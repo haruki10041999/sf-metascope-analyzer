@@ -1,4 +1,21 @@
-import { MetadataObjectDiff } from '../types/metadata';
+import fs 
+
+import {
+    MetadataObjectDiff,
+    MetadataObject,
+    MetadataFieldDiff,
+    MetadataField,
+} from '../types/metadata';
+import { Dependency, DependencyDiff } from '../types/metadata';
+
+
+export class MetadataRenderer {
+    private saveDir:string = '';
+
+    constructor(saveRoot:string) {
+
+    }
+}
 
 const escapeHtml = (value: string): string =>
     value

@@ -332,7 +332,7 @@ export class MetadataProcessor {
         } catch {
             return [];
         }
-        return MetadataParser.readMetadataObject(baseDir);
+        return await MetadataParser.readMetadataObject(baseDir);
     }
 
     private async getCurrentObjectList(baseDir: string): Promise<MetadataObject[]> {
