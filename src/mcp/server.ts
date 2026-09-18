@@ -4,8 +4,8 @@ import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
 import { z } from 'zod';
 
-import { MetadataProcessor } from '../processor/metadata';
-import { MetadataDependencyProcessor } from '../processor/metadataDependency';
+import { MetadataProcessor } from '../analyzer/processor/Metadata/metadata';
+import { MetadataDependencyProcessor } from '../analyzer/processor/Metadata/dependency';
 import { renderMetadataResult } from '../renderer/metadata';
 
 type AppContext = {

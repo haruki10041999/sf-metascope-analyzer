@@ -1,6 +1,7 @@
 import { Status } from './commons';
 
-export type CommonType = 'Id' | 'String' | 'Double' | 'Integer' | 'Boolean' | 'Date' | 'DateTime';
+export type MetadataCommonType =
+    'Id' | 'String' | 'Double' | 'Integer' | 'Boolean' | 'Date' | 'DateTime';
 
 export type MetadataObject = {
     apiName: string;
@@ -11,14 +12,21 @@ export type MetadataObject = {
 export type MetadataField = {
     apiName: string;
     dataType: '__c' | 'standard';
-    type: CommonType;
-    referenceObjectApiName?: string;
-};
+} & (
+    | {
+          type: MetadataCommonType;
+      }
+    | {
+          type: 'Lookup' | 'MasterDetail';
+          referenceObjectApiName: string;
+      }
+);
 
-export type Dependency = {
+export type MetadataDependency = {
     parentObjectApiName: string;
     parentFieldApiName: string;
     childObjectApiName: string;
+    type: 'Lookup' | 'MasterDetail';
 };
 
 export type MetadataObjectDiff = Omit<MetadataObject, 'fields'> & {
@@ -30,6 +38,6 @@ export type MetadataFieldDiff = MetadataField & {
     status: Status;
 };
 
-export type DependencyDiff = Dependency & {
+export type MetadataDependencyDiff = MetadataDependency & {
     status: Status;
 };

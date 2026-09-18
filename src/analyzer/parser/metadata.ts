@@ -2,12 +2,12 @@ import fs from 'node:fs/promises';
 import path from 'path';
 import { XMLParser } from 'fast-xml-parser';
 
-import { CommonType, MetadataObject, MetadataField } from '../types/metadata';
+import { MetadataCommonType, MetadataObject, MetadataField } from '../types/index';
 
 export class MetadataParser {
     static async readMetadataObject(baseDir: string): Promise<MetadataObject[]> {
         const metadataObjects: MetadataObject[] = [];
-        const objectDir = path.join(baseDir, 'force-app', 'main', 'default', 'objects', 'metadata');
+        const objectDir = path.join(baseDir, 'objects');
         const objectPathList = (await fs.readdir(objectDir, { withFileTypes: true }))
             .filter((entry) => entry.isFile() && entry.name.endsWith('.json'))
             .map((entry) => entry.name);
@@ -31,14 +31,14 @@ export class MetadataParser {
             {
                 apiName: 'CreatedById',
                 dataType: 'standard',
-                type: 'Id',
+                type: 'Lookup',
                 referenceObjectApiName: 'User',
             },
             { apiName: 'LastModifiedDate', dataType: 'standard', type: 'DateTime' },
             {
                 apiName: 'LastModifiedById',
                 dataType: 'standard',
-                type: 'Id',
+                type: 'Lookup',
                 referenceObjectApiName: 'User',
             },
         ];
@@ -74,8 +74,8 @@ export class MetadataParser {
         });
 
         const xml = parser.parse(await fs.readFile(fieldMetaPath, 'utf-8'));
-        let type: CommonType = 'String';
-        let referenceObjectApiName: string | undefined = undefined;
+        let type: MetadataCommonType | 'Lookup' | 'MasterDetail' = 'String';
+        let referenceObjectApiName: string = '';
         switch (xml.CustomField.type) {
             case 'Checkbox':
                 type = 'Boolean';
@@ -93,22 +93,26 @@ export class MetadataParser {
                 break;
             case 'Lookup':
             case 'MasterDetail':
-                type = 'Id';
+                type = xml.CustomField.type === 'Lookup' ? 'Lookup' : 'MasterDetail';
                 referenceObjectApiName = xml.CustomField.referenceTo;
                 break;
             default:
                 break;
         }
 
-        const metadataField: MetadataField = {
+        if (type === 'Lookup' || type === 'MasterDetail') {
+            return {
+                apiName: fieldApiName,
+                dataType: fieldApiName.endsWith('__c') ? '__c' : 'standard',
+                type: type,
+                referenceObjectApiName: referenceObjectApiName,
+            };
+        }
+
+        return {
             apiName: fieldApiName,
             dataType: fieldApiName.endsWith('__c') ? '__c' : 'standard',
             type: type,
         };
-        if (referenceObjectApiName) {
-            metadataField.referenceObjectApiName = referenceObjectApiName;
-        }
-
-        return metadataField;
     }
 }

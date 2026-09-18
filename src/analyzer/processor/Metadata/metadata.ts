@@ -1,34 +1,33 @@
 import fs from 'node:fs/promises';
 import path from 'path';
 
-import { MetadataParser } from '../parser/metadata';
-
-import { Status } from '../types/commons';
+import { MetadataParser } from '../../parser/index';
 
 import {
+    Status,
     MetadataObject,
     MetadataField,
     MetadataObjectDiff,
     MetadataFieldDiff,
-} from '../types/metadata';
+} from '../../types/index';
 
 export class MetadataProcessor {
-    private preDir: string = '';
-    private objectDir: string = '';
+    private savingRoot: string = '';
+    private repositoryRoot: string = '';
 
     private metadataObjectDiffs: MetadataObjectDiff[] = [];
 
     constructor(
-        preDir: string, //結果をセーブしている部分
-        objectDir: string, //force-app/default/main/objects
+        savingRoot: string, //結果をセーブしている部分
+        repositoryRoot: string,
     ) {
-        this.preDir = preDir;
-        this.objectDir = objectDir;
+        this.savingRoot = savingRoot;
+        this.repositoryRoot = path.join(repositoryRoot, 'force-app', 'main', 'default', 'objects');
     }
 
-    static async create(preDir: string, objectDir: string): Promise<MetadataProcessor> {
-        const processor = new MetadataProcessor(preDir, objectDir);
-        await processor.reset(preDir, objectDir);
+    static async create(savingRoot: string, repositoryRoot: string): Promise<MetadataProcessor> {
+        const processor = new MetadataProcessor(savingRoot, repositoryRoot);
+        await processor.reset();
         return processor;
     }
 
@@ -59,7 +58,7 @@ export class MetadataProcessor {
                     metadataDiffs.push(metadataDiff);
                     addedMetadataObjectDiffs.add(parentApiName);
                     metadataDiff.fields.forEach((field) => {
-                        if (field.referenceObjectApiName) {
+                        if (field.type === 'Lookup' || field.type === 'MasterDetail') {
                             nextTargetApiNames.add(field.referenceObjectApiName);
                         }
                     });
@@ -89,10 +88,8 @@ export class MetadataProcessor {
                 .filter((object) => object.status === 'New')
                 .map((object) => {
                     return {
-                        apiName: object.apiName,
-                        dataType: object.dataType,
+                        ...object,
                         fields: object.fields.filter((field) => field.status === 'New'),
-                        status: object.status,
                     };
                 }),
         );
@@ -104,10 +101,8 @@ export class MetadataProcessor {
                 .filter((object) => object.status === 'Delete')
                 .map((object) => {
                     return {
-                        apiName: object.apiName,
-                        dataType: object.dataType,
+                        ...object,
                         fields: object.fields.filter((field) => field.status === 'Delete'),
-                        status: object.status,
                     };
                 }),
         );
@@ -119,10 +114,8 @@ export class MetadataProcessor {
                 .filter((object) => object.status !== 'Delete')
                 .map((object) => {
                     return {
-                        apiName: object.apiName,
-                        dataType: object.dataType,
+                        ...object,
                         fields: object.fields.filter((field) => field.status !== 'Delete'),
-                        status: object.status,
                     };
                 }),
         );
@@ -134,10 +127,8 @@ export class MetadataProcessor {
                 .filter((object) => object.status !== 'New')
                 .map((object) => {
                     return {
-                        apiName: object.apiName,
-                        dataType: object.dataType,
+                        ...object,
                         fields: object.fields.filter((field) => field.status !== 'New'),
-                        status: object.status,
                     };
                 }),
         );
@@ -146,38 +137,38 @@ export class MetadataProcessor {
     convertMetaDataObjects(metadataObjectDiffs: MetadataObjectDiff[]): MetadataObject[] {
         return metadataObjectDiffs.map((metadata) => {
             return {
-                apiName: metadata.apiName,
-                dataType: metadata.dataType,
+                ...metadata,
                 fields: metadata.fields.map(({ status, ...field }) => field),
             };
         });
     }
 
-    async reset(preDir: string, objectDir: string): Promise<void> {
-        this.preDir = preDir;
-        this.objectDir = objectDir;
-        this.metadataObjectDiffs = await this.diffMetaDataObjects(preDir, objectDir);
+    async reset(): Promise<void> {
+        this.metadataObjectDiffs = await this.diffMetaDataObjects(
+            this.savingRoot,
+            this.repositoryRoot,
+        );
     }
 
     async save(): Promise<void> {
-        const objectDir = path.join(this.preDir, 'objects');
+        const objectDir = path.join(this.savingRoot, 'objects');
         await fs.mkdir(objectDir, { recursive: true });
         const metadataObjects: MetadataObject[] = this.getUpdatedMetadataObjects();
         for (const metadataObject of metadataObjects) {
             const objectFilePath = path.join(objectDir, `${metadataObject.apiName}.json`);
             await fs.writeFile(objectFilePath, JSON.stringify(metadataObject, null, 2));
         }
-        await this.reset(this.preDir, this.objectDir);
+        await this.reset();
     }
 
     private async diffMetaDataObjects(
-        basePreDir: string,
-        baseCurrentDir: string,
+        savingRoot: string,
+        repositoryRoot: string,
     ): Promise<MetadataObjectDiff[]> {
         const metadataObjectDiffs: MetadataObjectDiff[] = [];
-        const preMetadataObjects: MetadataObject[] = await this.getPreObjectList(basePreDir);
+        const preMetadataObjects: MetadataObject[] = await this.getPreObjectList(savingRoot);
         const currentMetadataObjects: MetadataObject[] =
-            await this.getCurrentObjectList(baseCurrentDir);
+            await this.getCurrentObjectList(repositoryRoot);
 
         const { newApiNames, deleteApiNames } = this.splitApiNames(
             preMetadataObjects.map((object) => object.apiName),
@@ -187,18 +178,12 @@ export class MetadataProcessor {
         currentMetadataObjects.forEach((metadata) => {
             if (newApiNames.includes(metadata.apiName)) {
                 metadataObjectDiffs.push({
-                    apiName: metadata.apiName,
-                    dataType: metadata.dataType,
+                    ...metadata,
                     fields: metadata.fields.map((field) => {
                         const metadataFieldDiff: MetadataFieldDiff = {
-                            apiName: field.apiName,
-                            dataType: field.dataType,
-                            type: field.type,
+                            ...field,
                             status: 'New',
                         };
-                        if (field.referenceObjectApiName) {
-                            metadataFieldDiff.referenceObjectApiName = field.referenceObjectApiName;
-                        }
                         return metadataFieldDiff;
                     }),
                     status: 'New',
@@ -216,8 +201,7 @@ export class MetadataProcessor {
                     deleteApiNames,
                 );
                 metadataObjectDiffs.push({
-                    apiName: metadata.apiName,
-                    dataType: metadata.dataType,
+                    ...metadata,
                     fields: metadataFieldDiffs,
                     status: 'Exist',
                 });
@@ -227,18 +211,12 @@ export class MetadataProcessor {
         preMetadataObjects.forEach((metadata) => {
             if (deleteApiNames.includes(metadata.apiName)) {
                 metadataObjectDiffs.push({
-                    apiName: metadata.apiName,
-                    dataType: metadata.dataType,
+                    ...metadata,
                     fields: metadata.fields.map((field) => {
                         const metadataFieldDiff: MetadataFieldDiff = {
-                            apiName: field.apiName,
-                            dataType: field.dataType,
-                            type: field.type,
+                            ...field,
                             status: 'Delete',
                         };
-                        if (field.referenceObjectApiName) {
-                            metadataFieldDiff.referenceObjectApiName = field.referenceObjectApiName;
-                        }
                         return metadataFieldDiff;
                     }),
                     status: 'Delete',
@@ -263,14 +241,11 @@ export class MetadataProcessor {
 
         currentMetadataFields.forEach((metadata) => {
             if (
-                metadata.referenceObjectApiName &&
+                (metadata.type === 'Lookup' || metadata.type === 'MasterDetail') &&
                 deleteObjectApiNames.includes(metadata.referenceObjectApiName)
             ) {
                 metadataFieldDiffs.push({
-                    apiName: metadata.apiName,
-                    dataType: metadata.dataType,
-                    type: metadata.type,
-                    referenceObjectApiName: metadata.referenceObjectApiName,
+                    ...metadata,
                     status: 'Delete',
                 });
                 return;
@@ -282,29 +257,18 @@ export class MetadataProcessor {
             }
 
             const metadataFieldDiff: MetadataFieldDiff = {
-                apiName: metadata.apiName,
-                dataType: metadata.dataType,
-                type: metadata.type,
+                ...metadata,
                 status: status,
             };
-            if (metadata.referenceObjectApiName) {
-                metadataFieldDiff.referenceObjectApiName = metadata.referenceObjectApiName;
-            }
-
             metadataFieldDiffs.push(metadataFieldDiff);
         });
 
         preMetadataFields.forEach((metadata) => {
             if (deleteApiNames.includes(metadata.apiName)) {
                 const metadataFieldDiff: MetadataFieldDiff = {
-                    apiName: metadata.apiName,
-                    dataType: metadata.dataType,
-                    type: metadata.type,
+                    ...metadata,
                     status: 'Delete',
                 };
-                if (metadata.referenceObjectApiName) {
-                    metadataFieldDiff.referenceObjectApiName = metadata.referenceObjectApiName;
-                }
                 metadataFieldDiffs.push(metadataFieldDiff);
                 return;
             }
@@ -357,11 +321,7 @@ export class MetadataProcessor {
             const parsedFields = [];
             for (const fieldApiName of fieldApiNames) {
                 parsedFields.push(
-                    await MetadataParser.parseSingleField(
-                        this.objectDir,
-                        objectApiName,
-                        fieldApiName,
-                    ),
+                    await MetadataParser.parseSingleField(baseDir, objectApiName, fieldApiName),
                 );
             }
             metadataObject.fields = [...metadataObject.fields, ...parsedFields];

@@ -1,25 +1,29 @@
-import { Dependency, DependencyDiff } from '../types/metadataDependency';
-
-import { CommonType, MetadataObjectDiff, MetadataFieldDiff } from '../types/metadata';
+import {
+    MetadataCommonType,
+    MetadataObjectDiff,
+    MetadataFieldDiff,
+    MetadataDependency,
+    MetadataDependencyDiff,
+} from '../../types/index';
 
 export class MetadataDependencyProcessor {
-    private dependencyDiffs: DependencyDiff[] = [];
+    private dependencyDiffs: MetadataDependencyDiff[] = [];
 
     constructor(metadataObjectDiffs: MetadataObjectDiff[]) {
         this.reset(metadataObjectDiffs);
     }
 
-    getAllDependencyDiff(): DependencyDiff[] {
+    getAllDependencyDiff(): MetadataDependencyDiff[] {
         return this.dependencyDiffs;
     }
 
-    getDependencyDiff(targetObjectApiName: string, depth = 1): DependencyDiff[] {
+    getDependencyDiff(targetObjectApiNames: string[], depth = 1): MetadataDependencyDiff[] {
         if (!Number.isInteger(depth) || depth <= 0) {
             return [];
         }
 
-        const dependencyDiffs: DependencyDiff[] = [];
-        let targetApiNames = new Set([targetObjectApiName]);
+        const dependencyDiffs: MetadataDependencyDiff[] = [];
+        let targetApiNames = new Set(targetObjectApiNames);
         const addedDependencies = new Set<string>();
         let maxDepth = depth;
         while (targetApiNames.size > 0 && maxDepth > 0) {
@@ -39,15 +43,15 @@ export class MetadataDependencyProcessor {
         return dependencyDiffs;
     }
 
-    getAllDependency(): Dependency[] {
+    getAllDependency(): MetadataDependency[] {
         return this.convertDependency(this.dependencyDiffs);
     }
 
-    getDependency(targetObjectApiName: string, depth = 1): Dependency[] {
-        return this.convertDependency(this.getDependencyDiff(targetObjectApiName, depth));
+    getDependency(targetObjectApiNames: string[], depth = 1): MetadataDependency[] {
+        return this.convertDependency(this.getDependencyDiff(targetObjectApiNames, depth));
     }
 
-    convertDependency(dependencyDiff: DependencyDiff[]): Dependency[] {
+    convertDependency(dependencyDiff: MetadataDependencyDiff[]): MetadataDependency[] {
         return dependencyDiff.map(({ status, ...dependency }) => dependency);
     }
 
@@ -55,26 +59,25 @@ export class MetadataDependencyProcessor {
         this.dependencyDiffs = this.calculateDependency(metadataObjectDiffs);
     }
 
-    private calculateDependency(metadataObjectDiffs: MetadataObjectDiff[]): DependencyDiff[] {
-        const dependencyDiffs: DependencyDiff[] = [];
+    private calculateDependency(
+        metadataObjectDiffs: MetadataObjectDiff[],
+    ): MetadataDependencyDiff[] {
+        const dependencyDiffs: MetadataDependencyDiff[] = [];
 
-        const processedMetadataDiffs: MetadataObjectDiff[] = metadataObjectDiffs.map((object) => {
-            return {
-                ...object,
-                fields: object.fields.filter((field) => field.referenceObjectApiName),
-            };
-        });
-
-        processedMetadataDiffs.forEach((metadataDiff) => {
+        metadataObjectDiffs.forEach((metadataDiff) => {
             const parentObjectApiName = metadataDiff.apiName;
             metadataDiff.fields.forEach((fieldDiff) => {
+                if (fieldDiff.type !== 'Lookup' && fieldDiff.type !== 'MasterDetail') {
+                    return;
+                }
                 const parentFieldApiName = fieldDiff.apiName;
-                const chidObjectApiName = fieldDiff.referenceObjectApiName!;
+                const chidObjectApiName = fieldDiff.referenceObjectApiName;
                 const status = fieldDiff.status;
                 dependencyDiffs.push({
                     parentObjectApiName: parentObjectApiName,
                     parentFieldApiName: parentFieldApiName,
                     childObjectApiName: chidObjectApiName,
+                    type: fieldDiff.type,
                     status: status,
                 });
             });
