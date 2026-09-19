@@ -2,7 +2,7 @@ import fs from 'node:fs/promises';
 import path from 'path';
 import { XMLParser } from 'fast-xml-parser';
 
-import { MetadataCommonType, MetadataObject, MetadataField } from '../types/index';
+import { MetadataCommonType, MetadataObject, MetadataField } from '../types';
 
 export class MetadataParser {
     static async readMetadataObject(baseDir: string): Promise<MetadataObject[]> {

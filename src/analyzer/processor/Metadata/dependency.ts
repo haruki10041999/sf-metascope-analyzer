@@ -1,10 +1,4 @@
-import {
-    MetadataCommonType,
-    MetadataObjectDiff,
-    MetadataFieldDiff,
-    MetadataDependency,
-    MetadataDependencyDiff,
-} from '../../types/index';
+import { MetadataObjectDiff, MetadataDependency, MetadataDependencyDiff } from '../../types';
 
 export class MetadataDependencyProcessor {
     private dependencyDiffs: MetadataDependencyDiff[] = [];

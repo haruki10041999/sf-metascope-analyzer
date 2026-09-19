@@ -1,128 +1,197 @@
 import fs from 'node:fs/promises';
-import path, { basename } from 'node:path';
+import path from 'node:path';
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
 import { z } from 'zod';
 
 import { MetadataProcessor } from '../analyzer/processor/Metadata/metadata';
 import { MetadataDependencyProcessor } from '../analyzer/processor/Metadata/dependency';
-import { renderMetadataResult } from '../renderer/metadata';
+
+import type { BuildReportOptions } from '../builder/htmlBuilder';
+import { buildReportHtml } from '../builder/htmlBuilder';
+
+const repositoryRoot = path.resolve(process.cwd());
+
+type MetadataContext = {
+    metadata: MetadataProcessor;
+    dependency: MetadataDependencyProcessor;
+};
 
 type AppContext = {
     repogitoryRoot: string;
     saveRoot: string;
+    metadataContext: MetadataContext;
 };
 
-const createMetadataProcessor = async (
+const createMetadataContext = async (
     repositoryRoot: string,
     saveRoot: string,
-): Promise<MetadataProcessor> => {
+): Promise<MetadataContext> => {
     const baseName = path.basename(repositoryRoot);
     const saveResultPath = path.join(saveRoot, baseName);
 
-    const processor = await MetadataProcessor.create(saveRoot, repositoryRoot);
+    const metadataProcessor = await MetadataProcessor.create(saveRoot, repositoryRoot);
 
     try {
         await fs.access(saveResultPath);
     } catch {
-        await processor.save();
+        await metadataProcessor.save();
     }
 
-    const dependencyProcessor = new MetadataDependencyProcessor(processor.getMetadataObjectDiffs());
+    const dependencyProcessor = new MetadataDependencyProcessor(
+        metadataProcessor.getMetadataObjectDiffs(),
+    );
 
-    return processor;
+    return {
+        metadata: metadataProcessor,
+        dependency: dependencyProcessor,
+    };
 };
 
-const createServer = (context?: any): McpServer => {
+const createServer = (context: AppContext): McpServer => {
     const server = new McpServer({
         name: 'sf-metascope-analyzer',
         version: '0.1.0',
     });
 
     server.registerTool(
-        'analyze_objects',
+        'save_objects',
         {
-            description: 'Salesforceオブジェクトをsnapshotまたはdiffモードで解析します',
-            inputSchema: {
-                baseDir: z.string().min(1),
-                mode: reportModeSchema,
+            description: 'Objectの結果を保存します',
+            inputSchema: {},
+            outputSchema: {
+                message: z.string().min(1),
             },
         },
-        async ({ baseDir, mode }) => {
-            const objectDir = await initializeWorkspace(baseDir);
-            const snapshotObjectsDir = path.join(getSnapshotDir(baseDir), 'objects');
-            const snapshotExists = await hasSnapshot(baseDir);
-            const effectiveMode = mode === 'diff' && snapshotExists ? 'diff' : 'snapshot';
-            const processor = await MetadataProcessor.create(
-                effectiveMode === 'diff'
-                    ? snapshotObjectsDir
-                    : path.join(getStorageRoot(baseDir), 'empty'),
-                objectDir,
-            );
+        async () => {
+            try {
+                await context.metadataContext.metadata.save();
+                context.metadataContext.dependency.reset(
+                    context.metadataContext.metadata.getMetadataObjectDiffs(),
+                );
 
-            if (effectiveMode === 'snapshot') {
-                await updateSnapshot(baseDir, objectDir);
+                const result = {
+                    message: '成功しました',
+                };
+
+                return {
+                    content: [
+                        {
+                            type: 'text',
+                            text: JSON.stringify(result),
+                        },
+                    ],
+                    structuredContent: result,
+                };
+            } catch (error) {
+                const result = {
+                    message: `失敗しました：${error}`,
+                };
+
+                return {
+                    content: [
+                        {
+                            type: 'text',
+                            text: JSON.stringify(result),
+                        },
+                    ],
+                    structuredContent: result,
+                };
             }
-
-            await writeObjectResults(baseDir, processor);
-
-            return {
-                content: [
-                    {
-                        type: 'text',
-                        text: JSON.stringify(
-                            {
-                                baseDir: path.resolve(baseDir),
-                                requestedMode: mode,
-                                mode: effectiveMode,
-                                initialSave: !snapshotExists,
-                                objectCount: processor.getMetadataObjectDiffs().length,
-                            },
-                            null,
-                            2,
-                        ),
-                    },
-                ],
-            };
         },
     );
 
     server.registerTool(
-        'render_object_report',
+        'analyze_objects',
         {
-            description: '指定リポジトリのオブジェクト解析結果をHTMLへ出力します',
+            description: 'Objectの解析結果を算出します。',
             inputSchema: {
                 baseDir: z.string().min(1),
-                mode: reportModeSchema,
+                isDiff: z.boolean(),
+                targetObjectApiNames: z
+                    .object({
+                        targetObjectApiNames: z.array(z.string()),
+                        depth: z.number().min(1).default(1),
+                    })
+                    .optional(),
+            },
+            outputSchema: {
+                message: z.string().min(1),
+                outputPath: z.string().min(1),
             },
         },
-        async ({ baseDir, mode }) => {
-            await initializeWorkspace(baseDir);
-            const processor = await createProcessor(baseDir, mode);
-            const reportPath = path.join(getStorageRoot(baseDir), 'analyses', 'report.html');
-            await fs.mkdir(path.dirname(reportPath), { recursive: true });
-            await fs.writeFile(
-                reportPath,
-                renderMetadataResult(processor.getMetadataObjectDiffs()),
-                'utf8',
-            );
+        async ({ baseDir, isDiff, targetObjectApiNames }) => {
+            const metadata = isDiff
+                ? targetObjectApiNames
+                    ? context.metadataContext.metadata.getRelatedMetadataObjectsDiff(
+                          targetObjectApiNames.targetObjectApiNames,
+                          targetObjectApiNames.depth,
+                      )
+                    : context.metadataContext.metadata.getMetadataObjectDiffs()
+                : targetObjectApiNames
+                  ? context.metadataContext.metadata.getRelatedMetadataObjects(
+                        targetObjectApiNames.targetObjectApiNames,
+                        targetObjectApiNames.depth,
+                    )
+                  : context.metadataContext.metadata.getMetadataObjects();
 
-            return {
-                content: [
-                    {
-                        type: 'text',
-                        text: JSON.stringify(
-                            {
-                                baseDir: path.resolve(baseDir),
-                                mode,
-                                reportPath,
-                            },
-                            null,
-                            2,
-                        ),
-                    },
-                ],
+            const dependency = isDiff
+                ? targetObjectApiNames
+                    ? context.metadataContext.dependency.getDependencyDiff(
+                          targetObjectApiNames.targetObjectApiNames,
+                          targetObjectApiNames.depth,
+                      )
+                    : context.metadataContext.dependency.getAllDependencyDiff()
+                : targetObjectApiNames
+                  ? context.metadataContext.dependency.getDependency(
+                        targetObjectApiNames.targetObjectApiNames,
+                        targetObjectApiNames.depth,
+                    )
+                  : context.metadataContext.dependency.getAllDependency();
+
+            const builderOption: BuildReportOptions = {
+                title: 'metadata解析レポート',
+                metadata: {
+                    type: 'metadata',
+                    metadata,
+                    dependency,
+                },
+                outputPath: baseDir,
             };
+
+            try {
+                const outputPath = await buildReportHtml(builderOption);
+
+                const result = {
+                    message: '成功しました',
+                    outputPath,
+                };
+
+                return {
+                    content: [
+                        {
+                            type: 'text',
+                            text: JSON.stringify(result),
+                        },
+                    ],
+                    structuredContent: result,
+                };
+            } catch (error) {
+                const result = {
+                    message: `失敗しました：${error}`,
+                    outputPath: baseDir,
+                };
+
+                return {
+                    content: [
+                        {
+                            type: 'text',
+                            text: JSON.stringify(result),
+                        },
+                    ],
+                    structuredContent: result,
+                };
+            }
         },
     );
 
@@ -132,12 +201,15 @@ const createServer = (context?: any): McpServer => {
 const initializeServer = async (): Promise<McpServer> => {
     await fs.stat(repositoryRoot);
 
-    const configuredBaseDir = process.env.SF_METASCOPE_BASE_DIR;
-    if (configuredBaseDir) {
-        await initializeWorkspace(configuredBaseDir);
-    }
+    const configuredBaseDir = process.env.SF_METASCOPE_BASE_DIR!;
 
-    return createServer(undefined);
+    const metadataContext = await createMetadataContext(repositoryRoot, configuredBaseDir);
+
+    return createServer({
+        repogitoryRoot: repositoryRoot,
+        saveRoot: configuredBaseDir,
+        metadataContext: metadataContext,
+    });
 };
 
 const main = async (): Promise<void> => {

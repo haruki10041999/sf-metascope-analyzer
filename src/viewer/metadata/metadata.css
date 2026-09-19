@@ -1,0 +1,114 @@
+.object_node {
+    background: #ffffff;
+    border: 2px solid #1e293b;
+    border-radius: 8px;
+    width: 180px;
+    padding: 12px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    font-family: sans-serif;
+}
+
+.object_node_name {
+    font-weight: bold;
+    font-size: 14px;
+    margin-bottom: 8px;
+}
+
+.object_node_button {
+    background: #f1f5f9;
+    border: 1px solid #cbd5e1;
+    border-radius: 4px;
+    padding: 4px 8px;
+    font-size: 11px;
+    cursor: pointer;
+}
+
+.object_node_fields {
+    margin-top: 8px;
+    margin-bottom: 8px;
+    border-top: 1px solid #e2e8f0;
+    text-align: left;
+}
+
+.object_node_field {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+    padding: 5px 4px;
+    border-bottom: 1px solid #e2e8f0;
+    font-size: 11px;
+}
+
+.object_node_field_name {
+    font-weight: 500;
+    color: #1e293b;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.object_node_field_type {
+    flex-shrink: 0;
+    color: #64748b;
+    font-size: 10px;
+}
+
+.react-flow__edge-path {
+    stroke-width: 1.5;
+}
+
+.dependency-edge-lookup .react-flow__edge-path {
+    stroke: #2563eb;
+    stroke-width: 1.5;
+    stroke-dasharray: 5 5;
+}
+
+.dependency-edge-master-detail .react-flow__edge-path {
+    stroke: #dc2626;
+    stroke-width: 2.5;
+}
+
+.dependency-edge-label {
+    fill: #1e293b;
+    font-size: 11px;
+    font-weight: 500;
+}
+
+.dependency-edge-label-bg {
+    fill: #ffffff;
+    fill-opacity: 0.9;
+}
+
+.dependency-edge-lookup .dependency-edge-label {
+    fill: #2563eb;
+}
+
+.dependency-edge-master-detail .dependency-edge-label {
+    fill: #dc2626;
+}
+
+.status_badge {
+    display: inline-block;
+    margin-left: 6px;
+    padding: 2px 5px;
+    border-radius: 4px;
+    font-size: 9px;
+    font-weight: bold;
+}
+
+.status_badge_new {
+    background: #dcfce7;
+    color: #166534;
+}
+
+.status_badge_exist {
+    background: #e2e8f0;
+    color: #475569;
+}
+
+.status_badge_delete {
+    background: #fee2e2;
+    color: #991b1b;
+}

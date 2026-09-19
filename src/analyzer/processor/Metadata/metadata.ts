@@ -1,7 +1,7 @@
 import fs from 'node:fs/promises';
 import path from 'path';
 
-import { MetadataParser } from '../../parser/index';
+import { MetadataParser } from '../../parser';
 
 import {
     Status,
@@ -9,7 +9,7 @@ import {
     MetadataField,
     MetadataObjectDiff,
     MetadataFieldDiff,
-} from '../../types/index';
+} from '../../types';
 
 export class MetadataProcessor {
     private savingRoot: string = '';
@@ -69,6 +69,10 @@ export class MetadataProcessor {
         }
 
         return metadataDiffs;
+    }
+
+    getMetadataObjects(): MetadataObject[] {
+        return this.convertMetaDataObjects(this.getMetadataObjectDiffs());
     }
 
     getSingleMetadataObject(targetObjectApiName: string): MetadataObject | undefined {

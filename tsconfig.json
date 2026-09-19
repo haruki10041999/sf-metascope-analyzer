@@ -4,13 +4,15 @@
         "module": "ESNext",
         "moduleResolution": "Bundler",
         "target": "ESNext",
-        "lib": ["ESNext"],
+        "lib": ["ESNext", "DOM"],
         "types": ["node"],
 
         /* 出力設定 */
         "sourceMap": true,
         "declaration": true,
         "declarationMap": true,
+        "rootDir": "src",
+        "outDir": "dist",
 
         /* 厳格な型チェック */
         "strict": true,
