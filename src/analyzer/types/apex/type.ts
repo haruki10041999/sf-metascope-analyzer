@@ -1,10 +1,12 @@
 import {
-    VariableDeclaratorsContext,
-    VariableDeclaratorContext,
+    TypeRefContext,
     TypeNameContext,
+    TypeArgumentsContext,
+    TypeListContext,
+    ArraySubscriptsContext,
 } from '@apexdevtools/apex-parser';
 
-export type CommonPrimitiveType =
+type CommonPrimitiveType =
     | 'Id'
     | 'String'
     | 'Double'
@@ -18,7 +20,7 @@ export type CommonPrimitiveType =
     | 'Blob'
     | 'Object';
 
-const COMMON_PRIMITIVE_TYPES: CommonPrimitiveType[] = [
+const COMMON_PRIMITIVE_TYPES: string[] = [
     'Id',
     'String',
     'Double',
@@ -33,91 +35,124 @@ const COMMON_PRIMITIVE_TYPES: CommonPrimitiveType[] = [
     'Object',
 ];
 
-export type ApexType =
+export type TypeField =
     | {
-          type: 'void';
-      }
-    | {
-          type: 'primitive';
-          name: CommonPrimitiveType;
+          type: 'primititve';
+          fieldType: CommonPrimitiveType;
       }
     | {
           type: 'custom';
-          name: string;
+          fieldType: string;
       }
     | {
-          type: 'List' | 'Set';
-          elementType: ApexType;
+          type: 'list' | 'set';
+          fieldType: TypeField;
       }
     | {
-          type: 'Map';
-          keyType: ApexType;
-          valueType: ApexType;
+          type: 'map';
+          keyType: TypeField;
+          valueType: TypeField;
+      }
+    | {
+          type: 'array';
+          fieldType: TypeField;
+          dimension: number;
       };
 
-export type ApexParameter = {
-    identifier: string;
-    type: ApexType;
-};
+export const makeTypeField = (ctx: TypeRefContext): TypeField => {
+    if (ctx.arraySubscripts()) {
+        const dimension = ctx.arraySubscripts().LBRACK_list().length;
+        const fieldType = ctx
+            .typeName_list()
+            .map((typeNameCtx) => typeNameCtx.id().getText())
+            .join('.');
 
-const isCommonPrimitiveType = (type: string): type is CommonPrimitiveType => {
-    return COMMON_PRIMITIVE_TYPES.includes(type as CommonPrimitiveType);
-};
-
-const isList = (type: string): boolean => {
-    return /^List<.+>$/.test(type);
-};
-
-const isSet = (type: string): boolean => {
-    return /^Set<.+>$/.test(type);
-};
-
-const isMap = (type: string): boolean => {
-    return /^Map<.+>$/.test(type);
-};
-
-const getGenericType = (type: string): string => {
-    const match = type.match(/<(.+)>/);
-    return match![1]!;
-};
-
-const makeApexType = (type: string): ApexType => {
-    if (type === 'void') {
+        let singleTypeField: TypeField;
+        if (COMMON_PRIMITIVE_TYPES.includes(fieldType)) {
+            singleTypeField = {
+                type: 'primititve',
+                fieldType: fieldType as CommonPrimitiveType,
+            };
+        } else {
+            singleTypeField = {
+                type: 'custom',
+                fieldType: fieldType,
+            };
+        }
         return {
-            type: 'void',
+            type: 'array',
+            fieldType: singleTypeField,
+            dimension: dimension,
         };
     }
 
-    if (isCommonPrimitiveType(type)) {
-        return {
-            type: 'primitive',
-            name: type,
-        };
+    const typeNameCtxs = ctx.typeName_list();
+    if (typeNameCtxs.length > 1) {
+        const fieldType = ctx
+            .typeName_list()
+            .map((typeNameCtx) => typeNameCtx.id().getText())
+            .join('.');
+        if (COMMON_PRIMITIVE_TYPES.includes(fieldType)) {
+            return {
+                type: 'primititve',
+                fieldType: fieldType as CommonPrimitiveType,
+            };
+        } else {
+            return {
+                type: 'custom',
+                fieldType: fieldType,
+            };
+        }
     }
 
-    if (isList(type) || isSet(type)) {
-        const result = getGenericType(type);
-        return {
-            type: isList(type) ? 'List' : 'Set',
-            elementType: makeApexType(result),
-        };
+    const typeNameCtx = typeNameCtxs.at(0)!;
+
+    if (typeNameCtx.LIST() || typeNameCtx.SET() || typeNameCtx.MAP()) {
+        const typeListCtx = typeNameCtx.typeArguments().typeList();
+        const typeRefCtxs = typeListCtx.typeRef_list();
+
+        if (typeRefCtxs.length === 1) {
+            if (typeNameCtx.LIST()) {
+                return {
+                    type: 'list',
+                    fieldType: makeTypeField(typeRefCtxs.at(0)!),
+                };
+            }
+
+            if (typeNameCtx.SET()) {
+                return {
+                    type: 'set',
+                    fieldType: makeTypeField(typeRefCtxs.at(0)!),
+                };
+            }
+        }
+
+        if (typeRefCtxs.length === 2 && typeNameCtx.MAP()) {
+            return {
+                type: 'map',
+                keyType: makeTypeField(typeRefCtxs.at(0)!),
+                valueType: makeTypeField(typeRefCtxs.at(1)!),
+            };
+        }
     }
 
-    if (isMap(type)) {
-        const result = getGenericType(type);
-
-        const index = result.indexOf(',');
-        const keyType = result.slice(0, index).trim();
-        const valueType = result.slice(index + 1).trim();
-        return {
-            type: 'Map',
-            keyType: makeApexType(keyType),
-            valueType: makeApexType(valueType),
-        };
+    if (typeNameCtx.id()) {
+        const fieldType = ctx
+            .typeName_list()
+            .map((typeNameCtx) => typeNameCtx.id().getText())
+            .join('.');
+        if (COMMON_PRIMITIVE_TYPES.includes(fieldType)) {
+            return {
+                type: 'primititve',
+                fieldType: fieldType as CommonPrimitiveType,
+            };
+        } else {
+            return {
+                type: 'custom',
+                fieldType: fieldType,
+            };
+        }
     }
 
-    return {
-        type: 'custom',
-        name: type,
-    };
+    throw new Error(`値が異常です。TypeRefContext:${ctx.getText()}`);
 };
