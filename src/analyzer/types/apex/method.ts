@@ -6,17 +6,13 @@ import {
 } from '@apexdevtools/apex-parser';
 
 import { TypeField, makeTypeField } from './type';
-import { ModifierField, makeModifierField } from './modifer';
+import { ParamField, makeParamList } from './params';
 import { StatementField, makeStatementField } from './statement';
 
 export type MethodField = {
     name: string;
     returnType: 'void' | TypeField;
-    params: {
-        variantType: TypeField;
-        variant: string;
-        modifier?: ModifierField[];
-    }[];
+    params: ParamField[];
     blockStatment?: StatementField[];
 };
 
@@ -30,41 +26,10 @@ export const makeMethodField = (ctx: MethodDeclarationContext): MethodField => {
         returnType = makeTypeField(ctx.typeRef());
     }
 
-    const params: {
-        variantType: TypeField;
-        variant: string;
-        modifier?: ModifierField[];
-    }[] = [];
-    ctx.formalParameters()
-        .formalParameterList()
-        .formalParameter_list()
-        .forEach((formalParameterCtx) => {
-            const variantType = makeTypeField(formalParameterCtx.typeRef());
-            const variant = formalParameterCtx.id().getText();
-
-            const param: {
-                variantType: TypeField;
-                variant: string;
-                modifier?: ModifierField[];
-            } = {
-                variantType: variantType,
-                variant: variant,
-            };
-            if (
-                formalParameterCtx.modifier_list() &&
-                formalParameterCtx.modifier_list().length > 0
-            ) {
-                param.modifier = formalParameterCtx.modifier_list().map((modifierCtx) => {
-                    return makeModifierField(modifierCtx);
-                });
-            }
-            params.push(param);
-        });
-
     const methodField: MethodField = {
         name: name,
         returnType: returnType,
-        params: params,
+        params: makeParamList(ctx.formalParameters()),
     };
 
     if (ctx.block()) {
