@@ -5,11 +5,12 @@ import {
     SetterContext,
 } from '@apexdevtools/apex-parser';
 
-import { TypeField, makeTypeField } from './type';
-import { ModifierField, makeModifierField } from './modifer';
-import { StatementField, makeStatementField } from './statement';
+import { TypeField, makeTypeField } from '../type';
+import { ModifierField, makeModifierField } from '../modifer';
+import { StatementField, makeStatementField } from '../statement';
 
-export type PropertyField = {
+export type PropertyMemberType = {
+    type: 'property';
     variantType: TypeField;
     variant: string;
     isGetter: boolean;
@@ -20,11 +21,12 @@ export type PropertyField = {
     setterBlockStatement?: StatementField[];
 };
 
-export const makePropertyField = (ctx: PropertyDeclarationContext): PropertyField => {
+export const makePropertyMemberType = (ctx: PropertyDeclarationContext): PropertyMemberType => {
     const variantType = makeTypeField(ctx.typeRef());
     const variant = ctx.id().getText();
 
-    const propertyField: PropertyField = {
+    const propertyField: PropertyMemberType = {
+        type: 'property',
         variantType: variantType,
         variant: variant,
         isGetter: false,
@@ -63,7 +65,7 @@ export const makePropertyField = (ctx: PropertyDeclarationContext): PropertyFiel
             }
 
             if (setterCtx.block()) {
-                propertyField.getterBlockStatement = setterCtx
+                propertyField.setterBlockStatement = setterCtx
                     .block()
                     .statement_list()
                     .map((statementCtx) => {
@@ -75,3 +77,4 @@ export const makePropertyField = (ctx: PropertyDeclarationContext): PropertyFiel
 
     return propertyField;
 };
+

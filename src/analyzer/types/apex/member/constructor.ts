@@ -1,16 +1,20 @@
 import { ConstructorDeclarationContext } from '@apexdevtools/apex-parser';
 
-import { ParamField, makeParamList } from './apex/params';
-import { StatementField, makeStatementField } from './apex/statement';
+import { ParamField, makeParamList } from '../params';
+import { StatementField, makeStatementField } from '../statement';
 
-export type ConstructorField = {
+export type ConstructorMemberType = {
+    type: 'constructor';
     name: string;
     params: ParamField[];
     blockStatement: StatementField[];
 };
 
-export const makeConstructorField = (ctx: ConstructorDeclarationContext): ConstructorField => {
+export const makeConstructorMemberType = (
+    ctx: ConstructorDeclarationContext,
+): ConstructorMemberType => {
     return {
+        type: 'constructor',
         name: ctx.qualifiedName().getText(),
         params: makeParamList(ctx.formalParameters()),
         blockStatement: ctx
@@ -21,3 +25,4 @@ export const makeConstructorField = (ctx: ConstructorDeclarationContext): Constr
             }),
     };
 };
+

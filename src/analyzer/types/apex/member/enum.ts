@@ -1,12 +1,14 @@
 import { EnumDeclarationContext, EnumConstantsContext } from '@apexdevtools/apex-parser';
 
-export type EnumField = {
+export type EnumMemberType = {
+    type: 'enum';
     variant: string;
     constants: string[];
 };
 
-export const makeEnumField = (ctx: EnumDeclarationContext): EnumField => {
+export const makeEnumMemberType = (ctx: EnumDeclarationContext): EnumMemberType => {
     return {
+        type: 'enum',
         variant: ctx.id().getText(),
         constants: ctx
             .enumConstants()
@@ -14,3 +16,4 @@ export const makeEnumField = (ctx: EnumDeclarationContext): EnumField => {
             .map((idCtx) => idCtx.getText()),
     };
 };
+

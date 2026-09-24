@@ -33,6 +33,7 @@ export class MetadataParser {
                 dataType: 'standard',
                 type: 'Lookup',
                 referenceObjectApiName: 'User',
+                relationshipName: 'User',
             },
             { apiName: 'LastModifiedDate', dataType: 'standard', type: 'DateTime' },
             {
@@ -40,6 +41,7 @@ export class MetadataParser {
                 dataType: 'standard',
                 type: 'Lookup',
                 referenceObjectApiName: 'User',
+                relationshipName: 'User',
             },
         ];
 
@@ -76,6 +78,7 @@ export class MetadataParser {
         const xml = parser.parse(await fs.readFile(fieldMetaPath, 'utf-8'));
         let type: MetadataCommonType | 'Lookup' | 'MasterDetail' = 'String';
         let referenceObjectApiName: string = '';
+        let relationshipName: string = '';
         switch (xml.CustomField.type) {
             case 'Checkbox':
                 type = 'Boolean';
@@ -95,6 +98,7 @@ export class MetadataParser {
             case 'MasterDetail':
                 type = xml.CustomField.type === 'Lookup' ? 'Lookup' : 'MasterDetail';
                 referenceObjectApiName = xml.CustomField.referenceTo;
+                relationshipName = xml.CustomField.relationshipName;
                 break;
             default:
                 break;
@@ -106,6 +110,7 @@ export class MetadataParser {
                 dataType: fieldApiName.endsWith('__c') ? '__c' : 'standard',
                 type: type,
                 referenceObjectApiName: referenceObjectApiName,
+                relationshipName: relationshipName,
             };
         }
 

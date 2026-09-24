@@ -1,22 +1,18 @@
-import {
-    MethodDeclarationContext,
-    FormalParametersContext,
-    FormalParameterListContext,
-    FormalParameterContext,
-} from '@apexdevtools/apex-parser';
+import { MethodDeclarationContext } from '@apexdevtools/apex-parser';
 
-import { TypeField, makeTypeField } from './type';
-import { ParamField, makeParamList } from './params';
-import { StatementField, makeStatementField } from './statement';
+import { TypeField, makeTypeField } from '../type';
+import { ParamField, makeParamList } from '../params';
+import { StatementField, makeStatementField } from '../statement';
 
-export type MethodField = {
+export type MethodMemberType = {
+    type: 'method';
     name: string;
     returnType: 'void' | TypeField;
     params: ParamField[];
-    blockStatment?: StatementField[];
+    blockStatement?: StatementField[];
 };
 
-export const makeMethodField = (ctx: MethodDeclarationContext): MethodField => {
+export const makeMethodMemberType = (ctx: MethodDeclarationContext): MethodMemberType => {
     const name = ctx.id().getText();
 
     let returnType: 'void' | TypeField;
@@ -26,14 +22,15 @@ export const makeMethodField = (ctx: MethodDeclarationContext): MethodField => {
         returnType = makeTypeField(ctx.typeRef());
     }
 
-    const methodField: MethodField = {
+    const methodField: MethodMemberType = {
+        type: 'method',
         name: name,
         returnType: returnType,
         params: makeParamList(ctx.formalParameters()),
     };
 
     if (ctx.block()) {
-        methodField.blockStatment = ctx
+        methodField.blockStatement = ctx
             .block()
             .statement_list()
             .map((statementCtx) => {
@@ -43,3 +40,4 @@ export const makeMethodField = (ctx: MethodDeclarationContext): MethodField => {
 
     return methodField;
 };
+

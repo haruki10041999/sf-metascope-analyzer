@@ -4,11 +4,12 @@ import {
     InterfaceMethodDeclarationContext,
 } from '@apexdevtools/apex-parser';
 
-import { TypeField, makeTypeField } from './type';
-import { ParamField, makeParamList } from './params';
-import { ModifierField, makeModifierField } from './modifer';
+import { TypeField, makeTypeField } from '../type';
+import { ParamField, makeParamList } from '../params';
+import { ModifierField, makeModifierField } from '../modifer';
 
-export type InterfaceField = {
+export type InterfaceMemberType = {
+    type: 'interface';
     name: string;
     extends?: TypeField[];
     methods: {
@@ -19,7 +20,7 @@ export type InterfaceField = {
     }[];
 };
 
-export const makeInterfaceField = (ctx: InterfaceDeclarationContext): InterfaceField => {
+export const makeInterfaceMemberType = (ctx: InterfaceDeclarationContext): InterfaceMemberType => {
     const name = ctx.id().getText();
 
     const methods: {
@@ -67,7 +68,8 @@ export const makeInterfaceField = (ctx: InterfaceDeclarationContext): InterfaceF
             methods.push(method);
         });
 
-    const interfaceField: InterfaceField = {
+    const interfaceField: InterfaceMemberType = {
+        type: 'interface',
         name: name,
         methods: methods,
     };
@@ -83,3 +85,4 @@ export const makeInterfaceField = (ctx: InterfaceDeclarationContext): InterfaceF
 
     return interfaceField;
 };
+

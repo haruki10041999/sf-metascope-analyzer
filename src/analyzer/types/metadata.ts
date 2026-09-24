@@ -19,6 +19,7 @@ export type MetadataField = {
     | {
           type: 'Lookup' | 'MasterDetail';
           referenceObjectApiName: string;
+          relationshipName: string;
       }
 );
 
