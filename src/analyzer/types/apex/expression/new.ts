@@ -51,8 +51,6 @@ export type NewExpressionType = {
 );
 
 export const makeNewExpressionType = (ctx: NewExpressionContext): NewExpressionType => {
-    const visitor = new ExpressionVisitor();
-
     if (ctx.creator().noRest()) {
         return {
             type: 'new',
@@ -92,7 +90,7 @@ export const makeNewExpressionType = (ctx: NewExpressionContext): NewExpressionT
                 .arguments()
                 .expressionList()
                 .expression_list()
-                .map((expressionCtx) => visitor.visit(expressionCtx));
+                .map((expressionCtx) => new ExpressionVisitor().visit(expressionCtx));
         }
 
         return newExpressionType;
@@ -105,7 +103,9 @@ export const makeNewExpressionType = (ctx: NewExpressionContext): NewExpressionT
         };
 
         if (ctx.creator().arrayCreatorRest().expression()) {
-            instanceField.size = visitor.visit(ctx.creator().arrayCreatorRest().expression());
+            instanceField.size = new ExpressionVisitor().visit(
+                ctx.creator().arrayCreatorRest().expression(),
+            );
         }
 
         const newExpressionType: NewExpressionType = {
@@ -119,7 +119,7 @@ export const makeNewExpressionType = (ctx: NewExpressionContext): NewExpressionT
                 .arrayCreatorRest()
                 .arrayInitializer()
                 .expression_list()
-                .map((expressionCtx) => visitor.visit(expressionCtx));
+                .map((expressionCtx) => new ExpressionVisitor().visit(expressionCtx));
         }
 
         return newExpressionType;
@@ -149,8 +149,8 @@ export const makeNewExpressionType = (ctx: NewExpressionContext): NewExpressionT
                 .mapCreatorRest()
                 .mapCreatorRestPair_list()
                 .map((expressionCtxs) => ({
-                    key: visitor.visit(expressionCtxs.expression(0)),
-                    value: visitor.visit(expressionCtxs.expression(1)),
+                    key: new ExpressionVisitor().visit(expressionCtxs.expression(0)),
+                    value: new ExpressionVisitor().visit(expressionCtxs.expression(1)),
                 }));
         }
 
@@ -177,7 +177,7 @@ export const makeNewExpressionType = (ctx: NewExpressionContext): NewExpressionT
                 .creator()
                 .setCreatorRest()
                 .expression_list()
-                .map((expressionCtx) => visitor.visit(expressionCtx));
+                .map((expressionCtx) => new ExpressionVisitor().visit(expressionCtx));
         }
 
         return newExpressionType;

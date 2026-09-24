@@ -15,14 +15,13 @@ export type DotExpressionType = {
 };
 
 export const makeDotExpressionType = (ctx: DotExpressionContext): DotExpressionType => {
-    const visitor = new ExpressionVisitor();
     const className = ctx.anyId().getText();
     const methodName = ctx.dotMethodCall().anyId().getText();
     const params = ctx
         .dotMethodCall()
         .expressionList()
         .expression_list()
-        .map((expressionCtx: ExpressionContext) => visitor.visit(expressionCtx));
+        .map((expressionCtx: ExpressionContext) => new ExpressionVisitor().visit(expressionCtx));
 
     if (ctx.QUESTIONDOT()) {
         return {

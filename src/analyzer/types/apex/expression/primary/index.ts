@@ -8,8 +8,7 @@ export type PrimaryExpression = {
 };
 
 export const makePrimaryExpression = (ctx: PrimaryExpressionContext): PrimaryExpression => {
-    const visitor = new PrimaryVisitor();
-    const field = visitor.visit(ctx);
+    const field = new PrimaryVisitor().visit(ctx);
 
     return {
         type: 'primary',

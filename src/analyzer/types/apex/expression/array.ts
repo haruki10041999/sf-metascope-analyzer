@@ -8,10 +8,9 @@ export type ArrayExpressionType = {
 };
 
 export const makeArrayExpressionType = (ctx: ArrayExpressionContext): ArrayExpressionType => {
-    const visitor = new ExpressionVisitor();
     const elements = ctx
         .expression_list()
-        .map((expressionCtx: ExpressionContext) => visitor.visit(expressionCtx));
+        .map((expressionCtx: ExpressionContext) => new ExpressionVisitor().visit(expressionCtx));
 
     return {
         type: 'array',

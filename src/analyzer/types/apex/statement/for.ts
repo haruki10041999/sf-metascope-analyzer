@@ -12,6 +12,7 @@ import { StatementField, makeStatementField } from '.';
 import { VariantField, makeVariantList } from '../variant';
 import { ModifierField, makeModifierField } from '../modifer';
 import { TypeField, makeTypeField } from '../type';
+import { ExpressionField, ExpressionVisitor } from '../expression';
 
 export type ForStatementType = {
     type: 'for';
@@ -24,14 +25,14 @@ export type ForStatementType = {
                     variant: VariantField[];
                     modifier?: ModifierField[];
                 }
-              | string;
-          condition: string;
-          update: string;
+              | ExpressionField[];
+          condition: ExpressionField;
+          update: ExpressionField[];
       }
     | {
           variant: string;
           variantType: TypeField;
-          list: string;
+          list: ExpressionField;
       }
 );
 
@@ -48,20 +49,19 @@ export const makeForStatementType = (ctx: ForStatementContext): ForStatementType
             statement: statement,
             variant: enhancedForControlCtx.id().getText(),
             variantType: variantType,
-            list: enhancedForControlCtx.expression().getText(),
+            list: new ExpressionVisitor().visit(enhancedForControlCtx.expression()),
         };
     }
 
-    const condition = forControlCtx.expression().getText();
+    const condition: ExpressionField = new ExpressionVisitor().visit(forControlCtx.expression());
 
     const forUpdateCtx = forControlCtx.forUpdate();
-    const update = forUpdateCtx
+    const update: ExpressionField[] = forUpdateCtx
         .expressionList()
         .expression_list()
         .map((expressionCtx) => {
-            return expressionCtx.getText();
-        })
-        .join('');
+            return new ExpressionVisitor().visit(expressionCtx);
+        });
 
     const forInitCtx = forControlCtx.forInit();
     if (forInitCtx.localVariableDeclaration()) {
@@ -95,9 +95,9 @@ export const makeForStatementType = (ctx: ForStatementContext): ForStatementType
             .expressionList()
             .expression_list()
             .map((expressionCtx) => {
-                return expressionCtx.getText();
-            })
-            .join('');
+                return new ExpressionVisitor().visit(expressionCtx);
+            });
+
         return {
             type: 'for',
             statement: statement,
@@ -107,3 +107,4 @@ export const makeForStatementType = (ctx: ForStatementContext): ForStatementType
         };
     }
 };
+

@@ -10,9 +10,8 @@ export type BitExpressionType = {
 };
 
 export const makeBitExpressionType = (ctx: BitExpressionContext): BitExpressionType => {
-    const visitor = new ExpressionVisitor();
-    const left = visitor.visit(ctx.expression(0));
-    const right = visitor.visit(ctx.expression(1));
+    const left = new ExpressionVisitor().visit(ctx.expression(0));
+    const right = new ExpressionVisitor().visit(ctx.expression(1));
 
     if (ctx.LT_list() && ctx.LT_list().length > 0) {
         return {

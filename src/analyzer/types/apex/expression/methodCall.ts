@@ -14,12 +14,11 @@ export const makeMethodCallExpressionType = (
 ): MethodCallExpressionType => {
     const methodName = ctx.methodCall().id().getText();
 
-    const visitor = new ExpressionVisitor();
     const params = ctx
         .methodCall()
         .expressionList()
         .expression_list()
-        .map((expressionCtx) => visitor.visit(expressionCtx));
+        .map((expressionCtx) => new ExpressionVisitor().visit(expressionCtx));
 
     return {
         type: 'methodCall',

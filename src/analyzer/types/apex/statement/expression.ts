@@ -1,8 +1,10 @@
 import { ExpressionStatementContext, ExpressionContext } from '@apexdevtools/apex-parser';
 
+import { ExpressionField, ExpressionVisitor } from '../expression';
+
 export type ExpressionStatementType = {
     type: 'expression';
-    expression: string;
+    expression: ExpressionField;
 };
 
 export const makeExpressionStatementType = (
@@ -10,6 +12,7 @@ export const makeExpressionStatementType = (
 ): ExpressionStatementType => {
     return {
         type: 'expression',
-        expression: ctx.expression().getText(),
+        expression: new ExpressionVisitor().visit(ctx.expression()),
     };
 };
+

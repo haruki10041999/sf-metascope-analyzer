@@ -4,9 +4,11 @@ import {
     ExpressionContext,
 } from '@apexdevtools/apex-parser';
 
+import { ExpressionField, ExpressionVisitor } from './expression';
+
 export type VariantField = {
     variant: string;
-    initialValue?: string;
+    initialValue?: ExpressionField;
 };
 
 export const makeVariantList = (ctx: VariableDeclaratorsContext) => {
@@ -19,7 +21,9 @@ export const makeVariantList = (ctx: VariableDeclaratorsContext) => {
         };
 
         if (variableDeclaratorCtx.ASSIGN()) {
-            variantField.initialValue = variableDeclaratorCtx.expression().getText();
+            variantField.initialValue = new ExpressionVisitor().visit(
+                variableDeclaratorCtx.expression() as ExpressionContext,
+            );
         }
 
         variantFields.push(variantField);
@@ -27,3 +31,4 @@ export const makeVariantList = (ctx: VariableDeclaratorsContext) => {
 
     return variantFields;
 };
+

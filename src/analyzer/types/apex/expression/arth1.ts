@@ -10,9 +10,8 @@ export type Arth1ExpressionType = {
 };
 
 export const makeArth1ExpressionType = (ctx: Arth1ExpressionContext): Arth1ExpressionType => {
-    const visitor = new ExpressionVisitor();
-    const left = visitor.visit(ctx.expression(0));
-    const right = visitor.visit(ctx.expression(1));
+    const left = new ExpressionVisitor().visit(ctx.expression(0));
+    const right = new ExpressionVisitor().visit(ctx.expression(1));
 
     if (ctx.MUL()) {
         return {

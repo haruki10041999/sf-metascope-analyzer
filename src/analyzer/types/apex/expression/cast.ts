@@ -11,8 +11,7 @@ export type CastExpressionType = {
 };
 
 export const makeCastExpressionType = (ctx: CastExpressionContext): CastExpressionType => {
-    const visitor = new ExpressionVisitor();
-    const value = visitor.visit(ctx.expression());
+    const value = new ExpressionVisitor().visit(ctx.expression());
     const targetType = makeTypeField(ctx.typeRef());
 
     return {

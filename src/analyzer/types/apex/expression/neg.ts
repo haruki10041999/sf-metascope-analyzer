@@ -9,8 +9,7 @@ export type NegExpressionType = {
 };
 
 export const makeNegExpressionType = (ctx: NegExpressionContext): NegExpressionType => {
-    const visitor = new ExpressionVisitor();
-    const value = visitor.visit(ctx.expression());
+    const value = new ExpressionVisitor().visit(ctx.expression());
 
     if (ctx.TILDE()) {
         return {

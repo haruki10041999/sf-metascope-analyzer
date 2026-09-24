@@ -1,16 +1,19 @@
 import { IfStatementContext, ParExpressionContext } from '@apexdevtools/apex-parser';
 
 import { StatementField, makeStatementField } from '.';
+import { ExpressionField, ExpressionVisitor } from '../expression';
 
 export type IfStatementType = {
     type: 'if';
-    condition: string;
+    condition: ExpressionField;
     statement: StatementField;
     elseStatment?: StatementField;
 };
 
 export const makeIfStatementType = (ctx: IfStatementContext): IfStatementType => {
-    const condition = ctx.parExpression().expression().getText();
+    const condition: ExpressionField = new ExpressionVisitor().visit(
+        ctx.parExpression().expression(),
+    );
 
     const statementCtxs = ctx.statement_list();
 
@@ -26,3 +29,4 @@ export const makeIfStatementType = (ctx: IfStatementContext): IfStatementType =>
 
     return ifStatementType;
 };
+

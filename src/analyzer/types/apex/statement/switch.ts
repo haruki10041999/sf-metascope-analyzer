@@ -8,6 +8,8 @@ import {
 
 import { BlockStatemtType, makeBlockStatemtType } from './block';
 
+import { ExpressionField, ExpressionVisitor } from '../expression';
+
 type SwitchCondition =
     | {
           type: 'condition';
@@ -21,12 +23,12 @@ type SwitchCondition =
 
 export type SwitchStatementType = {
     type: 'switch';
-    variant: string;
+    variant: ExpressionField;
     conditions: SwitchCondition[];
 };
 
 export const makeSwitchStatementType = (ctx: SwitchStatementContext): SwitchStatementType => {
-    const variant = ctx.expression().getText();
+    const variant: ExpressionField = new ExpressionVisitor().visit(ctx.expression());
 
     const conditions: SwitchCondition[] = [];
 
@@ -60,3 +62,4 @@ export const makeSwitchStatementType = (ctx: SwitchStatementContext): SwitchStat
         conditions: conditions,
     };
 };
+

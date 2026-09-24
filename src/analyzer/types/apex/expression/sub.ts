@@ -8,8 +8,7 @@ export type SubExpressionType = {
 };
 
 export const makeSubExpressionType = (ctx: SubExpressionContext): SubExpressionType => {
-    const visitor = new ExpressionVisitor();
-    const value = visitor.visit(ctx.expression());
+    const value = new ExpressionVisitor().visit(ctx.expression());
 
     return {
         type: 'sub',

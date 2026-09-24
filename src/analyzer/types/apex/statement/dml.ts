@@ -8,6 +8,8 @@ import {
     AccessLevelContext,
 } from '@apexdevtools/apex-parser';
 
+import { ExpressionField, ExpressionVisitor } from '../expression';
+
 export type DmlStatementType =
     | {
           type: 'insert' | 'update' | 'delete' | 'unDelete' | 'upsert';
@@ -16,7 +18,7 @@ export type DmlStatementType =
       }
     | {
           type: 'merge';
-          variants: string[];
+          variants: ExpressionField[];
           accessLevel: 'NONE' | 'SYSTEM' | 'USER';
       };
 
@@ -40,7 +42,7 @@ export const makeDmlStatementType = (
 
     if (ctx instanceof MergeStatementContext) {
         const variants = ctx.expression_list().map((expressionCtx) => {
-            return expressionCtx.getText();
+            return new ExpressionVisitor().visit(expressionCtx);
         });
         return {
             type: 'merge',
@@ -93,3 +95,4 @@ export const makeDmlStatementType = (
 
     throw new Error(`値が異常です`);
 };
+

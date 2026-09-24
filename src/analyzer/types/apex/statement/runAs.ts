@@ -2,8 +2,10 @@ import { RunAsStatementContext, ExpressionListContext } from '@apexdevtools/apex
 
 import { BlockStatemtType, makeBlockStatemtType } from './block';
 
+import { ExpressionField, ExpressionVisitor } from '../expression';
+
 export type RunAsStatementType = {
-    variant: string[];
+    variant: ExpressionField[];
     block: Omit<BlockStatemtType, 'type'>;
 };
 
@@ -13,7 +15,7 @@ export const makeRunAsStatementType = (ctx: RunAsStatementContext): RunAsStateme
         .expressionList()
         .expression_list()
         .map((expressionCtx) => {
-            return expressionCtx.getText();
+            return new ExpressionVisitor().visit(expressionCtx);
         });
 
     return {
@@ -21,3 +23,4 @@ export const makeRunAsStatementType = (ctx: RunAsStatementContext): RunAsStateme
         block: block,
     };
 };
+

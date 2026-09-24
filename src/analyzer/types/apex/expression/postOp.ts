@@ -8,8 +8,7 @@ export type PostOpExpressionType = {
 };
 
 export const makePostOrExpressionType = (ctx: PostOpExpressionContext): PostOpExpressionType => {
-    const visitor = new ExpressionVisitor();
-    const value = visitor.visit(ctx.expression());
+    const value = new ExpressionVisitor().visit(ctx.expression());
 
     if (ctx.INC()) {
         return {

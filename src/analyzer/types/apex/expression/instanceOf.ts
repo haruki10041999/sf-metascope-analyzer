@@ -13,8 +13,7 @@ export type InstanceOfExpressionType = {
 export const makeInstanceOfExpressionType = (
     ctx: InstanceOfExpressionContext,
 ): InstanceOfExpressionType => {
-    const visitor = new ExpressionVisitor();
-    const value = visitor.visit(ctx.expression());
+    const value = new ExpressionVisitor().visit(ctx.expression());
     const targetType = makeTypeField(ctx.typeRef());
 
     return {

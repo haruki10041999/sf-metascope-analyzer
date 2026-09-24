@@ -10,10 +10,9 @@ export type CondExpressionType = {
 };
 
 export const makeCondExpressionType = (ctx: CondExpressionContext): CondExpressionType => {
-    const visitor = new ExpressionVisitor();
-    const condition = visitor.visit(ctx.expression(0));
-    const trueValue = visitor.visit(ctx.expression(1));
-    const falseValue = visitor.visit(ctx.expression(2));
+    const condition = new ExpressionVisitor().visit(ctx.expression(0));
+    const trueValue = new ExpressionVisitor().visit(ctx.expression(1));
+    const falseValue = new ExpressionVisitor().visit(ctx.expression(2));
 
     return {
         type: 'cond',

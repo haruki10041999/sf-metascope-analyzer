@@ -8,8 +8,7 @@ export type PreOpExpressionType = {
 };
 
 export const makePreOpExpressionType = (ctx: PreOpExpressionContext): PreOpExpressionType => {
-    const visitor = new ExpressionVisitor();
-    const value = visitor.visit(ctx.expression());
+    const value = new ExpressionVisitor().visit(ctx.expression());
 
     if (ctx.ADD()) {
         return {

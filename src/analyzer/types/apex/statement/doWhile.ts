@@ -2,9 +2,11 @@ import { DoWhileStatementContext, ParExpressionContext } from '@apexdevtools/ape
 
 import { BlockStatemtType, makeBlockStatemtType } from './block';
 
+import { ExpressionField, ExpressionVisitor } from '../expression';
+
 export type DoWhileStatementType = {
     type: 'doWhile';
-    condition: string;
+    condition: ExpressionField;
     block: Omit<BlockStatemtType, 'type'>;
 };
 
@@ -13,7 +15,8 @@ export const makeDoWhileStatementType = (ctx: DoWhileStatementContext): DoWhileS
 
     return {
         type: 'doWhile',
-        condition: ctx.parExpression().expression().getText(),
+        condition: new ExpressionVisitor().visit(ctx.parExpression().expression()),
         block: block,
     };
 };
+
