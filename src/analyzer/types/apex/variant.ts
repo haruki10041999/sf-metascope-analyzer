@@ -4,7 +4,7 @@ import {
     ExpressionContext,
 } from '@apexdevtools/apex-parser';
 
-import { ExpressionField, ExpressionVisitor } from './expression';
+import { ExpressionField, ExpressionVisitor } from './expressionVisitor';
 
 export type VariantField = {
     variant: string;
@@ -31,4 +31,3 @@ export const makeVariantList = (ctx: VariableDeclaratorsContext) => {
 
     return variantFields;
 };
-
