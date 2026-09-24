@@ -24,7 +24,7 @@ export type QueryField = {
     update?: UpdateField;
 };
 
-export const makeSubQueryField = (ctx: QueryContext): QueryField => {
+export const makeQueryField = (ctx: QueryContext): QueryField => {
     const selectFields = makeSelectList(ctx.selectList());
     const fromField = makeFromField(ctx.fromNameList());
 
@@ -67,3 +67,4 @@ export const makeSubQueryField = (ctx: QueryContext): QueryField => {
 
     return subQueryField;
 };
+

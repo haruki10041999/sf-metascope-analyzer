@@ -24,12 +24,17 @@ type InstanceField =
       }
     | {
           instanceType: 'array';
+          size?: ExpressionField;
           genericType: TypeField;
       }
     | {
           instanceType: 'map';
           keyType: TypeField;
           valueType: TypeField;
+      }
+    | {
+          instanceType: 'set';
+          genericType: TypeField;
       };
 
 export type NewExpressionType = {
@@ -39,7 +44,9 @@ export type NewExpressionType = {
     | {
           instanceType: InstanceField;
           params?: ExpressionField[];
-          initializeExpression?: ExpressionField[];
+          initializeExpression?: (
+              ExpressionField | { key: ExpressionField; value: ExpressionField }
+          )[];
       }
 );
 
@@ -97,6 +104,10 @@ export const makeNewExpressionType = (ctx: NewExpressionContext): NewExpressionT
             genericType: makeTypeField(createdNameCtx.idCreatedNamePair(0).typeList().typeRef(0)),
         };
 
+        if (ctx.creator().arrayCreatorRest().expression()) {
+            instanceField.size = visitor.visit(ctx.creator().arrayCreatorRest().expression());
+        }
+
         const newExpressionType: NewExpressionType = {
             type: 'new',
             instanceType: instanceField,
@@ -115,8 +126,62 @@ export const makeNewExpressionType = (ctx: NewExpressionContext): NewExpressionT
     }
     // Handle array creator rest
     if (ctx.creator().mapCreatorRest()) {
+        const keyType = makeTypeField(createdNameCtx.idCreatedNamePair(0).typeList().typeRef(0));
+        const valueType = makeTypeField(createdNameCtx.idCreatedNamePair(0).typeList().typeRef(1));
+
+        const instanceField: InstanceField = {
+            instanceType: 'map',
+            keyType: keyType,
+            valueType: valueType,
+        };
+
+        const newExpressionType: NewExpressionType = {
+            type: 'new',
+            instanceType: instanceField,
+        };
+
+        if (
+            ctx.creator().mapCreatorRest().mapCreatorRestPair_list() &&
+            ctx.creator().mapCreatorRest().mapCreatorRestPair_list().length > 0
+        ) {
+            newExpressionType.initializeExpression = ctx
+                .creator()
+                .mapCreatorRest()
+                .mapCreatorRestPair_list()
+                .map((expressionCtxs) => ({
+                    key: visitor.visit(expressionCtxs.expression(0)),
+                    value: visitor.visit(expressionCtxs.expression(1)),
+                }));
+        }
+
+        return newExpressionType;
     }
+
     // Handle map creator rest
     if (ctx.creator().setCreatorRest()) {
+        const instanceField: InstanceField = {
+            instanceType: 'set',
+            genericType: makeTypeField(createdNameCtx.idCreatedNamePair(0).typeList().typeRef(0)),
+        };
+
+        const newExpressionType: NewExpressionType = {
+            type: 'new',
+            instanceType: instanceField,
+        };
+
+        if (
+            ctx.creator().setCreatorRest().expression_list() &&
+            ctx.creator().setCreatorRest().expression_list().length > 0
+        ) {
+            newExpressionType.initializeExpression = ctx
+                .creator()
+                .setCreatorRest()
+                .expression_list()
+                .map((expressionCtx) => visitor.visit(expressionCtx));
+        }
+
+        return newExpressionType;
     }
+
+    throw new Error('Unsupported new expression type');
 };
