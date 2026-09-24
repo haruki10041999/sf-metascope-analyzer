@@ -1,38 +1,25 @@
 import { CompilationUnitContext, TypeDeclarationContext } from '@apexdevtools/apex-parser';
 
-import {
-    ClassMemberType,
-    makeClassMemberType,
-    EnumMemberType,
-    makeEnumMemberType,
-    InterfaceMemberType,
-    makeInterfaceMemberType,
-} from './member';
+import { MemberType, MemberVisitor } from './memberVisitor';
 
 import { ModifierField, makeModifierField } from './modifer';
 
-export type ClsField = (ClassMemberType | EnumMemberType | InterfaceMemberType) & {
+export type ClsField = MemberType & {
     modifier?: ModifierField[];
 };
 
 export const makeClsField = (ctx: CompilationUnitContext): ClsField => {
     let clsField: ClsField | undefined;
     if (ctx.typeDeclaration().classDeclaration()) {
-        clsField = {
-            ...makeClassMemberType(ctx.typeDeclaration().classDeclaration()),
-        };
+        clsField = new MemberVisitor().visit(ctx.typeDeclaration().classDeclaration());
     }
 
     if (ctx.typeDeclaration().interfaceDeclaration()) {
-        clsField = {
-            ...makeInterfaceMemberType(ctx.typeDeclaration().interfaceDeclaration()),
-        };
+        clsField = new MemberVisitor().visit(ctx.typeDeclaration().interfaceDeclaration());
     }
 
     if (ctx.typeDeclaration().enumDeclaration()) {
-        clsField = {
-            ...makeEnumMemberType(ctx.typeDeclaration().enumDeclaration()),
-        };
+        clsField = new MemberVisitor().visit(ctx.typeDeclaration().enumDeclaration());
     }
 
     if (clsField) {
