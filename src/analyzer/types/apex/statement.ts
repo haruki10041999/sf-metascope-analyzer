@@ -1,6 +1,6 @@
 import { StatementContext } from '@apexdevtools/apex-parser';
 
-import { StatementType, StatementVisitor } from './apex/statementVisitor';
+import { StatementType, StatementVisitor } from './statementVisitor';
 
 export const makeStatementField = (ctx: StatementContext): StatementType => {
     if (ctx.block()) {
