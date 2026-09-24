@@ -1,12 +1,12 @@
 import { BitAndExpressionContext, ExpressionContext } from '@apexdevtools/apex-parser';
 
-import { ExpressionField, ExpressionVisitor } from '.';
+import { ExpressionType, ExpressionVisitor } from '.';
 
 export type BitAndExpressionType = {
     type: 'bitAnd';
     operator: '&';
-    left: ExpressionField;
-    right: ExpressionField;
+    left: ExpressionType;
+    right: ExpressionType;
 };
 
 export const makeBitAndExpressionType = (ctx: BitAndExpressionContext): BitAndExpressionType => {

@@ -4,14 +4,14 @@ import {
     ExpressionContext,
 } from '@apexdevtools/apex-parser';
 
-import { ExpressionField, ExpressionVisitor } from '.';
+import { ExpressionType, ExpressionVisitor } from '.';
 
 export type DotExpressionType = {
     type: 'dot';
     dotType: '.' | '?.';
     className: string;
     methodName: string;
-    params: ExpressionField[];
+    params: ExpressionType[];
 };
 
 export const makeDotExpressionType = (ctx: DotExpressionContext): DotExpressionType => {

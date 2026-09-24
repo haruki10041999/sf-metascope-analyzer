@@ -1,12 +1,12 @@
 import { CmpExpressionContext } from '@apexdevtools/apex-parser';
 
-import { ExpressionField, ExpressionVisitor } from '.';
+import { ExpressionType, ExpressionVisitor } from '.';
 
 export type CmpExpressionType = {
     type: 'cmp';
     operator: '=' | '>' | '<';
-    left: ExpressionField;
-    right: ExpressionField;
+    left: ExpressionType;
+    right: ExpressionType;
 };
 
 export const makeCmpExpressionType = (ctx: CmpExpressionContext): CmpExpressionType => {

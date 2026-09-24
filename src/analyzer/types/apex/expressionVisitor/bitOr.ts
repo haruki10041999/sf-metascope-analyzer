@@ -1,12 +1,12 @@
 import { BitOrExpressionContext, ExpressionContext } from '@apexdevtools/apex-parser';
 
-import { ExpressionField, ExpressionVisitor } from '.';
+import { ExpressionType, ExpressionVisitor } from '.';
 
 export type BitOrExpressionType = {
     type: 'bitOr';
     operator: '|';
-    left: ExpressionField;
-    right: ExpressionField;
+    left: ExpressionType;
+    right: ExpressionType;
 };
 
 export const makeBitOrExpressionType = (ctx: BitOrExpressionContext): BitOrExpressionType => {

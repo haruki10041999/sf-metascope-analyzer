@@ -20,7 +20,6 @@ import {
     RunAsStatementContext,
     LocalVariableDeclarationStatementContext,
     ExpressionStatementContext,
-    StatementContext,
 } from '@apexdevtools/apex-parser';
 
 import { BlockStatemtType, makeBlockStatemtType } from './block';

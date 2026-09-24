@@ -13,7 +13,7 @@ import {
     SetCreatorRestContext,
 } from '@apexdevtools/apex-parser';
 
-import { ExpressionField, ExpressionVisitor } from '.';
+import { ExpressionType, ExpressionVisitor } from '.';
 
 import { TypeField, makeTypeField } from '../type';
 
@@ -24,7 +24,7 @@ type InstanceField =
       }
     | {
           instanceType: 'array';
-          size?: ExpressionField;
+          size?: ExpressionType;
           genericType: TypeField;
       }
     | {
@@ -43,9 +43,9 @@ export type NewExpressionType = {
     | {}
     | {
           instanceType: InstanceField;
-          params?: ExpressionField[];
+          params?: ExpressionType[];
           initializeExpression?: (
-              ExpressionField | { key: ExpressionField; value: ExpressionField }
+              ExpressionType | { key: ExpressionType; value: ExpressionType }
           )[];
       }
 );

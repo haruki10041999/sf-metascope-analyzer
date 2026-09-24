@@ -1,12 +1,12 @@
 import { InstanceOfExpressionContext } from '@apexdevtools/apex-parser';
 
-import { ExpressionField, ExpressionVisitor } from '.';
+import { ExpressionType, ExpressionVisitor } from '.';
 
 import { TypeField, makeTypeField } from '../type';
 
 export type InstanceOfExpressionType = {
     type: 'instanceOf';
-    value: ExpressionField;
+    value: ExpressionType;
     targetType: TypeField;
 };
 

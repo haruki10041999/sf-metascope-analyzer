@@ -1,12 +1,12 @@
 import { CondExpressionContext } from '@apexdevtools/apex-parser';
 
-import { ExpressionField, ExpressionVisitor } from '.';
+import { ExpressionType, ExpressionVisitor } from '.';
 
 export type CondExpressionType = {
     type: 'cond';
-    condition: ExpressionField;
-    trueValue: ExpressionField;
-    falseValue: ExpressionField;
+    condition: ExpressionType;
+    trueValue: ExpressionType;
+    falseValue: ExpressionType;
 };
 
 export const makeCondExpressionType = (ctx: CondExpressionContext): CondExpressionType => {

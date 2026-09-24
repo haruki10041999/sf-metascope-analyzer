@@ -1,10 +1,10 @@
 import { ArrayExpressionContext, ExpressionContext } from '@apexdevtools/apex-parser';
 
-import { ExpressionField, ExpressionVisitor } from '.';
+import { ExpressionType, ExpressionVisitor } from '.';
 
 export type ArrayExpressionType = {
     type: 'array';
-    elements: ExpressionField[];
+    elements: ExpressionType[];
 };
 
 export const makeArrayExpressionType = (ctx: ArrayExpressionContext): ArrayExpressionType => {

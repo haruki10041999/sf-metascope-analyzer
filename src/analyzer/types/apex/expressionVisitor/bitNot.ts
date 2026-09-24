@@ -1,12 +1,12 @@
 import { BitNotExpressionContext } from '@apexdevtools/apex-parser';
 
-import { ExpressionField, ExpressionVisitor } from '.';
+import { ExpressionType, ExpressionVisitor } from '.';
 
 export type BitNotExpressionType = {
     type: 'bitNot';
     operator: '^';
-    left: ExpressionField;
-    right: ExpressionField;
+    left: ExpressionType;
+    right: ExpressionType;
 };
 
 export const makeBitNotExpressionType = (ctx: BitNotExpressionContext): BitNotExpressionType => {

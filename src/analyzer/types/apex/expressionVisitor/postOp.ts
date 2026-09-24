@@ -1,10 +1,10 @@
 import { PostOpExpressionContext } from '@apexdevtools/apex-parser';
-import { ExpressionField, ExpressionVisitor } from '.';
+import { ExpressionType, ExpressionVisitor } from '.';
 
 export type PostOpExpressionType = {
     type: 'postOp';
     operator: '++' | '--';
-    value: ExpressionField;
+    value: ExpressionType;
 };
 
 export const makePostOrExpressionType = (ctx: PostOpExpressionContext): PostOpExpressionType => {

@@ -1,11 +1,11 @@
 import { MethodCallExpressionContext, MethodCallContext } from '@apexdevtools/apex-parser';
 
-import { ExpressionField, ExpressionVisitor } from '.';
+import { ExpressionType, ExpressionVisitor } from '.';
 
 export type MethodCallExpressionType = {
     type: 'methodCall';
     methodName: string;
-    params: ExpressionField[];
+    params: ExpressionType[];
     mode: 'Normal' | 'Super' | 'This';
 };
 

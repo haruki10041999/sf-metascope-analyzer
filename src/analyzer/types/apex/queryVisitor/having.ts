@@ -1,11 +1,11 @@
 import { LogicalExpressionContext, ConditionalExpressionContext } from '@apexdevtools/apex-parser';
 
-import { FieldExpressionField, makeFieldExpressionField } from './fieldExpression';
+import { FieldExpressionType, makeFieldExpressionType } from './fieldExpression';
 
 export type HavingField =
     | {
           type: 'condition';
-          condition: FieldExpressionField;
+          condition: FieldExpressionType;
       }
     | {
           type: 'AND' | 'OR';
@@ -33,7 +33,7 @@ export const makeHavingField = (ctx: LogicalExpressionContext): HavingField => {
         }
         WhereFields.push({
             type: 'condition',
-            condition: makeFieldExpressionField(conditionalCtx.fieldExpression()),
+            condition: makeFieldExpressionType(conditionalCtx.fieldExpression()),
         });
     }
 

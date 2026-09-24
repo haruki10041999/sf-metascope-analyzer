@@ -26,13 +26,13 @@ export type ValueType =
           value: SubQueryField;
       };
 
-export type FieldExpressionField = {
+export type FieldExpressionType = {
     field: SoqlField | SoqlFunctionField[];
     operator: string;
     value: ValueType;
 };
 
-export const makeFieldExpressionField = (ctx: FieldExpressionContext): FieldExpressionField => {
+export const makeFieldExpressionType = (ctx: FieldExpressionContext): FieldExpressionType => {
     let field: SoqlField | SoqlFunctionField[] = makeSoqlField(ctx.fieldName());
     if (ctx.soqlFunction()) {
         field = makeSoqlFunctionField(ctx.soqlFunction());

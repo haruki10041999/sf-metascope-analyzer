@@ -1,10 +1,10 @@
 import { PreOpExpressionContext } from '@apexdevtools/apex-parser';
-import { ExpressionField, ExpressionVisitor } from '.';
+import { ExpressionType, ExpressionVisitor } from '.';
 
 export type PreOpExpressionType = {
     type: 'preOp';
     operator: '+' | '-' | '++' | '--';
-    value: ExpressionField;
+    value: ExpressionType;
 };
 
 export const makePreOpExpressionType = (ctx: PreOpExpressionContext): PreOpExpressionType => {

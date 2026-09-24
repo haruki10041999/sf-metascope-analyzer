@@ -1,12 +1,12 @@
 import { Arth1ExpressionContext, ExpressionContext } from '@apexdevtools/apex-parser';
 
-import { ExpressionField, ExpressionVisitor } from '.';
+import { ExpressionType, ExpressionVisitor } from '.';
 
 export type Arth1ExpressionType = {
     type: 'arth1';
     operator: '*' | '/';
-    left: ExpressionField;
-    right: ExpressionField;
+    left: ExpressionType;
+    right: ExpressionType;
 };
 
 export const makeArth1ExpressionType = (ctx: Arth1ExpressionContext): Arth1ExpressionType => {

@@ -4,12 +4,12 @@ import {
     WhereConditionalExpressionContext,
 } from '@apexdevtools/apex-parser';
 
-import { FieldExpressionField, makeFieldExpressionField } from './fieldExpression';
+import { FieldExpressionType, makeFieldExpressionType } from './fieldExpression';
 
 export type WhereField =
     | {
           type: 'condition';
-          condition: FieldExpressionField;
+          condition: FieldExpressionType;
       }
     | {
           type: 'AND' | 'OR';
@@ -43,7 +43,7 @@ const _makeWhereField = (ctx: WhereLogicalExpressionContext): WhereField => {
         }
         WhereFields.push({
             type: 'condition',
-            condition: makeFieldExpressionField(
+            condition: makeFieldExpressionType(
                 conditionalCtx.whereFieldExpression().fieldExpression(),
             ),
         });

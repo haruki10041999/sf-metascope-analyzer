@@ -1,12 +1,12 @@
 import { EqualityExpressionContext } from '@apexdevtools/apex-parser';
 
-import { ExpressionField, ExpressionVisitor } from '.';
+import { ExpressionType, ExpressionVisitor } from '.';
 
 export type EqualityExpressionType = {
     type: 'equality';
     operator: '===' | '!==' | '==' | '!=' | '<>';
-    left: ExpressionField;
-    right: ExpressionField;
+    left: ExpressionType;
+    right: ExpressionType;
 };
 
 export const makeEqualityExpressionType = (

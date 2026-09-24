@@ -1,14 +1,14 @@
 import { AssignExpressionContext, ExpressionContext } from '@apexdevtools/apex-parser';
 
-import { ExpressionField, ExpressionVisitor } from '.';
+import { ExpressionType, ExpressionVisitor } from '.';
 
 type AssignOperator = '=' | '+=' | '-=' | '*=' | '/=' | '&=' | '|=' | '^=' | '>>=' | '>>>=' | '<<=';
 
 export type AssignExpressionType = {
     type: 'assign';
     operator: AssignOperator;
-    left: ExpressionField;
-    right: ExpressionField;
+    left: ExpressionType;
+    right: ExpressionType;
 };
 
 export const makeAssignExpressionType = (ctx: AssignExpressionContext): AssignExpressionType => {

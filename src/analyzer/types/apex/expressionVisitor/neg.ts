@@ -1,11 +1,11 @@
 import { NegExpressionContext } from '@apexdevtools/apex-parser';
 
-import { ExpressionField, ExpressionVisitor } from '.';
+import { ExpressionType, ExpressionVisitor } from '.';
 
 export type NegExpressionType = {
     type: 'neg';
     operator: '~' | '!';
-    value: ExpressionField;
+    value: ExpressionType;
 };
 
 export const makeNegExpressionType = (ctx: NegExpressionContext): NegExpressionType => {

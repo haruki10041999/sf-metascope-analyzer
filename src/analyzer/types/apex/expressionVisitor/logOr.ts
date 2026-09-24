@@ -1,12 +1,12 @@
 import { LogOrExpressionContext, ExpressionContext } from '@apexdevtools/apex-parser';
 
-import { ExpressionField, ExpressionVisitor } from '.';
+import { ExpressionType, ExpressionVisitor } from '.';
 
 export type LogOrExpressionType = {
     type: 'logOr';
     operator: '||';
-    left: ExpressionField;
-    right: ExpressionField;
+    left: ExpressionType;
+    right: ExpressionType;
 };
 
 export const makeLogOrExpressionType = (ctx: LogOrExpressionContext): LogOrExpressionType => {

@@ -1,12 +1,12 @@
 import { CastExpressionContext } from '@apexdevtools/apex-parser';
 
-import { ExpressionField, ExpressionVisitor } from '.';
+import { ExpressionType, ExpressionVisitor } from '.';
 
 import { TypeField, makeTypeField } from '../type';
 
 export type CastExpressionType = {
     type: 'cast';
-    value: ExpressionField;
+    value: ExpressionType;
     targetType: TypeField;
 };
 

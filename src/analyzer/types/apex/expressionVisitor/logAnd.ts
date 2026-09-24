@@ -1,12 +1,12 @@
 import { LogAndExpressionContext, ExpressionContext } from '@apexdevtools/apex-parser';
 
-import { ExpressionField, ExpressionVisitor } from '.';
+import { ExpressionType, ExpressionVisitor } from '.';
 
 export type LogAndExpressionType = {
     type: 'logAnd';
     operator: '&&';
-    left: ExpressionField;
-    right: ExpressionField;
+    left: ExpressionType;
+    right: ExpressionType;
 };
 
 export const makeLogAndExpressionType = (ctx: LogAndExpressionContext): LogAndExpressionType => {
