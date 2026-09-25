@@ -8,7 +8,7 @@ import { WhereField, makeWhereField } from '../where';
 import { OrderByField, makeOrderByList } from '../orderBy';
 import { LimitField, makeLimitField } from '../limit';
 import { ForField, makeForField } from '../for';
-import { UpdateField, makeUpdateField } from '../update';
+import { UpdateField, makeUpdateField } from '../updateVisitor/updateList';
 
 export type SubQueryField = {
     select: SelectField[];
@@ -51,3 +51,4 @@ export const makeSubQueryField = (ctx: SubQueryContext): SubQueryField => {
 
     return subQueryField;
 };
+

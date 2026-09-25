@@ -9,7 +9,7 @@ import { ForField, makeForField } from './for';
 import { UsingScopeField, makeUsingScopeField } from './usingScope';
 import { OffsetField, makeOffsetField } from './offset';
 import { AllRowsField, makeAllRowsField } from './allRow';
-import { UpdateField, makeUpdateField } from './update';
+import { UpdateField, makeUpdateField } from './updateVisitor/updateList';
 
 export type QueryField = {
     select: SelectField[];

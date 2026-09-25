@@ -42,19 +42,19 @@ Apex の構文要素を TypeScript の型 (`XxxType` / `XxxField`) と生成関�
 
 ### ステートメント (`statement/`)
 
-| 要素                                                           | ファイル                  | 状態                 |
-| -------------------------------------------------------------- | ------------------------- | -------------------- |
-| ブロック                                                       | `block.ts`                | ✅                   |
-| if                                                             | `if.ts`                   | ✅                   |
-| switch（when 条件 / else）                                     | `switch.ts`               | ✅                   |
-| for（通常 / 拡張 for-each）                                    | `for.ts`                  | ✅                   |
-| while / do-while                                               | `while.ts` / `doWhile.ts` | ✅                   |
-| try-catch-finally                                              | `try.ts`                  | ✅                   |
-| return / throw / break / continue                              | 各ファイル                | ✅                   |
-| DML（insert/update/delete/undelete/upsert/merge・AccessLevel） | `dml.ts`                  | ✅                   |
-| System.runAs                                                   | `runAs.ts`                | ✅                   |
-| ローカル変数宣言                                               | `localVariant.ts`         | ✅                   |
-| 式ステートメント                                               | `expression.ts`           | ⚠️（生テキストのみ） |
+| 要素                                                           | ファイル                        | 状態                                                  |
+| -------------------------------------------------------------- | ------------------------------- | ----------------------------------------------------- |
+| ブロック                                                       | `block.ts`                      | ✅                                                    |
+| if                                                             | `if.ts`                         | ✅                                                    |
+| switch（when 条件 / else）                                     | `switch.ts`                     | ✅                                                    |
+| for（通常 / 拡張 for-each）                                    | `for.ts`                        | ✅                                                    |
+| while / do-while                                               | `while.ts` / `doWhile.ts`       | ✅                                                    |
+| try-catch-finally                                              | `try.ts`                        | ✅                                                    |
+| return / throw / break / continue                              | 各ファイル                      | ✅                                                    |
+| DML（insert/update/delete/undelete/upsert/merge・AccessLevel） | `dml.ts`                        | ✅                                                    |
+| System.runAs                                                   | `runAs.ts`                      | ✅                                                    |
+| ローカル変数宣言                                               | `localVariant.ts`               | ✅                                                    |
+| 式ステートメント                                               | `expression.ts` / `expression/` | ⚠️（ExpressionVisitorで構造化中。未知式は生テキスト） |
 
 ### SOQL (`soql/`)
 
@@ -98,11 +98,11 @@ Apex の構文要素を TypeScript の型 (`XxxType` / `XxxField`) と生成関�
 
 ### 🟠 中程度
 
-4. **式が生テキスト依存**
-    - `expression`（式ステートメント）、DML の `variant`、`for` の `condition`/`update`、`switch` の `variant`、`merge` の `variants` などが `getText()` の文字列。
-    - メソッド呼び出し・代入・変数参照・インライン SOQL/SOSL が構造化されないため、依存関係解析には不十分。
+4. **式の構造化が未接続・未完成**
+    - `expression/` 配下に `ExpressionVisitor` と各式makerは追加されているが、式ステートメント、DML、`for`、`switch`など既存の生成処理からの利用は未確認。
+    - `DotExpression` のプロパティ参照、匿名class、SOSL、未知の式Contextなどが未対応で、依存関係解析にはまだ不十分。
 
-5. **ジェネリック型の取りこぼし (`type.ts`)**
+5. **ジェネリック型の取りこぼし (`type.ts` / `expression/new.ts`)**
     - `List` / `Set` / `Map` 以外のジェネリック型（例: `Iterable<T>`、カスタム `MyContainer<T>`、`System.Type` 系）の `typeArguments` が無視され、型引数を失う。
     - ドット区切り名（`A.B.C`）の各セグメントに付く型引数も未対応。
 
@@ -120,7 +120,7 @@ Apex の構文要素を TypeScript の型 (`XxxType` / `XxxField`) と生成関�
     - エラーメッセージの表記揺れ: 「値が以上です」（`member/index.ts`）と「値が異常です」が混在。
 
 9. **修飾子あたりのアノテーションが 1 つ固定**
-    - `ModifierField.annotaition?: AnnotationField` は単一。Apex では各アノテーションが個別 `modifier` として扱われるため実害は小さいが、モデル名／単数形が誤解を招く。
+    - `ModifierType.annotaition?: AnnotationField` は単一。Apex では各アノテーションが個別 `modifier` として扱われるため実害は小さいが、モデル名／単数形が誤解を招く。
 
 ### ⛔ スコープ外（未着手）
 
@@ -195,21 +195,42 @@ AST モデルの網羅度は高く、構文カバレッジ設計は良好。現�
 | `runAsStatement`                                                               | `runAs.ts`                     | ✅                                                                |
 | `expressionStatement`                                                          | `expression.ts`                | ⚠️ `getText()` のみ                                               |
 
-### 6.4 式（❌ ほぼ未構造化）
+### 6.4 式（⚠️ Visitorと型分解を実装中）
 
-| 文法ルール                                                                                                | 状態          |
-| --------------------------------------------------------------------------------------------------------- | ------------- |
-| `expression`（`Assign`/`MethodCall`/`Dot`/`New`/`Cast`/`InstanceOf`/`Cond`/算術/比較 等の全サブタイプ）   | ❌ 生テキスト |
-| `primary`（`This`/`Super`/`Id`/`Literal`/`TypeRef`/`Soql`/`Sosl` 等）                                     | ❌            |
-| `methodCall` / `dotMethodCall` / `arguments`                                                              | ❌            |
-| `creator` / `createdName` / `classCreatorRest` / `arrayCreatorRest` / `mapCreatorRest` / `setCreatorRest` | ❌            |
-| `arrayInitializer` / `parExpression` / `expressionList`                                                   | ❌            |
+| 文法ルール                                                                                                | 状態                                                         |
+| --------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------ |
+| `expression`（`Assign`/`MethodCall`/`Dot`/`New`/`Cast`/`InstanceOf`/`Cond`/算術/比較 等の全サブタイプ）   | ⚠️ `ExpressionVisitor` の各 `visitXxx` とmakerを接続済み     |
+| `primary`（`This`/`Super`/`Id`/`Literal`/`TypeRef`/`Soql`/`Sosl` 等）                                     | ⚠️ `PrimaryVisitor` の分岐を実装済み。SOSLは未対応           |
+| `methodCall` / `dotMethodCall` / `arguments`                                                              | ⚠️ 通常/ドットメソッドと引数を構造化。プロパティ参照は要修正 |
+| `creator` / `createdName` / `classCreatorRest` / `arrayCreatorRest` / `mapCreatorRest` / `setCreatorRest` | ⚠️ 通常/配列/Map/Setを構造化。匿名クラス/空本体は未整理      |
+| `arrayInitializer` / `parExpression` / `expressionList`                                                   | ⚠️ 配列初期化/引数リストは利用。括弧式専用の整理は要確認     |
 
 > `new`・メソッド呼び出し・代入・キャスト・三項・インライン SOQL/SOSL がすべて文字列化されるため、参照解決や依存抽出には使えない。
 
 #### 具体的な対応策
 
 `expression` は左再帰＋多数のサブタイプ（`ApexParser.d.ts` の `AssignExpressionContext` / `DotExpressionContext` / `NewExpressionContext` / `CastExpressionContext` / `InstanceOfExpressionContext` など約 25 種）を持つため、**全サブタイプを `makeXxx` で網羅する AST 化はコスト過大**。依存解析（型・オブジェクト参照の抽出）が目的なら、次の 2 段構えが現実的。
+
+**現在の実装状況**
+
+`src/analyzer/types/apex/expression/index.ts` に `ApexParserBaseVisitor<ExpressionField>` を継承した `ExpressionVisitor` があり、`ApexParser.d.ts` の具象ExpressionContextごとに次のmakerを呼び分けている。
+
+- `PrimaryExpressionContext` → `makePrimaryExpression`
+- `Arth1` / `Arth2` / `BitAnd` / `BitOr` / `BitNot` / `Bit` → 各演算子maker
+- `Assign` / `Cmp` / `Equality` / `Cond` / `Coal` → 各maker
+- `LogAnd` / `LogOr` / `Neg` / `PreOp` / `PostOp` → 各maker
+- `Array` / `Dot` / `MethodCall` / `New` / `Cast` / `Sub` / `InstanceOf` → 各maker
+
+`src/analyzer/types/apex/expression/primary/visitor.ts` では、`This` / `Void` / `SOQL` / `Super` / `TypeRef` / `Id` / `Literal` の分岐も実装済み。各makerは引数や左右の `ExpressionContext` に対して `new ExpressionVisitor().visit(...)` を呼び、式を再帰的に構造化する。
+
+ただし、これは「Visitorの分岐が実装済み」という意味であり、全構文の完成を意味しない。現時点の残課題は次のとおり。
+
+1. `DotExpression` のmakerが `dotMethodCall()` の存在を前提としているため、`account.Name` のようなプロパティ参照を処理できない可能性がある。
+2. `new.ts` は通常のclass生成、配列、Map、Setを処理するが、`NoRestContext` を `{ type: 'new' }` に畳み込み、生成対象型を失う。
+3. `createdName` の名前空間・ジェネリック情報は文字列と最後の `typeList` の組み合わせで保持しており、型構造としては不完全。
+4. `SoslPrimaryContext` と SOSLの各Contextに対応するmakerがない。
+5. `visitExpression` の通常分岐は生テキストを返すため、未知の式Contextが追加された場合は構造化されない。
+6. プロジェクトビルドは `src/analyzer/parser/apex.ts` の `../types` に `ApexClass` がexportされていないエラーで失敗しており、Visitor単体を含む全体の動作確認は未完了。
 
 **方針 A（推奨・最小実装）: `ApexParserBaseVisitor` で「参照」だけ抽出する**
 
@@ -360,7 +381,7 @@ AST モデルの網羅度は高く、構文カバレッジ設計は良好。現�
 3. `Assign` / `Cast` / `InstanceOf` / `Cond`（三項）
 4. 算術・比較・論理（`Arth1/2`、`Cmp`、`Equality`、`LogAnd/LogOr`）と単項（`PreOp`/`PostOp`/`Neg`）
 
-> いずれの方針でも、左再帰の解決は手書き分岐より **`ApexParserVisitor` に委譲**するのが安全（`copyFrom` で生成される具象型を `instanceof` で判定しなくて済む）。まずは方針 A を入れ、6.5 のインライン SOQL 結線とセットで依存抽出を成立させるのが最短。
+> いずれの方針でも、左再帰の解決は手書き分岐より **`ApexParserBaseVisitor` に委譲**するのが安全（`copyFrom` で生成される具象型を `instanceof` で判定しなくて済む）。まずは現在実装済みの式makerをコンパイル可能な状態にし、`new`/ドット参照/SOSLを順に補完するのが最短。
 
 #### `ExpressionContext` のContext階層
 
@@ -562,7 +583,7 @@ collector.visit(variableDeclaratorCtx.expression());
 | #   | 未対応/問題                                                 | 影響                                     | 対応策                                                                                                                     |
 | --- | ----------------------------------------------------------- | ---------------------------------------- | -------------------------------------------------------------------------------------------------------------------------- |
 | 1   | パース処理が未結線（`makeClsField` 未呼び出し）             | Apex を一切解析できない                  | `apex.ts` で `.cls` 読込 →`ApexParserFactory.createParser` →`compilationUnit()` →`makeClsField()` を実装                   |
-| 2   | 式が全て getText                                            | 参照/依存抽出不可                        | 依存解析に必要な範囲で `methodCall`/`creator`/`DotExpression` を構造化（まずは型参照・メソッド呼び出しの抽出に限定）       |
+| 2   | 式Visitorは実装済みだが既存処理と未接続・一部未対応         | 参照/依存抽出が不完全                    | `ExpressionVisitor` の結果を式ステートメント/DML/`for`/`switch`へ接続し、プロパティ参照・匿名class・SOSLを補完             |
 | 3   | `soqlFunction` 無限再帰                                     | ネスト関数でスタックオーバーフロー       | `_makeSoqlFunctionField(ctx.soqlFunction(), ...)` と子コンテキストを渡すよう修正、`order` を参照渡し化                     |
 | 4   | トップレベル `query` 未結線＋`groupBy`/`with`/`having` 欠落 | インライン SOQL を解析できない・句の欠落 | `soqlLiteral` 経由で `query` を呼ぶ導線を作り、`QueryField` に `groupBy`/`with` を追加。空の `soql/soql.ts` を実装 or 削除 |
 | 5   | SELECT の別名・`TYPEOF`、`subFieldEntry` の `TYPEOF` 未処理 | 集計クエリ・多態参照が壊れる             | `selectEntry`/`subFieldEntry` に `typeOf()`・`soqlId()`（alias）分岐を追加                                                 |

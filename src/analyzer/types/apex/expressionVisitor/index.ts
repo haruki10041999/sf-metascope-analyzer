@@ -25,33 +25,37 @@ import {
     PreOpExpressionContext,
     PrimaryExpressionContext,
     SubExpressionContext,
+    ParExpressionContext,
+    BoundExpressionContext,
 } from '@apexdevtools/apex-parser';
 
-import { ArrayExpressionType, makeArrayExpressionType } from './array';
-import { Arth1ExpressionType, makeArth1ExpressionType } from './arth1';
-import { Arth2ExpressionType, makeArth2ExpressionType } from './arth2';
-import { AssignExpressionType, makeAssignExpressionType } from './assign';
-import { BitAndExpressionType, makeBitAndExpressionType } from './bitAnd';
-import { BitExpressionType, makeBitExpressionType } from './bit';
-import { BitNotExpressionType, makeBitNotExpressionType } from './bitNot';
-import { BitOrExpressionType, makeBitOrExpressionType } from './bitOr';
-import { CastExpressionType, makeCastExpressionType } from './cast';
-import { CmpExpressionType, makeCmpExpressionType } from './cmp';
-import { CoalExpressionType, makeCoalExpressionType } from './coal';
-import { CondExpressionType, makeCondExpressionType } from './cond';
-import { DotExpressionType, makeDotExpressionType } from './dot';
-import { EqualityExpressionType, makeEqualityExpressionType } from './equality';
-import { InstanceOfExpressionType, makeInstanceOfExpressionType } from './instanceOf';
-import { LogAndExpressionType, makeLogAndExpressionType } from './logAnd';
-import { LogOrExpressionType, makeLogOrExpressionType } from './logOr';
-import { MethodCallExpressionType, makeMethodCallExpressionType } from './methodCall';
-import { NegExpressionType, makeNegExpressionType } from './neg';
-import { NewExpressionType, makeNewExpressionType } from './new';
-import { NormalExpressionType, makeNormalType } from './normal';
-import { PostOpExpressionType, makePostOrExpressionType } from './postOp';
-import { PreOpExpressionType, makePreOpExpressionType } from './preOp';
-import { PrimaryExpressionType, makePrimaryExpressionType } from './primary';
-import { SubExpressionType, makeSubExpressionType } from './sub';
+import { ArrayExpressionType, makeArrayExpressionType } from './arrayExpression';
+import { Arth1ExpressionType, makeArth1ExpressionType } from './arth1Expression';
+import { Arth2ExpressionType, makeArth2ExpressionType } from './arth2Expression';
+import { AssignExpressionType, makeAssignExpressionType } from './assignExpression';
+import { BitAndExpressionType, makeBitAndExpressionType } from './bitAndExpression';
+import { BitExpressionType, makeBitExpressionType } from './bitExpression';
+import { BitNotExpressionType, makeBitNotExpressionType } from './bitNotExpression';
+import { BitOrExpressionType, makeBitOrExpressionType } from './bitOrExpression';
+import { CastExpressionType, makeCastExpressionType } from './castExpression';
+import { CmpExpressionType, makeCmpExpressionType } from './cmpExpression';
+import { CoalExpressionType, makeCoalExpressionType } from './coalExpression';
+import { CondExpressionType, makeCondExpressionType } from './condExpression';
+import { DotExpressionType, makeDotExpressionType } from './dotExpression';
+import { EqualityExpressionType, makeEqualityExpressionType } from './equalityExpression';
+import { InstanceOfExpressionType, makeInstanceOfExpressionType } from './instanceOfExpression';
+import { LogAndExpressionType, makeLogAndExpressionType } from './logAndExpression';
+import { LogOrExpressionType, makeLogOrExpressionType } from './logOrExpression';
+import { MethodCallExpressionType, makeMethodCallExpressionType } from './methodCallExpression';
+import { NegExpressionType, makeNegExpressionType } from './negExpression';
+import { NewExpressionType, makeNewExpressionType } from './newExpression';
+import { ExpressionType as expressionType, makeExpressionType } from './expression';
+import { PostOpExpressionType, makePostOpExpressionType } from './postOpExpression';
+import { PreOpExpressionType, makePreOpExpressionType } from './preOpExpression';
+import { PrimaryExpressionType, makePrimaryExpressionType } from './primaryExpression';
+import { SubExpressionType, makeSubExpressionType } from './subExpression';
+import { ParExpressionType, makeParExpressionType } from './parExpression';
+import { BoundExpressionType, makeBoundExpressionType } from './boundExpression';
 
 export type ExpressionType =
     | ArrayExpressionType
@@ -74,110 +78,121 @@ export type ExpressionType =
     | MethodCallExpressionType
     | NegExpressionType
     | NewExpressionType
-    | NormalExpressionType
+    | expressionType
     | PostOpExpressionType
     | PreOpExpressionType
     | PrimaryExpressionType
-    | SubExpressionType;
+    | SubExpressionType
+    | ParExpressionType
+    | BoundExpressionType;
 
 export class ExpressionVisitor extends ApexParserBaseVisitor<ExpressionType> {
-    visitExpression(ctx: ExpressionContext) {
-        return makeNormalType(ctx);
+    visitExpressionContext(ctx: ExpressionContext) {
+        return makeExpressionType(ctx);
     }
 
-    visitPrimaryExpression(ctx: PrimaryExpressionContext) {
+    visitPrimaryExpressionContext(ctx: PrimaryExpressionContext) {
         return makePrimaryExpressionType(ctx);
     }
 
-    visitArth1Expression(ctx: Arth1ExpressionContext) {
+    visitArth1ExpressionContext(ctx: Arth1ExpressionContext) {
         return makeArth1ExpressionType(ctx);
     }
 
-    visitCoalExpression(ctx: CoalExpressionContext) {
+    visitCoalExpressionContext(ctx: CoalExpressionContext) {
         return makeCoalExpressionType(ctx);
     }
 
-    visitDotExpression(ctx: DotExpressionContext) {
+    visitDotExpressionContext(ctx: DotExpressionContext) {
         return makeDotExpressionType(ctx);
     }
 
-    visitBitOrExpression(ctx: BitOrExpressionContext) {
+    visitBitOrExpressionContext(ctx: BitOrExpressionContext) {
         return makeBitOrExpressionType(ctx);
     }
 
-    visitArrayExpression(ctx: ArrayExpressionContext) {
+    visitArrayExpressionContext(ctx: ArrayExpressionContext) {
         return makeArrayExpressionType(ctx);
     }
 
-    visitNewExpression(ctx: NewExpressionContext) {
+    visitNewExpressionContext(ctx: NewExpressionContext) {
         return makeNewExpressionType(ctx);
     }
 
-    visitAssignExpression(ctx: AssignExpressionContext) {
+    visitAssignExpressionContext(ctx: AssignExpressionContext) {
         return makeAssignExpressionType(ctx);
     }
 
-    visitMethodCallExpression(ctx: MethodCallExpressionContext) {
+    visitMethodCallExpressionContext(ctx: MethodCallExpressionContext) {
         return makeMethodCallExpressionType(ctx);
     }
 
-    visitBitNotExpression(ctx: BitNotExpressionContext) {
+    visitBitNotExpressionContext(ctx: BitNotExpressionContext) {
         return makeBitNotExpressionType(ctx);
     }
 
-    visitArth2Expression(ctx: Arth2ExpressionContext) {
+    visitArth2ExpressionContext(ctx: Arth2ExpressionContext) {
         return makeArth2ExpressionType(ctx);
     }
 
-    visitLogAndExpression(ctx: LogAndExpressionContext) {
+    visitLogAndExpressionContext(ctx: LogAndExpressionContext) {
         return makeLogAndExpressionType(ctx);
     }
 
-    visitCastExpression(ctx: CastExpressionContext) {
+    visitCastExpressionContext(ctx: CastExpressionContext) {
         return makeCastExpressionType(ctx);
     }
 
-    visitBitAndExpression(ctx: BitAndExpressionContext) {
+    visitBitAndExpressionContext(ctx: BitAndExpressionContext) {
         return makeBitAndExpressionType(ctx);
     }
 
-    visitCmpExpression(ctx: CmpExpressionContext) {
+    visitCmpExpressionContext(ctx: CmpExpressionContext) {
         return makeCmpExpressionType(ctx);
     }
 
-    visitBitExpression(ctx: BitExpressionContext) {
+    visitBitExpressionContext(ctx: BitExpressionContext) {
         return makeBitExpressionType(ctx);
     }
 
-    visitLogOrExpression(ctx: LogOrExpressionContext) {
+    visitLogOrExpressionContext(ctx: LogOrExpressionContext) {
         return makeLogOrExpressionType(ctx);
     }
 
-    visitCondExpression(ctx: CondExpressionContext) {
+    visitCondExpressionContext(ctx: CondExpressionContext) {
         return makeCondExpressionType(ctx);
     }
 
-    visitEqualityExpression(ctx: EqualityExpressionContext) {
+    visitEqualityExpressionContext(ctx: EqualityExpressionContext) {
         return makeEqualityExpressionType(ctx);
     }
 
-    visitPostOpExpression(ctx: PostOpExpressionContext) {
-        return makePostOrExpressionType(ctx);
+    visitPostOpExpressionContext(ctx: PostOpExpressionContext) {
+        return makePostOpExpressionType(ctx);
     }
 
-    visitNegExpression(ctx: NegExpressionContext) {
+    visitNegExpressionContext(ctx: NegExpressionContext) {
         return makeNegExpressionType(ctx);
     }
 
-    visitPreOpExpression(ctx: PreOpExpressionContext) {
+    visitPreOpExpressionContext(ctx: PreOpExpressionContext) {
         return makePreOpExpressionType(ctx);
     }
 
-    visitSubExpression(ctx: SubExpressionContext) {
+    visitSubExpressionContext(ctx: SubExpressionContext) {
         return makeSubExpressionType(ctx);
     }
 
-    visitInstanceOfExpression(ctx: InstanceOfExpressionContext) {
+    visitInstanceOfExpressionContext(ctx: InstanceOfExpressionContext) {
         return makeInstanceOfExpressionType(ctx);
     }
+
+    visitParExpressionContext(ctx: ParExpressionContext) {
+        return makeParExpressionType(ctx);
+    }
+
+    visitBoundExpressionContext(ctx: BoundExpressionContext) {
+        return makeBoundExpressionType(ctx);
+    }
 }
+

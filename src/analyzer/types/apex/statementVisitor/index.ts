@@ -1,6 +1,6 @@
 import {
     ApexParserBaseVisitor,
-    BlockContext,
+    StatementContext,
     IfStatementContext,
     SwitchStatementContext,
     ForStatementContext,
@@ -22,29 +22,32 @@ import {
     ExpressionStatementContext,
 } from '@apexdevtools/apex-parser';
 
-import { BlockStatemtType, makeBlockStatemtType } from './block';
-import { IfStatementType, makeIfStatementType } from './if';
-import { SwitchStatementType, makeSwitchStatementType } from './switch';
-import { ForStatementType, makeForStatementType } from './for';
-import { WhileStatementType, makeWhileStatementType } from './while';
-import { DoWhileStatementType, makeDoWhileStatementType } from './doWhile';
-import { TryStatementType, makeTryStatementType } from './try';
-import { ReturnStatementType, makeReturnStatementType } from './return';
-import { ThrowStatementType, makeThrowStatementType } from './throw';
-import { BreakStatementType, makeBreakStatementType } from './break';
-import { ContinueStatementType, makeContinueStatementType } from './continue';
-import { InsertStatementType, makeInsertStatementType } from './insert';
-import { UpdateStatementType, makeUpdateStatementType } from './update';
-import { DeleteStatementType, makeDeleteStatementType } from './delete';
-import { UnDeleteStatementType, makeUnDeleteStatementType } from './undelete';
-import { UpsertStatementType, makeUpsertStatementType } from './upsert';
-import { MergeStatementType, makeMergeStatementType } from './merge';
-import { RunAsStatementType, makeRunAsStatementType } from './runAs';
-import { LocalVariantStatementType, makeLocalVariantStatementType } from './localVariant';
-import { ExpressionStatementType, makeExpressionStatementType } from './expression';
+import { StatementType as statementType, makeStatementType } from './statement';
+import { IfStatementType, makeIfStatementType } from './ifStatement';
+import { SwitchStatementType, makeSwitchStatementType } from './switchStatement';
+import { ForStatementType, makeForStatementType } from './forStatement';
+import { WhileStatementType, makeWhileStatementType } from './whileStatement';
+import { DoWhileStatementType, makeDoWhileStatementType } from './doWhileStatement';
+import { TryStatementType, makeTryStatementType } from './tryStatement';
+import { ReturnStatementType, makeReturnStatementType } from './returnStatement';
+import { ThrowStatementType, makeThrowStatementType } from './throwStatement';
+import { BreakStatementType, makeBreakStatementType } from './breakStatement';
+import { ContinueStatementType, makeContinueStatementType } from './continueStatement';
+import { InsertStatementType, makeInsertStatementType } from './insertStatement';
+import { UpdateStatementType, makeUpdateStatementType } from './updateStatement';
+import { DeleteStatementType, makeDeleteStatementType } from './deleteStatement';
+import { UndeleteStatementType, makeUndeleteStatementType } from './undeleteStatement';
+import { UpsertStatementType, makeUpsertStatementType } from './upsertStatement';
+import { MergeStatementType, makeMergeStatementType } from './mergeStatement';
+import { RunAsStatementType, makeRunAsStatementType } from './runAsStatement';
+import {
+    LocalVariableDeclarationStatementType,
+    makeLocalVariableDeclarationStatementType,
+} from './localVariableDeclarationStatement';
+import { ExpressionStatementType, makeExpressionStatementType } from './expressionStatement';
 
 export type StatementType =
-    | BlockStatemtType
+    | statementType
     | IfStatementType
     | SwitchStatementType
     | ForStatementType
@@ -58,16 +61,16 @@ export type StatementType =
     | InsertStatementType
     | UpdateStatementType
     | DeleteStatementType
-    | UnDeleteStatementType
+    | UndeleteStatementType
     | UpsertStatementType
     | MergeStatementType
     | RunAsStatementType
-    | LocalVariantStatementType
+    | LocalVariableDeclarationStatementType
     | ExpressionStatementType;
 
 export class StatementVisitor extends ApexParserBaseVisitor<StatementType> {
-    visitBlockContext(ctx: BlockContext) {
-        return makeBlockStatemtType(ctx);
+    visitStatementContext(ctx: StatementContext) {
+        return makeStatementType(ctx);
     }
 
     visitIfStatementContext(ctx: IfStatementContext) {
@@ -123,7 +126,7 @@ export class StatementVisitor extends ApexParserBaseVisitor<StatementType> {
     }
 
     visitUndeleteStatementContext(ctx: UndeleteStatementContext) {
-        return makeUnDeleteStatementType(ctx);
+        return makeUndeleteStatementType(ctx);
     }
 
     visitUpsertStatementContext(ctx: UpsertStatementContext) {
@@ -139,10 +142,11 @@ export class StatementVisitor extends ApexParserBaseVisitor<StatementType> {
     }
 
     visitLocalVariableDeclarationStatementContext(ctx: LocalVariableDeclarationStatementContext) {
-        return makeLocalVariantStatementType(ctx);
+        return makeLocalVariableDeclarationStatementType(ctx);
     }
 
     visitExpressionStatementContext(ctx: ExpressionStatementContext) {
         return makeExpressionStatementType(ctx);
     }
 }
+

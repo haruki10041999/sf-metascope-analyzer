@@ -10,28 +10,28 @@ import {
     LiteralPrimaryContext,
 } from '@apexdevtools/apex-parser';
 
-import { NormalPrimaryType, makeNormalPrimaryType } from './normal';
-import { ThisPrimaryType, makeThisPrimaryType } from './this';
-import { VoidPrimaryType, makeVoidPrimaryType } from './void';
-import { SoqlPrimaryType, makeSoqlPrimaryType } from './soql';
-import { SuperPrimaryType, makeSuperPrimaryType } from './super';
-import { TypePrimaryType, makeTypePrimaryType } from './type';
-import { IdPrimaryType, makeIdPrimaryType } from './id';
-import { LiteralPrimaryType, makeLiteralPrimaryType } from './literal';
+import { PrimaryType as primaryType, makePrimaryType } from './primary';
+import { ThisPrimaryType, makeThisPrimaryType } from './thisPrimary';
+import { VoidPrimaryType, makeVoidPrimaryType } from './voidPrimary';
+import { SoqlPrimaryType, makeSoqlPrimaryType } from './soqlPrimary';
+import { SuperPrimaryType, makeSuperPrimaryType } from './superPrimary';
+import { TypeRefPrimaryType, makeTypeRefPrimaryType } from './typeRefPrimary';
+import { IdPrimaryType, makeIdPrimaryType } from './idPrimary';
+import { LiteralPrimaryType, makeLiteralPrimaryType } from './literalPrimary';
 
 export type PrimaryType =
-    | NormalPrimaryType
+    | primaryType
     | ThisPrimaryType
     | VoidPrimaryType
     | SoqlPrimaryType
     | SuperPrimaryType
-    | TypePrimaryType
+    | TypeRefPrimaryType
     | IdPrimaryType
     | LiteralPrimaryType;
 
 export class PrimaryVisitor extends ApexParserBaseVisitor<PrimaryType> {
     visitPrimaryContext(ctx: PrimaryContext) {
-        return makeNormalPrimaryType(ctx);
+        return makePrimaryType(ctx);
     }
 
     visitThisPrimaryContext(ctx: ThisPrimaryContext) {
@@ -51,7 +51,7 @@ export class PrimaryVisitor extends ApexParserBaseVisitor<PrimaryType> {
     }
 
     visitTypeRefPrimaryContext(ctx: TypeRefPrimaryContext) {
-        return makeTypePrimaryType(ctx);
+        return makeTypeRefPrimaryType(ctx);
     }
 
     visitIdPrimaryContext(ctx: IdPrimaryContext) {
@@ -62,3 +62,4 @@ export class PrimaryVisitor extends ApexParserBaseVisitor<PrimaryType> {
         return makeLiteralPrimaryType(ctx);
     }
 }
+
