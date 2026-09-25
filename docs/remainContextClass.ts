@@ -43,130 +43,7 @@ export declare class TriggerCaseContext extends ParserRuleContext {
     exitRule(listener: ApexParserListener): void;
     accept<Result>(visitor: ApexParserVisitor<Result>): Result;
 }
-export declare class TriggerBlockContext extends ParserRuleContext {
-    constructor(parser?: ApexParser, parent?: ParserRuleContext, invokingState?: number);
-    LBRACE(): TerminalNode;
-    RBRACE(): TerminalNode;
-    triggerBlockMember_list(): TriggerBlockMemberContext[];
-    triggerBlockMember(i: number): TriggerBlockMemberContext;
-    get ruleIndex(): number;
-    enterRule(listener: ApexParserListener): void;
-    exitRule(listener: ApexParserListener): void;
-    accept<Result>(visitor: ApexParserVisitor<Result>): Result;
-}
-export declare class TriggerBlockMemberContext extends ParserRuleContext {
-    constructor(parser?: ApexParser, parent?: ParserRuleContext, invokingState?: number);
-    triggerMemberDeclaration(): TriggerMemberDeclarationContext;
-    modifier_list(): ModifierContext[];
-    modifier(i: number): ModifierContext;
-    statement(): StatementContext;
-    get ruleIndex(): number;
-    enterRule(listener: ApexParserListener): void;
-    exitRule(listener: ApexParserListener): void;
-    accept<Result>(visitor: ApexParserVisitor<Result>): Result;
-}
-export declare class AnonymousUnitContext extends ParserRuleContext {
-    constructor(parser?: ApexParser, parent?: ParserRuleContext, invokingState?: number);
-    anonymousBlock(): AnonymousBlockContext;
-    EOF(): TerminalNode;
-    get ruleIndex(): number;
-    enterRule(listener: ApexParserListener): void;
-    exitRule(listener: ApexParserListener): void;
-    accept<Result>(visitor: ApexParserVisitor<Result>): Result;
-}
-export declare class AnonymousBlockContext extends ParserRuleContext {
-    constructor(parser?: ApexParser, parent?: ParserRuleContext, invokingState?: number);
-    anonymousBlockMember_list(): AnonymousBlockMemberContext[];
-    anonymousBlockMember(i: number): AnonymousBlockMemberContext;
-    get ruleIndex(): number;
-    enterRule(listener: ApexParserListener): void;
-    exitRule(listener: ApexParserListener): void;
-    accept<Result>(visitor: ApexParserVisitor<Result>): Result;
-}
-export declare class AnonymousBlockMemberContext extends ParserRuleContext {
-    constructor(parser?: ApexParser, parent?: ParserRuleContext, invokingState?: number);
-    anonymousMemberDeclaration(): AnonymousMemberDeclarationContext;
-    modifier_list(): ModifierContext[];
-    modifier(i: number): ModifierContext;
-    statement(): StatementContext;
-    get ruleIndex(): number;
-    enterRule(listener: ApexParserListener): void;
-    exitRule(listener: ApexParserListener): void;
-    accept<Result>(visitor: ApexParserVisitor<Result>): Result;
-}
-export declare class CompilationUnitContext extends ParserRuleContext {
-    constructor(parser?: ApexParser, parent?: ParserRuleContext, invokingState?: number);
-    typeDeclaration(): TypeDeclarationContext;
-    EOF(): TerminalNode;
-    get ruleIndex(): number;
-    enterRule(listener: ApexParserListener): void;
-    exitRule(listener: ApexParserListener): void;
-    accept<Result>(visitor: ApexParserVisitor<Result>): Result;
-}
-export declare class TypeDeclarationContext extends ParserRuleContext {
-    constructor(parser?: ApexParser, parent?: ParserRuleContext, invokingState?: number);
-    classDeclaration(): ClassDeclarationContext;
-    modifier_list(): ModifierContext[];
-    modifier(i: number): ModifierContext;
-    enumDeclaration(): EnumDeclarationContext;
-    interfaceDeclaration(): InterfaceDeclarationContext;
-    get ruleIndex(): number;
-    enterRule(listener: ApexParserListener): void;
-    exitRule(listener: ApexParserListener): void;
-    accept<Result>(visitor: ApexParserVisitor<Result>): Result;
-}
-export declare class TriggerMemberDeclarationContext extends ParserRuleContext {
-    constructor(parser?: ApexParser, parent?: ParserRuleContext, invokingState?: number);
-    methodDeclaration(): MethodDeclarationContext;
-    interfaceDeclaration(): InterfaceDeclarationContext;
-    classDeclaration(): ClassDeclarationContext;
-    enumDeclaration(): EnumDeclarationContext;
-    propertyDeclaration(): PropertyDeclarationContext;
-    fieldDeclaration(): FieldDeclarationContext;
-    get ruleIndex(): number;
-    enterRule(listener: ApexParserListener): void;
-    exitRule(listener: ApexParserListener): void;
-    accept<Result>(visitor: ApexParserVisitor<Result>): Result;
-}
-export declare class AnonymousMemberDeclarationContext extends ParserRuleContext {
-    constructor(parser?: ApexParser, parent?: ParserRuleContext, invokingState?: number);
-    methodDeclaration(): MethodDeclarationContext;
-    interfaceDeclaration(): InterfaceDeclarationContext;
-    classDeclaration(): ClassDeclarationContext;
-    enumDeclaration(): EnumDeclarationContext;
-    propertyDeclaration(): PropertyDeclarationContext;
-    fieldDeclaration(): FieldDeclarationContext;
-    get ruleIndex(): number;
-    enterRule(listener: ApexParserListener): void;
-    exitRule(listener: ApexParserListener): void;
-    accept<Result>(visitor: ApexParserVisitor<Result>): Result;
-}
-export declare class MethodDeclarationContext extends ParserRuleContext {
-    constructor(parser?: ApexParser, parent?: ParserRuleContext, invokingState?: number);
-    id(): IdContext;
-    formalParameters(): FormalParametersContext;
-    typeRef(): TypeRefContext;
-    VOID(): TerminalNode;
-    block(): BlockContext;
-    SEMI(): TerminalNode;
-    get ruleIndex(): number;
-    enterRule(listener: ApexParserListener): void;
-    exitRule(listener: ApexParserListener): void;
-    accept<Result>(visitor: ApexParserVisitor<Result>): Result;
-}
-export declare class ArrayInitializerContext extends ParserRuleContext {
-    constructor(parser?: ApexParser, parent?: ParserRuleContext, invokingState?: number);
-    LBRACE(): TerminalNode;
-    RBRACE(): TerminalNode;
-    expression_list(): ExpressionContext[];
-    expression(i: number): ExpressionContext;
-    COMMA_list(): TerminalNode[];
-    COMMA(i: number): TerminalNode;
-    get ruleIndex(): number;
-    enterRule(listener: ApexParserListener): void;
-    exitRule(listener: ApexParserListener): void;
-    accept<Result>(visitor: ApexParserVisitor<Result>): Result;
-}
+
 export declare class SoslPrimaryContext extends PrimaryContext {
     constructor(parser: ApexParser, ctx: PrimaryContext);
     soslLiteral(): SoslLiteralContext;
@@ -174,107 +51,7 @@ export declare class SoslPrimaryContext extends PrimaryContext {
     exitRule(listener: ApexParserListener): void;
     accept<Result>(visitor: ApexParserVisitor<Result>): Result;
 }
-export declare class MethodCallContext extends ParserRuleContext {
-    constructor(parser?: ApexParser, parent?: ParserRuleContext, invokingState?: number);
-    id(): IdContext;
-    LPAREN(): TerminalNode;
-    RPAREN(): TerminalNode;
-    expressionList(): ExpressionListContext;
-    THIS(): TerminalNode;
-    SUPER(): TerminalNode;
-    get ruleIndex(): number;
-    enterRule(listener: ApexParserListener): void;
-    exitRule(listener: ApexParserListener): void;
-    accept<Result>(visitor: ApexParserVisitor<Result>): Result;
-}
-export declare class DotMethodCallContext extends ParserRuleContext {
-    constructor(parser?: ApexParser, parent?: ParserRuleContext, invokingState?: number);
-    anyId(): AnyIdContext;
-    LPAREN(): TerminalNode;
-    RPAREN(): TerminalNode;
-    expressionList(): ExpressionListContext;
-    get ruleIndex(): number;
-    enterRule(listener: ApexParserListener): void;
-    exitRule(listener: ApexParserListener): void;
-    accept<Result>(visitor: ApexParserVisitor<Result>): Result;
-}
-export declare class CreatorContext extends ParserRuleContext {
-    constructor(parser?: ApexParser, parent?: ParserRuleContext, invokingState?: number);
-    createdName(): CreatedNameContext;
-    noRest(): NoRestContext;
-    classCreatorRest(): ClassCreatorRestContext;
-    arrayCreatorRest(): ArrayCreatorRestContext;
-    mapCreatorRest(): MapCreatorRestContext;
-    setCreatorRest(): SetCreatorRestContext;
-    get ruleIndex(): number;
-    enterRule(listener: ApexParserListener): void;
-    exitRule(listener: ApexParserListener): void;
-    accept<Result>(visitor: ApexParserVisitor<Result>): Result;
-}
-export declare class NoRestContext extends ParserRuleContext {
-    constructor(parser?: ApexParser, parent?: ParserRuleContext, invokingState?: number);
-    LBRACE(): TerminalNode;
-    RBRACE(): TerminalNode;
-    get ruleIndex(): number;
-    enterRule(listener: ApexParserListener): void;
-    exitRule(listener: ApexParserListener): void;
-    accept<Result>(visitor: ApexParserVisitor<Result>): Result;
-}
-export declare class ClassCreatorRestContext extends ParserRuleContext {
-    constructor(parser?: ApexParser, parent?: ParserRuleContext, invokingState?: number);
-    arguments(): ArgumentsContext;
-    get ruleIndex(): number;
-    enterRule(listener: ApexParserListener): void;
-    exitRule(listener: ApexParserListener): void;
-    accept<Result>(visitor: ApexParserVisitor<Result>): Result;
-}
-export declare class ArrayCreatorRestContext extends ParserRuleContext {
-    constructor(parser?: ApexParser, parent?: ParserRuleContext, invokingState?: number);
-    LBRACK(): TerminalNode;
-    expression(): ExpressionContext;
-    RBRACK(): TerminalNode;
-    arrayInitializer(): ArrayInitializerContext;
-    get ruleIndex(): number;
-    enterRule(listener: ApexParserListener): void;
-    exitRule(listener: ApexParserListener): void;
-    accept<Result>(visitor: ApexParserVisitor<Result>): Result;
-}
-export declare class MapCreatorRestContext extends ParserRuleContext {
-    constructor(parser?: ApexParser, parent?: ParserRuleContext, invokingState?: number);
-    LBRACE(): TerminalNode;
-    mapCreatorRestPair_list(): MapCreatorRestPairContext[];
-    mapCreatorRestPair(i: number): MapCreatorRestPairContext;
-    RBRACE(): TerminalNode;
-    COMMA_list(): TerminalNode[];
-    COMMA(i: number): TerminalNode;
-    get ruleIndex(): number;
-    enterRule(listener: ApexParserListener): void;
-    exitRule(listener: ApexParserListener): void;
-    accept<Result>(visitor: ApexParserVisitor<Result>): Result;
-}
-export declare class SetCreatorRestContext extends ParserRuleContext {
-    constructor(parser?: ApexParser, parent?: ParserRuleContext, invokingState?: number);
-    LBRACE(): TerminalNode;
-    expression_list(): ExpressionContext[];
-    expression(i: number): ExpressionContext;
-    RBRACE(): TerminalNode;
-    COMMA_list(): TerminalNode[];
-    COMMA(i: number): TerminalNode;
-    get ruleIndex(): number;
-    enterRule(listener: ApexParserListener): void;
-    exitRule(listener: ApexParserListener): void;
-    accept<Result>(visitor: ApexParserVisitor<Result>): Result;
-}
-export declare class SoqlLiteralContext extends ParserRuleContext {
-    constructor(parser?: ApexParser, parent?: ParserRuleContext, invokingState?: number);
-    LBRACK(): TerminalNode;
-    query(): QueryContext;
-    RBRACK(): TerminalNode;
-    get ruleIndex(): number;
-    enterRule(listener: ApexParserListener): void;
-    exitRule(listener: ApexParserListener): void;
-    accept<Result>(visitor: ApexParserVisitor<Result>): Result;
-}
+
 export declare class QueryContext extends ParserRuleContext {
     constructor(parser?: ApexParser, parent?: ParserRuleContext, invokingState?: number);
     SELECT(): TerminalNode;
@@ -422,30 +199,6 @@ export declare class SoqlFunctionContext extends ParserRuleContext {
     exitRule(listener: ApexParserListener): void;
     accept<Result>(visitor: ApexParserVisitor<Result>): Result;
 }
-export declare class LocationValueContext extends ParserRuleContext {
-    constructor(parser?: ApexParser, parent?: ParserRuleContext, invokingState?: number);
-    fieldName(): FieldNameContext;
-    boundExpression(): BoundExpressionContext;
-    GEOLOCATION(): TerminalNode;
-    LPAREN(): TerminalNode;
-    coordinateValue_list(): CoordinateValueContext[];
-    coordinateValue(i: number): CoordinateValueContext;
-    COMMA(): TerminalNode;
-    RPAREN(): TerminalNode;
-    get ruleIndex(): number;
-    enterRule(listener: ApexParserListener): void;
-    exitRule(listener: ApexParserListener): void;
-    accept<Result>(visitor: ApexParserVisitor<Result>): Result;
-}
-export declare class CoordinateValueContext extends ParserRuleContext {
-    constructor(parser?: ApexParser, parent?: ParserRuleContext, invokingState?: number);
-    signedNumber(): SignedNumberContext;
-    boundExpression(): BoundExpressionContext;
-    get ruleIndex(): number;
-    enterRule(listener: ApexParserListener): void;
-    exitRule(listener: ApexParserListener): void;
-    accept<Result>(visitor: ApexParserVisitor<Result>): Result;
-}
 export declare class TypeOfContext extends ParserRuleContext {
     constructor(parser?: ApexParser, parent?: ParserRuleContext, invokingState?: number);
     TYPEOF(): TerminalNode;
@@ -465,36 +218,6 @@ export declare class WhenClauseContext extends ParserRuleContext {
     fieldName(): FieldNameContext;
     THEN(): TerminalNode;
     fieldNameList(): FieldNameListContext;
-    get ruleIndex(): number;
-    enterRule(listener: ApexParserListener): void;
-    exitRule(listener: ApexParserListener): void;
-    accept<Result>(visitor: ApexParserVisitor<Result>): Result;
-}
-export declare class ElseClauseContext extends ParserRuleContext {
-    constructor(parser?: ApexParser, parent?: ParserRuleContext, invokingState?: number);
-    ELSE(): TerminalNode;
-    fieldNameList(): FieldNameListContext;
-    get ruleIndex(): number;
-    enterRule(listener: ApexParserListener): void;
-    exitRule(listener: ApexParserListener): void;
-    accept<Result>(visitor: ApexParserVisitor<Result>): Result;
-}
-export declare class FieldNameListContext extends ParserRuleContext {
-    constructor(parser?: ApexParser, parent?: ParserRuleContext, invokingState?: number);
-    fieldName_list(): FieldNameContext[];
-    fieldName(i: number): FieldNameContext;
-    COMMA_list(): TerminalNode[];
-    COMMA(i: number): TerminalNode;
-    get ruleIndex(): number;
-    enterRule(listener: ApexParserListener): void;
-    exitRule(listener: ApexParserListener): void;
-    accept<Result>(visitor: ApexParserVisitor<Result>): Result;
-}
-export declare class UsingScopeContext extends ParserRuleContext {
-    constructor(parser?: ApexParser, parent?: ParserRuleContext, invokingState?: number);
-    USING(): TerminalNode;
-    SCOPE(): TerminalNode;
-    soqlId(): SoqlIdContext;
     get ruleIndex(): number;
     enterRule(listener: ApexParserListener): void;
     exitRule(listener: ApexParserListener): void;
@@ -584,23 +307,6 @@ export declare class FieldExpressionContext extends ParserRuleContext {
     exitRule(listener: ApexParserListener): void;
     accept<Result>(visitor: ApexParserVisitor<Result>): Result;
 }
-export declare class ComparisonOperatorContext extends ParserRuleContext {
-    constructor(parser?: ApexParser, parent?: ParserRuleContext, invokingState?: number);
-    ASSIGN(): TerminalNode;
-    NOTEQUAL(): TerminalNode;
-    LT(): TerminalNode;
-    GT(): TerminalNode;
-    LESSANDGREATER(): TerminalNode;
-    LIKE(): TerminalNode;
-    IN(): TerminalNode;
-    NOT(): TerminalNode;
-    INCLUDES(): TerminalNode;
-    EXCLUDES(): TerminalNode;
-    get ruleIndex(): number;
-    enterRule(listener: ApexParserListener): void;
-    exitRule(listener: ApexParserListener): void;
-    accept<Result>(visitor: ApexParserVisitor<Result>): Result;
-}
 export declare class ValueContext extends ParserRuleContext {
     constructor(parser?: ApexParser, parent?: ParserRuleContext, invokingState?: number);
     NULL(): TerminalNode;
@@ -625,30 +331,6 @@ export declare class ValueContext extends ParserRuleContext {
     exitRule(listener: ApexParserListener): void;
     accept<Result>(visitor: ApexParserVisitor<Result>): Result;
 }
-export declare class ValueListContext extends ParserRuleContext {
-    constructor(parser?: ApexParser, parent?: ParserRuleContext, invokingState?: number);
-    LPAREN(): TerminalNode;
-    value_list(): ValueContext[];
-    value(i: number): ValueContext;
-    RPAREN(): TerminalNode;
-    COMMA_list(): TerminalNode[];
-    COMMA(i: number): TerminalNode;
-    get ruleIndex(): number;
-    enterRule(listener: ApexParserListener): void;
-    exitRule(listener: ApexParserListener): void;
-    accept<Result>(visitor: ApexParserVisitor<Result>): Result;
-}
-export declare class SignedNumberContext extends ParserRuleContext {
-    constructor(parser?: ApexParser, parent?: ParserRuleContext, invokingState?: number);
-    IntegerLiteral(): TerminalNode;
-    NumberLiteral(): TerminalNode;
-    ADD(): TerminalNode;
-    SUB(): TerminalNode;
-    get ruleIndex(): number;
-    enterRule(listener: ApexParserListener): void;
-    exitRule(listener: ApexParserListener): void;
-    accept<Result>(visitor: ApexParserVisitor<Result>): Result;
-}
 export declare class WithClauseContext extends ParserRuleContext {
     constructor(parser?: ApexParser, parent?: ParserRuleContext, invokingState?: number);
     WITH(): TerminalNode;
@@ -659,38 +341,6 @@ export declare class WithClauseContext extends ParserRuleContext {
     SYSTEM_MODE(): TerminalNode;
     USER_MODE(): TerminalNode;
     logicalExpression(): LogicalExpressionContext;
-    get ruleIndex(): number;
-    enterRule(listener: ApexParserListener): void;
-    exitRule(listener: ApexParserListener): void;
-    accept<Result>(visitor: ApexParserVisitor<Result>): Result;
-}
-export declare class FilteringExpressionContext extends ParserRuleContext {
-    constructor(parser?: ApexParser, parent?: ParserRuleContext, invokingState?: number);
-    dataCategorySelection_list(): DataCategorySelectionContext[];
-    dataCategorySelection(i: number): DataCategorySelectionContext;
-    SOQLAND_list(): TerminalNode[];
-    SOQLAND(i: number): TerminalNode;
-    get ruleIndex(): number;
-    enterRule(listener: ApexParserListener): void;
-    exitRule(listener: ApexParserListener): void;
-    accept<Result>(visitor: ApexParserVisitor<Result>): Result;
-}
-export declare class DataCategorySelectionContext extends ParserRuleContext {
-    constructor(parser?: ApexParser, parent?: ParserRuleContext, invokingState?: number);
-    soqlId(): SoqlIdContext;
-    filteringSelector(): FilteringSelectorContext;
-    dataCategoryName(): DataCategoryNameContext;
-    get ruleIndex(): number;
-    enterRule(listener: ApexParserListener): void;
-    exitRule(listener: ApexParserListener): void;
-    accept<Result>(visitor: ApexParserVisitor<Result>): Result;
-}
-export declare class FilteringSelectorContext extends ParserRuleContext {
-    constructor(parser?: ApexParser, parent?: ParserRuleContext, invokingState?: number);
-    AT(): TerminalNode;
-    ABOVE(): TerminalNode;
-    BELOW(): TerminalNode;
-    ABOVE_OR_BELOW(): TerminalNode;
     get ruleIndex(): number;
     enterRule(listener: ApexParserListener): void;
     exitRule(listener: ApexParserListener): void;
@@ -767,50 +417,7 @@ export declare class FieldOrderContext extends ParserRuleContext {
     exitRule(listener: ApexParserListener): void;
     accept<Result>(visitor: ApexParserVisitor<Result>): Result;
 }
-export declare class LimitClauseContext extends ParserRuleContext {
-    constructor(parser?: ApexParser, parent?: ParserRuleContext, invokingState?: number);
-    LIMIT(): TerminalNode;
-    IntegerLiteral(): TerminalNode;
-    boundExpression(): BoundExpressionContext;
-    get ruleIndex(): number;
-    enterRule(listener: ApexParserListener): void;
-    exitRule(listener: ApexParserListener): void;
-    accept<Result>(visitor: ApexParserVisitor<Result>): Result;
-}
-export declare class OffsetClauseContext extends ParserRuleContext {
-    constructor(parser?: ApexParser, parent?: ParserRuleContext, invokingState?: number);
-    OFFSET(): TerminalNode;
-    IntegerLiteral(): TerminalNode;
-    boundExpression(): BoundExpressionContext;
-    get ruleIndex(): number;
-    enterRule(listener: ApexParserListener): void;
-    exitRule(listener: ApexParserListener): void;
-    accept<Result>(visitor: ApexParserVisitor<Result>): Result;
-}
-export declare class AllRowsClauseContext extends ParserRuleContext {
-    constructor(parser?: ApexParser, parent?: ParserRuleContext, invokingState?: number);
-    ALL(): TerminalNode;
-    ROWS(): TerminalNode;
-    get ruleIndex(): number;
-    enterRule(listener: ApexParserListener): void;
-    exitRule(listener: ApexParserListener): void;
-    accept<Result>(visitor: ApexParserVisitor<Result>): Result;
-}
-export declare class ForClausesContext extends ParserRuleContext {
-    constructor(parser?: ApexParser, parent?: ParserRuleContext, invokingState?: number);
-    FOR_list(): TerminalNode[];
-    FOR(i: number): TerminalNode;
-    VIEW_list(): TerminalNode[];
-    VIEW(i: number): TerminalNode;
-    UPDATE_list(): TerminalNode[];
-    UPDATE(i: number): TerminalNode;
-    REFERENCE_list(): TerminalNode[];
-    REFERENCE(i: number): TerminalNode;
-    get ruleIndex(): number;
-    enterRule(listener: ApexParserListener): void;
-    exitRule(listener: ApexParserListener): void;
-    accept<Result>(visitor: ApexParserVisitor<Result>): Result;
-}
+
 export declare class DateFormulaContext extends ParserRuleContext {
     constructor(parser?: ApexParser, parent?: ParserRuleContext, invokingState?: number);
     YESTERDAY(): TerminalNode;
@@ -864,16 +471,7 @@ export declare class DateFormulaContext extends ParserRuleContext {
     exitRule(listener: ApexParserListener): void;
     accept<Result>(visitor: ApexParserVisitor<Result>): Result;
 }
-export declare class SignedIntegerContext extends ParserRuleContext {
-    constructor(parser?: ApexParser, parent?: ParserRuleContext, invokingState?: number);
-    IntegerLiteral(): TerminalNode;
-    ADD(): TerminalNode;
-    SUB(): TerminalNode;
-    get ruleIndex(): number;
-    enterRule(listener: ApexParserListener): void;
-    exitRule(listener: ApexParserListener): void;
-    accept<Result>(visitor: ApexParserVisitor<Result>): Result;
-}
+
 export declare class SoslLiteralContext extends ParserRuleContext {
     constructor(parser?: ApexParser, parent?: ParserRuleContext, invokingState?: number);
     FindLiteral(): TerminalNode;

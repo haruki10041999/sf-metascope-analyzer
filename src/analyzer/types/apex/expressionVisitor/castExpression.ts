@@ -2,17 +2,17 @@ import { CastExpressionContext } from '@apexdevtools/apex-parser';
 
 import { ExpressionType, ExpressionVisitor } from '.';
 
-import { TypeField, makeTypeField } from '../type';
+import { TypeRefType, makeTypeRefType } from '../typeRef';
 
 export type CastExpressionType = {
     type: 'castExpression';
     value: Omit<ExpressionType, 'type'>;
-    targetType: Omit<TypeField, 'type'>;
+    targetType: Omit<TypeRefType, 'type'>;
 };
 
 export const makeCastExpressionType = (ctx: CastExpressionContext): CastExpressionType => {
     const { type: valueType, ...value } = new ExpressionVisitor().visit(ctx.expression());
-    const { type: targetTypeType, ...targetType } = makeTypeField(ctx.typeRef());
+    const { type: targetTypeType, ...targetType } = makeTypeRefType(ctx.typeRef());
 
     return {
         type: 'castExpression',
@@ -20,4 +20,3 @@ export const makeCastExpressionType = (ctx: CastExpressionContext): CastExpressi
         targetType: targetType,
     };
 };
-

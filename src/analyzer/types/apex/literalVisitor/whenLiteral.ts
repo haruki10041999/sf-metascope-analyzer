@@ -36,7 +36,9 @@ export const makeWhenLiteralType = (ctx: WhenLiteralContext): WhenLiteralType =>
     if (ctx.IntegerLiteral() || ctx.LongLiteral()) {
         const whelLiteralField: WhenLiteralField = {
             type: ctx.IntegerLiteral() ? 'integer' : 'long',
-            value: ctx.getText(),
+            value: ctx.IntegerLiteral()
+                ? ctx.IntegerLiteral().getText()
+                : ctx.LongLiteral().getText(),
         };
         let operator = '';
         if (ctx.ADD_list() && ctx.ADD_list().length > 0) {
@@ -67,7 +69,9 @@ export const makeWhenLiteralType = (ctx: WhenLiteralContext): WhenLiteralType =>
             type: 'whenLiteral',
             value: {
                 type: ctx.StringLiteral() ? 'string' : 'multilineString',
-                value: ctx.getText(),
+                value: ctx.StringLiteral()
+                    ? ctx.StringLiteral().getText()
+                    : ctx.MultilineStringLiteral().getText(),
             },
         };
     }

@@ -5,14 +5,27 @@ import { BlockType, BlockVisitor } from '../blockVisitor';
 
 export type StatementType = {
     type: 'statement';
-} & (
-    | {
-          block: Omit<BlockType, 'type'>;
-      }
-    | {
-          statement: Omit<statementType, 'type'>;
-      }
-);
+    block?: Omit<BlockType, 'type'>;
+    ifStatement?: Omit<statementType, 'type'>;
+    switchStatement?: Omit<statementType, 'type'>;
+    forStatement?: Omit<statementType, 'type'>;
+    whileStatement?: Omit<statementType, 'type'>;
+    doWhileStatement?: Omit<statementType, 'type'>;
+    tryStatement?: Omit<statementType, 'type'>;
+    returnStatement?: Omit<statementType, 'type'>;
+    throwStatement?: Omit<statementType, 'type'>;
+    breakStatement?: Omit<statementType, 'type'>;
+    continueStatement?: Omit<statementType, 'type'>;
+    insertStatement?: Omit<statementType, 'type'>;
+    updateStatement?: Omit<statementType, 'type'>;
+    deleteStatement?: Omit<statementType, 'type'>;
+    undeleteStatement?: Omit<statementType, 'type'>;
+    upsertStatement?: Omit<statementType, 'type'>;
+    mergeStatement?: Omit<statementType, 'type'>;
+    runAsStatement?: Omit<statementType, 'type'>;
+    localVariableDeclarationStatement?: Omit<statementType, 'type'>;
+    expressionStatement?: Omit<statementType, 'type'>;
+};
 
 export const makeStatementType = (ctx: StatementContext): StatementType => {
     if (ctx.block()) {
@@ -27,7 +40,7 @@ export const makeStatementType = (ctx: StatementContext): StatementType => {
         const { type, ...statement } = new StatementVisitor().visit(ctx.ifStatement());
         return {
             type: 'statement',
-            statement: statement,
+            ifStatement: statement,
         };
     }
 
@@ -35,7 +48,7 @@ export const makeStatementType = (ctx: StatementContext): StatementType => {
         const { type, ...statement } = new StatementVisitor().visit(ctx.switchStatement());
         return {
             type: 'statement',
-            statement: statement,
+            switchStatement: statement,
         };
     }
 
@@ -43,7 +56,7 @@ export const makeStatementType = (ctx: StatementContext): StatementType => {
         const { type, ...statement } = new StatementVisitor().visit(ctx.forStatement());
         return {
             type: 'statement',
-            statement: statement,
+            forStatement: statement,
         };
     }
 
@@ -51,7 +64,7 @@ export const makeStatementType = (ctx: StatementContext): StatementType => {
         const { type, ...statement } = new StatementVisitor().visit(ctx.whileStatement());
         return {
             type: 'statement',
-            statement: statement,
+            whileStatement: statement,
         };
     }
 
@@ -59,7 +72,7 @@ export const makeStatementType = (ctx: StatementContext): StatementType => {
         const { type, ...statement } = new StatementVisitor().visit(ctx.doWhileStatement());
         return {
             type: 'statement',
-            statement: statement,
+            doWhileStatement: statement,
         };
     }
 
@@ -67,7 +80,7 @@ export const makeStatementType = (ctx: StatementContext): StatementType => {
         const { type, ...statement } = new StatementVisitor().visit(ctx.tryStatement());
         return {
             type: 'statement',
-            statement: statement,
+            tryStatement: statement,
         };
     }
 
@@ -75,7 +88,7 @@ export const makeStatementType = (ctx: StatementContext): StatementType => {
         const { type, ...statement } = new StatementVisitor().visit(ctx.returnStatement());
         return {
             type: 'statement',
-            statement: statement,
+            returnStatement: statement,
         };
     }
 
@@ -83,7 +96,7 @@ export const makeStatementType = (ctx: StatementContext): StatementType => {
         const { type, ...statement } = new StatementVisitor().visit(ctx.throwStatement());
         return {
             type: 'statement',
-            statement: statement,
+            throwStatement: statement,
         };
     }
 
@@ -91,7 +104,7 @@ export const makeStatementType = (ctx: StatementContext): StatementType => {
         const { type, ...statement } = new StatementVisitor().visit(ctx.breakStatement());
         return {
             type: 'statement',
-            statement: statement,
+            breakStatement: statement,
         };
     }
 
@@ -99,7 +112,7 @@ export const makeStatementType = (ctx: StatementContext): StatementType => {
         const { type, ...statement } = new StatementVisitor().visit(ctx.continueStatement());
         return {
             type: 'statement',
-            statement: statement,
+            continueStatement: statement,
         };
     }
 
@@ -107,7 +120,7 @@ export const makeStatementType = (ctx: StatementContext): StatementType => {
         const { type, ...statement } = new StatementVisitor().visit(ctx.insertStatement());
         return {
             type: 'statement',
-            statement: statement,
+            insertStatement: statement,
         };
     }
 
@@ -115,7 +128,7 @@ export const makeStatementType = (ctx: StatementContext): StatementType => {
         const { type, ...statement } = new StatementVisitor().visit(ctx.updateStatement());
         return {
             type: 'statement',
-            statement: statement,
+            updateStatement: statement,
         };
     }
 
@@ -123,7 +136,7 @@ export const makeStatementType = (ctx: StatementContext): StatementType => {
         const { type, ...statement } = new StatementVisitor().visit(ctx.deleteStatement());
         return {
             type: 'statement',
-            statement: statement,
+            deleteStatement: statement,
         };
     }
 
@@ -131,7 +144,7 @@ export const makeStatementType = (ctx: StatementContext): StatementType => {
         const { type, ...statement } = new StatementVisitor().visit(ctx.undeleteStatement());
         return {
             type: 'statement',
-            statement: statement,
+            undeleteStatement: statement,
         };
     }
 
@@ -139,7 +152,7 @@ export const makeStatementType = (ctx: StatementContext): StatementType => {
         const { type, ...statement } = new StatementVisitor().visit(ctx.upsertStatement());
         return {
             type: 'statement',
-            statement: statement,
+            upsertStatement: statement,
         };
     }
 
@@ -147,7 +160,7 @@ export const makeStatementType = (ctx: StatementContext): StatementType => {
         const { type, ...statement } = new StatementVisitor().visit(ctx.mergeStatement());
         return {
             type: 'statement',
-            statement: statement,
+            mergeStatement: statement,
         };
     }
 
@@ -155,7 +168,7 @@ export const makeStatementType = (ctx: StatementContext): StatementType => {
         const { type, ...statement } = new StatementVisitor().visit(ctx.runAsStatement());
         return {
             type: 'statement',
-            statement: statement,
+            runAsStatement: statement,
         };
     }
 
@@ -165,7 +178,7 @@ export const makeStatementType = (ctx: StatementContext): StatementType => {
         );
         return {
             type: 'statement',
-            statement: statement,
+            localVariableDeclarationStatement: statement,
         };
     }
 
@@ -173,10 +186,9 @@ export const makeStatementType = (ctx: StatementContext): StatementType => {
         const { type, ...statement } = new StatementVisitor().visit(ctx.expressionStatement());
         return {
             type: 'statement',
-            statement: statement,
+            expressionStatement: statement,
         };
     }
 
     throw new Error('値が異常です。StatementContext: ' + ctx.getText());
 };
-

@@ -8,7 +8,7 @@ export type ArgumentsType = {
 };
 
 export const makeArgumentsType = (ctx: ArgumentsContext): ArgumentsType => {
-    const args = new ListVisitor().visit(ctx.expressionList());
+    const { type, ...args } = new ListVisitor().visit(ctx.expressionList());
 
     return {
         type: 'arguments',

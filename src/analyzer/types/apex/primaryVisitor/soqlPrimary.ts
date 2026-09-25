@@ -1,16 +1,17 @@
-import { SoqlPrimaryContext, SoqlLiteralContext } from '@apexdevtools/apex-parser';
+import { SoqlPrimaryContext } from '@apexdevtools/apex-parser';
 
-import { QueryField, makeQueryField } from '../queryVisitor';
+import { LiteralType, LiteralVisitor } from '../literalVisitor';
 
 export type SoqlPrimaryType = {
     type: 'soqlPrimary';
-    query: QueryField;
+    value: Omit<LiteralType, 'type'>;
 };
 
 export const makeSoqlPrimaryType = (ctx: SoqlPrimaryContext): SoqlPrimaryType => {
+    const { type, ...value } = new LiteralVisitor().visit(ctx.soqlLiteral());
+
     return {
         type: 'soqlPrimary',
-        query: makeQueryField(ctx.soqlLiteral().query()),
+        value: value,
     };
 };
-

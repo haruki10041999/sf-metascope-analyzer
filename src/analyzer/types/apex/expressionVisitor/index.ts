@@ -27,6 +27,7 @@ import {
     SubExpressionContext,
     ParExpressionContext,
     BoundExpressionContext,
+    FilteringExpressionContext,
 } from '@apexdevtools/apex-parser';
 
 import { ArrayExpressionType, makeArrayExpressionType } from './arrayExpression';
@@ -56,6 +57,7 @@ import { PrimaryExpressionType, makePrimaryExpressionType } from './primaryExpre
 import { SubExpressionType, makeSubExpressionType } from './subExpression';
 import { ParExpressionType, makeParExpressionType } from './parExpression';
 import { BoundExpressionType, makeBoundExpressionType } from './boundExpression';
+import { FilteringExpressionType, makeFilteringExpressionType } from './filteringExpression';
 
 export type ExpressionType =
     | ArrayExpressionType
@@ -84,7 +86,8 @@ export type ExpressionType =
     | PrimaryExpressionType
     | SubExpressionType
     | ParExpressionType
-    | BoundExpressionType;
+    | BoundExpressionType
+    | FilteringExpressionType;
 
 export class ExpressionVisitor extends ApexParserBaseVisitor<ExpressionType> {
     visitExpressionContext(ctx: ExpressionContext) {
@@ -194,5 +197,8 @@ export class ExpressionVisitor extends ApexParserBaseVisitor<ExpressionType> {
     visitBoundExpressionContext(ctx: BoundExpressionContext) {
         return makeBoundExpressionType(ctx);
     }
-}
 
+    visitFilteringExpressionContext(ctx: FilteringExpressionContext) {
+        return makeFilteringExpressionType(ctx);
+    }
+}

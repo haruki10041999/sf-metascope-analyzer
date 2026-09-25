@@ -1,33 +1,19 @@
-import { MethodCallExpressionContext, MethodCallContext } from '@apexdevtools/apex-parser';
+import { MethodCallExpressionContext } from '@apexdevtools/apex-parser';
 
-import { ExpressionType, ExpressionVisitor } from '.';
+import { CallType, CallVisitor } from '../callVisitor';
 
 export type MethodCallExpressionType = {
     type: 'methodCallExpression';
-    methodName: string;
-    params: Omit<ExpressionType, 'type'>[];
-    mode: 'Normal' | 'Super' | 'This';
+    methodCall: Omit<CallType, 'type'>;
 };
 
 export const makeMethodCallExpressionType = (
     ctx: MethodCallExpressionContext,
 ): MethodCallExpressionType => {
-    const methodName = ctx.methodCall().id().getText();
-
-    const params = ctx
-        .methodCall()
-        .expressionList()
-        .expression_list()
-        .map((expressionCtx) => {
-            const { type, ...param } = new ExpressionVisitor().visit(expressionCtx);
-            return param;
-        });
+    const { type, ...methodCall } = new CallVisitor().visit(ctx.methodCall());
 
     return {
         type: 'methodCallExpression',
-        methodName: methodName,
-        params: params,
-        mode: ctx.methodCall().SUPER() ? 'Super' : ctx.methodCall().THIS() ? 'This' : 'Normal',
+        methodCall: methodCall,
     };
 };
-

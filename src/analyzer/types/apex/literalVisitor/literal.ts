@@ -21,7 +21,7 @@ export const makeLiteralType = (ctx: LiteralContext): LiteralType => {
             type: 'literal',
             value: {
                 type: 'integer',
-                value: ctx.getText(),
+                value: ctx.IntegerLiteral().getText(),
             },
         };
     }
@@ -31,7 +31,7 @@ export const makeLiteralType = (ctx: LiteralContext): LiteralType => {
             type: 'literal',
             value: {
                 type: 'long',
-                value: ctx.getText(),
+                value: ctx.LongLiteral().getText(),
             },
         };
     }
@@ -41,7 +41,7 @@ export const makeLiteralType = (ctx: LiteralContext): LiteralType => {
             type: 'literal',
             value: {
                 type: 'number',
-                value: ctx.getText(),
+                value: ctx.NumberLiteral().getText(),
             },
         };
     }
@@ -51,7 +51,7 @@ export const makeLiteralType = (ctx: LiteralContext): LiteralType => {
             type: 'literal',
             value: {
                 type: 'string',
-                value: ctx.getText(),
+                value: ctx.StringLiteral().getText(),
             },
         };
     }
@@ -61,7 +61,7 @@ export const makeLiteralType = (ctx: LiteralContext): LiteralType => {
             type: 'literal',
             value: {
                 type: 'multilineString',
-                value: ctx.getText(),
+                value: ctx.MultilineStringLiteral().getText(),
             },
         };
     }
@@ -71,7 +71,7 @@ export const makeLiteralType = (ctx: LiteralContext): LiteralType => {
             type: 'literal',
             value: {
                 type: 'boolean',
-                value: ctx.getText(),
+                value: ctx.BooleanLiteral().getText(),
             },
         };
     }

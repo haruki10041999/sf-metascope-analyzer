@@ -1,10 +1,14 @@
 import {
     ApexParserBaseVisitor,
     MemberDeclarationContext,
+    TriggerMemberDeclarationContext,
+    AnonymousMemberDeclarationContext,
+    TypeDeclarationContext,
     ClassDeclarationContext,
     ClassBodyDeclarationContext,
     EnumDeclarationContext,
     ConstructorDeclarationContext,
+    MethodDeclarationContext,
     LocalVariableDeclarationContext,
     FieldDeclarationContext,
     InterfaceMethodDeclarationContext,
@@ -13,6 +17,15 @@ import {
 } from '@apexdevtools/apex-parser';
 
 import { MemberDeclarationType, makeMemberDeclarationType } from './memberDeclaration';
+import {
+    TriggerMemberDeclarationType,
+    makeTriggerMemberDeclarationType,
+} from './triggerMemverDeclaration';
+import {
+    AnonymousMemberDeclarationType,
+    makeAnonymousMemberDeclarationType,
+} from './anonymousMemberDeclaration';
+import { TypeDeclarationType, makeTypeDeclarationType } from './typeDeclaration';
 import { FieldDeclarationType, makeFieldDeclarationType } from './fieldDeclaration';
 import { PropertyDeclarationType, makePropertyDeclarationType } from './propertyDeclaration';
 import {
@@ -26,6 +39,7 @@ import {
 } from './localVariableDeclaration';
 import { ClassDeclarationType, makeClassDeclarationType } from './classDeclaration';
 import { ClassBodyDeclarationType, makeClassBodyDeclarationType } from './classBodyDeclaration';
+import { MethodDeclarationType, makeMethodDeclarationType } from './methodDeclaration';
 import { EnumDeclarationType, makeEnumDeclarationType } from './enumDeclaration';
 import {
     ConstructorDeclarationType,
@@ -35,10 +49,14 @@ import {
 export type DeclarationType =
     | LocalVariableDeclarationType
     | MemberDeclarationType
+    | TriggerMemberDeclarationType
+    | AnonymousMemberDeclarationType
+    | TypeDeclarationType
     | ClassDeclarationType
     | ClassBodyDeclarationType
     | EnumDeclarationType
     | ConstructorDeclarationType
+    | MethodDeclarationType
     | FieldDeclarationType
     | InterfaceMethodDeclarationType
     | InterfaceDeclarationType
@@ -83,5 +101,21 @@ export class DeclarationVisitor extends ApexParserBaseVisitor<DeclarationType> {
 
     visitPropertyDeclarationContext(ctx: PropertyDeclarationContext) {
         return makePropertyDeclarationType(ctx);
+    }
+
+    visitMethodDeclarationContext(ctx: MethodDeclarationContext) {
+        return makeMethodDeclarationType(ctx);
+    }
+
+    visitTypeDeclarationContext(ctx: TypeDeclarationContext) {
+        return makeTypeDeclarationType(ctx);
+    }
+
+    visitTriggerMemberDeclarationContext(ctx: TriggerMemberDeclarationContext) {
+        return makeTriggerMemberDeclarationType(ctx);
+    }
+
+    visitAnonymousMemberDeclarationContext(ctx: AnonymousMemberDeclarationContext) {
+        return makeAnonymousMemberDeclarationType(ctx);
     }
 }
