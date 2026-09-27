@@ -4,7 +4,7 @@ import { FieldGroupByType, makeFieldGroupByType } from '../fieldGroupBy';
 
 export type FieldGroupByListType = {
     type: 'fieldGroupByList';
-    list: Omit<FieldGroupByType, 'type'>;
+    list: Omit<FieldGroupByType, 'type'>[];
 };
 
 export const makeFieldGroupByListType = (ctx: FieldGroupByListContext): FieldGroupByListType => {

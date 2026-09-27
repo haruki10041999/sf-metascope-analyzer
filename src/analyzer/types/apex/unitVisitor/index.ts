@@ -11,7 +11,7 @@ import { TriggerUnitType, makeTriggerUnitType } from './triggerUnit';
 
 export type UnitType = CompilationUnitType | AnonymousUnitType | TriggerUnitType;
 
-export class unitVisitor extends ApexParserBaseVisitor<UnitType> {
+export class UnitVisitor extends ApexParserBaseVisitor<UnitType> {
     visitCompilationUnitContext(ctx: CompilationUnitContext) {
         return makeCompilationUnitType(ctx);
     }

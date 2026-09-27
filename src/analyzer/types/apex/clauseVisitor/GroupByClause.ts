@@ -10,13 +10,13 @@ export type GroupByClauseType = {
     having?: Omit<ExpressionType, 'type'>;
 };
 
-export const makeGroupByClauseType = (ctx:GroupByClauseContext):GroupByClauseType => {
-    const {type,..fields} = new ListVisitor().visit(ctx.fieldGroupByList());
+export const makeGroupByClauseType = (ctx: GroupByClauseContext): GroupByClauseType => {
+    const { type, ...fields } = new ListVisitor().visit(ctx.fieldGroupByList());
 
-    const groupByClauseType:GroupByClauseType = {
-        type:'groupByClause',
-        fields:fields
-    }
+    const groupByClauseType: GroupByClauseType = {
+        type: 'groupByClause',
+        fields: fields,
+    };
 
     if (ctx.ROLLUP()) {
         groupByClauseType.mode = 'ROLLUP';
@@ -27,9 +27,9 @@ export const makeGroupByClauseType = (ctx:GroupByClauseContext):GroupByClauseTyp
     }
 
     if (ctx.HAVING() && ctx.logicalExpression()) {
-        const {type,...having} = new ExpressionVisitor().visit(ctx.logicalExpression());
+        const { type, ...having } = new ExpressionVisitor().visit(ctx.logicalExpression());
         groupByClauseType.having = having;
     }
 
     return groupByClauseType;
-}
+};

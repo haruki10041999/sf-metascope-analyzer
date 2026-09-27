@@ -4,7 +4,7 @@ import { PairType, PairVisitor } from '../pairVisitor';
 
 export type MapCreatorRestType = {
     type: 'mapCreatorRest';
-    initilValue: Omit<PairType, 'type'>;
+    initilValue: Omit<PairType, 'type'>[];
 };
 
 export const makeMapCreatorRestType = (ctx: MapCreatorRestContext): MapCreatorRestType => {

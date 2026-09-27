@@ -10,7 +10,7 @@ export type DotMethodCallType = {
 };
 
 export const makeDotMethodCallType = (ctx: DotMethodCallContext): DotMethodCallType => {
-    const { type: _, ...methodName } = new IdVisitor().visit(ctx.id());
+    const { type: _, ...methodName } = new IdVisitor().visit(ctx.anyId());
 
     const dotMethodCallType: DotMethodCallType = {
         type: 'dotMethodCall',

@@ -8,7 +8,7 @@ export type DotExpressionType = {
 };
 
 export const makeDotExpressionType = (ctx: DotExpressionContext): DotExpressionType => {
-    const { type, ...dotMethodCall } = new CallVisitor().visit(ctx.methodCall());
+    const { type, ...dotMethodCall } = new CallVisitor().visit(ctx.dotMethodCall());
 
     return {
         type: 'dotExpression',

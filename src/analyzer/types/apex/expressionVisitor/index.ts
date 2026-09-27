@@ -70,7 +70,7 @@ import { LogicalExpressionType, makeLogicalExpressionType } from './logicalExpre
 import {
     WhereLogicalExpressionType,
     makeWhereLogicalExpressionType,
-} from './wherelogicalExpression';
+} from './whereLogicalExpression';
 import {
     WhereConditionalExpressionType,
     makeWhereConditionalExpressionType,
