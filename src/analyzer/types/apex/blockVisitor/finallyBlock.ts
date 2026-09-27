@@ -10,6 +10,6 @@ export type FinallyBlockType = {
 export const makeFinallyBlockType = (ctx: FinallyBlockContext): FinallyBlockType => {
     return {
         type: 'finallyBlock',
-        block: new BlockVisitor().visitBlockContext(ctx.block()),
+        block: new BlockVisitor().visit(ctx.block()),
     };
 };
