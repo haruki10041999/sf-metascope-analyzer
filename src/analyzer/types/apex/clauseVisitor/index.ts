@@ -6,22 +6,43 @@ import {
     LimitClauseContext,
     ForClausesContext,
     ElseClauseContext,
+    GroupByClauseContext,
+    OrderByClauseContext,
+    WithClauseContext,
+    WhereClauseContext,
+    WhenClauseContext,
+    SoslWithClauseContext,
+    SoslClausesContext,
 } from '@apexdevtools/apex-parser';
 
 import { CatchClauseType, makeCatchClauseType } from './catchClause';
 import { AllRowClauseType, makeAllRowClauseType } from './allRowClause';
 import { OffsetClauseType, makeOffsetClauseType } from './offsetClause';
 import { LimitClauseType, makeLimitClauseType } from './limitClause';
-import { ForClauseType, makeForClauseType } from './forClause';
+import { ForClausesType, makeForClausesType } from './forClauses';
 import { ElseClauseType, makeElseClauseType } from './elseClause';
+import { GroupByClauseType, makeGroupByClauseType } from './GroupByClause';
+import { OrderByClauseType, makeOrderByClauseType } from './orderByClause';
+import { WithClauseType, makeWithClauseType } from './withClause';
+import { WhereClauseType, makeWhereClauseType } from './whereClause';
+import { WhenClauseType, makeWhenClauseType } from './whenClause';
+import { SoslWithClauseType, makeSoslWithClauseType } from './soslWithClause';
+import { SoslClausesType, makeSoslClausesType } from './soslClauses';
 
 export type ClauseType =
     | CatchClauseType
     | AllRowClauseType
     | OffsetClauseType
     | LimitClauseType
-    | ForClauseType
-    | ElseClauseType;
+    | ForClausesType
+    | ElseClauseType
+    | GroupByClauseType
+    | OrderByClauseType
+    | WithClauseType
+    | WhereClauseType
+    | WhenClauseType
+    | SoslWithClauseType
+    | SoslClausesType;
 
 export class ClauseVisitor extends ApexParserBaseVisitor<ClauseType> {
     visitCatchClauseContext(ctx: CatchClauseContext) {
@@ -41,10 +62,38 @@ export class ClauseVisitor extends ApexParserBaseVisitor<ClauseType> {
     }
 
     visitForClausesContext(ctx: ForClausesContext) {
-        return makeForClauseType(ctx);
+        return makeForClausesType(ctx);
     }
 
     visitElseClauseContext(ctx: ElseClauseContext) {
         return makeElseClauseType(ctx);
+    }
+
+    visitGroupByClauseContext(ctx: GroupByClauseContext) {
+        return makeGroupByClauseType(ctx);
+    }
+
+    visitOrderByClauseContext(ctx: OrderByClauseContext) {
+        return makeOrderByClauseType(ctx);
+    }
+
+    visitWithClauseContext(ctx: WithClauseContext) {
+        return makeWithClauseType(ctx);
+    }
+
+    visitWhereClauseContext(ctx: WhereClauseContext) {
+        return makeWhereClauseType(ctx);
+    }
+
+    visitWhenClauseContext(ctx: WhenClauseContext) {
+        return makeWhenClauseType(ctx);
+    }
+
+    visitSoslWithClauseContext(ctx: SoslWithClauseContext) {
+        return makeSoslWithClauseType(ctx);
+    }
+
+    visitSoslClausesContext(ctx: SoslClausesContext) {
+        return makeSoslClausesType(ctx);
     }
 }

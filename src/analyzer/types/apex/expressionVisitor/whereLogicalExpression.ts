@@ -1,0 +1,99 @@
+import { WhereLogicalExpressionContext } from '@apexdevtools/apex-parser';
+
+import { ExpressionType, ExpressionVisitor } from '.';
+
+type WhereLogicalFieldType =
+    | {
+          condition: Omit<ExpressionType, 'type'>;
+      }
+    | {
+          type: 'AND';
+          condition1: WhereLogicalFieldType;
+          condition2: WhereLogicalFieldType;
+      }
+    | {
+          type: 'OR';
+          condition1: WhereLogicalFieldType;
+          condition2: WhereLogicalFieldType;
+      }
+    | {
+          type: 'NOT';
+          condition: WhereLogicalFieldType;
+      };
+
+export type WhereLogicalExpressionType = {
+    type: 'whereLogicalExpression';
+    value: WhereLogicalFieldType;
+};
+
+export const makeWhereLogicalExpressionType = (
+    ctx: WhereLogicalExpressionContext,
+): WhereLogicalExpressionType => {
+    const conditions: WhereLogicalFieldType[] = ctx.whereConditionalExpression_list()
+        ? ctx.whereConditionalExpression_list().map((whereConditionalExpressionCtx) => {
+              const { type, ...value } = new ExpressionVisitor().visit(
+                  whereConditionalExpressionCtx,
+              );
+              return {
+                  condition: value,
+              };
+          })
+        : [];
+
+    const andNodes = ctx.SOQLAND_list()
+        ? ctx.SOQLAND_list().map((andNode) => {
+              return { index: andNode.symbol.tokenIndex, value: 'AND' };
+          })
+        : [];
+    const orNodes = ctx.SOQLOR_list()
+        ? ctx.SOQLOR_list().map((orNode) => {
+              return { index: orNode.symbol.tokenIndex, value: 'OR' };
+          })
+        : [];
+    const logicalOperators = [...andNodes, ...orNodes]
+        .sort((a, b) => a.index - b.index)
+        .map((node) => {
+            return node.value;
+        });
+
+    if (conditions.length - 1 !== logicalOperators.length) {
+        throw new Error('値が異常です。LogicalExpressionContext: ' + ctx.getText());
+    }
+
+    let i = 0;
+    while (i < logicalOperators.length) {
+        if (logicalOperators.at(i) === 'AND') {
+            const andConditon: WhereLogicalFieldType = {
+                type: 'AND',
+                condition1: conditions.at(i)!,
+                condition2: conditions.at(i + 1)!,
+            };
+
+            conditions.splice(i, 2, andConditon);
+            logicalOperators.splice(i, 1);
+        } else {
+            i++;
+        }
+    }
+
+    let value: WhereLogicalFieldType = conditions.at(0)!;
+    logicalOperators.forEach((operator, index) => {
+        value = {
+            type: 'OR',
+            condition1: value,
+            condition2: conditions.at(index + 1)!,
+        };
+    });
+
+    if (ctx.NOT()) {
+        value = {
+            type: 'NOT',
+            condition: value,
+        };
+    }
+
+    return {
+        type: 'whereLogicalExpression',
+        value: value,
+    };
+};

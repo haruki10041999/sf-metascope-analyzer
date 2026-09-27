@@ -1,18 +1,13 @@
 import { NetworkListContext } from '@apexdevtools/apex-parser';
 
+import { ListType, ListVisitor } from '.';
+
 export type NetworkListType = {
     type: 'networkList';
-    values: string[];
+    list: string[];
 };
 
 export const makeNetworkListType = (ctx: NetworkListContext): NetworkListType => {
-    return {
-        type: 'networkList',
-        values: _makeNetworkListValue(ctx),
-    };
-};
-
-const _makeNetworkListValue = (ctx: NetworkListContext): string[] => {
     let value = '';
     if (ctx.StringLiteral()) {
         value = ctx.StringLiteral().getText();
@@ -20,11 +15,20 @@ const _makeNetworkListValue = (ctx: NetworkListContext): string[] => {
         value = ctx.MultilineStringLiteral().getText();
     }
 
-    const values = [value];
-
-    if (ctx.networkList()) {
-        values.push(..._makeNetworkListValue(ctx.networkList()));
+    const list = [];
+    if (value !== '') {
+        list.push(value);
     }
 
-    return values;
+    if (ctx.networkList()) {
+        const nested = new ListVisitor().visit(ctx.networkList());
+        if (nested.type === 'networkList') {
+            list.push(...nested.list);
+        }
+    }
+
+    return {
+        type: 'networkList',
+        list: list,
+    };
 };

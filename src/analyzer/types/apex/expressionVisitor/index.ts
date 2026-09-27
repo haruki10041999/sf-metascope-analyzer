@@ -28,6 +28,12 @@ import {
     ParExpressionContext,
     BoundExpressionContext,
     FilteringExpressionContext,
+    FieldExpressionContext,
+    ConditionalExpressionContext,
+    LogicalExpressionContext,
+    WhereLogicalExpressionContext,
+    WhereConditionalExpressionContext,
+    WhereFieldExpressionContext,
 } from '@apexdevtools/apex-parser';
 
 import { ArrayExpressionType, makeArrayExpressionType } from './arrayExpression';
@@ -58,6 +64,18 @@ import { SubExpressionType, makeSubExpressionType } from './subExpression';
 import { ParExpressionType, makeParExpressionType } from './parExpression';
 import { BoundExpressionType, makeBoundExpressionType } from './boundExpression';
 import { FilteringExpressionType, makeFilteringExpressionType } from './filteringExpression';
+import { FieldExpressionType, makeFieldExpressionType } from './fieldExpression';
+import { ConditionalExpressionType, makeConditionalExpressionType } from './conditionalExpression';
+import { LogicalExpressionType, makeLogicalExpressionType } from './logicalExpression';
+import {
+    WhereLogicalExpressionType,
+    makeWhereLogicalExpressionType,
+} from './wherelogicalExpression';
+import {
+    WhereConditionalExpressionType,
+    makeWhereConditionalExpressionType,
+} from './whereConditionalExpression';
+import { WhereFieldExpressionType, makeWhereFieldExpressionType } from './whereFieldExpression';
 
 export type ExpressionType =
     | ArrayExpressionType
@@ -87,7 +105,13 @@ export type ExpressionType =
     | SubExpressionType
     | ParExpressionType
     | BoundExpressionType
-    | FilteringExpressionType;
+    | FilteringExpressionType
+    | FieldExpressionType
+    | ConditionalExpressionType
+    | LogicalExpressionType
+    | WhereLogicalExpressionType
+    | WhereConditionalExpressionType
+    | WhereFieldExpressionType;
 
 export class ExpressionVisitor extends ApexParserBaseVisitor<ExpressionType> {
     visitExpressionContext(ctx: ExpressionContext) {
@@ -200,5 +224,29 @@ export class ExpressionVisitor extends ApexParserBaseVisitor<ExpressionType> {
 
     visitFilteringExpressionContext(ctx: FilteringExpressionContext) {
         return makeFilteringExpressionType(ctx);
+    }
+
+    visitFieldExpressionContext(ctx: FieldExpressionContext) {
+        return makeFieldExpressionType(ctx);
+    }
+
+    visitConditionalExpressionContext(ctx: ConditionalExpressionContext) {
+        return makeConditionalExpressionType(ctx);
+    }
+
+    VisitLogicalExpressionContext(ctx: LogicalExpressionContext) {
+        return makeLogicalExpressionType(ctx);
+    }
+
+    visitWhereLogicalExpressionContext(ctx: WhereLogicalExpressionContext) {
+        return makeWhereLogicalExpressionType(ctx);
+    }
+
+    visitWhereConditionalExpressionContext(ctx: WhereConditionalExpressionContext) {
+        return makeWhereConditionalExpressionType(ctx);
+    }
+
+    visitWhereFieldExpressionContext(ctx: WhereFieldExpressionContext) {
+        return makeWhereFieldExpressionType(ctx);
     }
 }

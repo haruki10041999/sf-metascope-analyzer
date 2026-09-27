@@ -13,7 +13,8 @@ import { BlockType as blockType, makeBlockType } from './block';
 import { FinallyBlockType, makeFinallyBlockType } from './finallyBlock';
 import { PropertyBlockType, makePropertyBlockType } from './propertyBlock';
 
-export type BlockType = blockType | FinallyBlockType | PropertyBlockType | AnonymousBlockType;
+export type BlockType =
+    blockType | FinallyBlockType | PropertyBlockType | AnonymousBlockType | TriggerBlockType;
 
 export class BlockVisitor extends ApexParserBaseVisitor<BlockType> {
     visitBlockContext(ctx: BlockContext) {

@@ -1,13 +1,16 @@
 import { ApexParserBaseVisitor, QueryContext, SubQueryContext } from '@apexdevtools/apex-parser';
 
-export type QueryType = { type: string };
+import { QueryType as queryType, makeQueryType } from './query';
+import { SubQueryType, makeSubQueryType } from './subQuery';
+
+export type QueryType = queryType | SubQueryType;
 
 export class QueryVisitor extends ApexParserBaseVisitor<QueryType> {
     visitQueryContext(ctx: QueryContext) {
-        return { type: 'query' };
+        return makeQueryType(ctx);
     }
 
     visitSubQueryContext(ctx: SubQueryContext) {
-        return { type: 'subQuery' };
+        return makeSubQueryType(ctx);
     }
 }

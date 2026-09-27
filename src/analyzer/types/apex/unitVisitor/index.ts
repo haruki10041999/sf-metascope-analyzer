@@ -2,12 +2,14 @@ import {
     ApexParserBaseVisitor,
     CompilationUnitContext,
     AnonymousUnitContext,
+    TriggerUnitContext,
 } from '@apexdevtools/apex-parser';
 
 import { CompilationUnitType, makeCompilationUnitType } from './compilationUnit';
 import { AnonymousUnitType, makeAnonymousUnitType } from './anonymousUnit';
+import { TriggerUnitType, makeTriggerUnitType } from './triggerUnit';
 
-export type UnitType = CompilationUnitType | AnonymousUnitType;
+export type UnitType = CompilationUnitType | AnonymousUnitType | TriggerUnitType;
 
 export class unitVisitor extends ApexParserBaseVisitor<UnitType> {
     visitCompilationUnitContext(ctx: CompilationUnitContext) {
@@ -16,5 +18,9 @@ export class unitVisitor extends ApexParserBaseVisitor<UnitType> {
 
     visitAnonymousUnitContext(ctx: AnonymousUnitContext) {
         return makeAnonymousUnitType(ctx);
+    }
+
+    visitTriggerUnitContext(ctx: TriggerUnitContext) {
+        return makeTriggerUnitType(ctx);
     }
 }

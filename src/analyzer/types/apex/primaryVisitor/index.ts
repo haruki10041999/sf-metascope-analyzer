@@ -8,6 +8,7 @@ import {
     TypeRefPrimaryContext,
     IdPrimaryContext,
     LiteralPrimaryContext,
+    SoslPrimaryContext,
 } from '@apexdevtools/apex-parser';
 
 import { PrimaryType as primaryType, makePrimaryType } from './primary';
@@ -18,6 +19,7 @@ import { SuperPrimaryType, makeSuperPrimaryType } from './superPrimary';
 import { TypeRefPrimaryType, makeTypeRefPrimaryType } from './typeRefPrimary';
 import { IdPrimaryType, makeIdPrimaryType } from './idPrimary';
 import { LiteralPrimaryType, makeLiteralPrimaryType } from './literalPrimary';
+import { SoslPrimaryType, makeSoslPrimaryType } from './soslPrimary';
 
 export type PrimaryType =
     | primaryType
@@ -27,7 +29,8 @@ export type PrimaryType =
     | SuperPrimaryType
     | TypeRefPrimaryType
     | IdPrimaryType
-    | LiteralPrimaryType;
+    | LiteralPrimaryType
+    | SoslPrimaryType;
 
 export class PrimaryVisitor extends ApexParserBaseVisitor<PrimaryType> {
     visitPrimaryContext(ctx: PrimaryContext) {
@@ -61,5 +64,8 @@ export class PrimaryVisitor extends ApexParserBaseVisitor<PrimaryType> {
     visitLiteralPrimaryContext(ctx: LiteralPrimaryContext) {
         return makeLiteralPrimaryType(ctx);
     }
-}
 
+    visitSoslPrimaryContext(ctx: SoslPrimaryContext) {
+        return makeSoslPrimaryType(ctx);
+    }
+}
