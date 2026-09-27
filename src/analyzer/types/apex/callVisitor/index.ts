@@ -10,11 +10,11 @@ import { DotMethodCallType, makeDotMethodCallType } from './dotMethodCall';
 export type CallType = MethodCallType | DotMethodCallType;
 
 export class CallVisitor extends ApexParserBaseVisitor<CallType> {
-    visitMethodCallContext(ctx: MethodCallContext) {
+    visitMethodCall(ctx: MethodCallContext) {
         return makeMethodCallType(ctx);
     }
 
-    visitDotMethodCallContext(ctx: DotMethodCallContext) {
+    visitDotMethodCall(ctx: DotMethodCallContext) {
         return makeDotMethodCallType(ctx);
     }
 }

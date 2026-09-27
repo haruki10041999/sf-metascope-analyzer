@@ -24,27 +24,27 @@ export type NameType =
     | DataCategoryNameType;
 
 export class NameVisitor extends ApexParserBaseVisitor<NameType> {
-    visitQualifiedNameContext(ctx: QualifiedNameContext): NameType {
+    visitQualifiedName(ctx: QualifiedNameContext): NameType {
         return makeQualifiedNameType(ctx);
     }
 
-    visitTypeNameContext(ctx: TypeNameContext): NameType {
+    visitTypeName(ctx: TypeNameContext): NameType {
         return makeTypeNameType(ctx);
     }
 
-    visitCreatedNameContext(ctx: CreatedNameContext): NameType {
+    visitCreatedName(ctx: CreatedNameContext): NameType {
         return makeCreatedNameType(ctx);
     }
 
-    visitFieldNameContext(ctx: FieldNameContext): NameType {
+    visitFieldName(ctx: FieldNameContext): NameType {
         return makeFieldNameType(ctx);
     }
 
-    visitDateFieldNameContext(ctx: DateFieldNameContext): NameType {
+    visitDateFieldName(ctx: DateFieldNameContext): NameType {
         return makeDateFieldNameType(ctx);
     }
 
-    visitDataCategoryNameContext(ctx: DataCategoryNameContext): NameType {
+    visitDataCategoryName(ctx: DataCategoryNameContext): NameType {
         return makeDataCategoryNameType(ctx);
     }
 }

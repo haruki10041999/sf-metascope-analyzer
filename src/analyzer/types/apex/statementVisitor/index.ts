@@ -69,84 +69,83 @@ export type StatementType =
     | ExpressionStatementType;
 
 export class StatementVisitor extends ApexParserBaseVisitor<StatementType> {
-    visitStatementContext(ctx: StatementContext) {
+    visitStatement(ctx: StatementContext) {
         return makeStatementType(ctx);
     }
 
-    visitIfStatementContext(ctx: IfStatementContext) {
+    visitIfStatement(ctx: IfStatementContext) {
         return makeIfStatementType(ctx);
     }
 
-    visitSwitchStatementContext(ctx: SwitchStatementContext) {
+    visitSwitchStatement(ctx: SwitchStatementContext) {
         return makeSwitchStatementType(ctx);
     }
 
-    visitForStatementContext(ctx: ForStatementContext) {
+    visitForStatement(ctx: ForStatementContext) {
         return makeForStatementType(ctx);
     }
 
-    visitWhileStatementContext(ctx: WhileStatementContext) {
+    visitWhileStatement(ctx: WhileStatementContext) {
         return makeWhileStatementType(ctx);
     }
 
-    visitDoWhileStatementContext(ctx: DoWhileStatementContext) {
+    visitDoWhileStatement(ctx: DoWhileStatementContext) {
         return makeDoWhileStatementType(ctx);
     }
 
-    visitTryStatementContext(ctx: TryStatementContext) {
+    visitTryStatement(ctx: TryStatementContext) {
         return makeTryStatementType(ctx);
     }
 
-    visitReturnStatementContext(ctx: ReturnStatementContext) {
+    visitReturnStatement(ctx: ReturnStatementContext) {
         return makeReturnStatementType(ctx);
     }
 
-    visitThrowStatementContext(ctx: ThrowStatementContext) {
+    visitThrowStatement(ctx: ThrowStatementContext) {
         return makeThrowStatementType(ctx);
     }
 
-    visitBreakStatementContext(ctx: BreakStatementContext) {
+    visitBreakStatement(ctx: BreakStatementContext) {
         return makeBreakStatementType(ctx);
     }
 
-    visitContinueStatementContext(ctx: ContinueStatementContext) {
+    visitContinueStatement(ctx: ContinueStatementContext) {
         return makeContinueStatementType(ctx);
     }
 
-    visitInsertStatementContext(ctx: InsertStatementContext) {
+    visitInsertStatement(ctx: InsertStatementContext) {
         return makeInsertStatementType(ctx);
     }
 
-    visitUpdateStatementContext(ctx: UpdateStatementContext) {
+    visitUpdateStatement(ctx: UpdateStatementContext) {
         return makeUpdateStatementType(ctx);
     }
 
-    visitDeleteStatementContext(ctx: DeleteStatementContext) {
+    visitDeleteStatement(ctx: DeleteStatementContext) {
         return makeDeleteStatementType(ctx);
     }
 
-    visitUndeleteStatementContext(ctx: UndeleteStatementContext) {
+    visitUndeleteStatement(ctx: UndeleteStatementContext) {
         return makeUndeleteStatementType(ctx);
     }
 
-    visitUpsertStatementContext(ctx: UpsertStatementContext) {
+    visitUpsertStatement(ctx: UpsertStatementContext) {
         return makeUpsertStatementType(ctx);
     }
 
-    visitMergeStatementContext(ctx: MergeStatementContext) {
+    visitMergeStatement(ctx: MergeStatementContext) {
         return makeMergeStatementType(ctx);
     }
 
-    visitRunAsStatementContext(ctx: RunAsStatementContext) {
+    visitRunAsStatement(ctx: RunAsStatementContext) {
         return makeRunAsStatementType(ctx);
     }
 
-    visitLocalVariableDeclarationStatementContext(ctx: LocalVariableDeclarationStatementContext) {
+    visitLocalVariableDeclarationStatement(ctx: LocalVariableDeclarationStatementContext) {
         return makeLocalVariableDeclarationStatementType(ctx);
     }
 
-    visitExpressionStatementContext(ctx: ExpressionStatementContext) {
+    visitExpressionStatement(ctx: ExpressionStatementContext) {
         return makeExpressionStatementType(ctx);
     }
 }
-

@@ -17,23 +17,23 @@ export type ValueType =
     valueType | ElementValueType | WhenValueType | CoodinateValueType | LocationValueType;
 
 export class ValueVisitor extends ApexParserBaseVisitor<ValueType> {
-    visitValueContext(ctx: ValueContext) {
+    visitValue(ctx: ValueContext) {
         return makeValueType(ctx);
     }
 
-    visitElementValueContext(ctx: ElementValueContext): ValueType {
+    visitElementValue(ctx: ElementValueContext): ValueType {
         return makeElementValueType(ctx);
     }
 
-    visitWhenValueContext(ctx: WhenValueContext): ValueType {
+    visitWhenValue(ctx: WhenValueContext): ValueType {
         return makeWhenValueType(ctx);
     }
 
-    visitCoordinateValueContext(ctx: CoordinateValueContext) {
+    visitCoordinateValue(ctx: CoordinateValueContext) {
         return makeCoordinateValueType(ctx);
     }
 
-    visitLocationValueContext(ctx: LocationValueContext) {
+    visitLocationValue(ctx: LocationValueContext) {
         return makeLocationValueType(ctx);
     }
 }

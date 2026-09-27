@@ -45,55 +45,55 @@ export type ClauseType =
     | SoslClausesType;
 
 export class ClauseVisitor extends ApexParserBaseVisitor<ClauseType> {
-    visitCatchClauseContext(ctx: CatchClauseContext) {
+    visitCatchClause(ctx: CatchClauseContext) {
         return makeCatchClauseType(ctx);
     }
 
-    visitAllRowsClauseContext(ctx: AllRowsClauseContext) {
+    visitAllRowsClause(ctx: AllRowsClauseContext) {
         return makeAllRowClauseType(ctx);
     }
 
-    visitOffsetClauseContext(ctx: OffsetClauseContext) {
+    visitOffsetClause(ctx: OffsetClauseContext) {
         return makeOffsetClauseType(ctx);
     }
 
-    visitLimitClauseContext(ctx: LimitClauseContext) {
+    visitLimitClause(ctx: LimitClauseContext) {
         return makeLimitClauseType(ctx);
     }
 
-    visitForClausesContext(ctx: ForClausesContext) {
+    visitForClauses(ctx: ForClausesContext) {
         return makeForClausesType(ctx);
     }
 
-    visitElseClauseContext(ctx: ElseClauseContext) {
+    visitElseClause(ctx: ElseClauseContext) {
         return makeElseClauseType(ctx);
     }
 
-    visitGroupByClauseContext(ctx: GroupByClauseContext) {
+    visitGroupByClause(ctx: GroupByClauseContext) {
         return makeGroupByClauseType(ctx);
     }
 
-    visitOrderByClauseContext(ctx: OrderByClauseContext) {
+    visitOrderByClause(ctx: OrderByClauseContext) {
         return makeOrderByClauseType(ctx);
     }
 
-    visitWithClauseContext(ctx: WithClauseContext) {
+    visitWithClause(ctx: WithClauseContext) {
         return makeWithClauseType(ctx);
     }
 
-    visitWhereClauseContext(ctx: WhereClauseContext) {
+    visitWhereClause(ctx: WhereClauseContext) {
         return makeWhereClauseType(ctx);
     }
 
-    visitWhenClauseContext(ctx: WhenClauseContext) {
+    visitWhenClause(ctx: WhenClauseContext) {
         return makeWhenClauseType(ctx);
     }
 
-    visitSoslWithClauseContext(ctx: SoslWithClauseContext) {
+    visitSoslWithClause(ctx: SoslWithClauseContext) {
         return makeSoslWithClauseType(ctx);
     }
 
-    visitSoslClausesContext(ctx: SoslClausesContext) {
+    visitSoslClauses(ctx: SoslClausesContext) {
         return makeSoslClausesType(ctx);
     }
 }

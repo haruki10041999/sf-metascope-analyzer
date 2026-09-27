@@ -63,59 +63,59 @@ export type DeclarationType =
     | PropertyDeclarationType;
 
 export class DeclarationVisitor extends ApexParserBaseVisitor<DeclarationType> {
-    visitMemberDeclarationContext(ctx: MemberDeclarationContext) {
+    visitMemberDeclaration(ctx: MemberDeclarationContext) {
         return makeMemberDeclarationType(ctx);
     }
 
-    visitLocalVariableDeclarationContext(ctx: LocalVariableDeclarationContext) {
+    visitLocalVariableDeclaration(ctx: LocalVariableDeclarationContext) {
         return makeLocalVariableDeclarationType(ctx);
     }
 
-    visitClassDeclarationContext(ctx: ClassDeclarationContext) {
+    visitClassDeclaration(ctx: ClassDeclarationContext) {
         return makeClassDeclarationType(ctx);
     }
 
-    visitClassBodyDeclarationContext(ctx: ClassBodyDeclarationContext) {
+    visitClassBodyDeclaration(ctx: ClassBodyDeclarationContext) {
         return makeClassBodyDeclarationType(ctx);
     }
 
-    visitEnumDeclarationContext(ctx: EnumDeclarationContext) {
+    visitEnumDeclaration(ctx: EnumDeclarationContext) {
         return makeEnumDeclarationType(ctx);
     }
 
-    visitConstructorDeclarationContext(ctx: ConstructorDeclarationContext) {
+    visitConstructorDeclaration(ctx: ConstructorDeclarationContext) {
         return makeConstructorDeclarationType(ctx);
     }
 
-    visitInterfaceMethodDeclarationContext(ctx: InterfaceMethodDeclarationContext) {
+    visitInterfaceMethodDeclaration(ctx: InterfaceMethodDeclarationContext) {
         return makeInterfaceMethodDeclarationType(ctx);
     }
 
-    visitInterfaceDeclarationContext(ctx: InterfaceDeclarationContext) {
+    visitInterfaceDeclaration(ctx: InterfaceDeclarationContext) {
         return makeInterfaceDeclarationType(ctx);
     }
 
-    visitFieldDeclarationContext(ctx: FieldDeclarationContext) {
+    visitFieldDeclaration(ctx: FieldDeclarationContext) {
         return makeFieldDeclarationType(ctx);
     }
 
-    visitPropertyDeclarationContext(ctx: PropertyDeclarationContext) {
+    visitPropertyDeclaration(ctx: PropertyDeclarationContext) {
         return makePropertyDeclarationType(ctx);
     }
 
-    visitMethodDeclarationContext(ctx: MethodDeclarationContext) {
+    visitMethodDeclaration(ctx: MethodDeclarationContext) {
         return makeMethodDeclarationType(ctx);
     }
 
-    visitTypeDeclarationContext(ctx: TypeDeclarationContext) {
+    visitTypeDeclaration(ctx: TypeDeclarationContext) {
         return makeTypeDeclarationType(ctx);
     }
 
-    visitTriggerMemberDeclarationContext(ctx: TriggerMemberDeclarationContext) {
+    visitTriggerMemberDeclaration(ctx: TriggerMemberDeclarationContext) {
         return makeTriggerMemberDeclarationType(ctx);
     }
 
-    visitAnonymousMemberDeclarationContext(ctx: AnonymousMemberDeclarationContext) {
+    visitAnonymousMemberDeclaration(ctx: AnonymousMemberDeclarationContext) {
         return makeAnonymousMemberDeclarationType(ctx);
     }
 }

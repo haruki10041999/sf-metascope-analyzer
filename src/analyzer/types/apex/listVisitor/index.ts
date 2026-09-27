@@ -48,58 +48,58 @@ export type ListType =
     | FieldSpecListType;
 
 export class ListVisitor extends ApexParserBaseVisitor<ListType> {
-    visitTypeListContext(ctx: TypeListContext): ListType {
+    visitTypeList(ctx: TypeListContext): ListType {
         return makeTypeListType(ctx);
     }
-    visitExpressionListContext(ctx: ExpressionListContext): ListType {
+    visitExpressionList(ctx: ExpressionListContext): ListType {
         return makeExpressionListType(ctx);
     }
 
-    visitFormalParameterListContext(ctx: FormalParameterListContext): ListType {
+    visitFormalParameterList(ctx: FormalParameterListContext): ListType {
         return makeFormalParameterListType(ctx);
     }
 
-    visitValueListContext(ctx: ValueListContext) {
+    visitValueList(ctx: ValueListContext) {
         return makeValueListType(ctx);
     }
 
-    visitFieldNameListContext(ctx: FieldNameListContext) {
+    visitFieldNameList(ctx: FieldNameListContext) {
         return makeFieldNameListType(ctx);
     }
 
-    visitUpdateListContext(ctx: UpdateListContext) {
+    visitUpdateList(ctx: UpdateListContext) {
         return makeUpdateListType(ctx);
     }
 
-    visitNetworkListContext(ctx: NetworkListContext) {
+    visitNetworkList(ctx: NetworkListContext) {
         return makeNetworkListType(ctx);
     }
 
-    visitFromNameListContext(ctx: FromNameListContext) {
+    visitFromNameList(ctx: FromNameListContext) {
         return makeFromNameListType(ctx);
     }
 
-    visitFieldGroupByListContext(ctx: FieldGroupByListContext) {
+    visitFieldGroupByList(ctx: FieldGroupByListContext) {
         return makeFieldGroupByListType(ctx);
     }
 
-    visitFieldOrderListContext(ctx: FieldOrderListContext) {
+    visitFieldOrderList(ctx: FieldOrderListContext) {
         return makeFieldOrderListType(ctx);
     }
 
-    visitSelectListContext(ctx: SelectListContext) {
+    visitSelectList(ctx: SelectListContext) {
         return makeSelectListType(ctx);
     }
 
-    visitSubFieldListContext(ctx: SubFieldListContext) {
+    visitSubFieldList(ctx: SubFieldListContext) {
         return makeSubFieldListType(ctx);
     }
 
-    visitFieldListContext(ctx: FieldListContext) {
+    visitFieldList(ctx: FieldListContext) {
         return makeFieldListType(ctx);
     }
 
-    visitFieldSpecListContext(ctx: FieldSpecListContext) {
+    visitFieldSpecList(ctx: FieldSpecListContext) {
         return makeFieldSpecListType(ctx);
     }
 }

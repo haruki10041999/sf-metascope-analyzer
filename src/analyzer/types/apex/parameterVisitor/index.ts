@@ -10,12 +10,11 @@ import { SoqlFieldsParameterType, makeSoqlFieldsParameterType } from './soqlFiel
 export type ParameterType = FormalParameterType | SoqlFieldsParameterType;
 
 export class ParameterVisitor extends ApexParserBaseVisitor<ParameterType> {
-    visitFormalParameterContext(ctx: FormalParameterContext) {
+    visitFormalParameter(ctx: FormalParameterContext) {
         return makeFormalParameterType(ctx);
     }
 
-    visitSoqlFieldsParameterContext(ctx: SoqlFieldsParameterContext) {
+    visitSoqlFieldsParameter(ctx: SoqlFieldsParameterContext) {
         return makeSoqlFieldsParameterType(ctx);
     }
 }
-

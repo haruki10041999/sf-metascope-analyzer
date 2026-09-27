@@ -10,11 +10,11 @@ import { InterfaceBodyType, makeInterfaceBodyType } from './interfaceBody';
 export type BodyType = ClassBodyType | InterfaceBodyType;
 
 export class BodyVisitor extends ApexParserBaseVisitor<BodyType> {
-    visitClassBodyContext(ctx: ClassBodyContext) {
+    visitClassBody(ctx: ClassBodyContext) {
         return makeClassBodyType(ctx);
     }
 
-    visitInterfaceBodyContext(ctx: InterfaceBodyContext) {
+    visitInterfaceBody(ctx: InterfaceBodyContext) {
         return makeInterfaceBodyType(ctx);
     }
 }

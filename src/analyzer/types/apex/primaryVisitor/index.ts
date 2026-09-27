@@ -33,39 +33,39 @@ export type PrimaryType =
     | SoslPrimaryType;
 
 export class PrimaryVisitor extends ApexParserBaseVisitor<PrimaryType> {
-    visitPrimaryContext(ctx: PrimaryContext) {
+    visitPrimary(ctx: PrimaryContext) {
         return makePrimaryType(ctx);
     }
 
-    visitThisPrimaryContext(ctx: ThisPrimaryContext) {
+    visitThisPrimary(ctx: ThisPrimaryContext) {
         return makeThisPrimaryType(ctx);
     }
 
-    visitVoidPrimaryContext(ctx: VoidPrimaryContext) {
+    visitVoidPrimary(ctx: VoidPrimaryContext) {
         return makeVoidPrimaryType(ctx);
     }
 
-    visitSoqlPrimaryContext(ctx: SoqlPrimaryContext) {
+    visitSoqlPrimary(ctx: SoqlPrimaryContext) {
         return makeSoqlPrimaryType(ctx);
     }
 
-    visitSuperPrimaryContext(ctx: SuperPrimaryContext) {
+    visitSuperPrimary(ctx: SuperPrimaryContext) {
         return makeSuperPrimaryType(ctx);
     }
 
-    visitTypeRefPrimaryContext(ctx: TypeRefPrimaryContext) {
+    visitTypeRefPrimary(ctx: TypeRefPrimaryContext) {
         return makeTypeRefPrimaryType(ctx);
     }
 
-    visitIdPrimaryContext(ctx: IdPrimaryContext) {
+    visitIdPrimary(ctx: IdPrimaryContext) {
         return makeIdPrimaryType(ctx);
     }
 
-    visitLiteralPrimaryContext(ctx: LiteralPrimaryContext) {
+    visitLiteralPrimary(ctx: LiteralPrimaryContext) {
         return makeLiteralPrimaryType(ctx);
     }
 
-    visitSoslPrimaryContext(ctx: SoslPrimaryContext) {
+    visitSoslPrimary(ctx: SoslPrimaryContext) {
         return makeSoslPrimaryType(ctx);
     }
 }

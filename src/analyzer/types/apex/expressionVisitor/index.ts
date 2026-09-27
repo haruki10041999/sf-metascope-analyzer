@@ -114,139 +114,139 @@ export type ExpressionType =
     | WhereFieldExpressionType;
 
 export class ExpressionVisitor extends ApexParserBaseVisitor<ExpressionType> {
-    visitExpressionContext(ctx: ExpressionContext) {
+    visitExpression(ctx: ExpressionContext) {
         return makeExpressionType(ctx);
     }
 
-    visitPrimaryExpressionContext(ctx: PrimaryExpressionContext) {
+    visitPrimaryExpression(ctx: PrimaryExpressionContext) {
         return makePrimaryExpressionType(ctx);
     }
 
-    visitArth1ExpressionContext(ctx: Arth1ExpressionContext) {
+    visitArth1Expression(ctx: Arth1ExpressionContext) {
         return makeArth1ExpressionType(ctx);
     }
 
-    visitCoalExpressionContext(ctx: CoalExpressionContext) {
+    visitCoalExpression(ctx: CoalExpressionContext) {
         return makeCoalExpressionType(ctx);
     }
 
-    visitDotExpressionContext(ctx: DotExpressionContext) {
+    visitDotExpression(ctx: DotExpressionContext) {
         return makeDotExpressionType(ctx);
     }
 
-    visitBitOrExpressionContext(ctx: BitOrExpressionContext) {
+    visitBitOrExpression(ctx: BitOrExpressionContext) {
         return makeBitOrExpressionType(ctx);
     }
 
-    visitArrayExpressionContext(ctx: ArrayExpressionContext) {
+    visitArrayExpression(ctx: ArrayExpressionContext) {
         return makeArrayExpressionType(ctx);
     }
 
-    visitNewExpressionContext(ctx: NewExpressionContext) {
+    visitNewExpression(ctx: NewExpressionContext) {
         return makeNewExpressionType(ctx);
     }
 
-    visitAssignExpressionContext(ctx: AssignExpressionContext) {
+    visitAssignExpression(ctx: AssignExpressionContext) {
         return makeAssignExpressionType(ctx);
     }
 
-    visitMethodCallExpressionContext(ctx: MethodCallExpressionContext) {
+    visitMethodCallExpression(ctx: MethodCallExpressionContext) {
         return makeMethodCallExpressionType(ctx);
     }
 
-    visitBitNotExpressionContext(ctx: BitNotExpressionContext) {
+    visitBitNotExpression(ctx: BitNotExpressionContext) {
         return makeBitNotExpressionType(ctx);
     }
 
-    visitArth2ExpressionContext(ctx: Arth2ExpressionContext) {
+    visitArth2Expression(ctx: Arth2ExpressionContext) {
         return makeArth2ExpressionType(ctx);
     }
 
-    visitLogAndExpressionContext(ctx: LogAndExpressionContext) {
+    visitLogAndExpression(ctx: LogAndExpressionContext) {
         return makeLogAndExpressionType(ctx);
     }
 
-    visitCastExpressionContext(ctx: CastExpressionContext) {
+    visitCastExpression(ctx: CastExpressionContext) {
         return makeCastExpressionType(ctx);
     }
 
-    visitBitAndExpressionContext(ctx: BitAndExpressionContext) {
+    visitBitAndExpression(ctx: BitAndExpressionContext) {
         return makeBitAndExpressionType(ctx);
     }
 
-    visitCmpExpressionContext(ctx: CmpExpressionContext) {
+    visitCmpExpression(ctx: CmpExpressionContext) {
         return makeCmpExpressionType(ctx);
     }
 
-    visitBitExpressionContext(ctx: BitExpressionContext) {
+    visitBitExpression(ctx: BitExpressionContext) {
         return makeBitExpressionType(ctx);
     }
 
-    visitLogOrExpressionContext(ctx: LogOrExpressionContext) {
+    visitLogOrExpression(ctx: LogOrExpressionContext) {
         return makeLogOrExpressionType(ctx);
     }
 
-    visitCondExpressionContext(ctx: CondExpressionContext) {
+    visitCondExpression(ctx: CondExpressionContext) {
         return makeCondExpressionType(ctx);
     }
 
-    visitEqualityExpressionContext(ctx: EqualityExpressionContext) {
+    visitEqualityExpression(ctx: EqualityExpressionContext) {
         return makeEqualityExpressionType(ctx);
     }
 
-    visitPostOpExpressionContext(ctx: PostOpExpressionContext) {
+    visitPostOpExpression(ctx: PostOpExpressionContext) {
         return makePostOpExpressionType(ctx);
     }
 
-    visitNegExpressionContext(ctx: NegExpressionContext) {
+    visitNegExpression(ctx: NegExpressionContext) {
         return makeNegExpressionType(ctx);
     }
 
-    visitPreOpExpressionContext(ctx: PreOpExpressionContext) {
+    visitPreOpExpression(ctx: PreOpExpressionContext) {
         return makePreOpExpressionType(ctx);
     }
 
-    visitSubExpressionContext(ctx: SubExpressionContext) {
+    visitSubExpression(ctx: SubExpressionContext) {
         return makeSubExpressionType(ctx);
     }
 
-    visitInstanceOfExpressionContext(ctx: InstanceOfExpressionContext) {
+    visitInstanceOfExpression(ctx: InstanceOfExpressionContext) {
         return makeInstanceOfExpressionType(ctx);
     }
 
-    visitParExpressionContext(ctx: ParExpressionContext) {
+    visitParExpression(ctx: ParExpressionContext) {
         return makeParExpressionType(ctx);
     }
 
-    visitBoundExpressionContext(ctx: BoundExpressionContext) {
+    visitBoundExpression(ctx: BoundExpressionContext) {
         return makeBoundExpressionType(ctx);
     }
 
-    visitFilteringExpressionContext(ctx: FilteringExpressionContext) {
+    visitFilteringExpression(ctx: FilteringExpressionContext) {
         return makeFilteringExpressionType(ctx);
     }
 
-    visitFieldExpressionContext(ctx: FieldExpressionContext) {
+    visitFieldExpression(ctx: FieldExpressionContext) {
         return makeFieldExpressionType(ctx);
     }
 
-    visitConditionalExpressionContext(ctx: ConditionalExpressionContext) {
+    visitConditionalExpression(ctx: ConditionalExpressionContext) {
         return makeConditionalExpressionType(ctx);
     }
 
-    VisitLogicalExpressionContext(ctx: LogicalExpressionContext) {
+    VisitLogicalExpression(ctx: LogicalExpressionContext) {
         return makeLogicalExpressionType(ctx);
     }
 
-    visitWhereLogicalExpressionContext(ctx: WhereLogicalExpressionContext) {
+    visitWhereLogicalExpression(ctx: WhereLogicalExpressionContext) {
         return makeWhereLogicalExpressionType(ctx);
     }
 
-    visitWhereConditionalExpressionContext(ctx: WhereConditionalExpressionContext) {
+    visitWhereConditionalExpression(ctx: WhereConditionalExpressionContext) {
         return makeWhereConditionalExpressionType(ctx);
     }
 
-    visitWhereFieldExpressionContext(ctx: WhereFieldExpressionContext) {
+    visitWhereFieldExpression(ctx: WhereFieldExpressionContext) {
         return makeWhereFieldExpressionType(ctx);
     }
 }

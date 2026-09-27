@@ -12,15 +12,15 @@ import { WhenControlType, makeWhenControlType } from './whenControl';
 export type ControlType = ForControlType | EnhancedForControlType | WhenControlType;
 
 export class ControlVisitor extends ApexParserBaseVisitor<ControlType> {
-    visitForControlContext(ctx: ForControlContext) {
+    visitForControl(ctx: ForControlContext) {
         return makeForControlType(ctx);
     }
 
-    visitEnhancedForControlContext(ctx: EnhancedForControlContext) {
+    visitEnhancedForControl(ctx: EnhancedForControlContext) {
         return makeEnhancedForControlType(ctx);
     }
 
-    visitWhenControlContext(ctx: WhenControlContext) {
+    visitWhenControl(ctx: WhenControlContext) {
         return makeWhenControlType(ctx);
     }
 }

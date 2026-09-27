@@ -14,19 +14,19 @@ import { SoslLiteralAltType, makeSoslLiteralAltType } from './soslLiteralAlt';
 export type LiteralType = literalType | WhenLiteralType | SoslLiteralType;
 
 export class LiteralVisitor extends ApexParserBaseVisitor<LiteralType> {
-    visitLiteralContext(ctx: LiteralContext): LiteralType {
+    visitLiteral(ctx: LiteralContext): LiteralType {
         return makeLiteralType(ctx);
     }
 
-    visitWhenLiteralContext(ctx: WhenLiteralContext): LiteralType {
+    visitWhenLiteral(ctx: WhenLiteralContext): LiteralType {
         return makeWhenLiteralType(ctx);
     }
 
-    visitSoslLiteralContext(ctx: SoslLiteralContext) {
+    visitSoslLiteral(ctx: SoslLiteralContext) {
         return makeSoslLiteralType(ctx);
     }
 
-    visitSoslLiteralAltContext(ctx: SoslLiteralAltContext) {
+    visitSoslLiteralAlt(ctx: SoslLiteralAltContext) {
         return makeSoslLiteralAltType(ctx);
     }
 }

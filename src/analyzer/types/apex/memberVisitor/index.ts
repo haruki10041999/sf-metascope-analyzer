@@ -10,11 +10,11 @@ import { TriggerBlockMemberType, makeTriggerBlockMemberType } from './triggerBlo
 export type MemberType = AnonymousBlockMemberType | TriggerBlockMemberType;
 
 export class MemberVisitor extends ApexParserBaseVisitor<MemberType> {
-    visitAnonymousBlockMemberContext(ctx: AnonymousBlockMemberContext) {
+    visitAnonymousBlockMember(ctx: AnonymousBlockMemberContext) {
         return makeAnonymousBlockMemberType(ctx);
     }
 
-    visitTriggerBlockMemberContext(ctx: TriggerBlockMemberContext) {
+    visitTriggerBlockMember(ctx: TriggerBlockMemberContext) {
         return makeTriggerBlockMemberType(ctx);
     }
 }

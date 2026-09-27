@@ -10,11 +10,11 @@ import { SubFieldEntryType, makeSubFieldEntryType } from './subFieldEntry';
 export type EntryType = SelectEntryType | SubFieldEntryType;
 
 export class EntryVisitor extends ApexParserBaseVisitor<EntryType> {
-    visitSelectEntryContext(ctx: SelectEntryContext) {
+    visitSelectEntry(ctx: SelectEntryContext) {
         return makeSelectEntryType(ctx);
     }
 
-    visitSubFieldEntryContext(ctx: SubFieldEntryContext) {
+    visitSubFieldEntry(ctx: SubFieldEntryContext) {
         return makeSubFieldEntryType(ctx);
     }
 }

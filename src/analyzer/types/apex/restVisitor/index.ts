@@ -21,23 +21,23 @@ export type RestType =
     | SetCreatorRestType;
 
 export class RestVisitor extends ApexParserBaseVisitor<RestType> {
-    visitNoRestContext(ctx: NoRestContext) {
+    visitNoRest(ctx: NoRestContext) {
         return makeNoRestType(ctx);
     }
 
-    visitClassCreatorRestContext(ctx: ClassCreatorRestContext) {
+    visitClassCreatorRest(ctx: ClassCreatorRestContext) {
         return makeClassCreatorRestType(ctx);
     }
 
-    visitArrayCreatorRestContext(ctx: ArrayCreatorRestContext) {
+    visitArrayCreatorRest(ctx: ArrayCreatorRestContext) {
         return makeArrayCreatorRestType(ctx);
     }
 
-    visitMapCreatorRestContext(ctx: MapCreatorRestContext) {
+    visitMapCreatorRest(ctx: MapCreatorRestContext) {
         return makeMapCreatorRestType(ctx);
     }
 
-    visitSetCreatorRestContext(ctx: SetCreatorRestContext) {
+    visitSetCreatorRest(ctx: SetCreatorRestContext) {
         return makeSetCreatorRestType(ctx);
     }
 }

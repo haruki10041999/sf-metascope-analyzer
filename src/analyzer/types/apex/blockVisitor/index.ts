@@ -17,23 +17,23 @@ export type BlockType =
     blockType | FinallyBlockType | PropertyBlockType | AnonymousBlockType | TriggerBlockType;
 
 export class BlockVisitor extends ApexParserBaseVisitor<BlockType> {
-    visitBlockContext(ctx: BlockContext) {
+    visitBlock(ctx: BlockContext) {
         return makeBlockType(ctx);
     }
 
-    visitFinallyBlockContext(ctx: FinallyBlockContext) {
+    visitFinallyBlock(ctx: FinallyBlockContext) {
         return makeFinallyBlockType(ctx);
     }
 
-    visitPropertyBlockContext(ctx: PropertyBlockContext) {
+    visitPropertyBlock(ctx: PropertyBlockContext) {
         return makePropertyBlockType(ctx);
     }
 
-    visitAnonymousBlockContext(ctx: AnonymousBlockContext) {
+    visitAnonymousBlock(ctx: AnonymousBlockContext) {
         return makeAnonymousBlockType(ctx);
     }
 
-    visitTriggerBlockContext(ctx: TriggerBlockContext) {
+    visitTriggerBlock(ctx: TriggerBlockContext) {
         return makeTriggerBlockType(ctx);
     }
 }

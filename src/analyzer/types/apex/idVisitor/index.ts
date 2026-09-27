@@ -14,17 +14,17 @@ import { SoslIdType, makeSoslIdType } from './soslId';
 export type IdType = idType | AnyIdType | SoqlIdType | SoslIdType;
 
 export class IdVisitor extends ApexParserBaseVisitor<IdType> {
-    visitIdContext(ctx: IdContext) {
+    visitId(ctx: IdContext) {
         return makeIdType(ctx);
     }
-    visitAnyIdContext(ctx: AnyIdContext) {
+    visitAnyId(ctx: AnyIdContext) {
         return makeAnyIdType(ctx);
     }
-    visitSoqlIdContext(ctx: SoqlIdContext) {
+    visitSoqlId(ctx: SoqlIdContext) {
         return makeSoqlIdType(ctx);
     }
 
-    visitSoslIdContext(ctx: SoslIdContext) {
+    visitSoslId(ctx: SoslIdContext) {
         return makeSoslIdType(ctx);
     }
 }

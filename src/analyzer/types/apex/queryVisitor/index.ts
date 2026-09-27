@@ -6,11 +6,11 @@ import { SubQueryType, makeSubQueryType } from './subQuery';
 export type QueryType = queryType | SubQueryType;
 
 export class QueryVisitor extends ApexParserBaseVisitor<QueryType> {
-    visitQueryContext(ctx: QueryContext) {
+    visitQuery(ctx: QueryContext) {
         return makeQueryType(ctx);
     }
 
-    visitSubQueryContext(ctx: SubQueryContext) {
+    visitSubQuery(ctx: SubQueryContext) {
         return makeSubQueryType(ctx);
     }
 }

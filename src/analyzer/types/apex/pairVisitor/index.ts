@@ -12,15 +12,15 @@ import { MapCreatorPairType, makeMapCreatorPairType } from './mapCreatorPair';
 export type PairType = IdCreatedNamePairType | ElementValuePairType | MapCreatorPairType;
 
 export class PairVisitor extends ApexParserBaseVisitor<PairType> {
-    visitIdCreatedNamePairContext(ctx: IdCreatedNamePairContext): PairType {
+    visitIdCreatedNamePair(ctx: IdCreatedNamePairContext): PairType {
         return makeIdCreatedNamePairType(ctx);
     }
 
-    visitElementValuePairContext(ctx: ElementValuePairContext): PairType {
+    visitElementValuePair(ctx: ElementValuePairContext): PairType {
         return makeElementValuePairType(ctx);
     }
 
-    visitMapCreatorRestPairContext(ctx: MapCreatorRestPairContext): PairType {
+    visitMapCreatorRestPair(ctx: MapCreatorRestPairContext): PairType {
         return makeMapCreatorPairType(ctx);
     }
 }

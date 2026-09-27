@@ -10,11 +10,11 @@ import { TypeArgumentsType, makeTypeArgumentsType } from './typeArguments';
 export type ArgumentsType = argumentsType | TypeArgumentsType;
 
 export class ArgumentsVisitor extends ApexParserBaseVisitor<ArgumentsType> {
-    visitArgumentsContext(ctx: ArgumentsContext): ArgumentsType {
+    visitArguments(ctx: ArgumentsContext): ArgumentsType {
         return makeArgumentsType(ctx);
     }
 
-    visitTypeArgumentsContext(ctx: TypeArgumentsContext): ArgumentsType {
+    visitTypeArguments(ctx: TypeArgumentsContext): ArgumentsType {
         return makeTypeArgumentsType(ctx);
     }
 }
