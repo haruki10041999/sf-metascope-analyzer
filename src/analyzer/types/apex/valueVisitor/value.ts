@@ -5,8 +5,6 @@ import { ListType, ListVisitor } from '../listVisitor';
 import { QueryType, QueryVisitor } from '../queryVisitor';
 import { LiteralVisitor, LiteralType } from '../literalVisitor';
 
-import { DateFormulaType, makeDateFormulaType } from '../dateFormula';
-
 type ValueFieldType =
     | {
           type: 'null';
@@ -30,7 +28,7 @@ type ValueFieldType =
       }
     | {
           type: 'dateFormula';
-          value: DateFormulaType;
+          value: QueryType;
       }
     | {
           type: 'subQuery';
@@ -121,7 +119,7 @@ export const makeValueType = (ctx: ValueContext): ValueType => {
     }
 
     if (ctx.dateFormula()) {
-        const value = makeDateFormulaType(ctx.dateFormula());
+        const value = new QueryVisitor().visit(ctx.dateFormula());
         valueFieldType = {
             type: 'dateFormula',
             value: value,

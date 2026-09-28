@@ -3,13 +3,11 @@ import { SubFieldEntryContext } from '@apexdevtools/apex-parser';
 import { IdType, IdVisitor } from '../idVisitor';
 import { NameType, NameVisitor } from '../nameVisitor';
 import { QueryType, QueryVisitor } from '../queryVisitor';
-
-import { SoqlFunctionType, makeSoqlFunctionType } from '../soqlFunction';
-import { TypeOfType, makeTypeOfType } from '../typeOf';
+import { ClauseType, ClauseVisitor } from '../clauseVisitor';
 
 export type SubFieldEntryType = {
     type: 'subFieldEntry';
-    entry: NameType | IdType | SoqlFunctionType | QueryType | TypeOfType;
+    entry: NameType | IdType | QueryType | ClauseType;
 };
 
 export const makeSubFieldEntryType = (ctx: SubFieldEntryContext): SubFieldEntryType => {
@@ -30,7 +28,7 @@ export const makeSubFieldEntryType = (ctx: SubFieldEntryContext): SubFieldEntryT
     }
 
     if (ctx.soqlFunction()) {
-        const field = makeSoqlFunctionType(ctx.soqlFunction());
+        const field = new QueryVisitor().visit(ctx.soqlFunction());
         return {
             type: 'subFieldEntry',
             entry: field,
@@ -46,7 +44,7 @@ export const makeSubFieldEntryType = (ctx: SubFieldEntryContext): SubFieldEntryT
     }
 
     if (ctx.typeOf()) {
-        const field = makeTypeOfType(ctx.typeOf());
+        const field = new ClauseVisitor().visit(ctx.typeOf());
         return {
             type: 'subFieldEntry',
             entry: field,

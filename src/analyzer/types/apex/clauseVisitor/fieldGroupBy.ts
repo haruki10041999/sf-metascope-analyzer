@@ -1,28 +1,27 @@
 import { FieldGroupByContext } from '@apexdevtools/apex-parser';
 
-import { NameType, NameVisitor } from './nameVisitor';
-
-import { SoqlFunctionType, makeSoqlFunctionType } from './soqlFunction';
+import { QueryType, QueryVisitor } from '../queryVisitor';
+import { NameType, NameVisitor } from '../nameVisitor';
 
 export type FieldGroupByType = {
     type: 'fieldGroupBy';
-    value: NameType | SoqlFunctionType;
+    clause: NameType | QueryType;
 };
 
 export const makeFieldGroupByType = (ctx: FieldGroupByContext): FieldGroupByType => {
     if (ctx.fieldName()) {
-        const { type, ...value } = new NameVisitor().visit(ctx.fieldName());
+        const value = new NameVisitor().visit(ctx.fieldName());
         return {
             type: 'fieldGroupBy',
-            value: value,
+            clause: value,
         };
     }
 
     if (ctx.soqlFunction()) {
-        const { type, ...value } = makeSoqlFunctionType(ctx.soqlFunction());
+        const value = new QueryVisitor().visit(ctx.soqlFunction());
         return {
             type: 'fieldGroupBy',
-            value: value,
+            clause: value,
         };
     }
 

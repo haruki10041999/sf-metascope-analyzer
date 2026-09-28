@@ -2,21 +2,19 @@ import { FieldExpressionContext } from '@apexdevtools/apex-parser';
 
 import { NameType, NameVisitor } from '../nameVisitor';
 import { ValueType, ValueVisitor } from '../valueVisitor';
-
-import { ComparisonOperatorType, makeComparisonOperatorType } from '../comparisonOperator';
-import { SoqlFunctionType, makeSoqlFunctionType } from '../soqlFunction';
+import { QueryType, QueryVisitor } from '../queryVisitor';
 
 export type FieldExpressionType = {
     type: 'fieldExpression';
     expression: {
-        left: NameType | SoqlFunctionType;
-        operator: ComparisonOperatorType;
+        left: NameType | QueryType;
+        operator: QueryType;
         right: ValueType;
     };
 };
 
 export const makeFieldExpressionType = (ctx: FieldExpressionContext): FieldExpressionType => {
-    const operator = makeComparisonOperatorType(ctx.comparisonOperator());
+    const operator = new QueryVisitor().visit(ctx.comparisonOperator());
     const value = new ValueVisitor().visit(ctx.value());
 
     if (ctx.fieldName()) {
@@ -32,7 +30,7 @@ export const makeFieldExpressionType = (ctx: FieldExpressionContext): FieldExpre
     }
 
     if (ctx.soqlFunction()) {
-        const field = makeSoqlFunctionType(ctx.soqlFunction());
+        const field = new QueryVisitor().visit(ctx.soqlFunction());
         return {
             type: 'fieldExpression',
             expression: {

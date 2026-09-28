@@ -3,8 +3,7 @@ import { FieldListContext } from '@apexdevtools/apex-parser';
 import { ListType, ListVisitor } from '.';
 
 import { IdType, IdVisitor } from '../idVisitor';
-
-import { SoqlFunctionType, makeSoqlFunctionType } from '../soqlFunction';
+import { QueryType, QueryVisitor } from '../queryVisitor';
 
 export type FieldListType = {
     type: 'fieldList';
@@ -12,7 +11,7 @@ export type FieldListType = {
         | IdType
         | { value: IdType; function?: 'TOLABEL' | 'CONVERT_CURRENCY' | 'FORMAT' }
         | {
-              value: SoqlFunctionType;
+              value: QueryType;
               firstFunction?: 'TOLABEL' | 'CONVERT_CURRENCY' | 'FORMAT';
           }
     )[];
@@ -23,7 +22,7 @@ export const makeFieldListType = (ctx: FieldListContext): FieldListType => {
         | IdType
         | { value: IdType; function?: 'TOLABEL' | 'CONVERT_CURRENCY' | 'FORMAT' }
         | {
-              value: SoqlFunctionType;
+              value: QueryType;
               firstFunction?: 'TOLABEL' | 'CONVERT_CURRENCY' | 'FORMAT';
           }
     )[] = [];
@@ -62,10 +61,10 @@ export const makeFieldListType = (ctx: FieldListContext): FieldListType => {
     }
 
     if (ctx.soqlFunction()) {
-        const soqlFunction = makeSoqlFunctionType(ctx.soqlFunction());
+        const soqlFunction = new QueryVisitor().visit(ctx.soqlFunction());
 
         const value: {
-            value: SoqlFunctionType;
+            value: QueryType;
             firstFunction?: 'TOLABEL' | 'CONVERT_CURRENCY' | 'FORMAT';
         } = {
             value: soqlFunction,

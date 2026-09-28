@@ -1,18 +1,18 @@
 import { UsingScopeContext } from '@apexdevtools/apex-parser';
 
-import { IdType, IdVisitor } from './idVisitor';
+import { IdType, IdVisitor } from '../idVisitor';
 
 export type UsingScopeType = {
     type: 'usingScope';
-    scope: IdType;
+    clause: IdType;
 };
 
 export const makeUsingScopeType = (ctx: UsingScopeContext): UsingScopeType => {
-    const { type, ...scope } = new IdVisitor().visit(ctx.soqlId());
+    const scope = new IdVisitor().visit(ctx.soqlId());
 
     return {
         type: 'usingScope',
-        scope: scope,
+        clause: scope,
     };
 };
 

@@ -3,13 +3,12 @@ import { SoslClausesContext } from '@apexdevtools/apex-parser';
 import { ClauseType, ClauseVisitor } from '.';
 
 import { ListType, ListVisitor } from '../listVisitor';
-
-import { SearchGroupType, makeSearchGroupType } from '../searchGroup';
+import { QueryType, QueryVisitor } from '../queryVisitor';
 
 export type SoslClausesType = {
     type: 'SoslClauses';
     clause: {
-        searchGroup: SearchGroupType;
+        searchGroup: QueryType;
         fieldSpecList: ListType;
         withList?: ClauseType[];
         limit?: ClauseType;
@@ -18,7 +17,7 @@ export type SoslClausesType = {
 };
 
 export const makeSoslClausesType = (ctx: SoslClausesContext): SoslClausesType => {
-    const searchGroup = makeSearchGroupType(ctx.searchGroup());
+    const searchGroup = new QueryVisitor().visit(ctx.searchGroup());
     const fieldSpecList = new ListVisitor().visit(ctx.fieldSpecList());
 
     const soslClausesType: SoslClausesType = {

@@ -3,15 +3,13 @@ import { QueryContext } from '@apexdevtools/apex-parser';
 import { ListType, ListVisitor } from '../listVisitor';
 import { ClauseType, ClauseVisitor } from '../clauseVisitor';
 
-import { UsingScopeType, makeUsingScopeType } from '../usingScope';
-
 export type QueryType = {
     type: 'query';
     query: {
         select: ListType;
         from: ListType;
         for?: ClauseType;
-        usingScope?: UsingScopeType;
+        usingScope?: ClauseType;
         where?: ClauseType;
         with?: ClauseType;
         groupBy?: ClauseType;
@@ -41,7 +39,7 @@ export const makeQueryType = (ctx: QueryContext): QueryType => {
     }
 
     if (ctx.usingScope()) {
-        const usingScope = makeUsingScopeType(ctx.usingScope());
+        const usingScope = new ClauseVisitor().visit(ctx.usingScope());
         queryType.query.usingScope = usingScope;
     }
 

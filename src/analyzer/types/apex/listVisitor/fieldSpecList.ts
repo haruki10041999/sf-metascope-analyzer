@@ -1,18 +1,17 @@
 import { FieldSpecListContext } from '@apexdevtools/apex-parser';
 
 import { ListType, ListVisitor } from '.';
-
-import { FieldSpecType, makeFieldSpecType } from '../fieldSpec';
+import { QueryType, QueryVisitor } from '../queryVisitor';
 
 export type FieldSpecListType = {
     type: 'fieldSpecList';
-    list: FieldSpecType[];
+    list: QueryType[];
 };
 
 export const makeFieldSpecListType = (ctx: FieldSpecListContext): FieldSpecListType => {
-    const list: FieldSpecType[] = [];
+    const list: QueryType[] = [];
 
-    list.push(makeFieldSpecType(ctx.fieldSpec()));
+    list.push(new QueryVisitor().visit(ctx.fieldSpec()));
 
     if (ctx.fieldSpecList_list() && ctx.fieldSpecList_list().length > 0) {
         ctx.fieldSpecList_list().forEach((nestedCtx) => {

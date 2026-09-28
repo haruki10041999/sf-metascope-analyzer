@@ -1,6 +1,6 @@
 import { DateFormulaContext } from '@apexdevtools/apex-parser';
 
-import { LiteralVisitor, LiteralType } from './literalVisitor';
+import { LiteralVisitor, LiteralType } from '../literalVisitor';
 
 type DateFormulaFunctionType =
     | 'YESTERDAY'
@@ -106,154 +106,200 @@ const isDateFormulaWithFunctionType = (ctx: DateFormulaContext): boolean => {
 
 export type DateFormulaType = {
     type: 'dateFormula';
-} & (
-    | {
-          formulaFunctionType: DateFormulaFunctionType;
-      }
-    | {
-          formulaFunctionType: DateFormulaWithFunctionType;
-          param: LiteralType;
-      }
-);
+    query:
+        | {
+              formulaFunctionType: DateFormulaFunctionType;
+          }
+        | {
+              formulaFunctionType: DateFormulaWithFunctionType;
+              param: LiteralType;
+          };
+};
 
 export const makeDateFormulaType = (ctx: DateFormulaContext): DateFormulaType => {
     if (isDateFormulaFunctionType(ctx)) {
         if (ctx.YESTERDAY()) {
             return {
                 type: 'dateFormula',
-                formulaFunctionType: 'YESTERDAY',
+                query: {
+                    formulaFunctionType: 'YESTERDAY',
+                },
             };
         }
         if (ctx.TODAY()) {
             return {
                 type: 'dateFormula',
-                formulaFunctionType: 'TODAY',
+                query: {
+                    formulaFunctionType: 'TODAY',
+                },
             };
         }
         if (ctx.TOMORROW()) {
             return {
                 type: 'dateFormula',
-                formulaFunctionType: 'TOMORROW',
+                query: {
+                    formulaFunctionType: 'TOMORROW',
+                },
             };
         }
         if (ctx.LAST_WEEK()) {
             return {
                 type: 'dateFormula',
-                formulaFunctionType: 'LAST_WEEK',
+                query: {
+                    formulaFunctionType: 'LAST_WEEK',
+                },
             };
         }
         if (ctx.THIS_WEEK()) {
             return {
                 type: 'dateFormula',
-                formulaFunctionType: 'THIS_WEEK',
+                query: {
+                    formulaFunctionType: 'THIS_WEEK',
+                },
             };
         }
         if (ctx.NEXT_WEEK()) {
             return {
                 type: 'dateFormula',
-                formulaFunctionType: 'NEXT_WEEK',
+                query: {
+                    formulaFunctionType: 'NEXT_WEEK',
+                },
             };
         }
         if (ctx.LAST_MONTH()) {
             return {
                 type: 'dateFormula',
-                formulaFunctionType: 'LAST_MONTH',
+                query: {
+                    formulaFunctionType: 'LAST_MONTH',
+                },
             };
         }
         if (ctx.THIS_MONTH()) {
             return {
                 type: 'dateFormula',
-                formulaFunctionType: 'THIS_MONTH',
+                query: {
+                    formulaFunctionType: 'THIS_MONTH',
+                },
             };
         }
         if (ctx.NEXT_MONTH()) {
             return {
                 type: 'dateFormula',
-                formulaFunctionType: 'NEXT_MONTH',
+                query: {
+                    formulaFunctionType: 'NEXT_MONTH',
+                },
             };
         }
         if (ctx.LAST_90_DAYS()) {
             return {
                 type: 'dateFormula',
-                formulaFunctionType: 'LAST_90_DAYS',
+                query: {
+                    formulaFunctionType: 'LAST_90_DAYS',
+                },
             };
         }
         if (ctx.NEXT_90_DAYS()) {
             return {
                 type: 'dateFormula',
-                formulaFunctionType: 'NEXT_90_DAYS',
+                query: {
+                    formulaFunctionType: 'NEXT_90_DAYS',
+                },
             };
         }
         if (ctx.THIS_QUARTER()) {
             return {
                 type: 'dateFormula',
-                formulaFunctionType: 'THIS_QUARTER',
+                query: {
+                    formulaFunctionType: 'THIS_QUARTER',
+                },
             };
         }
         if (ctx.LAST_QUARTER()) {
             return {
                 type: 'dateFormula',
-                formulaFunctionType: 'LAST_QUARTER',
+                query: {
+                    formulaFunctionType: 'LAST_QUARTER',
+                },
             };
         }
         if (ctx.NEXT_QUARTER()) {
             return {
                 type: 'dateFormula',
-                formulaFunctionType: 'NEXT_QUARTER',
+                query: {
+                    formulaFunctionType: 'NEXT_QUARTER',
+                },
             };
         }
         if (ctx.THIS_YEAR()) {
             return {
                 type: 'dateFormula',
-                formulaFunctionType: 'THIS_YEAR',
+                query: {
+                    formulaFunctionType: 'THIS_YEAR',
+                },
             };
         }
         if (ctx.LAST_YEAR()) {
             return {
                 type: 'dateFormula',
-                formulaFunctionType: 'LAST_YEAR',
+                query: {
+                    formulaFunctionType: 'LAST_YEAR',
+                },
             };
         }
         if (ctx.NEXT_YEAR()) {
             return {
                 type: 'dateFormula',
-                formulaFunctionType: 'NEXT_YEAR',
+                query: {
+                    formulaFunctionType: 'NEXT_YEAR',
+                },
             };
         }
         if (ctx.THIS_FISCAL_QUARTER()) {
             return {
                 type: 'dateFormula',
-                formulaFunctionType: 'THIS_FISCAL_QUARTER',
+                query: {
+                    formulaFunctionType: 'THIS_FISCAL_QUARTER',
+                },
             };
         }
         if (ctx.LAST_FISCAL_QUARTER()) {
             return {
                 type: 'dateFormula',
-                formulaFunctionType: 'LAST_FISCAL_QUARTER',
+                query: {
+                    formulaFunctionType: 'LAST_FISCAL_QUARTER',
+                },
             };
         }
         if (ctx.NEXT_FISCAL_QUARTER()) {
             return {
                 type: 'dateFormula',
-                formulaFunctionType: 'NEXT_FISCAL_QUARTER',
+                query: {
+                    formulaFunctionType: 'NEXT_FISCAL_QUARTER',
+                },
             };
         }
         if (ctx.THIS_FISCAL_YEAR()) {
             return {
                 type: 'dateFormula',
-                formulaFunctionType: 'THIS_FISCAL_YEAR',
+                query: {
+                    formulaFunctionType: 'THIS_FISCAL_YEAR',
+                },
             };
         }
         if (ctx.LAST_FISCAL_YEAR()) {
             return {
                 type: 'dateFormula',
-                formulaFunctionType: 'LAST_FISCAL_YEAR',
+                query: {
+                    formulaFunctionType: 'LAST_FISCAL_YEAR',
+                },
             };
         }
         if (ctx.NEXT_FISCAL_YEAR()) {
             return {
                 type: 'dateFormula',
-                formulaFunctionType: 'NEXT_FISCAL_YEAR',
+                query: {
+                    formulaFunctionType: 'NEXT_FISCAL_YEAR',
+                },
             };
         }
     }
@@ -264,148 +310,190 @@ export const makeDateFormulaType = (ctx: DateFormulaContext): DateFormulaType =>
         if (ctx.LAST_N_DAYS_N()) {
             return {
                 type: 'dateFormula',
-                formulaFunctionType: 'LAST_N_DAYS_N',
-                param: param,
+                query: {
+                    formulaFunctionType: 'LAST_N_DAYS_N',
+                    param: param,
+                },
             };
         }
         if (ctx.NEXT_N_DAYS_N()) {
             return {
                 type: 'dateFormula',
-                formulaFunctionType: 'NEXT_N_DAYS_N',
-                param: param,
+                query: {
+                    formulaFunctionType: 'NEXT_N_DAYS_N',
+                    param: param,
+                },
             };
         }
         if (ctx.N_DAYS_AGO_N()) {
             return {
                 type: 'dateFormula',
-                formulaFunctionType: 'N_DAYS_AGO_N',
-                param: param,
+                query: {
+                    formulaFunctionType: 'N_DAYS_AGO_N',
+                    param: param,
+                },
             };
         }
         if (ctx.NEXT_N_WEEKS_N()) {
             return {
                 type: 'dateFormula',
-                formulaFunctionType: 'NEXT_N_WEEKS_N',
-                param: param,
+                query: {
+                    formulaFunctionType: 'NEXT_N_WEEKS_N',
+                    param: param,
+                },
             };
         }
         if (ctx.LAST_N_WEEKS_N()) {
             return {
                 type: 'dateFormula',
-                formulaFunctionType: 'LAST_N_WEEKS_N',
-                param: param,
+                query: {
+                    formulaFunctionType: 'LAST_N_WEEKS_N',
+                    param: param,
+                },
             };
         }
         if (ctx.N_WEEKS_AGO_N()) {
             return {
                 type: 'dateFormula',
-                formulaFunctionType: 'N_WEEKS_AGO_N',
-                param: param,
+                query: {
+                    formulaFunctionType: 'N_WEEKS_AGO_N',
+                    param: param,
+                },
             };
         }
         if (ctx.NEXT_N_MONTHS_N()) {
             return {
                 type: 'dateFormula',
-                formulaFunctionType: 'NEXT_N_MONTHS_N',
-                param: param,
+                query: {
+                    formulaFunctionType: 'NEXT_N_MONTHS_N',
+                    param: param,
+                },
             };
         }
         if (ctx.LAST_N_MONTHS_N()) {
             return {
                 type: 'dateFormula',
-                formulaFunctionType: 'LAST_N_MONTHS_N',
-                param: param,
+                query: {
+                    formulaFunctionType: 'LAST_N_MONTHS_N',
+                    param: param,
+                },
             };
         }
         if (ctx.N_MONTHS_AGO_N()) {
             return {
                 type: 'dateFormula',
-                formulaFunctionType: 'N_MONTHS_AGO_N',
-                param: param,
+                query: {
+                    formulaFunctionType: 'N_MONTHS_AGO_N',
+                    param: param,
+                },
             };
         }
         if (ctx.NEXT_N_QUARTERS_N()) {
             return {
                 type: 'dateFormula',
-                formulaFunctionType: 'NEXT_N_QUARTERS_N',
-                param: param,
+                query: {
+                    formulaFunctionType: 'NEXT_N_QUARTERS_N',
+                    param: param,
+                },
             };
         }
         if (ctx.LAST_N_QUARTERS_N()) {
             return {
                 type: 'dateFormula',
-                formulaFunctionType: 'LAST_N_QUARTERS_N',
-                param: param,
+                query: {
+                    formulaFunctionType: 'LAST_N_QUARTERS_N',
+                    param: param,
+                },
             };
         }
         if (ctx.N_QUARTERS_AGO_N()) {
             return {
                 type: 'dateFormula',
-                formulaFunctionType: 'N_QUARTERS_AGO_N',
-                param: param,
+                query: {
+                    formulaFunctionType: 'N_QUARTERS_AGO_N',
+                    param: param,
+                },
             };
         }
         if (ctx.NEXT_N_FISCAL_QUARTERS_N()) {
             return {
                 type: 'dateFormula',
-                formulaFunctionType: 'NEXT_N_FISCAL_QUARTERS_N',
-                param: param,
+                query: {
+                    formulaFunctionType: 'NEXT_N_FISCAL_QUARTERS_N',
+                    param: param,
+                },
             };
         }
         if (ctx.LAST_N_FISCAL_QUARTERS_N()) {
             return {
                 type: 'dateFormula',
-                formulaFunctionType: 'LAST_N_FISCAL_QUARTERS_N',
-                param: param,
+                query: {
+                    formulaFunctionType: 'LAST_N_FISCAL_QUARTERS_N',
+                    param: param,
+                },
             };
         }
         if (ctx.N_FISCAL_QUARTERS_AGO_N()) {
             return {
                 type: 'dateFormula',
-                formulaFunctionType: 'N_FISCAL_QUARTERS_AGO_N',
-                param: param,
+                query: {
+                    formulaFunctionType: 'N_FISCAL_QUARTERS_AGO_N',
+                    param: param,
+                },
             };
         }
         if (ctx.NEXT_N_YEARS_N()) {
             return {
                 type: 'dateFormula',
-                formulaFunctionType: 'NEXT_N_YEARS_N',
-                param: param,
+                query: {
+                    formulaFunctionType: 'NEXT_N_YEARS_N',
+                    param: param,
+                },
             };
         }
         if (ctx.LAST_N_YEARS_N()) {
             return {
                 type: 'dateFormula',
-                formulaFunctionType: 'LAST_N_YEARS_N',
-                param: param,
+                query: {
+                    formulaFunctionType: 'LAST_N_YEARS_N',
+                    param: param,
+                },
             };
         }
         if (ctx.N_YEARS_AGO_N()) {
             return {
                 type: 'dateFormula',
-                formulaFunctionType: 'N_YEARS_AGO_N',
-                param: param,
+                query: {
+                    formulaFunctionType: 'N_YEARS_AGO_N',
+                    param: param,
+                },
             };
         }
         if (ctx.NEXT_N_FISCAL_YEARS_N()) {
             return {
                 type: 'dateFormula',
-                formulaFunctionType: 'NEXT_N_FISCAL_YEARS_N',
-                param: param,
+                query: {
+                    formulaFunctionType: 'NEXT_N_FISCAL_YEARS_N',
+                    param: param,
+                },
             };
         }
         if (ctx.LAST_N_FISCAL_YEARS_N()) {
             return {
                 type: 'dateFormula',
-                formulaFunctionType: 'LAST_N_FISCAL_YEARS_N',
-                param: param,
+                query: {
+                    formulaFunctionType: 'LAST_N_FISCAL_YEARS_N',
+                    param: param,
+                },
             };
         }
         if (ctx.N_FISCAL_YEARS_AGO_N()) {
             return {
                 type: 'dateFormula',
-                formulaFunctionType: 'N_FISCAL_YEARS_AGO_N',
-                param: param,
+                query: {
+                    formulaFunctionType: 'N_FISCAL_YEARS_AGO_N',
+                    param: param,
+                },
             };
         }
     }

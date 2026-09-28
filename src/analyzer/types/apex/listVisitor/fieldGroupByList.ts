@@ -1,15 +1,15 @@
 import { FieldGroupByListContext } from '@apexdevtools/apex-parser';
 
-import { FieldGroupByType, makeFieldGroupByType } from '../fieldGroupBy';
+import { ClauseType, ClauseVisitor } from '../clauseVisitor';
 
 export type FieldGroupByListType = {
     type: 'fieldGroupByList';
-    list: FieldGroupByType[];
+    list: ClauseType[];
 };
 
 export const makeFieldGroupByListType = (ctx: FieldGroupByListContext): FieldGroupByListType => {
     const list = ctx.fieldGroupBy_list().map((fieldGroupByCtx) => {
-        const value = makeFieldGroupByType(fieldGroupByCtx);
+        const value = new ClauseVisitor().visit(fieldGroupByCtx);
         return value;
     });
 

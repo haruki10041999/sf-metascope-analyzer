@@ -4,37 +4,38 @@ type FilteringSelectorField = 'AT' | 'ABOVE' | 'BELOW' | 'ABOVE_OR_BELOW';
 
 export type FilteringSelectorType = {
     type: 'filteringSelector';
-    selector: FilteringSelectorField;
+    clause: FilteringSelectorField;
 };
 
 export const makeFilteringSelectorType = (ctx: FilteringSelectorContext): FilteringSelectorType => {
     if (ctx.AT()) {
         return {
             type: 'filteringSelector',
-            selector: 'AT',
+            clause: 'AT',
         };
     }
 
     if (ctx.ABOVE()) {
         return {
             type: 'filteringSelector',
-            selector: 'ABOVE',
+            clause: 'ABOVE',
         };
     }
 
     if (ctx.BELOW()) {
         return {
             type: 'filteringSelector',
-            selector: 'BELOW',
+            clause: 'BELOW',
         };
     }
 
     if (ctx.ABOVE_OR_BELOW()) {
         return {
             type: 'filteringSelector',
-            selector: 'ABOVE_OR_BELOW',
+            clause: 'ABOVE_OR_BELOW',
         };
     }
 
     throw new Error(`値が異常です。FilteringSelectorContext:${ctx.getText()}`);
 };
+

@@ -2,14 +2,13 @@ import { WhereFieldExpressionContext } from '@apexdevtools/apex-parser';
 
 import { ExpressionType, ExpressionVisitor } from '.';
 import { ValueType, ValueVisitor } from '../valueVisitor';
-
-import { ComparisonOperatorType, makeComparisonOperatorType } from '../comparisonOperator';
+import { QueryType, QueryVisitor } from '../queryVisitor';
 
 export type WhereFieldExpressionType = {
     type: 'whereFieldExpression';
     expression: {
         left: { type: 'formula'; expression: string } | ExpressionType;
-        operator: ComparisonOperatorType;
+        operator: QueryType;
         right: ValueType;
     };
 };
@@ -33,7 +32,7 @@ export const makeWhereFieldExpressionType = (
         throw new Error('値が異常です。WhereFieldExpressionContext: ' + ctx.getText());
     }
 
-    const operator = makeComparisonOperatorType(ctx.comparisonOperator());
+    const operator = new QueryVisitor().visit(ctx.comparisonOperator());
     const value = new ValueVisitor().visit(ctx.value());
 
     return {

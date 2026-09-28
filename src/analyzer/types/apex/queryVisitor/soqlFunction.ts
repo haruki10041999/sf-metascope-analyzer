@@ -1,8 +1,10 @@
 import { SoqlFunctionContext } from '@apexdevtools/apex-parser';
 
-import { NameType, NameVisitor } from './nameVisitor';
-import { ParameterType, ParameterVisitor } from './parameterVisitor';
-import { ValueType, ValueVisitor } from './valueVisitor';
+import { QueryType, QueryVisitor } from '.';
+
+import { NameType, NameVisitor } from '../nameVisitor';
+import { ParameterType, ParameterVisitor } from '../parameterVisitor';
+import { ValueType, ValueVisitor } from '../valueVisitor';
 
 type NormalSoqlFunctionType =
     'AVG' | 'COUNT_DISTINCT' | 'MIN' | 'MAX' | 'SUM' | 'TOLABEL' | 'GROUPING' | 'CONVERT_CURRENCY';
@@ -72,24 +74,22 @@ const isDateFunctionType = (ctx: SoqlFunctionContext): boolean => {
     );
 };
 
-export type SoqlFunctionType = {
-    type: 'soqlFunction';
-} & (
+type SoqlFunctionFieldType =
     | {
           functionType: NormalSoqlFunctionType;
-          fieldName: NameType;
+          name: NameType;
       }
     | {
           functionType: DateFunctionType;
-          fieldName: NameType;
+          name: NameType;
       }
     | {
           functionType: CountFunctionType;
-          fieldName?: NameType;
+          name?: NameType;
       }
     | {
           functionType: FormatFunctionType;
-          fieldName: NameType;
+          name: NameType;
           format?: string;
       }
     | {
@@ -99,11 +99,12 @@ export type SoqlFunctionType = {
     | {
           functionType: DistanceFunctionType;
           param: ValueType[];
-      }
-    | {
-          function: SoqlFunctionType;
-      }
-);
+      };
+
+export type SoqlFunctionType = {
+    type: 'soqlFunction';
+    query: SoqlFunctionFieldType;
+};
 
 export const makeSoqlFunctionType = (ctx: SoqlFunctionContext): SoqlFunctionType => {
     let functionName:
@@ -115,7 +116,7 @@ export const makeSoqlFunctionType = (ctx: SoqlFunctionContext): SoqlFunctionType
         | DateFunctionType
         | undefined = undefined;
     if (isNormalFunctionType(ctx)) {
-        const { type, ...fieldName } = new NameVisitor().visit(ctx.fieldName());
+        const name = new NameVisitor().visit(ctx.fieldName());
 
         if (ctx.AVG()) {
             functionName = 'AVG';
@@ -145,14 +146,16 @@ export const makeSoqlFunctionType = (ctx: SoqlFunctionContext): SoqlFunctionType
         if (functionName) {
             return {
                 type: 'soqlFunction',
-                functionType: functionName,
-                fieldName: fieldName,
+                query: {
+                    functionType: functionName,
+                    name: name,
+                },
             };
         }
     }
 
     if (isDateFunctionType(ctx)) {
-        const { type, ...fieldName } = new NameVisitor().visit(ctx.dateFieldName());
+        const name = new NameVisitor().visit(ctx.dateFieldName());
 
         if (ctx.CALENDAR_MONTH()) {
             functionName = 'CALENDAR_MONTH';
@@ -194,73 +197,92 @@ export const makeSoqlFunctionType = (ctx: SoqlFunctionContext): SoqlFunctionType
         if (functionName) {
             return {
                 type: 'soqlFunction',
-                functionType: functionName,
-                fieldName: fieldName,
+                query: {
+                    functionType: functionName,
+                    name: name,
+                },
             };
         }
     }
 
     if (isCountFunctionType(ctx)) {
-        const soqlFunctionType: SoqlFunctionType = {
-            type: 'soqlFunction',
+        const query: {
+            functionType: CountFunctionType;
+            name?: NameType;
+        } = {
             functionType: 'COUNT',
         };
 
         if (ctx.fieldName()) {
-            const { type, ...fieldName } = new NameVisitor().visit(ctx.fieldName());
-            soqlFunctionType.fieldName = fieldName;
+            const name = new NameVisitor().visit(ctx.fieldName());
+            query.name = name;
         }
 
-        return soqlFunctionType;
+        return {
+            type: 'soqlFunction',
+            query: query,
+        };
     }
 
     if (isFormatFunctionType(ctx)) {
-        const { type, ...fieldName } = new NameVisitor().visit(ctx.fieldName());
-        const soqlFunctionType: SoqlFunctionType = {
-            type: 'soqlFunction',
+        const name = new NameVisitor().visit(ctx.fieldName());
+        const query: {
+            functionType: FormatFunctionType;
+            name: NameType;
+            format?: string;
+        } = {
             functionType: 'FORMAT',
-            fieldName: fieldName,
+            name: name,
         };
 
         if (ctx.StringLiteral()) {
-            soqlFunctionType.format = ctx.StringLiteral().getText();
+            query.format = ctx.StringLiteral().getText();
         }
 
         if (ctx.MultilineStringLiteral()) {
-            soqlFunctionType.format = ctx.MultilineStringLiteral().getText();
+            query.format = ctx.MultilineStringLiteral().getText();
         }
 
-        return soqlFunctionType;
+        return {
+            type: 'soqlFunction',
+            query: query,
+        };
     }
 
     if (isFieldsFunctionType(ctx)) {
-        const { type, ...param } = new ParameterVisitor().visit(ctx.soqlFieldsParameter());
+        const param = new ParameterVisitor().visit(ctx.soqlFieldsParameter());
         return {
             type: 'soqlFunction',
-            functionType: 'FIELDS',
-            param: param,
+            query: {
+                functionType: 'FIELDS',
+                param: param,
+            },
         };
     }
 
     if (isDistanceFunctionType(ctx)) {
         const param = ctx.locationValue_list().map((laocationValueCtx) => {
-            const { type, ...value } = new ValueVisitor().visit(laocationValueCtx);
+            const value = new ValueVisitor().visit(laocationValueCtx);
             return value;
         });
 
         return {
             type: 'soqlFunction',
-            functionType: 'DISTANCE',
-            param: param,
+            query: {
+                functionType: 'DISTANCE',
+                param: param,
+            },
         };
     }
 
     if (ctx.soqlFunction()) {
-        const { type, ...soqlFunction } = makeSoqlFunctionType(ctx.soqlFunction());
-        return {
-            type: 'soqlFunction',
-            function: soqlFunction,
-        };
+        const soqlFunction = new QueryVisitor().visit(ctx.soqlFunction());
+        if (soqlFunction.type === 'soqlFunction') {
+            return {
+                type: 'soqlFunction',
+                query: soqlFunction.query,
+            };
+        }
     }
 
     throw new Error('値が異常です。SoqlFunctionContext: ' + ctx.getText());

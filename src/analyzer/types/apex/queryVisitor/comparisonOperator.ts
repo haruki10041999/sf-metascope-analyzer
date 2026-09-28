@@ -18,7 +18,7 @@ type ComparisonOperatorField = (typeof comparisonOperators)[number];
 
 export type ComparisonOperatorType = {
     type: 'comparisonOperator';
-    operator: ComparisonOperatorField;
+    query: ComparisonOperatorField;
 };
 
 export const makeComparisonOperatorType = (
@@ -27,42 +27,42 @@ export const makeComparisonOperatorType = (
     if (ctx.ASSIGN()) {
         return {
             type: 'comparisonOperator',
-            operator: '=',
+            query: '=',
         };
     }
 
     if (ctx.NOTEQUAL()) {
         return {
             type: 'comparisonOperator',
-            operator: '!=',
+            query: '!=',
         };
     }
 
     if (ctx.LT()) {
         return {
             type: 'comparisonOperator',
-            operator: '<',
+            query: '<',
         };
     }
 
     if (ctx.GT()) {
         return {
             type: 'comparisonOperator',
-            operator: '>',
+            query: '>',
         };
     }
 
     if (ctx.LESSANDGREATER()) {
         return {
             type: 'comparisonOperator',
-            operator: ctx.LESSANDGREATER().getText() as ComparisonOperatorField,
+            query: ctx.LESSANDGREATER().getText() as ComparisonOperatorField,
         };
     }
 
     if (ctx.LIKE()) {
         return {
             type: 'comparisonOperator',
-            operator: 'LIKE',
+            query: 'LIKE',
         };
     }
 
@@ -70,28 +70,29 @@ export const makeComparisonOperatorType = (
         if (ctx.NOT()) {
             return {
                 type: 'comparisonOperator',
-                operator: 'NOT IN',
+                query: 'NOT IN',
             };
         }
         return {
             type: 'comparisonOperator',
-            operator: 'IN',
+            query: 'IN',
         };
     }
 
     if (ctx.INCLUDES()) {
         return {
             type: 'comparisonOperator',
-            operator: 'INCLUDES',
+            query: 'INCLUDES',
         };
     }
 
     if (ctx.EXCLUDES()) {
         return {
             type: 'comparisonOperator',
-            operator: 'EXCLUDES',
+            query: 'EXCLUDES',
         };
     }
 
     throw new Error('値が異常です。ComparisonOperatorContext: ' + ctx.getText());
 };
+

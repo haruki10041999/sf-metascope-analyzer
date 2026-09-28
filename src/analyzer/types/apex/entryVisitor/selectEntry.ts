@@ -2,14 +2,12 @@ import { SelectEntryContext } from '@apexdevtools/apex-parser';
 
 import { IdType, IdVisitor } from '../idVisitor';
 import { NameType, NameVisitor } from '../nameVisitor';
+import { ClauseType, ClauseVisitor } from '../clauseVisitor';
 import { QueryType, QueryVisitor } from '../queryVisitor';
-
-import { SoqlFunctionType, makeSoqlFunctionType } from '../soqlFunction';
-import { TypeOfType, makeTypeOfType } from '../typeOf';
 
 export type SelectEntryType = {
     type: 'selectEntry';
-    entry: NameType | IdType | SoqlFunctionType | QueryType | TypeOfType;
+    entry: NameType | IdType | QueryType | ClauseType;
 };
 
 export const makeSelectEntryType = (ctx: SelectEntryContext): SelectEntryType => {
@@ -30,7 +28,7 @@ export const makeSelectEntryType = (ctx: SelectEntryContext): SelectEntryType =>
     }
 
     if (ctx.soqlFunction()) {
-        const field = makeSoqlFunctionType(ctx.soqlFunction());
+        const field = new QueryVisitor().visit(ctx.soqlFunction());
         return {
             type: 'selectEntry',
             entry: field,
@@ -46,7 +44,7 @@ export const makeSelectEntryType = (ctx: SelectEntryContext): SelectEntryType =>
     }
 
     if (ctx.typeOf()) {
-        const field = makeTypeOfType(ctx.typeOf());
+        const field = new ClauseVisitor().visit(ctx.typeOf());
         return {
             type: 'selectEntry',
             entry: field,

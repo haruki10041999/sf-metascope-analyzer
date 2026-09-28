@@ -4,23 +4,24 @@ export type UpdateOperator = 'TRACKING' | 'VIEWSTAT';
 
 export type UpdateTypeType = {
     type: 'updateType';
-    mode: UpdateOperator;
+    clause: UpdateOperator;
 };
 
 export const makeUpdateTypeType = (ctx: UpdateTypeContext): UpdateTypeType => {
     if (ctx.TRACKING()) {
         return {
             type: 'updateType',
-            mode: 'TRACKING',
+            clause: 'TRACKING',
         };
     }
 
     if (ctx.VIEWSTAT()) {
         return {
             type: 'updateType',
-            mode: 'VIEWSTAT',
+            clause: 'VIEWSTAT',
         };
     }
 
     throw new Error('値が異常です UpdateTypeContext:' + ctx.getText());
 };
+

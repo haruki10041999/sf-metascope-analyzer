@@ -1,26 +1,27 @@
 import { FieldOrderContext } from '@apexdevtools/apex-parser';
 
-import { NameType, NameVisitor } from './nameVisitor';
-
-import { SoqlFunctionType, makeSoqlFunctionType } from './soqlFunction';
+import { QueryType, QueryVisitor } from '../queryVisitor';
+import { NameType, NameVisitor } from '../nameVisitor';
 
 export type FieldOrderType = {
     type: 'fieldOrder';
-    field: NameType | SoqlFunctionType;
-    direction?: 'ASC' | 'DESC';
-    nulls?: 'FIRST' | 'LAST';
+    clause: {
+        name: NameType | QueryType;
+        direction?: 'ASC' | 'DESC';
+        nulls?: 'FIRST' | 'LAST';
+    };
 };
 
 export const makeFieldOrderType = (ctx: FieldOrderContext): FieldOrderType => {
-    let field: NameType | SoqlFunctionType | undefined = undefined;
+    let field: NameType | QueryType | undefined = undefined;
 
     if (ctx.fieldName()) {
-        const { type, ...value } = new NameVisitor().visit(ctx.fieldName());
+        const value = new NameVisitor().visit(ctx.fieldName());
         field = value;
     }
 
     if (ctx.soqlFunction()) {
-        const { type, ...value } = makeSoqlFunctionType(ctx.soqlFunction());
+        const value = new QueryVisitor().visit(ctx.soqlFunction());
         field = value;
     }
 
@@ -30,23 +31,25 @@ export const makeFieldOrderType = (ctx: FieldOrderContext): FieldOrderType => {
 
     const fieldOrderType: FieldOrderType = {
         type: 'fieldOrder',
-        field: field,
+        clause: {
+            name: field,
+        },
     };
 
     if (ctx.ASC()) {
-        fieldOrderType.direction = 'ASC';
+        fieldOrderType.clause.direction = 'ASC';
     }
 
     if (ctx.DESC()) {
-        fieldOrderType.direction = 'DESC';
+        fieldOrderType.clause.direction = 'DESC';
     }
 
     if (ctx.NULLS()) {
         if (ctx.FIRST()) {
-            fieldOrderType.nulls = 'FIRST';
+            fieldOrderType.clause.nulls = 'FIRST';
         }
         if (ctx.LAST()) {
-            fieldOrderType.nulls = 'LAST';
+            fieldOrderType.clause.nulls = 'LAST';
         }
     }
 

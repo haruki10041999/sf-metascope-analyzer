@@ -13,6 +13,13 @@ import {
     WhenClauseContext,
     SoslWithClauseContext,
     SoslClausesContext,
+    DataCategorySelectionContext,
+    FieldGroupByContext,
+    FieldOrderContext,
+    FilteringSelectorContext,
+    UpdateTypeContext,
+    UsingScopeContext,
+    TypeOfContext,
 } from '@apexdevtools/apex-parser';
 
 import { CatchClauseType, makeCatchClauseType } from './catchClause';
@@ -28,6 +35,13 @@ import { WhereClauseType, makeWhereClauseType } from './whereClause';
 import { WhenClauseType, makeWhenClauseType } from './whenClause';
 import { SoslWithClauseType, makeSoslWithClauseType } from './soslWithClause';
 import { SoslClausesType, makeSoslClausesType } from './soslClauses';
+import { DataCategorySelectionType, makeDataCategorySelectionType } from './dataCategorySelection';
+import { FieldGroupByType, makeFieldGroupByType } from './fieldGroupBy';
+import { FieldOrderType, makeFieldOrderType } from './fieldOrder';
+import { FilteringSelectorType, makeFilteringSelectorType } from './filteringSelector';
+import { UpdateTypeType, makeUpdateTypeType } from './updateType';
+import { UsingScopeType, makeUsingScopeType } from './usingScope';
+import { TypeOfType, makeTypeOfType } from './typeOf';
 
 export type ClauseType =
     | CatchClauseType
@@ -42,7 +56,14 @@ export type ClauseType =
     | WhereClauseType
     | WhenClauseType
     | SoslWithClauseType
-    | SoslClausesType;
+    | SoslClausesType
+    | DataCategorySelectionType
+    | FieldGroupByType
+    | FieldOrderType
+    | FilteringSelectorType
+    | UpdateTypeType
+    | UsingScopeType
+    | TypeOfType;
 
 export class ClauseVisitor extends ApexParserBaseVisitor<ClauseType> {
     visitCatchClause(ctx: CatchClauseContext) {
@@ -95,5 +116,33 @@ export class ClauseVisitor extends ApexParserBaseVisitor<ClauseType> {
 
     visitSoslClauses(ctx: SoslClausesContext) {
         return makeSoslClausesType(ctx);
+    }
+
+    visitDataCategorySelection(ctx: DataCategorySelectionContext) {
+        return makeDataCategorySelectionType(ctx);
+    }
+
+    visitFieldGroupBy(ctx: FieldGroupByContext) {
+        return makeFieldGroupByType(ctx);
+    }
+
+    visitFieldOrder(ctx: FieldOrderContext) {
+        return makeFieldOrderType(ctx);
+    }
+
+    visitFilteringSelector(ctx: FilteringSelectorContext) {
+        return makeFilteringSelectorType(ctx);
+    }
+
+    visitUpdateType(ctx: UpdateTypeContext) {
+        return makeUpdateTypeType(ctx);
+    }
+
+    visitUsingScope(ctx: UsingScopeContext) {
+        return makeUsingScopeType(ctx);
+    }
+
+    visitTypeOf(ctx: TypeOfContext) {
+        return makeTypeOfType(ctx);
     }
 }

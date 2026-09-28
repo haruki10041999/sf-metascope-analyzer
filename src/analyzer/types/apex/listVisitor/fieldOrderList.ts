@@ -1,15 +1,15 @@
 import { FieldOrderListContext } from '@apexdevtools/apex-parser';
 
-import { FieldOrderType, makeFieldOrderType } from '../fieldOrder';
+import { ClauseType, ClauseVisitor } from '../clauseVisitor';
 
 export type FieldOrderListType = {
     type: 'fieldOrderList';
-    list: FieldOrderType[];
+    list: ClauseType[];
 };
 
 export const makeFieldOrderListType = (ctx: FieldOrderListContext): FieldOrderListType => {
     const list = ctx.fieldOrder_list().map((fieldOrderCtx) => {
-        const field = makeFieldOrderType(fieldOrderCtx);
+        const field = new ClauseVisitor().visitFieldOrder(fieldOrderCtx);
 
         return field;
     });

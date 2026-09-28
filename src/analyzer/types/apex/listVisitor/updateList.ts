@@ -1,16 +1,15 @@
 import { UpdateListContext } from '@apexdevtools/apex-parser';
 
 import { ListType, ListVisitor } from '../listVisitor';
-
-import { UpdateTypeType, makeUpdateTypeType } from '../updateType';
+import { ClauseType, ClauseVisitor } from '../clauseVisitor';
 
 export type UpdateListType = {
     type: 'updateList';
-    list: UpdateTypeType[];
+    list: ClauseType[];
 };
 
 export const makeUpdateListType = (ctx: UpdateListContext): UpdateListType => {
-    const list: UpdateTypeType[] = [makeUpdateTypeType(ctx.updateType())];
+    const list: ClauseType[] = [new ClauseVisitor().visit(ctx.updateType())];
 
     if (ctx.updateList()) {
         const nested = new ListVisitor().visit(ctx.updateList());

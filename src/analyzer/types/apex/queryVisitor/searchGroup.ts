@@ -4,44 +4,45 @@ type SearchGroupValue = 'ALL' | 'EMAIL' | 'NAME' | 'PHONE' | 'SIDEBAR';
 
 export type SearchGroupType = {
     type: 'searchGroup';
-    value: SearchGroupValue;
+    query: SearchGroupValue;
 };
 
 export const makeSearchGroupType = (ctx: SearchGroupContext): SearchGroupType => {
     if (ctx.ALL()) {
         return {
             type: 'searchGroup',
-            value: 'ALL',
+            query: 'ALL',
         };
     }
 
     if (ctx.EMAIL()) {
         return {
             type: 'searchGroup',
-            value: 'EMAIL',
+            query: 'EMAIL',
         };
     }
 
     if (ctx.NAME()) {
         return {
             type: 'searchGroup',
-            value: 'NAME',
+            query: 'NAME',
         };
     }
 
     if (ctx.PHONE()) {
         return {
             type: 'searchGroup',
-            value: 'PHONE',
+            query: 'PHONE',
         };
     }
 
     if (ctx.SIDEBAR()) {
         return {
             type: 'searchGroup',
-            value: 'SIDEBAR',
+            query: 'SIDEBAR',
         };
     }
 
     throw new Error('値が異常です。SearchGroupContext: ' + ctx.getText());
 };
+

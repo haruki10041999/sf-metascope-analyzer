@@ -1,10 +1,10 @@
 import { FilteringExpressionContext } from '@apexdevtools/apex-parser';
 
-import { DataCategorySelectionType, makeDataCategorySelectionType } from '../dataCategorySelection';
+import { ClauseType, ClauseVisitor } from '../clauseVisitor';
 
 type FilteringFieldType =
     | {
-          condition: DataCategorySelectionType;
+          condition: ClauseType;
       }
     | {
           type: 'AND';
@@ -31,7 +31,7 @@ export const makeFilteringExpressionType = (
     }
 
     const values = ctx.dataCategorySelection_list().map((dataCategorySelectionCtx) => {
-        const value = makeDataCategorySelectionType(dataCategorySelectionCtx);
+        const value = new ClauseVisitor().visit(dataCategorySelectionCtx);
         return value;
     });
 
