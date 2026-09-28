@@ -6,13 +6,13 @@ import { SoqlFunctionType, makeSoqlFunctionType } from './soqlFunction';
 
 export type FieldOrderType = {
     type: 'fieldOrder';
-    field: Omit<NameType, 'type'> | Omit<SoqlFunctionType, 'type'>;
+    field: NameType | SoqlFunctionType;
     direction?: 'ASC' | 'DESC';
     nulls?: 'FIRST' | 'LAST';
 };
 
 export const makeFieldOrderType = (ctx: FieldOrderContext): FieldOrderType => {
-    let field: Omit<NameType, 'type'> | Omit<SoqlFunctionType, 'type'> | undefined = undefined;
+    let field: NameType | SoqlFunctionType | undefined = undefined;
 
     if (ctx.fieldName()) {
         const { type, ...value } = new NameVisitor().visit(ctx.fieldName());
@@ -52,3 +52,4 @@ export const makeFieldOrderType = (ctx: FieldOrderContext): FieldOrderType => {
 
     return fieldOrderType;
 };
+

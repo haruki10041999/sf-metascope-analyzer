@@ -2,13 +2,13 @@ import { ThisPrimaryContext } from '@apexdevtools/apex-parser';
 
 export type ThisPrimaryType = {
     type: 'thisPrimary';
-    value: string;
+    primary: string;
 };
 
 export const makeThisPrimaryType = (ctx: ThisPrimaryContext): ThisPrimaryType => {
     return {
         type: 'thisPrimary',
-        value: ctx.getText(),
+        primary: ctx.THIS().getText(),
     };
 };
 

@@ -1,26 +1,30 @@
 import { UpdateStatementContext } from '@apexdevtools/apex-parser';
 
-import { ExpressionType, ExpressionVisitor } from '../expressionVisitor';
+import { StatementType, StatementVisitor } from './index';
 
-import { AccessLevelType, makeAccessLevelType } from '../accessLevel';
+import { ExpressionType, ExpressionVisitor } from '../expressionVisitor';
 
 export type UpdateStatementType = {
     type: 'updateStatement';
-    variant: Omit<ExpressionType, 'type'>;
-    accessLevel?: Omit<AccessLevelType, 'type'>;
+    statement: {
+        variant: ExpressionType;
+        accessLevel?: StatementType;
+    };
 };
 
 export const makeUpdateStatementType = (ctx: UpdateStatementContext): UpdateStatementType => {
-    const { type, ...variant } = new ExpressionVisitor().visit(ctx.expression());
+    const name = new ExpressionVisitor().visit(ctx.expression());
 
     const updateStatementType: UpdateStatementType = {
         type: 'updateStatement',
-        variant: variant,
+        statement: {
+            variant: name,
+        },
     };
 
     if (ctx.accessLevel()) {
-        const { type, ...accessLevel } = makeAccessLevelType(ctx.accessLevel());
-        updateStatementType.accessLevel = accessLevel;
+        const accessLevel = new StatementVisitor().visit(ctx.accessLevel());
+        updateStatementType.statement.accessLevel = accessLevel;
     }
 
     return updateStatementType;

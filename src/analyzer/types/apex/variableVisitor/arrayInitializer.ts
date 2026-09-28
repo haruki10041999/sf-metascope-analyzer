@@ -1,18 +1,19 @@
 import { ArrayInitializerContext } from '@apexdevtools/apex-parser';
 
-import { ExpressionType, ExpressionVisitor } from './expressionVisitor';
+import { ExpressionType, ExpressionVisitor } from '../expressionVisitor';
 
 export type ArrayInitializerType = {
     type: 'arrayInitializer';
-    values: Omit<ExpressionType, 'type'>;
+    valiable: ExpressionType[];
 };
 
 export const makeArrayInitializerType = (ctx: ArrayInitializerContext): ArrayInitializerType => {
     return {
         type: 'arrayInitializer',
-        values: ctx.expression_list().map((expressionCtx) => {
-            const { type, ...value } = new ExpressionVisitor().visit(expressionCtx);
+        valiable: ctx.expression_list().map((expressionCtx) => {
+            const value = new ExpressionVisitor().visit(expressionCtx);
             return value;
         }),
     };
 };
+

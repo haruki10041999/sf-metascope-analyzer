@@ -4,7 +4,7 @@ import { BlockType, BlockVisitor } from '.';
 
 export type FinallyBlockType = {
     type: 'finallyBlock';
-    block: Omit<BlockType, 'type'>;
+    block: BlockType;
 };
 
 export const makeFinallyBlockType = (ctx: FinallyBlockContext): FinallyBlockType => {

@@ -4,20 +4,24 @@ import { ExpressionType, ExpressionVisitor } from '.';
 
 export type BitOrExpressionType = {
     type: 'bitOrExpression';
-    operator: '|';
-    left: Omit<ExpressionType, 'type'>;
-    right: Omit<ExpressionType, 'type'>;
+    expression: {
+        left: ExpressionType;
+        operator: '|';
+        right: ExpressionType;
+    };
 };
 
 export const makeBitOrExpressionType = (ctx: BitOrExpressionContext): BitOrExpressionType => {
-    const { type: leftType, ...left } = new ExpressionVisitor().visit(ctx.expression(0));
-    const { type: rightType, ...right } = new ExpressionVisitor().visit(ctx.expression(1));
+    const left = new ExpressionVisitor().visit(ctx.expression(0));
+    const right = new ExpressionVisitor().visit(ctx.expression(1));
 
     return {
         type: 'bitOrExpression',
-        operator: '|',
-        left: left,
-        right: right,
+        expression: {
+            left: left,
+            operator: '|',
+            right: right,
+        },
     };
 };
 

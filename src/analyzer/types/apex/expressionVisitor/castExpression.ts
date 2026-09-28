@@ -1,22 +1,26 @@
 import { CastExpressionContext } from '@apexdevtools/apex-parser';
 
 import { ExpressionType, ExpressionVisitor } from '.';
-
-import { TypeRefType, makeTypeRefType } from '../typeRef';
+import { TypeType, TypeVisitor } from '../typeVisitor';
 
 export type CastExpressionType = {
     type: 'castExpression';
-    value: Omit<ExpressionType, 'type'>;
-    targetType: Omit<TypeRefType, 'type'>;
+    expression: {
+        type: TypeType;
+        value: ExpressionType;
+    };
 };
 
 export const makeCastExpressionType = (ctx: CastExpressionContext): CastExpressionType => {
-    const { type: valueType, ...value } = new ExpressionVisitor().visit(ctx.expression());
-    const { type: targetTypeType, ...targetType } = makeTypeRefType(ctx.typeRef());
+    const value = new ExpressionVisitor().visit(ctx.expression());
+    const targetType = new TypeVisitor().visit(ctx.typeRef());
 
     return {
         type: 'castExpression',
-        value: value,
-        targetType: targetType,
+        expression: {
+            type: targetType,
+            value: value,
+        },
     };
 };
+

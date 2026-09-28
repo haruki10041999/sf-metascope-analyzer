@@ -1,6 +1,6 @@
 import { DateFormulaContext } from '@apexdevtools/apex-parser';
 
-import { SignedIntegerType, makeSignedIntegerType } from './signedInteger';
+import { LiteralVisitor, LiteralType } from './literalVisitor';
 
 type DateFormulaFunctionType =
     | 'YESTERDAY'
@@ -112,7 +112,7 @@ export type DateFormulaType = {
       }
     | {
           formulaFunctionType: DateFormulaWithFunctionType;
-          param: Omit<SignedIntegerType, 'type'>;
+          param: LiteralType;
       }
 );
 
@@ -259,7 +259,7 @@ export const makeDateFormulaType = (ctx: DateFormulaContext): DateFormulaType =>
     }
 
     if (isDateFormulaWithFunctionType(ctx)) {
-        const { type, ...param } = makeSignedIntegerType(ctx.signedInteger());
+        const param = new LiteralVisitor().visit(ctx.signedInteger());
 
         if (ctx.LAST_N_DAYS_N()) {
             return {
@@ -412,3 +412,4 @@ export const makeDateFormulaType = (ctx: DateFormulaContext): DateFormulaType =>
 
     throw new Error('値が異常です。DateFormulaContext: ' + ctx.getText());
 };
+

@@ -4,8 +4,10 @@ import { ExpressionType, ExpressionVisitor } from '../expressionVisitor';
 
 export type MapCreatorPairType = {
     type: 'mapCreatorPair';
-    name: Omit<ExpressionType, 'type'>;
-    value: Omit<ExpressionType, 'type'>;
+    pair: {
+        name: ExpressionType;
+        value: ExpressionType;
+    };
 };
 
 export const makeMapCreatorPairType = (ctx: MapCreatorRestPairContext): MapCreatorPairType => {
@@ -13,7 +15,9 @@ export const makeMapCreatorPairType = (ctx: MapCreatorRestPairContext): MapCreat
     const value = new ExpressionVisitor().visit(ctx.expression(1));
     return {
         type: 'mapCreatorPair',
-        name: name,
-        value: value,
+        pair: {
+            name: name,
+            value: value,
+        },
     };
 };

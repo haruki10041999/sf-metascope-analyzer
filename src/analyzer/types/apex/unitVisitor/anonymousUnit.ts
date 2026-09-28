@@ -4,14 +4,15 @@ import { BlockType, BlockVisitor } from '../blockVisitor';
 
 export type AnonymousUnitType = {
     type: 'anonymousUnit';
-    block: Omit<BlockType, 'type'>;
+    unit: BlockType;
 };
 
 export const makeAnonymousUnitType = (ctx: AnonymousUnitContext): AnonymousUnitType => {
-    const { type, ...block } = new BlockVisitor().visit(ctx.anonymousBlock());
+    const unit = new BlockVisitor().visit(ctx.anonymousBlock());
 
     return {
         type: 'anonymousUnit',
-        block: block,
+        unit: unit,
     };
 };
+

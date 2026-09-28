@@ -4,17 +4,15 @@ import { IdType, IdVisitor } from '../idVisitor';
 
 export type QualifiedNameType = {
     type: 'qualifiedName';
-    name: string[];
+    name: IdType[];
 };
 
 export const makeQualifiedNameType = (ctx: QualifiedNameContext): QualifiedNameType => {
-    const names: string[] = [];
+    const names: IdType[] = [];
     if (ctx.id_list() && ctx.id_list().length > 0) {
         ctx.id_list().forEach((idCtx) => {
-            const { type, value } = new IdVisitor().visit(idCtx);
-            if (type === 'id') {
-                names.push(value);
-            }
+            const value = new IdVisitor().visit(idCtx);
+            names.push(value);
         });
     }
 

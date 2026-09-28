@@ -32,3 +32,4 @@ export const makeNetworkListType = (ctx: NetworkListContext): NetworkListType =>
         list: list,
     };
 };
+

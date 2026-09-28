@@ -3,39 +3,49 @@ import { ExpressionType, ExpressionVisitor } from '.';
 
 export type PreOpExpressionType = {
     type: 'preOpExpression';
-    operator: '+' | '-' | '++' | '--';
-    value: Omit<ExpressionType, 'type'>;
+    expression: {
+        operator: '+' | '-' | '++' | '--';
+        value: ExpressionType;
+    };
 };
 
 export const makePreOpExpressionType = (ctx: PreOpExpressionContext): PreOpExpressionType => {
-    const { type, ...value } = new ExpressionVisitor().visit(ctx.expression());
+    const value = new ExpressionVisitor().visit(ctx.expression());
 
     if (ctx.ADD()) {
         return {
             type: 'preOpExpression',
-            operator: '+',
-            value: value,
+            expression: {
+                operator: '+',
+                value: value,
+            },
         };
     }
     if (ctx.SUB()) {
         return {
             type: 'preOpExpression',
-            operator: '-',
-            value: value,
+            expression: {
+                operator: '-',
+                value: value,
+            },
         };
     }
     if (ctx.INC()) {
         return {
             type: 'preOpExpression',
-            operator: '++',
-            value: value,
+            expression: {
+                operator: '++',
+                value: value,
+            },
         };
     }
     if (ctx.DEC()) {
         return {
             type: 'preOpExpression',
-            operator: '--',
-            value: value,
+            expression: {
+                operator: '--',
+                value: value,
+            },
         };
     }
 

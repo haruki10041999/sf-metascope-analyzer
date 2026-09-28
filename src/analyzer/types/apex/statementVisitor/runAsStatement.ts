@@ -5,18 +5,22 @@ import { ListType, ListVisitor } from '../listVisitor';
 
 export type RunAsStatementType = {
     type: 'runAsStatement';
-    variant: Omit<ListType, 'type'>;
-    block: Omit<BlockType, 'type'>;
+    statement: {
+        variant: ListType;
+        block: BlockType;
+    };
 };
 
 export const makeRunAsStatementType = (ctx: RunAsStatementContext): RunAsStatementType => {
     const block = new BlockVisitor().visit(ctx.block());
-    const variant = new ListVisitor().visit(ctx.expressionList());
+    const name = new ListVisitor().visit(ctx.expressionList());
 
     return {
         type: 'runAsStatement',
-        variant: variant,
-        block: block,
+        statement: {
+            variant: name,
+            block: block,
+        },
     };
 };
 

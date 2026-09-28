@@ -4,12 +4,12 @@ import { ValueType, ValueVisitor } from '../valueVisitor';
 
 export type ValueListType = {
     type: 'valueList';
-    list: Omit<ValueType, 'type'>[];
+    list: ValueType[];
 };
 
 export const makeValueListType = (ctx: ValueListContext): ValueListType => {
     const list = ctx.value_list().map((valueCtx) => {
-        const { type, ...value } = new ValueVisitor().visit(valueCtx);
+        const value = new ValueVisitor().visit(valueCtx);
         return value;
     });
 
@@ -18,3 +18,4 @@ export const makeValueListType = (ctx: ValueListContext): ValueListType => {
         list: list,
     };
 };
+

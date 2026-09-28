@@ -4,17 +4,16 @@ import { ExpressionType, ExpressionVisitor } from '../expressionVisitor';
 
 export type ExpressionListType = {
     type: 'expressionList';
-    list: Omit<ExpressionType, 'type'>[];
+    list: ExpressionType[];
 };
 
 export const makeExpressionListType = (ctx: ExpressionListContext): ExpressionListType => {
-    const lists = ctx.expression_list().map((expressionCtx) => {
+    const list = ctx.expression_list().map((expressionCtx) => {
         const expression = new ExpressionVisitor().visit(expressionCtx);
-        const { type, ...list } = expression;
-        return list;
+        return expression;
     });
     return {
         type: 'expressionList',
-        list: lists,
+        list: list,
     };
 };

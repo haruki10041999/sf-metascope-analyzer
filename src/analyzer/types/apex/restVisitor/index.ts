@@ -5,6 +5,7 @@ import {
     ArrayCreatorRestContext,
     MapCreatorRestContext,
     SetCreatorRestContext,
+    CreatorContext,
 } from '@apexdevtools/apex-parser';
 
 import { NoRestType, makeNoRestType } from './noRest';
@@ -12,13 +13,15 @@ import { ClassCreatorRestType, makeClassCreatorRestType } from './classCreatorRe
 import { ArrayCreatorRestType, makeArrayCreatorRestType } from './arrayCreatorRest';
 import { MapCreatorRestType, makeMapCreatorRestType } from './mapCreatorRest';
 import { SetCreatorRestType, makeSetCreatorRestType } from './SetCreatorRest';
+import { CreatorType, makeCreatorType } from './creator';
 
 export type RestType =
     | NoRestType
     | ClassCreatorRestType
     | ArrayCreatorRestType
     | MapCreatorRestType
-    | SetCreatorRestType;
+    | SetCreatorRestType
+    | CreatorType;
 
 export class RestVisitor extends ApexParserBaseVisitor<RestType> {
     visitNoRest(ctx: NoRestContext) {
@@ -40,4 +43,9 @@ export class RestVisitor extends ApexParserBaseVisitor<RestType> {
     visitSetCreatorRest(ctx: SetCreatorRestContext) {
         return makeSetCreatorRestType(ctx);
     }
+
+    visitCreator(ctx: CreatorContext) {
+        return makeCreatorType(ctx);
+    }
 }
+

@@ -4,82 +4,67 @@ import { DeclarationType, DeclarationVisitor } from '.';
 
 export type AnonymousMemberDeclarationType = {
     type: 'anonymousMemberDeclaration';
-    methodDeclaration?: Omit<DeclarationType, 'type'>;
-    interfaceDeclaration?: Omit<DeclarationType, 'type'>;
-    classDeclaration?: Omit<DeclarationType, 'type'>;
-    enumDeclaration?: Omit<DeclarationType, 'type'>;
-    propertyDeclaration?: Omit<DeclarationType, 'type'>;
-    fieldDeclaration?: Omit<DeclarationType, 'type'>;
+    declaration: DeclarationType;
 };
 
 export const makeAnonymousMemberDeclarationType = (
     ctx: AnonymousMemberDeclarationContext,
 ): AnonymousMemberDeclarationType => {
     if (ctx.methodDeclaration()) {
-        const { type, ...methodDeclaration } = new DeclarationVisitor().visit(
-            ctx.methodDeclaration(),
-        );
+        const declaration = new DeclarationVisitor().visit(ctx.methodDeclaration());
         const anonymousMemberDeclarationType: AnonymousMemberDeclarationType = {
             type: 'anonymousMemberDeclaration',
-            methodDeclaration: methodDeclaration,
+            declaration: declaration,
         };
 
         return anonymousMemberDeclarationType;
     }
 
     if (ctx.interfaceDeclaration()) {
-        const { type, ...interfaceDeclaration } = new DeclarationVisitor().visit(
-            ctx.interfaceDeclaration(),
-        );
+        const declaration = new DeclarationVisitor().visit(ctx.interfaceDeclaration());
         const anonymousMemberDeclarationType: AnonymousMemberDeclarationType = {
             type: 'anonymousMemberDeclaration',
-            interfaceDeclaration: interfaceDeclaration,
+            declaration: declaration,
         };
 
         return anonymousMemberDeclarationType;
     }
 
     if (ctx.classDeclaration()) {
-        const { type, ...classDeclaration } = new DeclarationVisitor().visit(
-            ctx.classDeclaration(),
-        );
+        const declaration = new DeclarationVisitor().visit(ctx.classDeclaration());
         const anonymousMemberDeclarationType: AnonymousMemberDeclarationType = {
             type: 'anonymousMemberDeclaration',
-            classDeclaration: classDeclaration,
+            declaration: declaration,
         };
 
         return anonymousMemberDeclarationType;
     }
 
     if (ctx.enumDeclaration()) {
-        const { type, ...enumDeclaration } = new DeclarationVisitor().visit(ctx.enumDeclaration());
+        const declaration = new DeclarationVisitor().visit(ctx.enumDeclaration());
         const anonymousMemberDeclarationType: AnonymousMemberDeclarationType = {
             type: 'anonymousMemberDeclaration',
-            enumDeclaration: enumDeclaration,
+            declaration: declaration,
         };
 
         return anonymousMemberDeclarationType;
     }
 
     if (ctx.propertyDeclaration()) {
-        const { type, ...propertyDeclaration } = new DeclarationVisitor().visit(
-            ctx.propertyDeclaration(),
-        );
+        const declaration = new DeclarationVisitor().visit(ctx.propertyDeclaration());
         const anonymousMemberDeclarationType: AnonymousMemberDeclarationType = {
             type: 'anonymousMemberDeclaration',
-            propertyDeclaration: propertyDeclaration,
+            declaration: declaration,
         };
 
         return anonymousMemberDeclarationType;
     }
 
     if (ctx.fieldDeclaration()) {
-        const { type, ...fieldDeclaration } = new DeclarationVisitor().visit(
-            ctx.fieldDeclaration(),
-        );
+        const declaration = new DeclarationVisitor().visit(ctx.fieldDeclaration());
         const anonymousMemberDeclarationType: AnonymousMemberDeclarationType = {
             type: 'anonymousMemberDeclaration',
-            fieldDeclaration: fieldDeclaration,
+            declaration: declaration,
         };
 
         return anonymousMemberDeclarationType;
@@ -87,3 +72,4 @@ export const makeAnonymousMemberDeclarationType = (
 
     throw new Error('値が異常です。AnonymousMemberDeclarationType:' + ctx.getText());
 };
+

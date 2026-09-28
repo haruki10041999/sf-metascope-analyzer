@@ -6,11 +6,11 @@ import { UpdateTypeType, makeUpdateTypeType } from '../updateType';
 
 export type UpdateListType = {
     type: 'updateList';
-    list: Omit<UpdateTypeType, 'type'>[];
+    list: UpdateTypeType[];
 };
 
 export const makeUpdateListType = (ctx: UpdateListContext): UpdateListType => {
-    const list: Omit<UpdateTypeType, 'type'>[] = [makeUpdateTypeType(ctx.updateType())];
+    const list: UpdateTypeType[] = [makeUpdateTypeType(ctx.updateType())];
 
     if (ctx.updateList()) {
         const nested = new ListVisitor().visit(ctx.updateList());
@@ -25,3 +25,4 @@ export const makeUpdateListType = (ctx: UpdateListContext): UpdateListType => {
         list: list,
     };
 };
+

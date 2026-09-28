@@ -6,19 +6,19 @@ import { FieldSpecType, makeFieldSpecType } from '../fieldSpec';
 
 export type FieldSpecListType = {
     type: 'fieldSpecList';
-    list: Omit<FieldSpecType, 'type'>[];
+    list: FieldSpecType[];
 };
 
 export const makeFieldSpecListType = (ctx: FieldSpecListContext): FieldSpecListType => {
-    const list: Omit<FieldSpecType, 'type'>[] = [];
+    const list: FieldSpecType[] = [];
 
     list.push(makeFieldSpecType(ctx.fieldSpec()));
 
     if (ctx.fieldSpecList_list() && ctx.fieldSpecList_list().length > 0) {
         ctx.fieldSpecList_list().forEach((nestedCtx) => {
-            const { type, list: fieldSpecList } = new ListVisitor().visit(nestedCtx);
-            if (type === 'fieldSpecList') {
-                list.push(...fieldSpecList);
+            const fieldSpecList = new ListVisitor().visit(nestedCtx);
+            if (fieldSpecList.type === 'fieldSpecList') {
+                list.push(...fieldSpecList.list);
             }
         });
     }
@@ -28,3 +28,4 @@ export const makeFieldSpecListType = (ctx: FieldSpecListContext): FieldSpecListT
         list: list,
     };
 };
+

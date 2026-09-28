@@ -1,31 +1,39 @@
 import { PropertyBlockContext } from '@apexdevtools/apex-parser';
 
-import { ModifierType, makeModifierType } from '../modifier';
-import { GetterType, makeGetterType } from '../getter';
-import { SetterType, makeSetterType } from '../setter';
+import { ModifierType, ModifierVisitor } from '../modifierVisitor';
+import { BlockType, BlockVisitor } from '.';
 
 export type PropertyBlockType = {
     type: 'propertyBlock';
-    getter?: Omit<GetterType, 'type'>;
-    setter?: Omit<SetterType, 'type'>;
-    modifiers?: Omit<ModifierType, 'type'>[];
+    block: {
+        getter?: BlockType;
+        setter?: BlockType;
+        modifiers?: ModifierType[];
+    };
 };
 
 export const makePropertyBlockType = (ctx: PropertyBlockContext): PropertyBlockType => {
-    const propertyBlockType: PropertyBlockType = { type: 'propertyBlock' };
+    const block: {
+        getter?: BlockType;
+        setter?: BlockType;
+        modifiers?: ModifierType[];
+    } = {};
     if (ctx.getter()) {
-        const { type: _, ...getterType } = makeGetterType(ctx.getter());
-        propertyBlockType.getter = getterType;
+        const getterType = new BlockVisitor().visit(ctx.getter());
+        block.getter = getterType;
     }
     if (ctx.setter()) {
-        const { type: _, ...setterType } = makeSetterType(ctx.setter());
-        propertyBlockType.setter = setterType;
+        const setterType = new BlockVisitor().visit(ctx.setter());
+        block.setter = setterType;
     }
     if (ctx.modifier_list()) {
-        propertyBlockType.modifiers = ctx.modifier_list().map((modifier) => {
-            const { type: _, ...modifierType } = makeModifierType(modifier);
+        block.modifiers = ctx.modifier_list().map((modifier) => {
+            const modifierType = new ModifierVisitor().visit(modifier);
             return modifierType;
         });
     }
-    return propertyBlockType;
+    return {
+        type: 'propertyBlock',
+        block: block,
+    };
 };

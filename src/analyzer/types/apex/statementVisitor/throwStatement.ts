@@ -4,15 +4,15 @@ import { ExpressionType, ExpressionVisitor } from '../expressionVisitor';
 
 export type ThrowStatementType = {
     type: 'throwStatement';
-    value: Omit<ExpressionType, 'type'>;
+    statement: ExpressionType;
 };
 
 export const makeThrowStatementType = (ctx: ThrowStatementContext): ThrowStatementType => {
-    const { type, ...value } = new ExpressionVisitor().visit(ctx.expression());
+    const statement = new ExpressionVisitor().visit(ctx.expression());
 
     return {
         type: 'throwStatement',
-        value: value,
+        statement: statement,
     };
 };
 

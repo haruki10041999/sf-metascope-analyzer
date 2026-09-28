@@ -4,12 +4,12 @@ import { EntryType, EntryVisitor } from '../entryVisitor';
 
 export type SelectListType = {
     type: 'selectList';
-    list: Omit<EntryType, 'type'>[];
+    list: EntryType[];
 };
 
 export const makeSelectListType = (ctx: SelectListContext): SelectListType => {
     const list = ctx.selectEntry_list().map((selectEntryCtx) => {
-        const { type, ...entry } = new EntryVisitor().visit(selectEntryCtx);
+        const entry = new EntryVisitor().visit(selectEntryCtx);
         return entry;
     });
 
@@ -18,3 +18,4 @@ export const makeSelectListType = (ctx: SelectListContext): SelectListType => {
         list: list,
     };
 };
+

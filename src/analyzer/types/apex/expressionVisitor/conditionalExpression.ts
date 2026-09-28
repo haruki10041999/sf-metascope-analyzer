@@ -4,27 +4,28 @@ import { ExpressionType, ExpressionVisitor } from '.';
 
 export type ConditionalExpressionType = {
     type: 'conditionalExpresion';
-    value: Omit<ExpressionType, 'type'>;
+    expression: ExpressionType;
 };
 
 export const makeConditionalExpressionType = (
     ctx: ConditionalExpressionContext,
 ): ConditionalExpressionType => {
     if (ctx.logicalExpression()) {
-        const { type, ...value } = new ExpressionVisitor().visit(ctx.logicalExpression());
+        const expression = new ExpressionVisitor().visit(ctx.logicalExpression());
         return {
             type: 'conditionalExpresion',
-            value: value,
+            expression: expression,
         };
     }
 
     if (ctx.fieldExpression()) {
-        const { type, ...value } = new ExpressionVisitor().visit(ctx.fieldExpression());
+        const expression = new ExpressionVisitor().visit(ctx.fieldExpression());
         return {
             type: 'conditionalExpresion',
-            value: value,
+            expression: expression,
         };
     }
 
     throw new Error('値が異常です。ConditionalExpressionContext: ' + ctx.getText());
 };
+

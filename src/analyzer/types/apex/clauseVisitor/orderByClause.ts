@@ -4,14 +4,15 @@ import { ListType, ListVisitor } from '../listVisitor';
 
 export type OrderByClauseType = {
     type: 'orderByClause';
-    fields: Omit<ListType, 'type'>;
+    clause: ListType;
 };
 
 export const makeOrderByClauseType = (ctx: OrderByClauseContext): OrderByClauseType => {
-    const { type, ...fields } = new ListVisitor().visit(ctx.fieldOrderList());
+    const fields = new ListVisitor().visit(ctx.fieldOrderList());
 
     return {
         type: 'orderByClause',
-        fields: fields,
+        clause: fields,
     };
 };
+

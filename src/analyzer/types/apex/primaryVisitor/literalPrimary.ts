@@ -4,15 +4,15 @@ import { LiteralType, LiteralVisitor } from '../literalVisitor';
 
 export type LiteralPrimaryType = {
     type: 'literalPrimary';
-    value: Omit<LiteralType, 'type'>;
+    primary: LiteralType;
 };
 
 export const makeLiteralPrimaryType = (ctx: LiteralPrimaryContext): LiteralPrimaryType => {
-    const { type, ...value } = new LiteralVisitor().visit(ctx.literal());
+    const primary = new LiteralVisitor().visit(ctx.literal());
 
     return {
         type: 'literalPrimary',
-        value: value,
+        primary: primary,
     };
 };
 

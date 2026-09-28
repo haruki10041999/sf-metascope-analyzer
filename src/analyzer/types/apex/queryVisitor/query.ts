@@ -7,79 +7,84 @@ import { UsingScopeType, makeUsingScopeType } from '../usingScope';
 
 export type QueryType = {
     type: 'query';
-    select: Omit<ListType, 'type'>;
-    from: Omit<ListType, 'type'>;
-    for?: Omit<ClauseType, 'type'>;
-    usingScope?: Omit<UsingScopeType, 'type'>;
-    where?: Omit<ClauseType, 'type'>;
-    with?: Omit<ClauseType, 'type'>;
-    groupBy?: Omit<ClauseType, 'type'>;
-    orderBy?: Omit<ClauseType, 'type'>;
-    limit?: Omit<ClauseType, 'type'>;
-    offset?: Omit<ClauseType, 'type'>;
-    allRow?: Omit<ClauseType, 'type'>;
-    update?: Omit<ListType, 'type'>;
+    query: {
+        select: ListType;
+        from: ListType;
+        for?: ClauseType;
+        usingScope?: UsingScopeType;
+        where?: ClauseType;
+        with?: ClauseType;
+        groupBy?: ClauseType;
+        orderBy?: ClauseType;
+        limit?: ClauseType;
+        offset?: ClauseType;
+        allRow?: ClauseType;
+        update?: ListType;
+    };
 };
 
 export const makeQueryType = (ctx: QueryContext): QueryType => {
-    const { type: _, ...select } = new ListVisitor().visit(ctx.selectList());
-    const { type: __, ...from } = new ListVisitor().visit(ctx.fromNameList());
+    const select = new ListVisitor().visit(ctx.selectList());
+    const from = new ListVisitor().visit(ctx.fromNameList());
 
     const queryType: QueryType = {
         type: 'query',
-        select: select,
-        from: from,
+        query: {
+            select: select,
+            from: from,
+        },
     };
 
     if (ctx.forClauses()) {
-        const { type, ...forClauses } = new ClauseVisitor().visit(ctx.forClauses());
-        queryType.for = forClauses;
+        const forClauses = new ClauseVisitor().visit(ctx.forClauses());
+        queryType.query.for = forClauses;
     }
 
     if (ctx.usingScope()) {
-        const { type, ...usingScope } = makeUsingScopeType(ctx.usingScope());
-        queryType.usingScope = usingScope;
+        const usingScope = makeUsingScopeType(ctx.usingScope());
+        queryType.query.usingScope = usingScope;
     }
 
     if (ctx.whereClause()) {
-        const { type, ...whereClause } = new ClauseVisitor().visit(ctx.whereClause());
-        queryType.where = whereClause;
+        const whereClause = new ClauseVisitor().visit(ctx.whereClause());
+        queryType.query.where = whereClause;
     }
 
     if (ctx.withClause()) {
-        const { type, ...withClause } = new ClauseVisitor().visit(ctx.withClause());
-        queryType.with = withClause;
+        const withClause = new ClauseVisitor().visit(ctx.withClause());
+        queryType.query.with = withClause;
     }
 
     if (ctx.groupByClause()) {
-        const { type, ...groupByClause } = new ClauseVisitor().visit(ctx.groupByClause());
-        queryType.groupBy = groupByClause;
+        const groupByClause = new ClauseVisitor().visit(ctx.groupByClause());
+        queryType.query.groupBy = groupByClause;
     }
 
     if (ctx.orderByClause()) {
-        const { type, ...orderByClause } = new ClauseVisitor().visit(ctx.orderByClause());
-        queryType.orderBy = orderByClause;
+        const orderByClause = new ClauseVisitor().visit(ctx.orderByClause());
+        queryType.query.orderBy = orderByClause;
     }
 
     if (ctx.limitClause()) {
-        const { type, ...limitClause } = new ClauseVisitor().visit(ctx.limitClause());
-        queryType.limit = limitClause;
+        const limitClause = new ClauseVisitor().visit(ctx.limitClause());
+        queryType.query.limit = limitClause;
     }
 
     if (ctx.offsetClause()) {
-        const { type, ...offsetClause } = new ClauseVisitor().visit(ctx.offsetClause());
-        queryType.offset = offsetClause;
+        const offsetClause = new ClauseVisitor().visit(ctx.offsetClause());
+        queryType.query.offset = offsetClause;
     }
 
     if (ctx.allRowsClause()) {
-        const { type, ...allRowsClause } = new ClauseVisitor().visit(ctx.allRowsClause());
-        queryType.allRow = allRowsClause;
+        const allRowsClause = new ClauseVisitor().visit(ctx.allRowsClause());
+        queryType.query.allRow = allRowsClause;
     }
 
     if (ctx.updateList()) {
-        const { type, ...updateList } = new ListVisitor().visit(ctx.updateList());
-        queryType.update = updateList;
+        const updateList = new ListVisitor().visit(ctx.updateList());
+        queryType.query.update = updateList;
     }
 
     return queryType;
 };
+

@@ -3,13 +3,16 @@ import {
     ElementValuePairContext,
     IdCreatedNamePairContext,
     MapCreatorRestPairContext,
+    ElementValuePairsContext,
 } from '@apexdevtools/apex-parser';
 
 import { ElementValuePairType, makeElementValuePairType } from './elementValuePair';
 import { IdCreatedNamePairType, makeIdCreatedNamePairType } from './idCreatedNamePair';
 import { MapCreatorPairType, makeMapCreatorPairType } from './mapCreatorPair';
+import { ElementValuePairsType, makeElementValuePairsType } from './elementValuePairs';
 
-export type PairType = IdCreatedNamePairType | ElementValuePairType | MapCreatorPairType;
+export type PairType =
+    IdCreatedNamePairType | ElementValuePairType | MapCreatorPairType | ElementValuePairsType;
 
 export class PairVisitor extends ApexParserBaseVisitor<PairType> {
     visitIdCreatedNamePair(ctx: IdCreatedNamePairContext): PairType {
@@ -22,5 +25,9 @@ export class PairVisitor extends ApexParserBaseVisitor<PairType> {
 
     visitMapCreatorRestPair(ctx: MapCreatorRestPairContext): PairType {
         return makeMapCreatorPairType(ctx);
+    }
+
+    visitElementValuePairs(ctx: ElementValuePairsContext): PairType {
+        return makeElementValuePairsType(ctx);
     }
 }

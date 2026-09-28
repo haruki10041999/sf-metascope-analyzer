@@ -5,31 +5,36 @@ import { ListType, ListVisitor } from '../listVisitor';
 
 export type GroupByClauseType = {
     type: 'groupByClause';
-    fields: Omit<ListType, 'type'>;
-    mode?: 'ROLLUP' | 'CUBE';
-    having?: Omit<ExpressionType, 'type'>;
+    clause: {
+        fields: ListType;
+        mode?: 'ROLLUP' | 'CUBE';
+        having?: ExpressionType;
+    };
 };
 
 export const makeGroupByClauseType = (ctx: GroupByClauseContext): GroupByClauseType => {
-    const { type, ...fields } = new ListVisitor().visit(ctx.fieldGroupByList());
+    const fields = new ListVisitor().visit(ctx.fieldGroupByList());
 
     const groupByClauseType: GroupByClauseType = {
         type: 'groupByClause',
-        fields: fields,
+        clause: {
+            fields: fields,
+        },
     };
 
     if (ctx.ROLLUP()) {
-        groupByClauseType.mode = 'ROLLUP';
+        groupByClauseType.clause.mode = 'ROLLUP';
     }
 
     if (ctx.CUBE()) {
-        groupByClauseType.mode = 'CUBE';
+        groupByClauseType.clause.mode = 'CUBE';
     }
 
     if (ctx.HAVING() && ctx.logicalExpression()) {
-        const { type, ...having } = new ExpressionVisitor().visit(ctx.logicalExpression());
-        groupByClauseType.having = having;
+        const having = new ExpressionVisitor().visit(ctx.logicalExpression());
+        groupByClauseType.clause.having = having;
     }
 
     return groupByClauseType;
 };
+

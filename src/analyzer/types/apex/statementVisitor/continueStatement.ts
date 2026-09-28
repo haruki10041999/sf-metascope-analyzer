@@ -2,13 +2,13 @@ import { ContinueStatementContext } from '@apexdevtools/apex-parser';
 
 export type ContinueStatementType = {
     type: 'continueStatement';
-    value: string;
+    statement: string;
 };
 
 export const makeContinueStatementType = (ctx: ContinueStatementContext): ContinueStatementType => {
     return {
         type: 'continueStatement',
-        value: ctx.getText(),
+        statement: ctx.getText(),
     };
 };
 

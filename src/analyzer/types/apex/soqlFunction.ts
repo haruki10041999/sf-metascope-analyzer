@@ -77,31 +77,31 @@ export type SoqlFunctionType = {
 } & (
     | {
           functionType: NormalSoqlFunctionType;
-          fieldName: Omit<NameType, 'type'>;
+          fieldName: NameType;
       }
     | {
           functionType: DateFunctionType;
-          fieldName: Omit<NameType, 'type'>;
+          fieldName: NameType;
       }
     | {
           functionType: CountFunctionType;
-          fieldName?: Omit<NameType, 'type'>;
+          fieldName?: NameType;
       }
     | {
           functionType: FormatFunctionType;
-          fieldName: Omit<NameType, 'type'>;
+          fieldName: NameType;
           format?: string;
       }
     | {
           functionType: FieldsFunctionType;
-          param: Omit<ParameterType, 'type'>;
+          param: ParameterType;
       }
     | {
           functionType: DistanceFunctionType;
-          param: Omit<ValueType, 'type'>[];
+          param: ValueType[];
       }
     | {
-          function: Omit<SoqlFunctionType, 'type'>;
+          function: SoqlFunctionType;
       }
 );
 
@@ -265,3 +265,4 @@ export const makeSoqlFunctionType = (ctx: SoqlFunctionContext): SoqlFunctionType
 
     throw new Error('値が異常です。SoqlFunctionContext: ' + ctx.getText());
 };
+

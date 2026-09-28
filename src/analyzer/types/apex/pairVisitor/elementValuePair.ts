@@ -5,8 +5,8 @@ import { ValueType, ValueVisitor } from '../valueVisitor';
 
 export type ElementValuePairType = {
     type: 'elementValuePair';
-    name: Omit<IdType, 'type'>;
-    value?: Omit<ValueType, 'type'>;
+    name: IdType;
+    value?: ValueType;
 };
 
 export const makeElementValuePairType = (ctx: ElementValuePairContext): ElementValuePairType => {

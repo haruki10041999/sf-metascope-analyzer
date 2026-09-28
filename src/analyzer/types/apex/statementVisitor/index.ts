@@ -20,6 +20,7 @@ import {
     RunAsStatementContext,
     LocalVariableDeclarationStatementContext,
     ExpressionStatementContext,
+    AccessLevelContext,
 } from '@apexdevtools/apex-parser';
 
 import { StatementType as statementType, makeStatementType } from './statement';
@@ -45,6 +46,7 @@ import {
     makeLocalVariableDeclarationStatementType,
 } from './localVariableDeclarationStatement';
 import { ExpressionStatementType, makeExpressionStatementType } from './expressionStatement';
+import { AccessLevelType, makeAccessLevelType } from './accessLevel';
 
 export type StatementType =
     | statementType
@@ -66,7 +68,8 @@ export type StatementType =
     | MergeStatementType
     | RunAsStatementType
     | LocalVariableDeclarationStatementType
-    | ExpressionStatementType;
+    | ExpressionStatementType
+    | AccessLevelType;
 
 export class StatementVisitor extends ApexParserBaseVisitor<StatementType> {
     visitStatement(ctx: StatementContext) {
@@ -148,4 +151,9 @@ export class StatementVisitor extends ApexParserBaseVisitor<StatementType> {
     visitExpressionStatement(ctx: ExpressionStatementContext) {
         return makeExpressionStatementType(ctx);
     }
+
+    visitAccessLevel(ctx: AccessLevelContext) {
+        return makeAccessLevelType(ctx);
+    }
 }
+

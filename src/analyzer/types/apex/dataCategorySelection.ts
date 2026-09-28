@@ -7,9 +7,9 @@ import { FilteringSelectorType, makeFilteringSelectorType } from './filteringSel
 
 export type DataCategorySelectionType = {
     type: 'dataCategorySelection';
-    groupName: Omit<IdType, 'type'>;
-    selector: Omit<FilteringSelectorType, 'type'>;
-    categoryName: Omit<NameType, 'type'>;
+    groupName: IdType;
+    selector: FilteringSelectorType;
+    categoryName: NameType;
 };
 
 export const makeDataCategorySelectionType = (
@@ -26,3 +26,4 @@ export const makeDataCategorySelectionType = (
         categoryName: categoryName,
     };
 };
+

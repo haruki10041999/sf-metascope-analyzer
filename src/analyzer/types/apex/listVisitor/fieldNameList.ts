@@ -4,12 +4,12 @@ import { NameType, NameVisitor } from '../nameVisitor';
 
 export type FieldNameListType = {
     type: 'fieldNameList';
-    list: Omit<NameType, 'type'>[];
+    list: NameType[];
 };
 
 export const makeFieldNameListType = (ctx: FieldNameListContext): FieldNameListType => {
     const list = ctx.fieldName_list().map((fieldNameCtx) => {
-        const { type, ...fieldName } = new NameVisitor().visit(fieldNameCtx);
+        const fieldName = new NameVisitor().visit(fieldNameCtx);
 
         return fieldName;
     });
@@ -19,3 +19,4 @@ export const makeFieldNameListType = (ctx: FieldNameListContext): FieldNameListT
         list: list,
     };
 };
+

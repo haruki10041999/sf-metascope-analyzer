@@ -5,13 +5,13 @@ import { ExpressionType, ExpressionVisitor } from '../expressionVisitor';
 
 type ConditionType = {
     number: number;
-    condition: Omit<ExpressionType, 'type'> | 'else';
-    statement: Omit<StatementType, 'type'>;
+    condition: ExpressionType | 'else';
+    block: StatementType;
 };
 
 export type IfStatementType = {
     type: 'ifStatement';
-    conditions: ConditionType[];
+    statement: ConditionType[];
 };
 
 export const makeIfStatementType = (ctx: IfStatementContext): IfStatementType => {
@@ -20,17 +20,13 @@ export const makeIfStatementType = (ctx: IfStatementContext): IfStatementType =>
     let currentCtx: IfStatementContext | undefined = ctx;
     let count = 1;
     while (currentCtx) {
-        const { type: currentConditionType, ...currentCondition } = new ExpressionVisitor().visit(
-            currentCtx.parExpression(),
-        );
+        const currentCondition = new ExpressionVisitor().visit(currentCtx.parExpression());
         const statements: StatementContext[] = currentCtx.statement_list();
-        const { type: currentStatementType, ...currentStatement } = new StatementVisitor().visit(
-            statements.at(0)!,
-        );
+        const currentStatement = new StatementVisitor().visit(statements.at(0)!);
         conditionTypes.push({
             number: count,
             condition: currentCondition,
-            statement: currentStatement,
+            block: currentStatement,
         });
 
         if (!currentCtx.ELSE()) {
@@ -51,13 +47,11 @@ export const makeIfStatementType = (ctx: IfStatementContext): IfStatementType =>
             continue;
         }
 
-        const { type: elseStatementType, ...elseStatement } = new StatementVisitor().visit(
-            elseStatementCtx,
-        );
+        const elseStatement = new StatementVisitor().visit(elseStatementCtx);
         conditionTypes.push({
             number: count + 1,
             condition: 'else',
-            statement: elseStatement,
+            block: elseStatement,
         });
 
         break;
@@ -65,7 +59,7 @@ export const makeIfStatementType = (ctx: IfStatementContext): IfStatementType =>
 
     return {
         type: 'ifStatement',
-        conditions: conditionTypes,
+        statement: conditionTypes,
     };
 };
 

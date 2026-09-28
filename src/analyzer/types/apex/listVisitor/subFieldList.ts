@@ -4,12 +4,12 @@ import { EntryType, EntryVisitor } from '../entryVisitor';
 
 export type SubFieldListType = {
     type: 'subFieldList';
-    list: Omit<EntryType, 'type'>[];
+    list: EntryType[];
 };
 
 export const makeSubFieldListType = (ctx: SubFieldListContext): SubFieldListType => {
     const list = ctx.subFieldEntry_list().map((subFieldEntryCtx) => {
-        const { type, ...entry } = new EntryVisitor().visit(subFieldEntryCtx);
+        const entry = new EntryVisitor().visit(subFieldEntryCtx);
         return entry;
     });
 
@@ -18,3 +18,4 @@ export const makeSubFieldListType = (ctx: SubFieldListContext): SubFieldListType
         list: list,
     };
 };
+

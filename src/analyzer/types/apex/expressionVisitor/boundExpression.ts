@@ -1,13 +1,15 @@
 import { BoundExpressionContext } from '@apexdevtools/apex-parser';
 
+import { ExpressionType, ExpressionVisitor } from '.';
+
 export type BoundExpressionType = {
     type: 'boundExpression';
-    value: string;
+    expression: ExpressionType;
 };
 
 export function makeBoundExpressionType(ctx: BoundExpressionContext): BoundExpressionType {
     return {
         type: 'boundExpression',
-        value: ctx.getText(),
+        expression: new ExpressionVisitor().visit(ctx.expression()),
     };
 }

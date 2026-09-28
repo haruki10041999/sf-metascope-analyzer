@@ -1,26 +1,30 @@
 import { DeleteStatementContext } from '@apexdevtools/apex-parser';
 
-import { ExpressionType, ExpressionVisitor } from '../expressionVisitor';
+import { StatementType, StatementVisitor } from './index';
 
-import { AccessLevelType, makeAccessLevelType } from '../accessLevel';
+import { ExpressionType, ExpressionVisitor } from '../expressionVisitor';
 
 export type DeleteStatementType = {
     type: 'deleteStatement';
-    variant: Omit<ExpressionType, 'type'>;
-    accessLevel?: Omit<AccessLevelType, 'type'>;
+    statement: {
+        variant: ExpressionType;
+        accessLevel?: StatementType;
+    };
 };
 
 export const makeDeleteStatementType = (ctx: DeleteStatementContext): DeleteStatementType => {
-    const { type, ...variant } = new ExpressionVisitor().visit(ctx.expression());
+    const variant = new ExpressionVisitor().visit(ctx.expression());
 
     const deleteStatementType: DeleteStatementType = {
         type: 'deleteStatement',
-        variant: variant,
+        statement: {
+            variant: variant,
+        },
     };
 
     if (ctx.accessLevel()) {
-        const { type, ...accessLevel } = makeAccessLevelType(ctx.accessLevel());
-        deleteStatementType.accessLevel = accessLevel;
+        const accessLevel = new StatementVisitor().visit(ctx.accessLevel());
+        deleteStatementType.statement.accessLevel = accessLevel;
     }
 
     return deleteStatementType;

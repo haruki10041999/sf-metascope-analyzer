@@ -14,13 +14,14 @@ import {
     InterfaceMethodDeclarationContext,
     InterfaceDeclarationContext,
     PropertyDeclarationContext,
+    EnumConstantsContext,
 } from '@apexdevtools/apex-parser';
 
 import { MemberDeclarationType, makeMemberDeclarationType } from './memberDeclaration';
 import {
     TriggerMemberDeclarationType,
     makeTriggerMemberDeclarationType,
-} from './triggerMemverDeclaration';
+} from './triggerMemberDeclaration';
 import {
     AnonymousMemberDeclarationType,
     makeAnonymousMemberDeclarationType,
@@ -45,6 +46,7 @@ import {
     ConstructorDeclarationType,
     makeConstructorDeclarationType,
 } from './constructorDeclaration';
+import { EnumConstantsType, makeEnumConstantsType } from './enumConstants';
 
 export type DeclarationType =
     | LocalVariableDeclarationType
@@ -60,7 +62,8 @@ export type DeclarationType =
     | FieldDeclarationType
     | InterfaceMethodDeclarationType
     | InterfaceDeclarationType
-    | PropertyDeclarationType;
+    | PropertyDeclarationType
+    | EnumConstantsType;
 
 export class DeclarationVisitor extends ApexParserBaseVisitor<DeclarationType> {
     visitMemberDeclaration(ctx: MemberDeclarationContext) {
@@ -117,5 +120,9 @@ export class DeclarationVisitor extends ApexParserBaseVisitor<DeclarationType> {
 
     visitAnonymousMemberDeclaration(ctx: AnonymousMemberDeclarationContext) {
         return makeAnonymousMemberDeclarationType(ctx);
+    }
+
+    visitEnumConstants(ctx: EnumConstantsContext) {
+        return makeEnumConstantsType(ctx);
     }
 }

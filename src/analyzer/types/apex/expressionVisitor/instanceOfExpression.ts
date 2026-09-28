@@ -1,24 +1,30 @@
 import { InstanceOfExpressionContext } from '@apexdevtools/apex-parser';
 
 import { ExpressionType, ExpressionVisitor } from '.';
-
-import { TypeRefType, makeTypeRefType } from '../typeRef';
+import { TypeType, TypeVisitor } from '../typeVisitor';
 
 export type InstanceOfExpressionType = {
     type: 'instanceOfExpression';
-    value: Omit<ExpressionType, 'type'>;
-    targetType: Omit<TypeRefType, 'type'>;
+    expression: {
+        left: ExpressionType;
+        operator: 'instanceof';
+        right: TypeType;
+    };
 };
 
 export const makeInstanceOfExpressionType = (
     ctx: InstanceOfExpressionContext,
 ): InstanceOfExpressionType => {
-    const { type, ...value } = new ExpressionVisitor().visit(ctx.expression());
-    const { type: _, ...targetType } = makeTypeRefType(ctx.typeRef());
+    const value = new ExpressionVisitor().visit(ctx.expression());
+    const targetType = new TypeVisitor().visit(ctx.typeRef());
 
     return {
         type: 'instanceOfExpression',
-        value: value,
-        targetType: targetType,
+        expression: {
+            left: value,
+            operator: 'instanceof',
+            right: targetType,
+        },
     };
 };
+

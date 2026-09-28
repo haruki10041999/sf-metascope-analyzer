@@ -1,20 +1,24 @@
 import { FieldDeclarationContext } from '@apexdevtools/apex-parser';
 
-import { TypeRefType, makeTypeRefType } from '../typeRef';
-import { VariableDeclaratorsType, makeVariableDeclaratorsType } from '../variableDeclarators';
+import { TypeType, TypeVisitor } from '../typeVisitor';
+import { VariableType, VariableVisitor } from '../variableVisitor';
 
 export type FieldDeclarationType = {
     type: 'fieldDeclaration';
-    variantType: Omit<TypeRefType, 'type'>;
-    variant: Omit<VariableDeclaratorsType, 'type'>;
+    declaration: {
+        type: TypeType;
+        name: VariableType;
+    };
 };
 
 export const makeFieldDeclarationType = (ctx: FieldDeclarationContext): FieldDeclarationType => {
-    const { type: _, ...variantType } = makeTypeRefType(ctx.typeRef());
-    const { type: __, ...variant } = makeVariableDeclaratorsType(ctx.variableDeclarators());
+    const type = new TypeVisitor().visit(ctx.typeRef());
+    const name = new VariableVisitor().visit(ctx.variableDeclarators());
     return {
         type: 'fieldDeclaration',
-        variantType: variantType,
-        variant: variant,
+        declaration: {
+            type: type,
+            name: name,
+        },
     };
 };

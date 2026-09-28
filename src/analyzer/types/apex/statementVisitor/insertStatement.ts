@@ -1,26 +1,30 @@
 import { InsertStatementContext } from '@apexdevtools/apex-parser';
 
-import { ExpressionType, ExpressionVisitor } from '../expressionVisitor';
+import { StatementType, StatementVisitor } from './index';
 
-import { AccessLevelType, makeAccessLevelType } from '../accessLevel';
+import { ExpressionType, ExpressionVisitor } from '../expressionVisitor';
 
 export type InsertStatementType = {
     type: 'insertStatement';
-    variant: Omit<ExpressionType, 'type'>;
-    accessLevel?: Omit<AccessLevelType, 'type'>;
+    statement: {
+        variant: ExpressionType;
+        accessLevel?: StatementType;
+    };
 };
 
 export const makeInsertStatementType = (ctx: InsertStatementContext): InsertStatementType => {
-    const { type, ...variant } = new ExpressionVisitor().visit(ctx.expression());
+    const variant = new ExpressionVisitor().visit(ctx.expression());
 
     const insertStatementType: InsertStatementType = {
         type: 'insertStatement',
-        variant: variant,
+        statement: {
+            variant: variant,
+        },
     };
 
     if (ctx.accessLevel()) {
-        const { type, ...accessLevel } = makeAccessLevelType(ctx.accessLevel());
-        insertStatementType.accessLevel = accessLevel;
+        const accessLevel = new StatementVisitor().visit(ctx.accessLevel());
+        insertStatementType.statement.accessLevel = accessLevel;
     }
 
     return insertStatementType;

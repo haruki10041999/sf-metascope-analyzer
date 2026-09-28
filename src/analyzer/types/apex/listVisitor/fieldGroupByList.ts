@@ -4,12 +4,12 @@ import { FieldGroupByType, makeFieldGroupByType } from '../fieldGroupBy';
 
 export type FieldGroupByListType = {
     type: 'fieldGroupByList';
-    list: Omit<FieldGroupByType, 'type'>[];
+    list: FieldGroupByType[];
 };
 
 export const makeFieldGroupByListType = (ctx: FieldGroupByListContext): FieldGroupByListType => {
     const list = ctx.fieldGroupBy_list().map((fieldGroupByCtx) => {
-        const { type, ...value } = makeFieldGroupByType(fieldGroupByCtx);
+        const value = makeFieldGroupByType(fieldGroupByCtx);
         return value;
     });
 
@@ -18,3 +18,4 @@ export const makeFieldGroupByListType = (ctx: FieldGroupByListContext): FieldGro
         list: list,
     };
 };
+

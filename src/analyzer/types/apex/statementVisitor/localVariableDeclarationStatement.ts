@@ -4,7 +4,7 @@ import { DeclarationType, DeclarationVisitor } from '../declarationVisitor';
 
 export type LocalVariableDeclarationStatementType = {
     type: 'localVariableDeclarationStatement';
-    variants: Omit<DeclarationType, 'type'>;
+    statement: DeclarationType;
 };
 
 export const makeLocalVariableDeclarationStatementType = (
@@ -12,7 +12,7 @@ export const makeLocalVariableDeclarationStatementType = (
 ): LocalVariableDeclarationStatementType => {
     return {
         type: 'localVariableDeclarationStatement',
-        variants: new DeclarationVisitor().visit(ctx.localVariableDeclaration()),
+        statement: new DeclarationVisitor().visit(ctx.localVariableDeclaration()),
     };
 };
 

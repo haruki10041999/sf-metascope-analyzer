@@ -4,12 +4,12 @@ import { IdType, IdVisitor } from '../idVisitor';
 
 export type DataCategoryNameType = {
     type: 'DataCategoryName';
-    name: Omit<IdType, 'type'>[];
+    name: IdType[];
 };
 
 export function makeDataCategoryNameType(ctx: DataCategoryNameContext): DataCategoryNameType {
     const names = ctx.soqlId_list().map((idCtx) => {
-        const { type, ...name } = new IdVisitor().visit(idCtx);
+        const name = new IdVisitor().visit(idCtx);
         return name;
     });
 

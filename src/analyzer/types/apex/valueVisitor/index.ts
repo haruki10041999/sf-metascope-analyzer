@@ -10,11 +10,11 @@ import {
 import { ValueType as valueType, makeValueType } from './value';
 import { ElementValueType, makeElementValueType } from './elementValue';
 import { WhenValueType, makeWhenValueType } from './whenValue';
-import { CoodinateValueType, makeCoordinateValueType } from './coordinateValue';
+import { CoordinateValueType, makeCoordinateValueType } from './coordinateValue';
 import { LocationValueType, makeLocationValueType } from './locationValue';
 
 export type ValueType =
-    valueType | ElementValueType | WhenValueType | CoodinateValueType | LocationValueType;
+    valueType | ElementValueType | WhenValueType | CoordinateValueType | LocationValueType;
 
 export class ValueVisitor extends ApexParserBaseVisitor<ValueType> {
     visitValue(ctx: ValueContext) {

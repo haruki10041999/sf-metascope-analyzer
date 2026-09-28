@@ -3,8 +3,8 @@ import { ValueContext } from '@apexdevtools/apex-parser';
 import { ExpressionType, ExpressionVisitor } from '../expressionVisitor';
 import { ListType, ListVisitor } from '../listVisitor';
 import { QueryType, QueryVisitor } from '../queryVisitor';
+import { LiteralVisitor, LiteralType } from '../literalVisitor';
 
-import { SignedIntegerType, makeSignedIntegerType } from '../signedInteger';
 import { DateFormulaType, makeDateFormulaType } from '../dateFormula';
 
 type ValueFieldType =
@@ -26,20 +26,20 @@ type ValueFieldType =
       }
     | {
           type: 'signedNumber';
-          value: Omit<SignedIntegerType, 'type'>;
+          value: LiteralType;
       }
     | {
           type: 'dateFormula';
-          value: Omit<DateFormulaType, 'type'>;
+          value: DateFormulaType;
       }
     | {
           type: 'subQuery';
-          value: Omit<QueryType, 'type'>;
+          value: QueryType;
       }
-    | { type: 'list'; value: Omit<ListType, 'type'> }
+    | { type: 'list'; value: ListType }
     | {
           type: 'bind';
-          value: Omit<ExpressionType, 'type'>;
+          value: ExpressionType;
       };
 
 export type ValueType = {
@@ -113,7 +113,7 @@ export const makeValueType = (ctx: ValueContext): ValueType => {
     }
 
     if (ctx.signedNumber()) {
-        const { type, ...value } = makeSignedIntegerType(ctx.signedNumber());
+        const value = new LiteralVisitor().visit(ctx.signedNumber());
         valueFieldType = {
             type: 'signedNumber',
             value: value,
@@ -121,7 +121,7 @@ export const makeValueType = (ctx: ValueContext): ValueType => {
     }
 
     if (ctx.dateFormula()) {
-        const { type, ...value } = makeDateFormulaType(ctx.dateFormula());
+        const value = makeDateFormulaType(ctx.dateFormula());
         valueFieldType = {
             type: 'dateFormula',
             value: value,
@@ -129,7 +129,7 @@ export const makeValueType = (ctx: ValueContext): ValueType => {
     }
 
     if (ctx.subQuery()) {
-        const { type, ...value } = new QueryVisitor().visit(ctx.subQuery());
+        const value = new QueryVisitor().visit(ctx.subQuery());
         valueFieldType = {
             type: 'subQuery',
             value: value,
@@ -137,7 +137,7 @@ export const makeValueType = (ctx: ValueContext): ValueType => {
     }
 
     if (ctx.valueList()) {
-        const { type, ...value } = new ListVisitor().visit(ctx.valueList());
+        const value = new ListVisitor().visit(ctx.valueList());
         valueFieldType = {
             type: 'list',
             value: value,
@@ -145,7 +145,7 @@ export const makeValueType = (ctx: ValueContext): ValueType => {
     }
 
     if (ctx.boundExpression()) {
-        const { type, ...value } = new ExpressionVisitor().visit(ctx.boundExpression());
+        const value = new ExpressionVisitor().visit(ctx.boundExpression());
         valueFieldType = {
             type: 'bind',
             value: value,
@@ -161,3 +161,4 @@ export const makeValueType = (ctx: ValueContext): ValueType => {
         value: valueFieldType,
     };
 };
+

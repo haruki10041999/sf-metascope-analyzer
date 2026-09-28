@@ -4,16 +4,21 @@ import { ClauseType, ClauseVisitor } from '../clauseVisitor';
 
 export type SoslLiteralAltType = {
     type: 'soslLiteralAlt';
-    find: string;
-    soslClauses: Omit<ClauseType, 'type'>;
+    literal: {
+        find: string;
+        soslClauses: ClauseType;
+    };
 };
 
 export const makeSoslLiteralAltType = (ctx: SoslLiteralAltContext): SoslLiteralAltType => {
-    const { type, ...soslClauses } = new ClauseVisitor().visit(ctx.soslClauses());
+    const soslClauses = new ClauseVisitor().visit(ctx.soslClauses());
 
     return {
         type: 'soslLiteralAlt',
-        find: ctx.FindLiteralAlt().getText(),
-        soslClauses: soslClauses,
+        literal: {
+            find: ctx.FindLiteralAlt().getText(),
+            soslClauses: soslClauses,
+        },
     };
 };
+

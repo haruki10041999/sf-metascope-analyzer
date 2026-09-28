@@ -4,7 +4,7 @@ import { PairType, PairVisitor } from '../pairVisitor';
 
 export type CreatedNameType = {
     type: 'createdName';
-    name: Omit<PairType, 'type'>[];
+    name: PairType[];
 };
 
 export const makeCreatedNameType = (ctx: CreatedNameContext): CreatedNameType => {

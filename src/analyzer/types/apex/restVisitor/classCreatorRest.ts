@@ -4,14 +4,15 @@ import { ArgumentsType, ArgumentsVisitor } from '../argumentsVisitor';
 
 export type ClassCreatorRestType = {
     type: 'classCreatorRest';
-    params: Omit<ArgumentsType, 'type'>;
+    rest: ArgumentsType;
 };
 
 export const makeClassCreatorRestType = (ctx: ClassCreatorRestContext): ClassCreatorRestType => {
-    const { type, ...params } = new ArgumentsVisitor().visit(ctx.arguments());
+    const rest = new ArgumentsVisitor().visit(ctx.arguments());
 
     return {
         type: 'classCreatorRest',
-        params: params,
+        rest: rest,
     };
 };
+

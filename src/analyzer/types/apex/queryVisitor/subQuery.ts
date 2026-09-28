@@ -5,49 +5,54 @@ import { ClauseType, ClauseVisitor } from '../clauseVisitor';
 
 export type SubQueryType = {
     type: 'subQuery';
-    select: Omit<ListType, 'type'>;
-    from: Omit<ListType, 'type'>;
-    for?: Omit<ClauseType, 'type'>;
-    where?: Omit<ClauseType, 'type'>;
-    orderBy?: Omit<ClauseType, 'type'>;
-    limit?: Omit<ClauseType, 'type'>;
-    update?: Omit<ListType, 'type'>;
+    query: {
+        select: ListType;
+        from: ListType;
+        for?: ClauseType;
+        where?: ClauseType;
+        orderBy?: ClauseType;
+        limit?: ClauseType;
+        update?: ListType;
+    };
 };
 
 export const makeSubQueryType = (ctx: SubQueryContext): SubQueryType => {
-    const { type: _, ...select } = new ListVisitor().visit(ctx.subFieldList());
-    const { type: __, ...from } = new ListVisitor().visit(ctx.fromNameList());
+    const select = new ListVisitor().visit(ctx.subFieldList());
+    const from = new ListVisitor().visit(ctx.fromNameList());
 
     const subQueryType: SubQueryType = {
         type: 'subQuery',
-        select: select,
-        from: from,
+        query: {
+            select: select,
+            from: from,
+        },
     };
 
     if (ctx.forClauses()) {
-        const { type, ...forClauses } = new ClauseVisitor().visit(ctx.forClauses());
-        subQueryType.for = forClauses;
+        const forClauses = new ClauseVisitor().visit(ctx.forClauses());
+        subQueryType.query.for = forClauses;
     }
 
     if (ctx.whereClause()) {
-        const { type, ...whereClause } = new ClauseVisitor().visit(ctx.whereClause());
-        subQueryType.where = whereClause;
+        const whereClause = new ClauseVisitor().visit(ctx.whereClause());
+        subQueryType.query.where = whereClause;
     }
 
     if (ctx.orderByClause()) {
-        const { type, ...orderByClause } = new ClauseVisitor().visit(ctx.orderByClause());
-        subQueryType.orderBy = orderByClause;
+        const orderByClause = new ClauseVisitor().visit(ctx.orderByClause());
+        subQueryType.query.orderBy = orderByClause;
     }
 
     if (ctx.limitClause()) {
-        const { type, ...limitClause } = new ClauseVisitor().visit(ctx.limitClause());
-        subQueryType.limit = limitClause;
+        const limitClause = new ClauseVisitor().visit(ctx.limitClause());
+        subQueryType.query.limit = limitClause;
     }
 
     if (ctx.updateList()) {
-        const { type, ...updateList } = new ListVisitor().visit(ctx.updateList());
-        subQueryType.update = updateList;
+        const updateList = new ListVisitor().visit(ctx.updateList());
+        subQueryType.query.update = updateList;
     }
 
     return subQueryType;
 };
+

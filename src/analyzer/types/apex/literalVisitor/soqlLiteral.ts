@@ -4,14 +4,15 @@ import { QueryType, QueryVisitor } from '../queryVisitor';
 
 export type SoqlLiteralType = {
     type: 'soqlLiteral';
-    value: Omit<QueryType, 'type'>;
+    literal: QueryType;
 };
 
 export const makeSoqlLiteralType = (ctx: SoqlLiteralContext): SoqlLiteralType => {
-    const { type, ...value } = new QueryVisitor().visit(ctx.query());
+    const value = new QueryVisitor().visit(ctx.query());
 
     return {
         type: 'soqlLiteral',
-        value: value,
+        literal: value,
     };
 };
+

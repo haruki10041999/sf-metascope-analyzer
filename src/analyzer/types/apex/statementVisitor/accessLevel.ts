@@ -2,20 +2,20 @@ import { AccessLevelContext } from '@apexdevtools/apex-parser';
 
 export type AccessLevelType = {
     type: 'accessLevel';
-    value: 'SYSTEM' | 'USER';
+    statement: 'SYSTEM' | 'USER';
 };
 
 export const makeAccessLevelType = (ctx: AccessLevelContext): AccessLevelType => {
     if (ctx.SYSTEM()) {
         return {
             type: 'accessLevel',
-            value: 'SYSTEM',
+            statement: 'SYSTEM',
         };
     }
     if (ctx.USER()) {
         return {
             type: 'accessLevel',
-            value: 'USER',
+            statement: 'USER',
         };
     }
 

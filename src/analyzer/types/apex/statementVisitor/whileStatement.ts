@@ -6,20 +6,22 @@ import { ExpressionType, ExpressionVisitor } from '../expressionVisitor';
 
 export type WhileStatementType = {
     type: 'whileStatement';
-    condition: Omit<ExpressionType, 'type'>;
-    statement: Omit<StatementType, 'type'>;
+    statement: {
+        condition: ExpressionType;
+        statement: StatementType;
+    };
 };
 
 export const makeWhileStatementType = (ctx: WhileStatementContext): WhileStatementType => {
-    const { type: conditionType, ...condition } = new ExpressionVisitor().visit(
-        ctx.parExpression(),
-    );
-    const { type: statementType, ...statement } = new StatementVisitor().visit(ctx.statement());
+    const condition = new ExpressionVisitor().visit(ctx.parExpression());
+    const statement = new StatementVisitor().visit(ctx.statement());
 
     return {
         type: 'whileStatement',
-        condition: condition,
-        statement: statement,
+        statement: {
+            condition: condition,
+            statement: statement,
+        },
     };
 };
 

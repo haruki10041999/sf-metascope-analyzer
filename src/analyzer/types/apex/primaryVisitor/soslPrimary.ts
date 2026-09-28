@@ -4,14 +4,15 @@ import { LiteralType, LiteralVisitor } from '../literalVisitor';
 
 export type SoslPrimaryType = {
     type: 'soslPrimary';
-    value: Omit<LiteralType, 'type'>;
+    primary: LiteralType;
 };
 
 export const makeSoslPrimaryType = (ctx: SoslPrimaryContext): SoslPrimaryType => {
-    const { type, ...value } = new LiteralVisitor().visit(ctx.soslLiteral());
+    const primary = new LiteralVisitor().visit(ctx.soslLiteral());
 
     return {
         type: 'soslPrimary',
-        value: value,
+        primary: primary,
     };
 };
+

@@ -4,11 +4,11 @@ import { ListType, ListVisitor } from '../listVisitor';
 
 export type ArgumentsType = {
     type: 'arguments';
-    args: Omit<ListType, 'type'>;
+    args: ListType;
 };
 
 export const makeArgumentsType = (ctx: ArgumentsContext): ArgumentsType => {
-    const { type, ...args } = new ListVisitor().visit(ctx.expressionList());
+    const args = new ListVisitor().visit(ctx.expressionList());
 
     return {
         type: 'arguments',

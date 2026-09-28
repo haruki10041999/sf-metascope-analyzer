@@ -1,17 +1,17 @@
 import { EnumConstantsContext } from '@apexdevtools/apex-parser';
 
-import { IdType, IdVisitor } from './idVisitor';
+import { IdType, IdVisitor } from '../idVisitor';
 
 export type EnumConstantsType = {
     type: 'enumConstants';
-    constants: Omit<IdType, 'type'>[];
+    declaration: IdType[];
 };
 
 export function makeEnumConstantsType(ctx: EnumConstantsContext): EnumConstantsType {
     return {
         type: 'enumConstants',
-        constants: ctx.id_list().map((idCtx) => {
-            const { type, ...constant } = new IdVisitor().visit(idCtx);
+        declaration: ctx.id_list().map((idCtx) => {
+            const constant = new IdVisitor().visit(idCtx);
             return constant;
         }),
     };

@@ -6,7 +6,7 @@ import { SoqlFunctionType, makeSoqlFunctionType } from './soqlFunction';
 
 export type FieldGroupByType = {
     type: 'fieldGroupBy';
-    value: Omit<NameType, 'type'> | Omit<SoqlFunctionType, 'type'>;
+    value: NameType | SoqlFunctionType;
 };
 
 export const makeFieldGroupByType = (ctx: FieldGroupByContext): FieldGroupByType => {
@@ -28,3 +28,4 @@ export const makeFieldGroupByType = (ctx: FieldGroupByContext): FieldGroupByType
 
     throw new Error('値が異常です。FieldGroupByContext:' + ctx.getText());
 };
+

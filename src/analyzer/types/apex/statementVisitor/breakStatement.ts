@@ -2,13 +2,13 @@ import { BreakStatementContext } from '@apexdevtools/apex-parser';
 
 export type BreakStatementType = {
     type: 'breakStatement';
-    value: string;
+    statement: string;
 };
 
 export const makeBreakStatementType = (ctx: BreakStatementContext): BreakStatementType => {
     return {
         type: 'breakStatement',
-        value: ctx.getText(),
+        statement: ctx.BREAK().getText(),
     };
 };
 

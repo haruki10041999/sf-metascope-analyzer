@@ -1,22 +1,26 @@
 import { EnumDeclarationContext } from '@apexdevtools/apex-parser';
 
-import { IdType, IdVisitor } from '../idVisitor';
+import { DeclarationType, DeclarationVisitor } from '.';
 
-import { EnumConstantsType, makeEnumConstantsType } from '../enumConstants';
+import { IdType, IdVisitor } from '../idVisitor';
 
 export type EnumDeclarationType = {
     type: 'enumDeclaration';
-    enumName: Omit<IdType, 'type'>;
-    constants: Omit<EnumConstantsType, 'type'>;
+    declaration: {
+        name: IdType;
+        constants: DeclarationType;
+    };
 };
 
 export const makeEnumDeclarationType = (ctx: EnumDeclarationContext): EnumDeclarationType => {
-    const { type: nameType, ...name } = new IdVisitor().visit(ctx.id());
-    const { type: constantsType, ...constants } = makeEnumConstantsType(ctx.enumConstants());
+    const name = new IdVisitor().visit(ctx.id());
+    const constants = new DeclarationVisitor().visit(ctx.enumConstants());
 
     return {
         type: 'enumDeclaration',
-        enumName: name,
-        constants: constants,
+        declaration: {
+            name: name,
+            constants: constants,
+        },
     };
 };

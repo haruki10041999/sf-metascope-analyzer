@@ -4,12 +4,12 @@ import { DeclarationType, DeclarationVisitor } from '.';
 
 export type MemberDeclarationType = {
     type: 'memberDeclaration';
-    declaration: Omit<DeclarationType, 'type'>;
+    declaration: DeclarationType;
 };
 
 export const makeMemberDeclarationType = (ctx: MemberDeclarationContext): MemberDeclarationType => {
     if (ctx.methodDeclaration()) {
-        const { type, ...declaration } = new DeclarationVisitor().visit(ctx.methodDeclaration());
+        const declaration = new DeclarationVisitor().visit(ctx.methodDeclaration());
         return {
             type: 'memberDeclaration',
             declaration: declaration,
@@ -17,9 +17,7 @@ export const makeMemberDeclarationType = (ctx: MemberDeclarationContext): Member
     }
 
     if (ctx.constructorDeclaration()) {
-        const { type, ...declaration } = new DeclarationVisitor().visit(
-            ctx.constructorDeclaration(),
-        );
+        const declaration = new DeclarationVisitor().visit(ctx.constructorDeclaration());
         return {
             type: 'memberDeclaration',
             declaration: declaration,
@@ -27,7 +25,7 @@ export const makeMemberDeclarationType = (ctx: MemberDeclarationContext): Member
     }
 
     if (ctx.interfaceDeclaration()) {
-        const { type, ...declaration } = new DeclarationVisitor().visit(ctx.interfaceDeclaration());
+        const declaration = new DeclarationVisitor().visit(ctx.interfaceDeclaration());
         return {
             type: 'memberDeclaration',
             declaration: declaration,
@@ -35,7 +33,7 @@ export const makeMemberDeclarationType = (ctx: MemberDeclarationContext): Member
     }
 
     if (ctx.classDeclaration()) {
-        const { type, ...declaration } = new DeclarationVisitor().visit(ctx.classDeclaration());
+        const declaration = new DeclarationVisitor().visit(ctx.classDeclaration());
         return {
             type: 'memberDeclaration',
             declaration: declaration,
@@ -43,7 +41,7 @@ export const makeMemberDeclarationType = (ctx: MemberDeclarationContext): Member
     }
 
     if (ctx.enumDeclaration()) {
-        const { type, ...declaration } = new DeclarationVisitor().visit(ctx.enumDeclaration());
+        const declaration = new DeclarationVisitor().visit(ctx.enumDeclaration());
         return {
             type: 'memberDeclaration',
             declaration: declaration,
@@ -51,7 +49,7 @@ export const makeMemberDeclarationType = (ctx: MemberDeclarationContext): Member
     }
 
     if (ctx.propertyDeclaration()) {
-        const { type, ...declaration } = new DeclarationVisitor().visit(ctx.propertyDeclaration());
+        const declaration = new DeclarationVisitor().visit(ctx.propertyDeclaration());
         return {
             type: 'memberDeclaration',
             declaration: declaration,
@@ -59,7 +57,7 @@ export const makeMemberDeclarationType = (ctx: MemberDeclarationContext): Member
     }
 
     if (ctx.fieldDeclaration()) {
-        const { type, ...declaration } = new DeclarationVisitor().visit(ctx.fieldDeclaration());
+        const declaration = new DeclarationVisitor().visit(ctx.fieldDeclaration());
         return {
             type: 'memberDeclaration',
             declaration: declaration,

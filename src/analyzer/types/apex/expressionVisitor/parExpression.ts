@@ -1,13 +1,15 @@
 import { ParExpressionContext } from '@apexdevtools/apex-parser';
 
+import { ExpressionType, ExpressionVisitor } from '.';
+
 export type ParExpressionType = {
     type: 'ParExpression';
-    value: string;
+    expression: ExpressionType;
 };
 
 export const makeParExpressionType = (ctx: ParExpressionContext): ParExpressionType => {
     return {
         type: 'ParExpression',
-        value: ctx.getText(),
+        expression: new ExpressionVisitor().visit(ctx.expression()),
     };
 };

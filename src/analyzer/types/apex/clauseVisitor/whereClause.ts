@@ -4,14 +4,15 @@ import { ExpressionType, ExpressionVisitor } from '../expressionVisitor';
 
 export type WhereClauseType = {
     type: 'whereClause';
-    condition: Omit<ExpressionType, 'type'>;
+    clause: ExpressionType;
 };
 
 export const makeWhereClauseType = (ctx: WhereClauseContext): WhereClauseType => {
-    const { type, ...condition } = new ExpressionVisitor().visit(ctx);
+    const clause = new ExpressionVisitor().visit(ctx);
 
     return {
         type: 'whereClause',
-        condition: condition,
+        clause: clause,
     };
 };
+

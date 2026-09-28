@@ -4,28 +4,25 @@ import { IdType, IdVisitor } from '../idVisitor';
 
 export type SoslIdType = {
     type: 'soslId';
-    value: string[];
+    id: IdType[];
 };
 
 export const makeSoslIdType = (ctx: SoslIdContext): SoslIdType => {
-    const { type, value } = new IdVisitor().visit(ctx.id());
-    const values: string[] = [];
-    if (type === 'id') {
-        values.push(value);
-    }
+    const id = new IdVisitor().visit(ctx.id());
+    const values: IdType[] = [];
+    values.push(id);
 
     if (ctx.soslId_list() && ctx.soslId_list().length > 0) {
         ctx.soslId_list().forEach((soslIdCtx) => {
-            const { type, value } = new IdVisitor().visit(soslIdCtx.id());
-
-            if (type === 'soslId') {
-                values.push(...value);
+            const id = makeSoslIdType(soslIdCtx);
+            if (id.type === 'soslId') {
+                values.push(...id.id);
             }
         });
     }
 
     return {
         type: 'soslId',
-        value: values,
+        id: values,
     };
 };

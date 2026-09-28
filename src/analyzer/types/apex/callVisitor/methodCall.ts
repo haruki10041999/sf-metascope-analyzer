@@ -5,31 +5,30 @@ import { ListType, ListVisitor } from '../listVisitor';
 
 export type MethodCallType = {
     type: 'methodCall';
-    methodName: Omit<IdType, 'type'>;
-    params?: Omit<ListType, 'type'>;
-    reference?: 'this' | 'super';
+    method: { name: IdType; params?: ListType; reference?: 'this' | 'super' };
 };
 
 export const makeMethodCallType = (ctx: MethodCallContext): MethodCallType => {
-    const { type: _, ...methodName } = new IdVisitor().visit(ctx.id());
+    const methodName = new IdVisitor().visit(ctx.id());
 
     const methodCallType: MethodCallType = {
         type: 'methodCall',
-        methodName: methodName,
+        method: { name: methodName },
     };
 
     if (ctx.expressionList()) {
-        const { type: __, ...params } = new ListVisitor().visit(ctx.expressionList());
-        methodCallType.params = params;
+        const params = new ListVisitor().visit(ctx.expressionList());
+        methodCallType.method.params = params;
     }
 
     if (ctx.THIS()) {
-        methodCallType.reference = 'this';
+        methodCallType.method.reference = 'this';
     }
 
     if (ctx.SUPER()) {
-        methodCallType.reference = 'super';
+        methodCallType.method.reference = 'super';
     }
 
     return methodCallType;
 };
+

@@ -4,29 +4,35 @@ import { ExpressionType, ExpressionVisitor } from '.';
 
 export type Arth2ExpressionType = {
     type: 'arth2Expression';
-    operator: '+' | '-';
-    left: Omit<ExpressionType, 'type'>;
-    right: Omit<ExpressionType, 'type'>;
+    expression: {
+        left: ExpressionType;
+        operator: '+' | '-';
+        right: ExpressionType;
+    };
 };
 
 export const makeArth2ExpressionType = (ctx: Arth2ExpressionContext): Arth2ExpressionType => {
-    const { type: leftType, ...left } = new ExpressionVisitor().visit(ctx.expression(0));
-    const { type: rightType, ...right } = new ExpressionVisitor().visit(ctx.expression(1));
+    const left = new ExpressionVisitor().visit(ctx.expression(0));
+    const right = new ExpressionVisitor().visit(ctx.expression(1));
 
     if (ctx.ADD()) {
         return {
             type: 'arth2Expression',
-            operator: '+',
-            left,
-            right,
+            expression: {
+                left,
+                operator: '+',
+                right,
+            },
         };
     }
     if (ctx.SUB()) {
         return {
             type: 'arth2Expression',
-            operator: '-',
-            left,
-            right,
+            expression: {
+                left,
+                operator: '-',
+                right,
+            },
         };
     }
 

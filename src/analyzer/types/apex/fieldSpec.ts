@@ -7,13 +7,13 @@ import { ClauseType, ClauseVisitor } from './clauseVisitor';
 
 export type FieldSpecType = {
     type: 'fieldSpec';
-    objectName: Omit<IdType, 'type'>[];
-    fieldList: Omit<ListType, 'type'>;
-    where?: Omit<ExpressionType, 'type'>;
+    objectName: IdType[];
+    fieldList: ListType;
+    where?: ExpressionType;
     usingListView: boolean;
-    orderBy?: Omit<ListType, 'type'>;
-    limit?: Omit<ClauseType, 'type'>;
-    offset?: Omit<ClauseType, 'type'>;
+    orderBy?: ListType;
+    limit?: ClauseType;
+    offset?: ClauseType;
 };
 
 export const makeFieldSpecType = (ctx: FieldSpecContext): FieldSpecType => {
@@ -52,3 +52,4 @@ export const makeFieldSpecType = (ctx: FieldSpecContext): FieldSpecType => {
 
     return fieldSpecType;
 };
+

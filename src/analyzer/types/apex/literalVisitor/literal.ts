@@ -12,14 +12,14 @@ type LiteralField =
 
 export type LiteralType = {
     type: 'literal';
-    value: LiteralField;
+    literal: LiteralField;
 };
 
 export const makeLiteralType = (ctx: LiteralContext): LiteralType => {
     if (ctx.IntegerLiteral()) {
         return {
             type: 'literal',
-            value: {
+            literal: {
                 type: 'integer',
                 value: ctx.IntegerLiteral().getText(),
             },
@@ -29,7 +29,7 @@ export const makeLiteralType = (ctx: LiteralContext): LiteralType => {
     if (ctx.LongLiteral()) {
         return {
             type: 'literal',
-            value: {
+            literal: {
                 type: 'long',
                 value: ctx.LongLiteral().getText(),
             },
@@ -39,7 +39,7 @@ export const makeLiteralType = (ctx: LiteralContext): LiteralType => {
     if (ctx.NumberLiteral()) {
         return {
             type: 'literal',
-            value: {
+            literal: {
                 type: 'number',
                 value: ctx.NumberLiteral().getText(),
             },
@@ -49,7 +49,7 @@ export const makeLiteralType = (ctx: LiteralContext): LiteralType => {
     if (ctx.StringLiteral()) {
         return {
             type: 'literal',
-            value: {
+            literal: {
                 type: 'string',
                 value: ctx.StringLiteral().getText(),
             },
@@ -59,7 +59,7 @@ export const makeLiteralType = (ctx: LiteralContext): LiteralType => {
     if (ctx.MultilineStringLiteral()) {
         return {
             type: 'literal',
-            value: {
+            literal: {
                 type: 'multilineString',
                 value: ctx.MultilineStringLiteral().getText(),
             },
@@ -69,7 +69,7 @@ export const makeLiteralType = (ctx: LiteralContext): LiteralType => {
     if (ctx.BooleanLiteral()) {
         return {
             type: 'literal',
-            value: {
+            literal: {
                 type: 'boolean',
                 value: ctx.BooleanLiteral().getText(),
             },
@@ -79,7 +79,7 @@ export const makeLiteralType = (ctx: LiteralContext): LiteralType => {
     if (ctx.NULL()) {
         return {
             type: 'literal',
-            value: {
+            literal: {
                 type: 'null',
                 value: null,
             },

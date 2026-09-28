@@ -5,22 +5,22 @@ import { ListType, ListVisitor } from '../listVisitor';
 
 export type DotMethodCallType = {
     type: 'dotMethodCall';
-    methodName: Omit<IdType, 'type'>;
-    params?: Omit<ListType, 'type'>;
+    method: { name: IdType; params?: ListType };
 };
 
 export const makeDotMethodCallType = (ctx: DotMethodCallContext): DotMethodCallType => {
-    const { type: _, ...methodName } = new IdVisitor().visit(ctx.anyId());
+    const methodName = new IdVisitor().visit(ctx.anyId());
 
     const dotMethodCallType: DotMethodCallType = {
         type: 'dotMethodCall',
-        methodName: methodName,
+        method: { name: methodName },
     };
 
     if (ctx.expressionList()) {
-        const { type: __, ...params } = new ListVisitor().visit(ctx.expressionList());
-        dotMethodCallType.params = params;
+        const params = new ListVisitor().visit(ctx.expressionList());
+        dotMethodCallType.method.params = params;
     }
 
     return dotMethodCallType;
 };
+

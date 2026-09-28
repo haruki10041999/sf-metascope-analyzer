@@ -4,7 +4,7 @@ import { IdType, IdVisitor } from './idVisitor';
 
 export type UsingScopeType = {
     type: 'usingScope';
-    scope: Omit<IdType, 'type'>;
+    scope: IdType;
 };
 
 export const makeUsingScopeType = (ctx: UsingScopeContext): UsingScopeType => {
@@ -15,3 +15,4 @@ export const makeUsingScopeType = (ctx: UsingScopeContext): UsingScopeType => {
         scope: scope,
     };
 };
+

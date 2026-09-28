@@ -4,32 +4,36 @@ import { DeclarationType, DeclarationVisitor } from '.';
 
 import { BlockType, BlockVisitor } from '../blockVisitor';
 
-import { ModifierType, makeModifierType } from '../modifier';
+import { ModifierType, ModifierVisitor } from '../modifierVisitor';
 
 export type ClassBodyDeclarationType = {
     type: 'classBodyDeclaration';
-    initializerBlock?: {
-        block: Omit<BlockType, 'type'>;
-        isStatic: boolean;
+    declaration: {
+        body: DeclarationType;
+        initializerBlock?: {
+            block: BlockType;
+            isStatic: boolean;
+        };
+        modifier?: ModifierType[];
     };
-    declaration: Omit<DeclarationType, 'type'>;
-    modifier?: Omit<ModifierType, 'type'>[];
 };
 
 export const makeClassBodyDeclarationType = (
     ctx: ClassBodyDeclarationContext,
 ): ClassBodyDeclarationType => {
-    const { type, ...declaration } = new DeclarationVisitor().visit(ctx.memberDeclaration());
+    const declaration = new DeclarationVisitor().visit(ctx.memberDeclaration());
 
     const classBodyDeclarationType: ClassBodyDeclarationType = {
         type: 'classBodyDeclaration',
-        declaration: declaration,
+        declaration: {
+            body: declaration,
+        },
     };
 
     if (ctx.block()) {
-        const { type, ...block } = new BlockVisitor().visit(ctx.block());
+        const block = new BlockVisitor().visit(ctx.block());
         const isStatic = ctx.STATIC() !== undefined;
-        classBodyDeclarationType.initializerBlock = {
+        classBodyDeclarationType.declaration.initializerBlock = {
             block: block,
             isStatic: isStatic,
         };
@@ -37,10 +41,10 @@ export const makeClassBodyDeclarationType = (
 
     if (ctx.modifier_list() && ctx.modifier_list().length > 0) {
         const modifiers = ctx.modifier_list().map((modifierCtx) => {
-            const { type, ...modifier } = makeModifierType(modifierCtx);
+            const modifier = new ModifierVisitor().visit(modifierCtx);
             return modifier;
         });
-        classBodyDeclarationType.modifier = modifiers;
+        classBodyDeclarationType.declaration.modifier = modifiers;
     }
 
     return classBodyDeclarationType;

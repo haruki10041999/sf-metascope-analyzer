@@ -2,39 +2,43 @@ import { MethodDeclarationContext } from '@apexdevtools/apex-parser';
 
 import { IdType, IdVisitor } from '../idVisitor';
 import { BlockType, BlockVisitor } from '../blockVisitor';
-
-import { FormalParametersType, makeFormalParametersType } from '../formalParameters';
-import { TypeRefType, makeTypeRefType } from '../typeRef';
+import { TypeType, TypeVisitor } from '../typeVisitor';
+import { ParameterType, ParameterVisitor } from '../parameterVisitor';
 
 export type MethodDeclarationType = {
-    type: 'methoDeclaration';
-    methodName: Omit<IdType, 'type'>;
-    block: Omit<BlockType, 'type'>;
-    returnType: Omit<TypeRefType, 'type'> | 'void';
-    params?: Omit<FormalParametersType, 'type'>;
+    type: 'methodDeclaration';
+    declaration: {
+        type: TypeType | 'void';
+        name: IdType;
+        block: BlockType;
+        params?: ParameterType;
+    };
 };
 
 export const makeMethodDeclarationType = (ctx: MethodDeclarationContext): MethodDeclarationType => {
-    const { type: _, ...methodName } = new IdVisitor().visit(ctx.id());
-    const { type: __, ...block } = new BlockVisitor().visit(ctx.block());
+    const methodName = new IdVisitor().visit(ctx.id());
+    const block = new BlockVisitor().visit(ctx.block());
     const returnType = ctx.typeRef()
         ? (() => {
-              const { type, ...returnType } = makeTypeRefType(ctx.typeRef());
+              const returnType = new TypeVisitor().visit(ctx.typeRef());
               return returnType;
           })()
         : 'void';
 
     const methodDeclarationType: MethodDeclarationType = {
-        type: 'methoDeclaration',
-        methodName: methodName,
-        block: block,
-        returnType: returnType,
+        type: 'methodDeclaration',
+        declaration: {
+            type: returnType,
+            name: methodName,
+            block: block,
+        },
     };
 
     if (ctx.formalParameters()) {
-        const { type, ...params } = makeFormalParametersType(ctx.formalParameters());
-        methodDeclarationType.params = params;
+        const params = new ParameterVisitor().visit(ctx.formalParameters());
+        methodDeclarationType.declaration.params = params;
     }
 
     return methodDeclarationType;
 };
+

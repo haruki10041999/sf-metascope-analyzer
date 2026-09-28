@@ -20,16 +20,15 @@ type WhenLiteralField =
       }
     | {
           type: 'object';
-          value: Omit<NameType, 'type'>;
+          value: NameType;
       }
     | {
-          type: 'parenthesized';
-          value: Omit<LiteralType, 'type'>;
+          value: LiteralType;
       };
 
 export type WhenLiteralType = {
     type: 'whenLiteral';
-    value: WhenLiteralField;
+    literal: WhenLiteralField;
 };
 
 export const makeWhenLiteralType = (ctx: WhenLiteralContext): WhenLiteralType => {
@@ -60,14 +59,14 @@ export const makeWhenLiteralType = (ctx: WhenLiteralContext): WhenLiteralType =>
         }
         return {
             type: 'whenLiteral',
-            value: whelLiteralField,
+            literal: whelLiteralField,
         };
     }
 
     if (ctx.StringLiteral() || ctx.MultilineStringLiteral()) {
         return {
             type: 'whenLiteral',
-            value: {
+            literal: {
                 type: ctx.StringLiteral() ? 'string' : 'multilineString',
                 value: ctx.StringLiteral()
                     ? ctx.StringLiteral().getText()
@@ -79,7 +78,7 @@ export const makeWhenLiteralType = (ctx: WhenLiteralContext): WhenLiteralType =>
     if (ctx.NULL()) {
         return {
             type: 'whenLiteral',
-            value: {
+            literal: {
                 type: 'null',
                 value: null,
             },
@@ -87,10 +86,10 @@ export const makeWhenLiteralType = (ctx: WhenLiteralContext): WhenLiteralType =>
     }
 
     if (ctx.qualifiedName()) {
-        const { type, ...value } = new NameVisitor().visit(ctx.qualifiedName());
+        const value = new NameVisitor().visit(ctx.qualifiedName());
         return {
             type: 'whenLiteral',
-            value: {
+            literal: {
                 type: 'object',
                 value: value,
             },
@@ -98,10 +97,10 @@ export const makeWhenLiteralType = (ctx: WhenLiteralContext): WhenLiteralType =>
     }
 
     if (ctx.whenLiteral()) {
-        const { type, ...value } = new LiteralVisitor().visit(ctx.whenLiteral());
+        const value = new LiteralVisitor().visit(ctx.whenLiteral());
         return {
             type: 'whenLiteral',
-            value: { type: 'parenthesized', value: value },
+            literal: { value: value },
         };
     }
 

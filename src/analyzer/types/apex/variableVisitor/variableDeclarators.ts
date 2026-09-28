@@ -1,10 +1,10 @@
 import { VariableDeclaratorsContext } from '@apexdevtools/apex-parser';
 
-import { VariableDeclaratorType, makeVariableDeclaratorType } from './variableDeclarator';
+import { VariableType, VariableVisitor } from '../variableVisitor';
 
 export type VariableDeclaratorsType = {
     type: 'variableDeclarators';
-    variants: Omit<VariableDeclaratorType, 'type'>[];
+    variable: VariableType[];
 };
 
 export const makeVariableDeclaratorsType = (
@@ -12,8 +12,8 @@ export const makeVariableDeclaratorsType = (
 ): VariableDeclaratorsType => {
     return {
         type: 'variableDeclarators',
-        variants: ctx.variableDeclarator_list().map((vd) => {
-            const { type, ...variant } = makeVariableDeclaratorType(vd);
+        variable: ctx.variableDeclarator_list().map((vd) => {
+            const variant = new VariableVisitor().visit(vd);
             return variant;
         }),
     };

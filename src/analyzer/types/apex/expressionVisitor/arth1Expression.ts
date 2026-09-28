@@ -4,29 +4,35 @@ import { ExpressionType, ExpressionVisitor } from '.';
 
 export type Arth1ExpressionType = {
     type: 'arth1Expression';
-    operator: '*' | '/';
-    left: Omit<ExpressionType, 'type'>;
-    right: Omit<ExpressionType, 'type'>;
+    expression: {
+        left: ExpressionType;
+        operator: '*' | '/';
+        right: ExpressionType;
+    };
 };
 
 export const makeArth1ExpressionType = (ctx: Arth1ExpressionContext): Arth1ExpressionType => {
-    const { type: leftType, ...left } = new ExpressionVisitor().visit(ctx.expression(0));
-    const { type: rightType, ...right } = new ExpressionVisitor().visit(ctx.expression(1));
+    const left = new ExpressionVisitor().visit(ctx.expression(0));
+    const right = new ExpressionVisitor().visit(ctx.expression(1));
 
     if (ctx.MUL()) {
         return {
             type: 'arth1Expression',
-            operator: '*',
-            left,
-            right,
+            expression: {
+                left,
+                operator: '*',
+                right,
+            },
         };
     }
     if (ctx.DIV()) {
         return {
             type: 'arth1Expression',
-            operator: '/',
-            left,
-            right,
+            expression: {
+                left,
+                operator: '/',
+                right,
+            },
         };
     }
 

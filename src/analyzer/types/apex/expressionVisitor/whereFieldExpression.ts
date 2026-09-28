@@ -7,38 +7,42 @@ import { ComparisonOperatorType, makeComparisonOperatorType } from '../compariso
 
 export type WhereFieldExpressionType = {
     type: 'whereFieldExpression';
-    field: { type: 'formula'; value: string } | Omit<ExpressionType, 'type'>;
-    operator: Omit<ComparisonOperatorType, 'type'>;
-    value: Omit<ValueType, 'type'>;
+    expression: {
+        left: { type: 'formula'; expression: string } | ExpressionType;
+        operator: ComparisonOperatorType;
+        right: ValueType;
+    };
 };
 
 export const makeWhereFieldExpressionType = (
     ctx: WhereFieldExpressionContext,
 ): WhereFieldExpressionType => {
-    let field: { type: 'formula'; value: string } | Omit<ExpressionType, 'type'> | undefined =
-        undefined;
+    let field: { type: 'formula'; expression: string } | ExpressionType | undefined = undefined;
 
     if (ctx.fieldExpression()) {
-        const { type, ...fieldName } = new ExpressionVisitor().visit(ctx.fieldExpression());
+        const fieldName = new ExpressionVisitor().visit(ctx.fieldExpression());
         field = fieldName;
     }
 
     if (ctx.FORMULA() && ctx.StringLiteral()) {
-        const { type, ...formula } = new ExpressionVisitor().visit(ctx.StringLiteral());
-        field = { type: 'formula', value: formula };
+        const formula = ctx.StringLiteral().getText();
+        field = { type: 'formula', expression: formula };
     }
 
     if (!field) {
         throw new Error('値が異常です。WhereFieldExpressionContext: ' + ctx.getText());
     }
 
-    const { type, ...operator } = makeComparisonOperatorType(ctx.comparisonOperator());
-    const { type: _, ...value } = new ValueVisitor().visit(ctx.value());
+    const operator = makeComparisonOperatorType(ctx.comparisonOperator());
+    const value = new ValueVisitor().visit(ctx.value());
 
     return {
         type: 'whereFieldExpression',
-        field: field,
-        operator: operator,
-        value: value,
+        expression: {
+            left: field,
+            operator: operator,
+            right: value,
+        },
     };
 };
+

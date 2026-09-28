@@ -3,25 +3,31 @@ import { ExpressionType, ExpressionVisitor } from '.';
 
 export type PostOpExpressionType = {
     type: 'postOpExpression';
-    operator: '++' | '--';
-    value: Omit<ExpressionType, 'type'>;
+    expression: {
+        operator: '++' | '--';
+        value: ExpressionType;
+    };
 };
 
 export const makePostOpExpressionType = (ctx: PostOpExpressionContext): PostOpExpressionType => {
-    const { type, ...value } = new ExpressionVisitor().visit(ctx.expression());
+    const value = new ExpressionVisitor().visit(ctx.expression());
 
     if (ctx.INC()) {
         return {
             type: 'postOpExpression',
-            operator: '++',
-            value: value,
+            expression: {
+                operator: '++',
+                value: value,
+            },
         };
     }
     if (ctx.DEC()) {
         return {
             type: 'postOpExpression',
-            operator: '--',
-            value: value,
+            expression: {
+                operator: '--',
+                value: value,
+            },
         };
     }
 

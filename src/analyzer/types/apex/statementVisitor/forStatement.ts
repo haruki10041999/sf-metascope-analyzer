@@ -6,17 +6,21 @@ import { ControlType, ControlVisitor } from '../controlVisitor';
 
 export type ForStatementType = {
     type: 'forStatement';
-    condition: Omit<ControlType, 'type'>;
-    statement: Omit<StatementType, 'type'>;
+    statement: {
+        control: ControlType;
+        block: StatementType;
+    };
 };
 
 export const makeForStatementType = (ctx: ForStatementContext): ForStatementType => {
-    const { type: conditionType, ...condition } = new ControlVisitor().visit(ctx.forControl());
-    const { type: statementType, ...statement } = new StatementVisitor().visit(ctx.statement());
+    const control = new ControlVisitor().visit(ctx.forControl());
+    const block = new StatementVisitor().visit(ctx.statement());
     return {
         type: 'forStatement',
-        condition: condition,
-        statement: statement,
+        statement: {
+            control: control,
+            block: block,
+        },
     };
 };
 

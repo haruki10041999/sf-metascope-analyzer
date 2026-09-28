@@ -1,6 +1,6 @@
 import { ModifierContext } from '@apexdevtools/apex-parser';
 
-import { AnnotationType, makeAnnotationType } from './annotation';
+import { ModifierType as modifierType, ModifierVisitor } from '.';
 
 type ModifierField =
     | 'GLOBAL'
@@ -21,8 +21,10 @@ type ModifierField =
 
 export type ModifierType = {
     type: 'modifier';
-    modifierType: ModifierField;
-    annotation?: Omit<AnnotationType, 'type'>;
+    modifier: {
+        type: ModifierField;
+        annotation?: modifierType;
+    };
 };
 
 export const makeModifierType = (ctx: ModifierContext): ModifierType => {
@@ -78,16 +80,18 @@ export const makeModifierType = (ctx: ModifierContext): ModifierType => {
     }
 
     if (type === 'NONE') {
-        throw new Error('値が異常です。SoqlIdContext: ' + ctx.getText());
+        throw new Error('値が異常です。ModifierContext: ' + ctx.getText());
     }
 
     const modifierField: ModifierType = {
         type: 'modifier',
-        modifierType: type,
+        modifier: {
+            type: type,
+        },
     };
 
     if (ctx.annotation()) {
-        modifierField.annotation = makeAnnotationType(ctx.annotation());
+        modifierField.modifier.annotation = new ModifierVisitor().visit(ctx.annotation());
     }
 
     return modifierField;

@@ -4,14 +4,15 @@ import { CallType, CallVisitor } from '../callVisitor';
 
 export type DotExpressionType = {
     type: 'dotExpression';
-    dotMethodCall: Omit<CallType, 'type'>;
+    expression: CallType;
 };
 
 export const makeDotExpressionType = (ctx: DotExpressionContext): DotExpressionType => {
-    const { type, ...dotMethodCall } = new CallVisitor().visit(ctx.dotMethodCall());
+    const expression = new CallVisitor().visit(ctx.dotMethodCall());
 
     return {
         type: 'dotExpression',
-        dotMethodCall: dotMethodCall,
+        expression: expression,
     };
 };
+

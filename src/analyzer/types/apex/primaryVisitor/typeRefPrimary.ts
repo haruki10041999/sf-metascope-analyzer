@@ -1,17 +1,18 @@
 import { TypeRefPrimaryContext } from '@apexdevtools/apex-parser';
 
-import { TypeRefType, makeTypeRefType } from '../typeRef';
+import { TypeType, TypeVisitor } from '../typeVisitor';
 
 export type TypeRefPrimaryType = {
     type: 'typeRefPrimary';
-    value: Omit<TypeRefType, 'type'>;
+    primary: TypeType;
 };
 
 export const makeTypeRefPrimaryType = (ctx: TypeRefPrimaryContext): TypeRefPrimaryType => {
-    const { type, ...value } = makeTypeRefType(ctx.typeRef());
+    const primary = new TypeVisitor().visit(ctx.typeRef());
 
     return {
         type: 'typeRefPrimary',
-        value: value,
+        primary: primary,
     };
 };
+

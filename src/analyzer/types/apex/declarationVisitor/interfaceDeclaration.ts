@@ -6,26 +6,30 @@ import { ListType, ListVisitor } from '../listVisitor';
 
 export type InterfaceDeclarationType = {
     type: 'interface';
-    interfaceName: Omit<IdType, 'type'>;
-    body: Omit<BodyType, 'type'>;
-    extends?: Omit<ListType, 'type'>;
+    declaration: {
+        name: IdType;
+        body: BodyType;
+        extends?: ListType;
+    };
 };
 
 export const makeInterfaceDeclarationType = (
     ctx: InterfaceDeclarationContext,
 ): InterfaceDeclarationType => {
-    const { type: nameType, ...name } = new IdVisitor().visit(ctx.id());
-    const { type: bodyType, ...body } = new BodyVisitor().visit(ctx.interfaceBody());
+    const name = new IdVisitor().visit(ctx.id());
+    const body = new BodyVisitor().visit(ctx.interfaceBody());
 
     const interfaceDeclarationType: InterfaceDeclarationType = {
         type: 'interface',
-        interfaceName: name,
-        body: body,
+        declaration: {
+            name: name,
+            body: body,
+        },
     };
 
     if (ctx.EXTENDS() && ctx.typeList()) {
-        const { type: extendsType, ...extendsList } = new ListVisitor().visit(ctx.typeList());
-        interfaceDeclarationType.extends = extendsList;
+        const extendsList = new ListVisitor().visit(ctx.typeList());
+        interfaceDeclarationType.declaration.extends = extendsList;
     }
 
     return interfaceDeclarationType;

@@ -9,54 +9,50 @@ import { TypeOfType, makeTypeOfType } from '../typeOf';
 
 export type SubFieldEntryType = {
     type: 'subFieldEntry';
-    field:
-        | Omit<NameType, 'type'>
-        | Omit<IdType, 'type'>
-        | Omit<SoqlFunctionType, 'type'>
-        | Omit<QueryType, 'type'>
-        | Omit<TypeOfType, 'type'>;
+    entry: NameType | IdType | SoqlFunctionType | QueryType | TypeOfType;
 };
 
 export const makeSubFieldEntryType = (ctx: SubFieldEntryContext): SubFieldEntryType => {
     if (ctx.fieldName()) {
-        const { type, ...field } = new NameVisitor().visit(ctx.fieldName());
+        const field = new NameVisitor().visit(ctx.fieldName());
         return {
             type: 'subFieldEntry',
-            field: field,
+            entry: field,
         };
     }
 
     if (ctx.soqlId()) {
-        const { type, ...field } = new IdVisitor().visit(ctx.soqlId());
+        const field = new IdVisitor().visit(ctx.soqlId());
         return {
             type: 'subFieldEntry',
-            field: field,
+            entry: field,
         };
     }
 
     if (ctx.soqlFunction()) {
-        const { type, ...field } = makeSoqlFunctionType(ctx.soqlFunction());
+        const field = makeSoqlFunctionType(ctx.soqlFunction());
         return {
             type: 'subFieldEntry',
-            field: field,
+            entry: field,
         };
     }
 
     if (ctx.subQuery()) {
-        const { type, ...field } = new QueryVisitor().visit(ctx.subQuery());
+        const field = new QueryVisitor().visit(ctx.subQuery());
         return {
             type: 'subFieldEntry',
-            field: field,
+            entry: field,
         };
     }
 
     if (ctx.typeOf()) {
-        const { type, ...field } = makeTypeOfType(ctx.typeOf());
+        const field = makeTypeOfType(ctx.typeOf());
         return {
             type: 'subFieldEntry',
-            field: field,
+            entry: field,
         };
     }
 
     throw new Error('値が異常です。SubFieldEntryContext: ' + ctx.getText());
 };
+

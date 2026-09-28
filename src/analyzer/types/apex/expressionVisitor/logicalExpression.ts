@@ -4,7 +4,7 @@ import { ExpressionType, ExpressionVisitor } from '.';
 
 type LogicalFieldType =
     | {
-          condition: Omit<ExpressionType, 'type'>;
+          condition: ExpressionType;
       }
     | {
           type: 'AND';
@@ -23,13 +23,13 @@ type LogicalFieldType =
 
 export type LogicalExpressionType = {
     type: 'logicalExpression';
-    value: LogicalFieldType;
+    expression: LogicalFieldType;
 };
 
 export const makeLogicalExpressionType = (ctx: LogicalExpressionContext): LogicalExpressionType => {
     const conditions: LogicalFieldType[] = ctx.conditionalExpression_list()
         ? ctx.conditionalExpression_list().map((conditionalExpressionCtx) => {
-              const { type, ...value } = new ExpressionVisitor().visit(conditionalExpressionCtx);
+              const value = new ExpressionVisitor().visit(conditionalExpressionCtx);
               return {
                   condition: value,
               };
@@ -90,6 +90,7 @@ export const makeLogicalExpressionType = (ctx: LogicalExpressionContext): Logica
 
     return {
         type: 'logicalExpression',
-        value: value,
+        expression: value,
     };
 };
+

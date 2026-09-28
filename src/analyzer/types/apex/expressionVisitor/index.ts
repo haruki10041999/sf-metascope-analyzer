@@ -234,7 +234,7 @@ export class ExpressionVisitor extends ApexParserBaseVisitor<ExpressionType> {
         return makeConditionalExpressionType(ctx);
     }
 
-    VisitLogicalExpression(ctx: LogicalExpressionContext) {
+    visitLogicalExpression(ctx: LogicalExpressionContext) {
         return makeLogicalExpressionType(ctx);
     }
 
@@ -250,3 +250,4 @@ export class ExpressionVisitor extends ApexParserBaseVisitor<ExpressionType> {
         return makeWhereFieldExpressionType(ctx);
     }
 }
+

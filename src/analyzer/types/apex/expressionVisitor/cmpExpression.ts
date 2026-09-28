@@ -4,37 +4,45 @@ import { ExpressionType, ExpressionVisitor } from '.';
 
 export type CmpExpressionType = {
     type: 'cmpExpression';
-    operator: '=' | '>' | '<';
-    left: Omit<ExpressionType, 'type'>;
-    right: Omit<ExpressionType, 'type'>;
+    expression: {
+        left: ExpressionType;
+        operator: '=' | '>' | '<';
+        right: ExpressionType;
+    };
 };
 
 export const makeCmpExpressionType = (ctx: CmpExpressionContext): CmpExpressionType => {
-    const { type: leftType, ...left } = new ExpressionVisitor().visit(ctx.expression(0));
-    const { type: rightType, ...right } = new ExpressionVisitor().visit(ctx.expression(1));
+    const left = new ExpressionVisitor().visit(ctx.expression(0));
+    const right = new ExpressionVisitor().visit(ctx.expression(1));
 
     if (ctx.ASSIGN()) {
         return {
             type: 'cmpExpression',
-            operator: '=',
-            left: left,
-            right: right,
+            expression: {
+                left: left,
+                operator: '=',
+                right: right,
+            },
         };
     }
     if (ctx.GT()) {
         return {
             type: 'cmpExpression',
-            operator: '>',
-            left: left,
-            right: right,
+            expression: {
+                left: left,
+                operator: '>',
+                right: right,
+            },
         };
     }
     if (ctx.LT()) {
         return {
             type: 'cmpExpression',
-            operator: '<',
-            left: left,
-            right: right,
+            expression: {
+                left: left,
+                operator: '<',
+                right: right,
+            },
         };
     }
 

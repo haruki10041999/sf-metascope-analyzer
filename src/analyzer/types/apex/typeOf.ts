@@ -5,9 +5,9 @@ import { ClauseType, ClauseVisitor } from './clauseVisitor';
 
 export type TypeOfType = {
     type: 'typeOf';
-    whenField: Omit<NameType, 'type'>;
-    whenClauses: Omit<ClauseType, 'type'>;
-    elseClause?: Omit<ClauseType, 'type'>;
+    whenField: NameType;
+    whenClauses: ClauseType;
+    elseClause?: ClauseType;
 };
 
 export const makeTypeOfType = (ctx: TypeOfContext): TypeOfType => {
@@ -30,3 +30,4 @@ export const makeTypeOfType = (ctx: TypeOfContext): TypeOfType => {
 
     return typeOfType;
 };
+

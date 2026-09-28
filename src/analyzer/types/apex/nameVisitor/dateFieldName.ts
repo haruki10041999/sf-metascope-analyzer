@@ -4,16 +4,14 @@ import { NameType, NameVisitor } from '.';
 
 export type DateFieldNameType = {
     type: 'dateFieldName';
-    name: Omit<NameType, 'type'>;
-    isConvertTimeZone: boolean;
+    name: { name: NameType; isConvertTimeZone: boolean };
 };
 
 export const makeDateFieldNameType = (ctx: DateFieldNameContext): DateFieldNameType => {
-    const { type, ...name } = new NameVisitor().visit(ctx.fieldName());
+    const name = new NameVisitor().visit(ctx.fieldName());
 
     return {
         type: 'dateFieldName',
-        name: name,
-        isConvertTimeZone: ctx.CONVERT_TIMEZONE() !== undefined,
+        name: { name: name, isConvertTimeZone: ctx.CONVERT_TIMEZONE() !== undefined },
     };
 };

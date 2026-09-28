@@ -5,20 +5,22 @@ import { ExpressionType, ExpressionVisitor } from '../expressionVisitor';
 
 export type DoWhileStatementType = {
     type: 'doWhileStatement';
-    condition: Omit<ExpressionType, 'type'>;
-    block: Omit<BlockType, 'type'>;
+    statement: {
+        condition: ExpressionType;
+        block: BlockType;
+    };
 };
 
 export const makeDoWhileStatementType = (ctx: DoWhileStatementContext): DoWhileStatementType => {
-    const { type: conditionType, ...condition } = new ExpressionVisitor().visit(
-        ctx.parExpression(),
-    );
-    const { type: blockType, ...block } = new BlockVisitor().visit(ctx.block());
+    const condition = new ExpressionVisitor().visit(ctx.parExpression());
+    const block = new BlockVisitor().visit(ctx.block());
 
     return {
         type: 'doWhileStatement',
-        condition: condition,
-        block: block,
+        statement: {
+            condition: condition,
+            block: block,
+        },
     };
 };
 

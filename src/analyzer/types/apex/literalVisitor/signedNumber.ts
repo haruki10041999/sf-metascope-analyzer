@@ -2,9 +2,11 @@ import { SignedNumberContext } from '@apexdevtools/apex-parser';
 
 export type SignedNumberType = {
     type: 'signedNumber';
-    valueType: 'integer' | 'number';
-    value: string;
-    operator?: '+' | '-';
+    literal: {
+        type: 'integer' | 'number';
+        value: string;
+        operator?: '+' | '-';
+    };
 };
 
 export const makeSignedNumberType = (ctx: SignedNumberContext): SignedNumberType => {
@@ -27,24 +29,31 @@ export const makeSignedNumberType = (ctx: SignedNumberContext): SignedNumberType
     if (ctx.ADD()) {
         return {
             type: 'signedNumber',
-            valueType: valueType,
-            value: value,
-            operator: '+',
+            literal: {
+                type: valueType,
+                value: value,
+                operator: '+',
+            },
         };
     }
 
     if (ctx.SUB()) {
         return {
             type: 'signedNumber',
-            valueType: valueType,
-            value: value,
-            operator: '-',
+            literal: {
+                type: valueType,
+                value: value,
+                operator: '-',
+            },
         };
     }
 
     return {
         type: 'signedNumber',
-        valueType: valueType,
-        value: value,
+        literal: {
+            type: valueType,
+            value: value,
+        },
     };
 };
+

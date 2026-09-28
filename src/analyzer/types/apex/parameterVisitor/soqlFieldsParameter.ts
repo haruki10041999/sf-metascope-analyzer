@@ -2,7 +2,7 @@ import { SoqlFieldsParameterContext } from '@apexdevtools/apex-parser';
 
 export type SoqlFieldsParameterType = {
     type: 'soqlFieldsParameter';
-    param: 'ALL' | 'CUSTOM' | 'STANDARD';
+    parameter: 'ALL' | 'CUSTOM' | 'STANDARD';
 };
 
 export const makeSoqlFieldsParameterType = (
@@ -11,19 +11,19 @@ export const makeSoqlFieldsParameterType = (
     if (ctx.ALL()) {
         return {
             type: 'soqlFieldsParameter',
-            param: 'ALL',
+            parameter: 'ALL',
         };
     }
     if (ctx.CUSTOM()) {
         return {
             type: 'soqlFieldsParameter',
-            param: 'CUSTOM',
+            parameter: 'CUSTOM',
         };
     }
     if (ctx.STANDARD()) {
         return {
             type: 'soqlFieldsParameter',
-            param: 'STANDARD',
+            parameter: 'STANDARD',
         };
     }
 

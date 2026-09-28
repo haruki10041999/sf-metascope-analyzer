@@ -5,21 +5,25 @@ import { ListType, ListVisitor } from '../listVisitor';
 
 export type IdCreatedNamePairType = {
     type: 'idCreatedNamePair';
-    name: Omit<IdType, 'type'>;
-    generics?: Omit<ListType, 'type'>;
+    pair: {
+        name: IdType;
+        generics?: ListType;
+    };
 };
 
 export const makeIdCreatedNamePairType = (ctx: IdCreatedNamePairContext): IdCreatedNamePairType => {
-    const { type, ...name } = new IdVisitor().visit(ctx.anyId());
+    const name = new IdVisitor().visit(ctx.anyId());
 
     const idCreatedNamePairType: IdCreatedNamePairType = {
         type: 'idCreatedNamePair',
-        name: name,
+        pair: {
+            name: name,
+        },
     };
 
     if (ctx.typeList()) {
-        const { type, ...generics } = new ListVisitor().visit(ctx.typeList());
-        idCreatedNamePairType.generics = generics;
+        const generics = new ListVisitor().visit(ctx.typeList());
+        idCreatedNamePairType.pair.generics = generics;
     }
 
     return idCreatedNamePairType;

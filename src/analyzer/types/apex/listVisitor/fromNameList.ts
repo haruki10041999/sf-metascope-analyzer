@@ -1,20 +1,20 @@
-import { FromNameListContext, SoqlIdContext } from '@apexdevtools/apex-parser';
+import { FromNameListContext } from '@apexdevtools/apex-parser';
 
 import { NameType, NameVisitor } from '../nameVisitor';
 import { IdType, IdVisitor } from '../idVisitor';
 
 export type FromNameListType = {
     type: 'fromNameList';
-    list: (Omit<NameType, 'type'> | Omit<IdType, 'type'>)[];
+    list: (NameType | IdType)[];
 };
 
 export const makeFromNameListType = (ctx: FromNameListContext): FromNameListType => {
-    const list: (Omit<NameType, 'type'> | Omit<IdType, 'type'>)[] = [];
+    const list: (NameType | IdType)[] = [];
 
     if (ctx.fieldName_list() && ctx.fieldName_list().length > 0) {
         list.push(
             ...ctx.fieldName_list().map((fieldNameCtx) => {
-                const { type, ...fieldName } = new NameVisitor().visit(fieldNameCtx);
+                const fieldName = new NameVisitor().visit(fieldNameCtx);
                 return fieldName;
             }),
         );
@@ -23,7 +23,7 @@ export const makeFromNameListType = (ctx: FromNameListContext): FromNameListType
     if (ctx.soqlId_list() && ctx.soqlId_list().length > 0) {
         list.push(
             ...ctx.soqlId_list().map((soqlIdCtx) => {
-                const { type, ...soqlId } = new IdVisitor().visit(soqlIdCtx);
+                const soqlId = new IdVisitor().visit(soqlIdCtx);
                 return soqlId;
             }),
         );
@@ -34,3 +34,4 @@ export const makeFromNameListType = (ctx: FromNameListContext): FromNameListType
         list: list,
     };
 };
+

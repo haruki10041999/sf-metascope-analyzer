@@ -4,18 +4,13 @@ import { IdType, IdVisitor } from '.';
 
 export type SoqlIdType = {
     type: 'soqlId';
-    value: string;
+    id: IdType;
 };
 
 export const makeSoqlIdType = (ctx: SoqlIdContext): SoqlIdType => {
-    const { type, value } = new IdVisitor().visit(ctx.id());
-
-    if (type === 'id') {
-        return {
-            type: 'soqlId',
-            value: value,
-        };
-    }
-
-    throw new Error('値が異常です。SoqlIdContext: ' + ctx.getText());
+    const value = new IdVisitor().visit(ctx.id());
+    return {
+        type: 'soqlId',
+        id: value,
+    };
 };

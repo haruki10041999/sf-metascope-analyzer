@@ -4,16 +4,17 @@ import { CallType, CallVisitor } from '../callVisitor';
 
 export type MethodCallExpressionType = {
     type: 'methodCallExpression';
-    methodCall: Omit<CallType, 'type'>;
+    expression: CallType;
 };
 
 export const makeMethodCallExpressionType = (
     ctx: MethodCallExpressionContext,
 ): MethodCallExpressionType => {
-    const { type, ...methodCall } = new CallVisitor().visit(ctx.methodCall());
+    const expression = new CallVisitor().visit(ctx.methodCall());
 
     return {
         type: 'methodCallExpression',
-        methodCall: methodCall,
+        expression: expression,
     };
 };
+

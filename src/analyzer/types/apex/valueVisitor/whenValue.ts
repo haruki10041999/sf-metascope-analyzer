@@ -1,58 +1,66 @@
 import { WhenValueContext } from '@apexdevtools/apex-parser';
 
 import { LiteralType, LiteralVisitor } from '../literalVisitor';
-
 import { IdType, IdVisitor } from '../idVisitor';
-
-import { TypeRefType, makeTypeRefType } from '../typeRef';
+import { TypeType, TypeVisitor } from '../typeVisitor';
 
 export type WhenValueType = {
     type: 'whenValue';
-} & (
-    | {
-          values: Omit<LiteralType, 'type'>[];
-      }
-    | {
-          variantType?: Omit<TypeRefType, 'type'>;
-          variant: Omit<IdType, 'type'>;
-      }
-    | {
-          condition: 'else';
-      }
-);
+    value:
+        | {
+              literal: LiteralType[];
+          }
+        | {
+              type?: TypeType;
+              name: IdType;
+          }
+        | {
+              condition: 'else';
+          };
+};
 
 export const makeWhenValueType = (ctx: WhenValueContext): WhenValueType => {
     if (ctx.ELSE()) {
         return {
             type: 'whenValue',
-            condition: 'else',
+            value: {
+                condition: 'else',
+            },
         };
     }
 
     if (ctx.whenLiteral_list() && ctx.whenLiteral_list().length > 0) {
         const values = ctx.whenLiteral_list().map((literalCtx) => {
-            const { type, ...value } = new LiteralVisitor().visit(literalCtx);
+            const value = new LiteralVisitor().visit(literalCtx);
             return value;
         });
         return {
             type: 'whenValue',
-            values: values,
+            value: {
+                literal: values,
+            },
         };
     }
 
     if (ctx.id()) {
-        const { type, ...variant } = new IdVisitor().visit(ctx.id());
+        const variant = new IdVisitor().visit(ctx.id());
 
-        const whenValueType: WhenValueType = {
-            type: 'whenValue',
-            variant: variant,
+        const value: {
+            type?: TypeType;
+            name: IdType;
+        } = {
+            name: variant,
         };
+
         if (ctx.typeRef()) {
-            const { type, ...variantType } = makeTypeRefType(ctx.typeRef());
-            whenValueType.variantType = variantType;
+            const type = new TypeVisitor().visit(ctx.typeRef());
+            value.type = type;
         }
 
-        return whenValueType;
+        return {
+            type: 'whenValue',
+            value: value,
+        };
     }
 
     throw new Error('値が異常です。WhenValueContext: ' + ctx.getText());

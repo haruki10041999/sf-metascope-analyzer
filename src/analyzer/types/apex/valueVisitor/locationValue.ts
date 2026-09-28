@@ -7,41 +7,52 @@ import { ExpressionType, ExpressionVisitor } from '../expressionVisitor';
 
 export type LocationValueType = {
     type: 'locationValue';
-    value: Omit<NameType, 'type'> | Omit<ExpressionType, 'type'> | Omit<ValueType, 'type'>[];
-    isGeoLocation?: boolean;
+    value:
+        | {
+              value: NameType | ExpressionType;
+          }
+        | {
+              value: ValueType[];
+              isGeoLocation: boolean;
+          };
 };
 
 export const makeLocationValueType = (ctx: LocationValueContext): LocationValueType => {
     if (ctx.fieldName()) {
-        const { type, ...value } = new NameVisitor().visit(ctx.fieldName());
+        const value = new NameVisitor().visit(ctx.fieldName());
         return {
             type: 'locationValue',
-            value: value,
+            value: {
+                value: value,
+            },
         };
     }
 
     if (ctx.boundExpression()) {
-        const { type, ...value } = new ExpressionVisitor().visit(ctx.boundExpression());
+        const value = new ExpressionVisitor().visit(ctx.boundExpression());
         return {
             type: 'locationValue',
-            value: value,
+            value: {
+                value: value,
+            },
         };
     }
 
     if (ctx.coordinateValue_list() && ctx.coordinateValue_list().length !== 2) {
         const values = ctx.coordinateValue_list().map((coordinateValueCtx) => {
-            const { type, ...value } = new ValueVisitor().visit(coordinateValueCtx);
+            const value = new ValueVisitor().visit(coordinateValueCtx);
             return value;
         });
 
-        const isGeoLocation = ctx.GEOLOCATION() !== undefined;
-
         return {
             type: 'locationValue',
-            value: values,
-            isGeoLocation: isGeoLocation,
+            value: {
+                value: values,
+                isGeoLocation: ctx.GEOLOCATION() !== undefined,
+            },
         };
     }
 
     throw new Error('値が異常です。LocationValueContext: ' + ctx.getText());
 };
+

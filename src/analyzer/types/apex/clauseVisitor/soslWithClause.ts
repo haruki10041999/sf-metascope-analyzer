@@ -5,23 +5,23 @@ import { ListType, ListVisitor } from '../listVisitor';
 
 export type SoslWithClauseType = {
     type: 'soslWithClause';
-} & (
-    | {
-          withType: 'DIVISION' | 'DATA_CATEGORY' | 'PRICEBOOKID';
-          value: string | Omit<ExpressionType, 'type'>;
-      }
-    | {
-          withType: 'SNIPPET' | 'SPELL_CORRECTION';
-          value?: string;
-      }
-    | {
-          withType: 'NETWORK';
-          value: Omit<ListType, 'type'>;
-      }
-    | {
-          withType: 'METADATA' | 'HIGHLIGHT' | 'SYSETM_MODE' | 'USER_MODE' | string;
-      }
-);
+    clause:
+        | {
+              withType: 'DIVISION' | 'DATA_CATEGORY' | 'PRICEBOOKID';
+              value: string | ExpressionType;
+          }
+        | {
+              withType: 'SNIPPET' | 'SPELL_CORRECTION';
+              value?: string;
+          }
+        | {
+              withType: 'NETWORK';
+              value: ListType;
+          }
+        | {
+              withType: 'METADATA' | 'HIGHLIGHT' | 'SYSETM_MODE' | 'USER_MODE' | string;
+          };
+};
 
 export const makeSoslWithClauseType = (ctx: SoslWithClauseContext): SoslWithClauseType => {
     if (ctx.DIVISION() || ctx.PRICEBOOKID()) {
@@ -30,35 +30,43 @@ export const makeSoslWithClauseType = (ctx: SoslWithClauseContext): SoslWithClau
         if (ctx.StringLiteral()) {
             return {
                 type: 'soslWithClause',
-                withType: withType,
-                value: ctx.StringLiteral().getText(),
+                clause: {
+                    withType: withType,
+                    value: ctx.StringLiteral().getText(),
+                },
             };
         }
 
         if (ctx.MultilineStringLiteral()) {
             return {
                 type: 'soslWithClause',
-                withType: withType,
-                value: ctx.MultilineStringLiteral().getText(),
+                clause: {
+                    withType: withType,
+                    value: ctx.MultilineStringLiteral().getText(),
+                },
             };
         }
 
         if (ctx.boundExpression()) {
-            const { type, ...value } = new ExpressionVisitor().visit(ctx.boundExpression());
+            const value = new ExpressionVisitor().visit(ctx.boundExpression());
             return {
                 type: 'soslWithClause',
-                withType: withType,
-                value: value,
+                clause: {
+                    withType: withType,
+                    value: value,
+                },
             };
         }
     }
 
     if (ctx.DATA() && ctx.CATEGORY() && ctx.filteringExpression()) {
-        const { type, ...value } = new ExpressionVisitor().visit(ctx.filteringExpression());
+        const value = new ExpressionVisitor().visit(ctx.filteringExpression());
         return {
             type: 'soslWithClause',
-            withType: 'DATA_CATEGORY',
-            value: value,
+            clause: {
+                withType: 'DATA_CATEGORY',
+                value: value,
+            },
         };
     }
 
@@ -66,14 +74,18 @@ export const makeSoslWithClauseType = (ctx: SoslWithClauseContext): SoslWithClau
         if (ctx.TARGET_LENGTH() && ctx.IntegerLiteral()) {
             return {
                 type: 'soslWithClause',
-                withType: 'SNIPPET',
-                value: ctx.IntegerLiteral().getText(),
+                clause: {
+                    withType: 'SNIPPET',
+                    value: ctx.IntegerLiteral().getText(),
+                },
             };
         }
 
         return {
             type: 'soslWithClause',
-            withType: 'SNIPPET',
+            clause: {
+                withType: 'SNIPPET',
+            },
         };
     }
 
@@ -81,14 +93,18 @@ export const makeSoslWithClauseType = (ctx: SoslWithClauseContext): SoslWithClau
         if (ctx.BooleanLiteral()) {
             return {
                 type: 'soslWithClause',
-                withType: 'SPELL_CORRECTION',
-                value: ctx.BooleanLiteral().getText(),
+                clause: {
+                    withType: 'SPELL_CORRECTION',
+                    value: ctx.BooleanLiteral().getText(),
+                },
             };
         }
 
         return {
             type: 'soslWithClause',
-            withType: 'SPELL_CORRECTION',
+            clause: {
+                withType: 'SPELL_CORRECTION',
+            },
         };
     }
 
@@ -96,38 +112,49 @@ export const makeSoslWithClauseType = (ctx: SoslWithClauseContext): SoslWithClau
         const value = new ListVisitor().visit(ctx.networkList());
         return {
             type: 'soslWithClause',
-            withType: 'NETWORK',
-            value: value,
+            clause: {
+                withType: 'NETWORK',
+                value: value,
+            },
         };
     }
 
     if (ctx.METADATA()) {
         return {
             type: 'soslWithClause',
-            withType: 'METADATA',
+            clause: {
+                withType: 'METADATA',
+            },
         };
     }
 
     if (ctx.HIGHLIGHT()) {
         return {
             type: 'soslWithClause',
-            withType: 'HIGHLIGHT',
+            clause: {
+                withType: 'HIGHLIGHT',
+            },
         };
     }
 
     if (ctx.USER_MODE()) {
         return {
             type: 'soslWithClause',
-            withType: 'USER_MODE',
+            clause: {
+                withType: 'USER_MODE',
+            },
         };
     }
 
     if (ctx.SYSTEM_MODE()) {
         return {
             type: 'soslWithClause',
-            withType: 'SYSTEM_MODE',
+            clause: {
+                withType: 'SYSTEM_MODE',
+            },
         };
     }
 
     throw new Error('値が異常です。SoslWIthClauseContext: ' + ctx.getText());
 };
+

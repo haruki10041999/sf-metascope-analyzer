@@ -1,15 +1,16 @@
 import { FormalParameterContext } from '@apexdevtools/apex-parser';
 
 import { IdType, IdVisitor } from '../idVisitor';
-
-import { ModifierType, makeModifierType } from '../modifier';
-import { TypeRefType, makeTypeRefType } from '../typeRef';
+import { ModifierType, ModifierVisitor } from '../modifierVisitor';
+import { TypeType, TypeVisitor } from '../typeVisitor';
 
 export type FormalParameterType = {
     type: 'formalParameter';
-    param: Omit<IdType, 'type'>;
-    modifier?: Omit<ModifierType, 'type'>[];
-    typeRef?: Omit<TypeRefType, 'type'>;
+    parameter: {
+        parameter: IdType;
+        type?: TypeType;
+        modifier?: ModifierType[];
+    };
 };
 
 export const makeFormalParameterType = (ctx: FormalParameterContext): FormalParameterType => {
@@ -17,17 +18,19 @@ export const makeFormalParameterType = (ctx: FormalParameterContext): FormalPara
 
     const formalParameterType: FormalParameterType = {
         type: 'formalParameter',
-        param: param,
+        parameter: {
+            parameter: param,
+        },
     };
 
     if (ctx.modifier_list() && ctx.modifier_list.length > 0) {
-        formalParameterType.modifier = ctx
+        formalParameterType.parameter.modifier = ctx
             .modifier_list()
-            .map((modifierCtx) => makeModifierType(modifierCtx));
+            .map((modifierCtx) => new ModifierVisitor().visit(modifierCtx));
     }
 
     if (ctx.typeRef()) {
-        formalParameterType.typeRef = makeTypeRefType(ctx.typeRef());
+        formalParameterType.parameter.type = new TypeVisitor().visit(ctx.typeRef());
     }
 
     return formalParameterType;

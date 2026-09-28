@@ -1,17 +1,18 @@
 import { NewExpressionContext } from '@apexdevtools/apex-parser';
 
-import { CreatorType, makeCreatorType } from '../creator';
+import { RestType, RestVisitor } from '../restVisitor';
 
 export type NewExpressionType = {
     type: 'newExpression';
-    creator: Omit<CreatorType, 'type'>;
+    expression: RestType;
 };
 
 export const makeNewExpressionType = (ctx: NewExpressionContext): NewExpressionType => {
-    const { type, ...creator } = makeCreatorType(ctx.creator());
+    const expression = new RestVisitor().visit(ctx.creator());
 
     return {
         type: 'newExpression',
-        creator: creator,
+        expression: expression,
     };
 };
+

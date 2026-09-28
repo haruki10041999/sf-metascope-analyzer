@@ -1,17 +1,16 @@
 import { CoordinateValueContext } from '@apexdevtools/apex-parser';
 
 import { ExpressionType, ExpressionVisitor } from '../expressionVisitor';
+import { LiteralType, LiteralVisitor } from '../literalVisitor';
 
-import { SignedNumberType, makeSignedNumberType } from '../signedNumber';
-
-export type CoodinateValueType = {
+export type CoordinateValueType = {
     type: 'coordinateValue';
-    value: Omit<ExpressionType, 'type'> | Omit<SignedNumberType, 'type'>;
+    value: ExpressionType | LiteralType;
 };
 
-export const makeCoordinateValueType = (ctx: CoordinateValueContext): CoodinateValueType => {
+export const makeCoordinateValueType = (ctx: CoordinateValueContext): CoordinateValueType => {
     if (ctx.signedNumber()) {
-        const { type, ...value } = makeSignedNumberType(ctx.signedNumber());
+        const value = new LiteralVisitor().visit(ctx.signedNumber());
         return {
             type: 'coordinateValue',
             value: value,
@@ -19,7 +18,7 @@ export const makeCoordinateValueType = (ctx: CoordinateValueContext): CoodinateV
     }
 
     if (ctx.boundExpression()) {
-        const { type, ...value } = new ExpressionVisitor().visit(ctx.boundExpression());
+        const value = new ExpressionVisitor().visit(ctx.boundExpression());
         return {
             type: 'coordinateValue',
             value: value,
@@ -28,3 +27,4 @@ export const makeCoordinateValueType = (ctx: CoordinateValueContext): CoodinateV
 
     throw new Error('値が異常です。CoordinateValueContext: ' + ctx.getText());
 };
+

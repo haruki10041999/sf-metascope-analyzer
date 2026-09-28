@@ -4,7 +4,7 @@ import { ExpressionType, ExpressionVisitor } from '../expressionVisitor';
 
 export type ExpressionStatementType = {
     type: 'expressionStatement';
-    expression: ExpressionType;
+    statement: ExpressionType;
 };
 
 export const makeExpressionStatementType = (
@@ -12,7 +12,7 @@ export const makeExpressionStatementType = (
 ): ExpressionStatementType => {
     return {
         type: 'expressionStatement',
-        expression: new ExpressionVisitor().visit(ctx.expression()),
+        statement: new ExpressionVisitor().visit(ctx.expression()),
     };
 };
 

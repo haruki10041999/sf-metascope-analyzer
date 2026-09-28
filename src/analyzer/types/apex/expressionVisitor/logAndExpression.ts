@@ -4,21 +4,25 @@ import { ExpressionType, ExpressionVisitor } from '.';
 
 export type LogAndExpressionType = {
     type: 'logAndExpression';
-    operator: '&&';
-    left: Omit<ExpressionType, 'type'>;
-    right: Omit<ExpressionType, 'type'>;
+    exporession: {
+        left: ExpressionType;
+        operator: '&&';
+        right: ExpressionType;
+    };
 };
 
 export const makeLogAndExpressionType = (ctx: LogAndExpressionContext): LogAndExpressionType => {
     const visitor = new ExpressionVisitor();
-    const { type: leftType, ...left } = visitor.visit(ctx.expression(0));
-    const { type: rightType, ...right } = visitor.visit(ctx.expression(1));
+    const left = visitor.visit(ctx.expression(0));
+    const right = visitor.visit(ctx.expression(1));
 
     return {
         type: 'logAndExpression',
-        operator: '&&',
-        left: left,
-        right: right,
+        exporession: {
+            left: left,
+            operator: '&&',
+            right: right,
+        },
     };
 };
 

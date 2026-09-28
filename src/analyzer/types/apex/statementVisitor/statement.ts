@@ -5,190 +5,170 @@ import { BlockType, BlockVisitor } from '../blockVisitor';
 
 export type StatementType = {
     type: 'statement';
-    block?: Omit<BlockType, 'type'>;
-    ifStatement?: Omit<statementType, 'type'>;
-    switchStatement?: Omit<statementType, 'type'>;
-    forStatement?: Omit<statementType, 'type'>;
-    whileStatement?: Omit<statementType, 'type'>;
-    doWhileStatement?: Omit<statementType, 'type'>;
-    tryStatement?: Omit<statementType, 'type'>;
-    returnStatement?: Omit<statementType, 'type'>;
-    throwStatement?: Omit<statementType, 'type'>;
-    breakStatement?: Omit<statementType, 'type'>;
-    continueStatement?: Omit<statementType, 'type'>;
-    insertStatement?: Omit<statementType, 'type'>;
-    updateStatement?: Omit<statementType, 'type'>;
-    deleteStatement?: Omit<statementType, 'type'>;
-    undeleteStatement?: Omit<statementType, 'type'>;
-    upsertStatement?: Omit<statementType, 'type'>;
-    mergeStatement?: Omit<statementType, 'type'>;
-    runAsStatement?: Omit<statementType, 'type'>;
-    localVariableDeclarationStatement?: Omit<statementType, 'type'>;
-    expressionStatement?: Omit<statementType, 'type'>;
+    statement: BlockType | statementType;
 };
 
 export const makeStatementType = (ctx: StatementContext): StatementType => {
     if (ctx.block()) {
-        const { type, ...block } = new BlockVisitor().visit(ctx.block());
+        const block = new BlockVisitor().visit(ctx.block());
         return {
             type: 'statement',
-            block: block,
+            statement: block,
         };
     }
 
     if (ctx.ifStatement()) {
-        const { type, ...statement } = new StatementVisitor().visit(ctx.ifStatement());
+        const statement = new StatementVisitor().visit(ctx.ifStatement());
         return {
             type: 'statement',
-            ifStatement: statement,
+            statement: statement,
         };
     }
 
     if (ctx.switchStatement()) {
-        const { type, ...statement } = new StatementVisitor().visit(ctx.switchStatement());
+        const statement = new StatementVisitor().visit(ctx.switchStatement());
         return {
             type: 'statement',
-            switchStatement: statement,
+            statement: statement,
         };
     }
 
     if (ctx.forStatement()) {
-        const { type, ...statement } = new StatementVisitor().visit(ctx.forStatement());
+        const statement = new StatementVisitor().visit(ctx.forStatement());
         return {
             type: 'statement',
-            forStatement: statement,
+            statement: statement,
         };
     }
 
     if (ctx.whileStatement()) {
-        const { type, ...statement } = new StatementVisitor().visit(ctx.whileStatement());
+        const statement = new StatementVisitor().visit(ctx.whileStatement());
         return {
             type: 'statement',
-            whileStatement: statement,
+            statement: statement,
         };
     }
 
     if (ctx.doWhileStatement()) {
-        const { type, ...statement } = new StatementVisitor().visit(ctx.doWhileStatement());
+        const statement = new StatementVisitor().visit(ctx.doWhileStatement());
         return {
             type: 'statement',
-            doWhileStatement: statement,
+            statement: statement,
         };
     }
 
     if (ctx.tryStatement()) {
-        const { type, ...statement } = new StatementVisitor().visit(ctx.tryStatement());
+        const statement = new StatementVisitor().visit(ctx.tryStatement());
         return {
             type: 'statement',
-            tryStatement: statement,
+            statement: statement,
         };
     }
 
     if (ctx.returnStatement()) {
-        const { type, ...statement } = new StatementVisitor().visit(ctx.returnStatement());
+        const statement = new StatementVisitor().visit(ctx.returnStatement());
         return {
             type: 'statement',
-            returnStatement: statement,
+            statement: statement,
         };
     }
 
     if (ctx.throwStatement()) {
-        const { type, ...statement } = new StatementVisitor().visit(ctx.throwStatement());
+        const statement = new StatementVisitor().visit(ctx.throwStatement());
         return {
             type: 'statement',
-            throwStatement: statement,
+            statement: statement,
         };
     }
 
     if (ctx.breakStatement()) {
-        const { type, ...statement } = new StatementVisitor().visit(ctx.breakStatement());
+        const statement = new StatementVisitor().visit(ctx.breakStatement());
         return {
             type: 'statement',
-            breakStatement: statement,
+            statement: statement,
         };
     }
 
     if (ctx.continueStatement()) {
-        const { type, ...statement } = new StatementVisitor().visit(ctx.continueStatement());
+        const statement = new StatementVisitor().visit(ctx.continueStatement());
         return {
             type: 'statement',
-            continueStatement: statement,
+            statement: statement,
         };
     }
 
     if (ctx.insertStatement()) {
-        const { type, ...statement } = new StatementVisitor().visit(ctx.insertStatement());
+        const statement = new StatementVisitor().visit(ctx.insertStatement());
         return {
             type: 'statement',
-            insertStatement: statement,
+            statement: statement,
         };
     }
 
     if (ctx.updateStatement()) {
-        const { type, ...statement } = new StatementVisitor().visit(ctx.updateStatement());
+        const statement = new StatementVisitor().visit(ctx.updateStatement());
         return {
             type: 'statement',
-            updateStatement: statement,
+            statement: statement,
         };
     }
 
     if (ctx.deleteStatement()) {
-        const { type, ...statement } = new StatementVisitor().visit(ctx.deleteStatement());
+        const statement = new StatementVisitor().visit(ctx.deleteStatement());
         return {
             type: 'statement',
-            deleteStatement: statement,
+            statement: statement,
         };
     }
 
     if (ctx.undeleteStatement()) {
-        const { type, ...statement } = new StatementVisitor().visit(ctx.undeleteStatement());
+        const statement = new StatementVisitor().visit(ctx.undeleteStatement());
         return {
             type: 'statement',
-            undeleteStatement: statement,
+            statement: statement,
         };
     }
 
     if (ctx.upsertStatement()) {
-        const { type, ...statement } = new StatementVisitor().visit(ctx.upsertStatement());
+        const statement = new StatementVisitor().visit(ctx.upsertStatement());
         return {
             type: 'statement',
-            upsertStatement: statement,
+            statement: statement,
         };
     }
 
     if (ctx.mergeStatement()) {
-        const { type, ...statement } = new StatementVisitor().visit(ctx.mergeStatement());
+        const statement = new StatementVisitor().visit(ctx.mergeStatement());
         return {
             type: 'statement',
-            mergeStatement: statement,
+            statement: statement,
         };
     }
 
     if (ctx.runAsStatement()) {
-        const { type, ...statement } = new StatementVisitor().visit(ctx.runAsStatement());
+        const statement = new StatementVisitor().visit(ctx.runAsStatement());
         return {
             type: 'statement',
-            runAsStatement: statement,
+            statement: statement,
         };
     }
 
     if (ctx.localVariableDeclarationStatement()) {
-        const { type, ...statement } = new StatementVisitor().visit(
-            ctx.localVariableDeclarationStatement(),
-        );
+        const statement = new StatementVisitor().visit(ctx.localVariableDeclarationStatement());
         return {
             type: 'statement',
-            localVariableDeclarationStatement: statement,
+            statement: statement,
         };
     }
 
     if (ctx.expressionStatement()) {
-        const { type, ...statement } = new StatementVisitor().visit(ctx.expressionStatement());
+        const statement = new StatementVisitor().visit(ctx.expressionStatement());
         return {
             type: 'statement',
-            expressionStatement: statement,
+            statement: statement,
         };
     }
 
     throw new Error('値が異常です。StatementContext: ' + ctx.getText());
 };
+

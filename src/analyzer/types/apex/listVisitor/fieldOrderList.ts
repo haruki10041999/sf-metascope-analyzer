@@ -4,12 +4,12 @@ import { FieldOrderType, makeFieldOrderType } from '../fieldOrder';
 
 export type FieldOrderListType = {
     type: 'fieldOrderList';
-    list: Omit<FieldOrderType, 'type'>[];
+    list: FieldOrderType[];
 };
 
 export const makeFieldOrderListType = (ctx: FieldOrderListContext): FieldOrderListType => {
     const list = ctx.fieldOrder_list().map((fieldOrderCtx) => {
-        const { type, ...field } = makeFieldOrderType(fieldOrderCtx);
+        const field = makeFieldOrderType(fieldOrderCtx);
 
         return field;
     });
@@ -19,3 +19,4 @@ export const makeFieldOrderListType = (ctx: FieldOrderListContext): FieldOrderLi
         list: list,
     };
 };
+

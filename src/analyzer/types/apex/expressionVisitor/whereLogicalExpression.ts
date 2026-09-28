@@ -4,7 +4,7 @@ import { ExpressionType, ExpressionVisitor } from '.';
 
 type WhereLogicalFieldType =
     | {
-          condition: Omit<ExpressionType, 'type'>;
+          condition: ExpressionType;
       }
     | {
           type: 'AND';
@@ -23,7 +23,7 @@ type WhereLogicalFieldType =
 
 export type WhereLogicalExpressionType = {
     type: 'whereLogicalExpression';
-    value: WhereLogicalFieldType;
+    expression: WhereLogicalFieldType;
 };
 
 export const makeWhereLogicalExpressionType = (
@@ -31,9 +31,7 @@ export const makeWhereLogicalExpressionType = (
 ): WhereLogicalExpressionType => {
     const conditions: WhereLogicalFieldType[] = ctx.whereConditionalExpression_list()
         ? ctx.whereConditionalExpression_list().map((whereConditionalExpressionCtx) => {
-              const { type, ...value } = new ExpressionVisitor().visit(
-                  whereConditionalExpressionCtx,
-              );
+              const value = new ExpressionVisitor().visit(whereConditionalExpressionCtx);
               return {
                   condition: value,
               };
@@ -94,6 +92,7 @@ export const makeWhereLogicalExpressionType = (
 
     return {
         type: 'whereLogicalExpression',
-        value: value,
+        expression: value,
     };
 };
+

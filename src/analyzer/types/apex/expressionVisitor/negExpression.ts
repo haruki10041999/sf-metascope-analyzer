@@ -4,26 +4,32 @@ import { ExpressionType, ExpressionVisitor } from '.';
 
 export type NegExpressionType = {
     type: 'negExpression';
-    operator: '~' | '!';
-    value: Omit<ExpressionType, 'type'>;
+    expression: {
+        operator: '~' | '!';
+        value: ExpressionType;
+    };
 };
 
 export const makeNegExpressionType = (ctx: NegExpressionContext): NegExpressionType => {
-    const { type, ...value } = new ExpressionVisitor().visit(ctx.expression());
+    const value = new ExpressionVisitor().visit(ctx.expression());
 
     if (ctx.TILDE()) {
         return {
             type: 'negExpression',
-            operator: '~',
-            value: value,
+            expression: {
+                operator: '~',
+                value: value,
+            },
         };
     }
 
     if (ctx.BANG()) {
         return {
             type: 'negExpression',
-            operator: '!',
-            value: value,
+            expression: {
+                operator: '!',
+                value: value,
+            },
         };
     }
 

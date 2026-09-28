@@ -4,7 +4,7 @@ import { ParameterType, ParameterVisitor } from '../parameterVisitor';
 
 export type FormalParameterListType = {
     type: 'formalParameterList';
-    list: Omit<ParameterType, 'type'>[];
+    list: ParameterType[];
 };
 
 export const makeFormalParameterListType = (
@@ -12,7 +12,7 @@ export const makeFormalParameterListType = (
 ): FormalParameterListType => ({
     type: 'formalParameterList',
     list: ctx.formalParameter_list().map((formalParameterCtx) => {
-        const { type, ...list } = new ParameterVisitor().visit(formalParameterCtx);
-        return list;
+        const parameter = new ParameterVisitor().visit(formalParameterCtx);
+        return parameter;
     }),
 });

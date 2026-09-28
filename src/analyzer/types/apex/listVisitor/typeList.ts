@@ -1,18 +1,17 @@
 import { TypeListContext } from '@apexdevtools/apex-parser';
-
-import { TypeRefType, makeTypeRefType } from '../typeRef';
+import { TypeType, TypeVisitor } from '../typeVisitor';
 
 export type TypeListType = {
     type: 'typeList';
-    list: Omit<TypeRefType, 'type'>[];
+    list: TypeType[];
 };
 
 export const makeTypeListType = (ctx: TypeListContext): TypeListType => {
     return {
         type: 'typeList',
         list: ctx.typeRef_list().map((typeRefCtx) => {
-            const { type, ...nest } = makeTypeRefType(typeRefCtx);
-            return nest;
+            const typeRef = new TypeVisitor().visit(typeRefCtx);
+            return typeRef;
         }),
     };
 };

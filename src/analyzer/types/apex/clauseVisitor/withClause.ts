@@ -4,50 +4,68 @@ import { ExpressionType, ExpressionVisitor } from '../expressionVisitor';
 
 export type WithClauseType = {
     type: 'withClause';
-    mode: 'SECURITY_ENFORCED' | 'SYSTEM_MODE' | 'USER_MODE' | 'DATA_CATEGORY';
-    field?: Omit<ExpressionType, 'type'>;
+    clause:
+        | {
+              mode: 'SECURITY_ENFORCED' | 'SYSTEM_MODE' | 'USER_MODE';
+          }
+        | {
+              mode: 'DATA_CATEGORY';
+              field: ExpressionType;
+          };
 };
 
 export const makeWithClauseType = (ctx: WithClauseContext): WithClauseType => {
     if (ctx.SECURITY_ENFORCED()) {
         return {
             type: 'withClause',
-            mode: 'SECURITY_ENFORCED',
+            clause: {
+                mode: 'SECURITY_ENFORCED',
+            },
         };
     }
 
     if (ctx.SYSTEM_MODE()) {
         return {
             type: 'withClause',
-            mode: 'SYSTEM_MODE',
+            clause: {
+                mode: 'SYSTEM_MODE',
+            },
         };
     }
 
     if (ctx.USER_MODE()) {
         return {
             type: 'withClause',
-            mode: 'USER_MODE',
+            clause: {
+                mode: 'USER_MODE',
+            },
         };
     }
 
     if (ctx.DATA() && ctx.CATEGORY()) {
-        const withClauseType: WithClauseType = {
-            type: 'withClause',
-            mode: 'DATA_CATEGORY',
-        };
-
         if (ctx.filteringExpression()) {
-            const { type, ...fields } = new ExpressionVisitor().visit(ctx.filteringExpression());
-            withClauseType.field = fields;
+            const fields = new ExpressionVisitor().visit(ctx.filteringExpression());
+            return {
+                type: 'withClause',
+                clause: {
+                    mode: 'DATA_CATEGORY',
+                    field: fields,
+                },
+            };
         }
 
         if (ctx.logicalExpression()) {
-            const { type, ...fields } = new ExpressionVisitor().visit(ctx.logicalExpression());
-            withClauseType.field = fields;
+            const fields = new ExpressionVisitor().visit(ctx.logicalExpression());
+            return {
+                type: 'withClause',
+                clause: {
+                    mode: 'DATA_CATEGORY',
+                    field: fields,
+                },
+            };
         }
-
-        return withClauseType;
     }
 
     throw new Error('値が異常です。WithClauseContext: ' + ctx.getText());
 };
+

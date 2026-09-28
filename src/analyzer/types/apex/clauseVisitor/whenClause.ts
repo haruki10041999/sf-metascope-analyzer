@@ -5,17 +5,22 @@ import { ListType, ListVisitor } from '../listVisitor';
 
 export type WhenClauseType = {
     type: 'whenClause';
-    whenField: Omit<NameType, 'type'>;
-    thenFields: Omit<ListType, 'type'>;
+    clause: {
+        whenField: NameType;
+        thenFields: ListType;
+    };
 };
 
 export const makeWhenClauseType = (ctx: WhenClauseContext): WhenClauseType => {
-    const { type: _, ...whenField } = new NameVisitor().visit(ctx.fieldName());
-    const { type: __, ...thenFields } = new ListVisitor().visit(ctx.fieldNameList());
+    const whenField = new NameVisitor().visit(ctx.fieldName());
+    const thenFields = new ListVisitor().visit(ctx.fieldNameList());
 
     return {
         type: 'whenClause',
-        whenField: whenField,
-        thenFields: thenFields,
+        clause: {
+            whenField: whenField,
+            thenFields: thenFields,
+        },
     };
 };
+

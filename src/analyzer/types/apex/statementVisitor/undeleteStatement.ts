@@ -1,26 +1,30 @@
 import { UndeleteStatementContext } from '@apexdevtools/apex-parser';
 
-import { ExpressionType, ExpressionVisitor } from '../expressionVisitor';
+import { StatementType, StatementVisitor } from './index';
 
-import { AccessLevelType, makeAccessLevelType } from '../accessLevel';
+import { ExpressionType, ExpressionVisitor } from '../expressionVisitor';
 
 export type UndeleteStatementType = {
     type: 'undeleteStatement';
-    variant: Omit<ExpressionType, 'type'>;
-    accessLevel?: Omit<AccessLevelType, 'type'>;
+    statement: {
+        variant: ExpressionType;
+        accessLevel?: StatementType;
+    };
 };
 
 export const makeUndeleteStatementType = (ctx: UndeleteStatementContext): UndeleteStatementType => {
-    const { type, ...variant } = new ExpressionVisitor().visit(ctx.expression());
+    const name = new ExpressionVisitor().visit(ctx.expression());
 
     const undeleteStatementType: UndeleteStatementType = {
         type: 'undeleteStatement',
-        variant: variant,
+        statement: {
+            variant: name,
+        },
     };
 
     if (ctx.accessLevel()) {
-        const { type, ...accessLevel } = makeAccessLevelType(ctx.accessLevel());
-        undeleteStatementType.accessLevel = accessLevel;
+        const accessLevel = new StatementVisitor().visit(ctx.accessLevel());
+        undeleteStatementType.statement.accessLevel = accessLevel;
     }
 
     return undeleteStatementType;

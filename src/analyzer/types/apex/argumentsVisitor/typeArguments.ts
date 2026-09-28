@@ -4,7 +4,7 @@ import { ListType, ListVisitor } from '../listVisitor';
 
 export type TypeArgumentsType = {
     type: 'typeArguments';
-    args: Omit<ListType, 'type'>;
+    args: ListType;
 };
 
 export const makeTypeArgumentsType = (ctx: TypeArgumentsContext): TypeArgumentsType => {

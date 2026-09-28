@@ -4,17 +4,17 @@ import { DeclarationType, DeclarationVisitor } from '../declarationVisitor';
 
 export type InterfaceBodyType = {
     type: 'interfaceBody';
-    declarations: Omit<DeclarationType, 'type'>[];
+    body: DeclarationType[];
 };
 
 export const makeInterfaceBodyType = (ctx: InterfaceBodyContext): InterfaceBodyType => {
-    const declarations = ctx.interfaceMethodDeclaration_list().map((decl) => {
-        const { type, ...declaration } = new DeclarationVisitor().visit(decl);
+    const body = ctx.interfaceMethodDeclaration_list().map((decl) => {
+        const declaration = new DeclarationVisitor().visit(decl);
         return declaration;
     });
 
     return {
         type: 'interfaceBody',
-        declarations: declarations,
+        body: body,
     };
 };
