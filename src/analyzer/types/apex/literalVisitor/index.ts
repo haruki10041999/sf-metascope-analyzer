@@ -6,6 +6,7 @@ import {
     SoslLiteralAltContext,
     SignedIntegerContext,
     SignedNumberContext,
+    SoqlLiteralContext,
 } from '@apexdevtools/apex-parser';
 
 import { LiteralType as literalType, makeLiteralType } from './literal';
@@ -14,6 +15,7 @@ import { SoslLiteralType, makeSoslLiteralType } from './soslLiteral';
 import { SoslLiteralAltType, makeSoslLiteralAltType } from './soslLiteralAlt';
 import { SignedIntegerType, makeSignedIntegerType } from './signedInteger';
 import { SignedNumberType, makeSignedNumberType } from './signedNumber';
+import { SoqlLiteralType, makeSoqlLiteralType } from './soqlLiteral';
 
 export type LiteralType =
     | literalType
@@ -21,7 +23,8 @@ export type LiteralType =
     | SoslLiteralType
     | SoslLiteralAltType
     | SignedIntegerType
-    | SignedNumberType;
+    | SignedNumberType
+    | SoqlLiteralType;
 
 export class LiteralVisitor extends ApexParserBaseVisitor<LiteralType> {
     visitLiteral(ctx: LiteralContext): LiteralType {
@@ -46,5 +49,9 @@ export class LiteralVisitor extends ApexParserBaseVisitor<LiteralType> {
 
     visitSignedNumber(ctx: SignedNumberContext) {
         return makeSignedNumberType(ctx);
+    }
+
+    visitSoqlLiteral(ctx: SoqlLiteralContext) {
+        return makeSoqlLiteralType(ctx);
     }
 }
