@@ -28,49 +28,49 @@ type DateFunctionType =
     | 'WEEK_IN_YEAR';
 
 const isNormalFunctionType = (ctx: SoqlFunctionContext): boolean => {
-    return (
-        ctx.AVG() !== undefined ||
-        ctx.COUNT_DISTINCT() !== undefined ||
-        ctx.MIN() !== undefined ||
-        ctx.MAX() !== undefined ||
-        ctx.SUM() !== undefined ||
-        ctx.TOLABEL() !== undefined ||
-        ctx.GROUPING() !== undefined ||
-        ctx.CONVERT_CURRENCY() !== undefined
+    return Boolean(
+        ctx.AVG() ||
+        ctx.COUNT_DISTINCT() ||
+        ctx.MIN() ||
+        ctx.MAX() ||
+        ctx.SUM() ||
+        ctx.TOLABEL() ||
+        ctx.GROUPING() ||
+        ctx.CONVERT_CURRENCY(),
     );
 };
 
 const isFormatFunctionType = (ctx: SoqlFunctionContext): boolean => {
-    return ctx.FORMAT() !== undefined;
+    return Boolean(ctx.FORMAT());
 };
 
 const isCountFunctionType = (ctx: SoqlFunctionContext): boolean => {
-    return ctx.COUNT() !== undefined;
+    return Boolean(ctx.COUNT());
 };
 
 const isFieldsFunctionType = (ctx: SoqlFunctionContext): boolean => {
-    return ctx.FIELDS() !== undefined;
+    return Boolean(ctx.FIELDS());
 };
 
 const isDistanceFunctionType = (ctx: SoqlFunctionContext): boolean => {
-    return ctx.DISTANCE() !== undefined;
+    return Boolean(ctx.DISTANCE());
 };
 
 const isDateFunctionType = (ctx: SoqlFunctionContext): boolean => {
-    return (
-        ctx.CALENDAR_MONTH() !== undefined ||
-        ctx.CALENDAR_QUARTER() !== undefined ||
-        ctx.CALENDAR_YEAR() !== undefined ||
-        ctx.DAY_IN_MONTH() !== undefined ||
-        ctx.DAY_IN_WEEK() !== undefined ||
-        ctx.DAY_IN_YEAR() !== undefined ||
-        ctx.DAY_ONLY() !== undefined ||
-        ctx.FISCAL_MONTH() !== undefined ||
-        ctx.FISCAL_QUARTER() !== undefined ||
-        ctx.FISCAL_YEAR() !== undefined ||
-        ctx.HOUR_IN_DAY() !== undefined ||
-        ctx.WEEK_IN_MONTH() !== undefined ||
-        ctx.WEEK_IN_YEAR() !== undefined
+    return Boolean(
+        ctx.CALENDAR_MONTH() ||
+        ctx.CALENDAR_QUARTER() ||
+        ctx.CALENDAR_YEAR() ||
+        ctx.DAY_IN_MONTH() ||
+        ctx.DAY_IN_WEEK() ||
+        ctx.DAY_IN_YEAR() ||
+        ctx.DAY_ONLY() ||
+        ctx.FISCAL_MONTH() ||
+        ctx.FISCAL_QUARTER() ||
+        ctx.FISCAL_YEAR() ||
+        ctx.HOUR_IN_DAY() ||
+        ctx.WEEK_IN_MONTH() ||
+        ctx.WEEK_IN_YEAR(),
     );
 };
 
@@ -162,6 +162,9 @@ export const makeSoqlFunctionType = (ctx: SoqlFunctionContext): SoqlFunctionType
         }
         if (ctx.CALENDAR_QUARTER()) {
             functionName = 'CALENDAR_QUARTER';
+        }
+        if (ctx.CALENDAR_YEAR()) {
+            functionName = 'CALENDAR_YEAR';
         }
         if (ctx.DAY_IN_MONTH()) {
             functionName = 'DAY_IN_MONTH';
@@ -287,4 +290,3 @@ export const makeSoqlFunctionType = (ctx: SoqlFunctionContext): SoqlFunctionType
 
     throw new Error('値が異常です。SoqlFunctionContext: ' + ctx.getText());
 };
-

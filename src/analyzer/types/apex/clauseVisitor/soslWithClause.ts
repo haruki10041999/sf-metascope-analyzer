@@ -25,7 +25,7 @@ export type SoslWithClauseType = {
 
 export const makeSoslWithClauseType = (ctx: SoslWithClauseContext): SoslWithClauseType => {
     if (ctx.DIVISION() || ctx.PRICEBOOKID()) {
-        const withType = ctx.DIVISION() !== undefined ? 'DIVISION' : 'PRICEBOOKID';
+        const withType = ctx.DIVISION() ? 'DIVISION' : 'PRICEBOOKID';
 
         if (ctx.StringLiteral()) {
             return {
@@ -157,4 +157,3 @@ export const makeSoslWithClauseType = (ctx: SoslWithClauseContext): SoslWithClau
 
     throw new Error('値が異常です。SoslWIthClauseContext: ' + ctx.getText());
 };
-

@@ -115,139 +115,376 @@ export type ExpressionType =
 
 export class ExpressionVisitor extends ApexParserBaseVisitor<ExpressionType> {
     visitExpression(ctx: ExpressionContext) {
-        return makeExpressionType(ctx);
+        console.log('解析を開始します。' + 'ExpressionContext:  ' + ctx.getText());
+        const result = makeExpressionType(ctx);
+        console.log(
+            '------------解析が終了しました--------------' +
+                'ExpressionContext:  ' +
+                JSON.stringify(result, null, 2),
+        );
+        return result;
     }
 
     visitPrimaryExpression(ctx: PrimaryExpressionContext) {
-        return makePrimaryExpressionType(ctx);
+        console.log('解析を開始します。' + 'PrimaryExpressionContext:  ' + ctx.getText());
+        const result = makePrimaryExpressionType(ctx);
+        console.log(
+            '------------解析が終了しました--------------' +
+                'PrimaryExpressionContext:  ' +
+                JSON.stringify(result, null, 2),
+        );
+        return result;
     }
 
     visitArth1Expression(ctx: Arth1ExpressionContext) {
-        return makeArth1ExpressionType(ctx);
+        console.log('解析を開始します。' + 'Arth1ExpressionContext:  ' + ctx.getText());
+        const result = makeArth1ExpressionType(ctx);
+        console.log(
+            '------------解析が終了しました--------------' +
+                'Arth1ExpressionContext:  ' +
+                JSON.stringify(result, null, 2),
+        );
+        return result;
     }
 
     visitCoalExpression(ctx: CoalExpressionContext) {
-        return makeCoalExpressionType(ctx);
+        console.log('解析を開始します。' + 'CoalExpressionContext:  ' + ctx.getText());
+        const result = makeCoalExpressionType(ctx);
+        console.log(
+            '------------解析が終了しました--------------' +
+                'CoalExpressionContext:  ' +
+                JSON.stringify(result, null, 2),
+        );
+        return result;
     }
 
     visitDotExpression(ctx: DotExpressionContext) {
-        return makeDotExpressionType(ctx);
+        console.log('解析を開始します。' + 'DotExpressionContext:  ' + ctx.getText());
+        const result = makeDotExpressionType(ctx);
+        console.log(
+            '------------解析が終了しました--------------' +
+                'DotExpressionContext:  ' +
+                JSON.stringify(result, null, 2),
+        );
+        return result;
     }
 
     visitBitOrExpression(ctx: BitOrExpressionContext) {
-        return makeBitOrExpressionType(ctx);
+        console.log('解析を開始します。' + 'BitOrExpressionContext:  ' + ctx.getText());
+        const result = makeBitOrExpressionType(ctx);
+        console.log(
+            '------------解析が終了しました--------------' +
+                'BitOrExpressionContext:  ' +
+                JSON.stringify(result, null, 2),
+        );
+        return result;
     }
 
     visitArrayExpression(ctx: ArrayExpressionContext) {
-        return makeArrayExpressionType(ctx);
+        console.log('解析を開始します。' + 'ArrayExpressionContext:  ' + ctx.getText());
+        const result = makeArrayExpressionType(ctx);
+        console.log(
+            '------------解析が終了しました--------------' +
+                'ArrayExpressionContext:  ' +
+                JSON.stringify(result, null, 2),
+        );
+        return result;
     }
 
     visitNewExpression(ctx: NewExpressionContext) {
-        return makeNewExpressionType(ctx);
+        console.log('解析を開始します。' + 'NewExpressionContext:  ' + ctx.getText());
+        const result = makeNewExpressionType(ctx);
+        console.log(
+            '------------解析が終了しました--------------' +
+                'NewExpressionContext:  ' +
+                JSON.stringify(result, null, 2),
+        );
+        return result;
     }
 
     visitAssignExpression(ctx: AssignExpressionContext) {
-        return makeAssignExpressionType(ctx);
+        console.log('解析を開始します。' + 'AssignExpressionContext:  ' + ctx.getText());
+        const result = makeAssignExpressionType(ctx);
+        console.log(
+            '------------解析が終了しました--------------' +
+                'AssignExpressionContext:  ' +
+                JSON.stringify(result, null, 2),
+        );
+        return result;
     }
 
     visitMethodCallExpression(ctx: MethodCallExpressionContext) {
-        return makeMethodCallExpressionType(ctx);
+        console.log('解析を開始します。' + 'MethodCallExpressionContext:  ' + ctx.getText());
+        const result = makeMethodCallExpressionType(ctx);
+        console.log(
+            '------------解析が終了しました--------------' +
+                'MethodCallExpressionContext:  ' +
+                JSON.stringify(result, null, 2),
+        );
+        return result;
     }
 
     visitBitNotExpression(ctx: BitNotExpressionContext) {
-        return makeBitNotExpressionType(ctx);
+        console.log('解析を開始します。' + 'BitNotExpressionContext:  ' + ctx.getText());
+        const result = makeBitNotExpressionType(ctx);
+        console.log(
+            '------------解析が終了しました--------------' +
+                'BitNotExpressionContext:  ' +
+                JSON.stringify(result, null, 2),
+        );
+        return result;
     }
 
     visitArth2Expression(ctx: Arth2ExpressionContext) {
-        return makeArth2ExpressionType(ctx);
+        console.log('解析を開始します。' + 'Arth2ExpressionContext:  ' + ctx.getText());
+        const result = makeArth2ExpressionType(ctx);
+        console.log(
+            '------------解析が終了しました--------------' +
+                'Arth2ExpressionContext:  ' +
+                JSON.stringify(result, null, 2),
+        );
+        return result;
     }
 
     visitLogAndExpression(ctx: LogAndExpressionContext) {
-        return makeLogAndExpressionType(ctx);
+        console.log('解析を開始します。' + 'LogAndExpressionContext:  ' + ctx.getText());
+        const result = makeLogAndExpressionType(ctx);
+        console.log(
+            '------------解析が終了しました--------------' +
+                'LogAndExpressionContext:  ' +
+                JSON.stringify(result, null, 2),
+        );
+        return result;
     }
 
     visitCastExpression(ctx: CastExpressionContext) {
-        return makeCastExpressionType(ctx);
+        console.log('解析を開始します。' + 'CastExpressionContext:  ' + ctx.getText());
+        const result = makeCastExpressionType(ctx);
+        console.log(
+            '------------解析が終了しました--------------' +
+                'CastExpressionContext:  ' +
+                JSON.stringify(result, null, 2),
+        );
+        return result;
     }
 
     visitBitAndExpression(ctx: BitAndExpressionContext) {
-        return makeBitAndExpressionType(ctx);
+        console.log('解析を開始します。' + 'BitAndExpressionContext:  ' + ctx.getText());
+        const result = makeBitAndExpressionType(ctx);
+        console.log(
+            '------------解析が終了しました--------------' +
+                'BitAndExpressionContext:  ' +
+                JSON.stringify(result, null, 2),
+        );
+        return result;
     }
 
     visitCmpExpression(ctx: CmpExpressionContext) {
-        return makeCmpExpressionType(ctx);
+        console.log('解析を開始します。' + 'CmpExpressionContext:  ' + ctx.getText());
+        const result = makeCmpExpressionType(ctx);
+        console.log(
+            '------------解析が終了しました--------------' +
+                'CmpExpressionContext:  ' +
+                JSON.stringify(result, null, 2),
+        );
+        return result;
     }
 
     visitBitExpression(ctx: BitExpressionContext) {
-        return makeBitExpressionType(ctx);
+        console.log('解析を開始します。' + 'BitExpressionContext:  ' + ctx.getText());
+        const result = makeBitExpressionType(ctx);
+        console.log(
+            '------------解析が終了しました--------------' +
+                'BitExpressionContext:  ' +
+                JSON.stringify(result, null, 2),
+        );
+        return result;
     }
 
     visitLogOrExpression(ctx: LogOrExpressionContext) {
-        return makeLogOrExpressionType(ctx);
+        console.log('解析を開始します。' + 'LogOrExpressionContext:  ' + ctx.getText());
+        const result = makeLogOrExpressionType(ctx);
+        console.log(
+            '------------解析が終了しました--------------' +
+                'LogOrExpressionContext:  ' +
+                JSON.stringify(result, null, 2),
+        );
+        return result;
     }
 
     visitCondExpression(ctx: CondExpressionContext) {
-        return makeCondExpressionType(ctx);
+        console.log('解析を開始します。' + 'CondExpressionContext:  ' + ctx.getText());
+        const result = makeCondExpressionType(ctx);
+        console.log(
+            '------------解析が終了しました--------------' +
+                'CondExpressionContext:  ' +
+                JSON.stringify(result, null, 2),
+        );
+        return result;
     }
 
     visitEqualityExpression(ctx: EqualityExpressionContext) {
-        return makeEqualityExpressionType(ctx);
+        console.log('解析を開始します。' + 'EqualityExpressionContext:  ' + ctx.getText());
+        const result = makeEqualityExpressionType(ctx);
+        console.log(
+            '------------解析が終了しました--------------' +
+                'EqualityExpressionContext:  ' +
+                JSON.stringify(result, null, 2),
+        );
+        return result;
     }
 
     visitPostOpExpression(ctx: PostOpExpressionContext) {
-        return makePostOpExpressionType(ctx);
+        console.log('解析を開始します。' + 'PostOpExpressionContext:  ' + ctx.getText());
+        const result = makePostOpExpressionType(ctx);
+        console.log(
+            '------------解析が終了しました--------------' +
+                'PostOpExpressionContext:  ' +
+                JSON.stringify(result, null, 2),
+        );
+        return result;
     }
 
     visitNegExpression(ctx: NegExpressionContext) {
-        return makeNegExpressionType(ctx);
+        console.log('解析を開始します。' + 'NegExpressionContext:  ' + ctx.getText());
+        const result = makeNegExpressionType(ctx);
+        console.log(
+            '------------解析が終了しました--------------' +
+                'NegExpressionContext:  ' +
+                JSON.stringify(result, null, 2),
+        );
+        return result;
     }
 
     visitPreOpExpression(ctx: PreOpExpressionContext) {
-        return makePreOpExpressionType(ctx);
+        console.log('解析を開始します。' + 'PreOpExpressionContext:  ' + ctx.getText());
+        const result = makePreOpExpressionType(ctx);
+        console.log(
+            '------------解析が終了しました--------------' +
+                'PreOpExpressionContext:  ' +
+                JSON.stringify(result, null, 2),
+        );
+        return result;
     }
 
     visitSubExpression(ctx: SubExpressionContext) {
-        return makeSubExpressionType(ctx);
+        console.log('解析を開始します。' + 'SubExpressionContext:  ' + ctx.getText());
+        const result = makeSubExpressionType(ctx);
+        console.log(
+            '------------解析が終了しました--------------' +
+                'SubExpressionContext:  ' +
+                JSON.stringify(result, null, 2),
+        );
+        return result;
     }
 
     visitInstanceOfExpression(ctx: InstanceOfExpressionContext) {
-        return makeInstanceOfExpressionType(ctx);
+        console.log('解析を開始します。' + 'InstanceOfExpressionContext:  ' + ctx.getText());
+        const result = makeInstanceOfExpressionType(ctx);
+        console.log(
+            '------------解析が終了しました--------------' +
+                'InstanceOfExpressionContext:  ' +
+                JSON.stringify(result, null, 2),
+        );
+        return result;
     }
 
     visitParExpression(ctx: ParExpressionContext) {
-        return makeParExpressionType(ctx);
+        console.log('解析を開始します。' + 'ParExpressionContext:  ' + ctx.getText());
+        const result = makeParExpressionType(ctx);
+        console.log(
+            '------------解析が終了しました--------------' +
+                'ParExpressionContext:  ' +
+                JSON.stringify(result, null, 2),
+        );
+        return result;
     }
 
     visitBoundExpression(ctx: BoundExpressionContext) {
-        return makeBoundExpressionType(ctx);
+        console.log('解析を開始します。' + 'BoundExpressionContext:  ' + ctx.getText());
+        const result = makeBoundExpressionType(ctx);
+        console.log(
+            '------------解析が終了しました--------------' +
+                'BoundExpressionContext:  ' +
+                JSON.stringify(result, null, 2),
+        );
+        return result;
     }
 
     visitFilteringExpression(ctx: FilteringExpressionContext) {
-        return makeFilteringExpressionType(ctx);
+        console.log('解析を開始します。' + 'FilteringExpressionContext:  ' + ctx.getText());
+        const result = makeFilteringExpressionType(ctx);
+        console.log(
+            '------------解析が終了しました--------------' +
+                'FilteringExpressionContext:  ' +
+                JSON.stringify(result, null, 2),
+        );
+        return result;
     }
 
     visitFieldExpression(ctx: FieldExpressionContext) {
-        return makeFieldExpressionType(ctx);
+        console.log('解析を開始します。' + 'FieldExpressionContext:  ' + ctx.getText());
+        const result = makeFieldExpressionType(ctx);
+        console.log(
+            '------------解析が終了しました--------------' +
+                'FieldExpressionContext:  ' +
+                JSON.stringify(result, null, 2),
+        );
+        return result;
     }
 
     visitConditionalExpression(ctx: ConditionalExpressionContext) {
-        return makeConditionalExpressionType(ctx);
+        console.log('解析を開始します。' + 'ConditionalExpressionContext:  ' + ctx.getText());
+        const result = makeConditionalExpressionType(ctx);
+        console.log(
+            '------------解析が終了しました--------------' +
+                'ConditionalExpressionContext:  ' +
+                JSON.stringify(result, null, 2),
+        );
+        return result;
     }
 
     visitLogicalExpression(ctx: LogicalExpressionContext) {
-        return makeLogicalExpressionType(ctx);
+        console.log('解析を開始します。' + 'LogicalExpressionContext:  ' + ctx.getText());
+        const result = makeLogicalExpressionType(ctx);
+        console.log(
+            '------------解析が終了しました--------------' +
+                'LogicalExpressionContext:  ' +
+                JSON.stringify(result, null, 2),
+        );
+        return result;
     }
 
     visitWhereLogicalExpression(ctx: WhereLogicalExpressionContext) {
-        return makeWhereLogicalExpressionType(ctx);
+        console.log('解析を開始します。' + 'WhereLogicalExpressionContext:  ' + ctx.getText());
+        const result = makeWhereLogicalExpressionType(ctx);
+        console.log(
+            '------------解析が終了しました--------------' +
+                'WhereLogicalExpressionContext:  ' +
+                JSON.stringify(result, null, 2),
+        );
+        return result;
     }
 
     visitWhereConditionalExpression(ctx: WhereConditionalExpressionContext) {
-        return makeWhereConditionalExpressionType(ctx);
+        console.log('解析を開始します。' + 'WhereConditionalExpressionContext:  ' + ctx.getText());
+        const result = makeWhereConditionalExpressionType(ctx);
+        console.log(
+            '------------解析が終了しました--------------' +
+                'WhereConditionalExpressionContext:  ' +
+                JSON.stringify(result, null, 2),
+        );
+        return result;
     }
 
     visitWhereFieldExpression(ctx: WhereFieldExpressionContext) {
-        return makeWhereFieldExpressionType(ctx);
+        console.log('解析を開始します。' + 'WhereFieldExpressionContext:  ' + ctx.getText());
+        const result = makeWhereFieldExpressionType(ctx);
+        console.log(
+            '------------解析が終了しました--------------' +
+                'WhereFieldExpressionContext:  ' +
+                JSON.stringify(result, null, 2),
+        );
+        return result;
     }
 }
-

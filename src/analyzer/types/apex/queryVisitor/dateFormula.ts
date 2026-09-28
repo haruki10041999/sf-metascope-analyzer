@@ -51,56 +51,56 @@ type DateFormulaWithFunctionType =
     | 'N_FISCAL_YEARS_AGO_N';
 
 const isDateFormulaFunctionType = (ctx: DateFormulaContext): boolean => {
-    return (
-        ctx.YESTERDAY() !== undefined ||
-        ctx.TODAY() !== undefined ||
-        ctx.TOMORROW() !== undefined ||
-        ctx.LAST_WEEK() !== undefined ||
-        ctx.THIS_WEEK() !== undefined ||
-        ctx.NEXT_WEEK() !== undefined ||
-        ctx.LAST_MONTH() !== undefined ||
-        ctx.THIS_MONTH() !== undefined ||
-        ctx.NEXT_MONTH() !== undefined ||
-        ctx.LAST_90_DAYS() !== undefined ||
-        ctx.NEXT_90_DAYS() !== undefined ||
-        ctx.THIS_QUARTER() !== undefined ||
-        ctx.LAST_QUARTER() !== undefined ||
-        ctx.NEXT_QUARTER() !== undefined ||
-        ctx.THIS_YEAR() !== undefined ||
-        ctx.LAST_YEAR() !== undefined ||
-        ctx.NEXT_YEAR() !== undefined ||
-        ctx.THIS_FISCAL_QUARTER() !== undefined ||
-        ctx.LAST_FISCAL_QUARTER() !== undefined ||
-        ctx.NEXT_FISCAL_QUARTER() !== undefined ||
-        ctx.THIS_FISCAL_YEAR() !== undefined ||
-        ctx.LAST_FISCAL_YEAR() !== undefined ||
-        ctx.NEXT_FISCAL_YEAR() !== undefined
+    return Boolean(
+        ctx.YESTERDAY() ||
+        ctx.TODAY() ||
+        ctx.TOMORROW() ||
+        ctx.LAST_WEEK() ||
+        ctx.THIS_WEEK() ||
+        ctx.NEXT_WEEK() ||
+        ctx.LAST_MONTH() ||
+        ctx.THIS_MONTH() ||
+        ctx.NEXT_MONTH() ||
+        ctx.LAST_90_DAYS() ||
+        ctx.NEXT_90_DAYS() ||
+        ctx.THIS_QUARTER() ||
+        ctx.LAST_QUARTER() ||
+        ctx.NEXT_QUARTER() ||
+        ctx.THIS_YEAR() ||
+        ctx.LAST_YEAR() ||
+        ctx.NEXT_YEAR() ||
+        ctx.THIS_FISCAL_QUARTER() ||
+        ctx.LAST_FISCAL_QUARTER() ||
+        ctx.NEXT_FISCAL_QUARTER() ||
+        ctx.THIS_FISCAL_YEAR() ||
+        ctx.LAST_FISCAL_YEAR() ||
+        ctx.NEXT_FISCAL_YEAR(),
     );
 };
 
 const isDateFormulaWithFunctionType = (ctx: DateFormulaContext): boolean => {
-    return (
-        ctx.LAST_N_DAYS_N() !== undefined ||
-        ctx.NEXT_N_DAYS_N() !== undefined ||
-        ctx.N_DAYS_AGO_N() !== undefined ||
-        ctx.NEXT_N_WEEKS_N() !== undefined ||
-        ctx.LAST_N_WEEKS_N() !== undefined ||
-        ctx.N_WEEKS_AGO_N() !== undefined ||
-        ctx.NEXT_N_MONTHS_N() !== undefined ||
-        ctx.LAST_N_MONTHS_N() !== undefined ||
-        ctx.N_MONTHS_AGO_N() !== undefined ||
-        ctx.NEXT_N_QUARTERS_N() !== undefined ||
-        ctx.LAST_N_QUARTERS_N() !== undefined ||
-        ctx.N_QUARTERS_AGO_N() !== undefined ||
-        ctx.NEXT_N_FISCAL_QUARTERS_N() !== undefined ||
-        ctx.LAST_N_FISCAL_QUARTERS_N() !== undefined ||
-        ctx.N_FISCAL_QUARTERS_AGO_N() !== undefined ||
-        ctx.NEXT_N_YEARS_N() !== undefined ||
-        ctx.LAST_N_YEARS_N() !== undefined ||
-        ctx.N_YEARS_AGO_N() !== undefined ||
-        ctx.NEXT_N_FISCAL_YEARS_N() !== undefined ||
-        ctx.LAST_N_FISCAL_YEARS_N() !== undefined ||
-        ctx.N_FISCAL_YEARS_AGO_N() !== undefined
+    return Boolean(
+        ctx.LAST_N_DAYS_N() ||
+        ctx.NEXT_N_DAYS_N() ||
+        ctx.N_DAYS_AGO_N() ||
+        ctx.NEXT_N_WEEKS_N() ||
+        ctx.LAST_N_WEEKS_N() ||
+        ctx.N_WEEKS_AGO_N() ||
+        ctx.NEXT_N_MONTHS_N() ||
+        ctx.LAST_N_MONTHS_N() ||
+        ctx.N_MONTHS_AGO_N() ||
+        ctx.NEXT_N_QUARTERS_N() ||
+        ctx.LAST_N_QUARTERS_N() ||
+        ctx.N_QUARTERS_AGO_N() ||
+        ctx.NEXT_N_FISCAL_QUARTERS_N() ||
+        ctx.LAST_N_FISCAL_QUARTERS_N() ||
+        ctx.N_FISCAL_QUARTERS_AGO_N() ||
+        ctx.NEXT_N_YEARS_N() ||
+        ctx.LAST_N_YEARS_N() ||
+        ctx.N_YEARS_AGO_N() ||
+        ctx.NEXT_N_FISCAL_YEARS_N() ||
+        ctx.LAST_N_FISCAL_YEARS_N() ||
+        ctx.N_FISCAL_YEARS_AGO_N(),
     );
 };
 
@@ -500,4 +500,3 @@ export const makeDateFormulaType = (ctx: DateFormulaContext): DateFormulaType =>
 
     throw new Error('値が異常です。DateFormulaContext: ' + ctx.getText());
 };
-

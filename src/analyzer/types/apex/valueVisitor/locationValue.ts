@@ -48,11 +48,10 @@ export const makeLocationValueType = (ctx: LocationValueContext): LocationValueT
             type: 'locationValue',
             value: {
                 value: values,
-                isGeoLocation: ctx.GEOLOCATION() !== undefined,
+                isGeoLocation: Boolean(ctx.GEOLOCATION()),
             },
         };
     }
 
     throw new Error('値が異常です。LocationValueContext: ' + ctx.getText());
 };
-

@@ -67,82 +67,222 @@ export type ClauseType =
 
 export class ClauseVisitor extends ApexParserBaseVisitor<ClauseType> {
     visitCatchClause(ctx: CatchClauseContext) {
-        return makeCatchClauseType(ctx);
+        console.log('解析を開始します。' + 'CatchClauseContext:  ' + ctx.getText());
+        const result = makeCatchClauseType(ctx);
+        console.log(
+            '------------解析が終了しました--------------' +
+                'CatchClauseContext:  ' +
+                JSON.stringify(result, null, 2),
+        );
+        return result;
     }
 
     visitAllRowsClause(ctx: AllRowsClauseContext) {
-        return makeAllRowClauseType(ctx);
+        console.log('解析を開始します。' + 'AllRowsClauseContext:  ' + ctx.getText());
+        const result = makeAllRowClauseType(ctx);
+        console.log(
+            '------------解析が終了しました--------------' +
+                'AllRowsClauseContext:  ' +
+                JSON.stringify(result, null, 2),
+        );
+        return result;
     }
 
     visitOffsetClause(ctx: OffsetClauseContext) {
-        return makeOffsetClauseType(ctx);
+        console.log('解析を開始します。' + 'OffsetClauseContext:  ' + ctx.getText());
+        const result = makeOffsetClauseType(ctx);
+        console.log(
+            '------------解析が終了しました--------------' +
+                'OffsetClauseContext:  ' +
+                JSON.stringify(result, null, 2),
+        );
+        return result;
     }
 
     visitLimitClause(ctx: LimitClauseContext) {
-        return makeLimitClauseType(ctx);
+        console.log('解析を開始します。' + 'LimitClauseContext:  ' + ctx.getText());
+        const result = makeLimitClauseType(ctx);
+        console.log(
+            '------------解析が終了しました--------------' +
+                'LimitClauseContext:  ' +
+                JSON.stringify(result, null, 2),
+        );
+        return result;
     }
 
     visitForClauses(ctx: ForClausesContext) {
-        return makeForClausesType(ctx);
+        console.log('解析を開始します。' + 'ForClausesContext:  ' + ctx.getText());
+        const result = makeForClausesType(ctx);
+        console.log(
+            '------------解析が終了しました--------------' +
+                'ForClausesContext:  ' +
+                JSON.stringify(result, null, 2),
+        );
+        return result;
     }
 
     visitElseClause(ctx: ElseClauseContext) {
-        return makeElseClauseType(ctx);
+        console.log('解析を開始します。' + 'ElseClauseContext:  ' + ctx.getText());
+        const result = makeElseClauseType(ctx);
+        console.log(
+            '------------解析が終了しました--------------' +
+                'ElseClauseContext:  ' +
+                JSON.stringify(result, null, 2),
+        );
+        return result;
     }
 
     visitGroupByClause(ctx: GroupByClauseContext) {
-        return makeGroupByClauseType(ctx);
+        console.log('解析を開始します。' + 'GroupByClauseContext:  ' + ctx.getText());
+        const result = makeGroupByClauseType(ctx);
+        console.log(
+            '------------解析が終了しました--------------' +
+                'GroupByClauseContext:  ' +
+                JSON.stringify(result, null, 2),
+        );
+        return result;
     }
 
     visitOrderByClause(ctx: OrderByClauseContext) {
-        return makeOrderByClauseType(ctx);
+        console.log('解析を開始します。' + 'OrderByClauseContext:  ' + ctx.getText());
+        const result = makeOrderByClauseType(ctx);
+        console.log(
+            '------------解析が終了しました--------------' +
+                'OrderByClauseContext:  ' +
+                JSON.stringify(result, null, 2),
+        );
+        return result;
     }
 
     visitWithClause(ctx: WithClauseContext) {
-        return makeWithClauseType(ctx);
+        console.log('解析を開始します。' + 'WithClauseContext:  ' + ctx.getText());
+        const result = makeWithClauseType(ctx);
+        console.log(
+            '------------解析が終了しました--------------' +
+                'WithClauseContext:  ' +
+                JSON.stringify(result, null, 2),
+        );
+        return result;
     }
 
     visitWhereClause(ctx: WhereClauseContext) {
-        return makeWhereClauseType(ctx);
+        console.log('解析を開始します。' + 'WhereClauseContext:  ' + ctx.getText());
+        const result = makeWhereClauseType(ctx);
+        console.log(
+            '------------解析が終了しました--------------' +
+                'WhereClauseContext:  ' +
+                JSON.stringify(result, null, 2),
+        );
+        return result;
     }
 
     visitWhenClause(ctx: WhenClauseContext) {
-        return makeWhenClauseType(ctx);
+        console.log('解析を開始します。' + 'WhenClauseContext:  ' + ctx.getText());
+        const result = makeWhenClauseType(ctx);
+        console.log(
+            '------------解析が終了しました--------------' +
+                'WhenClauseContext:  ' +
+                JSON.stringify(result, null, 2),
+        );
+        return result;
     }
 
     visitSoslWithClause(ctx: SoslWithClauseContext) {
-        return makeSoslWithClauseType(ctx);
+        console.log('解析を開始します。' + 'SoslWithClauseContext:  ' + ctx.getText());
+        const result = makeSoslWithClauseType(ctx);
+        console.log(
+            '------------解析が終了しました--------------' +
+                'SoslWithClauseContext:  ' +
+                JSON.stringify(result, null, 2),
+        );
+        return result;
     }
 
     visitSoslClauses(ctx: SoslClausesContext) {
-        return makeSoslClausesType(ctx);
+        console.log('解析を開始します。' + 'SoslClausesContext:  ' + ctx.getText());
+        const result = makeSoslClausesType(ctx);
+        console.log(
+            '------------解析が終了しました--------------' +
+                'SoslClausesContext:  ' +
+                JSON.stringify(result, null, 2),
+        );
+        return result;
     }
 
     visitDataCategorySelection(ctx: DataCategorySelectionContext) {
-        return makeDataCategorySelectionType(ctx);
+        console.log('解析を開始します。' + 'DataCategorySelectionContext:  ' + ctx.getText());
+        const result = makeDataCategorySelectionType(ctx);
+        console.log(
+            '------------解析が終了しました--------------' +
+                'DataCategorySelectionContext:  ' +
+                JSON.stringify(result, null, 2),
+        );
+        return result;
     }
 
     visitFieldGroupBy(ctx: FieldGroupByContext) {
-        return makeFieldGroupByType(ctx);
+        console.log('解析を開始します。' + 'FieldGroupByContext:  ' + ctx.getText());
+        const result = makeFieldGroupByType(ctx);
+        console.log(
+            '------------解析が終了しました--------------' +
+                'FieldGroupByContext:  ' +
+                JSON.stringify(result, null, 2),
+        );
+        return result;
     }
 
     visitFieldOrder(ctx: FieldOrderContext) {
-        return makeFieldOrderType(ctx);
+        console.log('解析を開始します。' + 'FieldOrderContext:  ' + ctx.getText());
+        const result = makeFieldOrderType(ctx);
+        console.log(
+            '------------解析が終了しました--------------' +
+                'FieldOrderContext:  ' +
+                JSON.stringify(result, null, 2),
+        );
+        return result;
     }
 
     visitFilteringSelector(ctx: FilteringSelectorContext) {
-        return makeFilteringSelectorType(ctx);
+        console.log('解析を開始します。' + 'FilteringSelectorContext:  ' + ctx.getText());
+        const result = makeFilteringSelectorType(ctx);
+        console.log(
+            '------------解析が終了しました--------------' +
+                'FilteringSelectorContext:  ' +
+                JSON.stringify(result, null, 2),
+        );
+        return result;
     }
 
     visitUpdateType(ctx: UpdateTypeContext) {
-        return makeUpdateTypeType(ctx);
+        console.log('解析を開始します。' + 'UpdateTypeContext:  ' + ctx.getText());
+        const result = makeUpdateTypeType(ctx);
+        console.log(
+            '------------解析が終了しました--------------' +
+                'UpdateTypeContext:  ' +
+                JSON.stringify(result, null, 2),
+        );
+        return result;
     }
 
     visitUsingScope(ctx: UsingScopeContext) {
-        return makeUsingScopeType(ctx);
+        console.log('解析を開始します。' + 'UsingScopeContext:  ' + ctx.getText());
+        const result = makeUsingScopeType(ctx);
+        console.log(
+            '------------解析が終了しました--------------' +
+                'UsingScopeContext:  ' +
+                JSON.stringify(result, null, 2),
+        );
+        return result;
     }
 
     visitTypeOf(ctx: TypeOfContext) {
-        return makeTypeOfType(ctx);
+        console.log('解析を開始します。' + 'TypeOfContext:  ' + ctx.getText());
+        const result = makeTypeOfType(ctx);
+        console.log(
+            '------------解析が終了しました--------------' +
+                'TypeOfContext:  ' +
+                JSON.stringify(result, null, 2),
+        );
+        return result;
     }
 }

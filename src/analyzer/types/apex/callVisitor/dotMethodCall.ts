@@ -23,4 +23,3 @@ export const makeDotMethodCallType = (ctx: DotMethodCallContext): DotMethodCallT
 
     return dotMethodCallType;
 };
-

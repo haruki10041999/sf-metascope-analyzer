@@ -12,6 +12,6 @@ export const makeDateFieldNameType = (ctx: DateFieldNameContext): DateFieldNameT
 
     return {
         type: 'dateFieldName',
-        name: { name: name, isConvertTimeZone: ctx.CONVERT_TIMEZONE() !== undefined },
+        name: { name: name, isConvertTimeZone: Boolean(ctx.CONVERT_TIMEZONE()) },
     };
 };

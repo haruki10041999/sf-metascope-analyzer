@@ -48,58 +48,156 @@ export type ListType =
     | FieldSpecListType;
 
 export class ListVisitor extends ApexParserBaseVisitor<ListType> {
-    visitTypeList(ctx: TypeListContext): ListType {
-        return makeTypeListType(ctx);
+    visitTypeList(ctx: TypeListContext) {
+        console.log('解析を開始します。' + 'TypeListContext:  ' + ctx.getText());
+        const result = makeTypeListType(ctx);
+        console.log(
+            '------------解析が終了しました--------------' +
+                'TypeListContext:  ' +
+                JSON.stringify(result, null, 2),
+        );
+        return result;
     }
-    visitExpressionList(ctx: ExpressionListContext): ListType {
-        return makeExpressionListType(ctx);
+    visitExpressionList(ctx: ExpressionListContext) {
+        console.log('解析を開始します。' + 'ExpressionListContext:  ' + ctx.getText());
+        const result = makeExpressionListType(ctx);
+        console.log(
+            '------------解析が終了しました--------------' +
+                'ExpressionListContext:  ' +
+                JSON.stringify(result, null, 2),
+        );
+        return result;
     }
 
-    visitFormalParameterList(ctx: FormalParameterListContext): ListType {
-        return makeFormalParameterListType(ctx);
+    visitFormalParameterList(ctx: FormalParameterListContext) {
+        console.log('解析を開始します。' + 'FormalParameterListContext:  ' + ctx.getText());
+        const result = makeFormalParameterListType(ctx);
+        console.log(
+            '------------解析が終了しました--------------' +
+                'FormalParameterListContext:  ' +
+                JSON.stringify(result, null, 2),
+        );
+        return result;
     }
 
     visitValueList(ctx: ValueListContext) {
-        return makeValueListType(ctx);
+        console.log('解析を開始します。' + 'ValueListContext:  ' + ctx.getText());
+        const result = makeValueListType(ctx);
+        console.log(
+            '------------解析が終了しました--------------' +
+                'ValueListContext:  ' +
+                JSON.stringify(result, null, 2),
+        );
+        return result;
     }
 
     visitFieldNameList(ctx: FieldNameListContext) {
-        return makeFieldNameListType(ctx);
+        console.log('解析を開始します。' + 'FieldNameListContext:  ' + ctx.getText());
+        const result = makeFieldNameListType(ctx);
+        console.log(
+            '------------解析が終了しました--------------' +
+                'FieldNameListContext:  ' +
+                JSON.stringify(result, null, 2),
+        );
+        return result;
     }
 
     visitUpdateList(ctx: UpdateListContext) {
-        return makeUpdateListType(ctx);
+        console.log('解析を開始します。' + 'UpdateListContext:  ' + ctx.getText());
+        const result = makeUpdateListType(ctx);
+        console.log(
+            '------------解析が終了しました--------------' +
+                'UpdateListContext:  ' +
+                JSON.stringify(result, null, 2),
+        );
+        return result;
     }
 
     visitNetworkList(ctx: NetworkListContext) {
-        return makeNetworkListType(ctx);
+        console.log('解析を開始します。' + 'NetworkListContext:  ' + ctx.getText());
+        const result = makeNetworkListType(ctx);
+        console.log(
+            '------------解析が終了しました--------------' +
+                'NetworkListContext:  ' +
+                JSON.stringify(result, null, 2),
+        );
+        return result;
     }
 
     visitFromNameList(ctx: FromNameListContext) {
-        return makeFromNameListType(ctx);
+        console.log('解析を開始します。' + 'FromNameListContext:  ' + ctx.getText());
+        const result = makeFromNameListType(ctx);
+        console.log(
+            '------------解析が終了しました--------------' +
+                'FromNameListContext:  ' +
+                JSON.stringify(result, null, 2),
+        );
+        return result;
     }
 
     visitFieldGroupByList(ctx: FieldGroupByListContext) {
-        return makeFieldGroupByListType(ctx);
+        console.log('解析を開始します。' + 'FieldGroupByListContext:  ' + ctx.getText());
+        const result = makeFieldGroupByListType(ctx);
+        console.log(
+            '------------解析が終了しました--------------' +
+                'FieldGroupByListContext:  ' +
+                JSON.stringify(result, null, 2),
+        );
+        return result;
     }
 
     visitFieldOrderList(ctx: FieldOrderListContext) {
-        return makeFieldOrderListType(ctx);
+        console.log('解析を開始します。' + 'FieldOrderListContext:  ' + ctx.getText());
+        const result = makeFieldOrderListType(ctx);
+        console.log(
+            '------------解析が終了しました--------------' +
+                'FieldOrderListContext:  ' +
+                JSON.stringify(result, null, 2),
+        );
+        return result;
     }
 
     visitSelectList(ctx: SelectListContext) {
-        return makeSelectListType(ctx);
+        console.log('解析を開始します。' + 'SelectListContext:  ' + ctx.getText());
+        const result = makeSelectListType(ctx);
+        console.log(
+            '------------解析が終了しました--------------' +
+                'SelectListContext:  ' +
+                JSON.stringify(result, null, 2),
+        );
+        return result;
     }
 
     visitSubFieldList(ctx: SubFieldListContext) {
-        return makeSubFieldListType(ctx);
+        console.log('解析を開始します。' + 'SubFieldListContext:  ' + ctx.getText());
+        const result = makeSubFieldListType(ctx);
+        console.log(
+            '------------解析が終了しました--------------' +
+                'SubFieldListContext:  ' +
+                JSON.stringify(result, null, 2),
+        );
+        return result;
     }
 
     visitFieldList(ctx: FieldListContext) {
-        return makeFieldListType(ctx);
+        console.log('解析を開始します。' + 'FieldListContext:  ' + ctx.getText());
+        const result = makeFieldListType(ctx);
+        console.log(
+            '------------解析が終了しました--------------' +
+                'FieldListContext:  ' +
+                JSON.stringify(result, null, 2),
+        );
+        return result;
     }
 
     visitFieldSpecList(ctx: FieldSpecListContext) {
-        return makeFieldSpecListType(ctx);
+        console.log('解析を開始します。' + 'FieldSpecListContext:  ' + ctx.getText());
+        const result = makeFieldSpecListType(ctx);
+        console.log(
+            '------------解析が終了しました--------------' +
+                'FieldSpecListContext:  ' +
+                JSON.stringify(result, null, 2),
+        );
+        return result;
     }
 }

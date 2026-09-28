@@ -73,87 +73,235 @@ export type StatementType =
 
 export class StatementVisitor extends ApexParserBaseVisitor<StatementType> {
     visitStatement(ctx: StatementContext) {
-        return makeStatementType(ctx);
+        console.log('解析を開始します。' + 'StatementContext:  ' + ctx.getText());
+        const result = makeStatementType(ctx);
+        console.log(
+            '------------解析が終了しました--------------' +
+                'StatementContext:  ' +
+                JSON.stringify(result, null, 2),
+        );
+        return result;
     }
 
     visitIfStatement(ctx: IfStatementContext) {
-        return makeIfStatementType(ctx);
+        console.log('解析を開始します。' + 'IfStatementContext:  ' + ctx.getText());
+        const result = makeIfStatementType(ctx);
+        console.log(
+            '------------解析が終了しました--------------' +
+                'IfStatementContext:  ' +
+                JSON.stringify(result, null, 2),
+        );
+        return result;
     }
 
     visitSwitchStatement(ctx: SwitchStatementContext) {
-        return makeSwitchStatementType(ctx);
+        console.log('解析を開始します。' + 'SwitchStatementContext:  ' + ctx.getText());
+        const result = makeSwitchStatementType(ctx);
+        console.log(
+            '------------解析が終了しました--------------' +
+                'SwitchStatementContext:  ' +
+                JSON.stringify(result, null, 2),
+        );
+        return result;
     }
 
     visitForStatement(ctx: ForStatementContext) {
-        return makeForStatementType(ctx);
+        console.log('解析を開始します。' + 'ForStatementContext:  ' + ctx.getText());
+        const result = makeForStatementType(ctx);
+        console.log(
+            '------------解析が終了しました--------------' +
+                'ForStatementContext:  ' +
+                JSON.stringify(result, null, 2),
+        );
+        return result;
     }
 
     visitWhileStatement(ctx: WhileStatementContext) {
-        return makeWhileStatementType(ctx);
+        console.log('解析を開始します。' + 'WhileStatementContext:  ' + ctx.getText());
+        const result = makeWhileStatementType(ctx);
+        console.log(
+            '------------解析が終了しました--------------' +
+                'WhileStatementContext:  ' +
+                JSON.stringify(result, null, 2),
+        );
+        return result;
     }
 
     visitDoWhileStatement(ctx: DoWhileStatementContext) {
-        return makeDoWhileStatementType(ctx);
+        console.log('解析を開始します。' + 'DoWhileStatementContext:  ' + ctx.getText());
+        const result = makeDoWhileStatementType(ctx);
+        console.log(
+            '------------解析が終了しました--------------' +
+                'DoWhileStatementContext:  ' +
+                JSON.stringify(result, null, 2),
+        );
+        return result;
     }
 
     visitTryStatement(ctx: TryStatementContext) {
-        return makeTryStatementType(ctx);
+        console.log('解析を開始します。' + 'TryStatementContext:  ' + ctx.getText());
+        const result = makeTryStatementType(ctx);
+        console.log(
+            '------------解析が終了しました--------------' +
+                'TryStatementContext:  ' +
+                JSON.stringify(result, null, 2),
+        );
+        return result;
     }
 
     visitReturnStatement(ctx: ReturnStatementContext) {
-        return makeReturnStatementType(ctx);
+        console.log('解析を開始します。' + 'ReturnStatementContext:  ' + ctx.getText());
+        const result = makeReturnStatementType(ctx);
+        console.log(
+            '------------解析が終了しました--------------' +
+                'ReturnStatementContext:  ' +
+                JSON.stringify(result, null, 2),
+        );
+        return result;
     }
 
     visitThrowStatement(ctx: ThrowStatementContext) {
-        return makeThrowStatementType(ctx);
+        console.log('解析を開始します。' + 'ThrowStatementContext:  ' + ctx.getText());
+        const result = makeThrowStatementType(ctx);
+        console.log(
+            '------------解析が終了しました--------------' +
+                'ThrowStatementContext:  ' +
+                JSON.stringify(result, null, 2),
+        );
+        return result;
     }
 
     visitBreakStatement(ctx: BreakStatementContext) {
-        return makeBreakStatementType(ctx);
+        console.log('解析を開始します。' + 'BreakStatementContext:  ' + ctx.getText());
+        const result = makeBreakStatementType(ctx);
+        console.log(
+            '------------解析が終了しました--------------' +
+                'BreakStatementContext:  ' +
+                JSON.stringify(result, null, 2),
+        );
+        return result;
     }
 
     visitContinueStatement(ctx: ContinueStatementContext) {
-        return makeContinueStatementType(ctx);
+        console.log('解析を開始します。' + 'ContinueStatementContext:  ' + ctx.getText());
+        const result = makeContinueStatementType(ctx);
+        console.log(
+            '------------解析が終了しました--------------' +
+                'ContinueStatementContext:  ' +
+                JSON.stringify(result, null, 2),
+        );
+        return result;
     }
 
     visitInsertStatement(ctx: InsertStatementContext) {
-        return makeInsertStatementType(ctx);
+        console.log('解析を開始します。' + 'InsertStatementContext:  ' + ctx.getText());
+        const result = makeInsertStatementType(ctx);
+        console.log(
+            '------------解析が終了しました--------------' +
+                'InsertStatementContext:  ' +
+                JSON.stringify(result, null, 2),
+        );
+        return result;
     }
 
     visitUpdateStatement(ctx: UpdateStatementContext) {
-        return makeUpdateStatementType(ctx);
+        console.log('解析を開始します。' + 'UpdateStatementContext:  ' + ctx.getText());
+        const result = makeUpdateStatementType(ctx);
+        console.log(
+            '------------解析が終了しました--------------' +
+                'UpdateStatementContext:  ' +
+                JSON.stringify(result, null, 2),
+        );
+        return result;
     }
 
     visitDeleteStatement(ctx: DeleteStatementContext) {
-        return makeDeleteStatementType(ctx);
+        console.log('解析を開始します。' + 'DeleteStatementContext:  ' + ctx.getText());
+        const result = makeDeleteStatementType(ctx);
+        console.log(
+            '------------解析が終了しました--------------' +
+                'DeleteStatementContext:  ' +
+                JSON.stringify(result, null, 2),
+        );
+        return result;
     }
 
     visitUndeleteStatement(ctx: UndeleteStatementContext) {
-        return makeUndeleteStatementType(ctx);
+        console.log('解析を開始します。' + 'UndeleteStatementContext:  ' + ctx.getText());
+        const result = makeUndeleteStatementType(ctx);
+        console.log(
+            '------------解析が終了しました--------------' +
+                'UndeleteStatementContext:  ' +
+                JSON.stringify(result, null, 2),
+        );
+        return result;
     }
 
     visitUpsertStatement(ctx: UpsertStatementContext) {
-        return makeUpsertStatementType(ctx);
+        console.log('解析を開始します。' + 'UpsertStatementContext:  ' + ctx.getText());
+        const result = makeUpsertStatementType(ctx);
+        console.log(
+            '------------解析が終了しました--------------' +
+                'UpsertStatementContext:  ' +
+                JSON.stringify(result, null, 2),
+        );
+        return result;
     }
 
     visitMergeStatement(ctx: MergeStatementContext) {
-        return makeMergeStatementType(ctx);
+        console.log('解析を開始します。' + 'MergeStatementContext:  ' + ctx.getText());
+        const result = makeMergeStatementType(ctx);
+        console.log(
+            '------------解析が終了しました--------------' +
+                'MergeStatementContext:  ' +
+                JSON.stringify(result, null, 2),
+        );
+        return result;
     }
 
     visitRunAsStatement(ctx: RunAsStatementContext) {
-        return makeRunAsStatementType(ctx);
+        console.log('解析を開始します。' + 'RunAsStatementContext:  ' + ctx.getText());
+        const result = makeRunAsStatementType(ctx);
+        console.log(
+            '------------解析が終了しました--------------' +
+                'RunAsStatementContext:  ' +
+                JSON.stringify(result, null, 2),
+        );
+        return result;
     }
 
     visitLocalVariableDeclarationStatement(ctx: LocalVariableDeclarationStatementContext) {
-        return makeLocalVariableDeclarationStatementType(ctx);
+        console.log(
+            '解析を開始します。' + 'LocalVariableDeclarationStatementContext:  ' + ctx.getText(),
+        );
+        const result = makeLocalVariableDeclarationStatementType(ctx);
+        console.log(
+            '------------解析が終了しました--------------' +
+                'LocalVariableDeclarationStatementContext:  ' +
+                JSON.stringify(result, null, 2),
+        );
+        return result;
     }
 
     visitExpressionStatement(ctx: ExpressionStatementContext) {
-        return makeExpressionStatementType(ctx);
+        console.log('解析を開始します。' + 'ExpressionStatementContext:  ' + ctx.getText());
+        const result = makeExpressionStatementType(ctx);
+        console.log(
+            '------------解析が終了しました--------------' +
+                'ExpressionStatementContext:  ' +
+                JSON.stringify(result, null, 2),
+        );
+        return result;
     }
 
     visitAccessLevel(ctx: AccessLevelContext) {
-        return makeAccessLevelType(ctx);
+        console.log('解析を開始します。' + 'AccessLevelContext:  ' + ctx.getText());
+        const result = makeAccessLevelType(ctx);
+        console.log(
+            '------------解析が終了しました--------------' +
+                'AccessLevelContext:  ' +
+                JSON.stringify(result, null, 2),
+        );
+        return result;
     }
 }
-

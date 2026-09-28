@@ -32,7 +32,7 @@ export const makeClassBodyDeclarationType = (
 
     if (ctx.block()) {
         const block = new BlockVisitor().visit(ctx.block());
-        const isStatic = ctx.STATIC() !== undefined;
+        const isStatic = Boolean(ctx.STATIC());
         classBodyDeclarationType.declaration.initializerBlock = {
             block: block,
             isStatic: isStatic,

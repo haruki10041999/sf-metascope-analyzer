@@ -30,7 +30,7 @@ export const makeFieldSpecType = (ctx: FieldSpecContext): FieldSpecType => {
         query: {
             objectName: objectName,
             fieldList: fieldList,
-            usingListView: ctx.USING() !== undefined && ctx.LISTVIEW() !== undefined,
+            usingListView: Boolean(ctx.USING()) && Boolean(ctx.LISTVIEW()),
         },
     };
 
@@ -56,4 +56,3 @@ export const makeFieldSpecType = (ctx: FieldSpecContext): FieldSpecType => {
 
     return fieldSpecType;
 };
-

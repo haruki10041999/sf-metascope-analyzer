@@ -27,31 +27,80 @@ export type LiteralType =
     | SoqlLiteralType;
 
 export class LiteralVisitor extends ApexParserBaseVisitor<LiteralType> {
-    visitLiteral(ctx: LiteralContext): LiteralType {
-        return makeLiteralType(ctx);
+    visitLiteral(ctx: LiteralContext) {
+        console.log('解析を開始します。' + 'LiteralContext:  ' + ctx.getText());
+        const result = makeLiteralType(ctx);
+        console.log(
+            '------------解析が終了しました--------------' +
+                'LiteralContext:  ' +
+                JSON.stringify(result, null, 2),
+        );
+        return result;
     }
 
     visitWhenLiteral(ctx: WhenLiteralContext) {
-        return makeWhenLiteralType(ctx);
+        console.log('解析を開始します。' + 'WhenLiteralContext:  ' + ctx.getText());
+        const result = makeWhenLiteralType(ctx);
+        console.log(
+            '------------解析が終了しました--------------' +
+                'WhenLiteralContext:  ' +
+                JSON.stringify(result, null, 2),
+        );
+        return result;
     }
 
     visitSoslLiteral(ctx: SoslLiteralContext) {
-        return makeSoslLiteralType(ctx);
+        console.log('解析を開始します。' + 'SoslLiteralContext:  ' + ctx.getText());
+        const result = makeSoslLiteralType(ctx);
+        console.log(
+            '------------解析が終了しました--------------' +
+                'SoslLiteralContext:  ' +
+                JSON.stringify(result, null, 2),
+        );
+        return result;
     }
 
     visitSoslLiteralAlt(ctx: SoslLiteralAltContext) {
-        return makeSoslLiteralAltType(ctx);
+        console.log('解析を開始します。' + 'SoslLiteralAltContext:  ' + ctx.getText());
+        const result = makeSoslLiteralAltType(ctx);
+        console.log(
+            '------------解析が終了しました--------------' +
+                'SoslLiteralAltContext:  ' +
+                JSON.stringify(result, null, 2),
+        );
+        return result;
     }
 
     visitSignedInteger(ctx: SignedIntegerContext) {
-        return makeSignedIntegerType(ctx);
+        console.log('解析を開始します。' + 'SignedIntegerContext:  ' + ctx.getText());
+        const result = makeSignedIntegerType(ctx);
+        console.log(
+            '------------解析が終了しました--------------' +
+                'SignedIntegerContext:  ' +
+                JSON.stringify(result, null, 2),
+        );
+        return result;
     }
 
     visitSignedNumber(ctx: SignedNumberContext) {
-        return makeSignedNumberType(ctx);
+        console.log('解析を開始します。' + 'SignedNumberContext:  ' + ctx.getText());
+        const result = makeSignedNumberType(ctx);
+        console.log(
+            '------------解析が終了しました--------------' +
+                'SignedNumberContext:  ' +
+                JSON.stringify(result, null, 2),
+        );
+        return result;
     }
 
     visitSoqlLiteral(ctx: SoqlLiteralContext) {
-        return makeSoqlLiteralType(ctx);
+        console.log('解析を開始します。' + 'SoqlLiteralContext:  ' + ctx.getText());
+        const result = makeSoqlLiteralType(ctx);
+        console.log(
+            '------------解析が終了しました--------------' +
+                'SoqlLiteralContext:  ' +
+                JSON.stringify(result, null, 2),
+        );
+        return result;
     }
 }

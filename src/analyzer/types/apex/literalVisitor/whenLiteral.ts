@@ -54,7 +54,7 @@ export const makeWhenLiteralType = (ctx: WhenLiteralContext): WhenLiteralType =>
                 .join('');
         }
 
-        if (operator !== undefined && operator !== '') {
+        if (operator !== '') {
             whelLiteralField.operator = operator;
         }
         return {

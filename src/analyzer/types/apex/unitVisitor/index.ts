@@ -15,19 +15,46 @@ export type UnitType = CompilationUnitType | AnonymousUnitType | TriggerUnitType
 
 export class UnitVisitor extends ApexParserBaseVisitor<UnitType> {
     visitCompilationUnit(ctx: CompilationUnitContext) {
-        return makeCompilationUnitType(ctx);
+        console.log('解析を開始します。' + 'CompilationUnitContext:  ' + ctx.getText());
+        const result = makeCompilationUnitType(ctx);
+        console.log(
+            '------------解析が終了しました--------------' +
+                'CompilationUnitContext:  ' +
+                JSON.stringify(result, null, 2),
+        );
+        return result;
     }
 
     visitAnonymousUnit(ctx: AnonymousUnitContext) {
-        return makeAnonymousUnitType(ctx);
+        console.log('解析を開始します。' + 'AnonymousUnitContext:  ' + ctx.getText());
+        const result = makeAnonymousUnitType(ctx);
+        console.log(
+            '------------解析が終了しました--------------' +
+                'AnonymousUnitContext:  ' +
+                JSON.stringify(result, null, 2),
+        );
+        return result;
     }
 
     visitTriggerUnit(ctx: TriggerUnitContext) {
-        return makeTriggerUnitType(ctx);
+        console.log('解析を開始します。' + 'TriggerUnitContext:  ' + ctx.getText());
+        const result = makeTriggerUnitType(ctx);
+        console.log(
+            '------------解析が終了しました--------------' +
+                'TriggerUnitContext:  ' +
+                JSON.stringify(result, null, 2),
+        );
+        return result;
     }
 
     visitTriggerCase(ctx: TriggerCaseContext) {
-        return makeTriggerCaseType(ctx);
+        console.log('解析を開始します。' + 'TriggerCaseContext:  ' + ctx.getText());
+        const result = makeTriggerCaseType(ctx);
+        console.log(
+            '------------解析が終了しました--------------' +
+                'TriggerCaseContext:  ' +
+                JSON.stringify(result, null, 2),
+        );
+        return result;
     }
 }
-

@@ -5,20 +5,17 @@ import { IdType, IdVisitor } from '../idVisitor';
 
 export type TypeNameType = {
     type: 'typeName';
-    name: { name: IdType; collection?: 'list' | 'set' | 'map'; generic?: ArgumentsType };
+    name: { type: 'list' | 'set' | 'map'; generic?: ArgumentsType } | IdType;
 };
 
 export const makeTypeNameType = (ctx: TypeNameContext): TypeNameType => {
-    const value = new IdVisitor().visit(ctx.id());
-
     if ((ctx.LIST() || ctx.SET() || ctx.MAP()) && ctx.typeArguments()) {
         const generic = new ArgumentsVisitor().visit(ctx.typeArguments());
         if (ctx.LIST()) {
             return {
                 type: 'typeName',
                 name: {
-                    name: value,
-                    collection: 'list',
+                    type: 'list',
                     generic,
                 },
             };
@@ -27,8 +24,7 @@ export const makeTypeNameType = (ctx: TypeNameContext): TypeNameType => {
             return {
                 type: 'typeName',
                 name: {
-                    name: value,
-                    collection: 'set',
+                    type: 'set',
                     generic,
                 },
             };
@@ -37,16 +33,20 @@ export const makeTypeNameType = (ctx: TypeNameContext): TypeNameType => {
             return {
                 type: 'typeName',
                 name: {
-                    name: value,
-                    collection: 'map',
+                    type: 'map',
                     generic,
                 },
             };
         }
     }
 
-    return {
-        type: 'typeName',
-        name: { name: value },
-    };
+    if (ctx.id()) {
+        const type = new IdVisitor().visit(ctx.id());
+        return {
+            type: 'typeName',
+            name: type,
+        };
+    }
+
+    throw new Error('値が異常です。TypeNameContext: ' + ctx.getText());
 };

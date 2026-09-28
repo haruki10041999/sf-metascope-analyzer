@@ -11,10 +11,24 @@ export type ArgumentsType = argumentsType | TypeArgumentsType;
 
 export class ArgumentsVisitor extends ApexParserBaseVisitor<ArgumentsType> {
     visitArguments(ctx: ArgumentsContext): ArgumentsType {
-        return makeArgumentsType(ctx);
+        console.log('解析を開始します。' + 'ArgumentsContext：:  ' + ctx.getText());
+        const result = makeArgumentsType(ctx);
+        console.log(
+            '------------解析が終了しました--------------' +
+                'ArgumentsContext：:  ' +
+                JSON.stringify(result, null, 2),
+        );
+        return result;
     }
 
     visitTypeArguments(ctx: TypeArgumentsContext): ArgumentsType {
-        return makeTypeArgumentsType(ctx);
+        console.log('解析を開始します。' + 'TypeArgumentsContext:  ' + ctx.getText());
+        const result = makeTypeArgumentsType(ctx);
+        console.log(
+            '------------解析が終了しました--------------' +
+                'TypeArgumentsContext:  ' +
+                JSON.stringify(result, null, 2),
+        );
+        return result;
     }
 }

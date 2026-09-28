@@ -11,10 +11,24 @@ export type TypeType = ArraySubscriptsType | TypeRefType;
 
 export class TypeVisitor extends ApexParserBaseVisitor<TypeType> {
     visitArraySubscripts(ctx: ArraySubscriptsContext) {
-        return makeArraySubscriptsType(ctx);
+        console.log('解析を開始します。' + 'ArraySubscriptsContext:  ' + ctx.getText());
+        const result = makeArraySubscriptsType(ctx);
+        console.log(
+            '------------解析が終了しました--------------' +
+                'ArraySubscriptsContext:  ' +
+                JSON.stringify(result, null, 2),
+        );
+        return result;
     }
 
     visitTypeRef(ctx: TypeRefContext) {
-        return makeTypeRefType(ctx);
+        console.log('解析を開始します。' + 'TypeRefContext:  ' + ctx.getText());
+        const result = makeTypeRefType(ctx);
+        console.log(
+            '------------解析が終了しました--------------' +
+                'TypeRefContext:  ' +
+                JSON.stringify(result, null, 2),
+        );
+        return result;
     }
 }

@@ -28,31 +28,79 @@ export type QueryType =
 
 export class QueryVisitor extends ApexParserBaseVisitor<QueryType> {
     visitQuery(ctx: QueryContext) {
-        return makeQueryType(ctx);
+        console.log('解析を開始します。' + 'QueryContext:  ' + ctx.getText());
+        const result = makeQueryType(ctx);
+        console.log(
+            '------------解析が終了しました--------------' +
+                'QueryContext:  ' +
+                JSON.stringify(result, null, 2),
+        );
+        return result;
     }
 
     visitSubQuery(ctx: SubQueryContext) {
-        return makeSubQueryType(ctx);
+        console.log('解析を開始します。' + 'SubQueryContext:  ' + ctx.getText());
+        const result = makeSubQueryType(ctx);
+        console.log(
+            '------------解析が終了しました--------------' +
+                'SubQueryContext:  ' +
+                JSON.stringify(result, null, 2),
+        );
+        return result;
     }
 
     visitComparisonOperator(ctx: ComparisonOperatorContext) {
-        return makeComparisonOperatorType(ctx);
+        console.log('解析を開始します。' + 'ComparisonOperatorContext:  ' + ctx.getText());
+        const result = makeComparisonOperatorType(ctx);
+        console.log(
+            '------------解析が終了しました--------------' +
+                'ComparisonOperatorContext:  ' +
+                JSON.stringify(result, null, 2),
+        );
+        return result;
     }
 
     visitDateFormula(ctx: DateFormulaContext) {
-        return makeDateFormulaType(ctx);
+        console.log('解析を開始します。' + 'DateFormulaContext:  ' + ctx.getText());
+        const result = makeDateFormulaType(ctx);
+        console.log(
+            '------------解析が終了しました--------------' +
+                'DateFormulaContext:  ' +
+                JSON.stringify(result, null, 2),
+        );
+        return result;
     }
 
     visitFieldSpec(ctx: FieldSpecContext) {
-        return makeFieldSpecType(ctx);
+        console.log('解析を開始します。' + 'FieldSpecContext:  ' + ctx.getText());
+        const result = makeFieldSpecType(ctx);
+        console.log(
+            '------------解析が終了しました--------------' +
+                'FieldSpecContext:  ' +
+                JSON.stringify(result, null, 2),
+        );
+        return result;
     }
 
     visitSearchGroup(ctx: SearchGroupContext) {
-        return makeSearchGroupType(ctx);
+        console.log('解析を開始します。' + 'SearchGroupContext:  ' + ctx.getText());
+        const result = makeSearchGroupType(ctx);
+        console.log(
+            '------------解析が終了しました--------------' +
+                'SearchGroupContext:  ' +
+                JSON.stringify(result, null, 2),
+        );
+        return result;
     }
 
     visitSoqlFunction(ctx: SoqlFunctionContext) {
-        return makeSoqlFunctionType(ctx);
+        console.log('解析を開始します。' + 'SoqlFunctionContext:  ' + ctx.getText());
+        const result = makeSoqlFunctionType(ctx);
+        console.log(
+            '------------解析が終了しました--------------' +
+                'SoqlFunctionContext:  ' +
+                JSON.stringify(result, null, 2),
+        );
+        return result;
     }
 }
-

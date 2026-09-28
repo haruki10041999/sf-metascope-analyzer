@@ -171,4 +171,3 @@ export const makeStatementType = (ctx: StatementContext): StatementType => {
 
     throw new Error('値が異常です。StatementContext: ' + ctx.getText());
 };
-

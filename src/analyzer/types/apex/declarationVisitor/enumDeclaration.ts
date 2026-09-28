@@ -8,19 +8,20 @@ export type EnumDeclarationType = {
     type: 'enumDeclaration';
     declaration: {
         name: IdType;
-        constants: DeclarationType;
+        constants: DeclarationType | null;
     };
 };
 
 export const makeEnumDeclarationType = (ctx: EnumDeclarationContext): EnumDeclarationType => {
     const name = new IdVisitor().visit(ctx.id());
-    const constants = new DeclarationVisitor().visit(ctx.enumConstants());
 
     return {
         type: 'enumDeclaration',
         declaration: {
             name: name,
-            constants: constants,
+            constants: ctx.enumConstants()
+                ? new DeclarationVisitor().visit(ctx.enumConstants())
+                : null,
         },
     };
 };

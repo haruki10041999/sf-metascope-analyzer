@@ -4,13 +4,20 @@ import { ListType, ListVisitor } from '../listVisitor';
 
 export type FormalParametersType = {
     type: 'formalParameters';
-    parameter: ListType;
+    parameter: ListType | null;
 };
 
 export const makeFormalParametersType = (ctx: FormalParametersContext): FormalParametersType => {
-    const list = new ListVisitor().visit(ctx.formalParameterList());
+    if (ctx.formalParameterList()) {
+        const list = new ListVisitor().visit(ctx.formalParameterList());
+        return {
+            type: 'formalParameters',
+            parameter: list,
+        };
+    }
+
     return {
         type: 'formalParameters',
-        parameter: list,
+        parameter: null,
     };
 };

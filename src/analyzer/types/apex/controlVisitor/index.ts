@@ -18,22 +18,57 @@ export type ControlType =
 
 export class ControlVisitor extends ApexParserBaseVisitor<ControlType> {
     visitForControl(ctx: ForControlContext) {
-        return makeForControlType(ctx);
+        console.log('解析を開始します。' + 'ForControlContext:  ' + ctx.getText());
+        const result = makeForControlType(ctx);
+        console.log(
+            '------------解析が終了しました--------------' +
+                'ForControlContext:  ' +
+                JSON.stringify(result, null, 2),
+        );
+        return result;
     }
 
     visitForInit(ctx: ForInitContext) {
-        return makeForInitType(ctx);
+        console.log('解析を開始します。' + 'ForInitContext:  ' + ctx.getText());
+        const result = makeForInitType(ctx);
+        console.log(
+            '------------解析が終了しました--------------' +
+                'ForInitContext:  ' +
+                JSON.stringify(result, null, 2),
+        );
+        return result;
     }
 
     visitForUpdate(ctx: ForUpdateContext) {
-        return makeForUpdateType(ctx);
+        console.log('解析を開始します。' + 'ForUpdateContext:  ' + ctx.getText());
+        const result = makeForUpdateType(ctx);
+        console.log(
+            '------------解析が終了しました--------------' +
+                'ForUpdateContext:  ' +
+                JSON.stringify(result, null, 2),
+        );
+        return result;
     }
 
     visitEnhancedForControl(ctx: EnhancedForControlContext) {
-        return makeEnhancedForControlType(ctx);
+        console.log('解析を開始します。' + 'EnhancedForControlContext:  ' + ctx.getText());
+        const result = makeEnhancedForControlType(ctx);
+        console.log(
+            '------------解析が終了しました--------------' +
+                'EnhancedForControlContext:  ' +
+                JSON.stringify(result, null, 2),
+        );
+        return result;
     }
 
     visitWhenControl(ctx: WhenControlContext) {
-        return makeWhenControlType(ctx);
+        console.log('解析を開始します。' + 'WhenControlContext:  ' + ctx.getText());
+        const result = makeWhenControlType(ctx);
+        console.log(
+            '------------解析が終了しました--------------' +
+                'WhenControlContext:  ' +
+                JSON.stringify(result, null, 2),
+        );
+        return result;
     }
 }

@@ -71,4 +71,3 @@ export const makeCreatorType = (ctx: CreatorContext): CreatorType => {
 
     throw new Error('値が異常です。CreatorContext: ' + ctx.getText());
 };
-

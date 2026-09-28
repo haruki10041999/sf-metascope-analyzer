@@ -15,4 +15,3 @@ export const makeClassCreatorRestType = (ctx: ClassCreatorRestContext): ClassCre
         rest: rest,
     };
 };
-

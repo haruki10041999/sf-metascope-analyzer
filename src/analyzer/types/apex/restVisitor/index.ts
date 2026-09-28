@@ -25,27 +25,68 @@ export type RestType =
 
 export class RestVisitor extends ApexParserBaseVisitor<RestType> {
     visitNoRest(ctx: NoRestContext) {
-        return makeNoRestType(ctx);
+        console.log('解析を開始します。' + 'NoRestContext:  ' + ctx.getText());
+        const result = makeNoRestType(ctx);
+        console.log(
+            '------------解析が終了しました--------------' +
+                'NoRestContext:  ' +
+                JSON.stringify(result, null, 2),
+        );
+        return result;
     }
 
     visitClassCreatorRest(ctx: ClassCreatorRestContext) {
-        return makeClassCreatorRestType(ctx);
+        console.log('解析を開始します。' + 'ClassCreatorRestContext:  ' + ctx.getText());
+        const result = makeClassCreatorRestType(ctx);
+        console.log(
+            '------------解析が終了しました--------------' +
+                'ClassCreatorRestContext:  ' +
+                JSON.stringify(result, null, 2),
+        );
+        return result;
     }
 
     visitArrayCreatorRest(ctx: ArrayCreatorRestContext) {
-        return makeArrayCreatorRestType(ctx);
+        console.log('解析を開始します。' + 'ArrayCreatorRestContext:  ' + ctx.getText());
+        const result = makeArrayCreatorRestType(ctx);
+        console.log(
+            '------------解析が終了しました--------------' +
+                'ArrayCreatorRestContext:  ' +
+                JSON.stringify(result, null, 2),
+        );
+        return result;
     }
 
     visitMapCreatorRest(ctx: MapCreatorRestContext) {
-        return makeMapCreatorRestType(ctx);
+        console.log('解析を開始します。' + 'MapCreatorRestContext:  ' + ctx.getText());
+        const result = makeMapCreatorRestType(ctx);
+        console.log(
+            '------------解析が終了しました--------------' +
+                'MapCreatorRestContext:  ' +
+                JSON.stringify(result, null, 2),
+        );
+        return result;
     }
 
     visitSetCreatorRest(ctx: SetCreatorRestContext) {
-        return makeSetCreatorRestType(ctx);
+        console.log('解析を開始します。' + 'SetCreatorRestContext:  ' + ctx.getText());
+        const result = makeSetCreatorRestType(ctx);
+        console.log(
+            '------------解析が終了しました--------------' +
+                'SetCreatorRestContext:  ' +
+                JSON.stringify(result, null, 2),
+        );
+        return result;
     }
 
     visitCreator(ctx: CreatorContext) {
-        return makeCreatorType(ctx);
+        console.log('解析を開始します。' + 'SetCreatorRestContext:  ' + ctx.getText());
+        const result = makeCreatorType(ctx);
+        console.log(
+            '------------解析が終了しました--------------' +
+                'SetCreatorRestContext:  ' +
+                JSON.stringify(result, null, 2),
+        );
+        return result;
     }
 }
-

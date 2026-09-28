@@ -2,31 +2,25 @@ import { ForClausesContext } from '@apexdevtools/apex-parser';
 
 export type ForClausesType = {
     type: 'forClauses';
-    clause: 'VIEW' | 'UPDATE' | 'REFERENCE';
+    clause: ('VIEW' | 'UPDATE' | 'REFERENCE')[];
 };
 
 export const makeForClausesType = (ctx: ForClausesContext): ForClausesType => {
+    const clause: ('VIEW' | 'UPDATE' | 'REFERENCE')[] = [];
     if (ctx.VIEW_list() && ctx.VIEW_list().length > 0) {
-        return {
-            type: 'forClauses',
-            clause: 'VIEW',
-        };
+        clause.push(...Array(ctx.VIEW_list().length).fill('VIEW'));
     }
 
     if (ctx.UPDATE_list() && ctx.UPDATE_list().length > 0) {
-        return {
-            type: 'forClauses',
-            clause: 'UPDATE',
-        };
+        clause.push(...Array(ctx.UPDATE_list().length).fill('UPDATE'));
     }
 
     if (ctx.REFERENCE_list() && ctx.REFERENCE_list().length > 0) {
-        return {
-            type: 'forClauses',
-            clause: 'REFERENCE',
-        };
+        clause.push(...Array(ctx.UPDATE_list().length).fill('REFERENCE'));
     }
 
-    throw new Error('値が異常です。ForClausesContext: ' + ctx.getText());
+    return {
+        type: 'forClauses',
+        clause: clause,
+    };
 };
-

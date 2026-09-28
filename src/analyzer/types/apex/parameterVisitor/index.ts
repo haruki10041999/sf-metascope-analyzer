@@ -13,15 +13,35 @@ export type ParameterType = FormalParameterType | SoqlFieldsParameterType | Form
 
 export class ParameterVisitor extends ApexParserBaseVisitor<ParameterType> {
     visitFormalParameter(ctx: FormalParameterContext) {
-        return makeFormalParameterType(ctx);
+        console.log('解析を開始します。' + 'FormalParameterContext:  ' + ctx.getText());
+        const result = makeFormalParameterType(ctx);
+        console.log(
+            '------------解析が終了しました--------------' +
+                'FormalParameterContext:  ' +
+                JSON.stringify(result, null, 2),
+        );
+        return result;
     }
 
     visitFormalParameters(ctx: FormalParametersContext) {
-        return makeFormalParametersType(ctx);
+        console.log('解析を開始します。' + 'FormalParametersContext:  ' + ctx.getText());
+        const result = makeFormalParametersType(ctx);
+        console.log(
+            '------------解析が終了しました--------------' +
+                'FormalParametersContext:  ' +
+                JSON.stringify(result, null, 2),
+        );
+        return result;
     }
 
     visitSoqlFieldsParameter(ctx: SoqlFieldsParameterContext) {
-        return makeSoqlFieldsParameterType(ctx);
+        console.log('解析を開始します。' + 'SoqlFieldsParameterContext:  ' + ctx.getText());
+        const result = makeSoqlFieldsParameterType(ctx);
+        console.log(
+            '------------解析が終了しました--------------' +
+                'SoqlFieldsParameterContext:  ' +
+                JSON.stringify(result, null, 2),
+        );
+        return result;
     }
 }
-

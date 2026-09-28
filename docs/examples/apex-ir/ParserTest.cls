@@ -552,15 +552,15 @@ global with sharing class ParserTest extends BaseParser implements ParserInterfa
     // SOQL - CONVERT_CURRENCY
     // ============================================================
 
-    private List<Account> currencySoql() {
-
-        return [
-            SELECT
-                Id,
-                CONVERT_CURRENCY(AnnualRevenue)
-            FROM Account
-        ];
-    }
+    //private List<Account> currencySoql() {
+    //
+    //    return [
+    //        SELECT
+    //            Id,
+    //           CONVERT_CURRENCY(AnnualRevenue)
+    //        FROM Account
+    //    ];
+    //}
 
 
     // ============================================================
@@ -721,12 +721,7 @@ global with sharing class ParserTest extends BaseParser implements ParserInterfa
     // Inner enum
     // ============================================================
 
-    public enum Status {
-        NEW,
-        PROCESSING,
-        COMPLETED,
-        FAILED
-    }
+    public enum Status {NEW,PROCESSING,COMPLETED,FAILED}
 
 
     // ============================================================

@@ -18,34 +18,89 @@ import { GetterType, makeGetterType } from './getter';
 import { SetterType, makeSetterType } from './setter';
 
 export type BlockType =
-    blockType | FinallyBlockType | PropertyBlockType | AnonymousBlockType | TriggerBlockType;
+    | blockType
+    | FinallyBlockType
+    | PropertyBlockType
+    | AnonymousBlockType
+    | TriggerBlockType
+    | GetterType
+    | SetterType;
 
 export class BlockVisitor extends ApexParserBaseVisitor<BlockType> {
     visitBlock(ctx: BlockContext) {
-        return makeBlockType(ctx);
+        console.log('解析を開始します。' + 'BlockContext:  ' + ctx.getText());
+        const result = makeBlockType(ctx);
+        console.log(
+            '------------解析が終了しました--------------' +
+                'BlockContext:  ' +
+                JSON.stringify(result, null, 2),
+        );
+        return result;
     }
 
     visitFinallyBlock(ctx: FinallyBlockContext) {
-        return makeFinallyBlockType(ctx);
+        console.log('解析を開始します。' + 'FinallyBlockContext:  ' + ctx.getText());
+        const result = makeFinallyBlockType(ctx);
+        console.log(
+            '------------解析が終了しました--------------' +
+                'FinallyBlockContext:  ' +
+                JSON.stringify(result, null, 2),
+        );
+        return result;
     }
 
     visitPropertyBlock(ctx: PropertyBlockContext) {
-        return makePropertyBlockType(ctx);
+        console.log('解析を開始します。' + 'PropertyBlockContext:  ' + ctx.getText());
+        const result = makePropertyBlockType(ctx);
+        console.log(
+            '------------解析が終了しました--------------' +
+                'PropertyBlockContext:  ' +
+                JSON.stringify(result, null, 2),
+        );
+        return result;
     }
 
     visitAnonymousBlock(ctx: AnonymousBlockContext) {
-        return makeAnonymousBlockType(ctx);
+        console.log('解析を開始します。' + 'AnonymousBlockContext:  ' + ctx.getText());
+        const result = makeAnonymousBlockType(ctx);
+        console.log(
+            '------------解析が終了しました--------------' +
+                'AnonymousBlockContext:  ' +
+                JSON.stringify(result, null, 2),
+        );
+        return result;
     }
 
     visitTriggerBlock(ctx: TriggerBlockContext) {
-        return makeTriggerBlockType(ctx);
+        console.log('解析を開始します。' + 'TriggerBlockContext:  ' + ctx.getText());
+        const result = makeTriggerBlockType(ctx);
+        console.log(
+            '------------解析が終了しました--------------' +
+                'TriggerBlockContext:  ' +
+                JSON.stringify(result, null, 2),
+        );
+        return result;
     }
 
     visitGetter(ctx: GetterContext) {
-        return makeGetterType(ctx);
+        console.log('解析を開始します。' + 'GetterContext:  ' + ctx.getText());
+        const result = makeGetterType(ctx);
+        console.log(
+            '------------解析が終了しました--------------' +
+                'GetterContext:  ' +
+                JSON.stringify(result, null, 2),
+        );
+        return result;
     }
 
     visitSetter(ctx: SetterContext) {
-        return makeSetterType(ctx);
+        console.log('解析を開始します。' + 'SetterContext:  ' + ctx.getText());
+        const result = makeSetterType(ctx);
+        console.log(
+            '------------解析が終了しました--------------' +
+                'SetterContext:  ' +
+                JSON.stringify(result, null, 2),
+        );
+        return result;
     }
 }

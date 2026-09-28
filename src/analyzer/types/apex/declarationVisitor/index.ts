@@ -67,62 +67,167 @@ export type DeclarationType =
 
 export class DeclarationVisitor extends ApexParserBaseVisitor<DeclarationType> {
     visitMemberDeclaration(ctx: MemberDeclarationContext) {
-        return makeMemberDeclarationType(ctx);
+        console.log('解析を開始します。' + 'MemberDeclarationContext:  ' + ctx.getText());
+        const result = makeMemberDeclarationType(ctx);
+        console.log(
+            '------------解析が終了しました--------------' +
+                'MemberDeclarationContext:  ' +
+                JSON.stringify(result, null, 2),
+        );
+        return result;
     }
 
     visitLocalVariableDeclaration(ctx: LocalVariableDeclarationContext) {
-        return makeLocalVariableDeclarationType(ctx);
+        console.log('解析を開始します。' + 'LocalVariableDeclarationContext:  ' + ctx.getText());
+        const result = makeLocalVariableDeclarationType(ctx);
+        console.log(
+            '------------解析が終了しました--------------' +
+                'LocalVariableDeclarationContext:  ' +
+                JSON.stringify(result, null, 2),
+        );
+        return result;
     }
 
     visitClassDeclaration(ctx: ClassDeclarationContext) {
-        return makeClassDeclarationType(ctx);
+        console.log('解析を開始します。' + 'ClassDeclarationContext:  ' + ctx.getText());
+        const result = makeClassDeclarationType(ctx);
+        console.log(
+            '------------解析が終了しました--------------' +
+                'ClassDeclarationContext:  ' +
+                JSON.stringify(result, null, 2),
+        );
+        return result;
     }
 
     visitClassBodyDeclaration(ctx: ClassBodyDeclarationContext) {
-        return makeClassBodyDeclarationType(ctx);
+        console.log('解析を開始します。' + 'ClassBodyDeclarationContext:  ' + ctx.getText());
+        const result = makeClassBodyDeclarationType(ctx);
+        console.log(
+            '------------解析が終了しました--------------' +
+                'ClassBodyDeclarationContext:  ' +
+                JSON.stringify(result, null, 2),
+        );
+        return result;
     }
 
     visitEnumDeclaration(ctx: EnumDeclarationContext) {
-        return makeEnumDeclarationType(ctx);
+        console.log('解析を開始します。' + 'EnumDeclarationContext:  ' + ctx.getText());
+        const result = makeEnumDeclarationType(ctx);
+        console.log(
+            '------------解析が終了しました--------------' +
+                'EnumDeclarationContext:  ' +
+                JSON.stringify(result, null, 2),
+        );
+        return result;
     }
 
     visitConstructorDeclaration(ctx: ConstructorDeclarationContext) {
-        return makeConstructorDeclarationType(ctx);
+        console.log('解析を開始します。' + 'ConstructorDeclarationContext:  ' + ctx.getText());
+        const result = makeConstructorDeclarationType(ctx);
+        console.log(
+            '------------解析が終了しました--------------' +
+                'ConstructorDeclarationContext:  ' +
+                JSON.stringify(result, null, 2),
+        );
+        return result;
     }
 
     visitInterfaceMethodDeclaration(ctx: InterfaceMethodDeclarationContext) {
-        return makeInterfaceMethodDeclarationType(ctx);
+        console.log('解析を開始します。' + 'InterfaceMethodDeclarationContext:  ' + ctx.getText());
+        const result = makeInterfaceMethodDeclarationType(ctx);
+        console.log(
+            '------------解析が終了しました--------------' +
+                'InterfaceMethodDeclarationContext:  ' +
+                JSON.stringify(result, null, 2),
+        );
+        return result;
     }
 
     visitInterfaceDeclaration(ctx: InterfaceDeclarationContext) {
-        return makeInterfaceDeclarationType(ctx);
+        console.log('解析を開始します。' + 'InterfaceDeclarationContext:  ' + ctx.getText());
+        const result = makeInterfaceDeclarationType(ctx);
+        console.log(
+            '------------解析が終了しました--------------' +
+                'InterfaceDeclarationContext:  ' +
+                JSON.stringify(result, null, 2),
+        );
+        return result;
     }
 
     visitFieldDeclaration(ctx: FieldDeclarationContext) {
-        return makeFieldDeclarationType(ctx);
+        console.log('解析を開始します。' + 'FieldDeclarationContext:  ' + ctx.getText());
+        const result = makeFieldDeclarationType(ctx);
+        console.log(
+            '------------解析が終了しました--------------' +
+                'FieldDeclarationContext:  ' +
+                JSON.stringify(result, null, 2),
+        );
+        return result;
     }
 
     visitPropertyDeclaration(ctx: PropertyDeclarationContext) {
-        return makePropertyDeclarationType(ctx);
+        console.log('解析を開始します。' + 'PropertyDeclarationContext:  ' + ctx.getText());
+        const result = makePropertyDeclarationType(ctx);
+        console.log(
+            '------------解析が終了しました--------------' +
+                'PropertyDeclarationContext:  ' +
+                JSON.stringify(result, null, 2),
+        );
+        return result;
     }
 
     visitMethodDeclaration(ctx: MethodDeclarationContext) {
-        return makeMethodDeclarationType(ctx);
+        console.log('解析を開始します。' + 'MethodDeclarationContext:  ' + ctx.getText());
+        const result = makeMethodDeclarationType(ctx);
+        console.log(
+            '------------解析が終了しました--------------' +
+                'MethodDeclarationContext:  ' +
+                JSON.stringify(result, null, 2),
+        );
+        return result;
     }
 
     visitTypeDeclaration(ctx: TypeDeclarationContext) {
-        return makeTypeDeclarationType(ctx);
+        console.log('解析を開始します。' + 'TypeDeclarationContext:  ' + ctx.getText());
+        const result = makeTypeDeclarationType(ctx);
+        console.log(
+            '------------解析が終了しました--------------' +
+                'TypeDeclarationContext:  ' +
+                JSON.stringify(result, null, 2),
+        );
+        return result;
     }
 
     visitTriggerMemberDeclaration(ctx: TriggerMemberDeclarationContext) {
-        return makeTriggerMemberDeclarationType(ctx);
+        console.log('解析を開始します。' + 'TriggerMemberDeclarationContext:  ' + ctx.getText());
+        const result = makeTriggerMemberDeclarationType(ctx);
+        console.log(
+            '------------解析が終了しました--------------' +
+                'TriggerMemberDeclarationContext:  ' +
+                JSON.stringify(result, null, 2),
+        );
+        return result;
     }
 
     visitAnonymousMemberDeclaration(ctx: AnonymousMemberDeclarationContext) {
-        return makeAnonymousMemberDeclarationType(ctx);
+        console.log('解析を開始します。' + 'AnonymousMemberDeclarationContext:  ' + ctx.getText());
+        const result = makeAnonymousMemberDeclarationType(ctx);
+        console.log(
+            '------------解析が終了しました--------------' +
+                'AnonymousMemberDeclarationContext:  ' +
+                JSON.stringify(result, null, 2),
+        );
+        return result;
     }
 
     visitEnumConstants(ctx: EnumConstantsContext) {
-        return makeEnumConstantsType(ctx);
+        console.log('解析を開始します。' + 'EnumConstantsContext:  ' + ctx.getText());
+        const result = makeEnumConstantsType(ctx);
+        console.log(
+            '------------解析が終了しました--------------' +
+                'EnumConstantsContext:  ' +
+                JSON.stringify(result, null, 2),
+        );
+        return result;
     }
 }
