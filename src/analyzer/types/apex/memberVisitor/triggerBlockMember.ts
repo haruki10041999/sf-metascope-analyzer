@@ -2,7 +2,7 @@ import { TriggerBlockMemberContext } from '@apexdevtools/apex-parser';
 
 import { DeclarationType, DeclarationVisitor } from '../declarationVisitor';
 import { StatementType, StatementVisitor } from '../statementVisitor';
-import { ModifierType, ModifierVisitor } from '../modifierVisitor/modifier';
+import { ModifierType, ModifierVisitor } from '../modifierVisitor';
 
 export type TriggerBlockMemberType = {
     type: 'triggerBlockMember';
