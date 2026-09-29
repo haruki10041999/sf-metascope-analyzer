@@ -1,7 +1,8 @@
 import { readFile, writeFile } from 'node:fs/promises';
 
 import { ApexParserFactory } from '@apexdevtools/apex-parser';
-import { UnitVisitor } from '../../../src/analyzer/types/apex/unitVisitor';
+import { ApexSyntaxErrorCollector } from '../../../src/analyzer/parser/apexSyntaxError';
+import { UnitVisitor } from '../../../src/analyzer/types/apex_IR/unitVisitor';
 
 type ParseToken = {
     text: string;
@@ -19,11 +20,21 @@ const parseTreePath = new URL('./ParserTest.parse-tree.txt', import.meta.url);
 const contextTreePath = new URL('./ParserTest.context-tree.json', import.meta.url);
 const contextOutlinePath = new URL('./ParserTest.context-tree.txt', import.meta.url);
 const resultPath = new URL('./ParserTest.ir.json', import.meta.url);
-const errorPath = new URL('./ParserTest.ir-error.txt', import.meta.url);
+const errorPath = new URL('./ParserTest.ir-error.json', import.meta.url);
 const source = await readFile(sourcePath, 'utf8');
-const parser = ApexParserFactory.createParser(source);
+const syntaxErrors = new ApexSyntaxErrorCollector();
+const { parser } = ApexParserFactory.createLexerAndParser(source, syntaxErrors);
 
 const compilationUnit = parser.compilationUnit();
+await writeFile(errorPath, `${JSON.stringify(syntaxErrors.diagnostics, null, 2)}\n`, 'utf8');
+if (syntaxErrors.diagnostics.length > 0) {
+    console.warn(
+        `${syntaxErrors.diagnostics.length} syntax error(s) written to ${errorPath.pathname}`,
+    );
+    syntaxErrors.diagnostics.forEach(({ line, column, message }) => {
+        console.warn(`  ${line}:${column} ${message}`);
+    });
+}
 const parseTree = compilationUnit.toStringTree(parser.ruleNames, parser);
 await writeFile(parseTreePath, `${parseTree}\n`, 'utf8');
 console.log(`Parse tree written to ${parseTreePath.pathname}`);
@@ -63,14 +74,7 @@ await writeFile(
 );
 console.log(`Context outline written to ${contextOutlinePath.pathname}`);
 
-try {
-    const result = new UnitVisitor().visit(compilationUnit);
+const result = new UnitVisitor().visit(compilationUnit);
 
-    await writeFile(resultPath, `${JSON.stringify(result, null, 2)}\n`, 'utf8');
-    console.log(`IR written to ${resultPath.pathname}`);
-} catch (error) {
-    const message = error instanceof Error ? (error.stack ?? error.message) : String(error);
-    await writeFile(errorPath, `${message}\n`, 'utf8');
-    console.error(`IR generation failed; details written to ${errorPath.pathname}`);
-    throw error;
-}
+await writeFile(resultPath, `${JSON.stringify(result, null, 2)}\n`, 'utf8');
+console.log(`IR written to ${resultPath.pathname}`);
