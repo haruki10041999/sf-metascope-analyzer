@@ -5,7 +5,7 @@ import { AnyIdTypeClass } from './anyId';
 import { SoqlIdTypeClass } from './soqlId';
 import { SoslIdTypeClass } from './soslId';
 
-import { ContextTypeClass, ErrorTypeClass, CommonVisitor } from '../commonVisitor';
+import { CommonTypeClass, ContextTypeClass, ErrorTypeClass, CommonVisitor } from '../commonVisitor';
 
 export { isIdType } from './id';
 export { isAnyIdType } from './anyId';
@@ -24,6 +24,10 @@ export class IdTypeClass extends ContextTypeClass {
         return this.id;
     }
 }
+
+export const isIdTypeAll = (target: CommonTypeClass): target is IdTypeClass => {
+    return target instanceof IdTypeClass;
+};
 
 export class IdVisitor extends CommonVisitor<IdTypeClass> {
     visitId(ctx: IdContext) {

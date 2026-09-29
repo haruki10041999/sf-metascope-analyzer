@@ -1,22 +1,37 @@
 import { PrimaryExpressionContext } from '@apexdevtools/apex-parser';
 
-import { PrimaryType, PrimaryVisitor } from '../primaryVisitor';
+import { ExpressionTypeClass } from '.';
 
-export type PrimaryExpressionType = {
-    type: 'primaryExpression';
-    expression: PrimaryType;
-};
+import { isPrimaryTypeAll, PrimaryTypeClass, PrimaryVisitor } from '../primaryVisitor';
 
-export const makePrimaryExpressionType = (ctx: PrimaryExpressionContext): PrimaryExpressionType => {
-    if (!ctx.primary()) {
-        throw new Error('値が異常です。PrimaryExpressionContext: ' + ctx.getText());
+import { CommonTypeClass, ErrorTypeClass } from '../commonVisitor';
+
+export class PrimaryExpressionTypeClass extends ExpressionTypeClass {
+    private constructor(value: PrimaryTypeClass | null, errorClasses: ErrorTypeClass[]) {
+        super('primaryExpression', value, errorClasses);
     }
 
-    const field = new PrimaryVisitor().visit(ctx.primary());
+    static create(ctx: PrimaryExpressionContext): PrimaryExpressionTypeClass {
+        if (!ctx.primary()) {
+            throw new Error('値が異常です。PrimaryExpressionContext: ' + ctx.getText());
+        }
 
-    return {
-        type: 'primaryExpression',
-        expression: field,
-    };
+        let value: PrimaryTypeClass | null = null;
+        const errorClasses: ErrorTypeClass[] = [];
+
+        const primaryTypeClass = new PrimaryVisitor().visit(ctx.primary());
+        if (isPrimaryTypeAll(primaryTypeClass)) {
+            value = primaryTypeClass;
+        } else {
+            errorClasses.push(primaryTypeClass);
+        }
+
+        return new PrimaryExpressionTypeClass(value, errorClasses);
+    }
+}
+
+export const isPrimaryExpressionType = (
+    target: CommonTypeClass,
+): target is PrimaryExpressionTypeClass => {
+    return target instanceof PrimaryExpressionTypeClass;
 };
-

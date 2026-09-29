@@ -20,7 +20,7 @@ import { IdPrimaryTypeClass } from './idPrimary';
 import { LiteralPrimaryType, makeLiteralPrimaryType } from './literalPrimary';
 import { SoslPrimaryType, makeSoslPrimaryType } from './soslPrimary';
 
-import { ContextTypeClass, ErrorTypeClass, CommonVisitor } from '../commonVisitor';
+import { ContextTypeClass, ErrorTypeClass, CommonVisitor, CommonTypeClass } from '../commonVisitor';
 
 export { isPrimaryType } from './primary';
 export { isThisPrimaryType } from './thisPrimary';
@@ -40,6 +40,10 @@ export class PrimaryTypeClass extends ContextTypeClass {
         return this.value;
     }
 }
+
+export const isPrimaryTypeAll = (target: CommonTypeClass): target is PrimaryTypeClass => {
+    return target instanceof PrimaryTypeClass;
+};
 
 export class PrimaryVisitor extends CommonVisitor<PrimaryTypeClass> {
     visitPrimary(ctx: PrimaryContext) {

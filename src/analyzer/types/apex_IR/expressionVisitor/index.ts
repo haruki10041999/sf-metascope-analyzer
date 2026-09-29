@@ -1,5 +1,4 @@
 import {
-    ApexParserBaseVisitor,
     ArrayExpressionContext,
     Arth1ExpressionContext,
     Arth2ExpressionContext,
@@ -36,7 +35,7 @@ import {
     WhereFieldExpressionContext,
 } from '@apexdevtools/apex-parser';
 
-import { ArrayExpressionType, makeArrayExpressionType } from './arrayExpression';
+import { ArrayExpressionTypeClass } from './arrayExpression';
 import { Arth1ExpressionType, makeArth1ExpressionType } from './arth1Expression';
 import { Arth2ExpressionType, makeArth2ExpressionType } from './arth2Expression';
 import { AssignExpressionType, makeAssignExpressionType } from './assignExpression';
@@ -56,10 +55,10 @@ import { LogOrExpressionType, makeLogOrExpressionType } from './logOrExpression'
 import { MethodCallExpressionType, makeMethodCallExpressionType } from './methodCallExpression';
 import { NegExpressionType, makeNegExpressionType } from './negExpression';
 import { NewExpressionType, makeNewExpressionType } from './newExpression';
-import { ExpressionType as expressionType, makeExpressionType } from './expression';
+import { ExpressionTypeClass as expressionTypeClass } from './expression';
 import { PostOpExpressionType, makePostOpExpressionType } from './postOpExpression';
 import { PreOpExpressionType, makePreOpExpressionType } from './preOpExpression';
-import { PrimaryExpressionType, makePrimaryExpressionType } from './primaryExpression';
+import { PrimaryExpressionTypeClass } from './primaryExpression';
 import { SubExpressionType, makeSubExpressionType } from './subExpression';
 import { ParExpressionType, makeParExpressionType } from './parExpression';
 import { BoundExpressionType, makeBoundExpressionType } from './boundExpression';
@@ -77,66 +76,36 @@ import {
 } from './whereConditionalExpression';
 import { WhereFieldExpressionType, makeWhereFieldExpressionType } from './whereFieldExpression';
 
-import { ErrorType, CommonVisitor } from '../commonVisitor';
+import { ErrorTypeClass, ContextTypeClass, CommonVisitor, CommonTypeClass } from '../commonVisitor';
 
-export type ExpressionType =
-    | ArrayExpressionType
-    | Arth1ExpressionType
-    | Arth2ExpressionType
-    | AssignExpressionType
-    | BitAndExpressionType
-    | BitExpressionType
-    | BitNotExpressionType
-    | BitOrExpressionType
-    | CastExpressionType
-    | CmpExpressionType
-    | CoalExpressionType
-    | CondExpressionType
-    | DotExpressionType
-    | EqualityExpressionType
-    | InstanceOfExpressionType
-    | LogAndExpressionType
-    | LogOrExpressionType
-    | MethodCallExpressionType
-    | NegExpressionType
-    | NewExpressionType
-    | expressionType
-    | PostOpExpressionType
-    | PreOpExpressionType
-    | PrimaryExpressionType
-    | SubExpressionType
-    | ParExpressionType
-    | BoundExpressionType
-    | FilteringExpressionType
-    | FieldExpressionType
-    | ConditionalExpressionType
-    | LogicalExpressionType
-    | WhereLogicalExpressionType
-    | WhereConditionalExpressionType
-    | WhereFieldExpressionType
-    | ErrorType;
+export { isArrayExpressionType } from './arrayExpression';
+export { isExpressionType } from './expression';
+export { isPrimaryExpressionType } from './primaryExpression';
 
-export class ExpressionVisitor extends CommonVisitor<ExpressionType> {
+export class ExpressionTypeClass extends ContextTypeClass {
+    value: any | null = null;
+
+    constructor(type: string, value: any | null, errorClasses: ErrorTypeClass[]) {
+        super(type, errorClasses);
+        this.value = value;
+    }
+
+    getValue(): any | null {
+        return this.value;
+    }
+}
+
+export const isExpressionTypeAll = (target: CommonTypeClass): target is ExpressionTypeClass => {
+    return target instanceof ExpressionTypeClass;
+};
+
+export class ExpressionVisitor extends CommonVisitor<ExpressionTypeClass> {
     visitExpression(ctx: ExpressionContext) {
-        console.log('解析を開始します。' + 'ExpressionContext:  ' + ctx.getText());
-        const result = makeExpressionType(ctx);
-        console.log(
-            '------------解析が終了しました--------------' +
-                'ExpressionContext:  ' +
-                JSON.stringify(result, null, 2),
-        );
-        return result;
+        return expressionTypeClass.create(ctx);
     }
 
     visitPrimaryExpression(ctx: PrimaryExpressionContext) {
-        console.log('解析を開始します。' + 'PrimaryExpressionContext:  ' + ctx.getText());
-        const result = makePrimaryExpressionType(ctx);
-        console.log(
-            '------------解析が終了しました--------------' +
-                'PrimaryExpressionContext:  ' +
-                JSON.stringify(result, null, 2),
-        );
-        return result;
+        return PrimaryExpressionTypeClass.create(ctx);
     }
 
     visitArth1Expression(ctx: Arth1ExpressionContext) {
@@ -184,14 +153,7 @@ export class ExpressionVisitor extends CommonVisitor<ExpressionType> {
     }
 
     visitArrayExpression(ctx: ArrayExpressionContext) {
-        console.log('解析を開始します。' + 'ArrayExpressionContext:  ' + ctx.getText());
-        const result = makeArrayExpressionType(ctx);
-        console.log(
-            '------------解析が終了しました--------------' +
-                'ArrayExpressionContext:  ' +
-                JSON.stringify(result, null, 2),
-        );
-        return result;
+        return ArrayExpressionTypeClass.create(ctx);
     }
 
     visitNewExpression(ctx: NewExpressionContext) {
@@ -491,4 +453,3 @@ export class ExpressionVisitor extends CommonVisitor<ExpressionType> {
         return result;
     }
 }
-

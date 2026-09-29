@@ -1,6 +1,6 @@
 import { Arth1ExpressionContext, ExpressionContext } from '@apexdevtools/apex-parser';
 
-import { ExpressionType, ExpressionVisitor } from '.';
+import { ExpressionTypeClass, ExpressionVisitor } from '.';
 
 export type Arth1ExpressionType = {
     type: 'arth1Expression';
@@ -38,4 +38,3 @@ export const makeArth1ExpressionType = (ctx: Arth1ExpressionContext): Arth1Expre
 
     throw new Error('値が異常です。Arth1ExpressionContext: ' + ctx.getText());
 };
-

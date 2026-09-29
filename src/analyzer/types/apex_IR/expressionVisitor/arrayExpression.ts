@@ -1,25 +1,38 @@
-import { ArrayExpressionContext, ExpressionContext } from '@apexdevtools/apex-parser';
+import { ArrayExpressionContext } from '@apexdevtools/apex-parser';
 
-import { ExpressionType, ExpressionVisitor } from '.';
+import { ExpressionTypeClass, ExpressionVisitor, isExpressionType } from '.';
 
-export type ArrayExpressionType = {
-    type: 'arrayExpression';
-    expression: ExpressionType[];
-};
+import { ErrorTypeClass } from '../commonVisitor';
 
-export const makeArrayExpressionType = (ctx: ArrayExpressionContext): ArrayExpressionType => {
-    if (!ctx.expression_list() || ctx.expression_list().length === 0) {
-        throw new Error('値が異常です。ArrayExpressionContext: ' + ctx.getText());
+export class ArrayExpressionTypeClass extends ExpressionTypeClass {
+    private constructor(value: ExpressionTypeClass[], errorClasses: ErrorTypeClass[]) {
+        super('arrayExpression', value, errorClasses);
     }
 
-    const elements = ctx.expression_list().map((expressionCtx: ExpressionContext) => {
-        const element = new ExpressionVisitor().visit(expressionCtx);
-        return element;
-    });
+    static create(ctx: ArrayExpressionContext): ArrayExpressionTypeClass {
+        if (!ctx.expression_list() || ctx.expression_list().length === 0) {
+            throw new Error('値が異常です。ArrayExpressionContext: ' + ctx.getText());
+        }
 
-    return {
-        type: 'arrayExpression',
-        expression: elements,
-    };
+        const value: ExpressionTypeClass[] = [];
+        const errorClasses: ErrorTypeClass[] = [];
+
+        ctx.expression_list().forEach((expressionCtx) => {
+            const expression = new ExpressionVisitor().visit(expressionCtx);
+
+            if (isExpressionType(expression)) {
+                value.push(expression);
+            } else {
+                errorClasses.push(expression);
+            }
+        });
+
+        return new ArrayExpressionTypeClass(value, errorClasses);
+    }
+}
+
+export const isArrayExpressionType = (
+    target: ArrayExpressionTypeClass,
+): target is ArrayExpressionTypeClass => {
+    return target instanceof ArrayExpressionTypeClass;
 };
-

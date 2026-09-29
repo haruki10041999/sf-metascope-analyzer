@@ -31,7 +31,24 @@ import { SubFieldListType, makeSubFieldListType } from './subFieldList';
 import { FieldListType, makeFieldListType } from './fieldList';
 import { FieldSpecListType, makeFieldSpecListType } from './fieldSpecList';
 
-import { ErrorType, CommonVisitor } from '../commonVisitor';
+import { CommonTypeClass, ContextTypeClass, ErrorTypeClass, CommonVisitor } from '../commonVisitor';
+
+export class ListTypeClass extends ContextTypeClass {
+    private list: any | null = null;
+
+    constructor(type: string, list: any | null, errorClasses: ErrorTypeClass[]) {
+        super(type, errorClasses);
+        this.list = list;
+    }
+
+    getList(): any | null {
+        return this.list;
+    }
+}
+
+export const isListTypeAll = (target: CommonTypeClass): target is ListTypeClass => {
+    return target instanceof ListTypeClass;
+};
 
 export type ListType =
     | TypeListType

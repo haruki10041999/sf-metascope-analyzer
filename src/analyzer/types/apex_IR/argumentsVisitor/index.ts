@@ -7,12 +7,27 @@ import {
 import { ArgumentsType as argumentsType, makeArgumentsType } from './arguments';
 import { TypeArgumentsType, makeTypeArgumentsType } from './typeArguments';
 
-import { ErrorType, CommonVisitor } from '../commonVisitor';
+import { CommonTypeClass, ContextTypeClass, CommonVisitor, ErrorTypeClass } from '../commonVisitor';
 
-export type ArgumentsType = argumentsType | TypeArgumentsType | ErrorType;
+export class ArugumentsTypeClass extends ContextTypeClass {
+    private args: any | null = null;
 
-export class ArgumentsVisitor extends CommonVisitor<ArgumentsType> {
-    visitArguments(ctx: ArgumentsContext): ArgumentsType {
+    constructor(type: string, args: any | null, errorClasses: ErrorTypeClass[]) {
+        super(type, errorClasses);
+        (this, (args = args));
+    }
+
+    getArgs(): any | null {
+        return this.args;
+    }
+}
+
+export const isArugumentsTypeAll = (target: CommonTypeClass): target is ArugumentsTypeClass => {
+    return target instanceof ArugumentsTypeClass;
+};
+
+export class ArgumentsVisitor extends CommonVisitor<ArugumentsTypeClass> {
+    visitArguments(ctx: ArgumentsContext) {
         console.log('解析を開始します。' + 'ArgumentsContext：:  ' + ctx.getText());
         const result = makeArgumentsType(ctx);
         console.log(
@@ -23,7 +38,7 @@ export class ArgumentsVisitor extends CommonVisitor<ArgumentsType> {
         return result;
     }
 
-    visitTypeArguments(ctx: TypeArgumentsContext): ArgumentsType {
+    visitTypeArguments(ctx: TypeArgumentsContext) {
         console.log('解析を開始します。' + 'TypeArgumentsContext:  ' + ctx.getText());
         const result = makeTypeArgumentsType(ctx);
         console.log(

@@ -7,7 +7,7 @@ import {
 import { ArraySubscriptsTypeClass } from './arraySubscripts';
 import { TypeRefType, makeTypeRefType } from './typeRef';
 
-import { ContextTypeClass, CommonVisitor, ErrorTypeClass } from '../commonVisitor';
+import { CommonTypeClass, ContextTypeClass, CommonVisitor, ErrorTypeClass } from '../commonVisitor';
 
 export { isArraySubscriptsTypeClass } from './arraySubscripts';
 
@@ -23,6 +23,10 @@ export class TypeTypeClass extends ContextTypeClass {
         return this.variantType;
     }
 }
+
+export const isTypeTypeAll = (target: CommonTypeClass): target is TypeTypeClass => {
+    return target instanceof TypeTypeClass;
+};
 
 export class TypeVisitor extends CommonVisitor<TypeTypeClass> {
     visitArraySubscripts(ctx: ArraySubscriptsContext) {

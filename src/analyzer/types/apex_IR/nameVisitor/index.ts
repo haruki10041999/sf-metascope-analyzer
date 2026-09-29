@@ -15,7 +15,7 @@ import { makeFieldNameType, FieldNameType } from './fieldName';
 import { makeDateFieldNameType, DateFieldNameType } from './dateFieldName';
 import { makeDataCategoryNameType, DataCategoryNameType } from './dataCategoryName';
 
-import { ErrorType, CommonVisitor } from '../commonVisitor';
+import { ContextTypeClass, CommonVisitor } from '../commonVisitor';
 
 export type NameType =
     | QualifiedNameType
