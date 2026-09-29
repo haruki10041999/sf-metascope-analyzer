@@ -1,22 +1,34 @@
 import { IdPrimaryContext } from '@apexdevtools/apex-parser';
 
-import { IdType, IdVisitor } from '../idVisitor';
+import { IdTypeClass, IdVisitor, isIdType } from '../idVisitor';
 
-export type IdPrimaryType = {
-    type: 'idPrimary';
-    primary: IdType;
-};
+import { PrimaryTypeClass } from '.';
 
-export const makeIdPrimaryType = (ctx: IdPrimaryContext): IdPrimaryType => {
-    if (!ctx.id()) {
-        throw new Error('値が異常です。IdPrimaryContext: ' + ctx.getText());
+import { CommonTypeClass, ErrorTypeClass } from '../commonVisitor';
+
+export class IdPrimaryTypeClass extends PrimaryTypeClass {
+    private constructor(value: IdTypeClass | null, errorClasses: ErrorTypeClass[]) {
+        super('idPrimary', value, errorClasses);
     }
 
-    const primary = new IdVisitor().visit(ctx.id());
+    static create(ctx: IdPrimaryContext): IdPrimaryTypeClass {
+        if (!ctx.id()) {
+            throw new Error('値が異常です。IdPrimaryContext: ' + ctx.getText());
+        }
 
-    return {
-        type: 'idPrimary',
-        primary: primary,
-    };
+        let value: IdTypeClass | null = null;
+        const errorClasses: ErrorTypeClass[] = [];
+        const idTypeClass = new IdVisitor().visit(ctx.id());
+        if (isIdType(idTypeClass)) {
+            value = idTypeClass;
+        } else {
+            errorClasses.push(idTypeClass);
+        }
+
+        return new IdPrimaryTypeClass(value, errorClasses);
+    }
+}
+
+export const isIdPrimaryType = (target: CommonTypeClass): target is IdPrimaryTypeClass => {
+    return target instanceof IdPrimaryTypeClass;
 };
-

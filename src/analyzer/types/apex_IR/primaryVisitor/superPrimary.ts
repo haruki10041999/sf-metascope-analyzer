@@ -1,17 +1,22 @@
 import { SuperPrimaryContext } from '@apexdevtools/apex-parser';
 
-export type SuperPrimaryType = {
-    type: 'superPrimary';
-    primary: string;
-};
+import { PrimaryTypeClass } from '.';
+import { CommonTypeClass } from '../commonVisitor';
 
-export const makeSuperPrimaryType = (ctx: SuperPrimaryContext): SuperPrimaryType => {
-    if (!ctx.SUPER()) {
-        throw new Error('値が異常です。SuperPrimaryContext: ' + ctx.getText());
+export class SuperPrimaryTypeClass extends PrimaryTypeClass {
+    private constructor(value: string) {
+        super('superPrimary', value, []);
     }
-    return {
-        type: 'superPrimary',
-        primary: ctx.SUPER().getText(),
-    };
-};
 
+    static create(ctx: SuperPrimaryContext): SuperPrimaryTypeClass {
+        if (!ctx.SUPER()) {
+            throw new Error('値が異常です。 SuperPrimaryContext:' + ctx);
+        }
+
+        return new SuperPrimaryTypeClass(ctx.SUPER().getText());
+    }
+}
+
+export const isSuperPrimaryType = (target: CommonTypeClass): target is SuperPrimaryTypeClass => {
+    return target instanceof SuperPrimaryTypeClass;
+};

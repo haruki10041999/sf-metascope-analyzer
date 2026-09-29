@@ -1,32 +1,44 @@
 import { SoslIdContext } from '@apexdevtools/apex-parser';
 
-import { IdType, IdVisitor } from '.';
+import { IdTypeClass, IdVisitor, isIdType } from '.';
 
-export type SoslIdType = {
-    type: 'soslId';
-    id: IdType[];
-};
+import { CommonTypeClass, ErrorTypeClass } from '../commonVisitor';
 
-export const makeSoslIdType = (ctx: SoslIdContext): SoslIdType => {
-    if (!ctx.id()) {
-        throw new Error('値が異常です。SoslIdContext: ' + ctx.getText());
+export class SoslIdTypeClass extends IdTypeClass {
+    private constructor(id: IdTypeClass[], errorClasses: ErrorTypeClass[]) {
+        super('soslId', id, errorClasses);
     }
 
-    const id = new IdVisitor().visit(ctx.id());
-    const values: IdType[] = [];
-    values.push(id);
+    static create(ctx: SoslIdContext): SoslIdTypeClass {
+        if (!ctx.id()) {
+            throw new Error('値が異常です。SoslIdContext: ' + ctx.getText());
+        }
 
-    if (ctx.soslId_list() && ctx.soslId_list().length > 0) {
-        ctx.soslId_list().forEach((soslIdCtx) => {
-            const id = makeSoslIdType(soslIdCtx);
-            if (id.type === 'soslId') {
-                values.push(...id.id);
-            }
-        });
+        const id: IdTypeClass[] = [];
+        const errorClasses: ErrorTypeClass[] = [];
+
+        const idTypeClass = new IdVisitor().visit(ctx.id());
+        if (isIdType(idTypeClass)) {
+            id.push(idTypeClass);
+        } else {
+            errorClasses.push(idTypeClass);
+        }
+
+        if (ctx.soslId_list() && ctx.soslId_list().length > 0) {
+            ctx.soslId_list().forEach((soslIdCtx) => {
+                const soslIdTypeClass = new IdVisitor().visit(soslIdCtx);
+                if (isSoslIdType(soslIdTypeClass)) {
+                    id.push(...soslIdTypeClass.getId());
+                } else {
+                    errorClasses.push(soslIdTypeClass);
+                }
+            });
+        }
+
+        return new SoslIdTypeClass(id, errorClasses);
     }
+}
 
-    return {
-        type: 'soslId',
-        id: values,
-    };
+export const isSoslIdType = (target: CommonTypeClass): target is SoslIdTypeClass => {
+    return target instanceof SoslIdTypeClass;
 };

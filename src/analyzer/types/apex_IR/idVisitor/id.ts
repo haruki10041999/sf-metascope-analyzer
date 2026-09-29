@@ -1,17 +1,23 @@
 import { IdContext } from '@apexdevtools/apex-parser';
 
-export type IdType = {
-    type: 'id';
-    id: string;
-};
+import { IdTypeClass as idTypeClass } from '.';
 
-export const makeIdType = (ctx: IdContext): IdType => {
-    if (!ctx) {
-        throw new Error('値が異常です。IdContext: ' + ctx);
+import { CommonTypeClass } from '../commonVisitor';
+
+export class IdTypeClass extends idTypeClass {
+    private constructor(id: string) {
+        super('id', id, []);
     }
 
-    return {
-        type: 'id',
-        id: ctx.getText(),
-    };
+    static create(ctx: IdContext): IdTypeClass {
+        if (!ctx) {
+            throw new Error('値が異常です。IdContext: ' + ctx);
+        }
+
+        return new IdTypeClass(ctx.getText());
+    }
+}
+
+export const isIdType = (target: CommonTypeClass): target is IdTypeClass => {
+    return target instanceof IdTypeClass;
 };

@@ -1,60 +1,42 @@
-import {
-    ApexParserBaseVisitor,
-    IdContext,
-    AnyIdContext,
-    SoqlIdContext,
-    SoslIdContext,
-} from '@apexdevtools/apex-parser';
+import { IdContext, AnyIdContext, SoqlIdContext, SoslIdContext } from '@apexdevtools/apex-parser';
 
-import { IdType as idType, makeIdType } from './id';
-import { AnyIdType, makeAnyIdType } from './anyId';
-import { SoqlIdType, makeSoqlIdType } from './soqlId';
-import { SoslIdType, makeSoslIdType } from './soslId';
+import { IdTypeClass as idTypeClass, isIdType } from './id';
+import { AnyIdTypeClass } from './anyId';
+import { SoqlIdTypeClass } from './soqlId';
+import { SoslIdTypeClass } from './soslId';
 
-import { ErrorType, CommonVisitor } from '../commonVisitor';
+import { ContextTypeClass, ErrorTypeClass, CommonVisitor } from '../commonVisitor';
 
-export type IdType = idType | AnyIdType | SoqlIdType | SoslIdType | ErrorType;
+export { isIdType } from './id';
+export { isAnyIdType } from './anyId';
+export { isSoqlIdType } from './soqlId';
+export { isSoslIdType } from './soslId';
 
-export class IdVisitor extends CommonVisitor<IdType> {
+export class IdTypeClass extends ContextTypeClass {
+    private id: any | null = null;
+
+    constructor(type: string, id: any | null, errorClasses: ErrorTypeClass[]) {
+        super(type, errorClasses);
+        this.id = id;
+    }
+
+    getId(): any | null {
+        return this.id;
+    }
+}
+
+export class IdVisitor extends CommonVisitor<IdTypeClass> {
     visitId(ctx: IdContext) {
-        console.log('解析を開始します。' + 'IdContext:  ' + ctx.getText());
-        const result = makeIdType(ctx);
-        console.log(
-            '------------解析が終了しました--------------' +
-                'IdContext:  ' +
-                JSON.stringify(result, null, 2),
-        );
-        return result;
+        return idTypeClass.create(ctx);
     }
     visitAnyId(ctx: AnyIdContext) {
-        console.log('解析を開始します。' + 'AnyIdContext:  ' + ctx.getText());
-        const result = makeAnyIdType(ctx);
-        console.log(
-            '------------解析が終了しました--------------' +
-                'AnyIdContext:  ' +
-                JSON.stringify(result, null, 2),
-        );
-        return result;
+        return AnyIdTypeClass.create(ctx);
     }
     visitSoqlId(ctx: SoqlIdContext) {
-        console.log('解析を開始します。' + 'SoqlIdContext:  ' + ctx.getText());
-        const result = makeSoqlIdType(ctx);
-        console.log(
-            '------------解析が終了しました--------------' +
-                'SoqlIdContext:  ' +
-                JSON.stringify(result, null, 2),
-        );
-        return result;
+        return SoqlIdTypeClass.create(ctx);
     }
 
     visitSoslId(ctx: SoslIdContext) {
-        console.log('解析を開始します。' + 'SoslIdContext:  ' + ctx.getText());
-        const result = makeSoslIdType(ctx);
-        console.log(
-            '------------解析が終了しました--------------' +
-                'SoslIdContext:  ' +
-                JSON.stringify(result, null, 2),
-        );
-        return result;
+        return SoslIdTypeClass.create(ctx);
     }
 }

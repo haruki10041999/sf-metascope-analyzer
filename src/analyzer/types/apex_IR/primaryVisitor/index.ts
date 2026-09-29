@@ -1,5 +1,4 @@
 import {
-    ApexParserBaseVisitor,
     PrimaryContext,
     ThisPrimaryContext,
     VoidPrimaryContext,
@@ -11,62 +10,48 @@ import {
     SoslPrimaryContext,
 } from '@apexdevtools/apex-parser';
 
-import { PrimaryType as primaryType, makePrimaryType } from './primary';
-import { ThisPrimaryType, makeThisPrimaryType } from './thisPrimary';
-import { VoidPrimaryType, makeVoidPrimaryType } from './voidPrimary';
+import { PrimaryTypeClass as primaryTypeClass } from './primary';
+import { ThisPrimaryTypeClass } from './thisPrimary';
+import { VoidPrimaryTypeClass } from './voidPrimary';
 import { SoqlPrimaryType, makeSoqlPrimaryType } from './soqlPrimary';
-import { SuperPrimaryType, makeSuperPrimaryType } from './superPrimary';
+import { SuperPrimaryTypeClass } from './superPrimary';
 import { TypeRefPrimaryType, makeTypeRefPrimaryType } from './typeRefPrimary';
-import { IdPrimaryType, makeIdPrimaryType } from './idPrimary';
+import { IdPrimaryTypeClass } from './idPrimary';
 import { LiteralPrimaryType, makeLiteralPrimaryType } from './literalPrimary';
 import { SoslPrimaryType, makeSoslPrimaryType } from './soslPrimary';
 
-import { ErrorType, CommonVisitor } from '../commonVisitor';
+import { ContextTypeClass, ErrorTypeClass, CommonVisitor } from '../commonVisitor';
 
-export type PrimaryType =
-    | primaryType
-    | ThisPrimaryType
-    | VoidPrimaryType
-    | SoqlPrimaryType
-    | SuperPrimaryType
-    | TypeRefPrimaryType
-    | IdPrimaryType
-    | LiteralPrimaryType
-    | SoslPrimaryType
-    | ErrorType;
+export { isPrimaryType } from './primary';
+export { isThisPrimaryType } from './thisPrimary';
+export { isVoidPrimaryType } from './voidPrimary';
+export { isSuperPrimaryType } from './superPrimary';
+export { isIdPrimaryType } from './idPrimary';
 
-export class PrimaryVisitor extends CommonVisitor<PrimaryType> {
+export class PrimaryTypeClass extends ContextTypeClass {
+    private value: any | null = null;
+
+    constructor(type: string, value: any | null, errorClasses: ErrorTypeClass[]) {
+        super(type, errorClasses);
+        this.value = value;
+    }
+
+    getValue(): any | null {
+        return this.value;
+    }
+}
+
+export class PrimaryVisitor extends CommonVisitor<PrimaryTypeClass> {
     visitPrimary(ctx: PrimaryContext) {
-        console.log('解析を開始します。' + 'PrimaryContext:  ' + ctx.getText());
-        const result = makePrimaryType(ctx);
-        console.log(
-            '------------解析が終了しました--------------' +
-                'PrimaryContext:  ' +
-                JSON.stringify(result, null, 2),
-        );
-        return result;
+        return primaryTypeClass.create(ctx);
     }
 
     visitThisPrimary(ctx: ThisPrimaryContext) {
-        console.log('解析を開始します。' + 'ThisPrimaryContext:  ' + ctx.getText());
-        const result = makeThisPrimaryType(ctx);
-        console.log(
-            '------------解析が終了しました--------------' +
-                'ThisPrimaryContext:  ' +
-                JSON.stringify(result, null, 2),
-        );
-        return result;
+        return ThisPrimaryTypeClass.create(ctx);
     }
 
     visitVoidPrimary(ctx: VoidPrimaryContext) {
-        console.log('解析を開始します。' + 'VoidPrimaryContext:  ' + ctx.getText());
-        const result = makeVoidPrimaryType(ctx);
-        console.log(
-            '------------解析が終了しました--------------' +
-                'VoidPrimaryContext:  ' +
-                JSON.stringify(result, null, 2),
-        );
-        return result;
+        return VoidPrimaryTypeClass.create(ctx);
     }
 
     visitSoqlPrimary(ctx: SoqlPrimaryContext) {
@@ -81,14 +66,7 @@ export class PrimaryVisitor extends CommonVisitor<PrimaryType> {
     }
 
     visitSuperPrimary(ctx: SuperPrimaryContext) {
-        console.log('解析を開始します。' + 'SuperPrimaryContext:  ' + ctx.getText());
-        const result = makeSuperPrimaryType(ctx);
-        console.log(
-            '------------解析が終了しました--------------' +
-                'SuperPrimaryContext:  ' +
-                JSON.stringify(result, null, 2),
-        );
-        return result;
+        return SuperPrimaryTypeClass.create(ctx);
     }
 
     visitTypeRefPrimary(ctx: TypeRefPrimaryContext) {
@@ -103,14 +81,7 @@ export class PrimaryVisitor extends CommonVisitor<PrimaryType> {
     }
 
     visitIdPrimary(ctx: IdPrimaryContext) {
-        console.log('解析を開始します。' + 'IdPrimaryContext:  ' + ctx.getText());
-        const result = makeIdPrimaryType(ctx);
-        console.log(
-            '------------解析が終了しました--------------' +
-                'IdPrimaryContext:  ' +
-                JSON.stringify(result, null, 2),
-        );
-        return result;
+        return IdPrimaryTypeClass.create(ctx);
     }
 
     visitLiteralPrimary(ctx: LiteralPrimaryContext) {
@@ -135,4 +106,3 @@ export class PrimaryVisitor extends CommonVisitor<PrimaryType> {
         return result;
     }
 }
-

@@ -1,21 +1,29 @@
 import { ArraySubscriptsContext } from '@apexdevtools/apex-parser';
 
-export type ArraySubscriptsType = {
-    type: 'arraySubscripts';
-    variantType: number;
-};
+import { TypeTypeClass } from '.';
 
-export const makeArraySubscriptsType = (ctx: ArraySubscriptsContext): ArraySubscriptsType => {
-    if (
-        (ctx.LBRACK_list() && !ctx.RBRACK_list()) ||
-        (ctx.RBRACK_list() && !ctx.LBRACK_list()) ||
-        ctx.LBRACK_list().length !== ctx.RBRACK_list().length
-    ) {
-        throw new Error('値が異常です。ArraySubscriptsContext: ' + ctx.getText());
+import { CommonTypeClass } from '../commonVisitor';
+
+export class ArraySubscriptsTypeClass extends TypeTypeClass {
+    private constructor(variantType: number | null) {
+        super('arraySubscripts', variantType, []);
     }
 
-    return {
-        type: 'arraySubscripts',
-        variantType: ctx.LBRACK_list().length || 0,
-    };
+    static create(ctx: ArraySubscriptsContext): ArraySubscriptsTypeClass {
+        if (
+            (ctx.LBRACK_list() && !ctx.RBRACK_list()) ||
+            (ctx.RBRACK_list() && !ctx.LBRACK_list()) ||
+            ctx.LBRACK_list().length !== ctx.RBRACK_list().length
+        ) {
+            throw new Error('値が異常です。ArraySubscriptsContext: ' + ctx.getText());
+        }
+
+        return new ArraySubscriptsTypeClass(ctx.LBRACK_list().length);
+    }
+}
+
+export const isArraySubscriptsTypeClass = (
+    target: CommonTypeClass,
+): target is ArraySubscriptsTypeClass => {
+    return target instanceof ArraySubscriptsTypeClass;
 };

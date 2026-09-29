@@ -1,16 +1,23 @@
 import { AnyIdContext } from '@apexdevtools/apex-parser';
 
-export type AnyIdType = {
-    type: 'anyId';
-    id: string;
-};
+import { IdTypeClass } from '.';
 
-export const makeAnyIdType = (ctx: AnyIdContext): AnyIdType => {
-    if (!ctx) {
-        throw new Error('値が異常です。AnyIdContext: ' + ctx);
+import { CommonTypeClass } from '../commonVisitor';
+
+export class AnyIdTypeClass extends IdTypeClass {
+    private constructor(id: string) {
+        super('id', id, []);
     }
-    return {
-        type: 'anyId',
-        id: ctx.getText(),
-    };
+
+    static create(ctx: AnyIdContext): AnyIdTypeClass {
+        if (!ctx) {
+            throw new Error('値が異常です。AnyIdContext: ' + ctx);
+        }
+
+        return new AnyIdTypeClass(ctx.getText());
+    }
+}
+
+export const isAnyIdType = (target: CommonTypeClass): target is AnyIdTypeClass => {
+    return target instanceof AnyIdTypeClass;
 };

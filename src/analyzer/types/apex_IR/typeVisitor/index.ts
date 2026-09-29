@@ -4,23 +4,29 @@ import {
     TypeRefContext,
 } from '@apexdevtools/apex-parser';
 
-import { ArraySubscriptsType, makeArraySubscriptsType } from './arraySubscripts';
+import { ArraySubscriptsTypeClass } from './arraySubscripts';
 import { TypeRefType, makeTypeRefType } from './typeRef';
 
-import { ErrorType, CommonVisitor } from '../commonVisitor';
+import { ContextTypeClass, CommonVisitor, ErrorTypeClass } from '../commonVisitor';
 
-export type TypeType = ArraySubscriptsType | TypeRefType | ErrorType;
+export { isArraySubscriptsTypeClass } from './arraySubscripts';
 
-export class TypeVisitor extends CommonVisitor<TypeType> {
+export class TypeTypeClass extends ContextTypeClass {
+    private variantType: any | null = null;
+
+    constructor(type: string, variantType: any | null, errorClasses: ErrorTypeClass[]) {
+        super(type, errorClasses);
+        this.variantType = variantType;
+    }
+
+    getVariantType(): any | null {
+        return this.variantType;
+    }
+}
+
+export class TypeVisitor extends CommonVisitor<TypeTypeClass> {
     visitArraySubscripts(ctx: ArraySubscriptsContext) {
-        console.log('解析を開始します。' + 'ArraySubscriptsContext:  ' + ctx.getText());
-        const result = makeArraySubscriptsType(ctx);
-        console.log(
-            '------------解析が終了しました--------------' +
-                'ArraySubscriptsContext:  ' +
-                JSON.stringify(result, null, 2),
-        );
-        return result;
+        return ArraySubscriptsTypeClass.create(ctx);
     }
 
     visitTypeRef(ctx: TypeRefContext) {
