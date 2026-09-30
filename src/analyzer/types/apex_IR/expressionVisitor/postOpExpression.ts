@@ -1,36 +1,54 @@
 import { PostOpExpressionContext } from '@apexdevtools/apex-parser';
-import { ExpressionType, ExpressionVisitor } from '.';
 
-export type PostOpExpressionType = {
-    type: 'postOpExpression';
-    expression: {
-        operator: '++' | '--';
-        value: ExpressionType;
-    };
-};
+import {
+    ExpressionTypeClass,
+    ExpressionVisitor,
+    isExpressionTypeAll,
+    SingleOperatorExpressionTypeClass,
+} from '.';
 
-export const makePostOpExpressionType = (ctx: PostOpExpressionContext): PostOpExpressionType => {
-    const value = new ExpressionVisitor().visit(ctx.expression());
+import { ErrorTypeClass, CommonTypeClass } from '../commonVisitor';
 
-    if (ctx.INC()) {
-        return {
-            type: 'postOpExpression',
-            expression: {
-                operator: '++',
-                value: value,
-            },
-        };
-    }
-    if (ctx.DEC()) {
-        return {
-            type: 'postOpExpression',
-            expression: {
-                operator: '--',
-                value: value,
-            },
-        };
+export class PostOpExpressionTypeClass extends SingleOperatorExpressionTypeClass {
+    private constructor(
+        literal: ExpressionTypeClass | null,
+        operator: string | null,
+        errorClasses: Record<string, ErrorTypeClass>,
+    ) {
+        super('postOpExpression', literal, operator, errorClasses);
     }
 
-    throw new Error('値が異常です。PostOpExpressionContext: ' + ctx.getText());
+    static create(ctx: PostOpExpressionContext): PostOpExpressionTypeClass {
+        if (!ctx.expression() || (!ctx.INC() && !ctx.DEC())) {
+            throw new Error('値が異常です。PostOpExpressionContext: ' + ctx.getText());
+        }
+
+        const expressionTypeClass = new ExpressionVisitor().visit(ctx.expression());
+
+        let literal: ExpressionTypeClass | null = null;
+        let operator: string | null = null;
+        const errorTypeClasses: Record<string, ErrorTypeClass> = {};
+
+        if (isExpressionTypeAll(expressionTypeClass)) {
+            literal = expressionTypeClass;
+        } else {
+            errorTypeClasses['literal'] = expressionTypeClass;
+        }
+
+        if (ctx.INC()) {
+            operator = '++';
+        }
+        if (ctx.DEC()) {
+            operator = '--';
+        }
+
+        return new PostOpExpressionTypeClass(literal, operator, errorTypeClasses);
+    }
+}
+
+export const isPostOpExpressionType = (
+    target: CommonTypeClass,
+): target is PostOpExpressionTypeClass => {
+    return target instanceof PostOpExpressionTypeClass;
 };
 

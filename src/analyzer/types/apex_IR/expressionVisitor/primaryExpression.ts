@@ -7,7 +7,10 @@ import { isPrimaryTypeAll, PrimaryTypeClass, PrimaryVisitor } from '../primaryVi
 import { CommonTypeClass, ErrorTypeClass } from '../commonVisitor';
 
 export class PrimaryExpressionTypeClass extends ExpressionTypeClass {
-    private constructor(value: PrimaryTypeClass | null, errorClasses: ErrorTypeClass[]) {
+    private constructor(
+        value: PrimaryTypeClass | null,
+        errorClasses: Record<string, ErrorTypeClass>,
+    ) {
         super('primaryExpression', value, errorClasses);
     }
 
@@ -17,13 +20,13 @@ export class PrimaryExpressionTypeClass extends ExpressionTypeClass {
         }
 
         let value: PrimaryTypeClass | null = null;
-        const errorClasses: ErrorTypeClass[] = [];
+        const errorClasses: Record<string, ErrorTypeClass> = {};
 
         const primaryTypeClass = new PrimaryVisitor().visit(ctx.primary());
         if (isPrimaryTypeAll(primaryTypeClass)) {
             value = primaryTypeClass;
         } else {
-            errorClasses.push(primaryTypeClass);
+            errorClasses['value'] = primaryTypeClass;
         }
 
         return new PrimaryExpressionTypeClass(value, errorClasses);
@@ -35,3 +38,4 @@ export const isPrimaryExpressionType = (
 ): target is PrimaryExpressionTypeClass => {
     return target instanceof PrimaryExpressionTypeClass;
 };
+

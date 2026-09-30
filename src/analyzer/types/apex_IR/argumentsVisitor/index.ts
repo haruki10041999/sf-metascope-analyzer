@@ -4,48 +4,30 @@ import {
     TypeArgumentsContext,
 } from '@apexdevtools/apex-parser';
 
-import { ArgumentsType as argumentsType, makeArgumentsType } from './arguments';
-import { TypeArgumentsType, makeTypeArgumentsType } from './typeArguments';
+import { NormalArgumentsTypeClass } from './normal';
+import { TypeArgumentsTypeClass } from './typeArguments';
 
 import { CommonTypeClass, ContextTypeClass, CommonVisitor, ErrorTypeClass } from '../commonVisitor';
 
-export class ArugumentsTypeClass extends ContextTypeClass {
-    private args: any | null = null;
+export { isNormalArgumentsType, NormalArgumentsTypeClass } from './normal';
+export { isTypeArgumentsType, TypeArgumentsTypeClass } from './typeArguments';
 
-    constructor(type: string, args: any | null, errorClasses: ErrorTypeClass[]) {
-        super(type, errorClasses);
-        (this, (args = args));
-    }
-
-    getArgs(): any | null {
-        return this.args;
+export class ArgumentsTypeClass extends ContextTypeClass {
+    constructor(type: string, value: any | null, errorClasses: Record<string, ErrorTypeClass>) {
+        super(type, value, errorClasses);
     }
 }
 
-export const isArugumentsTypeAll = (target: CommonTypeClass): target is ArugumentsTypeClass => {
-    return target instanceof ArugumentsTypeClass;
+export const isArugumentsTypeAll = (target: CommonTypeClass): target is ArgumentsTypeClass => {
+    return target instanceof ArgumentsTypeClass;
 };
 
-export class ArgumentsVisitor extends CommonVisitor<ArugumentsTypeClass> {
+export class ArgumentsVisitor extends CommonVisitor<ArgumentsTypeClass> {
     visitArguments(ctx: ArgumentsContext) {
-        console.log('解析を開始します。' + 'ArgumentsContext：:  ' + ctx.getText());
-        const result = makeArgumentsType(ctx);
-        console.log(
-            '------------解析が終了しました--------------' +
-                'ArgumentsContext：:  ' +
-                JSON.stringify(result, null, 2),
-        );
-        return result;
+        return NormalArgumentsTypeClass.create(ctx);
     }
 
     visitTypeArguments(ctx: TypeArgumentsContext) {
-        console.log('解析を開始します。' + 'TypeArgumentsContext:  ' + ctx.getText());
-        const result = makeTypeArgumentsType(ctx);
-        console.log(
-            '------------解析が終了しました--------------' +
-                'TypeArgumentsContext:  ' +
-                JSON.stringify(result, null, 2),
-        );
-        return result;
+        return TypeArgumentsTypeClass.create(ctx);
     }
 }

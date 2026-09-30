@@ -5,8 +5,8 @@ import { IdTypeClass, IdVisitor, isIdType } from '.';
 import { CommonTypeClass, ErrorTypeClass } from '../commonVisitor';
 
 export class SoslIdTypeClass extends IdTypeClass {
-    private constructor(id: IdTypeClass[], errorClasses: ErrorTypeClass[]) {
-        super('soslId', id, errorClasses);
+    private constructor(value: IdTypeClass[], errorClasses: Record<string, ErrorTypeClass>) {
+        super('soslId', value, errorClasses);
     }
 
     static create(ctx: SoslIdContext): SoslIdTypeClass {
@@ -15,22 +15,22 @@ export class SoslIdTypeClass extends IdTypeClass {
         }
 
         const id: IdTypeClass[] = [];
-        const errorClasses: ErrorTypeClass[] = [];
+        const errorClasses: Record<string, ErrorTypeClass> = {};
 
         const idTypeClass = new IdVisitor().visit(ctx.id());
         if (isIdType(idTypeClass)) {
             id.push(idTypeClass);
         } else {
-            errorClasses.push(idTypeClass);
+            errorClasses['value'] = idTypeClass;
         }
 
         if (ctx.soslId_list() && ctx.soslId_list().length > 0) {
             ctx.soslId_list().forEach((soslIdCtx) => {
                 const soslIdTypeClass = new IdVisitor().visit(soslIdCtx);
                 if (isSoslIdType(soslIdTypeClass)) {
-                    id.push(...soslIdTypeClass.getId());
+                    id.push(...soslIdTypeClass.getValue());
                 } else {
-                    errorClasses.push(soslIdTypeClass);
+                    errorClasses['value'] = soslIdTypeClass;
                 }
             });
         }

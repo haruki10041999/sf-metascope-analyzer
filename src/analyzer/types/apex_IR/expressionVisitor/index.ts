@@ -36,35 +36,35 @@ import {
 } from '@apexdevtools/apex-parser';
 
 import { ArrayExpressionTypeClass } from './arrayExpression';
-import { Arth1ExpressionType, makeArth1ExpressionType } from './arth1Expression';
-import { Arth2ExpressionType, makeArth2ExpressionType } from './arth2Expression';
-import { AssignExpressionType, makeAssignExpressionType } from './assignExpression';
-import { BitAndExpressionType, makeBitAndExpressionType } from './bitAndExpression';
-import { BitExpressionType, makeBitExpressionType } from './bitExpression';
-import { BitNotExpressionType, makeBitNotExpressionType } from './bitNotExpression';
-import { BitOrExpressionType, makeBitOrExpressionType } from './bitOrExpression';
+import { Arth1ExpressionTypeClass } from './arth1Expression';
+import { Arth2ExpressionTypeClass } from './arth2Expression';
+import { AssignExpressionTypeClass } from './assignExpression';
+import { BitAndExpressionTypeClass } from './bitAndExpression';
+import { BitExpressionTypeClass } from './bitExpression';
+import { BitNotExpressionTypeClass } from './bitNotExpression';
+import { BitOrExpressionTypeClass } from './bitOrExpression';
 import { CastExpressionType, makeCastExpressionType } from './castExpression';
-import { CmpExpressionType, makeCmpExpressionType } from './cmpExpression';
-import { CoalExpressionType, makeCoalExpressionType } from './coalExpression';
+import { CmpExpressionTypeClass } from './cmpExpression';
+import { CoalExpressionTypeClass } from './coalExpression';
 import { CondExpressionType, makeCondExpressionType } from './condExpression';
 import { DotExpressionType, makeDotExpressionType } from './dotExpression';
-import { EqualityExpressionType, makeEqualityExpressionType } from './equalityExpression';
+import { EqualityExpressionTypeClass } from './equalityExpression';
 import { InstanceOfExpressionType, makeInstanceOfExpressionType } from './instanceOfExpression';
-import { LogAndExpressionType, makeLogAndExpressionType } from './logAndExpression';
-import { LogOrExpressionType, makeLogOrExpressionType } from './logOrExpression';
+import { LogAndExpressionTypeClass } from './logAndExpression';
+import { LogOrExpressionTypeClass } from './logOrExpression';
 import { MethodCallExpressionType, makeMethodCallExpressionType } from './methodCallExpression';
-import { NegExpressionType, makeNegExpressionType } from './negExpression';
+import { NegExpressionTypeClass } from './negExpression';
 import { NewExpressionType, makeNewExpressionType } from './newExpression';
-import { ExpressionTypeClass as expressionTypeClass } from './expression';
-import { PostOpExpressionType, makePostOpExpressionType } from './postOpExpression';
-import { PreOpExpressionType, makePreOpExpressionType } from './preOpExpression';
+import { NormalExpressionTypeClass } from './normal';
+import { PostOpExpressionTypeClass } from './postOpExpression';
+import { PreOpExpressionTypeClass } from './preOpExpression';
 import { PrimaryExpressionTypeClass } from './primaryExpression';
-import { SubExpressionType, makeSubExpressionType } from './subExpression';
-import { ParExpressionType, makeParExpressionType } from './parExpression';
-import { BoundExpressionType, makeBoundExpressionType } from './boundExpression';
+import { SubExpressionTypeClass } from './subExpression';
+import { ParExpressionTypeClass } from './parExpression';
+import { BoundExpressionTypeClass } from './boundExpression';
 import { FilteringExpressionType, makeFilteringExpressionType } from './filteringExpression';
 import { FieldExpressionType, makeFieldExpressionType } from './fieldExpression';
-import { ConditionalExpressionType, makeConditionalExpressionType } from './conditionalExpression';
+import { ConditionalExpressionTypeClass } from './conditionalExpression';
 import { LogicalExpressionType, makeLogicalExpressionType } from './logicalExpression';
 import {
     WhereLogicalExpressionType,
@@ -78,20 +78,110 @@ import { WhereFieldExpressionType, makeWhereFieldExpressionType } from './whereF
 
 import { ErrorTypeClass, ContextTypeClass, CommonVisitor, CommonTypeClass } from '../commonVisitor';
 
-export { isArrayExpressionType } from './arrayExpression';
-export { isExpressionType } from './expression';
-export { isPrimaryExpressionType } from './primaryExpression';
+export { isArrayExpressionType, ArrayExpressionTypeClass } from './arrayExpression';
+export { isArth1ExpressionType, Arth1ExpressionTypeClass } from './arth1Expression';
+export { isArth2ExpressionType, Arth2ExpressionTypeClass } from './arth2Expression';
+export { isAssignExpressionType, AssignExpressionTypeClass } from './assignExpression';
+export { isBitAndExpressionType, BitAndExpressionTypeClass } from './bitAndExpression';
+export { isBitExpressionType, BitExpressionTypeClass } from './bitExpression';
+export { isBitNotExpressionType, BitNotExpressionTypeClass } from './bitNotExpression';
+export { isBitOrExpressionType, BitOrExpressionTypeClass } from './bitOrExpression';
+export { isCmpExpressionType, CmpExpressionTypeClass } from './cmpExpression';
+export { isCoalExpressionType, CoalExpressionTypeClass } from './coalExpression';
+export { isEqualityExpressionType, EqualityExpressionTypeClass } from './equalityExpression';
+export { isLogAndExpressionType, LogAndExpressionTypeClass } from './logAndExpression';
+export { isLogOrExpressionType, LogOrExpressionTypeClass } from './logOrExpression';
+export { isNegExpressionType, NegExpressionTypeClass } from './negExpression';
+export { isNormalExpressionType, NormalExpressionTypeClass } from './normal';
+export { isPostOpExpressionType, PostOpExpressionTypeClass } from './postOpExpression';
+export { isPreOpExpressionType, PreOpExpressionTypeClass } from './preOpExpression';
+export { isPrimaryExpressionType, PrimaryExpressionTypeClass } from './primaryExpression';
+export { isSubExpressionType, SubExpressionTypeClass } from './subExpression';
+export { isBoundExpressionType, BoundExpressionTypeClass } from './boundExpression';
+export {
+    isConditionalExpressionType,
+    ConditionalExpressionTypeClass,
+} from './conditionalExpression';
+export { isParExpressionType, ParExpressionTypeClass } from './parExpression';
 
 export class ExpressionTypeClass extends ContextTypeClass {
-    value: any | null = null;
+    constructor(type: string, value: any | null, errorClasses: Record<string, ErrorTypeClass>) {
+        super(type, value, errorClasses);
+    }
+}
 
-    constructor(type: string, value: any | null, errorClasses: ErrorTypeClass[]) {
-        super(type, errorClasses);
-        this.value = value;
+export class SingleOperatorExpressionTypeClass extends ContextTypeClass {
+    private literal: any | null = null;
+    private operator: string | null = null;
+
+    constructor(
+        type: string,
+        literal: any | null,
+        operator: string | null,
+        errorClasses: Record<string, ErrorTypeClass>,
+    ) {
+        super(type, { literal: literal, operator: operator }, errorClasses);
+        this.literal = literal;
+        this.operator = operator;
     }
 
-    getValue(): any | null {
-        return this.value;
+    getLiteral(): any | null {
+        return this.literal;
+    }
+
+    isLiteralNull(): boolean {
+        return this.literal === null;
+    }
+
+    getOperator(): string | null {
+        return this.operator;
+    }
+
+    isOperatorNull(): boolean {
+        return this.operator === null;
+    }
+}
+
+export class OperatorExpressionTypeClass extends ContextTypeClass {
+    private left: any | null = null;
+    private right: any | null = null;
+    private operator: string | null = null;
+
+    constructor(
+        type: string,
+        left: any | null,
+        right: any | null,
+        operator: string | null,
+        errorClasses: Record<string, ErrorTypeClass>,
+    ) {
+        super(type, { left: left, right: right, operator: operator }, errorClasses);
+        this.left = left;
+        this.right = right;
+        this.operator = operator;
+    }
+
+    getLeft(): any | null {
+        return this.left;
+    }
+
+    getRight(): any | null {
+        return this.right;
+    }
+
+    getOperator(): string | null {
+        return this.operator;
+    }
+
+    isLeftNull(): boolean {
+        return this.left === null;
+    }
+
+    isRightNull(): boolean {
+        return this.right === null;
+    }
+
+    isOperatorNull(): boolean {
+        return this.operator === null;
     }
 }
 
@@ -101,7 +191,7 @@ export const isExpressionTypeAll = (target: CommonTypeClass): target is Expressi
 
 export class ExpressionVisitor extends CommonVisitor<ExpressionTypeClass> {
     visitExpression(ctx: ExpressionContext) {
-        return expressionTypeClass.create(ctx);
+        return NormalExpressionTypeClass.create(ctx);
     }
 
     visitPrimaryExpression(ctx: PrimaryExpressionContext) {
@@ -109,25 +199,11 @@ export class ExpressionVisitor extends CommonVisitor<ExpressionTypeClass> {
     }
 
     visitArth1Expression(ctx: Arth1ExpressionContext) {
-        console.log('解析を開始します。' + 'Arth1ExpressionContext:  ' + ctx.getText());
-        const result = makeArth1ExpressionType(ctx);
-        console.log(
-            '------------解析が終了しました--------------' +
-                'Arth1ExpressionContext:  ' +
-                JSON.stringify(result, null, 2),
-        );
-        return result;
+        return Arth1ExpressionTypeClass.create(ctx);
     }
 
     visitCoalExpression(ctx: CoalExpressionContext) {
-        console.log('解析を開始します。' + 'CoalExpressionContext:  ' + ctx.getText());
-        const result = makeCoalExpressionType(ctx);
-        console.log(
-            '------------解析が終了しました--------------' +
-                'CoalExpressionContext:  ' +
-                JSON.stringify(result, null, 2),
-        );
-        return result;
+        return CoalExpressionTypeClass.create(ctx);
     }
 
     visitDotExpression(ctx: DotExpressionContext) {
@@ -142,14 +218,7 @@ export class ExpressionVisitor extends CommonVisitor<ExpressionTypeClass> {
     }
 
     visitBitOrExpression(ctx: BitOrExpressionContext) {
-        console.log('解析を開始します。' + 'BitOrExpressionContext:  ' + ctx.getText());
-        const result = makeBitOrExpressionType(ctx);
-        console.log(
-            '------------解析が終了しました--------------' +
-                'BitOrExpressionContext:  ' +
-                JSON.stringify(result, null, 2),
-        );
-        return result;
+        return BitOrExpressionTypeClass.create(ctx);
     }
 
     visitArrayExpression(ctx: ArrayExpressionContext) {
@@ -168,14 +237,7 @@ export class ExpressionVisitor extends CommonVisitor<ExpressionTypeClass> {
     }
 
     visitAssignExpression(ctx: AssignExpressionContext) {
-        console.log('解析を開始します。' + 'AssignExpressionContext:  ' + ctx.getText());
-        const result = makeAssignExpressionType(ctx);
-        console.log(
-            '------------解析が終了しました--------------' +
-                'AssignExpressionContext:  ' +
-                JSON.stringify(result, null, 2),
-        );
-        return result;
+        return AssignExpressionTypeClass.create(ctx);
     }
 
     visitMethodCallExpression(ctx: MethodCallExpressionContext) {
@@ -190,36 +252,15 @@ export class ExpressionVisitor extends CommonVisitor<ExpressionTypeClass> {
     }
 
     visitBitNotExpression(ctx: BitNotExpressionContext) {
-        console.log('解析を開始します。' + 'BitNotExpressionContext:  ' + ctx.getText());
-        const result = makeBitNotExpressionType(ctx);
-        console.log(
-            '------------解析が終了しました--------------' +
-                'BitNotExpressionContext:  ' +
-                JSON.stringify(result, null, 2),
-        );
-        return result;
+        return BitNotExpressionTypeClass.create(ctx);
     }
 
     visitArth2Expression(ctx: Arth2ExpressionContext) {
-        console.log('解析を開始します。' + 'Arth2ExpressionContext:  ' + ctx.getText());
-        const result = makeArth2ExpressionType(ctx);
-        console.log(
-            '------------解析が終了しました--------------' +
-                'Arth2ExpressionContext:  ' +
-                JSON.stringify(result, null, 2),
-        );
-        return result;
+        return Arth2ExpressionTypeClass.create(ctx);
     }
 
     visitLogAndExpression(ctx: LogAndExpressionContext) {
-        console.log('解析を開始します。' + 'LogAndExpressionContext:  ' + ctx.getText());
-        const result = makeLogAndExpressionType(ctx);
-        console.log(
-            '------------解析が終了しました--------------' +
-                'LogAndExpressionContext:  ' +
-                JSON.stringify(result, null, 2),
-        );
-        return result;
+        return LogAndExpressionTypeClass.create(ctx);
     }
 
     visitCastExpression(ctx: CastExpressionContext) {
@@ -234,47 +275,19 @@ export class ExpressionVisitor extends CommonVisitor<ExpressionTypeClass> {
     }
 
     visitBitAndExpression(ctx: BitAndExpressionContext) {
-        console.log('解析を開始します。' + 'BitAndExpressionContext:  ' + ctx.getText());
-        const result = makeBitAndExpressionType(ctx);
-        console.log(
-            '------------解析が終了しました--------------' +
-                'BitAndExpressionContext:  ' +
-                JSON.stringify(result, null, 2),
-        );
-        return result;
+        return BitAndExpressionTypeClass.create(ctx);
     }
 
     visitCmpExpression(ctx: CmpExpressionContext) {
-        console.log('解析を開始します。' + 'CmpExpressionContext:  ' + ctx.getText());
-        const result = makeCmpExpressionType(ctx);
-        console.log(
-            '------------解析が終了しました--------------' +
-                'CmpExpressionContext:  ' +
-                JSON.stringify(result, null, 2),
-        );
-        return result;
+        return CmpExpressionTypeClass.create(ctx);
     }
 
     visitBitExpression(ctx: BitExpressionContext) {
-        console.log('解析を開始します。' + 'BitExpressionContext:  ' + ctx.getText());
-        const result = makeBitExpressionType(ctx);
-        console.log(
-            '------------解析が終了しました--------------' +
-                'BitExpressionContext:  ' +
-                JSON.stringify(result, null, 2),
-        );
-        return result;
+        return BitExpressionTypeClass.create(ctx);
     }
 
     visitLogOrExpression(ctx: LogOrExpressionContext) {
-        console.log('解析を開始します。' + 'LogOrExpressionContext:  ' + ctx.getText());
-        const result = makeLogOrExpressionType(ctx);
-        console.log(
-            '------------解析が終了しました--------------' +
-                'LogOrExpressionContext:  ' +
-                JSON.stringify(result, null, 2),
-        );
-        return result;
+        return LogOrExpressionTypeClass.create(ctx);
     }
 
     visitCondExpression(ctx: CondExpressionContext) {
@@ -289,58 +302,23 @@ export class ExpressionVisitor extends CommonVisitor<ExpressionTypeClass> {
     }
 
     visitEqualityExpression(ctx: EqualityExpressionContext) {
-        console.log('解析を開始します。' + 'EqualityExpressionContext:  ' + ctx.getText());
-        const result = makeEqualityExpressionType(ctx);
-        console.log(
-            '------------解析が終了しました--------------' +
-                'EqualityExpressionContext:  ' +
-                JSON.stringify(result, null, 2),
-        );
-        return result;
+        return EqualityExpressionTypeClass.create(ctx);
     }
 
     visitPostOpExpression(ctx: PostOpExpressionContext) {
-        console.log('解析を開始します。' + 'PostOpExpressionContext:  ' + ctx.getText());
-        const result = makePostOpExpressionType(ctx);
-        console.log(
-            '------------解析が終了しました--------------' +
-                'PostOpExpressionContext:  ' +
-                JSON.stringify(result, null, 2),
-        );
-        return result;
+        return PostOpExpressionTypeClass.create(ctx);
     }
 
     visitNegExpression(ctx: NegExpressionContext) {
-        console.log('解析を開始します。' + 'NegExpressionContext:  ' + ctx.getText());
-        const result = makeNegExpressionType(ctx);
-        console.log(
-            '------------解析が終了しました--------------' +
-                'NegExpressionContext:  ' +
-                JSON.stringify(result, null, 2),
-        );
-        return result;
+        return NegExpressionTypeClass.create(ctx);
     }
 
     visitPreOpExpression(ctx: PreOpExpressionContext) {
-        console.log('解析を開始します。' + 'PreOpExpressionContext:  ' + ctx.getText());
-        const result = makePreOpExpressionType(ctx);
-        console.log(
-            '------------解析が終了しました--------------' +
-                'PreOpExpressionContext:  ' +
-                JSON.stringify(result, null, 2),
-        );
-        return result;
+        return PreOpExpressionTypeClass.create(ctx);
     }
 
     visitSubExpression(ctx: SubExpressionContext) {
-        console.log('解析を開始します。' + 'SubExpressionContext:  ' + ctx.getText());
-        const result = makeSubExpressionType(ctx);
-        console.log(
-            '------------解析が終了しました--------------' +
-                'SubExpressionContext:  ' +
-                JSON.stringify(result, null, 2),
-        );
-        return result;
+        return SubExpressionTypeClass.create(ctx);
     }
 
     visitInstanceOfExpression(ctx: InstanceOfExpressionContext) {
@@ -355,25 +333,11 @@ export class ExpressionVisitor extends CommonVisitor<ExpressionTypeClass> {
     }
 
     visitParExpression(ctx: ParExpressionContext) {
-        console.log('解析を開始します。' + 'ParExpressionContext:  ' + ctx.getText());
-        const result = makeParExpressionType(ctx);
-        console.log(
-            '------------解析が終了しました--------------' +
-                'ParExpressionContext:  ' +
-                JSON.stringify(result, null, 2),
-        );
-        return result;
+        return ParExpressionTypeClass.create(ctx);
     }
 
     visitBoundExpression(ctx: BoundExpressionContext) {
-        console.log('解析を開始します。' + 'BoundExpressionContext:  ' + ctx.getText());
-        const result = makeBoundExpressionType(ctx);
-        console.log(
-            '------------解析が終了しました--------------' +
-                'BoundExpressionContext:  ' +
-                JSON.stringify(result, null, 2),
-        );
-        return result;
+        return BoundExpressionTypeClass.create(ctx);
     }
 
     visitFilteringExpression(ctx: FilteringExpressionContext) {
@@ -399,14 +363,7 @@ export class ExpressionVisitor extends CommonVisitor<ExpressionTypeClass> {
     }
 
     visitConditionalExpression(ctx: ConditionalExpressionContext) {
-        console.log('解析を開始します。' + 'ConditionalExpressionContext:  ' + ctx.getText());
-        const result = makeConditionalExpressionType(ctx);
-        console.log(
-            '------------解析が終了しました--------------' +
-                'ConditionalExpressionContext:  ' +
-                JSON.stringify(result, null, 2),
-        );
-        return result;
+        return ConditionalExpressionTypeClass.create(ctx);
     }
 
     visitLogicalExpression(ctx: LogicalExpressionContext) {
@@ -453,3 +410,4 @@ export class ExpressionVisitor extends CommonVisitor<ExpressionTypeClass> {
         return result;
     }
 }
+

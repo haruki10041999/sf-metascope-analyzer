@@ -29,15 +29,8 @@ export { isSuperPrimaryType } from './superPrimary';
 export { isIdPrimaryType } from './idPrimary';
 
 export class PrimaryTypeClass extends ContextTypeClass {
-    private value: any | null = null;
-
-    constructor(type: string, value: any | null, errorClasses: ErrorTypeClass[]) {
-        super(type, errorClasses);
-        this.value = value;
-    }
-
-    getValue(): any | null {
-        return this.value;
+    constructor(type: string, value: any | null, errorClasses: Record<string, ErrorTypeClass>) {
+        super(type, value, errorClasses);
     }
 }
 
@@ -110,3 +103,4 @@ export class PrimaryVisitor extends CommonVisitor<PrimaryTypeClass> {
         return result;
     }
 }
+

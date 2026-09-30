@@ -1,31 +1,55 @@
 import { BitNotExpressionContext } from '@apexdevtools/apex-parser';
+import {
+    OperatorExpressionTypeClass,
+    ExpressionTypeClass,
+    ExpressionVisitor,
+    isExpressionTypeAll,
+} from '.';
 
-import { ExpressionType, ExpressionVisitor } from '.';
+import { ErrorTypeClass, CommonTypeClass } from '../commonVisitor';
 
-export type BitNotExpressionType = {
-    type: 'bitNotExpression';
-    expression: {
-        left: ExpressionType;
-        operator: '^';
-        right: ExpressionType;
-    };
-};
-
-export const makeBitNotExpressionType = (ctx: BitNotExpressionContext): BitNotExpressionType => {
-    if (!ctx.expression(0) || !ctx.expression(1)) {
-        throw new Error('値が異常です。BitNotExpressionContext: ' + ctx.getText());
+export class BitNotExpressionTypeClass extends OperatorExpressionTypeClass {
+    private constructor(
+        left: ExpressionTypeClass | null,
+        right: ExpressionTypeClass | null,
+        operator: string | null,
+        errorClasses: Record<string, ErrorTypeClass>,
+    ) {
+        super('bitNotExpression', left, right, operator, errorClasses);
     }
 
-    const left = new ExpressionVisitor().visit(ctx.expression(0));
-    const right = new ExpressionVisitor().visit(ctx.expression(1));
+    static create(ctx: BitNotExpressionContext): BitNotExpressionTypeClass {
+        if (!ctx.expression_list() || ctx.expression_list().length !== 2 || !ctx.CARET()) {
+            throw new Error('値が異常です。BitNotExpressionContext: ' + ctx.getText());
+        }
 
-    return {
-        type: 'bitNotExpression',
-        expression: {
-            left: left,
-            operator: '^',
-            right: right,
-        },
-    };
+        const leftExpressionTypeClass = new ExpressionVisitor().visit(ctx.expression(0));
+        const rightExpressionTypeClass = new ExpressionVisitor().visit(ctx.expression(1));
+
+        let left: ExpressionTypeClass | null = null;
+        let right: ExpressionTypeClass | null = null;
+        const operator: string = '^';
+        const errorTypeClasses: Record<string, ErrorTypeClass> = {};
+
+        if (isExpressionTypeAll(leftExpressionTypeClass)) {
+            left = leftExpressionTypeClass;
+        } else {
+            errorTypeClasses['left'] = leftExpressionTypeClass;
+        }
+
+        if (isExpressionTypeAll(rightExpressionTypeClass)) {
+            right = rightExpressionTypeClass;
+        } else {
+            errorTypeClasses['right'] = rightExpressionTypeClass;
+        }
+
+        return new BitNotExpressionTypeClass(left, right, operator, errorTypeClasses);
+    }
+}
+
+export const isBitNotExpressionType = (
+    target: CommonTypeClass,
+): target is BitNotExpressionTypeClass => {
+    return target instanceof BitNotExpressionTypeClass;
 };
 

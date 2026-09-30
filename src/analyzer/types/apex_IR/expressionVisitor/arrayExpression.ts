@@ -2,10 +2,13 @@ import { ArrayExpressionContext } from '@apexdevtools/apex-parser';
 
 import { ExpressionTypeClass, ExpressionVisitor, isExpressionType } from '.';
 
-import { ErrorTypeClass } from '../commonVisitor';
+import { CommonTypeClass, ErrorTypeClass } from '../commonVisitor';
 
 export class ArrayExpressionTypeClass extends ExpressionTypeClass {
-    private constructor(value: ExpressionTypeClass[], errorClasses: ErrorTypeClass[]) {
+    private constructor(
+        value: ExpressionTypeClass[],
+        errorClasses: Record<string, ErrorTypeClass>,
+    ) {
         super('arrayExpression', value, errorClasses);
     }
 
@@ -15,15 +18,15 @@ export class ArrayExpressionTypeClass extends ExpressionTypeClass {
         }
 
         const value: ExpressionTypeClass[] = [];
-        const errorClasses: ErrorTypeClass[] = [];
+        const errorClasses: Record<string, ErrorTypeClass> = {};
 
-        ctx.expression_list().forEach((expressionCtx) => {
+        ctx.expression_list().forEach((expressionCtx, index) => {
             const expression = new ExpressionVisitor().visit(expressionCtx);
 
             if (isExpressionType(expression)) {
                 value.push(expression);
             } else {
-                errorClasses.push(expression);
+                errorClasses[`value_${index}`] = expression;
             }
         });
 
@@ -32,7 +35,8 @@ export class ArrayExpressionTypeClass extends ExpressionTypeClass {
 }
 
 export const isArrayExpressionType = (
-    target: ArrayExpressionTypeClass,
+    target: CommonTypeClass,
 ): target is ArrayExpressionTypeClass => {
     return target instanceof ArrayExpressionTypeClass;
 };
+

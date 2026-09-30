@@ -1,36 +1,61 @@
 import { VariableDeclaratorContext } from '@apexdevtools/apex-parser';
 
-import { IdType, IdVisitor } from '../idVisitor';
-import { ExpressionType, ExpressionVisitor } from '../expressionVisitor';
+import { VariableTypeClass } from '.';
 
-export type VariableDeclaratorType = {
-    type: 'variableDeclarator';
-    variable: {
-        name: IdType;
-        value?: ExpressionType;
-    };
-};
+import { IdTypeClass, IdVisitor, isIdType } from '../idVisitor';
+import { ExpressionTypeClass, ExpressionVisitor, isExpressionTypeAll } from '../expressionVisitor';
+import { ErrorTypeClass, CommonTypeClass } from '../commonVisitor';
 
-export const makeVariableDeclaratorType = (
-    ctx: VariableDeclaratorContext,
-): VariableDeclaratorType => {
-    if (!ctx.id()) {
-        throw new Error('値が異常です。VariableDeclaratorContext: ' + ctx.getText());
+export class VariableDeclaratorTypeClass extends VariableTypeClass {
+    name: any | null = null;
+
+    private constructor(
+        name: IdTypeClass | null,
+        value: ExpressionTypeClass | null,
+        errorTypeClasses: Record<string, ErrorTypeClass>,
+    ) {
+        super('variableDeclarator', value, errorTypeClasses);
+        this.name = name;
     }
 
-    const name = new IdVisitor().visit(ctx.id());
+    static create(ctx: VariableDeclaratorContext) {
+        if (!ctx.id() || !ctx.ASSIGN() || !ctx.expression()) {
+            throw new Error('値が異常です。VariableDeclaratorContext: ' + ctx.getText());
+        }
 
-    const variableDeclaratorType: VariableDeclaratorType = {
-        type: 'variableDeclarator',
-        variable: {
-            name: name,
-        },
-    };
+        let name: IdTypeClass | null = null;
+        let value: ExpressionTypeClass | null = null;
+        const errorTypeClasses: Record<string, ErrorTypeClass> = {};
 
-    if (ctx.ASSIGN() && ctx.expression()) {
-        const value = new ExpressionVisitor().visit(ctx.expression());
-        variableDeclaratorType.variable.value = value;
+        const idTypeClass = new IdVisitor().visit(ctx.id());
+        const expressionTypeClass = new ExpressionVisitor().visit(ctx.expression());
+
+        if (isIdType(idTypeClass)) {
+            name = idTypeClass;
+        } else {
+            errorTypeClasses['name'] = idTypeClass;
+        }
+
+        if (isExpressionTypeAll(expressionTypeClass)) {
+            value = expressionTypeClass;
+        } else {
+            errorTypeClasses['value'] = expressionTypeClass;
+        }
+
+        return new VariableDeclaratorTypeClass(name, value, errorTypeClasses);
     }
 
-    return variableDeclaratorType;
+    getName(): any | null {
+        return this.name;
+    }
+
+    isNameNull(): boolean {
+        return this.name === null;
+    }
+}
+
+export const isVariableDeclaratorType = (
+    target: CommonTypeClass,
+): target is VariableDeclaratorTypeClass => {
+    return target instanceof VariableDeclaratorTypeClass;
 };

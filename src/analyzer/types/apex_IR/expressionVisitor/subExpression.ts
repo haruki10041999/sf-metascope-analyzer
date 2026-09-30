@@ -1,22 +1,38 @@
 import { SubExpressionContext } from '@apexdevtools/apex-parser';
 
-import { ExpressionType, ExpressionVisitor } from '.';
+import { ExpressionTypeClass, ExpressionVisitor, isExpressionTypeAll } from '.';
 
-export type SubExpressionType = {
-    type: 'subExpression';
-    expression: ExpressionType;
-};
+import { CommonTypeClass, ErrorTypeClass } from '../commonVisitor';
 
-export const makeSubExpressionType = (ctx: SubExpressionContext): SubExpressionType => {
-    if (!ctx.expression()) {
-        throw new Error('値が異常です。SubExpressionContext: ' + ctx.getText());
+export class SubExpressionTypeClass extends ExpressionTypeClass {
+    private constructor(
+        value: ExpressionTypeClass | null,
+        errorClasses: Record<string, ErrorTypeClass>,
+    ) {
+        super('subExpression', value, errorClasses);
     }
 
-    const expression = new ExpressionVisitor().visit(ctx.expression());
+    static create(ctx: SubExpressionContext): SubExpressionTypeClass {
+        if (!ctx) {
+            throw new Error('値が異常です。SubExpressionContext: ' + ctx);
+        }
 
-    return {
-        type: 'subExpression',
-        expression: expression,
-    };
+        const expressionTypeClass = new ExpressionVisitor().visit(ctx.expression());
+
+        let value: ExpressionTypeClass | null = null;
+        let errorTypeClasses: Record<string, ErrorTypeClass> = {};
+
+        if (isExpressionTypeAll(expressionTypeClass)) {
+            value = expressionTypeClass;
+        } else {
+            errorTypeClasses['value'] = expressionTypeClass;
+        }
+
+        return new SubExpressionTypeClass(value, errorTypeClasses);
+    }
+}
+
+export const isSubExpressionType = (target: CommonTypeClass): target is SubExpressionTypeClass => {
+    return target instanceof SubExpressionTypeClass;
 };
 

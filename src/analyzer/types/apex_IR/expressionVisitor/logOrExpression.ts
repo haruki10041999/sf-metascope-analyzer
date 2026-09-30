@@ -1,31 +1,55 @@
 import { LogOrExpressionContext } from '@apexdevtools/apex-parser';
 
-import { ExpressionType, ExpressionVisitor } from '.';
+import {
+    OperatorExpressionTypeClass,
+    ExpressionTypeClass,
+    ExpressionVisitor,
+    isExpressionTypeAll,
+} from '.';
 
-export type LogOrExpressionType = {
-    type: 'logOrExpression';
-    expression: {
-        left: ExpressionType;
-        operator: '||';
-        right: ExpressionType;
-    };
-};
+import { ErrorTypeClass, CommonTypeClass } from '../commonVisitor';
 
-export const makeLogOrExpressionType = (ctx: LogOrExpressionContext): LogOrExpressionType => {
-    if (!ctx.expression(0) || !ctx.expression(1)) {
-        throw new Error('値が異常です。LogOrExpressionContext: ' + ctx.getText());
+export class LogOrExpressionTypeClass extends OperatorExpressionTypeClass {
+    private constructor(
+        left: ExpressionTypeClass | null,
+        right: ExpressionTypeClass | null,
+        operator: string | null,
+        errorClasses: Record<string, ErrorTypeClass>,
+    ) {
+        super('logOrExpression', left, right, operator, errorClasses);
     }
 
-    const left = new ExpressionVisitor().visit(ctx.expression(0));
-    const right = new ExpressionVisitor().visit(ctx.expression(1));
+    static create(ctx: LogOrExpressionContext): LogOrExpressionTypeClass {
+        if (!ctx.expression_list() || ctx.expression_list().length !== 2 || !ctx.OR()) {
+            throw new Error('値が異常です。LogOrExpressionContext: ' + ctx.getText());
+        }
 
-    return {
-        type: 'logOrExpression',
-        expression: {
-            left: left,
-            operator: '||',
-            right: right,
-        },
-    };
+        const leftExpressionTypeClass = new ExpressionVisitor().visit(ctx.expression(0));
+        const rightExpressionTypeClass = new ExpressionVisitor().visit(ctx.expression(1));
+
+        let left: ExpressionTypeClass | null = null;
+        let right: ExpressionTypeClass | null = null;
+        const operator = '||';
+        const errorTypeClasses: Record<string, ErrorTypeClass> = {};
+
+        if (isExpressionTypeAll(leftExpressionTypeClass)) {
+            left = leftExpressionTypeClass;
+        } else {
+            errorTypeClasses['left'] = leftExpressionTypeClass;
+        }
+        if (isExpressionTypeAll(rightExpressionTypeClass)) {
+            right = rightExpressionTypeClass;
+        } else {
+            errorTypeClasses['right'] = rightExpressionTypeClass;
+        }
+
+        return new LogOrExpressionTypeClass(left, right, operator, errorTypeClasses);
+    }
+}
+
+export const isLogOrExpressionType = (
+    target: CommonTypeClass,
+): target is LogOrExpressionTypeClass => {
+    return target instanceof LogOrExpressionTypeClass;
 };
 

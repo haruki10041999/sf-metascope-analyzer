@@ -1,20 +1,38 @@
 import { TypeArgumentsContext } from '@apexdevtools/apex-parser';
 
-import { ListType, ListVisitor } from '../listVisitor';
+import { ArgumentsTypeClass } from '.';
 
-export type TypeArgumentsType = {
-    type: 'typeArguments';
-    args: ListType;
-};
+import { TypeListTypeClass, ListVisitor, isTypeListType } from '../listVisitor';
 
-export const makeTypeArgumentsType = (ctx: TypeArgumentsContext): TypeArgumentsType => {
-    if (!ctx.typeList() && (!ctx.LT() || !ctx.GT())) {
-        throw new Error('値が異常です。TypeArgumentsContext: ' + ctx.getText());
+import { ErrorTypeClass, CommonTypeClass, isErrorType } from '../commonVisitor';
+
+export class TypeArgumentsTypeClass extends ArgumentsTypeClass {
+    private constructor(
+        value: TypeListTypeClass | null,
+        errorClasses: Record<string, ErrorTypeClass>,
+    ) {
+        super('typeArguments', value, errorClasses);
     }
 
-    const args = new ListVisitor().visit(ctx.typeList());
-    return {
-        type: 'typeArguments',
-        args,
-    };
+    static create(ctx: TypeArgumentsContext): TypeArgumentsTypeClass {
+        if (!ctx.typeList() && (!ctx.LT() || !ctx.GT())) {
+            throw new Error('値が異常です。TypeArgumentsContext: ' + ctx.getText());
+        }
+
+        let value: TypeListTypeClass | null = null;
+        const errorClasses: Record<string, ErrorTypeClass> = {};
+
+        const listTypeClass = new ListVisitor().visit(ctx.typeList());
+        if (isTypeListType(listTypeClass)) {
+            value = listTypeClass;
+        } else if (isErrorType(listTypeClass)) {
+            errorClasses['value'] = listTypeClass;
+        }
+
+        return new TypeArgumentsTypeClass(value, errorClasses);
+    }
+}
+
+export const isTypeArgumentsType = (target: CommonTypeClass): target is TypeArgumentsTypeClass => {
+    return target instanceof TypeArgumentsTypeClass;
 };

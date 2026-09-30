@@ -5,8 +5,8 @@ import { IdTypeClass, IdVisitor, isIdType } from '.';
 import { CommonTypeClass, ErrorTypeClass } from '../commonVisitor';
 
 export class SoqlIdTypeClass extends IdTypeClass {
-    private constructor(id: IdTypeClass | null, errorClasses: ErrorTypeClass[]) {
-        super('soqlId', id, errorClasses);
+    private constructor(value: IdTypeClass | null, errorClasses: Record<string, ErrorTypeClass>) {
+        super('soqlId', value, errorClasses);
     }
 
     static create(ctx: SoqlIdContext): SoqlIdTypeClass {
@@ -17,11 +17,11 @@ export class SoqlIdTypeClass extends IdTypeClass {
         const idTypeClass = new IdVisitor().visit(ctx);
 
         let id: IdTypeClass | null = null;
-        const errorClasses: ErrorTypeClass[] = [];
+        const errorClasses: Record<string, ErrorTypeClass> = {};
         if (isIdType(idTypeClass)) {
             id = idTypeClass;
         } else {
-            errorClasses.push(idTypeClass);
+            errorClasses['value'] = idTypeClass;
         }
 
         return new SoqlIdTypeClass(id, errorClasses);

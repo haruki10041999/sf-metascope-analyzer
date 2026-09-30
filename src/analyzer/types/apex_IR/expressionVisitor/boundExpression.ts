@@ -1,19 +1,39 @@
 import { BoundExpressionContext } from '@apexdevtools/apex-parser';
 
-import { ExpressionType, ExpressionVisitor } from '.';
+import { ExpressionTypeClass, ExpressionVisitor, isExpressionTypeAll } from '.';
 
-export type BoundExpressionType = {
-    type: 'boundExpression';
-    expression: ExpressionType;
-};
+import { CommonTypeClass, ErrorTypeClass } from '../commonVisitor';
 
-export function makeBoundExpressionType(ctx: BoundExpressionContext): BoundExpressionType {
-    if (!ctx.expression()) {
-        throw new Error('値が異常です。BoundExpressionContext: ' + ctx.getText());
+export class BoundExpressionTypeClass extends ExpressionTypeClass {
+    private constructor(
+        value: ExpressionTypeClass | null,
+        errorClasses: Record<string, ErrorTypeClass>,
+    ) {
+        super('boundExpression', value, errorClasses);
     }
 
-    return {
-        type: 'boundExpression',
-        expression: new ExpressionVisitor().visit(ctx.expression()),
-    };
+    static create(ctx: BoundExpressionContext): BoundExpressionTypeClass {
+        if (!ctx) {
+            throw new Error('値が異常です。BoundExpressionContext: ' + ctx);
+        }
+
+        const expressionTypeClass = new ExpressionVisitor().visit(ctx.expression());
+
+        let value: ExpressionTypeClass | null = null;
+        let errorTypeClasses: Record<string, ErrorTypeClass> = {};
+
+        if (isExpressionTypeAll(expressionTypeClass)) {
+            value = expressionTypeClass;
+        } else {
+            errorTypeClasses['value'] = expressionTypeClass;
+        }
+
+        return new BoundExpressionTypeClass(value, errorTypeClasses);
+    }
 }
+
+export const isBoundExpressionType = (
+    target: CommonTypeClass,
+): target is BoundExpressionTypeClass => {
+    return target instanceof BoundExpressionTypeClass;
+};

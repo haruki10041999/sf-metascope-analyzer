@@ -7,7 +7,7 @@ import { PrimaryTypeClass } from '.';
 import { CommonTypeClass, ErrorTypeClass } from '../commonVisitor';
 
 export class IdPrimaryTypeClass extends PrimaryTypeClass {
-    private constructor(value: IdTypeClass | null, errorClasses: ErrorTypeClass[]) {
+    private constructor(value: IdTypeClass | null, errorClasses: Record<string, ErrorTypeClass>) {
         super('idPrimary', value, errorClasses);
     }
 
@@ -17,12 +17,12 @@ export class IdPrimaryTypeClass extends PrimaryTypeClass {
         }
 
         let value: IdTypeClass | null = null;
-        const errorClasses: ErrorTypeClass[] = [];
+        const errorClasses: Record<string, ErrorTypeClass> = {};
         const idTypeClass = new IdVisitor().visit(ctx.id());
         if (isIdType(idTypeClass)) {
             value = idTypeClass;
         } else {
-            errorClasses.push(idTypeClass);
+            errorClasses['value'] = idTypeClass;
         }
 
         return new IdPrimaryTypeClass(value, errorClasses);
@@ -32,3 +32,4 @@ export class IdPrimaryTypeClass extends PrimaryTypeClass {
 export const isIdPrimaryType = (target: CommonTypeClass): target is IdPrimaryTypeClass => {
     return target instanceof IdPrimaryTypeClass;
 };
+

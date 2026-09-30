@@ -41,20 +41,34 @@ export class ErrorTypeClass extends CommonTypeClass {
     }
 }
 
-export const isErrorTypeClass = (target: CommonTypeClass): target is ErrorTypeClass => {
+export const isErrorType = (target: CommonTypeClass): target is ErrorTypeClass => {
     return target instanceof ErrorTypeClass;
 };
 
 export class ContextTypeClass extends CommonTypeClass {
-    private errorClasses: ErrorTypeClass[] = [];
+    private value: any | null = null;
+    private errorClasses: Record<string, ErrorTypeClass> = {};
 
-    constructor(type: string, errorClasses: ErrorTypeClass[]) {
+    constructor(type: string, value: any | null, errorClasses: Record<string, ErrorTypeClass>) {
         super(type);
+        this.value = value;
         this.errorClasses = errorClasses;
     }
 
-    getErrorClasses(): ErrorTypeClass[] {
+    getErrorClassesAll(): Record<string, ErrorTypeClass> {
         return this.errorClasses;
+    }
+
+    hasErrorClasses(): boolean {
+        return Object.keys(this.errorClasses).length > 0;
+    }
+
+    getValue(): any | null {
+        return this.value;
+    }
+
+    isValueNull(): boolean {
+        return this.value === null;
     }
 }
 

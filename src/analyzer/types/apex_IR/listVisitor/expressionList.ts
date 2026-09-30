@@ -1,23 +1,43 @@
 import { ExpressionListContext } from '@apexdevtools/apex-parser';
 
-import { ExpressionType, ExpressionVisitor } from '../expressionVisitor';
+import { ListTypeClass } from '.';
 
-export type ExpressionListType = {
-    type: 'expressionList';
-    list: ExpressionType[];
-};
+import { ExpressionTypeClass, ExpressionVisitor, isExpressionTypeAll } from '../expressionVisitor';
 
-export const makeExpressionListType = (ctx: ExpressionListContext): ExpressionListType => {
-    if (!ctx.expression_list() || ctx.expression_list().length === 0) {
-        throw new Error('値が異常です。ExpressionListContext: ' + ctx.getText());
+import { ErrorTypeClass, CommonTypeClass } from '../commonVisitor';
+
+export class ExpressionListTypeClass extends ListTypeClass {
+    private constructor(
+        value: ExpressionTypeClass[],
+        errorClasses: Record<string, ErrorTypeClass>,
+    ) {
+        super('expressionList', value, errorClasses);
     }
 
-    const list = ctx.expression_list().map((expressionCtx) => {
-        const expression = new ExpressionVisitor().visit(expressionCtx);
-        return expression;
-    });
-    return {
-        type: 'expressionList',
-        list: list,
-    };
+    static create(ctx: ExpressionListContext): ExpressionListTypeClass {
+        if (!ctx.expression_list() || ctx.expression_list().length === 0) {
+            throw new Error('値が異常です。ExpressionListContext: ' + ctx.getText());
+        }
+
+        const value: ExpressionTypeClass[] = [];
+        const errorClasses: Record<string, ErrorTypeClass> = {};
+
+        ctx.expression_list().forEach((expressionCtx, index) => {
+            const expressionTypeClass = new ExpressionVisitor().visit(expressionCtx);
+
+            if (isExpressionTypeAll(expressionTypeClass)) {
+                value.push(expressionTypeClass);
+            } else {
+                errorClasses[`value_${index}`] = expressionTypeClass;
+            }
+        });
+
+        return new ExpressionListTypeClass(value, errorClasses);
+    }
+}
+
+export const isExpressionListType = (
+    target: CommonTypeClass,
+): target is ExpressionListTypeClass => {
+    return target instanceof ExpressionListTypeClass;
 };

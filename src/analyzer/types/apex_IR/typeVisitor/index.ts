@@ -5,22 +5,16 @@ import {
 } from '@apexdevtools/apex-parser';
 
 import { ArraySubscriptsTypeClass } from './arraySubscripts';
-import { TypeRefType, makeTypeRefType } from './typeRef';
+import { TypeRefTypeClass } from './typeRef';
 
 import { CommonTypeClass, ContextTypeClass, CommonVisitor, ErrorTypeClass } from '../commonVisitor';
 
-export { isArraySubscriptsTypeClass } from './arraySubscripts';
+export { isArraySubscriptsType, ArraySubscriptsTypeClass } from './arraySubscripts';
+export { isTypeRefType, TypeRefTypeClass } from './typeRef';
 
 export class TypeTypeClass extends ContextTypeClass {
-    private variantType: any | null = null;
-
-    constructor(type: string, variantType: any | null, errorClasses: ErrorTypeClass[]) {
-        super(type, errorClasses);
-        this.variantType = variantType;
-    }
-
-    getVariantType(): any | null {
-        return this.variantType;
+    constructor(type: string, value: any | null, errorClasses: Record<string, ErrorTypeClass>) {
+        super(type, value, errorClasses);
     }
 }
 
@@ -34,13 +28,6 @@ export class TypeVisitor extends CommonVisitor<TypeTypeClass> {
     }
 
     visitTypeRef(ctx: TypeRefContext) {
-        console.log('解析を開始します。' + 'TypeRefContext:  ' + ctx.getText());
-        const result = makeTypeRefType(ctx);
-        console.log(
-            '------------解析が終了しました--------------' +
-                'TypeRefContext:  ' +
-                JSON.stringify(result, null, 2),
-        );
-        return result;
+        return TypeRefTypeClass.create(ctx);
     }
 }

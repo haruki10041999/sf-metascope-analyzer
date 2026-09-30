@@ -8,45 +8,38 @@ import {
     DataCategoryNameContext,
 } from '@apexdevtools/apex-parser';
 
-import { makeQualifiedNameType, QualifiedNameType } from './qualifiedName';
-import { makeTypeNameType, TypeNameType } from './typeName';
+import { QualifiedNameTypeClass } from './qualifiedName';
+import { TypeNameTypeClass } from './typeName';
 import { makeCreatedNameType, CreatedNameType } from './createName';
-import { makeFieldNameType, FieldNameType } from './fieldName';
-import { makeDateFieldNameType, DateFieldNameType } from './dateFieldName';
-import { makeDataCategoryNameType, DataCategoryNameType } from './dataCategoryName';
+import { FieldNameTypeClass } from './fieldName';
+import { DateFieldNameTypeClass } from './dateFieldName';
+import { DataCategoryNameTypeClass } from './dataCategoryName';
 
-import { ContextTypeClass, CommonVisitor } from '../commonVisitor';
+import { ContextTypeClass, ErrorTypeClass, CommonTypeClass, CommonVisitor } from '../commonVisitor';
 
-export type NameType =
-    | QualifiedNameType
-    | TypeNameType
-    | CreatedNameType
-    | FieldNameType
-    | DateFieldNameType
-    | DataCategoryNameType
-    | ErrorType;
+export { isQualifiedNameType, QualifiedNameTypeClass } from './qualifiedName';
+export { isTypeNameType, TypeNameTypeClass } from './typeName';
+export { isFieldNameType, FieldNameTypeClass } from './fieldName';
+export { isDateFieldNameType, DateFieldNameTypeClass } from './dateFieldName';
+export { isDataCategoryNameType, DataCategoryNameTypeClass } from './dataCategoryName';
 
-export class NameVisitor extends CommonVisitor<NameType> {
+export class NameTypeClass extends ContextTypeClass {
+    constructor(type: string, value: any | null, errorClasses: Record<string, ErrorTypeClass>) {
+        super(type, value, errorClasses);
+    }
+}
+
+export const isNameTypeAll = (target: CommonTypeClass): target is NameTypeClass => {
+    return target instanceof NameTypeClass;
+};
+
+export class NameVisitor extends CommonVisitor<NameTypeClass> {
     visitQualifiedName(ctx: QualifiedNameContext) {
-        console.log('解析を開始します。' + 'QualifiedNameContext:  ' + ctx.getText());
-        const result = makeQualifiedNameType(ctx);
-        console.log(
-            '------------解析が終了しました--------------' +
-                'QualifiedNameContext:  ' +
-                JSON.stringify(result, null, 2),
-        );
-        return result;
+        return QualifiedNameTypeClass.create(ctx);
     }
 
     visitTypeName(ctx: TypeNameContext) {
-        console.log('解析を開始します。' + 'TypeNameContext:  ' + ctx.getText());
-        const result = makeTypeNameType(ctx);
-        console.log(
-            '------------解析が終了しました--------------' +
-                'TypeNameContext:  ' +
-                JSON.stringify(result, null, 2),
-        );
-        return result;
+        return TypeNameTypeClass.create(ctx);
     }
 
     visitCreatedName(ctx: CreatedNameContext) {
@@ -61,35 +54,14 @@ export class NameVisitor extends CommonVisitor<NameType> {
     }
 
     visitFieldName(ctx: FieldNameContext) {
-        console.log('解析を開始します。' + 'FieldNameContext:  ' + ctx.getText());
-        const result = makeFieldNameType(ctx);
-        console.log(
-            '------------解析が終了しました--------------' +
-                'FieldNameContext:  ' +
-                JSON.stringify(result, null, 2),
-        );
-        return result;
+        return FieldNameTypeClass.create(ctx);
     }
 
     visitDateFieldName(ctx: DateFieldNameContext) {
-        console.log('解析を開始します。' + 'DateFieldNameContext:  ' + ctx.getText());
-        const result = makeDateFieldNameType(ctx);
-        console.log(
-            '------------解析が終了しました--------------' +
-                'DateFieldNameContext:  ' +
-                JSON.stringify(result, null, 2),
-        );
-        return result;
+        return DateFieldNameTypeClass.create(ctx);
     }
 
     visitDataCategoryName(ctx: DataCategoryNameContext) {
-        console.log('解析を開始します。' + 'DataCategoryNameContext:  ' + ctx.getText());
-        const result = makeDataCategoryNameType(ctx);
-        console.log(
-            '------------解析が終了しました--------------' +
-                'DataCategoryNameContext:  ' +
-                JSON.stringify(result, null, 2),
-        );
-        return result;
+        return DataCategoryNameTypeClass.create(ctx);
     }
 }

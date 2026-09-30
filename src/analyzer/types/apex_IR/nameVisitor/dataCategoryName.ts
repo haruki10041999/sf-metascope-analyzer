@@ -1,24 +1,39 @@
 import { DataCategoryNameContext } from '@apexdevtools/apex-parser';
 
-import { IdType, IdVisitor } from '../idVisitor';
+import { NameTypeClass } from '../nameVisitor';
 
-export type DataCategoryNameType = {
-    type: 'DataCategoryName';
-    name: IdType[];
-};
+import { NormalIdTypeClass, isNormalIdType, IdVisitor } from '../idVisitor';
 
-export function makeDataCategoryNameType(ctx: DataCategoryNameContext): DataCategoryNameType {
-    if (!ctx.soqlId_list() || ctx.soqlId_list().length === 0) {
-        throw new Error('値が異常です。DataCategoryNameContext: ' + ctx.getText());
+import { ErrorTypeClass, CommonTypeClass } from '../commonVisitor';
+
+export class DataCategoryNameTypeClass extends NameTypeClass {
+    private constructor(value: NormalIdTypeClass[], errorClasses: Record<string, ErrorTypeClass>) {
+        super('dataCategoryName', value, errorClasses);
     }
 
-    const names = ctx.soqlId_list().map((idCtx) => {
-        const name = new IdVisitor().visit(idCtx);
-        return name;
-    });
+    static create(ctx: DataCategoryNameContext): DataCategoryNameTypeClass {
+        if (!ctx.soqlId_list() || ctx.soqlId_list().length === 0) {
+            throw new Error('値が異常です。DataCategoryNameContext: ' + ctx.getText());
+        }
 
-    return {
-        type: 'DataCategoryName',
-        name: names,
-    };
+        const value: NormalIdTypeClass[] = [];
+        const errorClasses: Record<string, ErrorTypeClass> = {};
+
+        ctx.soqlId_list().forEach((idCtx, index) => {
+            const normalIdTypeClass = new IdVisitor().visit(idCtx);
+            if (isNormalIdType(normalIdTypeClass)) {
+                value.push(normalIdTypeClass);
+            } else {
+                errorClasses[`value_${index}`] = normalIdTypeClass;
+            }
+        });
+
+        return new DataCategoryNameTypeClass(value, errorClasses);
+    }
 }
+
+export const isDataCategoryNameType = (
+    target: CommonTypeClass,
+): target is DataCategoryNameTypeClass => {
+    return target instanceof DataCategoryNameTypeClass;
+};

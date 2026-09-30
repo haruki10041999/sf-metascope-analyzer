@@ -5,7 +5,7 @@ import { CommonTypeClass } from '../commonVisitor';
 
 export class SuperPrimaryTypeClass extends PrimaryTypeClass {
     private constructor(value: string) {
-        super('superPrimary', value, []);
+        super('superPrimary', value, {});
     }
 
     static create(ctx: SuperPrimaryContext): SuperPrimaryTypeClass {
@@ -20,3 +20,4 @@ export class SuperPrimaryTypeClass extends PrimaryTypeClass {
 export const isSuperPrimaryType = (target: CommonTypeClass): target is SuperPrimaryTypeClass => {
     return target instanceof SuperPrimaryTypeClass;
 };
+

@@ -5,8 +5,8 @@ import { IdTypeClass } from '.';
 import { CommonTypeClass } from '../commonVisitor';
 
 export class AnyIdTypeClass extends IdTypeClass {
-    private constructor(id: string) {
-        super('id', id, []);
+    private constructor(value: string) {
+        super('anyId', value, {});
     }
 
     static create(ctx: AnyIdContext): AnyIdTypeClass {

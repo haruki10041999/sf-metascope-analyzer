@@ -1,52 +1,64 @@
 import { TypeNameContext } from '@apexdevtools/apex-parser';
 
-import { ArgumentsType, ArgumentsVisitor } from '../argumentsVisitor';
-import { IdType, IdVisitor } from '../idVisitor';
+import { NameTypeClass } from '.';
 
-export type TypeNameType = {
-    type: 'typeName';
-    name: { type: 'list' | 'set' | 'map'; generic?: ArgumentsType } | IdType;
-};
+import { TypeArgumentsTypeClass, ArgumentsVisitor, isTypeArgumentsType } from '../argumentsVisitor';
+import { NormalIdTypeClass, IdVisitor, isNormalIdType } from '../idVisitor';
 
-export const makeTypeNameType = (ctx: TypeNameContext): TypeNameType => {
-    if ((ctx.LIST() || ctx.SET() || ctx.MAP()) && ctx.typeArguments()) {
-        const generic = new ArgumentsVisitor().visit(ctx.typeArguments());
-        if (ctx.LIST()) {
-            return {
-                type: 'typeName',
-                name: {
-                    type: 'list',
-                    generic,
-                },
-            };
-        }
-        if (ctx.SET()) {
-            return {
-                type: 'typeName',
-                name: {
-                    type: 'set',
-                    generic,
-                },
-            };
-        }
-        if (ctx.MAP()) {
-            return {
-                type: 'typeName',
-                name: {
-                    type: 'map',
-                    generic,
-                },
-            };
-        }
+import { ErrorTypeClass, CommonTypeClass } from '../commonVisitor';
+
+export class TypeNameTypeClass extends NameTypeClass {
+    private generic: TypeArgumentsTypeClass | null;
+
+    private constructor(
+        value: NormalIdTypeClass | 'list' | 'set' | 'map' | null,
+        generic: TypeArgumentsTypeClass | null,
+        errorClasses: Record<string, ErrorTypeClass>,
+    ) {
+        super('typeName', value, errorClasses);
+        this.generic = generic;
     }
 
-    if (ctx.id()) {
-        const type = new IdVisitor().visit(ctx.id());
-        return {
-            type: 'typeName',
-            name: type,
-        };
+    static create(ctx: TypeNameContext): TypeNameTypeClass {
+        if (!ctx.LIST() && !ctx.SET() && !ctx.MAP() && ctx.typeArguments() && !ctx.id()) {
+            throw new Error('値が異常です。TypeNameContext: ' + ctx.getText());
+        }
+
+        let value: NormalIdTypeClass | 'list' | 'set' | 'map' | null = null;
+        let generic: TypeArgumentsTypeClass | null = null;
+        const errorClasses: Record<string, ErrorTypeClass> = {};
+
+        if (ctx.LIST() || ctx.SET() || ctx.MAP()) {
+            value = ctx.LIST() ? 'list' : ctx.SET() ? 'set' : 'map';
+            const argumentsTypeClass = new ArgumentsVisitor().visit(ctx.typeArguments());
+            if (isTypeArgumentsType(argumentsTypeClass)) {
+                generic = argumentsTypeClass;
+            } else {
+                errorClasses['generic'] = argumentsTypeClass;
+            }
+        }
+
+        if (ctx.id()) {
+            const idTypeClass = new IdVisitor().visit(ctx.id());
+            if (isNormalIdType(idTypeClass)) {
+                value = idTypeClass;
+            } else {
+                errorClasses['value'] = idTypeClass;
+            }
+        }
+
+        return new TypeNameTypeClass(value, generic, errorClasses);
     }
 
-    throw new Error('値が異常です。TypeNameContext: ' + ctx.getText());
+    getGeneric(): TypeArgumentsTypeClass | null {
+        return this.generic;
+    }
+
+    isGenericNull(): boolean {
+        return this.generic === null;
+    }
+}
+
+export const isTypeNameType = (target: CommonTypeClass): target is TypeNameTypeClass => {
+    return target instanceof TypeNameTypeClass;
 };

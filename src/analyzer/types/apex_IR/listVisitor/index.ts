@@ -1,5 +1,4 @@
 import {
-    ApexParserBaseVisitor,
     ExpressionListContext,
     FieldNameListContext,
     FormalParameterListContext,
@@ -16,8 +15,8 @@ import {
     FieldSpecListContext,
 } from '@apexdevtools/apex-parser';
 
-import { TypeListType, makeTypeListType } from './typeList';
-import { ExpressionListType, makeExpressionListType } from './expressionList';
+import { TypeListTypeClass } from './typeList';
+import { ExpressionListTypeClass } from './expressionList';
 import { FieldNameListType, makeFieldNameListType } from './fieldNameList';
 import { FormalParameterListType, makeFormalParameterListType } from './formalParameterList';
 import { ValueListType, makeValueListType } from './valueList';
@@ -33,16 +32,12 @@ import { FieldSpecListType, makeFieldSpecListType } from './fieldSpecList';
 
 import { CommonTypeClass, ContextTypeClass, ErrorTypeClass, CommonVisitor } from '../commonVisitor';
 
+export { isTypeListType, TypeListTypeClass } from './typeList';
+export { isExpressionListType, ExpressionListTypeClass } from './expressionList';
+
 export class ListTypeClass extends ContextTypeClass {
-    private list: any | null = null;
-
-    constructor(type: string, list: any | null, errorClasses: ErrorTypeClass[]) {
-        super(type, errorClasses);
-        this.list = list;
-    }
-
-    getList(): any | null {
-        return this.list;
+    constructor(type: string, value: any | null, errorClasses: Record<string, ErrorTypeClass>) {
+        super(type, value, errorClasses);
     }
 }
 
@@ -50,43 +45,12 @@ export const isListTypeAll = (target: CommonTypeClass): target is ListTypeClass 
     return target instanceof ListTypeClass;
 };
 
-export type ListType =
-    | TypeListType
-    | ExpressionListType
-    | FormalParameterListType
-    | ValueListType
-    | FieldNameListType
-    | UpdateListType
-    | NetworkListType
-    | FromNameListType
-    | FieldGroupByListType
-    | FieldOrderListType
-    | SelectListType
-    | SubFieldListType
-    | FieldListType
-    | FieldSpecListType
-    | ErrorType;
-
-export class ListVisitor extends CommonVisitor<ListType> {
+export class ListVisitor extends CommonVisitor<ListTypeClass> {
     visitTypeList(ctx: TypeListContext) {
-        console.log('解析を開始します。' + 'TypeListContext:  ' + ctx.getText());
-        const result = makeTypeListType(ctx);
-        console.log(
-            '------------解析が終了しました--------------' +
-                'TypeListContext:  ' +
-                JSON.stringify(result, null, 2),
-        );
-        return result;
+        return TypeListTypeClass.create(ctx);
     }
     visitExpressionList(ctx: ExpressionListContext) {
-        console.log('解析を開始します。' + 'ExpressionListContext:  ' + ctx.getText());
-        const result = makeExpressionListType(ctx);
-        console.log(
-            '------------解析が終了しました--------------' +
-                'ExpressionListContext:  ' +
-                JSON.stringify(result, null, 2),
-        );
-        return result;
+        return ExpressionListTypeClass.create(ctx);
     }
 
     visitFormalParameterList(ctx: FormalParameterListContext) {

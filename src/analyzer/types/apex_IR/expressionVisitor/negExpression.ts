@@ -1,38 +1,52 @@
 import { NegExpressionContext } from '@apexdevtools/apex-parser';
 
-import { ExpressionType, ExpressionVisitor } from '.';
+import {
+    ExpressionTypeClass,
+    ExpressionVisitor,
+    isExpressionTypeAll,
+    SingleOperatorExpressionTypeClass,
+} from '.';
 
-export type NegExpressionType = {
-    type: 'negExpression';
-    expression: {
-        operator: '~' | '!';
-        value: ExpressionType;
-    };
-};
+import { ErrorTypeClass, CommonTypeClass } from '../commonVisitor';
 
-export const makeNegExpressionType = (ctx: NegExpressionContext): NegExpressionType => {
-    const value = new ExpressionVisitor().visit(ctx.expression());
-
-    if (ctx.TILDE()) {
-        return {
-            type: 'negExpression',
-            expression: {
-                operator: '~',
-                value: value,
-            },
-        };
+export class NegExpressionTypeClass extends SingleOperatorExpressionTypeClass {
+    private constructor(
+        literal: ExpressionTypeClass | null,
+        operator: string | null,
+        errorClasses: Record<string, ErrorTypeClass>,
+    ) {
+        super('negExpression', literal, operator, errorClasses);
     }
 
-    if (ctx.BANG()) {
-        return {
-            type: 'negExpression',
-            expression: {
-                operator: '!',
-                value: value,
-            },
-        };
-    }
+    static create(ctx: NegExpressionContext): NegExpressionTypeClass {
+        if (!ctx.expression() || (!ctx.TILDE() && !ctx.BANG())) {
+            throw new Error('値が異常です。NegExpressionContext: ' + ctx.getText());
+        }
 
-    throw new Error('値が異常です。NegExpressionContext: ' + ctx.getText());
+        const expressionTypeClass = new ExpressionVisitor().visit(ctx.expression());
+
+        let literal: ExpressionTypeClass | null = null;
+        let operator: string | null = null;
+        const errorTypeClasses: Record<string, ErrorTypeClass> = {};
+
+        if (isExpressionTypeAll(expressionTypeClass)) {
+            literal = expressionTypeClass;
+        } else {
+            errorTypeClasses['literal'] = expressionTypeClass;
+        }
+
+        if (ctx.TILDE()) {
+            operator = '~';
+        }
+        if (ctx.BANG()) {
+            operator = '!';
+        }
+
+        return new NegExpressionTypeClass(literal, operator, errorTypeClasses);
+    }
+}
+
+export const isNegExpressionType = (target: CommonTypeClass): target is NegExpressionTypeClass => {
+    return target instanceof NegExpressionTypeClass;
 };
 

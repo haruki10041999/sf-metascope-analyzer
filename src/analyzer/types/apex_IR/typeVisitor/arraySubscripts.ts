@@ -6,7 +6,7 @@ import { CommonTypeClass } from '../commonVisitor';
 
 export class ArraySubscriptsTypeClass extends TypeTypeClass {
     private constructor(variantType: number | null) {
-        super('arraySubscripts', variantType, []);
+        super('arraySubscripts', variantType, {});
     }
 
     static create(ctx: ArraySubscriptsContext): ArraySubscriptsTypeClass {
@@ -22,7 +22,7 @@ export class ArraySubscriptsTypeClass extends TypeTypeClass {
     }
 }
 
-export const isArraySubscriptsTypeClass = (
+export const isArraySubscriptsType = (
     target: CommonTypeClass,
 ): target is ArraySubscriptsTypeClass => {
     return target instanceof ArraySubscriptsTypeClass;

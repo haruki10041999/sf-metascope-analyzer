@@ -9,7 +9,7 @@ import {
     SoqlLiteralContext,
 } from '@apexdevtools/apex-parser';
 
-import { LiteralType as literalType, makeLiteralType } from './literal';
+import { NormalLiteralTypeClass } from './normal';
 import { WhenLiteralType, makeWhenLiteralType } from './whenLiteral';
 import { SoslLiteralType, makeSoslLiteralType } from './soslLiteral';
 import { SoslLiteralAltType, makeSoslLiteralAltType } from './soslLiteralAlt';
@@ -17,28 +17,45 @@ import { SignedIntegerType, makeSignedIntegerType } from './signedInteger';
 import { SignedNumberType, makeSignedNumberType } from './signedNumber';
 import { SoqlLiteralType, makeSoqlLiteralType } from './soqlLiteral';
 
-import { ErrorType, CommonVisitor } from '../commonVisitor';
+import { ErrorTypeClass, ContextTypeClass, CommonTypeClass, CommonVisitor } from '../commonVisitor';
 
-export type LiteralType =
-    | literalType
-    | WhenLiteralType
-    | SoslLiteralType
-    | SoslLiteralAltType
-    | SignedIntegerType
-    | SignedNumberType
-    | SoqlLiteralType
-    | ErrorType;
+export { isNormalLiteralType, NormalLiteralTypeClass } from './normal';
 
-export class LiteralVisitor extends CommonVisitor<LiteralType> {
+export class LiteralTypeClass extends ContextTypeClass {
+    private valueType: string | null = null;
+    private rawValue: any | null = null;
+
+    constructor(
+        type: string,
+        value: any | null,
+        valueType: string | null,
+        rawValue: any | null,
+        errorClasses: Record<string, ErrorTypeClass>,
+    ) {
+        super(type, value, errorClasses);
+        this.valueType = valueType;
+        this.rawValue = rawValue;
+    }
+
+    getValueType(): string | null {
+        return this.valueType;
+    }
+
+    isValueTypeNull(): boolean {
+        return this.valueType === null;
+    }
+    getRawValue(): any | null {
+        return this.rawValue;
+    }
+
+    isRawValueNull(): boolean {
+        return this.rawValue === null;
+    }
+}
+
+export class LiteralVisitor extends CommonVisitor<LiteralTypeClass> {
     visitLiteral(ctx: LiteralContext) {
-        console.log('解析を開始します。' + 'LiteralContext:  ' + ctx.getText());
-        const result = makeLiteralType(ctx);
-        console.log(
-            '------------解析が終了しました--------------' +
-                'LiteralContext:  ' +
-                JSON.stringify(result, null, 2),
-        );
-        return result;
+        return NormalLiteralTypeClass.create(ctx);
     }
 
     visitWhenLiteral(ctx: WhenLiteralContext) {

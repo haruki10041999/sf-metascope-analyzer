@@ -1,37 +1,62 @@
 import { TypeRefContext } from '@apexdevtools/apex-parser';
 
-import { NameType, NameVisitor } from '../nameVisitor';
-import { TypeType, TypeVisitor } from '.';
+import { TypeTypeClass, ArraySubscriptsTypeClass, TypeVisitor, isArraySubscriptsType } from '.';
 
-export type TypeRefType = {
-    type: 'typeRef';
-    variantType: {
-        name: NameType[];
-        array?: TypeType;
-    };
-};
+import { TypeNameTypeClass, NameVisitor, isTypeNameType } from '../nameVisitor';
+import { ErrorTypeClass, CommonTypeClass, isErrorType } from '../commonVisitor';
 
-export const makeTypeRefType = (ctx: TypeRefContext): TypeRefType => {
-    if (!ctx.typeName_list() || ctx.typeName_list().length === 0) {
-        throw new Error('値が異常です。TypeRefContext: ' + ctx.getText());
+export class TypeRefTypeClass extends TypeTypeClass {
+    private dimension: ArraySubscriptsTypeClass | null = null;
+
+    private constructor(
+        value: TypeNameTypeClass[],
+        dimension: ArraySubscriptsTypeClass | null,
+        errorClasses: Record<string, ErrorTypeClass>,
+    ) {
+        super('typeRef', value, errorClasses);
+        this.dimension = dimension;
     }
 
-    const typeNames = ctx.typeName_list().map((typeNameCtx) => {
-        const nest = new NameVisitor().visit(typeNameCtx);
-        return nest;
-    });
+    static create(ctx: TypeRefContext): TypeRefTypeClass {
+        if (!ctx.typeName_list() || ctx.typeName_list().length === 0) {
+            throw new Error('値が異常です。TypeRefContext: ' + ctx.getText());
+        }
 
-    const typeRefType: TypeRefType = {
-        type: 'typeRef',
-        variantType: {
-            name: typeNames,
-        },
-    };
+        const value: TypeNameTypeClass[] = [];
+        let dimension: ArraySubscriptsTypeClass | null = null;
+        const errorClasses: Record<string, ErrorTypeClass> = {};
 
-    if (ctx.arraySubscripts()) {
-        const nest = new TypeVisitor().visit(ctx.arraySubscripts());
-        typeRefType.variantType.array = nest;
+        ctx.typeName_list().forEach((typeNameCtx, index) => {
+            const nameTypeClass = new NameVisitor().visit(typeNameCtx);
+
+            if (isTypeNameType(nameTypeClass)) {
+                value.push(nameTypeClass);
+            } else if (isErrorType(nameTypeClass)) {
+                errorClasses[`value_${index}`] = nameTypeClass;
+            }
+        });
+
+        if (value.some((typeName) => ['list', 'set', 'map'].includes(typeName.getValue()))) {
+            const typeTypeClass = new TypeVisitor().visit(ctx.arraySubscripts());
+            if (isArraySubscriptsType(typeTypeClass)) {
+                dimension = typeTypeClass;
+            } else {
+                errorClasses['dimension'] = typeTypeClass;
+            }
+        }
+
+        return new TypeRefTypeClass(value, dimension, errorClasses);
     }
 
-    return typeRefType;
+    getDimension(): ArraySubscriptsTypeClass | null {
+        return this.dimension;
+    }
+
+    isDimensionNull(): boolean {
+        return this.dimension === null;
+    }
+}
+
+export const isTypeRefType = (target: any): target is TypeRefTypeClass => {
+    return target instanceof TypeRefTypeClass;
 };
