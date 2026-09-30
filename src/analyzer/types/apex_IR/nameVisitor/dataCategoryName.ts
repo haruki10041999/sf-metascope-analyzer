@@ -2,12 +2,12 @@ import { DataCategoryNameContext } from '@apexdevtools/apex-parser';
 
 import { NameTypeClass } from '../nameVisitor';
 
-import { NormalIdTypeClass, isNormalIdType, IdVisitor } from '../idVisitor';
+import { SoqlIdTypeClass, isSoqlIdType, IdVisitor } from '../idVisitor';
 
-import { ErrorTypeClass, CommonTypeClass } from '../commonVisitor';
+import { ErrorTypeClass, CommonTypeClass, isErrorType } from '../commonVisitor';
 
-export class DataCategoryNameTypeClass extends NameTypeClass {
-    private constructor(value: NormalIdTypeClass[], errorClasses: Record<string, ErrorTypeClass>) {
+export class DataCategoryNameTypeClass extends NameTypeClass<SoqlIdTypeClass[]> {
+    private constructor(value: SoqlIdTypeClass[], errorClasses: Record<string, ErrorTypeClass>) {
         super('dataCategoryName', value, errorClasses);
     }
 
@@ -16,15 +16,19 @@ export class DataCategoryNameTypeClass extends NameTypeClass {
             throw new Error('値が異常です。DataCategoryNameContext: ' + ctx.getText());
         }
 
-        const value: NormalIdTypeClass[] = [];
+        const value: SoqlIdTypeClass[] = [];
         const errorClasses: Record<string, ErrorTypeClass> = {};
 
         ctx.soqlId_list().forEach((idCtx, index) => {
-            const normalIdTypeClass = new IdVisitor().visit(idCtx);
-            if (isNormalIdType(normalIdTypeClass)) {
-                value.push(normalIdTypeClass);
+            const idTypeClass = new IdVisitor().visit(idCtx);
+            if (isSoqlIdType(idTypeClass)) {
+                value.push(idTypeClass);
+            } else if (isErrorType(idTypeClass)) {
+                errorClasses[`value_${index}`] = idTypeClass;
             } else {
-                errorClasses[`value_${index}`] = normalIdTypeClass;
+                throw new Error(
+                    '想定したタイプと違います　想定：soqlId、実値：' + idTypeClass.getType(),
+                );
             }
         });
 

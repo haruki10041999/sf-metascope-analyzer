@@ -35,17 +35,17 @@ import { CommonTypeClass, ContextTypeClass, ErrorTypeClass, CommonVisitor } from
 export { isTypeListType, TypeListTypeClass } from './typeList';
 export { isExpressionListType, ExpressionListTypeClass } from './expressionList';
 
-export class ListTypeClass extends ContextTypeClass {
-    constructor(type: string, value: any | null, errorClasses: Record<string, ErrorTypeClass>) {
+export class ListTypeClass<T> extends ContextTypeClass<T> {
+    constructor(type: string, value: T | null, errorClasses: Record<string, ErrorTypeClass>) {
         super(type, value, errorClasses);
     }
 }
 
-export const isListTypeAll = (target: CommonTypeClass): target is ListTypeClass => {
+export const isListTypeAll = (target: CommonTypeClass): target is ListTypeClass<unknown> => {
     return target instanceof ListTypeClass;
 };
 
-export class ListVisitor extends CommonVisitor<ListTypeClass> {
+export class ListVisitor extends CommonVisitor<ListTypeClass<unknown>> {
     visitTypeList(ctx: TypeListContext) {
         return TypeListTypeClass.create(ctx);
     }

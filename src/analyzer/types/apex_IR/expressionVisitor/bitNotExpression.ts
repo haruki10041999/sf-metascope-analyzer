@@ -1,6 +1,6 @@
 import { BitNotExpressionContext } from '@apexdevtools/apex-parser';
 import {
-    OperatorExpressionTypeClass,
+    DoubleOperatorExpressionTypeClass,
     ExpressionTypeClass,
     ExpressionVisitor,
     isExpressionTypeAll,
@@ -8,10 +8,13 @@ import {
 
 import { ErrorTypeClass, CommonTypeClass } from '../commonVisitor';
 
-export class BitNotExpressionTypeClass extends OperatorExpressionTypeClass {
+export class BitNotExpressionTypeClass extends DoubleOperatorExpressionTypeClass<
+    ExpressionTypeClass<unknown>,
+    ExpressionTypeClass<unknown>
+> {
     private constructor(
-        left: ExpressionTypeClass | null,
-        right: ExpressionTypeClass | null,
+        left: ExpressionTypeClass<unknown> | null,
+        right: ExpressionTypeClass<unknown> | null,
         operator: string | null,
         errorClasses: Record<string, ErrorTypeClass>,
     ) {
@@ -26,8 +29,8 @@ export class BitNotExpressionTypeClass extends OperatorExpressionTypeClass {
         const leftExpressionTypeClass = new ExpressionVisitor().visit(ctx.expression(0));
         const rightExpressionTypeClass = new ExpressionVisitor().visit(ctx.expression(1));
 
-        let left: ExpressionTypeClass | null = null;
-        let right: ExpressionTypeClass | null = null;
+        let left: ExpressionTypeClass<unknown> | null = null;
+        let right: ExpressionTypeClass<unknown> | null = null;
         const operator: string = '^';
         const errorTypeClasses: Record<string, ErrorTypeClass> = {};
 
@@ -52,4 +55,3 @@ export const isBitNotExpressionType = (
 ): target is BitNotExpressionTypeClass => {
     return target instanceof BitNotExpressionTypeClass;
 };
-

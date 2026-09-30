@@ -6,7 +6,7 @@ import { isPrimaryTypeAll, PrimaryTypeClass, PrimaryVisitor } from '../primaryVi
 
 import { CommonTypeClass, ErrorTypeClass } from '../commonVisitor';
 
-export class PrimaryExpressionTypeClass extends ExpressionTypeClass {
+export class PrimaryExpressionTypeClass extends ExpressionTypeClass<PrimaryTypeClass> {
     private constructor(
         value: PrimaryTypeClass | null,
         errorClasses: Record<string, ErrorTypeClass>,
@@ -38,4 +38,3 @@ export const isPrimaryExpressionType = (
 ): target is PrimaryExpressionTypeClass => {
     return target instanceof PrimaryExpressionTypeClass;
 };
-

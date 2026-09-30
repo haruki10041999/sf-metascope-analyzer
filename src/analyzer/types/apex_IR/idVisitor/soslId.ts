@@ -1,11 +1,11 @@
 import { SoslIdContext } from '@apexdevtools/apex-parser';
 
-import { IdTypeClass, IdVisitor, isIdType } from '.';
+import { IdTypeClass, NormalIdTypeClass, IdVisitor, isNormalIdType } from '.';
 
-import { CommonTypeClass, ErrorTypeClass } from '../commonVisitor';
+import { CommonTypeClass, ErrorTypeClass, isErrorType } from '../commonVisitor';
 
-export class SoslIdTypeClass extends IdTypeClass {
-    private constructor(value: IdTypeClass[], errorClasses: Record<string, ErrorTypeClass>) {
+export class SoslIdTypeClass extends IdTypeClass<NormalIdTypeClass[]> {
+    private constructor(value: NormalIdTypeClass[], errorClasses: Record<string, ErrorTypeClass>) {
         super('soslId', value, errorClasses);
     }
 
@@ -14,28 +14,35 @@ export class SoslIdTypeClass extends IdTypeClass {
             throw new Error('値が異常です。SoslIdContext: ' + ctx.getText());
         }
 
-        const id: IdTypeClass[] = [];
+        const value: NormalIdTypeClass[] = [];
         const errorClasses: Record<string, ErrorTypeClass> = {};
 
         const idTypeClass = new IdVisitor().visit(ctx.id());
-        if (isIdType(idTypeClass)) {
-            id.push(idTypeClass);
-        } else {
+        if (isNormalIdType(idTypeClass)) {
+            value.push(idTypeClass);
+        } else if (isErrorType(idTypeClass)) {
             errorClasses['value'] = idTypeClass;
+        } else {
+            throw new Error('想定したタイプと違います　想定：Id、実値：' + idTypeClass.getType());
         }
 
         if (ctx.soslId_list() && ctx.soslId_list().length > 0) {
             ctx.soslId_list().forEach((soslIdCtx) => {
                 const soslIdTypeClass = new IdVisitor().visit(soslIdCtx);
                 if (isSoslIdType(soslIdTypeClass)) {
-                    id.push(...soslIdTypeClass.getValue());
-                } else {
+                    value.push(...(soslIdTypeClass.getValue() || []));
+                } else if (isErrorType(soslIdTypeClass)) {
                     errorClasses['value'] = soslIdTypeClass;
+                } else {
+                    throw new Error(
+                        '想定したタイプと違います　想定：soslId、実値：' +
+                            soslIdTypeClass.getType(),
+                    );
                 }
             });
         }
 
-        return new SoslIdTypeClass(id, errorClasses);
+        return new SoslIdTypeClass(value, errorClasses);
     }
 }
 

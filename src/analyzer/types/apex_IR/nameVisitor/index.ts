@@ -23,17 +23,17 @@ export { isFieldNameType, FieldNameTypeClass } from './fieldName';
 export { isDateFieldNameType, DateFieldNameTypeClass } from './dateFieldName';
 export { isDataCategoryNameType, DataCategoryNameTypeClass } from './dataCategoryName';
 
-export class NameTypeClass extends ContextTypeClass {
-    constructor(type: string, value: any | null, errorClasses: Record<string, ErrorTypeClass>) {
+export class NameTypeClass<T> extends ContextTypeClass<T> {
+    constructor(type: string, value: T | null, errorClasses: Record<string, ErrorTypeClass>) {
         super(type, value, errorClasses);
     }
 }
 
-export const isNameTypeAll = (target: CommonTypeClass): target is NameTypeClass => {
+export const isNameTypeAll = (target: CommonTypeClass): target is NameTypeClass<unknown> => {
     return target instanceof NameTypeClass;
 };
 
-export class NameVisitor extends CommonVisitor<NameTypeClass> {
+export class NameVisitor extends CommonVisitor<NameTypeClass<unknown>> {
     visitQualifiedName(ctx: QualifiedNameContext) {
         return QualifiedNameTypeClass.create(ctx);
     }

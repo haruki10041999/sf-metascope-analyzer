@@ -1,7 +1,7 @@
 import { CmpExpressionContext } from '@apexdevtools/apex-parser';
 
 import {
-    OperatorExpressionTypeClass,
+    DoubleOperatorExpressionTypeClass,
     ExpressionTypeClass,
     ExpressionVisitor,
     isExpressionTypeAll,
@@ -9,10 +9,13 @@ import {
 
 import { ErrorTypeClass, CommonTypeClass } from '../commonVisitor';
 
-export class CmpExpressionTypeClass extends OperatorExpressionTypeClass {
+export class CmpExpressionTypeClass extends DoubleOperatorExpressionTypeClass<
+    ExpressionTypeClass<unknown>,
+    ExpressionTypeClass<unknown>
+> {
     private constructor(
-        left: ExpressionTypeClass | null,
-        right: ExpressionTypeClass | null,
+        left: ExpressionTypeClass<unknown> | null,
+        right: ExpressionTypeClass<unknown> | null,
         operator: string | null,
         errorClasses: Record<string, ErrorTypeClass>,
     ) {
@@ -31,8 +34,8 @@ export class CmpExpressionTypeClass extends OperatorExpressionTypeClass {
         const leftExpressionTypeClass = new ExpressionVisitor().visit(ctx.expression(0));
         const rightExpressionTypeClass = new ExpressionVisitor().visit(ctx.expression(1));
 
-        let left: ExpressionTypeClass | null = null;
-        let right: ExpressionTypeClass | null = null;
+        let left: ExpressionTypeClass<unknown> | null = null;
+        let right: ExpressionTypeClass<unknown> | null = null;
         let operator: string | null = null;
         const errorTypeClasses: Record<string, ErrorTypeClass> = {};
 
@@ -64,4 +67,3 @@ export class CmpExpressionTypeClass extends OperatorExpressionTypeClass {
 export const isCmpExpressionType = (target: CommonTypeClass): target is CmpExpressionTypeClass => {
     return target instanceof CmpExpressionTypeClass;
 };
-

@@ -3,9 +3,9 @@ import { QualifiedNameContext } from '@apexdevtools/apex-parser';
 import { NameTypeClass } from '.';
 
 import { NormalIdTypeClass, IdVisitor, isNormalIdType } from '../idVisitor';
-import { ErrorTypeClass, CommonTypeClass } from '../commonVisitor';
+import { ErrorTypeClass, CommonTypeClass, isErrorType } from '../commonVisitor';
 
-export class QualifiedNameTypeClass extends NameTypeClass {
+export class QualifiedNameTypeClass extends NameTypeClass<NormalIdTypeClass[]> {
     private constructor(value: NormalIdTypeClass[], errorClasses: Record<string, ErrorTypeClass>) {
         super('qualifiedName', value, errorClasses);
     }
@@ -19,11 +19,15 @@ export class QualifiedNameTypeClass extends NameTypeClass {
         const errorClasses: Record<string, ErrorTypeClass> = {};
 
         ctx.id_list().forEach((idCtx, index) => {
-            const normalIdTypeClass = new IdVisitor().visit(idCtx);
-            if (isNormalIdType(normalIdTypeClass)) {
-                value.push(normalIdTypeClass);
+            const idTypeClass = new IdVisitor().visit(idCtx);
+            if (isNormalIdType(idTypeClass)) {
+                value.push(idTypeClass);
+            } else if (isErrorType(idTypeClass)) {
+                errorClasses[`value_${index}`] = idTypeClass;
             } else {
-                errorClasses[`value_${index}`] = normalIdTypeClass;
+                throw new Error(
+                    '想定したタイプと違います　想定：Id、実値：' + idTypeClass.getType(),
+                );
             }
         });
 

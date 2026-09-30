@@ -6,9 +6,9 @@ import { ExpressionTypeClass, ExpressionVisitor, isExpressionTypeAll } from '../
 
 import { ErrorTypeClass, CommonTypeClass } from '../commonVisitor';
 
-export class ExpressionListTypeClass extends ListTypeClass {
+export class ExpressionListTypeClass extends ListTypeClass<ExpressionTypeClass<unknown>[]> {
     private constructor(
-        value: ExpressionTypeClass[],
+        value: ExpressionTypeClass<unknown>[],
         errorClasses: Record<string, ErrorTypeClass>,
     ) {
         super('expressionList', value, errorClasses);
@@ -19,7 +19,7 @@ export class ExpressionListTypeClass extends ListTypeClass {
             throw new Error('値が異常です。ExpressionListContext: ' + ctx.getText());
         }
 
-        const value: ExpressionTypeClass[] = [];
+        const value: ExpressionTypeClass<unknown>[] = [];
         const errorClasses: Record<string, ErrorTypeClass> = {};
 
         ctx.expression_list().forEach((expressionCtx, index) => {

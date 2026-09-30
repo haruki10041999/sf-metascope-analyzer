@@ -9,9 +9,11 @@ import {
 
 import { ErrorTypeClass, CommonTypeClass } from '../commonVisitor';
 
-export class NegExpressionTypeClass extends SingleOperatorExpressionTypeClass {
+export class NegExpressionTypeClass extends SingleOperatorExpressionTypeClass<
+    ExpressionTypeClass<unknown>
+> {
     private constructor(
-        literal: ExpressionTypeClass | null,
+        literal: ExpressionTypeClass<unknown> | null,
         operator: string | null,
         errorClasses: Record<string, ErrorTypeClass>,
     ) {
@@ -25,7 +27,7 @@ export class NegExpressionTypeClass extends SingleOperatorExpressionTypeClass {
 
         const expressionTypeClass = new ExpressionVisitor().visit(ctx.expression());
 
-        let literal: ExpressionTypeClass | null = null;
+        let literal: ExpressionTypeClass<unknown> | null = null;
         let operator: string | null = null;
         const errorTypeClasses: Record<string, ErrorTypeClass> = {};
 
@@ -49,4 +51,3 @@ export class NegExpressionTypeClass extends SingleOperatorExpressionTypeClass {
 export const isNegExpressionType = (target: CommonTypeClass): target is NegExpressionTypeClass => {
     return target instanceof NegExpressionTypeClass;
 };
-

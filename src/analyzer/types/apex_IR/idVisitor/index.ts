@@ -12,17 +12,17 @@ export { isAnyIdType, AnyIdTypeClass } from './anyId';
 export { isSoqlIdType, SoqlIdTypeClass } from './soqlId';
 export { isSoslIdType, SoslIdTypeClass } from './soslId';
 
-export class IdTypeClass extends ContextTypeClass {
+export class IdTypeClass<T> extends ContextTypeClass<T> {
     constructor(type: string, value: any | null, errorClasses: Record<string, ErrorTypeClass>) {
         super(type, value, errorClasses);
     }
 }
 
-export const isIdTypeAll = (target: CommonTypeClass): target is IdTypeClass => {
+export const isIdTypeAll = (target: CommonTypeClass): target is IdTypeClass<unknown> => {
     return target instanceof IdTypeClass;
 };
 
-export class IdVisitor extends CommonVisitor<IdTypeClass> {
+export class IdVisitor extends CommonVisitor<IdTypeClass<unknown>> {
     visitId(ctx: IdContext) {
         return NormalIdTypeClass.create(ctx);
     }

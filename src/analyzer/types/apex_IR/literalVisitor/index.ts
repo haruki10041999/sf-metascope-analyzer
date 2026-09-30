@@ -21,13 +21,13 @@ import { ErrorTypeClass, ContextTypeClass, CommonTypeClass, CommonVisitor } from
 
 export { isNormalLiteralType, NormalLiteralTypeClass } from './normal';
 
-export class LiteralTypeClass extends ContextTypeClass {
+export class LiteralTypeClass<T> extends ContextTypeClass<T> {
     private valueType: string | null = null;
     private rawValue: any | null = null;
 
     constructor(
         type: string,
-        value: any | null,
+        value: T | null,
         valueType: string | null,
         rawValue: any | null,
         errorClasses: Record<string, ErrorTypeClass>,
@@ -53,7 +53,11 @@ export class LiteralTypeClass extends ContextTypeClass {
     }
 }
 
-export class LiteralVisitor extends CommonVisitor<LiteralTypeClass> {
+export const isLiteralTypeAll = (target: CommonTypeClass): target is LiteralTypeClass<unknown> => {
+    return target instanceof LiteralTypeClass;
+};
+
+export class LiteralVisitor extends CommonVisitor<LiteralTypeClass<unknown>> {
     visitLiteral(ctx: LiteralContext) {
         return NormalLiteralTypeClass.create(ctx);
     }

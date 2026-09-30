@@ -3,9 +3,9 @@ import { FieldNameContext } from '@apexdevtools/apex-parser';
 import { NameTypeClass } from '.';
 
 import { SoqlIdTypeClass, IdVisitor, isSoqlIdType } from '../idVisitor';
-import { ErrorTypeClass, CommonTypeClass } from '../commonVisitor';
+import { ErrorTypeClass, CommonTypeClass, isErrorType } from '../commonVisitor';
 
-export class FieldNameTypeClass extends NameTypeClass {
+export class FieldNameTypeClass extends NameTypeClass<SoqlIdTypeClass[]> {
     private constructor(value: SoqlIdTypeClass[], errorClasses: Record<string, ErrorTypeClass>) {
         super('fieldName', value, errorClasses);
     }
@@ -18,12 +18,16 @@ export class FieldNameTypeClass extends NameTypeClass {
         const value: SoqlIdTypeClass[] = [];
         const errorClasses: Record<string, ErrorTypeClass> = {};
 
-        ctx.soqlId_list().forEach((idCtx, index) => {
-            const soqlIdTypeClass = new IdVisitor().visit(idCtx);
-            if (isSoqlIdType(soqlIdTypeClass)) {
-                value.push(soqlIdTypeClass);
+        ctx.soqlId_list().forEach((SoqlIdCtx, index) => {
+            const idTypeClass = new IdVisitor().visit(SoqlIdCtx);
+            if (isSoqlIdType(idTypeClass)) {
+                value.push(idTypeClass);
+            } else if (isErrorType(idTypeClass)) {
+                errorClasses[`value_${index}`] = idTypeClass;
             } else {
-                errorClasses[`value_${index}`] = soqlIdTypeClass;
+                throw new Error(
+                    '想定したタイプと違います　想定：soqlId、実値：' + idTypeClass.getType(),
+                );
             }
         });
 

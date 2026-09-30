@@ -2,9 +2,9 @@ import { DateFieldNameContext } from '@apexdevtools/apex-parser';
 
 import { NameTypeClass, NameVisitor, FieldNameTypeClass, isFieldNameType } from '.';
 
-import { ErrorTypeClass, CommonTypeClass } from '../commonVisitor';
+import { ErrorTypeClass, CommonTypeClass, isErrorType } from '../commonVisitor';
 
-export class DateFieldNameTypeClass extends NameTypeClass {
+export class DateFieldNameTypeClass extends NameTypeClass<FieldNameTypeClass> {
     private isConvertTimeZone: boolean | null = null;
     private constructor(
         value: FieldNameTypeClass | null,
@@ -27,8 +27,12 @@ export class DateFieldNameTypeClass extends NameTypeClass {
         const nameTypeClass = new NameVisitor().visit(ctx.fieldName());
         if (isFieldNameType(nameTypeClass)) {
             value = nameTypeClass;
-        } else {
+        } else if (isErrorType(nameTypeClass)) {
             errorClasses['value'] = nameTypeClass;
+        } else {
+            throw new Error(
+                '想定したタイプと違います　想定：fieldName、実値：' + nameTypeClass.getType(),
+            );
         }
 
         return new DateFieldNameTypeClass(value, errorClasses, isConvertTimeZone);

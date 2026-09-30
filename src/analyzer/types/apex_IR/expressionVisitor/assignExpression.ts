@@ -1,7 +1,7 @@
 import { AssignExpressionContext } from '@apexdevtools/apex-parser';
 
 import {
-    OperatorExpressionTypeClass,
+    DoubleOperatorExpressionTypeClass,
     ExpressionTypeClass,
     ExpressionVisitor,
     isExpressionTypeAll,
@@ -9,10 +9,13 @@ import {
 
 import { ErrorTypeClass, CommonTypeClass } from '../commonVisitor';
 
-export class AssignExpressionTypeClass extends OperatorExpressionTypeClass {
+export class AssignExpressionTypeClass extends DoubleOperatorExpressionTypeClass<
+    ExpressionTypeClass<unknown>,
+    ExpressionTypeClass<unknown>
+> {
     private constructor(
-        left: ExpressionTypeClass | null,
-        right: ExpressionTypeClass | null,
+        left: ExpressionTypeClass<unknown> | null,
+        right: ExpressionTypeClass<unknown> | null,
         operator: string | null,
         errorClasses: Record<string, ErrorTypeClass>,
     ) {
@@ -41,8 +44,8 @@ export class AssignExpressionTypeClass extends OperatorExpressionTypeClass {
         const leftExpressionTypeClass = new ExpressionVisitor().visit(ctx.expression(0));
         const rightExpressionTypeClass = new ExpressionVisitor().visit(ctx.expression(1));
 
-        let left: ExpressionTypeClass | null = null;
-        let right: ExpressionTypeClass | null = null;
+        let left: ExpressionTypeClass<unknown> | null = null;
+        let right: ExpressionTypeClass<unknown> | null = null;
         let operator: string | null = null;
         const errorTypeClasses: Record<string, ErrorTypeClass> = {};
 
@@ -110,4 +113,3 @@ export const isAssignExpressionType = (
 ): target is AssignExpressionTypeClass => {
     return target instanceof AssignExpressionTypeClass;
 };
-

@@ -9,13 +9,15 @@ import {
 
 import { ErrorTypeClass, CommonTypeClass } from '../commonVisitor';
 
-export class PostOpExpressionTypeClass extends SingleOperatorExpressionTypeClass {
+export class PostOpExpressionTypeClass extends SingleOperatorExpressionTypeClass<
+    ExpressionTypeClass<unknown>
+> {
     private constructor(
-        literal: ExpressionTypeClass | null,
+        value: ExpressionTypeClass<unknown> | null,
         operator: string | null,
         errorClasses: Record<string, ErrorTypeClass>,
     ) {
-        super('postOpExpression', literal, operator, errorClasses);
+        super('postOpExpression', value, operator, errorClasses);
     }
 
     static create(ctx: PostOpExpressionContext): PostOpExpressionTypeClass {
@@ -25,12 +27,12 @@ export class PostOpExpressionTypeClass extends SingleOperatorExpressionTypeClass
 
         const expressionTypeClass = new ExpressionVisitor().visit(ctx.expression());
 
-        let literal: ExpressionTypeClass | null = null;
+        let value: ExpressionTypeClass<unknown> | null = null;
         let operator: string | null = null;
         const errorTypeClasses: Record<string, ErrorTypeClass> = {};
 
         if (isExpressionTypeAll(expressionTypeClass)) {
-            literal = expressionTypeClass;
+            value = expressionTypeClass;
         } else {
             errorTypeClasses['literal'] = expressionTypeClass;
         }
@@ -42,7 +44,7 @@ export class PostOpExpressionTypeClass extends SingleOperatorExpressionTypeClass
             operator = '--';
         }
 
-        return new PostOpExpressionTypeClass(literal, operator, errorTypeClasses);
+        return new PostOpExpressionTypeClass(value, operator, errorTypeClasses);
     }
 }
 
@@ -51,4 +53,3 @@ export const isPostOpExpressionType = (
 ): target is PostOpExpressionTypeClass => {
     return target instanceof PostOpExpressionTypeClass;
 };
-

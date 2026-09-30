@@ -4,9 +4,9 @@ import { TypeTypeClass } from '.';
 
 import { CommonTypeClass } from '../commonVisitor';
 
-export class ArraySubscriptsTypeClass extends TypeTypeClass {
-    private constructor(variantType: number | null) {
-        super('arraySubscripts', variantType, {});
+export class ArraySubscriptsTypeClass extends TypeTypeClass<number> {
+    private constructor(value: number | null) {
+        super('arraySubscripts', value, {});
     }
 
     static create(ctx: ArraySubscriptsContext): ArraySubscriptsTypeClass {

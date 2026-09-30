@@ -4,9 +4,9 @@ import { ArgumentsTypeClass } from '.';
 
 import { ExpressionListTypeClass, ListVisitor, isExpressionListType } from '../listVisitor';
 
-import { ErrorTypeClass, CommonTypeClass } from '../commonVisitor';
+import { ErrorTypeClass, CommonTypeClass, isErrorType } from '../commonVisitor';
 
-export class NormalArgumentsTypeClass extends ArgumentsTypeClass {
+export class NormalArgumentsTypeClass extends ArgumentsTypeClass<ExpressionListTypeClass> {
     private constructor(
         value: ExpressionListTypeClass | null,
         errorClasses: Record<string, ErrorTypeClass>,
@@ -25,8 +25,12 @@ export class NormalArgumentsTypeClass extends ArgumentsTypeClass {
         const listTypeClass = new ListVisitor().visit(ctx.expressionList());
         if (isExpressionListType(listTypeClass)) {
             value = listTypeClass;
-        } else {
+        } else if (isErrorType(listTypeClass)) {
             errorClasses['value'] = listTypeClass;
+        } else {
+            throw new Error(
+                '想定したタイプと違います　想定：expressionList、実値：' + listTypeClass.getType(),
+            );
         }
 
         return new NormalArgumentsTypeClass(value, errorClasses);

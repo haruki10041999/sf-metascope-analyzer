@@ -1,8 +1,4 @@
-import {
-    ApexParserBaseVisitor,
-    ArgumentsContext,
-    TypeArgumentsContext,
-} from '@apexdevtools/apex-parser';
+import { ArgumentsContext, TypeArgumentsContext } from '@apexdevtools/apex-parser';
 
 import { NormalArgumentsTypeClass } from './normal';
 import { TypeArgumentsTypeClass } from './typeArguments';
@@ -12,17 +8,19 @@ import { CommonTypeClass, ContextTypeClass, CommonVisitor, ErrorTypeClass } from
 export { isNormalArgumentsType, NormalArgumentsTypeClass } from './normal';
 export { isTypeArgumentsType, TypeArgumentsTypeClass } from './typeArguments';
 
-export class ArgumentsTypeClass extends ContextTypeClass {
-    constructor(type: string, value: any | null, errorClasses: Record<string, ErrorTypeClass>) {
+export class ArgumentsTypeClass<T> extends ContextTypeClass<T> {
+    constructor(type: string, value: T | null, errorClasses: Record<string, ErrorTypeClass>) {
         super(type, value, errorClasses);
     }
 }
 
-export const isArugumentsTypeAll = (target: CommonTypeClass): target is ArgumentsTypeClass => {
+export const isArugumentsTypeAll = (
+    target: CommonTypeClass,
+): target is ArgumentsTypeClass<unknown> => {
     return target instanceof ArgumentsTypeClass;
 };
 
-export class ArgumentsVisitor extends CommonVisitor<ArgumentsTypeClass> {
+export class ArgumentsVisitor extends CommonVisitor<ArgumentsTypeClass<unknown>> {
     visitArguments(ctx: ArgumentsContext) {
         return NormalArgumentsTypeClass.create(ctx);
     }

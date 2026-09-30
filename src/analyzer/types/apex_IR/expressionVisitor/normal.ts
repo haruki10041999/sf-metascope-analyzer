@@ -4,7 +4,7 @@ import { ExpressionTypeClass } from '.';
 
 import { CommonTypeClass } from '../commonVisitor';
 
-export class NormalExpressionTypeClass extends ExpressionTypeClass {
+export class NormalExpressionTypeClass extends ExpressionTypeClass<string> {
     private constructor(value: string) {
         super('expression', value, {});
     }
@@ -23,4 +23,3 @@ export const isNormalExpressionType = (
 ): target is NormalExpressionTypeClass => {
     return target instanceof NormalExpressionTypeClass;
 };
-

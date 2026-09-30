@@ -10,7 +10,7 @@ import {
     SoslPrimaryContext,
 } from '@apexdevtools/apex-parser';
 
-import { PrimaryTypeClass as primaryTypeClass } from './primary';
+import { NormalPrimaryTypeClass } from './normal';
 import { ThisPrimaryTypeClass } from './thisPrimary';
 import { VoidPrimaryTypeClass } from './voidPrimary';
 import { SoqlPrimaryType, makeSoqlPrimaryType } from './soqlPrimary';
@@ -22,25 +22,25 @@ import { SoslPrimaryType, makeSoslPrimaryType } from './soslPrimary';
 
 import { ContextTypeClass, ErrorTypeClass, CommonVisitor, CommonTypeClass } from '../commonVisitor';
 
-export { isPrimaryType } from './primary';
-export { isThisPrimaryType } from './thisPrimary';
-export { isVoidPrimaryType } from './voidPrimary';
-export { isSuperPrimaryType } from './superPrimary';
-export { isIdPrimaryType } from './idPrimary';
+export { isNormalPrimaryType, NormalPrimaryTypeClass } from './normal';
+export { isThisPrimaryType, ThisPrimaryTypeClass } from './thisPrimary';
+export { isVoidPrimaryType, VoidPrimaryTypeClass } from './voidPrimary';
+export { isSuperPrimaryType, SuperPrimaryTypeClass } from './superPrimary';
+export { isIdPrimaryType, IdPrimaryTypeClass } from './idPrimary';
 
-export class PrimaryTypeClass extends ContextTypeClass {
-    constructor(type: string, value: any | null, errorClasses: Record<string, ErrorTypeClass>) {
+export class PrimaryTypeClass<T> extends ContextTypeClass<T> {
+    constructor(type: string, value: T | null, errorClasses: Record<string, ErrorTypeClass>) {
         super(type, value, errorClasses);
     }
 }
 
-export const isPrimaryTypeAll = (target: CommonTypeClass): target is PrimaryTypeClass => {
+export const isPrimaryTypeAll = (target: CommonTypeClass): target is PrimaryTypeClass<unknown> => {
     return target instanceof PrimaryTypeClass;
 };
 
-export class PrimaryVisitor extends CommonVisitor<PrimaryTypeClass> {
+export class PrimaryVisitor extends CommonVisitor<PrimaryTypeClass<unknown>> {
     visitPrimary(ctx: PrimaryContext) {
-        return primaryTypeClass.create(ctx);
+        return NormalPrimaryTypeClass.create(ctx);
     }
 
     visitThisPrimary(ctx: ThisPrimaryContext) {
@@ -103,4 +103,3 @@ export class PrimaryVisitor extends CommonVisitor<PrimaryTypeClass> {
         return result;
     }
 }
-

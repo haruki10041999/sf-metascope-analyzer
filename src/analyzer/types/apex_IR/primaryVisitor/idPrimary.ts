@@ -1,13 +1,16 @@
 import { IdPrimaryContext } from '@apexdevtools/apex-parser';
 
-import { IdTypeClass, IdVisitor, isIdType } from '../idVisitor';
+import { NormalIdTypeClass, IdVisitor, isNormalIdType } from '../idVisitor';
 
 import { PrimaryTypeClass } from '.';
 
-import { CommonTypeClass, ErrorTypeClass } from '../commonVisitor';
+import { CommonTypeClass, ErrorTypeClass, isErrorType } from '../commonVisitor';
 
-export class IdPrimaryTypeClass extends PrimaryTypeClass {
-    private constructor(value: IdTypeClass | null, errorClasses: Record<string, ErrorTypeClass>) {
+export class IdPrimaryTypeClass extends PrimaryTypeClass<NormalIdTypeClass> {
+    private constructor(
+        value: NormalIdTypeClass | null,
+        errorClasses: Record<string, ErrorTypeClass>,
+    ) {
         super('idPrimary', value, errorClasses);
     }
 
@@ -16,13 +19,17 @@ export class IdPrimaryTypeClass extends PrimaryTypeClass {
             throw new Error('値が異常です。IdPrimaryContext: ' + ctx.getText());
         }
 
-        let value: IdTypeClass | null = null;
+        let value: NormalIdTypeClass | null = null;
         const errorClasses: Record<string, ErrorTypeClass> = {};
         const idTypeClass = new IdVisitor().visit(ctx.id());
-        if (isIdType(idTypeClass)) {
+        if (isNormalIdType(idTypeClass)) {
             value = idTypeClass;
-        } else {
+        } else if (isErrorType(idTypeClass)) {
             errorClasses['value'] = idTypeClass;
+        } else {
+            throw new Error(
+                '想定したタイプと違います　想定：idPrimary、実値：' + idTypeClass.getType(),
+            );
         }
 
         return new IdPrimaryTypeClass(value, errorClasses);
@@ -32,4 +39,3 @@ export class IdPrimaryTypeClass extends PrimaryTypeClass {
 export const isIdPrimaryType = (target: CommonTypeClass): target is IdPrimaryTypeClass => {
     return target instanceof IdPrimaryTypeClass;
 };
-

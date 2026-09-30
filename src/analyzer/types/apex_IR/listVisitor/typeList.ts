@@ -2,11 +2,11 @@ import { TypeListContext } from '@apexdevtools/apex-parser';
 
 import { ListTypeClass } from '../listVisitor';
 
-import { TypeRefTypeClass, TypeVisitor, isTypeTypeAll, isTypeRefType } from '../typeVisitor';
+import { TypeRefTypeClass, TypeVisitor, isTypeRefType } from '../typeVisitor';
 
 import { ErrorTypeClass, CommonTypeClass, isErrorType } from '../commonVisitor';
 
-export class TypeListTypeClass extends ListTypeClass {
+export class TypeListTypeClass extends ListTypeClass<TypeRefTypeClass[]> {
     private constructor(value: TypeRefTypeClass[], errorClasses: Record<string, ErrorTypeClass>) {
         super('typeList', value, errorClasses);
     }
@@ -20,12 +20,16 @@ export class TypeListTypeClass extends ListTypeClass {
         const errorClasses: Record<string, ErrorTypeClass> = {};
 
         ctx.typeRef_list().forEach((typeRefCtx, index) => {
-            const typeRefTypeClass = new TypeVisitor().visit(typeRefCtx);
+            const typeTypeclass = new TypeVisitor().visit(typeRefCtx);
 
-            if (isTypeRefType(typeRefTypeClass)) {
-                value.push(typeRefTypeClass);
-            } else if (isErrorType(typeRefTypeClass)) {
-                errorClasses[`value_${index}`] = typeRefTypeClass;
+            if (isTypeRefType(typeTypeclass)) {
+                value.push(typeTypeclass);
+            } else if (isErrorType(typeTypeclass)) {
+                errorClasses[`value_${index}`] = typeTypeclass;
+            } else {
+                throw new Error(
+                    '想定したタイプと違います　想定：typeRef、実値：' + typeTypeclass.getType(),
+                );
             }
         });
 

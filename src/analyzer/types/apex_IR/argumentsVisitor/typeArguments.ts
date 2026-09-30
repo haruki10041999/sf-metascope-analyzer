@@ -6,7 +6,7 @@ import { TypeListTypeClass, ListVisitor, isTypeListType } from '../listVisitor';
 
 import { ErrorTypeClass, CommonTypeClass, isErrorType } from '../commonVisitor';
 
-export class TypeArgumentsTypeClass extends ArgumentsTypeClass {
+export class TypeArgumentsTypeClass extends ArgumentsTypeClass<TypeListTypeClass> {
     private constructor(
         value: TypeListTypeClass | null,
         errorClasses: Record<string, ErrorTypeClass>,
@@ -27,6 +27,10 @@ export class TypeArgumentsTypeClass extends ArgumentsTypeClass {
             value = listTypeClass;
         } else if (isErrorType(listTypeClass)) {
             errorClasses['value'] = listTypeClass;
+        } else {
+            throw new Error(
+                '想定したタイプと違います　想定：typeList、実値：' + listTypeClass.getType(),
+            );
         }
 
         return new TypeArgumentsTypeClass(value, errorClasses);

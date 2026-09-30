@@ -9,13 +9,15 @@ import {
 
 import { ErrorTypeClass, CommonTypeClass } from '../commonVisitor';
 
-export class PreOpExpressionTypeClass extends SingleOperatorExpressionTypeClass {
+export class PreOpExpressionTypeClass extends SingleOperatorExpressionTypeClass<
+    ExpressionTypeClass<unknown>
+> {
     private constructor(
-        literal: ExpressionTypeClass | null,
+        value: ExpressionTypeClass<unknown> | null,
         operator: string | null,
         errorClasses: Record<string, ErrorTypeClass>,
     ) {
-        super('preOpExpression', literal, operator, errorClasses);
+        super('preOpExpression', value, operator, errorClasses);
     }
 
     static create(ctx: PreOpExpressionContext): PreOpExpressionTypeClass {
@@ -25,14 +27,14 @@ export class PreOpExpressionTypeClass extends SingleOperatorExpressionTypeClass 
 
         const expressionTypeClass = new ExpressionVisitor().visit(ctx.expression());
 
-        let literal: ExpressionTypeClass | null = null;
+        let value: ExpressionTypeClass<unknown> | null = null;
         let operator: string | null = null;
         const errorTypeClasses: Record<string, ErrorTypeClass> = {};
 
         if (isExpressionTypeAll(expressionTypeClass)) {
-            literal = expressionTypeClass;
+            value = expressionTypeClass;
         } else {
-            errorTypeClasses['literal'] = expressionTypeClass;
+            errorTypeClasses['value'] = expressionTypeClass;
         }
 
         if (ctx.INC()) {
@@ -48,7 +50,7 @@ export class PreOpExpressionTypeClass extends SingleOperatorExpressionTypeClass 
             operator = '-';
         }
 
-        return new PreOpExpressionTypeClass(literal, operator, errorTypeClasses);
+        return new PreOpExpressionTypeClass(value, operator, errorTypeClasses);
     }
 }
 
@@ -57,4 +59,3 @@ export const isPreOpExpressionType = (
 ): target is PreOpExpressionTypeClass => {
     return target instanceof PreOpExpressionTypeClass;
 };
-

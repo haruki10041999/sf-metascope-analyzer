@@ -3,7 +3,7 @@ import { SuperPrimaryContext } from '@apexdevtools/apex-parser';
 import { PrimaryTypeClass } from '.';
 import { CommonTypeClass } from '../commonVisitor';
 
-export class SuperPrimaryTypeClass extends PrimaryTypeClass {
+export class SuperPrimaryTypeClass extends PrimaryTypeClass<string> {
     private constructor(value: string) {
         super('superPrimary', value, {});
     }
@@ -20,4 +20,3 @@ export class SuperPrimaryTypeClass extends PrimaryTypeClass {
 export const isSuperPrimaryType = (target: CommonTypeClass): target is SuperPrimaryTypeClass => {
     return target instanceof SuperPrimaryTypeClass;
 };
-

@@ -8,19 +8,59 @@ import {
 
 import { ElementValuePairType, makeElementValuePairType } from './elementValuePair';
 import { IdCreatedNamePairType, makeIdCreatedNamePairType } from './idCreatedNamePair';
-import { MapCreatorPairType, makeMapCreatorPairType } from './mapCreatorPair';
+import { MapCreatorPairTypeClass } from './mapCreatorPair';
 import { ElementValuePairsType, makeElementValuePairsType } from './elementValuePairs';
 
-import { ErrorType, CommonVisitor } from '../commonVisitor';
+import { ErrorTypeClass, ContextTypeClass, CommonVisitor, CommonTypeClass } from '../commonVisitor';
 
-export type PairType =
-    | IdCreatedNamePairType
-    | ElementValuePairType
-    | MapCreatorPairType
-    | ElementValuePairsType
-    | ErrorType;
+export { isMapCreatorPairType, MapCreatorPairTypeClass } from './mapCreatorPair';
 
-export class PairVisitor extends CommonVisitor<PairType> {
+export class PairTypeClass<T> extends ContextTypeClass<T> {
+    constructor(type: string, value: T | null, errorClasses: Record<string, ErrorTypeClass>) {
+        super(type, value, errorClasses);
+    }
+}
+
+export class DoublePairTypeClass<Tleft, Tright> extends PairTypeClass<{
+    left: Tleft | null;
+    right: Tright | null;
+}> {
+    private left: Tleft | null = null;
+    private right: Tright | null = null;
+
+    constructor(
+        type: string,
+        left: Tleft | null,
+        right: Tright | null,
+        errorClasses: Record<string, ErrorTypeClass>,
+    ) {
+        super(type, { left: left, right: right }, errorClasses);
+        this.left = left;
+        this.right = right;
+    }
+
+    getLeft(): Tleft | null {
+        return this.left;
+    }
+
+    getRight(): Tright | null {
+        return this.right;
+    }
+
+    isLeftNull(): boolean {
+        return this.left === null;
+    }
+
+    isRightNull(): boolean {
+        return this.right === null;
+    }
+}
+
+export const isPairTypeAll = (target: CommonTypeClass): target is PairTypeClass<unknown> => {
+    return target instanceof PairTypeClass;
+};
+
+export class PairVisitor extends CommonVisitor<PairTypeClass<unknown>> {
     visitIdCreatedNamePair(ctx: IdCreatedNamePairContext) {
         console.log('解析を開始します。' + 'IdCreatedNamePairContext:  ' + ctx.getText());
         const result = makeIdCreatedNamePairType(ctx);
@@ -44,14 +84,7 @@ export class PairVisitor extends CommonVisitor<PairType> {
     }
 
     visitMapCreatorRestPair(ctx: MapCreatorRestPairContext) {
-        console.log('解析を開始します。' + 'MapCreatorRestPairContext:  ' + ctx.getText());
-        const result = makeMapCreatorPairType(ctx);
-        console.log(
-            '------------解析が終了しました--------------' +
-                'MapCreatorRestPairContext:  ' +
-                JSON.stringify(result, null, 2),
-        );
-        return result;
+        return MapCreatorPairTypeClass.create(ctx);
     }
 
     visitElementValuePairs(ctx: ElementValuePairsContext) {

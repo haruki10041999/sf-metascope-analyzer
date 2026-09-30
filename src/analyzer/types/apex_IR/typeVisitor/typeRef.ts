@@ -5,7 +5,7 @@ import { TypeTypeClass, ArraySubscriptsTypeClass, TypeVisitor, isArraySubscripts
 import { TypeNameTypeClass, NameVisitor, isTypeNameType } from '../nameVisitor';
 import { ErrorTypeClass, CommonTypeClass, isErrorType } from '../commonVisitor';
 
-export class TypeRefTypeClass extends TypeTypeClass {
+export class TypeRefTypeClass extends TypeTypeClass<TypeNameTypeClass[]> {
     private dimension: ArraySubscriptsTypeClass | null = null;
 
     private constructor(
@@ -33,15 +33,24 @@ export class TypeRefTypeClass extends TypeTypeClass {
                 value.push(nameTypeClass);
             } else if (isErrorType(nameTypeClass)) {
                 errorClasses[`value_${index}`] = nameTypeClass;
+            } else {
+                throw new Error(
+                    '想定したタイプと違います　想定：typeName、実値：' + nameTypeClass.getType(),
+                );
             }
         });
 
-        if (value.some((typeName) => ['list', 'set', 'map'].includes(typeName.getValue()))) {
+        if (!value.some((typeName) => typeName.getGeneric() !== null)) {
             const typeTypeClass = new TypeVisitor().visit(ctx.arraySubscripts());
             if (isArraySubscriptsType(typeTypeClass)) {
                 dimension = typeTypeClass;
-            } else {
+            } else if (isErrorType(typeTypeClass)) {
                 errorClasses['dimension'] = typeTypeClass;
+            } else {
+                throw new Error(
+                    '想定したタイプと違います　想定：arraySubscripts、実値：' +
+                        typeTypeClass.getType(),
+                );
             }
         }
 

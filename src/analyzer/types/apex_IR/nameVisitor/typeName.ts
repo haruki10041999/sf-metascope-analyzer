@@ -5,9 +5,9 @@ import { NameTypeClass } from '.';
 import { TypeArgumentsTypeClass, ArgumentsVisitor, isTypeArgumentsType } from '../argumentsVisitor';
 import { NormalIdTypeClass, IdVisitor, isNormalIdType } from '../idVisitor';
 
-import { ErrorTypeClass, CommonTypeClass } from '../commonVisitor';
+import { ErrorTypeClass, CommonTypeClass, isErrorType } from '../commonVisitor';
 
-export class TypeNameTypeClass extends NameTypeClass {
+export class TypeNameTypeClass extends NameTypeClass<NormalIdTypeClass | 'list' | 'set' | 'map'> {
     private generic: TypeArgumentsTypeClass | null;
 
     private constructor(
@@ -33,8 +33,13 @@ export class TypeNameTypeClass extends NameTypeClass {
             const argumentsTypeClass = new ArgumentsVisitor().visit(ctx.typeArguments());
             if (isTypeArgumentsType(argumentsTypeClass)) {
                 generic = argumentsTypeClass;
-            } else {
+            } else if (isErrorType(argumentsTypeClass)) {
                 errorClasses['generic'] = argumentsTypeClass;
+            } else {
+                throw new Error(
+                    '想定したタイプと違います　想定：typeArguments、実値：' +
+                        argumentsTypeClass.getType(),
+                );
             }
         }
 
@@ -42,8 +47,12 @@ export class TypeNameTypeClass extends NameTypeClass {
             const idTypeClass = new IdVisitor().visit(ctx.id());
             if (isNormalIdType(idTypeClass)) {
                 value = idTypeClass;
-            } else {
+            } else if (isErrorType(idTypeClass)) {
                 errorClasses['value'] = idTypeClass;
+            } else {
+                throw new Error(
+                    '想定したタイプと違います　想定：Id、実値：' + idTypeClass.getType(),
+                );
             }
         }
 

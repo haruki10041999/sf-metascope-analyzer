@@ -1,11 +1,14 @@
 import { SoqlIdContext } from '@apexdevtools/apex-parser';
 
-import { IdTypeClass, IdVisitor, isIdType } from '.';
+import { IdTypeClass, IdVisitor, isNormalIdType, NormalIdTypeClass } from '.';
 
-import { CommonTypeClass, ErrorTypeClass } from '../commonVisitor';
+import { CommonTypeClass, ErrorTypeClass, isErrorType } from '../commonVisitor';
 
-export class SoqlIdTypeClass extends IdTypeClass {
-    private constructor(value: IdTypeClass | null, errorClasses: Record<string, ErrorTypeClass>) {
+export class SoqlIdTypeClass extends IdTypeClass<NormalIdTypeClass> {
+    private constructor(
+        value: NormalIdTypeClass | null,
+        errorClasses: Record<string, ErrorTypeClass>,
+    ) {
         super('soqlId', value, errorClasses);
     }
 
@@ -16,15 +19,17 @@ export class SoqlIdTypeClass extends IdTypeClass {
 
         const idTypeClass = new IdVisitor().visit(ctx);
 
-        let id: IdTypeClass | null = null;
+        let value: NormalIdTypeClass | null = null;
         const errorClasses: Record<string, ErrorTypeClass> = {};
-        if (isIdType(idTypeClass)) {
-            id = idTypeClass;
-        } else {
+        if (isNormalIdType(idTypeClass)) {
+            value = idTypeClass;
+        } else if (isErrorType(idTypeClass)) {
             errorClasses['value'] = idTypeClass;
+        } else {
+            throw new Error('想定したタイプと違います　想定：Id、実値：' + idTypeClass.getType());
         }
 
-        return new SoqlIdTypeClass(id, errorClasses);
+        return new SoqlIdTypeClass(value, errorClasses);
     }
 }
 

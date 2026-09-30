@@ -4,7 +4,7 @@ import { IdTypeClass } from '.';
 
 import { CommonTypeClass } from '../commonVisitor';
 
-export class NormalIdTypeClass extends IdTypeClass {
+export class NormalIdTypeClass extends IdTypeClass<string> {
     private constructor(value: string) {
         super('id', value, {});
     }
