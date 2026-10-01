@@ -11,34 +11,29 @@ import {
 
 import { AnonymousBlockType, makeAnonymousBlockType } from './anonymousBlock';
 import { TriggerBlockType, makeTriggerBlockType } from './triggerBlock';
-import { BlockType as blockType, makeBlockType } from './block';
+import { NormalBlockTypeClass } from './normal';
 import { FinallyBlockType, makeFinallyBlockType } from './finallyBlock';
 import { PropertyBlockType, makePropertyBlockType } from './propertyBlock';
 import { GetterType, makeGetterType } from './getter';
 import { SetterType, makeSetterType } from './setter';
 
-import { ErrorType, CommonVisitor } from '../commonVisitor';
+import { ErrorTypeClass, ContextTypeClass, CommonTypeClass, CommonVisitor } from '../commonVisitor';
 
-export type BlockType =
-    | blockType
-    | FinallyBlockType
-    | PropertyBlockType
-    | AnonymousBlockType
-    | TriggerBlockType
-    | GetterType
-    | SetterType
-    | ErrorType;
+export { isNormalBlockType, NormalBlockTypeClass } from './normal';
 
-export class BlockVisitor extends CommonVisitor<BlockType> {
+export class BlockTypeClass<T> extends ContextTypeClass<T> {
+    constructor(type: string, value: T | null, errorClasses: Record<string, ErrorTypeClass>) {
+        super(type, value, errorClasses);
+    }
+}
+
+export const isBlockTypeAll = (target: CommonTypeClass): target is BlockTypeClass<unknown> => {
+    return target instanceof BlockTypeClass;
+};
+
+export class BlockVisitor extends CommonVisitor<BlockTypeClass<unknown>> {
     visitBlock(ctx: BlockContext) {
-        console.log('解析を開始します。' + 'BlockContext:  ' + ctx.getText());
-        const result = makeBlockType(ctx);
-        console.log(
-            '------------解析が終了しました--------------' +
-                'BlockContext:  ' +
-                JSON.stringify(result, null, 2),
-        );
-        return result;
+        return NormalBlockTypeClass.create(ctx);
     }
 
     visitFinallyBlock(ctx: FinallyBlockContext) {

@@ -1,11 +1,50 @@
 import { StatementContext } from '@apexdevtools/apex-parser';
 
-import { StatementType as statementType, StatementVisitor } from '.';
-import { BlockType, BlockVisitor } from '../blockVisitor';
+import { StatementTypeClass, StatementVisitor, isStatementTypeAll } from '.';
 
-export type StatementType = {
-    type: 'statement';
-    statement: BlockType | statementType;
+import { NormalBlockTypeClass, BlockVisitor, isNormalBlockType } from '../blockVisitor';
+import { ErrorTypeClass, CommonTypeClass } from '../commonVisitor';
+
+export class NormalStatementTypeClass extends StatementTypeClass<
+    StatementTypeClass<unknown> | NormalBlockTypeClass
+> {
+    private constructor(
+        value: StatementTypeClass<unknown> | NormalBlockTypeClass | null,
+        errorClasses: Record<string, ErrorTypeClass>,
+    ) {
+        super('statement', value, errorClasses);
+    }
+
+    static create(ctx: StatementContext): NormalStatementTypeClass {
+        if (
+            !ctx.block() &&
+            !ctx.ifStatement() &&
+            !ctx.switchStatement() &&
+            !ctx.forStatement() &&
+            !ctx.whileStatement() &&
+            !ctx.doWhileStatement() &&
+            !ctx.tryStatement() &&
+            !ctx.returnStatement() &&
+            !ctx.throwStatement() &&
+            !ctx.breakStatement() &&
+            !ctx.continueStatement() &&
+            !ctx.insertStatement() &&
+            !ctx.updateStatement() &&
+            !ctx.deleteStatement()
+        ) {
+            throw new Error('値が異常です。StatementContext: ' + ctx.getText());
+        }
+        return new NormalStatementTypeClass(
+            makeStatementType(ctx) as StatementTypeClass<unknown>,
+            {},
+        );
+    }
+}
+
+export const isNormalStatementType = (
+    target: CommonTypeClass,
+): target is NormalStatementTypeClass => {
+    return target instanceof NormalStatementTypeClass;
 };
 
 export const makeStatementType = (ctx: StatementContext): StatementType => {
@@ -171,3 +210,4 @@ export const makeStatementType = (ctx: StatementContext): StatementType => {
 
     throw new Error('値が異常です。StatementContext: ' + ctx.getText());
 };
+

@@ -22,7 +22,7 @@ import {
     AccessLevelContext,
 } from '@apexdevtools/apex-parser';
 
-import { StatementType as statementType, makeStatementType } from './normal';
+import { NormalStatementTypeClass } from './normal';
 import { IfStatementType, makeIfStatementType } from './ifStatement';
 import { SwitchStatementType, makeSwitchStatementType } from './switchStatement';
 import { ForStatementType, makeForStatementType } from './forStatement';
@@ -49,6 +49,7 @@ import { AccessLevelTypeClass } from './accessLevel';
 
 import { ErrorTypeClass, ContextTypeClass, CommonTypeClass, CommonVisitor } from '../commonVisitor';
 
+export { isNormalStatementType, NormalStatementTypeClass } from './normal';
 export { isReturnStatementType, ReturnStatementTypeClass } from './returnStatement';
 export { isBreakStatementType, BreakStatementTypeClass } from './breakStatement';
 export { isContinueStatementType, ContinueStatementTypeClass } from './continueStatement';
@@ -87,7 +88,7 @@ export class DmlStatementTypeClass<T> extends StatementTypeClass<T> {
     }
 }
 
-export const isStatementTypeClass = (
+export const isStatementTypeAll = (
     target: CommonTypeClass,
 ): target is StatementTypeClass<unknown> => {
     return target instanceof StatementTypeClass;
@@ -95,14 +96,7 @@ export const isStatementTypeClass = (
 
 export class StatementVisitor extends CommonVisitor<StatementTypeClass<unknown>> {
     visitStatement(ctx: StatementContext) {
-        console.log('解析を開始します。' + 'StatementContext:  ' + ctx.getText());
-        const result = makeStatementType(ctx);
-        console.log(
-            '------------解析が終了しました--------------' +
-                'StatementContext:  ' +
-                JSON.stringify(result, null, 2),
-        );
-        return result;
+        return NormalStatementTypeClass.create(ctx);
     }
 
     visitIfStatement(ctx: IfStatementContext) {
