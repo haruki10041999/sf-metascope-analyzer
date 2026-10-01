@@ -21,11 +21,13 @@ export class ControllTypeClass<T> extends ContextTypeClass<T> {
     }
 }
 
-export const isControllTypeAll = (target: CommonTypeClass): target is ContextTypeClass<unknown> => {
-    return target instanceof CommonTypeClass;
+export const isControllTypeAll = (
+    target: CommonTypeClass,
+): target is ControllTypeClass<unknown> => {
+    return target instanceof ControllTypeClass;
 };
 
-export class ControlVisitor extends CommonVisitor<ControlType> {
+export class ControlVisitor extends CommonVisitor<ControllTypeClass<unknown>> {
     visitForControl(ctx: ForControlContext) {
         console.log('解析を開始します。' + 'ForControlContext:  ' + ctx.getText());
         const result = makeForControlType(ctx);
