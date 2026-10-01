@@ -1,5 +1,4 @@
 import {
-    ApexParserBaseVisitor,
     MemberDeclarationContext,
     TriggerMemberDeclarationContext,
     AnonymousMemberDeclarationContext,
@@ -46,29 +45,25 @@ import {
     ConstructorDeclarationType,
     makeConstructorDeclarationType,
 } from './constructorDeclaration';
-import { EnumConstantsType, makeEnumConstantsType } from './enumConstants';
+import { EnumConstantsTypeClass } from './enumConstants';
 
-import { ErrorType, CommonVisitor } from '../commonVisitor';
+import { ErrorTypeClass, ContextTypeClass, CommonTypeClass, CommonVisitor } from '../commonVisitor';
 
-export type DeclarationType =
-    | LocalVariableDeclarationType
-    | MemberDeclarationType
-    | TriggerMemberDeclarationType
-    | AnonymousMemberDeclarationType
-    | TypeDeclarationType
-    | ClassDeclarationType
-    | ClassBodyDeclarationType
-    | EnumDeclarationType
-    | ConstructorDeclarationType
-    | MethodDeclarationType
-    | FieldDeclarationType
-    | InterfaceMethodDeclarationType
-    | InterfaceDeclarationType
-    | PropertyDeclarationType
-    | EnumConstantsType
-    | ErrorType;
+export { isEnumConstantsType, EnumConstantsTypeClass } from './enumConstants';
 
-export class DeclarationVisitor extends CommonVisitor<DeclarationType> {
+export class DeclarationTypeClass<T> extends ContextTypeClass<T> {
+    constructor(type: string, value: T | null, errorClasses: Record<string, ErrorTypeClass>) {
+        super(type, value, errorClasses);
+    }
+}
+
+export const isDeclarationTypeAll = (
+    target: CommonTypeClass,
+): target is DeclarationTypeClass<unknown> => {
+    return target instanceof DeclarationTypeClass;
+};
+
+export class DeclarationVisitor extends CommonVisitor<DeclarationTypeClass<unknown>> {
     visitMemberDeclaration(ctx: MemberDeclarationContext) {
         console.log('解析を開始します。' + 'MemberDeclarationContext:  ' + ctx.getText());
         const result = makeMemberDeclarationType(ctx);
@@ -224,13 +219,6 @@ export class DeclarationVisitor extends CommonVisitor<DeclarationType> {
     }
 
     visitEnumConstants(ctx: EnumConstantsContext) {
-        console.log('解析を開始します。' + 'EnumConstantsContext:  ' + ctx.getText());
-        const result = makeEnumConstantsType(ctx);
-        console.log(
-            '------------解析が終了しました--------------' +
-                'EnumConstantsContext:  ' +
-                JSON.stringify(result, null, 2),
-        );
-        return result;
+        return EnumConstantsTypeClass.create(ctx);
     }
 }

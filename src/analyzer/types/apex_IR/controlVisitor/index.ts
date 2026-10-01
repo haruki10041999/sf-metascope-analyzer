@@ -13,15 +13,17 @@ import { ForUpdateType, makeForUpdateType } from './forUpdate';
 import { EnhancedForControlType, makeEnhancedForControlType } from './enhancedForControl';
 import { WhenControlType, makeWhenControlType } from './whenControl';
 
-import { ErrorType, CommonVisitor } from '../commonVisitor';
+import { ErrorTypeClass, ContextTypeClass, CommonTypeClass, CommonVisitor } from '../commonVisitor';
 
-export type ControlType =
-    | ForControlType
-    | ForInitType
-    | ForUpdateType
-    | EnhancedForControlType
-    | WhenControlType
-    | ErrorType;
+export class ControllTypeClass<T> extends ContextTypeClass<T> {
+    constructor(type: string, value: T | null, errorClasses: Record<string, ErrorTypeClass>) {
+        super(type, value, errorClasses);
+    }
+}
+
+export const isControllTypeAll = (target: CommonTypeClass): target is ContextTypeClass<unknown> => {
+    return target instanceof CommonTypeClass;
+};
 
 export class ControlVisitor extends CommonVisitor<ControlType> {
     visitForControl(ctx: ForControlContext) {

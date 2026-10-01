@@ -12,14 +12,18 @@ import {
 import { AnonymousBlockType, makeAnonymousBlockType } from './anonymousBlock';
 import { TriggerBlockType, makeTriggerBlockType } from './triggerBlock';
 import { NormalBlockTypeClass } from './normal';
-import { FinallyBlockType, makeFinallyBlockType } from './finallyBlock';
-import { PropertyBlockType, makePropertyBlockType } from './propertyBlock';
-import { GetterType, makeGetterType } from './getter';
-import { SetterType, makeSetterType } from './setter';
+import { FinallyBlockTypeClass } from './finallyBlock';
+import { PropertyBlockTypeClass } from './propertyBlock';
+import { GetterTypeClass } from './getter';
+import { SetterTypeClass } from './setter';
 
 import { ErrorTypeClass, ContextTypeClass, CommonTypeClass, CommonVisitor } from '../commonVisitor';
 
 export { isNormalBlockType, NormalBlockTypeClass } from './normal';
+export { isFinallyBlockType, FinallyBlockTypeClass } from './finallyBlock';
+export { isPropertyBlockType, PropertyBlockTypeClass } from './propertyBlock';
+export { isGetterType, GetterTypeClass } from './getter';
+export { isSetterType, SetterTypeClass } from './setter';
 
 export class BlockTypeClass<T> extends ContextTypeClass<T> {
     constructor(type: string, value: T | null, errorClasses: Record<string, ErrorTypeClass>) {
@@ -37,25 +41,11 @@ export class BlockVisitor extends CommonVisitor<BlockTypeClass<unknown>> {
     }
 
     visitFinallyBlock(ctx: FinallyBlockContext) {
-        console.log('解析を開始します。' + 'FinallyBlockContext:  ' + ctx.getText());
-        const result = makeFinallyBlockType(ctx);
-        console.log(
-            '------------解析が終了しました--------------' +
-                'FinallyBlockContext:  ' +
-                JSON.stringify(result, null, 2),
-        );
-        return result;
+        return FinallyBlockTypeClass.create(ctx);
     }
 
     visitPropertyBlock(ctx: PropertyBlockContext) {
-        console.log('解析を開始します。' + 'PropertyBlockContext:  ' + ctx.getText());
-        const result = makePropertyBlockType(ctx);
-        console.log(
-            '------------解析が終了しました--------------' +
-                'PropertyBlockContext:  ' +
-                JSON.stringify(result, null, 2),
-        );
-        return result;
+        return PropertyBlockTypeClass.create(ctx);
     }
 
     visitAnonymousBlock(ctx: AnonymousBlockContext) {
@@ -81,24 +71,10 @@ export class BlockVisitor extends CommonVisitor<BlockTypeClass<unknown>> {
     }
 
     visitGetter(ctx: GetterContext) {
-        console.log('解析を開始します。' + 'GetterContext:  ' + ctx.getText());
-        const result = makeGetterType(ctx);
-        console.log(
-            '------------解析が終了しました--------------' +
-                'GetterContext:  ' +
-                JSON.stringify(result, null, 2),
-        );
-        return result;
+        return GetterTypeClass.create(ctx);
     }
 
     visitSetter(ctx: SetterContext) {
-        console.log('解析を開始します。' + 'SetterContext:  ' + ctx.getText());
-        const result = makeSetterType(ctx);
-        console.log(
-            '------------解析が終了しました--------------' +
-                'SetterContext:  ' +
-                JSON.stringify(result, null, 2),
-        );
-        return result;
+        return SetterTypeClass.create(ctx);
     }
 }

@@ -39,7 +39,7 @@ export class VariableDeclaratorsTypeClass extends VariableTypeClass<VariableDecl
 }
 
 export const isVariableDeclaratorsType = (
-    value: VariableTypeClass<unknown>,
+    value: CommonTypeClass,
 ): value is VariableDeclaratorsTypeClass => {
     return value instanceof VariableDeclaratorsTypeClass;
 };

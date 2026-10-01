@@ -1,8 +1,35 @@
 import { LocalVariableDeclarationContext } from '@apexdevtools/apex-parser';
 
-import { ModifierType, ModifierVisitor } from '../modifierVisitor';
-import { VariableType, VariableVisitor } from '../variableVisitor';
-import { TypeType, TypeVisitor } from '../typeVisitor';
+import { DeclarationTypeClass } from '.';
+
+import { NormalModifierTypeClass, ModifierVisitor, isNormalModifierType } from '../modifierVisitor';
+import {
+    VariableDeclaratorsTypeClass,
+    VariableVisitor,
+    isVariableDeclaratorsType,
+} from '../variableVisitor';
+import { TypeRefTypeClass, TypeVisitor, isTypeRefType } from '../typeVisitor';
+import { ErrorTypeClass, CommonTypeClass, isErrorType } from '../commonVisitor';
+
+export class LocalVariableDeclarationTypeClass extends DeclarationTypeClass<VariableDeclaratorsTypeClass> {
+    private valueType: TypeRefTypeClass | null = null;
+    private modifier: NormalModifierTypeClass[] = [];
+
+    private constructor(
+        value: VariableDeclaratorsTypeClass | null,
+        valueType: TypeRefTypeClass | null,
+        modifier: NormalModifierTypeClass[],
+        errorClasses: Record<string, ErrorTypeClass>,
+    ) {
+        super('localVariableDeclaration', value, errorClasses);
+        this.valueType = valueType;
+        this.modifier = modifier;
+    }
+
+    getValueType(): TypeRefTypeClass | null {
+        return (this, this.valueType);
+    }
+}
 
 export type LocalVariableDeclarationType = {
     type: 'localVariableDeclaration';
