@@ -10,31 +10,36 @@ import {
 } from '@apexdevtools/apex-parser';
 
 import { NormalLiteralTypeClass } from './normal';
-import { WhenLiteralType, makeWhenLiteralType } from './whenLiteral';
+import { WhenLiteralTypeClass } from './whenLiteral';
 import { SoslLiteralType, makeSoslLiteralType } from './soslLiteral';
 import { SoslLiteralAltType, makeSoslLiteralAltType } from './soslLiteralAlt';
-import { SignedIntegerType, makeSignedIntegerType } from './signedInteger';
-import { SignedNumberType, makeSignedNumberType } from './signedNumber';
+import { SignedIntegerTypeClass } from './signedInteger';
+import { SignedNumberTypeClass } from './signedNumber';
 import { SoqlLiteralType, makeSoqlLiteralType } from './soqlLiteral';
 
 import { ErrorTypeClass, ContextTypeClass, CommonTypeClass, CommonVisitor } from '../commonVisitor';
 
 export { isNormalLiteralType, NormalLiteralTypeClass } from './normal';
-
+export { isWhenLiteralType, WhenLiteralTypeClass } from './whenLiteral';
+export { isSignedIntegerType, SignedIntegerTypeClass } from './signedInteger';
+export { isSignedNumberType, SignedNumberTypeClass } from './signedNumber';
 export class LiteralTypeClass<T> extends ContextTypeClass<T> {
-    private valueType: string | null = null;
-    private rawValue: any | null = null;
+    constructor(type: string, value: T | null, errorClasses: Record<string, ErrorTypeClass>) {
+        super(type, value, errorClasses);
+    }
+}
+
+export class PrimitiveLiteralTypeClass<T> extends LiteralTypeClass<T> {
+    private valueType: string | null;
 
     constructor(
         type: string,
         value: T | null,
         valueType: string | null,
-        rawValue: any | null,
         errorClasses: Record<string, ErrorTypeClass>,
     ) {
         super(type, value, errorClasses);
         this.valueType = valueType;
-        this.rawValue = rawValue;
     }
 
     getValueType(): string | null {
@@ -43,13 +48,6 @@ export class LiteralTypeClass<T> extends ContextTypeClass<T> {
 
     isValueTypeNull(): boolean {
         return this.valueType === null;
-    }
-    getRawValue(): any | null {
-        return this.rawValue;
-    }
-
-    isRawValueNull(): boolean {
-        return this.rawValue === null;
     }
 }
 
@@ -63,14 +61,7 @@ export class LiteralVisitor extends CommonVisitor<LiteralTypeClass<unknown>> {
     }
 
     visitWhenLiteral(ctx: WhenLiteralContext) {
-        console.log('解析を開始します。' + 'WhenLiteralContext:  ' + ctx.getText());
-        const result = makeWhenLiteralType(ctx);
-        console.log(
-            '------------解析が終了しました--------------' +
-                'WhenLiteralContext:  ' +
-                JSON.stringify(result, null, 2),
-        );
-        return result;
+        return WhenLiteralTypeClass.create(ctx);
     }
 
     visitSoslLiteral(ctx: SoslLiteralContext) {
@@ -96,25 +87,11 @@ export class LiteralVisitor extends CommonVisitor<LiteralTypeClass<unknown>> {
     }
 
     visitSignedInteger(ctx: SignedIntegerContext) {
-        console.log('解析を開始します。' + 'SignedIntegerContext:  ' + ctx.getText());
-        const result = makeSignedIntegerType(ctx);
-        console.log(
-            '------------解析が終了しました--------------' +
-                'SignedIntegerContext:  ' +
-                JSON.stringify(result, null, 2),
-        );
-        return result;
+        return SignedIntegerTypeClass.create(ctx);
     }
 
     visitSignedNumber(ctx: SignedNumberContext) {
-        console.log('解析を開始します。' + 'SignedNumberContext:  ' + ctx.getText());
-        const result = makeSignedNumberType(ctx);
-        console.log(
-            '------------解析が終了しました--------------' +
-                'SignedNumberContext:  ' +
-                JSON.stringify(result, null, 2),
-        );
-        return result;
+        return SignedNumberTypeClass.create(ctx);
     }
 
     visitSoqlLiteral(ctx: SoqlLiteralContext) {

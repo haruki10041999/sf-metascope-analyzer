@@ -22,8 +22,6 @@ export class SoslIdTypeClass extends IdTypeClass<NormalIdTypeClass[]> {
             value.push(idTypeClass);
         } else if (isErrorType(idTypeClass)) {
             errorClasses['value'] = idTypeClass;
-        } else {
-            throw new Error('想定したタイプと違います　想定：Id、実値：' + idTypeClass.getType());
         }
 
         if (ctx.soslId_list() && ctx.soslId_list().length > 0) {
@@ -33,11 +31,6 @@ export class SoslIdTypeClass extends IdTypeClass<NormalIdTypeClass[]> {
                     value.push(...(soslIdTypeClass.getValue() || []));
                 } else if (isErrorType(soslIdTypeClass)) {
                     errorClasses['value'] = soslIdTypeClass;
-                } else {
-                    throw new Error(
-                        '想定したタイプと違います　想定：soslId、実値：' +
-                            soslIdTypeClass.getType(),
-                    );
                 }
             });
         }

@@ -1,18 +1,26 @@
 import { BreakStatementContext } from '@apexdevtools/apex-parser';
 
-export type BreakStatementType = {
-    type: 'breakStatement';
-    statement: string;
-};
+import { StatementTypeClass } from '.';
 
-export const makeBreakStatementType = (ctx: BreakStatementContext): BreakStatementType => {
-    if (!ctx.BREAK()) {
-        throw new Error('値が異常です。BreakStatementContext: ' + ctx.getText());
+import { CommonTypeClass } from '../commonVisitor';
+
+export class BreakStatementTypeClass extends StatementTypeClass<string> {
+    private constructor(value: string | null) {
+        super('breakStatement', value, {});
     }
 
-    return {
-        type: 'breakStatement',
-        statement: ctx.BREAK().getText(),
-    };
+    static create(ctx: BreakStatementContext) {
+        if (!ctx.BREAK()) {
+            throw new Error('値が異常です。BreakStatementContext: ' + ctx.getText());
+        }
+
+        return new BreakStatementTypeClass(ctx.BREAK().getText());
+    }
+}
+
+export const isBreakStatementType = (
+    target: CommonTypeClass,
+): target is BreakStatementTypeClass => {
+    return target instanceof BreakStatementTypeClass;
 };
 

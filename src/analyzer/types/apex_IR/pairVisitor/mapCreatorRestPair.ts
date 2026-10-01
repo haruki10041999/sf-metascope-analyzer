@@ -5,7 +5,7 @@ import { DoublePairTypeClass } from '.';
 import { ExpressionTypeClass, ExpressionVisitor, isExpressionTypeAll } from '../expressionVisitor';
 import { ErrorTypeClass, CommonTypeClass } from '../commonVisitor';
 
-export class MapCreatorPairTypeClass extends DoublePairTypeClass<
+export class MapCreatorRestPairTypeClass extends DoublePairTypeClass<
     ExpressionTypeClass<unknown>,
     ExpressionTypeClass<unknown>
 > {
@@ -14,10 +14,10 @@ export class MapCreatorPairTypeClass extends DoublePairTypeClass<
         right: ExpressionTypeClass<unknown> | null,
         errorClasses: Record<string, ErrorTypeClass>,
     ) {
-        super('mapCreatorPair', left, right, errorClasses);
+        super('mapCreatorRestPair', left, right, errorClasses);
     }
 
-    static create(ctx: MapCreatorRestPairContext): MapCreatorPairTypeClass {
+    static create(ctx: MapCreatorRestPairContext): MapCreatorRestPairTypeClass {
         if (!ctx.expression_list() || ctx.expression_list().length !== 2) {
             throw new Error('値が異常です。MapCreatorRestPairContext: ' + ctx.getText());
         }
@@ -40,12 +40,12 @@ export class MapCreatorPairTypeClass extends DoublePairTypeClass<
             errorClasses['right'] = rightExpressionTypeClass;
         }
 
-        return new MapCreatorPairTypeClass(left, right, errorClasses);
+        return new MapCreatorRestPairTypeClass(left, right, errorClasses);
     }
 }
 
-export const isMapCreatorPairType = (
+export const isMapCreatorRestPairType = (
     target: CommonTypeClass,
-): target is MapCreatorPairTypeClass => {
-    return target instanceof MapCreatorPairTypeClass;
+): target is MapCreatorRestPairTypeClass => {
+    return target instanceof MapCreatorRestPairTypeClass;
 };

@@ -1,52 +1,71 @@
 import { AnnotationContext } from '@apexdevtools/apex-parser';
 
-import { IdType, IdVisitor } from '../idVisitor';
-import { ValueType, ValueVisitor } from '../valueVisitor';
-import { PairType, PairVisitor } from '../pairVisitor';
+import { ModifierTypeClass } from '../modifierVisitor';
 
-export type AnnotationType = {
-    type: 'annotation';
-    modifier: {
-        annotation: IdType;
-        value?: ValueType;
-        pairs?: PairType;
-    };
-};
+import { NormalIdTypeClass, IdVisitor, isNormalIdType } from '../idVisitor';
+import { ElementValueTypeClass, ValueVisitor, isElementValueType } from '../valueVisitor';
+import { ElementValuePairsTypeClass, PairVisitor, isElementValuePairsType } from '../pairVisitor';
+import { ErrorTypeClass, CommonTypeClass, isErrorType } from '../commonVisitor';
 
-export const makeAnnotationType = (ctx: AnnotationContext): AnnotationType => {
-    if (!ctx.id()) {
-        throw new Error('値が異常です。AnnotationContext: ' + ctx.getText());
+export class AnnotationTypeClass extends ModifierTypeClass<NormalIdTypeClass> {
+    private param: ElementValueTypeClass | ElementValuePairsTypeClass | null = null;
+
+    private constructor(
+        value: NormalIdTypeClass | null,
+        param: ElementValueTypeClass | ElementValuePairsTypeClass | null,
+        errorClasses: Record<string, ErrorTypeClass>,
+    ) {
+        super('annotation', value, errorClasses);
+        this.param = param;
     }
 
-    const annotation = new IdVisitor().visit(ctx.id());
+    static create(ctx: AnnotationContext): AnnotationTypeClass {
+        if (!ctx.id() || (ctx.elementValue() && ctx.elementValuePairs())) {
+            throw new Error('値が異常です。AnnotationContext: ' + ctx.getText());
+        }
 
-    if (ctx.elementValue()) {
-        const value = new ValueVisitor().visit(ctx.elementValue());
-        return {
-            type: 'annotation',
-            modifier: {
-                annotation: annotation,
-                value: value,
-            },
-        };
+        let value: NormalIdTypeClass | null = null;
+        let param: ElementValueTypeClass | ElementValuePairsTypeClass | null = null;
+        const errorTypeClasses: Record<string, ErrorTypeClass> = {};
+
+        const idTypeClass = new IdVisitor().visit(ctx.id());
+        if (isNormalIdType(idTypeClass)) {
+            value = idTypeClass;
+        } else if (isErrorType(idTypeClass)) {
+            errorTypeClasses['id'] = idTypeClass;
+        }
+
+        if (ctx.elementValue()) {
+            const valueTypeClass = new ValueVisitor().visit(ctx.elementValue());
+            if (isElementValueType(valueTypeClass)) {
+                param = valueTypeClass;
+            } else if (isErrorType(valueTypeClass)) {
+                errorTypeClasses['elementValue'] = valueTypeClass;
+            }
+        }
+
+        if (ctx.elementValuePairs()) {
+            const pairTypeClass = new PairVisitor().visit(ctx.elementValuePairs());
+            if (isElementValuePairsType(pairTypeClass)) {
+                param = pairTypeClass;
+            } else if (isErrorType(pairTypeClass)) {
+                errorTypeClasses['elementValuePairs'] = pairTypeClass;
+            }
+        }
+
+        return new AnnotationTypeClass(value, param, errorTypeClasses);
     }
 
-    if (ctx.elementValuePairs()) {
-        const pairs = new PairVisitor().visit(ctx.elementValuePairs());
-        return {
-            type: 'annotation',
-            modifier: {
-                annotation: annotation,
-                pairs: pairs,
-            },
-        };
+    getParam(): ElementValueTypeClass | ElementValuePairsTypeClass | null {
+        return this.param;
     }
 
-    return {
-        type: 'annotation',
-        modifier: {
-            annotation: annotation,
-        },
-    };
+    isParamNull(): boolean {
+        return this.param === null;
+    }
+}
+
+export const isAnnotationType = (target: CommonTypeClass): target is AnnotationTypeClass => {
+    return target instanceof AnnotationTypeClass;
 };
 

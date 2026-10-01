@@ -1,12 +1,17 @@
 import { VariableDeclaratorsContext } from '@apexdevtools/apex-parser';
 
-import { VariableTypeClass, VariableVisitor, isVariableDeclaratorType, isVariableTypeAll } from '.';
+import {
+    VariableDeclaratorTypeClass,
+    VariableTypeClass,
+    VariableVisitor,
+    isVariableDeclaratorType,
+} from '.';
 
-import { ErrorTypeClass, CommonTypeClass } from '../commonVisitor';
+import { ErrorTypeClass, CommonTypeClass, isErrorType } from '../commonVisitor';
 
-export class VariableDeclaratorsTypeClass extends VariableTypeClass {
+export class VariableDeclaratorsTypeClass extends VariableTypeClass<VariableDeclaratorTypeClass[]> {
     private constructor(
-        value: VariableTypeClass[],
+        value: VariableDeclaratorTypeClass[],
         errorTypeClasses: Record<string, ErrorTypeClass>,
     ) {
         super('variableDeclarators', value, errorTypeClasses);
@@ -17,14 +22,14 @@ export class VariableDeclaratorsTypeClass extends VariableTypeClass {
             throw new Error('値が異常です。VariableDeclaratorsContext: ' + ctx.getText());
         }
 
-        const value: VariableTypeClass[] = [];
+        const value: VariableDeclaratorTypeClass[] = [];
         const errorTypeClasses: Record<string, ErrorTypeClass> = {};
 
         ctx.variableDeclarator_list().map((variableDeclaratorCtx, index) => {
             const variableTypeClass = new VariableVisitor().visit(variableDeclaratorCtx);
-            if (isVariableTypeAll(variableTypeClass)) {
+            if (isVariableDeclaratorType(variableTypeClass)) {
                 value.push(variableTypeClass);
-            } else {
+            } else if (isErrorType(variableTypeClass)) {
                 errorTypeClasses[`value_${index}`] = variableTypeClass;
             }
         });
@@ -34,7 +39,7 @@ export class VariableDeclaratorsTypeClass extends VariableTypeClass {
 }
 
 export const isVariableDeclaratorsType = (
-    value: VariableTypeClass,
+    value: VariableTypeClass<unknown>,
 ): value is VariableDeclaratorsTypeClass => {
     return value instanceof VariableDeclaratorsTypeClass;
 };

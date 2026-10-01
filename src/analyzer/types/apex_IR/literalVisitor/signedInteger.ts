@@ -1,43 +1,44 @@
 import { SignedIntegerContext } from '@apexdevtools/apex-parser';
 
-export type SignedIntegerType = {
-    type: 'signedInteger';
-    literal: {
-        value: string;
-        operator?: '+' | '-';
-    };
-};
+import { PrimitiveLiteralTypeClass } from '.';
 
-export const makeSignedIntegerType = (ctx: SignedIntegerContext): SignedIntegerType => {
-    if (!ctx.IntegerLiteral()) {
-        throw new Error('値が異常です。SignedIntegerContext: ' + ctx.getText());
+import { CommonTypeClass } from '../commonVisitor';
+
+export class SignedIntegerTypeClass extends PrimitiveLiteralTypeClass<number> {
+    private operator: string | null;
+
+    private constructor(value: number, operator: string | null) {
+        super('signedInteger', value, 'integer', {});
+        this.operator = operator;
     }
 
-    if (ctx.ADD()) {
-        return {
-            type: 'signedInteger',
-            literal: {
-                value: ctx.IntegerLiteral().getText(),
-                operator: '+',
-            },
-        };
+    static create(ctx: SignedIntegerContext): SignedIntegerTypeClass {
+        if (!ctx.IntegerLiteral() || (!ctx.ADD() && !ctx.SUB())) {
+            throw new Error('値が異常です。SignedIntegerContext: ' + ctx.getText());
+        }
+
+        let operator: string | null = null;
+        if (ctx.ADD()) {
+            operator = '+';
+        }
+        if (ctx.SUB()) {
+            operator = '-';
+        }
+        const value = parseInt(ctx.IntegerLiteral().getText(), 10);
+
+        return new SignedIntegerTypeClass(value, operator);
     }
 
-    if (ctx.SUB()) {
-        return {
-            type: 'signedInteger',
-            literal: {
-                value: ctx.IntegerLiteral().getText(),
-                operator: '-',
-            },
-        };
+    getOperator(): string | null {
+        return this.operator;
     }
 
-    return {
-        type: 'signedInteger',
-        literal: {
-            value: ctx.IntegerLiteral().getText(),
-        },
-    };
+    isOperatorNull(): boolean {
+        return this.operator === null;
+    }
+}
+
+export const isSignedIntegerType = (taraget: any): taraget is SignedIntegerTypeClass => {
+    return taraget instanceof SignedIntegerTypeClass;
 };
 

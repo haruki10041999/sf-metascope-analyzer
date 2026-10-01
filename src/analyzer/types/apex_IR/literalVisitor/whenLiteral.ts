@@ -1,108 +1,109 @@
 import { WhenLiteralContext } from '@apexdevtools/apex-parser';
 
-import { LiteralType, LiteralVisitor } from '.';
+import { PrimitiveLiteralTypeClass, LiteralVisitor } from '.';
 
-import { NameType, NameVisitor } from '../nameVisitor';
+import { QualifiedNameTypeClass, NameVisitor, isQualifiedNameType } from '../nameVisitor';
+import { ErrorTypeClass, CommonTypeClass, isErrorType } from '../commonVisitor';
 
-type WhenLiteralField =
-    | {
-          type: 'integer' | 'long';
-          value: string;
-          operator?: string;
-      }
-    | {
-          type: 'string' | 'multilineString';
-          value: string;
-      }
-    | {
-          type: 'null';
-          value: null;
-      }
-    | {
-          type: 'object';
-          value: NameType;
-      }
-    | {
-          value: LiteralType;
-      };
+type WhenLiteralValueType = number | string | null | QualifiedNameTypeClass | WhenLiteralTypeClass;
 
-export type WhenLiteralType = {
-    type: 'whenLiteral';
-    literal: WhenLiteralField;
-};
+export class WhenLiteralTypeClass extends PrimitiveLiteralTypeClass<WhenLiteralValueType> {
+    private operator: string | null = null;
 
-export const makeWhenLiteralType = (ctx: WhenLiteralContext): WhenLiteralType => {
-    if (ctx.IntegerLiteral() || ctx.LongLiteral()) {
-        const whelLiteralField: WhenLiteralField = {
-            type: ctx.IntegerLiteral() ? 'integer' : 'long',
-            value: ctx.IntegerLiteral()
-                ? ctx.IntegerLiteral().getText()
-                : ctx.LongLiteral().getText(),
-        };
-        let operator = '';
-        if (ctx.ADD_list() && ctx.ADD_list().length > 0) {
-            operator = ctx
-                .ADD_list()
-                .map((node) => node.getText())
-                .join('');
+    private constructor(
+        value: WhenLiteralValueType | null,
+        operator: string | null,
+        valueType: string | null,
+        errorClasses: Record<string, ErrorTypeClass>,
+    ) {
+        super('whenLiteral', value, valueType, errorClasses);
+        this.operator = operator;
+    }
+
+    static create(ctx: WhenLiteralContext): WhenLiteralTypeClass {
+        if (
+            !ctx.IntegerLiteral() &&
+            !ctx.LongLiteral() &&
+            !ctx.StringLiteral() &&
+            !ctx.MultilineStringLiteral() &&
+            !ctx.NULL() &&
+            !ctx.qualifiedName() &&
+            !ctx.whenLiteral()
+        ) {
+            throw new Error('値が異常です。WhenLiteralContext: ' + ctx.getText());
         }
 
-        if (ctx.SUB_list() && ctx.SUB_list().length > 0) {
-            operator = ctx
-                .SUB_list()
-                .map((node) => node.getText())
-                .join('');
+        let value: WhenLiteralValueType | null = null;
+        let operator: string | null = null;
+        let valueType: string | null = null;
+        const errorClasses: Record<string, ErrorTypeClass> = {};
+
+        if (ctx.IntegerLiteral() || ctx.LongLiteral()) {
+            value = ctx.IntegerLiteral()
+                ? parseInt(ctx.IntegerLiteral().getText(), 10)
+                : parseInt(ctx.LongLiteral().getText(), 10);
+
+            valueType = ctx.IntegerLiteral() ? 'integer' : 'long';
+
+            if (ctx.ADD_list() && ctx.ADD_list().length > 0) {
+                operator = ctx
+                    .ADD_list()
+                    .map((node) => node.getText())
+                    .join('');
+            }
+
+            if (ctx.SUB_list() && ctx.SUB_list().length > 0) {
+                operator = ctx
+                    .SUB_list()
+                    .map((node) => node.getText())
+                    .join('');
+            }
         }
 
-        if (operator !== '') {
-            whelLiteralField.operator = operator;
+        if (ctx.StringLiteral() || ctx.MultilineStringLiteral()) {
+            value = ctx.StringLiteral()
+                ? ctx.StringLiteral().getText()
+                : ctx.MultilineStringLiteral().getText().split('\n').join('');
+            valueType = ctx.StringLiteral() ? 'string' : 'multilineString';
         }
-        return {
-            type: 'whenLiteral',
-            literal: whelLiteralField,
-        };
+
+        if (ctx.NULL()) {
+            value = null;
+            valueType = 'null';
+        }
+
+        if (ctx.qualifiedName()) {
+            const nameTypeClass = new NameVisitor().visit(ctx.qualifiedName());
+            if (isQualifiedNameType(nameTypeClass)) {
+                value = nameTypeClass;
+                valueType = 'qualifiedName';
+            } else if (isErrorType(nameTypeClass)) {
+                errorClasses['qualifiedName'] = nameTypeClass;
+            }
+        }
+
+        if (ctx.whenLiteral()) {
+            const literalTypeClass = new LiteralVisitor().visit(ctx.whenLiteral());
+            if (isWhenLiteralType(literalTypeClass)) {
+                value = literalTypeClass;
+                valueType = 'whenLiteral';
+            } else if (isErrorType(literalTypeClass)) {
+                errorClasses['whenLiteral'] = literalTypeClass;
+            }
+        }
+
+        return new WhenLiteralTypeClass(value, operator, valueType, errorClasses);
     }
 
-    if (ctx.StringLiteral() || ctx.MultilineStringLiteral()) {
-        return {
-            type: 'whenLiteral',
-            literal: {
-                type: ctx.StringLiteral() ? 'string' : 'multilineString',
-                value: ctx.StringLiteral()
-                    ? ctx.StringLiteral().getText()
-                    : ctx.MultilineStringLiteral().getText(),
-            },
-        };
+    getOperator(): string | null {
+        return this.operator;
     }
 
-    if (ctx.NULL()) {
-        return {
-            type: 'whenLiteral',
-            literal: {
-                type: 'null',
-                value: null,
-            },
-        };
+    isOperatorNull(): boolean {
+        return this.operator === null;
     }
+}
 
-    if (ctx.qualifiedName()) {
-        const value = new NameVisitor().visit(ctx.qualifiedName());
-        return {
-            type: 'whenLiteral',
-            literal: {
-                type: 'object',
-                value: value,
-            },
-        };
-    }
-
-    if (ctx.whenLiteral()) {
-        const value = new LiteralVisitor().visit(ctx.whenLiteral());
-        return {
-            type: 'whenLiteral',
-            literal: { value: value },
-        };
-    }
-
-    throw new Error('値が異常です。WhenLiteralContext: ' + ctx.getText());
+export const isWhenLiteralType = (target: CommonTypeClass): target is WhenLiteralTypeClass => {
+    return target instanceof WhenLiteralTypeClass;
 };

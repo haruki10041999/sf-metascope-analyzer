@@ -5,47 +5,38 @@ import {
     SoqlFieldsParameterContext,
 } from '@apexdevtools/apex-parser';
 
-import { FormalParameterType, makeFormalParameterType } from './formalParameter';
-import { FormalParametersType, makeFormalParametersType } from './formalParameters';
-import { SoqlFieldsParameterType, makeSoqlFieldsParameterType } from './soqlFieldsParameter';
+import { FormalParameterTypeClass } from './formalParameter';
+import { FormalParametersTypeClass } from './formalParameters';
+import { SoqlFieldsParameterTypeClass } from './soqlFieldsParameter';
 
-import { ErrorType, CommonVisitor } from '../commonVisitor';
+import { ErrorTypeClass, ContextTypeClass, CommonTypeClass, CommonVisitor } from '../commonVisitor';
 
-export type ParameterType =
-    FormalParameterType | SoqlFieldsParameterType | FormalParametersType | ErrorType;
+export { isFormalParameterType, FormalParameterTypeClass } from './formalParameter';
+export { isSoqlFieldsParameterType, SoqlFieldsParameterTypeClass } from './soqlFieldsParameter';
+export { isFormalParametersType, FormalParametersTypeClass } from './formalParameters';
+export class ParameterTypeClass<T> extends ContextTypeClass<T> {
+    constructor(type: string, value: T | null, errorClasses: Record<string, ErrorTypeClass>) {
+        super(type, value, errorClasses);
+    }
+}
 
-export class ParameterVisitor extends CommonVisitor<ParameterType> {
+export const isParameterTypeAll = (
+    target: CommonTypeClass,
+): target is ParameterTypeClass<unknown> => {
+    return target instanceof ParameterTypeClass;
+};
+
+export class ParameterVisitor extends CommonVisitor<ParameterTypeClass<unknown>> {
     visitFormalParameter(ctx: FormalParameterContext) {
-        console.log('解析を開始します。' + 'FormalParameterContext:  ' + ctx.getText());
-        const result = makeFormalParameterType(ctx);
-        console.log(
-            '------------解析が終了しました--------------' +
-                'FormalParameterContext:  ' +
-                JSON.stringify(result, null, 2),
-        );
-        return result;
+        return FormalParameterTypeClass.create(ctx);
     }
 
     visitFormalParameters(ctx: FormalParametersContext) {
-        console.log('解析を開始します。' + 'FormalParametersContext:  ' + ctx.getText());
-        const result = makeFormalParametersType(ctx);
-        console.log(
-            '------------解析が終了しました--------------' +
-                'FormalParametersContext:  ' +
-                JSON.stringify(result, null, 2),
-        );
-        return result;
+        return FormalParametersTypeClass.create(ctx);
     }
 
     visitSoqlFieldsParameter(ctx: SoqlFieldsParameterContext) {
-        console.log('解析を開始します。' + 'SoqlFieldsParameterContext:  ' + ctx.getText());
-        const result = makeSoqlFieldsParameterType(ctx);
-        console.log(
-            '------------解析が終了しました--------------' +
-                'SoqlFieldsParameterContext:  ' +
-                JSON.stringify(result, null, 2),
-        );
-        return result;
+        return SoqlFieldsParameterTypeClass.create(ctx);
     }
 }
 

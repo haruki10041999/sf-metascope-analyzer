@@ -1,34 +1,57 @@
 import { InstanceOfExpressionContext } from '@apexdevtools/apex-parser';
 
-import { ExpressionType, ExpressionVisitor } from '.';
-import { TypeType, TypeVisitor } from '../typeVisitor';
+import {
+    DoubleOperatorExpressionTypeClass,
+    ExpressionTypeClass,
+    ExpressionVisitor,
+    isExpressionTypeAll,
+} from '.';
 
-export type InstanceOfExpressionType = {
-    type: 'instanceOfExpression';
-    expression: {
-        left: ExpressionType;
-        operator: 'instanceof';
-        right: TypeType;
-    };
-};
+import { TypeRefTypeClass, TypeVisitor, isTypeRefType } from '../typeVisitor';
+import { ErrorTypeClass, CommonTypeClass, isErrorType } from '../commonVisitor';
 
-export const makeInstanceOfExpressionType = (
-    ctx: InstanceOfExpressionContext,
-): InstanceOfExpressionType => {
-    if (!ctx.expression() || !ctx.typeRef()) {
-        throw new Error('値が異常です。InstanceOfExpressionContext: ' + ctx.getText());
+export class InstanceOfExpressionTypeClass extends DoubleOperatorExpressionTypeClass<
+    ExpressionTypeClass<unknown>,
+    TypeRefTypeClass
+> {
+    private constructor(
+        left: ExpressionTypeClass<unknown> | null,
+        right: TypeRefTypeClass | null,
+        errorClasses: Record<string, ErrorTypeClass>,
+    ) {
+        super('instanceOfExpression', left, right, 'instanceof', errorClasses);
     }
 
-    const value = new ExpressionVisitor().visit(ctx.expression());
-    const targetType = new TypeVisitor().visit(ctx.typeRef());
+    static create(ctx: InstanceOfExpressionContext): InstanceOfExpressionTypeClass {
+        if (!ctx.expression() || !ctx.typeRef()) {
+            throw new Error('値が異常です。InstanceOfExpressionContext: ' + ctx.getText());
+        }
 
-    return {
-        type: 'instanceOfExpression',
-        expression: {
-            left: value,
-            operator: 'instanceof',
-            right: targetType,
-        },
-    };
+        let left: ExpressionTypeClass<unknown> | null = null;
+        let right: TypeRefTypeClass | null = null;
+        const errorClasses: Record<string, ErrorTypeClass> = {};
+
+        const expressionTypeClass = new ExpressionVisitor().visit(ctx.expression());
+        if (isExpressionTypeAll(expressionTypeClass)) {
+            left = expressionTypeClass;
+        } else {
+            errorClasses['left'] = expressionTypeClass;
+        }
+
+        const typeTypeClass = new TypeVisitor().visit(ctx.typeRef());
+        if (isTypeRefType(typeTypeClass)) {
+            right = typeTypeClass;
+        } else if (isErrorType(typeTypeClass)) {
+            errorClasses['right'] = typeTypeClass;
+        }
+
+        return new InstanceOfExpressionTypeClass(left, right, errorClasses);
+    }
+}
+
+export const isInstanceOfExpressionType = (
+    target: CommonTypeClass,
+): target is InstanceOfExpressionTypeClass => {
+    return target instanceof InstanceOfExpressionTypeClass;
 };
 

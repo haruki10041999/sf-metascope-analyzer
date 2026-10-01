@@ -26,10 +26,6 @@ export class IdPrimaryTypeClass extends PrimaryTypeClass<NormalIdTypeClass> {
             value = idTypeClass;
         } else if (isErrorType(idTypeClass)) {
             errorClasses['value'] = idTypeClass;
-        } else {
-            throw new Error(
-                '想定したタイプと違います　想定：idPrimary、実値：' + idTypeClass.getType(),
-            );
         }
 
         return new IdPrimaryTypeClass(value, errorClasses);
@@ -39,3 +35,4 @@ export class IdPrimaryTypeClass extends PrimaryTypeClass<NormalIdTypeClass> {
 export const isIdPrimaryType = (target: CommonTypeClass): target is IdPrimaryTypeClass => {
     return target instanceof IdPrimaryTypeClass;
 };
+

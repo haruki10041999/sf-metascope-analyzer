@@ -1,23 +1,34 @@
 import { AccessLevelContext } from '@apexdevtools/apex-parser';
 
-export type AccessLevelType = {
-    type: 'accessLevel';
-    statement: 'SYSTEM' | 'USER';
-};
+import { StatementTypeClass } from '.';
 
-export const makeAccessLevelType = (ctx: AccessLevelContext): AccessLevelType => {
-    if (ctx.SYSTEM()) {
-        return {
-            type: 'accessLevel',
-            statement: 'SYSTEM',
-        };
-    }
-    if (ctx.USER()) {
-        return {
-            type: 'accessLevel',
-            statement: 'USER',
-        };
+import { CommonTypeClass } from '../commonVisitor';
+
+type AccessLevelValueType = 'SYSTEM' | 'USER';
+
+export class AccessLevelTypeClass extends StatementTypeClass<AccessLevelValueType> {
+    private constructor(value: AccessLevelValueType | null) {
+        super('accessLevel', value, {});
     }
 
-    throw new Error('値が異常です。AccessLevelContext: ' + ctx.getText());
+    static create(ctx: AccessLevelContext) {
+        if (!ctx.SYSTEM() && !ctx.USER()) {
+            throw new Error('値が異常です。AccessLevelContext: ' + ctx.getText());
+        }
+
+        let value: AccessLevelValueType | null = null;
+
+        if (ctx.SYSTEM()) {
+            value = 'SYSTEM';
+        }
+        if (ctx.USER()) {
+            value = 'USER';
+        }
+
+        return new AccessLevelTypeClass(value);
+    }
+}
+
+export const isAccessLevelType = (target: CommonTypeClass): target is AccessLevelTypeClass => {
+    return target instanceof AccessLevelTypeClass;
 };

@@ -16,10 +16,9 @@ export class LogOrExpressionTypeClass extends DoubleOperatorExpressionTypeClass<
     private constructor(
         left: ExpressionTypeClass<unknown> | null,
         right: ExpressionTypeClass<unknown> | null,
-        operator: string | null,
         errorClasses: Record<string, ErrorTypeClass>,
     ) {
-        super('logOrExpression', left, right, operator, errorClasses);
+        super('logOrExpression', left, right, '||', errorClasses);
     }
 
     static create(ctx: LogOrExpressionContext): LogOrExpressionTypeClass {
@@ -32,7 +31,6 @@ export class LogOrExpressionTypeClass extends DoubleOperatorExpressionTypeClass<
 
         let left: ExpressionTypeClass<unknown> | null = null;
         let right: ExpressionTypeClass<unknown> | null = null;
-        const operator = '||';
         const errorTypeClasses: Record<string, ErrorTypeClass> = {};
 
         if (isExpressionTypeAll(leftExpressionTypeClass)) {
@@ -46,7 +44,7 @@ export class LogOrExpressionTypeClass extends DoubleOperatorExpressionTypeClass<
             errorTypeClasses['right'] = rightExpressionTypeClass;
         }
 
-        return new LogOrExpressionTypeClass(left, right, operator, errorTypeClasses);
+        return new LogOrExpressionTypeClass(left, right, errorTypeClasses);
     }
 }
 
@@ -55,3 +53,4 @@ export const isLogOrExpressionType = (
 ): target is LogOrExpressionTypeClass => {
     return target instanceof LogOrExpressionTypeClass;
 };
+

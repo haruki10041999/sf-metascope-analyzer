@@ -1,20 +1,37 @@
 import { ElementValueContext } from '@apexdevtools/apex-parser';
 
-import { LiteralType, LiteralVisitor } from '../literalVisitor';
+import { ValueTypeClass } from '.';
 
-export type ElementValueType = {
-    type: 'elementValue';
-    value: LiteralType;
-};
+import { NormalLiteralTypeClass, LiteralVisitor, isNormalLiteralType } from '../literalVisitor';
+import { ErrorTypeClass, CommonTypeClass, isErrorType } from '../commonVisitor';
 
-export const makeElementValueType = (ctx: ElementValueContext): ElementValueType => {
-    if (!ctx.literal()) {
-        throw new Error('値が異常です。ElementValueContext: ' + ctx.getText());
+export class ElementValueTypeClass extends ValueTypeClass<NormalLiteralTypeClass> {
+    private constructor(
+        value: NormalLiteralTypeClass | null,
+        errorClasses: Record<string, ErrorTypeClass>,
+    ) {
+        super('elementValue', value, errorClasses);
     }
 
-    const value = new LiteralVisitor().visit(ctx.literal());
-    return {
-        type: 'elementValue',
-        value: value,
-    };
+    static create(ctx: ElementValueContext) {
+        if (!ctx.literal()) {
+            throw new Error('値が異常です。ElementValueContext: ' + ctx.getText());
+        }
+
+        let value: NormalLiteralTypeClass | null = null;
+        const errorClasses: Record<string, ErrorTypeClass> = {};
+
+        const literalTypeClass = new LiteralVisitor().visit(ctx.literal());
+        if (isNormalLiteralType(literalTypeClass)) {
+            value = literalTypeClass;
+        } else if (isErrorType(literalTypeClass)) {
+            errorClasses['value'] = literalTypeClass;
+        }
+
+        return new ElementValueTypeClass(value, errorClasses);
+    }
+}
+
+export const isElementValueType = (target: CommonTypeClass): target is ElementValueTypeClass => {
+    return target instanceof ElementValueTypeClass;
 };

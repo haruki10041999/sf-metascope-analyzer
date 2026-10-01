@@ -4,9 +4,9 @@ import { ExpressionTypeClass, ExpressionVisitor, isExpressionTypeAll } from '.';
 
 import { CommonTypeClass, ErrorTypeClass } from '../commonVisitor';
 
-export class SubExpressionTypeClass extends ExpressionTypeClass {
+export class SubExpressionTypeClass extends ExpressionTypeClass<ExpressionTypeClass<unknown>> {
     private constructor(
-        value: ExpressionTypeClass | null,
+        value: ExpressionTypeClass<unknown> | null,
         errorClasses: Record<string, ErrorTypeClass>,
     ) {
         super('subExpression', value, errorClasses);
@@ -19,7 +19,7 @@ export class SubExpressionTypeClass extends ExpressionTypeClass {
 
         const expressionTypeClass = new ExpressionVisitor().visit(ctx.expression());
 
-        let value: ExpressionTypeClass | null = null;
+        let value: ExpressionTypeClass<unknown> | null = null;
         let errorTypeClasses: Record<string, ErrorTypeClass> = {};
 
         if (isExpressionTypeAll(expressionTypeClass)) {

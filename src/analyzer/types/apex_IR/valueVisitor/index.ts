@@ -7,23 +7,30 @@ import {
     LocationValueContext,
 } from '@apexdevtools/apex-parser';
 
-import { ValueType as valueType, makeValueType } from './value';
-import { ElementValueType, makeElementValueType } from './elementValue';
-import { WhenValueType, makeWhenValueType } from './whenValue';
-import { CoordinateValueType, makeCoordinateValueType } from './coordinateValue';
-import { LocationValueType, makeLocationValueType } from './locationValue';
+import { NormalValueTypeClass } from './normal';
+import { ElementValueTypeClass } from './elementValue';
+import { WhenValueTypeClass } from './whenValue';
+import { CoordinateValueTypeClass } from './coordinateValue';
+import { LocationValueTypeClass } from './locationValue';
 
-import { ErrorType, CommonVisitor } from '../commonVisitor';
+import { ErrorTypeClass, ContextTypeClass, CommonTypeClass, CommonVisitor } from '../commonVisitor';
 
-export type ValueType =
-    | valueType
-    | ElementValueType
-    | WhenValueType
-    | CoordinateValueType
-    | LocationValueType
-    | ErrorType;
+export { isNormalValueType, NormalValueTypeClass } from './normal';
+export { isElementValueType, ElementValueTypeClass } from './elementValue';
+export { isWhenValueType, WhenValueTypeClass } from './whenValue';
+export { isCoordinateValueType, CoordinateValueTypeClass } from './coordinateValue';
+export { isLocationValueType, LocationValueTypeClass } from './locationValue';
+export class ValueTypeClass<T> extends ContextTypeClass<T> {
+    constructor(type: string, value: T | null, errorClasses: Record<string, ErrorTypeClass>) {
+        super(type, value, errorClasses);
+    }
+}
 
-export class ValueVisitor extends CommonVisitor<ValueType> {
+export const isValueTypeAll = (target: CommonTypeClass): target is ValueTypeClass<unknown> => {
+    return target instanceof ValueTypeClass;
+};
+
+export class ValueVisitor extends CommonVisitor<ValueTypeClass<unknown>> {
     visitValue(ctx: ValueContext) {
         console.log('解析を開始します。' + 'ValueContext:  ' + ctx.getText());
         const result = makeValueType(ctx);
@@ -36,46 +43,18 @@ export class ValueVisitor extends CommonVisitor<ValueType> {
     }
 
     visitElementValue(ctx: ElementValueContext) {
-        console.log('解析を開始します。' + 'ElementValueContext:  ' + ctx.getText());
-        const result = makeElementValueType(ctx);
-        console.log(
-            '------------解析が終了しました--------------' +
-                'ElementValueContext:  ' +
-                JSON.stringify(result, null, 2),
-        );
-        return result;
+        return ElementValueTypeClass.create(ctx);
     }
 
     visitWhenValue(ctx: WhenValueContext) {
-        console.log('解析を開始します。' + 'WhenValueContext:  ' + ctx.getText());
-        const result = makeWhenValueType(ctx);
-        console.log(
-            '------------解析が終了しました--------------' +
-                'WhenValueContext:  ' +
-                JSON.stringify(result, null, 2),
-        );
-        return result;
+        return WhenValueTypeClass.create(ctx);
     }
 
     visitCoordinateValue(ctx: CoordinateValueContext) {
-        console.log('解析を開始します。' + 'CoordinateValueContext:  ' + ctx.getText());
-        const result = makeCoordinateValueType(ctx);
-        console.log(
-            '------------解析が終了しました--------------' +
-                'CoordinateValueContext:  ' +
-                JSON.stringify(result, null, 2),
-        );
-        return result;
+        return CoordinateValueTypeClass.create(ctx);
     }
 
     visitLocationValue(ctx: LocationValueContext) {
-        console.log('解析を開始します。' + 'LocationValueContext:  ' + ctx.getText());
-        const result = makeLocationValueType(ctx);
-        console.log(
-            '------------解析が終了しました--------------' +
-                'LocationValueContext:  ' +
-                JSON.stringify(result, null, 2),
-        );
-        return result;
+        return LocationValueTypeClass.create(ctx);
     }
 }

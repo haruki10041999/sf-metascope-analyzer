@@ -1,9 +1,30 @@
 import { ValueContext } from '@apexdevtools/apex-parser';
 
-import { ExpressionType, ExpressionVisitor } from '../expressionVisitor';
-import { ListType, ListVisitor } from '../listVisitor';
-import { QueryType, QueryVisitor } from '../queryVisitor';
-import { LiteralVisitor, LiteralType } from '../literalVisitor';
+import { ValueTypeClass } from '../valueVisitor';
+
+import {
+    BoundExpressionTypeClass,
+    ExpressionVisitor,
+    isBoundExpressionType,
+} from '../expressionVisitor';
+import { ValueListTypeClass, ListVisitor, isValueListType } from '../listVisitor';
+import {
+    DateFormulaTypeClass,
+    QueryTypeClass,
+    QueryVisitor,
+    isDateFormulaType,
+    isQueryTypeAll,
+} from '../queryVisitor';
+import { SignedIntegerTypeClass, LiteralVisitor, isSignedIntegerType } from '../literalVisitor';
+import { ErrorTypeClass, CommonTypeClass, isErrorType } from '../commonVisitor';
+
+type ValueValueType = string | number | boolean;
+
+export class NormalValueTypeClass extends ValueTypeClass<ValueValueType> {}
+
+export const isNormalValueType = (target: CommonTypeClass): target is NormalValueTypeClass => {
+    return target instanceof NormalValueTypeClass;
+};
 
 type ValueFieldType =
     | {

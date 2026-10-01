@@ -1,19 +1,39 @@
 import { CreatedNameContext } from '@apexdevtools/apex-parser';
 
-import { PairType, PairVisitor } from '../pairVisitor';
+import { NameTypeClass } from '.';
 
-export type CreatedNameType = {
-    type: 'createdName';
-    name: PairType[];
-};
+import { IdCreatedNamePairTypeClass, PairVisitor, isIdCreatedNamePairType } from '../pairVisitor';
+import { ErrorTypeClass, CommonTypeClass, isErrorType } from '../commonVisitor';
 
-export const makeCreatedNameType = (ctx: CreatedNameContext): CreatedNameType => {
-    if (!ctx.idCreatedNamePair_list()) {
-        throw new Error('値が異常です。CreatedNameContext: ' + ctx.getText());
+export class CreatedNameTypeClass extends NameTypeClass<IdCreatedNamePairTypeClass[]> {
+    private constructor(
+        value: IdCreatedNamePairTypeClass[] | null,
+        errorClasses: Record<string, ErrorTypeClass>,
+    ) {
+        super('createdName', value, errorClasses);
     }
 
-    return {
-        type: 'createdName',
-        name: ctx.idCreatedNamePair_list().map((pair) => new PairVisitor().visit(pair)),
-    };
+    static create(ctx: CreatedNameContext): CreatedNameTypeClass {
+        if (!ctx.idCreatedNamePair_list()) {
+            throw new Error('値が異常です。CreatedNameContext: ' + ctx.getText());
+        }
+
+        const value: IdCreatedNamePairTypeClass[] = [];
+        const errorClasses: Record<string, ErrorTypeClass> = {};
+
+        ctx.idCreatedNamePair_list().forEach((idCreatedNamePairCtx, index) => {
+            const pairTypeClass = new PairVisitor().visit(idCreatedNamePairCtx);
+            if (isIdCreatedNamePairType(pairTypeClass)) {
+                value.push(pairTypeClass);
+            } else if (isErrorType(pairTypeClass)) {
+                errorClasses[`value_${index}`] = pairTypeClass;
+            }
+        });
+
+        return new CreatedNameTypeClass(value, errorClasses);
+    }
+}
+
+export const isCreatedNameType = (target: CommonTypeClass): target is CreatedNameTypeClass => {
+    return target instanceof CreatedNameTypeClass;
 };

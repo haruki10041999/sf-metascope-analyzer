@@ -1,74 +1,79 @@
 import { CreatorContext } from '@apexdevtools/apex-parser';
 
-import { NameType, NameVisitor } from '../nameVisitor';
-import { RestType, RestVisitor } from '.';
+import { RestTypeClass, RestVisitor, isRestTypeAll } from '.';
 
-export type CreatorType = {
-    type: 'creator';
-    rest: {
-        variant: NameType;
-        rest: RestType;
-    };
-};
+import { CreatedNameTypeClass, NameVisitor, isCreatedNameType } from '../nameVisitor';
+import { ErrorTypeClass, CommonTypeClass, isErrorType } from '../commonVisitor';
 
-export const makeCreatorType = (ctx: CreatorContext): CreatorType => {
-    const variant = new NameVisitor().visit(ctx.createdName());
+export class CreatorTypeClass extends RestTypeClass<CreatedNameTypeClass> {
+    content: RestTypeClass<unknown> | null = null;
 
-    if (ctx.noRest()) {
-        const noRest = new RestVisitor().visit(ctx.noRest());
-        return {
-            type: 'creator',
-            rest: {
-                variant: variant,
-                rest: noRest,
-            },
-        };
+    private constructor(
+        value: CreatedNameTypeClass | null,
+        content: RestTypeClass<unknown> | null,
+        errorTypeClasses: Record<string, ErrorTypeClass>,
+    ) {
+        super('creator', value, errorTypeClasses);
+        this.content = content;
     }
 
-    if (ctx.classCreatorRest()) {
-        const classCreatorRest = new RestVisitor().visit(ctx.classCreatorRest());
-        return {
-            type: 'creator',
-            rest: {
-                variant: variant,
-                rest: classCreatorRest,
-            },
-        };
-    }
+    static create(ctx: CreatorContext): CreatorTypeClass {
+        if (
+            !ctx.createdName() ||
+            (!ctx.noRest() &&
+                !ctx.classCreatorRest() &&
+                !ctx.arrayCreatorRest() &&
+                !ctx.mapCreatorRest() &&
+                !ctx.setCreatorRest())
+        ) {
+            throw new Error('値が異常です。CreatorContext: ' + ctx.getText());
+        }
 
-    if (ctx.arrayCreatorRest()) {
-        const arrayCreatorRest = new RestVisitor().visit(ctx.arrayCreatorRest());
-        return {
-            type: 'creator',
-            rest: {
-                variant: variant,
-                rest: arrayCreatorRest,
-            },
-        };
-    }
+        let value: CreatedNameTypeClass | null = null;
+        let content: RestTypeClass<unknown> | null = null;
+        const errorTypeClasses: Record<string, ErrorTypeClass> = {};
 
-    if (ctx.mapCreatorRest()) {
-        const mapCreatorRest = new RestVisitor().visit(ctx.mapCreatorRest());
-        return {
-            type: 'creator',
-            rest: {
-                variant: variant,
-                rest: mapCreatorRest,
-            },
-        };
-    }
+        const nameTypeClass = new NameVisitor().visit(ctx.createdName());
+        if (isCreatedNameType(nameTypeClass)) {
+            value = nameTypeClass;
+        } else if (isErrorType(nameTypeClass)) {
+            errorTypeClasses['value'] = nameTypeClass;
+        }
 
-    if (ctx.setCreatorRest()) {
-        const setCreatorRest = new RestVisitor().visit(ctx.setCreatorRest());
-        return {
-            type: 'creator',
-            rest: {
-                variant: variant,
-                rest: setCreatorRest,
-            },
-        };
-    }
+        let restTypeClass: RestTypeClass<unknown> | ErrorTypeClass | null = null;
+        if (ctx.noRest()) {
+            restTypeClass = new RestVisitor().visit(ctx.noRest());
+        }
 
-    throw new Error('値が異常です。CreatorContext: ' + ctx.getText());
+        if (ctx.classCreatorRest()) {
+            restTypeClass = new RestVisitor().visit(ctx.classCreatorRest());
+        }
+
+        if (ctx.arrayCreatorRest()) {
+            restTypeClass = new RestVisitor().visit(ctx.arrayCreatorRest());
+        }
+
+        if (ctx.mapCreatorRest()) {
+            restTypeClass = new RestVisitor().visit(ctx.mapCreatorRest());
+        }
+
+        if (ctx.setCreatorRest()) {
+            restTypeClass = new RestVisitor().visit(ctx.setCreatorRest());
+        }
+
+        if (restTypeClass) {
+            if (isRestTypeAll(restTypeClass)) {
+                content = restTypeClass;
+            } else {
+                errorTypeClasses['content'] = restTypeClass;
+            }
+        }
+
+        return new CreatorTypeClass(value, content, errorTypeClasses);
+    }
+}
+
+export const isCreatorType = (target: CommonTypeClass): target is CreatorTypeClass => {
+    return target instanceof CreatorTypeClass;
 };
 

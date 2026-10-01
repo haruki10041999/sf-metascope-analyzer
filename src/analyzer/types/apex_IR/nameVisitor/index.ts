@@ -1,5 +1,4 @@
 import {
-    ApexParserBaseVisitor,
     QualifiedNameContext,
     TypeNameContext,
     CreatedNameContext,
@@ -10,15 +9,17 @@ import {
 
 import { QualifiedNameTypeClass } from './qualifiedName';
 import { TypeNameTypeClass } from './typeName';
-import { makeCreatedNameType, CreatedNameType } from './createName';
+import { CreatedNameTypeClass } from './createName';
 import { FieldNameTypeClass } from './fieldName';
 import { DateFieldNameTypeClass } from './dateFieldName';
+CreatedNameTypeClass;
 import { DataCategoryNameTypeClass } from './dataCategoryName';
 
 import { ContextTypeClass, ErrorTypeClass, CommonTypeClass, CommonVisitor } from '../commonVisitor';
 
 export { isQualifiedNameType, QualifiedNameTypeClass } from './qualifiedName';
 export { isTypeNameType, TypeNameTypeClass } from './typeName';
+export { isCreatedNameType, CreatedNameTypeClass } from './createName';
 export { isFieldNameType, FieldNameTypeClass } from './fieldName';
 export { isDateFieldNameType, DateFieldNameTypeClass } from './dateFieldName';
 export { isDataCategoryNameType, DataCategoryNameTypeClass } from './dataCategoryName';
@@ -43,14 +44,7 @@ export class NameVisitor extends CommonVisitor<NameTypeClass<unknown>> {
     }
 
     visitCreatedName(ctx: CreatedNameContext) {
-        console.log('解析を開始します。' + 'CreatedNameContext:  ' + ctx.getText());
-        const result = makeCreatedNameType(ctx);
-        console.log(
-            '------------解析が終了しました--------------' +
-                'CreatedNameContext:  ' +
-                JSON.stringify(result, null, 2),
-        );
-        return result;
+        return CreatedNameTypeClass.create(ctx);
     }
 
     visitFieldName(ctx: FieldNameContext) {

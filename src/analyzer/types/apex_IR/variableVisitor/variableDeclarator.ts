@@ -2,20 +2,20 @@ import { VariableDeclaratorContext } from '@apexdevtools/apex-parser';
 
 import { VariableTypeClass } from '.';
 
-import { IdTypeClass, IdVisitor, isIdType } from '../idVisitor';
+import { NormalIdTypeClass, IdVisitor, isNormalIdType } from '../idVisitor';
 import { ExpressionTypeClass, ExpressionVisitor, isExpressionTypeAll } from '../expressionVisitor';
-import { ErrorTypeClass, CommonTypeClass } from '../commonVisitor';
+import { ErrorTypeClass, CommonTypeClass, isErrorType } from '../commonVisitor';
 
-export class VariableDeclaratorTypeClass extends VariableTypeClass {
-    name: any | null = null;
+export class VariableDeclaratorTypeClass extends VariableTypeClass<NormalIdTypeClass | null> {
+    content: ExpressionTypeClass<unknown> | null = null;
 
     private constructor(
-        name: IdTypeClass | null,
-        value: ExpressionTypeClass | null,
+        value: NormalIdTypeClass | null,
+        content: ExpressionTypeClass<unknown> | null,
         errorTypeClasses: Record<string, ErrorTypeClass>,
     ) {
         super('variableDeclarator', value, errorTypeClasses);
-        this.name = name;
+        this.content = content;
     }
 
     static create(ctx: VariableDeclaratorContext) {
@@ -23,34 +23,33 @@ export class VariableDeclaratorTypeClass extends VariableTypeClass {
             throw new Error('値が異常です。VariableDeclaratorContext: ' + ctx.getText());
         }
 
-        let name: IdTypeClass | null = null;
-        let value: ExpressionTypeClass | null = null;
+        let name: NormalIdTypeClass | null = null;
+        let content: ExpressionTypeClass<unknown> | null = null;
         const errorTypeClasses: Record<string, ErrorTypeClass> = {};
 
         const idTypeClass = new IdVisitor().visit(ctx.id());
-        const expressionTypeClass = new ExpressionVisitor().visit(ctx.expression());
-
-        if (isIdType(idTypeClass)) {
+        if (isNormalIdType(idTypeClass)) {
             name = idTypeClass;
-        } else {
+        } else if (isErrorType(idTypeClass)) {
             errorTypeClasses['name'] = idTypeClass;
         }
 
+        const expressionTypeClass = new ExpressionVisitor().visit(ctx.expression());
         if (isExpressionTypeAll(expressionTypeClass)) {
-            value = expressionTypeClass;
+            content = expressionTypeClass;
         } else {
             errorTypeClasses['value'] = expressionTypeClass;
         }
 
-        return new VariableDeclaratorTypeClass(name, value, errorTypeClasses);
+        return new VariableDeclaratorTypeClass(name, content, errorTypeClasses);
     }
 
-    getName(): any | null {
-        return this.name;
+    getContent(): ExpressionTypeClass<unknown> | null {
+        return this.content;
     }
 
-    isNameNull(): boolean {
-        return this.name === null;
+    isContentNull(): boolean {
+        return this.content === null;
     }
 }
 

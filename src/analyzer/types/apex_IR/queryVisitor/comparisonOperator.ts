@@ -1,98 +1,80 @@
 import { ComparisonOperatorContext } from '@apexdevtools/apex-parser';
 
-const comparisonOperators = [
-    '=',
-    '!=',
-    '<',
-    '>',
-    '<=',
-    '>=',
-    'LIKE',
-    'IN',
-    'NOT IN',
-    'INCLUDES',
-    'EXCLUDES',
-] as const;
+import { QueryTypeClass } from './index';
 
-type ComparisonOperatorField = (typeof comparisonOperators)[number];
+import { CommonTypeClass } from '../commonVisitor';
 
-export type ComparisonOperatorType = {
-    type: 'comparisonOperator';
-    query: ComparisonOperatorField;
-};
+type ComparisonOperatorValueType =
+    '=' | '!=' | '<' | '>' | '<=' | '>=' | 'LIKE' | 'IN' | 'NOT IN' | 'INCLUDES' | 'EXCLUDES';
 
-export const makeComparisonOperatorType = (
-    ctx: ComparisonOperatorContext,
-): ComparisonOperatorType => {
-    if (ctx.ASSIGN()) {
-        return {
-            type: 'comparisonOperator',
-            query: '=',
-        };
+export class ComparisonOperatorTypeClass extends QueryTypeClass<ComparisonOperatorValueType> {
+    constructor(value: ComparisonOperatorValueType | null) {
+        super('comparisonOperator', value, {});
     }
 
-    if (ctx.NOTEQUAL()) {
-        return {
-            type: 'comparisonOperator',
-            query: '!=',
-        };
-    }
-
-    if (ctx.LT()) {
-        return {
-            type: 'comparisonOperator',
-            query: '<',
-        };
-    }
-
-    if (ctx.GT()) {
-        return {
-            type: 'comparisonOperator',
-            query: '>',
-        };
-    }
-
-    if (ctx.LESSANDGREATER()) {
-        return {
-            type: 'comparisonOperator',
-            query: ctx.LESSANDGREATER().getText() as ComparisonOperatorField,
-        };
-    }
-
-    if (ctx.LIKE()) {
-        return {
-            type: 'comparisonOperator',
-            query: 'LIKE',
-        };
-    }
-
-    if (ctx.IN()) {
-        if (ctx.NOT()) {
-            return {
-                type: 'comparisonOperator',
-                query: 'NOT IN',
-            };
+    static create(ctx: ComparisonOperatorContext): ComparisonOperatorTypeClass {
+        if (
+            !ctx.ASSIGN() &&
+            !ctx.NOTEQUAL() &&
+            !ctx.LT() &&
+            !ctx.GT() &&
+            !ctx.LESSANDGREATER() &&
+            !ctx.LIKE() &&
+            !ctx.IN() &&
+            !ctx.INCLUDES() &&
+            !ctx.EXCLUDES()
+        ) {
+            throw new Error('値が異常です。ComparisonOperatorContext: ' + ctx.getText());
         }
-        return {
-            type: 'comparisonOperator',
-            query: 'IN',
-        };
-    }
 
-    if (ctx.INCLUDES()) {
-        return {
-            type: 'comparisonOperator',
-            query: 'INCLUDES',
-        };
-    }
+        let value: ComparisonOperatorValueType | null = null;
 
-    if (ctx.EXCLUDES()) {
-        return {
-            type: 'comparisonOperator',
-            query: 'EXCLUDES',
-        };
-    }
+        if (ctx.ASSIGN()) {
+            value = '=';
+        }
 
-    throw new Error('値が異常です。ComparisonOperatorContext: ' + ctx.getText());
+        if (ctx.NOTEQUAL()) {
+            value = '!=';
+        }
+
+        if (ctx.LT()) {
+            value = '<';
+        }
+
+        if (ctx.GT()) {
+            value = '>';
+        }
+
+        if (ctx.LESSANDGREATER()) {
+            value = ctx.LESSANDGREATER().getText() as ComparisonOperatorValueType;
+        }
+
+        if (ctx.LIKE()) {
+            value = 'LIKE';
+        }
+
+        if (ctx.IN()) {
+            if (ctx.NOT()) {
+                value = 'NOT IN';
+            }
+            value = 'IN';
+        }
+
+        if (ctx.INCLUDES()) {
+            value = 'INCLUDES';
+        }
+
+        if (ctx.EXCLUDES()) {
+            value = 'EXCLUDES';
+        }
+
+        return new ComparisonOperatorTypeClass(value);
+    }
+}
+
+export const isComparisonOperatorType = (
+    target: CommonTypeClass,
+): target is ComparisonOperatorTypeClass => {
+    return target instanceof ComparisonOperatorTypeClass;
 };
 

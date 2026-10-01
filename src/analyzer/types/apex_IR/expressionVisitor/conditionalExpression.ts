@@ -4,9 +4,11 @@ import { ExpressionTypeClass, ExpressionVisitor, isExpressionTypeAll } from '.';
 
 import { CommonTypeClass, ErrorTypeClass } from '../commonVisitor';
 
-export class ConditionalExpressionTypeClass extends ExpressionTypeClass {
+export class ConditionalExpressionTypeClass extends ExpressionTypeClass<
+    ExpressionTypeClass<unknown>
+> {
     private constructor(
-        value: ExpressionTypeClass | null,
+        value: ExpressionTypeClass<unknown> | null,
         errorClasses: Record<string, ErrorTypeClass>,
     ) {
         super('conditionalExpression', value, errorClasses);
@@ -17,7 +19,7 @@ export class ConditionalExpressionTypeClass extends ExpressionTypeClass {
             throw new Error('値が異常です。ConditionalExpressionContext: ' + ctx);
         }
 
-        let expressionTypeClass: ExpressionTypeClass | ErrorTypeClass | null = null;
+        let expressionTypeClass: ExpressionTypeClass<unknown> | ErrorTypeClass | null = null;
         if (ctx.logicalExpression()) {
             expressionTypeClass = new ExpressionVisitor().visit(ctx.logicalExpression());
         }
@@ -26,7 +28,7 @@ export class ConditionalExpressionTypeClass extends ExpressionTypeClass {
             expressionTypeClass = new ExpressionVisitor().visit(ctx.fieldExpression());
         }
 
-        let value: ExpressionTypeClass | null = null;
+        let value: ExpressionTypeClass<unknown> | null = null;
         let errorTypeClasses: Record<string, ErrorTypeClass> = {};
         if (expressionTypeClass) {
             if (isExpressionTypeAll(expressionTypeClass)) {

@@ -1,25 +1,40 @@
 import { ValueListContext } from '@apexdevtools/apex-parser';
 
-import { ValueType, ValueVisitor } from '../valueVisitor';
+import { ListTypeClass } from '../listVisitor';
 
-export type ValueListType = {
-    type: 'valueList';
-    list: ValueType[];
-};
+import { NormalValueTypeClass, ValueVisitor, isNormalValueType } from '../valueVisitor';
+import { ErrorTypeClass, CommonTypeClass, isErrorType } from '../commonVisitor';
 
-export const makeValueListType = (ctx: ValueListContext): ValueListType => {
-    if (!ctx.value_list() || ctx.value_list().length === 0) {
-        throw new Error('値が異常です。ValueListContext: ' + ctx.getText());
+export class ValueListTypeClass extends ListTypeClass<NormalValueTypeClass[]> {
+    private constructor(
+        value: NormalValueTypeClass[],
+        errorClasses: Record<string, ErrorTypeClass>,
+    ) {
+        super('valueList', value, errorClasses);
     }
 
-    const list = ctx.value_list().map((valueCtx) => {
-        const value = new ValueVisitor().visit(valueCtx);
-        return value;
-    });
+    static create(ctx: ValueListContext): ValueListTypeClass {
+        if (!ctx.value_list() || ctx.value_list().length === 0) {
+            throw new Error('値が異常です。ValueListContext: ' + ctx.getText());
+        }
 
-    return {
-        type: 'valueList',
-        list: list,
-    };
+        const value: NormalValueTypeClass[] = [];
+        const errorClasses: Record<string, ErrorTypeClass> = {};
+
+        ctx.value_list().forEach((valueCtx, index) => {
+            const valueTypeClass = new ValueVisitor().visit(valueCtx);
+            if (isNormalValueType(valueTypeClass)) {
+                value.push(valueTypeClass);
+            } else if (isErrorType(valueTypeClass)) {
+                errorClasses[`value_${index}`] = valueTypeClass;
+            }
+        });
+
+        return new ValueListTypeClass(value, errorClasses);
+    }
+}
+
+export const isValueListType = (target: CommonTypeClass): target is ValueListTypeClass => {
+    return target instanceof ValueListTypeClass;
 };
 

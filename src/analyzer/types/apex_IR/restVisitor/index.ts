@@ -8,89 +8,55 @@ import {
     CreatorContext,
 } from '@apexdevtools/apex-parser';
 
-import { NoRestType, makeNoRestType } from './noRest';
-import { ClassCreatorRestType, makeClassCreatorRestType } from './classCreatorRest';
-import { ArrayCreatorRestType, makeArrayCreatorRestType } from './arrayCreatorRest';
-import { MapCreatorRestType, makeMapCreatorRestType } from './mapCreatorRest';
-import { SetCreatorRestType, makeSetCreatorRestType } from './SetCreatorRest';
-import { CreatorType, makeCreatorType } from './creator';
+import { NoRestTypeClass } from './noRest';
+import { ClassCreatorRestTypeClass } from './classCreatorRest';
+import { ArrayCreatorRestTypeClass } from './arrayCreatorRest';
+import { MapCreatorRestTypeClass } from './mapCreatorRest';
+import { SetCreatorRestTypeClass } from './SetCreatorRest';
+import { CreatorTypeClass } from './creator';
 
-import { ErrorType, CommonVisitor } from '../commonVisitor';
+import { ErrorTypeClass, ContextTypeClass, CommonTypeClass, CommonVisitor } from '../commonVisitor';
 
-export type RestType =
-    | NoRestType
-    | ClassCreatorRestType
-    | ArrayCreatorRestType
-    | MapCreatorRestType
-    | SetCreatorRestType
-    | CreatorType
-    | ErrorType;
+export { isNoRestType, NoRestTypeClass } from './noRest';
+export { isClassCreatorRestType, ClassCreatorRestTypeClass } from './classCreatorRest';
+export { isArrayCreatorRestType, ArrayCreatorRestTypeClass } from './arrayCreatorRest';
+export { isMapCreatorRestType, MapCreatorRestTypeClass } from './mapCreatorRest';
+export { isSetCreatorRestType, SetCreatorRestTypeClass } from './SetCreatorRest';
+export { isCreatorType, CreatorTypeClass } from './creator';
 
-export class RestVisitor extends CommonVisitor<RestType> {
+export class RestTypeClass<T> extends ContextTypeClass<T> {
+    constructor(type: string, value: T | null, errorClasses: Record<string, ErrorTypeClass>) {
+        super(type, value, errorClasses);
+    }
+}
+
+export const isRestTypeAll = (target: CommonTypeClass): target is RestTypeClass<unknown> => {
+    return target instanceof RestTypeClass;
+};
+
+export class RestVisitor extends CommonVisitor<RestTypeClass<unknown>> {
     visitNoRest(ctx: NoRestContext) {
-        console.log('解析を開始します。' + 'NoRestContext:  ' + ctx.getText());
-        const result = makeNoRestType(ctx);
-        console.log(
-            '------------解析が終了しました--------------' +
-                'NoRestContext:  ' +
-                JSON.stringify(result, null, 2),
-        );
-        return result;
+        return NoRestTypeClass.create(ctx);
     }
 
     visitClassCreatorRest(ctx: ClassCreatorRestContext) {
-        console.log('解析を開始します。' + 'ClassCreatorRestContext:  ' + ctx.getText());
-        const result = makeClassCreatorRestType(ctx);
-        console.log(
-            '------------解析が終了しました--------------' +
-                'ClassCreatorRestContext:  ' +
-                JSON.stringify(result, null, 2),
-        );
-        return result;
+        return ClassCreatorRestTypeClass.create(ctx);
     }
 
     visitArrayCreatorRest(ctx: ArrayCreatorRestContext) {
-        console.log('解析を開始します。' + 'ArrayCreatorRestContext:  ' + ctx.getText());
-        const result = makeArrayCreatorRestType(ctx);
-        console.log(
-            '------------解析が終了しました--------------' +
-                'ArrayCreatorRestContext:  ' +
-                JSON.stringify(result, null, 2),
-        );
-        return result;
+        return ArrayCreatorRestTypeClass.create(ctx);
     }
 
     visitMapCreatorRest(ctx: MapCreatorRestContext) {
-        console.log('解析を開始します。' + 'MapCreatorRestContext:  ' + ctx.getText());
-        const result = makeMapCreatorRestType(ctx);
-        console.log(
-            '------------解析が終了しました--------------' +
-                'MapCreatorRestContext:  ' +
-                JSON.stringify(result, null, 2),
-        );
-        return result;
+        return MapCreatorRestTypeClass.create(ctx);
     }
 
     visitSetCreatorRest(ctx: SetCreatorRestContext) {
-        console.log('解析を開始します。' + 'SetCreatorRestContext:  ' + ctx.getText());
-        const result = makeSetCreatorRestType(ctx);
-        console.log(
-            '------------解析が終了しました--------------' +
-                'SetCreatorRestContext:  ' +
-                JSON.stringify(result, null, 2),
-        );
-        return result;
+        return SetCreatorRestTypeClass.create(ctx);
     }
 
     visitCreator(ctx: CreatorContext) {
-        console.log('解析を開始します。' + 'SetCreatorRestContext:  ' + ctx.getText());
-        const result = makeCreatorType(ctx);
-        console.log(
-            '------------解析が終了しました--------------' +
-                'SetCreatorRestContext:  ' +
-                JSON.stringify(result, null, 2),
-        );
-        return result;
+        return CreatorTypeClass.create(ctx);
     }
 }
 

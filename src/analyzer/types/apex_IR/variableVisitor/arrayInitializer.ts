@@ -5,9 +5,9 @@ import { VariableTypeClass } from '.';
 import { ExpressionTypeClass, ExpressionVisitor, isExpressionTypeAll } from '../expressionVisitor';
 import { ErrorTypeClass, CommonTypeClass } from '../commonVisitor';
 
-export class ArrayInitializerTypeClass extends VariableTypeClass {
+export class ArrayInitializerTypeClass extends VariableTypeClass<ExpressionTypeClass<unknown>[]> {
     private constructor(
-        value: ExpressionTypeClass[],
+        value: ExpressionTypeClass<unknown>[],
         errorTypeClasses: Record<string, ErrorTypeClass>,
     ) {
         super('arrayInitializer', value, errorTypeClasses);
@@ -18,7 +18,7 @@ export class ArrayInitializerTypeClass extends VariableTypeClass {
             throw new Error('値が異常です。ArrayInitializerContext: ' + ctx.getText());
         }
 
-        const value: ExpressionTypeClass[] = [];
+        const value: ExpressionTypeClass<unknown>[] = [];
         const errorTypeClasses: Record<string, ErrorTypeClass> = {};
         ctx.expression_list().forEach((expressionCtx, index) => {
             const expressionTypeClass = new ExpressionVisitor().visit(expressionCtx);

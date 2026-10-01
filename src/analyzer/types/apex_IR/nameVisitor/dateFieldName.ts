@@ -29,10 +29,6 @@ export class DateFieldNameTypeClass extends NameTypeClass<FieldNameTypeClass> {
             value = nameTypeClass;
         } else if (isErrorType(nameTypeClass)) {
             errorClasses['value'] = nameTypeClass;
-        } else {
-            throw new Error(
-                '想定したタイプと違います　想定：fieldName、実値：' + nameTypeClass.getType(),
-            );
         }
 
         return new DateFieldNameTypeClass(value, errorClasses, isConvertTimeZone);

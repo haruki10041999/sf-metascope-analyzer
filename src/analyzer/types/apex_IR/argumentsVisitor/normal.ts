@@ -27,10 +27,6 @@ export class NormalArgumentsTypeClass extends ArgumentsTypeClass<ExpressionListT
             value = listTypeClass;
         } else if (isErrorType(listTypeClass)) {
             errorClasses['value'] = listTypeClass;
-        } else {
-            throw new Error(
-                '想定したタイプと違います　想定：expressionList、実値：' + listTypeClass.getType(),
-            );
         }
 
         return new NormalArgumentsTypeClass(value, errorClasses);

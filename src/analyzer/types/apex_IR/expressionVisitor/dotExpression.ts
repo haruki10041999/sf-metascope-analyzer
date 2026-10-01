@@ -1,50 +1,81 @@
 import { DotExpressionContext } from '@apexdevtools/apex-parser';
 
-import { IdType, IdVisitor } from '../idVisitor';
-import { ExpressionType, ExpressionVisitor } from '.';
-import { CallType, CallVisitor } from '../callVisitor';
+import {
+    DoubleOperatorExpressionTypeClass,
+    ExpressionTypeClass,
+    ExpressionVisitor,
+    isExpressionTypeAll,
+} from '.';
 
-export type DotExpressionType = {
-    type: 'dotExpression';
-    expression: {
-        left: ExpressionType;
-        operator: '.' | '?.';
-        right: IdType | CallType;
-    };
+import { AnyIdTypeClass, IdVisitor, isAnyIdType } from '../idVisitor';
+import { DotMethodCallTypeClass, CallVisitor, isDotMethodCallType } from '../callVisitor';
+import { ErrorTypeClass, CommonTypeClass, isErrorType } from '../commonVisitor';
+
+export class DotExpressionTypeClass extends DoubleOperatorExpressionTypeClass<
+    ExpressionTypeClass<unknown>,
+    AnyIdTypeClass | DotMethodCallTypeClass
+> {
+    private constructor(
+        left: ExpressionTypeClass<unknown> | null,
+        right: AnyIdTypeClass | DotMethodCallTypeClass | null,
+        operator: string | null,
+        errorClasses: Record<string, ErrorTypeClass>,
+    ) {
+        super('dotExpression', left, right, operator, errorClasses);
+    }
+
+    static create(ctx: DotExpressionContext): DotExpressionTypeClass {
+        if (
+            !ctx.expression() &&
+            (!ctx.anyId() || !ctx.dotMethodCall()) &&
+            (!ctx.DOT() || !ctx.QUESTIONDOT())
+        ) {
+            throw new Error('値が異常です。DotExpressionContext: ' + ctx.getText());
+        }
+
+        let left: ExpressionTypeClass<unknown> | null = null;
+        let right: AnyIdTypeClass | DotMethodCallTypeClass | null = null;
+        let operator: string | null = null;
+        const errorClasses: Record<string, ErrorTypeClass> = {};
+
+        const expressionTypeClass = new ExpressionVisitor().visit(ctx.expression());
+        if (isExpressionTypeAll(expressionTypeClass)) {
+            left = expressionTypeClass;
+        } else {
+            errorClasses['left'] = expressionTypeClass;
+        }
+
+        if (ctx.anyId()) {
+            const anyIdTypeClass = new IdVisitor().visit(ctx.anyId());
+            if (isAnyIdType(anyIdTypeClass)) {
+                right = anyIdTypeClass;
+            } else if (isErrorType(anyIdTypeClass)) {
+                errorClasses['right'] = anyIdTypeClass;
+            }
+        }
+
+        if (ctx.dotMethodCall()) {
+            const dotMethodCallTypeClass = new CallVisitor().visit(ctx.dotMethodCall());
+            if (isDotMethodCallType(dotMethodCallTypeClass)) {
+                right = dotMethodCallTypeClass;
+            } else if (isErrorType(dotMethodCallTypeClass)) {
+                errorClasses['right'] = dotMethodCallTypeClass;
+            }
+        }
+
+        if (ctx.DOT()) {
+            operator = '.';
+        }
+
+        if (ctx.QUESTIONDOT()) {
+            operator = '?.';
+        }
+
+        return new DotExpressionTypeClass(left, right, operator, errorClasses);
+    }
+}
+
+export const isDotExpressionType = (target: CommonTypeClass): target is DotExpressionTypeClass => {
+    return target instanceof DotExpressionTypeClass;
 };
 
-export const makeDotExpressionType = (ctx: DotExpressionContext): DotExpressionType => {
-    const expression = new ExpressionVisitor().visit(ctx.expression());
-
-    let operator: '.' | '?.' | undefined = undefined;
-    if (ctx.DOT()) {
-        operator = '.';
-    }
-
-    if (ctx.QUESTIONDOT()) {
-        operator = '?.';
-    }
-
-    let right: IdType | CallType | undefined = undefined;
-
-    if (ctx.anyId()) {
-        right = new IdVisitor().visit(ctx.anyId());
-    }
-
-    if (ctx.dotMethodCall()) {
-        right = new CallVisitor().visit(ctx.dotMethodCall());
-    }
-
-    if (!operator || !right) {
-        throw new Error('値が異常です。DotExpressionContext: ' + ctx.getText());
-    }
-
-    return {
-        type: 'dotExpression',
-        expression: {
-            left: expression,
-            operator: operator,
-            right: right,
-        },
-    };
-};

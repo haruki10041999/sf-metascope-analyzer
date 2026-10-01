@@ -1,26 +1,41 @@
 import { FormalParametersContext } from '@apexdevtools/apex-parser';
 
-import { ListType, ListVisitor } from '../listVisitor';
+import { ParameterTypeClass } from '.';
 
-export type FormalParametersType = {
-    type: 'formalParameters';
-    parameter: ListType | [];
-};
+import {
+    FormalParameterListTypeClass,
+    ListVisitor,
+    isFormalParameterListType,
+} from '../listVisitor';
+import { ErrorTypeClass, CommonTypeClass, isErrorType } from '../commonVisitor';
 
-export const makeFormalParametersType = (ctx: FormalParametersContext): FormalParametersType => {
-    if ((!ctx.LPAREN() && ctx.RPAREN()) || (!ctx.RPAREN() && ctx.LPAREN())) {
-        throw new Error('値が異常です。FormalParametersContext: ' + ctx.getText());
+export class FormalParametersTypeClass extends ParameterTypeClass<FormalParameterListTypeClass> {
+    private constructor(
+        value: FormalParameterListTypeClass | null,
+        errorClasses: Record<string, ErrorTypeClass>,
+    ) {
+        super('formalParameters', value, errorClasses);
     }
-    if (!ctx.formalParameterList()) {
-        return {
-            type: 'formalParameters',
-            parameter: [],
-        };
-    }
 
-    const list = new ListVisitor().visit(ctx.formalParameterList());
-    return {
-        type: 'formalParameters',
-        parameter: list,
-    };
+    static create(ctx: FormalParametersContext): FormalParametersTypeClass {
+        let value: FormalParameterListTypeClass | null = null;
+        let errorClasses: Record<string, ErrorTypeClass> = {};
+
+        if (ctx.formalParameterList()) {
+            const listTypeClass = new ListVisitor().visit(ctx.formalParameterList());
+            if (isFormalParameterListType(listTypeClass)) {
+                value = listTypeClass;
+            } else if (isErrorType(listTypeClass)) {
+                errorClasses['value'] = listTypeClass;
+            }
+        }
+
+        return new FormalParametersTypeClass(value, errorClasses);
+    }
+}
+
+export const isFormalParametersType = (
+    target: CommonTypeClass,
+): target is FormalParametersTypeClass => {
+    return target instanceof FormalParametersTypeClass;
 };

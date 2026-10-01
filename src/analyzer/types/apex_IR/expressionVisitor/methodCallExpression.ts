@@ -1,24 +1,41 @@
 import { MethodCallExpressionContext } from '@apexdevtools/apex-parser';
 
-import { CallType, CallVisitor } from '../callVisitor';
+import { ExpressionTypeClass } from '../expressionVisitor';
 
-export type MethodCallExpressionType = {
-    type: 'methodCallExpression';
-    expression: CallType;
-};
+import { MethodCallTypeClass, CallVisitor, isMethodCallType } from '../callVisitor';
+import { ErrorTypeClass, CommonTypeClass, isErrorType } from '../commonVisitor';
+import { Target } from 'inspector';
 
-export const makeMethodCallExpressionType = (
-    ctx: MethodCallExpressionContext,
-): MethodCallExpressionType => {
-    if (!ctx.methodCall()) {
-        throw new Error('値が異常です。MethodCallExpressionContext: ' + ctx.getText());
+export class MethodCallExpressionType extends ExpressionTypeClass<MethodCallTypeClass> {
+    private constructor(
+        value: MethodCallTypeClass | null,
+        errorClasses: Record<string, ErrorTypeClass>,
+    ) {
+        super('methodCallExpression', value, errorClasses);
     }
 
-    const expression = new CallVisitor().visit(ctx.methodCall());
+    static create(ctx: MethodCallExpressionContext): MethodCallExpressionType {
+        if (!ctx.methodCall()) {
+            throw new Error('値が異常です。MethodCallExpressionContext: ' + ctx.getText());
+        }
 
-    return {
-        type: 'methodCallExpression',
-        expression: expression,
-    };
+        let value: MethodCallTypeClass | null = null;
+        const errorClasses: Record<string, ErrorTypeClass> = {};
+
+        const expressionTypeClass = new CallVisitor().visit(ctx.methodCall());
+        if (isMethodCallType(expressionTypeClass)) {
+            value = expressionTypeClass;
+        } else if (isErrorType(expressionTypeClass)) {
+            errorClasses['value'] = expressionTypeClass;
+        }
+
+        return new MethodCallExpressionType(value, errorClasses);
+    }
+}
+
+export const isMethodCallExpressionType = (
+    target: CommonTypeClass,
+): target is MethodCallExpressionType => {
+    return target instanceof MethodCallExpressionType;
 };
 

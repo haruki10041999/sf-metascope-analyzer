@@ -11,25 +11,28 @@ import {
 
 import { QueryType as queryType, makeQueryType } from './query';
 import { SubQueryType, makeSubQueryType } from './subQuery';
-import { ComparisonOperatorType, makeComparisonOperatorType } from './comparisonOperator';
-import { DateFormulaType, makeDateFormulaType } from './dateFormula';
+import { ComparisonOperatorTypeClass } from './comparisonOperator';
+import { DateFormulaTypeClass } from './dateFormula';
 import { FieldSpecType, makeFieldSpecType } from './fieldSpec';
-import { SoqlFunctionType, makeSoqlFunctionType } from './soqlFunction';
+import { SoqlFunctionTypeClass } from './soqlFunction';
 import { SearchGroupType, makeSearchGroupType } from './searchGroup';
 
-import { ErrorType, CommonVisitor } from '../commonVisitor';
+import { ErrorTypeClass, ContextTypeClass, CommonTypeClass, CommonVisitor } from '../commonVisitor';
 
-export type QueryType =
-    | queryType
-    | SubQueryType
-    | ComparisonOperatorType
-    | DateFormulaType
-    | FieldSpecType
-    | SearchGroupType
-    | SoqlFunctionType
-    | ErrorType;
+export { isComparisonOperatorType, ComparisonOperatorTypeClass } from './comparisonOperator';
+export { isDateFormulaType, DateFormulaTypeClass } from './dateFormula';
+export { isSoqlFunctionType, SoqlFunctionTypeClass } from './soqlFunction';
+export class QueryTypeClass<T> extends ContextTypeClass<T> {
+    constructor(type: string, value: T | null, errorClasses: Record<string, ErrorTypeClass>) {
+        super(type, value, errorClasses);
+    }
+}
 
-export class QueryVisitor extends CommonVisitor<QueryType> {
+export const isQueryTypeAll = (target: CommonTypeClass): target is QueryTypeClass<unknown> => {
+    return target instanceof QueryTypeClass;
+};
+
+export class QueryVisitor extends CommonVisitor<QueryTypeClass<unknown>> {
     visitQuery(ctx: QueryContext) {
         console.log('解析を開始します。' + 'QueryContext:  ' + ctx.getText());
         const result = makeQueryType(ctx);
@@ -53,25 +56,11 @@ export class QueryVisitor extends CommonVisitor<QueryType> {
     }
 
     visitComparisonOperator(ctx: ComparisonOperatorContext) {
-        console.log('解析を開始します。' + 'ComparisonOperatorContext:  ' + ctx.getText());
-        const result = makeComparisonOperatorType(ctx);
-        console.log(
-            '------------解析が終了しました--------------' +
-                'ComparisonOperatorContext:  ' +
-                JSON.stringify(result, null, 2),
-        );
-        return result;
+        return ComparisonOperatorTypeClass.create(ctx);
     }
 
     visitDateFormula(ctx: DateFormulaContext) {
-        console.log('解析を開始します。' + 'DateFormulaContext:  ' + ctx.getText());
-        const result = makeDateFormulaType(ctx);
-        console.log(
-            '------------解析が終了しました--------------' +
-                'DateFormulaContext:  ' +
-                JSON.stringify(result, null, 2),
-        );
-        return result;
+        return DateFormulaTypeClass.create(ctx);
     }
 
     visitFieldSpec(ctx: FieldSpecContext) {
@@ -97,14 +86,7 @@ export class QueryVisitor extends CommonVisitor<QueryType> {
     }
 
     visitSoqlFunction(ctx: SoqlFunctionContext) {
-        console.log('解析を開始します。' + 'SoqlFunctionContext:  ' + ctx.getText());
-        const result = makeSoqlFunctionType(ctx);
-        console.log(
-            '------------解析が終了しました--------------' +
-                'SoqlFunctionContext:  ' +
-                JSON.stringify(result, null, 2),
-        );
-        return result;
+        return SoqlFunctionTypeClass.create(ctx);
     }
 }
 

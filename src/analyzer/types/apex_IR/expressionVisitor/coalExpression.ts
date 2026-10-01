@@ -16,10 +16,9 @@ export class CoalExpressionTypeClass extends DoubleOperatorExpressionTypeClass<
     private constructor(
         left: ExpressionTypeClass<unknown> | null,
         right: ExpressionTypeClass<unknown> | null,
-        operator: string | null,
         errorClasses: Record<string, ErrorTypeClass>,
     ) {
-        super('coalExpression', left, right, operator, errorClasses);
+        super('coalExpression', left, right, '??', errorClasses);
     }
 
     static create(ctx: CoalExpressionContext): CoalExpressionTypeClass {
@@ -32,7 +31,6 @@ export class CoalExpressionTypeClass extends DoubleOperatorExpressionTypeClass<
 
         let left: ExpressionTypeClass<unknown> | null = null;
         let right: ExpressionTypeClass<unknown> | null = null;
-        const operator = '??';
         const errorTypeClasses: Record<string, ErrorTypeClass> = {};
 
         if (isExpressionTypeAll(leftExpressionTypeClass)) {
@@ -46,7 +44,7 @@ export class CoalExpressionTypeClass extends DoubleOperatorExpressionTypeClass<
             errorTypeClasses['right'] = rightExpressionTypeClass;
         }
 
-        return new CoalExpressionTypeClass(left, right, operator, errorTypeClasses);
+        return new CoalExpressionTypeClass(left, right, errorTypeClasses);
     }
 }
 
@@ -55,3 +53,4 @@ export const isCoalExpressionType = (
 ): target is CoalExpressionTypeClass => {
     return target instanceof CoalExpressionTypeClass;
 };
+

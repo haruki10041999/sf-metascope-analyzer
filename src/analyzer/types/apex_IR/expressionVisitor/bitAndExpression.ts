@@ -16,10 +16,9 @@ export class BitAndExpressionTypeClass extends DoubleOperatorExpressionTypeClass
     private constructor(
         left: ExpressionTypeClass<unknown> | null,
         right: ExpressionTypeClass<unknown> | null,
-        operator: string | null,
         errorClasses: Record<string, ErrorTypeClass>,
     ) {
-        super('bitAndExpression', left, right, operator, errorClasses);
+        super('bitAndExpression', left, right, '&', errorClasses);
     }
 
     static create(ctx: BitAndExpressionContext): BitAndExpressionTypeClass {
@@ -32,7 +31,6 @@ export class BitAndExpressionTypeClass extends DoubleOperatorExpressionTypeClass
 
         let left: ExpressionTypeClass<unknown> | null = null;
         let right: ExpressionTypeClass<unknown> | null = null;
-        const operator: string = '&';
         const errorTypeClasses: Record<string, ErrorTypeClass> = {};
 
         if (isExpressionTypeAll(leftExpressionTypeClass)) {
@@ -46,7 +44,7 @@ export class BitAndExpressionTypeClass extends DoubleOperatorExpressionTypeClass
             errorTypeClasses['right'] = rightExpressionTypeClass;
         }
 
-        return new BitAndExpressionTypeClass(left, right, operator, errorTypeClasses);
+        return new BitAndExpressionTypeClass(left, right, errorTypeClasses);
     }
 }
 
@@ -55,3 +53,4 @@ export const isBitAndExpressionType = (
 ): target is BitAndExpressionTypeClass => {
     return target instanceof BitAndExpressionTypeClass;
 };
+

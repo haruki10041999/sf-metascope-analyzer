@@ -1,5 +1,4 @@
 import {
-    ApexParserBaseVisitor,
     StatementContext,
     IfStatementContext,
     SwitchStatementContext,
@@ -23,58 +22,78 @@ import {
     AccessLevelContext,
 } from '@apexdevtools/apex-parser';
 
-import { StatementType as statementType, makeStatementType } from './statement';
+import { StatementType as statementType, makeStatementType } from './normal';
 import { IfStatementType, makeIfStatementType } from './ifStatement';
 import { SwitchStatementType, makeSwitchStatementType } from './switchStatement';
 import { ForStatementType, makeForStatementType } from './forStatement';
 import { WhileStatementType, makeWhileStatementType } from './whileStatement';
 import { DoWhileStatementType, makeDoWhileStatementType } from './doWhileStatement';
 import { TryStatementType, makeTryStatementType } from './tryStatement';
-import { ReturnStatementType, makeReturnStatementType } from './returnStatement';
+import { ReturnStatementTypeClass } from './returnStatement';
 import { ThrowStatementType, makeThrowStatementType } from './throwStatement';
-import { BreakStatementType, makeBreakStatementType } from './breakStatement';
-import { ContinueStatementType, makeContinueStatementType } from './continueStatement';
-import { InsertStatementType, makeInsertStatementType } from './insertStatement';
-import { UpdateStatementType, makeUpdateStatementType } from './updateStatement';
-import { DeleteStatementType, makeDeleteStatementType } from './deleteStatement';
-import { UndeleteStatementType, makeUndeleteStatementType } from './undeleteStatement';
-import { UpsertStatementType, makeUpsertStatementType } from './upsertStatement';
-import { MergeStatementType, makeMergeStatementType } from './mergeStatement';
+import { BreakStatementTypeClass } from './breakStatement';
+import { ContinueStatementTypeClass } from './continueStatement';
+import { InsertStatementTypeClass } from './insertStatement';
+import { UpdateStatementTypeClass } from './updateStatement';
+import { DeleteStatementTypeClass } from './deleteStatement';
+import { UndeleteStatementTypeClass } from './undeleteStatement';
+import { UpsertStatementTypeClass } from './upsertStatement';
+import { MergeStatementTypeClass } from './mergeStatement';
 import { RunAsStatementType, makeRunAsStatementType } from './runAsStatement';
 import {
     LocalVariableDeclarationStatementType,
     makeLocalVariableDeclarationStatementType,
 } from './localVariableDeclarationStatement';
 import { ExpressionStatementType, makeExpressionStatementType } from './expressionStatement';
-import { AccessLevelType, makeAccessLevelType } from './accessLevel';
+import { AccessLevelTypeClass } from './accessLevel';
 
-import { ErrorType, CommonVisitor } from '../commonVisitor';
+import { ErrorTypeClass, ContextTypeClass, CommonTypeClass, CommonVisitor } from '../commonVisitor';
 
-export type StatementType =
-    | statementType
-    | IfStatementType
-    | SwitchStatementType
-    | ForStatementType
-    | WhileStatementType
-    | DoWhileStatementType
-    | TryStatementType
-    | ReturnStatementType
-    | ThrowStatementType
-    | BreakStatementType
-    | ContinueStatementType
-    | InsertStatementType
-    | UpdateStatementType
-    | DeleteStatementType
-    | UndeleteStatementType
-    | UpsertStatementType
-    | MergeStatementType
-    | RunAsStatementType
-    | LocalVariableDeclarationStatementType
-    | ExpressionStatementType
-    | AccessLevelType
-    | ErrorType;
+export { isReturnStatementType, ReturnStatementTypeClass } from './returnStatement';
+export { isBreakStatementType, BreakStatementTypeClass } from './breakStatement';
+export { isContinueStatementType, ContinueStatementTypeClass } from './continueStatement';
+export { isInsertStatementType, InsertStatementTypeClass } from './insertStatement';
+export { isUpdateStatementType, UpdateStatementTypeClass } from './updateStatement';
+export { isDeleteStatementType, DeleteStatementTypeClass } from './deleteStatement';
+export { isUndeleteStatementType, UndeleteStatementTypeClass } from './undeleteStatement';
+export { isUpsertStatementType, UpsertStatementTypeClass } from './upsertStatement';
+export { isMergeStatementType, MergeStatementTypeClass } from './mergeStatement';
+export { isAccessLevelType, AccessLevelTypeClass } from './accessLevel';
 
-export class StatementVisitor extends CommonVisitor<StatementType> {
+export class StatementTypeClass<T> extends ContextTypeClass<T> {
+    constructor(type: string, value: T | null, errorClasses: Record<string, ErrorTypeClass>) {
+        super(type, value, errorClasses);
+    }
+}
+
+export class DmlStatementTypeClass<T> extends StatementTypeClass<T> {
+    private accessLevel: AccessLevelTypeClass | null = null;
+    constructor(
+        type: string,
+        value: T | null,
+        accessLevel: AccessLevelTypeClass | null,
+        errorClasses: Record<string, ErrorTypeClass>,
+    ) {
+        super(type, value, errorClasses);
+        this.accessLevel = accessLevel;
+    }
+
+    getAccessLevel(): AccessLevelTypeClass | null {
+        return this.accessLevel;
+    }
+
+    isAccessLevelNull(): boolean {
+        return this.accessLevel === null;
+    }
+}
+
+export const isStatementTypeClass = (
+    target: CommonTypeClass,
+): target is StatementTypeClass<unknown> => {
+    return target instanceof StatementTypeClass;
+};
+
+export class StatementVisitor extends CommonVisitor<StatementTypeClass<unknown>> {
     visitStatement(ctx: StatementContext) {
         console.log('解析を開始します。' + 'StatementContext:  ' + ctx.getText());
         const result = makeStatementType(ctx);
@@ -153,14 +172,7 @@ export class StatementVisitor extends CommonVisitor<StatementType> {
     }
 
     visitReturnStatement(ctx: ReturnStatementContext) {
-        console.log('解析を開始します。' + 'ReturnStatementContext:  ' + ctx.getText());
-        const result = makeReturnStatementType(ctx);
-        console.log(
-            '------------解析が終了しました--------------' +
-                'ReturnStatementContext:  ' +
-                JSON.stringify(result, null, 2),
-        );
-        return result;
+        return ReturnStatementTypeClass.create(ctx);
     }
 
     visitThrowStatement(ctx: ThrowStatementContext) {
@@ -175,91 +187,36 @@ export class StatementVisitor extends CommonVisitor<StatementType> {
     }
 
     visitBreakStatement(ctx: BreakStatementContext) {
-        console.log('解析を開始します。' + 'BreakStatementContext:  ' + ctx.getText());
-        const result = makeBreakStatementType(ctx);
-        console.log(
-            '------------解析が終了しました--------------' +
-                'BreakStatementContext:  ' +
-                JSON.stringify(result, null, 2),
-        );
-        return result;
+        return BreakStatementTypeClass.create(ctx);
     }
 
     visitContinueStatement(ctx: ContinueStatementContext) {
-        console.log('解析を開始します。' + 'ContinueStatementContext:  ' + ctx.getText());
-        const result = makeContinueStatementType(ctx);
-        console.log(
-            '------------解析が終了しました--------------' +
-                'ContinueStatementContext:  ' +
-                JSON.stringify(result, null, 2),
-        );
-        return result;
+        return ContinueStatementTypeClass.create(ctx);
     }
 
     visitInsertStatement(ctx: InsertStatementContext) {
-        console.log('解析を開始します。' + 'InsertStatementContext:  ' + ctx.getText());
-        const result = makeInsertStatementType(ctx);
-        console.log(
-            '------------解析が終了しました--------------' +
-                'InsertStatementContext:  ' +
-                JSON.stringify(result, null, 2),
-        );
-        return result;
+        return InsertStatementTypeClass.create(ctx);
     }
 
     visitUpdateStatement(ctx: UpdateStatementContext) {
         console.log('解析を開始します。' + 'UpdateStatementContext:  ' + ctx.getText());
-        const result = makeUpdateStatementType(ctx);
-        console.log(
-            '------------解析が終了しました--------------' +
-                'UpdateStatementContext:  ' +
-                JSON.stringify(result, null, 2),
-        );
-        return result;
+        return UpdateStatementTypeClass.create(ctx);
     }
 
     visitDeleteStatement(ctx: DeleteStatementContext) {
-        console.log('解析を開始します。' + 'DeleteStatementContext:  ' + ctx.getText());
-        const result = makeDeleteStatementType(ctx);
-        console.log(
-            '------------解析が終了しました--------------' +
-                'DeleteStatementContext:  ' +
-                JSON.stringify(result, null, 2),
-        );
-        return result;
+        return DeleteStatementTypeClass.create(ctx);
     }
 
     visitUndeleteStatement(ctx: UndeleteStatementContext) {
-        console.log('解析を開始します。' + 'UndeleteStatementContext:  ' + ctx.getText());
-        const result = makeUndeleteStatementType(ctx);
-        console.log(
-            '------------解析が終了しました--------------' +
-                'UndeleteStatementContext:  ' +
-                JSON.stringify(result, null, 2),
-        );
-        return result;
+        return UndeleteStatementTypeClass.create(ctx);
     }
 
     visitUpsertStatement(ctx: UpsertStatementContext) {
-        console.log('解析を開始します。' + 'UpsertStatementContext:  ' + ctx.getText());
-        const result = makeUpsertStatementType(ctx);
-        console.log(
-            '------------解析が終了しました--------------' +
-                'UpsertStatementContext:  ' +
-                JSON.stringify(result, null, 2),
-        );
-        return result;
+        return UpsertStatementTypeClass.create(ctx);
     }
 
     visitMergeStatement(ctx: MergeStatementContext) {
-        console.log('解析を開始します。' + 'MergeStatementContext:  ' + ctx.getText());
-        const result = makeMergeStatementType(ctx);
-        console.log(
-            '------------解析が終了しました--------------' +
-                'MergeStatementContext:  ' +
-                JSON.stringify(result, null, 2),
-        );
-        return result;
+        return MergeStatementTypeClass.create(ctx);
     }
 
     visitRunAsStatement(ctx: RunAsStatementContext) {
@@ -298,14 +255,7 @@ export class StatementVisitor extends CommonVisitor<StatementType> {
     }
 
     visitAccessLevel(ctx: AccessLevelContext) {
-        console.log('解析を開始します。' + 'AccessLevelContext:  ' + ctx.getText());
-        const result = makeAccessLevelType(ctx);
-        console.log(
-            '------------解析が終了しました--------------' +
-                'AccessLevelContext:  ' +
-                JSON.stringify(result, null, 2),
-        );
-        return result;
+        return AccessLevelTypeClass.create(ctx);
     }
 }
 

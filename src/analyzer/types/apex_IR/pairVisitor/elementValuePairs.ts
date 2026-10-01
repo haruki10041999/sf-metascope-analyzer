@@ -1,23 +1,37 @@
 import { ElementValuePairsContext } from '@apexdevtools/apex-parser';
 
-import { PairType, PairVisitor } from '.';
+import { PairTypeClass, ElementValuePairTypeClass, PairVisitor, isElementValuePairType } from '.';
 
-export type ElementValuePairsType = {
-    type: 'elementValuePairs';
-    pair: PairType[];
-};
+import { ErrorTypeClass, CommonTypeClass, isErrorType } from '../commonVisitor';
 
-export const makeElementValuePairsType = (ctx: ElementValuePairsContext): ElementValuePairsType => {
-    if (!ctx.elementValuePair_list() || ctx.elementValuePair_list().length === 0) {
-        throw new Error('値が異常です。ElementValuePairsContext: ' + ctx.getText());
+export class ElementValuePairsTypeClass extends PairTypeClass<ElementValuePairTypeClass[]> {
+    constructor(pairs: ElementValuePairTypeClass[], errorClasses: Record<string, ErrorTypeClass>) {
+        super('elementValuePairs', pairs, errorClasses);
     }
 
-    const pairs = ctx.elementValuePair_list().map((pairCtx) => {
-        const pair = new PairVisitor().visit(pairCtx);
-        return pair;
-    });
-    return {
-        type: 'elementValuePairs',
-        pair: pairs,
-    };
+    static create(ctx: ElementValuePairsContext): ElementValuePairsTypeClass {
+        if (!ctx.elementValuePair_list() || ctx.elementValuePair_list().length === 0) {
+            throw new Error('値が異常です。ElementValuePairsContext: ' + ctx.getText());
+        }
+
+        const pairs: ElementValuePairTypeClass[] = [];
+        const errorTypeClasses: Record<string, ErrorTypeClass> = {};
+
+        ctx.elementValuePair_list().forEach((elementValuePairCtx, index) => {
+            const pair = new PairVisitor().visit(elementValuePairCtx);
+            if (isElementValuePairType(pair)) {
+                pairs.push(pair);
+            } else if (isErrorType(pair)) {
+                errorTypeClasses[`value_${index}`] = pair;
+            }
+        });
+
+        return new ElementValuePairsTypeClass(pairs, errorTypeClasses);
+    }
+}
+
+export const isElementValuePairsType = (
+    target: CommonTypeClass,
+): target is ElementValuePairsTypeClass => {
+    return target instanceof ElementValuePairsTypeClass;
 };

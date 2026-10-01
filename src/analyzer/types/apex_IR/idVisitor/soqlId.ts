@@ -25,8 +25,6 @@ export class SoqlIdTypeClass extends IdTypeClass<NormalIdTypeClass> {
             value = idTypeClass;
         } else if (isErrorType(idTypeClass)) {
             errorClasses['value'] = idTypeClass;
-        } else {
-            throw new Error('想定したタイプと違います　想定：Id、実値：' + idTypeClass.getType());
         }
 
         return new SoqlIdTypeClass(value, errorClasses);

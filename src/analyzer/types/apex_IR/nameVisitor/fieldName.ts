@@ -24,10 +24,6 @@ export class FieldNameTypeClass extends NameTypeClass<SoqlIdTypeClass[]> {
                 value.push(idTypeClass);
             } else if (isErrorType(idTypeClass)) {
                 errorClasses[`value_${index}`] = idTypeClass;
-            } else {
-                throw new Error(
-                    '想定したタイプと違います　想定：soqlId、実値：' + idTypeClass.getType(),
-                );
             }
         });
 

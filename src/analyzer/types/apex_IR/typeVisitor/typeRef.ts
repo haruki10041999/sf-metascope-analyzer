@@ -33,24 +33,15 @@ export class TypeRefTypeClass extends TypeTypeClass<TypeNameTypeClass[]> {
                 value.push(nameTypeClass);
             } else if (isErrorType(nameTypeClass)) {
                 errorClasses[`value_${index}`] = nameTypeClass;
-            } else {
-                throw new Error(
-                    '想定したタイプと違います　想定：typeName、実値：' + nameTypeClass.getType(),
-                );
             }
         });
 
-        if (!value.some((typeName) => typeName.getGeneric() !== null)) {
+        if (!value.some((typeName) => typeof typeName.getValue() === 'string')) {
             const typeTypeClass = new TypeVisitor().visit(ctx.arraySubscripts());
             if (isArraySubscriptsType(typeTypeClass)) {
                 dimension = typeTypeClass;
             } else if (isErrorType(typeTypeClass)) {
                 errorClasses['dimension'] = typeTypeClass;
-            } else {
-                throw new Error(
-                    '想定したタイプと違います　想定：arraySubscripts、実値：' +
-                        typeTypeClass.getType(),
-                );
             }
         }
 
@@ -66,6 +57,6 @@ export class TypeRefTypeClass extends TypeTypeClass<TypeNameTypeClass[]> {
     }
 }
 
-export const isTypeRefType = (target: any): target is TypeRefTypeClass => {
+export const isTypeRefType = (target: CommonTypeClass): target is TypeRefTypeClass => {
     return target instanceof TypeRefTypeClass;
 };

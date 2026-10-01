@@ -1,6 +1,9 @@
 import { DateFormulaContext } from '@apexdevtools/apex-parser';
 
-import { LiteralVisitor, LiteralType } from '../literalVisitor';
+import { QueryTypeClass } from '../queryVisitor';
+
+import { SignedIntegerTypeClass, LiteralVisitor, isSignedIntegerType } from '../literalVisitor';
+import { ErrorTypeClass, CommonTypeClass, isErrorType } from '../commonVisitor';
 
 type DateFormulaFunctionType =
     | 'YESTERDAY'
@@ -104,399 +107,187 @@ const isDateFormulaWithFunctionType = (ctx: DateFormulaContext): boolean => {
     );
 };
 
-export type DateFormulaType = {
-    type: 'dateFormula';
-    query:
-        | {
-              formulaFunctionType: DateFormulaFunctionType;
-          }
-        | {
-              formulaFunctionType: DateFormulaWithFunctionType;
-              param: LiteralType;
-          };
-};
+export type DateFormulaValueType = DateFormulaFunctionType | DateFormulaWithFunctionType;
 
-export const makeDateFormulaType = (ctx: DateFormulaContext): DateFormulaType => {
-    if (isDateFormulaFunctionType(ctx)) {
-        if (ctx.YESTERDAY()) {
-            return {
-                type: 'dateFormula',
-                query: {
-                    formulaFunctionType: 'YESTERDAY',
-                },
-            };
+export class DateFormulaTypeClass extends QueryTypeClass<DateFormulaValueType> {
+    private param: SignedIntegerTypeClass | null = null;
+
+    private constructor(
+        value: DateFormulaValueType | null,
+        param: SignedIntegerTypeClass | null,
+        errorClasses: Record<string, ErrorTypeClass>,
+    ) {
+        super('dateFormula', value, errorClasses);
+        this.param = param;
+    }
+
+    static create(ctx: DateFormulaContext): DateFormulaTypeClass {
+        if (!isDateFormulaFunctionType(ctx) && !isDateFormulaWithFunctionType(ctx)) {
+            throw new Error('値が異常です。DateFormulaContext: ' + ctx.getText());
         }
-        if (ctx.TODAY()) {
-            return {
-                type: 'dateFormula',
-                query: {
-                    formulaFunctionType: 'TODAY',
-                },
-            };
-        }
-        if (ctx.TOMORROW()) {
-            return {
-                type: 'dateFormula',
-                query: {
-                    formulaFunctionType: 'TOMORROW',
-                },
-            };
-        }
-        if (ctx.LAST_WEEK()) {
-            return {
-                type: 'dateFormula',
-                query: {
-                    formulaFunctionType: 'LAST_WEEK',
-                },
-            };
-        }
-        if (ctx.THIS_WEEK()) {
-            return {
-                type: 'dateFormula',
-                query: {
-                    formulaFunctionType: 'THIS_WEEK',
-                },
-            };
-        }
-        if (ctx.NEXT_WEEK()) {
-            return {
-                type: 'dateFormula',
-                query: {
-                    formulaFunctionType: 'NEXT_WEEK',
-                },
-            };
-        }
-        if (ctx.LAST_MONTH()) {
-            return {
-                type: 'dateFormula',
-                query: {
-                    formulaFunctionType: 'LAST_MONTH',
-                },
-            };
-        }
-        if (ctx.THIS_MONTH()) {
-            return {
-                type: 'dateFormula',
-                query: {
-                    formulaFunctionType: 'THIS_MONTH',
-                },
-            };
+
+        let value: DateFormulaValueType | null = null;
+        let param: SignedIntegerTypeClass | null = null;
+        const errorClasses: Record<string, ErrorTypeClass> = {};
+
+        if (isDateFormulaFunctionType(ctx)) {
+            if (ctx.YESTERDAY()) {
+                value = 'YESTERDAY';
+            }
+            if (ctx.TODAY()) {
+                value = 'TODAY';
+            }
+            if (ctx.TOMORROW()) {
+                value = 'TOMORROW';
+            }
+            if (ctx.LAST_WEEK()) {
+                value = 'LAST_WEEK';
+            }
+            if (ctx.THIS_WEEK()) {
+                value = 'THIS_WEEK';
+            }
+            if (ctx.NEXT_WEEK()) {
+                value = 'NEXT_WEEK';
+            }
+            if (ctx.LAST_MONTH()) {
+                value = 'LAST_MONTH';
+            }
+            if (ctx.THIS_MONTH()) {
+                value = 'THIS_MONTH';
+            }
         }
         if (ctx.NEXT_MONTH()) {
-            return {
-                type: 'dateFormula',
-                query: {
-                    formulaFunctionType: 'NEXT_MONTH',
-                },
-            };
+            value = 'NEXT_MONTH';
         }
         if (ctx.LAST_90_DAYS()) {
-            return {
-                type: 'dateFormula',
-                query: {
-                    formulaFunctionType: 'LAST_90_DAYS',
-                },
-            };
+            value = 'LAST_90_DAYS';
         }
         if (ctx.NEXT_90_DAYS()) {
-            return {
-                type: 'dateFormula',
-                query: {
-                    formulaFunctionType: 'NEXT_90_DAYS',
-                },
-            };
+            value = 'NEXT_90_DAYS';
         }
         if (ctx.THIS_QUARTER()) {
-            return {
-                type: 'dateFormula',
-                query: {
-                    formulaFunctionType: 'THIS_QUARTER',
-                },
-            };
+            value = 'THIS_QUARTER';
         }
         if (ctx.LAST_QUARTER()) {
-            return {
-                type: 'dateFormula',
-                query: {
-                    formulaFunctionType: 'LAST_QUARTER',
-                },
-            };
+            value = 'LAST_QUARTER';
         }
         if (ctx.NEXT_QUARTER()) {
-            return {
-                type: 'dateFormula',
-                query: {
-                    formulaFunctionType: 'NEXT_QUARTER',
-                },
-            };
+            value = 'NEXT_QUARTER';
         }
         if (ctx.THIS_YEAR()) {
-            return {
-                type: 'dateFormula',
-                query: {
-                    formulaFunctionType: 'THIS_YEAR',
-                },
-            };
+            value = 'THIS_YEAR';
         }
         if (ctx.LAST_YEAR()) {
-            return {
-                type: 'dateFormula',
-                query: {
-                    formulaFunctionType: 'LAST_YEAR',
-                },
-            };
+            value = 'LAST_YEAR';
         }
         if (ctx.NEXT_YEAR()) {
-            return {
-                type: 'dateFormula',
-                query: {
-                    formulaFunctionType: 'NEXT_YEAR',
-                },
-            };
+            value = 'NEXT_YEAR';
         }
         if (ctx.THIS_FISCAL_QUARTER()) {
-            return {
-                type: 'dateFormula',
-                query: {
-                    formulaFunctionType: 'THIS_FISCAL_QUARTER',
-                },
-            };
+            value = 'THIS_FISCAL_QUARTER';
         }
         if (ctx.LAST_FISCAL_QUARTER()) {
-            return {
-                type: 'dateFormula',
-                query: {
-                    formulaFunctionType: 'LAST_FISCAL_QUARTER',
-                },
-            };
+            value = 'LAST_FISCAL_QUARTER';
         }
         if (ctx.NEXT_FISCAL_QUARTER()) {
-            return {
-                type: 'dateFormula',
-                query: {
-                    formulaFunctionType: 'NEXT_FISCAL_QUARTER',
-                },
-            };
+            value = 'NEXT_FISCAL_QUARTER';
         }
         if (ctx.THIS_FISCAL_YEAR()) {
-            return {
-                type: 'dateFormula',
-                query: {
-                    formulaFunctionType: 'THIS_FISCAL_YEAR',
-                },
-            };
+            value = 'THIS_FISCAL_YEAR';
         }
         if (ctx.LAST_FISCAL_YEAR()) {
-            return {
-                type: 'dateFormula',
-                query: {
-                    formulaFunctionType: 'LAST_FISCAL_YEAR',
-                },
-            };
+            value = 'LAST_FISCAL_YEAR';
         }
         if (ctx.NEXT_FISCAL_YEAR()) {
-            return {
-                type: 'dateFormula',
-                query: {
-                    formulaFunctionType: 'NEXT_FISCAL_YEAR',
-                },
-            };
+            value = 'NEXT_FISCAL_YEAR';
         }
+
+        if (isDateFormulaWithFunctionType(ctx)) {
+            const literalTypeClass = new LiteralVisitor().visit(ctx.signedInteger());
+            if (isSignedIntegerType(literalTypeClass)) {
+                param = literalTypeClass;
+            } else if (isErrorType(literalTypeClass)) {
+                errorClasses['param'] = literalTypeClass;
+            }
+
+            if (ctx.LAST_N_DAYS_N()) {
+                value = 'LAST_N_DAYS_N';
+            }
+            if (ctx.NEXT_N_DAYS_N()) {
+                value = 'NEXT_N_DAYS_N';
+            }
+            if (ctx.N_DAYS_AGO_N()) {
+                value = 'N_DAYS_AGO_N';
+            }
+            if (ctx.NEXT_N_WEEKS_N()) {
+                value = 'NEXT_N_WEEKS_N';
+            }
+            if (ctx.LAST_N_WEEKS_N()) {
+                value = 'LAST_N_WEEKS_N';
+            }
+            if (ctx.N_WEEKS_AGO_N()) {
+                value = 'N_WEEKS_AGO_N';
+            }
+            if (ctx.NEXT_N_MONTHS_N()) {
+                value = 'NEXT_N_MONTHS_N';
+            }
+            if (ctx.LAST_N_MONTHS_N()) {
+                value = 'LAST_N_MONTHS_N';
+            }
+            if (ctx.N_MONTHS_AGO_N()) {
+                value = 'N_MONTHS_AGO_N';
+            }
+            if (ctx.NEXT_N_QUARTERS_N()) {
+                value = 'NEXT_N_QUARTERS_N';
+            }
+            if (ctx.LAST_N_QUARTERS_N()) {
+                value = 'LAST_N_QUARTERS_N';
+            }
+            if (ctx.N_QUARTERS_AGO_N()) {
+                value = 'N_QUARTERS_AGO_N';
+            }
+            if (ctx.NEXT_N_FISCAL_QUARTERS_N()) {
+                value = 'NEXT_N_FISCAL_QUARTERS_N';
+            }
+            if (ctx.LAST_N_FISCAL_QUARTERS_N()) {
+                value = 'LAST_N_FISCAL_QUARTERS_N';
+            }
+            if (ctx.N_FISCAL_QUARTERS_AGO_N()) {
+                value = 'N_FISCAL_QUARTERS_AGO_N';
+            }
+            if (ctx.NEXT_N_YEARS_N()) {
+                value = 'NEXT_N_YEARS_N';
+            }
+            if (ctx.LAST_N_YEARS_N()) {
+                value = 'LAST_N_YEARS_N';
+            }
+            if (ctx.N_YEARS_AGO_N()) {
+                value = 'N_YEARS_AGO_N';
+            }
+            if (ctx.NEXT_N_FISCAL_YEARS_N()) {
+                value = 'NEXT_N_FISCAL_YEARS_N';
+            }
+            if (ctx.LAST_N_FISCAL_YEARS_N()) {
+                value = 'LAST_N_FISCAL_YEARS_N';
+            }
+            if (ctx.N_FISCAL_YEARS_AGO_N()) {
+                value = 'N_FISCAL_YEARS_AGO_N';
+            }
+        }
+
+        return new DateFormulaTypeClass(value, param, errorClasses);
     }
 
-    if (isDateFormulaWithFunctionType(ctx)) {
-        const param = new LiteralVisitor().visit(ctx.signedInteger());
-
-        if (ctx.LAST_N_DAYS_N()) {
-            return {
-                type: 'dateFormula',
-                query: {
-                    formulaFunctionType: 'LAST_N_DAYS_N',
-                    param: param,
-                },
-            };
-        }
-        if (ctx.NEXT_N_DAYS_N()) {
-            return {
-                type: 'dateFormula',
-                query: {
-                    formulaFunctionType: 'NEXT_N_DAYS_N',
-                    param: param,
-                },
-            };
-        }
-        if (ctx.N_DAYS_AGO_N()) {
-            return {
-                type: 'dateFormula',
-                query: {
-                    formulaFunctionType: 'N_DAYS_AGO_N',
-                    param: param,
-                },
-            };
-        }
-        if (ctx.NEXT_N_WEEKS_N()) {
-            return {
-                type: 'dateFormula',
-                query: {
-                    formulaFunctionType: 'NEXT_N_WEEKS_N',
-                    param: param,
-                },
-            };
-        }
-        if (ctx.LAST_N_WEEKS_N()) {
-            return {
-                type: 'dateFormula',
-                query: {
-                    formulaFunctionType: 'LAST_N_WEEKS_N',
-                    param: param,
-                },
-            };
-        }
-        if (ctx.N_WEEKS_AGO_N()) {
-            return {
-                type: 'dateFormula',
-                query: {
-                    formulaFunctionType: 'N_WEEKS_AGO_N',
-                    param: param,
-                },
-            };
-        }
-        if (ctx.NEXT_N_MONTHS_N()) {
-            return {
-                type: 'dateFormula',
-                query: {
-                    formulaFunctionType: 'NEXT_N_MONTHS_N',
-                    param: param,
-                },
-            };
-        }
-        if (ctx.LAST_N_MONTHS_N()) {
-            return {
-                type: 'dateFormula',
-                query: {
-                    formulaFunctionType: 'LAST_N_MONTHS_N',
-                    param: param,
-                },
-            };
-        }
-        if (ctx.N_MONTHS_AGO_N()) {
-            return {
-                type: 'dateFormula',
-                query: {
-                    formulaFunctionType: 'N_MONTHS_AGO_N',
-                    param: param,
-                },
-            };
-        }
-        if (ctx.NEXT_N_QUARTERS_N()) {
-            return {
-                type: 'dateFormula',
-                query: {
-                    formulaFunctionType: 'NEXT_N_QUARTERS_N',
-                    param: param,
-                },
-            };
-        }
-        if (ctx.LAST_N_QUARTERS_N()) {
-            return {
-                type: 'dateFormula',
-                query: {
-                    formulaFunctionType: 'LAST_N_QUARTERS_N',
-                    param: param,
-                },
-            };
-        }
-        if (ctx.N_QUARTERS_AGO_N()) {
-            return {
-                type: 'dateFormula',
-                query: {
-                    formulaFunctionType: 'N_QUARTERS_AGO_N',
-                    param: param,
-                },
-            };
-        }
-        if (ctx.NEXT_N_FISCAL_QUARTERS_N()) {
-            return {
-                type: 'dateFormula',
-                query: {
-                    formulaFunctionType: 'NEXT_N_FISCAL_QUARTERS_N',
-                    param: param,
-                },
-            };
-        }
-        if (ctx.LAST_N_FISCAL_QUARTERS_N()) {
-            return {
-                type: 'dateFormula',
-                query: {
-                    formulaFunctionType: 'LAST_N_FISCAL_QUARTERS_N',
-                    param: param,
-                },
-            };
-        }
-        if (ctx.N_FISCAL_QUARTERS_AGO_N()) {
-            return {
-                type: 'dateFormula',
-                query: {
-                    formulaFunctionType: 'N_FISCAL_QUARTERS_AGO_N',
-                    param: param,
-                },
-            };
-        }
-        if (ctx.NEXT_N_YEARS_N()) {
-            return {
-                type: 'dateFormula',
-                query: {
-                    formulaFunctionType: 'NEXT_N_YEARS_N',
-                    param: param,
-                },
-            };
-        }
-        if (ctx.LAST_N_YEARS_N()) {
-            return {
-                type: 'dateFormula',
-                query: {
-                    formulaFunctionType: 'LAST_N_YEARS_N',
-                    param: param,
-                },
-            };
-        }
-        if (ctx.N_YEARS_AGO_N()) {
-            return {
-                type: 'dateFormula',
-                query: {
-                    formulaFunctionType: 'N_YEARS_AGO_N',
-                    param: param,
-                },
-            };
-        }
-        if (ctx.NEXT_N_FISCAL_YEARS_N()) {
-            return {
-                type: 'dateFormula',
-                query: {
-                    formulaFunctionType: 'NEXT_N_FISCAL_YEARS_N',
-                    param: param,
-                },
-            };
-        }
-        if (ctx.LAST_N_FISCAL_YEARS_N()) {
-            return {
-                type: 'dateFormula',
-                query: {
-                    formulaFunctionType: 'LAST_N_FISCAL_YEARS_N',
-                    param: param,
-                },
-            };
-        }
-        if (ctx.N_FISCAL_YEARS_AGO_N()) {
-            return {
-                type: 'dateFormula',
-                query: {
-                    formulaFunctionType: 'N_FISCAL_YEARS_AGO_N',
-                    param: param,
-                },
-            };
-        }
+    getParam(): SignedIntegerTypeClass | null {
+        return this.param;
     }
 
-    throw new Error('値が異常です。DateFormulaContext: ' + ctx.getText());
+    isParamNull(): boolean {
+        return this.param === null;
+    }
+}
+
+export const isDateFormulaType = (target: CommonTypeClass): target is DateFormulaTypeClass => {
+    return target instanceof DateFormulaTypeClass;
 };
+

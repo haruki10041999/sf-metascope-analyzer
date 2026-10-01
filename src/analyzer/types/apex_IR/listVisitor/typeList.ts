@@ -26,10 +26,6 @@ export class TypeListTypeClass extends ListTypeClass<TypeRefTypeClass[]> {
                 value.push(typeTypeclass);
             } else if (isErrorType(typeTypeclass)) {
                 errorClasses[`value_${index}`] = typeTypeclass;
-            } else {
-                throw new Error(
-                    '想定したタイプと違います　想定：typeRef、実値：' + typeTypeclass.getType(),
-                );
             }
         });
 

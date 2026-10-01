@@ -1,22 +1,37 @@
 import { NewExpressionContext } from '@apexdevtools/apex-parser';
 
-import { RestType, RestVisitor } from '../restVisitor';
+import { ExpressionTypeClass } from '.';
 
-export type NewExpressionType = {
-    type: 'newExpression';
-    expression: RestType;
-};
+import { CreatorTypeClass, RestVisitor, isCreatorType } from '../restVisitor';
+import { ErrorTypeClass, CommonTypeClass, isErrorType } from '../commonVisitor';
 
-export const makeNewExpressionType = (ctx: NewExpressionContext): NewExpressionType => {
-    if (!ctx.creator()) {
-        throw new Error('値が異常です。NewExpressionContext: ' + ctx.getText());
+export class NewExpressionTypeClass extends ExpressionTypeClass<CreatorTypeClass> {
+    private constructor(
+        value: CreatorTypeClass | null,
+        errorClasses: Record<string, ErrorTypeClass>,
+    ) {
+        super('newExpression', value, errorClasses);
     }
 
-    const expression = new RestVisitor().visit(ctx.creator());
+    static create(ctx: NewExpressionContext): NewExpressionTypeClass {
+        if (!ctx.creator()) {
+            throw new Error('値が異常です。NewExpressionContext: ' + ctx.getText());
+        }
 
-    return {
-        type: 'newExpression',
-        expression: expression,
-    };
+        let value: CreatorTypeClass | null = null;
+        const errorTypeClasses: Record<string, ErrorTypeClass> = {};
+        const expression = new RestVisitor().visit(ctx.creator());
+        if (isCreatorType(expression)) {
+            value = expression;
+        } else if (isErrorType(expression)) {
+            errorTypeClasses['value'] = expression;
+        }
+
+        return new NewExpressionTypeClass(value, errorTypeClasses);
+    }
+}
+
+export const isNewExpressionType = (target: CommonTypeClass): target is NewExpressionTypeClass => {
+    return target instanceof NewExpressionTypeClass;
 };
 

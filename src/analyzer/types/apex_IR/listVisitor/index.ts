@@ -17,9 +17,9 @@ import {
 
 import { TypeListTypeClass } from './typeList';
 import { ExpressionListTypeClass } from './expressionList';
-import { FieldNameListType, makeFieldNameListType } from './fieldNameList';
-import { FormalParameterListType, makeFormalParameterListType } from './formalParameterList';
-import { ValueListType, makeValueListType } from './valueList';
+import { FieldNameListTypeClass } from './fieldNameList';
+import { FormalParameterListTypeClass } from './formalParameterList';
+import { ValueListTypeClass } from './valueList';
 import { UpdateListType, makeUpdateListType } from './updateList';
 import { NetworkListType, makeNetworkListType } from './networkList';
 import { FromNameListType, makeFromNameListType } from './fromNameList';
@@ -33,7 +33,10 @@ import { FieldSpecListType, makeFieldSpecListType } from './fieldSpecList';
 import { CommonTypeClass, ContextTypeClass, ErrorTypeClass, CommonVisitor } from '../commonVisitor';
 
 export { isTypeListType, TypeListTypeClass } from './typeList';
+export { isFormalParameterListType, FormalParameterListTypeClass } from './formalParameterList';
+export { isValueListType, ValueListTypeClass } from './valueList';
 export { isExpressionListType, ExpressionListTypeClass } from './expressionList';
+export { isFieldNameListType, FieldNameListTypeClass } from './fieldNameList';
 
 export class ListTypeClass<T> extends ContextTypeClass<T> {
     constructor(type: string, value: T | null, errorClasses: Record<string, ErrorTypeClass>) {
@@ -54,80 +57,36 @@ export class ListVisitor extends CommonVisitor<ListTypeClass<unknown>> {
     }
 
     visitFormalParameterList(ctx: FormalParameterListContext) {
-        console.log('解析を開始します。' + 'FormalParameterListContext:  ' + ctx.getText());
-        const result = makeFormalParameterListType(ctx);
-        console.log(
-            '------------解析が終了しました--------------' +
-                'FormalParameterListContext:  ' +
-                JSON.stringify(result, null, 2),
-        );
-        return result;
+        return FormalParameterListTypeClass.create(ctx);
     }
 
     visitValueList(ctx: ValueListContext) {
-        console.log('解析を開始します。' + 'ValueListContext:  ' + ctx.getText());
-        const result = makeValueListType(ctx);
-        console.log(
-            '------------解析が終了しました--------------' +
-                'ValueListContext:  ' +
-                JSON.stringify(result, null, 2),
-        );
-        return result;
+        return ValueListTypeClass.create(ctx);
     }
 
     visitFieldNameList(ctx: FieldNameListContext) {
         console.log('解析を開始します。' + 'FieldNameListContext:  ' + ctx.getText());
-        const result = makeFieldNameListType(ctx);
-        console.log(
-            '------------解析が終了しました--------------' +
-                'FieldNameListContext:  ' +
-                JSON.stringify(result, null, 2),
-        );
-        return result;
+        return FieldNameListTypeClass.create(ctx);
     }
 
     visitUpdateList(ctx: UpdateListContext) {
         console.log('解析を開始します。' + 'UpdateListContext:  ' + ctx.getText());
-        const result = makeUpdateListType(ctx);
-        console.log(
-            '------------解析が終了しました--------------' +
-                'UpdateListContext:  ' +
-                JSON.stringify(result, null, 2),
-        );
-        return result;
+        return UpdateListType.create(ctx);
     }
 
     visitNetworkList(ctx: NetworkListContext) {
         console.log('解析を開始します。' + 'NetworkListContext:  ' + ctx.getText());
-        const result = makeNetworkListType(ctx);
-        console.log(
-            '------------解析が終了しました--------------' +
-                'NetworkListContext:  ' +
-                JSON.stringify(result, null, 2),
-        );
-        return result;
+        return NetworkListType.create(ctx);
     }
 
     visitFromNameList(ctx: FromNameListContext) {
         console.log('解析を開始します。' + 'FromNameListContext:  ' + ctx.getText());
-        const result = makeFromNameListType(ctx);
-        console.log(
-            '------------解析が終了しました--------------' +
-                'FromNameListContext:  ' +
-                JSON.stringify(result, null, 2),
-        );
-        return result;
+        return FromNameListType.create(ctx);
     }
 
     visitFieldGroupByList(ctx: FieldGroupByListContext) {
         console.log('解析を開始します。' + 'FieldGroupByListContext:  ' + ctx.getText());
-        const result = makeFieldGroupByListType(ctx);
-        console.log(
-            '------------解析が終了しました--------------' +
-                'FieldGroupByListContext:  ' +
-                JSON.stringify(result, null, 2),
-        );
-        return result;
+        return FieldGroupByListType.create(ctx);
     }
 
     visitFieldOrderList(ctx: FieldOrderListContext) {

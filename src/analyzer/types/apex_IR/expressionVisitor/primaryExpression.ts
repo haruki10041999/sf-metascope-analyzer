@@ -2,13 +2,13 @@ import { PrimaryExpressionContext } from '@apexdevtools/apex-parser';
 
 import { ExpressionTypeClass } from '.';
 
-import { isPrimaryTypeAll, PrimaryTypeClass, PrimaryVisitor } from '../primaryVisitor';
+import { PrimaryTypeClass, PrimaryVisitor, isPrimaryTypeAll } from '../primaryVisitor';
 
 import { CommonTypeClass, ErrorTypeClass } from '../commonVisitor';
 
-export class PrimaryExpressionTypeClass extends ExpressionTypeClass<PrimaryTypeClass> {
+export class PrimaryExpressionTypeClass extends ExpressionTypeClass<PrimaryTypeClass<unknown>> {
     private constructor(
-        value: PrimaryTypeClass | null,
+        value: PrimaryTypeClass<unknown> | null,
         errorClasses: Record<string, ErrorTypeClass>,
     ) {
         super('primaryExpression', value, errorClasses);
@@ -19,7 +19,7 @@ export class PrimaryExpressionTypeClass extends ExpressionTypeClass<PrimaryTypeC
             throw new Error('値が異常です。PrimaryExpressionContext: ' + ctx.getText());
         }
 
-        let value: PrimaryTypeClass | null = null;
+        let value: PrimaryTypeClass<unknown> | null = null;
         const errorClasses: Record<string, ErrorTypeClass> = {};
 
         const primaryTypeClass = new PrimaryVisitor().visit(ctx.primary());
@@ -38,3 +38,4 @@ export const isPrimaryExpressionType = (
 ): target is PrimaryExpressionTypeClass => {
     return target instanceof PrimaryExpressionTypeClass;
 };
+

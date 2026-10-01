@@ -1,22 +1,40 @@
 import { ReturnStatementContext } from '@apexdevtools/apex-parser';
 
-import { ExpressionType, ExpressionVisitor } from '../expressionVisitor';
+import { StatementTypeClass } from '../statementVisitor';
 
-export type ReturnStatementType = {
-    type: 'returnStatement';
-    statement: ExpressionType;
-};
+import { ExpressionTypeClass, ExpressionVisitor, isExpressionTypeAll } from '../expressionVisitor';
+import { ErrorTypeClass, CommonTypeClass, isErrorType } from '../commonVisitor';
 
-export const makeReturnStatementType = (ctx: ReturnStatementContext): ReturnStatementType => {
-    if (!ctx.expression()) {
-        throw new Error('値が異常です。ReturnStatementContext: ' + ctx.getText());
+export class ReturnStatementTypeClass extends StatementTypeClass<ExpressionTypeClass<unknown>> {
+    private constructor(
+        value: ExpressionTypeClass<unknown> | null,
+        errorClasses: Record<string, ErrorTypeClass>,
+    ) {
+        super('returnStatement', value, errorClasses);
     }
 
-    const value = new ExpressionVisitor().visit(ctx.expression());
+    static create(ctx: ReturnStatementContext): ReturnStatementTypeClass {
+        if (!ctx.expression()) {
+            throw new Error('値が異常です。ReturnStatementContext: ' + ctx.getText());
+        }
 
-    return {
-        type: 'returnStatement',
-        statement: value,
-    };
+        let value: ExpressionTypeClass<unknown> | null = null;
+        const errorClasses: Record<string, ErrorTypeClass> = {};
+
+        const expressionTypeClass = new ExpressionVisitor().visit(ctx.expression());
+        if (isExpressionTypeAll(expressionTypeClass)) {
+            value = expressionTypeClass;
+        } else if (isErrorType(expressionTypeClass)) {
+            errorClasses['value'] = expressionTypeClass;
+        }
+
+        return new ReturnStatementTypeClass(value, errorClasses);
+    }
+}
+
+export const isReturnStatementType = (
+    target: CommonTypeClass,
+): target is ReturnStatementTypeClass => {
+    return target instanceof ReturnStatementTypeClass;
 };
 

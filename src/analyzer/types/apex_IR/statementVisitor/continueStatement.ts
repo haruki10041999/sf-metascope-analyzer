@@ -1,18 +1,26 @@
 import { ContinueStatementContext } from '@apexdevtools/apex-parser';
 
-export type ContinueStatementType = {
-    type: 'continueStatement';
-    statement: string;
-};
+import { StatementTypeClass } from '.';
 
-export const makeContinueStatementType = (ctx: ContinueStatementContext): ContinueStatementType => {
-    if (!ctx.CONTINUE()) {
-        throw new Error('値が異常です。ContinueStatementContext: ' + ctx.getText());
+import { CommonTypeClass } from '../commonVisitor';
+
+export class ContinueStatementTypeClass extends StatementTypeClass<string> {
+    private constructor(value: string | null) {
+        super('continueStatement', value, {});
     }
 
-    return {
-        type: 'continueStatement',
-        statement: ctx.CONTINUE().getText(),
-    };
+    static create(ctx: ContinueStatementContext) {
+        if (!ctx.CONTINUE()) {
+            throw new Error('値が異常です。ContinueStatementContext: ' + ctx.getText());
+        }
+
+        return new ContinueStatementTypeClass(ctx.CONTINUE().getText());
+    }
+}
+
+export const isContinueStatementType = (
+    target: CommonTypeClass,
+): target is ContinueStatementTypeClass => {
+    return target instanceof ContinueStatementTypeClass;
 };
 

@@ -35,11 +35,6 @@ export class TypeNameTypeClass extends NameTypeClass<NormalIdTypeClass | 'list' 
                 generic = argumentsTypeClass;
             } else if (isErrorType(argumentsTypeClass)) {
                 errorClasses['generic'] = argumentsTypeClass;
-            } else {
-                throw new Error(
-                    '想定したタイプと違います　想定：typeArguments、実値：' +
-                        argumentsTypeClass.getType(),
-                );
             }
         }
 
@@ -49,10 +44,6 @@ export class TypeNameTypeClass extends NameTypeClass<NormalIdTypeClass | 'list' 
                 value = idTypeClass;
             } else if (isErrorType(idTypeClass)) {
                 errorClasses['value'] = idTypeClass;
-            } else {
-                throw new Error(
-                    '想定したタイプと違います　想定：Id、実値：' + idTypeClass.getType(),
-                );
             }
         }
 

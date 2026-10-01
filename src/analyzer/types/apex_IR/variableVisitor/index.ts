@@ -11,20 +11,22 @@ import { VariableDeclaratorsTypeClass } from './variableDeclarators';
 
 import { ContextTypeClass, CommonVisitor, CommonTypeClass, ErrorTypeClass } from '../commonVisitor';
 
-export { isArrayInitializerType } from './arrayInitializer';
-export { isVariableDeclaratorType } from './variableDeclarator';
-export { isVariableDeclaratorsType } from './variableDeclarators';
-export class VariableTypeClass extends ContextTypeClass {
-    constructor(type: string, value: any, errorTypeClasses: Record<string, ErrorTypeClass>) {
+export { isArrayInitializerType, ArrayInitializerTypeClass } from './arrayInitializer';
+export { isVariableDeclaratorType, VariableDeclaratorTypeClass } from './variableDeclarator';
+export { isVariableDeclaratorsType, VariableDeclaratorsTypeClass } from './variableDeclarators';
+export class VariableTypeClass<T> extends ContextTypeClass<T> {
+    constructor(type: string, value: T | null, errorTypeClasses: Record<string, ErrorTypeClass>) {
         super(type, value, errorTypeClasses);
     }
 }
 
-export const isVariableTypeAll = (target: CommonTypeClass): target is VariableTypeClass => {
+export const isVariableTypeAll = (
+    target: CommonTypeClass,
+): target is VariableTypeClass<unknown> => {
     return target instanceof VariableTypeClass;
 };
 
-export class VariableVisitor extends CommonVisitor<VariableTypeClass> {
+export class VariableVisitor extends CommonVisitor<VariableTypeClass<unknown>> {
     visitArrayInitializer(ctx: ArrayInitializerContext) {
         return ArrayInitializerTypeClass.create(ctx);
     }

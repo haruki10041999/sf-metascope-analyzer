@@ -1,22 +1,44 @@
 import { ClassCreatorRestContext } from '@apexdevtools/apex-parser';
 
-import { ArgumentsType, ArgumentsVisitor } from '../argumentsVisitor';
+import { RestTypeClass } from '.';
 
-export type ClassCreatorRestType = {
-    type: 'classCreatorRest';
-    rest: ArgumentsType;
-};
+import {
+    NormalArgumentsTypeClass,
+    ArgumentsVisitor,
+    isNormalArgumentsType,
+} from '../argumentsVisitor';
+import { ErrorTypeClass, CommonTypeClass, isErrorType } from '../commonVisitor';
 
-export const makeClassCreatorRestType = (ctx: ClassCreatorRestContext): ClassCreatorRestType => {
-    if (!ctx.arguments()) {
-        throw new Error('値が異常です。ClassCreatorRestContext: ' + ctx.getText());
+export class ClassCreatorRestTypeClass extends RestTypeClass<NormalArgumentsTypeClass> {
+    private constructor(
+        value: NormalArgumentsTypeClass | null,
+        errorClasses: Record<string, ErrorTypeClass>,
+    ) {
+        super('classCreatorRest', value, errorClasses);
     }
 
-    const rest = new ArgumentsVisitor().visit(ctx.arguments());
+    static create(ctx: ClassCreatorRestContext): ClassCreatorRestTypeClass {
+        if (!ctx.arguments()) {
+            throw new Error('値が異常です。ClassCreatorRestContext: ' + ctx.getText());
+        }
 
-    return {
-        type: 'classCreatorRest',
-        rest: rest,
-    };
+        let value: NormalArgumentsTypeClass | null = null;
+        const errorTypeClasses: Record<string, ErrorTypeClass> = {};
+
+        const argumentTypeClass = new ArgumentsVisitor().visit(ctx.arguments());
+        if (isNormalArgumentsType(argumentTypeClass)) {
+            value = argumentTypeClass;
+        } else if (isErrorType(argumentTypeClass)) {
+            errorTypeClasses['value'] = argumentTypeClass;
+        }
+
+        return new ClassCreatorRestTypeClass(value, errorTypeClasses);
+    }
+}
+
+export const isClassCreatorRestType = (
+    target: CommonTypeClass,
+): target is ClassCreatorRestTypeClass => {
+    return target instanceof ClassCreatorRestTypeClass;
 };
 

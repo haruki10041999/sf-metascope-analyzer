@@ -34,21 +34,19 @@ export class IdCreatedNamePairTypeClass extends DoublePairTypeClass<
             left = idTypeClass;
         } else if (isErrorType(idTypeClass)) {
             errorClasses['left'] = idTypeClass;
-        } else {
-            throw new Error(
-                '想定したタイプと違います　想定：anyId、実値：' + idTypeClass.getType(),
-            );
         }
         if (isTypeListType(listTypeClass)) {
             right = listTypeClass;
         } else if (isErrorType(listTypeClass)) {
             errorClasses['right'] = listTypeClass;
-        } else {
-            throw new Error(
-                '想定したタイプと違います　想定：typeList、実値：' + listTypeClass.getType(),
-            );
         }
 
         return new IdCreatedNamePairTypeClass(left, right, errorClasses);
     }
 }
+
+export const isIdCreatedNamePairType = (
+    target: CommonTypeClass,
+): target is IdCreatedNamePairTypeClass => {
+    return target instanceof IdCreatedNamePairTypeClass;
+};

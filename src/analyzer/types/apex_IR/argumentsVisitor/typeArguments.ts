@@ -27,10 +27,6 @@ export class TypeArgumentsTypeClass extends ArgumentsTypeClass<TypeListTypeClass
             value = listTypeClass;
         } else if (isErrorType(listTypeClass)) {
             errorClasses['value'] = listTypeClass;
-        } else {
-            throw new Error(
-                '想定したタイプと違います　想定：typeList、実値：' + listTypeClass.getType(),
-            );
         }
 
         return new TypeArgumentsTypeClass(value, errorClasses);
