@@ -76,13 +76,7 @@ import {
 } from './whereConditionalExpression';
 import { WhereFieldExpressionType, makeWhereFieldExpressionType } from './whereFieldExpression';
 
-import {
-    ErrorTypeClass,
-    ContextTypeClass,
-    ContextListTypeClass,
-    CommonVisitor,
-    CommonTypeClass,
-} from '../commonVisitor';
+import { ErrorTypeClass, CommonVisitor, CommonTypeClass } from '../commonVisitor';
 
 export { isArrayExpressionType, ArrayExpressionTypeClass } from './arrayExpression';
 export { isArth1ExpressionType, Arth1ExpressionTypeClass } from './arth1Expression';
@@ -116,24 +110,44 @@ export {
 } from './conditionalExpression';
 export { isParExpressionType, ParExpressionTypeClass } from './parExpression';
 
-export class ExpressionTypeClass<T> extends ContextTypeClass<T> {
+export class ExpressionTypeClass<T> extends CommonTypeClass {
+    private value: T | ErrorTypeClass;
+
     constructor(type: string, value: T | ErrorTypeClass) {
-        super(type, value);
+        super(type);
+        this.value = value;
+    }
+
+    getValue(): T | ErrorTypeClass {
+        return this.value;
     }
 }
 
-export class ExpressionListTypeClass<T> extends ContextTypeClass<T> {
-    constructor(type: string, value: T | ErrorTypeClass) {
-        super(type, value);
+export class ExpressionListTypeClass<T> extends CommonTypeClass {
+    private value: (T | ErrorTypeClass)[];
+
+    constructor(type: string, value: (T | ErrorTypeClass)[]) {
+        super(type);
+        this.value = value;
+    }
+
+    getValue(): (T | ErrorTypeClass)[] {
+        return this.value;
     }
 }
 
-export class SingleOperatorExpressionTypeClass<T> extends ExpressionTypeClass<T> {
+export class SingleOperatorExpressionTypeClass<T> extends CommonTypeClass {
     private operator: string;
+    private value: T | ErrorTypeClass;
 
     constructor(type: string, value: T | ErrorTypeClass, operator: string) {
-        super(type, value);
+        super(type);
+        this.value = value;
         this.operator = operator;
+    }
+
+    getValue(): T | ErrorTypeClass {
+        return this.value;
     }
 
     getOperator(): string {
@@ -141,37 +155,84 @@ export class SingleOperatorExpressionTypeClass<T> extends ExpressionTypeClass<T>
     }
 }
 
-export class DoubleOperatorExpressionTypeClass<
-    Tleft,
-    Tright,
-> extends SingleOperatorExpressionTypeClass<{ left: Tleft; right: Tright }> {
-    private left: Tleft;
-    private right: Tright;
+export class DoubleOperatorExpressionTypeClass<Tleft, Tright> extends CommonTypeClass {
+    private left: Tleft | ErrorTypeClass;
+    private right: Tright | ErrorTypeClass;
+    private operator: string;
 
-    constructor(type: string, left: Tleft, right: Tright, operator: string) {
-        super(type, { left: left, right: right }, operator);
+    constructor(
+        type: string,
+        left: Tleft | ErrorTypeClass,
+        right: Tright | ErrorTypeClass,
+        operator: string,
+    ) {
+        super(type);
         this.left = left;
         this.right = right;
+        this.operator = operator;
     }
 
-    getLeft(): Tleft {
+    getLeft(): Tleft | ErrorTypeClass {
         return this.left;
     }
 
-    getRight(): Tright {
+    getRight(): Tright | ErrorTypeClass {
         return this.right;
+    }
+
+    getOperator(): string {
+        return this.operator;
     }
 }
 
-export const isExpressionTypeAll = (
-    target: CommonTypeClass,
-): target is ExpressionTypeClass<unknown> | ExpressionListTypeClass<unknown> => {
-    return target instanceof ExpressionTypeClass || target instanceof ExpressionListTypeClass;
+export class IfExpressionTypeClass<TCondition, TTrue, TFalse> extends CommonTypeClass {
+    private condition: TCondition | ErrorTypeClass;
+    private trueValue: TTrue | ErrorTypeClass;
+    private falseValue: TFalse | ErrorTypeClass;
+
+    constructor(
+        type: string,
+        condition: TCondition | ErrorTypeClass,
+        trueValue: TTrue | ErrorTypeClass,
+        falseValue: TFalse | ErrorTypeClass,
+    ) {
+        super(type);
+        this.condition = condition;
+        this.trueValue = trueValue;
+        this.falseValue = falseValue;
+    }
+
+    getCondition(): TCondition | ErrorTypeClass {
+        return this.condition;
+    }
+
+    getTrueValue(): TTrue | ErrorTypeClass {
+        return this.trueValue;
+    }
+
+    getFalseValue(): TFalse | ErrorTypeClass {
+        return this.falseValue;
+    }
+}
+
+export type ExpressionAllTypeClass =
+    | ExpressionTypeClass<unknown>
+    | ExpressionListTypeClass<unknown>
+    | SingleOperatorExpressionTypeClass<unknown>
+    | DoubleOperatorExpressionTypeClass<unknown, unknown>
+    | IfExpressionTypeClass<unknown, unknown, unknown>;
+
+export const isExpressionTypeAll = (target: CommonTypeClass): target is ExpressionAllTypeClass => {
+    return (
+        target instanceof ExpressionTypeClass ||
+        target instanceof ExpressionListTypeClass ||
+        target instanceof SingleOperatorExpressionTypeClass ||
+        target instanceof DoubleOperatorExpressionTypeClass ||
+        target instanceof ConditionalExpressionTypeClass
+    );
 };
 
-export class ExpressionVisitor extends CommonVisitor<
-    ExpressionTypeClass<unknown> | ExpressionListTypeClass<unknown>
-> {
+export class ExpressionVisitor extends CommonVisitor<ExpressionAllTypeClass> {
     visitExpression(ctx: ExpressionContext) {
         return NormalExpressionTypeClass.create(ctx);
     }

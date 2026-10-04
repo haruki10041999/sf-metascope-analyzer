@@ -1,34 +1,31 @@
 import { BoundExpressionContext } from '@apexdevtools/apex-parser';
 
-import { ExpressionTypeClass, ExpressionVisitor, isExpressionTypeAll } from '.';
+import {
+    ExpressionTypeClass,
+    ExpressionAllTypeClass,
+    ExpressionVisitor,
+    isExpressionTypeAll,
+} from '.';
 
-import { CommonTypeClass, ErrorTypeClass } from '../commonVisitor';
+import { CommonTypeClass, ErrorTypeClass, isValidClass } from '../commonVisitor';
 
-export class BoundExpressionTypeClass extends ExpressionTypeClass<unknown> {
-    private constructor(
-        value: ExpressionTypeClass<unknown> | null,
-        errorClasses: Record<string, ErrorTypeClass>,
-    ) {
-        super('boundExpression', value, errorClasses);
+export class BoundExpressionTypeClass extends ExpressionTypeClass<ExpressionAllTypeClass> {
+    private constructor(value: ExpressionAllTypeClass | ErrorTypeClass) {
+        super('boundExpression', value);
     }
 
     static create(ctx: BoundExpressionContext): BoundExpressionTypeClass {
-        if (!ctx) {
+        if (!ctx.expression() || !ctx.COLON) {
             throw new Error('値が異常です。BoundExpressionContext: ' + ctx);
         }
 
-        const expressionTypeClass = new ExpressionVisitor().visit(ctx.expression());
-
-        let value: ExpressionTypeClass<unknown> | null = null;
-        let errorTypeClasses: Record<string, ErrorTypeClass> = {};
-
-        if (isExpressionTypeAll(expressionTypeClass)) {
-            value = expressionTypeClass;
-        } else {
-            errorTypeClasses['value'] = expressionTypeClass;
-        }
-
-        return new BoundExpressionTypeClass(value, errorTypeClasses);
+        return new BoundExpressionTypeClass(
+            isValidClass(
+                new ExpressionVisitor().visit(ctx.expression()),
+                isExpressionTypeAll,
+                'expression',
+            ),
+        );
     }
 }
 

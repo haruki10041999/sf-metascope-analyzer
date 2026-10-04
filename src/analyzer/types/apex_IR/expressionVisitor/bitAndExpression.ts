@@ -2,23 +2,22 @@ import { BitAndExpressionContext } from '@apexdevtools/apex-parser';
 
 import {
     DoubleOperatorExpressionTypeClass,
-    ExpressionTypeClass,
+    ExpressionAllTypeClass,
     ExpressionVisitor,
     isExpressionTypeAll,
 } from '.';
 
-import { ErrorTypeClass, CommonTypeClass } from '../commonVisitor';
+import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
 
 export class BitAndExpressionTypeClass extends DoubleOperatorExpressionTypeClass<
-    ExpressionTypeClass<unknown>,
-    ExpressionTypeClass<unknown>
+    ExpressionAllTypeClass,
+    ExpressionAllTypeClass
 > {
     private constructor(
-        left: ExpressionTypeClass<unknown> | null,
-        right: ExpressionTypeClass<unknown> | null,
-        errorClasses: Record<string, ErrorTypeClass>,
+        left: ExpressionAllTypeClass | ErrorTypeClass,
+        right: ExpressionAllTypeClass | ErrorTypeClass,
     ) {
-        super('bitAndExpression', left, right, '&', errorClasses);
+        super('bitAndExpression', left, right, '&');
     }
 
     static create(ctx: BitAndExpressionContext): BitAndExpressionTypeClass {
@@ -26,25 +25,18 @@ export class BitAndExpressionTypeClass extends DoubleOperatorExpressionTypeClass
             throw new Error('値が異常です。BitAndExpressionContext: ' + ctx.getText());
         }
 
-        const leftExpressionTypeClass = new ExpressionVisitor().visit(ctx.expression(0));
-        const rightExpressionTypeClass = new ExpressionVisitor().visit(ctx.expression(1));
-
-        let left: ExpressionTypeClass<unknown> | null = null;
-        let right: ExpressionTypeClass<unknown> | null = null;
-        const errorTypeClasses: Record<string, ErrorTypeClass> = {};
-
-        if (isExpressionTypeAll(leftExpressionTypeClass)) {
-            left = leftExpressionTypeClass;
-        } else {
-            errorTypeClasses['left'] = leftExpressionTypeClass;
-        }
-        if (isExpressionTypeAll(rightExpressionTypeClass)) {
-            right = rightExpressionTypeClass;
-        } else {
-            errorTypeClasses['right'] = rightExpressionTypeClass;
-        }
-
-        return new BitAndExpressionTypeClass(left, right, errorTypeClasses);
+        return new BitAndExpressionTypeClass(
+            isValidClass(
+                new ExpressionVisitor().visit(ctx.expression(0)),
+                isExpressionTypeAll,
+                'expression',
+            ),
+            isValidClass(
+                new ExpressionVisitor().visit(ctx.expression(1)),
+                isExpressionTypeAll,
+                'expression',
+            ),
+        );
     }
 }
 
@@ -53,4 +45,3 @@ export const isBitAndExpressionType = (
 ): target is BitAndExpressionTypeClass => {
     return target instanceof BitAndExpressionTypeClass;
 };
-

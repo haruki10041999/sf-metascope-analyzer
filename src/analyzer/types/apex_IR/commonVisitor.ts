@@ -45,32 +45,6 @@ export const isErrorType = (target: CommonTypeClass): target is ErrorTypeClass =
     return target instanceof ErrorTypeClass;
 };
 
-export class ContextTypeClass<T> extends CommonTypeClass {
-    private value: T | ErrorTypeClass;
-
-    constructor(type: string, value: T | ErrorTypeClass) {
-        super(type);
-        this.value = value;
-    }
-
-    getValue(): T | ErrorTypeClass {
-        return this.value;
-    }
-}
-
-export class ContextListTypeClass<T> extends CommonTypeClass {
-    private value: (T | ErrorTypeClass)[];
-
-    constructor(type: string, value: (T | ErrorTypeClass)[]) {
-        super(type);
-        this.value = value;
-    }
-
-    getValue(): (T | ErrorTypeClass)[] {
-        return this.value;
-    }
-}
-
 export const isValidClass = <T extends CommonTypeClass>(
     target: CommonTypeClass,
     isValidType: (target: CommonTypeClass) => target is T,

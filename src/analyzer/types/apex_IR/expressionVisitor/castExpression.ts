@@ -1,19 +1,23 @@
 import { CastExpressionContext } from '@apexdevtools/apex-parser';
 
-import { ExpressionTypeClass, ExpressionVisitor, isExpressionTypeAll } from '.';
+import {
+    ExpressionTypeClass,
+    ExpressionAllTypeClass,
+    ExpressionVisitor,
+    isExpressionTypeAll,
+} from '.';
 
 import { TypeRefTypeClass, TypeVisitor, isTypeRefType } from '../typeVisitor';
-import { ErrorTypeClass, CommonTypeClass, isErrorType } from '../commonVisitor';
+import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
 
-export class CastExpressionTypeClass extends ExpressionTypeClass<ExpressionTypeClass<unknown>> {
-    private valueType: TypeRefTypeClass | null = null;
+export class CastExpressionTypeClass extends ExpressionTypeClass<ExpressionAllTypeClass> {
+    private valueType: TypeRefTypeClass | ErrorTypeClass;
 
     private constructor(
-        value: ExpressionTypeClass<unknown> | null,
-        valueType: TypeRefTypeClass | null,
-        errorClasses: Record<string, ErrorTypeClass>,
+        value: ExpressionAllTypeClass | ErrorTypeClass,
+        valueType: TypeRefTypeClass | ErrorTypeClass,
     ) {
-        super('castExpression', value, errorClasses);
+        super('castExpression', value);
         this.valueType = valueType;
     }
 
@@ -22,33 +26,18 @@ export class CastExpressionTypeClass extends ExpressionTypeClass<ExpressionTypeC
             throw new Error('値が異常です。CastExpressionContext: ' + ctx.getText());
         }
 
-        let value: ExpressionTypeClass<unknown> | null = null;
-        let valueType: TypeRefTypeClass | null = null;
-        const errorClasses: Record<string, ErrorTypeClass> = {};
-
-        const expressionTypeClass = new ExpressionVisitor().visit(ctx.expression());
-        if (isExpressionTypeAll(expressionTypeClass)) {
-            value = expressionTypeClass;
-        } else {
-            errorClasses['value'] = expressionTypeClass;
-        }
-
-        const typeTypeClasss = new TypeVisitor().visit(ctx.typeRef());
-        if (isTypeRefType(typeTypeClasss)) {
-            valueType = typeTypeClasss;
-        } else if (isErrorType(typeTypeClasss)) {
-            errorClasses['valueType'] = typeTypeClasss;
-        }
-
-        return new CastExpressionTypeClass(value, valueType, errorClasses);
+        return new CastExpressionTypeClass(
+            isValidClass(
+                new ExpressionVisitor().visit(ctx.expression()),
+                isExpressionTypeAll,
+                'expression',
+            ),
+            isValidClass(new TypeVisitor().visit(ctx.typeRef()), isTypeRefType, 'typeRef'),
+        );
     }
 
-    getValueType(): TypeRefTypeClass | null {
+    getValueType(): TypeRefTypeClass | ErrorTypeClass {
         return this.valueType;
-    }
-
-    isValueTypeNull(): boolean {
-        return this.valueType === null;
     }
 }
 
@@ -57,4 +46,3 @@ export const isCastExpressionType = (
 ): target is CastExpressionTypeClass => {
     return target instanceof CastExpressionTypeClass;
 };
-

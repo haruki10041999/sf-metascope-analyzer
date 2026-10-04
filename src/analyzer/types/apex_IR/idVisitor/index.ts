@@ -5,38 +5,46 @@ import { AnyIdTypeClass } from './anyId';
 import { SoqlIdTypeClass } from './soqlId';
 import { SoslIdTypeClass } from './soslId';
 
-import {
-    ContextTypeClass,
-    ContextListTypeClass,
-    ErrorTypeClass,
-    CommonTypeClass,
-    CommonVisitor,
-} from '../commonVisitor';
+import { ErrorTypeClass, CommonTypeClass, CommonVisitor } from '../commonVisitor';
 
 export { isNormalIdType, NormalIdTypeClass } from './normal';
 export { isAnyIdType, AnyIdTypeClass } from './anyId';
 export { isSoqlIdType, SoqlIdTypeClass } from './soqlId';
 export { isSoslIdType, SoslIdTypeClass } from './soslId';
 
-export class IdTypeClass<T> extends ContextTypeClass<T> {
+export class IdTypeClass<T> extends CommonTypeClass {
+    private value: T | ErrorTypeClass;
+
     constructor(type: string, value: T | ErrorTypeClass) {
-        super(type, value);
+        super(type);
+        this.value = value;
+    }
+
+    getValue(): T | ErrorTypeClass {
+        return this.value;
     }
 }
 
-export class IdListTypeClass<T> extends ContextListTypeClass<T> {
+export class IdListTypeClass<T> extends CommonTypeClass {
+    private value: (T | ErrorTypeClass)[];
+
     constructor(type: string, value: (T | ErrorTypeClass)[]) {
-        super(type, value);
+        super(type);
+        this.value = value;
+    }
+
+    getValue(): (T | ErrorTypeClass)[] {
+        return this.value;
     }
 }
 
-export const isIdTypeAll = (
-    target: CommonTypeClass,
-): target is IdTypeClass<unknown> | IdListTypeClass<unknown> => {
+export type IdAllTypeClass = IdTypeClass<unknown> | IdListTypeClass<unknown>;
+
+export const isIdTypeAll = (target: CommonTypeClass): target is IdAllTypeClass => {
     return target instanceof IdTypeClass || target instanceof IdListTypeClass;
 };
 
-export class IdVisitor extends CommonVisitor<IdTypeClass<unknown> | IdListTypeClass<unknown>> {
+export class IdVisitor extends CommonVisitor<IdAllTypeClass> {
     visitId(ctx: IdContext) {
         return NormalIdTypeClass.create(ctx);
     }

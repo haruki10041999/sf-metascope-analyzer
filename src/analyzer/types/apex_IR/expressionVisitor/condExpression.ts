@@ -1,27 +1,25 @@
 import { CondExpressionContext } from '@apexdevtools/apex-parser';
 
-import { ExpressionTypeClass, ExpressionVisitor, isExpressionTypeAll } from '.';
+import {
+    IfExpressionTypeClass,
+    ExpressionAllTypeClass,
+    ExpressionVisitor,
+    isExpressionTypeAll,
+} from '.';
 
-import { ErrorTypeClass, CommonTypeClass } from '../commonVisitor';
+import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
 
-export class CondExpressionTypeClass extends ExpressionTypeClass<{
-    trueValue: ExpressionTypeClass<unknown> | null;
-    falseValue: ExpressionTypeClass<unknown> | null;
-}> {
-    private condition: ExpressionTypeClass<unknown> | null = null;
-    private trueValue: ExpressionTypeClass<unknown> | null = null;
-    private falseValue: ExpressionTypeClass<unknown> | null = null;
-
+export class CondExpressionTypeClass extends IfExpressionTypeClass<
+    ExpressionAllTypeClass,
+    ExpressionAllTypeClass,
+    ExpressionAllTypeClass
+> {
     constructor(
-        condition: ExpressionTypeClass<unknown> | null,
-        trueValue: ExpressionTypeClass<unknown> | null,
-        falseValue: ExpressionTypeClass<unknown> | null,
-        errorClasses: Record<string, ErrorTypeClass>,
+        condition: ExpressionAllTypeClass | ErrorTypeClass,
+        trueValue: ExpressionAllTypeClass | ErrorTypeClass,
+        falseValue: ExpressionAllTypeClass | ErrorTypeClass,
     ) {
-        super('condExpression', { trueValue: trueValue, falseValue: falseValue }, errorClasses);
-        this.condition = condition;
-        this.trueValue = trueValue;
-        this.falseValue = falseValue;
+        super('condExpression', condition, trueValue, falseValue);
     }
 
     static create(ctx: CondExpressionContext): CondExpressionTypeClass {
@@ -29,57 +27,23 @@ export class CondExpressionTypeClass extends ExpressionTypeClass<{
             throw new Error('Invalid CondExpressionContext: ' + ctx.getText());
         }
 
-        let condition: ExpressionTypeClass<unknown> | null = null;
-        let trueValue: ExpressionTypeClass<unknown> | null = null;
-        let falseValue: ExpressionTypeClass<unknown> | null = null;
-        const errorClasses: Record<string, ErrorTypeClass> = {};
-
-        const expressionTypeClass_0 = new ExpressionVisitor().visit(ctx.expression(0));
-        if (isExpressionTypeAll(expressionTypeClass_0)) {
-            condition = expressionTypeClass_0;
-        } else {
-            errorClasses['condition'] = expressionTypeClass_0;
-        }
-
-        const expressionTypeClass_1 = new ExpressionVisitor().visit(ctx.expression(1));
-        if (isExpressionTypeAll(expressionTypeClass_1)) {
-            trueValue = expressionTypeClass_1;
-        } else {
-            errorClasses['trueValue'] = expressionTypeClass_1;
-        }
-
-        const expressionTypeClass_2 = new ExpressionVisitor().visit(ctx.expression(2));
-        if (isExpressionTypeAll(expressionTypeClass_2)) {
-            falseValue = expressionTypeClass_2;
-        } else {
-            errorClasses['falseValue'] = expressionTypeClass_2;
-        }
-
-        return new CondExpressionTypeClass(condition, trueValue, falseValue, errorClasses);
-    }
-
-    getCondition(): ExpressionTypeClass<unknown> | null {
-        return this.condition;
-    }
-
-    isConditionNull(): boolean {
-        return this.condition === null;
-    }
-
-    getTrueValue(): ExpressionTypeClass<unknown> | null {
-        return this.trueValue;
-    }
-
-    isTrueValueNull(): boolean {
-        return this.trueValue === null;
-    }
-
-    getFalseValue(): ExpressionTypeClass<unknown> | null {
-        return this.falseValue;
-    }
-
-    isFalseValueNull(): boolean {
-        return this.falseValue === null;
+        return new CondExpressionTypeClass(
+            isValidClass(
+                new ExpressionVisitor().visit(ctx.expression(0)),
+                isExpressionTypeAll,
+                'expression',
+            ),
+            isValidClass(
+                new ExpressionVisitor().visit(ctx.expression(1)),
+                isExpressionTypeAll,
+                'expression',
+            ),
+            isValidClass(
+                new ExpressionVisitor().visit(ctx.expression(2)),
+                isExpressionTypeAll,
+                'expression',
+            ),
+        );
     }
 }
 
@@ -88,4 +52,3 @@ export const isCondExpressionType = (
 ): target is CondExpressionTypeClass => {
     return target instanceof CondExpressionTypeClass;
 };
-

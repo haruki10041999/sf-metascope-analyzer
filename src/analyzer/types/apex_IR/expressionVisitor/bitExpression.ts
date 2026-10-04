@@ -2,24 +2,23 @@ import { BitExpressionContext } from '@apexdevtools/apex-parser';
 
 import {
     DoubleOperatorExpressionTypeClass,
-    ExpressionTypeClass,
+    ExpressionAllTypeClass,
     ExpressionVisitor,
     isExpressionTypeAll,
 } from '.';
 
-import { ErrorTypeClass, CommonTypeClass } from '../commonVisitor';
+import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
 
 export class BitExpressionTypeClass extends DoubleOperatorExpressionTypeClass<
-    ExpressionTypeClass<unknown>,
-    ExpressionTypeClass<unknown>
+    ExpressionAllTypeClass,
+    ExpressionAllTypeClass
 > {
     private constructor(
-        left: ExpressionTypeClass<unknown> | null,
-        right: ExpressionTypeClass<unknown> | null,
-        operator: string | null,
-        errorClasses: Record<string, ErrorTypeClass>,
+        left: ExpressionAllTypeClass | ErrorTypeClass,
+        right: ExpressionAllTypeClass | ErrorTypeClass,
+        operator: string,
     ) {
-        super('bitExpression', left, right, operator, errorClasses);
+        super('bitExpression', left, right, operator);
     }
 
     static create(ctx: BitExpressionContext): BitExpressionTypeClass {
@@ -31,25 +30,7 @@ export class BitExpressionTypeClass extends DoubleOperatorExpressionTypeClass<
         ) {
             throw new Error('値が異常です。BitExpressionContext: ' + ctx.getText());
         }
-
-        const leftExpressionTypeClass = new ExpressionVisitor().visit(ctx.expression(0));
-        const rightExpressionTypeClass = new ExpressionVisitor().visit(ctx.expression(1));
-
-        let left: ExpressionTypeClass<unknown> | null = null;
-        let right: ExpressionTypeClass<unknown> | null = null;
-        let operator: string | null = null;
-        const errorTypeClasses: Record<string, ErrorTypeClass> = {};
-
-        if (isExpressionTypeAll(leftExpressionTypeClass)) {
-            left = leftExpressionTypeClass;
-        } else {
-            errorTypeClasses['left'] = leftExpressionTypeClass;
-        }
-        if (isExpressionTypeAll(rightExpressionTypeClass)) {
-            right = rightExpressionTypeClass;
-        } else {
-            errorTypeClasses['right'] = rightExpressionTypeClass;
-        }
+        let operator: string = '';
 
         if (ctx.LT_list() && ctx.LT_list().length > 0) {
             operator = ctx
@@ -65,7 +46,19 @@ export class BitExpressionTypeClass extends DoubleOperatorExpressionTypeClass<
                 .join('');
         }
 
-        return new BitExpressionTypeClass(left, right, operator, errorTypeClasses);
+        return new BitExpressionTypeClass(
+            isValidClass(
+                new ExpressionVisitor().visit(ctx.expression(0)),
+                isExpressionTypeAll,
+                'expression',
+            ),
+            isValidClass(
+                new ExpressionVisitor().visit(ctx.expression(1)),
+                isExpressionTypeAll,
+                'expression',
+            ),
+            operator,
+        );
     }
 }
 
