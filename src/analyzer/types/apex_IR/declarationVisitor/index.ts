@@ -26,29 +26,40 @@ import {
     makeAnonymousMemberDeclarationType,
 } from './anonymousMemberDeclaration';
 import { TypeDeclarationType, makeTypeDeclarationType } from './typeDeclaration';
-import { FieldDeclarationType, makeFieldDeclarationType } from './fieldDeclaration';
-import { PropertyDeclarationType, makePropertyDeclarationType } from './propertyDeclaration';
-import {
-    InterfaceMethodDeclarationType,
-    makeInterfaceMethodDeclarationType,
-} from './interfaceMethodDeclaration';
+import { FieldDeclarationTypeClass } from './fieldDeclaration';
+import { PropertyDeclarationTypeClass } from './propertyDeclaration';
+import { InterfaceMethodDeclarationTypeClass } from './interfaceMethodDeclaration';
 import { InterfaceDeclarationType, makeInterfaceDeclarationType } from './interfaceDeclaration';
-import {
-    LocalVariableDeclarationType,
-    makeLocalVariableDeclarationType,
-} from './localVariableDeclaration';
-import { ClassDeclarationType, makeClassDeclarationType } from './classDeclaration';
+import { LocalVariableDeclarationTypeClass } from './localVariableDeclaration';
+import { ClassDeclarationTypeClass } from './classDeclaration';
 import { ClassBodyDeclarationType, makeClassBodyDeclarationType } from './classBodyDeclaration';
-import { MethodDeclarationType, makeMethodDeclarationType } from './methodDeclaration';
-import { EnumDeclarationType, makeEnumDeclarationType } from './enumDeclaration';
-import {
-    ConstructorDeclarationType,
-    makeConstructorDeclarationType,
-} from './constructorDeclaration';
+import { MethodDeclarationTypeClass } from './methodDeclaration';
+import { EnumDeclarationTypeClass } from './enumDeclaration';
+import { ConstructorDeclarationTypeClass } from './constructorDeclaration';
 import { EnumConstantsTypeClass } from './enumConstants';
 
 import { ErrorTypeClass, ContextTypeClass, CommonTypeClass, CommonVisitor } from '../commonVisitor';
 
+export { isFieldDeclarationType, FieldDeclarationTypeClass } from './fieldDeclaration';
+export {
+    isPropertyDeclarationTypeClass,
+    PropertyDeclarationTypeClass,
+} from './propertyDeclaration';
+export {
+    isInterfaceMethodDeclarationType,
+    InterfaceMethodDeclarationTypeClass,
+} from './interfaceMethodDeclaration';
+export { isClassDeclarationType, ClassDeclarationTypeClass } from './classDeclaration';
+export { isMethodDeclarationType, MethodDeclarationTypeClass } from './methodDeclaration';
+export { isEnumDeclarationType, EnumDeclarationTypeClass } from './enumDeclaration';
+export {
+    isLocalVariableDeclarationType,
+    LocalVariableDeclarationTypeClass,
+} from './localVariableDeclaration';
+export {
+    isConstructorDeclarationType,
+    ConstructorDeclarationTypeClass,
+} from './constructorDeclaration';
 export { isEnumConstantsType, EnumConstantsTypeClass } from './enumConstants';
 
 export class DeclarationTypeClass<T> extends ContextTypeClass<T> {
@@ -76,14 +87,7 @@ export class DeclarationVisitor extends CommonVisitor<DeclarationTypeClass<unkno
     }
 
     visitLocalVariableDeclaration(ctx: LocalVariableDeclarationContext) {
-        console.log('解析を開始します。' + 'LocalVariableDeclarationContext:  ' + ctx.getText());
-        const result = makeLocalVariableDeclarationType(ctx);
-        console.log(
-            '------------解析が終了しました--------------' +
-                'LocalVariableDeclarationContext:  ' +
-                JSON.stringify(result, null, 2),
-        );
-        return result;
+        return LocalVariableDeclarationTypeClass.create(ctx);
     }
 
     visitClassDeclaration(ctx: ClassDeclarationContext) {
@@ -109,36 +113,15 @@ export class DeclarationVisitor extends CommonVisitor<DeclarationTypeClass<unkno
     }
 
     visitEnumDeclaration(ctx: EnumDeclarationContext) {
-        console.log('解析を開始します。' + 'EnumDeclarationContext:  ' + ctx.getText());
-        const result = makeEnumDeclarationType(ctx);
-        console.log(
-            '------------解析が終了しました--------------' +
-                'EnumDeclarationContext:  ' +
-                JSON.stringify(result, null, 2),
-        );
-        return result;
+        return EnumDeclarationTypeClass.create(ctx);
     }
 
     visitConstructorDeclaration(ctx: ConstructorDeclarationContext) {
-        console.log('解析を開始します。' + 'ConstructorDeclarationContext:  ' + ctx.getText());
-        const result = makeConstructorDeclarationType(ctx);
-        console.log(
-            '------------解析が終了しました--------------' +
-                'ConstructorDeclarationContext:  ' +
-                JSON.stringify(result, null, 2),
-        );
-        return result;
+        return ConstructorDeclarationTypeClass.create(ctx);
     }
 
     visitInterfaceMethodDeclaration(ctx: InterfaceMethodDeclarationContext) {
-        console.log('解析を開始します。' + 'InterfaceMethodDeclarationContext:  ' + ctx.getText());
-        const result = makeInterfaceMethodDeclarationType(ctx);
-        console.log(
-            '------------解析が終了しました--------------' +
-                'InterfaceMethodDeclarationContext:  ' +
-                JSON.stringify(result, null, 2),
-        );
-        return result;
+        return InterfaceMethodDeclarationTypeClass.create(ctx);
     }
 
     visitInterfaceDeclaration(ctx: InterfaceDeclarationContext) {
@@ -153,36 +136,15 @@ export class DeclarationVisitor extends CommonVisitor<DeclarationTypeClass<unkno
     }
 
     visitFieldDeclaration(ctx: FieldDeclarationContext) {
-        console.log('解析を開始します。' + 'FieldDeclarationContext:  ' + ctx.getText());
-        const result = makeFieldDeclarationType(ctx);
-        console.log(
-            '------------解析が終了しました--------------' +
-                'FieldDeclarationContext:  ' +
-                JSON.stringify(result, null, 2),
-        );
-        return result;
+        return FieldDeclarationTypeClass.create(ctx);
     }
 
     visitPropertyDeclaration(ctx: PropertyDeclarationContext) {
-        console.log('解析を開始します。' + 'PropertyDeclarationContext:  ' + ctx.getText());
-        const result = makePropertyDeclarationType(ctx);
-        console.log(
-            '------------解析が終了しました--------------' +
-                'PropertyDeclarationContext:  ' +
-                JSON.stringify(result, null, 2),
-        );
-        return result;
+        return PropertyDeclarationTypeClass.create(ctx);
     }
 
     visitMethodDeclaration(ctx: MethodDeclarationContext) {
-        console.log('解析を開始します。' + 'MethodDeclarationContext:  ' + ctx.getText());
-        const result = makeMethodDeclarationType(ctx);
-        console.log(
-            '------------解析が終了しました--------------' +
-                'MethodDeclarationContext:  ' +
-                JSON.stringify(result, null, 2),
-        );
-        return result;
+        return MethodDeclarationTypeClass.create(ctx);
     }
 
     visitTypeDeclaration(ctx: TypeDeclarationContext) {

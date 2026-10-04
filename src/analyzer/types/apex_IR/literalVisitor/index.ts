@@ -24,8 +24,8 @@ export { isWhenLiteralType, WhenLiteralTypeClass } from './whenLiteral';
 export { isSignedIntegerType, SignedIntegerTypeClass } from './signedInteger';
 export { isSignedNumberType, SignedNumberTypeClass } from './signedNumber';
 export class LiteralTypeClass<T> extends ContextTypeClass<T> {
-    constructor(type: string, value: T | null, errorClasses: Record<string, ErrorTypeClass>) {
-        super(type, value, errorClasses);
+    constructor(type: string, value: T | ErrorTypeClass) {
+        super(type, value);
     }
 }
 

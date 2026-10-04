@@ -7,11 +7,8 @@ import { ExpressionListTypeClass, ListVisitor, isExpressionListType } from '../l
 import { ErrorTypeClass, CommonTypeClass, isErrorType } from '../commonVisitor';
 
 export class NormalArgumentsTypeClass extends ArgumentsTypeClass<ExpressionListTypeClass> {
-    private constructor(
-        value: ExpressionListTypeClass | null,
-        errorClasses: Record<string, ErrorTypeClass>,
-    ) {
-        super('arguments', value, errorClasses);
+    private constructor(value: ExpressionListTypeClass | ErrorTypeClass) {
+        super('arguments', value);
     }
 
     static create(ctx: ArgumentsContext): NormalArgumentsTypeClass {

@@ -1,12 +1,12 @@
 import { SoslIdContext } from '@apexdevtools/apex-parser';
 
-import { IdTypeClass, NormalIdTypeClass, IdVisitor, isNormalIdType } from '.';
+import { IdListTypeClass, NormalIdTypeClass, IdVisitor, isNormalIdType } from '.';
 
-import { CommonTypeClass, ErrorTypeClass, isErrorType } from '../commonVisitor';
+import { CommonTypeClass, ErrorTypeClass, isValidClass } from '../commonVisitor';
 
-export class SoslIdTypeClass extends IdTypeClass<NormalIdTypeClass[]> {
-    private constructor(value: NormalIdTypeClass[], errorClasses: Record<string, ErrorTypeClass>) {
-        super('soslId', value, errorClasses);
+export class SoslIdTypeClass extends IdListTypeClass<NormalIdTypeClass> {
+    private constructor(value: (NormalIdTypeClass | ErrorTypeClass)[]) {
+        super('soslId', value);
     }
 
     static create(ctx: SoslIdContext): SoslIdTypeClass {
@@ -14,28 +14,26 @@ export class SoslIdTypeClass extends IdTypeClass<NormalIdTypeClass[]> {
             throw new Error('値が異常です。SoslIdContext: ' + ctx.getText());
         }
 
-        const value: NormalIdTypeClass[] = [];
-        const errorClasses: Record<string, ErrorTypeClass> = {};
-
-        const idTypeClass = new IdVisitor().visit(ctx.id());
-        if (isNormalIdType(idTypeClass)) {
-            value.push(idTypeClass);
-        } else if (isErrorType(idTypeClass)) {
-            errorClasses['value'] = idTypeClass;
-        }
+        const value: (NormalIdTypeClass | ErrorTypeClass)[] = [];
+        value.push(isValidClass(new IdVisitor().visit(ctx.id()), isNormalIdType, 'id'));
 
         if (ctx.soslId_list() && ctx.soslId_list().length > 0) {
             ctx.soslId_list().forEach((soslIdCtx) => {
-                const soslIdTypeClass = new IdVisitor().visit(soslIdCtx);
-                if (isSoslIdType(soslIdTypeClass)) {
-                    value.push(...(soslIdTypeClass.getValue() || []));
-                } else if (isErrorType(soslIdTypeClass)) {
-                    errorClasses['value'] = soslIdTypeClass;
+                const idTypeClass = isValidClass(
+                    new IdVisitor().visit(soslIdCtx),
+                    isSoslIdType,
+                    'soslId',
+                );
+
+                if (isSoslIdType(idTypeClass)) {
+                    value.push(...idTypeClass.getValue());
+                } else {
+                    value.push(idTypeClass);
                 }
             });
         }
 
-        return new SoslIdTypeClass(value, errorClasses);
+        return new SoslIdTypeClass(value);
     }
 }
 

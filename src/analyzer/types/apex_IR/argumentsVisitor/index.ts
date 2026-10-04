@@ -9,8 +9,8 @@ export { isNormalArgumentsType, NormalArgumentsTypeClass } from './normal';
 export { isTypeArgumentsType, TypeArgumentsTypeClass } from './typeArguments';
 
 export class ArgumentsTypeClass<T> extends ContextTypeClass<T> {
-    constructor(type: string, value: T | null, errorClasses: Record<string, ErrorTypeClass>) {
-        super(type, value, errorClasses);
+    constructor(type: string, value: T | ErrorTypeClass) {
+        super(type, value);
     }
 }
 

@@ -1,28 +1,64 @@
 import { FieldDeclarationContext } from '@apexdevtools/apex-parser';
 
-import { TypeType, TypeVisitor } from '../typeVisitor';
-import { VariableType, VariableVisitor } from '../variableVisitor';
+import { DeclarationTypeClass } from '.';
 
-export type FieldDeclarationType = {
-    type: 'fieldDeclaration';
-    declaration: {
-        type: TypeType;
-        name: VariableType;
-    };
-};
+import { TypeRefTypeClass, TypeVisitor, isTypeRefType } from '../typeVisitor';
+import {
+    VariableDeclaratorsTypeClass,
+    VariableVisitor,
+    isVariableDeclaratorsType,
+} from '../variableVisitor';
+import { ErrorTypeClass, CommonTypeClass, isErrorType } from '../commonVisitor';
 
-export const makeFieldDeclarationType = (ctx: FieldDeclarationContext): FieldDeclarationType => {
-    if (!ctx.typeRef() || !ctx.variableDeclarators()) {
-        throw new Error('値が異常です。FieldDeclarationContext: ' + ctx.getText());
+export class FieldDeclarationTypeClass extends DeclarationTypeClass<VariableDeclaratorsTypeClass> {
+    private valueType: TypeRefTypeClass | null = null;
+
+    private constructor(
+        value: VariableDeclaratorsTypeClass | null,
+        valueType: TypeRefTypeClass | null,
+        errorClasses: Record<string, ErrorTypeClass>,
+    ) {
+        super('fieldDeclaration', value, errorClasses);
+        this.valueType = valueType;
     }
 
-    const type = new TypeVisitor().visit(ctx.typeRef());
-    const name = new VariableVisitor().visit(ctx.variableDeclarators());
-    return {
-        type: 'fieldDeclaration',
-        declaration: {
-            type: type,
-            name: name,
-        },
-    };
+    static create(ctx: FieldDeclarationContext): FieldDeclarationTypeClass {
+        if (!ctx.typeRef() || !ctx.variableDeclarators()) {
+            throw new Error('値が異常です。FieldDeclarationContext: ' + ctx.getText());
+        }
+
+        let value: VariableDeclaratorsTypeClass | null = null;
+        let valueType: TypeRefTypeClass | null = null;
+        const errorClasses: Record<string, ErrorTypeClass> = {};
+
+        const variableTypeClass = new VariableVisitor().visit(ctx.variableDeclarators());
+        if (isVariableDeclaratorsType(variableTypeClass)) {
+            value = variableTypeClass;
+        } else if (isErrorType(variableTypeClass)) {
+            errorClasses['value'] = variableTypeClass;
+        }
+
+        const typeTypeClass = new VariableVisitor().visit(ctx.variableDeclarators());
+        if (isTypeRefType(typeTypeClass)) {
+            valueType = typeTypeClass;
+        } else if (isErrorType(typeTypeClass)) {
+            errorClasses['valueType'] = typeTypeClass;
+        }
+
+        return new FieldDeclarationTypeClass(value, valueType, errorClasses);
+    }
+
+    getValueType(): TypeRefTypeClass | null {
+        return this.valueType;
+    }
+
+    isValueTypeNull(): boolean {
+        return this.valueType === null;
+    }
+}
+
+export const isFieldDeclarationType = (
+    target: CommonTypeClass,
+): target is FieldDeclarationTypeClass => {
+    return target instanceof FieldDeclarationTypeClass;
 };

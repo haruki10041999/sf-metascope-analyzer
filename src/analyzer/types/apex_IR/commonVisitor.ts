@@ -46,31 +46,42 @@ export const isErrorType = (target: CommonTypeClass): target is ErrorTypeClass =
 };
 
 export class ContextTypeClass<T> extends CommonTypeClass {
-    private value: T | null = null;
-    private errorClasses: Record<string, ErrorTypeClass> = {};
+    private value: T | ErrorTypeClass;
 
-    constructor(type: string, value: T | null, errorClasses: Record<string, ErrorTypeClass>) {
+    constructor(type: string, value: T | ErrorTypeClass) {
         super(type);
         this.value = value;
-        this.errorClasses = errorClasses;
     }
 
-    getErrorClassesAll(): Record<string, ErrorTypeClass> {
-        return this.errorClasses;
-    }
-
-    hasErrorClasses(): boolean {
-        return Object.keys(this.errorClasses).length > 0;
-    }
-
-    getValue(): T | null {
+    getValue(): T | ErrorTypeClass {
         return this.value;
     }
+}
 
-    isValueNull(): this is T {
-        return this.value === null;
+export class ContextListTypeClass<T> extends CommonTypeClass {
+    private value: (T | ErrorTypeClass)[];
+
+    constructor(type: string, value: (T | ErrorTypeClass)[]) {
+        super(type);
+        this.value = value;
+    }
+
+    getValue(): (T | ErrorTypeClass)[] {
+        return this.value;
     }
 }
+
+export const isValidClass = <T extends CommonTypeClass>(
+    target: CommonTypeClass,
+    isValidType: (target: CommonTypeClass) => target is T,
+    type: string,
+): T | ErrorTypeClass => {
+    if (isErrorType(target) || isValidType(target)) {
+        return target;
+    }
+
+    throw new Error(`想定していた型と違います 想定:${type} 実値:${target.getType()}`);
+};
 
 export class CommonVisitor<T> extends ApexParserBaseVisitor<T | ErrorTypeClass> {
     override visit(ctx: ApexParserRuleContext) {

@@ -1,10 +1,17 @@
 import { ArrayExpressionContext } from '@apexdevtools/apex-parser';
 
-import { ExpressionTypeClass, ExpressionVisitor, isExpressionTypeAll } from '.';
+import {
+    ExpressionTypeClass,
+    ExpressionListTypeClass,
+    ExpressionVisitor,
+    isExpressionTypeAll,
+} from '.';
 
 import { CommonTypeClass, ErrorTypeClass } from '../commonVisitor';
 
-export class ArrayExpressionTypeClass extends ExpressionTypeClass<ExpressionTypeClass<unknown>[]> {
+export class ArrayExpressionTypeClass extends ExpressionListTypeClass<
+    ExpressionTypeClass<unknown>
+> {
     private constructor(
         value: ExpressionTypeClass<unknown>[],
         errorClasses: Record<string, ErrorTypeClass>,

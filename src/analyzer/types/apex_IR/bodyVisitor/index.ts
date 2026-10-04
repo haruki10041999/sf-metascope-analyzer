@@ -1,17 +1,23 @@
-import {
-    ApexParserBaseVisitor,
-    ClassBodyContext,
-    InterfaceBodyContext,
-} from '@apexdevtools/apex-parser';
+import { ClassBodyContext, InterfaceBodyContext } from '@apexdevtools/apex-parser';
 
 import { ClassBodyType, makeClassBodyType } from './classBody';
-import { InterfaceBodyType, makeInterfaceBodyType } from './interfaceBody';
+import { InterfaceBodyTypeClass } from './interfaceBody';
 
-import { ErrorType, CommonVisitor } from '../commonVisitor';
+import { ErrorTypeClass, ContextTypeClass, CommonTypeClass, CommonVisitor } from '../commonVisitor';
 
-export type BodyType = ClassBodyType | InterfaceBodyType | ErrorType;
+export { isInterfaceBodyType, InterfaceBodyTypeClass } from './interfaceBody';
 
-export class BodyVisitor extends CommonVisitor<BodyType> {
+export class BodyTypeClass<T> extends ContextTypeClass<T> {
+    constructor(type: string, value: T | null, errorClasses: Record<string, ErrorTypeClass>) {
+        super(type, value, errorClasses);
+    }
+}
+
+export const isBodyTypeAll = (target: CommonTypeClass): target is BodyTypeClass<unknown> => {
+    return target instanceof BodyTypeClass;
+};
+
+export class BodyVisitor extends CommonVisitor<BodyTypeClass<unknown>> {
     visitClassBody(ctx: ClassBodyContext) {
         console.log('解析を開始します。' + 'ClassBodyContext:  ' + ctx.getText());
         const result = makeClassBodyType(ctx);
@@ -24,13 +30,6 @@ export class BodyVisitor extends CommonVisitor<BodyType> {
     }
 
     visitInterfaceBody(ctx: InterfaceBodyContext) {
-        console.log('解析を開始します。' + 'InterfaceBodyContext:  ' + ctx.getText());
-        const result = makeInterfaceBodyType(ctx);
-        console.log(
-            '------------解析が終了しました--------------' +
-                'InterfaceBodyContext:  ' +
-                JSON.stringify(result, null, 2),
-        );
-        return result;
+        return InterfaceBodyTypeClass.create(ctx);
     }
 }

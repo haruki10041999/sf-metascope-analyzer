@@ -9,8 +9,8 @@ export { isArraySubscriptsType, ArraySubscriptsTypeClass } from './arraySubscrip
 export { isTypeRefType, TypeRefTypeClass } from './typeRef';
 
 export class TypeTypeClass<T> extends ContextTypeClass<T> {
-    constructor(type: string, value: T | null, errorClasses: Record<string, ErrorTypeClass>) {
-        super(type, value, errorClasses);
+    constructor(type: string, value: T | ErrorTypeClass) {
+        super(type, value);
     }
 }
 

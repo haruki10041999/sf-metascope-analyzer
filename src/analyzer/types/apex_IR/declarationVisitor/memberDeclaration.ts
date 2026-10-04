@@ -1,5 +1,7 @@
 import { MemberDeclarationContext } from '@apexdevtools/apex-parser';
 
+import { MethodDeclarationTypeClass, ConstructorDeclarationTypeClass, Interface } from '.';
+
 import { DeclarationType, DeclarationVisitor } from '.';
 
 export type MemberDeclarationType = {

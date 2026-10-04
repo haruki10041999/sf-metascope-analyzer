@@ -1,24 +1,46 @@
 import { InterfaceBodyContext } from '@apexdevtools/apex-parser';
 
-import { DeclarationType, DeclarationVisitor } from '../declarationVisitor';
+import { BodyTypeClass } from '.';
 
-export type InterfaceBodyType = {
-    type: 'interfaceBody';
-    body: DeclarationType[];
-};
+import {
+    InterfaceMethodDeclarationTypeClass,
+    DeclarationVisitor,
+    isInterfaceMethodDeclarationType,
+} from '../declarationVisitor';
+import { ErrorTypeClass, CommonTypeClass, isErrorType } from '../commonVisitor';
 
-export const makeInterfaceBodyType = (ctx: InterfaceBodyContext): InterfaceBodyType => {
-    if (!ctx.interfaceMethodDeclaration_list()) {
-        throw new Error('値が異常です。InterfaceBodyContext: ' + ctx.getText());
+export class InterfaceBodyTypeClass extends BodyTypeClass<InterfaceMethodDeclarationTypeClass[]> {
+    private constructor(
+        value: InterfaceMethodDeclarationTypeClass[],
+        errorClasses: Record<string, ErrorTypeClass>,
+    ) {
+        super('interfaceBody', value, errorClasses);
     }
 
-    const body = ctx.interfaceMethodDeclaration_list().map((decl) => {
-        const declaration = new DeclarationVisitor().visit(decl);
-        return declaration;
-    });
+    static create(ctx: InterfaceBodyContext): InterfaceBodyTypeClass {
+        if (
+            !ctx.interfaceMethodDeclaration_list() &&
+            ctx.interfaceMethodDeclaration_list().length > 0
+        ) {
+            throw new Error('値が異常です。InterfaceBodyContext: ' + ctx.getText());
+        }
 
-    return {
-        type: 'interfaceBody',
-        body: body,
-    };
+        const value: InterfaceMethodDeclarationTypeClass[] = [];
+        const errorClasses: Record<string, ErrorTypeClass> = {};
+
+        ctx.interfaceMethodDeclaration_list().forEach((interfaceBodyCtx, index) => {
+            const declarationTypeClass = new DeclarationVisitor().visit(interfaceBodyCtx);
+            if (isInterfaceMethodDeclarationType(declarationTypeClass)) {
+                value.push(declarationTypeClass);
+            } else if (isErrorType(declarationTypeClass)) {
+                errorClasses[`value_${index}`] = declarationTypeClass;
+            }
+        });
+
+        return new InterfaceBodyTypeClass(value, errorClasses);
+    }
+}
+
+export const isInterfaceBodyType = (target: CommonTypeClass): target is InterfaceBodyTypeClass => {
+    return target instanceof InterfaceBodyTypeClass;
 };

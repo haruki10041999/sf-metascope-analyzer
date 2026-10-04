@@ -1,9 +1,20 @@
 import { ClassDeclarationContext } from '@apexdevtools/apex-parser';
 
-import { IdType, IdVisitor } from '../idVisitor';
+import { DeclarationTypeClass } from '.';
+
+import { NormalIdTypeClass, IdVisitor } from '../idVisitor';
 import { BodyType, BodyVisitor } from '../bodyVisitor';
 import { ListType, ListVisitor } from '../listVisitor';
 import { TypeType, TypeVisitor } from '../typeVisitor';
+import { ErrorTypeClass, CommonTypeClass, isErrorType } from '../commonVisitor';
+
+export class ClassDeclarationTypeClass extends DeclarationTypeClass<NormalIdTypeClass> {}
+
+export const isClassDeclarationType = (
+    target: CommonTypeClass,
+): target is ClassDeclarationTypeClass => {
+    return target instanceof ClassDeclarationTypeClass;
+};
 
 export type ClassDeclarationType = {
     type: 'classDeclaration';

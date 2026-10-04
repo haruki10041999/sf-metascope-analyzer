@@ -1,8 +1,53 @@
 import { InterfaceDeclarationContext } from '@apexdevtools/apex-parser';
 
-import { IdType, IdVisitor } from '../idVisitor';
-import { BodyType, BodyVisitor } from '../bodyVisitor';
-import { ListType, ListVisitor } from '../listVisitor';
+import { DeclarationTypeClass } from '.';
+
+import { NormalIdTypeClass, IdVisitor, isNormalIdType } from '../idVisitor';
+import { InterfaceBodyTypeClass, BodyVisitor, isInterfaceBodyType } from '../bodyVisitor';
+import { TypeListTypeClass, ListVisitor, isTypeListType } from '../listVisitor';
+import { ErrorTypeClass, CommonTypeClass, isErrorType } from '../commonVisitor';
+
+export class InterfaceDeclarationTypeClass extends DeclarationTypeClass<NormalIdTypeClass> {
+    private body: InterfaceBodyTypeClass | null = null;
+    private extend: TypeListTypeClass | null = null;
+    private constructor(
+        value: NormalIdTypeClass | null,
+        body: InterfaceBodyTypeClass | null,
+        extend: TypeListTypeClass | null,
+        errorClasses: Record<string, ErrorTypeClass>,
+    ) {
+        super('interfaceDeclaration', value, errorClasses);
+        this.body = body;
+        this.extend = extend;
+    }
+
+    static create(ctx: InterfaceDeclarationContext): InterfaceDeclarationTypeClass {
+        if (!ctx.id() || !ctx.interfaceBody()) {
+            throw new Error('値が異常です。InterfaceDeclarationContext: ' + ctx.getText());
+        }
+
+        let value: NormalIdTypeClass | null = null;
+        let body: InterfaceBodyTypeClass | null = null;
+        let extend: TypeListTypeClass | null = null;
+        const errorClasses: Record<string, ErrorTypeClass> = {};
+    }
+
+    getBody(): InterfaceBodyTypeClass | null {
+        return this.body;
+    }
+
+    isBodyNull(): boolean {
+        return this.body === null;
+    }
+
+    getExtend(): TypeListTypeClass | null {
+        return this.extend;
+    }
+
+    isExtendNull(): boolean {
+        return this.extend === null;
+    }
+}
 
 export type InterfaceDeclarationType = {
     type: 'interface';

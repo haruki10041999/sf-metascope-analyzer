@@ -26,46 +26,59 @@ export class LocalVariableDeclarationTypeClass extends DeclarationTypeClass<Vari
         this.modifier = modifier;
     }
 
+    static create(ctx: LocalVariableDeclarationContext): LocalVariableDeclarationTypeClass {
+        if (!ctx.typeRef() || !ctx.variableDeclarators()) {
+            throw new Error('値が異常です。LocalVariableDeclarationContext: ' + ctx.getText());
+        }
+
+        let value: VariableDeclaratorsTypeClass | null = null;
+        let valueType: TypeRefTypeClass | null = null;
+        const modifier: NormalModifierTypeClass[] = [];
+        const errorClasses: Record<string, ErrorTypeClass> = {};
+
+        const variableTypeClass = new VariableVisitor().visit(ctx.variableDeclarators());
+        if (isVariableDeclaratorsType(variableTypeClass)) {
+            value = variableTypeClass;
+        } else if (isErrorType(variableTypeClass)) {
+            errorClasses['value'] = variableTypeClass;
+        }
+
+        const typeTypeClass = new VariableVisitor().visit(ctx.variableDeclarators());
+        if (isTypeRefType(typeTypeClass)) {
+            valueType = typeTypeClass;
+        } else if (isErrorType(typeTypeClass)) {
+            errorClasses['valueType'] = typeTypeClass;
+        }
+
+        if (ctx.modifier_list() && ctx.modifier_list().length > 0) {
+            ctx.modifier_list().forEach((modifierCtx, index) => {
+                const modifierTypeClass = new ModifierVisitor().visit(modifierCtx);
+                if (isNormalModifierType(modifierTypeClass)) {
+                    modifier.push(modifierTypeClass);
+                } else if (isErrorType(modifierTypeClass)) {
+                    errorClasses[`modifier_${index}`] = modifierTypeClass;
+                }
+            });
+        }
+
+        return new LocalVariableDeclarationTypeClass(value, valueType, modifier, errorClasses);
+    }
+
     getValueType(): TypeRefTypeClass | null {
-        return (this, this.valueType);
+        return this.valueType;
+    }
+
+    isValueTypeNull(): boolean {
+        return this.valueType === null;
+    }
+
+    getModifier(): NormalModifierTypeClass[] {
+        return this.modifier;
     }
 }
 
-export type LocalVariableDeclarationType = {
-    type: 'localVariableDeclaration';
-    declaration: {
-        type: TypeType;
-        name: VariableType;
-        modifier?: ModifierType[];
-    };
-};
-
-export const makeLocalVariableDeclarationType = (
-    ctx: LocalVariableDeclarationContext,
-): LocalVariableDeclarationType => {
-    if (!ctx.typeRef() || !ctx.variableDeclarators()) {
-        throw new Error('値が異常です。LocalVariableDeclarationContext: ' + ctx.getText());
-    }
-
-    const variantType = new TypeVisitor().visit(ctx.typeRef());
-    const variants = new VariableVisitor().visit(ctx.variableDeclarators());
-
-    const localVariableDeclarationType: LocalVariableDeclarationType = {
-        type: 'localVariableDeclaration',
-        declaration: {
-            type: variantType,
-            name: variants,
-        },
-    };
-
-    if (ctx.modifier_list() && ctx.modifier_list().length > 0) {
-        localVariableDeclarationType.declaration.modifier = ctx
-            .modifier_list()
-            .map((modifierCtx) => {
-                const modifier = new ModifierVisitor().visit(modifierCtx);
-                return modifier;
-            });
-    }
-
-    return localVariableDeclarationType;
+export const isLocalVariableDeclarationType = (
+    target: CommonTypeClass,
+): target is LocalVariableDeclarationTypeClass => {
+    return target instanceof LocalVariableDeclarationTypeClass;
 };

@@ -76,7 +76,13 @@ import {
 } from './whereConditionalExpression';
 import { WhereFieldExpressionType, makeWhereFieldExpressionType } from './whereFieldExpression';
 
-import { ErrorTypeClass, ContextTypeClass, CommonVisitor, CommonTypeClass } from '../commonVisitor';
+import {
+    ErrorTypeClass,
+    ContextTypeClass,
+    ContextListTypeClass,
+    CommonVisitor,
+    CommonTypeClass,
+} from '../commonVisitor';
 
 export { isArrayExpressionType, ArrayExpressionTypeClass } from './arrayExpression';
 export { isArth1ExpressionType, Arth1ExpressionTypeClass } from './arth1Expression';
@@ -111,76 +117,61 @@ export {
 export { isParExpressionType, ParExpressionTypeClass } from './parExpression';
 
 export class ExpressionTypeClass<T> extends ContextTypeClass<T> {
-    constructor(type: string, value: T | null, errorClasses: Record<string, ErrorTypeClass>) {
-        super(type, value, errorClasses);
+    constructor(type: string, value: T | ErrorTypeClass) {
+        super(type, value);
+    }
+}
+
+export class ExpressionListTypeClass<T> extends ContextTypeClass<T> {
+    constructor(type: string, value: T | ErrorTypeClass) {
+        super(type, value);
     }
 }
 
 export class SingleOperatorExpressionTypeClass<T> extends ExpressionTypeClass<T> {
-    private operator: string | null = null;
+    private operator: string;
 
-    constructor(
-        type: string,
-        value: T | null,
-        operator: string | null,
-        errorClasses: Record<string, ErrorTypeClass>,
-    ) {
-        super(type, value, errorClasses);
+    constructor(type: string, value: T | ErrorTypeClass, operator: string) {
+        super(type, value);
         this.operator = operator;
     }
 
-    getOperator(): string | null {
+    getOperator(): string {
         return this.operator;
-    }
-
-    isOperatorNull(): boolean {
-        return this.operator === null;
     }
 }
 
 export class DoubleOperatorExpressionTypeClass<
     Tleft,
     Tright,
-> extends SingleOperatorExpressionTypeClass<{ left: Tleft | null; right: Tright | null }> {
-    private left: Tleft | null = null;
-    private right: Tright | null = null;
+> extends SingleOperatorExpressionTypeClass<{ left: Tleft; right: Tright }> {
+    private left: Tleft;
+    private right: Tright;
 
-    constructor(
-        type: string,
-        left: any | null,
-        right: any | null,
-        operator: string | null,
-        errorClasses: Record<string, ErrorTypeClass>,
-    ) {
-        super(type, { left: left, right: right }, operator, errorClasses);
+    constructor(type: string, left: Tleft, right: Tright, operator: string) {
+        super(type, { left: left, right: right }, operator);
         this.left = left;
         this.right = right;
     }
 
-    getLeft(): Tleft | null {
+    getLeft(): Tleft {
         return this.left;
     }
 
-    getRight(): Tright | null {
+    getRight(): Tright {
         return this.right;
-    }
-
-    isLeftNull(): boolean {
-        return this.left === null;
-    }
-
-    isRightNull(): boolean {
-        return this.right === null;
     }
 }
 
 export const isExpressionTypeAll = (
     target: CommonTypeClass,
-): target is ExpressionTypeClass<unknown> => {
-    return target instanceof ExpressionTypeClass;
+): target is ExpressionTypeClass<unknown> | ExpressionListTypeClass<unknown> => {
+    return target instanceof ExpressionTypeClass || target instanceof ExpressionListTypeClass;
 };
 
-export class ExpressionVisitor extends CommonVisitor<ExpressionTypeClass<unknown>> {
+export class ExpressionVisitor extends CommonVisitor<
+    ExpressionTypeClass<unknown> | ExpressionListTypeClass<unknown>
+> {
     visitExpression(ctx: ExpressionContext) {
         return NormalExpressionTypeClass.create(ctx);
     }
@@ -359,4 +350,3 @@ export class ExpressionVisitor extends CommonVisitor<ExpressionTypeClass<unknown
         return result;
     }
 }
-
