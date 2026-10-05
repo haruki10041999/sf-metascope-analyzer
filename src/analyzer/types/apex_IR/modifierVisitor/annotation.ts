@@ -5,67 +5,55 @@ import { ModifierTypeClass } from '../modifierVisitor';
 import { NormalIdTypeClass, IdVisitor, isNormalIdType } from '../idVisitor';
 import { ElementValueTypeClass, ValueVisitor, isElementValueType } from '../valueVisitor';
 import { ElementValuePairsTypeClass, PairVisitor, isElementValuePairsType } from '../pairVisitor';
-import { ErrorTypeClass, CommonTypeClass, isErrorType } from '../commonVisitor';
+import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
 
 export class AnnotationTypeClass extends ModifierTypeClass<NormalIdTypeClass> {
-    private param: ElementValueTypeClass | ElementValuePairsTypeClass | null = null;
+    private param: ElementValueTypeClass | ElementValuePairsTypeClass | ErrorTypeClass | null =
+        null;
 
     private constructor(
-        value: NormalIdTypeClass | null,
-        param: ElementValueTypeClass | ElementValuePairsTypeClass | null,
-        errorClasses: Record<string, ErrorTypeClass>,
+        value: NormalIdTypeClass | ErrorTypeClass,
+        param: ElementValueTypeClass | ElementValuePairsTypeClass | ErrorTypeClass | null,
     ) {
-        super('annotation', value, errorClasses);
+        super('annotation', value);
         this.param = param;
     }
 
     static create(ctx: AnnotationContext): AnnotationTypeClass {
-        if (!ctx.id() || (ctx.elementValue() && ctx.elementValuePairs())) {
+        if (!ctx.id()) {
             throw new Error('値が異常です。AnnotationContext: ' + ctx.getText());
         }
 
-        let value: NormalIdTypeClass | null = null;
-        let param: ElementValueTypeClass | ElementValuePairsTypeClass | null = null;
-        const errorTypeClasses: Record<string, ErrorTypeClass> = {};
-
-        const idTypeClass = new IdVisitor().visit(ctx.id());
-        if (isNormalIdType(idTypeClass)) {
-            value = idTypeClass;
-        } else if (isErrorType(idTypeClass)) {
-            errorTypeClasses['id'] = idTypeClass;
-        }
+        let param: ElementValueTypeClass | ElementValuePairsTypeClass | ErrorTypeClass | null =
+            null;
 
         if (ctx.elementValue()) {
-            const valueTypeClass = new ValueVisitor().visit(ctx.elementValue());
-            if (isElementValueType(valueTypeClass)) {
-                param = valueTypeClass;
-            } else if (isErrorType(valueTypeClass)) {
-                errorTypeClasses['elementValue'] = valueTypeClass;
-            }
+            param = isValidClass(
+                new ValueVisitor().visit(ctx.elementValue()),
+                isElementValueType,
+                'elementValue',
+            );
         }
 
         if (ctx.elementValuePairs()) {
-            const pairTypeClass = new PairVisitor().visit(ctx.elementValuePairs());
-            if (isElementValuePairsType(pairTypeClass)) {
-                param = pairTypeClass;
-            } else if (isErrorType(pairTypeClass)) {
-                errorTypeClasses['elementValuePairs'] = pairTypeClass;
-            }
+            param = isValidClass(
+                new PairVisitor().visit(ctx.elementValuePairs()),
+                isElementValuePairsType,
+                'elementValuePairs',
+            );
         }
 
-        return new AnnotationTypeClass(value, param, errorTypeClasses);
+        return new AnnotationTypeClass(
+            isValidClass(new IdVisitor().visit(ctx.id()), isNormalIdType, 'id'),
+            param,
+        );
     }
 
-    getParam(): ElementValueTypeClass | ElementValuePairsTypeClass | null {
+    getParam(): ElementValueTypeClass | ElementValuePairsTypeClass | ErrorTypeClass | null {
         return this.param;
-    }
-
-    isParamNull(): boolean {
-        return this.param === null;
     }
 }
 
 export const isAnnotationType = (target: CommonTypeClass): target is AnnotationTypeClass => {
     return target instanceof AnnotationTypeClass;
 };
-

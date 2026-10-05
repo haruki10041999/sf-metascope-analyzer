@@ -1,20 +1,22 @@
-import {
-    ApexParserBaseVisitor,
-    AnnotationContext,
-    ModifierContext,
-} from '@apexdevtools/apex-parser';
+import { AnnotationContext, ModifierContext } from '@apexdevtools/apex-parser';
 
 import { AnnotationTypeClass } from './annotation';
 import { NormalModifierTypeClass } from './normal';
 
-import { ErrorTypeClass, ContextTypeClass, CommonTypeClass, CommonVisitor } from '../commonVisitor';
+import { ErrorTypeClass, CommonTypeClass, CommonVisitor } from '../commonVisitor';
 
 export { isAnnotationType, AnnotationTypeClass } from './annotation';
 export { isNormalModifierType, NormalModifierTypeClass } from './normal';
 
-export class ModifierTypeClass<T> extends ContextTypeClass<T> {
-    constructor(type: string, value: T | null, errorClasses: Record<string, ErrorTypeClass>) {
-        super(type, value, errorClasses);
+export class ModifierTypeClass<T> extends CommonTypeClass {
+    private value: T | ErrorTypeClass;
+    constructor(type: string, value: T | ErrorTypeClass) {
+        super(type);
+        this.value = value;
+    }
+
+    getValue(): T | ErrorTypeClass {
+        return this.value;
     }
 }
 

@@ -2,21 +2,21 @@ import { DotExpressionContext } from '@apexdevtools/apex-parser';
 
 import {
     DoubleOperatorExpressionTypeClass,
-    ExpressionTypeClass,
+    ExpressionAllTypeClass,
     ExpressionVisitor,
     isExpressionTypeAll,
 } from '.';
 
 import { AnyIdTypeClass, IdVisitor, isAnyIdType } from '../idVisitor';
 import { DotMethodCallTypeClass, CallVisitor, isDotMethodCallType } from '../callVisitor';
-import { ErrorTypeClass, CommonTypeClass, isErrorType } from '../commonVisitor';
+import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
 
 export class DotExpressionTypeClass extends DoubleOperatorExpressionTypeClass<
-    ExpressionTypeClass<unknown>,
+    ExpressionAllTypeClass,
     AnyIdTypeClass | DotMethodCallTypeClass
 > {
     private constructor(
-        left: ExpressionTypeClass<unknown> | null,
+        left: ExpressionAllTypeClass | ErrorTypeClass,
         right: AnyIdTypeClass | DotMethodCallTypeClass | null,
         operator: string | null,
         errorClasses: Record<string, ErrorTypeClass>,
@@ -78,4 +78,3 @@ export class DotExpressionTypeClass extends DoubleOperatorExpressionTypeClass<
 export const isDotExpressionType = (target: CommonTypeClass): target is DotExpressionTypeClass => {
     return target instanceof DotExpressionTypeClass;
 };
-

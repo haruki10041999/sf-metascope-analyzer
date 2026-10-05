@@ -3,14 +3,20 @@ import { ArgumentsContext, TypeArgumentsContext } from '@apexdevtools/apex-parse
 import { NormalArgumentsTypeClass } from './normal';
 import { TypeArgumentsTypeClass } from './typeArguments';
 
-import { CommonTypeClass, ContextTypeClass, CommonVisitor, ErrorTypeClass } from '../commonVisitor';
+import { CommonTypeClass, CommonVisitor, ErrorTypeClass } from '../commonVisitor';
 
 export { isNormalArgumentsType, NormalArgumentsTypeClass } from './normal';
 export { isTypeArgumentsType, TypeArgumentsTypeClass } from './typeArguments';
 
-export class ArgumentsTypeClass<T> extends ContextTypeClass<T> {
-    constructor(type: string, value: T | ErrorTypeClass) {
-        super(type, value);
+export class ArgumentsTypeClass<T> extends CommonTypeClass {
+    private value: T | ErrorTypeClass | null = null;
+    constructor(type: string, value: T | ErrorTypeClass | null) {
+        super(type);
+        this.value = value;
+    }
+
+    getValue(): T | ErrorTypeClass | null {
+        return this.value;
     }
 }
 

@@ -13,16 +13,22 @@ import { WhenValueTypeClass } from './whenValue';
 import { CoordinateValueTypeClass } from './coordinateValue';
 import { LocationValueTypeClass } from './locationValue';
 
-import { ErrorTypeClass, ContextTypeClass, CommonTypeClass, CommonVisitor } from '../commonVisitor';
+import { ErrorTypeClass, CommonTypeClass, CommonVisitor } from '../commonVisitor';
 
 export { isNormalValueType, NormalValueTypeClass } from './normal';
 export { isElementValueType, ElementValueTypeClass } from './elementValue';
 export { isWhenValueType, WhenValueTypeClass } from './whenValue';
 export { isCoordinateValueType, CoordinateValueTypeClass } from './coordinateValue';
 export { isLocationValueType, LocationValueTypeClass } from './locationValue';
-export class ValueTypeClass<T> extends ContextTypeClass<T> {
-    constructor(type: string, value: T | null, errorClasses: Record<string, ErrorTypeClass>) {
-        super(type, value, errorClasses);
+export class ValueTypeClass<T> extends CommonTypeClass {
+    private value: T | ErrorTypeClass;
+    constructor(type: string, value: T | ErrorTypeClass) {
+        super(type);
+        this.value = value;
+    }
+
+    getValue(): T | ErrorTypeClass {
+        return this.value;
     }
 }
 

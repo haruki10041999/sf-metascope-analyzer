@@ -3,14 +3,11 @@ import { ValueListContext } from '@apexdevtools/apex-parser';
 import { ListTypeClass } from '../listVisitor';
 
 import { NormalValueTypeClass, ValueVisitor, isNormalValueType } from '../valueVisitor';
-import { ErrorTypeClass, CommonTypeClass, isErrorType } from '../commonVisitor';
+import { ErrorTypeClass, CommonTypeClass, isValidClassList } from '../commonVisitor';
 
-export class ValueListTypeClass extends ListTypeClass<NormalValueTypeClass[]> {
-    private constructor(
-        value: NormalValueTypeClass[],
-        errorClasses: Record<string, ErrorTypeClass>,
-    ) {
-        super('valueList', value, errorClasses);
+export class ValueListTypeClass extends ListTypeClass<NormalValueTypeClass> {
+    private constructor(value: (NormalValueTypeClass | ErrorTypeClass)[]) {
+        super('valueList', value);
     }
 
     static create(ctx: ValueListContext): ValueListTypeClass {
@@ -18,23 +15,17 @@ export class ValueListTypeClass extends ListTypeClass<NormalValueTypeClass[]> {
             throw new Error('値が異常です。ValueListContext: ' + ctx.getText());
         }
 
-        const value: NormalValueTypeClass[] = [];
-        const errorClasses: Record<string, ErrorTypeClass> = {};
-
-        ctx.value_list().forEach((valueCtx, index) => {
-            const valueTypeClass = new ValueVisitor().visit(valueCtx);
-            if (isNormalValueType(valueTypeClass)) {
-                value.push(valueTypeClass);
-            } else if (isErrorType(valueTypeClass)) {
-                errorClasses[`value_${index}`] = valueTypeClass;
-            }
-        });
-
-        return new ValueListTypeClass(value, errorClasses);
+        return new ValueListTypeClass(
+            isValidClassList(
+                ctx.value_list(),
+                (ctx) => new ValueVisitor().visit(ctx),
+                isNormalValueType,
+                'value',
+            ),
+        );
     }
 }
 
 export const isValueListType = (target: CommonTypeClass): target is ValueListTypeClass => {
     return target instanceof ValueListTypeClass;
 };
-

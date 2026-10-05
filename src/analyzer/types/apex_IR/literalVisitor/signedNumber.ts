@@ -8,7 +8,7 @@ export class SignedNumberTypeClass extends PrimitiveLiteralTypeClass<number> {
     private operator: string | null;
 
     private constructor(value: number, valueType: 'integer' | 'number', operator: string | null) {
-        super('signedNumber', value, valueType, {});
+        super('signedNumber', value, valueType);
         this.operator = operator;
     }
 
@@ -46,7 +46,6 @@ export class SignedNumberTypeClass extends PrimitiveLiteralTypeClass<number> {
     }
 }
 
-export const isSignedNumberType = (taraget: any): taraget is SignedNumberTypeClass => {
+export const isSignedNumberType = (taraget: CommonTypeClass): taraget is SignedNumberTypeClass => {
     return taraget instanceof SignedNumberTypeClass;
 };
-

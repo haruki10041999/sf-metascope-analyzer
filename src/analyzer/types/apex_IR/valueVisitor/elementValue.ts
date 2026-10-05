@@ -3,14 +3,11 @@ import { ElementValueContext } from '@apexdevtools/apex-parser';
 import { ValueTypeClass } from '.';
 
 import { NormalLiteralTypeClass, LiteralVisitor, isNormalLiteralType } from '../literalVisitor';
-import { ErrorTypeClass, CommonTypeClass, isErrorType } from '../commonVisitor';
+import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
 
 export class ElementValueTypeClass extends ValueTypeClass<NormalLiteralTypeClass> {
-    private constructor(
-        value: NormalLiteralTypeClass | null,
-        errorClasses: Record<string, ErrorTypeClass>,
-    ) {
-        super('elementValue', value, errorClasses);
+    private constructor(value: NormalLiteralTypeClass | ErrorTypeClass) {
+        super('elementValue', value);
     }
 
     static create(ctx: ElementValueContext) {
@@ -18,17 +15,9 @@ export class ElementValueTypeClass extends ValueTypeClass<NormalLiteralTypeClass
             throw new Error('値が異常です。ElementValueContext: ' + ctx.getText());
         }
 
-        let value: NormalLiteralTypeClass | null = null;
-        const errorClasses: Record<string, ErrorTypeClass> = {};
-
-        const literalTypeClass = new LiteralVisitor().visit(ctx.literal());
-        if (isNormalLiteralType(literalTypeClass)) {
-            value = literalTypeClass;
-        } else if (isErrorType(literalTypeClass)) {
-            errorClasses['value'] = literalTypeClass;
-        }
-
-        return new ElementValueTypeClass(value, errorClasses);
+        return new ElementValueTypeClass(
+            isValidClass(new LiteralVisitor().visit(ctx.literal()), isNormalLiteralType, 'literal'),
+        );
     }
 }
 

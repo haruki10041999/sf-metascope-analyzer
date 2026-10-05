@@ -185,7 +185,7 @@ export class DoubleOperatorExpressionTypeClass<Tleft, Tright> extends CommonType
     }
 }
 
-export class IfExpressionTypeClass<TCondition, TTrue, TFalse> extends CommonTypeClass {
+export class ConditionExpressionTypeClass<TCondition, TTrue, TFalse> extends CommonTypeClass {
     private condition: TCondition | ErrorTypeClass;
     private trueValue: TTrue | ErrorTypeClass;
     private falseValue: TFalse | ErrorTypeClass;

@@ -1,21 +1,17 @@
 import { IdCreatedNamePairContext } from '@apexdevtools/apex-parser';
 
-import { DoublePairTypeClass } from '.';
+import { PairTypeClass } from '.';
 
 import { AnyIdTypeClass, IdVisitor, isAnyIdType } from '../idVisitor';
 import { TypeListTypeClass, ListVisitor, isTypeListType } from '../listVisitor';
-import { ErrorTypeClass, CommonTypeClass, isErrorType } from '../commonVisitor';
+import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
 
-export class IdCreatedNamePairTypeClass extends DoublePairTypeClass<
-    AnyIdTypeClass,
-    TypeListTypeClass
-> {
+export class IdCreatedNamePairTypeClass extends PairTypeClass<AnyIdTypeClass, TypeListTypeClass> {
     private constructor(
-        left: AnyIdTypeClass | null,
-        right: TypeListTypeClass | null,
-        errorClasses: Record<string, ErrorTypeClass>,
+        left: AnyIdTypeClass | ErrorTypeClass,
+        right: TypeListTypeClass | ErrorTypeClass,
     ) {
-        super('idCreatedNamePair', left, right, errorClasses);
+        super('idCreatedNamePair', left, right);
     }
 
     static create(ctx: IdCreatedNamePairContext): IdCreatedNamePairTypeClass {
@@ -23,25 +19,10 @@ export class IdCreatedNamePairTypeClass extends DoublePairTypeClass<
             throw new Error('値が異常です。IdCreatedNamePairContext: ' + ctx.getText());
         }
 
-        let left: AnyIdTypeClass | null = null;
-        let right: TypeListTypeClass | null = null;
-        const errorClasses: Record<string, ErrorTypeClass> = {};
-
-        const idTypeClass = new IdVisitor().visit(ctx.anyId());
-        const listTypeClass = new ListVisitor().visit(ctx.typeList());
-
-        if (isAnyIdType(idTypeClass)) {
-            left = idTypeClass;
-        } else if (isErrorType(idTypeClass)) {
-            errorClasses['left'] = idTypeClass;
-        }
-        if (isTypeListType(listTypeClass)) {
-            right = listTypeClass;
-        } else if (isErrorType(listTypeClass)) {
-            errorClasses['right'] = listTypeClass;
-        }
-
-        return new IdCreatedNamePairTypeClass(left, right, errorClasses);
+        return new IdCreatedNamePairTypeClass(
+            isValidClass(new IdVisitor().visit(ctx.anyId()), isAnyIdType, 'anyId'),
+            isValidClass(new ListVisitor().visit(ctx.typeList()), isTypeListType, 'typeList'),
+        );
     }
 }
 

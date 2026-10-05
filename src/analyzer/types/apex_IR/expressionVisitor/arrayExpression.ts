@@ -5,10 +5,9 @@ import {
     ExpressionAllTypeClass,
     ExpressionVisitor,
     isExpressionTypeAll,
-    isValidClass,
 } from '.';
 
-import { CommonTypeClass, ErrorTypeClass } from '../commonVisitor';
+import { CommonTypeClass, ErrorTypeClass, isValidClass } from '../commonVisitor';
 
 export class ArrayExpressionTypeClass extends ExpressionListTypeClass<ExpressionAllTypeClass> {
     private constructor(value: (ExpressionAllTypeClass | ErrorTypeClass)[]) {

@@ -12,6 +12,19 @@ export { isAnyIdType, AnyIdTypeClass } from './anyId';
 export { isSoqlIdType, SoqlIdTypeClass } from './soqlId';
 export { isSoslIdType, SoslIdTypeClass } from './soslId';
 
+export class IdValueTypeClass<T> extends CommonTypeClass {
+    private value: T;
+
+    constructor(type: string, value: T) {
+        super(type);
+        this.value = value;
+    }
+
+    getValue(): T {
+        return this.value;
+    }
+}
+
 export class IdTypeClass<T> extends CommonTypeClass {
     private value: T | ErrorTypeClass;
 
@@ -38,10 +51,15 @@ export class IdListTypeClass<T> extends CommonTypeClass {
     }
 }
 
-export type IdAllTypeClass = IdTypeClass<unknown> | IdListTypeClass<unknown>;
+export type IdAllTypeClass =
+    IdValueTypeClass<unknown> | IdTypeClass<unknown> | IdListTypeClass<unknown>;
 
 export const isIdTypeAll = (target: CommonTypeClass): target is IdAllTypeClass => {
-    return target instanceof IdTypeClass || target instanceof IdListTypeClass;
+    return (
+        target instanceof IdValueTypeClass ||
+        target instanceof IdTypeClass ||
+        target instanceof IdListTypeClass
+    );
 };
 
 export class IdVisitor extends CommonVisitor<IdAllTypeClass> {

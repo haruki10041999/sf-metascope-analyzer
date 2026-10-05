@@ -1,20 +1,23 @@
 import { MapCreatorRestPairContext } from '@apexdevtools/apex-parser';
 
-import { DoublePairTypeClass } from '.';
+import { PairTypeClass } from '.';
 
-import { ExpressionTypeClass, ExpressionVisitor, isExpressionTypeAll } from '../expressionVisitor';
-import { ErrorTypeClass, CommonTypeClass } from '../commonVisitor';
+import {
+    ExpressionAllTypeClass,
+    ExpressionVisitor,
+    isExpressionTypeAll,
+} from '../expressionVisitor';
+import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
 
-export class MapCreatorRestPairTypeClass extends DoublePairTypeClass<
-    ExpressionTypeClass<unknown>,
-    ExpressionTypeClass<unknown>
+export class MapCreatorRestPairTypeClass extends PairTypeClass<
+    ExpressionAllTypeClass,
+    ExpressionAllTypeClass
 > {
     private constructor(
-        left: ExpressionTypeClass<unknown> | null,
-        right: ExpressionTypeClass<unknown> | null,
-        errorClasses: Record<string, ErrorTypeClass>,
+        left: ExpressionAllTypeClass | ErrorTypeClass,
+        right: ExpressionAllTypeClass | ErrorTypeClass,
     ) {
-        super('mapCreatorRestPair', left, right, errorClasses);
+        super('mapCreatorRestPair', left, right);
     }
 
     static create(ctx: MapCreatorRestPairContext): MapCreatorRestPairTypeClass {
@@ -22,25 +25,18 @@ export class MapCreatorRestPairTypeClass extends DoublePairTypeClass<
             throw new Error('値が異常です。MapCreatorRestPairContext: ' + ctx.getText());
         }
 
-        let left: ExpressionTypeClass<unknown> | null = null;
-        let right: ExpressionTypeClass<unknown> | null = null;
-        const errorClasses: Record<string, ErrorTypeClass> = {};
-
-        const leftExpressionTypeClass = new ExpressionVisitor().visit(ctx.expression(0));
-        const rightExpressionTypeClass = new ExpressionVisitor().visit(ctx.expression(1));
-
-        if (isExpressionTypeAll(leftExpressionTypeClass)) {
-            left = leftExpressionTypeClass;
-        } else {
-            errorClasses['left'] = leftExpressionTypeClass;
-        }
-        if (isExpressionTypeAll(rightExpressionTypeClass)) {
-            right = rightExpressionTypeClass;
-        } else {
-            errorClasses['right'] = rightExpressionTypeClass;
-        }
-
-        return new MapCreatorRestPairTypeClass(left, right, errorClasses);
+        return new MapCreatorRestPairTypeClass(
+            isValidClass(
+                new ExpressionVisitor().visit(ctx.expression(0)),
+                isExpressionTypeAll,
+                'expression',
+            ),
+            isValidClass(
+                new ExpressionVisitor().visit(ctx.expression(1)),
+                isExpressionTypeAll,
+                'expression',
+            ),
+        );
     }
 }
 

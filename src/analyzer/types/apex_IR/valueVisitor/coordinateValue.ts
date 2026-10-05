@@ -4,21 +4,17 @@ import { ValueTypeClass } from '.';
 
 import {
     BoundExpressionTypeClass,
-    ExpressionVisitor,
-    isExpressionTypeAll,
+    ExpressionVisitor,,
     isBoundExpressionType,
 } from '../expressionVisitor';
 import { SignedNumberTypeClass, LiteralVisitor, isSignedNumberType } from '../literalVisitor';
-import { ErrorTypeClass, CommonTypeClass, isErrorType } from '../commonVisitor';
+import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
 
 export class CoordinateValueTypeClass extends ValueTypeClass<
     SignedNumberTypeClass | BoundExpressionTypeClass
 > {
-    private constructor(
-        value: SignedNumberTypeClass | BoundExpressionTypeClass | null,
-        errorClasses: Record<string, ErrorTypeClass>,
-    ) {
-        super('coordinateValue', value, errorClasses);
+    private constructor(value: SignedNumberTypeClass | BoundExpressionTypeClass | ErrorTypeClass) {
+        super('coordinateValue', value);
     }
 
     static create(ctx: CoordinateValueContext): CoordinateValueTypeClass {
@@ -26,30 +22,19 @@ export class CoordinateValueTypeClass extends ValueTypeClass<
             throw new Error('値が異常です。CoordinateValueContext: ' + ctx.getText());
         }
 
-        let value: SignedNumberTypeClass | BoundExpressionTypeClass | null = null;
-        const errorClasses: Record<string, ErrorTypeClass> = {};
-
-        if (ctx.signedNumber()) {
-            const literalTypeClass = new LiteralVisitor().visit(ctx.signedNumber());
-            if (isSignedNumberType(literalTypeClass)) {
-                value = literalTypeClass;
-            } else if (isErrorType(literalTypeClass)) {
-                errorClasses['value'] = literalTypeClass;
-            }
-        }
-
-        if (ctx.boundExpression()) {
-            const expressionTypeClass = new ExpressionVisitor().visit(ctx.boundExpression());
-            if (
-                isExpressionTypeAll(expressionTypeClass) &&
-                isBoundExpressionType(expressionTypeClass)
-            ) {
-                value = expressionTypeClass;
-            } else if (isErrorType(expressionTypeClass)) {
-                errorClasses['value'] = expressionTypeClass;
-            }
-        }
-        return new CoordinateValueTypeClass(value, errorClasses);
+        return new CoordinateValueTypeClass(
+            ctx.signedNumber()
+                ? isValidClass(
+                      new LiteralVisitor().visit(ctx.signedNumber()),
+                      isSignedNumberType,
+                      'signedNumber',
+                  )
+                : isValidClass(
+                      new ExpressionVisitor().visit(ctx.boundExpression()),
+                      isBoundExpressionType,
+                      'boundExpression',
+                  ),
+        );
     }
 }
 
@@ -58,4 +43,3 @@ export const isCoordinateValueType = (
 ): target is CoordinateValueTypeClass => {
     return target instanceof CoordinateValueTypeClass;
 };
-

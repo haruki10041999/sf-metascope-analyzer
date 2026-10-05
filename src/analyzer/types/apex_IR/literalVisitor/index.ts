@@ -17,45 +17,51 @@ import { SignedIntegerTypeClass } from './signedInteger';
 import { SignedNumberTypeClass } from './signedNumber';
 import { SoqlLiteralType, makeSoqlLiteralType } from './soqlLiteral';
 
-import { ErrorTypeClass, ContextTypeClass, CommonTypeClass, CommonVisitor } from '../commonVisitor';
+import { ErrorTypeClass, CommonTypeClass, CommonVisitor } from '../commonVisitor';
 
 export { isNormalLiteralType, NormalLiteralTypeClass } from './normal';
 export { isWhenLiteralType, WhenLiteralTypeClass } from './whenLiteral';
 export { isSignedIntegerType, SignedIntegerTypeClass } from './signedInteger';
 export { isSignedNumberType, SignedNumberTypeClass } from './signedNumber';
-export class LiteralTypeClass<T> extends ContextTypeClass<T> {
+
+export class LiteralTypeClass<T> extends CommonTypeClass {
+    private value: T | ErrorTypeClass;
     constructor(type: string, value: T | ErrorTypeClass) {
-        super(type, value);
+        super(type);
+        this.value = value;
+    }
+
+    getValue(): T | ErrorTypeClass {
+        return this.value;
     }
 }
 
-export class PrimitiveLiteralTypeClass<T> extends LiteralTypeClass<T> {
-    private valueType: string | null;
+export class PrimitiveLiteralTypeClass<T> extends CommonTypeClass {
+    private valueType: string;
+    private value: T | ErrorTypeClass;
 
-    constructor(
-        type: string,
-        value: T | null,
-        valueType: string | null,
-        errorClasses: Record<string, ErrorTypeClass>,
-    ) {
-        super(type, value, errorClasses);
+    constructor(type: string, value: T | ErrorTypeClass, valueType: string) {
+        super(type);
+        this.value = value;
         this.valueType = valueType;
+    }
+
+    getValue(): T | ErrorTypeClass {
+        return this.value;
     }
 
     getValueType(): string | null {
         return this.valueType;
     }
-
-    isValueTypeNull(): boolean {
-        return this.valueType === null;
-    }
 }
 
-export const isLiteralTypeAll = (target: CommonTypeClass): target is LiteralTypeClass<unknown> => {
-    return target instanceof LiteralTypeClass;
+export type LiteralAllTypeClass = LiteralTypeClass<unknown> | PrimitiveLiteralTypeClass<unknown>;
+
+export const isLiteralTypeAll = (target: CommonTypeClass): target is LiteralAllTypeClass => {
+    return target instanceof LiteralTypeClass || target instanceof PrimitiveLiteralTypeClass;
 };
 
-export class LiteralVisitor extends CommonVisitor<LiteralTypeClass<unknown>> {
+export class LiteralVisitor extends CommonVisitor<LiteralAllTypeClass> {
     visitLiteral(ctx: LiteralContext) {
         return NormalLiteralTypeClass.create(ctx);
     }

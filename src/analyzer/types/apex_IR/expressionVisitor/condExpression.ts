@@ -1,7 +1,7 @@
 import { CondExpressionContext } from '@apexdevtools/apex-parser';
 
 import {
-    IfExpressionTypeClass,
+    ConditionExpressionTypeClass,
     ExpressionAllTypeClass,
     ExpressionVisitor,
     isExpressionTypeAll,
@@ -9,7 +9,7 @@ import {
 
 import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
 
-export class CondExpressionTypeClass extends IfExpressionTypeClass<
+export class CondExpressionTypeClass extends ConditionExpressionTypeClass<
     ExpressionAllTypeClass,
     ExpressionAllTypeClass,
     ExpressionAllTypeClass

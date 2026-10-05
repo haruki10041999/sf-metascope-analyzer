@@ -1,14 +1,14 @@
 import { DataCategoryNameContext } from '@apexdevtools/apex-parser';
 
-import { NameTypeClass } from '../nameVisitor';
+import { NameListTypeClass } from '../nameVisitor';
 
 import { SoqlIdTypeClass, isSoqlIdType, IdVisitor } from '../idVisitor';
 
-import { ErrorTypeClass, CommonTypeClass, isErrorType } from '../commonVisitor';
+import { ErrorTypeClass, CommonTypeClass, isValidClassList } from '../commonVisitor';
 
-export class DataCategoryNameTypeClass extends NameTypeClass<SoqlIdTypeClass[]> {
-    private constructor(value: SoqlIdTypeClass[], errorClasses: Record<string, ErrorTypeClass>) {
-        super('dataCategoryName', value, errorClasses);
+export class DataCategoryNameTypeClass extends NameListTypeClass<SoqlIdTypeClass> {
+    private constructor(value: (SoqlIdTypeClass | ErrorTypeClass)[]) {
+        super('dataCategoryName', value);
     }
 
     static create(ctx: DataCategoryNameContext): DataCategoryNameTypeClass {
@@ -16,19 +16,14 @@ export class DataCategoryNameTypeClass extends NameTypeClass<SoqlIdTypeClass[]> 
             throw new Error('値が異常です。DataCategoryNameContext: ' + ctx.getText());
         }
 
-        const value: SoqlIdTypeClass[] = [];
-        const errorClasses: Record<string, ErrorTypeClass> = {};
-
-        ctx.soqlId_list().forEach((idCtx, index) => {
-            const idTypeClass = new IdVisitor().visit(idCtx);
-            if (isSoqlIdType(idTypeClass)) {
-                value.push(idTypeClass);
-            } else if (isErrorType(idTypeClass)) {
-                errorClasses[`value_${index}`] = idTypeClass;
-            }
-        });
-
-        return new DataCategoryNameTypeClass(value, errorClasses);
+        return new DataCategoryNameTypeClass(
+            isValidClassList(
+                ctx.soqlId_list(),
+                (ctx) => new IdVisitor().visit(ctx),
+                isSoqlIdType,
+                'soqlId',
+            ),
+        );
     }
 }
 

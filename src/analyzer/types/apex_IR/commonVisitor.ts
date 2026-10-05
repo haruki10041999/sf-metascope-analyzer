@@ -57,6 +57,17 @@ export const isValidClass = <T extends CommonTypeClass>(
     throw new Error(`想定していた型と違います 想定:${type} 実値:${target.getType()}`);
 };
 
+export const isValidClassList = <T extends CommonTypeClass>(
+    ctxs: ApexParserRuleContext[],
+    create: (ctx: ApexParserRuleContext) => CommonTypeClass,
+    isValidType: (target: CommonTypeClass) => target is T,
+    type: string,
+): (T | ErrorTypeClass)[] => {
+    return ctxs.map((ctx) => {
+        return isValidClass(create(ctx), isValidType, type);
+    });
+};
+
 export class CommonVisitor<T> extends ApexParserBaseVisitor<T | ErrorTypeClass> {
     override visit(ctx: ApexParserRuleContext) {
         try {

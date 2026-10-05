@@ -1,21 +1,20 @@
 import { ElementValuePairContext } from '@apexdevtools/apex-parser';
 
-import { DoublePairTypeClass } from '.';
+import { PairTypeClass } from '.';
 
 import { NormalIdTypeClass, IdVisitor, isNormalIdType } from '../idVisitor';
 import { ElementValueTypeClass, ValueVisitor, isElementValueType } from '../valueVisitor';
-import { ErrorTypeClass, CommonTypeClass, isErrorType } from '../commonVisitor';
+import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
 
-export class ElementValuePairTypeClass extends DoublePairTypeClass<
+export class ElementValuePairTypeClass extends PairTypeClass<
     NormalIdTypeClass,
     ElementValueTypeClass
 > {
     private constructor(
-        left: NormalIdTypeClass | null,
-        right: ElementValueTypeClass | null,
-        errorClasses: Record<string, ErrorTypeClass>,
+        left: NormalIdTypeClass | ErrorTypeClass,
+        right: ElementValueTypeClass | ErrorTypeClass,
     ) {
-        super('elementValuePair', left, right, errorClasses);
+        super('elementValuePair', left, right);
     }
 
     static create(ctx: ElementValuePairContext): ElementValuePairTypeClass {
@@ -23,29 +22,14 @@ export class ElementValuePairTypeClass extends DoublePairTypeClass<
             throw new Error('値が異常です。ElementValuePairContext: ' + ctx.getText());
         }
 
-        let left: NormalIdTypeClass | null = null;
-        let right: ElementValueTypeClass | null = null;
-        const errorClasses: Record<string, ErrorTypeClass> = {};
-
-        if (ctx.id()) {
-            const idTypeClass = new IdVisitor().visit(ctx.id());
-            if (isNormalIdType(idTypeClass)) {
-                left = idTypeClass;
-            } else if (isErrorType(idTypeClass)) {
-                errorClasses['left'] = idTypeClass;
-            }
-        }
-
-        if (ctx.elementValue()) {
-            const valueTypeClass = new ValueVisitor().visit(ctx.elementValue());
-            if (isElementValueType(valueTypeClass)) {
-                right = valueTypeClass;
-            } else if (isErrorType(valueTypeClass)) {
-                errorClasses['right'] = valueTypeClass;
-            }
-        }
-
-        return new ElementValuePairTypeClass(left, right, errorClasses);
+        return new ElementValuePairTypeClass(
+            isValidClass(new IdVisitor().visit(ctx.id()), isNormalIdType, 'id'),
+            isValidClass(
+                new ValueVisitor().visit(ctx.elementValue()),
+                isElementValueType,
+                'elementValue',
+            ),
+        );
     }
 }
 

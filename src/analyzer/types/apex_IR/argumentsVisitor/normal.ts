@@ -4,29 +4,29 @@ import { ArgumentsTypeClass } from '.';
 
 import { ExpressionListTypeClass, ListVisitor, isExpressionListType } from '../listVisitor';
 
-import { ErrorTypeClass, CommonTypeClass, isErrorType } from '../commonVisitor';
+import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
 
 export class NormalArgumentsTypeClass extends ArgumentsTypeClass<ExpressionListTypeClass> {
-    private constructor(value: ExpressionListTypeClass | ErrorTypeClass) {
+    private constructor(value: ExpressionListTypeClass | ErrorTypeClass | null) {
         super('arguments', value);
     }
 
     static create(ctx: ArgumentsContext): NormalArgumentsTypeClass {
-        if (!ctx.LPAREN() || !ctx.RPAREN() || !ctx.expressionList()) {
+        if (!ctx.LPAREN() || !ctx.RPAREN()) {
             throw new Error('値が異常です。ArgumentsContext: ' + ctx.getText());
         }
 
-        let value: ExpressionListTypeClass | null = null;
-        const errorClasses: Record<string, ErrorTypeClass> = {};
+        let value: ExpressionListTypeClass | ErrorTypeClass | null = null;
 
-        const listTypeClass = new ListVisitor().visit(ctx.expressionList());
-        if (isExpressionListType(listTypeClass)) {
-            value = listTypeClass;
-        } else if (isErrorType(listTypeClass)) {
-            errorClasses['value'] = listTypeClass;
+        if (ctx.expressionList()) {
+            value = isValidClass(
+                new ListVisitor().visit(ctx.expressionList()),
+                isExpressionListType,
+                'expressionList',
+            );
         }
 
-        return new NormalArgumentsTypeClass(value, errorClasses);
+        return new NormalArgumentsTypeClass(value);
     }
 }
 

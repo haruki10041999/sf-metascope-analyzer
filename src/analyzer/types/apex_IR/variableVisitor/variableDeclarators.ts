@@ -2,19 +2,16 @@ import { VariableDeclaratorsContext } from '@apexdevtools/apex-parser';
 
 import {
     VariableDeclaratorTypeClass,
-    VariableTypeClass,
+    VariableListTypeClass,
     VariableVisitor,
     isVariableDeclaratorType,
 } from '.';
 
-import { ErrorTypeClass, CommonTypeClass, isErrorType } from '../commonVisitor';
+import { ErrorTypeClass, CommonTypeClass, isValidClassList } from '../commonVisitor';
 
-export class VariableDeclaratorsTypeClass extends VariableTypeClass<VariableDeclaratorTypeClass[]> {
-    private constructor(
-        value: VariableDeclaratorTypeClass[],
-        errorTypeClasses: Record<string, ErrorTypeClass>,
-    ) {
-        super('variableDeclarators', value, errorTypeClasses);
+export class VariableDeclaratorsTypeClass extends VariableListTypeClass<VariableDeclaratorTypeClass> {
+    private constructor(value: (VariableDeclaratorTypeClass | ErrorTypeClass)[]) {
+        super('variableDeclarators', value);
     }
 
     static create(ctx: VariableDeclaratorsContext) {
@@ -22,19 +19,14 @@ export class VariableDeclaratorsTypeClass extends VariableTypeClass<VariableDecl
             throw new Error('値が異常です。VariableDeclaratorsContext: ' + ctx.getText());
         }
 
-        const value: VariableDeclaratorTypeClass[] = [];
-        const errorTypeClasses: Record<string, ErrorTypeClass> = {};
-
-        ctx.variableDeclarator_list().map((variableDeclaratorCtx, index) => {
-            const variableTypeClass = new VariableVisitor().visit(variableDeclaratorCtx);
-            if (isVariableDeclaratorType(variableTypeClass)) {
-                value.push(variableTypeClass);
-            } else if (isErrorType(variableTypeClass)) {
-                errorTypeClasses[`value_${index}`] = variableTypeClass;
-            }
-        });
-
-        return new VariableDeclaratorsTypeClass(value, errorTypeClasses);
+        return new VariableDeclaratorsTypeClass(
+            isValidClassList(
+                ctx.variableDeclarator_list(),
+                (ctx) => new VariableVisitor().visit(ctx),
+                isVariableDeclaratorType,
+                'variableDeclarator',
+            ),
+        );
     }
 }
 

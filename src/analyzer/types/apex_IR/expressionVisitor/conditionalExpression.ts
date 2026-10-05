@@ -11,7 +11,7 @@ export class ConditionalExpressionTypeClass extends ExpressionTypeClass<
         value: ExpressionTypeClass<unknown> | null,
         errorClasses: Record<string, ErrorTypeClass>,
     ) {
-        super('conditionalExpression', value, errorClasses);
+        super('conditionalExpression', value);
     }
 
     static create(ctx: ConditionalExpressionContext): ConditionalExpressionTypeClass {
@@ -47,4 +47,3 @@ export const isConditionalExpressionType = (
 ): target is ConditionalExpressionTypeClass => {
     return target instanceof ConditionalExpressionTypeClass;
 };
-

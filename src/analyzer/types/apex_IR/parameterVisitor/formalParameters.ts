@@ -7,30 +7,23 @@ import {
     ListVisitor,
     isFormalParameterListType,
 } from '../listVisitor';
-import { ErrorTypeClass, CommonTypeClass, isErrorType } from '../commonVisitor';
+import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
 
-export class FormalParametersTypeClass extends ParameterTypeClass<FormalParameterListTypeClass> {
-    private constructor(
-        value: FormalParameterListTypeClass | null,
-        errorClasses: Record<string, ErrorTypeClass>,
-    ) {
-        super('formalParameters', value, errorClasses);
+export class FormalParametersTypeClass extends ParameterTypeClass<FormalParameterListTypeClass | null> {
+    private constructor(value: FormalParameterListTypeClass | ErrorTypeClass | null = null) {
+        super('formalParameters', value);
     }
 
     static create(ctx: FormalParametersContext): FormalParametersTypeClass {
-        let value: FormalParameterListTypeClass | null = null;
-        let errorClasses: Record<string, ErrorTypeClass> = {};
-
-        if (ctx.formalParameterList()) {
-            const listTypeClass = new ListVisitor().visit(ctx.formalParameterList());
-            if (isFormalParameterListType(listTypeClass)) {
-                value = listTypeClass;
-            } else if (isErrorType(listTypeClass)) {
-                errorClasses['value'] = listTypeClass;
-            }
-        }
-
-        return new FormalParametersTypeClass(value, errorClasses);
+        return new FormalParametersTypeClass(
+            ctx.formalParameterList()
+                ? isValidClass(
+                      new ListVisitor().visit(ctx.formalParameterList()),
+                      isFormalParameterListType,
+                      'formalParameterList',
+                  )
+                : null,
+        );
     }
 }
 

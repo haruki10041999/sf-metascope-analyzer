@@ -3,20 +3,19 @@ import { WhenLiteralContext } from '@apexdevtools/apex-parser';
 import { PrimitiveLiteralTypeClass, LiteralVisitor } from '.';
 
 import { QualifiedNameTypeClass, NameVisitor, isQualifiedNameType } from '../nameVisitor';
-import { ErrorTypeClass, CommonTypeClass, isErrorType } from '../commonVisitor';
+import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
 
 type WhenLiteralValueType = number | string | null | QualifiedNameTypeClass | WhenLiteralTypeClass;
 
 export class WhenLiteralTypeClass extends PrimitiveLiteralTypeClass<WhenLiteralValueType> {
-    private operator: string | null = null;
+    private operator: string;
 
     private constructor(
-        value: WhenLiteralValueType | null,
-        operator: string | null,
-        valueType: string | null,
-        errorClasses: Record<string, ErrorTypeClass>,
+        value: WhenLiteralValueType | ErrorTypeClass,
+        operator: string,
+        valueType: string,
     ) {
-        super('whenLiteral', value, valueType, errorClasses);
+        super('whenLiteral', value, valueType);
         this.operator = operator;
     }
 
@@ -33,10 +32,9 @@ export class WhenLiteralTypeClass extends PrimitiveLiteralTypeClass<WhenLiteralV
             throw new Error('値が異常です。WhenLiteralContext: ' + ctx.getText());
         }
 
-        let value: WhenLiteralValueType | null = null;
-        let operator: string | null = null;
-        let valueType: string | null = null;
-        const errorClasses: Record<string, ErrorTypeClass> = {};
+        let value: WhenLiteralValueType | ErrorTypeClass;
+        let operator: string = '';
+        let valueType: string = '';
 
         if (ctx.IntegerLiteral() || ctx.LongLiteral()) {
             value = ctx.IntegerLiteral()
@@ -58,49 +56,35 @@ export class WhenLiteralTypeClass extends PrimitiveLiteralTypeClass<WhenLiteralV
                     .map((node) => node.getText())
                     .join('');
             }
-        }
-
-        if (ctx.StringLiteral() || ctx.MultilineStringLiteral()) {
+        } else if (ctx.StringLiteral() || ctx.MultilineStringLiteral()) {
             value = ctx.StringLiteral()
                 ? ctx.StringLiteral().getText()
                 : ctx.MultilineStringLiteral().getText().split('\n').join('');
             valueType = ctx.StringLiteral() ? 'string' : 'multilineString';
-        }
-
-        if (ctx.NULL()) {
+        } else if (ctx.qualifiedName()) {
+            value = isValidClass(
+                new NameVisitor().visit(ctx.qualifiedName()),
+                isQualifiedNameType,
+                'qualifiedName',
+            );
+            valueType = 'qualifiedName';
+        } else if (ctx.whenLiteral()) {
+            value = isValidClass(
+                new LiteralVisitor().visitWhenLiteral(ctx.whenLiteral()),
+                isWhenLiteralType,
+                'whenLiteral',
+            );
+            valueType = 'whenLiteral';
+        } else {
             value = null;
             valueType = 'null';
         }
 
-        if (ctx.qualifiedName()) {
-            const nameTypeClass = new NameVisitor().visit(ctx.qualifiedName());
-            if (isQualifiedNameType(nameTypeClass)) {
-                value = nameTypeClass;
-                valueType = 'qualifiedName';
-            } else if (isErrorType(nameTypeClass)) {
-                errorClasses['qualifiedName'] = nameTypeClass;
-            }
-        }
-
-        if (ctx.whenLiteral()) {
-            const literalTypeClass = new LiteralVisitor().visit(ctx.whenLiteral());
-            if (isWhenLiteralType(literalTypeClass)) {
-                value = literalTypeClass;
-                valueType = 'whenLiteral';
-            } else if (isErrorType(literalTypeClass)) {
-                errorClasses['whenLiteral'] = literalTypeClass;
-            }
-        }
-
-        return new WhenLiteralTypeClass(value, operator, valueType, errorClasses);
+        return new WhenLiteralTypeClass(value, operator, valueType);
     }
 
-    getOperator(): string | null {
+    getOperator(): string {
         return this.operator;
-    }
-
-    isOperatorNull(): boolean {
-        return this.operator === null;
     }
 }
 

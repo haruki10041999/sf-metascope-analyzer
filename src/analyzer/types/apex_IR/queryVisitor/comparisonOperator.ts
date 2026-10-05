@@ -2,14 +2,14 @@ import { ComparisonOperatorContext } from '@apexdevtools/apex-parser';
 
 import { QueryTypeClass } from './index';
 
-import { CommonTypeClass } from '../commonVisitor';
+import { CommonTypeClass, ErrorTypeClass } from '../commonVisitor';
 
 type ComparisonOperatorValueType =
     '=' | '!=' | '<' | '>' | '<=' | '>=' | 'LIKE' | 'IN' | 'NOT IN' | 'INCLUDES' | 'EXCLUDES';
 
 export class ComparisonOperatorTypeClass extends QueryTypeClass<ComparisonOperatorValueType> {
-    constructor(value: ComparisonOperatorValueType | null) {
-        super('comparisonOperator', value, {});
+    constructor(value: ComparisonOperatorValueType | ErrorTypeClass) {
+        super('comparisonOperator', value);
     }
 
     static create(ctx: ComparisonOperatorContext): ComparisonOperatorTypeClass {
@@ -27,44 +27,28 @@ export class ComparisonOperatorTypeClass extends QueryTypeClass<ComparisonOperat
             throw new Error('値が異常です。ComparisonOperatorContext: ' + ctx.getText());
         }
 
-        let value: ComparisonOperatorValueType | null = null;
+        let value: ComparisonOperatorValueType;
 
         if (ctx.ASSIGN()) {
             value = '=';
-        }
-
-        if (ctx.NOTEQUAL()) {
+        } else if (ctx.NOTEQUAL()) {
             value = '!=';
-        }
-
-        if (ctx.LT()) {
+        } else if (ctx.LT()) {
             value = '<';
-        }
-
-        if (ctx.GT()) {
+        } else if (ctx.GT()) {
             value = '>';
-        }
-
-        if (ctx.LESSANDGREATER()) {
+        } else if (ctx.LESSANDGREATER()) {
             value = ctx.LESSANDGREATER().getText() as ComparisonOperatorValueType;
-        }
-
-        if (ctx.LIKE()) {
+        } else if (ctx.LIKE()) {
             value = 'LIKE';
-        }
-
-        if (ctx.IN()) {
+        } else if (ctx.IN()) {
             if (ctx.NOT()) {
                 value = 'NOT IN';
             }
             value = 'IN';
-        }
-
-        if (ctx.INCLUDES()) {
+        } else if (ctx.INCLUDES()) {
             value = 'INCLUDES';
-        }
-
-        if (ctx.EXCLUDES()) {
+        } else {
             value = 'EXCLUDES';
         }
 
@@ -77,4 +61,3 @@ export const isComparisonOperatorType = (
 ): target is ComparisonOperatorTypeClass => {
     return target instanceof ComparisonOperatorTypeClass;
 };
-

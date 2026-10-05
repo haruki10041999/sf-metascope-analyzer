@@ -1,16 +1,13 @@
 import { CreatedNameContext } from '@apexdevtools/apex-parser';
 
-import { NameTypeClass } from '.';
+import { NameListTypeClass } from '.';
 
 import { IdCreatedNamePairTypeClass, PairVisitor, isIdCreatedNamePairType } from '../pairVisitor';
-import { ErrorTypeClass, CommonTypeClass, isErrorType } from '../commonVisitor';
+import { ErrorTypeClass, CommonTypeClass, isValidClassList } from '../commonVisitor';
 
-export class CreatedNameTypeClass extends NameTypeClass<IdCreatedNamePairTypeClass[]> {
-    private constructor(
-        value: IdCreatedNamePairTypeClass[] | null,
-        errorClasses: Record<string, ErrorTypeClass>,
-    ) {
-        super('createdName', value, errorClasses);
+export class CreatedNameTypeClass extends NameListTypeClass<IdCreatedNamePairTypeClass> {
+    private constructor(value: (IdCreatedNamePairTypeClass | ErrorTypeClass)[]) {
+        super('createdName', value);
     }
 
     static create(ctx: CreatedNameContext): CreatedNameTypeClass {
@@ -18,19 +15,14 @@ export class CreatedNameTypeClass extends NameTypeClass<IdCreatedNamePairTypeCla
             throw new Error('値が異常です。CreatedNameContext: ' + ctx.getText());
         }
 
-        const value: IdCreatedNamePairTypeClass[] = [];
-        const errorClasses: Record<string, ErrorTypeClass> = {};
-
-        ctx.idCreatedNamePair_list().forEach((idCreatedNamePairCtx, index) => {
-            const pairTypeClass = new PairVisitor().visit(idCreatedNamePairCtx);
-            if (isIdCreatedNamePairType(pairTypeClass)) {
-                value.push(pairTypeClass);
-            } else if (isErrorType(pairTypeClass)) {
-                errorClasses[`value_${index}`] = pairTypeClass;
-            }
-        });
-
-        return new CreatedNameTypeClass(value, errorClasses);
+        return new CreatedNameTypeClass(
+            isValidClassList(
+                ctx.idCreatedNamePair_list(),
+                (ctx) => new PairVisitor().visit(ctx),
+                isIdCreatedNamePairType,
+                'idCreatedNamePair',
+            ),
+        );
     }
 }
 

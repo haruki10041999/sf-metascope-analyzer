@@ -12,10 +12,9 @@ import { TypeNameTypeClass } from './typeName';
 import { CreatedNameTypeClass } from './createName';
 import { FieldNameTypeClass } from './fieldName';
 import { DateFieldNameTypeClass } from './dateFieldName';
-CreatedNameTypeClass;
 import { DataCategoryNameTypeClass } from './dataCategoryName';
 
-import { ContextTypeClass, ErrorTypeClass, CommonTypeClass, CommonVisitor } from '../commonVisitor';
+import { ErrorTypeClass, CommonTypeClass, CommonVisitor } from '../commonVisitor';
 
 export { isQualifiedNameType, QualifiedNameTypeClass } from './qualifiedName';
 export { isTypeNameType, TypeNameTypeClass } from './typeName';
@@ -24,17 +23,37 @@ export { isFieldNameType, FieldNameTypeClass } from './fieldName';
 export { isDateFieldNameType, DateFieldNameTypeClass } from './dateFieldName';
 export { isDataCategoryNameType, DataCategoryNameTypeClass } from './dataCategoryName';
 
-export class NameTypeClass<T> extends ContextTypeClass<T> {
-    constructor(type: string, value: T | null, errorClasses: Record<string, ErrorTypeClass>) {
-        super(type, value, errorClasses);
+export class NameTypeClass<T> extends CommonTypeClass {
+    private value: T | ErrorTypeClass;
+    constructor(type: string, value: T | ErrorTypeClass) {
+        super(type);
+        this.value = value;
+    }
+
+    getValue(): T | ErrorTypeClass {
+        return this.value;
     }
 }
 
-export const isNameTypeAll = (target: CommonTypeClass): target is NameTypeClass<unknown> => {
-    return target instanceof NameTypeClass;
+export class NameListTypeClass<T> extends CommonTypeClass {
+    private value: (T | ErrorTypeClass)[];
+    constructor(type: string, value: (T | ErrorTypeClass)[]) {
+        super(type);
+        this.value = value;
+    }
+
+    getValue(): (T | ErrorTypeClass)[] {
+        return this.value;
+    }
+}
+
+export type NameAllTypeClass = NameTypeClass<unknown> | NameListTypeClass<unknown>;
+
+export const isNameTypeAll = (target: CommonTypeClass): target is NameAllTypeClass => {
+    return target instanceof NameTypeClass || target instanceof NameListTypeClass;
 };
 
-export class NameVisitor extends CommonVisitor<NameTypeClass<unknown>> {
+export class NameVisitor extends CommonVisitor<NameAllTypeClass> {
     visitQualifiedName(ctx: QualifiedNameContext) {
         return QualifiedNameTypeClass.create(ctx);
     }

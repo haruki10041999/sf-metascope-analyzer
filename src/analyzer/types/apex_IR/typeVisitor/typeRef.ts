@@ -1,19 +1,18 @@
 import { TypeRefContext } from '@apexdevtools/apex-parser';
 
-import { TypeTypeClass, ArraySubscriptsTypeClass, TypeVisitor, isArraySubscriptsType } from '.';
+import { TypeListTypeClass, ArraySubscriptsTypeClass, TypeVisitor, isArraySubscriptsType } from '.';
 
 import { TypeNameTypeClass, NameVisitor, isTypeNameType } from '../nameVisitor';
-import { ErrorTypeClass, CommonTypeClass, isErrorType } from '../commonVisitor';
+import { ErrorTypeClass, CommonTypeClass, isValidClass, isValidClassList } from '../commonVisitor';
 
-export class TypeRefTypeClass extends TypeTypeClass<TypeNameTypeClass[]> {
-    private dimension: ArraySubscriptsTypeClass | null = null;
+export class TypeRefTypeClass extends TypeListTypeClass<TypeNameTypeClass> {
+    private dimension: ArraySubscriptsTypeClass | ErrorTypeClass | null = null;
 
     private constructor(
-        value: TypeNameTypeClass[],
-        dimension: ArraySubscriptsTypeClass | null,
-        errorClasses: Record<string, ErrorTypeClass>,
+        value: (TypeNameTypeClass | ErrorTypeClass)[],
+        dimension: ArraySubscriptsTypeClass | ErrorTypeClass | null,
     ) {
-        super('typeRef', value, errorClasses);
+        super('typeRef', value);
         this.dimension = dimension;
     }
 
@@ -22,38 +21,28 @@ export class TypeRefTypeClass extends TypeTypeClass<TypeNameTypeClass[]> {
             throw new Error('値が異常です。TypeRefContext: ' + ctx.getText());
         }
 
-        const value: TypeNameTypeClass[] = [];
-        let dimension: ArraySubscriptsTypeClass | null = null;
-        const errorClasses: Record<string, ErrorTypeClass> = {};
+        const value = isValidClassList(
+            ctx.typeName_list(),
+            (ctx) => new NameVisitor().visit(ctx),
+            isTypeNameType,
+            'typeName',
+        );
 
-        ctx.typeName_list().forEach((typeNameCtx, index) => {
-            const nameTypeClass = new NameVisitor().visit(typeNameCtx);
+        let dimension: ArraySubscriptsTypeClass | ErrorTypeClass | null = null;
 
-            if (isTypeNameType(nameTypeClass)) {
-                value.push(nameTypeClass);
-            } else if (isErrorType(nameTypeClass)) {
-                errorClasses[`value_${index}`] = nameTypeClass;
-            }
-        });
-
-        if (!value.some((typeName) => typeof typeName.getValue() === 'string')) {
-            const typeTypeClass = new TypeVisitor().visit(ctx.arraySubscripts());
-            if (isArraySubscriptsType(typeTypeClass)) {
-                dimension = typeTypeClass;
-            } else if (isErrorType(typeTypeClass)) {
-                errorClasses['dimension'] = typeTypeClass;
-            }
+        if (
+            !value.some(
+                (typeName) => isTypeNameType(typeName) && typeof typeName.getValue() === 'string',
+            )
+        ) {
+            dimension = new TypeVisitor().visitArraySubscripts(ctx.arraySubscripts());
         }
 
-        return new TypeRefTypeClass(value, dimension, errorClasses);
+        return new TypeRefTypeClass(value, dimension);
     }
 
-    getDimension(): ArraySubscriptsTypeClass | null {
+    getDimension(): ArraySubscriptsTypeClass | ErrorTypeClass | null {
         return this.dimension;
-    }
-
-    isDimensionNull(): boolean {
-        return this.dimension === null;
     }
 }
 

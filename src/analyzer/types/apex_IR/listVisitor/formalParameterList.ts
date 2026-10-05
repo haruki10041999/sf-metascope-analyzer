@@ -7,14 +7,11 @@ import {
     ParameterVisitor,
     isFormalParameterType,
 } from '../parameterVisitor';
-import { ErrorTypeClass, CommonTypeClass, isErrorType } from '../commonVisitor';
+import { ErrorTypeClass, CommonTypeClass, isValidClassList } from '../commonVisitor';
 
-export class FormalParameterListTypeClass extends ListTypeClass<FormalParameterTypeClass[]> {
-    private constructor(
-        value: FormalParameterTypeClass[],
-        errorClasses: Record<string, ErrorTypeClass>,
-    ) {
-        super('formalParameterList', value, errorClasses);
+export class FormalParameterListTypeClass extends ListTypeClass<FormalParameterTypeClass> {
+    private constructor(value: (FormalParameterTypeClass | ErrorTypeClass)[]) {
+        super('formalParameterList', value);
     }
 
     static create(ctx: FormalParameterListContext): FormalParameterListTypeClass {
@@ -22,19 +19,14 @@ export class FormalParameterListTypeClass extends ListTypeClass<FormalParameterT
             throw new Error('値が異常です。FormalParameterListContext: ' + ctx.getText());
         }
 
-        const value: FormalParameterTypeClass[] = [];
-        const errorClasses: Record<string, ErrorTypeClass> = {};
-
-        ctx.formalParameter_list().forEach((formalParameterCtx, index) => {
-            const parameterTypeClass = new ParameterVisitor().visit(formalParameterCtx);
-            if (isFormalParameterType(parameterTypeClass)) {
-                value.push(parameterTypeClass);
-            } else if (isErrorType(parameterTypeClass)) {
-                errorClasses[`value_${index}`] = parameterTypeClass;
-            }
-        });
-
-        return new FormalParameterListTypeClass(value, errorClasses);
+        return new FormalParameterListTypeClass(
+            isValidClassList(
+                ctx.formalParameter_list(),
+                (ctx) => new ParameterVisitor().visit(ctx),
+                isFormalParameterType,
+                'formalParameter',
+            ),
+        );
     }
 }
 

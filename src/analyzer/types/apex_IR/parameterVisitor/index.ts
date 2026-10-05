@@ -9,14 +9,21 @@ import { FormalParameterTypeClass } from './formalParameter';
 import { FormalParametersTypeClass } from './formalParameters';
 import { SoqlFieldsParameterTypeClass } from './soqlFieldsParameter';
 
-import { ErrorTypeClass, ContextTypeClass, CommonTypeClass, CommonVisitor } from '../commonVisitor';
+import { ErrorTypeClass, CommonTypeClass, CommonVisitor } from '../commonVisitor';
 
 export { isFormalParameterType, FormalParameterTypeClass } from './formalParameter';
 export { isSoqlFieldsParameterType, SoqlFieldsParameterTypeClass } from './soqlFieldsParameter';
 export { isFormalParametersType, FormalParametersTypeClass } from './formalParameters';
-export class ParameterTypeClass<T> extends ContextTypeClass<T> {
-    constructor(type: string, value: T | null, errorClasses: Record<string, ErrorTypeClass>) {
-        super(type, value, errorClasses);
+
+export class ParameterTypeClass<T> extends CommonTypeClass {
+    private value: T | ErrorTypeClass;
+    constructor(type: string, value: T | ErrorTypeClass) {
+        super(type);
+        this.value = value;
+    }
+
+    getValue(): T | ErrorTypeClass {
+        return this.value;
     }
 }
 
@@ -39,4 +46,3 @@ export class ParameterVisitor extends CommonVisitor<ParameterTypeClass<unknown>>
         return SoqlFieldsParameterTypeClass.create(ctx);
     }
 }
-

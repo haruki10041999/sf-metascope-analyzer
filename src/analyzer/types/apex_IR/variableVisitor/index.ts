@@ -9,24 +9,43 @@ import { ArrayInitializerTypeClass } from './arrayInitializer';
 import { VariableDeclaratorTypeClass } from './variableDeclarator';
 import { VariableDeclaratorsTypeClass } from './variableDeclarators';
 
-import { ContextTypeClass, CommonVisitor, CommonTypeClass, ErrorTypeClass } from '../commonVisitor';
+import { CommonVisitor, CommonTypeClass, ErrorTypeClass } from '../commonVisitor';
 
 export { isArrayInitializerType, ArrayInitializerTypeClass } from './arrayInitializer';
 export { isVariableDeclaratorType, VariableDeclaratorTypeClass } from './variableDeclarator';
 export { isVariableDeclaratorsType, VariableDeclaratorsTypeClass } from './variableDeclarators';
-export class VariableTypeClass<T> extends ContextTypeClass<T> {
-    constructor(type: string, value: T | null, errorTypeClasses: Record<string, ErrorTypeClass>) {
-        super(type, value, errorTypeClasses);
+
+export class VariableTypeClass<T> extends CommonTypeClass {
+    private value: T | ErrorTypeClass;
+    constructor(type: string, value: T | ErrorTypeClass) {
+        super(type);
+        this.value = value;
+    }
+
+    getValue(): T | ErrorTypeClass {
+        return this.value;
     }
 }
 
-export const isVariableTypeAll = (
-    target: CommonTypeClass,
-): target is VariableTypeClass<unknown> => {
-    return target instanceof VariableTypeClass;
+export class VariableListTypeClass<T> extends CommonTypeClass {
+    private value: (T | ErrorTypeClass)[];
+    constructor(type: string, value: (T | ErrorTypeClass)[]) {
+        super(type);
+        this.value = value;
+    }
+
+    getValue(): (T | ErrorTypeClass)[] {
+        return this.value;
+    }
+}
+
+export type VariableAllTypeClass = VariableTypeClass<unknown> | VariableListTypeClass<unknown>;
+
+export const isVariableTypeAll = (target: CommonTypeClass): target is VariableAllTypeClass => {
+    return target instanceof VariableTypeClass || target instanceof VariableListTypeClass;
 };
 
-export class VariableVisitor extends CommonVisitor<VariableTypeClass<unknown>> {
+export class VariableVisitor extends CommonVisitor<VariableAllTypeClass> {
     visitArrayInitializer(ctx: ArrayInitializerContext) {
         return ArrayInitializerTypeClass.create(ctx);
     }

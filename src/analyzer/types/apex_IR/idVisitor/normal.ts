@@ -1,10 +1,10 @@
 import { IdContext } from '@apexdevtools/apex-parser';
 
-import { IdTypeClass } from '.';
+import { IdValueTypeClass } from '.';
 
 import { CommonTypeClass } from '../commonVisitor';
 
-export class NormalIdTypeClass extends IdTypeClass<string> {
+export class NormalIdTypeClass extends IdValueTypeClass<string> {
     private constructor(value: string) {
         super('id', value);
     }

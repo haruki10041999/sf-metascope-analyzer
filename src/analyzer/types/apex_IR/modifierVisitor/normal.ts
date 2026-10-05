@@ -2,7 +2,7 @@ import { ModifierContext } from '@apexdevtools/apex-parser';
 
 import { AnnotationTypeClass, ModifierTypeClass, ModifierVisitor, isAnnotationType } from '.';
 
-import { CommonTypeClass, ErrorTypeClass, isErrorType } from '../commonVisitor';
+import { CommonTypeClass, ErrorTypeClass, isErrorType, isValidClass } from '../commonVisitor';
 
 type NormalModifierValueType =
     | 'GLOBAL'
@@ -23,11 +23,8 @@ type NormalModifierValueType =
     | AnnotationTypeClass;
 
 export class NormalModifierTypeClass extends ModifierTypeClass<NormalModifierValueType> {
-    private constructor(
-        value: NormalModifierValueType | null,
-        errorClasses: Record<string, ErrorTypeClass>,
-    ) {
-        super('modifier', value, errorClasses);
+    private constructor(value: NormalModifierValueType | ErrorTypeClass) {
+        super('modifier', value);
     }
 
     static create(ctx: ModifierContext): NormalModifierTypeClass {
@@ -52,64 +49,46 @@ export class NormalModifierTypeClass extends ModifierTypeClass<NormalModifierVal
             throw new Error('値が異常です。ModifierContext: ' + ctx.getText());
         }
 
-        let value: NormalModifierValueType | null = null;
-        const errorClasses: Record<string, ErrorTypeClass> = {};
-
+        let value: NormalModifierValueType | ErrorTypeClass;
         if (ctx.GLOBAL()) {
             value = 'GLOBAL';
-        }
-        if (ctx.PUBLIC()) {
+        } else if (ctx.PUBLIC()) {
             value = 'PUBLIC';
-        }
-        if (ctx.PROTECTED()) {
+        } else if (ctx.PROTECTED()) {
             value = 'PROTECTED';
-        }
-        if (ctx.PRIVATE()) {
+        } else if (ctx.PRIVATE()) {
             value = 'PRIVATE';
-        }
-        if (ctx.TRANSIENT()) {
+        } else if (ctx.TRANSIENT()) {
             value = 'TRANSIENT';
-        }
-        if (ctx.STATIC()) {
+        } else if (ctx.STATIC()) {
             value = 'STATIC';
-        }
-        if (ctx.ABSTRACT()) {
+        } else if (ctx.ABSTRACT()) {
             value = 'ABSTRACT';
-        }
-        if (ctx.FINAL()) {
+        } else if (ctx.FINAL()) {
             value = 'FINAL';
-        }
-        if (ctx.WEBSERVICE()) {
+        } else if (ctx.WEBSERVICE()) {
             value = 'WEBSERVICE';
-        }
-        if (ctx.OVERRIDE()) {
+        } else if (ctx.OVERRIDE()) {
             value = 'OVERRIDE';
-        }
-        if (ctx.VIRTUAL()) {
+        } else if (ctx.VIRTUAL()) {
             value = 'VIRTUAL';
-        }
-        if (ctx.TESTMETHOD()) {
+        } else if (ctx.TESTMETHOD()) {
             value = 'TESTMETHOD';
-        }
-        if (ctx.WITH() && ctx.SHARING()) {
+        } else if (ctx.WITH() && ctx.SHARING()) {
             value = 'WITH_SHARING';
-        }
-        if (ctx.WITHOUT() && ctx.SHARING()) {
+        } else if (ctx.WITHOUT() && ctx.SHARING()) {
             value = 'WITHOUT_SHARING';
-        }
-        if (ctx.INHERITED()) {
+        } else if (ctx.INHERITED()) {
             value = 'INHERITED';
-        }
-        if (ctx.annotation()) {
-            const modifierTypeClass = new ModifierVisitor().visit(ctx.annotation());
-            if (isAnnotationType(modifierTypeClass)) {
-                value = modifierTypeClass;
-            } else if (isErrorType(modifierTypeClass)) {
-                errorClasses['value'] = modifierTypeClass;
-            }
+        } else {
+            value = isValidClass(
+                new ModifierVisitor().visit(ctx.annotation()),
+                isAnnotationType,
+                'annotation',
+            );
         }
 
-        return new NormalModifierTypeClass(value, errorClasses);
+        return new NormalModifierTypeClass(value);
     }
 }
 
@@ -118,4 +97,3 @@ export const isNormalModifierType = (
 ): target is NormalModifierTypeClass => {
     return target instanceof NormalModifierTypeClass;
 };
-

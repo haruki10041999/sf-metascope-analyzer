@@ -22,7 +22,7 @@ import { FormalParameterListTypeClass } from './formalParameterList';
 import { ValueListTypeClass } from './valueList';
 import { UpdateListType, makeUpdateListType } from './updateList';
 import { NetworkListType, makeNetworkListType } from './networkList';
-import { FromNameListType, makeFromNameListType } from './fromNameList';
+import { FromNameListTypeClass } from './fromNameList';
 import { FieldGroupByListType, makeFieldGroupByListType } from './fieldGroupByList';
 import { FieldOrderListType, makeFieldOrderListType } from './fieldOrderList';
 import { SelectListType, makeSelectListType } from './selectList';
@@ -30,17 +30,25 @@ import { SubFieldListType, makeSubFieldListType } from './subFieldList';
 import { FieldListType, makeFieldListType } from './fieldList';
 import { FieldSpecListType, makeFieldSpecListType } from './fieldSpecList';
 
-import { CommonTypeClass, ContextTypeClass, ErrorTypeClass, CommonVisitor } from '../commonVisitor';
+import { CommonTypeClass, ErrorTypeClass, CommonVisitor } from '../commonVisitor';
 
 export { isTypeListType, TypeListTypeClass } from './typeList';
 export { isFormalParameterListType, FormalParameterListTypeClass } from './formalParameterList';
 export { isValueListType, ValueListTypeClass } from './valueList';
 export { isExpressionListType, ExpressionListTypeClass } from './expressionList';
 export { isFieldNameListType, FieldNameListTypeClass } from './fieldNameList';
+export { isFromNameListType, FromNameListTypeClass } from './fromNameList';
 
-export class ListTypeClass<T> extends ContextTypeClass<T> {
-    constructor(type: string, value: T | null, errorClasses: Record<string, ErrorTypeClass>) {
-        super(type, value, errorClasses);
+export class ListTypeClass<T> extends CommonTypeClass {
+    private value: (T | ErrorTypeClass)[];
+
+    constructor(type: string, value: (T | ErrorTypeClass)[]) {
+        super(type);
+        this.value = value;
+    }
+
+    getValue(): (T | ErrorTypeClass)[] {
+        return this.value;
     }
 }
 
@@ -80,8 +88,7 @@ export class ListVisitor extends CommonVisitor<ListTypeClass<unknown>> {
     }
 
     visitFromNameList(ctx: FromNameListContext) {
-        console.log('解析を開始します。' + 'FromNameListContext:  ' + ctx.getText());
-        return FromNameListType.create(ctx);
+        return FromNameListTypeClass.create(ctx);
     }
 
     visitFieldGroupByList(ctx: FieldGroupByListContext) {

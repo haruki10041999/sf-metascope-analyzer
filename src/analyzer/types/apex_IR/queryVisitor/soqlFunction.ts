@@ -15,7 +15,7 @@ import {
     isSoqlFieldsParameterType,
 } from '../parameterVisitor';
 import { LocationValueTypeClass, ValueVisitor, isLocationValueType } from '../valueVisitor';
-import { ErrorTypeClass, CommonTypeClass, isErrorType } from '../commonVisitor';
+import { ErrorTypeClass, CommonTypeClass, isValidClass, isValidClassList } from '../commonVisitor';
 
 type NormalSoqlFunctionType =
     'AVG' | 'COUNT_DISTINCT' | 'MIN' | 'MAX' | 'SUM' | 'TOLABEL' | 'GROUPING' | 'CONVERT_CURRENCY';
@@ -97,18 +97,17 @@ type SoqlParameterType =
     | FieldNameTypeClass
     | DateFieldNameTypeClass
     | SoqlFieldsParameterTypeClass
-    | (LocationValueTypeClass | string | string[])[]
+    | (LocationValueTypeClass | ErrorTypeClass | string | string[])[]
     | SoqlFunctionTypeClass;
 
 export class SoqlFunctionTypeClass extends QueryTypeClass<SoqlFunctionValueType> {
-    private param: SoqlParameterType | null = null;
+    private param: SoqlParameterType | ErrorTypeClass | null = null;
 
     private constructor(
-        value: SoqlFunctionValueType | null,
-        param: SoqlParameterType | null,
-        errorClasses: Record<string, ErrorTypeClass>,
+        value: SoqlFunctionValueType | ErrorTypeClass,
+        param: SoqlParameterType | ErrorTypeClass | null,
     ) {
-        super('soqlFunction', value, errorClasses);
+        super('soqlFunction', value);
         this.param = param;
     }
 
@@ -124,177 +123,134 @@ export class SoqlFunctionTypeClass extends QueryTypeClass<SoqlFunctionValueType>
             throw new Error('値が異常です。SoqlFunctionContext: ' + ctx.getText());
         }
 
-        let value: SoqlFunctionValueType | null = null;
-        let param: SoqlParameterType | null = null;
-        const errorClasses: Record<string, ErrorTypeClass> = {};
+        let value: SoqlFunctionValueType | ErrorTypeClass;
+        let param: SoqlParameterType | ErrorTypeClass | null = null;
 
         if (isNormalFunctionType(ctx)) {
             if (ctx.AVG()) {
                 value = 'AVG';
-            }
-            if (ctx.COUNT_DISTINCT()) {
+            } else if (ctx.COUNT_DISTINCT()) {
                 value = 'COUNT_DISTINCT';
-            }
-            if (ctx.MIN()) {
+            } else if (ctx.MIN()) {
                 value = 'MIN';
-            }
-            if (ctx.MAX()) {
+            } else if (ctx.MAX()) {
                 value = 'MAX';
-            }
-            if (ctx.SUM()) {
+            } else if (ctx.SUM()) {
                 value = 'SUM';
-            }
-            if (ctx.TOLABEL()) {
+            } else if (ctx.TOLABEL()) {
                 value = 'TOLABEL';
-            }
-            if (ctx.GROUPING()) {
+            } else if (ctx.GROUPING()) {
                 value = 'GROUPING';
-            }
-            if (ctx.CONVERT_CURRENCY()) {
+            } else {
                 value = 'CONVERT_CURRENCY';
             }
 
-            const nameTypeClass = new NameVisitor().visit(ctx.fieldName());
-            if (isFieldNameType(nameTypeClass)) {
-                param = nameTypeClass;
-            } else if (isErrorType(nameTypeClass)) {
-                errorClasses['param'] = nameTypeClass;
-            }
-        }
-
-        if (isDateFunctionType(ctx)) {
+            param = isValidClass(
+                new NameVisitor().visit(ctx.fieldName()),
+                isFieldNameType,
+                'fieldName',
+            );
+        } else if (isDateFunctionType(ctx)) {
             if (ctx.CALENDAR_MONTH()) {
                 value = 'CALENDAR_MONTH';
-            }
-            if (ctx.CALENDAR_QUARTER()) {
+            } else if (ctx.CALENDAR_QUARTER()) {
                 value = 'CALENDAR_QUARTER';
-            }
-            if (ctx.CALENDAR_YEAR()) {
+            } else if (ctx.CALENDAR_YEAR()) {
                 value = 'CALENDAR_YEAR';
-            }
-            if (ctx.DAY_IN_MONTH()) {
+            } else if (ctx.DAY_IN_MONTH()) {
                 value = 'DAY_IN_MONTH';
-            }
-            if (ctx.DAY_IN_WEEK()) {
+            } else if (ctx.DAY_IN_WEEK()) {
                 value = 'DAY_IN_WEEK';
-            }
-            if (ctx.DAY_IN_YEAR()) {
+            } else if (ctx.DAY_IN_YEAR()) {
                 value = 'DAY_IN_YEAR';
-            }
-            if (ctx.DAY_ONLY()) {
+            } else if (ctx.DAY_ONLY()) {
                 value = 'DAY_ONLY';
-            }
-            if (ctx.FISCAL_MONTH()) {
+            } else if (ctx.FISCAL_MONTH()) {
                 value = 'FISCAL_MONTH';
-            }
-            if (ctx.FISCAL_QUARTER()) {
+            } else if (ctx.FISCAL_QUARTER()) {
                 value = 'FISCAL_QUARTER';
-            }
-            if (ctx.FISCAL_YEAR()) {
+            } else if (ctx.FISCAL_YEAR()) {
                 value = 'FISCAL_YEAR';
-            }
-            if (ctx.HOUR_IN_DAY()) {
+            } else if (ctx.HOUR_IN_DAY()) {
                 value = 'HOUR_IN_DAY';
-            }
-            if (ctx.WEEK_IN_MONTH()) {
+            } else if (ctx.WEEK_IN_MONTH()) {
                 value = 'WEEK_IN_MONTH';
-            }
-            if (ctx.WEEK_IN_YEAR()) {
+            } else {
                 value = 'WEEK_IN_YEAR';
             }
 
-            const nameTypeClass = new NameVisitor().visit(ctx.dateFieldName());
-            if (isDateFieldNameType(nameTypeClass)) {
-                param = nameTypeClass;
-            } else if (isErrorType(nameTypeClass)) {
-                errorClasses['param'] = nameTypeClass;
-            }
-        }
-
-        if (isCountFunctionType(ctx)) {
+            param = isValidClass(
+                new NameVisitor().visit(ctx.dateFieldName()),
+                isDateFieldNameType,
+                'dateFieldName',
+            );
+        } else if (isCountFunctionType(ctx)) {
             value = 'COUNT';
 
             if (ctx.fieldName()) {
-                const nameTypeClass = new NameVisitor().visit(ctx.fieldName());
-                if (isFieldNameType(nameTypeClass)) {
-                    param = nameTypeClass;
-                } else if (isErrorType(nameTypeClass)) {
-                    errorClasses['param'] = nameTypeClass;
-                } else {
-                }
+                param = isValidClass(
+                    new NameVisitor().visit(ctx.fieldName()),
+                    isFieldNameType,
+                    'fieldName',
+                );
             }
-        }
-
-        if (isFormatFunctionType(ctx)) {
+        } else if (isFormatFunctionType(ctx)) {
             value = 'FORMAT';
 
             if (ctx.fieldName()) {
-                const nameTypeClass = new NameVisitor().visit(ctx.fieldName());
-                if (isFieldNameType(nameTypeClass)) {
-                    param = nameTypeClass;
-                } else if (isErrorType(nameTypeClass)) {
-                    errorClasses['param'] = nameTypeClass;
-                }
+                param = isValidClass(
+                    new NameVisitor().visit(ctx.fieldName()),
+                    isFieldNameType,
+                    'fieldName',
+                );
             }
 
             if (ctx.soqlFunction()) {
-                const queryTypeClass = new QueryVisitor().visit(ctx.soqlFunction());
-                if (isSoqlFunctionType(queryTypeClass)) {
-                    param = queryTypeClass;
-                } else if (isErrorType(queryTypeClass)) {
-                    errorClasses['param'] = queryTypeClass;
-                }
+                param = isValidClass(
+                    new QueryVisitor().visit(ctx.soqlFunction()),
+                    isSoqlFunctionType,
+                    'soqlFunction',
+                );
             }
-        }
-
-        if (isFieldsFunctionType(ctx)) {
+        } else if (isFieldsFunctionType(ctx)) {
             value = 'FIELDS';
 
-            const paramTypeClass = new ParameterVisitor().visit(ctx.soqlFieldsParameter());
-            if (isSoqlFieldsParameterType(paramTypeClass)) {
-                param = paramTypeClass;
-            } else if (isErrorType(paramTypeClass)) {
-                errorClasses['param'] = paramTypeClass;
-            }
-        }
-
-        if (isDistanceFunctionType(ctx)) {
+            param = isValidClass(
+                new QueryVisitor().visit(ctx.soqlFunction()),
+                isSoqlFunctionType,
+                'soqlFunction',
+            );
+        } else {
             value = 'DISTANCE';
 
-            const distanceParam: (LocationValueTypeClass | string | string[])[] = [];
+            const distanceParam: (LocationValueTypeClass | ErrorTypeClass | string | string[])[] =
+                [];
 
-            ctx.locationValue_list().forEach((locationValueCtx, index) => {
-                const valueTypeClass = new ValueVisitor().visit(locationValueCtx);
-                if (isLocationValueType(valueTypeClass)) {
-                    distanceParam.push(valueTypeClass);
-                } else if (isErrorType(valueTypeClass)) {
-                    errorClasses[`param_${index}`] = valueTypeClass;
-                }
-            });
+            distanceParam.push(
+                ...isValidClassList(
+                    ctx.locationValue_list() || [],
+                    (ctx) => new ValueVisitor().visit(ctx),
+                    isLocationValueType,
+                    'locationValue',
+                ),
+            );
 
             if (ctx.StringLiteral()) {
                 distanceParam.push(ctx.StringLiteral().getText());
-            }
-
-            if (ctx.MultilineStringLiteral()) {
+            } else if (ctx.MultilineStringLiteral()) {
                 distanceParam.push(ctx.MultilineStringLiteral().getText().split('\n'));
             }
             param = distanceParam;
         }
 
-        return new SoqlFunctionTypeClass(value, param, errorClasses);
+        return new SoqlFunctionTypeClass(value, param);
     }
 
-    getParam(): SoqlParameterType | null {
+    getParam(): SoqlParameterType | ErrorTypeClass | null {
         return this.param;
-    }
-
-    isParamNull(): boolean {
-        return this.param === null;
     }
 }
 
 export const isSoqlFunctionType = (target: CommonTypeClass): target is SoqlFunctionTypeClass => {
     return target instanceof SoqlFunctionTypeClass;
 };
-

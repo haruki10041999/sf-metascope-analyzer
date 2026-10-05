@@ -17,14 +17,21 @@ import { FieldSpecType, makeFieldSpecType } from './fieldSpec';
 import { SoqlFunctionTypeClass } from './soqlFunction';
 import { SearchGroupType, makeSearchGroupType } from './searchGroup';
 
-import { ErrorTypeClass, ContextTypeClass, CommonTypeClass, CommonVisitor } from '../commonVisitor';
+import { ErrorTypeClass, CommonTypeClass, CommonVisitor } from '../commonVisitor';
 
 export { isComparisonOperatorType, ComparisonOperatorTypeClass } from './comparisonOperator';
 export { isDateFormulaType, DateFormulaTypeClass } from './dateFormula';
 export { isSoqlFunctionType, SoqlFunctionTypeClass } from './soqlFunction';
-export class QueryTypeClass<T> extends ContextTypeClass<T> {
-    constructor(type: string, value: T | null, errorClasses: Record<string, ErrorTypeClass>) {
-        super(type, value, errorClasses);
+
+export class QueryTypeClass<T> extends CommonTypeClass {
+    private value: T | ErrorTypeClass;
+    constructor(type: string, value: T | ErrorTypeClass) {
+        super(type);
+        this.value = value;
+    }
+
+    getValue(): T | ErrorTypeClass {
+        return this.value;
     }
 }
 
@@ -89,4 +96,3 @@ export class QueryVisitor extends CommonVisitor<QueryTypeClass<unknown>> {
         return SoqlFunctionTypeClass.create(ctx);
     }
 }
-

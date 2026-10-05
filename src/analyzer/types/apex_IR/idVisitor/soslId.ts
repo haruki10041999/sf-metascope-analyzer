@@ -2,7 +2,7 @@ import { SoslIdContext } from '@apexdevtools/apex-parser';
 
 import { IdListTypeClass, NormalIdTypeClass, IdVisitor, isNormalIdType } from '.';
 
-import { CommonTypeClass, ErrorTypeClass, isValidClass } from '../commonVisitor';
+import { CommonTypeClass, ErrorTypeClass, isValidClass, isValidClassList } from '../commonVisitor';
 
 export class SoslIdTypeClass extends IdListTypeClass<NormalIdTypeClass> {
     private constructor(value: (NormalIdTypeClass | ErrorTypeClass)[]) {
@@ -18,13 +18,14 @@ export class SoslIdTypeClass extends IdListTypeClass<NormalIdTypeClass> {
         value.push(isValidClass(new IdVisitor().visit(ctx.id()), isNormalIdType, 'id'));
 
         if (ctx.soslId_list() && ctx.soslId_list().length > 0) {
-            ctx.soslId_list().forEach((soslIdCtx) => {
-                const idTypeClass = isValidClass(
-                    new IdVisitor().visit(soslIdCtx),
-                    isSoslIdType,
-                    'soslId',
-                );
+            const idTypeClassList = isValidClassList(
+                ctx.soslId_list(),
+                (ctx) => new IdVisitor().visit(ctx),
+                isSoslIdType,
+                'soslId',
+            );
 
+            idTypeClassList.forEach((idTypeClass) => {
                 if (isSoslIdType(idTypeClass)) {
                     value.push(...idTypeClass.getValue());
                 } else {

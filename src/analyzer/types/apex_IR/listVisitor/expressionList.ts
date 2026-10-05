@@ -2,16 +2,17 @@ import { ExpressionListContext } from '@apexdevtools/apex-parser';
 
 import { ListTypeClass } from '.';
 
-import { ExpressionTypeClass, ExpressionVisitor, isExpressionTypeAll } from '../expressionVisitor';
+import {
+    ExpressionAllTypeClass,
+    ExpressionVisitor,
+    isExpressionTypeAll,
+} from '../expressionVisitor';
 
-import { ErrorTypeClass, CommonTypeClass } from '../commonVisitor';
+import { ErrorTypeClass, CommonTypeClass, isValidClassList } from '../commonVisitor';
 
-export class ExpressionListTypeClass extends ListTypeClass<ExpressionTypeClass<unknown>[]> {
-    private constructor(
-        value: ExpressionTypeClass<unknown>[],
-        errorClasses: Record<string, ErrorTypeClass>,
-    ) {
-        super('expressionList', value, errorClasses);
+export class ExpressionListTypeClass extends ListTypeClass<ExpressionAllTypeClass> {
+    private constructor(value: (ExpressionAllTypeClass | ErrorTypeClass)[]) {
+        super('expressionList', value);
     }
 
     static create(ctx: ExpressionListContext): ExpressionListTypeClass {
@@ -19,20 +20,14 @@ export class ExpressionListTypeClass extends ListTypeClass<ExpressionTypeClass<u
             throw new Error('値が異常です。ExpressionListContext: ' + ctx.getText());
         }
 
-        const value: ExpressionTypeClass<unknown>[] = [];
-        const errorClasses: Record<string, ErrorTypeClass> = {};
-
-        ctx.expression_list().forEach((expressionCtx, index) => {
-            const expressionTypeClass = new ExpressionVisitor().visit(expressionCtx);
-
-            if (isExpressionTypeAll(expressionTypeClass)) {
-                value.push(expressionTypeClass);
-            } else {
-                errorClasses[`value_${index}`] = expressionTypeClass;
-            }
-        });
-
-        return new ExpressionListTypeClass(value, errorClasses);
+        return new ExpressionListTypeClass(
+            isValidClassList(
+                ctx.expression_list(),
+                (ctx) => new ExpressionVisitor().visit(ctx),
+                isExpressionTypeAll,
+                'expression',
+            ),
+        );
     }
 }
 

@@ -1,44 +1,39 @@
 import { FromNameListContext } from '@apexdevtools/apex-parser';
 
-import { NameType, NameVisitor } from '../nameVisitor';
-import { IdType, IdVisitor } from '../idVisitor';
+import { ListTypeClass } from '../listVisitor';
 
-export type FromNameListType = {
-    type: 'fromNameList';
-    list: (NameType | IdType)[];
-};
+import { FieldNameTypeClass, NameVisitor, isFieldNameType } from '../nameVisitor';
+import { SoqlIdTypeClass, IdVisitor, isSoqlIdType } from '../idVisitor';
+import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
 
-export const makeFromNameListType = (ctx: FromNameListContext): FromNameListType => {
-    if (
-        (!ctx.fieldName_list() || ctx.fieldName_list().length === 0) &&
-        (!ctx.soqlId_list() || ctx.soqlId_list().length === 0)
-    ) {
-        throw new Error('値が異常です。FromNameListContext: ' + ctx.getText());
+export class FromNameListTypeClass extends ListTypeClass<FieldNameTypeClass | SoqlIdTypeClass> {
+    private constructor(value: (FieldNameTypeClass | SoqlIdTypeClass | ErrorTypeClass)[]) {
+        super('fromNameList', value);
     }
 
-    const list: (NameType | IdType)[] = [];
+    static create(ctx: FromNameListContext): FromNameListTypeClass {
+        if (
+            (!ctx.fieldName_list() && ctx.fieldName_list().length === 0) ||
+            (!ctx.soqlId_list() && ctx.soqlId_list().length === 0)
+        ) {
+            throw new Error('値が異常です。FromNameListContext: ' + ctx.getText());
+        }
 
-    if (ctx.fieldName_list() && ctx.fieldName_list().length > 0) {
-        list.push(
-            ...ctx.fieldName_list().map((fieldNameCtx) => {
-                const fieldName = new NameVisitor().visit(fieldNameCtx);
-                return fieldName;
+        return new FromNameListTypeClass([
+            ...(ctx.fieldName_list() || []).map((fieldNameCtx) => {
+                return isValidClass(
+                    new NameVisitor().visit(fieldNameCtx),
+                    isFieldNameType,
+                    'fieldName',
+                );
             }),
-        );
-    }
-
-    if (ctx.soqlId_list() && ctx.soqlId_list().length > 0) {
-        list.push(
-            ...ctx.soqlId_list().map((soqlIdCtx) => {
-                const soqlId = new IdVisitor().visit(soqlIdCtx);
-                return soqlId;
+            ...(ctx.soqlId_list() || []).map((soqlIdCtx) => {
+                return isValidClass(new IdVisitor().visit(soqlIdCtx), isSoqlIdType, 'soqlId');
             }),
-        );
+        ]);
     }
+}
 
-    return {
-        type: 'fromNameList',
-        list: list,
-    };
+export const isFromNameListType = (target: CommonTypeClass): target is FromNameListTypeClass => {
+    return target instanceof FromNameListTypeClass;
 };
-

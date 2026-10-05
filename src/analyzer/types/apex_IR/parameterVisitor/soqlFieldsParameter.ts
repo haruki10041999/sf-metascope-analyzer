@@ -7,8 +7,8 @@ import { CommonTypeClass, ErrorTypeClass } from '../commonVisitor';
 type SoqlFieldsParameterValueType = 'ALL' | 'CUSTOM' | 'STANDARD';
 
 export class SoqlFieldsParameterTypeClass extends ParameterTypeClass<SoqlFieldsParameterValueType> {
-    private constructor(value: SoqlFieldsParameterValueType | null) {
-        super('soqlFieldsParameter', value, {});
+    private constructor(value: SoqlFieldsParameterValueType | ErrorTypeClass) {
+        super('soqlFieldsParameter', value);
     }
 
     static create(ctx: SoqlFieldsParameterContext): SoqlFieldsParameterTypeClass {
@@ -16,21 +16,14 @@ export class SoqlFieldsParameterTypeClass extends ParameterTypeClass<SoqlFieldsP
             throw new Error('値が異常です。SoqlFieldsParameterContext: ' + ctx.getText());
         }
 
-        let value: SoqlFieldsParameterValueType | null = null;
-        if (ctx.ALL()) {
-            value = 'ALL';
-        }
-        if (ctx.CUSTOM()) {
-            value = 'CUSTOM';
-        }
-        if (ctx.STANDARD()) {
-            value = 'STANDARD';
-        }
-
-        return new SoqlFieldsParameterTypeClass(value);
+        return new SoqlFieldsParameterTypeClass(
+            ctx.ALL() ? 'ALL' : ctx.CUSTOM() ? 'CUSTOM' : 'STANDARD',
+        );
     }
 }
 
-export const isSoqlFieldsParameterType = (target: any): target is SoqlFieldsParameterTypeClass => {
+export const isSoqlFieldsParameterType = (
+    target: CommonTypeClass,
+): target is SoqlFieldsParameterTypeClass => {
     return target instanceof SoqlFieldsParameterTypeClass;
 };

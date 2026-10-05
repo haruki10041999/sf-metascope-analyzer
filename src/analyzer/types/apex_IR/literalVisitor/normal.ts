@@ -1,13 +1,14 @@
 import { LiteralContext } from '@apexdevtools/apex-parser';
 
 import { PrimitiveLiteralTypeClass } from '.';
-import { CommonTypeClass } from '../commonVisitor';
+
+import { ErrorTypeClass, CommonTypeClass } from '../commonVisitor';
 
 type LiteralValueType = string | number | boolean | null | string[];
 
 export class NormalLiteralTypeClass extends PrimitiveLiteralTypeClass<LiteralValueType> {
-    constructor(value: LiteralValueType | null, valueType: string | null) {
-        super('literal', value, valueType, {});
+    constructor(value: LiteralValueType | ErrorTypeClass, valueType: string) {
+        super('literal', value, valueType);
     }
 
     static create(ctx: LiteralContext): NormalLiteralTypeClass {
@@ -23,39 +24,27 @@ export class NormalLiteralTypeClass extends PrimitiveLiteralTypeClass<LiteralVal
             throw new Error('値が異常です。LiteralContext: ' + ctx.getText());
         }
 
-        let value: LiteralValueType | null = null;
-        let valueType: string | null = null;
+        let value: LiteralValueType | ErrorTypeClass;
+        let valueType: string;
         if (ctx.IntegerLiteral()) {
             value = parseInt(ctx.IntegerLiteral().getText(), 10);
             valueType = 'integer';
-        }
-
-        if (ctx.LongLiteral()) {
+        } else if (ctx.LongLiteral()) {
             value = parseInt(ctx.LongLiteral().getText(), 10);
             valueType = 'long';
-        }
-
-        if (ctx.NumberLiteral()) {
+        } else if (ctx.NumberLiteral()) {
             value = parseFloat(ctx.NumberLiteral().getText());
             valueType = 'number';
-        }
-
-        if (ctx.StringLiteral()) {
+        } else if (ctx.StringLiteral()) {
             value = ctx.StringLiteral().getText();
             valueType = 'string';
-        }
-
-        if (ctx.MultilineStringLiteral()) {
+        } else if (ctx.MultilineStringLiteral()) {
             value = ctx.MultilineStringLiteral().getText().split('\n');
             valueType = 'multilineString';
-        }
-
-        if (ctx.BooleanLiteral()) {
+        } else if (ctx.BooleanLiteral()) {
             value = ctx.BooleanLiteral().getText() === 'true';
             valueType = 'boolean';
-        }
-
-        if (ctx.NULL()) {
+        } else {
             value = null;
             valueType = 'null';
         }

@@ -1,13 +1,13 @@
 import { FieldNameContext } from '@apexdevtools/apex-parser';
 
-import { NameTypeClass } from '.';
+import { NameListTypeClass } from '.';
 
 import { SoqlIdTypeClass, IdVisitor, isSoqlIdType } from '../idVisitor';
-import { ErrorTypeClass, CommonTypeClass, isErrorType } from '../commonVisitor';
+import { ErrorTypeClass, CommonTypeClass, isValidClassList } from '../commonVisitor';
 
-export class FieldNameTypeClass extends NameTypeClass<SoqlIdTypeClass[]> {
-    private constructor(value: SoqlIdTypeClass[], errorClasses: Record<string, ErrorTypeClass>) {
-        super('fieldName', value, errorClasses);
+export class FieldNameTypeClass extends NameListTypeClass<SoqlIdTypeClass> {
+    private constructor(value: (SoqlIdTypeClass | ErrorTypeClass)[]) {
+        super('fieldName', value);
     }
 
     static create(ctx: FieldNameContext): FieldNameTypeClass {
@@ -18,16 +18,14 @@ export class FieldNameTypeClass extends NameTypeClass<SoqlIdTypeClass[]> {
         const value: SoqlIdTypeClass[] = [];
         const errorClasses: Record<string, ErrorTypeClass> = {};
 
-        ctx.soqlId_list().forEach((SoqlIdCtx, index) => {
-            const idTypeClass = new IdVisitor().visit(SoqlIdCtx);
-            if (isSoqlIdType(idTypeClass)) {
-                value.push(idTypeClass);
-            } else if (isErrorType(idTypeClass)) {
-                errorClasses[`value_${index}`] = idTypeClass;
-            }
-        });
-
-        return new FieldNameTypeClass(value, errorClasses);
+        return new FieldNameTypeClass(
+            isValidClassList(
+                ctx.soqlId_list(),
+                (ctx) => new IdVisitor().visit(ctx),
+                isSoqlIdType,
+                'soqlId',
+            ),
+        );
     }
 }
 

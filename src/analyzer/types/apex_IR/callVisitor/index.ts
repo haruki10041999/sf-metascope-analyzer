@@ -3,11 +3,12 @@ import { MethodCallContext, DotMethodCallContext } from '@apexdevtools/apex-pars
 import { MethodCallTypeClass } from './methodCall';
 import { DotMethodCallTypeClass } from './dotMethodCall';
 
-import { ErrorTypeClass, ContextTypeClass, CommonTypeClass, CommonVisitor } from '../commonVisitor';
+import { ErrorTypeClass, CommonTypeClass, CommonVisitor } from '../commonVisitor';
 
 export { isMethodCallType, MethodCallTypeClass } from './methodCall';
 export { isDotMethodCallType, DotMethodCallTypeClass } from './dotMethodCall';
-export class CallTypeClass<T, Tparam> extends ContextTypeClass<T> {
+export class CallTypeClass<T, Tparam> extends CommonTypeClass {
+    private value: T | ErrorTypeClass;
     private param: Tparam | null;
 
     constructor(
@@ -42,4 +43,3 @@ export class CallVisitor extends CommonVisitor<CallTypeClass<unknown, unknown>> 
         return DotMethodCallTypeClass.create(ctx);
     }
 }
-

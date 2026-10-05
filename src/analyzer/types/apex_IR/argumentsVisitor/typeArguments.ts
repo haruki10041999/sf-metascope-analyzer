@@ -4,32 +4,28 @@ import { ArgumentsTypeClass } from '.';
 
 import { TypeListTypeClass, ListVisitor, isTypeListType } from '../listVisitor';
 
-import { ErrorTypeClass, CommonTypeClass, isErrorType } from '../commonVisitor';
+import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
 
 export class TypeArgumentsTypeClass extends ArgumentsTypeClass<TypeListTypeClass> {
-    private constructor(
-        value: TypeListTypeClass | null,
-        errorClasses: Record<string, ErrorTypeClass>,
-    ) {
-        super('typeArguments', value, errorClasses);
+    private constructor(value: TypeListTypeClass | ErrorTypeClass | null) {
+        super('typeArguments', value);
     }
 
     static create(ctx: TypeArgumentsContext): TypeArgumentsTypeClass {
-        if (!ctx.typeList() && (!ctx.LT() || !ctx.GT())) {
+        if (!ctx.LT() || !ctx.GT()) {
             throw new Error('値が異常です。TypeArgumentsContext: ' + ctx.getText());
         }
 
-        let value: TypeListTypeClass | null = null;
-        const errorClasses: Record<string, ErrorTypeClass> = {};
-
-        const listTypeClass = new ListVisitor().visit(ctx.typeList());
-        if (isTypeListType(listTypeClass)) {
-            value = listTypeClass;
-        } else if (isErrorType(listTypeClass)) {
-            errorClasses['value'] = listTypeClass;
+        let value: TypeListTypeClass | ErrorTypeClass | null = null;
+        if (ctx.typeList()) {
+            value = isValidClass(
+                new ListVisitor().visit(ctx.typeList()),
+                isTypeListType,
+                'typeList',
+            );
         }
 
-        return new TypeArgumentsTypeClass(value, errorClasses);
+        return new TypeArgumentsTypeClass(value);
     }
 }
 
