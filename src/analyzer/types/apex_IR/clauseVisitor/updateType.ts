@@ -1,27 +1,23 @@
 import { UpdateTypeContext } from '@apexdevtools/apex-parser';
 
-export type UpdateOperator = 'TRACKING' | 'VIEWSTAT';
+import { ClauseTypeClass } from '.';
 
-export type UpdateTypeType = {
-    type: 'updateType';
-    clause: UpdateOperator;
-};
+import { CommonTypeClass } from '../commonVisitor';
 
-export const makeUpdateTypeType = (ctx: UpdateTypeContext): UpdateTypeType => {
-    if (ctx.TRACKING()) {
-        return {
-            type: 'updateType',
-            clause: 'TRACKING',
-        };
+export class UpdateTypeTypeClass extends ClauseTypeClass<string> {
+    private constructor(value: string) {
+        super('updateType', value);
     }
 
-    if (ctx.VIEWSTAT()) {
-        return {
-            type: 'updateType',
-            clause: 'VIEWSTAT',
-        };
+    static create(ctx: UpdateTypeContext): UpdateTypeTypeClass {
+        if (!ctx.TRACKING() && !ctx.VIEWSTAT()) {
+            throw new Error('値が異常です UpdateTypeContext:' + ctx.getText());
+        }
+
+        return new UpdateTypeTypeClass(ctx.TRACKING() ? 'TRACKING' : 'VIEWSTAT');
     }
+}
 
-    throw new Error('値が異常です UpdateTypeContext:' + ctx.getText());
+export const isUpdateTypeType = (target: CommonTypeClass): target is UpdateTypeTypeClass => {
+    return target instanceof UpdateTypeTypeClass;
 };
-

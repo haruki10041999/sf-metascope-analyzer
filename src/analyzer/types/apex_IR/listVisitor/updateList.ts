@@ -1,31 +1,46 @@
 import { UpdateListContext } from '@apexdevtools/apex-parser';
 
-import { ListType, ListVisitor } from '.';
-import { ClauseType, ClauseVisitor } from '../clauseVisitor';
+import { ListTypeClass, ListVisitor } from '.';
 
-export type UpdateListType = {
-    type: 'updateList';
-    list: ClauseType[];
-};
+import { UpdateTypeTypeClass, ClauseVisitor, isUpdateTypeType } from '../clauseVisitor';
+import { ErrorTypeClass, CommonTypeClass, isValidClass, isValidClassList } from '../commonVisitor';
 
-export const makeUpdateListType = (ctx: UpdateListContext): UpdateListType => {
-    if (!ctx.updateType()) {
-        throw new Error('値が異常です。UpdateListContext: ' + ctx.getText());
+export class UpdateListTypeClass extends ListTypeClass<UpdateTypeTypeClass> {
+    private constructor(value: (UpdateTypeTypeClass | ErrorTypeClass)[]) {
+        super('updateList', value);
     }
 
-    const list: ClauseType[] = [new ClauseVisitor().visit(ctx.updateType())];
-
-    if (ctx.updateList()) {
-        const nested = new ListVisitor().visit(ctx.updateList());
-
-        if (nested.type === 'updateList') {
-            list.push(...nested.list);
+    static create(ctx: UpdateListContext): UpdateListTypeClass {
+        if (!ctx.updateType()) {
+            throw new Error('値が異常です。UpdateListContext: ' + ctx.getText());
         }
+
+        const value: (UpdateTypeTypeClass | ErrorTypeClass)[] = [
+            isValidClass(
+                new ClauseVisitor().visit(ctx.updateType()),
+                isUpdateTypeType,
+                'updateType',
+            ),
+        ];
+
+        if (ctx.updateList()) {
+            const nested = isValidClass(
+                new ListVisitor().visit(ctx.updateList()),
+                isUpdateListType,
+                'updateList',
+            );
+
+            if (isUpdateListType(nested)) {
+                value.push(...nested.getValue());
+            } else {
+                value.push(nested);
+            }
+        }
+
+        return new UpdateListTypeClass(value);
     }
+}
 
-    return {
-        type: 'updateList',
-        list: list,
-    };
+export const isUpdateListType = (target: CommonTypeClass): target is UpdateListTypeClass => {
+    return target instanceof UpdateListTypeClass;
 };
-

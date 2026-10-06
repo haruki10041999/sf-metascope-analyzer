@@ -1,39 +1,45 @@
 import { NetworkListContext } from '@apexdevtools/apex-parser';
 
-import { ListType, ListVisitor } from '.';
+import { ListTypeClass, ListVisitor } from '.';
 
-export type NetworkListType = {
-    type: 'networkList';
-    list: string[];
-};
+import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
 
-export const makeNetworkListType = (ctx: NetworkListContext): NetworkListType => {
-    if (!ctx.StringLiteral() && !ctx.MultilineStringLiteral()) {
-        throw new Error('値が異常です。NetworkListContext: ' + ctx.getText());
+export class NetworkListTypeClass extends ListTypeClass<string> {
+    private constructor(value: (string | ErrorTypeClass)[]) {
+        super('networkList', value);
     }
 
-    let value = '';
-    if (ctx.StringLiteral()) {
-        value = ctx.StringLiteral().getText();
-    } else if (ctx.MultilineStringLiteral()) {
-        value = ctx.MultilineStringLiteral().getText();
-    }
-
-    const list = [];
-    if (value !== '') {
-        list.push(value);
-    }
-
-    if (ctx.networkList()) {
-        const nested = new ListVisitor().visit(ctx.networkList());
-        if (nested.type === 'networkList') {
-            list.push(...nested.list);
+    static create(ctx: NetworkListContext): NetworkListTypeClass {
+        if (!ctx.StringLiteral() && !ctx.MultilineStringLiteral()) {
+            throw new Error('値が異常です。NetworkListContext: ' + ctx.getText());
         }
+
+        const value: (string | ErrorTypeClass)[] = [];
+
+        if (ctx.StringLiteral()) {
+            value.push(ctx.StringLiteral().getText());
+        } else {
+            value.push(ctx.MultilineStringLiteral().getText());
+        }
+
+        if (ctx.networkList()) {
+            const nested = isValidClass(
+                new ListVisitor().visit(ctx.networkList()),
+                isNetworkListType,
+                'networkList',
+            );
+
+            if (isNetworkListType(nested)) {
+                value.push(...nested.getValue());
+            } else {
+                value.push(nested);
+            }
+        }
+
+        return new NetworkListTypeClass(value);
     }
+}
 
-    return {
-        type: 'networkList',
-        list: list,
-    };
+export const isNetworkListType = (target: CommonTypeClass): target is NetworkListTypeClass => {
+    return target instanceof NetworkListTypeClass;
 };
-

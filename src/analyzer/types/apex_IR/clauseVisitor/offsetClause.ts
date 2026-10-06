@@ -1,29 +1,36 @@
 import { OffsetClauseContext } from '@apexdevtools/apex-parser';
 
-import { ExpressionType, ExpressionVisitor } from '../expressionVisitor';
+import { ClauseTypeClass } from '.';
 
-export type OffsetClauseType = {
-    type: 'offsetClause';
-    clause: string | ExpressionType;
-};
+import {
+    BoundExpressionTypeClass,
+    ExpressionVisitor,
+    isBoundExpressionType,
+} from '../expressionVisitor';
+import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
 
-export const makeOffsetClauseType = (ctx: OffsetClauseContext): OffsetClauseType => {
-    if (ctx.IntegerLiteral()) {
-        return {
-            type: 'offsetClause',
-            clause: ctx.IntegerLiteral().getText(),
-        };
+export class OffsetClauseTypeClass extends ClauseTypeClass<string | BoundExpressionTypeClass> {
+    private constructor(value: string | BoundExpressionTypeClass | ErrorTypeClass) {
+        super('limitClause', value);
     }
 
-    if (ctx.boundExpression()) {
-        const value = new ExpressionVisitor().visit(ctx.boundExpression());
+    static create(ctx: OffsetClauseContext): OffsetClauseTypeClass {
+        if (!ctx.IntegerLiteral() && !ctx.boundExpression()) {
+            throw new Error('値が異常です。OffsetClauseContext: ' + ctx.getText());
+        }
 
-        return {
-            type: 'offsetClause',
-            clause: value,
-        };
+        return new OffsetClauseTypeClass(
+            ctx.IntegerLiteral()
+                ? ctx.IntegerLiteral().getText()
+                : isValidClass(
+                      new ExpressionVisitor().visit(ctx.boundExpression()),
+                      isBoundExpressionType,
+                      'boundExpression',
+                  ),
+        );
     }
+}
 
-    throw new Error('値が異常です。OffsetClauseContext: ' + ctx.getText());
+export const isOffsetClauseType = (target: CommonTypeClass): target is OffsetClauseTypeClass => {
+    return target instanceof OffsetClauseTypeClass;
 };
-

@@ -1,18 +1,23 @@
 import { AllRowsClauseContext } from '@apexdevtools/apex-parser';
 
-export type AllRowClauseType = {
-    type: 'allRow';
-    clause: string;
-};
+import { ClauseTypeClass } from '.';
 
-export const makeAllRowClauseType = (ctx: AllRowsClauseContext) => {
-    if (!ctx.ALL() || !ctx.ROWS()) {
-        throw new Error('値が異常です。AllRowsClauseContext: ' + ctx.getText());
+import { ErrorTypeClass, CommonTypeClass } from '../commonVisitor';
+
+export class AllRowsClauseTypeClass extends ClauseTypeClass<string> {
+    private constructor(value: string | ErrorTypeClass) {
+        super('allRowClause', value);
     }
 
-    return {
-        type: 'allRow',
-        clause: ctx.ALL().getText() + ' ' + ctx.ROWS().getText(),
-    };
-};
+    static create(ctx: AllRowsClauseContext): AllRowsClauseTypeClass {
+        if (!ctx.ALL() || !ctx.ROWS()) {
+            throw new Error('値が異常です。AllRowsClauseContext: ' + ctx.getText());
+        }
 
+        return new AllRowsClauseTypeClass(ctx.ALL().getText() + ' ' + ctx.ROWS().getText());
+    }
+}
+
+export const isAllRowsClauseType = (target: CommonTypeClass): target is AllRowsClauseTypeClass => {
+    return target instanceof AllRowsClauseTypeClass;
+};

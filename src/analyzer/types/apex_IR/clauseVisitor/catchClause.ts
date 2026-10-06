@@ -1,44 +1,65 @@
 import { CatchClauseContext } from '@apexdevtools/apex-parser';
 
-import { IdType, IdVisitor } from '../idVisitor';
-import { BlockType, BlockVisitor } from '../blockVisitor';
-import { NameType, NameVisitor } from '../nameVisitor';
-import { ModifierType, ModifierVisitor } from '../modifierVisitor';
+import { ClauseTypeClass } from '.';
 
-export type CatchClauseType = {
-    type: 'catchClause';
-    clause: {
-        exception: NameType;
-        variant: IdType;
-        block: BlockType;
-        modifier?: ModifierType[];
-    };
-};
+import { NormalIdTypeClass, IdVisitor, isNormalIdType } from '../idVisitor';
+import { NormalBlockTypeClass, BlockVisitor, isNormalBlockType } from '../blockVisitor';
+import { QualifiedNameTypeClass, NameVisitor, isQualifiedNameType } from '../nameVisitor';
+import { NormalModifierTypeClass, ModifierVisitor, isNormalModifierType } from '../modifierVisitor';
+import { CommonTypeClass, ErrorTypeClass, isValidClass, isValidClassList } from '../commonVisitor';
 
-export const makeCatchClauseType = (ctx: CatchClauseContext): CatchClauseType => {
-    if (!ctx.qualifiedName() || !ctx.id() || !ctx.block()) {
-        throw new Error('値が異常です。CatchClauseContext: ' + ctx.getText());
+export class CatchClauseTypeClass extends ClauseTypeClass<NormalIdTypeClass> {
+    private valueType: QualifiedNameTypeClass | ErrorTypeClass;
+    private block: NormalBlockTypeClass | ErrorTypeClass;
+    private modifier: (NormalModifierTypeClass | ErrorTypeClass)[];
+
+    private constructor(
+        value: NormalIdTypeClass | ErrorTypeClass,
+        valueType: QualifiedNameTypeClass | ErrorTypeClass,
+        block: NormalBlockTypeClass | ErrorTypeClass,
+        modifier: (NormalModifierTypeClass | ErrorTypeClass)[],
+    ) {
+        super('catchClause', value);
+        this.valueType = valueType;
+        this.block = block;
+        this.modifier = modifier;
     }
 
-    const exception = new NameVisitor().visit(ctx.qualifiedName());
-    const variant = new IdVisitor().visit(ctx.id());
-    const block = new BlockVisitor().visit(ctx.block());
+    static create(ctx: CatchClauseContext): CatchClauseTypeClass {
+        if (!ctx.qualifiedName() || !ctx.id() || !ctx.block()) {
+            throw new Error('値が異常です。CatchClauseContext: ' + ctx.getText());
+        }
 
-    const catchClauseType: CatchClauseType = {
-        type: 'catchClause',
-        clause: {
-            exception: exception,
-            variant: variant,
-            block: block,
-        },
-    };
-
-    if (ctx.modifier_list() && ctx.modifier_list().length > 0) {
-        catchClauseType.clause.modifier = ctx.modifier_list().map((modifierCtx) => {
-            const modifier = new ModifierVisitor().visit(modifierCtx);
-            return modifier;
-        });
+        return new CatchClauseTypeClass(
+            isValidClass(new IdVisitor().visit(ctx.id()), isNormalIdType, 'id'),
+            isValidClass(
+                new NameVisitor().visit(ctx.qualifiedName()),
+                isQualifiedNameType,
+                'qualifiedName',
+            ),
+            isValidClass(new BlockVisitor().visit(ctx.block()), isNormalBlockType, 'block'),
+            isValidClassList(
+                ctx.modifier_list() || [],
+                (ctx) => new ModifierVisitor().visit(ctx),
+                isNormalModifierType,
+                'modifier',
+            ),
+        );
     }
 
-    return catchClauseType;
+    getValueType(): QualifiedNameTypeClass | ErrorTypeClass {
+        return this.valueType;
+    }
+
+    getBlock(): NormalBlockTypeClass | ErrorTypeClass {
+        return this.block;
+    }
+
+    getModifier(): (NormalModifierTypeClass | ErrorTypeClass)[] {
+        return this.modifier;
+    }
+}
+
+export const isCatchClauseType = (target: CommonTypeClass): target is CatchClauseTypeClass => {
+    return target instanceof CatchClauseTypeClass;
 };

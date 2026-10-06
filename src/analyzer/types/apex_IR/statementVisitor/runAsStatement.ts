@@ -31,6 +31,10 @@ export class RunAsStatementTypeClass extends StatementTypeClass<ExpressionListTy
             isValidClass(new BlockVisitor().visit(ctx.block()), isNormalBlockType, 'block'),
         );
     }
+
+    getBlock(): NormalBlockTypeClass | ErrorTypeClass {
+        return this.block;
+    }
 }
 
 export const isRunAsStatementType = (
@@ -38,4 +42,3 @@ export const isRunAsStatementType = (
 ): target is RunAsStatementTypeClass => {
     return target instanceof RunAsStatementTypeClass;
 };
-

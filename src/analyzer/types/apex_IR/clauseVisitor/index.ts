@@ -21,28 +21,53 @@ import {
     TypeOfContext,
 } from '@apexdevtools/apex-parser';
 
-import { CatchClauseType, makeCatchClauseType } from './catchClause';
-import { AllRowClauseType, makeAllRowClauseType } from './allRowClause';
-import { OffsetClauseType, makeOffsetClauseType } from './offsetClause';
-import { LimitClauseType, makeLimitClauseType } from './limitClause';
-import { ForClausesType, makeForClausesType } from './forClauses';
-import { ElseClauseType, makeElseClauseType } from './elseClause';
-import { GroupByClauseType, makeGroupByClauseType } from './GroupByClause';
-import { OrderByClauseType, makeOrderByClauseType } from './orderByClause';
-import { WithClauseType, makeWithClauseType } from './withClause';
-import { WhereClauseType, makeWhereClauseType } from './whereClause';
-import { WhenClauseType, makeWhenClauseType } from './whenClause';
+import { CatchClauseTypeClass } from './catchClause';
+import { AllRowsClauseTypeClass } from './allRowClause';
+import { OffsetClauseTypeClass } from './offsetClause';
+import { LimitClauseTypeClass } from './limitClause';
+import { ForClausesTypeClass } from './forClauses';
+import { ElseClauseTypeClass } from './elseClause';
+import { GroupByClauseTypeClass } from './GroupByClause';
+import { OrderByClauseTypeClass } from './orderByClause';
+import { WithClauseTypeClass } from './withClause';
+import { WhereClauseTypeClass } from './whereClause';
+import { WhenClauseTypeClass } from './whenClause';
 import { SoslWithClauseType, makeSoslWithClauseType } from './soslWithClause';
 import { SoslClausesType, makeSoslClausesType } from './soslClauses';
-import { DataCategorySelectionType, makeDataCategorySelectionType } from './dataCategorySelection';
-import { FieldGroupByType, makeFieldGroupByType } from './fieldGroupBy';
-import { FieldOrderType, makeFieldOrderType } from './fieldOrder';
-import { FilteringSelectorType, makeFilteringSelectorType } from './filteringSelector';
-import { UpdateTypeType, makeUpdateTypeType } from './updateType';
-import { UsingScopeType, makeUsingScopeType } from './usingScope';
-import { TypeOfType, makeTypeOfType } from './typeOf';
+import {
+    isDataCategorySelectionType,
+    DataCategorySelectionTypeClass,
+} from './dataCategorySelection';
+import { FieldGroupByTypeClass } from './fieldGroupBy';
+import { FieldOrderTypeClass } from './fieldOrder';
+import { FilteringSelectorTypeClass } from './filteringSelector';
+import { UpdateTypeTypeClass } from './updateType';
+import { UsingScopeTypeClass } from './usingScope';
+import { TypeOfTypeClass } from './typeOf';
 
 import { ErrorTypeClass, CommonTypeClass, CommonVisitor } from '../commonVisitor';
+
+export { isAllRowsClauseType, AllRowsClauseTypeClass } from './allRowClause';
+export { isCatchClauseType, CatchClauseTypeClass } from './catchClause';
+export { isFileteringSelectorType, FilteringSelectorTypeClass } from './filteringSelector';
+export {
+    isDataCategorySelectionType,
+    DataCategorySelectionTypeClass,
+} from './dataCategorySelection';
+export { isElseClauseType, ElseClauseTypeClass } from './elseClause';
+export { isFieldGroupByType, FieldGroupByTypeClass } from './fieldGroupBy';
+export { isFieldOrderType, FieldOrderTypeClass } from './fieldOrder';
+export { isForClausesType, ForClausesTypeClass } from './forClauses';
+export { isGroupByClauseType, GroupByClauseTypeClass } from './GroupByClause';
+export { isLimitClauseType, LimitClauseTypeClass } from './limitClause';
+export { isOffsetClauseType, OffsetClauseTypeClass } from './offsetClause';
+export { isOrderByClauseType, OrderByClauseTypeClass } from './orderByClause';
+export { isUpdateTypeType, UpdateTypeTypeClass } from './updateType';
+export { isUsingScopeType, UsingScopeTypeClass } from './usingScope';
+export { isWhenClauseType, WhenClauseTypeClass } from './whenClause';
+export { isTypeOfType, TypeOfTypeClass } from './typeOf';
+export { isWhereClauseType, WhereClauseTypeClass } from './whereClause';
+export { isWithClauseType, WithClauseTypeClass } from './withClause';
 
 export class ClauseTypeClass<T> extends CommonTypeClass {
     private value: T | ErrorTypeClass;
@@ -56,130 +81,67 @@ export class ClauseTypeClass<T> extends CommonTypeClass {
     }
 }
 
-export const isClauseTypeClass = (target: CommonTypeClass): target is ClauseTypeClass<unknown> => {
-    return target instanceof ClauseTypeClass;
+export class ClauseListTypeClass<T> extends CommonTypeClass {
+    private value: (T | ErrorTypeClass)[];
+    constructor(type: string, value: (T | ErrorTypeClass)[]) {
+        super(type);
+        this.value = value;
+    }
+
+    getValue(): (T | ErrorTypeClass)[] {
+        return this.value;
+    }
+}
+
+export type ClauseAllTypeClass = ClauseTypeClass<unknown> | ClauseListTypeClass<unknown>;
+
+export const isClauseTypeClass = (target: CommonTypeClass): target is ClauseAllTypeClass => {
+    return target instanceof ClauseTypeClass || target instanceof ClauseListTypeClass;
 };
 
-export class ClauseVisitor extends CommonVisitor<ClauseTypeClass<unknown>> {
+export class ClauseVisitor extends CommonVisitor<ClauseAllTypeClass> {
     visitCatchClause(ctx: CatchClauseContext) {
-        console.log('解析を開始します。' + 'CatchClauseContext:  ' + ctx.getText());
-        const result = makeCatchClauseType(ctx);
-        console.log(
-            '------------解析が終了しました--------------' +
-                'CatchClauseContext:  ' +
-                JSON.stringify(result, null, 2),
-        );
-        return result;
+        return CatchClauseTypeClass.create(ctx);
     }
 
     visitAllRowsClause(ctx: AllRowsClauseContext) {
-        console.log('解析を開始します。' + 'AllRowsClauseContext:  ' + ctx.getText());
-        const result = makeAllRowClauseType(ctx);
-        console.log(
-            '------------解析が終了しました--------------' +
-                'AllRowsClauseContext:  ' +
-                JSON.stringify(result, null, 2),
-        );
-        return result;
+        return AllRowsClauseTypeClass.create(ctx);
     }
 
     visitOffsetClause(ctx: OffsetClauseContext) {
-        console.log('解析を開始します。' + 'OffsetClauseContext:  ' + ctx.getText());
-        const result = makeOffsetClauseType(ctx);
-        console.log(
-            '------------解析が終了しました--------------' +
-                'OffsetClauseContext:  ' +
-                JSON.stringify(result, null, 2),
-        );
-        return result;
+        return OffsetClauseTypeClass.create(ctx);
     }
 
     visitLimitClause(ctx: LimitClauseContext) {
-        console.log('解析を開始します。' + 'LimitClauseContext:  ' + ctx.getText());
-        const result = makeLimitClauseType(ctx);
-        console.log(
-            '------------解析が終了しました--------------' +
-                'LimitClauseContext:  ' +
-                JSON.stringify(result, null, 2),
-        );
-        return result;
+        return LimitClauseTypeClass.create(ctx);
     }
 
     visitForClauses(ctx: ForClausesContext) {
-        console.log('解析を開始します。' + 'ForClausesContext:  ' + ctx.getText());
-        const result = makeForClausesType(ctx);
-        console.log(
-            '------------解析が終了しました--------------' +
-                'ForClausesContext:  ' +
-                JSON.stringify(result, null, 2),
-        );
-        return result;
+        return ForClausesTypeClass.create(ctx);
     }
 
     visitElseClause(ctx: ElseClauseContext) {
-        console.log('解析を開始します。' + 'ElseClauseContext:  ' + ctx.getText());
-        const result = makeElseClauseType(ctx);
-        console.log(
-            '------------解析が終了しました--------------' +
-                'ElseClauseContext:  ' +
-                JSON.stringify(result, null, 2),
-        );
-        return result;
+        return ElseClauseTypeClass.create(ctx);
     }
 
     visitGroupByClause(ctx: GroupByClauseContext) {
-        console.log('解析を開始します。' + 'GroupByClauseContext:  ' + ctx.getText());
-        const result = makeGroupByClauseType(ctx);
-        console.log(
-            '------------解析が終了しました--------------' +
-                'GroupByClauseContext:  ' +
-                JSON.stringify(result, null, 2),
-        );
-        return result;
+        return GroupByClauseTypeClass.create(ctx);
     }
 
     visitOrderByClause(ctx: OrderByClauseContext) {
-        console.log('解析を開始します。' + 'OrderByClauseContext:  ' + ctx.getText());
-        const result = makeOrderByClauseType(ctx);
-        console.log(
-            '------------解析が終了しました--------------' +
-                'OrderByClauseContext:  ' +
-                JSON.stringify(result, null, 2),
-        );
-        return result;
+        return OrderByClauseTypeClass.create(ctx);
     }
 
     visitWithClause(ctx: WithClauseContext) {
-        console.log('解析を開始します。' + 'WithClauseContext:  ' + ctx.getText());
-        const result = makeWithClauseType(ctx);
-        console.log(
-            '------------解析が終了しました--------------' +
-                'WithClauseContext:  ' +
-                JSON.stringify(result, null, 2),
-        );
-        return result;
+        return WithClauseTypeClass.create(ctx);
     }
 
     visitWhereClause(ctx: WhereClauseContext) {
-        console.log('解析を開始します。' + 'WhereClauseContext:  ' + ctx.getText());
-        const result = makeWhereClauseType(ctx);
-        console.log(
-            '------------解析が終了しました--------------' +
-                'WhereClauseContext:  ' +
-                JSON.stringify(result, null, 2),
-        );
-        return result;
+        return WhereClauseTypeClass.create(ctx);
     }
 
     visitWhenClause(ctx: WhenClauseContext) {
-        console.log('解析を開始します。' + 'WhenClauseContext:  ' + ctx.getText());
-        const result = makeWhenClauseType(ctx);
-        console.log(
-            '------------解析が終了しました--------------' +
-                'WhenClauseContext:  ' +
-                JSON.stringify(result, null, 2),
-        );
-        return result;
+        return WhenClauseTypeClass.create(ctx);
     }
 
     visitSoslWithClause(ctx: SoslWithClauseContext) {
@@ -205,79 +167,30 @@ export class ClauseVisitor extends CommonVisitor<ClauseTypeClass<unknown>> {
     }
 
     visitDataCategorySelection(ctx: DataCategorySelectionContext) {
-        console.log('解析を開始します。' + 'DataCategorySelectionContext:  ' + ctx.getText());
-        const result = makeDataCategorySelectionType(ctx);
-        console.log(
-            '------------解析が終了しました--------------' +
-                'DataCategorySelectionContext:  ' +
-                JSON.stringify(result, null, 2),
-        );
-        return result;
+        return DataCategorySelectionTypeClass.create(ctx);
     }
 
     visitFieldGroupBy(ctx: FieldGroupByContext) {
-        console.log('解析を開始します。' + 'FieldGroupByContext:  ' + ctx.getText());
-        const result = makeFieldGroupByType(ctx);
-        console.log(
-            '------------解析が終了しました--------------' +
-                'FieldGroupByContext:  ' +
-                JSON.stringify(result, null, 2),
-        );
-        return result;
+        return FieldGroupByTypeClass.create(ctx);
     }
 
     visitFieldOrder(ctx: FieldOrderContext) {
-        console.log('解析を開始します。' + 'FieldOrderContext:  ' + ctx.getText());
-        const result = makeFieldOrderType(ctx);
-        console.log(
-            '------------解析が終了しました--------------' +
-                'FieldOrderContext:  ' +
-                JSON.stringify(result, null, 2),
-        );
-        return result;
+        return FieldOrderTypeClass.create(ctx);
     }
 
     visitFilteringSelector(ctx: FilteringSelectorContext) {
-        console.log('解析を開始します。' + 'FilteringSelectorContext:  ' + ctx.getText());
-        const result = makeFilteringSelectorType(ctx);
-        console.log(
-            '------------解析が終了しました--------------' +
-                'FilteringSelectorContext:  ' +
-                JSON.stringify(result, null, 2),
-        );
-        return result;
+        return FilteringSelectorTypeClass.create(ctx);
     }
 
     visitUpdateType(ctx: UpdateTypeContext) {
-        console.log('解析を開始します。' + 'UpdateTypeContext:  ' + ctx.getText());
-        const result = makeUpdateTypeType(ctx);
-        console.log(
-            '------------解析が終了しました--------------' +
-                'UpdateTypeContext:  ' +
-                JSON.stringify(result, null, 2),
-        );
-        return result;
+        return UpdateTypeTypeClass.create(ctx);
     }
 
     visitUsingScope(ctx: UsingScopeContext) {
-        console.log('解析を開始します。' + 'UsingScopeContext:  ' + ctx.getText());
-        const result = makeUsingScopeType(ctx);
-        console.log(
-            '------------解析が終了しました--------------' +
-                'UsingScopeContext:  ' +
-                JSON.stringify(result, null, 2),
-        );
-        return result;
+        return UsingScopeTypeClass.create(ctx);
     }
 
     visitTypeOf(ctx: TypeOfContext) {
-        console.log('解析を開始します。' + 'TypeOfContext:  ' + ctx.getText());
-        const result = makeTypeOfType(ctx);
-        console.log(
-            '------------解析が終了しました--------------' +
-                'TypeOfContext:  ' +
-                JSON.stringify(result, null, 2),
-        );
-        return result;
+        return TypeOfTypeClass.create(ctx);
     }
 }

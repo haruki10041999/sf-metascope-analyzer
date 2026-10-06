@@ -1,25 +1,33 @@
 import { FieldGroupByListContext } from '@apexdevtools/apex-parser';
 
-import { ClauseType, ClauseVisitor } from '../clauseVisitor';
+import { ListTypeClass } from '.';
 
-export type FieldGroupByListType = {
-    type: 'fieldGroupByList';
-    list: ClauseType[];
-};
+import { FieldGroupByTypeClass, ClauseVisitor, isFieldGroupByType } from '../clauseVisitor';
+import { ErrorTypeClass, CommonTypeClass, isValidClassList } from '../commonVisitor';
 
-export const makeFieldGroupByListType = (ctx: FieldGroupByListContext): FieldGroupByListType => {
-    if (!ctx.fieldGroupBy_list() || ctx.fieldGroupBy_list().length === 0) {
-        throw new Error('値が異常です。FieldGroupByListContext: ' + ctx.getText());
+export class FieldGroupByListTypeClass extends ListTypeClass<FieldGroupByTypeClass> {
+    private constructor(value: (FieldGroupByTypeClass | ErrorTypeClass)[]) {
+        super('fieldGroupByList', value);
     }
 
-    const list = ctx.fieldGroupBy_list().map((fieldGroupByCtx) => {
-        const value = new ClauseVisitor().visit(fieldGroupByCtx);
-        return value;
-    });
+    static create(ctx: FieldGroupByListContext): FieldGroupByListTypeClass {
+        if (!ctx.fieldGroupBy_list() || ctx.fieldGroupBy_list().length === 0) {
+            throw new Error('値が異常です。FieldGroupByListContext: ' + ctx.getText());
+        }
 
-    return {
-        type: 'fieldGroupByList',
-        list: list,
-    };
+        return new FieldGroupByListTypeClass(
+            isValidClassList(
+                ctx.fieldGroupBy_list(),
+                (ctx) => new ClauseVisitor().visit(ctx),
+                isFieldGroupByType,
+                'fieldGroupBy',
+            ),
+        );
+    }
+}
+
+export const isFieldGroupByListType = (
+    target: CommonTypeClass,
+): target is FieldGroupByListTypeClass => {
+    return target instanceof FieldGroupByListTypeClass;
 };
-

@@ -1,71 +1,64 @@
 import { WithClauseContext } from '@apexdevtools/apex-parser';
 
-import { ExpressionType, ExpressionVisitor } from '../expressionVisitor';
+import { ClauseTypeClass } from '.';
 
-export type WithClauseType = {
-    type: 'withClause';
-    clause:
-        | {
-              mode: 'SECURITY_ENFORCED' | 'SYSTEM_MODE' | 'USER_MODE';
-          }
-        | {
-              mode: 'DATA_CATEGORY';
-              field: ExpressionType;
-          };
-};
+import {
+    FilteringExpressionTypeClass,
+    ExpressionVisitor,
+    isFilteringExpressionType,
+} from '../expressionVisitor';
+import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
 
-export const makeWithClauseType = (ctx: WithClauseContext): WithClauseType => {
-    if (ctx.SECURITY_ENFORCED()) {
-        return {
-            type: 'withClause',
-            clause: {
-                mode: 'SECURITY_ENFORCED',
-            },
-        };
+export class WithClauseTypeClass extends ClauseTypeClass<string> {
+    private field: FilteringExpressionTypeClass | ErrorTypeClass | null = null;
+
+    private constructor(
+        value: string,
+        field: FilteringExpressionTypeClass | ErrorTypeClass | null,
+    ) {
+        super('withClause', value);
+        this.field = field;
     }
 
-    if (ctx.SYSTEM_MODE()) {
-        return {
-            type: 'withClause',
-            clause: {
-                mode: 'SYSTEM_MODE',
-            },
-        };
-    }
-
-    if (ctx.USER_MODE()) {
-        return {
-            type: 'withClause',
-            clause: {
-                mode: 'USER_MODE',
-            },
-        };
-    }
-
-    if (ctx.DATA() && ctx.CATEGORY()) {
-        if (ctx.filteringExpression()) {
-            const fields = new ExpressionVisitor().visit(ctx.filteringExpression());
-            return {
-                type: 'withClause',
-                clause: {
-                    mode: 'DATA_CATEGORY',
-                    field: fields,
-                },
-            };
+    static create(ctx: WithClauseContext): WithClauseTypeClass {
+        if (
+            !ctx.SYSTEM_MODE() &&
+            !ctx.USER_MODE() &&
+            !ctx.SECURITY_ENFORCED() &&
+            !ctx.DATA() &&
+            !ctx.CATEGORY()
+        ) {
+            throw new Error('値が異常です。WithClauseContext: ' + ctx.getText());
         }
 
-        if (ctx.logicalExpression()) {
-            const fields = new ExpressionVisitor().visit(ctx.logicalExpression());
-            return {
-                type: 'withClause',
-                clause: {
-                    mode: 'DATA_CATEGORY',
-                    field: fields,
-                },
-            };
+        let value: string;
+        if (ctx.SYSTEM_MODE()) {
+            value = 'SYSTEM_MODE';
+        } else if (ctx.USER_MODE()) {
+            value = 'USER_MODE';
+        } else if (ctx.SECURITY_ENFORCED()) {
+            value = 'SECURITY_ENFORCED';
+        } else {
+            value = 'DATA_CATEGORY';
         }
+
+        return new WithClauseTypeClass(
+            value,
+            ctx.DATA() && ctx.CATEGORY()
+                ? isValidClass(
+                      new ExpressionVisitor().visit(ctx.filteringExpression()),
+                      isFilteringExpressionType,
+                      'filteringExpression',
+                  )
+                : null,
+        );
     }
 
-    throw new Error('値が異常です。WithClauseContext: ' + ctx.getText());
-};
+    getField(): FilteringExpressionTypeClass | ErrorTypeClass | null {
+        return this.field;
+    }
+}
 
+export const isWithClauseType = (target: CommonTypeClass): target is WithClauseTypeClass => {
+    return target instanceof WithClauseTypeClass;
+};

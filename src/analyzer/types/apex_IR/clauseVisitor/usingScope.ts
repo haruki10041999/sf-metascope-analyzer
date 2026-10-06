@@ -1,22 +1,26 @@
 import { UsingScopeContext } from '@apexdevtools/apex-parser';
 
-import { IdType, IdVisitor } from '../idVisitor';
+import { ClauseTypeClass } from '.';
 
-export type UsingScopeType = {
-    type: 'usingScope';
-    clause: IdType;
-};
+import { SoqlIdTypeClass, IdVisitor, isSoqlIdType } from '../idVisitor';
+import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
 
-export const makeUsingScopeType = (ctx: UsingScopeContext): UsingScopeType => {
-    if (!ctx.soqlId()) {
-        throw new Error('値が異常です。UsingScopeContext: ' + ctx.getText());
+export class UsingScopeTypeClass extends ClauseTypeClass<SoqlIdTypeClass> {
+    private constructor(value: SoqlIdTypeClass | ErrorTypeClass) {
+        super('usingScope', value);
     }
 
-    const scope = new IdVisitor().visit(ctx.soqlId());
+    static create(ctx: UsingScopeContext): UsingScopeTypeClass {
+        if (!ctx.soqlId()) {
+            throw new Error('値が異常です。UsingScopeContext: ' + ctx.getText());
+        }
 
-    return {
-        type: 'usingScope',
-        clause: scope,
-    };
+        return new UsingScopeTypeClass(
+            isValidClass(new IdVisitor().visit(ctx.soqlId()), isSoqlIdType, 'soqlId'),
+        );
+    }
+}
+
+export const isUsingScopeType = (target: CommonTypeClass): target is UsingScopeTypeClass => {
+    return target instanceof UsingScopeTypeClass;
 };
-

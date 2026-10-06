@@ -1,29 +1,36 @@
 import { LimitClauseContext } from '@apexdevtools/apex-parser';
 
-import { ExpressionType, ExpressionVisitor } from '../expressionVisitor';
+import { ClauseTypeClass } from '.';
 
-export type LimitClauseType = {
-    type: 'limitClause';
-    clause: string | ExpressionType;
-};
+import {
+    BoundExpressionTypeClass,
+    ExpressionVisitor,
+    isBoundExpressionType,
+} from '../expressionVisitor';
+import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
 
-export const makeLimitClauseType = (ctx: LimitClauseContext): LimitClauseType => {
-    if (ctx.IntegerLiteral()) {
-        return {
-            type: 'limitClause',
-            clause: ctx.IntegerLiteral().getText(),
-        };
+export class LimitClauseTypeClass extends ClauseTypeClass<string | BoundExpressionTypeClass> {
+    private constructor(value: string | BoundExpressionTypeClass | ErrorTypeClass) {
+        super('limitClause', value);
     }
 
-    if (ctx.boundExpression()) {
-        const clause = new ExpressionVisitor().visit(ctx.boundExpression());
+    static create(ctx: LimitClauseContext): LimitClauseTypeClass {
+        if (!ctx.IntegerLiteral() && !ctx.boundExpression()) {
+            throw new Error('値が異常です。LimitClauseContext: ' + ctx.getText());
+        }
 
-        return {
-            type: 'limitClause',
-            clause: clause,
-        };
+        return new LimitClauseTypeClass(
+            ctx.IntegerLiteral()
+                ? ctx.IntegerLiteral().getText()
+                : isValidClass(
+                      new ExpressionVisitor().visit(ctx.boundExpression()),
+                      isBoundExpressionType,
+                      'boundExpression',
+                  ),
+        );
     }
+}
 
-    throw new Error('値が異常です。LimitClauseContext: ' + ctx.getText());
+export const isLimitClauseType = (target: CommonTypeClass): target is LimitClauseTypeClass => {
+    return target instanceof LimitClauseTypeClass;
 };
-

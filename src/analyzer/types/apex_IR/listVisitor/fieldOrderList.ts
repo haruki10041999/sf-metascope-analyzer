@@ -1,26 +1,33 @@
 import { FieldOrderListContext } from '@apexdevtools/apex-parser';
 
-import { ClauseType, ClauseVisitor } from '../clauseVisitor';
+import { ListTypeClass } from '.';
 
-export type FieldOrderListType = {
-    type: 'fieldOrderList';
-    list: ClauseType[];
-};
+import { FieldOrderTypeClass, ClauseVisitor, isFieldOrderType } from '../clauseVisitor';
+import { ErrorTypeClass, CommonTypeClass, isValidClassList } from '../commonVisitor';
 
-export const makeFieldOrderListType = (ctx: FieldOrderListContext): FieldOrderListType => {
-    if (!ctx.fieldOrder_list() || ctx.fieldOrder_list().length === 0) {
-        throw new Error('値が異常です。FieldOrderListContext: ' + ctx.getText());
+export class FieldOrderListTypeClass extends ListTypeClass<FieldOrderTypeClass> {
+    private constructor(value: (FieldOrderTypeClass | ErrorTypeClass)[]) {
+        super('fieldOrderList', value);
     }
 
-    const list = ctx.fieldOrder_list().map((fieldOrderCtx) => {
-        const field = new ClauseVisitor().visitFieldOrder(fieldOrderCtx);
+    static create(ctx: FieldOrderListContext): FieldOrderListTypeClass {
+        if (!ctx.fieldOrder_list() || ctx.fieldOrder_list().length === 0) {
+            throw new Error('値が異常です。FieldOrderListContext: ' + ctx.getText());
+        }
 
-        return field;
-    });
+        return new FieldOrderListTypeClass(
+            isValidClassList(
+                ctx.fieldOrder_list(),
+                (ctx) => new ClauseVisitor().visit(ctx),
+                isFieldOrderType,
+                'fieldOrder',
+            ),
+        );
+    }
+}
 
-    return {
-        type: 'fieldOrderList',
-        list: list,
-    };
+export const isFieldOrderListType = (
+    target: CommonTypeClass,
+): target is FieldOrderListTypeClass => {
+    return target instanceof FieldOrderListTypeClass;
 };
-

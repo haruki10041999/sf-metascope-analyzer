@@ -1,42 +1,63 @@
 import { TypeOfContext } from '@apexdevtools/apex-parser';
 
-import { ClauseType, ClauseVisitor } from '.';
+import {
+    WhenClauseTypeClass,
+    ElseClauseTypeClass,
+    ClauseTypeClass,
+    ClauseVisitor,
+    isWhenClauseType,
+    isElseClauseType,
+} from '.';
 
-import { NameType, NameVisitor } from '../nameVisitor';
+import { FieldNameTypeClass, NameVisitor, isFieldNameType } from '../nameVisitor';
+import { ErrorTypeClass, CommonTypeClass, isValidClass, isValidClassList } from '../commonVisitor';
 
-export type TypeOfType = {
-    type: 'typeOf';
-    clause: {
-        name: NameType;
-        whenClause: ClauseType[];
-        elseClause?: ClauseType;
-    };
-};
+export class TypeOfTypeClass extends ClauseTypeClass<FieldNameTypeClass> {
+    private whenClause: (WhenClauseTypeClass | ErrorTypeClass)[];
+    private elseClause: ElseClauseTypeClass | ErrorTypeClass | null = null;
 
-export const makeTypeOfType = (ctx: TypeOfContext): TypeOfType => {
-    if (!ctx.fieldName() || !ctx.whenClause_list() || ctx.whenClause_list().length === 0) {
-        throw new Error('値が異常です。TypeOfContext: ' + ctx.getText());
+    private constructor(
+        value: FieldNameTypeClass | ErrorTypeClass,
+        whenClause: (WhenClauseTypeClass | ErrorTypeClass)[],
+        elseClause: ElseClauseTypeClass | ErrorTypeClass | null,
+    ) {
+        super('typeOf', value);
+        this.whenClause = whenClause;
+        this.elseClause = elseClause;
     }
 
-    const name = new NameVisitor().visit(ctx.fieldName());
-    const whenClause = ctx.whenClause_list().map((whenClauseCtx) => {
-        const whenClause = new ClauseVisitor().visit(whenClauseCtx);
-        return whenClause;
-    });
+    static create(ctx: TypeOfContext): TypeOfTypeClass {
+        if (!ctx.fieldName() || !ctx.whenClause_list() || ctx.whenClause_list().length === 0) {
+            throw new Error('値が異常です。TypeOfContext: ' + ctx.getText());
+        }
 
-    const typeOfType: TypeOfType = {
-        type: 'typeOf',
-        clause: {
-            name: name,
-            whenClause: whenClause,
-        },
-    };
-
-    if (ctx.elseClause()) {
-        const elseClause = new ClauseVisitor().visit(ctx.elseClause());
-        typeOfType.clause.elseClause = elseClause;
+        return new TypeOfTypeClass(
+            isValidClass(new NameVisitor().visit(ctx.fieldName()), isFieldNameType, 'fieldName'),
+            isValidClassList(
+                ctx.whenClause_list(),
+                (ctx) => new ClauseVisitor().visit(ctx),
+                isWhenClauseType,
+                'whenClause',
+            ),
+            ctx.elseClause()
+                ? isValidClass(
+                      new ClauseVisitor().visit(ctx.elseClause()),
+                      isElseClauseType,
+                      'elseClause',
+                  )
+                : null,
+        );
     }
 
-    return typeOfType;
-};
+    getWhenClause(): (WhenClauseTypeClass | ErrorTypeClass)[] {
+        return this.whenClause;
+    }
 
+    getElseClause(): ElseClauseTypeClass | ErrorTypeClass | null {
+        return this.elseClause;
+    }
+}
+
+export const isTypeOfType = (target: CommonTypeClass): target is TypeOfTypeClass => {
+    return target instanceof TypeOfTypeClass;
+};

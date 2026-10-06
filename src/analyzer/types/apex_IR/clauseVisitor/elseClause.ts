@@ -1,22 +1,30 @@
 import { ElseClauseContext } from '@apexdevtools/apex-parser';
 
-import { NameType, NameVisitor } from '../nameVisitor';
+import { ClauseTypeClass } from '.';
 
-export type ElseClauseType = {
-    type: 'elseClause';
-    clause: NameType;
-};
+import { FieldNameListTypeClass, ListVisitor, isFieldNameListType } from '../listVisitor';
+import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
 
-export const makeElseClauseType = (ctx: ElseClauseContext): ElseClauseType => {
-    if (!ctx.fieldNameList()) {
-        throw new Error('値が異常です。ElseClauseContext: ' + ctx.getText());
+export class ElseClauseTypeClass extends ClauseTypeClass<FieldNameListTypeClass> {
+    private constructor(value: FieldNameListTypeClass | ErrorTypeClass) {
+        super('elseClasuse', value);
     }
 
-    const clause = new NameVisitor().visit(ctx.fieldNameList());
+    static create(ctx: ElseClauseContext): ElseClauseTypeClass {
+        if (!ctx.fieldNameList()) {
+            throw new Error('値が異常です。ElseClauseContext: ' + ctx.getText());
+        }
 
-    return {
-        type: 'elseClause',
-        clause: clause,
-    };
+        return new ElseClauseTypeClass(
+            isValidClass(
+                new ListVisitor().visit(ctx.fieldNameList()),
+                isFieldNameListType,
+                'fieldNameList',
+            ),
+        );
+    }
+}
+
+export const isElseClauseType = (target: CommonTypeClass): target is ElseClauseTypeClass => {
+    return target instanceof ElseClauseTypeClass;
 };
-

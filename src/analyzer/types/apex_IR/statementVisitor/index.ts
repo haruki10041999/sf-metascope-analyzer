@@ -28,7 +28,7 @@ import { SwitchStatementTypeClass } from './switchStatement';
 import { ForStatementTypeClass } from './forStatement';
 import { WhileStatementTypeClass } from './whileStatement';
 import { DoWhileStatementTypeClass } from './doWhileStatement';
-import { TryStatementType, makeTryStatementType } from './tryStatement';
+import { TryStatementTypeClass } from './tryStatement';
 import { ReturnStatementTypeClass } from './returnStatement';
 import { ThrowStatementTypeClass } from './throwStatement';
 import { BreakStatementTypeClass } from './breakStatement';
@@ -63,6 +63,7 @@ export { isSwitchStatementType, SwitchStatementTypeClass } from './switchStateme
 export { isForStatementType, ForStatementTypeClass } from './forStatement';
 export { isWhileStatementType, WhileStatementTypeClass } from './whileStatement';
 export { isDoWhileStatementType, DoWhileStatementTypeClass } from './doWhileStatement';
+export { isTryStatementType, TryStatementTypeClass } from './tryStatement';
 export {
     isLocalVariableDeclarationStatementType,
     LocalVariableDeclarationStatementTypeClass,
@@ -142,14 +143,7 @@ export class StatementVisitor extends CommonVisitor<StatementAllTypeClass> {
     }
 
     visitTryStatement(ctx: TryStatementContext) {
-        console.log('解析を開始します。' + 'TryStatementContext:  ' + ctx.getText());
-        const result = makeTryStatementType(ctx);
-        console.log(
-            '------------解析が終了しました--------------' +
-                'TryStatementContext:  ' +
-                JSON.stringify(result, null, 2),
-        );
-        return result;
+        return TryStatementTypeClass.create(ctx);
     }
 
     visitReturnStatement(ctx: ReturnStatementContext) {
@@ -208,4 +202,3 @@ export class StatementVisitor extends CommonVisitor<StatementAllTypeClass> {
         return AccessLevelTypeClass.create(ctx);
     }
 }
-

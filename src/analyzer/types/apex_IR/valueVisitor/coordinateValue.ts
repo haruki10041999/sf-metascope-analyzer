@@ -4,7 +4,7 @@ import { ValueTypeClass } from '.';
 
 import {
     BoundExpressionTypeClass,
-    ExpressionVisitor,,
+    ExpressionVisitor,
     isBoundExpressionType,
 } from '../expressionVisitor';
 import { SignedNumberTypeClass, LiteralVisitor, isSignedNumberType } from '../literalVisitor';

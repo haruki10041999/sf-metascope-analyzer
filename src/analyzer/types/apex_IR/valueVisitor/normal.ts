@@ -10,17 +10,55 @@ import {
 import { ValueListTypeClass, ListVisitor, isValueListType } from '../listVisitor';
 import {
     DateFormulaTypeClass,
-    QueryTypeClass,
+    SubQueryTypeClass,
     QueryVisitor,
     isDateFormulaType,
-    isQueryTypeAll,
+    isSubQueryType,
 } from '../queryVisitor';
 import { SignedIntegerTypeClass, LiteralVisitor, isSignedIntegerType } from '../literalVisitor';
-import { ErrorTypeClass, CommonTypeClass, isErrorType } from '../commonVisitor';
+import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
 
-type ValueValueType = string | number | boolean;
+type ValueTypeClassValue =
+    | string
+    | number
+    | boolean
+    | Date
+    | SignedIntegerTypeClass
+    | DateFormulaTypeClass
+    | SubQueryTypeClass
+    | ValueListTypeClass
+    | BoundExpressionTypeClass
+    | null;
 
-export class NormalValueTypeClass extends ValueTypeClass<ValueValueType> {}
+export class NormalValueTypeClass extends ValueTypeClass<ValueTypeClassValue> {
+    private valueType: string;
+    private constructor(value: ValueTypeClassValue | ErrorTypeClass, valueType: string) {
+        super('value', value);
+        this.valueType = valueType;
+    }
+
+    static create(ctx: ValueContext): NormalValueTypeClass {
+        if (
+            !ctx.NULL() &&
+            !ctx.BooleanLiteral() &&
+            !ctx.signedNumber() &&
+            !ctx.StringLiteral() &&
+            !ctx.MultilineStringLiteral() &&
+            !ctx.DateLiteral() &&
+            !ctx.dateFormula() &&
+            !ctx.IntegralCurrencyLiteral() &&
+            !ctx.IntegerLiteral() &&
+            !ctx.subQuery() &&
+            !ctx.valueList() &&
+            !ctx.boundExpression()
+        ) {
+            throw new Error('値が異常です。ValueContext: ' + ctx.getText());
+        }
+
+        let value: ValueTypeClassValue | ErrorTypeClass;
+        let valueType: string;
+    }
+}
 
 export const isNormalValueType = (target: CommonTypeClass): target is NormalValueTypeClass => {
     return target instanceof NormalValueTypeClass;
@@ -180,4 +218,3 @@ export const makeValueType = (ctx: ValueContext): ValueType => {
         value: valueFieldType,
     };
 };
-

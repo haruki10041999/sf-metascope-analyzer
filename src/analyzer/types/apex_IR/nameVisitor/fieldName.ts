@@ -15,9 +15,6 @@ export class FieldNameTypeClass extends NameListTypeClass<SoqlIdTypeClass> {
             throw new Error('値が異常です。FieldNameContext: ' + ctx.getText());
         }
 
-        const value: SoqlIdTypeClass[] = [];
-        const errorClasses: Record<string, ErrorTypeClass> = {};
-
         return new FieldNameTypeClass(
             isValidClassList(
                 ctx.soqlId_list(),

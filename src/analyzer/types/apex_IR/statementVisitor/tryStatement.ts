@@ -1,42 +1,63 @@
 import { TryStatementContext } from '@apexdevtools/apex-parser';
 
-import { BlockType, BlockVisitor } from '../blockVisitor';
-import { ClauseType, ClauseVisitor } from '../clauseVisitor';
+import { StatementTypeClass } from '.';
 
-export type TryStatementType = {
-    type: 'tryStatement';
-    statement: {
-        tryBlock: BlockType;
-        catchBlocks: ClauseType[];
-        finallyBlock?: BlockType;
-    };
-};
+import {
+    NormalBlockTypeClass,
+    FinallyBlockTypeClass,
+    BlockVisitor,
+    isNormalBlockType,
+    isFinallyBlockType,
+} from '../blockVisitor';
+import { CatchClauseTypeClass, ClauseVisitor, isCatchClauseType } from '../clauseVisitor';
+import { ErrorTypeClass, CommonTypeClass, isValidClass, isValidClassList } from '../commonVisitor';
 
-export const makeTryStatementType = (ctx: TryStatementContext): TryStatementType => {
-    if (!ctx.block() || !ctx.catchClause_list() || ctx.catchClause_list().length === 0) {
-        throw new Error('値が異常です。TryStatementContext: ' + ctx.getText());
+export class TryStatementTypeClass extends StatementTypeClass<NormalBlockTypeClass> {
+    private catchBlock: (CatchClauseTypeClass | ErrorTypeClass)[];
+    private finallyBlock: FinallyBlockTypeClass | ErrorTypeClass | null = null;
+
+    private constructor(
+        value: NormalBlockTypeClass | ErrorTypeClass,
+        catchBlock: (CatchClauseTypeClass | ErrorTypeClass)[],
+        finallyBlock: FinallyBlockTypeClass | ErrorTypeClass | null = null,
+    ) {
+        super('tryStatement', value);
+        this.catchBlock = catchBlock;
+        this.finallyBlock = finallyBlock;
     }
 
-    const tryBlock = new BlockVisitor().visit(ctx.block());
+    static create(ctx: TryStatementContext): TryStatementTypeClass {
+        if (!ctx.block() || !ctx.catchClause_list() || ctx.catchClause_list().length === 0) {
+            throw new Error('値が異常です。TryStatementContext: ' + ctx.getText());
+        }
 
-    const catchBlocks = ctx.catchClause_list().map((catchClauseCtx) => {
-        const catchBlock = new ClauseVisitor().visit(catchClauseCtx);
-        return catchBlock;
-    });
-
-    const tryStatementType: TryStatementType = {
-        type: 'tryStatement',
-        statement: {
-            tryBlock: tryBlock,
-            catchBlocks: catchBlocks,
-        },
-    };
-
-    if (ctx.finallyBlock()) {
-        const finallyBlock = new BlockVisitor().visit(ctx.finallyBlock());
-        tryStatementType.statement.finallyBlock = finallyBlock;
+        return new TryStatementTypeClass(
+            isValidClass(new BlockVisitor().visit(ctx.block()), isNormalBlockType, 'block'),
+            isValidClassList(
+                ctx.catchClause_list() || [],
+                (ctx) => new ClauseVisitor().visit(ctx),
+                isCatchClauseType,
+                'catchClause',
+            ),
+            ctx.finallyBlock()
+                ? isValidClass(
+                      new BlockVisitor().visit(ctx.finallyBlock()),
+                      isFinallyBlockType,
+                      'finallyBlock',
+                  )
+                : null,
+        );
     }
 
-    return tryStatementType;
-};
+    getCatchBlock(): (CatchClauseTypeClass | ErrorTypeClass)[] {
+        return this.catchBlock;
+    }
 
+    getFinallyBlock(): FinallyBlockTypeClass | ErrorTypeClass | null {
+        return this.finallyBlock;
+    }
+}
+
+export const isTryStatementType = (target: CommonTypeClass): target is TryStatementTypeClass => {
+    return target instanceof TryStatementTypeClass;
+};

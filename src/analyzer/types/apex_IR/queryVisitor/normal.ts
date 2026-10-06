@@ -1,10 +1,19 @@
 import { QueryContext } from '@apexdevtools/apex-parser';
 
-import { QueryType } from './query';
+import { QueryTypeClass } from '.';
+
+import { QueryType } from './normal';
 
 import { ListType, ListVisitor } from '../listVisitor';
 import { ClauseType, ClauseVisitor } from '../clauseVisitor';
 import { SoqlIdTypeClass, IdVisitor } from '../idVisitor';
+import { CommonTypeClass, ErrorTypeClass } from '../commonVisitor';
+
+export class NormalQueryTypeClass extends QueryTypeClass<SoqlIdTypeClass> {}
+
+export const isNormalQueryType = (target: CommonTypeClass): target is NormalQueryTypeClass => {
+    return target instanceof NormalQueryTypeClass;
+};
 
 export type QueryType = {
     type: 'query';
@@ -92,4 +101,3 @@ export const makeQueryType = (ctx: QueryContext): QueryType => {
 
     return queryType;
 };
-

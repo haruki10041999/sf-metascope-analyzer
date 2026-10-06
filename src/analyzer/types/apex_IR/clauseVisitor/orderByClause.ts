@@ -1,22 +1,30 @@
 import { OrderByClauseContext } from '@apexdevtools/apex-parser';
 
-import { ListType, ListVisitor } from '../listVisitor';
+import { ClauseTypeClass } from '.';
 
-export type OrderByClauseType = {
-    type: 'orderByClause';
-    clause: ListType;
-};
+import { FieldOrderListTypeClass, ListVisitor, isFieldOrderListType } from '../listVisitor';
+import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
 
-export const makeOrderByClauseType = (ctx: OrderByClauseContext): OrderByClauseType => {
-    if (!ctx.fieldOrderList()) {
-        throw new Error('値が異常です。OrderByClauseContext: ' + ctx.getText());
+export class OrderByClauseTypeClass extends ClauseTypeClass<FieldOrderListTypeClass> {
+    private constructor(value: FieldOrderListTypeClass | ErrorTypeClass) {
+        super('orderByClause', value);
     }
 
-    const fields = new ListVisitor().visit(ctx.fieldOrderList());
+    static create(ctx: OrderByClauseContext): OrderByClauseTypeClass {
+        if (!ctx.fieldOrderList()) {
+            throw new Error('値が異常です。OrderByClauseContext: ' + ctx.getText());
+        }
 
-    return {
-        type: 'orderByClause',
-        clause: fields,
-    };
+        return new OrderByClauseTypeClass(
+            isValidClass(
+                new ListVisitor().visit(ctx.fieldOrderList()),
+                isFieldOrderListType,
+                'fieldOrderList',
+            ),
+        );
+    }
+}
+
+export const isOrderByClauseType = (target: CommonTypeClass): target is OrderByClauseTypeClass => {
+    return target instanceof OrderByClauseTypeClass;
 };
-

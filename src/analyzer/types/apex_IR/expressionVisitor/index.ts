@@ -62,7 +62,7 @@ import { PrimaryExpressionTypeClass } from './primaryExpression';
 import { SubExpressionTypeClass } from './subExpression';
 import { ParExpressionTypeClass } from './parExpression';
 import { BoundExpressionTypeClass } from './boundExpression';
-import { FilteringExpressionType, makeFilteringExpressionType } from './filteringExpression';
+import { FilteringExpressionTypeClass } from './filteringExpression';
 import { FieldExpressionTypeClass } from './fieldExpression';
 import { ConditionalExpressionTypeClass } from './conditionalExpression';
 import { LogicalExpressionTypeClass } from './logicalExpression';
@@ -114,6 +114,7 @@ export {
     isWhereConditionalExpressionType,
     WhereConditionalExpressionTypeClass,
 } from './whereConditionalExpression';
+export { isFilteringExpressionType, FilteringExpressionTypeClass } from './filteringExpression';
 
 export class ExpressionTypeClass<T> extends CommonTypeClass {
     private value: T | ErrorTypeClass;
@@ -347,14 +348,7 @@ export class ExpressionVisitor extends CommonVisitor<ExpressionAllTypeClass> {
     }
 
     visitFilteringExpression(ctx: FilteringExpressionContext) {
-        console.log('解析を開始します。' + 'FilteringExpressionContext:  ' + ctx.getText());
-        const result = makeFilteringExpressionType(ctx);
-        console.log(
-            '------------解析が終了しました--------------' +
-                'FilteringExpressionContext:  ' +
-                JSON.stringify(result, null, 2),
-        );
-        return result;
+        return FilteringExpressionTypeClass.create(ctx);
     }
 
     visitFieldExpression(ctx: FieldExpressionContext) {
@@ -381,4 +375,3 @@ export class ExpressionVisitor extends CommonVisitor<ExpressionAllTypeClass> {
         return WhereFieldExpressionTypeClass.create(ctx);
     }
 }
-

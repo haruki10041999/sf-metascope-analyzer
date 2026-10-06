@@ -1,7 +1,17 @@
 import { SubQueryContext } from '@apexdevtools/apex-parser';
 
+import { QueryTypeClass } from '.';
+
 import { ListType, ListVisitor } from '../listVisitor';
 import { ClauseType, ClauseVisitor } from '../clauseVisitor';
+import { SoqlIdTypeClass } from '../idVisitor';
+import { ErrorTypeClass, CommonTypeClass } from '../commonVisitor';
+
+export class SubQueryTypeClass extends QueryTypeClass<SoqlIdTypeClass> {}
+
+export const isSubQueryType = (target: CommonTypeClass): target is SubQueryTypeClass => {
+    return target instanceof SubQueryTypeClass;
+};
 
 export type SubQueryType = {
     type: 'subQuery';
@@ -59,4 +69,3 @@ export const makeSubQueryType = (ctx: SubQueryContext): SubQueryType => {
 
     return subQueryType;
 };
-
