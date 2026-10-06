@@ -52,7 +52,7 @@ import { EqualityExpressionTypeClass } from './equalityExpression';
 import { InstanceOfExpressionTypeClass } from './instanceOfExpression';
 import { LogAndExpressionTypeClass } from './logAndExpression';
 import { LogOrExpressionTypeClass } from './logOrExpression';
-import { MethodCallExpressionType } from './methodCallExpression';
+import { MethodCallExpressionTypeClass } from './methodCallExpression';
 import { NegExpressionTypeClass } from './negExpression';
 import { NewExpressionTypeClass } from './newExpression';
 import { NormalExpressionTypeClass } from './normal';
@@ -63,24 +63,19 @@ import { SubExpressionTypeClass } from './subExpression';
 import { ParExpressionTypeClass } from './parExpression';
 import { BoundExpressionTypeClass } from './boundExpression';
 import { FilteringExpressionType, makeFilteringExpressionType } from './filteringExpression';
-import { FieldExpressionType, makeFieldExpressionType } from './fieldExpression';
+import { FieldExpressionTypeClass } from './fieldExpression';
 import { ConditionalExpressionTypeClass } from './conditionalExpression';
-import { LogicalExpressionType, makeLogicalExpressionType } from './logicalExpression';
-import {
-    WhereLogicalExpressionType,
-    makeWhereLogicalExpressionType,
-} from './whereLogicalExpression';
-import {
-    WhereConditionalExpressionType,
-    makeWhereConditionalExpressionType,
-} from './whereConditionalExpression';
-import { WhereFieldExpressionType, makeWhereFieldExpressionType } from './whereFieldExpression';
+import { LogicalExpressionTypeClass } from './logicalExpression';
+import { WhereLogicalExpressionTypeClass } from './whereLogicalExpression';
+import { WhereConditionalExpressionTypeClass } from './whereConditionalExpression';
+import { WhereFieldExpressionTypeClass } from './whereFieldExpression';
 
 import { ErrorTypeClass, CommonVisitor, CommonTypeClass } from '../commonVisitor';
 
 export { isArrayExpressionType, ArrayExpressionTypeClass } from './arrayExpression';
 export { isArth1ExpressionType, Arth1ExpressionTypeClass } from './arth1Expression';
 export { isArth2ExpressionType, Arth2ExpressionTypeClass } from './arth2Expression';
+export { isWhereFieldExpressionType, WhereFieldExpressionTypeClass } from './whereFieldExpression';
 export { isAssignExpressionType, AssignExpressionTypeClass } from './assignExpression';
 export { isBitAndExpressionType, BitAndExpressionTypeClass } from './bitAndExpression';
 export { isBitExpressionType, BitExpressionTypeClass } from './bitExpression';
@@ -95,7 +90,7 @@ export { isEqualityExpressionType, EqualityExpressionTypeClass } from './equalit
 export { isInstanceOfExpressionType, InstanceOfExpressionTypeClass } from './instanceOfExpression';
 export { isLogAndExpressionType, LogAndExpressionTypeClass } from './logAndExpression';
 export { isLogOrExpressionType, LogOrExpressionTypeClass } from './logOrExpression';
-export { isMethodCallExpressionType, MethodCallExpressionType } from './methodCallExpression';
+export { isMethodCallExpressionType, MethodCallExpressionTypeClass } from './methodCallExpression';
 export { isNegExpressionType, NegExpressionTypeClass } from './negExpression';
 export { isNewExpressionType, NewExpressionTypeClass } from './newExpression';
 export { isNormalExpressionType, NormalExpressionTypeClass } from './normal';
@@ -109,6 +104,16 @@ export {
     ConditionalExpressionTypeClass,
 } from './conditionalExpression';
 export { isParExpressionType, ParExpressionTypeClass } from './parExpression';
+export { isLogicalExpressionType, LogicalExpressionTypeClass } from './logicalExpression';
+export { isFieldExpressionType, FieldExpressionTypeClass } from './fieldExpression';
+export {
+    isWhereLogicalExpressionType,
+    WhereLogicalExpressionTypeClass,
+} from './whereLogicalExpression';
+export {
+    isWhereConditionalExpressionType,
+    WhereConditionalExpressionTypeClass,
+} from './whereConditionalExpression';
 
 export class ExpressionTypeClass<T> extends CommonTypeClass {
     private value: T | ErrorTypeClass;
@@ -155,16 +160,16 @@ export class SingleOperatorExpressionTypeClass<T> extends CommonTypeClass {
     }
 }
 
-export class DoubleOperatorExpressionTypeClass<Tleft, Tright> extends CommonTypeClass {
+export class DoubleOperatorExpressionTypeClass<Tleft, TOperator, Tright> extends CommonTypeClass {
     private left: Tleft | ErrorTypeClass;
     private right: Tright | ErrorTypeClass;
-    private operator: string;
+    private operator: TOperator | ErrorTypeClass;
 
     constructor(
         type: string,
         left: Tleft | ErrorTypeClass,
         right: Tright | ErrorTypeClass,
-        operator: string,
+        operator: TOperator | ErrorTypeClass,
     ) {
         super(type);
         this.left = left;
@@ -180,7 +185,7 @@ export class DoubleOperatorExpressionTypeClass<Tleft, Tright> extends CommonType
         return this.right;
     }
 
-    getOperator(): string {
+    getOperator(): TOperator | ErrorTypeClass {
         return this.operator;
     }
 }
@@ -219,8 +224,8 @@ export type ExpressionAllTypeClass =
     | ExpressionTypeClass<unknown>
     | ExpressionListTypeClass<unknown>
     | SingleOperatorExpressionTypeClass<unknown>
-    | DoubleOperatorExpressionTypeClass<unknown, unknown>
-    | IfExpressionTypeClass<unknown, unknown, unknown>;
+    | DoubleOperatorExpressionTypeClass<unknown, unknown, unknown>
+    | ConditionExpressionTypeClass<unknown, unknown, unknown>;
 
 export const isExpressionTypeAll = (target: CommonTypeClass): target is ExpressionAllTypeClass => {
     return (
@@ -228,7 +233,7 @@ export const isExpressionTypeAll = (target: CommonTypeClass): target is Expressi
         target instanceof ExpressionListTypeClass ||
         target instanceof SingleOperatorExpressionTypeClass ||
         target instanceof DoubleOperatorExpressionTypeClass ||
-        target instanceof ConditionalExpressionTypeClass
+        target instanceof ConditionExpressionTypeClass
     );
 };
 
@@ -270,7 +275,7 @@ export class ExpressionVisitor extends CommonVisitor<ExpressionAllTypeClass> {
     }
 
     visitMethodCallExpression(ctx: MethodCallExpressionContext) {
-        return MethodCallExpressionType.create(ctx);
+        return MethodCallExpressionTypeClass.create(ctx);
     }
 
     visitBitNotExpression(ctx: BitNotExpressionContext) {
@@ -353,14 +358,7 @@ export class ExpressionVisitor extends CommonVisitor<ExpressionAllTypeClass> {
     }
 
     visitFieldExpression(ctx: FieldExpressionContext) {
-        console.log('解析を開始します。' + 'FieldExpressionContext:  ' + ctx.getText());
-        const result = makeFieldExpressionType(ctx);
-        console.log(
-            '------------解析が終了しました--------------' +
-                'FieldExpressionContext:  ' +
-                JSON.stringify(result, null, 2),
-        );
-        return result;
+        return FieldExpressionTypeClass.create(ctx);
     }
 
     visitConditionalExpression(ctx: ConditionalExpressionContext) {
@@ -368,46 +366,19 @@ export class ExpressionVisitor extends CommonVisitor<ExpressionAllTypeClass> {
     }
 
     visitLogicalExpression(ctx: LogicalExpressionContext) {
-        console.log('解析を開始します。' + 'LogicalExpressionContext:  ' + ctx.getText());
-        const result = makeLogicalExpressionType(ctx);
-        console.log(
-            '------------解析が終了しました--------------' +
-                'LogicalExpressionContext:  ' +
-                JSON.stringify(result, null, 2),
-        );
-        return result;
+        return LogicalExpressionTypeClass.create(ctx);
     }
 
     visitWhereLogicalExpression(ctx: WhereLogicalExpressionContext) {
-        console.log('解析を開始します。' + 'WhereLogicalExpressionContext:  ' + ctx.getText());
-        const result = makeWhereLogicalExpressionType(ctx);
-        console.log(
-            '------------解析が終了しました--------------' +
-                'WhereLogicalExpressionContext:  ' +
-                JSON.stringify(result, null, 2),
-        );
-        return result;
+        return WhereLogicalExpressionTypeClass.create(ctx);
     }
 
     visitWhereConditionalExpression(ctx: WhereConditionalExpressionContext) {
-        console.log('解析を開始します。' + 'WhereConditionalExpressionContext:  ' + ctx.getText());
-        const result = makeWhereConditionalExpressionType(ctx);
-        console.log(
-            '------------解析が終了しました--------------' +
-                'WhereConditionalExpressionContext:  ' +
-                JSON.stringify(result, null, 2),
-        );
-        return result;
+        return WhereConditionalExpressionTypeClass.create(ctx);
     }
 
     visitWhereFieldExpression(ctx: WhereFieldExpressionContext) {
-        console.log('解析を開始します。' + 'WhereFieldExpressionContext:  ' + ctx.getText());
-        const result = makeWhereFieldExpressionType(ctx);
-        console.log(
-            '------------解析が終了しました--------------' +
-                'WhereFieldExpressionContext:  ' +
-                JSON.stringify(result, null, 2),
-        );
-        return result;
+        return WhereFieldExpressionTypeClass.create(ctx);
     }
 }
+

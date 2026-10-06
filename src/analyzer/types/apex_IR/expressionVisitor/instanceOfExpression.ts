@@ -2,24 +2,24 @@ import { InstanceOfExpressionContext } from '@apexdevtools/apex-parser';
 
 import {
     DoubleOperatorExpressionTypeClass,
-    ExpressionTypeClass,
+    ExpressionAllTypeClass,
     ExpressionVisitor,
     isExpressionTypeAll,
 } from '.';
 
 import { TypeRefTypeClass, TypeVisitor, isTypeRefType } from '../typeVisitor';
-import { ErrorTypeClass, CommonTypeClass, isErrorType } from '../commonVisitor';
+import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
 
 export class InstanceOfExpressionTypeClass extends DoubleOperatorExpressionTypeClass<
-    ExpressionTypeClass<unknown>,
+    ExpressionAllTypeClass,
+    string,
     TypeRefTypeClass
 > {
     private constructor(
-        left: ExpressionTypeClass<unknown> | null,
-        right: TypeRefTypeClass | null,
-        errorClasses: Record<string, ErrorTypeClass>,
+        left: ExpressionAllTypeClass | ErrorTypeClass,
+        right: TypeRefTypeClass | ErrorTypeClass,
     ) {
-        super('instanceOfExpression', left, right, 'instanceof', errorClasses);
+        super('instanceOfExpression', left, right, 'instanceof');
     }
 
     static create(ctx: InstanceOfExpressionContext): InstanceOfExpressionTypeClass {
@@ -27,25 +27,14 @@ export class InstanceOfExpressionTypeClass extends DoubleOperatorExpressionTypeC
             throw new Error('値が異常です。InstanceOfExpressionContext: ' + ctx.getText());
         }
 
-        let left: ExpressionTypeClass<unknown> | null = null;
-        let right: TypeRefTypeClass | null = null;
-        const errorClasses: Record<string, ErrorTypeClass> = {};
-
-        const expressionTypeClass = new ExpressionVisitor().visit(ctx.expression());
-        if (isExpressionTypeAll(expressionTypeClass)) {
-            left = expressionTypeClass;
-        } else {
-            errorClasses['left'] = expressionTypeClass;
-        }
-
-        const typeTypeClass = new TypeVisitor().visit(ctx.typeRef());
-        if (isTypeRefType(typeTypeClass)) {
-            right = typeTypeClass;
-        } else if (isErrorType(typeTypeClass)) {
-            errorClasses['right'] = typeTypeClass;
-        }
-
-        return new InstanceOfExpressionTypeClass(left, right, errorClasses);
+        return new InstanceOfExpressionTypeClass(
+            isValidClass(
+                new ExpressionVisitor().visit(ctx.expression()),
+                isExpressionTypeAll,
+                'expression',
+            ),
+            isValidClass(new TypeVisitor().visit(ctx.typeRef()), isTypeRefType, 'typeRef'),
+        );
     }
 }
 

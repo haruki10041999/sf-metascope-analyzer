@@ -1,19 +1,27 @@
 import { CreatorContext } from '@apexdevtools/apex-parser';
 
-import { RestTypeClass, RestVisitor, isRestTypeAll } from '.';
+import {
+    RestAllTypeClass,
+    RestTypeClass,
+    RestVisitor,
+    isArrayCreatorRestType,
+    isClassCreatorRestType,
+    isMapCreatorRestType,
+    isNoRestType,
+    isSetCreatorRestType,
+} from '.';
 
 import { CreatedNameTypeClass, NameVisitor, isCreatedNameType } from '../nameVisitor';
-import { ErrorTypeClass, CommonTypeClass, isErrorType } from '../commonVisitor';
+import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
 
 export class CreatorTypeClass extends RestTypeClass<CreatedNameTypeClass> {
-    content: RestTypeClass<unknown> | null = null;
+    content: RestAllTypeClass | ErrorTypeClass;
 
     private constructor(
-        value: CreatedNameTypeClass | null,
-        content: RestTypeClass<unknown> | null,
-        errorTypeClasses: Record<string, ErrorTypeClass>,
+        value: CreatedNameTypeClass | ErrorTypeClass,
+        content: RestAllTypeClass | ErrorTypeClass,
     ) {
-        super('creator', value, errorTypeClasses);
+        super('creator', value);
         this.content = content;
     }
 
@@ -29,47 +37,42 @@ export class CreatorTypeClass extends RestTypeClass<CreatedNameTypeClass> {
             throw new Error('値が異常です。CreatorContext: ' + ctx.getText());
         }
 
-        let value: CreatedNameTypeClass | null = null;
-        let content: RestTypeClass<unknown> | null = null;
-        const errorTypeClasses: Record<string, ErrorTypeClass> = {};
+        const value = isValidClass(
+            new NameVisitor().visit(ctx.createdName()),
+            isCreatedNameType,
+            'createdName',
+        );
 
-        const nameTypeClass = new NameVisitor().visit(ctx.createdName());
-        if (isCreatedNameType(nameTypeClass)) {
-            value = nameTypeClass;
-        } else if (isErrorType(nameTypeClass)) {
-            errorTypeClasses['value'] = nameTypeClass;
-        }
-
-        let restTypeClass: RestTypeClass<unknown> | ErrorTypeClass | null = null;
+        let content: RestAllTypeClass | ErrorTypeClass;
         if (ctx.noRest()) {
-            restTypeClass = new RestVisitor().visit(ctx.noRest());
+            content = isValidClass(new RestVisitor().visit(ctx.noRest()), isNoRestType, 'noRest');
+        } else if (ctx.classCreatorRest()) {
+            content = isValidClass(
+                new RestVisitor().visit(ctx.classCreatorRest()),
+                isClassCreatorRestType,
+                'classCreatorRest',
+            );
+        } else if (ctx.arrayCreatorRest()) {
+            content = isValidClass(
+                new RestVisitor().visit(ctx.arrayCreatorRest()),
+                isArrayCreatorRestType,
+                'arrayCreatorRest',
+            );
+        } else if (ctx.mapCreatorRest()) {
+            content = isValidClass(
+                new RestVisitor().visit(ctx.mapCreatorRest()),
+                isMapCreatorRestType,
+                'mapCreatorRest',
+            );
+        } else {
+            content = isValidClass(
+                new RestVisitor().visit(ctx.setCreatorRest()),
+                isSetCreatorRestType,
+                'setCreatorRest',
+            );
         }
 
-        if (ctx.classCreatorRest()) {
-            restTypeClass = new RestVisitor().visit(ctx.classCreatorRest());
-        }
-
-        if (ctx.arrayCreatorRest()) {
-            restTypeClass = new RestVisitor().visit(ctx.arrayCreatorRest());
-        }
-
-        if (ctx.mapCreatorRest()) {
-            restTypeClass = new RestVisitor().visit(ctx.mapCreatorRest());
-        }
-
-        if (ctx.setCreatorRest()) {
-            restTypeClass = new RestVisitor().visit(ctx.setCreatorRest());
-        }
-
-        if (restTypeClass) {
-            if (isRestTypeAll(restTypeClass)) {
-                content = restTypeClass;
-            } else {
-                errorTypeClasses['content'] = restTypeClass;
-            }
-        }
-
-        return new CreatorTypeClass(value, content, errorTypeClasses);
+        return new CreatorTypeClass(value, content);
     }
 }
 

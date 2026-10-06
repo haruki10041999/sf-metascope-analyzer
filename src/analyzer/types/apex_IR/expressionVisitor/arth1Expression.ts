@@ -11,6 +11,7 @@ import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor'
 
 export class Arth1ExpressionTypeClass extends DoubleOperatorExpressionTypeClass<
     ExpressionAllTypeClass,
+    string,
     ExpressionAllTypeClass
 > {
     private constructor(
@@ -51,3 +52,4 @@ export const isArth1ExpressionType = (
 ): target is Arth1ExpressionTypeClass => {
     return target instanceof Arth1ExpressionTypeClass;
 };
+

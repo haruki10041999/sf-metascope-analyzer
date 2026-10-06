@@ -1,31 +1,49 @@
 import { WhereConditionalExpressionContext } from '@apexdevtools/apex-parser';
 
-import { ExpressionType, ExpressionVisitor } from '.';
+import {
+    WhereLogicalExpressionTypeClass,
+    WhereFieldExpressionTypeClass,
+    ExpressionTypeClass,
+    ExpressionVisitor,
+    isWhereLogicalExpressionType,
+    isWhereFieldExpressionType,
+} from '.';
 
-export type WhereConditionalExpressionType = {
-    type: 'whereConditionalExpression';
-    expression: ExpressionType;
-};
+import { CommonTypeClass, ErrorTypeClass, isValidClass } from '../commonVisitor';
 
-export const makeWhereConditionalExpressionType = (
-    ctx: WhereConditionalExpressionContext,
-): WhereConditionalExpressionType => {
-    if (ctx.whereLogicalExpression()) {
-        const value = new ExpressionVisitor().visit(ctx.whereLogicalExpression());
-        return {
-            type: 'whereConditionalExpression',
-            expression: value,
-        };
+export class WhereConditionalExpressionTypeClass extends ExpressionTypeClass<
+    WhereLogicalExpressionTypeClass | WhereFieldExpressionTypeClass
+> {
+    private constructor(
+        value: WhereLogicalExpressionTypeClass | WhereFieldExpressionTypeClass | ErrorTypeClass,
+    ) {
+        super('conditionalExpression', value);
     }
 
-    if (ctx.whereFieldExpression()) {
-        const value = new ExpressionVisitor().visit(ctx.whereFieldExpression());
-        return {
-            type: 'whereConditionalExpression',
-            expression: value,
-        };
-    }
+    static create(ctx: WhereConditionalExpressionContext): WhereConditionalExpressionTypeClass {
+        if (!ctx.whereLogicalExpression() && !ctx.whereFieldExpression()) {
+            throw new Error('値が異常です。ConditionalExpressionContext: ' + ctx);
+        }
 
-    throw new Error('値が異常です。WhereConditionalExpressionContext: ' + ctx.getText());
+        return new WhereConditionalExpressionTypeClass(
+            ctx.whereLogicalExpression()
+                ? isValidClass(
+                      new ExpressionVisitor().visit(ctx.whereLogicalExpression()),
+                      isWhereLogicalExpressionType,
+                      'whereLogicalExpression',
+                  )
+                : isValidClass(
+                      new ExpressionVisitor().visit(ctx.whereFieldExpression()),
+                      isWhereFieldExpressionType,
+                      'whereFieldExpression',
+                  ),
+        );
+    }
+}
+
+export const isWhereConditionalExpressionType = (
+    target: CommonTypeClass,
+): target is WhereConditionalExpressionTypeClass => {
+    return target instanceof WhereConditionalExpressionTypeClass;
 };
 

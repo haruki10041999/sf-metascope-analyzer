@@ -7,11 +7,25 @@ import {
 import { SelectEntryType, makeSelectEntryType } from './selectEntry';
 import { SubFieldEntryType, makeSubFieldEntryType } from './subFieldEntry';
 
-import { ErrorType, CommonVisitor } from '../commonVisitor';
+import { ErrorTypeClass, CommonTypeClass, CommonVisitor } from '../commonVisitor';
 
-export type EntryType = SelectEntryType | SubFieldEntryType | ErrorType;
+export class EntryTypeClass<T> extends CommonTypeClass {
+    private value: T | ErrorTypeClass;
+    constructor(type: string, value: T | ErrorTypeClass) {
+        super(type);
+        this.value = value;
+    }
 
-export class EntryVisitor extends CommonVisitor<EntryType> {
+    getValue(): T | ErrorTypeClass {
+        return this.value;
+    }
+}
+
+export const isEntryTypeAll = (target: CommonTypeClass): target is EntryTypeClass<unknown> => {
+    return target instanceof EntryTypeClass;
+};
+
+export class EntryVisitor extends CommonVisitor<EntryTypeClass<unknown>> {
     visitSelectEntry(ctx: SelectEntryContext) {
         console.log('解析を開始します。' + 'SelectEntryContext:  ' + ctx.getText());
         const result = makeSelectEntryType(ctx);

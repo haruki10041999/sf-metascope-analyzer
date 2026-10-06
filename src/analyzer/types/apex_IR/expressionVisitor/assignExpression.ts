@@ -11,6 +11,7 @@ import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor'
 
 export class AssignExpressionTypeClass extends DoubleOperatorExpressionTypeClass<
     ExpressionAllTypeClass,
+    string,
     ExpressionAllTypeClass
 > {
     private constructor(
@@ -106,3 +107,4 @@ export const isAssignExpressionType = (
 ): target is AssignExpressionTypeClass => {
     return target instanceof AssignExpressionTypeClass;
 };
+

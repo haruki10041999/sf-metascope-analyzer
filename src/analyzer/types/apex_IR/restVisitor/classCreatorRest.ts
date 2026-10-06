@@ -7,14 +7,11 @@ import {
     ArgumentsVisitor,
     isNormalArgumentsType,
 } from '../argumentsVisitor';
-import { ErrorTypeClass, CommonTypeClass, isErrorType } from '../commonVisitor';
+import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
 
 export class ClassCreatorRestTypeClass extends RestTypeClass<NormalArgumentsTypeClass> {
-    private constructor(
-        value: NormalArgumentsTypeClass | null,
-        errorClasses: Record<string, ErrorTypeClass>,
-    ) {
-        super('classCreatorRest', value, errorClasses);
+    private constructor(value: NormalArgumentsTypeClass | ErrorTypeClass) {
+        super('classCreatorRest', value);
     }
 
     static create(ctx: ClassCreatorRestContext): ClassCreatorRestTypeClass {
@@ -22,17 +19,13 @@ export class ClassCreatorRestTypeClass extends RestTypeClass<NormalArgumentsType
             throw new Error('値が異常です。ClassCreatorRestContext: ' + ctx.getText());
         }
 
-        let value: NormalArgumentsTypeClass | null = null;
-        const errorTypeClasses: Record<string, ErrorTypeClass> = {};
-
-        const argumentTypeClass = new ArgumentsVisitor().visit(ctx.arguments());
-        if (isNormalArgumentsType(argumentTypeClass)) {
-            value = argumentTypeClass;
-        } else if (isErrorType(argumentTypeClass)) {
-            errorTypeClasses['value'] = argumentTypeClass;
-        }
-
-        return new ClassCreatorRestTypeClass(value, errorTypeClasses);
+        return new ClassCreatorRestTypeClass(
+            isValidClass(
+                new ArgumentsVisitor().visit(ctx.arguments()),
+                isNormalArgumentsType,
+                'arguments',
+            ),
+        );
     }
 }
 

@@ -1,35 +1,57 @@
 import { EnhancedForControlContext } from '@apexdevtools/apex-parser';
 
-import { IdType, IdVisitor } from '../idVisitor';
-import { ExpressionType, ExpressionVisitor } from '../expressionVisitor';
-import { TypeType, TypeVisitor } from '../typeVisitor';
+import { ControlTypeClass } from '.';
 
-export type EnhancedForControlType = {
-    type: 'enhancedForControl';
-    control: {
-        variantType: TypeType;
-        variant: IdType;
-        fromVariant: ExpressionType;
-    };
-};
+import { NormalIdTypeClass, IdVisitor, isNormalIdType } from '../idVisitor';
+import {
+    ExpressionAllTypeClass,
+    ExpressionVisitor,
+    isExpressionTypeAll,
+} from '../expressionVisitor';
+import { TypeRefTypeClass, TypeVisitor, isTypeRefType } from '../typeVisitor';
+import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
 
-export const makeEnhancedForControlType = (
-    ctx: EnhancedForControlContext,
-): EnhancedForControlType => {
-    if (!ctx.typeRef() || !ctx.id() || !ctx.expression()) {
-        throw new Error('値が異常です。EnhancedForControlContext: ' + ctx.getText());
+export class EnhancedForControlTypeClass extends ControlTypeClass<NormalIdTypeClass> {
+    private valueType: TypeRefTypeClass | ErrorTypeClass;
+    private fromVariant: ExpressionAllTypeClass | ErrorTypeClass;
+
+    private constructor(
+        value: NormalIdTypeClass | ErrorTypeClass,
+        valueType: TypeRefTypeClass | ErrorTypeClass,
+        fromVariant: ExpressionAllTypeClass | ErrorTypeClass,
+    ) {
+        super('enhancedForControl', value);
+        this.valueType = valueType;
+        this.fromVariant = fromVariant;
     }
 
-    const variantType = new TypeVisitor().visit(ctx.typeRef());
-    const variant = new IdVisitor().visit(ctx.id());
-    const fromVariant = new ExpressionVisitor().visit(ctx.expression());
+    static create(ctx: EnhancedForControlContext): EnhancedForControlTypeClass {
+        if (!ctx.typeRef() || !ctx.id() || !ctx.expression()) {
+            throw new Error('値が異常です。EnhancedForControlContext: ' + ctx.getText());
+        }
 
-    return {
-        type: 'enhancedForControl',
-        control: {
-            variantType: variantType,
-            variant: variant,
-            fromVariant: fromVariant,
-        },
-    };
+        return new EnhancedForControlTypeClass(
+            isValidClass(new IdVisitor().visit(ctx.id()), isNormalIdType, 'id'),
+            isValidClass(new TypeVisitor().visit(ctx.typeRef()), isTypeRefType, 'typeRef'),
+            isValidClass(
+                new ExpressionVisitor().visit(ctx.expression()),
+                isExpressionTypeAll,
+                'expression',
+            ),
+        );
+    }
+
+    getValueType(): TypeRefTypeClass | ErrorTypeClass {
+        return this.valueType;
+    }
+
+    getFromVariant(): ExpressionAllTypeClass | ErrorTypeClass {
+        return this.fromVariant;
+    }
+}
+
+export const isEnhancedForControlType = (
+    target: CommonTypeClass,
+): target is EnhancedForControlTypeClass => {
+    return target instanceof EnhancedForControlTypeClass;
 };

@@ -4,34 +4,48 @@ import {
     TriggerBlockMemberContext,
 } from '@apexdevtools/apex-parser';
 
-import { AnonymousBlockMemberType, makeAnonymousBlockMemberType } from './anonymousBlockMember';
-import { TriggerBlockMemberType, makeTriggerBlockMemberType } from './triggerBlockMember';
+import { AnonymousBlockMemberTypeClass } from './anonymousBlockMember';
+import { TriggerBlockMemberTypeClass } from './triggerBlockMember';
 
-import { ErrorType, CommonVisitor } from '../commonVisitor';
+import { NormalModifierTypeClass } from '../modifierVisitor';
+import { ErrorTypeClass, CommonTypeClass, CommonVisitor } from '../commonVisitor';
 
-export type MemberType = AnonymousBlockMemberType | TriggerBlockMemberType | ErrorType;
+export { isAnonymousBlockMemberType, AnonymousBlockMemberTypeClass } from './anonymousBlockMember';
+export { isTriggerBlockMemberType, TriggerBlockMemberTypeClass } from './triggerBlockMember';
 
-export class MemberVisitor extends CommonVisitor<MemberType> {
+export class MemberTypeClass<T> extends CommonTypeClass {
+    private value: T | ErrorTypeClass;
+    private modifier: (NormalModifierTypeClass | ErrorTypeClass)[];
+    constructor(
+        type: string,
+        value: T | ErrorTypeClass,
+        modifier: (NormalModifierTypeClass | ErrorTypeClass)[],
+    ) {
+        super(type);
+        this.value = value;
+        this.modifier = modifier;
+    }
+
+    getValue(): T | ErrorTypeClass {
+        return this.value;
+    }
+
+    getModifier(): (NormalModifierTypeClass | ErrorTypeClass)[] {
+        return this.modifier;
+    }
+}
+
+export const isMemberTypeAll = (target: CommonTypeClass): target is MemberTypeClass<unknown> => {
+    return target instanceof MemberTypeClass;
+};
+
+export class MemberVisitor extends CommonVisitor<MemberTypeClass<unknown>> {
     visitAnonymousBlockMember(ctx: AnonymousBlockMemberContext) {
-        console.log('解析を開始します。' + 'AnonymousBlockMemberContext:  ' + ctx.getText());
-        const result = makeAnonymousBlockMemberType(ctx);
-        console.log(
-            '------------解析が終了しました--------------' +
-                'AnonymousBlockMemberContext:  ' +
-                JSON.stringify(result, null, 2),
-        );
-        return result;
+        return AnonymousBlockMemberTypeClass.create(ctx);
     }
 
     visitTriggerBlockMember(ctx: TriggerBlockMemberContext) {
-        console.log('解析を開始します。' + 'TriggerBlockMemberContext:  ' + ctx.getText());
-        const result = makeTriggerBlockMemberType(ctx);
-        console.log(
-            '------------解析が終了しました--------------' +
-                'TriggerBlockMemberContext:  ' +
-                JSON.stringify(result, null, 2),
-        );
-        return result;
+        return TriggerBlockMemberTypeClass.create(ctx);
     }
 }
 

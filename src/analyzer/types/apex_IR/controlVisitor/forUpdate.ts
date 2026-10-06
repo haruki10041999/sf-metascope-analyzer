@@ -1,20 +1,30 @@
 import { ForUpdateContext } from '@apexdevtools/apex-parser';
 
-import { ListType, ListVisitor } from '../listVisitor';
+import { ControlTypeClass } from './index';
 
-export type ForUpdateType = {
-    type: 'forUpdate';
-    update: ListType;
-};
+import { ExpressionListTypeClass, ListVisitor, isExpressionListType } from '../listVisitor';
+import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
 
-export const makeForUpdateType = (ctx: ForUpdateContext): ForUpdateType => {
-    if (!ctx.expressionList()) {
-        throw new Error('値が異常です。ForUpdateContext: ' + ctx.getText());
+export class ForUpdateTypeClass extends ControlTypeClass<ExpressionListTypeClass> {
+    private constructor(value: ExpressionListTypeClass | ErrorTypeClass) {
+        super('forUpdate', value);
     }
 
-    const update = new ListVisitor().visit(ctx.expressionList());
-    return {
-        type: 'forUpdate',
-        update: update,
-    };
+    static create(ctx: ForUpdateContext): ForUpdateTypeClass {
+        if (!ctx.expressionList()) {
+            throw new Error('値が異常です。ForUpdateContext: ' + ctx.getText());
+        }
+
+        return new ForUpdateTypeClass(
+            isValidClass(
+                new ListVisitor().visit(ctx.expressionList()),
+                isExpressionListType,
+                'expressionList',
+            ),
+        );
+    }
+}
+
+export const isForUpdateType = (target: CommonTypeClass): target is ForUpdateTypeClass => {
+    return target instanceof ForUpdateTypeClass;
 };

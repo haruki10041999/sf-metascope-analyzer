@@ -7,14 +7,11 @@ import {
     DeclarationVisitor,
     isInterfaceMethodDeclarationType,
 } from '../declarationVisitor';
-import { ErrorTypeClass, CommonTypeClass, isErrorType } from '../commonVisitor';
+import { ErrorTypeClass, CommonTypeClass, isValidClassList } from '../commonVisitor';
 
-export class InterfaceBodyTypeClass extends BodyTypeClass<InterfaceMethodDeclarationTypeClass[]> {
-    private constructor(
-        value: InterfaceMethodDeclarationTypeClass[],
-        errorClasses: Record<string, ErrorTypeClass>,
-    ) {
-        super('interfaceBody', value, errorClasses);
+export class InterfaceBodyTypeClass extends BodyTypeClass<InterfaceMethodDeclarationTypeClass> {
+    private constructor(value: (InterfaceMethodDeclarationTypeClass | ErrorTypeClass)[]) {
+        super('interfaceBody', value);
     }
 
     static create(ctx: InterfaceBodyContext): InterfaceBodyTypeClass {
@@ -25,19 +22,14 @@ export class InterfaceBodyTypeClass extends BodyTypeClass<InterfaceMethodDeclara
             throw new Error('値が異常です。InterfaceBodyContext: ' + ctx.getText());
         }
 
-        const value: InterfaceMethodDeclarationTypeClass[] = [];
-        const errorClasses: Record<string, ErrorTypeClass> = {};
-
-        ctx.interfaceMethodDeclaration_list().forEach((interfaceBodyCtx, index) => {
-            const declarationTypeClass = new DeclarationVisitor().visit(interfaceBodyCtx);
-            if (isInterfaceMethodDeclarationType(declarationTypeClass)) {
-                value.push(declarationTypeClass);
-            } else if (isErrorType(declarationTypeClass)) {
-                errorClasses[`value_${index}`] = declarationTypeClass;
-            }
-        });
-
-        return new InterfaceBodyTypeClass(value, errorClasses);
+        return new InterfaceBodyTypeClass(
+            isValidClassList(
+                ctx.interfaceMethodDeclaration_list(),
+                (ctx) => new DeclarationVisitor().visit(ctx),
+                isInterfaceMethodDeclarationType,
+                'interfaceMethodDeclaration',
+            ),
+        );
     }
 }
 

@@ -1,6 +1,6 @@
 import { SelectEntryContext } from '@apexdevtools/apex-parser';
 
-import { IdType, IdVisitor } from '../idVisitor';
+import { SoqlIdTypeClass, IdVisitor } from '../idVisitor';
 import { NameType, NameVisitor } from '../nameVisitor';
 import { ClauseType, ClauseVisitor } from '../clauseVisitor';
 import { QueryType, QueryVisitor } from '../queryVisitor';

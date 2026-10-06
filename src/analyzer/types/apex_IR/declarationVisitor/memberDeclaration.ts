@@ -1,70 +1,104 @@
 import { MemberDeclarationContext } from '@apexdevtools/apex-parser';
 
-import { MethodDeclarationTypeClass, ConstructorDeclarationTypeClass, Interface } from '.';
+import {
+    MethodDeclarationTypeClass,
+    ConstructorDeclarationTypeClass,
+    InterfaceDeclarationTypeClass,
+    ClassDeclarationTypeClass,
+    EnumDeclarationTypeClass,
+    PropertyDeclarationTypeClass,
+    FieldDeclarationTypeClass,
+    DeclarationTypeClass,
+    DeclarationVisitor,
+    isMethodDeclarationType,
+    isConstructorDeclarationType,
+    isInterfaceDeclarationType,
+    isClassDeclarationType,
+    isEnumDeclarationType,
+    isPropertyDeclarationType,
+    isFieldDeclarationType,
+} from '.';
 
-import { DeclarationType, DeclarationVisitor } from '.';
+import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
 
-export type MemberDeclarationType = {
-    type: 'memberDeclaration';
-    declaration: DeclarationType;
-};
+type MemberDeclarationTypeClassType =
+    | MethodDeclarationTypeClass
+    | ConstructorDeclarationTypeClass
+    | InterfaceDeclarationTypeClass
+    | ClassDeclarationTypeClass
+    | EnumDeclarationTypeClass
+    | PropertyDeclarationTypeClass
+    | FieldDeclarationTypeClass;
 
-export const makeMemberDeclarationType = (ctx: MemberDeclarationContext): MemberDeclarationType => {
-    if (ctx.methodDeclaration()) {
-        const declaration = new DeclarationVisitor().visit(ctx.methodDeclaration());
-        return {
-            type: 'memberDeclaration',
-            declaration: declaration,
-        };
+export class MemberDeclarationTypeClass extends DeclarationTypeClass<MemberDeclarationTypeClassType> {
+    constructor(value: MemberDeclarationTypeClassType | ErrorTypeClass) {
+        super('memberDeclaration', value);
     }
 
-    if (ctx.constructorDeclaration()) {
-        const declaration = new DeclarationVisitor().visit(ctx.constructorDeclaration());
-        return {
-            type: 'memberDeclaration',
-            declaration: declaration,
-        };
-    }
+    static create(ctx: MemberDeclarationContext): MemberDeclarationTypeClass {
+        if (
+            !ctx.methodDeclaration() &&
+            !ctx.constructorDeclaration() &&
+            !ctx.interfaceDeclaration() &&
+            !ctx.classDeclaration() &&
+            !ctx.enumDeclaration() &&
+            !ctx.propertyDeclaration() &&
+            !ctx.fieldDeclaration()
+        ) {
+            throw new Error('値が異常です。MemberDeclarationContext: ' + ctx.getText());
+        }
 
-    if (ctx.interfaceDeclaration()) {
-        const declaration = new DeclarationVisitor().visit(ctx.interfaceDeclaration());
-        return {
-            type: 'memberDeclaration',
-            declaration: declaration,
-        };
-    }
+        let value: MemberDeclarationTypeClassType | ErrorTypeClass;
+        if (ctx.methodDeclaration()) {
+            value = isValidClass(
+                new DeclarationVisitor().visit(ctx.methodDeclaration()),
+                isMethodDeclarationType,
+                'MethodDeclaration',
+            );
+        } else if (ctx.constructorDeclaration()) {
+            value = isValidClass(
+                new DeclarationVisitor().visit(ctx.constructorDeclaration()),
+                isConstructorDeclarationType,
+                'ConstructorDeclaration',
+            );
+        } else if (ctx.interfaceDeclaration()) {
+            value = isValidClass(
+                new DeclarationVisitor().visit(ctx.interfaceDeclaration()),
+                isInterfaceDeclarationType,
+                'InterfaceDeclaration',
+            );
+        } else if (ctx.classDeclaration()) {
+            value = isValidClass(
+                new DeclarationVisitor().visit(ctx.classDeclaration()),
+                isClassDeclarationType,
+                'ClassDeclaration',
+            );
+        } else if (ctx.enumDeclaration()) {
+            value = isValidClass(
+                new DeclarationVisitor().visit(ctx.enumDeclaration()),
+                isEnumDeclarationType,
+                'EnumDeclaration',
+            );
+        } else if (ctx.propertyDeclaration()) {
+            value = isValidClass(
+                new DeclarationVisitor().visit(ctx.propertyDeclaration()),
+                isPropertyDeclarationType,
+                'PropertyDeclaration',
+            );
+        } else {
+            value = isValidClass(
+                new DeclarationVisitor().visit(ctx.fieldDeclaration()),
+                isFieldDeclarationType,
+                'FieldDeclaration',
+            );
+        }
 
-    if (ctx.classDeclaration()) {
-        const declaration = new DeclarationVisitor().visit(ctx.classDeclaration());
-        return {
-            type: 'memberDeclaration',
-            declaration: declaration,
-        };
+        return new MemberDeclarationTypeClass(value);
     }
+}
 
-    if (ctx.enumDeclaration()) {
-        const declaration = new DeclarationVisitor().visit(ctx.enumDeclaration());
-        return {
-            type: 'memberDeclaration',
-            declaration: declaration,
-        };
-    }
-
-    if (ctx.propertyDeclaration()) {
-        const declaration = new DeclarationVisitor().visit(ctx.propertyDeclaration());
-        return {
-            type: 'memberDeclaration',
-            declaration: declaration,
-        };
-    }
-
-    if (ctx.fieldDeclaration()) {
-        const declaration = new DeclarationVisitor().visit(ctx.fieldDeclaration());
-        return {
-            type: 'memberDeclaration',
-            declaration: declaration,
-        };
-    }
-
-    throw new Error('値が異常です。MemberDeclarationContext: ' + ctx.getText());
+export const isMemberDeclarationType = (
+    target: CommonTypeClass,
+): target is MemberDeclarationTypeClass => {
+    return target instanceof MemberDeclarationTypeClass;
 };

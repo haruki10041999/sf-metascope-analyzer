@@ -3,65 +3,33 @@ import { ClassBodyContext } from '@apexdevtools/apex-parser';
 import { BodyTypeClass } from '.';
 
 import {
-    InterfaceMethodDeclarationTypeClass,
+    ClassBodyDeclarationTypeClass,
     DeclarationVisitor,
-    isInterfaceMethodDeclarationType,
+    isClassBodyDeclarationType,
 } from '../declarationVisitor';
-import { ErrorTypeClass, CommonTypeClass, isErrorType } from '../commonVisitor';
+import { ErrorTypeClass, CommonTypeClass, isValidClassList } from '../commonVisitor';
 
-export class InterfaceBodyTypeClass extends BodyTypeClass<InterfaceMethodDeclarationTypeClass[]> {
-    private constructor(
-        value: InterfaceMethodDeclarationTypeClass[],
-        errorClasses: Record<string, ErrorTypeClass>,
-    ) {
-        super('interfaceBody', value, errorClasses);
+export class ClassBodyTypeClass extends BodyTypeClass<ClassBodyDeclarationTypeClass> {
+    private constructor(value: (ClassBodyDeclarationTypeClass | ErrorTypeClass)[]) {
+        super('classBody', value);
     }
 
-    static create(ctx: InterfaceBodyContext): InterfaceBodyTypeClass {
-        if (
-            !ctx.interfaceMethodDeclaration_list() &&
-            ctx.interfaceMethodDeclaration_list().length > 0
-        ) {
-            throw new Error('値が異常です。InterfaceBodyContext: ' + ctx.getText());
+    static create(ctx: ClassBodyContext): ClassBodyTypeClass {
+        if (!ctx.classBodyDeclaration_list() && ctx.classBodyDeclaration_list().length > 0) {
+            throw new Error('値が異常です。ClassBodyContext: ' + ctx.getText());
         }
 
-        const value: InterfaceMethodDeclarationTypeClass[] = [];
-        const errorClasses: Record<string, ErrorTypeClass> = {};
-
-        ctx.interfaceMethodDeclaration_list().forEach((interfaceBodyCtx, index) => {
-            const declarationTypeClass = new DeclarationVisitor().visit(interfaceBodyCtx);
-            if (isInterfaceMethodDeclarationType(declarationTypeClass)) {
-                value.push(declarationTypeClass);
-            } else if (isErrorType(declarationTypeClass)) {
-                errorClasses[`value_${index}`] = declarationTypeClass;
-            }
-        });
-
-        return new InterfaceBodyTypeClass(value, errorClasses);
+        return new ClassBodyTypeClass(
+            isValidClassList(
+                ctx.classBodyDeclaration_list(),
+                (ctx) => new DeclarationVisitor().visit(ctx),
+                isClassBodyDeclarationType,
+                'classBodyDeclaration',
+            ),
+        );
     }
 }
 
-export const isInterfaceBodyType = (target: CommonTypeClass): target is InterfaceBodyTypeClass => {
-    return target instanceof InterfaceBodyTypeClass;
-};
-
-export type ClassBodyType = {
-    type: 'classBody';
-    body: DeclarationType[];
-};
-
-export const makeClassBodyType = (ctx: ClassBodyContext): ClassBodyType => {
-    if (!ctx.classBodyDeclaration_list()) {
-        throw new Error('値が異常です。ClassBodyContext: ' + ctx.getText());
-    }
-
-    const declarations = ctx.classBodyDeclaration_list().map((clasBodyDeclarationCtx) => {
-        const declaration = new DeclarationVisitor().visit(clasBodyDeclarationCtx);
-        return declaration;
-    });
-
-    return {
-        type: 'classBody',
-        body: declarations,
-    };
+export const isClassBodyType = (target: CommonTypeClass): target is ClassBodyTypeClass => {
+    return target instanceof ClassBodyTypeClass;
 };

@@ -1,7 +1,10 @@
 import { QueryContext } from '@apexdevtools/apex-parser';
 
+import { QueryType } from './query';
+
 import { ListType, ListVisitor } from '../listVisitor';
 import { ClauseType, ClauseVisitor } from '../clauseVisitor';
+import { SoqlIdTypeClass, IdVisitor } from '../idVisitor';
 
 export type QueryType = {
     type: 'query';

@@ -5,18 +5,17 @@ import { DeclarationTypeClass } from '.';
 import { NormalIdTypeClass, IdVisitor, isNormalIdType } from '../idVisitor';
 import { InterfaceBodyTypeClass, BodyVisitor, isInterfaceBodyType } from '../bodyVisitor';
 import { TypeListTypeClass, ListVisitor, isTypeListType } from '../listVisitor';
-import { ErrorTypeClass, CommonTypeClass, isErrorType } from '../commonVisitor';
+import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
 
 export class InterfaceDeclarationTypeClass extends DeclarationTypeClass<NormalIdTypeClass> {
-    private body: InterfaceBodyTypeClass | null = null;
-    private extend: TypeListTypeClass | null = null;
+    private body: InterfaceBodyTypeClass | ErrorTypeClass;
+    private extend: TypeListTypeClass | ErrorTypeClass | null = null;
     private constructor(
-        value: NormalIdTypeClass | null,
-        body: InterfaceBodyTypeClass | null,
-        extend: TypeListTypeClass | null,
-        errorClasses: Record<string, ErrorTypeClass>,
+        value: NormalIdTypeClass | ErrorTypeClass,
+        body: InterfaceBodyTypeClass | ErrorTypeClass,
+        extend: TypeListTypeClass | ErrorTypeClass | null,
     ) {
-        super('interfaceDeclaration', value, errorClasses);
+        super('interfaceDeclaration', value);
         this.body = body;
         this.extend = extend;
     }
@@ -26,60 +25,26 @@ export class InterfaceDeclarationTypeClass extends DeclarationTypeClass<NormalId
             throw new Error('値が異常です。InterfaceDeclarationContext: ' + ctx.getText());
         }
 
-        let value: NormalIdTypeClass | null = null;
-        let body: InterfaceBodyTypeClass | null = null;
-        let extend: TypeListTypeClass | null = null;
-        const errorClasses: Record<string, ErrorTypeClass> = {};
+        return new InterfaceDeclarationTypeClass(
+            isValidClass(new IdVisitor().visit(ctx.id()), isNormalIdType, 'id'),
+            isValidClass(new BodyVisitor().visit(ctx.interfaceBody()), isInterfaceBodyType, 'body'),
+            ctx.EXTENDS() && ctx.typeList()
+                ? isValidClass(new ListVisitor().visit(ctx.typeList()), isTypeListType, 'extend')
+                : null,
+        );
     }
 
-    getBody(): InterfaceBodyTypeClass | null {
+    getBody(): InterfaceBodyTypeClass | ErrorTypeClass {
         return this.body;
     }
 
-    isBodyNull(): boolean {
-        return this.body === null;
-    }
-
-    getExtend(): TypeListTypeClass | null {
+    getExtend(): TypeListTypeClass | ErrorTypeClass | null {
         return this.extend;
-    }
-
-    isExtendNull(): boolean {
-        return this.extend === null;
     }
 }
 
-export type InterfaceDeclarationType = {
-    type: 'interface';
-    declaration: {
-        name: IdType;
-        body: BodyType;
-        extends?: ListType;
-    };
-};
-
-export const makeInterfaceDeclarationType = (
-    ctx: InterfaceDeclarationContext,
-): InterfaceDeclarationType => {
-    if (!ctx.id() || !ctx.interfaceBody()) {
-        throw new Error('値が異常です。InterfaceDeclarationContext: ' + ctx.getText());
-    }
-
-    const name = new IdVisitor().visit(ctx.id());
-    const body = new BodyVisitor().visit(ctx.interfaceBody());
-
-    const interfaceDeclarationType: InterfaceDeclarationType = {
-        type: 'interface',
-        declaration: {
-            name: name,
-            body: body,
-        },
-    };
-
-    if (ctx.EXTENDS() && ctx.typeList()) {
-        const extendsList = new ListVisitor().visit(ctx.typeList());
-        interfaceDeclarationType.declaration.extends = extendsList;
-    }
-
-    return interfaceDeclarationType;
+export const isInterfaceDeclarationType = (
+    target: CommonTypeClass,
+): target is InterfaceDeclarationTypeClass => {
+    return target instanceof InterfaceDeclarationTypeClass;
 };

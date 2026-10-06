@@ -5,7 +5,7 @@ import { CommonTypeClass } from '../commonVisitor';
 
 export class VoidPrimaryTypeClass extends PrimaryTypeClass<string> {
     private constructor(value: string) {
-        super('voidPrimary', value, {});
+        super('voidPrimary', value);
     }
 
     static create(ctx: VoidPrimaryContext): VoidPrimaryTypeClass {
@@ -20,3 +20,4 @@ export class VoidPrimaryTypeClass extends PrimaryTypeClass<string> {
 export const isVoidPrimaryType = (target: CommonTypeClass): target is VoidPrimaryTypeClass => {
     return target instanceof VoidPrimaryTypeClass;
 };
+

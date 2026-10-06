@@ -1,96 +1,59 @@
 import { LogicalExpressionContext } from '@apexdevtools/apex-parser';
 
-import { ExpressionType, ExpressionVisitor } from '.';
+import {
+    ConditionalExpressionTypeClass,
+    ExpressionListTypeClass,
+    ExpressionVisitor,
+    isConditionalExpressionType,
+} from '.';
 
-type LogicalFieldType =
-    | {
-          condition: ExpressionType;
-      }
-    | {
-          type: 'AND';
-          condition1: LogicalFieldType;
-          condition2: LogicalFieldType;
-      }
-    | {
-          type: 'OR';
-          condition1: LogicalFieldType;
-          condition2: LogicalFieldType;
-      }
-    | {
-          type: 'NOT';
-          condition: LogicalFieldType;
-      };
+import { CommonTypeClass, ErrorTypeClass, isValidClassList } from '../commonVisitor';
 
-export type LogicalExpressionType = {
-    type: 'logicalExpression';
-    expression: LogicalFieldType;
-};
+export class LogicalExpressionTypeClass extends ExpressionListTypeClass<ConditionalExpressionTypeClass> {
+    private operator: string | null = null;
 
-export const makeLogicalExpressionType = (ctx: LogicalExpressionContext): LogicalExpressionType => {
-    const conditions: LogicalFieldType[] = ctx.conditionalExpression_list()
-        ? ctx.conditionalExpression_list().map((conditionalExpressionCtx) => {
-              const value = new ExpressionVisitor().visit(conditionalExpressionCtx);
-              return {
-                  condition: value,
-              };
-          })
-        : [];
-
-    const andNodes = ctx.SOQLAND_list()
-        ? ctx.SOQLAND_list().map((andNode) => {
-              return { index: andNode.symbol.tokenIndex, value: 'AND' };
-          })
-        : [];
-    const orNodes = ctx.SOQLOR_list()
-        ? ctx.SOQLOR_list().map((orNode) => {
-              return { index: orNode.symbol.tokenIndex, value: 'OR' };
-          })
-        : [];
-    const logicalOperators = [...andNodes, ...orNodes]
-        .sort((a, b) => a.index - b.index)
-        .map((node) => {
-            return node.value;
-        });
-
-    if (conditions.length - 1 !== logicalOperators.length) {
-        throw new Error('値が異常です。LogicalExpressionContext: ' + ctx.getText());
+    private constructor(
+        value: (ConditionalExpressionTypeClass | ErrorTypeClass)[],
+        operator: string | null,
+    ) {
+        super('logicalExpression', value);
+        this.operator = operator;
     }
 
-    let i = 0;
-    while (i < logicalOperators.length) {
-        if (logicalOperators.at(i) === 'AND') {
-            const andConditon: LogicalFieldType = {
-                type: 'AND',
-                condition1: conditions.at(i)!,
-                condition2: conditions.at(i + 1)!,
-            };
-
-            conditions.splice(i, 2, andConditon);
-            logicalOperators.splice(i, 1);
-        } else {
-            i++;
+    static create(ctx: LogicalExpressionContext): LogicalExpressionTypeClass {
+        if (
+            !ctx.conditionalExpression_list() ||
+            ctx.conditionalExpression_list().length - 1 !==
+                (ctx.SOQLAND_list()?.length ?? 0) + (ctx.SOQLOR_list()?.length ?? 0)
+        ) {
+            throw new Error('値が異常です。LogicalExpressionContext: ' + ctx.getText());
         }
+
+        return new LogicalExpressionTypeClass(
+            isValidClassList(
+                ctx.conditionalExpression_list(),
+                (ctx) => new ExpressionVisitor().visit(ctx),
+                isConditionalExpressionType,
+                'conditionalExpression',
+            ),
+            ctx.SOQLAND_list()?.length
+                ? 'AND'
+                : ctx.SOQLOR_list()?.length
+                  ? 'OR'
+                  : ctx.NOT()
+                    ? 'NOT'
+                    : null,
+        );
     }
 
-    let value: LogicalFieldType = conditions.at(0)!;
-    logicalOperators.forEach((operator, index) => {
-        value = {
-            type: 'OR',
-            condition1: value,
-            condition2: conditions.at(index + 1)!,
-        };
-    });
-
-    if (ctx.NOT()) {
-        value = {
-            type: 'NOT',
-            condition: value,
-        };
+    getOperator(): string | null {
+        return this.operator;
     }
+}
 
-    return {
-        type: 'logicalExpression',
-        expression: value,
-    };
+export const isLogicalExpressionType = (
+    target: CommonTypeClass,
+): target is LogicalExpressionTypeClass => {
+    return target instanceof LogicalExpressionTypeClass;
 };
 

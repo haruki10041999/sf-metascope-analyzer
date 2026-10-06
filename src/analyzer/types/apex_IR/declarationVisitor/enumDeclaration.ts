@@ -8,17 +8,16 @@ import {
 } from '.';
 
 import { NormalIdTypeClass, IdVisitor, isNormalIdType } from '../idVisitor';
-import { ErrorTypeClass, CommonTypeClass, isErrorType } from '../commonVisitor';
+import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
 
 export class EnumDeclarationTypeClass extends DeclarationTypeClass<NormalIdTypeClass> {
-    private constant: EnumConstantsTypeClass | null = null;
+    private constant: EnumConstantsTypeClass | ErrorTypeClass | null = null;
 
     private constructor(
-        value: NormalIdTypeClass | null,
-        constant: EnumConstantsTypeClass | null,
-        errorClasses: Record<string, ErrorTypeClass>,
+        value: NormalIdTypeClass | ErrorTypeClass,
+        constant: EnumConstantsTypeClass | ErrorTypeClass | null,
     ) {
-        super('enumDeclaration', value, errorClasses);
+        super('enumDeclaration', value);
         this.constant = constant;
     }
 
@@ -27,33 +26,20 @@ export class EnumDeclarationTypeClass extends DeclarationTypeClass<NormalIdTypeC
             throw new Error('値が異常です。EnumDeclarationContext: ' + ctx.getText());
         }
 
-        let value: NormalIdTypeClass | null = null;
-        let constant: EnumConstantsTypeClass | null = null;
-        const errorClasses: Record<string, ErrorTypeClass> = {};
-
-        const idTypeClass = new IdVisitor().visit(ctx.id());
-        if (isNormalIdType(idTypeClass)) {
-            value = idTypeClass;
-        } else if (isErrorType(idTypeClass)) {
-            errorClasses['value'] = idTypeClass;
-        }
-
-        const declarationTypeClass = new DeclarationVisitor().visit(ctx.enumConstants());
-        if (isEnumConstantsType(declarationTypeClass)) {
-            constant = declarationTypeClass;
-        } else if (isErrorType(declarationTypeClass)) {
-            errorClasses['constant'] = declarationTypeClass;
-        }
-
-        return new EnumDeclarationTypeClass(value, constant, errorClasses);
+        return new EnumDeclarationTypeClass(
+            isValidClass(new IdVisitor().visit(ctx.id()), isNormalIdType, 'id'),
+            ctx.enumConstants()
+                ? isValidClass(
+                      new DeclarationVisitor().visit(ctx.enumConstants()),
+                      isEnumConstantsType,
+                      'enumConstants',
+                  )
+                : null,
+        );
     }
 
-    getConstant(): EnumConstantsTypeClass | null {
+    getConstant(): EnumConstantsTypeClass | ErrorTypeClass | null {
         return this.constant;
-    }
-
-    isConstantNull(): boolean {
-        return this.constant === null;
     }
 }
 

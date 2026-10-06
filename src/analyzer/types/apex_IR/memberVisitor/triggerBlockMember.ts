@@ -1,53 +1,60 @@
 import { TriggerBlockMemberContext } from '@apexdevtools/apex-parser';
 
-import { DeclarationType, DeclarationVisitor } from '../declarationVisitor';
-import { StatementType, StatementVisitor } from '../statementVisitor';
-import { ModifierType, ModifierVisitor } from '../modifierVisitor';
+import { MemberTypeClass } from '.';
 
-export type TriggerBlockMemberType = {
-    type: 'triggerBlockMember';
-    member:
-        | {
-              declaration: DeclarationType;
-              modifier?: ModifierType[];
-          }
-        | StatementType;
-};
+import {
+    TriggerMemberDeclarationTypeClass,
+    DeclarationVisitor,
+    isTriggerMemberDeclarationType,
+} from '../declarationVisitor';
+import {
+    NormalStatementTypeClass,
+    StatementVisitor,
+    isNormalStatementType,
+} from '../statementVisitor';
+import { NormalModifierTypeClass, ModifierVisitor, isNormalModifierType } from '../modifierVisitor';
+import { ErrorTypeClass, CommonTypeClass, isValidClass, isValidClassList } from '../commonVisitor';
 
-export const makeTriggerBlockMemberType = (
-    ctx: TriggerBlockMemberContext,
-): TriggerBlockMemberType => {
-    if (ctx.triggerMemberDeclaration()) {
-        const declaration = new DeclarationVisitor().visit(ctx.triggerMemberDeclaration());
+export class TriggerBlockMemberTypeClass extends MemberTypeClass<
+    TriggerMemberDeclarationTypeClass | NormalStatementTypeClass
+> {
+    private constructor(
+        value: TriggerMemberDeclarationTypeClass | NormalStatementTypeClass | ErrorTypeClass,
+        modifier: (NormalModifierTypeClass | ErrorTypeClass)[],
+    ) {
+        super('triggerBlockMember', value, modifier);
+    }
 
-        const member: {
-            declaration: DeclarationType;
-            modifier?: ModifierType[];
-        } = {
-            declaration: declaration,
-        };
-
-        if (ctx.modifier_list() && ctx.modifier_list().length > 0) {
-            const modifiers = ctx.modifier_list().map((modifierCtx) => {
-                const modifier = new ModifierVisitor().visit(modifierCtx);
-                return modifier;
-            });
-            member.modifier = modifiers;
+    static create(ctx: TriggerBlockMemberContext): TriggerBlockMemberTypeClass {
+        if (!ctx.triggerMemberDeclaration() && !ctx.statement()) {
+            throw new Error('値が異常です。TriggerBlockMemberContext: ' + ctx.getText());
         }
-        return {
-            type: 'triggerBlockMember',
-            member: member,
-        };
-    }
 
-    if (ctx.statement()) {
-        const statement = new StatementVisitor().visit(ctx.statement());
-        return {
-            type: 'triggerBlockMember',
-            member: statement,
-        };
+        return new TriggerBlockMemberTypeClass(
+            ctx.triggerMemberDeclaration()
+                ? isValidClass(
+                      new DeclarationVisitor().visit(ctx.triggerMemberDeclaration()),
+                      isTriggerMemberDeclarationType,
+                      'triggerMemberDeclaration',
+                  )
+                : isValidClass(
+                      new StatementVisitor().visit(ctx.statement()),
+                      isNormalStatementType,
+                      'statement',
+                  ),
+            isValidClassList(
+                ctx.modifier_list(),
+                (ctx) => new ModifierVisitor().visit(ctx),
+                isNormalModifierType,
+                'modifier',
+            ),
+        );
     }
+}
 
-    throw new Error('値が異常です。TriggerBlockMemberContext: ' + ctx.getText());
+export const isTriggerBlockMemberType = (
+    target: CommonTypeClass,
+): target is TriggerBlockMemberTypeClass => {
+    return target instanceof TriggerBlockMemberTypeClass;
 };
 

@@ -2,23 +2,26 @@ import { ArrayCreatorRestContext } from '@apexdevtools/apex-parser';
 
 import { RestTypeClass } from '.';
 
-import { ExpressionTypeClass, ExpressionVisitor, isExpressionTypeAll } from '../expressionVisitor';
+import {
+    ExpressionAllTypeClass,
+    ExpressionVisitor,
+    isExpressionTypeAll,
+} from '../expressionVisitor';
 import {
     ArrayInitializerTypeClass,
     VariableVisitor,
     isArrayInitializerType,
 } from '../variableVisitor';
 
-import { ErrorTypeClass, CommonTypeClass, isErrorType } from '../commonVisitor';
+import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
 
-export class ArrayCreatorRestTypeClass extends RestTypeClass<ArrayInitializerTypeClass> {
-    private size: ExpressionTypeClass<unknown> | null = null;
+export class ArrayCreatorRestTypeClass extends RestTypeClass<ArrayInitializerTypeClass | null> {
+    private size: ExpressionAllTypeClass | ErrorTypeClass | null = null;
     private constructor(
-        value: ArrayInitializerTypeClass | null,
-        size: ExpressionTypeClass<unknown> | null,
-        errorTypeClasses: Record<string, ErrorTypeClass>,
+        value: ArrayInitializerTypeClass | ErrorTypeClass | null,
+        size: ExpressionAllTypeClass | ErrorTypeClass | null,
     ) {
-        super('arrayCreatorRest', value, errorTypeClasses);
+        super('arrayCreatorRest', value);
         this.size = size;
     }
 
@@ -27,37 +30,27 @@ export class ArrayCreatorRestTypeClass extends RestTypeClass<ArrayInitializerTyp
             throw new Error('値が異常です。ArrayCreatorRestContext: ' + ctx);
         }
 
-        let value: ArrayInitializerTypeClass | null = null;
-        let size: ExpressionTypeClass<unknown> | null = null;
-        const errorTypeClasses: Record<string, ErrorTypeClass> = {};
+        const value = ctx.expression()
+            ? isValidClass(
+                  new ExpressionVisitor().visit(ctx.expression()),
+                  isExpressionTypeAll,
+                  'expression',
+              )
+            : null;
 
-        if (ctx.expression()) {
-            const expressionTypeClass = new ExpressionVisitor().visit(ctx.expression());
-            if (isExpressionTypeAll(expressionTypeClass)) {
-                size = expressionTypeClass;
-            } else {
-                errorTypeClasses['size'] = expressionTypeClass;
-            }
-        }
+        const size = ctx.arrayInitializer()
+            ? isValidClass(
+                  new VariableVisitor().visit(ctx.arrayInitializer()),
+                  isArrayInitializerType,
+                  'arrayInitializer',
+              )
+            : null;
 
-        if (ctx.arrayInitializer()) {
-            const variableTypeClass = new VariableVisitor().visit(ctx.arrayInitializer());
-            if (isArrayInitializerType(variableTypeClass)) {
-                value = variableTypeClass;
-            } else if (isErrorType(variableTypeClass)) {
-                errorTypeClasses['value'] = variableTypeClass;
-            }
-        }
-
-        return new ArrayCreatorRestTypeClass(value, size, errorTypeClasses);
+        return new ArrayCreatorRestTypeClass(value, size);
     }
 
-    getSize(): ExpressionTypeClass<unknown> | null {
+    getSize(): ExpressionAllTypeClass | ErrorTypeClass | null {
         return this.size;
-    }
-
-    isSizeNull(): boolean {
-        return this.size === null;
     }
 }
 

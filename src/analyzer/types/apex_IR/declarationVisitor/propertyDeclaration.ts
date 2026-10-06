@@ -5,18 +5,18 @@ import { DeclarationTypeClass } from '.';
 import { NormalIdTypeClass, IdVisitor, isNormalIdType } from '../idVisitor';
 import { PropertyBlockTypeClass, BlockVisitor, isPropertyBlockType } from '../blockVisitor';
 import { TypeRefTypeClass, TypeVisitor, isTypeRefType } from '../typeVisitor';
-import { ErrorTypeClass, CommonTypeClass, isErrorType } from '../commonVisitor';
+import { ErrorTypeClass, CommonTypeClass, isValidClass, isValidClassList } from '../commonVisitor';
+import { get } from 'http';
 
 export class PropertyDeclarationTypeClass extends DeclarationTypeClass<NormalIdTypeClass> {
-    private valueType: TypeRefTypeClass | null = null;
-    private block: PropertyBlockTypeClass[] = [];
+    private valueType: TypeRefTypeClass | ErrorTypeClass;
+    private block: (PropertyBlockTypeClass | ErrorTypeClass)[] = [];
     private constructor(
-        value: NormalIdTypeClass | null,
-        valueType: TypeRefTypeClass | null,
-        block: PropertyBlockTypeClass[],
-        errorClasses: Record<string, ErrorTypeClass>,
+        value: NormalIdTypeClass | ErrorTypeClass,
+        valueType: TypeRefTypeClass | ErrorTypeClass,
+        block: (PropertyBlockTypeClass | ErrorTypeClass)[],
     ) {
-        super('propertyDeclaration', value, errorClasses);
+        super('propertyDeclaration', value);
         this.valueType = valueType;
         this.block = block;
     }
@@ -26,42 +26,29 @@ export class PropertyDeclarationTypeClass extends DeclarationTypeClass<NormalIdT
             throw new Error('値が異常です。PropertyDeclarationContext: ' + ctx.getText());
         }
 
-        let value: NormalIdTypeClass | null = null;
-        let valueType: TypeRefTypeClass | 'void' | null = null;
-        let block: PropertyBlockTypeClass[] = [];
-        const errorClasses: Record<string, ErrorTypeClass> = {};
+        return new PropertyDeclarationTypeClass(
+            isValidClass(new IdVisitor().visit(ctx.id()), isNormalIdType, 'id'),
+            isValidClass(new TypeVisitor().visit(ctx.typeRef()), isTypeRefType, 'typeRef'),
+            isValidClassList(
+                ctx.propertyBlock_list(),
+                (ctx) => new BlockVisitor().visit(ctx),
+                isPropertyBlockType,
+                'propertyBlock',
+            ),
+        );
+    }
 
-        const idTypeClass = new IdVisitor().visit(ctx.id());
-        if (isNormalIdType(idTypeClass)) {
-            value = idTypeClass;
-        } else if (isErrorType(idTypeClass)) {
-            errorClasses['value'] = idTypeClass;
-        }
+    getValueType(): TypeRefTypeClass | ErrorTypeClass {
+        return this.valueType;
+    }
 
-        const typeTypeClass = new TypeVisitor().visit(ctx.typeRef());
-        if (isTypeRefType(typeTypeClass)) {
-            valueType = typeTypeClass;
-        } else if (isErrorType(typeTypeClass)) {
-            errorClasses['valueType'] = typeTypeClass;
-        }
-
-        if (ctx.propertyBlock_list() && ctx.propertyBlock_list().length > 0) {
-            ctx.propertyBlock_list().forEach((propertyBlockCtx, index) => {
-                const blockTypeClass = new BlockVisitor().visit(propertyBlockCtx);
-                if (isPropertyBlockType(blockTypeClass)) {
-                    block.push(blockTypeClass);
-                } else if (isErrorType(blockTypeClass)) {
-                    errorClasses[`block_${index}`] = blockTypeClass;
-                }
-            });
-        }
-
-        return new PropertyDeclarationTypeClass(value, valueType, block, errorClasses);
+    getBlock(): (PropertyBlockTypeClass | ErrorTypeClass)[] {
+        return this.block;
     }
 }
 
-export const isPropertyDeclarationTypeClass = (
+export const isPropertyDeclarationType = (
     target: CommonTypeClass,
 ): target is PropertyDeclarationTypeClass => {
-    return target instanceof PropertyBlockTypeClass;
+    return target instanceof PropertyDeclarationTypeClass;
 };

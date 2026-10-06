@@ -5,8 +5,8 @@ import { StatementTypeClass } from '.';
 import { CommonTypeClass } from '../commonVisitor';
 
 export class ContinueStatementTypeClass extends StatementTypeClass<string> {
-    private constructor(value: string | null) {
-        super('continueStatement', value, {});
+    private constructor(value: string) {
+        super('continueStatement', value);
     }
 
     static create(ctx: ContinueStatementContext) {

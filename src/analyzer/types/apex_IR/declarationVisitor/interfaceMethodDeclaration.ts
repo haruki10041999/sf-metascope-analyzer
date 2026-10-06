@@ -10,22 +10,21 @@ import {
     ParameterVisitor,
     isFormalParametersType,
 } from '../parameterVisitor';
-import { ErrorTypeClass, CommonTypeClass, isErrorType } from '../commonVisitor';
+import { ErrorTypeClass, CommonTypeClass, isValidClass, isValidClassList } from '../commonVisitor';
 import { InsertStatementTypeClass } from '../statementVisitor';
 
 export class InterfaceMethodDeclarationTypeClass extends DeclarationTypeClass<NormalIdTypeClass> {
-    private valueType: TypeRefTypeClass | 'void' | null = null;
-    private param: FormalParametersTypeClass | null = null;
-    private modifier: NormalModifierTypeClass[] = [];
+    private valueType: TypeRefTypeClass | 'void' | ErrorTypeClass;
+    private param: FormalParametersTypeClass | ErrorTypeClass | null = null;
+    private modifier: (NormalModifierTypeClass | ErrorTypeClass)[] = [];
 
     private constructor(
-        value: NormalIdTypeClass | null,
-        valueType: TypeRefTypeClass | 'void' | null,
-        param: FormalParametersTypeClass | null,
-        modifier: NormalModifierTypeClass[],
-        errorClasses: Record<string, ErrorTypeClass>,
+        value: NormalIdTypeClass | ErrorTypeClass,
+        valueType: TypeRefTypeClass | 'void' | ErrorTypeClass,
+        param: FormalParametersTypeClass | ErrorTypeClass | null,
+        modifier: (NormalModifierTypeClass | ErrorTypeClass)[],
     ) {
-        super('InterfaceMethodDeclaration', value, errorClasses);
+        super('InterfaceMethodDeclaration', value);
         this.valueType = valueType;
         this.param = param;
         this.modifier = modifier;
@@ -36,76 +35,40 @@ export class InterfaceMethodDeclarationTypeClass extends DeclarationTypeClass<No
             throw new Error('値が異常です。InterfaceMethodDeclarationContext: ' + ctx.getText());
         }
 
-        let value: NormalIdTypeClass | null = null;
-        let valueType: TypeRefTypeClass | 'void' | null = null;
-        let param: FormalParametersTypeClass | null = null;
-        const modifier: NormalModifierTypeClass[] = [];
-        const errorClasses: Record<string, ErrorTypeClass> = {};
-
-        const idTypeClass = new IdVisitor().visit(ctx.id());
-        if (isNormalIdType(idTypeClass)) {
-            value = idTypeClass;
-        } else if (isErrorType(idTypeClass)) {
-            errorClasses['value'] = idTypeClass;
-        }
-
-        const typeTypeClass = new TypeVisitor().visit(ctx.typeRef());
-        if (isTypeRefType(typeTypeClass)) {
-            valueType = typeTypeClass;
-        } else if (isErrorType(typeTypeClass)) {
-            errorClasses['valueType'] = typeTypeClass;
-        }
-
-        if (ctx.formalParameters()) {
-            const parameterTypeClass = new ParameterVisitor().visit(ctx.formalParameters());
-            if (isFormalParametersType(parameterTypeClass)) {
-                param = parameterTypeClass;
-            } else if (isErrorType(parameterTypeClass)) {
-                errorClasses['param'] = parameterTypeClass;
-            }
-        }
-
-        if (ctx.modifier_list() && ctx.modifier_list().length > 0) {
-            ctx.modifier_list().forEach((modifierCtx, index) => {
-                const modifierTypeClass = new ModifierVisitor().visit(modifierCtx);
-                if (isNormalModifierType(modifierTypeClass)) {
-                    modifier.push(modifierTypeClass);
-                } else if (isErrorType(modifierTypeClass)) {
-                    errorClasses[`modifier_${index}`] = modifierTypeClass;
-                }
-            });
-        }
-
         return new InterfaceMethodDeclarationTypeClass(
-            value,
-            valueType,
-            param,
-            modifier,
-            errorClasses,
+            isValidClass(new IdVisitor().visit(ctx.id()), isNormalIdType, 'id'),
+            isValidClass(new TypeVisitor().visit(ctx.typeRef()), isTypeRefType, 'typeRef'),
+            ctx.formalParameters()
+                ? isValidClass(
+                      new ParameterVisitor().visit(ctx.formalParameters()),
+                      isFormalParametersType,
+                      'formalParameters',
+                  )
+                : null,
+            isValidClassList(
+                ctx.modifier_list(),
+                (ctx) => new ModifierVisitor().visit(ctx),
+                isNormalModifierType,
+                'modifier_list',
+            ),
         );
     }
 
-    getValueType(): TypeRefTypeClass | 'void' | null {
+    getValueType(): TypeRefTypeClass | 'void' | ErrorTypeClass {
         return this.valueType;
     }
 
-    isValueTypeNull(): boolean {
-        return this.valueType === null;
-    }
-
-    getParam(): FormalParametersTypeClass | null {
+    getParam(): FormalParametersTypeClass | ErrorTypeClass | null {
         return this.param;
     }
 
-    isParamNull(): boolean {
-        return this.param === null;
-    }
-
-    getModifier(): NormalModifierTypeClass[] {
+    getModifier(): (NormalModifierTypeClass | ErrorTypeClass)[] {
         return this.modifier;
     }
 }
 
-export const isInterfaceMethodDeclarationType = (target:CommonTypeClass):target is InterfaceMethodDeclarationTypeClass => {
-    return target is InsertStatementTypeClass
-}
+export const isInterfaceMethodDeclarationType = (
+    target: CommonTypeClass,
+): target is InterfaceMethodDeclarationTypeClass => {
+    return target instanceof InterfaceMethodDeclarationTypeClass;
+};

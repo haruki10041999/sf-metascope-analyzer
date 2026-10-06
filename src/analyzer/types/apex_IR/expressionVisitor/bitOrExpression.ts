@@ -11,6 +11,7 @@ import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor'
 
 export class BitOrExpressionTypeClass extends DoubleOperatorExpressionTypeClass<
     ExpressionAllTypeClass,
+    string,
     ExpressionAllTypeClass
 > {
     private constructor(
@@ -45,3 +46,4 @@ export const isBitOrExpressionType = (
 ): target is BitOrExpressionTypeClass => {
     return target instanceof BitOrExpressionTypeClass;
 };
+

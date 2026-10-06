@@ -15,22 +15,29 @@ import { ThisPrimaryTypeClass } from './thisPrimary';
 import { VoidPrimaryTypeClass } from './voidPrimary';
 import { SoqlPrimaryType, makeSoqlPrimaryType } from './soqlPrimary';
 import { SuperPrimaryTypeClass } from './superPrimary';
-import { TypeRefPrimaryType, makeTypeRefPrimaryType } from './typeRefPrimary';
+import { TypeRefPrimaryTypeClass } from './typeRefPrimary';
 import { IdPrimaryTypeClass } from './idPrimary';
-import { LiteralPrimaryType, makeLiteralPrimaryType } from './literalPrimary';
+import { LiteralPrimaryTypeClass } from './literalPrimary';
 import { SoslPrimaryType, makeSoslPrimaryType } from './soslPrimary';
 
-import { ContextTypeClass, ErrorTypeClass, CommonVisitor, CommonTypeClass } from '../commonVisitor';
+import { ErrorTypeClass, CommonVisitor, CommonTypeClass } from '../commonVisitor';
 
 export { isNormalPrimaryType, NormalPrimaryTypeClass } from './normal';
 export { isThisPrimaryType, ThisPrimaryTypeClass } from './thisPrimary';
 export { isVoidPrimaryType, VoidPrimaryTypeClass } from './voidPrimary';
 export { isSuperPrimaryType, SuperPrimaryTypeClass } from './superPrimary';
 export { isIdPrimaryType, IdPrimaryTypeClass } from './idPrimary';
+export { isLiteralPrimaryType, LiteralPrimaryTypeClass } from './literalPrimary';
 
-export class PrimaryTypeClass<T> extends ContextTypeClass<T> {
-    constructor(type: string, value: T | null, errorClasses: Record<string, ErrorTypeClass>) {
-        super(type, value, errorClasses);
+export class PrimaryTypeClass<T> extends CommonTypeClass {
+    private value: T | ErrorTypeClass;
+    constructor(type: string, value: T | ErrorTypeClass) {
+        super(type);
+        this.value = value;
+    }
+
+    getValue(): T | ErrorTypeClass {
+        return this.value;
     }
 }
 
@@ -67,14 +74,7 @@ export class PrimaryVisitor extends CommonVisitor<PrimaryTypeClass<unknown>> {
     }
 
     visitTypeRefPrimary(ctx: TypeRefPrimaryContext) {
-        console.log('解析を開始します。' + 'TypeRefPrimaryContext:  ' + ctx.getText());
-        const result = makeTypeRefPrimaryType(ctx);
-        console.log(
-            '------------解析が終了しました--------------' +
-                'TypeRefPrimaryContext:  ' +
-                JSON.stringify(result, null, 2),
-        );
-        return result;
+        return TypeRefPrimaryTypeClass.create(ctx);
     }
 
     visitIdPrimary(ctx: IdPrimaryContext) {
@@ -82,14 +82,7 @@ export class PrimaryVisitor extends CommonVisitor<PrimaryTypeClass<unknown>> {
     }
 
     visitLiteralPrimary(ctx: LiteralPrimaryContext) {
-        console.log('解析を開始します。' + 'LiteralPrimaryContext:  ' + ctx.getText());
-        const result = makeLiteralPrimaryType(ctx);
-        console.log(
-            '------------解析が終了しました--------------' +
-                'LiteralPrimaryContext:  ' +
-                JSON.stringify(result, null, 2),
-        );
-        return result;
+        return LiteralPrimaryTypeClass.create(ctx);
     }
 
     visitSoslPrimary(ctx: SoslPrimaryContext) {
@@ -103,3 +96,4 @@ export class PrimaryVisitor extends CommonVisitor<PrimaryTypeClass<unknown>> {
         return result;
     }
 }
+

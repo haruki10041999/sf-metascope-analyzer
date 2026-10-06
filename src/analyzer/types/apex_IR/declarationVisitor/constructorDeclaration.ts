@@ -9,19 +9,18 @@ import {
     ParameterVisitor,
     isFormalParametersType,
 } from '../parameterVisitor';
-import { ErrorTypeClass, CommonTypeClass, isErrorType } from '../commonVisitor';
+import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
 
 export class ConstructorDeclarationTypeClass extends DeclarationTypeClass<QualifiedNameTypeClass> {
-    private param: FormalParametersTypeClass | null = null;
-    private block: NormalBlockTypeClass | null = null;
+    private param: FormalParametersTypeClass | ErrorTypeClass | null = null;
+    private block: NormalBlockTypeClass | ErrorTypeClass;
 
     private constructor(
-        value: QualifiedNameTypeClass | null,
-        param: FormalParametersTypeClass | null,
-        block: NormalBlockTypeClass | null,
-        errorClasses: Record<string, ErrorTypeClass>,
+        value: QualifiedNameTypeClass | ErrorTypeClass,
+        param: FormalParametersTypeClass | ErrorTypeClass | null,
+        block: NormalBlockTypeClass | ErrorTypeClass,
     ) {
-        super('constructorDeclaration', value, errorClasses);
+        super('constructorDeclaration', value);
         this.param = param;
         this.block = block;
     }
@@ -31,51 +30,29 @@ export class ConstructorDeclarationTypeClass extends DeclarationTypeClass<Qualif
             throw new Error('値が異常です。ConstructorDeclarationContext: ' + ctx.getText());
         }
 
-        let value: QualifiedNameTypeClass | null = null;
-        let param: FormalParametersTypeClass | null = null;
-        let block: NormalBlockTypeClass | null = null;
-        const errorClasses: Record<string, ErrorTypeClass> = {};
-
-        const nameTypeClass = new NameVisitor().visit(ctx.qualifiedName());
-        if (isQualifiedNameType(nameTypeClass)) {
-            value = nameTypeClass;
-        } else if (isErrorType(nameTypeClass)) {
-            errorClasses['value'] = nameTypeClass;
-        }
-
-        if (ctx.formalParameters()) {
-            const parameterTypeClass = new ParameterVisitor().visit(ctx.formalParameters());
-            if (isFormalParametersType(parameterTypeClass)) {
-                param = parameterTypeClass;
-            } else if (isErrorType(parameterTypeClass)) {
-                errorClasses['param'] = parameterTypeClass;
-            }
-        }
-
-        const blockTypeClass = new BlockVisitor().visit(ctx.block());
-        if (isNormalBlockType(blockTypeClass)) {
-            block = blockTypeClass;
-        } else if (isErrorType(blockTypeClass)) {
-            errorClasses['block'] = blockTypeClass;
-        }
-
-        return new ConstructorDeclarationTypeClass(value, param, block, errorClasses);
+        return new ConstructorDeclarationTypeClass(
+            isValidClass(
+                new NameVisitor().visit(ctx.qualifiedName()),
+                isQualifiedNameType,
+                'qualifiedName',
+            ),
+            ctx.formalParameters()
+                ? isValidClass(
+                      new ParameterVisitor().visit(ctx.formalParameters()),
+                      isFormalParametersType,
+                      'formalParameters',
+                  )
+                : null,
+            isValidClass(new BlockVisitor().visit(ctx.block()), isNormalBlockType, 'block'),
+        );
     }
 
-    getParam(): FormalParametersTypeClass | null {
+    getParam(): FormalParametersTypeClass | ErrorTypeClass | null {
         return this.param;
     }
 
-    isParamNull(): boolean {
-        return this.param === null;
-    }
-
-    getBlock(): NormalBlockTypeClass | null {
+    getBlock(): NormalBlockTypeClass | ErrorTypeClass {
         return this.block;
-    }
-
-    isBlockNull(): boolean {
-        return this.block === null;
     }
 }
 

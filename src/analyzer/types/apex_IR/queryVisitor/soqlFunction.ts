@@ -187,11 +187,11 @@ export class SoqlFunctionTypeClass extends QueryTypeClass<SoqlFunctionValueType>
         } else if (isCountFunctionType(ctx)) {
             value = 'COUNT';
 
-            if (ctx.fieldName()) {
+            if (ctx.soqlFieldsParameter()) {
                 param = isValidClass(
-                    new NameVisitor().visit(ctx.fieldName()),
-                    isFieldNameType,
-                    'fieldName',
+                    new NameVisitor().visit(ctx.soqlFieldsParameter()),
+                    isSoqlFieldsParameterType,
+                    'soqlFieldsParameter',
                 );
             }
         } else if (isFormatFunctionType(ctx)) {
@@ -254,3 +254,4 @@ export class SoqlFunctionTypeClass extends QueryTypeClass<SoqlFunctionValueType>
 export const isSoqlFunctionType = (target: CommonTypeClass): target is SoqlFunctionTypeClass => {
     return target instanceof SoqlFunctionTypeClass;
 };
+

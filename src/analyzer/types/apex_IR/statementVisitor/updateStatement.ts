@@ -7,16 +7,19 @@ import {
     isAccessLevelType,
 } from '.';
 
-import { ExpressionTypeClass, ExpressionVisitor, isExpressionTypeAll } from '../expressionVisitor';
-import { ErrorTypeClass, CommonTypeClass, isErrorType } from '../commonVisitor';
+import {
+    ExpressionAllTypeClass,
+    ExpressionVisitor,
+    isExpressionTypeAll,
+} from '../expressionVisitor';
+import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
 
-export class UpdateStatementTypeClass extends DmlStatementTypeClass<ExpressionTypeClass<unknown>> {
+export class UpdateStatementTypeClass extends DmlStatementTypeClass<ExpressionAllTypeClass> {
     private constructor(
-        value: ExpressionTypeClass<unknown> | null,
-        accessLevel: AccessLevelTypeClass | null,
-        errorClasses: Record<string, ErrorTypeClass>,
+        value: ExpressionAllTypeClass | ErrorTypeClass,
+        accessLevel: AccessLevelTypeClass | ErrorTypeClass | null,
     ) {
-        super('updateStatement', value, accessLevel, errorClasses);
+        super('updateStatement', value, accessLevel);
     }
 
     static create(ctx: UpdateStatementContext): UpdateStatementTypeClass {
@@ -24,27 +27,20 @@ export class UpdateStatementTypeClass extends DmlStatementTypeClass<ExpressionTy
             throw new Error('値が異常です。UpdateStatementContext: ' + ctx.getText());
         }
 
-        let value: ExpressionTypeClass<unknown> | null = null;
-        let accessLevel: AccessLevelTypeClass | null = null;
-        const errorClasses: Record<string, ErrorTypeClass> = {};
-
-        const expressionTypeClass = new ExpressionVisitor().visit(ctx.expression());
-        if (isExpressionTypeAll(expressionTypeClass)) {
-            value = expressionTypeClass;
-        } else if (isErrorType(expressionTypeClass)) {
-            errorClasses['expression'] = expressionTypeClass;
-        }
-
-        if (ctx.accessLevel()) {
-            const accessLevelTypeClass = new StatementVisitor().visit(ctx.accessLevel());
-            if (isAccessLevelType(accessLevelTypeClass)) {
-                accessLevel = accessLevelTypeClass;
-            } else if (isErrorType(accessLevelTypeClass)) {
-                errorClasses['accessLevel'] = accessLevelTypeClass;
-            }
-        }
-
-        return new UpdateStatementTypeClass(value, accessLevel, errorClasses);
+        return new UpdateStatementTypeClass(
+            isValidClass(
+                new ExpressionVisitor().visit(ctx.expression()),
+                isExpressionTypeAll,
+                'expression',
+            ),
+            ctx.accessLevel()
+                ? isValidClass(
+                      new StatementVisitor().visit(ctx.accessLevel()),
+                      isAccessLevelType,
+                      'accessLevel',
+                  )
+                : null,
+        );
     }
 }
 

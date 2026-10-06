@@ -1,5 +1,4 @@
 import {
-    ApexParserBaseVisitor,
     CatchClauseContext,
     AllRowsClauseContext,
     OffsetClauseContext,
@@ -43,32 +42,25 @@ import { UpdateTypeType, makeUpdateTypeType } from './updateType';
 import { UsingScopeType, makeUsingScopeType } from './usingScope';
 import { TypeOfType, makeTypeOfType } from './typeOf';
 
-import { ErrorType, CommonVisitor } from '../commonVisitor';
+import { ErrorTypeClass, CommonTypeClass, CommonVisitor } from '../commonVisitor';
 
-export type ClauseType =
-    | CatchClauseType
-    | AllRowClauseType
-    | OffsetClauseType
-    | LimitClauseType
-    | ForClausesType
-    | ElseClauseType
-    | GroupByClauseType
-    | OrderByClauseType
-    | WithClauseType
-    | WhereClauseType
-    | WhenClauseType
-    | SoslWithClauseType
-    | SoslClausesType
-    | DataCategorySelectionType
-    | FieldGroupByType
-    | FieldOrderType
-    | FilteringSelectorType
-    | UpdateTypeType
-    | UsingScopeType
-    | TypeOfType
-    | ErrorType;
+export class ClauseTypeClass<T> extends CommonTypeClass {
+    private value: T | ErrorTypeClass;
+    constructor(type: string, value: T | ErrorTypeClass) {
+        super(type);
+        this.value = value;
+    }
 
-export class ClauseVisitor extends CommonVisitor<ClauseType> {
+    getValue(): T | ErrorTypeClass {
+        return this.value;
+    }
+}
+
+export const isClauseTypeClass = (target: CommonTypeClass): target is ClauseTypeClass<unknown> => {
+    return target instanceof ClauseTypeClass;
+};
+
+export class ClauseVisitor extends CommonVisitor<ClauseTypeClass<unknown>> {
     visitCatchClause(ctx: CatchClauseContext) {
         console.log('解析を開始します。' + 'CatchClauseContext:  ' + ctx.getText());
         const result = makeCatchClauseType(ctx);

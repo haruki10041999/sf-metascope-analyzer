@@ -6,7 +6,7 @@ import { CommonTypeClass } from '../commonVisitor';
 
 export class NormalExpressionTypeClass extends ExpressionTypeClass<string> {
     private constructor(value: string) {
-        super('expression', value, {});
+        super('expression', value);
     }
 
     static create(ctx: ExpressionContext): NormalExpressionTypeClass {
@@ -23,3 +23,4 @@ export const isNormalExpressionType = (
 ): target is NormalExpressionTypeClass => {
     return target instanceof NormalExpressionTypeClass;
 };
+

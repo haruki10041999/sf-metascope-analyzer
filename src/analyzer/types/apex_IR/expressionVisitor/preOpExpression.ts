@@ -1,23 +1,17 @@
 import { PreOpExpressionContext } from '@apexdevtools/apex-parser';
 
 import {
-    ExpressionTypeClass,
+    ExpressionAllTypeClass,
     ExpressionVisitor,
     isExpressionTypeAll,
     SingleOperatorExpressionTypeClass,
 } from '.';
 
-import { ErrorTypeClass, CommonTypeClass } from '../commonVisitor';
+import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
 
-export class PreOpExpressionTypeClass extends SingleOperatorExpressionTypeClass<
-    ExpressionTypeClass<unknown>
-> {
-    private constructor(
-        value: ExpressionTypeClass<unknown> | null,
-        operator: string | null,
-        errorClasses: Record<string, ErrorTypeClass>,
-    ) {
-        super('preOpExpression', value, operator, errorClasses);
+export class PreOpExpressionTypeClass extends SingleOperatorExpressionTypeClass<ExpressionAllTypeClass> {
+    private constructor(value: ExpressionAllTypeClass | ErrorTypeClass, operator: string) {
+        super('preOpExpression', value, operator);
     }
 
     static create(ctx: PreOpExpressionContext): PreOpExpressionTypeClass {
@@ -25,32 +19,26 @@ export class PreOpExpressionTypeClass extends SingleOperatorExpressionTypeClass<
             throw new Error('値が異常です。PreOpExpressionContext: ' + ctx.getText());
         }
 
-        const expressionTypeClass = new ExpressionVisitor().visit(ctx.expression());
-
-        let value: ExpressionTypeClass<unknown> | null = null;
-        let operator: string | null = null;
-        const errorTypeClasses: Record<string, ErrorTypeClass> = {};
-
-        if (isExpressionTypeAll(expressionTypeClass)) {
-            value = expressionTypeClass;
-        } else {
-            errorTypeClasses['value'] = expressionTypeClass;
-        }
+        let operator: string;
 
         if (ctx.INC()) {
             operator = '++';
-        }
-        if (ctx.DEC()) {
+        } else if (ctx.DEC()) {
             operator = '--';
-        }
-        if (ctx.ADD()) {
+        } else if (ctx.ADD()) {
             operator = '+';
-        }
-        if (ctx.SUB()) {
+        } else {
             operator = '-';
         }
 
-        return new PreOpExpressionTypeClass(value, operator, errorTypeClasses);
+        return new PreOpExpressionTypeClass(
+            isValidClass(
+                new ExpressionVisitor().visit(ctx.expression()),
+                isExpressionTypeAll,
+                'expression',
+            ),
+            operator,
+        );
     }
 }
 
@@ -59,3 +47,4 @@ export const isPreOpExpressionType = (
 ): target is PreOpExpressionTypeClass => {
     return target instanceof PreOpExpressionTypeClass;
 };
+

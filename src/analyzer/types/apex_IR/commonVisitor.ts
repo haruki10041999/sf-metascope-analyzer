@@ -63,6 +63,10 @@ export const isValidClassList = <T extends CommonTypeClass>(
     isValidType: (target: CommonTypeClass) => target is T,
     type: string,
 ): (T | ErrorTypeClass)[] => {
+    if (!ctxs || ctxs.length === 0) {
+        return [];
+    }
+
     return ctxs.map((ctx) => {
         return isValidClass(create(ctx), isValidType, type);
     });

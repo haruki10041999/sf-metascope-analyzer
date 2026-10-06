@@ -1,30 +1,41 @@
 import { RunAsStatementContext } from '@apexdevtools/apex-parser';
 
-import { BlockType, BlockVisitor } from '../blockVisitor';
-import { ListType, ListVisitor } from '../listVisitor';
+import { StatementTypeClass } from '../statementVisitor';
 
-export type RunAsStatementType = {
-    type: 'runAsStatement';
-    statement: {
-        variant: ListType;
-        block: BlockType;
-    };
-};
+import { NormalBlockTypeClass, BlockVisitor, isNormalBlockType } from '../blockVisitor';
+import { ExpressionListTypeClass, ListVisitor, isExpressionListType } from '../listVisitor';
+import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
 
-export const makeRunAsStatementType = (ctx: RunAsStatementContext): RunAsStatementType => {
-    if (!ctx.block() || !ctx.expressionList()) {
-        throw new Error('値が異常です。RunAsStatementContext: ' + ctx.getText());
+export class RunAsStatementTypeClass extends StatementTypeClass<ExpressionListTypeClass> {
+    private block: NormalBlockTypeClass | ErrorTypeClass;
+
+    private constructor(
+        value: ExpressionListTypeClass | ErrorTypeClass,
+        block: NormalBlockTypeClass | ErrorTypeClass,
+    ) {
+        super('runAsStatement', value);
+        this.block = block;
     }
 
-    const block = new BlockVisitor().visit(ctx.block());
-    const name = new ListVisitor().visit(ctx.expressionList());
+    static create(ctx: RunAsStatementContext) {
+        if (!ctx.block() || !ctx.expressionList()) {
+            throw new Error('値が異常です。RunAsStatementContext: ' + ctx.getText());
+        }
 
-    return {
-        type: 'runAsStatement',
-        statement: {
-            variant: name,
-            block: block,
-        },
-    };
+        return new RunAsStatementTypeClass(
+            isValidClass(
+                new ListVisitor().visit(ctx.expressionList()),
+                isExpressionListType,
+                'expressionList',
+            ),
+            isValidClass(new BlockVisitor().visit(ctx.block()), isNormalBlockType, 'block'),
+        );
+    }
+}
+
+export const isRunAsStatementType = (
+    target: CommonTypeClass,
+): target is RunAsStatementTypeClass => {
+    return target instanceof RunAsStatementTypeClass;
 };
 

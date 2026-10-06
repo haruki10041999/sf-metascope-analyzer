@@ -4,15 +4,14 @@ import { CallTypeClass } from '.';
 
 import { AnyIdTypeClass, IdVisitor, isAnyIdType } from '../idVisitor';
 import { ExpressionListTypeClass, ListVisitor, isExpressionListType } from '../listVisitor';
-import { ErrorTypeClass, CommonTypeClass, isErrorType } from '../commonVisitor';
+import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
 
 export class DotMethodCallTypeClass extends CallTypeClass<AnyIdTypeClass, ExpressionListTypeClass> {
     private constructor(
-        value: AnyIdTypeClass | null,
-        param: ExpressionListTypeClass | null,
-        errorClasses: Record<string, ErrorTypeClass>,
+        value: AnyIdTypeClass | ErrorTypeClass,
+        param: ExpressionListTypeClass | ErrorTypeClass | null,
     ) {
-        super('dotMethodCall', value, param, errorClasses);
+        super('dotMethodCall', value, param);
     }
 
     static create(ctx: DotMethodCallContext): DotMethodCallTypeClass {
@@ -20,27 +19,16 @@ export class DotMethodCallTypeClass extends CallTypeClass<AnyIdTypeClass, Expres
             throw new Error('値が異常です。DotMethodCallContext: ' + ctx.getText());
         }
 
-        let value: AnyIdTypeClass | null = null;
-        let param: ExpressionListTypeClass | null = null;
-        const errorClasses: Record<string, ErrorTypeClass> = {};
-
-        const idTypeClass = new IdVisitor().visit(ctx.anyId());
-        if (isAnyIdType(idTypeClass)) {
-            value = idTypeClass;
-        } else if (isErrorType(idTypeClass)) {
-            errorClasses['value'] = idTypeClass;
-        }
-
-        if (ctx.expressionList()) {
-            const listTypeClass = new ListVisitor().visit(ctx.expressionList());
-            if (isExpressionListType(listTypeClass)) {
-                param = listTypeClass;
-            } else if (isErrorType(listTypeClass)) {
-                errorClasses['param'] = listTypeClass;
-            }
-        }
-
-        return new DotMethodCallTypeClass(value, param, errorClasses);
+        return new DotMethodCallTypeClass(
+            isValidClass(new IdVisitor().visit(ctx.anyId()), isAnyIdType, 'anyId'),
+            ctx.expressionList()
+                ? isValidClass(
+                      new ListVisitor().visit(ctx.expressionList()),
+                      isExpressionListType,
+                      'expressionList',
+                  )
+                : null,
+        );
     }
 }
 

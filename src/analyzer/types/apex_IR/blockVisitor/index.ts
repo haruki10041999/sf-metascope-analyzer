@@ -17,7 +17,7 @@ import { PropertyBlockTypeClass } from './propertyBlock';
 import { GetterTypeClass } from './getter';
 import { SetterTypeClass } from './setter';
 
-import { ErrorTypeClass, ContextTypeClass, CommonTypeClass, CommonVisitor } from '../commonVisitor';
+import { ErrorTypeClass, CommonTypeClass, CommonVisitor } from '../commonVisitor';
 
 export { isNormalBlockType, NormalBlockTypeClass } from './normal';
 export { isFinallyBlockType, FinallyBlockTypeClass } from './finallyBlock';
@@ -25,17 +25,37 @@ export { isPropertyBlockType, PropertyBlockTypeClass } from './propertyBlock';
 export { isGetterType, GetterTypeClass } from './getter';
 export { isSetterType, SetterTypeClass } from './setter';
 
-export class BlockTypeClass<T> extends ContextTypeClass<T> {
-    constructor(type: string, value: T | null, errorClasses: Record<string, ErrorTypeClass>) {
-        super(type, value, errorClasses);
+export class BlockTypeClass<T> extends CommonTypeClass {
+    private value: T | ErrorTypeClass;
+    constructor(type: string, value: T | ErrorTypeClass) {
+        super(type);
+        this.value = value;
+    }
+
+    getValue(): T | ErrorTypeClass {
+        return this.value;
     }
 }
 
-export const isBlockTypeAll = (target: CommonTypeClass): target is BlockTypeClass<unknown> => {
-    return target instanceof BlockTypeClass;
+export class BlockListTypeClass<T> extends CommonTypeClass {
+    private value: (T | ErrorTypeClass)[];
+    constructor(type: string, value: (T | ErrorTypeClass)[]) {
+        super(type);
+        this.value = value;
+    }
+
+    getValue(): (T | ErrorTypeClass)[] {
+        return this.value;
+    }
+}
+
+export type BlockAllTypeClass = BlockTypeClass<unknown> | BlockListTypeClass<unknown>;
+
+export const isBlockTypeAll = (target: CommonTypeClass): target is BlockAllTypeClass => {
+    return target instanceof BlockTypeClass || target instanceof BlockListTypeClass;
 };
 
-export class BlockVisitor extends CommonVisitor<BlockTypeClass<unknown>> {
+export class BlockVisitor extends CommonVisitor<BlockAllTypeClass> {
     visitBlock(ctx: BlockContext) {
         return NormalBlockTypeClass.create(ctx);
     }

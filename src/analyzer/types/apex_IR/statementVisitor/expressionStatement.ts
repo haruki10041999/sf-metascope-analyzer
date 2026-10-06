@@ -1,22 +1,37 @@
 import { ExpressionStatementContext } from '@apexdevtools/apex-parser';
 
-import { ExpressionType, ExpressionVisitor } from '../expressionVisitor';
+import { StatementTypeClass } from '.';
 
-export type ExpressionStatementType = {
-    type: 'expressionStatement';
-    statement: ExpressionType;
-};
+import {
+    ExpressionAllTypeClass,
+    ExpressionVisitor,
+    isExpressionTypeAll,
+} from '../expressionVisitor';
+import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
 
-export const makeExpressionStatementType = (
-    ctx: ExpressionStatementContext,
-): ExpressionStatementType => {
-    if (!ctx.expression()) {
-        throw new Error('値が異常です。ExpressionStatementContext: ' + ctx.getText());
+export class ExpressionStatementTypeClass extends StatementTypeClass<ExpressionAllTypeClass> {
+    private constructor(value: ExpressionAllTypeClass | ErrorTypeClass) {
+        super('expressionStatement', value);
     }
 
-    return {
-        type: 'expressionStatement',
-        statement: new ExpressionVisitor().visit(ctx.expression()),
-    };
+    static create(ctx: ExpressionStatementContext): ExpressionStatementTypeClass {
+        if (!ctx.expression()) {
+            throw new Error('値が異常です。ExpressionStatementContext: ' + ctx.getText());
+        }
+
+        return new ExpressionStatementTypeClass(
+            isValidClass(
+                new ExpressionVisitor().visit(ctx.expression()),
+                isExpressionTypeAll,
+                'expression',
+            ),
+        );
+    }
+}
+
+export const isExpressionStatementType = (
+    target: CommonTypeClass,
+): target is ExpressionStatementTypeClass => {
+    return target instanceof ExpressionStatementTypeClass;
 };
 

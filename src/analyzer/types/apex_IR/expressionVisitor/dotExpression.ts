@@ -13,15 +13,15 @@ import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor'
 
 export class DotExpressionTypeClass extends DoubleOperatorExpressionTypeClass<
     ExpressionAllTypeClass,
+    string,
     AnyIdTypeClass | DotMethodCallTypeClass
 > {
     private constructor(
         left: ExpressionAllTypeClass | ErrorTypeClass,
-        right: AnyIdTypeClass | DotMethodCallTypeClass | null,
-        operator: string | null,
-        errorClasses: Record<string, ErrorTypeClass>,
+        right: AnyIdTypeClass | DotMethodCallTypeClass | ErrorTypeClass,
+        operator: string,
     ) {
-        super('dotExpression', left, right, operator, errorClasses);
+        super('dotExpression', left, right, operator);
     }
 
     static create(ctx: DotExpressionContext): DotExpressionTypeClass {
@@ -33,48 +33,25 @@ export class DotExpressionTypeClass extends DoubleOperatorExpressionTypeClass<
             throw new Error('値が異常です。DotExpressionContext: ' + ctx.getText());
         }
 
-        let left: ExpressionTypeClass<unknown> | null = null;
-        let right: AnyIdTypeClass | DotMethodCallTypeClass | null = null;
-        let operator: string | null = null;
-        const errorClasses: Record<string, ErrorTypeClass> = {};
-
-        const expressionTypeClass = new ExpressionVisitor().visit(ctx.expression());
-        if (isExpressionTypeAll(expressionTypeClass)) {
-            left = expressionTypeClass;
-        } else {
-            errorClasses['left'] = expressionTypeClass;
-        }
-
-        if (ctx.anyId()) {
-            const anyIdTypeClass = new IdVisitor().visit(ctx.anyId());
-            if (isAnyIdType(anyIdTypeClass)) {
-                right = anyIdTypeClass;
-            } else if (isErrorType(anyIdTypeClass)) {
-                errorClasses['right'] = anyIdTypeClass;
-            }
-        }
-
-        if (ctx.dotMethodCall()) {
-            const dotMethodCallTypeClass = new CallVisitor().visit(ctx.dotMethodCall());
-            if (isDotMethodCallType(dotMethodCallTypeClass)) {
-                right = dotMethodCallTypeClass;
-            } else if (isErrorType(dotMethodCallTypeClass)) {
-                errorClasses['right'] = dotMethodCallTypeClass;
-            }
-        }
-
-        if (ctx.DOT()) {
-            operator = '.';
-        }
-
-        if (ctx.QUESTIONDOT()) {
-            operator = '?.';
-        }
-
-        return new DotExpressionTypeClass(left, right, operator, errorClasses);
+        return new DotExpressionTypeClass(
+            isValidClass(
+                new ExpressionVisitor().visit(ctx.expression()),
+                isExpressionTypeAll,
+                'expression',
+            ),
+            ctx.anyId()
+                ? isValidClass(new IdVisitor().visit(ctx.anyId()), isAnyIdType, 'anyId')
+                : isValidClass(
+                      new CallVisitor().visit(ctx.dotMethodCall()),
+                      isDotMethodCallType,
+                      'dotMethodCall',
+                  ),
+            ctx.DOT() ? '.' : '?.',
+        );
     }
 }
 
 export const isDotExpressionType = (target: CommonTypeClass): target is DotExpressionTypeClass => {
     return target instanceof DotExpressionTypeClass;
 };
+

@@ -1,15 +1,17 @@
 import { SubExpressionContext } from '@apexdevtools/apex-parser';
 
-import { ExpressionTypeClass, ExpressionVisitor, isExpressionTypeAll } from '.';
+import {
+    ExpressionAllTypeClass,
+    ExpressionTypeClass,
+    ExpressionVisitor,
+    isExpressionTypeAll,
+} from '.';
 
-import { CommonTypeClass, ErrorTypeClass } from '../commonVisitor';
+import { CommonTypeClass, ErrorTypeClass, isValidClass } from '../commonVisitor';
 
-export class SubExpressionTypeClass extends ExpressionTypeClass<ExpressionTypeClass<unknown>> {
-    private constructor(
-        value: ExpressionTypeClass<unknown> | null,
-        errorClasses: Record<string, ErrorTypeClass>,
-    ) {
-        super('subExpression', value, errorClasses);
+export class SubExpressionTypeClass extends ExpressionTypeClass<ExpressionAllTypeClass> {
+    private constructor(value: ExpressionAllTypeClass | ErrorTypeClass) {
+        super('subExpression', value);
     }
 
     static create(ctx: SubExpressionContext): SubExpressionTypeClass {
@@ -17,18 +19,13 @@ export class SubExpressionTypeClass extends ExpressionTypeClass<ExpressionTypeCl
             throw new Error('値が異常です。SubExpressionContext: ' + ctx);
         }
 
-        const expressionTypeClass = new ExpressionVisitor().visit(ctx.expression());
-
-        let value: ExpressionTypeClass<unknown> | null = null;
-        let errorTypeClasses: Record<string, ErrorTypeClass> = {};
-
-        if (isExpressionTypeAll(expressionTypeClass)) {
-            value = expressionTypeClass;
-        } else {
-            errorTypeClasses['value'] = expressionTypeClass;
-        }
-
-        return new SubExpressionTypeClass(value, errorTypeClasses);
+        return new SubExpressionTypeClass(
+            isValidClass(
+                new ExpressionVisitor().visit(ctx.expression()),
+                isExpressionTypeAll,
+                'expression',
+            ),
+        );
     }
 }
 

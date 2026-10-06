@@ -1,62 +1,64 @@
 import { ClassBodyDeclarationContext } from '@apexdevtools/apex-parser';
 
-import { DeclarationType, DeclarationVisitor } from '.';
+import {
+    MemberDeclarationTypeClass,
+    DeclarationTypeClass,
+    DeclarationVisitor,
+    isMemberDeclarationType,
+} from '.';
 
-import { BlockType, BlockVisitor } from '../blockVisitor';
+import { NormalBlockTypeClass, BlockVisitor, isNormalBlockType } from '../blockVisitor';
+import { NormalModifierTypeClass, ModifierVisitor, isNormalModifierType } from '../modifierVisitor';
+import { CommonTypeClass, ErrorTypeClass, isValidClass, isValidClassList } from '../commonVisitor';
 
-import { ModifierType, ModifierVisitor } from '../modifierVisitor';
+export class ClassBodyDeclarationTypeClass extends DeclarationTypeClass<
+    MemberDeclarationTypeClass | NormalBlockTypeClass
+> {
+    private modifier: (NormalModifierTypeClass | ErrorTypeClass)[];
+    private isStatic: boolean = false;
 
-export type ClassBodyDeclarationType = {
-    type: 'classBodyDeclaration';
-    declaration:
-        | {
-              body: DeclarationType;
-              modifier?: ModifierType[];
-          }
-        | {
-              body: BlockType;
-              isStatic: boolean;
-          };
-};
-
-export const makeClassBodyDeclarationType = (
-    ctx: ClassBodyDeclarationContext,
-): ClassBodyDeclarationType => {
-    if (ctx.block()) {
-        const block = new BlockVisitor().visit(ctx.block());
-        const isStatic = Boolean(ctx.STATIC());
-        return {
-            type: 'classBodyDeclaration',
-            declaration: {
-                body: block,
-                isStatic: isStatic,
-            },
-        };
+    private constructor(
+        value: MemberDeclarationTypeClass | NormalBlockTypeClass | ErrorTypeClass,
+        modifier: (NormalModifierTypeClass | ErrorTypeClass)[],
+        isStatic: boolean,
+    ) {
+        super('classBodyDeclaration', value);
+        this.modifier = modifier;
+        this.isStatic = isStatic;
     }
 
-    if (ctx.memberDeclaration()) {
-        const body = new DeclarationVisitor().visit(ctx.memberDeclaration());
-
-        const declaration: {
-            body: DeclarationType;
-            modifier?: ModifierType[];
-        } = {
-            body: body,
-        };
-
-        if (ctx.modifier_list() && ctx.modifier_list().length > 0) {
-            const modifiers = ctx.modifier_list().map((modifierCtx) => {
-                const modifier = new ModifierVisitor().visit(modifierCtx);
-                return modifier;
-            });
-            declaration.modifier = modifiers;
+    static create(ctx: ClassBodyDeclarationContext): ClassBodyDeclarationTypeClass {
+        if (!ctx.memberDeclaration() && !ctx.block()) {
+            throw new Error('値が異常です。ClassBodyDeclarationContext: ' + ctx.getText());
         }
 
-        return {
-            type: 'classBodyDeclaration',
-            declaration: declaration,
-        };
+        return new ClassBodyDeclarationTypeClass(
+            ctx.memberDeclaration()
+                ? isValidClass(
+                      new DeclarationVisitor().visit(ctx.memberDeclaration()),
+                      isMemberDeclarationType,
+                      'memberDeclaration',
+                  )
+                : isValidClass(new BlockVisitor().visit(ctx.block()), isNormalBlockType, 'block'),
+            isValidClassList(
+                ctx.modifier_list(),
+                (ctx) => new ModifierVisitor().visit(ctx),
+                isNormalModifierType,
+                'modifier',
+            ),
+            Boolean(ctx.STATIC()),
+        );
     }
 
-    throw new Error('値が異常です。ClassBodyDeclarationContext: ' + ctx.getText());
-};
+    getModifier(): (NormalModifierTypeClass | ErrorTypeClass)[] {
+        return this.modifier;
+    }
+
+    getIsStatic(): boolean {
+        return this.isStatic;
+    }
+}
+
+export const isClassBodyDeclarationType = (
+    target: CommonTypeClass,
+): target is ClassBodyDeclarationTypeClass => target instanceof ClassBodyDeclarationTypeClass;

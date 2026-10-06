@@ -1,28 +1,37 @@
 import { WhenControlContext } from '@apexdevtools/apex-parser';
 
-import { ValueType, ValueVisitor } from '../valueVisitor';
-import { BlockType, BlockVisitor } from '../blockVisitor';
+import { ControlTypeClass } from '.';
 
-export type WhenControlType = {
-    type: 'whenControl';
-    control: {
-        condition: ValueType;
-        block: BlockType;
-    };
-};
+import { WhenValueTypeClass, ValueVisitor, isWhenValueType } from '../valueVisitor';
+import { NormalBlockTypeClass, BlockVisitor, isNormalBlockType } from '../blockVisitor';
+import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
 
-export const makeWhenControlType = (ctx: WhenControlContext): WhenControlType => {
-    if (!ctx.whenValue() || !ctx.block()) {
-        throw new Error('値が異常です。WhenControlContext: ' + ctx.getText());
+export class WhenControlTypeClass extends ControlTypeClass<WhenValueTypeClass> {
+    private block: NormalBlockTypeClass | ErrorTypeClass;
+    private constructor(
+        value: WhenValueTypeClass | ErrorTypeClass,
+        block: NormalBlockTypeClass | ErrorTypeClass,
+    ) {
+        super('whenControl', value);
+        this.block = block;
     }
 
-    const condition = new ValueVisitor().visit(ctx.whenValue());
-    const block = new BlockVisitor().visit(ctx.block());
-    return {
-        type: 'whenControl',
-        control: {
-            condition: condition,
-            block: block,
-        },
-    };
+    static create(ctx: WhenControlContext): WhenControlTypeClass {
+        if (!ctx.whenValue() || !ctx.block()) {
+            throw new Error('値が異常です。WhenControlContext: ' + ctx.getText());
+        }
+
+        return new WhenControlTypeClass(
+            isValidClass(new ValueVisitor().visit(ctx.whenValue()), isWhenValueType, 'whenValue'),
+            isValidClass(new BlockVisitor().visit(ctx.block()), isNormalBlockType, 'block'),
+        );
+    }
+
+    getBlock(): NormalBlockTypeClass | ErrorTypeClass {
+        return this.block;
+    }
+}
+
+export const isWhenControlType = (target: CommonTypeClass): target is WhenControlTypeClass => {
+    return target instanceof WhenControlTypeClass;
 };

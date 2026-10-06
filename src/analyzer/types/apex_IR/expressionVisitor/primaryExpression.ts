@@ -4,14 +4,11 @@ import { ExpressionTypeClass } from '.';
 
 import { PrimaryTypeClass, PrimaryVisitor, isPrimaryTypeAll } from '../primaryVisitor';
 
-import { CommonTypeClass, ErrorTypeClass } from '../commonVisitor';
+import { CommonTypeClass, ErrorTypeClass, isValidClass } from '../commonVisitor';
 
 export class PrimaryExpressionTypeClass extends ExpressionTypeClass<PrimaryTypeClass<unknown>> {
-    private constructor(
-        value: PrimaryTypeClass<unknown> | null,
-        errorClasses: Record<string, ErrorTypeClass>,
-    ) {
-        super('primaryExpression', value, errorClasses);
+    private constructor(value: PrimaryTypeClass<unknown> | ErrorTypeClass) {
+        super('primaryExpression', value);
     }
 
     static create(ctx: PrimaryExpressionContext): PrimaryExpressionTypeClass {
@@ -19,17 +16,9 @@ export class PrimaryExpressionTypeClass extends ExpressionTypeClass<PrimaryTypeC
             throw new Error('値が異常です。PrimaryExpressionContext: ' + ctx.getText());
         }
 
-        let value: PrimaryTypeClass<unknown> | null = null;
-        const errorClasses: Record<string, ErrorTypeClass> = {};
-
-        const primaryTypeClass = new PrimaryVisitor().visit(ctx.primary());
-        if (isPrimaryTypeAll(primaryTypeClass)) {
-            value = primaryTypeClass;
-        } else {
-            errorClasses['value'] = primaryTypeClass;
-        }
-
-        return new PrimaryExpressionTypeClass(value, errorClasses);
+        return new PrimaryExpressionTypeClass(
+            isValidClass(new PrimaryVisitor().visit(ctx.primary()), isPrimaryTypeAll, 'primary'),
+        );
     }
 }
 

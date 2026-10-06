@@ -1,98 +1,59 @@
 import { WhereLogicalExpressionContext } from '@apexdevtools/apex-parser';
 
-import { ExpressionType, ExpressionVisitor } from '.';
+import {
+    WhereConditionalExpressionTypeClass,
+    ExpressionListTypeClass,
+    ExpressionVisitor,
+    isWhereConditionalExpressionType,
+} from '.';
 
-type WhereLogicalFieldType =
-    | {
-          condition: ExpressionType;
-      }
-    | {
-          type: 'AND';
-          condition1: WhereLogicalFieldType;
-          condition2: WhereLogicalFieldType;
-      }
-    | {
-          type: 'OR';
-          condition1: WhereLogicalFieldType;
-          condition2: WhereLogicalFieldType;
-      }
-    | {
-          type: 'NOT';
-          condition: WhereLogicalFieldType;
-      };
+import { CommonTypeClass, ErrorTypeClass, isValidClassList } from '../commonVisitor';
 
-export type WhereLogicalExpressionType = {
-    type: 'whereLogicalExpression';
-    expression: WhereLogicalFieldType;
-};
+export class WhereLogicalExpressionTypeClass extends ExpressionListTypeClass<WhereConditionalExpressionTypeClass> {
+    private operator: string | null = null;
 
-export const makeWhereLogicalExpressionType = (
-    ctx: WhereLogicalExpressionContext,
-): WhereLogicalExpressionType => {
-    const conditions: WhereLogicalFieldType[] = ctx.whereConditionalExpression_list()
-        ? ctx.whereConditionalExpression_list().map((whereConditionalExpressionCtx) => {
-              const value = new ExpressionVisitor().visit(whereConditionalExpressionCtx);
-              return {
-                  condition: value,
-              };
-          })
-        : [];
-
-    const andNodes = ctx.SOQLAND_list()
-        ? ctx.SOQLAND_list().map((andNode) => {
-              return { index: andNode.symbol.tokenIndex, value: 'AND' };
-          })
-        : [];
-    const orNodes = ctx.SOQLOR_list()
-        ? ctx.SOQLOR_list().map((orNode) => {
-              return { index: orNode.symbol.tokenIndex, value: 'OR' };
-          })
-        : [];
-    const logicalOperators = [...andNodes, ...orNodes]
-        .sort((a, b) => a.index - b.index)
-        .map((node) => {
-            return node.value;
-        });
-
-    if (conditions.length - 1 !== logicalOperators.length) {
-        throw new Error('値が異常です。LogicalExpressionContext: ' + ctx.getText());
+    private constructor(
+        value: (WhereConditionalExpressionTypeClass | ErrorTypeClass)[],
+        operator: string | null,
+    ) {
+        super('whereLogicalExpression', value);
+        this.operator = operator;
     }
 
-    let i = 0;
-    while (i < logicalOperators.length) {
-        if (logicalOperators.at(i) === 'AND') {
-            const andConditon: WhereLogicalFieldType = {
-                type: 'AND',
-                condition1: conditions.at(i)!,
-                condition2: conditions.at(i + 1)!,
-            };
-
-            conditions.splice(i, 2, andConditon);
-            logicalOperators.splice(i, 1);
-        } else {
-            i++;
+    static create(ctx: WhereLogicalExpressionContext): WhereLogicalExpressionTypeClass {
+        if (
+            !ctx.whereConditionalExpression_list() ||
+            ctx.whereConditionalExpression_list().length - 1 !==
+                (ctx.SOQLAND_list()?.length ?? 0) + (ctx.SOQLOR_list()?.length ?? 0)
+        ) {
+            throw new Error('値が異常です。WhereLogicalExpressionContext: ' + ctx.getText());
         }
+
+        return new WhereLogicalExpressionTypeClass(
+            isValidClassList(
+                ctx.whereConditionalExpression_list(),
+                (ctx) => new ExpressionVisitor().visit(ctx),
+                isWhereConditionalExpressionType,
+                'conditionalExpression',
+            ),
+            ctx.SOQLAND_list()?.length
+                ? 'AND'
+                : ctx.SOQLOR_list()?.length
+                  ? 'OR'
+                  : ctx.NOT()
+                    ? 'NOT'
+                    : null,
+        );
     }
 
-    let value: WhereLogicalFieldType = conditions.at(0)!;
-    logicalOperators.forEach((operator, index) => {
-        value = {
-            type: 'OR',
-            condition1: value,
-            condition2: conditions.at(index + 1)!,
-        };
-    });
-
-    if (ctx.NOT()) {
-        value = {
-            type: 'NOT',
-            condition: value,
-        };
+    getOperator(): string | null {
+        return this.operator;
     }
+}
 
-    return {
-        type: 'whereLogicalExpression',
-        expression: value,
-    };
+export const isWhereLogicalExpressionType = (
+    target: CommonTypeClass,
+): target is WhereLogicalExpressionTypeClass => {
+    return target instanceof WhereLogicalExpressionTypeClass;
 };
 

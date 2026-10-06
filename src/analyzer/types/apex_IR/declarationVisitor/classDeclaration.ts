@@ -2,55 +2,61 @@ import { ClassDeclarationContext } from '@apexdevtools/apex-parser';
 
 import { DeclarationTypeClass } from '.';
 
-import { NormalIdTypeClass, IdVisitor } from '../idVisitor';
-import { BodyType, BodyVisitor } from '../bodyVisitor';
-import { ListType, ListVisitor } from '../listVisitor';
-import { TypeType, TypeVisitor } from '../typeVisitor';
-import { ErrorTypeClass, CommonTypeClass, isErrorType } from '../commonVisitor';
+import { NormalIdTypeClass, IdVisitor, isNormalIdType } from '../idVisitor';
+import { ClassBodyTypeClass, BodyVisitor, isClassBodyType } from '../bodyVisitor';
+import { TypeListTypeClass, ListVisitor, isTypeListType } from '../listVisitor';
+import { TypeRefTypeClass, TypeVisitor, isTypeRefType } from '../typeVisitor';
+import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
 
-export class ClassDeclarationTypeClass extends DeclarationTypeClass<NormalIdTypeClass> {}
+export class ClassDeclarationTypeClass extends DeclarationTypeClass<NormalIdTypeClass> {
+    private body: ClassBodyTypeClass | ErrorTypeClass;
+    private extend: TypeRefTypeClass | ErrorTypeClass | null;
+    private implement: TypeListTypeClass | ErrorTypeClass | null;
+
+    private constructor(
+        value: NormalIdTypeClass | ErrorTypeClass,
+        body: ClassBodyTypeClass | ErrorTypeClass,
+        extend: TypeRefTypeClass | ErrorTypeClass | null,
+        implement: TypeListTypeClass | ErrorTypeClass | null,
+    ) {
+        super('classDeclaration', value);
+        this.body = body;
+        this.extend = extend;
+        this.implement = implement;
+    }
+
+    static create(ctx: ClassDeclarationContext): ClassDeclarationTypeClass {
+        if (!ctx.id() || !ctx.classBody()) {
+            throw new Error('値が異常です。ClassDeclarationContext: ' + ctx.getText());
+        }
+
+        return new ClassDeclarationTypeClass(
+            isValidClass(new IdVisitor().visit(ctx.id()), isNormalIdType, 'id'),
+            isValidClass(new BodyVisitor().visit(ctx.classBody()), isClassBodyType, 'classBody'),
+            ctx.EXTENDS() && ctx.typeRef()
+                ? isValidClass(new TypeVisitor().visit(ctx.typeRef()), isTypeRefType, 'typeRef')
+                : null,
+            ctx.IMPLEMENTS() && ctx.typeList()
+                ? isValidClass(new ListVisitor().visit(ctx.typeList()), isTypeListType, 'typeList')
+                : null,
+        );
+    }
+
+    getBody(): ClassBodyTypeClass | ErrorTypeClass {
+        return this.body;
+    }
+
+    getExtend(): TypeRefTypeClass | ErrorTypeClass | null {
+        return this.extend;
+    }
+
+    getImplement(): TypeListTypeClass | ErrorTypeClass | null {
+        return this.implement;
+    }
+}
 
 export const isClassDeclarationType = (
     target: CommonTypeClass,
 ): target is ClassDeclarationTypeClass => {
     return target instanceof ClassDeclarationTypeClass;
 };
-
-export type ClassDeclarationType = {
-    type: 'classDeclaration';
-    declaration: {
-        name: IdType;
-        body: BodyType;
-        extends?: TypeType;
-        implements?: ListType;
-    };
-};
-
-export function makeClassDeclarationType(ctx: ClassDeclarationContext): ClassDeclarationType {
-    if (!ctx.id() || !ctx.classBody()) {
-        throw new Error('値が異常です。ClassDeclarationContext: ' + ctx.getText());
-    }
-
-    const name = new IdVisitor().visit(ctx.id());
-    const body = new BodyVisitor().visit(ctx.classBody());
-
-    const classDeclarationType: ClassDeclarationType = {
-        type: 'classDeclaration',
-        declaration: {
-            name: name,
-            body: body,
-        },
-    };
-
-    if (ctx.EXTENDS() && ctx.typeRef()) {
-        const extendsRef = new TypeVisitor().visit(ctx.typeRef());
-        classDeclarationType.declaration.extends = extendsRef;
-    }
-
-    if (ctx.IMPLEMENTS() && ctx.typeList()) {
-        const implementsList = new ListVisitor().visit(ctx.typeList());
-        classDeclarationType.declaration.implements = implementsList;
-    }
-
-    return classDeclarationType;
-}

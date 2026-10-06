@@ -1,22 +1,29 @@
 import { TypeRefPrimaryContext } from '@apexdevtools/apex-parser';
 
-import { TypeType, TypeVisitor } from '../typeVisitor';
+import { PrimaryTypeClass } from '.';
 
-export type TypeRefPrimaryType = {
-    type: 'typeRefPrimary';
-    primary: TypeType;
-};
+import { TypeRefTypeClass, TypeVisitor, isTypeRefType } from '../typeVisitor';
+import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
 
-export const makeTypeRefPrimaryType = (ctx: TypeRefPrimaryContext): TypeRefPrimaryType => {
-    if (!ctx.typeRef()) {
-        throw new Error('値が異常です。TypeRefPrimaryContext: ' + ctx.getText());
+export class TypeRefPrimaryTypeClass extends PrimaryTypeClass<TypeRefTypeClass> {
+    private constructor(value: TypeRefTypeClass | ErrorTypeClass) {
+        super('typeRefPrimary', value);
     }
 
-    const primary = new TypeVisitor().visit(ctx.typeRef());
+    static create(ctx: TypeRefPrimaryContext): TypeRefPrimaryTypeClass {
+        if (!ctx.typeRef()) {
+            throw new Error('値が異常です。 TypeRefPrimaryContext:' + ctx);
+        }
 
-    return {
-        type: 'typeRefPrimary',
-        primary: primary,
-    };
+        return new TypeRefPrimaryTypeClass(
+            isValidClass(new TypeVisitor().visit(ctx.typeRef()), isTypeRefType, 'typeRef'),
+        );
+    }
+}
+
+export const isTypeRefPrimaryType = (
+    target: CommonTypeClass,
+): target is TypeRefPrimaryTypeClass => {
+    return target instanceof TypeRefPrimaryTypeClass;
 };
 

@@ -4,14 +4,11 @@ import { NormalIdTypeClass, IdVisitor, isNormalIdType } from '../idVisitor';
 
 import { PrimaryTypeClass } from '.';
 
-import { CommonTypeClass, ErrorTypeClass, isErrorType } from '../commonVisitor';
+import { CommonTypeClass, ErrorTypeClass, isValidClass } from '../commonVisitor';
 
 export class IdPrimaryTypeClass extends PrimaryTypeClass<NormalIdTypeClass> {
-    private constructor(
-        value: NormalIdTypeClass | null,
-        errorClasses: Record<string, ErrorTypeClass>,
-    ) {
-        super('idPrimary', value, errorClasses);
+    private constructor(value: NormalIdTypeClass | ErrorTypeClass) {
+        super('idPrimary', value);
     }
 
     static create(ctx: IdPrimaryContext): IdPrimaryTypeClass {
@@ -19,16 +16,9 @@ export class IdPrimaryTypeClass extends PrimaryTypeClass<NormalIdTypeClass> {
             throw new Error('値が異常です。IdPrimaryContext: ' + ctx.getText());
         }
 
-        let value: NormalIdTypeClass | null = null;
-        const errorClasses: Record<string, ErrorTypeClass> = {};
-        const idTypeClass = new IdVisitor().visit(ctx.id());
-        if (isNormalIdType(idTypeClass)) {
-            value = idTypeClass;
-        } else if (isErrorType(idTypeClass)) {
-            errorClasses['value'] = idTypeClass;
-        }
-
-        return new IdPrimaryTypeClass(value, errorClasses);
+        return new IdPrimaryTypeClass(
+            isValidClass(new IdVisitor().visit(ctx.id()), isNormalIdType, 'id'),
+        );
     }
 }
 

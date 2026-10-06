@@ -4,18 +4,17 @@ import { CallTypeClass } from '.';
 
 import { NormalIdTypeClass, IdVisitor, isNormalIdType } from '../idVisitor';
 import { ExpressionListTypeClass, ListVisitor, isExpressionListType } from '../listVisitor';
-import { ErrorTypeClass, CommonTypeClass, isErrorType } from '../commonVisitor';
+import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
 
 export class MethodCallTypeClass extends CallTypeClass<NormalIdTypeClass, ExpressionListTypeClass> {
     private reference: string | null = null;
 
     private constructor(
-        value: NormalIdTypeClass | null,
-        param: ExpressionListTypeClass | null,
+        value: NormalIdTypeClass | ErrorTypeClass,
+        param: ExpressionListTypeClass | ErrorTypeClass | null,
         reference: string | null,
-        errorClasses: Record<string, ErrorTypeClass>,
     ) {
-        super('methodCall', value, param, errorClasses);
+        super('methodCall', value, param);
         this.reference = reference;
     }
 
@@ -24,44 +23,21 @@ export class MethodCallTypeClass extends CallTypeClass<NormalIdTypeClass, Expres
             throw new Error('値が異常です。MethodCallContext: ' + ctx.getText());
         }
 
-        let value: NormalIdTypeClass | null = null;
-        let param: ExpressionListTypeClass | null = null;
-        let reference: string | null = null;
-        const errorClasses: Record<string, ErrorTypeClass> = {};
-
-        const idTypeClass = new IdVisitor().visit(ctx.id());
-        if (isNormalIdType(idTypeClass)) {
-            value = idTypeClass;
-        } else if (isErrorType(idTypeClass)) {
-            errorClasses['value'] = idTypeClass;
-        }
-
-        if (ctx.expressionList()) {
-            const listTypeClass = new ListVisitor().visit(ctx.expressionList());
-            if (isExpressionListType(listTypeClass)) {
-                param = listTypeClass;
-            } else if (isErrorType(listTypeClass)) {
-                errorClasses['param'] = listTypeClass;
-            }
-        }
-
-        if (ctx.THIS()) {
-            reference = 'this';
-        }
-
-        if (ctx.SUPER()) {
-            reference = 'super';
-        }
-
-        return new MethodCallTypeClass(value, param, reference, errorClasses);
+        return new MethodCallTypeClass(
+            isValidClass(new IdVisitor().visit(ctx.id()), isNormalIdType, 'id'),
+            ctx.expressionList()
+                ? isValidClass(
+                      new ListVisitor().visit(ctx.expressionList()),
+                      isExpressionListType,
+                      'expressionList',
+                  )
+                : null,
+            ctx.THIS() ? 'this' : ctx.SUPER() ? 'super' : null,
+        );
     }
 
     getReference(): string | null {
         return this.reference;
-    }
-
-    isReferenceNull(): boolean {
-        return this.reference === null;
     }
 }
 

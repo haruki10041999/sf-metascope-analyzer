@@ -1,33 +1,54 @@
 import { SwitchStatementContext } from '@apexdevtools/apex-parser';
 
-import { ControlType, ControlVisitor } from '../controlVisitor';
-import { ExpressionType, ExpressionVisitor } from '../expressionVisitor';
+import { StatementTypeClass } from '.';
 
-export type SwitchStatementType = {
-    type: 'switchStatement';
-    statement: {
-        variant: ExpressionType;
-        blocks: ControlType[];
-    };
-};
+import { WhenControlTypeClass, ControlVisitor, isWhenControlType } from '../controlVisitor';
+import {
+    ExpressionAllTypeClass,
+    ExpressionVisitor,
+    isExpressionTypeAll,
+} from '../expressionVisitor';
+import { ErrorTypeClass, CommonTypeClass, isValidClass, isValidClassList } from '../commonVisitor';
 
-export const makeSwitchStatementType = (ctx: SwitchStatementContext): SwitchStatementType => {
-    if (!ctx.expression() || !ctx.whenControl_list() || ctx.whenControl_list().length === 0) {
-        throw new Error('値が異常です。SwitchStatementContext: ' + ctx.getText());
+export class SwitchStatementTypeClass extends StatementTypeClass<ExpressionAllTypeClass> {
+    private block: (WhenControlTypeClass | ErrorTypeClass)[];
+
+    private constructor(
+        value: ExpressionAllTypeClass | ErrorTypeClass,
+        blocks: (WhenControlTypeClass | ErrorTypeClass)[],
+    ) {
+        super('switchStatement', value);
+        this.block = blocks;
     }
 
-    const name = new ExpressionVisitor().visit(ctx.expression());
-    const whenBlocks = ctx.whenControl_list().map((whenControlCtx) => {
-        const block = new ControlVisitor().visit(whenControlCtx);
-        return block;
-    });
+    static create(ctx: SwitchStatementContext): SwitchStatementTypeClass {
+        if (!ctx.expression() || !ctx.whenControl_list() || ctx.whenControl_list().length === 0) {
+            throw new Error('値が異常です。SwitchStatementContext: ' + ctx.getText());
+        }
 
-    return {
-        type: 'switchStatement',
-        statement: {
-            variant: name,
-            blocks: whenBlocks,
-        },
-    };
+        return new SwitchStatementTypeClass(
+            isValidClass(
+                new ExpressionVisitor().visit(ctx.expression()),
+                isExpressionTypeAll,
+                'expression',
+            ),
+            isValidClassList(
+                ctx.whenControl_list(),
+                (ctx) => new ControlVisitor().visit(ctx),
+                isWhenControlType,
+                'whenControl_list',
+            ),
+        );
+    }
+
+    getBlocks(): (WhenControlTypeClass | ErrorTypeClass)[] {
+        return this.block;
+    }
+}
+
+export const isSwitchStatementType = (
+    target: CommonTypeClass,
+): target is SwitchStatementTypeClass => {
+    return target instanceof SwitchStatementTypeClass;
 };
 

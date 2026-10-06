@@ -1,13 +1,13 @@
 import { EnumConstantsContext } from '@apexdevtools/apex-parser';
 
-import { DeclarationTypeClass } from '.';
+import { DeclarationListTypeClass } from '.';
 
 import { NormalIdTypeClass, IdVisitor, isNormalIdType } from '../idVisitor';
-import { ErrorTypeClass, CommonTypeClass, isErrorType } from '../commonVisitor';
+import { ErrorTypeClass, CommonTypeClass, isValidClassList } from '../commonVisitor';
 
-export class EnumConstantsTypeClass extends DeclarationTypeClass<NormalIdTypeClass[]> {
-    private constructor(value: NormalIdTypeClass[], errorClasses: Record<string, ErrorTypeClass>) {
-        super('enumConstants', value, errorClasses);
+export class EnumConstantsTypeClass extends DeclarationListTypeClass<NormalIdTypeClass> {
+    private constructor(value: (NormalIdTypeClass | ErrorTypeClass)[]) {
+        super('enumConstants', value);
     }
 
     static create(ctx: EnumConstantsContext): EnumConstantsTypeClass {
@@ -15,19 +15,14 @@ export class EnumConstantsTypeClass extends DeclarationTypeClass<NormalIdTypeCla
             throw new Error('値が異常です。EnumConstantsContext: ' + ctx.getText());
         }
 
-        const value: NormalIdTypeClass[] = [];
-        const errorClasses: Record<string, ErrorTypeClass> = {};
-
-        ctx.id_list().forEach((idCtx, index) => {
-            const idTypeClass = new IdVisitor().visit(idCtx);
-            if (isNormalIdType(idTypeClass)) {
-                value.push(idTypeClass);
-            } else if (isErrorType(idTypeClass)) {
-                errorClasses[`value_${index}`] = idTypeClass;
-            }
-        });
-
-        return new EnumConstantsTypeClass(value, errorClasses);
+        return new EnumConstantsTypeClass(
+            isValidClassList(
+                ctx.id_list(),
+                (ctx) => new IdVisitor().visit(ctx),
+                isNormalIdType,
+                'id',
+            ),
+        );
     }
 }
 

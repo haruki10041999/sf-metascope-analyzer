@@ -16,39 +16,33 @@ import {
     EnumConstantsContext,
 } from '@apexdevtools/apex-parser';
 
-import { MemberDeclarationType, makeMemberDeclarationType } from './memberDeclaration';
-import {
-    TriggerMemberDeclarationType,
-    makeTriggerMemberDeclarationType,
-} from './triggerMemberDeclaration';
-import {
-    AnonymousMemberDeclarationType,
-    makeAnonymousMemberDeclarationType,
-} from './anonymousMemberDeclaration';
-import { TypeDeclarationType, makeTypeDeclarationType } from './typeDeclaration';
+import { MemberDeclarationTypeClass } from './memberDeclaration';
+import { TriggerMemberDeclarationTypeClass } from './triggerMemberDeclaration';
+import { AnonymousMemberDeclarationTypeClass } from './anonymousMemberDeclaration';
+import { TypeDeclarationClass } from './typeDeclaration';
 import { FieldDeclarationTypeClass } from './fieldDeclaration';
 import { PropertyDeclarationTypeClass } from './propertyDeclaration';
 import { InterfaceMethodDeclarationTypeClass } from './interfaceMethodDeclaration';
-import { InterfaceDeclarationType, makeInterfaceDeclarationType } from './interfaceDeclaration';
+import { InterfaceDeclarationTypeClass } from './interfaceDeclaration';
 import { LocalVariableDeclarationTypeClass } from './localVariableDeclaration';
 import { ClassDeclarationTypeClass } from './classDeclaration';
-import { ClassBodyDeclarationType, makeClassBodyDeclarationType } from './classBodyDeclaration';
+import { ClassBodyDeclarationTypeClass } from './classBodyDeclaration';
 import { MethodDeclarationTypeClass } from './methodDeclaration';
 import { EnumDeclarationTypeClass } from './enumDeclaration';
 import { ConstructorDeclarationTypeClass } from './constructorDeclaration';
 import { EnumConstantsTypeClass } from './enumConstants';
 
-import { ErrorTypeClass, ContextTypeClass, CommonTypeClass, CommonVisitor } from '../commonVisitor';
+import { ErrorTypeClass, CommonTypeClass, CommonVisitor } from '../commonVisitor';
 
+export { isTypeDeclarationClass, TypeDeclarationClass } from './typeDeclaration';
+export { isMemberDeclarationType, MemberDeclarationTypeClass } from './memberDeclaration';
 export { isFieldDeclarationType, FieldDeclarationTypeClass } from './fieldDeclaration';
-export {
-    isPropertyDeclarationTypeClass,
-    PropertyDeclarationTypeClass,
-} from './propertyDeclaration';
+export { isPropertyDeclarationType, PropertyDeclarationTypeClass } from './propertyDeclaration';
 export {
     isInterfaceMethodDeclarationType,
     InterfaceMethodDeclarationTypeClass,
 } from './interfaceMethodDeclaration';
+export { isInterfaceDeclarationType, InterfaceDeclarationTypeClass } from './interfaceDeclaration';
 export { isClassDeclarationType, ClassDeclarationTypeClass } from './classDeclaration';
 export { isMethodDeclarationType, MethodDeclarationTypeClass } from './methodDeclaration';
 export { isEnumDeclarationType, EnumDeclarationTypeClass } from './enumDeclaration';
@@ -56,34 +50,57 @@ export {
     isLocalVariableDeclarationType,
     LocalVariableDeclarationTypeClass,
 } from './localVariableDeclaration';
+export { isClassBodyDeclarationType, ClassBodyDeclarationTypeClass } from './classBodyDeclaration';
 export {
     isConstructorDeclarationType,
     ConstructorDeclarationTypeClass,
 } from './constructorDeclaration';
 export { isEnumConstantsType, EnumConstantsTypeClass } from './enumConstants';
+export {
+    isTriggerMemberDeclarationType,
+    TriggerMemberDeclarationTypeClass,
+} from './triggerMemberDeclaration';
+export {
+    isAnonymousMemberDeclarationType,
+    AnonymousMemberDeclarationTypeClass,
+} from './anonymousMemberDeclaration';
 
-export class DeclarationTypeClass<T> extends ContextTypeClass<T> {
-    constructor(type: string, value: T | null, errorClasses: Record<string, ErrorTypeClass>) {
-        super(type, value, errorClasses);
+export class DeclarationTypeClass<T> extends CommonTypeClass {
+    private value: T | ErrorTypeClass;
+    constructor(type: string, value: T | ErrorTypeClass) {
+        super(type);
+        this.value = value;
+    }
+
+    getValue(): T | ErrorTypeClass {
+        return this.value;
     }
 }
 
+export class DeclarationListTypeClass<T> extends CommonTypeClass {
+    private value: (T | ErrorTypeClass)[];
+    constructor(type: string, value: (T | ErrorTypeClass)[]) {
+        super(type);
+        this.value = value;
+    }
+
+    getValue(): (T | ErrorTypeClass)[] {
+        return this.value;
+    }
+}
+
+export type DeclarationAllTypeClass =
+    DeclarationTypeClass<unknown> | DeclarationListTypeClass<unknown>;
+
 export const isDeclarationTypeAll = (
     target: CommonTypeClass,
-): target is DeclarationTypeClass<unknown> => {
-    return target instanceof DeclarationTypeClass;
+): target is DeclarationAllTypeClass => {
+    return target instanceof DeclarationTypeClass || target instanceof DeclarationListTypeClass;
 };
 
-export class DeclarationVisitor extends CommonVisitor<DeclarationTypeClass<unknown>> {
+export class DeclarationVisitor extends CommonVisitor<DeclarationAllTypeClass> {
     visitMemberDeclaration(ctx: MemberDeclarationContext) {
-        console.log('解析を開始します。' + 'MemberDeclarationContext:  ' + ctx.getText());
-        const result = makeMemberDeclarationType(ctx);
-        console.log(
-            '------------解析が終了しました--------------' +
-                'MemberDeclarationContext:  ' +
-                JSON.stringify(result, null, 2),
-        );
-        return result;
+        return MemberDeclarationTypeClass.create(ctx);
     }
 
     visitLocalVariableDeclaration(ctx: LocalVariableDeclarationContext) {
@@ -91,25 +108,11 @@ export class DeclarationVisitor extends CommonVisitor<DeclarationTypeClass<unkno
     }
 
     visitClassDeclaration(ctx: ClassDeclarationContext) {
-        console.log('解析を開始します。' + 'ClassDeclarationContext:  ' + ctx.getText());
-        const result = makeClassDeclarationType(ctx);
-        console.log(
-            '------------解析が終了しました--------------' +
-                'ClassDeclarationContext:  ' +
-                JSON.stringify(result, null, 2),
-        );
-        return result;
+        return ClassDeclarationTypeClass.create(ctx);
     }
 
     visitClassBodyDeclaration(ctx: ClassBodyDeclarationContext) {
-        console.log('解析を開始します。' + 'ClassBodyDeclarationContext:  ' + ctx.getText());
-        const result = makeClassBodyDeclarationType(ctx);
-        console.log(
-            '------------解析が終了しました--------------' +
-                'ClassBodyDeclarationContext:  ' +
-                JSON.stringify(result, null, 2),
-        );
-        return result;
+        return ClassBodyDeclarationTypeClass.create(ctx);
     }
 
     visitEnumDeclaration(ctx: EnumDeclarationContext) {
@@ -125,14 +128,7 @@ export class DeclarationVisitor extends CommonVisitor<DeclarationTypeClass<unkno
     }
 
     visitInterfaceDeclaration(ctx: InterfaceDeclarationContext) {
-        console.log('解析を開始します。' + 'InterfaceDeclarationContext:  ' + ctx.getText());
-        const result = makeInterfaceDeclarationType(ctx);
-        console.log(
-            '------------解析が終了しました--------------' +
-                'InterfaceDeclarationContext:  ' +
-                JSON.stringify(result, null, 2),
-        );
-        return result;
+        return InterfaceDeclarationTypeClass.create(ctx);
     }
 
     visitFieldDeclaration(ctx: FieldDeclarationContext) {
@@ -148,36 +144,15 @@ export class DeclarationVisitor extends CommonVisitor<DeclarationTypeClass<unkno
     }
 
     visitTypeDeclaration(ctx: TypeDeclarationContext) {
-        console.log('解析を開始します。' + 'TypeDeclarationContext:  ' + ctx.getText());
-        const result = makeTypeDeclarationType(ctx);
-        console.log(
-            '------------解析が終了しました--------------' +
-                'TypeDeclarationContext:  ' +
-                JSON.stringify(result, null, 2),
-        );
-        return result;
+        return TypeDeclarationClass.create(ctx);
     }
 
     visitTriggerMemberDeclaration(ctx: TriggerMemberDeclarationContext) {
-        console.log('解析を開始します。' + 'TriggerMemberDeclarationContext:  ' + ctx.getText());
-        const result = makeTriggerMemberDeclarationType(ctx);
-        console.log(
-            '------------解析が終了しました--------------' +
-                'TriggerMemberDeclarationContext:  ' +
-                JSON.stringify(result, null, 2),
-        );
-        return result;
+        return TriggerMemberDeclarationTypeClass.create(ctx);
     }
 
     visitAnonymousMemberDeclaration(ctx: AnonymousMemberDeclarationContext) {
-        console.log('解析を開始します。' + 'AnonymousMemberDeclarationContext:  ' + ctx.getText());
-        const result = makeAnonymousMemberDeclarationType(ctx);
-        console.log(
-            '------------解析が終了しました--------------' +
-                'AnonymousMemberDeclarationContext:  ' +
-                JSON.stringify(result, null, 2),
-        );
-        return result;
+        return AnonymousMemberDeclarationTypeClass.create(ctx);
     }
 
     visitEnumConstants(ctx: EnumConstantsContext) {

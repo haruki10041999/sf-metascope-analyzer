@@ -1,16 +1,17 @@
 import { SetCreatorRestContext } from '@apexdevtools/apex-parser';
 
-import { RestTypeClass } from '.';
+import { RestListTypeClass } from '.';
 
-import { ExpressionTypeClass, ExpressionVisitor, isExpressionTypeAll } from '../expressionVisitor';
-import { ErrorTypeClass, CommonTypeClass } from '../commonVisitor';
+import {
+    ExpressionAllTypeClass,
+    ExpressionVisitor,
+    isExpressionTypeAll,
+} from '../expressionVisitor';
+import { ErrorTypeClass, CommonTypeClass, isValidClassList } from '../commonVisitor';
 
-export class SetCreatorRestTypeClass extends RestTypeClass<ExpressionTypeClass<unknown>[]> {
-    private constructor(
-        value: ExpressionTypeClass<unknown>[] | null,
-        errorClasses: Record<string, ErrorTypeClass>,
-    ) {
-        super('setCreatorRest', value, errorClasses);
+export class SetCreatorRestTypeClass extends RestListTypeClass<ExpressionAllTypeClass> {
+    private constructor(value: (ExpressionAllTypeClass | ErrorTypeClass)[]) {
+        super('setCreatorRest', value);
     }
 
     static create(ctx: SetCreatorRestContext): SetCreatorRestTypeClass {
@@ -18,19 +19,14 @@ export class SetCreatorRestTypeClass extends RestTypeClass<ExpressionTypeClass<u
             throw new Error('値が異常です。SetCreatorRestContext: ' + ctx.getText());
         }
 
-        const value: ExpressionTypeClass<unknown>[] = [];
-        const errorClasses: Record<string, ErrorTypeClass> = {};
-
-        ctx.expression_list().forEach((expressionCtx, index) => {
-            const expressionTypeClass = new ExpressionVisitor().visit(expressionCtx);
-            if (isExpressionTypeAll(expressionTypeClass)) {
-                value.push(expressionTypeClass);
-            } else {
-                errorClasses[`value_${index}`] = expressionTypeClass;
-            }
-        });
-
-        return new SetCreatorRestTypeClass(value, errorClasses);
+        return new SetCreatorRestTypeClass(
+            isValidClassList(
+                ctx.expression_list(),
+                (ctx) => new ExpressionVisitor().visit(ctx),
+                isExpressionTypeAll,
+                'expression',
+            ),
+        );
     }
 }
 

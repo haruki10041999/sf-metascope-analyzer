@@ -9,19 +9,18 @@ import {
     isVariableDeclaratorsType,
 } from '../variableVisitor';
 import { TypeRefTypeClass, TypeVisitor, isTypeRefType } from '../typeVisitor';
-import { ErrorTypeClass, CommonTypeClass, isErrorType } from '../commonVisitor';
+import { ErrorTypeClass, CommonTypeClass, isValidClass, isValidClassList } from '../commonVisitor';
 
 export class LocalVariableDeclarationTypeClass extends DeclarationTypeClass<VariableDeclaratorsTypeClass> {
-    private valueType: TypeRefTypeClass | null = null;
-    private modifier: NormalModifierTypeClass[] = [];
+    private valueType: TypeRefTypeClass | ErrorTypeClass;
+    private modifier: (NormalModifierTypeClass | ErrorTypeClass)[] = [];
 
     private constructor(
-        value: VariableDeclaratorsTypeClass | null,
-        valueType: TypeRefTypeClass | null,
-        modifier: NormalModifierTypeClass[],
-        errorClasses: Record<string, ErrorTypeClass>,
+        value: VariableDeclaratorsTypeClass | ErrorTypeClass,
+        valueType: TypeRefTypeClass | ErrorTypeClass,
+        modifier: (NormalModifierTypeClass | ErrorTypeClass)[],
     ) {
-        super('localVariableDeclaration', value, errorClasses);
+        super('localVariableDeclaration', value);
         this.valueType = valueType;
         this.modifier = modifier;
     }
@@ -31,48 +30,27 @@ export class LocalVariableDeclarationTypeClass extends DeclarationTypeClass<Vari
             throw new Error('値が異常です。LocalVariableDeclarationContext: ' + ctx.getText());
         }
 
-        let value: VariableDeclaratorsTypeClass | null = null;
-        let valueType: TypeRefTypeClass | null = null;
-        const modifier: NormalModifierTypeClass[] = [];
-        const errorClasses: Record<string, ErrorTypeClass> = {};
-
-        const variableTypeClass = new VariableVisitor().visit(ctx.variableDeclarators());
-        if (isVariableDeclaratorsType(variableTypeClass)) {
-            value = variableTypeClass;
-        } else if (isErrorType(variableTypeClass)) {
-            errorClasses['value'] = variableTypeClass;
-        }
-
-        const typeTypeClass = new VariableVisitor().visit(ctx.variableDeclarators());
-        if (isTypeRefType(typeTypeClass)) {
-            valueType = typeTypeClass;
-        } else if (isErrorType(typeTypeClass)) {
-            errorClasses['valueType'] = typeTypeClass;
-        }
-
-        if (ctx.modifier_list() && ctx.modifier_list().length > 0) {
-            ctx.modifier_list().forEach((modifierCtx, index) => {
-                const modifierTypeClass = new ModifierVisitor().visit(modifierCtx);
-                if (isNormalModifierType(modifierTypeClass)) {
-                    modifier.push(modifierTypeClass);
-                } else if (isErrorType(modifierTypeClass)) {
-                    errorClasses[`modifier_${index}`] = modifierTypeClass;
-                }
-            });
-        }
-
-        return new LocalVariableDeclarationTypeClass(value, valueType, modifier, errorClasses);
+        return new LocalVariableDeclarationTypeClass(
+            isValidClass(
+                new VariableVisitor().visit(ctx.variableDeclarators()),
+                isVariableDeclaratorsType,
+                'variableDeclarators',
+            ),
+            isValidClass(new TypeVisitor().visit(ctx.typeRef()), isTypeRefType, 'typeRef'),
+            isValidClassList(
+                ctx.modifier_list(),
+                (ctx) => new ModifierVisitor().visit(ctx),
+                isNormalModifierType,
+                'modifier_list',
+            ),
+        );
     }
 
-    getValueType(): TypeRefTypeClass | null {
+    getValueType(): TypeRefTypeClass | ErrorTypeClass {
         return this.valueType;
     }
 
-    isValueTypeNull(): boolean {
-        return this.valueType === null;
-    }
-
-    getModifier(): NormalModifierTypeClass[] {
+    getModifier(): (NormalModifierTypeClass | ErrorTypeClass)[] {
         return this.modifier;
     }
 }

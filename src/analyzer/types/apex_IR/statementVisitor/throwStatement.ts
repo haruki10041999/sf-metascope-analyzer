@@ -1,22 +1,37 @@
 import { ThrowStatementContext } from '@apexdevtools/apex-parser';
 
-import { ExpressionType, ExpressionVisitor } from '../expressionVisitor';
+import { StatementTypeClass } from '../statementVisitor';
 
-export type ThrowStatementType = {
-    type: 'throwStatement';
-    statement: ExpressionType;
-};
+import {
+    ExpressionAllTypeClass,
+    ExpressionVisitor,
+    isExpressionTypeAll,
+} from '../expressionVisitor';
+import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
 
-export const makeThrowStatementType = (ctx: ThrowStatementContext): ThrowStatementType => {
-    if (!ctx.expression()) {
-        throw new Error('値が異常です。ThrowStatementContext: ' + ctx.getText());
+export class ThrowStatementTypeClass extends StatementTypeClass<ExpressionAllTypeClass> {
+    private constructor(value: ExpressionAllTypeClass | ErrorTypeClass) {
+        super('throwStatement', value);
     }
 
-    const statement = new ExpressionVisitor().visit(ctx.expression());
+    static create(ctx: ThrowStatementContext): ThrowStatementTypeClass {
+        if (!ctx.expression()) {
+            throw new Error('値が異常です。ThrowStatementContext: ' + ctx.getText());
+        }
 
-    return {
-        type: 'throwStatement',
-        statement: statement,
-    };
+        return new ThrowStatementTypeClass(
+            isValidClass(
+                new ExpressionVisitor().visit(ctx.expression()),
+                isExpressionTypeAll,
+                'expression',
+            ),
+        );
+    }
+}
+
+export const isThrowStatementType = (
+    target: CommonTypeClass,
+): target is ThrowStatementTypeClass => {
+    return target instanceof ThrowStatementTypeClass;
 };
 

@@ -9,22 +9,16 @@ import {
     isSetterType,
 } from '.';
 
-import {
-    NormalModifierTypeClass,
-    ModifierVisitor,
-    isNormalModifierType,
-    ModifierTypeClass,
-} from '../modifierVisitor';
-import { ErrorTypeClass, CommonTypeClass, isErrorType } from '../commonVisitor';
+import { NormalModifierTypeClass, ModifierVisitor, isNormalModifierType } from '../modifierVisitor';
+import { ErrorTypeClass, CommonTypeClass, isValidClass, isValidClassList } from '../commonVisitor';
 
 export class PropertyBlockTypeClass extends BlockTypeClass<GetterTypeClass | SetterTypeClass> {
-    private modifier: NormalModifierTypeClass[] = [];
+    private modifier: (NormalModifierTypeClass | ErrorTypeClass)[] = [];
     private constructor(
-        value: GetterTypeClass | SetterTypeClass | null,
-        modifier: NormalModifierTypeClass[],
-        errorClasses: Record<string, ErrorTypeClass>,
+        value: GetterTypeClass | SetterTypeClass | ErrorTypeClass,
+        modifier: (NormalModifierTypeClass | ErrorTypeClass)[],
     ) {
-        super('propertyBlock', value, errorClasses);
+        super('propertyBlock', value);
         this.modifier = modifier;
     }
 
@@ -33,43 +27,24 @@ export class PropertyBlockTypeClass extends BlockTypeClass<GetterTypeClass | Set
             throw new Error('値が異常です。GetterContext: ' + ctx.getText());
         }
 
-        let value: GetterTypeClass | SetterTypeClass | null = null;
-        const modifier: NormalModifierTypeClass[] = [];
-        const errorClasses: Record<string, ErrorTypeClass> = {};
-
-        if (ctx.getter()) {
-            const blockTypeClass = new BlockVisitor().visit(ctx.getter());
-            if (isGetterType(blockTypeClass)) {
-                value = blockTypeClass;
-            } else if (isErrorType(blockTypeClass)) {
-                errorClasses['value'] = blockTypeClass;
-            }
-        }
-
-        if (ctx.setter()) {
-            const blockTypeClass = new BlockVisitor().visit(ctx.setter());
-            if (isSetterType(blockTypeClass)) {
-                value = blockTypeClass;
-            } else if (isErrorType(blockTypeClass)) {
-                errorClasses['value'] = blockTypeClass;
-            }
-        }
-
-        if (ctx.modifier_list() && ctx.modifier_list().length > 0) {
-            ctx.modifier_list().forEach((modifierCtx, index) => {
-                const modifierTypeClass = new ModifierVisitor().visit(modifierCtx);
-                if (isNormalModifierType(modifierTypeClass)) {
-                    modifier.push(modifierTypeClass);
-                } else if (isErrorType(modifierTypeClass)) {
-                    errorClasses[`modifier_${index}`] = modifierTypeClass;
-                }
-            });
-        }
-
-        return new PropertyBlockTypeClass(value, modifier, errorClasses);
+        return new PropertyBlockTypeClass(
+            isValidClass(
+                ctx.getter()
+                    ? new BlockVisitor().visit(ctx.getter())
+                    : new BlockVisitor().visit(ctx.setter()),
+                ctx.getter() ? isGetterType : isSetterType,
+                'value',
+            ),
+            isValidClassList(
+                ctx.modifier_list(),
+                (modifierCtx) => new ModifierVisitor().visit(modifierCtx),
+                isNormalModifierType,
+                'modifier',
+            ),
+        );
     }
 
-    getModifier(): NormalModifierTypeClass[] {
+    getModifier(): (NormalModifierTypeClass | ErrorTypeClass)[] {
         return this.modifier;
     }
 }

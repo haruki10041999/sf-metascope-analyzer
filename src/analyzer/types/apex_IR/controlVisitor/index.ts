@@ -7,79 +7,54 @@ import {
     WhenControlContext,
 } from '@apexdevtools/apex-parser';
 
-import { ForControlType, makeForControlType } from './forControl';
-import { ForInitType, makeForInitType } from './forInit';
-import { ForUpdateType, makeForUpdateType } from './forUpdate';
-import { EnhancedForControlType, makeEnhancedForControlType } from './enhancedForControl';
-import { WhenControlType, makeWhenControlType } from './whenControl';
+import { ForControlTypeClass } from './forControl';
+import { ForInitTypeClass } from './forInit';
+import { ForUpdateTypeClass } from './forUpdate';
+import { EnhancedForControlTypeClass } from './enhancedForControl';
+import { WhenControlTypeClass } from './whenControl';
 
-import { ErrorTypeClass, ContextTypeClass, CommonTypeClass, CommonVisitor } from '../commonVisitor';
+import { ErrorTypeClass, CommonTypeClass, CommonVisitor } from '../commonVisitor';
 
-export class ControllTypeClass<T> extends ContextTypeClass<T> {
-    constructor(type: string, value: T | null, errorClasses: Record<string, ErrorTypeClass>) {
-        super(type, value, errorClasses);
+export { isForControlType, ForControlTypeClass } from './forControl';
+export { isForInitType, ForInitTypeClass } from './forInit';
+export { isForUpdateType, ForUpdateTypeClass } from './forUpdate';
+export { isWhenControlType, WhenControlTypeClass } from './whenControl';
+export { isEnhancedForControlType, EnhancedForControlTypeClass } from './enhancedForControl';
+
+export class ControlTypeClass<T> extends CommonTypeClass {
+    private value: T | ErrorTypeClass;
+    constructor(type: string, value: T | ErrorTypeClass) {
+        super(type);
+        this.value = value;
+    }
+
+    getValue(): T | ErrorTypeClass {
+        return this.value;
     }
 }
 
-export const isControllTypeAll = (
-    target: CommonTypeClass,
-): target is ControllTypeClass<unknown> => {
-    return target instanceof ControllTypeClass;
+export const isControlTypeAll = (target: CommonTypeClass): target is ControlTypeClass<unknown> => {
+    return target instanceof ControlTypeClass;
 };
 
-export class ControlVisitor extends CommonVisitor<ControllTypeClass<unknown>> {
+export class ControlVisitor extends CommonVisitor<ControlTypeClass<unknown>> {
     visitForControl(ctx: ForControlContext) {
-        console.log('解析を開始します。' + 'ForControlContext:  ' + ctx.getText());
-        const result = makeForControlType(ctx);
-        console.log(
-            '------------解析が終了しました--------------' +
-                'ForControlContext:  ' +
-                JSON.stringify(result, null, 2),
-        );
-        return result;
+        return ForControlTypeClass.create(ctx);
     }
 
     visitForInit(ctx: ForInitContext) {
-        console.log('解析を開始します。' + 'ForInitContext:  ' + ctx.getText());
-        const result = makeForInitType(ctx);
-        console.log(
-            '------------解析が終了しました--------------' +
-                'ForInitContext:  ' +
-                JSON.stringify(result, null, 2),
-        );
-        return result;
+        return ForInitTypeClass.create(ctx);
     }
 
     visitForUpdate(ctx: ForUpdateContext) {
-        console.log('解析を開始します。' + 'ForUpdateContext:  ' + ctx.getText());
-        const result = makeForUpdateType(ctx);
-        console.log(
-            '------------解析が終了しました--------------' +
-                'ForUpdateContext:  ' +
-                JSON.stringify(result, null, 2),
-        );
-        return result;
+        return ForUpdateTypeClass.create(ctx);
     }
 
     visitEnhancedForControl(ctx: EnhancedForControlContext) {
-        console.log('解析を開始します。' + 'EnhancedForControlContext:  ' + ctx.getText());
-        const result = makeEnhancedForControlType(ctx);
-        console.log(
-            '------------解析が終了しました--------------' +
-                'EnhancedForControlContext:  ' +
-                JSON.stringify(result, null, 2),
-        );
-        return result;
+        return EnhancedForControlTypeClass.create(ctx);
     }
 
     visitWhenControl(ctx: WhenControlContext) {
-        console.log('解析を開始します。' + 'WhenControlContext:  ' + ctx.getText());
-        const result = makeWhenControlType(ctx);
-        console.log(
-            '------------解析が終了しました--------------' +
-                'WhenControlContext:  ' +
-                JSON.stringify(result, null, 2),
-        );
-        return result;
+        return WhenControlTypeClass.create(ctx);
     }
 }

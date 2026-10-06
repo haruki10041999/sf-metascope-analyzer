@@ -1,29 +1,45 @@
 import { ForInitContext } from '@apexdevtools/apex-parser';
 
-import { DeclarationType, DeclarationVisitor } from '../declarationVisitor';
-import { ListType, ListVisitor } from '../listVisitor';
+import { ControlTypeClass } from '.';
 
-export type ForInitType = {
-    type: 'forInit';
-    init: DeclarationType | ListType;
-};
+import {
+    LocalVariableDeclarationTypeClass,
+    DeclarationVisitor,
+    isLocalVariableDeclarationType,
+} from '../declarationVisitor';
+import { ExpressionListTypeClass, ListVisitor, isExpressionListType } from '../listVisitor';
+import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
 
-export const makeForInitType = (ctx: ForInitContext): ForInitType => {
-    if (ctx.localVariableDeclaration()) {
-        const init = new DeclarationVisitor().visit(ctx.localVariableDeclaration());
-        return {
-            type: 'forInit',
-            init: init,
-        };
+export class ForInitTypeClass extends ControlTypeClass<
+    LocalVariableDeclarationTypeClass | ExpressionListTypeClass
+> {
+    private constructor(
+        value: LocalVariableDeclarationTypeClass | ExpressionListTypeClass | ErrorTypeClass,
+    ) {
+        super('forInit', value);
     }
 
-    if (ctx.expressionList()) {
-        const init = new ListVisitor().visit(ctx.expressionList());
-        return {
-            type: 'forInit',
-            init: init,
-        };
-    }
+    static create(ctx: ForInitContext): ForInitTypeClass {
+        if (!ctx.localVariableDeclaration() && !ctx.expressionList()) {
+            throw new Error('値が異常です。ForInitContext: ' + ctx.getText());
+        }
 
-    throw new Error('値が異常です。ForInitContext: ' + ctx.getText());
+        return new ForInitTypeClass(
+            ctx.localVariableDeclaration()
+                ? isValidClass(
+                      new DeclarationVisitor().visit(ctx.localVariableDeclaration()),
+                      isLocalVariableDeclarationType,
+                      'localVariableDeclaration',
+                  )
+                : isValidClass(
+                      new ListVisitor().visit(ctx.expressionList()),
+                      isExpressionListType,
+                      'expressionList',
+                  ),
+        );
+    }
+}
+
+export const isForInitType = (target: CommonTypeClass): target is ForInitTypeClass => {
+    return target instanceof ForInitTypeClass;
 };

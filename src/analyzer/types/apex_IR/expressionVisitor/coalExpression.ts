@@ -11,6 +11,7 @@ import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor'
 
 export class CoalExpressionTypeClass extends DoubleOperatorExpressionTypeClass<
     ExpressionAllTypeClass,
+    string,
     ExpressionAllTypeClass
 > {
     private constructor(
@@ -45,3 +46,4 @@ export const isCoalExpressionType = (
 ): target is CoalExpressionTypeClass => {
     return target instanceof CoalExpressionTypeClass;
 };
+

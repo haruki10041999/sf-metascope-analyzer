@@ -9,24 +9,16 @@ export { isMethodCallType, MethodCallTypeClass } from './methodCall';
 export { isDotMethodCallType, DotMethodCallTypeClass } from './dotMethodCall';
 export class CallTypeClass<T, Tparam> extends CommonTypeClass {
     private value: T | ErrorTypeClass;
-    private param: Tparam | null;
+    private param: Tparam | ErrorTypeClass | null;
 
-    constructor(
-        type: string,
-        value: T | null,
-        param: Tparam | null,
-        errorClasses: Record<string, ErrorTypeClass>,
-    ) {
-        super(type, value, errorClasses);
+    constructor(type: string, value: T | ErrorTypeClass, param: Tparam | ErrorTypeClass | null) {
+        super(type);
+        this.value = value;
         this.param = param;
     }
 
-    getParam(): Tparam | null {
+    getParam(): Tparam | ErrorTypeClass | null {
         return this.param;
-    }
-
-    isParamNull(): boolean {
-        return this.param === null;
     }
 }
 
@@ -43,3 +35,4 @@ export class CallVisitor extends CommonVisitor<CallTypeClass<unknown, unknown>> 
         return DotMethodCallTypeClass.create(ctx);
     }
 }
+

@@ -1,15 +1,21 @@
 import { ConditionalExpressionContext } from '@apexdevtools/apex-parser';
 
-import { ExpressionTypeClass, ExpressionVisitor, isExpressionTypeAll } from '.';
+import {
+    LogicalExpressionTypeClass,
+    FieldExpressionTypeClass,
+    ExpressionTypeClass,
+    ExpressionVisitor,
+    isLogicalExpressionType,
+    isFieldExpressionType,
+} from '.';
 
-import { CommonTypeClass, ErrorTypeClass } from '../commonVisitor';
+import { CommonTypeClass, ErrorTypeClass, isValidClass } from '../commonVisitor';
 
 export class ConditionalExpressionTypeClass extends ExpressionTypeClass<
-    ExpressionTypeClass<unknown>
+    LogicalExpressionTypeClass | FieldExpressionTypeClass
 > {
     private constructor(
-        value: ExpressionTypeClass<unknown> | null,
-        errorClasses: Record<string, ErrorTypeClass>,
+        value: LogicalExpressionTypeClass | FieldExpressionTypeClass | ErrorTypeClass,
     ) {
         super('conditionalExpression', value);
     }
@@ -19,26 +25,19 @@ export class ConditionalExpressionTypeClass extends ExpressionTypeClass<
             throw new Error('値が異常です。ConditionalExpressionContext: ' + ctx);
         }
 
-        let expressionTypeClass: ExpressionTypeClass<unknown> | ErrorTypeClass | null = null;
-        if (ctx.logicalExpression()) {
-            expressionTypeClass = new ExpressionVisitor().visit(ctx.logicalExpression());
-        }
-
-        if (ctx.fieldExpression()) {
-            expressionTypeClass = new ExpressionVisitor().visit(ctx.fieldExpression());
-        }
-
-        let value: ExpressionTypeClass<unknown> | null = null;
-        let errorTypeClasses: Record<string, ErrorTypeClass> = {};
-        if (expressionTypeClass) {
-            if (isExpressionTypeAll(expressionTypeClass)) {
-                value = expressionTypeClass;
-            } else {
-                errorTypeClasses['value'] = expressionTypeClass;
-            }
-        }
-
-        return new ConditionalExpressionTypeClass(value, errorTypeClasses);
+        return new ConditionalExpressionTypeClass(
+            ctx.logicalExpression()
+                ? isValidClass(
+                      new ExpressionVisitor().visit(ctx.logicalExpression()),
+                      isLogicalExpressionType,
+                      'logicalExpression',
+                  )
+                : isValidClass(
+                      new ExpressionVisitor().visit(ctx.fieldExpression()),
+                      isFieldExpressionType,
+                      'fieldExpression',
+                  ),
+        );
     }
 }
 
@@ -47,3 +46,4 @@ export const isConditionalExpressionType = (
 ): target is ConditionalExpressionTypeClass => {
     return target instanceof ConditionalExpressionTypeClass;
 };
+

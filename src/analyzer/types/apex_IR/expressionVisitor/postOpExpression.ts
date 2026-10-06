@@ -1,23 +1,17 @@
 import { PostOpExpressionContext } from '@apexdevtools/apex-parser';
 
 import {
-    ExpressionTypeClass,
+    ExpressionAllTypeClass,
     ExpressionVisitor,
     isExpressionTypeAll,
     SingleOperatorExpressionTypeClass,
 } from '.';
 
-import { ErrorTypeClass, CommonTypeClass } from '../commonVisitor';
+import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
 
-export class PostOpExpressionTypeClass extends SingleOperatorExpressionTypeClass<
-    ExpressionTypeClass<unknown>
-> {
-    private constructor(
-        value: ExpressionTypeClass<unknown> | null,
-        operator: string | null,
-        errorClasses: Record<string, ErrorTypeClass>,
-    ) {
-        super('postOpExpression', value, operator, errorClasses);
+export class PostOpExpressionTypeClass extends SingleOperatorExpressionTypeClass<ExpressionAllTypeClass> {
+    private constructor(value: ExpressionAllTypeClass | ErrorTypeClass, operator: string) {
+        super('postOpExpression', value, operator);
     }
 
     static create(ctx: PostOpExpressionContext): PostOpExpressionTypeClass {
@@ -25,26 +19,14 @@ export class PostOpExpressionTypeClass extends SingleOperatorExpressionTypeClass
             throw new Error('値が異常です。PostOpExpressionContext: ' + ctx.getText());
         }
 
-        const expressionTypeClass = new ExpressionVisitor().visit(ctx.expression());
-
-        let value: ExpressionTypeClass<unknown> | null = null;
-        let operator: string | null = null;
-        const errorTypeClasses: Record<string, ErrorTypeClass> = {};
-
-        if (isExpressionTypeAll(expressionTypeClass)) {
-            value = expressionTypeClass;
-        } else {
-            errorTypeClasses['literal'] = expressionTypeClass;
-        }
-
-        if (ctx.INC()) {
-            operator = '++';
-        }
-        if (ctx.DEC()) {
-            operator = '--';
-        }
-
-        return new PostOpExpressionTypeClass(value, operator, errorTypeClasses);
+        return new PostOpExpressionTypeClass(
+            isValidClass(
+                new ExpressionVisitor().visit(ctx.expression()),
+                isExpressionTypeAll,
+                'expression',
+            ),
+            ctx.INC() ? '++' : '--',
+        );
     }
 }
 
@@ -53,3 +35,4 @@ export const isPostOpExpressionType = (
 ): target is PostOpExpressionTypeClass => {
     return target instanceof PostOpExpressionTypeClass;
 };
+

@@ -8,18 +8,21 @@ import {
 } from '.';
 
 import { QualifiedNameTypeClass, NameVisitor, isQualifiedNameType } from '../nameVisitor';
-import { ExpressionTypeClass, ExpressionVisitor, isExpressionTypeAll } from '../expressionVisitor';
-import { ErrorTypeClass, CommonTypeClass, isErrorType } from '../commonVisitor';
+import {
+    ExpressionAllTypeClass,
+    ExpressionVisitor,
+    isExpressionTypeAll,
+} from '../expressionVisitor';
+import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
 
-export class UpsertStatementTypeClass extends DmlStatementTypeClass<ExpressionTypeClass<unknown>> {
-    private key: QualifiedNameTypeClass | null = null;
+export class UpsertStatementTypeClass extends DmlStatementTypeClass<ExpressionAllTypeClass> {
+    private key: QualifiedNameTypeClass | ErrorTypeClass | null = null;
     private constructor(
-        value: ExpressionTypeClass<unknown> | null,
-        key: QualifiedNameTypeClass | null,
-        accessLevel: AccessLevelTypeClass | null,
-        errorClasses: Record<string, ErrorTypeClass>,
+        value: ExpressionAllTypeClass | ErrorTypeClass,
+        key: QualifiedNameTypeClass | ErrorTypeClass | null,
+        accessLevel: AccessLevelTypeClass | ErrorTypeClass | null,
     ) {
-        super('upsertStatement', value, accessLevel, errorClasses);
+        super('upsertStatement', value, accessLevel);
         this.key = key;
     }
 
@@ -28,37 +31,27 @@ export class UpsertStatementTypeClass extends DmlStatementTypeClass<ExpressionTy
             throw new Error('値が異常です。UpsertStatementContext: ' + ctx.getText());
         }
 
-        let value: ExpressionTypeClass<unknown> | null = null;
-        let key: QualifiedNameTypeClass | null = null;
-        let accessLevel: AccessLevelTypeClass | null = null;
-        const errorClasses: Record<string, ErrorTypeClass> = {};
-
-        const expressionTypeClass = new ExpressionVisitor().visit(ctx.expression());
-        if (isExpressionTypeAll(expressionTypeClass)) {
-            value = expressionTypeClass;
-        } else if (isErrorType(expressionTypeClass)) {
-            errorClasses['expression'] = expressionTypeClass;
-        }
-
-        if (ctx.qualifiedName()) {
-            const nameTypeClass = new NameVisitor().visit(ctx.qualifiedName());
-            if (isQualifiedNameType(nameTypeClass)) {
-                key = nameTypeClass;
-            } else if (isErrorType(nameTypeClass)) {
-                errorClasses['key'] = nameTypeClass;
-            }
-        }
-
-        if (ctx.accessLevel()) {
-            const accessLevelTypeClass = new StatementVisitor().visit(ctx.accessLevel());
-            if (isAccessLevelType(accessLevelTypeClass)) {
-                accessLevel = accessLevelTypeClass;
-            } else if (isErrorType(accessLevelTypeClass)) {
-                errorClasses['accessLevel'] = accessLevelTypeClass;
-            }
-        }
-
-        return new UpsertStatementTypeClass(value, key, accessLevel, errorClasses);
+        return new UpsertStatementTypeClass(
+            isValidClass(
+                new ExpressionVisitor().visit(ctx.expression()),
+                isExpressionTypeAll,
+                'expression',
+            ),
+            ctx.qualifiedName()
+                ? isValidClass(
+                      new NameVisitor().visit(ctx.qualifiedName()),
+                      isQualifiedNameType,
+                      'qualifiedName',
+                  )
+                : null,
+            ctx.accessLevel()
+                ? isValidClass(
+                      new StatementVisitor().visit(ctx.accessLevel()),
+                      isAccessLevelType,
+                      'accessLevel',
+                  )
+                : null,
+        );
     }
 }
 

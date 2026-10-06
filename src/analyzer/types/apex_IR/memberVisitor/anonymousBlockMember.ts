@@ -1,53 +1,60 @@
 import { AnonymousBlockMemberContext } from '@apexdevtools/apex-parser';
 
-import { DeclarationType, DeclarationVisitor } from '../declarationVisitor';
-import { StatementType, StatementVisitor } from '../statementVisitor';
-import { ModifierType, ModifierVisitor } from '../modifierVisitor';
+import { MemberTypeClass } from '.';
 
-export type AnonymousBlockMemberType = {
-    type: 'anonymousBlockMember';
-    member:
-        | {
-              declaration: DeclarationType;
-              modifier?: ModifierType[];
-          }
-        | StatementType;
-};
+import {
+    AnonymousMemberDeclarationTypeClass,
+    DeclarationVisitor,
+    isAnonymousMemberDeclarationType,
+} from '../declarationVisitor';
+import {
+    NormalStatementTypeClass,
+    StatementVisitor,
+    isNormalStatementType,
+} from '../statementVisitor';
+import { NormalModifierTypeClass, ModifierVisitor, isNormalModifierType } from '../modifierVisitor';
+import { ErrorTypeClass, CommonTypeClass, isValidClass, isValidClassList } from '../commonVisitor';
 
-export const makeAnonymousBlockMemberType = (
-    ctx: AnonymousBlockMemberContext,
-): AnonymousBlockMemberType => {
-    if (ctx.anonymousMemberDeclaration()) {
-        const declaration = new DeclarationVisitor().visit(ctx.anonymousMemberDeclaration());
+export class AnonymousBlockMemberTypeClass extends MemberTypeClass<
+    AnonymousMemberDeclarationTypeClass | NormalStatementTypeClass
+> {
+    private constructor(
+        value: AnonymousMemberDeclarationTypeClass | NormalStatementTypeClass | ErrorTypeClass,
+        modifier: (NormalModifierTypeClass | ErrorTypeClass)[],
+    ) {
+        super('anonymousBlockMember', value, modifier);
+    }
 
-        const member: {
-            declaration: DeclarationType;
-            modifier?: ModifierType[];
-        } = {
-            declaration: declaration,
-        };
-
-        if (ctx.modifier_list() && ctx.modifier_list().length > 0) {
-            const modifiers = ctx.modifier_list().map((modifierCtx) => {
-                const modifier = new ModifierVisitor().visit(modifierCtx);
-                return modifier;
-            });
-            member.modifier = modifiers;
+    static create(ctx: AnonymousBlockMemberContext): AnonymousBlockMemberTypeClass {
+        if (!ctx.anonymousMemberDeclaration() && !ctx.statement()) {
+            throw new Error('値が異常です。AnonymousBlockMemberContext: ' + ctx.getText());
         }
-        return {
-            type: 'anonymousBlockMember',
-            member: member,
-        };
-    }
 
-    if (ctx.statement()) {
-        const statement = new StatementVisitor().visit(ctx.statement());
-        return {
-            type: 'anonymousBlockMember',
-            member: statement,
-        };
+        return new AnonymousBlockMemberTypeClass(
+            ctx.anonymousMemberDeclaration()
+                ? isValidClass(
+                      new DeclarationVisitor().visit(ctx.anonymousMemberDeclaration()),
+                      isAnonymousMemberDeclarationType,
+                      'anonymousMemberDeclaration',
+                  )
+                : isValidClass(
+                      new StatementVisitor().visit(ctx.statement()),
+                      isNormalStatementType,
+                      'statement',
+                  ),
+            isValidClassList(
+                ctx.modifier_list(),
+                (ctx) => new ModifierVisitor().visit(ctx),
+                isNormalModifierType,
+                'modifier',
+            ),
+        );
     }
+}
 
-    throw new Error('値が異常です。AnonymousBlockMemberContext: ' + ctx.getText());
+export const isAnonymousBlockMemberType = (
+    target: CommonTypeClass,
+): target is AnonymousBlockMemberTypeClass => {
+    return target instanceof AnonymousBlockMemberTypeClass;
 };
 

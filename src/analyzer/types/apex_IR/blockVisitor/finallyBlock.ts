@@ -2,14 +2,11 @@ import { FinallyBlockContext } from '@apexdevtools/apex-parser';
 
 import { NormalBlockTypeClass, BlockTypeClass, BlockVisitor, isNormalBlockType } from '.';
 
-import { ErrorTypeClass, CommonTypeClass, isErrorType } from '../commonVisitor';
+import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
 
 export class FinallyBlockTypeClass extends BlockTypeClass<NormalBlockTypeClass> {
-    private constructor(
-        value: NormalBlockTypeClass | null,
-        errorClasses: Record<string, ErrorTypeClass>,
-    ) {
-        super('finallyBlock', value, errorClasses);
+    private constructor(value: NormalBlockTypeClass | ErrorTypeClass) {
+        super('finallyBlock', value);
     }
 
     static create(ctx: FinallyBlockContext): FinallyBlockTypeClass {
@@ -17,17 +14,9 @@ export class FinallyBlockTypeClass extends BlockTypeClass<NormalBlockTypeClass> 
             throw new Error('値が異常です。FinallyBlockContext: ' + ctx.getText());
         }
 
-        let value: NormalBlockTypeClass | null = null;
-        const errorClasses: Record<string, ErrorTypeClass> = {};
-
-        const blockTypeClass = new BlockVisitor().visit(ctx.block());
-        if (isNormalBlockType(blockTypeClass)) {
-            value = blockTypeClass;
-        } else if (isErrorType(blockTypeClass)) {
-            errorClasses['value'] = blockTypeClass;
-        }
-
-        return new FinallyBlockTypeClass(value, errorClasses);
+        return new FinallyBlockTypeClass(
+            isValidClass(new BlockVisitor().visit(ctx.block()), isNormalBlockType, 'block'),
+        );
     }
 }
 

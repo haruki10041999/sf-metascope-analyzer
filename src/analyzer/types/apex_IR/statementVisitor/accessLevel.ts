@@ -7,8 +7,8 @@ import { CommonTypeClass } from '../commonVisitor';
 type AccessLevelValueType = 'SYSTEM' | 'USER';
 
 export class AccessLevelTypeClass extends StatementTypeClass<AccessLevelValueType> {
-    private constructor(value: AccessLevelValueType | null) {
-        super('accessLevel', value, {});
+    private constructor(value: AccessLevelValueType) {
+        super('accessLevel', value);
     }
 
     static create(ctx: AccessLevelContext) {
@@ -16,16 +16,7 @@ export class AccessLevelTypeClass extends StatementTypeClass<AccessLevelValueTyp
             throw new Error('値が異常です。AccessLevelContext: ' + ctx.getText());
         }
 
-        let value: AccessLevelValueType | null = null;
-
-        if (ctx.SYSTEM()) {
-            value = 'SYSTEM';
-        }
-        if (ctx.USER()) {
-            value = 'USER';
-        }
-
-        return new AccessLevelTypeClass(value);
+        return new AccessLevelTypeClass(ctx.SYSTEM() ? 'SYSTEM' : 'USER');
     }
 }
 

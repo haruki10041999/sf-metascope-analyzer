@@ -5,7 +5,7 @@ import { CommonTypeClass } from '../commonVisitor';
 
 export class NormalPrimaryTypeClass extends PrimaryTypeClass<string> {
     private constructor(value: string) {
-        super('primary', value, {});
+        super('primary', value);
     }
 
     static create(ctx: PrimaryContext): NormalPrimaryTypeClass {
@@ -20,3 +20,4 @@ export class NormalPrimaryTypeClass extends PrimaryTypeClass<string> {
 export const isNormalPrimaryType = (target: CommonTypeClass): target is NormalPrimaryTypeClass => {
     return target instanceof NormalPrimaryTypeClass;
 };
+

@@ -8,17 +8,16 @@ import {
     VariableVisitor,
     isVariableDeclaratorsType,
 } from '../variableVisitor';
-import { ErrorTypeClass, CommonTypeClass, isErrorType } from '../commonVisitor';
+import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
 
 export class FieldDeclarationTypeClass extends DeclarationTypeClass<VariableDeclaratorsTypeClass> {
-    private valueType: TypeRefTypeClass | null = null;
+    private valueType: TypeRefTypeClass | ErrorTypeClass;
 
     private constructor(
-        value: VariableDeclaratorsTypeClass | null,
-        valueType: TypeRefTypeClass | null,
-        errorClasses: Record<string, ErrorTypeClass>,
+        value: VariableDeclaratorsTypeClass | ErrorTypeClass,
+        valueType: TypeRefTypeClass | ErrorTypeClass,
     ) {
-        super('fieldDeclaration', value, errorClasses);
+        super('fieldDeclaration', value);
         this.valueType = valueType;
     }
 
@@ -27,33 +26,18 @@ export class FieldDeclarationTypeClass extends DeclarationTypeClass<VariableDecl
             throw new Error('値が異常です。FieldDeclarationContext: ' + ctx.getText());
         }
 
-        let value: VariableDeclaratorsTypeClass | null = null;
-        let valueType: TypeRefTypeClass | null = null;
-        const errorClasses: Record<string, ErrorTypeClass> = {};
-
-        const variableTypeClass = new VariableVisitor().visit(ctx.variableDeclarators());
-        if (isVariableDeclaratorsType(variableTypeClass)) {
-            value = variableTypeClass;
-        } else if (isErrorType(variableTypeClass)) {
-            errorClasses['value'] = variableTypeClass;
-        }
-
-        const typeTypeClass = new VariableVisitor().visit(ctx.variableDeclarators());
-        if (isTypeRefType(typeTypeClass)) {
-            valueType = typeTypeClass;
-        } else if (isErrorType(typeTypeClass)) {
-            errorClasses['valueType'] = typeTypeClass;
-        }
-
-        return new FieldDeclarationTypeClass(value, valueType, errorClasses);
+        return new FieldDeclarationTypeClass(
+            isValidClass(
+                new VariableVisitor().visit(ctx.variableDeclarators()),
+                isVariableDeclaratorsType,
+                'variableDeclarators',
+            ),
+            isValidClass(new TypeVisitor().visit(ctx.typeRef()), isTypeRefType, 'typeRef'),
+        );
     }
 
-    getValueType(): TypeRefTypeClass | null {
+    getValueType(): TypeRefTypeClass | ErrorTypeClass {
         return this.valueType;
-    }
-
-    isValueTypeNull(): boolean {
-        return this.valueType === null;
     }
 }
 

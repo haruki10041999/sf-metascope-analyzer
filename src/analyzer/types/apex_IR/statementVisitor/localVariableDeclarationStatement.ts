@@ -1,22 +1,39 @@
 import { LocalVariableDeclarationStatementContext } from '@apexdevtools/apex-parser';
 
-import { DeclarationType, DeclarationVisitor } from '../declarationVisitor';
+import { StatementTypeClass } from '../statementVisitor';
 
-export type LocalVariableDeclarationStatementType = {
-    type: 'localVariableDeclarationStatement';
-    statement: DeclarationType;
-};
+import {
+    LocalVariableDeclarationTypeClass,
+    DeclarationVisitor,
+    isLocalVariableDeclarationType,
+} from '../declarationVisitor';
+import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
 
-export const makeLocalVariableDeclarationStatementType = (
-    ctx: LocalVariableDeclarationStatementContext,
-): LocalVariableDeclarationStatementType => {
-    if (!ctx.localVariableDeclaration()) {
-        throw new Error('値が異常です。LocalVariableDeclarationStatementContext: ' + ctx.getText());
+export class LocalVariableDeclarationStatementTypeClass extends StatementTypeClass<LocalVariableDeclarationTypeClass> {
+    private constructor(value: LocalVariableDeclarationTypeClass | ErrorTypeClass) {
+        super('localVariableDeclarationStatement', value);
     }
 
-    return {
-        type: 'localVariableDeclarationStatement',
-        statement: new DeclarationVisitor().visit(ctx.localVariableDeclaration()),
-    };
+    static create(ctx: LocalVariableDeclarationStatementContext) {
+        if (!ctx.localVariableDeclaration()) {
+            throw new Error(
+                '値が異常です。LocalVariableDeclarationStatementContext: ' + ctx.getText(),
+            );
+        }
+
+        return new LocalVariableDeclarationStatementTypeClass(
+            isValidClass(
+                new DeclarationVisitor().visit(ctx.localVariableDeclaration()),
+                isLocalVariableDeclarationType,
+                'localVariableDeclaration',
+            ),
+        );
+    }
+}
+
+export const isLocalVariableDeclarationStatementType = (
+    target: CommonTypeClass,
+): target is LocalVariableDeclarationStatementTypeClass => {
+    return target instanceof LocalVariableDeclarationStatementTypeClass;
 };
 

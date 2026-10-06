@@ -1,22 +1,29 @@
 import { LiteralPrimaryContext } from '@apexdevtools/apex-parser';
 
-import { LiteralType, LiteralVisitor } from '../literalVisitor';
+import { PrimaryTypeClass } from '.';
 
-export type LiteralPrimaryType = {
-    type: 'literalPrimary';
-    primary: LiteralType;
-};
+import { NormalLiteralTypeClass, LiteralVisitor, isNormalLiteralType } from '../literalVisitor';
+import { CommonTypeClass, ErrorTypeClass, isValidClass } from '../commonVisitor';
 
-export const makeLiteralPrimaryType = (ctx: LiteralPrimaryContext): LiteralPrimaryType => {
-    if (!ctx.literal()) {
-        throw new Error('値が異常です。LiteralPrimaryContext: ' + ctx.getText());
+export class LiteralPrimaryTypeClass extends PrimaryTypeClass<NormalLiteralTypeClass> {
+    private constructor(value: NormalLiteralTypeClass | ErrorTypeClass) {
+        super('literalPrimary', value);
     }
 
-    const primary = new LiteralVisitor().visit(ctx.literal());
+    static create(ctx: LiteralPrimaryContext): LiteralPrimaryTypeClass {
+        if (!ctx.literal()) {
+            throw new Error('値が異常です。LiteralPrimaryContext: ' + ctx.getText());
+        }
 
-    return {
-        type: 'literalPrimary',
-        primary: primary,
-    };
+        return new LiteralPrimaryTypeClass(
+            isValidClass(new LiteralVisitor().visit(ctx.literal()), isNormalLiteralType, 'literal'),
+        );
+    }
+}
+
+export const isLiteralPrimaryType = (
+    target: CommonTypeClass,
+): target is LiteralPrimaryTypeClass => {
+    return target instanceof LiteralPrimaryTypeClass;
 };
 

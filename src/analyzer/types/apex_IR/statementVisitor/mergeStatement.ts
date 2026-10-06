@@ -2,21 +2,26 @@ import { MergeStatementContext } from '@apexdevtools/apex-parser';
 
 import {
     AccessLevelTypeClass,
-    DmlStatementTypeClass,
+    StatementListTypeClass,
     StatementVisitor,
     isAccessLevelType,
 } from '.';
 
-import { ExpressionTypeClass, ExpressionVisitor, isExpressionTypeAll } from '../expressionVisitor';
-import { ErrorTypeClass, CommonTypeClass, isErrorType } from '../commonVisitor';
+import {
+    ExpressionAllTypeClass,
+    ExpressionVisitor,
+    isExpressionTypeAll,
+} from '../expressionVisitor';
+import { ErrorTypeClass, CommonTypeClass, isValidClass, isValidClassList } from '../commonVisitor';
 
-export class MergeStatementTypeClass extends DmlStatementTypeClass<ExpressionTypeClass<unknown>[]> {
+export class MergeStatementTypeClass extends StatementListTypeClass<ExpressionAllTypeClass> {
+    private accessLevel: AccessLevelTypeClass | ErrorTypeClass | null = null;
     private constructor(
-        value: ExpressionTypeClass<unknown>[],
-        accessLevel: AccessLevelTypeClass | null,
-        errorClasses: Record<string, ErrorTypeClass>,
+        value: (ExpressionAllTypeClass | ErrorTypeClass)[],
+        accessLevel: AccessLevelTypeClass | ErrorTypeClass | null,
     ) {
-        super('mergeStatement', value, accessLevel, errorClasses);
+        super('mergeStatement', value);
+        this.accessLevel = accessLevel;
     }
 
     static create(ctx: MergeStatementContext): MergeStatementTypeClass {
@@ -24,29 +29,25 @@ export class MergeStatementTypeClass extends DmlStatementTypeClass<ExpressionTyp
             throw new Error('値が異常です。MergeStatementContext: ' + ctx.getText());
         }
 
-        const value: ExpressionTypeClass<unknown>[] = [];
-        let accessLevel: AccessLevelTypeClass | null = null;
-        const errorClasses: Record<string, ErrorTypeClass> = {};
+        return new MergeStatementTypeClass(
+            isValidClassList(
+                ctx.expression_list(),
+                (ctx) => new ExpressionVisitor().visit(ctx),
+                isExpressionTypeAll,
+                'expression',
+            ),
+            ctx.accessLevel()
+                ? isValidClass(
+                      new StatementVisitor().visit(ctx.accessLevel()),
+                      isAccessLevelType,
+                      'accessLevel',
+                  )
+                : null,
+        );
+    }
 
-        ctx.expression_list().forEach((expressionCtx, index) => {
-            const expressionTypeClass = new ExpressionVisitor().visit(expressionCtx);
-            if (isExpressionTypeAll(expressionTypeClass)) {
-                value.push(expressionTypeClass);
-            } else if (isErrorType(expressionTypeClass)) {
-                errorClasses[`value_${index}`] = expressionTypeClass;
-            }
-        });
-
-        if (ctx.accessLevel()) {
-            const accessLevelTypeClass = new StatementVisitor().visit(ctx.accessLevel());
-            if (isAccessLevelType(accessLevelTypeClass)) {
-                accessLevel = accessLevelTypeClass;
-            } else if (isErrorType(accessLevelTypeClass)) {
-                errorClasses['accessLevel'] = accessLevelTypeClass;
-            }
-        }
-
-        return new MergeStatementTypeClass(value, accessLevel, errorClasses);
+    getAccessLevel(): AccessLevelTypeClass | ErrorTypeClass | null {
+        return this.accessLevel;
     }
 }
 

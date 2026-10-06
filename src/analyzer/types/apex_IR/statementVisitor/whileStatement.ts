@@ -1,31 +1,57 @@
 import { WhileStatementContext } from '@apexdevtools/apex-parser';
 
-import { StatementType, StatementVisitor } from '.';
+import {
+    NormalStatementTypeClass,
+    StatementTypeClass,
+    StatementVisitor,
+    isNormalStatementType,
+} from '.';
 
-import { ExpressionType, ExpressionVisitor } from '../expressionVisitor';
+import {
+    ParExpressionTypeClass,
+    ExpressionVisitor,
+    isParExpressionType,
+} from '../expressionVisitor';
+import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
 
-export type WhileStatementType = {
-    type: 'whileStatement';
-    statement: {
-        condition: ExpressionType;
-        block: StatementType;
-    };
-};
+export class WhileStatementTypeClass extends StatementTypeClass<ParExpressionTypeClass> {
+    private block: NormalStatementTypeClass | ErrorTypeClass;
 
-export const makeWhileStatementType = (ctx: WhileStatementContext): WhileStatementType => {
-    if (!ctx.parExpression() || !ctx.statement()) {
-        throw new Error('値が異常です。WhileStatementContext: ' + ctx.getText());
+    private constructor(
+        value: ParExpressionTypeClass | ErrorTypeClass,
+        block: NormalStatementTypeClass | ErrorTypeClass,
+    ) {
+        super('whileStatement', value);
+        this.block = block;
     }
 
-    const condition = new ExpressionVisitor().visit(ctx.parExpression());
-    const statement = new StatementVisitor().visit(ctx.statement());
+    static create(ctx: WhileStatementContext): WhileStatementTypeClass {
+        if (!ctx.parExpression() || !ctx.statement()) {
+            throw new Error('値が異常です。WhileStatementContext: ' + ctx.getText());
+        }
 
-    return {
-        type: 'whileStatement',
-        statement: {
-            condition: condition,
-            block: statement,
-        },
-    };
+        return new WhileStatementTypeClass(
+            isValidClass(
+                new ExpressionVisitor().visit(ctx.parExpression()),
+                isParExpressionType,
+                'parExpression',
+            ),
+            isValidClass(
+                new StatementVisitor().visit(ctx.statement()),
+                isNormalStatementType,
+                'statement',
+            ),
+        );
+    }
+
+    getBlock() {
+        return this.block;
+    }
+}
+
+export const isWhileStatementType = (
+    target: CommonTypeClass,
+): target is WhileStatementTypeClass => {
+    return target instanceof WhileStatementTypeClass;
 };
 

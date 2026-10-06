@@ -10,21 +10,20 @@ import {
     ParameterVisitor,
     isFormalParametersType,
 } from '../parameterVisitor';
-import { ErrorTypeClass, CommonTypeClass, isErrorType } from '../commonVisitor';
+import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
 
 export class MethodDeclarationTypeClass extends DeclarationTypeClass<NormalIdTypeClass> {
-    private valueType: TypeRefTypeClass | 'void' | null = null;
-    private param: FormalParametersTypeClass | null = null;
-    private block: NormalBlockTypeClass | null = null;
+    private valueType: TypeRefTypeClass | 'void' | ErrorTypeClass;
+    private param: FormalParametersTypeClass | ErrorTypeClass | null = null;
+    private block: NormalBlockTypeClass | ErrorTypeClass;
 
     private constructor(
-        value: NormalIdTypeClass | null,
-        valueType: TypeRefTypeClass | 'void' | null,
-        param: FormalParametersTypeClass | null,
-        block: NormalBlockTypeClass | null,
-        errorClasses: Record<string, ErrorTypeClass>,
+        value: NormalIdTypeClass | ErrorTypeClass,
+        valueType: TypeRefTypeClass | 'void' | ErrorTypeClass,
+        param: FormalParametersTypeClass | ErrorTypeClass | null,
+        block: NormalBlockTypeClass | ErrorTypeClass,
     ) {
-        super('methodDeclaration', value, errorClasses);
+        super('methodDeclaration', value);
         this.valueType = valueType;
         this.param = param;
         this.block = block;
@@ -35,67 +34,32 @@ export class MethodDeclarationTypeClass extends DeclarationTypeClass<NormalIdTyp
             throw new Error('値が異常です。MethodDeclarationContext: ' + ctx.getText());
         }
 
-        let value: NormalIdTypeClass | null = null;
-        let valueType: TypeRefTypeClass | 'void' | null = null;
-        let param: FormalParametersTypeClass | null = null;
-        let block: NormalBlockTypeClass | null = null;
-        const errorClasses: Record<string, ErrorTypeClass> = {};
-
-        const idTypeClass = new IdVisitor().visit(ctx.id());
-        if (isNormalIdType(idTypeClass)) {
-            value = idTypeClass;
-        } else if (isErrorType(idTypeClass)) {
-            errorClasses['value'] = idTypeClass;
-        }
-
-        const typeTypeClass = new TypeVisitor().visit(ctx.typeRef());
-        if (isTypeRefType(typeTypeClass)) {
-            valueType = typeTypeClass;
-        } else if (isErrorType(typeTypeClass)) {
-            errorClasses['valueType'] = typeTypeClass;
-        }
-
-        if (ctx.formalParameters()) {
-            const parameterTypeClass = new ParameterVisitor().visit(ctx.formalParameters());
-            if (isFormalParametersType(parameterTypeClass)) {
-                param = parameterTypeClass;
-            } else if (isErrorType(parameterTypeClass)) {
-                errorClasses['param'] = parameterTypeClass;
-            }
-        }
-
-        const blockTypeClass = new BlockVisitor().visit(ctx.block());
-        if (isNormalBlockType(blockTypeClass)) {
-            block = blockTypeClass;
-        } else if (isErrorType(blockTypeClass)) {
-            errorClasses['block'] = blockTypeClass;
-        }
-
-        return new MethodDeclarationTypeClass(value, valueType, param, block, errorClasses);
+        return new MethodDeclarationTypeClass(
+            isValidClass(new IdVisitor().visit(ctx.id()), isNormalIdType, 'id'),
+            ctx.VOID()
+                ? 'void'
+                : isValidClass(new TypeVisitor().visit(ctx.typeRef()), isTypeRefType, 'typeRef'),
+            ctx.formalParameters()
+                ? isValidClass(
+                      new ParameterVisitor().visit(ctx.formalParameters()),
+                      isFormalParametersType,
+                      'formalParameters',
+                  )
+                : null,
+            isValidClass(new BlockVisitor().visit(ctx.block()), isNormalBlockType, 'block'),
+        );
     }
 
-    getValueType(): TypeRefTypeClass | 'void' | null {
+    getValueType(): TypeRefTypeClass | 'void' | ErrorTypeClass {
         return this.valueType;
     }
 
-    isValueTypeNull(): boolean {
-        return this.valueType === null;
-    }
-
-    getParam(): FormalParametersTypeClass | null {
+    getParam(): FormalParametersTypeClass | ErrorTypeClass | null {
         return this.param;
     }
 
-    isParamNull(): boolean {
-        return this.param === null;
-    }
-
-    getBlock(): NormalBlockTypeClass | null {
+    getBlock(): NormalBlockTypeClass | ErrorTypeClass {
         return this.block;
-    }
-
-    isBlockNull(): boolean {
-        return this.block === null;
     }
 }
 
@@ -104,3 +68,4 @@ export const isMethodDeclarationType = (
 ): target is MethodDeclarationTypeClass => {
     return target instanceof MethodDeclarationTypeClass;
 };
+

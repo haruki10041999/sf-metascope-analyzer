@@ -1,15 +1,17 @@
 import { ParExpressionContext } from '@apexdevtools/apex-parser';
 
-import { ExpressionTypeClass, ExpressionVisitor, isExpressionTypeAll } from '.';
+import {
+    ExpressionAllTypeClass,
+    ExpressionTypeClass,
+    ExpressionVisitor,
+    isExpressionTypeAll,
+} from '.';
 
-import { CommonTypeClass, ErrorTypeClass } from '../commonVisitor';
+import { CommonTypeClass, ErrorTypeClass, isValidClass } from '../commonVisitor';
 
-export class ParExpressionTypeClass extends ExpressionTypeClass<ExpressionTypeClass<unknown>> {
-    private constructor(
-        value: ExpressionTypeClass<unknown> | null,
-        errorClasses: Record<string, ErrorTypeClass>,
-    ) {
-        super('parExpression', value, errorClasses);
+export class ParExpressionTypeClass extends ExpressionTypeClass<ExpressionAllTypeClass> {
+    private constructor(value: ExpressionAllTypeClass | ErrorTypeClass) {
+        super('parExpression', value);
     }
 
     static create(ctx: ParExpressionContext): ParExpressionTypeClass {
@@ -17,18 +19,13 @@ export class ParExpressionTypeClass extends ExpressionTypeClass<ExpressionTypeCl
             throw new Error('値が異常です。ParExpressionContext: ' + ctx);
         }
 
-        const expressionTypeClass = new ExpressionVisitor().visit(ctx.expression());
-
-        let value: ExpressionTypeClass<unknown> | null = null;
-        let errorTypeClasses: Record<string, ErrorTypeClass> = {};
-
-        if (isExpressionTypeAll(expressionTypeClass)) {
-            value = expressionTypeClass;
-        } else {
-            errorTypeClasses['value'] = expressionTypeClass;
-        }
-
-        return new ParExpressionTypeClass(value, errorTypeClasses);
+        return new ParExpressionTypeClass(
+            isValidClass(
+                new ExpressionVisitor().visit(ctx.expression()),
+                isExpressionTypeAll,
+                'expression',
+            ),
+        );
     }
 }
 

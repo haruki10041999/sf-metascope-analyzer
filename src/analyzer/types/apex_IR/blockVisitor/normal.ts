@@ -1,6 +1,6 @@
 import { BlockContext } from '@apexdevtools/apex-parser';
 
-import { BlockTypeClass } from '.';
+import { BlockListTypeClass } from '.';
 
 import {
     NormalStatementTypeClass,
@@ -8,14 +8,11 @@ import {
     isNormalStatementType,
 } from '../statementVisitor';
 
-import { ErrorTypeClass, CommonTypeClass, isErrorType } from '../commonVisitor';
+import { ErrorTypeClass, CommonTypeClass, isValidClassList } from '../commonVisitor';
 
-export class NormalBlockTypeClass extends BlockTypeClass<NormalStatementTypeClass[]> {
-    private constructor(
-        value: NormalStatementTypeClass[],
-        errorClasses: Record<string, ErrorTypeClass>,
-    ) {
-        super('block', value, errorClasses);
+export class NormalBlockTypeClass extends BlockListTypeClass<NormalStatementTypeClass> {
+    private constructor(value: (NormalStatementTypeClass | ErrorTypeClass)[]) {
+        super('block', value);
     }
 
     static create(ctx: BlockContext): NormalBlockTypeClass {
@@ -26,16 +23,14 @@ export class NormalBlockTypeClass extends BlockTypeClass<NormalStatementTypeClas
         let value: NormalStatementTypeClass[] = [];
         const errorClasses: Record<string, ErrorTypeClass> = {};
 
-        ctx.statement_list().forEach((statmentCtx, index) => {
-            const statement = new StatementVisitor().visit(statmentCtx);
-            if (isNormalStatementType(statement)) {
-                value.push(statement);
-            } else if (isErrorType(statement)) {
-                errorClasses[`value_${index}`] = statement;
-            }
-        });
-
-        return new NormalBlockTypeClass(value, errorClasses);
+        return new NormalBlockTypeClass(
+            isValidClassList(
+                ctx.statement_list(),
+                (ctx) => new StatementVisitor().visit(ctx),
+                isNormalStatementType,
+                'statement_list',
+            ),
+        );
     }
 }
 

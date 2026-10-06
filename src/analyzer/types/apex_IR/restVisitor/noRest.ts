@@ -6,7 +6,7 @@ import { CommonTypeClass } from '../commonVisitor';
 
 export class NoRestTypeClass extends RestTypeClass<string> {
     private constructor(value: string) {
-        super('noRest', value, {});
+        super('noRest', value);
     }
 
     static create(ctx: NoRestContext): NoRestTypeClass {

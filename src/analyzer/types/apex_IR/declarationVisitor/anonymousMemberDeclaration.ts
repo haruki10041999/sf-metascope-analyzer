@@ -1,75 +1,98 @@
 import { AnonymousMemberDeclarationContext } from '@apexdevtools/apex-parser';
 
-import { DeclarationType, DeclarationVisitor } from '.';
+import {
+    MethodDeclarationTypeClass,
+    ConstructorDeclarationTypeClass,
+    InterfaceDeclarationTypeClass,
+    ClassDeclarationTypeClass,
+    EnumDeclarationTypeClass,
+    PropertyDeclarationTypeClass,
+    FieldDeclarationTypeClass,
+    DeclarationTypeClass,
+    DeclarationVisitor,
+    isMethodDeclarationType,
+    isConstructorDeclarationType,
+    isInterfaceDeclarationType,
+    isClassDeclarationType,
+    isEnumDeclarationType,
+    isPropertyDeclarationType,
+    isFieldDeclarationType,
+} from '.';
 
-export type AnonymousMemberDeclarationType = {
-    type: 'anonymousMemberDeclaration';
-    declaration: DeclarationType;
-};
+import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
 
-export const makeAnonymousMemberDeclarationType = (
-    ctx: AnonymousMemberDeclarationContext,
-): AnonymousMemberDeclarationType => {
-    if (ctx.methodDeclaration()) {
-        const declaration = new DeclarationVisitor().visit(ctx.methodDeclaration());
-        const anonymousMemberDeclarationType: AnonymousMemberDeclarationType = {
-            type: 'anonymousMemberDeclaration',
-            declaration: declaration,
-        };
+type AnonymousMemberDeclarationTypeClassType =
+    | MethodDeclarationTypeClass
+    | ConstructorDeclarationTypeClass
+    | InterfaceDeclarationTypeClass
+    | ClassDeclarationTypeClass
+    | EnumDeclarationTypeClass
+    | PropertyDeclarationTypeClass
+    | FieldDeclarationTypeClass;
 
-        return anonymousMemberDeclarationType;
+export class AnonymousMemberDeclarationTypeClass extends DeclarationTypeClass<AnonymousMemberDeclarationTypeClassType> {
+    constructor(value: AnonymousMemberDeclarationTypeClassType | ErrorTypeClass) {
+        super('anonymousMemberDeclaration', value);
     }
 
-    if (ctx.interfaceDeclaration()) {
-        const declaration = new DeclarationVisitor().visit(ctx.interfaceDeclaration());
-        const anonymousMemberDeclarationType: AnonymousMemberDeclarationType = {
-            type: 'anonymousMemberDeclaration',
-            declaration: declaration,
-        };
+    static create(ctx: AnonymousMemberDeclarationContext): AnonymousMemberDeclarationTypeClass {
+        if (
+            !ctx.methodDeclaration() &&
+            !ctx.interfaceDeclaration() &&
+            !ctx.classDeclaration() &&
+            !ctx.enumDeclaration() &&
+            !ctx.propertyDeclaration() &&
+            !ctx.fieldDeclaration()
+        ) {
+            throw new Error('値が異常です。AnonymousMemberDeclarationContext: ' + ctx.getText());
+        }
 
-        return anonymousMemberDeclarationType;
+        let value: AnonymousMemberDeclarationTypeClassType | ErrorTypeClass;
+        if (ctx.methodDeclaration()) {
+            value = isValidClass(
+                new DeclarationVisitor().visit(ctx.methodDeclaration()),
+                isMethodDeclarationType,
+                'MethodDeclaration',
+            );
+        } else if (ctx.interfaceDeclaration()) {
+            value = isValidClass(
+                new DeclarationVisitor().visit(ctx.interfaceDeclaration()),
+                isInterfaceDeclarationType,
+                'InterfaceDeclaration',
+            );
+        } else if (ctx.classDeclaration()) {
+            value = isValidClass(
+                new DeclarationVisitor().visit(ctx.classDeclaration()),
+                isClassDeclarationType,
+                'ClassDeclaration',
+            );
+        } else if (ctx.enumDeclaration()) {
+            value = isValidClass(
+                new DeclarationVisitor().visit(ctx.enumDeclaration()),
+                isEnumDeclarationType,
+                'EnumDeclaration',
+            );
+        } else if (ctx.propertyDeclaration()) {
+            value = isValidClass(
+                new DeclarationVisitor().visit(ctx.propertyDeclaration()),
+                isPropertyDeclarationType,
+                'PropertyDeclaration',
+            );
+        } else {
+            value = isValidClass(
+                new DeclarationVisitor().visit(ctx.fieldDeclaration()),
+                isFieldDeclarationType,
+                'FieldDeclaration',
+            );
+        }
+
+        return new AnonymousMemberDeclarationTypeClass(value);
     }
+}
 
-    if (ctx.classDeclaration()) {
-        const declaration = new DeclarationVisitor().visit(ctx.classDeclaration());
-        const anonymousMemberDeclarationType: AnonymousMemberDeclarationType = {
-            type: 'anonymousMemberDeclaration',
-            declaration: declaration,
-        };
-
-        return anonymousMemberDeclarationType;
-    }
-
-    if (ctx.enumDeclaration()) {
-        const declaration = new DeclarationVisitor().visit(ctx.enumDeclaration());
-        const anonymousMemberDeclarationType: AnonymousMemberDeclarationType = {
-            type: 'anonymousMemberDeclaration',
-            declaration: declaration,
-        };
-
-        return anonymousMemberDeclarationType;
-    }
-
-    if (ctx.propertyDeclaration()) {
-        const declaration = new DeclarationVisitor().visit(ctx.propertyDeclaration());
-        const anonymousMemberDeclarationType: AnonymousMemberDeclarationType = {
-            type: 'anonymousMemberDeclaration',
-            declaration: declaration,
-        };
-
-        return anonymousMemberDeclarationType;
-    }
-
-    if (ctx.fieldDeclaration()) {
-        const declaration = new DeclarationVisitor().visit(ctx.fieldDeclaration());
-        const anonymousMemberDeclarationType: AnonymousMemberDeclarationType = {
-            type: 'anonymousMemberDeclaration',
-            declaration: declaration,
-        };
-
-        return anonymousMemberDeclarationType;
-    }
-
-    throw new Error('値が異常です。AnonymousMemberDeclarationType:' + ctx.getText());
+export const isAnonymousMemberDeclarationType = (
+    target: CommonTypeClass,
+): target is AnonymousMemberDeclarationTypeClass => {
+    return target instanceof AnonymousMemberDeclarationTypeClass;
 };
 

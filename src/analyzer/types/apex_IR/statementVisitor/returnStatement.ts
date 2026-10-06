@@ -2,15 +2,16 @@ import { ReturnStatementContext } from '@apexdevtools/apex-parser';
 
 import { StatementTypeClass } from '../statementVisitor';
 
-import { ExpressionTypeClass, ExpressionVisitor, isExpressionTypeAll } from '../expressionVisitor';
-import { ErrorTypeClass, CommonTypeClass, isErrorType } from '../commonVisitor';
+import {
+    ExpressionAllTypeClass,
+    ExpressionVisitor,
+    isExpressionTypeAll,
+} from '../expressionVisitor';
+import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
 
-export class ReturnStatementTypeClass extends StatementTypeClass<ExpressionTypeClass<unknown>> {
-    private constructor(
-        value: ExpressionTypeClass<unknown> | null,
-        errorClasses: Record<string, ErrorTypeClass>,
-    ) {
-        super('returnStatement', value, errorClasses);
+export class ReturnStatementTypeClass extends StatementTypeClass<ExpressionAllTypeClass> {
+    private constructor(value: ExpressionAllTypeClass | ErrorTypeClass) {
+        super('returnStatement', value);
     }
 
     static create(ctx: ReturnStatementContext): ReturnStatementTypeClass {
@@ -18,17 +19,13 @@ export class ReturnStatementTypeClass extends StatementTypeClass<ExpressionTypeC
             throw new Error('値が異常です。ReturnStatementContext: ' + ctx.getText());
         }
 
-        let value: ExpressionTypeClass<unknown> | null = null;
-        const errorClasses: Record<string, ErrorTypeClass> = {};
-
-        const expressionTypeClass = new ExpressionVisitor().visit(ctx.expression());
-        if (isExpressionTypeAll(expressionTypeClass)) {
-            value = expressionTypeClass;
-        } else if (isErrorType(expressionTypeClass)) {
-            errorClasses['value'] = expressionTypeClass;
-        }
-
-        return new ReturnStatementTypeClass(value, errorClasses);
+        return new ReturnStatementTypeClass(
+            isValidClass(
+                new ExpressionVisitor().visit(ctx.expression()),
+                isExpressionTypeAll,
+                'expression',
+            ),
+        );
     }
 }
 

@@ -5,8 +5,8 @@ import { StatementTypeClass } from '.';
 import { CommonTypeClass } from '../commonVisitor';
 
 export class BreakStatementTypeClass extends StatementTypeClass<string> {
-    private constructor(value: string | null) {
-        super('breakStatement', value, {});
+    private constructor(value: string) {
+        super('breakStatement', value);
     }
 
     static create(ctx: BreakStatementContext) {

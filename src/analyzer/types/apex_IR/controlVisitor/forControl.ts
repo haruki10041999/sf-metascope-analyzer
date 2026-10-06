@@ -1,47 +1,70 @@
 import { ForControlContext } from '@apexdevtools/apex-parser';
 
-import { ControlType, ControlVisitor } from '.';
+import {
+    EnhancedForControlTypeClass,
+    ForInitTypeClass,
+    ForUpdateTypeClass,
+    ControlTypeClass,
+    ControlVisitor,
+    isEnhancedForControlType,
+    isForInitType,
+    isForUpdateType,
+} from '.';
 
-import { ExpressionType, ExpressionVisitor } from '../expressionVisitor';
+import {
+    ExpressionAllTypeClass,
+    ExpressionVisitor,
+    isExpressionTypeAll,
+} from '../expressionVisitor';
+import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
 
-export type ForControlType = {
-    type: 'forControl';
-    control:
-        | {
-              condition: ControlType;
-          }
-        | {
-              init: ControlType;
-              condition: ExpressionType;
-              update: ControlType;
-          };
-};
+export class ForControlTypeClass extends ControlTypeClass<
+    EnhancedForControlTypeClass | ExpressionAllTypeClass
+> {
+    private init: ForInitTypeClass | ErrorTypeClass | null;
+    private update: ForUpdateTypeClass | ErrorTypeClass | null;
 
-export const makeForControlType = (ctx: ForControlContext): ForControlType => {
-    if (ctx.enhancedForControl()) {
-        const condition = new ControlVisitor().visit(ctx.enhancedForControl());
-        return {
-            type: 'forControl',
-            control: {
-                condition: condition,
-            },
-        };
+    private constructor(
+        value: EnhancedForControlTypeClass | ExpressionAllTypeClass | ErrorTypeClass,
+        init: ForInitTypeClass | ErrorTypeClass | null,
+        update: ForUpdateTypeClass | ErrorTypeClass | null,
+    ) {
+        super('forControl', value);
+        this.init = init;
+        this.update = update;
     }
 
-    if (ctx.forInit() && ctx.expression() && ctx.forUpdate()) {
-        const init = new ControlVisitor().visit(ctx.forInit());
-        const condition = new ExpressionVisitor().visit(ctx.expression());
-        const update = new ControlVisitor().visit(ctx.forUpdate());
+    static create(ctx: ForControlContext): ForControlTypeClass {
+        if (!ctx.enhancedForControl() && !ctx.expression()) {
+            throw new Error('値が異常です。ForControlContext: ' + ctx.getText());
+        }
 
-        return {
-            type: 'forControl',
-            control: {
-                init: init,
-                condition: condition,
-                update: update,
-            },
-        };
+        return new ForControlTypeClass(
+            ctx.enhancedForControl()
+                ? isValidClass(
+                      new ControlVisitor().visit(ctx.enhancedForControl()),
+                      isEnhancedForControlType,
+                      'enhancedForControl',
+                  )
+                : isValidClass(
+                      new ExpressionVisitor().visit(ctx.expression()),
+                      isExpressionTypeAll,
+                      'expression',
+                  ),
+            ctx.forInit()
+                ? isValidClass(new ControlVisitor().visit(ctx.forInit()), isForInitType, 'forInit')
+                : null,
+            ctx.forUpdate()
+                ? isValidClass(
+                      new ControlVisitor().visit(ctx.forUpdate()),
+                      isForUpdateType,
+                      'forUpdate',
+                  )
+                : null,
+        );
     }
+}
 
-    throw new Error('値が異常です。ForControlContext: ' + ctx.getText());
+export const isForControlType = (target: CommonTypeClass): target is ForControlTypeClass => {
+    return target instanceof ForControlTypeClass;
 };

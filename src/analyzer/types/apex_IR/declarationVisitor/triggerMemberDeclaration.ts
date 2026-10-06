@@ -1,75 +1,95 @@
 import { TriggerMemberDeclarationContext } from '@apexdevtools/apex-parser';
 
-import { DeclarationType, DeclarationVisitor } from '.';
+import {
+    MethodDeclarationTypeClass,
+    InterfaceDeclarationTypeClass,
+    ClassDeclarationTypeClass,
+    EnumDeclarationTypeClass,
+    PropertyDeclarationTypeClass,
+    FieldDeclarationTypeClass,
+    DeclarationTypeClass,
+    DeclarationVisitor,
+    isMethodDeclarationType,
+    isInterfaceDeclarationType,
+    isClassDeclarationType,
+    isEnumDeclarationType,
+    isPropertyDeclarationType,
+    isFieldDeclarationType,
+} from '.';
 
-export type TriggerMemberDeclarationType = {
-    type: 'triggerMemberDeclaration';
-    declaration: DeclarationType;
-};
+import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
 
-export const makeTriggerMemberDeclarationType = (
-    ctx: TriggerMemberDeclarationContext,
-): TriggerMemberDeclarationType => {
-    if (ctx.methodDeclaration()) {
-        const methodDeclaration = new DeclarationVisitor().visit(ctx.methodDeclaration());
-        const triggerMemberDeclarationType: TriggerMemberDeclarationType = {
-            type: 'triggerMemberDeclaration',
-            declaration: methodDeclaration,
-        };
+type TriggerMemberDeclarationTypeClassType =
+    | MethodDeclarationTypeClass
+    | InterfaceDeclarationTypeClass
+    | ClassDeclarationTypeClass
+    | EnumDeclarationTypeClass
+    | PropertyDeclarationTypeClass
+    | FieldDeclarationTypeClass;
 
-        return triggerMemberDeclarationType;
+export class TriggerMemberDeclarationTypeClass extends DeclarationTypeClass<TriggerMemberDeclarationTypeClassType> {
+    constructor(value: TriggerMemberDeclarationTypeClassType | ErrorTypeClass) {
+        super('triggerMemberDeclaration', value);
     }
 
-    if (ctx.interfaceDeclaration()) {
-        const interfaceDeclaration = new DeclarationVisitor().visit(ctx.interfaceDeclaration());
-        const triggerMemberDeclarationType: TriggerMemberDeclarationType = {
-            type: 'triggerMemberDeclaration',
-            declaration: interfaceDeclaration,
-        };
+    static create(ctx: TriggerMemberDeclarationContext): TriggerMemberDeclarationTypeClass {
+        if (
+            !ctx.methodDeclaration() &&
+            !ctx.interfaceDeclaration() &&
+            !ctx.classDeclaration() &&
+            !ctx.enumDeclaration() &&
+            !ctx.propertyDeclaration() &&
+            !ctx.fieldDeclaration()
+        ) {
+            throw new Error('値が異常です。TriggerMemberDeclarationContext: ' + ctx.getText());
+        }
 
-        return triggerMemberDeclarationType;
+        let value: TriggerMemberDeclarationTypeClassType | ErrorTypeClass;
+        if (ctx.methodDeclaration()) {
+            value = isValidClass(
+                new DeclarationVisitor().visit(ctx.methodDeclaration()),
+                isMethodDeclarationType,
+                'MethodDeclaration',
+            );
+        } else if (ctx.interfaceDeclaration()) {
+            value = isValidClass(
+                new DeclarationVisitor().visit(ctx.interfaceDeclaration()),
+                isInterfaceDeclarationType,
+                'InterfaceDeclaration',
+            );
+        } else if (ctx.classDeclaration()) {
+            value = isValidClass(
+                new DeclarationVisitor().visit(ctx.classDeclaration()),
+                isClassDeclarationType,
+                'ClassDeclaration',
+            );
+        } else if (ctx.enumDeclaration()) {
+            value = isValidClass(
+                new DeclarationVisitor().visit(ctx.enumDeclaration()),
+                isEnumDeclarationType,
+                'EnumDeclaration',
+            );
+        } else if (ctx.propertyDeclaration()) {
+            value = isValidClass(
+                new DeclarationVisitor().visit(ctx.propertyDeclaration()),
+                isPropertyDeclarationType,
+                'PropertyDeclaration',
+            );
+        } else {
+            value = isValidClass(
+                new DeclarationVisitor().visit(ctx.fieldDeclaration()),
+                isFieldDeclarationType,
+                'FieldDeclaration',
+            );
+        }
+
+        return new TriggerMemberDeclarationTypeClass(value);
     }
+}
 
-    if (ctx.classDeclaration()) {
-        const classDeclaration = new DeclarationVisitor().visit(ctx.classDeclaration());
-        const triggerMemberDeclarationType: TriggerMemberDeclarationType = {
-            type: 'triggerMemberDeclaration',
-            declaration: classDeclaration,
-        };
-
-        return triggerMemberDeclarationType;
-    }
-
-    if (ctx.enumDeclaration()) {
-        const enumDeclaration = new DeclarationVisitor().visit(ctx.enumDeclaration());
-        const triggerMemberDeclarationType: TriggerMemberDeclarationType = {
-            type: 'triggerMemberDeclaration',
-            declaration: enumDeclaration,
-        };
-
-        return triggerMemberDeclarationType;
-    }
-
-    if (ctx.propertyDeclaration()) {
-        const propertyDeclaration = new DeclarationVisitor().visit(ctx.propertyDeclaration());
-        const triggerMemberDeclarationType: TriggerMemberDeclarationType = {
-            type: 'triggerMemberDeclaration',
-            declaration: propertyDeclaration,
-        };
-
-        return triggerMemberDeclarationType;
-    }
-
-    if (ctx.fieldDeclaration()) {
-        const fieldDeclaration = new DeclarationVisitor().visit(ctx.fieldDeclaration());
-        const triggerMemberDeclarationType: TriggerMemberDeclarationType = {
-            type: 'triggerMemberDeclaration',
-            declaration: fieldDeclaration,
-        };
-
-        return triggerMemberDeclarationType;
-    }
-
-    throw new Error('値が異常です。TriggerMemberDeclarationType: ' + ctx.getText());
+export const isTriggerMemberDeclarationType = (
+    target: CommonTypeClass,
+): target is TriggerMemberDeclarationTypeClass => {
+    return target instanceof TriggerMemberDeclarationTypeClass;
 };
 
