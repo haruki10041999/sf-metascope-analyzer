@@ -23,3 +23,4 @@ export * from './typeVisitor';
 export * from './unitVisitor';
 export * from './valueVisitor';
 export * from './variableVisitor';
+export * from './commonVisitor';

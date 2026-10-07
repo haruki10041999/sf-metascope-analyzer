@@ -1,4 +1,4 @@
-import { ModifierType } from '../apex_IR';
+import { AnnotationTypeClass, NormalModifierTypeClass, ErrorTypeClass } from '../apex_IR';
 
 type AccessModifier = 'GLOBAL' | 'PUBLIC' | 'PROTECTED' | 'PRIVATE';
 
@@ -10,14 +10,14 @@ type WebModifier = 'WEBSERVICE';
 
 type TestModifier = 'TESTMETHOD';
 
-type SharingModifier = 'WITH_SHARING' | 'WITHOUT_SHARING' | 'INHERITED';
+type SharingModifier = 'WITH_SHARING' | 'WITHOUT_SHARING' | 'INHERITED_SHARING';
 
 type AnnotationField = {
     name: string;
     param: {
         name?: string;
         value: string;
-    };
+    }[];
 };
 
 export type ModifierField = {
@@ -30,7 +30,9 @@ export type ModifierField = {
     sharing?: SharingModifier;
 };
 
-export const makeModifierField = (modifierTypes: ModifierType[]): ModifierField => {
+export const makeModifierField = (
+    modifierTypes: (NormalModifierTypeClass | ErrorTypeClass)[],
+): ModifierField => {
     const modifierField: ModifierField = {};
 
     return modifierField;
