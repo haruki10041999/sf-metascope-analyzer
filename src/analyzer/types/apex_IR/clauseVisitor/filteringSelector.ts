@@ -31,8 +31,9 @@ export class FilteringSelectorTypeClass extends ClauseTypeClass<string> {
     }
 }
 
-export const isFileteringSelectorType = (
+export const isFilteringSelectorType = (
     target: CommonTypeClass,
 ): target is FilteringSelectorTypeClass => {
     return target instanceof FilteringSelectorTypeClass;
 };
+

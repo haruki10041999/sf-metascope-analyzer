@@ -1,159 +1,105 @@
 import { SoslWithClauseContext } from '@apexdevtools/apex-parser';
 
-import { ExpressionType, ExpressionVisitor } from '../expressionVisitor';
-import { ListType, ListVisitor } from '../listVisitor';
+import { ClauseTypeClass } from '.';
 
-export type SoslWithClauseType = {
-    type: 'soslWithClause';
-    clause:
-        | {
-              withType: 'DIVISION' | 'DATA_CATEGORY' | 'PRICEBOOKID';
-              value: string | ExpressionType;
-          }
-        | {
-              withType: 'SNIPPET' | 'SPELL_CORRECTION';
-              value?: string;
-          }
-        | {
-              withType: 'NETWORK';
-              value: ListType;
-          }
-        | {
-              withType: 'METADATA' | 'HIGHLIGHT' | 'SYSETM_MODE' | 'USER_MODE' | string;
-          };
+import {
+    BoundExpressionTypeClass,
+    FilteringExpressionTypeClass,
+    ExpressionVisitor,
+    isBoundExpressionType,
+    isFilteringExpressionType,
+} from '../expressionVisitor';
+import { NetworkListTypeClass, ListVisitor, isNetworkListType } from '../listVisitor';
+import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
+
+type SoslWithClauseContent =
+    string | BoundExpressionTypeClass | FilteringExpressionTypeClass | NetworkListTypeClass;
+
+export class SoslWithClauseTypeClass extends ClauseTypeClass<string> {
+    private content: SoslWithClauseContent | ErrorTypeClass | null = null;
+
+    private constructor(value: string, content: SoslWithClauseContent | ErrorTypeClass | null) {
+        super('soslWithClause', value);
+        this.content = content;
+    }
+
+    static create(ctx: SoslWithClauseContext): SoslWithClauseTypeClass {
+        if (
+            !ctx.DIVISION() &&
+            !ctx.PRICEBOOKID() &&
+            !ctx.DATA() &&
+            !ctx.CATEGORY() &&
+            !ctx.SNIPPET() &&
+            !ctx.SPELL_CORRECTION() &&
+            !ctx.NETWORK() &&
+            !ctx.METADATA() &&
+            !ctx.HIGHLIGHT() &&
+            !ctx.SYSTEM_MODE() &&
+            !ctx.USER_MODE()
+        ) {
+            throw new Error('値が異常です。SoslWithClauseContext: ' + ctx.getText());
+        }
+
+        let value: string;
+        let content: SoslWithClauseContent | ErrorTypeClass | null = null;
+
+        if (ctx.DIVISION() || ctx.PRICEBOOKID()) {
+            value = ctx.DIVISION() ? 'DIVISION' : 'PRICEBOOKID';
+            content = ctx.StringLiteral()
+                ? ctx.StringLiteral().getText()
+                : ctx.MultilineStringLiteral()
+                  ? ctx.MultilineStringLiteral().getText()
+                  : isValidClass(
+                        new ExpressionVisitor().visit(ctx.boundExpression()),
+                        isBoundExpressionType,
+                        'boundExpression',
+                    );
+        } else if (ctx.DATA() && ctx.CATEGORY()) {
+            value = 'DATA_CATEGORY';
+            content = isValidClass(
+                new ExpressionVisitor().visit(ctx.filteringExpression()),
+                isFilteringExpressionType,
+                'filteringExpression',
+            );
+        } else if (ctx.SNIPPET()) {
+            value = 'SNIPPET';
+            // `(target_length = n)` は任意
+            content = ctx.IntegerLiteral() ? ctx.IntegerLiteral().getText() : null;
+        } else if (ctx.SPELL_CORRECTION()) {
+            value = 'SPELL_CORRECTION';
+            content = ctx.BooleanLiteral().getText();
+        } else if (ctx.NETWORK()) {
+            value = 'NETWORK';
+            // `NETWORK IN (...)` と `NETWORK = '...'` の 2 形式がある
+            content = ctx.networkList()
+                ? isValidClass(
+                      new ListVisitor().visit(ctx.networkList()),
+                      isNetworkListType,
+                      'networkList',
+                  )
+                : ctx.StringLiteral().getText();
+        } else if (ctx.METADATA()) {
+            value = 'METADATA';
+            content = ctx.StringLiteral() ? ctx.StringLiteral().getText() : null;
+        } else if (ctx.HIGHLIGHT()) {
+            value = 'HIGHLIGHT';
+        } else if (ctx.SYSTEM_MODE()) {
+            value = 'SYSTEM_MODE';
+        } else {
+            value = 'USER_MODE';
+        }
+
+        return new SoslWithClauseTypeClass(value, content);
+    }
+
+    getContent(): SoslWithClauseContent | ErrorTypeClass | null {
+        return this.content;
+    }
+}
+
+export const isSoslWithClauseType = (
+    target: CommonTypeClass,
+): target is SoslWithClauseTypeClass => {
+    return target instanceof SoslWithClauseTypeClass;
 };
 
-export const makeSoslWithClauseType = (ctx: SoslWithClauseContext): SoslWithClauseType => {
-    if (ctx.DIVISION() || ctx.PRICEBOOKID()) {
-        const withType = ctx.DIVISION() ? 'DIVISION' : 'PRICEBOOKID';
-
-        if (ctx.StringLiteral()) {
-            return {
-                type: 'soslWithClause',
-                clause: {
-                    withType: withType,
-                    value: ctx.StringLiteral().getText(),
-                },
-            };
-        }
-
-        if (ctx.MultilineStringLiteral()) {
-            return {
-                type: 'soslWithClause',
-                clause: {
-                    withType: withType,
-                    value: ctx.MultilineStringLiteral().getText(),
-                },
-            };
-        }
-
-        if (ctx.boundExpression()) {
-            const value = new ExpressionVisitor().visit(ctx.boundExpression());
-            return {
-                type: 'soslWithClause',
-                clause: {
-                    withType: withType,
-                    value: value,
-                },
-            };
-        }
-    }
-
-    if (ctx.DATA() && ctx.CATEGORY() && ctx.filteringExpression()) {
-        const value = new ExpressionVisitor().visit(ctx.filteringExpression());
-        return {
-            type: 'soslWithClause',
-            clause: {
-                withType: 'DATA_CATEGORY',
-                value: value,
-            },
-        };
-    }
-
-    if (ctx.SNIPPET()) {
-        if (ctx.TARGET_LENGTH() && ctx.IntegerLiteral()) {
-            return {
-                type: 'soslWithClause',
-                clause: {
-                    withType: 'SNIPPET',
-                    value: ctx.IntegerLiteral().getText(),
-                },
-            };
-        }
-
-        return {
-            type: 'soslWithClause',
-            clause: {
-                withType: 'SNIPPET',
-            },
-        };
-    }
-
-    if (ctx.SPELL_CORRECTION()) {
-        if (ctx.BooleanLiteral()) {
-            return {
-                type: 'soslWithClause',
-                clause: {
-                    withType: 'SPELL_CORRECTION',
-                    value: ctx.BooleanLiteral().getText(),
-                },
-            };
-        }
-
-        return {
-            type: 'soslWithClause',
-            clause: {
-                withType: 'SPELL_CORRECTION',
-            },
-        };
-    }
-
-    if (ctx.NETWORK() && ctx.networkList()) {
-        const value = new ListVisitor().visit(ctx.networkList());
-        return {
-            type: 'soslWithClause',
-            clause: {
-                withType: 'NETWORK',
-                value: value,
-            },
-        };
-    }
-
-    if (ctx.METADATA()) {
-        return {
-            type: 'soslWithClause',
-            clause: {
-                withType: 'METADATA',
-            },
-        };
-    }
-
-    if (ctx.HIGHLIGHT()) {
-        return {
-            type: 'soslWithClause',
-            clause: {
-                withType: 'HIGHLIGHT',
-            },
-        };
-    }
-
-    if (ctx.USER_MODE()) {
-        return {
-            type: 'soslWithClause',
-            clause: {
-                withType: 'USER_MODE',
-            },
-        };
-    }
-
-    if (ctx.SYSTEM_MODE()) {
-        return {
-            type: 'soslWithClause',
-            clause: {
-                withType: 'SYSTEM_MODE',
-            },
-        };
-    }
-
-    throw new Error('値が異常です。SoslWIthClauseContext: ' + ctx.getText());
-};

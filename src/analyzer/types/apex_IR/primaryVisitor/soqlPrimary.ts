@@ -1,22 +1,22 @@
 import { SoqlPrimaryContext } from '@apexdevtools/apex-parser';
 
-import { LiteralType, LiteralVisitor } from '../literalVisitor';
+import { PrimaryTypeClass } from '.';
 
-export type SoqlPrimaryType = {
-    type: 'soqlPrimary';
-    primary: LiteralType;
-};
+import { SoqlLiteralTypeClass, LiteralVisitor, isSoqlLiteralType } from '../literalVisitor';
+import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
 
-export const makeSoqlPrimaryType = (ctx: SoqlPrimaryContext): SoqlPrimaryType => {
-    if (!ctx.soqlLiteral()) {
-        throw new Error('値が異常です。SoqlPrimaryContext: ' + ctx.getText());
+export class SoqlPrimaryTypeClass extends PrimaryTypeClass<SoqlLiteralTypeClass> {
+    private constructor(value: SoqlLiteralTypeClass | ErrorTypeClass) {
+        super('soqlPrimary', value);
     }
 
-    const primary = new LiteralVisitor().visit(ctx.soqlLiteral());
+    static create(ctx: SoqlPrimaryContext): SoqlPrimaryTypeClass {
+        const primary = new LiteralVisitor().visit(ctx.soqlLiteral());
+        return new SoqlPrimaryTypeClass(isValidClass(primary, isSoqlLiteralType, 'soqlLiteral'));
+    }
+}
 
-    return {
-        type: 'soqlPrimary',
-        primary: primary,
-    };
+export const isSoqlPrimaryType = (target: CommonTypeClass): target is SoqlPrimaryTypeClass => {
+    return target instanceof SoqlPrimaryTypeClass;
 };
 

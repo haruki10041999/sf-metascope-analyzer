@@ -21,23 +21,24 @@ import {
     TypeOfContext,
 } from '@apexdevtools/apex-parser';
 
+// 各ファイルより先に base を評価させ、循環 import 時の TDZ を防ぐ
+export * from './base';
+import type { ClauseAllTypeClass } from './base';
+
 import { CatchClauseTypeClass } from './catchClause';
-import { AllRowsClauseTypeClass } from './allRowClause';
+import { AllRowsClauseTypeClass } from './allRowsClause';
 import { OffsetClauseTypeClass } from './offsetClause';
 import { LimitClauseTypeClass } from './limitClause';
 import { ForClausesTypeClass } from './forClauses';
 import { ElseClauseTypeClass } from './elseClause';
-import { GroupByClauseTypeClass } from './GroupByClause';
+import { GroupByClauseTypeClass } from './groupByClause';
 import { OrderByClauseTypeClass } from './orderByClause';
 import { WithClauseTypeClass } from './withClause';
 import { WhereClauseTypeClass } from './whereClause';
 import { WhenClauseTypeClass } from './whenClause';
-import { SoslWithClauseType, makeSoslWithClauseType } from './soslWithClause';
-import { SoslClausesType, makeSoslClausesType } from './soslClauses';
-import {
-    isDataCategorySelectionType,
-    DataCategorySelectionTypeClass,
-} from './dataCategorySelection';
+import { SoslWithClauseTypeClass } from './soslWithClause';
+import { SoslClausesTypeClass } from './soslClauses';
+import { DataCategorySelectionTypeClass } from './dataCategorySelection';
 import { FieldGroupByTypeClass } from './fieldGroupBy';
 import { FieldOrderTypeClass } from './fieldOrder';
 import { FilteringSelectorTypeClass } from './filteringSelector';
@@ -45,11 +46,11 @@ import { UpdateTypeTypeClass } from './updateType';
 import { UsingScopeTypeClass } from './usingScope';
 import { TypeOfTypeClass } from './typeOf';
 
-import { ErrorTypeClass, CommonTypeClass, CommonVisitor } from '../commonVisitor';
+import { CommonVisitor } from '../commonVisitor';
 
-export { isAllRowsClauseType, AllRowsClauseTypeClass } from './allRowClause';
+export { isAllRowsClauseType, AllRowsClauseTypeClass } from './allRowsClause';
 export { isCatchClauseType, CatchClauseTypeClass } from './catchClause';
-export { isFileteringSelectorType, FilteringSelectorTypeClass } from './filteringSelector';
+export { isFilteringSelectorType, FilteringSelectorTypeClass } from './filteringSelector';
 export {
     isDataCategorySelectionType,
     DataCategorySelectionTypeClass,
@@ -58,7 +59,7 @@ export { isElseClauseType, ElseClauseTypeClass } from './elseClause';
 export { isFieldGroupByType, FieldGroupByTypeClass } from './fieldGroupBy';
 export { isFieldOrderType, FieldOrderTypeClass } from './fieldOrder';
 export { isForClausesType, ForClausesTypeClass } from './forClauses';
-export { isGroupByClauseType, GroupByClauseTypeClass } from './GroupByClause';
+export { isGroupByClauseType, GroupByClauseTypeClass } from './groupByClause';
 export { isLimitClauseType, LimitClauseTypeClass } from './limitClause';
 export { isOffsetClauseType, OffsetClauseTypeClass } from './offsetClause';
 export { isOrderByClauseType, OrderByClauseTypeClass } from './orderByClause';
@@ -68,36 +69,8 @@ export { isWhenClauseType, WhenClauseTypeClass } from './whenClause';
 export { isTypeOfType, TypeOfTypeClass } from './typeOf';
 export { isWhereClauseType, WhereClauseTypeClass } from './whereClause';
 export { isWithClauseType, WithClauseTypeClass } from './withClause';
-
-export class ClauseTypeClass<T> extends CommonTypeClass {
-    private value: T | ErrorTypeClass;
-    constructor(type: string, value: T | ErrorTypeClass) {
-        super(type);
-        this.value = value;
-    }
-
-    getValue(): T | ErrorTypeClass {
-        return this.value;
-    }
-}
-
-export class ClauseListTypeClass<T> extends CommonTypeClass {
-    private value: (T | ErrorTypeClass)[];
-    constructor(type: string, value: (T | ErrorTypeClass)[]) {
-        super(type);
-        this.value = value;
-    }
-
-    getValue(): (T | ErrorTypeClass)[] {
-        return this.value;
-    }
-}
-
-export type ClauseAllTypeClass = ClauseTypeClass<unknown> | ClauseListTypeClass<unknown>;
-
-export const isClauseTypeClass = (target: CommonTypeClass): target is ClauseAllTypeClass => {
-    return target instanceof ClauseTypeClass || target instanceof ClauseListTypeClass;
-};
+export { isSoslClausesType, SoslClausesTypeClass } from './soslClauses';
+export { isSoslWithClauseType, SoslWithClauseTypeClass } from './soslWithClause';
 
 export class ClauseVisitor extends CommonVisitor<ClauseAllTypeClass> {
     visitCatchClause(ctx: CatchClauseContext) {
@@ -145,25 +118,11 @@ export class ClauseVisitor extends CommonVisitor<ClauseAllTypeClass> {
     }
 
     visitSoslWithClause(ctx: SoslWithClauseContext) {
-        console.log('解析を開始します。' + 'SoslWithClauseContext:  ' + ctx.getText());
-        const result = makeSoslWithClauseType(ctx);
-        console.log(
-            '------------解析が終了しました--------------' +
-                'SoslWithClauseContext:  ' +
-                JSON.stringify(result, null, 2),
-        );
-        return result;
+        return SoslWithClauseTypeClass.create(ctx);
     }
 
     visitSoslClauses(ctx: SoslClausesContext) {
-        console.log('解析を開始します。' + 'SoslClausesContext:  ' + ctx.getText());
-        const result = makeSoslClausesType(ctx);
-        console.log(
-            '------------解析が終了しました--------------' +
-                'SoslClausesContext:  ' +
-                JSON.stringify(result, null, 2),
-        );
-        return result;
+        return SoslClausesTypeClass.create(ctx);
     }
 
     visitDataCategorySelection(ctx: DataCategorySelectionContext) {

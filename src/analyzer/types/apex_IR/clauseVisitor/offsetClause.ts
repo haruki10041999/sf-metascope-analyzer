@@ -11,7 +11,7 @@ import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor'
 
 export class OffsetClauseTypeClass extends ClauseTypeClass<string | BoundExpressionTypeClass> {
     private constructor(value: string | BoundExpressionTypeClass | ErrorTypeClass) {
-        super('limitClause', value);
+        super('offsetClause', value);
     }
 
     static create(ctx: OffsetClauseContext): OffsetClauseTypeClass {
@@ -34,3 +34,4 @@ export class OffsetClauseTypeClass extends ClauseTypeClass<string | BoundExpress
 export const isOffsetClauseType = (target: CommonTypeClass): target is OffsetClauseTypeClass => {
     return target instanceof OffsetClauseTypeClass;
 };
+

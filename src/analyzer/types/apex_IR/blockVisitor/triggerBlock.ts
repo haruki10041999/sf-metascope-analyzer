@@ -1,25 +1,32 @@
 import { TriggerBlockContext } from '@apexdevtools/apex-parser';
 
-import { MemberType, MemberVisitor } from '../memberVisitor';
+import { BlockListTypeClass } from '../blockVisitor';
 
-export type TriggerBlockType = {
-    type: 'triggerBlock';
-    block: MemberType[];
-};
+import {
+    TriggerBlockMemberTypeClass,
+    MemberVisitor,
+    isTriggerBlockMemberType,
+} from '../memberVisitor';
+import { ErrorTypeClass, CommonTypeClass, isValidClassList } from '../commonVisitor';
 
-export const makeTriggerBlockType = (ctx: TriggerBlockContext): TriggerBlockType => {
-    if (!ctx.triggerBlockMember_list()) {
-        throw new Error('値が異常です。TriggerBlockContext: ' + ctx.getText());
+export class TriggerBlockTypeClass extends BlockListTypeClass<TriggerBlockMemberTypeClass> {
+    private constructor(value: (TriggerBlockMemberTypeClass | ErrorTypeClass)[]) {
+        super('triggerBlock', value);
     }
 
-    const memberBlocks = ctx.triggerBlockMember_list().map((triggerBlockMemberCtx) => {
-        const memberBlock = new MemberVisitor().visit(triggerBlockMemberCtx);
-        return memberBlock;
-    });
+    static create(ctx: TriggerBlockContext): TriggerBlockTypeClass {
+        return new TriggerBlockTypeClass(
+            isValidClassList(
+                ctx.triggerBlockMember_list(),
+                (ctx) => new MemberVisitor().visit(ctx),
+                isTriggerBlockMemberType,
+                'triggerBlock',
+            ),
+        );
+    }
+}
 
-    return {
-        type: 'triggerBlock',
-        block: memberBlocks,
-    };
+export const isTriggerBlockType = (target: CommonTypeClass): target is TriggerBlockTypeClass => {
+    return target instanceof TriggerBlockTypeClass;
 };
 

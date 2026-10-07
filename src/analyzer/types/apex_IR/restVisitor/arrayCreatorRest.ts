@@ -26,23 +26,23 @@ export class ArrayCreatorRestTypeClass extends RestTypeClass<ArrayInitializerTyp
     }
 
     static create(ctx: ArrayCreatorRestContext): ArrayCreatorRestTypeClass {
-        if (!ctx) {
-            throw new Error('値が異常です。ArrayCreatorRestContext: ' + ctx);
+        if (!ctx.expression() && !ctx.arrayInitializer()) {
+            throw new Error('値が異常です。ArrayCreatorRestContext: ' + ctx.getText());
         }
 
-        const value = ctx.expression()
-            ? isValidClass(
-                  new ExpressionVisitor().visit(ctx.expression()),
-                  isExpressionTypeAll,
-                  'expression',
-              )
-            : null;
-
-        const size = ctx.arrayInitializer()
+        const value = ctx.arrayInitializer()
             ? isValidClass(
                   new VariableVisitor().visit(ctx.arrayInitializer()),
                   isArrayInitializerType,
                   'arrayInitializer',
+              )
+            : null;
+
+        const size = ctx.expression()
+            ? isValidClass(
+                  new ExpressionVisitor().visit(ctx.expression()),
+                  isExpressionTypeAll,
+                  'expression',
               )
             : null;
 

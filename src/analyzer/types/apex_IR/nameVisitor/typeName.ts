@@ -19,22 +19,25 @@ export class TypeNameTypeClass extends NameTypeClass<NormalIdTypeClass | 'list' 
     }
 
     static create(ctx: TypeNameContext): TypeNameTypeClass {
-        if (!ctx.LIST() && !ctx.SET() && !ctx.MAP() && ctx.typeArguments() && !ctx.id()) {
+        if (!ctx.LIST() && !ctx.SET() && !ctx.MAP() && !ctx.id()) {
             throw new Error('値が異常です。TypeNameContext: ' + ctx.getText());
         }
 
         let value: NormalIdTypeClass | 'list' | 'set' | 'map' | ErrorTypeClass;
-        let generic: TypeArgumentsTypeClass | ErrorTypeClass | null = null;
         if (ctx.LIST() || ctx.SET() || ctx.MAP()) {
             value = ctx.LIST() ? 'list' : ctx.SET() ? 'set' : 'map';
-            generic = isValidClass(
-                new ArgumentsVisitor().visit(ctx.typeArguments()),
-                isTypeArgumentsType,
-                'typeArguments',
-            );
         } else {
             value = isValidClass(new IdVisitor().visit(ctx.id()), isNormalIdType, 'id');
         }
+
+        // 型引数は `List` 単体やユーザー定義型では省略される
+        const generic = ctx.typeArguments()
+            ? isValidClass(
+                  new ArgumentsVisitor().visit(ctx.typeArguments()),
+                  isTypeArgumentsType,
+                  'typeArguments',
+              )
+            : null;
 
         return new TypeNameTypeClass(value, generic);
     }

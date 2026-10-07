@@ -21,12 +21,7 @@ export class WhenValueTypeClass extends ValueTypeClass<WhenValueValueType> {
     }
 
     static create(ctx: WhenValueContext): WhenValueTypeClass {
-        if (
-            !ctx.ELSE() ||
-            !ctx.whenLiteral_list() ||
-            ctx.whenLiteral_list().length === 0 ||
-            (!ctx.typeRef() && !ctx.id())
-        ) {
+        if (!ctx.ELSE() && ctx.whenLiteral_list().length === 0 && (!ctx.typeRef() || !ctx.id())) {
             throw new Error('値が異常です。WhenValueContext: ' + ctx.getText());
         }
 
@@ -35,7 +30,7 @@ export class WhenValueTypeClass extends ValueTypeClass<WhenValueValueType> {
 
         if (ctx.ELSE()) {
             value = 'else';
-        } else if (ctx.whenLiteral_list() && ctx.whenLiteral_list().length > 0) {
+        } else if (ctx.whenLiteral_list().length > 0) {
             value = isValidClassList(
                 ctx.whenLiteral_list(),
                 (ctx) => new LiteralVisitor().visit(ctx),

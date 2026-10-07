@@ -1,47 +1,65 @@
 import { TriggerUnitContext } from '@apexdevtools/apex-parser';
 
-import { UnitType, UnitVisitor } from '.';
+import { TriggerCaseTypeClass, UnitListTypeClass, UnitVisitor, isTriggerCaseType } from '.';
 
-import { IdType, IdVisitor } from '../idVisitor';
-import { BlockType, BlockVisitor } from '../blockVisitor';
+import { NormalIdTypeClass, IdVisitor, isNormalIdType } from '../idVisitor';
+import { TriggerBlockTypeClass, BlockVisitor, isTriggerBlockType } from '../blockVisitor';
+import { ErrorTypeClass, CommonTypeClass, isValidClass, isValidClassList } from '../commonVisitor';
 
-export type TriggerUnitType = {
-    type: 'triggerUnit';
-    unit: {
-        idList: IdType[];
-        caseList: UnitType[];
-        block: BlockType;
-    };
-};
+export class TriggerUnitTypeClass extends UnitListTypeClass<NormalIdTypeClass> {
+    private triggerCase: (TriggerCaseTypeClass | ErrorTypeClass)[];
+    private block: TriggerBlockTypeClass | ErrorTypeClass;
 
-export const makeTriggerUnitType = (ctx: TriggerUnitContext): TriggerUnitType => {
-    if (
-        (!ctx.id_list() || ctx.id_list().length === 0) &&
-        (!ctx.triggerCase_list() || ctx.triggerCase_list().length === 0) &&
-        !ctx.triggerBlock()
+    private constructor(
+        value: (NormalIdTypeClass | ErrorTypeClass)[],
+        triggerCase: (TriggerCaseTypeClass | ErrorTypeClass)[],
+        block: TriggerBlockTypeClass | ErrorTypeClass,
     ) {
-        throw new Error('値が異常です。TriggerUnitContext: ' + ctx.getText());
+        super('triggerUnit', value);
+        this.triggerCase = triggerCase;
+        this.block = block;
     }
 
-    const idList = ctx.id_list().map((Idctx) => {
-        const id = new IdVisitor().visit(Idctx);
-        return id;
-    });
+    static create(ctx: TriggerUnitContext): TriggerUnitTypeClass {
+        if (
+            (!ctx.id_list() || ctx.id_list().length === 0) &&
+            (!ctx.triggerCase_list() || ctx.triggerCase_list().length === 0) &&
+            !ctx.triggerBlock()
+        ) {
+            throw new Error('値が異常です。TriggerUnitContext: ' + ctx.getText());
+        }
 
-    const caseList = ctx.triggerCase_list().map((triggerCaseCtx) => {
-        const triggerCaseType = new UnitVisitor().visit(triggerCaseCtx);
-        return triggerCaseType;
-    });
+        return new TriggerUnitTypeClass(
+            isValidClassList(
+                ctx.id_list(),
+                (ctx) => new IdVisitor().visit(ctx),
+                isNormalIdType,
+                'id',
+            ),
+            isValidClassList(
+                ctx.triggerCase_list(),
+                (ctx) => new UnitVisitor().visit(ctx),
+                isTriggerCaseType,
+                'triggerCase',
+            ),
+            isValidClass(
+                new BlockVisitor().visit(ctx.triggerBlock()),
+                isTriggerBlockType,
+                'triggerBlock',
+            ),
+        );
+    }
 
-    const block = new BlockVisitor().visit(ctx.triggerBlock());
+    getTriggerCase(): (TriggerCaseTypeClass | ErrorTypeClass)[] {
+        return this.triggerCase;
+    }
 
-    return {
-        type: 'triggerUnit',
-        unit: {
-            idList: idList,
-            caseList: caseList,
-            block: block,
-        },
-    };
+    getBlock(): TriggerBlockTypeClass | ErrorTypeClass {
+        return this.block;
+    }
+}
+
+export const isTriggerUnitType = (value: any): value is TriggerUnitTypeClass => {
+    return value instanceof TriggerUnitTypeClass;
 };
 

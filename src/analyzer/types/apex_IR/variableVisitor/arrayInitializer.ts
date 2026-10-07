@@ -15,10 +15,6 @@ export class ArrayInitializerTypeClass extends VariableListTypeClass<ExpressionA
     }
 
     public static create(ctx: ArrayInitializerContext) {
-        if (!ctx.expression_list() || ctx.expression_list().length === 0) {
-            throw new Error('値が異常です。ArrayInitializerContext: ' + ctx.getText());
-        }
-
         return new ArrayInitializerTypeClass(
             isValidClassList(
                 ctx.expression_list(),
@@ -35,3 +31,4 @@ export const isArrayInitializerType = (
 ): target is ArrayInitializerTypeClass => {
     return target instanceof ArrayInitializerTypeClass;
 };
+

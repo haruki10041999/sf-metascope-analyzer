@@ -1,22 +1,23 @@
 import { SoqlLiteralContext } from '@apexdevtools/apex-parser';
 
-import { QueryType, QueryVisitor } from '../queryVisitor';
+import { LiteralTypeClass } from '.';
 
-export type SoqlLiteralType = {
-    type: 'soqlLiteral';
-    literal: QueryType;
-};
+import { NormalQueryTypeClass, QueryVisitor, isNormalQueryType } from '../queryVisitor';
+import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
 
-export const makeSoqlLiteralType = (ctx: SoqlLiteralContext): SoqlLiteralType => {
-    if (!ctx.query()) {
-        throw new Error('値が異常です。SoqlLiteralContext: ' + ctx.getText());
+export class SoqlLiteralTypeClass extends LiteralTypeClass<NormalQueryTypeClass> {
+    private constructor(value: NormalQueryTypeClass | ErrorTypeClass) {
+        super('soqlLiteral', value);
     }
 
-    const value = new QueryVisitor().visit(ctx.query());
+    static create(ctx: SoqlLiteralContext): SoqlLiteralTypeClass {
+        return new SoqlLiteralTypeClass(
+            isValidClass(new QueryVisitor().visit(ctx.query()), isNormalQueryType, 'query'),
+        );
+    }
+}
 
-    return {
-        type: 'soqlLiteral',
-        literal: value,
-    };
+export const isSoqlLiteralType = (target: CommonTypeClass): target is SoqlLiteralTypeClass => {
+    return target instanceof SoqlLiteralTypeClass;
 };
 

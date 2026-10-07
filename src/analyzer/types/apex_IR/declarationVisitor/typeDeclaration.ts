@@ -17,7 +17,7 @@ import { ErrorTypeClass, CommonTypeClass, isValidClass, isValidClassList } from 
 export type TypeDeclarationClassType =
     ClassDeclarationTypeClass | EnumDeclarationTypeClass | InterfaceDeclarationTypeClass;
 
-export class TypeDeclarationClass extends DeclarationTypeClass<TypeDeclarationClassType> {
+export class TypeDeclarationTypeClass extends DeclarationTypeClass<TypeDeclarationClassType> {
     private modifier: (NormalModifierTypeClass | ErrorTypeClass)[];
     private constructor(
         value: TypeDeclarationClassType | ErrorTypeClass,
@@ -27,7 +27,7 @@ export class TypeDeclarationClass extends DeclarationTypeClass<TypeDeclarationCl
         this.modifier = modifier;
     }
 
-    static create(ctx: TypeDeclarationContext): TypeDeclarationClass {
+    static create(ctx: TypeDeclarationContext): TypeDeclarationTypeClass {
         if (!ctx.classDeclaration() && !ctx.enumDeclaration() && !ctx.interfaceDeclaration()) {
             throw new Error('値が異常です。TypeDeclarationType: ' + ctx.getText());
         }
@@ -53,7 +53,7 @@ export class TypeDeclarationClass extends DeclarationTypeClass<TypeDeclarationCl
             );
         }
 
-        return new TypeDeclarationClass(
+        return new TypeDeclarationTypeClass(
             value,
             isValidClassList(
                 ctx.modifier_list(),
@@ -69,7 +69,9 @@ export class TypeDeclarationClass extends DeclarationTypeClass<TypeDeclarationCl
     }
 }
 
-export const isTypeDeclarationClass = (target: CommonTypeClass): target is TypeDeclarationClass => {
-    return target instanceof TypeDeclarationClass;
+export const isTypeDeclarationType = (
+    target: CommonTypeClass,
+): target is TypeDeclarationTypeClass => {
+    return target instanceof TypeDeclarationTypeClass;
 };
 

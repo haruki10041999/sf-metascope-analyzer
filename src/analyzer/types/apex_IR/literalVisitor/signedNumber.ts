@@ -4,16 +4,16 @@ import { PrimitiveLiteralTypeClass } from '.';
 
 import { CommonTypeClass } from '../commonVisitor';
 
-export class SignedNumberTypeClass extends PrimitiveLiteralTypeClass<number> {
+export class SignedNumberTypeClass extends PrimitiveLiteralTypeClass<string> {
     private operator: string | null;
 
-    private constructor(value: number, valueType: 'integer' | 'number', operator: string | null) {
+    private constructor(value: string, valueType: 'integer' | 'number', operator: string | null) {
         super('signedNumber', value, valueType);
         this.operator = operator;
     }
 
     static create(ctx: SignedNumberContext): SignedNumberTypeClass {
-        if ((!ctx.IntegerLiteral() && !ctx.NumberLiteral()) || (!ctx.ADD() && !ctx.SUB())) {
+        if (!ctx.IntegerLiteral() && !ctx.NumberLiteral()) {
             throw new Error('値が異常です。SignedNumberContext: ' + ctx.getText());
         }
 
@@ -24,13 +24,13 @@ export class SignedNumberTypeClass extends PrimitiveLiteralTypeClass<number> {
         if (ctx.SUB()) {
             operator = '-';
         }
-        let value: number;
+        let value: string;
         let valueType: 'integer' | 'number';
         if (ctx.IntegerLiteral()) {
-            value = parseInt(ctx.IntegerLiteral().getText(), 10);
+            value = ctx.IntegerLiteral().getText();
             valueType = 'integer';
         } else {
-            value = parseFloat(ctx.NumberLiteral().getText());
+            value = ctx.NumberLiteral().getText();
             valueType = 'number';
         }
 
@@ -40,12 +40,9 @@ export class SignedNumberTypeClass extends PrimitiveLiteralTypeClass<number> {
     getOperator(): string | null {
         return this.operator;
     }
-
-    isOperatorNull(): boolean {
-        return this.operator === null;
-    }
 }
 
-export const isSignedNumberType = (taraget: CommonTypeClass): taraget is SignedNumberTypeClass => {
-    return taraget instanceof SignedNumberTypeClass;
+export const isSignedNumberType = (target: CommonTypeClass): target is SignedNumberTypeClass => {
+    return target instanceof SignedNumberTypeClass;
 };
+

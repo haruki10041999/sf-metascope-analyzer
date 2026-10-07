@@ -1,6 +1,6 @@
 import { WhereClauseContext } from '@apexdevtools/apex-parser';
 
-import { ClauseTypeClass, ClauseVisitor } from '.';
+import { ClauseTypeClass } from '.';
 
 import {
     WhereLogicalExpressionTypeClass,
@@ -21,7 +21,7 @@ export class WhereClauseTypeClass extends ClauseTypeClass<WhereLogicalExpression
 
         return new WhereClauseTypeClass(
             isValidClass(
-                new ClauseVisitor().visit(ctx.whereLogicalExpression()),
+                new ExpressionVisitor().visit(ctx.whereLogicalExpression()),
                 isWhereLogicalExpressionType,
                 'whereLogicalExpression',
             ),
@@ -32,3 +32,4 @@ export class WhereClauseTypeClass extends ClauseTypeClass<WhereLogicalExpression
 export const isWhereClauseType = (target: CommonTypeClass): target is WhereClauseTypeClass => {
     return target instanceof WhereClauseTypeClass;
 };
+

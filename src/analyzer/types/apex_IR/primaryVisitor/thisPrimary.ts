@@ -10,7 +10,7 @@ export class ThisPrimaryTypeClass extends PrimaryTypeClass<string> {
 
     static create(ctx: ThisPrimaryContext): ThisPrimaryTypeClass {
         if (!ctx.THIS()) {
-            throw new Error('値が異常です。 ThisPrimaryContext:' + ctx);
+            throw new Error('値が異常です。ThisPrimaryContext: ' + ctx.getText());
         }
 
         return new ThisPrimaryTypeClass(ctx.THIS().getText());

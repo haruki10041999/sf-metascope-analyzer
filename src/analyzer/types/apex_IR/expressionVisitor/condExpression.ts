@@ -14,7 +14,7 @@ export class CondExpressionTypeClass extends ConditionExpressionTypeClass<
     ExpressionAllTypeClass,
     ExpressionAllTypeClass
 > {
-    constructor(
+    private constructor(
         condition: ExpressionAllTypeClass | ErrorTypeClass,
         trueValue: ExpressionAllTypeClass | ErrorTypeClass,
         falseValue: ExpressionAllTypeClass | ErrorTypeClass,
@@ -52,3 +52,4 @@ export const isCondExpressionType = (
 ): target is CondExpressionTypeClass => {
     return target instanceof CondExpressionTypeClass;
 };
+

@@ -22,7 +22,7 @@ export class EnumDeclarationTypeClass extends DeclarationTypeClass<NormalIdTypeC
     }
 
     static create(ctx: EnumDeclarationContext): EnumDeclarationTypeClass {
-        if (!ctx.id() || !ctx.enumConstants()) {
+        if (!ctx.id()) {
             throw new Error('値が異常です。EnumDeclarationContext: ' + ctx.getText());
         }
 

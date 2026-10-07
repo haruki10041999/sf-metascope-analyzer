@@ -16,13 +16,6 @@ export class NormalBlockTypeClass extends BlockListTypeClass<NormalStatementType
     }
 
     static create(ctx: BlockContext): NormalBlockTypeClass {
-        if (!ctx.statement_list() || ctx.statement_list().length === 0) {
-            throw new Error('値が異常です。BlockContext: ' + ctx.getText());
-        }
-
-        let value: NormalStatementTypeClass[] = [];
-        const errorClasses: Record<string, ErrorTypeClass> = {};
-
         return new NormalBlockTypeClass(
             isValidClassList(
                 ctx.statement_list(),

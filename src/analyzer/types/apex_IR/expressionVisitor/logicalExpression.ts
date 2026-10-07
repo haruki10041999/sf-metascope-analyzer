@@ -2,14 +2,14 @@ import { LogicalExpressionContext } from '@apexdevtools/apex-parser';
 
 import {
     ConditionalExpressionTypeClass,
-    ExpressionListTypeClass,
+    ExpressionListBaseTypeClass,
     ExpressionVisitor,
     isConditionalExpressionType,
 } from '.';
 
 import { CommonTypeClass, ErrorTypeClass, isValidClassList } from '../commonVisitor';
 
-export class LogicalExpressionTypeClass extends ExpressionListTypeClass<ConditionalExpressionTypeClass> {
+export class LogicalExpressionTypeClass extends ExpressionListBaseTypeClass<ConditionalExpressionTypeClass> {
     private operator: string | null = null;
 
     private constructor(

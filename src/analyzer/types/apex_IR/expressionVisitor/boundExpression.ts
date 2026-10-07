@@ -15,8 +15,8 @@ export class BoundExpressionTypeClass extends ExpressionTypeClass<ExpressionAllT
     }
 
     static create(ctx: BoundExpressionContext): BoundExpressionTypeClass {
-        if (!ctx.expression() || !ctx.COLON) {
-            throw new Error('値が異常です。BoundExpressionContext: ' + ctx);
+        if (!ctx.expression() || !ctx.COLON()) {
+            throw new Error('値が異常です。BoundExpressionContext: ' + ctx.getText());
         }
 
         return new BoundExpressionTypeClass(

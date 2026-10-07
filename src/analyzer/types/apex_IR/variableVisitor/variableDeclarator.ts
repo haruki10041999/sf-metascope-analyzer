@@ -11,32 +11,35 @@ import {
 import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
 
 export class VariableDeclaratorTypeClass extends VariableTypeClass<NormalIdTypeClass> {
-    content: ExpressionAllTypeClass | ErrorTypeClass;
+    private content: ExpressionAllTypeClass | ErrorTypeClass | null;
 
     private constructor(
         value: NormalIdTypeClass | ErrorTypeClass,
-        content: ExpressionAllTypeClass | ErrorTypeClass,
+        content: ExpressionAllTypeClass | ErrorTypeClass | null,
     ) {
         super('variableDeclarator', value);
         this.content = content;
     }
 
     static create(ctx: VariableDeclaratorContext) {
-        if (!ctx.id() || !ctx.ASSIGN() || !ctx.expression()) {
+        if (!ctx.id()) {
             throw new Error('値が異常です。VariableDeclaratorContext: ' + ctx.getText());
         }
 
         return new VariableDeclaratorTypeClass(
             isValidClass(new IdVisitor().visit(ctx.id()), isNormalIdType, 'id'),
-            isValidClass(
-                new ExpressionVisitor().visit(ctx.expression()),
-                isExpressionTypeAll,
-                'expression',
-            ),
+            // 初期化子は任意（`String name;`）
+            ctx.expression()
+                ? isValidClass(
+                      new ExpressionVisitor().visit(ctx.expression()),
+                      isExpressionTypeAll,
+                      'expression',
+                  )
+                : null,
         );
     }
 
-    getContent(): ExpressionAllTypeClass | ErrorTypeClass {
+    getContent(): ExpressionAllTypeClass | ErrorTypeClass | null {
         return this.content;
     }
 }

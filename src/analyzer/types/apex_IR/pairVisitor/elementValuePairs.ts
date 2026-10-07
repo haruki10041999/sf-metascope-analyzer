@@ -10,7 +10,7 @@ import {
 import { ErrorTypeClass, CommonTypeClass, isValidClassList } from '../commonVisitor';
 
 export class ElementValuePairsTypeClass extends PairListTypeClass<ElementValuePairTypeClass> {
-    constructor(value: (ElementValuePairTypeClass | ErrorTypeClass)[]) {
+    private constructor(value: (ElementValuePairTypeClass | ErrorTypeClass)[]) {
         super('elementValuePairs', value);
     }
 

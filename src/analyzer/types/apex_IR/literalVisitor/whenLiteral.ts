@@ -43,23 +43,15 @@ export class WhenLiteralTypeClass extends PrimitiveLiteralTypeClass<WhenLiteralV
 
             valueType = ctx.IntegerLiteral() ? 'integer' : 'long';
 
-            if (ctx.ADD_list() && ctx.ADD_list().length > 0) {
-                operator = ctx
-                    .ADD_list()
-                    .map((node) => node.getText())
-                    .join('');
-            }
-
-            if (ctx.SUB_list() && ctx.SUB_list().length > 0) {
-                operator = ctx
-                    .SUB_list()
-                    .map((node) => node.getText())
-                    .join('');
-            }
+            // 符号は複数並び得るため、ソース順のまま連結する
+            operator = [...ctx.ADD_list(), ...ctx.SUB_list()]
+                .sort((a, b) => a.symbol.tokenIndex - b.symbol.tokenIndex)
+                .map((node) => node.getText())
+                .join('');
         } else if (ctx.StringLiteral() || ctx.MultilineStringLiteral()) {
             value = ctx.StringLiteral()
                 ? ctx.StringLiteral().getText()
-                : ctx.MultilineStringLiteral().getText().split('\n').join('');
+                : ctx.MultilineStringLiteral().getText();
             valueType = ctx.StringLiteral() ? 'string' : 'multilineString';
         } else if (ctx.qualifiedName()) {
             value = isValidClass(
@@ -70,7 +62,7 @@ export class WhenLiteralTypeClass extends PrimitiveLiteralTypeClass<WhenLiteralV
             valueType = 'qualifiedName';
         } else if (ctx.whenLiteral()) {
             value = isValidClass(
-                new LiteralVisitor().visitWhenLiteral(ctx.whenLiteral()),
+                new LiteralVisitor().visit(ctx.whenLiteral()),
                 isWhenLiteralType,
                 'whenLiteral',
             );

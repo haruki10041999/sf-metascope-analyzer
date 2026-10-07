@@ -10,10 +10,6 @@ export class AnyIdTypeClass extends IdValueTypeClass<string> {
     }
 
     static create(ctx: AnyIdContext): AnyIdTypeClass {
-        if (!ctx) {
-            throw new Error('値が異常です。AnyIdContext: ' + ctx);
-        }
-
         return new AnyIdTypeClass(ctx.getText());
     }
 }

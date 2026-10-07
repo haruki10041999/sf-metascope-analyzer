@@ -1,56 +1,104 @@
 import { SoslClausesContext } from '@apexdevtools/apex-parser';
 
-import { ClauseType, ClauseVisitor } from '.';
+import {
+    SoslWithClauseTypeClass,
+    LimitClauseTypeClass,
+    ClauseTypeClass,
+    ClauseVisitor,
+    isSoslWithClauseType,
+    isLimitClauseType,
+} from '.';
 
-import { ListType, ListVisitor } from '../listVisitor';
-import { QueryType, QueryVisitor } from '../queryVisitor';
+import {
+    FieldSpecListTypeClass,
+    UpdateListTypeClass,
+    ListVisitor,
+    isFieldSpecListType,
+    isUpdateListType,
+} from '../listVisitor';
+import { SearchGroupTypeClass, QueryVisitor, isSearchGroupType } from '../queryVisitor';
+import { ErrorTypeClass, CommonTypeClass, isValidClass, isValidClassList } from '../commonVisitor';
 
-export type SoslClausesType = {
-    type: 'SoslClauses';
-    clause: {
-        searchGroup: QueryType;
-        fieldSpecList: ListType;
-        withList?: ClauseType[];
-        limit?: ClauseType;
-        updatelist?: ListType;
-    };
-};
+export class SoslClausesTypeClass extends ClauseTypeClass<SearchGroupTypeClass | null> {
+    private fieldSpecList: FieldSpecListTypeClass | ErrorTypeClass | null;
+    private withList: (SoslWithClauseTypeClass | ErrorTypeClass)[] | null;
+    private limitClause: LimitClauseTypeClass | ErrorTypeClass | null;
+    private updateList: UpdateListTypeClass | ErrorTypeClass | null;
 
-export const makeSoslClausesType = (ctx: SoslClausesContext): SoslClausesType => {
-    if (!ctx.searchGroup() || !ctx.fieldSpecList()) {
-        throw new Error('値が異常です。SoslClausesContext: ' + ctx.getText());
+    private constructor(
+        value: SearchGroupTypeClass | ErrorTypeClass | null,
+        fieldSpecList: FieldSpecListTypeClass | ErrorTypeClass | null,
+        withList: (SoslWithClauseTypeClass | ErrorTypeClass)[] | null,
+        limitClause: LimitClauseTypeClass | ErrorTypeClass | null,
+        updateList: UpdateListTypeClass | ErrorTypeClass | null,
+    ) {
+        super('soslClauses', value);
+        this.fieldSpecList = fieldSpecList;
+        this.withList = withList;
+        this.limitClause = limitClause;
+        this.updateList = updateList;
     }
 
-    const searchGroup = new QueryVisitor().visit(ctx.searchGroup());
-    const fieldSpecList = new ListVisitor().visit(ctx.fieldSpecList());
-
-    const soslClausesType: SoslClausesType = {
-        type: 'SoslClauses',
-        clause: {
-            searchGroup: searchGroup,
-            fieldSpecList: fieldSpecList,
-        },
-    };
-
-    if (ctx.soslWithClause_list() && ctx.soslWithClause_list().length > 0) {
-        const withList = ctx.soslWithClause_list().map((soslWithClauseCtx) => {
-            const withClause = new ClauseVisitor().visit(soslWithClauseCtx);
-            return withClause;
-        });
-
-        soslClausesType.clause.withList = withList;
+    static create(ctx: SoslClausesContext): SoslClausesTypeClass {
+        // `IN ... FIELDS` / `RETURNING ...` はいずれも任意
+        return new SoslClausesTypeClass(
+            ctx.searchGroup()
+                ? isValidClass(
+                      new QueryVisitor().visit(ctx.searchGroup()),
+                      isSearchGroupType,
+                      'searchGroup',
+                  )
+                : null,
+            ctx.fieldSpecList()
+                ? isValidClass(
+                      new ListVisitor().visit(ctx.fieldSpecList()),
+                      isFieldSpecListType,
+                      'fieldSpecList',
+                  )
+                : null,
+            ctx.soslWithClause_list() && ctx.soslWithClause_list().length > 0
+                ? isValidClassList(
+                      ctx.soslWithClause_list(),
+                      (ctx) => new ClauseVisitor().visit(ctx),
+                      isSoslWithClauseType,
+                      'soslWithClause',
+                  )
+                : null,
+            ctx.limitClause()
+                ? isValidClass(
+                      new ClauseVisitor().visit(ctx.limitClause()),
+                      isLimitClauseType,
+                      'limitClause',
+                  )
+                : null,
+            ctx.UPDATE() && ctx.updateList()
+                ? isValidClass(
+                      new ListVisitor().visit(ctx.updateList()),
+                      isUpdateListType,
+                      'updateList',
+                  )
+                : null,
+        );
     }
 
-    if (ctx.limitClause()) {
-        const limit = new ClauseVisitor().visit(ctx.limitClause());
-        soslClausesType.clause.limit = limit;
+    getFieldSpecList(): FieldSpecListTypeClass | ErrorTypeClass | null {
+        return this.fieldSpecList;
     }
 
-    if (ctx.UPDATE() && ctx.updateList()) {
-        const updateList = new ListVisitor().visit(ctx.updateList());
-        soslClausesType.clause.updatelist = updateList;
+    getWithList(): (SoslWithClauseTypeClass | ErrorTypeClass)[] | null {
+        return this.withList;
     }
 
-    return soslClausesType;
+    getLimitClause(): LimitClauseTypeClass | ErrorTypeClass | null {
+        return this.limitClause;
+    }
+
+    getUpdateList(): UpdateListTypeClass | ErrorTypeClass | null {
+        return this.updateList;
+    }
+}
+
+export const isSoslClausesType = (target: CommonTypeClass): target is SoslClausesTypeClass => {
+    return target instanceof SoslClausesTypeClass;
 };
 

@@ -3,17 +3,19 @@ import { WithClauseContext } from '@apexdevtools/apex-parser';
 import { ClauseTypeClass } from '.';
 
 import {
+    LogicalExpressionTypeClass,
     FilteringExpressionTypeClass,
     ExpressionVisitor,
     isFilteringExpressionType,
+    isLogicalExpressionType,
 } from '../expressionVisitor';
 import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
 
-export class WithClauseTypeClass extends ClauseTypeClass<string> {
+export class WithClauseTypeClass extends ClauseTypeClass<string | LogicalExpressionTypeClass> {
     private field: FilteringExpressionTypeClass | ErrorTypeClass | null = null;
 
     private constructor(
-        value: string,
+        value: string | LogicalExpressionTypeClass | ErrorTypeClass,
         field: FilteringExpressionTypeClass | ErrorTypeClass | null,
     ) {
         super('withClause', value);
@@ -26,20 +28,27 @@ export class WithClauseTypeClass extends ClauseTypeClass<string> {
             !ctx.USER_MODE() &&
             !ctx.SECURITY_ENFORCED() &&
             !ctx.DATA() &&
-            !ctx.CATEGORY()
+            !ctx.CATEGORY() &&
+            !ctx.logicalExpression()
         ) {
             throw new Error('値が異常です。WithClauseContext: ' + ctx.getText());
         }
 
-        let value: string;
+        let value: string | LogicalExpressionTypeClass | ErrorTypeClass;
         if (ctx.SYSTEM_MODE()) {
             value = 'SYSTEM_MODE';
         } else if (ctx.USER_MODE()) {
             value = 'USER_MODE';
         } else if (ctx.SECURITY_ENFORCED()) {
             value = 'SECURITY_ENFORCED';
-        } else {
+        } else if (ctx.DATA() && ctx.CATEGORY()) {
             value = 'DATA_CATEGORY';
+        } else {
+            value = isValidClass(
+                new ExpressionVisitor().visit(ctx.logicalExpression()),
+                isLogicalExpressionType,
+                'logicalExpression',
+            );
         }
 
         return new WithClauseTypeClass(
@@ -62,3 +71,4 @@ export class WithClauseTypeClass extends ClauseTypeClass<string> {
 export const isWithClauseType = (target: CommonTypeClass): target is WithClauseTypeClass => {
     return target instanceof WithClauseTypeClass;
 };
+

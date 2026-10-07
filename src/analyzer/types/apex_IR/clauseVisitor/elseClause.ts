@@ -7,7 +7,7 @@ import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor'
 
 export class ElseClauseTypeClass extends ClauseTypeClass<FieldNameListTypeClass> {
     private constructor(value: FieldNameListTypeClass | ErrorTypeClass) {
-        super('elseClasuse', value);
+        super('elseClause', value);
     }
 
     static create(ctx: ElseClauseContext): ElseClauseTypeClass {
@@ -28,3 +28,4 @@ export class ElseClauseTypeClass extends ClauseTypeClass<FieldNameListTypeClass>
 export const isElseClauseType = (target: CommonTypeClass): target is ElseClauseTypeClass => {
     return target instanceof ElseClauseTypeClass;
 };
+

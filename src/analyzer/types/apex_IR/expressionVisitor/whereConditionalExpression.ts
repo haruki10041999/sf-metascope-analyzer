@@ -17,12 +17,12 @@ export class WhereConditionalExpressionTypeClass extends ExpressionTypeClass<
     private constructor(
         value: WhereLogicalExpressionTypeClass | WhereFieldExpressionTypeClass | ErrorTypeClass,
     ) {
-        super('conditionalExpression', value);
+        super('whereConditionalExpression', value);
     }
 
     static create(ctx: WhereConditionalExpressionContext): WhereConditionalExpressionTypeClass {
         if (!ctx.whereLogicalExpression() && !ctx.whereFieldExpression()) {
-            throw new Error('値が異常です。ConditionalExpressionContext: ' + ctx);
+            throw new Error('値が異常です。WhereConditionalExpressionContext: ' + ctx.getText());
         }
 
         return new WhereConditionalExpressionTypeClass(

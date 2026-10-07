@@ -31,7 +31,7 @@ type AnonymousMemberDeclarationTypeClassType =
     | FieldDeclarationTypeClass;
 
 export class AnonymousMemberDeclarationTypeClass extends DeclarationTypeClass<AnonymousMemberDeclarationTypeClassType> {
-    constructor(value: AnonymousMemberDeclarationTypeClassType | ErrorTypeClass) {
+    private constructor(value: AnonymousMemberDeclarationTypeClassType | ErrorTypeClass) {
         super('anonymousMemberDeclaration', value);
     }
 

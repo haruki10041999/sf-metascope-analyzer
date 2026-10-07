@@ -23,11 +23,7 @@ export class CmpExpressionTypeClass extends DoubleOperatorExpressionTypeClass<
     }
 
     static create(ctx: CmpExpressionContext): CmpExpressionTypeClass {
-        if (
-            !ctx.expression_list() ||
-            ctx.expression_list().length !== 2 ||
-            (!ctx.ASSIGN() && !ctx.GT() && !ctx.LT())
-        ) {
+        if (ctx.expression_list().length !== 2 || (!ctx.GT() && !ctx.LT())) {
             throw new Error('値が異常です。CmpExpressionContext: ' + ctx.getText());
         }
 
@@ -42,7 +38,8 @@ export class CmpExpressionTypeClass extends DoubleOperatorExpressionTypeClass<
                 isExpressionTypeAll,
                 'expression',
             ),
-            ctx.ASSIGN() ? '=' : ctx.GT() ? '>' : '<',
+            // `<=` / `>=` は LT/GT と ASSIGN の 2 トークンで表現される
+            (ctx.GT() ? '>' : '<') + (ctx.ASSIGN() ? '=' : ''),
         );
     }
 }

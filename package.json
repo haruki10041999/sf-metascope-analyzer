@@ -8,6 +8,7 @@
         "dev": "vite",
         "build": "tsc && vite build",
         "mcp": "tsx src/mcp/server.ts",
+        "test": "tsx --test \"test/**/*.test.ts\"",
         "format": "prettier --write .",
         "format:check": "prettier --check ."
     },

@@ -10,10 +10,6 @@ export class NoRestTypeClass extends RestTypeClass<string> {
     }
 
     static create(ctx: NoRestContext): NoRestTypeClass {
-        if (!ctx) {
-            throw new Error('値が異常です。NoRestContext: ' + ctx);
-        }
-
         return new NoRestTypeClass(ctx.getText());
     }
 }

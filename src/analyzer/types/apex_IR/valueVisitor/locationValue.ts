@@ -10,54 +10,63 @@ import {
 } from '../expressionVisitor';
 import { ErrorTypeClass, CommonTypeClass, isValidClass, isValidClassList } from '../commonVisitor';
 
-type LocationValueValue =
-    | FieldNameTypeClass
-    | BoundExpressionTypeClass
-    | { value: (CoordinateValueTypeClass | ErrorTypeClass)[]; geoLocation: boolean };
+type LocationValueValue = FieldNameTypeClass | BoundExpressionTypeClass;
 
-export class LocationValueTypeClass extends ValueTypeClass<LocationValueValue> {
-    private constructor(value: LocationValueValue | ErrorTypeClass) {
+export class LocationValueTypeClass extends ValueTypeClass<LocationValueValue | null> {
+    // GEOLOCATION(lat, lng) 形式のときのみ [緯度, 経度]、それ以外は null
+    private coordinates: (CoordinateValueTypeClass | ErrorTypeClass)[] | null;
+
+    private constructor(
+        value: LocationValueValue | ErrorTypeClass | null,
+        coordinates: (CoordinateValueTypeClass | ErrorTypeClass)[] | null,
+    ) {
         super('locationValue', value);
+        this.coordinates = coordinates;
     }
 
     static create(ctx: LocationValueContext): LocationValueTypeClass {
         if (
             !ctx.fieldName() &&
             !ctx.boundExpression() &&
-            (!ctx.coordinateValue_list() || ctx.coordinateValue_list().length !== 2)
+            (!ctx.GEOLOCATION() || ctx.coordinateValue_list().length !== 2)
         ) {
             throw new Error('値が異常です。LocationValueContext: ' + ctx.getText());
         }
 
-        let value: LocationValueValue | ErrorTypeClass;
-        if (ctx.fieldName()) {
-            value = isValidClass(
-                new NameVisitor().visit(ctx.fieldName()),
-                isFieldNameType,
-                'fieldName',
-            );
-        } else if (ctx.boundExpression()) {
-            value = isValidClass(
-                new ExpressionVisitor().visit(ctx.boundExpression()),
-                isBoundExpressionType,
-                'boundExpression',
-            );
-        } else {
-            value = {
-                value: isValidClassList(
-                    ctx.coordinateValue_list() || [],
+        if (ctx.GEOLOCATION()) {
+            return new LocationValueTypeClass(
+                null,
+                isValidClassList(
+                    ctx.coordinateValue_list(),
                     (ctx) => new ValueVisitor().visit(ctx),
                     isCoordinateValueType,
-                    'coodinateValue',
+                    'coordinateValue',
                 ),
-                geoLocation: ctx.GEOLOCATION() !== null,
-            };
+            );
         }
 
-        return new LocationValueTypeClass(value);
+        return new LocationValueTypeClass(
+            ctx.fieldName()
+                ? isValidClass(
+                      new NameVisitor().visit(ctx.fieldName()),
+                      isFieldNameType,
+                      'fieldName',
+                  )
+                : isValidClass(
+                      new ExpressionVisitor().visit(ctx.boundExpression()),
+                      isBoundExpressionType,
+                      'boundExpression',
+                  ),
+            null,
+        );
+    }
+
+    getCoordinates(): (CoordinateValueTypeClass | ErrorTypeClass)[] | null {
+        return this.coordinates;
     }
 }
 
 export const isLocationValueType = (target: CommonTypeClass): target is LocationValueTypeClass => {
     return target instanceof LocationValueTypeClass;
 };
+

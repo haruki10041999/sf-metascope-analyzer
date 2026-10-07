@@ -15,8 +15,8 @@ export class ParExpressionTypeClass extends ExpressionTypeClass<ExpressionAllTyp
     }
 
     static create(ctx: ParExpressionContext): ParExpressionTypeClass {
-        if (!ctx) {
-            throw new Error('値が異常です。ParExpressionContext: ' + ctx);
+        if (!ctx.expression()) {
+            throw new Error('値が異常です。ParExpressionContext: ' + ctx.getText());
         }
 
         return new ParExpressionTypeClass(

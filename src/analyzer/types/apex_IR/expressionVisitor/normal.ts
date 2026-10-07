@@ -10,10 +10,6 @@ export class NormalExpressionTypeClass extends ExpressionTypeClass<string> {
     }
 
     static create(ctx: ExpressionContext): NormalExpressionTypeClass {
-        if (!ctx) {
-            throw new Error('値が異常です。ExpressionContext: ' + ctx);
-        }
-
         return new NormalExpressionTypeClass(ctx.getText());
     }
 }

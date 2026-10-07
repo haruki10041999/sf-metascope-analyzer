@@ -31,7 +31,7 @@ type MemberDeclarationTypeClassType =
     | FieldDeclarationTypeClass;
 
 export class MemberDeclarationTypeClass extends DeclarationTypeClass<MemberDeclarationTypeClassType> {
-    constructor(value: MemberDeclarationTypeClassType | ErrorTypeClass) {
+    private constructor(value: MemberDeclarationTypeClassType | ErrorTypeClass) {
         super('memberDeclaration', value);
     }
 

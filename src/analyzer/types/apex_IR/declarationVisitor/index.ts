@@ -16,10 +16,14 @@ import {
     EnumConstantsContext,
 } from '@apexdevtools/apex-parser';
 
+// 各ファイルより先に base を評価させ、循環 import 時の TDZ を防ぐ
+export * from './base';
+import type { DeclarationAllTypeClass } from './base';
+
 import { MemberDeclarationTypeClass } from './memberDeclaration';
 import { TriggerMemberDeclarationTypeClass } from './triggerMemberDeclaration';
 import { AnonymousMemberDeclarationTypeClass } from './anonymousMemberDeclaration';
-import { TypeDeclarationClass } from './typeDeclaration';
+import { TypeDeclarationTypeClass } from './typeDeclaration';
 import { FieldDeclarationTypeClass } from './fieldDeclaration';
 import { PropertyDeclarationTypeClass } from './propertyDeclaration';
 import { InterfaceMethodDeclarationTypeClass } from './interfaceMethodDeclaration';
@@ -32,9 +36,9 @@ import { EnumDeclarationTypeClass } from './enumDeclaration';
 import { ConstructorDeclarationTypeClass } from './constructorDeclaration';
 import { EnumConstantsTypeClass } from './enumConstants';
 
-import { ErrorTypeClass, CommonTypeClass, CommonVisitor } from '../commonVisitor';
+import { CommonVisitor } from '../commonVisitor';
 
-export { isTypeDeclarationClass, TypeDeclarationClass } from './typeDeclaration';
+export { isTypeDeclarationType, TypeDeclarationTypeClass } from './typeDeclaration';
 export { isMemberDeclarationType, MemberDeclarationTypeClass } from './memberDeclaration';
 export { isFieldDeclarationType, FieldDeclarationTypeClass } from './fieldDeclaration';
 export { isPropertyDeclarationType, PropertyDeclarationTypeClass } from './propertyDeclaration';
@@ -64,39 +68,6 @@ export {
     isAnonymousMemberDeclarationType,
     AnonymousMemberDeclarationTypeClass,
 } from './anonymousMemberDeclaration';
-
-export class DeclarationTypeClass<T> extends CommonTypeClass {
-    private value: T | ErrorTypeClass;
-    constructor(type: string, value: T | ErrorTypeClass) {
-        super(type);
-        this.value = value;
-    }
-
-    getValue(): T | ErrorTypeClass {
-        return this.value;
-    }
-}
-
-export class DeclarationListTypeClass<T> extends CommonTypeClass {
-    private value: (T | ErrorTypeClass)[];
-    constructor(type: string, value: (T | ErrorTypeClass)[]) {
-        super(type);
-        this.value = value;
-    }
-
-    getValue(): (T | ErrorTypeClass)[] {
-        return this.value;
-    }
-}
-
-export type DeclarationAllTypeClass =
-    DeclarationTypeClass<unknown> | DeclarationListTypeClass<unknown>;
-
-export const isDeclarationTypeAll = (
-    target: CommonTypeClass,
-): target is DeclarationAllTypeClass => {
-    return target instanceof DeclarationTypeClass || target instanceof DeclarationListTypeClass;
-};
 
 export class DeclarationVisitor extends CommonVisitor<DeclarationAllTypeClass> {
     visitMemberDeclaration(ctx: MemberDeclarationContext) {
@@ -144,7 +115,7 @@ export class DeclarationVisitor extends CommonVisitor<DeclarationAllTypeClass> {
     }
 
     visitTypeDeclaration(ctx: TypeDeclarationContext) {
-        return TypeDeclarationClass.create(ctx);
+        return TypeDeclarationTypeClass.create(ctx);
     }
 
     visitTriggerMemberDeclaration(ctx: TriggerMemberDeclarationContext) {

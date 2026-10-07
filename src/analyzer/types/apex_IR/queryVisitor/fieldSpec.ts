@@ -1,63 +1,133 @@
 import { FieldSpecContext } from '@apexdevtools/apex-parser';
 
-import { IdType, IdVisitor } from '../idVisitor';
-import { ListType, ListVisitor } from '../listVisitor';
-import { ExpressionType, ExpressionVisitor } from '../expressionVisitor';
-import { ClauseType, ClauseVisitor } from '../clauseVisitor';
+import { QueryTypeClass } from '../queryVisitor';
 
-export type FieldSpecType = {
-    type: 'fieldSpec';
-    query: {
-        objectName: IdType[];
-        fieldList: ListType;
-        where?: ExpressionType;
-        usingListView: boolean;
-        orderBy?: ListType;
-        limit?: ClauseType;
-        offset?: ClauseType;
-    };
-};
+import { SoslIdTypeClass, IdVisitor, isSoslIdType } from '../idVisitor';
+import {
+    FieldListTypeClass,
+    FieldOrderListTypeClass,
+    ListVisitor,
+    isFieldListType,
+    isFieldOrderListType,
+} from '../listVisitor';
+import {
+    LogicalExpressionTypeClass,
+    ExpressionVisitor,
+    isLogicalExpressionType,
+} from '../expressionVisitor';
+import {
+    LimitClauseTypeClass,
+    OffsetClauseTypeClass,
+    ClauseVisitor,
+    isLimitClauseType,
+    isOffsetClauseType,
+} from '../clauseVisitor';
+import { CommonTypeClass, ErrorTypeClass, isValidClass } from '../commonVisitor';
 
-export const makeFieldSpecType = (ctx: FieldSpecContext): FieldSpecType => {
-    if (!ctx.soslId_list() || !ctx.fieldList()) {
-        throw new Error('値が異常です。FieldSpecContext: ' + ctx.getText());
+// value はオブジェクト名 (soslId[0])
+export class FieldSpecTypeClass extends QueryTypeClass<SoslIdTypeClass> {
+    private fieldList: FieldListTypeClass | ErrorTypeClass | null;
+    private where: LogicalExpressionTypeClass | ErrorTypeClass | null;
+    private listView: SoslIdTypeClass | ErrorTypeClass | null;
+    private orderBy: FieldOrderListTypeClass | ErrorTypeClass | null;
+    private limitClause: LimitClauseTypeClass | ErrorTypeClass | null;
+    private offsetClause: OffsetClauseTypeClass | ErrorTypeClass | null;
+
+    private constructor(
+        value: SoslIdTypeClass | ErrorTypeClass,
+        fieldList: FieldListTypeClass | ErrorTypeClass | null,
+        where: LogicalExpressionTypeClass | ErrorTypeClass | null,
+        listView: SoslIdTypeClass | ErrorTypeClass | null,
+        orderBy: FieldOrderListTypeClass | ErrorTypeClass | null,
+        limitClause: LimitClauseTypeClass | ErrorTypeClass | null,
+        offsetClause: OffsetClauseTypeClass | ErrorTypeClass | null,
+    ) {
+        super('fieldSpec', value);
+        this.fieldList = fieldList;
+        this.where = where;
+        this.listView = listView;
+        this.orderBy = orderBy;
+        this.limitClause = limitClause;
+        this.offsetClause = offsetClause;
     }
 
-    const objectName = ctx.soslId_list().map((soslIdCtx) => {
-        const soslId = new IdVisitor().visit(soslIdCtx);
-        return soslId;
-    });
-    const fieldList = new ListVisitor().visit(ctx.fieldList());
+    static create(ctx: FieldSpecContext): FieldSpecTypeClass {
+        if (!ctx.soslId_list() || ctx.soslId_list().length === 0) {
+            throw new Error('値が異常です。FieldSpecContext: ' + ctx.getText());
+        }
 
-    const fieldSpecType: FieldSpecType = {
-        type: 'fieldSpec',
-        query: {
-            objectName: objectName,
-            fieldList: fieldList,
-            usingListView: Boolean(ctx.USING()) && Boolean(ctx.LISTVIEW()),
-        },
-    };
+        // soslId[1] は USING LISTVIEW = xxx のビュー名
+        const listViewCtx = ctx.LISTVIEW() ? ctx.soslId(1) : null;
 
-    if (ctx.WHERE() && ctx.logicalExpression()) {
-        const where = new ExpressionVisitor().visit(ctx.logicalExpression());
-        fieldSpecType.query.where = where;
+        return new FieldSpecTypeClass(
+            isValidClass(new IdVisitor().visit(ctx.soslId(0)), isSoslIdType, 'soslId'),
+            ctx.fieldList()
+                ? isValidClass(
+                      new ListVisitor().visit(ctx.fieldList()),
+                      isFieldListType,
+                      'fieldList',
+                  )
+                : null,
+            ctx.logicalExpression()
+                ? isValidClass(
+                      new ExpressionVisitor().visit(ctx.logicalExpression()),
+                      isLogicalExpressionType,
+                      'logicalExpression',
+                  )
+                : null,
+            listViewCtx
+                ? isValidClass(new IdVisitor().visit(listViewCtx), isSoslIdType, 'soslId')
+                : null,
+            ctx.fieldOrderList()
+                ? isValidClass(
+                      new ListVisitor().visit(ctx.fieldOrderList()),
+                      isFieldOrderListType,
+                      'fieldOrderList',
+                  )
+                : null,
+            ctx.limitClause()
+                ? isValidClass(
+                      new ClauseVisitor().visit(ctx.limitClause()),
+                      isLimitClauseType,
+                      'limitClause',
+                  )
+                : null,
+            ctx.offsetClause()
+                ? isValidClass(
+                      new ClauseVisitor().visit(ctx.offsetClause()),
+                      isOffsetClauseType,
+                      'offsetClause',
+                  )
+                : null,
+        );
     }
 
-    if (ctx.ORDER() && ctx.BY() && ctx.fieldOrderList()) {
-        const orderby = new ListVisitor().visit(ctx.fieldOrderList());
-        fieldSpecType.query.orderBy = orderby;
+    getFieldList(): FieldListTypeClass | ErrorTypeClass | null {
+        return this.fieldList;
     }
 
-    if (ctx.limitClause()) {
-        const limitClause = new ClauseVisitor().visit(ctx.limitClause());
-        fieldSpecType.query.limit = limitClause;
+    getWhere(): LogicalExpressionTypeClass | ErrorTypeClass | null {
+        return this.where;
     }
 
-    if (ctx.offsetClause()) {
-        const offsetClause = new ClauseVisitor().visit(ctx.offsetClause());
-        fieldSpecType.query.offset = offsetClause;
+    getListView(): SoslIdTypeClass | ErrorTypeClass | null {
+        return this.listView;
     }
 
-    return fieldSpecType;
+    getOrderBy(): FieldOrderListTypeClass | ErrorTypeClass | null {
+        return this.orderBy;
+    }
+
+    getLimitClause(): LimitClauseTypeClass | ErrorTypeClass | null {
+        return this.limitClause;
+    }
+
+    getOffsetClause(): OffsetClauseTypeClass | ErrorTypeClass | null {
+        return this.offsetClause;
+    }
+}
+
+export const isFieldSpecType = (target: CommonTypeClass): target is FieldSpecTypeClass => {
+    return target instanceof FieldSpecTypeClass;
 };
 

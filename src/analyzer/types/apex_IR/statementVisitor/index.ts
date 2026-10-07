@@ -22,6 +22,10 @@ import {
     AccessLevelContext,
 } from '@apexdevtools/apex-parser';
 
+// 各ファイルより先に base を評価させ、循環 import 時の TDZ を防ぐ
+export * from './base';
+import type { StatementAllTypeClass } from './base';
+
 import { NormalStatementTypeClass } from './normal';
 import { IfStatementTypeClass } from './ifStatement';
 import { SwitchStatementTypeClass } from './switchStatement';
@@ -44,7 +48,7 @@ import { LocalVariableDeclarationStatementTypeClass } from './localVariableDecla
 import { ExpressionStatementTypeClass } from './expressionStatement';
 import { AccessLevelTypeClass } from './accessLevel';
 
-import { ErrorTypeClass, CommonTypeClass, CommonVisitor } from '../commonVisitor';
+import { CommonVisitor } from '../commonVisitor';
 
 export { isNormalStatementType, NormalStatementTypeClass } from './normal';
 export { isReturnStatementType, ReturnStatementTypeClass } from './returnStatement';
@@ -70,52 +74,6 @@ export {
 } from './localVariableDeclarationStatement';
 export { isExpressionStatementType, ExpressionStatementTypeClass } from './expressionStatement';
 export { isAccessLevelType, AccessLevelTypeClass } from './accessLevel';
-
-export class StatementTypeClass<T> extends CommonTypeClass {
-    private value: T | ErrorTypeClass;
-    constructor(type: string, value: T | ErrorTypeClass) {
-        super(type);
-        this.value = value;
-    }
-
-    getValue(): T | ErrorTypeClass {
-        return this.value;
-    }
-}
-
-export class StatementListTypeClass<T> extends CommonTypeClass {
-    private value: (T | ErrorTypeClass)[];
-    constructor(type: string, value: (T | ErrorTypeClass)[]) {
-        super(type);
-        this.value = value;
-    }
-
-    getValue(): (T | ErrorTypeClass)[] {
-        return this.value;
-    }
-}
-
-export class DmlStatementTypeClass<T> extends StatementTypeClass<T> {
-    private accessLevel: AccessLevelTypeClass | ErrorTypeClass | null = null;
-    constructor(
-        type: string,
-        value: T | ErrorTypeClass,
-        accessLevel: AccessLevelTypeClass | ErrorTypeClass | null,
-    ) {
-        super(type, value);
-        this.accessLevel = accessLevel;
-    }
-
-    getAccessLevel(): AccessLevelTypeClass | ErrorTypeClass | null {
-        return this.accessLevel;
-    }
-}
-
-export type StatementAllTypeClass = StatementTypeClass<unknown> | StatementListTypeClass<unknown>;
-
-export const isStatementTypeAll = (target: CommonTypeClass): target is StatementAllTypeClass => {
-    return target instanceof StatementTypeClass || target instanceof StatementListTypeClass;
-};
 
 export class StatementVisitor extends CommonVisitor<StatementAllTypeClass> {
     visitStatement(ctx: StatementContext) {
@@ -202,3 +160,4 @@ export class StatementVisitor extends CommonVisitor<StatementAllTypeClass> {
         return AccessLevelTypeClass.create(ctx);
     }
 }
+

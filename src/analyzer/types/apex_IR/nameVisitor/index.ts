@@ -7,6 +7,10 @@ import {
     DataCategoryNameContext,
 } from '@apexdevtools/apex-parser';
 
+// 各ファイルより先に base を評価させ、循環 import 時の TDZ を防ぐ
+export * from './base';
+import type { NameAllTypeClass } from './base';
+
 import { QualifiedNameTypeClass } from './qualifiedName';
 import { TypeNameTypeClass } from './typeName';
 import { CreatedNameTypeClass } from './createName';
@@ -14,7 +18,7 @@ import { FieldNameTypeClass } from './fieldName';
 import { DateFieldNameTypeClass } from './dateFieldName';
 import { DataCategoryNameTypeClass } from './dataCategoryName';
 
-import { ErrorTypeClass, CommonTypeClass, CommonVisitor } from '../commonVisitor';
+import { CommonVisitor } from '../commonVisitor';
 
 export { isQualifiedNameType, QualifiedNameTypeClass } from './qualifiedName';
 export { isTypeNameType, TypeNameTypeClass } from './typeName';
@@ -22,36 +26,6 @@ export { isCreatedNameType, CreatedNameTypeClass } from './createName';
 export { isFieldNameType, FieldNameTypeClass } from './fieldName';
 export { isDateFieldNameType, DateFieldNameTypeClass } from './dateFieldName';
 export { isDataCategoryNameType, DataCategoryNameTypeClass } from './dataCategoryName';
-
-export class NameTypeClass<T> extends CommonTypeClass {
-    private value: T | ErrorTypeClass;
-    constructor(type: string, value: T | ErrorTypeClass) {
-        super(type);
-        this.value = value;
-    }
-
-    getValue(): T | ErrorTypeClass {
-        return this.value;
-    }
-}
-
-export class NameListTypeClass<T> extends CommonTypeClass {
-    private value: (T | ErrorTypeClass)[];
-    constructor(type: string, value: (T | ErrorTypeClass)[]) {
-        super(type);
-        this.value = value;
-    }
-
-    getValue(): (T | ErrorTypeClass)[] {
-        return this.value;
-    }
-}
-
-export type NameAllTypeClass = NameTypeClass<unknown> | NameListTypeClass<unknown>;
-
-export const isNameTypeAll = (target: CommonTypeClass): target is NameAllTypeClass => {
-    return target instanceof NameTypeClass || target instanceof NameListTypeClass;
-};
 
 export class NameVisitor extends CommonVisitor<NameAllTypeClass> {
     visitQualifiedName(ctx: QualifiedNameContext) {

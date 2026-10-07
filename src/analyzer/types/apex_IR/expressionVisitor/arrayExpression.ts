@@ -1,7 +1,7 @@
 import { ArrayExpressionContext } from '@apexdevtools/apex-parser';
 
 import {
-    ExpressionListTypeClass,
+    ExpressionListBaseTypeClass,
     ExpressionAllTypeClass,
     ExpressionVisitor,
     isExpressionTypeAll,
@@ -9,7 +9,7 @@ import {
 
 import { CommonTypeClass, ErrorTypeClass, isValidClass } from '../commonVisitor';
 
-export class ArrayExpressionTypeClass extends ExpressionListTypeClass<ExpressionAllTypeClass> {
+export class ArrayExpressionTypeClass extends ExpressionListBaseTypeClass<ExpressionAllTypeClass> {
     private constructor(value: (ExpressionAllTypeClass | ErrorTypeClass)[]) {
         super('arrayExpression', value);
     }
@@ -36,3 +36,4 @@ export const isArrayExpressionType = (
 ): target is ArrayExpressionTypeClass => {
     return target instanceof ArrayExpressionTypeClass;
 };
+

@@ -15,6 +15,10 @@ import {
     FieldSpecListContext,
 } from '@apexdevtools/apex-parser';
 
+// 各ファイルより先に base を評価させ、循環 import 時の TDZ を防ぐ
+export * from './base';
+import type { ListTypeClass } from './base';
+
 import { TypeListTypeClass } from './typeList';
 import { ExpressionListTypeClass } from './expressionList';
 import { FieldNameListTypeClass } from './fieldNameList';
@@ -25,40 +29,37 @@ import { NetworkListTypeClass } from './networkList';
 import { FromNameListTypeClass } from './fromNameList';
 import { FieldGroupByListTypeClass } from './fieldGroupByList';
 import { FieldOrderListTypeClass } from './fieldOrderList';
-import { SelectListType, makeSelectListType } from './selectList';
-import { SubFieldListType, makeSubFieldListType } from './subFieldList';
-import { FieldListType, makeFieldListType } from './fieldList';
-import { FieldSpecListType, makeFieldSpecListType } from './fieldSpecList';
+import { SelectListTypeClass } from './selectList';
+import { SubFieldListTypeClass } from './subFieldList';
+import { FieldListTypeClass } from './fieldList';
+import { FieldSpecListTypeClass } from './fieldSpecList';
 
-import { CommonTypeClass, ErrorTypeClass, CommonVisitor } from '../commonVisitor';
+import { CommonVisitor } from '../commonVisitor';
 
 export { isTypeListType, TypeListTypeClass } from './typeList';
 export { isFormalParameterListType, FormalParameterListTypeClass } from './formalParameterList';
 export { isValueListType, ValueListTypeClass } from './valueList';
 export { isExpressionListType, ExpressionListTypeClass } from './expressionList';
 export { isFieldNameListType, FieldNameListTypeClass } from './fieldNameList';
-export { isFromNameListType, FromNameListTypeClass } from './fromNameList';
+export {
+    isFromNameListType,
+    FromNameListTypeClass,
+    isFromNameType,
+    FromNameTypeClass,
+} from './fromNameList';
 export { isFieldGroupByListType, FieldGroupByListTypeClass } from './fieldGroupByList';
 export { isFieldOrderListType, FieldOrderListTypeClass } from './fieldOrderList';
 export { isUpdateListType, UpdateListTypeClass } from './updateList';
 export { isNetworkListType, NetworkListTypeClass } from './networkList';
-
-export class ListTypeClass<T> extends CommonTypeClass {
-    private value: (T | ErrorTypeClass)[];
-
-    constructor(type: string, value: (T | ErrorTypeClass)[]) {
-        super(type);
-        this.value = value;
-    }
-
-    getValue(): (T | ErrorTypeClass)[] {
-        return this.value;
-    }
-}
-
-export const isListTypeAll = (target: CommonTypeClass): target is ListTypeClass<unknown> => {
-    return target instanceof ListTypeClass;
-};
+export { isSelectListType, SelectListTypeClass } from './selectList';
+export { isSubFieldListType, SubFieldListTypeClass } from './subFieldList';
+export {
+    isFieldListType,
+    FieldListTypeClass,
+    isSoslFieldType,
+    SoslFieldTypeClass,
+} from './fieldList';
+export { isFieldSpecListType, FieldSpecListTypeClass } from './fieldSpecList';
 
 export class ListVisitor extends CommonVisitor<ListTypeClass<unknown>> {
     visitTypeList(ctx: TypeListContext) {
@@ -101,46 +102,18 @@ export class ListVisitor extends CommonVisitor<ListTypeClass<unknown>> {
     }
 
     visitSelectList(ctx: SelectListContext) {
-        console.log('解析を開始します。' + 'SelectListContext:  ' + ctx.getText());
-        const result = makeSelectListType(ctx);
-        console.log(
-            '------------解析が終了しました--------------' +
-                'SelectListContext:  ' +
-                JSON.stringify(result, null, 2),
-        );
-        return result;
+        return SelectListTypeClass.create(ctx);
     }
 
     visitSubFieldList(ctx: SubFieldListContext) {
-        console.log('解析を開始します。' + 'SubFieldListContext:  ' + ctx.getText());
-        const result = makeSubFieldListType(ctx);
-        console.log(
-            '------------解析が終了しました--------------' +
-                'SubFieldListContext:  ' +
-                JSON.stringify(result, null, 2),
-        );
-        return result;
+        return SubFieldListTypeClass.create(ctx);
     }
 
     visitFieldList(ctx: FieldListContext) {
-        console.log('解析を開始します。' + 'FieldListContext:  ' + ctx.getText());
-        const result = makeFieldListType(ctx);
-        console.log(
-            '------------解析が終了しました--------------' +
-                'FieldListContext:  ' +
-                JSON.stringify(result, null, 2),
-        );
-        return result;
+        return FieldListTypeClass.create(ctx);
     }
 
     visitFieldSpecList(ctx: FieldSpecListContext) {
-        console.log('解析を開始します。' + 'FieldSpecListContext:  ' + ctx.getText());
-        const result = makeFieldSpecListType(ctx);
-        console.log(
-            '------------解析が終了しました--------------' +
-                'FieldSpecListContext:  ' +
-                JSON.stringify(result, null, 2),
-        );
-        return result;
+        return FieldSpecListTypeClass.create(ctx);
     }
 }

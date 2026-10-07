@@ -1,40 +1,53 @@
 import { SoslLiteralContext } from '@apexdevtools/apex-parser';
 
-import { ExpressionType, ExpressionVisitor } from '../expressionVisitor';
-import { ClauseType, ClauseVisitor } from '../clauseVisitor';
+import { LiteralTypeClass } from '.';
 
-export type SoslLiteralType = {
-    type: 'soslLiteral';
-    literal: {
-        find: string | ExpressionType;
-        soslClauses: ClauseType;
-    };
-};
+import {
+    BoundExpressionTypeClass,
+    ExpressionVisitor,
+    isBoundExpressionType,
+} from '../expressionVisitor';
+import { SoslClausesTypeClass, ClauseVisitor, isSoslClausesType } from '../clauseVisitor';
+import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
 
-export const makeSoslLiteralType = (ctx: SoslLiteralContext): SoslLiteralType => {
-    const soslClauses = new ClauseVisitor().visit(ctx.soslClauses());
+export class SoslLiteralTypeClass extends LiteralTypeClass<string | BoundExpressionTypeClass> {
+    private soslClauses: SoslClausesTypeClass | ErrorTypeClass;
 
-    if (ctx.FindLiteral()) {
-        return {
-            type: 'soslLiteral',
-            literal: {
-                find: ctx.FindLiteral().getText(),
-                soslClauses: soslClauses,
-            },
-        };
+    private constructor(
+        value: string | BoundExpressionTypeClass | ErrorTypeClass,
+        soslClauses: SoslClausesTypeClass | ErrorTypeClass,
+    ) {
+        super('soslLiteral', value);
+        this.soslClauses = soslClauses;
     }
 
-    if (ctx.boundExpression()) {
-        const find = new ExpressionVisitor().visit(ctx.boundExpression());
-        return {
-            type: 'soslLiteral',
-            literal: {
-                find: find,
-                soslClauses: soslClauses,
-            },
-        };
+    static create(ctx: SoslLiteralContext): SoslLiteralTypeClass {
+        if ((!ctx.FindLiteral() && !ctx.boundExpression()) || !ctx.soslClauses()) {
+            throw new Error('値が異常です。SoslLiteralContext: ' + ctx.getText());
+        }
+
+        return new SoslLiteralTypeClass(
+            ctx.FindLiteral()
+                ? ctx.FindLiteral().getText()
+                : isValidClass(
+                      new ExpressionVisitor().visit(ctx.boundExpression()),
+                      isBoundExpressionType,
+                      'boundExpression',
+                  ),
+            isValidClass(
+                new ClauseVisitor().visit(ctx.soslClauses()),
+                isSoslClausesType,
+                'soslClauses',
+            ),
+        );
     }
 
-    throw new Error('値が異常です。SoslLiteralContext: ' + ctx.getText());
+    getSoslClauses(): SoslClausesTypeClass | ErrorTypeClass {
+        return this.soslClauses;
+    }
+}
+
+export const isSoslLiteralType = (target: CommonTypeClass): target is SoslLiteralTypeClass => {
+    return target instanceof SoslLiteralTypeClass;
 };
 

@@ -2,14 +2,14 @@ import { WhereLogicalExpressionContext } from '@apexdevtools/apex-parser';
 
 import {
     WhereConditionalExpressionTypeClass,
-    ExpressionListTypeClass,
+    ExpressionListBaseTypeClass,
     ExpressionVisitor,
     isWhereConditionalExpressionType,
 } from '.';
 
 import { CommonTypeClass, ErrorTypeClass, isValidClassList } from '../commonVisitor';
 
-export class WhereLogicalExpressionTypeClass extends ExpressionListTypeClass<WhereConditionalExpressionTypeClass> {
+export class WhereLogicalExpressionTypeClass extends ExpressionListBaseTypeClass<WhereConditionalExpressionTypeClass> {
     private operator: string | null = null;
 
     private constructor(
@@ -34,7 +34,7 @@ export class WhereLogicalExpressionTypeClass extends ExpressionListTypeClass<Whe
                 ctx.whereConditionalExpression_list(),
                 (ctx) => new ExpressionVisitor().visit(ctx),
                 isWhereConditionalExpressionType,
-                'conditionalExpression',
+                'whereConditionalExpression',
             ),
             ctx.SOQLAND_list()?.length
                 ? 'AND'

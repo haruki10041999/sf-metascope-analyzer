@@ -15,13 +15,6 @@ export class InterfaceBodyTypeClass extends BodyTypeClass<InterfaceMethodDeclara
     }
 
     static create(ctx: InterfaceBodyContext): InterfaceBodyTypeClass {
-        if (
-            !ctx.interfaceMethodDeclaration_list() &&
-            ctx.interfaceMethodDeclaration_list().length > 0
-        ) {
-            throw new Error('値が異常です。InterfaceBodyContext: ' + ctx.getText());
-        }
-
         return new InterfaceBodyTypeClass(
             isValidClassList(
                 ctx.interfaceMethodDeclaration_list(),

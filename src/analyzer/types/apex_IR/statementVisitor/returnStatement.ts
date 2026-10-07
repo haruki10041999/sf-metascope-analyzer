@@ -9,22 +9,21 @@ import {
 } from '../expressionVisitor';
 import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
 
-export class ReturnStatementTypeClass extends StatementTypeClass<ExpressionAllTypeClass> {
-    private constructor(value: ExpressionAllTypeClass | ErrorTypeClass) {
+export class ReturnStatementTypeClass extends StatementTypeClass<ExpressionAllTypeClass | null> {
+    private constructor(value: ExpressionAllTypeClass | ErrorTypeClass | null) {
         super('returnStatement', value);
     }
 
     static create(ctx: ReturnStatementContext): ReturnStatementTypeClass {
-        if (!ctx.expression()) {
-            throw new Error('値が異常です。ReturnStatementContext: ' + ctx.getText());
-        }
-
+        // void メソッドの `return;` は式を持たない
         return new ReturnStatementTypeClass(
-            isValidClass(
-                new ExpressionVisitor().visit(ctx.expression()),
-                isExpressionTypeAll,
-                'expression',
-            ),
+            ctx.expression()
+                ? isValidClass(
+                      new ExpressionVisitor().visit(ctx.expression()),
+                      isExpressionTypeAll,
+                      'expression',
+                  )
+                : null,
         );
     }
 }

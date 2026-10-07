@@ -1,3 +1,4 @@
+// apex_IR 網羅用サンプルトリガー（全 7 種の triggerCase と、トリガー本体内のメンバー宣言を含む）
 trigger ParserTrigger on Account (
     before insert,
     before update,
@@ -13,26 +14,65 @@ trigger ParserTrigger on Account (
     // ============================================================
 
     System.debug(Trigger.isExecuting);
-
     System.debug(Trigger.isBefore);
-
     System.debug(Trigger.isAfter);
-
     System.debug(Trigger.isInsert);
-
     System.debug(Trigger.isUpdate);
-
     System.debug(Trigger.isDelete);
-
     System.debug(Trigger.isUndelete);
-
     System.debug(Trigger.new);
-
     System.debug(Trigger.old);
-
     System.debug(Trigger.newMap);
-
     System.debug(Trigger.oldMap);
+    System.debug(Trigger.operationType);
+    System.debug(Trigger.size);
+
+
+    // ============================================================
+    // Trigger 内のメンバー宣言（クラス / インターフェース / enum / メソッド / フィールド / プロパティ）
+    // ============================================================
+
+    private static final String PREFIX = 'Trigger: ';
+
+    static Integer invocationCount = 0;
+
+    public String label { get; set; }
+
+    private void log(String message) {
+        System.debug(PREFIX + message);
+    }
+
+    public class TriggerHelper {
+        public void run() {
+            System.debug('helper');
+        }
+    }
+
+    public interface TriggerHandler {
+        void handle();
+    }
+
+    public enum Phase {
+        BEFORE_PHASE,
+        AFTER_PHASE
+    }
+
+
+    // ============================================================
+    // operationType による分岐（switch on enum）
+    // ============================================================
+
+    switch on Trigger.operationType {
+        when BEFORE_INSERT, BEFORE_UPDATE {
+            invocationCount++;
+        }
+        when AFTER_DELETE {
+            invocationCount--;
+        }
+        when else {
+            invocationCount += 0;
+        }
+    }
 
 
     // ============================================================
@@ -47,8 +87,7 @@ trigger ParserTrigger on Account (
                 account.Name = 'Default Account';
             }
 
-            account.Description =
-                'Created by trigger';
+            account.Description = 'Created by trigger';
         }
     }
 
@@ -61,14 +100,14 @@ trigger ParserTrigger on Account (
 
         for (Account account : Trigger.new) {
 
-            Account oldAccount =
-                Trigger.oldMap.get(account.Id);
+            Account oldAccount = Trigger.oldMap.get(account.Id);
 
-            if (
-                account.Name != oldAccount.Name
-            ) {
-                account.Description =
-                    'Name changed';
+            if (account.Name != oldAccount.Name) {
+                account.Description = 'Name changed';
+            }
+
+            if (account.AnnualRevenue < 0) {
+                account.addError('AnnualRevenue must be positive');
             }
         }
     }
@@ -81,10 +120,7 @@ trigger ParserTrigger on Account (
     if (Trigger.isBefore && Trigger.isDelete) {
 
         for (Account account : Trigger.old) {
-
-            System.debug(
-                'Deleting: ' + account.Name
-            );
+            System.debug('Deleting: ' + account.Name);
         }
     }
 
@@ -95,11 +131,9 @@ trigger ParserTrigger on Account (
 
     if (Trigger.isAfter && Trigger.isInsert) {
 
-        List<Contact> contacts =
-            new List<Contact>();
+        List<Contact> contacts = new List<Contact>();
 
         for (Account account : Trigger.new) {
-
             contacts.add(
                 new Contact(
                     LastName = account.Name,
@@ -109,7 +143,7 @@ trigger ParserTrigger on Account (
         }
 
         if (!contacts.isEmpty()) {
-            insert contacts;
+            insert as user contacts;
         }
     }
 
@@ -120,12 +154,9 @@ trigger ParserTrigger on Account (
 
     if (Trigger.isAfter && Trigger.isUpdate) {
 
-        Set<Id> accountIds =
-            new Set<Id>();
+        Set<Id> accountIds = new Set<Id>();
 
-        accountIds.addAll(
-            Trigger.newMap.keySet()
-        );
+        accountIds.addAll(Trigger.newMap.keySet());
 
         List<Account> accounts = [
             SELECT
@@ -133,23 +164,23 @@ trigger ParserTrigger on Account (
                 Name,
                 Industry,
                 (
-                    SELECT
-                        Id,
-                        FirstName,
-                        LastName
+                    SELECT Id, FirstName, LastName
                     FROM Contacts
                 )
             FROM Account
             WHERE Id IN :accountIds
         ];
 
+        List<Contact> toUpdate = new List<Contact>();
+
         for (Account account : accounts) {
-
             for (Contact contact : account.Contacts) {
-
-                System.debug(contact.Name);
+                contact.Description = account.Name;
+                toUpdate.add(contact);
             }
         }
+
+        update toUpdate;
     }
 
 
@@ -159,11 +190,12 @@ trigger ParserTrigger on Account (
 
     if (Trigger.isAfter && Trigger.isDelete) {
 
-        for (Account account : Trigger.old) {
+        List<Task> tasks = [SELECT Id FROM Task WHERE WhatId IN :Trigger.oldMap.keySet() ALL ROWS];
 
-            System.debug(
-                'Deleted: ' + account.Id
-            );
+        delete tasks;
+
+        for (Account account : Trigger.old) {
+            System.debug('Deleted: ' + account.Id);
         }
     }
 
@@ -174,11 +206,12 @@ trigger ParserTrigger on Account (
 
     if (Trigger.isAfter && Trigger.isUndelete) {
 
-        for (Account account : Trigger.new) {
-
-            System.debug(
-                'Restored: ' + account.Id
-            );
+        try {
+            for (Account account : Trigger.new) {
+                log('Restored: ' + account.Id);
+            }
+        } catch (Exception e) {
+            System.debug(e.getMessage());
         }
     }
 }

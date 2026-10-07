@@ -6,7 +6,6 @@ import { NormalIdTypeClass, IdVisitor, isNormalIdType } from '../idVisitor';
 import { PropertyBlockTypeClass, BlockVisitor, isPropertyBlockType } from '../blockVisitor';
 import { TypeRefTypeClass, TypeVisitor, isTypeRefType } from '../typeVisitor';
 import { ErrorTypeClass, CommonTypeClass, isValidClass, isValidClassList } from '../commonVisitor';
-import { get } from 'http';
 
 export class PropertyDeclarationTypeClass extends DeclarationTypeClass<NormalIdTypeClass> {
     private valueType: TypeRefTypeClass | ErrorTypeClass;

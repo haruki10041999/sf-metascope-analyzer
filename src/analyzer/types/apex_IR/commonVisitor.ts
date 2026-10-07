@@ -1,7 +1,19 @@
 import { ApexParserBaseVisitor, ApexParserRuleContext } from '@apexdevtools/apex-parser';
 
+export type SourcePosition = {
+    offset: number;
+    line: number;
+    column: number;
+};
+
+export type SourceSpan = {
+    start: SourcePosition;
+    end: SourcePosition;
+};
+
 export class CommonTypeClass {
     private type: string = '';
+    private span: SourceSpan | null = null;
 
     constructor(type: string) {
         this.type = type;
@@ -10,22 +22,48 @@ export class CommonTypeClass {
     getType(): string {
         return this.type;
     }
+
+    getSpan(): SourceSpan | null {
+        return this.span;
+    }
+
+    setSpan(span: SourceSpan | null): void {
+        this.span = span;
+    }
 }
 
+export type ErrorCode = 'NULL_CHILD' | 'UNSUPPORTED_CONTEXT' | 'TYPE_MISMATCH' | 'EXCEPTION';
+
 export class ErrorTypeClass extends CommonTypeClass {
+    private code: ErrorCode;
     private contextType: string = '';
     private context: string = '';
     private errorMessage: string = '';
 
-    private constructor(contextType: string, context: string, errorMessage: string) {
+    private constructor(
+        code: ErrorCode,
+        contextType: string,
+        context: string,
+        errorMessage: string,
+    ) {
         super('AnalyzerError');
+        this.code = code;
         this.contextType = contextType;
         this.context = context;
         this.errorMessage = errorMessage;
     }
 
-    static create(contextType: string, context: string, errorMessage: string): ErrorTypeClass {
-        return new ErrorTypeClass(contextType, context, errorMessage);
+    static create(
+        code: ErrorCode,
+        contextType: string,
+        context: string,
+        errorMessage: string,
+    ): ErrorTypeClass {
+        return new ErrorTypeClass(code, contextType, context, errorMessage);
+    }
+
+    getCode(): ErrorCode {
+        return this.code;
     }
 
     getContextType(): string {
@@ -54,7 +92,15 @@ export const isValidClass = <T extends CommonTypeClass>(
         return target;
     }
 
-    throw new Error(`想定していた型と違います 想定:${type} 実値:${target.getType()}`);
+    // 親ノード全体を失わないよう、型不一致は子だけをエラーノードに置き換える
+    const error = ErrorTypeClass.create(
+        'TYPE_MISMATCH',
+        type,
+        target.getType(),
+        `想定していた型と違います 想定:${type} 実値:${target.getType()}`,
+    );
+    error.setSpan(target.getSpan());
+    return error;
 };
 
 export const isValidClassList = <T extends CommonTypeClass>(
@@ -72,16 +118,66 @@ export const isValidClassList = <T extends CommonTypeClass>(
     });
 };
 
+export const getSourceSpan = (ctx: ApexParserRuleContext): SourceSpan | null => {
+    const start = ctx.start;
+    if (!start) {
+        return null;
+    }
+
+    const startPosition = { offset: start.start, line: start.line, column: start.column };
+    const stop = ctx.stop;
+    // 空のルール（例: 次元 0 の arraySubscripts）は stop が start より前のトークンになる
+    if (!stop || stop.tokenIndex < start.tokenIndex) {
+        return { start: startPosition, end: startPosition };
+    }
+
+    const lines = (stop.text ?? '').split('\n');
+    const lastLine = lines[lines.length - 1] ?? '';
+    return {
+        start: startPosition,
+        end: {
+            offset: stop.stop + 1,
+            line: stop.line + lines.length - 1,
+            column: lines.length > 1 ? lastLine.length : stop.column + lastLine.length,
+        },
+    };
+};
+
 export class CommonVisitor<T> extends ApexParserBaseVisitor<T | ErrorTypeClass> {
     override visit(ctx: ApexParserRuleContext) {
-        try {
-            return super.visit(ctx);
-        } catch (error) {
+        // 生成 getter は型上 non-null だが、任意の子要素が無いと実行時は null を返す
+        if (!ctx) {
             return ErrorTypeClass.create(
+                'NULL_CHILD',
+                'null',
+                '',
+                `${this.constructor.name} に子要素がありません`,
+            );
+        }
+
+        let result: T | ErrorTypeClass;
+        try {
+            const visited = super.visit(ctx);
+            // Visitor に visitXxx が無いと visitChildren の戻り値（配列等）が返るため弾く
+            result =
+                visited instanceof CommonTypeClass
+                    ? visited
+                    : ErrorTypeClass.create(
+                          'UNSUPPORTED_CONTEXT',
+                          ctx.constructor.name,
+                          ctx.getText(),
+                          `${this.constructor.name} は ${ctx.constructor.name} に対応していません`,
+                      );
+        } catch (error) {
+            result = ErrorTypeClass.create(
+                'EXCEPTION',
                 ctx.constructor.name,
                 ctx.getText(),
                 error instanceof Error ? error.message : String(error),
             );
         }
+
+        (result as CommonTypeClass).setSpan(getSourceSpan(ctx));
+        return result;
     }
 }

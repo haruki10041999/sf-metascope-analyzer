@@ -10,10 +10,6 @@ export class NormalIdTypeClass extends IdValueTypeClass<string> {
     }
 
     static create(ctx: IdContext): NormalIdTypeClass {
-        if (!ctx) {
-            throw new Error('値が異常です。IdContext: ' + ctx);
-        }
-
         return new NormalIdTypeClass(ctx.getText());
     }
 }

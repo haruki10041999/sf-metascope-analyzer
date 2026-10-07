@@ -15,10 +15,6 @@ export class ClassBodyTypeClass extends BodyTypeClass<ClassBodyDeclarationTypeCl
     }
 
     static create(ctx: ClassBodyContext): ClassBodyTypeClass {
-        if (!ctx.classBodyDeclaration_list() && ctx.classBodyDeclaration_list().length > 0) {
-            throw new Error('値が異常です。ClassBodyContext: ' + ctx.getText());
-        }
-
         return new ClassBodyTypeClass(
             isValidClassList(
                 ctx.classBodyDeclaration_list(),

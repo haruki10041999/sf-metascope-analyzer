@@ -1,34 +1,46 @@
 import { FieldSpecListContext } from '@apexdevtools/apex-parser';
 
-import { ListType, ListVisitor } from '.';
-import { QueryType, QueryVisitor } from '../queryVisitor';
+import { ListTypeClass, ListVisitor } from '.';
 
-export type FieldSpecListType = {
-    type: 'fieldSpecList';
-    list: QueryType[];
-};
+import { FieldSpecTypeClass, QueryVisitor, isFieldSpecType } from '../queryVisitor';
+import { ErrorTypeClass, CommonTypeClass, isValidClass, isValidClassList } from '../commonVisitor';
 
-export const makeFieldSpecListType = (ctx: FieldSpecListContext): FieldSpecListType => {
-    if (!ctx.fieldSpec()) {
-        throw new Error('値が異常です。FieldSpecListContext: ' + ctx.getText());
+export class FieldSpecListTypeClass extends ListTypeClass<FieldSpecTypeClass> {
+    private constructor(value: (FieldSpecTypeClass | ErrorTypeClass)[]) {
+        super('fieldSpecList', value);
     }
 
-    const list: QueryType[] = [];
+    static create(ctx: FieldSpecListContext): FieldSpecListTypeClass {
+        if (!ctx.fieldSpec()) {
+            throw new Error('値が異常です。FieldSpecListContext: ' + ctx.getText());
+        }
 
-    list.push(new QueryVisitor().visit(ctx.fieldSpec()));
+        const value: (FieldSpecTypeClass | ErrorTypeClass)[] = [
+            isValidClass(new QueryVisitor().visit(ctx.fieldSpec()), isFieldSpecType, 'fieldSpec'),
+        ];
 
-    if (ctx.fieldSpecList_list() && ctx.fieldSpecList_list().length > 0) {
-        ctx.fieldSpecList_list().forEach((nestedCtx) => {
-            const fieldSpecList = new ListVisitor().visit(nestedCtx);
-            if (fieldSpecList.type === 'fieldSpecList') {
-                list.push(...fieldSpecList.list);
-            }
-        });
+        if (ctx.fieldSpecList_list() && ctx.fieldSpecList_list().length > 0) {
+            const nested = isValidClassList(
+                ctx.fieldSpecList_list(),
+                (ctx) => new ListVisitor().visit(ctx),
+                isFieldSpecListType,
+                'fieldSpecList',
+            );
+
+            nested.forEach((nest) => {
+                if (isFieldSpecListType(nest)) {
+                    value.push(...nest.getValue());
+                } else {
+                    value.push(nest);
+                }
+            });
+        }
+
+        return new FieldSpecListTypeClass(value);
     }
+}
 
-    return {
-        type: 'fieldSpecList',
-        list: list,
-    };
+export const isFieldSpecListType = (target: CommonTypeClass): target is FieldSpecListTypeClass => {
+    return target instanceof FieldSpecListTypeClass;
 };
 

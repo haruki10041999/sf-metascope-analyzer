@@ -1,22 +1,31 @@
 import { SoslPrimaryContext } from '@apexdevtools/apex-parser';
 
-import { LiteralType, LiteralVisitor } from '../literalVisitor';
+import { PrimaryTypeClass } from '.';
 
-export type SoslPrimaryType = {
-    type: 'soslPrimary';
-    primary: LiteralType;
-};
+import { SoslLiteralTypeClass, LiteralVisitor, isSoslLiteralType } from '../literalVisitor';
+import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
 
-export const makeSoslPrimaryType = (ctx: SoslPrimaryContext): SoslPrimaryType => {
-    if (!ctx.soslLiteral()) {
-        throw new Error('値が異常です。SoslPrimaryContext: ' + ctx.getText());
+export class SoslPrimaryTypeClass extends PrimaryTypeClass<SoslLiteralTypeClass> {
+    private constructor(value: SoslLiteralTypeClass | ErrorTypeClass) {
+        super('soslPrimary', value);
     }
 
-    const primary = new LiteralVisitor().visit(ctx.soslLiteral());
+    static create(ctx: SoslPrimaryContext): SoslPrimaryTypeClass {
+        if (!ctx.soslLiteral()) {
+            throw new Error('値が異常です。SoslPrimaryContext: ' + ctx.getText());
+        }
 
-    return {
-        type: 'soslPrimary',
-        primary: primary,
-    };
+        return new SoslPrimaryTypeClass(
+            isValidClass(
+                new LiteralVisitor().visit(ctx.soslLiteral()),
+                isSoslLiteralType,
+                'soslLiteral',
+            ),
+        );
+    }
+}
+
+export const isSoslPrimaryType = (target: CommonTypeClass): target is SoslPrimaryTypeClass => {
+    return target instanceof SoslPrimaryTypeClass;
 };
 

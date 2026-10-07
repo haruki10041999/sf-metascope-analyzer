@@ -90,7 +90,7 @@ export class NormalStatementTypeClass extends StatementTypeClass<NormalStatement
             !ctx.updateStatement() &&
             !ctx.deleteStatement() &&
             !ctx.undeleteStatement() &&
-            !ctx.updateStatement() &&
+            !ctx.upsertStatement() &&
             !ctx.mergeStatement() &&
             !ctx.runAsStatement() &&
             !ctx.localVariableDeclarationStatement() &&
@@ -187,12 +187,6 @@ export class NormalStatementTypeClass extends StatementTypeClass<NormalStatement
                 isUndeleteStatementType,
                 'undeleteStatement',
             );
-        } else if (ctx.updateStatement()) {
-            value = isValidClass(
-                new StatementVisitor().visit(ctx.updateStatement()),
-                isUpdateStatementType,
-                'updateStatement',
-            );
         } else if (ctx.upsertStatement()) {
             value = isValidClass(
                 new StatementVisitor().visit(ctx.upsertStatement()),
@@ -234,3 +228,4 @@ export const isNormalStatementType = (
 ): target is NormalStatementTypeClass => {
     return target instanceof NormalStatementTypeClass;
 };
+

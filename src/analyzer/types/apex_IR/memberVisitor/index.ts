@@ -4,40 +4,17 @@ import {
     TriggerBlockMemberContext,
 } from '@apexdevtools/apex-parser';
 
+// 各ファイルより先に base を評価させ、循環 import 時の TDZ を防ぐ
+export * from './base';
+import type { MemberTypeClass } from './base';
+
 import { AnonymousBlockMemberTypeClass } from './anonymousBlockMember';
 import { TriggerBlockMemberTypeClass } from './triggerBlockMember';
 
-import { NormalModifierTypeClass } from '../modifierVisitor';
-import { ErrorTypeClass, CommonTypeClass, CommonVisitor } from '../commonVisitor';
+import { CommonVisitor } from '../commonVisitor';
 
 export { isAnonymousBlockMemberType, AnonymousBlockMemberTypeClass } from './anonymousBlockMember';
 export { isTriggerBlockMemberType, TriggerBlockMemberTypeClass } from './triggerBlockMember';
-
-export class MemberTypeClass<T> extends CommonTypeClass {
-    private value: T | ErrorTypeClass;
-    private modifier: (NormalModifierTypeClass | ErrorTypeClass)[];
-    constructor(
-        type: string,
-        value: T | ErrorTypeClass,
-        modifier: (NormalModifierTypeClass | ErrorTypeClass)[],
-    ) {
-        super(type);
-        this.value = value;
-        this.modifier = modifier;
-    }
-
-    getValue(): T | ErrorTypeClass {
-        return this.value;
-    }
-
-    getModifier(): (NormalModifierTypeClass | ErrorTypeClass)[] {
-        return this.modifier;
-    }
-}
-
-export const isMemberTypeAll = (target: CommonTypeClass): target is MemberTypeClass<unknown> => {
-    return target instanceof MemberTypeClass;
-};
 
 export class MemberVisitor extends CommonVisitor<MemberTypeClass<unknown>> {
     visitAnonymousBlockMember(ctx: AnonymousBlockMemberContext) {

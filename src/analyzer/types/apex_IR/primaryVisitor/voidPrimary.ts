@@ -10,7 +10,7 @@ export class VoidPrimaryTypeClass extends PrimaryTypeClass<string> {
 
     static create(ctx: VoidPrimaryContext): VoidPrimaryTypeClass {
         if (!ctx.VOID() || !ctx.CLASS()) {
-            throw new Error('値が異常です。VoidPrimaryContext: ' + ctx);
+            throw new Error('値が異常です。VoidPrimaryContext: ' + ctx.getText());
         }
 
         return new VoidPrimaryTypeClass(ctx.VOID().getText() + '.' + ctx.CLASS().getText());

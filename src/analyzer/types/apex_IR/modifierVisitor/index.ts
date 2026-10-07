@@ -1,30 +1,16 @@
 import { AnnotationContext, ModifierContext } from '@apexdevtools/apex-parser';
 
+// 各ファイルより先に base を評価させ、循環 import 時の TDZ を防ぐ
+export * from './base';
+import type { ModifierTypeClass } from './base';
+
 import { AnnotationTypeClass } from './annotation';
 import { NormalModifierTypeClass } from './normal';
 
-import { ErrorTypeClass, CommonTypeClass, CommonVisitor } from '../commonVisitor';
+import { CommonVisitor } from '../commonVisitor';
 
 export { isAnnotationType, AnnotationTypeClass } from './annotation';
 export { isNormalModifierType, NormalModifierTypeClass } from './normal';
-
-export class ModifierTypeClass<T> extends CommonTypeClass {
-    private value: T | ErrorTypeClass;
-    constructor(type: string, value: T | ErrorTypeClass) {
-        super(type);
-        this.value = value;
-    }
-
-    getValue(): T | ErrorTypeClass {
-        return this.value;
-    }
-}
-
-export const isModifierTypeAll = (
-    target: CommonTypeClass,
-): target is ModifierTypeClass<unknown> => {
-    return target instanceof ModifierTypeClass;
-};
 
 export class ModifierVisitor extends CommonVisitor<ModifierTypeClass<unknown>> {
     visitModifier(ctx: ModifierContext) {

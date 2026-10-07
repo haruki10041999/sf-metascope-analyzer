@@ -1,14 +1,23 @@
-global with sharing class ParserTest extends BaseParser implements ParserInterface {
+/**
+ * apex_IR 網羅用サンプルクラス。
+ * ParserTrigger.trigger / parser.apex と合わせて、IR の全ノード種別を 1 回以上出現させる。
+ */
+@IsTest(SeeAllData=false isParallel=true)
+global inherited sharing virtual class ParserTest extends BaseParser implements ParserInterface, Comparable {
 
     // ============================================================
-    // Fields
+    // Fields（修飾子・初期化子あり/なし・複数宣言子・配列）
     // ============================================================
 
     public static final Integer MAX_SIZE = 100;
 
+    private static Integer counter;
+
     private String name;
 
     protected Id accountId;
+
+    global transient Blob cache;
 
     public List<String> names = new List<String>();
 
@@ -22,117 +31,102 @@ global with sharing class ParserTest extends BaseParser implements ParserInterfa
 
     private Integer[][] integerMatrix;
 
+    private Integer first = 1, second, third = 3;
+
+    // 空の宣言（`;` 単体）
+    ;
+
+
+    // ============================================================
+    // Static / instance initializer
+    // ============================================================
+
+    static {
+        counter = 0;
+    }
+
+    {
+        names = new List<String>();
+    }
+
+
+    // ============================================================
+    // Properties
+    // ============================================================
+
+    public String autoProperty { get; set; }
+
+    public Integer readOnlyProperty { get; private set; }
+
+    public Integer computedProperty {
+        get {
+            return counter == null ? 0 : counter;
+        }
+        set {
+            counter = value;
+        }
+    }
+
 
     // ============================================================
     // Constructor
     // ============================================================
 
     public ParserTest() {
-        this.name = 'default';
+        this('default');
     }
 
     public ParserTest(String name) {
+        super();
         this.name = name;
     }
 
 
     // ============================================================
-    // Simple method
+    // Annotations / modifiers
     // ============================================================
 
-    public String getName() {
-        return this.name;
+    @AuraEnabled(cacheable=true)
+    public static String getName(Id recordId) {
+        return String.valueOf(recordId);
+    }
+
+    @InvocableMethod(label='Run' description='Run the parser')
+    global static void invocable(List<String> values) {
+        System.debug(values);
+    }
+
+    @Deprecated
+    webservice static String legacy() {
+        return 'legacy';
+    }
+
+    @TestVisible
+    private static testmethod void legacyTest() {
+        System.assert(true);
+    }
+
+    public override String toString() {
+        return name;
+    }
+
+    public virtual Integer compareTo(Object other) {
+        return 0;
+    }
+
+    protected virtual void hook() {
     }
 
 
     // ============================================================
-    // Primitive types
-    // ============================================================
-
-    private void primitiveTypes(
-        Id idValue,
-        String stringValue,
-        Integer integerValue,
-        Long longValue,
-        Double doubleValue,
-        Decimal decimalValue,
-        Boolean booleanValue,
-        Date dateValue,
-        Datetime datetimeValue,
-        Time timeValue
-    ) {
-        Blob blobValue;
-        Object objectValue;
-
-        System.debug(idValue);
-        System.debug(stringValue);
-        System.debug(integerValue);
-        System.debug(longValue);
-        System.debug(doubleValue);
-        System.debug(decimalValue);
-        System.debug(booleanValue);
-        System.debug(dateValue);
-        System.debug(datetimeValue);
-        System.debug(timeValue);
-        System.debug(blobValue);
-        System.debug(objectValue);
-    }
-
-
-    // ============================================================
-    // Generic types
-    // ============================================================
-
-    private void genericTypes() {
-
-        List<String> stringList = new List<String>();
-
-        Set<Id> idSet = new Set<Id>();
-
-        Map<Id, Account> accountMapLocal =
-            new Map<Id, Account>();
-
-        List<Map<Id, Account>> nestedGeneric =
-            new List<Map<Id, Account>>();
-
-        Map<String, List<Account>> complexMap =
-            new Map<String, List<Account>>();
-    }
-
-
-    // ============================================================
-    // Array
-    // ============================================================
-
-    private void arrays() {
-
-        String[] values = new String[10];
-
-        Integer[] numbers = new Integer[] {
-            1,
-            2,
-            3
-        };
-
-        Integer[][] matrix = new Integer[3][3];
-
-        values[0] = 'test';
-
-        Integer value = numbers[0];
-
-        System.debug(matrix);
-    }
-
-
-    // ============================================================
-    // Literals
+    // Primitive types / literals
     // ============================================================
 
     private void literals() {
 
         String stringValue = 'Hello World';
 
-        String escapedValue = 'Hello\\nWorld';
+        String escapedValue = 'Hello\nWorld';
 
         Integer integerValue = 123;
 
@@ -148,27 +142,175 @@ global with sharing class ParserTest extends BaseParser implements ParserInterfa
 
         String nullValue = null;
 
+        Blob blobValue;
+
+        Object objectValue;
+
         Date dateValue = Date.newInstance(2026, 9, 28);
 
-        Datetime datetimeValue =
-            Datetime.newInstance(2026, 9, 28, 12, 30, 0);
+        Datetime datetimeValue = Datetime.newInstance(2026, 9, 28, 12, 30, 0);
 
-        Time timeValue =
-            Time.newInstance(12, 30, 0, 0);
-
-        String multiline = '''
-            This is
-            a multiline
-            string.
-        ''';
+        Time timeValue = Time.newInstance(12, 30, 0, 0);
     }
 
 
     // ============================================================
-    // If
+    // Generic types / class literal
     // ============================================================
 
-    private void ifStatements(Integer value) {
+    private void genericTypes() {
+
+        List<String> stringList = new List<String>();
+
+        Set<Id> idSet = new Set<Id>();
+
+        Map<Id, Account> accountMapLocal = new Map<Id, Account>();
+
+        List<Map<Id, Account>> nestedGeneric = new List<Map<Id, Account>>();
+
+        Map<String, List<Account>> complexMap = new Map<String, List<Account>>();
+
+        List<String>[] arrayOfLists = new List<String>[2];
+
+        System.Type stringType = String.class;
+
+        System.Type listType = List<String>.class;
+
+        System.Type voidType = void.class;
+
+        Schema.SObjectType accountType = Account.SObjectType;
+    }
+
+
+    // ============================================================
+    // Creators（noRest / classCreator / array / map / set）
+    // ============================================================
+
+    private void creators() {
+
+        Set<String> emptySet = new Set<String>{};
+
+        List<String> initializedList = new List<String>{ 'a', 'b' };
+
+        Set<Integer> initializedSet = new Set<Integer>{ 1, 2, 3 };
+
+        Map<String, Integer> initializedMap = new Map<String, Integer>{ 'a' => 1, 'b' => 2 };
+
+        Account account = new Account(Name = 'Test', Industry = 'Technology');
+
+        String[] sized = new String[10];
+
+        Integer[] numbers = new Integer[] { 1, 2, 3 };
+
+        Integer[] emptyNumbers = new Integer[] {};
+
+        Schema.DescribeSObjectResult describe = new Schema.DescribeSObjectResult();
+
+        sized[0] = 'test';
+
+        Integer value = numbers[0];
+    }
+
+
+    // ============================================================
+    // Expressions（全演算子）
+    // ============================================================
+
+    private Integer operators(Integer a, Integer b) {
+
+        Integer result = a + b;
+        result = a - b;
+        result = a * b;
+        result = a / b;
+        result = -a;
+        result = +a;
+        result = ~a;
+
+        result = a << 2;
+        result = a >> 2;
+        result = a >>> 2;
+        result = a & b;
+        result = a | b;
+        result = a ^ b;
+
+        result++;
+        result--;
+        ++result;
+        --result;
+
+        result += 10;
+        result -= 10;
+        result *= 2;
+        result /= 2;
+        result &= 1;
+        result |= 1;
+        result ^= 1;
+        result <<= 1;
+        result >>= 1;
+        result >>>= 1;
+
+        Boolean flag = a < b;
+        flag = a > b;
+        flag = a <= b;
+        flag = a >= b;
+        flag = a == b;
+        flag = a != b;
+        flag = a <> b;
+        flag = a === b;
+        flag = a !== b;
+        flag = !flag;
+        flag = flag && a > 0;
+        flag = flag || a < 0;
+        flag = (a > 0 && b > 0) || (a < 0 && b < 0);
+
+        Integer coalesced = counter ?? 0;
+
+        String safe = name?.toUpperCase();
+
+        Integer ternary = flag ? a : b;
+
+        return result;
+    }
+
+    private void castAndInstanceof(SObject objectValue) {
+
+        Account account = (Account) objectValue;
+
+        Boolean isAccount = objectValue instanceof Account;
+
+        String accountName = ((Account) objectValue).Name;
+
+        System.debug(account.Name + accountName + isAccount);
+    }
+
+
+    // ============================================================
+    // Method calls（this / super / static / chained / dot）
+    // ============================================================
+
+    private void methodCalls() {
+
+        this.hook();
+
+        super.someMethod();
+
+        hook();
+
+        System.debug('hello');
+
+        String value = String.valueOf(123).trim().toUpperCase();
+
+        Integer size = this.names.size();
+
+        Id ownerId = [SELECT OwnerId FROM Account LIMIT 1].OwnerId;
+    }
+
+
+    // ============================================================
+    // If / loops / switch
+    // ============================================================
+
+    private void controlFlow(Integer value, List<Account> accounts) {
 
         if (value > 100) {
             System.debug('large');
@@ -177,255 +319,291 @@ global with sharing class ParserTest extends BaseParser implements ParserInterfa
         } else {
             System.debug('small');
         }
-    }
 
+        if (value == 0) return;
 
-    // ============================================================
-    // Loops
-    // ============================================================
+        for (Integer i = 0, j = 10; i < j; i++, j--) {
+            if (i == 5) {
+                continue;
+            }
+            if (i == 8) {
+                break;
+            }
+        }
 
-    private void loops(List<Account> accounts) {
+        Integer k;
+        for (k = 0; k < 3; k++) {
+            System.debug(k);
+        }
 
-        for (Integer i = 0; i < 10; i++) {
-            System.debug(i);
+        for (;;) {
+            break;
         }
 
         for (Account account : accounts) {
             System.debug(account.Name);
         }
 
-        while (true) {
-            break;
+        for (List<Account> chunk : [SELECT Id FROM Account]) {
+            System.debug(chunk.size());
+        }
+
+        while (value > 0) {
+            value--;
         }
 
         do {
-            System.debug('do while');
-        } while (false);
+            value++;
+        } while (value < 10);
     }
 
+    private String switchExamples(Object input, String text, Integer num, Status status) {
 
-    // ============================================================
-    // Switch
-    // ============================================================
-
-    private String switchExample(String value) {
-
-        switch on value {
+        switch on text {
             when 'A' {
                 return 'Alpha';
             }
-            when 'B' {
-                return 'Beta';
+            when 'B', 'C' {
+                return 'Beta or Gamma';
+            }
+            when null {
+                return 'null';
             }
             when else {
                 return 'Unknown';
             }
         }
-    }
 
+        switch on num {
+            when 1, -1 {
+                return 'one';
+            }
+            when 2 {
+                return 'two';
+            }
+        }
 
-    // ============================================================
-    // Try / Catch / Finally
-    // ============================================================
+        switch on status {
+            when AAA, BBB {
+                return 'first';
+            }
+            when else {
+                return 'other';
+            }
+        }
 
-    private void exceptionHandling() {
-
-        try {
-
-            Account account = [
-                SELECT Id, Name
-                FROM Account
-                LIMIT 1
-            ];
-
-            System.debug(account);
-
-        } catch (QueryException e) {
-
-            System.debug(e.getMessage());
-
-        } catch (Exception e) {
-
-            System.debug(e.getMessage());
-
-        } finally {
-
-            System.debug('finally');
+        switch on input {
+            when Account a {
+                return a.Name;
+            }
+            when Contact c {
+                return c.LastName;
+            }
+            when else {
+                return null;
+            }
         }
     }
 
 
     // ============================================================
-    // SOQL - basic
+    // Try / Catch / Finally / throw
     // ============================================================
 
-    private List<Account> basicSoql() {
+    private void exceptionHandling() {
+
+        try {
+            Account account = [SELECT Id, Name FROM Account LIMIT 1];
+            System.debug(account);
+        } catch (QueryException e) {
+            System.debug(e.getMessage());
+        } catch (final Exception e) {
+            System.debug(e.getMessage());
+        } finally {
+            System.debug('finally');
+        }
+
+        try {
+            throwExample();
+        } finally {
+            System.debug('only finally');
+        }
+    }
+
+    private void throwExample() {
+        throw new CustomException('Something went wrong');
+    }
+
+
+    // ============================================================
+    // DML（access level / upsert external id / merge）
+    // ============================================================
+
+    private void dmlExample(Account account, Account duplicate, List<Account> accounts) {
+
+        insert account;
+
+        insert as user account;
+
+        update as system accounts;
+
+        upsert account;
+
+        upsert accounts Account.ExternalId__c;
+
+        upsert as user accounts Account.ExternalId__c;
+
+        delete account;
+
+        undelete account;
+
+        merge account duplicate;
+
+        merge as system account duplicate;
+    }
+
+    private void databaseExample(List<Account> accounts) {
+
+        Database.SaveResult[] results = Database.insert(accounts, false);
+
+        Database.update(accounts, false);
+
+        Database.delete(accounts, false);
+
+        Database.upsert(accounts, false);
+    }
+
+
+    // ============================================================
+    // System.runAs
+    // ============================================================
+
+    private void runAsExample(User user) {
+
+        System.runAs(user) {
+            System.debug(UserInfo.getUserId());
+        }
+
+        System.runAs(new Version(1, 0)) {
+            System.debug('versioned');
+        }
+    }
+
+
+    // ============================================================
+    // SOQL - basic / bind / ORDER BY / LIMIT / OFFSET
+    // ============================================================
+
+    private List<Account> basicSoql(Integer pageSize, Integer pageOffset) {
 
         List<Account> accounts = [
-            SELECT
-                Id,
-                Name,
-                AccountNumber,
-                Industry,
-                Type,
-                AnnualRevenue,
-                CreatedDate
+            SELECT Id, Name, Industry, AnnualRevenue, CreatedDate
             FROM Account
             WHERE Industry = 'Technology'
-            ORDER BY Name ASC
+            ORDER BY Name ASC NULLS FIRST, CreatedDate DESC NULLS LAST, Industry
             LIMIT 100
+            OFFSET 10
         ];
-
-        return accounts;
-    }
-
-
-    // ============================================================
-    // SOQL - bind variable
-    // ============================================================
-
-    private List<Account> bindSoql(String industry) {
 
         return [
-            SELECT Id, Name
+            SELECT Id
             FROM Account
-            WHERE Industry = :industry
+            LIMIT :pageSize
+            OFFSET :pageOffset
         ];
     }
 
 
     // ============================================================
-    // SOQL - multiple conditions
+    // SOQL - 比較演算子 / 論理演算子 / 値の種類
     // ============================================================
 
-    private List<Account> logicalSoql(
-        String industry,
-        Decimal revenue
-    ) {
+    private List<Account> whereSoql(String industry, Decimal revenue, Set<Id> ids) {
 
         return [
             SELECT Id, Name
             FROM Account
             WHERE
                 Industry = :industry
-                AND (
-                    AnnualRevenue > :revenue
-                    OR Name LIKE 'Test%'
-                )
+                AND AnnualRevenue > :revenue
+                AND AnnualRevenue >= 1000
+                AND AnnualRevenue < 1000000
+                AND AnnualRevenue <= -1.5
+                AND NumberOfEmployees != 0
+                AND Name LIKE 'Test%'
+                AND (Phone = NULL OR Fax != NULL)
                 AND (NOT Name = 'Excluded')
+                AND Id IN :ids
+                AND Id NOT IN :new Set<Id>()
+                AND Industry IN ('Technology', 'Finance')
+                AND Type NOT IN ('Other')
+                AND Interests__c INCLUDES ('Golf', 'Tennis')
+                AND Interests__c EXCLUDES ('Chess')
+                AND IsDeleted = false
+                AND AnnualRevenue > USD5000
+                AND CreatedDate = TODAY
+                AND CreatedDate = LAST_N_DAYS:30
+                AND LastModifiedDate > 2026-01-01T00:00:00Z
+                AND Birthdate__c = 2026-01-01
+                AND OwnerId IN (SELECT Id FROM User WHERE IsActive = true)
         ];
     }
 
 
     // ============================================================
-    // SOQL - IN / NOT IN
+    // SOQL - relationship / subquery / alias
     // ============================================================
 
-    private List<Account> collectionSoql(Set<Id> ids) {
-
-        return [
-            SELECT Id, Name
-            FROM Account
-            WHERE Id IN :ids
-            AND Id NOT IN :new Set<Id>()
-        ];
-    }
-
-
-    // ============================================================
-    // SOQL - NULL
-    // ============================================================
-
-    private List<Account> nullSoql() {
-
-        return [
-            SELECT Id, Name
-            FROM Account
-            WHERE Phone != NULL
-            AND Fax = NULL
-        ];
-    }
-
-
-    // ============================================================
-    // SOQL - relationship
-    // ============================================================
-
-    private List<Contact> relationshipSoql() {
-
-        return [
-            SELECT
-                Id,
-                FirstName,
-                LastName,
-                Account.Id,
-                Account.Name,
-                Account.Owner.Name
-            FROM Contact
-            WHERE Account.Industry = 'Technology'
-        ];
-    }
-
-
-    // ============================================================
-    // SOQL - child relationship subquery
-    // ============================================================
-
-    private List<Account> childRelationshipSoql() {
+    private List<Account> relationshipSoql() {
 
         return [
             SELECT
                 Id,
                 Name,
+                Owner.Name,
+                Parent.Owner.Name,
                 (
-                    SELECT
-                        Id,
-                        FirstName,
-                        LastName,
-                        Email
+                    SELECT Id, FirstName, Account.Name
                     FROM Contacts
                     WHERE Email != NULL
                     ORDER BY LastName
                     LIMIT 10
                 )
-            FROM Account
-            WHERE Id != NULL
+            FROM Account a
+            WHERE a.Industry = 'Technology'
         ];
     }
 
 
     // ============================================================
-    // SOQL - nested relationship
+    // SOQL - TYPEOF
     // ============================================================
 
-    private List<Account> nestedRelationshipSoql() {
+    private List<Event> typeOfSoql() {
 
         return [
             SELECT
                 Id,
-                Name,
-                (
-                    SELECT
-                        Id,
-                        FirstName,
-                        Account.Name
-                    FROM Contacts
-                )
-            FROM Account
+                TYPEOF What
+                    WHEN Account THEN Name, Phone
+                    WHEN Opportunity THEN Amount, CloseDate
+                    ELSE Name
+                END
+            FROM Event
         ];
     }
 
 
     // ============================================================
-    // SOQL - aggregate
+    // SOQL - aggregate / GROUP BY / ROLLUP / CUBE / HAVING / alias
     // ============================================================
 
-    private List<AggregateResult> aggregateSoql() {
+    private void aggregateSoql() {
 
-        return [
+        List<AggregateResult> aggregates = [
             SELECT
                 Industry,
-                COUNT(Id),
+                COUNT(Id) total,
                 COUNT_DISTINCT(OwnerId),
                 MIN(AnnualRevenue),
                 MAX(AnnualRevenue),
@@ -433,38 +611,20 @@ global with sharing class ParserTest extends BaseParser implements ParserInterfa
                 AVG(AnnualRevenue)
             FROM Account
             GROUP BY Industry
+            HAVING COUNT(Id) > 10
+            ORDER BY COUNT(Id) DESC
         ];
-    }
 
+        Integer total = [SELECT COUNT() FROM Account];
 
-    // ============================================================
-    // SOQL - GROUP BY ROLLUP
-    // ============================================================
-
-    private List<AggregateResult> rollupSoql() {
-
-        return [
-            SELECT
-                Industry,
-                Type,
-                COUNT(Id)
+        List<AggregateResult> rollup = [
+            SELECT Industry, Type, GROUPING(Industry), COUNT(Id)
             FROM Account
             GROUP BY ROLLUP(Industry, Type)
         ];
-    }
 
-
-    // ============================================================
-    // SOQL - GROUP BY CUBE
-    // ============================================================
-
-    private List<AggregateResult> cubeSoql() {
-
-        return [
-            SELECT
-                Industry,
-                Type,
-                COUNT(Id)
+        List<AggregateResult> cube = [
+            SELECT Industry, Type, COUNT(Id)
             FROM Account
             GROUP BY CUBE(Industry, Type)
         ];
@@ -472,29 +632,12 @@ global with sharing class ParserTest extends BaseParser implements ParserInterfa
 
 
     // ============================================================
-    // SOQL - HAVING
+    // SOQL - date functions / FORMAT / TOLABEL / convertCurrency / FIELDS
     // ============================================================
 
-    private List<AggregateResult> havingSoql() {
+    private void functionSoql() {
 
-        return [
-            SELECT
-                Industry,
-                COUNT(Id) total
-            FROM Account
-            GROUP BY Industry
-            HAVING COUNT(Id) > 10
-        ];
-    }
-
-
-    // ============================================================
-    // SOQL - date functions
-    // ============================================================
-
-    private List<AggregateResult> dateFunctionSoql() {
-
-        return [
+        List<AggregateResult> dates = [
             SELECT
                 CALENDAR_MONTH(CreatedDate),
                 CALENDAR_QUARTER(CreatedDate),
@@ -510,145 +653,69 @@ global with sharing class ParserTest extends BaseParser implements ParserInterfa
                 WEEK_IN_MONTH(CreatedDate),
                 WEEK_IN_YEAR(CreatedDate)
             FROM Account
-            GROUP BY
-                CALENDAR_MONTH(CreatedDate),
-                CALENDAR_YEAR(CreatedDate)
+            GROUP BY CALENDAR_MONTH(CreatedDate), CALENDAR_YEAR(CreatedDate)
         ];
+
+        List<Account> formatted = [
+            SELECT Id, FORMAT(CreatedDate), FORMAT(convertCurrency(AnnualRevenue)), TOLABEL(Type)
+            FROM Account
+        ];
+
+        List<Account> allFields = [SELECT FIELDS(ALL) FROM Account LIMIT 200];
+
+        List<Account> standardFields = [SELECT FIELDS(STANDARD) FROM Account];
+
+        List<Account> customFields = [SELECT FIELDS(CUSTOM) FROM Account LIMIT 200];
     }
 
 
     // ============================================================
-    // SOQL - FORMAT
+    // SOQL - DISTANCE / GEOLOCATION
     // ============================================================
 
-    private List<Account> formatSoql() {
+    private List<Account> locationSoql(Location here) {
 
         return [
-            SELECT
-                Id,
-                FORMAT(CreatedDate)
+            SELECT Id
             FROM Account
+            WHERE DISTANCE(BillingAddress, GEOLOCATION(37.775, -122.418), 'km') < 20
+            ORDER BY DISTANCE(BillingAddress, :here, 'mi')
         ];
     }
 
 
     // ============================================================
-    // SOQL - TOLABEL
+    // SOQL - USING SCOPE / WITH / ALL ROWS / FOR / UPDATE
     // ============================================================
 
-    private List<Account> toLabelSoql() {
+    private void soqlClauses() {
 
-        return [
-            SELECT
-                Id,
-                TOLABEL(Type),
-                TOLABEL(Industry)
-            FROM Account
+        List<Account> mine = [SELECT Id FROM Account USING SCOPE Mine];
+
+        List<Account> userMode = [SELECT Id FROM Account WITH USER_MODE];
+
+        List<Account> systemMode = [SELECT Id FROM Account WITH SYSTEM_MODE];
+
+        List<Account> secured = [SELECT Id FROM Account WITH SECURITY_ENFORCED];
+
+        List<Knowledge__kav> articles = [
+            SELECT Title
+            FROM Knowledge__kav
+            WITH DATA CATEGORY Geography__c AT (Usa__c, Uk__c)
+                AND Product__c ABOVE_OR_BELOW Mobile__c
+                AND Topic__c ABOVE Root__c
+                AND Region__c BELOW Asia__c
         ];
-    }
 
+        List<Account> deleted = [SELECT Id FROM Account WHERE IsDeleted = true ALL ROWS];
 
-    // ============================================================
-    // SOQL - CONVERT_CURRENCY
-    // ============================================================
+        List<Account> locked = [SELECT Id FROM Account FOR UPDATE];
 
-    private List<Account> currencySoql() {
-    
-       return [
-            SELECT
-                Id,
-               convertCurrency(AnnualRevenue)
-            FROM Account
-        ];
-    }
+        List<Account> viewed = [SELECT Id FROM Account FOR VIEW];
 
+        List<Account> referenced = [SELECT Id FROM Account FOR REFERENCE];
 
-    // ============================================================
-    // SOQL - GROUPING
-    // ============================================================
-
-    private List<AggregateResult> groupingSoql() {
-
-        return [
-            SELECT
-                Industry,
-                GROUPING(Industry),
-                COUNT(Id)
-            FROM Account
-            GROUP BY ROLLUP(Industry)
-        ];
-    }
-
-
-    // ============================================================
-    // SOQL - FIELDS
-    // ============================================================
-
-    private List<Account> fieldsSoql() {
-
-        return [
-            SELECT FIELDS(ALL)
-            FROM Account
-            LIMIT 200
-        ];
-    }
-
-
-    // ============================================================
-    // SOQL - FOR
-    // ============================================================
-
-    private List<Account> forSoql() {
-
-        return [
-            SELECT Id, Name
-            FROM Account
-            FOR UPDATE
-        ];
-    }
-
-
-    // ============================================================
-    // SOQL - WITH USER_MODE
-    // ============================================================
-
-    private List<Account> userModeSoql() {
-
-        return [
-            SELECT Id, Name
-            FROM Account
-            WITH USER_MODE
-        ];
-    }
-
-
-    // ============================================================
-    // SOQL - WITH SYSTEM_MODE
-    // ============================================================
-
-    private List<Account> systemModeSoql() {
-
-        return [
-            SELECT Id, Name
-            FROM Account
-            WITH SYSTEM_MODE
-        ];
-    }
-
-
-    // ============================================================
-    // SOQL - OFFSET
-    // ============================================================
-
-    private List<Account> offsetSoql() {
-
-        return [
-            SELECT Id, Name
-            FROM Account
-            ORDER BY Name
-            LIMIT 50
-            OFFSET 10
-        ];
+        List<FAQ__kav> tracked = [SELECT Id FROM FAQ__kav UPDATE TRACKING, VIEWSTAT];
     }
 
 
@@ -656,54 +723,45 @@ global with sharing class ParserTest extends BaseParser implements ParserInterfa
     // SOSL
     // ============================================================
 
-    private List<List<SObject>> soslExample(String keyword) {
+    private void soslExamples(String keyword) {
 
-        return [
+        List<List<SObject>> simple = [FIND 'test' IN ALL FIELDS RETURNING Account, Contact];
+
+        List<List<SObject>> bound = [
             FIND :keyword
-            IN ALL FIELDS
+            IN NAME FIELDS
             RETURNING
-                Account(Id, Name),
+                Account(Id, Name WHERE Industry = 'Technology' ORDER BY Name LIMIT 10),
                 Contact(Id, FirstName, LastName),
-                Lead(Id, FirstName, LastName)
+                Lead(Id, FirstName, LastName USING LISTVIEW = MyLeads OFFSET 5)
+            WITH DIVISION = 'Global'
+            WITH SNIPPET (target_length = 120)
+            WITH NETWORK IN ('0DBxx0000000001', '0DBxx0000000002')
+            WITH PRICEBOOKID = '01sxx0000000001'
+            WITH METADATA = 'LABELS'
+            LIMIT 100
+            UPDATE TRACKING, VIEWSTAT
+        ];
+
+        List<List<SObject>> emails = [FIND 'a@example.com' IN EMAIL FIELDS RETURNING Contact(Email)];
+
+        List<List<SObject>> phones = [FIND '555' IN PHONE FIELDS RETURNING Contact];
+
+        List<List<SObject>> sidebar = [FIND 'x' IN SIDEBAR FIELDS RETURNING Account WITH NETWORK = '0DBxx0000000001'];
+
+        List<List<SObject>> categorized = [
+            FIND 'help'
+            RETURNING KnowledgeArticleVersion(Id, Title)
+            WITH DATA CATEGORY Geography__c AT Usa__c
         ];
     }
 
 
     // ============================================================
-    // Method call
+    // Inner class / interface / enum / exception
     // ============================================================
 
-    private void methodCalls() {
-
-        this.getName();
-
-        super.someMethod();
-
-        System.debug('hello');
-
-        String value = String.valueOf(123);
-
-        Integer size = names.size();
-    }
-
-
-    // ============================================================
-    // Static method
-    // ============================================================
-
-    public static String staticMethod(String value) {
-
-        return value != null
-            ? value.toUpperCase()
-            : 'NULL';
-    }
-
-
-    // ============================================================
-    // Inner class
-    // ============================================================
-
-    public class InnerClass {
+    public virtual class InnerClass implements Handler {
 
         private String value;
 
@@ -711,15 +769,24 @@ global with sharing class ParserTest extends BaseParser implements ParserInterfa
             this.value = value;
         }
 
+        public void execute() {
+            System.debug(value);
+        }
+
         public String getValue() {
             return value;
         }
     }
 
+    public abstract class AbstractHandler {
+        public abstract void execute();
+    }
 
-    // ============================================================
-    // Inner enum
-    // ============================================================
+    public without sharing class WithoutSharingHandler extends AbstractHandler {
+        public override void execute() {
+            System.debug('without sharing');
+        }
+    }
 
     public enum Status {
         AAA,
@@ -728,148 +795,16 @@ global with sharing class ParserTest extends BaseParser implements ParserInterfa
         DDD
     }
 
-
-    // ============================================================
-    // Inner interface
-    // ============================================================
+    enum EmptyEnum {}
 
     public interface Handler {
         void execute();
     }
 
-
-    // ============================================================
-    // Inner exception
-    // ============================================================
+    public interface ExtendedHandler extends Handler, Comparable {
+        String describe(Integer level, List<String> tags);
+    }
 
     public class CustomException extends Exception {
-    }
-
-
-    // ============================================================
-    // Anonymous implementation
-    // ============================================================
-
-    private void anonymousImplementation() {
-
-        Handler handler = new Handler() {
-            public void execute() {
-                System.debug('executed');
-            }
-        };
-
-        handler.execute();
-    }
-
-
-    // ============================================================
-    // DML
-    // ============================================================
-
-    private void dmlExample(Account account) {
-
-        insert account;
-
-        update account;
-
-        delete account;
-
-        undelete account;
-
-        upsert account;
-    }
-
-
-    // ============================================================
-    // Database methods
-    // ============================================================
-
-    private void databaseExample(List<Account> accounts) {
-
-        Database.SaveResult[] results =
-            Database.insert(accounts, false);
-
-        Database.update(accounts, false);
-
-        Database.delete(accounts, false);
-
-        Database.upsert(accounts, false);
-    }
-
-
-    // ============================================================
-    // Ternary
-    // ============================================================
-
-    private String ternary(Boolean condition) {
-
-        return condition
-            ? 'true'
-            : 'false';
-    }
-
-
-    // ============================================================
-    // Operators
-    // ============================================================
-
-    private Integer operators(
-        Integer a,
-        Integer b
-    ) {
-
-        Integer result = a + b;
-
-        result = a - b;
-
-        result = a * b;
-
-        result = a / b;
-
-        result++;
-
-        result--;
-
-        result += 10;
-
-        result -= 10;
-
-        result *= 2;
-
-        result /= 2;
-
-        return result;
-    }
-
-
-    // ============================================================
-    // Cast
-    // ============================================================
-
-    private void casting(SObject objectValue) {
-
-        Account account = (Account)objectValue;
-
-        System.debug(account.Name);
-    }
-
-
-    // ============================================================
-    // instanceof
-    // ============================================================
-
-    private Boolean instanceofExample(SObject value) {
-
-        return value instanceof Account;
-    }
-
-
-    // ============================================================
-    // throw
-    // ============================================================
-
-    private void throwExample() {
-
-        throw new CustomException('Something went wrong');
     }
 }

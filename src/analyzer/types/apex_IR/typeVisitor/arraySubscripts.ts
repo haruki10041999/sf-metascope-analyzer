@@ -10,11 +10,7 @@ export class ArraySubscriptsTypeClass extends TypeTypeClass<number> {
     }
 
     static create(ctx: ArraySubscriptsContext): ArraySubscriptsTypeClass {
-        if (
-            (ctx.LBRACK_list() && !ctx.RBRACK_list()) ||
-            (ctx.RBRACK_list() && !ctx.LBRACK_list()) ||
-            ctx.LBRACK_list().length !== ctx.RBRACK_list().length
-        ) {
+        if (ctx.LBRACK_list().length !== ctx.RBRACK_list().length) {
             throw new Error('値が異常です。ArraySubscriptsContext: ' + ctx.getText());
         }
 

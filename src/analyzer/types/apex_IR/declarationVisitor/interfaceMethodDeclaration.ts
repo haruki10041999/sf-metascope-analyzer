@@ -11,7 +11,6 @@ import {
     isFormalParametersType,
 } from '../parameterVisitor';
 import { ErrorTypeClass, CommonTypeClass, isValidClass, isValidClassList } from '../commonVisitor';
-import { InsertStatementTypeClass } from '../statementVisitor';
 
 export class InterfaceMethodDeclarationTypeClass extends DeclarationTypeClass<NormalIdTypeClass> {
     private valueType: TypeRefTypeClass | 'void' | ErrorTypeClass;
@@ -24,7 +23,7 @@ export class InterfaceMethodDeclarationTypeClass extends DeclarationTypeClass<No
         param: FormalParametersTypeClass | ErrorTypeClass | null,
         modifier: (NormalModifierTypeClass | ErrorTypeClass)[],
     ) {
-        super('InterfaceMethodDeclaration', value);
+        super('interfaceMethodDeclaration', value);
         this.valueType = valueType;
         this.param = param;
         this.modifier = modifier;
@@ -37,7 +36,9 @@ export class InterfaceMethodDeclarationTypeClass extends DeclarationTypeClass<No
 
         return new InterfaceMethodDeclarationTypeClass(
             isValidClass(new IdVisitor().visit(ctx.id()), isNormalIdType, 'id'),
-            isValidClass(new TypeVisitor().visit(ctx.typeRef()), isTypeRefType, 'typeRef'),
+            ctx.VOID()
+                ? 'void'
+                : isValidClass(new TypeVisitor().visit(ctx.typeRef()), isTypeRefType, 'typeRef'),
             ctx.formalParameters()
                 ? isValidClass(
                       new ParameterVisitor().visit(ctx.formalParameters()),

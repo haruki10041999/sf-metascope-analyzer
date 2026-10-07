@@ -1,6 +1,6 @@
 import { FilteringExpressionContext } from '@apexdevtools/apex-parser';
 
-import { ExpressionListTypeClass } from '.';
+import { ExpressionListBaseTypeClass } from '.';
 
 import {
     DataCategorySelectionTypeClass,
@@ -9,7 +9,7 @@ import {
 } from '../clauseVisitor';
 import { ErrorTypeClass, CommonTypeClass, isValidClassList } from '../commonVisitor';
 
-export class FilteringExpressionTypeClass extends ExpressionListTypeClass<DataCategorySelectionTypeClass> {
+export class FilteringExpressionTypeClass extends ExpressionListBaseTypeClass<DataCategorySelectionTypeClass> {
     private constructor(value: (DataCategorySelectionTypeClass | ErrorTypeClass)[]) {
         super('filteringExpression', value);
     }
@@ -39,3 +39,4 @@ export const isFilteringExpressionType = (
 ): target is FilteringExpressionTypeClass => {
     return target instanceof FilteringExpressionTypeClass;
 };
+

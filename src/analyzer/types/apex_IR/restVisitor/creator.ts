@@ -15,7 +15,7 @@ import { CreatedNameTypeClass, NameVisitor, isCreatedNameType } from '../nameVis
 import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
 
 export class CreatorTypeClass extends RestTypeClass<CreatedNameTypeClass> {
-    content: RestAllTypeClass | ErrorTypeClass;
+    private content: RestAllTypeClass | ErrorTypeClass;
 
     private constructor(
         value: CreatedNameTypeClass | ErrorTypeClass,
@@ -73,6 +73,10 @@ export class CreatorTypeClass extends RestTypeClass<CreatedNameTypeClass> {
         }
 
         return new CreatorTypeClass(value, content);
+    }
+
+    getContent(): RestAllTypeClass | ErrorTypeClass {
+        return this.content;
     }
 }
 

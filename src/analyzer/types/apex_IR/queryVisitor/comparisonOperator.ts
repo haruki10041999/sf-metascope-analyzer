@@ -5,10 +5,21 @@ import { QueryTypeClass } from './index';
 import { CommonTypeClass, ErrorTypeClass } from '../commonVisitor';
 
 type ComparisonOperatorValueType =
-    '=' | '!=' | '<' | '>' | '<=' | '>=' | 'LIKE' | 'IN' | 'NOT IN' | 'INCLUDES' | 'EXCLUDES';
+    | '='
+    | '!='
+    | '<'
+    | '>'
+    | '<='
+    | '>='
+    | '<>'
+    | 'LIKE'
+    | 'IN'
+    | 'NOT IN'
+    | 'INCLUDES'
+    | 'EXCLUDES';
 
 export class ComparisonOperatorTypeClass extends QueryTypeClass<ComparisonOperatorValueType> {
-    constructor(value: ComparisonOperatorValueType | ErrorTypeClass) {
+    private constructor(value: ComparisonOperatorValueType | ErrorTypeClass) {
         super('comparisonOperator', value);
     }
 
@@ -29,23 +40,21 @@ export class ComparisonOperatorTypeClass extends QueryTypeClass<ComparisonOperat
 
         let value: ComparisonOperatorValueType;
 
-        if (ctx.ASSIGN()) {
+        // `<=` / `>=` は LT/GT と ASSIGN の 2 トークンなので、ASSIGN 単体より先に判定する
+        if (ctx.LT()) {
+            value = ctx.ASSIGN() ? '<=' : '<';
+        } else if (ctx.GT()) {
+            value = ctx.ASSIGN() ? '>=' : '>';
+        } else if (ctx.ASSIGN()) {
             value = '=';
         } else if (ctx.NOTEQUAL()) {
             value = '!=';
-        } else if (ctx.LT()) {
-            value = '<';
-        } else if (ctx.GT()) {
-            value = '>';
         } else if (ctx.LESSANDGREATER()) {
-            value = ctx.LESSANDGREATER().getText() as ComparisonOperatorValueType;
+            value = '<>';
         } else if (ctx.LIKE()) {
             value = 'LIKE';
         } else if (ctx.IN()) {
-            if (ctx.NOT()) {
-                value = 'NOT IN';
-            }
-            value = 'IN';
+            value = ctx.NOT() ? 'NOT IN' : 'IN';
         } else if (ctx.INCLUDES()) {
             value = 'INCLUDES';
         } else {
@@ -61,3 +70,4 @@ export const isComparisonOperatorType = (
 ): target is ComparisonOperatorTypeClass => {
     return target instanceof ComparisonOperatorTypeClass;
 };
+

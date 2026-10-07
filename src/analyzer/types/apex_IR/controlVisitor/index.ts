@@ -7,35 +7,23 @@ import {
     WhenControlContext,
 } from '@apexdevtools/apex-parser';
 
+// 各ファイルより先に base を評価させ、循環 import 時の TDZ を防ぐ
+export * from './base';
+import type { ControlTypeClass } from './base';
+
 import { ForControlTypeClass } from './forControl';
 import { ForInitTypeClass } from './forInit';
 import { ForUpdateTypeClass } from './forUpdate';
 import { EnhancedForControlTypeClass } from './enhancedForControl';
 import { WhenControlTypeClass } from './whenControl';
 
-import { ErrorTypeClass, CommonTypeClass, CommonVisitor } from '../commonVisitor';
+import { CommonVisitor } from '../commonVisitor';
 
 export { isForControlType, ForControlTypeClass } from './forControl';
 export { isForInitType, ForInitTypeClass } from './forInit';
 export { isForUpdateType, ForUpdateTypeClass } from './forUpdate';
 export { isWhenControlType, WhenControlTypeClass } from './whenControl';
 export { isEnhancedForControlType, EnhancedForControlTypeClass } from './enhancedForControl';
-
-export class ControlTypeClass<T> extends CommonTypeClass {
-    private value: T | ErrorTypeClass;
-    constructor(type: string, value: T | ErrorTypeClass) {
-        super(type);
-        this.value = value;
-    }
-
-    getValue(): T | ErrorTypeClass {
-        return this.value;
-    }
-}
-
-export const isControlTypeAll = (target: CommonTypeClass): target is ControlTypeClass<unknown> => {
-    return target instanceof ControlTypeClass;
-};
 
 export class ControlVisitor extends CommonVisitor<ControlTypeClass<unknown>> {
     visitForControl(ctx: ForControlContext) {

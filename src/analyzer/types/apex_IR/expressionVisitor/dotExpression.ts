@@ -26,9 +26,9 @@ export class DotExpressionTypeClass extends DoubleOperatorExpressionTypeClass<
 
     static create(ctx: DotExpressionContext): DotExpressionTypeClass {
         if (
-            !ctx.expression() &&
-            (!ctx.anyId() || !ctx.dotMethodCall()) &&
-            (!ctx.DOT() || !ctx.QUESTIONDOT())
+            !ctx.expression() ||
+            (!ctx.anyId() && !ctx.dotMethodCall()) ||
+            (!ctx.DOT() && !ctx.QUESTIONDOT())
         ) {
             throw new Error('値が異常です。DotExpressionContext: ' + ctx.getText());
         }

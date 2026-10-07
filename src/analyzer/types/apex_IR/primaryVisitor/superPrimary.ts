@@ -10,7 +10,7 @@ export class SuperPrimaryTypeClass extends PrimaryTypeClass<string> {
 
     static create(ctx: SuperPrimaryContext): SuperPrimaryTypeClass {
         if (!ctx.SUPER()) {
-            throw new Error('値が異常です。 SuperPrimaryContext:' + ctx);
+            throw new Error('値が異常です。SuperPrimaryContext: ' + ctx.getText());
         }
 
         return new SuperPrimaryTypeClass(ctx.SUPER().getText());

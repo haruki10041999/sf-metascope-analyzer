@@ -53,6 +53,10 @@ export class UpsertStatementTypeClass extends DmlStatementTypeClass<ExpressionAl
                 : null,
         );
     }
+
+    getKey(): QualifiedNameTypeClass | ErrorTypeClass | null {
+        return this.key;
+    }
 }
 
 export const isUpsertStatementType = (

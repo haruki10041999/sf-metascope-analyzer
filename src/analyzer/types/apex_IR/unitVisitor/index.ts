@@ -6,59 +6,38 @@ import {
     TriggerCaseContext,
 } from '@apexdevtools/apex-parser';
 
-import { CompilationUnitType, makeCompilationUnitType } from './compilationUnit';
-import { AnonymousUnitType, makeAnonymousUnitType } from './anonymousUnit';
-import { TriggerUnitType, makeTriggerUnitType } from './triggerUnit';
-import { TriggerCaseType, makeTriggerCaseType } from './triggerCase';
+// 各ファイルより先に base を評価させ、循環 import 時の TDZ を防ぐ
+export * from './base';
+import type { UnitAllTypeClass } from './base';
 
-import { ErrorType, CommonVisitor } from '../commonVisitor';
+import { CompilationUnitTypeClass } from './compilationUnit';
+import { AnonymousUnitTypeClass } from './anonymousUnit';
+import { TriggerUnitTypeClass } from './triggerUnit';
+import { TriggerCaseTypeClass } from './triggerCase';
 
-export type UnitType =
-    CompilationUnitType | AnonymousUnitType | TriggerUnitType | TriggerCaseType | ErrorType;
+import { CommonVisitor } from '../commonVisitor';
 
-export class UnitVisitor extends CommonVisitor<UnitType> {
+export { isCompilationUnitType, CompilationUnitTypeClass } from './compilationUnit';
+export { isAnonymousUnitType, AnonymousUnitTypeClass } from './anonymousUnit';
+export { isTriggerUnitType, TriggerUnitTypeClass } from './triggerUnit';
+
+export { isTriggerCaseType, TriggerCaseTypeClass } from './triggerCase';
+
+export class UnitVisitor extends CommonVisitor<UnitAllTypeClass> {
     visitCompilationUnit(ctx: CompilationUnitContext) {
-        console.log('解析を開始します。' + 'CompilationUnitContext:  ' + ctx.getText());
-        const result = makeCompilationUnitType(ctx);
-        console.log(
-            '------------解析が終了しました--------------' +
-                'CompilationUnitContext:  ' +
-                JSON.stringify(result, null, 2),
-        );
-        return result;
+        return CompilationUnitTypeClass.create(ctx);
     }
 
     visitAnonymousUnit(ctx: AnonymousUnitContext) {
-        console.log('解析を開始します。' + 'AnonymousUnitContext:  ' + ctx.getText());
-        const result = makeAnonymousUnitType(ctx);
-        console.log(
-            '------------解析が終了しました--------------' +
-                'AnonymousUnitContext:  ' +
-                JSON.stringify(result, null, 2),
-        );
-        return result;
+        return AnonymousUnitTypeClass.create(ctx);
     }
 
     visitTriggerUnit(ctx: TriggerUnitContext) {
-        console.log('解析を開始します。' + 'TriggerUnitContext:  ' + ctx.getText());
-        const result = makeTriggerUnitType(ctx);
-        console.log(
-            '------------解析が終了しました--------------' +
-                'TriggerUnitContext:  ' +
-                JSON.stringify(result, null, 2),
-        );
-        return result;
+        return TriggerUnitTypeClass.create(ctx);
     }
 
     visitTriggerCase(ctx: TriggerCaseContext) {
-        console.log('解析を開始します。' + 'TriggerCaseContext:  ' + ctx.getText());
-        const result = makeTriggerCaseType(ctx);
-        console.log(
-            '------------解析が終了しました--------------' +
-                'TriggerCaseContext:  ' +
-                JSON.stringify(result, null, 2),
-        );
-        return result;
+        return TriggerCaseTypeClass.create(ctx);
     }
 }
 

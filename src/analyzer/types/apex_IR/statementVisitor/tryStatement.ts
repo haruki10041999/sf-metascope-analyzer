@@ -27,7 +27,7 @@ export class TryStatementTypeClass extends StatementTypeClass<NormalBlockTypeCla
     }
 
     static create(ctx: TryStatementContext): TryStatementTypeClass {
-        if (!ctx.block() || !ctx.catchClause_list() || ctx.catchClause_list().length === 0) {
+        if (!ctx.block() || (ctx.catchClause_list().length === 0 && !ctx.finallyBlock())) {
             throw new Error('値が異常です。TryStatementContext: ' + ctx.getText());
         }
 
@@ -61,3 +61,4 @@ export class TryStatementTypeClass extends StatementTypeClass<NormalBlockTypeCla
 export const isTryStatementType = (target: CommonTypeClass): target is TryStatementTypeClass => {
     return target instanceof TryStatementTypeClass;
 };
+

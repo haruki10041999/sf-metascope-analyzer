@@ -12,13 +12,13 @@ import { NormalModifierTypeClass, ModifierVisitor, isNormalModifierType } from '
 import { CommonTypeClass, ErrorTypeClass, isValidClass, isValidClassList } from '../commonVisitor';
 
 export class ClassBodyDeclarationTypeClass extends DeclarationTypeClass<
-    MemberDeclarationTypeClass | NormalBlockTypeClass
+    MemberDeclarationTypeClass | NormalBlockTypeClass | null
 > {
     private modifier: (NormalModifierTypeClass | ErrorTypeClass)[];
     private isStatic: boolean = false;
 
     private constructor(
-        value: MemberDeclarationTypeClass | NormalBlockTypeClass | ErrorTypeClass,
+        value: MemberDeclarationTypeClass | NormalBlockTypeClass | ErrorTypeClass | null,
         modifier: (NormalModifierTypeClass | ErrorTypeClass)[],
         isStatic: boolean,
     ) {
@@ -28,18 +28,24 @@ export class ClassBodyDeclarationTypeClass extends DeclarationTypeClass<
     }
 
     static create(ctx: ClassBodyDeclarationContext): ClassBodyDeclarationTypeClass {
-        if (!ctx.memberDeclaration() && !ctx.block()) {
+        if (!ctx.memberDeclaration() && !ctx.block() && !ctx.SEMI()) {
             throw new Error('値が異常です。ClassBodyDeclarationContext: ' + ctx.getText());
         }
 
+        let value: MemberDeclarationTypeClass | NormalBlockTypeClass | ErrorTypeClass | null = null;
+        if (ctx.memberDeclaration()) {
+            value = isValidClass(
+                new DeclarationVisitor().visit(ctx.memberDeclaration()),
+                isMemberDeclarationType,
+                'memberDeclaration',
+            );
+        } else if (ctx.block()) {
+            value = isValidClass(new BlockVisitor().visit(ctx.block()), isNormalBlockType, 'block');
+        }
+
+        // 単独の `;` は文法上許される空宣言なので value は null
         return new ClassBodyDeclarationTypeClass(
-            ctx.memberDeclaration()
-                ? isValidClass(
-                      new DeclarationVisitor().visit(ctx.memberDeclaration()),
-                      isMemberDeclarationType,
-                      'memberDeclaration',
-                  )
-                : isValidClass(new BlockVisitor().visit(ctx.block()), isNormalBlockType, 'block'),
+            value,
             isValidClassList(
                 ctx.modifier_list(),
                 (ctx) => new ModifierVisitor().visit(ctx),

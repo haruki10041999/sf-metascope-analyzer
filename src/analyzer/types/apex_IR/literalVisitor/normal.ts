@@ -4,10 +4,8 @@ import { PrimitiveLiteralTypeClass } from '.';
 
 import { ErrorTypeClass, CommonTypeClass } from '../commonVisitor';
 
-type LiteralValueType = string | number | boolean | null | string[];
-
-export class NormalLiteralTypeClass extends PrimitiveLiteralTypeClass<LiteralValueType> {
-    constructor(value: LiteralValueType | ErrorTypeClass, valueType: string) {
+export class NormalLiteralTypeClass extends PrimitiveLiteralTypeClass<string> {
+    private constructor(value: string | ErrorTypeClass, valueType: string) {
         super('literal', value, valueType);
     }
 
@@ -24,28 +22,28 @@ export class NormalLiteralTypeClass extends PrimitiveLiteralTypeClass<LiteralVal
             throw new Error('値が異常です。LiteralContext: ' + ctx.getText());
         }
 
-        let value: LiteralValueType | ErrorTypeClass;
+        let value: string | ErrorTypeClass;
         let valueType: string;
         if (ctx.IntegerLiteral()) {
-            value = parseInt(ctx.IntegerLiteral().getText(), 10);
+            value = ctx.IntegerLiteral().getText();
             valueType = 'integer';
         } else if (ctx.LongLiteral()) {
-            value = parseInt(ctx.LongLiteral().getText(), 10);
+            value = ctx.LongLiteral().getText();
             valueType = 'long';
         } else if (ctx.NumberLiteral()) {
-            value = parseFloat(ctx.NumberLiteral().getText());
+            value = ctx.NumberLiteral().getText();
             valueType = 'number';
         } else if (ctx.StringLiteral()) {
             value = ctx.StringLiteral().getText();
             valueType = 'string';
         } else if (ctx.MultilineStringLiteral()) {
-            value = ctx.MultilineStringLiteral().getText().split('\n');
+            value = ctx.MultilineStringLiteral().getText();
             valueType = 'multilineString';
         } else if (ctx.BooleanLiteral()) {
-            value = ctx.BooleanLiteral().getText() === 'true';
+            value = ctx.BooleanLiteral().getText();
             valueType = 'boolean';
         } else {
-            value = null;
+            value = 'null';
             valueType = 'null';
         }
 

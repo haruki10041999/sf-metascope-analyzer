@@ -19,7 +19,7 @@ type NormalModifierValueType =
     | 'TESTMETHOD'
     | 'WITH_SHARING'
     | 'WITHOUT_SHARING'
-    | 'INHERITED'
+    | 'INHERITED_SHARING'
     | AnnotationTypeClass;
 
 export class NormalModifierTypeClass extends ModifierTypeClass<NormalModifierValueType> {
@@ -78,8 +78,8 @@ export class NormalModifierTypeClass extends ModifierTypeClass<NormalModifierVal
             value = 'WITH_SHARING';
         } else if (ctx.WITHOUT() && ctx.SHARING()) {
             value = 'WITHOUT_SHARING';
-        } else if (ctx.INHERITED()) {
-            value = 'INHERITED';
+        } else if (ctx.INHERITED() && ctx.SHARING()) {
+            value = 'INHERITED_SHARING';
         } else {
             value = isValidClass(
                 new ModifierVisitor().visit(ctx.annotation()),
@@ -97,3 +97,4 @@ export const isNormalModifierType = (
 ): target is NormalModifierTypeClass => {
     return target instanceof NormalModifierTypeClass;
 };
+

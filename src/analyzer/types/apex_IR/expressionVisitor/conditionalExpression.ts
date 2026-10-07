@@ -22,7 +22,7 @@ export class ConditionalExpressionTypeClass extends ExpressionTypeClass<
 
     static create(ctx: ConditionalExpressionContext): ConditionalExpressionTypeClass {
         if (!ctx.logicalExpression() && !ctx.fieldExpression()) {
-            throw new Error('値が異常です。ConditionalExpressionContext: ' + ctx);
+            throw new Error('値が異常です。ConditionalExpressionContext: ' + ctx.getText());
         }
 
         return new ConditionalExpressionTypeClass(

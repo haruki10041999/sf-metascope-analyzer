@@ -4,7 +4,7 @@ import {
     FilteringSelectorTypeClass,
     ClauseTypeClass,
     ClauseVisitor,
-    isFileteringSelectorType,
+    isFilteringSelectorType,
 } from '.';
 
 import { SoqlIdTypeClass, IdVisitor, isSoqlIdType } from '../idVisitor';
@@ -34,7 +34,7 @@ export class DataCategorySelectionTypeClass extends ClauseTypeClass<SoqlIdTypeCl
             isValidClass(new IdVisitor().visit(ctx.soqlId()), isSoqlIdType, 'soqlId'),
             isValidClass(
                 new ClauseVisitor().visit(ctx.filteringSelector()),
-                isFileteringSelectorType,
+                isFilteringSelectorType,
                 'filteringSelector',
             ),
             isValidClass(
@@ -59,3 +59,4 @@ export const isDataCategorySelectionType = (
 ): target is DataCategorySelectionTypeClass => {
     return target instanceof DataCategorySelectionTypeClass;
 };
+

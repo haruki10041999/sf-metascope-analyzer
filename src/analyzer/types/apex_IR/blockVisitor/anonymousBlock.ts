@@ -1,25 +1,34 @@
 import { AnonymousBlockContext } from '@apexdevtools/apex-parser';
 
-import { MemberType, MemberVisitor } from '../memberVisitor';
+import { BlockListTypeClass } from '../blockVisitor';
 
-export type AnonymousBlockType = {
-    type: 'anonymousBlock';
-    block: MemberType[];
-};
+import {
+    AnonymousBlockMemberTypeClass,
+    MemberVisitor,
+    isAnonymousBlockMemberType,
+} from '../memberVisitor';
+import { ErrorTypeClass, CommonTypeClass, isValidClassList } from '../commonVisitor';
 
-export const makeAnonymousBlockType = (ctx: AnonymousBlockContext): AnonymousBlockType => {
-    if (!ctx.anonymousBlockMember_list()) {
-        throw new Error('値が異常です。AnonymousBlockContext: ' + ctx.getText());
+export class AnonymousBlockTypeClass extends BlockListTypeClass<AnonymousBlockMemberTypeClass> {
+    private constructor(value: (AnonymousBlockMemberTypeClass | ErrorTypeClass)[]) {
+        super('anonymousBlock', value);
     }
 
-    const memberBlocks = ctx.anonymousBlockMember_list().map((anonymousBlockMemberCtx) => {
-        const memberBlock = new MemberVisitor().visit(anonymousBlockMemberCtx);
-        return memberBlock;
-    });
+    static create(ctx: AnonymousBlockContext): AnonymousBlockTypeClass {
+        return new AnonymousBlockTypeClass(
+            isValidClassList(
+                ctx.anonymousBlockMember_list(),
+                (ctx) => new MemberVisitor().visit(ctx),
+                isAnonymousBlockMemberType,
+                'anonymousBlock',
+            ),
+        );
+    }
+}
 
-    return {
-        type: 'anonymousBlock',
-        block: memberBlocks,
-    };
+export const isAnonymousBlockType = (
+    target: CommonTypeClass,
+): target is AnonymousBlockTypeClass => {
+    return target instanceof AnonymousBlockTypeClass;
 };
 

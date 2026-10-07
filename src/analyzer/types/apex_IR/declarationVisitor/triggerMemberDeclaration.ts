@@ -28,7 +28,7 @@ type TriggerMemberDeclarationTypeClassType =
     | FieldDeclarationTypeClass;
 
 export class TriggerMemberDeclarationTypeClass extends DeclarationTypeClass<TriggerMemberDeclarationTypeClassType> {
-    constructor(value: TriggerMemberDeclarationTypeClassType | ErrorTypeClass) {
+    private constructor(value: TriggerMemberDeclarationTypeClassType | ErrorTypeClass) {
         super('triggerMemberDeclaration', value);
     }
 

@@ -15,20 +15,16 @@ import {
     isDateFormulaType,
     isSubQueryType,
 } from '../queryVisitor';
-import { SignedIntegerTypeClass, LiteralVisitor, isSignedIntegerType } from '../literalVisitor';
+import { SignedNumberTypeClass, LiteralVisitor, isSignedNumberType } from '../literalVisitor';
 import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
 
 type ValueTypeClassValue =
     | string
-    | number
-    | boolean
-    | Date
-    | SignedIntegerTypeClass
+    | SignedNumberTypeClass
     | DateFormulaTypeClass
     | SubQueryTypeClass
     | ValueListTypeClass
-    | BoundExpressionTypeClass
-    | null;
+    | BoundExpressionTypeClass;
 
 export class NormalValueTypeClass extends ValueTypeClass<ValueTypeClassValue> {
     private valueType: string;
@@ -45,6 +41,8 @@ export class NormalValueTypeClass extends ValueTypeClass<ValueTypeClassValue> {
             !ctx.StringLiteral() &&
             !ctx.MultilineStringLiteral() &&
             !ctx.DateLiteral() &&
+            !ctx.TimeLiteral() &&
+            !ctx.DateTimeLiteral() &&
             !ctx.dateFormula() &&
             !ctx.IntegralCurrencyLiteral() &&
             !ctx.IntegerLiteral() &&
@@ -57,6 +55,76 @@ export class NormalValueTypeClass extends ValueTypeClass<ValueTypeClassValue> {
 
         let value: ValueTypeClassValue | ErrorTypeClass;
         let valueType: string;
+
+        if (ctx.NULL()) {
+            value = 'null';
+            valueType = 'null';
+        } else if (ctx.BooleanLiteral()) {
+            value = ctx.BooleanLiteral().getText();
+            valueType = 'boolean';
+        } else if (ctx.signedNumber()) {
+            value = isValidClass(
+                new LiteralVisitor().visit(ctx.signedNumber()),
+                isSignedNumberType,
+                'signedNumber',
+            );
+            valueType = 'signedNumber';
+        } else if (ctx.StringLiteral()) {
+            value = ctx.StringLiteral().getText();
+            valueType = 'string';
+        } else if (ctx.MultilineStringLiteral()) {
+            value = ctx.MultilineStringLiteral().getText();
+            valueType = 'multilineString';
+        } else if (ctx.DateLiteral()) {
+            value = ctx.DateLiteral().getText();
+            valueType = 'date';
+        } else if (ctx.TimeLiteral()) {
+            value = ctx.TimeLiteral().getText();
+            valueType = 'time';
+        } else if (ctx.DateTimeLiteral()) {
+            value = ctx.DateTimeLiteral().getText();
+            valueType = 'dateTime';
+        } else if (ctx.dateFormula()) {
+            value = isValidClass(
+                new QueryVisitor().visit(ctx.dateFormula()),
+                isDateFormulaType,
+                'dateFormula',
+            );
+            valueType = 'dateFormula';
+        } else if (ctx.IntegralCurrencyLiteral()) {
+            value = ctx.IntegralCurrencyLiteral().getText();
+            valueType = 'integralCurrency';
+        } else if (ctx.IntegerLiteral()) {
+            value = ctx.IntegerLiteral().getText();
+            valueType = 'integer';
+        } else if (ctx.subQuery()) {
+            value = isValidClass(
+                new QueryVisitor().visit(ctx.subQuery()),
+                isSubQueryType,
+                'subQuery',
+            );
+            valueType = 'subQuery';
+        } else if (ctx.valueList()) {
+            value = isValidClass(
+                new ListVisitor().visit(ctx.valueList()),
+                isValueListType,
+                'valueList',
+            );
+            valueType = 'valueList';
+        } else {
+            value = isValidClass(
+                new ExpressionVisitor().visit(ctx.boundExpression()),
+                isBoundExpressionType,
+                'boundExpression',
+            );
+            valueType = 'boundExpression';
+        }
+
+        return new NormalValueTypeClass(value, valueType);
+    }
+
+    getValueType(): string {
+        return this.valueType;
     }
 }
 
@@ -64,157 +132,3 @@ export const isNormalValueType = (target: CommonTypeClass): target is NormalValu
     return target instanceof NormalValueTypeClass;
 };
 
-type ValueFieldType =
-    | {
-          type: 'null';
-          value: null;
-      }
-    | {
-          type:
-              | 'boolean'
-              | 'string'
-              | 'multilineString'
-              | 'date'
-              | 'time'
-              | 'dateTime'
-              | 'integralCurrency'
-              | 'integer';
-          value: string;
-      }
-    | {
-          type: 'signedNumber';
-          value: LiteralType;
-      }
-    | {
-          type: 'dateFormula';
-          value: QueryType;
-      }
-    | {
-          type: 'subQuery';
-          value: QueryType;
-      }
-    | { type: 'list'; value: ListType }
-    | {
-          type: 'bind';
-          value: ExpressionType;
-      };
-
-export type ValueType = {
-    type: 'value';
-    value: ValueFieldType;
-};
-
-export const makeValueType = (ctx: ValueContext): ValueType => {
-    let valueFieldType: ValueFieldType | undefined = undefined;
-    if (ctx.NULL()) {
-        valueFieldType = {
-            type: 'null',
-            value: null,
-        };
-    }
-
-    if (ctx.BooleanLiteral()) {
-        valueFieldType = {
-            type: 'boolean',
-            value: ctx.BooleanLiteral().getText(),
-        };
-    }
-
-    if (ctx.StringLiteral()) {
-        valueFieldType = {
-            type: 'string',
-            value: ctx.StringLiteral().getText(),
-        };
-    }
-
-    if (ctx.MultilineStringLiteral()) {
-        valueFieldType = {
-            type: 'multilineString',
-            value: ctx.MultilineStringLiteral().getText(),
-        };
-    }
-
-    if (ctx.DateLiteral()) {
-        valueFieldType = {
-            type: 'date',
-            value: ctx.DateLiteral().getText(),
-        };
-    }
-
-    if (ctx.TimeLiteral()) {
-        valueFieldType = {
-            type: 'time',
-            value: ctx.TimeLiteral().getText(),
-        };
-    }
-
-    if (ctx.DateTimeLiteral()) {
-        valueFieldType = {
-            type: 'dateTime',
-            value: ctx.DateTimeLiteral().getText(),
-        };
-    }
-
-    if (ctx.IntegralCurrencyLiteral()) {
-        valueFieldType = {
-            type: 'integralCurrency',
-            value: ctx.IntegralCurrencyLiteral().getText(),
-        };
-    }
-
-    if (ctx.IntegerLiteral()) {
-        valueFieldType = {
-            type: 'integer',
-            value: ctx.IntegerLiteral().getText(),
-        };
-    }
-
-    if (ctx.signedNumber()) {
-        const value = new LiteralVisitor().visit(ctx.signedNumber());
-        valueFieldType = {
-            type: 'signedNumber',
-            value: value,
-        };
-    }
-
-    if (ctx.dateFormula()) {
-        const value = new QueryVisitor().visit(ctx.dateFormula());
-        valueFieldType = {
-            type: 'dateFormula',
-            value: value,
-        };
-    }
-
-    if (ctx.subQuery()) {
-        const value = new QueryVisitor().visit(ctx.subQuery());
-        valueFieldType = {
-            type: 'subQuery',
-            value: value,
-        };
-    }
-
-    if (ctx.valueList()) {
-        const value = new ListVisitor().visit(ctx.valueList());
-        valueFieldType = {
-            type: 'list',
-            value: value,
-        };
-    }
-
-    if (ctx.boundExpression()) {
-        const value = new ExpressionVisitor().visit(ctx.boundExpression());
-        valueFieldType = {
-            type: 'bind',
-            value: value,
-        };
-    }
-
-    if (!valueFieldType) {
-        throw new Error('値が異常です。ValueContext: ' + ctx.getText());
-    }
-
-    return {
-        type: 'value',
-        value: valueFieldType,
-    };
-};

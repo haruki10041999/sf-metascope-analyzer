@@ -15,13 +15,13 @@ import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor'
 export class MethodDeclarationTypeClass extends DeclarationTypeClass<NormalIdTypeClass> {
     private valueType: TypeRefTypeClass | 'void' | ErrorTypeClass;
     private param: FormalParametersTypeClass | ErrorTypeClass | null = null;
-    private block: NormalBlockTypeClass | ErrorTypeClass;
+    private block: NormalBlockTypeClass | ErrorTypeClass | null;
 
     private constructor(
         value: NormalIdTypeClass | ErrorTypeClass,
         valueType: TypeRefTypeClass | 'void' | ErrorTypeClass,
         param: FormalParametersTypeClass | ErrorTypeClass | null,
-        block: NormalBlockTypeClass | ErrorTypeClass,
+        block: NormalBlockTypeClass | ErrorTypeClass | null,
     ) {
         super('methodDeclaration', value);
         this.valueType = valueType;
@@ -30,7 +30,7 @@ export class MethodDeclarationTypeClass extends DeclarationTypeClass<NormalIdTyp
     }
 
     static create(ctx: MethodDeclarationContext): MethodDeclarationTypeClass {
-        if (!ctx.id() || !ctx.block() || (!ctx.VOID() && !ctx.typeRef())) {
+        if (!ctx.id() || (!ctx.VOID() && !ctx.typeRef())) {
             throw new Error('値が異常です。MethodDeclarationContext: ' + ctx.getText());
         }
 
@@ -46,7 +46,10 @@ export class MethodDeclarationTypeClass extends DeclarationTypeClass<NormalIdTyp
                       'formalParameters',
                   )
                 : null,
-            isValidClass(new BlockVisitor().visit(ctx.block()), isNormalBlockType, 'block'),
+            // abstract メソッドは本体を持たない（`void run();`）
+            ctx.block()
+                ? isValidClass(new BlockVisitor().visit(ctx.block()), isNormalBlockType, 'block')
+                : null,
         );
     }
 
@@ -58,7 +61,7 @@ export class MethodDeclarationTypeClass extends DeclarationTypeClass<NormalIdTyp
         return this.param;
     }
 
-    getBlock(): NormalBlockTypeClass | ErrorTypeClass {
+    getBlock(): NormalBlockTypeClass | ErrorTypeClass | null {
         return this.block;
     }
 }

@@ -187,11 +187,12 @@ export class SoqlFunctionTypeClass extends QueryTypeClass<SoqlFunctionValueType>
         } else if (isCountFunctionType(ctx)) {
             value = 'COUNT';
 
-            if (ctx.soqlFieldsParameter()) {
+            // `COUNT()` は引数なし、`COUNT(field)` は fieldName
+            if (ctx.fieldName()) {
                 param = isValidClass(
-                    new NameVisitor().visit(ctx.soqlFieldsParameter()),
-                    isSoqlFieldsParameterType,
-                    'soqlFieldsParameter',
+                    new NameVisitor().visit(ctx.fieldName()),
+                    isFieldNameType,
+                    'fieldName',
                 );
             }
         } else if (isFormatFunctionType(ctx)) {
@@ -203,9 +204,7 @@ export class SoqlFunctionTypeClass extends QueryTypeClass<SoqlFunctionValueType>
                     isFieldNameType,
                     'fieldName',
                 );
-            }
-
-            if (ctx.soqlFunction()) {
+            } else if (ctx.soqlFunction()) {
                 param = isValidClass(
                     new QueryVisitor().visit(ctx.soqlFunction()),
                     isSoqlFunctionType,
@@ -216,9 +215,9 @@ export class SoqlFunctionTypeClass extends QueryTypeClass<SoqlFunctionValueType>
             value = 'FIELDS';
 
             param = isValidClass(
-                new QueryVisitor().visit(ctx.soqlFunction()),
-                isSoqlFunctionType,
-                'soqlFunction',
+                new ParameterVisitor().visit(ctx.soqlFieldsParameter()),
+                isSoqlFieldsParameterType,
+                'soqlFieldsParameter',
             );
         } else {
             value = 'DISTANCE';

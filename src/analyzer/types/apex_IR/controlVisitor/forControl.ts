@@ -19,13 +19,13 @@ import {
 import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
 
 export class ForControlTypeClass extends ControlTypeClass<
-    EnhancedForControlTypeClass | ExpressionAllTypeClass
+    EnhancedForControlTypeClass | ExpressionAllTypeClass | null
 > {
     private init: ForInitTypeClass | ErrorTypeClass | null;
     private update: ForUpdateTypeClass | ErrorTypeClass | null;
 
     private constructor(
-        value: EnhancedForControlTypeClass | ExpressionAllTypeClass | ErrorTypeClass,
+        value: EnhancedForControlTypeClass | ExpressionAllTypeClass | ErrorTypeClass | null,
         init: ForInitTypeClass | ErrorTypeClass | null,
         update: ForUpdateTypeClass | ErrorTypeClass | null,
     ) {
@@ -34,23 +34,26 @@ export class ForControlTypeClass extends ControlTypeClass<
         this.update = update;
     }
 
+    // `for (;;)` のように初期化・条件・更新はすべて任意
     static create(ctx: ForControlContext): ForControlTypeClass {
-        if (!ctx.enhancedForControl() && !ctx.expression()) {
-            throw new Error('値が異常です。ForControlContext: ' + ctx.getText());
+        let value: EnhancedForControlTypeClass | ExpressionAllTypeClass | ErrorTypeClass | null =
+            null;
+        if (ctx.enhancedForControl()) {
+            value = isValidClass(
+                new ControlVisitor().visit(ctx.enhancedForControl()),
+                isEnhancedForControlType,
+                'enhancedForControl',
+            );
+        } else if (ctx.expression()) {
+            value = isValidClass(
+                new ExpressionVisitor().visit(ctx.expression()),
+                isExpressionTypeAll,
+                'expression',
+            );
         }
 
         return new ForControlTypeClass(
-            ctx.enhancedForControl()
-                ? isValidClass(
-                      new ControlVisitor().visit(ctx.enhancedForControl()),
-                      isEnhancedForControlType,
-                      'enhancedForControl',
-                  )
-                : isValidClass(
-                      new ExpressionVisitor().visit(ctx.expression()),
-                      isExpressionTypeAll,
-                      'expression',
-                  ),
+            value,
             ctx.forInit()
                 ? isValidClass(new ControlVisitor().visit(ctx.forInit()), isForInitType, 'forInit')
                 : null,

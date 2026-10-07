@@ -1,47 +1,42 @@
 import { TriggerCaseContext } from '@apexdevtools/apex-parser';
 
-export type TriggerCaseType = {
-    type: 'triggerCase';
-    beforAfter: 'BEFORE' | 'AFTER';
-    triggerType: 'INSERT' | 'UPDATE' | 'DELETE' | 'UNDELETE';
+import { UnitTypeClass } from '.';
+
+import { ErrorTypeClass, CommonTypeClass } from '../commonVisitor';
+
+export class TriggerCaseTypeClass extends UnitTypeClass<string> {
+    private triggerCaseType: string;
+    private constructor(value: string, triggerCaseType: string) {
+        super('triggerCase', value);
+        this.triggerCaseType = triggerCaseType;
+    }
+
+    static create(ctx: TriggerCaseContext): TriggerCaseTypeClass {
+        if (
+            (!ctx.BEFORE() && !ctx.AFTER()) ||
+            (!ctx.INSERT() && !ctx.UPDATE() && !ctx.DELETE() && !ctx.UNDELETE())
+        ) {
+            throw new Error('値が異常です。TriggerCaseContext: ' + ctx.getText());
+        }
+
+        return new TriggerCaseTypeClass(
+            ctx.BEFORE() ? 'BEFORE' : 'AFTER',
+            ctx.INSERT()
+                ? 'INSERT'
+                : ctx.UPDATE()
+                  ? 'UPDATE'
+                  : ctx.DELETE()
+                    ? 'DELETE'
+                    : 'UNDELETE',
+        );
+    }
+
+    getTriggerCaseType(): string {
+        return this.triggerCaseType;
+    }
+}
+
+export const isTriggerCaseType = (target: CommonTypeClass): target is TriggerCaseTypeClass => {
+    return target instanceof TriggerCaseTypeClass;
 };
 
-export const makeTriggerCaseType = (ctx: TriggerCaseContext): TriggerCaseType => {
-    let beforeAfter: 'BEFORE' | 'AFTER' | undefined = undefined;
-
-    if (ctx.BEFORE()) {
-        beforeAfter = 'BEFORE';
-    }
-
-    if (ctx.AFTER()) {
-        beforeAfter = 'AFTER';
-    }
-
-    let triggerType: 'INSERT' | 'UPDATE' | 'DELETE' | 'UNDELETE' | undefined = undefined;
-
-    if (ctx.INSERT()) {
-        triggerType = 'INSERT';
-    }
-
-    if (ctx.UPDATE()) {
-        triggerType = 'UPDATE';
-    }
-
-    if (ctx.DELETE()) {
-        triggerType = 'DELETE';
-    }
-
-    if (ctx.UNDELETE()) {
-        triggerType = 'UNDELETE';
-    }
-
-    if (!beforeAfter || !triggerType) {
-        throw new Error('値が異常です。TriggerCaseContext: ' + ctx.getText());
-    }
-
-    return {
-        type: 'triggerCase',
-        beforAfter: beforeAfter,
-        triggerType: triggerType,
-    };
-};

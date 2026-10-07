@@ -33,9 +33,7 @@ export class AnnotationTypeClass extends ModifierTypeClass<NormalIdTypeClass> {
                 isElementValueType,
                 'elementValue',
             );
-        }
-
-        if (ctx.elementValuePairs()) {
+        } else if (ctx.elementValuePairs()) {
             param = isValidClass(
                 new PairVisitor().visit(ctx.elementValuePairs()),
                 isElementValuePairsType,
@@ -57,3 +55,4 @@ export class AnnotationTypeClass extends ModifierTypeClass<NormalIdTypeClass> {
 export const isAnnotationType = (target: CommonTypeClass): target is AnnotationTypeClass => {
     return target instanceof AnnotationTypeClass;
 };
+

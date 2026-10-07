@@ -15,8 +15,8 @@ export class SubExpressionTypeClass extends ExpressionTypeClass<ExpressionAllTyp
     }
 
     static create(ctx: SubExpressionContext): SubExpressionTypeClass {
-        if (!ctx) {
-            throw new Error('値が異常です。SubExpressionContext: ' + ctx);
+        if (!ctx.expression()) {
+            throw new Error('値が異常です。SubExpressionContext: ' + ctx.getText());
         }
 
         return new SubExpressionTypeClass(

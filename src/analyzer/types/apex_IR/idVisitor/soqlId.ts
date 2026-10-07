@@ -10,11 +10,9 @@ export class SoqlIdTypeClass extends IdTypeClass<NormalIdTypeClass> {
     }
 
     static create(ctx: SoqlIdContext): SoqlIdTypeClass {
-        if (!ctx) {
-            throw new Error('値が異常です。SoqlIdContext: ' + ctx);
-        }
-
-        return new SoqlIdTypeClass(isValidClass(new IdVisitor().visit(ctx), isNormalIdType, 'id'));
+        return new SoqlIdTypeClass(
+            isValidClass(new IdVisitor().visit(ctx.id()), isNormalIdType, 'id'),
+        );
     }
 }
 

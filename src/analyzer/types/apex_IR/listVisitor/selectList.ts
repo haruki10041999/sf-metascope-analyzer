@@ -1,25 +1,32 @@
 import { SelectListContext } from '@apexdevtools/apex-parser';
 
-import { EntryType, EntryVisitor } from '../entryVisitor';
+import { ListTypeClass } from '../listVisitor';
 
-export type SelectListType = {
-    type: 'selectList';
-    list: EntryType[];
-};
+import { SelectEntryTypeClass, EntryVisitor, isSelectEntryType } from '../entryVisitor';
+import { ErrorTypeClass, CommonTypeClass, isValidClassList } from '../commonVisitor';
 
-export const makeSelectListType = (ctx: SelectListContext): SelectListType => {
-    if (!ctx.selectEntry_list() || ctx.selectEntry_list().length === 0) {
-        throw new Error('値が異常です。SelectListContext: ' + ctx.getText());
+export class SelectListTypeClass extends ListTypeClass<SelectEntryTypeClass> {
+    private constructor(list: (SelectEntryTypeClass | ErrorTypeClass)[]) {
+        super('selectList', list);
     }
 
-    const list = ctx.selectEntry_list().map((selectEntryCtx) => {
-        const entry = new EntryVisitor().visit(selectEntryCtx);
-        return entry;
-    });
+    static create(ctx: SelectListContext): SelectListTypeClass {
+        if (!ctx.selectEntry_list() || ctx.selectEntry_list().length === 0) {
+            throw new Error('値が異常です。SelectListContext: ' + ctx.getText());
+        }
 
-    return {
-        type: 'selectList',
-        list: list,
-    };
+        return new SelectListTypeClass(
+            isValidClassList(
+                ctx.selectEntry_list(),
+                (ctx) => new EntryVisitor().visit(ctx),
+                isSelectEntryType,
+                'selectEntry',
+            ),
+        );
+    }
+}
+
+export const isSelectListType = (target: CommonTypeClass): target is SelectListTypeClass => {
+    return target instanceof SelectListTypeClass;
 };
 

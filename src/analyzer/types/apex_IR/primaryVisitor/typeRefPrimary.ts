@@ -12,7 +12,7 @@ export class TypeRefPrimaryTypeClass extends PrimaryTypeClass<TypeRefTypeClass> 
 
     static create(ctx: TypeRefPrimaryContext): TypeRefPrimaryTypeClass {
         if (!ctx.typeRef()) {
-            throw new Error('値が異常です。 TypeRefPrimaryContext:' + ctx);
+            throw new Error('値が異常です。TypeRefPrimaryContext: ' + ctx.getText());
         }
 
         return new TypeRefPrimaryTypeClass(
