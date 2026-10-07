@@ -50,6 +50,9 @@ import {
     isSubExpressionType,
     isInstanceOfExpressionType,
     isErrorType,
+    ExpressionAllTypeClass,
+    AnyIdTypeClass,
+    DotMethodCallTypeClass,
 } from '../apex_IR';
 
 import { primaryConvert } from './primaryConvert';
@@ -67,8 +70,34 @@ export const expressionConvert = (typeClass: CommonTypeClass, errorClasses: Erro
     }
 
     if (isArth1ExpressionType(typeClass)) {
-        const arth1TypeClassLeftValue = (typeClass as Arth1ExpressionTypeClass).getLeft();
-        const arth1TypeClassRightValue = (typeClass as Arth1ExpressionTypeClass).getRight();
-        const arth1TypeClassOperatorValue = (typeClass as Arth1ExpressionTypeClass).getOperator();
+        const left = (typeClass as Arth1ExpressionTypeClass).getLeft() as
+            ExpressionAllTypeClass | ErrorTypeClass;
+        const right = (typeClass as Arth1ExpressionTypeClass).getRight() as
+            ExpressionAllTypeClass | ErrorTypeClass;
+        const operator = (typeClass as Arth1ExpressionTypeClass).getOperator() as string;
+    }
+
+    if (isCoalExpressionType(typeClass)) {
+        const left = (typeClass as CoalExpressionTypeClass).getLeft() as
+            ExpressionAllTypeClass | ErrorTypeClass;
+        const right = (typeClass as CoalExpressionTypeClass).getRight() as
+            ExpressionAllTypeClass | ErrorTypeClass;
+        const operator = (typeClass as CoalExpressionTypeClass).getOperator() as string;
+    }
+
+    if (isDotExpressionType(typeClass)) {
+        const left = (typeClass as DotExpressionTypeClass).getLeft() as
+            ExpressionAllTypeClass | ErrorTypeClass;
+        const right = (typeClass as DotExpressionTypeClass).getRight() as
+            AnyIdTypeClass | DotMethodCallTypeClass | ErrorTypeClass;
+        const operator = (typeClass as CoalExpressionTypeClass).getOperator() as string;
+    }
+
+    if (isBitOrExpressionType(typeClass)) {
+        const left = (typeClass as BitOrExpressionTypeClass).getLeft() as
+            ExpressionAllTypeClass | ErrorTypeClass;
+        const right = (typeClass as BitOrExpressionTypeClass).getRight() as
+            ExpressionAllTypeClass | ErrorTypeClass;
+        const operator = (typeClass as BitOrExpressionTypeClass).getOperator() as string;
     }
 };

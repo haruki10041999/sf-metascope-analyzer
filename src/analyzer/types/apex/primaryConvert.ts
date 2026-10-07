@@ -25,7 +25,15 @@ import {
     SoqlLiteralTypeClass,
     NormalIdTypeClass,
     isErrorType,
+    isNormalIdType,
+    isNormalLiteralType,
+    isSoqlLiteralType,
+    isNormalQueryType,
+    isSoslLiteralType,
+    isSoslClausesType,
 } from '../apex_IR';
+
+import { toPrimitiveValue, toTypeClass } from './commons';
 
 export const primaryConvert = (typeClass: CommonTypeClass, errorClasses: ErrorTypeClass[]) => {
     if (isErrorType(typeClass)) {
@@ -35,26 +43,41 @@ export const primaryConvert = (typeClass: CommonTypeClass, errorClasses: ErrorTy
 
     let value = null;
     if (isIdPrimaryType(typeClass)) {
-        value = (typeClass as IdPrimaryTypeClass).getValue() as NormalIdTypeClass | ErrorTypeClass;
+        const value = toTypeClass(typeClass.getValue(), isNormalIdType, errorClasses);
+        if (value) {
+            return value.getValue();
+        }
     }
 
     if (isLiteralPrimaryType(typeClass)) {
-        value = (typeClass as LiteralPrimaryTypeClass).getValue() as
-            NormalLiteralTypeClass | ErrorTypeClass;
+        const value = toTypeClass(typeClass.getValue(), isNormalLiteralType, errorClasses);
+        if (value) {
+            return { type: value.getValueType(), value: value.getValue() };
+        }
     }
 
     if (isNormalPrimaryType(typeClass)) {
-        value = (typeClass as NormalPrimaryTypeClass).getValue() as string;
+        return toPrimitiveValue(
+            typeClass.getValue(),
+            (target): target is string => {
+                return typeof target === 'string';
+            },
+            errorClasses,
+        );
     }
 
     if (isSoqlPrimaryType(typeClass)) {
-        value = (typeClass as SoqlPrimaryTypeClass).getValue() as
-            SoqlLiteralTypeClass | ErrorTypeClass;
+        const literalTypeClass = toTypeClass(typeClass.getValue(), isSoqlLiteralType, errorClasses);
+        if (literalTypeClass) {
+            return toTypeClass(literalTypeClass.getValue(), isNormalQueryType, errorClasses);
+        }
     }
 
     if (isSoslPrimaryType(typeClass)) {
-        value = (typeClass as SoslPrimaryTypeClass).getValue() as
-            SoslLiteralTypeClass | ErrorTypeClass;
+        const literalTypeClass = toTypeClass(typeClass.getValue(), isSoslLiteralType, errorClasses);
+        if (literalTypeClass) {
+            return toTypeClass(literalTypeClass.getValue(), isSoslClausesType, errorClasses);
+        }
     }
 
     if (isSuperPrimaryType(typeClass)) {
