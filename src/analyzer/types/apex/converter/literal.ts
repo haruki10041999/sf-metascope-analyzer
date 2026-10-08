@@ -19,6 +19,11 @@ import {
 import { toPrimitiveValue, toTypeClass } from './commons';
 import { qualifiedNameConvert } from './name';
 
+export type NormalLiteral = {
+    value: string | null;
+    valueType: string | null;
+};
+
 export const normalLiteralConvert = (
     target: NormalLiteralTypeClass,
     errorClass: ErrorTypeClass[],
@@ -40,6 +45,8 @@ export const normalLiteralConvert = (
         valueType: valueType,
     };
 };
+
+export type WhenLiteral = {};
 
 export const whenLiteralConvert = (
     target: WhenLiteralTypeClass,
@@ -71,12 +78,16 @@ export const whenLiteralConvert = (
     };
 };
 
+export type SoqlLiteral = NormalQueryTypeClass | null;
+
 export const soqlLiteralConvert = (
     target: SoqlLiteralTypeClass,
     errorClass: ErrorTypeClass[],
-): NormalQueryTypeClass | null => {
+): SoqlLiteral => {
     return toTypeClass(target.getValue(), isNormalQueryType, errorClass);
 };
+
+type Sosl
 
 export const soslLiteralConvert = (
     target: SoslLiteralTypeClass,

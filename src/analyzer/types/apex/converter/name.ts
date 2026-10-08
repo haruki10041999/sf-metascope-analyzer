@@ -18,12 +18,15 @@ import {
 } from '../../apex_IR';
 
 import { toPrimitiveValue, toTypeClass } from './commons';
-import { normalIdConvert, soqlIdConvert } from './id';
+import { NormalId, normalIdConvert, SoqlId, soqlIdConvert } from './id';
+import { TypeArguments, typeArgumentsConvert } from './arguments';
+
+export type QualifiedName = NormalId[] | null;
 
 export const qualifiedNameConvert = (
     target: QualifiedNameTypeClass,
     errorClass: ErrorTypeClass[],
-): string[] => {
+): QualifiedName => {
     const values: string[] = [];
     target.getValue().forEach((item) => {
         const valueTypeClass = toTypeClass(item, isNormalIdType, errorClass);
@@ -31,13 +34,18 @@ export const qualifiedNameConvert = (
             values.push(normalIdConvert(valueTypeClass));
         }
     });
-    return values;
+    return values.length > 0 ? values : null;
+};
+
+export type TypeName = {
+    value: string | NormalId | null;
+    generic: TypeArguments | null;
 };
 
 export const typeNameConvert = (
     target: TypeNameTypeClass,
     errorClass: ErrorTypeClass[],
-): { value: string | null; generic: TypeArgumentsTypeClass | null } => {
+): TypeName => {
     let value = null;
     let generic = null;
 
@@ -53,7 +61,8 @@ export const typeNameConvert = (
 
     const genericTypeClass = target.getGeneric();
     if (genericTypeClass) {
-        generic = toTypeClass(genericTypeClass, isTypeArgumentsType, errorClass);
+        const typeClass = toTypeClass(genericTypeClass, isTypeArgumentsType, errorClass);
+        generic = typeClass ? typeArgumentsConvert(typeClass, errorClass) : null;
     }
 
     return {
@@ -62,10 +71,12 @@ export const typeNameConvert = (
     };
 };
 
+export type CreatedName = IdCreatedNamePairTypeClass[] | null;
+
 export const createdNameConvert = (
     target: CreatedNameTypeClass,
     errorClass: ErrorTypeClass[],
-): IdCreatedNamePairTypeClass[] | null => {
+): CreatedName => {
     const values: IdCreatedNamePairTypeClass[] = [];
     target.getValue().forEach((item) => {
         const valueTypeClass = toTypeClass(item, isIdCreatedNamePairType, errorClass);
@@ -76,10 +87,12 @@ export const createdNameConvert = (
     return values.length > 0 ? values : null;
 };
 
+export type FieldName = SoqlId[] | null;
+
 export const fieldNameConvert = (
     target: FieldNameTypeClass,
     errorClass: ErrorTypeClass[],
-): string[] => {
+): FieldName => {
     const values: (string | null)[] = [];
     target.getValue().forEach((item) => {
         const valueTypeClass = toTypeClass(item, isSoqlIdType, errorClass);
@@ -89,14 +102,22 @@ export const fieldNameConvert = (
             }
         }
     });
-    return values.filter((v): v is string => v !== null);
+
+    return values.filter((v): v is string => v !== null).length
+        ? values.filter((v): v is string => v !== null)
+        : null;
+};
+
+export type DateFieldName = {
+    value: FieldName | null;
+    isConvertTimeZone: boolean;
 };
 
 export const dateFieldNameConvert = (
     target: DateFieldNameTypeClass,
     errorClass: ErrorTypeClass[],
-): { value: string[] | null; isConvertTimeZone: boolean } => {
-    let value: string[] | null = null;
+): DateFieldName => {
+    let value: FieldName | null = null;
     const isConvertTimeZone = target.getConvertTimeZone();
     const valueTypeClass = toTypeClass(target.getValue(), isFieldNameType, errorClass);
     if (valueTypeClass) {
@@ -108,18 +129,21 @@ export const dateFieldNameConvert = (
     };
 };
 
+export type DataCategoryName = SoqlId[] | null;
+
 export const dataCategoryNameConvert = (
     target: DataCategoryNameTypeClass,
     errorClass: ErrorTypeClass[],
-): string[] => {
+): DataCategoryName => {
     const values: (string | null)[] = [];
     target.getValue().forEach((item) => {
         const valueTypeClass = toTypeClass(item, isSoqlIdType, errorClass);
         if (valueTypeClass) {
-            if (isFieldNameType(valueTypeClass)) {
-                values.push(fieldNameConvert(valueTypeClass, errorClass).join('.'));
-            }
+            values.push(soqlIdConvert(valueTypeClass, errorClass));
         }
     });
-    return values.filter((v): v is string => v !== null);
+
+    return values.filter((v): v is string => v !== null).length
+        ? values.filter((v): v is string => v !== null)
+        : null;
 };

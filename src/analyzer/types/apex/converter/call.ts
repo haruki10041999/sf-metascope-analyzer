@@ -9,13 +9,19 @@ import {
 } from '../../apex_IR';
 
 import { toTypeClass } from './commons';
-import { normalIdConvert, anyIdConvert } from './id';
-import { expressionListConvert } from './list';
+import { NormalId, normalIdConvert, AnyId, anyIdConvert } from './id';
+import { ExpressionList, expressionListConvert } from './list';
+
+export type MethodCall = {
+    value: NormalId | null;
+    param: ExpressionList | null;
+    reference: string | null;
+};
 
 export const methodCallConvert = (
     target: MethodCallTypeClass,
     errorClass: ErrorTypeClass[],
-): { value: string | null; param: any[] | null; reference: string | null } => {
+): MethodCall => {
     const valueTypeClass = target.getValue();
     let value;
     if (!(valueTypeClass instanceof CommonTypeClass)) {
@@ -26,10 +32,8 @@ export const methodCallConvert = (
     }
 
     const paramTypeClass = target.getParam();
-    let param;
-    if (!(paramTypeClass instanceof CommonTypeClass)) {
-        param = paramTypeClass;
-    } else {
+    let param = null;
+    if (paramTypeClass) {
         const expressionList = toTypeClass(paramTypeClass, isExpressionListType, errorClass);
         param = expressionList ? expressionListConvert(expressionList, errorClass) : null;
     }
@@ -41,10 +45,15 @@ export const methodCallConvert = (
     };
 };
 
+export type DotMethodCall = {
+    value: AnyId | null;
+    param: ExpressionList | null;
+};
+
 export const dotMethodCallConvert = (
     target: DotMethodCallTypeClass,
     errorClass: ErrorTypeClass[],
-): { value: string | null; param: any[] | null } => {
+): DotMethodCall => {
     let value = null;
     const valueTypeClass = toTypeClass(target.getValue(), isAnyIdType, errorClass);
     if (valueTypeClass) {

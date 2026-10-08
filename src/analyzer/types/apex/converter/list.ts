@@ -52,13 +52,16 @@ import {
 } from '../../apex_IR';
 
 import { toPrimitiveValue, toTypeClass } from './commons';
-import { expressionConvert } from './expression';
+import { Expression, expressionConvert } from './expression';
 import { fieldNameConvert } from './name';
+import { typeRefConvert, TypeRef } from './type';
+
+export type TypeList = TypeRef[];
 
 export const typeListConvert = (
     target: TypeListTypeClass,
     errorClass: ErrorTypeClass[],
-): TypeRefTypeClass[] => {
+): TypeList => {
     const values: TypeRefTypeClass[] = [];
     target.getValue().forEach((item) => {
         const valueTypeClass = toTypeClass(item, isTypeRefType, errorClass);
@@ -69,24 +72,28 @@ export const typeListConvert = (
     return values;
 };
 
+export type ExpressionList = Expression[] | null;
+
 export const expressionListConvert = (
     target: ExpressionListTypeClass,
     errorClass: ErrorTypeClass[],
-): any[] => {
-    const values: CommonTypeClass[] = [];
+): ExpressionList => {
+    const values: Expression[] = [];
     target.getValue().forEach((item) => {
         const valueTypeClass = toTypeClass(item, isExpressionTypeAll, errorClass);
         if (valueTypeClass) {
             values.push(expressionConvert(valueTypeClass, errorClass));
         }
     });
-    return values;
+    return values.length > 0 ? values : null;
 };
+
+export type FormalParameterList = FormalParameterTypeClass[] | null;
 
 export const formalParameterListConvert = (
     target: FormalParameterListTypeClass,
     errorClass: ErrorTypeClass[],
-): FormalParameterTypeClass[] => {
+): FormalParameterList => {
     const values: FormalParameterTypeClass[] = [];
     target.getValue().forEach((item) => {
         const valueTypeClass = toTypeClass(item, isFormalParameterType, errorClass);
@@ -94,7 +101,7 @@ export const formalParameterListConvert = (
             values.push(valueTypeClass);
         }
     });
-    return values;
+    return values.length > 0 ? values : null;
 };
 
 export const valueListConvert = (

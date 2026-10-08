@@ -93,15 +93,18 @@ import {
 } from '../../apex_IR';
 
 import { toPrimitiveValue, toTypeClass } from './commons';
-import { anyIdConvert } from './id';
-import { primaryConvert } from './primary';
+import { AnyId, anyIdConvert } from './id';
+import { Primary, primaryConvert } from './primary';
 import { fieldNameConvert } from './name';
-import { methodCallConvert, dotMethodCallConvert } from './call';
+import { MethodCall, methodCallConvert, DotMethodCall, dotMethodCallConvert } from './call';
+import { TypeRef, typeRefConvert } from './type';
+
+export type NormalExpression = string | null;
 
 export const normalExpressionConvert = (
     target: NormalExpressionTypeClass,
     errorClass: ErrorTypeClass[],
-): string | null => {
+): NormalExpression => {
     return toPrimitiveValue(
         target.getValue(),
         (target): target is string => typeof target === 'string',
@@ -109,10 +112,12 @@ export const normalExpressionConvert = (
     );
 };
 
+export type PrimaryExpression = Primary | null;
+
 export const primaryExpressionConvert = (
     target: PrimaryExpressionTypeClass,
     errorClass: ErrorTypeClass[],
-): any => {
+): PrimaryExpression => {
     const valueTypeClass = toTypeClass(target.getValue(), isPrimaryTypeAll, errorClass);
     if (valueTypeClass) {
         return primaryConvert(valueTypeClass, errorClass);
@@ -121,10 +126,16 @@ export const primaryExpressionConvert = (
     return null;
 };
 
+export type DotExpression = {
+    left: Expression | null;
+    right: AnyId | DotMethodCall | null;
+    operator: string | null;
+};
+
 export const dotExpressionConvert = (
     target: DotExpressionTypeClass,
     errorClass: ErrorTypeClass[],
-): any => {
+): DotExpression => {
     const leftTypeClass = toTypeClass(target.getLeft(), isExpressionTypeAll, errorClass);
     const operator = toPrimitiveValue(
         target.getOperator(),
@@ -155,10 +166,12 @@ export const dotExpressionConvert = (
     };
 };
 
+export type ArrayExpression = Expression[] | null;
+
 export const arrayExpressionConvert = (
     target: ArrayExpressionTypeClass,
     errorClass: ErrorTypeClass[],
-): any[] | null => {
+): ArrayExpression => {
     const values: any[] = [];
     target.getValue().forEach((item) => {
         const valueTypeClass = toTypeClass(item, isExpressionTypeAll, errorClass);
@@ -169,10 +182,12 @@ export const arrayExpressionConvert = (
     return values.length > 0 ? values : null;
 };
 
+export type MethodCallExpression = MethodCall | null;
+
 export const methodCallExpressionConvert = (
     target: MethodCallExpressionTypeClass,
     errorClass: ErrorTypeClass[],
-): { value: string | null; param: any[] | null; reference: string | null } | null => {
+): MethodCallExpression => {
     const valueTypeClass = toTypeClass(target.getValue(), isMethodCallType, errorClass);
     if (valueTypeClass) {
         return methodCallConvert(valueTypeClass, errorClass);
@@ -180,10 +195,12 @@ export const methodCallExpressionConvert = (
     return null;
 };
 
+export type NewExpression = CreatorTypeClass | null;
+
 export const newExpressionConvert = (
     target: NewExpressionTypeClass,
     errorClass: ErrorTypeClass[],
-): CreatorTypeClass | null => {
+): NewExpression => {
     const valueTypeClass = toTypeClass(target.getValue(), isCreatorType, errorClass);
     if (valueTypeClass) {
         return valueTypeClass;
@@ -191,31 +208,44 @@ export const newExpressionConvert = (
     return null;
 };
 
+export type CastExpression = {
+    value: Expression | null;
+    valueType: TypeRef | null;
+};
+
 export const castExpressionConvert = (
     target: CastExpressionTypeClass,
     errorClass: ErrorTypeClass[],
-): { value: any; valueType: TypeRefTypeClass | null } => {
+): CastExpression => {
     const valueTypeClass = toTypeClass(target.getValue(), isExpressionTypeAll, errorClass);
     const valueTypeTypeClass = toTypeClass(target.getValueType(), isTypeRefType, errorClass);
 
     return {
         value: valueTypeClass ? expressionConvert(valueTypeClass, errorClass) : null,
-        valueType: valueTypeTypeClass ? valueTypeTypeClass : null,
+        valueType: valueTypeTypeClass ? typeRefConvert(valueTypeTypeClass, errorClass) : null,
     };
 };
+
+export type SubExpression = Expression | null;
 
 export const subExpressionConvert = (
     target: SubExpressionTypeClass,
     errorClass: ErrorTypeClass[],
-): any | null => {
+): SubExpression => {
     const valueTypeClass = toTypeClass(target.getValue(), isExpressionTypeAll, errorClass);
     return valueTypeClass ? expressionConvert(valueTypeClass, errorClass) : null;
+};
+
+export type PostOpExpression = {
+    value: Expression | null;
+    operator: string;
+    location: 'post';
 };
 
 export const postOpExpressionConvert = (
     target: PostOpExpressionTypeClass,
     errorClass: ErrorTypeClass[],
-): { value: any | null; operator: string; location: 'post' } => {
+): PostOpExpression => {
     const valueTypeClass = toTypeClass(target.getValue(), isExpressionTypeAll, errorClass);
     return {
         value: valueTypeClass ? expressionConvert(valueTypeClass, errorClass) : null,
@@ -224,10 +254,16 @@ export const postOpExpressionConvert = (
     };
 };
 
+export type PreOpExpression = {
+    value: Expression | null;
+    operator: string;
+    location: 'pre';
+};
+
 export const preOpExpressionConvert = (
     target: PreOpExpressionTypeClass,
     errorClass: ErrorTypeClass[],
-): { value: any | null; operator: string; location: 'pre' } => {
+): PreOpExpression => {
     const valueTypeClass = toTypeClass(target.getValue(), isExpressionTypeAll, errorClass);
     return {
         value: valueTypeClass ? expressionConvert(valueTypeClass, errorClass) : null,
@@ -236,10 +272,15 @@ export const preOpExpressionConvert = (
     };
 };
 
+export type NegExpression = {
+    value: Expression | null;
+    operator: string;
+};
+
 export const negExpressionConvert = (
     target: NegExpressionTypeClass,
     errorClass: ErrorTypeClass[],
-): { value: any | null; operator: string } => {
+): NegExpression => {
     const valueTypeClass = toTypeClass(target.getValue(), isExpressionTypeAll, errorClass);
     return {
         value: valueTypeClass ? expressionConvert(valueTypeClass, errorClass) : null,
@@ -247,10 +288,16 @@ export const negExpressionConvert = (
     };
 };
 
+export type Arth1Expression = {
+    left: Expression | null;
+    right: Expression | null;
+    operator: string | null;
+};
+
 export const arth1ExpressionConvert = (
     target: Arth1ExpressionTypeClass,
     errorClass: ErrorTypeClass[],
-): { left: any | null; right: any | null; operator: string | null } => {
+): Arth1Expression => {
     const leftTypeClass = toTypeClass(target.getLeft(), isExpressionTypeAll, errorClass);
     const rightTypeClass = toTypeClass(target.getRight(), isExpressionTypeAll, errorClass);
     return {
@@ -262,12 +309,18 @@ export const arth1ExpressionConvert = (
             errorClass,
         ),
     };
+};
+
+export type Arth2Expression = {
+    left: Expression | null;
+    right: Expression | null;
+    operator: string | null;
 };
 
 export const arth2ExpressionConvert = (
     target: Arth2ExpressionTypeClass,
     errorClass: ErrorTypeClass[],
-): { left: any | null; right: any | null; operator: string | null } => {
+): Arth2Expression => {
     const leftTypeClass = toTypeClass(target.getLeft(), isExpressionTypeAll, errorClass);
     const rightTypeClass = toTypeClass(target.getRight(), isExpressionTypeAll, errorClass);
     return {
@@ -279,12 +332,18 @@ export const arth2ExpressionConvert = (
             errorClass,
         ),
     };
+};
+
+export type BitExpression = {
+    left: Expression | null;
+    right: Expression | null;
+    operator: string | null;
 };
 
 export const bitExpressionConvert = (
     target: BitExpressionTypeClass,
     errorClass: ErrorTypeClass[],
-): { left: any | null; right: any | null; operator: string | null } => {
+): BitExpression => {
     const leftTypeClass = toTypeClass(target.getLeft(), isExpressionTypeAll, errorClass);
     const rightTypeClass = toTypeClass(target.getRight(), isExpressionTypeAll, errorClass);
     return {
@@ -296,12 +355,18 @@ export const bitExpressionConvert = (
             errorClass,
         ),
     };
+};
+
+export type CmpExpression = {
+    left: Expression | null;
+    right: Expression | null;
+    operator: string | null;
 };
 
 export const cmpExpressionConvert = (
     target: CmpExpressionTypeClass,
     errorClass: ErrorTypeClass[],
-): { left: any | null; right: any | null; operator: string | null } => {
+): CmpExpression => {
     const leftTypeClass = toTypeClass(target.getLeft(), isExpressionTypeAll, errorClass);
     const rightTypeClass = toTypeClass(target.getRight(), isExpressionTypeAll, errorClass);
     return {
@@ -315,21 +380,33 @@ export const cmpExpressionConvert = (
     };
 };
 
+export type InstanceOfExpression = {
+    left: Expression | null;
+    right: TypeRef | null;
+    operator: string | null;
+};
+
 export const instanceOfExpressionConvert = (
     target: InstanceOfExpressionTypeClass,
     errorClass: ErrorTypeClass[],
-): { left: any | null; right: TypeRefTypeClass | null; operator: string | null } => {
+): InstanceOfExpression => {
     const leftTypeClass = toTypeClass(target.getLeft(), isExpressionTypeAll, errorClass);
     const rightTypeClass = toTypeClass(target.getRight(), isTypeRefType, errorClass);
     return {
         left: leftTypeClass ? expressionConvert(leftTypeClass, errorClass) : null,
-        right: rightTypeClass,
+        right: rightTypeClass ? typeRefConvert(rightTypeClass) : null,
         operator: toPrimitiveValue(
             target.getOperator(),
             (target): target is string => typeof target === 'string',
             errorClass,
         ),
     };
+};
+
+export type EqualityExpression = {
+    left: Expression | null;
+    right: Expression | null;
+    operator: string | null;
 };
 
 export const equalityExpressionConvert = (
@@ -349,10 +426,16 @@ export const equalityExpressionConvert = (
     };
 };
 
+export type BitAndExpression = {
+    left: Expression | null;
+    right: Expression | null;
+    operator: string | null;
+};
+
 export const bitAndExpressionConvert = (
     target: BitAndExpressionTypeClass,
     errorClass: ErrorTypeClass[],
-): { left: any | null; right: any | null; operator: string | null } => {
+): BitAndExpression => {
     const leftTypeClass = toTypeClass(target.getLeft(), isExpressionTypeAll, errorClass);
     const rightTypeClass = toTypeClass(target.getRight(), isExpressionTypeAll, errorClass);
     return {
@@ -364,27 +447,41 @@ export const bitAndExpressionConvert = (
             errorClass,
         ),
     };
+};
+
+export type BitNotExpression = {
+    left: Expression | null;
+    right: Expression | null;
+    operator: string | null;
 };
 
 export const bitNotExpressionConvert = (
     target: BitNotExpressionTypeClass,
     errorClass: ErrorTypeClass[],
-): { left: any | null; operator: string | null } => {
+): BitNotExpression => {
     const leftTypeClass = toTypeClass(target.getLeft(), isExpressionTypeAll, errorClass);
+    const rightTypeClass = toTypeClass(target.getRight(), isExpressionTypeAll, errorClass);
     return {
         left: leftTypeClass ? expressionConvert(leftTypeClass, errorClass) : null,
+        right: rightTypeClass ? expressionConvert(rightTypeClass, errorClass) : null,
         operator: toPrimitiveValue(
             target.getOperator(),
             (target): target is string => typeof target === 'string',
             errorClass,
         ),
     };
+};
+
+export type BitOrExpression = {
+    left: Expression | null;
+    right: Expression | null;
+    operator: string | null;
 };
 
 export const bitOrExpressionConvert = (
     target: BitOrExpressionTypeClass,
     errorClass: ErrorTypeClass[],
-): { left: any | null; right: any | null; operator: string | null } => {
+): BitOrExpression => {
     const leftTypeClass = toTypeClass(target.getLeft(), isExpressionTypeAll, errorClass);
     const rightTypeClass = toTypeClass(target.getRight(), isExpressionTypeAll, errorClass);
     return {
@@ -396,12 +493,18 @@ export const bitOrExpressionConvert = (
             errorClass,
         ),
     };
+};
+
+export type LogAndExpression = {
+    left: Expression | null;
+    right: Expression | null;
+    operator: string | null;
 };
 
 export const logAndExpressionConvert = (
     target: LogAndExpressionTypeClass,
     errorClass: ErrorTypeClass[],
-): { left: any | null; right: any | null; operator: string | null } => {
+): LogAndExpression => {
     const leftTypeClass = toTypeClass(target.getLeft(), isExpressionTypeAll, errorClass);
     const rightTypeClass = toTypeClass(target.getRight(), isExpressionTypeAll, errorClass);
     return {
@@ -413,12 +516,18 @@ export const logAndExpressionConvert = (
             errorClass,
         ),
     };
+};
+
+export type LogOrExpression = {
+    left: Expression | null;
+    right: Expression | null;
+    operator: string | null;
 };
 
 export const logOrExpressionConvert = (
     target: LogOrExpressionTypeClass,
     errorClass: ErrorTypeClass[],
-): { left: any | null; right: any | null; operator: string | null } => {
+): LogOrExpression => {
     const leftTypeClass = toTypeClass(target.getLeft(), isExpressionTypeAll, errorClass);
     const rightTypeClass = toTypeClass(target.getRight(), isExpressionTypeAll, errorClass);
     return {
@@ -430,12 +539,18 @@ export const logOrExpressionConvert = (
             errorClass,
         ),
     };
+};
+
+export type CoalExpression = {
+    left: Expression | null;
+    right: Expression | null;
+    operator: string | null;
 };
 
 export const coalExpressionConvert = (
     target: CoalExpressionTypeClass,
     errorClass: ErrorTypeClass[],
-): { left: any | null; right: any | null; operator: string | null } => {
+): CoalExpression => {
     const leftTypeClass = toTypeClass(target.getLeft(), isExpressionTypeAll, errorClass);
     const rightTypeClass = toTypeClass(target.getRight(), isExpressionTypeAll, errorClass);
     return {
@@ -449,10 +564,16 @@ export const coalExpressionConvert = (
     };
 };
 
+export type CondExpression = {
+    condition: Expression | null;
+    trueValue: Expression | null;
+    falseValue: Expression | null;
+};
+
 export const condExpressionConvert = (
     target: CondExpressionTypeClass,
     errorClass: ErrorTypeClass[],
-): { condition: any | null; trueValue: any | null; falseValue: any | null } => {
+): CondExpression => {
     const conditionTypeClass = toTypeClass(target.getCondition(), isExpressionTypeAll, errorClass);
     const trueValueTypeClass = toTypeClass(target.getTrueValue(), isExpressionTypeAll, errorClass);
     const falseValueTypeClass = toTypeClass(
@@ -467,10 +588,16 @@ export const condExpressionConvert = (
     };
 };
 
+export type AssignExpression = {
+    left: Expression | null;
+    right: Expression | null;
+    operator: string | null;
+};
+
 export const assignExpressionConvert = (
     target: AssignExpressionTypeClass,
     errorClass: ErrorTypeClass[],
-): { left: any | null; right: any | null; operator: string | null } => {
+): AssignExpression => {
     const leftTypeClass = toTypeClass(target.getLeft(), isExpressionTypeAll, errorClass);
     const rightTypeClass = toTypeClass(target.getRight(), isExpressionTypeAll, errorClass);
     return {
@@ -484,26 +611,32 @@ export const assignExpressionConvert = (
     };
 };
 
+export type ParExpression = Expression | null;
+
 export const parExpressionConvert = (
     target: ParExpressionTypeClass,
     errorClass: ErrorTypeClass[],
-): any | null => {
+): ParExpression => {
     const valueTypeClass = toTypeClass(target.getValue(), isExpressionTypeAll, errorClass);
     return valueTypeClass ? expressionConvert(valueTypeClass, errorClass) : null;
 };
+
+export type BoundExpression = Expression | null;
 
 export const boundExpressionConvert = (
     target: BoundExpressionTypeClass,
     errorClass: ErrorTypeClass[],
-): any | null => {
+): BoundExpression => {
     const valueTypeClass = toTypeClass(target.getValue(), isExpressionTypeAll, errorClass);
     return valueTypeClass ? expressionConvert(valueTypeClass, errorClass) : null;
 };
 
+export type FilteringExpression = DataCategorySelectionTypeClass[] | null;
+
 export const filteringExpressionConvert = (
     target: FilteringExpressionTypeClass,
     errorClass: ErrorTypeClass[],
-): DataCategorySelectionTypeClass[] | null => {
+): FilteringExpression => {
     const values: DataCategorySelectionTypeClass[] = [];
     target.getValue().forEach((value) => {
         const valueTypeClass = toTypeClass(value, isDataCategorySelectionType, errorClass);
@@ -515,14 +648,16 @@ export const filteringExpressionConvert = (
     return values.length > 0 ? values : null;
 };
 
-export const fieldExpressionConvert = (
-    target: FieldExpressionTypeClass,
-    errorClass: ErrorTypeClass[],
-): {
+export type FieldExpression = {
     left: string[] | SoqlFunctionTypeClass | null;
     right: NormalValueTypeClass | null;
     operator: ComparisonOperatorTypeClass | null;
-} => {
+};
+
+export const fieldExpressionConvert = (
+    target: FieldExpressionTypeClass,
+    errorClass: ErrorTypeClass[],
+): FieldExpression => {
     const leftTypeClass = toTypeClass(
         target.getLeft(),
         (target): target is FieldNameTypeClass | SoqlFunctionTypeClass =>
@@ -554,10 +689,12 @@ export const fieldExpressionConvert = (
     };
 };
 
+export type ConditionalExpression = LogicalExpression | FieldExpression | null;
+
 export const conditionalExpressionConvert = (
     target: ConditionalExpressionTypeClass,
     errorClass: ErrorTypeClass[],
-): any | null => {
+): ConditionalExpression => {
     const valueTypeClass = toTypeClass(
         target.getValue(),
         (target): target is LogicalExpressionTypeClass | FieldExpressionTypeClass =>
@@ -577,10 +714,15 @@ export const conditionalExpressionConvert = (
     return null;
 };
 
+export type LogicalExpression = {
+    value: ConditionalExpression[] | null;
+    operator: string | null;
+};
+
 export const logicalExpressionConvert = (
     target: LogicalExpressionTypeClass,
     errorClass: ErrorTypeClass[],
-): { value: any[] | null; operator: string | null } => {
+): LogicalExpression => {
     const value: any[] = [];
     target.getValue().forEach((item) => {
         const valueTypeClass = toTypeClass(item, isConditionalExpressionType, errorClass);
@@ -595,14 +737,16 @@ export const logicalExpressionConvert = (
     };
 };
 
+export type WhereFieldExpression = {
+    left: string | FieldExpression | null;
+    right: NormalValueTypeClass | null;
+    operator: ComparisonOperatorTypeClass | null;
+};
+
 export const whereFieldExpressionConvert = (
     target: WhereFieldExpressionTypeClass,
     errorClass: ErrorTypeClass[],
-): {
-    left: string | any | null;
-    right: NormalValueTypeClass | null;
-    operator: ComparisonOperatorTypeClass | null;
-} => {
+): WhereFieldExpression => {
     let left = null;
     const leftTypeClass = target.getLeft();
     if (!(leftTypeClass instanceof CommonTypeClass)) {
@@ -632,6 +776,8 @@ export const whereFieldExpressionConvert = (
     };
 };
 
+export type WhereConditionalExpression = WhereLogicalExpression | WhereFieldExpression;
+
 export const whereConditionalExpressionConvert = (
     target: WhereConditionalExpressionTypeClass,
     errorClass: ErrorTypeClass[],
@@ -655,6 +801,11 @@ export const whereConditionalExpressionConvert = (
     return null;
 };
 
+export type WhereLogicalExpression = {
+    value: WhereConditionalExpression | null;
+    operator: string | null;
+};
+
 export const whereLogicalExpressionConvert = (
     target: WhereLogicalExpressionTypeClass,
     errorClass: ErrorTypeClass[],
@@ -673,10 +824,38 @@ export const whereLogicalExpressionConvert = (
     };
 };
 
+export type Expression =
+    | NormalExpression
+    | PrimaryExpression
+    | DotExpression
+    | ArrayExpression
+    | MethodCallExpression
+    | NewExpression
+    | CastExpression
+    //   | SubExpression
+    | PostOpExpression
+    | PreOpExpression
+    | NegExpression
+    | Arth1Expression
+    | Arth2Expression
+    | BitExpression
+    | CmpExpression
+    | InstanceOfExpression
+    | EqualityExpression
+    | BitAndExpression
+    | BitNotExpression
+    | BitOrExpression
+    | LogAndExpression
+    | LogOrExpression
+    | CoalExpression
+    | CondExpression
+    | AssignExpression
+    | null;
+
 export const expressionConvert = (
     target: ExpressionAllTypeClass,
     errorClass: ErrorTypeClass[],
-): any => {
+): Expression => {
     if (isNormalExpressionType(target)) {
         return normalExpressionConvert(target, errorClass);
     }

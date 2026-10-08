@@ -31,52 +31,64 @@ import {
 } from '../../apex_IR';
 
 import { toPrimitiveValue, toTypeClass } from './commons';
-import { normalIdConvert } from './id';
+import { NormalId, normalIdConvert } from './id';
+import { typeRefConvert, TypeRef } from './type';
+import { NormalLiteral, normalLiteralConvert } from './literal';
+
+export type NormalPrimary = string | null;
 
 export const normalPrimaryConvert = (
     target: NormalPrimaryTypeClass,
     errorClass: ErrorTypeClass[],
-): string | null => {
+): NormalPrimary => {
     return toPrimitiveValue(
         target.getValue(),
         (target): target is string => typeof target === 'string',
         errorClass,
     );
 };
+
+export type ThisPrimary = string | null;
 
 export const thisPrimaryConvert = (
     target: ThisPrimaryTypeClass,
     errorClass: ErrorTypeClass[],
-): string | null => {
+): ThisPrimary => {
     return toPrimitiveValue(
         target.getValue(),
         (target): target is string => typeof target === 'string',
         errorClass,
     );
 };
+
+export type VoidPrimary = string | null;
 
 export const voidPrimaryConvert = (
     target: VoidPrimaryTypeClass,
     errorClass: ErrorTypeClass[],
-): string | null => {
+): VoidPrimary => {
     return toPrimitiveValue(
         target.getValue(),
         (target): target is string => typeof target === 'string',
         errorClass,
     );
 };
+
+type SoqlPrimary = SoqlLiteralTypeClass | null;
 
 export const soqlPrimaryConvert = (
     target: SoqlPrimaryTypeClass,
     errorClass: ErrorTypeClass[],
-): SoqlLiteralTypeClass | null => {
+): SoqlPrimary => {
     return toTypeClass(target.getValue(), isSoqlLiteralType, errorClass);
 };
+
+export type SuperPrimary = string | null;
 
 export const superPrimaryConvert = (
     target: SuperPrimaryTypeClass,
     errorClass: ErrorTypeClass[],
-): string | null => {
+): SuperPrimary => {
     return toPrimitiveValue(
         target.getValue(),
         (target): target is string => typeof target === 'string',
@@ -84,17 +96,26 @@ export const superPrimaryConvert = (
     );
 };
 
+export type TypeRefPrimary = TypeRef | null;
+
 export const typeRefPrimaryConvert = (
     target: TypeRefPrimaryTypeClass,
     errorClass: ErrorTypeClass[],
-): TypeRefTypeClass | null => {
-    return toTypeClass(target.getValue(), isTypeRefType, errorClass);
+): TypeRefPrimary => {
+    const typeClass = toTypeClass(target.getValue(), isTypeRefType, errorClass);
+    if (typeClass) {
+        return typeRefConvert(typeClass, errorClass);
+    }
+
+    return null;
 };
+
+export type IdPrimary = NormalId | null;
 
 export const idPrimaryConvert = (
     target: IdPrimaryTypeClass,
     errorClass: ErrorTypeClass[],
-): string | null => {
+): IdPrimary => {
     const normalIdType = toTypeClass(target.getValue(), isNormalIdType, errorClass);
 
     if (normalIdType) {
@@ -103,21 +124,45 @@ export const idPrimaryConvert = (
     return null;
 };
 
+export type LiteralPrimary = NormalLiteral | null;
+
 export const literalPrimaryConvert = (
     target: LiteralPrimaryTypeClass,
     errorClass: ErrorTypeClass[],
-): NormalLiteralTypeClass | null => {
-    return toTypeClass(target.getValue(), isNormalLiteralType, errorClass);
+): LiteralPrimary => {
+    const typeClass = toTypeClass(target.getValue(), isNormalLiteralType, errorClass);
+    if (typeClass) {
+        return normalLiteralConvert(typeClass, errorClass);
+    }
+
+    return null;
 };
+
+export type SoslPrimary = SoslLiteralTypeClass | null;
 
 export const soslPrimaryConvert = (
     target: SoslPrimaryTypeClass,
     errorClass: ErrorTypeClass[],
-): SoslLiteralTypeClass | null => {
+): SoslPrimary => {
     return toTypeClass(target.getValue(), isSoslLiteralType, errorClass);
 };
 
-export const primaryConvert = (target: PrimaryTypeClass<unknown>, errorClass: ErrorTypeClass[]) => {
+export type Primary =
+    | NormalPrimary
+    | ThisPrimary
+    | VoidPrimary
+    | SoqlPrimary
+    | SuperPrimary
+    | TypeRefPrimary
+    | IdPrimary
+    | LiteralPrimary
+    | SoslPrimary
+    | null;
+
+export const primaryConvert = (
+    target: PrimaryTypeClass<unknown>,
+    errorClass: ErrorTypeClass[],
+): Primary => {
     if (isNormalPrimaryType(target)) {
         return normalPrimaryConvert(target, errorClass);
     }
