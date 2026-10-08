@@ -5,7 +5,7 @@ import { PrimitiveLiteralTypeClass, LiteralVisitor } from '.';
 import { QualifiedNameTypeClass, NameVisitor, isQualifiedNameType } from '../nameVisitor';
 import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
 
-type WhenLiteralValueType = number | string | null | QualifiedNameTypeClass | WhenLiteralTypeClass;
+type WhenLiteralValueType = number | string | null | QualifiedNameTypeClass;
 
 export class WhenLiteralTypeClass extends PrimitiveLiteralTypeClass<WhenLiteralValueType> {
     private operator: string;
@@ -61,12 +61,19 @@ export class WhenLiteralTypeClass extends PrimitiveLiteralTypeClass<WhenLiteralV
             );
             valueType = 'qualifiedName';
         } else if (ctx.whenLiteral()) {
-            value = isValidClass(
+            const valueTypeClass = isValidClass(
                 new LiteralVisitor().visit(ctx.whenLiteral()),
                 isWhenLiteralType,
                 'whenLiteral',
             );
-            valueType = 'whenLiteral';
+
+            if (isWhenLiteralType(valueTypeClass)) {
+                value = valueTypeClass.getValue();
+                valueType = valueTypeClass.getValueType() ?? '';
+            } else {
+                value = valueTypeClass;
+                valueType = '';
+            }
         } else {
             value = null;
             valueType = 'null';

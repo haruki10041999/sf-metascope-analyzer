@@ -22,7 +22,7 @@ export class DateFieldNameTypeClass extends NameTypeClass<FieldNameTypeClass> {
         );
     }
 
-    getConvertTimeZone(): boolean | null {
+    getConvertTimeZone(): boolean {
         return this.isConvertTimeZone;
     }
 }

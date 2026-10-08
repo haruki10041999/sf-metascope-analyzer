@@ -1,5 +1,4 @@
 import {
-    ApexParserBaseVisitor,
     ArrayInitializerContext,
     VariableDeclaratorContext,
     VariableDeclaratorsContext,
