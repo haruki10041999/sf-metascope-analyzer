@@ -10,54 +10,60 @@ import {
     isNormalBlockType,
     isGetterType,
     isSetterType,
-    NormalStatementTypeClass,
     isNormalStatementType,
-    AnonymousBlockMemberTypeClass,
     isAnonymousBlockMemberType,
-    TriggerBlockMemberTypeClass,
     isTriggerBlockMemberType,
-    NormalModifierTypeClass,
-    isNormalModifierType,
 } from '../../apex_IR';
 
 import { toTypeClass } from './commons';
+import { NormalModifier, normalModifierListConvert } from './modifier';
+import { NormalStatement, normalStatementConvert } from './statement';
+import {
+    AnonymousBlockMember,
+    anonymousBlockMemberConvert,
+    TriggerBlockMember,
+    triggerBlockMemberConvert,
+} from './member';
+
+export type NormalBlock = NormalStatement[] | undefined;
 
 export const normalBlockConvert = (
     target: NormalBlockTypeClass,
     errorClass: ErrorTypeClass[],
-): NormalStatementTypeClass[] | null => {
-    const values: NormalStatementTypeClass[] = [];
+): NormalBlock => {
+    const values: NormalStatement[] = [];
     target.getValue().forEach((item) => {
         const valueTypeClass = toTypeClass(item, isNormalStatementType, errorClass);
         if (valueTypeClass) {
-            values.push(valueTypeClass);
+            values.push(normalStatementConvert(valueTypeClass, errorClass));
         }
     });
 
-    return values.length > 0 ? values : null;
+    return values.length > 0 ? values : undefined;
 };
+
+export type FinallyBlock = NormalBlock | undefined;
 
 export const finallyBlockConvert = (
     target: FinallyBlockTypeClass,
     errorClass: ErrorTypeClass[],
-): NormalStatementTypeClass[] | null => {
+): FinallyBlock => {
     const valueTypeClass = toTypeClass(target.getValue(), isNormalBlockType, errorClass);
-    return valueTypeClass
-        ? normalBlockConvert(valueTypeClass as NormalBlockTypeClass, errorClass)
-        : null;
+    return valueTypeClass ? normalBlockConvert(valueTypeClass, errorClass) : undefined;
+};
+
+export type PropertyBlock = {
+    type: 'getter' | 'setter' | undefined;
+    value: NormalBlock;
+    modifier: NormalModifier[] | undefined;
 };
 
 export const propertyBlockConvert = (
     target: PropertyBlockTypeClass,
     errorClass: ErrorTypeClass[],
-): {
-    type: 'getter' | 'setter' | null;
-    value: NormalStatementTypeClass[] | null;
-    modifier: NormalModifierTypeClass[] | null;
-} => {
-    let type: 'getter' | 'setter' | null = null;
-    let value: NormalStatementTypeClass[] | null = null;
-    const modifier: NormalModifierTypeClass[] = [];
+): PropertyBlock => {
+    let type: 'getter' | 'setter' | undefined = undefined;
+    let value: NormalBlock = undefined;
 
     const valueTypeClass = toTypeClass(
         target.getValue(),
@@ -75,70 +81,63 @@ export const propertyBlockConvert = (
         }
     }
 
-    target.getModifier().forEach((item) => {
-        const modifierTypeClass = toTypeClass(item, isNormalModifierType, errorClass);
-        if (modifierTypeClass) {
-            modifier.push(modifierTypeClass);
-        }
-    });
-
-    return { type: type, value: value, modifier: modifier.length > 0 ? modifier : null };
+    return {
+        type: type,
+        value: value,
+        modifier: normalModifierListConvert(target.getModifier(), errorClass),
+    };
 };
+
+export type AnonymousBlock = AnonymousBlockMember[] | undefined;
 
 export const anonymousBlockConvert = (
     target: AnonymousBlockTypeClass,
     errorClass: ErrorTypeClass[],
-): AnonymousBlockMemberTypeClass[] | null => {
-    const values: AnonymousBlockMemberTypeClass[] = [];
+): AnonymousBlock => {
+    const values: AnonymousBlockMember[] = [];
     target.getValue().forEach((item) => {
         const valueTypeClass = toTypeClass(item, isAnonymousBlockMemberType, errorClass);
         if (valueTypeClass) {
-            values.push(valueTypeClass);
+            values.push(anonymousBlockMemberConvert(valueTypeClass, errorClass));
         }
     });
 
-    return values.length > 0 ? values : null;
+    return values.length > 0 ? values : undefined;
 };
+
+export type TriggerBlock = TriggerBlockMember[] | undefined;
 
 export const triggerBlockConvert = (
     target: TriggerBlockTypeClass,
     errorClass: ErrorTypeClass[],
-): TriggerBlockMemberTypeClass[] | null => {
-    const values: TriggerBlockMemberTypeClass[] = [];
+): TriggerBlock => {
+    const values: TriggerBlockMember[] = [];
     target.getValue().forEach((item) => {
         const valueTypeClass = toTypeClass(item, isTriggerBlockMemberType, errorClass);
         if (valueTypeClass) {
-            values.push(valueTypeClass);
+            values.push(triggerBlockMemberConvert(valueTypeClass, errorClass));
         }
     });
 
-    return values.length > 0 ? values : null;
+    return values.length > 0 ? values : undefined;
 };
 
-export const getterConvert = (
-    target: GetterTypeClass,
-    errorClass: ErrorTypeClass[],
-): NormalStatementTypeClass[] | null => {
+export type Getter = NormalBlock;
+
+export const getterConvert = (target: GetterTypeClass, errorClass: ErrorTypeClass[]): Getter => {
     const valueTypeClass = target.getValue();
-    if (valueTypeClass) {
-        const blockTypeClass = toTypeClass(valueTypeClass, isNormalBlockType, errorClass);
-        if (blockTypeClass) {
-            return normalBlockConvert(blockTypeClass as NormalBlockTypeClass, errorClass);
-        }
-    }
-    return null;
+    const blockTypeClass = valueTypeClass
+        ? toTypeClass(valueTypeClass, isNormalBlockType, errorClass)
+        : undefined;
+    return blockTypeClass ? normalBlockConvert(blockTypeClass, errorClass) : undefined;
 };
 
-export const setterConvert = (
-    target: SetterTypeClass,
-    errorClass: ErrorTypeClass[],
-): NormalStatementTypeClass[] | null => {
+export type Setter = NormalBlock;
+
+export const setterConvert = (target: SetterTypeClass, errorClass: ErrorTypeClass[]): Setter => {
     const valueTypeClass = target.getValue();
-    if (valueTypeClass) {
-        const blockTypeClass = toTypeClass(valueTypeClass, isNormalBlockType, errorClass);
-        if (blockTypeClass) {
-            return normalBlockConvert(blockTypeClass as NormalBlockTypeClass, errorClass);
-        }
-    }
-    return null;
+    const blockTypeClass = valueTypeClass
+        ? toTypeClass(valueTypeClass, isNormalBlockType, errorClass)
+        : undefined;
+    return blockTypeClass ? normalBlockConvert(blockTypeClass, errorClass) : undefined;
 };

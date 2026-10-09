@@ -19,10 +19,6 @@ import {
     isIdPrimaryType,
     isLiteralPrimaryType,
     isSoslPrimaryType,
-    SoqlLiteralTypeClass,
-    TypeRefTypeClass,
-    NormalLiteralTypeClass,
-    SoslLiteralTypeClass,
     isNormalIdType,
     isSoqlLiteralType,
     isTypeRefType,
@@ -33,9 +29,16 @@ import {
 import { toPrimitiveValue, toTypeClass } from './commons';
 import { NormalId, normalIdConvert } from './id';
 import { typeRefConvert, TypeRef } from './type';
-import { NormalLiteral, normalLiteralConvert } from './literal';
+import {
+    NormalLiteral,
+    normalLiteralConvert,
+    SoqlLiteral,
+    soqlLiteralConvert,
+    SoslLiteral,
+    soslLiteralConvert,
+} from './literal';
 
-export type NormalPrimary = string | null;
+export type NormalPrimary = string | undefined;
 
 export const normalPrimaryConvert = (
     target: NormalPrimaryTypeClass,
@@ -48,7 +51,7 @@ export const normalPrimaryConvert = (
     );
 };
 
-export type ThisPrimary = string | null;
+export type ThisPrimary = string | undefined;
 
 export const thisPrimaryConvert = (
     target: ThisPrimaryTypeClass,
@@ -61,7 +64,7 @@ export const thisPrimaryConvert = (
     );
 };
 
-export type VoidPrimary = string | null;
+export type VoidPrimary = string | undefined;
 
 export const voidPrimaryConvert = (
     target: VoidPrimaryTypeClass,
@@ -74,16 +77,17 @@ export const voidPrimaryConvert = (
     );
 };
 
-type SoqlPrimary = SoqlLiteralTypeClass | null;
+export type SoqlPrimary = SoqlLiteral;
 
 export const soqlPrimaryConvert = (
     target: SoqlPrimaryTypeClass,
     errorClass: ErrorTypeClass[],
 ): SoqlPrimary => {
-    return toTypeClass(target.getValue(), isSoqlLiteralType, errorClass);
+    const valueTypeClass = toTypeClass(target.getValue(), isSoqlLiteralType, errorClass);
+    return valueTypeClass ? soqlLiteralConvert(valueTypeClass, errorClass) : undefined;
 };
 
-export type SuperPrimary = string | null;
+export type SuperPrimary = string | undefined;
 
 export const superPrimaryConvert = (
     target: SuperPrimaryTypeClass,
@@ -96,7 +100,7 @@ export const superPrimaryConvert = (
     );
 };
 
-export type TypeRefPrimary = TypeRef | null;
+export type TypeRefPrimary = TypeRef | undefined;
 
 export const typeRefPrimaryConvert = (
     target: TypeRefPrimaryTypeClass,
@@ -107,10 +111,10 @@ export const typeRefPrimaryConvert = (
         return typeRefConvert(typeClass, errorClass);
     }
 
-    return null;
+    return undefined;
 };
 
-export type IdPrimary = NormalId | null;
+export type IdPrimary = NormalId | undefined;
 
 export const idPrimaryConvert = (
     target: IdPrimaryTypeClass,
@@ -121,10 +125,10 @@ export const idPrimaryConvert = (
     if (normalIdType) {
         return normalIdConvert(normalIdType);
     }
-    return null;
+    return undefined;
 };
 
-export type LiteralPrimary = NormalLiteral | null;
+export type LiteralPrimary = NormalLiteral | undefined;
 
 export const literalPrimaryConvert = (
     target: LiteralPrimaryTypeClass,
@@ -135,61 +139,93 @@ export const literalPrimaryConvert = (
         return normalLiteralConvert(typeClass, errorClass);
     }
 
-    return null;
+    return undefined;
 };
 
-export type SoslPrimary = SoslLiteralTypeClass | null;
+export type SoslPrimary = SoslLiteral | undefined;
 
 export const soslPrimaryConvert = (
     target: SoslPrimaryTypeClass,
     errorClass: ErrorTypeClass[],
 ): SoslPrimary => {
-    return toTypeClass(target.getValue(), isSoslLiteralType, errorClass);
+    const valueTypeClass = toTypeClass(target.getValue(), isSoslLiteralType, errorClass);
+    return valueTypeClass ? soslLiteralConvert(valueTypeClass, errorClass) : undefined;
 };
 
 export type Primary =
-    | NormalPrimary
-    | ThisPrimary
-    | VoidPrimary
-    | SoqlPrimary
-    | SuperPrimary
-    | TypeRefPrimary
-    | IdPrimary
-    | LiteralPrimary
-    | SoslPrimary
-    | null;
+    | {
+          type: string;
+          primary:
+              | NormalPrimary
+              | ThisPrimary
+              | VoidPrimary
+              | SoqlPrimary
+              | SuperPrimary
+              | TypeRefPrimary
+              | IdPrimary
+              | LiteralPrimary
+              | SoslPrimary;
+      }
+    | undefined;
 
 export const primaryConvert = (
     target: PrimaryTypeClass<unknown>,
     errorClass: ErrorTypeClass[],
 ): Primary => {
     if (isNormalPrimaryType(target)) {
-        return normalPrimaryConvert(target, errorClass);
+        return {
+            type: 'normal',
+            primary: normalPrimaryConvert(target, errorClass),
+        };
     }
     if (isThisPrimaryType(target)) {
-        return thisPrimaryConvert(target, errorClass);
+        return {
+            type: 'this',
+            primary: thisPrimaryConvert(target, errorClass),
+        };
     }
     if (isVoidPrimaryType(target)) {
-        return voidPrimaryConvert(target, errorClass);
+        return {
+            type: 'void',
+            primary: voidPrimaryConvert(target, errorClass),
+        };
     }
     if (isSoqlPrimaryType(target)) {
-        return soqlPrimaryConvert(target, errorClass);
+        return {
+            type: 'soql',
+            primary: soqlPrimaryConvert(target, errorClass),
+        };
     }
     if (isSuperPrimaryType(target)) {
-        return superPrimaryConvert(target, errorClass);
+        return {
+            type: 'super',
+            primary: superPrimaryConvert(target, errorClass),
+        };
     }
     if (isTypeRefPrimaryType(target)) {
-        return typeRefPrimaryConvert(target, errorClass);
+        return {
+            type: 'typeRef',
+            primary: typeRefPrimaryConvert(target, errorClass),
+        };
     }
     if (isIdPrimaryType(target)) {
-        return idPrimaryConvert(target, errorClass);
+        return {
+            type: 'id',
+            primary: idPrimaryConvert(target, errorClass),
+        };
     }
     if (isLiteralPrimaryType(target)) {
-        return literalPrimaryConvert(target, errorClass);
+        return {
+            type: 'literal',
+            primary: literalPrimaryConvert(target, errorClass),
+        };
     }
     if (isSoslPrimaryType(target)) {
-        return soslPrimaryConvert(target, errorClass);
+        return {
+            type: 'sosl',
+            primary: soslPrimaryConvert(target, errorClass),
+        };
     }
 
-    return null;
+    return undefined;
 };

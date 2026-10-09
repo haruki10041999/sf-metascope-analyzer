@@ -1,4 +1,4 @@
-import { readFile, writeFile } from 'node:fs/promises';
+import { mkdir, readFile, writeFile } from 'node:fs/promises';
 
 import { ApexParser, ApexParserFactory, ApexParserRuleContext } from '@apexdevtools/apex-parser';
 import { ApexSyntaxErrorCollector } from '../../../src/analyzer/parser/apexSyntaxError';
@@ -10,6 +10,9 @@ const targets: [string, (parser: ApexParser) => ApexParserRuleContext][] = [
     ['parser.apex', (parser) => parser.anonymousUnit()],
 ];
 
+const outputDirectory = new URL('./ir-output/', import.meta.url);
+await mkdir(outputDirectory, { recursive: true });
+
 for (const [file, rule] of targets) {
     const source = await readFile(new URL(`./${file}`, import.meta.url), 'utf8');
     const syntaxErrors = new ApexSyntaxErrorCollector();
@@ -20,7 +23,7 @@ for (const [file, rule] of targets) {
         console.warn(`${file} ${line}:${column} ${message}`);
     });
 
-    const outputPath = new URL(`./${file.replace(/\.[^.]+$/, '')}.ir.json`, import.meta.url);
+    const outputPath = new URL(`./${file.replace(/\.[^.]+$/, '')}.ir.json`, outputDirectory);
     await writeFile(outputPath, `${JSON.stringify(result, null, 2)}\n`, 'utf8');
     console.log(`IR written to ${outputPath.pathname}`);
 }

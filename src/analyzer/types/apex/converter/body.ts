@@ -2,38 +2,46 @@ import {
     ErrorTypeClass,
     ClassBodyTypeClass,
     InterfaceBodyTypeClass,
-    ClassBodyDeclarationTypeClass,
     isClassBodyDeclarationType,
-    InterfaceMethodDeclarationTypeClass,
     isInterfaceMethodDeclarationType,
 } from '../../apex_IR';
 
 import { toTypeClass } from './commons';
+import {
+    ClassBodyDeclaration,
+    classBodyDeclarationConvert,
+    InterfaceMethodDeclaration,
+    interfaceMethodDeclarationConvert,
+} from './declaration';
 
-export const classBodyConvertet = (
+export type ClassBody = ClassBodyDeclaration[] | undefined;
+
+export const classBodyConvert = (
     target: ClassBodyTypeClass,
     errorClass: ErrorTypeClass[],
-): ClassBodyDeclarationTypeClass[] | null => {
-    const value: ClassBodyDeclarationTypeClass[] = [];
+): ClassBody => {
+    const value: ClassBodyDeclaration[] = [];
     target.getValue().forEach((item) => {
         const converted = toTypeClass(item, isClassBodyDeclarationType, errorClass);
         if (converted) {
-            value.push(converted);
+            value.push(classBodyDeclarationConvert(converted, errorClass));
         }
     });
-    return value.length > 0 ? value : null;
+    return value.length > 0 ? value : undefined;
 };
 
-export const interfaceBodyConverter = (
+export type InterfaceBody = InterfaceMethodDeclaration[] | undefined;
+
+export const interfaceBodyConvert = (
     target: InterfaceBodyTypeClass,
     errorClass: ErrorTypeClass[],
-): InterfaceMethodDeclarationTypeClass[] | null => {
-    const value: InterfaceMethodDeclarationTypeClass[] = [];
+): InterfaceBody => {
+    const value: InterfaceMethodDeclaration[] = [];
     target.getValue().forEach((item) => {
         const converted = toTypeClass(item, isInterfaceMethodDeclarationType, errorClass);
         if (converted) {
-            value.push(converted);
+            value.push(interfaceMethodDeclarationConvert(converted, errorClass));
         }
     });
-    return value.length > 0 ? value : null;
+    return value.length > 0 ? value : undefined;
 };

@@ -66,6 +66,14 @@ export class ForControlTypeClass extends ControlTypeClass<
                 : null,
         );
     }
+
+    getInit(): ForInitTypeClass | ErrorTypeClass | null {
+        return this.init;
+    }
+
+    getUpdate(): ForUpdateTypeClass | ErrorTypeClass | null {
+        return this.update;
+    }
 }
 
 export const isForControlType = (target: CommonTypeClass): target is ForControlTypeClass => {

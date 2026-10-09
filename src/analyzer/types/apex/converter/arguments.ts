@@ -9,7 +9,7 @@ import {
 import { toTypeClass } from './commons';
 import { ExpressionList, expressionListConvert, TypeList, typeListConvert } from './list';
 
-type NormalArguments = ExpressionList | null;
+export type NormalArguments = ExpressionList | undefined;
 
 export const normalArgumentsConvert = (
     target: NormalArgumentsTypeClass,
@@ -27,10 +27,10 @@ export const normalArgumentsConvert = (
         }
     }
 
-    return null;
+    return undefined;
 };
 
-export type TypeArguments = TypeList | null;
+export type TypeArguments = TypeList | undefined;
 
 export const typeArgumentsConvert = (
     target: TypeArgumentsTypeClass,
@@ -44,5 +44,5 @@ export const typeArgumentsConvert = (
         }
     }
 
-    return null;
+    return undefined;
 };

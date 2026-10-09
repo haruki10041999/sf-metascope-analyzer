@@ -21,14 +21,14 @@ export const anyIdConvert = (target: AnyIdTypeClass): AnyId => {
     return target.getValue();
 };
 
-export type SoqlId = string | null;
+export type SoqlId = string | undefined;
 
 export const soqlIdConvert = (target: SoqlIdTypeClass, errorClasses: ErrorTypeClass[]): SoqlId => {
     const soqlValue = toTypeClass(target.getValue(), isNormalIdType, errorClasses);
-    return soqlValue ? normalIdConvert(soqlValue) : null;
+    return soqlValue ? normalIdConvert(soqlValue) : undefined;
 };
 
-export type SoslId = string[] | null;
+export type SoslId = string[] | undefined;
 
 export const soslIdConvert = (target: SoslIdTypeClass, errorClasses: ErrorTypeClass[]): SoslId => {
     const values: string[] = [];
@@ -38,5 +38,5 @@ export const soslIdConvert = (target: SoslIdTypeClass, errorClasses: ErrorTypeCl
             values.push(normalIdConvert(normalIdValue));
         }
     }
-    return values.length > 0 ? values : null;
+    return values.length > 0 ? values : undefined;
 };

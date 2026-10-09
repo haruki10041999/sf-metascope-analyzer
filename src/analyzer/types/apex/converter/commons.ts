@@ -4,7 +4,7 @@ export const toPrimitiveValue = <T>(
     target: any,
     isValid: (target: any) => target is T,
     errorClass: ErrorTypeClass[],
-): T | null => {
+): T | undefined => {
     if (isValid(target)) {
         return target;
     }
@@ -13,14 +13,14 @@ export const toPrimitiveValue = <T>(
         errorClass.push(target);
     }
 
-    return null;
+    return undefined;
 };
 
 export const toTypeClass = <T extends CommonTypeClass>(
     target: CommonTypeClass,
     isValidType: (target: CommonTypeClass) => target is T,
     errorClasses: ErrorTypeClass[],
-): T | null => {
+): T | undefined => {
     if (isValidType(target)) {
         return target;
     }
@@ -29,6 +29,6 @@ export const toTypeClass = <T extends CommonTypeClass>(
         errorClasses.push(target);
     }
 
-    return null;
+    return undefined;
 };
 

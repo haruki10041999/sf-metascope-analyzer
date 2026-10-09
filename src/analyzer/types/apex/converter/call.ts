@@ -13,9 +13,9 @@ import { NormalId, normalIdConvert, AnyId, anyIdConvert } from './id';
 import { ExpressionList, expressionListConvert } from './list';
 
 export type MethodCall = {
-    value: NormalId | null;
-    param: ExpressionList | null;
-    reference: string | null;
+    value: NormalId | undefined;
+    param: ExpressionList | undefined;
+    reference: string | undefined;
 };
 
 export const methodCallConvert = (
@@ -23,38 +23,38 @@ export const methodCallConvert = (
     errorClass: ErrorTypeClass[],
 ): MethodCall => {
     const valueTypeClass = target.getValue();
-    let value;
+    let value: MethodCall['value'] = undefined;
     if (!(valueTypeClass instanceof CommonTypeClass)) {
-        value = valueTypeClass;
+        value = valueTypeClass ?? undefined;
     } else {
         const normalId = toTypeClass(valueTypeClass, isNormalIdType, errorClass);
-        value = normalId ? normalIdConvert(normalId) : null;
+        value = normalId ? normalIdConvert(normalId) : undefined;
     }
 
     const paramTypeClass = target.getParam();
-    let param = null;
+    let param = undefined;
     if (paramTypeClass) {
         const expressionList = toTypeClass(paramTypeClass, isExpressionListType, errorClass);
-        param = expressionList ? expressionListConvert(expressionList, errorClass) : null;
+        param = expressionList ? expressionListConvert(expressionList, errorClass) : undefined;
     }
 
     return {
         value: value,
         param: param,
-        reference: target.getReference(),
+        reference: target.getReference() ?? undefined,
     };
 };
 
 export type DotMethodCall = {
-    value: AnyId | null;
-    param: ExpressionList | null;
+    value: AnyId | undefined;
+    param: ExpressionList | undefined;
 };
 
 export const dotMethodCallConvert = (
     target: DotMethodCallTypeClass,
     errorClass: ErrorTypeClass[],
 ): DotMethodCall => {
-    let value = null;
+    let value = undefined;
     const valueTypeClass = toTypeClass(target.getValue(), isAnyIdType, errorClass);
     if (valueTypeClass) {
         value = anyIdConvert(valueTypeClass);
@@ -63,10 +63,10 @@ export const dotMethodCallConvert = (
     const paramTypeClass = target.getParam();
     let param;
     if (!(paramTypeClass instanceof CommonTypeClass)) {
-        param = paramTypeClass;
+        param = paramTypeClass ?? undefined;
     } else {
         const expressionList = toTypeClass(paramTypeClass, isExpressionListType, errorClass);
-        param = expressionList ? expressionListConvert(expressionList, errorClass) : null;
+        param = expressionList ? expressionListConvert(expressionList, errorClass) : undefined;
     }
 
     return {
