@@ -106,9 +106,29 @@ export const setCreatorRestConvert = (
 
 export type Creator =
     | {
-          type: string;
+          type: 'array';
           value: CreatedName;
-          content: ArrayCreatorRest | ClassCreatorRest | MapCreatorRest | NoRest | SetCreatorRest;
+          content: ArrayCreatorRest;
+      }
+    | {
+          type: 'class';
+          value: CreatedName;
+          content: ClassCreatorRest;
+      }
+    | {
+          type: 'map';
+          value: CreatedName;
+          content: MapCreatorRest;
+      }
+    | {
+          type: 'no';
+          value: CreatedName;
+          content: NoRest;
+      }
+    | {
+          type: 'set';
+          value: CreatedName;
+          content: SetCreatorRest;
       }
     | undefined;
 

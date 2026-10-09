@@ -154,17 +154,40 @@ export const soslPrimaryConvert = (
 
 export type Primary =
     | {
-          type: string;
-          primary:
-              | NormalPrimary
-              | ThisPrimary
-              | VoidPrimary
-              | SoqlPrimary
-              | SuperPrimary
-              | TypeRefPrimary
-              | IdPrimary
-              | LiteralPrimary
-              | SoslPrimary;
+          type: 'normal';
+          primary: NormalPrimary;
+      }
+    | {
+          type: 'this';
+          primary: ThisPrimary;
+      }
+    | {
+          type: 'void';
+          primary: VoidPrimary;
+      }
+    | {
+          type: 'soql';
+          primary: SoqlPrimary;
+      }
+    | {
+          type: 'super';
+          primary: SuperPrimary;
+      }
+    | {
+          type: 'typeRef';
+          primary: TypeRefPrimary;
+      }
+    | {
+          type: 'id';
+          primary: IdPrimary;
+      }
+    | {
+          type: 'literal';
+          primary: LiteralPrimary;
+      }
+    | {
+          type: 'sosl';
+          primary: SoslPrimary;
       }
     | undefined;
 

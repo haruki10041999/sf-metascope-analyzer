@@ -91,15 +91,32 @@ const normalBlockOrUndefinedConvert = (
 
 export type MemberDeclarationValue =
     | {
-          type: string;
-          member:
-              | MethodDeclaration
-              | ConstructorDeclaration
-              | InterfaceDeclaration
-              | ClassDeclaration
-              | EnumDeclaration
-              | PropertyDeclaration
-              | FieldDeclaration;
+          type: 'method';
+          member: MethodDeclaration;
+      }
+    | {
+          type: 'constructor';
+          member: ConstructorDeclaration;
+      }
+    | {
+          type: 'interface';
+          member: InterfaceDeclaration;
+      }
+    | {
+          type: 'class';
+          member: ClassDeclaration;
+      }
+    | {
+          type: 'enum';
+          member: EnumDeclaration;
+      }
+    | {
+          type: 'property';
+          member: PropertyDeclaration;
+      }
+    | {
+          type: 'field';
+          member: FieldDeclaration;
       }
     | undefined;
 

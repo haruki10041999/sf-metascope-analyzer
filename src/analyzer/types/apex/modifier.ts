@@ -2,7 +2,8 @@ import { NormalModifier, Annotation, ElementValue, ElementValuePairs } from './c
 
 type AnnotationParam = {
     key?: string;
-    value: any;
+    value: string;
+    valueType: string;
 };
 
 type AccessModifier = 'PUBLIC' | 'PRIVATE' | 'PROTECTED' | 'GLOBAL';
@@ -87,6 +88,38 @@ export const makeModifierType = (modifier: NormalModifier[]): ModifierType => {
         }
 
         if (m.type === 'annotation') {
+            if (!modifierType.annotation) {
+                modifierType.annotation = {};
+            }
+
+            const key = m.value.value;
+            const param = m.value.param;
+
+            if (key) {
+                if (!param) {
+                    modifierType.annotation[key] = [];
+                    return;
+                }
+
+                if (Array.isArray(param)) {
+                    const annotationParams: AnnotationParam[] = [];
+                    param.forEach((p) => {
+                        const annotationParam = {
+                            key: p.left || '',
+                            value: p.right!.value || '',
+                            valueType: p.right!.valueType || '',
+                        };
+                        annotationParams.push(annotationParam);
+                    });
+                    modifierType.annotation[key] = annotationParams;
+                } else {
+                    const annotationParam: AnnotationParam = {
+                        value: param.value || '',
+                        valueType: param.valueType || '',
+                    };
+                    modifierType.annotation[key] = [annotationParam];
+                }
+            }
         }
     });
 

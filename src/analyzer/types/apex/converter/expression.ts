@@ -831,33 +831,104 @@ export const whereLogicalExpressionConvert = (
 
 export type Expression =
     | {
-          type: string;
-          expression:
-              | NormalExpression
-              | PrimaryExpression
-              | DotExpression
-              | ArrayExpression
-              | MethodCallExpression
-              | NewExpression
-              | CastExpression
-              | SubExpression
-              | PostOpExpression
-              | PreOpExpression
-              | NegExpression
-              | Arth1Expression
-              | Arth2Expression
-              | BitExpression
-              | CmpExpression
-              | InstanceOfExpression
-              | EqualityExpression
-              | BitAndExpression
-              | BitNotExpression
-              | BitOrExpression
-              | LogAndExpression
-              | LogOrExpression
-              | CoalExpression
-              | CondExpression
-              | AssignExpression;
+          type: 'normal';
+          expression: NormalExpression;
+      }
+    | {
+          type: 'primary';
+          expression: PrimaryExpression;
+      }
+    | {
+          type: 'dot';
+          expression: DotExpression;
+      }
+    | {
+          type: 'array';
+          expression: ArrayExpression;
+      }
+    | {
+          type: 'methodCall';
+          expression: MethodCallExpression;
+      }
+    | {
+          type: 'new';
+          expression: NewExpression;
+      }
+    | {
+          type: 'cast';
+          expression: CastExpression;
+      }
+    | {
+          type: 'sub';
+          expression: SubExpression;
+      }
+    | {
+          type: 'postOp';
+          expression: PostOpExpression;
+      }
+    | {
+          type: 'preOp';
+          expression: PreOpExpression;
+      }
+    | {
+          type: 'neg';
+          expression: NegExpression;
+      }
+    | {
+          type: 'arth1';
+          expression: Arth1Expression;
+      }
+    | {
+          type: 'arth2';
+          expression: Arth2Expression;
+      }
+    | {
+          type: 'bit';
+          expression: BitExpression;
+      }
+    | {
+          type: 'cmp';
+          expression: CmpExpression;
+      }
+    | {
+          type: 'instanceOf';
+          expression: InstanceOfExpression;
+      }
+    | {
+          type: 'equality';
+          expression: EqualityExpression;
+      }
+    | {
+          type: 'bitAnd';
+          expression: BitAndExpression;
+      }
+    | {
+          type: 'bitNot';
+          expression: BitNotExpression;
+      }
+    | {
+          type: 'bitOr';
+          expression: BitOrExpression;
+      }
+    | {
+          type: 'logAnd';
+          expression: LogAndExpression;
+      }
+    | {
+          type: 'logOr';
+          expression: LogOrExpression;
+      }
+    | {
+          type: 'coal';
+          expression: CoalExpression;
+      }
+    | {
+          type: 'cond';
+          expression: CondExpression;
+      }
+    | {
+          type: 'assign';
+          expression: AssignExpression;
       }
     | undefined;
 

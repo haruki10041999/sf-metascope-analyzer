@@ -377,25 +377,72 @@ export const whileStatementConvert = (
 
 export type NormalStatement =
     | {
-          type: string;
-          statement:
-              | NormalBlock
-              | IfStatement
-              | SwitchStatement
-              | ForStatement
-              | WhileStatement
-              | DoWhileStatement
-              | TryStatement
-              | ReturnStatement
-              | ThrowStatement
-              | BreakStatement
-              | ContinueStatement
-              | DmlStatement
-              | UpsertStatement
-              | MergeStatement
-              | RunAsStatement
-              | LocalVariableDeclarationStatement
-              | ExpressionStatement;
+          type: 'block';
+          statement: NormalBlock;
+      }
+    | {
+          type: 'if';
+          statement: IfStatement;
+      }
+    | {
+          type: 'switch';
+          statement: SwitchStatement;
+      }
+    | {
+          type: 'for';
+          statement: ForStatement;
+      }
+    | {
+          type: 'while';
+          statement: WhileStatement;
+      }
+    | {
+          type: 'doWhile';
+          statement: DoWhileStatement;
+      }
+    | {
+          type: 'try';
+          statement: TryStatement;
+      }
+    | {
+          type: 'return';
+          statement: ReturnStatement;
+      }
+    | {
+          type: 'throw';
+          statement: ThrowStatement;
+      }
+    | {
+          type: 'break';
+          statement: BreakStatement;
+      }
+    | {
+          type: 'continue';
+          statement: ContinueStatement;
+      }
+    | {
+          type: 'insert' | 'update' | 'delete' | 'undelete';
+          statement: DmlStatement;
+      }
+    | {
+          type: 'upsert';
+          statement: UpsertStatement;
+      }
+    | {
+          type: 'merge';
+          statement: MergeStatement;
+      }
+    | {
+          type: 'runAs';
+          statement: RunAsStatement;
+      }
+    | {
+          type: 'localVariable';
+          statement: LocalVariableDeclarationStatement;
+      }
+    | {
+          type: 'expression';
+          statement: ExpressionStatement;
       }
     | undefined;
 
