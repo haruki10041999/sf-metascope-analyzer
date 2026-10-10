@@ -28,16 +28,10 @@ export const makePrimary = (primary: Primary): any => {
 
         if (primary.type === 'soql') {
             const query = primary.primary;
-            if (query) {
-            }
         }
 
         if (primary.type === 'sosl') {
             const query = primary.primary;
-            if (query) {
-                const find = query.value;
-                const clause = query.soslClauses;
-            }
         }
     }
 

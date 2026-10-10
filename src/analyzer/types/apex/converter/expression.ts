@@ -183,12 +183,23 @@ export const arrayExpressionConvert = (
 export const methodCallExpressionConvert = (
     target: MethodCallExpressionTypeClass,
     errorClass: ErrorTypeClass[],
-): MethodCall | undefined => {
+): MethodCall => {
+    const methodCallExpression: MethodCall = {
+        param: [],
+    };
     const valueTypeClass = toTypeClass(target.getValue(), isMethodCallType, errorClass);
     if (valueTypeClass) {
-        return methodCallConvert(valueTypeClass, errorClass);
+        const methodCall = methodCallConvert(valueTypeClass, errorClass);
+
+        methodCallExpression.param.push(...methodCall.param);
+        if (methodCall.value) {
+            methodCallExpression.value = methodCall.value;
+        }
+        if (methodCall.reference) {
+            methodCallExpression.reference = methodCall.reference;
+        }
     }
-    return undefined;
+    return methodCallExpression;
 };
 
 export const newExpressionConvert = (
@@ -205,14 +216,18 @@ export const newExpressionConvert = (
 
 export type CastExpression = {
     value?: Expression;
-    valueType?: TypeRef;
+    valueType: TypeRef;
 };
 
 export const castExpressionConvert = (
     target: CastExpressionTypeClass,
     errorClass: ErrorTypeClass[],
 ): CastExpression => {
-    const castExpression: CastExpression = {};
+    const castExpression: CastExpression = {
+        valueType: {
+            value: [],
+        },
+    };
 
     const valueTypeClass = toTypeClass(target.getValue(), isExpressionTypeAll, errorClass);
     if (valueTypeClass) {
@@ -224,7 +239,12 @@ export const castExpressionConvert = (
 
     const valueTypeTypeClass = toTypeClass(target.getValueType(), isTypeRefType, errorClass);
     if (valueTypeTypeClass) {
-        castExpression.valueType = typeRefConvert(valueTypeTypeClass, errorClass);
+        const typeRef = typeRefConvert(valueTypeTypeClass, errorClass);
+        castExpression.valueType.value.push(...typeRef.value);
+
+        if (typeRef.dimension) {
+            castExpression.valueType.dimension = typeRef.dimension;
+        }
     }
 
     return castExpression;
@@ -449,14 +469,18 @@ export const cmpExpressionConvert = (
 export type InstanceOfExpression = {
     left?: Expression;
     operator?: string;
-    right?: TypeRef;
+    right: TypeRef;
 };
 
 export const instanceOfExpressionConvert = (
     target: InstanceOfExpressionTypeClass,
     errorClass: ErrorTypeClass[],
 ): InstanceOfExpression => {
-    const instanceOfExpression: InstanceOfExpression = {};
+    const instanceOfExpression: InstanceOfExpression = {
+        right: {
+            value: [],
+        },
+    };
 
     const leftTypeClass = toTypeClass(target.getLeft(), isExpressionTypeAll, errorClass);
     if (leftTypeClass) {
@@ -478,8 +502,10 @@ export const instanceOfExpressionConvert = (
     const rightTypeClass = toTypeClass(target.getRight(), isTypeRefType, errorClass);
     if (rightTypeClass) {
         const typeRef = typeRefConvert(rightTypeClass, errorClass);
-        if (typeRef) {
-            instanceOfExpression.right = typeRef;
+
+        instanceOfExpression.right.value.push(...typeRef.value);
+        if (typeRef.dimension) {
+            instanceOfExpression.right.dimension = typeRef.dimension;
         }
     }
 
@@ -1060,7 +1086,7 @@ export type Expression =
       }
     | {
           type: 'methodCall';
-          expression?: MethodCall;
+          expression: MethodCall;
       }
     | {
           type: 'new';
@@ -1136,11 +1162,11 @@ export const expressionConvert = (
         expression.expression.push(...arrayExpressionConvert(target, errorClass));
     }
     if (isMethodCallExpressionType(target)) {
-        expression = { type: 'methodCall' };
         const value = methodCallExpressionConvert(target, errorClass);
-        if (value) {
-            expression.expression = value;
-        }
+        expression = {
+            type: 'methodCall',
+            expression: value,
+        };
     }
     if (isNewExpressionType(target)) {
         expression = { type: 'new' };

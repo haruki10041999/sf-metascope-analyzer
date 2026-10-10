@@ -177,15 +177,18 @@ export const creatorConvert = (
             creator = {
                 type: 'class',
                 value: createdName,
-                content: classCreatorRestConvert(contentTypeClass, errorClass),
+                content: [],
             };
+
+            creator.content.push(...classCreatorRestConvert(contentTypeClass, errorClass));
         }
         if (isMapCreatorRestType(contentTypeClass)) {
             creator = {
                 type: 'map',
                 value: createdName,
-                content: mapCreatorRestConvert(contentTypeClass, errorClass),
+                content: [],
             };
+            creator.content.push(...mapCreatorRestConvert(contentTypeClass, errorClass));
         }
         if (isNoRestType(contentTypeClass)) {
             creator = {
@@ -201,8 +204,10 @@ export const creatorConvert = (
             creator = {
                 type: 'set',
                 value: createdName,
-                content: setCreatorRestConvert(contentTypeClass, errorClass),
+                content: [],
             };
+
+            creator.content.push(...setCreatorRestConvert(contentTypeClass, errorClass));
         }
     }
 

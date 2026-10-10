@@ -153,7 +153,7 @@ export const makeExpressionType = (expression: Expression): ExpressionType => {
 
             if (value && valueType) {
                 return {
-                    variant: makeExpressionType(expression.expression.value),
+                    variant: makeExpressionType(expression.expression),
                     toType: makeTypeType(valueType),
                 };
             }
