@@ -7,19 +7,41 @@ import {
     SetCreatorRest,
 } from './converter';
 
-import { makeExpressionType } from './expression';
+import { ExpressionType, makeExpressionType } from './expression';
 import { TypeType, makeTypeType } from './type';
 
-export type CreatorType = {
-    name: string[];
-    generic?: TypeType[];
-    value?: any[];
-    size?: any;
-    args?: any[];
-    rest?: any;
+type ArrayValue = {
+    value?: ExpressionType[];
+    size?: ExpressionType;
 };
 
-export const makeCreatorType = (creator: Creator): any => {
+type ClassValue = {
+    args: ExpressionType[];
+};
+
+type MapValue = {
+    value: {
+        key: ExpressionType;
+        value: ExpressionType;
+    }[];
+};
+
+type SetValue = {
+    value?: ExpressionType[];
+};
+
+type NoValue = {
+    rest?: string;
+};
+
+export type CreatorType =
+    | ({
+          name: string[];
+          generic?: TypeType[] | undefined;
+      } & (ArrayValue | ClassValue | MapValue | SetValue | NoValue))
+    | undefined;
+
+export const makeCreatorType = (creator: Creator): CreatorType => {
     if (creator && creator.value) {
         const value = creator.value;
 

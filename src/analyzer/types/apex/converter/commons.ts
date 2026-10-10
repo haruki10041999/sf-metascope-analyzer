@@ -31,4 +31,3 @@ export const toTypeClass = <T extends CommonTypeClass>(
 
     return undefined;
 };
-

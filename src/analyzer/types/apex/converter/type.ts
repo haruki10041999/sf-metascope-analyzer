@@ -9,12 +9,10 @@ import {
 import { toPrimitiveValue, toTypeClass } from './commons';
 import { TypeName, typeNameConvert } from './name';
 
-export type ArraySubscripts = number | undefined;
-
 export const arraySubscriptsConvert = (
     target: ArraySubscriptsTypeClass,
     errorClass: ErrorTypeClass[],
-): ArraySubscripts => {
+): number | undefined => {
     return toPrimitiveValue(
         target.getValue(),
         (target): target is number => typeof target === 'number',
@@ -23,8 +21,8 @@ export const arraySubscriptsConvert = (
 };
 
 export type TypeRef = {
-    value: TypeName[] | undefined;
-    dimension: ArraySubscripts;
+    value: TypeName[];
+    dimension?: number;
 };
 
 export const typeRefConvert = (target: TypeRefTypeClass, errorClass: ErrorTypeClass[]): TypeRef => {
@@ -37,19 +35,21 @@ export const typeRefConvert = (target: TypeRefTypeClass, errorClass: ErrorTypeCl
         }
     });
 
+    const typeRef: TypeRef = {
+        value: values,
+    };
+
     const dimensionTypeClass = toTypeClass(
         target.getDimension(),
         isArraySubscriptsType,
         errorClass,
     );
 
-    const arraySubscripts = dimensionTypeClass
-        ? arraySubscriptsConvert(dimensionTypeClass, errorClass)
-        : undefined;
-
-    return {
-        value: values.length > 0 ? values : undefined,
-        dimension:
-            arraySubscripts !== undefined && arraySubscripts !== 0 ? arraySubscripts : undefined,
-    };
+    if (dimensionTypeClass) {
+        const dimension = arraySubscriptsConvert(dimensionTypeClass, errorClass);
+        if (dimension) {
+            typeRef.dimension = dimension;
+        }
+    }
+    return typeRef;
 };

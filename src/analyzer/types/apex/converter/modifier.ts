@@ -13,9 +13,10 @@ import {
 } from '../../apex_IR';
 
 import { toTypeClass } from './commons';
-import { NormalId, normalIdConvert } from './id';
-import { ElementValue, elementValueConvert } from './value';
-import { ElementValuePairs, elementValuePairsConvert } from './pair';
+import { normalIdConvert } from './id';
+import { elementValueConvert } from './value';
+import { ElementValuePair, elementValuePairsConvert } from './pair';
+import { NormalLiteral } from './literal';
 
 export type NormalModifier =
     | {
@@ -24,60 +25,53 @@ export type NormalModifier =
       }
     | {
           type: 'annotation';
-          value: Annotation;
-      }
-    | undefined;
+          value?: Annotation;
+      };
 
 export const normalModifierConvert = (
     target: NormalModifierTypeClass,
     errorClass: ErrorTypeClass[],
 ): NormalModifier | undefined => {
     const value = target.getValue();
-    if (!(value instanceof CommonTypeClass)) {
-        return {
+    let modifier: NormalModifier | undefined = undefined;
+
+    if (typeof value === 'string') {
+        modifier = {
             type: 'modifier',
-            value: value as string,
+            value: value,
         };
-    }
-
-    const annotationTypeClass = toTypeClass(value, isAnnotationType, errorClass);
-    if (annotationTypeClass) {
-        return {
-            type: 'annotation',
-            value: annotationConvert(annotationTypeClass, errorClass),
-        };
-    }
-
-    return undefined;
-};
-
-export const normalModifierListConvert = (
-    targets: (NormalModifierTypeClass | ErrorTypeClass)[],
-    errorClass: ErrorTypeClass[],
-): NormalModifier[] | undefined => {
-    const values: NormalModifier[] = [];
-    targets.forEach((item) => {
-        const typeClass = toTypeClass(item, isNormalModifierType, errorClass);
-        const value = typeClass ? normalModifierConvert(typeClass, errorClass) : undefined;
-        if (value) {
-            values.push(value);
+    } else {
+        const typeClass = toTypeClass(value, isAnnotationType, errorClass);
+        if (typeClass) {
+            const annotation = annotationConvert(typeClass, errorClass);
+            if (annotation) {
+                return {
+                    type: 'annotation',
+                    value: annotation,
+                };
+            }
         }
-    });
-    return values.length > 0 ? values : undefined;
+    }
+
+    return modifier;
 };
 
 export type Annotation = {
-    value: NormalId | undefined;
-    param: ElementValue | ElementValuePairs;
+    value?: string;
+    param?: NormalLiteral | ElementValuePair[];
 };
 
 export const annotationConvert = (
     target: AnnotationTypeClass,
     errorClass: ErrorTypeClass[],
-): Annotation => {
-    const valueTypeClass = toTypeClass(target.getValue(), isNormalIdType, errorClass);
+): Annotation | undefined => {
+    const annotation: Annotation = {};
 
-    let param: Annotation['param'] = undefined;
+    const valueTypeClass = toTypeClass(target.getValue(), isNormalIdType, errorClass);
+    if (valueTypeClass) {
+        annotation.value = normalIdConvert(valueTypeClass);
+    }
+
     const paramValue = target.getParam();
     if (paramValue) {
         const paramTypeClass = toTypeClass(
@@ -88,16 +82,19 @@ export const annotationConvert = (
         );
         if (paramTypeClass) {
             if (isElementValueType(paramTypeClass)) {
-                param = elementValueConvert(paramTypeClass, errorClass);
+                const elementValue = elementValueConvert(paramTypeClass, errorClass);
+                if (elementValue) {
+                    annotation.param = elementValue;
+                }
             }
             if (isElementValuePairsType(paramTypeClass)) {
-                param = elementValuePairsConvert(paramTypeClass, errorClass);
+                const elementValuePairs = elementValuePairsConvert(paramTypeClass, errorClass);
+                if (elementValuePairs) {
+                    annotation.param = elementValuePairs;
+                }
             }
         }
     }
 
-    return {
-        value: valueTypeClass ? normalIdConvert(valueTypeClass) : undefined,
-        param: param,
-    };
+    return annotation;
 };

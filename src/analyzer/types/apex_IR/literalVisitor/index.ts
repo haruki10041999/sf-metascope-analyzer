@@ -1,5 +1,4 @@
 import {
-    ApexParserBaseVisitor,
     LiteralContext,
     WhenLiteralContext,
     SoslLiteralContext,

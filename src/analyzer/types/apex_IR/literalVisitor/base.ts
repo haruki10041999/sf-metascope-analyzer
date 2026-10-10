@@ -26,7 +26,7 @@ export class PrimitiveLiteralTypeClass<T> extends CommonTypeClass {
         return this.value;
     }
 
-    getValueType(): string | null {
+    getValueType(): string {
         return this.valueType;
     }
 }

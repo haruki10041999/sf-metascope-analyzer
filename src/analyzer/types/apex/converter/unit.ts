@@ -12,32 +12,37 @@ import {
 } from '../../apex_IR';
 
 import { toPrimitiveValue, toTypeClass } from './commons';
-import { NormalId, normalIdConvert } from './id';
-import { AnonymousBlock, anonymousBlockConvert, TriggerBlock, triggerBlockConvert } from './block';
+import { normalIdConvert } from './id';
+import { anonymousBlockConvert, triggerBlockConvert } from './block';
 import { TypeDeclaration, typeDeclarationConvert } from './declaration';
-
-export type AnonymousUnit = AnonymousBlock;
+import { AnonymousBlockMember, TriggerBlockMember } from './member';
 
 export const anonymousUnitConvert = (
     target: AnonymousUnitTypeClass,
     errorClass: ErrorTypeClass[],
-): AnonymousUnit => {
+): AnonymousBlockMember[] => {
     const valueTypeClass = toTypeClass(target.getValue(), isAnonymousBlockType, errorClass);
-    return valueTypeClass ? anonymousBlockConvert(valueTypeClass, errorClass) : undefined;
-};
+    if (valueTypeClass) {
+        return anonymousBlockConvert(valueTypeClass, errorClass);
+    }
 
-export type CompilationUnit = TypeDeclaration | undefined;
+    return [];
+};
 
 export const compilationUnitConvert = (
     target: CompilationUnitTypeClass,
     errorClass: ErrorTypeClass[],
-): CompilationUnit => {
+): TypeDeclaration | undefined => {
     const valueTypeClass = toTypeClass(target.getValue(), isTypeDeclarationType, errorClass);
-    return valueTypeClass ? typeDeclarationConvert(valueTypeClass, errorClass) : undefined;
+    if (valueTypeClass) {
+        return typeDeclarationConvert(valueTypeClass, errorClass);
+    }
+
+    return undefined;
 };
 
 export type TriggerCase = {
-    value: string | undefined;
+    value?: string;
     triggerCaseType: string;
 };
 
@@ -45,47 +50,54 @@ export const triggerCaseConvert = (
     target: TriggerCaseTypeClass,
     errorClass: ErrorTypeClass[],
 ): TriggerCase => {
-    return {
-        value: toPrimitiveValue(
-            target.getValue(),
-            (target): target is string => typeof target === 'string',
-            errorClass,
-        ),
-        triggerCaseType: target.getTriggerCaseType(),
-    };
+    const triggerCase: TriggerCase = { triggerCaseType: target.getTriggerCaseType() };
+
+    const value = toPrimitiveValue(
+        target.getValue(),
+        (target): target is string => typeof target === 'string',
+        errorClass,
+    );
+    if (value) {
+        triggerCase.value = value;
+    }
+
+    return triggerCase;
 };
 
 export type TriggerUnit = {
-    value: NormalId[] | undefined;
-    triggerCase: TriggerCase[] | undefined;
-    block: TriggerBlock;
+    value: string[];
+    triggerCase: TriggerCase[];
+    block: TriggerBlockMember[];
 };
 
 export const triggerUnitConvert = (
     target: TriggerUnitTypeClass,
     errorClass: ErrorTypeClass[],
 ): TriggerUnit => {
-    const value: NormalId[] = [];
+    const triggerUnit: TriggerUnit = {
+        value: [],
+        triggerCase: [],
+        block: [],
+    };
+
     target.getValue().forEach((item) => {
         const idTypeClass = toTypeClass(item, isNormalIdType, errorClass);
         if (idTypeClass) {
-            value.push(normalIdConvert(idTypeClass));
+            triggerUnit.value.push(normalIdConvert(idTypeClass));
         }
     });
 
-    const triggerCase: TriggerCase[] = [];
     target.getTriggerCase().forEach((item) => {
         const caseTypeClass = toTypeClass(item, isTriggerCaseType, errorClass);
         if (caseTypeClass) {
-            triggerCase.push(triggerCaseConvert(caseTypeClass, errorClass));
+            triggerUnit.triggerCase.push(triggerCaseConvert(caseTypeClass, errorClass));
         }
     });
 
     const blockTypeClass = toTypeClass(target.getBlock(), isTriggerBlockType, errorClass);
+    if (blockTypeClass) {
+        triggerUnit.block.push(...triggerBlockConvert(blockTypeClass, errorClass));
+    }
 
-    return {
-        value: value.length > 0 ? value : undefined,
-        triggerCase: triggerCase.length > 0 ? triggerCase : undefined,
-        block: blockTypeClass ? triggerBlockConvert(blockTypeClass, errorClass) : undefined,
-    };
+    return triggerUnit;
 };

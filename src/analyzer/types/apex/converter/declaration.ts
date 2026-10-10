@@ -1,5 +1,4 @@
 import {
-    CommonTypeClass,
     ErrorTypeClass,
     AnonymousMemberDeclarationTypeClass,
     ClassBodyDeclarationTypeClass,
@@ -17,7 +16,6 @@ import {
     TriggerMemberDeclarationTypeClass,
     TypeDeclarationTypeClass,
     NormalBlockTypeClass,
-    TypeRefTypeClass,
     isClassBodyType,
     isClassDeclarationType,
     isConstructorDeclarationType,
@@ -37,59 +35,22 @@ import {
     isTypeListType,
     isTypeRefType,
     isVariableDeclaratorsType,
+    isNormalModifierType,
 } from '../../apex_IR';
 
 import { toTypeClass } from './commons';
-import { NormalId, normalIdConvert } from './id';
-import { QualifiedName, qualifiedNameConvert } from './name';
+import { normalIdConvert } from './id';
+import { qualifiedNameConvert } from './name';
 import { TypeRef, typeRefConvert } from './type';
-import { TypeList, typeListConvert } from './list';
-import { NormalBlock, normalBlockConvert, PropertyBlock, propertyBlockConvert } from './block';
-import { ClassBody, classBodyConvert, InterfaceBody, interfaceBodyConvert } from './body';
-import { NormalModifier, normalModifierListConvert } from './modifier';
-import { FormalParameters, formalParametersConvert } from './parameter';
-import { VariableDeclarators, variableDeclaratorsConvert } from './variable';
+import { typeListConvert } from './list';
+import { normalBlockConvert, PropertyBlock, propertyBlockConvert } from './block';
+import { classBodyConvert, interfaceBodyConvert } from './body';
+import { NormalModifier, normalModifierConvert } from './modifier';
+import { FormalParameter, formalParametersConvert } from './parameter';
+import { VariableDeclarator, variableDeclaratorsConvert } from './variable';
+import { NormalStatement } from './statement';
 
-const normalIdOrUndefinedConvert = (
-    target: CommonTypeClass,
-    errorClass: ErrorTypeClass[],
-): NormalId | undefined => {
-    const typeClass = toTypeClass(target, isNormalIdType, errorClass);
-    return typeClass ? normalIdConvert(typeClass) : undefined;
-};
-
-const typeRefOrUndefinedConvert = (
-    target: CommonTypeClass,
-    errorClass: ErrorTypeClass[],
-): TypeRef | undefined => {
-    const typeClass = toTypeClass(target, isTypeRefType, errorClass);
-    return typeClass ? typeRefConvert(typeClass, errorClass) : undefined;
-};
-
-const returnTypeConvert = (
-    target: TypeRefTypeClass | 'void' | ErrorTypeClass,
-    errorClass: ErrorTypeClass[],
-): TypeRef | 'void' | undefined => {
-    return target === 'void' ? target : typeRefOrUndefinedConvert(target, errorClass);
-};
-
-const formalParametersOrUndefinedConvert = (
-    target: CommonTypeClass | null | undefined,
-    errorClass: ErrorTypeClass[],
-): FormalParameters => {
-    const typeClass = target ? toTypeClass(target, isFormalParametersType, errorClass) : undefined;
-    return typeClass ? formalParametersConvert(typeClass, errorClass) : undefined;
-};
-
-const normalBlockOrUndefinedConvert = (
-    target: CommonTypeClass | null | undefined,
-    errorClass: ErrorTypeClass[],
-): NormalBlock => {
-    const typeClass = target ? toTypeClass(target, isNormalBlockType, errorClass) : undefined;
-    return typeClass ? normalBlockConvert(typeClass, errorClass) : undefined;
-};
-
-export type MemberDeclarationValue =
+export type MemberDeclaration =
     | {
           type: 'method';
           member: MethodDeclaration;
@@ -117,15 +78,14 @@ export type MemberDeclarationValue =
     | {
           type: 'field';
           member: FieldDeclaration;
-      }
-    | undefined;
+      };
 
-const memberDeclarationValueConvert = (
-    target: CommonTypeClass,
+const memberDeclarationConvert = (
+    target: MemberDeclarationTypeClass,
     errorClass: ErrorTypeClass[],
-): MemberDeclarationValue => {
+): MemberDeclaration | undefined => {
     const valueTypeClass = toTypeClass(
-        target,
+        target.getValue(),
         (
             target,
         ): target is
@@ -146,95 +106,507 @@ const memberDeclarationValueConvert = (
         errorClass,
     );
 
-    if (!valueTypeClass) {
-        return undefined;
-    }
-    if (isMethodDeclarationType(valueTypeClass)) {
-        return {
-            type: 'method',
-            member: methodDeclarationConvert(valueTypeClass, errorClass),
-        };
-    }
-    if (isConstructorDeclarationType(valueTypeClass)) {
-        return {
-            type: 'constructor',
-            member: constructorDeclarationConvert(valueTypeClass, errorClass),
-        };
-    }
-    if (isInterfaceDeclarationType(valueTypeClass)) {
-        return {
-            type: 'interface',
-            member: interfaceDeclarationConvert(valueTypeClass, errorClass),
-        };
-    }
-    if (isClassDeclarationType(valueTypeClass)) {
-        return {
-            type: 'class',
-            member: classDeclarationConvert(valueTypeClass, errorClass),
-        };
-    }
-    if (isEnumDeclarationType(valueTypeClass)) {
-        return {
-            type: 'enum',
-            member: enumDeclarationConvert(valueTypeClass, errorClass),
-        };
-    }
-    if (isPropertyDeclarationType(valueTypeClass)) {
-        return {
-            type: 'property',
-            member: propertyDeclarationConvert(valueTypeClass, errorClass),
-        };
-    }
-    if (isFieldDeclarationType(valueTypeClass)) {
-        return {
-            type: 'field',
-            member: fieldDeclarationConvert(valueTypeClass, errorClass),
-        };
+    let memberDeclaration: MemberDeclaration | undefined = undefined;
+
+    if (valueTypeClass) {
+        if (isMethodDeclarationType(valueTypeClass)) {
+            memberDeclaration = {
+                type: 'method',
+                member: {
+                    param: [],
+                    block: [],
+                },
+            };
+
+            const member = methodDeclarationConvert(valueTypeClass, errorClass);
+            memberDeclaration.member.param.push(...member.param);
+            memberDeclaration.member.block.push(...member.block);
+            if (member.value) {
+                memberDeclaration.member.value = member.value;
+            }
+
+            if (member.valueType) {
+                memberDeclaration.member.valueType = member.valueType;
+            }
+        }
+        if (isConstructorDeclarationType(valueTypeClass)) {
+            memberDeclaration = {
+                type: 'constructor',
+                member: {
+                    value: [],
+                    param: [],
+                    block: [],
+                },
+            };
+
+            const member = constructorDeclarationConvert(valueTypeClass, errorClass);
+            memberDeclaration.member.value.push(...member.value);
+            memberDeclaration.member.param.push(...member.param);
+            memberDeclaration.member.block.push(...member.block);
+        }
+        if (isInterfaceDeclarationType(valueTypeClass)) {
+            memberDeclaration = {
+                type: 'interface',
+                member: {
+                    body: [],
+                    extend: [],
+                },
+            };
+
+            const member = interfaceDeclarationConvert(valueTypeClass, errorClass);
+            memberDeclaration.member.body.push(...member.body);
+            memberDeclaration.member.extend.push(...member.extend);
+            if (member.value) {
+                memberDeclaration.member.value = member.value;
+            }
+        }
+        if (isClassDeclarationType(valueTypeClass)) {
+            memberDeclaration = {
+                type: 'class',
+                member: {
+                    body: [],
+                    extend: {
+                        value: [],
+                    },
+                    implement: [],
+                },
+            };
+
+            const member = classDeclarationConvert(valueTypeClass, errorClass);
+            memberDeclaration.member.body.push(...member.body);
+            memberDeclaration.member.extend.value.push(...member.extend.value);
+            memberDeclaration.member.implement.push(...member.implement);
+            if (member.value) {
+                memberDeclaration.member.value = member.value;
+            }
+            if (member.extend.dimension) {
+                memberDeclaration.member.extend.dimension = member.extend.dimension;
+            }
+        }
+        if (isEnumDeclarationType(valueTypeClass)) {
+            memberDeclaration = {
+                type: 'enum',
+                member: {
+                    constant: [],
+                },
+            };
+
+            const member = enumDeclarationConvert(valueTypeClass, errorClass);
+            memberDeclaration.member.constant.push(...member.constant);
+            if (member.value) {
+                memberDeclaration.member.value = member.value;
+            }
+        }
+        if (isPropertyDeclarationType(valueTypeClass)) {
+            memberDeclaration = {
+                type: 'property',
+                member: {
+                    valueType: {
+                        value: [],
+                    },
+                    block: [],
+                },
+            };
+
+            const member = propertyDeclarationConvert(valueTypeClass, errorClass);
+            memberDeclaration.member.valueType.value.push(...member.valueType.value);
+            memberDeclaration.member.block.push(...member.block);
+            if (member.value) {
+                memberDeclaration.member.value = member.value;
+            }
+            if (member.valueType.dimension) {
+                memberDeclaration.member.valueType.dimension = member.valueType.dimension;
+            }
+        }
+        if (isFieldDeclarationType(valueTypeClass)) {
+            memberDeclaration = {
+                type: 'field',
+                member: {
+                    value: [],
+                    valueType: {
+                        value: [],
+                    },
+                },
+            };
+
+            const member = fieldDeclarationConvert(valueTypeClass, errorClass);
+            memberDeclaration.member.value.push(...member.value);
+            memberDeclaration.member.valueType.value.push(...member.valueType.value);
+            if (member.valueType.dimension) {
+                memberDeclaration.member.valueType.dimension = member.valueType.dimension;
+            }
+        }
     }
 
-    return undefined;
+    return memberDeclaration;
 };
 
-export type AnonymousMemberDeclaration = MemberDeclarationValue;
+export type AnonymousMemberDeclaration =
+    | {
+          type: 'method';
+          member: MethodDeclaration;
+      }
+    | {
+          type: 'interface';
+          member: InterfaceDeclaration;
+      }
+    | {
+          type: 'class';
+          member: ClassDeclaration;
+      }
+    | {
+          type: 'enum';
+          member: EnumDeclaration;
+      }
+    | {
+          type: 'property';
+          member: PropertyDeclaration;
+      }
+    | {
+          type: 'field';
+          member: FieldDeclaration;
+      };
 
 export const anonymousMemberDeclarationConvert = (
     target: AnonymousMemberDeclarationTypeClass,
     errorClass: ErrorTypeClass[],
-): AnonymousMemberDeclaration => {
-    return memberDeclarationValueConvert(target.getValue(), errorClass);
+): AnonymousMemberDeclaration | undefined => {
+    const valueTypeClass = toTypeClass(
+        target.getValue(),
+        (
+            target,
+        ): target is
+            | MethodDeclarationTypeClass
+            | InterfaceDeclarationTypeClass
+            | ClassDeclarationTypeClass
+            | EnumDeclarationTypeClass
+            | PropertyDeclarationTypeClass
+            | FieldDeclarationTypeClass =>
+            isMethodDeclarationType(target) ||
+            isInterfaceDeclarationType(target) ||
+            isClassDeclarationType(target) ||
+            isEnumDeclarationType(target) ||
+            isPropertyDeclarationType(target) ||
+            isFieldDeclarationType(target),
+        errorClass,
+    );
+
+    let anonymousMemberDeclaration: AnonymousMemberDeclaration | undefined = undefined;
+
+    if (valueTypeClass) {
+        if (isMethodDeclarationType(valueTypeClass)) {
+            anonymousMemberDeclaration = {
+                type: 'method',
+                member: {
+                    param: [],
+                    block: [],
+                },
+            };
+
+            const member = methodDeclarationConvert(valueTypeClass, errorClass);
+            anonymousMemberDeclaration.member.param.push(...member.param);
+            anonymousMemberDeclaration.member.block.push(...member.block);
+            if (member.value) {
+                anonymousMemberDeclaration.member.value = member.value;
+            }
+
+            if (member.valueType) {
+                anonymousMemberDeclaration.member.valueType = member.valueType;
+            }
+        }
+        if (isInterfaceDeclarationType(valueTypeClass)) {
+            anonymousMemberDeclaration = {
+                type: 'interface',
+                member: {
+                    body: [],
+                    extend: [],
+                },
+            };
+
+            const member = interfaceDeclarationConvert(valueTypeClass, errorClass);
+            anonymousMemberDeclaration.member.body.push(...member.body);
+            anonymousMemberDeclaration.member.extend.push(...member.extend);
+            if (member.value) {
+                anonymousMemberDeclaration.member.value = member.value;
+            }
+        }
+        if (isClassDeclarationType(valueTypeClass)) {
+            anonymousMemberDeclaration = {
+                type: 'class',
+                member: {
+                    body: [],
+                    extend: {
+                        value: [],
+                    },
+                    implement: [],
+                },
+            };
+
+            const member = classDeclarationConvert(valueTypeClass, errorClass);
+            anonymousMemberDeclaration.member.body.push(...member.body);
+            anonymousMemberDeclaration.member.extend.value.push(...member.extend.value);
+            anonymousMemberDeclaration.member.implement.push(...member.implement);
+            if (member.value) {
+                anonymousMemberDeclaration.member.value = member.value;
+            }
+            if (member.extend.dimension) {
+                anonymousMemberDeclaration.member.extend.dimension = member.extend.dimension;
+            }
+        }
+        if (isEnumDeclarationType(valueTypeClass)) {
+            anonymousMemberDeclaration = {
+                type: 'enum',
+                member: {
+                    constant: [],
+                },
+            };
+
+            const member = enumDeclarationConvert(valueTypeClass, errorClass);
+            anonymousMemberDeclaration.member.constant.push(...member.constant);
+            if (member.value) {
+                anonymousMemberDeclaration.member.value = member.value;
+            }
+        }
+        if (isPropertyDeclarationType(valueTypeClass)) {
+            anonymousMemberDeclaration = {
+                type: 'property',
+                member: {
+                    valueType: {
+                        value: [],
+                    },
+                    block: [],
+                },
+            };
+
+            const member = propertyDeclarationConvert(valueTypeClass, errorClass);
+            anonymousMemberDeclaration.member.valueType.value.push(...member.valueType.value);
+            anonymousMemberDeclaration.member.block.push(...member.block);
+            if (member.value) {
+                anonymousMemberDeclaration.member.value = member.value;
+            }
+            if (member.valueType.dimension) {
+                anonymousMemberDeclaration.member.valueType.dimension = member.valueType.dimension;
+            }
+        }
+        if (isFieldDeclarationType(valueTypeClass)) {
+            anonymousMemberDeclaration = {
+                type: 'field',
+                member: {
+                    value: [],
+                    valueType: {
+                        value: [],
+                    },
+                },
+            };
+
+            const member = fieldDeclarationConvert(valueTypeClass, errorClass);
+            anonymousMemberDeclaration.member.value.push(...member.value);
+            anonymousMemberDeclaration.member.valueType.value.push(...member.valueType.value);
+            if (member.valueType.dimension) {
+                anonymousMemberDeclaration.member.valueType.dimension = member.valueType.dimension;
+            }
+        }
+    }
+
+    return anonymousMemberDeclaration;
 };
 
-export type MemberDeclaration = MemberDeclarationValue;
-
-export const memberDeclarationConvert = (
-    target: MemberDeclarationTypeClass,
-    errorClass: ErrorTypeClass[],
-): MemberDeclaration => {
-    return memberDeclarationValueConvert(target.getValue(), errorClass);
-};
-
-export type TriggerMemberDeclaration = MemberDeclarationValue;
+export type TriggerMemberDeclaration =
+    | {
+          type: 'method';
+          member: MethodDeclaration;
+      }
+    | {
+          type: 'interface';
+          member: InterfaceDeclaration;
+      }
+    | {
+          type: 'class';
+          member: ClassDeclaration;
+      }
+    | {
+          type: 'enum';
+          member: EnumDeclaration;
+      }
+    | {
+          type: 'property';
+          member: PropertyDeclaration;
+      }
+    | {
+          type: 'field';
+          member: FieldDeclaration;
+      };
 
 export const triggerMemberDeclarationConvert = (
     target: TriggerMemberDeclarationTypeClass,
     errorClass: ErrorTypeClass[],
-): TriggerMemberDeclaration => {
-    return memberDeclarationValueConvert(target.getValue(), errorClass);
-};
+): TriggerMemberDeclaration | undefined => {
+    const valueTypeClass = toTypeClass(
+        target.getValue(),
+        (
+            target,
+        ): target is
+            | MethodDeclarationTypeClass
+            | InterfaceDeclarationTypeClass
+            | ClassDeclarationTypeClass
+            | EnumDeclarationTypeClass
+            | PropertyDeclarationTypeClass
+            | FieldDeclarationTypeClass =>
+            isMethodDeclarationType(target) ||
+            isInterfaceDeclarationType(target) ||
+            isClassDeclarationType(target) ||
+            isEnumDeclarationType(target) ||
+            isPropertyDeclarationType(target) ||
+            isFieldDeclarationType(target),
+        errorClass,
+    );
 
+    let triggerMemberDeclaration: TriggerMemberDeclaration | undefined = undefined;
+
+    if (valueTypeClass) {
+        if (isMethodDeclarationType(valueTypeClass)) {
+            triggerMemberDeclaration = {
+                type: 'method',
+                member: {
+                    param: [],
+                    block: [],
+                },
+            };
+
+            const member = methodDeclarationConvert(valueTypeClass, errorClass);
+            triggerMemberDeclaration.member.param.push(...member.param);
+            triggerMemberDeclaration.member.block.push(...member.block);
+            if (member.value) {
+                triggerMemberDeclaration.member.value = member.value;
+            }
+
+            if (member.valueType) {
+                triggerMemberDeclaration.member.valueType = member.valueType;
+            }
+        }
+        if (isInterfaceDeclarationType(valueTypeClass)) {
+            triggerMemberDeclaration = {
+                type: 'interface',
+                member: {
+                    body: [],
+                    extend: [],
+                },
+            };
+
+            const member = interfaceDeclarationConvert(valueTypeClass, errorClass);
+            triggerMemberDeclaration.member.body.push(...member.body);
+            triggerMemberDeclaration.member.extend.push(...member.extend);
+            if (member.value) {
+                triggerMemberDeclaration.member.value = member.value;
+            }
+        }
+        if (isClassDeclarationType(valueTypeClass)) {
+            triggerMemberDeclaration = {
+                type: 'class',
+                member: {
+                    body: [],
+                    extend: {
+                        value: [],
+                    },
+                    implement: [],
+                },
+            };
+
+            const member = classDeclarationConvert(valueTypeClass, errorClass);
+            triggerMemberDeclaration.member.body.push(...member.body);
+            triggerMemberDeclaration.member.extend.value.push(...member.extend.value);
+            triggerMemberDeclaration.member.implement.push(...member.implement);
+            if (member.value) {
+                triggerMemberDeclaration.member.value = member.value;
+            }
+            if (member.extend.dimension) {
+                triggerMemberDeclaration.member.extend.dimension = member.extend.dimension;
+            }
+        }
+        if (isEnumDeclarationType(valueTypeClass)) {
+            triggerMemberDeclaration = {
+                type: 'enum',
+                member: {
+                    constant: [],
+                },
+            };
+
+            const member = enumDeclarationConvert(valueTypeClass, errorClass);
+            triggerMemberDeclaration.member.constant.push(...member.constant);
+            if (member.value) {
+                triggerMemberDeclaration.member.value = member.value;
+            }
+        }
+        if (isPropertyDeclarationType(valueTypeClass)) {
+            triggerMemberDeclaration = {
+                type: 'property',
+                member: {
+                    valueType: {
+                        value: [],
+                    },
+                    block: [],
+                },
+            };
+
+            const member = propertyDeclarationConvert(valueTypeClass, errorClass);
+            triggerMemberDeclaration.member.valueType.value.push(...member.valueType.value);
+            triggerMemberDeclaration.member.block.push(...member.block);
+            if (member.value) {
+                triggerMemberDeclaration.member.value = member.value;
+            }
+            if (member.valueType.dimension) {
+                triggerMemberDeclaration.member.valueType.dimension = member.valueType.dimension;
+            }
+        }
+        if (isFieldDeclarationType(valueTypeClass)) {
+            triggerMemberDeclaration = {
+                type: 'field',
+                member: {
+                    value: [],
+                    valueType: {
+                        value: [],
+                    },
+                },
+            };
+
+            const member = fieldDeclarationConvert(valueTypeClass, errorClass);
+            triggerMemberDeclaration.member.value.push(...member.value);
+            triggerMemberDeclaration.member.valueType.value.push(...member.valueType.value);
+            if (member.valueType.dimension) {
+                triggerMemberDeclaration.member.valueType.dimension = member.valueType.dimension;
+            }
+        }
+    }
+
+    return triggerMemberDeclaration;
+};
 export type ClassBodyDeclaration = {
-    value: MemberDeclaration | NormalBlock;
-    modifier: NormalModifier[] | undefined;
-    isStatic: boolean | undefined;
+    value?: MemberDeclaration | NormalStatement[];
+    modifier: NormalModifier[];
+    isStatic?: boolean;
 };
 
 export const classBodyDeclarationConvert = (
     target: ClassBodyDeclarationTypeClass,
     errorClass: ErrorTypeClass[],
 ): ClassBodyDeclaration => {
+    const modifiers: NormalModifier[] = [];
+    target.getModifier().forEach((m) => {
+        const modifierTypeClass = toTypeClass(m, isNormalModifierType, errorClass);
+        if (modifierTypeClass) {
+            const modifier = normalModifierConvert(modifierTypeClass, errorClass);
+            if (modifier) {
+                modifiers.push(modifier);
+            }
+        }
+    });
+
+    const classBodyDeclaration: ClassBodyDeclaration = {
+        modifier: modifiers,
+    };
+
     const valueValue = target.getValue();
 
-    let value: ClassBodyDeclaration['value'] = undefined;
     if (valueValue) {
         const valueTypeClass = toTypeClass(
             valueValue,
@@ -244,207 +616,389 @@ export const classBodyDeclarationConvert = (
         );
         if (valueTypeClass) {
             if (isMemberDeclarationType(valueTypeClass)) {
-                value = memberDeclarationConvert(valueTypeClass, errorClass);
+                const member = memberDeclarationConvert(valueTypeClass, errorClass);
+                if (member) {
+                    classBodyDeclaration.value = member;
+                }
             }
             if (isNormalBlockType(valueTypeClass)) {
-                value = normalBlockConvert(valueTypeClass, errorClass);
+                classBodyDeclaration.value = normalBlockConvert(valueTypeClass, errorClass);
             }
+        }
+
+        const isStatic: boolean = target.getIsStatic();
+        if (valueValue && isNormalBlockType(valueValue)) {
+            classBodyDeclaration.isStatic = isStatic;
         }
     }
 
-    return {
-        value: value,
-        modifier: normalModifierListConvert(target.getModifier(), errorClass),
-        isStatic: valueValue && isNormalBlockType(valueValue) ? target.getIsStatic() : undefined,
-    };
+    return classBodyDeclaration;
 };
 
 export type ClassDeclaration = {
-    value: NormalId | undefined;
-    body: ClassBody;
-    extend: TypeRef | undefined;
-    implement: TypeList | undefined;
+    value?: string;
+    body: ClassBodyDeclaration[];
+    extend: TypeRef;
+    implement: TypeRef[];
 };
 
 export const classDeclarationConvert = (
     target: ClassDeclarationTypeClass,
     errorClass: ErrorTypeClass[],
 ): ClassDeclaration => {
+    const body: ClassBodyDeclaration[] = [];
     const bodyTypeClass = toTypeClass(target.getBody(), isClassBodyType, errorClass);
+    if (bodyTypeClass) {
+        body.push(...classBodyConvert(bodyTypeClass, errorClass));
+    }
+
+    const implement: TypeRef[] = [];
+    const implementValue = target.getExtend();
+    if (implementValue) {
+        const implementTypeClass = toTypeClass(implementValue, isTypeListType, errorClass);
+        if (implementTypeClass) {
+            implement.push(...typeListConvert(implementTypeClass, errorClass));
+        }
+    }
+
+    const classDeclaration: ClassDeclaration = {
+        body: body,
+        extend: {
+            value: [],
+        },
+        implement: [],
+    };
 
     const extendValue = target.getExtend();
-    const implementValue = target.getImplement();
-    const implementTypeClass = implementValue
-        ? toTypeClass(implementValue, isTypeListType, errorClass)
-        : undefined;
+    if (extendValue) {
+        const extendTypeClass = toTypeClass(extendValue, isTypeRefType, errorClass);
+        if (extendTypeClass) {
+            const extend = typeRefConvert(extendTypeClass, errorClass);
+            classDeclaration.extend.value = extend.value;
+            if (extend.dimension) {
+                classDeclaration.extend.dimension = extend.dimension;
+            }
+        }
+    }
 
-    return {
-        value: normalIdOrUndefinedConvert(target.getValue(), errorClass),
-        body: bodyTypeClass ? classBodyConvert(bodyTypeClass, errorClass) : undefined,
-        extend: extendValue ? typeRefOrUndefinedConvert(extendValue, errorClass) : undefined,
-        implement: implementTypeClass ? typeListConvert(implementTypeClass, errorClass) : undefined,
-    };
+    const valueTypeClass = toTypeClass(target.getValue(), isNormalIdType, errorClass);
+    if (valueTypeClass) {
+        classDeclaration.value = normalIdConvert(valueTypeClass);
+    }
+
+    return classDeclaration;
 };
 
 export type ConstructorDeclaration = {
-    value: QualifiedName;
-    param: FormalParameters;
-    block: NormalBlock;
+    value: string[];
+    param: FormalParameter[];
+    block: NormalStatement[];
 };
 
 export const constructorDeclarationConvert = (
     target: ConstructorDeclarationTypeClass,
     errorClass: ErrorTypeClass[],
 ): ConstructorDeclaration => {
+    const value: string[] = [];
     const valueTypeClass = toTypeClass(target.getValue(), isQualifiedNameType, errorClass);
+    if (valueTypeClass) {
+        value.push(...qualifiedNameConvert(valueTypeClass, errorClass));
+    }
+
+    const param: FormalParameter[] = [];
+    const paramValue = target.getParam();
+    if (paramValue) {
+        const paramTypeClass = toTypeClass(paramValue, isFormalParametersType, errorClass);
+        if (paramTypeClass) {
+            param.push(...formalParametersConvert(paramTypeClass, errorClass));
+        }
+    }
+
+    const block: NormalStatement[] = [];
+    const blockTypeClass = toTypeClass(target.getBlock(), isNormalBlockType, errorClass);
+    if (blockTypeClass) {
+        block.push(...normalBlockConvert(blockTypeClass, errorClass));
+    }
 
     return {
-        value: valueTypeClass ? qualifiedNameConvert(valueTypeClass, errorClass) : undefined,
-        param: formalParametersOrUndefinedConvert(target.getParam(), errorClass),
-        block: normalBlockOrUndefinedConvert(target.getBlock(), errorClass),
+        value: value,
+        param: param,
+        block: block,
     };
 };
-
-export type EnumConstants = NormalId[] | undefined;
 
 export const enumConstantsConvert = (
     target: EnumConstantsTypeClass,
     errorClass: ErrorTypeClass[],
-): EnumConstants => {
-    const values: NormalId[] = [];
+): string[] => {
+    const values: string[] = [];
     target.getValue().forEach((item) => {
-        const value = normalIdOrUndefinedConvert(item, errorClass);
-        if (value) {
-            values.push(value);
+        const valueTypeClass = toTypeClass(item, isNormalIdType, errorClass);
+        if (valueTypeClass) {
+            values.push(normalIdConvert(valueTypeClass));
         }
     });
-    return values.length > 0 ? values : undefined;
+    return values;
 };
 
 export type EnumDeclaration = {
-    value: NormalId | undefined;
-    constant: EnumConstants;
+    value?: string;
+    constant: string[];
 };
 
 export const enumDeclarationConvert = (
     target: EnumDeclarationTypeClass,
     errorClass: ErrorTypeClass[],
 ): EnumDeclaration => {
+    const constant: string[] = [];
     const constantValue = target.getConstant();
-    const constantTypeClass = constantValue
-        ? toTypeClass(constantValue, isEnumConstantsType, errorClass)
-        : undefined;
+    if (constantValue) {
+        const constantTypeClass = toTypeClass(constantValue, isEnumConstantsType, errorClass);
+        if (constantTypeClass) {
+            constant.push(...enumConstantsConvert(constantTypeClass, errorClass));
+        }
+    }
 
-    return {
-        value: normalIdOrUndefinedConvert(target.getValue(), errorClass),
-        constant: constantTypeClass
-            ? enumConstantsConvert(constantTypeClass, errorClass)
-            : undefined,
+    const enumDeclaration: EnumDeclaration = {
+        constant: constant,
     };
+
+    const valueTypeClass = toTypeClass(target.getValue(), isNormalIdType, errorClass);
+    if (valueTypeClass) {
+        enumDeclaration.value = normalIdConvert(valueTypeClass);
+    }
+
+    return enumDeclaration;
 };
 
 export type FieldDeclaration = {
-    value: VariableDeclarators;
-    valueType: TypeRef | undefined;
+    value: VariableDeclarator[];
+    valueType: TypeRef;
 };
 
 export const fieldDeclarationConvert = (
     target: FieldDeclarationTypeClass,
     errorClass: ErrorTypeClass[],
 ): FieldDeclaration => {
+    const value: VariableDeclarator[] = [];
     const valueTypeClass = toTypeClass(target.getValue(), isVariableDeclaratorsType, errorClass);
+    if (valueTypeClass) {
+        value.push(...variableDeclaratorsConvert(valueTypeClass, errorClass));
+    }
 
-    return {
-        value: valueTypeClass ? variableDeclaratorsConvert(valueTypeClass, errorClass) : undefined,
-        valueType: typeRefOrUndefinedConvert(target.getValueType(), errorClass),
+    const fieldDeclaration: FieldDeclaration = {
+        value: value,
+        valueType: {
+            value: [],
+        },
     };
+
+    const valueTypeTypeClass = toTypeClass(target.getValueType(), isTypeRefType, errorClass);
+    if (valueTypeTypeClass) {
+        const typeRef = typeRefConvert(valueTypeTypeClass, errorClass);
+        fieldDeclaration.valueType.value = typeRef.value;
+        if (typeRef.dimension) {
+            fieldDeclaration.valueType.dimension = typeRef.dimension;
+        }
+    }
+
+    return fieldDeclaration;
 };
 
 export type InterfaceDeclaration = {
-    value: NormalId | undefined;
-    body: InterfaceBody;
-    extend: TypeList | undefined;
+    value?: string;
+    body: InterfaceMethodDeclaration[];
+    extend: TypeRef[];
 };
 
 export const interfaceDeclarationConvert = (
     target: InterfaceDeclarationTypeClass,
     errorClass: ErrorTypeClass[],
 ): InterfaceDeclaration => {
+    const body: InterfaceMethodDeclaration[] = [];
     const bodyTypeClass = toTypeClass(target.getBody(), isInterfaceBodyType, errorClass);
+    if (bodyTypeClass) {
+        body.push(...interfaceBodyConvert(bodyTypeClass, errorClass));
+    }
 
+    const extend: TypeRef[] = [];
     const extendValue = target.getExtend();
-    const extendTypeClass = extendValue
-        ? toTypeClass(extendValue, isTypeListType, errorClass)
-        : undefined;
+    if (extendValue) {
+        const extendTypeClass = toTypeClass(extendValue, isTypeListType, errorClass);
+        if (extendTypeClass) {
+            extend.push(...typeListConvert(extendTypeClass, errorClass));
+        }
+    }
 
-    return {
-        value: normalIdOrUndefinedConvert(target.getValue(), errorClass),
-        body: bodyTypeClass ? interfaceBodyConvert(bodyTypeClass, errorClass) : undefined,
-        extend: extendTypeClass ? typeListConvert(extendTypeClass, errorClass) : undefined,
+    const interfaceDeclaration: InterfaceDeclaration = {
+        body: body,
+        extend: extend,
     };
+
+    const valueTypeClass = toTypeClass(target.getValue(), isNormalIdType, errorClass);
+    if (valueTypeClass) {
+        interfaceDeclaration.value = normalIdConvert(valueTypeClass);
+    }
+    return interfaceDeclaration;
 };
 
 export type InterfaceMethodDeclaration = {
-    value: NormalId | undefined;
-    valueType: TypeRef | 'void' | undefined;
-    param: FormalParameters;
-    modifier: NormalModifier[] | undefined;
+    value?: string;
+    valueType?: TypeRef | 'void';
+    param: FormalParameter[];
+    modifier: NormalModifier[];
 };
 
 export const interfaceMethodDeclarationConvert = (
     target: InterfaceMethodDeclarationTypeClass,
     errorClass: ErrorTypeClass[],
 ): InterfaceMethodDeclaration => {
-    return {
-        value: normalIdOrUndefinedConvert(target.getValue(), errorClass),
-        valueType: returnTypeConvert(target.getValueType(), errorClass),
-        param: formalParametersOrUndefinedConvert(target.getParam(), errorClass),
-        modifier: normalModifierListConvert(target.getModifier(), errorClass),
+    const param: FormalParameter[] = [];
+    const paramValue = target.getParam();
+    if (paramValue) {
+        const paramTypeClass = toTypeClass(paramValue, isFormalParametersType, errorClass);
+        if (paramTypeClass) {
+            param.push(...formalParametersConvert(paramTypeClass, errorClass));
+        }
+    }
+
+    const modifiers: NormalModifier[] = [];
+    target.getModifier().forEach((m) => {
+        const modifierTypeClass = toTypeClass(m, isNormalModifierType, errorClass);
+        if (modifierTypeClass) {
+            const modifier = normalModifierConvert(modifierTypeClass, errorClass);
+            if (modifier) {
+                modifiers.push(modifier);
+            }
+        }
+    });
+
+    const interfaceMethodDeclaration: InterfaceMethodDeclaration = {
+        param: param,
+        modifier: modifiers,
     };
+
+    const valueTypeClass = toTypeClass(target.getValue(), isNormalIdType, errorClass);
+    if (valueTypeClass) {
+        interfaceMethodDeclaration.value = normalIdConvert(valueTypeClass);
+    }
+
+    const valueType = target.getValueType();
+    if (typeof valueType === 'string') {
+        interfaceMethodDeclaration.valueType = valueType;
+    } else {
+        const valueTypeTypeClass = toTypeClass(valueType, isTypeRefType, errorClass);
+        if (valueTypeTypeClass) {
+            interfaceMethodDeclaration.valueType = typeRefConvert(valueTypeTypeClass, errorClass);
+        }
+    }
+
+    return interfaceMethodDeclaration;
 };
 
 export type LocalVariableDeclaration = {
-    value: VariableDeclarators;
-    valueType: TypeRef | undefined;
-    modifier: NormalModifier[] | undefined;
+    value: VariableDeclarator[];
+    valueType: TypeRef;
+    modifier: NormalModifier[];
 };
 
 export const localVariableDeclarationConvert = (
     target: LocalVariableDeclarationTypeClass,
     errorClass: ErrorTypeClass[],
 ): LocalVariableDeclaration => {
+    const value: VariableDeclarator[] = [];
     const valueTypeClass = toTypeClass(target.getValue(), isVariableDeclaratorsType, errorClass);
+    if (valueTypeClass) {
+        value.push(...variableDeclaratorsConvert(valueTypeClass, errorClass));
+    }
 
-    return {
-        value: valueTypeClass ? variableDeclaratorsConvert(valueTypeClass, errorClass) : undefined,
-        valueType: typeRefOrUndefinedConvert(target.getValueType(), errorClass),
-        modifier: normalModifierListConvert(target.getModifier(), errorClass),
+    const modifiers: NormalModifier[] = [];
+    target.getModifier().forEach((m) => {
+        const modifierTypeClass = toTypeClass(m, isNormalModifierType, errorClass);
+        if (modifierTypeClass) {
+            const modifier = normalModifierConvert(modifierTypeClass, errorClass);
+            if (modifier) {
+                modifiers.push(modifier);
+            }
+        }
+    });
+
+    const localVariableDeclaration: LocalVariableDeclaration = {
+        value: value,
+        valueType: {
+            value: [],
+        },
+        modifier: modifiers,
     };
+
+    const valueTypeTypeClass = toTypeClass(target.getValueType(), isTypeRefType, errorClass);
+    if (valueTypeTypeClass) {
+        const typeRef = typeRefConvert(valueTypeTypeClass, errorClass);
+        localVariableDeclaration.valueType.value = typeRef.value;
+        if (typeRef.dimension) {
+            localVariableDeclaration.valueType.dimension = typeRef.dimension;
+        }
+    }
+
+    return localVariableDeclaration;
 };
 
 export type MethodDeclaration = {
-    value: NormalId | undefined;
-    valueType: TypeRef | 'void' | undefined;
-    param: FormalParameters;
-    block: NormalBlock;
+    value?: string;
+    valueType?: TypeRef | 'void';
+    param: FormalParameter[];
+    block: NormalStatement[];
 };
 
 export const methodDeclarationConvert = (
     target: MethodDeclarationTypeClass,
     errorClass: ErrorTypeClass[],
 ): MethodDeclaration => {
-    return {
-        value: normalIdOrUndefinedConvert(target.getValue(), errorClass),
-        valueType: returnTypeConvert(target.getValueType(), errorClass),
-        param: formalParametersOrUndefinedConvert(target.getParam(), errorClass),
-        block: normalBlockOrUndefinedConvert(target.getBlock(), errorClass),
+    const param: FormalParameter[] = [];
+    const paramValue = target.getParam();
+    if (paramValue) {
+        const paramTypeClass = toTypeClass(paramValue, isFormalParametersType, errorClass);
+        if (paramTypeClass) {
+            param.push(...formalParametersConvert(paramTypeClass, errorClass));
+        }
+    }
+
+    const block: NormalStatement[] = [];
+    const blockValue = target.getBlock();
+    if (blockValue) {
+        const blockTypeClass = toTypeClass(blockValue, isNormalBlockType, errorClass);
+        if (blockTypeClass) {
+            block.push(...normalBlockConvert(blockTypeClass, errorClass));
+        }
+    }
+
+    const methodDeclaration: MethodDeclaration = {
+        param: param,
+        block: block,
     };
+
+    const valueTypeClass = toTypeClass(target.getValue(), isNormalIdType, errorClass);
+    if (valueTypeClass) {
+        methodDeclaration.value = normalIdConvert(valueTypeClass);
+    }
+
+    const valueType = target.getValueType();
+    if (typeof valueType === 'string') {
+        methodDeclaration.valueType = valueType;
+    } else {
+        const valueTypeTypeClass = toTypeClass(valueType, isTypeRefType, errorClass);
+        if (valueTypeTypeClass) {
+            methodDeclaration.valueType = typeRefConvert(valueTypeTypeClass, errorClass);
+        }
+    }
+
+    return methodDeclaration;
 };
 
 export type PropertyDeclaration = {
-    value: NormalId | undefined;
-    valueType: TypeRef | undefined;
-    block: PropertyBlock[] | undefined;
+    value?: string;
+    valueType: TypeRef;
+    block: PropertyBlock[];
 };
 
 export const propertyDeclarationConvert = (
@@ -459,25 +1013,51 @@ export const propertyDeclarationConvert = (
         }
     });
 
-    return {
-        value: normalIdOrUndefinedConvert(target.getValue(), errorClass),
-        valueType: typeRefOrUndefinedConvert(target.getValueType(), errorClass),
-        block: block.length > 0 ? block : undefined,
+    const propertyDeclaration: PropertyDeclaration = {
+        valueType: {
+            value: [],
+        },
+        block: block,
     };
+
+    const valueTypeTypeClass = toTypeClass(target.getValueType(), isTypeRefType, errorClass);
+    if (valueTypeTypeClass) {
+        const typeRef = typeRefConvert(valueTypeTypeClass, errorClass);
+        propertyDeclaration.valueType.value = typeRef.value;
+        if (typeRef.dimension) {
+            propertyDeclaration.valueType.dimension = typeRef.dimension;
+        }
+    }
+
+    const valueTypeClass = toTypeClass(target.getValue(), isNormalIdType, errorClass);
+    if (valueTypeClass) {
+        propertyDeclaration.value = normalIdConvert(valueTypeClass);
+    }
+
+    return propertyDeclaration;
 };
 
 export type TypeDeclaration =
     | {
-          type: string;
-          value: ClassDeclaration | EnumDeclaration | InterfaceDeclaration | undefined;
-          modifier: NormalModifier[] | undefined;
+          type: 'class';
+          value: ClassDeclaration;
+          modifier: NormalModifier[];
       }
-    | undefined;
+    | {
+          type: 'enum';
+          value: EnumDeclaration;
+          modifier: NormalModifier[];
+      }
+    | {
+          type: 'interface';
+          value: InterfaceDeclaration;
+          modifier: NormalModifier[];
+      };
 
 export const typeDeclarationConvert = (
     target: TypeDeclarationTypeClass,
     errorClass: ErrorTypeClass[],
-): TypeDeclaration => {
+): TypeDeclaration | undefined => {
     const valueTypeClass = toTypeClass(
         target.getValue(),
         (
@@ -490,30 +1070,76 @@ export const typeDeclarationConvert = (
         errorClass,
     );
 
-    const modifier = normalModifierListConvert(target.getModifier(), errorClass);
+    const modifiers: NormalModifier[] = [];
+    target.getModifier().forEach((m) => {
+        const modifierTypeClass = toTypeClass(m, isNormalModifierType, errorClass);
+        if (modifierTypeClass) {
+            const modifier = normalModifierConvert(modifierTypeClass, errorClass);
+            if (modifier) {
+                modifiers.push(modifier);
+            }
+        }
+    });
+
+    let typeDeclaration: TypeDeclaration | undefined = undefined;
+
     if (valueTypeClass) {
         if (isClassDeclarationType(valueTypeClass)) {
-            return {
+            typeDeclaration = {
                 type: 'class',
-                value: classDeclarationConvert(valueTypeClass, errorClass),
-                modifier: modifier,
+                value: {
+                    body: [],
+                    extend: {
+                        value: [],
+                    },
+                    implement: [],
+                },
+                modifier: modifiers,
             };
+
+            const value = classDeclarationConvert(valueTypeClass, errorClass);
+            typeDeclaration.value.body.push(...value.body);
+            typeDeclaration.value.extend.value.push(...value.extend.value);
+            typeDeclaration.value.implement.push(...value.implement);
+            if (value.value) {
+                typeDeclaration.value.value = value.value;
+            }
+            if (value.extend.dimension) {
+                typeDeclaration.value.extend.dimension = value.extend.dimension;
+            }
         }
         if (isEnumDeclarationType(valueTypeClass)) {
-            return {
+            typeDeclaration = {
                 type: 'enum',
-                value: enumDeclarationConvert(valueTypeClass, errorClass),
-                modifier: modifier,
+                value: {
+                    constant: [],
+                },
+                modifier: modifiers,
             };
+            const value = enumDeclarationConvert(valueTypeClass, errorClass);
+            typeDeclaration.value.constant.push(...value.constant);
+            if (value.value) {
+                typeDeclaration.value.value = value.value;
+            }
         }
         if (isInterfaceDeclarationType(valueTypeClass)) {
-            return {
+            typeDeclaration = {
                 type: 'interface',
-                value: interfaceDeclarationConvert(valueTypeClass, errorClass),
-                modifier: modifier,
+                value: {
+                    body: [],
+                    extend: [],
+                },
+                modifier: modifiers,
             };
+
+            const value = interfaceDeclarationConvert(valueTypeClass, errorClass);
+            typeDeclaration.value.body.push(...value.body);
+            typeDeclaration.value.extend.push(...value.extend);
+            if (value.value) {
+                typeDeclaration.value.value = value.value;
+            }
         }
     }
 
-    return undefined;
+    return typeDeclaration;
 };

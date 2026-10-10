@@ -11,12 +11,12 @@ type Dot = {
     operator: string;
     property?: string;
     methodName?: string;
-    param?: any[];
+    param?: ExpressionType[];
 };
 type Array = ExpressionType[];
 type MethodCall = {
     methodName: string;
-    param?: ExpressionType[];
+    param: ExpressionType[] | undefined;
     isSuper: boolean;
     isThis: boolean;
 };
@@ -30,12 +30,12 @@ type Sub = {
     parenthesized: boolean;
 };
 type SingleOperator = {
-    value: ExpressionType;
+    variant: ExpressionType;
     operator: string;
     location: 'prefix' | 'postfix';
 };
 type InstanceOf = {
-    value: ExpressionType;
+    variant: ExpressionType;
     operator: string;
     type: TypeType;
 };
@@ -110,7 +110,7 @@ export const makeExpressionType = (expression: Expression): ExpressionType => {
         if (expression.type === 'array') {
             const array = expression.expression;
             if (array) {
-                const elements: any[] = [];
+                const elements: ExpressionType[] = [];
                 array.forEach((element) => {
                     elements.push(makeExpressionType(element));
                 });
@@ -199,14 +199,14 @@ export const makeExpressionType = (expression: Expression): ExpressionType => {
 
         if (expression.type === 'cond') {
             const condition = expression.expression.condition;
-            const trueExpr = expression.expression.trueValue;
-            const falseExpr = expression.expression.falseValue;
+            const trueValue = expression.expression.trueValue;
+            const falseValue = expression.expression.falseValue;
 
-            if (condition && trueExpr && falseExpr) {
+            if (condition && trueValue && falseValue) {
                 return {
                     condition: makeExpressionType(condition),
-                    trueExpr: makeExpressionType(trueExpr),
-                    falseExpr: makeExpressionType(falseExpr),
+                    trueValue: makeExpressionType(trueValue),
+                    falseValue: makeExpressionType(falseValue),
                 };
             }
         }

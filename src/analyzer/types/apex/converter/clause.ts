@@ -48,52 +48,151 @@ import {
     isSoqlIdType,
     isUpdateListType,
     isWhereLogicalExpressionType,
+    isNormalModifierType,
 } from '../../apex_IR';
 
 import { toPrimitiveValue, toTypeClass } from './commons';
-import { NormalId, normalIdConvert, SoqlId, soqlIdConvert } from './id';
+import { normalIdConvert, soqlIdConvert } from './id';
+import { qualifiedNameConvert, fieldNameConvert, dataCategoryNameConvert } from './name';
+import { NormalStatement } from './statement';
+import { normalBlockConvert } from './block';
+import { NormalModifier, normalModifierConvert } from './modifier';
 import {
-    QualifiedName,
-    qualifiedNameConvert,
-    FieldName,
-    fieldNameConvert,
-    DataCategoryName,
-    dataCategoryNameConvert,
-} from './name';
-import { NormalBlock, normalBlockConvert } from './block';
-import { NormalModifier, normalModifierListConvert } from './modifier';
-import {
-    FieldNameList,
     fieldNameListConvert,
-    FieldGroupByList,
     fieldGroupByListConvert,
-    FieldOrderList,
     fieldOrderListConvert,
-    FieldSpecList,
     fieldSpecListConvert,
-    UpdateList,
     updateListConvert,
-    NetworkList,
     networkListConvert,
 } from './list';
 import {
-    BoundExpression,
+    Expression,
     boundExpressionConvert,
-    FilteringExpression,
     filteringExpressionConvert,
     LogicalExpression,
     logicalExpressionConvert,
     WhereLogicalExpression,
     whereLogicalExpressionConvert,
 } from './expression';
-import { SoqlFunction, soqlFunctionConvert, SearchGroup, searchGroupConvert } from './query';
+import { SoqlFunction, soqlFunctionConvert, searchGroupConvert, FieldSpec } from './query';
 
-const fieldNameOrSoqlFunctionConvert = (
-    target: FieldNameTypeClass | SoqlFunctionTypeClass | ErrorTypeClass,
+export const allRowsClauseConvert = (
+    target: AllRowsClauseTypeClass,
     errorClass: ErrorTypeClass[],
-): FieldName | SoqlFunction | undefined => {
+): string | undefined => {
+    return toPrimitiveValue(
+        target.getValue(),
+        (target): target is string => typeof target === 'string',
+        errorClass,
+    );
+};
+
+export type CatchClause = {
+    value?: string;
+    valueType: string[];
+    block: NormalStatement[];
+    modifier: NormalModifier[];
+};
+
+export const catchClauseConvert = (
+    target: CatchClauseTypeClass,
+    errorClass: ErrorTypeClass[],
+): CatchClause => {
+    const catchClause: CatchClause = {
+        valueType: [],
+        block: [],
+        modifier: [],
+    };
+
+    const valueTypeClass = toTypeClass(target.getValue(), isNormalIdType, errorClass);
+    if (valueTypeClass) {
+        catchClause.value = normalIdConvert(valueTypeClass);
+    }
+
+    const valueTypeTypeClass = toTypeClass(target.getValueType(), isQualifiedNameType, errorClass);
+    if (valueTypeTypeClass) {
+        catchClause.valueType.push(...qualifiedNameConvert(valueTypeTypeClass, errorClass));
+    }
+
+    const blockTypeClass = toTypeClass(target.getBlock(), isNormalBlockType, errorClass);
+    if (blockTypeClass) {
+        catchClause.block.push(...normalBlockConvert(blockTypeClass, errorClass));
+    }
+
+    target.getModifier().forEach((m) => {
+        const typeClass = toTypeClass(m, isNormalModifierType, errorClass);
+        if (typeClass) {
+            const modifier = normalModifierConvert(typeClass, errorClass);
+            if (modifier) {
+                catchClause.modifier.push(modifier);
+            }
+        }
+    });
+
+    return catchClause;
+};
+
+export type DataCategorySelection = {
+    value?: string;
+    selector?: string;
+    category: string[];
+};
+
+export const dataCategorySelectionConvert = (
+    target: DataCategorySelectionTypeClass,
+    errorClass: ErrorTypeClass[],
+): DataCategorySelection => {
+    const category: string[] = [];
+    const categoryTypeClass = toTypeClass(target.getCategory(), isDataCategoryNameType, errorClass);
+    if (categoryTypeClass) {
+        category.push(...dataCategoryNameConvert(categoryTypeClass, errorClass));
+    }
+
+    const dataCategorySelection: DataCategorySelection = {
+        category: category,
+    };
+
+    const valueTypeClass = toTypeClass(target.getValue(), isSoqlIdType, errorClass);
+    if (valueTypeClass) {
+        const soqlId = soqlIdConvert(valueTypeClass, errorClass);
+        if (soqlId) {
+            dataCategorySelection.value = soqlId;
+        }
+    }
+
+    const selectorTypeClass = toTypeClass(
+        target.getSelector(),
+        isFilteringSelectorType,
+        errorClass,
+    );
+    if (selectorTypeClass) {
+        const selector = filteringSelectorConvert(selectorTypeClass, errorClass);
+        if (selector) {
+            dataCategorySelection.selector = selector;
+        }
+    }
+
+    return dataCategorySelection;
+};
+
+export const elseClauseConvert = (
+    target: ElseClauseTypeClass,
+    errorClass: ErrorTypeClass[],
+): string[][] => {
+    const valueTypeClass = toTypeClass(target.getValue(), isFieldNameListType, errorClass);
+    if (valueTypeClass) {
+        return fieldNameListConvert(valueTypeClass, errorClass);
+    }
+
+    return [];
+};
+
+export const fieldGroupByConvert = (
+    target: FieldGroupByTypeClass,
+    errorClass: ErrorTypeClass[],
+): string[] | SoqlFunction | undefined => {
     const valueTypeClass = toTypeClass(
-        target,
+        target.getValue(),
         (target): target is FieldNameTypeClass | SoqlFunctionTypeClass =>
             isFieldNameType(target) || isSoqlFunctionType(target),
         errorClass,
@@ -103,6 +202,7 @@ const fieldNameOrSoqlFunctionConvert = (
         if (isFieldNameType(valueTypeClass)) {
             return fieldNameConvert(valueTypeClass, errorClass);
         }
+
         if (isSoqlFunctionType(valueTypeClass)) {
             return soqlFunctionConvert(valueTypeClass, errorClass);
         }
@@ -111,115 +211,52 @@ const fieldNameOrSoqlFunctionConvert = (
     return undefined;
 };
 
-export type AllRowsClause = string | undefined;
-
-export const allRowsClauseConvert = (
-    target: AllRowsClauseTypeClass,
-    errorClass: ErrorTypeClass[],
-): AllRowsClause => {
-    return toPrimitiveValue(
-        target.getValue(),
-        (target): target is string => typeof target === 'string',
-        errorClass,
-    );
-};
-
-export type CatchClause = {
-    value: NormalId | undefined;
-    valueType: QualifiedName;
-    block: NormalBlock;
-    modifier: NormalModifier[] | undefined;
-};
-
-export const catchClauseConvert = (
-    target: CatchClauseTypeClass,
-    errorClass: ErrorTypeClass[],
-): CatchClause => {
-    const valueTypeClass = toTypeClass(target.getValue(), isNormalIdType, errorClass);
-    const valueTypeTypeClass = toTypeClass(target.getValueType(), isQualifiedNameType, errorClass);
-    const blockTypeClass = toTypeClass(target.getBlock(), isNormalBlockType, errorClass);
-
-    return {
-        value: valueTypeClass ? normalIdConvert(valueTypeClass) : undefined,
-        valueType: valueTypeTypeClass
-            ? qualifiedNameConvert(valueTypeTypeClass, errorClass)
-            : undefined,
-        block: blockTypeClass ? normalBlockConvert(blockTypeClass, errorClass) : undefined,
-        modifier: normalModifierListConvert(target.getModifier(), errorClass),
-    };
-};
-
-export type DataCategorySelection = {
-    value: SoqlId;
-    selector: FilteringSelector;
-    category: DataCategoryName;
-};
-
-export const dataCategorySelectionConvert = (
-    target: DataCategorySelectionTypeClass,
-    errorClass: ErrorTypeClass[],
-): DataCategorySelection => {
-    const valueTypeClass = toTypeClass(target.getValue(), isSoqlIdType, errorClass);
-    const selectorTypeClass = toTypeClass(
-        target.getSelector(),
-        isFilteringSelectorType,
-        errorClass,
-    );
-    const categoryTypeClass = toTypeClass(target.getCategory(), isDataCategoryNameType, errorClass);
-
-    return {
-        value: valueTypeClass ? soqlIdConvert(valueTypeClass, errorClass) : undefined,
-        selector: selectorTypeClass
-            ? filteringSelectorConvert(selectorTypeClass, errorClass)
-            : undefined,
-        category: categoryTypeClass
-            ? dataCategoryNameConvert(categoryTypeClass, errorClass)
-            : undefined,
-    };
-};
-
-export type ElseClause = FieldNameList;
-
-export const elseClauseConvert = (
-    target: ElseClauseTypeClass,
-    errorClass: ErrorTypeClass[],
-): ElseClause => {
-    const valueTypeClass = toTypeClass(target.getValue(), isFieldNameListType, errorClass);
-    return valueTypeClass ? fieldNameListConvert(valueTypeClass, errorClass) : undefined;
-};
-
-export type FieldGroupBy = FieldName | SoqlFunction | undefined;
-
-export const fieldGroupByConvert = (
-    target: FieldGroupByTypeClass,
-    errorClass: ErrorTypeClass[],
-): FieldGroupBy => {
-    return fieldNameOrSoqlFunctionConvert(target.getValue(), errorClass);
-};
-
 export type FieldOrder = {
-    value: FieldName | SoqlFunction | undefined;
-    direction: string | undefined;
-    nulls: string | undefined;
+    value?: string[] | SoqlFunction;
+    direction?: string;
+    nulls?: string;
 };
 
 export const fieldOrderConvert = (
     target: FieldOrderTypeClass,
     errorClass: ErrorTypeClass[],
 ): FieldOrder => {
-    return {
-        value: fieldNameOrSoqlFunctionConvert(target.getValue(), errorClass),
-        direction: target.getDirection() ?? undefined,
-        nulls: target.getNulls() ?? undefined,
-    };
-};
+    const fieldOrder: FieldOrder = {};
 
-export type FilteringSelector = string | undefined;
+    const valueTypeClass = toTypeClass(
+        target.getValue(),
+        (target): target is FieldNameTypeClass | SoqlFunctionTypeClass =>
+            isFieldNameType(target) || isSoqlFunctionType(target),
+        errorClass,
+    );
+
+    if (valueTypeClass) {
+        if (isFieldNameType(valueTypeClass)) {
+            fieldOrder.value = fieldNameConvert(valueTypeClass, errorClass);
+        }
+
+        if (isSoqlFunctionType(valueTypeClass)) {
+            fieldOrder.value = soqlFunctionConvert(valueTypeClass, errorClass);
+        }
+    }
+
+    const direction = target.getDirection();
+    if (direction) {
+        fieldOrder.direction = direction;
+    }
+
+    const nulls = target.getNulls();
+    if (nulls) {
+        fieldOrder.nulls = nulls;
+    }
+
+    return fieldOrder;
+};
 
 export const filteringSelectorConvert = (
     target: FilteringSelectorTypeClass,
     errorClass: ErrorTypeClass[],
-): FilteringSelector => {
+): string | undefined => {
     return toPrimitiveValue(
         target.getValue(),
         (target): target is string => typeof target === 'string',
@@ -227,12 +264,10 @@ export const filteringSelectorConvert = (
     );
 };
 
-export type ForClauses = string[] | undefined;
-
 export const forClausesConvert = (
     target: ForClausesTypeClass,
     errorClass: ErrorTypeClass[],
-): ForClauses => {
+): string[] => {
     const values: string[] = [];
     target.getValue().forEach((item) => {
         const value = toPrimitiveValue(
@@ -244,142 +279,192 @@ export const forClausesConvert = (
             values.push(value);
         }
     });
-    return values.length > 0 ? values : undefined;
+    return values;
 };
 
 export type GroupByClause = {
-    value: FieldGroupByList;
-    mode: string | undefined;
-    having: LogicalExpression | undefined;
+    value: (string[] | SoqlFunction)[];
+    mode?: string;
+    having: LogicalExpression;
 };
 
 export const groupByClauseConvert = (
     target: GroupByClauseTypeClass,
     errorClass: ErrorTypeClass[],
 ): GroupByClause => {
+    const groupByClause: GroupByClause = {
+        value: [],
+        having: {
+            value: [],
+        },
+    };
+
     const valueTypeClass = toTypeClass(target.getValue(), isFieldGroupByListType, errorClass);
+    if (valueTypeClass) {
+        groupByClause.value.push(...fieldGroupByListConvert(valueTypeClass, errorClass));
+    }
+
+    const mode = target.getMode();
+    if (mode) {
+        groupByClause.mode = mode;
+    }
 
     const havingValue = target.getHaving();
-    const havingTypeClass = havingValue
-        ? toTypeClass(havingValue, isLogicalExpressionType, errorClass)
-        : undefined;
+    if (havingValue) {
+        const typeClass = toTypeClass(havingValue, isLogicalExpressionType, errorClass);
+        if (typeClass) {
+            const expression = logicalExpressionConvert(typeClass, errorClass);
+            groupByClause.having.value.push(...expression.value);
+            if (expression.operator) {
+                groupByClause.having.operator = expression.operator;
+            }
+        }
+    }
 
-    return {
-        value: valueTypeClass ? fieldGroupByListConvert(valueTypeClass, errorClass) : undefined,
-        mode: target.getMode() ?? undefined,
-        having: havingTypeClass ? logicalExpressionConvert(havingTypeClass, errorClass) : undefined,
-    };
+    return groupByClause;
 };
-
-export type LimitClause = string | BoundExpression;
 
 export const limitClauseConvert = (
     target: LimitClauseTypeClass,
     errorClass: ErrorTypeClass[],
-): LimitClause => {
+): string | Expression | undefined => {
     const value = target.getValue();
     if (typeof value === 'string') {
         return value;
     }
 
     const valueTypeClass = toTypeClass(value, isBoundExpressionType, errorClass);
-    return valueTypeClass ? boundExpressionConvert(valueTypeClass, errorClass) : undefined;
-};
+    if (valueTypeClass) {
+        return boundExpressionConvert(valueTypeClass, errorClass);
+    }
 
-export type OffsetClause = string | BoundExpression;
+    return undefined;
+};
 
 export const offsetClauseConvert = (
     target: OffsetClauseTypeClass,
     errorClass: ErrorTypeClass[],
-): OffsetClause => {
+): string | Expression | undefined => {
     const value = target.getValue();
     if (typeof value === 'string') {
         return value;
     }
 
     const valueTypeClass = toTypeClass(value, isBoundExpressionType, errorClass);
-    return valueTypeClass ? boundExpressionConvert(valueTypeClass, errorClass) : undefined;
-};
+    if (valueTypeClass) {
+        return boundExpressionConvert(valueTypeClass, errorClass);
+    }
 
-export type OrderByClause = FieldOrderList;
+    return undefined;
+};
 
 export const orderByClauseConvert = (
     target: OrderByClauseTypeClass,
     errorClass: ErrorTypeClass[],
-): OrderByClause => {
+): FieldOrder[] => {
     const valueTypeClass = toTypeClass(target.getValue(), isFieldOrderListType, errorClass);
-    return valueTypeClass ? fieldOrderListConvert(valueTypeClass, errorClass) : undefined;
+    if (valueTypeClass) {
+        return fieldOrderListConvert(valueTypeClass, errorClass);
+    }
+
+    return [];
 };
 
 export type SoslClauses = {
-    value: SearchGroup | undefined;
-    fieldSpecList: FieldSpecList;
-    withList: SoslWithClause[] | undefined;
-    limitClause: LimitClause | undefined;
-    updateList: UpdateList;
+    value?: string;
+    fieldSpecList: FieldSpec[];
+    withList: SoslWithClause[];
+    limitClause?: string | Expression;
+    updateList: string[];
 };
 
 export const soslClausesConvert = (
     target: SoslClausesTypeClass,
     errorClass: ErrorTypeClass[],
 ): SoslClauses => {
+    const soslClauses: SoslClauses = {
+        fieldSpecList: [],
+        withList: [],
+        updateList: [],
+    };
+
     const valueValue = target.getValue();
-    const valueTypeClass = valueValue
-        ? toTypeClass(valueValue, isSearchGroupType, errorClass)
-        : undefined;
+    if (valueValue) {
+        const valueTypeClass = toTypeClass(valueValue, isSearchGroupType, errorClass);
+        if (valueTypeClass) {
+            const searchGroup = searchGroupConvert(valueTypeClass, errorClass);
+            if (searchGroup) {
+                soslClauses.value = searchGroup;
+            }
+        }
+    }
 
     const fieldSpecListValue = target.getFieldSpecList();
-    const fieldSpecListTypeClass = fieldSpecListValue
-        ? toTypeClass(fieldSpecListValue, isFieldSpecListType, errorClass)
-        : undefined;
+    if (fieldSpecListValue) {
+        const fieldSpecListTypeClass = toTypeClass(
+            fieldSpecListValue,
+            isFieldSpecListType,
+            errorClass,
+        );
+        if (fieldSpecListTypeClass) {
+            soslClauses.fieldSpecList.push(
+                ...fieldSpecListConvert(fieldSpecListTypeClass, errorClass),
+            );
+        }
+    }
 
-    const withList: SoslWithClause[] = [];
     target.getWithList()?.forEach((item) => {
         const withTypeClass = toTypeClass(item, isSoslWithClauseType, errorClass);
         if (withTypeClass) {
-            withList.push(soslWithClauseConvert(withTypeClass, errorClass));
+            soslClauses.withList.push(soslWithClauseConvert(withTypeClass, errorClass));
         }
     });
 
     const limitClauseValue = target.getLimitClause();
-    const limitClauseTypeClass = limitClauseValue
-        ? toTypeClass(limitClauseValue, isLimitClauseType, errorClass)
-        : undefined;
+    if (limitClauseValue) {
+        const limitClauseTypeClass = toTypeClass(limitClauseValue, isLimitClauseType, errorClass);
+        if (limitClauseTypeClass) {
+            const limitClause = limitClauseConvert(limitClauseTypeClass, errorClass);
+            if (limitClause) {
+                soslClauses.limitClause = limitClause;
+            }
+        }
+    }
 
     const updateListValue = target.getUpdateList();
-    const updateListTypeClass = updateListValue
-        ? toTypeClass(updateListValue, isUpdateListType, errorClass)
-        : undefined;
+    if (updateListValue) {
+        const updateListTypeClass = toTypeClass(updateListValue, isUpdateListType, errorClass);
+        if (updateListTypeClass) {
+            soslClauses.updateList.push(...updateListConvert(updateListTypeClass, errorClass));
+        }
+    }
 
-    return {
-        value: valueTypeClass ? searchGroupConvert(valueTypeClass, errorClass) : undefined,
-        fieldSpecList: fieldSpecListTypeClass
-            ? fieldSpecListConvert(fieldSpecListTypeClass, errorClass)
-            : undefined,
-        withList: withList.length > 0 ? withList : undefined,
-        limitClause: limitClauseTypeClass
-            ? limitClauseConvert(limitClauseTypeClass, errorClass)
-            : undefined,
-        updateList: updateListTypeClass
-            ? updateListConvert(updateListTypeClass, errorClass)
-            : undefined,
-    };
+    return soslClauses;
 };
 
 export type SoslWithClause = {
-    value: string | undefined;
-    content: string | BoundExpression | FilteringExpression | NetworkList;
+    value?: string;
+    content?: string | string[] | Expression | DataCategorySelection[];
 };
 
 export const soslWithClauseConvert = (
     target: SoslWithClauseTypeClass,
     errorClass: ErrorTypeClass[],
 ): SoslWithClause => {
-    const contentValue = target.getContent();
+    const soslWithClause: SoslWithClause = {};
 
-    let content: SoslWithClause['content'] = undefined;
+    const value = toPrimitiveValue(
+        target.getValue(),
+        (target): target is string => typeof target === 'string',
+        errorClass,
+    );
+    if (value) {
+        soslWithClause.value = value;
+    }
+
+    const contentValue = target.getContent();
     if (typeof contentValue === 'string') {
-        content = contentValue;
+        soslWithClause.content = contentValue;
     } else if (contentValue) {
         const contentTypeClass = toTypeClass(
             contentValue,
@@ -395,35 +480,35 @@ export const soslWithClauseConvert = (
 
         if (contentTypeClass) {
             if (isBoundExpressionType(contentTypeClass)) {
-                content = boundExpressionConvert(contentTypeClass, errorClass);
+                const expression = boundExpressionConvert(contentTypeClass, errorClass);
+                if (expression) {
+                    soslWithClause.content = expression;
+                }
             }
             if (isFilteringExpressionType(contentTypeClass)) {
-                content = filteringExpressionConvert(contentTypeClass, errorClass);
+                soslWithClause.content = filteringExpressionConvert(contentTypeClass, errorClass);
             }
             if (isNetworkListType(contentTypeClass)) {
-                content = networkListConvert(contentTypeClass, errorClass);
+                soslWithClause.content = networkListConvert(contentTypeClass, errorClass);
             }
         }
     }
 
-    return {
-        value: toPrimitiveValue(
-            target.getValue(),
-            (target): target is string => typeof target === 'string',
-            errorClass,
-        ),
-        content: content,
-    };
+    return soslWithClause;
 };
 
 export type TypeOf = {
-    value: FieldName;
-    whenClause: WhenClause[] | undefined;
-    elseClause: ElseClause;
+    value: string[];
+    whenClause: WhenClause[];
+    elseClause: string[][];
 };
 
 export const typeOfConvert = (target: TypeOfTypeClass, errorClass: ErrorTypeClass[]): TypeOf => {
+    const value: string[] = [];
     const valueTypeClass = toTypeClass(target.getValue(), isFieldNameType, errorClass);
+    if (valueTypeClass) {
+        value.push(...fieldNameConvert(valueTypeClass, errorClass));
+    }
 
     const whenClause: WhenClause[] = [];
     target.getWhenClause().forEach((item) => {
@@ -433,26 +518,26 @@ export const typeOfConvert = (target: TypeOfTypeClass, errorClass: ErrorTypeClas
         }
     });
 
+    const elseClause: string[][] = [];
     const elseClauseValue = target.getElseClause();
-    const elseClauseTypeClass = elseClauseValue
-        ? toTypeClass(elseClauseValue, isElseClauseType, errorClass)
-        : undefined;
+    if (elseClauseValue) {
+        const elseClauseTypeClass = toTypeClass(elseClauseValue, isElseClauseType, errorClass);
+        if (elseClauseTypeClass) {
+            elseClause.push(...elseClauseConvert(elseClauseTypeClass, errorClass));
+        }
+    }
 
     return {
-        value: valueTypeClass ? fieldNameConvert(valueTypeClass, errorClass) : undefined,
-        whenClause: whenClause.length > 0 ? whenClause : undefined,
-        elseClause: elseClauseTypeClass
-            ? elseClauseConvert(elseClauseTypeClass, errorClass)
-            : undefined,
+        value: value,
+        whenClause: whenClause,
+        elseClause: elseClause,
     };
 };
-
-export type UpdateType = string | undefined;
 
 export const updateTypeConvert = (
     target: UpdateTypeTypeClass,
     errorClass: ErrorTypeClass[],
-): UpdateType => {
+): string | undefined => {
     return toPrimitiveValue(
         target.getValue(),
         (target): target is string => typeof target === 'string',
@@ -460,70 +545,92 @@ export const updateTypeConvert = (
     );
 };
 
-export type UsingScope = SoqlId;
-
 export const usingScopeConvert = (
     target: UsingScopeTypeClass,
     errorClass: ErrorTypeClass[],
-): UsingScope => {
+): string | undefined => {
     const valueTypeClass = toTypeClass(target.getValue(), isSoqlIdType, errorClass);
-    return valueTypeClass ? soqlIdConvert(valueTypeClass, errorClass) : undefined;
+    if (valueTypeClass) {
+        return soqlIdConvert(valueTypeClass, errorClass);
+    }
+
+    return undefined;
 };
 
 export type WhenClause = {
-    value: FieldName;
-    field: FieldNameList;
+    value: string[];
+    field: string[][];
 };
 
 export const whenClauseConvert = (
     target: WhenClauseTypeClass,
     errorClass: ErrorTypeClass[],
 ): WhenClause => {
+    const value: string[] = [];
     const valueTypeClass = toTypeClass(target.getValue(), isFieldNameType, errorClass);
-    const fieldTypeClass = toTypeClass(target.getField(), isFieldNameListType, errorClass);
+    if (valueTypeClass) {
+        value.push(...fieldNameConvert(valueTypeClass, errorClass));
+    }
 
+    const field: string[][] = [];
+    const fieldTypeClass = toTypeClass(target.getField(), isFieldNameListType, errorClass);
+    if (fieldTypeClass) {
+        field.push(...fieldNameListConvert(fieldTypeClass, errorClass));
+    }
     return {
-        value: valueTypeClass ? fieldNameConvert(valueTypeClass, errorClass) : undefined,
-        field: fieldTypeClass ? fieldNameListConvert(fieldTypeClass, errorClass) : undefined,
+        value: value,
+        field: field,
     };
 };
-
-export type WhereClause = WhereLogicalExpression | undefined;
 
 export const whereClauseConvert = (
     target: WhereClauseTypeClass,
     errorClass: ErrorTypeClass[],
-): WhereClause => {
+): WhereLogicalExpression => {
     const valueTypeClass = toTypeClass(target.getValue(), isWhereLogicalExpressionType, errorClass);
-    return valueTypeClass ? whereLogicalExpressionConvert(valueTypeClass, errorClass) : undefined;
+    if (valueTypeClass) {
+        return whereLogicalExpressionConvert(valueTypeClass, errorClass);
+    }
+
+    return {
+        value: [],
+    };
 };
 
 export type WithClause = {
-    value: string | LogicalExpression | undefined;
-    field: FilteringExpression;
+    value?: string | LogicalExpression;
+    field: DataCategorySelection[];
 };
 
 export const withClauseConvert = (
     target: WithClauseTypeClass,
     errorClass: ErrorTypeClass[],
 ): WithClause => {
-    const valueValue = target.getValue();
-
-    let value: WithClause['value'] = undefined;
-    if (typeof valueValue === 'string') {
-        value = valueValue;
-    } else {
-        const valueTypeClass = toTypeClass(valueValue, isLogicalExpressionType, errorClass);
-        value = valueTypeClass ? logicalExpressionConvert(valueTypeClass, errorClass) : undefined;
+    const field: DataCategorySelection[] = [];
+    const fieldValue = target.getField();
+    if (fieldValue) {
+        const fieldTypeClass = toTypeClass(fieldValue, isFilteringExpressionType, errorClass);
+        if (fieldTypeClass) {
+            field.push(...filteringExpressionConvert(fieldTypeClass, errorClass));
+        }
     }
 
-    const fieldValue = target.getField();
-    const fieldTypeClass = fieldValue
-        ? toTypeClass(fieldValue, isFilteringExpressionType, errorClass)
-        : undefined;
-
-    return {
-        value: value,
-        field: fieldTypeClass ? filteringExpressionConvert(fieldTypeClass, errorClass) : undefined,
+    const withClause: WithClause = {
+        field: field,
     };
+
+    const valueValue = target.getValue();
+    if (typeof valueValue === 'string') {
+        withClause.value = valueValue;
+    } else {
+        const valueTypeClass = toTypeClass(valueValue, isLogicalExpressionType, errorClass);
+        if (valueTypeClass) {
+            const expression = logicalExpressionConvert(valueTypeClass, errorClass);
+            if (expression) {
+                withClause.value = expression;
+            }
+        }
+    }
+
+    return withClause;
 };

@@ -14,35 +14,43 @@ import {
 
 import { toTypeClass } from './commons';
 import { Expression, expressionConvert } from './expression';
-import { AnyId, anyIdConvert, NormalId, normalIdConvert } from './id';
-import { TypeList, typeListConvert } from './list';
+import { anyIdConvert, normalIdConvert } from './id';
+import { typeListConvert } from './list';
 import { NormalLiteral } from './literal';
+import { TypeRef } from './type';
 import { elementValueConvert } from './value';
 
 export type ElementValuePair = {
-    left: NormalId | undefined;
-    right: NormalLiteral | undefined;
+    left?: string;
+    right?: NormalLiteral;
 };
 
 export const elementValuePairConvert = (
     target: ElementValuePairTypeClass,
     errorClass: ErrorTypeClass[],
 ): ElementValuePair => {
+    const elementValuePair: ElementValuePair = {};
+
     const leftTypeClass = toTypeClass(target.getLeft(), isNormalIdType, errorClass);
+    if (leftTypeClass) {
+        elementValuePair.left = normalIdConvert(leftTypeClass);
+    }
+
     const rightTypeClass = toTypeClass(target.getRight(), isElementValueType, errorClass);
+    if (rightTypeClass) {
+        const literal = elementValueConvert(rightTypeClass, errorClass);
+        if (literal) {
+            elementValuePair.right = literal;
+        }
+    }
 
-    return {
-        left: leftTypeClass ? normalIdConvert(leftTypeClass) : undefined,
-        right: rightTypeClass ? elementValueConvert(rightTypeClass, errorClass) : undefined,
-    };
+    return elementValuePair;
 };
-
-export type ElementValuePairs = ElementValuePair[] | undefined;
 
 export const elementValuePairsConvert = (
     target: ElementValuePairsTypeClass,
     errorClass: ErrorTypeClass[],
-): ElementValuePairs => {
+): ElementValuePair[] => {
     const values: ElementValuePair[] = [];
     target.getValue().forEach((item) => {
         const valueTypeClass = toTypeClass(item, isElementValuePairType, errorClass);
@@ -50,43 +58,64 @@ export const elementValuePairsConvert = (
             values.push(elementValuePairConvert(valueTypeClass, errorClass));
         }
     });
-    return values.length > 0 ? values : undefined;
+    return values;
 };
 
 export type IdCreatedNamePair = {
-    left: AnyId | undefined;
-    right: TypeList | undefined;
+    left?: string;
+    right: TypeRef[];
 };
 
 export const idCreatedNamePairConvert = (
     target: IdCreatedNamePairTypeClass,
     errorClass: ErrorTypeClass[],
 ): IdCreatedNamePair => {
+    const idCreatedNamePair: IdCreatedNamePair = {
+        right: [],
+    };
+
     const leftTypeClass = toTypeClass(target.getLeft(), isAnyIdType, errorClass);
+    if (leftTypeClass) {
+        idCreatedNamePair.left = anyIdConvert(leftTypeClass);
+    }
 
     const rightValue = target.getRight();
-    const rightTypeClass = rightValue ? toTypeClass(rightValue, isTypeListType, errorClass) : undefined;
+    if (rightValue) {
+        const typeClass = toTypeClass(rightValue, isTypeListType, errorClass);
+        if (typeClass) {
+            idCreatedNamePair.right.push(...typeListConvert(typeClass, errorClass));
+        }
+    }
 
-    return {
-        left: leftTypeClass ? anyIdConvert(leftTypeClass) : undefined,
-        right: rightTypeClass ? typeListConvert(rightTypeClass, errorClass) : undefined,
-    };
+    return idCreatedNamePair;
 };
 
 export type MapCreatorRestPair = {
-    left: Expression;
-    right: Expression;
+    left?: Expression;
+    right?: Expression;
 };
 
 export const mapCreatorRestPairConvert = (
     target: MapCreatorRestPairTypeClass,
     errorClass: ErrorTypeClass[],
 ): MapCreatorRestPair => {
-    const leftTypeClass = toTypeClass(target.getLeft(), isExpressionTypeAll, errorClass);
-    const rightTypeClass = toTypeClass(target.getRight(), isExpressionTypeAll, errorClass);
+    const mapCreatorRestPair: MapCreatorRestPair = {};
 
-    return {
-        left: leftTypeClass ? expressionConvert(leftTypeClass, errorClass) : undefined,
-        right: rightTypeClass ? expressionConvert(rightTypeClass, errorClass) : undefined,
-    };
+    const leftTypeClass = toTypeClass(target.getLeft(), isExpressionTypeAll, errorClass);
+    if (leftTypeClass) {
+        const expression = expressionConvert(leftTypeClass, errorClass);
+        if (expression) {
+            mapCreatorRestPair.left = expression;
+        }
+    }
+
+    const rightTypeClass = toTypeClass(target.getRight(), isExpressionTypeAll, errorClass);
+    if (rightTypeClass) {
+        const expression = expressionConvert(rightTypeClass, errorClass);
+        if (expression) {
+            mapCreatorRestPair.right = expression;
+        }
+    }
+
+    return mapCreatorRestPair;
 };

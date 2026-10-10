@@ -20,8 +20,7 @@ export class SignedIntegerTypeClass extends PrimitiveLiteralTypeClass<string> {
         let operator: string | null = null;
         if (ctx.ADD()) {
             operator = '+';
-        }
-        if (ctx.SUB()) {
+        } else if (ctx.SUB()) {
             operator = '-';
         }
         const value = ctx.IntegerLiteral().getText();
@@ -37,4 +36,3 @@ export class SignedIntegerTypeClass extends PrimitiveLiteralTypeClass<string> {
 export const isSignedIntegerType = (target: CommonTypeClass): target is SignedIntegerTypeClass => {
     return target instanceof SignedIntegerTypeClass;
 };
-

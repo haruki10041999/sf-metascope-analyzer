@@ -10,52 +10,59 @@ import {
 
 import { toTypeClass } from './commons';
 import { Expression, expressionConvert } from './expression';
-import { NormalId, normalIdConvert } from './id';
-
-export type ArrayInitializer = Expression[] | undefined;
+import { normalIdConvert } from './id';
 
 export const arrayInitializerConvert = (
     target: ArrayInitializerTypeClass,
     errorClass: ErrorTypeClass[],
-): ArrayInitializer => {
+): Expression[] => {
     const values: Expression[] = [];
     target.getValue().forEach((item) => {
         const valueTypeClass = toTypeClass(item, isExpressionTypeAll, errorClass);
         if (valueTypeClass) {
-            values.push(expressionConvert(valueTypeClass, errorClass));
+            const expression = expressionConvert(valueTypeClass, errorClass);
+            if (expression) {
+                values.push(expression);
+            }
         }
     });
-    return values.length > 0 ? values : undefined;
+    return values;
 };
 
 export type VariableDeclarator = {
-    value: NormalId | undefined;
-    content: Expression;
+    value?: string;
+    content?: Expression;
 };
 
 export const variableDeclaratorConvert = (
     target: VariableDeclaratorTypeClass,
     errorClass: ErrorTypeClass[],
 ): VariableDeclarator => {
+    const variableDeclarator: VariableDeclarator = {};
+
     const valueTypeClass = toTypeClass(target.getValue(), isNormalIdType, errorClass);
+    if (valueTypeClass) {
+        variableDeclarator.value = normalIdConvert(valueTypeClass);
+    }
 
     const contentValue = target.getContent();
-    const contentTypeClass = contentValue
-        ? toTypeClass(contentValue, isExpressionTypeAll, errorClass)
-        : undefined;
+    if (contentValue) {
+        const contentTypeClass = toTypeClass(contentValue, isExpressionTypeAll, errorClass);
+        if (contentTypeClass) {
+            const expression = expressionConvert(contentTypeClass, errorClass);
+            if (expression) {
+                variableDeclarator.content = expression;
+            }
+        }
+    }
 
-    return {
-        value: valueTypeClass ? normalIdConvert(valueTypeClass) : undefined,
-        content: contentTypeClass ? expressionConvert(contentTypeClass, errorClass) : undefined,
-    };
+    return variableDeclarator;
 };
-
-export type VariableDeclarators = VariableDeclarator[] | undefined;
 
 export const variableDeclaratorsConvert = (
     target: VariableDeclaratorsTypeClass,
     errorClass: ErrorTypeClass[],
-): VariableDeclarators => {
+): VariableDeclarator[] => {
     const values: VariableDeclarator[] = [];
     target.getValue().forEach((item) => {
         const valueTypeClass = toTypeClass(item, isVariableDeclaratorType, errorClass);
@@ -63,5 +70,5 @@ export const variableDeclaratorsConvert = (
             values.push(variableDeclaratorConvert(valueTypeClass, errorClass));
         }
     });
-    return values.length > 0 ? values : undefined;
+    return values;
 };

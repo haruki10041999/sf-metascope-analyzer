@@ -7,14 +7,14 @@ import {
 } from '../../apex_IR';
 
 import { toTypeClass } from './commons';
-import { ExpressionList, expressionListConvert, TypeList, typeListConvert } from './list';
-
-export type NormalArguments = ExpressionList | undefined;
+import { TypeRef } from './type';
+import { Expression } from './expression';
+import { expressionListConvert, typeListConvert } from './list';
 
 export const normalArgumentsConvert = (
     target: NormalArgumentsTypeClass,
     errorClass: ErrorTypeClass[],
-): NormalArguments => {
+): Expression[] => {
     const valueTypeClass = target.getValue();
     if (valueTypeClass) {
         const expressionListTypeClass = toTypeClass(
@@ -27,15 +27,13 @@ export const normalArgumentsConvert = (
         }
     }
 
-    return undefined;
+    return [];
 };
-
-export type TypeArguments = TypeList | undefined;
 
 export const typeArgumentsConvert = (
     target: TypeArgumentsTypeClass,
     errorClass: ErrorTypeClass[],
-): TypeArguments => {
+): TypeRef[] => {
     const valueTypeClass = target.getValue();
     if (valueTypeClass) {
         const typeListTypeClass = toTypeClass(valueTypeClass, isTypeListType, errorClass);
@@ -44,5 +42,5 @@ export const typeArgumentsConvert = (
         }
     }
 
-    return undefined;
+    return [];
 };

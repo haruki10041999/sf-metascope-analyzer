@@ -45,4 +45,3 @@ export class SignedNumberTypeClass extends PrimitiveLiteralTypeClass<string> {
 export const isSignedNumberType = (target: CommonTypeClass): target is SignedNumberTypeClass => {
     return target instanceof SignedNumberTypeClass;
 };
-

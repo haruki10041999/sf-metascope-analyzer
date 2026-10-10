@@ -39,7 +39,8 @@ export type TypeType =
           kind: 'map';
           keyType: TypeType;
           valueType: TypeType;
-      };
+      }
+    | undefined;
 
 export const makeTypeType = (type: TypeRef): TypeType => {
     if (type.value) {
@@ -91,5 +92,5 @@ export const makeTypeType = (type: TypeRef): TypeType => {
         }
     }
 
-    throw new Error('Unsupported type');
+    return undefined;
 };

@@ -19,4 +19,3 @@ export const isNormalExpressionType = (
 ): target is NormalExpressionTypeClass => {
     return target instanceof NormalExpressionTypeClass;
 };
-

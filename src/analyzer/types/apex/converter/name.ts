@@ -1,5 +1,4 @@
 import {
-    CommonTypeClass,
     ErrorTypeClass,
     QualifiedNameTypeClass,
     TypeNameTypeClass,
@@ -15,16 +14,15 @@ import {
 } from '../../apex_IR';
 
 import { toTypeClass } from './commons';
-import { NormalId, normalIdConvert, SoqlId, soqlIdConvert } from './id';
-import { TypeArguments, typeArgumentsConvert } from './arguments';
+import { normalIdConvert, soqlIdConvert } from './id';
+import { TypeRef } from './type';
+import { typeArgumentsConvert } from './arguments';
 import { IdCreatedNamePair, idCreatedNamePairConvert } from './pair';
-
-export type QualifiedName = NormalId[] | undefined;
 
 export const qualifiedNameConvert = (
     target: QualifiedNameTypeClass,
     errorClass: ErrorTypeClass[],
-): QualifiedName => {
+): string[] => {
     const values: string[] = [];
     target.getValue().forEach((item) => {
         const valueTypeClass = toTypeClass(item, isNormalIdType, errorClass);
@@ -32,49 +30,49 @@ export const qualifiedNameConvert = (
             values.push(normalIdConvert(valueTypeClass));
         }
     });
-    return values.length > 0 ? values : undefined;
+    return values;
 };
 
 export type TypeName = {
-    value: string | NormalId | undefined;
-    generic: TypeArguments | undefined;
+    value?: string;
+    generic: TypeRef[];
 };
 
 export const typeNameConvert = (
     target: TypeNameTypeClass,
     errorClass: ErrorTypeClass[],
 ): TypeName => {
-    let value = undefined;
-    let generic = undefined;
+    const typeName: TypeName = {
+        generic: [],
+    };
 
     const valueTypeClass = target.getValue();
-
-    if (!(valueTypeClass instanceof CommonTypeClass)) {
-        value = valueTypeClass;
+    if (typeof valueTypeClass === 'string') {
+        typeName.value = valueTypeClass;
     } else {
         if (isNormalIdType(valueTypeClass)) {
-            value = normalIdConvert(valueTypeClass);
+            typeName.value = normalIdConvert(valueTypeClass);
         }
     }
 
     const genericTypeClass = target.getGeneric();
     if (genericTypeClass) {
         const typeClass = toTypeClass(genericTypeClass, isTypeArgumentsType, errorClass);
-        generic = typeClass ? typeArgumentsConvert(typeClass, errorClass) : undefined;
+        if (typeClass) {
+            const generic = typeArgumentsConvert(typeClass, errorClass);
+            if (generic) {
+                typeName.generic.push(...generic);
+            }
+        }
     }
 
-    return {
-        value: value,
-        generic: generic,
-    };
+    return typeName;
 };
-
-export type CreatedName = IdCreatedNamePair[] | undefined;
 
 export const createdNameConvert = (
     target: CreatedNameTypeClass,
     errorClass: ErrorTypeClass[],
-): CreatedName => {
+): IdCreatedNamePair[] => {
     const values: IdCreatedNamePair[] = [];
     target.getValue().forEach((item) => {
         const valueTypeClass = toTypeClass(item, isIdCreatedNamePairType, errorClass);
@@ -82,32 +80,31 @@ export const createdNameConvert = (
             values.push(idCreatedNamePairConvert(valueTypeClass, errorClass));
         }
     });
-    return values.length > 0 ? values : undefined;
+    return values;
 };
-
-export type FieldName = SoqlId[] | undefined;
 
 export const fieldNameConvert = (
     target: FieldNameTypeClass,
     errorClass: ErrorTypeClass[],
-): FieldName => {
-    const values: (string | undefined)[] = [];
+): string[] => {
+    const values: string[] = [];
     target.getValue().forEach((item) => {
         const valueTypeClass = toTypeClass(item, isSoqlIdType, errorClass);
         if (valueTypeClass) {
             if (isSoqlIdType(valueTypeClass)) {
-                values.push(soqlIdConvert(valueTypeClass, errorClass));
+                const soqlId = soqlIdConvert(valueTypeClass, errorClass);
+                if (soqlId) {
+                    values.push(soqlId);
+                }
             }
         }
     });
 
-    return values.filter((v): v is string => v !== undefined).length
-        ? values.filter((v): v is string => v !== undefined)
-        : undefined;
+    return values;
 };
 
 export type DateFieldName = {
-    value: FieldName | undefined;
+    value: string[];
     isConvertTimeZone: boolean;
 };
 
@@ -115,33 +112,32 @@ export const dateFieldNameConvert = (
     target: DateFieldNameTypeClass,
     errorClass: ErrorTypeClass[],
 ): DateFieldName => {
-    let value: FieldName | undefined = undefined;
+    const values: string[] = [];
     const isConvertTimeZone = target.getConvertTimeZone();
     const valueTypeClass = toTypeClass(target.getValue(), isFieldNameType, errorClass);
     if (valueTypeClass) {
-        value = fieldNameConvert(valueTypeClass, errorClass);
+        values.push(...fieldNameConvert(valueTypeClass, errorClass));
     }
     return {
-        value: value,
+        value: values,
         isConvertTimeZone: isConvertTimeZone,
     };
 };
 
-export type DataCategoryName = SoqlId[] | undefined;
-
 export const dataCategoryNameConvert = (
     target: DataCategoryNameTypeClass,
     errorClass: ErrorTypeClass[],
-): DataCategoryName => {
-    const values: (string | undefined)[] = [];
+): string[] => {
+    const values: string[] = [];
     target.getValue().forEach((item) => {
         const valueTypeClass = toTypeClass(item, isSoqlIdType, errorClass);
         if (valueTypeClass) {
-            values.push(soqlIdConvert(valueTypeClass, errorClass));
+            const soqlId = soqlIdConvert(valueTypeClass, errorClass);
+            if (soqlId) {
+                values.push(soqlId);
+            }
         }
     });
 
-    return values.filter((v): v is string => v !== undefined).length
-        ? values.filter((v): v is string => v !== undefined)
-        : undefined;
+    return values;
 };

@@ -1,8 +1,10 @@
 import { NormalBlock } from './converter';
 
-import { makeStatementType } from './statement';
+import { StatementType, makeStatementType } from './statement';
 
-export const makeNormalBlockType = (block: NormalBlock): any => {
+export type BlockType = StatementType[] | undefined;
+
+export const makeBlockType = (block: NormalBlock): BlockType => {
     if (block) {
         const statements: any[] = [];
 

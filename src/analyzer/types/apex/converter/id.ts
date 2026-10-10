@@ -9,28 +9,28 @@ import {
 
 import { toTypeClass } from './commons';
 
-export type NormalId = string;
-
-export const normalIdConvert = (target: NormalIdTypeClass): NormalId => {
+export const normalIdConvert = (target: NormalIdTypeClass): string => {
     return target.getValue();
 };
 
-export type AnyId = string;
-
-export const anyIdConvert = (target: AnyIdTypeClass): AnyId => {
+export const anyIdConvert = (target: AnyIdTypeClass): string => {
     return target.getValue();
 };
 
-export type SoqlId = string | undefined;
-
-export const soqlIdConvert = (target: SoqlIdTypeClass, errorClasses: ErrorTypeClass[]): SoqlId => {
+export const soqlIdConvert = (
+    target: SoqlIdTypeClass,
+    errorClasses: ErrorTypeClass[],
+): string | undefined => {
     const soqlValue = toTypeClass(target.getValue(), isNormalIdType, errorClasses);
-    return soqlValue ? normalIdConvert(soqlValue) : undefined;
+    if (soqlValue) {
+        return normalIdConvert(soqlValue);
+    }
 };
 
-export type SoslId = string[] | undefined;
-
-export const soslIdConvert = (target: SoslIdTypeClass, errorClasses: ErrorTypeClass[]): SoslId => {
+export const soslIdConvert = (
+    target: SoslIdTypeClass,
+    errorClasses: ErrorTypeClass[],
+): string[] => {
     const values: string[] = [];
     for (const value of target.getValue()) {
         const normalIdValue = toTypeClass(value, isNormalIdType, errorClasses);
@@ -38,5 +38,5 @@ export const soslIdConvert = (target: SoslIdTypeClass, errorClasses: ErrorTypeCl
             values.push(normalIdConvert(normalIdValue));
         }
     }
-    return values.length > 0 ? values : undefined;
+    return values;
 };

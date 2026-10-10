@@ -36,53 +36,47 @@ import {
 } from '../../apex_IR';
 
 import { toPrimitiveValue, toTypeClass } from './commons';
-import { SoslId, soslIdConvert } from './id';
-import { FieldName, fieldNameConvert, DateFieldName, dateFieldNameConvert } from './name';
+import { soslIdConvert } from './id';
+import { fieldNameConvert, DateFieldName, dateFieldNameConvert } from './name';
 import {
-    FieldList,
+    FromName,
+    SoslField,
     fieldListConvert,
-    FieldOrderList,
     fieldOrderListConvert,
-    FromNameList,
     fromNameListConvert,
-    SelectList,
     selectListConvert,
-    SubFieldList,
     subFieldListConvert,
-    UpdateList,
     updateListConvert,
 } from './list';
-import { LogicalExpression, logicalExpressionConvert } from './expression';
-import { SignedInteger, signedIntegerConvert } from './literal';
-import { LocationValue, locationValueConvert } from './value';
-import { SoqlFieldsParameter, soqlFieldsParameterConvert } from './parameter';
 import {
-    AllRowsClause,
+    Expression,
+    LogicalExpression,
+    logicalExpressionConvert,
+    WhereLogicalExpression,
+} from './expression';
+import { SignedLiteral, signedIntegerConvert } from './literal';
+import { locationValueConvert } from './value';
+import { soqlFieldsParameterConvert } from './parameter';
+import {
     allRowsClauseConvert,
-    ForClauses,
+    FieldOrder,
     forClausesConvert,
     GroupByClause,
     groupByClauseConvert,
-    LimitClause,
     limitClauseConvert,
-    OffsetClause,
     offsetClauseConvert,
-    OrderByClause,
     orderByClauseConvert,
-    UsingScope,
     usingScopeConvert,
-    WhereClause,
     whereClauseConvert,
     WithClause,
     withClauseConvert,
 } from './clause';
-
-export type ComparisonOperator = string | undefined;
+import { SelectEntry, SubFieldEntry } from './entry';
 
 export const comparisonOperatorConvert = (
     target: ComparisonOperatorTypeClass,
     errorClass: ErrorTypeClass[],
-): ComparisonOperator => {
+): string | undefined => {
     return toPrimitiveValue(
         target.getValue(),
         (target): target is string => typeof target === 'string',
@@ -91,220 +85,320 @@ export const comparisonOperatorConvert = (
 };
 
 export type DateFormula = {
-    value: string | undefined;
-    param: SignedInteger | undefined;
+    value?: string;
+    param?: SignedLiteral;
 };
 
 export const dateFormulaConvert = (
     target: DateFormulaTypeClass,
     errorClass: ErrorTypeClass[],
 ): DateFormula => {
+    const dateFormula: DateFormula = {};
+
     const value = toPrimitiveValue(
         target.getValue(),
         (target): target is string => typeof target === 'string',
         errorClass,
     );
+    if (value) {
+        dateFormula.value = value;
+    }
 
     const paramValue = target.getParam();
-    const paramTypeClass = paramValue
-        ? toTypeClass(paramValue, isSignedIntegerType, errorClass)
-        : undefined;
+    if (paramValue) {
+        const typeClass = toTypeClass(paramValue, isSignedIntegerType, errorClass);
+        if (typeClass) {
+            dateFormula.param = signedIntegerConvert(typeClass, errorClass);
+        }
+    }
 
-    return {
-        value: value,
-        param: paramTypeClass ? signedIntegerConvert(paramTypeClass, errorClass) : undefined,
-    };
+    return dateFormula;
 };
 
 export type FieldSpec = {
-    value: SoslId;
-    fieldList: FieldList;
-    where: LogicalExpression | undefined;
-    listView: SoslId;
-    orderBy: FieldOrderList;
-    limitClause: LimitClause | undefined;
-    offsetClause: OffsetClause | undefined;
+    value: string[];
+    fieldList: SoslField[];
+    where: LogicalExpression;
+    listView: string[];
+    orderBy: FieldOrder[];
+    limitClause?: string | Expression;
+    offsetClause?: Expression;
 };
 
 export const fieldSpecConvert = (
     target: FieldSpecTypeClass,
     errorClass: ErrorTypeClass[],
 ): FieldSpec => {
+    const value: string[] = [];
     const valueTypeClass = toTypeClass(target.getValue(), isSoslIdType, errorClass);
+    if (valueTypeClass) {
+        value.push(...soslIdConvert(valueTypeClass, errorClass));
+    }
 
+    const fieldList: SoslField[] = [];
     const fieldListValue = target.getFieldList();
-    const fieldListTypeClass = fieldListValue
-        ? toTypeClass(fieldListValue, isFieldListType, errorClass)
-        : undefined;
+    if (fieldListValue) {
+        const fieldListTypeClass = toTypeClass(fieldListValue, isFieldListType, errorClass);
+        if (fieldListTypeClass) {
+            fieldList.push(...fieldListConvert(fieldListTypeClass, errorClass));
+        }
+    }
+
+    const listView: string[] = [];
+    const listViewValue = target.getListView();
+    if (listViewValue) {
+        const listViewValueTypeClass = toTypeClass(listViewValue, isSoslIdType, errorClass);
+        if (listViewValueTypeClass) {
+            listView.push(...soslIdConvert(listViewValueTypeClass, errorClass));
+        }
+    }
+
+    const orderBy: FieldOrder[] = [];
+    const orderByValue = target.getOrderBy();
+    if (orderByValue) {
+        const orderByTypeClass = toTypeClass(orderByValue, isFieldOrderListType, errorClass);
+        if (orderByTypeClass) {
+            orderBy.push(...fieldOrderListConvert(orderByTypeClass, errorClass));
+        }
+    }
+
+    const fieldSpec: FieldSpec = {
+        value: value,
+        fieldList: fieldList,
+        where: {
+            value: [],
+        },
+        listView: listView,
+        orderBy: orderBy,
+    };
 
     const whereValue = target.getWhere();
-    const whereTypeClass = whereValue
-        ? toTypeClass(whereValue, isLogicalExpressionType, errorClass)
-        : undefined;
+    if (whereValue) {
+        const whereTypeClass = toTypeClass(whereValue, isLogicalExpressionType, errorClass);
+        if (whereTypeClass) {
+            const expression = logicalExpressionConvert(whereTypeClass, errorClass);
+            fieldSpec.where.value.push(...expression.value);
 
-    const listViewValue = target.getListView();
-    const listViewTypeClass = listViewValue
-        ? toTypeClass(listViewValue, isSoslIdType, errorClass)
-        : undefined;
-
-    const orderByValue = target.getOrderBy();
-    const orderByTypeClass = orderByValue
-        ? toTypeClass(orderByValue, isFieldOrderListType, errorClass)
-        : undefined;
+            if (expression.operator) {
+                fieldSpec.where.operator = expression.operator;
+            }
+        }
+    }
 
     const limitClauseValue = target.getLimitClause();
-    const limitClauseTypeClass = limitClauseValue
-        ? toTypeClass(limitClauseValue, isLimitClauseType, errorClass)
-        : undefined;
+    if (limitClauseValue) {
+        const limitClauseTypeClass = toTypeClass(limitClauseValue, isLimitClauseType, errorClass);
+        if (limitClauseTypeClass) {
+            const expression = limitClauseConvert(limitClauseTypeClass, errorClass);
+            if (expression) {
+                fieldSpec.limitClause = expression;
+            }
+        }
+    }
 
     const offsetClauseValue = target.getOffsetClause();
-    const offsetClauseTypeClass = offsetClauseValue
-        ? toTypeClass(offsetClauseValue, isOffsetClauseType, errorClass)
-        : undefined;
+    if (offsetClauseValue) {
+        const offsetClauseTypeClass = toTypeClass(
+            offsetClauseValue,
+            isOffsetClauseType,
+            errorClass,
+        );
+        if (offsetClauseTypeClass) {
+            const expression = offsetClauseConvert(offsetClauseTypeClass, errorClass);
+            if (expression) {
+                fieldSpec.limitClause = expression;
+            }
+        }
+    }
 
-    return {
-        value: valueTypeClass ? soslIdConvert(valueTypeClass, errorClass) : undefined,
-        fieldList: fieldListTypeClass
-            ? fieldListConvert(fieldListTypeClass, errorClass)
-            : undefined,
-        where: whereTypeClass ? logicalExpressionConvert(whereTypeClass, errorClass) : undefined,
-        listView: listViewTypeClass ? soslIdConvert(listViewTypeClass, errorClass) : undefined,
-        orderBy: orderByTypeClass ? fieldOrderListConvert(orderByTypeClass, errorClass) : undefined,
-        limitClause: limitClauseTypeClass
-            ? limitClauseConvert(limitClauseTypeClass, errorClass)
-            : undefined,
-        offsetClause: offsetClauseTypeClass
-            ? offsetClauseConvert(offsetClauseTypeClass, errorClass)
-            : undefined,
-    };
+    return fieldSpec;
 };
 
-type SoqlQueryBase = {
-    from: FromNameList;
-    forClause: ForClauses;
-    whereClause: WhereClause;
-    orderByClause: OrderByClause;
-    limitClause: LimitClause | undefined;
-    updateList: UpdateList;
+export type NormalQuery = {
+    value: SelectEntry[];
+    from: FromName[];
+    forClause: string[];
+    whereClause: WhereLogicalExpression;
+    orderByClause: FieldOrder[];
+    limitClause?: string | Expression;
+    updateList: string[];
+    usingScope?: string;
+    withClause: WithClause;
+    groupByClause: GroupByClause;
+    offsetClause?: string | Expression;
+    allRowsClause?: string;
 };
-
-const soqlQueryBaseConvert = (
-    target: NormalQueryTypeClass | SubQueryTypeClass,
-    errorClass: ErrorTypeClass[],
-): SoqlQueryBase => {
-    const fromTypeClass = toTypeClass(target.getFrom(), isFromNameListType, errorClass);
-
-    const forClauseValue = target.getForClause();
-    const forClauseTypeClass = forClauseValue
-        ? toTypeClass(forClauseValue, isForClausesType, errorClass)
-        : undefined;
-
-    const whereClauseValue = target.getWhereClause();
-    const whereClauseTypeClass = whereClauseValue
-        ? toTypeClass(whereClauseValue, isWhereClauseType, errorClass)
-        : undefined;
-
-    const orderByClauseValue = target.getOrderByClause();
-    const orderByClauseTypeClass = orderByClauseValue
-        ? toTypeClass(orderByClauseValue, isOrderByClauseType, errorClass)
-        : undefined;
-
-    const limitClauseValue = target.getLimitClause();
-    const limitClauseTypeClass = limitClauseValue
-        ? toTypeClass(limitClauseValue, isLimitClauseType, errorClass)
-        : undefined;
-
-    const updateListValue = target.getUpdateList();
-    const updateListTypeClass = updateListValue
-        ? toTypeClass(updateListValue, isUpdateListType, errorClass)
-        : undefined;
-
-    return {
-        from: fromTypeClass ? fromNameListConvert(fromTypeClass, errorClass) : undefined,
-        forClause: forClauseTypeClass
-            ? forClausesConvert(forClauseTypeClass, errorClass)
-            : undefined,
-        whereClause: whereClauseTypeClass
-            ? whereClauseConvert(whereClauseTypeClass, errorClass)
-            : undefined,
-        orderByClause: orderByClauseTypeClass
-            ? orderByClauseConvert(orderByClauseTypeClass, errorClass)
-            : undefined,
-        limitClause: limitClauseTypeClass
-            ? limitClauseConvert(limitClauseTypeClass, errorClass)
-            : undefined,
-        updateList: updateListTypeClass
-            ? updateListConvert(updateListTypeClass, errorClass)
-            : undefined,
-    };
-};
-
-export type NormalQuery = { value: SelectList } & SoqlQueryBase & {
-        usingScope: UsingScope;
-        withClause: WithClause | undefined;
-        groupByClause: GroupByClause | undefined;
-        offsetClause: OffsetClause | undefined;
-        allRowsClause: AllRowsClause;
-    };
 
 export const normalQueryConvert = (
     target: NormalQueryTypeClass,
     errorClass: ErrorTypeClass[],
 ): NormalQuery => {
+    const value: SelectEntry[] = [];
     const valueTypeClass = toTypeClass(target.getValue(), isSelectListType, errorClass);
+    if (valueTypeClass) {
+        value.push(...selectListConvert(valueTypeClass, errorClass));
+    }
 
-    const usingScopeValue = target.getUsingScope();
-    const usingScopeTypeClass = usingScopeValue
-        ? toTypeClass(usingScopeValue, isUsingScopeType, errorClass)
-        : undefined;
+    const from: FromName[] = [];
+    const fromTypeClass = toTypeClass(target.getFrom(), isFromNameListType, errorClass);
+    if (fromTypeClass) {
+        from.push(...fromNameListConvert(fromTypeClass, errorClass));
+    }
+
+    const forClause: string[] = [];
+    const forClauseValue = target.getForClause();
+    if (forClauseValue) {
+        const forClauseTypeClass = toTypeClass(forClauseValue, isForClausesType, errorClass);
+        if (forClauseTypeClass) {
+            forClause.push(...forClausesConvert(forClauseTypeClass, errorClass));
+        }
+    }
+
+    const orderByClause: FieldOrder[] = [];
+    const orderByClauseValue = target.getOrderByClause();
+    if (orderByClauseValue) {
+        const orderByClauseTypeClass = toTypeClass(
+            orderByClauseValue,
+            isOrderByClauseType,
+            errorClass,
+        );
+        if (orderByClauseTypeClass) {
+            orderByClause.push(...orderByClauseConvert(orderByClauseTypeClass, errorClass));
+        }
+    }
+
+    const updateList: string[] = [];
+    const updateListValue = target.getUpdateList();
+    if (updateListValue) {
+        const updateListTypeClass = toTypeClass(updateListValue, isUpdateListType, errorClass);
+        if (updateListTypeClass) {
+            updateList.push(...updateListConvert(updateListTypeClass, errorClass));
+        }
+    }
+
+    const normalQuery: NormalQuery = {
+        value: value,
+        from: from,
+        forClause: forClause,
+        whereClause: {
+            value: [],
+        },
+        orderByClause: orderByClause,
+        updateList: updateList,
+        withClause: {
+            field: [],
+        },
+        groupByClause: {
+            value: [],
+            having: {
+                value: [],
+            },
+        },
+    };
+
+    const whereClauseValue = target.getWhereClause();
+    if (whereClauseValue) {
+        const whereClauseTypeClass = toTypeClass(whereClauseValue, isWhereClauseType, errorClass);
+        if (whereClauseTypeClass) {
+            const whereClause = whereClauseConvert(whereClauseTypeClass, errorClass);
+            normalQuery.whereClause.value.push(...whereClause.value);
+            if (whereClause.operator) {
+                normalQuery.whereClause.operator = whereClause.operator;
+            }
+        }
+    }
 
     const withClauseValue = target.getWithClause();
-    const withClauseTypeClass = withClauseValue
-        ? toTypeClass(withClauseValue, isWithClauseType, errorClass)
-        : undefined;
+    if (withClauseValue) {
+        const withClauseTypeClass = toTypeClass(withClauseValue, isWithClauseType, errorClass);
+        if (withClauseTypeClass) {
+            const withClause = withClauseConvert(withClauseTypeClass, errorClass);
+            normalQuery.withClause.field.push(...withClause.field);
+            if (withClause.value) {
+                normalQuery.withClause.value = withClause.value;
+            }
+        }
+    }
 
     const groupByClauseValue = target.getGroupByClause();
-    const groupByClauseTypeClass = groupByClauseValue
-        ? toTypeClass(groupByClauseValue, isGroupByClauseType, errorClass)
-        : undefined;
+    if (groupByClauseValue) {
+        const groupByClauseTypeClass = toTypeClass(
+            groupByClauseValue,
+            isGroupByClauseType,
+            errorClass,
+        );
+        if (groupByClauseTypeClass) {
+            const groupByClause = groupByClauseConvert(groupByClauseTypeClass, errorClass);
+            normalQuery.groupByClause.value.push(...groupByClause.value);
+            normalQuery.groupByClause.having.value.push(...groupByClause.having.value);
+            if (groupByClause.mode) {
+                normalQuery.groupByClause.mode = groupByClause.mode;
+            }
+            if (groupByClause.having.operator) {
+                normalQuery.groupByClause.having.operator = groupByClause.having.operator;
+            }
+        }
+    }
+
+    const limitClauseValue = target.getLimitClause();
+    if (limitClauseValue) {
+        const limitClauseTypeClass = toTypeClass(limitClauseValue, isLimitClauseType, errorClass);
+        if (limitClauseTypeClass) {
+            const limitClause = limitClauseConvert(limitClauseTypeClass, errorClass);
+            if (limitClause) {
+                normalQuery.limitClause = limitClause;
+            }
+        }
+    }
+
+    const usingScopeValue = target.getUsingScope();
+    if (usingScopeValue) {
+        const usingScopeTypeClass = toTypeClass(usingScopeValue, isUsingScopeType, errorClass);
+        if (usingScopeTypeClass) {
+            const usingScope = usingScopeConvert(usingScopeTypeClass, errorClass);
+            if (usingScope) {
+                normalQuery.usingScope = usingScope;
+            }
+        }
+    }
 
     const offsetClauseValue = target.getOffsetClause();
-    const offsetClauseTypeClass = offsetClauseValue
-        ? toTypeClass(offsetClauseValue, isOffsetClauseType, errorClass)
-        : undefined;
+    if (offsetClauseValue) {
+        const offsetClauseTypeClass = toTypeClass(
+            offsetClauseValue,
+            isOffsetClauseType,
+            errorClass,
+        );
+        if (offsetClauseTypeClass) {
+            const offsetClause = offsetClauseConvert(offsetClauseTypeClass, errorClass);
+            if (offsetClause) {
+                normalQuery.offsetClause = offsetClause;
+            }
+        }
+    }
 
     const allRowsClauseValue = target.getAllRowsClause();
-    const allRowsClauseTypeClass = allRowsClauseValue
-        ? toTypeClass(allRowsClauseValue, isAllRowsClauseType, errorClass)
-        : undefined;
+    if (allRowsClauseValue) {
+        const allRowsClauseTypeClass = toTypeClass(
+            allRowsClauseValue,
+            isAllRowsClauseType,
+            errorClass,
+        );
+        if (allRowsClauseTypeClass) {
+            const allRowsClause = allRowsClauseConvert(allRowsClauseTypeClass, errorClass);
+            if (allRowsClause) {
+                normalQuery.allRowsClause = allRowsClause;
+            }
+        }
+    }
 
-    return {
-        value: valueTypeClass ? selectListConvert(valueTypeClass, errorClass) : undefined,
-        ...soqlQueryBaseConvert(target, errorClass),
-        usingScope: usingScopeTypeClass
-            ? usingScopeConvert(usingScopeTypeClass, errorClass)
-            : undefined,
-        withClause: withClauseTypeClass
-            ? withClauseConvert(withClauseTypeClass, errorClass)
-            : undefined,
-        groupByClause: groupByClauseTypeClass
-            ? groupByClauseConvert(groupByClauseTypeClass, errorClass)
-            : undefined,
-        offsetClause: offsetClauseTypeClass
-            ? offsetClauseConvert(offsetClauseTypeClass, errorClass)
-            : undefined,
-        allRowsClause: allRowsClauseTypeClass
-            ? allRowsClauseConvert(allRowsClauseTypeClass, errorClass)
-            : undefined,
-    };
+    return normalQuery;
 };
-
-export type SearchGroup = string | undefined;
 
 export const searchGroupConvert = (
     target: SearchGroupTypeClass,
     errorClass: ErrorTypeClass[],
-): SearchGroup => {
+): string | undefined => {
     return toPrimitiveValue(
         target.getValue(),
         (target): target is string => typeof target === 'string',
@@ -313,41 +407,51 @@ export const searchGroupConvert = (
 };
 
 export type SoqlFunction = {
-    value: string | undefined;
-    param:
-        | FieldName
+    value?: string;
+    param?:
+        | string[]
         | DateFieldName
-        | SoqlFieldsParameter
+        | string
         | SoqlFunction
-        | (string | string[] | LocationValue)[]
-        | undefined;
+        | (string | string[] | (SignedLiteral | Expression)[] | string[] | Expression)[];
 };
 
 export const soqlFunctionConvert = (
     target: SoqlFunctionTypeClass,
     errorClass: ErrorTypeClass[],
 ): SoqlFunction => {
+    const soqlFunction: SoqlFunction = {};
+
     const value = toPrimitiveValue(
         target.getValue(),
         (target): target is string => typeof target === 'string',
         errorClass,
     );
+    if (value) {
+        soqlFunction.value = value;
+    }
 
     const paramValue = target.getParam();
-    let param: SoqlFunction['param'] = undefined;
     if (Array.isArray(paramValue)) {
-        const values: (string | string[] | LocationValue)[] = [];
+        const values: (
+            string | string[] | (SignedLiteral | Expression)[] | string[] | Expression
+        )[] = [];
         paramValue.forEach((item) => {
             if (typeof item === 'string' || Array.isArray(item)) {
                 values.push(item);
                 return;
             }
+
             const locationTypeClass = toTypeClass(item, isLocationValueType, errorClass);
             if (locationTypeClass) {
-                values.push(locationValueConvert(locationTypeClass, errorClass));
+                const locationValue = locationValueConvert(locationTypeClass, errorClass);
+                if (locationValue) {
+                    values.push(locationValue);
+                }
             }
         });
-        param = values.length > 0 ? values : undefined;
+
+        soqlFunction.param = values;
     } else if (paramValue) {
         const paramTypeClass = toTypeClass(
             paramValue,
@@ -367,38 +471,116 @@ export const soqlFunctionConvert = (
 
         if (paramTypeClass) {
             if (isFieldNameType(paramTypeClass)) {
-                param = fieldNameConvert(paramTypeClass, errorClass);
+                soqlFunction.param = fieldNameConvert(paramTypeClass, errorClass);
             }
             if (isDateFieldNameType(paramTypeClass)) {
-                param = dateFieldNameConvert(paramTypeClass, errorClass);
+                soqlFunction.param = dateFieldNameConvert(paramTypeClass, errorClass);
             }
             if (isSoqlFieldsParameterType(paramTypeClass)) {
-                param = soqlFieldsParameterConvert(paramTypeClass, errorClass);
+                const parameter = soqlFieldsParameterConvert(paramTypeClass, errorClass);
+                if (parameter) {
+                    soqlFunction.param = parameter;
+                }
             }
             if (isSoqlFunctionType(paramTypeClass)) {
-                param = soqlFunctionConvert(paramTypeClass, errorClass);
+                soqlFunction.param = soqlFunctionConvert(paramTypeClass, errorClass);
             }
         }
     }
 
-    return {
-        value: value,
-        param: param,
-    };
+    return soqlFunction;
 };
 
 export type SubQuery = {
-    value: SubFieldList;
-} & SoqlQueryBase;
+    value: SubFieldEntry[];
+    from: FromName[];
+    forClause: string[];
+    whereClause: WhereLogicalExpression;
+    orderByClause: FieldOrder[];
+    limitClause?: string | Expression;
+    updateList: string[];
+};
 
 export const subQueryConvert = (
     target: SubQueryTypeClass,
     errorClass: ErrorTypeClass[],
 ): SubQuery => {
+    const value: SubFieldEntry[] = [];
     const valueTypeClass = toTypeClass(target.getValue(), isSubFieldListType, errorClass);
+    if (valueTypeClass) {
+        value.push(...subFieldListConvert(valueTypeClass, errorClass));
+    }
 
-    return {
-        value: valueTypeClass ? subFieldListConvert(valueTypeClass, errorClass) : undefined,
-        ...soqlQueryBaseConvert(target, errorClass),
+    const from: FromName[] = [];
+    const fromTypeClass = toTypeClass(target.getFrom(), isFromNameListType, errorClass);
+    if (fromTypeClass) {
+        from.push(...fromNameListConvert(fromTypeClass, errorClass));
+    }
+
+    const forClause: string[] = [];
+    const forClauseValue = target.getForClause();
+    if (forClauseValue) {
+        const forClauseTypeClass = toTypeClass(forClauseValue, isForClausesType, errorClass);
+        if (forClauseTypeClass) {
+            forClause.push(...forClausesConvert(forClauseTypeClass, errorClass));
+        }
+    }
+
+    const orderByClause: FieldOrder[] = [];
+    const orderByClauseValue = target.getOrderByClause();
+    if (orderByClauseValue) {
+        const orderByClauseTypeClass = toTypeClass(
+            orderByClauseValue,
+            isOrderByClauseType,
+            errorClass,
+        );
+        if (orderByClauseTypeClass) {
+            orderByClause.push(...orderByClauseConvert(orderByClauseTypeClass, errorClass));
+        }
+    }
+
+    const updateList: string[] = [];
+    const updateListValue = target.getUpdateList();
+    if (updateListValue) {
+        const updateListTypeClass = toTypeClass(updateListValue, isUpdateListType, errorClass);
+        if (updateListTypeClass) {
+            updateList.push(...updateListConvert(updateListTypeClass, errorClass));
+        }
+    }
+
+    const subQuery: SubQuery = {
+        value: value,
+        from: from,
+        forClause: forClause,
+        whereClause: {
+            value: [],
+        },
+        orderByClause: orderByClause,
+        updateList: updateList,
     };
+
+    const whereClauseValue = target.getWhereClause();
+    if (whereClauseValue) {
+        const whereClauseTypeClass = toTypeClass(whereClauseValue, isWhereClauseType, errorClass);
+        if (whereClauseTypeClass) {
+            const whereClause = whereClauseConvert(whereClauseTypeClass, errorClass);
+            subQuery.whereClause.value.push(...whereClause.value);
+            if (whereClause.operator) {
+                subQuery.whereClause.operator = whereClause.operator;
+            }
+        }
+    }
+
+    const limitClauseValue = target.getLimitClause();
+    if (limitClauseValue) {
+        const limitClauseTypeClass = toTypeClass(limitClauseValue, isLimitClauseType, errorClass);
+        if (limitClauseTypeClass) {
+            const limitClause = limitClauseConvert(limitClauseTypeClass, errorClass);
+            if (limitClause) {
+                subQuery.limitClause = limitClause;
+            }
+        }
+    }
+
+    return subQuery;
 };

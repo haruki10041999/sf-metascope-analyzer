@@ -5,56 +5,78 @@ import {
     SoqlFieldsParameterTypeClass,
     isFormalParameterListType,
     isNormalIdType,
+    isNormalModifierType,
     isTypeRefType,
 } from '../../apex_IR';
 
 import { toPrimitiveValue, toTypeClass } from './commons';
-import { NormalId, normalIdConvert } from './id';
-import { FormalParameterList, formalParameterListConvert } from './list';
-import { NormalModifier, normalModifierListConvert } from './modifier';
+import { normalIdConvert } from './id';
+import { formalParameterListConvert } from './list';
+import { NormalModifier, normalModifierConvert } from './modifier';
 import { TypeRef, typeRefConvert } from './type';
 
 export type FormalParameter = {
-    value: NormalId | undefined;
-    valueType: TypeRef | undefined;
-    modifier: NormalModifier[] | undefined;
+    value?: string;
+    valueType: TypeRef;
+    modifier: NormalModifier[];
 };
 
 export const formalParameterConvert = (
     target: FormalParameterTypeClass,
     errorClass: ErrorTypeClass[],
 ): FormalParameter => {
-    const valueTypeClass = toTypeClass(target.getValue(), isNormalIdType, errorClass);
-    const valueTypeTypeClass = toTypeClass(target.getValueType(), isTypeRefType, errorClass);
-
-    return {
-        value: valueTypeClass ? normalIdConvert(valueTypeClass) : undefined,
-        valueType: valueTypeTypeClass ? typeRefConvert(valueTypeTypeClass, errorClass) : undefined,
-        modifier: normalModifierListConvert(target.getModifier(), errorClass),
+    const formalParameter: FormalParameter = {
+        valueType: {
+            value: [],
+        },
+        modifier: [],
     };
-};
 
-export type FormalParameters = FormalParameterList;
+    const valueTypeClass = toTypeClass(target.getValue(), isNormalIdType, errorClass);
+    if (valueTypeClass) {
+        formalParameter.value = normalIdConvert(valueTypeClass);
+    }
+
+    const valueTypeTypeClass = toTypeClass(target.getValueType(), isTypeRefType, errorClass);
+    if (valueTypeTypeClass) {
+        const typeRef = typeRefConvert(valueTypeTypeClass, errorClass);
+        formalParameter.valueType.value.push(...typeRef.value);
+        if (typeRef.dimension) {
+            formalParameter.valueType.dimension = typeRef.dimension;
+        }
+    }
+
+    target.getModifier().forEach((m) => {
+        const typeClass = toTypeClass(m, isNormalModifierType, errorClass);
+        if (typeClass) {
+            const modifier = normalModifierConvert(typeClass, errorClass);
+            if (modifier) {
+                formalParameter.modifier.push(modifier);
+            }
+        }
+    });
+
+    return formalParameter;
+};
 
 export const formalParametersConvert = (
     target: FormalParametersTypeClass,
     errorClass: ErrorTypeClass[],
-): FormalParameters => {
+): FormalParameter[] => {
     const value = target.getValue();
-    if (!value) {
-        return undefined;
+    if (value) {
+        const typeClass = toTypeClass(value, isFormalParameterListType, errorClass);
+        if (typeClass) {
+            return formalParameterListConvert(typeClass, errorClass);
+        }
     }
-
-    const listTypeClass = toTypeClass(value, isFormalParameterListType, errorClass);
-    return listTypeClass ? formalParameterListConvert(listTypeClass, errorClass) : undefined;
+    return [];
 };
-
-export type SoqlFieldsParameter = string | undefined;
 
 export const soqlFieldsParameterConvert = (
     target: SoqlFieldsParameterTypeClass,
     errorClass: ErrorTypeClass[],
-): SoqlFieldsParameter => {
+): string | undefined => {
     return toPrimitiveValue(
         target.getValue(),
         (target): target is string => typeof target === 'string',

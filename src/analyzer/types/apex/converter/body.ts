@@ -14,34 +14,30 @@ import {
     interfaceMethodDeclarationConvert,
 } from './declaration';
 
-export type ClassBody = ClassBodyDeclaration[] | undefined;
-
 export const classBodyConvert = (
     target: ClassBodyTypeClass,
     errorClass: ErrorTypeClass[],
-): ClassBody => {
-    const value: ClassBodyDeclaration[] = [];
+): ClassBodyDeclaration[] => {
+    const values: ClassBodyDeclaration[] = [];
     target.getValue().forEach((item) => {
         const converted = toTypeClass(item, isClassBodyDeclarationType, errorClass);
         if (converted) {
-            value.push(classBodyDeclarationConvert(converted, errorClass));
+            values.push(classBodyDeclarationConvert(converted, errorClass));
         }
     });
-    return value.length > 0 ? value : undefined;
+    return values;
 };
-
-export type InterfaceBody = InterfaceMethodDeclaration[] | undefined;
 
 export const interfaceBodyConvert = (
     target: InterfaceBodyTypeClass,
     errorClass: ErrorTypeClass[],
-): InterfaceBody => {
-    const value: InterfaceMethodDeclaration[] = [];
+): InterfaceMethodDeclaration[] => {
+    const values: InterfaceMethodDeclaration[] = [];
     target.getValue().forEach((item) => {
         const converted = toTypeClass(item, isInterfaceMethodDeclarationType, errorClass);
         if (converted) {
-            value.push(interfaceMethodDeclarationConvert(converted, errorClass));
+            values.push(interfaceMethodDeclarationConvert(converted, errorClass));
         }
     });
-    return value.length > 0 ? value : undefined;
+    return values;
 };

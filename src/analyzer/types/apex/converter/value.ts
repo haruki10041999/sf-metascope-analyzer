@@ -26,27 +26,25 @@ import {
 } from '../../apex_IR';
 
 import { toTypeClass } from './commons';
-import { NormalId, normalIdConvert } from './id';
-import { BoundExpression, boundExpressionConvert } from './expression';
+import { normalIdConvert } from './id';
+import { Expression, boundExpressionConvert } from './expression';
 import {
     NormalLiteral,
     normalLiteralConvert,
-    SignedNumber,
+    SignedLiteral,
     signedNumberConvert,
     WhenLiteral,
     whenLiteralConvert,
 } from './literal';
-import { FieldName, fieldNameConvert } from './name';
-import { ValueList, valueListConvert } from './list';
+import { fieldNameConvert } from './name';
+import { valueListConvert } from './list';
 import { TypeRef, typeRefConvert } from './type';
 import { DateFormula, dateFormulaConvert, SubQuery, subQueryConvert } from './query';
-
-export type CoordinateValue = SignedNumber | BoundExpression | undefined;
 
 export const coordinateValueConvert = (
     target: CoordinateValueTypeClass,
     errorClass: ErrorTypeClass[],
-): CoordinateValue => {
+): SignedLiteral | Expression | undefined => {
     const valueTypeClass = toTypeClass(
         target.getValue(),
         (target): target is SignedNumberTypeClass | BoundExpressionTypeClass =>
@@ -66,31 +64,33 @@ export const coordinateValueConvert = (
     return undefined;
 };
 
-export type ElementValue = NormalLiteral | undefined;
-
 export const elementValueConvert = (
     target: ElementValueTypeClass,
     errorClass: ErrorTypeClass[],
-): ElementValue => {
+): NormalLiteral | undefined => {
     const valueTypeClass = toTypeClass(target.getValue(), isNormalLiteralType, errorClass);
-    return valueTypeClass ? normalLiteralConvert(valueTypeClass, errorClass) : undefined;
+    if (valueTypeClass) {
+        return normalLiteralConvert(valueTypeClass, errorClass);
+    }
+    return undefined;
 };
-
-export type LocationValue = CoordinateValue[] | FieldName | BoundExpression | undefined;
 
 export const locationValueConvert = (
     target: LocationValueTypeClass,
     errorClass: ErrorTypeClass[],
-): LocationValue => {
+): (SignedLiteral | Expression)[] | string[] | Expression | undefined => {
     const value = target.getValue();
     const coordinates = target.getCoordinates();
 
     if (coordinates && coordinates.length > 0) {
-        const values: CoordinateValue[] = [];
+        const values: (SignedLiteral | Expression)[] = [];
         coordinates.forEach((coordinate) => {
             const typeClass = toTypeClass(coordinate, isCoordinateValueType, errorClass);
             if (typeClass) {
-                values.push(coordinateValueConvert(typeClass, errorClass));
+                const coordinateValue = coordinateValueConvert(typeClass, errorClass);
+                if (coordinateValue) {
+                    values.push(coordinateValue);
+                }
             }
         });
         return values;
@@ -118,8 +118,7 @@ export const locationValueConvert = (
 };
 
 export type NormalValue = {
-    value: string | SignedNumber | ValueList | DateFormula | SubQuery | BoundExpression | undefined;
-
+    value?: string | SignedLiteral | NormalValue[] | DateFormula | SubQuery | Expression;
     valueType: string;
 };
 
@@ -127,11 +126,14 @@ export const normalValueConvert = (
     target: NormalValueTypeClass,
     errorClass: ErrorTypeClass[],
 ): NormalValue => {
+    const normalValue: NormalValue = {
+        valueType: target.getValueType(),
+    };
+
     const valueTypeClass = target.getValue();
 
-    let value: NormalValue['value'] = undefined;
-    if (!(valueTypeClass instanceof CommonTypeClass)) {
-        value = valueTypeClass;
+    if (typeof valueTypeClass === 'string') {
+        normalValue.value = valueTypeClass;
     } else {
         const typeClass = toTypeClass(
             valueTypeClass,
@@ -153,70 +155,79 @@ export const normalValueConvert = (
 
         if (typeClass) {
             if (isSignedNumberType(typeClass)) {
-                value = signedNumberConvert(typeClass, errorClass);
+                normalValue.value = signedNumberConvert(typeClass, errorClass);
             }
             if (isValueListType(typeClass)) {
-                value = valueListConvert(typeClass, errorClass);
+                normalValue.value = valueListConvert(typeClass, errorClass);
             }
             if (isDateFormulaType(typeClass)) {
-                value = dateFormulaConvert(typeClass, errorClass);
+                normalValue.value = dateFormulaConvert(typeClass, errorClass);
             }
             if (isSubQueryType(typeClass)) {
-                value = subQueryConvert(typeClass, errorClass);
+                normalValue.value = subQueryConvert(typeClass, errorClass);
             }
             if (isBoundExpressionType(typeClass)) {
-                value = boundExpressionConvert(typeClass, errorClass);
+                const expression = boundExpressionConvert(typeClass, errorClass);
+                if (expression) {
+                    normalValue.value = expression;
+                }
             }
         }
     }
 
-    return {
-        value: value,
-        valueType: target.getValueType(),
-    };
+    return normalValue;
 };
 
 export type WhenValue = {
-    value: string | WhenLiteral[] | NormalId | undefined;
-    valueType: TypeRef | undefined;
+    value?: string | WhenLiteral[];
+    valueType: TypeRef;
 };
 
 export const whenValueConvert = (
     target: WhenValueTypeClass,
     errorClass: ErrorTypeClass[],
 ): WhenValue => {
-    const valueTypeClass = target.getValue();
+    const whenValue: WhenValue = {
+        valueType: {
+            value: [],
+        },
+    };
 
-    let value: WhenValue['value'] = undefined;
-    let valueType: WhenValue['valueType'] = undefined;
+    const valueTypeClass = target.getValue();
     if (typeof valueTypeClass === 'string') {
-        value = valueTypeClass;
+        whenValue.value = valueTypeClass;
     } else if (Array.isArray(valueTypeClass)) {
         const values: WhenLiteral[] = [];
-        valueTypeClass.forEach((item) => {
-            const typeClass = toTypeClass(item, isWhenLiteralType, errorClass);
+        valueTypeClass.forEach((whenliteralTypeClass) => {
+            const typeClass = toTypeClass(whenliteralTypeClass, isWhenLiteralType, errorClass);
             if (typeClass) {
-                values.push(whenLiteralConvert(typeClass, errorClass));
+                const whenLiteral = whenLiteralConvert(typeClass, errorClass);
+                if (whenLiteral) {
+                    values.push(whenLiteral);
+                }
             }
         });
-        value = values;
+        whenValue.value = values;
     } else {
         const typeClass = toTypeClass(valueTypeClass, isNormalIdType, errorClass);
         if (typeClass) {
-            value = normalIdConvert(typeClass);
+            whenValue.value = normalIdConvert(typeClass);
         }
+    }
 
-        const valueTypeTypeClass = target.getValueType();
-        if (valueTypeTypeClass) {
-            const typeClass = toTypeClass(valueTypeTypeClass, isTypeRefType, errorClass);
-            if (typeClass) {
-                valueType = typeRefConvert(typeClass, errorClass);
+    const valueTypeTypeClass = target.getValueType();
+    if (valueTypeTypeClass) {
+        const typeClass = toTypeClass(valueTypeTypeClass, isTypeRefType, errorClass);
+        if (typeClass) {
+            const typeRef = typeRefConvert(typeClass, errorClass);
+            if (typeRef) {
+                whenValue.valueType.value.push(...typeRef.value);
+                if (typeRef.dimension) {
+                    whenValue.valueType.dimension = typeRef.dimension;
+                }
             }
         }
     }
 
-    return {
-        value: value,
-        valueType: valueType,
-    };
+    return whenValue;
 };

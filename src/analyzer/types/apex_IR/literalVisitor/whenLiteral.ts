@@ -5,14 +5,14 @@ import { PrimitiveLiteralTypeClass, LiteralVisitor } from '.';
 import { QualifiedNameTypeClass, NameVisitor, isQualifiedNameType } from '../nameVisitor';
 import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
 
-type WhenLiteralValueType = number | string | null | QualifiedNameTypeClass;
+type WhenLiteralValueType = string | QualifiedNameTypeClass;
 
 export class WhenLiteralTypeClass extends PrimitiveLiteralTypeClass<WhenLiteralValueType> {
-    private operator: string;
+    private operator: string | null;
 
     private constructor(
         value: WhenLiteralValueType | ErrorTypeClass,
-        operator: string,
+        operator: string | null,
         valueType: string,
     ) {
         super('whenLiteral', value, valueType);
@@ -33,14 +33,12 @@ export class WhenLiteralTypeClass extends PrimitiveLiteralTypeClass<WhenLiteralV
         }
 
         let value: WhenLiteralValueType | ErrorTypeClass;
-        let operator: string = '';
-        let valueType: string = '';
-
+        let operator: string | null = null;
+        let valueType: string;
         if (ctx.IntegerLiteral() || ctx.LongLiteral()) {
             value = ctx.IntegerLiteral()
-                ? parseInt(ctx.IntegerLiteral().getText(), 10)
-                : parseInt(ctx.LongLiteral().getText(), 10);
-
+                ? ctx.IntegerLiteral().getText()
+                : ctx.LongLiteral().getText();
             valueType = ctx.IntegerLiteral() ? 'integer' : 'long';
 
             // 符号は複数並び得るため、ソース順のまま連結する
@@ -71,18 +69,17 @@ export class WhenLiteralTypeClass extends PrimitiveLiteralTypeClass<WhenLiteralV
                 value = valueTypeClass.getValue();
                 valueType = valueTypeClass.getValueType() ?? '';
             } else {
-                value = valueTypeClass;
-                valueType = '';
+                throw new Error('値が異常です。WhenLiteralContext: ' + ctx.getText());
             }
         } else {
-            value = null;
+            value = ctx.NULL().getText();
             valueType = 'null';
         }
 
         return new WhenLiteralTypeClass(value, operator, valueType);
     }
 
-    getOperator(): string {
+    getOperator(): string | null {
         return this.operator;
     }
 }

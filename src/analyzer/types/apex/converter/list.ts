@@ -38,28 +38,19 @@ import {
 
 import { toPrimitiveValue, toTypeClass } from './commons';
 import { Expression, expressionConvert } from './expression';
-import { SoqlId, soqlIdConvert, SoslId, soslIdConvert } from './id';
-import { FieldName, fieldNameConvert } from './name';
+import { soqlIdConvert, soslIdConvert } from './id';
+import { fieldNameConvert } from './name';
 import { typeRefConvert, TypeRef } from './type';
 import { NormalValue, normalValueConvert } from './value';
 import { FormalParameter, formalParameterConvert } from './parameter';
-import {
-    FieldGroupBy,
-    fieldGroupByConvert,
-    FieldOrder,
-    fieldOrderConvert,
-    UpdateType,
-    updateTypeConvert,
-} from './clause';
+import { fieldGroupByConvert, FieldOrder, fieldOrderConvert, updateTypeConvert } from './clause';
 import { SelectEntry, selectEntryConvert, SubFieldEntry, subFieldEntryConvert } from './entry';
 import { FieldSpec, fieldSpecConvert, SoqlFunction, soqlFunctionConvert } from './query';
-
-export type TypeList = TypeRef[];
 
 export const typeListConvert = (
     target: TypeListTypeClass,
     errorClass: ErrorTypeClass[],
-): TypeList => {
+): TypeRef[] => {
     const values: TypeRef[] = [];
     target.getValue().forEach((item) => {
         const valueTypeClass = toTypeClass(item, isTypeRefType, errorClass);
@@ -70,28 +61,27 @@ export const typeListConvert = (
     return values;
 };
 
-export type ExpressionList = Expression[] | undefined;
-
 export const expressionListConvert = (
     target: ExpressionListTypeClass,
     errorClass: ErrorTypeClass[],
-): ExpressionList => {
+): Expression[] => {
     const values: Expression[] = [];
     target.getValue().forEach((item) => {
         const valueTypeClass = toTypeClass(item, isExpressionTypeAll, errorClass);
         if (valueTypeClass) {
-            values.push(expressionConvert(valueTypeClass, errorClass));
+            const expression = expressionConvert(valueTypeClass, errorClass);
+            if (expression) {
+                values.push(expression);
+            }
         }
     });
-    return values.length > 0 ? values : undefined;
+    return values;
 };
-
-export type FormalParameterList = FormalParameter[] | undefined;
 
 export const formalParameterListConvert = (
     target: FormalParameterListTypeClass,
     errorClass: ErrorTypeClass[],
-): FormalParameterList => {
+): FormalParameter[] => {
     const values: FormalParameter[] = [];
     target.getValue().forEach((item) => {
         const valueTypeClass = toTypeClass(item, isFormalParameterType, errorClass);
@@ -99,15 +89,13 @@ export const formalParameterListConvert = (
             values.push(formalParameterConvert(valueTypeClass, errorClass));
         }
     });
-    return values.length > 0 ? values : undefined;
+    return values;
 };
-
-export type ValueList = NormalValue[] | undefined;
 
 export const valueListConvert = (
     target: ValueListTypeClass,
     errorClass: ErrorTypeClass[],
-): ValueList => {
+): NormalValue[] => {
     const values: NormalValue[] = [];
     target.getValue().forEach((item) => {
         const valueTypeClass = toTypeClass(item, isNormalValueType, errorClass);
@@ -115,48 +103,44 @@ export const valueListConvert = (
             values.push(normalValueConvert(valueTypeClass, errorClass));
         }
     });
-    return values.length > 0 ? values : undefined;
+    return values;
 };
-
-export type FieldNameList = FieldName[] | undefined;
 
 export const fieldNameListConvert = (
     target: FieldNameListTypeClass,
     errorClass: ErrorTypeClass[],
-): FieldNameList => {
-    const values: FieldName[] = [];
+): string[][] => {
+    const values: string[][] = [];
     target.getValue().forEach((item) => {
         const valueTypeClass = toTypeClass(item, isFieldNameType, errorClass);
         if (valueTypeClass) {
             values.push(fieldNameConvert(valueTypeClass, errorClass));
         }
     });
-    return values.length > 0 ? values : undefined;
+    return values;
 };
-
-export type UpdateList = UpdateType[] | undefined;
 
 export const updateListConvert = (
     target: UpdateListTypeClass,
     errorClass: ErrorTypeClass[],
-): UpdateList => {
-    const values: UpdateType[] = [];
+): string[] => {
+    const values: string[] = [];
     target.getValue().forEach((item) => {
         const valueTypeClass = toTypeClass(item, isUpdateTypeType, errorClass);
-        const value = valueTypeClass ? updateTypeConvert(valueTypeClass, errorClass) : undefined;
-        if (value) {
-            values.push(value);
+        if (valueTypeClass) {
+            const updateType = updateTypeConvert(valueTypeClass, errorClass);
+            if (updateType) {
+                values.push(updateType);
+            }
         }
     });
-    return values.length > 0 ? values : undefined;
+    return values;
 };
-
-export type NetworkList = string[] | undefined;
 
 export const networkListConvert = (
     target: NetworkListTypeClass,
     errorClass: ErrorTypeClass[],
-): NetworkList => {
+): string[] => {
     const values: string[] = [];
     target.getValue().forEach((item) => {
         const value = toPrimitiveValue(
@@ -168,31 +152,30 @@ export const networkListConvert = (
             values.push(value);
         }
     });
-    return values.length > 0 ? values : undefined;
+    return values;
 };
-
-export type FieldGroupByList = FieldGroupBy[] | undefined;
 
 export const fieldGroupByListConvert = (
     target: FieldGroupByListTypeClass,
     errorClass: ErrorTypeClass[],
-): FieldGroupByList => {
-    const values: FieldGroupBy[] = [];
+): (string[] | SoqlFunction)[] => {
+    const values: (string[] | SoqlFunction)[] = [];
     target.getValue().forEach((item) => {
         const valueTypeClass = toTypeClass(item, isFieldGroupByType, errorClass);
         if (valueTypeClass) {
-            values.push(fieldGroupByConvert(valueTypeClass, errorClass));
+            const fieldGroupBy = fieldGroupByConvert(valueTypeClass, errorClass);
+            if (fieldGroupBy) {
+                values.push(fieldGroupBy);
+            }
         }
     });
-    return values.length > 0 ? values : undefined;
+    return values;
 };
-
-export type FieldOrderList = FieldOrder[] | undefined;
 
 export const fieldOrderListConvert = (
     target: FieldOrderListTypeClass,
     errorClass: ErrorTypeClass[],
-): FieldOrderList => {
+): FieldOrder[] => {
     const values: FieldOrder[] = [];
     target.getValue().forEach((item) => {
         const valueTypeClass = toTypeClass(item, isFieldOrderType, errorClass);
@@ -200,15 +183,13 @@ export const fieldOrderListConvert = (
             values.push(fieldOrderConvert(valueTypeClass, errorClass));
         }
     });
-    return values.length > 0 ? values : undefined;
+    return values;
 };
-
-export type SelectList = SelectEntry[] | undefined;
 
 export const selectListConvert = (
     target: SelectListTypeClass,
     errorClass: ErrorTypeClass[],
-): SelectList => {
+): SelectEntry[] => {
     const values: SelectEntry[] = [];
     target.getValue().forEach((item) => {
         const valueTypeClass = toTypeClass(item, isSelectEntryType, errorClass);
@@ -216,15 +197,13 @@ export const selectListConvert = (
             values.push(selectEntryConvert(valueTypeClass, errorClass));
         }
     });
-    return values.length > 0 ? values : undefined;
+    return values;
 };
-
-export type SubFieldList = SubFieldEntry[] | undefined;
 
 export const subFieldListConvert = (
     target: SubFieldListTypeClass,
     errorClass: ErrorTypeClass[],
-): SubFieldList => {
+): SubFieldEntry[] => {
     const values: SubFieldEntry[] = [];
     target.getValue().forEach((item) => {
         const valueTypeClass = toTypeClass(item, isSubFieldEntryType, errorClass);
@@ -232,18 +211,20 @@ export const subFieldListConvert = (
             values.push(subFieldEntryConvert(valueTypeClass, errorClass));
         }
     });
-    return values.length > 0 ? values : undefined;
+    return values;
 };
 
 export type SoslField = {
-    value: SoslId | SoqlFunction | undefined;
-    func: string | undefined;
+    value?: string[] | SoqlFunction;
+    func?: string;
 };
 
 export const soslFieldConvert = (
     target: SoslFieldTypeClass,
     errorClass: ErrorTypeClass[],
 ): SoslField => {
+    const soslField: SoslField = {};
+
     const valueTypeClass = toTypeClass(
         target.getValue(),
         (target): target is SoslIdTypeClass | SoqlFunctionTypeClass =>
@@ -251,28 +232,22 @@ export const soslFieldConvert = (
         errorClass,
     );
 
-    let value: SoslField['value'] = undefined;
     if (valueTypeClass) {
         if (isSoslIdType(valueTypeClass)) {
-            value = soslIdConvert(valueTypeClass, errorClass);
+            soslField.value = soslIdConvert(valueTypeClass, errorClass);
         }
         if (isSoqlFunctionType(valueTypeClass)) {
-            value = soqlFunctionConvert(valueTypeClass, errorClass);
+            soslField.value = soqlFunctionConvert(valueTypeClass, errorClass);
         }
     }
 
-    return {
-        value: value,
-        func: target.getFunc() ?? undefined,
-    };
+    return soslField;
 };
-
-export type FieldList = SoslField[] | undefined;
 
 export const fieldListConvert = (
     target: FieldListTypeClass,
     errorClass: ErrorTypeClass[],
-): FieldList => {
+): SoslField[] => {
     const values: SoslField[] = [];
     target.getValue().forEach((item) => {
         const valueTypeClass = toTypeClass(item, isSoslFieldType, errorClass);
@@ -280,15 +255,13 @@ export const fieldListConvert = (
             values.push(soslFieldConvert(valueTypeClass, errorClass));
         }
     });
-    return values.length > 0 ? values : undefined;
+    return values;
 };
-
-export type FieldSpecList = FieldSpec[] | undefined;
 
 export const fieldSpecListConvert = (
     target: FieldSpecListTypeClass,
     errorClass: ErrorTypeClass[],
-): FieldSpecList => {
+): FieldSpec[] => {
     const values: FieldSpec[] = [];
     target.getValue().forEach((item) => {
         const valueTypeClass = toTypeClass(item, isFieldSpecType, errorClass);
@@ -296,37 +269,47 @@ export const fieldSpecListConvert = (
             values.push(fieldSpecConvert(valueTypeClass, errorClass));
         }
     });
-    return values.length > 0 ? values : undefined;
+    return values;
 };
 
 export type FromName = {
-    value: FieldName;
-    alias: SoqlId;
+    value: string[];
+    alias?: string;
 };
 
 export const fromNameConvert = (
     target: FromNameTypeClass,
     errorClass: ErrorTypeClass[],
 ): FromName => {
+    const values: string[] = [];
+
     const valueTypeClass = toTypeClass(target.getValue(), isFieldNameType, errorClass);
+    if (valueTypeClass) {
+        values.push(...fieldNameConvert(valueTypeClass, errorClass));
+    }
+
+    const fromName: FromName = {
+        value: values,
+    };
 
     const aliasValue = target.getAlias();
-    const aliasTypeClass = aliasValue
-        ? toTypeClass(aliasValue, isSoqlIdType, errorClass)
-        : undefined;
+    if (aliasValue) {
+        const typeClass = toTypeClass(aliasValue, isSoqlIdType, errorClass);
+        if (typeClass) {
+            const soqlId = soqlIdConvert(typeClass, errorClass);
+            if (soqlId) {
+                fromName.alias = soqlId;
+            }
+        }
+    }
 
-    return {
-        value: valueTypeClass ? fieldNameConvert(valueTypeClass, errorClass) : undefined,
-        alias: aliasTypeClass ? soqlIdConvert(aliasTypeClass, errorClass) : undefined,
-    };
+    return fromName;
 };
-
-export type FromNameList = FromName[] | undefined;
 
 export const fromNameListConvert = (
     target: FromNameListTypeClass,
     errorClass: ErrorTypeClass[],
-): FromNameList => {
+): FromName[] => {
     const values: FromName[] = [];
     target.getValue().forEach((item) => {
         const valueTypeClass = toTypeClass(item, isFromNameType, errorClass);
@@ -334,5 +317,5 @@ export const fromNameListConvert = (
             values.push(fromNameConvert(valueTypeClass, errorClass));
         }
     });
-    return values.length > 0 ? values : undefined;
+    return values;
 };

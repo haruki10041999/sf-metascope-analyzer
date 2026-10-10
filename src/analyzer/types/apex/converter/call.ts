@@ -9,68 +9,75 @@ import {
 } from '../../apex_IR';
 
 import { toTypeClass } from './commons';
-import { NormalId, normalIdConvert, AnyId, anyIdConvert } from './id';
-import { ExpressionList, expressionListConvert } from './list';
+import { normalIdConvert, anyIdConvert } from './id';
+import { Expression } from './expression';
+import { expressionListConvert } from './list';
 
 export type MethodCall = {
-    value: NormalId | undefined;
-    param: ExpressionList | undefined;
-    reference: string | undefined;
+    value?: string;
+    param: Expression[];
+    reference?: string;
 };
 
 export const methodCallConvert = (
     target: MethodCallTypeClass,
     errorClass: ErrorTypeClass[],
 ): MethodCall => {
-    const valueTypeClass = target.getValue();
-    let value: MethodCall['value'] = undefined;
-    if (!(valueTypeClass instanceof CommonTypeClass)) {
-        value = valueTypeClass ?? undefined;
-    } else {
-        const normalId = toTypeClass(valueTypeClass, isNormalIdType, errorClass);
-        value = normalId ? normalIdConvert(normalId) : undefined;
-    }
-
+    const param: Expression[] = [];
     const paramTypeClass = target.getParam();
-    let param = undefined;
     if (paramTypeClass) {
         const expressionList = toTypeClass(paramTypeClass, isExpressionListType, errorClass);
-        param = expressionList ? expressionListConvert(expressionList, errorClass) : undefined;
+        if (expressionList) {
+            param.push(...expressionListConvert(expressionList, errorClass));
+        }
     }
 
-    return {
-        value: value,
+    const methodCall: MethodCall = {
         param: param,
-        reference: target.getReference() ?? undefined,
     };
+
+    const valueTypeClass = target.getValue();
+    if (valueTypeClass) {
+        const normalId = toTypeClass(valueTypeClass, isNormalIdType, errorClass);
+        if (normalId) {
+            methodCall.value = normalIdConvert(normalId);
+        }
+    }
+
+    const reference = target.getReference();
+    if (reference) {
+        methodCall.reference = reference;
+    }
+
+    return methodCall;
 };
 
 export type DotMethodCall = {
-    value: AnyId | undefined;
-    param: ExpressionList | undefined;
+    value?: string;
+    param: Expression[];
 };
 
 export const dotMethodCallConvert = (
     target: DotMethodCallTypeClass,
     errorClass: ErrorTypeClass[],
 ): DotMethodCall => {
-    let value = undefined;
-    const valueTypeClass = toTypeClass(target.getValue(), isAnyIdType, errorClass);
-    if (valueTypeClass) {
-        value = anyIdConvert(valueTypeClass);
-    }
-
+    const param: Expression[] = [];
     const paramTypeClass = target.getParam();
-    let param;
-    if (!(paramTypeClass instanceof CommonTypeClass)) {
-        param = paramTypeClass ?? undefined;
-    } else {
+    if (paramTypeClass) {
         const expressionList = toTypeClass(paramTypeClass, isExpressionListType, errorClass);
-        param = expressionList ? expressionListConvert(expressionList, errorClass) : undefined;
+        if (expressionList) {
+            param.push(...expressionListConvert(expressionList, errorClass));
+        }
     }
 
-    return {
-        value: value,
+    const dotMethodCall: DotMethodCall = {
         param: param,
     };
+
+    const valueTypeClass = toTypeClass(target.getValue(), isAnyIdType, errorClass);
+    if (valueTypeClass) {
+        dotMethodCall.value = anyIdConvert(valueTypeClass);
+    }
+
+    return dotMethodCall;
 };

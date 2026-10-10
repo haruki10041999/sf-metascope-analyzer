@@ -6,7 +6,6 @@ import {
     MapCreatorRestTypeClass,
     NoRestTypeClass,
     SetCreatorRestTypeClass,
-    RestAllTypeClass,
     isArrayCreatorRestType,
     isArrayInitializerType,
     isClassCreatorRestType,
@@ -21,53 +20,63 @@ import {
 } from '../../apex_IR';
 
 import { toPrimitiveValue, toTypeClass } from './commons';
-import { NormalArguments, normalArgumentsConvert } from './arguments';
+import { normalArgumentsConvert } from './arguments';
 import { Expression, expressionConvert } from './expression';
-import { CreatedName, createdNameConvert } from './name';
-import { MapCreatorRestPair, mapCreatorRestPairConvert } from './pair';
-import { ArrayInitializer, arrayInitializerConvert } from './variable';
+import { createdNameConvert } from './name';
+import { IdCreatedNamePair, MapCreatorRestPair, mapCreatorRestPairConvert } from './pair';
+import { arrayInitializerConvert } from './variable';
 
 export type ArrayCreatorRest = {
-    value: ArrayInitializer;
-    size: Expression;
+    value: Expression[];
+    size?: Expression;
 };
 
 export const arrayCreatorRestConvert = (
     target: ArrayCreatorRestTypeClass,
     errorClass: ErrorTypeClass[],
 ): ArrayCreatorRest => {
-    const valueTypeClass = target.getValue();
-    const initializer = valueTypeClass
-        ? toTypeClass(valueTypeClass, isArrayInitializerType, errorClass)
-        : undefined;
-
-    const sizeTypeClass = target.getSize();
-    const size = sizeTypeClass
-        ? toTypeClass(sizeTypeClass, isExpressionTypeAll, errorClass)
-        : undefined;
-
-    return {
-        value: initializer ? arrayInitializerConvert(initializer, errorClass) : undefined,
-        size: size ? expressionConvert(size, errorClass) : undefined,
+    const arrayCreatorRest: ArrayCreatorRest = {
+        value: [],
     };
-};
 
-export type ClassCreatorRest = NormalArguments;
+    const value = target.getValue();
+    if (value) {
+        const valueTypeClass = toTypeClass(value, isArrayInitializerType, errorClass);
+        if (valueTypeClass) {
+            arrayCreatorRest.value.push(...arrayInitializerConvert(valueTypeClass, errorClass));
+        }
+    }
+
+    const sizeValue = target.getSize();
+    if (sizeValue) {
+        const sizeTypeClass = toTypeClass(sizeValue, isExpressionTypeAll, errorClass);
+        if (sizeTypeClass) {
+            const expression = expressionConvert(sizeTypeClass, errorClass);
+            if (expression) {
+                arrayCreatorRest.size = expression;
+            }
+        }
+    }
+
+    return arrayCreatorRest;
+};
 
 export const classCreatorRestConvert = (
     target: ClassCreatorRestTypeClass,
     errorClass: ErrorTypeClass[],
-): ClassCreatorRest => {
+): Expression[] => {
     const valueTypeClass = toTypeClass(target.getValue(), isNormalArgumentsType, errorClass);
-    return valueTypeClass ? normalArgumentsConvert(valueTypeClass, errorClass) : undefined;
-};
+    if (valueTypeClass) {
+        return normalArgumentsConvert(valueTypeClass, errorClass);
+    }
 
-export type MapCreatorRest = MapCreatorRestPair[] | undefined;
+    return [];
+};
 
 export const mapCreatorRestConvert = (
     target: MapCreatorRestTypeClass,
     errorClass: ErrorTypeClass[],
-): MapCreatorRest => {
+): MapCreatorRestPair[] => {
     const values: MapCreatorRestPair[] = [];
     target.getValue().forEach((item) => {
         const valueTypeClass = toTypeClass(item, isMapCreatorRestPairType, errorClass);
@@ -75,12 +84,13 @@ export const mapCreatorRestConvert = (
             values.push(mapCreatorRestPairConvert(valueTypeClass, errorClass));
         }
     });
-    return values.length > 0 ? values : undefined;
+    return values;
 };
 
-export type NoRest = string | undefined;
-
-export const noRestConvert = (target: NoRestTypeClass, errorClass: ErrorTypeClass[]): NoRest => {
+export const noRestConvert = (
+    target: NoRestTypeClass,
+    errorClass: ErrorTypeClass[],
+): string | undefined => {
     return toPrimitiveValue(
         target.getValue(),
         (target): target is string => typeof target === 'string',
@@ -88,93 +98,113 @@ export const noRestConvert = (target: NoRestTypeClass, errorClass: ErrorTypeClas
     );
 };
 
-export type SetCreatorRest = Expression[] | undefined;
-
 export const setCreatorRestConvert = (
     target: SetCreatorRestTypeClass,
     errorClass: ErrorTypeClass[],
-): SetCreatorRest => {
+): Expression[] => {
     const values: Expression[] = [];
     target.getValue().forEach((item) => {
         const valueTypeClass = toTypeClass(item, isExpressionTypeAll, errorClass);
         if (valueTypeClass) {
-            values.push(expressionConvert(valueTypeClass, errorClass));
+            const expression = expressionConvert(valueTypeClass, errorClass);
+            if (expression) {
+                values.push(expression);
+            }
         }
     });
-    return values.length > 0 ? values : undefined;
+    return values;
 };
 
 export type Creator =
     | {
           type: 'array';
-          value: CreatedName;
+          value: IdCreatedNamePair[];
           content: ArrayCreatorRest;
       }
     | {
           type: 'class';
-          value: CreatedName;
-          content: ClassCreatorRest;
+          value: IdCreatedNamePair[];
+          content: Expression[];
       }
     | {
           type: 'map';
-          value: CreatedName;
-          content: MapCreatorRest;
+          value: IdCreatedNamePair[];
+          content: MapCreatorRestPair[];
       }
     | {
           type: 'no';
-          value: CreatedName;
-          content: NoRest;
+          value: IdCreatedNamePair[];
+          content?: string;
       }
     | {
           type: 'set';
-          value: CreatedName;
-          content: SetCreatorRest;
-      }
-    | undefined;
+          value: IdCreatedNamePair[];
+          content: Expression[];
+      };
 
-export const creatorConvert = (target: CreatorTypeClass, errorClass: ErrorTypeClass[]): Creator => {
+export const creatorConvert = (
+    target: CreatorTypeClass,
+    errorClass: ErrorTypeClass[],
+): Creator | undefined => {
+    const createdName: IdCreatedNamePair[] = [];
+
     const valueTypeClass = toTypeClass(target.getValue(), isCreatedNameType, errorClass);
+    if (valueTypeClass) {
+        createdName.push(...createdNameConvert(valueTypeClass, errorClass));
+    }
+
     const contentTypeClass = toTypeClass(target.getContent(), isRestTypeAll, errorClass);
 
-    if (!contentTypeClass) {
-        return undefined;
+    let creator: Creator | undefined = undefined;
+
+    if (contentTypeClass) {
+        if (isArrayCreatorRestType(contentTypeClass)) {
+            creator = {
+                type: 'array',
+                value: createdName,
+                content: {
+                    value: [],
+                },
+            };
+
+            const content = arrayCreatorRestConvert(contentTypeClass, errorClass);
+            creator.content.value.push(...content.value);
+            if (content.size) {
+                creator.content.size = content.size;
+            }
+        }
+        if (isClassCreatorRestType(contentTypeClass)) {
+            creator = {
+                type: 'class',
+                value: createdName,
+                content: classCreatorRestConvert(contentTypeClass, errorClass),
+            };
+        }
+        if (isMapCreatorRestType(contentTypeClass)) {
+            creator = {
+                type: 'map',
+                value: createdName,
+                content: mapCreatorRestConvert(contentTypeClass, errorClass),
+            };
+        }
+        if (isNoRestType(contentTypeClass)) {
+            creator = {
+                type: 'no',
+                value: createdName,
+            };
+            const content = noRestConvert(contentTypeClass, errorClass);
+            if (content) {
+                creator.content = content;
+            }
+        }
+        if (isSetCreatorRestType(contentTypeClass)) {
+            creator = {
+                type: 'set',
+                value: createdName,
+                content: setCreatorRestConvert(contentTypeClass, errorClass),
+            };
+        }
     }
 
-    if (isArrayCreatorRestType(contentTypeClass)) {
-        return {
-            type: 'array',
-            value: valueTypeClass ? createdNameConvert(valueTypeClass, errorClass) : undefined,
-            content: arrayCreatorRestConvert(contentTypeClass, errorClass),
-        };
-    }
-    if (isClassCreatorRestType(contentTypeClass)) {
-        return {
-            type: 'class',
-            value: valueTypeClass ? createdNameConvert(valueTypeClass, errorClass) : undefined,
-            content: classCreatorRestConvert(contentTypeClass, errorClass),
-        };
-    }
-    if (isMapCreatorRestType(contentTypeClass)) {
-        return {
-            type: 'map',
-            value: valueTypeClass ? createdNameConvert(valueTypeClass, errorClass) : undefined,
-            content: mapCreatorRestConvert(contentTypeClass, errorClass),
-        };
-    }
-    if (isNoRestType(contentTypeClass)) {
-        return {
-            type: 'no',
-            value: valueTypeClass ? createdNameConvert(valueTypeClass, errorClass) : undefined,
-            content: noRestConvert(contentTypeClass, errorClass),
-        };
-    }
-    if (isSetCreatorRestType(contentTypeClass)) {
-        return {
-            type: 'set',
-            value: valueTypeClass ? createdNameConvert(valueTypeClass, errorClass) : undefined,
-            content: setCreatorRestConvert(contentTypeClass, errorClass),
-        };
-    }
-
-    return undefined;
+    return creator;
 };

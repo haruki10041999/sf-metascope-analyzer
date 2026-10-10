@@ -27,72 +27,123 @@ import {
 } from '../../apex_IR';
 
 import { toPrimitiveValue, toTypeClass } from './commons';
-import { NormalId, normalIdConvert } from './id';
-import { typeRefConvert, TypeRef } from './type';
+import { normalIdConvert } from './id';
+import { TypeRef, typeRefConvert } from './type';
+import { NormalQuery } from './query';
 import {
     NormalLiteral,
     normalLiteralConvert,
-    SoqlLiteral,
     soqlLiteralConvert,
     SoslLiteral,
     soslLiteralConvert,
 } from './literal';
 
-export type NormalPrimary = string | undefined;
-
 export const normalPrimaryConvert = (
     target: NormalPrimaryTypeClass,
     errorClass: ErrorTypeClass[],
-): NormalPrimary => {
+): string | undefined => {
     return toPrimitiveValue(
         target.getValue(),
         (target): target is string => typeof target === 'string',
         errorClass,
     );
 };
-
-export type ThisPrimary = string | undefined;
 
 export const thisPrimaryConvert = (
     target: ThisPrimaryTypeClass,
     errorClass: ErrorTypeClass[],
-): ThisPrimary => {
+): string | undefined => {
     return toPrimitiveValue(
         target.getValue(),
         (target): target is string => typeof target === 'string',
         errorClass,
     );
 };
-
-export type VoidPrimary = string | undefined;
 
 export const voidPrimaryConvert = (
     target: VoidPrimaryTypeClass,
     errorClass: ErrorTypeClass[],
-): VoidPrimary => {
+): string | undefined => {
     return toPrimitiveValue(
         target.getValue(),
         (target): target is string => typeof target === 'string',
         errorClass,
     );
 };
-
-export type SoqlPrimary = SoqlLiteral;
 
 export const soqlPrimaryConvert = (
     target: SoqlPrimaryTypeClass,
     errorClass: ErrorTypeClass[],
-): SoqlPrimary => {
-    const valueTypeClass = toTypeClass(target.getValue(), isSoqlLiteralType, errorClass);
-    return valueTypeClass ? soqlLiteralConvert(valueTypeClass, errorClass) : undefined;
-};
+): NormalQuery => {
+    const soqlPrimary: NormalQuery = {
+        value: [],
+        from: [],
+        forClause: [],
+        whereClause: {
+            value: [],
+        },
+        orderByClause: [],
+        updateList: [],
+        withClause: {
+            field: [],
+        },
+        groupByClause: {
+            value: [],
+            having: {
+                value: [],
+            },
+        },
+    };
 
-export type SuperPrimary = string | undefined;
+    const valueTypeClass = toTypeClass(target.getValue(), isSoqlLiteralType, errorClass);
+    if (valueTypeClass) {
+        const normalQuery = soqlLiteralConvert(valueTypeClass, errorClass);
+
+        soqlPrimary.value.push(...normalQuery.value);
+        soqlPrimary.from.push(...normalQuery.from);
+        soqlPrimary.forClause.push(...normalQuery.forClause);
+        soqlPrimary.orderByClause.push(...normalQuery.orderByClause);
+        soqlPrimary.updateList.push(...normalQuery.updateList);
+        soqlPrimary.whereClause.value.push(...normalQuery.whereClause.value);
+        soqlPrimary.withClause.field.push(...normalQuery.withClause.field);
+        soqlPrimary.groupByClause.value.push(...normalQuery.groupByClause.value);
+        soqlPrimary.groupByClause.having.value.push(...normalQuery.groupByClause.having.value);
+
+        if (normalQuery.limitClause) {
+            soqlPrimary.limitClause = normalQuery.limitClause;
+        }
+        if (normalQuery.usingScope) {
+            soqlPrimary.usingScope = normalQuery.usingScope;
+        }
+        if (normalQuery.offsetClause) {
+            soqlPrimary.offsetClause = normalQuery.offsetClause;
+        }
+        if (normalQuery.allRowsClause) {
+            soqlPrimary.allRowsClause = normalQuery.allRowsClause;
+        }
+        if (normalQuery.whereClause.operator) {
+            soqlPrimary.whereClause.operator = normalQuery.whereClause.operator;
+        }
+        if (normalQuery.withClause.value) {
+            soqlPrimary.withClause.value = normalQuery.withClause.value;
+        }
+
+        if (normalQuery.groupByClause.mode) {
+            soqlPrimary.groupByClause.mode = normalQuery.groupByClause.mode;
+        }
+
+        if (normalQuery.groupByClause.having.operator) {
+            soqlPrimary.groupByClause.having.operator = normalQuery.groupByClause.having.operator;
+        }
+    }
+
+    return soqlPrimary;
+};
 
 export const superPrimaryConvert = (
     target: SuperPrimaryTypeClass,
     errorClass: ErrorTypeClass[],
-): SuperPrimary => {
+): string | undefined => {
     return toPrimitiveValue(
         target.getValue(),
         (target): target is string => typeof target === 'string',
@@ -100,26 +151,32 @@ export const superPrimaryConvert = (
     );
 };
 
-export type TypeRefPrimary = TypeRef | undefined;
-
 export const typeRefPrimaryConvert = (
     target: TypeRefPrimaryTypeClass,
     errorClass: ErrorTypeClass[],
-): TypeRefPrimary => {
+): TypeRef => {
+    const typeRefPrimary: TypeRef = {
+        value: [],
+    };
+
     const typeClass = toTypeClass(target.getValue(), isTypeRefType, errorClass);
     if (typeClass) {
-        return typeRefConvert(typeClass, errorClass);
+        const typeRef = typeRefConvert(typeClass, errorClass);
+
+        typeRefPrimary.value.push(...typeRef.value);
+
+        if (typeRef.dimension) {
+            typeRefPrimary.dimension = typeRef.dimension;
+        }
     }
 
-    return undefined;
+    return typeRefPrimary;
 };
-
-export type IdPrimary = NormalId | undefined;
 
 export const idPrimaryConvert = (
     target: IdPrimaryTypeClass,
     errorClass: ErrorTypeClass[],
-): IdPrimary => {
+): string | undefined => {
     const normalIdType = toTypeClass(target.getValue(), isNormalIdType, errorClass);
 
     if (normalIdType) {
@@ -128,12 +185,10 @@ export const idPrimaryConvert = (
     return undefined;
 };
 
-export type LiteralPrimary = NormalLiteral | undefined;
-
 export const literalPrimaryConvert = (
     target: LiteralPrimaryTypeClass,
     errorClass: ErrorTypeClass[],
-): LiteralPrimary => {
+): NormalLiteral | undefined => {
     const typeClass = toTypeClass(target.getValue(), isNormalLiteralType, errorClass);
     if (typeClass) {
         return normalLiteralConvert(typeClass, errorClass);
@@ -142,113 +197,140 @@ export const literalPrimaryConvert = (
     return undefined;
 };
 
-export type SoslPrimary = SoslLiteral | undefined;
-
 export const soslPrimaryConvert = (
     target: SoslPrimaryTypeClass,
     errorClass: ErrorTypeClass[],
-): SoslPrimary => {
+): SoslLiteral => {
+    const soslPrimary: SoslLiteral = {
+        soslClauses: {
+            fieldSpecList: [],
+            withList: [],
+            updateList: [],
+        },
+    };
+
     const valueTypeClass = toTypeClass(target.getValue(), isSoslLiteralType, errorClass);
-    return valueTypeClass ? soslLiteralConvert(valueTypeClass, errorClass) : undefined;
+    if (valueTypeClass) {
+        const soslLiteral = soslLiteralConvert(valueTypeClass, errorClass);
+
+        soslPrimary.soslClauses.fieldSpecList.push(...soslLiteral.soslClauses.fieldSpecList);
+        soslPrimary.soslClauses.withList.push(...soslLiteral.soslClauses.withList);
+        soslPrimary.soslClauses.updateList.push(...soslLiteral.soslClauses.updateList);
+
+        if (soslLiteral.value) {
+            soslPrimary.value = soslLiteral.value;
+        }
+
+        if (soslLiteral.soslClauses.value) {
+            soslPrimary.soslClauses.value = soslLiteral.soslClauses.value;
+        }
+        if (soslLiteral.soslClauses.limitClause) {
+            soslPrimary.soslClauses.limitClause = soslLiteral.soslClauses.limitClause;
+        }
+    }
+    return soslPrimary;
 };
 
 export type Primary =
     | {
-          type: 'normal';
-          primary: NormalPrimary;
-      }
-    | {
-          type: 'this';
-          primary: ThisPrimary;
-      }
-    | {
-          type: 'void';
-          primary: VoidPrimary;
+          type: 'normal' | 'this' | 'void' | 'super' | 'id';
+          primary?: string;
       }
     | {
           type: 'soql';
-          primary: SoqlPrimary;
-      }
-    | {
-          type: 'super';
-          primary: SuperPrimary;
+          primary: NormalQuery;
       }
     | {
           type: 'typeRef';
-          primary: TypeRefPrimary;
-      }
-    | {
-          type: 'id';
-          primary: IdPrimary;
+          primary: TypeRef;
       }
     | {
           type: 'literal';
-          primary: LiteralPrimary;
+          primary?: NormalLiteral;
       }
     | {
           type: 'sosl';
-          primary: SoslPrimary;
-      }
-    | undefined;
+          primary: SoslLiteral;
+      };
 
 export const primaryConvert = (
     target: PrimaryTypeClass<unknown>,
     errorClass: ErrorTypeClass[],
-): Primary => {
+): Primary | undefined => {
+    let primary: Primary | undefined = undefined;
+
     if (isNormalPrimaryType(target)) {
-        return {
-            type: 'normal',
-            primary: normalPrimaryConvert(target, errorClass),
-        };
+        primary = { type: 'normal' };
+
+        const convertValue = normalPrimaryConvert(target, errorClass);
+        if (convertValue) {
+            primary.primary = convertValue;
+        }
     }
     if (isThisPrimaryType(target)) {
-        return {
-            type: 'this',
-            primary: thisPrimaryConvert(target, errorClass),
-        };
+        primary = { type: 'this' };
+
+        const convertValue = thisPrimaryConvert(target, errorClass);
+        if (convertValue) {
+            primary.primary = convertValue;
+        }
     }
     if (isVoidPrimaryType(target)) {
-        return {
-            type: 'void',
-            primary: voidPrimaryConvert(target, errorClass),
-        };
+        primary = { type: 'void' };
+
+        const convertValue = voidPrimaryConvert(target, errorClass);
+        if (convertValue) {
+            primary.primary = convertValue;
+        }
     }
     if (isSoqlPrimaryType(target)) {
-        return {
-            type: 'soql',
-            primary: soqlPrimaryConvert(target, errorClass),
-        };
+        primary = { type: 'soql' };
+
+        const convertValue = soqlPrimaryConvert(target, errorClass);
+        if (convertValue) {
+            primary.primary = convertValue;
+        }
     }
     if (isSuperPrimaryType(target)) {
-        return {
-            type: 'super',
-            primary: superPrimaryConvert(target, errorClass),
-        };
+        primary = { type: 'super' };
+
+        const convertValue = superPrimaryConvert(target, errorClass);
+        if (convertValue) {
+            primary.primary = convertValue;
+        }
     }
     if (isTypeRefPrimaryType(target)) {
-        return {
-            type: 'typeRef',
-            primary: typeRefPrimaryConvert(target, errorClass),
-        };
+        primary = { type: 'typeRef' };
+
+        const convertValue = typeRefPrimaryConvert(target, errorClass);
+        if (convertValue) {
+            primary.primary = convertValue;
+        }
     }
     if (isIdPrimaryType(target)) {
-        return {
-            type: 'id',
-            primary: idPrimaryConvert(target, errorClass),
-        };
+        primary = { type: 'id' };
+
+        const convertValue = idPrimaryConvert(target, errorClass);
+        if (convertValue) {
+            primary.primary = convertValue;
+        }
     }
     if (isLiteralPrimaryType(target)) {
-        return {
-            type: 'literal',
-            primary: literalPrimaryConvert(target, errorClass),
-        };
+        primary = { type: 'literal' };
+
+        const convertValue = literalPrimaryConvert(target, errorClass);
+        if (convertValue) {
+            primary.primary = convertValue;
+        }
     }
     if (isSoslPrimaryType(target)) {
-        return {
-            type: 'sosl',
-            primary: soslPrimaryConvert(target, errorClass),
-        };
+        primary = { type: 'sosl' };
+
+        const convertValue = soslPrimaryConvert(target, errorClass);
+        if (convertValue) {
+            primary.primary = convertValue;
+        }
     }
 
-    return undefined;
+    return primary;
 };
