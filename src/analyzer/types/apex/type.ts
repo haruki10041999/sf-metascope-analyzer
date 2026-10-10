@@ -1,4 +1,4 @@
-import { TypeRef, TypeName, TypeList, TypeArguments, ArraySubscripts } from './converter';
+import { TypeRef } from './converter';
 
 const isPrimitiveType = (type: string): boolean => {
     return [
@@ -47,7 +47,7 @@ export const makeTypeType = (type: TypeRef): TypeType => {
         if (type.dimension) {
             return {
                 kind: 'array',
-                name: makeTypeType({ value: type.value, dimension: undefined }),
+                name: makeTypeType({ value: type.value }),
                 dimension: type.dimension,
             };
         }

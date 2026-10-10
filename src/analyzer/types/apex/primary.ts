@@ -1,15 +1,4 @@
-import {
-    Primary,
-    NormalPrimary,
-    ThisPrimary,
-    SuperPrimary,
-    LiteralPrimary,
-    TypeRefPrimary,
-    VoidPrimary,
-    SoqlPrimary,
-    SoslPrimary,
-    NormalLiteral,
-} from './converter';
+import { Primary } from './converter';
 
 import { makeTypeType, TypeType } from './type';
 

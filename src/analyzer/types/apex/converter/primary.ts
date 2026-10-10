@@ -284,12 +284,11 @@ export const primaryConvert = (
         }
     }
     if (isSoqlPrimaryType(target)) {
-        primary = { type: 'soql' };
-
         const convertValue = soqlPrimaryConvert(target, errorClass);
-        if (convertValue) {
-            primary.primary = convertValue;
-        }
+        primary = {
+            type: 'soql',
+            primary: convertValue,
+        };
     }
     if (isSuperPrimaryType(target)) {
         primary = { type: 'super' };
@@ -300,12 +299,11 @@ export const primaryConvert = (
         }
     }
     if (isTypeRefPrimaryType(target)) {
-        primary = { type: 'typeRef' };
-
         const convertValue = typeRefPrimaryConvert(target, errorClass);
-        if (convertValue) {
-            primary.primary = convertValue;
-        }
+        primary = {
+            type: 'typeRef',
+            primary: convertValue,
+        };
     }
     if (isIdPrimaryType(target)) {
         primary = { type: 'id' };
@@ -324,12 +322,11 @@ export const primaryConvert = (
         }
     }
     if (isSoslPrimaryType(target)) {
-        primary = { type: 'sosl' };
-
         const convertValue = soslPrimaryConvert(target, errorClass);
-        if (convertValue) {
-            primary.primary = convertValue;
-        }
+        primary = {
+            type: 'sosl',
+            primary: convertValue,
+        };
     }
 
     return primary;
