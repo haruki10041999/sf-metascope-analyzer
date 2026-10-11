@@ -1,4 +1,4 @@
-import { TypeRef } from './converter';
+import { TypeRef, TypeName } from './converter';
 
 const isPrimitiveType = (type: string): boolean => {
     return [
@@ -14,7 +14,19 @@ const isPrimitiveType = (type: string): boolean => {
         'OBJECT',
         'STRING',
         'TIME',
-    ].includes(type.toLocaleUpperCase());
+    ].includes(type.toUpperCase());
+};
+
+const isListType = (type: string): boolean => {
+    return 'LIST' === type.toUpperCase();
+};
+
+const isSetType = (type: string): boolean => {
+    return 'SET' === type.toUpperCase();
+};
+
+const isMapType = (type: string): boolean => {
+    return 'MAP' === type.toUpperCase();
 };
 
 export type TypeType =
@@ -25,6 +37,7 @@ export type TypeType =
     | {
           kind: 'custom';
           name: string[];
+          generic?: TypeType[];
       }
     | {
           kind: 'array';
@@ -40,21 +53,25 @@ export type TypeType =
           keyType: TypeType;
           valueType: TypeType;
       }
-    | undefined;
+    | {
+          kind: 'unSupported';
+      };
 
 export const makeTypeType = (type: TypeRef): TypeType => {
-    if (type.value) {
-        if (type.dimension) {
+    const { value, dimension }: TypeRef = type;
+
+    if (value && value.length > 0) {
+        if (dimension) {
             return {
                 kind: 'array',
-                name: makeTypeType({ value: type.value }),
-                dimension: type.dimension,
+                name: makeTypeType({ value: value }),
+                dimension: dimension,
             };
         }
 
-        if (type.value.length === 1) {
-            const typeName = type.value[0]!.value;
-            const typeGeneric = type.value[0]!.generic;
+        if (value.length === 1) {
+            const { value: typeName, generic }: TypeName = value.at(0)!;
+
             if (typeName) {
                 if (isPrimitiveType(typeName)) {
                     return {
@@ -62,35 +79,49 @@ export const makeTypeType = (type: TypeRef): TypeType => {
                         name: typeName,
                     };
                 }
-                if (typeGeneric) {
-                    if ((typeName === 'list' || typeName === 'set') && typeGeneric.length === 1) {
+
+                if (generic) {
+                    if ((isListType(typeName) || isSetType(typeName)) && generic.length === 1) {
                         return {
-                            kind: typeName,
-                            type: makeTypeType(typeGeneric[0]!),
+                            kind: isListType(typeName) ? 'list' : 'set',
+                            type: makeTypeType(generic.at(0)!),
                         };
                     }
 
-                    if (typeName === 'map' && typeGeneric.length === 2) {
+                    if (isMapType(typeName) && generic.length === 2) {
                         return {
                             kind: 'map',
-                            keyType: makeTypeType(typeGeneric[0]!),
-                            valueType: makeTypeType(typeGeneric[1]!),
+                            keyType: makeTypeType(generic.at(0)!),
+                            valueType: makeTypeType(generic.at(1)!),
                         };
                     }
                 }
 
-                return {
+                const typeType: TypeType = {
                     kind: 'custom',
                     name: [typeName],
                 };
+
+                if (generic) {
+                    typeType.generic = generic.map((g) => makeTypeType(g));
+                }
+                return typeType;
             }
         } else {
-            return {
+            const typeType: TypeType = {
                 kind: 'custom',
                 name: type.value.map((v) => v.value!),
             };
+
+            if (type.value.at(-1) && type.value.at(-1)!.generic) {
+                const generic = type.value.at(-1)!.generic;
+                typeType.generic = generic.map((g) => makeTypeType(g));
+            }
+            return typeType;
         }
     }
 
-    return undefined;
+    return {
+        kind: 'unSupported',
+    };
 };

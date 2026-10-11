@@ -1078,7 +1078,7 @@ export type Expression =
       }
     | {
           type: 'dot';
-          expression?: DotExpression;
+          expression: DotExpression;
       }
     | {
           type: 'array';
@@ -1094,7 +1094,7 @@ export type Expression =
       }
     | {
           type: 'cast';
-          expression?: CastExpression;
+          expression: CastExpression;
       }
     | {
           type: 'sub';
@@ -1102,14 +1102,13 @@ export type Expression =
       }
     | {
           type: 'postOp' | 'preOp' | 'neg';
-          expression?: SingleOperatorExpression;
+          expression: SingleOperatorExpression;
       }
     | {
           type:
               | 'arth1'
               | 'arth2'
               | 'bit'
-              | 'cmp'
               | 'equality'
               | 'bitAnd'
               | 'bitOr'
@@ -1119,15 +1118,15 @@ export type Expression =
               | 'logAnd'
               | 'logOr'
               | 'coal';
-          expression?: ExpToExpOperatorClass;
+          expression: ExpToExpOperatorClass;
       }
     | {
           type: 'instanceOf';
-          expression?: InstanceOfExpression;
+          expression: InstanceOfExpression;
       }
     | {
           type: 'cond';
-          expression?: CondExpression;
+          expression: CondExpression;
       };
 
 export const expressionConvert = (
@@ -1151,11 +1150,11 @@ export const expressionConvert = (
         }
     }
     if (isDotExpressionType(target)) {
-        expression = { type: 'dot' };
         const value = dotExpressionConvert(target, errorClass);
-        if (value) {
-            expression.expression = value;
-        }
+        expression = {
+            type: 'dot',
+            expression: value,
+        };
     }
     if (isArrayExpressionType(target)) {
         expression = { type: 'array', expression: [] };
@@ -1176,11 +1175,11 @@ export const expressionConvert = (
         }
     }
     if (isCastExpressionType(target)) {
-        expression = { type: 'cast' };
         const value = castExpressionConvert(target, errorClass);
-        if (value) {
-            expression.expression = value;
-        }
+        expression = {
+            type: 'cast',
+            expression: value,
+        };
     }
     if (isSubExpressionType(target)) {
         expression = { type: 'sub' };
@@ -1190,122 +1189,122 @@ export const expressionConvert = (
         }
     }
     if (isPostOpExpressionType(target)) {
-        expression = { type: 'postOp' };
         const value = postOpExpressionConvert(target, errorClass);
-        if (value) {
-            expression.expression = value;
-        }
+        expression = {
+            type: 'postOp',
+            expression: value,
+        };
     }
     if (isPreOpExpressionType(target)) {
-        expression = { type: 'preOp' };
         const value = preOpExpressionConvert(target, errorClass);
-        if (value) {
-            expression.expression = value;
+        expression = {
+            type: 'preOp',
+            expression: value,
+        };
+        if (isNegExpressionType(target)) {
+            const value = negExpressionConvert(target, errorClass);
+            expression = {
+                type: 'neg',
+                expression: value,
+            };
         }
-    }
-    if (isNegExpressionType(target)) {
-        expression = { type: 'neg' };
-        const value = negExpressionConvert(target, errorClass);
-        if (value) {
-            expression.expression = value;
+        if (isArth1ExpressionType(target)) {
+            const value = arth1ExpressionConvert(target, errorClass);
+            expression = {
+                type: 'arth1',
+                expression: value,
+            };
         }
-    }
-    if (isArth1ExpressionType(target)) {
-        expression = { type: 'arth1' };
-        const value = arth1ExpressionConvert(target, errorClass);
-        if (value) {
-            expression.expression = value;
+        if (isArth2ExpressionType(target)) {
+            const value = arth2ExpressionConvert(target, errorClass);
+            expression = {
+                type: 'arth2',
+                expression: value,
+            };
         }
-    }
-    if (isArth2ExpressionType(target)) {
-        expression = { type: 'arth2' };
-        const value = arth2ExpressionConvert(target, errorClass);
-        if (value) {
-            expression.expression = value;
+        if (isBitExpressionType(target)) {
+            const value = bitExpressionConvert(target, errorClass);
+            expression = {
+                type: 'bit',
+                expression: value,
+            };
         }
-    }
-    if (isBitExpressionType(target)) {
-        expression = { type: 'bit' };
-        const value = bitExpressionConvert(target, errorClass);
-        if (value) {
-            expression.expression = value;
+        if (isBitAndExpressionType(target)) {
+            const value = bitAndExpressionConvert(target, errorClass);
+            expression = {
+                type: 'bitAnd',
+                expression: value,
+            };
         }
-    }
-    if (isBitAndExpressionType(target)) {
-        expression = { type: 'bitAnd' };
-        const value = bitAndExpressionConvert(target, errorClass);
-        if (value) {
-            expression.expression = value;
+        if (isBitOrExpressionType(target)) {
+            const value = bitOrExpressionConvert(target, errorClass);
+            expression = {
+                type: 'bitOr',
+                expression: value,
+            };
         }
-    }
-    if (isBitOrExpressionType(target)) {
-        expression = { type: 'bitOr' };
-        const value = bitOrExpressionConvert(target, errorClass);
-        if (value) {
-            expression.expression = value;
+        if (isBitNotExpressionType(target)) {
+            const value = bitNotExpressionConvert(target, errorClass);
+            expression = {
+                type: 'bitNot',
+                expression: value,
+            };
         }
-    }
-    if (isBitNotExpressionType(target)) {
-        expression = { type: 'bitNot' };
-        const value = bitNotExpressionConvert(target, errorClass);
-        if (value) {
-            expression.expression = value;
+        if (isAssignExpressionType(target)) {
+            const value = assignExpressionConvert(target, errorClass);
+            expression = {
+                type: 'assign',
+                expression: value,
+            };
         }
-    }
-    if (isAssignExpressionType(target)) {
-        expression = { type: 'assign' };
-        const value = assignExpressionConvert(target, errorClass);
-        if (value) {
-            expression.expression = value;
+        if (isCmpExpressionType(target)) {
+            const value = cmpExpressionConvert(target, errorClass);
+            expression = {
+                type: 'cmp',
+                expression: value,
+            };
         }
-    }
-    if (isCmpExpressionType(target)) {
-        expression = { type: 'cmp' };
-        const value = cmpExpressionConvert(target, errorClass);
-        if (value) {
-            expression.expression = value;
+        if (isInstanceOfExpressionType(target)) {
+            const value = instanceOfExpressionConvert(target, errorClass);
+            expression = {
+                type: 'instanceOf',
+                expression: value,
+            };
         }
-    }
-    if (isInstanceOfExpressionType(target)) {
-        expression = { type: 'instanceOf' };
-        const value = instanceOfExpressionConvert(target, errorClass);
-        if (value) {
-            expression.expression = value;
+        if (isEqualityExpressionType(target)) {
+            const value = equalityExpressionConvert(target, errorClass);
+            expression = {
+                type: 'equality',
+                expression: value,
+            };
         }
-    }
-    if (isEqualityExpressionType(target)) {
-        expression = { type: 'equality' };
-        const value = equalityExpressionConvert(target, errorClass);
-        if (value) {
-            expression.expression = value;
+        if (isLogAndExpressionType(target)) {
+            const value = logAndExpressionConvert(target, errorClass);
+            expression = {
+                type: 'logAnd',
+                expression: value,
+            };
         }
-    }
-    if (isLogAndExpressionType(target)) {
-        expression = { type: 'logAnd' };
-        const value = logAndExpressionConvert(target, errorClass);
-        if (value) {
-            expression.expression = value;
+        if (isLogOrExpressionType(target)) {
+            const value = logOrExpressionConvert(target, errorClass);
+            expression = {
+                type: 'logOr',
+                expression: value,
+            };
         }
-    }
-    if (isLogOrExpressionType(target)) {
-        expression = { type: 'logOr' };
-        const value = logOrExpressionConvert(target, errorClass);
-        if (value) {
-            expression.expression = value;
+        if (isCoalExpressionType(target)) {
+            const value = coalExpressionConvert(target, errorClass);
+            expression = {
+                type: 'coal',
+                expression: value,
+            };
         }
-    }
-    if (isCoalExpressionType(target)) {
-        expression = { type: 'coal' };
-        const value = coalExpressionConvert(target, errorClass);
-        if (value) {
-            expression.expression = value;
-        }
-    }
-    if (isCondExpressionType(target)) {
-        expression = { type: 'cond' };
-        const value = condExpressionConvert(target, errorClass);
-        if (value) {
-            expression.expression = value;
+        if (isCondExpressionType(target)) {
+            const value = condExpressionConvert(target, errorClass);
+            expression = {
+                type: 'cond',
+                expression: value,
+            };
         }
     }
 

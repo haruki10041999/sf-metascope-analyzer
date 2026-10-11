@@ -1,5 +1,4 @@
 import {
-    CommonTypeClass,
     ErrorTypeClass,
     NormalValueTypeClass,
     ElementValueTypeClass,

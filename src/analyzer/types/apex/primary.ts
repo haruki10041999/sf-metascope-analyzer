@@ -1,39 +1,51 @@
-import { Primary } from './converter';
+import { Primary, NormalQuery, TypeRef, NormalLiteral, SoslLiteral } from './converter';
 
 import { makeTypeType, TypeType } from './type';
 
-export type PrimaryType = any[];
+type SoqlPrimaryType = NormalQuery;
+type LiteralPrimaryType = {
+    value: string;
+    valueType: string;
+};
+type SoslPrimaryType = SoslLiteral;
 
-export const makePrimary = (primary: Primary): any => {
-    if (primary) {
-        if (
-            primary.type === 'normal' ||
-            primary.type === 'this' ||
-            primary.type === 'super' ||
-            primary.type === 'void' ||
-            primary.type === 'literal'
-        ) {
-            const value = primary.primary;
-            if (value) {
-                return value;
-            }
-        }
+export type PrimaryType =
+    string | SoqlPrimaryType | LiteralPrimaryType | SoslPrimaryType | TypeType | 'unSupported';
 
-        if (primary.type === 'typeRef') {
-            const typeRef = primary.primary;
-            if (typeRef) {
-                return makeTypeType(typeRef);
-            }
-        }
+export const makePrimaryType = (primary: Primary): PrimaryType => {
+    const { type, primary: value } = primary;
+    if (
+        (type === 'normal' ||
+            type === 'this' ||
+            type === 'super' ||
+            type === 'void' ||
+            type === 'id') &&
+        value
+    ) {
+        return value;
+    }
 
-        if (primary.type === 'soql') {
-            const query = primary.primary;
-        }
+    if (type === 'typeRef') {
+        return makeTypeType(value);
+    }
 
-        if (primary.type === 'sosl') {
-            const query = primary.primary;
+    if (type === 'literal' && value) {
+        const { value: valueValue, valueType } = value;
+        if (valueValue && valueType) {
+            return {
+                value: valueValue,
+                valueType: valueType,
+            };
         }
     }
 
-    return undefined;
+    if (type === 'soql') {
+        return value;
+    }
+
+    if (type === 'sosl') {
+        return value;
+    }
+
+    return 'unSupported';
 };

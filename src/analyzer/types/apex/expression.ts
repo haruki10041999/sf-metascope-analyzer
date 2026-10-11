@@ -1,243 +1,376 @@
-import { Expression } from './converter';
+import {
+    Expression,
+    Primary,
+    DotExpression,
+    MethodCall,
+    Creator,
+    IdCreatedNamePair,
+    ArrayCreatorRest,
+    MapCreatorRestPair,
+    CastExpression,
+    SingleOperatorExpression,
+    ExpToExpOperatorClass,
+    InstanceOfExpression,
+    CondExpression,
+} from './converter';
 
-import { PrimaryType, makePrimary } from './primary';
+import { PrimaryType, makePrimaryType } from './primary';
 import { TypeType, makeTypeType } from './type';
-import { CreatorType, makeCreatorType } from './creater';
 
-type Normal = string;
-type Primary = PrimaryType;
-type Dot = {
+type DotExpressionType = {
     object: ExpressionType;
     operator: string;
-    property?: string;
-    methodName?: string;
-    param?: ExpressionType[];
+    member:
+        | {
+              kind: 'field';
+              name: string;
+          }
+        | {
+              kind: 'method';
+              name: string;
+              arg: ExpressionType[];
+          };
 };
-type Array = ExpressionType[];
-type MethodCall = {
-    methodName: string;
-    param: ExpressionType[] | undefined;
+
+type MethodCallType = {
+    name?: string;
+    arg: ExpressionType[];
     isSuper: boolean;
     isThis: boolean;
 };
-type New = CreatorType;
-type Cast = {
-    variant: ExpressionType;
-    toType: TypeType;
+
+type CreatedNameType = {
+    typeName: string[];
+    generic?: TypeType[];
 };
-type Sub = {
+
+type ArrayCreatorRestType = CreatedNameType & {
+    size?: ExpressionType;
+    initValue?: ExpressionType[];
+};
+
+type ClassCreatorRestType = CreatedNameType & {
+    arg?: ExpressionType[];
+};
+
+type MapCreatorRestType = CreatedNameType & {
+    initValue?: {
+        key: ExpressionType;
+        value: ExpressionType;
+    }[];
+};
+
+type SetCreatorRestType = CreatedNameType & {
+    initialValue?: ExpressionType[];
+};
+
+type CreatorType =
+    | CreatedNameType
+    | ArrayCreatorRestType
+    | ClassCreatorRestType
+    | MapCreatorRestType
+    | SetCreatorRestType;
+
+type CastType = {
     value: ExpressionType;
-    parenthesized: boolean;
+    convertTo: TypeType;
 };
-type SingleOperator = {
-    variant: ExpressionType;
+
+type SubType = {
+    value: ExpressionType;
+    parenthesized: true;
+};
+
+type SingleOperatorType = {
+    value: ExpressionType;
     operator: string;
     location: 'prefix' | 'postfix';
 };
-type InstanceOf = {
-    variant: ExpressionType;
-    operator: string;
-    type: TypeType;
-};
-type Cond = {
-    condition: ExpressionType;
-    trueValue: ExpressionType;
-    falseValue: ExpressionType;
-};
-type DoubleOperator = {
+
+type DoubleOperatorType = {
     left: ExpressionType;
     operator: string;
     right: ExpressionType;
 };
 
+type InstanceOfType = {
+    value: ExpressionType;
+    operator: string;
+    targetType: TypeType;
+};
+
+type CondType = {
+    condition: ExpressionType;
+    truevalue: ExpressionType;
+    falseValue: ExpressionType;
+};
+
 export type ExpressionType =
-    | Normal
-    | Primary
-    | Dot
-    | Array
-    | MethodCall
-    | New
-    | Cast
-    | Sub
-    | SingleOperator
-    | InstanceOf
-    | Cond
-    | DoubleOperator
-    | undefined;
+    | string
+    | PrimaryType
+    | ExpressionType[]
+    | DotExpressionType
+    | MethodCallType
+    | CreatorType
+    | CastType
+    | SubType
+    | SingleOperatorType
+    | DoubleOperatorType
+    | InstanceOfType
+    | CondType
+    | 'unSupported';
 
 export const makeExpressionType = (expression: Expression): ExpressionType => {
-    if (expression && expression.expression) {
-        if (expression.type === 'normal') {
-            return expression.expression;
-        }
+    const { type, expression: value } = expression;
 
-        if (expression.type === 'primary') {
-            return makePrimary(expression.expression);
-        }
+    if (type === 'normal' && value) {
+        return value;
+    }
 
-        if (expression.type === 'dot') {
-            const left = expression.expression.left;
-            const right = expression.expression.right;
-            const operator = expression.expression.operator;
+    if (type === 'primary' && value) {
+        return makePrimaryType(value);
+    }
 
-            if (left && right && operator) {
-                if (typeof right === 'string') {
-                    return {
-                        object: makeExpressionType(left),
-                        operator: operator,
-                        property: right,
-                    };
-                } else {
-                    const method = right.value!;
-                    const param = right.param;
-                    const params: ExpressionType[] = [];
-                    if (param) {
-                        param.forEach((p) => {
-                            params.push(makeExpressionType(p));
-                        });
-                    }
+    if (type === 'dot') {
+        const { left, operator, right } = value;
 
-                    return {
-                        object: makeExpressionType(left),
-                        operator: operator,
-                        methodName: method,
-                        param: params,
+        if (left && operator && right) {
+            const object = makeExpressionType(expression);
+
+            let member:
+                | {
+                      kind: 'field';
+                      name: string;
+                  }
+                | {
+                      kind: 'method';
+                      name: string;
+                      arg: ExpressionType[];
+                  }
+                | undefined = undefined;
+            if (typeof right === 'string') {
+                member = {
+                    kind: 'field',
+                    name: right,
+                };
+            } else {
+                const { value: name, param: arg } = right;
+                if (name) {
+                    member = {
+                        kind: 'method',
+                        name: name,
+                        arg: arg.map((a) => makeExpressionType(a)),
                     };
                 }
             }
+
+            if (member !== undefined) {
+                return {
+                    object: object,
+                    operator: operator,
+                    member: member,
+                };
+            }
+        }
+    }
+
+    if (type === 'array') {
+        return value.map((v) => makeExpressionType(v));
+    }
+
+    if (type === 'methodCall') {
+        const { value: name, param: arg, reference } = value;
+
+        const expressionType: MethodCallType = {
+            arg: arg.map((a) => makeExpressionType(a)),
+            isSuper: reference?.toLowerCase() === 'super',
+            isThis: reference?.toLowerCase() === 'this',
+        };
+
+        if (name) {
+            expressionType.name = name;
         }
 
-        if (expression.type === 'array') {
-            const array = expression.expression;
-            if (array) {
-                const elements: ExpressionType[] = [];
-                array.forEach((element) => {
-                    elements.push(makeExpressionType(element));
-                });
-                return elements;
+        return expressionType;
+    }
+
+    if (type === 'new' && value) {
+        const { type: creatorType, value: idCreatedNamePairs, content } = value;
+
+        let createdName: CreatedNameType | undefined = undefined;
+        const typeName: string[] = [];
+        let generic: TypeType[] | undefined = undefined;
+
+        idCreatedNamePairs.forEach((i, index) => {
+            const { left, right } = i;
+            if (left) {
+                typeName.push(left);
+            }
+
+            if (right.length !== 0 && idCreatedNamePairs.length === index + 1) {
+                generic = right.map((r) => makeTypeType(r));
+            }
+        });
+
+        if (typeName.length > 0) {
+            createdName = {
+                typeName: typeName,
+            };
+            if (generic) {
+                createdName.generic = generic;
             }
         }
 
-        if (expression.type === 'methodCall') {
-            const methodName = expression.expression.value;
-            const param = expression.expression.param;
-            const reference = expression.expression.reference;
+        if (createdName) {
+            if (creatorType === 'array') {
+                const { value: initialValue, size: size } = content;
+                const expressionType: ArrayCreatorRestType = {
+                    ...createdName,
+                };
 
-            if (methodName && reference) {
-                const params: ExpressionType[] = [];
-                if (param) {
-                    param.forEach((p) => {
-                        params.push(makeExpressionType(p));
+                if (size) {
+                    expressionType.size = makeExpressionType(size);
+                }
+                if (initialValue.length > 0) {
+                    expressionType.initValue = initialValue.map((i) => makeExpressionType(i));
+                }
+
+                return expressionType;
+            }
+
+            if (creatorType === 'class') {
+                const expressionType: ClassCreatorRestType = {
+                    ...createdName,
+                };
+
+                if (content.length > 0) {
+                    expressionType.arg = content.map((a) => makeExpressionType(a));
+                }
+
+                return expressionType;
+            }
+
+            if (creatorType === 'map') {
+                const expressionType: MapCreatorRestType = {
+                    ...createdName,
+                };
+
+                if (content.length > 0) {
+                    const initialValue: {
+                        key: ExpressionType;
+                        value: ExpressionType;
+                    }[] = [];
+
+                    content.forEach((c) => {
+                        const { left, right } = c;
+                        if (left && right) {
+                            initialValue.push({
+                                key: makeExpressionType(left),
+                                value: makeExpressionType(left),
+                            });
+                        }
                     });
+
+                    expressionType.initValue = initialValue;
                 }
 
-                return {
-                    methodName: methodName,
-                    param: params.length > 0 ? params : undefined,
-                    isSuper: reference.toLowerCase() === 'super',
-                    isThis: reference.toLowerCase() === 'this',
+                return expressionType;
+            }
+
+            if (creatorType === 'no') {
+                return createdName;
+            }
+
+            if (creatorType === 'set') {
+                const expressionType: SetCreatorRestType = {
+                    ...createdName,
                 };
+
+                if (content.length > 0) {
+                    expressionType.initialValue = content.map((c) => makeExpressionType(c));
+                }
+
+                return expressionType;
             }
         }
+    }
 
-        if (expression.type === 'new') {
-            const creator = expression.expression;
-            if (creator) {
-                return makeCreatorType(creator);
-            }
-        }
-
-        if (expression.type === 'cast') {
-            const value = expression.expression.value;
-            const valueType = expression.expression.valueType;
-
-            if (value && valueType) {
-                return {
-                    variant: makeExpressionType(expression.expression),
-                    toType: makeTypeType(valueType),
-                };
-            }
-        }
-
-        if (expression.type === 'sub') {
+    if (type === 'cast') {
+        const { value: valueValue, valueType } = value;
+        if (valueValue && valueType) {
             return {
-                value: makeExpressionType(expression.expression),
-                parenthesized: true,
+                value: makeExpressionType(valueValue),
+                convertTo: makeTypeType(valueType),
             };
         }
-
-        if (
-            expression.type === 'postOp' ||
-            expression.type === 'preOp' ||
-            expression.type === 'neg'
-        ) {
-            const value = expression.expression.value;
-            const operator = expression.expression.operator;
-
-            if (value && operator) {
-                return {
-                    variant: makeExpressionType(value),
-                    operator: operator,
-                    location: expression.type === 'postOp' ? 'postfix' : 'prefix',
-                };
-            }
-        }
-
-        if (expression.type === 'instanceOf') {
-            const left = expression.expression.left;
-            const right = expression.expression.right;
-            const operator = expression.expression.operator;
-
-            if (left && right && operator) {
-                return {
-                    variant: makeExpressionType(left),
-                    operator: operator,
-                    type: makeTypeType(right),
-                };
-            }
-        }
-
-        if (expression.type === 'cond') {
-            const condition = expression.expression.condition;
-            const trueValue = expression.expression.trueValue;
-            const falseValue = expression.expression.falseValue;
-
-            if (condition && trueValue && falseValue) {
-                return {
-                    condition: makeExpressionType(condition),
-                    trueValue: makeExpressionType(trueValue),
-                    falseValue: makeExpressionType(falseValue),
-                };
-            }
-        }
-
-        if (
-            expression.type === 'arth1' ||
-            expression.type === 'arth2' ||
-            expression.type === 'bit' ||
-            expression.type === 'cmp' ||
-            expression.type === 'equality' ||
-            expression.type === 'bitAnd' ||
-            expression.type === 'bitNot' ||
-            expression.type === 'bitOr' ||
-            expression.type === 'logAnd' ||
-            expression.type === 'logOr' ||
-            expression.type === 'coal' ||
-            expression.type === 'assign'
-        ) {
-            const left = makeExpressionType(expression.expression.left);
-            const right = makeExpressionType(expression.expression.right);
-            const operator = expression.expression.operator;
-
-            if (left && right && operator) {
-                return {
-                    left: left,
-                    operator: operator,
-                    right: right,
-                };
-            }
-        }
-
-        return undefined;
     }
+
+    if (type === 'sub' && value) {
+        return {
+            value: makeExpressionType(value),
+            parenthesized: true,
+        };
+    }
+
+    if (type === 'postOp' || type === 'preOp' || type == 'neg') {
+        const { value: valueValue, operator, location } = value;
+        if (valueValue) {
+            return {
+                value: makeExpressionType(valueValue),
+                operator: operator,
+                location: location,
+            };
+        }
+    }
+
+    if (
+        type === 'arth1' ||
+        type === 'arth2' ||
+        type === 'bit' ||
+        type === 'equality' ||
+        type === 'bitAnd' ||
+        type === 'bitOr' ||
+        type === 'bitNot' ||
+        type === 'assign' ||
+        type === 'cmp' ||
+        type === 'logAnd' ||
+        type === 'logOr' ||
+        type === 'coal'
+    ) {
+        const { left, operator, right } = value;
+
+        if (left && operator && right) {
+            return {
+                left: makeExpressionType(left),
+                operator: operator,
+                right: makeExpressionType(right),
+            };
+        }
+    }
+
+    if (type === 'instanceOf') {
+        const { left, operator, right } = value;
+
+        if (left && operator && right) {
+            return {
+                value: makeExpressionType(left),
+                operator: operator,
+                targetType: makeTypeType(right),
+            };
+        }
+    }
+
+    if (type === 'cond') {
+        const { condition, true: trueValue, false: falseValue } = value;
+
+        if (condition && trueValue && falseValue) {
+            return {
+                condition: makeExpressionType(condition),
+                truevalue: makeExpressionType(trueValue),
+                falseValue: makeExpressionType(falseValue),
+            };
+        }
+    }
+
+    return 'unSupported';
 };
