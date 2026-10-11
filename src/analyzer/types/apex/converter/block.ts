@@ -16,7 +16,7 @@ import {
     isNormalModifierType,
 } from '../../apex_IR';
 
-import { toTypeClass } from './commons';
+import { toTypeClass, CommonClass, isCommonClass } from './commons';
 import { NormalModifier, normalModifierConvert } from './modifier';
 import { NormalStatement, normalStatementConvert } from './statement';
 import {
@@ -54,6 +54,35 @@ export const finallyBlockConvert = (
     }
 
     return [];
+};
+
+export class PropertyBlockClass extends CommonClass {
+    private type: 'getter' | 'setter';
+    private value: NormalStatement[];
+    private modifier: NormalModifier[];
+
+    constructor(type: 'getter' | 'setter', value: NormalStatement[], modifier: NormalModifier[]) {
+        super();
+        this.type = type;
+        this.value = value;
+        this.modifier = modifier;
+    }
+
+    getType(): 'getter' | 'setter' {
+        return this.type;
+    }
+
+    getValue(): NormalStatement[] {
+        return this.value;
+    }
+
+    getModifier(): NormalModifier[] {
+        return this.modifier;
+    }
+}
+
+export const isPropertyBlockClass = (target: CommonClass): target is PropertyBlockClass => {
+    return isCommonClass(target, PropertyBlockClass);
 };
 
 export type PropertyBlock = {

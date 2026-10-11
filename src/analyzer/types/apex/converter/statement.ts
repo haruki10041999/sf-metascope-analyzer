@@ -55,7 +55,7 @@ import {
     isFinallyBlockType,
 } from '../../apex_IR';
 
-import { toPrimitiveValue, toTypeClass } from './commons';
+import { toPrimitiveValue, toTypeClass, CommonClass, isCommonClass } from './commons';
 import { Expression, expressionConvert, parExpressionConvert } from './expression';
 import { expressionListConvert } from './list';
 import { qualifiedNameConvert } from './name';
@@ -95,6 +95,29 @@ export const continueStatementConvert = (
         (target): target is string => typeof target === 'string',
         errorClass,
     );
+};
+
+export class DmlStatementClass extends CommonClass {
+    private value: Expression | null;
+    private accessLevel: string | null;
+
+    constructor(value: Expression | null, accessLevel: string | null) {
+        super();
+        this.value = value;
+        this.accessLevel = accessLevel;
+    }
+
+    getValue(): Expression | null {
+        return this.value;
+    }
+
+    getAccessLevel(): string | null {
+        return this.accessLevel;
+    }
+}
+
+export const isDmlStatementClass = (target: CommonClass): target is DmlStatementClass => {
+    return isCommonClass(target, DmlStatementClass);
 };
 
 export type DmlStatement = {
@@ -214,6 +237,35 @@ export const undeletetatementConvert = (
     return undeleteStatement;
 };
 
+export class UpsertStatementClass extends CommonClass {
+    private value: Expression | null;
+    private accessLevel: string | null;
+    private key: string[];
+
+    constructor(value: Expression | null, accessLevel: string | null, key: string[]) {
+        super();
+        this.value = value;
+        this.accessLevel = accessLevel;
+        this.key = key;
+    }
+
+    getValue(): Expression | null {
+        return this.value;
+    }
+
+    getAccessLevel(): string | null {
+        return this.accessLevel;
+    }
+
+    getKey(): string[] {
+        return this.key;
+    }
+}
+
+export const isUpsertStatementClass = (target: CommonClass): target is UpsertStatementClass => {
+    return isCommonClass(target, UpsertStatementClass);
+};
+
 export type UpsertStatement = {
     value?: Expression;
     accessLevel?: string;
@@ -260,6 +312,29 @@ export const upsertStatementConvert = (
     return upsertStatement;
 };
 
+export class MergeStatementClass extends CommonClass {
+    private value: Expression[];
+    private accessLevel: string | null;
+
+    constructor(value: Expression[], accessLevel: string | null) {
+        super();
+        this.value = value;
+        this.accessLevel = accessLevel;
+    }
+
+    getValue(): Expression[] {
+        return this.value;
+    }
+
+    getAccessLevel(): string | null {
+        return this.accessLevel;
+    }
+}
+
+export const isMergeStatementClass = (target: CommonClass): target is MergeStatementClass => {
+    return isCommonClass(target, MergeStatementClass);
+};
+
 export type MergeStatement = {
     value: Expression[];
     accessLevel?: string;
@@ -296,6 +371,29 @@ export const mergeStatementConvert = (
     }
 
     return mergeStatement;
+};
+
+export class DoWhileStatementClass extends CommonClass {
+    private value: Expression | null;
+    private block: NormalStatement[];
+
+    constructor(value: Expression | null, block: NormalStatement[]) {
+        super();
+        this.value = value;
+        this.block = block;
+    }
+
+    getValue(): Expression | null {
+        return this.value;
+    }
+
+    getBlock(): NormalStatement[] {
+        return this.block;
+    }
+}
+
+export const isDoWhileStatementClass = (target: CommonClass): target is DoWhileStatementClass => {
+    return isCommonClass(target, DoWhileStatementClass);
 };
 
 export type DoWhileStatement = {
@@ -340,6 +438,29 @@ export const expressionStatementConvert = (
     return undefined;
 };
 
+export class ForStatementClass extends CommonClass {
+    private value: ForControl;
+    private block: NormalStatement | null;
+
+    constructor(value: ForControl, block: NormalStatement | null) {
+        super();
+        this.value = value;
+        this.block = block;
+    }
+
+    getValue(): ForControl {
+        return this.value;
+    }
+
+    getBlock(): NormalStatement | null {
+        return this.block;
+    }
+}
+
+export const isForStatementClass = (target: CommonClass): target is ForStatementClass => {
+    return isCommonClass(target, ForStatementClass);
+};
+
 export type ForStatement = {
     value: ForControl;
     block?: NormalStatement;
@@ -376,6 +497,29 @@ export const forStatementConvert = (
     }
 
     return forStatement;
+};
+
+export class IfStatementClass extends CommonClass {
+    private value: Expression | null;
+    private block: NormalStatement | null;
+
+    constructor(value: Expression | null, block: NormalStatement | null) {
+        super();
+        this.value = value;
+        this.block = block;
+    }
+
+    getValue(): Expression | null {
+        return this.value;
+    }
+
+    getBlock(): NormalStatement | null {
+        return this.block;
+    }
+}
+
+export const isIfStatementClass = (target: CommonClass): target is IfStatementClass => {
+    return isCommonClass(target, IfStatementClass);
 };
 
 export type IfStatement = {
@@ -481,6 +625,29 @@ export const returnStatementConvert = (
     return undefined;
 };
 
+export class RunAsStatementClass extends CommonClass {
+    private value: Expression[];
+    private block: NormalStatement[];
+
+    constructor(value: Expression[], block: NormalStatement[]) {
+        super();
+        this.value = value;
+        this.block = block;
+    }
+
+    getValue(): Expression[] {
+        return this.value;
+    }
+
+    getBlock(): NormalStatement[] {
+        return this.block;
+    }
+}
+
+export const isRunAsStatementClass = (target: CommonClass): target is RunAsStatementClass => {
+    return isCommonClass(target, RunAsStatementClass);
+};
+
 export type RunAsStatement = {
     value: Expression[];
     block: NormalStatement[];
@@ -506,6 +673,29 @@ export const runAsStatementConvert = (
         value: value,
         block: block,
     };
+};
+
+export class SwitchStatementClass extends CommonClass {
+    private value: Expression | null;
+    private block: WhenControl[];
+
+    constructor(value: Expression | null, block: WhenControl[]) {
+        super();
+        this.value = value;
+        this.block = block;
+    }
+
+    getValue(): Expression | null {
+        return this.value;
+    }
+
+    getBlock(): WhenControl[] {
+        return this.block;
+    }
+}
+
+export const isSwitchStatementClass = (target: CommonClass): target is SwitchStatementClass => {
+    return isCommonClass(target, SwitchStatementClass);
 };
 
 export type SwitchStatement = {
@@ -555,6 +745,39 @@ export const throwStatementConvert = (
     return undefined;
 };
 
+export class TryStatementClass extends CommonClass {
+    private value: NormalStatement[];
+    private catchBlock: CatchClause[];
+    private finallyBlock: NormalStatement[];
+
+    constructor(
+        value: NormalStatement[],
+        catchBlock: CatchClause[],
+        finallyBlock: NormalStatement[],
+    ) {
+        super();
+        this.value = value;
+        this.catchBlock = catchBlock;
+        this.finallyBlock = finallyBlock;
+    }
+
+    getValue(): NormalStatement[] {
+        return this.value;
+    }
+
+    getCatchBlock(): CatchClause[] {
+        return this.catchBlock;
+    }
+
+    getFinallyBlock(): NormalStatement[] {
+        return this.finallyBlock;
+    }
+}
+
+export const isTryStatementClass = (target: CommonClass): target is TryStatementClass => {
+    return isCommonClass(target, TryStatementClass);
+};
+
 export type TryStatement = {
     value: NormalStatement[];
     catchBlock: CatchClause[];
@@ -595,6 +818,29 @@ export const tryStatementConvert = (
     };
 };
 
+export class WhileStatementClass extends CommonClass {
+    private value: Expression | null;
+    private block: NormalStatement | null;
+
+    constructor(value: Expression | null, block: NormalStatement | null) {
+        super();
+        this.value = value;
+        this.block = block;
+    }
+
+    getValue(): Expression | null {
+        return this.value;
+    }
+
+    getBlock(): NormalStatement | null {
+        return this.block;
+    }
+}
+
+export const isWhileStatementClass = (target: CommonClass): target is WhileStatementClass => {
+    return isCommonClass(target, WhileStatementClass);
+};
+
 export type WhileStatement = {
     value?: Expression;
     block?: NormalStatement;
@@ -623,6 +869,246 @@ export const whileStatementConvert = (
     }
 
     return whileStatement;
+};
+
+export abstract class StatementElementClass<TType, TStatement> extends CommonClass {
+    private type: TType;
+    private statement: TStatement;
+
+    constructor(type: TType, statement: TStatement) {
+        super();
+        this.type = type;
+        this.statement = statement;
+    }
+
+    getType(): TType {
+        return this.type;
+    }
+
+    getStatement(): TStatement {
+        return this.statement;
+    }
+}
+
+export const isStatementElementClass = (
+    target: CommonClass,
+): target is StatementElementClass<unknown, unknown> => {
+    return isCommonClass(target, StatementElementClass);
+};
+
+export class BlockStatementElementClass extends StatementElementClass<'block', NormalStatement[]> {
+    constructor(statement: NormalStatement[]) {
+        super('block', statement);
+    }
+}
+
+export const isBlockStatementElementClass = (
+    target: CommonClass,
+): target is BlockStatementElementClass => {
+    return isCommonClass(target, BlockStatementElementClass);
+};
+
+export class IfStatementElementClass extends StatementElementClass<'if', IfStatementClass> {
+    constructor(statement: IfStatementClass) {
+        super('if', statement);
+    }
+}
+
+export const isIfStatementElementClass = (
+    target: CommonClass,
+): target is IfStatementElementClass => {
+    return isCommonClass(target, IfStatementElementClass);
+};
+
+export class SwitchStatementElementClass extends StatementElementClass<
+    'switch',
+    SwitchStatementClass
+> {
+    constructor(statement: SwitchStatementClass) {
+        super('switch', statement);
+    }
+}
+
+export const isSwitchStatementElementClass = (
+    target: CommonClass,
+): target is SwitchStatementElementClass => {
+    return isCommonClass(target, SwitchStatementElementClass);
+};
+
+export class ForStatementElementClass extends StatementElementClass<'for', ForStatementClass> {
+    constructor(statement: ForStatementClass) {
+        super('for', statement);
+    }
+}
+
+export const isForStatementElementClass = (
+    target: CommonClass,
+): target is ForStatementElementClass => {
+    return isCommonClass(target, ForStatementElementClass);
+};
+
+export class WhileStatementElementClass extends StatementElementClass<
+    'while',
+    WhileStatementClass
+> {
+    constructor(statement: WhileStatementClass) {
+        super('while', statement);
+    }
+}
+
+export const isWhileStatementElementClass = (
+    target: CommonClass,
+): target is WhileStatementElementClass => {
+    return isCommonClass(target, WhileStatementElementClass);
+};
+
+export class DoWhileStatementElementClass extends StatementElementClass<
+    'doWhile',
+    DoWhileStatementClass
+> {
+    constructor(statement: DoWhileStatementClass) {
+        super('doWhile', statement);
+    }
+}
+
+export const isDoWhileStatementElementClass = (
+    target: CommonClass,
+): target is DoWhileStatementElementClass => {
+    return isCommonClass(target, DoWhileStatementElementClass);
+};
+
+export class TryStatementElementClass extends StatementElementClass<'try', TryStatementClass> {
+    constructor(statement: TryStatementClass) {
+        super('try', statement);
+    }
+}
+
+export const isTryStatementElementClass = (
+    target: CommonClass,
+): target is TryStatementElementClass => {
+    return isCommonClass(target, TryStatementElementClass);
+};
+
+export class ExpressionStatementElementClass extends StatementElementClass<
+    'return' | 'expression' | 'throw',
+    Expression | null
+> {
+    constructor(type: 'return' | 'expression' | 'throw', statement: Expression | null) {
+        super(type, statement);
+    }
+}
+
+export const isExpressionStatementElementClass = (
+    target: CommonClass,
+): target is ExpressionStatementElementClass => {
+    return isCommonClass(target, ExpressionStatementElementClass);
+};
+
+export class StringStatementElementClass extends StatementElementClass<
+    'break' | 'continue',
+    string | null
+> {
+    constructor(type: 'break' | 'continue', statement: string | null) {
+        super(type, statement);
+    }
+}
+
+export const isStringStatementElementClass = (
+    target: CommonClass,
+): target is StringStatementElementClass => {
+    return isCommonClass(target, StringStatementElementClass);
+};
+
+export class DmlStatementElementClass extends StatementElementClass<
+    'insert' | 'update' | 'delete' | 'undelete',
+    DmlStatementClass
+> {
+    constructor(type: 'insert' | 'update' | 'delete' | 'undelete', statement: DmlStatementClass) {
+        super(type, statement);
+    }
+}
+
+export const isDmlStatementElementClass = (
+    target: CommonClass,
+): target is DmlStatementElementClass => {
+    return isCommonClass(target, DmlStatementElementClass);
+};
+
+export class UpsertStatementElementClass extends StatementElementClass<
+    'upsert',
+    UpsertStatementClass
+> {
+    constructor(statement: UpsertStatementClass) {
+        super('upsert', statement);
+    }
+}
+
+export const isUpsertStatementElementClass = (
+    target: CommonClass,
+): target is UpsertStatementElementClass => {
+    return isCommonClass(target, UpsertStatementElementClass);
+};
+
+export class MergeStatementElementClass extends StatementElementClass<
+    'merge',
+    MergeStatementClass
+> {
+    constructor(statement: MergeStatementClass) {
+        super('merge', statement);
+    }
+}
+
+export const isMergeStatementElementClass = (
+    target: CommonClass,
+): target is MergeStatementElementClass => {
+    return isCommonClass(target, MergeStatementElementClass);
+};
+
+export class RunAsStatementElementClass extends StatementElementClass<
+    'runAs',
+    RunAsStatementElementClass
+> {
+    constructor(statement: RunAsStatementElementClass) {
+        super('runAs', statement);
+    }
+}
+
+export const isRunAsStatementElementClass = (
+    target: CommonClass,
+): target is RunAsStatementElementClass => {
+    return isCommonClass(target, RunAsStatementElementClass);
+};
+
+export class LocalVariableStatementElementClass extends StatementElementClass<
+    'localVariable',
+    LocalVariableDeclaration
+> {
+    constructor(statement: LocalVariableDeclaration) {
+        super('localVariable', statement);
+    }
+}
+
+export const isLocalVariableStatementElementClass = (
+    target: CommonClass,
+): target is LocalVariableStatementElementClass => {
+    return isCommonClass(target, LocalVariableStatementElementClass);
+};
+
+export class NormalStatementClass extends CommonClass {
+    private value: StatementElementClass<unknown, unknown>;
+
+    constructor(value: StatementElementClass<unknown, unknown>) {
+        super();
+        this.value = value;
+    }
+
+    getValue(): StatementElementClass<unknown, unknown> {
+        return this.value;
+    }
+}
+
+export const isNormalStatementClass = (target: CommonClass): target is NormalStatementClass => {
+    return isCommonClass(target, NormalStatementClass);
 };
 
 export type NormalStatement =

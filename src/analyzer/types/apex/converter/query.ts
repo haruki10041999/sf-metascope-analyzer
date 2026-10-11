@@ -35,7 +35,7 @@ import {
     isWithClauseType,
 } from '../../apex_IR';
 
-import { toPrimitiveValue, toTypeClass } from './commons';
+import { toPrimitiveValue, toTypeClass, CommonClass, isCommonClass } from './commons';
 import { soslIdConvert } from './id';
 import { fieldNameConvert, DateFieldName, dateFieldNameConvert } from './name';
 import {
@@ -413,7 +413,7 @@ export type SoqlFunction = {
         | DateFieldName
         | string
         | SoqlFunction
-        | (string | string[] | (SignedLiteral | Expression)[] | string[] | Expression)[];
+        | (string | string[] | (SignedLiteral | Expression)[] | Expression)[];
 };
 
 export const soqlFunctionConvert = (

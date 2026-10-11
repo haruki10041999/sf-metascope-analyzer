@@ -11,7 +11,7 @@ import {
     isTypeDeclarationType,
 } from '../../apex_IR';
 
-import { toPrimitiveValue, toTypeClass } from './commons';
+import { toPrimitiveValue, toTypeClass, CommonClass, isCommonClass } from './commons';
 import { normalIdConvert } from './id';
 import { anonymousBlockConvert, triggerBlockConvert } from './block';
 import { TypeDeclaration, typeDeclarationConvert } from './declaration';
@@ -41,6 +41,29 @@ export const compilationUnitConvert = (
     return undefined;
 };
 
+export class TriggerCaseClass extends CommonClass {
+    private value: string | null;
+    private triggerCaseType: string;
+
+    constructor(value: string | null, triggerCaseType: string) {
+        super();
+        this.value = value;
+        this.triggerCaseType = triggerCaseType;
+    }
+
+    getValue(): string | null {
+        return this.value;
+    }
+
+    getContent(): string {
+        return this.triggerCaseType;
+    }
+}
+
+export const isTriggerCaseClass = (target: CommonClass): target is TriggerCaseClass => {
+    return isCommonClass(target, TriggerCaseClass);
+};
+
 export type TriggerCase = {
     value?: string;
     triggerCaseType: string;
@@ -62,6 +85,35 @@ export const triggerCaseConvert = (
     }
 
     return triggerCase;
+};
+
+export class TriggerUnitClass extends CommonClass {
+    private value: string[];
+    private triggerCaseType: TriggerCase[];
+    private block: TriggerBlockMember[];
+
+    constructor(value: string[], triggerCaseType: TriggerCase[], block: TriggerBlockMember[]) {
+        super();
+        this.value = value;
+        this.triggerCaseType = triggerCaseType;
+        this.block = block;
+    }
+
+    getValue(): string[] {
+        return this.value;
+    }
+
+    getContent(): TriggerCase[] {
+        return this.triggerCaseType;
+    }
+
+    getBlock(): TriggerBlockMember[] {
+        return this.block;
+    }
+}
+
+export const isTriggerUnitClass = (target: CommonClass): target is TriggerUnitClass => {
+    return isCommonClass(target, TriggerUnitClass);
 };
 
 export type TriggerUnit = {

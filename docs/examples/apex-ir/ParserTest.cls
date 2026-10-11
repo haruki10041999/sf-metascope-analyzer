@@ -204,6 +204,8 @@ global inherited sharing virtual class ParserTest extends BaseParser implements 
 
         Integer[] emptyNumbers = new Integer[] {};
 
+        DocutizeForm.AccountService hoge = new DocutizeForm.AccountService<String>();
+
         Schema.DescribeSObjectResult describe = new Schema.DescribeSObjectResult();
 
         sized[0] = 'test';

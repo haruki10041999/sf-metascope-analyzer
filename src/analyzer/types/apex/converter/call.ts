@@ -8,10 +8,39 @@ import {
     isExpressionListType,
 } from '../../apex_IR';
 
-import { toTypeClass } from './commons';
+import { toTypeClass, CommonClass, isCommonClass } from './commons';
 import { normalIdConvert, anyIdConvert } from './id';
 import { Expression } from './expression';
 import { expressionListConvert } from './list';
+
+export class MethodCallClass extends CommonClass {
+    private value: string | null;
+    private param: Expression[];
+    private reference: string | null;
+
+    constructor(value: string | null, param: Expression[], reference: string | null) {
+        super();
+        this.value = value;
+        this.param = param;
+        this.reference = reference;
+    }
+
+    getValue(): string | null {
+        return this.value;
+    }
+
+    getParam(): Expression[] {
+        return this.param;
+    }
+
+    getReference(): string | null {
+        return this.reference;
+    }
+}
+
+export const isMethodCallClass = (target: CommonClass): target is MethodCallClass => {
+    return isCommonClass(target, MethodCallClass);
+};
 
 export type MethodCall = {
     value?: string;
@@ -50,6 +79,29 @@ export const methodCallConvert = (
     }
 
     return methodCall;
+};
+
+export class DotMethodCallClass extends CommonClass {
+    private value: string | null;
+    private param: Expression[];
+
+    constructor(value: string | null, param: Expression[]) {
+        super();
+        this.value = value;
+        this.param = param;
+    }
+
+    getValue(): string | null {
+        return this.value;
+    }
+
+    getParam(): Expression[] {
+        return this.param;
+    }
+}
+
+export const isDotMethodCallClass = (target: CommonClass): target is DotMethodCallClass => {
+    return isCommonClass(target, DotMethodCallClass);
 };
 
 export type DotMethodCall = {

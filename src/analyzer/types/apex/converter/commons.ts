@@ -31,3 +31,12 @@ export const toTypeClass = <T extends CommonTypeClass>(
 
     return undefined;
 };
+
+export abstract class CommonClass {}
+
+export const isCommonClass = <T extends CommonClass>(
+    target: CommonClass,
+    classType: abstract new (...args: any[]) => T,
+): target is T => {
+    return target instanceof classType;
+};

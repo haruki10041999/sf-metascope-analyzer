@@ -84,7 +84,7 @@ import {
     isFieldNameType,
 } from '../../apex_IR';
 
-import { toPrimitiveValue, toTypeClass } from './commons';
+import { toPrimitiveValue, toTypeClass, CommonClass, isCommonClass } from './commons';
 import { anyIdConvert } from './id';
 import { Primary, primaryConvert } from './primary';
 import { fieldNameConvert } from './name';
@@ -115,6 +115,39 @@ export const primaryExpressionConvert = (
         return primaryConvert(valueTypeClass, errorClass);
     }
     return undefined;
+};
+
+export class DotExpressionClass extends CommonClass {
+    private left: ExpressionElementClass<unknown, unknown> | null;
+    private operator: string | null;
+    private right: string | DotMethodCall | null;
+
+    constructor(
+        left: ExpressionElementClass<unknown, unknown> | null,
+        operator: string | null,
+        right: string | DotMethodCall | null,
+    ) {
+        super();
+        this.left = left;
+        this.operator = operator;
+        this.right = right;
+    }
+
+    getLeft(): ExpressionElementClass<unknown, unknown> | null {
+        return this.left;
+    }
+
+    getOperator(): string | null {
+        return this.operator;
+    }
+
+    getRight(): string | DotMethodCall | null {
+        return this.right;
+    }
+}
+
+export const isDotExpressionClass = (target: CommonClass): target is DotExpressionClass => {
+    return isCommonClass(target, DotExpressionClass);
 };
 
 export type DotExpression = {
@@ -214,6 +247,29 @@ export const newExpressionConvert = (
     return undefined;
 };
 
+export class CastExpressionClass extends CommonClass {
+    private value: ExpressionElementClass<unknown, unknown> | null;
+    private valueType: TypeRef;
+
+    constructor(value: ExpressionElementClass<unknown, unknown> | null, valueType: TypeRef) {
+        super();
+        this.value = value;
+        this.valueType = valueType;
+    }
+
+    getValue(): ExpressionElementClass<unknown, unknown> | null {
+        return this.value;
+    }
+
+    getValueType(): TypeRef {
+        return this.valueType;
+    }
+}
+
+export const isCastExpressionClass = (target: CommonClass): target is CastExpressionClass => {
+    return isCommonClass(target, CastExpressionClass);
+};
+
 export type CastExpression = {
     value?: Expression;
     valueType: TypeRef;
@@ -259,6 +315,41 @@ export const subExpressionConvert = (
         return expressionConvert(valueTypeClass, errorClass);
     }
     return undefined;
+};
+
+export class SingleOperatorExpressionClass extends CommonClass {
+    private value: ExpressionElementClass<unknown, unknown> | null;
+    private operator: string;
+    private location: 'prefix' | 'postfix';
+
+    constructor(
+        value: ExpressionElementClass<unknown, unknown> | null,
+        operator: string,
+        location: 'prefix' | 'postfix',
+    ) {
+        super();
+        this.value = value;
+        this.operator = operator;
+        this.location = location;
+    }
+
+    getValue(): ExpressionElementClass<unknown, unknown> | null {
+        return this.value;
+    }
+
+    getOperator(): string {
+        return this.operator;
+    }
+
+    getLocation(): 'prefix' | 'postfix' {
+        return this.location;
+    }
+}
+
+export const isSingleOperatorExpressionClass = (
+    target: CommonClass,
+): target is SingleOperatorExpressionClass => {
+    return isCommonClass(target, SingleOperatorExpressionClass);
 };
 
 export type SingleOperatorExpression = {
@@ -324,7 +415,42 @@ export const negExpressionConvert = (
     return negExpression;
 };
 
-export type ExpToExpOperatorClass = {
+export class ExpToExpOperatorExpressionClass extends CommonClass {
+    private left: ExpressionElementClass<unknown, unknown> | null;
+    private operator: string | null;
+    private right: ExpressionElementClass<unknown, unknown> | null;
+
+    constructor(
+        left: ExpressionElementClass<unknown, unknown> | null,
+        operator: string | null,
+        right: ExpressionElementClass<unknown, unknown> | null,
+    ) {
+        super();
+        this.left = left;
+        this.operator = operator;
+        this.right = right;
+    }
+
+    getLeft(): ExpressionElementClass<unknown, unknown> | null {
+        return this.left;
+    }
+
+    getOperator(): string | null {
+        return this.operator;
+    }
+
+    getRight(): ExpressionElementClass<unknown, unknown> | null {
+        return this.right;
+    }
+}
+
+export const isExpToExpOperatorExpressionClass = (
+    target: CommonClass,
+): target is ExpToExpOperatorExpressionClass => {
+    return isCommonClass(target, ExpToExpOperatorExpressionClass);
+};
+
+export type ExpToExpOperatorExpression = {
     left?: Expression;
     operator?: string;
     right?: Expression;
@@ -333,8 +459,8 @@ export type ExpToExpOperatorClass = {
 export const arth1ExpressionConvert = (
     target: Arth1ExpressionTypeClass,
     errorClass: ErrorTypeClass[],
-): ExpToExpOperatorClass => {
-    const arth1Expression: ExpToExpOperatorClass = {};
+): ExpToExpOperatorExpression => {
+    const arth1Expression: ExpToExpOperatorExpression = {};
 
     const leftTypeClass = toTypeClass(target.getLeft(), isExpressionTypeAll, errorClass);
     if (leftTypeClass) {
@@ -367,8 +493,8 @@ export const arth1ExpressionConvert = (
 export const arth2ExpressionConvert = (
     target: Arth2ExpressionTypeClass,
     errorClass: ErrorTypeClass[],
-): ExpToExpOperatorClass => {
-    const arth2Expression: ExpToExpOperatorClass = {};
+): ExpToExpOperatorExpression => {
+    const arth2Expression: ExpToExpOperatorExpression = {};
 
     const leftTypeClass = toTypeClass(target.getLeft(), isExpressionTypeAll, errorClass);
     if (leftTypeClass) {
@@ -401,8 +527,8 @@ export const arth2ExpressionConvert = (
 export const bitExpressionConvert = (
     target: BitExpressionTypeClass,
     errorClass: ErrorTypeClass[],
-): ExpToExpOperatorClass => {
-    const bitExpression: ExpToExpOperatorClass = {};
+): ExpToExpOperatorExpression => {
+    const bitExpression: ExpToExpOperatorExpression = {};
 
     const leftTypeClass = toTypeClass(target.getLeft(), isExpressionTypeAll, errorClass);
     if (leftTypeClass) {
@@ -435,8 +561,8 @@ export const bitExpressionConvert = (
 export const cmpExpressionConvert = (
     target: CmpExpressionTypeClass,
     errorClass: ErrorTypeClass[],
-): ExpToExpOperatorClass => {
-    const cmpExpression: ExpToExpOperatorClass = {};
+): ExpToExpOperatorExpression => {
+    const cmpExpression: ExpToExpOperatorExpression = {};
 
     const leftTypeClass = toTypeClass(target.getLeft(), isExpressionTypeAll, errorClass);
     if (leftTypeClass) {
@@ -464,6 +590,41 @@ export const cmpExpressionConvert = (
     }
 
     return cmpExpression;
+};
+
+export class InstanceOfExpressionClass extends CommonClass {
+    private left: ExpressionElementClass<unknown, unknown> | null;
+    private operator: string | null;
+    private right: TypeRef;
+
+    constructor(
+        left: ExpressionElementClass<unknown, unknown> | null,
+        operator: string | null,
+        right: TypeRef,
+    ) {
+        super();
+        this.left = left;
+        this.operator = operator;
+        this.right = right;
+    }
+
+    getLeft(): ExpressionElementClass<unknown, unknown> | null {
+        return this.left;
+    }
+
+    getOperator(): string | null {
+        return this.operator;
+    }
+
+    getRight(): TypeRef {
+        return this.right;
+    }
+}
+
+export const isInstanceOfExpressionClass = (
+    target: CommonClass,
+): target is InstanceOfExpressionClass => {
+    return isCommonClass(target, InstanceOfExpressionClass);
 };
 
 export type InstanceOfExpression = {
@@ -515,8 +676,8 @@ export const instanceOfExpressionConvert = (
 export const equalityExpressionConvert = (
     target: EqualityExpressionTypeClass,
     errorClass: ErrorTypeClass[],
-): ExpToExpOperatorClass => {
-    const equalityExpression: ExpToExpOperatorClass = {};
+): ExpToExpOperatorExpression => {
+    const equalityExpression: ExpToExpOperatorExpression = {};
 
     const leftTypeClass = toTypeClass(target.getLeft(), isExpressionTypeAll, errorClass);
     if (leftTypeClass) {
@@ -549,8 +710,8 @@ export const equalityExpressionConvert = (
 export const bitAndExpressionConvert = (
     target: BitAndExpressionTypeClass,
     errorClass: ErrorTypeClass[],
-): ExpToExpOperatorClass => {
-    const bitAndExpression: ExpToExpOperatorClass = {};
+): ExpToExpOperatorExpression => {
+    const bitAndExpression: ExpToExpOperatorExpression = {};
 
     const leftTypeClass = toTypeClass(target.getLeft(), isExpressionTypeAll, errorClass);
     if (leftTypeClass) {
@@ -583,8 +744,8 @@ export const bitAndExpressionConvert = (
 export const bitNotExpressionConvert = (
     target: BitNotExpressionTypeClass,
     errorClass: ErrorTypeClass[],
-): ExpToExpOperatorClass => {
-    const bitNotExpression: ExpToExpOperatorClass = {};
+): ExpToExpOperatorExpression => {
+    const bitNotExpression: ExpToExpOperatorExpression = {};
 
     const leftTypeClass = toTypeClass(target.getLeft(), isExpressionTypeAll, errorClass);
     if (leftTypeClass) {
@@ -617,8 +778,8 @@ export const bitNotExpressionConvert = (
 export const bitOrExpressionConvert = (
     target: BitOrExpressionTypeClass,
     errorClass: ErrorTypeClass[],
-): ExpToExpOperatorClass => {
-    const bitOrExpression: ExpToExpOperatorClass = {};
+): ExpToExpOperatorExpression => {
+    const bitOrExpression: ExpToExpOperatorExpression = {};
 
     const leftTypeClass = toTypeClass(target.getLeft(), isExpressionTypeAll, errorClass);
     if (leftTypeClass) {
@@ -651,8 +812,8 @@ export const bitOrExpressionConvert = (
 export const logAndExpressionConvert = (
     target: LogAndExpressionTypeClass,
     errorClass: ErrorTypeClass[],
-): ExpToExpOperatorClass => {
-    const logAndExpression: ExpToExpOperatorClass = {};
+): ExpToExpOperatorExpression => {
+    const logAndExpression: ExpToExpOperatorExpression = {};
 
     const leftTypeClass = toTypeClass(target.getLeft(), isExpressionTypeAll, errorClass);
     if (leftTypeClass) {
@@ -685,8 +846,8 @@ export const logAndExpressionConvert = (
 export const logOrExpressionConvert = (
     target: LogOrExpressionTypeClass,
     errorClass: ErrorTypeClass[],
-): ExpToExpOperatorClass => {
-    const logOrExpression: ExpToExpOperatorClass = {};
+): ExpToExpOperatorExpression => {
+    const logOrExpression: ExpToExpOperatorExpression = {};
 
     const leftTypeClass = toTypeClass(target.getLeft(), isExpressionTypeAll, errorClass);
     if (leftTypeClass) {
@@ -719,8 +880,8 @@ export const logOrExpressionConvert = (
 export const coalExpressionConvert = (
     target: CoalExpressionTypeClass,
     errorClass: ErrorTypeClass[],
-): ExpToExpOperatorClass => {
-    const coalExpression: ExpToExpOperatorClass = {};
+): ExpToExpOperatorExpression => {
+    const coalExpression: ExpToExpOperatorExpression = {};
 
     const leftTypeClass = toTypeClass(target.getLeft(), isExpressionTypeAll, errorClass);
     if (leftTypeClass) {
@@ -748,6 +909,39 @@ export const coalExpressionConvert = (
     }
 
     return coalExpression;
+};
+
+export class CondExpressionClass extends CommonClass {
+    private condition: ExpressionElementClass<unknown, unknown> | null;
+    private trueValue: ExpressionElementClass<unknown, unknown> | null;
+    private falseValue: ExpressionElementClass<unknown, unknown> | null;
+
+    constructor(
+        condition: ExpressionElementClass<unknown, unknown> | null,
+        trueValue: ExpressionElementClass<unknown, unknown> | null,
+        falseValue: ExpressionElementClass<unknown, unknown> | null,
+    ) {
+        super();
+        this.condition = condition;
+        this.trueValue = trueValue;
+        this.falseValue = falseValue;
+    }
+
+    getCondition(): ExpressionElementClass<unknown, unknown> | null {
+        return this.condition;
+    }
+
+    getTrueValue(): ExpressionElementClass<unknown, unknown> | null {
+        return this.trueValue;
+    }
+
+    getFalseValue(): ExpressionElementClass<unknown, unknown> | null {
+        return this.falseValue;
+    }
+}
+
+export const isCondExpressionClass = (target: CommonClass): target is CondExpressionClass => {
+    return isCommonClass(target, CondExpressionClass);
 };
 
 export type CondExpression = {
@@ -792,8 +986,8 @@ export const condExpressionConvert = (
 export const assignExpressionConvert = (
     target: AssignExpressionTypeClass,
     errorClass: ErrorTypeClass[],
-): ExpToExpOperatorClass => {
-    const assignExpression: ExpToExpOperatorClass = {};
+): ExpToExpOperatorExpression => {
+    const assignExpression: ExpToExpOperatorExpression = {};
 
     const leftTypeClass = toTypeClass(target.getLeft(), isExpressionTypeAll, errorClass);
     if (leftTypeClass) {
@@ -859,6 +1053,39 @@ export const filteringExpressionConvert = (
     });
 
     return values;
+};
+
+export class FieldExpressionClass extends CommonClass {
+    private left: string[] | SoqlFunction | null;
+    private operator: string | null;
+    private right: NormalValue | null;
+
+    constructor(
+        left: string[] | SoqlFunction | null,
+        operator: string | null,
+        right: NormalValue | null,
+    ) {
+        super();
+        this.left = left;
+        this.operator = operator;
+        this.right = right;
+    }
+
+    getLeft(): string[] | SoqlFunction | null {
+        return this.left;
+    }
+
+    getOperator(): string | null {
+        return this.operator;
+    }
+
+    getRight(): NormalValue | null {
+        return this.right;
+    }
+}
+
+export const isFieldExpressionClass = (target: CommonClass): target is FieldExpressionClass => {
+    return isCommonClass(target, FieldExpressionClass);
 };
 
 export type FieldExpression = {
@@ -931,6 +1158,29 @@ export const conditionalExpressionConvert = (
     return undefined;
 };
 
+export class LogicalExpressionClass extends CommonClass {
+    private value: (LogicalExpression | FieldExpression)[];
+    private operator: string | null;
+
+    constructor(value: (LogicalExpression | FieldExpression)[], operator: string | null) {
+        super();
+        this.value = value;
+        this.operator = operator;
+    }
+
+    getValue(): (LogicalExpression | FieldExpression)[] {
+        return this.value;
+    }
+
+    getOperator(): string | null {
+        return this.operator;
+    }
+}
+
+export const isLogicalExpressionClass = (target: CommonClass): target is LogicalExpressionClass => {
+    return isCommonClass(target, LogicalExpressionClass);
+};
+
 export type LogicalExpression = {
     value: (LogicalExpression | FieldExpression)[];
     operator?: string;
@@ -961,6 +1211,41 @@ export const logicalExpressionConvert = (
     }
 
     return logicalExpression;
+};
+
+export class WhereFieldExpressionClass extends CommonClass {
+    private left: string | FieldExpression | null;
+    private operator: string | null;
+    private right: NormalValue | null;
+
+    constructor(
+        left: string | FieldExpression | null,
+        operator: string | null,
+        right: NormalValue | null,
+    ) {
+        super();
+        this.left = left;
+        this.operator = operator;
+        this.right = right;
+    }
+
+    getLeft(): string | FieldExpression | null {
+        return this.left;
+    }
+
+    getOperator(): string | null {
+        return this.operator;
+    }
+
+    getRight(): NormalValue | null {
+        return this.right;
+    }
+}
+
+export const isWhereFieldExpressionClass = (
+    target: CommonClass,
+): target is WhereFieldExpression => {
+    return isCommonClass(target, WhereFieldExpressionClass);
 };
 
 export type WhereFieldExpression = {
@@ -1036,6 +1321,31 @@ export const whereConditionalExpressionConvert = (
     return undefined;
 };
 
+export class WhereLogicalExpressionClass extends CommonClass {
+    private value: (WhereLogicalExpression | WhereFieldExpression)[];
+    private operator: string | null;
+
+    constructor(value: (WhereLogicalExpression | WhereFieldExpression)[], operator: string | null) {
+        super();
+        this.value = value;
+        this.operator = operator;
+    }
+
+    getValue(): (WhereLogicalExpression | WhereFieldExpression)[] {
+        return this.value;
+    }
+
+    getOperator(): string | null {
+        return this.operator;
+    }
+}
+
+export const isWhereLogicalExpressionClass = (
+    target: CommonClass,
+): target is WhereLogicalExpressionClass => {
+    return isCommonClass(target, WhereLogicalExpressionClass);
+};
+
 export type WhereLogicalExpression = {
     value: (WhereLogicalExpression | WhereFieldExpression)[];
     operator?: string;
@@ -1066,6 +1376,153 @@ export const whereLogicalExpressionConvert = (
     }
     return whereLogicalExpression;
 };
+
+export abstract class ExpressionElementClass<TType, TExpression> extends CommonClass {
+    private type: TType;
+    private expression: TExpression;
+
+    constructor(type: TType, expression: TExpression) {
+        super();
+        this.type = type;
+        this.expression = expression;
+    }
+
+    getType(): TType {
+        return this.type;
+    }
+
+    getExpression(): TExpression {
+        return this.expression;
+    }
+}
+
+export const isExpressionElementClass = (
+    target: CommonClass,
+): target is ExpressionElementClass<unknown, unknown> => {
+    return isCommonClass(target, ExpressionElementClass);
+};
+
+export class NormalExpressionElementClass extends ExpressionElementClass<'normal', string | null> {
+    constructor(expression: string | null) {
+        super('normal', expression);
+    }
+}
+
+export class PrimaryExpressionElementClass extends ExpressionElementClass<
+    'primary',
+    Primary | null
+> {
+    constructor(expression: Primary | null) {
+        super('primary', expression);
+    }
+}
+
+export class DotExpressionElementClass extends ExpressionElementClass<
+    'dot',
+    DotExpressionClass | null
+> {
+    constructor(expression: DotExpressionClass | null) {
+        super('dot', expression);
+    }
+}
+
+export class MethodCallExpressionElementClass extends ExpressionElementClass<
+    'methodCall',
+    MethodCall
+> {
+    constructor(expression: MethodCall) {
+        super('methodCall', expression);
+    }
+}
+
+export class ArrayExpressionElementClass extends ExpressionElementClass<'array', Expression[]> {
+    constructor(expression: Expression[]) {
+        super('array', expression);
+    }
+}
+
+export class NewExpressionElementClass extends ExpressionElementClass<'new', Creator | null> {
+    constructor(expression: Creator | null) {
+        super('new', expression);
+    }
+}
+
+export class CastExpressionElementClass extends ExpressionElementClass<
+    'cast',
+    CastExpressionClass
+> {
+    constructor(expression: CastExpressionClass) {
+        super('cast', expression);
+    }
+}
+
+export class SubExpressionElementClass extends ExpressionElementClass<'sub', Expression | null> {
+    constructor(expression: Expression | null) {
+        super('sub', expression);
+    }
+}
+
+export class SingleOperatorExpressionElementClass extends ExpressionElementClass<
+    'postOp' | 'preOp' | 'neg',
+    SingleOperatorExpressionClass
+> {
+    constructor(type: 'postOp' | 'preOp' | 'neg', expression: SingleOperatorExpressionClass) {
+        super(type, expression);
+    }
+}
+
+export class ExpToExpOperatorExpressionElementClass extends ExpressionElementClass<
+    | 'arth1'
+    | 'arth2'
+    | 'bit'
+    | 'equality'
+    | 'bitAnd'
+    | 'bitOr'
+    | 'bitNot'
+    | 'assign'
+    | 'cmp'
+    | 'logAnd'
+    | 'logOr'
+    | 'coal',
+    ExpToExpOperatorExpressionClass
+> {
+    constructor(
+        type:
+            | 'arth1'
+            | 'arth2'
+            | 'bit'
+            | 'equality'
+            | 'bitAnd'
+            | 'bitOr'
+            | 'bitNot'
+            | 'assign'
+            | 'cmp'
+            | 'logAnd'
+            | 'logOr'
+            | 'coal',
+        expression: ExpToExpOperatorExpressionClass,
+    ) {
+        super(type, expression);
+    }
+}
+
+export class InstanceOfExpressionElementClass extends ExpressionElementClass<
+    'instanceOf',
+    InstanceOfExpressionClass
+> {
+    constructor(expression: InstanceOfExpressionClass) {
+        super('instanceOf', expression);
+    }
+}
+
+export class CondExpressionElementClass extends ExpressionElementClass<
+    'cond',
+    CondExpressionClass
+> {
+    constructor(expression: CondExpressionClass) {
+        super('cond', expression);
+    }
+}
 
 export type Expression =
     | {
@@ -1118,7 +1575,7 @@ export type Expression =
               | 'logAnd'
               | 'logOr'
               | 'coal';
-          expression: ExpToExpOperatorClass;
+          expression: ExpToExpOperatorExpression;
       }
     | {
           type: 'instanceOf';

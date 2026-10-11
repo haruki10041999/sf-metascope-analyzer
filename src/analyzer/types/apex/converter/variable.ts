@@ -8,7 +8,7 @@ import {
     isVariableDeclaratorType,
 } from '../../apex_IR';
 
-import { toTypeClass } from './commons';
+import { toTypeClass, CommonClass, isCommonClass } from './commons';
 import { Expression, expressionConvert } from './expression';
 import { normalIdConvert } from './id';
 
@@ -27,6 +27,31 @@ export const arrayInitializerConvert = (
         }
     });
     return values;
+};
+
+export class VariableDeclaratorClass extends CommonClass {
+    private value: string | null;
+    private content: Expression | null;
+
+    constructor(value: string | null, content: Expression | null) {
+        super();
+        this.value = value;
+        this.content = content;
+    }
+
+    getValue(): string | null {
+        return this.value;
+    }
+
+    getContent(): Expression | null {
+        return this.content;
+    }
+}
+
+export const isVariableDeclaratorClass = (
+    target: CommonClass,
+): target is VariableDeclaratorClass => {
+    return isCommonClass(target, VariableDeclaratorClass);
 };
 
 export type VariableDeclarator = {

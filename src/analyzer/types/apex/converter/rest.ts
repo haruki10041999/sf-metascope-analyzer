@@ -19,12 +19,35 @@ import {
     isSetCreatorRestType,
 } from '../../apex_IR';
 
-import { toPrimitiveValue, toTypeClass } from './commons';
+import { toPrimitiveValue, toTypeClass, CommonClass, isCommonClass } from './commons';
 import { normalArgumentsConvert } from './arguments';
 import { Expression, expressionConvert } from './expression';
 import { createdNameConvert } from './name';
 import { IdCreatedNamePair, MapCreatorRestPair, mapCreatorRestPairConvert } from './pair';
 import { arrayInitializerConvert } from './variable';
+
+export class ArrayCreatorRestClass extends CommonClass {
+    private value: Expression[];
+    private size: Expression | null;
+
+    constructor(value: Expression[], size: Expression | null) {
+        super();
+        this.value = value;
+        this.size = size;
+    }
+
+    getValue(): Expression[] {
+        return this.value;
+    }
+
+    getSize(): Expression | null {
+        return this.size;
+    }
+}
+
+export const isArrayCreatorRestClass = (target: CommonClass): target is ArrayCreatorRestClass => {
+    return isCommonClass(target, ArrayCreatorRestClass);
+};
 
 export type ArrayCreatorRest = {
     value: Expression[];
@@ -113,6 +136,108 @@ export const setCreatorRestConvert = (
         }
     });
     return values;
+};
+
+export abstract class RestElementClass<TType, TValue, TContent> extends CommonClass {
+    private type: TType;
+    private value: TValue;
+    private content: TContent;
+
+    constructor(type: TType, value: TValue, content: TContent) {
+        super();
+        this.type = type;
+        this.value = value;
+        this.content = content;
+    }
+
+    getType(): TType {
+        return this.type;
+    }
+
+    getValue(): TValue {
+        return this.value;
+    }
+
+    getContent(): TContent {
+        return this.content;
+    }
+}
+
+export const isRestElementClass = (
+    target: CommonClass,
+): target is RestElementClass<unknown, unknown, unknown> => {
+    return isCommonClass(target, RestElementClass);
+};
+
+export class ArrayRestElementClass extends RestElementClass<
+    'array',
+    IdCreatedNamePair[],
+    ArrayCreatorRestClass
+> {
+    constructor(value: IdCreatedNamePair[], content: ArrayCreatorRestClass) {
+        super('array', value, content);
+    }
+}
+
+export const isArrayElementClass = (target: CommonClass): target is ArrayRestElementClass => {
+    return isCommonClass(target, ArrayRestElementClass);
+};
+
+export class ExpressionArrayRestElementClass extends RestElementClass<
+    'class' | 'set',
+    IdCreatedNamePair[],
+    Expression[]
+> {
+    constructor(type: 'class' | 'set', value: IdCreatedNamePair[], content: Expression[]) {
+        super(type, value, content);
+    }
+}
+
+export const isExpressionArrayRestElementClass = (
+    target: CommonClass,
+): target is ExpressionArrayRestElementClass => {
+    return isCommonClass(target, ExpressionArrayRestElementClass);
+};
+
+export class MapRestElementClass extends RestElementClass<
+    'map',
+    IdCreatedNamePair[],
+    MapCreatorRestPair[]
+> {
+    constructor(value: IdCreatedNamePair[], content: MapCreatorRestPair[]) {
+        super('map', value, content);
+    }
+}
+
+export const isMapRestElementClass = (target: CommonClass): target is MapRestElementClass => {
+    return isCommonClass(target, MapRestElementClass);
+};
+
+export class NoRestElementClass extends RestElementClass<'no', IdCreatedNamePair[], string | null> {
+    constructor(value: IdCreatedNamePair[], content: string | null) {
+        super('no', value, content);
+    }
+}
+
+export const isNoRestElementClass = (target: CommonClass): target is NoRestElementClass => {
+    return isCommonClass(target, NoRestElementClass);
+};
+
+export class CreatorClass extends CommonClass {
+    private value: RestElementClass<unknown, unknown, unknown>;
+
+    constructor(value: RestElementClass<unknown, unknown, unknown>) {
+        super();
+        this.value = value;
+    }
+
+    getValue(): RestElementClass<unknown, unknown, unknown> {
+        return this.value;
+    }
+}
+
+export const isCreatorClass = (target: CommonClass): target is CreatorClass => {
+    return isCommonClass(target, CreatorClass);
 };
 
 export type Creator =

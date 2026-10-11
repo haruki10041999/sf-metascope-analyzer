@@ -6,7 +6,7 @@ import {
     isTypeNameType,
 } from '../../apex_IR';
 
-import { toPrimitiveValue, toTypeClass } from './commons';
+import { toPrimitiveValue, toTypeClass, CommonClass, isCommonClass } from './commons';
 import { TypeName, typeNameConvert } from './name';
 
 export const arraySubscriptsConvert = (
@@ -18,6 +18,29 @@ export const arraySubscriptsConvert = (
         (target): target is number => typeof target === 'number',
         errorClass,
     );
+};
+
+export class TypeRefClass extends CommonClass {
+    private value: TypeName[];
+    private dimension: number | null;
+
+    constructor(value: TypeName[], dimension: number | null) {
+        super();
+        this.value = value;
+        this.dimension = dimension;
+    }
+
+    getValue(): TypeName[] {
+        return this.value;
+    }
+
+    getDimension(): number | null {
+        return this.dimension;
+    }
+}
+
+export const isTypeRefClass = (target: CommonClass): target is TypeRefClass => {
+    return isCommonClass(target, TypeRefClass);
 };
 
 export type TypeRef = {

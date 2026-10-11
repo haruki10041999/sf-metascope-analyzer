@@ -9,7 +9,7 @@ import {
     MapCreatorRestPair,
     CastExpression,
     SingleOperatorExpression,
-    ExpToExpOperatorClass,
+    ExpToExpOperatorExpression,
     InstanceOfExpression,
     CondExpression,
 } from './converter';

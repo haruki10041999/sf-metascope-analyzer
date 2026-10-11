@@ -61,13 +61,13 @@
     - `cast`: `expression?: CastExpression`
     - `sub`: `expression?: Expression`
     - `postOp`, `preOp`, `neg`: `expression?: SingleOperatorExpression`
-    - `arth1`, `arth2`, `bit`, `cmp`, `equality`, `bitAnd`, `bitOr`, `bitNot`, `assign`, `logAnd`, `logOr`, `coal`: `expression?: ExpToExpOperatorClass`
+    - `arth1`, `arth2`, `bit`, `cmp`, `equality`, `bitAnd`, `bitOr`, `bitNot`, `assign`, `logAnd`, `logOr`, `coal`: `expression?: ExpToExpOperatorExpression`
     - `instanceOf`: `expression?: InstanceOfExpression`
     - `cond`: `expression?: CondExpression`
 - `DotExpression`: `left?: Expression`, `operator?: string`, `right?: string | DotMethodCall`。メンバー参照・メソッド呼び出しを表します。
 - `CastExpression`: `value?: Expression`, `valueType: TypeRef`。
 - `SingleOperatorExpression`: `value?: Expression`, `operator: string`, `location: 'prefix' | 'postfix'`。
-- `ExpToExpOperatorClass`: `left?: Expression`, `operator?: string`, `right?: Expression`。
+- `ExpToExpOperatorExpression`: `left?: Expression`, `operator?: string`, `right?: Expression`。
 - `InstanceOfExpression`: `left?: Expression`, `operator?: string`, `right: TypeRef`。
 - `CondExpression`: `condition?: Expression`, `true?: Expression`, `false?: Expression`。三項演算子です。
 - `FieldExpression`: `left?: string[] | SoqlFunction`, `operator?: string`, `right?: NormalValue`。SOQL条件項目です。
@@ -231,3 +231,287 @@
 - [id.ts](../src/analyzer/types/apex/converter/id.ts): ID値
 - [arguments.ts](../src/analyzer/types/apex/converter/arguments.ts): 引数リスト
 - [index.ts](../src/analyzer/types/apex/converter/index.ts): converter型・関数の再export
+
+## 型ごとの利用関数
+
+以下は、各型名が converter 関数の引数型または戻り値型に現れる箇所の一覧です。間接的に利用する関数ではなく、関数シグネチャで型を明示しているものを記載しています。Union のメンバー型は、その Union 型の行にまとめています。補助関数などで型名が直接シグネチャに現れない場合は、上記の型定義と各ファイルを参照してください。
+
+| 型                           | 利用関数                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
+| ---------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `PropertyBlock`              | `propertyBlockConvert` (`block.ts`)                                                                                                                                                                                                                                                                                                                                                                                                                                       |
+| `MethodCall`                 | `methodCallConvert` (`call.ts`), `methodCallExpressionConvert` (`expression.ts`)                                                                                                                                                                                                                                                                                                                                                                                          |
+| `DotMethodCall`              | `dotMethodCallConvert` (`call.ts`)                                                                                                                                                                                                                                                                                                                                                                                                                                        |
+| `CatchClause`                | `catchClauseConvert` (`clause.ts`)                                                                                                                                                                                                                                                                                                                                                                                                                                        |
+| `DataCategorySelection`      | `dataCategorySelectionConvert` (`clause.ts`), `filteringExpressionConvert` (`expression.ts`)                                                                                                                                                                                                                                                                                                                                                                              |
+| `FieldOrder`                 | `fieldOrderConvert` (`clause.ts`), `orderByClauseConvert` (`clause.ts`), `fieldOrderListConvert` (`list.ts`)                                                                                                                                                                                                                                                                                                                                                              |
+| `GroupByClause`              | `groupByClauseConvert` (`clause.ts`)                                                                                                                                                                                                                                                                                                                                                                                                                                      |
+| `SoslClauses`                | `soslClausesConvert` (`clause.ts`)                                                                                                                                                                                                                                                                                                                                                                                                                                        |
+| `SoslWithClause`             | `soslWithClauseConvert` (`clause.ts`)                                                                                                                                                                                                                                                                                                                                                                                                                                     |
+| `TypeOf`                     | `typeOfConvert` (`clause.ts`)                                                                                                                                                                                                                                                                                                                                                                                                                                             |
+| `WhenClause`                 | `whenClauseConvert` (`clause.ts`)                                                                                                                                                                                                                                                                                                                                                                                                                                         |
+| `WithClause`                 | `withClauseConvert` (`clause.ts`)                                                                                                                                                                                                                                                                                                                                                                                                                                         |
+| `EnhancedForControl`         | `enhancedForControlConvert` (`control.ts`)                                                                                                                                                                                                                                                                                                                                                                                                                                |
+| `ForControl`                 | `forControlConvert` (`control.ts`)                                                                                                                                                                                                                                                                                                                                                                                                                                        |
+| `WhenControl`                | `whenControlConvert` (`control.ts`)                                                                                                                                                                                                                                                                                                                                                                                                                                       |
+| `MemberDeclaration`          | `memberDeclarationConvert` (`declaration.ts`)                                                                                                                                                                                                                                                                                                                                                                                                                             |
+| `AnonymousMemberDeclaration` | `anonymousMemberDeclarationConvert` (`declaration.ts`)                                                                                                                                                                                                                                                                                                                                                                                                                    |
+| `TriggerMemberDeclaration`   | `triggerMemberDeclarationConvert` (`declaration.ts`)                                                                                                                                                                                                                                                                                                                                                                                                                      |
+| `ClassBodyDeclaration`       | `classBodyConvert` (`body.ts`), `classBodyDeclarationConvert` (`declaration.ts`)                                                                                                                                                                                                                                                                                                                                                                                          |
+| `ClassDeclaration`           | `classDeclarationConvert` (`declaration.ts`)                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| `ConstructorDeclaration`     | `constructorDeclarationConvert` (`declaration.ts`)                                                                                                                                                                                                                                                                                                                                                                                                                        |
+| `EnumDeclaration`            | `enumDeclarationConvert` (`declaration.ts`)                                                                                                                                                                                                                                                                                                                                                                                                                               |
+| `FieldDeclaration`           | `fieldDeclarationConvert` (`declaration.ts`)                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| `InterfaceDeclaration`       | `interfaceDeclarationConvert` (`declaration.ts`)                                                                                                                                                                                                                                                                                                                                                                                                                          |
+| `InterfaceMethodDeclaration` | `interfaceBodyConvert` (`body.ts`), `interfaceMethodDeclarationConvert` (`declaration.ts`)                                                                                                                                                                                                                                                                                                                                                                                |
+| `LocalVariableDeclaration`   | `forInitConvert` (`control.ts`), `localVariableDeclarationConvert` (`declaration.ts`), `localVariableDeclarationStatementConvert` (`statement.ts`)                                                                                                                                                                                                                                                                                                                        |
+| `MethodDeclaration`          | `methodDeclarationConvert` (`declaration.ts`)                                                                                                                                                                                                                                                                                                                                                                                                                             |
+| `PropertyDeclaration`        | `propertyDeclarationConvert` (`declaration.ts`)                                                                                                                                                                                                                                                                                                                                                                                                                           |
+| `TypeDeclaration`            | `typeDeclarationConvert` (`declaration.ts`), `compilationUnitConvert` (`unit.ts`)                                                                                                                                                                                                                                                                                                                                                                                         |
+| `SelectEntry`                | `selectEntryConvert` (`entry.ts`), `selectListConvert` (`list.ts`)                                                                                                                                                                                                                                                                                                                                                                                                        |
+| `SubFieldEntry`              | `subFieldEntryConvert` (`entry.ts`), `subFieldListConvert` (`list.ts`)                                                                                                                                                                                                                                                                                                                                                                                                    |
+| `DotExpression`              | `dotExpressionConvert` (`expression.ts`)                                                                                                                                                                                                                                                                                                                                                                                                                                  |
+| `CastExpression`             | `castExpressionConvert` (`expression.ts`)                                                                                                                                                                                                                                                                                                                                                                                                                                 |
+| `SingleOperatorExpression`   | `postOpExpressionConvert`, `preOpExpressionConvert`, `negExpressionConvert` (`expression.ts`)                                                                                                                                                                                                                                                                                                                                                                             |
+| `ExpToExpOperatorExpression` | `arth1ExpressionConvert`, `arth2ExpressionConvert`, `bitExpressionConvert`, `cmpExpressionConvert`, `equalityExpressionConvert`, `bitAndExpressionConvert`, `bitNotExpressionConvert`, `bitOrExpressionConvert`, `logAndExpressionConvert`, `logOrExpressionConvert`, `coalExpressionConvert`, `assignExpressionConvert` (`expression.ts`)                                                                                                                                |
+| `InstanceOfExpression`       | `instanceOfExpressionConvert` (`expression.ts`)                                                                                                                                                                                                                                                                                                                                                                                                                           |
+| `CondExpression`             | `condExpressionConvert` (`expression.ts`)                                                                                                                                                                                                                                                                                                                                                                                                                                 |
+| `FieldExpression`            | `fieldExpressionConvert` (`expression.ts`)                                                                                                                                                                                                                                                                                                                                                                                                                                |
+| `LogicalExpression`          | `conditionalExpressionConvert`, `logicalExpressionConvert` (`expression.ts`)                                                                                                                                                                                                                                                                                                                                                                                              |
+| `WhereFieldExpression`       | `whereFieldExpressionConvert` (`expression.ts`)                                                                                                                                                                                                                                                                                                                                                                                                                           |
+| `WhereLogicalExpression`     | `whereClauseConvert` (`clause.ts`), `whereConditionalExpressionConvert`, `whereLogicalExpressionConvert` (`expression.ts`)                                                                                                                                                                                                                                                                                                                                                |
+| `Expression`                 | `normalArgumentsConvert` (`arguments.ts`), `forUpdateConvert` (`control.ts`), `arrayExpressionConvert`, `subExpressionConvert`, `parExpressionConvert`, `boundExpressionConvert`, `expressionConvert` (`expression.ts`), `expressionListConvert` (`list.ts`), `classCreatorRestConvert`, `setCreatorRestConvert` (`rest.ts`), `expressionStatementConvert`, `returnStatementConvert`, `throwStatementConvert` (`statement.ts`), `arrayInitializerConvert` (`variable.ts`) |
+| `SoslField`                  | `soslFieldConvert`, `fieldListConvert` (`list.ts`)                                                                                                                                                                                                                                                                                                                                                                                                                        |
+| `FromName`                   | `fromNameConvert`, `fromNameListConvert` (`list.ts`)                                                                                                                                                                                                                                                                                                                                                                                                                      |
+| `NormalLiteral`              | `normalLiteralConvert` (`literal.ts`), `literalPrimaryConvert` (`primary.ts`), `elementValueConvert` (`value.ts`)                                                                                                                                                                                                                                                                                                                                                         |
+| `WhenLiteral`                | `whenLiteralConvert` (`literal.ts`)                                                                                                                                                                                                                                                                                                                                                                                                                                       |
+| `SoslLiteral`                | `soslLiteralConvert` (`literal.ts`), `soslPrimaryConvert` (`primary.ts`)                                                                                                                                                                                                                                                                                                                                                                                                  |
+| `SoslLiteralAlt`             | `soslLiteralAltConvert` (`literal.ts`)                                                                                                                                                                                                                                                                                                                                                                                                                                    |
+| `SignedLiteral`              | `signedIntegerConvert`, `signedNumberConvert` (`literal.ts`), `coordinateValueConvert`, `locationValueConvert` (`value.ts`)                                                                                                                                                                                                                                                                                                                                               |
+| `AnonymousBlockMember`       | `anonymousBlockConvert` (`block.ts`), `anonymousBlockMemberConvert` (`member.ts`), `anonymousUnitConvert` (`unit.ts`)                                                                                                                                                                                                                                                                                                                                                     |
+| `TriggerBlockMember`         | `triggerBlockConvert` (`block.ts`), `triggerBlockMemberConvert` (`member.ts`)                                                                                                                                                                                                                                                                                                                                                                                             |
+| `NormalModifier`             | `normalModifierConvert` (`modifier.ts`)                                                                                                                                                                                                                                                                                                                                                                                                                                   |
+| `Annotation`                 | `annotationConvert` (`modifier.ts`)                                                                                                                                                                                                                                                                                                                                                                                                                                       |
+| `TypeName`                   | `typeNameConvert` (`name.ts`)                                                                                                                                                                                                                                                                                                                                                                                                                                             |
+| `DateFieldName`              | `dateFieldNameConvert` (`name.ts`)                                                                                                                                                                                                                                                                                                                                                                                                                                        |
+| `ElementValuePair`           | `elementValuePairConvert`, `elementValuePairsConvert` (`pair.ts`)                                                                                                                                                                                                                                                                                                                                                                                                         |
+| `IdCreatedNamePair`          | `createdNameConvert` (`name.ts`), `idCreatedNamePairConvert` (`pair.ts`)                                                                                                                                                                                                                                                                                                                                                                                                  |
+| `MapCreatorRestPair`         | `mapCreatorRestPairConvert` (`pair.ts`), `mapCreatorRestConvert` (`rest.ts`)                                                                                                                                                                                                                                                                                                                                                                                              |
+| `FormalParameter`            | `formalParameterListConvert` (`list.ts`), `formalParameterConvert`, `formalParametersConvert` (`parameter.ts`)                                                                                                                                                                                                                                                                                                                                                            |
+| `Primary`                    | `primaryExpressionConvert` (`expression.ts`), `primaryConvert` (`primary.ts`)                                                                                                                                                                                                                                                                                                                                                                                             |
+| `DateFormula`                | `dateFormulaConvert` (`query.ts`)                                                                                                                                                                                                                                                                                                                                                                                                                                         |
+| `FieldSpec`                  | `fieldSpecListConvert` (`list.ts`), `fieldSpecConvert` (`query.ts`)                                                                                                                                                                                                                                                                                                                                                                                                       |
+| `NormalQuery`                | `soqlLiteralConvert` (`literal.ts`), `soqlPrimaryConvert` (`primary.ts`), `normalQueryConvert` (`query.ts`)                                                                                                                                                                                                                                                                                                                                                               |
+| `SoqlFunction`               | `soqlFunctionConvert` (`query.ts`)                                                                                                                                                                                                                                                                                                                                                                                                                                        |
+| `SubQuery`                   | `subQueryConvert` (`query.ts`)                                                                                                                                                                                                                                                                                                                                                                                                                                            |
+| `ArrayCreatorRest`           | `arrayCreatorRestConvert` (`rest.ts`)                                                                                                                                                                                                                                                                                                                                                                                                                                     |
+| `Creator`                    | `newExpressionConvert` (`expression.ts`), `creatorConvert` (`rest.ts`)                                                                                                                                                                                                                                                                                                                                                                                                    |
+| `DmlStatement`               | `insertStatementConvert`, `updatetatementConvert`, `deletetatementConvert`, `undeletetatementConvert` (`statement.ts`)                                                                                                                                                                                                                                                                                                                                                    |
+| `UpsertStatement`            | `upsertStatementConvert` (`statement.ts`)                                                                                                                                                                                                                                                                                                                                                                                                                                 |
+| `MergeStatement`             | `mergeStatementConvert` (`statement.ts`)                                                                                                                                                                                                                                                                                                                                                                                                                                  |
+| `DoWhileStatement`           | `doWhileStatementConvert` (`statement.ts`)                                                                                                                                                                                                                                                                                                                                                                                                                                |
+| `ForStatement`               | `forStatementConvert` (`statement.ts`)                                                                                                                                                                                                                                                                                                                                                                                                                                    |
+| `IfStatement`                | `ifStatementConvert` (`statement.ts`)                                                                                                                                                                                                                                                                                                                                                                                                                                     |
+| `RunAsStatement`             | `runAsStatementConvert` (`statement.ts`)                                                                                                                                                                                                                                                                                                                                                                                                                                  |
+| `SwitchStatement`            | `switchStatementConvert` (`statement.ts`)                                                                                                                                                                                                                                                                                                                                                                                                                                 |
+| `TryStatement`               | `tryStatementConvert` (`statement.ts`)                                                                                                                                                                                                                                                                                                                                                                                                                                    |
+| `WhileStatement`             | `whileStatementConvert` (`statement.ts`)                                                                                                                                                                                                                                                                                                                                                                                                                                  |
+| `NormalStatement`            | `normalBlockConvert`, `finallyBlockConvert`, `getterConvert`, `setterConvert` (`block.ts`), `normalStatementConvert` (`statement.ts`)                                                                                                                                                                                                                                                                                                                                     |
+| `TypeRef`                    | `typeArgumentsConvert` (`arguments.ts`), `typeListConvert` (`list.ts`), `typeRefPrimaryConvert` (`primary.ts`), `typeRefConvert` (`type.ts`)                                                                                                                                                                                                                                                                                                                              |
+| `TriggerCase`                | `triggerCaseConvert` (`unit.ts`)                                                                                                                                                                                                                                                                                                                                                                                                                                          |
+| `TriggerUnit`                | `triggerUnitConvert` (`unit.ts`)                                                                                                                                                                                                                                                                                                                                                                                                                                          |
+| `NormalValue`                | `valueListConvert` (`list.ts`), `normalValueConvert` (`value.ts`)                                                                                                                                                                                                                                                                                                                                                                                                         |
+| `WhenValue`                  | `whenValueConvert` (`value.ts`)                                                                                                                                                                                                                                                                                                                                                                                                                                           |
+| `VariableDeclarator`         | `variableDeclaratorConvert`, `variableDeclaratorsConvert` (`variable.ts`)                                                                                                                                                                                                                                                                                                                                                                                                 |
+
+## 型の依存関係
+
+図の矢印 `A --> B` は、型 `A` の定義が型 `B` をプロパティまたはUnionメンバーとして参照することを表します。標準型 (`string`, `Expression[]` の配列そのものなど) と Apex IR の入力型は省略しています。
+
+```mermaid
+classDiagram
+    PropertyBlock --> NormalModifier
+    PropertyBlock --> NormalStatement
+    MethodCall --> Expression
+    DotMethodCall --> Expression
+    CatchClause --> NormalModifier
+    CatchClause --> NormalStatement
+    FieldOrder --> SoqlFunction
+    GroupByClause --> LogicalExpression
+    GroupByClause --> SoqlFunction
+    SoslClauses --> Expression
+    SoslClauses --> FieldSpec
+    SoslClauses --> SoslWithClause
+    SoslWithClause --> DataCategorySelection
+    SoslWithClause --> Expression
+    TypeOf --> WhenClause
+    WithClause --> DataCategorySelection
+    WithClause --> LogicalExpression
+    EnhancedForControl --> Expression
+    EnhancedForControl --> TypeRef
+    ForControl --> EnhancedForControl
+    ForControl --> Expression
+    ForControl --> LocalVariableDeclaration
+    WhenControl --> NormalStatement
+    WhenControl --> WhenValue
+    MemberDeclaration --> ClassDeclaration
+    MemberDeclaration --> ConstructorDeclaration
+    MemberDeclaration --> EnumDeclaration
+    MemberDeclaration --> FieldDeclaration
+    MemberDeclaration --> InterfaceDeclaration
+    MemberDeclaration --> MethodDeclaration
+    MemberDeclaration --> PropertyDeclaration
+    AnonymousMemberDeclaration --> ClassDeclaration
+    AnonymousMemberDeclaration --> EnumDeclaration
+    AnonymousMemberDeclaration --> FieldDeclaration
+    AnonymousMemberDeclaration --> InterfaceDeclaration
+    AnonymousMemberDeclaration --> MethodDeclaration
+    AnonymousMemberDeclaration --> PropertyDeclaration
+    TriggerMemberDeclaration --> ClassDeclaration
+    TriggerMemberDeclaration --> EnumDeclaration
+    TriggerMemberDeclaration --> FieldDeclaration
+    TriggerMemberDeclaration --> InterfaceDeclaration
+    TriggerMemberDeclaration --> MethodDeclaration
+    TriggerMemberDeclaration --> PropertyDeclaration
+    ClassBodyDeclaration --> MemberDeclaration
+    ClassBodyDeclaration --> NormalModifier
+    ClassBodyDeclaration --> NormalStatement
+    ClassDeclaration --> ClassBodyDeclaration
+    ClassDeclaration --> TypeRef
+    ConstructorDeclaration --> FormalParameter
+    ConstructorDeclaration --> NormalStatement
+    FieldDeclaration --> TypeRef
+    FieldDeclaration --> VariableDeclarator
+    InterfaceDeclaration --> InterfaceMethodDeclaration
+    InterfaceDeclaration --> TypeRef
+    InterfaceMethodDeclaration --> FormalParameter
+    InterfaceMethodDeclaration --> NormalModifier
+    InterfaceMethodDeclaration --> TypeRef
+    LocalVariableDeclaration --> NormalModifier
+    LocalVariableDeclaration --> TypeRef
+    LocalVariableDeclaration --> VariableDeclarator
+    MethodDeclaration --> FormalParameter
+    MethodDeclaration --> NormalStatement
+    MethodDeclaration --> TypeRef
+    PropertyDeclaration --> PropertyBlock
+    PropertyDeclaration --> TypeRef
+    TypeDeclaration --> ClassDeclaration
+    TypeDeclaration --> EnumDeclaration
+    TypeDeclaration --> InterfaceDeclaration
+    TypeDeclaration --> NormalModifier
+    SelectEntry --> SoqlFunction
+    SelectEntry --> SubQuery
+    SelectEntry --> TypeOf
+    SubFieldEntry --> SoqlFunction
+    SubFieldEntry --> SubQuery
+    SubFieldEntry --> TypeOf
+    DotExpression --> DotMethodCall
+    DotExpression --> Expression
+    CastExpression --> Expression
+    CastExpression --> TypeRef
+    SingleOperatorExpression --> Expression
+    ExpToExpOperatorExpression --> Expression
+    InstanceOfExpression --> Expression
+    InstanceOfExpression --> TypeRef
+    CondExpression --> Expression
+    FieldExpression --> NormalValue
+    FieldExpression --> SoqlFunction
+    LogicalExpression --> FieldExpression
+    WhereFieldExpression --> FieldExpression
+    WhereFieldExpression --> NormalValue
+    WhereLogicalExpression --> WhereFieldExpression
+    Expression --> CastExpression
+    Expression --> CondExpression
+    Expression --> Creator
+    Expression --> DotExpression
+    Expression --> ExpToExpOperatorExpression
+    Expression --> InstanceOfExpression
+    Expression --> MethodCall
+    Expression --> Primary
+    Expression --> SingleOperatorExpression
+    SoslField --> SoqlFunction
+    Annotation --> ElementValuePair
+    Annotation --> NormalLiteral
+    TypeName --> TypeRef
+    ElementValuePair --> NormalLiteral
+    IdCreatedNamePair --> TypeRef
+    MapCreatorRestPair --> Expression
+    FormalParameter --> NormalModifier
+    FormalParameter --> TypeRef
+    Primary --> NormalLiteral
+    Primary --> NormalQuery
+    Primary --> SoslLiteral
+    Primary --> TypeRef
+    DateFormula --> SignedLiteral
+    FieldSpec --> Expression
+    FieldSpec --> FieldOrder
+    FieldSpec --> LogicalExpression
+    FieldSpec --> SoslField
+    NormalQuery --> Expression
+    NormalQuery --> FieldOrder
+    NormalQuery --> FromName
+    NormalQuery --> GroupByClause
+    NormalQuery --> SelectEntry
+    NormalQuery --> WhereLogicalExpression
+    NormalQuery --> WithClause
+    SoqlFunction --> DateFieldName
+    SoqlFunction --> Expression
+    SoqlFunction --> SignedLiteral
+    SubQuery --> Expression
+    SubQuery --> FieldOrder
+    SubQuery --> FromName
+    SubQuery --> SubFieldEntry
+    SubQuery --> WhereLogicalExpression
+    ArrayCreatorRest --> Expression
+    Creator --> ArrayCreatorRest
+    Creator --> Expression
+    Creator --> IdCreatedNamePair
+    Creator --> MapCreatorRestPair
+    DmlStatement --> Expression
+    UpsertStatement --> Expression
+    MergeStatement --> Expression
+    DoWhileStatement --> Expression
+    DoWhileStatement --> NormalStatement
+    ForStatement --> ForControl
+    ForStatement --> NormalStatement
+    IfStatement --> Expression
+    IfStatement --> NormalStatement
+    RunAsStatement --> Expression
+    RunAsStatement --> NormalStatement
+    SwitchStatement --> Expression
+    SwitchStatement --> WhenControl
+    TryStatement --> CatchClause
+    TryStatement --> NormalStatement
+    WhileStatement --> Expression
+    WhileStatement --> NormalStatement
+    NormalStatement --> DmlStatement
+    NormalStatement --> DoWhileStatement
+    NormalStatement --> Expression
+    NormalStatement --> ForStatement
+    NormalStatement --> IfStatement
+    NormalStatement --> LocalVariableDeclaration
+    NormalStatement --> MergeStatement
+    NormalStatement --> RunAsStatement
+    NormalStatement --> SwitchStatement
+    NormalStatement --> TryStatement
+    NormalStatement --> UpsertStatement
+    NormalStatement --> WhileStatement
+    TypeRef --> TypeName
+    TriggerUnit --> TriggerBlockMember
+    TriggerUnit --> TriggerCase
+    NormalValue --> DateFormula
+    NormalValue --> Expression
+    NormalValue --> SignedLiteral
+    NormalValue --> SubQuery
+    WhenValue --> TypeRef
+    WhenValue --> WhenLiteral
+    VariableDeclarator --> Expression
+    SoslLiteral --> Expression
+    SoslLiteral --> SoslClauses
+    SoslLiteralAlt --> SoslClauses
+    AnonymousBlockMember --> AnonymousMemberDeclaration
+    AnonymousBlockMember --> NormalModifier
+    AnonymousBlockMember --> NormalStatement
+    TriggerBlockMember --> NormalModifier
+    TriggerBlockMember --> NormalStatement
+    TriggerBlockMember --> TriggerMemberDeclaration
+```
