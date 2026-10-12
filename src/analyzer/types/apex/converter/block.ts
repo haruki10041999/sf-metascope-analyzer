@@ -17,19 +17,19 @@ import {
 } from '../../apex_IR';
 
 import { toTypeClass, CommonClass, isCommonClass } from './commons';
-import { NormalModifier, normalModifierConvert } from './modifier';
-import { NormalStatement, normalStatementConvert } from './statement';
+import { NormalModifierClass, normalModifierConvert } from './modifier';
+import { NormalStatementClass, normalStatementConvert } from './statement';
 import {
-    AnonymousBlockMember,
+    AnonymousBlockMemberClass,
     anonymousBlockMemberConvert,
-    TriggerBlockMember,
+    TriggerBlockMemberClass,
     triggerBlockMemberConvert,
 } from './member';
 
 export const normalBlockConvert = (
     target: NormalBlockTypeClass,
     errorClass: ErrorTypeClass[],
-): NormalStatement[] => {
+): NormalStatementClass[] => {
     const values: NormalStatement[] = [];
     target.getValue().forEach((item) => {
         const valueTypeClass = toTypeClass(item, isNormalStatementType, errorClass);
@@ -57,18 +57,31 @@ export const finallyBlockConvert = (
 };
 
 export class PropertyBlockClass extends CommonClass {
-    private type: 'getter' | 'setter';
-    private value: NormalStatement[];
-    private modifier: NormalModifier[];
+    private type: 'getter' | 'setter' | null = null;
+    private value: NormalStatement[] = [];
+    private modifier: NormalModifier[] = [];
 
-    constructor(type: 'getter' | 'setter', value: NormalStatement[], modifier: NormalModifier[]) {
-        super();
+    setType(type: 'getter' | 'setter' | null): void {
         this.type = type;
-        this.value = value;
-        this.modifier = modifier;
     }
 
-    getType(): 'getter' | 'setter' {
+    resetValue(): void {
+        this.value = [];
+    }
+
+    setValue(value: NormalStatement[]): void {
+        this.value.push(...value);
+    }
+
+    resetModifier(): void {
+        this.modifier = [];
+    }
+
+    setModifier(modifier: NormalModifier[]): void {
+        this.modifier.push(...modifier);
+    }
+
+    getType(): 'getter' | 'setter' | null {
         return this.type;
     }
 
@@ -79,16 +92,18 @@ export class PropertyBlockClass extends CommonClass {
     getModifier(): NormalModifier[] {
         return this.modifier;
     }
+
+    copy(commonClass: PropertyBlockClass): void {
+        this.setType(commonClass.getType());
+        this.resetValue();
+        this.setValue(commonClass.getValue());
+        this.resetModifier();
+        this.setModifier(commonClass.getModifier());
+    }
 }
 
 export const isPropertyBlockClass = (target: CommonClass): target is PropertyBlockClass => {
     return isCommonClass(target, PropertyBlockClass);
-};
-
-export type PropertyBlock = {
-    type?: 'getter' | 'setter';
-    value: NormalStatement[];
-    modifier: NormalModifier[];
 };
 
 export const propertyBlockConvert = (

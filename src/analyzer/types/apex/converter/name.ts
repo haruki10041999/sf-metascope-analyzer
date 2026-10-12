@@ -13,11 +13,11 @@ import {
     isFieldNameType,
 } from '../../apex_IR';
 
-import { toTypeClass } from './commons';
+import { toTypeClass, CommonClass, isCommonClass } from './commons';
 import { normalIdConvert, soqlIdConvert } from './id';
-import { TypeRef } from './type';
+import { TypeRefClass } from './type';
 import { typeArgumentsConvert } from './arguments';
-import { IdCreatedNamePair, idCreatedNamePairConvert } from './pair';
+import { IdCreatedNamePairClass, idCreatedNamePairConvert } from './pair';
 
 export const qualifiedNameConvert = (
     target: QualifiedNameTypeClass,
@@ -33,9 +33,39 @@ export const qualifiedNameConvert = (
     return values;
 };
 
-export type TypeName = {
-    value?: string;
-    generic: TypeRef[];
+export class TypeNameClass extends CommonClass {
+    private value: string | null = null;
+    private generic: TypeRef[] = [];
+
+    setValue(value: string | null): void {
+        this.value = value;
+    }
+
+    resetGeneric(): void {
+        this.generic = [];
+    }
+
+    setGeneric(generic: TypeRef[]): void {
+        this.generic.push(...generic);
+    }
+
+    getValue(): string | null {
+        return this.value;
+    }
+
+    getGeneric(): TypeRef[] {
+        return this.generic;
+    }
+
+    copy(commonClass: TypeNameClass): void {
+        this.setValue(commonClass.getValue());
+        this.resetGeneric();
+        this.setGeneric(commonClass.getGeneric());
+    }
+}
+
+export const isTypeNameClass = (target: CommonClass): target is TypeNameClass => {
+    return target instanceof TypeNameClass;
 };
 
 export const typeNameConvert = (
@@ -72,8 +102,9 @@ export const typeNameConvert = (
 export const createdNameConvert = (
     target: CreatedNameTypeClass,
     errorClass: ErrorTypeClass[],
-): IdCreatedNamePair[] => {
-    const values: IdCreatedNamePair[] = [];
+): IdCreatedNamePairClass[] => {
+    const values: IdCreatedNamePairClass[] = [];
+
     target.getValue().forEach((item) => {
         const valueTypeClass = toTypeClass(item, isIdCreatedNamePairType, errorClass);
         if (valueTypeClass) {
@@ -103,9 +134,39 @@ export const fieldNameConvert = (
     return values;
 };
 
-export type DateFieldName = {
-    value: string[];
-    isConvertTimeZone: boolean;
+export class DateFieldNameClass extends CommonClass {
+    private value: string[] = [];
+    private isConvertTimeZone: boolean | null = null;
+
+    resetValue(): void {
+        this.value = [];
+    }
+
+    setValue(value: string[]): void {
+        this.value.push(...value);
+    }
+
+    setIsConvertTimeZone(isConvertTimeZone: boolean | null): void {
+        this.isConvertTimeZone = isConvertTimeZone;
+    }
+
+    getValue(): string[] {
+        return this.value;
+    }
+
+    getIsConvertTimeZone(): boolean | null {
+        return this.isConvertTimeZone;
+    }
+
+    copy(commonClass: DateFieldNameClass): void {
+        this.resetValue();
+        this.setValue(commonClass.getValue());
+        this.setIsConvertTimeZone(commonClass.getIsConvertTimeZone());
+    }
+}
+
+export const isDateFieldNameClass = (target: CommonClass): target is DateFieldNameClass => {
+    return target instanceof DateFieldNameClass;
 };
 
 export const dateFieldNameConvert = (

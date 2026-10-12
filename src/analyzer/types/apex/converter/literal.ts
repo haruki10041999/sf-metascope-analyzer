@@ -14,15 +14,40 @@ import {
     isSoslClausesType,
 } from '../../apex_IR';
 
-import { toPrimitiveValue, toTypeClass } from './commons';
+import { toPrimitiveValue, toTypeClass, CommonClass, isCommonClass } from './commons';
 import { qualifiedNameConvert } from './name';
-import { Expression, boundExpressionConvert } from './expression';
-import { NormalQuery, normalQueryConvert } from './query';
-import { SoslClauses, soslClausesConvert } from './clause';
+import { ExpressionClass, boundExpressionConvert } from './expression';
+import { NormalQueryClass, normalQueryConvert } from './query';
+import { SoslClausesClass, soslClausesConvert } from './clause';
 
-export type NormalLiteral = {
-    value?: string;
-    valueType: string;
+export class NormalLiteralClass extends CommonClass {
+    private value: string | null = null;
+    private valueType: string | null = null;
+
+    setValue(value: string | null): void {
+        this.value = value;
+    }
+
+    setValueType(valueType: string | null): void {
+        this.valueType = valueType;
+    }
+
+    getValue(): string | null {
+        return this.value;
+    }
+
+    getValueType(): string | null {
+        return this.valueType;
+    }
+
+    copy(commonClass: NormalLiteralClass): void {
+        this.setValue(commonClass.getValue());
+        this.setValueType(commonClass.getValueType());
+    }
+}
+
+export const isNormalLiteralClass = (target: CommonClass): target is NormalLiteralClass => {
+    return target instanceof NormalLiteralClass;
 };
 
 export const normalLiteralConvert = (
@@ -45,10 +70,44 @@ export const normalLiteralConvert = (
     return normalLiteral;
 };
 
-export type WhenLiteral = {
-    value?: string | string[];
-    valueType: string;
-    operator?: string;
+export class WhenLiteralClass extends CommonClass {
+    private value: string | string[] | null = null;
+    private valueType: string | null = null;
+    private operator: string | null = null;
+
+    setValue(value: string | string[] | null): void {
+        this.value = value;
+    }
+
+    setValueType(valueType: string | null): void {
+        this.valueType = valueType;
+    }
+
+    setOperator(operator: string | null): void {
+        this.operator = operator;
+    }
+
+    getValue(): string | string[] | null {
+        return this.value;
+    }
+
+    getValueType(): string | null {
+        return this.valueType;
+    }
+
+    getOperator(): string | null {
+        return this.operator;
+    }
+
+    copy(commonClass: WhenLiteralClass): void {
+        this.setValue(commonClass.getValue());
+        this.setValueType(commonClass.getValueType());
+        this.setOperator(commonClass.getOperator());
+    }
+}
+
+export const isWhenLiteralClass = (target: CommonClass): target is WhenLiteralClass => {
+    return target instanceof WhenLiteralClass;
 };
 
 export const whenLiteralConvert = (
@@ -146,10 +205,31 @@ export const soqlLiteralConvert = (
     return soqlLiteral;
 };
 
-export type SoslLiteral = {
-    value?: string | Expression;
-    soslClauses: SoslClauses;
-};
+export class SoslLiteralClass extends CommonClass {
+    private value: string | Expression | null = null;
+    private soslClauses: SoslClauses | null = null;
+
+    setValue(value: string | Expression | null) {
+        this.value = value;
+    }
+
+    setSoslClauses(soslClauses: SoslClauses | null): void {
+        this.soslClauses = soslClauses;
+    }
+
+    getValue(): string | Expression | null {
+        return this.value;
+    }
+
+    getSoslClauses(): SoslClauses | null {
+        return this.soslClauses;
+    }
+
+    copy(commonClass: SoslLiteralClass): void {
+        this.setValue(commonClass.getValue());
+        this.setSoslClauses(commonClass.getSoslClauses());
+    }
+}
 
 export const soslLiteralConvert = (
     target: SoslLiteralTypeClass,
@@ -199,9 +279,34 @@ export const soslLiteralConvert = (
     return soslLiteral;
 };
 
-export type SoslLiteralAlt = {
-    value?: string;
-    soslClauses: SoslClauses;
+export class SoslLiteralAltClass extends CommonClass {
+    private value: string | null = null;
+    private soslClauses: SoslClauses | null = null;
+
+    setValue(value: string | null) {
+        this.value = value;
+    }
+
+    setSoslClauses(soslClauses: SoslClauses | null): void {
+        this.soslClauses = soslClauses;
+    }
+
+    getValue(): string | null {
+        return this.value;
+    }
+
+    getSoslClauses(): SoslClauses | null {
+        return this.soslClauses;
+    }
+
+    copy(commonClass: SoslLiteralAltClass): void {
+        this.setValue(commonClass.getValue());
+        this.setSoslClauses(commonClass.getSoslClauses());
+    }
+}
+
+export const isSoslLiteralAltClass = (target: CommonClass): target is SoslLiteralAltClass => {
+    return target instanceof SoslLiteralAltClass;
 };
 
 export const soslLiteralAltConvert = (
@@ -248,10 +353,44 @@ export const soslLiteralAltConvert = (
     return soslLiteralAlt;
 };
 
-export type SignedLiteral = {
-    value?: string;
-    valueType: string;
-    operator?: string;
+export class SignedLiteralClass extends CommonClass {
+    private value: string | null = null;
+    private valueType: string | null = null;
+    private operator: string | null = null;
+
+    setValue(value: string | null): void {
+        this.value = value;
+    }
+
+    setValueType(valueType: string | null): void {
+        this.valueType = valueType;
+    }
+
+    setOperator(operator: string | null): void {
+        this.operator = operator;
+    }
+
+    getValue(): string | null {
+        return this.value;
+    }
+
+    getValueType(): string | null {
+        return this.valueType;
+    }
+
+    getOperator(): string | null {
+        return this.operator;
+    }
+
+    copy(commonClass: SignedLiteralClass): void {
+        this.setValue(commonClass.getValue());
+        this.setValueType(commonClass.getValueType());
+        this.setOperator(commonClass.getOperator());
+    }
+}
+
+export const isSignedLiteralClass = (target: CommonClass): target is SignedLiteralClass => {
+    return target instanceof SignedLiteralClass;
 };
 
 export const signedIntegerConvert = (

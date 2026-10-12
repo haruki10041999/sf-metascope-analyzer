@@ -36,4 +36,3 @@ export const isArrayExpressionType = (
 ): target is ArrayExpressionTypeClass => {
     return target instanceof ArrayExpressionTypeClass;
 };
-

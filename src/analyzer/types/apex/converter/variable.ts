@@ -9,42 +9,48 @@ import {
 } from '../../apex_IR';
 
 import { toTypeClass, CommonClass, isCommonClass } from './commons';
-import { Expression, expressionConvert } from './expression';
+import { ExpressionClass, expressionConvert } from './expression';
 import { normalIdConvert } from './id';
 
 export const arrayInitializerConvert = (
     target: ArrayInitializerTypeClass,
     errorClass: ErrorTypeClass[],
-): Expression[] => {
-    const values: Expression[] = [];
+): ExpressionClass[] => {
+    const values: ExpressionClass[] = [];
+
     target.getValue().forEach((item) => {
         const valueTypeClass = toTypeClass(item, isExpressionTypeAll, errorClass);
         if (valueTypeClass) {
-            const expression = expressionConvert(valueTypeClass, errorClass);
-            if (expression) {
-                values.push(expression);
-            }
+            values.push(expressionConvert(valueTypeClass, errorClass));
         }
     });
+
     return values;
 };
 
 export class VariableDeclaratorClass extends CommonClass {
-    private value: string | null;
-    private content: Expression | null;
+    private value: string | null = null;
+    private content: ExpressionClass = new ExpressionClass();
 
-    constructor(value: string | null, content: Expression | null) {
-        super();
+    setValue(value: string | null): void {
         this.value = value;
-        this.content = content;
+    }
+
+    setContent(content: ExpressionClass): void {
+        this.content.copy(content);
     }
 
     getValue(): string | null {
         return this.value;
     }
 
-    getContent(): Expression | null {
+    getContent(): ExpressionClass {
         return this.content;
+    }
+
+    copy(commonClass: VariableDeclaratorClass): void {
+        this.setValue(commonClass.getValue());
+        this.setContent(commonClass.getContent());
     }
 }
 
@@ -54,30 +60,22 @@ export const isVariableDeclaratorClass = (
     return isCommonClass(target, VariableDeclaratorClass);
 };
 
-export type VariableDeclarator = {
-    value?: string;
-    content?: Expression;
-};
-
 export const variableDeclaratorConvert = (
     target: VariableDeclaratorTypeClass,
     errorClass: ErrorTypeClass[],
-): VariableDeclarator => {
-    const variableDeclarator: VariableDeclarator = {};
+): VariableDeclaratorClass => {
+    const variableDeclarator = new VariableDeclaratorClass();
 
     const valueTypeClass = toTypeClass(target.getValue(), isNormalIdType, errorClass);
     if (valueTypeClass) {
-        variableDeclarator.value = normalIdConvert(valueTypeClass);
+        variableDeclarator.setValue(normalIdConvert(valueTypeClass));
     }
 
     const contentValue = target.getContent();
     if (contentValue) {
         const contentTypeClass = toTypeClass(contentValue, isExpressionTypeAll, errorClass);
         if (contentTypeClass) {
-            const expression = expressionConvert(contentTypeClass, errorClass);
-            if (expression) {
-                variableDeclarator.content = expression;
-            }
+            variableDeclarator.setContent(expressionConvert(contentTypeClass, errorClass));
         }
     }
 
@@ -87,8 +85,8 @@ export const variableDeclaratorConvert = (
 export const variableDeclaratorsConvert = (
     target: VariableDeclaratorsTypeClass,
     errorClass: ErrorTypeClass[],
-): VariableDeclarator[] => {
-    const values: VariableDeclarator[] = [];
+): VariableDeclaratorClass[] => {
+    const values: VariableDeclaratorClass[] = [];
     target.getValue().forEach((item) => {
         const valueTypeClass = toTypeClass(item, isVariableDeclaratorType, errorClass);
         if (valueTypeClass) {

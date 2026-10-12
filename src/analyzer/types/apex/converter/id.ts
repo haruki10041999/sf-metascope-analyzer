@@ -20,7 +20,7 @@ export const anyIdConvert = (target: AnyIdTypeClass): string => {
 export const soqlIdConvert = (
     target: SoqlIdTypeClass,
     errorClasses: ErrorTypeClass[],
-): string | undefined => {
+): string | null => {
     const soqlValue = toTypeClass(target.getValue(), isNormalIdType, errorClasses);
     if (soqlValue) {
         return normalIdConvert(soqlValue);

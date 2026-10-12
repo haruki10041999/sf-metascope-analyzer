@@ -9,16 +9,55 @@ import {
     isTypeRefType,
 } from '../../apex_IR';
 
-import { toPrimitiveValue, toTypeClass } from './commons';
+import { toPrimitiveValue, toTypeClass, CommonClass, isCommonClass } from './commons';
 import { normalIdConvert } from './id';
 import { formalParameterListConvert } from './list';
-import { NormalModifier, normalModifierConvert } from './modifier';
-import { TypeRef, typeRefConvert } from './type';
+import { NormalModifierClass, normalModifierConvert } from './modifier';
+import { TypeRefClass, typeRefConvert } from './type';
 
-export type FormalParameter = {
-    value?: string;
-    valueType: TypeRef;
-    modifier: NormalModifier[];
+export class FormalParameterClass extends CommonClass {
+    private value: string | null = null;
+    private valueType: TypeRef | null = null;
+    private modifier: NormalModifier[] = [];
+
+    setValue(value: string | null): void {
+        this.value = value;
+    }
+
+    setValueType(valueType: TypeRef | null) {
+        this.valueType = valueType;
+    }
+
+    resetModifier(): void {
+        this.modifier = [];
+    }
+
+    setModifier(modifier: NormalModifier[]): void {
+        this.modifier.push(...modifier);
+    }
+
+    getValue(): string | null {
+        return this.value;
+    }
+
+    getValueType(): TypeRef | null {
+        return this.valueType;
+    }
+
+    getModifier(): NormalModifier[] {
+        return this.modifier;
+    }
+
+    copy(commonClass: FormalParameterClass): void {
+        this.setValue(commonClass.getValue());
+        this.setValueType(commonClass.getValueType());
+        this.resetModifier();
+        this.setModifier(commonClass.getModifier());
+    }
+}
+
+const isFormalParameterClass = (target: CommonClass): target is FormalParameterClass => {
+    return target instanceof FormalParameterClass;
 };
 
 export const formalParameterConvert = (
@@ -76,7 +115,7 @@ export const formalParametersConvert = (
 export const soqlFieldsParameterConvert = (
     target: SoqlFieldsParameterTypeClass,
     errorClass: ErrorTypeClass[],
-): string | undefined => {
+): string | null => {
     return toPrimitiveValue(
         target.getValue(),
         (target): target is string => typeof target === 'string',

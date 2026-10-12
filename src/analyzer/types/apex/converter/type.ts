@@ -7,12 +7,12 @@ import {
 } from '../../apex_IR';
 
 import { toPrimitiveValue, toTypeClass, CommonClass, isCommonClass } from './commons';
-import { TypeName, typeNameConvert } from './name';
+import { TypeNameClass, typeNameConvert } from './name';
 
 export const arraySubscriptsConvert = (
     target: ArraySubscriptsTypeClass,
     errorClass: ErrorTypeClass[],
-): number | undefined => {
+): number | null => {
     return toPrimitiveValue(
         target.getValue(),
         (target): target is number => typeof target === 'number',
@@ -21,21 +21,33 @@ export const arraySubscriptsConvert = (
 };
 
 export class TypeRefClass extends CommonClass {
-    private value: TypeName[];
-    private dimension: number | null;
+    private value: TypeNameClass[] = [];
+    private dimension: number | null = null;
 
-    constructor(value: TypeName[], dimension: number | null) {
-        super();
-        this.value = value;
+    resetValue(): void {
+        this.value = [];
+    }
+
+    setValue(value: TypeNameClass[]): void {
+        this.value.push(...value);
+    }
+
+    setDimension(dimension: number | null): void {
         this.dimension = dimension;
     }
 
-    getValue(): TypeName[] {
+    getValue(): TypeNameClass[] {
         return this.value;
     }
 
     getDimension(): number | null {
         return this.dimension;
+    }
+
+    copy(commonClass: TypeRefClass): void {
+        this.resetValue();
+        this.setValue(commonClass.getValue());
+        this.setDimension(commonClass.getDimension());
     }
 }
 
@@ -43,35 +55,30 @@ export const isTypeRefClass = (target: CommonClass): target is TypeRefClass => {
     return isCommonClass(target, TypeRefClass);
 };
 
-export type TypeRef = {
-    value: TypeName[];
-    dimension?: number;
-};
+export const typeRefConvert = (
+    target: TypeRefTypeClass,
+    errorClass: ErrorTypeClass[],
+): TypeRefClass => {
+    const typeRef = new TypeRefClass();
 
-export const typeRefConvert = (target: TypeRefTypeClass, errorClass: ErrorTypeClass[]): TypeRef => {
-    const values: TypeName[] = [];
-
+    const values: TypeNameClass[] = [];
     target.getValue().forEach((item) => {
         const valueTypeClass = toTypeClass(item, isTypeNameType, errorClass);
         if (valueTypeClass) {
             values.push(typeNameConvert(valueTypeClass, errorClass));
         }
     });
-
-    const typeRef: TypeRef = {
-        value: values,
-    };
+    typeRef.setValue(values);
 
     const dimensionTypeClass = toTypeClass(
         target.getDimension(),
         isArraySubscriptsType,
         errorClass,
     );
-
     if (dimensionTypeClass) {
         const dimension = arraySubscriptsConvert(dimensionTypeClass, errorClass);
         if (dimension) {
-            typeRef.dimension = dimension;
+            typeRef.setDimension(dimension);
         }
     }
     return typeRef;

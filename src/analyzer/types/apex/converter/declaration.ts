@@ -38,52 +38,194 @@ import {
     isNormalModifierType,
 } from '../../apex_IR';
 
-import { toTypeClass } from './commons';
+import { toTypeClass, CommonClass, isCommonClass } from './commons';
 import { normalIdConvert } from './id';
 import { qualifiedNameConvert } from './name';
-import { TypeRef, typeRefConvert } from './type';
+import { TypeRefClass, typeRefConvert } from './type';
 import { typeListConvert } from './list';
-import { normalBlockConvert, PropertyBlock, propertyBlockConvert } from './block';
+import { PropertyBlockClass, normalBlockConvert, propertyBlockConvert } from './block';
 import { classBodyConvert, interfaceBodyConvert } from './body';
-import { NormalModifier, normalModifierConvert } from './modifier';
-import { FormalParameter, formalParametersConvert } from './parameter';
-import { VariableDeclarator, variableDeclaratorsConvert } from './variable';
-import { NormalStatement } from './statement';
+import { NormalModifierClass, normalModifierConvert } from './modifier';
+import { FormalParameterClass, formalParametersConvert } from './parameter';
+import { VariableDeclaratorClass, variableDeclaratorsConvert } from './variable';
+import { NormalStatementClass } from './statement';
 
-export type MemberDeclaration =
-    | {
-          type: 'method';
-          member: MethodDeclaration;
-      }
-    | {
-          type: 'constructor';
-          member: ConstructorDeclaration;
-      }
-    | {
-          type: 'interface';
-          member: InterfaceDeclaration;
-      }
-    | {
-          type: 'class';
-          member: ClassDeclaration;
-      }
-    | {
-          type: 'enum';
-          member: EnumDeclaration;
-      }
-    | {
-          type: 'property';
-          member: PropertyDeclaration;
-      }
-    | {
-          type: 'field';
-          member: FieldDeclaration;
-      };
+export abstract class DeclarationElementClass<TType, TDeclaration> extends CommonClass {
+    private type: TType;
+    private declaration: TDeclaration;
+
+    constructor(type: TType, declaration: TDeclaration) {
+        super();
+        this.type = type;
+        this.declaration = declaration;
+    }
+
+    getType(): TType {
+        return this.type;
+    }
+
+    getDeclaration(): TDeclaration {
+        return this.declaration;
+    }
+}
+
+export const isDeclarationElementClass = (
+    target: CommonClass,
+): target is DeclarationElementClass<unknown, unknown> => {
+    return isCommonClass(target, DeclarationElementClass);
+};
+
+export class MethodDeclarationElementClass extends DeclarationElementClass<
+    'method',
+    MethodDeclarationClass
+> {
+    constructor(declartion: MethodDeclarationClass) {
+        super('method', declartion);
+    }
+}
+
+export const isMethodDeclarationElementClass = (
+    target: CommonClass,
+): target is MethodDeclarationElementClass => {
+    return isCommonClass(target, MethodDeclarationElementClass);
+};
+
+export class ConstructorDeclarationElementClass extends DeclarationElementClass<
+    'constructor',
+    ConstructorDeclarationClass
+> {
+    constructor(declartion: ConstructorDeclarationClass) {
+        super('constructor', declartion);
+    }
+}
+
+export const isConstructorDeclarationElementClass = (
+    target: CommonClass,
+): target is ConstructorDeclarationElementClass => {
+    return isCommonClass(target, ConstructorDeclarationElementClass);
+};
+
+export class InterfaceDeclarationElementClass extends DeclarationElementClass<
+    'interface',
+    InterfaceDeclarationClass
+> {
+    constructor(declartion: InterfaceDeclarationClass) {
+        super('interface', declartion);
+    }
+}
+
+export const isInterfaceDeclarationElementClass = (
+    target: CommonClass,
+): target is InterfaceDeclarationElementClass => {
+    return isCommonClass(target, InterfaceDeclarationElementClass);
+};
+
+export class ClassDeclarationElementClass extends DeclarationElementClass<
+    'class',
+    ClassDeclarationClass
+> {
+    constructor(declartion: ClassDeclarationClass) {
+        super('class', declartion);
+    }
+}
+
+export const isClassDeclarationElementClass = (
+    target: CommonClass,
+): target is ClassDeclarationElementClass => {
+    return isCommonClass(target, ClassDeclarationElementClass);
+};
+
+export class EnumDeclarationElementClass extends DeclarationElementClass<
+    'enum',
+    EnumDeclarationClass
+> {
+    constructor(declartion: EnumDeclarationClass) {
+        super('enum', declartion);
+    }
+}
+
+export const isEnumDeclarationElementClass = (
+    target: CommonClass,
+): target is EnumDeclarationElementClass => {
+    return isCommonClass(target, EnumDeclarationElementClass);
+};
+
+export class PropertyDeclarationElementClass extends DeclarationElementClass<
+    'property',
+    PropertyDeclarationClass
+> {
+    constructor(declartion: PropertyDeclarationClass) {
+        super('property', declartion);
+    }
+}
+
+export const isPropertyDeclarationElementClass = (
+    target: CommonClass,
+): target is PropertyDeclarationElementClass => {
+    return isCommonClass(target, PropertyDeclarationElementClass);
+};
+
+export class FieldDeclarationElementClass extends DeclarationElementClass<
+    'field',
+    FieldDeclarationClass
+> {
+    constructor(declartion: FieldDeclarationClass) {
+        super('field', declartion);
+    }
+}
+
+export const isFieldDeclarationElementClass = (
+    target: CommonClass,
+): target is FieldDeclarationElementClass => {
+    return isCommonClass(target, FieldDeclarationElementClass);
+};
+
+export class MemberDeclarationClass extends CommonClass {
+    private value:
+        | MethodDeclarationElementClass
+        | ConstructorDeclarationElementClass
+        | InterfaceDeclarationElementClass
+        | ClassDeclarationElementClass
+        | EnumDeclarationElementClass
+        | PropertyDeclarationElementClass
+        | FieldDeclarationElementClass
+        | null = null;
+
+    setValue(
+        value:
+            | MethodDeclarationElementClass
+            | ConstructorDeclarationElementClass
+            | InterfaceDeclarationElementClass
+            | ClassDeclarationElementClass
+            | EnumDeclarationElementClass
+            | PropertyDeclarationElementClass
+            | FieldDeclarationElementClass
+            | null,
+    ) {
+        this.value = value;
+    }
+
+    getValue():
+        | MethodDeclarationElementClass
+        | ConstructorDeclarationElementClass
+        | InterfaceDeclarationElementClass
+        | ClassDeclarationElementClass
+        | EnumDeclarationElementClass
+        | PropertyDeclarationElementClass
+        | FieldDeclarationElementClass
+        | null {
+        return this.value;
+    }
+
+    copy(commonClass: MemberDeclarationClass): void {
+        this.setValue(commonClass.getValue());
+    }
+}
 
 const memberDeclarationConvert = (
     target: MemberDeclarationTypeClass,
     errorClass: ErrorTypeClass[],
-): MemberDeclaration | undefined => {
+): MemberDeclaration | null => {
     const valueTypeClass = toTypeClass(
         target.getValue(),
         (
@@ -106,7 +248,7 @@ const memberDeclarationConvert = (
         errorClass,
     );
 
-    let memberDeclaration: MemberDeclaration | undefined = undefined;
+    let memberDeclaration: MemberDeclaration | null = null;
 
     if (valueTypeClass) {
         if (isMethodDeclarationType(valueTypeClass)) {
@@ -241,36 +383,55 @@ const memberDeclarationConvert = (
     return memberDeclaration;
 };
 
-export type AnonymousMemberDeclaration =
-    | {
-          type: 'method';
-          member: MethodDeclaration;
-      }
-    | {
-          type: 'interface';
-          member: InterfaceDeclaration;
-      }
-    | {
-          type: 'class';
-          member: ClassDeclaration;
-      }
-    | {
-          type: 'enum';
-          member: EnumDeclaration;
-      }
-    | {
-          type: 'property';
-          member: PropertyDeclaration;
-      }
-    | {
-          type: 'field';
-          member: FieldDeclaration;
-      };
+export class AnonymousTriggerMemberDeclarationClass extends CommonClass {
+    private value:
+        | MethodDeclarationElementClass
+        | InterfaceDeclarationElementClass
+        | ClassDeclarationElementClass
+        | EnumDeclarationElementClass
+        | PropertyDeclarationElementClass
+        | FieldDeclarationElementClass
+        | null = null;
+
+    setValue(
+        value:
+            | MethodDeclarationElementClass
+            | InterfaceDeclarationElementClass
+            | ClassDeclarationElementClass
+            | EnumDeclarationElementClass
+            | PropertyDeclarationElementClass
+            | FieldDeclarationElementClass
+            | null,
+    ) {
+        this.value = value;
+    }
+
+    getValue():
+        | MethodDeclarationElementClass
+        | InterfaceDeclarationElementClass
+        | ClassDeclarationElementClass
+        | EnumDeclarationElementClass
+        | PropertyDeclarationElementClass
+        | FieldDeclarationElementClass
+        | null {
+        return this.value;
+    }
+
+    copy(commonClass: AnonymousTriggerMemberDeclarationClass): void {
+        this.setValue(commonClass.getValue());
+    }
+}
+
+export const isAnonymousTriggerMemberDeclarationClass = (
+    target: CommonClass,
+): target is AnonymousTriggerMemberDeclarationClass => {
+    return isCommonClass(target, AnonymousTriggerMemberDeclarationClass);
+};
 
 export const anonymousMemberDeclarationConvert = (
     target: AnonymousMemberDeclarationTypeClass,
     errorClass: ErrorTypeClass[],
-): AnonymousMemberDeclaration | undefined => {
+): AnonymousMemberDeclaration | null => {
     const valueTypeClass = toTypeClass(
         target.getValue(),
         (
@@ -291,7 +452,7 @@ export const anonymousMemberDeclarationConvert = (
         errorClass,
     );
 
-    let anonymousMemberDeclaration: AnonymousMemberDeclaration | undefined = undefined;
+    let anonymousMemberDeclaration: AnonymousMemberDeclaration | null = null;
 
     if (valueTypeClass) {
         if (isMethodDeclarationType(valueTypeClass)) {
@@ -411,36 +572,10 @@ export const anonymousMemberDeclarationConvert = (
     return anonymousMemberDeclaration;
 };
 
-export type TriggerMemberDeclaration =
-    | {
-          type: 'method';
-          member: MethodDeclaration;
-      }
-    | {
-          type: 'interface';
-          member: InterfaceDeclaration;
-      }
-    | {
-          type: 'class';
-          member: ClassDeclaration;
-      }
-    | {
-          type: 'enum';
-          member: EnumDeclaration;
-      }
-    | {
-          type: 'property';
-          member: PropertyDeclaration;
-      }
-    | {
-          type: 'field';
-          member: FieldDeclaration;
-      };
-
 export const triggerMemberDeclarationConvert = (
     target: TriggerMemberDeclarationTypeClass,
     errorClass: ErrorTypeClass[],
-): TriggerMemberDeclaration | undefined => {
+): TriggerMemberDeclaration | null => {
     const valueTypeClass = toTypeClass(
         target.getValue(),
         (
@@ -461,7 +596,7 @@ export const triggerMemberDeclarationConvert = (
         errorClass,
     );
 
-    let triggerMemberDeclaration: TriggerMemberDeclaration | undefined = undefined;
+    let triggerMemberDeclaration: TriggerMemberDeclaration | null = null;
 
     if (valueTypeClass) {
         if (isMethodDeclarationType(valueTypeClass)) {
@@ -580,10 +715,52 @@ export const triggerMemberDeclarationConvert = (
 
     return triggerMemberDeclaration;
 };
-export type ClassBodyDeclaration = {
-    value?: MemberDeclaration | NormalStatement[];
-    modifier: NormalModifier[];
-    isStatic?: boolean;
+
+export class ClassBodyDeclarationClass extends CommonClass {
+    private value: MemberDeclarationClass | NormalStatement[] | null = null;
+    private modifier: NormalModifier[] = [];
+    private isStatic: boolean | null = null;
+
+    setValue(value: MemberDeclarationClass | NormalStatement[] | null): void {
+        this.value = value;
+    }
+
+    resetModifier(): void {
+        this.modifier = [];
+    }
+
+    setModifier(modifier: NormalModifier[]): void {
+        this.modifier.push(...modifier);
+    }
+
+    setIsStatic(isStatic: boolean | null): void {
+        this.isStatic = isStatic;
+    }
+
+    getValue(): MemberDeclarationClass | NormalStatement[] | null {
+        return this.value;
+    }
+
+    getModifier(): NormalModifier[] {
+        return this.modifier;
+    }
+
+    getIsStatic(): boolean | null {
+        return this.isStatic;
+    }
+
+    copy(commonClass: ClassBodyDeclarationClass): void {
+        this.setValue(commonClass.getValue());
+        this.resetModifier();
+        this.setModifier(commonClass.getModifier());
+        this.setIsStatic(commonClass.getIsStatic());
+    }
+}
+
+export const isClassBodyDeclarationClass = (
+    target: CommonClass,
+): target is ClassBodyDeclarationClass => {
+    return isCommonClass(target, ClassBodyDeclarationClass);
 };
 
 export const classBodyDeclarationConvert = (
@@ -635,11 +812,64 @@ export const classBodyDeclarationConvert = (
     return classBodyDeclaration;
 };
 
-export type ClassDeclaration = {
-    value?: string;
-    body: ClassBodyDeclaration[];
-    extend: TypeRef;
-    implement: TypeRef[];
+export class ClassDeclarationClass extends CommonClass {
+    private value: string | null = null;
+    private body: ClassBodyDeclarationClass[] = [];
+    private extend: TypeRef | null = null;
+    private implement: TypeRef[] = [];
+
+    setValue(value: string | null): void {
+        this.value = value;
+    }
+
+    resetBody(): void {
+        this.body = [];
+    }
+
+    setBody(body: ClassBodyDeclarationClass[]): void {
+        this.body.push(...body);
+    }
+
+    setExtend(extend: TypeRef | null): void {
+        this.extend = extend;
+    }
+
+    resetImplement() {
+        this.implement = [];
+    }
+
+    setImpliment(impliment: TypeRef[]): void {
+        this.implement.push(...impliment);
+    }
+
+    getValue(): string | null {
+        return this.value;
+    }
+
+    getBody(): ClassBodyDeclarationClass[] {
+        return this.body;
+    }
+
+    getExtend(): TypeRef | null {
+        return this.extend;
+    }
+
+    getImplement(): TypeRef[] {
+        return this.implement;
+    }
+
+    copy(commonClass: ClassDeclarationClass): void {
+        this.setValue(commonClass.getValue());
+        this.resetBody();
+        this.setBody(commonClass.getBody());
+        this.setExtend(commonClass.getExtend());
+        this.resetImplement();
+        this.setImpliment(commonClass.getImplement());
+    }
+}
+
+export const isClassDeclarationClass = (target: CommonClass): target is ClassDeclarationClass => {
+    return isCommonClass(target, ClassDeclarationClass);
 };
 
 export const classDeclarationConvert = (
@@ -689,10 +919,61 @@ export const classDeclarationConvert = (
     return classDeclaration;
 };
 
-export type ConstructorDeclaration = {
-    value: string[];
-    param: FormalParameter[];
-    block: NormalStatement[];
+export class ConstructorDeclarationClass extends CommonClass {
+    private value: string[] = [];
+    private param: FormalParameter[] = [];
+    private block: NormalStatement[] = [];
+
+    resetValue(): void {
+        this.value = [];
+    }
+
+    setValue(value: string[]): void {
+        this.value.push(...value);
+    }
+
+    resetParam(): void {
+        this.param = [];
+    }
+
+    setParam(param: FormalParameter[]): void {
+        this.param.push(...param);
+    }
+
+    resetBlock(): void {
+        this.block = [];
+    }
+
+    setBlock(block: NormalStatement[]) {
+        this.block.push(...block);
+    }
+
+    getValue(): string[] {
+        return this.value;
+    }
+
+    getParam(): FormalParameter[] {
+        return this.param;
+    }
+
+    getBlock(): NormalStatement[] {
+        return this.block;
+    }
+
+    copy(commonClass: ConstructorDeclarationClass): void {
+        this.resetValue();
+        this.setValue(commonClass.getValue());
+        this.resetParam();
+        this.setParam(commonClass.getParam());
+        this.resetBlock();
+        this.setBlock(commonClass.getBlock());
+    }
+}
+
+export const isConstructorDeclarationClass = (
+    target: CommonClass,
+): target is ConstructorDeclarationClass => {
+    return isCommonClass(target, ConstructorDeclarationClass);
 };
 
 export const constructorDeclarationConvert = (
@@ -741,9 +1022,39 @@ export const enumConstantsConvert = (
     return values;
 };
 
-export type EnumDeclaration = {
-    value?: string;
-    constant: string[];
+export class EnumDeclarationClass extends CommonClass {
+    private value: string | null = null;
+    private constant: string[] = [];
+
+    setValue(value: string | null): void {
+        this.value = value;
+    }
+
+    resetConstant(): void {
+        this.constant = [];
+    }
+
+    setConstant(constant: string[]) {
+        this.constant.push(...constant);
+    }
+
+    getValue(): string | null {
+        return this.value;
+    }
+
+    getConstant(): string[] {
+        return this.constant;
+    }
+
+    copy(commonClass: EnumDeclarationClass): void {
+        this.setValue(commonClass.getValue());
+        this.resetConstant();
+        this.setConstant(commonClass.getConstant());
+    }
+}
+
+export const isEnumDeclarationClass = (target: CommonClass): target is EnumDeclarationClass => {
+    return isCommonClass(target, EnumDeclarationClass);
 };
 
 export const enumDeclarationConvert = (
@@ -771,9 +1082,39 @@ export const enumDeclarationConvert = (
     return enumDeclaration;
 };
 
-export type FieldDeclaration = {
-    value: VariableDeclarator[];
-    valueType: TypeRef;
+export class FieldDeclarationClass extends CommonClass {
+    private value: VariableDeclarator[] = [];
+    private valueType: TypeRef | null = null;
+
+    resetValue(): void {
+        this.value = [];
+    }
+
+    setValue(value: VariableDeclarator[]): void {
+        value.push(...value);
+    }
+
+    setValueType(valueType: TypeRef | null): void {
+        this.valueType = valueType;
+    }
+
+    getValue(): VariableDeclarator[] {
+        return this.value;
+    }
+
+    getValueType(): TypeRef | null {
+        return this.valueType;
+    }
+
+    copy(commonClass: FieldDeclarationClass): void {
+        this.resetValue();
+        this.setValue(commonClass.getValue());
+        this.setValueType(commonClass.getValueType());
+    }
+}
+
+export const isFieldDeclarationClass = (target: CommonClass): target is FieldDeclarationClass => {
+    return isCommonClass(target, FieldDeclarationClass);
 };
 
 export const fieldDeclarationConvert = (
@@ -805,10 +1146,56 @@ export const fieldDeclarationConvert = (
     return fieldDeclaration;
 };
 
-export type InterfaceDeclaration = {
-    value?: string;
-    body: InterfaceMethodDeclaration[];
-    extend: TypeRef[];
+export class InterfaceDeclarationClass extends CommonClass {
+    private value: string | null = null;
+    private body: InterfaceMethodDeclarationClass[] = [];
+    private extend: TypeRef[] = [];
+
+    setValue(value: string | null): void {
+        this.value = value;
+    }
+
+    resetBody(): void {
+        this.body = [];
+    }
+
+    setBody(body: InterfaceMethodDeclarationClass[]): void {
+        this.body.push(...body);
+    }
+
+    resetExtend(): void {
+        this.extend = [];
+    }
+
+    setExtend(extend: TypeRef[]) {
+        this.extend.push(...extend);
+    }
+
+    getValue(): string | null {
+        return this.value;
+    }
+
+    getBody(): InterfaceMethodDeclarationClass[] {
+        return this.body;
+    }
+
+    getExtend(): TypeRef[] {
+        return this.extend;
+    }
+
+    copy(commonClass: InterfaceDeclarationClass): void {
+        this.setValue(commonClass.getValue());
+        this.resetBody();
+        this.setBody(commonClass.getBody());
+        this.resetExtend();
+        this.setExtend(commonClass.getExtend());
+    }
+}
+
+export const isInterfaceDeclarationClass = (
+    target: CommonClass,
+): target is InterfaceDeclarationClass => {
+    return isCommonClass(target, InterfaceDeclarationClass);
 };
 
 export const interfaceDeclarationConvert = (
@@ -842,11 +1229,66 @@ export const interfaceDeclarationConvert = (
     return interfaceDeclaration;
 };
 
-export type InterfaceMethodDeclaration = {
-    value?: string;
-    valueType?: TypeRef | 'void';
-    param: FormalParameter[];
-    modifier: NormalModifier[];
+export class InterfaceMethodDeclarationClass extends CommonClass {
+    private value: string | null = null;
+    private valueType: TypeRef | 'void' | null = null;
+    private param: FormalParameter[] = [];
+    private modifier: NormalModifier[] = [];
+
+    setValue(value: string | null): void {
+        this.value = value;
+    }
+
+    setValueType(valueType: TypeRef | 'void' | null): void {
+        this.valueType = valueType;
+    }
+
+    resetParam(): void {
+        this.param = [];
+    }
+
+    setParam(param: FormalParameter[]): void {
+        this.param.push(...param);
+    }
+
+    resetModifier(): void {
+        this.modifier = [];
+    }
+
+    setModifier(modifier: NormalModifier[]): void {
+        this.modifier.push(...modifier);
+    }
+
+    getValue(): string | null {
+        return this.value;
+    }
+
+    getValueType(): TypeRef | 'void' | null {
+        return this.valueType;
+    }
+
+    getParam(): FormalParameter[] {
+        return this.param;
+    }
+
+    getModifier(): NormalModifier[] {
+        return this.modifier;
+    }
+
+    copy(commonClass: InterfaceMethodDeclarationClass): void {
+        this.setValue(commonClass.getValue());
+        this.setValueType(commonClass.getValueType());
+        this.resetParam();
+        this.setParam(commonClass.getParam());
+        this.resetModifier();
+        this.setModifier(commonClass.getModifier());
+    }
+}
+
+export const isInterfaceMethodDeclarationClass = (
+    target: CommonClass,
+): target is InterfaceMethodDeclarationClass => {
+    return isCommonClass(target, InterfaceMethodDeclarationClass);
 };
 
 export const interfaceMethodDeclarationConvert = (
@@ -896,23 +1338,70 @@ export const interfaceMethodDeclarationConvert = (
     return interfaceMethodDeclaration;
 };
 
-export type LocalVariableDeclaration = {
-    value: VariableDeclarator[];
-    valueType: TypeRef;
-    modifier: NormalModifier[];
+export class LocalVariableDeclarationClass extends CommonClass {
+    private value: VariableDeclaratorClass[] = [];
+    private valueType: TypeRefClass = new TypeRefClass();
+    private modifier: NormalModifierClass[] = [];
+
+    resetValue(): void {
+        this.value = [];
+    }
+
+    setValue(value: VariableDeclaratorClass[]): void {
+        this.value.push(...value);
+    }
+
+    setValueType(valueType: TypeRefClass) {
+        this.valueType.copy(valueType);
+    }
+
+    resetModifier(): void {
+        this.modifier = [];
+    }
+
+    setModifier(modifier: NormalModifierClass[]): void {
+        this.modifier.push(...modifier);
+    }
+
+    getValue(): VariableDeclaratorClass[] {
+        return this.value;
+    }
+
+    getValueType(): TypeRefClass {
+        return this.valueType;
+    }
+
+    getModifier(): NormalModifierClass[] {
+        return this.modifier;
+    }
+
+    copy(commonClass: LocalVariableDeclarationClass): void {
+        this.resetValue();
+        this.setValue(commonClass.getValue());
+        this.setValueType(commonClass.getValueType());
+        this.resetModifier();
+        this.setModifier(commonClass.getModifier());
+    }
+}
+
+export const isLocalVariableDeclarationClass = (
+    target: CommonClass,
+): target is LocalVariableDeclarationClass => {
+    return isCommonClass(target, LocalVariableDeclarationClass);
 };
 
 export const localVariableDeclarationConvert = (
     target: LocalVariableDeclarationTypeClass,
     errorClass: ErrorTypeClass[],
-): LocalVariableDeclaration => {
-    const value: VariableDeclarator[] = [];
+): LocalVariableDeclarationClass => {
+    const localVariableDeclaration = new LocalVariableDeclarationClass();
+
     const valueTypeClass = toTypeClass(target.getValue(), isVariableDeclaratorsType, errorClass);
     if (valueTypeClass) {
-        value.push(...variableDeclaratorsConvert(valueTypeClass, errorClass));
+        localVariableDeclaration.setValue(variableDeclaratorsConvert(valueTypeClass, errorClass));
     }
 
-    const modifiers: NormalModifier[] = [];
+    const modifiers: NormalModifierClass[] = [];
     target.getModifier().forEach((m) => {
         const modifierTypeClass = toTypeClass(m, isNormalModifierType, errorClass);
         if (modifierTypeClass) {
@@ -922,32 +1411,74 @@ export const localVariableDeclarationConvert = (
             }
         }
     });
-
-    const localVariableDeclaration: LocalVariableDeclaration = {
-        value: value,
-        valueType: {
-            value: [],
-        },
-        modifier: modifiers,
-    };
+    localVariableDeclaration.setModifier(modifiers);
 
     const valueTypeTypeClass = toTypeClass(target.getValueType(), isTypeRefType, errorClass);
     if (valueTypeTypeClass) {
-        const typeRef = typeRefConvert(valueTypeTypeClass, errorClass);
-        localVariableDeclaration.valueType.value = typeRef.value;
-        if (typeRef.dimension) {
-            localVariableDeclaration.valueType.dimension = typeRef.dimension;
-        }
+        localVariableDeclaration.setValueType(typeRefConvert(valueTypeTypeClass, errorClass));
     }
 
     return localVariableDeclaration;
 };
 
-export type MethodDeclaration = {
-    value?: string;
-    valueType?: TypeRef | 'void';
-    param: FormalParameter[];
-    block: NormalStatement[];
+export class MethodDeclarationClass extends CommonClass {
+    private value: string | null = null;
+    private valueType: TypeRef | 'void' | null = null;
+    private param: FormalParameter[] = [];
+    private block: NormalStatement[] = [];
+
+    setValue(value: string | null): void {
+        this.value = value;
+    }
+
+    setValueType(valueType: TypeRef | 'void' | null): void {
+        this.valueType = valueType;
+    }
+
+    resetParam(): void {
+        this.param = [];
+    }
+
+    setParam(param: FormalParameter[]): void {
+        this.param.push(...param);
+    }
+
+    resetBlock(): void {
+        this.block = [];
+    }
+
+    setBlock(block: NormalStatement[]): void {
+        this.block.push(...block);
+    }
+
+    getValue(): string | null {
+        return this.value;
+    }
+
+    getValueType(): TypeRef | 'void' | null {
+        return this.valueType;
+    }
+
+    getParam(): FormalParameter[] {
+        return this.param;
+    }
+
+    getBlock(): NormalStatement[] {
+        return this.block;
+    }
+
+    copy(commonClass: MethodDeclarationClass): void {
+        this.setValue(commonClass.getValue());
+        this.setValueType(commonClass.getValueType());
+        this.resetParam();
+        this.setParam(commonClass.getParam());
+        this.resetBlock();
+        this.setBlock(commonClass.getBlock());
+    }
+}
+
+export const isMethodDeclarationClass = (target: CommonClass): target is MethodDeclarationClass => {
+    return isCommonClass(target, MethodDeclarationClass);
 };
 
 export const methodDeclarationConvert = (
@@ -995,10 +1526,51 @@ export const methodDeclarationConvert = (
     return methodDeclaration;
 };
 
-export type PropertyDeclaration = {
-    value?: string;
-    valueType: TypeRef;
-    block: PropertyBlock[];
+export class PropertyDeclarationClass extends CommonClass {
+    private value: string | null = null;
+    private valueType: TypeRef | null = null;
+    private block: PropertyBlock[] = [];
+
+    setValue(value: string | null): void {
+        this.value = value;
+    }
+
+    setValueType(valueType: TypeRef | null): void {
+        this.valueType = valueType;
+    }
+
+    resetBlock(): void {
+        this.block = [];
+    }
+
+    setBlock(block: PropertyBlock[]): void {
+        this.block.push(...block);
+    }
+
+    getValue(): string | null {
+        return this.value;
+    }
+
+    getValueType(): TypeRef | null {
+        return this.valueType;
+    }
+
+    getBlock(): PropertyBlock[] {
+        return this.block;
+    }
+
+    copy(commonClass: PropertyDeclarationClass): void {
+        this.setValue(commonClass.getValue());
+        this.setValueType(commonClass.getValueType());
+        this.resetBlock();
+        this.setBlock(commonClass.getBlock());
+    }
+}
+
+export const isPropertyDeclarationClass = (
+    target: CommonClass,
+): target is PropertyDeclarationClass => {
+    return isCommonClass(target, PropertyDeclarationClass);
 };
 
 export const propertyDeclarationConvert = (
@@ -1037,27 +1609,44 @@ export const propertyDeclarationConvert = (
     return propertyDeclaration;
 };
 
-export type TypeDeclaration =
-    | {
-          type: 'class';
-          value: ClassDeclaration;
-          modifier: NormalModifier[];
-      }
-    | {
-          type: 'enum';
-          value: EnumDeclaration;
-          modifier: NormalModifier[];
-      }
-    | {
-          type: 'interface';
-          value: InterfaceDeclaration;
-          modifier: NormalModifier[];
-      };
+export class TypeDeclarationClass extends CommonClass {
+    private value:
+        | InterfaceDeclarationElementClass
+        | ClassDeclarationElementClass
+        | EnumDeclarationElementClass
+        | null = null;
+
+    setValue(
+        value:
+            | InterfaceDeclarationElementClass
+            | ClassDeclarationElementClass
+            | EnumDeclarationElementClass
+            | null,
+    ): void {
+        this.value = value;
+    }
+
+    getValue():
+        | InterfaceDeclarationElementClass
+        | ClassDeclarationElementClass
+        | EnumDeclarationElementClass
+        | null {
+        return this.value;
+    }
+
+    copy(commonClass: TypeDeclarationClass): void {
+        this.setValue(commonClass.getValue());
+    }
+}
+
+export const isTypeDeclarationClass = (target: CommonClass): target is TypeDeclarationClass => {
+    return isCommonClass(target, TypeDeclarationClass);
+};
 
 export const typeDeclarationConvert = (
     target: TypeDeclarationTypeClass,
     errorClass: ErrorTypeClass[],
-): TypeDeclaration | undefined => {
+): TypeDeclaration | null => {
     const valueTypeClass = toTypeClass(
         target.getValue(),
         (
@@ -1081,7 +1670,7 @@ export const typeDeclarationConvert = (
         }
     });
 
-    let typeDeclaration: TypeDeclaration | undefined = undefined;
+    let typeDeclaration: TypeDeclaration | null = null;
 
     if (valueTypeClass) {
         if (isClassDeclarationType(valueTypeClass)) {

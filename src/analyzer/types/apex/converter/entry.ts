@@ -13,15 +13,40 @@ import {
     isTypeOfType,
 } from '../../apex_IR';
 
-import { toTypeClass } from './commons';
+import { toTypeClass, CommonClass, isCommonClass } from './commons';
 import { soqlIdConvert } from './id';
 import { fieldNameConvert } from './name';
-import { SoqlFunction, soqlFunctionConvert, SubQuery, subQueryConvert } from './query';
-import { TypeOf, typeOfConvert } from './clause';
+import { SoqlFunctionClass,SubQueryClass soqlFunctionConvert, subQueryConvert } from './query';
+import { TypeOfClass, typeOfConvert } from './clause';
 
-export type SelectEntry = {
-    value?: string[] | SoqlFunction | SubQuery | TypeOf;
-    alias?: string;
+export class EntryClass extends CommonClass {
+    private value: string[] | SoqlFunction | SubQuery | TypeOf | null = null;
+    private alias: string | null = null;
+
+    setValue(value: string[] | SoqlFunction | SubQuery | TypeOf | null): void {
+        this.value = value;
+    }
+
+    setAlias(alias: string | null): void {
+        this.alias = alias;
+    }
+
+    getValue(): string | null {
+        return this.value;
+    }
+
+    getAlias(): string | null {
+        return this.alias;
+    }
+
+    copy(commonClass: EntryClass): void {
+        this.setValue(commonClass.getValue());
+        this.setAlias(commonClass.getAlias());
+    }
+}
+
+export const isEntryClass = (target: CommonClass): target is EntryClass => {
+    return isCommonClass(target,EntryClass);
 };
 
 export const selectEntryConvert = (
@@ -72,16 +97,11 @@ export const selectEntryConvert = (
     return selectEntry;
 };
 
-export type SubFieldEntry = {
-    value?: string[] | SoqlFunction | SubQuery | TypeOf;
-    alias?: string;
-};
-
 export const subFieldEntryConvert = (
     target: SubFieldEntryTypeClass,
     errorClass: ErrorTypeClass[],
-): SubFieldEntry => {
-    const subFieldEntry: SubFieldEntry = {};
+): SelectEntry => {
+    const subFieldEntry: SelectEntry = {};
 
     const valueTypeClass = toTypeClass(
         target.getValue(),

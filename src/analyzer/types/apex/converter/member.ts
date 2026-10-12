@@ -11,19 +11,50 @@ import {
     isNormalModifierType,
 } from '../../apex_IR';
 
-import { toTypeClass } from './commons';
-import { NormalModifier, normalModifierConvert } from './modifier';
-import { NormalStatement, normalStatementConvert } from './statement';
+import { toTypeClass, CommonClass, isCommonClass } from './commons';
+import { NormalModifierClass, normalModifierConvert } from './modifier';
+import { NormalStatementClass, normalStatementConvert } from './statement';
 import {
-    AnonymousMemberDeclaration,
+    AnonymousTriggerMemberDeclarationClass,
     anonymousMemberDeclarationConvert,
-    TriggerMemberDeclaration,
     triggerMemberDeclarationConvert,
 } from './declaration';
 
-export type AnonymousBlockMember = {
-    value?: AnonymousMemberDeclaration | NormalStatement;
-    modifier: NormalModifier[];
+export class AnonymousBlockMemberClass extends CommonClass {
+    private value: AnonymousMemberDeclaration | NormalStatement | null = null;
+    private modifier: NormalModifier[] = [];
+
+    setValue(value: AnonymousMemberDeclaration | NormalStatement | null): void {
+        this.value = value;
+    }
+
+    resetModifier(): void {
+        this.modifier = [];
+    }
+
+    setModifier(modifier: NormalModifier[]): void {
+        this.modifier.push(...modifier);
+    }
+
+    getValue(): AnonymousMemberDeclaration | NormalStatement | null {
+        return this.value;
+    }
+
+    getModifier(): NormalModifier[] {
+        return this.modifier;
+    }
+
+    copy(commonClass: AnonymousBlockMemberClass): void {
+        this.setValue(commonClass.getValue());
+        this.resetModifier();
+        this.setModifier(commonClass.getModifier());
+    }
+}
+
+export const isAnonymousBlockMemberClass = (
+    target: CommonClass,
+): target is AnonymousBlockMemberClass => {
+    return target instanceof AnonymousBlockMemberClass;
 };
 
 export const anonymousBlockMemberConvert = (
@@ -73,9 +104,41 @@ export const anonymousBlockMemberConvert = (
     return anonymousBlockMember;
 };
 
-export type TriggerBlockMember = {
-    value?: TriggerMemberDeclaration | NormalStatement;
-    modifier: NormalModifier[];
+export class TriggerBlockMemberClass extends CommonClass {
+    private value: TriggerMemberDeclaration | NormalStatement | null = null;
+    private modifier: NormalModifier[] = [];
+
+    setValue(value: TriggerMemberDeclaration | NormalStatement | null): void {
+        this.value = value;
+    }
+
+    resetModifier(): void {
+        this.modifier = [];
+    }
+
+    setModifier(modifier: NormalModifier[]): void {
+        this.modifier.push(...modifier);
+    }
+
+    getValue(): AnonymousMemberDeclaration | NormalStatement | null {
+        return this.value;
+    }
+
+    getModifier(): NormalModifier[] {
+        return this.modifier;
+    }
+
+    copy(commonClass: AnonymousBlockMemberClass): void {
+        this.setValue(commonClass.getValue());
+        this.resetModifier();
+        this.setModifier(commonClass.getModifier());
+    }
+}
+
+export const isTriggerBlockMemberClass = (
+    target: CommonClass,
+): target is TriggerBlockMemberClass => {
+    return target instanceof TriggerBlockMemberClass;
 };
 
 export const triggerBlockMemberConvert = (

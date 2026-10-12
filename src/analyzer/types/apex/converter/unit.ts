@@ -14,40 +14,46 @@ import {
 import { toPrimitiveValue, toTypeClass, CommonClass, isCommonClass } from './commons';
 import { normalIdConvert } from './id';
 import { anonymousBlockConvert, triggerBlockConvert } from './block';
-import { TypeDeclaration, typeDeclarationConvert } from './declaration';
-import { AnonymousBlockMember, TriggerBlockMember } from './member';
+import { TypeDeclarationClass, typeDeclarationConvert } from './declaration';
+import { AnonymousBlockMemberClass, TriggerBlockMemberClass } from './member';
 
 export const anonymousUnitConvert = (
     target: AnonymousUnitTypeClass,
     errorClass: ErrorTypeClass[],
-): AnonymousBlockMember[] => {
+): AnonymousBlockMemberClass[] => {
+    const value: AnonymousBlockMemberClass[] = [];
+
     const valueTypeClass = toTypeClass(target.getValue(), isAnonymousBlockType, errorClass);
     if (valueTypeClass) {
-        return anonymousBlockConvert(valueTypeClass, errorClass);
+        value.push(...anonymousBlockConvert(valueTypeClass, errorClass));
     }
 
-    return [];
+    return value;
 };
 
 export const compilationUnitConvert = (
     target: CompilationUnitTypeClass,
     errorClass: ErrorTypeClass[],
-): TypeDeclaration | undefined => {
+): TypeDeclarationClass => {
+    const compilatinonUnit = new TypeDeclarationClass();
+
     const valueTypeClass = toTypeClass(target.getValue(), isTypeDeclarationType, errorClass);
     if (valueTypeClass) {
-        return typeDeclarationConvert(valueTypeClass, errorClass);
+        compilatinonUnit.copy(typeDeclarationConvert(valueTypeClass, errorClass));
     }
 
-    return undefined;
+    return compilatinonUnit;
 };
 
 export class TriggerCaseClass extends CommonClass {
-    private value: string | null;
-    private triggerCaseType: string;
+    private value: string | null = null;
+    private triggerCaseType: string | null = null;
 
-    constructor(value: string | null, triggerCaseType: string) {
-        super();
+    setValue(value: string | null): void {
         this.value = value;
+    }
+
+    setTriggerCaseType(triggerCaseType: string | null): void {
         this.triggerCaseType = triggerCaseType;
     }
 
@@ -55,8 +61,13 @@ export class TriggerCaseClass extends CommonClass {
         return this.value;
     }
 
-    getContent(): string {
+    getTriggerCaseType(): string | null {
         return this.triggerCaseType;
+    }
+
+    copy(commonClass: TriggerCaseClass): void {
+        this.setValue(commonClass.getValue());
+        this.setTriggerCaseType(commonClass.getTriggerCaseType());
     }
 }
 
@@ -64,16 +75,12 @@ export const isTriggerCaseClass = (target: CommonClass): target is TriggerCaseCl
     return isCommonClass(target, TriggerCaseClass);
 };
 
-export type TriggerCase = {
-    value?: string;
-    triggerCaseType: string;
-};
-
 export const triggerCaseConvert = (
     target: TriggerCaseTypeClass,
     errorClass: ErrorTypeClass[],
-): TriggerCase => {
-    const triggerCase: TriggerCase = { triggerCaseType: target.getTriggerCaseType() };
+): TriggerCaseClass => {
+    const triggerCase = new TriggerCaseClass();
+    triggerCase.setTriggerCaseType(target.getTriggerCaseType());
 
     const value = toPrimitiveValue(
         target.getValue(),
@@ -81,34 +88,55 @@ export const triggerCaseConvert = (
         errorClass,
     );
     if (value) {
-        triggerCase.value = value;
+        triggerCase.setValue(value);
     }
 
     return triggerCase;
 };
 
 export class TriggerUnitClass extends CommonClass {
-    private value: string[];
-    private triggerCaseType: TriggerCase[];
-    private block: TriggerBlockMember[];
+    private value: string | null = null;
+    private triggerCaseType: TriggerCaseClass[] = [];
+    private block: TriggerBlockMemberClass[] = [];
 
-    constructor(value: string[], triggerCaseType: TriggerCase[], block: TriggerBlockMember[]) {
-        super();
+    setValue(value: string | null): void {
         this.value = value;
-        this.triggerCaseType = triggerCaseType;
-        this.block = block;
     }
 
-    getValue(): string[] {
+    resetTriggerCaseType(): void {
+        this.triggerCaseType = [];
+    }
+
+    setTriggerCaseType(triggerCaseType: TriggerCaseClass[]): void {
+        this.triggerCaseType.push(...triggerCaseType);
+    }
+
+    resetBlock(): void {
+        this.block = [];
+    }
+
+    setBlock(block: TriggerBlockMemberClass[]): void {
+        this.block.push(...block);
+    }
+
+    getValue(): string | null {
         return this.value;
     }
 
-    getContent(): TriggerCase[] {
+    getTriggerCaseType(): TriggerCaseClass[] {
         return this.triggerCaseType;
     }
 
-    getBlock(): TriggerBlockMember[] {
+    getBlock(): TriggerBlockMemberClass[] {
         return this.block;
+    }
+
+    copy(commonClass: TriggerUnitClass): void {
+        this.setValue(commonClass.getValue());
+        this.resetTriggerCaseType();
+        this.setTriggerCaseType(commonClass.getTriggerCaseType());
+        this.resetBlock();
+        this.setBlock(commonClass.getBlock());
     }
 }
 
@@ -116,39 +144,31 @@ export const isTriggerUnitClass = (target: CommonClass): target is TriggerUnitCl
     return isCommonClass(target, TriggerUnitClass);
 };
 
-export type TriggerUnit = {
-    value: string[];
-    triggerCase: TriggerCase[];
-    block: TriggerBlockMember[];
-};
-
 export const triggerUnitConvert = (
     target: TriggerUnitTypeClass,
     errorClass: ErrorTypeClass[],
-): TriggerUnit => {
-    const triggerUnit: TriggerUnit = {
-        value: [],
-        triggerCase: [],
-        block: [],
-    };
+): TriggerUnitClass => {
+    const triggerUnit = new TriggerUnitClass();
 
     target.getValue().forEach((item) => {
         const idTypeClass = toTypeClass(item, isNormalIdType, errorClass);
         if (idTypeClass) {
-            triggerUnit.value.push(normalIdConvert(idTypeClass));
+            triggerUnit.setValue(normalIdConvert(idTypeClass));
         }
     });
 
+    const triggerCases: TriggerCaseClass[] = [];
     target.getTriggerCase().forEach((item) => {
         const caseTypeClass = toTypeClass(item, isTriggerCaseType, errorClass);
         if (caseTypeClass) {
-            triggerUnit.triggerCase.push(triggerCaseConvert(caseTypeClass, errorClass));
+            triggerCases.push(triggerCaseConvert(caseTypeClass, errorClass));
         }
     });
+    triggerUnit.setTriggerCaseType(triggerCases);
 
     const blockTypeClass = toTypeClass(target.getBlock(), isTriggerBlockType, errorClass);
     if (blockTypeClass) {
-        triggerUnit.block.push(...triggerBlockConvert(blockTypeClass, errorClass));
+        triggerUnit.setBlock(triggerBlockConvert(blockTypeClass, errorClass));
     }
 
     return triggerUnit;

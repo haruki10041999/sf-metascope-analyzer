@@ -24,26 +24,41 @@ import {
     isNormalIdType,
 } from '../../apex_IR';
 
-import { toTypeClass } from './commons';
-import { normalIdConvert } from './id';
-import { Expression, boundExpressionConvert } from './expression';
 import {
-    NormalLiteral,
+    toTypeClass,
+    CommonClass,
+    isCommonClass,
+    isString,
+    isNormalValueClassArray,
+    isWhenLiteralClassArray,
+} from './commons';
+import { normalIdConvert } from './id';
+import { ExpressionClass, boundExpressionConvert, isExpressionClass } from './expression';
+import {
+    isSignedLiteralClass,
+    NormalLiteralClass,
     normalLiteralConvert,
-    SignedLiteral,
+    SignedLiteralClass,
     signedNumberConvert,
-    WhenLiteral,
+    WhenLiteralClass,
     whenLiteralConvert,
 } from './literal';
 import { fieldNameConvert } from './name';
 import { valueListConvert } from './list';
-import { TypeRef, typeRefConvert } from './type';
-import { DateFormula, dateFormulaConvert, SubQuery, subQueryConvert } from './query';
+import { TypeRefClass, typeRefConvert } from './type';
+import {
+    DateFormulaClass,
+    SubQueryClass,
+    dateFormulaConvert,
+    isDateFormulaClass,
+    isSubQueryClass,
+    subQueryConvert,
+} from './query';
 
 export const coordinateValueConvert = (
     target: CoordinateValueTypeClass,
     errorClass: ErrorTypeClass[],
-): SignedLiteral | Expression | undefined => {
+): SignedLiteralClass | ExpressionClass | null => {
     const valueTypeClass = toTypeClass(
         target.getValue(),
         (target): target is SignedNumberTypeClass | BoundExpressionTypeClass =>
@@ -60,29 +75,31 @@ export const coordinateValueConvert = (
         }
     }
 
-    return undefined;
+    return null;
 };
 
 export const elementValueConvert = (
     target: ElementValueTypeClass,
     errorClass: ErrorTypeClass[],
-): NormalLiteral | undefined => {
+): NormalLiteralClass => {
+    const elementValue = new NormalLiteralClass();
+
     const valueTypeClass = toTypeClass(target.getValue(), isNormalLiteralType, errorClass);
     if (valueTypeClass) {
-        return normalLiteralConvert(valueTypeClass, errorClass);
+        elementValue.copy(normalLiteralConvert(valueTypeClass, errorClass));
     }
-    return undefined;
+    return elementValue;
 };
 
 export const locationValueConvert = (
     target: LocationValueTypeClass,
     errorClass: ErrorTypeClass[],
-): (SignedLiteral | Expression)[] | string[] | Expression | undefined => {
+): (SignedLiteralClass | ExpressionClass)[] | string[] | ExpressionClass | null => {
     const value = target.getValue();
     const coordinates = target.getCoordinates();
 
     if (coordinates && coordinates.length > 0) {
-        const values: (SignedLiteral | Expression)[] = [];
+        const values: (SignedLiteralClass | ExpressionClass)[] = [];
         coordinates.forEach((coordinate) => {
             const typeClass = toTypeClass(coordinate, isCoordinateValueType, errorClass);
             if (typeClass) {
@@ -113,26 +130,97 @@ export const locationValueConvert = (
         }
     }
 
-    return undefined;
+    return null;
 };
 
-export type NormalValue = {
-    value?: string | SignedLiteral | NormalValue[] | DateFormula | SubQuery | Expression;
-    valueType: string;
+export class NormalValueClass extends CommonClass {
+    private value:
+        | string
+        | SignedLiteralClass
+        | NormalValueClass[]
+        | DateFormulaClass
+        | SubQueryClass
+        | ExpressionClass
+        | null = null;
+    private valueType: string | null = null;
+
+    setValue(
+        value:
+            | string
+            | SignedLiteralClass
+            | NormalValueClass[]
+            | DateFormulaClass
+            | SubQueryClass
+            | ExpressionClass
+            | null,
+    ): void {
+        if (isString(this.value) && isString(value)) {
+            this.value = value;
+        } else if (this.value instanceof CommonClass && value instanceof CommonClass) {
+            if (isSignedLiteralClass(this.value) && isSignedLiteralClass(value)) {
+                this.value.copy(value);
+            }
+
+            if (isNormalValueClassArray(this.value) && isNormalValueClassArray(value)) {
+                this.value.push(...value);
+            }
+
+            if (isDateFormulaClass(this.value) && isDateFormulaClass(value)) {
+                this.value.copy(value);
+            }
+
+            if (isSubQueryClass(this.value) && isSubQueryClass(value)) {
+                this.value.copy(value);
+            }
+
+            if (isExpressionClass(this.value) && isExpressionClass(value)) {
+                this.value.copy(value);
+            }
+        } else {
+            this.value = value;
+        }
+    }
+
+    setValueType(valueType: string | null): void {
+        this.valueType = valueType;
+    }
+
+    getValue():
+        | string
+        | SignedLiteralClass
+        | NormalValueClass[]
+        | DateFormulaClass
+        | SubQueryClass
+        | ExpressionClass
+        | null {
+        return this.value;
+    }
+
+    getValueType(): string | null {
+        return this.valueType;
+    }
+
+    copy(commonClass: NormalValueClass): void {
+        this.setValue(commonClass.getValue());
+        this.setValueType(commonClass.getValueType());
+    }
+}
+
+export const isNormalValueClass = (target: CommonClass): target is NormalValueClass => {
+    return isCommonClass(target, NormalValueClass);
 };
 
 export const normalValueConvert = (
     target: NormalValueTypeClass,
     errorClass: ErrorTypeClass[],
-): NormalValue => {
-    const normalValue: NormalValue = {
-        valueType: target.getValueType(),
-    };
+): NormalValueClass => {
+    const normalValue = new NormalValueClass();
+    normalValue.setValueType(target.getValueType());
 
     const valueTypeClass = target.getValue();
 
     if (typeof valueTypeClass === 'string') {
-        normalValue.value = valueTypeClass;
+        normalValue.setValue(valueTypeClass);
     } else {
         const typeClass = toTypeClass(
             valueTypeClass,
@@ -154,21 +242,21 @@ export const normalValueConvert = (
 
         if (typeClass) {
             if (isSignedNumberType(typeClass)) {
-                normalValue.value = signedNumberConvert(typeClass, errorClass);
+                normalValue.setValue(signedNumberConvert(typeClass, errorClass));
             }
             if (isValueListType(typeClass)) {
-                normalValue.value = valueListConvert(typeClass, errorClass);
+                normalValue.setValue(valueListConvert(typeClass, errorClass));
             }
             if (isDateFormulaType(typeClass)) {
-                normalValue.value = dateFormulaConvert(typeClass, errorClass);
+                normalValue.setValue(dateFormulaConvert(typeClass, errorClass));
             }
             if (isSubQueryType(typeClass)) {
-                normalValue.value = subQueryConvert(typeClass, errorClass);
+                normalValue.setValue(subQueryConvert(typeClass, errorClass));
             }
             if (isBoundExpressionType(typeClass)) {
                 const expression = boundExpressionConvert(typeClass, errorClass);
                 if (expression) {
-                    normalValue.value = expression;
+                    normalValue.setValue(expression);
                 }
             }
         }
@@ -177,40 +265,65 @@ export const normalValueConvert = (
     return normalValue;
 };
 
-export type WhenValue = {
-    value?: string | WhenLiteral[];
-    valueType: TypeRef;
+export class WhenValueClass extends CommonClass {
+    private value: string | WhenLiteralClass[] | null = null;
+    private valueType: TypeRefClass = new TypeRefClass();
+
+    setValue(value: string | WhenLiteralClass[] | null): void {
+        if (isWhenLiteralClassArray(this.value) && isWhenLiteralClassArray(value)) {
+            this.value.push(...value);
+        } else if (isString(this.value) && isString(value)) {
+            this.value = value;
+        } else {
+            this.value = value;
+        }
+    }
+
+    setValueType(valueType: TypeRefClass): void {
+        this.valueType.copy(valueType);
+    }
+
+    getValue(): string | WhenLiteralClass[] | null {
+        return this.value;
+    }
+
+    getValueType(): TypeRefClass {
+        return this.valueType;
+    }
+
+    copy(commonClass: WhenValueClass): void {
+        this.setValue(commonClass.getValue());
+        this.setValueType(commonClass.getValueType());
+    }
+}
+
+export const isWhenValueTypeClass = (target: CommonClass): target is WhenValueClass => {
+    return isCommonClass(target, WhenValueClass);
 };
 
 export const whenValueConvert = (
     target: WhenValueTypeClass,
     errorClass: ErrorTypeClass[],
-): WhenValue => {
-    const whenValue: WhenValue = {
-        valueType: {
-            value: [],
-        },
-    };
+): WhenValueClass => {
+    const whenValue = new WhenValueClass();
 
     const valueTypeClass = target.getValue();
+
     if (typeof valueTypeClass === 'string') {
-        whenValue.value = valueTypeClass;
+        whenValue.setValue(valueTypeClass);
     } else if (Array.isArray(valueTypeClass)) {
-        const values: WhenLiteral[] = [];
+        const values: WhenLiteralClass[] = [];
         valueTypeClass.forEach((whenliteralTypeClass) => {
             const typeClass = toTypeClass(whenliteralTypeClass, isWhenLiteralType, errorClass);
             if (typeClass) {
-                const whenLiteral = whenLiteralConvert(typeClass, errorClass);
-                if (whenLiteral) {
-                    values.push(whenLiteral);
-                }
+                values.push(whenLiteralConvert(typeClass, errorClass));
             }
         });
-        whenValue.value = values;
+        whenValue.setValue(values);
     } else {
         const typeClass = toTypeClass(valueTypeClass, isNormalIdType, errorClass);
         if (typeClass) {
-            whenValue.value = normalIdConvert(typeClass);
+            whenValue.setValue(normalIdConvert(typeClass));
         }
     }
 
@@ -218,13 +331,7 @@ export const whenValueConvert = (
     if (valueTypeTypeClass) {
         const typeClass = toTypeClass(valueTypeTypeClass, isTypeRefType, errorClass);
         if (typeClass) {
-            const typeRef = typeRefConvert(typeClass, errorClass);
-            if (typeRef) {
-                whenValue.valueType.value.push(...typeRef.value);
-                if (typeRef.dimension) {
-                    whenValue.valueType.dimension = typeRef.dimension;
-                }
-            }
+            whenValue.setValueType(typeRefConvert(typeClass, errorClass));
         }
     }
 

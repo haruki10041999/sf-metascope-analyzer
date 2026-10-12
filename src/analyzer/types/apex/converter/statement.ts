@@ -56,18 +56,28 @@ import {
 } from '../../apex_IR';
 
 import { toPrimitiveValue, toTypeClass, CommonClass, isCommonClass } from './commons';
-import { Expression, expressionConvert, parExpressionConvert } from './expression';
+import {
+    ExpressionClass,
+    isExpressionClass,
+    expressionConvert,
+    parExpressionConvert,
+} from './expression';
 import { expressionListConvert } from './list';
 import { qualifiedNameConvert } from './name';
 import { finallyBlockConvert, normalBlockConvert } from './block';
-import { CatchClause, catchClauseConvert } from './clause';
-import { ForControl, forControlConvert, WhenControl, whenControlConvert } from './control';
-import { LocalVariableDeclaration, localVariableDeclarationConvert } from './declaration';
+import { CatchClauseClass, catchClauseConvert } from './clause';
+import {
+    ForControlClass,
+    WhenControlClass,
+    forControlConvert,
+    whenControlConvert,
+} from './control';
+import { LocalVariableDeclarationClass, localVariableDeclarationConvert } from './declaration';
 
 export const accessLevelConvert = (
     target: AccessLevelTypeClass,
     errorClass: ErrorTypeClass[],
-): string | undefined => {
+): string | null => {
     return toPrimitiveValue(
         target.getValue(),
         (target): target is string => typeof target === 'string',
@@ -78,7 +88,7 @@ export const accessLevelConvert = (
 export const breakStatementConvert = (
     target: BreakStatementTypeClass,
     errorClass: ErrorTypeClass[],
-): string | undefined => {
+): string | null => {
     return toPrimitiveValue(
         target.getValue(),
         (target): target is string => typeof target === 'string',
@@ -89,7 +99,7 @@ export const breakStatementConvert = (
 export const continueStatementConvert = (
     target: ContinueStatementTypeClass,
     errorClass: ErrorTypeClass[],
-): string | undefined => {
+): string | null => {
     return toPrimitiveValue(
         target.getValue(),
         (target): target is string => typeof target === 'string',
@@ -98,21 +108,28 @@ export const continueStatementConvert = (
 };
 
 export class DmlStatementClass extends CommonClass {
-    private value: Expression | null;
-    private accessLevel: string | null;
+    private value: ExpressionClass = new ExpressionClass();
+    private accessLevel: string | null = null;
 
-    constructor(value: Expression | null, accessLevel: string | null) {
-        super();
-        this.value = value;
+    setValue(value: ExpressionClass): void {
+        this.value.copy(value);
+    }
+
+    setAccessLevel(accessLevel: string | null) {
         this.accessLevel = accessLevel;
     }
 
-    getValue(): Expression | null {
+    getValue(): ExpressionClass {
         return this.value;
     }
 
     getAccessLevel(): string | null {
         return this.accessLevel;
+    }
+
+    copy(commonClass: DmlStatementClass): void {
+        this.setValue(commonClass.getValue());
+        this.setAccessLevel(commonClass.getAccessLevel());
     }
 }
 
@@ -120,23 +137,15 @@ export const isDmlStatementClass = (target: CommonClass): target is DmlStatement
     return isCommonClass(target, DmlStatementClass);
 };
 
-export type DmlStatement = {
-    value?: Expression;
-    accessLevel?: string;
-};
-
 export const insertStatementConvert = (
     target: InsertStatementTypeClass,
     errorClass: ErrorTypeClass[],
-): DmlStatement => {
-    const insertStatement: DmlStatement = {};
+): DmlStatementClass => {
+    const insertStatement = new DmlStatementClass();
 
     const valueTypeClass = toTypeClass(target.getValue(), isExpressionTypeAll, errorClass);
     if (valueTypeClass) {
-        const expression = expressionConvert(valueTypeClass, errorClass);
-        if (expression) {
-            insertStatement.value = expression;
-        }
+        insertStatement.setValue(expressionConvert(valueTypeClass, errorClass));
     }
 
     const accessLevelTypeClass = target.getAccessLevel();
@@ -145,7 +154,7 @@ export const insertStatementConvert = (
         if (typeClass) {
             const accessLevel = accessLevelConvert(typeClass, errorClass);
             if (accessLevel) {
-                insertStatement.accessLevel = accessLevel;
+                insertStatement.setAccessLevel(accessLevel);
             }
         }
     }
@@ -156,15 +165,12 @@ export const insertStatementConvert = (
 export const updatetatementConvert = (
     target: UpdateStatementTypeClass,
     errorClass: ErrorTypeClass[],
-): DmlStatement => {
-    const updateStatement: DmlStatement = {};
+): DmlStatementClass => {
+    const updateStatement = new DmlStatementClass();
 
     const valueTypeClass = toTypeClass(target.getValue(), isExpressionTypeAll, errorClass);
     if (valueTypeClass) {
-        const expression = expressionConvert(valueTypeClass, errorClass);
-        if (expression) {
-            updateStatement.value = expression;
-        }
+        updateStatement.setValue(expressionConvert(valueTypeClass, errorClass));
     }
 
     const accessLevelTypeClass = target.getAccessLevel();
@@ -173,7 +179,7 @@ export const updatetatementConvert = (
         if (typeClass) {
             const accessLevel = accessLevelConvert(typeClass, errorClass);
             if (accessLevel) {
-                updateStatement.accessLevel = accessLevel;
+                updateStatement.setAccessLevel(accessLevel);
             }
         }
     }
@@ -184,15 +190,12 @@ export const updatetatementConvert = (
 export const deletetatementConvert = (
     target: DeleteStatementTypeClass,
     errorClass: ErrorTypeClass[],
-): DmlStatement => {
-    const deleteStatement: DmlStatement = {};
+): DmlStatementClass => {
+    const deleteStatement = new DmlStatementClass();
 
     const valueTypeClass = toTypeClass(target.getValue(), isExpressionTypeAll, errorClass);
     if (valueTypeClass) {
-        const expression = expressionConvert(valueTypeClass, errorClass);
-        if (expression) {
-            deleteStatement.value = expression;
-        }
+        deleteStatement.setValue(expressionConvert(valueTypeClass, errorClass));
     }
 
     const accessLevelTypeClass = target.getAccessLevel();
@@ -201,7 +204,7 @@ export const deletetatementConvert = (
         if (typeClass) {
             const accessLevel = accessLevelConvert(typeClass, errorClass);
             if (accessLevel) {
-                deleteStatement.accessLevel = accessLevel;
+                deleteStatement.setAccessLevel(accessLevel);
             }
         }
     }
@@ -212,15 +215,12 @@ export const deletetatementConvert = (
 export const undeletetatementConvert = (
     target: UndeleteStatementTypeClass,
     errorClass: ErrorTypeClass[],
-): DmlStatement => {
-    const undeleteStatement: DmlStatement = {};
+): DmlStatementClass => {
+    const undeleteStatement = new DmlStatementClass();
 
     const valueTypeClass = toTypeClass(target.getValue(), isExpressionTypeAll, errorClass);
     if (valueTypeClass) {
-        const expression = expressionConvert(valueTypeClass, errorClass);
-        if (expression) {
-            undeleteStatement.value = expression;
-        }
+        undeleteStatement.setValue(expressionConvert(valueTypeClass, errorClass));
     }
 
     const accessLevelTypeClass = target.getAccessLevel();
@@ -229,7 +229,7 @@ export const undeletetatementConvert = (
         if (typeClass) {
             const accessLevel = accessLevelConvert(typeClass, errorClass);
             if (accessLevel) {
-                undeleteStatement.accessLevel = accessLevel;
+                undeleteStatement.setAccessLevel(accessLevel);
             }
         }
     }
@@ -238,18 +238,27 @@ export const undeletetatementConvert = (
 };
 
 export class UpsertStatementClass extends CommonClass {
-    private value: Expression | null;
-    private accessLevel: string | null;
-    private key: string[];
+    private value: ExpressionClass = new ExpressionClass();
+    private accessLevel: string | null = null;
+    private key: string[] = [];
 
-    constructor(value: Expression | null, accessLevel: string | null, key: string[]) {
-        super();
-        this.value = value;
-        this.accessLevel = accessLevel;
-        this.key = key;
+    setValue(value: ExpressionClass): void {
+        this.value.copy(value);
     }
 
-    getValue(): Expression | null {
+    setAccessLevel(accessLevel: string | null): void {
+        this.accessLevel = accessLevel;
+    }
+
+    resetKey(): void {
+        this.key = [];
+    }
+
+    setKey(key: string[]): void {
+        this.key.push(...key);
+    }
+
+    getValue(): ExpressionClass {
         return this.value;
     }
 
@@ -260,42 +269,36 @@ export class UpsertStatementClass extends CommonClass {
     getKey(): string[] {
         return this.key;
     }
+
+    copy(commonClass: UpsertStatementClass): void {
+        this.setValue(commonClass.getValue());
+        this.setAccessLevel(commonClass.getAccessLevel());
+        this.resetKey();
+        this.setKey(commonClass.getKey());
+    }
 }
 
 export const isUpsertStatementClass = (target: CommonClass): target is UpsertStatementClass => {
     return isCommonClass(target, UpsertStatementClass);
 };
 
-export type UpsertStatement = {
-    value?: Expression;
-    accessLevel?: string;
-    key: string[];
-};
-
 export const upsertStatementConvert = (
     target: UpsertStatementTypeClass,
     errorClass: ErrorTypeClass[],
-): UpsertStatement => {
-    const upsertStatement: UpsertStatement = {
-        key: [],
-    };
+): UpsertStatementClass => {
+    const upsertStatement = new UpsertStatementClass();
+
     const keyValue = target.getKey();
     if (keyValue) {
         const typeClass = toTypeClass(keyValue, isQualifiedNameType, errorClass);
         if (typeClass) {
-            const key = qualifiedNameConvert(typeClass, errorClass);
-            if (key) {
-                upsertStatement.key.push(...key);
-            }
+            upsertStatement.setKey(qualifiedNameConvert(typeClass, errorClass));
         }
     }
 
     const valueTypeClass = toTypeClass(target.getValue(), isExpressionTypeAll, errorClass);
     if (valueTypeClass) {
-        const expression = expressionConvert(valueTypeClass, errorClass);
-        if (expression) {
-            upsertStatement.value = expression;
-        }
+        upsertStatement.setValue(expressionConvert(valueTypeClass, errorClass));
     }
 
     const accessLevelTypeClass = target.getAccessLevel();
@@ -304,7 +307,7 @@ export const upsertStatementConvert = (
         if (typeClass) {
             const accessLevel = accessLevelConvert(typeClass, errorClass);
             if (accessLevel) {
-                upsertStatement.accessLevel = accessLevel;
+                upsertStatement.setAccessLevel(accessLevel);
             }
         }
     }
@@ -313,21 +316,33 @@ export const upsertStatementConvert = (
 };
 
 export class MergeStatementClass extends CommonClass {
-    private value: Expression[];
-    private accessLevel: string | null;
+    private value: ExpressionClass[] = [];
+    private accessLevel: string | null = null;
 
-    constructor(value: Expression[], accessLevel: string | null) {
-        super();
-        this.value = value;
+    resetValue(): void {
+        this.value = [];
+    }
+
+    setValue(value: ExpressionClass[]): void {
+        this.value.push(...value);
+    }
+
+    setAccessLevel(accessLevel: string | null): void {
         this.accessLevel = accessLevel;
     }
 
-    getValue(): Expression[] {
+    getValue(): ExpressionClass[] {
         return this.value;
     }
 
     getAccessLevel(): string | null {
         return this.accessLevel;
+    }
+
+    copy(commonClass: MergeStatementClass): void {
+        this.resetValue();
+        this.setValue(commonClass.getValue());
+        this.setAccessLevel(commonClass.getAccessLevel());
     }
 }
 
@@ -335,29 +350,20 @@ export const isMergeStatementClass = (target: CommonClass): target is MergeState
     return isCommonClass(target, MergeStatementClass);
 };
 
-export type MergeStatement = {
-    value: Expression[];
-    accessLevel?: string;
-};
-
 export const mergeStatementConvert = (
     target: MergeStatementTypeClass,
     errorClass: ErrorTypeClass[],
-): MergeStatement => {
-    const values: Expression[] = [];
+): MergeStatementClass => {
+    const mergeStatement = new MergeStatementClass();
+
+    const values: ExpressionClass[] = [];
     target.getValue().forEach((item) => {
         const typeClass = toTypeClass(item, isExpressionTypeAll, errorClass);
         if (typeClass) {
-            const expression = expressionConvert(typeClass, errorClass);
-            if (expression) {
-                values.push(expression);
-            }
+            values.push(expressionConvert(typeClass, errorClass));
         }
     });
-
-    const mergeStatement: MergeStatement = {
-        value: values,
-    };
+    mergeStatement.getValue();
 
     const accessLevelTypeClass = target.getAccessLevel();
     if (accessLevelTypeClass) {
@@ -365,7 +371,7 @@ export const mergeStatementConvert = (
         if (typeClass) {
             const accessLevel = accessLevelConvert(typeClass, errorClass);
             if (accessLevel) {
-                mergeStatement.accessLevel = accessLevel;
+                mergeStatement.setAccessLevel(accessLevel);
             }
         }
     }
@@ -374,21 +380,33 @@ export const mergeStatementConvert = (
 };
 
 export class DoWhileStatementClass extends CommonClass {
-    private value: Expression | null;
-    private block: NormalStatement[];
+    private value: ExpressionClass = new ExpressionClass();
+    private block: NormalStatementClass[] = [];
 
-    constructor(value: Expression | null, block: NormalStatement[]) {
-        super();
-        this.value = value;
-        this.block = block;
+    setValue(value: ExpressionClass): void {
+        this.value.copy(value);
     }
 
-    getValue(): Expression | null {
+    resetBlock(): void {
+        this.block = [];
+    }
+
+    setBlock(block: NormalStatementClass[]): void {
+        this.block.push(...block);
+    }
+
+    getValue(): ExpressionClass {
         return this.value;
     }
 
-    getBlock(): NormalStatement[] {
+    getBlock(): NormalStatementClass[] {
         return this.block;
+    }
+
+    copy(commonClass: DoWhileStatementClass): void {
+        this.setValue(commonClass.getValue());
+        this.resetBlock();
+        this.setBlock(commonClass.getBlock());
     }
 }
 
@@ -396,31 +414,22 @@ export const isDoWhileStatementClass = (target: CommonClass): target is DoWhileS
     return isCommonClass(target, DoWhileStatementClass);
 };
 
-export type DoWhileStatement = {
-    value?: Expression;
-    block: NormalStatement[];
-};
-
 export const doWhileStatementConvert = (
     target: DoWhileStatementTypeClass,
     errorClass: ErrorTypeClass[],
-): DoWhileStatement => {
-    const block: NormalStatement[] = [];
+): DoWhileStatementClass => {
+    const doWhileStatement = new DoWhileStatementClass();
+
+    const block: NormalStatementClass[] = [];
     const blockTypeClass = toTypeClass(target.getBlock(), isNormalBlockType, errorClass);
     if (blockTypeClass) {
         block.push(...normalBlockConvert(blockTypeClass, errorClass));
     }
-
-    const doWhileStatement: DoWhileStatement = {
-        block: block,
-    };
+    doWhileStatement.setBlock(block);
 
     const valueTypeClass = toTypeClass(target.getValue(), isParExpressionType, errorClass);
     if (valueTypeClass) {
-        const expression = parExpressionConvert(valueTypeClass, errorClass);
-        if (expression) {
-            doWhileStatement.value = expression;
-        }
+        doWhileStatement.setValue(parExpressionConvert(valueTypeClass, errorClass));
     }
 
     return doWhileStatement;
@@ -429,31 +438,40 @@ export const doWhileStatementConvert = (
 export const expressionStatementConvert = (
     target: ExpressionStatementTypeClass,
     errorClass: ErrorTypeClass[],
-): Expression | undefined => {
+): ExpressionClass => {
+    const expressionClass = new ExpressionClass();
+
     const valueTypeClass = toTypeClass(target.getValue(), isExpressionTypeAll, errorClass);
     if (valueTypeClass) {
-        return expressionConvert(valueTypeClass, errorClass);
+        expressionClass.copy(expressionConvert(valueTypeClass, errorClass));
     }
 
-    return undefined;
+    return expressionClass;
 };
 
 export class ForStatementClass extends CommonClass {
-    private value: ForControl;
-    private block: NormalStatement | null;
+    private value: ForControlClass = new ForControlClass();
+    private block: NormalStatementClass = new NormalStatementClass();
 
-    constructor(value: ForControl, block: NormalStatement | null) {
-        super();
-        this.value = value;
-        this.block = block;
+    setValue(value: ForControlClass): void {
+        this.value.copy(value);
     }
 
-    getValue(): ForControl {
+    setBlock(block: NormalStatementClass): void {
+        this.block.copy(block);
+    }
+
+    getValue(): ForControlClass {
         return this.value;
     }
 
-    getBlock(): NormalStatement | null {
+    getBlock(): NormalStatementClass {
         return this.block;
+    }
+
+    copy(commonClass: ForStatementClass): void {
+        this.setValue(commonClass.getValue());
+        this.setBlock(commonClass.getBlock());
     }
 }
 
@@ -461,60 +479,57 @@ export const isForStatementClass = (target: CommonClass): target is ForStatement
     return isCommonClass(target, ForStatementClass);
 };
 
-export type ForStatement = {
-    value: ForControl;
-    block?: NormalStatement;
-};
-
 export const forStatementConvert = (
     target: ForStatementTypeClass,
     errorClass: ErrorTypeClass[],
-): ForStatement => {
-    const forStatement: ForStatement = {
-        value: {
-            update: [],
-        },
-    };
+): ForStatementClass => {
+    const forStatement = new ForStatementClass();
 
     const valueTypeClass = toTypeClass(target.getValue(), isForControlType, errorClass);
     if (valueTypeClass) {
-        const forControl = forControlConvert(valueTypeClass, errorClass);
-        forStatement.value.update.push(...forControl.update);
-        if (forControl.init) {
-            forStatement.value.init = forControl.init;
-        }
-        if (forControl.value) {
-            forStatement.value.value = forControl.value;
-        }
+        forStatement.setValue(forControlConvert(valueTypeClass, errorClass));
     }
 
     const blockTypeClass = toTypeClass(target.getBlock(), isNormalStatementType, errorClass);
     if (blockTypeClass) {
-        const statement = normalStatementConvert(blockTypeClass, errorClass);
-        if (statement) {
-            forStatement.block = statement;
-        }
+        forStatement.setBlock(normalStatementConvert(blockTypeClass, errorClass));
     }
 
     return forStatement;
 };
 
 export class IfStatementClass extends CommonClass {
-    private value: Expression | null;
-    private block: NormalStatement | null;
+    private value: string | ExpressionClass | null = null;
+    private block: NormalStatementClass = new NormalStatementClass();
 
-    constructor(value: Expression | null, block: NormalStatement | null) {
-        super();
-        this.value = value;
-        this.block = block;
+    setValue(value: string | ExpressionClass | null): void {
+        if (
+            this.value instanceof CommonClass &&
+            isExpressionClass(this.value) &&
+            value instanceof CommonClass &&
+            isExpressionClass(value)
+        ) {
+            this.value.copy(value);
+        } else {
+            this.value = value;
+        }
     }
 
-    getValue(): Expression | null {
+    setBlock(block: NormalStatementClass): void {
+        this.block.copy(block);
+    }
+
+    getValue(): string | ExpressionClass | null {
         return this.value;
     }
 
-    getBlock(): NormalStatement | null {
+    getBlock(): NormalStatementClass {
         return this.block;
+    }
+
+    copy(commonClass: IfStatementClass): void {
+        this.setValue(commonClass.getValue());
+        this.setBlock(commonClass.getBlock());
     }
 }
 
@@ -522,15 +537,10 @@ export const isIfStatementClass = (target: CommonClass): target is IfStatementCl
     return isCommonClass(target, IfStatementClass);
 };
 
-export type IfStatement = {
-    value?: Expression | 'else';
-    block?: NormalStatement;
-}[];
-
 export const ifStatementConvert = (
     target: IfStatementTypeClass,
     errorClass: ErrorTypeClass[],
-): IfStatement => {
+): IfStatementClass[] => {
     const value = target.getValue();
 
     if (!Array.isArray(value)) {
@@ -538,33 +548,24 @@ export const ifStatementConvert = (
         return [];
     }
 
-    const values: IfStatement = [];
+    const values: IfStatementClass[] = [];
 
     value.forEach((item) => {
-        const ifStatementBlock: {
-            value?: Expression | 'else';
-            block?: NormalStatement;
-        } = {};
+        const ifStatementBlock = new IfStatementClass();
 
         const value = item.value;
         if (typeof value === 'string') {
-            ifStatementBlock.value = value;
+            ifStatementBlock.setValue(value);
         } else {
             const valueTypeClass = toTypeClass(value, isParExpressionType, errorClass);
             if (valueTypeClass) {
-                const expression = parExpressionConvert(valueTypeClass, errorClass);
-                if (expression) {
-                    ifStatementBlock.value = expression;
-                }
+                ifStatementBlock.setValue(parExpressionConvert(valueTypeClass, errorClass));
             }
         }
 
         const blockTypeClass = toTypeClass(item.block, isNormalStatementType, errorClass);
         if (blockTypeClass) {
-            const statement = normalStatementConvert(blockTypeClass, errorClass);
-            if (statement) {
-                ifStatementBlock.block = statement;
-            }
+            ifStatementBlock.setBlock(normalStatementConvert(blockTypeClass, errorClass));
         }
 
         values.push(ifStatementBlock);
@@ -576,14 +577,8 @@ export const ifStatementConvert = (
 export const localVariableDeclarationStatementConvert = (
     target: LocalVariableDeclarationStatementTypeClass,
     errorClass: ErrorTypeClass[],
-): LocalVariableDeclaration => {
-    const localVariableDeclarationStatement: LocalVariableDeclaration = {
-        value: [],
-        valueType: {
-            value: [],
-        },
-        modifier: [],
-    };
+): LocalVariableDeclarationClass => {
+    const localVariableDeclarationStatement = new LocalVariableDeclarationClass();
 
     const valueTypeClass = toTypeClass(
         target.getValue(),
@@ -591,20 +586,9 @@ export const localVariableDeclarationStatementConvert = (
         errorClass,
     );
     if (valueTypeClass) {
-        const localVariableDeclaration = localVariableDeclarationConvert(
-            valueTypeClass,
-            errorClass,
+        localVariableDeclarationStatement.copy(
+            localVariableDeclarationConvert(valueTypeClass, errorClass),
         );
-
-        localVariableDeclarationStatement.value.push(...localVariableDeclaration.value);
-        localVariableDeclarationStatement.valueType.value.push(
-            ...localVariableDeclaration.valueType.value,
-        );
-        localVariableDeclarationStatement.modifier.push(...localVariableDeclaration.modifier);
-        if (localVariableDeclaration.valueType.dimension) {
-            localVariableDeclarationStatement.valueType.dimension =
-                localVariableDeclaration.valueType.dimension;
-        }
     }
 
     return localVariableDeclarationStatement;
@@ -613,34 +597,53 @@ export const localVariableDeclarationStatementConvert = (
 export const returnStatementConvert = (
     target: ReturnStatementTypeClass,
     errorClass: ErrorTypeClass[],
-): Expression | undefined => {
+): ExpressionClass => {
+    const returnStatement = new ExpressionClass();
+
     const value = target.getValue();
     if (value) {
         const valueTypeClass = toTypeClass(value, isExpressionTypeAll, errorClass);
         if (valueTypeClass) {
-            return expressionConvert(valueTypeClass, errorClass);
+            returnStatement.copy(expressionConvert(valueTypeClass, errorClass));
         }
     }
 
-    return undefined;
+    return returnStatement;
 };
 
 export class RunAsStatementClass extends CommonClass {
-    private value: Expression[];
-    private block: NormalStatement[];
+    private value: ExpressionClass[] = [];
+    private block: NormalStatementClass[] = [];
 
-    constructor(value: Expression[], block: NormalStatement[]) {
-        super();
-        this.value = value;
-        this.block = block;
+    resetValue(): void {
+        this.value = [];
     }
 
-    getValue(): Expression[] {
+    setValue(value: ExpressionClass[]): void {
+        this.value.push(...value);
+    }
+
+    resetBlock(): void {
+        this.block = [];
+    }
+
+    setBlock(block: NormalStatementClass[]): void {
+        this.block.push(...block);
+    }
+
+    getValue(): ExpressionClass[] {
         return this.value;
     }
 
-    getBlock(): NormalStatement[] {
+    getBlock(): NormalStatementClass[] {
         return this.block;
+    }
+
+    copy(commonClass: RunAsStatementClass): void {
+        this.resetValue();
+        this.setValue(commonClass.getValue());
+        this.resetBlock();
+        this.setBlock(commonClass.getBlock());
     }
 }
 
@@ -648,49 +651,57 @@ export const isRunAsStatementClass = (target: CommonClass): target is RunAsState
     return isCommonClass(target, RunAsStatementClass);
 };
 
-export type RunAsStatement = {
-    value: Expression[];
-    block: NormalStatement[];
-};
-
 export const runAsStatementConvert = (
     target: RunAsStatementTypeClass,
     errorClass: ErrorTypeClass[],
-): RunAsStatement => {
-    const value: Expression[] = [];
+): RunAsStatementClass => {
+    const runAsStatement = new RunAsStatementClass();
+
+    const value: ExpressionClass[] = [];
     const valueTypeClass = toTypeClass(target.getValue(), isExpressionListType, errorClass);
     if (valueTypeClass) {
         value.push(...expressionListConvert(valueTypeClass, errorClass));
     }
+    runAsStatement.setValue(value);
 
-    const block: NormalStatement[] = [];
+    const block: NormalStatementClass[] = [];
     const blockTypeClass = toTypeClass(target.getBlock(), isNormalBlockType, errorClass);
     if (blockTypeClass) {
         block.push(...normalBlockConvert(blockTypeClass, errorClass));
     }
+    runAsStatement.setBlock(block);
 
-    return {
-        value: value,
-        block: block,
-    };
+    return runAsStatement;
 };
 
 export class SwitchStatementClass extends CommonClass {
-    private value: Expression | null;
-    private block: WhenControl[];
+    private value: ExpressionClass = new ExpressionClass();
+    private block: WhenControlClass[] = [];
 
-    constructor(value: Expression | null, block: WhenControl[]) {
-        super();
-        this.value = value;
-        this.block = block;
+    setValue(value: ExpressionClass): void {
+        this.value.copy(value);
     }
 
-    getValue(): Expression | null {
+    resetBlock(): void {
+        this.block = [];
+    }
+
+    setBlock(block: WhenControlClass[]): void {
+        this.block.push(...block);
+    }
+
+    getValue(): ExpressionClass {
         return this.value;
     }
 
-    getBlock(): WhenControl[] {
+    getBlock(): WhenControlClass[] {
         return this.block;
+    }
+
+    copy(commonClass: SwitchStatementClass): void {
+        this.setValue(commonClass.getValue());
+        this.resetBlock();
+        this.setBlock(commonClass.getBlock());
     }
 }
 
@@ -698,33 +709,24 @@ export const isSwitchStatementClass = (target: CommonClass): target is SwitchSta
     return isCommonClass(target, SwitchStatementClass);
 };
 
-export type SwitchStatement = {
-    value?: Expression;
-    block: WhenControl[];
-};
-
 export const switchStatementConvert = (
     target: SwitchStatementTypeClass,
     errorClass: ErrorTypeClass[],
-): SwitchStatement => {
-    const block: WhenControl[] = [];
+): SwitchStatementClass => {
+    const switchStatement = new SwitchStatementClass();
+
+    const block: WhenControlClass[] = [];
     target.getBlocks().forEach((item) => {
         const whenTypeClass = toTypeClass(item, isWhenControlType, errorClass);
         if (whenTypeClass) {
             block.push(whenControlConvert(whenTypeClass, errorClass));
         }
     });
-
-    const switchStatement: SwitchStatement = {
-        block: block,
-    };
+    switchStatement.setBlock(block);
 
     const valueTypeClass = toTypeClass(target.getValue(), isExpressionTypeAll, errorClass);
     if (valueTypeClass) {
-        const expression = expressionConvert(valueTypeClass, errorClass);
-        if (expression) {
-            switchStatement.value = expression;
-        }
+        switchStatement.setValue(expressionConvert(valueTypeClass, errorClass));
     }
 
     return switchStatement;
@@ -733,44 +735,68 @@ export const switchStatementConvert = (
 export const throwStatementConvert = (
     target: ThrowStatementTypeClass,
     errorClass: ErrorTypeClass[],
-): Expression | undefined => {
+): ExpressionClass => {
+    const throwStatement = new ExpressionClass();
+
     const value = target.getValue();
     if (value) {
         const valueTypeClass = toTypeClass(value, isExpressionTypeAll, errorClass);
         if (valueTypeClass) {
-            return expressionConvert(valueTypeClass, errorClass);
+            throwStatement.copy(expressionConvert(valueTypeClass, errorClass));
         }
     }
 
-    return undefined;
+    return throwStatement;
 };
 
 export class TryStatementClass extends CommonClass {
-    private value: NormalStatement[];
-    private catchBlock: CatchClause[];
-    private finallyBlock: NormalStatement[];
+    private value: NormalStatementClass[] = [];
+    private catchBlock: CatchClauseClass[] = [];
+    private finallyBlock: NormalStatementClass[] = [];
 
-    constructor(
-        value: NormalStatement[],
-        catchBlock: CatchClause[],
-        finallyBlock: NormalStatement[],
-    ) {
-        super();
-        this.value = value;
-        this.catchBlock = catchBlock;
-        this.finallyBlock = finallyBlock;
+    resetValue(): void {
+        this.value = [];
     }
 
-    getValue(): NormalStatement[] {
+    setValue(value: NormalStatementClass[]) {
+        this.value.push(...value);
+    }
+
+    resetCatchBlock(): void {
+        this.catchBlock = [];
+    }
+
+    setCatchBlock(catchBlock: CatchClauseClass[]) {
+        this.catchBlock.push(...catchBlock);
+    }
+
+    resetFinallyBlock(): void {
+        this.finallyBlock = [];
+    }
+
+    setFinallyBlock(finallyBlock: NormalStatementClass[]) {
+        this.finallyBlock.push(...finallyBlock);
+    }
+
+    getValue(): NormalStatementClass[] {
         return this.value;
     }
 
-    getCatchBlock(): CatchClause[] {
+    getCatchBlock(): CatchClauseClass[] {
         return this.catchBlock;
     }
 
-    getFinallyBlock(): NormalStatement[] {
+    getFinallyBlock(): NormalStatementClass[] {
         return this.finallyBlock;
+    }
+
+    copy(commonClass: TryStatementClass): void {
+        this.resetValue();
+        this.setValue(commonClass.getValue());
+        this.resetCatchBlock();
+        this.setCatchBlock(commonClass.getCatchBlock());
+        this.resetFinallyBlock();
+        this.setFinallyBlock(commonClass.getFinallyBlock());
     }
 }
 
@@ -778,31 +804,29 @@ export const isTryStatementClass = (target: CommonClass): target is TryStatement
     return isCommonClass(target, TryStatementClass);
 };
 
-export type TryStatement = {
-    value: NormalStatement[];
-    catchBlock: CatchClause[];
-    finallyBlock: NormalStatement[];
-};
-
 export const tryStatementConvert = (
     target: TryStatementTypeClass,
     errorClass: ErrorTypeClass[],
-): TryStatement => {
-    const value: NormalStatement[] = [];
+): TryStatementClass => {
+    const tryStatement = new TryStatementClass();
+
+    const value: NormalStatementClass[] = [];
     const valueTypeClass = toTypeClass(target.getValue(), isNormalBlockType, errorClass);
     if (valueTypeClass) {
         value.push(...normalBlockConvert(valueTypeClass, errorClass));
     }
+    tryStatement.setValue(value);
 
-    const catchBlock: CatchClause[] = [];
+    const catchBlock: CatchClauseClass[] = [];
     target.getCatchBlock().forEach((item) => {
         const catchTypeClass = toTypeClass(item, isCatchClauseType, errorClass);
         if (catchTypeClass) {
             catchBlock.push(catchClauseConvert(catchTypeClass, errorClass));
         }
     });
+    tryStatement.setCatchBlock(catchBlock);
 
-    const finallyBlock: NormalStatement[] = [];
+    const finallyBlock: NormalStatementClass[] = [];
     const finallyValue = target.getFinallyBlock();
     if (finallyValue) {
         const finallyTypeClass = toTypeClass(finallyValue, isFinallyBlockType, errorClass);
@@ -810,30 +834,34 @@ export const tryStatementConvert = (
             finallyBlock.push(...finallyBlockConvert(finallyTypeClass, errorClass));
         }
     }
+    tryStatement.setFinallyBlock(finallyBlock);
 
-    return {
-        value: value,
-        catchBlock: catchBlock,
-        finallyBlock: finallyBlock,
-    };
+    return tryStatement;
 };
 
 export class WhileStatementClass extends CommonClass {
-    private value: Expression | null;
-    private block: NormalStatement | null;
+    private value: ExpressionClass = new ExpressionClass();
+    private block: NormalStatementClass = new NormalStatementClass();
 
-    constructor(value: Expression | null, block: NormalStatement | null) {
-        super();
-        this.value = value;
-        this.block = block;
+    setValue(value: ExpressionClass): void {
+        this.value.copy(value);
     }
 
-    getValue(): Expression | null {
+    setBlock(block: NormalStatementClass) {
+        this.block.copy(block);
+    }
+
+    getValue(): ExpressionClass {
         return this.value;
     }
 
-    getBlock(): NormalStatement | null {
+    getBlock(): NormalStatementClass {
         return this.block;
+    }
+
+    copy(commonClass: WhileStatementClass): void {
+        this.setValue(commonClass.getValue());
+        this.setBlock(commonClass.getBlock());
     }
 }
 
@@ -841,31 +869,20 @@ export const isWhileStatementClass = (target: CommonClass): target is WhileState
     return isCommonClass(target, WhileStatementClass);
 };
 
-export type WhileStatement = {
-    value?: Expression;
-    block?: NormalStatement;
-};
-
 export const whileStatementConvert = (
     target: WhileStatementTypeClass,
     errorClass: ErrorTypeClass[],
-): WhileStatement => {
-    const whileStatement: WhileStatement = {};
+): WhileStatementClass => {
+    const whileStatement = new WhileStatementClass();
 
     const valueTypeClass = toTypeClass(target.getValue(), isParExpressionType, errorClass);
     if (valueTypeClass) {
-        const expression = parExpressionConvert(valueTypeClass, errorClass);
-        if (expression) {
-            whileStatement.value = expression;
-        }
+        whileStatement.setValue(parExpressionConvert(valueTypeClass, errorClass));
     }
 
     const blockTypeClass = toTypeClass(target.getBlock(), isNormalStatementType, errorClass);
     if (blockTypeClass) {
-        const statement = normalStatementConvert(blockTypeClass, errorClass);
-        if (statement) {
-            whileStatement.block = statement;
-        }
+        whileStatement.setBlock(normalStatementConvert(blockTypeClass, errorClass));
     }
 
     return whileStatement;
@@ -896,8 +913,11 @@ export const isStatementElementClass = (
     return isCommonClass(target, StatementElementClass);
 };
 
-export class BlockStatementElementClass extends StatementElementClass<'block', NormalStatement[]> {
-    constructor(statement: NormalStatement[]) {
+export class BlockStatementElementClass extends StatementElementClass<
+    'block',
+    NormalStatementClass[]
+> {
+    constructor(statement: NormalStatementClass[]) {
         super('block', statement);
     }
 }
@@ -908,8 +928,8 @@ export const isBlockStatementElementClass = (
     return isCommonClass(target, BlockStatementElementClass);
 };
 
-export class IfStatementElementClass extends StatementElementClass<'if', IfStatementClass> {
-    constructor(statement: IfStatementClass) {
+export class IfStatementElementClass extends StatementElementClass<'if', IfStatementClass[]> {
+    constructor(statement: IfStatementClass[]) {
         super('if', statement);
     }
 }
@@ -991,9 +1011,9 @@ export const isTryStatementElementClass = (
 
 export class ExpressionStatementElementClass extends StatementElementClass<
     'return' | 'expression' | 'throw',
-    Expression | null
+    ExpressionClass
 > {
-    constructor(type: 'return' | 'expression' | 'throw', statement: Expression | null) {
+    constructor(type: 'return' | 'expression' | 'throw', statement: ExpressionClass) {
         super(type, statement);
     }
 }
@@ -1066,9 +1086,9 @@ export const isMergeStatementElementClass = (
 
 export class RunAsStatementElementClass extends StatementElementClass<
     'runAs',
-    RunAsStatementElementClass
+    RunAsStatementClass
 > {
-    constructor(statement: RunAsStatementElementClass) {
+    constructor(statement: RunAsStatementClass) {
         super('runAs', statement);
     }
 }
@@ -1081,9 +1101,9 @@ export const isRunAsStatementElementClass = (
 
 export class LocalVariableStatementElementClass extends StatementElementClass<
     'localVariable',
-    LocalVariableDeclaration
+    LocalVariableDeclarationClass
 > {
-    constructor(statement: LocalVariableDeclaration) {
+    constructor(statement: LocalVariableDeclarationClass) {
         super('localVariable', statement);
     }
 }
@@ -1095,15 +1115,65 @@ export const isLocalVariableStatementElementClass = (
 };
 
 export class NormalStatementClass extends CommonClass {
-    private value: StatementElementClass<unknown, unknown>;
+    private value:
+        | BlockStatementElementClass
+        | IfStatementElementClass
+        | SwitchStatementElementClass
+        | ForStatementElementClass
+        | WhileStatementElementClass
+        | DoWhileStatementElementClass
+        | TryStatementElementClass
+        | ExpressionStatementElementClass
+        | StringStatementElementClass
+        | DmlStatementElementClass
+        | UpsertStatementElementClass
+        | MergeStatementElementClass
+        | RunAsStatementElementClass
+        | LocalVariableStatementElementClass
+        | null = null;
 
-    constructor(value: StatementElementClass<unknown, unknown>) {
-        super();
+    setValue(
+        value:
+            | BlockStatementElementClass
+            | IfStatementElementClass
+            | SwitchStatementElementClass
+            | ForStatementElementClass
+            | WhileStatementElementClass
+            | DoWhileStatementElementClass
+            | TryStatementElementClass
+            | ExpressionStatementElementClass
+            | StringStatementElementClass
+            | DmlStatementElementClass
+            | UpsertStatementElementClass
+            | MergeStatementElementClass
+            | RunAsStatementElementClass
+            | LocalVariableStatementElementClass
+            | null,
+    ): void {
         this.value = value;
     }
 
-    getValue(): StatementElementClass<unknown, unknown> {
+    getValue():
+        | BlockStatementElementClass
+        | IfStatementElementClass
+        | SwitchStatementElementClass
+        | ForStatementElementClass
+        | WhileStatementElementClass
+        | DoWhileStatementElementClass
+        | TryStatementElementClass
+        | ExpressionStatementElementClass
+        | StringStatementElementClass
+        | DmlStatementElementClass
+        | UpsertStatementElementClass
+        | MergeStatementElementClass
+        | RunAsStatementElementClass
+        | LocalVariableStatementElementClass
+        | null {
         return this.value;
+    }
+
+    copy(commonClass: NormalStatementClass): void {
+        this.setValue(commonClass.getValue());
     }
 }
 
@@ -1111,204 +1181,148 @@ export const isNormalStatementClass = (target: CommonClass): target is NormalSta
     return isCommonClass(target, NormalStatementClass);
 };
 
-export type NormalStatement =
-    | {
-          type: 'block';
-          statement: NormalStatement[];
-      }
-    | {
-          type: 'if';
-          statement: IfStatement;
-      }
-    | {
-          type: 'switch';
-          statement: SwitchStatement;
-      }
-    | {
-          type: 'for';
-          statement: ForStatement;
-      }
-    | {
-          type: 'while';
-          statement: WhileStatement;
-      }
-    | {
-          type: 'doWhile';
-          statement: DoWhileStatement;
-      }
-    | {
-          type: 'try';
-          statement: TryStatement;
-      }
-    | {
-          type: 'return' | 'expression' | 'throw';
-          statement?: Expression;
-      }
-    | {
-          type: 'break' | 'continue';
-          statement?: string;
-      }
-    | {
-          type: 'insert' | 'update' | 'delete' | 'undelete';
-          statement: DmlStatement;
-      }
-    | {
-          type: 'upsert';
-          statement: UpsertStatement;
-      }
-    | {
-          type: 'merge';
-          statement: MergeStatement;
-      }
-    | {
-          type: 'runAs';
-          statement: RunAsStatement;
-      }
-    | {
-          type: 'localVariable';
-          statement: LocalVariableDeclaration;
-      };
-
 export const normalStatementConvert = (
     target: NormalStatementTypeClass,
     errorClass: ErrorTypeClass[],
-): NormalStatement | undefined => {
+): NormalStatementClass => {
     const valueTypeClass = toTypeClass(target.getValue(), isStatementTypeAll, errorClass);
 
-    let statement: NormalStatement | undefined = undefined;
+    const normalStatement = new NormalStatementClass();
 
     if (valueTypeClass) {
         if (isNormalBlockType(valueTypeClass)) {
-            statement = {
-                type: 'block',
-                statement: normalBlockConvert(valueTypeClass, errorClass),
-            };
+            normalStatement.setValue(
+                new BlockStatementElementClass(normalBlockConvert(valueTypeClass, errorClass)),
+            );
         }
         if (isIfStatementType(valueTypeClass)) {
-            statement = {
-                type: 'if',
-                statement: ifStatementConvert(valueTypeClass, errorClass),
-            };
+            normalStatement.setValue(
+                new IfStatementElementClass(ifStatementConvert(valueTypeClass, errorClass)),
+            );
         }
+
         if (isSwitchStatementType(valueTypeClass)) {
-            statement = {
-                type: 'switch',
-                statement: switchStatementConvert(valueTypeClass, errorClass),
-            };
+            normalStatement.setValue(
+                new SwitchStatementElementClass(switchStatementConvert(valueTypeClass, errorClass)),
+            );
         }
         if (isForStatementType(valueTypeClass)) {
-            statement = {
-                type: 'for',
-                statement: forStatementConvert(valueTypeClass, errorClass),
-            };
+            normalStatement.setValue(
+                new ForStatementElementClass(forStatementConvert(valueTypeClass, errorClass)),
+            );
         }
         if (isWhileStatementType(valueTypeClass)) {
-            statement = {
-                type: 'while',
-                statement: whileStatementConvert(valueTypeClass, errorClass),
-            };
+            normalStatement.setValue(
+                new WhileStatementElementClass(whileStatementConvert(valueTypeClass, errorClass)),
+            );
         }
         if (isDoWhileStatementType(valueTypeClass)) {
-            statement = {
-                type: 'doWhile',
-                statement: doWhileStatementConvert(valueTypeClass, errorClass),
-            };
+            normalStatement.setValue(
+                new DoWhileStatementElementClass(
+                    doWhileStatementConvert(valueTypeClass, errorClass),
+                ),
+            );
         }
         if (isTryStatementType(valueTypeClass)) {
-            statement = {
-                type: 'try',
-                statement: tryStatementConvert(valueTypeClass, errorClass),
-            };
+            normalStatement.setValue(
+                new TryStatementElementClass(tryStatementConvert(valueTypeClass, errorClass)),
+            );
         }
         if (isReturnStatementType(valueTypeClass)) {
-            statement = { type: 'return' };
-
-            const value = returnStatementConvert(valueTypeClass, errorClass);
-            if (value) {
-                statement.statement = value;
-            }
+            normalStatement.setValue(
+                new ExpressionStatementElementClass(
+                    'return',
+                    returnStatementConvert(valueTypeClass, errorClass),
+                ),
+            );
         }
         if (isThrowStatementType(valueTypeClass)) {
-            statement = { type: 'throw' };
-
-            const value = throwStatementConvert(valueTypeClass, errorClass);
-            if (value) {
-                statement.statement = value;
-            }
+            normalStatement.setValue(
+                new ExpressionStatementElementClass(
+                    'throw',
+                    returnStatementConvert(valueTypeClass, errorClass),
+                ),
+            );
         }
         if (isBreakStatementType(valueTypeClass)) {
-            statement = { type: 'break' };
-
-            const value = breakStatementConvert(valueTypeClass, errorClass);
-            if (value) {
-                statement.statement = value;
-            }
+            normalStatement.setValue(
+                new StringStatementElementClass(
+                    'break',
+                    breakStatementConvert(valueTypeClass, errorClass),
+                ),
+            );
         }
         if (isContinueStatementType(valueTypeClass)) {
-            statement = { type: 'continue' };
-
-            const value = continueStatementConvert(valueTypeClass, errorClass);
-            if (value) {
-                statement.statement = value;
-            }
+            normalStatement.setValue(
+                new StringStatementElementClass(
+                    'continue',
+                    breakStatementConvert(valueTypeClass, errorClass),
+                ),
+            );
         }
         if (isInsertStatementType(valueTypeClass)) {
-            statement = {
-                type: 'insert',
-                statement: insertStatementConvert(valueTypeClass, errorClass),
-            };
+            normalStatement.setValue(
+                new DmlStatementElementClass(
+                    'insert',
+                    insertStatementConvert(valueTypeClass, errorClass),
+                ),
+            );
         }
         if (isUpdateStatementType(valueTypeClass)) {
-            statement = {
-                type: 'update',
-                statement: updatetatementConvert(valueTypeClass, errorClass),
-            };
+            normalStatement.setValue(
+                new DmlStatementElementClass(
+                    'update',
+                    updatetatementConvert(valueTypeClass, errorClass),
+                ),
+            );
         }
         if (isDeleteStatementType(valueTypeClass)) {
-            statement = {
-                type: 'delete',
-                statement: deletetatementConvert(valueTypeClass, errorClass),
-            };
+            normalStatement.setValue(
+                new DmlStatementElementClass(
+                    'delete',
+                    deletetatementConvert(valueTypeClass, errorClass),
+                ),
+            );
         }
         if (isUndeleteStatementType(valueTypeClass)) {
-            statement = {
-                type: 'undelete',
-                statement: undeletetatementConvert(valueTypeClass, errorClass),
-            };
+            normalStatement.setValue(
+                new DmlStatementElementClass(
+                    'undelete',
+                    undeletetatementConvert(valueTypeClass, errorClass),
+                ),
+            );
         }
         if (isUpsertStatementType(valueTypeClass)) {
-            statement = {
-                type: 'upsert',
-                statement: upsertStatementConvert(valueTypeClass, errorClass),
-            };
+            normalStatement.setValue(
+                new UpsertStatementElementClass(upsertStatementConvert(valueTypeClass, errorClass)),
+            );
         }
         if (isMergeStatementType(valueTypeClass)) {
-            statement = {
-                type: 'merge',
-                statement: mergeStatementConvert(valueTypeClass, errorClass),
-            };
+            normalStatement.setValue(
+                new MergeStatementElementClass(mergeStatementConvert(valueTypeClass, errorClass)),
+            );
         }
         if (isRunAsStatementType(valueTypeClass)) {
-            statement = {
-                type: 'runAs',
-                statement: runAsStatementConvert(valueTypeClass, errorClass),
-            };
+            normalStatement.setValue(
+                new RunAsStatementElementClass(runAsStatementConvert(valueTypeClass, errorClass)),
+            );
         }
         if (isLocalVariableDeclarationStatementType(valueTypeClass)) {
-            return {
-                type: 'localVariable',
-                statement: localVariableDeclarationStatementConvert(valueTypeClass, errorClass),
-            };
+            normalStatement.setValue(
+                new LocalVariableStatementElementClass(
+                    localVariableDeclarationStatementConvert(valueTypeClass, errorClass),
+                ),
+            );
         }
         if (isExpressionStatementType(valueTypeClass)) {
-            statement = { type: 'expression' };
-
-            const value = expressionStatementConvert(valueTypeClass, errorClass);
-            if (value) {
-                statement.statement = value;
-            }
+            normalStatement.setValue(
+                new ExpressionStatementElementClass(
+                    'expression',
+                    expressionStatementConvert(valueTypeClass, errorClass),
+                ),
+            );
         }
     }
 
-    return statement;
+    return normalStatement;
 };

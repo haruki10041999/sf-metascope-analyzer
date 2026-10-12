@@ -36,22 +36,27 @@ import {
     isFromNameType,
 } from '../../apex_IR';
 
-import { toPrimitiveValue, toTypeClass } from './commons';
-import { Expression, expressionConvert } from './expression';
+import { toPrimitiveValue, toTypeClass, CommonClass, isCommonClass } from './commons';
+import { ExpressionClass, expressionConvert } from './expression';
 import { soqlIdConvert, soslIdConvert } from './id';
 import { fieldNameConvert } from './name';
-import { typeRefConvert, TypeRef } from './type';
-import { NormalValue, normalValueConvert } from './value';
-import { FormalParameter, formalParameterConvert } from './parameter';
-import { fieldGroupByConvert, FieldOrder, fieldOrderConvert, updateTypeConvert } from './clause';
-import { SelectEntry, selectEntryConvert, SubFieldEntry, subFieldEntryConvert } from './entry';
-import { FieldSpec, fieldSpecConvert, SoqlFunction, soqlFunctionConvert } from './query';
+import { TypeRefClass, typeRefConvert } from './type';
+import { NormalValueClass, normalValueConvert } from './value';
+import { FormalParameterClass, formalParameterConvert } from './parameter';
+import {
+    FieldOrderClass,
+    fieldGroupByConvert,
+    fieldOrderConvert,
+    updateTypeConvert,
+} from './clause';
+import { EntryClass, selectEntryConvert, subFieldEntryConvert } from './entry';
+import { FieldSpecClass, SoqlFunctionClass, fieldSpecConvert, soqlFunctionConvert } from './query';
 
 export const typeListConvert = (
     target: TypeListTypeClass,
     errorClass: ErrorTypeClass[],
-): TypeRef[] => {
-    const values: TypeRef[] = [];
+): TypeRefClass[] => {
+    const values: TypeRefClass[] = [];
     target.getValue().forEach((item) => {
         const valueTypeClass = toTypeClass(item, isTypeRefType, errorClass);
         if (valueTypeClass) {
@@ -64,17 +69,15 @@ export const typeListConvert = (
 export const expressionListConvert = (
     target: ExpressionListTypeClass,
     errorClass: ErrorTypeClass[],
-): Expression[] => {
-    const values: Expression[] = [];
+): ExpressionClass[] => {
+    const values: ExpressionClass[] = [];
     target.getValue().forEach((item) => {
         const valueTypeClass = toTypeClass(item, isExpressionTypeAll, errorClass);
         if (valueTypeClass) {
-            const expression = expressionConvert(valueTypeClass, errorClass);
-            if (expression) {
-                values.push(expression);
-            }
+            values.push(expressionConvert(valueTypeClass, errorClass));
         }
     });
+
     return values;
 };
 
@@ -214,9 +217,34 @@ export const subFieldListConvert = (
     return values;
 };
 
-export type SoslField = {
-    value?: string[] | SoqlFunction;
-    func?: string;
+export class SoslFieldClass extends CommonClass {
+    private value: string[] | SoqlFunction | null = null;
+    private func: string | null = null;
+
+    setValue(value: string[] | SoqlFunction | null): void {
+        this.value = value;
+    }
+
+    setFunc(func: string | null): void {
+        this.func = func;
+    }
+
+    getValue(): string[] | SoqlFunction | null {
+        return this.value;
+    }
+
+    getFunc(): string | null {
+        return this.func;
+    }
+
+    copy(commonClass: SoslFieldClass): void {
+        this.setValue(commonClass.getValue());
+        this.setFunc(commonClass.getFunc());
+    }
+}
+
+export const isSoslFieldClass = (target: CommonClass): target is SoslFieldClass => {
+    return target instanceof SoslFieldClass;
 };
 
 export const soslFieldConvert = (
@@ -272,9 +300,39 @@ export const fieldSpecListConvert = (
     return values;
 };
 
-export type FromName = {
-    value: string[];
-    alias?: string;
+export class FromNameClass extends CommonClass {
+    private value: string[] = [];
+    private alias: string | null = null;
+
+    resetValue(): void {
+        this.value = [];
+    }
+
+    setValue(value: string[]): void {
+        this.value.push(...value);
+    }
+
+    setAlias(alias: string | null): void {
+        this.alias = alias;
+    }
+
+    getValue(): string[] {
+        return this.value;
+    }
+
+    getAlias(): string | null {
+        return this.alias;
+    }
+
+    copy(commonClass: FromNameClass): void {
+        this.resetValue();
+        this.setValue(commonClass.getValue());
+        this.setAlias(commonClass.getAlias());
+    }
+}
+
+export const isFromNameClass = (target: CommonClass): target is FromNameClass => {
+    return target instanceof FromNameClass;
 };
 
 export const fromNameConvert = (

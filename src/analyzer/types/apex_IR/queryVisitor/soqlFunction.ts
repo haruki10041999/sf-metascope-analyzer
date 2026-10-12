@@ -97,7 +97,7 @@ type SoqlParameterType =
     | FieldNameTypeClass
     | DateFieldNameTypeClass
     | SoqlFieldsParameterTypeClass
-    | (LocationValueTypeClass | ErrorTypeClass | string | string[])[]
+    | (LocationValueTypeClass | ErrorTypeClass | string)[]
     | SoqlFunctionTypeClass;
 
 export class SoqlFunctionTypeClass extends QueryTypeClass<SoqlFunctionValueType> {
@@ -222,8 +222,7 @@ export class SoqlFunctionTypeClass extends QueryTypeClass<SoqlFunctionValueType>
         } else {
             value = 'DISTANCE';
 
-            const distanceParam: (LocationValueTypeClass | ErrorTypeClass | string | string[])[] =
-                [];
+            const distanceParam: (LocationValueTypeClass | ErrorTypeClass | string)[] = [];
 
             distanceParam.push(
                 ...isValidClassList(
@@ -237,7 +236,7 @@ export class SoqlFunctionTypeClass extends QueryTypeClass<SoqlFunctionValueType>
             if (ctx.StringLiteral()) {
                 distanceParam.push(ctx.StringLiteral().getText());
             } else if (ctx.MultilineStringLiteral()) {
-                distanceParam.push(ctx.MultilineStringLiteral().getText().split('\n'));
+                distanceParam.push(ctx.MultilineStringLiteral().getText());
             }
             param = distanceParam;
         }
@@ -253,4 +252,3 @@ export class SoqlFunctionTypeClass extends QueryTypeClass<SoqlFunctionValueType>
 export const isSoqlFunctionType = (target: CommonTypeClass): target is SoqlFunctionTypeClass => {
     return target instanceof SoqlFunctionTypeClass;
 };
-

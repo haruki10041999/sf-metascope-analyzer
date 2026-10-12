@@ -21,27 +21,39 @@ import {
 
 import { toPrimitiveValue, toTypeClass, CommonClass, isCommonClass } from './commons';
 import { normalArgumentsConvert } from './arguments';
-import { Expression, expressionConvert } from './expression';
+import { ExpressionClass, expressionConvert } from './expression';
 import { createdNameConvert } from './name';
-import { IdCreatedNamePair, MapCreatorRestPair, mapCreatorRestPairConvert } from './pair';
+import { IdCreatedNamePairClass, MapCreatorRestPairClass, mapCreatorRestPairConvert } from './pair';
 import { arrayInitializerConvert } from './variable';
 
 export class ArrayCreatorRestClass extends CommonClass {
-    private value: Expression[];
-    private size: Expression | null;
+    private value: ExpressionClass[] = [];
+    private size: ExpressionClass = new ExpressionClass();
 
-    constructor(value: Expression[], size: Expression | null) {
-        super();
-        this.value = value;
-        this.size = size;
+    resetValue(): void {
+        this.value = [];
     }
 
-    getValue(): Expression[] {
+    setValue(value: ExpressionClass[]): void {
+        this.value.push(...value);
+    }
+
+    setSize(size: ExpressionClass) {
+        this.size.copy(size);
+    }
+
+    getValue(): ExpressionClass[] {
         return this.value;
     }
 
-    getSize(): Expression | null {
+    getSize(): ExpressionClass {
         return this.size;
+    }
+
+    copy(commonClass: ArrayCreatorRestClass): void {
+        this.resetValue();
+        this.setValue(commonClass.getValue());
+        this.setSize(commonClass.getSize());
     }
 }
 
@@ -49,24 +61,17 @@ export const isArrayCreatorRestClass = (target: CommonClass): target is ArrayCre
     return isCommonClass(target, ArrayCreatorRestClass);
 };
 
-export type ArrayCreatorRest = {
-    value: Expression[];
-    size?: Expression;
-};
-
 export const arrayCreatorRestConvert = (
     target: ArrayCreatorRestTypeClass,
     errorClass: ErrorTypeClass[],
-): ArrayCreatorRest => {
-    const arrayCreatorRest: ArrayCreatorRest = {
-        value: [],
-    };
+): ArrayCreatorRestClass => {
+    const arrayCreatorRest = new ArrayCreatorRestClass();
 
     const value = target.getValue();
     if (value) {
         const valueTypeClass = toTypeClass(value, isArrayInitializerType, errorClass);
         if (valueTypeClass) {
-            arrayCreatorRest.value.push(...arrayInitializerConvert(valueTypeClass, errorClass));
+            arrayCreatorRest.setValue(arrayInitializerConvert(valueTypeClass, errorClass));
         }
     }
 
@@ -74,10 +79,7 @@ export const arrayCreatorRestConvert = (
     if (sizeValue) {
         const sizeTypeClass = toTypeClass(sizeValue, isExpressionTypeAll, errorClass);
         if (sizeTypeClass) {
-            const expression = expressionConvert(sizeTypeClass, errorClass);
-            if (expression) {
-                arrayCreatorRest.size = expression;
-            }
+            arrayCreatorRest.setSize(expressionConvert(sizeTypeClass, errorClass));
         }
     }
 
@@ -87,7 +89,7 @@ export const arrayCreatorRestConvert = (
 export const classCreatorRestConvert = (
     target: ClassCreatorRestTypeClass,
     errorClass: ErrorTypeClass[],
-): Expression[] => {
+): ExpressionClass[] => {
     const valueTypeClass = toTypeClass(target.getValue(), isNormalArgumentsType, errorClass);
     if (valueTypeClass) {
         return normalArgumentsConvert(valueTypeClass, errorClass);
@@ -99,8 +101,8 @@ export const classCreatorRestConvert = (
 export const mapCreatorRestConvert = (
     target: MapCreatorRestTypeClass,
     errorClass: ErrorTypeClass[],
-): MapCreatorRestPair[] => {
-    const values: MapCreatorRestPair[] = [];
+): MapCreatorRestPairClass[] => {
+    const values: MapCreatorRestPairClass[] = [];
     target.getValue().forEach((item) => {
         const valueTypeClass = toTypeClass(item, isMapCreatorRestPairType, errorClass);
         if (valueTypeClass) {
@@ -113,7 +115,7 @@ export const mapCreatorRestConvert = (
 export const noRestConvert = (
     target: NoRestTypeClass,
     errorClass: ErrorTypeClass[],
-): string | undefined => {
+): string | null => {
     return toPrimitiveValue(
         target.getValue(),
         (target): target is string => typeof target === 'string',
@@ -124,15 +126,12 @@ export const noRestConvert = (
 export const setCreatorRestConvert = (
     target: SetCreatorRestTypeClass,
     errorClass: ErrorTypeClass[],
-): Expression[] => {
-    const values: Expression[] = [];
+): ExpressionClass[] => {
+    const values: ExpressionClass[] = [];
     target.getValue().forEach((item) => {
         const valueTypeClass = toTypeClass(item, isExpressionTypeAll, errorClass);
         if (valueTypeClass) {
-            const expression = expressionConvert(valueTypeClass, errorClass);
-            if (expression) {
-                values.push(expression);
-            }
+            values.push(expressionConvert(valueTypeClass, errorClass));
         }
     });
     return values;
@@ -171,10 +170,10 @@ export const isRestElementClass = (
 
 export class ArrayRestElementClass extends RestElementClass<
     'array',
-    IdCreatedNamePair[],
+    IdCreatedNamePairClass[],
     ArrayCreatorRestClass
 > {
-    constructor(value: IdCreatedNamePair[], content: ArrayCreatorRestClass) {
+    constructor(value: IdCreatedNamePairClass[], content: ArrayCreatorRestClass) {
         super('array', value, content);
     }
 }
@@ -185,10 +184,14 @@ export const isArrayElementClass = (target: CommonClass): target is ArrayRestEle
 
 export class ExpressionArrayRestElementClass extends RestElementClass<
     'class' | 'set',
-    IdCreatedNamePair[],
-    Expression[]
+    IdCreatedNamePairClass[],
+    ExpressionClass[]
 > {
-    constructor(type: 'class' | 'set', value: IdCreatedNamePair[], content: Expression[]) {
+    constructor(
+        type: 'class' | 'set',
+        value: IdCreatedNamePairClass[],
+        content: ExpressionClass[],
+    ) {
         super(type, value, content);
     }
 }
@@ -201,10 +204,10 @@ export const isExpressionArrayRestElementClass = (
 
 export class MapRestElementClass extends RestElementClass<
     'map',
-    IdCreatedNamePair[],
-    MapCreatorRestPair[]
+    IdCreatedNamePairClass[],
+    MapCreatorRestPairClass[]
 > {
-    constructor(value: IdCreatedNamePair[], content: MapCreatorRestPair[]) {
+    constructor(value: IdCreatedNamePairClass[], content: MapCreatorRestPairClass[]) {
         super('map', value, content);
     }
 }
@@ -213,8 +216,12 @@ export const isMapRestElementClass = (target: CommonClass): target is MapRestEle
     return isCommonClass(target, MapRestElementClass);
 };
 
-export class NoRestElementClass extends RestElementClass<'no', IdCreatedNamePair[], string | null> {
-    constructor(value: IdCreatedNamePair[], content: string | null) {
+export class NoRestElementClass extends RestElementClass<
+    'no',
+    IdCreatedNamePairClass[],
+    string | null
+> {
+    constructor(value: IdCreatedNamePairClass[], content: string | null) {
         super('no', value, content);
     }
 }
@@ -224,15 +231,35 @@ export const isNoRestElementClass = (target: CommonClass): target is NoRestEleme
 };
 
 export class CreatorClass extends CommonClass {
-    private value: RestElementClass<unknown, unknown, unknown>;
+    private value:
+        | ArrayRestElementClass
+        | ExpressionArrayRestElementClass
+        | MapRestElementClass
+        | NoRestElementClass
+        | null = null;
 
-    constructor(value: RestElementClass<unknown, unknown, unknown>) {
-        super();
+    setValue(
+        value:
+            | ArrayRestElementClass
+            | ExpressionArrayRestElementClass
+            | MapRestElementClass
+            | NoRestElementClass
+            | null,
+    ) {
         this.value = value;
     }
 
-    getValue(): RestElementClass<unknown, unknown, unknown> {
+    getValue():
+        | ArrayRestElementClass
+        | ExpressionArrayRestElementClass
+        | MapRestElementClass
+        | NoRestElementClass
+        | null {
         return this.value;
+    }
+
+    copy(commonClass: CreatorClass): void {
+        this.setValue(commonClass.getValue());
     }
 }
 
@@ -240,99 +267,59 @@ export const isCreatorClass = (target: CommonClass): target is CreatorClass => {
     return isCommonClass(target, CreatorClass);
 };
 
-export type Creator =
-    | {
-          type: 'array';
-          value: IdCreatedNamePair[];
-          content: ArrayCreatorRest;
-      }
-    | {
-          type: 'class';
-          value: IdCreatedNamePair[];
-          content: Expression[];
-      }
-    | {
-          type: 'map';
-          value: IdCreatedNamePair[];
-          content: MapCreatorRestPair[];
-      }
-    | {
-          type: 'no';
-          value: IdCreatedNamePair[];
-          content?: string;
-      }
-    | {
-          type: 'set';
-          value: IdCreatedNamePair[];
-          content: Expression[];
-      };
-
 export const creatorConvert = (
     target: CreatorTypeClass,
     errorClass: ErrorTypeClass[],
-): Creator | undefined => {
-    const createdName: IdCreatedNamePair[] = [];
+): CreatorClass => {
+    const creator = new CreatorClass();
 
+    const createdName: IdCreatedNamePairClass[] = [];
     const valueTypeClass = toTypeClass(target.getValue(), isCreatedNameType, errorClass);
     if (valueTypeClass) {
         createdName.push(...createdNameConvert(valueTypeClass, errorClass));
     }
 
     const contentTypeClass = toTypeClass(target.getContent(), isRestTypeAll, errorClass);
-
-    let creator: Creator | undefined = undefined;
-
     if (contentTypeClass) {
         if (isArrayCreatorRestType(contentTypeClass)) {
-            creator = {
-                type: 'array',
-                value: createdName,
-                content: {
-                    value: [],
-                },
-            };
-
-            const content = arrayCreatorRestConvert(contentTypeClass, errorClass);
-            creator.content.value.push(...content.value);
-            if (content.size) {
-                creator.content.size = content.size;
-            }
+            creator.setValue(
+                new ArrayRestElementClass(
+                    createdName,
+                    arrayCreatorRestConvert(contentTypeClass, errorClass),
+                ),
+            );
         }
-        if (isClassCreatorRestType(contentTypeClass)) {
-            creator = {
-                type: 'class',
-                value: createdName,
-                content: [],
-            };
 
-            creator.content.push(...classCreatorRestConvert(contentTypeClass, errorClass));
+        if (isClassCreatorRestType(contentTypeClass)) {
+            creator.setValue(
+                new ExpressionArrayRestElementClass(
+                    'class',
+                    createdName,
+                    classCreatorRestConvert(contentTypeClass, errorClass),
+                ),
+            );
         }
         if (isMapCreatorRestType(contentTypeClass)) {
-            creator = {
-                type: 'map',
-                value: createdName,
-                content: [],
-            };
-            creator.content.push(...mapCreatorRestConvert(contentTypeClass, errorClass));
+            creator.setValue(
+                new MapRestElementClass(
+                    createdName,
+                    mapCreatorRestConvert(contentTypeClass, errorClass),
+                ),
+            );
         }
         if (isNoRestType(contentTypeClass)) {
-            creator = {
-                type: 'no',
-                value: createdName,
-            };
-            const content = noRestConvert(contentTypeClass, errorClass);
-            if (content) {
-                creator.content = content;
-            }
+            creator.setValue(
+                new NoRestElementClass(createdName, noRestConvert(contentTypeClass, errorClass)),
+            );
         }
         if (isSetCreatorRestType(contentTypeClass)) {
-            creator = {
-                type: 'set',
-                value: createdName,
-                content: [],
-            };
-
-            creator.content.push(...setCreatorRestConvert(contentTypeClass, errorClass));
+            creator.setValue(
+                new ExpressionArrayRestElementClass(
+                    'set',
+                    createdName,
+                    setCreatorRestConvert(contentTypeClass, errorClass),
+                ),
+            );
         }
     }
 

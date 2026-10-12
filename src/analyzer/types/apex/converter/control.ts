@@ -19,20 +19,56 @@ import {
     isWhenValueType,
 } from '../../apex_IR';
 
-import { toTypeClass } from './commons';
+import { toTypeClass, CommonClass, isCommonClass } from './commons';
 import { normalIdConvert } from './id';
-import { TypeRef, typeRefConvert } from './type';
-import { Expression, expressionConvert } from './expression';
+import { TypeRefClass, typeRefConvert } from './type';
+import { ExpressionClass, expressionConvert } from './expression';
 import { expressionListConvert } from './list';
-import { NormalStatement } from './statement';
+import { NormalStatementClass } from './statement';
 import { normalBlockConvert } from './block';
-import { WhenValue, whenValueConvert } from './value';
-import { LocalVariableDeclaration, localVariableDeclarationConvert } from './declaration';
+import { WhenValueClass, whenValueConvert } from './value';
+import { LocalVariableDeclarationClass, localVariableDeclarationConvert } from './declaration';
 
-export type EnhancedForControl = {
-    value?: string;
-    valueType: TypeRef;
-    fromVariant?: Expression;
+export class EnhancedForControlClass extends CommonClass {
+    private value: string | null = null;
+    private valueType: TypeRef | null = null;
+    private fromVariant: Expression | null = null;
+
+    setValue(value: string | null): void {
+        this.value = value;
+    }
+
+    setValueType(valueType: TypeRef | null): void {
+        this.valueType = valueType;
+    }
+
+    setFromVariant(fromVariant: Expression | null): void {
+        this.fromVariant = fromVariant;
+    }
+
+    getValue(): string | null {
+        return this.value;
+    }
+
+    getValueType(): TypeRef | null {
+        return this.valueType;
+    }
+
+    getFromVariant(): Expression | null {
+        return this.fromVariant;
+    }
+
+    copy(commonClass: EnhancedForControlClass): void {
+        this.setValue(commonClass.getValue());
+        this.setValueType(commonClass.getValueType());
+        this.setFromVariant(commonClass.getFromVariant());
+    }
+}
+
+export const isEnhancedForControlClass = (
+    target: CommonClass,
+): target is EnhancedForControlClass => {
+    return isCommonClass(target, EnhancedForControlClass);
 };
 
 export const enhancedForControlConvert = (
@@ -74,28 +110,64 @@ export const enhancedForControlConvert = (
     return enhancedForControl;
 };
 
-export type ForControl = {
-    value?: EnhancedForControl | Expression;
-    init?: LocalVariableDeclaration | Expression[];
-    update: Expression[];
+export class ForControlClass extends CommonClass {
+    private value: EnhancedForControlClass | Expression | null = null;
+    private init: LocalVariableDeclaration | Expression[] | null = null;
+    private update: Expression[] = [];
+
+    setValue(value: EnhancedForControlClass | Expression | null): void {
+        this.value = value;
+    }
+
+    setInit(init: LocalVariableDeclaration | Expression[] | null): void {
+        this.init = init;
+    }
+
+    resetUpdate(): void {
+        this.update = [];
+    }
+
+    setupdate(update: Expression[]): void {
+        this.update.push(...update);
+    }
+
+    getValue(): string | null {
+        return this.value;
+    }
+
+    getInit(): LocalVariableDeclaration | Expression[] | null {
+        return this.init;
+    }
+
+    getUpdate(): Expression[] {
+        return this.update;
+    }
+
+    copy(commonClass: ForControlClass): void {
+        this.setValue(commonClass.getValue());
+        this.setInit(commonClass.getInit());
+        this.resetUpdate();
+        this.setupdate(commonClass.getUpdate());
+    }
+}
+
+export const isForControlClass = (target: CommonClass): target is ForControlClass => {
+    return isCommonClass(target, ForControlClass);
 };
 
 export const forControlConvert = (
     target: ForControlTypeClass,
     errorClass: ErrorTypeClass[],
-): ForControl => {
-    const update: Expression[] = [];
+): ForControlClass => {
+    const forControl = new ForControlClass();
+
     const updateValue = target.getUpdate();
     if (updateValue) {
         const updateTypeClass = toTypeClass(updateValue, isForUpdateType, errorClass);
         if (updateTypeClass) {
-            update.push(...forUpdateConvert(updateTypeClass, errorClass));
+            forControl.setupdate(forUpdateConvert(updateTypeClass, errorClass));
         }
     }
-
-    const forControl: ForControl = {
-        update: update,
-    };
 
     const initValue = target.getInit();
     if (initValue) {
@@ -103,7 +175,7 @@ export const forControlConvert = (
         if (initTypeClass) {
             const init = forInitConvert(initTypeClass, errorClass);
             if (init) {
-                forControl.init = init;
+                forControl.setInit(init);
             }
         }
     }
@@ -132,7 +204,7 @@ export const forControlConvert = (
 export const forInitConvert = (
     target: ForInitTypeClass,
     errorClass: ErrorTypeClass[],
-): LocalVariableDeclaration | Expression[] | undefined => {
+): LocalVariableDeclarationClass | ExpressionClass[] | null => {
     const valueTypeClass = toTypeClass(
         target.getValue(),
         (target): target is LocalVariableDeclarationTypeClass | ExpressionListTypeClass =>
@@ -149,55 +221,74 @@ export const forInitConvert = (
         }
     }
 
-    return undefined;
+    return null;
 };
 
 export const forUpdateConvert = (
     target: ForUpdateTypeClass,
     errorClass: ErrorTypeClass[],
-): Expression[] => {
+): ExpressionClass[] => {
+    const expressionClassList: ExpressionClass[] = [];
+
     const valueTypeClass = toTypeClass(target.getValue(), isExpressionListType, errorClass);
     if (valueTypeClass) {
-        return expressionListConvert(valueTypeClass, errorClass);
+        expressionClassList.push(...expressionListConvert(valueTypeClass, errorClass));
     }
 
-    return [];
+    return expressionClassList;
 };
 
-export type WhenControl = {
-    value: WhenValue;
-    block: NormalStatement[];
+export class WhenControlClass extends CommonClass {
+    private value: WhenValueClass = new WhenValueClass();
+    private block: NormalStatementClass[] = [];
+
+    setValue(value: WhenValueClass): void {
+        this.value.copy(value);
+    }
+
+    resetBlock(): void {
+        this.block = [];
+    }
+
+    setBlock(block: NormalStatementClass[]): void {
+        this.block.push(...block);
+    }
+
+    getValue(): WhenValueClass {
+        return this.value;
+    }
+
+    getBlock(): NormalStatementClass[] {
+        return this.block;
+    }
+
+    copy(commonClass: WhenControlClass): void {
+        this.setValue(commonClass.getValue());
+        this.resetBlock();
+        this.setBlock(commonClass.getBlock());
+    }
+}
+
+export const isWhenControlClass = (target: CommonClass): target is WhenControlClass => {
+    return isCommonClass(target, WhenControlClass);
 };
 
 export const whenControlConvert = (
     target: WhenControlTypeClass,
     errorClass: ErrorTypeClass[],
-): WhenControl => {
-    const block: NormalStatement[] = [];
+): WhenControlClass => {
+    const whenControl = new WhenControlClass();
+
+    const block: NormalStatementClass[] = [];
     const blockTypeClass = toTypeClass(target.getBlock(), isNormalBlockType, errorClass);
     if (blockTypeClass) {
         block.push(...normalBlockConvert(blockTypeClass, errorClass));
     }
-
-    const whenControl: WhenControl = {
-        value: {
-            valueType: {
-                value: [],
-            },
-        },
-        block: block,
-    };
+    whenControl.setBlock(block);
 
     const valueTypeClass = toTypeClass(target.getValue(), isWhenValueType, errorClass);
     if (valueTypeClass) {
-        const value = whenValueConvert(valueTypeClass, errorClass);
-        whenControl.value.valueType.value = value.valueType.value;
-        if (value.value) {
-            whenControl.value.value = value.value;
-        }
-        if (value.valueType.dimension) {
-            whenControl.value.valueType.dimension = value.valueType.dimension;
-        }
+        whenControl.setValue(whenValueConvert(valueTypeClass, errorClass));
     }
 
     return whenControl;
