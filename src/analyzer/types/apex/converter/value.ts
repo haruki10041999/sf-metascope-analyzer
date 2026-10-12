@@ -24,18 +24,12 @@ import {
     isNormalIdType,
 } from '../../apex_IR';
 
-import {
-    toTypeClass,
-    CommonClass,
-    isCommonClass,
-    isString,
-    isNormalValueClassArray,
-    isWhenLiteralClassArray,
-} from './commons';
-import { normalIdConvert } from './id';
+import { toTypeClass, CommonClass, isCommonClass } from './commons';
+import { isString, isStringArray, normalIdConvert } from './id';
 import { ExpressionClass, boundExpressionConvert, isExpressionClass } from './expression';
 import {
     isSignedLiteralClass,
+    isWhenLiteralClassArray,
     NormalLiteralClass,
     normalLiteralConvert,
     SignedLiteralClass,
@@ -76,6 +70,16 @@ export const coordinateValueConvert = (
     }
 
     return null;
+};
+
+export const isCoordinateValue = (target: any): target is SignedLiteralClass | ExpressionClass => {
+    return isSignedLiteralClass(target) || isExpressionClass(target);
+};
+
+export const isCoordinateValueArray = (
+    target: any,
+): target is (SignedLiteralClass | ExpressionClass)[] => {
+    return Array.isArray(target) && target.every((t) => isCoordinateValue(t));
 };
 
 export const elementValueConvert = (
@@ -131,6 +135,18 @@ export const locationValueConvert = (
     }
 
     return null;
+};
+
+export const isLocationValue = (
+    target: any,
+): target is (SignedLiteralClass | ExpressionClass)[] | string[] | ExpressionClass => {
+    return isCoordinateValueArray(target) || isStringArray(target) || isExpressionClass(target);
+};
+
+export const isLocationValueArray = (
+    target: any,
+): target is ((SignedLiteralClass | ExpressionClass)[] | string[] | ExpressionClass)[] => {
+    return Array.isArray(target) && target.every((t) => isLocationValue(t));
 };
 
 export class NormalValueClass extends CommonClass {
@@ -206,8 +222,12 @@ export class NormalValueClass extends CommonClass {
     }
 }
 
-export const isNormalValueClass = (target: CommonClass): target is NormalValueClass => {
+export const isNormalValueClass = (target: any): target is NormalValueClass => {
     return isCommonClass(target, NormalValueClass);
+};
+
+export const isNormalValueClassArray = (target: any): target is NormalValueClass[] => {
+    return Array.isArray(target) && target.every((t) => isNormalValueClass(t));
 };
 
 export const normalValueConvert = (
@@ -297,8 +317,12 @@ export class WhenValueClass extends CommonClass {
     }
 }
 
-export const isWhenValueTypeClass = (target: CommonClass): target is WhenValueClass => {
+export const isWhenValueTypeClass = (target: any): target is WhenValueClass => {
     return isCommonClass(target, WhenValueClass);
+};
+
+export const isWhenValueTypeClassArray = (target: any): target is WhenValueClass[] => {
+    return Array.isArray(target) && target.every((t) => isWhenValueTypeClass(t));
 };
 
 export const whenValueConvert = (

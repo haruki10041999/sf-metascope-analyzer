@@ -38,7 +38,7 @@ import {
 
 import { toPrimitiveValue, toTypeClass, CommonClass, isCommonClass } from './commons';
 import { ExpressionClass, expressionConvert } from './expression';
-import { soqlIdConvert, soslIdConvert } from './id';
+import { isStringArray, soqlIdConvert, soslIdConvert } from './id';
 import { fieldNameConvert } from './name';
 import { TypeRefClass, typeRefConvert } from './type';
 import { NormalValueClass, normalValueConvert } from './value';
@@ -50,7 +50,13 @@ import {
     updateTypeConvert,
 } from './clause';
 import { EntryClass, selectEntryConvert, subFieldEntryConvert } from './entry';
-import { FieldSpecClass, SoqlFunctionClass, fieldSpecConvert, soqlFunctionConvert } from './query';
+import {
+    FieldSpecClass,
+    SoqlFunctionClass,
+    fieldSpecConvert,
+    isSoqlFunctionClass,
+    soqlFunctionConvert,
+} from './query';
 
 export const typeListConvert = (
     target: TypeListTypeClass,
@@ -84,8 +90,8 @@ export const expressionListConvert = (
 export const formalParameterListConvert = (
     target: FormalParameterListTypeClass,
     errorClass: ErrorTypeClass[],
-): FormalParameter[] => {
-    const values: FormalParameter[] = [];
+): FormalParameterClass[] => {
+    const values: FormalParameterClass[] = [];
     target.getValue().forEach((item) => {
         const valueTypeClass = toTypeClass(item, isFormalParameterType, errorClass);
         if (valueTypeClass) {
@@ -98,8 +104,8 @@ export const formalParameterListConvert = (
 export const valueListConvert = (
     target: ValueListTypeClass,
     errorClass: ErrorTypeClass[],
-): NormalValue[] => {
-    const values: NormalValue[] = [];
+): NormalValueClass[] => {
+    const values: NormalValueClass[] = [];
     target.getValue().forEach((item) => {
         const valueTypeClass = toTypeClass(item, isNormalValueType, errorClass);
         if (valueTypeClass) {
@@ -161,8 +167,8 @@ export const networkListConvert = (
 export const fieldGroupByListConvert = (
     target: FieldGroupByListTypeClass,
     errorClass: ErrorTypeClass[],
-): (string[] | SoqlFunction)[] => {
-    const values: (string[] | SoqlFunction)[] = [];
+): (string[] | SoqlFunctionClass)[] => {
+    const values: (string[] | SoqlFunctionClass)[] = [];
     target.getValue().forEach((item) => {
         const valueTypeClass = toTypeClass(item, isFieldGroupByType, errorClass);
         if (valueTypeClass) {
@@ -178,8 +184,8 @@ export const fieldGroupByListConvert = (
 export const fieldOrderListConvert = (
     target: FieldOrderListTypeClass,
     errorClass: ErrorTypeClass[],
-): FieldOrder[] => {
-    const values: FieldOrder[] = [];
+): FieldOrderClass[] => {
+    const values: FieldOrderClass[] = [];
     target.getValue().forEach((item) => {
         const valueTypeClass = toTypeClass(item, isFieldOrderType, errorClass);
         if (valueTypeClass) {
@@ -192,8 +198,8 @@ export const fieldOrderListConvert = (
 export const selectListConvert = (
     target: SelectListTypeClass,
     errorClass: ErrorTypeClass[],
-): SelectEntry[] => {
-    const values: SelectEntry[] = [];
+): EntryClass[] => {
+    const values: EntryClass[] = [];
     target.getValue().forEach((item) => {
         const valueTypeClass = toTypeClass(item, isSelectEntryType, errorClass);
         if (valueTypeClass) {
@@ -206,8 +212,8 @@ export const selectListConvert = (
 export const subFieldListConvert = (
     target: SubFieldListTypeClass,
     errorClass: ErrorTypeClass[],
-): SubFieldEntry[] => {
-    const values: SubFieldEntry[] = [];
+): EntryClass[] => {
+    const values: EntryClass[] = [];
     target.getValue().forEach((item) => {
         const valueTypeClass = toTypeClass(item, isSubFieldEntryType, errorClass);
         if (valueTypeClass) {
@@ -218,18 +224,24 @@ export const subFieldListConvert = (
 };
 
 export class SoslFieldClass extends CommonClass {
-    private value: string[] | SoqlFunction | null = null;
+    private value: string[] | SoqlFunctionClass | null = null;
     private func: string | null = null;
 
-    setValue(value: string[] | SoqlFunction | null): void {
-        this.value = value;
+    setValue(value: string[] | SoqlFunctionClass | null): void {
+        if (isStringArray(this.value) && isStringArray(value)) {
+            this.value.push(...value);
+        } else if (isSoqlFunctionClass(this.value) && isSoqlFunctionClass(value)) {
+            this.value.copy(value);
+        } else {
+            this.value = value;
+        }
     }
 
     setFunc(func: string | null): void {
         this.func = func;
     }
 
-    getValue(): string[] | SoqlFunction | null {
+    getValue(): string[] | SoqlFunctionClass | null {
         return this.value;
     }
 
@@ -243,15 +255,20 @@ export class SoslFieldClass extends CommonClass {
     }
 }
 
-export const isSoslFieldClass = (target: CommonClass): target is SoslFieldClass => {
-    return target instanceof SoslFieldClass;
+export const isSoslFieldClass = (target: any): target is SoslFieldClass => {
+    return isCommonClass(target, SoslFieldClass);
+};
+
+export const isSoslFieldClassArray = (target: any): target is SoslFieldClass => {
+    return Array.isArray(target) && target.every((t) => isSoslFieldClass(t));
 };
 
 export const soslFieldConvert = (
     target: SoslFieldTypeClass,
     errorClass: ErrorTypeClass[],
-): SoslField => {
-    const soslField: SoslField = {};
+): SoslFieldClass => {
+    const soslField = new SoslFieldClass();
+    soslField.setFunc(target.getFunc());
 
     const valueTypeClass = toTypeClass(
         target.getValue(),
@@ -262,10 +279,10 @@ export const soslFieldConvert = (
 
     if (valueTypeClass) {
         if (isSoslIdType(valueTypeClass)) {
-            soslField.value = soslIdConvert(valueTypeClass, errorClass);
+            soslField.setValue(soslIdConvert(valueTypeClass, errorClass));
         }
         if (isSoqlFunctionType(valueTypeClass)) {
-            soslField.value = soqlFunctionConvert(valueTypeClass, errorClass);
+            soslField.setValue(soqlFunctionConvert(valueTypeClass, errorClass));
         }
     }
 
@@ -275,8 +292,8 @@ export const soslFieldConvert = (
 export const fieldListConvert = (
     target: FieldListTypeClass,
     errorClass: ErrorTypeClass[],
-): SoslField[] => {
-    const values: SoslField[] = [];
+): SoslFieldClass[] => {
+    const values: SoslFieldClass[] = [];
     target.getValue().forEach((item) => {
         const valueTypeClass = toTypeClass(item, isSoslFieldType, errorClass);
         if (valueTypeClass) {
@@ -289,8 +306,8 @@ export const fieldListConvert = (
 export const fieldSpecListConvert = (
     target: FieldSpecListTypeClass,
     errorClass: ErrorTypeClass[],
-): FieldSpec[] => {
-    const values: FieldSpec[] = [];
+): FieldSpecClass[] => {
+    const values: FieldSpecClass[] = [];
     target.getValue().forEach((item) => {
         const valueTypeClass = toTypeClass(item, isFieldSpecType, errorClass);
         if (valueTypeClass) {
@@ -331,33 +348,30 @@ export class FromNameClass extends CommonClass {
     }
 }
 
-export const isFromNameClass = (target: CommonClass): target is FromNameClass => {
-    return target instanceof FromNameClass;
+export const isFromNameClass = (target: any): target is FromNameClass => {
+    return isCommonClass(target, FromNameClass);
+};
+
+export const isFromNameClassArray = (target: any): target is FromNameClass[] => {
+    return Array.isArray(target) && target.every((t) => isFromNameClass(t));
 };
 
 export const fromNameConvert = (
     target: FromNameTypeClass,
     errorClass: ErrorTypeClass[],
-): FromName => {
-    const values: string[] = [];
+): FromNameClass => {
+    const fromName = new FromNameClass();
 
     const valueTypeClass = toTypeClass(target.getValue(), isFieldNameType, errorClass);
     if (valueTypeClass) {
-        values.push(...fieldNameConvert(valueTypeClass, errorClass));
+        fromName.setValue(fieldNameConvert(valueTypeClass, errorClass));
     }
-
-    const fromName: FromName = {
-        value: values,
-    };
 
     const aliasValue = target.getAlias();
     if (aliasValue) {
         const typeClass = toTypeClass(aliasValue, isSoqlIdType, errorClass);
         if (typeClass) {
-            const soqlId = soqlIdConvert(typeClass, errorClass);
-            if (soqlId) {
-                fromName.alias = soqlId;
-            }
+            fromName.setAlias(soqlIdConvert(typeClass, errorClass));
         }
     }
 
@@ -367,8 +381,8 @@ export const fromNameConvert = (
 export const fromNameListConvert = (
     target: FromNameListTypeClass,
     errorClass: ErrorTypeClass[],
-): FromName[] => {
-    const values: FromName[] = [];
+): FromNameClass[] => {
+    const values: FromNameClass[] = [];
     target.getValue().forEach((item) => {
         const valueTypeClass = toTypeClass(item, isFromNameType, errorClass);
         if (valueTypeClass) {

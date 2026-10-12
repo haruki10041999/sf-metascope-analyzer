@@ -13,6 +13,10 @@ export const normalIdConvert = (target: NormalIdTypeClass): string => {
     return target.getValue();
 };
 
+export const isString = (target: any): target is string => {
+    return typeof target === 'string';
+};
+
 export const anyIdConvert = (target: AnyIdTypeClass): string => {
     return target.getValue();
 };
@@ -25,6 +29,8 @@ export const soqlIdConvert = (
     if (soqlValue) {
         return normalIdConvert(soqlValue);
     }
+
+    return null;
 };
 
 export const soslIdConvert = (
@@ -39,4 +45,8 @@ export const soslIdConvert = (
         }
     }
     return values;
+};
+
+export const isStringArray = (target: any): target is string[] => {
+    return Array.isArray(target) && target.every((t) => typeof t === 'string');
 };

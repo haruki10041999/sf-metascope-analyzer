@@ -35,7 +35,7 @@ export const qualifiedNameConvert = (
 
 export class TypeNameClass extends CommonClass {
     private value: string | null = null;
-    private generic: TypeRef[] = [];
+    private generic: TypeRefClass[] = [];
 
     setValue(value: string | null): void {
         this.value = value;
@@ -45,7 +45,7 @@ export class TypeNameClass extends CommonClass {
         this.generic = [];
     }
 
-    setGeneric(generic: TypeRef[]): void {
+    setGeneric(generic: TypeRefClass[]): void {
         this.generic.push(...generic);
     }
 
@@ -53,7 +53,7 @@ export class TypeNameClass extends CommonClass {
         return this.value;
     }
 
-    getGeneric(): TypeRef[] {
+    getGeneric(): TypeRefClass[] {
         return this.generic;
     }
 
@@ -64,24 +64,26 @@ export class TypeNameClass extends CommonClass {
     }
 }
 
-export const isTypeNameClass = (target: CommonClass): target is TypeNameClass => {
-    return target instanceof TypeNameClass;
+export const isTypeNameClass = (target: any): target is TypeNameClass => {
+    return isCommonClass(target, TypeNameClass);
+};
+
+export const isTypeNameClassArray = (target: any): target is TypeNameClass[] => {
+    return Array.isArray(target) && target.every((t) => isTypeNameClass(t));
 };
 
 export const typeNameConvert = (
     target: TypeNameTypeClass,
     errorClass: ErrorTypeClass[],
-): TypeName => {
-    const typeName: TypeName = {
-        generic: [],
-    };
+): TypeNameClass => {
+    const typeName = new TypeNameClass();
 
     const valueTypeClass = target.getValue();
     if (typeof valueTypeClass === 'string') {
-        typeName.value = valueTypeClass;
+        typeName.setValue(valueTypeClass);
     } else {
         if (isNormalIdType(valueTypeClass)) {
-            typeName.value = normalIdConvert(valueTypeClass);
+            typeName.setValue(normalIdConvert(valueTypeClass));
         }
     }
 
@@ -89,10 +91,7 @@ export const typeNameConvert = (
     if (genericTypeClass) {
         const typeClass = toTypeClass(genericTypeClass, isTypeArgumentsType, errorClass);
         if (typeClass) {
-            const generic = typeArgumentsConvert(typeClass, errorClass);
-            if (generic) {
-                typeName.generic.push(...generic);
-            }
+            typeName.setGeneric(typeArgumentsConvert(typeClass, errorClass));
         }
     }
 
@@ -165,24 +164,23 @@ export class DateFieldNameClass extends CommonClass {
     }
 }
 
-export const isDateFieldNameClass = (target: CommonClass): target is DateFieldNameClass => {
-    return target instanceof DateFieldNameClass;
+export const isDateFieldNameClass = (target: any): target is DateFieldNameClass => {
+    return isCommonClass(target, DateFieldNameClass);
 };
 
 export const dateFieldNameConvert = (
     target: DateFieldNameTypeClass,
     errorClass: ErrorTypeClass[],
-): DateFieldName => {
-    const values: string[] = [];
-    const isConvertTimeZone = target.getConvertTimeZone();
+): DateFieldNameClass => {
+    const dateFieldName = new DateFieldNameClass();
+
+    dateFieldName.setIsConvertTimeZone(target.getConvertTimeZone());
+
     const valueTypeClass = toTypeClass(target.getValue(), isFieldNameType, errorClass);
     if (valueTypeClass) {
-        values.push(...fieldNameConvert(valueTypeClass, errorClass));
+        dateFieldName.setValue(fieldNameConvert(valueTypeClass, errorClass));
     }
-    return {
-        value: values,
-        isConvertTimeZone: isConvertTimeZone,
-    };
+    return dateFieldName;
 };
 
 export const dataCategoryNameConvert = (

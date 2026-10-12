@@ -74,67 +74,12 @@ export const voidPrimaryConvert = (
 export const soqlPrimaryConvert = (
     target: SoqlPrimaryTypeClass,
     errorClass: ErrorTypeClass[],
-): NormalQuery => {
-    const soqlPrimary: NormalQuery = {
-        value: [],
-        from: [],
-        forClause: [],
-        whereClause: {
-            value: [],
-        },
-        orderByClause: [],
-        updateList: [],
-        withClause: {
-            field: [],
-        },
-        groupByClause: {
-            value: [],
-            having: {
-                value: [],
-            },
-        },
-    };
+): NormalQueryClass => {
+    const soqlPrimary = new NormalQueryClass();
 
     const valueTypeClass = toTypeClass(target.getValue(), isSoqlLiteralType, errorClass);
     if (valueTypeClass) {
-        const normalQuery = soqlLiteralConvert(valueTypeClass, errorClass);
-
-        soqlPrimary.value.push(...normalQuery.value);
-        soqlPrimary.from.push(...normalQuery.from);
-        soqlPrimary.forClause.push(...normalQuery.forClause);
-        soqlPrimary.orderByClause.push(...normalQuery.orderByClause);
-        soqlPrimary.updateList.push(...normalQuery.updateList);
-        soqlPrimary.whereClause.value.push(...normalQuery.whereClause.value);
-        soqlPrimary.withClause.field.push(...normalQuery.withClause.field);
-        soqlPrimary.groupByClause.value.push(...normalQuery.groupByClause.value);
-        soqlPrimary.groupByClause.having.value.push(...normalQuery.groupByClause.having.value);
-
-        if (normalQuery.limitClause) {
-            soqlPrimary.limitClause = normalQuery.limitClause;
-        }
-        if (normalQuery.usingScope) {
-            soqlPrimary.usingScope = normalQuery.usingScope;
-        }
-        if (normalQuery.offsetClause) {
-            soqlPrimary.offsetClause = normalQuery.offsetClause;
-        }
-        if (normalQuery.allRowsClause) {
-            soqlPrimary.allRowsClause = normalQuery.allRowsClause;
-        }
-        if (normalQuery.whereClause.operator) {
-            soqlPrimary.whereClause.operator = normalQuery.whereClause.operator;
-        }
-        if (normalQuery.withClause.value) {
-            soqlPrimary.withClause.value = normalQuery.withClause.value;
-        }
-
-        if (normalQuery.groupByClause.mode) {
-            soqlPrimary.groupByClause.mode = normalQuery.groupByClause.mode;
-        }
-
-        if (normalQuery.groupByClause.having.operator) {
-            soqlPrimary.groupByClause.having.operator = normalQuery.groupByClause.having.operator;
-        }
+        soqlPrimary.copy(soqlLiteralConvert(valueTypeClass, errorClass));
     }
 
     return soqlPrimary;
@@ -154,20 +99,12 @@ export const superPrimaryConvert = (
 export const typeRefPrimaryConvert = (
     target: TypeRefPrimaryTypeClass,
     errorClass: ErrorTypeClass[],
-): TypeRef => {
-    const typeRefPrimary: TypeRef = {
-        value: [],
-    };
+): TypeRefClass => {
+    const typeRefPrimary = new TypeRefClass();
 
     const typeClass = toTypeClass(target.getValue(), isTypeRefType, errorClass);
     if (typeClass) {
-        const typeRef = typeRefConvert(typeClass, errorClass);
-
-        typeRefPrimary.value.push(...typeRef.value);
-
-        if (typeRef.dimension) {
-            typeRefPrimary.dimension = typeRef.dimension;
-        }
+        typeRefPrimary.copy(typeRefConvert(typeClass, errorClass));
     }
 
     return typeRefPrimary;
@@ -188,45 +125,26 @@ export const idPrimaryConvert = (
 export const literalPrimaryConvert = (
     target: LiteralPrimaryTypeClass,
     errorClass: ErrorTypeClass[],
-): NormalLiteral | null => {
+): NormalLiteralClass => {
+    const literalPrimary = new NormalLiteralClass();
+
     const typeClass = toTypeClass(target.getValue(), isNormalLiteralType, errorClass);
     if (typeClass) {
-        return normalLiteralConvert(typeClass, errorClass);
+        literalPrimary.copy(normalLiteralConvert(typeClass, errorClass));
     }
 
-    return null;
+    return literalPrimary;
 };
 
 export const soslPrimaryConvert = (
     target: SoslPrimaryTypeClass,
     errorClass: ErrorTypeClass[],
-): SoslLiteral => {
-    const soslPrimary: SoslLiteral = {
-        soslClauses: {
-            fieldSpecList: [],
-            withList: [],
-            updateList: [],
-        },
-    };
+): SoslLiteralClass => {
+    const soslPrimary = new SoslLiteralClass();
 
     const valueTypeClass = toTypeClass(target.getValue(), isSoslLiteralType, errorClass);
     if (valueTypeClass) {
-        const soslLiteral = soslLiteralConvert(valueTypeClass, errorClass);
-
-        soslPrimary.soslClauses.fieldSpecList.push(...soslLiteral.soslClauses.fieldSpecList);
-        soslPrimary.soslClauses.withList.push(...soslLiteral.soslClauses.withList);
-        soslPrimary.soslClauses.updateList.push(...soslLiteral.soslClauses.updateList);
-
-        if (soslLiteral.value) {
-            soslPrimary.value = soslLiteral.value;
-        }
-
-        if (soslLiteral.soslClauses.value) {
-            soslPrimary.soslClauses.value = soslLiteral.soslClauses.value;
-        }
-        if (soslLiteral.soslClauses.limitClause) {
-            soslPrimary.soslClauses.limitClause = soslLiteral.soslClauses.limitClause;
-        }
+        soslPrimary.copy(soslLiteralConvert(valueTypeClass, errorClass));
     }
     return soslPrimary;
 };
@@ -271,8 +189,8 @@ export const isStringPrimaryElementClass = (
     return isCommonClass(target, StringPrimaryElementClass);
 };
 
-export class SoqlPrimaryElementClass extends PrimaryElementClass<'soql', NormalQuery> {
-    constructor(priamry: NormalQuery) {
+export class SoqlPrimaryElementClass extends PrimaryElementClass<'soql', NormalQueryClass> {
+    constructor(priamry: NormalQueryClass) {
         super('soql', priamry);
     }
 }
@@ -283,8 +201,8 @@ export const isSoqlPrimaryElementClass = (
     return isCommonClass(target, SoqlPrimaryElementClass);
 };
 
-export class TypeRefPrimaryElementClass extends PrimaryElementClass<'typeRef', TypeRef> {
-    constructor(priamry: TypeRef) {
+export class TypeRefPrimaryElementClass extends PrimaryElementClass<'typeRef', TypeRefClass> {
+    constructor(priamry: TypeRefClass) {
         super('typeRef', priamry);
     }
 }
@@ -295,11 +213,8 @@ export const isTypeRefPrimaryElementClass = (
     return isCommonClass(target, TypeRefPrimaryElementClass);
 };
 
-export class LiteralPrimaryElementClass extends PrimaryElementClass<
-    'literal',
-    NormalLiteral | null
-> {
-    constructor(priamry: NormalLiteral | null) {
+export class LiteralPrimaryElementClass extends PrimaryElementClass<'literal', NormalLiteralClass> {
+    constructor(priamry: NormalLiteralClass) {
         super('literal', priamry);
     }
 }
@@ -310,8 +225,8 @@ export const isLiteralPrimaryElementClass = (
     return isCommonClass(target, LiteralPrimaryElementClass);
 };
 
-export class SoslPrimaryElementClass extends PrimaryElementClass<'sosl', SoslLiteral | null> {
-    constructor(priamry: SoslLiteral | null) {
+export class SoslPrimaryElementClass extends PrimaryElementClass<'sosl', SoslLiteralClass> {
+    constructor(priamry: SoslLiteralClass) {
         super('sosl', priamry);
     }
 }
@@ -358,84 +273,54 @@ export class PrimaryClass extends CommonClass {
     }
 }
 
-export const isPrimaryClass = (target: CommonClass): target is PrimaryClass => {
-    return target instanceof PrimaryClass;
+export const isPrimaryClass = (target: any): target is PrimaryClass => {
+    return isCommonClass(target, PrimaryClass);
+};
+
+export const isPrimaryClassArray = (target: any): target is PrimaryClass[] => {
+    return Array.isArray(target) && target.every((t) => isPrimaryClass(t));
 };
 
 export const primaryConvert = (
     target: PrimaryTypeClass<unknown>,
     errorClass: ErrorTypeClass[],
 ): PrimaryClass => {
-    let primary: Primary | null = null;
+    const primary: PrimaryClass = new PrimaryClass();
 
     if (isNormalPrimaryType(target)) {
-        primary = { type: 'normal' };
-
-        const convertValue = normalPrimaryConvert(target, errorClass);
-        if (convertValue) {
-            primary.primary = convertValue;
-        }
+        primary.setValue(
+            new StringPrimaryElementClass('normal', normalPrimaryConvert(target, errorClass)),
+        );
     }
     if (isThisPrimaryType(target)) {
-        primary = { type: 'this' };
-
-        const convertValue = thisPrimaryConvert(target, errorClass);
-        if (convertValue) {
-            primary.primary = convertValue;
-        }
+        primary.setValue(
+            new StringPrimaryElementClass('this', thisPrimaryConvert(target, errorClass)),
+        );
     }
     if (isVoidPrimaryType(target)) {
-        primary = { type: 'void' };
-
-        const convertValue = voidPrimaryConvert(target, errorClass);
-        if (convertValue) {
-            primary.primary = convertValue;
-        }
+        primary.setValue(
+            new StringPrimaryElementClass('void', voidPrimaryConvert(target, errorClass)),
+        );
     }
     if (isSoqlPrimaryType(target)) {
-        const convertValue = soqlPrimaryConvert(target, errorClass);
-        primary = {
-            type: 'soql',
-            primary: convertValue,
-        };
+        primary.setValue(new SoqlPrimaryElementClass(soqlPrimaryConvert(target, errorClass)));
     }
     if (isSuperPrimaryType(target)) {
-        primary = { type: 'super' };
-
-        const convertValue = superPrimaryConvert(target, errorClass);
-        if (convertValue) {
-            primary.primary = convertValue;
-        }
+        primary.setValue(
+            new StringPrimaryElementClass('super', superPrimaryConvert(target, errorClass)),
+        );
     }
     if (isTypeRefPrimaryType(target)) {
-        const convertValue = typeRefPrimaryConvert(target, errorClass);
-        primary = {
-            type: 'typeRef',
-            primary: convertValue,
-        };
+        primary.setValue(new TypeRefPrimaryElementClass(typeRefPrimaryConvert(target, errorClass)));
     }
     if (isIdPrimaryType(target)) {
-        primary = { type: 'id' };
-
-        const convertValue = idPrimaryConvert(target, errorClass);
-        if (convertValue) {
-            primary.primary = convertValue;
-        }
+        primary.setValue(new StringPrimaryElementClass('id', idPrimaryConvert(target, errorClass)));
     }
     if (isLiteralPrimaryType(target)) {
-        primary = { type: 'literal' };
-
-        const convertValue = literalPrimaryConvert(target, errorClass);
-        if (convertValue) {
-            primary.primary = convertValue;
-        }
+        primary.setValue(new LiteralPrimaryElementClass(literalPrimaryConvert(target, errorClass)));
     }
     if (isSoslPrimaryType(target)) {
-        const convertValue = soslPrimaryConvert(target, errorClass);
-        primary = {
-            type: 'sosl',
-            primary: convertValue,
-        };
+        primary.setValue(new SoslPrimaryElementClass(soslPrimaryConvert(target, errorClass)));
     }
 
     return primary;

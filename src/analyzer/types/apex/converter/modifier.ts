@@ -14,8 +14,12 @@ import {
 import { toTypeClass, CommonClass, isCommonClass } from './commons';
 import { normalIdConvert } from './id';
 import { elementValueConvert } from './value';
-import { ElementValuePairClass, elementValuePairsConvert } from './pair';
-import { NormalLiteralClass } from './literal';
+import {
+    ElementValuePairClass,
+    elementValuePairsConvert,
+    isElementValuePairClassArray,
+} from './pair';
+import { isNormalLiteralClass, NormalLiteralClass } from './literal';
 
 export abstract class ModifierElementClass<TType, TModifier> extends CommonClass {
     private type: TType;
@@ -42,8 +46,8 @@ export const isModifierElementClass = (
     return isCommonClass(target, ModifierElementClass);
 };
 
-export class NormalModifierElementClass extends ModifierElementClass<'normal', string | null> {
-    constructor(modifier: string | null) {
+export class NormalModifierElementClass extends ModifierElementClass<'normal', string> {
+    constructor(modifier: string) {
         super('normal', modifier);
     }
 }
@@ -56,9 +60,9 @@ export const isNormalModifierElementClass = (
 
 export class AnnotationModifierElementClass extends ModifierElementClass<
     'annotation',
-    AnnotationClass | null
+    AnnotationClass
 > {
-    constructor(modifier: AnnotationClass | null) {
+    constructor(modifier: AnnotationClass) {
         super('annotation', modifier);
     }
 }
@@ -85,55 +89,61 @@ export class NormalModifierClass extends CommonClass {
     }
 }
 
-export const isNormalModifierClass = (target: CommonClass): target is NormalModifierClass => {
+export const isNormalModifierClass = (target: any): target is NormalModifierClass => {
     return isCommonClass(target, NormalModifierClass);
+};
+
+export const isNormalModifierClassArray = (target: any): target is NormalModifierClass[] => {
+    return Array.isArray(target) && target.every((t) => isNormalModifierClass(t));
 };
 
 export const normalModifierConvert = (
     target: NormalModifierTypeClass,
     errorClass: ErrorTypeClass[],
-): NormalModifier | null => {
-    const value = target.getValue();
-    let modifier: NormalModifier | null = null;
+): NormalModifierClass => {
+    const normalModifier = new NormalModifierClass();
 
+    const value = target.getValue();
     if (typeof value === 'string') {
-        modifier = {
-            type: 'modifier',
-            value: value,
-        };
+        normalModifier.setValue(new NormalModifierElementClass(value));
     } else {
-        const typeClass = toTypeClass(value, isAnnotationType, errorClass);
-        if (typeClass) {
-            const annotation = annotationConvert(typeClass, errorClass);
-            if (annotation) {
-                return {
-                    type: 'annotation',
-                    value: annotation,
-                };
-            }
+        const valueTypeClass = toTypeClass(value, isAnnotationType, errorClass);
+        if (valueTypeClass) {
+            normalModifier.setValue(
+                new AnnotationModifierElementClass(annotationConvert(valueTypeClass, errorClass)),
+            );
         }
     }
 
-    return modifier;
+    return normalModifier;
 };
 
 export class AnnotationClass extends CommonClass {
     private value: string | null = null;
-    private param: NormalLiteral | ElementValuePair[] | null = null;
+    private param: NormalLiteralClass | ElementValuePairClass[] | null = null;
 
     setValue(value: string | null) {
         this.value = value;
     }
 
-    setParam(param: NormalLiteral | ElementValuePair[] | null): void {
-        this.param = param;
+    setParam(param: NormalLiteralClass | ElementValuePairClass[] | null): void {
+        if (isNormalLiteralClass(this.param) && isNormalLiteralClass(param)) {
+            this.param.copy(param);
+        } else if (
+            isElementValuePairClassArray(param) &&
+            isElementValuePairClassArray(this.param)
+        ) {
+            this.param.push(...param);
+        } else {
+            this.param = param;
+        }
     }
 
     getValue(): string | null {
         return this.value;
     }
 
-    getParam(): NormalLiteral | ElementValuePair[] | null {
+    getParam(): NormalLiteralClass | ElementValuePairClass[] | null {
         return this.param;
     }
 
@@ -143,19 +153,29 @@ export class AnnotationClass extends CommonClass {
     }
 }
 
-export const isAnnotationClass = (target: CommonClass): target is AnnotationClass => {
-    return target instanceof AnnotationClass;
+export const isAnnotationClass = (target: any): target is AnnotationClass => {
+    return isCommonClass(target, AnnotationClass);
+};
+
+export const isAnnotationClassArray = (target: any): target is AnnotationClass[] => {
+    return Array.isArray(target) && target.every((t) => isAnnotationClass(t));
+};
+
+export const isAnotationParam = (
+    target: any,
+): target is NormalLiteralClass | ElementValuePairClass[] => {
+    return isNormalLiteralClass(target) || isElementValuePairClassArray(target);
 };
 
 export const annotationConvert = (
     target: AnnotationTypeClass,
     errorClass: ErrorTypeClass[],
-): Annotation | null => {
-    const annotation: Annotation = {};
+): AnnotationClass => {
+    const annotation = new AnnotationClass();
 
     const valueTypeClass = toTypeClass(target.getValue(), isNormalIdType, errorClass);
     if (valueTypeClass) {
-        annotation.value = normalIdConvert(valueTypeClass);
+        annotation.setValue(normalIdConvert(valueTypeClass));
     }
 
     const paramValue = target.getParam();
@@ -168,16 +188,10 @@ export const annotationConvert = (
         );
         if (paramTypeClass) {
             if (isElementValueType(paramTypeClass)) {
-                const elementValue = elementValueConvert(paramTypeClass, errorClass);
-                if (elementValue) {
-                    annotation.param = elementValue;
-                }
+                annotation.setParam(elementValueConvert(paramTypeClass, errorClass));
             }
             if (isElementValuePairsType(paramTypeClass)) {
-                const elementValuePairs = elementValuePairsConvert(paramTypeClass, errorClass);
-                if (elementValuePairs) {
-                    annotation.param = elementValuePairs;
-                }
+                annotation.setParam(elementValuePairsConvert(paramTypeClass, errorClass));
             }
         }
     }

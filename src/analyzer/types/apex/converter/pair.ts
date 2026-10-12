@@ -22,21 +22,21 @@ import { elementValueConvert } from './value';
 
 export class ElementValuePairClass extends CommonClass {
     private left: string | null = null;
-    private right: NormalLiteral | null = null;
+    private right: NormalLiteralClass = new NormalLiteralClass();
 
     setLeft(left: string | null): void {
         this.left = left;
     }
 
-    setRight(right: NormalLiteral | null): void {
-        this.right = right;
+    setRight(right: NormalLiteralClass): void {
+        this.right.copy(right);
     }
 
     getLeft(): string | null {
         return this.left;
     }
 
-    getRight(): NormalLiteral | null {
+    getRight(): NormalLiteralClass {
         return this.right;
     }
 
@@ -46,27 +46,28 @@ export class ElementValuePairClass extends CommonClass {
     }
 }
 
-const isElementValuePairClass = (target: CommonClass): target is ElementValuePairClass => {
-    return target instanceof ElementValuePairClass;
+export const isElementValuePairClass = (target: any): target is ElementValuePairClass => {
+    return isCommonClass(target, ElementValuePairClass);
+};
+
+export const isElementValuePairClassArray = (target: any): target is ElementValuePairClass[] => {
+    return Array.isArray(target) && target.every((t) => isElementValuePairClass(t));
 };
 
 export const elementValuePairConvert = (
     target: ElementValuePairTypeClass,
     errorClass: ErrorTypeClass[],
-): ElementValuePair => {
-    const elementValuePair: ElementValuePair = {};
+): ElementValuePairClass => {
+    const elementValuePair = new ElementValuePairClass();
 
     const leftTypeClass = toTypeClass(target.getLeft(), isNormalIdType, errorClass);
     if (leftTypeClass) {
-        elementValuePair.left = normalIdConvert(leftTypeClass);
+        elementValuePair.setLeft(normalIdConvert(leftTypeClass));
     }
 
     const rightTypeClass = toTypeClass(target.getRight(), isElementValueType, errorClass);
     if (rightTypeClass) {
-        const literal = elementValueConvert(rightTypeClass, errorClass);
-        if (literal) {
-            elementValuePair.right = literal;
-        }
+        elementValuePair.setRight(elementValueConvert(rightTypeClass, errorClass));
     }
 
     return elementValuePair;
@@ -75,8 +76,9 @@ export const elementValuePairConvert = (
 export const elementValuePairsConvert = (
     target: ElementValuePairsTypeClass,
     errorClass: ErrorTypeClass[],
-): ElementValuePair[] => {
-    const values: ElementValuePair[] = [];
+): ElementValuePairClass[] => {
+    const values: ElementValuePairClass[] = [];
+
     target.getValue().forEach((item) => {
         const valueTypeClass = toTypeClass(item, isElementValuePairType, errorClass);
         if (valueTypeClass) {
@@ -88,7 +90,7 @@ export const elementValuePairsConvert = (
 
 export class IdCreatedNamePairClass extends CommonClass {
     private left: string | null = null;
-    private right: TypeRef[] = [];
+    private right: TypeRefClass[] = [];
 
     setLeft(left: string | null): void {
         this.left = left;
@@ -98,7 +100,7 @@ export class IdCreatedNamePairClass extends CommonClass {
         this.right = [];
     }
 
-    setRight(right: TypeRef[]): void {
+    setRight(right: TypeRefClass[]): void {
         this.right.push(...right);
     }
 
@@ -106,7 +108,7 @@ export class IdCreatedNamePairClass extends CommonClass {
         return this.left;
     }
 
-    getRight(): TypeRef[] {
+    getRight(): TypeRefClass[] {
         return this.right;
     }
 
@@ -117,8 +119,12 @@ export class IdCreatedNamePairClass extends CommonClass {
     }
 }
 
-const isIdCreatedNamePairClass = (target: CommonClass): target is IdCreatedNamePairClass => {
-    return target instanceof IdCreatedNamePairClass;
+export const isIdCreatedNamePairClass = (target: any): target is IdCreatedNamePairClass => {
+    return isCommonClass(target, IdCreatedNamePairClass);
+};
+
+export const isIdCreatedNamePairClassArray = (target: any): target is IdCreatedNamePairClass[] => {
+    return Array.isArray(target) && target.every((t) => isIdCreatedNamePairClass(t));
 };
 
 export const idCreatedNamePairConvert = (
@@ -172,7 +178,13 @@ export class MapCreatorRestPairClass extends CommonClass {
 export const isMapCreatorRestPairClass = (
     target: CommonClass,
 ): target is MapCreatorRestPairClass => {
-    return target instanceof MapCreatorRestPairClass;
+    return isCommonClass(target, MapCreatorRestPairClass);
+};
+
+export const isMapCreatorRestPairClassArray = (
+    target: any,
+): target is MapCreatorRestPairClass[] => {
+    return Array.isArray(target) && target.every((t) => isMapCreatorRestPairClass(t));
 };
 
 export const mapCreatorRestPairConvert = (

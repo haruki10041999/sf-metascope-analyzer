@@ -54,8 +54,12 @@ export class MethodCallClass extends CommonClass {
     }
 }
 
-export const isMethodCallClass = (target: CommonClass): target is MethodCallClass => {
+export const isMethodCallClass = (target: any): target is MethodCallClass => {
     return isCommonClass(target, MethodCallClass);
+};
+
+export const isMethodCallClassArray = (target: any): target is MethodCallClass[] => {
+    return Array.isArray(target) && target.every((t) => isMethodCallClass(t));
 };
 
 export const methodCallConvert = (
@@ -119,8 +123,12 @@ export class DotMethodCallClass extends CommonClass {
     }
 }
 
-export const isDotMethodCallClass = (target: CommonClass): target is DotMethodCallClass => {
+export const isDotMethodCallClass = (target: any): target is DotMethodCallClass => {
     return isCommonClass(target, DotMethodCallClass);
+};
+
+export const isDotMethodCallClassArray = (target: any): target is DotMethodCallClass[] => {
+    return Array.isArray(target) && target.every((t) => isDotMethodCallClass(t));
 };
 
 export const dotMethodCallConvert = (

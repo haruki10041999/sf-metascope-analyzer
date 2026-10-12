@@ -16,9 +16,10 @@ import {
 
 import { toPrimitiveValue, toTypeClass, CommonClass, isCommonClass } from './commons';
 import { qualifiedNameConvert } from './name';
-import { ExpressionClass, boundExpressionConvert } from './expression';
+import { ExpressionClass, boundExpressionConvert, isExpressionClass } from './expression';
 import { NormalQueryClass, normalQueryConvert } from './query';
 import { SoslClausesClass, soslClausesConvert } from './clause';
+import { isString } from './id';
 
 export class NormalLiteralClass extends CommonClass {
     private value: string | null = null;
@@ -46,26 +47,28 @@ export class NormalLiteralClass extends CommonClass {
     }
 }
 
-export const isNormalLiteralClass = (target: CommonClass): target is NormalLiteralClass => {
-    return target instanceof NormalLiteralClass;
+export const isNormalLiteralClass = (target: any): target is NormalLiteralClass => {
+    return isCommonClass(target, NormalLiteralClass);
+};
+
+export const isNormalLiteralClassArray = (target: any): target is NormalLiteralClass[] => {
+    return Array.isArray(target) && target.every((t) => isNormalLiteralClass(t));
 };
 
 export const normalLiteralConvert = (
     target: NormalLiteralTypeClass,
     errorClass: ErrorTypeClass[],
-): NormalLiteral => {
-    const normalLiteral: NormalLiteral = {
-        valueType: target.getValueType(),
-    };
+): NormalLiteralClass => {
+    const normalLiteral = new NormalLiteralClass();
+    normalLiteral.setValueType(target.getValueType());
 
-    const value = toPrimitiveValue(
-        target.getValue(),
-        (target): target is string => typeof target === 'string',
-        errorClass,
+    normalLiteral.setValue(
+        toPrimitiveValue(
+            target.getValue(),
+            (target): target is string => typeof target === 'string',
+            errorClass,
+        ),
     );
-    if (value) {
-        normalLiteral.value = value;
-    }
 
     return normalLiteral;
 };
@@ -106,32 +109,32 @@ export class WhenLiteralClass extends CommonClass {
     }
 }
 
-export const isWhenLiteralClass = (target: CommonClass): target is WhenLiteralClass => {
-    return target instanceof WhenLiteralClass;
+export const isWhenLiteralClass = (target: any): target is WhenLiteralClass => {
+    return isCommonClass(target, WhenLiteralClass);
+};
+
+export const isWhenLiteralClassArray = (target: any): target is WhenLiteralClass[] => {
+    return Array.isArray(target) && target.every((t) => isWhenLiteralClass(t));
 };
 
 export const whenLiteralConvert = (
     target: WhenLiteralTypeClass,
     errorClass: ErrorTypeClass[],
-): WhenLiteral => {
-    const whenLiteral: WhenLiteral = {
-        valueType: target.getValueType(),
-    };
+): WhenLiteralClass => {
+    const whenLiteral = new WhenLiteralClass();
+    whenLiteral.setValueType(target.getValueType());
 
     const valueTypeClass = target.getValue();
     if (typeof valueTypeClass === 'string') {
-        whenLiteral.value = valueTypeClass;
+        whenLiteral.setValue(valueTypeClass);
     } else {
         const nameTypeClass = toTypeClass(valueTypeClass, isQualifiedNameType, errorClass);
         if (nameTypeClass) {
-            whenLiteral.value = qualifiedNameConvert(nameTypeClass, errorClass);
+            whenLiteral.setValue(qualifiedNameConvert(nameTypeClass, errorClass));
         }
     }
 
-    const operator = target.getOperator();
-    if (operator) {
-        whenLiteral.operator = operator;
-    }
+    whenLiteral.setOperator(target.getOperator());
 
     return whenLiteral;
 };
@@ -139,89 +142,40 @@ export const whenLiteralConvert = (
 export const soqlLiteralConvert = (
     target: SoqlLiteralTypeClass,
     errorClass: ErrorTypeClass[],
-): NormalQuery => {
-    const soqlLiteral: NormalQuery = {
-        value: [],
-        from: [],
-        forClause: [],
-        whereClause: {
-            value: [],
-        },
-        orderByClause: [],
-        updateList: [],
-        withClause: {
-            field: [],
-        },
-        groupByClause: {
-            value: [],
-            having: {
-                value: [],
-            },
-        },
-    };
+): NormalQueryClass => {
+    const soqlLiteral = new NormalQueryClass();
 
-    const valueTypeClass = toTypeClass(target.getValue(), isNormalQueryType, errorClass);
-    if (valueTypeClass) {
-        const normalQuery = normalQueryConvert(valueTypeClass, errorClass);
-
-        soqlLiteral.value.push(...normalQuery.value);
-        soqlLiteral.from.push(...normalQuery.from);
-        soqlLiteral.forClause.push(...normalQuery.forClause);
-        soqlLiteral.orderByClause.push(...normalQuery.orderByClause);
-        soqlLiteral.updateList.push(...normalQuery.updateList);
-        soqlLiteral.whereClause.value.push(...normalQuery.whereClause.value);
-        soqlLiteral.withClause.field.push(...normalQuery.withClause.field);
-        soqlLiteral.groupByClause.value.push(...normalQuery.groupByClause.value);
-        soqlLiteral.groupByClause.having.value.push(...normalQuery.groupByClause.having.value);
-
-        if (normalQuery.limitClause) {
-            soqlLiteral.limitClause = normalQuery.limitClause;
-        }
-        if (normalQuery.usingScope) {
-            soqlLiteral.usingScope = normalQuery.usingScope;
-        }
-        if (normalQuery.offsetClause) {
-            soqlLiteral.offsetClause = normalQuery.offsetClause;
-        }
-        if (normalQuery.allRowsClause) {
-            soqlLiteral.allRowsClause = normalQuery.allRowsClause;
-        }
-        if (normalQuery.whereClause.operator) {
-            soqlLiteral.whereClause.operator = normalQuery.whereClause.operator;
-        }
-        if (normalQuery.withClause.value) {
-            soqlLiteral.withClause.value = normalQuery.withClause.value;
-        }
-
-        if (normalQuery.groupByClause.mode) {
-            soqlLiteral.groupByClause.mode = normalQuery.groupByClause.mode;
-        }
-
-        if (normalQuery.groupByClause.having.operator) {
-            soqlLiteral.groupByClause.having.operator = normalQuery.groupByClause.having.operator;
-        }
+    const queyTypeClass = toTypeClass(target.getValue(), isNormalQueryType, errorClass);
+    if (queyTypeClass) {
+        soqlLiteral.copy(normalQueryConvert(queyTypeClass, errorClass));
     }
 
     return soqlLiteral;
 };
 
 export class SoslLiteralClass extends CommonClass {
-    private value: string | Expression | null = null;
-    private soslClauses: SoslClauses | null = null;
+    private value: string | ExpressionClass | null = null;
+    private soslClauses: SoslClausesClass = new SoslClausesClass();
 
-    setValue(value: string | Expression | null) {
-        this.value = value;
+    setValue(value: string | ExpressionClass | null) {
+        if (isString(this.value) && isString(value)) {
+            this.value = value;
+        } else if (isExpressionClass(this.value) && isExpressionClass(value)) {
+            this.value.copy(value);
+        } else {
+            this.value = value;
+        }
     }
 
-    setSoslClauses(soslClauses: SoslClauses | null): void {
-        this.soslClauses = soslClauses;
+    setSoslClauses(soslClauses: SoslClausesClass): void {
+        this.soslClauses.copy(soslClauses);
     }
 
-    getValue(): string | Expression | null {
+    getValue(): string | ExpressionClass | null {
         return this.value;
     }
 
-    getSoslClauses(): SoslClauses | null {
+    getSoslClauses(): SoslClausesClass {
         return this.soslClauses;
     }
 
@@ -231,17 +185,19 @@ export class SoslLiteralClass extends CommonClass {
     }
 }
 
+export const isSoslLiteralClass = (target: any): target is SoslLiteralClass => {
+    return isCommonClass(target, SoslLiteralClass);
+};
+
+export const isSoslLiteralClassArray = (target: any): target is SoslLiteralClass[] => {
+    return Array.isArray(target) && target.every((t) => isSoslLiteralClass(t));
+};
+
 export const soslLiteralConvert = (
     target: SoslLiteralTypeClass,
     errorClass: ErrorTypeClass[],
-): SoslLiteral => {
-    const soslLiteral: SoslLiteral = {
-        soslClauses: {
-            fieldSpecList: [],
-            withList: [],
-            updateList: [],
-        },
-    };
+): SoslLiteralClass => {
+    const soslLiteral = new SoslLiteralClass();
 
     const soslClausesTypeClass = toTypeClass(
         target.getSoslClauses(),
@@ -249,30 +205,16 @@ export const soslLiteralConvert = (
         errorClass,
     );
     if (soslClausesTypeClass) {
-        const soslClauses = soslClausesConvert(soslClausesTypeClass, errorClass);
-
-        soslLiteral.soslClauses.fieldSpecList.push(...soslClauses.fieldSpecList);
-        soslLiteral.soslClauses.withList.push(...soslClauses.withList);
-        soslLiteral.soslClauses.updateList.push(...soslClauses.updateList);
-
-        if (soslClauses.value) {
-            soslLiteral.soslClauses.value = soslClauses.value;
-        }
-        if (soslClauses.limitClause) {
-            soslLiteral.soslClauses.limitClause = soslClauses.limitClause;
-        }
+        soslLiteral.setSoslClauses(soslClausesConvert(soslClausesTypeClass, errorClass));
     }
 
     const valueTypeClass = target.getValue();
     if (typeof valueTypeClass === 'string') {
-        soslLiteral.value = valueTypeClass;
+        soslLiteral.setValue(valueTypeClass);
     } else {
         const typeClass = toTypeClass(valueTypeClass, isBoundExpressionType, errorClass);
         if (typeClass) {
-            const expression = boundExpressionConvert(typeClass, errorClass);
-            if (expression) {
-                soslLiteral.value = expression;
-            }
+            soslLiteral.setValue(boundExpressionConvert(typeClass, errorClass));
         }
     }
 
@@ -281,21 +223,21 @@ export const soslLiteralConvert = (
 
 export class SoslLiteralAltClass extends CommonClass {
     private value: string | null = null;
-    private soslClauses: SoslClauses | null = null;
+    private soslClauses: SoslClausesClass = new SoslClausesClass();
 
     setValue(value: string | null) {
         this.value = value;
     }
 
-    setSoslClauses(soslClauses: SoslClauses | null): void {
-        this.soslClauses = soslClauses;
+    setSoslClauses(soslClauses: SoslClausesClass): void {
+        this.soslClauses.copy(soslClauses);
     }
 
     getValue(): string | null {
         return this.value;
     }
 
-    getSoslClauses(): SoslClauses | null {
+    getSoslClauses(): SoslClausesClass {
         return this.soslClauses;
     }
 
@@ -305,21 +247,21 @@ export class SoslLiteralAltClass extends CommonClass {
     }
 }
 
-export const isSoslLiteralAltClass = (target: CommonClass): target is SoslLiteralAltClass => {
-    return target instanceof SoslLiteralAltClass;
+export const isSoslLiteralAltClass = (target: any): target is SoslLiteralAltClass => {
+    return isCommonClass(target, SoslLiteralAltClass);
+};
+
+export const isSoslLiteralAltClassArray = (
+    target: CommonClass,
+): target is SoslLiteralAltClass[] => {
+    return Array.isArray(target) && target.every((t) => isSoslLiteralAltClass(t));
 };
 
 export const soslLiteralAltConvert = (
     target: SoslLiteralAltTypeClass,
     errorClass: ErrorTypeClass[],
-): SoslLiteralAlt => {
-    const soslLiteralAlt: SoslLiteralAlt = {
-        soslClauses: {
-            fieldSpecList: [],
-            withList: [],
-            updateList: [],
-        },
-    };
+): SoslLiteralAltClass => {
+    const soslLiteralAlt = new SoslLiteralAltClass();
 
     const soslClausesTypeClass = toTypeClass(
         target.getSoslClauses(),
@@ -327,28 +269,16 @@ export const soslLiteralAltConvert = (
         errorClass,
     );
     if (soslClausesTypeClass) {
-        const soslClauses = soslClausesConvert(soslClausesTypeClass, errorClass);
-
-        soslLiteralAlt.soslClauses.fieldSpecList.push(...soslClauses.fieldSpecList);
-        soslLiteralAlt.soslClauses.withList.push(...soslClauses.withList);
-        soslLiteralAlt.soslClauses.updateList.push(...soslClauses.updateList);
-
-        if (soslClauses.value) {
-            soslLiteralAlt.soslClauses.value = soslClauses.value;
-        }
-        if (soslClauses.limitClause) {
-            soslLiteralAlt.soslClauses.limitClause = soslClauses.limitClause;
-        }
+        soslLiteralAlt.setSoslClauses(soslClausesConvert(soslClausesTypeClass, errorClass));
     }
 
-    const value = toPrimitiveValue(
-        target.getValue(),
-        (target): target is string => typeof target === 'string',
-        errorClass,
+    soslLiteralAlt.setValue(
+        toPrimitiveValue(
+            target.getValue(),
+            (target): target is string => typeof target === 'string',
+            errorClass,
+        ),
     );
-    if (value) {
-        soslLiteralAlt.value = value;
-    }
 
     return soslLiteralAlt;
 };
@@ -390,30 +320,29 @@ export class SignedLiteralClass extends CommonClass {
 }
 
 export const isSignedLiteralClass = (target: CommonClass): target is SignedLiteralClass => {
-    return target instanceof SignedLiteralClass;
+    return isCommonClass(target, SignedLiteralClass);
+};
+
+export const isSignedLiteralClassArray = (target: CommonClass): target is SignedLiteralClass[] => {
+    return Array.isArray(target) && target.every((t) => isSignedLiteralClass(t));
 };
 
 export const signedIntegerConvert = (
     target: SignedIntegerTypeClass,
     errorClass: ErrorTypeClass[],
-): SignedLiteral => {
-    const signedInteger: SignedLiteral = {
-        valueType: target.getValueType(),
-    };
+): SignedLiteralClass => {
+    const signedInteger = new SignedLiteralClass();
+    signedInteger.setOperator(target.getValueType());
 
-    const value = toPrimitiveValue(
-        target.getValue(),
-        (target): target is string => typeof target === 'string',
-        errorClass,
+    signedInteger.setValue(
+        toPrimitiveValue(
+            target.getValue(),
+            (target): target is string => typeof target === 'string',
+            errorClass,
+        ),
     );
-    if (value) {
-        signedInteger.value = value;
-    }
 
-    const operator = target.getOperator();
-    if (operator) {
-        signedInteger.operator = operator;
-    }
+    signedInteger.setOperator(target.getOperator());
 
     return signedInteger;
 };
@@ -421,24 +350,19 @@ export const signedIntegerConvert = (
 export const signedNumberConvert = (
     target: SignedNumberTypeClass,
     errorClass: ErrorTypeClass[],
-): SignedLiteral => {
-    const signedNumber: SignedLiteral = {
-        valueType: target.getValueType(),
-    };
+): SignedLiteralClass => {
+    const signedNumber = new SignedLiteralClass();
+    signedNumber.setValueType(target.getValueType());
 
-    const value = toPrimitiveValue(
-        target.getValue(),
-        (target): target is string => typeof target === 'string',
-        errorClass,
+    signedNumber.setValue(
+        toPrimitiveValue(
+            target.getValue(),
+            (target): target is string => typeof target === 'string',
+            errorClass,
+        ),
     );
-    if (value) {
-        signedNumber.value = value;
-    }
 
-    const operator = target.getOperator();
-    if (operator) {
-        signedNumber.operator = operator;
-    }
+    signedNumber.setOperator(target.getOperator());
 
     return signedNumber;
 };

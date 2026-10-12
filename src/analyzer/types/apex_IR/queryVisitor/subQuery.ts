@@ -105,4 +105,3 @@ export class SubQueryTypeClass extends SoqlQueryTypeClass<SubFieldListTypeClass>
 export const isSubQueryType = (target: CommonTypeClass): target is SubQueryTypeClass => {
     return target instanceof SubQueryTypeClass;
 };
-

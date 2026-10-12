@@ -20,9 +20,8 @@ import { toTypeClass, CommonClass, isCommonClass } from './commons';
 import { NormalModifierClass, normalModifierConvert } from './modifier';
 import { NormalStatementClass, normalStatementConvert } from './statement';
 import {
-    AnonymousBlockMemberClass,
+    AnonymousTriggerBlockMemberClass,
     anonymousBlockMemberConvert,
-    TriggerBlockMemberClass,
     triggerBlockMemberConvert,
 } from './member';
 
@@ -30,7 +29,8 @@ export const normalBlockConvert = (
     target: NormalBlockTypeClass,
     errorClass: ErrorTypeClass[],
 ): NormalStatementClass[] => {
-    const values: NormalStatement[] = [];
+    const values: NormalStatementClass[] = [];
+
     target.getValue().forEach((item) => {
         const valueTypeClass = toTypeClass(item, isNormalStatementType, errorClass);
         if (valueTypeClass) {
@@ -47,19 +47,21 @@ export const normalBlockConvert = (
 export const finallyBlockConvert = (
     target: FinallyBlockTypeClass,
     errorClass: ErrorTypeClass[],
-): NormalStatement[] => {
+): NormalStatementClass[] => {
+    const values: NormalStatementClass[] = [];
+
     const valueTypeClass = toTypeClass(target.getValue(), isNormalBlockType, errorClass);
     if (valueTypeClass) {
-        return normalBlockConvert(valueTypeClass, errorClass);
+        values.push(...normalBlockConvert(valueTypeClass, errorClass));
     }
 
-    return [];
+    return values;
 };
 
 export class PropertyBlockClass extends CommonClass {
     private type: 'getter' | 'setter' | null = null;
-    private value: NormalStatement[] = [];
-    private modifier: NormalModifier[] = [];
+    private value: NormalStatementClass[] = [];
+    private modifier: NormalModifierClass[] = [];
 
     setType(type: 'getter' | 'setter' | null): void {
         this.type = type;
@@ -69,7 +71,7 @@ export class PropertyBlockClass extends CommonClass {
         this.value = [];
     }
 
-    setValue(value: NormalStatement[]): void {
+    setValue(value: NormalStatementClass[]): void {
         this.value.push(...value);
     }
 
@@ -77,7 +79,7 @@ export class PropertyBlockClass extends CommonClass {
         this.modifier = [];
     }
 
-    setModifier(modifier: NormalModifier[]): void {
+    setModifier(modifier: NormalModifierClass[]): void {
         this.modifier.push(...modifier);
     }
 
@@ -85,11 +87,11 @@ export class PropertyBlockClass extends CommonClass {
         return this.type;
     }
 
-    getValue(): NormalStatement[] {
+    getValue(): NormalStatementClass[] {
         return this.value;
     }
 
-    getModifier(): NormalModifier[] {
+    getModifier(): NormalModifierClass[] {
         return this.modifier;
     }
 
@@ -102,18 +104,19 @@ export class PropertyBlockClass extends CommonClass {
     }
 }
 
-export const isPropertyBlockClass = (target: CommonClass): target is PropertyBlockClass => {
+export const isPropertyBlockClass = (target: any): target is PropertyBlockClass => {
     return isCommonClass(target, PropertyBlockClass);
+};
+
+export const isPropertyBlockClassArray = (target: any): target is PropertyBlockClass[] => {
+    return Array.isArray(target) && target.every((t) => isPropertyBlockClass(t));
 };
 
 export const propertyBlockConvert = (
     target: PropertyBlockTypeClass,
     errorClass: ErrorTypeClass[],
-): PropertyBlock => {
-    const propertyBlock: PropertyBlock = {
-        value: [],
-        modifier: [],
-    };
+): PropertyBlockClass => {
+    const propertyBlock = new PropertyBlockClass();
 
     const valueTypeClass = toTypeClass(
         target.getValue(),
@@ -123,23 +126,26 @@ export const propertyBlockConvert = (
     );
     if (valueTypeClass) {
         if (isGetterType(valueTypeClass)) {
-            propertyBlock.type = 'getter';
-            propertyBlock.value.push(...getterConvert(valueTypeClass, errorClass));
-        } else if (isSetterType(valueTypeClass)) {
-            propertyBlock.type = 'setter';
-            propertyBlock.value.push(...setterConvert(valueTypeClass, errorClass));
+            propertyBlock.setType('getter');
+            propertyBlock.setValue(getterConvert(valueTypeClass, errorClass));
+        }
+        if (isSetterType(valueTypeClass)) {
+            propertyBlock.setType('setter');
+            propertyBlock.setValue(setterConvert(valueTypeClass, errorClass));
         }
     }
 
+    const modifiers: NormalModifierClass[] = [];
     target.getModifier().forEach((m) => {
         const typeClass = toTypeClass(m, isNormalModifierType, errorClass);
         if (typeClass) {
             const modifier = normalModifierConvert(typeClass, errorClass);
             if (modifier) {
-                propertyBlock.modifier.push(modifier);
+                modifiers.push(modifier);
             }
         }
     });
+    propertyBlock.setModifier(modifiers);
 
     return propertyBlock;
 };
@@ -147,8 +153,9 @@ export const propertyBlockConvert = (
 export const anonymousBlockConvert = (
     target: AnonymousBlockTypeClass,
     errorClass: ErrorTypeClass[],
-): AnonymousBlockMember[] => {
-    const values: AnonymousBlockMember[] = [];
+): AnonymousTriggerBlockMemberClass[] => {
+    const values: AnonymousTriggerBlockMemberClass[] = [];
+
     target.getValue().forEach((item) => {
         const valueTypeClass = toTypeClass(item, isAnonymousBlockMemberType, errorClass);
         if (valueTypeClass) {
@@ -162,8 +169,9 @@ export const anonymousBlockConvert = (
 export const triggerBlockConvert = (
     target: TriggerBlockTypeClass,
     errorClass: ErrorTypeClass[],
-): TriggerBlockMember[] => {
-    const values: TriggerBlockMember[] = [];
+): AnonymousTriggerBlockMemberClass[] => {
+    const values: AnonymousTriggerBlockMemberClass[] = [];
+
     target.getValue().forEach((item) => {
         const valueTypeClass = toTypeClass(item, isTriggerBlockMemberType, errorClass);
         if (valueTypeClass) {
@@ -177,12 +185,14 @@ export const triggerBlockConvert = (
 export const getterConvert = (
     target: GetterTypeClass,
     errorClass: ErrorTypeClass[],
-): NormalStatement[] => {
+): NormalStatementClass[] => {
+    const values: NormalStatementClass[] = [];
+
     const value = target.getValue();
     if (value) {
         const valueTypeClass = toTypeClass(value, isNormalBlockType, errorClass);
         if (valueTypeClass) {
-            return normalBlockConvert(valueTypeClass, errorClass);
+            values.push(...normalBlockConvert(valueTypeClass, errorClass));
         }
     }
 
@@ -192,14 +202,16 @@ export const getterConvert = (
 export const setterConvert = (
     target: SetterTypeClass,
     errorClass: ErrorTypeClass[],
-): NormalStatement[] => {
+): NormalStatementClass[] => {
+    const values: NormalStatementClass[] = [];
+
     const value = target.getValue();
     if (value) {
         const valueTypeClass = toTypeClass(value, isNormalBlockType, errorClass);
         if (valueTypeClass) {
-            return normalBlockConvert(valueTypeClass, errorClass);
+            values.push(...normalBlockConvert(valueTypeClass, errorClass));
         }
     }
 
-    return [];
+    return values;
 };

@@ -54,10 +54,14 @@ export class VariableDeclaratorClass extends CommonClass {
     }
 }
 
-export const isVariableDeclaratorClass = (
-    target: CommonClass,
-): target is VariableDeclaratorClass => {
+export const isVariableDeclaratorClass = (target: any): target is VariableDeclaratorClass => {
     return isCommonClass(target, VariableDeclaratorClass);
+};
+
+export const isVariableDeclaratorClassArray = (
+    target: any,
+): target is VariableDeclaratorClass[] => {
+    return Array.isArray(target) && target.every((t) => isVariableDeclaratorClass(t));
 };
 
 export const variableDeclaratorConvert = (

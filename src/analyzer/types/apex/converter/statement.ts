@@ -133,8 +133,12 @@ export class DmlStatementClass extends CommonClass {
     }
 }
 
-export const isDmlStatementClass = (target: CommonClass): target is DmlStatementClass => {
+export const isDmlStatementClass = (target: any): target is DmlStatementClass => {
     return isCommonClass(target, DmlStatementClass);
+};
+
+export const isDmlStatementClassArray = (target: any): target is DmlStatementClass[] => {
+    return Array.isArray(target) && target.every((t) => isDmlStatementClass(t));
 };
 
 export const insertStatementConvert = (
@@ -278,8 +282,12 @@ export class UpsertStatementClass extends CommonClass {
     }
 }
 
-export const isUpsertStatementClass = (target: CommonClass): target is UpsertStatementClass => {
+export const isUpsertStatementClass = (target: any): target is UpsertStatementClass => {
     return isCommonClass(target, UpsertStatementClass);
+};
+
+export const isUpsertStatementClassArray = (target: any): target is UpsertStatementClass[] => {
+    return Array.isArray(target) && target.every((t) => isUpsertStatementClass(t));
 };
 
 export const upsertStatementConvert = (
@@ -346,8 +354,15 @@ export class MergeStatementClass extends CommonClass {
     }
 }
 
-export const isMergeStatementClass = (target: CommonClass): target is MergeStatementClass => {
+export const isMergeStatementClass = (target: any): target is MergeStatementClass => {
     return isCommonClass(target, MergeStatementClass);
+};
+
+export const isMergeStatementClassArray = (target: any): target is MergeStatementClass[] => {
+    return (
+        Array.isArray(target) &&
+        target.every((t) => t instanceof CommonClass && isMergeStatementClass(t))
+    );
 };
 
 export const mergeStatementConvert = (
@@ -410,8 +425,12 @@ export class DoWhileStatementClass extends CommonClass {
     }
 }
 
-export const isDoWhileStatementClass = (target: CommonClass): target is DoWhileStatementClass => {
+export const isDoWhileStatementClass = (target: any): target is DoWhileStatementClass => {
     return isCommonClass(target, DoWhileStatementClass);
+};
+
+export const isDoWhileStatementClassArray = (target: any): target is DoWhileStatementClass[] => {
+    return Array.isArray(target) && target.every((t) => isDoWhileStatementClass(t));
 };
 
 export const doWhileStatementConvert = (
@@ -475,8 +494,12 @@ export class ForStatementClass extends CommonClass {
     }
 }
 
-export const isForStatementClass = (target: CommonClass): target is ForStatementClass => {
+export const isForStatementClass = (target: any): target is ForStatementClass => {
     return isCommonClass(target, ForStatementClass);
+};
+
+export const isForStatementClassArray = (target: any): target is ForStatementClass[] => {
+    return Array.isArray(target) && target.every((t) => isForStatementClass(t));
 };
 
 export const forStatementConvert = (
@@ -533,8 +556,12 @@ export class IfStatementClass extends CommonClass {
     }
 }
 
-export const isIfStatementClass = (target: CommonClass): target is IfStatementClass => {
+export const isIfStatementClass = (target: any): target is IfStatementClass => {
     return isCommonClass(target, IfStatementClass);
+};
+
+export const isIfStatementClassArray = (target: any): target is IfStatementClass[] => {
+    return Array.isArray(target) && target.every((t) => isIfStatementClass(t));
 };
 
 export const ifStatementConvert = (
@@ -647,8 +674,12 @@ export class RunAsStatementClass extends CommonClass {
     }
 }
 
-export const isRunAsStatementClass = (target: CommonClass): target is RunAsStatementClass => {
+export const isRunAsStatementClass = (target: any): target is RunAsStatementClass => {
     return isCommonClass(target, RunAsStatementClass);
+};
+
+export const isRunAsStatementClassArray = (target: any): target is RunAsStatementClass[] => {
+    return Array.isArray(target) && target.every((t) => isRunAsStatementClass(t));
 };
 
 export const runAsStatementConvert = (
@@ -705,8 +736,12 @@ export class SwitchStatementClass extends CommonClass {
     }
 }
 
-export const isSwitchStatementClass = (target: CommonClass): target is SwitchStatementClass => {
+export const isSwitchStatementClass = (target: any): target is SwitchStatementClass => {
     return isCommonClass(target, SwitchStatementClass);
+};
+
+export const isSwitchStatementClassArray = (target: any): target is SwitchStatementClass[] => {
+    return Array.isArray(target) && target.every((t) => isSwitchStatementClass(t));
 };
 
 export const switchStatementConvert = (
@@ -800,8 +835,12 @@ export class TryStatementClass extends CommonClass {
     }
 }
 
-export const isTryStatementClass = (target: CommonClass): target is TryStatementClass => {
+export const isTryStatementClass = (target: any): target is TryStatementClass => {
     return isCommonClass(target, TryStatementClass);
+};
+
+export const isTryStatementClassArray = (target: any): target is TryStatementClass[] => {
+    return Array.isArray(target) && target.every((t) => isTryStatementClass(t));
 };
 
 export const tryStatementConvert = (
@@ -865,8 +904,12 @@ export class WhileStatementClass extends CommonClass {
     }
 }
 
-export const isWhileStatementClass = (target: CommonClass): target is WhileStatementClass => {
+export const isWhileStatementClass = (target: any): target is WhileStatementClass => {
     return isCommonClass(target, WhileStatementClass);
+};
+
+export const isWhileStatementClassArray = (target: any): target is WhileStatementClass[] => {
+    return Array.isArray(target) && target.every((t) => isWhileStatementClass(t));
 };
 
 export const whileStatementConvert = (
@@ -1177,8 +1220,12 @@ export class NormalStatementClass extends CommonClass {
     }
 }
 
-export const isNormalStatementClass = (target: CommonClass): target is NormalStatementClass => {
+export const isNormalStatementClass = (target: any): target is NormalStatementClass => {
     return isCommonClass(target, NormalStatementClass);
+};
+
+export const isNormalStatementClassArray = (target: any): target is NormalStatementClass[] => {
+    return Array.isArray(target) && target.every((t) => isNormalStatementClass(t));
 };
 
 export const normalStatementConvert = (

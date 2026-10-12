@@ -35,4 +35,3 @@ export class DotMethodCallTypeClass extends CallTypeClass<AnyIdTypeClass, Expres
 export const isDotMethodCallType = (target: CommonTypeClass): target is DotMethodCallTypeClass => {
     return target instanceof DotMethodCallTypeClass;
 };
-

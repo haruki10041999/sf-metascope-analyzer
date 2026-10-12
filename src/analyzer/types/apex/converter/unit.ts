@@ -15,13 +15,13 @@ import { toPrimitiveValue, toTypeClass, CommonClass, isCommonClass } from './com
 import { normalIdConvert } from './id';
 import { anonymousBlockConvert, triggerBlockConvert } from './block';
 import { TypeDeclarationClass, typeDeclarationConvert } from './declaration';
-import { AnonymousBlockMemberClass, TriggerBlockMemberClass } from './member';
+import { AnonymousTriggerBlockMemberClass } from './member';
 
 export const anonymousUnitConvert = (
     target: AnonymousUnitTypeClass,
     errorClass: ErrorTypeClass[],
-): AnonymousBlockMemberClass[] => {
-    const value: AnonymousBlockMemberClass[] = [];
+): AnonymousTriggerBlockMemberClass[] => {
+    const value: AnonymousTriggerBlockMemberClass[] = [];
 
     const valueTypeClass = toTypeClass(target.getValue(), isAnonymousBlockType, errorClass);
     if (valueTypeClass) {
@@ -71,8 +71,12 @@ export class TriggerCaseClass extends CommonClass {
     }
 }
 
-export const isTriggerCaseClass = (target: CommonClass): target is TriggerCaseClass => {
+export const isTriggerCaseClass = (target: any): target is TriggerCaseClass => {
     return isCommonClass(target, TriggerCaseClass);
+};
+
+export const isTriggerCaseClassArray = (target: any): target is TriggerCaseClass[] => {
+    return Array.isArray(target) && target.every((t) => isTriggerCaseClass(t));
 };
 
 export const triggerCaseConvert = (
@@ -97,7 +101,7 @@ export const triggerCaseConvert = (
 export class TriggerUnitClass extends CommonClass {
     private value: string | null = null;
     private triggerCaseType: TriggerCaseClass[] = [];
-    private block: TriggerBlockMemberClass[] = [];
+    private block: AnonymousTriggerBlockMemberClass[] = [];
 
     setValue(value: string | null): void {
         this.value = value;
@@ -115,7 +119,7 @@ export class TriggerUnitClass extends CommonClass {
         this.block = [];
     }
 
-    setBlock(block: TriggerBlockMemberClass[]): void {
+    setBlock(block: AnonymousTriggerBlockMemberClass[]): void {
         this.block.push(...block);
     }
 
@@ -127,7 +131,7 @@ export class TriggerUnitClass extends CommonClass {
         return this.triggerCaseType;
     }
 
-    getBlock(): TriggerBlockMemberClass[] {
+    getBlock(): AnonymousTriggerBlockMemberClass[] {
         return this.block;
     }
 
@@ -140,8 +144,15 @@ export class TriggerUnitClass extends CommonClass {
     }
 }
 
-export const isTriggerUnitClass = (target: CommonClass): target is TriggerUnitClass => {
+export const isTriggerUnitClass = (target: any): target is TriggerUnitClass => {
     return isCommonClass(target, TriggerUnitClass);
+};
+
+export const isTriggerUnitClassArray = (target: any): target is TriggerUnitClass[] => {
+    return (
+        Array.isArray(target) &&
+        target.every((t) => t instanceof CommonClass && isTriggerUnitClass(t))
+    );
 };
 
 export const triggerUnitConvert = (

@@ -52,7 +52,7 @@ import {
 } from '../../apex_IR';
 
 import { toPrimitiveValue, toTypeClass, CommonClass, isCommonClass } from './commons';
-import { normalIdConvert, soqlIdConvert } from './id';
+import { isString, isStringArray, normalIdConvert, soqlIdConvert } from './id';
 import { qualifiedNameConvert, fieldNameConvert, dataCategoryNameConvert } from './name';
 import { NormalStatementClass } from './statement';
 import { normalBlockConvert } from './block';
@@ -66,15 +66,23 @@ import {
     networkListConvert,
 } from './list';
 import {
-    Expression,
+    ExpressionClass,
+    LogicalExpressionClass,
+    WhereLogicalExpressionClass,
     boundExpressionConvert,
     filteringExpressionConvert,
-    LogicalExpression,
+    isExpressionClass,
+    isLogicalExpressionClass,
     logicalExpressionConvert,
-    WhereLogicalExpression,
     whereLogicalExpressionConvert,
 } from './expression';
-import { SoqlFunction, soqlFunctionConvert, searchGroupConvert, FieldSpec } from './query';
+import {
+    SoqlFunctionClass,
+    FieldSpecClass,
+    soqlFunctionConvert,
+    searchGroupConvert,
+    isSoqlFunctionClass,
+} from './query';
 
 export const allRowsClauseConvert = (
     target: AllRowsClauseTypeClass,
@@ -148,8 +156,12 @@ export class CatchClauseClass extends CommonClass {
     }
 }
 
-export const isCatchClauseClass = (target: CommonClass): target is CatchClauseClass => {
+export const isCatchClauseClass = (target: any): target is CatchClauseClass => {
     return isCommonClass(target, CatchClauseClass);
+};
+
+export const isCatchClauseClassArray = (target: any): target is CatchClauseClass[] => {
+    return Array.isArray(target) && target.every((t) => isCatchClauseClass(t));
 };
 
 export const catchClauseConvert = (
@@ -177,17 +189,14 @@ export const catchClauseConvert = (
     }
     catchClause.setBlock(block);
 
-    const modifier: NormalModifierClass[] = [];
+    const modifiers: NormalModifierClass[] = [];
     target.getModifier().forEach((m) => {
         const typeClass = toTypeClass(m, isNormalModifierType, errorClass);
         if (typeClass) {
-            const modifier = normalModifierConvert(typeClass, errorClass);
-            if (modifier) {
-                modifier.push(modifier);
-            }
+            modifiers.push(normalModifierConvert(typeClass, errorClass));
         }
     });
-    catchClause.setModifier(modifier);
+    catchClause.setModifier(modifiers);
 
     return catchClause;
 };
@@ -233,32 +242,30 @@ export class DataCategorySelectionClass extends CommonClass {
     }
 }
 
-export const isDataCategorySelectionClass = (
-    target: CommonClass,
-): target is DataCategorySelectionClass => {
+export const isDataCategorySelectionClass = (target: any): target is DataCategorySelectionClass => {
     return isCommonClass(target, DataCategorySelectionClass);
+};
+
+export const isDataCategorySelectionClassArray = (
+    target: any,
+): target is DataCategorySelectionClass[] => {
+    return Array.isArray(target) && target.every((t) => isDataCategorySelectionClass(t));
 };
 
 export const dataCategorySelectionConvert = (
     target: DataCategorySelectionTypeClass,
     errorClass: ErrorTypeClass[],
-): DataCategorySelection => {
-    const category: string[] = [];
+): DataCategorySelectionClass => {
+    const dataCategotrSelection = new DataCategorySelectionClass();
+
     const categoryTypeClass = toTypeClass(target.getCategory(), isDataCategoryNameType, errorClass);
     if (categoryTypeClass) {
-        category.push(...dataCategoryNameConvert(categoryTypeClass, errorClass));
+        dataCategotrSelection.setCategory(dataCategoryNameConvert(categoryTypeClass, errorClass));
     }
-
-    const dataCategorySelection: DataCategorySelection = {
-        category: category,
-    };
 
     const valueTypeClass = toTypeClass(target.getValue(), isSoqlIdType, errorClass);
     if (valueTypeClass) {
-        const soqlId = soqlIdConvert(valueTypeClass, errorClass);
-        if (soqlId) {
-            dataCategorySelection.value = soqlId;
-        }
+        dataCategotrSelection.setValue(soqlIdConvert(valueTypeClass, errorClass));
     }
 
     const selectorTypeClass = toTypeClass(
@@ -267,13 +274,10 @@ export const dataCategorySelectionConvert = (
         errorClass,
     );
     if (selectorTypeClass) {
-        const selector = filteringSelectorConvert(selectorTypeClass, errorClass);
-        if (selector) {
-            dataCategorySelection.selector = selector;
-        }
+        dataCategotrSelection.setSelector(filteringSelectorConvert(selectorTypeClass, errorClass));
     }
 
-    return dataCategorySelection;
+    return dataCategotrSelection;
 };
 
 export const elseClauseConvert = (
@@ -291,7 +295,7 @@ export const elseClauseConvert = (
 export const fieldGroupByConvert = (
     target: FieldGroupByTypeClass,
     errorClass: ErrorTypeClass[],
-): string[] | SoqlFunction | null => {
+): string[] | SoqlFunctionClass | null => {
     const valueTypeClass = toTypeClass(
         target.getValue(),
         (target): target is FieldNameTypeClass | SoqlFunctionTypeClass =>
@@ -312,13 +316,33 @@ export const fieldGroupByConvert = (
     return null;
 };
 
+export const isFieldGroupBy = (target: any): target is string[] | SoqlFunctionClass => {
+    return isStringArray(target) && isSoqlFunctionClass(target);
+};
+
+export const isFieldGroupByArray = (target: any): target is (string[] | SoqlFunctionClass)[] => {
+    return Array.isArray(target) && target.every((t) => isFieldGroupBy(t));
+};
+
 export class FieldOrderClass extends CommonClass {
-    private value: string[] | SoqlFunction = null;
+    private value: string[] | SoqlFunctionClass | null = null;
     private direction: string | null = null;
     private nulls: string | null = null;
 
-    setValue(value: string | null): void {
-        this.value = value;
+    resetValue(): void {
+        if (isStringArray(this.value)) {
+            this.value = [];
+        }
+    }
+
+    setValue(value: string[] | SoqlFunctionClass | null): void {
+        if (isStringArray(this.value) && isStringArray(value)) {
+            this.value.push(...value);
+        } else if (isSoqlFunctionClass(this.value) && isSoqlFunctionClass(value)) {
+            this.value.copy(value);
+        } else {
+            this.value = value;
+        }
     }
 
     setDirection(direction: string | null): void {
@@ -329,7 +353,7 @@ export class FieldOrderClass extends CommonClass {
         this.nulls = nulls;
     }
 
-    getValue(): string | null {
+    getValue(): string[] | SoqlFunctionClass | null {
         return this.value;
     }
 
@@ -342,21 +366,26 @@ export class FieldOrderClass extends CommonClass {
     }
 
     copy(commonClass: FieldOrderClass): void {
+        this.resetValue();
         this.setValue(commonClass.getValue());
         this.setDirection(commonClass.getDirection());
         this.setNulls(commonClass.getNulls());
     }
 }
 
-export const isFieldOrderClass = (target: CommonClass): target is FieldOrderClass => {
+export const isFieldOrderClass = (target: any): target is FieldOrderClass => {
     return isCommonClass(target, FieldOrderClass);
+};
+
+export const isFieldOrderClassArray = (target: any): target is FieldOrderClass[] => {
+    return Array.isArray(target) && target.every((t) => isFieldOrderClass(t));
 };
 
 export const fieldOrderConvert = (
     target: FieldOrderTypeClass,
     errorClass: ErrorTypeClass[],
-): FieldOrder => {
-    const fieldOrder: FieldOrder = {};
+): FieldOrderClass => {
+    const fieldOrder = new FieldOrderClass();
 
     const valueTypeClass = toTypeClass(
         target.getValue(),
@@ -367,23 +396,16 @@ export const fieldOrderConvert = (
 
     if (valueTypeClass) {
         if (isFieldNameType(valueTypeClass)) {
-            fieldOrder.value = fieldNameConvert(valueTypeClass, errorClass);
+            fieldOrder.setValue(fieldNameConvert(valueTypeClass, errorClass));
         }
 
         if (isSoqlFunctionType(valueTypeClass)) {
-            fieldOrder.value = soqlFunctionConvert(valueTypeClass, errorClass);
+            fieldOrder.setValue(soqlFunctionConvert(valueTypeClass, errorClass));
         }
     }
 
-    const direction = target.getDirection();
-    if (direction) {
-        fieldOrder.direction = direction;
-    }
-
-    const nulls = target.getNulls();
-    if (nulls) {
-        fieldOrder.nulls = nulls;
-    }
+    fieldOrder.setDirection(target.getDirection());
+    fieldOrder.setNulls(target.getNulls());
 
     return fieldOrder;
 };
@@ -418,15 +440,15 @@ export const forClausesConvert = (
 };
 
 export class GroupByClauseClass extends CommonClass {
-    private value: (string[] | SoqlFunction)[] = [];
+    private value: (string[] | SoqlFunctionClass)[] = [];
     private mode: string | null = null;
-    private having: LogicalExpression | null = [];
+    private having: LogicalExpressionClass = new LogicalExpressionClass();
 
     resetValue(): void {
         this.value = [];
     }
 
-    setValue(value: (string[] | SoqlFunction)[]): void {
+    setValue(value: (string[] | SoqlFunctionClass)[]): void {
         this.value.push(...value);
     }
 
@@ -434,11 +456,11 @@ export class GroupByClauseClass extends CommonClass {
         this.mode = mode;
     }
 
-    setHaving(having: LogicalExpression | null): void {
-        this.having = having;
+    setHaving(having: LogicalExpressionClass): void {
+        this.having.copy(having);
     }
 
-    getValue(): (string[] | SoqlFunction)[] {
+    getValue(): (string[] | SoqlFunctionClass)[] {
         return this.value;
     }
 
@@ -446,7 +468,7 @@ export class GroupByClauseClass extends CommonClass {
         return this.mode;
     }
 
-    getHaving(): LogicalExpression | null {
+    getHaving(): LogicalExpressionClass {
         return this.having;
     }
 
@@ -458,40 +480,32 @@ export class GroupByClauseClass extends CommonClass {
     }
 }
 
-export const isGroupByClauseClass = (target: CommonClass): target is GroupByClauseClass => {
+export const isGroupByClauseClass = (target: any): target is GroupByClauseClass => {
     return isCommonClass(target, GroupByClauseClass);
+};
+
+export const isGroupByClauseClassArray = (target: any): target is GroupByClauseClass[] => {
+    return Array.isArray(target) && target.every((t) => isGroupByClauseClass(t));
 };
 
 export const groupByClauseConvert = (
     target: GroupByClauseTypeClass,
     errorClass: ErrorTypeClass[],
-): GroupByClause => {
-    const groupByClause: GroupByClause = {
-        value: [],
-        having: {
-            value: [],
-        },
-    };
+): GroupByClauseClass => {
+    const groupByClause = new GroupByClauseClass();
 
     const valueTypeClass = toTypeClass(target.getValue(), isFieldGroupByListType, errorClass);
     if (valueTypeClass) {
-        groupByClause.value.push(...fieldGroupByListConvert(valueTypeClass, errorClass));
+        groupByClause.setValue(fieldGroupByListConvert(valueTypeClass, errorClass));
     }
 
-    const mode = target.getMode();
-    if (mode) {
-        groupByClause.mode = mode;
-    }
+    groupByClause.setMode(target.getMode());
 
     const havingValue = target.getHaving();
     if (havingValue) {
         const typeClass = toTypeClass(havingValue, isLogicalExpressionType, errorClass);
         if (typeClass) {
-            const expression = logicalExpressionConvert(typeClass, errorClass);
-            groupByClause.having.value.push(...expression.value);
-            if (expression.operator) {
-                groupByClause.having.operator = expression.operator;
-            }
+            groupByClause.setHaving(logicalExpressionConvert(typeClass, errorClass));
         }
     }
 
@@ -501,7 +515,7 @@ export const groupByClauseConvert = (
 export const limitClauseConvert = (
     target: LimitClauseTypeClass,
     errorClass: ErrorTypeClass[],
-): string | Expression | null => {
+): string | ExpressionClass | null => {
     const value = target.getValue();
     if (typeof value === 'string') {
         return value;
@@ -513,12 +527,20 @@ export const limitClauseConvert = (
     }
 
     return null;
+};
+
+export const isLimitClause = (target: any): target is string | ExpressionClass => {
+    return isString(target) && isExpressionClass(target);
+};
+
+export const isLimitClauseArray = (target: any): target is (string | ExpressionClass)[] => {
+    return Array.isArray(target) && target.every((t) => isLimitClause(t));
 };
 
 export const offsetClauseConvert = (
     target: OffsetClauseTypeClass,
     errorClass: ErrorTypeClass[],
-): string | Expression | null => {
+): string | ExpressionClass | null => {
     const value = target.getValue();
     if (typeof value === 'string') {
         return value;
@@ -532,23 +554,33 @@ export const offsetClauseConvert = (
     return null;
 };
 
+export const isOffsetClause = (target: any): target is string | ExpressionClass => {
+    return isString(target) && isExpressionClass(target);
+};
+
+export const isOffsetClauseArray = (target: any): target is (string | ExpressionClass)[] => {
+    return Array.isArray(target) && target.every((t) => isOffsetClause(t));
+};
+
 export const orderByClauseConvert = (
     target: OrderByClauseTypeClass,
     errorClass: ErrorTypeClass[],
-): FieldOrder[] => {
+): FieldOrderClass[] => {
+    const value: FieldOrderClass[] = [];
+
     const valueTypeClass = toTypeClass(target.getValue(), isFieldOrderListType, errorClass);
     if (valueTypeClass) {
-        return fieldOrderListConvert(valueTypeClass, errorClass);
+        value.push(...fieldOrderListConvert(valueTypeClass, errorClass));
     }
 
-    return [];
+    return value;
 };
 
 export class SoslClausesClass extends CommonClass {
     private value: string | null = null;
-    private fieldSpecList: FieldSpec[] = [];
+    private fieldSpecList: FieldSpecClass[] = [];
     private withList: SoslWithClauseClass[] = [];
-    private limitClause: string | Expression | null = null;
+    private limitClause: string | ExpressionClass | null = null;
     private updateList: string[] = [];
 
     setValue(value: string | null): void {
@@ -559,8 +591,8 @@ export class SoslClausesClass extends CommonClass {
         this.fieldSpecList = [];
     }
 
-    setFieldSpecList(fieldSpecList: FieldSpec[]): void {
-        this.fieldSpecList = fieldSpecList;
+    setFieldSpecList(fieldSpecList: FieldSpecClass[]): void {
+        this.fieldSpecList.push(...fieldSpecList);
     }
 
     resetWithList() {
@@ -568,11 +600,17 @@ export class SoslClausesClass extends CommonClass {
     }
 
     setWithList(withList: SoslWithClauseClass[]): void {
-        this.withList = withList;
+        this.withList.push(...withList);
     }
 
-    setLimitClause(limitClause: string | Expression | null): void {
-        this.limitClause = limitClause;
+    setLimitClause(limitClause: string | ExpressionClass | null): void {
+        if (isString(this.limitClause) && isString(limitClause)) {
+            this.limitClause = limitClause;
+        } else if (isExpressionClass(this.limitClause) && isExpressionClass(limitClause)) {
+            this.limitClause.copy(limitClause);
+        } else {
+            this.limitClause = limitClause;
+        }
     }
 
     resetUpdateList() {
@@ -587,7 +625,7 @@ export class SoslClausesClass extends CommonClass {
         return this.value;
     }
 
-    getFieldSpecList(): FieldSpec[] {
+    getFieldSpecList(): FieldSpecClass[] {
         return this.fieldSpecList;
     }
 
@@ -595,7 +633,7 @@ export class SoslClausesClass extends CommonClass {
         return this.withList;
     }
 
-    getLimitClause(): string | Expression | null {
+    getLimitClause(): string | ExpressionClass | null {
         return this.limitClause;
     }
 
@@ -609,34 +647,31 @@ export class SoslClausesClass extends CommonClass {
         this.setFieldSpecList(commonClass.getFieldSpecList());
         this.resetWithList();
         this.setWithList(commonClass.getWithList());
-        this.limitClause(commonClass.limitClause());
+        this.setLimitClause(commonClass.getLimitClause());
         this.resetUpdateList();
         this.setUpdateList(commonClass.getUpdateList());
     }
 }
 
-export const isSoslClauses = (target: CommonClass): target is SoslClausesClass => {
+export const isSoslClauses = (target: any): target is SoslClausesClass => {
     return isCommonClass(target, SoslClausesClass);
+};
+
+export const isSoslClausesArray = (target: any): target is SoslClausesClass[] => {
+    return Array.isArray(target) && target.every((t) => isSoslClauses(t));
 };
 
 export const soslClausesConvert = (
     target: SoslClausesTypeClass,
     errorClass: ErrorTypeClass[],
-): SoslClauses => {
-    const soslClauses: SoslClauses = {
-        fieldSpecList: [],
-        withList: [],
-        updateList: [],
-    };
+): SoslClausesClass => {
+    const soslClauses = new SoslClausesClass();
 
     const valueValue = target.getValue();
     if (valueValue) {
         const valueTypeClass = toTypeClass(valueValue, isSearchGroupType, errorClass);
         if (valueTypeClass) {
-            const searchGroup = searchGroupConvert(valueTypeClass, errorClass);
-            if (searchGroup) {
-                soslClauses.value = searchGroup;
-            }
+            soslClauses.setValue(searchGroupConvert(valueTypeClass, errorClass));
         }
     }
 
@@ -648,27 +683,27 @@ export const soslClausesConvert = (
             errorClass,
         );
         if (fieldSpecListTypeClass) {
-            soslClauses.fieldSpecList.push(
-                ...fieldSpecListConvert(fieldSpecListTypeClass, errorClass),
-            );
+            soslClauses.setFieldSpecList(fieldSpecListConvert(fieldSpecListTypeClass, errorClass));
         }
     }
 
-    target.getWithList()?.forEach((item) => {
-        const withTypeClass = toTypeClass(item, isSoslWithClauseType, errorClass);
-        if (withTypeClass) {
-            soslClauses.withList.push(soslWithClauseConvert(withTypeClass, errorClass));
-        }
-    });
+    const withClause = target.getWithList();
+    const withList: SoslWithClauseClass[] = [];
+    if (withClause) {
+        withClause.forEach((item) => {
+            const withTypeClass = toTypeClass(item, isSoslWithClauseType, errorClass);
+            if (withTypeClass) {
+                withList.push(soslWithClauseConvert(withTypeClass, errorClass));
+            }
+        });
+    }
+    soslClauses.setWithList(withList);
 
     const limitClauseValue = target.getLimitClause();
     if (limitClauseValue) {
         const limitClauseTypeClass = toTypeClass(limitClauseValue, isLimitClauseType, errorClass);
         if (limitClauseTypeClass) {
-            const limitClause = limitClauseConvert(limitClauseTypeClass, errorClass);
-            if (limitClause) {
-                soslClauses.limitClause = limitClause;
-            }
+            soslClauses.setLimitClause(limitClauseConvert(limitClauseTypeClass, errorClass));
         }
     }
 
@@ -676,7 +711,7 @@ export const soslClausesConvert = (
     if (updateListValue) {
         const updateListTypeClass = toTypeClass(updateListValue, isUpdateListType, errorClass);
         if (updateListTypeClass) {
-            soslClauses.updateList.push(...updateListConvert(updateListTypeClass, errorClass));
+            soslClauses.setUpdateList(updateListConvert(updateListTypeClass, errorClass));
         }
     }
 
@@ -685,54 +720,71 @@ export const soslClausesConvert = (
 
 export class SoslWithClauseClass extends CommonClass {
     private value: string | null = null;
-    private content: string | string[] | Expression | DataCategorySelectionClass[] | null = null;
+    private content: string | string[] | ExpressionClass | DataCategorySelectionClass[] | null =
+        null;
 
     setValue(value: string | null): void {
         this.value = value;
     }
 
     setContent(
-        content: string | string[] | Expression | DataCategorySelectionClass[] | null,
+        content: string | string[] | ExpressionClass | DataCategorySelectionClass[] | null,
     ): void {
-        this.content = content;
+        if (isString(this.content) && isString(content)) {
+            this.content = content;
+        } else if (isStringArray(this.content) && isStringArray(content)) {
+            this.content.push(...content);
+        } else if (isExpressionClass(this.content) && isExpressionClass(content)) {
+            this.content.copy(content);
+        } else if (
+            isDataCategorySelectionClassArray(this.content) &&
+            isDataCategorySelectionClassArray(content)
+        ) {
+            this.content.push(...content);
+        } else {
+            this.content = content;
+        }
     }
 
     getValue(): string | null {
         return this.value;
     }
 
-    getContent(): string | string[] | Expression | DataCategorySelectionClass[] | null {
+    getContent(): string | string[] | ExpressionClass | DataCategorySelectionClass[] | null {
         return this.content;
     }
 
     copy(commonClass: SoslWithClauseClass): void {
         this.setValue(commonClass.getValue());
-        this.setContent(commonClass.content());
+        this.setContent(commonClass.getContent());
     }
 }
 
-export const isSoslWithClauseClass = (target: CommonClass): target is SoslWithClauseClass => {
+export const isSoslWithClauseClass = (target: any): target is SoslWithClauseClass => {
     return isCommonClass(target, SoslWithClauseClass);
+};
+
+export const isSoslWithClauseClassArray = (target: any): target is SoslWithClauseClass[] => {
+    return Array.isArray(target) && target.every((t) => isSoslWithClauseClass(t));
 };
 
 export const soslWithClauseConvert = (
     target: SoslWithClauseTypeClass,
     errorClass: ErrorTypeClass[],
-): SoslWithClause => {
-    const soslWithClause: SoslWithClause = {};
+): SoslWithClauseClass => {
+    const soslWithClause = new SoslWithClauseClass();
 
-    const value = toPrimitiveValue(
-        target.getValue(),
-        (target): target is string => typeof target === 'string',
-        errorClass,
+    soslWithClause.setValue(
+        toPrimitiveValue(
+            target.getValue(),
+            (target): target is string => typeof target === 'string',
+            errorClass,
+        ),
     );
-    if (value) {
-        soslWithClause.value = value;
-    }
 
     const contentValue = target.getContent();
     if (typeof contentValue === 'string') {
-        soslWithClause.content = contentValue;
+        soslWithClause.setContent(contentValue);
     } else if (contentValue) {
         const contentTypeClass = toTypeClass(
             contentValue,
@@ -750,14 +802,14 @@ export const soslWithClauseConvert = (
             if (isBoundExpressionType(contentTypeClass)) {
                 const expression = boundExpressionConvert(contentTypeClass, errorClass);
                 if (expression) {
-                    soslWithClause.content = expression;
+                    soslWithClause.setContent(expression);
                 }
             }
             if (isFilteringExpressionType(contentTypeClass)) {
-                soslWithClause.content = filteringExpressionConvert(contentTypeClass, errorClass);
+                soslWithClause.setContent(filteringExpressionConvert(contentTypeClass, errorClass));
             }
             if (isNetworkListType(contentTypeClass)) {
-                soslWithClause.content = networkListConvert(contentTypeClass, errorClass);
+                soslWithClause.setContent(networkListConvert(contentTypeClass, errorClass));
             }
         }
     }
@@ -816,39 +868,43 @@ export class TypeOfClass extends CommonClass {
     }
 }
 
-export const isTypeOfClass = (target: CommonClass): target is TypeOfClass => {
+export const isTypeOfClass = (target: any): target is TypeOfClass => {
     return isCommonClass(target, TypeOfClass);
 };
 
-export const typeOfConvert = (target: TypeOfTypeClass, errorClass: ErrorTypeClass[]): TypeOf => {
-    const value: string[] = [];
+export const isTypeOfClassArray = (target: any): target is TypeOfClass[] => {
+    return Array.isArray(target) && target.every((t) => isTypeOfClass(t));
+};
+
+export const typeOfConvert = (
+    target: TypeOfTypeClass,
+    errorClass: ErrorTypeClass[],
+): TypeOfClass => {
+    const typeOf = new TypeOfClass();
+
     const valueTypeClass = toTypeClass(target.getValue(), isFieldNameType, errorClass);
     if (valueTypeClass) {
-        value.push(...fieldNameConvert(valueTypeClass, errorClass));
+        typeOf.setValue(fieldNameConvert(valueTypeClass, errorClass));
     }
 
-    const whenClause: WhenClause[] = [];
+    const whenClause: WhenClauseClass[] = [];
     target.getWhenClause().forEach((item) => {
         const whenTypeClass = toTypeClass(item, isWhenClauseType, errorClass);
         if (whenTypeClass) {
             whenClause.push(whenClauseConvert(whenTypeClass, errorClass));
         }
     });
+    typeOf.setWhenClause(whenClause);
 
-    const elseClause: string[][] = [];
     const elseClauseValue = target.getElseClause();
     if (elseClauseValue) {
         const elseClauseTypeClass = toTypeClass(elseClauseValue, isElseClauseType, errorClass);
         if (elseClauseTypeClass) {
-            elseClause.push(...elseClauseConvert(elseClauseTypeClass, errorClass));
+            typeOf.setElseClause(elseClauseConvert(elseClauseTypeClass, errorClass));
         }
     }
 
-    return {
-        value: value,
-        whenClause: whenClause,
-        elseClause: elseClause,
-    };
+    return typeOf;
 };
 
 export const updateTypeConvert = (
@@ -910,51 +966,60 @@ export class WhenClauseClass extends CommonClass {
     }
 }
 
-export const isWhenClauseClass = (target: CommonClass): target is WhenClauseClass => {
+export const isWhenClauseClass = (target: any): target is WhenClauseClass => {
     return isCommonClass(target, WhenClauseClass);
+};
+
+export const isWhenClauseClassArray = (target: any): target is WhenClauseClass[] => {
+    return Array.isArray(target) && target.every((t) => isWhenClauseClass(t));
 };
 
 export const whenClauseConvert = (
     target: WhenClauseTypeClass,
     errorClass: ErrorTypeClass[],
-): WhenClause => {
-    const value: string[] = [];
+): WhenClauseClass => {
+    const whenClause = new WhenClauseClass();
+
     const valueTypeClass = toTypeClass(target.getValue(), isFieldNameType, errorClass);
     if (valueTypeClass) {
-        value.push(...fieldNameConvert(valueTypeClass, errorClass));
+        whenClause.setValue(fieldNameConvert(valueTypeClass, errorClass));
     }
 
     const field: string[][] = [];
     const fieldTypeClass = toTypeClass(target.getField(), isFieldNameListType, errorClass);
     if (fieldTypeClass) {
-        field.push(...fieldNameListConvert(fieldTypeClass, errorClass));
+        whenClause.setField(fieldNameListConvert(fieldTypeClass, errorClass));
     }
-    return {
-        value: value,
-        field: field,
-    };
+
+    return whenClause;
 };
 
 export const whereClauseConvert = (
     target: WhereClauseTypeClass,
     errorClass: ErrorTypeClass[],
-): WhereLogicalExpression => {
+): WhereLogicalExpressionClass => {
+    const whereClause = new WhereLogicalExpressionClass();
+
     const valueTypeClass = toTypeClass(target.getValue(), isWhereLogicalExpressionType, errorClass);
     if (valueTypeClass) {
-        return whereLogicalExpressionConvert(valueTypeClass, errorClass);
+        whereClause.copy(whereLogicalExpressionConvert(valueTypeClass, errorClass));
     }
 
-    return {
-        value: [],
-    };
+    return whereClause;
 };
 
 export class WithClauseClass extends CommonClass {
-    private value: string | LogicalExpression | null = null;
+    private value: string | LogicalExpressionClass | null = null;
     private field: DataCategorySelectionClass[] = [];
 
-    setValue(value: string | LogicalExpression | null): void {
-        this.value = value;
+    setValue(value: string | LogicalExpressionClass | null): void {
+        if (isString(this.value) && isString(value)) {
+            this.value = value;
+        } else if (isLogicalExpressionClass(this.value) && isLogicalExpressionClass(value)) {
+            this.value.copy(value);
+        } else {
+            this.value = value;
+        }
     }
 
     resetField(): void {
@@ -965,7 +1030,7 @@ export class WithClauseClass extends CommonClass {
         this.field.push(...field);
     }
 
-    getValue(): string | LogicalExpression | null {
+    getValue(): string | LogicalExpressionClass | null {
         return this.value;
     }
 
@@ -980,37 +1045,35 @@ export class WithClauseClass extends CommonClass {
     }
 }
 
-export const isWithClauseClass = (target: CommonClass): target is WithClauseClass => {
+export const isWithClauseClass = (target: any): target is WithClauseClass => {
     return isCommonClass(target, WithClauseClass);
+};
+
+export const isWithClauseClassArray = (target: any): target is WhenClauseClass[] => {
+    return Array.isArray(target) && target.every((t) => isWithClauseClass(t));
 };
 
 export const withClauseConvert = (
     target: WithClauseTypeClass,
     errorClass: ErrorTypeClass[],
-): WithClause => {
-    const field: DataCategorySelection[] = [];
+): WithClauseClass => {
+    const withClause = new WithClauseClass();
+
     const fieldValue = target.getField();
     if (fieldValue) {
         const fieldTypeClass = toTypeClass(fieldValue, isFilteringExpressionType, errorClass);
         if (fieldTypeClass) {
-            field.push(...filteringExpressionConvert(fieldTypeClass, errorClass));
+            withClause.setField(filteringExpressionConvert(fieldTypeClass, errorClass));
         }
     }
 
-    const withClause: WithClause = {
-        field: field,
-    };
-
     const valueValue = target.getValue();
     if (typeof valueValue === 'string') {
-        withClause.value = valueValue;
+        withClause.setValue(valueValue);
     } else {
         const valueTypeClass = toTypeClass(valueValue, isLogicalExpressionType, errorClass);
         if (valueTypeClass) {
-            const expression = logicalExpressionConvert(valueTypeClass, errorClass);
-            if (expression) {
-                withClause.value = expression;
-            }
+            withClause.setField(logicalExpressionConvert(valueTypeClass, errorClass));
         }
     }
 

@@ -57,8 +57,12 @@ export class ArrayCreatorRestClass extends CommonClass {
     }
 }
 
-export const isArrayCreatorRestClass = (target: CommonClass): target is ArrayCreatorRestClass => {
+export const isArrayCreatorRestClass = (target: any): target is ArrayCreatorRestClass => {
     return isCommonClass(target, ArrayCreatorRestClass);
+};
+
+export const isArrayCreatorRestClassArray = (target: any): target is ArrayCreatorRestClass[] => {
+    return Array.isArray(target) && target.every((t) => isArrayCreatorRestClass(t));
 };
 
 export const arrayCreatorRestConvert = (
@@ -263,8 +267,12 @@ export class CreatorClass extends CommonClass {
     }
 }
 
-export const isCreatorClass = (target: CommonClass): target is CreatorClass => {
+export const isCreatorClass = (target: any): target is CreatorClass => {
     return isCommonClass(target, CreatorClass);
+};
+
+export const isCreatorClassArray = (target: any): target is CreatorClass[] => {
+    return Array.isArray(target) && target.every((t) => isCreatorClass(t));
 };
 
 export const creatorConvert = (

@@ -20,6 +20,14 @@ export const arraySubscriptsConvert = (
     );
 };
 
+export const isNumber = (target: any): target is number => {
+    return typeof target === 'number';
+};
+
+export const isNumberArray = (target: any): target is number[] => {
+    return Array.isArray(target) && target.every((t) => isNumber(t));
+};
+
 export class TypeRefClass extends CommonClass {
     private value: TypeNameClass[] = [];
     private dimension: number | null = null;
@@ -51,8 +59,14 @@ export class TypeRefClass extends CommonClass {
     }
 }
 
-export const isTypeRefClass = (target: CommonClass): target is TypeRefClass => {
+export const isTypeRefClass = (target: any): target is TypeRefClass => {
     return isCommonClass(target, TypeRefClass);
+};
+
+export const isTypeRefClassArray = (target: any): target is TypeRefClass[] => {
+    return (
+        Array.isArray(target) && target.every((t) => t instanceof CommonClass && isTypeRefClass(t))
+    );
 };
 
 export const typeRefConvert = (

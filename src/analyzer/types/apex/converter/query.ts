@@ -35,16 +35,8 @@ import {
     isWithClauseType,
 } from '../../apex_IR';
 
-import {
-    toPrimitiveValue,
-    toTypeClass,
-    CommonClass,
-    isCommonClass,
-    isStringArray,
-    isDistanceValueArray,
-    isString,
-} from './commons';
-import { soslIdConvert } from './id';
+import { toPrimitiveValue, toTypeClass, CommonClass, isCommonClass } from './commons';
+import { isString, isStringArray, soslIdConvert } from './id';
 import {
     DateFieldNameClass,
     fieldNameConvert,
@@ -69,7 +61,7 @@ import {
     logicalExpressionConvert,
 } from './expression';
 import { SignedLiteralClass, signedIntegerConvert } from './literal';
-import { locationValueConvert } from './value';
+import { isLocationValue, locationValueConvert } from './value';
 import { soqlFieldsParameterConvert } from './parameter';
 import {
     FieldOrderClass,
@@ -124,8 +116,12 @@ export class DateFormulaClass extends CommonClass {
     }
 }
 
-export const isDateFormulaClass = (target: CommonClass): target is DateFormulaClass => {
-    return target instanceof DateFormulaClass;
+export const isDateFormulaClass = (target: any): target is DateFormulaClass => {
+    return isCommonClass(target, DateFormulaClass);
+};
+
+export const isDateFormulaClassArray = (target: any): target is DateFormulaClass[] => {
+    return Array.isArray(target) && target.every((t) => isDateFormulaClass(t));
 };
 
 export const dateFormulaConvert = (
@@ -160,7 +156,7 @@ export class FieldSpecClass extends CommonClass {
     private listView: string[] = [];
     private orderBy: FieldOrderClass[] = [];
     private limitClause: string | ExpressionClass | null = null;
-    private offsetClause: ExpressionClass = new ExpressionClass();
+    private offsetClause: string | ExpressionClass | null = null;
 
     resetValue(): void {
         this.value = [];
@@ -211,8 +207,14 @@ export class FieldSpecClass extends CommonClass {
         }
     }
 
-    setOffsetClause(offsetClause: ExpressionClass) {
-        this.offsetClause.copy(offsetClause);
+    setOffsetClause(offsetClause: string | ExpressionClass | null) {
+        if (isExpressionClass(this.offsetClause) && isExpressionClass(offsetClause)) {
+            this.offsetClause.copy(offsetClause);
+        } else if (isString(this.offsetClause) && isString(offsetClause)) {
+            this.offsetClause = offsetClause;
+        } else {
+            this.offsetClause = offsetClause;
+        }
     }
 
     getValue(): string[] {
@@ -239,7 +241,7 @@ export class FieldSpecClass extends CommonClass {
         return this.limitClause;
     }
 
-    getOffsetClause(): ExpressionClass {
+    getOffsetClause(): string | ExpressionClass | null {
         return this.offsetClause;
     }
 
@@ -258,8 +260,12 @@ export class FieldSpecClass extends CommonClass {
     }
 }
 
-export const isFieldSpecClass = (target: CommonClass): target is FieldSpecClass => {
-    return target instanceof FieldSpecClass;
+export const isFieldSpecClass = (target: any): target is FieldSpecClass => {
+    return isCommonClass(target, FieldSpecClass);
+};
+
+export const isFieldSpecClassArray = (target: any): target is FieldSpecClass[] => {
+    return Array.isArray(target) && target.every((t) => isFieldSpecClass(t));
 };
 
 export const fieldSpecConvert = (
@@ -496,8 +502,12 @@ export class NormalQueryClass extends CommonClass {
     }
 }
 
-export const isNormalQueryClass = (target: CommonClass): target is NormalQueryClass => {
-    return target instanceof NormalQueryClass;
+export const isNormalQueryClass = (target: any): target is NormalQueryClass => {
+    return isCommonClass(target, NormalQueryClass);
+};
+
+export const isNormalQueryClassArray = (target: any): target is NormalQueryClass[] => {
+    return Array.isArray(target) && target.every((t) => isNormalQueryClass(t));
 };
 
 export const normalQueryConvert = (
@@ -687,8 +697,24 @@ export class SoqlFunctionClass extends CommonClass {
     }
 }
 
-export const isSoqlFunctionClass = (target: CommonClass): target is SoqlFunctionClass => {
-    return target instanceof SoqlFunctionClass;
+export const isSoqlFunctionClass = (target: any): target is SoqlFunctionClass => {
+    return isCommonClass(target, SoqlFunctionClass);
+};
+
+export const isSoqlFunctionClassArray = (target: any): target is SoqlFunctionClass[] => {
+    return Array.isArray(target) && target.every((t) => isSoqlFunctionClass(t));
+};
+
+export const isDistanceValue = (
+    target: any,
+): target is string | (SignedLiteralClass | ExpressionClass)[] | string[] | ExpressionClass => {
+    return isString(target) || isLocationValue(target);
+};
+
+export const isDistanceValueArray = (
+    target: any,
+): target is (string | (SignedLiteralClass | ExpressionClass)[] | string[] | ExpressionClass)[] => {
+    return Array.isArray(target) && target.every((t) => isDistanceValue(t));
 };
 
 export const soqlFunctionConvert = (
@@ -876,8 +902,12 @@ export class SubQueryClass extends CommonClass {
     }
 }
 
-export const isSubQueryClass = (target: CommonClass): target is SubQueryClass => {
-    return target instanceof SubQueryClass;
+export const isSubQueryClass = (target: any): target is SubQueryClass => {
+    return isCommonClass(target, SubQueryClass);
+};
+
+export const isSubQueryClassArray = (target: any): target is SubQueryClass[] => {
+    return Array.isArray(target) && target.every((t) => isSubQueryClass(t));
 };
 
 export const subQueryConvert = (

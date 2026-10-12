@@ -22,39 +22,48 @@ import {
 import { toTypeClass, CommonClass, isCommonClass } from './commons';
 import { normalIdConvert } from './id';
 import { TypeRefClass, typeRefConvert } from './type';
-import { ExpressionClass, expressionConvert } from './expression';
+import {
+    ExpressionClass,
+    expressionConvert,
+    isExpressionClass,
+    isExpressionClassArray,
+} from './expression';
 import { expressionListConvert } from './list';
 import { NormalStatementClass } from './statement';
 import { normalBlockConvert } from './block';
 import { WhenValueClass, whenValueConvert } from './value';
-import { LocalVariableDeclarationClass, localVariableDeclarationConvert } from './declaration';
+import {
+    isLocalVariableDeclarationClass,
+    LocalVariableDeclarationClass,
+    localVariableDeclarationConvert,
+} from './declaration';
 
 export class EnhancedForControlClass extends CommonClass {
     private value: string | null = null;
-    private valueType: TypeRef | null = null;
-    private fromVariant: Expression | null = null;
+    private valueType: TypeRefClass = new TypeRefClass();
+    private fromVariant: ExpressionClass = new ExpressionClass();
 
     setValue(value: string | null): void {
         this.value = value;
     }
 
-    setValueType(valueType: TypeRef | null): void {
-        this.valueType = valueType;
+    setValueType(valueType: TypeRefClass): void {
+        this.valueType.copy(valueType);
     }
 
-    setFromVariant(fromVariant: Expression | null): void {
-        this.fromVariant = fromVariant;
+    setFromVariant(fromVariant: ExpressionClass): void {
+        this.fromVariant.copy(fromVariant);
     }
 
     getValue(): string | null {
         return this.value;
     }
 
-    getValueType(): TypeRef | null {
+    getValueType(): TypeRefClass {
         return this.valueType;
     }
 
-    getFromVariant(): Expression | null {
+    getFromVariant(): ExpressionClass {
         return this.fromVariant;
     }
 
@@ -65,34 +74,30 @@ export class EnhancedForControlClass extends CommonClass {
     }
 }
 
-export const isEnhancedForControlClass = (
-    target: CommonClass,
-): target is EnhancedForControlClass => {
+export const isEnhancedForControlClass = (target: any): target is EnhancedForControlClass => {
     return isCommonClass(target, EnhancedForControlClass);
+};
+
+export const isEnhancedForControlClassArray = (
+    target: any,
+): target is EnhancedForControlClass[] => {
+    return Array.isArray(target) && target.every((t) => isEnhancedForControlClass(t));
 };
 
 export const enhancedForControlConvert = (
     target: EnhancedForControlTypeClass,
     errorClass: ErrorTypeClass[],
-): EnhancedForControl => {
-    const enhancedForControl: EnhancedForControl = {
-        valueType: {
-            value: [],
-        },
-    };
+): EnhancedForControlClass => {
+    const enhancedForControl = new EnhancedForControlClass();
 
     const valueTypeClass = toTypeClass(target.getValue(), isNormalIdType, errorClass);
     if (valueTypeClass) {
-        enhancedForControl.value = normalIdConvert(valueTypeClass);
+        enhancedForControl.setValue(normalIdConvert(valueTypeClass));
     }
 
     const valueTypeTypeClass = toTypeClass(target.getValueType(), isTypeRefType, errorClass);
     if (valueTypeTypeClass) {
-        const typeRef = typeRefConvert(valueTypeTypeClass, errorClass);
-        enhancedForControl.valueType.value.push(...typeRef.value);
-        if (typeRef.dimension) {
-            enhancedForControl.valueType.dimension = typeRef.dimension;
-        }
+        enhancedForControl.setValueType(typeRefConvert(valueTypeTypeClass, errorClass));
     }
 
     const fromVariantTypeClass = toTypeClass(
@@ -101,45 +106,54 @@ export const enhancedForControlConvert = (
         errorClass,
     );
     if (fromVariantTypeClass) {
-        const expression = expressionConvert(fromVariantTypeClass, errorClass);
-        if (expression) {
-            enhancedForControl.fromVariant = expression;
-        }
+        enhancedForControl.setFromVariant(expressionConvert(fromVariantTypeClass, errorClass));
     }
 
     return enhancedForControl;
 };
 
 export class ForControlClass extends CommonClass {
-    private value: EnhancedForControlClass | Expression | null = null;
-    private init: LocalVariableDeclaration | Expression[] | null = null;
-    private update: Expression[] = [];
+    private value: EnhancedForControlClass | ExpressionClass | null = null;
+    private init: LocalVariableDeclarationClass | ExpressionClass[] | null = null;
+    private update: ExpressionClass[] = [];
 
-    setValue(value: EnhancedForControlClass | Expression | null): void {
-        this.value = value;
+    setValue(value: EnhancedForControlClass | ExpressionClass | null): void {
+        if (isEnhancedForControlClass(this.value) && isEnhancedForControlClass(value)) {
+            this.value.copy(value);
+        } else if (isExpressionClass(this.value) && isExpressionClass(value)) {
+            this.value.copy(value);
+        } else {
+            this.value = value;
+        }
     }
 
-    setInit(init: LocalVariableDeclaration | Expression[] | null): void {
-        this.init = init;
+    setInit(init: LocalVariableDeclarationClass | ExpressionClass[] | null): void {
+        if (isLocalVariableDeclarationClass(this.init) && isLocalVariableDeclarationClass(init)) {
+            this.init.copy(init);
+        } else if (isExpressionClassArray(this.init) && isExpressionClassArray(init)) {
+            this.init.push(...init);
+        } else {
+            this.init = init;
+        }
     }
 
     resetUpdate(): void {
         this.update = [];
     }
 
-    setupdate(update: Expression[]): void {
+    setupdate(update: ExpressionClass[]): void {
         this.update.push(...update);
     }
 
-    getValue(): string | null {
+    getValue(): EnhancedForControlClass | ExpressionClass | null {
         return this.value;
     }
 
-    getInit(): LocalVariableDeclaration | Expression[] | null {
+    getInit(): LocalVariableDeclarationClass | ExpressionClass[] | null {
         return this.init;
     }
 
-    getUpdate(): Expression[] {
+    getUpdate(): ExpressionClass[] {
         return this.update;
     }
 
@@ -151,8 +165,12 @@ export class ForControlClass extends CommonClass {
     }
 }
 
-export const isForControlClass = (target: CommonClass): target is ForControlClass => {
+export const isForControlClass = (target: any): target is ForControlClass => {
     return isCommonClass(target, ForControlClass);
+};
+
+export const isForControlClassArray = (target: any): target is ForControlClass[] => {
+    return Array.isArray(target) && target.every((t) => isForControlClass(t));
 };
 
 export const forControlConvert = (
@@ -184,16 +202,13 @@ export const forControlConvert = (
 
     if (valueValue) {
         if (isEnhancedForControlType(valueValue)) {
-            forControl.value = enhancedForControlConvert(valueValue, errorClass);
+            forControl.setValue(enhancedForControlConvert(valueValue, errorClass));
         }
 
         if (isExpressionTypeAll) {
             const expressionTypeClass = toTypeClass(valueValue, isExpressionTypeAll, errorClass);
             if (expressionTypeClass) {
-                const expression = expressionConvert(expressionTypeClass, errorClass);
-                if (expression) {
-                    forControl.value = expression;
-                }
+                forControl.setValue(expressionConvert(expressionTypeClass, errorClass));
             }
         }
     }
@@ -222,6 +237,18 @@ export const forInitConvert = (
     }
 
     return null;
+};
+
+export const isForInit = (
+    target: any,
+): target is LocalVariableDeclarationClass | ExpressionClass[] => {
+    return isLocalVariableDeclarationClass(target) || isExpressionClassArray(target);
+};
+
+export const isForInitArray = (
+    target: any,
+): target is (LocalVariableDeclarationClass | ExpressionClass[])[] => {
+    return Array.isArray(target) && target.every((t) => isForInit(t));
 };
 
 export const forUpdateConvert = (
@@ -269,8 +296,12 @@ export class WhenControlClass extends CommonClass {
     }
 }
 
-export const isWhenControlClass = (target: CommonClass): target is WhenControlClass => {
+export const isWhenControlClass = (target: any): target is WhenControlClass => {
     return isCommonClass(target, WhenControlClass);
+};
+
+export const isWhenControlClassArray = (target: any): target is WhenControlClass[] => {
+    return Array.isArray(target) && target.every((t) => isWhenControlClass(t));
 };
 
 export const whenControlConvert = (
@@ -279,12 +310,10 @@ export const whenControlConvert = (
 ): WhenControlClass => {
     const whenControl = new WhenControlClass();
 
-    const block: NormalStatementClass[] = [];
     const blockTypeClass = toTypeClass(target.getBlock(), isNormalBlockType, errorClass);
     if (blockTypeClass) {
-        block.push(...normalBlockConvert(blockTypeClass, errorClass));
+        whenControl.setBlock(normalBlockConvert(blockTypeClass, errorClass));
     }
-    whenControl.setBlock(block);
 
     const valueTypeClass = toTypeClass(target.getValue(), isWhenValueType, errorClass);
     if (valueTypeClass) {
