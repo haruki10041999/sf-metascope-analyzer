@@ -1,26 +1,26 @@
 import {
-    SoqlFunctionClass,
     LogicalExpressionClass,
     FieldExpressionClass,
     NormalValueClass,
     SubQueryClass,
     isString,
-    isStringArray,
     isExpressionClass,
+    isSoqlFunctionClass,
+    isLogicalExpressionClass,
+    isFieldExpressionClass,
+    isDataCategorySelectionClass,
     isSignedLiteralClass,
     isNormalValueClassArray,
     isDateFormulaClass,
     isSubQueryClass,
-    isSoqlFunctionClass,
-    isLogicalExpressionClass,
-    isFieldExpressionClass,
-    GroupByClauseClass,
+    isStringArray,
 } from '../converter';
 
 import { ExpressionType, makeExpressionType } from '../expression';
 import { SoqlFunctionField, makeSoqlFunctionField } from './soqlFunction';
+import { SubQueryField, makeSubQueryField } from './subQuery';
 
-type ValueType =
+export type ValueType =
     | {
           kind: string;
           value: string;
@@ -40,36 +40,23 @@ type ValueType =
               operator?: string;
           };
       }
-    | SubQueryClass;
+    | ({
+          kind: 'subQuery';
+      } & SubQueryField);
 
-type HavingField =
+export type LogicalField =
     | {
-          field: string | string[] | SoqlFunctionField;
+          field: string[] | SoqlFunctionField;
           operator: string;
           value: ValueType;
       }
-    | HavingField[]
+    | LogicalField[]
     | {
           logicalOperator: 'AND' | 'OR' | 'NOT';
-          conditions: HavingField[];
+          conditions: LogicalField[];
       };
 
-export type GroupByField = {
-    field: (
-        | {
-              kind: 'field';
-              field: string[];
-          }
-        | {
-              kind: 'function';
-              field: SoqlFunctionField;
-          }
-    )[];
-    mode?: string;
-    having?: HavingField;
-};
-
-const makeValue = (value: NormalValueClass): ValueType | undefined => {
+export const makeValueType = (value: NormalValueClass): ValueType | undefined => {
     const valueValue = value.getValue();
 
     if (valueValue) {
@@ -112,7 +99,7 @@ const makeValue = (value: NormalValueClass): ValueType | undefined => {
 
         if (isNormalValueClassArray(valueValue)) {
             if (valueValue.length > 0) {
-                return valueValue.map((v) => makeValue(v)).filter((v) => v !== undefined);
+                return valueValue.map((v) => makeValueType(v)).filter((v) => v !== undefined);
             }
         }
 
@@ -143,9 +130,15 @@ const makeValue = (value: NormalValueClass): ValueType | undefined => {
                     return valueType;
                 }
             }
+        }
 
-            if (isSubQueryClass(valueValue)) {
-                return valueValue;
+        if (isSubQueryClass(valueValue)) {
+            const subQuery = makeSubQueryField(valueValue);
+            if (subQuery) {
+                return {
+                    kind: 'subQuery',
+                    ...subQuery,
+                };
             }
         }
     }
@@ -153,10 +146,12 @@ const makeValue = (value: NormalValueClass): ValueType | undefined => {
     return undefined;
 };
 
-const makeHavingSingleField = (havingField: FieldExpressionClass): HavingField | undefined => {
-    const field = havingField.getLeft();
-    const operator = havingField.getOperator();
-    const value = makeValue(havingField.getRight());
+export const makeSingleLogicalField = (
+    fieldExpression: FieldExpressionClass,
+): LogicalField | undefined => {
+    const field = fieldExpression.getLeft();
+    const operator = fieldExpression.getOperator();
+    const value = makeValueType(fieldExpression.getRight());
 
     if (field && operator && value) {
         if (isStringArray(field) && field.length > 0) {
@@ -182,75 +177,45 @@ const makeHavingSingleField = (havingField: FieldExpressionClass): HavingField |
     return undefined;
 };
 
-const makeHavingField = (whereClause: LogicalExpressionClass): HavingField => {
-    const whereFields: HavingField[] = [];
+export const makeLogicalField = (
+    logicalExpression: LogicalExpressionClass,
+): LogicalField | undefined => {
+    const logicalFields: LogicalField[] = [];
 
-    const conditions = whereClause.getValue();
-    const logicalOperator = whereClause.getOperator();
+    const conditions = logicalExpression.getValue();
+    const logicalOperator = logicalExpression.getOperator();
 
     conditions.forEach((condition) => {
         if (isFieldExpressionClass(condition)) {
-            const whereField = makeHavingSingleField(condition);
-            if (whereField) {
-                whereFields.push(whereField);
+            const logicalField = makeSingleLogicalField(condition);
+            if (logicalField) {
+                logicalFields.push(logicalField);
             }
         }
 
         if (isLogicalExpressionClass(condition)) {
-            whereFields.push(makeHavingField(condition));
-        }
-    });
+            const logical = makeLogicalField(condition);
 
-    if (!logicalOperator) {
-        return whereFields;
-    }
-
-    return {
-        logicalOperator:
-            logicalOperator.toUpperCase() === 'AND'
-                ? 'AND'
-                : logicalOperator.toUpperCase() === 'OR'
-                  ? 'OR'
-                  : 'NOT',
-        conditions: whereFields,
-    };
-};
-
-export const makeGroupByField = (groupByClause: GroupByClauseClass): GroupByField => {
-    const groupByField: GroupByField = {
-        field: [],
-    };
-
-    const value = groupByClause.getValue();
-    const mode = groupByClause.getMode();
-    const having = groupByClause.getHaving();
-
-    value.forEach((v) => {
-        if (isStringArray(v) && v.length > 0) {
-            groupByField.field.push({
-                kind: 'field',
-                field: v,
-            });
-        }
-
-        if (isSoqlFunctionClass(v)) {
-            const func = makeSoqlFunctionField(v);
-            if (func) {
-                groupByField.field.push({
-                    kind: 'function',
-                    field: func,
-                });
+            if (logical) {
+                logicalFields.push(logical);
             }
         }
     });
 
-    if (mode) {
-        groupByField.mode = mode;
+    if (logicalFields.length > 0) {
+        if (!logicalOperator) {
+            return logicalFields;
+        }
+        return {
+            logicalOperator:
+                logicalOperator.toUpperCase() === 'AND'
+                    ? 'AND'
+                    : logicalOperator.toUpperCase() === 'OR'
+                      ? 'OR'
+                      : 'NOT',
+            conditions: logicalFields,
+        };
     }
 
-    if (having.getValue().length > 0) {
-        groupByField.having = makeHavingField(having);
-    }
-
-    return groupByField;
+    return undefined;
 };

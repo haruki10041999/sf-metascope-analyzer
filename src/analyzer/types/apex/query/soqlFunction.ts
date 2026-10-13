@@ -1,13 +1,11 @@
 import {
     SoqlFunctionClass,
-    DateFieldNameClass,
     SignedLiteralClass,
     ExpressionClass,
     isSoqlFunctionClass,
     isDateFieldNameClass,
     isSignedLiteralClass,
     isExpressionClass,
-    isCoordinateValue,
     isDistanceValueArray,
     isString,
     isStringArray,
@@ -187,4 +185,3 @@ export const makeSoqlFunctionField = (
 
     return undefined;
 };
-

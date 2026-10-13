@@ -1,8 +1,5 @@
 import {
     EntryClass,
-    SoqlFunctionClass,
-    TypeOfClass,
-    SubQueryClass,
     isStringArray,
     isSoqlFunctionClass,
     isTypeOfClass,
@@ -11,18 +8,17 @@ import {
 
 import { SoqlFunctionField, makeSoqlFunctionField } from './soqlFunction';
 import { TypeOfField, makeTypeOfField } from './typeof';
+import { SubQueryField, makeSubQueryField } from './subQuery';
 
-type SubQueryField = SubQueryClass;
-
-type Select = {
+export type SelectField = {
     field?: { field: string[]; alias?: string }[];
     soqlFunction?: { field: SoqlFunctionField; alias?: string }[];
     typeOf?: { field: TypeOfField; alias?: string }[];
     subQuery?: { field: SubQueryField; alias?: string }[];
 };
 
-export const makeSelectListType = (entries: EntryClass[]): Select => {
-    const select: Select = {};
+export const makeSelectField = (entries: EntryClass[]): SelectField | undefined => {
+    const select: SelectField = {};
 
     entries.forEach((entry) => {
         const value = entry.getValue();
@@ -38,7 +34,13 @@ export const makeSelectListType = (entries: EntryClass[]): Select => {
             }
 
             select.field.push(field);
-        } else if (isSoqlFunctionClass(value)) {
+        }
+
+        if (isSoqlFunctionClass(value)) {
+            if (!select.soqlFunction) {
+                select.soqlFunction = [];
+            }
+
             const soqlFunctionField = makeSoqlFunctionField(value);
             if (soqlFunctionField) {
                 if (!select.soqlFunction) {
@@ -54,7 +56,13 @@ export const makeSelectListType = (entries: EntryClass[]): Select => {
 
                 select.soqlFunction.push(field);
             }
-        } else if (isTypeOfClass(value)) {
+        }
+
+        if (isTypeOfClass(value)) {
+            if (!select.typeOf) {
+                select.typeOf = [];
+            }
+
             const typeOfField = makeTypeOfField(value);
             if (typeOfField) {
                 if (!select.typeOf) {
@@ -68,15 +76,21 @@ export const makeSelectListType = (entries: EntryClass[]): Select => {
 
                 select.typeOf.push(field);
             }
-        } else if (isSubQueryClass(value)) {
+        }
+
+        if (isSubQueryClass(value)) {
             if (!select.subQuery) {
                 select.subQuery = [];
             }
-            const field: { field: SubQueryField; alias?: string } = { field: value };
-            if (alias) {
-                field.alias = alias;
+
+            const subQuery = makeSubQueryField(value);
+            if (subQuery) {
+                const field: { field: SubQueryField; alias?: string } = { field: subQuery };
+                if (alias) {
+                    field.alias = alias;
+                }
+                select.subQuery.push(field);
             }
-            select.subQuery.push(field);
         }
     });
 
@@ -99,6 +113,13 @@ export const makeSelectListType = (entries: EntryClass[]): Select => {
         );
     }
 
-    return select;
-};
+    if (select.subQuery && select.subQuery.length > 0) {
+        select.subQuery.sort((a, b) => a.field.from.field.localeCompare(b.field.from.field));
+    }
 
+    if (Object.keys(select).length > 0) {
+        return select;
+    }
+
+    return undefined;
+};

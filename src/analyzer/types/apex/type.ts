@@ -52,9 +52,6 @@ export type TypeType =
           kind: 'map';
           keyType: TypeType;
           valueType: TypeType;
-      }
-    | {
-          kind: 'unSupported';
       };
 
 export const makeTypeType = (type: TypeRefClass): TypeType => {

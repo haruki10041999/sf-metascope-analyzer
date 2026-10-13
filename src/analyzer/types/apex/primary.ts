@@ -17,8 +17,8 @@ import {
 } from './converter';
 
 import { makeTypeType, TypeType } from './type';
+import { SoqlType, makesoqlType } from './query';
 
-type SoqlPrimaryType = NormalQueryClass;
 type LiteralPrimaryType = {
     value: string;
     valueType: string;
@@ -26,7 +26,7 @@ type LiteralPrimaryType = {
 type SoslPrimaryType = SoslLiteralClass;
 
 export type PrimaryType =
-    string | SoqlPrimaryType | LiteralPrimaryType | SoslPrimaryType | TypeType | 'unSupported';
+    string | SoqlType | LiteralPrimaryType | SoslPrimaryType | TypeType | 'unSupported';
 
 export const makePrimaryType = (primary: PrimaryClass): PrimaryType => {
     const elementClass = primary.getValue();
@@ -59,7 +59,7 @@ export const makePrimaryType = (primary: PrimaryClass): PrimaryType => {
 
         if (isSoqlPrimaryElementClass(elementClass)) {
             const value = elementClass.getPrimary();
-            return value;
+            return makesoqlType(value);
         }
 
         if (isSoslPrimaryElementClass(elementClass)) {

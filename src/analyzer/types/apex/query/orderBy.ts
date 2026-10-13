@@ -13,7 +13,7 @@ export type OrderByField = {
     nulls?: 'FIRST' | 'LAST';
 };
 
-export const makeOrderByField = (orderByClause: FieldOrderClass[]): OrderByField[] => {
+export const makeOrderByField = (orderByClause: FieldOrderClass[]): OrderByField[] | undefined => {
     const orderByFields: OrderByField[] = [];
 
     orderByClause.forEach((orderBy) => {
@@ -51,5 +51,9 @@ export const makeOrderByField = (orderByClause: FieldOrderClass[]): OrderByField
         }
     });
 
-    return orderByFields;
+    if (orderByFields.length > 0) {
+        return orderByFields;
+    }
+
+    return undefined;
 };
