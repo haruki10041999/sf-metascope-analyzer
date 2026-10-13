@@ -14,6 +14,7 @@ import {
     compilationUnitConvert,
     triggerUnitConvert,
 } from '../../../src/analyzer/types/apex/converter/unit';
+import { CommonClass } from '../../../src/analyzer/types/apex/converter/commons';
 import { UnitVisitor } from '../../../src/analyzer/types/apex_IR/unitVisitor';
 
 const targets: [string, (parser: ApexParser) => ApexParserRuleContext][] = [
@@ -45,6 +46,13 @@ const errorToJson = (error: ErrorTypeClass) => ({
     span: error.getSpan(),
 });
 
+const classToJson = (_key: string, value: unknown): unknown => {
+    if (value instanceof CommonClass) {
+        return Object.fromEntries(Object.entries(value));
+    }
+    return value;
+};
+
 const outputDirectory = new URL('./converter-output/', import.meta.url);
 await mkdir(outputDirectory, { recursive: true });
 
@@ -68,6 +76,6 @@ for (const [file, rule] of targets) {
     };
 
     const outputFile = new URL(`${file.replace(/\.[^.]+$/, '')}.converted.json`, outputDirectory);
-    await writeFile(outputFile, `${JSON.stringify(result, null, 2)}\n`, 'utf8');
+    await writeFile(outputFile, `${JSON.stringify(result, classToJson, 2)}\n`, 'utf8');
     console.log(`Converter output written to ${outputFile.pathname}`);
 }

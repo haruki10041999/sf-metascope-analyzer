@@ -317,7 +317,7 @@ export const fieldGroupByConvert = (
 };
 
 export const isFieldGroupBy = (target: any): target is string[] | SoqlFunctionClass => {
-    return isStringArray(target) && isSoqlFunctionClass(target);
+    return isStringArray(target) || isSoqlFunctionClass(target);
 };
 
 export const isFieldGroupByArray = (target: any): target is (string[] | SoqlFunctionClass)[] => {

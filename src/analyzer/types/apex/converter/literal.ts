@@ -332,7 +332,7 @@ export const signedIntegerConvert = (
     errorClass: ErrorTypeClass[],
 ): SignedLiteralClass => {
     const signedInteger = new SignedLiteralClass();
-    signedInteger.setOperator(target.getValueType());
+    signedInteger.setValueType(target.getValueType());
 
     signedInteger.setValue(
         toPrimitiveValue(

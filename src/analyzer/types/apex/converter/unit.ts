@@ -99,12 +99,16 @@ export const triggerCaseConvert = (
 };
 
 export class TriggerUnitClass extends CommonClass {
-    private value: string | null = null;
+    private value: string[] = [];
     private triggerCaseType: TriggerCaseClass[] = [];
     private block: AnonymousTriggerBlockMemberClass[] = [];
 
-    setValue(value: string | null): void {
-        this.value = value;
+    resetValue(): void {
+        this.value = [];
+    }
+
+    setValue(value: string[]): void {
+        this.value.push(...value);
     }
 
     resetTriggerCaseType(): void {
@@ -123,7 +127,7 @@ export class TriggerUnitClass extends CommonClass {
         this.block.push(...block);
     }
 
-    getValue(): string | null {
+    getValue(): string[] {
         return this.value;
     }
 
@@ -136,6 +140,7 @@ export class TriggerUnitClass extends CommonClass {
     }
 
     copy(commonClass: TriggerUnitClass): void {
+        this.resetValue();
         this.setValue(commonClass.getValue());
         this.resetTriggerCaseType();
         this.setTriggerCaseType(commonClass.getTriggerCaseType());
@@ -161,12 +166,14 @@ export const triggerUnitConvert = (
 ): TriggerUnitClass => {
     const triggerUnit = new TriggerUnitClass();
 
+    const names: string[] = [];
     target.getValue().forEach((item) => {
         const idTypeClass = toTypeClass(item, isNormalIdType, errorClass);
         if (idTypeClass) {
-            triggerUnit.setValue(normalIdConvert(idTypeClass));
+            names.push(normalIdConvert(idTypeClass));
         }
     });
+    triggerUnit.setValue(names);
 
     const triggerCases: TriggerCaseClass[] = [];
     target.getTriggerCase().forEach((item) => {

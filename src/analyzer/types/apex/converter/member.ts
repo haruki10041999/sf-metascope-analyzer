@@ -132,15 +132,15 @@ export const triggerBlockMemberConvert = (
 
     const valueTypeClass = toTypeClass(
         target.getValue(),
-        (target): target is AnonymousMemberDeclarationTypeClass | NormalStatementTypeClass =>
-            isAnonymousMemberDeclarationType(target) || isNormalStatementType(target),
+        (target): target is TriggerMemberDeclarationTypeClass | NormalStatementTypeClass =>
+            isTriggerMemberDeclarationType(target) || isNormalStatementType(target),
         errorClass,
     );
 
     if (valueTypeClass) {
-        if (isAnonymousMemberDeclarationType(valueTypeClass)) {
+        if (isTriggerMemberDeclarationType(valueTypeClass)) {
             triggerBlockMember.setValue(
-                anonymousMemberDeclarationConvert(valueTypeClass, errorClass),
+                triggerMemberDeclarationConvert(valueTypeClass, errorClass),
             );
         }
         if (isNormalStatementType(valueTypeClass)) {

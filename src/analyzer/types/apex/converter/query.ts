@@ -470,7 +470,7 @@ export class NormalQueryClass extends CommonClass {
         return this.withClause;
     }
 
-    getGroupeByClause(): GroupByClauseClass {
+    getGroupByClause(): GroupByClauseClass {
         return this.groupByClause;
     }
 
@@ -497,6 +497,7 @@ export class NormalQueryClass extends CommonClass {
         this.setUpdateList(commonClass.getUpdateList());
         this.setUsingScope(commonClass.getUsingScope());
         this.setWithClause(commonClass.getWithClause());
+        this.setGroupByClause(commonClass.getGroupByClause());
         this.setOffsetClause(commonClass.getOffsetClause());
         this.setAllRowsClause(commonClass.getAllRowsClause());
     }
@@ -671,7 +672,11 @@ export class SoqlFunctionClass extends CommonClass {
         } else if (isStringArray(this.param) && isStringArray(param)) {
             this.param.push(...param);
         } else if (isDistanceValueArray(this.param) && isDistanceValueArray(param)) {
-            this.param.push(...param);
+            // string[] も絞り込み結果に含まれ push の引数型が string に縮むため明示的に型付けする
+            const current: (
+                string | (SignedLiteralClass | ExpressionClass)[] | string[] | ExpressionClass
+            )[] = this.param;
+            current.push(...param);
         } else {
             this.param = param;
         }

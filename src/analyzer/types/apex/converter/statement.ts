@@ -53,6 +53,8 @@ import {
     UndeleteStatementTypeClass,
     isStatementTypeAll,
     isFinallyBlockType,
+    NormalBlockTypeClass,
+    StatementAllTypeClass,
 } from '../../apex_IR';
 
 import { toPrimitiveValue, toTypeClass, CommonClass, isCommonClass } from './commons';
@@ -378,7 +380,7 @@ export const mergeStatementConvert = (
             values.push(expressionConvert(typeClass, errorClass));
         }
     });
-    mergeStatement.getValue();
+    mergeStatement.setValue(values);
 
     const accessLevelTypeClass = target.getAccessLevel();
     if (accessLevelTypeClass) {
@@ -1232,7 +1234,12 @@ export const normalStatementConvert = (
     target: NormalStatementTypeClass,
     errorClass: ErrorTypeClass[],
 ): NormalStatementClass => {
-    const valueTypeClass = toTypeClass(target.getValue(), isStatementTypeAll, errorClass);
+    const valueTypeClass = toTypeClass(
+        target.getValue(),
+        (target): target is StatementAllTypeClass | NormalBlockTypeClass =>
+            isStatementTypeAll(target) || isNormalBlockType(target),
+        errorClass,
+    );
 
     const normalStatement = new NormalStatementClass();
 
@@ -1287,7 +1294,7 @@ export const normalStatementConvert = (
             normalStatement.setValue(
                 new ExpressionStatementElementClass(
                     'throw',
-                    returnStatementConvert(valueTypeClass, errorClass),
+                    throwStatementConvert(valueTypeClass, errorClass),
                 ),
             );
         }
@@ -1303,7 +1310,7 @@ export const normalStatementConvert = (
             normalStatement.setValue(
                 new StringStatementElementClass(
                     'continue',
-                    breakStatementConvert(valueTypeClass, errorClass),
+                    continueStatementConvert(valueTypeClass, errorClass),
                 ),
             );
         }

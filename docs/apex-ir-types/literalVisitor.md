@@ -81,14 +81,14 @@ public static final Integer MAX_SIZE = 100;
 - **type**: `'whenLiteral'`
 - **継承**: `PrimitiveLiteralTypeClass<WhenLiteralValueType>`
 - **元 Context**: `WhenLiteralContext`（文法: `(SUB|ADD)* IntegerLiteral | (SUB|ADD)* LongLiteral | StringLiteral | MultilineStringLiteral | NULL | qualifiedName | LPAREN whenLiteral RPAREN`）
-- **役割**: `switch` の `when` 節に書かれる値 1 つ。`WhenLiteralValueType` = `number | string | null | QualifiedNameTypeClass | WhenLiteralTypeClass`。
+- **役割**: `switch` の `when` 節に書かれる値 1 つ。`WhenLiteralValueType` = `string | QualifiedNameTypeClass`。
 
-| 変数        | 型                                       | 内容                                                                                                                                                                                                                                                               |
-| ----------- | ---------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `type`      | `'whenLiteral'`                          | 継承                                                                                                                                                                                                                                                               |
-| `valueType` | `string`                                 | `'integer'` \| `'long'` \| `'string'` \| `'multilineString'` \| `'qualifiedName'` \| `'whenLiteral'` \| `'null'`                                                                                                                                                   |
-| `value`     | `WhenLiteralValueType \| ErrorTypeClass` | integer / long: `parseInt` した `number`（符号は含まない）。string: 引用符込みのテキスト。multilineString: ソースのままのテキスト（改行も保持）。qualifiedName: `QualifiedNameTypeClass`（列挙値など）。whenLiteral: 括弧内の `WhenLiteralTypeClass`。null: `null` |
-| `operator`  | `string`                                 | 数値の前の符号（`+` / `-` トークンをすべてソース順に連結した文字列。例: `-1` → `'-'`、`+-1` → `'+-'`）。符号なし・数値以外は `''`                                                                                                                                  |
+| 変数        | 型                                       | 内容                                                                                                                                                                                                                                                      |
+| ----------- | ---------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `type`      | `'whenLiteral'`                          | 継承                                                                                                                                                                                                                                                      |
+| `valueType` | `string`                                 | `'integer'` \| `'long'` \| `'string'` \| `'multilineString'` \| `'qualifiedName'` \| `'null'`（括弧付きは内側の値の種類）                                                                                                                                 |
+| `value`     | `WhenLiteralValueType \| ErrorTypeClass` | integer / long: トークンのテキスト（文字列、符号は含まない）。string: 引用符込みのテキスト。multilineString: ソースのままのテキスト（改行も保持）。qualifiedName: `QualifiedNameTypeClass`（列挙値など）。括弧付き: 内側の値に展開。null: 文字列 `'null'` |
+| `operator`  | `string \| null`                         | 数値の前の符号（`+` / `-` トークンをすべてソース順に連結した文字列。例: `-1` → `'-'`、`+-1` → `'+-'`、符号なし → `''`）。数値以外は `null`                                                                                                                |
 
 ゲッター: `getValue()`, `getValueType()`, `getOperator()`
 
@@ -102,10 +102,10 @@ when null { ... }
 ```
 
 ```json
-{"type":"whenLiteral","valueType":"string","value":"'A'","operator":""}
-{"type":"whenLiteral","valueType":"integer","value":1,"operator":"-"}
-{"type":"whenLiteral","valueType":"qualifiedName","value":{"type":"qualifiedName","value":[{"type":"id","value":"AAA"}]},"operator":""}
-{"type":"whenLiteral","valueType":"null","value":null,"operator":""}
+{"type":"whenLiteral","valueType":"string","value":"'A'","operator":null}
+{"type":"whenLiteral","valueType":"integer","value":"1","operator":"-"}
+{"type":"whenLiteral","valueType":"qualifiedName","value":{"type":"qualifiedName","value":[{"type":"id","value":"AAA"}]},"operator":null}
+{"type":"whenLiteral","valueType":"null","value":"null","operator":null}
 ```
 
 ### `SignedIntegerTypeClass`（signedInteger.ts）

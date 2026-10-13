@@ -683,7 +683,7 @@ export const classDeclarationConvert = (
     }
     classDeclaration.setBody(body);
 
-    const implementValue = target.getExtend();
+    const implementValue = target.getImplement();
     if (implementValue) {
         const implementTypeClass = toTypeClass(implementValue, isTypeListType, errorClass);
         if (implementTypeClass) {
@@ -881,7 +881,7 @@ export class FieldDeclarationClass extends CommonClass {
     }
 
     setValue(value: VariableDeclaratorClass[]): void {
-        value.push(...value);
+        this.value.push(...value);
     }
 
     setValueType(valueType: TypeRefClass): void {
@@ -1286,7 +1286,7 @@ export const isMethodDeclarationClass = (target: any): target is MethodDeclarati
 };
 
 export const isMethodDeclarationClassArray = (target: any): target is MethodDeclarationClass[] => {
-    return Array.isArray(target) && target.every((t) => isMemberDeclarationClass(t));
+    return Array.isArray(target) && target.every((t) => isMethodDeclarationClass(t));
 };
 
 export const methodDeclarationConvert = (
@@ -1484,6 +1484,7 @@ export const typeDeclarationConvert = (
     });
 
     const typeDeclaration = new TypeDeclarationClass();
+    typeDeclaration.setModifier(modifiers);
 
     if (valueTypeClass) {
         if (isClassDeclarationType(valueTypeClass)) {

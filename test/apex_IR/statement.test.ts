@@ -62,7 +62,7 @@ describe('valueVisitor / whenValue', () => {
         const literal = await import('../../src/analyzer/types/apex_IR/literalVisitor');
         const result = new literal.LiteralVisitor().visit(parse('-1', (p) => p.whenLiteral()));
         assert.ok(literal.isWhenLiteralType(result), result.getType());
-        assert.equal(result.getValue(), 1);
+        assert.equal(result.getValue(), '1');
         assert.equal(result.getOperator(), '-');
     });
 
