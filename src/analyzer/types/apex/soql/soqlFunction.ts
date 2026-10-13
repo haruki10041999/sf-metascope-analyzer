@@ -1,4 +1,18 @@
-import { SoqlFunction, DateFieldName, SignedLiteral, Expression } from '../converter';
+import {
+    SoqlFunctionClass,
+    DateFieldNameClass,
+    SignedLiteralClass,
+    ExpressionClass,
+    isSoqlFunctionClass,
+    isDateFieldNameClass,
+    isSignedLiteralClass,
+    isExpressionClass,
+    isCoordinateValue,
+    isDistanceValueArray,
+    isString,
+    isStringArray,
+    isCoordinateValueArray,
+} from '../converter';
 
 import { ExpressionType, makeExpressionType } from '../expression';
 
@@ -7,71 +21,26 @@ type CoordinateValue = {
     longitude: ExpressionType | { value: string; valueType: string; operator?: string };
 };
 
-const isExpression = (param: unknown): param is Expression => {
-    return (
-        typeof param === 'object' &&
-        param !== null &&
-        'type' in param &&
-        typeof param.type === 'string' &&
-        [
-            'normal',
-            'primary',
-            'dot',
-            'array',
-            'methodCall',
-            'new',
-            'cast',
-            'sub',
-            'postOp',
-            'preOp',
-            'neg',
-            'arth1',
-            'arth2',
-            'bit',
-            'equality',
-            'bitAnd',
-            'bitOr',
-            'bitNot',
-            'assign',
-            'cmp',
-            'logAnd',
-            'logOr',
-            'coal',
-            'instanceOf',
-            'cond',
-        ].includes(param.type)
-    );
-};
-
-const isSignLiteral = (param: any): param is SignedLiteral => {
-    return (
-        typeof param === 'object' &&
-        param !== null &&
-        'value' in param &&
-        'valueType' in param &&
-        'operator' in param
-    );
-};
-
-const makeCoordinateLiteral = (
-    literal: Expression | SignedLiteral,
+const makeCoordinateElement = (
+    coordinateElement: ExpressionClass | SignedLiteralClass,
 ): ExpressionType | { value: string; valueType: string; operator?: string } | undefined => {
-    if (isExpression(literal)) {
-        return makeExpressionType(literal);
+    if (isExpressionClass(coordinateElement)) {
+        return makeExpressionType(coordinateElement);
     }
 
-    if (isSignLiteral(literal)) {
-        const { value, valueType, operator } = literal;
-        if (value) {
+    if (isSignedLiteralClass(coordinateElement)) {
+        const value = coordinateElement.getValue();
+        const valueType = coordinateElement.getValueType();
+        const operator = coordinateElement.getOperator();
+
+        if (value && valueType) {
             const coordinateLiteral: { value: string; valueType: string; operator?: string } = {
                 value: value,
                 valueType: valueType,
             };
-
             if (operator) {
                 coordinateLiteral.operator = operator;
             }
-
             return coordinateLiteral;
         }
     }
@@ -80,11 +49,11 @@ const makeCoordinateLiteral = (
 };
 
 const makeCoordinateValue = (
-    coordinateValues: (Expression | SignedLiteral)[],
+    coordinateValues: (ExpressionClass | SignedLiteralClass)[],
 ): CoordinateValue | undefined => {
     if (coordinateValues.length === 2) {
-        const latitude = makeCoordinateLiteral(coordinateValues.at(0)!);
-        const longitude = makeCoordinateLiteral(coordinateValues.at(1)!);
+        const latitude = makeCoordinateElement(coordinateValues.at(0)!);
+        const longitude = makeCoordinateElement(coordinateValues.at(1)!);
 
         if (latitude && longitude) {
             return {
@@ -97,27 +66,17 @@ const makeCoordinateValue = (
     return undefined;
 };
 
-type LocationValue = string | string[] | (SignedLiteral | Expression)[] | Expression;
-
-type DistanceArg = {
+type DistanceValue = {
     field: string[];
     location: string[] | ExpressionType | CoordinateValue;
     unit: string;
 };
 
-const isString = (param: any): param is string => {
-    return typeof param === 'string';
-};
-
-const isStringArray = (param: any): param is string[] => {
-    return Array.isArray(param) && param.every((p) => typeof p === 'string');
-};
-
-const isCoordinateValues = (param: any): param is (SignedLiteral | Expression)[] => {
-    return Array.isArray(param) && param.every((p) => isSignLiteral(param) || isExpression(param));
-};
-
-const makeDistanceArg = (locationValues: LocationValue[]): DistanceArg | undefined => {
+const makeDistanceValue = (
+    locationValues: (
+        string | (SignedLiteralClass | ExpressionClass)[] | string[] | ExpressionClass
+    )[],
+): DistanceValue | undefined => {
     if (locationValues.length === 3) {
         const field = locationValues.at(0)!;
         const location = locationValues.at(1)!;
@@ -132,7 +91,7 @@ const makeDistanceArg = (locationValues: LocationValue[]): DistanceArg | undefin
                 };
             }
 
-            if (isExpression(location)) {
+            if (isExpressionClass(location)) {
                 return {
                     field: field,
                     location: makeExpressionType(location),
@@ -140,7 +99,7 @@ const makeDistanceArg = (locationValues: LocationValue[]): DistanceArg | undefin
                 };
             }
 
-            if (isCoordinateValues(location)) {
+            if (isCoordinateValueArray(location)) {
                 const coordinateValue = makeCoordinateValue(location);
                 if (coordinateValue) {
                     return {
@@ -157,54 +116,29 @@ const makeDistanceArg = (locationValues: LocationValue[]): DistanceArg | undefin
 };
 
 export type SoqlFunctionField = {
-    kind: 'function';
     funcName: string;
     arg?:
         | string[]
         | { fieldName: string[]; isConvertTimeZone: boolean }
         | string
-        | Omit<SoqlFunctionField, 'kind'>
-        | DistanceArg;
-};
-
-const isDateFieldName = (param: any): param is DateFieldName => {
-    return (
-        typeof param === 'object' &&
-        param !== null &&
-        'value' in param &&
-        'isConvertTimeZone' in param
-    );
-};
-
-const isLocationValue = (
-    param: any,
-): param is (string | string[] | (SignedLiteral | Expression)[] | Expression)[] => {
-    return (
-        Array.isArray(param) &&
-        param.every(
-            (item) =>
-                typeof item === 'string' ||
-                (Array.isArray(item) && item.every((i) => typeof i === 'string')) ||
-                isCoordinateValues(item) ||
-                isExpression(item),
-        )
-    );
-};
-
-const isSoqlFunction = (param: any): param is SoqlFunction => {
-    return typeof param === 'object' && param !== null && 'value' in param && 'param' in param;
+        | SoqlFunctionField
+        | DistanceValue;
 };
 
 export const makeSoqlFunctionField = (
-    soqlFunction: SoqlFunction,
+    soqlFunction: SoqlFunctionClass,
 ): SoqlFunctionField | undefined => {
-    const { value, param } = soqlFunction;
+    const value = soqlFunction.getValue();
+    const param = soqlFunction.getParam();
 
     if (value) {
         const soqlFunctionField: SoqlFunctionField = {
-            kind: 'function',
             funcName: value,
         };
+
+        if (!param) {
+            return soqlFunctionField;
+        }
 
         if (param) {
             if (isString(param)) {
@@ -214,33 +148,43 @@ export const makeSoqlFunctionField = (
 
             if (isStringArray(param) && param.length > 0) {
                 soqlFunctionField.arg = param;
+                return soqlFunctionField;
             }
 
-            if (isDateFieldName(param)) {
-                soqlFunctionField.arg = {
-                    fieldName: param.value,
-                    isConvertTimeZone: param.isConvertTimeZone,
-                };
-            }
+            if (isDateFieldNameClass(param)) {
+                const dateFieldName = param.getValue();
+                const isConvertTimeZone = param.getIsConvertTimeZone();
 
-            if (isLocationValue(param)) {
-                const distanceArg = makeDistanceArg(param);
-                if (distanceArg) {
-                    soqlFunctionField.arg = distanceArg;
+                if (dateFieldName.length > 0 && isConvertTimeZone) {
+                    soqlFunctionField.arg = {
+                        fieldName: dateFieldName,
+                        isConvertTimeZone: isConvertTimeZone,
+                    };
+                    return soqlFunctionField;
                 }
             }
 
-            if (isSoqlFunction(param)) {
+            if (isDistanceValueArray(param)) {
+                const locationValue: (
+                    string | (SignedLiteralClass | ExpressionClass)[] | string[] | ExpressionClass
+                )[] = param;
+                const distanceValue = makeDistanceValue(locationValue);
+                if (distanceValue) {
+                    soqlFunctionField.arg = distanceValue;
+                    return soqlFunctionField;
+                }
+            }
+
+            if (isSoqlFunctionClass(param)) {
                 const soqlFunction = makeSoqlFunctionField(param);
                 if (soqlFunction) {
-                    const { kind, ...func } = soqlFunction;
-                    soqlFunction.arg = func;
+                    soqlFunctionField.arg = soqlFunction;
+                    return soqlFunctionField;
                 }
             }
         }
-
-        return soqlFunctionField;
     }
 
     return undefined;
 };
+

@@ -182,7 +182,7 @@ export class ArrayRestElementClass extends RestElementClass<
     }
 }
 
-export const isArrayElementClass = (target: CommonClass): target is ArrayRestElementClass => {
+export const isArrayRestElementClass = (target: CommonClass): target is ArrayRestElementClass => {
     return isCommonClass(target, ArrayRestElementClass);
 };
 

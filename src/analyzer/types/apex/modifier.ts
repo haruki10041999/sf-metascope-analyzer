@@ -1,4 +1,12 @@
-import { NormalModifier, Annotation, NormalLiteral, ElementValuePair } from './converter';
+import {
+    NormalModifierClass,
+    AnnotationClass,
+    ModifierElementClass,
+    NormalModifierElementClass,
+    AnnotationModifierElementClass,
+    NormalLiteralClass,
+    ElementValuePairClass,
+} from './converter';
 
 type AccessModifier = 'PUBLIC' | 'PRIVATE' | 'PROTECTED' | 'GLOBAL';
 type DeclarationModifier = 'STATIC' | 'FINAL' | 'ABSTRACT' | 'VIRTUAL' | 'OVERRIDE';
@@ -125,7 +133,7 @@ export type ModifierType = {
 export const makeAnnotationType = <TName extends string>(
     result: AnnotationType<TName>[],
     name: TName,
-    param?: NormalLiteral | ElementValuePair[],
+    param: NormalLiteralClass | ElementValuePairClass[] | null,
 ): void => {
     const annotation: AnnotationType<TName> = {
         name: name,
@@ -134,43 +142,49 @@ export const makeAnnotationType = <TName extends string>(
     if (param) {
         if (Array.isArray(param)) {
             param.forEach((p) => {
+                const key = p.getLeft();
+
+                const right = p.getRight();
+                const value = right.getValue();
+                const valueType = right.getValueType();
+
+                if (!key || !value || !valueType) return;
+
                 if (!annotation.param) {
                     annotation.param = [];
                 }
-                const { left: key, right: value } = p;
 
-                if (key && value && value.value && value.valueType) {
-                    annotation.param.push({
-                        key: key,
-                        value: value.value,
-                        valueType: value.valueType,
-                    });
-                }
+                annotation.param.push({
+                    key: key,
+                    value: value,
+                    valueType: valueType,
+                });
             });
         } else {
-            const { value, valueType } = param;
-            if (value) {
-                annotation.param = [
-                    {
-                        value: value,
-                        valueType: valueType,
-                    },
-                ];
-            }
+            const value = param.getValue();
+            const valueType = param.getValueType();
+
+            if (!value || !valueType) return;
+
+            annotation.param = [
+                {
+                    value: value,
+                    valueType: valueType,
+                },
+            ];
         }
     }
     result.push(annotation);
 };
-export const makeModifierType = (modifiers: NormalModifier[]): ModifierType => {
+export const makeModifierType = (modifiers: NormalModifierClass[]): ModifierType => {
     const modifierType: ModifierType = {};
 
     modifiers.forEach((modifier) => {
-        const { type, value } = modifier;
+        const modifierElement = modifier.getValue();
+        if (!modifierElement) return;
 
-        if (!value) return;
-
-        if (type === 'modifier') {
-            const modifier = value as string;
+        if (modifierElement.getType() === 'normal') {
+            const modifier = modifierElement.getModifier() as string;
 
             if (isAccessModifier(modifier)) {
                 if (!modifierType.access) {
@@ -221,12 +235,15 @@ export const makeModifierType = (modifiers: NormalModifier[]): ModifierType => {
             }
         }
 
-        if (type === 'annotation') {
+        if (modifierElement.getModifier() === 'annotation') {
+            const modifier = modifierElement.getModifier() as AnnotationClass;
+
             if (!modifierType.annotation) {
                 modifierType.annotation = {};
             }
 
-            const { value: name, param } = value as Annotation;
+            const name = modifier.getValue();
+            const param = modifier.getParam();
 
             if (name) {
                 if (isLWCAnnotation(name)) {

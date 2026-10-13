@@ -1,4 +1,4 @@
-import { TypeRef, TypeName } from './converter';
+import { TypeRefClass, TypeNameClass } from './converter';
 
 const isPrimitiveType = (type: string): boolean => {
     return [
@@ -57,20 +57,24 @@ export type TypeType =
           kind: 'unSupported';
       };
 
-export const makeTypeType = (type: TypeRef): TypeType => {
-    const { value, dimension }: TypeRef = type;
+export const makeTypeType = (type: TypeRefClass): TypeType => {
+    const value = type.getValue();
+    const dimension = type.getDimension();
 
     if (value && value.length > 0) {
         if (dimension) {
+            const arrayedType = new TypeRefClass();
+            arrayedType.setValue(value);
             return {
                 kind: 'array',
-                name: makeTypeType({ value: value }),
+                name: makeTypeType(arrayedType),
                 dimension: dimension,
             };
         }
 
         if (value.length === 1) {
-            const { value: typeName, generic }: TypeName = value.at(0)!;
+            const typeName = value.at(0)!.getValue();
+            const generic = value.at(0)!.getGeneric();
 
             if (typeName) {
                 if (isPrimitiveType(typeName)) {
@@ -110,11 +114,11 @@ export const makeTypeType = (type: TypeRef): TypeType => {
         } else {
             const typeType: TypeType = {
                 kind: 'custom',
-                name: type.value.map((v) => v.value!),
+                name: type.getValue().map((v) => v.getValue()!),
             };
 
-            if (type.value.at(-1) && type.value.at(-1)!.generic) {
-                const generic = type.value.at(-1)!.generic;
+            if (type.getValue().at(-1) && type.getValue().at(-1)!.getGeneric().length > 0) {
+                const generic = type.getValue().at(-1)!.getGeneric();
                 typeType.generic = generic.map((g) => makeTypeType(g));
             }
             return typeType;

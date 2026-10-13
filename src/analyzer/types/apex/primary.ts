@@ -1,50 +1,71 @@
-import { Primary, NormalQuery, TypeRef, NormalLiteral, SoslLiteral } from './converter';
+import {
+    PrimaryClass,
+    NormalQueryClass,
+    TypeRefClass,
+    NormalLiteralClass,
+    SoslLiteralClass,
+    StringPrimaryElementClass,
+    SoqlPrimaryElementClass,
+    TypeRefPrimaryElementClass,
+    LiteralPrimaryElementClass,
+    SoslPrimaryElementClass,
+    isStringPrimaryElementClass,
+    isSoqlPrimaryElementClass,
+    isTypeRefPrimaryElementClass,
+    isLiteralPrimaryElementClass,
+    isSoslPrimaryElementClass,
+} from './converter';
 
 import { makeTypeType, TypeType } from './type';
 
-type SoqlPrimaryType = NormalQuery;
+type SoqlPrimaryType = NormalQueryClass;
 type LiteralPrimaryType = {
     value: string;
     valueType: string;
 };
-type SoslPrimaryType = SoslLiteral;
+type SoslPrimaryType = SoslLiteralClass;
 
 export type PrimaryType =
     string | SoqlPrimaryType | LiteralPrimaryType | SoslPrimaryType | TypeType | 'unSupported';
 
-export const makePrimaryType = (primary: Primary): PrimaryType => {
-    const { type, primary: value } = primary;
-    if (
-        (type === 'normal' ||
-            type === 'this' ||
-            type === 'super' ||
-            type === 'void' ||
-            type === 'id') &&
-        value
-    ) {
-        return value;
-    }
+export const makePrimaryType = (primary: PrimaryClass): PrimaryType => {
+    const elementClass = primary.getValue();
 
-    if (type === 'typeRef') {
-        return makeTypeType(value);
-    }
-
-    if (type === 'literal' && value) {
-        const { value: valueValue, valueType } = value;
-        if (valueValue && valueType) {
-            return {
-                value: valueValue,
-                valueType: valueType,
-            };
+    if (elementClass) {
+        if (isStringPrimaryElementClass(elementClass)) {
+            const value = elementClass.getPrimary();
+            if (value) {
+                return value;
+            }
         }
-    }
 
-    if (type === 'soql') {
-        return value;
-    }
+        if (isTypeRefPrimaryElementClass(elementClass)) {
+            const value = elementClass.getPrimary();
+            return makeTypeType(value);
+        }
 
-    if (type === 'sosl') {
-        return value;
+        if (isLiteralPrimaryElementClass(elementClass)) {
+            const value = elementClass.getPrimary();
+            const valueValue = value.getValue();
+            const valueType = value.getValueType();
+
+            if (valueValue && valueType) {
+                return {
+                    value: valueValue,
+                    valueType: valueType,
+                };
+            }
+        }
+
+        if (isSoqlPrimaryElementClass(elementClass)) {
+            const value = elementClass.getPrimary();
+            return value;
+        }
+
+        if (isSoslPrimaryElementClass(elementClass)) {
+            const value = elementClass.getPrimary();
+            return value;
+        }
     }
 
     return 'unSupported';

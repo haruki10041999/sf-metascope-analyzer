@@ -1,32 +1,38 @@
-import { TypeOf } from '../converter';
+import { TypeOfClass, WhenClauseClass, isTypeOfClass } from '../converter';
 
 type ConditionBlock = {
     object: string[] | 'else';
     fields: string[][];
 };
 
-export type TypeOfField =
-    | {
-          kind: 'typeOf';
-          field: string[];
-          conditionBlock: ConditionBlock[];
-      }
-    | 'unSuporrted';
+export type TypeOfField = {
+    field: string[];
+    conditionBlock: ConditionBlock[];
+};
 
-export const makeTypeOfField = (typeOf: TypeOf): TypeOfField => {
-    const { value, whenClause, elseClause } = typeOf;
+export const makeTypeOfField = (typeOf: TypeOfClass): TypeOfField | undefined => {
+    const value = typeOf.getValue();
+    const whenClause = typeOf.getWhenClause();
+    const elseClause = typeOf.getElseClause();
 
-    if (value.length > 0) {
+    if (value.length > 0 && whenClause.length > 0) {
         const conditionBlock: ConditionBlock[] = [];
+
         whenClause.forEach((where) => {
-            const { value: object, field } = where;
-            conditionBlock.push({
-                object: object,
-                fields: field,
-            });
+            const object = where.getValue();
+            const field = where.getField();
+
+            if (object.length > 0 && field.length > 0) {
+                conditionBlock.push({
+                    object: object,
+                    fields: field.sort(
+                        (a, b) => a.length - b.length || a.at(0)!.localeCompare(b.at(0)!),
+                    ),
+                });
+            }
         });
 
-        if (elseClause) {
+        if (elseClause.length > 0) {
             conditionBlock.push({
                 object: 'else',
                 fields: elseClause,
@@ -34,11 +40,11 @@ export const makeTypeOfField = (typeOf: TypeOf): TypeOfField => {
         }
 
         return {
-            kind: 'typeOf',
             field: value,
             conditionBlock: conditionBlock,
         };
     }
 
-    return 'unSuporrted';
+    return undefined;
 };
+
