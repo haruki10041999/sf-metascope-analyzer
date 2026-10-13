@@ -432,9 +432,9 @@ export const makeExpressionType = (expression: ExpressionClass): ExpressionType 
 
             if (left && operator && right) {
                 return {
-                    value: makeExpressionType(left),
+                    left: makeExpressionType(left),
                     operator: operator,
-                    targetType: makeTypeType(right),
+                    right: makeTypeType(right),
                 };
             }
         }
@@ -448,7 +448,7 @@ export const makeExpressionType = (expression: ExpressionClass): ExpressionType 
             if (condition && trueValue && falseValue) {
                 return {
                     condition: makeExpressionType(condition),
-                    trueValue: makeExpressionType(trueValue),
+                    truevalue: makeExpressionType(trueValue),
                     falseValue: makeExpressionType(falseValue),
                 };
             }

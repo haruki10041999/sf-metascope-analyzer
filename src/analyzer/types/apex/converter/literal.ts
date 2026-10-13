@@ -319,11 +319,11 @@ export class SignedLiteralClass extends CommonClass {
     }
 }
 
-export const isSignedLiteralClass = (target: CommonClass): target is SignedLiteralClass => {
+export const isSignedLiteralClass = (target: any): target is SignedLiteralClass => {
     return isCommonClass(target, SignedLiteralClass);
 };
 
-export const isSignedLiteralClassArray = (target: CommonClass): target is SignedLiteralClass[] => {
+export const isSignedLiteralClassArray = (target: any): target is SignedLiteralClass[] => {
     return Array.isArray(target) && target.every((t) => isSignedLiteralClass(t));
 };
 

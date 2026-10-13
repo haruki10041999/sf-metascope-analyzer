@@ -1073,7 +1073,7 @@ export const withClauseConvert = (
     } else {
         const valueTypeClass = toTypeClass(valueValue, isLogicalExpressionType, errorClass);
         if (valueTypeClass) {
-            withClause.setField(logicalExpressionConvert(valueTypeClass, errorClass));
+            withClause.setValue(logicalExpressionConvert(valueTypeClass, errorClass));
         }
     }
 
