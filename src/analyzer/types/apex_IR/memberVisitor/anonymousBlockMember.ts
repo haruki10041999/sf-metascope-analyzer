@@ -57,4 +57,3 @@ export const isAnonymousBlockMemberType = (
 ): target is AnonymousBlockMemberTypeClass => {
     return target instanceof AnonymousBlockMemberTypeClass;
 };
-
