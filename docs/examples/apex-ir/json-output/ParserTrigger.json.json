@@ -1,0 +1,1759 @@
+{
+  "file": "ParserTrigger.trigger",
+  "syntaxErrors": [],
+  "conversionErrors": [],
+  "converted": {
+    "fileType": "trigger",
+    "triggerCase": [
+      {
+        "kind": "INSERT",
+        "timing": "BEFORE"
+      },
+      {
+        "kind": "UPDATE",
+        "timing": "BEFORE"
+      },
+      {
+        "kind": "DELETE",
+        "timing": "BEFORE"
+      },
+      {
+        "kind": "INSERT",
+        "timing": "AFTER"
+      },
+      {
+        "kind": "UPDATE",
+        "timing": "AFTER"
+      },
+      {
+        "kind": "DELETE",
+        "timing": "AFTER"
+      },
+      {
+        "kind": "UNDELETE",
+        "timing": "AFTER"
+      }
+    ],
+    "block": [
+      {
+        "kind": "expression",
+        "block": {
+          "kind": "method",
+          "object": {
+            "kind": "id",
+            "value": "System"
+          },
+          "dot": ".",
+          "name": "debug",
+          "arg": [
+            {
+              "kind": "field",
+              "object": {
+                "kind": "id",
+                "value": "Trigger"
+              },
+              "dot": ".",
+              "name": "isExecuting"
+            }
+          ]
+        }
+      },
+      {
+        "kind": "expression",
+        "block": {
+          "kind": "method",
+          "object": {
+            "kind": "id",
+            "value": "System"
+          },
+          "dot": ".",
+          "name": "debug",
+          "arg": [
+            {
+              "kind": "field",
+              "object": {
+                "kind": "id",
+                "value": "Trigger"
+              },
+              "dot": ".",
+              "name": "isBefore"
+            }
+          ]
+        }
+      },
+      {
+        "kind": "expression",
+        "block": {
+          "kind": "method",
+          "object": {
+            "kind": "id",
+            "value": "System"
+          },
+          "dot": ".",
+          "name": "debug",
+          "arg": [
+            {
+              "kind": "field",
+              "object": {
+                "kind": "id",
+                "value": "Trigger"
+              },
+              "dot": ".",
+              "name": "isAfter"
+            }
+          ]
+        }
+      },
+      {
+        "kind": "expression",
+        "block": {
+          "kind": "method",
+          "object": {
+            "kind": "id",
+            "value": "System"
+          },
+          "dot": ".",
+          "name": "debug",
+          "arg": [
+            {
+              "kind": "field",
+              "object": {
+                "kind": "id",
+                "value": "Trigger"
+              },
+              "dot": ".",
+              "name": "isInsert"
+            }
+          ]
+        }
+      },
+      {
+        "kind": "expression",
+        "block": {
+          "kind": "method",
+          "object": {
+            "kind": "id",
+            "value": "System"
+          },
+          "dot": ".",
+          "name": "debug",
+          "arg": [
+            {
+              "kind": "field",
+              "object": {
+                "kind": "id",
+                "value": "Trigger"
+              },
+              "dot": ".",
+              "name": "isUpdate"
+            }
+          ]
+        }
+      },
+      {
+        "kind": "expression",
+        "block": {
+          "kind": "method",
+          "object": {
+            "kind": "id",
+            "value": "System"
+          },
+          "dot": ".",
+          "name": "debug",
+          "arg": [
+            {
+              "kind": "field",
+              "object": {
+                "kind": "id",
+                "value": "Trigger"
+              },
+              "dot": ".",
+              "name": "isDelete"
+            }
+          ]
+        }
+      },
+      {
+        "kind": "expression",
+        "block": {
+          "kind": "method",
+          "object": {
+            "kind": "id",
+            "value": "System"
+          },
+          "dot": ".",
+          "name": "debug",
+          "arg": [
+            {
+              "kind": "field",
+              "object": {
+                "kind": "id",
+                "value": "Trigger"
+              },
+              "dot": ".",
+              "name": "isUndelete"
+            }
+          ]
+        }
+      },
+      {
+        "kind": "expression",
+        "block": {
+          "kind": "method",
+          "object": {
+            "kind": "id",
+            "value": "System"
+          },
+          "dot": ".",
+          "name": "debug",
+          "arg": [
+            {
+              "kind": "field",
+              "object": {
+                "kind": "id",
+                "value": "Trigger"
+              },
+              "dot": ".",
+              "name": "new"
+            }
+          ]
+        }
+      },
+      {
+        "kind": "expression",
+        "block": {
+          "kind": "method",
+          "object": {
+            "kind": "id",
+            "value": "System"
+          },
+          "dot": ".",
+          "name": "debug",
+          "arg": [
+            {
+              "kind": "field",
+              "object": {
+                "kind": "id",
+                "value": "Trigger"
+              },
+              "dot": ".",
+              "name": "old"
+            }
+          ]
+        }
+      },
+      {
+        "kind": "expression",
+        "block": {
+          "kind": "method",
+          "object": {
+            "kind": "id",
+            "value": "System"
+          },
+          "dot": ".",
+          "name": "debug",
+          "arg": [
+            {
+              "kind": "field",
+              "object": {
+                "kind": "id",
+                "value": "Trigger"
+              },
+              "dot": ".",
+              "name": "newMap"
+            }
+          ]
+        }
+      },
+      {
+        "kind": "expression",
+        "block": {
+          "kind": "method",
+          "object": {
+            "kind": "id",
+            "value": "System"
+          },
+          "dot": ".",
+          "name": "debug",
+          "arg": [
+            {
+              "kind": "field",
+              "object": {
+                "kind": "id",
+                "value": "Trigger"
+              },
+              "dot": ".",
+              "name": "oldMap"
+            }
+          ]
+        }
+      },
+      {
+        "kind": "expression",
+        "block": {
+          "kind": "method",
+          "object": {
+            "kind": "id",
+            "value": "System"
+          },
+          "dot": ".",
+          "name": "debug",
+          "arg": [
+            {
+              "kind": "field",
+              "object": {
+                "kind": "id",
+                "value": "Trigger"
+              },
+              "dot": ".",
+              "name": "operationType"
+            }
+          ]
+        }
+      },
+      {
+        "kind": "expression",
+        "block": {
+          "kind": "method",
+          "object": {
+            "kind": "id",
+            "value": "System"
+          },
+          "dot": ".",
+          "name": "debug",
+          "arg": [
+            {
+              "kind": "field",
+              "object": {
+                "kind": "id",
+                "value": "Trigger"
+              },
+              "dot": ".",
+              "name": "size"
+            }
+          ]
+        }
+      },
+      {
+        "kind": "field",
+        "variant": [
+          {
+            "variant": "PREFIX",
+            "initValue": {
+              "kind": "literal",
+              "value": "Trigger: ",
+              "valueType": "string"
+            }
+          }
+        ],
+        "variantType": {
+          "kind": "primitive",
+          "name": "String"
+        },
+        "modifier": {
+          "access": [
+            "PRIVATE"
+          ],
+          "declaration": [
+            "STATIC",
+            "FINAL"
+          ]
+        }
+      },
+      {
+        "kind": "field",
+        "variant": [
+          {
+            "variant": "invocationCount",
+            "initValue": {
+              "kind": "literal",
+              "value": "0",
+              "valueType": "integer"
+            }
+          }
+        ],
+        "variantType": {
+          "kind": "primitive",
+          "name": "Integer"
+        },
+        "modifier": {
+          "declaration": [
+            "STATIC"
+          ]
+        }
+      },
+      {
+        "kind": "property",
+        "variant": "label",
+        "variantType": {
+          "kind": "primitive",
+          "name": "String"
+        },
+        "block": [
+          {
+            "type": "getter"
+          },
+          {
+            "type": "setter"
+          }
+        ],
+        "modifier": {
+          "access": [
+            "PUBLIC"
+          ]
+        }
+      },
+      {
+        "kind": "method",
+        "name": "log",
+        "returnType": "void",
+        "param": [
+          {
+            "variant": "message",
+            "variantType": {
+              "kind": "primitive",
+              "name": "String"
+            }
+          }
+        ],
+        "block": [
+          {
+            "kind": "expression",
+            "block": {
+              "kind": "method",
+              "object": {
+                "kind": "id",
+                "value": "System"
+              },
+              "dot": ".",
+              "name": "debug",
+              "arg": [
+                {
+                  "kind": "expression",
+                  "left": {
+                    "kind": "id",
+                    "value": "PREFIX"
+                  },
+                  "operator": "+",
+                  "right": {
+                    "kind": "id",
+                    "value": "message"
+                  }
+                }
+              ]
+            }
+          }
+        ],
+        "modifier": {
+          "access": [
+            "PRIVATE"
+          ]
+        }
+      },
+      {
+        "kind": "class",
+        "name": "TriggerHelper",
+        "method": [
+          {
+            "name": "run",
+            "returnType": "void",
+            "block": [
+              {
+                "kind": "expression",
+                "block": {
+                  "kind": "method",
+                  "object": {
+                    "kind": "id",
+                    "value": "System"
+                  },
+                  "dot": ".",
+                  "name": "debug",
+                  "arg": [
+                    {
+                      "kind": "literal",
+                      "value": "helper",
+                      "valueType": "string"
+                    }
+                  ]
+                }
+              }
+            ],
+            "modifier": {
+              "access": [
+                "PUBLIC"
+              ]
+            }
+          }
+        ],
+        "modifier": {
+          "access": [
+            "PUBLIC"
+          ]
+        }
+      },
+      {
+        "kind": "interface",
+        "name": "TriggerHandler",
+        "block": [
+          {
+            "name": "handle",
+            "returnType": "void"
+          }
+        ],
+        "modifier": {
+          "access": [
+            "PUBLIC"
+          ]
+        }
+      },
+      {
+        "kind": "enum",
+        "name": "Phase",
+        "constant": [
+          "BEFORE_PHASE",
+          "AFTER_PHASE"
+        ],
+        "modifier": {
+          "access": [
+            "PUBLIC"
+          ]
+        }
+      },
+      {
+        "kind": "switch",
+        "variant": {
+          "kind": "field",
+          "object": {
+            "kind": "id",
+            "value": "Trigger"
+          },
+          "dot": ".",
+          "name": "operationType"
+        },
+        "block": [
+          {
+            "conditionValue": [
+              {
+                "value": [
+                  "BEFORE_INSERT"
+                ],
+                "valueType": "qualifiedName"
+              },
+              {
+                "value": [
+                  "BEFORE_UPDATE"
+                ],
+                "valueType": "qualifiedName"
+              }
+            ],
+            "block": [
+              {
+                "kind": "expression",
+                "block": {
+                  "kind": "postfix",
+                  "value": {
+                    "kind": "id",
+                    "value": "invocationCount"
+                  },
+                  "operator": "++"
+                }
+              }
+            ]
+          },
+          {
+            "conditionValue": [
+              {
+                "value": [
+                  "AFTER_DELETE"
+                ],
+                "valueType": "qualifiedName"
+              }
+            ],
+            "block": [
+              {
+                "kind": "expression",
+                "block": {
+                  "kind": "postfix",
+                  "value": {
+                    "kind": "id",
+                    "value": "invocationCount"
+                  },
+                  "operator": "--"
+                }
+              }
+            ]
+          },
+          {
+            "conditionValue": {
+              "value": "else"
+            },
+            "block": [
+              {
+                "kind": "expression",
+                "block": {
+                  "kind": "expression",
+                  "left": {
+                    "kind": "id",
+                    "value": "invocationCount"
+                  },
+                  "operator": "+=",
+                  "right": {
+                    "kind": "literal",
+                    "value": "0",
+                    "valueType": "integer"
+                  }
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "kind": "if",
+        "block": [
+          {
+            "condition": {
+              "kind": "expression",
+              "left": {
+                "kind": "field",
+                "object": {
+                  "kind": "id",
+                  "value": "Trigger"
+                },
+                "dot": ".",
+                "name": "isBefore"
+              },
+              "operator": "&&",
+              "right": {
+                "kind": "field",
+                "object": {
+                  "kind": "id",
+                  "value": "Trigger"
+                },
+                "dot": ".",
+                "name": "isInsert"
+              }
+            },
+            "block": [
+              {
+                "type": "for",
+                "condition": {
+                  "variableName": "account",
+                  "variableType": {
+                    "kind": "custom",
+                    "name": [
+                      "Account"
+                    ]
+                  },
+                  "iterable": {
+                    "kind": "field",
+                    "object": {
+                      "kind": "id",
+                      "value": "Trigger"
+                    },
+                    "dot": ".",
+                    "name": "new"
+                  }
+                },
+                "block": [
+                  {
+                    "kind": "if",
+                    "block": [
+                      {
+                        "condition": {
+                          "kind": "method",
+                          "object": {
+                            "kind": "id",
+                            "value": "String"
+                          },
+                          "dot": ".",
+                          "name": "isBlank",
+                          "arg": [
+                            {
+                              "kind": "field",
+                              "object": {
+                                "kind": "id",
+                                "value": "account"
+                              },
+                              "dot": ".",
+                              "name": "Name"
+                            }
+                          ]
+                        },
+                        "block": [
+                          {
+                            "kind": "expression",
+                            "block": {
+                              "kind": "expression",
+                              "left": {
+                                "kind": "field",
+                                "object": {
+                                  "kind": "id",
+                                  "value": "account"
+                                },
+                                "dot": ".",
+                                "name": "Name"
+                              },
+                              "operator": "=",
+                              "right": {
+                                "kind": "literal",
+                                "value": "Default Account",
+                                "valueType": "string"
+                              }
+                            }
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "kind": "expression",
+                    "block": {
+                      "kind": "expression",
+                      "left": {
+                        "kind": "field",
+                        "object": {
+                          "kind": "id",
+                          "value": "account"
+                        },
+                        "dot": ".",
+                        "name": "Description"
+                      },
+                      "operator": "=",
+                      "right": {
+                        "kind": "literal",
+                        "value": "Created by trigger",
+                        "valueType": "string"
+                      }
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "kind": "if",
+        "block": [
+          {
+            "condition": {
+              "kind": "expression",
+              "left": {
+                "kind": "field",
+                "object": {
+                  "kind": "id",
+                  "value": "Trigger"
+                },
+                "dot": ".",
+                "name": "isBefore"
+              },
+              "operator": "&&",
+              "right": {
+                "kind": "field",
+                "object": {
+                  "kind": "id",
+                  "value": "Trigger"
+                },
+                "dot": ".",
+                "name": "isUpdate"
+              }
+            },
+            "block": [
+              {
+                "type": "for",
+                "condition": {
+                  "variableName": "account",
+                  "variableType": {
+                    "kind": "custom",
+                    "name": [
+                      "Account"
+                    ]
+                  },
+                  "iterable": {
+                    "kind": "field",
+                    "object": {
+                      "kind": "id",
+                      "value": "Trigger"
+                    },
+                    "dot": ".",
+                    "name": "new"
+                  }
+                },
+                "block": [
+                  {
+                    "kind": "localVariable",
+                    "variant": [
+                      {
+                        "variant": "oldAccount",
+                        "initValue": {
+                          "kind": "method",
+                          "object": {
+                            "kind": "field",
+                            "object": {
+                              "kind": "id",
+                              "value": "Trigger"
+                            },
+                            "dot": ".",
+                            "name": "oldMap"
+                          },
+                          "dot": ".",
+                          "name": "get",
+                          "arg": [
+                            {
+                              "kind": "field",
+                              "object": {
+                                "kind": "id",
+                                "value": "account"
+                              },
+                              "dot": ".",
+                              "name": "Id"
+                            }
+                          ]
+                        }
+                      }
+                    ],
+                    "variantType": {
+                      "kind": "custom",
+                      "name": [
+                        "Account"
+                      ]
+                    }
+                  },
+                  {
+                    "kind": "if",
+                    "block": [
+                      {
+                        "condition": {
+                          "kind": "expression",
+                          "left": {
+                            "kind": "field",
+                            "object": {
+                              "kind": "id",
+                              "value": "account"
+                            },
+                            "dot": ".",
+                            "name": "Name"
+                          },
+                          "operator": "!=",
+                          "right": {
+                            "kind": "field",
+                            "object": {
+                              "kind": "id",
+                              "value": "oldAccount"
+                            },
+                            "dot": ".",
+                            "name": "Name"
+                          }
+                        },
+                        "block": [
+                          {
+                            "kind": "expression",
+                            "block": {
+                              "kind": "expression",
+                              "left": {
+                                "kind": "field",
+                                "object": {
+                                  "kind": "id",
+                                  "value": "account"
+                                },
+                                "dot": ".",
+                                "name": "Description"
+                              },
+                              "operator": "=",
+                              "right": {
+                                "kind": "literal",
+                                "value": "Name changed",
+                                "valueType": "string"
+                              }
+                            }
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "kind": "if",
+                    "block": [
+                      {
+                        "condition": {
+                          "kind": "expression",
+                          "left": {
+                            "kind": "field",
+                            "object": {
+                              "kind": "id",
+                              "value": "account"
+                            },
+                            "dot": ".",
+                            "name": "AnnualRevenue"
+                          },
+                          "operator": "<",
+                          "right": {
+                            "kind": "literal",
+                            "value": "0",
+                            "valueType": "integer"
+                          }
+                        },
+                        "block": [
+                          {
+                            "kind": "expression",
+                            "block": {
+                              "kind": "method",
+                              "object": {
+                                "kind": "id",
+                                "value": "account"
+                              },
+                              "dot": ".",
+                              "name": "addError",
+                              "arg": [
+                                {
+                                  "kind": "literal",
+                                  "value": "AnnualRevenue must be positive",
+                                  "valueType": "string"
+                                }
+                              ]
+                            }
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "kind": "if",
+        "block": [
+          {
+            "condition": {
+              "kind": "expression",
+              "left": {
+                "kind": "field",
+                "object": {
+                  "kind": "id",
+                  "value": "Trigger"
+                },
+                "dot": ".",
+                "name": "isBefore"
+              },
+              "operator": "&&",
+              "right": {
+                "kind": "field",
+                "object": {
+                  "kind": "id",
+                  "value": "Trigger"
+                },
+                "dot": ".",
+                "name": "isDelete"
+              }
+            },
+            "block": [
+              {
+                "type": "for",
+                "condition": {
+                  "variableName": "account",
+                  "variableType": {
+                    "kind": "custom",
+                    "name": [
+                      "Account"
+                    ]
+                  },
+                  "iterable": {
+                    "kind": "field",
+                    "object": {
+                      "kind": "id",
+                      "value": "Trigger"
+                    },
+                    "dot": ".",
+                    "name": "old"
+                  }
+                },
+                "block": [
+                  {
+                    "kind": "expression",
+                    "block": {
+                      "kind": "method",
+                      "object": {
+                        "kind": "id",
+                        "value": "System"
+                      },
+                      "dot": ".",
+                      "name": "debug",
+                      "arg": [
+                        {
+                          "kind": "expression",
+                          "left": {
+                            "kind": "literal",
+                            "value": "Deleting: ",
+                            "valueType": "string"
+                          },
+                          "operator": "+",
+                          "right": {
+                            "kind": "field",
+                            "object": {
+                              "kind": "id",
+                              "value": "account"
+                            },
+                            "dot": ".",
+                            "name": "Name"
+                          }
+                        }
+                      ]
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "kind": "if",
+        "block": [
+          {
+            "condition": {
+              "kind": "expression",
+              "left": {
+                "kind": "field",
+                "object": {
+                  "kind": "id",
+                  "value": "Trigger"
+                },
+                "dot": ".",
+                "name": "isAfter"
+              },
+              "operator": "&&",
+              "right": {
+                "kind": "field",
+                "object": {
+                  "kind": "id",
+                  "value": "Trigger"
+                },
+                "dot": ".",
+                "name": "isInsert"
+              }
+            },
+            "block": [
+              {
+                "kind": "localVariable",
+                "variant": [
+                  {
+                    "variant": "contacts",
+                    "initValue": {
+                      "kind": "instance",
+                      "typeName": [
+                        "List"
+                      ],
+                      "generic": [
+                        {
+                          "kind": "custom",
+                          "name": [
+                            "Contact"
+                          ]
+                        }
+                      ]
+                    }
+                  }
+                ],
+                "variantType": {
+                  "kind": "list",
+                  "type": {
+                    "kind": "custom",
+                    "name": [
+                      "Contact"
+                    ]
+                  }
+                }
+              },
+              {
+                "type": "for",
+                "condition": {
+                  "variableName": "account",
+                  "variableType": {
+                    "kind": "custom",
+                    "name": [
+                      "Account"
+                    ]
+                  },
+                  "iterable": {
+                    "kind": "field",
+                    "object": {
+                      "kind": "id",
+                      "value": "Trigger"
+                    },
+                    "dot": ".",
+                    "name": "new"
+                  }
+                },
+                "block": [
+                  {
+                    "kind": "expression",
+                    "block": {
+                      "kind": "method",
+                      "object": {
+                        "kind": "id",
+                        "value": "contacts"
+                      },
+                      "dot": ".",
+                      "name": "add",
+                      "arg": [
+                        {
+                          "kind": "instance",
+                          "typeName": [
+                            "Contact"
+                          ],
+                          "arg": [
+                            {
+                              "kind": "expression",
+                              "left": {
+                                "kind": "id",
+                                "value": "LastName"
+                              },
+                              "operator": "=",
+                              "right": {
+                                "kind": "field",
+                                "object": {
+                                  "kind": "id",
+                                  "value": "account"
+                                },
+                                "dot": ".",
+                                "name": "Name"
+                              }
+                            },
+                            {
+                              "kind": "expression",
+                              "left": {
+                                "kind": "id",
+                                "value": "AccountId"
+                              },
+                              "operator": "=",
+                              "right": {
+                                "kind": "field",
+                                "object": {
+                                  "kind": "id",
+                                  "value": "account"
+                                },
+                                "dot": ".",
+                                "name": "Id"
+                              }
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  }
+                ]
+              },
+              {
+                "kind": "if",
+                "block": [
+                  {
+                    "condition": {
+                      "kind": "prefix",
+                      "value": {
+                        "kind": "method",
+                        "object": {
+                          "kind": "id",
+                          "value": "contacts"
+                        },
+                        "dot": ".",
+                        "name": "isEmpty"
+                      },
+                      "operator": "!"
+                    },
+                    "block": [
+                      {
+                        "kind": "insert",
+                        "value": {
+                          "kind": "id",
+                          "value": "contacts"
+                        },
+                        "accessLevel": "USER"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "kind": "if",
+        "block": [
+          {
+            "condition": {
+              "kind": "expression",
+              "left": {
+                "kind": "field",
+                "object": {
+                  "kind": "id",
+                  "value": "Trigger"
+                },
+                "dot": ".",
+                "name": "isAfter"
+              },
+              "operator": "&&",
+              "right": {
+                "kind": "field",
+                "object": {
+                  "kind": "id",
+                  "value": "Trigger"
+                },
+                "dot": ".",
+                "name": "isUpdate"
+              }
+            },
+            "block": [
+              {
+                "kind": "localVariable",
+                "variant": [
+                  {
+                    "variant": "accountIds",
+                    "initValue": {
+                      "kind": "instance",
+                      "typeName": [
+                        "Set"
+                      ],
+                      "generic": [
+                        {
+                          "kind": "primitive",
+                          "name": "Id"
+                        }
+                      ]
+                    }
+                  }
+                ],
+                "variantType": {
+                  "kind": "set",
+                  "type": {
+                    "kind": "primitive",
+                    "name": "Id"
+                  }
+                }
+              },
+              {
+                "kind": "expression",
+                "block": {
+                  "kind": "method",
+                  "object": {
+                    "kind": "id",
+                    "value": "accountIds"
+                  },
+                  "dot": ".",
+                  "name": "addAll",
+                  "arg": [
+                    {
+                      "kind": "method",
+                      "object": {
+                        "kind": "field",
+                        "object": {
+                          "kind": "id",
+                          "value": "Trigger"
+                        },
+                        "dot": ".",
+                        "name": "newMap"
+                      },
+                      "dot": ".",
+                      "name": "keySet"
+                    }
+                  ]
+                }
+              },
+              {
+                "kind": "localVariable",
+                "variant": [
+                  {
+                    "variant": "accounts",
+                    "initValue": {
+                      "kind": "soql",
+                      "select": {
+                        "field": [
+                          {
+                            "field": [
+                              "Id"
+                            ]
+                          },
+                          {
+                            "field": [
+                              "Industry"
+                            ]
+                          },
+                          {
+                            "field": [
+                              "Name"
+                            ]
+                          }
+                        ],
+                        "subQuery": [
+                          {
+                            "field": {
+                              "select": {
+                                "field": [
+                                  {
+                                    "field": [
+                                      "FirstName"
+                                    ]
+                                  },
+                                  {
+                                    "field": [
+                                      "Id"
+                                    ]
+                                  },
+                                  {
+                                    "field": [
+                                      "LastName"
+                                    ]
+                                  }
+                                ]
+                              },
+                              "from": {
+                                "field": "Contacts"
+                              }
+                            }
+                          }
+                        ]
+                      },
+                      "from": {
+                        "field": "Account"
+                      },
+                      "where": [
+                        {
+                          "field": [
+                            "Id"
+                          ],
+                          "operator": "IN",
+                          "value": {
+                            "kind": "bind",
+                            "value": {
+                              "kind": "id",
+                              "value": "accountIds"
+                            }
+                          }
+                        }
+                      ]
+                    }
+                  }
+                ],
+                "variantType": {
+                  "kind": "list",
+                  "type": {
+                    "kind": "custom",
+                    "name": [
+                      "Account"
+                    ]
+                  }
+                }
+              },
+              {
+                "kind": "localVariable",
+                "variant": [
+                  {
+                    "variant": "toUpdate",
+                    "initValue": {
+                      "kind": "instance",
+                      "typeName": [
+                        "List"
+                      ],
+                      "generic": [
+                        {
+                          "kind": "custom",
+                          "name": [
+                            "Contact"
+                          ]
+                        }
+                      ]
+                    }
+                  }
+                ],
+                "variantType": {
+                  "kind": "list",
+                  "type": {
+                    "kind": "custom",
+                    "name": [
+                      "Contact"
+                    ]
+                  }
+                }
+              },
+              {
+                "type": "for",
+                "condition": {
+                  "variableName": "account",
+                  "variableType": {
+                    "kind": "custom",
+                    "name": [
+                      "Account"
+                    ]
+                  },
+                  "iterable": {
+                    "kind": "id",
+                    "value": "accounts"
+                  }
+                },
+                "block": [
+                  {
+                    "type": "for",
+                    "condition": {
+                      "variableName": "contact",
+                      "variableType": {
+                        "kind": "custom",
+                        "name": [
+                          "Contact"
+                        ]
+                      },
+                      "iterable": {
+                        "kind": "field",
+                        "object": {
+                          "kind": "id",
+                          "value": "account"
+                        },
+                        "dot": ".",
+                        "name": "Contacts"
+                      }
+                    },
+                    "block": [
+                      {
+                        "kind": "expression",
+                        "block": {
+                          "kind": "expression",
+                          "left": {
+                            "kind": "field",
+                            "object": {
+                              "kind": "id",
+                              "value": "contact"
+                            },
+                            "dot": ".",
+                            "name": "Description"
+                          },
+                          "operator": "=",
+                          "right": {
+                            "kind": "field",
+                            "object": {
+                              "kind": "id",
+                              "value": "account"
+                            },
+                            "dot": ".",
+                            "name": "Name"
+                          }
+                        }
+                      },
+                      {
+                        "kind": "expression",
+                        "block": {
+                          "kind": "method",
+                          "object": {
+                            "kind": "id",
+                            "value": "toUpdate"
+                          },
+                          "dot": ".",
+                          "name": "add",
+                          "arg": [
+                            {
+                              "kind": "id",
+                              "value": "contact"
+                            }
+                          ]
+                        }
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "kind": "update",
+                "value": {
+                  "kind": "id",
+                  "value": "toUpdate"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "kind": "if",
+        "block": [
+          {
+            "condition": {
+              "kind": "expression",
+              "left": {
+                "kind": "field",
+                "object": {
+                  "kind": "id",
+                  "value": "Trigger"
+                },
+                "dot": ".",
+                "name": "isAfter"
+              },
+              "operator": "&&",
+              "right": {
+                "kind": "field",
+                "object": {
+                  "kind": "id",
+                  "value": "Trigger"
+                },
+                "dot": ".",
+                "name": "isDelete"
+              }
+            },
+            "block": [
+              {
+                "kind": "localVariable",
+                "variant": [
+                  {
+                    "variant": "tasks",
+                    "initValue": {
+                      "kind": "soql",
+                      "select": {
+                        "field": [
+                          {
+                            "field": [
+                              "Id"
+                            ]
+                          }
+                        ]
+                      },
+                      "from": {
+                        "field": "Task"
+                      },
+                      "where": [
+                        {
+                          "field": [
+                            "WhatId"
+                          ],
+                          "operator": "IN",
+                          "value": {
+                            "kind": "bind",
+                            "value": {
+                              "kind": "method",
+                              "object": {
+                                "kind": "field",
+                                "object": {
+                                  "kind": "id",
+                                  "value": "Trigger"
+                                },
+                                "dot": ".",
+                                "name": "oldMap"
+                              },
+                              "dot": ".",
+                              "name": "keySet"
+                            }
+                          }
+                        }
+                      ],
+                      "allRows": "ALL ROWS"
+                    }
+                  }
+                ],
+                "variantType": {
+                  "kind": "list",
+                  "type": {
+                    "kind": "custom",
+                    "name": [
+                      "Task"
+                    ]
+                  }
+                }
+              },
+              {
+                "kind": "delete",
+                "value": {
+                  "kind": "id",
+                  "value": "tasks"
+                }
+              },
+              {
+                "type": "for",
+                "condition": {
+                  "variableName": "account",
+                  "variableType": {
+                    "kind": "custom",
+                    "name": [
+                      "Account"
+                    ]
+                  },
+                  "iterable": {
+                    "kind": "field",
+                    "object": {
+                      "kind": "id",
+                      "value": "Trigger"
+                    },
+                    "dot": ".",
+                    "name": "old"
+                  }
+                },
+                "block": [
+                  {
+                    "kind": "expression",
+                    "block": {
+                      "kind": "method",
+                      "object": {
+                        "kind": "id",
+                        "value": "System"
+                      },
+                      "dot": ".",
+                      "name": "debug",
+                      "arg": [
+                        {
+                          "kind": "expression",
+                          "left": {
+                            "kind": "literal",
+                            "value": "Deleted: ",
+                            "valueType": "string"
+                          },
+                          "operator": "+",
+                          "right": {
+                            "kind": "field",
+                            "object": {
+                              "kind": "id",
+                              "value": "account"
+                            },
+                            "dot": ".",
+                            "name": "Id"
+                          }
+                        }
+                      ]
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "kind": "if",
+        "block": [
+          {
+            "condition": {
+              "kind": "expression",
+              "left": {
+                "kind": "field",
+                "object": {
+                  "kind": "id",
+                  "value": "Trigger"
+                },
+                "dot": ".",
+                "name": "isAfter"
+              },
+              "operator": "&&",
+              "right": {
+                "kind": "field",
+                "object": {
+                  "kind": "id",
+                  "value": "Trigger"
+                },
+                "dot": ".",
+                "name": "isUndelete"
+              }
+            },
+            "block": [
+              {
+                "kind": "try",
+                "block": [
+                  {
+                    "type": "try",
+                    "block": [
+                      {
+                        "type": "for",
+                        "condition": {
+                          "variableName": "account",
+                          "variableType": {
+                            "kind": "custom",
+                            "name": [
+                              "Account"
+                            ]
+                          },
+                          "iterable": {
+                            "kind": "field",
+                            "object": {
+                              "kind": "id",
+                              "value": "Trigger"
+                            },
+                            "dot": ".",
+                            "name": "new"
+                          }
+                        },
+                        "block": [
+                          {
+                            "kind": "expression",
+                            "block": {
+                              "kind": "method",
+                              "isSuper": false,
+                              "isThis": false,
+                              "name": "log",
+                              "arg": [
+                                {
+                                  "kind": "expression",
+                                  "left": {
+                                    "kind": "literal",
+                                    "value": "Restored: ",
+                                    "valueType": "string"
+                                  },
+                                  "operator": "+",
+                                  "right": {
+                                    "kind": "field",
+                                    "object": {
+                                      "kind": "id",
+                                      "value": "account"
+                                    },
+                                    "dot": ".",
+                                    "name": "Id"
+                                  }
+                                }
+                              ]
+                            }
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "type": "catch",
+                    "exception": "e",
+                    "excepstionType": [
+                      "Exception"
+                    ],
+                    "block": [
+                      {
+                        "kind": "expression",
+                        "block": {
+                          "kind": "method",
+                          "object": {
+                            "kind": "id",
+                            "value": "System"
+                          },
+                          "dot": ".",
+                          "name": "debug",
+                          "arg": [
+                            {
+                              "kind": "method",
+                              "object": {
+                                "kind": "id",
+                                "value": "e"
+                              },
+                              "dot": ".",
+                              "name": "getMessage"
+                            }
+                          ]
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "type": "finally",
+                    "block": []
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

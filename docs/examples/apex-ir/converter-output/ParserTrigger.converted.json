@@ -1,0 +1,3702 @@
+{
+  "file": "ParserTrigger.trigger",
+  "syntaxErrors": [],
+  "conversionErrors": [],
+  "converted": {
+    "value": [
+      "ParserTrigger",
+      "Account"
+    ],
+    "triggerCaseType": [
+      {
+        "value": "BEFORE",
+        "triggerCaseType": "INSERT"
+      },
+      {
+        "value": "BEFORE",
+        "triggerCaseType": "UPDATE"
+      },
+      {
+        "value": "BEFORE",
+        "triggerCaseType": "DELETE"
+      },
+      {
+        "value": "AFTER",
+        "triggerCaseType": "INSERT"
+      },
+      {
+        "value": "AFTER",
+        "triggerCaseType": "UPDATE"
+      },
+      {
+        "value": "AFTER",
+        "triggerCaseType": "DELETE"
+      },
+      {
+        "value": "AFTER",
+        "triggerCaseType": "UNDELETE"
+      }
+    ],
+    "block": [
+      {
+        "value": {
+          "value": {
+            "type": "expression",
+            "statement": {
+              "value": {
+                "type": "dot",
+                "expression": {
+                  "left": {
+                    "value": {
+                      "type": "primary",
+                      "expression": {
+                        "value": {
+                          "type": "id",
+                          "primary": "System"
+                        }
+                      }
+                    }
+                  },
+                  "operator": ".",
+                  "right": {
+                    "value": "debug",
+                    "param": [
+                      {
+                        "value": {
+                          "type": "dot",
+                          "expression": {
+                            "left": {
+                              "value": {
+                                "type": "primary",
+                                "expression": {
+                                  "value": {
+                                    "type": "id",
+                                    "primary": "Trigger"
+                                  }
+                                }
+                              }
+                            },
+                            "operator": ".",
+                            "right": "isExecuting"
+                          }
+                        }
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "modifier": []
+      },
+      {
+        "value": {
+          "value": {
+            "type": "expression",
+            "statement": {
+              "value": {
+                "type": "dot",
+                "expression": {
+                  "left": {
+                    "value": {
+                      "type": "primary",
+                      "expression": {
+                        "value": {
+                          "type": "id",
+                          "primary": "System"
+                        }
+                      }
+                    }
+                  },
+                  "operator": ".",
+                  "right": {
+                    "value": "debug",
+                    "param": [
+                      {
+                        "value": {
+                          "type": "dot",
+                          "expression": {
+                            "left": {
+                              "value": {
+                                "type": "primary",
+                                "expression": {
+                                  "value": {
+                                    "type": "id",
+                                    "primary": "Trigger"
+                                  }
+                                }
+                              }
+                            },
+                            "operator": ".",
+                            "right": "isBefore"
+                          }
+                        }
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "modifier": []
+      },
+      {
+        "value": {
+          "value": {
+            "type": "expression",
+            "statement": {
+              "value": {
+                "type": "dot",
+                "expression": {
+                  "left": {
+                    "value": {
+                      "type": "primary",
+                      "expression": {
+                        "value": {
+                          "type": "id",
+                          "primary": "System"
+                        }
+                      }
+                    }
+                  },
+                  "operator": ".",
+                  "right": {
+                    "value": "debug",
+                    "param": [
+                      {
+                        "value": {
+                          "type": "dot",
+                          "expression": {
+                            "left": {
+                              "value": {
+                                "type": "primary",
+                                "expression": {
+                                  "value": {
+                                    "type": "id",
+                                    "primary": "Trigger"
+                                  }
+                                }
+                              }
+                            },
+                            "operator": ".",
+                            "right": "isAfter"
+                          }
+                        }
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "modifier": []
+      },
+      {
+        "value": {
+          "value": {
+            "type": "expression",
+            "statement": {
+              "value": {
+                "type": "dot",
+                "expression": {
+                  "left": {
+                    "value": {
+                      "type": "primary",
+                      "expression": {
+                        "value": {
+                          "type": "id",
+                          "primary": "System"
+                        }
+                      }
+                    }
+                  },
+                  "operator": ".",
+                  "right": {
+                    "value": "debug",
+                    "param": [
+                      {
+                        "value": {
+                          "type": "dot",
+                          "expression": {
+                            "left": {
+                              "value": {
+                                "type": "primary",
+                                "expression": {
+                                  "value": {
+                                    "type": "id",
+                                    "primary": "Trigger"
+                                  }
+                                }
+                              }
+                            },
+                            "operator": ".",
+                            "right": "isInsert"
+                          }
+                        }
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "modifier": []
+      },
+      {
+        "value": {
+          "value": {
+            "type": "expression",
+            "statement": {
+              "value": {
+                "type": "dot",
+                "expression": {
+                  "left": {
+                    "value": {
+                      "type": "primary",
+                      "expression": {
+                        "value": {
+                          "type": "id",
+                          "primary": "System"
+                        }
+                      }
+                    }
+                  },
+                  "operator": ".",
+                  "right": {
+                    "value": "debug",
+                    "param": [
+                      {
+                        "value": {
+                          "type": "dot",
+                          "expression": {
+                            "left": {
+                              "value": {
+                                "type": "primary",
+                                "expression": {
+                                  "value": {
+                                    "type": "id",
+                                    "primary": "Trigger"
+                                  }
+                                }
+                              }
+                            },
+                            "operator": ".",
+                            "right": "isUpdate"
+                          }
+                        }
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "modifier": []
+      },
+      {
+        "value": {
+          "value": {
+            "type": "expression",
+            "statement": {
+              "value": {
+                "type": "dot",
+                "expression": {
+                  "left": {
+                    "value": {
+                      "type": "primary",
+                      "expression": {
+                        "value": {
+                          "type": "id",
+                          "primary": "System"
+                        }
+                      }
+                    }
+                  },
+                  "operator": ".",
+                  "right": {
+                    "value": "debug",
+                    "param": [
+                      {
+                        "value": {
+                          "type": "dot",
+                          "expression": {
+                            "left": {
+                              "value": {
+                                "type": "primary",
+                                "expression": {
+                                  "value": {
+                                    "type": "id",
+                                    "primary": "Trigger"
+                                  }
+                                }
+                              }
+                            },
+                            "operator": ".",
+                            "right": "isDelete"
+                          }
+                        }
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "modifier": []
+      },
+      {
+        "value": {
+          "value": {
+            "type": "expression",
+            "statement": {
+              "value": {
+                "type": "dot",
+                "expression": {
+                  "left": {
+                    "value": {
+                      "type": "primary",
+                      "expression": {
+                        "value": {
+                          "type": "id",
+                          "primary": "System"
+                        }
+                      }
+                    }
+                  },
+                  "operator": ".",
+                  "right": {
+                    "value": "debug",
+                    "param": [
+                      {
+                        "value": {
+                          "type": "dot",
+                          "expression": {
+                            "left": {
+                              "value": {
+                                "type": "primary",
+                                "expression": {
+                                  "value": {
+                                    "type": "id",
+                                    "primary": "Trigger"
+                                  }
+                                }
+                              }
+                            },
+                            "operator": ".",
+                            "right": "isUndelete"
+                          }
+                        }
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "modifier": []
+      },
+      {
+        "value": {
+          "value": {
+            "type": "expression",
+            "statement": {
+              "value": {
+                "type": "dot",
+                "expression": {
+                  "left": {
+                    "value": {
+                      "type": "primary",
+                      "expression": {
+                        "value": {
+                          "type": "id",
+                          "primary": "System"
+                        }
+                      }
+                    }
+                  },
+                  "operator": ".",
+                  "right": {
+                    "value": "debug",
+                    "param": [
+                      {
+                        "value": {
+                          "type": "dot",
+                          "expression": {
+                            "left": {
+                              "value": {
+                                "type": "primary",
+                                "expression": {
+                                  "value": {
+                                    "type": "id",
+                                    "primary": "Trigger"
+                                  }
+                                }
+                              }
+                            },
+                            "operator": ".",
+                            "right": "new"
+                          }
+                        }
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "modifier": []
+      },
+      {
+        "value": {
+          "value": {
+            "type": "expression",
+            "statement": {
+              "value": {
+                "type": "dot",
+                "expression": {
+                  "left": {
+                    "value": {
+                      "type": "primary",
+                      "expression": {
+                        "value": {
+                          "type": "id",
+                          "primary": "System"
+                        }
+                      }
+                    }
+                  },
+                  "operator": ".",
+                  "right": {
+                    "value": "debug",
+                    "param": [
+                      {
+                        "value": {
+                          "type": "dot",
+                          "expression": {
+                            "left": {
+                              "value": {
+                                "type": "primary",
+                                "expression": {
+                                  "value": {
+                                    "type": "id",
+                                    "primary": "Trigger"
+                                  }
+                                }
+                              }
+                            },
+                            "operator": ".",
+                            "right": "old"
+                          }
+                        }
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "modifier": []
+      },
+      {
+        "value": {
+          "value": {
+            "type": "expression",
+            "statement": {
+              "value": {
+                "type": "dot",
+                "expression": {
+                  "left": {
+                    "value": {
+                      "type": "primary",
+                      "expression": {
+                        "value": {
+                          "type": "id",
+                          "primary": "System"
+                        }
+                      }
+                    }
+                  },
+                  "operator": ".",
+                  "right": {
+                    "value": "debug",
+                    "param": [
+                      {
+                        "value": {
+                          "type": "dot",
+                          "expression": {
+                            "left": {
+                              "value": {
+                                "type": "primary",
+                                "expression": {
+                                  "value": {
+                                    "type": "id",
+                                    "primary": "Trigger"
+                                  }
+                                }
+                              }
+                            },
+                            "operator": ".",
+                            "right": "newMap"
+                          }
+                        }
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "modifier": []
+      },
+      {
+        "value": {
+          "value": {
+            "type": "expression",
+            "statement": {
+              "value": {
+                "type": "dot",
+                "expression": {
+                  "left": {
+                    "value": {
+                      "type": "primary",
+                      "expression": {
+                        "value": {
+                          "type": "id",
+                          "primary": "System"
+                        }
+                      }
+                    }
+                  },
+                  "operator": ".",
+                  "right": {
+                    "value": "debug",
+                    "param": [
+                      {
+                        "value": {
+                          "type": "dot",
+                          "expression": {
+                            "left": {
+                              "value": {
+                                "type": "primary",
+                                "expression": {
+                                  "value": {
+                                    "type": "id",
+                                    "primary": "Trigger"
+                                  }
+                                }
+                              }
+                            },
+                            "operator": ".",
+                            "right": "oldMap"
+                          }
+                        }
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "modifier": []
+      },
+      {
+        "value": {
+          "value": {
+            "type": "expression",
+            "statement": {
+              "value": {
+                "type": "dot",
+                "expression": {
+                  "left": {
+                    "value": {
+                      "type": "primary",
+                      "expression": {
+                        "value": {
+                          "type": "id",
+                          "primary": "System"
+                        }
+                      }
+                    }
+                  },
+                  "operator": ".",
+                  "right": {
+                    "value": "debug",
+                    "param": [
+                      {
+                        "value": {
+                          "type": "dot",
+                          "expression": {
+                            "left": {
+                              "value": {
+                                "type": "primary",
+                                "expression": {
+                                  "value": {
+                                    "type": "id",
+                                    "primary": "Trigger"
+                                  }
+                                }
+                              }
+                            },
+                            "operator": ".",
+                            "right": "operationType"
+                          }
+                        }
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "modifier": []
+      },
+      {
+        "value": {
+          "value": {
+            "type": "expression",
+            "statement": {
+              "value": {
+                "type": "dot",
+                "expression": {
+                  "left": {
+                    "value": {
+                      "type": "primary",
+                      "expression": {
+                        "value": {
+                          "type": "id",
+                          "primary": "System"
+                        }
+                      }
+                    }
+                  },
+                  "operator": ".",
+                  "right": {
+                    "value": "debug",
+                    "param": [
+                      {
+                        "value": {
+                          "type": "dot",
+                          "expression": {
+                            "left": {
+                              "value": {
+                                "type": "primary",
+                                "expression": {
+                                  "value": {
+                                    "type": "id",
+                                    "primary": "Trigger"
+                                  }
+                                }
+                              }
+                            },
+                            "operator": ".",
+                            "right": "size"
+                          }
+                        }
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "modifier": []
+      },
+      {
+        "value": {
+          "value": {
+            "type": "field",
+            "declaration": {
+              "value": [
+                {
+                  "value": "PREFIX",
+                  "content": {
+                    "value": {
+                      "type": "primary",
+                      "expression": {
+                        "value": {
+                          "type": "literal",
+                          "primary": {
+                            "value": "'Trigger: '",
+                            "valueType": "string"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              ],
+              "valueType": {
+                "value": [
+                  {
+                    "value": "String",
+                    "generic": []
+                  }
+                ],
+                "dimension": null
+              }
+            }
+          }
+        },
+        "modifier": [
+          {
+            "value": {
+              "type": "normal",
+              "modifier": "PRIVATE"
+            }
+          },
+          {
+            "value": {
+              "type": "normal",
+              "modifier": "STATIC"
+            }
+          },
+          {
+            "value": {
+              "type": "normal",
+              "modifier": "FINAL"
+            }
+          }
+        ]
+      },
+      {
+        "value": {
+          "value": {
+            "type": "field",
+            "declaration": {
+              "value": [
+                {
+                  "value": "invocationCount",
+                  "content": {
+                    "value": {
+                      "type": "primary",
+                      "expression": {
+                        "value": {
+                          "type": "literal",
+                          "primary": {
+                            "value": "0",
+                            "valueType": "integer"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              ],
+              "valueType": {
+                "value": [
+                  {
+                    "value": "Integer",
+                    "generic": []
+                  }
+                ],
+                "dimension": null
+              }
+            }
+          }
+        },
+        "modifier": [
+          {
+            "value": {
+              "type": "normal",
+              "modifier": "STATIC"
+            }
+          }
+        ]
+      },
+      {
+        "value": {
+          "value": {
+            "type": "property",
+            "declaration": {
+              "value": "label",
+              "valueType": {
+                "value": [
+                  {
+                    "value": "String",
+                    "generic": []
+                  }
+                ],
+                "dimension": null
+              },
+              "block": [
+                {
+                  "type": "getter",
+                  "value": [],
+                  "modifier": []
+                },
+                {
+                  "type": "setter",
+                  "value": [],
+                  "modifier": []
+                }
+              ]
+            }
+          }
+        },
+        "modifier": [
+          {
+            "value": {
+              "type": "normal",
+              "modifier": "PUBLIC"
+            }
+          }
+        ]
+      },
+      {
+        "value": {
+          "value": {
+            "type": "method",
+            "declaration": {
+              "value": "log",
+              "valueType": "void",
+              "param": [
+                {
+                  "value": "message",
+                  "valueType": {
+                    "value": [
+                      {
+                        "value": "String",
+                        "generic": []
+                      }
+                    ],
+                    "dimension": null
+                  },
+                  "modifier": []
+                }
+              ],
+              "block": [
+                {
+                  "value": {
+                    "type": "expression",
+                    "statement": {
+                      "value": {
+                        "type": "dot",
+                        "expression": {
+                          "left": {
+                            "value": {
+                              "type": "primary",
+                              "expression": {
+                                "value": {
+                                  "type": "id",
+                                  "primary": "System"
+                                }
+                              }
+                            }
+                          },
+                          "operator": ".",
+                          "right": {
+                            "value": "debug",
+                            "param": [
+                              {
+                                "value": {
+                                  "type": "arth2",
+                                  "expression": {
+                                    "left": {
+                                      "value": {
+                                        "type": "primary",
+                                        "expression": {
+                                          "value": {
+                                            "type": "id",
+                                            "primary": "PREFIX"
+                                          }
+                                        }
+                                      }
+                                    },
+                                    "operator": "+",
+                                    "right": {
+                                      "value": {
+                                        "type": "primary",
+                                        "expression": {
+                                          "value": {
+                                            "type": "id",
+                                            "primary": "message"
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            ]
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              ]
+            }
+          }
+        },
+        "modifier": [
+          {
+            "value": {
+              "type": "normal",
+              "modifier": "PRIVATE"
+            }
+          }
+        ]
+      },
+      {
+        "value": {
+          "value": {
+            "type": "class",
+            "declaration": {
+              "value": "TriggerHelper",
+              "body": [
+                {
+                  "value": {
+                    "value": {
+                      "type": "method",
+                      "declaration": {
+                        "value": "run",
+                        "valueType": "void",
+                        "param": [],
+                        "block": [
+                          {
+                            "value": {
+                              "type": "expression",
+                              "statement": {
+                                "value": {
+                                  "type": "dot",
+                                  "expression": {
+                                    "left": {
+                                      "value": {
+                                        "type": "primary",
+                                        "expression": {
+                                          "value": {
+                                            "type": "id",
+                                            "primary": "System"
+                                          }
+                                        }
+                                      }
+                                    },
+                                    "operator": ".",
+                                    "right": {
+                                      "value": "debug",
+                                      "param": [
+                                        {
+                                          "value": {
+                                            "type": "primary",
+                                            "expression": {
+                                              "value": {
+                                                "type": "literal",
+                                                "primary": {
+                                                  "value": "'helper'",
+                                                  "valueType": "string"
+                                                }
+                                              }
+                                            }
+                                          }
+                                        }
+                                      ]
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        ]
+                      }
+                    }
+                  },
+                  "modifier": [
+                    {
+                      "value": {
+                        "type": "normal",
+                        "modifier": "PUBLIC"
+                      }
+                    }
+                  ],
+                  "isStatic": null
+                }
+              ],
+              "extend": {
+                "value": [],
+                "dimension": null
+              },
+              "implement": []
+            }
+          }
+        },
+        "modifier": [
+          {
+            "value": {
+              "type": "normal",
+              "modifier": "PUBLIC"
+            }
+          }
+        ]
+      },
+      {
+        "value": {
+          "value": {
+            "type": "interface",
+            "declaration": {
+              "value": "TriggerHandler",
+              "body": [
+                {
+                  "value": "handle",
+                  "valueType": "void",
+                  "param": [],
+                  "modifier": []
+                }
+              ],
+              "extend": []
+            }
+          }
+        },
+        "modifier": [
+          {
+            "value": {
+              "type": "normal",
+              "modifier": "PUBLIC"
+            }
+          }
+        ]
+      },
+      {
+        "value": {
+          "value": {
+            "type": "enum",
+            "declaration": {
+              "value": "Phase",
+              "constant": [
+                "BEFORE_PHASE",
+                "AFTER_PHASE"
+              ]
+            }
+          }
+        },
+        "modifier": [
+          {
+            "value": {
+              "type": "normal",
+              "modifier": "PUBLIC"
+            }
+          }
+        ]
+      },
+      {
+        "value": {
+          "value": {
+            "type": "switch",
+            "statement": {
+              "value": {
+                "value": {
+                  "type": "dot",
+                  "expression": {
+                    "left": {
+                      "value": {
+                        "type": "primary",
+                        "expression": {
+                          "value": {
+                            "type": "id",
+                            "primary": "Trigger"
+                          }
+                        }
+                      }
+                    },
+                    "operator": ".",
+                    "right": "operationType"
+                  }
+                }
+              },
+              "block": [
+                {
+                  "value": {
+                    "value": [
+                      {
+                        "value": [
+                          "BEFORE_INSERT"
+                        ],
+                        "valueType": "qualifiedName",
+                        "operator": null
+                      },
+                      {
+                        "value": [
+                          "BEFORE_UPDATE"
+                        ],
+                        "valueType": "qualifiedName",
+                        "operator": null
+                      }
+                    ],
+                    "valueType": {
+                      "value": [],
+                      "dimension": null
+                    }
+                  },
+                  "block": [
+                    {
+                      "value": {
+                        "type": "expression",
+                        "statement": {
+                          "value": {
+                            "type": "postOp",
+                            "expression": {
+                              "value": {
+                                "value": {
+                                  "type": "primary",
+                                  "expression": {
+                                    "value": {
+                                      "type": "id",
+                                      "primary": "invocationCount"
+                                    }
+                                  }
+                                }
+                              },
+                              "operator": "++",
+                              "location": "postfix"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  ]
+                },
+                {
+                  "value": {
+                    "value": [
+                      {
+                        "value": [
+                          "AFTER_DELETE"
+                        ],
+                        "valueType": "qualifiedName",
+                        "operator": null
+                      }
+                    ],
+                    "valueType": {
+                      "value": [],
+                      "dimension": null
+                    }
+                  },
+                  "block": [
+                    {
+                      "value": {
+                        "type": "expression",
+                        "statement": {
+                          "value": {
+                            "type": "postOp",
+                            "expression": {
+                              "value": {
+                                "value": {
+                                  "type": "primary",
+                                  "expression": {
+                                    "value": {
+                                      "type": "id",
+                                      "primary": "invocationCount"
+                                    }
+                                  }
+                                }
+                              },
+                              "operator": "--",
+                              "location": "postfix"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  ]
+                },
+                {
+                  "value": {
+                    "value": "else",
+                    "valueType": {
+                      "value": [],
+                      "dimension": null
+                    }
+                  },
+                  "block": [
+                    {
+                      "value": {
+                        "type": "expression",
+                        "statement": {
+                          "value": {
+                            "type": "assign",
+                            "expression": {
+                              "left": {
+                                "value": {
+                                  "type": "primary",
+                                  "expression": {
+                                    "value": {
+                                      "type": "id",
+                                      "primary": "invocationCount"
+                                    }
+                                  }
+                                }
+                              },
+                              "operator": "+=",
+                              "right": {
+                                "value": {
+                                  "type": "primary",
+                                  "expression": {
+                                    "value": {
+                                      "type": "literal",
+                                      "primary": {
+                                        "value": "0",
+                                        "valueType": "integer"
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        },
+        "modifier": []
+      },
+      {
+        "value": {
+          "value": {
+            "type": "if",
+            "statement": [
+              {
+                "value": {
+                  "value": {
+                    "type": "logAnd",
+                    "expression": {
+                      "left": {
+                        "value": {
+                          "type": "dot",
+                          "expression": {
+                            "left": {
+                              "value": {
+                                "type": "primary",
+                                "expression": {
+                                  "value": {
+                                    "type": "id",
+                                    "primary": "Trigger"
+                                  }
+                                }
+                              }
+                            },
+                            "operator": ".",
+                            "right": "isBefore"
+                          }
+                        }
+                      },
+                      "operator": "&&",
+                      "right": {
+                        "value": {
+                          "type": "dot",
+                          "expression": {
+                            "left": {
+                              "value": {
+                                "type": "primary",
+                                "expression": {
+                                  "value": {
+                                    "type": "id",
+                                    "primary": "Trigger"
+                                  }
+                                }
+                              }
+                            },
+                            "operator": ".",
+                            "right": "isInsert"
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "block": {
+                  "value": {
+                    "type": "block",
+                    "statement": [
+                      {
+                        "value": {
+                          "type": "for",
+                          "statement": {
+                            "value": {
+                              "value": {
+                                "value": "account",
+                                "valueType": {
+                                  "value": [
+                                    {
+                                      "value": "Account",
+                                      "generic": []
+                                    }
+                                  ],
+                                  "dimension": null
+                                },
+                                "fromVariant": {
+                                  "value": {
+                                    "type": "dot",
+                                    "expression": {
+                                      "left": {
+                                        "value": {
+                                          "type": "primary",
+                                          "expression": {
+                                            "value": {
+                                              "type": "id",
+                                              "primary": "Trigger"
+                                            }
+                                          }
+                                        }
+                                      },
+                                      "operator": ".",
+                                      "right": "new"
+                                    }
+                                  }
+                                }
+                              },
+                              "init": null,
+                              "update": []
+                            },
+                            "block": {
+                              "value": {
+                                "type": "block",
+                                "statement": [
+                                  {
+                                    "value": {
+                                      "type": "if",
+                                      "statement": [
+                                        {
+                                          "value": {
+                                            "value": {
+                                              "type": "dot",
+                                              "expression": {
+                                                "left": {
+                                                  "value": {
+                                                    "type": "primary",
+                                                    "expression": {
+                                                      "value": {
+                                                        "type": "id",
+                                                        "primary": "String"
+                                                      }
+                                                    }
+                                                  }
+                                                },
+                                                "operator": ".",
+                                                "right": {
+                                                  "value": "isBlank",
+                                                  "param": [
+                                                    {
+                                                      "value": {
+                                                        "type": "dot",
+                                                        "expression": {
+                                                          "left": {
+                                                            "value": {
+                                                              "type": "primary",
+                                                              "expression": {
+                                                                "value": {
+                                                                  "type": "id",
+                                                                  "primary": "account"
+                                                                }
+                                                              }
+                                                            }
+                                                          },
+                                                          "operator": ".",
+                                                          "right": "Name"
+                                                        }
+                                                      }
+                                                    }
+                                                  ]
+                                                }
+                                              }
+                                            }
+                                          },
+                                          "block": {
+                                            "value": {
+                                              "type": "block",
+                                              "statement": [
+                                                {
+                                                  "value": {
+                                                    "type": "expression",
+                                                    "statement": {
+                                                      "value": {
+                                                        "type": "assign",
+                                                        "expression": {
+                                                          "left": {
+                                                            "value": {
+                                                              "type": "dot",
+                                                              "expression": {
+                                                                "left": {
+                                                                  "value": {
+                                                                    "type": "primary",
+                                                                    "expression": {
+                                                                      "value": {
+                                                                        "type": "id",
+                                                                        "primary": "account"
+                                                                      }
+                                                                    }
+                                                                  }
+                                                                },
+                                                                "operator": ".",
+                                                                "right": "Name"
+                                                              }
+                                                            }
+                                                          },
+                                                          "operator": "=",
+                                                          "right": {
+                                                            "value": {
+                                                              "type": "primary",
+                                                              "expression": {
+                                                                "value": {
+                                                                  "type": "literal",
+                                                                  "primary": {
+                                                                    "value": "'Default Account'",
+                                                                    "valueType": "string"
+                                                                  }
+                                                                }
+                                                              }
+                                                            }
+                                                          }
+                                                        }
+                                                      }
+                                                    }
+                                                  }
+                                                }
+                                              ]
+                                            }
+                                          }
+                                        }
+                                      ]
+                                    }
+                                  },
+                                  {
+                                    "value": {
+                                      "type": "expression",
+                                      "statement": {
+                                        "value": {
+                                          "type": "assign",
+                                          "expression": {
+                                            "left": {
+                                              "value": {
+                                                "type": "dot",
+                                                "expression": {
+                                                  "left": {
+                                                    "value": {
+                                                      "type": "primary",
+                                                      "expression": {
+                                                        "value": {
+                                                          "type": "id",
+                                                          "primary": "account"
+                                                        }
+                                                      }
+                                                    }
+                                                  },
+                                                  "operator": ".",
+                                                  "right": "Description"
+                                                }
+                                              }
+                                            },
+                                            "operator": "=",
+                                            "right": {
+                                              "value": {
+                                                "type": "primary",
+                                                "expression": {
+                                                  "value": {
+                                                    "type": "literal",
+                                                    "primary": {
+                                                      "value": "'Created by trigger'",
+                                                      "valueType": "string"
+                                                    }
+                                                  }
+                                                }
+                                              }
+                                            }
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                ]
+                              }
+                            }
+                          }
+                        }
+                      }
+                    ]
+                  }
+                }
+              }
+            ]
+          }
+        },
+        "modifier": []
+      },
+      {
+        "value": {
+          "value": {
+            "type": "if",
+            "statement": [
+              {
+                "value": {
+                  "value": {
+                    "type": "logAnd",
+                    "expression": {
+                      "left": {
+                        "value": {
+                          "type": "dot",
+                          "expression": {
+                            "left": {
+                              "value": {
+                                "type": "primary",
+                                "expression": {
+                                  "value": {
+                                    "type": "id",
+                                    "primary": "Trigger"
+                                  }
+                                }
+                              }
+                            },
+                            "operator": ".",
+                            "right": "isBefore"
+                          }
+                        }
+                      },
+                      "operator": "&&",
+                      "right": {
+                        "value": {
+                          "type": "dot",
+                          "expression": {
+                            "left": {
+                              "value": {
+                                "type": "primary",
+                                "expression": {
+                                  "value": {
+                                    "type": "id",
+                                    "primary": "Trigger"
+                                  }
+                                }
+                              }
+                            },
+                            "operator": ".",
+                            "right": "isUpdate"
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "block": {
+                  "value": {
+                    "type": "block",
+                    "statement": [
+                      {
+                        "value": {
+                          "type": "for",
+                          "statement": {
+                            "value": {
+                              "value": {
+                                "value": "account",
+                                "valueType": {
+                                  "value": [
+                                    {
+                                      "value": "Account",
+                                      "generic": []
+                                    }
+                                  ],
+                                  "dimension": null
+                                },
+                                "fromVariant": {
+                                  "value": {
+                                    "type": "dot",
+                                    "expression": {
+                                      "left": {
+                                        "value": {
+                                          "type": "primary",
+                                          "expression": {
+                                            "value": {
+                                              "type": "id",
+                                              "primary": "Trigger"
+                                            }
+                                          }
+                                        }
+                                      },
+                                      "operator": ".",
+                                      "right": "new"
+                                    }
+                                  }
+                                }
+                              },
+                              "init": null,
+                              "update": []
+                            },
+                            "block": {
+                              "value": {
+                                "type": "block",
+                                "statement": [
+                                  {
+                                    "value": {
+                                      "type": "localVariable",
+                                      "statement": {
+                                        "value": [
+                                          {
+                                            "value": "oldAccount",
+                                            "content": {
+                                              "value": {
+                                                "type": "dot",
+                                                "expression": {
+                                                  "left": {
+                                                    "value": {
+                                                      "type": "dot",
+                                                      "expression": {
+                                                        "left": {
+                                                          "value": {
+                                                            "type": "primary",
+                                                            "expression": {
+                                                              "value": {
+                                                                "type": "id",
+                                                                "primary": "Trigger"
+                                                              }
+                                                            }
+                                                          }
+                                                        },
+                                                        "operator": ".",
+                                                        "right": "oldMap"
+                                                      }
+                                                    }
+                                                  },
+                                                  "operator": ".",
+                                                  "right": {
+                                                    "value": "get",
+                                                    "param": [
+                                                      {
+                                                        "value": {
+                                                          "type": "dot",
+                                                          "expression": {
+                                                            "left": {
+                                                              "value": {
+                                                                "type": "primary",
+                                                                "expression": {
+                                                                  "value": {
+                                                                    "type": "id",
+                                                                    "primary": "account"
+                                                                  }
+                                                                }
+                                                              }
+                                                            },
+                                                            "operator": ".",
+                                                            "right": "Id"
+                                                          }
+                                                        }
+                                                      }
+                                                    ]
+                                                  }
+                                                }
+                                              }
+                                            }
+                                          }
+                                        ],
+                                        "valueType": {
+                                          "value": [
+                                            {
+                                              "value": "Account",
+                                              "generic": []
+                                            }
+                                          ],
+                                          "dimension": null
+                                        },
+                                        "modifier": []
+                                      }
+                                    }
+                                  },
+                                  {
+                                    "value": {
+                                      "type": "if",
+                                      "statement": [
+                                        {
+                                          "value": {
+                                            "value": {
+                                              "type": "equality",
+                                              "expression": {
+                                                "left": {
+                                                  "value": {
+                                                    "type": "dot",
+                                                    "expression": {
+                                                      "left": {
+                                                        "value": {
+                                                          "type": "primary",
+                                                          "expression": {
+                                                            "value": {
+                                                              "type": "id",
+                                                              "primary": "account"
+                                                            }
+                                                          }
+                                                        }
+                                                      },
+                                                      "operator": ".",
+                                                      "right": "Name"
+                                                    }
+                                                  }
+                                                },
+                                                "operator": "!=",
+                                                "right": {
+                                                  "value": {
+                                                    "type": "dot",
+                                                    "expression": {
+                                                      "left": {
+                                                        "value": {
+                                                          "type": "primary",
+                                                          "expression": {
+                                                            "value": {
+                                                              "type": "id",
+                                                              "primary": "oldAccount"
+                                                            }
+                                                          }
+                                                        }
+                                                      },
+                                                      "operator": ".",
+                                                      "right": "Name"
+                                                    }
+                                                  }
+                                                }
+                                              }
+                                            }
+                                          },
+                                          "block": {
+                                            "value": {
+                                              "type": "block",
+                                              "statement": [
+                                                {
+                                                  "value": {
+                                                    "type": "expression",
+                                                    "statement": {
+                                                      "value": {
+                                                        "type": "assign",
+                                                        "expression": {
+                                                          "left": {
+                                                            "value": {
+                                                              "type": "dot",
+                                                              "expression": {
+                                                                "left": {
+                                                                  "value": {
+                                                                    "type": "primary",
+                                                                    "expression": {
+                                                                      "value": {
+                                                                        "type": "id",
+                                                                        "primary": "account"
+                                                                      }
+                                                                    }
+                                                                  }
+                                                                },
+                                                                "operator": ".",
+                                                                "right": "Description"
+                                                              }
+                                                            }
+                                                          },
+                                                          "operator": "=",
+                                                          "right": {
+                                                            "value": {
+                                                              "type": "primary",
+                                                              "expression": {
+                                                                "value": {
+                                                                  "type": "literal",
+                                                                  "primary": {
+                                                                    "value": "'Name changed'",
+                                                                    "valueType": "string"
+                                                                  }
+                                                                }
+                                                              }
+                                                            }
+                                                          }
+                                                        }
+                                                      }
+                                                    }
+                                                  }
+                                                }
+                                              ]
+                                            }
+                                          }
+                                        }
+                                      ]
+                                    }
+                                  },
+                                  {
+                                    "value": {
+                                      "type": "if",
+                                      "statement": [
+                                        {
+                                          "value": {
+                                            "value": {
+                                              "type": "cmp",
+                                              "expression": {
+                                                "left": {
+                                                  "value": {
+                                                    "type": "dot",
+                                                    "expression": {
+                                                      "left": {
+                                                        "value": {
+                                                          "type": "primary",
+                                                          "expression": {
+                                                            "value": {
+                                                              "type": "id",
+                                                              "primary": "account"
+                                                            }
+                                                          }
+                                                        }
+                                                      },
+                                                      "operator": ".",
+                                                      "right": "AnnualRevenue"
+                                                    }
+                                                  }
+                                                },
+                                                "operator": "<",
+                                                "right": {
+                                                  "value": {
+                                                    "type": "primary",
+                                                    "expression": {
+                                                      "value": {
+                                                        "type": "literal",
+                                                        "primary": {
+                                                          "value": "0",
+                                                          "valueType": "integer"
+                                                        }
+                                                      }
+                                                    }
+                                                  }
+                                                }
+                                              }
+                                            }
+                                          },
+                                          "block": {
+                                            "value": {
+                                              "type": "block",
+                                              "statement": [
+                                                {
+                                                  "value": {
+                                                    "type": "expression",
+                                                    "statement": {
+                                                      "value": {
+                                                        "type": "dot",
+                                                        "expression": {
+                                                          "left": {
+                                                            "value": {
+                                                              "type": "primary",
+                                                              "expression": {
+                                                                "value": {
+                                                                  "type": "id",
+                                                                  "primary": "account"
+                                                                }
+                                                              }
+                                                            }
+                                                          },
+                                                          "operator": ".",
+                                                          "right": {
+                                                            "value": "addError",
+                                                            "param": [
+                                                              {
+                                                                "value": {
+                                                                  "type": "primary",
+                                                                  "expression": {
+                                                                    "value": {
+                                                                      "type": "literal",
+                                                                      "primary": {
+                                                                        "value": "'AnnualRevenue must be positive'",
+                                                                        "valueType": "string"
+                                                                      }
+                                                                    }
+                                                                  }
+                                                                }
+                                                              }
+                                                            ]
+                                                          }
+                                                        }
+                                                      }
+                                                    }
+                                                  }
+                                                }
+                                              ]
+                                            }
+                                          }
+                                        }
+                                      ]
+                                    }
+                                  }
+                                ]
+                              }
+                            }
+                          }
+                        }
+                      }
+                    ]
+                  }
+                }
+              }
+            ]
+          }
+        },
+        "modifier": []
+      },
+      {
+        "value": {
+          "value": {
+            "type": "if",
+            "statement": [
+              {
+                "value": {
+                  "value": {
+                    "type": "logAnd",
+                    "expression": {
+                      "left": {
+                        "value": {
+                          "type": "dot",
+                          "expression": {
+                            "left": {
+                              "value": {
+                                "type": "primary",
+                                "expression": {
+                                  "value": {
+                                    "type": "id",
+                                    "primary": "Trigger"
+                                  }
+                                }
+                              }
+                            },
+                            "operator": ".",
+                            "right": "isBefore"
+                          }
+                        }
+                      },
+                      "operator": "&&",
+                      "right": {
+                        "value": {
+                          "type": "dot",
+                          "expression": {
+                            "left": {
+                              "value": {
+                                "type": "primary",
+                                "expression": {
+                                  "value": {
+                                    "type": "id",
+                                    "primary": "Trigger"
+                                  }
+                                }
+                              }
+                            },
+                            "operator": ".",
+                            "right": "isDelete"
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "block": {
+                  "value": {
+                    "type": "block",
+                    "statement": [
+                      {
+                        "value": {
+                          "type": "for",
+                          "statement": {
+                            "value": {
+                              "value": {
+                                "value": "account",
+                                "valueType": {
+                                  "value": [
+                                    {
+                                      "value": "Account",
+                                      "generic": []
+                                    }
+                                  ],
+                                  "dimension": null
+                                },
+                                "fromVariant": {
+                                  "value": {
+                                    "type": "dot",
+                                    "expression": {
+                                      "left": {
+                                        "value": {
+                                          "type": "primary",
+                                          "expression": {
+                                            "value": {
+                                              "type": "id",
+                                              "primary": "Trigger"
+                                            }
+                                          }
+                                        }
+                                      },
+                                      "operator": ".",
+                                      "right": "old"
+                                    }
+                                  }
+                                }
+                              },
+                              "init": null,
+                              "update": []
+                            },
+                            "block": {
+                              "value": {
+                                "type": "block",
+                                "statement": [
+                                  {
+                                    "value": {
+                                      "type": "expression",
+                                      "statement": {
+                                        "value": {
+                                          "type": "dot",
+                                          "expression": {
+                                            "left": {
+                                              "value": {
+                                                "type": "primary",
+                                                "expression": {
+                                                  "value": {
+                                                    "type": "id",
+                                                    "primary": "System"
+                                                  }
+                                                }
+                                              }
+                                            },
+                                            "operator": ".",
+                                            "right": {
+                                              "value": "debug",
+                                              "param": [
+                                                {
+                                                  "value": {
+                                                    "type": "arth2",
+                                                    "expression": {
+                                                      "left": {
+                                                        "value": {
+                                                          "type": "primary",
+                                                          "expression": {
+                                                            "value": {
+                                                              "type": "literal",
+                                                              "primary": {
+                                                                "value": "'Deleting: '",
+                                                                "valueType": "string"
+                                                              }
+                                                            }
+                                                          }
+                                                        }
+                                                      },
+                                                      "operator": "+",
+                                                      "right": {
+                                                        "value": {
+                                                          "type": "dot",
+                                                          "expression": {
+                                                            "left": {
+                                                              "value": {
+                                                                "type": "primary",
+                                                                "expression": {
+                                                                  "value": {
+                                                                    "type": "id",
+                                                                    "primary": "account"
+                                                                  }
+                                                                }
+                                                              }
+                                                            },
+                                                            "operator": ".",
+                                                            "right": "Name"
+                                                          }
+                                                        }
+                                                      }
+                                                    }
+                                                  }
+                                                }
+                                              ]
+                                            }
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                ]
+                              }
+                            }
+                          }
+                        }
+                      }
+                    ]
+                  }
+                }
+              }
+            ]
+          }
+        },
+        "modifier": []
+      },
+      {
+        "value": {
+          "value": {
+            "type": "if",
+            "statement": [
+              {
+                "value": {
+                  "value": {
+                    "type": "logAnd",
+                    "expression": {
+                      "left": {
+                        "value": {
+                          "type": "dot",
+                          "expression": {
+                            "left": {
+                              "value": {
+                                "type": "primary",
+                                "expression": {
+                                  "value": {
+                                    "type": "id",
+                                    "primary": "Trigger"
+                                  }
+                                }
+                              }
+                            },
+                            "operator": ".",
+                            "right": "isAfter"
+                          }
+                        }
+                      },
+                      "operator": "&&",
+                      "right": {
+                        "value": {
+                          "type": "dot",
+                          "expression": {
+                            "left": {
+                              "value": {
+                                "type": "primary",
+                                "expression": {
+                                  "value": {
+                                    "type": "id",
+                                    "primary": "Trigger"
+                                  }
+                                }
+                              }
+                            },
+                            "operator": ".",
+                            "right": "isInsert"
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "block": {
+                  "value": {
+                    "type": "block",
+                    "statement": [
+                      {
+                        "value": {
+                          "type": "localVariable",
+                          "statement": {
+                            "value": [
+                              {
+                                "value": "contacts",
+                                "content": {
+                                  "value": {
+                                    "type": "new",
+                                    "expression": {
+                                      "value": {
+                                        "type": "class",
+                                        "value": [
+                                          {
+                                            "left": "List",
+                                            "right": [
+                                              {
+                                                "value": [
+                                                  {
+                                                    "value": "Contact",
+                                                    "generic": []
+                                                  }
+                                                ],
+                                                "dimension": null
+                                              }
+                                            ]
+                                          }
+                                        ],
+                                        "content": []
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            ],
+                            "valueType": {
+                              "value": [
+                                {
+                                  "value": "list",
+                                  "generic": [
+                                    {
+                                      "value": [
+                                        {
+                                          "value": "Contact",
+                                          "generic": []
+                                        }
+                                      ],
+                                      "dimension": null
+                                    }
+                                  ]
+                                }
+                              ],
+                              "dimension": null
+                            },
+                            "modifier": []
+                          }
+                        }
+                      },
+                      {
+                        "value": {
+                          "type": "for",
+                          "statement": {
+                            "value": {
+                              "value": {
+                                "value": "account",
+                                "valueType": {
+                                  "value": [
+                                    {
+                                      "value": "Account",
+                                      "generic": []
+                                    }
+                                  ],
+                                  "dimension": null
+                                },
+                                "fromVariant": {
+                                  "value": {
+                                    "type": "dot",
+                                    "expression": {
+                                      "left": {
+                                        "value": {
+                                          "type": "primary",
+                                          "expression": {
+                                            "value": {
+                                              "type": "id",
+                                              "primary": "Trigger"
+                                            }
+                                          }
+                                        }
+                                      },
+                                      "operator": ".",
+                                      "right": "new"
+                                    }
+                                  }
+                                }
+                              },
+                              "init": null,
+                              "update": []
+                            },
+                            "block": {
+                              "value": {
+                                "type": "block",
+                                "statement": [
+                                  {
+                                    "value": {
+                                      "type": "expression",
+                                      "statement": {
+                                        "value": {
+                                          "type": "dot",
+                                          "expression": {
+                                            "left": {
+                                              "value": {
+                                                "type": "primary",
+                                                "expression": {
+                                                  "value": {
+                                                    "type": "id",
+                                                    "primary": "contacts"
+                                                  }
+                                                }
+                                              }
+                                            },
+                                            "operator": ".",
+                                            "right": {
+                                              "value": "add",
+                                              "param": [
+                                                {
+                                                  "value": {
+                                                    "type": "new",
+                                                    "expression": {
+                                                      "value": {
+                                                        "type": "class",
+                                                        "value": [
+                                                          {
+                                                            "left": "Contact",
+                                                            "right": []
+                                                          }
+                                                        ],
+                                                        "content": [
+                                                          {
+                                                            "value": {
+                                                              "type": "assign",
+                                                              "expression": {
+                                                                "left": {
+                                                                  "value": {
+                                                                    "type": "primary",
+                                                                    "expression": {
+                                                                      "value": {
+                                                                        "type": "id",
+                                                                        "primary": "LastName"
+                                                                      }
+                                                                    }
+                                                                  }
+                                                                },
+                                                                "operator": "=",
+                                                                "right": {
+                                                                  "value": {
+                                                                    "type": "dot",
+                                                                    "expression": {
+                                                                      "left": {
+                                                                        "value": {
+                                                                          "type": "primary",
+                                                                          "expression": {
+                                                                            "value": {
+                                                                              "type": "id",
+                                                                              "primary": "account"
+                                                                            }
+                                                                          }
+                                                                        }
+                                                                      },
+                                                                      "operator": ".",
+                                                                      "right": "Name"
+                                                                    }
+                                                                  }
+                                                                }
+                                                              }
+                                                            }
+                                                          },
+                                                          {
+                                                            "value": {
+                                                              "type": "assign",
+                                                              "expression": {
+                                                                "left": {
+                                                                  "value": {
+                                                                    "type": "primary",
+                                                                    "expression": {
+                                                                      "value": {
+                                                                        "type": "id",
+                                                                        "primary": "AccountId"
+                                                                      }
+                                                                    }
+                                                                  }
+                                                                },
+                                                                "operator": "=",
+                                                                "right": {
+                                                                  "value": {
+                                                                    "type": "dot",
+                                                                    "expression": {
+                                                                      "left": {
+                                                                        "value": {
+                                                                          "type": "primary",
+                                                                          "expression": {
+                                                                            "value": {
+                                                                              "type": "id",
+                                                                              "primary": "account"
+                                                                            }
+                                                                          }
+                                                                        }
+                                                                      },
+                                                                      "operator": ".",
+                                                                      "right": "Id"
+                                                                    }
+                                                                  }
+                                                                }
+                                                              }
+                                                            }
+                                                          }
+                                                        ]
+                                                      }
+                                                    }
+                                                  }
+                                                }
+                                              ]
+                                            }
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                ]
+                              }
+                            }
+                          }
+                        }
+                      },
+                      {
+                        "value": {
+                          "type": "if",
+                          "statement": [
+                            {
+                              "value": {
+                                "value": {
+                                  "type": "neg",
+                                  "expression": {
+                                    "value": {
+                                      "value": {
+                                        "type": "dot",
+                                        "expression": {
+                                          "left": {
+                                            "value": {
+                                              "type": "primary",
+                                              "expression": {
+                                                "value": {
+                                                  "type": "id",
+                                                  "primary": "contacts"
+                                                }
+                                              }
+                                            }
+                                          },
+                                          "operator": ".",
+                                          "right": {
+                                            "value": "isEmpty",
+                                            "param": []
+                                          }
+                                        }
+                                      }
+                                    },
+                                    "operator": "!",
+                                    "location": "prefix"
+                                  }
+                                }
+                              },
+                              "block": {
+                                "value": {
+                                  "type": "block",
+                                  "statement": [
+                                    {
+                                      "value": {
+                                        "type": "insert",
+                                        "statement": {
+                                          "value": {
+                                            "value": {
+                                              "type": "primary",
+                                              "expression": {
+                                                "value": {
+                                                  "type": "id",
+                                                  "primary": "contacts"
+                                                }
+                                              }
+                                            }
+                                          },
+                                          "accessLevel": "USER"
+                                        }
+                                      }
+                                    }
+                                  ]
+                                }
+                              }
+                            }
+                          ]
+                        }
+                      }
+                    ]
+                  }
+                }
+              }
+            ]
+          }
+        },
+        "modifier": []
+      },
+      {
+        "value": {
+          "value": {
+            "type": "if",
+            "statement": [
+              {
+                "value": {
+                  "value": {
+                    "type": "logAnd",
+                    "expression": {
+                      "left": {
+                        "value": {
+                          "type": "dot",
+                          "expression": {
+                            "left": {
+                              "value": {
+                                "type": "primary",
+                                "expression": {
+                                  "value": {
+                                    "type": "id",
+                                    "primary": "Trigger"
+                                  }
+                                }
+                              }
+                            },
+                            "operator": ".",
+                            "right": "isAfter"
+                          }
+                        }
+                      },
+                      "operator": "&&",
+                      "right": {
+                        "value": {
+                          "type": "dot",
+                          "expression": {
+                            "left": {
+                              "value": {
+                                "type": "primary",
+                                "expression": {
+                                  "value": {
+                                    "type": "id",
+                                    "primary": "Trigger"
+                                  }
+                                }
+                              }
+                            },
+                            "operator": ".",
+                            "right": "isUpdate"
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "block": {
+                  "value": {
+                    "type": "block",
+                    "statement": [
+                      {
+                        "value": {
+                          "type": "localVariable",
+                          "statement": {
+                            "value": [
+                              {
+                                "value": "accountIds",
+                                "content": {
+                                  "value": {
+                                    "type": "new",
+                                    "expression": {
+                                      "value": {
+                                        "type": "class",
+                                        "value": [
+                                          {
+                                            "left": "Set",
+                                            "right": [
+                                              {
+                                                "value": [
+                                                  {
+                                                    "value": "Id",
+                                                    "generic": []
+                                                  }
+                                                ],
+                                                "dimension": null
+                                              }
+                                            ]
+                                          }
+                                        ],
+                                        "content": []
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            ],
+                            "valueType": {
+                              "value": [
+                                {
+                                  "value": "set",
+                                  "generic": [
+                                    {
+                                      "value": [
+                                        {
+                                          "value": "Id",
+                                          "generic": []
+                                        }
+                                      ],
+                                      "dimension": null
+                                    }
+                                  ]
+                                }
+                              ],
+                              "dimension": null
+                            },
+                            "modifier": []
+                          }
+                        }
+                      },
+                      {
+                        "value": {
+                          "type": "expression",
+                          "statement": {
+                            "value": {
+                              "type": "dot",
+                              "expression": {
+                                "left": {
+                                  "value": {
+                                    "type": "primary",
+                                    "expression": {
+                                      "value": {
+                                        "type": "id",
+                                        "primary": "accountIds"
+                                      }
+                                    }
+                                  }
+                                },
+                                "operator": ".",
+                                "right": {
+                                  "value": "addAll",
+                                  "param": [
+                                    {
+                                      "value": {
+                                        "type": "dot",
+                                        "expression": {
+                                          "left": {
+                                            "value": {
+                                              "type": "dot",
+                                              "expression": {
+                                                "left": {
+                                                  "value": {
+                                                    "type": "primary",
+                                                    "expression": {
+                                                      "value": {
+                                                        "type": "id",
+                                                        "primary": "Trigger"
+                                                      }
+                                                    }
+                                                  }
+                                                },
+                                                "operator": ".",
+                                                "right": "newMap"
+                                              }
+                                            }
+                                          },
+                                          "operator": ".",
+                                          "right": {
+                                            "value": "keySet",
+                                            "param": []
+                                          }
+                                        }
+                                      }
+                                    }
+                                  ]
+                                }
+                              }
+                            }
+                          }
+                        }
+                      },
+                      {
+                        "value": {
+                          "type": "localVariable",
+                          "statement": {
+                            "value": [
+                              {
+                                "value": "accounts",
+                                "content": {
+                                  "value": {
+                                    "type": "primary",
+                                    "expression": {
+                                      "value": {
+                                        "type": "soql",
+                                        "primary": {
+                                          "value": [
+                                            {
+                                              "value": [
+                                                "Id"
+                                              ],
+                                              "alias": null
+                                            },
+                                            {
+                                              "value": [
+                                                "Name"
+                                              ],
+                                              "alias": null
+                                            },
+                                            {
+                                              "value": [
+                                                "Industry"
+                                              ],
+                                              "alias": null
+                                            },
+                                            {
+                                              "value": {
+                                                "value": [
+                                                  {
+                                                    "value": [
+                                                      "Id"
+                                                    ],
+                                                    "alias": null
+                                                  },
+                                                  {
+                                                    "value": [
+                                                      "FirstName"
+                                                    ],
+                                                    "alias": null
+                                                  },
+                                                  {
+                                                    "value": [
+                                                      "LastName"
+                                                    ],
+                                                    "alias": null
+                                                  }
+                                                ],
+                                                "from": [
+                                                  {
+                                                    "value": [
+                                                      "Contacts"
+                                                    ],
+                                                    "alias": null
+                                                  }
+                                                ],
+                                                "forClause": [],
+                                                "whereClause": {
+                                                  "value": [],
+                                                  "operator": null
+                                                },
+                                                "orderByClause": [],
+                                                "limitClause": null,
+                                                "updateList": []
+                                              },
+                                              "alias": null
+                                            }
+                                          ],
+                                          "from": [
+                                            {
+                                              "value": [
+                                                "Account"
+                                              ],
+                                              "alias": null
+                                            }
+                                          ],
+                                          "forClause": [],
+                                          "whereClause": {
+                                            "value": [
+                                              {
+                                                "left": {
+                                                  "left": [
+                                                    "Id"
+                                                  ],
+                                                  "operator": "IN",
+                                                  "right": {
+                                                    "value": {
+                                                      "value": {
+                                                        "type": "primary",
+                                                        "expression": {
+                                                          "value": {
+                                                            "type": "id",
+                                                            "primary": "accountIds"
+                                                          }
+                                                        }
+                                                      }
+                                                    },
+                                                    "valueType": "boundExpression"
+                                                  }
+                                                },
+                                                "operator": null,
+                                                "right": {
+                                                  "value": null,
+                                                  "valueType": null
+                                                }
+                                              }
+                                            ],
+                                            "operator": null
+                                          },
+                                          "orderByClause": [],
+                                          "limitClause": null,
+                                          "updateList": [],
+                                          "usingScope": null,
+                                          "withClause": {
+                                            "value": null,
+                                            "field": []
+                                          },
+                                          "groupByClause": {
+                                            "value": [],
+                                            "mode": null,
+                                            "having": {
+                                              "value": [],
+                                              "operator": null
+                                            }
+                                          },
+                                          "offsetClause": null,
+                                          "allRowsClause": null
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            ],
+                            "valueType": {
+                              "value": [
+                                {
+                                  "value": "list",
+                                  "generic": [
+                                    {
+                                      "value": [
+                                        {
+                                          "value": "Account",
+                                          "generic": []
+                                        }
+                                      ],
+                                      "dimension": null
+                                    }
+                                  ]
+                                }
+                              ],
+                              "dimension": null
+                            },
+                            "modifier": []
+                          }
+                        }
+                      },
+                      {
+                        "value": {
+                          "type": "localVariable",
+                          "statement": {
+                            "value": [
+                              {
+                                "value": "toUpdate",
+                                "content": {
+                                  "value": {
+                                    "type": "new",
+                                    "expression": {
+                                      "value": {
+                                        "type": "class",
+                                        "value": [
+                                          {
+                                            "left": "List",
+                                            "right": [
+                                              {
+                                                "value": [
+                                                  {
+                                                    "value": "Contact",
+                                                    "generic": []
+                                                  }
+                                                ],
+                                                "dimension": null
+                                              }
+                                            ]
+                                          }
+                                        ],
+                                        "content": []
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            ],
+                            "valueType": {
+                              "value": [
+                                {
+                                  "value": "list",
+                                  "generic": [
+                                    {
+                                      "value": [
+                                        {
+                                          "value": "Contact",
+                                          "generic": []
+                                        }
+                                      ],
+                                      "dimension": null
+                                    }
+                                  ]
+                                }
+                              ],
+                              "dimension": null
+                            },
+                            "modifier": []
+                          }
+                        }
+                      },
+                      {
+                        "value": {
+                          "type": "for",
+                          "statement": {
+                            "value": {
+                              "value": {
+                                "value": "account",
+                                "valueType": {
+                                  "value": [
+                                    {
+                                      "value": "Account",
+                                      "generic": []
+                                    }
+                                  ],
+                                  "dimension": null
+                                },
+                                "fromVariant": {
+                                  "value": {
+                                    "type": "primary",
+                                    "expression": {
+                                      "value": {
+                                        "type": "id",
+                                        "primary": "accounts"
+                                      }
+                                    }
+                                  }
+                                }
+                              },
+                              "init": null,
+                              "update": []
+                            },
+                            "block": {
+                              "value": {
+                                "type": "block",
+                                "statement": [
+                                  {
+                                    "value": {
+                                      "type": "for",
+                                      "statement": {
+                                        "value": {
+                                          "value": {
+                                            "value": "contact",
+                                            "valueType": {
+                                              "value": [
+                                                {
+                                                  "value": "Contact",
+                                                  "generic": []
+                                                }
+                                              ],
+                                              "dimension": null
+                                            },
+                                            "fromVariant": {
+                                              "value": {
+                                                "type": "dot",
+                                                "expression": {
+                                                  "left": {
+                                                    "value": {
+                                                      "type": "primary",
+                                                      "expression": {
+                                                        "value": {
+                                                          "type": "id",
+                                                          "primary": "account"
+                                                        }
+                                                      }
+                                                    }
+                                                  },
+                                                  "operator": ".",
+                                                  "right": "Contacts"
+                                                }
+                                              }
+                                            }
+                                          },
+                                          "init": null,
+                                          "update": []
+                                        },
+                                        "block": {
+                                          "value": {
+                                            "type": "block",
+                                            "statement": [
+                                              {
+                                                "value": {
+                                                  "type": "expression",
+                                                  "statement": {
+                                                    "value": {
+                                                      "type": "assign",
+                                                      "expression": {
+                                                        "left": {
+                                                          "value": {
+                                                            "type": "dot",
+                                                            "expression": {
+                                                              "left": {
+                                                                "value": {
+                                                                  "type": "primary",
+                                                                  "expression": {
+                                                                    "value": {
+                                                                      "type": "id",
+                                                                      "primary": "contact"
+                                                                    }
+                                                                  }
+                                                                }
+                                                              },
+                                                              "operator": ".",
+                                                              "right": "Description"
+                                                            }
+                                                          }
+                                                        },
+                                                        "operator": "=",
+                                                        "right": {
+                                                          "value": {
+                                                            "type": "dot",
+                                                            "expression": {
+                                                              "left": {
+                                                                "value": {
+                                                                  "type": "primary",
+                                                                  "expression": {
+                                                                    "value": {
+                                                                      "type": "id",
+                                                                      "primary": "account"
+                                                                    }
+                                                                  }
+                                                                }
+                                                              },
+                                                              "operator": ".",
+                                                              "right": "Name"
+                                                            }
+                                                          }
+                                                        }
+                                                      }
+                                                    }
+                                                  }
+                                                }
+                                              },
+                                              {
+                                                "value": {
+                                                  "type": "expression",
+                                                  "statement": {
+                                                    "value": {
+                                                      "type": "dot",
+                                                      "expression": {
+                                                        "left": {
+                                                          "value": {
+                                                            "type": "primary",
+                                                            "expression": {
+                                                              "value": {
+                                                                "type": "id",
+                                                                "primary": "toUpdate"
+                                                              }
+                                                            }
+                                                          }
+                                                        },
+                                                        "operator": ".",
+                                                        "right": {
+                                                          "value": "add",
+                                                          "param": [
+                                                            {
+                                                              "value": {
+                                                                "type": "primary",
+                                                                "expression": {
+                                                                  "value": {
+                                                                    "type": "id",
+                                                                    "primary": "contact"
+                                                                  }
+                                                                }
+                                                              }
+                                                            }
+                                                          ]
+                                                        }
+                                                      }
+                                                    }
+                                                  }
+                                                }
+                                              }
+                                            ]
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                ]
+                              }
+                            }
+                          }
+                        }
+                      },
+                      {
+                        "value": {
+                          "type": "update",
+                          "statement": {
+                            "value": {
+                              "value": {
+                                "type": "primary",
+                                "expression": {
+                                  "value": {
+                                    "type": "id",
+                                    "primary": "toUpdate"
+                                  }
+                                }
+                              }
+                            },
+                            "accessLevel": null
+                          }
+                        }
+                      }
+                    ]
+                  }
+                }
+              }
+            ]
+          }
+        },
+        "modifier": []
+      },
+      {
+        "value": {
+          "value": {
+            "type": "if",
+            "statement": [
+              {
+                "value": {
+                  "value": {
+                    "type": "logAnd",
+                    "expression": {
+                      "left": {
+                        "value": {
+                          "type": "dot",
+                          "expression": {
+                            "left": {
+                              "value": {
+                                "type": "primary",
+                                "expression": {
+                                  "value": {
+                                    "type": "id",
+                                    "primary": "Trigger"
+                                  }
+                                }
+                              }
+                            },
+                            "operator": ".",
+                            "right": "isAfter"
+                          }
+                        }
+                      },
+                      "operator": "&&",
+                      "right": {
+                        "value": {
+                          "type": "dot",
+                          "expression": {
+                            "left": {
+                              "value": {
+                                "type": "primary",
+                                "expression": {
+                                  "value": {
+                                    "type": "id",
+                                    "primary": "Trigger"
+                                  }
+                                }
+                              }
+                            },
+                            "operator": ".",
+                            "right": "isDelete"
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "block": {
+                  "value": {
+                    "type": "block",
+                    "statement": [
+                      {
+                        "value": {
+                          "type": "localVariable",
+                          "statement": {
+                            "value": [
+                              {
+                                "value": "tasks",
+                                "content": {
+                                  "value": {
+                                    "type": "primary",
+                                    "expression": {
+                                      "value": {
+                                        "type": "soql",
+                                        "primary": {
+                                          "value": [
+                                            {
+                                              "value": [
+                                                "Id"
+                                              ],
+                                              "alias": null
+                                            }
+                                          ],
+                                          "from": [
+                                            {
+                                              "value": [
+                                                "Task"
+                                              ],
+                                              "alias": null
+                                            }
+                                          ],
+                                          "forClause": [],
+                                          "whereClause": {
+                                            "value": [
+                                              {
+                                                "left": {
+                                                  "left": [
+                                                    "WhatId"
+                                                  ],
+                                                  "operator": "IN",
+                                                  "right": {
+                                                    "value": {
+                                                      "value": {
+                                                        "type": "dot",
+                                                        "expression": {
+                                                          "left": {
+                                                            "value": {
+                                                              "type": "dot",
+                                                              "expression": {
+                                                                "left": {
+                                                                  "value": {
+                                                                    "type": "primary",
+                                                                    "expression": {
+                                                                      "value": {
+                                                                        "type": "id",
+                                                                        "primary": "Trigger"
+                                                                      }
+                                                                    }
+                                                                  }
+                                                                },
+                                                                "operator": ".",
+                                                                "right": "oldMap"
+                                                              }
+                                                            }
+                                                          },
+                                                          "operator": ".",
+                                                          "right": {
+                                                            "value": "keySet",
+                                                            "param": []
+                                                          }
+                                                        }
+                                                      }
+                                                    },
+                                                    "valueType": "boundExpression"
+                                                  }
+                                                },
+                                                "operator": null,
+                                                "right": {
+                                                  "value": null,
+                                                  "valueType": null
+                                                }
+                                              }
+                                            ],
+                                            "operator": null
+                                          },
+                                          "orderByClause": [],
+                                          "limitClause": null,
+                                          "updateList": [],
+                                          "usingScope": null,
+                                          "withClause": {
+                                            "value": null,
+                                            "field": []
+                                          },
+                                          "groupByClause": {
+                                            "value": [],
+                                            "mode": null,
+                                            "having": {
+                                              "value": [],
+                                              "operator": null
+                                            }
+                                          },
+                                          "offsetClause": null,
+                                          "allRowsClause": "ALL ROWS"
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            ],
+                            "valueType": {
+                              "value": [
+                                {
+                                  "value": "list",
+                                  "generic": [
+                                    {
+                                      "value": [
+                                        {
+                                          "value": "Task",
+                                          "generic": []
+                                        }
+                                      ],
+                                      "dimension": null
+                                    }
+                                  ]
+                                }
+                              ],
+                              "dimension": null
+                            },
+                            "modifier": []
+                          }
+                        }
+                      },
+                      {
+                        "value": {
+                          "type": "delete",
+                          "statement": {
+                            "value": {
+                              "value": {
+                                "type": "primary",
+                                "expression": {
+                                  "value": {
+                                    "type": "id",
+                                    "primary": "tasks"
+                                  }
+                                }
+                              }
+                            },
+                            "accessLevel": null
+                          }
+                        }
+                      },
+                      {
+                        "value": {
+                          "type": "for",
+                          "statement": {
+                            "value": {
+                              "value": {
+                                "value": "account",
+                                "valueType": {
+                                  "value": [
+                                    {
+                                      "value": "Account",
+                                      "generic": []
+                                    }
+                                  ],
+                                  "dimension": null
+                                },
+                                "fromVariant": {
+                                  "value": {
+                                    "type": "dot",
+                                    "expression": {
+                                      "left": {
+                                        "value": {
+                                          "type": "primary",
+                                          "expression": {
+                                            "value": {
+                                              "type": "id",
+                                              "primary": "Trigger"
+                                            }
+                                          }
+                                        }
+                                      },
+                                      "operator": ".",
+                                      "right": "old"
+                                    }
+                                  }
+                                }
+                              },
+                              "init": null,
+                              "update": []
+                            },
+                            "block": {
+                              "value": {
+                                "type": "block",
+                                "statement": [
+                                  {
+                                    "value": {
+                                      "type": "expression",
+                                      "statement": {
+                                        "value": {
+                                          "type": "dot",
+                                          "expression": {
+                                            "left": {
+                                              "value": {
+                                                "type": "primary",
+                                                "expression": {
+                                                  "value": {
+                                                    "type": "id",
+                                                    "primary": "System"
+                                                  }
+                                                }
+                                              }
+                                            },
+                                            "operator": ".",
+                                            "right": {
+                                              "value": "debug",
+                                              "param": [
+                                                {
+                                                  "value": {
+                                                    "type": "arth2",
+                                                    "expression": {
+                                                      "left": {
+                                                        "value": {
+                                                          "type": "primary",
+                                                          "expression": {
+                                                            "value": {
+                                                              "type": "literal",
+                                                              "primary": {
+                                                                "value": "'Deleted: '",
+                                                                "valueType": "string"
+                                                              }
+                                                            }
+                                                          }
+                                                        }
+                                                      },
+                                                      "operator": "+",
+                                                      "right": {
+                                                        "value": {
+                                                          "type": "dot",
+                                                          "expression": {
+                                                            "left": {
+                                                              "value": {
+                                                                "type": "primary",
+                                                                "expression": {
+                                                                  "value": {
+                                                                    "type": "id",
+                                                                    "primary": "account"
+                                                                  }
+                                                                }
+                                                              }
+                                                            },
+                                                            "operator": ".",
+                                                            "right": "Id"
+                                                          }
+                                                        }
+                                                      }
+                                                    }
+                                                  }
+                                                }
+                                              ]
+                                            }
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                ]
+                              }
+                            }
+                          }
+                        }
+                      }
+                    ]
+                  }
+                }
+              }
+            ]
+          }
+        },
+        "modifier": []
+      },
+      {
+        "value": {
+          "value": {
+            "type": "if",
+            "statement": [
+              {
+                "value": {
+                  "value": {
+                    "type": "logAnd",
+                    "expression": {
+                      "left": {
+                        "value": {
+                          "type": "dot",
+                          "expression": {
+                            "left": {
+                              "value": {
+                                "type": "primary",
+                                "expression": {
+                                  "value": {
+                                    "type": "id",
+                                    "primary": "Trigger"
+                                  }
+                                }
+                              }
+                            },
+                            "operator": ".",
+                            "right": "isAfter"
+                          }
+                        }
+                      },
+                      "operator": "&&",
+                      "right": {
+                        "value": {
+                          "type": "dot",
+                          "expression": {
+                            "left": {
+                              "value": {
+                                "type": "primary",
+                                "expression": {
+                                  "value": {
+                                    "type": "id",
+                                    "primary": "Trigger"
+                                  }
+                                }
+                              }
+                            },
+                            "operator": ".",
+                            "right": "isUndelete"
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "block": {
+                  "value": {
+                    "type": "block",
+                    "statement": [
+                      {
+                        "value": {
+                          "type": "try",
+                          "statement": {
+                            "value": [
+                              {
+                                "value": {
+                                  "type": "for",
+                                  "statement": {
+                                    "value": {
+                                      "value": {
+                                        "value": "account",
+                                        "valueType": {
+                                          "value": [
+                                            {
+                                              "value": "Account",
+                                              "generic": []
+                                            }
+                                          ],
+                                          "dimension": null
+                                        },
+                                        "fromVariant": {
+                                          "value": {
+                                            "type": "dot",
+                                            "expression": {
+                                              "left": {
+                                                "value": {
+                                                  "type": "primary",
+                                                  "expression": {
+                                                    "value": {
+                                                      "type": "id",
+                                                      "primary": "Trigger"
+                                                    }
+                                                  }
+                                                }
+                                              },
+                                              "operator": ".",
+                                              "right": "new"
+                                            }
+                                          }
+                                        }
+                                      },
+                                      "init": null,
+                                      "update": []
+                                    },
+                                    "block": {
+                                      "value": {
+                                        "type": "block",
+                                        "statement": [
+                                          {
+                                            "value": {
+                                              "type": "expression",
+                                              "statement": {
+                                                "value": {
+                                                  "type": "methodCall",
+                                                  "expression": {
+                                                    "value": "log",
+                                                    "param": [
+                                                      {
+                                                        "value": {
+                                                          "type": "arth2",
+                                                          "expression": {
+                                                            "left": {
+                                                              "value": {
+                                                                "type": "primary",
+                                                                "expression": {
+                                                                  "value": {
+                                                                    "type": "literal",
+                                                                    "primary": {
+                                                                      "value": "'Restored: '",
+                                                                      "valueType": "string"
+                                                                    }
+                                                                  }
+                                                                }
+                                                              }
+                                                            },
+                                                            "operator": "+",
+                                                            "right": {
+                                                              "value": {
+                                                                "type": "dot",
+                                                                "expression": {
+                                                                  "left": {
+                                                                    "value": {
+                                                                      "type": "primary",
+                                                                      "expression": {
+                                                                        "value": {
+                                                                          "type": "id",
+                                                                          "primary": "account"
+                                                                        }
+                                                                      }
+                                                                    }
+                                                                  },
+                                                                  "operator": ".",
+                                                                  "right": "Id"
+                                                                }
+                                                              }
+                                                            }
+                                                          }
+                                                        }
+                                                      }
+                                                    ],
+                                                    "reference": null
+                                                  }
+                                                }
+                                              }
+                                            }
+                                          }
+                                        ]
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            ],
+                            "catchBlock": [
+                              {
+                                "value": "e",
+                                "valueType": [
+                                  "Exception"
+                                ],
+                                "block": [
+                                  {
+                                    "value": {
+                                      "type": "expression",
+                                      "statement": {
+                                        "value": {
+                                          "type": "dot",
+                                          "expression": {
+                                            "left": {
+                                              "value": {
+                                                "type": "primary",
+                                                "expression": {
+                                                  "value": {
+                                                    "type": "id",
+                                                    "primary": "System"
+                                                  }
+                                                }
+                                              }
+                                            },
+                                            "operator": ".",
+                                            "right": {
+                                              "value": "debug",
+                                              "param": [
+                                                {
+                                                  "value": {
+                                                    "type": "dot",
+                                                    "expression": {
+                                                      "left": {
+                                                        "value": {
+                                                          "type": "primary",
+                                                          "expression": {
+                                                            "value": {
+                                                              "type": "id",
+                                                              "primary": "e"
+                                                            }
+                                                          }
+                                                        }
+                                                      },
+                                                      "operator": ".",
+                                                      "right": {
+                                                        "value": "getMessage",
+                                                        "param": []
+                                                      }
+                                                    }
+                                                  }
+                                                }
+                                              ]
+                                            }
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                ],
+                                "modifier": []
+                              }
+                            ],
+                            "finallyBlock": []
+                          }
+                        }
+                      }
+                    ]
+                  }
+                }
+              }
+            ]
+          }
+        },
+        "modifier": []
+      }
+    ]
+  }
+}

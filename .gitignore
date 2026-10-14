@@ -2,6 +2,3 @@
 node_modules
 package-lock.json
 dist
-docs/examples/apex-ir/converter-output
-docs/examples/apex-ir/ir-output
-docs/examples/apex-ir/json-output

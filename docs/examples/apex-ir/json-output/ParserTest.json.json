@@ -1,0 +1,7158 @@
+{
+  "file": "ParserTest.cls",
+  "syntaxErrors": [],
+  "conversionErrors": [],
+  "converted": {
+    "fileType": "cls",
+    "kind": "class",
+    "name": "ParserTest",
+    "extend": {
+      "kind": "custom",
+      "name": [
+        "BaseParser"
+      ]
+    },
+    "implement": [
+      {
+        "kind": "custom",
+        "name": [
+          "ParserInterface"
+        ]
+      },
+      {
+        "kind": "custom",
+        "name": [
+          "Comparable"
+        ]
+      }
+    ],
+    "field": [
+      {
+        "variant": [
+          {
+            "variant": "MAX_SIZE",
+            "initValue": {
+              "kind": "literal",
+              "value": "100",
+              "valueType": "integer"
+            }
+          }
+        ],
+        "variantType": {
+          "kind": "primitive",
+          "name": "Integer"
+        },
+        "modifier": {
+          "access": [
+            "PUBLIC"
+          ],
+          "declaration": [
+            "STATIC",
+            "FINAL"
+          ]
+        }
+      },
+      {
+        "variant": [
+          {
+            "variant": "counter"
+          }
+        ],
+        "variantType": {
+          "kind": "primitive",
+          "name": "Integer"
+        },
+        "modifier": {
+          "access": [
+            "PRIVATE"
+          ],
+          "declaration": [
+            "STATIC"
+          ]
+        }
+      },
+      {
+        "variant": [
+          {
+            "variant": "name"
+          }
+        ],
+        "variantType": {
+          "kind": "primitive",
+          "name": "String"
+        },
+        "modifier": {
+          "access": [
+            "PRIVATE"
+          ]
+        }
+      },
+      {
+        "variant": [
+          {
+            "variant": "accountId"
+          }
+        ],
+        "variantType": {
+          "kind": "primitive",
+          "name": "Id"
+        },
+        "modifier": {
+          "access": [
+            "PROTECTED"
+          ]
+        }
+      },
+      {
+        "variant": [
+          {
+            "variant": "cache"
+          }
+        ],
+        "variantType": {
+          "kind": "primitive",
+          "name": "Blob"
+        },
+        "modifier": {
+          "access": [
+            "GLOBAL"
+          ],
+          "other": [
+            "TRANSIENT"
+          ]
+        }
+      },
+      {
+        "variant": [
+          {
+            "variant": "names",
+            "initValue": {
+              "kind": "instance",
+              "typeName": [
+                "List"
+              ],
+              "generic": [
+                {
+                  "kind": "primitive",
+                  "name": "String"
+                }
+              ]
+            }
+          }
+        ],
+        "variantType": {
+          "kind": "list",
+          "type": {
+            "kind": "primitive",
+            "name": "String"
+          }
+        },
+        "modifier": {
+          "access": [
+            "PUBLIC"
+          ]
+        }
+      },
+      {
+        "variant": [
+          {
+            "variant": "accountIds",
+            "initValue": {
+              "kind": "instance",
+              "typeName": [
+                "Set"
+              ],
+              "generic": [
+                {
+                  "kind": "primitive",
+                  "name": "Id"
+                }
+              ]
+            }
+          }
+        ],
+        "variantType": {
+          "kind": "set",
+          "type": {
+            "kind": "primitive",
+            "name": "Id"
+          }
+        },
+        "modifier": {
+          "access": [
+            "PRIVATE"
+          ]
+        }
+      },
+      {
+        "variant": [
+          {
+            "variant": "accountMap",
+            "initValue": {
+              "kind": "instance",
+              "typeName": [
+                "Map"
+              ],
+              "generic": [
+                {
+                  "kind": "primitive",
+                  "name": "Id"
+                },
+                {
+                  "kind": "custom",
+                  "name": [
+                    "Account"
+                  ]
+                }
+              ]
+            }
+          }
+        ],
+        "variantType": {
+          "kind": "map",
+          "keyType": {
+            "kind": "primitive",
+            "name": "Id"
+          },
+          "valueType": {
+            "kind": "custom",
+            "name": [
+              "Account"
+            ]
+          }
+        },
+        "modifier": {
+          "access": [
+            "PRIVATE"
+          ]
+        }
+      },
+      {
+        "variant": [
+          {
+            "variant": "nestedList"
+          }
+        ],
+        "variantType": {
+          "kind": "list",
+          "type": {
+            "kind": "list",
+            "type": {
+              "kind": "primitive",
+              "name": "String"
+            }
+          }
+        },
+        "modifier": {
+          "access": [
+            "PRIVATE"
+          ]
+        }
+      },
+      {
+        "variant": [
+          {
+            "variant": "stringArray"
+          }
+        ],
+        "variantType": {
+          "kind": "array",
+          "name": {
+            "kind": "primitive",
+            "name": "String"
+          },
+          "dimension": 1
+        },
+        "modifier": {
+          "access": [
+            "PRIVATE"
+          ]
+        }
+      },
+      {
+        "variant": [
+          {
+            "variant": "integerMatrix"
+          }
+        ],
+        "variantType": {
+          "kind": "array",
+          "name": {
+            "kind": "primitive",
+            "name": "Integer"
+          },
+          "dimension": 2
+        },
+        "modifier": {
+          "access": [
+            "PRIVATE"
+          ]
+        }
+      },
+      {
+        "variant": [
+          {
+            "variant": "first",
+            "initValue": {
+              "kind": "literal",
+              "value": "1",
+              "valueType": "integer"
+            }
+          },
+          {
+            "variant": "second"
+          },
+          {
+            "variant": "third",
+            "initValue": {
+              "kind": "literal",
+              "value": "3",
+              "valueType": "integer"
+            }
+          }
+        ],
+        "variantType": {
+          "kind": "primitive",
+          "name": "Integer"
+        },
+        "modifier": {
+          "access": [
+            "PRIVATE"
+          ]
+        }
+      }
+    ],
+    "initializerBlock": [
+      {
+        "block": [
+          {
+            "kind": "expression",
+            "block": {
+              "kind": "expression",
+              "left": {
+                "kind": "id",
+                "value": "counter"
+              },
+              "operator": "=",
+              "right": {
+                "kind": "literal",
+                "value": "0",
+                "valueType": "integer"
+              }
+            }
+          }
+        ],
+        "isStatic": true
+      },
+      {
+        "block": [
+          {
+            "kind": "expression",
+            "block": {
+              "kind": "expression",
+              "left": {
+                "kind": "id",
+                "value": "names"
+              },
+              "operator": "=",
+              "right": {
+                "kind": "instance",
+                "typeName": [
+                  "List"
+                ],
+                "generic": [
+                  {
+                    "kind": "primitive",
+                    "name": "String"
+                  }
+                ]
+              }
+            }
+          }
+        ],
+        "isStatic": false
+      }
+    ],
+    "property": [
+      {
+        "variant": "autoProperty",
+        "variantType": {
+          "kind": "primitive",
+          "name": "String"
+        },
+        "block": [
+          {
+            "type": "getter"
+          },
+          {
+            "type": "setter"
+          }
+        ],
+        "modifier": {
+          "access": [
+            "PUBLIC"
+          ]
+        }
+      },
+      {
+        "variant": "readOnlyProperty",
+        "variantType": {
+          "kind": "primitive",
+          "name": "Integer"
+        },
+        "block": [
+          {
+            "type": "getter"
+          },
+          {
+            "type": "setter",
+            "modifier": {
+              "access": [
+                "PRIVATE"
+              ]
+            }
+          }
+        ],
+        "modifier": {
+          "access": [
+            "PUBLIC"
+          ]
+        }
+      },
+      {
+        "variant": "computedProperty",
+        "variantType": {
+          "kind": "primitive",
+          "name": "Integer"
+        },
+        "block": [
+          {
+            "type": "getter",
+            "block": [
+              {
+                "kind": "return",
+                "block": {
+                  "kind": "tenary",
+                  "condition": {
+                    "kind": "expression",
+                    "left": {
+                      "kind": "id",
+                      "value": "counter"
+                    },
+                    "operator": "==",
+                    "right": {
+                      "kind": "literal",
+                      "value": "null",
+                      "valueType": "null"
+                    }
+                  },
+                  "truevalue": {
+                    "kind": "literal",
+                    "value": "0",
+                    "valueType": "integer"
+                  },
+                  "falseValue": {
+                    "kind": "id",
+                    "value": "counter"
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "type": "setter",
+            "block": [
+              {
+                "kind": "expression",
+                "block": {
+                  "kind": "expression",
+                  "left": {
+                    "kind": "id",
+                    "value": "counter"
+                  },
+                  "operator": "=",
+                  "right": {
+                    "kind": "id",
+                    "value": "value"
+                  }
+                }
+              }
+            ]
+          }
+        ],
+        "modifier": {
+          "access": [
+            "PUBLIC"
+          ]
+        }
+      }
+    ],
+    "construct": [
+      {
+        "name": [
+          "ParserTest"
+        ],
+        "block": [
+          {
+            "kind": "expression",
+            "block": {
+              "kind": "method",
+              "isSuper": false,
+              "isThis": true,
+              "arg": [
+                {
+                  "kind": "literal",
+                  "value": "default",
+                  "valueType": "string"
+                }
+              ]
+            }
+          }
+        ],
+        "modifier": {
+          "access": [
+            "PUBLIC"
+          ]
+        }
+      },
+      {
+        "name": [
+          "ParserTest"
+        ],
+        "block": [
+          {
+            "kind": "expression",
+            "block": {
+              "kind": "method",
+              "isSuper": true,
+              "isThis": false
+            }
+          },
+          {
+            "kind": "expression",
+            "block": {
+              "kind": "expression",
+              "left": {
+                "kind": "field",
+                "object": {
+                  "kind": "this",
+                  "value": "this"
+                },
+                "dot": ".",
+                "name": "name"
+              },
+              "operator": "=",
+              "right": {
+                "kind": "id",
+                "value": "name"
+              }
+            }
+          }
+        ],
+        "param": [
+          {
+            "variant": "name",
+            "variantType": {
+              "kind": "primitive",
+              "name": "String"
+            }
+          }
+        ],
+        "modifier": {
+          "access": [
+            "PUBLIC"
+          ]
+        }
+      }
+    ],
+    "method": [
+      {
+        "name": "getName",
+        "returnType": {
+          "kind": "primitive",
+          "name": "String"
+        },
+        "param": [
+          {
+            "variant": "recordId",
+            "variantType": {
+              "kind": "primitive",
+              "name": "Id"
+            }
+          }
+        ],
+        "block": [
+          {
+            "kind": "return",
+            "block": {
+              "kind": "method",
+              "object": {
+                "kind": "id",
+                "value": "String"
+              },
+              "dot": ".",
+              "name": "valueOf",
+              "arg": [
+                {
+                  "kind": "id",
+                  "value": "recordId"
+                }
+              ]
+            }
+          }
+        ],
+        "modifier": {
+          "annotation": {
+            "lwc": [
+              {
+                "name": "AuraEnabled",
+                "param": [
+                  {
+                    "key": "cacheable",
+                    "value": "true",
+                    "valueType": "boolean"
+                  }
+                ]
+              }
+            ]
+          },
+          "access": [
+            "PUBLIC"
+          ],
+          "declaration": [
+            "STATIC"
+          ]
+        }
+      },
+      {
+        "name": "invocable",
+        "returnType": "void",
+        "param": [
+          {
+            "variant": "values",
+            "variantType": {
+              "kind": "list",
+              "type": {
+                "kind": "primitive",
+                "name": "String"
+              }
+            }
+          }
+        ],
+        "block": [
+          {
+            "kind": "expression",
+            "block": {
+              "kind": "method",
+              "object": {
+                "kind": "id",
+                "value": "System"
+              },
+              "dot": ".",
+              "name": "debug",
+              "arg": [
+                {
+                  "kind": "id",
+                  "value": "values"
+                }
+              ]
+            }
+          }
+        ],
+        "modifier": {
+          "annotation": {
+            "flow": [
+              {
+                "name": "InvocableMethod",
+                "param": [
+                  {
+                    "key": "label",
+                    "value": "Run",
+                    "valueType": "string"
+                  },
+                  {
+                    "key": "description",
+                    "value": "Run the parser",
+                    "valueType": "string"
+                  }
+                ]
+              }
+            ]
+          },
+          "access": [
+            "GLOBAL"
+          ],
+          "declaration": [
+            "STATIC"
+          ]
+        }
+      },
+      {
+        "name": "legacy",
+        "returnType": {
+          "kind": "primitive",
+          "name": "String"
+        },
+        "block": [
+          {
+            "kind": "return",
+            "block": {
+              "kind": "literal",
+              "value": "legacy",
+              "valueType": "string"
+            }
+          }
+        ],
+        "modifier": {
+          "annotation": {
+            "compatibility": [
+              {
+                "name": "Deprecated"
+              }
+            ]
+          },
+          "webService": [
+            "WEBSERVICE"
+          ],
+          "declaration": [
+            "STATIC"
+          ]
+        }
+      },
+      {
+        "name": "legacyTest",
+        "returnType": "void",
+        "block": [
+          {
+            "kind": "expression",
+            "block": {
+              "kind": "method",
+              "object": {
+                "kind": "id",
+                "value": "System"
+              },
+              "dot": ".",
+              "name": "assert",
+              "arg": [
+                {
+                  "kind": "literal",
+                  "value": "true",
+                  "valueType": "boolean"
+                }
+              ]
+            }
+          }
+        ],
+        "modifier": {
+          "annotation": {
+            "test": [
+              {
+                "name": "TestVisible"
+              }
+            ]
+          },
+          "access": [
+            "PRIVATE"
+          ],
+          "declaration": [
+            "STATIC"
+          ],
+          "test": [
+            "TESTMETHOD"
+          ]
+        }
+      },
+      {
+        "name": "toString",
+        "returnType": {
+          "kind": "primitive",
+          "name": "String"
+        },
+        "block": [
+          {
+            "kind": "return",
+            "block": {
+              "kind": "id",
+              "value": "name"
+            }
+          }
+        ],
+        "modifier": {
+          "access": [
+            "PUBLIC"
+          ],
+          "declaration": [
+            "OVERRIDE"
+          ]
+        }
+      },
+      {
+        "name": "compareTo",
+        "returnType": {
+          "kind": "primitive",
+          "name": "Integer"
+        },
+        "param": [
+          {
+            "variant": "other",
+            "variantType": {
+              "kind": "primitive",
+              "name": "Object"
+            }
+          }
+        ],
+        "block": [
+          {
+            "kind": "return",
+            "block": {
+              "kind": "literal",
+              "value": "0",
+              "valueType": "integer"
+            }
+          }
+        ],
+        "modifier": {
+          "access": [
+            "PUBLIC"
+          ],
+          "declaration": [
+            "VIRTUAL"
+          ]
+        }
+      },
+      {
+        "name": "hook",
+        "returnType": "void",
+        "modifier": {
+          "access": [
+            "PROTECTED"
+          ],
+          "declaration": [
+            "VIRTUAL"
+          ]
+        }
+      },
+      {
+        "name": "literals",
+        "returnType": "void",
+        "block": [
+          {
+            "kind": "localVariable",
+            "variant": [
+              {
+                "variant": "stringValue",
+                "initValue": {
+                  "kind": "literal",
+                  "value": "Hello World",
+                  "valueType": "string"
+                }
+              }
+            ],
+            "variantType": {
+              "kind": "primitive",
+              "name": "String"
+            }
+          },
+          {
+            "kind": "localVariable",
+            "variant": [
+              {
+                "variant": "escapedValue",
+                "initValue": {
+                  "kind": "literal",
+                  "value": "Hello\\nWorld",
+                  "valueType": "string"
+                }
+              }
+            ],
+            "variantType": {
+              "kind": "primitive",
+              "name": "String"
+            }
+          },
+          {
+            "kind": "localVariable",
+            "variant": [
+              {
+                "variant": "integerValue",
+                "initValue": {
+                  "kind": "literal",
+                  "value": "123",
+                  "valueType": "integer"
+                }
+              }
+            ],
+            "variantType": {
+              "kind": "primitive",
+              "name": "Integer"
+            }
+          },
+          {
+            "kind": "localVariable",
+            "variant": [
+              {
+                "variant": "longValue",
+                "initValue": {
+                  "kind": "literal",
+                  "value": "123456789L",
+                  "valueType": "long"
+                }
+              }
+            ],
+            "variantType": {
+              "kind": "primitive",
+              "name": "Long"
+            }
+          },
+          {
+            "kind": "localVariable",
+            "variant": [
+              {
+                "variant": "decimalValue",
+                "initValue": {
+                  "kind": "literal",
+                  "value": "123.45",
+                  "valueType": "number"
+                }
+              }
+            ],
+            "variantType": {
+              "kind": "primitive",
+              "name": "Decimal"
+            }
+          },
+          {
+            "kind": "localVariable",
+            "variant": [
+              {
+                "variant": "doubleValue",
+                "initValue": {
+                  "kind": "literal",
+                  "value": "12.34",
+                  "valueType": "number"
+                }
+              }
+            ],
+            "variantType": {
+              "kind": "primitive",
+              "name": "Double"
+            }
+          },
+          {
+            "kind": "localVariable",
+            "variant": [
+              {
+                "variant": "trueValue",
+                "initValue": {
+                  "kind": "literal",
+                  "value": "true",
+                  "valueType": "boolean"
+                }
+              }
+            ],
+            "variantType": {
+              "kind": "primitive",
+              "name": "Boolean"
+            }
+          },
+          {
+            "kind": "localVariable",
+            "variant": [
+              {
+                "variant": "falseValue",
+                "initValue": {
+                  "kind": "literal",
+                  "value": "false",
+                  "valueType": "boolean"
+                }
+              }
+            ],
+            "variantType": {
+              "kind": "primitive",
+              "name": "Boolean"
+            }
+          },
+          {
+            "kind": "localVariable",
+            "variant": [
+              {
+                "variant": "nullValue",
+                "initValue": {
+                  "kind": "literal",
+                  "value": "null",
+                  "valueType": "null"
+                }
+              }
+            ],
+            "variantType": {
+              "kind": "primitive",
+              "name": "String"
+            }
+          },
+          {
+            "kind": "localVariable",
+            "variant": [
+              {
+                "variant": "blobValue"
+              }
+            ],
+            "variantType": {
+              "kind": "primitive",
+              "name": "Blob"
+            }
+          },
+          {
+            "kind": "localVariable",
+            "variant": [
+              {
+                "variant": "objectValue"
+              }
+            ],
+            "variantType": {
+              "kind": "primitive",
+              "name": "Object"
+            }
+          },
+          {
+            "kind": "localVariable",
+            "variant": [
+              {
+                "variant": "dateValue",
+                "initValue": {
+                  "kind": "method",
+                  "object": {
+                    "kind": "id",
+                    "value": "Date"
+                  },
+                  "dot": ".",
+                  "name": "newInstance",
+                  "arg": [
+                    {
+                      "kind": "literal",
+                      "value": "2026",
+                      "valueType": "integer"
+                    },
+                    {
+                      "kind": "literal",
+                      "value": "9",
+                      "valueType": "integer"
+                    },
+                    {
+                      "kind": "literal",
+                      "value": "28",
+                      "valueType": "integer"
+                    }
+                  ]
+                }
+              }
+            ],
+            "variantType": {
+              "kind": "primitive",
+              "name": "Date"
+            }
+          },
+          {
+            "kind": "localVariable",
+            "variant": [
+              {
+                "variant": "datetimeValue",
+                "initValue": {
+                  "kind": "method",
+                  "object": {
+                    "kind": "id",
+                    "value": "Datetime"
+                  },
+                  "dot": ".",
+                  "name": "newInstance",
+                  "arg": [
+                    {
+                      "kind": "literal",
+                      "value": "2026",
+                      "valueType": "integer"
+                    },
+                    {
+                      "kind": "literal",
+                      "value": "9",
+                      "valueType": "integer"
+                    },
+                    {
+                      "kind": "literal",
+                      "value": "28",
+                      "valueType": "integer"
+                    },
+                    {
+                      "kind": "literal",
+                      "value": "12",
+                      "valueType": "integer"
+                    },
+                    {
+                      "kind": "literal",
+                      "value": "30",
+                      "valueType": "integer"
+                    },
+                    {
+                      "kind": "literal",
+                      "value": "0",
+                      "valueType": "integer"
+                    }
+                  ]
+                }
+              }
+            ],
+            "variantType": {
+              "kind": "primitive",
+              "name": "Datetime"
+            }
+          },
+          {
+            "kind": "localVariable",
+            "variant": [
+              {
+                "variant": "timeValue",
+                "initValue": {
+                  "kind": "method",
+                  "object": {
+                    "kind": "id",
+                    "value": "Time"
+                  },
+                  "dot": ".",
+                  "name": "newInstance",
+                  "arg": [
+                    {
+                      "kind": "literal",
+                      "value": "12",
+                      "valueType": "integer"
+                    },
+                    {
+                      "kind": "literal",
+                      "value": "30",
+                      "valueType": "integer"
+                    },
+                    {
+                      "kind": "literal",
+                      "value": "0",
+                      "valueType": "integer"
+                    },
+                    {
+                      "kind": "literal",
+                      "value": "0",
+                      "valueType": "integer"
+                    }
+                  ]
+                }
+              }
+            ],
+            "variantType": {
+              "kind": "primitive",
+              "name": "Time"
+            }
+          }
+        ],
+        "modifier": {
+          "access": [
+            "PRIVATE"
+          ]
+        }
+      },
+      {
+        "name": "genericTypes",
+        "returnType": "void",
+        "block": [
+          {
+            "kind": "localVariable",
+            "variant": [
+              {
+                "variant": "stringList",
+                "initValue": {
+                  "kind": "instance",
+                  "typeName": [
+                    "List"
+                  ],
+                  "generic": [
+                    {
+                      "kind": "primitive",
+                      "name": "String"
+                    }
+                  ]
+                }
+              }
+            ],
+            "variantType": {
+              "kind": "list",
+              "type": {
+                "kind": "primitive",
+                "name": "String"
+              }
+            }
+          },
+          {
+            "kind": "localVariable",
+            "variant": [
+              {
+                "variant": "idSet",
+                "initValue": {
+                  "kind": "instance",
+                  "typeName": [
+                    "Set"
+                  ],
+                  "generic": [
+                    {
+                      "kind": "primitive",
+                      "name": "Id"
+                    }
+                  ]
+                }
+              }
+            ],
+            "variantType": {
+              "kind": "set",
+              "type": {
+                "kind": "primitive",
+                "name": "Id"
+              }
+            }
+          },
+          {
+            "kind": "localVariable",
+            "variant": [
+              {
+                "variant": "accountMapLocal",
+                "initValue": {
+                  "kind": "instance",
+                  "typeName": [
+                    "Map"
+                  ],
+                  "generic": [
+                    {
+                      "kind": "primitive",
+                      "name": "Id"
+                    },
+                    {
+                      "kind": "custom",
+                      "name": [
+                        "Account"
+                      ]
+                    }
+                  ]
+                }
+              }
+            ],
+            "variantType": {
+              "kind": "map",
+              "keyType": {
+                "kind": "primitive",
+                "name": "Id"
+              },
+              "valueType": {
+                "kind": "custom",
+                "name": [
+                  "Account"
+                ]
+              }
+            }
+          },
+          {
+            "kind": "localVariable",
+            "variant": [
+              {
+                "variant": "nestedGeneric",
+                "initValue": {
+                  "kind": "instance",
+                  "typeName": [
+                    "List"
+                  ],
+                  "generic": [
+                    {
+                      "kind": "map",
+                      "keyType": {
+                        "kind": "primitive",
+                        "name": "Id"
+                      },
+                      "valueType": {
+                        "kind": "custom",
+                        "name": [
+                          "Account"
+                        ]
+                      }
+                    }
+                  ]
+                }
+              }
+            ],
+            "variantType": {
+              "kind": "list",
+              "type": {
+                "kind": "map",
+                "keyType": {
+                  "kind": "primitive",
+                  "name": "Id"
+                },
+                "valueType": {
+                  "kind": "custom",
+                  "name": [
+                    "Account"
+                  ]
+                }
+              }
+            }
+          },
+          {
+            "kind": "localVariable",
+            "variant": [
+              {
+                "variant": "complexMap",
+                "initValue": {
+                  "kind": "instance",
+                  "typeName": [
+                    "Map"
+                  ],
+                  "generic": [
+                    {
+                      "kind": "primitive",
+                      "name": "String"
+                    },
+                    {
+                      "kind": "list",
+                      "type": {
+                        "kind": "custom",
+                        "name": [
+                          "Account"
+                        ]
+                      }
+                    }
+                  ]
+                }
+              }
+            ],
+            "variantType": {
+              "kind": "map",
+              "keyType": {
+                "kind": "primitive",
+                "name": "String"
+              },
+              "valueType": {
+                "kind": "list",
+                "type": {
+                  "kind": "custom",
+                  "name": [
+                    "Account"
+                  ]
+                }
+              }
+            }
+          },
+          {
+            "kind": "localVariable",
+            "variant": [
+              {
+                "variant": "arrayOfLists",
+                "initValue": {
+                  "kind": "instance",
+                  "typeName": [
+                    "List"
+                  ],
+                  "generic": [
+                    {
+                      "kind": "primitive",
+                      "name": "String"
+                    }
+                  ],
+                  "size": {
+                    "kind": "literal",
+                    "value": "2",
+                    "valueType": "integer"
+                  }
+                }
+              }
+            ],
+            "variantType": {
+              "kind": "array",
+              "name": {
+                "kind": "list",
+                "type": {
+                  "kind": "primitive",
+                  "name": "String"
+                }
+              },
+              "dimension": 1
+            }
+          },
+          {
+            "kind": "localVariable",
+            "variant": [
+              {
+                "variant": "stringType",
+                "initValue": {
+                  "kind": "type",
+                  "value": {
+                    "kind": "primitive",
+                    "name": "String"
+                  }
+                }
+              }
+            ],
+            "variantType": {
+              "kind": "custom",
+              "name": [
+                "System",
+                "Type"
+              ]
+            }
+          },
+          {
+            "kind": "localVariable",
+            "variant": [
+              {
+                "variant": "listType",
+                "initValue": {
+                  "kind": "type",
+                  "value": {
+                    "kind": "list",
+                    "type": {
+                      "kind": "primitive",
+                      "name": "String"
+                    }
+                  }
+                }
+              }
+            ],
+            "variantType": {
+              "kind": "custom",
+              "name": [
+                "System",
+                "Type"
+              ]
+            }
+          },
+          {
+            "kind": "localVariable",
+            "variant": [
+              {
+                "variant": "voidType",
+                "initValue": {
+                  "kind": "void",
+                  "value": "void.class"
+                }
+              }
+            ],
+            "variantType": {
+              "kind": "custom",
+              "name": [
+                "System",
+                "Type"
+              ]
+            }
+          },
+          {
+            "kind": "localVariable",
+            "variant": [
+              {
+                "variant": "accountType",
+                "initValue": {
+                  "kind": "field",
+                  "object": {
+                    "kind": "id",
+                    "value": "Account"
+                  },
+                  "dot": ".",
+                  "name": "SObjectType"
+                }
+              }
+            ],
+            "variantType": {
+              "kind": "custom",
+              "name": [
+                "Schema",
+                "SObjectType"
+              ]
+            }
+          }
+        ],
+        "modifier": {
+          "access": [
+            "PRIVATE"
+          ]
+        }
+      },
+      {
+        "name": "creators",
+        "returnType": "void",
+        "block": [
+          {
+            "kind": "localVariable",
+            "variant": [
+              {
+                "variant": "emptySet",
+                "initValue": {
+                  "kind": "instance",
+                  "typeName": [
+                    "Set"
+                  ],
+                  "generic": [
+                    {
+                      "kind": "primitive",
+                      "name": "String"
+                    }
+                  ]
+                }
+              }
+            ],
+            "variantType": {
+              "kind": "set",
+              "type": {
+                "kind": "primitive",
+                "name": "String"
+              }
+            }
+          },
+          {
+            "kind": "localVariable",
+            "variant": [
+              {
+                "variant": "initializedList",
+                "initValue": {
+                  "kind": "instance",
+                  "typeName": [
+                    "List"
+                  ],
+                  "generic": [
+                    {
+                      "kind": "primitive",
+                      "name": "String"
+                    }
+                  ],
+                  "initialValue": [
+                    {
+                      "kind": "literal",
+                      "value": "a",
+                      "valueType": "string"
+                    },
+                    {
+                      "kind": "literal",
+                      "value": "b",
+                      "valueType": "string"
+                    }
+                  ]
+                }
+              }
+            ],
+            "variantType": {
+              "kind": "list",
+              "type": {
+                "kind": "primitive",
+                "name": "String"
+              }
+            }
+          },
+          {
+            "kind": "localVariable",
+            "variant": [
+              {
+                "variant": "initializedSet",
+                "initValue": {
+                  "kind": "instance",
+                  "typeName": [
+                    "Set"
+                  ],
+                  "generic": [
+                    {
+                      "kind": "primitive",
+                      "name": "Integer"
+                    }
+                  ],
+                  "initialValue": [
+                    {
+                      "kind": "literal",
+                      "value": "1",
+                      "valueType": "integer"
+                    },
+                    {
+                      "kind": "literal",
+                      "value": "2",
+                      "valueType": "integer"
+                    },
+                    {
+                      "kind": "literal",
+                      "value": "3",
+                      "valueType": "integer"
+                    }
+                  ]
+                }
+              }
+            ],
+            "variantType": {
+              "kind": "set",
+              "type": {
+                "kind": "primitive",
+                "name": "Integer"
+              }
+            }
+          },
+          {
+            "kind": "localVariable",
+            "variant": [
+              {
+                "variant": "initializedMap",
+                "initValue": {
+                  "kind": "instance",
+                  "typeName": [
+                    "Map"
+                  ],
+                  "generic": [
+                    {
+                      "kind": "primitive",
+                      "name": "String"
+                    },
+                    {
+                      "kind": "primitive",
+                      "name": "Integer"
+                    }
+                  ],
+                  "initValue": [
+                    {
+                      "key": {
+                        "kind": "literal",
+                        "value": "a",
+                        "valueType": "string"
+                      },
+                      "value": {
+                        "kind": "literal",
+                        "value": "1",
+                        "valueType": "integer"
+                      }
+                    },
+                    {
+                      "key": {
+                        "kind": "literal",
+                        "value": "b",
+                        "valueType": "string"
+                      },
+                      "value": {
+                        "kind": "literal",
+                        "value": "2",
+                        "valueType": "integer"
+                      }
+                    }
+                  ]
+                }
+              }
+            ],
+            "variantType": {
+              "kind": "map",
+              "keyType": {
+                "kind": "primitive",
+                "name": "String"
+              },
+              "valueType": {
+                "kind": "primitive",
+                "name": "Integer"
+              }
+            }
+          },
+          {
+            "kind": "localVariable",
+            "variant": [
+              {
+                "variant": "account",
+                "initValue": {
+                  "kind": "instance",
+                  "typeName": [
+                    "Account"
+                  ],
+                  "arg": [
+                    {
+                      "kind": "expression",
+                      "left": {
+                        "kind": "id",
+                        "value": "Name"
+                      },
+                      "operator": "=",
+                      "right": {
+                        "kind": "literal",
+                        "value": "Test",
+                        "valueType": "string"
+                      }
+                    },
+                    {
+                      "kind": "expression",
+                      "left": {
+                        "kind": "id",
+                        "value": "Industry"
+                      },
+                      "operator": "=",
+                      "right": {
+                        "kind": "literal",
+                        "value": "Technology",
+                        "valueType": "string"
+                      }
+                    }
+                  ]
+                }
+              }
+            ],
+            "variantType": {
+              "kind": "custom",
+              "name": [
+                "Account"
+              ]
+            }
+          },
+          {
+            "kind": "localVariable",
+            "variant": [
+              {
+                "variant": "sized",
+                "initValue": {
+                  "kind": "instance",
+                  "typeName": [
+                    "String"
+                  ],
+                  "size": {
+                    "kind": "literal",
+                    "value": "10",
+                    "valueType": "integer"
+                  }
+                }
+              }
+            ],
+            "variantType": {
+              "kind": "array",
+              "name": {
+                "kind": "primitive",
+                "name": "String"
+              },
+              "dimension": 1
+            }
+          },
+          {
+            "kind": "localVariable",
+            "variant": [
+              {
+                "variant": "numbers",
+                "initValue": {
+                  "kind": "instance",
+                  "typeName": [
+                    "Integer"
+                  ],
+                  "initValue": [
+                    {
+                      "kind": "literal",
+                      "value": "1",
+                      "valueType": "integer"
+                    },
+                    {
+                      "kind": "literal",
+                      "value": "2",
+                      "valueType": "integer"
+                    },
+                    {
+                      "kind": "literal",
+                      "value": "3",
+                      "valueType": "integer"
+                    }
+                  ]
+                }
+              }
+            ],
+            "variantType": {
+              "kind": "array",
+              "name": {
+                "kind": "primitive",
+                "name": "Integer"
+              },
+              "dimension": 1
+            }
+          },
+          {
+            "kind": "localVariable",
+            "variant": [
+              {
+                "variant": "emptyNumbers",
+                "initValue": {
+                  "kind": "instance",
+                  "typeName": [
+                    "Integer"
+                  ]
+                }
+              }
+            ],
+            "variantType": {
+              "kind": "array",
+              "name": {
+                "kind": "primitive",
+                "name": "Integer"
+              },
+              "dimension": 1
+            }
+          },
+          {
+            "kind": "localVariable",
+            "variant": [
+              {
+                "variant": "hoge",
+                "initValue": {
+                  "kind": "instance",
+                  "typeName": [
+                    "DocutizeForm",
+                    "AccountService"
+                  ],
+                  "generic": [
+                    {
+                      "kind": "primitive",
+                      "name": "String"
+                    }
+                  ]
+                }
+              }
+            ],
+            "variantType": {
+              "kind": "custom",
+              "name": [
+                "DocutizeForm",
+                "AccountService"
+              ]
+            }
+          },
+          {
+            "kind": "localVariable",
+            "variant": [
+              {
+                "variant": "describe",
+                "initValue": {
+                  "kind": "instance",
+                  "typeName": [
+                    "Schema",
+                    "DescribeSObjectResult"
+                  ]
+                }
+              }
+            ],
+            "variantType": {
+              "kind": "custom",
+              "name": [
+                "Schema",
+                "DescribeSObjectResult"
+              ]
+            }
+          },
+          {
+            "kind": "expression",
+            "block": {
+              "kind": "expression",
+              "left": [
+                {
+                  "kind": "id",
+                  "value": "sized"
+                },
+                {
+                  "kind": "literal",
+                  "value": "0",
+                  "valueType": "integer"
+                }
+              ],
+              "operator": "=",
+              "right": {
+                "kind": "literal",
+                "value": "test",
+                "valueType": "string"
+              }
+            }
+          },
+          {
+            "kind": "localVariable",
+            "variant": [
+              {
+                "variant": "value",
+                "initValue": [
+                  {
+                    "kind": "id",
+                    "value": "numbers"
+                  },
+                  {
+                    "kind": "literal",
+                    "value": "0",
+                    "valueType": "integer"
+                  }
+                ]
+              }
+            ],
+            "variantType": {
+              "kind": "primitive",
+              "name": "Integer"
+            }
+          }
+        ],
+        "modifier": {
+          "access": [
+            "PRIVATE"
+          ]
+        }
+      },
+      {
+        "name": "operators",
+        "returnType": {
+          "kind": "primitive",
+          "name": "Integer"
+        },
+        "param": [
+          {
+            "variant": "a",
+            "variantType": {
+              "kind": "primitive",
+              "name": "Integer"
+            }
+          },
+          {
+            "variant": "b",
+            "variantType": {
+              "kind": "primitive",
+              "name": "Integer"
+            }
+          }
+        ],
+        "block": [
+          {
+            "kind": "localVariable",
+            "variant": [
+              {
+                "variant": "result",
+                "initValue": {
+                  "kind": "expression",
+                  "left": {
+                    "kind": "id",
+                    "value": "a"
+                  },
+                  "operator": "+",
+                  "right": {
+                    "kind": "id",
+                    "value": "b"
+                  }
+                }
+              }
+            ],
+            "variantType": {
+              "kind": "primitive",
+              "name": "Integer"
+            }
+          },
+          {
+            "kind": "expression",
+            "block": {
+              "kind": "expression",
+              "left": {
+                "kind": "id",
+                "value": "result"
+              },
+              "operator": "=",
+              "right": {
+                "kind": "expression",
+                "left": {
+                  "kind": "id",
+                  "value": "a"
+                },
+                "operator": "-",
+                "right": {
+                  "kind": "id",
+                  "value": "b"
+                }
+              }
+            }
+          },
+          {
+            "kind": "expression",
+            "block": {
+              "kind": "expression",
+              "left": {
+                "kind": "id",
+                "value": "result"
+              },
+              "operator": "=",
+              "right": {
+                "kind": "expression",
+                "left": {
+                  "kind": "id",
+                  "value": "a"
+                },
+                "operator": "*",
+                "right": {
+                  "kind": "id",
+                  "value": "b"
+                }
+              }
+            }
+          },
+          {
+            "kind": "expression",
+            "block": {
+              "kind": "expression",
+              "left": {
+                "kind": "id",
+                "value": "result"
+              },
+              "operator": "=",
+              "right": {
+                "kind": "expression",
+                "left": {
+                  "kind": "id",
+                  "value": "a"
+                },
+                "operator": "/",
+                "right": {
+                  "kind": "id",
+                  "value": "b"
+                }
+              }
+            }
+          },
+          {
+            "kind": "expression",
+            "block": {
+              "kind": "expression",
+              "left": {
+                "kind": "id",
+                "value": "result"
+              },
+              "operator": "=",
+              "right": {
+                "kind": "prefix",
+                "value": {
+                  "kind": "id",
+                  "value": "a"
+                },
+                "operator": "-"
+              }
+            }
+          },
+          {
+            "kind": "expression",
+            "block": {
+              "kind": "expression",
+              "left": {
+                "kind": "id",
+                "value": "result"
+              },
+              "operator": "=",
+              "right": {
+                "kind": "prefix",
+                "value": {
+                  "kind": "id",
+                  "value": "a"
+                },
+                "operator": "+"
+              }
+            }
+          },
+          {
+            "kind": "expression",
+            "block": {
+              "kind": "expression",
+              "left": {
+                "kind": "id",
+                "value": "result"
+              },
+              "operator": "=",
+              "right": {
+                "kind": "prefix",
+                "value": {
+                  "kind": "id",
+                  "value": "a"
+                },
+                "operator": "~"
+              }
+            }
+          },
+          {
+            "kind": "expression",
+            "block": {
+              "kind": "expression",
+              "left": {
+                "kind": "id",
+                "value": "result"
+              },
+              "operator": "=",
+              "right": {
+                "kind": "expression",
+                "left": {
+                  "kind": "id",
+                  "value": "a"
+                },
+                "operator": "<<",
+                "right": {
+                  "kind": "literal",
+                  "value": "2",
+                  "valueType": "integer"
+                }
+              }
+            }
+          },
+          {
+            "kind": "expression",
+            "block": {
+              "kind": "expression",
+              "left": {
+                "kind": "id",
+                "value": "result"
+              },
+              "operator": "=",
+              "right": {
+                "kind": "expression",
+                "left": {
+                  "kind": "id",
+                  "value": "a"
+                },
+                "operator": ">>",
+                "right": {
+                  "kind": "literal",
+                  "value": "2",
+                  "valueType": "integer"
+                }
+              }
+            }
+          },
+          {
+            "kind": "expression",
+            "block": {
+              "kind": "expression",
+              "left": {
+                "kind": "id",
+                "value": "result"
+              },
+              "operator": "=",
+              "right": {
+                "kind": "expression",
+                "left": {
+                  "kind": "id",
+                  "value": "a"
+                },
+                "operator": ">>>",
+                "right": {
+                  "kind": "literal",
+                  "value": "2",
+                  "valueType": "integer"
+                }
+              }
+            }
+          },
+          {
+            "kind": "expression",
+            "block": {
+              "kind": "expression",
+              "left": {
+                "kind": "id",
+                "value": "result"
+              },
+              "operator": "=",
+              "right": {
+                "kind": "expression",
+                "left": {
+                  "kind": "id",
+                  "value": "a"
+                },
+                "operator": "&",
+                "right": {
+                  "kind": "id",
+                  "value": "b"
+                }
+              }
+            }
+          },
+          {
+            "kind": "expression",
+            "block": {
+              "kind": "expression",
+              "left": {
+                "kind": "id",
+                "value": "result"
+              },
+              "operator": "=",
+              "right": {
+                "kind": "expression",
+                "left": {
+                  "kind": "id",
+                  "value": "a"
+                },
+                "operator": "|",
+                "right": {
+                  "kind": "id",
+                  "value": "b"
+                }
+              }
+            }
+          },
+          {
+            "kind": "expression",
+            "block": {
+              "kind": "expression",
+              "left": {
+                "kind": "id",
+                "value": "result"
+              },
+              "operator": "=",
+              "right": {
+                "kind": "expression",
+                "left": {
+                  "kind": "id",
+                  "value": "a"
+                },
+                "operator": "^",
+                "right": {
+                  "kind": "id",
+                  "value": "b"
+                }
+              }
+            }
+          },
+          {
+            "kind": "expression",
+            "block": {
+              "kind": "postfix",
+              "value": {
+                "kind": "id",
+                "value": "result"
+              },
+              "operator": "++"
+            }
+          },
+          {
+            "kind": "expression",
+            "block": {
+              "kind": "postfix",
+              "value": {
+                "kind": "id",
+                "value": "result"
+              },
+              "operator": "--"
+            }
+          },
+          {
+            "kind": "expression",
+            "block": {
+              "kind": "prefix",
+              "value": {
+                "kind": "id",
+                "value": "result"
+              },
+              "operator": "++"
+            }
+          },
+          {
+            "kind": "expression",
+            "block": {
+              "kind": "prefix",
+              "value": {
+                "kind": "id",
+                "value": "result"
+              },
+              "operator": "--"
+            }
+          },
+          {
+            "kind": "expression",
+            "block": {
+              "kind": "expression",
+              "left": {
+                "kind": "id",
+                "value": "result"
+              },
+              "operator": "+=",
+              "right": {
+                "kind": "literal",
+                "value": "10",
+                "valueType": "integer"
+              }
+            }
+          },
+          {
+            "kind": "expression",
+            "block": {
+              "kind": "expression",
+              "left": {
+                "kind": "id",
+                "value": "result"
+              },
+              "operator": "-=",
+              "right": {
+                "kind": "literal",
+                "value": "10",
+                "valueType": "integer"
+              }
+            }
+          },
+          {
+            "kind": "expression",
+            "block": {
+              "kind": "expression",
+              "left": {
+                "kind": "id",
+                "value": "result"
+              },
+              "operator": "*=",
+              "right": {
+                "kind": "literal",
+                "value": "2",
+                "valueType": "integer"
+              }
+            }
+          },
+          {
+            "kind": "expression",
+            "block": {
+              "kind": "expression",
+              "left": {
+                "kind": "id",
+                "value": "result"
+              },
+              "operator": "/=",
+              "right": {
+                "kind": "literal",
+                "value": "2",
+                "valueType": "integer"
+              }
+            }
+          },
+          {
+            "kind": "expression",
+            "block": {
+              "kind": "expression",
+              "left": {
+                "kind": "id",
+                "value": "result"
+              },
+              "operator": "&=",
+              "right": {
+                "kind": "literal",
+                "value": "1",
+                "valueType": "integer"
+              }
+            }
+          },
+          {
+            "kind": "expression",
+            "block": {
+              "kind": "expression",
+              "left": {
+                "kind": "id",
+                "value": "result"
+              },
+              "operator": "|=",
+              "right": {
+                "kind": "literal",
+                "value": "1",
+                "valueType": "integer"
+              }
+            }
+          },
+          {
+            "kind": "expression",
+            "block": {
+              "kind": "expression",
+              "left": {
+                "kind": "id",
+                "value": "result"
+              },
+              "operator": "^=",
+              "right": {
+                "kind": "literal",
+                "value": "1",
+                "valueType": "integer"
+              }
+            }
+          },
+          {
+            "kind": "expression",
+            "block": {
+              "kind": "expression",
+              "left": {
+                "kind": "id",
+                "value": "result"
+              },
+              "operator": "<<=",
+              "right": {
+                "kind": "literal",
+                "value": "1",
+                "valueType": "integer"
+              }
+            }
+          },
+          {
+            "kind": "expression",
+            "block": {
+              "kind": "expression",
+              "left": {
+                "kind": "id",
+                "value": "result"
+              },
+              "operator": ">>=",
+              "right": {
+                "kind": "literal",
+                "value": "1",
+                "valueType": "integer"
+              }
+            }
+          },
+          {
+            "kind": "expression",
+            "block": {
+              "kind": "expression",
+              "left": {
+                "kind": "id",
+                "value": "result"
+              },
+              "operator": ">>>=",
+              "right": {
+                "kind": "literal",
+                "value": "1",
+                "valueType": "integer"
+              }
+            }
+          },
+          {
+            "kind": "localVariable",
+            "variant": [
+              {
+                "variant": "flag",
+                "initValue": {
+                  "kind": "expression",
+                  "left": {
+                    "kind": "id",
+                    "value": "a"
+                  },
+                  "operator": "<",
+                  "right": {
+                    "kind": "id",
+                    "value": "b"
+                  }
+                }
+              }
+            ],
+            "variantType": {
+              "kind": "primitive",
+              "name": "Boolean"
+            }
+          },
+          {
+            "kind": "expression",
+            "block": {
+              "kind": "expression",
+              "left": {
+                "kind": "id",
+                "value": "flag"
+              },
+              "operator": "=",
+              "right": {
+                "kind": "expression",
+                "left": {
+                  "kind": "id",
+                  "value": "a"
+                },
+                "operator": ">",
+                "right": {
+                  "kind": "id",
+                  "value": "b"
+                }
+              }
+            }
+          },
+          {
+            "kind": "expression",
+            "block": {
+              "kind": "expression",
+              "left": {
+                "kind": "id",
+                "value": "flag"
+              },
+              "operator": "=",
+              "right": {
+                "kind": "expression",
+                "left": {
+                  "kind": "id",
+                  "value": "a"
+                },
+                "operator": "<=",
+                "right": {
+                  "kind": "id",
+                  "value": "b"
+                }
+              }
+            }
+          },
+          {
+            "kind": "expression",
+            "block": {
+              "kind": "expression",
+              "left": {
+                "kind": "id",
+                "value": "flag"
+              },
+              "operator": "=",
+              "right": {
+                "kind": "expression",
+                "left": {
+                  "kind": "id",
+                  "value": "a"
+                },
+                "operator": ">=",
+                "right": {
+                  "kind": "id",
+                  "value": "b"
+                }
+              }
+            }
+          },
+          {
+            "kind": "expression",
+            "block": {
+              "kind": "expression",
+              "left": {
+                "kind": "id",
+                "value": "flag"
+              },
+              "operator": "=",
+              "right": {
+                "kind": "expression",
+                "left": {
+                  "kind": "id",
+                  "value": "a"
+                },
+                "operator": "==",
+                "right": {
+                  "kind": "id",
+                  "value": "b"
+                }
+              }
+            }
+          },
+          {
+            "kind": "expression",
+            "block": {
+              "kind": "expression",
+              "left": {
+                "kind": "id",
+                "value": "flag"
+              },
+              "operator": "=",
+              "right": {
+                "kind": "expression",
+                "left": {
+                  "kind": "id",
+                  "value": "a"
+                },
+                "operator": "!=",
+                "right": {
+                  "kind": "id",
+                  "value": "b"
+                }
+              }
+            }
+          },
+          {
+            "kind": "expression",
+            "block": {
+              "kind": "expression",
+              "left": {
+                "kind": "id",
+                "value": "flag"
+              },
+              "operator": "=",
+              "right": {
+                "kind": "expression",
+                "left": {
+                  "kind": "id",
+                  "value": "a"
+                },
+                "operator": "<>",
+                "right": {
+                  "kind": "id",
+                  "value": "b"
+                }
+              }
+            }
+          },
+          {
+            "kind": "expression",
+            "block": {
+              "kind": "expression",
+              "left": {
+                "kind": "id",
+                "value": "flag"
+              },
+              "operator": "=",
+              "right": {
+                "kind": "expression",
+                "left": {
+                  "kind": "id",
+                  "value": "a"
+                },
+                "operator": "===",
+                "right": {
+                  "kind": "id",
+                  "value": "b"
+                }
+              }
+            }
+          },
+          {
+            "kind": "expression",
+            "block": {
+              "kind": "expression",
+              "left": {
+                "kind": "id",
+                "value": "flag"
+              },
+              "operator": "=",
+              "right": {
+                "kind": "expression",
+                "left": {
+                  "kind": "id",
+                  "value": "a"
+                },
+                "operator": "!==",
+                "right": {
+                  "kind": "id",
+                  "value": "b"
+                }
+              }
+            }
+          },
+          {
+            "kind": "expression",
+            "block": {
+              "kind": "expression",
+              "left": {
+                "kind": "id",
+                "value": "flag"
+              },
+              "operator": "=",
+              "right": {
+                "kind": "prefix",
+                "value": {
+                  "kind": "id",
+                  "value": "flag"
+                },
+                "operator": "!"
+              }
+            }
+          },
+          {
+            "kind": "expression",
+            "block": {
+              "kind": "expression",
+              "left": {
+                "kind": "id",
+                "value": "flag"
+              },
+              "operator": "=",
+              "right": {
+                "kind": "expression",
+                "left": {
+                  "kind": "id",
+                  "value": "flag"
+                },
+                "operator": "&&",
+                "right": {
+                  "kind": "expression",
+                  "left": {
+                    "kind": "id",
+                    "value": "a"
+                  },
+                  "operator": ">",
+                  "right": {
+                    "kind": "literal",
+                    "value": "0",
+                    "valueType": "integer"
+                  }
+                }
+              }
+            }
+          },
+          {
+            "kind": "expression",
+            "block": {
+              "kind": "expression",
+              "left": {
+                "kind": "id",
+                "value": "flag"
+              },
+              "operator": "=",
+              "right": {
+                "kind": "expression",
+                "left": {
+                  "kind": "id",
+                  "value": "flag"
+                },
+                "operator": "||",
+                "right": {
+                  "kind": "expression",
+                  "left": {
+                    "kind": "id",
+                    "value": "a"
+                  },
+                  "operator": "<",
+                  "right": {
+                    "kind": "literal",
+                    "value": "0",
+                    "valueType": "integer"
+                  }
+                }
+              }
+            }
+          },
+          {
+            "kind": "expression",
+            "block": {
+              "kind": "expression",
+              "left": {
+                "kind": "id",
+                "value": "flag"
+              },
+              "operator": "=",
+              "right": {
+                "kind": "expression",
+                "left": {
+                  "kind": "sub",
+                  "value": {
+                    "kind": "expression",
+                    "left": {
+                      "kind": "expression",
+                      "left": {
+                        "kind": "id",
+                        "value": "a"
+                      },
+                      "operator": ">",
+                      "right": {
+                        "kind": "literal",
+                        "value": "0",
+                        "valueType": "integer"
+                      }
+                    },
+                    "operator": "&&",
+                    "right": {
+                      "kind": "expression",
+                      "left": {
+                        "kind": "id",
+                        "value": "b"
+                      },
+                      "operator": ">",
+                      "right": {
+                        "kind": "literal",
+                        "value": "0",
+                        "valueType": "integer"
+                      }
+                    }
+                  },
+                  "parenthesized": true
+                },
+                "operator": "||",
+                "right": {
+                  "kind": "sub",
+                  "value": {
+                    "kind": "expression",
+                    "left": {
+                      "kind": "expression",
+                      "left": {
+                        "kind": "id",
+                        "value": "a"
+                      },
+                      "operator": "<",
+                      "right": {
+                        "kind": "literal",
+                        "value": "0",
+                        "valueType": "integer"
+                      }
+                    },
+                    "operator": "&&",
+                    "right": {
+                      "kind": "expression",
+                      "left": {
+                        "kind": "id",
+                        "value": "b"
+                      },
+                      "operator": "<",
+                      "right": {
+                        "kind": "literal",
+                        "value": "0",
+                        "valueType": "integer"
+                      }
+                    }
+                  },
+                  "parenthesized": true
+                }
+              }
+            }
+          },
+          {
+            "kind": "localVariable",
+            "variant": [
+              {
+                "variant": "coalesced",
+                "initValue": {
+                  "kind": "expression",
+                  "left": {
+                    "kind": "id",
+                    "value": "counter"
+                  },
+                  "operator": "??",
+                  "right": {
+                    "kind": "literal",
+                    "value": "0",
+                    "valueType": "integer"
+                  }
+                }
+              }
+            ],
+            "variantType": {
+              "kind": "primitive",
+              "name": "Integer"
+            }
+          },
+          {
+            "kind": "localVariable",
+            "variant": [
+              {
+                "variant": "safe",
+                "initValue": {
+                  "kind": "method",
+                  "object": {
+                    "kind": "id",
+                    "value": "name"
+                  },
+                  "dot": "?.",
+                  "name": "toUpperCase"
+                }
+              }
+            ],
+            "variantType": {
+              "kind": "primitive",
+              "name": "String"
+            }
+          },
+          {
+            "kind": "localVariable",
+            "variant": [
+              {
+                "variant": "ternary",
+                "initValue": {
+                  "kind": "tenary",
+                  "condition": {
+                    "kind": "id",
+                    "value": "flag"
+                  },
+                  "truevalue": {
+                    "kind": "id",
+                    "value": "a"
+                  },
+                  "falseValue": {
+                    "kind": "id",
+                    "value": "b"
+                  }
+                }
+              }
+            ],
+            "variantType": {
+              "kind": "primitive",
+              "name": "Integer"
+            }
+          },
+          {
+            "kind": "return",
+            "block": {
+              "kind": "id",
+              "value": "result"
+            }
+          }
+        ],
+        "modifier": {
+          "access": [
+            "PRIVATE"
+          ]
+        }
+      },
+      {
+        "name": "castAndInstanceof",
+        "returnType": "void",
+        "param": [
+          {
+            "variant": "objectValue",
+            "variantType": {
+              "kind": "custom",
+              "name": [
+                "SObject"
+              ]
+            }
+          }
+        ],
+        "block": [
+          {
+            "kind": "localVariable",
+            "variant": [
+              {
+                "variant": "account",
+                "initValue": {
+                  "kind": "cast",
+                  "value": {
+                    "kind": "id",
+                    "value": "objectValue"
+                  },
+                  "convertTo": {
+                    "kind": "custom",
+                    "name": [
+                      "Account"
+                    ]
+                  }
+                }
+              }
+            ],
+            "variantType": {
+              "kind": "custom",
+              "name": [
+                "Account"
+              ]
+            }
+          },
+          {
+            "kind": "localVariable",
+            "variant": [
+              {
+                "variant": "isAccount",
+                "initValue": {
+                  "kind": "expression",
+                  "left": {
+                    "kind": "id",
+                    "value": "objectValue"
+                  },
+                  "operator": "instanceof",
+                  "right": {
+                    "kind": "custom",
+                    "name": [
+                      "Account"
+                    ]
+                  }
+                }
+              }
+            ],
+            "variantType": {
+              "kind": "primitive",
+              "name": "Boolean"
+            }
+          },
+          {
+            "kind": "localVariable",
+            "variant": [
+              {
+                "variant": "accountName",
+                "initValue": {
+                  "kind": "field",
+                  "object": {
+                    "kind": "sub",
+                    "value": {
+                      "kind": "cast",
+                      "value": {
+                        "kind": "id",
+                        "value": "objectValue"
+                      },
+                      "convertTo": {
+                        "kind": "custom",
+                        "name": [
+                          "Account"
+                        ]
+                      }
+                    },
+                    "parenthesized": true
+                  },
+                  "dot": ".",
+                  "name": "Name"
+                }
+              }
+            ],
+            "variantType": {
+              "kind": "primitive",
+              "name": "String"
+            }
+          },
+          {
+            "kind": "expression",
+            "block": {
+              "kind": "method",
+              "object": {
+                "kind": "id",
+                "value": "System"
+              },
+              "dot": ".",
+              "name": "debug",
+              "arg": [
+                {
+                  "kind": "expression",
+                  "left": {
+                    "kind": "expression",
+                    "left": {
+                      "kind": "field",
+                      "object": {
+                        "kind": "id",
+                        "value": "account"
+                      },
+                      "dot": ".",
+                      "name": "Name"
+                    },
+                    "operator": "+",
+                    "right": {
+                      "kind": "id",
+                      "value": "accountName"
+                    }
+                  },
+                  "operator": "+",
+                  "right": {
+                    "kind": "id",
+                    "value": "isAccount"
+                  }
+                }
+              ]
+            }
+          }
+        ],
+        "modifier": {
+          "access": [
+            "PRIVATE"
+          ]
+        }
+      },
+      {
+        "name": "methodCalls",
+        "returnType": "void",
+        "block": [
+          {
+            "kind": "expression",
+            "block": {
+              "kind": "method",
+              "object": {
+                "kind": "this",
+                "value": "this"
+              },
+              "dot": ".",
+              "name": "hook"
+            }
+          },
+          {
+            "kind": "expression",
+            "block": {
+              "kind": "method",
+              "object": {
+                "kind": "super",
+                "value": "super"
+              },
+              "dot": ".",
+              "name": "someMethod"
+            }
+          },
+          {
+            "kind": "expression",
+            "block": {
+              "kind": "method",
+              "isSuper": false,
+              "isThis": false,
+              "name": "hook"
+            }
+          },
+          {
+            "kind": "expression",
+            "block": {
+              "kind": "method",
+              "object": {
+                "kind": "id",
+                "value": "System"
+              },
+              "dot": ".",
+              "name": "debug",
+              "arg": [
+                {
+                  "kind": "literal",
+                  "value": "hello",
+                  "valueType": "string"
+                }
+              ]
+            }
+          },
+          {
+            "kind": "localVariable",
+            "variant": [
+              {
+                "variant": "value",
+                "initValue": {
+                  "kind": "method",
+                  "object": {
+                    "kind": "method",
+                    "object": {
+                      "kind": "method",
+                      "object": {
+                        "kind": "id",
+                        "value": "String"
+                      },
+                      "dot": ".",
+                      "name": "valueOf",
+                      "arg": [
+                        {
+                          "kind": "literal",
+                          "value": "123",
+                          "valueType": "integer"
+                        }
+                      ]
+                    },
+                    "dot": ".",
+                    "name": "trim"
+                  },
+                  "dot": ".",
+                  "name": "toUpperCase"
+                }
+              }
+            ],
+            "variantType": {
+              "kind": "primitive",
+              "name": "String"
+            }
+          },
+          {
+            "kind": "localVariable",
+            "variant": [
+              {
+                "variant": "size",
+                "initValue": {
+                  "kind": "method",
+                  "object": {
+                    "kind": "field",
+                    "object": {
+                      "kind": "this",
+                      "value": "this"
+                    },
+                    "dot": ".",
+                    "name": "names"
+                  },
+                  "dot": ".",
+                  "name": "size"
+                }
+              }
+            ],
+            "variantType": {
+              "kind": "primitive",
+              "name": "Integer"
+            }
+          },
+          {
+            "kind": "localVariable",
+            "variant": [
+              {
+                "variant": "ownerId",
+                "initValue": {
+                  "kind": "field",
+                  "object": {
+                    "kind": "soql",
+                    "select": {
+                      "field": [
+                        {
+                          "field": [
+                            "OwnerId"
+                          ]
+                        }
+                      ]
+                    },
+                    "from": {
+                      "field": "Account"
+                    },
+                    "limit": {
+                      "kind": "number",
+                      "value": "1"
+                    }
+                  },
+                  "dot": ".",
+                  "name": "OwnerId"
+                }
+              }
+            ],
+            "variantType": {
+              "kind": "primitive",
+              "name": "Id"
+            }
+          }
+        ],
+        "modifier": {
+          "access": [
+            "PRIVATE"
+          ]
+        }
+      },
+      {
+        "name": "controlFlow",
+        "returnType": "void",
+        "param": [
+          {
+            "variant": "value",
+            "variantType": {
+              "kind": "primitive",
+              "name": "Integer"
+            }
+          },
+          {
+            "variant": "accounts",
+            "variantType": {
+              "kind": "list",
+              "type": {
+                "kind": "custom",
+                "name": [
+                  "Account"
+                ]
+              }
+            }
+          }
+        ],
+        "block": [
+          {
+            "kind": "if",
+            "block": [
+              {
+                "condition": {
+                  "kind": "expression",
+                  "left": {
+                    "kind": "id",
+                    "value": "value"
+                  },
+                  "operator": ">",
+                  "right": {
+                    "kind": "literal",
+                    "value": "100",
+                    "valueType": "integer"
+                  }
+                },
+                "block": [
+                  {
+                    "kind": "expression",
+                    "block": {
+                      "kind": "method",
+                      "object": {
+                        "kind": "id",
+                        "value": "System"
+                      },
+                      "dot": ".",
+                      "name": "debug",
+                      "arg": [
+                        {
+                          "kind": "literal",
+                          "value": "large",
+                          "valueType": "string"
+                        }
+                      ]
+                    }
+                  }
+                ]
+              },
+              {
+                "condition": {
+                  "kind": "expression",
+                  "left": {
+                    "kind": "id",
+                    "value": "value"
+                  },
+                  "operator": ">",
+                  "right": {
+                    "kind": "literal",
+                    "value": "50",
+                    "valueType": "integer"
+                  }
+                },
+                "block": [
+                  {
+                    "kind": "expression",
+                    "block": {
+                      "kind": "method",
+                      "object": {
+                        "kind": "id",
+                        "value": "System"
+                      },
+                      "dot": ".",
+                      "name": "debug",
+                      "arg": [
+                        {
+                          "kind": "literal",
+                          "value": "medium",
+                          "valueType": "string"
+                        }
+                      ]
+                    }
+                  }
+                ]
+              },
+              {
+                "condition": "else",
+                "block": [
+                  {
+                    "kind": "expression",
+                    "block": {
+                      "kind": "method",
+                      "object": {
+                        "kind": "id",
+                        "value": "System"
+                      },
+                      "dot": ".",
+                      "name": "debug",
+                      "arg": [
+                        {
+                          "kind": "literal",
+                          "value": "small",
+                          "valueType": "string"
+                        }
+                      ]
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "type": "for",
+            "condition": {
+              "init": {
+                "variant": [
+                  {
+                    "variant": "i",
+                    "initValue": {
+                      "kind": "literal",
+                      "value": "0",
+                      "valueType": "integer"
+                    }
+                  },
+                  {
+                    "variant": "j",
+                    "initValue": {
+                      "kind": "literal",
+                      "value": "10",
+                      "valueType": "integer"
+                    }
+                  }
+                ],
+                "variantType": {
+                  "kind": "primitive",
+                  "name": "Integer"
+                }
+              },
+              "condition": {
+                "kind": "expression",
+                "left": {
+                  "kind": "id",
+                  "value": "i"
+                },
+                "operator": "<",
+                "right": {
+                  "kind": "id",
+                  "value": "j"
+                }
+              },
+              "update": [
+                {
+                  "kind": "postfix",
+                  "value": {
+                    "kind": "id",
+                    "value": "i"
+                  },
+                  "operator": "++"
+                },
+                {
+                  "kind": "postfix",
+                  "value": {
+                    "kind": "id",
+                    "value": "j"
+                  },
+                  "operator": "--"
+                }
+              ]
+            },
+            "block": [
+              {
+                "kind": "if",
+                "block": [
+                  {
+                    "condition": {
+                      "kind": "expression",
+                      "left": {
+                        "kind": "id",
+                        "value": "i"
+                      },
+                      "operator": "==",
+                      "right": {
+                        "kind": "literal",
+                        "value": "5",
+                        "valueType": "integer"
+                      }
+                    },
+                    "block": [
+                      {
+                        "kind": "continue",
+                        "block": "continue"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "kind": "if",
+                "block": [
+                  {
+                    "condition": {
+                      "kind": "expression",
+                      "left": {
+                        "kind": "id",
+                        "value": "i"
+                      },
+                      "operator": "==",
+                      "right": {
+                        "kind": "literal",
+                        "value": "8",
+                        "valueType": "integer"
+                      }
+                    },
+                    "block": [
+                      {
+                        "kind": "break",
+                        "block": "break"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "kind": "localVariable",
+            "variant": [
+              {
+                "variant": "k"
+              }
+            ],
+            "variantType": {
+              "kind": "primitive",
+              "name": "Integer"
+            }
+          },
+          {
+            "type": "for",
+            "condition": {
+              "init": [
+                {
+                  "kind": "expression",
+                  "left": {
+                    "kind": "id",
+                    "value": "k"
+                  },
+                  "operator": "=",
+                  "right": {
+                    "kind": "literal",
+                    "value": "0",
+                    "valueType": "integer"
+                  }
+                }
+              ],
+              "condition": {
+                "kind": "expression",
+                "left": {
+                  "kind": "id",
+                  "value": "k"
+                },
+                "operator": "<",
+                "right": {
+                  "kind": "literal",
+                  "value": "3",
+                  "valueType": "integer"
+                }
+              },
+              "update": [
+                {
+                  "kind": "postfix",
+                  "value": {
+                    "kind": "id",
+                    "value": "k"
+                  },
+                  "operator": "++"
+                }
+              ]
+            },
+            "block": [
+              {
+                "kind": "expression",
+                "block": {
+                  "kind": "method",
+                  "object": {
+                    "kind": "id",
+                    "value": "System"
+                  },
+                  "dot": ".",
+                  "name": "debug",
+                  "arg": [
+                    {
+                      "kind": "id",
+                      "value": "k"
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          {
+            "type": "for",
+            "condition": {
+              "variableName": "account",
+              "variableType": {
+                "kind": "custom",
+                "name": [
+                  "Account"
+                ]
+              },
+              "iterable": {
+                "kind": "id",
+                "value": "accounts"
+              }
+            },
+            "block": [
+              {
+                "kind": "expression",
+                "block": {
+                  "kind": "method",
+                  "object": {
+                    "kind": "id",
+                    "value": "System"
+                  },
+                  "dot": ".",
+                  "name": "debug",
+                  "arg": [
+                    {
+                      "kind": "field",
+                      "object": {
+                        "kind": "id",
+                        "value": "account"
+                      },
+                      "dot": ".",
+                      "name": "Name"
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          {
+            "type": "for",
+            "condition": {
+              "variableName": "chunk",
+              "variableType": {
+                "kind": "list",
+                "type": {
+                  "kind": "custom",
+                  "name": [
+                    "Account"
+                  ]
+                }
+              },
+              "iterable": {
+                "kind": "soql",
+                "select": {
+                  "field": [
+                    {
+                      "field": [
+                        "Id"
+                      ]
+                    }
+                  ]
+                },
+                "from": {
+                  "field": "Account"
+                }
+              }
+            },
+            "block": [
+              {
+                "kind": "expression",
+                "block": {
+                  "kind": "method",
+                  "object": {
+                    "kind": "id",
+                    "value": "System"
+                  },
+                  "dot": ".",
+                  "name": "debug",
+                  "arg": [
+                    {
+                      "kind": "method",
+                      "object": {
+                        "kind": "id",
+                        "value": "chunk"
+                      },
+                      "dot": ".",
+                      "name": "size"
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          {
+            "type": "while",
+            "condition": {
+              "kind": "expression",
+              "left": {
+                "kind": "id",
+                "value": "value"
+              },
+              "operator": ">",
+              "right": {
+                "kind": "literal",
+                "value": "0",
+                "valueType": "integer"
+              }
+            },
+            "block": [
+              {
+                "kind": "expression",
+                "block": {
+                  "kind": "postfix",
+                  "value": {
+                    "kind": "id",
+                    "value": "value"
+                  },
+                  "operator": "--"
+                }
+              }
+            ]
+          },
+          {
+            "type": "doWhile",
+            "condition": {
+              "kind": "expression",
+              "left": {
+                "kind": "id",
+                "value": "value"
+              },
+              "operator": "<",
+              "right": {
+                "kind": "literal",
+                "value": "10",
+                "valueType": "integer"
+              }
+            },
+            "block": [
+              {
+                "kind": "expression",
+                "block": {
+                  "kind": "postfix",
+                  "value": {
+                    "kind": "id",
+                    "value": "value"
+                  },
+                  "operator": "++"
+                }
+              }
+            ]
+          }
+        ],
+        "modifier": {
+          "access": [
+            "PRIVATE"
+          ]
+        }
+      },
+      {
+        "name": "switchExamples",
+        "returnType": {
+          "kind": "primitive",
+          "name": "String"
+        },
+        "param": [
+          {
+            "variant": "input",
+            "variantType": {
+              "kind": "primitive",
+              "name": "Object"
+            }
+          },
+          {
+            "variant": "text",
+            "variantType": {
+              "kind": "primitive",
+              "name": "String"
+            }
+          },
+          {
+            "variant": "num",
+            "variantType": {
+              "kind": "primitive",
+              "name": "Integer"
+            }
+          },
+          {
+            "variant": "status",
+            "variantType": {
+              "kind": "custom",
+              "name": [
+                "Status"
+              ]
+            }
+          }
+        ],
+        "block": [
+          {
+            "kind": "switch",
+            "variant": {
+              "kind": "id",
+              "value": "text"
+            },
+            "block": [
+              {
+                "conditionValue": [
+                  {
+                    "value": "A",
+                    "valueType": "string"
+                  }
+                ],
+                "block": [
+                  {
+                    "kind": "return",
+                    "block": {
+                      "kind": "literal",
+                      "value": "Alpha",
+                      "valueType": "string"
+                    }
+                  }
+                ]
+              },
+              {
+                "conditionValue": [
+                  {
+                    "value": "B",
+                    "valueType": "string"
+                  },
+                  {
+                    "value": "C",
+                    "valueType": "string"
+                  }
+                ],
+                "block": [
+                  {
+                    "kind": "return",
+                    "block": {
+                      "kind": "literal",
+                      "value": "Beta or Gamma",
+                      "valueType": "string"
+                    }
+                  }
+                ]
+              },
+              {
+                "conditionValue": [
+                  {
+                    "value": "null",
+                    "valueType": "null"
+                  }
+                ],
+                "block": [
+                  {
+                    "kind": "return",
+                    "block": {
+                      "kind": "literal",
+                      "value": "null",
+                      "valueType": "string"
+                    }
+                  }
+                ]
+              },
+              {
+                "conditionValue": {
+                  "value": "else"
+                },
+                "block": [
+                  {
+                    "kind": "return",
+                    "block": {
+                      "kind": "literal",
+                      "value": "Unknown",
+                      "valueType": "string"
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "kind": "switch",
+            "variant": {
+              "kind": "id",
+              "value": "num"
+            },
+            "block": [
+              {
+                "conditionValue": [
+                  {
+                    "value": "1",
+                    "valueType": "integer"
+                  },
+                  {
+                    "value": "1",
+                    "valueType": "integer",
+                    "operator": "-"
+                  }
+                ],
+                "block": [
+                  {
+                    "kind": "return",
+                    "block": {
+                      "kind": "literal",
+                      "value": "one",
+                      "valueType": "string"
+                    }
+                  }
+                ]
+              },
+              {
+                "conditionValue": [
+                  {
+                    "value": "2",
+                    "valueType": "integer"
+                  }
+                ],
+                "block": [
+                  {
+                    "kind": "return",
+                    "block": {
+                      "kind": "literal",
+                      "value": "two",
+                      "valueType": "string"
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "kind": "switch",
+            "variant": {
+              "kind": "id",
+              "value": "status"
+            },
+            "block": [
+              {
+                "conditionValue": [
+                  {
+                    "value": [
+                      "AAA"
+                    ],
+                    "valueType": "qualifiedName"
+                  },
+                  {
+                    "value": [
+                      "BBB"
+                    ],
+                    "valueType": "qualifiedName"
+                  }
+                ],
+                "block": [
+                  {
+                    "kind": "return",
+                    "block": {
+                      "kind": "literal",
+                      "value": "first",
+                      "valueType": "string"
+                    }
+                  }
+                ]
+              },
+              {
+                "conditionValue": {
+                  "value": "else"
+                },
+                "block": [
+                  {
+                    "kind": "return",
+                    "block": {
+                      "kind": "literal",
+                      "value": "other",
+                      "valueType": "string"
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "kind": "switch",
+            "variant": {
+              "kind": "id",
+              "value": "input"
+            },
+            "block": [
+              {
+                "conditionValue": {
+                  "value": "a",
+                  "valueType": {
+                    "kind": "custom",
+                    "name": [
+                      "Account"
+                    ]
+                  }
+                },
+                "block": [
+                  {
+                    "kind": "return",
+                    "block": {
+                      "kind": "field",
+                      "object": {
+                        "kind": "id",
+                        "value": "a"
+                      },
+                      "dot": ".",
+                      "name": "Name"
+                    }
+                  }
+                ]
+              },
+              {
+                "conditionValue": {
+                  "value": "c",
+                  "valueType": {
+                    "kind": "custom",
+                    "name": [
+                      "Contact"
+                    ]
+                  }
+                },
+                "block": [
+                  {
+                    "kind": "return",
+                    "block": {
+                      "kind": "field",
+                      "object": {
+                        "kind": "id",
+                        "value": "c"
+                      },
+                      "dot": ".",
+                      "name": "LastName"
+                    }
+                  }
+                ]
+              },
+              {
+                "conditionValue": {
+                  "value": "else"
+                },
+                "block": [
+                  {
+                    "kind": "return",
+                    "block": {
+                      "kind": "literal",
+                      "value": "null",
+                      "valueType": "null"
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        ],
+        "modifier": {
+          "access": [
+            "PRIVATE"
+          ]
+        }
+      },
+      {
+        "name": "exceptionHandling",
+        "returnType": "void",
+        "block": [
+          {
+            "kind": "try",
+            "block": [
+              {
+                "type": "try",
+                "block": [
+                  {
+                    "kind": "localVariable",
+                    "variant": [
+                      {
+                        "variant": "account",
+                        "initValue": {
+                          "kind": "soql",
+                          "select": {
+                            "field": [
+                              {
+                                "field": [
+                                  "Id"
+                                ]
+                              },
+                              {
+                                "field": [
+                                  "Name"
+                                ]
+                              }
+                            ]
+                          },
+                          "from": {
+                            "field": "Account"
+                          },
+                          "limit": {
+                            "kind": "number",
+                            "value": "1"
+                          }
+                        }
+                      }
+                    ],
+                    "variantType": {
+                      "kind": "custom",
+                      "name": [
+                        "Account"
+                      ]
+                    }
+                  },
+                  {
+                    "kind": "expression",
+                    "block": {
+                      "kind": "method",
+                      "object": {
+                        "kind": "id",
+                        "value": "System"
+                      },
+                      "dot": ".",
+                      "name": "debug",
+                      "arg": [
+                        {
+                          "kind": "id",
+                          "value": "account"
+                        }
+                      ]
+                    }
+                  }
+                ]
+              },
+              {
+                "type": "catch",
+                "exception": "e",
+                "excepstionType": [
+                  "QueryException"
+                ],
+                "block": [
+                  {
+                    "kind": "expression",
+                    "block": {
+                      "kind": "method",
+                      "object": {
+                        "kind": "id",
+                        "value": "System"
+                      },
+                      "dot": ".",
+                      "name": "debug",
+                      "arg": [
+                        {
+                          "kind": "method",
+                          "object": {
+                            "kind": "id",
+                            "value": "e"
+                          },
+                          "dot": ".",
+                          "name": "getMessage"
+                        }
+                      ]
+                    }
+                  }
+                ]
+              },
+              {
+                "type": "catch",
+                "exception": "e",
+                "excepstionType": [
+                  "Exception"
+                ],
+                "block": [
+                  {
+                    "kind": "expression",
+                    "block": {
+                      "kind": "method",
+                      "object": {
+                        "kind": "id",
+                        "value": "System"
+                      },
+                      "dot": ".",
+                      "name": "debug",
+                      "arg": [
+                        {
+                          "kind": "method",
+                          "object": {
+                            "kind": "id",
+                            "value": "e"
+                          },
+                          "dot": ".",
+                          "name": "getMessage"
+                        }
+                      ]
+                    }
+                  }
+                ],
+                "modifier": {
+                  "declaration": [
+                    "FINAL"
+                  ]
+                }
+              },
+              {
+                "type": "finally",
+                "block": [
+                  {
+                    "kind": "expression",
+                    "block": {
+                      "kind": "method",
+                      "object": {
+                        "kind": "id",
+                        "value": "System"
+                      },
+                      "dot": ".",
+                      "name": "debug",
+                      "arg": [
+                        {
+                          "kind": "literal",
+                          "value": "finally",
+                          "valueType": "string"
+                        }
+                      ]
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "kind": "try",
+            "block": [
+              {
+                "type": "try",
+                "block": [
+                  {
+                    "kind": "expression",
+                    "block": {
+                      "kind": "method",
+                      "isSuper": false,
+                      "isThis": false,
+                      "name": "throwExample"
+                    }
+                  }
+                ]
+              },
+              {
+                "type": "finally",
+                "block": [
+                  {
+                    "kind": "expression",
+                    "block": {
+                      "kind": "method",
+                      "object": {
+                        "kind": "id",
+                        "value": "System"
+                      },
+                      "dot": ".",
+                      "name": "debug",
+                      "arg": [
+                        {
+                          "kind": "literal",
+                          "value": "only finally",
+                          "valueType": "string"
+                        }
+                      ]
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        ],
+        "modifier": {
+          "access": [
+            "PRIVATE"
+          ]
+        }
+      },
+      {
+        "name": "throwExample",
+        "returnType": "void",
+        "block": [
+          {
+            "kind": "throw",
+            "block": {
+              "kind": "instance",
+              "typeName": [
+                "CustomException"
+              ],
+              "arg": [
+                {
+                  "kind": "literal",
+                  "value": "Something went wrong",
+                  "valueType": "string"
+                }
+              ]
+            }
+          }
+        ],
+        "modifier": {
+          "access": [
+            "PRIVATE"
+          ]
+        }
+      },
+      {
+        "name": "dmlExample",
+        "returnType": "void",
+        "param": [
+          {
+            "variant": "account",
+            "variantType": {
+              "kind": "custom",
+              "name": [
+                "Account"
+              ]
+            }
+          },
+          {
+            "variant": "duplicate",
+            "variantType": {
+              "kind": "custom",
+              "name": [
+                "Account"
+              ]
+            }
+          },
+          {
+            "variant": "accounts",
+            "variantType": {
+              "kind": "list",
+              "type": {
+                "kind": "custom",
+                "name": [
+                  "Account"
+                ]
+              }
+            }
+          }
+        ],
+        "block": [
+          {
+            "kind": "insert",
+            "value": {
+              "kind": "id",
+              "value": "account"
+            }
+          },
+          {
+            "kind": "insert",
+            "value": {
+              "kind": "id",
+              "value": "account"
+            },
+            "accessLevel": "USER"
+          },
+          {
+            "kind": "update",
+            "value": {
+              "kind": "id",
+              "value": "accounts"
+            },
+            "accessLevel": "SYSTEM"
+          },
+          {
+            "kind": "upsert",
+            "value": {
+              "kind": "id",
+              "value": "account"
+            }
+          },
+          {
+            "kind": "upsert",
+            "value": {
+              "kind": "id",
+              "value": "accounts"
+            },
+            "eternalKey": [
+              "Account",
+              "ExternalId__c"
+            ]
+          },
+          {
+            "kind": "upsert",
+            "value": {
+              "kind": "id",
+              "value": "accounts"
+            },
+            "accessLevel": "USER",
+            "eternalKey": [
+              "Account",
+              "ExternalId__c"
+            ]
+          },
+          {
+            "kind": "delete",
+            "value": {
+              "kind": "id",
+              "value": "account"
+            }
+          },
+          {
+            "kind": "undelete",
+            "value": {
+              "kind": "id",
+              "value": "account"
+            }
+          },
+          {
+            "kind": "merge",
+            "value": [
+              {
+                "kind": "id",
+                "value": "account"
+              },
+              {
+                "kind": "id",
+                "value": "duplicate"
+              }
+            ]
+          },
+          {
+            "kind": "merge",
+            "value": [
+              {
+                "kind": "id",
+                "value": "account"
+              },
+              {
+                "kind": "id",
+                "value": "duplicate"
+              }
+            ],
+            "accessLevel": "SYSTEM"
+          }
+        ],
+        "modifier": {
+          "access": [
+            "PRIVATE"
+          ]
+        }
+      },
+      {
+        "name": "databaseExample",
+        "returnType": "void",
+        "param": [
+          {
+            "variant": "accounts",
+            "variantType": {
+              "kind": "list",
+              "type": {
+                "kind": "custom",
+                "name": [
+                  "Account"
+                ]
+              }
+            }
+          }
+        ],
+        "block": [
+          {
+            "kind": "localVariable",
+            "variant": [
+              {
+                "variant": "results",
+                "initValue": {
+                  "kind": "method",
+                  "object": {
+                    "kind": "id",
+                    "value": "Database"
+                  },
+                  "dot": ".",
+                  "name": "insert",
+                  "arg": [
+                    {
+                      "kind": "id",
+                      "value": "accounts"
+                    },
+                    {
+                      "kind": "literal",
+                      "value": "false",
+                      "valueType": "boolean"
+                    }
+                  ]
+                }
+              }
+            ],
+            "variantType": {
+              "kind": "array",
+              "name": {
+                "kind": "custom",
+                "name": [
+                  "Database",
+                  "SaveResult"
+                ]
+              },
+              "dimension": 1
+            }
+          },
+          {
+            "kind": "expression",
+            "block": {
+              "kind": "method",
+              "object": {
+                "kind": "id",
+                "value": "Database"
+              },
+              "dot": ".",
+              "name": "update",
+              "arg": [
+                {
+                  "kind": "id",
+                  "value": "accounts"
+                },
+                {
+                  "kind": "literal",
+                  "value": "false",
+                  "valueType": "boolean"
+                }
+              ]
+            }
+          },
+          {
+            "kind": "expression",
+            "block": {
+              "kind": "method",
+              "object": {
+                "kind": "id",
+                "value": "Database"
+              },
+              "dot": ".",
+              "name": "delete",
+              "arg": [
+                {
+                  "kind": "id",
+                  "value": "accounts"
+                },
+                {
+                  "kind": "literal",
+                  "value": "false",
+                  "valueType": "boolean"
+                }
+              ]
+            }
+          },
+          {
+            "kind": "expression",
+            "block": {
+              "kind": "method",
+              "object": {
+                "kind": "id",
+                "value": "Database"
+              },
+              "dot": ".",
+              "name": "upsert",
+              "arg": [
+                {
+                  "kind": "id",
+                  "value": "accounts"
+                },
+                {
+                  "kind": "literal",
+                  "value": "false",
+                  "valueType": "boolean"
+                }
+              ]
+            }
+          }
+        ],
+        "modifier": {
+          "access": [
+            "PRIVATE"
+          ]
+        }
+      },
+      {
+        "name": "runAsExample",
+        "returnType": "void",
+        "param": [
+          {
+            "variant": "user",
+            "variantType": {
+              "kind": "custom",
+              "name": [
+                "User"
+              ]
+            }
+          }
+        ],
+        "block": [
+          {
+            "kind": "runAs",
+            "arg": [
+              {
+                "kind": "id",
+                "value": "user"
+              }
+            ],
+            "block": [
+              {
+                "kind": "expression",
+                "block": {
+                  "kind": "method",
+                  "object": {
+                    "kind": "id",
+                    "value": "System"
+                  },
+                  "dot": ".",
+                  "name": "debug",
+                  "arg": [
+                    {
+                      "kind": "method",
+                      "object": {
+                        "kind": "id",
+                        "value": "UserInfo"
+                      },
+                      "dot": ".",
+                      "name": "getUserId"
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          {
+            "kind": "runAs",
+            "arg": [
+              {
+                "kind": "instance",
+                "typeName": [
+                  "Version"
+                ],
+                "arg": [
+                  {
+                    "kind": "literal",
+                    "value": "1",
+                    "valueType": "integer"
+                  },
+                  {
+                    "kind": "literal",
+                    "value": "0",
+                    "valueType": "integer"
+                  }
+                ]
+              }
+            ],
+            "block": [
+              {
+                "kind": "expression",
+                "block": {
+                  "kind": "method",
+                  "object": {
+                    "kind": "id",
+                    "value": "System"
+                  },
+                  "dot": ".",
+                  "name": "debug",
+                  "arg": [
+                    {
+                      "kind": "literal",
+                      "value": "versioned",
+                      "valueType": "string"
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        ],
+        "modifier": {
+          "access": [
+            "PRIVATE"
+          ]
+        }
+      },
+      {
+        "name": "basicSoql",
+        "returnType": {
+          "kind": "list",
+          "type": {
+            "kind": "custom",
+            "name": [
+              "Account"
+            ]
+          }
+        },
+        "param": [
+          {
+            "variant": "pageSize",
+            "variantType": {
+              "kind": "primitive",
+              "name": "Integer"
+            }
+          },
+          {
+            "variant": "pageOffset",
+            "variantType": {
+              "kind": "primitive",
+              "name": "Integer"
+            }
+          }
+        ],
+        "block": [
+          {
+            "kind": "localVariable",
+            "variant": [
+              {
+                "variant": "accounts",
+                "initValue": {
+                  "kind": "soql",
+                  "select": {
+                    "field": [
+                      {
+                        "field": [
+                          "AnnualRevenue"
+                        ]
+                      },
+                      {
+                        "field": [
+                          "CreatedDate"
+                        ]
+                      },
+                      {
+                        "field": [
+                          "Id"
+                        ]
+                      },
+                      {
+                        "field": [
+                          "Industry"
+                        ]
+                      },
+                      {
+                        "field": [
+                          "Name"
+                        ]
+                      }
+                    ]
+                  },
+                  "from": {
+                    "field": "Account"
+                  },
+                  "where": [
+                    {
+                      "field": [
+                        "Industry"
+                      ],
+                      "operator": "=",
+                      "value": {
+                        "kind": "string",
+                        "value": "Technology"
+                      }
+                    }
+                  ],
+                  "orderBy": [
+                    {
+                      "field": [
+                        "Name"
+                      ],
+                      "direction": "ASC",
+                      "nulls": "FIRST"
+                    },
+                    {
+                      "field": [
+                        "CreatedDate"
+                      ],
+                      "direction": "DESC",
+                      "nulls": "LAST"
+                    },
+                    {
+                      "field": [
+                        "Industry"
+                      ]
+                    }
+                  ],
+                  "limit": {
+                    "kind": "number",
+                    "value": "10"
+                  }
+                }
+              }
+            ],
+            "variantType": {
+              "kind": "list",
+              "type": {
+                "kind": "custom",
+                "name": [
+                  "Account"
+                ]
+              }
+            }
+          },
+          {
+            "kind": "return",
+            "block": {
+              "kind": "soql",
+              "select": {
+                "field": [
+                  {
+                    "field": [
+                      "Id"
+                    ]
+                  }
+                ]
+              },
+              "from": {
+                "field": "Account"
+              },
+              "limit": {
+                "kind": "bind",
+                "value": {
+                  "kind": "id",
+                  "value": "pageOffset"
+                }
+              }
+            }
+          }
+        ],
+        "modifier": {
+          "access": [
+            "PRIVATE"
+          ]
+        }
+      },
+      {
+        "name": "whereSoql",
+        "returnType": {
+          "kind": "list",
+          "type": {
+            "kind": "custom",
+            "name": [
+              "Account"
+            ]
+          }
+        },
+        "param": [
+          {
+            "variant": "industry",
+            "variantType": {
+              "kind": "primitive",
+              "name": "String"
+            }
+          },
+          {
+            "variant": "revenue",
+            "variantType": {
+              "kind": "primitive",
+              "name": "Decimal"
+            }
+          },
+          {
+            "variant": "ids",
+            "variantType": {
+              "kind": "set",
+              "type": {
+                "kind": "primitive",
+                "name": "Id"
+              }
+            }
+          }
+        ],
+        "block": [
+          {
+            "kind": "return",
+            "block": {
+              "kind": "soql",
+              "select": {
+                "field": [
+                  {
+                    "field": [
+                      "Id"
+                    ]
+                  },
+                  {
+                    "field": [
+                      "Name"
+                    ]
+                  }
+                ]
+              },
+              "from": {
+                "field": "Account"
+              },
+              "where": {
+                "logicalOperator": "AND",
+                "conditions": [
+                  {
+                    "field": [
+                      "Industry"
+                    ],
+                    "operator": "=",
+                    "value": {
+                      "kind": "bind",
+                      "value": {
+                        "kind": "id",
+                        "value": "industry"
+                      }
+                    }
+                  },
+                  {
+                    "field": [
+                      "AnnualRevenue"
+                    ],
+                    "operator": ">",
+                    "value": {
+                      "kind": "bind",
+                      "value": {
+                        "kind": "id",
+                        "value": "revenue"
+                      }
+                    }
+                  },
+                  {
+                    "field": [
+                      "AnnualRevenue"
+                    ],
+                    "operator": ">=",
+                    "value": {
+                      "kind": "integer",
+                      "value": "1000"
+                    }
+                  },
+                  {
+                    "field": [
+                      "AnnualRevenue"
+                    ],
+                    "operator": "<",
+                    "value": {
+                      "kind": "integer",
+                      "value": "1000000"
+                    }
+                  },
+                  {
+                    "field": [
+                      "AnnualRevenue"
+                    ],
+                    "operator": "<=",
+                    "value": {
+                      "kind": "number",
+                      "value": "1.5",
+                      "operator": "-"
+                    }
+                  },
+                  {
+                    "field": [
+                      "NumberOfEmployees"
+                    ],
+                    "operator": "!=",
+                    "value": {
+                      "kind": "integer",
+                      "value": "0"
+                    }
+                  },
+                  {
+                    "field": [
+                      "Name"
+                    ],
+                    "operator": "LIKE",
+                    "value": {
+                      "kind": "string",
+                      "value": "Test%"
+                    }
+                  },
+                  {
+                    "logicalOperator": "OR",
+                    "conditions": [
+                      {
+                        "field": [
+                          "Phone"
+                        ],
+                        "operator": "=",
+                        "value": {
+                          "kind": "null",
+                          "value": "null"
+                        }
+                      },
+                      {
+                        "field": [
+                          "Fax"
+                        ],
+                        "operator": "!=",
+                        "value": {
+                          "kind": "null",
+                          "value": "null"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "logicalOperator": "NOT",
+                    "conditions": [
+                      {
+                        "field": [
+                          "Name"
+                        ],
+                        "operator": "=",
+                        "value": {
+                          "kind": "string",
+                          "value": "Excluded"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "field": [
+                      "Id"
+                    ],
+                    "operator": "IN",
+                    "value": {
+                      "kind": "bind",
+                      "value": {
+                        "kind": "id",
+                        "value": "ids"
+                      }
+                    }
+                  },
+                  {
+                    "field": [
+                      "Id"
+                    ],
+                    "operator": "NOT IN",
+                    "value": {
+                      "kind": "bind",
+                      "value": {
+                        "kind": "instance",
+                        "typeName": [
+                          "Set"
+                        ],
+                        "generic": [
+                          {
+                            "kind": "primitive",
+                            "name": "Id"
+                          }
+                        ]
+                      }
+                    }
+                  },
+                  {
+                    "field": [
+                      "Industry"
+                    ],
+                    "operator": "IN",
+                    "value": [
+                      {
+                        "kind": "string",
+                        "value": "Technology"
+                      },
+                      {
+                        "kind": "string",
+                        "value": "Finance"
+                      }
+                    ]
+                  },
+                  {
+                    "field": [
+                      "Type"
+                    ],
+                    "operator": "NOT IN",
+                    "value": [
+                      {
+                        "kind": "string",
+                        "value": "Other"
+                      }
+                    ]
+                  },
+                  {
+                    "field": [
+                      "Interests__c"
+                    ],
+                    "operator": "INCLUDES",
+                    "value": [
+                      {
+                        "kind": "string",
+                        "value": "Golf"
+                      },
+                      {
+                        "kind": "string",
+                        "value": "Tennis"
+                      }
+                    ]
+                  },
+                  {
+                    "field": [
+                      "Interests__c"
+                    ],
+                    "operator": "EXCLUDES",
+                    "value": [
+                      {
+                        "kind": "string",
+                        "value": "Chess"
+                      }
+                    ]
+                  },
+                  {
+                    "field": [
+                      "IsDeleted"
+                    ],
+                    "operator": "=",
+                    "value": {
+                      "kind": "boolean",
+                      "value": "false"
+                    }
+                  },
+                  {
+                    "field": [
+                      "AnnualRevenue"
+                    ],
+                    "operator": ">",
+                    "value": {
+                      "kind": "integralCurrency",
+                      "value": "USD5000"
+                    }
+                  },
+                  {
+                    "field": [
+                      "CreatedDate"
+                    ],
+                    "operator": "=",
+                    "value": {
+                      "kind": "dateFormula",
+                      "funcName": "TODAY"
+                    }
+                  },
+                  {
+                    "field": [
+                      "CreatedDate"
+                    ],
+                    "operator": "=",
+                    "value": {
+                      "kind": "dateFormula",
+                      "funcName": "LAST_N_DAYS_N",
+                      "param": {
+                        "value": "LAST_N_DAYS_N",
+                        "valueType": "integer"
+                      }
+                    }
+                  },
+                  {
+                    "field": [
+                      "LastModifiedDate"
+                    ],
+                    "operator": ">",
+                    "value": {
+                      "kind": "dateTime",
+                      "value": "2026-01-01T00:00:00Z"
+                    }
+                  },
+                  {
+                    "field": [
+                      "Birthdate__c"
+                    ],
+                    "operator": "=",
+                    "value": {
+                      "kind": "date",
+                      "value": "2026-01-01"
+                    }
+                  },
+                  {
+                    "field": [
+                      "OwnerId"
+                    ],
+                    "operator": "IN",
+                    "value": {
+                      "kind": "subQuery",
+                      "select": {
+                        "field": [
+                          {
+                            "field": [
+                              "Id"
+                            ]
+                          }
+                        ]
+                      },
+                      "from": {
+                        "field": "User"
+                      },
+                      "where": [
+                        {
+                          "field": [
+                            "IsActive"
+                          ],
+                          "operator": "=",
+                          "value": {
+                            "kind": "boolean",
+                            "value": "true"
+                          }
+                        }
+                      ]
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        ],
+        "modifier": {
+          "access": [
+            "PRIVATE"
+          ]
+        }
+      },
+      {
+        "name": "relationshipSoql",
+        "returnType": {
+          "kind": "list",
+          "type": {
+            "kind": "custom",
+            "name": [
+              "Account"
+            ]
+          }
+        },
+        "block": [
+          {
+            "kind": "return",
+            "block": {
+              "kind": "soql",
+              "select": {
+                "field": [
+                  {
+                    "field": [
+                      "Id"
+                    ]
+                  },
+                  {
+                    "field": [
+                      "Name"
+                    ]
+                  },
+                  {
+                    "field": [
+                      "Owner",
+                      "Name"
+                    ]
+                  },
+                  {
+                    "field": [
+                      "Parent",
+                      "Owner",
+                      "Name"
+                    ]
+                  }
+                ],
+                "subQuery": [
+                  {
+                    "field": {
+                      "select": {
+                        "field": [
+                          {
+                            "field": [
+                              "FirstName"
+                            ]
+                          },
+                          {
+                            "field": [
+                              "Id"
+                            ]
+                          },
+                          {
+                            "field": [
+                              "Account",
+                              "Name"
+                            ]
+                          }
+                        ]
+                      },
+                      "from": {
+                        "field": "Contacts"
+                      },
+                      "where": [
+                        {
+                          "field": [
+                            "Email"
+                          ],
+                          "operator": "!=",
+                          "value": {
+                            "kind": "null",
+                            "value": "null"
+                          }
+                        }
+                      ],
+                      "orderBy": [
+                        {
+                          "field": [
+                            "LastName"
+                          ]
+                        }
+                      ],
+                      "limit": {
+                        "kind": "number",
+                        "value": "10"
+                      }
+                    }
+                  }
+                ]
+              },
+              "from": {
+                "field": "Account",
+                "alias": "a"
+              },
+              "where": [
+                {
+                  "field": [
+                    "a",
+                    "Industry"
+                  ],
+                  "operator": "=",
+                  "value": {
+                    "kind": "string",
+                    "value": "Technology"
+                  }
+                }
+              ]
+            }
+          }
+        ],
+        "modifier": {
+          "access": [
+            "PRIVATE"
+          ]
+        }
+      },
+      {
+        "name": "typeOfSoql",
+        "returnType": {
+          "kind": "list",
+          "type": {
+            "kind": "custom",
+            "name": [
+              "Event"
+            ]
+          }
+        },
+        "block": [
+          {
+            "kind": "return",
+            "block": {
+              "kind": "soql",
+              "select": {
+                "field": [
+                  {
+                    "field": [
+                      "Id"
+                    ]
+                  }
+                ],
+                "typeOf": [
+                  {
+                    "field": {
+                      "field": [
+                        "What"
+                      ],
+                      "conditionBlock": [
+                        {
+                          "object": [
+                            "Account"
+                          ],
+                          "fields": [
+                            [
+                              "Name"
+                            ],
+                            [
+                              "Phone"
+                            ]
+                          ]
+                        },
+                        {
+                          "object": [
+                            "Opportunity"
+                          ],
+                          "fields": [
+                            [
+                              "Amount"
+                            ],
+                            [
+                              "CloseDate"
+                            ]
+                          ]
+                        },
+                        {
+                          "object": "else",
+                          "fields": [
+                            [
+                              "Name"
+                            ]
+                          ]
+                        }
+                      ]
+                    }
+                  }
+                ]
+              },
+              "from": {
+                "field": "Event"
+              }
+            }
+          }
+        ],
+        "modifier": {
+          "access": [
+            "PRIVATE"
+          ]
+        }
+      },
+      {
+        "name": "aggregateSoql",
+        "returnType": "void",
+        "block": [
+          {
+            "kind": "localVariable",
+            "variant": [
+              {
+                "variant": "aggregates",
+                "initValue": {
+                  "kind": "soql",
+                  "select": {
+                    "field": [
+                      {
+                        "field": [
+                          "Industry"
+                        ]
+                      }
+                    ],
+                    "soqlFunction": [
+                      {
+                        "field": {
+                          "funcName": "AVG",
+                          "arg": [
+                            "AnnualRevenue"
+                          ]
+                        }
+                      },
+                      {
+                        "field": {
+                          "funcName": "COUNT",
+                          "arg": [
+                            "Id"
+                          ]
+                        },
+                        "alias": "total"
+                      },
+                      {
+                        "field": {
+                          "funcName": "COUNT_DISTINCT",
+                          "arg": [
+                            "OwnerId"
+                          ]
+                        }
+                      },
+                      {
+                        "field": {
+                          "funcName": "MAX",
+                          "arg": [
+                            "AnnualRevenue"
+                          ]
+                        }
+                      },
+                      {
+                        "field": {
+                          "funcName": "MIN",
+                          "arg": [
+                            "AnnualRevenue"
+                          ]
+                        }
+                      },
+                      {
+                        "field": {
+                          "funcName": "SUM",
+                          "arg": [
+                            "AnnualRevenue"
+                          ]
+                        }
+                      }
+                    ]
+                  },
+                  "from": {
+                    "field": "Account"
+                  },
+                  "orderBy": [
+                    {
+                      "field": {
+                        "funcName": "COUNT",
+                        "arg": [
+                          "Id"
+                        ]
+                      },
+                      "direction": "DESC"
+                    }
+                  ],
+                  "groupBy": {
+                    "field": [
+                      {
+                        "kind": "field",
+                        "field": [
+                          "Industry"
+                        ]
+                      }
+                    ],
+                    "having": [
+                      {
+                        "field": {
+                          "funcName": "COUNT",
+                          "arg": [
+                            "Id"
+                          ]
+                        },
+                        "operator": ">",
+                        "value": {
+                          "kind": "integer",
+                          "value": "10"
+                        }
+                      }
+                    ]
+                  }
+                }
+              }
+            ],
+            "variantType": {
+              "kind": "list",
+              "type": {
+                "kind": "custom",
+                "name": [
+                  "AggregateResult"
+                ]
+              }
+            }
+          },
+          {
+            "kind": "localVariable",
+            "variant": [
+              {
+                "variant": "total",
+                "initValue": {
+                  "kind": "soql",
+                  "select": {
+                    "soqlFunction": [
+                      {
+                        "field": {
+                          "funcName": "COUNT"
+                        }
+                      }
+                    ]
+                  },
+                  "from": {
+                    "field": "Account"
+                  }
+                }
+              }
+            ],
+            "variantType": {
+              "kind": "primitive",
+              "name": "Integer"
+            }
+          },
+          {
+            "kind": "localVariable",
+            "variant": [
+              {
+                "variant": "rollup",
+                "initValue": {
+                  "kind": "soql",
+                  "select": {
+                    "field": [
+                      {
+                        "field": [
+                          "Industry"
+                        ]
+                      },
+                      {
+                        "field": [
+                          "Type"
+                        ]
+                      }
+                    ],
+                    "soqlFunction": [
+                      {
+                        "field": {
+                          "funcName": "COUNT",
+                          "arg": [
+                            "Id"
+                          ]
+                        }
+                      },
+                      {
+                        "field": {
+                          "funcName": "GROUPING",
+                          "arg": [
+                            "Industry"
+                          ]
+                        }
+                      }
+                    ]
+                  },
+                  "from": {
+                    "field": "Account"
+                  },
+                  "groupBy": {
+                    "field": [
+                      {
+                        "kind": "field",
+                        "field": [
+                          "Industry"
+                        ]
+                      },
+                      {
+                        "kind": "field",
+                        "field": [
+                          "Type"
+                        ]
+                      }
+                    ],
+                    "mode": "ROLLUP"
+                  }
+                }
+              }
+            ],
+            "variantType": {
+              "kind": "list",
+              "type": {
+                "kind": "custom",
+                "name": [
+                  "AggregateResult"
+                ]
+              }
+            }
+          },
+          {
+            "kind": "localVariable",
+            "variant": [
+              {
+                "variant": "cube",
+                "initValue": {
+                  "kind": "soql",
+                  "select": {
+                    "field": [
+                      {
+                        "field": [
+                          "Industry"
+                        ]
+                      },
+                      {
+                        "field": [
+                          "Type"
+                        ]
+                      }
+                    ],
+                    "soqlFunction": [
+                      {
+                        "field": {
+                          "funcName": "COUNT",
+                          "arg": [
+                            "Id"
+                          ]
+                        }
+                      }
+                    ]
+                  },
+                  "from": {
+                    "field": "Account"
+                  },
+                  "groupBy": {
+                    "field": [
+                      {
+                        "kind": "field",
+                        "field": [
+                          "Industry"
+                        ]
+                      },
+                      {
+                        "kind": "field",
+                        "field": [
+                          "Type"
+                        ]
+                      }
+                    ],
+                    "mode": "CUBE"
+                  }
+                }
+              }
+            ],
+            "variantType": {
+              "kind": "list",
+              "type": {
+                "kind": "custom",
+                "name": [
+                  "AggregateResult"
+                ]
+              }
+            }
+          }
+        ],
+        "modifier": {
+          "access": [
+            "PRIVATE"
+          ]
+        }
+      },
+      {
+        "name": "functionSoql",
+        "returnType": "void",
+        "block": [
+          {
+            "kind": "localVariable",
+            "variant": [
+              {
+                "variant": "dates",
+                "initValue": {
+                  "kind": "soql",
+                  "select": {
+                    "soqlFunction": [
+                      {
+                        "field": {
+                          "funcName": "CALENDAR_MONTH",
+                          "arg": {
+                            "fieldName": [
+                              "CreatedDate"
+                            ],
+                            "isConvertTimeZone": false
+                          }
+                        }
+                      },
+                      {
+                        "field": {
+                          "funcName": "CALENDAR_QUARTER",
+                          "arg": {
+                            "fieldName": [
+                              "CreatedDate"
+                            ],
+                            "isConvertTimeZone": false
+                          }
+                        }
+                      },
+                      {
+                        "field": {
+                          "funcName": "CALENDAR_YEAR",
+                          "arg": {
+                            "fieldName": [
+                              "CreatedDate"
+                            ],
+                            "isConvertTimeZone": false
+                          }
+                        }
+                      },
+                      {
+                        "field": {
+                          "funcName": "DAY_IN_MONTH",
+                          "arg": {
+                            "fieldName": [
+                              "CreatedDate"
+                            ],
+                            "isConvertTimeZone": false
+                          }
+                        }
+                      },
+                      {
+                        "field": {
+                          "funcName": "DAY_IN_WEEK",
+                          "arg": {
+                            "fieldName": [
+                              "CreatedDate"
+                            ],
+                            "isConvertTimeZone": false
+                          }
+                        }
+                      },
+                      {
+                        "field": {
+                          "funcName": "DAY_IN_YEAR",
+                          "arg": {
+                            "fieldName": [
+                              "CreatedDate"
+                            ],
+                            "isConvertTimeZone": false
+                          }
+                        }
+                      },
+                      {
+                        "field": {
+                          "funcName": "DAY_ONLY",
+                          "arg": {
+                            "fieldName": [
+                              "CreatedDate"
+                            ],
+                            "isConvertTimeZone": false
+                          }
+                        }
+                      },
+                      {
+                        "field": {
+                          "funcName": "FISCAL_MONTH",
+                          "arg": {
+                            "fieldName": [
+                              "CreatedDate"
+                            ],
+                            "isConvertTimeZone": false
+                          }
+                        }
+                      },
+                      {
+                        "field": {
+                          "funcName": "FISCAL_QUARTER",
+                          "arg": {
+                            "fieldName": [
+                              "CreatedDate"
+                            ],
+                            "isConvertTimeZone": false
+                          }
+                        }
+                      },
+                      {
+                        "field": {
+                          "funcName": "FISCAL_YEAR",
+                          "arg": {
+                            "fieldName": [
+                              "CreatedDate"
+                            ],
+                            "isConvertTimeZone": false
+                          }
+                        }
+                      },
+                      {
+                        "field": {
+                          "funcName": "HOUR_IN_DAY",
+                          "arg": {
+                            "fieldName": [
+                              "CreatedDate"
+                            ],
+                            "isConvertTimeZone": false
+                          }
+                        }
+                      },
+                      {
+                        "field": {
+                          "funcName": "WEEK_IN_MONTH",
+                          "arg": {
+                            "fieldName": [
+                              "CreatedDate"
+                            ],
+                            "isConvertTimeZone": false
+                          }
+                        }
+                      },
+                      {
+                        "field": {
+                          "funcName": "WEEK_IN_YEAR",
+                          "arg": {
+                            "fieldName": [
+                              "CreatedDate"
+                            ],
+                            "isConvertTimeZone": false
+                          }
+                        }
+                      }
+                    ]
+                  },
+                  "from": {
+                    "field": "Account"
+                  },
+                  "groupBy": {
+                    "field": [
+                      {
+                        "kind": "function",
+                        "field": {
+                          "funcName": "CALENDAR_MONTH",
+                          "arg": {
+                            "fieldName": [
+                              "CreatedDate"
+                            ],
+                            "isConvertTimeZone": false
+                          }
+                        }
+                      },
+                      {
+                        "kind": "function",
+                        "field": {
+                          "funcName": "CALENDAR_YEAR",
+                          "arg": {
+                            "fieldName": [
+                              "CreatedDate"
+                            ],
+                            "isConvertTimeZone": false
+                          }
+                        }
+                      }
+                    ]
+                  }
+                }
+              }
+            ],
+            "variantType": {
+              "kind": "list",
+              "type": {
+                "kind": "custom",
+                "name": [
+                  "AggregateResult"
+                ]
+              }
+            }
+          },
+          {
+            "kind": "localVariable",
+            "variant": [
+              {
+                "variant": "formatted",
+                "initValue": {
+                  "kind": "soql",
+                  "select": {
+                    "field": [
+                      {
+                        "field": [
+                          "Id"
+                        ]
+                      }
+                    ],
+                    "soqlFunction": [
+                      {
+                        "field": {
+                          "funcName": "FORMAT",
+                          "arg": [
+                            "CreatedDate"
+                          ]
+                        }
+                      },
+                      {
+                        "field": {
+                          "funcName": "FORMAT",
+                          "arg": {
+                            "funcName": "CONVERT_CURRENCY",
+                            "arg": [
+                              "AnnualRevenue"
+                            ]
+                          }
+                        }
+                      },
+                      {
+                        "field": {
+                          "funcName": "TOLABEL",
+                          "arg": [
+                            "Type"
+                          ]
+                        }
+                      }
+                    ]
+                  },
+                  "from": {
+                    "field": "Account"
+                  }
+                }
+              }
+            ],
+            "variantType": {
+              "kind": "list",
+              "type": {
+                "kind": "custom",
+                "name": [
+                  "Account"
+                ]
+              }
+            }
+          },
+          {
+            "kind": "localVariable",
+            "variant": [
+              {
+                "variant": "allFields",
+                "initValue": {
+                  "kind": "soql",
+                  "select": {
+                    "soqlFunction": [
+                      {
+                        "field": {
+                          "funcName": "FIELDS",
+                          "arg": "ALL"
+                        }
+                      }
+                    ]
+                  },
+                  "from": {
+                    "field": "Account"
+                  },
+                  "limit": {
+                    "kind": "number",
+                    "value": "200"
+                  }
+                }
+              }
+            ],
+            "variantType": {
+              "kind": "list",
+              "type": {
+                "kind": "custom",
+                "name": [
+                  "Account"
+                ]
+              }
+            }
+          },
+          {
+            "kind": "localVariable",
+            "variant": [
+              {
+                "variant": "standardFields",
+                "initValue": {
+                  "kind": "soql",
+                  "select": {
+                    "soqlFunction": [
+                      {
+                        "field": {
+                          "funcName": "FIELDS",
+                          "arg": "STANDARD"
+                        }
+                      }
+                    ]
+                  },
+                  "from": {
+                    "field": "Account"
+                  }
+                }
+              }
+            ],
+            "variantType": {
+              "kind": "list",
+              "type": {
+                "kind": "custom",
+                "name": [
+                  "Account"
+                ]
+              }
+            }
+          },
+          {
+            "kind": "localVariable",
+            "variant": [
+              {
+                "variant": "customFields",
+                "initValue": {
+                  "kind": "soql",
+                  "select": {
+                    "soqlFunction": [
+                      {
+                        "field": {
+                          "funcName": "FIELDS",
+                          "arg": "CUSTOM"
+                        }
+                      }
+                    ]
+                  },
+                  "from": {
+                    "field": "Account"
+                  },
+                  "limit": {
+                    "kind": "number",
+                    "value": "200"
+                  }
+                }
+              }
+            ],
+            "variantType": {
+              "kind": "list",
+              "type": {
+                "kind": "custom",
+                "name": [
+                  "Account"
+                ]
+              }
+            }
+          }
+        ],
+        "modifier": {
+          "access": [
+            "PRIVATE"
+          ]
+        }
+      },
+      {
+        "name": "locationSoql",
+        "returnType": {
+          "kind": "list",
+          "type": {
+            "kind": "custom",
+            "name": [
+              "Account"
+            ]
+          }
+        },
+        "param": [
+          {
+            "variant": "here",
+            "variantType": {
+              "kind": "custom",
+              "name": [
+                "Location"
+              ]
+            }
+          }
+        ],
+        "block": [
+          {
+            "kind": "return",
+            "block": {
+              "kind": "soql",
+              "select": {
+                "field": [
+                  {
+                    "field": [
+                      "Id"
+                    ]
+                  }
+                ]
+              },
+              "from": {
+                "field": "Account"
+              },
+              "where": [
+                {
+                  "field": {
+                    "funcName": "DISTANCE",
+                    "arg": {
+                      "field": [
+                        "BillingAddress"
+                      ],
+                      "location": {
+                        "latitude": {
+                          "value": "37.775",
+                          "valueType": "number"
+                        },
+                        "longitude": {
+                          "value": "122.418",
+                          "valueType": "number",
+                          "operator": "-"
+                        }
+                      },
+                      "unit": "km"
+                    }
+                  },
+                  "operator": "<",
+                  "value": {
+                    "kind": "integer",
+                    "value": "20"
+                  }
+                }
+              ],
+              "orderBy": [
+                {
+                  "field": {
+                    "funcName": "DISTANCE",
+                    "arg": {
+                      "field": [
+                        "BillingAddress"
+                      ],
+                      "location": {
+                        "kind": "id",
+                        "value": "here"
+                      },
+                      "unit": "mi"
+                    }
+                  }
+                }
+              ]
+            }
+          }
+        ],
+        "modifier": {
+          "access": [
+            "PRIVATE"
+          ]
+        }
+      },
+      {
+        "name": "soqlClauses",
+        "returnType": "void",
+        "block": [
+          {
+            "kind": "localVariable",
+            "variant": [
+              {
+                "variant": "mine",
+                "initValue": {
+                  "kind": "soql",
+                  "select": {
+                    "field": [
+                      {
+                        "field": [
+                          "Id"
+                        ]
+                      }
+                    ]
+                  },
+                  "from": {
+                    "field": "Account"
+                  },
+                  "usingScope": "Mine"
+                }
+              }
+            ],
+            "variantType": {
+              "kind": "list",
+              "type": {
+                "kind": "custom",
+                "name": [
+                  "Account"
+                ]
+              }
+            }
+          },
+          {
+            "kind": "localVariable",
+            "variant": [
+              {
+                "variant": "userMode",
+                "initValue": {
+                  "kind": "soql",
+                  "select": {
+                    "field": [
+                      {
+                        "field": [
+                          "Id"
+                        ]
+                      }
+                    ]
+                  },
+                  "from": {
+                    "field": "Account"
+                  },
+                  "with": {
+                    "kind": "USER_MODE"
+                  }
+                }
+              }
+            ],
+            "variantType": {
+              "kind": "list",
+              "type": {
+                "kind": "custom",
+                "name": [
+                  "Account"
+                ]
+              }
+            }
+          },
+          {
+            "kind": "localVariable",
+            "variant": [
+              {
+                "variant": "systemMode",
+                "initValue": {
+                  "kind": "soql",
+                  "select": {
+                    "field": [
+                      {
+                        "field": [
+                          "Id"
+                        ]
+                      }
+                    ]
+                  },
+                  "from": {
+                    "field": "Account"
+                  },
+                  "with": {
+                    "kind": "SYSTEM_MODE"
+                  }
+                }
+              }
+            ],
+            "variantType": {
+              "kind": "list",
+              "type": {
+                "kind": "custom",
+                "name": [
+                  "Account"
+                ]
+              }
+            }
+          },
+          {
+            "kind": "localVariable",
+            "variant": [
+              {
+                "variant": "secured",
+                "initValue": {
+                  "kind": "soql",
+                  "select": {
+                    "field": [
+                      {
+                        "field": [
+                          "Id"
+                        ]
+                      }
+                    ]
+                  },
+                  "from": {
+                    "field": "Account"
+                  },
+                  "with": {
+                    "kind": "SECURITY_ENFORCED"
+                  }
+                }
+              }
+            ],
+            "variantType": {
+              "kind": "list",
+              "type": {
+                "kind": "custom",
+                "name": [
+                  "Account"
+                ]
+              }
+            }
+          },
+          {
+            "kind": "localVariable",
+            "variant": [
+              {
+                "variant": "articles",
+                "initValue": {
+                  "kind": "soql",
+                  "select": {
+                    "field": [
+                      {
+                        "field": [
+                          "Title"
+                        ]
+                      }
+                    ]
+                  },
+                  "from": {
+                    "field": "Knowledge__kav"
+                  },
+                  "with": {
+                    "kind": "DATA_CATEGORY",
+                    "categories": [
+                      {
+                        "field": "Geography__c",
+                        "selector": "AT",
+                        "category": [
+                          "Usa__c",
+                          "Uk__c"
+                        ]
+                      },
+                      {
+                        "field": "Product__c",
+                        "selector": "ABOVE_OR_BELOW",
+                        "category": [
+                          "Mobile__c"
+                        ]
+                      },
+                      {
+                        "field": "Topic__c",
+                        "selector": "ABOVE",
+                        "category": [
+                          "Root__c"
+                        ]
+                      },
+                      {
+                        "field": "Region__c",
+                        "selector": "BELOW",
+                        "category": [
+                          "Asia__c"
+                        ]
+                      }
+                    ]
+                  }
+                }
+              }
+            ],
+            "variantType": {
+              "kind": "list",
+              "type": {
+                "kind": "custom",
+                "name": [
+                  "Knowledge__kav"
+                ]
+              }
+            }
+          },
+          {
+            "kind": "localVariable",
+            "variant": [
+              {
+                "variant": "deleted",
+                "initValue": {
+                  "kind": "soql",
+                  "select": {
+                    "field": [
+                      {
+                        "field": [
+                          "Id"
+                        ]
+                      }
+                    ]
+                  },
+                  "from": {
+                    "field": "Account"
+                  },
+                  "where": [
+                    {
+                      "field": [
+                        "IsDeleted"
+                      ],
+                      "operator": "=",
+                      "value": {
+                        "kind": "boolean",
+                        "value": "true"
+                      }
+                    }
+                  ],
+                  "allRows": "ALL ROWS"
+                }
+              }
+            ],
+            "variantType": {
+              "kind": "list",
+              "type": {
+                "kind": "custom",
+                "name": [
+                  "Account"
+                ]
+              }
+            }
+          },
+          {
+            "kind": "localVariable",
+            "variant": [
+              {
+                "variant": "locked",
+                "initValue": {
+                  "kind": "soql",
+                  "select": {
+                    "field": [
+                      {
+                        "field": [
+                          "Id"
+                        ]
+                      }
+                    ]
+                  },
+                  "from": {
+                    "field": "Account"
+                  },
+                  "for": "UPDATE"
+                }
+              }
+            ],
+            "variantType": {
+              "kind": "list",
+              "type": {
+                "kind": "custom",
+                "name": [
+                  "Account"
+                ]
+              }
+            }
+          },
+          {
+            "kind": "localVariable",
+            "variant": [
+              {
+                "variant": "viewed",
+                "initValue": {
+                  "kind": "soql",
+                  "select": {
+                    "field": [
+                      {
+                        "field": [
+                          "Id"
+                        ]
+                      }
+                    ]
+                  },
+                  "from": {
+                    "field": "Account"
+                  },
+                  "for": "VIEW"
+                }
+              }
+            ],
+            "variantType": {
+              "kind": "list",
+              "type": {
+                "kind": "custom",
+                "name": [
+                  "Account"
+                ]
+              }
+            }
+          },
+          {
+            "kind": "localVariable",
+            "variant": [
+              {
+                "variant": "referenced",
+                "initValue": {
+                  "kind": "soql",
+                  "select": {
+                    "field": [
+                      {
+                        "field": [
+                          "Id"
+                        ]
+                      }
+                    ]
+                  },
+                  "from": {
+                    "field": "Account"
+                  },
+                  "for": "REFERENCE"
+                }
+              }
+            ],
+            "variantType": {
+              "kind": "list",
+              "type": {
+                "kind": "custom",
+                "name": [
+                  "Account"
+                ]
+              }
+            }
+          },
+          {
+            "kind": "localVariable",
+            "variant": [
+              {
+                "variant": "tracked",
+                "initValue": {
+                  "kind": "soql",
+                  "select": {
+                    "field": [
+                      {
+                        "field": [
+                          "Id"
+                        ]
+                      }
+                    ]
+                  },
+                  "from": {
+                    "field": "FAQ__kav"
+                  },
+                  "update": [
+                    "TRACKING",
+                    "VIEWSTAT"
+                  ]
+                }
+              }
+            ],
+            "variantType": {
+              "kind": "list",
+              "type": {
+                "kind": "custom",
+                "name": [
+                  "FAQ__kav"
+                ]
+              }
+            }
+          }
+        ],
+        "modifier": {
+          "access": [
+            "PRIVATE"
+          ]
+        }
+      },
+      {
+        "name": "soslExamples",
+        "returnType": "void",
+        "param": [
+          {
+            "variant": "keyword",
+            "variantType": {
+              "kind": "primitive",
+              "name": "String"
+            }
+          }
+        ],
+        "block": [
+          {
+            "kind": "localVariable",
+            "variant": [
+              {
+                "variant": "simple",
+                "initValue": {
+                  "kind": "sosl",
+                  "keyword": {
+                    "kind": "string",
+                    "value": "test"
+                  },
+                  "searchGroup": "ALL",
+                  "fieldSpec": [
+                    {
+                      "object": "Account"
+                    },
+                    {
+                      "object": "Contact"
+                    }
+                  ]
+                }
+              }
+            ],
+            "variantType": {
+              "kind": "list",
+              "type": {
+                "kind": "list",
+                "type": {
+                  "kind": "custom",
+                  "name": [
+                    "SObject"
+                  ]
+                }
+              }
+            }
+          },
+          {
+            "kind": "localVariable",
+            "variant": [
+              {
+                "variant": "bound",
+                "initValue": {
+                  "kind": "sosl",
+                  "keyword": {
+                    "kind": "bind",
+                    "value": {
+                      "kind": "id",
+                      "value": "keyword"
+                    }
+                  },
+                  "searchGroup": "NAME",
+                  "fieldSpec": [
+                    {
+                      "object": "Account",
+                      "field": {
+                        "field": [
+                          [
+                            "Id"
+                          ],
+                          [
+                            "Name"
+                          ]
+                        ]
+                      },
+                      "where": [
+                        {
+                          "field": [
+                            "Industry"
+                          ],
+                          "operator": "=",
+                          "value": {
+                            "kind": "string",
+                            "value": "Technology"
+                          }
+                        }
+                      ],
+                      "orderBy": [
+                        {
+                          "field": [
+                            "Name"
+                          ]
+                        }
+                      ],
+                      "limit": {
+                        "kind": "number",
+                        "value": "10"
+                      }
+                    },
+                    {
+                      "object": "Contact",
+                      "field": {
+                        "field": [
+                          [
+                            "FirstName"
+                          ],
+                          [
+                            "Id"
+                          ],
+                          [
+                            "LastName"
+                          ]
+                        ]
+                      }
+                    },
+                    {
+                      "object": "Lead",
+                      "field": {
+                        "field": [
+                          [
+                            "FirstName"
+                          ],
+                          [
+                            "Id"
+                          ],
+                          [
+                            "LastName"
+                          ]
+                        ]
+                      },
+                      "listView": "MyLeads",
+                      "offset": {
+                        "kind": "number",
+                        "value": "5"
+                      }
+                    }
+                  ],
+                  "with": [
+                    {
+                      "kind": "DIVISION",
+                      "param": "Global"
+                    },
+                    {
+                      "kind": "SNIPPET",
+                      "param": "120"
+                    },
+                    {
+                      "kind": "NETWORK",
+                      "param": [
+                        "0DBxx0000000001",
+                        "0DBxx0000000002"
+                      ]
+                    },
+                    {
+                      "kind": "PRICEBOOKID",
+                      "param": "01sxx0000000001"
+                    },
+                    {
+                      "kind": "METADATA",
+                      "param": "LABELS"
+                    }
+                  ],
+                  "limit": {
+                    "kind": "number",
+                    "value": "100"
+                  },
+                  "update": [
+                    "TRACKING",
+                    "VIEWSTAT"
+                  ]
+                }
+              }
+            ],
+            "variantType": {
+              "kind": "list",
+              "type": {
+                "kind": "list",
+                "type": {
+                  "kind": "custom",
+                  "name": [
+                    "SObject"
+                  ]
+                }
+              }
+            }
+          },
+          {
+            "kind": "localVariable",
+            "variant": [
+              {
+                "variant": "emails",
+                "initValue": {
+                  "kind": "sosl",
+                  "keyword": {
+                    "kind": "string",
+                    "value": "a@example.com"
+                  },
+                  "searchGroup": "EMAIL",
+                  "fieldSpec": [
+                    {
+                      "object": "Contact",
+                      "field": {
+                        "field": [
+                          [
+                            "Email"
+                          ]
+                        ]
+                      }
+                    }
+                  ]
+                }
+              }
+            ],
+            "variantType": {
+              "kind": "list",
+              "type": {
+                "kind": "list",
+                "type": {
+                  "kind": "custom",
+                  "name": [
+                    "SObject"
+                  ]
+                }
+              }
+            }
+          },
+          {
+            "kind": "localVariable",
+            "variant": [
+              {
+                "variant": "phones",
+                "initValue": {
+                  "kind": "sosl",
+                  "keyword": {
+                    "kind": "string",
+                    "value": "555"
+                  },
+                  "searchGroup": "PHONE",
+                  "fieldSpec": [
+                    {
+                      "object": "Contact"
+                    }
+                  ]
+                }
+              }
+            ],
+            "variantType": {
+              "kind": "list",
+              "type": {
+                "kind": "list",
+                "type": {
+                  "kind": "custom",
+                  "name": [
+                    "SObject"
+                  ]
+                }
+              }
+            }
+          },
+          {
+            "kind": "localVariable",
+            "variant": [
+              {
+                "variant": "sidebar",
+                "initValue": {
+                  "kind": "sosl",
+                  "keyword": {
+                    "kind": "string",
+                    "value": "x"
+                  },
+                  "searchGroup": "SIDEBAR",
+                  "fieldSpec": [
+                    {
+                      "object": "Account"
+                    }
+                  ],
+                  "with": [
+                    {
+                      "kind": "NETWORK",
+                      "param": "0DBxx0000000001"
+                    }
+                  ]
+                }
+              }
+            ],
+            "variantType": {
+              "kind": "list",
+              "type": {
+                "kind": "list",
+                "type": {
+                  "kind": "custom",
+                  "name": [
+                    "SObject"
+                  ]
+                }
+              }
+            }
+          },
+          {
+            "kind": "localVariable",
+            "variant": [
+              {
+                "variant": "categorized",
+                "initValue": {
+                  "kind": "sosl",
+                  "keyword": {
+                    "kind": "string",
+                    "value": "help"
+                  },
+                  "fieldSpec": [
+                    {
+                      "object": "KnowledgeArticleVersion",
+                      "field": {
+                        "field": [
+                          [
+                            "Id"
+                          ],
+                          [
+                            "Title"
+                          ]
+                        ]
+                      }
+                    }
+                  ],
+                  "with": [
+                    {
+                      "kind": "DATA_CATEGORY",
+                      "param": [
+                        {
+                          "field": "Geography__c",
+                          "selector": "AT",
+                          "category": [
+                            "Usa__c"
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              }
+            ],
+            "variantType": {
+              "kind": "list",
+              "type": {
+                "kind": "list",
+                "type": {
+                  "kind": "custom",
+                  "name": [
+                    "SObject"
+                  ]
+                }
+              }
+            }
+          }
+        ],
+        "modifier": {
+          "access": [
+            "PRIVATE"
+          ]
+        }
+      }
+    ],
+    "class": [
+      {
+        "name": "InnerClass",
+        "implement": [
+          {
+            "kind": "custom",
+            "name": [
+              "Handler"
+            ]
+          }
+        ],
+        "field": [
+          {
+            "variant": [
+              {
+                "variant": "value"
+              }
+            ],
+            "variantType": {
+              "kind": "primitive",
+              "name": "String"
+            },
+            "modifier": {
+              "access": [
+                "PRIVATE"
+              ]
+            }
+          }
+        ],
+        "construct": [
+          {
+            "name": [
+              "InnerClass"
+            ],
+            "block": [
+              {
+                "kind": "expression",
+                "block": {
+                  "kind": "expression",
+                  "left": {
+                    "kind": "field",
+                    "object": {
+                      "kind": "this",
+                      "value": "this"
+                    },
+                    "dot": ".",
+                    "name": "value"
+                  },
+                  "operator": "=",
+                  "right": {
+                    "kind": "id",
+                    "value": "value"
+                  }
+                }
+              }
+            ],
+            "param": [
+              {
+                "variant": "value",
+                "variantType": {
+                  "kind": "primitive",
+                  "name": "String"
+                }
+              }
+            ],
+            "modifier": {
+              "access": [
+                "PUBLIC"
+              ]
+            }
+          }
+        ],
+        "method": [
+          {
+            "name": "execute",
+            "returnType": "void",
+            "block": [
+              {
+                "kind": "expression",
+                "block": {
+                  "kind": "method",
+                  "object": {
+                    "kind": "id",
+                    "value": "System"
+                  },
+                  "dot": ".",
+                  "name": "debug",
+                  "arg": [
+                    {
+                      "kind": "id",
+                      "value": "value"
+                    }
+                  ]
+                }
+              }
+            ],
+            "modifier": {
+              "access": [
+                "PUBLIC"
+              ]
+            }
+          },
+          {
+            "name": "getValue",
+            "returnType": {
+              "kind": "primitive",
+              "name": "String"
+            },
+            "block": [
+              {
+                "kind": "return",
+                "block": {
+                  "kind": "id",
+                  "value": "value"
+                }
+              }
+            ],
+            "modifier": {
+              "access": [
+                "PUBLIC"
+              ]
+            }
+          }
+        ],
+        "modifier": {
+          "access": [
+            "PUBLIC"
+          ],
+          "declaration": [
+            "VIRTUAL"
+          ]
+        }
+      },
+      {
+        "name": "AbstractHandler",
+        "method": [
+          {
+            "name": "execute",
+            "returnType": "void",
+            "modifier": {
+              "access": [
+                "PUBLIC"
+              ],
+              "declaration": [
+                "ABSTRACT"
+              ]
+            }
+          }
+        ],
+        "modifier": {
+          "access": [
+            "PUBLIC"
+          ],
+          "declaration": [
+            "ABSTRACT"
+          ]
+        }
+      },
+      {
+        "name": "WithoutSharingHandler",
+        "extend": {
+          "kind": "custom",
+          "name": [
+            "AbstractHandler"
+          ]
+        },
+        "method": [
+          {
+            "name": "execute",
+            "returnType": "void",
+            "block": [
+              {
+                "kind": "expression",
+                "block": {
+                  "kind": "method",
+                  "object": {
+                    "kind": "id",
+                    "value": "System"
+                  },
+                  "dot": ".",
+                  "name": "debug",
+                  "arg": [
+                    {
+                      "kind": "literal",
+                      "value": "without sharing",
+                      "valueType": "string"
+                    }
+                  ]
+                }
+              }
+            ],
+            "modifier": {
+              "access": [
+                "PUBLIC"
+              ],
+              "declaration": [
+                "OVERRIDE"
+              ]
+            }
+          }
+        ],
+        "modifier": {
+          "access": [
+            "PUBLIC"
+          ],
+          "sharing": [
+            "WITHOUT_SHARING"
+          ]
+        }
+      },
+      {
+        "name": "CustomException",
+        "extend": {
+          "kind": "custom",
+          "name": [
+            "Exception"
+          ]
+        },
+        "modifier": {
+          "access": [
+            "PUBLIC"
+          ]
+        }
+      }
+    ],
+    "enum": [
+      {
+        "name": "Status",
+        "constant": [
+          "AAA",
+          "BBB",
+          "CCC",
+          "DDD"
+        ],
+        "modifier": {
+          "access": [
+            "PUBLIC"
+          ]
+        }
+      },
+      {
+        "name": "EmptyEnum"
+      }
+    ],
+    "interface": [
+      {
+        "name": "Handler",
+        "block": [
+          {
+            "name": "execute",
+            "returnType": "void"
+          }
+        ],
+        "modifier": {
+          "access": [
+            "PUBLIC"
+          ]
+        }
+      },
+      {
+        "name": "ExtendedHandler",
+        "block": [
+          {
+            "name": "describe",
+            "returnType": {
+              "kind": "primitive",
+              "name": "String"
+            },
+            "param": [
+              {
+                "variant": "level",
+                "variantType": {
+                  "kind": "primitive",
+                  "name": "Integer"
+                }
+              },
+              {
+                "variant": "tags",
+                "variantType": {
+                  "kind": "list",
+                  "type": {
+                    "kind": "primitive",
+                    "name": "String"
+                  }
+                }
+              }
+            ]
+          }
+        ],
+        "extend": [
+          {
+            "kind": "custom",
+            "name": [
+              "Handler"
+            ]
+          },
+          {
+            "kind": "custom",
+            "name": [
+              "Comparable"
+            ]
+          }
+        ],
+        "modifier": {
+          "access": [
+            "PUBLIC"
+          ]
+        }
+      }
+    ],
+    "modifier": {
+      "annotation": {
+        "test": [
+          {
+            "name": "IsTest",
+            "param": [
+              {
+                "key": "SeeAllData",
+                "value": "false",
+                "valueType": "boolean"
+              },
+              {
+                "key": "isParallel",
+                "value": "true",
+                "valueType": "boolean"
+              }
+            ]
+          }
+        ]
+      },
+      "access": [
+        "GLOBAL"
+      ],
+      "declaration": [
+        "VIRTUAL"
+      ]
+    }
+  }
+}
