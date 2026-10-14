@@ -39,40 +39,47 @@ const makeWhenValue = (whenValue: WhenValueClass): WhenValue | undefined => {
                     value: 'else',
                 };
             } else {
+                const field: WhenValue = {
+                    value: value.replace(/^(['"])(.*)\1$/, '$2'),
+                };
+
                 const valueType = makeTypeType(whenValue.getValueType());
                 if (valueType) {
-                    return {
-                        value: value,
-                        valueType: valueType,
-                    };
+                    field.valueType = valueType;
                 }
+
+                return field;
             }
         }
 
         if (isWhenLiteralClassArray(value)) {
             const literals: { value: string | string[]; valueType: string; operator?: string }[] =
                 [];
-            value.forEach((literal) => {
-                const value = literal.getValue();
-                const valueType = literal.getValueType();
-                const operator = literal.getOperator();
+            value.forEach((l) => {
+                const value = l.getValue();
+                const valueType = l.getValueType();
+                const operator = l.getOperator();
 
-                if (
-                    ((isStringArray(value) && value.length > 0) || isString(value)) &&
-                    valueType &&
-                    operator
-                ) {
-                    literals.push({
-                        value: value,
+                if (((isStringArray(value) && value.length > 0) || isString(value)) && valueType) {
+                    const literal: {
+                        value: string | string[];
+                        valueType: string;
+                        operator?: string;
+                    } = {
+                        value: isString(value) ? value.replace(/^(['"])(.*)\1$/, '$2') : value,
                         valueType: valueType,
-                        operator: operator,
-                    });
-                }
+                    };
 
-                if (literals.length > 0) {
-                    return literals;
+                    if (operator) {
+                        literal.operator = operator;
+                    }
+
+                    literals.push(literal);
                 }
             });
+            if (literals.length > 0) {
+                return literals;
+            }
         }
     }
     return undefined;

@@ -64,7 +64,7 @@ export const makeValueType = (value: NormalValueClass): ValueType | undefined =>
             if (valueType) {
                 return {
                     kind: valueType,
-                    value: valueValue,
+                    value: valueValue.replace(/^(['"])(.*)\1$/, '$2'),
                 };
             }
         }

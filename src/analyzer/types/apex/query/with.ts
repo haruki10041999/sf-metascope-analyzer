@@ -109,15 +109,18 @@ export const makeSoslWithField = (
 
             if (param) {
                 if (isString(param)) {
-                    soslWithField.param = param;
+                    soslWithField.param = param.replace(/^(['"])(.*)\1$/, '$2');
                 }
 
                 if (isStringArray(param) && param.length > 0) {
-                    soslWithField.param = param;
+                    soslWithField.param = param.map((p) => p.replace(/^(['"])(.*)\1$/, '$2'));
                 }
 
                 if (isExpressionClass(param)) {
-                    soslWithField.param = makeExpressionType(param);
+                    const expression = makeExpressionType(param);
+                    if (expression) {
+                        soslWithField.param = expression;
+                    }
                 }
 
                 if (isDataCategorySelectionClassArray(param)) {

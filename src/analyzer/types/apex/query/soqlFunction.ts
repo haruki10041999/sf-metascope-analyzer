@@ -85,7 +85,7 @@ const makeDistanceValue = (
                 return {
                     field: field,
                     location: location,
-                    unit: unit,
+                    unit: unit.replace(/^(['"])(.*)\1$/, '$2'),
                 };
             }
 
@@ -95,7 +95,7 @@ const makeDistanceValue = (
                     return {
                         field: field,
                         location: expression,
-                        unit: unit,
+                        unit: unit.replace(/^(['"])(.*)\1$/, '$2'),
                     };
                 }
             }
@@ -106,7 +106,7 @@ const makeDistanceValue = (
                     return {
                         field: field,
                         location: coordinateValue,
-                        unit: unit,
+                        unit: unit.replace(/^(['"])(.*)\1$/, '$2'),
                     };
                 }
             }

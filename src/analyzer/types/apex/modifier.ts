@@ -153,7 +153,7 @@ const makeAnnotationType = <TName extends string>(
 
                 annotation.param.push({
                     key: key,
-                    value: value,
+                    value: value.replace(/^(['"])(.*)\1$/, '$2'),
                     valueType: valueType,
                 });
             });

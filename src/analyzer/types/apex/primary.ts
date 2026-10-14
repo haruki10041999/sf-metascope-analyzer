@@ -12,7 +12,7 @@ import { SoqlType, makesoqlType } from './query';
 import { SoslType, makeSoslType } from './query';
 
 type StringPrimaryType = {
-    kind: 'value';
+    kind: string;
     value: string;
 };
 
@@ -46,8 +46,8 @@ export const makePrimaryType = (primary: PrimaryClass): PrimaryType | undefined 
             const value = elementClass.getPrimary();
             if (value) {
                 return {
-                    kind: 'value',
-                    value: value,
+                    kind: elementClass.getType(),
+                    value: value.replace(/^(['"])(.*)\1$/, '$2'),
                 };
             }
         }
@@ -70,7 +70,7 @@ export const makePrimaryType = (primary: PrimaryClass): PrimaryType | undefined 
             if (valueValue && valueType) {
                 return {
                     kind: 'literal',
-                    value: valueValue,
+                    value: valueValue.replace(/^(['"])(.*)\1$/, '$2'),
                     valueType: valueType,
                 };
             }
