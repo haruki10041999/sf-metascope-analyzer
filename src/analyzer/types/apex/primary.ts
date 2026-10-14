@@ -1,14 +1,5 @@
 import {
     PrimaryClass,
-    NormalQueryClass,
-    TypeRefClass,
-    NormalLiteralClass,
-    SoslLiteralClass,
-    StringPrimaryElementClass,
-    SoqlPrimaryElementClass,
-    TypeRefPrimaryElementClass,
-    LiteralPrimaryElementClass,
-    SoslPrimaryElementClass,
     isStringPrimaryElementClass,
     isSoqlPrimaryElementClass,
     isTypeRefPrimaryElementClass,
@@ -18,30 +9,57 @@ import {
 
 import { makeTypeType, TypeType } from './type';
 import { SoqlType, makesoqlType } from './query';
+import { SoslType, makeSoslType } from './query';
+
+type StringPrimaryType = {
+    kind: 'value';
+    value: string;
+};
 
 type LiteralPrimaryType = {
+    kind: 'literal';
     value: string;
     valueType: string;
 };
-type SoslPrimaryType = SoslLiteralClass;
+
+type TypePrimaryType = {
+    kind: 'type';
+    value: TypeType;
+};
+
+type SoqlPrimaryType = {
+    kind: 'soql';
+} & SoqlType;
+
+type SoslPrimaryType = {
+    kind: 'sosl';
+} & SoslType;
 
 export type PrimaryType =
-    string | SoqlType | LiteralPrimaryType | SoslPrimaryType | TypeType | 'unSupported';
+    StringPrimaryType | SoqlPrimaryType | LiteralPrimaryType | SoslPrimaryType | TypePrimaryType;
 
-export const makePrimaryType = (primary: PrimaryClass): PrimaryType => {
+export const makePrimaryType = (primary: PrimaryClass): PrimaryType | undefined => {
     const elementClass = primary.getValue();
 
     if (elementClass) {
         if (isStringPrimaryElementClass(elementClass)) {
             const value = elementClass.getPrimary();
             if (value) {
-                return value;
+                return {
+                    kind: 'value',
+                    value: value,
+                };
             }
         }
 
         if (isTypeRefPrimaryElementClass(elementClass)) {
-            const value = elementClass.getPrimary();
-            return makeTypeType(value);
+            const value = makeTypeType(elementClass.getPrimary());
+            if (value) {
+                return {
+                    kind: 'type',
+                    value: value,
+                };
+            }
         }
 
         if (isLiteralPrimaryElementClass(elementClass)) {
@@ -51,6 +69,7 @@ export const makePrimaryType = (primary: PrimaryClass): PrimaryType => {
 
             if (valueValue && valueType) {
                 return {
+                    kind: 'literal',
                     value: valueValue,
                     valueType: valueType,
                 };
@@ -58,15 +77,25 @@ export const makePrimaryType = (primary: PrimaryClass): PrimaryType => {
         }
 
         if (isSoqlPrimaryElementClass(elementClass)) {
-            const value = elementClass.getPrimary();
-            return makesoqlType(value);
+            const value = makesoqlType(elementClass.getPrimary());
+            if (value) {
+                return {
+                    kind: 'soql',
+                    ...value,
+                };
+            }
         }
 
         if (isSoslPrimaryElementClass(elementClass)) {
-            const value = elementClass.getPrimary();
-            return value;
+            const value = makeSoslType(elementClass.getPrimary());
+            if (value) {
+                return {
+                    kind: 'sosl',
+                    ...value,
+                };
+            }
         }
     }
 
-    return 'unSupported';
+    return undefined;
 };

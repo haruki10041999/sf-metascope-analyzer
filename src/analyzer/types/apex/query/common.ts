@@ -2,13 +2,11 @@ import {
     LogicalExpressionClass,
     FieldExpressionClass,
     NormalValueClass,
-    SubQueryClass,
     isString,
     isExpressionClass,
     isSoqlFunctionClass,
     isLogicalExpressionClass,
     isFieldExpressionClass,
-    isDataCategorySelectionClass,
     isSignedLiteralClass,
     isNormalValueClassArray,
     isDateFormulaClass,
@@ -72,10 +70,13 @@ export const makeValueType = (value: NormalValueClass): ValueType | undefined =>
         }
 
         if (isExpressionClass(valueValue)) {
-            return {
-                kind: 'bind',
-                value: makeExpressionType(valueValue),
-            };
+            const expression = makeExpressionType(valueValue);
+            if (expression) {
+                return {
+                    kind: 'bind',
+                    value: expression,
+                };
+            }
         }
 
         if (isSignedLiteralClass(valueValue)) {

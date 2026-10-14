@@ -1,4 +1,4 @@
-import { FromNameClass, isFromNameClass } from '../converter';
+import { FromNameClass } from '../converter';
 
 export type FromField = {
     field: string;

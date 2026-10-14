@@ -1,9 +1,4 @@
-import {
-    FieldOrderClass,
-    isFieldOrderClass,
-    isSoqlFunctionClass,
-    isStringArray,
-} from '../converter';
+import { FieldOrderClass, isSoqlFunctionClass, isStringArray } from '../converter';
 
 import { SoqlFunctionField, makeSoqlFunctionField } from './soqlFunction';
 

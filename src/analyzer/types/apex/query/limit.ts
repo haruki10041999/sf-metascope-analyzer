@@ -21,10 +21,13 @@ export const makeLimitField = (limitClause: string | ExpressionClass): LimitFiel
     }
 
     if (isExpressionClass(limitClause)) {
-        return {
-            kind: 'bind',
-            value: makeExpressionType(limitClause),
-        };
+        const expression = makeExpressionType(limitClause);
+        if (expression) {
+            return {
+                kind: 'bind',
+                value: expression,
+            };
+        }
     }
 
     return undefined;

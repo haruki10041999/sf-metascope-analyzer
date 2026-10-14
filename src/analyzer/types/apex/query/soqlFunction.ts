@@ -90,11 +90,14 @@ const makeDistanceValue = (
             }
 
             if (isExpressionClass(location)) {
-                return {
-                    field: field,
-                    location: makeExpressionType(location),
-                    unit: unit,
-                };
+                const expression = makeExpressionType(location);
+                if (expression) {
+                    return {
+                        field: field,
+                        location: expression,
+                        unit: unit,
+                    };
+                }
             }
 
             if (isCoordinateValueArray(location)) {

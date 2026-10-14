@@ -1,9 +1,6 @@
 import {
     NormalModifierClass,
     AnnotationClass,
-    ModifierElementClass,
-    NormalModifierElementClass,
-    AnnotationModifierElementClass,
     NormalLiteralClass,
     ElementValuePairClass,
 } from './converter';
@@ -130,7 +127,7 @@ export type ModifierType = {
     };
 };
 
-export const makeAnnotationType = <TName extends string>(
+const makeAnnotationType = <TName extends string>(
     result: AnnotationType<TName>[],
     name: TName,
     param: NormalLiteralClass | ElementValuePairClass[] | null,
@@ -176,7 +173,7 @@ export const makeAnnotationType = <TName extends string>(
     }
     result.push(annotation);
 };
-export const makeModifierType = (modifiers: NormalModifierClass[]): ModifierType => {
+export const makeModifierType = (modifiers: NormalModifierClass[]): ModifierType | undefined => {
     const modifierType: ModifierType = {};
 
     modifiers.forEach((modifier) => {
@@ -344,5 +341,9 @@ export const makeModifierType = (modifiers: NormalModifierClass[]): ModifierType
         }
     });
 
-    return modifierType;
+    if (Object.keys(modifierType).length > 0) {
+        return modifierType;
+    }
+
+    return undefined;
 };

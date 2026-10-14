@@ -2,7 +2,7 @@ import { ExpressionClass, isString, isExpressionClass } from '../converter';
 
 import { ExpressionType, makeExpressionType } from '../expression';
 
-export type offsetField =
+export type OffsetField =
     | {
           kind: 'number';
           value: string;
@@ -14,7 +14,7 @@ export type offsetField =
 
 export const makeOffsetField = (
     offsetClause: string | ExpressionClass,
-): offsetField | undefined => {
+): OffsetField | undefined => {
     if (isString(offsetClause)) {
         return {
             kind: 'number',
@@ -23,10 +23,13 @@ export const makeOffsetField = (
     }
 
     if (isExpressionClass(offsetClause)) {
-        return {
-            kind: 'bind',
-            value: makeExpressionType(offsetClause),
-        };
+        const expression = makeExpressionType(offsetClause);
+        if (expression) {
+            return {
+                kind: 'bind',
+                value: expression,
+            };
+        }
     }
 
     return undefined;

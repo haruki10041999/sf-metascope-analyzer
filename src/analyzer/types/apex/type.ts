@@ -54,7 +54,7 @@ export type TypeType =
           valueType: TypeType;
       };
 
-export const makeTypeType = (type: TypeRefClass): TypeType => {
+export const makeTypeType = (type: TypeRefClass): TypeType | undefined => {
     const value = type.getValue();
     const dimension = type.getDimension();
 
@@ -62,11 +62,15 @@ export const makeTypeType = (type: TypeRefClass): TypeType => {
         if (dimension) {
             const arrayedType = new TypeRefClass();
             arrayedType.setValue(value);
-            return {
-                kind: 'array',
-                name: makeTypeType(arrayedType),
-                dimension: dimension,
-            };
+            const arrayedTypeType = makeTypeType(arrayedType);
+
+            if (arrayedTypeType) {
+                return {
+                    kind: 'array',
+                    name: arrayedTypeType,
+                    dimension: dimension,
+                };
+            }
         }
 
         if (value.length === 1) {
@@ -83,18 +87,26 @@ export const makeTypeType = (type: TypeRefClass): TypeType => {
 
                 if (generic) {
                     if ((isListType(typeName) || isSetType(typeName)) && generic.length === 1) {
-                        return {
-                            kind: isListType(typeName) ? 'list' : 'set',
-                            type: makeTypeType(generic.at(0)!),
-                        };
+                        const type = makeTypeType(generic.at(0)!);
+                        if (type) {
+                            return {
+                                kind: isListType(typeName) ? 'list' : 'set',
+                                type: type,
+                            };
+                        }
                     }
 
                     if (isMapType(typeName) && generic.length === 2) {
-                        return {
-                            kind: 'map',
-                            keyType: makeTypeType(generic.at(0)!),
-                            valueType: makeTypeType(generic.at(1)!),
-                        };
+                        const keyType = makeTypeType(generic.at(0)!);
+                        const valueType = makeTypeType(generic.at(1)!);
+
+                        if (keyType && valueType) {
+                            return {
+                                kind: 'map',
+                                keyType: keyType,
+                                valueType: valueType,
+                            };
+                        }
                     }
                 }
 
@@ -104,7 +116,9 @@ export const makeTypeType = (type: TypeRefClass): TypeType => {
                 };
 
                 if (generic) {
-                    typeType.generic = generic.map((g) => makeTypeType(g));
+                    typeType.generic = generic
+                        .map((g) => makeTypeType(g))
+                        .filter((g) => g !== undefined);
                 }
                 return typeType;
             }
@@ -116,13 +130,13 @@ export const makeTypeType = (type: TypeRefClass): TypeType => {
 
             if (type.getValue().at(-1) && type.getValue().at(-1)!.getGeneric().length > 0) {
                 const generic = type.getValue().at(-1)!.getGeneric();
-                typeType.generic = generic.map((g) => makeTypeType(g));
+                typeType.generic = generic
+                    .map((g) => makeTypeType(g))
+                    .filter((g) => g !== undefined);
             }
             return typeType;
         }
     }
 
-    return {
-        kind: 'unSupported',
-    };
+    return undefined;
 };

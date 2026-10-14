@@ -1,20 +1,63 @@
-import { WithClauseClass, isLogicalExpressionClass, isString } from '../converter';
+import {
+    WithClauseClass,
+    SoslWithClauseClass,
+    isLogicalExpressionClass,
+    isString,
+    isStringArray,
+    isExpressionClass,
+    DataCategorySelectionClass,
+    isDataCategorySelectionClassArray,
+} from '../converter';
 
+import { ExpressionType, makeExpressionType } from '../expression';
 import { LogicalField, makeLogicalField } from './common';
+
+export type DataCategoryField = {
+    field: string;
+    selector: string;
+    category: string[];
+};
 
 export type WithField =
     | {
           kind: string;
-          categories?: {
-              field: string;
-              selector: string;
-              category: string[];
-          }[];
+          categories?: DataCategoryField[];
       }
     | {
           kind: 'filtering';
           value: LogicalField;
       };
+
+export type SoslWithField = {
+    kind: string;
+    param?: string | string[] | ExpressionType | DataCategoryField[];
+};
+
+export const makeDataCategoryField = (
+    dataCategory: DataCategorySelectionClass[],
+): DataCategoryField[] | undefined => {
+    const categories: DataCategoryField[] = [];
+
+    dataCategory.forEach((dc) => {
+        const valueValue = dc.getValue();
+        const selector = dc.getSelector();
+        const category = dc.getCategory();
+
+        if (valueValue && selector && category.length > 0) {
+            categories.push({
+                field: valueValue,
+                selector: selector,
+                category: category,
+            });
+        }
+    });
+
+    if (categories.length > 0) {
+        return categories;
+    }
+
+    return undefined;
+};
 
 export const makewithField = (withClause: WithClauseClass): WithField | undefined => {
     const value = withClause.getValue();
@@ -27,26 +70,10 @@ export const makewithField = (withClause: WithClauseClass): WithField | undefine
             };
 
             if (field.length > 0) {
-                const categories: {
-                    field: string;
-                    selector: string;
-                    category: string[];
-                }[] = [];
-
-                field.forEach((f) => {
-                    const valueValue = f.getValue();
-                    const selector = f.getSelector();
-                    const category = f.getCategory();
-
-                    if (valueValue && selector && category.length > 0) {
-                        categories.push({
-                            field: valueValue,
-                            selector: selector,
-                            category: category,
-                        });
-                    }
-                });
-                withField.categories = categories;
+                const categories = makeDataCategoryField(field);
+                if (categories) {
+                    withField.categories = categories;
+                }
             }
 
             return withField;
@@ -61,6 +88,51 @@ export const makewithField = (withClause: WithClauseClass): WithField | undefine
                 };
             }
         }
+    }
+
+    return undefined;
+};
+
+export const makeSoslWithField = (
+    soslWithClause: SoslWithClauseClass[],
+): SoslWithField[] | undefined => {
+    const soslWithFields: SoslWithField[] = [];
+
+    soslWithClause.forEach((withClause) => {
+        const kind = withClause.getValue();
+        const param = withClause.getContent();
+
+        if (kind) {
+            const soslWithField: SoslWithField = {
+                kind: kind,
+            };
+
+            if (param) {
+                if (isString(param)) {
+                    soslWithField.param = param;
+                }
+
+                if (isStringArray(param) && param.length > 0) {
+                    soslWithField.param = param;
+                }
+
+                if (isExpressionClass(param)) {
+                    soslWithField.param = makeExpressionType(param);
+                }
+
+                if (isDataCategorySelectionClassArray(param)) {
+                    const categories = makeDataCategoryField(param);
+                    if (categories) {
+                        soslWithField.param = categories;
+                    }
+                }
+            }
+            soslWithFields.push(soslWithField);
+        }
+    });
+
+    if (soslWithFields.length > 0) {
+        return soslWithFields;
     }
 
     return undefined;

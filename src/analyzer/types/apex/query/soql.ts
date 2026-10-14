@@ -9,26 +9,24 @@ import { LimitField, makeLimitField } from './limit';
 import { makeUpdateField } from './update';
 import { WithField, makewithField } from './with';
 import { GroupByField, makeGroupByField } from './groupBy';
-import { offsetField, makeOffsetField } from './offset';
+import { OffsetField, makeOffsetField } from './offset';
 
-export type SoqlType =
-    | {
-          select: SelectField;
-          from: FromField;
-          for?: string;
-          where?: WhereField;
-          orderBy?: OrderByField[];
-          limit?: LimitField;
-          update?: string[];
-          usingScope?: string;
-          with?: WithField;
-          groupBy?: GroupByField;
-          offset?: offsetField;
-          allRows?: string;
-      }
-    | 'Unsupported';
+export type SoqlType = {
+    select: SelectField;
+    from: FromField;
+    for?: string;
+    where?: WhereField;
+    orderBy?: OrderByField[];
+    limit?: LimitField;
+    update?: string[];
+    usingScope?: string;
+    with?: WithField;
+    groupBy?: GroupByField;
+    offset?: OffsetField;
+    allRows?: string;
+};
 
-export const makesoqlType = (query: NormalQueryClass): SoqlType => {
+export const makesoqlType = (query: NormalQueryClass): SoqlType | undefined => {
     const selectField = makeSelectField(query.getValue());
     const fromField = makeFromField(query.getFrom());
 
@@ -97,5 +95,5 @@ export const makesoqlType = (query: NormalQueryClass): SoqlType => {
         return soqlType;
     }
 
-    return 'Unsupported';
+    return undefined;
 };
