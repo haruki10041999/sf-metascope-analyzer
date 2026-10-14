@@ -27,11 +27,6 @@ import { DmlField, makeDmlField, makeUpsertField, makeMergeField } from './dml';
 import { RunAsField, makeRunAsField } from './runAs';
 import { LocalVariableField, makeLocalVariableField } from './localVariable';
 
-export type BlockField = {
-    kind: 'block';
-    block: StatementType[];
-};
-
 export type ExpressionStatementField = {
     kind: 'return' | 'expression' | 'throw';
     block: ExpressionType;
@@ -43,7 +38,7 @@ export type StringStatementField = {
 };
 
 export type StatementType =
-    | BlockField
+    | StatementType[]
     | IfField
     | SwitchField
     | ForField
@@ -56,7 +51,7 @@ export type StatementType =
     | RunAsField
     | LocalVariableField;
 
-export const makeBlockField = (statement: NormalStatementClass[]): BlockField | undefined => {
+export const makeBlockField = (statement: NormalStatementClass[]): StatementType[] | undefined => {
     const statementTypes: StatementType[] = [];
 
     statement.forEach((s) => {
@@ -67,10 +62,7 @@ export const makeBlockField = (statement: NormalStatementClass[]): BlockField | 
     });
 
     if (statementTypes.length > 0) {
-        return {
-            kind: 'block',
-            block: statementTypes,
-        };
+        return statementTypes;
     }
 
     return undefined;
