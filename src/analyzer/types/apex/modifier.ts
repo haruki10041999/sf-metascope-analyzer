@@ -232,7 +232,7 @@ export const makeModifierType = (modifiers: NormalModifierClass[]): ModifierType
             }
         }
 
-        if (modifierElement.getModifier() === 'annotation') {
+        if (modifierElement.getType() === 'annotation') {
             const modifier = modifierElement.getModifier() as AnnotationClass;
 
             if (!modifierType.annotation) {
