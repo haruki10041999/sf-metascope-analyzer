@@ -156,10 +156,10 @@ export const makeSoqlFunctionField = (
                 const dateFieldName = param.getValue();
                 const isConvertTimeZone = param.getIsConvertTimeZone();
 
-                if (dateFieldName.length > 0 && isConvertTimeZone) {
+                if (dateFieldName.length > 0) {
                     soqlFunctionField.arg = {
                         fieldName: dateFieldName,
-                        isConvertTimeZone: isConvertTimeZone,
+                        isConvertTimeZone: isConvertTimeZone || false,
                     };
                     return soqlFunctionField;
                 }

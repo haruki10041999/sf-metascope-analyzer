@@ -69,11 +69,11 @@ export const makeWhereField = (
         }
     });
 
-    if (!logicalOperator) {
-        return whereFields;
-    }
-
     if (whereFields.length > 0) {
+        if (!logicalOperator) {
+            return whereFields;
+        }
+
         return {
             logicalOperator:
                 logicalOperator.toUpperCase() === 'AND'
