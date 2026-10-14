@@ -1,19 +1,19 @@
 import { TryStatementClass, CatchClauseClass } from '../converter';
 import { makeModifierType, ModifierType } from '../modifier';
 
-import { BlockField, makeBlockField } from './statement';
+import { StatementType, makeStatementType } from './statement';
 
 type TryBlock =
     | {
           type: 'try' | 'finally';
-          block: BlockField;
+          block: StatementType[];
       }
     | {
           type: 'catch';
           exception: string;
           excepstionType: string[];
           modifier?: ModifierType;
-          block: BlockField;
+          block: StatementType[];
       };
 
 export type TryField = {
@@ -24,7 +24,10 @@ export type TryField = {
 export const makeTryField = (tryStatement: TryStatementClass): TryField | undefined => {
     const tryBlocks: TryBlock[] = [];
 
-    const tryBlock = makeBlockField(tryStatement.getValue());
+    const tryBlock = tryStatement
+        .getValue()
+        .map((b) => makeStatementType(b))
+        .filter((b) => b !== undefined);
     if (tryBlock) {
         tryBlocks.push({
             type: 'try',
@@ -35,7 +38,10 @@ export const makeTryField = (tryStatement: TryStatementClass): TryField | undefi
     tryStatement.getCatchBlock().forEach((c) => {
         const exception = c.getValue();
         const exceptionType = c.getValueType();
-        const block = makeBlockField(c.getBlock());
+        const block = c
+            .getBlock()
+            .map((b) => makeStatementType(b))
+            .filter((b) => b !== undefined);
         const modifier = makeModifierType(c.getModifier());
 
         if (exception && exceptionType && block) {
@@ -54,7 +60,10 @@ export const makeTryField = (tryStatement: TryStatementClass): TryField | undefi
         }
     });
 
-    const finallyBlock = makeBlockField(tryStatement.getFinallyBlock());
+    const finallyBlock = tryStatement
+        .getFinallyBlock()
+        .map((b) => makeStatementType(b))
+        .filter((b) => b !== undefined);
     if (finallyBlock) {
         tryBlocks.push({
             type: 'finally',

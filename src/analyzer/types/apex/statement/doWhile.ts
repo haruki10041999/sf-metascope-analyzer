@@ -1,19 +1,22 @@
 import { DoWhileStatementClass } from '../converter';
 
 import { ExpressionType, makeExpressionType } from '../expression';
-import { BlockField, makeBlockField } from './statement';
+import { StatementType, makeStatementType } from './statement';
 
 export type DoWhileField = {
     type: 'doWhile';
     condition: ExpressionType;
-    block: BlockField;
+    block: StatementType[];
 };
 
 export const makeDoWhileField = (
     dowhileStatement: DoWhileStatementClass,
 ): DoWhileField | undefined => {
     const condition = makeExpressionType(dowhileStatement.getValue());
-    const block = makeBlockField(dowhileStatement.getBlock());
+    const block = dowhileStatement
+        .getBlock()
+        .map((b) => makeStatementType(b))
+        .filter((b) => b !== undefined);
 
     if (condition && block) {
         return {
