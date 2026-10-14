@@ -1,12 +1,12 @@
 import { RunAsStatementClass } from '../converter';
 
 import { ExpressionType, makeExpressionType } from '../expression';
-import { StatementType, makeBlockField } from './statement';
+import { BlockField, makeBlockField } from './statement';
 
 export type RunAsField = {
     kind: 'runAs';
     arg: ExpressionType[];
-    block: StatementType[];
+    block: BlockField;
 };
 
 export const makeRunAsField = (runAsStatement: RunAsStatementClass): RunAsField | undefined => {

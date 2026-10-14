@@ -1,19 +1,19 @@
 import { TryStatementClass, CatchClauseClass } from '../converter';
 import { makeModifierType, ModifierType } from '../modifier';
 
-import { StatementType, makeBlockField } from './statement';
+import { BlockField, makeBlockField } from './statement';
 
 type TryBlock =
     | {
           type: 'try' | 'finally';
-          block: StatementType[];
+          block: BlockField;
       }
     | {
           type: 'catch';
           exception: string;
           excepstionType: string[];
           modifier?: ModifierType;
-          block: StatementType[];
+          block: BlockField;
       };
 
 export type TryField = {

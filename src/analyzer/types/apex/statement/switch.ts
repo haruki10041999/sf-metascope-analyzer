@@ -2,13 +2,12 @@ import {
     SwitchStatementClass,
     WhenControlClass,
     WhenValueClass,
-    WhenLiteralClass,
     isString,
     isWhenLiteralClassArray,
     isStringArray,
 } from '../converter';
 
-import { StatementType, makeBlockField } from './statement';
+import { BlockField, makeBlockField } from './statement';
 import { ExpressionType, makeExpressionType } from '../expression';
 import { TypeType, makeTypeType } from '../type';
 
@@ -21,7 +20,7 @@ type WhenValue =
 
 type WhenBlock = {
     conditionValue: WhenValue;
-    block: StatementType;
+    block: BlockField;
 };
 
 export type SwitchField = {
