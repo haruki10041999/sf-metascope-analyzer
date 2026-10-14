@@ -6,9 +6,14 @@ import { OrderByField, makeOrderByField } from './orderBy';
 import { LimitField, makeLimitField } from './limit';
 import { OffsetField, makeOffsetField } from './offset';
 
+type SoslField = {
+    field?: string[][];
+    soqlFunction?: SoqlFunctionField[];
+};
+
 export type FieldSpecField = {
     object: string;
-    field?: (string[] | SoqlFunctionField)[];
+    field?: SoslField;
     where?: LogicalField;
     listView?: string;
     orderBy?: OrderByField[];
@@ -16,33 +21,60 @@ export type FieldSpecField = {
     offset?: OffsetField;
 };
 
-const makeSoslField = (soslField: SoslFieldClass): string[] | SoqlFunctionField | undefined => {
-    const value = soslField.getValue();
-    const func = soslField.getFunc();
+const makeSoslField = (soslField: SoslFieldClass[]): SoslField | undefined => {
+    const fieldList: SoslField = {};
 
-    if (value) {
-        let field: string[] | SoqlFunctionField | undefined = undefined;
-        if (isStringArray(value)) {
-            field = value;
-        }
+    soslField.forEach((f) => {
+        const value = f.getValue();
+        const func = f.getFunc();
 
-        if (isSoqlFunctionClass(value)) {
-            const soqlFunctionField = makeSoqlFunctionField(value);
-            if (soqlFunctionField) {
-                field = soqlFunctionField;
-            }
-        }
-
-        if (field) {
-            if (func) {
-                field = {
-                    funcName: func,
-                    arg: field,
-                };
+        if (value) {
+            let field: string[] | SoqlFunctionField | undefined = undefined;
+            if (isStringArray(value) && value.length > 0) {
+                field = value;
             }
 
-            return field;
+            if (isSoqlFunctionClass(value)) {
+                const soqlFunctionField = makeSoqlFunctionField(value);
+                if (soqlFunctionField) {
+                    field = soqlFunctionField;
+                }
+            }
+
+            if (field) {
+                if (func) {
+                    field = {
+                        funcName: func,
+                        arg: field,
+                    };
+                }
+
+                if (Array.isArray(field)) {
+                    if (!fieldList.field) {
+                        fieldList.field = [];
+                    }
+                    fieldList.field.push(field);
+                } else {
+                    if (!fieldList.soqlFunction) {
+                        fieldList.soqlFunction = [];
+                    }
+
+                    fieldList.soqlFunction.push(field);
+                }
+            }
         }
+    });
+
+    if (fieldList.field && fieldList.field.length > 0) {
+        fieldList.field.sort((a, b) => a.length - b.length || a.at(0)!.localeCompare(b.at(0)!));
+    }
+
+    if (fieldList.soqlFunction && fieldList.soqlFunction.length > 0) {
+        fieldList.soqlFunction.sort((a, b) => a.funcName.localeCompare(b.funcName));
+    }
+
+    if (Object.keys(fieldList).length > 0) {
+        return fieldList;
     }
 
     return undefined;
@@ -68,14 +100,10 @@ export const makeFieldSpecField = (fieldSpec: FieldSpecClass[]): FieldSpecField[
             };
 
             if (fieldList.length > 0) {
-                const fields: (string[] | SoqlFunctionField)[] = [];
-                fieldList.forEach((field) => {
-                    const soslField = makeSoslField(field);
-                    if (soslField) {
-                        fields.push(soslField);
-                    }
-                });
-                fieldSpecField.field = fields;
+                const fields = makeSoslField(fieldList);
+                if (fields) {
+                    fieldSpecField.field = fields;
+                }
             }
 
             const whereField = makeLogicalField(where);

@@ -38,11 +38,11 @@ export const makeSoslType = (
     if (value) {
         let keyWord: KeyWordField | undefined = undefined;
         if (isString(value)) {
-            const word = value.match(/(['"])(.*?)\1/g);
+            const word = value.match(/(['"])(.*?)\1/);
             if (word) {
                 keyWord = {
                     kind: 'string',
-                    value: word.at(0)!,
+                    value: word.at(2)!,
                 };
             }
         }

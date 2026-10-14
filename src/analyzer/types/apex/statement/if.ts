@@ -22,17 +22,20 @@ export const makeIfField = (statement: IfStatementClass[]): IfField | undefined 
 
         if (condition && block) {
             if (isExpressionClass(condition)) {
-                return {
-                    condition: makeExpressionType(condition),
-                    block: block,
-                };
+                const expression = makeExpressionType(condition);
+                if (expression) {
+                    ifBlock.push({
+                        condition: expression,
+                        block: block,
+                    });
+                }
             }
 
             if (isString(condition) && condition.toLocaleLowerCase() === 'else') {
-                return {
+                ifBlock.push({
                     condition: 'else',
                     block: block,
-                };
+                });
             }
         }
     });
