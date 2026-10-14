@@ -4,6 +4,8 @@
   "conversionErrors": [],
   "converted": {
     "fileType": "trigger",
+    "name": "ParserTrigger",
+    "object": "Account",
     "triggerCase": [
       {
         "kind": "INSERT",

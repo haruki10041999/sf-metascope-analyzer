@@ -16,6 +16,8 @@ type TriggerCaseType = {
 
 export type TriggerUnitType = {
     fileType: 'trigger';
+    name: string;
+    object: string;
     triggerCase: TriggerCaseType[];
     block: ({ modifier?: ModifierType } & (AnonymousTriggerMemberType | StatementType))[];
 };
@@ -42,7 +44,7 @@ export const makeTriggerUnitType = (triggerUnit: TriggerUnitClass): TriggerUnitT
         .filter((t) => t !== undefined);
     const triggerBlock = triggerUnit.getBlock();
 
-    if (value && triggerCaseType.length > 0 && triggerBlock.length > 0) {
+    if (value && value.length === 2 && triggerCaseType.length > 0 && triggerBlock.length > 0) {
         const blocks: ({ modifier?: ModifierType } & (
             AnonymousTriggerMemberType | StatementType
         ))[] = [];
@@ -84,6 +86,8 @@ export const makeTriggerUnitType = (triggerUnit: TriggerUnitClass): TriggerUnitT
 
         return {
             fileType: 'trigger',
+            name: value.at(0)!,
+            object: value.at(1)!,
             triggerCase: triggerCaseType,
             block: blocks,
         };
