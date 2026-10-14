@@ -9,7 +9,7 @@ export type MethodField = {
     name: string;
     returnType: TypeType | 'void';
     param?: ParameterType[];
-    block: StatementType[];
+    block?: StatementType[];
 };
 
 export const makeMethodField = (
@@ -24,13 +24,12 @@ export const makeMethodField = (
         .filter((b) => b !== undefined);
 
     let methodField: MethodField | undefined = undefined;
-    if (name && valueType && block) {
+    if (name && valueType) {
         if (isString(valueType)) {
             methodField = {
                 kind: 'method',
                 name: name,
                 returnType: 'void',
-                block: block,
             };
         }
 
@@ -41,7 +40,6 @@ export const makeMethodField = (
                     kind: 'method',
                     name: name,
                     returnType: returnType,
-                    block: block,
                 };
             }
         }
@@ -50,6 +48,10 @@ export const makeMethodField = (
     if (methodField) {
         if (param) {
             methodField.param = param;
+        }
+
+        if (block.length > 0) {
+            methodField.block = block;
         }
 
         return methodField;

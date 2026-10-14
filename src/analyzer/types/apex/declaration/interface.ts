@@ -91,7 +91,7 @@ export const makeInterfaceField = (
             block: body,
         };
 
-        if (extend) {
+        if (extend.length > 0) {
             interfaceField.extend = extend;
         }
 

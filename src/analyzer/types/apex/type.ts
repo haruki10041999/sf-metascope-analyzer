@@ -85,7 +85,7 @@ export const makeTypeType = (type: TypeRefClass): TypeType | undefined => {
                     };
                 }
 
-                if (generic) {
+                if (generic.length > 0) {
                     if ((isListType(typeName) || isSetType(typeName)) && generic.length === 1) {
                         const type = makeTypeType(generic.at(0)!);
                         if (type) {
@@ -115,7 +115,7 @@ export const makeTypeType = (type: TypeRefClass): TypeType | undefined => {
                     name: [typeName],
                 };
 
-                if (generic) {
+                if (generic.length > 0) {
                     typeType.generic = generic
                         .map((g) => makeTypeType(g))
                         .filter((g) => g !== undefined);

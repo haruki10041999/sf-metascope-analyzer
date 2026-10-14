@@ -18,7 +18,7 @@ export type GroupByField = {
     having?: LogicalField;
 };
 
-export const makeGroupByField = (groupByClause: GroupByClauseClass): GroupByField => {
+export const makeGroupByField = (groupByClause: GroupByClauseClass): GroupByField | undefined => {
     const groupByField: GroupByField = {
         field: [],
     };
@@ -57,5 +57,9 @@ export const makeGroupByField = (groupByClause: GroupByClauseClass): GroupByFiel
         }
     }
 
-    return groupByField;
+    if (groupByField.field.length > 0) {
+        return groupByField;
+    }
+
+    return undefined;
 };

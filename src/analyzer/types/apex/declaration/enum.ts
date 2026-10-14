@@ -16,7 +16,7 @@ export const makeEnumField = (enumDeclaration: EnumDeclarationClass): EnumField 
             name: value,
         };
 
-        if (constant) {
+        if (constant.length > 0) {
             enumField.constant = constant;
         }
 
