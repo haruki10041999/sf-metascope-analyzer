@@ -4,9 +4,10 @@ import {
     isNormalStatementClassArray,
 } from '../converter';
 
+import { RewriteQueries, QueryStore, extractQueries } from '../commons';
 import { TypeType, makeTypeType } from '../type';
 import { ModifierType, makeModifierType } from '../modifier';
-import { StatementType, makeStatementType } from '../statement';
+import { BlockField, makeBlockField } from '../statement';
 import { makeMemberType } from './member';
 import { MethodField } from './method';
 import { PropertyField } from './property';
@@ -44,9 +45,10 @@ export type InnerClassField = Omit<ClassField, 'kind'> & {
 };
 
 export type InitializeBlockField = {
-    block: StatementType[];
     isStatic: boolean;
-};
+    soql?: QueryStore['soql'];
+    sosl?: QueryStore['sosl'];
+} & RewriteQueries<BlockField>;
 
 export type ClassField = {
     kind: 'class';
@@ -93,11 +95,24 @@ export const makeClassField = (classDeclaration: ClassDeclarationClass): ClassFi
                     classField.initializerBlock = [];
                 }
 
-                const initializerBlock: InitializeBlockField = {
-                    block: body.map((b) => makeStatementType(b)).filter((b) => b !== undefined),
-                    isStatic: b.getIsStatic() || false,
-                };
-                classField.initializerBlock.push(initializerBlock);
+                const queryStore: QueryStore = { soql: [], sosl: [] };
+
+                const initializerBlock = extractQueries(makeBlockField(body), queryStore);
+                if (initializerBlock) {
+                    const initializedBlockField: InitializeBlockField = {
+                        ...initializerBlock,
+                        isStatic: b.getIsStatic() || false,
+                    };
+
+                    if (queryStore.soql.length > 0) {
+                        initializedBlockField.soql = queryStore.soql;
+                    }
+                    if (queryStore.sosl.length > 0) {
+                        initializedBlockField.sosl = queryStore.sosl;
+                    }
+
+                    classField.initializerBlock.push(initializedBlockField);
+                }
             }
 
             if (isMemberDeclarationClass(body)) {
@@ -240,3 +255,4 @@ export const makeClassField = (classDeclaration: ClassDeclarationClass): ClassFi
 
     return undefined;
 };
+

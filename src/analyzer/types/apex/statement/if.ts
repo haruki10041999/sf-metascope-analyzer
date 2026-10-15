@@ -1,12 +1,12 @@
 import { IfStatementClass, isExpressionClass, isString } from '../converter';
 
 import { StatementType, makeStatementType } from './statement';
+import { BlockField } from './block';
 import { ExpressionType, makeExpressionType } from '../expression';
 
 type IfBlock = {
     condition: ExpressionType | 'else';
-    block: StatementType;
-};
+} & (BlockField | { block: StatementType });
 
 export type IfField = {
     kind: 'if';
@@ -20,13 +20,22 @@ export const makeIfField = (statement: IfStatementClass[]): IfField | undefined 
         const condition = s.getValue();
         const block = makeStatementType(s.getBlock());
 
-        if (condition && block) {
+        let blockField: BlockField | { block: StatementType } | undefined = undefined;
+        if (block) {
+            if ('kind' in block) {
+                blockField = { block: block };
+            } else {
+                blockField = block;
+            }
+        }
+
+        if (condition && blockField) {
             if (isExpressionClass(condition)) {
                 const expression = makeExpressionType(condition);
                 if (expression) {
                     ifBlock.push({
                         condition: expression,
-                        block: block,
+                        ...blockField,
                     });
                 }
             }
@@ -34,7 +43,7 @@ export const makeIfField = (statement: IfStatementClass[]): IfField | undefined 
             if (isString(condition) && condition.toLocaleLowerCase() === 'else') {
                 ifBlock.push({
                     condition: 'else',
-                    block: block,
+                    ...blockField,
                 });
             }
         }
@@ -49,3 +58,4 @@ export const makeIfField = (statement: IfStatementClass[]): IfField | undefined 
 
     return undefined;
 };
+

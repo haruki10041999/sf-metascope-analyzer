@@ -16,6 +16,7 @@ import {
     isWhileStatementElementClass,
 } from '../converter';
 
+import { BlockField, makeBlockField } from './block';
 import { ExpressionType, makeExpressionType } from '../expression';
 import { IfField, makeIfField } from './if';
 import { SwitchField, makeSwitchField } from './switch';
@@ -37,7 +38,7 @@ export type StringStatementField = {
 };
 
 export type StatementType =
-    | StatementType[]
+    | BlockField
     | IfField
     | SwitchField
     | ForField
@@ -49,19 +50,6 @@ export type StatementType =
     | DmlField
     | RunAsField
     | LocalVariableField;
-
-export const makeBlockField = (statement: NormalStatementClass[]): StatementType[] => {
-    const statementTypes: StatementType[] = [];
-
-    statement.forEach((s) => {
-        const statementType = makeStatementType(s);
-        if (statementType) {
-            statementTypes.push(statementType);
-        }
-    });
-
-    return statementTypes;
-};
 
 export const makeStatementType = (statement: NormalStatementClass): StatementType | undefined => {
     const elementClass = statement.getValue();

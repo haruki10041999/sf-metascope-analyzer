@@ -26,8 +26,16 @@
             ],
             "block": [
               {
-                "kind": "return",
-                "block": {
+                "blockIndex": 1,
+                "kind": "declarationRef",
+                "declarationKind": "return",
+                "index": 1
+              }
+            ],
+            "return": [
+              {
+                "returnIndex": 1,
+                "value": {
                   "kind": "expression",
                   "left": {
                     "kind": "literal",
@@ -110,8 +118,16 @@
         ],
         "block": [
           {
-            "kind": "return",
-            "block": {
+            "blockIndex": 1,
+            "kind": "declarationRef",
+            "declarationKind": "return",
+            "index": 1
+          }
+        ],
+        "return": [
+          {
+            "returnIndex": 1,
+            "value": {
               "kind": "method",
               "object": {
                 "kind": "id",
@@ -152,8 +168,16 @@
         ],
         "block": [
           {
-            "kind": "return",
-            "block": {
+            "blockIndex": 1,
+            "kind": "declarationRef",
+            "declarationKind": "return",
+            "index": 1
+          }
+        ],
+        "return": [
+          {
+            "returnIndex": 1,
+            "value": {
               "kind": "expression",
               "left": {
                 "kind": "id",
@@ -742,7 +766,7 @@
                   "name": "String"
                 }
               ],
-              "creatorType": "set",
+              "creatorType": "list",
               "initialValue": [
                 {
                   "kind": "literal",
@@ -1176,7 +1200,7 @@
                   ]
                 }
               ],
-              "creatorType": "set",
+              "creatorType": "list",
               "initialValue": [
                 {
                   "kind": "instance",
@@ -1303,49 +1327,9 @@
           {
             "variant": "accountList",
             "initValue": {
-              "kind": "soql",
-              "select": {
-                "field": [
-                  {
-                    "field": [
-                      "AnnualRevenue"
-                    ]
-                  },
-                  {
-                    "field": [
-                      "Id"
-                    ]
-                  },
-                  {
-                    "field": [
-                      "Industry"
-                    ]
-                  },
-                  {
-                    "field": [
-                      "Name"
-                    ]
-                  }
-                ]
-              },
-              "from": {
-                "field": "Account"
-              },
-              "where": [
-                {
-                  "field": [
-                    "Id"
-                  ],
-                  "operator": "=",
-                  "value": {
-                    "kind": "bind",
-                    "value": {
-                      "kind": "id",
-                      "value": "accountId"
-                    }
-                  }
-                }
-              ]
+              "kind": "queryRef",
+              "queryKind": "soql",
+              "index": 1
             }
           }
         ],
@@ -1357,7 +1341,54 @@
               "Account"
             ]
           }
-        }
+        },
+        "soql": [
+          {
+            "soqlIndex": 1,
+            "select": {
+              "field": [
+                {
+                  "field": [
+                    "AnnualRevenue"
+                  ]
+                },
+                {
+                  "field": [
+                    "Id"
+                  ]
+                },
+                {
+                  "field": [
+                    "Industry"
+                  ]
+                },
+                {
+                  "field": [
+                    "Name"
+                  ]
+                }
+              ]
+            },
+            "from": {
+              "field": "Account"
+            },
+            "where": [
+              {
+                "field": [
+                  "Id"
+                ],
+                "operator": "=",
+                "value": {
+                  "kind": "bind",
+                  "value": {
+                    "kind": "id",
+                    "value": "accountId"
+                  }
+                }
+              }
+            ]
+          }
+        ]
       },
       {
         "kind": "field",
@@ -1365,45 +1396,9 @@
           {
             "variant": "contactList",
             "initValue": {
-              "kind": "soql",
-              "select": {
-                "field": [
-                  {
-                    "field": [
-                      "Id"
-                    ]
-                  },
-                  {
-                    "field": [
-                      "Name"
-                    ]
-                  },
-                  {
-                    "field": [
-                      "Account",
-                      "Name"
-                    ]
-                  }
-                ]
-              },
-              "from": {
-                "field": "Contact"
-              },
-              "where": [
-                {
-                  "field": [
-                    "AccountId"
-                  ],
-                  "operator": "=",
-                  "value": {
-                    "kind": "bind",
-                    "value": {
-                      "kind": "id",
-                      "value": "accountId"
-                    }
-                  }
-                }
-              ]
+              "kind": "queryRef",
+              "queryKind": "soql",
+              "index": 1
             }
           }
         ],
@@ -1415,7 +1410,50 @@
               "Contact"
             ]
           }
-        }
+        },
+        "soql": [
+          {
+            "soqlIndex": 1,
+            "select": {
+              "field": [
+                {
+                  "field": [
+                    "Id"
+                  ]
+                },
+                {
+                  "field": [
+                    "Name"
+                  ]
+                },
+                {
+                  "field": [
+                    "Account",
+                    "Name"
+                  ]
+                }
+              ]
+            },
+            "from": {
+              "field": "Contact"
+            },
+            "where": [
+              {
+                "field": [
+                  "AccountId"
+                ],
+                "operator": "=",
+                "value": {
+                  "kind": "bind",
+                  "value": {
+                    "kind": "id",
+                    "value": "accountId"
+                  }
+                }
+              }
+            ]
+          }
+        ]
       },
       {
         "kind": "field",
@@ -1423,62 +1461,9 @@
           {
             "variant": "results",
             "initValue": {
-              "kind": "soql",
-              "select": {
-                "field": [
-                  {
-                    "field": [
-                      "Industry"
-                    ]
-                  }
-                ],
-                "soqlFunction": [
-                  {
-                    "field": {
-                      "funcName": "AVG",
-                      "arg": [
-                        "AnnualRevenue"
-                      ]
-                    }
-                  },
-                  {
-                    "field": {
-                      "funcName": "COUNT",
-                      "arg": [
-                        "Id"
-                      ]
-                    }
-                  }
-                ]
-              },
-              "from": {
-                "field": "Account"
-              },
-              "groupBy": {
-                "field": [
-                  {
-                    "kind": "field",
-                    "field": [
-                      "Industry"
-                    ]
-                  }
-                ],
-                "having": [
-                  {
-                    "field": {
-                      "funcName": "COUNT",
-                      "arg": [
-                        "Id"
-                      ]
-                    },
-                    "operator": ">",
-                    "value": {
-                      "kind": "integer",
-                      "value": "1"
-                    }
-                  }
-                ]
-              }
+              "kind": "queryRef",
+              "queryKind": "soql",
+              "index": 1
             }
           }
         ],
@@ -1490,7 +1475,67 @@
               "AggregateResult"
             ]
           }
-        }
+        },
+        "soql": [
+          {
+            "soqlIndex": 1,
+            "select": {
+              "field": [
+                {
+                  "field": [
+                    "Industry"
+                  ]
+                }
+              ],
+              "soqlFunction": [
+                {
+                  "field": {
+                    "funcName": "AVG",
+                    "arg": [
+                      "AnnualRevenue"
+                    ]
+                  }
+                },
+                {
+                  "field": {
+                    "funcName": "COUNT",
+                    "arg": [
+                      "Id"
+                    ]
+                  }
+                }
+              ]
+            },
+            "from": {
+              "field": "Account"
+            },
+            "groupBy": {
+              "field": [
+                {
+                  "kind": "field",
+                  "field": [
+                    "Industry"
+                  ]
+                }
+              ],
+              "having": [
+                {
+                  "field": {
+                    "funcName": "COUNT",
+                    "arg": [
+                      "Id"
+                    ]
+                  },
+                  "operator": ">",
+                  "value": {
+                    "kind": "integer",
+                    "value": "1"
+                  }
+                }
+              ]
+            }
+          }
+        ]
       },
       {
         "kind": "field",
@@ -1498,45 +1543,9 @@
           {
             "variant": "functionAccounts",
             "initValue": {
-              "kind": "soql",
-              "select": {
-                "field": [
-                  {
-                    "field": [
-                      "Id"
-                    ]
-                  }
-                ],
-                "soqlFunction": [
-                  {
-                    "field": {
-                      "funcName": "CONVERT_CURRENCY",
-                      "arg": [
-                        "AnnualRevenue"
-                      ]
-                    }
-                  },
-                  {
-                    "field": {
-                      "funcName": "FORMAT",
-                      "arg": [
-                        "CreatedDate"
-                      ]
-                    }
-                  },
-                  {
-                    "field": {
-                      "funcName": "TOLABEL",
-                      "arg": [
-                        "Type"
-                      ]
-                    }
-                  }
-                ]
-              },
-              "from": {
-                "field": "Account"
-              }
+              "kind": "queryRef",
+              "queryKind": "soql",
+              "index": 1
             }
           }
         ],
@@ -1548,7 +1557,50 @@
               "Account"
             ]
           }
-        }
+        },
+        "soql": [
+          {
+            "soqlIndex": 1,
+            "select": {
+              "field": [
+                {
+                  "field": [
+                    "Id"
+                  ]
+                }
+              ],
+              "soqlFunction": [
+                {
+                  "field": {
+                    "funcName": "CONVERT_CURRENCY",
+                    "arg": [
+                      "AnnualRevenue"
+                    ]
+                  }
+                },
+                {
+                  "field": {
+                    "funcName": "FORMAT",
+                    "arg": [
+                      "CreatedDate"
+                    ]
+                  }
+                },
+                {
+                  "field": {
+                    "funcName": "TOLABEL",
+                    "arg": [
+                      "Type"
+                    ]
+                  }
+                }
+              ]
+            },
+            "from": {
+              "field": "Account"
+            }
+          }
+        ]
       },
       {
         "kind": "field",
@@ -1556,24 +1608,9 @@
           {
             "variant": "allFields",
             "initValue": {
-              "kind": "soql",
-              "select": {
-                "soqlFunction": [
-                  {
-                    "field": {
-                      "funcName": "FIELDS",
-                      "arg": "ALL"
-                    }
-                  }
-                ]
-              },
-              "from": {
-                "field": "Account"
-              },
-              "limit": {
-                "kind": "number",
-                "value": "200"
-              }
+              "kind": "queryRef",
+              "queryKind": "soql",
+              "index": 1
             }
           }
         ],
@@ -1585,7 +1622,29 @@
               "Account"
             ]
           }
-        }
+        },
+        "soql": [
+          {
+            "soqlIndex": 1,
+            "select": {
+              "soqlFunction": [
+                {
+                  "field": {
+                    "funcName": "FIELDS",
+                    "arg": "ALL"
+                  }
+                }
+              ]
+            },
+            "from": {
+              "field": "Account"
+            },
+            "limit": {
+              "kind": "number",
+              "value": "200"
+            }
+          }
+        ]
       },
       {
         "kind": "field",
@@ -1593,40 +1652,9 @@
           {
             "variant": "lockedAccounts",
             "initValue": {
-              "kind": "soql",
-              "select": {
-                "field": [
-                  {
-                    "field": [
-                      "Id"
-                    ]
-                  },
-                  {
-                    "field": [
-                      "Name"
-                    ]
-                  }
-                ]
-              },
-              "from": {
-                "field": "Account"
-              },
-              "for": "UPDATE",
-              "where": [
-                {
-                  "field": [
-                    "Id"
-                  ],
-                  "operator": "=",
-                  "value": {
-                    "kind": "bind",
-                    "value": {
-                      "kind": "id",
-                      "value": "accountId"
-                    }
-                  }
-                }
-              ]
+              "kind": "queryRef",
+              "queryKind": "soql",
+              "index": 1
             }
           }
         ],
@@ -1638,7 +1666,45 @@
               "Account"
             ]
           }
-        }
+        },
+        "soql": [
+          {
+            "soqlIndex": 1,
+            "select": {
+              "field": [
+                {
+                  "field": [
+                    "Id"
+                  ]
+                },
+                {
+                  "field": [
+                    "Name"
+                  ]
+                }
+              ]
+            },
+            "from": {
+              "field": "Account"
+            },
+            "for": "UPDATE",
+            "where": [
+              {
+                "field": [
+                  "Id"
+                ],
+                "operator": "=",
+                "value": {
+                  "kind": "bind",
+                  "value": {
+                    "kind": "id",
+                    "value": "accountId"
+                  }
+                }
+              }
+            ]
+          }
+        ]
       },
       {
         "kind": "field",
@@ -1646,27 +1712,9 @@
           {
             "variant": "userModeAccounts",
             "initValue": {
-              "kind": "soql",
-              "select": {
-                "field": [
-                  {
-                    "field": [
-                      "Id"
-                    ]
-                  },
-                  {
-                    "field": [
-                      "Name"
-                    ]
-                  }
-                ]
-              },
-              "from": {
-                "field": "Account"
-              },
-              "with": {
-                "kind": "USER_MODE"
-              }
+              "kind": "queryRef",
+              "queryKind": "soql",
+              "index": 1
             }
           }
         ],
@@ -1678,7 +1726,32 @@
               "Account"
             ]
           }
-        }
+        },
+        "soql": [
+          {
+            "soqlIndex": 1,
+            "select": {
+              "field": [
+                {
+                  "field": [
+                    "Id"
+                  ]
+                },
+                {
+                  "field": [
+                    "Name"
+                  ]
+                }
+              ]
+            },
+            "from": {
+              "field": "Account"
+            },
+            "with": {
+              "kind": "USER_MODE"
+            }
+          }
+        ]
       },
       {
         "kind": "field",
@@ -1686,38 +1759,45 @@
           {
             "variant": "accountCount",
             "initValue": {
-              "kind": "soql",
-              "select": {
-                "soqlFunction": [
-                  {
-                    "field": {
-                      "funcName": "COUNT"
-                    }
-                  }
-                ]
-              },
-              "from": {
-                "field": "Account"
-              },
-              "where": [
-                {
-                  "field": [
-                    "CreatedDate"
-                  ],
-                  "operator": "=",
-                  "value": {
-                    "kind": "dateFormula",
-                    "funcName": "THIS_MONTH"
-                  }
-                }
-              ]
+              "kind": "queryRef",
+              "queryKind": "soql",
+              "index": 1
             }
           }
         ],
         "variantType": {
           "kind": "primitive",
           "name": "Integer"
-        }
+        },
+        "soql": [
+          {
+            "soqlIndex": 1,
+            "select": {
+              "soqlFunction": [
+                {
+                  "field": {
+                    "funcName": "COUNT"
+                  }
+                }
+              ]
+            },
+            "from": {
+              "field": "Account"
+            },
+            "where": [
+              {
+                "field": [
+                  "CreatedDate"
+                ],
+                "operator": "=",
+                "value": {
+                  "kind": "dateFormula",
+                  "funcName": "THIS_MONTH"
+                }
+              }
+            ]
+          }
+        ]
       },
       {
         "kind": "field",
@@ -1725,40 +1805,9 @@
           {
             "variant": "searchResults",
             "initValue": {
-              "kind": "sosl",
-              "keyword": {
-                "kind": "string",
-                "value": "test"
-              },
-              "searchGroup": "ALL",
-              "fieldSpec": [
-                {
-                  "object": "Account",
-                  "field": {
-                    "field": [
-                      [
-                        "Id"
-                      ],
-                      [
-                        "Name"
-                      ]
-                    ]
-                  }
-                },
-                {
-                  "object": "Contact",
-                  "field": {
-                    "field": [
-                      [
-                        "Id"
-                      ],
-                      [
-                        "Name"
-                      ]
-                    ]
-                  }
-                }
-              ]
+              "kind": "queryRef",
+              "queryKind": "sosl",
+              "index": 1
             }
           }
         ],
@@ -1773,7 +1822,45 @@
               ]
             }
           }
-        }
+        },
+        "sosl": [
+          {
+            "soslIndex": 1,
+            "keyword": {
+              "kind": "string",
+              "value": "test"
+            },
+            "searchGroup": "ALL",
+            "fieldSpec": [
+              {
+                "object": "Account",
+                "field": {
+                  "field": [
+                    [
+                      "Id"
+                    ],
+                    [
+                      "Name"
+                    ]
+                  ]
+                }
+              },
+              {
+                "object": "Contact",
+                "field": {
+                  "field": [
+                    [
+                      "Id"
+                    ],
+                    [
+                      "Name"
+                    ]
+                  ]
+                }
+              }
+            ]
+          }
+        ]
       },
       {
         "kind": "if",
@@ -1794,6 +1881,7 @@
             },
             "block": [
               {
+                "blockIndex": 1,
                 "kind": "expression",
                 "block": {
                   "kind": "method",
@@ -1830,6 +1918,7 @@
             },
             "block": [
               {
+                "blockIndex": 1,
                 "kind": "expression",
                 "block": {
                   "kind": "method",
@@ -1854,6 +1943,7 @@
             "condition": "else",
             "block": [
               {
+                "blockIndex": 1,
                 "kind": "expression",
                 "block": {
                   "kind": "method",
@@ -1877,7 +1967,7 @@
         ]
       },
       {
-        "type": "for",
+        "kind": "for",
         "condition": {
           "condition": {
             "kind": "expression",
@@ -1921,6 +2011,7 @@
         },
         "block": [
           {
+            "blockIndex": 1,
             "kind": "if",
             "block": [
               {
@@ -1955,13 +2046,23 @@
                 },
                 "block": [
                   {
-                    "kind": "continue"
+                    "blockIndex": 1,
+                    "kind": "declarationRef",
+                    "declarationKind": "continue",
+                    "index": 1
+                  }
+                ],
+                "continue": [
+                  {
+                    "continueIndex": 1,
+                    "value": "continue"
                   }
                 ]
               }
             ]
           },
           {
+            "blockIndex": 2,
             "kind": "if",
             "block": [
               {
@@ -1980,13 +2081,23 @@
                 },
                 "block": [
                   {
-                    "kind": "break"
+                    "blockIndex": 1,
+                    "kind": "declarationRef",
+                    "declarationKind": "break",
+                    "index": 1
+                  }
+                ],
+                "break": [
+                  {
+                    "breakIndex": 1,
+                    "value": "break"
                   }
                 ]
               }
             ]
           },
           {
+            "blockIndex": 3,
             "kind": "expression",
             "block": {
               "kind": "method",
@@ -2007,7 +2118,7 @@
         ]
       },
       {
-        "type": "for",
+        "kind": "for",
         "condition": {
           "variableName": "item",
           "variableType": {
@@ -2023,6 +2134,7 @@
         },
         "block": [
           {
+            "blockIndex": 1,
             "kind": "expression",
             "block": {
               "kind": "method",
@@ -2048,7 +2160,7 @@
         ]
       },
       {
-        "type": "for",
+        "kind": "for",
         "condition": {
           "variableName": "item",
           "variableType": {
@@ -2058,27 +2170,14 @@
             ]
           },
           "iterable": {
-            "kind": "soql",
-            "select": {
-              "field": [
-                {
-                  "field": [
-                    "Id"
-                  ]
-                }
-              ]
-            },
-            "from": {
-              "field": "Account"
-            },
-            "limit": {
-              "kind": "number",
-              "value": "5"
-            }
+            "kind": "queryRef",
+            "queryKind": "soql",
+            "index": 1
           }
         },
         "block": [
           {
+            "blockIndex": 1,
             "kind": "expression",
             "block": {
               "kind": "method",
@@ -2121,7 +2220,7 @@
         }
       },
       {
-        "type": "while",
+        "kind": "while",
         "condition": {
           "kind": "expression",
           "left": {
@@ -2137,6 +2236,7 @@
         },
         "block": [
           {
+            "blockIndex": 1,
             "kind": "expression",
             "block": {
               "kind": "postfix",
@@ -2167,7 +2267,7 @@
         }
       },
       {
-        "type": "doWhile",
+        "kind": "doWhile",
         "condition": {
           "kind": "expression",
           "left": {
@@ -2183,6 +2283,7 @@
         },
         "block": [
           {
+            "blockIndex": 1,
             "kind": "expression",
             "block": {
               "kind": "expression",
@@ -2233,6 +2334,7 @@
             ],
             "block": [
               {
+                "blockIndex": 1,
                 "kind": "expression",
                 "block": {
                   "kind": "method",
@@ -2266,6 +2368,7 @@
             ],
             "block": [
               {
+                "blockIndex": 1,
                 "kind": "expression",
                 "block": {
                   "kind": "method",
@@ -2292,6 +2395,7 @@
             },
             "block": [
               {
+                "blockIndex": 1,
                 "kind": "expression",
                 "block": {
                   "kind": "method",
@@ -2350,59 +2454,17 @@
             "type": "try",
             "block": [
               {
-                "kind": "localVariable",
-                "variant": [
+                "blockIndex": 1,
+                "kind": "declarationRef",
+                "declarationKind": "localVariable",
+                "variants": [
                   {
-                    "variant": "a",
-                    "initValue": {
-                      "kind": "soql",
-                      "select": {
-                        "field": [
-                          {
-                            "field": [
-                              "Id"
-                            ]
-                          },
-                          {
-                            "field": [
-                              "Name"
-                            ]
-                          }
-                        ]
-                      },
-                      "from": {
-                        "field": "Account"
-                      },
-                      "where": [
-                        {
-                          "field": [
-                            "Id"
-                          ],
-                          "operator": "=",
-                          "value": {
-                            "kind": "bind",
-                            "value": {
-                              "kind": "id",
-                              "value": "accountId"
-                            }
-                          }
-                        }
-                      ],
-                      "limit": {
-                        "kind": "number",
-                        "value": "1"
-                      }
-                    }
+                    "index": 1
                   }
-                ],
-                "variantType": {
-                  "kind": "custom",
-                  "name": [
-                    "Account"
-                  ]
-                }
+                ]
               },
               {
+                "blockIndex": 2,
                 "kind": "expression",
                 "block": {
                   "kind": "method",
@@ -2421,6 +2483,7 @@
                 }
               },
               {
+                "blockIndex": 3,
                 "kind": "if",
                 "block": [
                   {
@@ -2439,8 +2502,16 @@
                     },
                     "block": [
                       {
-                        "kind": "throw",
-                        "block": {
+                        "blockIndex": 1,
+                        "kind": "declarationRef",
+                        "declarationKind": "throw",
+                        "index": 1
+                      }
+                    ],
+                    "throw": [
+                      {
+                        "throwIndex": 1,
+                        "value": {
                           "kind": "instance",
                           "typeName": [
                             "QueryException"
@@ -2459,6 +2530,23 @@
                   }
                 ]
               }
+            ],
+            "localVariable": [
+              {
+                "localVariableIndex": 1,
+                "variant": "a",
+                "variantType": {
+                  "kind": "custom",
+                  "name": [
+                    "Account"
+                  ]
+                },
+                "initialValue": {
+                  "kind": "queryRef",
+                  "queryKind": "soql",
+                  "index": 2
+                }
+              }
             ]
           },
           {
@@ -2469,6 +2557,7 @@
             ],
             "block": [
               {
+                "blockIndex": 1,
                 "kind": "expression",
                 "block": {
                   "kind": "method",
@@ -2501,6 +2590,7 @@
             ],
             "block": [
               {
+                "blockIndex": 1,
                 "kind": "expression",
                 "block": {
                   "kind": "method",
@@ -2529,6 +2619,7 @@
             "type": "finally",
             "block": [
               {
+                "blockIndex": 1,
                 "kind": "expression",
                 "block": {
                   "kind": "method",
@@ -2916,33 +3007,17 @@
             },
             "block": [
               {
-                "kind": "localVariable",
-                "variant": [
+                "blockIndex": 1,
+                "kind": "declarationRef",
+                "declarationKind": "localVariable",
+                "variants": [
                   {
-                    "variant": "accountValue",
-                    "initValue": {
-                      "kind": "cast",
-                      "value": {
-                        "kind": "id",
-                        "value": "objectValue"
-                      },
-                      "convertTo": {
-                        "kind": "custom",
-                        "name": [
-                          "Account"
-                        ]
-                      }
-                    }
+                    "index": 1
                   }
-                ],
-                "variantType": {
-                  "kind": "custom",
-                  "name": [
-                    "Account"
-                  ]
-                }
+                ]
               },
               {
+                "blockIndex": 2,
                 "kind": "expression",
                 "block": {
                   "kind": "method",
@@ -2963,6 +3038,31 @@
                       "name": "Name"
                     }
                   ]
+                }
+              }
+            ],
+            "localVariable": [
+              {
+                "localVariableIndex": 1,
+                "variant": "accountValue",
+                "variantType": {
+                  "kind": "custom",
+                  "name": [
+                    "Account"
+                  ]
+                },
+                "initialValue": {
+                  "kind": "cast",
+                  "value": {
+                    "kind": "id",
+                    "value": "objectValue"
+                  },
+                  "convertTo": {
+                    "kind": "custom",
+                    "name": [
+                      "Account"
+                    ]
+                  }
                 }
               }
             ]
@@ -3025,6 +3125,7 @@
         ],
         "block": [
           {
+            "blockIndex": 1,
             "kind": "expression",
             "block": {
               "kind": "method",
@@ -3112,6 +3213,66 @@
               "valueType": "string"
             }
           ]
+        }
+      }
+    ],
+    "soql": [
+      {
+        "soqlIndex": 1,
+        "select": {
+          "field": [
+            {
+              "field": [
+                "Id"
+              ]
+            }
+          ]
+        },
+        "from": {
+          "field": "Account"
+        },
+        "limit": {
+          "kind": "number",
+          "value": "5"
+        }
+      },
+      {
+        "soqlIndex": 2,
+        "select": {
+          "field": [
+            {
+              "field": [
+                "Id"
+              ]
+            },
+            {
+              "field": [
+                "Name"
+              ]
+            }
+          ]
+        },
+        "from": {
+          "field": "Account"
+        },
+        "where": [
+          {
+            "field": [
+              "Id"
+            ],
+            "operator": "=",
+            "value": {
+              "kind": "bind",
+              "value": {
+                "kind": "id",
+                "value": "accountId"
+              }
+            }
+          }
+        ],
+        "limit": {
+          "kind": "number",
+          "value": "1"
         }
       }
     ]

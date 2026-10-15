@@ -1,20 +1,20 @@
 import { TryStatementClass, CatchClauseClass } from '../converter';
 import { makeModifierType, ModifierType } from '../modifier';
 
-import { StatementType, makeStatementType } from './statement';
+import { BlockField, makeBlockField } from './block';
 
-type TryBlock =
+type TryBlock = (
     | {
           type: 'try' | 'finally';
-          block: StatementType[];
       }
     | {
           type: 'catch';
           exception: string;
           exceptionType: string[];
           modifier?: ModifierType;
-          block: StatementType[];
-      };
+      }
+) &
+    BlockField;
 
 export type TryField = {
     kind: 'try';
@@ -24,24 +24,18 @@ export type TryField = {
 export const makeTryField = (tryStatement: TryStatementClass): TryField | undefined => {
     const tryBlocks: TryBlock[] = [];
 
-    const tryBlock = tryStatement
-        .getValue()
-        .map((b) => makeStatementType(b))
-        .filter((b) => b !== undefined);
+    const tryBlock = makeBlockField(tryStatement.getValue());
     if (tryBlock) {
         tryBlocks.push({
             type: 'try',
-            block: tryBlock,
+            ...tryBlock,
         });
     }
 
     tryStatement.getCatchBlock().forEach((c) => {
         const exception = c.getValue();
         const exceptionType = c.getValueType();
-        const block = c
-            .getBlock()
-            .map((b) => makeStatementType(b))
-            .filter((b) => b !== undefined);
+        const block = makeBlockField(c.getBlock());
         const modifier = makeModifierType(c.getModifier());
 
         if (exception && exceptionType && block) {
@@ -49,7 +43,7 @@ export const makeTryField = (tryStatement: TryStatementClass): TryField | undefi
                 type: 'catch',
                 exception: exception,
                 exceptionType: exceptionType,
-                block: block,
+                ...block,
             };
 
             if (modifier) {
@@ -62,13 +56,13 @@ export const makeTryField = (tryStatement: TryStatementClass): TryField | undefi
 
     const finallyStatements = tryStatement.getFinallyBlock();
     if (finallyStatements.length > 0) {
-        const finallyBlock = finallyStatements
-            .map((b) => makeStatementType(b))
-            .filter((b) => b !== undefined);
-        tryBlocks.push({
-            type: 'finally',
-            block: finallyBlock,
-        });
+        const finallyBlock = makeBlockField(finallyStatements);
+        if (finallyBlock) {
+            tryBlocks.push({
+                type: 'finally',
+                ...finallyBlock,
+            });
+        }
     }
 
     if (tryBlocks.length > 0) {

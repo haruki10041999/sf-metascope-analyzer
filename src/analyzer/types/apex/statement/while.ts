@@ -1,25 +1,35 @@
 import { WhileStatementClass } from '../converter';
 
 import { ExpressionType, makeExpressionType } from '../expression';
+import { BlockField } from './block';
 import { StatementType, makeStatementType } from './statement';
 
 export type WhileField = {
-    type: 'while';
+    kind: 'while';
     condition: ExpressionType;
-    block: StatementType;
-};
+} & (BlockField | { block: StatementType });
 
 export const makeWhileField = (whileStatement: WhileStatementClass): WhileField | undefined => {
     const condition = makeExpressionType(whileStatement.getValue());
     const block = makeStatementType(whileStatement.getBlock());
 
-    if (condition && block) {
+    let blockField: BlockField | { block: StatementType } | undefined = undefined;
+    if (block) {
+        if (!('kind' in block)) {
+            blockField = block;
+        } else {
+            blockField = { block: block };
+        }
+    }
+
+    if (condition && blockField) {
         return {
-            type: 'while',
+            kind: 'while',
             condition: condition,
-            block: block,
+            ...blockField,
         };
     }
 
     return undefined;
 };
+

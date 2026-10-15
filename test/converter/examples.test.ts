@@ -174,7 +174,7 @@ describe('converter / docs/examples/apex-ir', () => {
         const output = await convertOutput(...examples[0]);
         assert.ok(find(output, (n) => n.kind === 'return' && n.block === undefined).length > 0);
         assert.ok(
-            find(output, (n) => n.type === 'for' && Object.keys(n.condition ?? {}).length === 0)
+            find(output, (n) => n.kind === 'for' && Object.keys(n.condition ?? {}).length === 0)
                 .length > 0,
         );
 
@@ -210,5 +210,24 @@ describe('converter / docs/examples/apex-ir', () => {
         assert.ok(
             find(output, (n) => n.creatorType === 'set' && n.initialValue?.length === 0).length > 0,
         );
+        assert.ok(
+            find(output, (n) => n.creatorType === 'list' && n.initialValue?.length === 2).length >
+                0,
+        );
+    });
+
+    it('anonymous / trigger の SOQL・SOSL を unit 単位で抽出する', async () => {
+        for (const example of [examples[1], examples[2]]) {
+            const output = await convertOutput(...example);
+            const references = find(output, (n) => n.kind === 'queryRef');
+            const inlineQueries = find(output, (n) => n.kind === 'soql' || n.kind === 'sosl');
+
+            assert.ok(references.length > 0);
+            assert.equal(inlineQueries.length, 0);
+            references.forEach((reference) => {
+                const indexKey = `${reference.queryKind}Index`;
+                assert.ok(find(output, (n) => n[indexKey] === reference.index).length > 0);
+            });
+        }
     });
 });

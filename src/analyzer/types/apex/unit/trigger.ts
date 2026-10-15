@@ -5,6 +5,7 @@ import {
     isNormalStatementClass,
 } from '../converter';
 
+import { RewriteQueries, QueryStore, extractQueries } from '../commons';
 import { ModifierType, makeModifierType } from '../modifier';
 import { StatementType, makeStatementType } from '../statement';
 import { AnonymousTriggerMemberType, makeAnonymousTriggerMemberType } from '../declaration';
@@ -19,7 +20,11 @@ export type TriggerUnitType = {
     name: string;
     object: string;
     triggerCase: TriggerCaseType[];
-    block: ({ modifier?: ModifierType } & (AnonymousTriggerMemberType | StatementType))[];
+    block: ({ modifier?: ModifierType } & RewriteQueries<
+        AnonymousTriggerMemberType | StatementType
+    >)[];
+    soql?: QueryStore['soql'];
+    sosl?: QueryStore['sosl'];
 };
 
 const makeTriggerCaseType = (triggerCase: TriggerCaseClass): TriggerCaseType | undefined => {
@@ -43,11 +48,10 @@ export const makeTriggerUnitType = (triggerUnit: TriggerUnitClass): TriggerUnitT
         .map((t) => makeTriggerCaseType(t))
         .filter((t) => t !== undefined);
     const triggerBlock = triggerUnit.getBlock();
+    const queryStore: QueryStore = { soql: [], sosl: [] };
 
     if (value && value.length === 2 && triggerCaseType.length > 0 && triggerBlock.length > 0) {
-        const blocks: ({ modifier?: ModifierType } & (
-            AnonymousTriggerMemberType | StatementType
-        ))[] = [];
+        const blocks: TriggerUnitType['block'] = [];
 
         triggerBlock.forEach((b) => {
             const block = b.getValue();
@@ -56,8 +60,10 @@ export const makeTriggerUnitType = (triggerUnit: TriggerUnitClass): TriggerUnitT
             if (isAnonymousTriggerMemberDeclarationClass(block)) {
                 const member = makeAnonymousTriggerMemberType(block);
                 if (member) {
-                    const field: { modifier?: ModifierType } & AnonymousTriggerMemberType = {
-                        ...member,
+                    const field: {
+                        modifier?: ModifierType;
+                    } & RewriteQueries<AnonymousTriggerMemberType> = {
+                        ...extractQueries(member, queryStore),
                     };
 
                     if (modifier) {
@@ -71,8 +77,8 @@ export const makeTriggerUnitType = (triggerUnit: TriggerUnitClass): TriggerUnitT
             if (isNormalStatementClass(block)) {
                 const member = makeStatementType(block);
                 if (member) {
-                    const field: { modifier?: ModifierType } & StatementType = {
-                        ...member,
+                    const field: { modifier?: ModifierType } & RewriteQueries<StatementType> = {
+                        ...extractQueries(member, queryStore),
                     };
 
                     if (modifier) {
@@ -90,6 +96,8 @@ export const makeTriggerUnitType = (triggerUnit: TriggerUnitClass): TriggerUnitT
             object: value.at(1)!,
             triggerCase: triggerCaseType,
             block: blocks,
+            ...(queryStore.soql.length > 0 ? { soql: queryStore.soql } : {}),
+            ...(queryStore.sosl.length > 0 ? { sosl: queryStore.sosl } : {}),
         };
     }
 

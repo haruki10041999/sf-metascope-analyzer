@@ -12,7 +12,7 @@ import { SoqlType, makesoqlType } from './query';
 import { SoslType, makeSoslType } from './query';
 
 type StringPrimaryType = {
-    kind: string;
+    kind: 'normal' | 'this' | 'void' | 'super' | 'id';
     value: string;
 };
 

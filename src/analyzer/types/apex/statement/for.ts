@@ -12,6 +12,7 @@ import {
 import { TypeType, makeTypeType } from '../type';
 import { ExpressionType, makeExpressionType } from '../expression';
 import { ModifierType, makeModifierType } from '../modifier';
+import { BlockField } from './block';
 import { StatementType, makeStatementType } from './statement';
 
 type EnhancedFor = {
@@ -35,10 +36,9 @@ type NormalFor = {
 };
 
 export type ForField = {
-    type: 'for';
+    kind: 'for';
     condition: EnhancedFor | NormalFor;
-    block: StatementType;
-};
+} & (BlockField | { block: StatementType });
 
 const makeEnhancedFor = (enhancedFor: EnhancedForControlClass): EnhancedFor | undefined => {
     const variableName = enhancedFor.getValue();
@@ -132,15 +132,24 @@ export const makeForField = (forStatement: ForStatementClass): ForField | undefi
     const forControl = forStatement.getValue();
     const block = makeStatementType(forStatement.getBlock());
 
+    let blockField: BlockField | { block: StatementType } | undefined = undefined;
     if (block) {
+        if ('kind' in block) {
+            blockField = { block: block };
+        } else {
+            blockField = block;
+        }
+    }
+
+    if (blockField) {
         const value = forControl.getValue();
         if (isEnhancedForControlClass(value)) {
             const enhancedFor = makeEnhancedFor(value);
             if (enhancedFor) {
                 return {
-                    type: 'for',
+                    kind: 'for',
                     condition: enhancedFor,
-                    block: block,
+                    ...blockField,
                 };
             }
         }
@@ -150,9 +159,9 @@ export const makeForField = (forStatement: ForStatementClass): ForField | undefi
             const normalFor = makeNormalFor(init, value, forControl.getUpdate());
             if (normalFor) {
                 return {
-                    type: 'for',
+                    kind: 'for',
                     condition: normalFor,
-                    block: block,
+                    ...blockField,
                 };
             }
         }

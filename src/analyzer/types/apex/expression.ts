@@ -23,6 +23,11 @@ import {
 import { PrimaryType, makePrimaryType } from './primary';
 import { TypeType, makeTypeType } from './type';
 
+type NormalType = {
+    kind: 'normal';
+    value: string;
+};
+
 type DotExpressionType = {
     object: ExpressionType;
     dot: string;
@@ -75,6 +80,11 @@ type SetCreatorRestType = CreatedNameType & {
     initialValue: ExpressionType[];
 };
 
+type ListCreatorRestType = CreatedNameType & {
+    creatorType: 'list';
+    initialValue: ExpressionType[];
+};
+
 type CreatorType = {
     kind: 'instance';
 } & (
@@ -83,6 +93,7 @@ type CreatorType = {
     | ClassCreatorRestType
     | MapCreatorRestType
     | SetCreatorRestType
+    | ListCreatorRestType
 );
 
 type CastType = {
@@ -131,7 +142,7 @@ type CondType = {
 };
 
 export type ExpressionType =
-    | string
+    | NormalType
     | PrimaryType
     | ArrayAccessType
     | DotExpressionType
@@ -151,7 +162,10 @@ export const makeExpressionType = (expression: ExpressionClass): ExpressionType 
         if (isNormalExpressionElementClass(elementClass)) {
             const value = elementClass.getExpression();
             if (value) {
-                return value;
+                return {
+                    kind: 'normal',
+                    value: value,
+                };
             }
         }
 
@@ -317,22 +331,30 @@ export const makeExpressionType = (expression: ExpressionClass): ExpressionType 
                         };
                     }
 
-                    if (restElementClass.getType() === 'set') {
+                    const initialValue = restElementClass
+                        .getContent()
+                        .map((a) => makeExpressionType(a))
+                        .filter((a) => a !== undefined);
+                    const collectionName = createdName.typeName.at(-1);
+
+                    if (collectionName === 'Set') {
                         const expressionType: SetCreatorRestType = {
                             ...createdName,
                             creatorType: 'set',
-                            initialValue: [],
+                            initialValue,
                         };
 
-                        expressionType.initialValue = restElementClass
-                            .getContent()
-                            .map((a) => makeExpressionType(a))
-                            .filter((a) => a !== undefined);
+                        return { kind: 'instance', ...expressionType };
+                    }
 
-                        return {
-                            kind: 'instance',
-                            ...expressionType,
+                    if (collectionName === 'List') {
+                        const expressionType: ListCreatorRestType = {
+                            ...createdName,
+                            creatorType: 'list',
+                            initialValue,
                         };
+
+                        return { kind: 'instance', ...expressionType };
                     }
                 }
 
@@ -368,11 +390,15 @@ export const makeExpressionType = (expression: ExpressionClass): ExpressionType 
                     };
                 }
                 if (isNoRestElementClass(restElementClass)) {
-                    if (restElementClass.getContent() === '{}') {
+                    const collectionName = createdName.typeName.at(-1);
+                    if (
+                        restElementClass.getContent() === '{}' &&
+                        (collectionName === 'List' || collectionName === 'Set')
+                    ) {
                         return {
                             kind: 'instance',
                             ...createdName,
-                            creatorType: 'set',
+                            creatorType: collectionName === 'Set' ? 'set' : 'list',
                             initialValue: [],
                         };
                     }

@@ -1,39 +1,42 @@
 import { PropertyDeclarationClass, PropertyBlockClass } from '../converter';
 
+import { RewriteQueries, QueryStore, extractQueries } from '../commons';
 import { TypeType, makeTypeType } from '../type';
 import { ModifierType, makeModifierType } from '../modifier';
-import { StatementType, makeStatementType } from '../statement';
+import { BlockField, makeBlockField } from '../statement';
 
 type PropertyBlockField = {
-    type: 'getter' | 'setter';
-    block?: StatementType[];
+    kind: 'getter' | 'setter';
     modifier?: ModifierType;
-};
+} & ({} | RewriteQueries<BlockField>);
 
 export type PropertyField = {
     kind: 'property';
     variant: string;
     variantType: TypeType;
     block?: PropertyBlockField[];
+    soql?: QueryStore['soql'];
+    sosl?: QueryStore['sosl'];
 };
 
 const makePropertyBlockField = (
     propertyBlock: PropertyBlockClass,
+    queryStore: QueryStore,
 ): PropertyBlockField | undefined => {
     const type = propertyBlock.getType();
-    const block = propertyBlock
-        .getValue()
-        .map((b) => makeStatementType(b))
-        .filter((b) => b !== undefined);
+    const block = extractQueries(makeBlockField(propertyBlock.getValue()), queryStore);
     const modifier = makeModifierType(propertyBlock.getModifier());
 
     if (type) {
-        const propertyBlockField: PropertyBlockField = {
-            type: type,
+        let propertyBlockField: PropertyBlockField = {
+            kind: type,
         };
 
-        if (block.length > 0) {
-            propertyBlockField.block = block;
+        if (block) {
+            propertyBlockField = {
+                ...propertyBlockField,
+                ...block,
+            };
         }
 
         if (modifier) {
@@ -49,11 +52,12 @@ const makePropertyBlockField = (
 export const makePropertyField = (
     propertyDeclaration: PropertyDeclarationClass,
 ): PropertyField | undefined => {
+    const queryStore: QueryStore = { soql: [], sosl: [] };
     const variant = propertyDeclaration.getValue();
     const variantType = makeTypeType(propertyDeclaration.getValueType());
     const block = propertyDeclaration
         .getBlock()
-        .map((b) => makePropertyBlockField(b))
+        .map((b) => makePropertyBlockField(b, queryStore))
         .filter((b) => b !== undefined);
 
     if (variant && variantType) {
@@ -67,8 +71,16 @@ export const makePropertyField = (
             propertyField.block = block;
         }
 
+        if (queryStore.soql.length > 0) {
+            propertyField.soql = queryStore.soql;
+        }
+        if (queryStore.sosl.length > 0) {
+            propertyField.sosl = queryStore.sosl;
+        }
+
         return propertyField;
     }
 
     return undefined;
 };
+

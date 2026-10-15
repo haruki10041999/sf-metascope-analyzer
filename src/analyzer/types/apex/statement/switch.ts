@@ -7,7 +7,7 @@ import {
     isStringArray,
 } from '../converter';
 
-import { StatementType, makeStatementType } from './statement';
+import { BlockField, makeBlockField } from './block';
 import { ExpressionType, makeExpressionType } from '../expression';
 import { TypeType, makeTypeType } from '../type';
 
@@ -20,8 +20,7 @@ type WhenValue =
 
 type WhenBlock = {
     conditionValue: WhenValue;
-    block: StatementType[];
-};
+} & BlockField;
 
 export type SwitchField = {
     kind: 'switch';
@@ -89,15 +88,12 @@ const makeWhenBlock = (whenControl: WhenControlClass[]): WhenBlock[] | undefined
     const whenBlock: WhenBlock[] = [];
     whenControl.forEach((c) => {
         const whenValue = makeWhenValue(c.getValue());
-        const block = c
-            .getBlock()
-            .map((b) => makeStatementType(b))
-            .filter((b) => b !== undefined);
+        const block = makeBlockField(c.getBlock());
 
         if (whenValue && block) {
             whenBlock.push({
                 conditionValue: whenValue,
-                block: block,
+                ...block,
             });
         }
     });
@@ -123,3 +119,4 @@ export const makeSwitchField = (switchStatement: SwitchStatementClass): SwitchFi
 
     return undefined;
 };
+

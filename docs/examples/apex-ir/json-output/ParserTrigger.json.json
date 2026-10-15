@@ -393,10 +393,10 @@
         },
         "block": [
           {
-            "type": "getter"
+            "kind": "getter"
           },
           {
-            "type": "setter"
+            "kind": "setter"
           }
         ],
         "modifier": {
@@ -420,6 +420,7 @@
         ],
         "block": [
           {
+            "blockIndex": 1,
             "kind": "expression",
             "block": {
               "kind": "method",
@@ -461,6 +462,7 @@
             "returnType": "void",
             "block": [
               {
+                "blockIndex": 1,
                 "kind": "expression",
                 "block": {
                   "kind": "method",
@@ -550,6 +552,7 @@
             ],
             "block": [
               {
+                "blockIndex": 1,
                 "kind": "expression",
                 "block": {
                   "kind": "postfix",
@@ -573,6 +576,7 @@
             ],
             "block": [
               {
+                "blockIndex": 1,
                 "kind": "expression",
                 "block": {
                   "kind": "postfix",
@@ -591,6 +595,7 @@
             },
             "block": [
               {
+                "blockIndex": 1,
                 "kind": "expression",
                 "block": {
                   "kind": "expression",
@@ -638,7 +643,8 @@
             },
             "block": [
               {
-                "type": "for",
+                "blockIndex": 1,
+                "kind": "for",
                 "condition": {
                   "variableName": "account",
                   "variableType": {
@@ -659,6 +665,7 @@
                 },
                 "block": [
                   {
+                    "blockIndex": 1,
                     "kind": "if",
                     "block": [
                       {
@@ -684,6 +691,7 @@
                         },
                         "block": [
                           {
+                            "blockIndex": 1,
                             "kind": "expression",
                             "block": {
                               "kind": "expression",
@@ -709,6 +717,7 @@
                     ]
                   },
                   {
+                    "blockIndex": 2,
                     "kind": "expression",
                     "block": {
                       "kind": "expression",
@@ -763,7 +772,8 @@
             },
             "block": [
               {
-                "type": "for",
+                "blockIndex": 1,
+                "kind": "for",
                 "condition": {
                   "variableName": "account",
                   "variableType": {
@@ -784,45 +794,17 @@
                 },
                 "block": [
                   {
-                    "kind": "localVariable",
-                    "variant": [
+                    "blockIndex": 1,
+                    "kind": "declarationRef",
+                    "declarationKind": "localVariable",
+                    "variants": [
                       {
-                        "variant": "oldAccount",
-                        "initValue": {
-                          "kind": "method",
-                          "object": {
-                            "kind": "field",
-                            "object": {
-                              "kind": "id",
-                              "value": "Trigger"
-                            },
-                            "dot": ".",
-                            "name": "oldMap"
-                          },
-                          "dot": ".",
-                          "name": "get",
-                          "arg": [
-                            {
-                              "kind": "field",
-                              "object": {
-                                "kind": "id",
-                                "value": "account"
-                              },
-                              "dot": ".",
-                              "name": "Id"
-                            }
-                          ]
-                        }
+                        "index": 1
                       }
-                    ],
-                    "variantType": {
-                      "kind": "custom",
-                      "name": [
-                        "Account"
-                      ]
-                    }
+                    ]
                   },
                   {
+                    "blockIndex": 2,
                     "kind": "if",
                     "block": [
                       {
@@ -850,6 +832,7 @@
                         },
                         "block": [
                           {
+                            "blockIndex": 1,
                             "kind": "expression",
                             "block": {
                               "kind": "expression",
@@ -875,6 +858,7 @@
                     ]
                   },
                   {
+                    "blockIndex": 3,
                     "kind": "if",
                     "block": [
                       {
@@ -898,6 +882,7 @@
                         },
                         "block": [
                           {
+                            "blockIndex": 1,
                             "kind": "expression",
                             "block": {
                               "kind": "method",
@@ -919,6 +904,43 @@
                         ]
                       }
                     ]
+                  }
+                ],
+                "localVariable": [
+                  {
+                    "localVariableIndex": 1,
+                    "variant": "oldAccount",
+                    "variantType": {
+                      "kind": "custom",
+                      "name": [
+                        "Account"
+                      ]
+                    },
+                    "initialValue": {
+                      "kind": "method",
+                      "object": {
+                        "kind": "field",
+                        "object": {
+                          "kind": "id",
+                          "value": "Trigger"
+                        },
+                        "dot": ".",
+                        "name": "oldMap"
+                      },
+                      "dot": ".",
+                      "name": "get",
+                      "arg": [
+                        {
+                          "kind": "field",
+                          "object": {
+                            "kind": "id",
+                            "value": "account"
+                          },
+                          "dot": ".",
+                          "name": "Id"
+                        }
+                      ]
+                    }
                   }
                 ]
               }
@@ -954,7 +976,8 @@
             },
             "block": [
               {
-                "type": "for",
+                "blockIndex": 1,
+                "kind": "for",
                 "condition": {
                   "variableName": "account",
                   "variableType": {
@@ -975,6 +998,7 @@
                 },
                 "block": [
                   {
+                    "blockIndex": 1,
                     "kind": "expression",
                     "block": {
                       "kind": "method",
@@ -1040,39 +1064,18 @@
             },
             "block": [
               {
-                "kind": "localVariable",
-                "variant": [
+                "blockIndex": 1,
+                "kind": "declarationRef",
+                "declarationKind": "localVariable",
+                "variants": [
                   {
-                    "variant": "contacts",
-                    "initValue": {
-                      "kind": "instance",
-                      "typeName": [
-                        "List"
-                      ],
-                      "generic": [
-                        {
-                          "kind": "custom",
-                          "name": [
-                            "Contact"
-                          ]
-                        }
-                      ],
-                      "creatorType": "class"
-                    }
+                    "index": 1
                   }
-                ],
-                "variantType": {
-                  "kind": "list",
-                  "type": {
-                    "kind": "custom",
-                    "name": [
-                      "Contact"
-                    ]
-                  }
-                }
+                ]
               },
               {
-                "type": "for",
+                "blockIndex": 2,
+                "kind": "for",
                 "condition": {
                   "variableName": "account",
                   "variableType": {
@@ -1093,6 +1096,7 @@
                 },
                 "block": [
                   {
+                    "blockIndex": 1,
                     "kind": "expression",
                     "block": {
                       "kind": "method",
@@ -1152,6 +1156,7 @@
                 ]
               },
               {
+                "blockIndex": 3,
                 "kind": "if",
                 "block": [
                   {
@@ -1170,6 +1175,15 @@
                     },
                     "block": [
                       {
+                        "blockIndex": 1,
+                        "kind": "declarationRef",
+                        "declarationKind": "dml",
+                        "index": 1
+                      }
+                    ],
+                    "dml": [
+                      {
+                        "dmlIndex": 1,
                         "kind": "insert",
                         "value": {
                           "kind": "id",
@@ -1180,6 +1194,36 @@
                     ]
                   }
                 ]
+              }
+            ],
+            "localVariable": [
+              {
+                "localVariableIndex": 1,
+                "variant": "contacts",
+                "variantType": {
+                  "kind": "list",
+                  "type": {
+                    "kind": "custom",
+                    "name": [
+                      "Contact"
+                    ]
+                  }
+                },
+                "initialValue": {
+                  "kind": "instance",
+                  "typeName": [
+                    "List"
+                  ],
+                  "generic": [
+                    {
+                      "kind": "custom",
+                      "name": [
+                        "Contact"
+                      ]
+                    }
+                  ],
+                  "creatorType": "class"
+                }
               }
             ]
           }
@@ -1213,34 +1257,17 @@
             },
             "block": [
               {
-                "kind": "localVariable",
-                "variant": [
+                "blockIndex": 1,
+                "kind": "declarationRef",
+                "declarationKind": "localVariable",
+                "variants": [
                   {
-                    "variant": "accountIds",
-                    "initValue": {
-                      "kind": "instance",
-                      "typeName": [
-                        "Set"
-                      ],
-                      "generic": [
-                        {
-                          "kind": "primitive",
-                          "name": "Id"
-                        }
-                      ],
-                      "creatorType": "class"
-                    }
+                    "index": 1
                   }
-                ],
-                "variantType": {
-                  "kind": "set",
-                  "type": {
-                    "kind": "primitive",
-                    "name": "Id"
-                  }
-                }
+                ]
               },
               {
+                "blockIndex": 2,
                 "kind": "expression",
                 "block": {
                   "kind": "method",
@@ -1269,124 +1296,28 @@
                 }
               },
               {
-                "kind": "localVariable",
-                "variant": [
+                "blockIndex": 3,
+                "kind": "declarationRef",
+                "declarationKind": "localVariable",
+                "variants": [
                   {
-                    "variant": "accounts",
-                    "initValue": {
-                      "kind": "soql",
-                      "select": {
-                        "field": [
-                          {
-                            "field": [
-                              "Id"
-                            ]
-                          },
-                          {
-                            "field": [
-                              "Industry"
-                            ]
-                          },
-                          {
-                            "field": [
-                              "Name"
-                            ]
-                          }
-                        ],
-                        "subQuery": [
-                          {
-                            "field": {
-                              "select": {
-                                "field": [
-                                  {
-                                    "field": [
-                                      "FirstName"
-                                    ]
-                                  },
-                                  {
-                                    "field": [
-                                      "Id"
-                                    ]
-                                  },
-                                  {
-                                    "field": [
-                                      "LastName"
-                                    ]
-                                  }
-                                ]
-                              },
-                              "from": {
-                                "field": "Contacts"
-                              }
-                            }
-                          }
-                        ]
-                      },
-                      "from": {
-                        "field": "Account"
-                      },
-                      "where": [
-                        {
-                          "field": [
-                            "Id"
-                          ],
-                          "operator": "IN",
-                          "value": {
-                            "kind": "bind",
-                            "value": {
-                              "kind": "id",
-                              "value": "accountIds"
-                            }
-                          }
-                        }
-                      ]
-                    }
+                    "index": 2
                   }
-                ],
-                "variantType": {
-                  "kind": "list",
-                  "type": {
-                    "kind": "custom",
-                    "name": [
-                      "Account"
-                    ]
-                  }
-                }
+                ]
               },
               {
-                "kind": "localVariable",
-                "variant": [
+                "blockIndex": 4,
+                "kind": "declarationRef",
+                "declarationKind": "localVariable",
+                "variants": [
                   {
-                    "variant": "toUpdate",
-                    "initValue": {
-                      "kind": "instance",
-                      "typeName": [
-                        "List"
-                      ],
-                      "generic": [
-                        {
-                          "kind": "custom",
-                          "name": [
-                            "Contact"
-                          ]
-                        }
-                      ],
-                      "creatorType": "class"
-                    }
+                    "index": 3
                   }
-                ],
-                "variantType": {
-                  "kind": "list",
-                  "type": {
-                    "kind": "custom",
-                    "name": [
-                      "Contact"
-                    ]
-                  }
-                }
+                ]
               },
               {
-                "type": "for",
+                "blockIndex": 5,
+                "kind": "for",
                 "condition": {
                   "variableName": "account",
                   "variableType": {
@@ -1402,7 +1333,8 @@
                 },
                 "block": [
                   {
-                    "type": "for",
+                    "blockIndex": 1,
+                    "kind": "for",
                     "condition": {
                       "variableName": "contact",
                       "variableType": {
@@ -1423,6 +1355,7 @@
                     },
                     "block": [
                       {
+                        "blockIndex": 1,
                         "kind": "expression",
                         "block": {
                           "kind": "expression",
@@ -1448,6 +1381,7 @@
                         }
                       },
                       {
+                        "blockIndex": 2,
                         "kind": "expression",
                         "block": {
                           "kind": "method",
@@ -1470,6 +1404,87 @@
                 ]
               },
               {
+                "blockIndex": 6,
+                "kind": "declarationRef",
+                "declarationKind": "dml",
+                "index": 1
+              }
+            ],
+            "localVariable": [
+              {
+                "localVariableIndex": 1,
+                "variant": "accountIds",
+                "variantType": {
+                  "kind": "set",
+                  "type": {
+                    "kind": "primitive",
+                    "name": "Id"
+                  }
+                },
+                "initialValue": {
+                  "kind": "instance",
+                  "typeName": [
+                    "Set"
+                  ],
+                  "generic": [
+                    {
+                      "kind": "primitive",
+                      "name": "Id"
+                    }
+                  ],
+                  "creatorType": "class"
+                }
+              },
+              {
+                "localVariableIndex": 2,
+                "variant": "accounts",
+                "variantType": {
+                  "kind": "list",
+                  "type": {
+                    "kind": "custom",
+                    "name": [
+                      "Account"
+                    ]
+                  }
+                },
+                "initialValue": {
+                  "kind": "queryRef",
+                  "queryKind": "soql",
+                  "index": 1
+                }
+              },
+              {
+                "localVariableIndex": 3,
+                "variant": "toUpdate",
+                "variantType": {
+                  "kind": "list",
+                  "type": {
+                    "kind": "custom",
+                    "name": [
+                      "Contact"
+                    ]
+                  }
+                },
+                "initialValue": {
+                  "kind": "instance",
+                  "typeName": [
+                    "List"
+                  ],
+                  "generic": [
+                    {
+                      "kind": "custom",
+                      "name": [
+                        "Contact"
+                      ]
+                    }
+                  ],
+                  "creatorType": "class"
+                }
+              }
+            ],
+            "dml": [
+              {
+                "dmlIndex": 1,
                 "kind": "update",
                 "value": {
                   "kind": "id",
@@ -1508,72 +1523,24 @@
             },
             "block": [
               {
-                "kind": "localVariable",
-                "variant": [
+                "blockIndex": 1,
+                "kind": "declarationRef",
+                "declarationKind": "localVariable",
+                "variants": [
                   {
-                    "variant": "tasks",
-                    "initValue": {
-                      "kind": "soql",
-                      "select": {
-                        "field": [
-                          {
-                            "field": [
-                              "Id"
-                            ]
-                          }
-                        ]
-                      },
-                      "from": {
-                        "field": "Task"
-                      },
-                      "where": [
-                        {
-                          "field": [
-                            "WhatId"
-                          ],
-                          "operator": "IN",
-                          "value": {
-                            "kind": "bind",
-                            "value": {
-                              "kind": "method",
-                              "object": {
-                                "kind": "field",
-                                "object": {
-                                  "kind": "id",
-                                  "value": "Trigger"
-                                },
-                                "dot": ".",
-                                "name": "oldMap"
-                              },
-                              "dot": ".",
-                              "name": "keySet"
-                            }
-                          }
-                        }
-                      ],
-                      "allRows": "ALL ROWS"
-                    }
+                    "index": 1
                   }
-                ],
-                "variantType": {
-                  "kind": "list",
-                  "type": {
-                    "kind": "custom",
-                    "name": [
-                      "Task"
-                    ]
-                  }
-                }
+                ]
               },
               {
-                "kind": "delete",
-                "value": {
-                  "kind": "id",
-                  "value": "tasks"
-                }
+                "blockIndex": 2,
+                "kind": "declarationRef",
+                "declarationKind": "dml",
+                "index": 1
               },
               {
-                "type": "for",
+                "blockIndex": 3,
+                "kind": "for",
                 "condition": {
                   "variableName": "account",
                   "variableType": {
@@ -1594,6 +1561,7 @@
                 },
                 "block": [
                   {
+                    "blockIndex": 1,
                     "kind": "expression",
                     "block": {
                       "kind": "method",
@@ -1627,6 +1595,36 @@
                   }
                 ]
               }
+            ],
+            "localVariable": [
+              {
+                "localVariableIndex": 1,
+                "variant": "tasks",
+                "variantType": {
+                  "kind": "list",
+                  "type": {
+                    "kind": "custom",
+                    "name": [
+                      "Task"
+                    ]
+                  }
+                },
+                "initialValue": {
+                  "kind": "queryRef",
+                  "queryKind": "soql",
+                  "index": 2
+                }
+              }
+            ],
+            "dml": [
+              {
+                "dmlIndex": 1,
+                "kind": "delete",
+                "value": {
+                  "kind": "id",
+                  "value": "tasks"
+                }
+              }
             ]
           }
         ]
@@ -1659,13 +1657,15 @@
             },
             "block": [
               {
+                "blockIndex": 1,
                 "kind": "try",
                 "block": [
                   {
                     "type": "try",
                     "block": [
                       {
-                        "type": "for",
+                        "blockIndex": 1,
+                        "kind": "for",
                         "condition": {
                           "variableName": "account",
                           "variableType": {
@@ -1686,6 +1686,7 @@
                         },
                         "block": [
                           {
+                            "blockIndex": 1,
                             "kind": "expression",
                             "block": {
                               "kind": "method",
@@ -1726,6 +1727,7 @@
                     ],
                     "block": [
                       {
+                        "blockIndex": 1,
                         "kind": "expression",
                         "block": {
                           "kind": "method",
@@ -1755,6 +1757,117 @@
             ]
           }
         ]
+      }
+    ],
+    "soql": [
+      {
+        "soqlIndex": 1,
+        "select": {
+          "field": [
+            {
+              "field": [
+                "Id"
+              ]
+            },
+            {
+              "field": [
+                "Industry"
+              ]
+            },
+            {
+              "field": [
+                "Name"
+              ]
+            }
+          ],
+          "subQuery": [
+            {
+              "field": {
+                "select": {
+                  "field": [
+                    {
+                      "field": [
+                        "FirstName"
+                      ]
+                    },
+                    {
+                      "field": [
+                        "Id"
+                      ]
+                    },
+                    {
+                      "field": [
+                        "LastName"
+                      ]
+                    }
+                  ]
+                },
+                "from": {
+                  "field": "Contacts"
+                }
+              }
+            }
+          ]
+        },
+        "from": {
+          "field": "Account"
+        },
+        "where": [
+          {
+            "field": [
+              "Id"
+            ],
+            "operator": "IN",
+            "value": {
+              "kind": "bind",
+              "value": {
+                "kind": "id",
+                "value": "accountIds"
+              }
+            }
+          }
+        ]
+      },
+      {
+        "soqlIndex": 2,
+        "select": {
+          "field": [
+            {
+              "field": [
+                "Id"
+              ]
+            }
+          ]
+        },
+        "from": {
+          "field": "Task"
+        },
+        "where": [
+          {
+            "field": [
+              "WhatId"
+            ],
+            "operator": "IN",
+            "value": {
+              "kind": "bind",
+              "value": {
+                "kind": "method",
+                "object": {
+                  "kind": "field",
+                  "object": {
+                    "kind": "id",
+                    "value": "Trigger"
+                  },
+                  "dot": ".",
+                  "name": "oldMap"
+                },
+                "dot": ".",
+                "name": "keySet"
+              }
+            }
+          }
+        ],
+        "allRows": "ALL ROWS"
       }
     ]
   }

@@ -1,27 +1,27 @@
 import { isString, isTypeRefClass, MethodDeclarationClass } from '../converter';
 
+import { RewriteQueries, QueryStore, extractQueries } from '../commons';
 import { TypeType, makeTypeType } from '../type';
 import { ParameterType, makeParameterType } from './parameter';
-import { StatementType, makeStatementType } from '../statement';
+import { BlockField, makeBlockField } from '../statement';
 
 export type MethodField = {
     kind: 'method';
     name: string;
     returnType: TypeType | 'void';
     param?: ParameterType[];
-    block?: StatementType[];
-};
+    soql?: QueryStore['soql'];
+    sosl?: QueryStore['sosl'];
+} & ({} | RewriteQueries<BlockField>);
 
 export const makeMethodField = (
     methodDeclaration: MethodDeclarationClass,
 ): MethodField | undefined => {
     const name = methodDeclaration.getValue();
     const valueType = methodDeclaration.getValueType();
+    const queryStore: QueryStore = { soql: [], sosl: [] };
     const param = makeParameterType(methodDeclaration.getParam());
-    const block = methodDeclaration
-        .getBlock()
-        .map((b) => makeStatementType(b))
-        .filter((b) => b !== undefined);
+    const block = extractQueries(makeBlockField(methodDeclaration.getBlock()), queryStore);
 
     let methodField: MethodField | undefined = undefined;
     if (name && valueType) {
@@ -50,12 +50,21 @@ export const makeMethodField = (
             methodField.param = param;
         }
 
-        if (block.length > 0) {
-            methodField.block = block;
+        if (block) {
+            methodField = {
+                ...methodField,
+                ...block,
+            };
         }
 
-        return methodField;
+        if (queryStore.soql.length > 0) {
+            methodField.soql = queryStore.soql;
+        }
+        if (queryStore.sosl.length > 0) {
+            methodField.sosl = queryStore.sosl;
+        }
     }
 
-    return undefined;
+    return methodField;
 };
+
