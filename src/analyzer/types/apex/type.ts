@@ -1,3 +1,5 @@
+import typia from 'typia';
+
 import { TypeRefClass, TypeNameClass } from './converter';
 
 const isPrimitiveType = (type: string): boolean => {
@@ -53,6 +55,8 @@ export type TypeType =
           keyType: TypeType;
           valueType: TypeType;
       };
+
+export const isTypeType = typia.createIs<TypeType>;
 
 export const makeTypeType = (type: TypeRefClass): TypeType | undefined => {
     const value = type.getValue();

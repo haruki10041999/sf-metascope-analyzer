@@ -1,3 +1,5 @@
+import typia from 'typia';
+
 import {
     PrimaryClass,
     isStringPrimaryElementClass,
@@ -37,6 +39,8 @@ type SoslPrimaryType = {
 
 export type PrimaryType =
     StringPrimaryType | SoqlPrimaryType | LiteralPrimaryType | SoslPrimaryType | TypePrimaryType;
+
+export const isPrimaryType = typia.createIs<PrimaryType>;
 
 export const makePrimaryType = (primary: PrimaryClass): PrimaryType | undefined => {
     const elementClass = primary.getValue();

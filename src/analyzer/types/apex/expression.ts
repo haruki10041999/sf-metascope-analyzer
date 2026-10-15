@@ -1,3 +1,5 @@
+import typia from 'typia';
+
 import {
     ExpressionClass,
     isNormalExpressionElementClass,
@@ -154,6 +156,8 @@ export type ExpressionType =
     | DoubleOperatorType
     | InstanceOfType
     | CondType;
+
+export const isExpressionType = typia.createIs<ExpressionType>;
 
 export const makeExpressionType = (expression: ExpressionClass): ExpressionType | undefined => {
     const elementClass = expression.getValue();
