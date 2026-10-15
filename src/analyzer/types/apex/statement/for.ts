@@ -29,9 +29,9 @@ type NormalForInit =
     | ExpressionType[];
 
 type NormalFor = {
-    init: NormalForInit;
-    condition: ExpressionType;
-    update: ExpressionType[];
+    init?: NormalForInit;
+    condition?: ExpressionType;
+    update?: ExpressionType[];
 };
 
 export type ForField = {
@@ -57,14 +57,24 @@ const makeEnhancedFor = (enhancedFor: EnhancedForControlClass): EnhancedFor | un
 };
 
 const makeNormalFor = (
-    init: LocalVariableDeclarationClass | ExpressionClass[],
-    condition: ExpressionClass,
+    init: LocalVariableDeclarationClass | ExpressionClass[] | null,
+    condition: ExpressionClass | null,
     update: ExpressionClass[],
 ): NormalFor | undefined => {
-    const cond = makeExpressionType(condition);
-    const updates = update.map((u) => makeExpressionType(u)).filter((u) => u !== undefined);
+    const normalFor: NormalFor = {};
 
-    if (cond && updates.length > 0) {
+    if (condition) {
+        const cond = makeExpressionType(condition);
+        if (!cond) return undefined;
+        normalFor.condition = cond;
+    }
+
+    const updates = update.map((u) => makeExpressionType(u)).filter((u) => u !== undefined);
+    if (updates.length > 0) {
+        normalFor.update = updates;
+    }
+
+    if (init) {
         if (isLocalVariableDeclarationClass(init)) {
             const value = init.getValue();
             const valueType = makeTypeType(init.getValueType());
@@ -103,27 +113,19 @@ const makeNormalFor = (
                     inits.modifier = modifier;
                 }
 
-                return {
-                    init: inits,
-                    condition: cond,
-                    update: updates,
-                };
+                normalFor.init = inits;
+            } else {
+                return undefined;
             }
-        }
-
-        if (isExpressionClassArray(init)) {
+        } else if (isExpressionClassArray(init)) {
             const inits = init.map((i) => makeExpressionType(i)).filter((i) => i !== undefined);
-            if (inits) {
-                return {
-                    init: inits,
-                    condition: cond,
-                    update: updates,
-                };
-            }
+            normalFor.init = inits;
+        } else {
+            return undefined;
         }
     }
 
-    return undefined;
+    return normalFor;
 };
 
 export const makeForField = (forStatement: ForStatementClass): ForField | undefined => {
@@ -143,20 +145,19 @@ export const makeForField = (forStatement: ForStatementClass): ForField | undefi
             }
         }
 
-        if (isExpressionClass(value)) {
+        if (isExpressionClass(value) || value === null) {
             const init = forControl.getInit();
-            if (init) {
-                const normalFor = makeNormalFor(init, value, forControl.getUpdate());
-                if (normalFor) {
-                    return {
-                        type: 'for',
-                        condition: normalFor,
-                        block: block,
-                    };
-                }
+            const normalFor = makeNormalFor(init, value, forControl.getUpdate());
+            if (normalFor) {
+                return {
+                    type: 'for',
+                    condition: normalFor,
+                    block: block,
+                };
             }
         }
     }
 
     return undefined;
 };
+

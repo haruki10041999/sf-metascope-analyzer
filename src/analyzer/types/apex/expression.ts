@@ -52,15 +52,18 @@ type CreatedNameType = {
 };
 
 type ArrayCreatorRestType = CreatedNameType & {
+    creatorType: 'array';
     size?: ExpressionType;
-    initValue?: ExpressionType[];
+    initValue: ExpressionType[];
 };
 
 type ClassCreatorRestType = CreatedNameType & {
+    creatorType: 'class';
     arg?: ExpressionType[];
 };
 
 type MapCreatorRestType = CreatedNameType & {
+    creatorType: 'map';
     initValue?: {
         key: ExpressionType;
         value: ExpressionType;
@@ -68,7 +71,8 @@ type MapCreatorRestType = CreatedNameType & {
 };
 
 type SetCreatorRestType = CreatedNameType & {
-    initialValue?: ExpressionType[];
+    creatorType: 'set';
+    initialValue: ExpressionType[];
 };
 
 type CreatorType = {
@@ -93,6 +97,12 @@ type SubType = {
     parenthesized: true;
 };
 
+type ArrayAccessType = {
+    kind: 'arrayAccess';
+    object: ExpressionType;
+    index: ExpressionType[];
+};
+
 type SingleOperatorType = {
     kind: 'prefix' | 'postfix';
     value: ExpressionType;
@@ -114,16 +124,16 @@ type InstanceOfType = {
 };
 
 type CondType = {
-    kind: 'tenary';
+    kind: 'ternary';
     condition: ExpressionType;
-    truevalue: ExpressionType;
+    trueValue: ExpressionType;
     falseValue: ExpressionType;
 };
 
 export type ExpressionType =
     | string
     | PrimaryType
-    | ExpressionType[]
+    | ArrayAccessType
     | DotExpressionType
     | MethodCallType
     | CreatorType
@@ -194,10 +204,18 @@ export const makeExpressionType = (expression: ExpressionClass): ExpressionType 
         }
 
         if (isArrayExpressionElementClass(elementClass)) {
-            return elementClass
+            const values = elementClass
                 .getExpression()
                 .map((v) => makeExpressionType(v))
                 .filter((v) => v !== undefined);
+            const object = values[0];
+            if (object && values.length > 1) {
+                return {
+                    kind: 'arrayAccess',
+                    object: object,
+                    index: values.slice(1),
+                };
+            }
         }
 
         if (isMethodCallExpressionElementClass(elementClass)) {
@@ -265,15 +283,14 @@ export const makeExpressionType = (expression: ExpressionClass): ExpressionType 
 
                     const expressionType: ArrayCreatorRestType = {
                         ...createdName,
+                        creatorType: 'array',
+                        initValue: initialValue,
                     };
 
                     if (size) {
                         expressionType.size = size;
                     }
 
-                    if (initialValue.length > 0) {
-                        expressionType.initValue = initialValue;
-                    }
                     return {
                         kind: 'instance',
                         ...expressionType,
@@ -284,6 +301,7 @@ export const makeExpressionType = (expression: ExpressionClass): ExpressionType 
                     if (restElementClass.getType() === 'class') {
                         const expressionType: ClassCreatorRestType = {
                             ...createdName,
+                            creatorType: 'class',
                         };
 
                         if (restElementClass.getContent().length > 0) {
@@ -302,14 +320,14 @@ export const makeExpressionType = (expression: ExpressionClass): ExpressionType 
                     if (restElementClass.getType() === 'set') {
                         const expressionType: SetCreatorRestType = {
                             ...createdName,
+                            creatorType: 'set',
+                            initialValue: [],
                         };
 
-                        if (restElementClass.getContent().length > 0) {
-                            expressionType.initialValue = restElementClass
-                                .getContent()
-                                .map((a) => makeExpressionType(a))
-                                .filter((a) => a !== undefined);
-                        }
+                        expressionType.initialValue = restElementClass
+                            .getContent()
+                            .map((a) => makeExpressionType(a))
+                            .filter((a) => a !== undefined);
 
                         return {
                             kind: 'instance',
@@ -323,6 +341,7 @@ export const makeExpressionType = (expression: ExpressionClass): ExpressionType 
 
                     const expressionType: MapCreatorRestType = {
                         ...createdName,
+                        creatorType: 'map',
                     };
 
                     if (content.length > 0) {
@@ -349,9 +368,19 @@ export const makeExpressionType = (expression: ExpressionClass): ExpressionType 
                     };
                 }
                 if (isNoRestElementClass(restElementClass)) {
+                    if (restElementClass.getContent() === '{}') {
+                        return {
+                            kind: 'instance',
+                            ...createdName,
+                            creatorType: 'set',
+                            initialValue: [],
+                        };
+                    }
+
                     return {
                         kind: 'instance',
                         ...createdName,
+                        creatorType: 'class',
                     };
                 }
             }
@@ -440,9 +469,9 @@ export const makeExpressionType = (expression: ExpressionClass): ExpressionType 
 
             if (condition && trueValue && falseValue) {
                 return {
-                    kind: 'tenary',
+                    kind: 'ternary',
                     condition: condition,
-                    truevalue: trueValue,
+                    trueValue: trueValue,
                     falseValue: falseValue,
                 };
             }

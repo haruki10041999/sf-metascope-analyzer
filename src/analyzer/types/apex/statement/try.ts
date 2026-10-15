@@ -11,7 +11,7 @@ type TryBlock =
     | {
           type: 'catch';
           exception: string;
-          excepstionType: string[];
+          exceptionType: string[];
           modifier?: ModifierType;
           block: StatementType[];
       };
@@ -48,7 +48,7 @@ export const makeTryField = (tryStatement: TryStatementClass): TryField | undefi
             const catchBlock: TryBlock = {
                 type: 'catch',
                 exception: exception,
-                excepstionType: exceptionType,
+                exceptionType: exceptionType,
                 block: block,
             };
 
@@ -60,11 +60,11 @@ export const makeTryField = (tryStatement: TryStatementClass): TryField | undefi
         }
     });
 
-    const finallyBlock = tryStatement
-        .getFinallyBlock()
-        .map((b) => makeStatementType(b))
-        .filter((b) => b !== undefined);
-    if (finallyBlock) {
+    const finallyStatements = tryStatement.getFinallyBlock();
+    if (finallyStatements.length > 0) {
+        const finallyBlock = finallyStatements
+            .map((b) => makeStatementType(b))
+            .filter((b) => b !== undefined);
         tryBlocks.push({
             type: 'finally',
             block: finallyBlock,

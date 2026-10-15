@@ -29,12 +29,11 @@ import { LocalVariableField, makeLocalVariableField } from './localVariable';
 
 export type ExpressionStatementField = {
     kind: 'return' | 'expression' | 'throw';
-    block: ExpressionType;
+    block?: ExpressionType;
 };
 
 export type StringStatementField = {
     kind: 'break' | 'continue';
-    block: string;
 };
 
 export type StatementType =
@@ -51,7 +50,7 @@ export type StatementType =
     | RunAsField
     | LocalVariableField;
 
-export const makeBlockField = (statement: NormalStatementClass[]): StatementType[] | undefined => {
+export const makeBlockField = (statement: NormalStatementClass[]): StatementType[] => {
     const statementTypes: StatementType[] = [];
 
     statement.forEach((s) => {
@@ -61,11 +60,7 @@ export const makeBlockField = (statement: NormalStatementClass[]): StatementType
         }
     });
 
-    if (statementTypes.length > 0) {
-        return statementTypes;
-    }
-
-    return undefined;
+    return statementTypes;
 };
 
 export const makeStatementType = (statement: NormalStatementClass): StatementType | undefined => {
@@ -115,6 +110,10 @@ export const makeStatementType = (statement: NormalStatementClass): StatementTyp
                     block: value,
                 };
             }
+
+            if (elementClass.getType() === 'return') {
+                return { kind: 'return' };
+            }
         }
 
         if (isStringStatementElementClass(elementClass)) {
@@ -122,7 +121,6 @@ export const makeStatementType = (statement: NormalStatementClass): StatementTyp
             if (value) {
                 return {
                     kind: elementClass.getType(),
-                    block: value,
                 };
             }
         }
@@ -150,3 +148,4 @@ export const makeStatementType = (statement: NormalStatementClass): StatementTyp
 
     return undefined;
 };
+

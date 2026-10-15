@@ -12,11 +12,11 @@ export type DmlField =
           kind: 'upsert';
           value: ExpressionType;
           accessLevel?: string;
-          eternalKey?: string[];
+          externalKey?: string[];
       }
     | {
           kind: 'merge';
-          value: ExpressionType;
+          value: ExpressionType[];
           accessLevel?: string;
       };
 
@@ -42,7 +42,6 @@ export const makeDmlField = (
 
     return undefined;
 };
-
 export const makeUpsertField = (upsertStatement: UpsertStatementClass): DmlField | undefined => {
     const value = makeExpressionType(upsertStatement.getValue());
     const accessLevel = upsertStatement.getAccessLevel();
@@ -59,7 +58,7 @@ export const makeUpsertField = (upsertStatement: UpsertStatementClass): DmlField
         }
 
         if (eternalKey.length > 0) {
-            dmlField.eternalKey = eternalKey;
+            dmlField.externalKey = eternalKey;
         }
 
         return dmlField;

@@ -8,14 +8,17 @@ import { parse } from '../apex_IR/helpers';
 
 type UnitVisitorModule = typeof import('../../src/analyzer/types/apex_IR/unitVisitor');
 type ConverterModule = typeof import('../../src/analyzer/types/apex/converter');
+type UnitOutputModule = typeof import('../../src/analyzer/types/apex/unit');
 type IRModule = typeof import('../../src/analyzer/types/apex_IR');
 let unitVisitor: UnitVisitorModule;
 let converter: ConverterModule;
+let unitOutput: UnitOutputModule;
 let ir: IRModule;
 
 before(async () => {
     unitVisitor = await import('../../src/analyzer/types/apex_IR/unitVisitor');
     converter = await import('../../src/analyzer/types/apex/converter');
+    unitOutput = await import('../../src/analyzer/types/apex/unit');
     ir = await import('../../src/analyzer/types/apex_IR');
 });
 
@@ -36,7 +39,25 @@ const convert = async (file: string, rule: (p: ApexParser) => ApexParserRuleCont
     else if (ir.isTriggerUnitType(unit)) converted = converter.triggerUnitConvert(unit, errors);
     else if (ir.isAnonymousUnitType(unit)) converted = converter.anonymousUnitConvert(unit, errors);
     else throw new Error(`Unsupported unit type: ${unit.getType()}`);
-    return { unit, converted: JSON.parse(JSON.stringify(converted)), errors };
+    return {
+        unit,
+        converted: JSON.parse(JSON.stringify(converted)),
+        convertedClass: converted,
+        errors,
+    };
+};
+
+const convertOutput = async (file: string, rule: (p: ApexParser) => ApexParserRuleContext) => {
+    const result = await convert(file, rule);
+    let output: unknown;
+    if (ir.isCompilationUnitType(result.unit)) {
+        output = unitOutput.makeCompilationUnitType(result.convertedClass as any);
+    } else if (ir.isTriggerUnitType(result.unit)) {
+        output = unitOutput.makeTriggerUnitType(result.convertedClass as any);
+    } else if (ir.isAnonymousUnitType(result.unit)) {
+        output = unitOutput.makeAnonymousUnitType(result.convertedClass as any);
+    }
+    return JSON.parse(JSON.stringify(output));
 };
 
 // IR の構造キーや、converter が null に正規化する arraySubscripts の 0 / isStatic の false は比較対象外
@@ -121,5 +142,73 @@ describe('converter / docs/examples/apex-ir', () => {
         const declarations = converted.block.filter((b: any) => b.modifier.length > 0);
         assert.ok(declarations.length > 0);
         declarations.forEach((d: any) => assert.notEqual(d.value?.value, null));
+    });
+
+    it('JSON 出力で SOQL の LIMIT / OFFSET と日付式の引数を保持する', async () => {
+        const output = await convertOutput(...examples[0]);
+        const offsetQueries = find(
+            output,
+            (n) => n.offset !== undefined && n.from?.field !== undefined,
+        );
+        assert.equal(offsetQueries.length, 2);
+        assert.ok(
+            offsetQueries.some(
+                (query) => query.limit?.kind === 'number' && query.limit.value === '100',
+            ),
+        );
+        assert.ok(
+            offsetQueries.some(
+                (query) => query.limit?.kind === 'bind' && query.limit.value.value === 'pageSize',
+            ),
+        );
+        assert.ok(offsetQueries.some((query) => query.offset?.value === '10'));
+        assert.ok(offsetQueries.some((query) => query.offset?.kind === 'bind'));
+
+        const dateFormula = find(output, (n) => n.kind === 'dateFormula').find(
+            (value) => value.funcName === 'LAST_N_DAYS_N',
+        );
+        assert.equal(dateFormula?.param?.value, '30');
+    });
+
+    it('JSON 出力で空 return / for と finally の有無を保持する', async () => {
+        const output = await convertOutput(...examples[0]);
+        assert.ok(find(output, (n) => n.kind === 'return' && n.block === undefined).length > 0);
+        assert.ok(
+            find(output, (n) => n.type === 'for' && Object.keys(n.condition ?? {}).length === 0)
+                .length > 0,
+        );
+
+        const triggerOutput = await convertOutput(...examples[1]);
+        const tryStatements = find(triggerOutput, (n) => n.kind === 'try');
+        assert.ok(tryStatements.length > 0);
+        tryStatements.forEach((statement) =>
+            assert.equal(
+                statement.block.some((block: any) => block.type === 'finally'),
+                false,
+            ),
+        );
+    });
+
+    it('JSON 出力で修飾子と型付きキー名を保持する', async () => {
+        const output = await convertOutput(...examples[0]);
+        assert.ok(find(output, (n) => n.sharing?.includes('INHERITED_SHARING')).length > 0);
+        assert.ok(find(output, (n) => n.externalKey !== undefined).length > 0);
+        assert.ok(find(output, (n) => n.exceptionType !== undefined).length > 0);
+        assert.ok(
+            find(output, (n) => n.kind === 'ternary' && n.trueValue !== undefined).length > 0,
+        );
+    });
+
+    it('JSON 出力で配列アクセスと空の配列生成を区別する', async () => {
+        const output = await convertOutput(...examples[0]);
+        const arrayAccesses = find(output, (n) => n.kind === 'arrayAccess');
+        assert.ok(arrayAccesses.some((n) => n.object?.value === 'sized'));
+        assert.ok(arrayAccesses.some((n) => n.object?.value === 'numbers'));
+        assert.ok(
+            find(output, (n) => n.creatorType === 'array' && Array.isArray(n.initValue)).length > 0,
+        );
+        assert.ok(
+            find(output, (n) => n.creatorType === 'set' && n.initialValue?.length === 0).length > 0,
+        );
     });
 });

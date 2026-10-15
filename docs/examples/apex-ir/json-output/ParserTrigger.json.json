@@ -1056,7 +1056,8 @@
                             "Contact"
                           ]
                         }
-                      ]
+                      ],
+                      "creatorType": "class"
                     }
                   }
                 ],
@@ -1107,6 +1108,7 @@
                           "typeName": [
                             "Contact"
                           ],
+                          "creatorType": "class",
                           "arg": [
                             {
                               "kind": "expression",
@@ -1225,7 +1227,8 @@
                           "kind": "primitive",
                           "name": "Id"
                         }
-                      ]
+                      ],
+                      "creatorType": "class"
                     }
                   }
                 ],
@@ -1367,7 +1370,8 @@
                             "Contact"
                           ]
                         }
-                      ]
+                      ],
+                      "creatorType": "class"
                     }
                   }
                 ],
@@ -1717,7 +1721,7 @@
                   {
                     "type": "catch",
                     "exception": "e",
-                    "excepstionType": [
+                    "exceptionType": [
                       "Exception"
                     ],
                     "block": [
@@ -1745,10 +1749,6 @@
                         }
                       }
                     ]
-                  },
-                  {
-                    "type": "finally",
-                    "block": []
                   }
                 ]
               }

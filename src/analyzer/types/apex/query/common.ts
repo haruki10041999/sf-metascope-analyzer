@@ -115,7 +115,7 @@ export const makeValueType = (value: NormalValueClass): ValueType | undefined =>
                 };
 
                 if (param) {
-                    const literal = valueValue.getValue();
+                    const literal = param.getValue();
                     const literalType = param.getValueType();
                     const literalOperator = param.getOperator();
 

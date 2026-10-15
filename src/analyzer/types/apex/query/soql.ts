@@ -83,7 +83,7 @@ export const makesoqlType = (query: NormalQueryClass): SoqlType | undefined => {
         if (offsetClause) {
             const offsetField = makeOffsetField(offsetClause);
             if (offsetField) {
-                soqlType.limit = offsetField;
+                soqlType.offset = offsetField;
             }
         }
 
@@ -97,3 +97,4 @@ export const makesoqlType = (query: NormalQueryClass): SoqlType | undefined => {
 
     return undefined;
 };
+

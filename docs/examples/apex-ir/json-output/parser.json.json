@@ -420,7 +420,8 @@
                   "kind": "primitive",
                   "name": "String"
                 }
-              ]
+              ],
+              "creatorType": "class"
             }
           }
         ],
@@ -447,7 +448,8 @@
                   "kind": "primitive",
                   "name": "Id"
                 }
-              ]
+              ],
+              "creatorType": "class"
             }
           }
         ],
@@ -480,7 +482,8 @@
                     "Account"
                   ]
                 }
-              ]
+              ],
+              "creatorType": "class"
             }
           }
         ],
@@ -518,6 +521,7 @@
                   "name": "Integer"
                 }
               ],
+              "creatorType": "map",
               "initValue": [
                 {
                   "key": {
@@ -575,6 +579,7 @@
                   "name": "String"
                 }
               ],
+              "creatorType": "set",
               "initialValue": [
                 {
                   "kind": "literal",
@@ -613,7 +618,9 @@
                   "kind": "primitive",
                   "name": "String"
                 }
-              ]
+              ],
+              "creatorType": "set",
+              "initialValue": []
             }
           }
         ],
@@ -635,6 +642,7 @@
               "typeName": [
                 "Integer"
               ],
+              "creatorType": "array",
               "initValue": [
                 {
                   "kind": "literal",
@@ -674,6 +682,8 @@
               "typeName": [
                 "String"
               ],
+              "creatorType": "array",
+              "initValue": [],
               "size": {
                 "kind": "literal",
                 "value": "5",
@@ -732,6 +742,7 @@
                   "name": "String"
                 }
               ],
+              "creatorType": "set",
               "initialValue": [
                 {
                   "kind": "literal",
@@ -752,17 +763,20 @@
         "kind": "expression",
         "block": {
           "kind": "expression",
-          "left": [
-            {
+          "left": {
+            "kind": "arrayAccess",
+            "object": {
               "kind": "id",
               "value": "names"
             },
-            {
-              "kind": "literal",
-              "value": "0",
-              "valueType": "integer"
-            }
-          ],
+            "index": [
+              {
+                "kind": "literal",
+                "value": "0",
+                "valueType": "integer"
+              }
+            ]
+          },
           "operator": "=",
           "right": {
             "kind": "literal",
@@ -896,6 +910,7 @@
               "typeName": [
                 "Account"
               ],
+              "creatorType": "class",
               "arg": [
                 {
                   "kind": "expression",
@@ -1067,7 +1082,7 @@
           "kind": "id",
           "value": "account"
         },
-        "eternalKey": [
+        "externalKey": [
           "Account",
           "Id"
         ]
@@ -1082,6 +1097,7 @@
               "typeName": [
                 "Account"
               ],
+              "creatorType": "class",
               "arg": [
                 {
                   "kind": "expression",
@@ -1160,12 +1176,14 @@
                   ]
                 }
               ],
+              "creatorType": "set",
               "initialValue": [
                 {
                   "kind": "instance",
                   "typeName": [
                     "Account"
                   ],
+                  "creatorType": "class",
                   "arg": [
                     {
                       "kind": "expression",
@@ -1187,6 +1205,7 @@
                   "typeName": [
                     "Account"
                   ],
+                  "creatorType": "class",
                   "arg": [
                     {
                       "kind": "expression",
@@ -1208,6 +1227,7 @@
                   "typeName": [
                     "Account"
                   ],
+                  "creatorType": "class",
                   "arg": [
                     {
                       "kind": "expression",
@@ -1859,22 +1879,6 @@
       {
         "type": "for",
         "condition": {
-          "init": {
-            "variant": [
-              {
-                "variant": "i",
-                "initValue": {
-                  "kind": "literal",
-                  "value": "0",
-                  "valueType": "integer"
-                }
-              }
-            ],
-            "variantType": {
-              "kind": "primitive",
-              "name": "Integer"
-            }
-          },
           "condition": {
             "kind": "expression",
             "left": {
@@ -1897,7 +1901,23 @@
               },
               "operator": "++"
             }
-          ]
+          ],
+          "init": {
+            "variant": [
+              {
+                "variant": "i",
+                "initValue": {
+                  "kind": "literal",
+                  "value": "0",
+                  "valueType": "integer"
+                }
+              }
+            ],
+            "variantType": {
+              "kind": "primitive",
+              "name": "Integer"
+            }
+          }
         },
         "block": [
           {
@@ -1935,8 +1955,7 @@
                 },
                 "block": [
                   {
-                    "kind": "continue",
-                    "block": "continue"
+                    "kind": "continue"
                   }
                 ]
               }
@@ -1961,8 +1980,7 @@
                 },
                 "block": [
                   {
-                    "kind": "break",
-                    "block": "break"
+                    "kind": "break"
                   }
                 ]
               }
@@ -2302,12 +2320,12 @@
           {
             "variant": "result",
             "initValue": {
-              "kind": "tenary",
+              "kind": "ternary",
               "condition": {
                 "kind": "id",
                 "value": "enabled"
               },
-              "truevalue": {
+              "trueValue": {
                 "kind": "literal",
                 "value": "enabled",
                 "valueType": "string"
@@ -2427,6 +2445,7 @@
                           "typeName": [
                             "QueryException"
                           ],
+                          "creatorType": "class",
                           "arg": [
                             {
                               "kind": "literal",
@@ -2445,7 +2464,7 @@
           {
             "type": "catch",
             "exception": "e",
-            "excepstionType": [
+            "exceptionType": [
               "QueryException"
             ],
             "block": [
@@ -2477,7 +2496,7 @@
           {
             "type": "catch",
             "exception": "e",
-            "excepstionType": [
+            "exceptionType": [
               "Exception"
             ],
             "block": [
@@ -2824,6 +2843,7 @@
               "typeName": [
                 "Account"
               ],
+              "creatorType": "class",
               "arg": [
                 {
                   "kind": "expression",
@@ -2981,6 +3001,7 @@
             "typeName": [
               "User"
             ],
+            "creatorType": "class",
             "arg": [
               {
                 "kind": "expression",

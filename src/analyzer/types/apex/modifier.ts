@@ -9,7 +9,7 @@ type AccessModifier = 'PUBLIC' | 'PRIVATE' | 'PROTECTED' | 'GLOBAL';
 type DeclarationModifier = 'STATIC' | 'FINAL' | 'ABSTRACT' | 'VIRTUAL' | 'OVERRIDE';
 type WebServiceModifier = 'WEBSERVICE';
 type TestModifier = 'TESTMETHOD';
-type SharingModifier = 'WITH_SHARING' | 'WITHOUT_SHARING' | 'INHERIT_SHARING';
+type SharingModifier = 'WITH_SHARING' | 'WITHOUT_SHARING' | 'INHERITED_SHARING';
 type OtherModifier = 'TRANSIENT';
 
 const isAccessModifier = (value: string): value is AccessModifier =>
@@ -27,7 +27,7 @@ const isWebServiceModifier = (value: string): value is WebServiceModifier => val
 const isTestModifier = (value: string): value is TestModifier => value === 'TESTMETHOD';
 
 const isSharingModifier = (value: string): value is SharingModifier =>
-    value === 'WITH_SHARING' || value === 'WITHOUT_SHARING' || value === 'INHERIT_SHARING';
+    value === 'WITH_SHARING' || value === 'WITHOUT_SHARING' || value === 'INHERITED_SHARING';
 
 const isOtherModifier = (value: string): value is OtherModifier => value === 'TRANSIENT';
 
