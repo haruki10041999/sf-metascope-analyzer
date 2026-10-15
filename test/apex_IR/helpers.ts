@@ -1,6 +1,6 @@
 import { ApexParser, ApexParserFactory } from '@apexdevtools/apex-parser';
 
-import { ApexSyntaxErrorCollector } from '../../src/analyzer/parser/apexSyntaxError';
+import { ApexSyntaxErrorCollector } from '../../src/analyzer/parser/Apex/apexSyntaxError';
 import { CommonTypeClass, ErrorTypeClass } from '../../src/analyzer/types/apex_IR/commonVisitor';
 
 // 構文エラーがあるとエラー回復後の木を検証してしまうため、テスト入力側の誤りとして即失敗させる

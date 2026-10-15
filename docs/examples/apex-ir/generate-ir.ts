@@ -1,7 +1,7 @@
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
 
 import { ApexParser, ApexParserFactory, ApexParserRuleContext } from '@apexdevtools/apex-parser';
-import { ApexSyntaxErrorCollector } from '../../../src/analyzer/parser/apexSyntaxError';
+import { ApexSyntaxErrorCollector } from '../../../src/analyzer/parser/Apex/apexSyntaxError';
 import { UnitVisitor } from '../../../src/analyzer/types/apex_IR/unitVisitor';
 
 const targets: [string, (parser: ApexParser) => ApexParserRuleContext][] = [

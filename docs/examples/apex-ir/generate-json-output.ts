@@ -1,7 +1,7 @@
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
 
 import { ApexParser, ApexParserFactory, ApexParserRuleContext } from '@apexdevtools/apex-parser';
-import { ApexSyntaxErrorCollector } from '../../../src/analyzer/parser/apexSyntaxError';
+import { ApexSyntaxErrorCollector } from '../../../src/analyzer/parser/Apex/apexSyntaxError';
 import {
     CommonTypeClass,
     ErrorTypeClass,
@@ -80,3 +80,4 @@ for (const [file, rule] of targets) {
     await writeFile(outputFile, `${JSON.stringify(result, null, 2)}\n`, 'utf8');
     console.log(`Converter output written to ${outputFile.pathname}`);
 }
+
