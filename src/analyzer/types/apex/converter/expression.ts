@@ -1,5 +1,9 @@
+import typia from 'typia';
+
 import {
     ErrorTypeClass,
+    CommonTypeClass,
+    SourceSpan,
     NormalExpressionTypeClass,
     PrimaryExpressionTypeClass,
     DotExpressionTypeClass,
@@ -84,17 +88,25 @@ import {
     isFieldNameType,
 } from '../../apex_IR';
 
-import { toPrimitiveValue, toTypeClass, CommonClass, isCommonClass } from './commons';
-import { anyIdConvert, isString, isStringArray } from './id';
-import { PrimaryClass, primaryConvert, PrimaryElementClass } from './primary';
-import { fieldNameConvert } from './name';
 import {
-    MethodCallClass,
-    DotMethodCallClass,
-    methodCallConvert,
-    dotMethodCallConvert,
-    isDotMethodCallClass,
-} from './call';
+    toPrimitiveValue,
+    toTypeClass,
+    SourceSpanInfo,
+    CommonClass,
+    ElementClass,
+    CommonJson,
+    ErrorInfo,
+    isErrorInfo,
+} from './commons';
+import { AnyIdClass, AnyIdJson, isString, isStringArray } from './id';
+import {
+    AllPrimaryClass,
+    AllPrimaryJson,
+    PrimaryElementClass,
+    isPrimaryTypeClass,
+} from './primary';
+import { fieldNameConvert } from './name';
+import { MethodCallClass, MethodCallJson, DotMethodCallClass, DotMethodCallJson } from './call';
 import { TypeRefClass, typeRefConvert } from './type';
 import { CreatorClass, creatorConvert } from './rest';
 import { DataCategorySelectionClass, dataCategorySelectionConvert } from './clause';
@@ -106,118 +118,200 @@ import {
     soqlFunctionConvert,
 } from './query';
 
-export const normalExpressionConvert = (
-    target: NormalExpressionTypeClass,
-    errorClass: ErrorTypeClass[],
-): string | null => {
-    return toPrimitiveValue(
-        target.getValue(),
-        (target): target is string => typeof target === 'string',
-        errorClass,
-    );
-};
+export type ExpressionJson = CommonJson<'expression'> & { expression: string | null };
+export const isExpressionJson = typia.createIs<ExpressionJson>();
 
-export const primaryExpressionConvert = (
-    target: PrimaryExpressionTypeClass,
-    errorClass: ErrorTypeClass[],
-): PrimaryClass => {
-    const primaryClass = new PrimaryClass();
+export class ExpressionClass implements CommonClass<'expression', ExpressionJson> {
+    private value: string | null;
+    private sourceSpan: SourceSpanInfo;
+    private errorInfo: ErrorInfo | null;
 
-    const valueTypeClass = toTypeClass(target.getValue(), isPrimaryTypeAll, errorClass);
-    if (valueTypeClass) {
-        primaryClass.copy(primaryConvert(valueTypeClass, errorClass));
-    }
-    return primaryClass;
-};
+    constructor(target: NormalExpressionTypeClass) {
+        const value = toPrimitiveValue(target.getValue(), isString);
 
-export class DotExpressionClass extends CommonClass {
-    private left: ExpressionClass = new ExpressionClass();
-    private operator: string | null = null;
-    private right: string | DotMethodCallClass | null = null;
-
-    setLeft(left: ExpressionClass): void {
-        this.left.copy(left);
-    }
-
-    setOperator(operator: string | null): void {
-        this.operator = operator;
-    }
-
-    setRight(right: string | DotMethodCallClass | null): void {
-        if (isDotMethodCallClass(this.right) && isDotMethodCallClass(right)) {
-            this.right.copy(right);
-        } else if (isString(this.right) && isString(right)) {
-            this.right = right;
+        if (isErrorInfo(value)) {
+            this.errorInfo = value;
+            this.value = null;
         } else {
-            this.right = right;
+            this.errorInfo = null;
+            this.value = value;
         }
+
+        this.sourceSpan = { content: target.getSpan()! };
     }
 
-    getLeft(): ExpressionClass {
-        return this.left;
+    getErrorInfo(): ErrorInfo | null {
+        return this.errorInfo;
     }
 
-    getOperator(): string | null {
-        return this.operator;
+    getType(): 'expression' {
+        return 'expression';
     }
 
-    getRight(): string | DotMethodCallClass | null {
-        return this.right;
+    getSourceSpan(): SourceSpanInfo {
+        return this.sourceSpan;
     }
 
-    copy(commonClass: DotExpressionClass): void {
-        this.setLeft(commonClass.getLeft());
-        this.setOperator(commonClass.getOperator());
-        this.setRight(commonClass.getRight());
+    toJson(): ExpressionJson {
+        return {
+            type: 'expression',
+            expression: this.value,
+            sourceSpan: this.sourceSpan,
+        };
     }
 }
 
-export const isDotExpressionClass = (target: any): target is DotExpressionClass => {
-    return isCommonClass(target, DotExpressionClass);
+export type PrimaryExpressionJson = CommonJson<'primaryExpression'> & {
+    primaryExpression?: Omit<AllPrimaryJson, 'sourceSpan'>;
 };
 
-export const isDotExpressionClassArray = (target: any): target is DotExpressionClass[] => {
-    return Array.isArray(target) && target.every((t) => isDotExpressionClass(t));
-};
+export const isPrimaryExpressionJson = typia.createIs<PrimaryExpressionJson>();
 
-export const dotExpressionConvert = (
-    target: DotExpressionTypeClass,
-    errorClass: ErrorTypeClass[],
-): DotExpressionClass => {
-    const dotExpression = new DotExpressionClass();
+export class PrimaryExpressionClass implements CommonClass<
+    'primaryExpression',
+    PrimaryExpressionJson
+> {
+    private value: AllPrimaryClass | null;
+    private sourceSpan: SourceSpanInfo;
+    private errorInfo: ErrorInfo | null;
 
-    const leftTypeClass = toTypeClass(target.getLeft(), isExpressionTypeAll, errorClass);
-    if (leftTypeClass) {
-        dotExpression.setLeft(expressionConvert(leftTypeClass, errorClass));
-    }
+    constructor(target: PrimaryExpressionTypeClass) {
+        const value = toTypeClass(target.getValue(), isPrimaryTypeClass);
 
-    const operator = toPrimitiveValue(
-        target.getOperator(),
-        (target): target is string => typeof target === 'string',
-        errorClass,
-    );
-    if (operator) {
-        dotExpression.setOperator(operator);
-    }
-
-    const rightTypeClass = toTypeClass(
-        target.getRight(),
-        (target): target is AnyIdTypeClass | DotMethodCallTypeClass =>
-            isAnyIdType(target) || isDotMethodCallType(target),
-        errorClass,
-    );
-
-    if (rightTypeClass) {
-        if (isAnyIdType(rightTypeClass)) {
-            dotExpression.setRight(anyIdConvert(rightTypeClass));
-        }
-        if (isDotMethodCallType(rightTypeClass)) {
-            dotExpression.setRight(dotMethodCallConvert(rightTypeClass, errorClass));
+        if (isErrorInfo(value)) {
+            this.errorInfo = value;
+            this.value = null;
+            this.sourceSpan = { content: target.getSpan()! };
+        } else {
+            this.errorInfo = null;
+            this.value = new PrimaryElementClass(value).getCommonClass();
+            this.sourceSpan = { [this.value.getType()]: this.value.getSourceSpan() };
         }
     }
 
-    return dotExpression;
+    getErrorInfo(): ErrorInfo | null {
+        return this.errorInfo;
+    }
+
+    getType(): 'primaryExpression' {
+        return 'primaryExpression';
+    }
+
+    getSourceSpan(): SourceSpanInfo {
+        return this.sourceSpan;
+    }
+
+    toJson(): PrimaryExpressionJson {
+        const json: PrimaryExpressionJson = {
+            type: 'primaryExpression',
+            sourceSpan: this.sourceSpan,
+        };
+
+        if (this.value) {
+            const { sourceSpan, ...rest } = this.value.toJson();
+            json.primaryExpression = rest;
+        }
+
+        return json;
+    }
+}
+
+export type DotExpressionJson = CommonJson<'dotExpression'> & {
+    object?: Omit<AllExpressionJson, 'sourceSpan'>;
+    operator?: string;
+    member?: Omit<AnyIdJson, 'sourceSpan'> | Omit<DotMethodCallJson, 'sourceSpan'>;
 };
+
+export const isDotExpressionJson = typia.createIs<DotExpressionJson>();
+
+export class DotExpressionClass implements CommonClass<'dotExpression', DotExpressionJson> {
+    private object: AllExpressionClass | null;
+    private operator: string | null;
+    private member: AnyIdClass | DotMethodCallClass | null;
+    private sourceSpan: SourceSpanInfo = {};
+    private errorInfo: ErrorInfo[] = [];
+
+    constructor(target: DotExpressionTypeClass) {
+        const objectClass = toTypeClass(target.getLeft(), isExpressionTypeClass);
+        if (isErrorInfo(objectClass)) {
+            this.errorInfo.push(objectClass);
+            this.object = null;
+        } else {
+            this.object = new ExpressionElementClass(objectClass).getCommonClass();
+            this.sourceSpan = {
+                ...this.sourceSpan,
+                [this.object.getType()]: this.object.getSourceSpan(),
+            };
+        }
+        const memberClass = toTypeClass(
+            target.getRight(),
+            (target: CommonTypeClass): target is AnyIdTypeClass | DotMethodCallTypeClass =>
+                isAnyIdType(target) || isDotMethodCallType(target),
+        );
+        if (isErrorInfo(memberClass)) {
+            this.errorInfo.push(memberClass);
+            this.member = null;
+        } else {
+            if (isAnyIdType(memberClass)) {
+                this.member = new AnyIdClass(memberClass);
+                this.sourceSpan = {
+                    ...this.sourceSpan,
+                    [this.member.getType()]: this.member.getSourceSpan()!,
+                };
+            }
+            if (isDotMethodCallType(memberClass)) {
+                this.member = new DotMethodCallClass(memberClass);
+                this.sourceSpan = {
+                    ...this.sourceSpan,
+                    [this.member.getType()]: this.member.getSourceSpan()!,
+                };
+            }
+            this.member = null;
+        }
+
+        const operator = toPrimitiveValue(target.getOperator(), isString);
+        if (isErrorInfo(operator)) {
+            this.errorInfo.push(operator);
+            this.operator = null;
+        } else {
+            this.operator = operator;
+        }
+
+        if (
+            !('object' in this.sourceSpan) ||
+            !('member' in this.sourceSpan) ||
+            !('operator' in this.sourceSpan)
+        ) {
+            this.sourceSpan = { content: target.getSpan()! };
+        }
+    }
+
+    getErrorInfo(): ErrorInfo[] {
+        return this.errorInfo;
+    }
+
+    getType(): 'dotExpression' {
+        return 'dotExpression';
+    }
+
+    getSourceSpan(): SourceSpanInfo {
+        return this.sourceSpan;
+    }
+
+    toJson(): PrimaryExpressionJson {
+        const json: PrimaryExpressionJson = {
+            type: 'primaryExpression',
+            sourceSpan: this.sourceSpan,
+        };
+
+        if (this.value) {
+            const { sourceSpan, ...rest } = this.value.toJson();
+            json.primaryExpression = rest;
+        }
+
+        return json;
+    }
+}
 
 export const arrayExpressionConvert = (
     target: ArrayExpressionTypeClass,
@@ -1346,471 +1440,83 @@ export const whereLogicalExpressionConvert = (
     return whereLogicalExpression;
 };
 
-export abstract class ExpressionElementClass<TType, TExpression> extends CommonClass {
-    private type: TType;
-    private expression: TExpression;
+export type AllExpressionClass = ExpressionClass | PrimaryExpressionClass;
 
-    constructor(type: TType, expression: TExpression) {
-        super();
-        this.type = type;
-        this.expression = expression;
-    }
+export type AllExpressionJson = ExpressionJson | PrimaryExpressionJson;
 
-    getType(): TType {
-        return this.type;
-    }
+export class ExpressionElementClass implements ElementClass<TType, TExpression> {
+    private commonClass: AllExpressionClass;
 
-    getExpression(): TExpression {
-        return this.expression;
-    }
-}
-
-export const isExpressionElementClass = (
-    target: CommonClass,
-): target is ExpressionElementClass<unknown, unknown> => {
-    return isCommonClass(target, ExpressionElementClass);
-};
-
-export class NormalExpressionElementClass extends ExpressionElementClass<'normal', string | null> {
-    constructor(expression: string | null) {
-        super('normal', expression);
-    }
-}
-
-export const isNormalExpressionElementClass = (
-    target: CommonClass,
-): target is NormalExpressionElementClass => {
-    return isCommonClass(target, NormalExpressionElementClass);
-};
-
-export class PrimaryExpressionElementClass extends ExpressionElementClass<'primary', PrimaryClass> {
-    constructor(expression: PrimaryClass) {
-        super('primary', expression);
-    }
-}
-
-export const isPrimaryExpressionElementClass = (
-    target: CommonClass,
-): target is PrimaryExpressionElementClass => {
-    return isCommonClass(target, PrimaryExpressionElementClass);
-};
-
-export class DotExpressionElementClass extends ExpressionElementClass<
-    'dot',
-    DotExpressionClass | null
-> {
-    constructor(expression: DotExpressionClass | null) {
-        super('dot', expression);
-    }
-}
-
-export const isDotExpressionElementClass = (
-    target: CommonClass,
-): target is DotExpressionElementClass => {
-    return isCommonClass(target, DotExpressionElementClass);
-};
-
-export class MethodCallExpressionElementClass extends ExpressionElementClass<
-    'methodCall',
-    MethodCallClass
-> {
-    constructor(expression: MethodCallClass) {
-        super('methodCall', expression);
-    }
-}
-
-export const isMethodCallExpressionElementClass = (
-    target: CommonClass,
-): target is MethodCallExpressionElementClass => {
-    return isCommonClass(target, MethodCallExpressionElementClass);
-};
-
-export class ArrayExpressionElementClass extends ExpressionElementClass<
-    'array',
-    ExpressionClass[]
-> {
-    constructor(expression: ExpressionClass[]) {
-        super('array', expression);
-    }
-}
-
-export const isArrayExpressionElementClass = (
-    target: CommonClass,
-): target is ArrayExpressionElementClass => {
-    return isCommonClass(target, ArrayExpressionElementClass);
-};
-
-export class NewExpressionElementClass extends ExpressionElementClass<'new', CreatorClass> {
-    constructor(expression: CreatorClass) {
-        super('new', expression);
-    }
-}
-
-export const isNewExpressionElementClass = (
-    target: CommonClass,
-): target is NewExpressionElementClass => {
-    return isCommonClass(target, NewExpressionElementClass);
-};
-
-export class CastExpressionElementClass extends ExpressionElementClass<
-    'cast',
-    CastExpressionClass
-> {
-    constructor(expression: CastExpressionClass) {
-        super('cast', expression);
-    }
-}
-
-export const isCastExpressionElementClass = (
-    target: CommonClass,
-): target is CastExpressionElementClass => {
-    return isCommonClass(target, CastExpressionElementClass);
-};
-
-export class SubExpressionElementClass extends ExpressionElementClass<
-    'sub',
-    ExpressionClass | null
-> {
-    constructor(expression: ExpressionClass | null) {
-        super('sub', expression);
-    }
-}
-
-export const isSubExpressionElementClass = (
-    target: CommonClass,
-): target is SubExpressionElementClass => {
-    return isCommonClass(target, SubExpressionElementClass);
-};
-
-export class SingleOperatorExpressionElementClass extends ExpressionElementClass<
-    'postOp' | 'preOp' | 'neg',
-    SingleOperatorExpressionClass
-> {
-    constructor(type: 'postOp' | 'preOp' | 'neg', expression: SingleOperatorExpressionClass) {
-        super(type, expression);
-    }
-}
-
-export const isSingleOperatorExpressionElementClass = (
-    target: CommonClass,
-): target is SingleOperatorExpressionElementClass => {
-    return isCommonClass(target, SingleOperatorExpressionElementClass);
-};
-
-export class ExpToExpOperatorExpressionElementClass extends ExpressionElementClass<
-    | 'arth1'
-    | 'arth2'
-    | 'bit'
-    | 'equality'
-    | 'bitAnd'
-    | 'bitOr'
-    | 'bitNot'
-    | 'assign'
-    | 'cmp'
-    | 'logAnd'
-    | 'logOr'
-    | 'coal',
-    ExpToExpOperatorExpressionClass
-> {
-    constructor(
-        type:
-            | 'arth1'
-            | 'arth2'
-            | 'bit'
-            | 'equality'
-            | 'bitAnd'
-            | 'bitOr'
-            | 'bitNot'
-            | 'assign'
-            | 'cmp'
-            | 'logAnd'
-            | 'logOr'
-            | 'coal',
-        expression: ExpToExpOperatorExpressionClass,
-    ) {
-        super(type, expression);
-    }
-}
-
-export const isExpToExpOperatorExpressionElementClass = (
-    target: CommonClass,
-): target is ExpToExpOperatorExpressionElementClass => {
-    return isCommonClass(target, ExpToExpOperatorExpressionElementClass);
-};
-
-export class InstanceOfExpressionElementClass extends ExpressionElementClass<
-    'instanceOf',
-    InstanceOfExpressionClass
-> {
-    constructor(expression: InstanceOfExpressionClass) {
-        super('instanceOf', expression);
-    }
-}
-
-export const isInstanceOfExpressionElementClass = (
-    target: CommonClass,
-): target is InstanceOfExpressionElementClass => {
-    return isCommonClass(target, InstanceOfExpressionElementClass);
-};
-
-export class CondExpressionElementClass extends ExpressionElementClass<
-    'cond',
-    CondExpressionClass
-> {
-    constructor(expression: CondExpressionClass) {
-        super('cond', expression);
-    }
-}
-
-export const isCondExpressionElementClass = (
-    target: CommonClass,
-): target is CondExpressionElementClass => {
-    return isCommonClass(target, CondExpressionElementClass);
-};
-
-export class ExpressionClass extends CommonClass {
-    private value:
-        | NormalExpressionElementClass
-        | PrimaryExpressionElementClass
-        | DotExpressionElementClass
-        | MethodCallExpressionElementClass
-        | ArrayExpressionElementClass
-        | NewExpressionElementClass
-        | CastExpressionElementClass
-        | SubExpressionElementClass
-        | SingleOperatorExpressionElementClass
-        | ExpToExpOperatorExpressionElementClass
-        | InstanceOfExpressionElementClass
-        | CondExpressionElementClass
-        | null = null;
-
-    setValue(
-        value:
-            | NormalExpressionElementClass
-            | PrimaryExpressionElementClass
-            | DotExpressionElementClass
-            | MethodCallExpressionElementClass
-            | ArrayExpressionElementClass
-            | NewExpressionElementClass
-            | CastExpressionElementClass
-            | SubExpressionElementClass
-            | SingleOperatorExpressionElementClass
-            | ExpToExpOperatorExpressionElementClass
-            | InstanceOfExpressionElementClass
-            | CondExpressionElementClass
-            | null,
-    ): void {
-        this.value = value;
-    }
-
-    getValue():
-        | NormalExpressionElementClass
-        | PrimaryExpressionElementClass
-        | DotExpressionElementClass
-        | MethodCallExpressionElementClass
-        | ArrayExpressionElementClass
-        | NewExpressionElementClass
-        | CastExpressionElementClass
-        | SubExpressionElementClass
-        | SingleOperatorExpressionElementClass
-        | ExpToExpOperatorExpressionElementClass
-        | InstanceOfExpressionElementClass
-        | CondExpressionElementClass
-        | null {
-        return this.value;
-    }
-
-    copy(commonClass: ExpressionClass) {
-        this.setValue(commonClass.getValue());
-    }
-}
-
-export const isExpressionClass = (target: any): target is ExpressionClass => {
-    return isCommonClass(target, ExpressionClass);
-};
-
-export const isExpressionClassArray = (target: any): target is ExpressionClass[] => {
-    return Array.isArray(target) && target.every((t) => isExpressionClass(t));
-};
-
-export const expressionConvert = (
-    target: ExpressionAllTypeClass,
-    errorClass: ErrorTypeClass[],
-): ExpressionClass => {
-    const expressionClass = new ExpressionClass();
-
-    if (isNormalExpressionType(target)) {
-        const value = normalExpressionConvert(target, errorClass);
-        if (value) {
-            expressionClass.setValue(new NormalExpressionElementClass(value));
+    constructor(target: NormalExpressionTypeClass | PrimaryExpressionTypeClass) {
+        if (isNormalExpressionType(target)) {
+            this.commonClass = new ExpressionClass(target);
+            return;
         }
-    }
-    if (isPrimaryExpressionType(target)) {
-        const value = primaryExpressionConvert(target, errorClass);
-        if (value) {
-            expressionClass.setValue(new PrimaryExpressionElementClass(value));
-        }
-    }
-    if (isDotExpressionType(target)) {
-        expressionClass.setValue(
-            new DotExpressionElementClass(dotExpressionConvert(target, errorClass)),
-        );
-    }
-    if (isArrayExpressionType(target)) {
-        expressionClass.setValue(
-            new ArrayExpressionElementClass(arrayExpressionConvert(target, errorClass)),
-        );
-    }
-    if (isMethodCallExpressionType(target)) {
-        expressionClass.setValue(
-            new MethodCallExpressionElementClass(methodCallExpressionConvert(target, errorClass)),
-        );
-    }
-    if (isNewExpressionType(target)) {
-        expressionClass.setValue(
-            new NewExpressionElementClass(newExpressionConvert(target, errorClass)),
-        );
-    }
-    if (isCastExpressionType(target)) {
-        expressionClass.setValue(
-            new CastExpressionElementClass(castExpressionConvert(target, errorClass)),
-        );
-    }
-    if (isSubExpressionType(target)) {
-        expressionClass.setValue(
-            new SubExpressionElementClass(subExpressionConvert(target, errorClass)),
-        );
-    }
-    if (isPostOpExpressionType(target)) {
-        expressionClass.setValue(
-            new SingleOperatorExpressionElementClass(
-                'postOp',
-                postOpExpressionConvert(target, errorClass),
-            ),
-        );
-    }
-    if (isPreOpExpressionType(target)) {
-        expressionClass.setValue(
-            new SingleOperatorExpressionElementClass(
-                'preOp',
-                preOpExpressionConvert(target, errorClass),
-            ),
-        );
-    }
-    if (isNegExpressionType(target)) {
-        expressionClass.setValue(
-            new SingleOperatorExpressionElementClass(
-                'neg',
-                negExpressionConvert(target, errorClass),
-            ),
-        );
-    }
-    if (isArth1ExpressionType(target)) {
-        expressionClass.setValue(
-            new ExpToExpOperatorExpressionElementClass(
-                'arth1',
-                arth1ExpressionConvert(target, errorClass),
-            ),
-        );
-    }
-    if (isArth2ExpressionType(target)) {
-        expressionClass.setValue(
-            new ExpToExpOperatorExpressionElementClass(
-                'arth2',
-                arth2ExpressionConvert(target, errorClass),
-            ),
-        );
-    }
-    if (isBitExpressionType(target)) {
-        expressionClass.setValue(
-            new ExpToExpOperatorExpressionElementClass(
-                'bit',
-                bitExpressionConvert(target, errorClass),
-            ),
-        );
-    }
-    if (isBitAndExpressionType(target)) {
-        expressionClass.setValue(
-            new ExpToExpOperatorExpressionElementClass(
-                'bitAnd',
-                bitAndExpressionConvert(target, errorClass),
-            ),
-        );
-    }
-    if (isBitOrExpressionType(target)) {
-        expressionClass.setValue(
-            new ExpToExpOperatorExpressionElementClass(
-                'bitOr',
-                bitOrExpressionConvert(target, errorClass),
-            ),
-        );
-    }
-    if (isBitNotExpressionType(target)) {
-        expressionClass.setValue(
-            new ExpToExpOperatorExpressionElementClass(
-                'bitNot',
-                bitNotExpressionConvert(target, errorClass),
-            ),
-        );
-    }
-    if (isAssignExpressionType(target)) {
-        expressionClass.setValue(
-            new ExpToExpOperatorExpressionElementClass(
-                'assign',
-                assignExpressionConvert(target, errorClass),
-            ),
-        );
-    }
-    if (isCmpExpressionType(target)) {
-        expressionClass.setValue(
-            new ExpToExpOperatorExpressionElementClass(
-                'cmp',
-                cmpExpressionConvert(target, errorClass),
-            ),
-        );
-    }
-    if (isInstanceOfExpressionType(target)) {
-        expressionClass.setValue(
-            new InstanceOfExpressionElementClass(instanceOfExpressionConvert(target, errorClass)),
-        );
-    }
-    if (isEqualityExpressionType(target)) {
-        expressionClass.setValue(
-            new ExpToExpOperatorExpressionElementClass(
-                'equality',
-                equalityExpressionConvert(target, errorClass),
-            ),
-        );
-    }
-    if (isLogAndExpressionType(target)) {
-        expressionClass.setValue(
-            new ExpToExpOperatorExpressionElementClass(
-                'logAnd',
-                logAndExpressionConvert(target, errorClass),
-            ),
-        );
-    }
-    if (isLogOrExpressionType(target)) {
-        expressionClass.setValue(
-            new ExpToExpOperatorExpressionElementClass(
-                'logOr',
-                logOrExpressionConvert(target, errorClass),
-            ),
-        );
-    }
-    if (isCoalExpressionType(target)) {
-        expressionClass.setValue(
-            new ExpToExpOperatorExpressionElementClass(
-                'coal',
-                coalExpressionConvert(target, errorClass),
-            ),
-        );
-    }
-    if (isCondExpressionType(target)) {
-        expressionClass.setValue(
-            new CondExpressionElementClass(condExpressionConvert(target, errorClass)),
-        );
-    }
 
-    return expressionClass;
+        if (isPrimaryExpressionType(target)) {
+            this.commonClass = new PrimaryExpressionClass(target);
+            return;
+        }
+
+        throw new Error('Unsupported expression type: ');
+    }
+    getCommonClass(): AllExpressionClass {
+        return this.commonClass;
+    }
+}
+
+export const isExpressionTypeClass = (
+    target: any,
+): target is NormalExpressionTypeClass | PrimaryExpressionTypeClass => {
+    // | DotExpressionTypeClass
+    // | ArrayExpressionTypeClass
+    // | MethodCallExpressionTypeClass
+    // | NewExpressionTypeClass
+    // | CastExpressionTypeClass
+    // | SubExpressionTypeClass
+    // | PostOpExpressionTypeClass
+    // | PreOpExpressionTypeClass
+    // | NegExpressionTypeClass
+    // | Arth1ExpressionTypeClass
+    // | Arth2ExpressionTypeClass
+    // | BitExpressionTypeClass
+    // | CmpExpressionTypeClass
+    // | InstanceOfExpressionTypeClass
+    // | EqualityExpressionTypeClass
+    // | BitAndExpressionTypeClass
+    // | BitNotExpressionTypeClass
+    // | BitOrExpressionTypeClass
+    // | LogAndExpressionTypeClass
+    // | LogOrExpressionTypeClass
+    // | CoalExpressionTypeClass
+    // | CondExpressionTypeClass
+    // | AssignExpressionTypeClass => {
+    return (
+        target instanceof CommonTypeClass ||
+        isNormalExpressionType(target) ||
+        isPrimaryExpressionType(target)
+        // isDotExpressionType(target) ||
+        // isArrayExpressionType(target) ||
+        // isMethodCallExpressionType(target) ||
+        // isNewExpressionType(target) ||
+        // isCastExpressionType(target) ||
+        // isSubExpressionType(target) ||
+        // isPostOpExpressionType(target) ||
+        // isPreOpExpressionType(target) ||
+        // isNegExpressionType(target) ||
+        // isArth1ExpressionType(target) ||
+        // isArth2ExpressionType(target) ||
+        // isBitExpressionType(target) ||
+        // isCmpExpressionType(target) ||
+        // isInstanceOfExpressionType(target) ||
+        // isEqualityExpressionType(target) ||
+        // isBitAndExpressionType(target) ||
+        // isBitNotExpressionType(target) ||
+        // isBitOrExpressionType(target) ||
+        // isLogAndExpressionType(target) ||
+        // isLogOrExpressionType(target) ||
+        // isCoalExpressionType(target) ||
+        // isCondExpressionType(target) ||
+        // isAssignExpressionType(target)
+    );
 };

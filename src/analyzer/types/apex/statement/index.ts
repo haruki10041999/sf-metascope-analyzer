@@ -1,3 +1,3 @@
 export * from './statement';
-export * from './block';
+export * from '../../../parser/Apex/extractor/block';
 

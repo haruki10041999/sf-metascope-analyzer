@@ -21,7 +21,7 @@ type CoordinateValue = {
     longitude: ExpressionType | { value: string; valueType: string; operator?: string };
 };
 
-const isCoordinateValue = typia.createIs<CoordinateValue>;
+const isCoordinateValue = typia.createIs<CoordinateValue>();
 
 const makeCoordinateElement = (
     coordinateElement: ExpressionClass | SignedLiteralClass,
@@ -74,7 +74,7 @@ type DistanceValue = {
     unit: string;
 };
 
-const isDistanceValue = typia.createIs<DistanceValue>;
+const isDistanceValue = typia.createIs<DistanceValue>();
 
 const makeDistanceValue = (
     locationValues: (
@@ -223,7 +223,7 @@ type DateFunctionField = {
     funcName: DateFunctionName;
     arg: { field: string[]; isConvertTimeZone: boolean };
 };
-type SoqlFunctionField =
+export type SoqlFunctionField =
     | NormalSoqlFunctionField
     | DateFunctionField
     | CountFunctionField
@@ -231,58 +231,23 @@ type SoqlFunctionField =
     | FieldsFunctionField
     | DistanceFunctionField;
 
-const isNormalSoqlFunctionField = (
-    soqlFunctionField: SoqlFunctionField,
-): soqlFunctionField is NormalSoqlFunctionField => {
-    return isNormalSoqlFunctionName(soqlFunctionField.funcName);
-};
+const isNormalSoqlFunctionField = typia.createIs<NormalSoqlFunctionField>();
 
-const isDateFunctionField = (
-    soqlFunctionField: SoqlFunctionField,
-): soqlFunctionField is DateFunctionField => {
-    return isDateFunctionName(soqlFunctionField.funcName);
-};
+const isDateFunctionField = typia.createIs<DateFunctionField>();
 
-const isCountFunctionField = (
-    soqlFunctionField: SoqlFunctionField,
-): soqlFunctionField is CountFunctionField => {
-    return isCountFunctionName(soqlFunctionField.funcName);
-};
+const isCountFunctionField = typia.createIs<CountFunctionField>();
 
-const isFormatFunctionField = (
-    soqlFunctionField: SoqlFunctionField,
-): soqlFunctionField is FormatFunctionField => {
-    return isFormatFunctionName(soqlFunctionField.funcName);
-};
+const isFormatFunctionField = typia.createIs<FormatFunctionField>();
 
-const isFieldsFunctionField = (
-    soqlFunctionField: SoqlFunctionField,
-): soqlFunctionField is FieldsFunctionField => {
-    return isFieldsFunctionName(soqlFunctionField.funcName);
-};
+const isFieldsFunctionField = typia.createIs<FieldsFunctionField>();
 
-const isDistanceFunctionField = (
-    soqlFunctionField: SoqlFunctionField,
-): soqlFunctionField is DistanceFunctionField => {
-    return isDistanceFunctionName(soqlFunctionField.funcName);
-};
+const isDistanceFunctionField = typia.createIs<DistanceFunctionField>();
 
-const isSoqlFunctionField = (soqlFunctionField: any): soqlFunctionField is SoqlFunctionField => {
-    return (
-        typeof soqlFunctionField === 'object' &&
-        soqlFunctionField !== null &&
-        'funcName' in soqlFunctionField &&
-        typeof soqlFunctionField.funcName === 'string' &&
-        (isNormalSoqlFunctionName(soqlFunctionField.funcName) ||
-            isDateFunctionField(soqlFunctionField.funcName) ||
-            isFieldsFunctionName(soqlFunctionField.funcName) ||
-            isFormatFunctionName(soqlFunctionField.funcName) ||
-            isDistanceFunctionName(soqlFunctionField.funcName) ||
-            isCountFunctionName(soqlFunctionField.funcName))
-    );
-};
+export const isSoqlFunctionField = typia.createIs<SoqlFunctionField>();
 
-const makeSoqlFunctionField = (soqlFunction: SoqlFunctionClass): SoqlFunctionField | undefined => {
+export const makeSoqlFunctionField = (
+    soqlFunction: SoqlFunctionClass,
+): SoqlFunctionField | undefined => {
     const value = soqlFunction.getValue();
     const param = soqlFunction.getParam();
 
@@ -361,17 +326,18 @@ const makeSoqlFunctionField = (soqlFunction: SoqlFunctionClass): SoqlFunctionFie
 };
 
 export type SoqlFunctionSet = {
-    normal?: NormalSoqlFunctionField[];
-    date?: DateFunctionField[];
-    count?: CountFunctionField[];
-    fields?: FieldsFunctionField[];
-    format: FormatFunctionField[];
-    distance?: DistanceFunctionField[];
+    normal?: { field: NormalSoqlFunctionField; alias?: string }[];
+    date?: { field: DateFunctionField; alias?: string }[];
+    count?: { field: CountFunctionField; alias?: string }[];
+    fields?: { field: FieldsFunctionField; alias?: string }[];
+    format?: { field: FormatFunctionField; alias?: string }[];
+    distance?: { field: DistanceFunctionField; alias?: string }[];
 };
 
 export const assignSoqlFunction = (
     soqlFunction: SoqlFunctionClass,
     soqlFunctionSet: SoqlFunctionSet,
+    alias?: string,
 ): void => {
     const soqlFunctionField = makeSoqlFunctionField(soqlFunction);
 
@@ -381,7 +347,15 @@ export const assignSoqlFunction = (
                 soqlFunctionSet.normal = [];
             }
 
-            soqlFunctionSet.normal.push(soqlFunctionField);
+            const field: { field: NormalSoqlFunctionField; alias?: string } = {
+                field: soqlFunctionField,
+            };
+
+            if (alias) {
+                field.alias = alias;
+            }
+
+            soqlFunctionSet.normal.push(field);
         }
 
         if (isDateFunctionField(soqlFunctionField)) {
@@ -389,7 +363,13 @@ export const assignSoqlFunction = (
                 soqlFunctionSet.date = [];
             }
 
-            soqlFunctionSet.date.push(soqlFunctionField);
+            const field: { field: DateFunctionField; alias?: string } = {
+                field: soqlFunctionField,
+            };
+            if (alias) {
+                field.alias = alias;
+            }
+            soqlFunctionSet.date.push(field);
         }
 
         if (isCountFunctionField(soqlFunctionField)) {
@@ -397,7 +377,13 @@ export const assignSoqlFunction = (
                 soqlFunctionSet.count = [];
             }
 
-            soqlFunctionSet.count.push(soqlFunctionField);
+            const field: { field: CountFunctionField; alias?: string } = {
+                field: soqlFunctionField,
+            };
+            if (alias) {
+                field.alias = alias;
+            }
+            soqlFunctionSet.count.push(field);
         }
 
         if (isFieldsFunctionField(soqlFunctionField)) {
@@ -405,7 +391,13 @@ export const assignSoqlFunction = (
                 soqlFunctionSet.fields = [];
             }
 
-            soqlFunctionSet.fields.push(soqlFunctionField);
+            const field: { field: FieldsFunctionField; alias?: string } = {
+                field: soqlFunctionField,
+            };
+            if (alias) {
+                field.alias = alias;
+            }
+            soqlFunctionSet.fields.push(field);
         }
 
         if (isFormatFunctionField(soqlFunctionField)) {
@@ -413,7 +405,13 @@ export const assignSoqlFunction = (
                 soqlFunctionSet.format = [];
             }
 
-            soqlFunctionSet.format.push(soqlFunctionField);
+            const field: { field: FormatFunctionField; alias?: string } = {
+                field: soqlFunctionField,
+            };
+            if (alias) {
+                field.alias = alias;
+            }
+            soqlFunctionSet.format.push(field);
         }
 
         if (isDistanceFunctionField(soqlFunctionField)) {
@@ -421,7 +419,13 @@ export const assignSoqlFunction = (
                 soqlFunctionSet.distance = [];
             }
 
-            soqlFunctionSet.distance.push(soqlFunctionField);
+            const field: { field: DistanceFunctionField; alias?: string } = {
+                field: soqlFunctionField,
+            };
+            if (alias) {
+                field.alias = alias;
+            }
+            soqlFunctionSet.distance.push(field);
         }
     }
 };
@@ -429,82 +433,78 @@ export const assignSoqlFunction = (
 export const sortSoqlFunctionSet = (functionSet: SoqlFunctionSet) => {
     if (functionSet.normal) {
         functionSet.normal.sort((a, b) => {
-            const funcNameDiff = a.funcName.localeCompare(b.funcName);
-            if (funcNameDiff !== 0) return funcNameDiff;
+            const aliasDiff = Number(a.alias !== undefined) - Number(b.alias !== undefined);
+            if (aliasDiff !== 0) return aliasDiff;
 
-            const argLengthDiff = a.arg.length - b.arg.length;
-            if (argLengthDiff !== 0) return argLengthDiff;
-
-            for (let i = 0; i < a.arg.length; i++) {
-                const diff = a.arg[i]!.localeCompare(b.arg[i]!);
-                if (diff !== 0) return diff;
+            if (isString(a.alias) && isString(b.alias)) {
+                return a.alias.localeCompare(b.alias);
             }
 
-            return 0;
+            return soqlFunctionSort(a.field, b.field);
         });
     }
 
     if (functionSet.date) {
         functionSet.date.sort((a, b) => {
-            const funcNameDiff = a.funcName.localeCompare(b.funcName);
-            if (funcNameDiff !== 0) return funcNameDiff;
+            const aliasDiff = Number(a.alias !== undefined) - Number(b.alias !== undefined);
+            if (aliasDiff !== 0) return aliasDiff;
 
-            const argLengthDiff = a.arg.field.length - b.arg.field.length;
-            if (argLengthDiff !== 0) return argLengthDiff;
-
-            for (let i = 0; i < a.arg.field.length; i++) {
-                const diff = a.arg.field[i]!.localeCompare(b.arg.field[i]!);
-                if (diff !== 0) return diff;
+            if (isString(a.alias) && isString(b.alias)) {
+                return a.alias.localeCompare(b.alias);
             }
 
-            const isConvertTimeZoneDiff =
-                Number(a.arg.isConvertTimeZone) - Number(b.arg.isConvertTimeZone);
-            if (isConvertTimeZoneDiff !== 0) return isConvertTimeZoneDiff;
-
-            return 0;
+            return soqlFunctionSort(a.field, b.field);
         });
     }
 
     if (functionSet.count) {
         functionSet.count.sort((a, b) => {
-            const isAArg = Number(a.arg !== undefined);
-            const isBArg = Number(b.arg !== undefined);
-            if (isAArg - isBArg !== 0) return isAArg - isBArg;
+            const aliasDiff = Number(a.alias !== undefined) - Number(b.alias !== undefined);
+            if (aliasDiff !== 0) return aliasDiff;
 
-            if (a.arg && b.arg) {
-                const argLengthDiff = a.arg!.length - b.arg.length;
-                if (argLengthDiff !== 0) return argLengthDiff;
-
-                for (let i = 0; i < a.arg.length; i++) {
-                    const diff = a.arg[i]!.localeCompare(b.arg[i]!);
-                    if (diff !== 0) return diff;
-                }
+            if (isString(a.alias) && isString(b.alias)) {
+                return a.alias.localeCompare(b.alias);
             }
 
-            return 0;
+            return soqlFunctionSort(a.field, b.field);
         });
     }
 
     if (functionSet.fields) {
-        functionSet.fields.sort((a, b) => a.arg.localeCompare(b.arg));
+        functionSet.fields.sort((a, b) => {
+            const aliasDiff = Number(a.alias !== undefined) - Number(b.alias !== undefined);
+            if (aliasDiff !== 0) return aliasDiff;
+
+            if (isString(a.alias) && isString(b.alias)) {
+                return a.alias.localeCompare(b.alias);
+            }
+
+            return soqlFunctionSort(a.field, b.field);
+        });
     }
 
     if (functionSet.format) {
         functionSet.format.sort((a, b) => {
-            const typeDiff = assignFormatSortNumber(a) - assignFormatSortNumber(b);
-            if (typeDiff !== 0) return typeDiff;
+            const aliasDiff = Number(a.alias !== undefined) - Number(b.alias !== undefined);
+            if (aliasDiff !== 0) return aliasDiff;
 
-            if (isStringArray(a.arg) && isStringArray(b.arg)) {
-                const argLengthDiff = a.arg!.length - b.arg.length;
-                if (argLengthDiff !== 0) return argLengthDiff;
-
-                for (let i = 0; i < a.arg.length; i++) {
-                    const diff = a.arg[i]!.localeCompare(b.arg[i]!);
-                    if (diff !== 0) return diff;
-                }
+            if (isString(a.alias) && isString(b.alias)) {
+                return a.alias.localeCompare(b.alias);
             }
 
-            if (isSoqlFunctionField(a.arg) && isNormalSoqlFunctionField(b.arg)) return 0;
+            return soqlFunctionSort(a.field, b.field);
+        });
+    }
+    if (functionSet.distance) {
+        functionSet.distance.sort((a, b) => {
+            const aliasDiff = Number(a.alias !== undefined) - Number(b.alias !== undefined);
+            if (aliasDiff !== 0) return aliasDiff;
+
+            if (isString(a.alias) && isString(b.alias)) {
+                return a.alias.localeCompare(b.alias);
+            }
+
+            return soqlFunctionSort(a.field, b.field);
         });
     }
 };
@@ -520,7 +520,7 @@ const assignSoqlFunctionFieldNumber = (functionField: SoqlFunctionField): number
     return 0;
 };
 
-const functionSort = (a: SoqlFunctionField, b: SoqlFunctionField): number => {
+const soqlFunctionSort = (a: SoqlFunctionField, b: SoqlFunctionField): number => {
     const funcNameDiff = a.funcName.localeCompare(b.funcName);
     if (funcNameDiff !== 0) return funcNameDiff;
 
@@ -572,5 +572,65 @@ const functionSort = (a: SoqlFunctionField, b: SoqlFunctionField): number => {
         if (paramDiff !== 0) return paramDiff;
     }
 
-    if (isFormatFunctionField(a) && isFormatFunctionField(b)) return 0;
+    if (isFormatFunctionField(a) && isFormatFunctionField(b)) {
+        const argAType = isStringArray(a.arg) ? 0 : 1;
+        const argBType = isStringArray(b.arg) ? 0 : 1;
+        const argTypeDiff = argAType - argBType;
+        if (argTypeDiff !== 0) return argTypeDiff;
+
+        if (isStringArray(a.arg) && isStringArray(b.arg)) {
+            const argLengthDiff = a.arg.length - b.arg.length;
+            if (argLengthDiff !== 0) return argLengthDiff;
+
+            for (let i = 0; i < a.arg.length; i++) {
+                const diff = a.arg[i]!.localeCompare(b.arg[i]!);
+                if (diff !== 0) return diff;
+            }
+        }
+
+        if (isSoqlFunctionField(a) && isSoqlFunctionField(b)) {
+            return soqlFunctionSort(a, b);
+        }
+    }
+
+    if (isDistanceFunctionField(a) && isDistanceFunctionField(b)) {
+        const fieldArgLengthDiff = a.arg.field.length - b.arg.field.length;
+        if (fieldArgLengthDiff !== 0) return fieldArgLengthDiff;
+
+        for (let i = 0; i < a.arg.field.length; i++) {
+            const diff = a.arg.field[i]!.localeCompare(b.arg.field[i]!);
+            if (diff !== 0) return diff;
+        }
+
+        const locationAType = isStringArray(a.arg.location)
+            ? 0
+            : isExpressionType(a.arg.location)
+              ? 1
+              : 2;
+        const locationBType = isStringArray(b.arg.location)
+            ? 0
+            : isExpressionType(b.arg.location)
+              ? 1
+              : 2;
+        const locationTypeDiff = locationAType - locationBType;
+        if (locationTypeDiff !== 0) return locationTypeDiff;
+
+        const locationLengthDiff =
+            isStringArray(a.arg.location) && isStringArray(b.arg.location)
+                ? a.arg.location.length - b.arg.location.length
+                : 0;
+        if (locationLengthDiff !== 0) return locationLengthDiff;
+
+        if (isStringArray(a.arg.location) && isStringArray(b.arg.location)) {
+            for (let i = 0; i < a.arg.location.length; i++) {
+                const diff = a.arg.location[i]!.localeCompare(b.arg.location[i]!);
+                if (diff !== 0) return diff;
+            }
+        }
+
+        return a.arg.unit.localeCompare(b.arg.unit);
+    }
+
+    return 0;
 };
+

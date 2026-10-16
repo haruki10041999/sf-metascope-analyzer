@@ -1,3 +1,5 @@
+import typia from 'typia';
+
 import {
     InterfaceDeclarationClass,
     InterfaceMethodDeclarationClass,
@@ -22,6 +24,8 @@ export type InterfaceField = {
     block: InterfaceMethodField[];
     extend?: TypeType[];
 };
+
+export const isInterfaceField = typia.createIs<InterfaceField>();
 
 const makeInterfaceMethodField = (
     interfaceMethodDeclaration: InterfaceMethodDeclarationClass[],
@@ -100,3 +104,4 @@ export const makeInterfaceField = (
 
     return undefined;
 };
+

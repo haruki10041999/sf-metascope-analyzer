@@ -1,6 +1,8 @@
+import typia from 'typia';
+
 import { PropertyDeclarationClass, PropertyBlockClass } from '../converter';
 
-import { RewriteQueries, QueryStore, extractQueries } from '../commons';
+import { RewriteQueries, QueryStore, extractQueries } from '../../../parser/Apex/extractor/commons';
 import { TypeType, makeTypeType } from '../type';
 import { ModifierType, makeModifierType } from '../modifier';
 import { BlockField, makeBlockField } from '../statement';
@@ -18,6 +20,8 @@ export type PropertyField = {
     soql?: QueryStore['soql'];
     sosl?: QueryStore['sosl'];
 };
+
+export const isPropertyField = typia.createIs<PropertyField>();
 
 const makePropertyBlockField = (
     propertyBlock: PropertyBlockClass,

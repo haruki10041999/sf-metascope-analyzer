@@ -1,6 +1,8 @@
+import typia from 'typia';
+
 import { isString, isTypeRefClass, MethodDeclarationClass } from '../converter';
 
-import { RewriteQueries, QueryStore, extractQueries } from '../commons';
+import { RewriteQueries, QueryStore, extractQueries } from '../../../parser/Apex/extractor/commons';
 import { TypeType, makeTypeType } from '../type';
 import { ParameterType, makeParameterType } from './parameter';
 import { BlockField, makeBlockField } from '../statement';
@@ -13,6 +15,8 @@ export type MethodField = {
     soql?: QueryStore['soql'];
     sosl?: QueryStore['sosl'];
 } & ({} | RewriteQueries<BlockField>);
+
+export const isMethodField = typia.createIs<MethodField>();
 
 export const makeMethodField = (
     methodDeclaration: MethodDeclarationClass,

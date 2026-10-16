@@ -31,32 +31,55 @@ const isMapType = (type: string): boolean => {
     return 'MAP' === type.toUpperCase();
 };
 
-export type TypeType =
-    | {
-          kind: 'primitive';
-          name: string;
-      }
-    | {
-          kind: 'custom';
-          name: string[];
-          generic?: TypeType[];
-      }
-    | {
-          kind: 'array';
-          name: TypeType;
-          dimension: number;
-      }
-    | {
-          kind: 'list' | 'set';
-          type: TypeType;
-      }
-    | {
-          kind: 'map';
-          keyType: TypeType;
-          valueType: TypeType;
-      };
+type PrimitiveTypeType = {
+    kind: 'primitive';
+    name: string;
+};
 
-export const isTypeType = typia.createIs<TypeType>;
+export const isPrimitiveTypeType = typia.createIs<PrimitiveTypeType>();
+
+type CustomTypeType = {
+    kind: 'custom';
+    name: string[];
+    generic?: TypeType[];
+};
+
+export const isCustomTypeType = typia.createIs<CustomTypeType>();
+
+type ArrayTypeType = {
+    kind: 'array';
+    name: TypeType;
+    dimension: number;
+};
+
+export const isArrayTypeType = typia.createIs<ArrayTypeType>();
+
+type ListTypeType = {
+    kind: 'list';
+    type: TypeType;
+};
+
+export const isListTypeType = typia.createIs<ListTypeType>();
+
+type SetTypeType = {
+    kind: 'set';
+    type: TypeType;
+};
+
+export const isSetTypeType = typia.createIs<SetTypeType>();
+
+type MapTypeType = {
+    kind: 'map';
+    keyType: TypeType;
+    valueType: TypeType;
+};
+
+export const isMapTypeType = typia.createIs<MapTypeType>();
+
+export type TypeType =
+    PrimitiveTypeType | CustomTypeType | ArrayTypeType | ListTypeType | SetTypeType | MapTypeType;
+
+export const isTypeType = typia.createIs<TypeType>();
 
 export const makeTypeType = (type: TypeRefClass): TypeType | undefined => {
     const value = type.getValue();

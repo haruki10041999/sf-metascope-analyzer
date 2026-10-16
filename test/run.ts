@@ -1,0 +1,9 @@
+import './apex_IR/commonVisitor.test';
+import './apex_IR/examples.test';
+import './apex_IR/expression.test';
+import './apex_IR/module.test';
+import './apex_IR/query.test';
+import './apex_IR/statement.test';
+import './apex_IR/type.test';
+import './apex_IR/unit.test';
+import './converter/examples.test';

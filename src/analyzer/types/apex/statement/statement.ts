@@ -1,3 +1,5 @@
+import typia from 'typia';
+
 import {
     NormalStatementClass,
     isBlockStatementElementClass,
@@ -16,7 +18,6 @@ import {
     isWhileStatementElementClass,
 } from '../converter';
 
-import { BlockField, makeBlockField } from './block';
 import { ExpressionType, makeExpressionType } from '../expression';
 import { IfField, makeIfField } from './if';
 import { SwitchField, makeSwitchField } from './switch';
@@ -33,12 +34,15 @@ export type ExpressionStatementField = {
     block?: ExpressionType;
 };
 
+export const isExpressionStatementField = typia.createIs<ExpressionStatementField>();
+
 export type StringStatementField = {
     kind: 'break' | 'continue';
 };
+export const isStringStatementField = typia.createIs<StringStatementField>();
 
 export type StatementType =
-    | BlockField
+    | StatementType[]
     | IfField
     | SwitchField
     | ForField
@@ -51,13 +55,14 @@ export type StatementType =
     | RunAsField
     | LocalVariableField;
 
+export const isStatementType = typia.createIs<StatementType>();
+
 export const makeStatementType = (statement: NormalStatementClass): StatementType | undefined => {
     const elementClass = statement.getValue();
 
     if (elementClass) {
         if (isBlockStatementElementClass(elementClass)) {
-            const value = makeBlockField(elementClass.getStatement());
-            return value;
+            const
         }
 
         if (isIfStatementElementClass(elementClass)) {

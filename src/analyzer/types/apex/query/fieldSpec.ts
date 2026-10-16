@@ -42,7 +42,14 @@ const makeSoslField = (soslField: SoslFieldClass[]): SoslField | undefined => {
             }
 
             if (field) {
-                if (func) {
+                if (func === 'FORMAT') {
+                    field = {
+                        funcName: func,
+                        arg: field,
+                    };
+                } else if (func === 'TOLABEL' || func === 'CONVERT_CURRENCY') {
+                    if (!Array.isArray(field)) return;
+
                     field = {
                         funcName: func,
                         arg: field,
@@ -54,7 +61,7 @@ const makeSoslField = (soslField: SoslFieldClass[]): SoslField | undefined => {
                         fieldList.field = [];
                     }
                     fieldList.field.push(field);
-                } else {
+                } else if (field !== undefined) {
                     if (!fieldList.soqlFunction) {
                         fieldList.soqlFunction = [];
                     }
@@ -144,3 +151,4 @@ export const makeFieldSpecField = (fieldSpec: FieldSpecClass[]): FieldSpecField[
 
     return undefined;
 };
+

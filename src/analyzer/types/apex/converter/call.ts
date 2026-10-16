@@ -1,3 +1,5 @@
+import typia from 'typia';
+
 import {
     CommonTypeClass,
     ErrorTypeClass,
@@ -8,147 +10,188 @@ import {
     isExpressionListType,
 } from '../../apex_IR';
 
-import { toTypeClass, CommonClass, isCommonClass } from './commons';
-import { normalIdConvert, anyIdConvert } from './id';
-import { ExpressionClass } from './expression';
-import { expressionListConvert } from './list';
+import {
+    toPrimitiveValue,
+    toTypeClass,
+    SourceSpanInfo,
+    CommonClass,
+    ElementClass,
+    CommonJson,
+    ErrorInfo,
+    isErrorInfo,
+} from './commons';
+import { IdClass, IdJson, AnyIdClass, AnyIdJson } from './id';
+import {
+    ExpressionElementClass,
+    AllExpressionJson,
+    AllExpressionClass,
+    isExpressionTypeClass,
+} from './expression';
+import { ExpressionListClass, ExpressionListJson } from './list';
 
-export class MethodCallClass extends CommonClass {
-    private value: string | null = null;
-    private param: ExpressionClass[] = [];
-    private reference: string | null = null;
+export type MethodCallJson = CommonJson<'methodCall'> & {
+    member?: Omit<IdJson, 'sourceSpan'>;
+    param?: Omit<ExpressionListJson, 'sourceSpan'>;
+    reference?: string;
+};
+export const isMethodCallJson = typia.createIs<MethodCallJson>();
 
-    setValue(value: string | null): void {
-        this.value = value;
+export class MethodCallClass implements CommonClass<'methodCall', MethodCallJson> {
+    private member: IdClass | null;
+    private param: ExpressionListClass | null;
+    private reference: string | null;
+    private sourceSpan: SourceSpanInfo = {};
+    private errorInfo: ErrorInfo[] = [];
+
+    constructor(target: MethodCallTypeClass) {
+        const member = target.getValue();
+        if (member) {
+            const memberClass = toTypeClass(member, isNormalIdType);
+            if (isErrorInfo(memberClass)) {
+                this.errorInfo.push(memberClass);
+                this.member = null;
+            } else {
+                this.member = new IdClass(memberClass);
+                this.sourceSpan = { ...this.sourceSpan, [member.getType()]: member.getSpan()! };
+            }
+        } else {
+            this.member = null;
+        }
+
+        const param = target.getParam();
+        if (param) {
+            const paramClass = toTypeClass(param, isExpressionListType);
+            if (isErrorInfo(paramClass)) {
+                this.errorInfo.push(paramClass);
+                this.param = null;
+            } else {
+                this.param = new ExpressionListClass(paramClass);
+                this.sourceSpan = { ...this.sourceSpan, [param.getType()]: param.getSpan()! };
+            }
+        } else {
+            this.param = null;
+        }
+
+        if (target.getReference()) {
+            this.reference = target.getReference();
+        } else {
+            this.reference = null;
+        }
+
+        if (!('member' in this.sourceSpan) || !('param' in this.sourceSpan)) {
+            this.sourceSpan = { content: target.getSpan()! };
+        }
     }
 
-    resetParam(): void {
-        this.param = [];
+    getErrorInfo(): ErrorInfo[] {
+        return this.errorInfo;
     }
 
-    setParam(param: ExpressionClass[]): void {
-        this.param.push(...param);
+    getType(): 'methodCall' {
+        return 'methodCall';
     }
 
-    setReference(reference: string | null): void {
-        this.reference = reference;
+    getSourceSpan(): SourceSpanInfo | SourceSpanInfo[] {
+        return this.sourceSpan;
     }
+    toJson(): MethodCallJson {
+        const json: MethodCallJson = {
+            type: 'methodCall',
+            sourceSpan: this.sourceSpan,
+        };
 
-    getValue(): string | null {
-        return this.value;
-    }
+        if (this.member) {
+            const { sourceSpan, ...rest } = this.member.toJson();
+            json.member = rest;
+        }
 
-    getParam(): ExpressionClass[] {
-        return this.param;
-    }
+        if (this.param) {
+            const { sourceSpan, ...rest } = this.param.toJson();
+            json.param = rest;
+        }
 
-    getReference(): string | null {
-        return this.reference;
-    }
+        if (this.reference) {
+            json.reference = this.reference;
+        }
 
-    copy(commonClass: MethodCallClass): void {
-        this.setValue(commonClass.getValue());
-        this.resetParam();
-        this.setParam(commonClass.getParam());
-        this.setReference(commonClass.getReference());
+        return json;
     }
 }
 
-export const isMethodCallClass = (target: any): target is MethodCallClass => {
-    return isCommonClass(target, MethodCallClass);
+export type DotMethodCallJson = CommonJson<'dotMethodCall'> & {
+    member?: Omit<AnyIdJson, 'sourceSpan'>;
+    param?: Omit<ExpressionListJson, 'sourceSpan'>;
 };
+export const isDotMethodCallJson = typia.createIs<DotMethodCallJson>();
 
-export const isMethodCallClassArray = (target: any): target is MethodCallClass[] => {
-    return Array.isArray(target) && target.every((t) => isMethodCallClass(t));
-};
+export class DotMethodCallClass implements CommonClass<'dotMethodCall', DotMethodCallJson> {
+    private member: AnyIdClass | null;
+    private param: ExpressionListClass | null;
+    private sourceSpan: SourceSpanInfo = {};
+    private errorInfo: ErrorInfo[] = [];
 
-export const methodCallConvert = (
-    target: MethodCallTypeClass,
-    errorClass: ErrorTypeClass[],
-): MethodCallClass => {
-    const methodCall = new MethodCallClass();
+    constructor(target: DotMethodCallTypeClass) {
+        const memberClass = toTypeClass(target.getValue(), isAnyIdType);
+        if (isErrorInfo(memberClass)) {
+            this.errorInfo.push(memberClass);
+            this.member = null;
+        } else {
+            this.member = new AnyIdClass(memberClass);
+            this.sourceSpan = {
+                ...this.sourceSpan,
+                [this.member.getType()]: this.member.getSourceSpan()!,
+            };
+        }
 
-    const paramTypeClass = target.getParam();
-    if (paramTypeClass) {
-        const expressionList = toTypeClass(paramTypeClass, isExpressionListType, errorClass);
-        if (expressionList) {
-            methodCall.setParam(expressionListConvert(expressionList, errorClass));
+        const param = target.getParam();
+        if (param) {
+            const paramClass = toTypeClass(param, isExpressionListType);
+            if (isErrorInfo(paramClass)) {
+                this.errorInfo.push(paramClass);
+                this.param = null;
+            } else {
+                this.param = new ExpressionListClass(paramClass);
+                this.sourceSpan = {
+                    ...this.sourceSpan,
+                    [this.param.getType()]: this.param.getSourceSpan()!,
+                };
+            }
+        } else {
+            this.param = null;
+        }
+
+        if (!('member' in this.sourceSpan)) {
+            this.sourceSpan = { content: target.getSpan()! };
         }
     }
 
-    const valueTypeClass = target.getValue();
-    if (valueTypeClass) {
-        const normalId = toTypeClass(valueTypeClass, isNormalIdType, errorClass);
-        if (normalId) {
-            methodCall.setValue(normalIdConvert(normalId));
+    getErrorInfo(): ErrorInfo[] {
+        return this.errorInfo;
+    }
+
+    getType(): 'dotMethodCall' {
+        return 'dotMethodCall';
+    }
+
+    getSourceSpan(): SourceSpanInfo | SourceSpanInfo[] {
+        return this.sourceSpan;
+    }
+    toJson(): DotMethodCallJson {
+        const json: DotMethodCallJson = {
+            type: 'dotMethodCall',
+            sourceSpan: this.sourceSpan,
+        };
+
+        if (this.member) {
+            const { sourceSpan, ...rest } = this.member.toJson();
+            json.member = rest;
         }
-    }
 
-    const reference = target.getReference();
-    if (reference) {
-        methodCall.setReference(reference);
-    }
+        if (this.param) {
+            const { sourceSpan, ...rest } = this.param.toJson();
+            json.param = rest;
+        }
 
-    return methodCall;
-};
-
-export class DotMethodCallClass extends CommonClass {
-    private value: string | null = null;
-    private param: ExpressionClass[] = [];
-
-    setValue(value: string | null): void {
-        this.value = value;
-    }
-
-    resetParam(): void {
-        this.param = [];
-    }
-
-    setParam(param: ExpressionClass[]): void {
-        this.param.push(...param);
-    }
-
-    getValue(): string | null {
-        return this.value;
-    }
-
-    getParam(): ExpressionClass[] {
-        return this.param;
-    }
-
-    copy(commonClass: DotMethodCallClass): void {
-        this.setValue(commonClass.getValue());
-        this.resetParam();
-        this.setParam(commonClass.getParam());
+        return json;
     }
 }
-
-export const isDotMethodCallClass = (target: any): target is DotMethodCallClass => {
-    return isCommonClass(target, DotMethodCallClass);
-};
-
-export const isDotMethodCallClassArray = (target: any): target is DotMethodCallClass[] => {
-    return Array.isArray(target) && target.every((t) => isDotMethodCallClass(t));
-};
-
-export const dotMethodCallConvert = (
-    target: DotMethodCallTypeClass,
-    errorClass: ErrorTypeClass[],
-): DotMethodCallClass => {
-    const dotMethodCall = new DotMethodCallClass();
-
-    const paramTypeClass = target.getParam();
-    if (paramTypeClass) {
-        const expressionList = toTypeClass(paramTypeClass, isExpressionListType, errorClass);
-        if (expressionList) {
-            dotMethodCall.setParam(expressionListConvert(expressionList, errorClass));
-        }
-    }
-
-    const valueTypeClass = toTypeClass(target.getValue(), isAnyIdType, errorClass);
-    if (valueTypeClass) {
-        dotMethodCall.setValue(anyIdConvert(valueTypeClass));
-    }
-
-    return dotMethodCall;
-};

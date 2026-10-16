@@ -6,9 +6,9 @@
     "type": "module",
     "scripts": {
         "dev": "vite",
-        "build": "tsc && vite build",
-        "mcp": "tsx src/mcp/server.ts",
-        "test": "tsx --test \"test/**/*.test.ts\"",
+        "build": "ttsc && vite build",
+        "mcp": "ttsx --noCheck src/mcp/server.ts",
+        "test": "ttsx --noCheck test/run.ts",
         "format": "prettier --write .",
         "format:check": "prettier --check ."
     },
@@ -40,13 +40,13 @@
         "zod": "^4.6.5"
     },
     "devDependencies": {
+        "@ttsc/unplugin": "^0.32.1",
         "@types/dagre": "^0.7.52",
         "@types/node": "^22.20.3",
         "@types/react": "^18.3.3",
         "@types/react-dom": "^18.3.0",
         "@vitejs/plugin-react": "^6.1.1",
         "prettier": "^3.9.7",
-        "tsx": "^4.23.13",
         "ttsc": "^0.32.1",
         "typescript": "^7.0.2",
         "vite": "^8.3.0",

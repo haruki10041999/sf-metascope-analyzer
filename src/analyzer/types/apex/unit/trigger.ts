@@ -1,3 +1,5 @@
+import typia from 'typia';
+
 import {
     TriggerUnitClass,
     TriggerCaseClass,
@@ -5,7 +7,7 @@ import {
     isNormalStatementClass,
 } from '../converter';
 
-import { RewriteQueries, QueryStore, extractQueries } from '../commons';
+import { RewriteQueries, QueryStore, extractQueries } from '../../../parser/Apex/extractor/commons';
 import { ModifierType, makeModifierType } from '../modifier';
 import { StatementType, makeStatementType } from '../statement';
 import { AnonymousTriggerMemberType, makeAnonymousTriggerMemberType } from '../declaration';
@@ -26,6 +28,8 @@ export type TriggerUnitType = {
     soql?: QueryStore['soql'];
     sosl?: QueryStore['sosl'];
 };
+
+export const isTriggerUnitType = typia.createIs<TriggerUnitType>();
 
 const makeTriggerCaseType = (triggerCase: TriggerCaseClass): TriggerCaseType | undefined => {
     const timing = triggerCase.getValue();

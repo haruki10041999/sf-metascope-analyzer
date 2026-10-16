@@ -1,3 +1,5 @@
+import typia from 'typia';
+
 import {
     SwitchStatementClass,
     WhenControlClass,
@@ -7,7 +9,7 @@ import {
     isStringArray,
 } from '../converter';
 
-import { BlockField, makeBlockField } from './block';
+import { BlockField, makeBlockField } from '../../../parser/Apex/extractor/block';
 import { ExpressionType, makeExpressionType } from '../expression';
 import { TypeType, makeTypeType } from '../type';
 
@@ -27,6 +29,7 @@ export type SwitchField = {
     variant: ExpressionType;
     block: WhenBlock[];
 };
+export const isSwitchField = typia.createIs<SwitchField>;
 
 const makeWhenValue = (whenValue: WhenValueClass): WhenValue | undefined => {
     const value = whenValue.getValue();

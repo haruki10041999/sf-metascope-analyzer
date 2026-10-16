@@ -641,106 +641,110 @@
                 "name": "isInsert"
               }
             },
-            "block": [
-              {
-                "blockIndex": 1,
-                "kind": "for",
-                "condition": {
-                  "variableName": "account",
-                  "variableType": {
-                    "kind": "custom",
-                    "name": [
-                      "Account"
-                    ]
-                  },
-                  "iterable": {
-                    "kind": "field",
-                    "object": {
-                      "kind": "id",
-                      "value": "Trigger"
+            "block": {
+              "block": [
+                {
+                  "blockIndex": 1,
+                  "kind": "for",
+                  "condition": {
+                    "variableName": "account",
+                    "variableType": {
+                      "kind": "custom",
+                      "name": [
+                        "Account"
+                      ]
                     },
-                    "dot": ".",
-                    "name": "new"
-                  }
-                },
-                "block": [
-                  {
-                    "blockIndex": 1,
-                    "kind": "if",
+                    "iterable": {
+                      "kind": "field",
+                      "object": {
+                        "kind": "id",
+                        "value": "Trigger"
+                      },
+                      "dot": ".",
+                      "name": "new"
+                    }
+                  },
+                  "block": {
                     "block": [
                       {
-                        "condition": {
-                          "kind": "method",
-                          "object": {
-                            "kind": "id",
-                            "value": "String"
-                          },
-                          "dot": ".",
-                          "name": "isBlank",
-                          "arg": [
-                            {
-                              "kind": "field",
-                              "object": {
-                                "kind": "id",
-                                "value": "account"
-                              },
-                              "dot": ".",
-                              "name": "Name"
-                            }
-                          ]
-                        },
+                        "blockIndex": 1,
+                        "kind": "if",
                         "block": [
                           {
-                            "blockIndex": 1,
-                            "kind": "expression",
-                            "block": {
-                              "kind": "expression",
-                              "left": {
-                                "kind": "field",
-                                "object": {
-                                  "kind": "id",
-                                  "value": "account"
-                                },
-                                "dot": ".",
-                                "name": "Name"
+                            "condition": {
+                              "kind": "method",
+                              "object": {
+                                "kind": "id",
+                                "value": "String"
                               },
-                              "operator": "=",
-                              "right": {
-                                "kind": "literal",
-                                "value": "Default Account",
-                                "valueType": "string"
+                              "dot": ".",
+                              "name": "isBlank",
+                              "arg": [
+                                {
+                                  "kind": "field",
+                                  "object": {
+                                    "kind": "id",
+                                    "value": "account"
+                                  },
+                                  "dot": ".",
+                                  "name": "Name"
+                                }
+                              ]
+                            },
+                            "block": [
+                              {
+                                "blockIndex": 1,
+                                "kind": "expression",
+                                "block": {
+                                  "kind": "expression",
+                                  "left": {
+                                    "kind": "field",
+                                    "object": {
+                                      "kind": "id",
+                                      "value": "account"
+                                    },
+                                    "dot": ".",
+                                    "name": "Name"
+                                  },
+                                  "operator": "=",
+                                  "right": {
+                                    "kind": "literal",
+                                    "value": "Default Account",
+                                    "valueType": "string"
+                                  }
+                                }
                               }
-                            }
+                            ]
                           }
                         ]
+                      },
+                      {
+                        "blockIndex": 2,
+                        "kind": "expression",
+                        "block": {
+                          "kind": "expression",
+                          "left": {
+                            "kind": "field",
+                            "object": {
+                              "kind": "id",
+                              "value": "account"
+                            },
+                            "dot": ".",
+                            "name": "Description"
+                          },
+                          "operator": "=",
+                          "right": {
+                            "kind": "literal",
+                            "value": "Created by trigger",
+                            "valueType": "string"
+                          }
+                        }
                       }
                     ]
-                  },
-                  {
-                    "blockIndex": 2,
-                    "kind": "expression",
-                    "block": {
-                      "kind": "expression",
-                      "left": {
-                        "kind": "field",
-                        "object": {
-                          "kind": "id",
-                          "value": "account"
-                        },
-                        "dot": ".",
-                        "name": "Description"
-                      },
-                      "operator": "=",
-                      "right": {
-                        "kind": "literal",
-                        "value": "Created by trigger",
-                        "valueType": "string"
-                      }
-                    }
                   }
-                ]
-              }
-            ]
+                }
+              ]
+            }
           }
         ]
       },
@@ -770,71 +774,47 @@
                 "name": "isUpdate"
               }
             },
-            "block": [
-              {
-                "blockIndex": 1,
-                "kind": "for",
-                "condition": {
-                  "variableName": "account",
-                  "variableType": {
-                    "kind": "custom",
-                    "name": [
-                      "Account"
-                    ]
-                  },
-                  "iterable": {
-                    "kind": "field",
-                    "object": {
-                      "kind": "id",
-                      "value": "Trigger"
+            "block": {
+              "block": [
+                {
+                  "blockIndex": 1,
+                  "kind": "for",
+                  "condition": {
+                    "variableName": "account",
+                    "variableType": {
+                      "kind": "custom",
+                      "name": [
+                        "Account"
+                      ]
                     },
-                    "dot": ".",
-                    "name": "new"
-                  }
-                },
-                "block": [
-                  {
-                    "blockIndex": 1,
-                    "kind": "declarationRef",
-                    "declarationKind": "localVariable",
-                    "variants": [
-                      {
-                        "index": 1
-                      }
-                    ]
+                    "iterable": {
+                      "kind": "field",
+                      "object": {
+                        "kind": "id",
+                        "value": "Trigger"
+                      },
+                      "dot": ".",
+                      "name": "new"
+                    }
                   },
-                  {
-                    "blockIndex": 2,
-                    "kind": "if",
+                  "block": {
                     "block": [
                       {
-                        "condition": {
-                          "kind": "expression",
-                          "left": {
-                            "kind": "field",
-                            "object": {
-                              "kind": "id",
-                              "value": "account"
-                            },
-                            "dot": ".",
-                            "name": "Name"
-                          },
-                          "operator": "!=",
-                          "right": {
-                            "kind": "field",
-                            "object": {
-                              "kind": "id",
-                              "value": "oldAccount"
-                            },
-                            "dot": ".",
-                            "name": "Name"
+                        "blockIndex": 1,
+                        "kind": "declarationRef",
+                        "declarationKind": "localVariable",
+                        "variants": [
+                          {
+                            "index": 1
                           }
-                        },
+                        ]
+                      },
+                      {
+                        "blockIndex": 2,
+                        "kind": "if",
                         "block": [
                           {
-                            "blockIndex": 1,
-                            "kind": "expression",
-                            "block": {
+                            "condition": {
                               "kind": "expression",
                               "left": {
                                 "kind": "field",
@@ -843,108 +823,136 @@
                                   "value": "account"
                                 },
                                 "dot": ".",
-                                "name": "Description"
+                                "name": "Name"
                               },
-                              "operator": "=",
+                              "operator": "!=",
+                              "right": {
+                                "kind": "field",
+                                "object": {
+                                  "kind": "id",
+                                  "value": "oldAccount"
+                                },
+                                "dot": ".",
+                                "name": "Name"
+                              }
+                            },
+                            "block": [
+                              {
+                                "blockIndex": 1,
+                                "kind": "expression",
+                                "block": {
+                                  "kind": "expression",
+                                  "left": {
+                                    "kind": "field",
+                                    "object": {
+                                      "kind": "id",
+                                      "value": "account"
+                                    },
+                                    "dot": ".",
+                                    "name": "Description"
+                                  },
+                                  "operator": "=",
+                                  "right": {
+                                    "kind": "literal",
+                                    "value": "Name changed",
+                                    "valueType": "string"
+                                  }
+                                }
+                              }
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "blockIndex": 3,
+                        "kind": "if",
+                        "block": [
+                          {
+                            "condition": {
+                              "kind": "expression",
+                              "left": {
+                                "kind": "field",
+                                "object": {
+                                  "kind": "id",
+                                  "value": "account"
+                                },
+                                "dot": ".",
+                                "name": "AnnualRevenue"
+                              },
+                              "operator": "<",
                               "right": {
                                 "kind": "literal",
-                                "value": "Name changed",
-                                "valueType": "string"
+                                "value": "0",
+                                "valueType": "integer"
                               }
-                            }
+                            },
+                            "block": [
+                              {
+                                "blockIndex": 1,
+                                "kind": "expression",
+                                "block": {
+                                  "kind": "method",
+                                  "object": {
+                                    "kind": "id",
+                                    "value": "account"
+                                  },
+                                  "dot": ".",
+                                  "name": "addError",
+                                  "arg": [
+                                    {
+                                      "kind": "literal",
+                                      "value": "AnnualRevenue must be positive",
+                                      "valueType": "string"
+                                    }
+                                  ]
+                                }
+                              }
+                            ]
                           }
                         ]
                       }
-                    ]
-                  },
-                  {
-                    "blockIndex": 3,
-                    "kind": "if",
-                    "block": [
+                    ],
+                    "localVariable": [
                       {
-                        "condition": {
-                          "kind": "expression",
-                          "left": {
+                        "localVariableIndex": 1,
+                        "variant": "oldAccount",
+                        "variantType": {
+                          "kind": "custom",
+                          "name": [
+                            "Account"
+                          ]
+                        },
+                        "initialValue": {
+                          "kind": "method",
+                          "object": {
                             "kind": "field",
                             "object": {
                               "kind": "id",
-                              "value": "account"
+                              "value": "Trigger"
                             },
                             "dot": ".",
-                            "name": "AnnualRevenue"
+                            "name": "oldMap"
                           },
-                          "operator": "<",
-                          "right": {
-                            "kind": "literal",
-                            "value": "0",
-                            "valueType": "integer"
-                          }
-                        },
-                        "block": [
-                          {
-                            "blockIndex": 1,
-                            "kind": "expression",
-                            "block": {
-                              "kind": "method",
+                          "dot": ".",
+                          "name": "get",
+                          "arg": [
+                            {
+                              "kind": "field",
                               "object": {
                                 "kind": "id",
                                 "value": "account"
                               },
                               "dot": ".",
-                              "name": "addError",
-                              "arg": [
-                                {
-                                  "kind": "literal",
-                                  "value": "AnnualRevenue must be positive",
-                                  "valueType": "string"
-                                }
-                              ]
+                              "name": "Id"
                             }
-                          }
-                        ]
+                          ]
+                        }
                       }
                     ]
                   }
-                ],
-                "localVariable": [
-                  {
-                    "localVariableIndex": 1,
-                    "variant": "oldAccount",
-                    "variantType": {
-                      "kind": "custom",
-                      "name": [
-                        "Account"
-                      ]
-                    },
-                    "initialValue": {
-                      "kind": "method",
-                      "object": {
-                        "kind": "field",
-                        "object": {
-                          "kind": "id",
-                          "value": "Trigger"
-                        },
-                        "dot": ".",
-                        "name": "oldMap"
-                      },
-                      "dot": ".",
-                      "name": "get",
-                      "arg": [
-                        {
-                          "kind": "field",
-                          "object": {
-                            "kind": "id",
-                            "value": "account"
-                          },
-                          "dot": ".",
-                          "name": "Id"
-                        }
-                      ]
-                    }
-                  }
-                ]
-              }
-            ]
+                }
+              ]
+            }
           }
         ]
       },
@@ -1062,170 +1070,172 @@
                 "name": "isInsert"
               }
             },
-            "block": [
-              {
-                "blockIndex": 1,
-                "kind": "declarationRef",
-                "declarationKind": "localVariable",
-                "variants": [
-                  {
-                    "index": 1
-                  }
-                ]
-              },
-              {
-                "blockIndex": 2,
-                "kind": "for",
-                "condition": {
-                  "variableName": "account",
-                  "variableType": {
-                    "kind": "custom",
-                    "name": [
-                      "Account"
-                    ]
-                  },
-                  "iterable": {
-                    "kind": "field",
-                    "object": {
-                      "kind": "id",
-                      "value": "Trigger"
-                    },
-                    "dot": ".",
-                    "name": "new"
-                  }
+            "block": {
+              "block": [
+                {
+                  "blockIndex": 1,
+                  "kind": "declarationRef",
+                  "declarationKind": "localVariable",
+                  "variants": [
+                    {
+                      "index": 1
+                    }
+                  ]
                 },
-                "block": [
-                  {
-                    "blockIndex": 1,
-                    "kind": "expression",
-                    "block": {
-                      "kind": "method",
+                {
+                  "blockIndex": 2,
+                  "kind": "for",
+                  "condition": {
+                    "variableName": "account",
+                    "variableType": {
+                      "kind": "custom",
+                      "name": [
+                        "Account"
+                      ]
+                    },
+                    "iterable": {
+                      "kind": "field",
                       "object": {
                         "kind": "id",
-                        "value": "contacts"
+                        "value": "Trigger"
                       },
                       "dot": ".",
-                      "name": "add",
-                      "arg": [
-                        {
-                          "kind": "instance",
-                          "typeName": [
-                            "Contact"
-                          ],
-                          "creatorType": "class",
-                          "arg": [
-                            {
-                              "kind": "expression",
-                              "left": {
-                                "kind": "id",
-                                "value": "LastName"
-                              },
-                              "operator": "=",
-                              "right": {
-                                "kind": "field",
-                                "object": {
-                                  "kind": "id",
-                                  "value": "account"
-                                },
-                                "dot": ".",
-                                "name": "Name"
-                              }
-                            },
-                            {
-                              "kind": "expression",
-                              "left": {
-                                "kind": "id",
-                                "value": "AccountId"
-                              },
-                              "operator": "=",
-                              "right": {
-                                "kind": "field",
-                                "object": {
-                                  "kind": "id",
-                                  "value": "account"
-                                },
-                                "dot": ".",
-                                "name": "Id"
-                              }
-                            }
-                          ]
-                        }
-                      ]
+                      "name": "new"
                     }
-                  }
-                ]
-              },
-              {
-                "blockIndex": 3,
-                "kind": "if",
-                "block": [
-                  {
-                    "condition": {
-                      "kind": "prefix",
-                      "value": {
+                  },
+                  "block": [
+                    {
+                      "blockIndex": 1,
+                      "kind": "expression",
+                      "block": {
                         "kind": "method",
                         "object": {
                           "kind": "id",
                           "value": "contacts"
                         },
                         "dot": ".",
-                        "name": "isEmpty"
-                      },
-                      "operator": "!"
-                    },
-                    "block": [
-                      {
-                        "blockIndex": 1,
-                        "kind": "declarationRef",
-                        "declarationKind": "dml",
-                        "index": 1
+                        "name": "add",
+                        "arg": [
+                          {
+                            "typeName": [
+                              "Contact"
+                            ],
+                            "kind": "instance",
+                            "creatorType": "class",
+                            "arg": [
+                              {
+                                "kind": "expression",
+                                "left": {
+                                  "kind": "id",
+                                  "value": "LastName"
+                                },
+                                "operator": "=",
+                                "right": {
+                                  "kind": "field",
+                                  "object": {
+                                    "kind": "id",
+                                    "value": "account"
+                                  },
+                                  "dot": ".",
+                                  "name": "Name"
+                                }
+                              },
+                              {
+                                "kind": "expression",
+                                "left": {
+                                  "kind": "id",
+                                  "value": "AccountId"
+                                },
+                                "operator": "=",
+                                "right": {
+                                  "kind": "field",
+                                  "object": {
+                                    "kind": "id",
+                                    "value": "account"
+                                  },
+                                  "dot": ".",
+                                  "name": "Id"
+                                }
+                              }
+                            ]
+                          }
+                        ]
                       }
-                    ],
-                    "dml": [
-                      {
-                        "dmlIndex": 1,
-                        "kind": "insert",
-                        "value": {
-                          "kind": "id",
-                          "value": "contacts"
-                        },
-                        "accessLevel": "USER"
-                      }
-                    ]
-                  }
-                ]
-              }
-            ],
-            "localVariable": [
-              {
-                "localVariableIndex": 1,
-                "variant": "contacts",
-                "variantType": {
-                  "kind": "list",
-                  "type": {
-                    "kind": "custom",
-                    "name": [
-                      "Contact"
-                    ]
-                  }
+                    }
+                  ]
                 },
-                "initialValue": {
-                  "kind": "instance",
-                  "typeName": [
-                    "List"
-                  ],
-                  "generic": [
+                {
+                  "blockIndex": 3,
+                  "kind": "if",
+                  "block": [
                     {
+                      "condition": {
+                        "kind": "prefix",
+                        "value": {
+                          "kind": "method",
+                          "object": {
+                            "kind": "id",
+                            "value": "contacts"
+                          },
+                          "dot": ".",
+                          "name": "isEmpty"
+                        },
+                        "operator": "!"
+                      },
+                      "block": [
+                        {
+                          "blockIndex": 1,
+                          "kind": "declarationRef",
+                          "declarationKind": "dml",
+                          "index": 1
+                        }
+                      ],
+                      "dml": [
+                        {
+                          "dmlIndex": 1,
+                          "kind": "insert",
+                          "value": {
+                            "kind": "id",
+                            "value": "contacts"
+                          },
+                          "accessLevel": "USER"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ],
+              "localVariable": [
+                {
+                  "localVariableIndex": 1,
+                  "variant": "contacts",
+                  "variantType": {
+                    "kind": "list",
+                    "type": {
                       "kind": "custom",
                       "name": [
                         "Contact"
                       ]
                     }
-                  ],
-                  "creatorType": "class"
+                  },
+                  "initialValue": {
+                    "typeName": [
+                      "List"
+                    ],
+                    "generic": [
+                      {
+                        "kind": "custom",
+                        "name": [
+                          "Contact"
+                        ]
+                      }
+                    ],
+                    "kind": "instance",
+                    "creatorType": "class"
+                  }
                 }
-              }
-            ]
+              ]
+            }
           }
         ]
       },
@@ -1422,7 +1432,6 @@
                   }
                 },
                 "initialValue": {
-                  "kind": "instance",
                   "typeName": [
                     "Set"
                   ],
@@ -1432,6 +1441,7 @@
                       "name": "Id"
                     }
                   ],
+                  "kind": "instance",
                   "creatorType": "class"
                 }
               },
@@ -1466,7 +1476,6 @@
                   }
                 },
                 "initialValue": {
-                  "kind": "instance",
                   "typeName": [
                     "List"
                   ],
@@ -1478,6 +1487,7 @@
                       ]
                     }
                   ],
+                  "kind": "instance",
                   "creatorType": "class"
                 }
               }

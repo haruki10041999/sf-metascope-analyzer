@@ -1,10 +1,12 @@
+import typia from 'typia';
+
 import {
     AnonymousTriggerBlockMemberClass,
     isAnonymousTriggerMemberDeclarationClass,
     isNormalStatementClass,
 } from '../converter';
 
-import { RewriteQueries, QueryStore, extractQueries } from '../commons';
+import { RewriteQueries, QueryStore, extractQueries } from '../../../parser/Apex/extractor/commons';
 import { ModifierType, makeModifierType } from '../modifier';
 import { StatementType, makeStatementType } from '../statement';
 import { AnonymousTriggerMemberType, makeAnonymousTriggerMemberType } from '../declaration';
@@ -17,6 +19,8 @@ export type AnonymousUnitType = {
     soql?: QueryStore['soql'];
     sosl?: QueryStore['sosl'];
 };
+
+export const isAnonymousUnitType = typia.createIs<AnonymousUnitType>();
 
 export const makeAnonymousUnitType = (
     anonymousUnit: AnonymousTriggerBlockMemberClass[],

@@ -1,24 +1,37 @@
+import typia from 'typia';
+
 import { DmlStatementClass, UpsertStatementClass, MergeStatementClass } from '../converter';
 
 import { ExpressionType, makeExpressionType } from '../expression';
 
-export type DmlField =
-    | {
-          kind: 'insert' | 'update' | 'delete' | 'undelete';
-          value: ExpressionType;
-          accessLevel?: string;
-      }
-    | {
-          kind: 'upsert';
-          value: ExpressionType;
-          accessLevel?: string;
-          externalKey?: string[];
-      }
-    | {
-          kind: 'merge';
-          value: ExpressionType[];
-          accessLevel?: string;
-      };
+type CommonDmlField = {
+    kind: 'insert' | 'update' | 'delete' | 'undelete';
+    value: ExpressionType;
+    accessLevel?: string;
+};
+
+export const isCommonDmlField = typia.createIs<CommonDmlField>;
+
+type UpsertDmlField = {
+    kind: 'upsert';
+    value: ExpressionType;
+    accessLevel?: string;
+    externalKey?: string[];
+};
+
+export const isUpsertDmlField = typia.createIs<UpsertDmlField>;
+
+type MergeDmlField = {
+    kind: 'merge';
+    value: ExpressionType[];
+    accessLevel?: string;
+};
+
+export const isMergeDmlField = typia.createIs<MergeDmlField>;
+
+export type DmlField = CommonDmlField | UpsertDmlField | MergeDmlField;
+
+export const isDmlField = typia.createIs<DmlField>;
 
 export const makeDmlField = (
     type: 'insert' | 'update' | 'delete' | 'undelete',

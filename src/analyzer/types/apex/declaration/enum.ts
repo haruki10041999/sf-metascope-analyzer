@@ -1,3 +1,5 @@
+import typia from 'typia';
+
 import { EnumDeclarationClass } from '../converter';
 
 export type EnumField = {
@@ -5,6 +7,7 @@ export type EnumField = {
     name: string;
     constant?: string[];
 };
+export const isEnumField = typia.createIs<EnumField>();
 
 export const makeEnumField = (enumDeclaration: EnumDeclarationClass): EnumField | undefined => {
     const value = enumDeclaration.getValue();
@@ -25,3 +28,4 @@ export const makeEnumField = (enumDeclaration: EnumDeclarationClass): EnumField 
 
     return undefined;
 };
+

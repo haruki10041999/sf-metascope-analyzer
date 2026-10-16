@@ -1,3 +1,5 @@
+import typia from 'typia';
+
 import {
     MemberDeclarationClass,
     AnonymousTriggerMemberDeclarationClass,
@@ -29,12 +31,17 @@ export type MemberType =
     | InterfaceField
     | ClassField;
 
+export const isMemberType = typia.createIs<MemberType>();
+
 export type AnonymousTriggerMemberType =
     MethodField | PropertyField | FieldField | EnumField | InterfaceField | ClassField;
+
+export const isAnonymousTriggerMemberType = typia.createIs<AnonymousTriggerMemberType>();
 
 export type TypeDeclarationType = { modifier?: ModifierType } & (
     EnumField | InterfaceField | ClassField
 );
+export const isTypeDeclarationType = typia.createIs<TypeDeclarationType>();
 
 export const makeMemberType = (
     memberDeclaration: MemberDeclarationClass,
@@ -163,3 +170,4 @@ export const makeTypeDeclarationType = (
 
     return undefined;
 };
+

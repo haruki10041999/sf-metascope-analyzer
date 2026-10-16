@@ -1,4 +1,5 @@
-import { isTypeDeclarationType } from '../../apex_IR';
+import typia from 'typia';
+
 import { TypeDeclarationClass } from '../converter';
 
 import { TypeDeclarationType, makeTypeDeclarationType } from '../declaration';
@@ -6,6 +7,8 @@ import { TypeDeclarationType, makeTypeDeclarationType } from '../declaration';
 export type CompilationUnitType = {
     fileType: 'cls';
 } & TypeDeclarationType;
+
+export const isCompilationUnitType = typia.createIs<CompilationUnitType>();
 
 export const makeCompilationUnitType = (
     typeDeclaration: TypeDeclarationClass,
@@ -20,3 +23,4 @@ export const makeCompilationUnitType = (
 
     return undefined;
 };
+

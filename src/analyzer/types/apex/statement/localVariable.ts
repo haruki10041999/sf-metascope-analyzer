@@ -1,3 +1,5 @@
+import typia from 'typia';
+
 import { LocalVariableDeclarationClass } from '../converter';
 
 import { TypeType, makeTypeType } from '../type';
@@ -10,6 +12,8 @@ export type LocalVariableField = {
     variantType: TypeType;
     modifier?: ModifierType;
 };
+
+export const isLocalVariableField = typia.createIs<LocalVariableField>();
 
 export const makeLocalVariableField = (
     localVariableStatement: LocalVariableDeclarationClass,
@@ -52,3 +56,4 @@ export const makeLocalVariableField = (
 
     return undefined;
 };
+

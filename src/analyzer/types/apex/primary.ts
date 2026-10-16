@@ -18,29 +18,37 @@ type StringPrimaryType = {
     value: string;
 };
 
+export const isStringPrimaryType = typia.createIs<StringPrimaryType>();
+
 type LiteralPrimaryType = {
     kind: 'literal';
     value: string;
     valueType: string;
 };
+export const isLiteralPrimaryType = typia.createIs<LiteralPrimaryType>();
 
 type TypePrimaryType = {
     kind: 'type';
     value: TypeType;
 };
+export const isTypePrimaryType = typia.createIs<TypePrimaryType>();
 
 type SoqlPrimaryType = {
     kind: 'soql';
 } & SoqlType;
 
+export const isSoqlPrimaryType = typia.createIs<SoqlPrimaryType>();
+
 type SoslPrimaryType = {
     kind: 'sosl';
 } & SoslType;
 
+export const isSoslPrimaryType = typia.createIs<SoslPrimaryType>();
+
 export type PrimaryType =
     StringPrimaryType | SoqlPrimaryType | LiteralPrimaryType | SoslPrimaryType | TypePrimaryType;
 
-export const isPrimaryType = typia.createIs<PrimaryType>;
+export const isPrimaryType = typia.createIs<PrimaryType>();
 
 export const makePrimaryType = (primary: PrimaryClass): PrimaryType | undefined => {
     const elementClass = primary.getValue();

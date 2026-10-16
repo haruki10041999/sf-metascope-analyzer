@@ -1,7 +1,9 @@
+import typia from 'typia';
+
 import { IfStatementClass, isExpressionClass, isString } from '../converter';
 
 import { StatementType, makeStatementType } from './statement';
-import { BlockField } from './block';
+import { BlockField, isBlockField } from '../../../parser/Apex/extractor/block';
 import { ExpressionType, makeExpressionType } from '../expression';
 
 type IfBlock = {
@@ -13,6 +15,8 @@ export type IfField = {
     block: IfBlock[];
 };
 
+export const isIfField = typia.createIs<IfField>;
+
 export const makeIfField = (statement: IfStatementClass[]): IfField | undefined => {
     const ifBlock: IfBlock[] = [];
 
@@ -22,10 +26,10 @@ export const makeIfField = (statement: IfStatementClass[]): IfField | undefined 
 
         let blockField: BlockField | { block: StatementType } | undefined = undefined;
         if (block) {
-            if ('kind' in block) {
-                blockField = { block: block };
-            } else {
+            if (isBlockField(block)) {
                 blockField = block;
+            } else {
+                blockField = { block: block };
             }
         }
 

@@ -1,20 +1,22 @@
+import typia, { is } from 'typia';
+
 import {
     ClassDeclarationClass,
     isMemberDeclarationClass,
     isNormalStatementClassArray,
 } from '../converter';
 
-import { RewriteQueries, QueryStore, extractQueries } from '../commons';
+import { RewriteQueries, QueryStore, extractQueries } from '../../../parser/Apex/extractor/commons';
 import { TypeType, makeTypeType } from '../type';
 import { ModifierType, makeModifierType } from '../modifier';
 import { BlockField, makeBlockField } from '../statement';
 import { makeMemberType } from './member';
-import { MethodField } from './method';
-import { PropertyField } from './property';
-import { FieldField } from './field';
-import { EnumField } from './enum';
-import { ConstructorField } from './constructor';
-import { InterfaceField } from './interface';
+import { MethodField, isMethodField } from './method';
+import { PropertyField, isPropertyField } from './property';
+import { FieldField, isFieldField } from './field';
+import { EnumField, isEnumField } from './enum';
+import { ConstructorField, isConstructorField } from './constructor';
+import { InterfaceField, isInterfaceField } from './interface';
 
 export type InnerMethodField = Omit<MethodField, 'kind'> & {
     modifier?: ModifierType;
@@ -64,6 +66,8 @@ export type ClassField = {
     extend?: TypeType;
     implement?: TypeType[];
 };
+
+export const isClassField = typia.createIs<ClassField>();
 
 export const makeClassField = (classDeclaration: ClassDeclarationClass): ClassField | undefined => {
     const name = classDeclaration.getValue();
@@ -120,132 +124,130 @@ export const makeClassField = (classDeclaration: ClassDeclarationClass): ClassFi
 
                 const member = makeMemberType(body);
 
-                if (member) {
-                    if (member.kind === 'constructor') {
-                        const { kind, ...content } = member;
+                if (isConstructorField(member)) {
+                    const { kind, ...content } = member;
 
-                        if (!classField.construct) {
-                            classField.construct = [];
-                        }
-
-                        const field: InnerConstructorField = {
-                            ...content,
-                        };
-
-                        if (modifier) {
-                            field.modifier = modifier;
-                        }
-
-                        classField.construct.push(field);
+                    if (!classField.construct) {
+                        classField.construct = [];
                     }
 
-                    if (member.kind === 'method') {
-                        const { kind, ...content } = member;
+                    const field: InnerConstructorField = {
+                        ...content,
+                    };
 
-                        if (!classField.method) {
-                            classField.method = [];
-                        }
-
-                        const fieldField: InnerMethodField = {
-                            ...content,
-                        };
-
-                        if (modifier) {
-                            fieldField.modifier = modifier;
-                        }
-
-                        classField.method.push(fieldField);
+                    if (modifier) {
+                        field.modifier = modifier;
                     }
 
-                    if (member.kind === 'property') {
-                        const { kind, ...content } = member;
+                    classField.construct.push(field);
+                }
 
-                        if (!classField.property) {
-                            classField.property = [];
-                        }
+                if (isMethodField(member)) {
+                    const { kind, ...content } = member;
 
-                        const fieldField: InnerPropertyField = {
-                            ...content,
-                        };
-
-                        if (modifier) {
-                            fieldField.modifier = modifier;
-                        }
-
-                        classField.property.push(fieldField);
+                    if (!classField.method) {
+                        classField.method = [];
                     }
 
-                    if (member.kind === 'field') {
-                        const { kind, ...content } = member;
+                    const fieldField: InnerMethodField = {
+                        ...content,
+                    };
 
-                        if (!classField.field) {
-                            classField.field = [];
-                        }
-
-                        const fieldField: InnerFieldField = {
-                            ...content,
-                        };
-
-                        if (modifier) {
-                            fieldField.modifier = modifier;
-                        }
-
-                        classField.field.push(fieldField);
+                    if (modifier) {
+                        fieldField.modifier = modifier;
                     }
 
-                    if (member.kind === 'enum') {
-                        const { kind, ...content } = member;
+                    classField.method.push(fieldField);
+                }
 
-                        if (!classField.enum) {
-                            classField.enum = [];
-                        }
+                if (isPropertyField(member)) {
+                    const { kind, ...content } = member;
 
-                        const fieldField: InnerEnumField = {
-                            ...content,
-                        };
-
-                        if (modifier) {
-                            fieldField.modifier = modifier;
-                        }
-
-                        classField.enum.push(fieldField);
+                    if (!classField.property) {
+                        classField.property = [];
                     }
 
-                    if (member.kind === 'interface') {
-                        const { kind, ...content } = member;
+                    const fieldField: InnerPropertyField = {
+                        ...content,
+                    };
 
-                        if (!classField.interface) {
-                            classField.interface = [];
-                        }
-
-                        const fieldField: InnerInterfaceField = {
-                            ...content,
-                        };
-
-                        if (modifier) {
-                            fieldField.modifier = modifier;
-                        }
-
-                        classField.interface.push(fieldField);
+                    if (modifier) {
+                        fieldField.modifier = modifier;
                     }
 
-                    if (member.kind === 'class') {
-                        const { kind, ...content } = member;
+                    classField.property.push(fieldField);
+                }
 
-                        if (!classField.class) {
-                            classField.class = [];
-                        }
+                if (isFieldField(member)) {
+                    const { kind, ...content } = member;
 
-                        const fieldField: InnerClassField = {
-                            ...content,
-                        };
-
-                        if (modifier) {
-                            fieldField.modifier = modifier;
-                        }
-
-                        classField.class.push(fieldField);
+                    if (!classField.field) {
+                        classField.field = [];
                     }
+
+                    const fieldField: InnerFieldField = {
+                        ...content,
+                    };
+
+                    if (modifier) {
+                        fieldField.modifier = modifier;
+                    }
+
+                    classField.field.push(fieldField);
+                }
+
+                if (isEnumField(member)) {
+                    const { kind, ...content } = member;
+
+                    if (!classField.enum) {
+                        classField.enum = [];
+                    }
+
+                    const fieldField: InnerEnumField = {
+                        ...content,
+                    };
+
+                    if (modifier) {
+                        fieldField.modifier = modifier;
+                    }
+
+                    classField.enum.push(fieldField);
+                }
+
+                if (isInterfaceField(member)) {
+                    const { kind, ...content } = member;
+
+                    if (!classField.interface) {
+                        classField.interface = [];
+                    }
+
+                    const fieldField: InnerInterfaceField = {
+                        ...content,
+                    };
+
+                    if (modifier) {
+                        fieldField.modifier = modifier;
+                    }
+
+                    classField.interface.push(fieldField);
+                }
+
+                if (isClassField(member)) {
+                    const { kind, ...content } = member;
+
+                    if (!classField.class) {
+                        classField.class = [];
+                    }
+
+                    const fieldField: InnerClassField = {
+                        ...content,
+                    };
+
+                    if (modifier) {
+                        fieldField.modifier = modifier;
+                    }
+
+                    classField.class.push(fieldField);
                 }
             }
         });

@@ -435,7 +435,6 @@
           {
             "variant": "names",
             "initValue": {
-              "kind": "instance",
               "typeName": [
                 "List"
               ],
@@ -445,6 +444,7 @@
                   "name": "String"
                 }
               ],
+              "kind": "instance",
               "creatorType": "class"
             }
           }
@@ -463,7 +463,6 @@
           {
             "variant": "ids",
             "initValue": {
-              "kind": "instance",
               "typeName": [
                 "Set"
               ],
@@ -473,6 +472,7 @@
                   "name": "Id"
                 }
               ],
+              "kind": "instance",
               "creatorType": "class"
             }
           }
@@ -491,7 +491,6 @@
           {
             "variant": "accounts",
             "initValue": {
-              "kind": "instance",
               "typeName": [
                 "Map"
               ],
@@ -507,6 +506,7 @@
                   ]
                 }
               ],
+              "kind": "instance",
               "creatorType": "class"
             }
           }
@@ -531,7 +531,6 @@
           {
             "variant": "scores",
             "initValue": {
-              "kind": "instance",
               "typeName": [
                 "Map"
               ],
@@ -545,6 +544,7 @@
                   "name": "Integer"
                 }
               ],
+              "kind": "instance",
               "creatorType": "map",
               "initValue": [
                 {
@@ -593,7 +593,6 @@
           {
             "variant": "tags",
             "initValue": {
-              "kind": "instance",
               "typeName": [
                 "Set"
               ],
@@ -603,6 +602,7 @@
                   "name": "String"
                 }
               ],
+              "kind": "instance",
               "creatorType": "set",
               "initialValue": [
                 {
@@ -662,10 +662,10 @@
           {
             "variant": "numbers",
             "initValue": {
-              "kind": "instance",
               "typeName": [
                 "Integer"
               ],
+              "kind": "instance",
               "creatorType": "array",
               "initValue": [
                 {
@@ -702,10 +702,10 @@
           {
             "variant": "sized",
             "initValue": {
-              "kind": "instance",
               "typeName": [
                 "String"
               ],
+              "kind": "instance",
               "creatorType": "array",
               "initValue": [],
               "size": {
@@ -756,7 +756,6 @@
           "name": "addAll",
           "arg": [
             {
-              "kind": "instance",
               "typeName": [
                 "List"
               ],
@@ -766,6 +765,7 @@
                   "name": "String"
                 }
               ],
+              "kind": "instance",
               "creatorType": "list",
               "initialValue": [
                 {
@@ -930,10 +930,10 @@
           {
             "variant": "account",
             "initValue": {
-              "kind": "instance",
               "typeName": [
                 "Account"
               ],
+              "kind": "instance",
               "creatorType": "class",
               "arg": [
                 {
@@ -1117,10 +1117,10 @@
           {
             "variant": "duplicate",
             "initValue": {
-              "kind": "instance",
               "typeName": [
                 "Account"
               ],
+              "kind": "instance",
               "creatorType": "class",
               "arg": [
                 {
@@ -1188,7 +1188,6 @@
           {
             "variant": "dmlAccounts",
             "initValue": {
-              "kind": "instance",
               "typeName": [
                 "List"
               ],
@@ -1200,13 +1199,14 @@
                   ]
                 }
               ],
+              "kind": "instance",
               "creatorType": "list",
               "initialValue": [
                 {
-                  "kind": "instance",
                   "typeName": [
                     "Account"
                   ],
+                  "kind": "instance",
                   "creatorType": "class",
                   "arg": [
                     {
@@ -1225,10 +1225,10 @@
                   ]
                 },
                 {
-                  "kind": "instance",
                   "typeName": [
                     "Account"
                   ],
+                  "kind": "instance",
                   "creatorType": "class",
                   "arg": [
                     {
@@ -1247,10 +1247,10 @@
                   ]
                 },
                 {
-                  "kind": "instance",
                   "typeName": [
                     "Account"
                   ],
+                  "kind": "instance",
                   "creatorType": "class",
                   "arg": [
                     {
@@ -1487,24 +1487,28 @@
                   ]
                 }
               ],
-              "soqlFunction": [
-                {
-                  "field": {
-                    "funcName": "AVG",
-                    "arg": [
-                      "AnnualRevenue"
-                    ]
+              "soqlFunction": {
+                "count": [
+                  {
+                    "field": {
+                      "funcName": "COUNT",
+                      "arg": [
+                        "Id"
+                      ]
+                    }
                   }
-                },
-                {
-                  "field": {
-                    "funcName": "COUNT",
-                    "arg": [
-                      "Id"
-                    ]
+                ],
+                "normal": [
+                  {
+                    "field": {
+                      "funcName": "AVG",
+                      "arg": [
+                        "AnnualRevenue"
+                      ]
+                    }
                   }
-                }
-              ]
+                ]
+              }
             },
             "from": {
               "field": "Account"
@@ -1569,32 +1573,36 @@
                   ]
                 }
               ],
-              "soqlFunction": [
-                {
-                  "field": {
-                    "funcName": "CONVERT_CURRENCY",
-                    "arg": [
-                      "AnnualRevenue"
-                    ]
+              "soqlFunction": {
+                "normal": [
+                  {
+                    "field": {
+                      "funcName": "CONVERT_CURRENCY",
+                      "arg": [
+                        "AnnualRevenue"
+                      ]
+                    }
+                  },
+                  {
+                    "field": {
+                      "funcName": "TOLABEL",
+                      "arg": [
+                        "Type"
+                      ]
+                    }
                   }
-                },
-                {
-                  "field": {
-                    "funcName": "FORMAT",
-                    "arg": [
-                      "CreatedDate"
-                    ]
+                ],
+                "format": [
+                  {
+                    "field": {
+                      "funcName": "FORMAT",
+                      "arg": [
+                        "CreatedDate"
+                      ]
+                    }
                   }
-                },
-                {
-                  "field": {
-                    "funcName": "TOLABEL",
-                    "arg": [
-                      "Type"
-                    ]
-                  }
-                }
-              ]
+                ]
+              }
             },
             "from": {
               "field": "Account"
@@ -1627,14 +1635,16 @@
           {
             "soqlIndex": 1,
             "select": {
-              "soqlFunction": [
-                {
-                  "field": {
-                    "funcName": "FIELDS",
-                    "arg": "ALL"
+              "soqlFunction": {
+                "fields": [
+                  {
+                    "field": {
+                      "funcName": "FIELDS",
+                      "arg": "ALL"
+                    }
                   }
-                }
-              ]
+                ]
+              }
             },
             "from": {
               "field": "Account"
@@ -1773,13 +1783,15 @@
           {
             "soqlIndex": 1,
             "select": {
-              "soqlFunction": [
-                {
-                  "field": {
-                    "funcName": "COUNT"
+              "soqlFunction": {
+                "count": [
+                  {
+                    "field": {
+                      "funcName": "COUNT"
+                    }
                   }
-                }
-              ]
+                ]
+              }
             },
             "from": {
               "field": "Account"
@@ -2009,113 +2021,115 @@
             }
           }
         },
-        "block": [
-          {
-            "blockIndex": 1,
-            "kind": "if",
-            "block": [
-              {
-                "condition": {
-                  "kind": "expression",
-                  "left": {
-                    "kind": "method",
-                    "object": {
-                      "kind": "id",
-                      "value": "Math"
-                    },
-                    "dot": ".",
-                    "name": "mod",
-                    "arg": [
-                      {
-                        "kind": "id",
-                        "value": "i"
-                      },
-                      {
-                        "kind": "literal",
-                        "value": "2",
-                        "valueType": "integer"
-                      }
-                    ]
-                  },
-                  "operator": "==",
-                  "right": {
-                    "kind": "literal",
-                    "value": "0",
-                    "valueType": "integer"
-                  }
-                },
-                "block": [
-                  {
-                    "blockIndex": 1,
-                    "kind": "declarationRef",
-                    "declarationKind": "continue",
-                    "index": 1
-                  }
-                ],
-                "continue": [
-                  {
-                    "continueIndex": 1,
-                    "value": "continue"
-                  }
-                ]
-              }
-            ]
-          },
-          {
-            "blockIndex": 2,
-            "kind": "if",
-            "block": [
-              {
-                "condition": {
-                  "kind": "expression",
-                  "left": {
-                    "kind": "id",
-                    "value": "i"
-                  },
-                  "operator": "==",
-                  "right": {
-                    "kind": "literal",
-                    "value": "7",
-                    "valueType": "integer"
-                  }
-                },
-                "block": [
-                  {
-                    "blockIndex": 1,
-                    "kind": "declarationRef",
-                    "declarationKind": "break",
-                    "index": 1
-                  }
-                ],
-                "break": [
-                  {
-                    "breakIndex": 1,
-                    "value": "break"
-                  }
-                ]
-              }
-            ]
-          },
-          {
-            "blockIndex": 3,
-            "kind": "expression",
-            "block": {
-              "kind": "method",
-              "object": {
-                "kind": "id",
-                "value": "System"
-              },
-              "dot": ".",
-              "name": "debug",
-              "arg": [
+        "block": {
+          "block": [
+            {
+              "blockIndex": 1,
+              "kind": "if",
+              "block": [
                 {
-                  "kind": "id",
-                  "value": "i"
+                  "condition": {
+                    "kind": "expression",
+                    "left": {
+                      "kind": "method",
+                      "object": {
+                        "kind": "id",
+                        "value": "Math"
+                      },
+                      "dot": ".",
+                      "name": "mod",
+                      "arg": [
+                        {
+                          "kind": "id",
+                          "value": "i"
+                        },
+                        {
+                          "kind": "literal",
+                          "value": "2",
+                          "valueType": "integer"
+                        }
+                      ]
+                    },
+                    "operator": "==",
+                    "right": {
+                      "kind": "literal",
+                      "value": "0",
+                      "valueType": "integer"
+                    }
+                  },
+                  "block": [
+                    {
+                      "blockIndex": 1,
+                      "kind": "declarationRef",
+                      "declarationKind": "continue",
+                      "index": 1
+                    }
+                  ],
+                  "continue": [
+                    {
+                      "continueIndex": 1,
+                      "value": "continue"
+                    }
+                  ]
                 }
               ]
+            },
+            {
+              "blockIndex": 2,
+              "kind": "if",
+              "block": [
+                {
+                  "condition": {
+                    "kind": "expression",
+                    "left": {
+                      "kind": "id",
+                      "value": "i"
+                    },
+                    "operator": "==",
+                    "right": {
+                      "kind": "literal",
+                      "value": "7",
+                      "valueType": "integer"
+                    }
+                  },
+                  "block": [
+                    {
+                      "blockIndex": 1,
+                      "kind": "declarationRef",
+                      "declarationKind": "break",
+                      "index": 1
+                    }
+                  ],
+                  "break": [
+                    {
+                      "breakIndex": 1,
+                      "value": "break"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "blockIndex": 3,
+              "kind": "expression",
+              "block": {
+                "kind": "method",
+                "object": {
+                  "kind": "id",
+                  "value": "System"
+                },
+                "dot": ".",
+                "name": "debug",
+                "arg": [
+                  {
+                    "kind": "id",
+                    "value": "i"
+                  }
+                ]
+              }
             }
-          }
-        ]
+          ]
+        }
       },
       {
         "kind": "for",
@@ -2512,10 +2526,10 @@
                       {
                         "throwIndex": 1,
                         "value": {
-                          "kind": "instance",
                           "typeName": [
                             "QueryException"
                           ],
+                          "kind": "instance",
                           "creatorType": "class",
                           "arg": [
                             {
@@ -2930,10 +2944,10 @@
           {
             "variant": "objectValue",
             "initValue": {
-              "kind": "instance",
               "typeName": [
                 "Account"
               ],
+              "kind": "instance",
               "creatorType": "class",
               "arg": [
                 {
@@ -3097,10 +3111,10 @@
         "kind": "runAs",
         "arg": [
           {
-            "kind": "instance",
             "typeName": [
               "User"
             ],
+            "kind": "instance",
             "creatorType": "class",
             "arg": [
               {

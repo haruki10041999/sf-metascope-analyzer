@@ -6,13 +6,13 @@ import {
     isSubQueryClass,
 } from '../converter';
 
-import { SoqlFunctionField, makeSoqlFunctionField } from './soqlFunction';
+import { SoqlFunctionSet, assignSoqlFunction, sortSoqlFunctionSet } from './soqlFunction';
 import { TypeOfField, makeTypeOfField } from './typeof';
 import { SubQueryField, makeSubQueryField } from './subQuery';
 
 export type SelectField = {
     field?: { field: string[]; alias?: string }[];
-    soqlFunction?: { field: SoqlFunctionField; alias?: string }[];
+    soqlFunction?: SoqlFunctionSet;
     typeOf?: { field: TypeOfField; alias?: string }[];
     subQuery?: { field: SubQueryField; alias?: string }[];
 };
@@ -38,24 +38,10 @@ export const makeSelectField = (entries: EntryClass[]): SelectField | undefined 
 
         if (isSoqlFunctionClass(value)) {
             if (!select.soqlFunction) {
-                select.soqlFunction = [];
+                select.soqlFunction = {};
             }
 
-            const soqlFunctionField = makeSoqlFunctionField(value);
-            if (soqlFunctionField) {
-                if (!select.soqlFunction) {
-                    select.soqlFunction = [];
-                }
-
-                const field: { field: SoqlFunctionField; alias?: string } = {
-                    field: soqlFunctionField,
-                };
-                if (alias) {
-                    field.alias = alias;
-                }
-
-                select.soqlFunction.push(field);
-            }
+            assignSoqlFunction(value, select.soqlFunction, alias ?? undefined);
         }
 
         if (isTypeOfClass(value)) {
@@ -95,26 +81,73 @@ export const makeSelectField = (entries: EntryClass[]): SelectField | undefined 
     });
 
     if (select.field && select.field.length > 0) {
-        select.field.sort(
-            (a, b) =>
-                a.field.length - b.field.length || a.field.at(0)!.localeCompare(b.field.at(0)!),
-        );
+        select.field.sort((a, b) => {
+            const aliasDiff = Number(a.alias !== undefined) - Number(b.alias !== undefined);
+            if (aliasDiff !== 0) return aliasDiff;
+
+            const fieldLengthDiff = a.field.length - b.field.length;
+            if (fieldLengthDiff !== 0) return fieldLengthDiff;
+
+            for (let i = 0; i < a.field.length; i++) {
+                const diff = a.field[i]!.localeCompare(b.field[i]!);
+                if (diff !== 0) return diff;
+            }
+
+            return 0;
+        });
     }
 
-    if (select.soqlFunction && select.soqlFunction.length > 0) {
-        select.soqlFunction.sort((a, b) => a.field.funcName.localeCompare(b.field.funcName));
+    if (select.soqlFunction) {
+        sortSoqlFunctionSet(select.soqlFunction);
     }
 
     if (select.typeOf && select.typeOf.length > 0) {
-        select.typeOf.sort(
-            (a, b) =>
-                a.field.field.length - b.field.field.length ||
-                a.field.field.at(0)!.localeCompare(b.field.field.at(0)!),
-        );
+        select.typeOf.sort((a, b) => {
+            const aliasDiff = Number(a.alias !== undefined) - Number(b.alias !== undefined);
+            if (aliasDiff !== 0) return aliasDiff;
+
+            const fieldLengthDiff = a.field.field.length - b.field.field.length;
+            if (fieldLengthDiff !== 0) return fieldLengthDiff;
+
+            for (let i = 0; i < a.field.field.length; i++) {
+                const diff = a.field.field[i]!.localeCompare(b.field.field[i]!);
+                if (diff !== 0) return diff;
+            }
+
+            const blockLengthDiff = a.field.conditionBlock.length - b.field.conditionBlock.length;
+            if (blockLengthDiff !== 0) return blockLengthDiff;
+
+            return 0;
+        });
     }
 
     if (select.subQuery && select.subQuery.length > 0) {
-        select.subQuery.sort((a, b) => a.field.from.field.localeCompare(b.field.from.field));
+        select.subQuery.sort((a, b) => {
+            const aliasDiff = Number(a.alias !== undefined) - Number(b.alias !== undefined);
+            if (aliasDiff !== 0) return aliasDiff;
+
+            const fromAliasDiff =
+                Number(a.field.from.alias !== undefined) - Number(b.field.from.alias !== undefined);
+            if (fromAliasDiff !== 0) return fromAliasDiff;
+
+            const fromFieldDiff = a.field.from.field.localeCompare(b.field.from.field);
+            if (fromFieldDiff !== 0) return fromFieldDiff;
+
+            if (a.field.select.field && b.field.select.field) {
+                const selectFieldLengthDiff =
+                    a.field.select.field.length - b.field.select.field.length;
+                if (selectFieldLengthDiff !== 0) return selectFieldLengthDiff;
+            }
+
+            if (a.field.select.soqlFunction && b.field.select.soqlFunction) {
+                const keysLengthDiff =
+                    Object.keys(a.field.select.soqlFunction).length -
+                    Object.keys(b.field.select.soqlFunction).length;
+                if (keysLengthDiff !== 0) return keysLengthDiff;
+            }
+
+            return 0;
+        });
     }
 
     if (Object.keys(select).length > 0) {
@@ -123,3 +156,4 @@ export const makeSelectField = (entries: EntryClass[]): SelectField | undefined 
 
     return undefined;
 };
+

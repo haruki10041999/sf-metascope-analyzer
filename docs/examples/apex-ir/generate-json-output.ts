@@ -1,7 +1,6 @@
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
 
 import { ApexParser, ApexParserFactory, ApexParserRuleContext } from '@apexdevtools/apex-parser';
-import { ApexSyntaxErrorCollector } from '../../../src/analyzer/parser/Apex/apexSyntaxError';
 import {
     CommonTypeClass,
     ErrorTypeClass,
@@ -21,6 +20,26 @@ import {
 } from '../../../src/analyzer/types/apex';
 import { CommonClass } from '../../../src/analyzer/types/apex/converter/commons';
 import { UnitVisitor } from '../../../src/analyzer/types/apex_IR/unitVisitor';
+
+import { ApexErrorListener } from '@apexdevtools/apex-parser';
+
+type ApexSyntaxDiagnostic = {
+    line: number;
+    column: number;
+    message: string;
+};
+
+/**
+ * apex-parser はエラー回復で解析を続けるため、トークンの読み飛ばし・補完が起きても
+ * 構文木だけでは気付きにくい。Lexer と Parser の両方に付けて構文エラーを収集する。
+ */
+class ApexSyntaxErrorCollector extends ApexErrorListener {
+    readonly diagnostics: ApexSyntaxDiagnostic[] = [];
+
+    apexSyntaxError(line: number, column: number, message: string): void {
+        this.diagnostics.push({ line, column, message });
+    }
+}
 
 const targets: [string, (parser: ApexParser) => ApexParserRuleContext][] = [
     ['ParserTest.cls', (parser) => parser.compilationUnit()],

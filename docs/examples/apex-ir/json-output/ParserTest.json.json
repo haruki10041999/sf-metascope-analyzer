@@ -127,7 +127,6 @@
           {
             "variant": "names",
             "initValue": {
-              "kind": "instance",
               "typeName": [
                 "List"
               ],
@@ -137,6 +136,7 @@
                   "name": "String"
                 }
               ],
+              "kind": "instance",
               "creatorType": "class"
             }
           }
@@ -159,7 +159,6 @@
           {
             "variant": "accountIds",
             "initValue": {
-              "kind": "instance",
               "typeName": [
                 "Set"
               ],
@@ -169,6 +168,7 @@
                   "name": "Id"
                 }
               ],
+              "kind": "instance",
               "creatorType": "class"
             }
           }
@@ -191,7 +191,6 @@
           {
             "variant": "accountMap",
             "initValue": {
-              "kind": "instance",
               "typeName": [
                 "Map"
               ],
@@ -207,6 +206,7 @@
                   ]
                 }
               ],
+              "kind": "instance",
               "creatorType": "class"
             }
           }
@@ -361,7 +361,6 @@
               },
               "operator": "=",
               "right": {
-                "kind": "instance",
                 "typeName": [
                   "List"
                 ],
@@ -371,6 +370,7 @@
                     "name": "String"
                   }
                 ],
+                "kind": "instance",
                 "creatorType": "class"
               }
             }
@@ -1409,7 +1409,6 @@
               }
             },
             "initialValue": {
-              "kind": "instance",
               "typeName": [
                 "List"
               ],
@@ -1419,6 +1418,7 @@
                   "name": "String"
                 }
               ],
+              "kind": "instance",
               "creatorType": "class"
             }
           },
@@ -1433,7 +1433,6 @@
               }
             },
             "initialValue": {
-              "kind": "instance",
               "typeName": [
                 "Set"
               ],
@@ -1443,6 +1442,7 @@
                   "name": "Id"
                 }
               ],
+              "kind": "instance",
               "creatorType": "class"
             }
           },
@@ -1463,7 +1463,6 @@
               }
             },
             "initialValue": {
-              "kind": "instance",
               "typeName": [
                 "Map"
               ],
@@ -1479,6 +1478,7 @@
                   ]
                 }
               ],
+              "kind": "instance",
               "creatorType": "class"
             }
           },
@@ -1502,7 +1502,6 @@
               }
             },
             "initialValue": {
-              "kind": "instance",
               "typeName": [
                 "List"
               ],
@@ -1521,6 +1520,7 @@
                   }
                 }
               ],
+              "kind": "instance",
               "creatorType": "class"
             }
           },
@@ -1544,7 +1544,6 @@
               }
             },
             "initialValue": {
-              "kind": "instance",
               "typeName": [
                 "Map"
               ],
@@ -1563,6 +1562,7 @@
                   }
                 }
               ],
+              "kind": "instance",
               "creatorType": "class"
             }
           },
@@ -1581,7 +1581,6 @@
               "dimension": 1
             },
             "initialValue": {
-              "kind": "instance",
               "typeName": [
                 "List"
               ],
@@ -1591,6 +1590,7 @@
                   "name": "String"
                 }
               ],
+              "kind": "instance",
               "creatorType": "array",
               "initValue": [],
               "size": {
@@ -1860,7 +1860,6 @@
               }
             },
             "initialValue": {
-              "kind": "instance",
               "typeName": [
                 "List"
               ],
@@ -1870,6 +1869,7 @@
                   "name": "String"
                 }
               ],
+              "kind": "instance",
               "creatorType": "list",
               "initialValue": [
                 {
@@ -1896,7 +1896,6 @@
               }
             },
             "initialValue": {
-              "kind": "instance",
               "typeName": [
                 "Set"
               ],
@@ -1906,6 +1905,7 @@
                   "name": "Integer"
                 }
               ],
+              "kind": "instance",
               "creatorType": "set",
               "initialValue": [
                 {
@@ -1941,7 +1941,6 @@
               }
             },
             "initialValue": {
-              "kind": "instance",
               "typeName": [
                 "Map"
               ],
@@ -1955,6 +1954,7 @@
                   "name": "Integer"
                 }
               ],
+              "kind": "instance",
               "creatorType": "map",
               "initValue": [
                 {
@@ -1994,10 +1994,10 @@
               ]
             },
             "initialValue": {
-              "kind": "instance",
               "typeName": [
                 "Account"
               ],
+              "kind": "instance",
               "creatorType": "class",
               "arg": [
                 {
@@ -2041,10 +2041,10 @@
               "dimension": 1
             },
             "initialValue": {
-              "kind": "instance",
               "typeName": [
                 "String"
               ],
+              "kind": "instance",
               "creatorType": "array",
               "initValue": [],
               "size": {
@@ -2066,10 +2066,10 @@
               "dimension": 1
             },
             "initialValue": {
-              "kind": "instance",
               "typeName": [
                 "Integer"
               ],
+              "kind": "instance",
               "creatorType": "array",
               "initValue": [
                 {
@@ -2102,10 +2102,10 @@
               "dimension": 1
             },
             "initialValue": {
-              "kind": "instance",
               "typeName": [
                 "Integer"
               ],
+              "kind": "instance",
               "creatorType": "array",
               "initValue": []
             }
@@ -2121,7 +2121,6 @@
               ]
             },
             "initialValue": {
-              "kind": "instance",
               "typeName": [
                 "DocutizeForm",
                 "AccountService"
@@ -2132,6 +2131,7 @@
                   "name": "String"
                 }
               ],
+              "kind": "instance",
               "creatorType": "class"
             }
           },
@@ -2146,11 +2146,11 @@
               ]
             },
             "initialValue": {
-              "kind": "instance",
               "typeName": [
                 "Schema",
                 "DescribeSObjectResult"
               ],
+              "kind": "instance",
               "creatorType": "class"
             }
           },
@@ -3816,78 +3816,80 @@
                 }
               }
             },
-            "block": [
-              {
-                "blockIndex": 1,
-                "kind": "if",
-                "block": [
-                  {
-                    "condition": {
-                      "kind": "expression",
-                      "left": {
-                        "kind": "id",
-                        "value": "i"
+            "block": {
+              "block": [
+                {
+                  "blockIndex": 1,
+                  "kind": "if",
+                  "block": [
+                    {
+                      "condition": {
+                        "kind": "expression",
+                        "left": {
+                          "kind": "id",
+                          "value": "i"
+                        },
+                        "operator": "==",
+                        "right": {
+                          "kind": "literal",
+                          "value": "5",
+                          "valueType": "integer"
+                        }
                       },
-                      "operator": "==",
-                      "right": {
-                        "kind": "literal",
-                        "value": "5",
-                        "valueType": "integer"
-                      }
-                    },
-                    "block": [
-                      {
-                        "blockIndex": 1,
-                        "kind": "declarationRef",
-                        "declarationKind": "continue",
-                        "index": 1
-                      }
-                    ],
-                    "continue": [
-                      {
-                        "continueIndex": 1,
-                        "value": "continue"
-                      }
-                    ]
-                  }
-                ]
-              },
-              {
-                "blockIndex": 2,
-                "kind": "if",
-                "block": [
-                  {
-                    "condition": {
-                      "kind": "expression",
-                      "left": {
-                        "kind": "id",
-                        "value": "i"
+                      "block": [
+                        {
+                          "blockIndex": 1,
+                          "kind": "declarationRef",
+                          "declarationKind": "continue",
+                          "index": 1
+                        }
+                      ],
+                      "continue": [
+                        {
+                          "continueIndex": 1,
+                          "value": "continue"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "blockIndex": 2,
+                  "kind": "if",
+                  "block": [
+                    {
+                      "condition": {
+                        "kind": "expression",
+                        "left": {
+                          "kind": "id",
+                          "value": "i"
+                        },
+                        "operator": "==",
+                        "right": {
+                          "kind": "literal",
+                          "value": "8",
+                          "valueType": "integer"
+                        }
                       },
-                      "operator": "==",
-                      "right": {
-                        "kind": "literal",
-                        "value": "8",
-                        "valueType": "integer"
-                      }
-                    },
-                    "block": [
-                      {
-                        "blockIndex": 1,
-                        "kind": "declarationRef",
-                        "declarationKind": "break",
-                        "index": 1
-                      }
-                    ],
-                    "break": [
-                      {
-                        "breakIndex": 1,
-                        "value": "break"
-                      }
-                    ]
-                  }
-                ]
-              }
-            ]
+                      "block": [
+                        {
+                          "blockIndex": 1,
+                          "kind": "declarationRef",
+                          "declarationKind": "break",
+                          "index": 1
+                        }
+                      ],
+                      "break": [
+                        {
+                          "breakIndex": 1,
+                          "value": "break"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
           },
           {
             "blockIndex": 4,
@@ -4814,10 +4816,10 @@
           {
             "throwIndex": 1,
             "value": {
-              "kind": "instance",
               "typeName": [
                 "CustomException"
               ],
+              "kind": "instance",
               "creatorType": "class",
               "arg": [
                 {
@@ -5244,10 +5246,10 @@
             "kind": "runAs",
             "arg": [
               {
-                "kind": "instance",
                 "typeName": [
                   "Version"
                 ],
+                "kind": "instance",
                 "creatorType": "class",
                 "arg": [
                   {
@@ -5697,7 +5699,6 @@
                   "value": {
                     "kind": "bind",
                     "value": {
-                      "kind": "instance",
                       "typeName": [
                         "Set"
                       ],
@@ -5707,6 +5708,7 @@
                           "name": "Id"
                         }
                       ],
+                      "kind": "instance",
                       "creatorType": "class"
                     }
                   }
@@ -6232,57 +6234,61 @@
                   ]
                 }
               ],
-              "soqlFunction": [
-                {
-                  "field": {
-                    "funcName": "AVG",
-                    "arg": [
-                      "AnnualRevenue"
-                    ]
+              "soqlFunction": {
+                "count": [
+                  {
+                    "field": {
+                      "funcName": "COUNT",
+                      "arg": [
+                        "Id"
+                      ]
+                    },
+                    "alias": "total"
                   }
-                },
-                {
-                  "field": {
-                    "funcName": "COUNT",
-                    "arg": [
-                      "Id"
-                    ]
+                ],
+                "normal": [
+                  {
+                    "field": {
+                      "funcName": "AVG",
+                      "arg": [
+                        "AnnualRevenue"
+                      ]
+                    }
                   },
-                  "alias": "total"
-                },
-                {
-                  "field": {
-                    "funcName": "COUNT_DISTINCT",
-                    "arg": [
-                      "OwnerId"
-                    ]
+                  {
+                    "field": {
+                      "funcName": "COUNT_DISTINCT",
+                      "arg": [
+                        "OwnerId"
+                      ]
+                    }
+                  },
+                  {
+                    "field": {
+                      "funcName": "MAX",
+                      "arg": [
+                        "AnnualRevenue"
+                      ]
+                    }
+                  },
+                  {
+                    "field": {
+                      "funcName": "MIN",
+                      "arg": [
+                        "AnnualRevenue"
+                      ]
+                    }
+                  },
+                  {
+                    "field": {
+                      "funcName": "SUM",
+                      "arg": [
+                        "AnnualRevenue"
+                      ]
+                    }
                   }
-                },
-                {
-                  "field": {
-                    "funcName": "MAX",
-                    "arg": [
-                      "AnnualRevenue"
-                    ]
-                  }
-                },
-                {
-                  "field": {
-                    "funcName": "MIN",
-                    "arg": [
-                      "AnnualRevenue"
-                    ]
-                  }
-                },
-                {
-                  "field": {
-                    "funcName": "SUM",
-                    "arg": [
-                      "AnnualRevenue"
-                    ]
-                  }
-                }
-              ]
+                ]
+              }
             },
             "from": {
               "field": "Account"
@@ -6327,13 +6333,15 @@
           {
             "soqlIndex": 2,
             "select": {
-              "soqlFunction": [
-                {
-                  "field": {
-                    "funcName": "COUNT"
+              "soqlFunction": {
+                "count": [
+                  {
+                    "field": {
+                      "funcName": "COUNT"
+                    }
                   }
-                }
-              ]
+                ]
+              }
             },
             "from": {
               "field": "Account"
@@ -6354,24 +6362,28 @@
                   ]
                 }
               ],
-              "soqlFunction": [
-                {
-                  "field": {
-                    "funcName": "COUNT",
-                    "arg": [
-                      "Id"
-                    ]
+              "soqlFunction": {
+                "normal": [
+                  {
+                    "field": {
+                      "funcName": "GROUPING",
+                      "arg": [
+                        "Industry"
+                      ]
+                    }
                   }
-                },
-                {
-                  "field": {
-                    "funcName": "GROUPING",
-                    "arg": [
-                      "Industry"
-                    ]
+                ],
+                "count": [
+                  {
+                    "field": {
+                      "funcName": "COUNT",
+                      "arg": [
+                        "Id"
+                      ]
+                    }
                   }
-                }
-              ]
+                ]
+              }
             },
             "from": {
               "field": "Account"
@@ -6409,16 +6421,18 @@
                   ]
                 }
               ],
-              "soqlFunction": [
-                {
-                  "field": {
-                    "funcName": "COUNT",
-                    "arg": [
-                      "Id"
-                    ]
+              "soqlFunction": {
+                "count": [
+                  {
+                    "field": {
+                      "funcName": "COUNT",
+                      "arg": [
+                        "Id"
+                      ]
+                    }
                   }
-                }
-              ]
+                ]
+              }
             },
             "from": {
               "field": "Account"
@@ -6599,151 +6613,153 @@
           {
             "soqlIndex": 1,
             "select": {
-              "soqlFunction": [
-                {
-                  "field": {
-                    "funcName": "CALENDAR_MONTH",
-                    "arg": {
-                      "fieldName": [
-                        "CreatedDate"
-                      ],
-                      "isConvertTimeZone": false
+              "soqlFunction": {
+                "date": [
+                  {
+                    "field": {
+                      "funcName": "CALENDAR_MONTH",
+                      "arg": {
+                        "field": [
+                          "CreatedDate"
+                        ],
+                        "isConvertTimeZone": false
+                      }
+                    }
+                  },
+                  {
+                    "field": {
+                      "funcName": "CALENDAR_QUARTER",
+                      "arg": {
+                        "field": [
+                          "CreatedDate"
+                        ],
+                        "isConvertTimeZone": false
+                      }
+                    }
+                  },
+                  {
+                    "field": {
+                      "funcName": "CALENDAR_YEAR",
+                      "arg": {
+                        "field": [
+                          "CreatedDate"
+                        ],
+                        "isConvertTimeZone": false
+                      }
+                    }
+                  },
+                  {
+                    "field": {
+                      "funcName": "DAY_IN_MONTH",
+                      "arg": {
+                        "field": [
+                          "CreatedDate"
+                        ],
+                        "isConvertTimeZone": false
+                      }
+                    }
+                  },
+                  {
+                    "field": {
+                      "funcName": "DAY_IN_WEEK",
+                      "arg": {
+                        "field": [
+                          "CreatedDate"
+                        ],
+                        "isConvertTimeZone": false
+                      }
+                    }
+                  },
+                  {
+                    "field": {
+                      "funcName": "DAY_IN_YEAR",
+                      "arg": {
+                        "field": [
+                          "CreatedDate"
+                        ],
+                        "isConvertTimeZone": false
+                      }
+                    }
+                  },
+                  {
+                    "field": {
+                      "funcName": "DAY_ONLY",
+                      "arg": {
+                        "field": [
+                          "CreatedDate"
+                        ],
+                        "isConvertTimeZone": false
+                      }
+                    }
+                  },
+                  {
+                    "field": {
+                      "funcName": "FISCAL_MONTH",
+                      "arg": {
+                        "field": [
+                          "CreatedDate"
+                        ],
+                        "isConvertTimeZone": false
+                      }
+                    }
+                  },
+                  {
+                    "field": {
+                      "funcName": "FISCAL_QUARTER",
+                      "arg": {
+                        "field": [
+                          "CreatedDate"
+                        ],
+                        "isConvertTimeZone": false
+                      }
+                    }
+                  },
+                  {
+                    "field": {
+                      "funcName": "FISCAL_YEAR",
+                      "arg": {
+                        "field": [
+                          "CreatedDate"
+                        ],
+                        "isConvertTimeZone": false
+                      }
+                    }
+                  },
+                  {
+                    "field": {
+                      "funcName": "HOUR_IN_DAY",
+                      "arg": {
+                        "field": [
+                          "CreatedDate"
+                        ],
+                        "isConvertTimeZone": false
+                      }
+                    }
+                  },
+                  {
+                    "field": {
+                      "funcName": "WEEK_IN_MONTH",
+                      "arg": {
+                        "field": [
+                          "CreatedDate"
+                        ],
+                        "isConvertTimeZone": false
+                      }
+                    }
+                  },
+                  {
+                    "field": {
+                      "funcName": "WEEK_IN_YEAR",
+                      "arg": {
+                        "field": [
+                          "CreatedDate"
+                        ],
+                        "isConvertTimeZone": false
+                      }
                     }
                   }
-                },
-                {
-                  "field": {
-                    "funcName": "CALENDAR_QUARTER",
-                    "arg": {
-                      "fieldName": [
-                        "CreatedDate"
-                      ],
-                      "isConvertTimeZone": false
-                    }
-                  }
-                },
-                {
-                  "field": {
-                    "funcName": "CALENDAR_YEAR",
-                    "arg": {
-                      "fieldName": [
-                        "CreatedDate"
-                      ],
-                      "isConvertTimeZone": false
-                    }
-                  }
-                },
-                {
-                  "field": {
-                    "funcName": "DAY_IN_MONTH",
-                    "arg": {
-                      "fieldName": [
-                        "CreatedDate"
-                      ],
-                      "isConvertTimeZone": false
-                    }
-                  }
-                },
-                {
-                  "field": {
-                    "funcName": "DAY_IN_WEEK",
-                    "arg": {
-                      "fieldName": [
-                        "CreatedDate"
-                      ],
-                      "isConvertTimeZone": false
-                    }
-                  }
-                },
-                {
-                  "field": {
-                    "funcName": "DAY_IN_YEAR",
-                    "arg": {
-                      "fieldName": [
-                        "CreatedDate"
-                      ],
-                      "isConvertTimeZone": false
-                    }
-                  }
-                },
-                {
-                  "field": {
-                    "funcName": "DAY_ONLY",
-                    "arg": {
-                      "fieldName": [
-                        "CreatedDate"
-                      ],
-                      "isConvertTimeZone": false
-                    }
-                  }
-                },
-                {
-                  "field": {
-                    "funcName": "FISCAL_MONTH",
-                    "arg": {
-                      "fieldName": [
-                        "CreatedDate"
-                      ],
-                      "isConvertTimeZone": false
-                    }
-                  }
-                },
-                {
-                  "field": {
-                    "funcName": "FISCAL_QUARTER",
-                    "arg": {
-                      "fieldName": [
-                        "CreatedDate"
-                      ],
-                      "isConvertTimeZone": false
-                    }
-                  }
-                },
-                {
-                  "field": {
-                    "funcName": "FISCAL_YEAR",
-                    "arg": {
-                      "fieldName": [
-                        "CreatedDate"
-                      ],
-                      "isConvertTimeZone": false
-                    }
-                  }
-                },
-                {
-                  "field": {
-                    "funcName": "HOUR_IN_DAY",
-                    "arg": {
-                      "fieldName": [
-                        "CreatedDate"
-                      ],
-                      "isConvertTimeZone": false
-                    }
-                  }
-                },
-                {
-                  "field": {
-                    "funcName": "WEEK_IN_MONTH",
-                    "arg": {
-                      "fieldName": [
-                        "CreatedDate"
-                      ],
-                      "isConvertTimeZone": false
-                    }
-                  }
-                },
-                {
-                  "field": {
-                    "funcName": "WEEK_IN_YEAR",
-                    "arg": {
-                      "fieldName": [
-                        "CreatedDate"
-                      ],
-                      "isConvertTimeZone": false
-                    }
-                  }
-                }
-              ]
+                ]
+              }
             },
             "from": {
               "field": "Account"
@@ -6755,7 +6771,7 @@
                   "field": {
                     "funcName": "CALENDAR_MONTH",
                     "arg": {
-                      "fieldName": [
+                      "field": [
                         "CreatedDate"
                       ],
                       "isConvertTimeZone": false
@@ -6767,7 +6783,7 @@
                   "field": {
                     "funcName": "CALENDAR_YEAR",
                     "arg": {
-                      "fieldName": [
+                      "field": [
                         "CreatedDate"
                       ],
                       "isConvertTimeZone": false
@@ -6787,35 +6803,39 @@
                   ]
                 }
               ],
-              "soqlFunction": [
-                {
-                  "field": {
-                    "funcName": "FORMAT",
-                    "arg": [
-                      "CreatedDate"
-                    ]
-                  }
-                },
-                {
-                  "field": {
-                    "funcName": "FORMAT",
-                    "arg": {
-                      "funcName": "CONVERT_CURRENCY",
+              "soqlFunction": {
+                "format": [
+                  {
+                    "field": {
+                      "funcName": "FORMAT",
                       "arg": [
-                        "AnnualRevenue"
+                        "CreatedDate"
+                      ]
+                    }
+                  },
+                  {
+                    "field": {
+                      "funcName": "FORMAT",
+                      "arg": {
+                        "funcName": "CONVERT_CURRENCY",
+                        "arg": [
+                          "AnnualRevenue"
+                        ]
+                      }
+                    }
+                  }
+                ],
+                "normal": [
+                  {
+                    "field": {
+                      "funcName": "TOLABEL",
+                      "arg": [
+                        "Type"
                       ]
                     }
                   }
-                },
-                {
-                  "field": {
-                    "funcName": "TOLABEL",
-                    "arg": [
-                      "Type"
-                    ]
-                  }
-                }
-              ]
+                ]
+              }
             },
             "from": {
               "field": "Account"
@@ -6824,14 +6844,16 @@
           {
             "soqlIndex": 3,
             "select": {
-              "soqlFunction": [
-                {
-                  "field": {
-                    "funcName": "FIELDS",
-                    "arg": "ALL"
+              "soqlFunction": {
+                "fields": [
+                  {
+                    "field": {
+                      "funcName": "FIELDS",
+                      "arg": "ALL"
+                    }
                   }
-                }
-              ]
+                ]
+              }
             },
             "from": {
               "field": "Account"
@@ -6844,14 +6866,16 @@
           {
             "soqlIndex": 4,
             "select": {
-              "soqlFunction": [
-                {
-                  "field": {
-                    "funcName": "FIELDS",
-                    "arg": "STANDARD"
+              "soqlFunction": {
+                "fields": [
+                  {
+                    "field": {
+                      "funcName": "FIELDS",
+                      "arg": "STANDARD"
+                    }
                   }
-                }
-              ]
+                ]
+              }
             },
             "from": {
               "field": "Account"
@@ -6860,14 +6884,16 @@
           {
             "soqlIndex": 5,
             "select": {
-              "soqlFunction": [
-                {
-                  "field": {
-                    "funcName": "FIELDS",
-                    "arg": "CUSTOM"
+              "soqlFunction": {
+                "fields": [
+                  {
+                    "field": {
+                      "funcName": "FIELDS",
+                      "arg": "CUSTOM"
+                    }
                   }
-                }
-              ]
+                ]
+              }
             },
             "from": {
               "field": "Account"

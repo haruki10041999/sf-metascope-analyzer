@@ -1,7 +1,9 @@
+import typia from 'typia';
+
 import { TryStatementClass, CatchClauseClass } from '../converter';
 import { makeModifierType, ModifierType } from '../modifier';
 
-import { BlockField, makeBlockField } from './block';
+import { BlockField, makeBlockField } from '../../../parser/Apex/extractor/block';
 
 type TryBlock = (
     | {
@@ -20,6 +22,8 @@ export type TryField = {
     kind: 'try';
     block: TryBlock[];
 };
+
+export const isTryField = typia.createIs<TryField>();
 
 export const makeTryField = (tryStatement: TryStatementClass): TryField | undefined => {
     const tryBlocks: TryBlock[] = [];

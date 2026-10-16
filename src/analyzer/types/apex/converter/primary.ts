@@ -1,6 +1,8 @@
+import typia from 'typia';
+
 import {
     ErrorTypeClass,
-    PrimaryTypeClass,
+    CommonTypeClass,
     NormalPrimaryTypeClass,
     ThisPrimaryTypeClass,
     VoidPrimaryTypeClass,
@@ -26,8 +28,17 @@ import {
     isSoslLiteralType,
 } from '../../apex_IR';
 
-import { toPrimitiveValue, toTypeClass, CommonClass, isCommonClass } from './commons';
-import { normalIdConvert } from './id';
+import {
+    toPrimitiveValue,
+    toTypeClass,
+    SourceSpanInfo,
+    CommonClass,
+    ElementClass,
+    CommonJson,
+    ErrorInfo,
+    isErrorInfo,
+} from './commons';
+import { IdJson, IdClass, isString } from './id';
 import { TypeRefClass, typeRefConvert } from './type';
 import { NormalQueryClass } from './query';
 import {
@@ -38,38 +49,251 @@ import {
     soslLiteralConvert,
 } from './literal';
 
-export const normalPrimaryConvert = (
-    target: NormalPrimaryTypeClass,
-    errorClass: ErrorTypeClass[],
-): string | null => {
-    return toPrimitiveValue(
-        target.getValue(),
-        (target): target is string => typeof target === 'string',
-        errorClass,
-    );
+export type PrimaryJson = CommonJson<'primary'> & {
+    primary: string | null;
 };
 
-export const thisPrimaryConvert = (
-    target: ThisPrimaryTypeClass,
-    errorClass: ErrorTypeClass[],
-): string | null => {
-    return toPrimitiveValue(
-        target.getValue(),
-        (target): target is string => typeof target === 'string',
-        errorClass,
-    );
-};
+export const isPrimaryJson = typia.createIs<PrimaryJson>();
 
-export const voidPrimaryConvert = (
-    target: VoidPrimaryTypeClass,
-    errorClass: ErrorTypeClass[],
-): string | null => {
-    return toPrimitiveValue(
-        target.getValue(),
-        (target): target is string => typeof target === 'string',
-        errorClass,
-    );
+class PrimaryClass implements CommonClass<'primary', PrimaryJson> {
+    private value: string | null;
+    private sourceSpan: SourceSpanInfo;
+    private errorInfo: ErrorInfo | null;
+
+    constructor(target: NormalPrimaryTypeClass) {
+        const value = toPrimitiveValue(target.getValue(), isString);
+
+        if (isErrorInfo(value)) {
+            this.errorInfo = value;
+            this.value = null;
+        } else {
+            this.errorInfo = null;
+            this.value = value;
+        }
+
+        this.sourceSpan = { content: target.getSpan()! };
+    }
+    getErrorInfo(): ErrorInfo | null {
+        return this.errorInfo;
+    }
+
+    getType(): 'primary' {
+        return 'primary';
+    }
+
+    getValue(): string | null {
+        return this.value;
+    }
+
+    getSourceSpan(): SourceSpanInfo {
+        return this.sourceSpan;
+    }
+
+    toJson(): PrimaryJson {
+        return {
+            type: 'primary',
+            primary: this.value,
+            sourceSpan: this.sourceSpan,
+        };
+    }
+}
+
+export type ThisPrimaryJson = CommonJson<'thisPrimary'> & {
+    thisPrimary: string | null;
 };
+export const isThisPrimaryJson = typia.createIs<ThisPrimaryJson>();
+
+class ThisPrimaryClass implements CommonClass<'thisPrimary', ThisPrimaryJson> {
+    private value: string | null;
+    private sourceSpan: SourceSpanInfo;
+    private errorInfo: ErrorInfo | null;
+
+    constructor(target: ThisPrimaryTypeClass) {
+        const value = toPrimitiveValue(target.getValue(), isString);
+
+        if (isErrorInfo(value)) {
+            this.errorInfo = value;
+            this.value = null;
+        } else {
+            this.errorInfo = null;
+            this.value = value;
+        }
+
+        this.sourceSpan = { content: target.getSpan()! };
+    }
+    getErrorInfo(): ErrorInfo | null {
+        return this.errorInfo;
+    }
+
+    getType(): 'thisPrimary' {
+        return 'thisPrimary';
+    }
+
+    getValue(): string | null {
+        return this.value;
+    }
+
+    getSourceSpan(): SourceSpanInfo {
+        return this.sourceSpan;
+    }
+
+    toJson(): ThisPrimaryJson {
+        return {
+            type: 'thisPrimary',
+            thisPrimary: this.value,
+            sourceSpan: this.sourceSpan,
+        };
+    }
+}
+
+export type VoidPrimaryJson = CommonJson<'voidPrimary'> & {
+    voidPrimary: string | null;
+};
+export const isVoidPrimaryJson = typia.createIs<VoidPrimaryJson>();
+
+class VoidPrimaryClass implements CommonClass<'voidPrimary', VoidPrimaryJson> {
+    private value: string | null;
+    private sourceSpan: SourceSpanInfo;
+    private errorInfo: ErrorInfo | null;
+
+    constructor(target: VoidPrimaryTypeClass) {
+        const value = toPrimitiveValue(target.getValue(), isString);
+
+        if (isErrorInfo(value)) {
+            this.errorInfo = value;
+            this.value = null;
+        } else {
+            this.errorInfo = null;
+            this.value = value;
+        }
+
+        this.sourceSpan = { content: target.getSpan()! };
+    }
+    getErrorInfo(): ErrorInfo | null {
+        return this.errorInfo;
+    }
+
+    getType(): 'voidPrimary' {
+        return 'voidPrimary';
+    }
+
+    getValue(): string | null {
+        return this.value;
+    }
+
+    getSourceSpan(): SourceSpanInfo {
+        return this.sourceSpan;
+    }
+
+    toJson(): VoidPrimaryJson {
+        return {
+            type: 'voidPrimary',
+            voidPrimary: this.value,
+            sourceSpan: this.sourceSpan,
+        };
+    }
+}
+
+export type SuperPrimaryJson = CommonJson<'superPrimary'> & {
+    superPrimary: string | null;
+};
+export const isSuperPrimaryJson = typia.createIs<SuperPrimaryJson>();
+
+class SuperPrimaryClass implements CommonClass<'superPrimary', SuperPrimaryJson> {
+    private value: string | null;
+    private sourceSpan: SourceSpanInfo;
+    private errorInfo: ErrorInfo | null;
+
+    constructor(target: SuperPrimaryTypeClass) {
+        const value = toPrimitiveValue(target.getValue(), isString);
+
+        if (isErrorInfo(value)) {
+            this.errorInfo = value;
+            this.value = null;
+        } else {
+            this.errorInfo = null;
+            this.value = value;
+        }
+
+        this.sourceSpan = { content: target.getSpan()! };
+    }
+    getErrorInfo(): ErrorInfo | null {
+        return this.errorInfo;
+    }
+
+    getType(): 'superPrimary' {
+        return 'superPrimary';
+    }
+
+    getValue(): string | null {
+        return this.value;
+    }
+
+    getSourceSpan(): SourceSpanInfo {
+        return this.sourceSpan;
+    }
+
+    toJson(): SuperPrimaryJson {
+        return {
+            type: 'superPrimary',
+            superPrimary: this.value,
+            sourceSpan: this.sourceSpan,
+        };
+    }
+}
+
+export type IdPrimaryJson = CommonJson<'idPrimary'> & { idPrimary?: Omit<IdJson, 'sourceSpan'> };
+
+export const isIdPrimaryJson = typia.createIs<IdPrimaryJson>();
+
+class IdPrimaryClass implements CommonClass<'idPrimary', IdPrimaryJson> {
+    private value: IdClass | null;
+    private sourceSpan: SourceSpanInfo;
+    private errorInfo: ErrorInfo | null;
+
+    constructor(target: IdPrimaryTypeClass) {
+        const value = toTypeClass(target.getValue(), isNormalIdType);
+
+        if (isErrorInfo(value)) {
+            this.errorInfo = value;
+            this.value = null;
+            this.sourceSpan = { content: target.getSpan()! };
+        } else {
+            this.errorInfo = null;
+            this.value = new IdClass(value);
+            this.sourceSpan = { [this.value.getType()]: this.value.getSourceSpan() };
+        }
+    }
+    getErrorInfo(): ErrorInfo | null {
+        return this.errorInfo;
+    }
+
+    getType(): 'idPrimary' {
+        return 'idPrimary';
+    }
+
+    getValue(): IdClass | null {
+        return this.value;
+    }
+
+    getSourceSpan(): SourceSpanInfo {
+        return this.sourceSpan;
+    }
+
+    toJson(): IdPrimaryJson {
+        const json: IdPrimaryJson = {
+            type: 'idPrimary',
+            sourceSpan: this.sourceSpan,
+        };
+
+        if (this.value) {
+            const { sourceSpan, ...rest } = this.value.toJson();
+            json.idPrimary = rest;
+        }
+
+        return json;
+    }
+}
 
 export const soqlPrimaryConvert = (
     target: SoqlPrimaryTypeClass,
@@ -85,17 +309,6 @@ export const soqlPrimaryConvert = (
     return soqlPrimary;
 };
 
-export const superPrimaryConvert = (
-    target: SuperPrimaryTypeClass,
-    errorClass: ErrorTypeClass[],
-): string | null => {
-    return toPrimitiveValue(
-        target.getValue(),
-        (target): target is string => typeof target === 'string',
-        errorClass,
-    );
-};
-
 export const typeRefPrimaryConvert = (
     target: TypeRefPrimaryTypeClass,
     errorClass: ErrorTypeClass[],
@@ -108,18 +321,6 @@ export const typeRefPrimaryConvert = (
     }
 
     return typeRefPrimary;
-};
-
-export const idPrimaryConvert = (
-    target: IdPrimaryTypeClass,
-    errorClass: ErrorTypeClass[],
-): string | null => {
-    const normalIdType = toTypeClass(target.getValue(), isNormalIdType, errorClass);
-
-    if (normalIdType) {
-        return normalIdConvert(normalIdType);
-    }
-    return null;
 };
 
 export const literalPrimaryConvert = (
@@ -149,179 +350,82 @@ export const soslPrimaryConvert = (
     return soslPrimary;
 };
 
-export abstract class PrimaryElementClass<TType, TPrimay> extends CommonClass {
-    private type: TType;
-    private primary: TPrimay;
+export type AllPrimaryClass =
+    PrimaryClass | ThisPrimaryClass | VoidPrimaryClass | IdPrimaryClass | SuperPrimaryClass;
 
-    constructor(type: TType, primary: TPrimay) {
-        super();
-        this.type = type;
-        this.primary = primary;
-    }
+export type AllPrimaryJson =
+    PrimaryJson | ThisPrimaryJson | VoidPrimaryJson | IdPrimaryJson | SuperPrimaryJson;
 
-    getType(): TType {
-        return this.type;
-    }
-
-    getPrimary(): TPrimay {
-        return this.primary;
-    }
-}
-
-export const isPrimaryElementClass = (
-    target: CommonClass,
-): target is PrimaryElementClass<unknown, unknown> => {
-    return isCommonClass(target, PrimaryElementClass);
-};
-
-export class StringPrimaryElementClass extends PrimaryElementClass<
-    'normal' | 'this' | 'void' | 'super' | 'id',
-    string | null
+export class PrimaryElementClass implements ElementClass<
+    'primary' | 'thisPrimary' | 'voidPrimary' | 'idPrimary' | 'superPrimary',
+    AllPrimaryClass
 > {
-    constructor(type: 'normal' | 'this' | 'void' | 'super' | 'id', priamry: string | null) {
-        super(type, priamry);
+    private commonClass: AllPrimaryClass;
+
+    constructor(
+        target:
+            | NormalPrimaryTypeClass
+            | ThisPrimaryTypeClass
+            | VoidPrimaryTypeClass
+            | IdPrimaryTypeClass
+            | SuperPrimaryTypeClass,
+    ) {
+        if (isNormalPrimaryType(target)) {
+            this.commonClass = new PrimaryClass(target);
+            return;
+        }
+
+        if (isThisPrimaryType(target)) {
+            this.commonClass = new ThisPrimaryClass(target);
+            return;
+        }
+
+        if (isVoidPrimaryType(target)) {
+            this.commonClass = new VoidPrimaryClass(target);
+            return;
+        }
+
+        if (isIdPrimaryType(target)) {
+            this.commonClass = new IdPrimaryClass(target);
+            return;
+        }
+
+        if (isSuperPrimaryType(target)) {
+            this.commonClass = new SuperPrimaryClass(target);
+            return;
+        }
+
+        throw new Error('Unsupported primary type: ');
+    }
+
+    getCommonClass(): AllPrimaryClass {
+        return this.commonClass;
     }
 }
 
-export const isStringPrimaryElementClass = (
-    target: CommonClass,
-): target is StringPrimaryElementClass => {
-    return isCommonClass(target, StringPrimaryElementClass);
-};
+export const isPrimaryTypeClass = (
+    target: any,
+): target is
+    | NormalPrimaryTypeClass
+    | ThisPrimaryTypeClass
+    | VoidPrimaryTypeClass
+    | IdPrimaryTypeClass
+    | SuperPrimaryTypeClass => {
+    // | SoqlPrimaryTypeClass
+    // | LiteralPrimaryTypeClass
+    // | TypeRefPrimaryTypeClass
+    // | SoslPrimaryTypeClass => {
 
-export class SoqlPrimaryElementClass extends PrimaryElementClass<'soql', NormalQueryClass> {
-    constructor(priamry: NormalQueryClass) {
-        super('soql', priamry);
-    }
-}
-
-export const isSoqlPrimaryElementClass = (
-    target: CommonClass,
-): target is SoqlPrimaryElementClass => {
-    return isCommonClass(target, SoqlPrimaryElementClass);
-};
-
-export class TypeRefPrimaryElementClass extends PrimaryElementClass<'typeRef', TypeRefClass> {
-    constructor(priamry: TypeRefClass) {
-        super('typeRef', priamry);
-    }
-}
-
-export const isTypeRefPrimaryElementClass = (
-    target: CommonClass,
-): target is TypeRefPrimaryElementClass => {
-    return isCommonClass(target, TypeRefPrimaryElementClass);
-};
-
-export class LiteralPrimaryElementClass extends PrimaryElementClass<'literal', NormalLiteralClass> {
-    constructor(priamry: NormalLiteralClass) {
-        super('literal', priamry);
-    }
-}
-
-export const isLiteralPrimaryElementClass = (
-    target: CommonClass,
-): target is LiteralPrimaryElementClass => {
-    return isCommonClass(target, LiteralPrimaryElementClass);
-};
-
-export class SoslPrimaryElementClass extends PrimaryElementClass<'sosl', SoslLiteralClass> {
-    constructor(priamry: SoslLiteralClass) {
-        super('sosl', priamry);
-    }
-}
-
-export const isSoslPrimaryElementClass = (
-    target: CommonClass,
-): target is SoslPrimaryElementClass => {
-    return isCommonClass(target, SoslPrimaryElementClass);
-};
-
-export class PrimaryClass extends CommonClass {
-    private value:
-        | StringPrimaryElementClass
-        | SoqlPrimaryElementClass
-        | TypeRefPrimaryElementClass
-        | LiteralPrimaryElementClass
-        | SoslPrimaryElementClass
-        | null = null;
-
-    setValue(
-        value:
-            | StringPrimaryElementClass
-            | SoqlPrimaryElementClass
-            | TypeRefPrimaryElementClass
-            | LiteralPrimaryElementClass
-            | SoslPrimaryElementClass
-            | null,
-    ): void {
-        this.value = value;
-    }
-
-    getValue():
-        | StringPrimaryElementClass
-        | SoqlPrimaryElementClass
-        | TypeRefPrimaryElementClass
-        | LiteralPrimaryElementClass
-        | SoslPrimaryElementClass
-        | null {
-        return this.value;
-    }
-
-    copy(commonClass: PrimaryClass) {
-        this.setValue(commonClass.getValue());
-    }
-}
-
-export const isPrimaryClass = (target: any): target is PrimaryClass => {
-    return isCommonClass(target, PrimaryClass);
-};
-
-export const isPrimaryClassArray = (target: any): target is PrimaryClass[] => {
-    return Array.isArray(target) && target.every((t) => isPrimaryClass(t));
-};
-
-export const primaryConvert = (
-    target: PrimaryTypeClass<unknown>,
-    errorClass: ErrorTypeClass[],
-): PrimaryClass => {
-    const primary: PrimaryClass = new PrimaryClass();
-
-    if (isNormalPrimaryType(target)) {
-        primary.setValue(
-            new StringPrimaryElementClass('normal', normalPrimaryConvert(target, errorClass)),
-        );
-    }
-    if (isThisPrimaryType(target)) {
-        primary.setValue(
-            new StringPrimaryElementClass('this', thisPrimaryConvert(target, errorClass)),
-        );
-    }
-    if (isVoidPrimaryType(target)) {
-        primary.setValue(
-            new StringPrimaryElementClass('void', voidPrimaryConvert(target, errorClass)),
-        );
-    }
-    if (isSoqlPrimaryType(target)) {
-        primary.setValue(new SoqlPrimaryElementClass(soqlPrimaryConvert(target, errorClass)));
-    }
-    if (isSuperPrimaryType(target)) {
-        primary.setValue(
-            new StringPrimaryElementClass('super', superPrimaryConvert(target, errorClass)),
-        );
-    }
-    if (isTypeRefPrimaryType(target)) {
-        primary.setValue(new TypeRefPrimaryElementClass(typeRefPrimaryConvert(target, errorClass)));
-    }
-    if (isIdPrimaryType(target)) {
-        primary.setValue(new StringPrimaryElementClass('id', idPrimaryConvert(target, errorClass)));
-    }
-    if (isLiteralPrimaryType(target)) {
-        primary.setValue(new LiteralPrimaryElementClass(literalPrimaryConvert(target, errorClass)));
-    }
-    if (isSoslPrimaryType(target)) {
-        primary.setValue(new SoslPrimaryElementClass(soslPrimaryConvert(target, errorClass)));
-    }
-
-    return primary;
+    return (
+        target instanceof CommonTypeClass ||
+        isNormalPrimaryType(target) ||
+        isThisPrimaryType(target) ||
+        isVoidPrimaryType(target) ||
+        isIdPrimaryType(target) ||
+        isSuperPrimaryType(target)
+        // isSoslPrimaryType(target) ||
+        // isLiteralPrimaryType(target) ||
+        // isTypeRefPrimaryType(target) ||
+        // isSoqlPrimaryType(target)
+    );
 };

@@ -22,13 +22,23 @@ import {
     isDotMethodCallClass,
 } from './converter';
 
-import { PrimaryType, makePrimaryType } from './primary';
+import {
+    PrimaryType,
+    makePrimaryType,
+    isStringPrimaryType,
+    isLiteralPrimaryType,
+    isTypePrimaryType,
+    isSoqlPrimaryType,
+    isSoslPrimaryType,
+} from './primary';
 import { TypeType, makeTypeType } from './type';
 
 type NormalType = {
     kind: 'normal';
     value: string;
 };
+
+export const isNormalType = typia.createIs<NormalType>();
 
 type DotExpressionType = {
     object: ExpressionType;
@@ -45,6 +55,8 @@ type DotExpressionType = {
       }
 );
 
+export const isDotExpressionType = typia.createIs<DotExpressionType>();
+
 type MethodCallType = {
     kind: 'method';
     name?: string;
@@ -52,6 +64,7 @@ type MethodCallType = {
     isSuper: boolean;
     isThis: boolean;
 };
+export const isMethodCallType = typia.createIs<MethodCallType>();
 
 type CreatedNameType = {
     typeName: string[];
@@ -59,68 +72,89 @@ type CreatedNameType = {
 };
 
 type ArrayCreatorRestType = CreatedNameType & {
+    kind: 'instance';
     creatorType: 'array';
     size?: ExpressionType;
     initValue: ExpressionType[];
 };
 
+export const isArrayCreatorRestType = typia.createIs<ArrayCreatorRestType>();
+
 type ClassCreatorRestType = CreatedNameType & {
+    kind: 'instance';
     creatorType: 'class';
     arg?: ExpressionType[];
 };
+export const isClassCreatorRestType = typia.createIs<ClassCreatorRestType>();
 
 type MapCreatorRestType = CreatedNameType & {
+    kind: 'instance';
     creatorType: 'map';
     initValue?: {
         key: ExpressionType;
         value: ExpressionType;
     }[];
 };
+export const isMapCreatorRestType = typia.createIs<MapCreatorRestType>();
 
 type SetCreatorRestType = CreatedNameType & {
+    kind: 'instance';
     creatorType: 'set';
     initialValue: ExpressionType[];
 };
+export const isSetCreatorRestType = typia.createIs<SetCreatorRestType>();
 
 type ListCreatorRestType = CreatedNameType & {
+    kind: 'instance';
     creatorType: 'list';
     initialValue: ExpressionType[];
 };
+export const isListCreatorRestType = typia.createIs<ListCreatorRestType>();
 
-type CreatorType = {
+type NoCreatorRestType = CreatedNameType & {
     kind: 'instance';
-} & (
+    creatorType: 'none';
+};
+export const isNoCreatorRestType = typia.createIs<NoCreatorRestType>();
+
+type CreatorType =
     | CreatedNameType
     | ArrayCreatorRestType
     | ClassCreatorRestType
     | MapCreatorRestType
     | SetCreatorRestType
     | ListCreatorRestType
-);
+    | NoCreatorRestType;
+
+export const isCreatorType = typia.createIs<CreatorType>();
 
 type CastType = {
     kind: 'cast';
     value: ExpressionType;
     convertTo: TypeType;
 };
+export const isCastType = typia.createIs<CastType>();
 
 type SubType = {
     kind: 'sub';
     value: ExpressionType;
     parenthesized: true;
 };
+export const isSubType = typia.createIs<SubType>();
 
 type ArrayAccessType = {
     kind: 'arrayAccess';
     object: ExpressionType;
     index: ExpressionType[];
 };
+export const isArrayAccessType = typia.createIs<ArrayAccessType>();
 
 type SingleOperatorType = {
     kind: 'prefix' | 'postfix';
     value: ExpressionType;
     operator: string;
 };
+export const isSingleOperatorType = typia.createIs<SingleOperatorType>();
 
 type DoubleOperatorType = {
     kind: 'expression';
@@ -128,6 +162,7 @@ type DoubleOperatorType = {
     operator: string;
     right: ExpressionType;
 };
+export const isDoubleOperatorType = typia.createIs<DoubleOperatorType>();
 
 type InstanceOfType = {
     kind: 'expression';
@@ -135,6 +170,7 @@ type InstanceOfType = {
     operator: string;
     right: TypeType;
 };
+export const isInstanceOfType = typia.createIs<InstanceOfType>();
 
 type CondType = {
     kind: 'ternary';
@@ -142,6 +178,7 @@ type CondType = {
     trueValue: ExpressionType;
     falseValue: ExpressionType;
 };
+export const isCondType = typia.createIs<CondType>();
 
 export type ExpressionType =
     | NormalType
@@ -157,7 +194,7 @@ export type ExpressionType =
     | InstanceOfType
     | CondType;
 
-export const isExpressionType = typia.createIs<ExpressionType>;
+export const isExpressionType = typia.createIs<ExpressionType>();
 
 export const makeExpressionType = (expression: ExpressionClass): ExpressionType | undefined => {
     const elementClass = expression.getValue();
@@ -301,6 +338,7 @@ export const makeExpressionType = (expression: ExpressionClass): ExpressionType 
 
                     const expressionType: ArrayCreatorRestType = {
                         ...createdName,
+                        kind: 'instance',
                         creatorType: 'array',
                         initValue: initialValue,
                     };
@@ -309,16 +347,14 @@ export const makeExpressionType = (expression: ExpressionClass): ExpressionType 
                         expressionType.size = size;
                     }
 
-                    return {
-                        kind: 'instance',
-                        ...expressionType,
-                    };
+                    return expressionType;
                 }
 
                 if (isExpressionArrayRestElementClass(restElementClass)) {
                     if (restElementClass.getType() === 'class') {
                         const expressionType: ClassCreatorRestType = {
                             ...createdName,
+                            kind: 'instance',
                             creatorType: 'class',
                         };
 
@@ -329,10 +365,7 @@ export const makeExpressionType = (expression: ExpressionClass): ExpressionType 
                                 .filter((a) => a !== undefined);
                         }
 
-                        return {
-                            kind: 'instance',
-                            ...expressionType,
-                        };
+                        return expressionType;
                     }
 
                     const initialValue = restElementClass
@@ -344,21 +377,23 @@ export const makeExpressionType = (expression: ExpressionClass): ExpressionType 
                     if (collectionName === 'Set') {
                         const expressionType: SetCreatorRestType = {
                             ...createdName,
+                            kind: 'instance',
                             creatorType: 'set',
                             initialValue,
                         };
 
-                        return { kind: 'instance', ...expressionType };
+                        return expressionType;
                     }
 
                     if (collectionName === 'List') {
                         const expressionType: ListCreatorRestType = {
                             ...createdName,
+                            kind: 'instance',
                             creatorType: 'list',
                             initialValue,
                         };
 
-                        return { kind: 'instance', ...expressionType };
+                        return expressionType;
                     }
                 }
 
@@ -367,6 +402,7 @@ export const makeExpressionType = (expression: ExpressionClass): ExpressionType 
 
                     const expressionType: MapCreatorRestType = {
                         ...createdName,
+                        kind: 'instance',
                         creatorType: 'map',
                     };
 
@@ -388,10 +424,7 @@ export const makeExpressionType = (expression: ExpressionClass): ExpressionType 
                         expressionType.initValue = initialValue;
                     }
 
-                    return {
-                        kind: 'instance',
-                        ...expressionType,
-                    };
+                    return expressionType;
                 }
                 if (isNoRestElementClass(restElementClass)) {
                     const collectionName = createdName.typeName.at(-1);

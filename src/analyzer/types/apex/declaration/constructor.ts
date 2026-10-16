@@ -1,6 +1,8 @@
+import typia from 'typia';
+
 import { ConstructorDeclarationClass } from '../converter';
 
-import { RewriteQueries, QueryStore, extractQueries } from '../commons';
+import { RewriteQueries, QueryStore, extractQueries } from '../../../parser/Apex/extractor/commons';
 import { ParameterType, makeParameterType } from './parameter';
 import { BlockField, makeBlockField } from '../statement';
 
@@ -11,6 +13,8 @@ export type ConstructorField = {
     soql?: QueryStore['soql'];
     sosl?: QueryStore['sosl'];
 } & ({} | RewriteQueries<BlockField>);
+
+export const isConstructorField = typia.createIs<ConstructorField>();
 
 export const makeConstructorField = (
     constructorDeclaration: ConstructorDeclarationClass,

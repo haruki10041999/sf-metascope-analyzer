@@ -1,6 +1,8 @@
+import typia from 'typia';
+
 import { FieldDeclarationClass, VariableDeclaratorClass } from '../converter';
 
-import { RewriteQueries, QueryStore, extractQueries } from '../commons';
+import { RewriteQueries, QueryStore, extractQueries } from '../../../parser/Apex/extractor/commons';
 import { ExpressionType, makeExpressionType } from '../expression';
 import { TypeType, makeTypeType } from '../type';
 
@@ -16,6 +18,8 @@ export type FieldField = {
     soql?: QueryStore['soql'];
     sosl?: QueryStore['sosl'];
 };
+
+export const isFieldField = typia.createIs<FieldField>();
 
 export const makeFieldField = (fieldDeclaration: FieldDeclarationClass): FieldField | undefined => {
     const value = fieldDeclaration.getValue();

@@ -1,4 +1,7 @@
-import type { SoqlType, SoslType } from './query';
+import typia from 'typia';
+
+import type { SoqlType, SoslType } from '../../../types/apex/query';
+import type { ModifierType } from '../../../types/apex/modifier';
 
 type QueryReference = {
     kind: 'queryRef';
@@ -6,15 +9,19 @@ type QueryReference = {
     index: number;
 };
 
+export const isQueryReference = typia.createIs<QueryReference>();
+
 export type RewriteQueries<T> = T extends { kind: 'soql' }
     ? QueryReference
     : T extends { kind: 'sosl' }
       ? QueryReference
       : T extends readonly (infer Item)[]
         ? RewriteQueries<Item>[]
-        : T extends object
-          ? { [Key in keyof T]: RewriteQueries<T[Key]> }
-          : T;
+        : T extends ModifierType
+          ? T
+          : T extends object
+            ? { [Key in keyof T]: RewriteQueries<T[Key]> }
+            : T;
 
 export type QueryStore = {
     soql: ({ soqlIndex: number } & SoqlType)[];

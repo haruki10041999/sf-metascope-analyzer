@@ -1,7 +1,7 @@
 import { RunAsStatementClass } from '../converter';
 
 import { ExpressionType, makeExpressionType } from '../expression';
-import { BlockField, makeBlockField } from './block';
+import { BlockField, makeBlockField } from '../../../parser/Apex/extractor/block';
 
 export type RunAsField = {
     kind: 'runAs';

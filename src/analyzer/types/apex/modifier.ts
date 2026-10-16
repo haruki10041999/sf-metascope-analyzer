@@ -1,3 +1,5 @@
+import typia from 'typia';
+
 import {
     NormalModifierClass,
     AnnotationClass,
@@ -126,6 +128,8 @@ export type ModifierType = {
         other?: AnnotationType<string>[];
     };
 };
+
+export const isModifierType = typia.createIs<ModifierType>();
 
 const makeAnnotationType = <TName extends string>(
     result: AnnotationType<TName>[],

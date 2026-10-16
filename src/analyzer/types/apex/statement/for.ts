@@ -1,3 +1,4 @@
+import typia from 'typia';
 import {
     ForStatementClass,
     EnhancedForControlClass,
@@ -12,7 +13,7 @@ import {
 import { TypeType, makeTypeType } from '../type';
 import { ExpressionType, makeExpressionType } from '../expression';
 import { ModifierType, makeModifierType } from '../modifier';
-import { BlockField } from './block';
+import { BlockField, isBlockField } from '../../../parser/Apex/extractor/block';
 import { StatementType, makeStatementType } from './statement';
 
 type EnhancedFor = {
@@ -39,6 +40,8 @@ export type ForField = {
     kind: 'for';
     condition: EnhancedFor | NormalFor;
 } & (BlockField | { block: StatementType });
+
+export const isForField = typia.createIs<ForField>;
 
 const makeEnhancedFor = (enhancedFor: EnhancedForControlClass): EnhancedFor | undefined => {
     const variableName = enhancedFor.getValue();
@@ -134,10 +137,10 @@ export const makeForField = (forStatement: ForStatementClass): ForField | undefi
 
     let blockField: BlockField | { block: StatementType } | undefined = undefined;
     if (block) {
-        if ('kind' in block) {
-            blockField = { block: block };
-        } else {
+        if (isBlockField(block)) {
             blockField = block;
+        } else {
+            blockField = { block: block };
         }
     }
 
