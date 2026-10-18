@@ -1,24 +1,61 @@
+import typia from 'typia';
+
 import {
-    ErrorTypeClass,
     ArraySubscriptsTypeClass,
     TypeRefTypeClass,
     isArraySubscriptsType,
     isTypeNameType,
+    TypeNameTypeClass,
 } from '../../apex_IR';
 
-import { toPrimitiveValue, toTypeClass, CommonClass, isCommonClass } from './commons';
-import { TypeNameClass, typeNameConvert } from './name';
+import {
+    toPrimitiveValue,
+    SourceSpanInfo,
+    CommonBaseClass,
+    ElementBaseClass,
+    CommonJson,
+    ErrorInfo,
+    isErrorInfo,
+    assignClass,
+    assignClassWithNull,
+    assignClassToElementClass,
+    assignElementClass,
+    isTargetTypeClass,
+    assignMultiClass,
+    assignClassArray,
+} from './commons';
+import { TypeNameClass, TypeNameJson } from './name';
 
-export const arraySubscriptsConvert = (
-    target: ArraySubscriptsTypeClass,
-    errorClass: ErrorTypeClass[],
-): number | null => {
-    return toPrimitiveValue(
-        target.getValue(),
-        (target): target is number => typeof target === 'number',
-        errorClass,
-    );
+export type ArraySubscriptsJson = CommonJson<'arraySubscripts'> & {
+    arraySubscripts: number | null;
 };
+export const isArraySubscriptsJson = typia.createIs<ArraySubscriptsJson>();
+
+export const isArraySubscriptsClass = (target: unknown): target is ArraySubscriptsClass => {
+    return target instanceof ArraySubscriptsClass;
+};
+
+class ArraySubscriptsClass extends CommonBaseClass<'arraySubscripts', ArraySubscriptsJson> {
+    private arraySubscripts: number | null;
+
+    constructor(target: ArraySubscriptsTypeClass) {
+        const arraySubscripts = toPrimitiveValue(target.getValue(), isNumber);
+        super(
+            'arraySubscripts',
+            target.getSpan()!,
+            isErrorInfo(arraySubscripts) ? arraySubscripts : null,
+        );
+        this.arraySubscripts = !isErrorInfo(arraySubscripts) ? arraySubscripts : null;
+    }
+
+    toJson(): ArraySubscriptsJson {
+        return {
+            type: 'arraySubscripts',
+            arraySubscripts: this.arraySubscripts,
+            sourceSpan: this.getSourceSpan(),
+        };
+    }
+}
 
 export const isNumber = (target: any): target is number => {
     return typeof target === 'number';
@@ -28,72 +65,101 @@ export const isNumberArray = (target: any): target is number[] => {
     return Array.isArray(target) && target.every((t) => isNumber(t));
 };
 
-export class TypeRefClass extends CommonClass {
-    private value: TypeNameClass[] = [];
-    private dimension: number | null = null;
+export type TypeRefJson = CommonJson<'typeRef'> & {
+    types: (Omit<TypeNameJson, 'sourceSpan'> | null)[];
+    arrayDimention?: Omit<ArraySubscriptsJson, 'sourceSpan'> | null;
+};
+export const isTypeRefJson = typia.createIs<TypeRefJson>();
 
-    resetValue(): void {
-        this.value = [];
+export const isTypeRefClass = (target: unknown): target is TypeRefClass => {
+    return target instanceof TypeRefClass;
+};
+
+export class TypeRefClass extends CommonBaseClass<'typeRef', TypeRefJson> {
+    private types: (TypeNameClass | null)[];
+    private arrayDimention: ArraySubscriptsClass | null | undefined;
+
+    constructor(target: TypeRefTypeClass) {
+        const types: (TypeNameClass | null)[] = [];
+        let sourceSpan: SourceSpanInfo = {};
+        const sourceSpanArray: SourceSpanInfo[] = [];
+        const errorInfo: ErrorInfo[] = [];
+        let assignIndex = 0;
+
+        const type = assignClassArray(
+            target.getValue(),
+            (target: unknown) => isTargetTypeClass(target, isTypeNameType),
+            (typeClass: TypeNameTypeClass) => new TypeNameClass(typeClass),
+        );
+        type.forEach((t) => {
+            if (isErrorInfo(t)) {
+                errorInfo.push(t);
+                types.push(null);
+            } else {
+                types.push(t);
+                sourceSpanArray.push({
+                    type: t.getSourceSpan(),
+                });
+                assignIndex++;
+            }
+        });
+
+        if (sourceSpanArray.length > 0) {
+            sourceSpan = { ...sourceSpan, type: sourceSpanArray };
+        }
+
+        const arrayDimention = assignClassWithNull(
+            target.getDimension(),
+            (target: unknown) => isTargetTypeClass(target, isArraySubscriptsType),
+            (typeClass: ArraySubscriptsTypeClass) => new ArraySubscriptsClass(typeClass),
+        );
+        if (isErrorInfo(arrayDimention)) {
+            errorInfo.push(arrayDimention);
+        } else if (isArraySubscriptsClass(arrayDimention)) {
+            sourceSpan = {
+                ...sourceSpan,
+                arrayDimention: arrayDimention.getSourceSpan(),
+            };
+            assignIndex++;
+        }
+
+        super(
+            'typeRef',
+            Object.keys(sourceSpan).length + sourceSpanArray.length - 1 !== assignIndex
+                ? { content: target.getSpan()!, ...sourceSpan }
+                : sourceSpanArray,
+            errorInfo,
+        );
+        this.types = types;
+        this.arrayDimention = !isErrorInfo(arrayDimention)
+            ? arrayDimention !== null
+                ? arrayDimention
+                : null
+            : undefined;
     }
 
-    setValue(value: TypeNameClass[]): void {
-        this.value.push(...value);
-    }
+    toJson(): TypeRefJson {
+        const json: TypeRefJson = {
+            type: 'typeRef',
+            types: this.types.map((t) => {
+                if (t) {
+                    const { sourceSpan, ...rest } = t.toJson();
+                    return rest;
+                }
+                return null;
+            }),
+            sourceSpan: this.getSourceSpan(),
+        };
 
-    setDimension(dimension: number | null): void {
-        this.dimension = dimension;
-    }
+        if (this.arrayDimention !== undefined) {
+            if (this.arrayDimention) {
+                const { sourceSpan, ...rest } = this.arrayDimention.toJson();
+                json.arrayDimention = rest;
+            } else {
+                json.arrayDimention = this.arrayDimention;
+            }
+        }
 
-    getValue(): TypeNameClass[] {
-        return this.value;
-    }
-
-    getDimension(): number | null {
-        return this.dimension;
-    }
-
-    copy(commonClass: TypeRefClass): void {
-        this.resetValue();
-        this.setValue(commonClass.getValue());
-        this.setDimension(commonClass.getDimension());
+        return json;
     }
 }
-
-export const isTypeRefClass = (target: any): target is TypeRefClass => {
-    return isCommonClass(target, TypeRefClass);
-};
-
-export const isTypeRefClassArray = (target: any): target is TypeRefClass[] => {
-    return (
-        Array.isArray(target) && target.every((t) => t instanceof CommonClass && isTypeRefClass(t))
-    );
-};
-
-export const typeRefConvert = (
-    target: TypeRefTypeClass,
-    errorClass: ErrorTypeClass[],
-): TypeRefClass => {
-    const typeRef = new TypeRefClass();
-
-    const values: TypeNameClass[] = [];
-    target.getValue().forEach((item) => {
-        const valueTypeClass = toTypeClass(item, isTypeNameType, errorClass);
-        if (valueTypeClass) {
-            values.push(typeNameConvert(valueTypeClass, errorClass));
-        }
-    });
-    typeRef.setValue(values);
-
-    const dimensionTypeClass = toTypeClass(
-        target.getDimension(),
-        isArraySubscriptsType,
-        errorClass,
-    );
-    if (dimensionTypeClass) {
-        const dimension = arraySubscriptsConvert(dimensionTypeClass, errorClass);
-        if (dimension) {
-            typeRef.setDimension(dimension);
-        }
-    }
-    return typeRef;
-};

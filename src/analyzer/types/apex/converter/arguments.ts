@@ -1,50 +1,129 @@
+import typia from 'typia';
+
 import {
     ErrorTypeClass,
+    ExpressionListTypeClass,
     NormalArgumentsTypeClass,
     TypeArgumentsTypeClass,
+    TypeListTypeClass,
     isExpressionListType,
     isTypeListType,
 } from '../../apex_IR';
 
-import { toTypeClass } from './commons';
-import { TypeRefClass } from './type';
+import {
+    SourceSpanInfo,
+    CommonBaseClass,
+    CommonJson,
+    assignClassWithNull,
+    isTargetTypeClass,
+    ErrorInfo,
+    isErrorInfo,
+    assignClass,
+} from './commons';
+import { TypeRefClass, TypeRefJson } from './type';
 import { ExpressionClass } from './expression';
-import { expressionListConvert, typeListConvert } from './list';
+import {
+    ExpressionListClass,
+    ExpressionListJson,
+    isExpressionListClass,
+    TypeListClass,
+    typeListConvert,
+    TypeListJson,
+} from './list';
 
-export const normalArgumentsConvert = (
-    target: NormalArgumentsTypeClass,
-    errorClass: ErrorTypeClass[],
-): ExpressionClass[] => {
-    const normalArguments: ExpressionClass[] = [];
+export type ArgumentsJson = CommonJson<'arguments'> & {
+    arguments?: Omit<ExpressionListJson, 'sourceSpan'> | null;
+};
+export const isArgumentsJson = typia.createIs<ArgumentsJson>();
+export const isArgumentsClass = (target: unknown): target is ArgumentsClass => {
+    return target instanceof ArgumentsClass;
+};
 
-    const valueTypeClass = target.getValue();
-    if (valueTypeClass) {
-        const expressionListTypeClass = toTypeClass(
-            valueTypeClass,
-            isExpressionListType,
-            errorClass,
+export class ArgumentsClass extends CommonBaseClass<'arguments', ArgumentsJson> {
+    private arguments: ExpressionListClass | null | undefined;
+
+    constructor(target: NormalArgumentsTypeClass) {
+        const argument = assignClassWithNull(
+            target.getValue(),
+            (target: unknown) => isTargetTypeClass(target, isExpressionListType),
+            (target: ExpressionListTypeClass) => new ExpressionListClass(target),
         );
-        if (expressionListTypeClass) {
-            normalArguments.push(...expressionListConvert(expressionListTypeClass, errorClass));
-        }
+        super(
+            'arguments',
+            !isErrorInfo(argument) && argument !== null
+                ? { argument: argument.getSourceSpan() }
+                : { content: target.getSpan()! },
+            isErrorInfo(argument) ? argument : null,
+        );
+        this.arguments = !isErrorInfo(argument) ? (argument !== null ? argument : null) : undefined;
     }
 
-    return normalArguments;
+    toJson(): ArgumentsJson {
+        const json: ArgumentsJson = {
+            type: 'arguments',
+            sourceSpan: this.getSourceSpan(),
+        };
+
+        if (this.arguments !== undefined) {
+            if (this.arguments) {
+                const { sourceSpan, ...rest } = this.arguments.toJson();
+                json.arguments = rest;
+            } else {
+                json.arguments = null;
+            }
+        }
+
+        return json;
+    }
+}
+
+export type TypeArgumentsJson = CommonJson<'typeArguments'> & {
+    typeArguments?: Omit<TypeListJson, 'sourceSpan'> | null;
+};
+export const isTypeArgumentsJson = typia.createIs<TypeArgumentsJson>();
+
+export const isTypeArgumentsClass = (target: unknown): target is TypeArgumentsClass => {
+    return target instanceof TypeArgumentsClass;
 };
 
-export const typeArgumentsConvert = (
-    target: TypeArgumentsTypeClass,
-    errorClass: ErrorTypeClass[],
-): TypeRefClass[] => {
-    const typeArguments: TypeRefClass[] = [];
+export class TypeArgumentsClass extends CommonBaseClass<'typeArguments', TypeArgumentsJson> {
+    private typeArguments: TypeListClass | null | undefined;
 
-    const valueTypeClass = target.getValue();
-    if (valueTypeClass) {
-        const typeListTypeClass = toTypeClass(valueTypeClass, isTypeListType, errorClass);
-        if (typeListTypeClass) {
-            typeArguments.push(...typeListConvert(typeListTypeClass, errorClass));
-        }
+    constructor(target: TypeArgumentsTypeClass) {
+        const typeArguments = assignClassWithNull(
+            target.getValue(),
+            (target: unknown) => isTargetTypeClass(target, isTypeListType),
+            (typeClass: TypeListTypeClass) => new TypeListClass(typeClass),
+        );
+        super(
+            'typeArguments',
+            !isErrorInfo(typeArguments) && typeArguments !== null
+                ? { typeArguments: typeArguments.getSourceSpan() }
+                : { content: target.getSpan()! },
+            isErrorInfo(typeArguments) ? typeArguments : null,
+        );
+        this.typeArguments = !isErrorInfo(typeArguments)
+            ? typeArguments !== null
+                ? typeArguments
+                : null
+            : undefined;
     }
 
-    return typeArguments;
-};
+    toJson(): TypeArgumentsJson {
+        const json: TypeArgumentsJson = {
+            type: 'typeArguments',
+            sourceSpan: this.getSourceSpan(),
+        };
+
+        if (this.typeArguments !== undefined) {
+            if (this.typeArguments) {
+                const { sourceSpan, ...rest } = this.typeArguments.toJson();
+                json.typeArguments = rest;
+            } else {
+                json.typeArguments = null;
+            }
+        }
+
+        return json;
+    }
+}

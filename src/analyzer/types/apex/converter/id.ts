@@ -11,11 +11,13 @@ import {
 } from '../../apex_IR';
 
 import {
-    toTypeClass,
     SourceSpanInfo,
-    CommonClass,
+    CommonBaseClass,
     ErrorInfo,
     CommonJson,
+    assignClass,
+    assignClassArray,
+    isTargetTypeClass,
     isErrorInfo,
 } from './commons';
 
@@ -24,34 +26,23 @@ export type IdJson = CommonJson<'id'> & {
 };
 export const isIdJson = typia.createIs<IdJson>();
 
-export class IdClass implements CommonClass<'id', IdJson> {
-    private value: string;
-    private sourceSpan: SourceSpanInfo;
+export const isIdClass = (target: unknown): target is IdClass => {
+    return target instanceof IdClass;
+};
+
+export class IdClass extends CommonBaseClass<'id', IdJson> {
+    private id: string;
 
     constructor(target: NormalIdTypeClass) {
-        this.value = target.getValue();
-        this.sourceSpan = {
-            content: target.getSpan()!,
-        };
-    }
-
-    getErrorInfo(): null {
-        return null;
-    }
-
-    getType(): 'id' {
-        return 'id';
-    }
-
-    getSourceSpan(): SourceSpanInfo {
-        return this.sourceSpan;
+        super('id', target.getSpan()!, null);
+        this.id = target.getValue();
     }
 
     toJson(): IdJson {
         return {
             type: 'id',
-            id: this.value,
-            sourceSpan: this.sourceSpan,
+            id: this.id,
+            sourceSpan: this.getSourceSpan(),
         };
     }
 }
@@ -61,135 +52,123 @@ export type AnyIdJson = CommonJson<'anyId'> & {
 };
 export const isAnyIdJson = typia.createIs<AnyIdJson>();
 
-export class AnyIdClass implements CommonClass<'anyId', AnyIdJson> {
-    private value: string;
-    private sourceSpan: SourceSpanInfo;
+export const isAnyIdClass = (target: unknown): target is AnyIdClass => {
+    return target instanceof AnyIdClass;
+};
+
+export class AnyIdClass extends CommonBaseClass<'anyId', AnyIdJson> {
+    private anyId: string;
 
     constructor(target: AnyIdTypeClass) {
-        this.value = target.getValue();
-        this.sourceSpan = {
-            content: target.getSpan()!,
-        };
-    }
-    getErrorInfo(): null {
-        return null;
-    }
-
-    getType(): 'anyId' {
-        return 'anyId';
-    }
-
-    getSourceSpan(): SourceSpanInfo {
-        return this.sourceSpan;
+        super('anyId', target.getSpan()!, null);
+        this.anyId = target.getValue();
     }
 
     toJson(): AnyIdJson {
         return {
             type: 'anyId',
-            anyId: this.value,
-            sourceSpan: this.sourceSpan,
+            anyId: this.anyId,
+            sourceSpan: this.getSourceSpan(),
         };
     }
 }
 
-export type SoqlIdJson = CommonJson<'soqlId'> & { soqlId?: Omit<IdJson, 'sourceSpan'> };
+export type SoqlIdJson = CommonJson<'soqlId'> & { soqlId: Omit<IdJson, 'sourceSpan'> | null };
 export const isSoqlIdJson = typia.createIs<SoqlIdJson>();
 
-export class SoqlIdClass implements CommonClass<'soqlId', SoqlIdJson> {
-    private value: IdClass | null;
-    private sourceSpan: SourceSpanInfo;
-    private errorInfo: ErrorInfo | null;
+export const isSoqlIdClass = (target: unknown): target is SoqlIdClass => {
+    return target instanceof SoqlIdClass;
+};
+
+export class SoqlIdClass extends CommonBaseClass<'soqlId', SoqlIdJson> {
+    private soqlId: IdClass | null;
 
     constructor(target: SoqlIdTypeClass) {
-        const value = toTypeClass(target.getValue(), isNormalIdType);
-
-        if (isErrorInfo(value)) {
-            this.errorInfo = value;
-            this.value = null;
-            this.sourceSpan = { content: target.getSpan()! };
-        } else {
-            this.errorInfo = null;
-            this.value = new IdClass(value);
-            this.sourceSpan = { [this.value.getType()]: this.value.getSourceSpan() };
-        }
-    }
-
-    getErrorInfo(): ErrorInfo | null {
-        return this.errorInfo;
-    }
-
-    getType(): 'soqlId' {
-        return 'soqlId';
-    }
-
-    getSourceSpan(): SourceSpanInfo {
-        return this.sourceSpan;
+        const id = assignClass(
+            target.getValue(),
+            (target: unknown): target is NormalIdTypeClass =>
+                isTargetTypeClass(target, isNormalIdType),
+            (typeClass: NormalIdTypeClass) => new IdClass(typeClass),
+        );
+        super(
+            'soqlId',
+            isErrorInfo(id) ? target.getSpan()! : { soqlId: id.getSourceSpan() },
+            isErrorInfo(id) ? id : null,
+        );
+        this.soqlId = !isErrorInfo(id) ? id : null;
     }
 
     toJson(): SoqlIdJson {
-        const json: SoqlIdJson = {
-            type: 'soqlId',
-            sourceSpan: this.sourceSpan,
-        };
-
-        if (this.value) {
-            const { sourceSpan, ...rest } = this.value.toJson();
-            json.soqlId = rest;
+        if (this.soqlId) {
+            const { sourceSpan, ...id } = this.soqlId.toJson();
+            return {
+                type: 'soqlId',
+                soqlId: id,
+                sourceSpan: this.getSourceSpan(),
+            };
+        } else {
+            return {
+                type: 'soqlId',
+                soqlId: null,
+                sourceSpan: this.getSourceSpan(),
+            };
         }
-
-        return json;
     }
 }
 
-export type SoslIdJson = CommonJson<'soslId'> & { soslId: Omit<IdJson, 'sourceSpan'>[] };
+export type SoslIdJson = CommonJson<'soslId'> & { soslId: (Omit<IdJson, 'sourceSpan'> | null)[] };
 export const isSoslIdJson = typia.createIs<SoslIdJson>();
 
-export class SoslIdClass implements CommonClass<'soslId', SoslIdJson> {
-    private value: IdClass[] = [];
-    private sourceSpan: SourceSpanInfo | SourceSpanInfo[];
-    private errorInfo: ErrorInfo[] = [];
+export const isSoslClass = (target: unknown): target is SoslIdClass => {
+    return target instanceof SoslIdClass;
+};
+
+export class SoslIdClass extends CommonBaseClass<'soslId', SoslIdJson> {
+    private soslId: (IdClass | null)[] = [];
 
     constructor(target: SoslIdTypeClass) {
+        const soslId: (IdClass | null)[] = [];
         const sourceSpanArray: SourceSpanInfo[] = [];
+        const errorInfo: ErrorInfo[] = [];
 
-        target.getValue().forEach((value) => {
-            const normalIdValue = toTypeClass(value, isNormalIdType);
-            if (isErrorInfo(normalIdValue)) {
-                this.errorInfo.push(normalIdValue);
+        const assignList = assignClassArray(
+            target.getValue(),
+            (target: unknown): target is NormalIdTypeClass =>
+                isTargetTypeClass(target, isNormalIdType),
+            (typeClass: NormalIdTypeClass) => new IdClass(typeClass),
+        );
+
+        assignList.forEach((id) => {
+            if (isErrorInfo(id)) {
+                errorInfo.push(id);
+                soslId.push(null);
             } else {
-                const idClass = new IdClass(normalIdValue);
-                this.value.push(idClass);
-                sourceSpanArray.push({ [idClass.getType()]: idClass.getSourceSpan() });
+                soslId.push(id);
+                sourceSpanArray.push({ soslId: id.getSourceSpan() });
             }
         });
 
-        if (sourceSpanArray.length > 0) {
-            this.sourceSpan = sourceSpanArray;
-        } else {
-            this.sourceSpan = { content: target.getSpan()! };
-        }
-    }
-
-    getErrorInfo(): ErrorInfo[] {
-        return this.errorInfo;
-    }
-
-    getType(): 'soslId' {
-        return 'soslId';
-    }
-
-    getSourceSpan(): SourceSpanInfo | SourceSpanInfo[] {
-        return this.sourceSpan;
+        super(
+            'soslId',
+            sourceSpanArray.length !== soslId.length
+                ? { content: target.getSpan()!, soslId: sourceSpanArray }
+                : sourceSpanArray,
+            errorInfo,
+        );
+        this.soslId = soslId;
     }
 
     toJson(): SoslIdJson {
         return {
             type: 'soslId',
-            sourceSpan: this.sourceSpan,
-            soslId: this.value.map((idClass) => {
-                const { sourceSpan, ...rest } = idClass.toJson();
-                return rest;
+            soslId: this.soslId.map((idClass) => {
+                if (idClass) {
+                    const { sourceSpan, ...rest } = idClass.toJson();
+                    return rest;
+                }
+                return idClass;
             }),
+            sourceSpan: this.getSourceSpan(),
         };
     }
 }

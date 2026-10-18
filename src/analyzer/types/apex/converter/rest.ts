@@ -1,3 +1,5 @@
+import typia from 'typia';
+
 import {
     ErrorTypeClass,
     ArrayCreatorRestTypeClass,
@@ -17,319 +19,480 @@ import {
     isNormalArgumentsType,
     isRestTypeAll,
     isSetCreatorRestType,
+    ArrayInitializerTypeClass,
+    NormalArgumentsTypeClass,
+    MapCreatorRestPairTypeClass,
+    CommonTypeClass,
+    CreatedNameTypeClass,
 } from '../../apex_IR';
 
-import { toPrimitiveValue, toTypeClass, CommonClass, isCommonClass } from './commons';
-import { normalArgumentsConvert } from './arguments';
-import { ExpressionClass, expressionConvert } from './expression';
-import { createdNameConvert } from './name';
-import { IdCreatedNamePairClass, MapCreatorRestPairClass, mapCreatorRestPairConvert } from './pair';
-import { arrayInitializerConvert } from './variable';
+import {
+    toPrimitiveValue,
+    toTypeClass,
+    SourceSpanInfo,
+    CommonClass,
+    ElementClass,
+    CommonJson,
+    ErrorInfo,
+    isErrorInfo,
+    assignClass,
+    assignClassWithNull,
+    assignClassToElementClass,
+    isTargetTypeClass,
+    assignMultiClass,
+    CommonBaseClass,
+    assignElementClassWithNull,
+    assignClassArray,
+    assignElementClass,
+    ElementBaseClass,
+} from './commons';
+import { ArgumentsClass, ArgumentsJson } from './arguments';
+import {
+    AllExpressionJson,
+    AllExpressionClass,
+    isExpressionTypeClass,
+    expressionRules,
+    isAllExpressionClass,
+} from './expression';
+import { CreatedNameClass, CreatedNameJson } from './name';
+import { MapCreatorRestPairClass, MapCreatorRestPairJson } from './pair';
+import { ArrayInitializerClass, ArrayInitializerJson, isArrayInitializerClass } from './variable';
+import { isError } from 'postcss/lib/css-syntax-error';
+import { isString } from './id';
 
-export class ArrayCreatorRestClass extends CommonClass {
-    private value: ExpressionClass[] = [];
-    private size: ExpressionClass = new ExpressionClass();
+export type ArrayCreatorRestJson = CommonJson<'arrayCreatorRest'> & {
+    array?: Omit<ArrayInitializerJson, 'sourceSpan'> | null;
+    size?: Omit<AllExpressionJson, 'sourceSpan'> | null;
+};
+export const isArrayCreatorRestJson = typia.createIs<ArrayCreatorRestJson>();
+export const isArrayCreatorRestClass = (target: unknown): target is ArrayCreatorRestClass => {
+    return target instanceof ArrayCreatorRestClass;
+};
 
-    resetValue(): void {
-        this.value = [];
+export class ArrayCreatorRestClass extends CommonBaseClass<
+    'arrayCreatorRest',
+    ArrayCreatorRestJson
+> {
+    private array: ArrayInitializerClass | null | undefined;
+    private size: AllExpressionClass | null | undefined;
+
+    constructor(target: ArrayCreatorRestTypeClass) {
+        let sourceSpan: SourceSpanInfo = {};
+        const errorInfo: ErrorInfo[] = [];
+        let assignIndex = 0;
+
+        const array = assignClassWithNull(
+            target.getValue(),
+            (target: unknown) => isTargetTypeClass(target, isArrayInitializerType),
+            (typeClass: ArrayInitializerTypeClass) => new ArrayInitializerClass(typeClass),
+        );
+        if (isErrorInfo(array)) {
+            errorInfo.push(array);
+        } else if (isArrayInitializerClass(array)) {
+            sourceSpan = { ...sourceSpan, array: array.getSourceSpan() };
+            assignIndex++;
+        }
+
+        const size = assignElementClassWithNull(
+            target.getSize(),
+            isExpressionTypeClass,
+            expressionRules,
+        );
+        if (isErrorInfo(size)) {
+            errorInfo.push(size);
+        } else if (isAllExpressionClass(size)) {
+            sourceSpan = {
+                ...sourceSpan,
+                size: size.getSourceSpan(),
+            };
+            assignIndex++;
+        }
+
+        super(
+            'arrayCreatorRest',
+            Object.keys(sourceSpan).length === assignIndex
+                ? sourceSpan
+                : { ...sourceSpan, content: target.getSpan()! },
+            errorInfo,
+        );
+        this.array = !isErrorInfo(array) ? (array !== null ? array : null) : undefined;
+        this.size = !isErrorInfo(size) ? (size !== null ? size : null) : undefined;
     }
 
-    setValue(value: ExpressionClass[]): void {
-        this.value.push(...value);
-    }
+    toJson(): ArrayCreatorRestJson {
+        const json: ArrayCreatorRestJson = {
+            type: 'arrayCreatorRest',
+            sourceSpan: this.getSourceSpan(),
+        };
 
-    setSize(size: ExpressionClass) {
-        this.size.copy(size);
-    }
+        if (this.array !== undefined) {
+            if (this.array) {
+                const { sourceSpan, ...rest } = this.array.toJson();
+                json.array = rest;
+            } else {
+                json.array = this.array;
+            }
+        }
 
-    getValue(): ExpressionClass[] {
-        return this.value;
-    }
+        if (this.size !== undefined) {
+            if (this.size) {
+                const { sourceSpan, ...rest } = this.size.toJson();
+                json.size = rest;
+            } else {
+                json.size = this.size;
+            }
+        }
 
-    getSize(): ExpressionClass {
-        return this.size;
-    }
-
-    copy(commonClass: ArrayCreatorRestClass): void {
-        this.resetValue();
-        this.setValue(commonClass.getValue());
-        this.setSize(commonClass.getSize());
+        return json;
     }
 }
 
-export const isArrayCreatorRestClass = (target: any): target is ArrayCreatorRestClass => {
-    return isCommonClass(target, ArrayCreatorRestClass);
+export type ClassCreatorRestJson = CommonJson<'classCreatorRest'> & {
+    classCreatorRest: Omit<ArgumentsJson, 'sourceSpan'> | null;
+};
+export const isClassCreatorRestJson = typia.createIs<ClassCreatorRestJson>();
+export const isClassCreatorRestClass = (target: unknown): target is ClassCreatorRestClass => {
+    return target instanceof ClassCreatorRestClass;
 };
 
-export const isArrayCreatorRestClassArray = (target: any): target is ArrayCreatorRestClass[] => {
-    return Array.isArray(target) && target.every((t) => isArrayCreatorRestClass(t));
-};
+export class ClassCreatorRestClass extends CommonBaseClass<
+    'classCreatorRest',
+    ClassCreatorRestJson
+> {
+    private classCreatorRest: ArgumentsClass | null;
 
-export const arrayCreatorRestConvert = (
-    target: ArrayCreatorRestTypeClass,
-    errorClass: ErrorTypeClass[],
-): ArrayCreatorRestClass => {
-    const arrayCreatorRest = new ArrayCreatorRestClass();
+    constructor(target: ClassCreatorRestTypeClass) {
+        const classCreatorRest = assignClass(
+            target.getValue(),
+            (target: unknown) => isTargetTypeClass(target, isNormalArgumentsType),
+            (typeClass: NormalArgumentsTypeClass) => new ArgumentsClass(typeClass),
+        );
 
-    const value = target.getValue();
-    if (value) {
-        const valueTypeClass = toTypeClass(value, isArrayInitializerType, errorClass);
-        if (valueTypeClass) {
-            arrayCreatorRest.setValue(arrayInitializerConvert(valueTypeClass, errorClass));
-        }
+        super(
+            'classCreatorRest',
+            isErrorInfo(classCreatorRest)
+                ? { content: target.getSpan()! }
+                : classCreatorRest.getSourceSpan(),
+            isErrorInfo(classCreatorRest) ? classCreatorRest : null,
+        );
+        this.classCreatorRest = !isErrorInfo(classCreatorRest) ? classCreatorRest : null;
     }
 
-    const sizeValue = target.getSize();
-    if (sizeValue) {
-        const sizeTypeClass = toTypeClass(sizeValue, isExpressionTypeAll, errorClass);
-        if (sizeTypeClass) {
-            arrayCreatorRest.setSize(expressionConvert(sizeTypeClass, errorClass));
+    toJson(): ClassCreatorRestJson {
+        if (this.classCreatorRest) {
+            return {
+                type: 'classCreatorRest',
+                classCreatorRest: this.classCreatorRest.toJson(),
+                sourceSpan: this.getSourceSpan(),
+            };
+        } else {
+            return {
+                type: 'classCreatorRest',
+                classCreatorRest: null,
+                sourceSpan: this.getSourceSpan(),
+            };
         }
     }
+}
 
-    return arrayCreatorRest;
+export type MapCreatorRestJson = CommonJson<'mapCreatorRest'> & {
+    mapCreatorRest: (Omit<MapCreatorRestPairJson, 'sourceSpan'> | null)[];
+};
+export const isMapCreatorRestJson = typia.createIs<MapCreatorRestJson>();
+export const isMapCreatorRestClass = (target: unknown): target is MapCreatorRestClass => {
+    return target instanceof MapCreatorRestClass;
 };
 
-export const classCreatorRestConvert = (
-    target: ClassCreatorRestTypeClass,
-    errorClass: ErrorTypeClass[],
-): ExpressionClass[] => {
-    const valueTypeClass = toTypeClass(target.getValue(), isNormalArgumentsType, errorClass);
-    if (valueTypeClass) {
-        return normalArgumentsConvert(valueTypeClass, errorClass);
+export class MapCreatorRestClass extends CommonBaseClass<'mapCreatorRest', MapCreatorRestJson> {
+    private mapCreatorRest: (MapCreatorRestPairClass | null)[];
+
+    constructor(target: MapCreatorRestTypeClass) {
+        const mapCreatorRest: (MapCreatorRestPairClass | null)[] = [];
+        const sourceSpanArray: SourceSpanInfo[] = [];
+        const errorInfo: ErrorInfo[] = [];
+
+        const mapCreatorRestValue = assignClassArray(
+            target.getValue(),
+            (target: unknown) => isTargetTypeClass(target, isMapCreatorRestPairType),
+            (typeClass: MapCreatorRestPairTypeClass) => new MapCreatorRestPairClass(typeClass),
+        );
+        mapCreatorRestValue.forEach((m) => {
+            if (isErrorInfo(m)) {
+                errorInfo.push(m);
+                mapCreatorRest.push(null);
+            } else {
+                sourceSpanArray.push({ mapCreatorRest: m.getSourceSpan() });
+                mapCreatorRest.push(m);
+            }
+        });
+
+        super(
+            'mapCreatorRest',
+            sourceSpanArray.length !== mapCreatorRest.filter((m) => m !== null).length
+                ? { content: target.getSpan()!, expressionList: sourceSpanArray }
+                : sourceSpanArray,
+            errorInfo,
+        );
+        this.mapCreatorRest = mapCreatorRest;
     }
 
-    return [];
+    toJson(): MapCreatorRestJson {
+        return {
+            type: 'mapCreatorRest',
+            mapCreatorRest: this.mapCreatorRest.map((m) => {
+                if (m) {
+                    const { sourceSpan, ...rest } = m.toJson();
+                    return rest;
+                }
+                return null;
+            }),
+            sourceSpan: this.getSourceSpan(),
+        };
+    }
+}
+
+export type NoRestJson = CommonJson<'noRest'> & {
+    noRest: string | null;
+};
+export const isNoRestJson = typia.createIs<NoRestJson>();
+
+export const isNoRestclass = (target: unknown): target is NoRestclass => {
+    return target instanceof NoRestclass;
 };
 
-export const mapCreatorRestConvert = (
-    target: MapCreatorRestTypeClass,
-    errorClass: ErrorTypeClass[],
-): MapCreatorRestPairClass[] => {
-    const values: MapCreatorRestPairClass[] = [];
-    target.getValue().forEach((item) => {
-        const valueTypeClass = toTypeClass(item, isMapCreatorRestPairType, errorClass);
-        if (valueTypeClass) {
-            values.push(mapCreatorRestPairConvert(valueTypeClass, errorClass));
-        }
-    });
-    return values;
+export class NoRestclass extends CommonBaseClass<'noRest', NoRestJson> {
+    private noRest: string | null;
+
+    constructor(target: NoRestTypeClass) {
+        const noRest = toPrimitiveValue(target.getValue(), isString);
+        super('noRest', target.getSpan()!, isErrorInfo(noRest) ? noRest : null);
+        this.noRest = !isErrorInfo(noRest) ? noRest : null;
+    }
+
+    toJson(): NoRestJson {
+        return {
+            type: 'noRest',
+            noRest: this.noRest,
+            sourceSpan: this.getSourceSpan(),
+        };
+    }
+}
+
+export type SetCreatorRestJson = CommonJson<'setCreatorRest'> & {
+    setCreatorRest: (Omit<AllExpressionJson, 'sourceSpan'> | null)[];
+};
+export const isSetCreatorRestJson = typia.createIs<SetCreatorRestJson>();
+
+export const isSetCreatorRestClass = (target: unknown): target is SetCreatorRestClass => {
+    return target instanceof SetCreatorRestClass;
 };
 
-export const noRestConvert = (
-    target: NoRestTypeClass,
-    errorClass: ErrorTypeClass[],
-): string | null => {
-    return toPrimitiveValue(
-        target.getValue(),
-        (target): target is string => typeof target === 'string',
-        errorClass,
+export class SetCreatorRestClass extends CommonBaseClass<'setCreatorRest', SetCreatorRestJson> {
+    private setCreatorRest: (AllExpressionClass | null)[] = [];
+
+    constructor(target: SetCreatorRestTypeClass) {
+        const setCreatorRest: (AllExpressionClass | null)[] = [];
+        const sourceSpanArray: SourceSpanInfo[] = [];
+        const errorInfo: ErrorInfo[] = [];
+
+        target.getValue().forEach((value) => {
+            const expressionClass = assignElementClass(
+                value,
+                isExpressionTypeClass,
+                expressionRules,
+            );
+            if (isErrorInfo(expressionClass)) {
+                errorInfo.push(expressionClass);
+                setCreatorRest.push(null);
+            } else {
+                setCreatorRest.push(expressionClass);
+                sourceSpanArray.push({
+                    expressionList: expressionClass.getSourceSpan(),
+                });
+            }
+        });
+
+        super(
+            'setCreatorRest',
+            sourceSpanArray.length !== setCreatorRest.filter((s) => s !== null).length
+                ? { content: target.getSpan()!, expressionList: sourceSpanArray }
+                : sourceSpanArray,
+            errorInfo,
+        );
+        this.setCreatorRest = setCreatorRest;
+    }
+    toJson(): SetCreatorRestJson {
+        return {
+            type: 'setCreatorRest',
+            setCreatorRest: this.setCreatorRest.map((s) => {
+                if (s) {
+                    const { sourceSpan, ...rest } = s.toJson();
+                    return rest;
+                }
+                return null;
+            }),
+            sourceSpan: this.getSourceSpan(),
+        };
+    }
+}
+
+export type AllRestClass =
+    | ArrayCreatorRestClass
+    | ClassCreatorRestClass
+    | MapCreatorRestClass
+    | NoRestclass
+    | SetCreatorRestClass;
+
+export type AllRestJson =
+    | ArrayCreatorRestJson
+    | ClassCreatorRestJson
+    | MapCreatorRestJson
+    | NoRestJson
+    | SetCreatorRestJson;
+
+export const restRules = [
+    {
+        isValid: (target: unknown): target is ArrayCreatorRestTypeClass =>
+            isTargetTypeClass(target, isArrayCreatorRestType),
+        construct: (target: ArrayCreatorRestTypeClass) => new ArrayCreatorRestClass(target),
+    },
+    {
+        isValid: (target: unknown): target is ClassCreatorRestTypeClass =>
+            isTargetTypeClass(target, isClassCreatorRestType),
+        construct: (target: ClassCreatorRestTypeClass) => new ClassCreatorRestClass(target),
+    },
+    {
+        isValid: (target: unknown): target is MapCreatorRestTypeClass =>
+            isTargetTypeClass(target, isMapCreatorRestType),
+        construct: (target: MapCreatorRestTypeClass) => new MapCreatorRestClass(target),
+    },
+    {
+        isValid: (target: unknown): target is NoRestTypeClass =>
+            isTargetTypeClass(target, isNoRestType),
+        construct: (target: NoRestTypeClass) => new NoRestclass(target),
+    },
+    {
+        isValid: (target: unknown): target is SetCreatorRestTypeClass =>
+            isTargetTypeClass(target, isSetCreatorRestType),
+        construct: (target: SetCreatorRestTypeClass) => new SetCreatorRestClass(target),
+    },
+] as const;
+
+export class RestElementClass extends ElementBaseClass<
+    [
+        | ArrayCreatorRestTypeClass
+        | ClassCreatorRestTypeClass
+        | MapCreatorRestTypeClass
+        | NoRestTypeClass
+        | SetCreatorRestTypeClass,
+    ],
+    typeof restRules
+> {}
+
+export const isRestTypeClass = (
+    target: any,
+): target is
+    | ArrayCreatorRestTypeClass
+    | ClassCreatorRestTypeClass
+    | MapCreatorRestTypeClass
+    | NoRestTypeClass
+    | SetCreatorRestTypeClass => {
+    // | SoqlPrimaryTypeClass
+    // | LiteralPrimaryTypeClass
+    // | TypeRefPrimaryTypeClass
+    // | SoslPrimaryTypeClass => {
+
+    return (
+        target instanceof CommonTypeClass &&
+        (isArrayCreatorRestType(target) ||
+            isClassCreatorRestType(target) ||
+            isMapCreatorRestType(target) ||
+            isNoRestType(target) ||
+            isSetCreatorRestType(target))
+        // isSoslPrimaryType(target) ||
+        // isLiteralPrimaryType(target) ||
+        // isTypeRefPrimaryType(target) ||
+        // isSoqlPrimaryType(target)
     );
 };
 
-export const setCreatorRestConvert = (
-    target: SetCreatorRestTypeClass,
-    errorClass: ErrorTypeClass[],
-): ExpressionClass[] => {
-    const values: ExpressionClass[] = [];
-    target.getValue().forEach((item) => {
-        const valueTypeClass = toTypeClass(item, isExpressionTypeAll, errorClass);
-        if (valueTypeClass) {
-            values.push(expressionConvert(valueTypeClass, errorClass));
-        }
-    });
-    return values;
+export const isAllRestClass = (target: unknown): target is AllRestClass => {
+    return (
+        isArrayCreatorRestClass(target) ||
+        isClassCreatorRestClass(target) ||
+        isMapCreatorRestClass(target) ||
+        isNoRestclass(target) ||
+        isSetCreatorRestClass(target)
+    );
 };
 
-export abstract class RestElementClass<TType, TValue, TContent> extends CommonClass {
-    private type: TType;
-    private value: TValue;
-    private content: TContent;
-
-    constructor(type: TType, value: TValue, content: TContent) {
-        super();
-        this.type = type;
-        this.value = value;
-        this.content = content;
-    }
-
-    getType(): TType {
-        return this.type;
-    }
-
-    getValue(): TValue {
-        return this.value;
-    }
-
-    getContent(): TContent {
-        return this.content;
-    }
-}
-
-export const isRestElementClass = (
-    target: CommonClass,
-): target is RestElementClass<unknown, unknown, unknown> => {
-    return isCommonClass(target, RestElementClass);
+export type CreatorJson = CommonJson<'creator'> & {
+    name: Omit<CreatedNameJson, 'sourceSpan'> | null;
+    rest: Omit<AllRestJson, 'sourceSpan'> | null;
+};
+export const isCreatorJson = typia.createIs<CreatorJson>();
+export const isCreatorClass = (target: unknown): target is CreatorClass => {
+    return target instanceof CreatorClass;
 };
 
-export class ArrayRestElementClass extends RestElementClass<
-    'array',
-    IdCreatedNamePairClass[],
-    ArrayCreatorRestClass
-> {
-    constructor(value: IdCreatedNamePairClass[], content: ArrayCreatorRestClass) {
-        super('array', value, content);
-    }
-}
+export class CreatorClass extends CommonBaseClass<'creator', CreatorJson> {
+    private name: CreatedNameClass | null;
+    private rest: AllRestClass | null;
 
-export const isArrayRestElementClass = (target: CommonClass): target is ArrayRestElementClass => {
-    return isCommonClass(target, ArrayRestElementClass);
-};
+    constructor(target: CreatorTypeClass) {
+        let sourceSpan: SourceSpanInfo = {};
+        const errorInfo: ErrorInfo[] = [];
+        let assignIndex = 0;
 
-export class ExpressionArrayRestElementClass extends RestElementClass<
-    'class' | 'set',
-    IdCreatedNamePairClass[],
-    ExpressionClass[]
-> {
-    constructor(
-        type: 'class' | 'set',
-        value: IdCreatedNamePairClass[],
-        content: ExpressionClass[],
-    ) {
-        super(type, value, content);
-    }
-}
-
-export const isExpressionArrayRestElementClass = (
-    target: CommonClass,
-): target is ExpressionArrayRestElementClass => {
-    return isCommonClass(target, ExpressionArrayRestElementClass);
-};
-
-export class MapRestElementClass extends RestElementClass<
-    'map',
-    IdCreatedNamePairClass[],
-    MapCreatorRestPairClass[]
-> {
-    constructor(value: IdCreatedNamePairClass[], content: MapCreatorRestPairClass[]) {
-        super('map', value, content);
-    }
-}
-
-export const isMapRestElementClass = (target: CommonClass): target is MapRestElementClass => {
-    return isCommonClass(target, MapRestElementClass);
-};
-
-export class NoRestElementClass extends RestElementClass<
-    'no',
-    IdCreatedNamePairClass[],
-    string | null
-> {
-    constructor(value: IdCreatedNamePairClass[], content: string | null) {
-        super('no', value, content);
-    }
-}
-
-export const isNoRestElementClass = (target: CommonClass): target is NoRestElementClass => {
-    return isCommonClass(target, NoRestElementClass);
-};
-
-export class CreatorClass extends CommonClass {
-    private value:
-        | ArrayRestElementClass
-        | ExpressionArrayRestElementClass
-        | MapRestElementClass
-        | NoRestElementClass
-        | null = null;
-
-    setValue(
-        value:
-            | ArrayRestElementClass
-            | ExpressionArrayRestElementClass
-            | MapRestElementClass
-            | NoRestElementClass
-            | null,
-    ) {
-        this.value = value;
-    }
-
-    getValue():
-        | ArrayRestElementClass
-        | ExpressionArrayRestElementClass
-        | MapRestElementClass
-        | NoRestElementClass
-        | null {
-        return this.value;
-    }
-
-    copy(commonClass: CreatorClass): void {
-        this.setValue(commonClass.getValue());
-    }
-}
-
-export const isCreatorClass = (target: any): target is CreatorClass => {
-    return isCommonClass(target, CreatorClass);
-};
-
-export const isCreatorClassArray = (target: any): target is CreatorClass[] => {
-    return Array.isArray(target) && target.every((t) => isCreatorClass(t));
-};
-
-export const creatorConvert = (
-    target: CreatorTypeClass,
-    errorClass: ErrorTypeClass[],
-): CreatorClass => {
-    const creator = new CreatorClass();
-
-    const createdName: IdCreatedNamePairClass[] = [];
-    const valueTypeClass = toTypeClass(target.getValue(), isCreatedNameType, errorClass);
-    if (valueTypeClass) {
-        createdName.push(...createdNameConvert(valueTypeClass, errorClass));
-    }
-
-    const contentTypeClass = toTypeClass(target.getContent(), isRestTypeAll, errorClass);
-    if (contentTypeClass) {
-        if (isArrayCreatorRestType(contentTypeClass)) {
-            creator.setValue(
-                new ArrayRestElementClass(
-                    createdName,
-                    arrayCreatorRestConvert(contentTypeClass, errorClass),
-                ),
-            );
+        const name = assignClass(
+            target.getValue(),
+            (target: unknown) => isTargetTypeClass(target, isCreatedNameType),
+            (typeClass: CreatedNameTypeClass) => new CreatedNameClass(typeClass),
+        );
+        if (isErrorInfo(name)) {
+            errorInfo.push(name);
+        } else {
+            sourceSpan = { ...sourceSpan, name: name.getSourceSpan() };
+            assignIndex++;
         }
 
-        if (isClassCreatorRestType(contentTypeClass)) {
-            creator.setValue(
-                new ExpressionArrayRestElementClass(
-                    'class',
-                    createdName,
-                    classCreatorRestConvert(contentTypeClass, errorClass),
-                ),
-            );
+        const rest = assignElementClass(target.getValue(), isRestTypeClass, restRules);
+        if (isErrorInfo(rest)) {
+            errorInfo.push(rest);
+        } else {
+            sourceSpan = { ...sourceSpan, rest: rest.getSourceSpan() };
+            assignIndex++;
         }
-        if (isMapCreatorRestType(contentTypeClass)) {
-            creator.setValue(
-                new MapRestElementClass(
-                    createdName,
-                    mapCreatorRestConvert(contentTypeClass, errorClass),
-                ),
-            );
-        }
-        if (isNoRestType(contentTypeClass)) {
-            creator.setValue(
-                new NoRestElementClass(createdName, noRestConvert(contentTypeClass, errorClass)),
-            );
-        }
-        if (isSetCreatorRestType(contentTypeClass)) {
-            creator.setValue(
-                new ExpressionArrayRestElementClass(
-                    'set',
-                    createdName,
-                    setCreatorRestConvert(contentTypeClass, errorClass),
-                ),
-            );
-        }
+
+        super(
+            'creator',
+            Object.keys(sourceSpan).length === assignIndex
+                ? sourceSpan
+                : { ...sourceSpan, content: target.getSpan()! },
+            errorInfo,
+        );
+        this.name = !isErrorInfo(name) ? name : null;
+        this.rest = !isErrorInfo(rest) ? rest : null;
     }
 
-    return creator;
-};
+    toJson(): CreatorJson {
+        let name: Omit<CreatedNameJson, 'sourceSpan'> | null = null;
+        if (this.name) {
+            const { sourceSpan, ...rest } = this.name.toJson();
+            name = rest;
+        }
+
+        let rest: Omit<AllRestJson, 'sourceSpan'> | null = null;
+        if (this.rest) {
+            const { sourceSpan, ...createdRest } = this.rest.toJson();
+            rest = createdRest;
+        }
+
+        return {
+            type: 'creator',
+            name: name,
+            rest: rest,
+            sourceSpan: this.getSourceSpan(),
+        };
+    }
+}

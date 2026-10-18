@@ -1,7 +1,7 @@
 import { ArrayExpressionContext } from '@apexdevtools/apex-parser';
 
 import {
-    ExpressionListBaseTypeClass,
+    ExpressionTypeClass,
     ExpressionAllTypeClass,
     ExpressionVisitor,
     isExpressionTypeAll,
@@ -9,25 +9,38 @@ import {
 
 import { CommonTypeClass, ErrorTypeClass, isValidClass } from '../commonVisitor';
 
-export class ArrayExpressionTypeClass extends ExpressionListBaseTypeClass<ExpressionAllTypeClass> {
-    private constructor(value: (ExpressionAllTypeClass | ErrorTypeClass)[]) {
+export class ArrayExpressionTypeClass extends ExpressionTypeClass<ExpressionAllTypeClass> {
+    private index: ExpressionAllTypeClass | ErrorTypeClass;
+
+    private constructor(
+        value: ExpressionAllTypeClass | ErrorTypeClass,
+        index: ExpressionAllTypeClass | ErrorTypeClass,
+    ) {
         super('arrayExpression', value);
+        this.index = index;
     }
 
     static create(ctx: ArrayExpressionContext): ArrayExpressionTypeClass {
-        if (!ctx.expression_list() || ctx.expression_list().length === 0) {
+        if (!ctx.expression_list() || ctx.expression_list().length !== 2) {
             throw new Error('値が異常です。ArrayExpressionContext: ' + ctx.getText());
         }
 
         return new ArrayExpressionTypeClass(
-            ctx.expression_list().map((expressionCtx) => {
-                return isValidClass(
-                    new ExpressionVisitor().visit(expressionCtx),
-                    isExpressionTypeAll,
-                    'expression',
-                );
-            }),
+            isValidClass(
+                new ExpressionVisitor().visit(ctx.expression(0)),
+                isExpressionTypeAll,
+                'expression',
+            ),
+            isValidClass(
+                new ExpressionVisitor().visit(ctx.expression(1)),
+                isExpressionTypeAll,
+                'expression',
+            ),
         );
+    }
+
+    getIndex(): ExpressionAllTypeClass | ErrorTypeClass {
+        return this.index;
     }
 }
 

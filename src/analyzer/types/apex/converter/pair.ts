@@ -1,3 +1,5 @@
+import typia from 'typia';
+
 import {
     ErrorTypeClass,
     ElementValuePairTypeClass,
@@ -10,12 +12,35 @@ import {
     isExpressionTypeAll,
     isNormalIdType,
     isTypeListType,
+    AnyIdTypeClass,
+    TypeListTypeClass,
 } from '../../apex_IR';
 
-import { toTypeClass, CommonClass, isCommonClass } from './commons';
-import { ExpressionClass, expressionConvert } from './expression';
-import { anyIdConvert, normalIdConvert } from './id';
-import { typeListConvert } from './list';
+import {
+    toPrimitiveValue,
+    SourceSpanInfo,
+    CommonBaseClass,
+    ElementBaseClass,
+    CommonJson,
+    ErrorInfo,
+    isErrorInfo,
+    assignClass,
+    assignClassWithNull,
+    assignClassToElementClass,
+    assignElementClass,
+    isTargetTypeClass,
+    assignMultiClass,
+} from './commons';
+import {
+    AllExpressionClass,
+    AllExpressionJson,
+    ExpressionClass,
+    expressionConvert,
+    expressionRules,
+    isExpressionTypeClass,
+} from './expression';
+import { AnyIdClass, anyIdConvert, AnyIdJson, normalIdConvert } from './id';
+import { isTypeListClass, TypeListClass, typeListConvert, TypeListJson } from './list';
 import { NormalLiteralClass } from './literal';
 import { TypeRefClass } from './type';
 import { elementValueConvert } from './value';
@@ -88,120 +113,160 @@ export const elementValuePairsConvert = (
     return values;
 };
 
-export class IdCreatedNamePairClass extends CommonClass {
-    private left: string | null = null;
-    private right: TypeRefClass[] = [];
+export type IdCreatedNamePairJson = CommonJson<'idCreatedNamePair'> & {
+    collection: Omit<AnyIdJson, 'sourceSpan'> | null;
+    generic?: Omit<TypeListJson, 'sourceSpan'> | null;
+};
+export const isIdCreatedNamePairJson = typia.createIs<IdCreatedNamePairJson>();
 
-    setLeft(left: string | null): void {
-        this.left = left;
-    }
-
-    resetRight(): void {
-        this.right = [];
-    }
-
-    setRight(right: TypeRefClass[]): void {
-        this.right.push(...right);
-    }
-
-    getLeft(): string | null {
-        return this.left;
-    }
-
-    getRight(): TypeRefClass[] {
-        return this.right;
-    }
-
-    copy(commonClass: IdCreatedNamePairClass): void {
-        this.setLeft(commonClass.getLeft());
-        this.resetRight();
-        this.setRight(commonClass.getRight());
-    }
-}
-
-export const isIdCreatedNamePairClass = (target: any): target is IdCreatedNamePairClass => {
-    return isCommonClass(target, IdCreatedNamePairClass);
+export const isIdCreatedNamePairClass = (target: unknown): target is IdCreatedNamePairClass => {
+    return target instanceof IdCreatedNamePairClass;
 };
 
-export const isIdCreatedNamePairClassArray = (target: any): target is IdCreatedNamePairClass[] => {
-    return Array.isArray(target) && target.every((t) => isIdCreatedNamePairClass(t));
-};
+export class IdCreatedNamePairClass extends CommonBaseClass<
+    'idCreatedNamePair',
+    IdCreatedNamePairJson
+> {
+    private collection: AnyIdClass | null;
+    private generic: TypeListClass | null | undefined;
 
-export const idCreatedNamePairConvert = (
-    target: IdCreatedNamePairTypeClass,
-    errorClass: ErrorTypeClass[],
-): IdCreatedNamePairClass => {
-    const idCreatedNamePair = new IdCreatedNamePairClass();
+    constructor(target: IdCreatedNamePairTypeClass) {
+        let sourceSpan: SourceSpanInfo = {};
+        const errorInfo: ErrorInfo[] = [];
+        let assignIndex = 0;
 
-    const leftTypeClass = toTypeClass(target.getLeft(), isAnyIdType, errorClass);
-    if (leftTypeClass) {
-        idCreatedNamePair.setLeft(anyIdConvert(leftTypeClass));
-    }
-
-    const rightValue = target.getRight();
-    if (rightValue) {
-        const typeClass = toTypeClass(rightValue, isTypeListType, errorClass);
-        if (typeClass) {
-            idCreatedNamePair.setRight(typeListConvert(typeClass, errorClass));
+        const collection = assignClass(
+            target.getLeft(),
+            (target: unknown) => isTargetTypeClass(target, isAnyIdType),
+            (typeClass: AnyIdTypeClass) => new AnyIdClass(typeClass),
+        );
+        if (isErrorInfo(collection)) {
+            errorInfo.push(collection);
+        } else {
+            sourceSpan = { ...sourceSpan, collection: collection.getSourceSpan() };
+            assignIndex++;
         }
+
+        const generic = assignClassWithNull(
+            target.getRight(),
+            (target: unknown) => isTargetTypeClass(target, isTypeListType),
+            (typeClass: TypeListTypeClass) => new TypeListClass(typeClass),
+        );
+        if (isErrorInfo(generic)) {
+            errorInfo.push(generic);
+        } else if (isTypeListClass(generic)) {
+            sourceSpan = {
+                ...sourceSpan,
+                generic: generic.getSourceSpan(),
+            };
+            assignIndex++;
+        }
+
+        super(
+            'idCreatedNamePair',
+            Object.keys(sourceSpan).length === assignIndex
+                ? sourceSpan
+                : { ...sourceSpan, content: target.getSpan()! },
+            errorInfo,
+        );
+        this.collection = !isErrorInfo(collection) ? collection : null;
+        this.generic = !isErrorInfo(generic) ? (generic !== null ? generic : null) : undefined;
     }
 
-    return idCreatedNamePair;
-};
+    toJson(): IdCreatedNamePairJson {
+        let collection: Omit<AnyIdJson, 'sourceSpan'> | null = null;
+        if (this.collection) {
+            const { sourceSpan, ...rest } = this.collection.toJson();
+            collection = rest;
+        }
 
-export class MapCreatorRestPairClass extends CommonClass {
-    private left: ExpressionClass = new ExpressionClass();
-    private right: ExpressionClass = new ExpressionClass();
+        const json: IdCreatedNamePairJson = {
+            type: 'idCreatedNamePair',
+            collection: collection,
+            sourceSpan: this.getSourceSpan(),
+        };
 
-    setLeft(left: ExpressionClass): void {
-        this.left.copy(left);
-    }
+        if (this.generic !== undefined) {
+            if (this.generic) {
+                const { sourceSpan, ...rest } = this.generic.toJson();
+                json.generic = rest;
+            } else {
+                json.generic = null;
+            }
+        }
 
-    setRight(right: ExpressionClass): void {
-        this.right.copy(right);
-    }
-
-    getLeft(): ExpressionClass {
-        return this.left;
-    }
-
-    getRight(): ExpressionClass {
-        return this.right;
-    }
-
-    copy(commonClass: MapCreatorRestPairClass): void {
-        this.setLeft(commonClass.getLeft());
-        this.setRight(commonClass.getRight());
+        return json;
     }
 }
 
-export const isMapCreatorRestPairClass = (
-    target: CommonClass,
-): target is MapCreatorRestPairClass => {
-    return isCommonClass(target, MapCreatorRestPairClass);
+export type MapCreatorRestPairJson = CommonJson<'mapCreatorRestPair'> & {
+    key: Omit<AllExpressionJson, 'sourceSpan'> | null;
+    value: Omit<AllExpressionJson, 'sourceSpan'> | null;
+};
+export const isMapCreatorRestPairJson = typia.createIs<MapCreatorRestPairJson>();
+export const isMapCreatorRestPairClass = (target: unknown): target is MapCreatorRestPairClass => {
+    return target instanceof MapCreatorRestPairClass;
 };
 
-export const isMapCreatorRestPairClassArray = (
-    target: any,
-): target is MapCreatorRestPairClass[] => {
-    return Array.isArray(target) && target.every((t) => isMapCreatorRestPairClass(t));
-};
+export class MapCreatorRestPairClass extends CommonBaseClass<
+    'mapCreatorRestPair',
+    MapCreatorRestPairJson
+> {
+    private key: AllExpressionClass | null;
+    private value: AllExpressionClass | null;
 
-export const mapCreatorRestPairConvert = (
-    target: MapCreatorRestPairTypeClass,
-    errorClass: ErrorTypeClass[],
-): MapCreatorRestPairClass => {
-    const mapCreatorRestPair = new MapCreatorRestPairClass();
+    constructor(target: MapCreatorRestPairTypeClass) {
+        let sourceSpan: SourceSpanInfo = {};
+        const errorInfo: ErrorInfo[] = [];
+        let assignIndex = 0;
 
-    const leftTypeClass = toTypeClass(target.getLeft(), isExpressionTypeAll, errorClass);
-    if (leftTypeClass) {
-        mapCreatorRestPair.setLeft(expressionConvert(leftTypeClass, errorClass));
+        const key = assignElementClass(target.getLeft(), isExpressionTypeClass, expressionRules);
+
+        if (isErrorInfo(key)) {
+            errorInfo.push(key);
+        } else {
+            sourceSpan = { ...sourceSpan, key: key.getSourceSpan() };
+            assignIndex++;
+        }
+
+        const value = assignElementClass(target.getRight(), isExpressionTypeClass, expressionRules);
+
+        if (isErrorInfo(value)) {
+            errorInfo.push(value);
+        } else {
+            sourceSpan = { ...sourceSpan, value: value.getSourceSpan() };
+            assignIndex++;
+        }
+
+        super(
+            'mapCreatorRestPair',
+            Object.keys(sourceSpan).length === assignIndex
+                ? sourceSpan
+                : { ...sourceSpan, content: target.getSpan()! },
+            errorInfo,
+        );
+        this.key = !isErrorInfo(key) ? key : null;
+        this.value = !isErrorInfo(value) ? value : null;
     }
 
-    const rightTypeClass = toTypeClass(target.getRight(), isExpressionTypeAll, errorClass);
-    if (rightTypeClass) {
-        mapCreatorRestPair.setRight(expressionConvert(rightTypeClass, errorClass));
-    }
+    toJson(): MapCreatorRestPairJson {
+        let key: Omit<AllExpressionJson, 'sourceSpan'> | null = null;
+        if (this.key) {
+            const { sourceSpan, ...rest } = this.key.toJson();
+            key = rest;
+        }
 
-    return mapCreatorRestPair;
-};
+        let value: Omit<AllExpressionJson, 'sourceSpan'> | null = null;
+        if (this.value) {
+            const { sourceSpan, ...rest } = this.value.toJson();
+            value = rest;
+        }
+
+        return {
+            type: 'mapCreatorRestPair',
+            key: key,
+            value: value,
+            sourceSpan: this.getSourceSpan(),
+        };
+    }
+}

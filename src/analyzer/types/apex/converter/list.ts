@@ -36,6 +36,7 @@ import {
     isSubFieldEntryType,
     isFieldSpecType,
     isFromNameType,
+    TypeRefTypeClass,
 } from '../../apex_IR';
 
 import {
@@ -43,10 +44,13 @@ import {
     toTypeClass,
     SourceSpanInfo,
     CommonClass,
-    ElementClass,
+    assignClassArray,
     CommonJson,
     ErrorInfo,
     isErrorInfo,
+    CommonBaseClass,
+    assignElementClass,
+    isTargetTypeClass,
 } from './commons';
 import { IdClass, IdJson, AnyIdClass, AnyIdJson } from './id';
 import {
@@ -54,9 +58,10 @@ import {
     AllExpressionJson,
     AllExpressionClass,
     isExpressionTypeClass,
+    expressionRules,
 } from './expression';
 import { fieldNameConvert } from './name';
-import { TypeRefClass, typeRefConvert } from './type';
+import { TypeRefClass, TypeRefJson } from './type';
 import { NormalValueClass, normalValueConvert } from './value';
 import { FormalParameterClass, formalParameterConvert } from './parameter';
 import {
@@ -74,78 +79,117 @@ import {
     soqlFunctionConvert,
 } from './query';
 
-export const typeListConvert = (
-    target: TypeListTypeClass,
-    errorClass: ErrorTypeClass[],
-): TypeRefClass[] => {
-    const values: TypeRefClass[] = [];
-    target.getValue().forEach((item) => {
-        const valueTypeClass = toTypeClass(item, isTypeRefType, errorClass);
-        if (valueTypeClass) {
-            values.push(typeRefConvert(valueTypeClass, errorClass));
-        }
-    });
-    return values;
+export type TypeListJson = CommonJson<'typeList'> & {
+    typeList: (Omit<TypeRefJson, 'sourceSpan'> | null)[];
+};
+export const isTypeListJson = typia.createIs<TypeListJson>();
+
+export const isTypeListClass = (target: unknown): target is TypeListClass => {
+    return target instanceof TypeListClass;
 };
 
+export class TypeListClass extends CommonBaseClass<'typeList', TypeListJson> {
+    private typeList: (TypeRefClass | null)[];
+
+    constructor(target: TypeListTypeClass) {
+        const typeList: (TypeRefClass | null)[] = [];
+        const sourceSpanArray: SourceSpanInfo[] = [];
+        const errorInfo: ErrorInfo[] = [];
+
+        const typeListValue = assignClassArray(
+            target.getValue(),
+            (target: unknown) => isTargetTypeClass(target, isTypeRefType),
+            (typeClass: TypeRefTypeClass) => new TypeRefClass(typeClass),
+        );
+        typeListValue.forEach((t) => {
+            if (isErrorInfo(t)) {
+                errorInfo.push(t);
+                typeList.push(null);
+            } else {
+                sourceSpanArray.push({ typeList: t.getSourceSpan() });
+                typeList.push(t);
+            }
+        });
+
+        super(
+            'typeList',
+            sourceSpanArray.length !== typeList.filter((t) => t !== null).length
+                ? { content: target.getSpan()!, typeList: sourceSpanArray }
+                : sourceSpanArray,
+            errorInfo,
+        );
+        this.typeList = typeList;
+    }
+
+    toJson(): TypeListJson {
+        return {
+            type: 'typeList',
+            typeList: this.typeList.map((t) => {
+                if (t) {
+                    const { sourceSpan, ...rest } = t.toJson();
+                    return rest;
+                }
+                return null;
+            }),
+            sourceSpan: this.getSourceSpan(),
+        };
+    }
+}
+
 export type ExpressionListJson = CommonJson<'expressionList'> & {
-    expressionList: Omit<AllExpressionJson, 'sourceSpan'>[];
+    expressionList: (Omit<AllExpressionJson, 'sourceSpan'> | null)[];
 };
 export const isExpressionListJson = typia.createIs<ExpressionListJson>();
 
-export class ExpressionListClass implements CommonClass<'expressionList', ExpressionListJson> {
-    private value: AllExpressionClass[] = [];
-    private sourceSpan: SourceSpanInfo | SourceSpanInfo[];
-    private errorInfo: ErrorInfo[] = [];
+export const isExpressionListClass = (target: unknown): target is ExpressionListClass => {
+    return target instanceof ExpressionListClass;
+};
+
+export class ExpressionListClass extends CommonBaseClass<'expressionList', ExpressionListJson> {
+    private expressionList: (AllExpressionClass | null)[] = [];
 
     constructor(target: ExpressionListTypeClass) {
+        const expressionList: (AllExpressionClass | null)[] = [];
         const sourceSpanArray: SourceSpanInfo[] = [];
+        const errorInfo: ErrorInfo[] = [];
 
         target.getValue().forEach((value) => {
-            const expressionValue = toTypeClass(value, isExpressionTypeClass);
-            if (isErrorInfo(expressionValue)) {
-                this.errorInfo.push(expressionValue);
+            const expressionClass = assignElementClass(
+                value,
+                isExpressionTypeClass,
+                expressionRules,
+            );
+            if (isErrorInfo(expressionClass)) {
+                errorInfo.push(expressionClass);
+                expressionList.push(null);
             } else {
-                const expressionClass = new ExpressionElementClass(
-                    expressionValue,
-                ).getCommonClass();
-                this.value.push(expressionClass);
+                expressionList.push(expressionClass);
                 sourceSpanArray.push({
-                    [expressionClass.getType()]: expressionClass.getSourceSpan(),
+                    expressionList: expressionClass.getSourceSpan(),
                 });
             }
         });
 
-        if (sourceSpanArray.length > 0) {
-            this.sourceSpan = sourceSpanArray;
-        } else {
-            this.sourceSpan = { content: target.getSpan()! };
-        }
+        super(
+            'expressionList',
+            sourceSpanArray.length !== expressionList.filter((e) => e !== null).length
+                ? { content: target.getSpan()!, expressionList: sourceSpanArray }
+                : sourceSpanArray,
+            errorInfo,
+        );
+        this.expressionList = expressionList;
     }
-    getErrorInfo(): ErrorInfo[] {
-        return this.errorInfo;
-    }
-
-    getType(): 'expressionList' {
-        return 'expressionList';
-    }
-
-    getValue(): AllExpressionClass[] {
-        return this.value;
-    }
-
-    getSourceSpan(): SourceSpanInfo | SourceSpanInfo[] {
-        return this.sourceSpan;
-    }
-
     toJson(): ExpressionListJson {
         return {
             type: 'expressionList',
-            sourceSpan: this.sourceSpan,
-            expressionList: this.value.map((expressionClass) => {
-                const { sourceSpan, ...rest } = expressionClass.toJson();
-                return rest;
+            expressionList: this.expressionList.map((expressionClass) => {
+                if (expressionClass) {
+                    const { sourceSpan, ...rest } = expressionClass.toJson();
+                    return rest;
+                }
+                return null;
             }),
+            sourceSpan: this.getSourceSpan(),
         };
     }
 }

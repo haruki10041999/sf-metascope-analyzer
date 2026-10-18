@@ -26,17 +26,20 @@ import {
     isTypeRefType,
     isNormalLiteralType,
     isSoslLiteralType,
+    NormalIdTypeClass,
 } from '../../apex_IR';
 
 import {
     toPrimitiveValue,
-    toTypeClass,
     SourceSpanInfo,
-    CommonClass,
-    ElementClass,
+    CommonBaseClass,
+    ElementBaseClass,
     CommonJson,
     ErrorInfo,
     isErrorInfo,
+    assignClassToElementClass,
+    assignClass,
+    isTargetTypeClass,
 } from './commons';
 import { IdJson, IdClass, isString } from './id';
 import { TypeRefClass, typeRefConvert } from './type';
@@ -52,48 +55,26 @@ import {
 export type PrimaryJson = CommonJson<'primary'> & {
     primary: string | null;
 };
-
 export const isPrimaryJson = typia.createIs<PrimaryJson>();
 
-class PrimaryClass implements CommonClass<'primary', PrimaryJson> {
-    private value: string | null;
-    private sourceSpan: SourceSpanInfo;
-    private errorInfo: ErrorInfo | null;
+export const isPrimaryClass = (target: unknown): target is PrimaryClass => {
+    return target instanceof PrimaryClass;
+};
+
+class PrimaryClass extends CommonBaseClass<'primary', PrimaryJson> {
+    private primary: string | null;
 
     constructor(target: NormalPrimaryTypeClass) {
-        const value = toPrimitiveValue(target.getValue(), isString);
-
-        if (isErrorInfo(value)) {
-            this.errorInfo = value;
-            this.value = null;
-        } else {
-            this.errorInfo = null;
-            this.value = value;
-        }
-
-        this.sourceSpan = { content: target.getSpan()! };
-    }
-    getErrorInfo(): ErrorInfo | null {
-        return this.errorInfo;
-    }
-
-    getType(): 'primary' {
-        return 'primary';
-    }
-
-    getValue(): string | null {
-        return this.value;
-    }
-
-    getSourceSpan(): SourceSpanInfo {
-        return this.sourceSpan;
+        const primary = toPrimitiveValue(target.getValue(), isString);
+        super('primary', target.getSpan()!, isErrorInfo(primary) ? primary : null);
+        this.primary = !isErrorInfo(primary) ? primary : null;
     }
 
     toJson(): PrimaryJson {
         return {
             type: 'primary',
-            primary: this.value,
-            sourceSpan: this.sourceSpan,
+            primary: this.primary,
+            sourceSpan: this.getSourceSpan(),
         };
     }
 }
@@ -103,45 +84,24 @@ export type ThisPrimaryJson = CommonJson<'thisPrimary'> & {
 };
 export const isThisPrimaryJson = typia.createIs<ThisPrimaryJson>();
 
-class ThisPrimaryClass implements CommonClass<'thisPrimary', ThisPrimaryJson> {
-    private value: string | null;
-    private sourceSpan: SourceSpanInfo;
-    private errorInfo: ErrorInfo | null;
+export const isThisPrimaryClass = (target: unknown): target is ThisPrimaryClass => {
+    return target instanceof ThisPrimaryClass;
+};
 
-    constructor(target: ThisPrimaryTypeClass) {
-        const value = toPrimitiveValue(target.getValue(), isString);
+class ThisPrimaryClass extends CommonBaseClass<'thisPrimary', ThisPrimaryJson> {
+    private thisPrimary: string | null;
 
-        if (isErrorInfo(value)) {
-            this.errorInfo = value;
-            this.value = null;
-        } else {
-            this.errorInfo = null;
-            this.value = value;
-        }
-
-        this.sourceSpan = { content: target.getSpan()! };
-    }
-    getErrorInfo(): ErrorInfo | null {
-        return this.errorInfo;
-    }
-
-    getType(): 'thisPrimary' {
-        return 'thisPrimary';
-    }
-
-    getValue(): string | null {
-        return this.value;
-    }
-
-    getSourceSpan(): SourceSpanInfo {
-        return this.sourceSpan;
+    constructor(target: NormalPrimaryTypeClass) {
+        const thisPrimary = toPrimitiveValue(target.getValue(), isString);
+        super('thisPrimary', target.getSpan()!, isErrorInfo(thisPrimary) ? thisPrimary : null);
+        this.thisPrimary = !isErrorInfo(thisPrimary) ? thisPrimary : null;
     }
 
     toJson(): ThisPrimaryJson {
         return {
             type: 'thisPrimary',
-            thisPrimary: this.value,
-            sourceSpan: this.sourceSpan,
+            thisPrimary: this.thisPrimary,
+            sourceSpan: this.getSourceSpan(),
         };
     }
 }
@@ -151,45 +111,24 @@ export type VoidPrimaryJson = CommonJson<'voidPrimary'> & {
 };
 export const isVoidPrimaryJson = typia.createIs<VoidPrimaryJson>();
 
-class VoidPrimaryClass implements CommonClass<'voidPrimary', VoidPrimaryJson> {
-    private value: string | null;
-    private sourceSpan: SourceSpanInfo;
-    private errorInfo: ErrorInfo | null;
+export const isVoidPrimaryClass = (target: unknown): target is VoidPrimaryClass => {
+    return target instanceof VoidPrimaryClass;
+};
 
-    constructor(target: VoidPrimaryTypeClass) {
-        const value = toPrimitiveValue(target.getValue(), isString);
+class VoidPrimaryClass extends CommonBaseClass<'voidPrimary', VoidPrimaryJson> {
+    private voidPrimary: string | null;
 
-        if (isErrorInfo(value)) {
-            this.errorInfo = value;
-            this.value = null;
-        } else {
-            this.errorInfo = null;
-            this.value = value;
-        }
-
-        this.sourceSpan = { content: target.getSpan()! };
-    }
-    getErrorInfo(): ErrorInfo | null {
-        return this.errorInfo;
-    }
-
-    getType(): 'voidPrimary' {
-        return 'voidPrimary';
-    }
-
-    getValue(): string | null {
-        return this.value;
-    }
-
-    getSourceSpan(): SourceSpanInfo {
-        return this.sourceSpan;
+    constructor(target: NormalPrimaryTypeClass) {
+        const voidPrimary = toPrimitiveValue(target.getValue(), isString);
+        super('voidPrimary', target.getSpan()!, isErrorInfo(voidPrimary) ? voidPrimary : null);
+        this.voidPrimary = !isErrorInfo(voidPrimary) ? voidPrimary : null;
     }
 
     toJson(): VoidPrimaryJson {
         return {
             type: 'voidPrimary',
-            voidPrimary: this.value,
-            sourceSpan: this.sourceSpan,
+            voidPrimary: this.voidPrimary,
+            sourceSpan: this.getSourceSpan(),
         };
     }
 }
@@ -199,99 +138,70 @@ export type SuperPrimaryJson = CommonJson<'superPrimary'> & {
 };
 export const isSuperPrimaryJson = typia.createIs<SuperPrimaryJson>();
 
-class SuperPrimaryClass implements CommonClass<'superPrimary', SuperPrimaryJson> {
-    private value: string | null;
-    private sourceSpan: SourceSpanInfo;
-    private errorInfo: ErrorInfo | null;
+export const isSuperPrimaryClass = (target: unknown): target is SuperPrimaryClass => {
+    return target instanceof SuperPrimaryClass;
+};
 
-    constructor(target: SuperPrimaryTypeClass) {
-        const value = toPrimitiveValue(target.getValue(), isString);
+class SuperPrimaryClass extends CommonBaseClass<'superPrimary', SuperPrimaryJson> {
+    private superPrimary: string | null;
 
-        if (isErrorInfo(value)) {
-            this.errorInfo = value;
-            this.value = null;
-        } else {
-            this.errorInfo = null;
-            this.value = value;
-        }
-
-        this.sourceSpan = { content: target.getSpan()! };
-    }
-    getErrorInfo(): ErrorInfo | null {
-        return this.errorInfo;
-    }
-
-    getType(): 'superPrimary' {
-        return 'superPrimary';
-    }
-
-    getValue(): string | null {
-        return this.value;
-    }
-
-    getSourceSpan(): SourceSpanInfo {
-        return this.sourceSpan;
+    constructor(target: NormalPrimaryTypeClass) {
+        const superPrimary = toPrimitiveValue(target.getValue(), isString);
+        super('superPrimary', target.getSpan()!, isErrorInfo(superPrimary) ? superPrimary : null);
+        this.superPrimary = !isErrorInfo(superPrimary) ? superPrimary : null;
     }
 
     toJson(): SuperPrimaryJson {
         return {
             type: 'superPrimary',
-            superPrimary: this.value,
-            sourceSpan: this.sourceSpan,
+            superPrimary: this.superPrimary,
+            sourceSpan: this.getSourceSpan(),
         };
     }
 }
 
-export type IdPrimaryJson = CommonJson<'idPrimary'> & { idPrimary?: Omit<IdJson, 'sourceSpan'> };
-
+export type IdPrimaryJson = CommonJson<'idPrimary'> & {
+    idPrimary: Omit<IdJson, 'sourceSpan'> | null;
+};
 export const isIdPrimaryJson = typia.createIs<IdPrimaryJson>();
 
-class IdPrimaryClass implements CommonClass<'idPrimary', IdPrimaryJson> {
-    private value: IdClass | null;
-    private sourceSpan: SourceSpanInfo;
-    private errorInfo: ErrorInfo | null;
+export const isIdPrimaryClass = (target: unknown): target is IdPrimaryClass => {
+    return target instanceof IdPrimaryClass;
+};
+
+class IdPrimaryClass extends CommonBaseClass<'idPrimary', IdPrimaryJson> {
+    private idPrimary: IdClass | null;
 
     constructor(target: IdPrimaryTypeClass) {
-        const value = toTypeClass(target.getValue(), isNormalIdType);
-
-        if (isErrorInfo(value)) {
-            this.errorInfo = value;
-            this.value = null;
-            this.sourceSpan = { content: target.getSpan()! };
-        } else {
-            this.errorInfo = null;
-            this.value = new IdClass(value);
-            this.sourceSpan = { [this.value.getType()]: this.value.getSourceSpan() };
-        }
-    }
-    getErrorInfo(): ErrorInfo | null {
-        return this.errorInfo;
-    }
-
-    getType(): 'idPrimary' {
-        return 'idPrimary';
-    }
-
-    getValue(): IdClass | null {
-        return this.value;
-    }
-
-    getSourceSpan(): SourceSpanInfo {
-        return this.sourceSpan;
+        const id = assignClass(
+            target.getValue(),
+            (target: unknown): target is NormalIdTypeClass =>
+                isTargetTypeClass(target, isNormalIdType),
+            (typeClass: NormalIdTypeClass) => new IdClass(typeClass),
+        );
+        super(
+            'idPrimary',
+            isErrorInfo(id) ? target.getSpan()! : { [id.getType()]: id.getSourceSpan() },
+            isErrorInfo(id) ? id : null,
+        );
+        this.idPrimary = !isErrorInfo(id) ? id : null;
     }
 
     toJson(): IdPrimaryJson {
-        const json: IdPrimaryJson = {
-            type: 'idPrimary',
-            sourceSpan: this.sourceSpan,
-        };
-
-        if (this.value) {
-            const { sourceSpan, ...rest } = this.value.toJson();
-            json.idPrimary = rest;
+        if (this.idPrimary) {
+            const { sourceSpan, ...id } = this.idPrimary.toJson();
+            return {
+                type: 'idPrimary',
+                idPrimary: id,
+                sourceSpan: this.getSourceSpan(),
+            };
+        } else {
+            return {
+                type: 'idPrimary',
+                idPrimary: null,
+                sourceSpan: this.getSourceSpan(),
+            };
         }
-
-        return json;
     }
 }
 
@@ -356,52 +266,44 @@ export type AllPrimaryClass =
 export type AllPrimaryJson =
     PrimaryJson | ThisPrimaryJson | VoidPrimaryJson | IdPrimaryJson | SuperPrimaryJson;
 
-export class PrimaryElementClass implements ElementClass<
-    'primary' | 'thisPrimary' | 'voidPrimary' | 'idPrimary' | 'superPrimary',
-    AllPrimaryClass
-> {
-    private commonClass: AllPrimaryClass;
+export const primaryRules = [
+    {
+        isValid: (target: unknown): target is NormalPrimaryTypeClass =>
+            isTargetTypeClass(target, isNormalPrimaryType),
+        construct: (target: NormalPrimaryTypeClass) => new PrimaryClass(target),
+    },
+    {
+        isValid: (target: unknown): target is VoidPrimaryTypeClass =>
+            isTargetTypeClass(target, isVoidPrimaryType),
+        construct: (target: VoidPrimaryTypeClass) => new VoidPrimaryClass(target),
+    },
+    {
+        isValid: (target: unknown): target is SuperPrimaryTypeClass =>
+            isTargetTypeClass(target, isSuperPrimaryType),
+        construct: (target: SuperPrimaryTypeClass) => new SuperPrimaryClass(target),
+    },
+    {
+        isValid: (target: unknown): target is ThisPrimaryTypeClass =>
+            isTargetTypeClass(target, isThisPrimaryType),
+        construct: (target: ThisPrimaryTypeClass) => new ThisPrimaryClass(target),
+    },
+    {
+        isValid: (target: unknown): target is IdPrimaryTypeClass =>
+            isTargetTypeClass(target, isIdPrimaryType),
+        construct: (target: IdPrimaryTypeClass) => new IdPrimaryClass(target),
+    },
+] as const;
 
-    constructor(
-        target:
-            | NormalPrimaryTypeClass
-            | ThisPrimaryTypeClass
-            | VoidPrimaryTypeClass
-            | IdPrimaryTypeClass
-            | SuperPrimaryTypeClass,
-    ) {
-        if (isNormalPrimaryType(target)) {
-            this.commonClass = new PrimaryClass(target);
-            return;
-        }
-
-        if (isThisPrimaryType(target)) {
-            this.commonClass = new ThisPrimaryClass(target);
-            return;
-        }
-
-        if (isVoidPrimaryType(target)) {
-            this.commonClass = new VoidPrimaryClass(target);
-            return;
-        }
-
-        if (isIdPrimaryType(target)) {
-            this.commonClass = new IdPrimaryClass(target);
-            return;
-        }
-
-        if (isSuperPrimaryType(target)) {
-            this.commonClass = new SuperPrimaryClass(target);
-            return;
-        }
-
-        throw new Error('Unsupported primary type: ');
-    }
-
-    getCommonClass(): AllPrimaryClass {
-        return this.commonClass;
-    }
-}
+export class PrimaryElementClass extends ElementBaseClass<
+    [
+        | NormalPrimaryTypeClass
+        | ThisPrimaryTypeClass
+        | VoidPrimaryTypeClass
+        | IdPrimaryTypeClass
+        | SuperPrimaryTypeClass,
+    ],
+    typeof primaryRules
+> {}
 
 export const isPrimaryTypeClass = (
     target: any,
@@ -417,15 +319,25 @@ export const isPrimaryTypeClass = (
     // | SoslPrimaryTypeClass => {
 
     return (
-        target instanceof CommonTypeClass ||
-        isNormalPrimaryType(target) ||
-        isThisPrimaryType(target) ||
-        isVoidPrimaryType(target) ||
-        isIdPrimaryType(target) ||
-        isSuperPrimaryType(target)
+        target instanceof CommonTypeClass &&
+        (isNormalPrimaryType(target) ||
+            isThisPrimaryType(target) ||
+            isVoidPrimaryType(target) ||
+            isIdPrimaryType(target) ||
+            isSuperPrimaryType(target))
         // isSoslPrimaryType(target) ||
         // isLiteralPrimaryType(target) ||
         // isTypeRefPrimaryType(target) ||
         // isSoqlPrimaryType(target)
+    );
+};
+
+export const isAllPrimaryClass = (target: unknown): target is AllPrimaryClass => {
+    return (
+        isPrimaryClass(target) ||
+        isVoidPrimaryClass(target) ||
+        isSuperPrimaryClass(target) ||
+        isThisPrimaryClass(target) ||
+        isIdPrimaryClass(target)
     );
 };
