@@ -1,6 +1,28 @@
 import typia from 'typia';
 
-import { TypeRefClass, TypeNameClass } from './converter';
+import {
+    TypeRefTypeClass,
+    TypeNameTypeClass,
+    TypeListTypeClass,
+    TypeArgumentsTypeClass,
+    isTypeRefType,
+    isNormalIdType,
+    NormalIdTypeClass,
+    isTypeArgumentsType,
+    isTypeListType,
+    isTypeNameType,
+    isArraySubscriptsType,
+    ArraySubscriptsTypeClass,
+} from '../apex_IR';
+
+import {
+    SourceInfo,
+    ErrorInfo,
+    assignMultiClass,
+    makeErrorAssignRule,
+    isTargetTypeClass,
+    splitSourceInfo,
+} from './commons';
 
 const isPrimitiveType = (type: string): boolean => {
     return [
@@ -80,6 +102,144 @@ export type TypeType =
     PrimitiveTypeType | CustomTypeType | ArrayTypeType | ListTypeType | SetTypeType | MapTypeType;
 
 export const isTypeType = typia.createIs<TypeType>();
+
+export const makeTypeListType = (
+    type: string,
+    typeListTypeClass: TypeListTypeClass,
+    sourceInfo: { [key: string]: SourceInfo },
+    errorInfo: ErrorInfo[],
+) => {
+    const typeListType = typeListTypeClass.getType();
+
+    return assignMultiClass(typeListTypeClass.getValue(), [
+        {
+            isValid: (target: unknown) => isTargetTypeClass(target, isTypeRefType),
+            construct: (typeClass: TypeRefTypeClass) => {
+                return makeTypeRefType(
+                    [type, typeListType].join('_'),
+                    typeClass,
+                    sourceInfo,
+                    errorInfo,
+                );
+            },
+        },
+        makeErrorAssignRule(errorInfo),
+    ]);
+};
+
+export const makeTypeNameType = (
+    type: string,
+    typeNameTypeClass: TypeNameTypeClass,
+    sourceInfo: { [key: string]: SourceInfo },
+    errorInfo: ErrorInfo[],
+) => {
+    const typeNameType = typeNameTypeClass.getType();
+    const collection = assignMultiClass(typeNameTypeClass.getValue(), [
+        {
+            isValid: (target: unknown) => isTargetTypeClass(target, isNormalIdType),
+            construct: (typeClass: NormalIdTypeClass) => {
+                return splitSourceInfo(
+                    typeClass,
+                    [type, typeNameType, typeClass.getType()].join('_'),
+                    sourceInfo,
+                ).getValue();
+            },
+        },
+        {
+            isValid: (target: unknown) => typeof target === 'string' && target === 'list',
+            construct: (typeClass: 'list') => {
+                return typeClass;
+            },
+        },
+        {
+            isValid: (target: unknown) => typeof target === 'string' && target === 'set',
+            construct: (typeClass: 'set') => {
+                return typeClass;
+            },
+        },
+        {
+            isValid: (target: unknown) => typeof target === 'string' && target === 'map',
+            construct: (typeClass: 'map') => {
+                return typeClass;
+            },
+        },
+        makeErrorAssignRule(errorInfo),
+    ]);
+    const generic = assignMultiClass(typeNameTypeClass.getGeneric(), [
+        {
+            isValid: (target: unknown) => isTargetTypeClass(target, isTypeArgumentsType),
+            construct: (typeClass: TypeArgumentsTypeClass) => {
+                const typeArugumentsType = typeClass.getType();
+                return assignMultiClass(typeClass.getValue(), [
+                    {
+                        isValid: (target: unknown) => isTargetTypeClass(target, isTypeListType),
+                        construct: (typeClass: TypeListTypeClass) => {
+                            return makeTypeListType(
+                                [type, typeNameType, typeArugumentsType].join('_'),
+                                typeClass,
+                                sourceInfo,
+                                errorInfo,
+                            );
+                        },
+                    },
+                    makeErrorAssignRule(errorInfo),
+                ]);
+            },
+        },
+        makeErrorAssignRule(errorInfo),
+    ]);
+};
+
+export const makeTypeRefType = (
+    type: string,
+    typeRefTypeClass: TypeRefTypeClass,
+    sourceInfo: { [key: string]: SourceInfo },
+    errorInfo: ErrorInfo[],
+) => {
+    const typeRefType = typeRefTypeClass.getType();
+    const typeRef = typeRefTypeClass.getValue().forEach((v) => {
+        return assignMultiClass(v, [
+            {
+                isValid: (target: unknown) => isTargetTypeClass(target, isTypeNameType),
+                construct: (typeClass: TypeNameTypeClass) => {
+                    return makeTypeNameType(
+                        [type, typeRefType].join('_'),
+                        typeClass,
+                        sourceInfo,
+                        errorInfo,
+                    );
+                },
+            },
+            makeErrorAssignRule(errorInfo),
+        ]);
+    });
+    const arrayDimension = assignMultiClass(typeRefTypeClass.getDimension(), [
+        {
+            isValid: (target: unknown) => isTargetTypeClass(target, isArraySubscriptsType),
+            construct: (typeClass: ArraySubscriptsTypeClass) => {
+                const arraySubscriptsType = typeClass.getType();
+                const arraySubscriptsTypeClass = typeClass;
+                return assignMultiClass(typeClass, [
+                    {
+                        isValid: (target: unknown) => typeof target === 'number',
+                        construct: (typeClass: number) => {
+                            splitSourceInfo(
+                                arraySubscriptsTypeClass,
+                                [type, typeRefType, arraySubscriptsType].join('_'),
+                                sourceInfo,
+                            );
+                            return typeClass;
+                        },
+                    },
+                    makeErrorAssignRule(errorInfo),
+                ]);
+            },
+        },
+        makeErrorAssignRule(errorInfo),
+    ]);
+
+    return { type, arrayDimension };
+};
 
 export const makeTypeType = (type: TypeRefClass): TypeType | undefined => {
     const value = type.getValue();
