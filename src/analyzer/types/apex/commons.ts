@@ -9,12 +9,14 @@ import {
     isErrorType,
 } from '../apex_IR';
 
-export type SourceInfo = {
+export type Source = {
     type: string;
     start: SourcePosition;
     end: SourcePosition;
 };
+
 export const isSourceInfo = typia.createIs<SourceInfo>();
+
 export const makeSourceInfo = (typeClass: CommonTypeClass): SourceInfo => {
     return {
         type: typeClass.getType(),

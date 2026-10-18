@@ -7,6 +7,7 @@ export type SourcePosition = {
 };
 
 export type SourceSpan = {
+    context: string;
     start: SourcePosition;
     end: SourcePosition;
 };
@@ -128,12 +129,13 @@ export const getSourceSpan = (ctx: ApexParserRuleContext): SourceSpan | null => 
     const stop = ctx.stop;
     // 空のルール（例: 次元 0 の arraySubscripts）は stop が start より前のトークンになる
     if (!stop || stop.tokenIndex < start.tokenIndex) {
-        return { start: startPosition, end: startPosition };
+        return { context: ctx.getText(), start: startPosition, end: startPosition };
     }
 
     const lines = (stop.text ?? '').split('\n');
     const lastLine = lines[lines.length - 1] ?? '';
     return {
+        context: ctx.getText(),
         start: startPosition,
         end: {
             offset: stop.stop + 1,
