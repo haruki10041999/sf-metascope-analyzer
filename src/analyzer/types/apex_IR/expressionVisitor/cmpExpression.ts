@@ -2,21 +2,21 @@ import { CmpExpressionContext } from '@apexdevtools/apex-parser';
 
 import {
     DoubleOperatorExpressionTypeClass,
-    ExpressionAllTypeClass,
+    BasedExpressionTypeClass,
     ExpressionVisitor,
-    isExpressionTypeAll,
+    isBasedExpressionTypeClass,
 } from '.';
 
 import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
 
 export class CmpExpressionTypeClass extends DoubleOperatorExpressionTypeClass<
-    ExpressionAllTypeClass,
+    BasedExpressionTypeClass,
     string,
-    ExpressionAllTypeClass
+    BasedExpressionTypeClass
 > {
     private constructor(
-        left: ExpressionAllTypeClass | ErrorTypeClass,
-        right: ExpressionAllTypeClass | ErrorTypeClass,
+        left: BasedExpressionTypeClass | ErrorTypeClass,
+        right: BasedExpressionTypeClass | ErrorTypeClass,
         operator: string,
     ) {
         super('cmpExpression', left, right, operator);
@@ -30,12 +30,12 @@ export class CmpExpressionTypeClass extends DoubleOperatorExpressionTypeClass<
         return new CmpExpressionTypeClass(
             isValidClass(
                 new ExpressionVisitor().visit(ctx.expression(0)),
-                isExpressionTypeAll,
+                isBasedExpressionTypeClass,
                 'expression',
             ),
             isValidClass(
                 new ExpressionVisitor().visit(ctx.expression(1)),
-                isExpressionTypeAll,
+                isBasedExpressionTypeClass,
                 'expression',
             ),
             // `<=` / `>=` は LT/GT と ASSIGN の 2 トークンで表現される

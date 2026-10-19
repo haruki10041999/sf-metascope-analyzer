@@ -1,16 +1,16 @@
 import { PostOpExpressionContext } from '@apexdevtools/apex-parser';
 
 import {
-    ExpressionAllTypeClass,
+    BasedExpressionTypeClass,
     ExpressionVisitor,
-    isExpressionTypeAll,
+    isBasedExpressionTypeClass,
     SingleOperatorExpressionTypeClass,
 } from '.';
 
 import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
 
-export class PostOpExpressionTypeClass extends SingleOperatorExpressionTypeClass<ExpressionAllTypeClass> {
-    private constructor(value: ExpressionAllTypeClass | ErrorTypeClass, operator: string) {
+export class PostOpExpressionTypeClass extends SingleOperatorExpressionTypeClass<BasedExpressionTypeClass> {
+    private constructor(value: BasedExpressionTypeClass | ErrorTypeClass, operator: string) {
         super('postOpExpression', value, operator);
     }
 
@@ -22,7 +22,7 @@ export class PostOpExpressionTypeClass extends SingleOperatorExpressionTypeClass
         return new PostOpExpressionTypeClass(
             isValidClass(
                 new ExpressionVisitor().visit(ctx.expression()),
-                isExpressionTypeAll,
+                isBasedExpressionTypeClass,
                 'expression',
             ),
             ctx.INC() ? '++' : '--',

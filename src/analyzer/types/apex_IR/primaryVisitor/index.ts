@@ -13,18 +13,20 @@ import {
 // 各ファイルより先に base を評価させ、循環 import 時の TDZ を防ぐ
 export * from './base';
 import type { PrimaryTypeClass } from './base';
+import type { BasedPrimaryTypeClass } from './basedPrimary';
+export type { BasedPrimaryTypeClass };
 
-import { NormalPrimaryTypeClass } from './normal';
-import { ThisPrimaryTypeClass } from './thisPrimary';
-import { VoidPrimaryTypeClass } from './voidPrimary';
-import { SoqlPrimaryTypeClass } from './soqlPrimary';
-import { SuperPrimaryTypeClass } from './superPrimary';
-import { TypeRefPrimaryTypeClass } from './typeRefPrimary';
-import { IdPrimaryTypeClass } from './idPrimary';
-import { LiteralPrimaryTypeClass } from './literalPrimary';
-import { SoslPrimaryTypeClass } from './soslPrimary';
+import { isNormalPrimaryType, NormalPrimaryTypeClass } from './normal';
+import { isThisPrimaryType, ThisPrimaryTypeClass } from './thisPrimary';
+import { isVoidPrimaryType, VoidPrimaryTypeClass } from './voidPrimary';
+import { isSoqlPrimaryType, SoqlPrimaryTypeClass } from './soqlPrimary';
+import { isSuperPrimaryType, SuperPrimaryTypeClass } from './superPrimary';
+import { isTypeRefPrimaryType, TypeRefPrimaryTypeClass } from './typeRefPrimary';
+import { isIdPrimaryType, IdPrimaryTypeClass } from './idPrimary';
+import { isLiteralPrimaryType, LiteralPrimaryTypeClass } from './literalPrimary';
+import { isSoslPrimaryType, SoslPrimaryTypeClass } from './soslPrimary';
 
-import { CommonVisitor } from '../commonVisitor';
+import { CommonTypeClass, CommonVisitor } from '../commonVisitor';
 
 export { isNormalPrimaryType, NormalPrimaryTypeClass } from './normal';
 export { isThisPrimaryType, ThisPrimaryTypeClass } from './thisPrimary';
@@ -35,6 +37,20 @@ export { isIdPrimaryType, IdPrimaryTypeClass } from './idPrimary';
 export { isLiteralPrimaryType, LiteralPrimaryTypeClass } from './literalPrimary';
 export { isSoslPrimaryType, SoslPrimaryTypeClass } from './soslPrimary';
 export { isTypeRefPrimaryType, TypeRefPrimaryTypeClass } from './typeRefPrimary';
+
+export const isBasedPrimaryType = (target: CommonTypeClass): target is BasedPrimaryTypeClass => {
+    return (
+        isNormalPrimaryType(target) ||
+        isThisPrimaryType(target) ||
+        isVoidPrimaryType(target) ||
+        isSoqlPrimaryType(target) ||
+        isSuperPrimaryType(target) ||
+        isTypeRefPrimaryType(target) ||
+        isIdPrimaryType(target) ||
+        isLiteralPrimaryType(target) ||
+        isSoslPrimaryType(target)
+    );
+};
 
 export class PrimaryVisitor extends CommonVisitor<PrimaryTypeClass<unknown>> {
     visitPrimary(ctx: PrimaryContext) {

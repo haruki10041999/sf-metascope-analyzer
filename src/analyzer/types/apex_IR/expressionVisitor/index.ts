@@ -37,7 +37,8 @@ import {
 
 // 各ファイルより先に base を評価させ、循環 import 時の TDZ を防ぐ
 export * from './base';
-import type { ExpressionAllTypeClass } from './base';
+import type { BasedExpressionTypeClass } from './basedExpression';
+export type { BasedExpressionTypeClass } from './basedExpression';
 
 import { ArrayExpressionTypeClass } from './arrayExpression';
 import { Arth1ExpressionTypeClass } from './arth1Expression';
@@ -74,7 +75,7 @@ import { WhereLogicalExpressionTypeClass } from './whereLogicalExpression';
 import { WhereConditionalExpressionTypeClass } from './whereConditionalExpression';
 import { WhereFieldExpressionTypeClass } from './whereFieldExpression';
 
-import { CommonVisitor } from '../commonVisitor';
+import { CommonTypeClass, CommonVisitor } from '../commonVisitor';
 
 export { isArrayExpressionType, ArrayExpressionTypeClass } from './arrayExpression';
 export { isArth1ExpressionType, Arth1ExpressionTypeClass } from './arth1Expression';
@@ -120,7 +121,39 @@ export {
 } from './whereConditionalExpression';
 export { isFilteringExpressionType, FilteringExpressionTypeClass } from './filteringExpression';
 
-export class ExpressionVisitor extends CommonVisitor<ExpressionAllTypeClass> {
+export const isBasedExpressionTypeClass = (
+    target: CommonTypeClass,
+): target is BasedExpressionTypeClass => {
+    return (
+        target instanceof NormalExpressionTypeClass ||
+        target instanceof PrimaryExpressionTypeClass ||
+        target instanceof DotExpressionTypeClass ||
+        target instanceof MethodCallExpressionTypeClass ||
+        target instanceof NewExpressionTypeClass ||
+        target instanceof CastExpressionTypeClass ||
+        target instanceof SubExpressionTypeClass ||
+        target instanceof ArrayExpressionTypeClass ||
+        target instanceof Arth1ExpressionTypeClass ||
+        target instanceof Arth2ExpressionTypeClass ||
+        target instanceof AssignExpressionTypeClass ||
+        target instanceof BitAndExpressionTypeClass ||
+        target instanceof BitExpressionTypeClass ||
+        target instanceof BitOrExpressionTypeClass ||
+        target instanceof BitNotExpressionTypeClass ||
+        target instanceof CmpExpressionTypeClass ||
+        target instanceof CoalExpressionTypeClass ||
+        target instanceof CondExpressionTypeClass ||
+        target instanceof EqualityExpressionTypeClass ||
+        target instanceof InstanceOfExpressionTypeClass ||
+        target instanceof LogAndExpressionTypeClass ||
+        target instanceof LogOrExpressionTypeClass ||
+        target instanceof NegExpressionTypeClass ||
+        target instanceof PostOpExpressionTypeClass ||
+        target instanceof PreOpExpressionTypeClass
+    );
+};
+
+export class ExpressionVisitor extends CommonVisitor<BasedExpressionTypeClass> {
     visitExpression(ctx: ExpressionContext) {
         return NormalExpressionTypeClass.create(ctx);
     }
@@ -257,4 +290,3 @@ export class ExpressionVisitor extends CommonVisitor<ExpressionAllTypeClass> {
         return WhereFieldExpressionTypeClass.create(ctx);
     }
 }
-

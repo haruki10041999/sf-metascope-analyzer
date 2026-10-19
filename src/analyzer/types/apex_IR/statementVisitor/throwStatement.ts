@@ -3,14 +3,14 @@ import { ThrowStatementContext } from '@apexdevtools/apex-parser';
 import { StatementTypeClass } from '../statementVisitor';
 
 import {
-    ExpressionAllTypeClass,
+    BasedExpressionTypeClass,
     ExpressionVisitor,
-    isExpressionTypeAll,
+    isBasedExpressionTypeClass,
 } from '../expressionVisitor';
 import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
 
-export class ThrowStatementTypeClass extends StatementTypeClass<ExpressionAllTypeClass> {
-    private constructor(value: ExpressionAllTypeClass | ErrorTypeClass) {
+export class ThrowStatementTypeClass extends StatementTypeClass<BasedExpressionTypeClass> {
+    private constructor(value: BasedExpressionTypeClass | ErrorTypeClass) {
         super('throwStatement', value);
     }
 
@@ -22,7 +22,7 @@ export class ThrowStatementTypeClass extends StatementTypeClass<ExpressionAllTyp
         return new ThrowStatementTypeClass(
             isValidClass(
                 new ExpressionVisitor().visit(ctx.expression()),
-                isExpressionTypeAll,
+                isBasedExpressionTypeClass,
                 'expression',
             ),
         );

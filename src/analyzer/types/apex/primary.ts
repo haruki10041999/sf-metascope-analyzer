@@ -1,113 +1,133 @@
 import typia from 'typia';
 
 import {
-    PrimaryClass,
-    isStringPrimaryElementClass,
-    isSoqlPrimaryElementClass,
-    isTypeRefPrimaryElementClass,
-    isLiteralPrimaryElementClass,
-    isSoslPrimaryElementClass,
-} from './converter';
+    NormalPrimaryTypeClass,
+    ThisPrimaryTypeClass,
+    VoidPrimaryTypeClass,
+    SuperPrimaryTypeClass,
+    IdPrimaryTypeClass,
+    TypeRefPrimaryTypeClass,
+    LiteralPrimaryTypeClass,
+    SoqlPrimaryTypeClass,
+    SoslPrimaryTypeClass,
+    BasedPrimaryTypeClass,
+    NormalIdTypeClass,
+    isNormalPrimaryType,
+    isThisPrimaryType,
+    isVoidPrimaryType,
+    isSuperPrimaryType,
+    isTypeRefPrimaryType,
+    isIdPrimaryType,
+    isLiteralPrimaryType,
+    isSoqlPrimaryType,
+    isSoslPrimaryType,
+    isNormalIdType,
+} from '../apex_IR';
 
+import {
+    ErrorInfo,
+    SourceInfoMap,
+    assignMultiClass,
+    isErrorInfo,
+    isTargetTypeClass,
+    makeErrorAssignRule,
+    makeErrorInfo,
+    makeSourceInfo,
+    makeEmptySourceInfoMap,
+    makeSingleSourceInfoMap,
+    makeArraySourceInfoMap,
+} from './converter/commons';
 import { makeTypeType, TypeType } from './type';
 import { SoqlType, makesoqlType } from './query';
 import { SoslType, makeSoslType } from './query';
 
-type StringPrimaryType = {
-    kind: 'normal' | 'this' | 'void' | 'super' | 'id';
-    value: string;
-};
+export const makePrimaryType = (
+    target: BasedPrimaryTypeClass,
+    sourceInfo: SourceInfoMap,
+    errorInfo: ErrorInfo[],
+) => {
+    const primary = assignMultiClass(target, [
+        {
+            isValid: (target: unknown) => isTargetTypeClass(target, isNormalPrimaryType),
+            construct: (primaryTypeClass: NormalPrimaryTypeClass) => {
+                sourceInfo[primaryTypeClass.getType()] = makeSingleSourceInfoMap(primaryTypeClass);
+                return assignMultiClass(target.getValue(), [
+                    {
+                        isValid: (target: unknown) => typeof target === 'string',
+                        construct: (value: string) => value,
+                    },
+                    makeErrorAssignRule(errorInfo),
+                ]);
+            },
+        },
+        {
+            isValid: (target: unknown) => isTargetTypeClass(target, isThisPrimaryType),
+            construct: (thisPrimaryTypeClass: ThisPrimaryTypeClass) => {
+                sourceInfo[thisPrimaryTypeClass.getType()] =
+                    makeSingleSourceInfoMap(thisPrimaryTypeClass);
+                return assignMultiClass(target.getValue(), [
+                    {
+                        isValid: (target: unknown) => typeof target === 'string',
+                        construct: (value: string) => value,
+                    },
+                    makeErrorAssignRule(errorInfo),
+                ]);
+            },
+        },
+        {
+            isValid: (target: unknown) => isTargetTypeClass(target, isSuperPrimaryType),
+            construct: (superPrimaryTypeClass: SuperPrimaryTypeClass) => {
+                sourceInfo[superPrimaryTypeClass.getType()] =
+                    makeSingleSourceInfoMap(superPrimaryTypeClass);
+                return assignMultiClass(target.getValue(), [
+                    {
+                        isValid: (target: unknown) => typeof target === 'string',
+                        construct: (value: string) => value,
+                    },
+                    makeErrorAssignRule(errorInfo),
+                ]);
+            },
+        },
+        {
+            isValid: (target: unknown) => isTargetTypeClass(target, isVoidPrimaryType),
+            construct: (voidPrimaryTypeClass: VoidPrimaryTypeClass) => {
+                sourceInfo[voidPrimaryTypeClass.getType()] =
+                    makeSingleSourceInfoMap(voidPrimaryTypeClass);
+                return assignMultiClass(target.getValue(), [
+                    {
+                        isValid: (target: unknown) => typeof target === 'string',
+                        construct: (value: string) => value,
+                    },
+                    makeErrorAssignRule(errorInfo),
+                ]);
+            },
+        },
+        {
+            isValid: (target: unknown) => isTargetTypeClass(target, isIdPrimaryType),
+            construct: (idPrimaryTypeClass: IdPrimaryTypeClass) => {
+                const idPrimarySouceType = idPrimaryTypeClass.getType();
+                const idPrimarySourceInfo = makeEmptySourceInfoMap();
+                const idPrimary = assignMultiClass(target.getValue(), [
+                    {
+                        isValid: (target: unknown) => isTargetTypeClass(target, isNormalIdType),
+                        construct: (idTypeClass: NormalIdTypeClass) => {
+                            idPrimarySourceInfo[idPrimarySouceType] =
+                                makeSingleSourceInfoMap(idTypeClass);
+                            return idTypeClass.getValue();
+                        },
+                    },
+                    makeErrorAssignRule(errorInfo),
+                ]);
+                sourceInfo[idPrimarySouceType] = idPrimarySourceInfo;
+                return idPrimary;
+            },
+        },
+        {
+            isValid: (target: unknown) => isTargetTypeClass(target, isLiteralPrimaryType),
+            construct: (literalPrimaryTypeClass: LiteralPrimaryTypeClass) => {},
+        },
+        makeErrorAssignRule(errorInfo),
+    ]);
 
-export const isStringPrimaryType = typia.createIs<StringPrimaryType>();
-
-type LiteralPrimaryType = {
-    kind: 'literal';
-    value: string;
-    valueType: string;
-};
-export const isLiteralPrimaryType = typia.createIs<LiteralPrimaryType>();
-
-type TypePrimaryType = {
-    kind: 'type';
-    value: TypeType;
-};
-export const isTypePrimaryType = typia.createIs<TypePrimaryType>();
-
-type SoqlPrimaryType = {
-    kind: 'soql';
-} & SoqlType;
-
-export const isSoqlPrimaryType = typia.createIs<SoqlPrimaryType>();
-
-type SoslPrimaryType = {
-    kind: 'sosl';
-} & SoslType;
-
-export const isSoslPrimaryType = typia.createIs<SoslPrimaryType>();
-
-export type PrimaryType =
-    StringPrimaryType | SoqlPrimaryType | LiteralPrimaryType | SoslPrimaryType | TypePrimaryType;
-
-export const isPrimaryType = typia.createIs<PrimaryType>();
-
-export const makePrimaryType = (primary: PrimaryClass): PrimaryType | undefined => {
-    const elementClass = primary.getValue();
-
-    if (elementClass) {
-        if (isStringPrimaryElementClass(elementClass)) {
-            const value = elementClass.getPrimary();
-            if (value) {
-                return {
-                    kind: elementClass.getType(),
-                    value: value.replace(/^(['"])(.*)\1$/, '$2'),
-                };
-            }
-        }
-
-        if (isTypeRefPrimaryElementClass(elementClass)) {
-            const value = makeTypeType(elementClass.getPrimary());
-            if (value) {
-                return {
-                    kind: 'type',
-                    value: value,
-                };
-            }
-        }
-
-        if (isLiteralPrimaryElementClass(elementClass)) {
-            const value = elementClass.getPrimary();
-            const valueValue = value.getValue();
-            const valueType = value.getValueType();
-
-            if (valueValue && valueType) {
-                return {
-                    kind: 'literal',
-                    value: valueValue.replace(/^(['"])(.*)\1$/, '$2'),
-                    valueType: valueType,
-                };
-            }
-        }
-
-        if (isSoqlPrimaryElementClass(elementClass)) {
-            const value = makesoqlType(elementClass.getPrimary());
-            if (value) {
-                return {
-                    kind: 'soql',
-                    ...value,
-                };
-            }
-        }
-
-        if (isSoslPrimaryElementClass(elementClass)) {
-            const value = makeSoslType(elementClass.getPrimary());
-            if (value) {
-                return {
-                    kind: 'sosl',
-                    ...value,
-                };
-            }
-        }
-    }
-
-    return undefined;
+    return primary;
 };

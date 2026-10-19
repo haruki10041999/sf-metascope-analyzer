@@ -2,21 +2,21 @@ import { BitExpressionContext } from '@apexdevtools/apex-parser';
 
 import {
     DoubleOperatorExpressionTypeClass,
-    ExpressionAllTypeClass,
+    BasedExpressionTypeClass,
     ExpressionVisitor,
-    isExpressionTypeAll,
+    isBasedExpressionTypeClass,
 } from '.';
 
 import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
 
 export class BitExpressionTypeClass extends DoubleOperatorExpressionTypeClass<
-    ExpressionAllTypeClass,
+    BasedExpressionTypeClass,
     string,
-    ExpressionAllTypeClass
+    BasedExpressionTypeClass
 > {
     private constructor(
-        left: ExpressionAllTypeClass | ErrorTypeClass,
-        right: ExpressionAllTypeClass | ErrorTypeClass,
+        left: BasedExpressionTypeClass | ErrorTypeClass,
+        right: BasedExpressionTypeClass | ErrorTypeClass,
         operator: string,
     ) {
         super('bitExpression', left, right, operator);
@@ -50,12 +50,12 @@ export class BitExpressionTypeClass extends DoubleOperatorExpressionTypeClass<
         return new BitExpressionTypeClass(
             isValidClass(
                 new ExpressionVisitor().visit(ctx.expression(0)),
-                isExpressionTypeAll,
+                isBasedExpressionTypeClass,
                 'expression',
             ),
             isValidClass(
                 new ExpressionVisitor().visit(ctx.expression(1)),
-                isExpressionTypeAll,
+                isBasedExpressionTypeClass,
                 'expression',
             ),
             operator,

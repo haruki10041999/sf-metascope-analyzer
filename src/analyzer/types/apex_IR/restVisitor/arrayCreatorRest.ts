@@ -3,9 +3,9 @@ import { ArrayCreatorRestContext } from '@apexdevtools/apex-parser';
 import { RestTypeClass } from '.';
 
 import {
-    ExpressionAllTypeClass,
+    BasedExpressionTypeClass,
     ExpressionVisitor,
-    isExpressionTypeAll,
+    isBasedExpressionTypeClass,
 } from '../expressionVisitor';
 import {
     ArrayInitializerTypeClass,
@@ -16,10 +16,10 @@ import {
 import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
 
 export class ArrayCreatorRestTypeClass extends RestTypeClass<ArrayInitializerTypeClass | null> {
-    private size: ExpressionAllTypeClass | ErrorTypeClass | null = null;
+    private size: BasedExpressionTypeClass | ErrorTypeClass | null = null;
     private constructor(
         value: ArrayInitializerTypeClass | ErrorTypeClass | null,
-        size: ExpressionAllTypeClass | ErrorTypeClass | null,
+        size: BasedExpressionTypeClass | ErrorTypeClass | null,
     ) {
         super('arrayCreatorRest', value);
         this.size = size;
@@ -41,7 +41,7 @@ export class ArrayCreatorRestTypeClass extends RestTypeClass<ArrayInitializerTyp
         const size = ctx.expression()
             ? isValidClass(
                   new ExpressionVisitor().visit(ctx.expression()),
-                  isExpressionTypeAll,
+                  isBasedExpressionTypeClass,
                   'expression',
               )
             : null;
@@ -49,7 +49,7 @@ export class ArrayCreatorRestTypeClass extends RestTypeClass<ArrayInitializerTyp
         return new ArrayCreatorRestTypeClass(value, size);
     }
 
-    getSize(): ExpressionAllTypeClass | ErrorTypeClass | null {
+    getSize(): BasedExpressionTypeClass | ErrorTypeClass | null {
         return this.size;
     }
 }

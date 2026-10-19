@@ -4,17 +4,17 @@ import { StatementTypeClass } from '.';
 
 import { WhenControlTypeClass, ControlVisitor, isWhenControlType } from '../controlVisitor';
 import {
-    ExpressionAllTypeClass,
+    BasedExpressionTypeClass,
     ExpressionVisitor,
-    isExpressionTypeAll,
+    isBasedExpressionTypeClass,
 } from '../expressionVisitor';
 import { ErrorTypeClass, CommonTypeClass, isValidClass, isValidClassList } from '../commonVisitor';
 
-export class SwitchStatementTypeClass extends StatementTypeClass<ExpressionAllTypeClass> {
+export class SwitchStatementTypeClass extends StatementTypeClass<BasedExpressionTypeClass> {
     private block: (WhenControlTypeClass | ErrorTypeClass)[];
 
     private constructor(
-        value: ExpressionAllTypeClass | ErrorTypeClass,
+        value: BasedExpressionTypeClass | ErrorTypeClass,
         blocks: (WhenControlTypeClass | ErrorTypeClass)[],
     ) {
         super('switchStatement', value);
@@ -29,7 +29,7 @@ export class SwitchStatementTypeClass extends StatementTypeClass<ExpressionAllTy
         return new SwitchStatementTypeClass(
             isValidClass(
                 new ExpressionVisitor().visit(ctx.expression()),
-                isExpressionTypeAll,
+                isBasedExpressionTypeClass,
                 'expression',
             ),
             isValidClassList(

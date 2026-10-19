@@ -4,21 +4,21 @@ import { ControlTypeClass } from '.';
 
 import { NormalIdTypeClass, IdVisitor, isNormalIdType } from '../idVisitor';
 import {
-    ExpressionAllTypeClass,
+    BasedExpressionTypeClass,
     ExpressionVisitor,
-    isExpressionTypeAll,
+    isBasedExpressionTypeClass,
 } from '../expressionVisitor';
 import { TypeRefTypeClass, TypeVisitor, isTypeRefType } from '../typeVisitor';
 import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
 
 export class EnhancedForControlTypeClass extends ControlTypeClass<NormalIdTypeClass> {
     private valueType: TypeRefTypeClass | ErrorTypeClass;
-    private fromVariant: ExpressionAllTypeClass | ErrorTypeClass;
+    private fromVariant: BasedExpressionTypeClass | ErrorTypeClass;
 
     private constructor(
         value: NormalIdTypeClass | ErrorTypeClass,
         valueType: TypeRefTypeClass | ErrorTypeClass,
-        fromVariant: ExpressionAllTypeClass | ErrorTypeClass,
+        fromVariant: BasedExpressionTypeClass | ErrorTypeClass,
     ) {
         super('enhancedForControl', value);
         this.valueType = valueType;
@@ -35,7 +35,7 @@ export class EnhancedForControlTypeClass extends ControlTypeClass<NormalIdTypeCl
             isValidClass(new TypeVisitor().visit(ctx.typeRef()), isTypeRefType, 'typeRef'),
             isValidClass(
                 new ExpressionVisitor().visit(ctx.expression()),
-                isExpressionTypeAll,
+                isBasedExpressionTypeClass,
                 'expression',
             ),
         );
@@ -45,7 +45,7 @@ export class EnhancedForControlTypeClass extends ControlTypeClass<NormalIdTypeCl
         return this.valueType;
     }
 
-    getFromVariant(): ExpressionAllTypeClass | ErrorTypeClass {
+    getFromVariant(): BasedExpressionTypeClass | ErrorTypeClass {
         return this.fromVariant;
     }
 }

@@ -12,20 +12,20 @@ import {
 } from '.';
 
 import {
-    ExpressionAllTypeClass,
+    BasedExpressionTypeClass,
     ExpressionVisitor,
-    isExpressionTypeAll,
+    isBasedExpressionTypeClass,
 } from '../expressionVisitor';
 import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
 
 export class ForControlTypeClass extends ControlTypeClass<
-    EnhancedForControlTypeClass | ExpressionAllTypeClass | null
+    EnhancedForControlTypeClass | BasedExpressionTypeClass | null
 > {
     private init: ForInitTypeClass | ErrorTypeClass | null;
     private update: ForUpdateTypeClass | ErrorTypeClass | null;
 
     private constructor(
-        value: EnhancedForControlTypeClass | ExpressionAllTypeClass | ErrorTypeClass | null,
+        value: EnhancedForControlTypeClass | BasedExpressionTypeClass | ErrorTypeClass | null,
         init: ForInitTypeClass | ErrorTypeClass | null,
         update: ForUpdateTypeClass | ErrorTypeClass | null,
     ) {
@@ -36,7 +36,7 @@ export class ForControlTypeClass extends ControlTypeClass<
 
     // `for (;;)` のように初期化・条件・更新はすべて任意
     static create(ctx: ForControlContext): ForControlTypeClass {
-        let value: EnhancedForControlTypeClass | ExpressionAllTypeClass | ErrorTypeClass | null =
+        let value: EnhancedForControlTypeClass | BasedExpressionTypeClass | ErrorTypeClass | null =
             null;
         if (ctx.enhancedForControl()) {
             value = isValidClass(
@@ -47,7 +47,7 @@ export class ForControlTypeClass extends ControlTypeClass<
         } else if (ctx.expression()) {
             value = isValidClass(
                 new ExpressionVisitor().visit(ctx.expression()),
-                isExpressionTypeAll,
+                isBasedExpressionTypeClass,
                 'expression',
             );
         }

@@ -3,14 +3,14 @@ import { ExpressionStatementContext } from '@apexdevtools/apex-parser';
 import { StatementTypeClass } from '.';
 
 import {
-    ExpressionAllTypeClass,
+    BasedExpressionTypeClass,
     ExpressionVisitor,
-    isExpressionTypeAll,
+    isBasedExpressionTypeClass,
 } from '../expressionVisitor';
 import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
 
-export class ExpressionStatementTypeClass extends StatementTypeClass<ExpressionAllTypeClass> {
-    private constructor(value: ExpressionAllTypeClass | ErrorTypeClass) {
+export class ExpressionStatementTypeClass extends StatementTypeClass<BasedExpressionTypeClass> {
+    private constructor(value: BasedExpressionTypeClass | ErrorTypeClass) {
         super('expressionStatement', value);
     }
 
@@ -22,7 +22,7 @@ export class ExpressionStatementTypeClass extends StatementTypeClass<ExpressionA
         return new ExpressionStatementTypeClass(
             isValidClass(
                 new ExpressionVisitor().visit(ctx.expression()),
-                isExpressionTypeAll,
+                isBasedExpressionTypeClass,
                 'expression',
             ),
         );

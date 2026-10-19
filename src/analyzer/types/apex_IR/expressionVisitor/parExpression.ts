@@ -1,16 +1,16 @@
 import { ParExpressionContext } from '@apexdevtools/apex-parser';
 
 import {
-    ExpressionAllTypeClass,
+    BasedExpressionTypeClass,
     ExpressionTypeClass,
     ExpressionVisitor,
-    isExpressionTypeAll,
+    isBasedExpressionTypeClass,
 } from '.';
 
 import { CommonTypeClass, ErrorTypeClass, isValidClass } from '../commonVisitor';
 
-export class ParExpressionTypeClass extends ExpressionTypeClass<ExpressionAllTypeClass> {
-    private constructor(value: ExpressionAllTypeClass | ErrorTypeClass) {
+export class ParExpressionTypeClass extends ExpressionTypeClass<BasedExpressionTypeClass> {
+    private constructor(value: BasedExpressionTypeClass | ErrorTypeClass) {
         super('parExpression', value);
     }
 
@@ -22,7 +22,7 @@ export class ParExpressionTypeClass extends ExpressionTypeClass<ExpressionAllTyp
         return new ParExpressionTypeClass(
             isValidClass(
                 new ExpressionVisitor().visit(ctx.expression()),
-                isExpressionTypeAll,
+                isBasedExpressionTypeClass,
                 'expression',
             ),
         );

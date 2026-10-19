@@ -3,14 +3,14 @@ import { ArrayInitializerContext } from '@apexdevtools/apex-parser';
 import { VariableListTypeClass } from '.';
 
 import {
-    ExpressionAllTypeClass,
+    BasedExpressionTypeClass,
     ExpressionVisitor,
-    isExpressionTypeAll,
+    isBasedExpressionTypeClass,
 } from '../expressionVisitor';
 import { ErrorTypeClass, CommonTypeClass, isValidClassList } from '../commonVisitor';
 
-export class ArrayInitializerTypeClass extends VariableListTypeClass<ExpressionAllTypeClass> {
-    private constructor(value: (ExpressionAllTypeClass | ErrorTypeClass)[]) {
+export class ArrayInitializerTypeClass extends VariableListTypeClass<BasedExpressionTypeClass> {
+    private constructor(value: (BasedExpressionTypeClass | ErrorTypeClass)[]) {
         super('arrayInitializer', value);
     }
 
@@ -19,7 +19,7 @@ export class ArrayInitializerTypeClass extends VariableListTypeClass<ExpressionA
             isValidClassList(
                 ctx.expression_list(),
                 (ctx) => new ExpressionVisitor().visit(ctx),
-                isExpressionTypeAll,
+                isBasedExpressionTypeClass,
                 'expression',
             ),
         );

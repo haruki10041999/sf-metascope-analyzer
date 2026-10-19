@@ -9,16 +9,16 @@ import {
 
 import { QualifiedNameTypeClass, NameVisitor, isQualifiedNameType } from '../nameVisitor';
 import {
-    ExpressionAllTypeClass,
+    BasedExpressionTypeClass,
     ExpressionVisitor,
-    isExpressionTypeAll,
+    isBasedExpressionTypeClass,
 } from '../expressionVisitor';
 import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
 
-export class UpsertStatementTypeClass extends DmlStatementTypeClass<ExpressionAllTypeClass> {
+export class UpsertStatementTypeClass extends DmlStatementTypeClass<BasedExpressionTypeClass> {
     private key: QualifiedNameTypeClass | ErrorTypeClass | null = null;
     private constructor(
-        value: ExpressionAllTypeClass | ErrorTypeClass,
+        value: BasedExpressionTypeClass | ErrorTypeClass,
         key: QualifiedNameTypeClass | ErrorTypeClass | null,
         accessLevel: AccessLevelTypeClass | ErrorTypeClass | null,
     ) {
@@ -34,7 +34,7 @@ export class UpsertStatementTypeClass extends DmlStatementTypeClass<ExpressionAl
         return new UpsertStatementTypeClass(
             isValidClass(
                 new ExpressionVisitor().visit(ctx.expression()),
-                isExpressionTypeAll,
+                isBasedExpressionTypeClass,
                 'expression',
             ),
             ctx.qualifiedName()

@@ -1,16 +1,16 @@
 import { PreOpExpressionContext } from '@apexdevtools/apex-parser';
 
 import {
-    ExpressionAllTypeClass,
+    BasedExpressionTypeClass,
     ExpressionVisitor,
-    isExpressionTypeAll,
+    isBasedExpressionTypeClass,
     SingleOperatorExpressionTypeClass,
 } from '.';
 
 import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
 
-export class PreOpExpressionTypeClass extends SingleOperatorExpressionTypeClass<ExpressionAllTypeClass> {
-    private constructor(value: ExpressionAllTypeClass | ErrorTypeClass, operator: string) {
+export class PreOpExpressionTypeClass extends SingleOperatorExpressionTypeClass<BasedExpressionTypeClass> {
+    private constructor(value: BasedExpressionTypeClass | ErrorTypeClass, operator: string) {
         super('preOpExpression', value, operator);
     }
 
@@ -34,7 +34,7 @@ export class PreOpExpressionTypeClass extends SingleOperatorExpressionTypeClass<
         return new PreOpExpressionTypeClass(
             isValidClass(
                 new ExpressionVisitor().visit(ctx.expression()),
-                isExpressionTypeAll,
+                isBasedExpressionTypeClass,
                 'expression',
             ),
             operator,

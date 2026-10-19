@@ -3,14 +3,14 @@ import { ReturnStatementContext } from '@apexdevtools/apex-parser';
 import { StatementTypeClass } from '../statementVisitor';
 
 import {
-    ExpressionAllTypeClass,
+    BasedExpressionTypeClass,
     ExpressionVisitor,
-    isExpressionTypeAll,
+    isBasedExpressionTypeClass,
 } from '../expressionVisitor';
 import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
 
-export class ReturnStatementTypeClass extends StatementTypeClass<ExpressionAllTypeClass | null> {
-    private constructor(value: ExpressionAllTypeClass | ErrorTypeClass | null) {
+export class ReturnStatementTypeClass extends StatementTypeClass<BasedExpressionTypeClass | null> {
+    private constructor(value: BasedExpressionTypeClass | ErrorTypeClass | null) {
         super('returnStatement', value);
     }
 
@@ -20,7 +20,7 @@ export class ReturnStatementTypeClass extends StatementTypeClass<ExpressionAllTy
             ctx.expression()
                 ? isValidClass(
                       new ExpressionVisitor().visit(ctx.expression()),
-                      isExpressionTypeAll,
+                      isBasedExpressionTypeClass,
                       'expression',
                   )
                 : null,

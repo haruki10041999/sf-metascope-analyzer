@@ -2,21 +2,21 @@ import { InstanceOfExpressionContext } from '@apexdevtools/apex-parser';
 
 import {
     DoubleOperatorExpressionTypeClass,
-    ExpressionAllTypeClass,
+    BasedExpressionTypeClass,
     ExpressionVisitor,
-    isExpressionTypeAll,
+    isBasedExpressionTypeClass,
 } from '.';
 
 import { TypeRefTypeClass, TypeVisitor, isTypeRefType } from '../typeVisitor';
 import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
 
 export class InstanceOfExpressionTypeClass extends DoubleOperatorExpressionTypeClass<
-    ExpressionAllTypeClass,
+    BasedExpressionTypeClass,
     string,
     TypeRefTypeClass
 > {
     private constructor(
-        left: ExpressionAllTypeClass | ErrorTypeClass,
+        left: BasedExpressionTypeClass | ErrorTypeClass,
         right: TypeRefTypeClass | ErrorTypeClass,
     ) {
         super('instanceOfExpression', left, right, 'instanceof');
@@ -30,7 +30,7 @@ export class InstanceOfExpressionTypeClass extends DoubleOperatorExpressionTypeC
         return new InstanceOfExpressionTypeClass(
             isValidClass(
                 new ExpressionVisitor().visit(ctx.expression()),
-                isExpressionTypeAll,
+                isBasedExpressionTypeClass,
                 'expression',
             ),
             isValidClass(new TypeVisitor().visit(ctx.typeRef()), isTypeRefType, 'typeRef'),

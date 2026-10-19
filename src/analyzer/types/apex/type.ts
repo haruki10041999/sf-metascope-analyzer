@@ -21,8 +21,10 @@ import {
     assignMultiClass,
     makeErrorAssignRule,
     isTargetTypeClass,
-    splitSourceInfo,
-} from './commons';
+    SourceInfoMap,
+    makeEmptySourceInfoMap,
+    makeSingleSourceInfoMap,
+} from './converter/commons';
 
 const isPrimitiveType = (type: string): boolean => {
     return [
@@ -103,46 +105,60 @@ export type TypeType =
 
 export const isTypeType = typia.createIs<TypeType>();
 
-export const makeTypeListType = (
-    type: string,
-    typeListTypeClass: TypeListTypeClass,
-    sourceInfo: { [key: string]: SourceInfo },
-    errorInfo: ErrorInfo[],
-) => {
-    const typeListType = typeListTypeClass.getType();
+type TypeRefTypeResult = {
+    typeRef: TypeNameTypeResult[];
+    arrayDimension: number | null | void;
+};
 
-    return assignMultiClass(typeListTypeClass.getValue(), [
-        {
-            isValid: (target: unknown) => isTargetTypeClass(target, isTypeRefType),
-            construct: (typeClass: TypeRefTypeClass) => {
-                return makeTypeRefType(
-                    [type, typeListType].join('_'),
-                    typeClass,
-                    sourceInfo,
-                    errorInfo,
-                );
-            },
-        },
-        makeErrorAssignRule(errorInfo),
-    ]);
+type TypeNameTypeResult = {
+    collection: string | null | void;
+    generic: TypeRefTypeResult[] | null | void;
+};
+
+export const makeTypeListType = (
+    typeListTypeClass: TypeListTypeClass,
+    sourceInfo: SourceInfoMap,
+    errorInfo: ErrorInfo[],
+): TypeRefTypeResult[] => {
+    const typeListType = typeListTypeClass.getType();
+    const typeListSourceInfoMap = makeEmptySourceInfoMap();
+
+    const typeList: TypeRefTypeResult[] = typeListTypeClass
+        .getValue()
+        .map((value, index) =>
+            assignMultiClass(value, [
+                {
+                    isValid: (target: unknown) => isTargetTypeClass(target, isTypeRefType),
+                    construct: (typeClass: TypeRefTypeClass) => {
+                        const typeRefSourceInfoMap = makeEmptySourceInfoMap();
+                        const typeRef = makeTypeRefType(typeClass, typeRefSourceInfoMap, errorInfo);
+                        typeListSourceInfoMap[`${typeClass.getType()}_${index}`] =
+                            typeRefSourceInfoMap;
+                        return typeRef;
+                    },
+                },
+                makeErrorAssignRule(errorInfo),
+            ]),
+        )
+        .filter((item) => item != null);
+
+    sourceInfo[typeListType] = typeListSourceInfoMap;
+    return typeList;
 };
 
 export const makeTypeNameType = (
-    type: string,
     typeNameTypeClass: TypeNameTypeClass,
-    sourceInfo: { [key: string]: SourceInfo },
+    sourceInfo: SourceInfoMap,
     errorInfo: ErrorInfo[],
-) => {
+): TypeNameTypeResult => {
     const typeNameType = typeNameTypeClass.getType();
+    const typeNameSourceInfoMap = makeEmptySourceInfoMap();
     const collection = assignMultiClass(typeNameTypeClass.getValue(), [
         {
             isValid: (target: unknown) => isTargetTypeClass(target, isNormalIdType),
             construct: (typeClass: NormalIdTypeClass) => {
-                return splitSourceInfo(
-                    typeClass,
-                    [type, typeNameType, typeClass.getType()].join('_'),
-                    sourceInfo,
-                ).getValue();
+                typeNameSourceInfoMap[typeNameType] = makeSingleSourceInfoMap(typeClass);
+                return typeClass.getValue();
             },
         },
         {
@@ -170,16 +186,18 @@ export const makeTypeNameType = (
             isValid: (target: unknown) => isTargetTypeClass(target, isTypeArgumentsType),
             construct: (typeClass: TypeArgumentsTypeClass) => {
                 const typeArugumentsType = typeClass.getType();
+                const typeArgumentsSourceInfoMap = makeEmptySourceInfoMap();
                 return assignMultiClass(typeClass.getValue(), [
                     {
                         isValid: (target: unknown) => isTargetTypeClass(target, isTypeListType),
                         construct: (typeClass: TypeListTypeClass) => {
-                            return makeTypeListType(
-                                [type, typeNameType, typeArugumentsType].join('_'),
+                            const typeList = makeTypeListType(
                                 typeClass,
-                                sourceInfo,
+                                typeArgumentsSourceInfoMap,
                                 errorInfo,
                             );
+                            typeNameSourceInfoMap[typeArugumentsType] = typeArgumentsSourceInfoMap;
+                            return typeList;
                         },
                     },
                     makeErrorAssignRule(errorInfo),
@@ -188,31 +206,41 @@ export const makeTypeNameType = (
         },
         makeErrorAssignRule(errorInfo),
     ]);
+
+    sourceInfo[typeNameType] = typeNameSourceInfoMap;
+    return { collection, generic };
 };
 
 export const makeTypeRefType = (
-    type: string,
     typeRefTypeClass: TypeRefTypeClass,
-    sourceInfo: { [key: string]: SourceInfo },
+    sourceInfo: SourceInfoMap,
     errorInfo: ErrorInfo[],
-) => {
+): TypeRefTypeResult => {
     const typeRefType = typeRefTypeClass.getType();
-    const typeRef = typeRefTypeClass.getValue().forEach((v) => {
-        return assignMultiClass(v, [
-            {
-                isValid: (target: unknown) => isTargetTypeClass(target, isTypeNameType),
-                construct: (typeClass: TypeNameTypeClass) => {
-                    return makeTypeNameType(
-                        [type, typeRefType].join('_'),
-                        typeClass,
-                        sourceInfo,
-                        errorInfo,
-                    );
+    const typeRefSourceInfoMap = makeEmptySourceInfoMap();
+    const typeRef = typeRefTypeClass
+        .getValue()
+        .map((v, index) => {
+            const typeRefItem = assignMultiClass(v, [
+                {
+                    isValid: (target: unknown) => isTargetTypeClass(target, isTypeNameType),
+                    construct: (typeClass: TypeNameTypeClass) => {
+                        const typeNameSourceInfoMap = makeEmptySourceInfoMap();
+                        const typeName = makeTypeNameType(
+                            typeClass,
+                            typeNameSourceInfoMap,
+                            errorInfo,
+                        );
+                        typeRefSourceInfoMap[`${typeClass.getType()}_${index}`] =
+                            typeNameSourceInfoMap;
+                        return typeName;
+                    },
                 },
-            },
-            makeErrorAssignRule(errorInfo),
-        ]);
-    });
+                makeErrorAssignRule(errorInfo),
+            ]);
+            return typeRefItem;
+        })
+        ?.filter((item) => item != null);
     const arrayDimension = assignMultiClass(typeRefTypeClass.getDimension(), [
         {
             isValid: (target: unknown) => isTargetTypeClass(target, isArraySubscriptsType),
@@ -223,11 +251,8 @@ export const makeTypeRefType = (
                     {
                         isValid: (target: unknown) => typeof target === 'number',
                         construct: (typeClass: number) => {
-                            splitSourceInfo(
-                                arraySubscriptsTypeClass,
-                                [type, typeRefType, arraySubscriptsType].join('_'),
-                                sourceInfo,
-                            );
+                            typeRefSourceInfoMap[arraySubscriptsType] =
+                                makeSingleSourceInfoMap(arraySubscriptsTypeClass);
                             return typeClass;
                         },
                     },
@@ -238,92 +263,148 @@ export const makeTypeRefType = (
         makeErrorAssignRule(errorInfo),
     ]);
 
-    return { type, arrayDimension };
+    sourceInfo[typeRefType] = typeRefSourceInfoMap;
+    return { typeRef, arrayDimension };
 };
 
-export const makeTypeType = (type: TypeRefClass): TypeType | undefined => {
-    const value = type.getValue();
-    const dimension = type.getDimension();
+const getTypeNameValue = (typeName: TypeNameTypeClass): string | undefined => {
+    const value = typeName.getValue();
+    if (typeof value === 'string') {
+        return value;
+    }
+    return isTargetTypeClass(value, isNormalIdType) ? value.getValue() : undefined;
+};
 
-    if (value && value.length > 0) {
-        if (dimension) {
-            const arrayedType = new TypeRefClass();
-            arrayedType.setValue(value);
-            const arrayedTypeType = makeTypeType(arrayedType);
-
-            if (arrayedTypeType) {
-                return {
-                    kind: 'array',
-                    name: arrayedTypeType,
-                    dimension: dimension,
-                };
-            }
-        }
-
-        if (value.length === 1) {
-            const typeName = value.at(0)!.getValue();
-            const generic = value.at(0)!.getGeneric();
-
-            if (typeName) {
-                if (isPrimitiveType(typeName)) {
-                    return {
-                        kind: 'primitive',
-                        name: typeName,
-                    };
-                }
-
-                if (generic.length > 0) {
-                    if ((isListType(typeName) || isSetType(typeName)) && generic.length === 1) {
-                        const type = makeTypeType(generic.at(0)!);
-                        if (type) {
-                            return {
-                                kind: isListType(typeName) ? 'list' : 'set',
-                                type: type,
-                            };
-                        }
-                    }
-
-                    if (isMapType(typeName) && generic.length === 2) {
-                        const keyType = makeTypeType(generic.at(0)!);
-                        const valueType = makeTypeType(generic.at(1)!);
-
-                        if (keyType && valueType) {
-                            return {
-                                kind: 'map',
-                                keyType: keyType,
-                                valueType: valueType,
-                            };
-                        }
-                    }
-                }
-
-                const typeType: TypeType = {
-                    kind: 'custom',
-                    name: [typeName],
-                };
-
-                if (generic.length > 0) {
-                    typeType.generic = generic
-                        .map((g) => makeTypeType(g))
-                        .filter((g) => g !== undefined);
-                }
-                return typeType;
-            }
-        } else {
-            const typeType: TypeType = {
-                kind: 'custom',
-                name: type.getValue().map((v) => v.getValue()!),
-            };
-
-            if (type.getValue().at(-1) && type.getValue().at(-1)!.getGeneric().length > 0) {
-                const generic = type.getValue().at(-1)!.getGeneric();
-                typeType.generic = generic
-                    .map((g) => makeTypeType(g))
-                    .filter((g) => g !== undefined);
-            }
-            return typeType;
-        }
+const getGenericTypeRefs = (typeName: TypeNameTypeClass): TypeRefTypeClass[] | undefined => {
+    const argumentsType = typeName.getGeneric();
+    if (argumentsType === null) {
+        return [];
+    }
+    if (!isTargetTypeClass(argumentsType, isTypeArgumentsType)) {
+        return undefined;
     }
 
-    return undefined;
+    const typeList = argumentsType.getValue();
+    if (!isTargetTypeClass(typeList, isTypeListType)) {
+        return undefined;
+    }
+
+    const values = typeList.getValue();
+    const typeRefs = values.filter((item): item is TypeRefTypeClass =>
+        isTargetTypeClass(item, isTypeRefType),
+    );
+    return typeRefs.length === values.length ? typeRefs : undefined;
+};
+
+const makeTypeTypeFromParts = (
+    typeNames: TypeNameTypeClass[],
+    dimension: number,
+): TypeType | undefined => {
+    if (typeNames.length === 0) {
+        return undefined;
+    }
+
+    if (dimension > 0) {
+        const arrayedTypeType = makeTypeTypeFromParts(typeNames, 0);
+        return arrayedTypeType
+            ? {
+                  kind: 'array',
+                  name: arrayedTypeType,
+                  dimension,
+              }
+            : undefined;
+    }
+
+    if (typeNames.length === 1) {
+        const typeName = getTypeNameValue(typeNames[0]!);
+        if (!typeName) {
+            return undefined;
+        }
+
+        const generic = getGenericTypeRefs(typeNames[0]!);
+        if (!generic) {
+            return undefined;
+        }
+        if (isPrimitiveType(typeName)) {
+            return {
+                kind: 'primitive',
+                name: typeName,
+            };
+        }
+
+        if (generic.length > 0) {
+            if ((isListType(typeName) || isSetType(typeName)) && generic.length === 1) {
+                const innerType = makeTypeType(generic[0]!);
+                if (innerType) {
+                    return {
+                        kind: isListType(typeName) ? 'list' : 'set',
+                        type: innerType,
+                    };
+                }
+            }
+
+            if (isMapType(typeName) && generic.length === 2) {
+                const keyType = makeTypeType(generic[0]!);
+                const valueType = makeTypeType(generic[1]!);
+
+                if (keyType && valueType) {
+                    return {
+                        kind: 'map',
+                        keyType,
+                        valueType,
+                    };
+                }
+            }
+        }
+
+        const typeType: TypeType = {
+            kind: 'custom',
+            name: [typeName],
+        };
+
+        if (generic.length > 0) {
+            typeType.generic = generic
+                .map((genericType) => makeTypeType(genericType))
+                .filter((genericType) => genericType !== undefined);
+        }
+        return typeType;
+    }
+
+    const names = typeNames.map(getTypeNameValue);
+    if (!names.every((name): name is string => name !== undefined)) {
+        return undefined;
+    }
+
+    const typeType: TypeType = {
+        kind: 'custom',
+        name: names,
+    };
+    const generic = getGenericTypeRefs(typeNames.at(-1)!);
+    if (!generic) {
+        return undefined;
+    }
+    if (generic.length > 0) {
+        typeType.generic = generic
+            .map((genericType) => makeTypeType(genericType))
+            .filter((genericType) => genericType !== undefined);
+    }
+    return typeType;
+};
+
+export const makeTypeType = (type: TypeRefTypeClass): TypeType | undefined => {
+    const value = type.getValue();
+    const typeNames = value.filter((item): item is TypeNameTypeClass =>
+        isTargetTypeClass(item, isTypeNameType),
+    );
+    if (typeNames.length !== value.length) {
+        return undefined;
+    }
+
+    const dimensionClass = type.getDimension();
+    if (!isTargetTypeClass(dimensionClass, isArraySubscriptsType)) {
+        return undefined;
+    }
+
+    const dimension = dimensionClass.getValue();
+    return typeof dimension === 'number' ? makeTypeTypeFromParts(typeNames, dimension) : undefined;
 };

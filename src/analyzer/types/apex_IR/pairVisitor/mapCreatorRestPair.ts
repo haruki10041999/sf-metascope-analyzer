@@ -3,19 +3,19 @@ import { MapCreatorRestPairContext } from '@apexdevtools/apex-parser';
 import { PairTypeClass } from '.';
 
 import {
-    ExpressionAllTypeClass,
+    BasedExpressionTypeClass,
     ExpressionVisitor,
-    isExpressionTypeAll,
+    isBasedExpressionTypeClass,
 } from '../expressionVisitor';
 import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
 
 export class MapCreatorRestPairTypeClass extends PairTypeClass<
-    ExpressionAllTypeClass,
-    ExpressionAllTypeClass
+    BasedExpressionTypeClass,
+    BasedExpressionTypeClass
 > {
     private constructor(
-        left: ExpressionAllTypeClass | ErrorTypeClass,
-        right: ExpressionAllTypeClass | ErrorTypeClass,
+        left: BasedExpressionTypeClass | ErrorTypeClass,
+        right: BasedExpressionTypeClass | ErrorTypeClass,
     ) {
         super('mapCreatorRestPair', left, right);
     }
@@ -28,12 +28,12 @@ export class MapCreatorRestPairTypeClass extends PairTypeClass<
         return new MapCreatorRestPairTypeClass(
             isValidClass(
                 new ExpressionVisitor().visit(ctx.expression(0)),
-                isExpressionTypeAll,
+                isBasedExpressionTypeClass,
                 'expression',
             ),
             isValidClass(
                 new ExpressionVisitor().visit(ctx.expression(1)),
-                isExpressionTypeAll,
+                isBasedExpressionTypeClass,
                 'expression',
             ),
         );

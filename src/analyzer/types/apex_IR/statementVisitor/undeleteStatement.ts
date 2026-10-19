@@ -8,15 +8,15 @@ import {
 } from '.';
 
 import {
-    ExpressionAllTypeClass,
+    BasedExpressionTypeClass,
     ExpressionVisitor,
-    isExpressionTypeAll,
+    isBasedExpressionTypeClass,
 } from '../expressionVisitor';
 import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
 
-export class UndeleteStatementTypeClass extends DmlStatementTypeClass<ExpressionAllTypeClass> {
+export class UndeleteStatementTypeClass extends DmlStatementTypeClass<BasedExpressionTypeClass> {
     private constructor(
-        value: ExpressionAllTypeClass | ErrorTypeClass,
+        value: BasedExpressionTypeClass | ErrorTypeClass,
         accessLevel: AccessLevelTypeClass | ErrorTypeClass | null,
     ) {
         super('undeleteStatement', value, accessLevel);
@@ -30,7 +30,7 @@ export class UndeleteStatementTypeClass extends DmlStatementTypeClass<Expression
         return new UndeleteStatementTypeClass(
             isValidClass(
                 new ExpressionVisitor().visit(ctx.expression()),
-                isExpressionTypeAll,
+                isBasedExpressionTypeClass,
                 'expression',
             ),
             ctx.accessLevel()

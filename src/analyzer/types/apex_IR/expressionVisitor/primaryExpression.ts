@@ -2,12 +2,12 @@ import { PrimaryExpressionContext } from '@apexdevtools/apex-parser';
 
 import { ExpressionTypeClass } from '.';
 
-import { PrimaryTypeClass, PrimaryVisitor, isPrimaryTypeAll } from '../primaryVisitor';
+import { BasedPrimaryTypeClass, PrimaryVisitor, isBasedPrimaryType } from '../primaryVisitor';
 
 import { CommonTypeClass, ErrorTypeClass, isValidClass } from '../commonVisitor';
 
-export class PrimaryExpressionTypeClass extends ExpressionTypeClass<PrimaryTypeClass<unknown>> {
-    private constructor(value: PrimaryTypeClass<unknown> | ErrorTypeClass) {
+export class PrimaryExpressionTypeClass extends ExpressionTypeClass<BasedPrimaryTypeClass> {
+    private constructor(value: BasedPrimaryTypeClass | ErrorTypeClass) {
         super('primaryExpression', value);
     }
 
@@ -17,7 +17,7 @@ export class PrimaryExpressionTypeClass extends ExpressionTypeClass<PrimaryTypeC
         }
 
         return new PrimaryExpressionTypeClass(
-            isValidClass(new PrimaryVisitor().visit(ctx.primary()), isPrimaryTypeAll, 'primary'),
+            isValidClass(new PrimaryVisitor().visit(ctx.primary()), isBasedPrimaryType, 'primary'),
         );
     }
 }

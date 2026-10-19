@@ -2,19 +2,19 @@ import { ArrayExpressionContext } from '@apexdevtools/apex-parser';
 
 import {
     ExpressionTypeClass,
-    ExpressionAllTypeClass,
+    BasedExpressionTypeClass,
     ExpressionVisitor,
-    isExpressionTypeAll,
+    isBasedExpressionTypeClass,
 } from '.';
 
 import { CommonTypeClass, ErrorTypeClass, isValidClass } from '../commonVisitor';
 
-export class ArrayExpressionTypeClass extends ExpressionTypeClass<ExpressionAllTypeClass> {
-    private index: ExpressionAllTypeClass | ErrorTypeClass;
+export class ArrayExpressionTypeClass extends ExpressionTypeClass<BasedExpressionTypeClass> {
+    private index: BasedExpressionTypeClass | ErrorTypeClass;
 
     private constructor(
-        value: ExpressionAllTypeClass | ErrorTypeClass,
-        index: ExpressionAllTypeClass | ErrorTypeClass,
+        value: BasedExpressionTypeClass | ErrorTypeClass,
+        index: BasedExpressionTypeClass | ErrorTypeClass,
     ) {
         super('arrayExpression', value);
         this.index = index;
@@ -28,18 +28,18 @@ export class ArrayExpressionTypeClass extends ExpressionTypeClass<ExpressionAllT
         return new ArrayExpressionTypeClass(
             isValidClass(
                 new ExpressionVisitor().visit(ctx.expression(0)),
-                isExpressionTypeAll,
+                isBasedExpressionTypeClass,
                 'expression',
             ),
             isValidClass(
                 new ExpressionVisitor().visit(ctx.expression(1)),
-                isExpressionTypeAll,
+                isBasedExpressionTypeClass,
                 'expression',
             ),
         );
     }
 
-    getIndex(): ExpressionAllTypeClass | ErrorTypeClass {
+    getIndex(): BasedExpressionTypeClass | ErrorTypeClass {
         return this.index;
     }
 }
@@ -49,3 +49,4 @@ export const isArrayExpressionType = (
 ): target is ArrayExpressionTypeClass => {
     return target instanceof ArrayExpressionTypeClass;
 };
+

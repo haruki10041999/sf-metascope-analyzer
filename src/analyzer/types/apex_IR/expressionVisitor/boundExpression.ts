@@ -2,15 +2,15 @@ import { BoundExpressionContext } from '@apexdevtools/apex-parser';
 
 import {
     ExpressionTypeClass,
-    ExpressionAllTypeClass,
+    BasedExpressionTypeClass,
     ExpressionVisitor,
-    isExpressionTypeAll,
+    isBasedExpressionTypeClass,
 } from '.';
 
 import { CommonTypeClass, ErrorTypeClass, isValidClass } from '../commonVisitor';
 
-export class BoundExpressionTypeClass extends ExpressionTypeClass<ExpressionAllTypeClass> {
-    private constructor(value: ExpressionAllTypeClass | ErrorTypeClass) {
+export class BoundExpressionTypeClass extends ExpressionTypeClass<BasedExpressionTypeClass> {
+    private constructor(value: BasedExpressionTypeClass | ErrorTypeClass) {
         super('boundExpression', value);
     }
 
@@ -22,7 +22,7 @@ export class BoundExpressionTypeClass extends ExpressionTypeClass<ExpressionAllT
         return new BoundExpressionTypeClass(
             isValidClass(
                 new ExpressionVisitor().visit(ctx.expression()),
-                isExpressionTypeAll,
+                isBasedExpressionTypeClass,
                 'expression',
             ),
         );

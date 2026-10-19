@@ -2,19 +2,19 @@ import { CastExpressionContext } from '@apexdevtools/apex-parser';
 
 import {
     ExpressionTypeClass,
-    ExpressionAllTypeClass,
+    BasedExpressionTypeClass,
     ExpressionVisitor,
-    isExpressionTypeAll,
+    isBasedExpressionTypeClass,
 } from '.';
 
 import { TypeRefTypeClass, TypeVisitor, isTypeRefType } from '../typeVisitor';
 import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
 
-export class CastExpressionTypeClass extends ExpressionTypeClass<ExpressionAllTypeClass> {
+export class CastExpressionTypeClass extends ExpressionTypeClass<BasedExpressionTypeClass> {
     private valueType: TypeRefTypeClass | ErrorTypeClass;
 
     private constructor(
-        value: ExpressionAllTypeClass | ErrorTypeClass,
+        value: BasedExpressionTypeClass | ErrorTypeClass,
         valueType: TypeRefTypeClass | ErrorTypeClass,
     ) {
         super('castExpression', value);
@@ -29,7 +29,7 @@ export class CastExpressionTypeClass extends ExpressionTypeClass<ExpressionAllTy
         return new CastExpressionTypeClass(
             isValidClass(
                 new ExpressionVisitor().visit(ctx.expression()),
-                isExpressionTypeAll,
+                isBasedExpressionTypeClass,
                 'expression',
             ),
             isValidClass(new TypeVisitor().visit(ctx.typeRef()), isTypeRefType, 'typeRef'),
@@ -46,3 +46,4 @@ export const isCastExpressionType = (
 ): target is CastExpressionTypeClass => {
     return target instanceof CastExpressionTypeClass;
 };
+

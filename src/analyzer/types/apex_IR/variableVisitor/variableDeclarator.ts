@@ -4,18 +4,18 @@ import { VariableTypeClass } from '.';
 
 import { NormalIdTypeClass, IdVisitor, isNormalIdType } from '../idVisitor';
 import {
-    ExpressionAllTypeClass,
+    BasedExpressionTypeClass,
     ExpressionVisitor,
-    isExpressionTypeAll,
+    isBasedExpressionTypeClass,
 } from '../expressionVisitor';
 import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
 
 export class VariableDeclaratorTypeClass extends VariableTypeClass<NormalIdTypeClass> {
-    private content: ExpressionAllTypeClass | ErrorTypeClass | null;
+    private content: BasedExpressionTypeClass | ErrorTypeClass | null;
 
     private constructor(
         value: NormalIdTypeClass | ErrorTypeClass,
-        content: ExpressionAllTypeClass | ErrorTypeClass | null,
+        content: BasedExpressionTypeClass | ErrorTypeClass | null,
     ) {
         super('variableDeclarator', value);
         this.content = content;
@@ -32,14 +32,14 @@ export class VariableDeclaratorTypeClass extends VariableTypeClass<NormalIdTypeC
             ctx.expression()
                 ? isValidClass(
                       new ExpressionVisitor().visit(ctx.expression()),
-                      isExpressionTypeAll,
+                      isBasedExpressionTypeClass,
                       'expression',
                   )
                 : null,
         );
     }
 
-    getContent(): ExpressionAllTypeClass | ErrorTypeClass | null {
+    getContent(): BasedExpressionTypeClass | ErrorTypeClass | null {
         return this.content;
     }
 }

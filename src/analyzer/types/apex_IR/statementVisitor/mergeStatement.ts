@@ -8,16 +8,16 @@ import {
 } from '.';
 
 import {
-    ExpressionAllTypeClass,
+    BasedExpressionTypeClass,
     ExpressionVisitor,
-    isExpressionTypeAll,
+    isBasedExpressionTypeClass,
 } from '../expressionVisitor';
 import { ErrorTypeClass, CommonTypeClass, isValidClass, isValidClassList } from '../commonVisitor';
 
-export class MergeStatementTypeClass extends StatementListTypeClass<ExpressionAllTypeClass> {
+export class MergeStatementTypeClass extends StatementListTypeClass<BasedExpressionTypeClass> {
     private accessLevel: AccessLevelTypeClass | ErrorTypeClass | null = null;
     private constructor(
-        value: (ExpressionAllTypeClass | ErrorTypeClass)[],
+        value: (BasedExpressionTypeClass | ErrorTypeClass)[],
         accessLevel: AccessLevelTypeClass | ErrorTypeClass | null,
     ) {
         super('mergeStatement', value);
@@ -33,7 +33,7 @@ export class MergeStatementTypeClass extends StatementListTypeClass<ExpressionAl
             isValidClassList(
                 ctx.expression_list(),
                 (ctx) => new ExpressionVisitor().visit(ctx),
-                isExpressionTypeAll,
+                isBasedExpressionTypeClass,
                 'expression',
             ),
             ctx.accessLevel()

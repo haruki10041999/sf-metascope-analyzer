@@ -2,15 +2,17 @@ import typia from 'typia';
 
 import {
     ErrorInfo,
-    SourceInfo,
+    SourceInfoMap,
     assignMultiClass,
     isErrorInfo,
     isTargetTypeClass,
     makeErrorAssignRule,
     makeErrorInfo,
     makeSourceInfo,
-    splitSourceInfo,
-} from './commons';
+    makeEmptySourceInfoMap,
+    makeSingleSourceInfoMap,
+    makeArraySourceInfoMap,
+} from './converter/commons';
 
 import {
     NormalModifierTypeClass,
@@ -125,10 +127,73 @@ type AnnotationParam = {
     valueType: string;
 };
 
-type AnnotationType<TName extends string> = {
-    name: TName;
+const isAnnotationParam = typia.createIs<AnnotationParam>();
+
+type LWCAnnotationType = {
+    name: LWCAnnotation;
     param?: AnnotationParam | AnnotationParam[];
 };
+const isLWCAnnotationType = typia.createIs<LWCAnnotationType>();
+
+type FlowAnnotationType = {
+    name: FlowAnnotation;
+    param?: AnnotationParam | AnnotationParam[];
+};
+const isFlowAnnotationType = typia.createIs<FlowAnnotationType>();
+
+type AsyncAnnotationType = {
+    name: AsyncAnnotation;
+    param?: AnnotationParam | AnnotationParam[];
+};
+const isAsyncAnnotationType = typia.createIs<AsyncAnnotationType>();
+
+type TestAnnotationType = {
+    name: TestAnnotation;
+    param?: AnnotationParam | AnnotationParam[];
+};
+const isTestAnnotationType = typia.createIs<TestAnnotationType>();
+
+type RestAnnotationType = {
+    name: RestAnnotation;
+    param?: AnnotationParam | AnnotationParam[];
+};
+const isRestAnnotationType = typia.createIs<RestAnnotationType>();
+
+type VisualforceAnnotationType = {
+    name: VisualforceAnnotation;
+    param?: AnnotationParam | AnnotationParam[];
+};
+const isVisualforceAnnotationType = typia.createIs<VisualforceAnnotationType>();
+
+type AccessAnnotationType = {
+    name: AccessAnnotation;
+    param?: AnnotationParam | AnnotationParam[];
+};
+const isAccessAnnotationType = typia.createIs<AccessAnnotationType>();
+
+type SerializationAnnotationType = {
+    name: SerializationAnnotation;
+    param?: AnnotationParam | AnnotationParam[];
+};
+const isSerializationAnnotationType = typia.createIs<SerializationAnnotationType>();
+
+type ExecutionAnnotationType = {
+    name: ExecutionAnnotation;
+    param?: AnnotationParam | AnnotationParam[];
+};
+const isExecutionAnnotationType = typia.createIs<ExecutionAnnotationType>();
+
+type CompatibilityAnnotationType = {
+    name: CompatibilityAnnotation;
+    param?: AnnotationParam | AnnotationParam[];
+};
+const isCompatibilityAnnotationType = typia.createIs<CompatibilityAnnotationType>();
+
+type OtherAnnotationType = {
+    name: string;
+    param?: AnnotationParam | AnnotationParam[];
+};
+const isOtherAnnotationType = typia.createIs<OtherAnnotationType>();
 
 export type ModifierType = {
     access?: AccessModifier[];
@@ -138,40 +203,52 @@ export type ModifierType = {
     sharing?: SharingModifier[];
     other?: OtherModifier[];
     annotation?: {
-        lwc?: AnnotationType<LWCAnnotation>[];
-        flow?: AnnotationType<FlowAnnotation>[];
-        async?: AnnotationType<AsyncAnnotation>[];
-        test?: AnnotationType<TestAnnotation>[];
-        rest?: AnnotationType<RestAnnotation>[];
-        visualforce?: AnnotationType<VisualforceAnnotation>[];
-        access?: AnnotationType<AccessAnnotation>[];
-        serialize?: AnnotationType<SerializationAnnotation>[];
-        execution?: AnnotationType<ExecutionAnnotation>[];
-        compatibility?: AnnotationType<CompatibilityAnnotation>[];
-        other?: AnnotationType<string>[];
+        lwc?: LWCAnnotationType[];
+        flow?: FlowAnnotationType[];
+        async?: AsyncAnnotationType[];
+        test?: TestAnnotationType[];
+        rest?: RestAnnotationType[];
+        visualforce?: VisualforceAnnotationType[];
+        access?: AccessAnnotationType[];
+        serialize?: SerializationAnnotationType[];
+        execution?: ExecutionAnnotationType[];
+        compatibility?: CompatibilityAnnotationType[];
+        other?: OtherAnnotationType[];
     };
 };
 
 export const isModifierType = typia.createIs<ModifierType>();
 
+type ElementValueResult = {
+    value: string | null | void;
+    valueType: string;
+} | null | void;
+
+type ElementValuePairResult = {
+    key: string | null | void;
+    value: ElementValueResult | null;
+};
+
+type AnnotationResult = {
+    name: string | null | void;
+    annotationParam: AnnotationParam | AnnotationParam[] | null;
+};
+
 export const makeElementValueType = (
-    type: string,
     elementValueClass: ElementValueTypeClass,
-    sourceInfo: { [key: string]: SourceInfo },
+    sourceInfo: SourceInfoMap,
     errorInfo: ErrorInfo[],
-) => {
-    return assignMultiClass(elementValueClass.getValue(), [
+): ElementValueResult => {
+    const elementValueType = elementValueClass.getType();
+    const elementValueSourceInfoMap = makeEmptySourceInfoMap();
+
+    const elementValue = assignMultiClass(elementValueClass.getValue(), [
         {
             isValid: (target: unknown) => isTargetTypeClass(target, isNormalLiteralType),
             construct: (typeClass: NormalLiteralTypeClass) => {
-                const normalLiteral = splitSourceInfo(
-                    typeClass,
-                    [type, elementValueClass.getType(), typeClass.getType()].join('_'),
-                    sourceInfo,
-                );
-                const value = normalLiteral.getValue();
-                const valueType = normalLiteral.getValueType();
-
+                const value = typeClass.getValue();
+                const valueType = typeClass.getValueType();
+                elementValueSourceInfoMap[typeClass.getType()] = makeSingleSourceInfoMap(typeClass);
                 return {
                     value: assignMultiClass(value, [
                         {
@@ -188,28 +265,29 @@ export const makeElementValueType = (
         },
         makeErrorAssignRule(errorInfo),
     ]);
+
+    sourceInfo[elementValueType] = elementValueSourceInfoMap;
+
+    return elementValue;
 };
 
 const makeElementValuePairType = (
-    type: string,
     elementValuePairTypeClass: ElementValuePairTypeClass,
-    sourceInfo: { [key: string]: SourceInfo },
+    sourceInfo: SourceInfoMap,
     errorInfo: ErrorInfo[],
-) => {
+): ElementValuePairResult => {
     const elementValuePairType = elementValuePairTypeClass.getType();
+    const elementValuePairSourceInfoMap = makeEmptySourceInfoMap();
     const key = elementValuePairTypeClass.getLeft();
     const value = elementValuePairTypeClass.getRight();
 
-    return {
+    const elementValuePair = {
         key: assignMultiClass(key, [
             {
                 isValid: (target: unknown) => isTargetTypeClass(target, isNormalIdType),
                 construct: (typeClass: NormalIdTypeClass) => {
-                    return splitSourceInfo(
-                        typeClass,
-                        [type, elementValuePairType, typeClass.getType()].join('_'),
-                        sourceInfo,
-                    ).getValue();
+                    elementValuePairSourceInfoMap[typeClass.getType()] =
+                        makeSingleSourceInfoMap(typeClass);
                 },
             },
             makeErrorAssignRule(errorInfo),
@@ -219,9 +297,8 @@ const makeElementValuePairType = (
                 isValid: (target: unknown) => isTargetTypeClass(target, isElementValueType),
                 construct: (typeClass: ElementValueTypeClass) => {
                     return makeElementValueType(
-                        [type, elementValuePairType].join('_'),
                         typeClass,
-                        sourceInfo,
+                        elementValuePairSourceInfoMap,
                         errorInfo,
                     );
                 },
@@ -229,17 +306,20 @@ const makeElementValuePairType = (
             makeErrorAssignRule(errorInfo),
         ]),
     };
+
+    sourceInfo[elementValuePairType] = elementValuePairSourceInfoMap;
+    return elementValuePair;
 };
 
 const makeElementValuePairsType = (
-    type: string,
     elementValuePairsTypeClass: ElementValuePairsTypeClass,
-    sourceInfo: { [key: string]: SourceInfo },
+    sourceInfo: SourceInfoMap,
     errorInfo: ErrorInfo[],
-) => {
+): ElementValuePairResult[] => {
     const elementValuePairsType = elementValuePairsTypeClass.getType();
+    const elementValuePairsSourceInfoMap = makeEmptySourceInfoMap();
 
-    return elementValuePairsTypeClass
+    const elementValuePairs = elementValuePairsTypeClass
         .getValue()
         .map((value) => {
             return assignMultiClass(value, [
@@ -247,9 +327,8 @@ const makeElementValuePairsType = (
                     isValid: (target: unknown) => isTargetTypeClass(target, isElementValuePairType),
                     construct: (typeClass: ElementValuePairTypeClass) => {
                         return makeElementValuePairType(
-                            [type, elementValuePairsType].join('_'),
                             typeClass,
-                            sourceInfo,
+                            elementValuePairsSourceInfoMap,
                             errorInfo,
                         );
                     },
@@ -258,29 +337,25 @@ const makeElementValuePairsType = (
             ]);
         })
         .filter((value) => value != null);
+
+    sourceInfo[elementValuePairsType] = elementValuePairsSourceInfoMap;
+    return elementValuePairs;
 };
 
 const makeAnnotationType = (
-    modifierType: ModifierType,
-    type: string,
     annotationTypeClass: AnnotationTypeClass,
-    sourceInfo: { [key: string]: SourceInfo },
+    sourceInfo: SourceInfoMap,
     errorInfo: ErrorInfo[],
-): void => {
-    if (!modifierType.annotation) {
-        modifierType.annotation = {};
-    }
-
+): AnnotationResult => {
     const annotationType = annotationTypeClass.getType();
+    const annotationSourceInfoMap = makeEmptySourceInfoMap();
+
     const name = assignMultiClass(annotationTypeClass.getValue(), [
         {
             isValid: (target: unknown) => isTargetTypeClass(target, isNormalIdType),
             construct: (typeClass: NormalIdTypeClass) => {
-                return splitSourceInfo(
-                    typeClass,
-                    [type, annotationType, typeClass.getType()].join('_'),
-                    sourceInfo,
-                ).getValue();
+                annotationSourceInfoMap[typeClass.getType()] = makeSingleSourceInfoMap(typeClass);
+                return typeClass.getValue();
             },
         },
         makeErrorAssignRule(errorInfo),
@@ -290,29 +365,19 @@ const makeAnnotationType = (
         {
             isValid: (target: unknown) => isTargetTypeClass(target, isElementValueType),
             construct: (typeClass: ElementValueTypeClass) => {
-                return makeElementValueType(
-                    [type, annotationType].join('_'),
-                    typeClass,
-                    sourceInfo,
-                    errorInfo,
-                );
+                return makeElementValueType(typeClass, annotationSourceInfoMap, errorInfo);
             },
         },
         {
             isValid: (target: unknown) => isTargetTypeClass(target, isElementValuePairsType),
             construct: (typeClass: ElementValuePairsTypeClass) => {
-                return makeElementValuePairsType(
-                    [type, annotationType].join('_'),
-                    typeClass,
-                    sourceInfo,
-                    errorInfo,
-                );
+                return makeElementValuePairsType(typeClass, annotationSourceInfoMap, errorInfo);
             },
         },
         makeErrorAssignRule(errorInfo),
     ]);
 
-    let annotationParam: AnnotationParam | AnnotationParam[] | undefined = undefined;
+    let annotationParam: AnnotationParam | AnnotationParam[] | null = null;
     if (param != null) {
         if (Array.isArray(param)) {
             const annotationParams: AnnotationParam[] = [];
@@ -342,196 +407,17 @@ const makeAnnotationType = (
         }
     }
 
-    if (name != null) {
-        if (isLWCAnnotation(name)) {
-            if (!modifierType.annotation.lwc) {
-                modifierType.annotation.lwc = [];
-            }
+    sourceInfo[annotationType] = annotationSourceInfoMap;
 
-            const annotationType: AnnotationType<LWCAnnotation> = {
-                name: name,
-            };
-            if (annotationParam) {
-                annotationType.param = annotationParam;
-            }
-
-            modifierType.annotation.lwc.push(annotationType);
-
-            return;
-        }
-
-        if (isFlowAnnotation(name)) {
-            if (!modifierType.annotation.flow) {
-                modifierType.annotation.flow = [];
-            }
-
-            const annotationType: AnnotationType<FlowAnnotation> = {
-                name: name,
-            };
-            if (annotationParam) {
-                annotationType.param = annotationParam;
-            }
-
-            modifierType.annotation.flow.push(annotationType);
-
-            return;
-        }
-
-        if (isAsyncAnnotation(name)) {
-            if (!modifierType.annotation.async) {
-                modifierType.annotation.async = [];
-            }
-
-            const annotationType: AnnotationType<AsyncAnnotation> = {
-                name: name,
-            };
-            if (annotationParam) {
-                annotationType.param = annotationParam;
-            }
-
-            modifierType.annotation.async.push(annotationType);
-
-            return;
-        }
-
-        if (isTestAnnotation(name)) {
-            if (!modifierType.annotation.test) {
-                modifierType.annotation.test = [];
-            }
-
-            const annotationType: AnnotationType<TestAnnotation> = {
-                name: name,
-            };
-            if (annotationParam) {
-                annotationType.param = annotationParam;
-            }
-
-            modifierType.annotation.test.push(annotationType);
-
-            return;
-        }
-
-        if (isRestAnnotation(name)) {
-            if (!modifierType.annotation.rest) {
-                modifierType.annotation.rest = [];
-            }
-
-            const annotationType: AnnotationType<RestAnnotation> = {
-                name: name,
-            };
-            if (annotationParam) {
-                annotationType.param = annotationParam;
-            }
-
-            modifierType.annotation.rest.push(annotationType);
-
-            return;
-        }
-
-        if (isVisualforceAnnotation(name)) {
-            if (!modifierType.annotation.visualforce) {
-                modifierType.annotation.visualforce = [];
-            }
-
-            const annotationType: AnnotationType<VisualforceAnnotation> = {
-                name: name,
-            };
-            if (annotationParam) {
-                annotationType.param = annotationParam;
-            }
-
-            modifierType.annotation.visualforce.push(annotationType);
-
-            return;
-        }
-
-        if (isAccessAnnotation(name)) {
-            if (!modifierType.annotation.access) {
-                modifierType.annotation.access = [];
-            }
-
-            const annotationType: AnnotationType<AccessAnnotation> = {
-                name: name,
-            };
-            if (annotationParam) {
-                annotationType.param = annotationParam;
-            }
-
-            modifierType.annotation.access.push(annotationType);
-
-            return;
-        }
-
-        if (isSerializationAnnotation(name)) {
-            if (!modifierType.annotation.serialize) {
-                modifierType.annotation.serialize = [];
-            }
-
-            const annotationType: AnnotationType<SerializationAnnotation> = {
-                name: name,
-            };
-            if (annotationParam) {
-                annotationType.param = annotationParam;
-            }
-
-            modifierType.annotation.serialize.push(annotationType);
-
-            return;
-        }
-
-        if (isExecutionAnnotation(name)) {
-            if (!modifierType.annotation.execution) {
-                modifierType.annotation.execution = [];
-            }
-
-            const annotationType: AnnotationType<ExecutionAnnotation> = {
-                name: name,
-            };
-            if (annotationParam) {
-                annotationType.param = annotationParam;
-            }
-
-            modifierType.annotation.execution.push(annotationType);
-
-            return;
-        }
-
-        if (isCompatibilityAnnotation(name)) {
-            if (!modifierType.annotation.compatibility) {
-                modifierType.annotation.compatibility = [];
-            }
-
-            const annotationType: AnnotationType<CompatibilityAnnotation> = {
-                name: name,
-            };
-            if (annotationParam) {
-                annotationType.param = annotationParam;
-            }
-
-            modifierType.annotation.compatibility.push(annotationType);
-
-            return;
-        }
-
-        if (!modifierType.annotation.other) {
-            modifierType.annotation.other = [];
-        }
-
-        const annotationType: AnnotationType<string> = {
-            name: name,
-        };
-        if (annotationParam) {
-            annotationType.param = annotationParam;
-        }
-
-        modifierType.annotation.other.push(annotationType);
-    }
+    return {
+        name,
+        annotationParam,
+    };
 };
 
 export const makeModifierType = (
-    type: string,
     modifiers: NormalModifierTypeClass[],
-    sourceInfo: { [key: string]: SourceInfo },
+    sourceInfo: SourceInfoMap,
     errorInfo: ErrorInfo[],
 ): ModifierType | undefined => {
     const modifierType: ModifierType = {};
@@ -545,6 +431,8 @@ export const makeModifierType = (
                     if (!modifierType.access) {
                         modifierType.access = [];
                     }
+                    sourceInfo[`${modifier.getType()}_${index}`] =
+                        makeSingleSourceInfoMap(modifier);
                     modifierType.access.push(typeClass);
                 },
             },
@@ -555,6 +443,8 @@ export const makeModifierType = (
                     if (!modifierType.declaration) {
                         modifierType.declaration = [];
                     }
+                    sourceInfo[`${modifier.getType()}_${index}`] =
+                        makeSingleSourceInfoMap(modifier);
                     modifierType.declaration.push(typeClass);
                 },
             },
@@ -565,6 +455,8 @@ export const makeModifierType = (
                     if (!modifierType.webService) {
                         modifierType.webService = [];
                     }
+                    sourceInfo[`${modifier.getType()}_${index}`] =
+                        makeSingleSourceInfoMap(modifier);
                     modifierType.webService.push(typeClass);
                 },
             },
@@ -575,6 +467,8 @@ export const makeModifierType = (
                     if (!modifierType.test) {
                         modifierType.test = [];
                     }
+                    sourceInfo[`${modifier.getType()}_${index}`] =
+                        makeSingleSourceInfoMap(modifier);
                     modifierType.test.push(typeClass);
                 },
             },
@@ -586,6 +480,8 @@ export const makeModifierType = (
                     if (!modifierType.sharing) {
                         modifierType.sharing = [];
                     }
+                    sourceInfo[`${modifier.getType()}_${index}`] =
+                        makeSingleSourceInfoMap(modifier);
                     modifierType.sharing.push(typeClass);
                 },
             },
@@ -597,39 +493,233 @@ export const makeModifierType = (
                     if (!modifierType.other) {
                         modifierType.other = [];
                     }
+                    sourceInfo[`${modifier.getType()}_${index}`] =
+                        makeSingleSourceInfoMap(modifier);
                     modifierType.other.push(typeClass);
                 },
             },
             {
                 isValid: (target: unknown) => isTargetTypeClass(target, isAnnotationType),
                 construct: (typeClass: AnnotationTypeClass) => {
-                    makeAnnotationType(modifierType, type, typeClass, sourceInfo, errorInfo);
-                },
-            },
-            {
-                isValid: (target: unknown) => isTargetTypeClass(target, isErrorType),
-                construct: (typeClass: ErrorTypeClass) => {
-                    return makeErrorInfo(typeClass);
-                },
-            },
-        ]);
-        if (!modifierElement) {
-            sourceInfo = {
-                ...sourceInfo,
-                [[type, modifier.getType()].join('_')]: makeSourceInfo(modifier),
-            };
-            return;
-        }
+                    if (!modifierType.annotation) {
+                        modifierType.annotation = {};
+                    }
+                    const annotationSourceInfo = makeEmptySourceInfoMap();
+                    const { name, annotationParam } = makeAnnotationType(
+                        typeClass,
+                        annotationSourceInfo,
+                        errorInfo,
+                    );
+                    sourceInfo[`${modifier.getType()}_${index}`] = annotationSourceInfo;
 
-        if (isErrorInfo(modifierElement)) {
-            errorInfo.push(modifierElement);
-            return;
-        }
+                    if (typeof name === 'string' && isLWCAnnotation(name)) {
+                        if (!modifierType.annotation.lwc) {
+                            modifierType.annotation.lwc = [];
+                        }
+
+                        const annotation: LWCAnnotationType = {
+                            name,
+                        };
+
+                        if (annotationParam != null) {
+                            annotation.param = annotationParam;
+                        }
+
+                        modifierType.annotation.lwc.push(annotation);
+                        return;
+                    }
+
+                    if (typeof name === 'string' && isFlowAnnotation(name)) {
+                        if (!modifierType.annotation.flow) {
+                            modifierType.annotation.flow = [];
+                        }
+
+                        const annotation: FlowAnnotationType = {
+                            name,
+                        };
+
+                        if (annotationParam != null) {
+                            annotation.param = annotationParam;
+                        }
+
+                        modifierType.annotation.flow.push(annotation);
+                        return;
+                    }
+
+                    if (typeof name === 'string' && isAsyncAnnotation(name)) {
+                        if (!modifierType.annotation.async) {
+                            modifierType.annotation.async = [];
+                        }
+
+                        const annotation: AsyncAnnotationType = {
+                            name,
+                        };
+
+                        if (annotationParam != null) {
+                            annotation.param = annotationParam;
+                        }
+
+                        modifierType.annotation.async.push(annotation);
+                        return;
+                    }
+
+                    if (typeof name === 'string' && isTestAnnotation(name)) {
+                        if (!modifierType.annotation.test) {
+                            modifierType.annotation.test = [];
+                        }
+
+                        const annotation: TestAnnotationType = {
+                            name,
+                        };
+
+                        if (annotationParam != null) {
+                            annotation.param = annotationParam;
+                        }
+
+                        modifierType.annotation.test.push(annotation);
+                        return;
+                    }
+
+                    if (typeof name === 'string' && isRestAnnotation(name)) {
+                        if (!modifierType.annotation.rest) {
+                            modifierType.annotation.rest = [];
+                        }
+
+                        const annotation: RestAnnotationType = {
+                            name,
+                        };
+
+                        if (annotationParam != null) {
+                            annotation.param = annotationParam;
+                        }
+
+                        modifierType.annotation.rest.push(annotation);
+                        return;
+                    }
+
+                    if (typeof name === 'string' && isVisualforceAnnotation(name)) {
+                        if (!modifierType.annotation.visualforce) {
+                            modifierType.annotation.visualforce = [];
+                        }
+
+                        const annotation: VisualforceAnnotationType = {
+                            name,
+                        };
+
+                        if (annotationParam != null) {
+                            annotation.param = annotationParam;
+                        }
+
+                        modifierType.annotation.visualforce.push(annotation);
+                        return;
+                    }
+
+                    if (typeof name === 'string' && isAccessAnnotation(name)) {
+                        if (!modifierType.annotation.access) {
+                            modifierType.annotation.access = [];
+                        }
+
+                        const annotation: AccessAnnotationType = {
+                            name,
+                        };
+
+                        if (annotationParam != null) {
+                            annotation.param = annotationParam;
+                        }
+
+                        modifierType.annotation.access.push(annotation);
+                        return;
+                    }
+
+                    if (typeof name === 'string' && isAccessAnnotation(name)) {
+                        if (!modifierType.annotation.access) {
+                            modifierType.annotation.access = [];
+                        }
+
+                        const annotation: AccessAnnotationType = {
+                            name,
+                        };
+
+                        if (annotationParam != null) {
+                            annotation.param = annotationParam;
+                        }
+
+                        modifierType.annotation.access.push(annotation);
+                        return;
+                    }
+
+                    if (typeof name === 'string' && isSerializationAnnotation(name)) {
+                        if (!modifierType.annotation.serialize) {
+                            modifierType.annotation.serialize = [];
+                        }
+
+                        const annotation: SerializationAnnotationType = {
+                            name,
+                        };
+
+                        if (annotationParam != null) {
+                            annotation.param = annotationParam;
+                        }
+
+                        modifierType.annotation.serialize.push(annotation);
+                        return;
+                    }
+
+                    if (typeof name === 'string' && isExecutionAnnotation(name)) {
+                        if (!modifierType.annotation.execution) {
+                            modifierType.annotation.execution = [];
+                        }
+
+                        const annotation: ExecutionAnnotationType = {
+                            name,
+                        };
+
+                        if (annotationParam != null) {
+                            annotation.param = annotationParam;
+                        }
+
+                        modifierType.annotation.execution.push(annotation);
+                        return;
+                    }
+
+                    if (typeof name === 'string' && isCompatibilityAnnotation(name)) {
+                        if (!modifierType.annotation.compatibility) {
+                            modifierType.annotation.compatibility = [];
+                        }
+
+                        const annotation: CompatibilityAnnotationType = {
+                            name,
+                        };
+
+                        if (annotationParam != null) {
+                            annotation.param = annotationParam;
+                        }
+
+                        modifierType.annotation.compatibility.push(annotation);
+                        return;
+                    }
+
+                    if (typeof name === 'string') {
+                        if (!modifierType.annotation.other) {
+                            modifierType.annotation.other = [];
+                        }
+
+                        const annotation: OtherAnnotationType = {
+                            name,
+                        };
+
+                        if (annotationParam != null) {
+                            annotation.param = annotationParam;
+                        }
+
+                        modifierType.annotation.other.push(annotation);
+                        return;
+                    }
+                },
+            },
+            makeErrorAssignRule(errorInfo),
+        ]);
     });
 
-    if (Object.keys(modifierType).length > 0) {
-        return modifierType;
-    }
-
-    return undefined;
+    return modifierType;
 };

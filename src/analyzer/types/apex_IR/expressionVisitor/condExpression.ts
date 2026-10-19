@@ -2,22 +2,22 @@ import { CondExpressionContext } from '@apexdevtools/apex-parser';
 
 import {
     ConditionExpressionTypeClass,
-    ExpressionAllTypeClass,
+    BasedExpressionTypeClass,
     ExpressionVisitor,
-    isExpressionTypeAll,
+    isBasedExpressionTypeClass,
 } from '.';
 
 import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
 
 export class CondExpressionTypeClass extends ConditionExpressionTypeClass<
-    ExpressionAllTypeClass,
-    ExpressionAllTypeClass,
-    ExpressionAllTypeClass
+    BasedExpressionTypeClass,
+    BasedExpressionTypeClass,
+    BasedExpressionTypeClass
 > {
     private constructor(
-        condition: ExpressionAllTypeClass | ErrorTypeClass,
-        trueValue: ExpressionAllTypeClass | ErrorTypeClass,
-        falseValue: ExpressionAllTypeClass | ErrorTypeClass,
+        condition: BasedExpressionTypeClass | ErrorTypeClass,
+        trueValue: BasedExpressionTypeClass | ErrorTypeClass,
+        falseValue: BasedExpressionTypeClass | ErrorTypeClass,
     ) {
         super('condExpression', condition, trueValue, falseValue);
     }
@@ -30,17 +30,17 @@ export class CondExpressionTypeClass extends ConditionExpressionTypeClass<
         return new CondExpressionTypeClass(
             isValidClass(
                 new ExpressionVisitor().visit(ctx.expression(0)),
-                isExpressionTypeAll,
+                isBasedExpressionTypeClass,
                 'expression',
             ),
             isValidClass(
                 new ExpressionVisitor().visit(ctx.expression(1)),
-                isExpressionTypeAll,
+                isBasedExpressionTypeClass,
                 'expression',
             ),
             isValidClass(
                 new ExpressionVisitor().visit(ctx.expression(2)),
-                isExpressionTypeAll,
+                isBasedExpressionTypeClass,
                 'expression',
             ),
         );

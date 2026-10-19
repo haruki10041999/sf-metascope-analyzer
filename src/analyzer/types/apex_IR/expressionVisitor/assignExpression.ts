@@ -2,21 +2,21 @@ import { AssignExpressionContext } from '@apexdevtools/apex-parser';
 
 import {
     DoubleOperatorExpressionTypeClass,
-    ExpressionAllTypeClass,
+    BasedExpressionTypeClass,
     ExpressionVisitor,
-    isExpressionTypeAll,
+    isBasedExpressionTypeClass,
 } from '.';
 
 import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
 
 export class AssignExpressionTypeClass extends DoubleOperatorExpressionTypeClass<
-    ExpressionAllTypeClass,
+    BasedExpressionTypeClass,
     string,
-    ExpressionAllTypeClass
+    BasedExpressionTypeClass
 > {
     private constructor(
-        left: ExpressionAllTypeClass | ErrorTypeClass,
-        right: ExpressionAllTypeClass | ErrorTypeClass,
+        left: BasedExpressionTypeClass | ErrorTypeClass,
+        right: BasedExpressionTypeClass | ErrorTypeClass,
         operator: string,
     ) {
         super('assignExpression', left, right, operator);
@@ -89,12 +89,12 @@ export class AssignExpressionTypeClass extends DoubleOperatorExpressionTypeClass
         return new AssignExpressionTypeClass(
             isValidClass(
                 new ExpressionVisitor().visit(ctx.expression(0)),
-                isExpressionTypeAll,
+                isBasedExpressionTypeClass,
                 'expression',
             ),
             isValidClass(
                 new ExpressionVisitor().visit(ctx.expression(1)),
-                isExpressionTypeAll,
+                isBasedExpressionTypeClass,
                 'expression',
             ),
             operator,

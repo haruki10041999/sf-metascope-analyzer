@@ -3,15 +3,15 @@ import { ExpressionListContext } from '@apexdevtools/apex-parser';
 import { ListTypeClass } from '.';
 
 import {
-    ExpressionAllTypeClass,
+    BasedExpressionTypeClass,
     ExpressionVisitor,
-    isExpressionTypeAll,
+    isBasedExpressionTypeClass,
 } from '../expressionVisitor';
 
 import { ErrorTypeClass, CommonTypeClass, isValidClassList } from '../commonVisitor';
 
-export class ExpressionListTypeClass extends ListTypeClass<ExpressionAllTypeClass> {
-    private constructor(value: (ExpressionAllTypeClass | ErrorTypeClass)[]) {
+export class ExpressionListTypeClass extends ListTypeClass<BasedExpressionTypeClass> {
+    private constructor(value: (BasedExpressionTypeClass | ErrorTypeClass)[]) {
         super('expressionList', value);
     }
 
@@ -24,7 +24,7 @@ export class ExpressionListTypeClass extends ListTypeClass<ExpressionAllTypeClas
             isValidClassList(
                 ctx.expression_list(),
                 (ctx) => new ExpressionVisitor().visit(ctx),
-                isExpressionTypeAll,
+                isBasedExpressionTypeClass,
                 'expression',
             ),
         );

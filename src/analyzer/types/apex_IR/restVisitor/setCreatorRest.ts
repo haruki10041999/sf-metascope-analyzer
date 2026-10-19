@@ -3,14 +3,14 @@ import { SetCreatorRestContext } from '@apexdevtools/apex-parser';
 import { RestListTypeClass } from '.';
 
 import {
-    ExpressionAllTypeClass,
+    BasedExpressionTypeClass,
     ExpressionVisitor,
-    isExpressionTypeAll,
+    isBasedExpressionTypeClass,
 } from '../expressionVisitor';
 import { ErrorTypeClass, CommonTypeClass, isValidClassList } from '../commonVisitor';
 
-export class SetCreatorRestTypeClass extends RestListTypeClass<ExpressionAllTypeClass> {
-    private constructor(value: (ExpressionAllTypeClass | ErrorTypeClass)[]) {
+export class SetCreatorRestTypeClass extends RestListTypeClass<BasedExpressionTypeClass> {
+    private constructor(value: (BasedExpressionTypeClass | ErrorTypeClass)[]) {
         super('setCreatorRest', value);
     }
 
@@ -23,7 +23,7 @@ export class SetCreatorRestTypeClass extends RestListTypeClass<ExpressionAllType
             isValidClassList(
                 ctx.expression_list(),
                 (ctx) => new ExpressionVisitor().visit(ctx),
-                isExpressionTypeAll,
+                isBasedExpressionTypeClass,
                 'expression',
             ),
         );

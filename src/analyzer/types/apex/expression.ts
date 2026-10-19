@@ -1,27 +1,50 @@
 import typia from 'typia';
 
 import {
-    ExpressionClass,
-    isNormalExpressionElementClass,
-    isPrimaryExpressionElementClass,
-    isDotExpressionElementClass,
-    isMethodCallExpressionElementClass,
-    isArrayExpressionElementClass,
-    isNewExpressionElementClass,
-    isCastExpressionElementClass,
-    isArrayRestElementClass,
-    isExpressionArrayRestElementClass,
-    isMapRestElementClass,
-    isNoRestElementClass,
-    isSubExpressionElementClass,
-    isSingleOperatorExpressionElementClass,
-    isExpToExpOperatorExpressionElementClass,
-    isInstanceOfExpressionElementClass,
-    isCondExpressionElementClass,
-    isString,
-    isDotMethodCallClass,
-} from './converter';
+    ExpressionAllTypeClass,
+    NormalExpressionTypeClass,
+    PrimaryExpressionTypeClass,
+    DotExpressionTypeClass,
+    MethodCallExpressionTypeClass,
+    NewExpressionTypeClass,
+    CastExpressionTypeClass,
+    SubExpressionTypeClass,
+    ArrayExpressionTypeClass,
+    Arth1ExpressionTypeClass,
+    Arth2ExpressionTypeClass,
+    AssignExpressionTypeClass,
+    BitAndExpressionTypeClass,
+    BitExpressionTypeClass,
+    BitOrExpressionTypeClass,
+    BitNotExpressionTypeClass,
+    CmpExpressionTypeClass,
+    CoalExpressionTypeClass,
+    CondExpressionTypeClass,
+    EqualityExpressionTypeClass,
+    InstanceOfExpressionTypeClass,
+    LogAndExpressionTypeClass,
+    LogOrExpressionTypeClass,
+    NegExpressionTypeClass,
+    PostOpExpressionTypeClass,
+    PreOpExpressionTypeClass,
+    BasedExpressionTypeClass,
+    isNormalExpressionType,
+    isPrimaryExpressionType,
+} from '../apex_IR';
 
+import {
+    ErrorInfo,
+    SourceInfoMap,
+    assignMultiClass,
+    isErrorInfo,
+    isTargetTypeClass,
+    makeErrorAssignRule,
+    makeErrorInfo,
+    makeSourceInfo,
+    makeEmptySourceInfoMap,
+    makeSingleSourceInfoMap,
+    makeArraySourceInfoMap,
+} from './converter/commons';
 import {
     PrimaryType,
     makePrimaryType,
@@ -196,11 +219,41 @@ export type ExpressionType =
 
 export const isExpressionType = typia.createIs<ExpressionType>();
 
-export const makeExpressionType = (expression: ExpressionClass): ExpressionType | undefined => {
-    const elementClass = expression.getValue();
+export const makeExpressionType = (
+    target: BasedExpressionTypeClass,
+    sourceInfo: SourceInfoMap,
+    errorInfo: ErrorInfo[],
+): ExpressionType | undefined => {
+    const expressionType = target.getType();
+    const expression = assignMultiClass(target, [
+        {
+            isValid: (target: unknown) => isTargetTypeClass(target, isNormalExpressionType),
+            construct: (typeClass: NormalExpressionTypeClass) => {
+                return assignMultiClass(typeClass.getValue(), [
+                    {
+                        isValid: (target: unknown) => typeof target === 'string',
+                        construct: (value: string) => {
+                            return value;
+                        },
+                    },
+                    makeErrorAssignRule(errorInfo),
+                ]);
+            },
+        },
+        {
+            isValid: (target: unknown) => isTargetTypeClass(target, isPrimaryExpressionType),
+            construct: (typeClass: PrimaryExpressionTypeClass) => {
+                const primarySourceInfoMap = makeEmptySourceInfoMap();
+                const primary = makePrimaryType(typeClass.getValue());
+                sourceInfo[expressionType] = primarySourceInfoMap;
+                return primary;
+            },
+        },
+        makeErrorAssignRule(errorInfo),
+    ]);
 
     if (elementClass) {
-        if (isNormalExpressionElementClass(elementClass)) {
+        if (isExpression(elementClass)) {
             const value = elementClass.getExpression();
             if (value) {
                 return {
@@ -222,7 +275,7 @@ export const makeExpressionType = (expression: ExpressionClass): ExpressionType 
                 const right = value.getRight();
 
                 if (left && operator && right) {
-                    const object = makeExpressionType(left);
+                    const object = makeExpressionType(left, sourceInfo, errorInfo);
                     if (object) {
                         if (isString(right)) {
                             return {
@@ -247,7 +300,7 @@ export const makeExpressionType = (expression: ExpressionClass): ExpressionType 
 
                                 if (param.length > 0) {
                                     expressionType.arg = param
-                                        .map((p) => makeExpressionType(p))
+                                        .map((p) => makeExpressionType(p, sourceInfo, errorInfo))
                                         .filter((p) => p !== undefined);
                                 }
                                 return expressionType;
@@ -261,7 +314,7 @@ export const makeExpressionType = (expression: ExpressionClass): ExpressionType 
         if (isArrayExpressionElementClass(elementClass)) {
             const values = elementClass
                 .getExpression()
-                .map((v) => makeExpressionType(v))
+                .map((v) => makeExpressionType(v, sourceInfo, errorInfo))
                 .filter((v) => v !== undefined);
             const object = values[0];
             if (object && values.length > 1) {
@@ -294,7 +347,7 @@ export const makeExpressionType = (expression: ExpressionClass): ExpressionType 
 
                     if (arg.length > 0) {
                         expressionType.arg = arg
-                            .map((a) => makeExpressionType(a))
+                            .map((a) => makeExpressionType(a, sourceInfo, errorInfo))
                             .filter((a) => a !== undefined);
                     }
 
@@ -330,10 +383,10 @@ export const makeExpressionType = (expression: ExpressionClass): ExpressionType 
 
                 if (isArrayRestElementClass(restElementClass)) {
                     const content = restElementClass.getContent();
-                    const size = makeExpressionType(content.getSize());
+                    const size = makeExpressionType(content.getSize(), sourceInfo, errorInfo);
                     const initialValue = content
                         .getValue()
-                        .map((a) => makeExpressionType(a))
+                        .map((a) => makeExpressionType(a, sourceInfo, errorInfo))
                         .filter((a) => a !== undefined);
 
                     const expressionType: ArrayCreatorRestType = {
@@ -361,7 +414,7 @@ export const makeExpressionType = (expression: ExpressionClass): ExpressionType 
                         if (restElementClass.getContent().length > 0) {
                             expressionType.arg = restElementClass
                                 .getContent()
-                                .map((a) => makeExpressionType(a))
+                                .map((a) => makeExpressionType(a, sourceInfo, errorInfo))
                                 .filter((a) => a !== undefined);
                         }
 
@@ -370,7 +423,7 @@ export const makeExpressionType = (expression: ExpressionClass): ExpressionType 
 
                     const initialValue = restElementClass
                         .getContent()
-                        .map((a) => makeExpressionType(a))
+                        .map((a) => makeExpressionType(a, sourceInfo, errorInfo))
                         .filter((a) => a !== undefined);
                     const collectionName = createdName.typeName.at(-1);
 
@@ -412,8 +465,12 @@ export const makeExpressionType = (expression: ExpressionClass): ExpressionType 
                             value: ExpressionType;
                         }[] = [];
                         content.forEach((item) => {
-                            const left = makeExpressionType(item.getLeft());
-                            const right = makeExpressionType(item.getRight());
+                            const left = makeExpressionType(item.getLeft(), sourceInfo, errorInfo);
+                            const right = makeExpressionType(
+                                item.getRight(),
+                                sourceInfo,
+                                errorInfo,
+                            );
                             if (left && right) {
                                 initialValue.push({
                                     key: left,
@@ -451,7 +508,7 @@ export const makeExpressionType = (expression: ExpressionClass): ExpressionType 
 
         if (isCastExpressionElementClass(elementClass)) {
             const value = elementClass.getExpression();
-            const valueValue = makeExpressionType(value.getValue());
+            const valueValue = makeExpressionType(value.getValue(), sourceInfo, errorInfo);
             const valueType = makeTypeType(value.getValueType());
 
             if (valueValue && valueType) {
@@ -466,7 +523,7 @@ export const makeExpressionType = (expression: ExpressionClass): ExpressionType 
         if (isSubExpressionElementClass(elementClass)) {
             const value = elementClass.getExpression();
             if (value) {
-                const expression = makeExpressionType(value);
+                const expression = makeExpressionType(value, sourceInfo, errorInfo);
                 if (expression) {
                     return {
                         kind: 'sub',
@@ -479,7 +536,7 @@ export const makeExpressionType = (expression: ExpressionClass): ExpressionType 
 
         if (isSingleOperatorExpressionElementClass(elementClass)) {
             const value = elementClass.getExpression();
-            const valueValue = makeExpressionType(value.getValue());
+            const valueValue = makeExpressionType(value.getValue(), sourceInfo, errorInfo);
             const operator = value.getOperator();
             const location = value.getLocation();
 
@@ -494,9 +551,9 @@ export const makeExpressionType = (expression: ExpressionClass): ExpressionType 
 
         if (isExpToExpOperatorExpressionElementClass(elementClass)) {
             const value = elementClass.getExpression();
-            const left = makeExpressionType(value.getLeft());
+            const left = makeExpressionType(value.getLeft(), sourceInfo, errorInfo);
             const operator = value.getOperator();
-            const right = makeExpressionType(value.getRight());
+            const right = makeExpressionType(value.getRight(), sourceInfo, errorInfo);
 
             if (left && operator && right) {
                 return {
@@ -510,9 +567,9 @@ export const makeExpressionType = (expression: ExpressionClass): ExpressionType 
 
         if (isInstanceOfExpressionElementClass(elementClass)) {
             const value = elementClass.getExpression();
-            const left = makeExpressionType(value.getLeft());
+            const left = makeExpressionType(value.getLeft(), sourceInfo, errorInfo);
             const operator = value.getOperator();
-            const right = makeTypeType(value.getRight());
+            const right = makeTypeType(value.getRight(), sourceInfo, errorInfo);
 
             if (left && operator && right) {
                 return {
@@ -526,9 +583,9 @@ export const makeExpressionType = (expression: ExpressionClass): ExpressionType 
 
         if (isCondExpressionElementClass(elementClass)) {
             const value = elementClass.getExpression();
-            const condition = makeExpressionType(value.getCondition());
-            const trueValue = makeExpressionType(value.getTrueValue());
-            const falseValue = makeExpressionType(value.getFalseValue());
+            const condition = makeExpressionType(value.getCondition(), sourceInfo, errorInfo);
+            const trueValue = makeExpressionType(value.getTrueValue(), sourceInfo, errorInfo);
+            const falseValue = makeExpressionType(value.getFalseValue(), sourceInfo, errorInfo);
 
             if (condition && trueValue && falseValue) {
                 return {

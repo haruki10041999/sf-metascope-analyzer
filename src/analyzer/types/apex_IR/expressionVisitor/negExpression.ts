@@ -1,16 +1,16 @@
 import { NegExpressionContext } from '@apexdevtools/apex-parser';
 
 import {
-    ExpressionAllTypeClass,
+    BasedExpressionTypeClass,
     ExpressionVisitor,
-    isExpressionTypeAll,
+    isBasedExpressionTypeClass,
     SingleOperatorExpressionTypeClass,
 } from '.';
 
 import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
 
-export class NegExpressionTypeClass extends SingleOperatorExpressionTypeClass<ExpressionAllTypeClass> {
-    private constructor(value: ExpressionAllTypeClass | ErrorTypeClass, operator: string) {
+export class NegExpressionTypeClass extends SingleOperatorExpressionTypeClass<BasedExpressionTypeClass> {
+    private constructor(value: BasedExpressionTypeClass | ErrorTypeClass, operator: string) {
         super('negExpression', value, operator);
     }
 
@@ -22,7 +22,7 @@ export class NegExpressionTypeClass extends SingleOperatorExpressionTypeClass<Ex
         return new NegExpressionTypeClass(
             isValidClass(
                 new ExpressionVisitor().visit(ctx.expression()),
-                isExpressionTypeAll,
+                isBasedExpressionTypeClass,
                 'expression',
             ),
             ctx.TILDE() ? '~' : '!',

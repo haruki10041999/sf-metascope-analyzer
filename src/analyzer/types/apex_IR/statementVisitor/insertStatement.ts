@@ -8,15 +8,15 @@ import {
 } from '.';
 
 import {
-    ExpressionAllTypeClass,
+    BasedExpressionTypeClass,
     ExpressionVisitor,
-    isExpressionTypeAll,
+    isBasedExpressionTypeClass,
 } from '../expressionVisitor';
 import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
 
-export class InsertStatementTypeClass extends DmlStatementTypeClass<ExpressionAllTypeClass> {
+export class InsertStatementTypeClass extends DmlStatementTypeClass<BasedExpressionTypeClass> {
     private constructor(
-        value: ExpressionAllTypeClass | ErrorTypeClass,
+        value: BasedExpressionTypeClass | ErrorTypeClass,
         accessLevel: AccessLevelTypeClass | ErrorTypeClass | null,
     ) {
         super('insertStatement', value, accessLevel);
@@ -30,7 +30,7 @@ export class InsertStatementTypeClass extends DmlStatementTypeClass<ExpressionAl
         return new InsertStatementTypeClass(
             isValidClass(
                 new ExpressionVisitor().visit(ctx.expression()),
-                isExpressionTypeAll,
+                isBasedExpressionTypeClass,
                 'expression',
             ),
             ctx.accessLevel()
