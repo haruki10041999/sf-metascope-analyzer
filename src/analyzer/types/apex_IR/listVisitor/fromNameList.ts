@@ -27,7 +27,11 @@ export class FromNameTypeClass extends CommonTypeClass {
         );
         const start = getSourceSpan(fieldName);
         const end = alias ? getSourceSpan(alias) : start;
-        fromName.setSpan(start && end ? { start: start.start, end: end.end } : null);
+        fromName.setSpan(
+            start && end
+                ? { context: fieldName.getText(), start: start.start, end: end.end }
+                : null,
+        );
         return fromName;
     }
 
@@ -73,4 +77,3 @@ export class FromNameListTypeClass extends ListTypeClass<FromNameTypeClass> {
 export const isFromNameListType = (target: CommonTypeClass): target is FromNameListTypeClass => {
     return target instanceof FromNameListTypeClass;
 };
-

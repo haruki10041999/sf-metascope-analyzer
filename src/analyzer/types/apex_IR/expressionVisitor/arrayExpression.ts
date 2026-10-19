@@ -4,7 +4,7 @@ import {
     ExpressionTypeClass,
     BasedExpressionTypeClass,
     ExpressionVisitor,
-    isBasedExpressionTypeClass,
+    isBasedExpressionType,
 } from '.';
 
 import { CommonTypeClass, ErrorTypeClass, isValidClass } from '../commonVisitor';
@@ -28,12 +28,12 @@ export class ArrayExpressionTypeClass extends ExpressionTypeClass<BasedExpressio
         return new ArrayExpressionTypeClass(
             isValidClass(
                 new ExpressionVisitor().visit(ctx.expression(0)),
-                isBasedExpressionTypeClass,
+                isBasedExpressionType,
                 'expression',
             ),
             isValidClass(
                 new ExpressionVisitor().visit(ctx.expression(1)),
-                isBasedExpressionTypeClass,
+                isBasedExpressionType,
                 'expression',
             ),
         );
@@ -49,4 +49,3 @@ export const isArrayExpressionType = (
 ): target is ArrayExpressionTypeClass => {
     return target instanceof ArrayExpressionTypeClass;
 };
-

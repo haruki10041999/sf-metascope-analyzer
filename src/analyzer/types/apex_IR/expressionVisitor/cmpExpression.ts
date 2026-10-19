@@ -4,7 +4,7 @@ import {
     DoubleOperatorExpressionTypeClass,
     BasedExpressionTypeClass,
     ExpressionVisitor,
-    isBasedExpressionTypeClass,
+    isBasedExpressionType,
 } from '.';
 
 import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
@@ -30,12 +30,12 @@ export class CmpExpressionTypeClass extends DoubleOperatorExpressionTypeClass<
         return new CmpExpressionTypeClass(
             isValidClass(
                 new ExpressionVisitor().visit(ctx.expression(0)),
-                isBasedExpressionTypeClass,
+                isBasedExpressionType,
                 'expression',
             ),
             isValidClass(
                 new ExpressionVisitor().visit(ctx.expression(1)),
-                isBasedExpressionTypeClass,
+                isBasedExpressionType,
                 'expression',
             ),
             // `<=` / `>=` は LT/GT と ASSIGN の 2 トークンで表現される
@@ -47,4 +47,3 @@ export class CmpExpressionTypeClass extends DoubleOperatorExpressionTypeClass<
 export const isCmpExpressionType = (target: CommonTypeClass): target is CmpExpressionTypeClass => {
     return target instanceof CmpExpressionTypeClass;
 };
-

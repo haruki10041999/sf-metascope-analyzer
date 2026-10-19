@@ -6,7 +6,7 @@ import { NormalIdTypeClass, IdVisitor, isNormalIdType } from '../idVisitor';
 import {
     BasedExpressionTypeClass,
     ExpressionVisitor,
-    isBasedExpressionTypeClass,
+    isBasedExpressionType,
 } from '../expressionVisitor';
 import { TypeRefTypeClass, TypeVisitor, isTypeRefType } from '../typeVisitor';
 import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
@@ -35,7 +35,7 @@ export class EnhancedForControlTypeClass extends ControlTypeClass<NormalIdTypeCl
             isValidClass(new TypeVisitor().visit(ctx.typeRef()), isTypeRefType, 'typeRef'),
             isValidClass(
                 new ExpressionVisitor().visit(ctx.expression()),
-                isBasedExpressionTypeClass,
+                isBasedExpressionType,
                 'expression',
             ),
         );

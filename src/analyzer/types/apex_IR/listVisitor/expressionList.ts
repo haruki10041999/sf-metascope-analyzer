@@ -5,7 +5,7 @@ import { ListTypeClass } from '.';
 import {
     BasedExpressionTypeClass,
     ExpressionVisitor,
-    isBasedExpressionTypeClass,
+    isBasedExpressionType,
 } from '../expressionVisitor';
 
 import { ErrorTypeClass, CommonTypeClass, isValidClassList } from '../commonVisitor';
@@ -24,7 +24,7 @@ export class ExpressionListTypeClass extends ListTypeClass<BasedExpressionTypeCl
             isValidClassList(
                 ctx.expression_list(),
                 (ctx) => new ExpressionVisitor().visit(ctx),
-                isBasedExpressionTypeClass,
+                isBasedExpressionType,
                 'expression',
             ),
         );

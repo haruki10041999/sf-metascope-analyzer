@@ -10,7 +10,7 @@ import {
 import {
     BasedExpressionTypeClass,
     ExpressionVisitor,
-    isBasedExpressionTypeClass,
+    isBasedExpressionType,
 } from '../expressionVisitor';
 import { ErrorTypeClass, CommonTypeClass, isValidClass, isValidClassList } from '../commonVisitor';
 
@@ -33,7 +33,7 @@ export class MergeStatementTypeClass extends StatementListTypeClass<BasedExpress
             isValidClassList(
                 ctx.expression_list(),
                 (ctx) => new ExpressionVisitor().visit(ctx),
-                isBasedExpressionTypeClass,
+                isBasedExpressionType,
                 'expression',
             ),
             ctx.accessLevel()
@@ -56,4 +56,3 @@ export const isMergeStatementType = (
 ): target is MergeStatementTypeClass => {
     return target instanceof MergeStatementTypeClass;
 };
-

@@ -4,7 +4,7 @@ import {
     DoubleOperatorExpressionTypeClass,
     BasedExpressionTypeClass,
     ExpressionVisitor,
-    isBasedExpressionTypeClass,
+    isBasedExpressionType,
 } from '.';
 
 import { AnyIdTypeClass, IdVisitor, isAnyIdType } from '../idVisitor';
@@ -36,7 +36,7 @@ export class DotExpressionTypeClass extends DoubleOperatorExpressionTypeClass<
         return new DotExpressionTypeClass(
             isValidClass(
                 new ExpressionVisitor().visit(ctx.expression()),
-                isBasedExpressionTypeClass,
+                isBasedExpressionType,
                 'expression',
             ),
             ctx.anyId()
@@ -54,4 +54,3 @@ export class DotExpressionTypeClass extends DoubleOperatorExpressionTypeClass<
 export const isDotExpressionType = (target: CommonTypeClass): target is DotExpressionTypeClass => {
     return target instanceof DotExpressionTypeClass;
 };
-

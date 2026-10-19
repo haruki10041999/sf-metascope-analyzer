@@ -3,7 +3,7 @@ import { PreOpExpressionContext } from '@apexdevtools/apex-parser';
 import {
     BasedExpressionTypeClass,
     ExpressionVisitor,
-    isBasedExpressionTypeClass,
+    isBasedExpressionType,
     SingleOperatorExpressionTypeClass,
 } from '.';
 
@@ -34,7 +34,7 @@ export class PreOpExpressionTypeClass extends SingleOperatorExpressionTypeClass<
         return new PreOpExpressionTypeClass(
             isValidClass(
                 new ExpressionVisitor().visit(ctx.expression()),
-                isBasedExpressionTypeClass,
+                isBasedExpressionType,
                 'expression',
             ),
             operator,
@@ -47,4 +47,3 @@ export const isPreOpExpressionType = (
 ): target is PreOpExpressionTypeClass => {
     return target instanceof PreOpExpressionTypeClass;
 };
-

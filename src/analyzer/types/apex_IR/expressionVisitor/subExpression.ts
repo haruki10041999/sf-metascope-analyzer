@@ -4,7 +4,7 @@ import {
     BasedExpressionTypeClass,
     ExpressionTypeClass,
     ExpressionVisitor,
-    isBasedExpressionTypeClass,
+    isBasedExpressionType,
 } from '.';
 
 import { CommonTypeClass, ErrorTypeClass, isValidClass } from '../commonVisitor';
@@ -22,7 +22,7 @@ export class SubExpressionTypeClass extends ExpressionTypeClass<BasedExpressionT
         return new SubExpressionTypeClass(
             isValidClass(
                 new ExpressionVisitor().visit(ctx.expression()),
-                isBasedExpressionTypeClass,
+                isBasedExpressionType,
                 'expression',
             ),
         );
@@ -32,4 +32,3 @@ export class SubExpressionTypeClass extends ExpressionTypeClass<BasedExpressionT
 export const isSubExpressionType = (target: CommonTypeClass): target is SubExpressionTypeClass => {
     return target instanceof SubExpressionTypeClass;
 };
-

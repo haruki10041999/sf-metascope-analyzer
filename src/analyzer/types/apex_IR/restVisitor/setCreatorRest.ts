@@ -5,7 +5,7 @@ import { RestListTypeClass } from '.';
 import {
     BasedExpressionTypeClass,
     ExpressionVisitor,
-    isBasedExpressionTypeClass,
+    isBasedExpressionType,
 } from '../expressionVisitor';
 import { ErrorTypeClass, CommonTypeClass, isValidClassList } from '../commonVisitor';
 
@@ -23,7 +23,7 @@ export class SetCreatorRestTypeClass extends RestListTypeClass<BasedExpressionTy
             isValidClassList(
                 ctx.expression_list(),
                 (ctx) => new ExpressionVisitor().visit(ctx),
-                isBasedExpressionTypeClass,
+                isBasedExpressionType,
                 'expression',
             ),
         );
@@ -35,4 +35,3 @@ export const isSetCreatorRestType = (
 ): target is SetCreatorRestTypeClass => {
     return target instanceof SetCreatorRestTypeClass;
 };
-

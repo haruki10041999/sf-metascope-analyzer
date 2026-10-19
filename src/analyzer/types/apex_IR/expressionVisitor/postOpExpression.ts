@@ -3,7 +3,7 @@ import { PostOpExpressionContext } from '@apexdevtools/apex-parser';
 import {
     BasedExpressionTypeClass,
     ExpressionVisitor,
-    isBasedExpressionTypeClass,
+    isBasedExpressionType,
     SingleOperatorExpressionTypeClass,
 } from '.';
 
@@ -22,7 +22,7 @@ export class PostOpExpressionTypeClass extends SingleOperatorExpressionTypeClass
         return new PostOpExpressionTypeClass(
             isValidClass(
                 new ExpressionVisitor().visit(ctx.expression()),
-                isBasedExpressionTypeClass,
+                isBasedExpressionType,
                 'expression',
             ),
             ctx.INC() ? '++' : '--',
@@ -35,4 +35,3 @@ export const isPostOpExpressionType = (
 ): target is PostOpExpressionTypeClass => {
     return target instanceof PostOpExpressionTypeClass;
 };
-

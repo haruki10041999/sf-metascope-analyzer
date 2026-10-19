@@ -5,7 +5,7 @@ import { StatementTypeClass } from '../statementVisitor';
 import {
     BasedExpressionTypeClass,
     ExpressionVisitor,
-    isBasedExpressionTypeClass,
+    isBasedExpressionType,
 } from '../expressionVisitor';
 import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
 
@@ -20,7 +20,7 @@ export class ReturnStatementTypeClass extends StatementTypeClass<BasedExpression
             ctx.expression()
                 ? isValidClass(
                       new ExpressionVisitor().visit(ctx.expression()),
-                      isBasedExpressionTypeClass,
+                      isBasedExpressionType,
                       'expression',
                   )
                 : null,
@@ -33,4 +33,3 @@ export const isReturnStatementType = (
 ): target is ReturnStatementTypeClass => {
     return target instanceof ReturnStatementTypeClass;
 };
-

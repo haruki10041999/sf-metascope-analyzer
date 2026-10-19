@@ -5,7 +5,7 @@ import { VariableListTypeClass } from '.';
 import {
     BasedExpressionTypeClass,
     ExpressionVisitor,
-    isBasedExpressionTypeClass,
+    isBasedExpressionType,
 } from '../expressionVisitor';
 import { ErrorTypeClass, CommonTypeClass, isValidClassList } from '../commonVisitor';
 
@@ -19,7 +19,7 @@ export class ArrayInitializerTypeClass extends VariableListTypeClass<BasedExpres
             isValidClassList(
                 ctx.expression_list(),
                 (ctx) => new ExpressionVisitor().visit(ctx),
-                isBasedExpressionTypeClass,
+                isBasedExpressionType,
                 'expression',
             ),
         );
@@ -31,4 +31,3 @@ export const isArrayInitializerType = (
 ): target is ArrayInitializerTypeClass => {
     return target instanceof ArrayInitializerTypeClass;
 };
-

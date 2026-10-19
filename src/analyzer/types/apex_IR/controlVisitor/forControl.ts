@@ -14,7 +14,7 @@ import {
 import {
     BasedExpressionTypeClass,
     ExpressionVisitor,
-    isBasedExpressionTypeClass,
+    isBasedExpressionType,
 } from '../expressionVisitor';
 import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
 
@@ -47,7 +47,7 @@ export class ForControlTypeClass extends ControlTypeClass<
         } else if (ctx.expression()) {
             value = isValidClass(
                 new ExpressionVisitor().visit(ctx.expression()),
-                isBasedExpressionTypeClass,
+                isBasedExpressionType,
                 'expression',
             );
         }

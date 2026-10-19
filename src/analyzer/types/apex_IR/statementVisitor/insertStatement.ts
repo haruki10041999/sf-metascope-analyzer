@@ -10,7 +10,7 @@ import {
 import {
     BasedExpressionTypeClass,
     ExpressionVisitor,
-    isBasedExpressionTypeClass,
+    isBasedExpressionType,
 } from '../expressionVisitor';
 import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
 
@@ -30,7 +30,7 @@ export class InsertStatementTypeClass extends DmlStatementTypeClass<BasedExpress
         return new InsertStatementTypeClass(
             isValidClass(
                 new ExpressionVisitor().visit(ctx.expression()),
-                isBasedExpressionTypeClass,
+                isBasedExpressionType,
                 'expression',
             ),
             ctx.accessLevel()
@@ -49,4 +49,3 @@ export const isInsertStatementType = (
 ): target is InsertStatementTypeClass => {
     return target instanceof InsertStatementTypeClass;
 };
-

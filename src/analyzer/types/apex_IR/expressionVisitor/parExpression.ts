@@ -4,7 +4,7 @@ import {
     BasedExpressionTypeClass,
     ExpressionTypeClass,
     ExpressionVisitor,
-    isBasedExpressionTypeClass,
+    isBasedExpressionType,
 } from '.';
 
 import { CommonTypeClass, ErrorTypeClass, isValidClass } from '../commonVisitor';
@@ -22,7 +22,7 @@ export class ParExpressionTypeClass extends ExpressionTypeClass<BasedExpressionT
         return new ParExpressionTypeClass(
             isValidClass(
                 new ExpressionVisitor().visit(ctx.expression()),
-                isBasedExpressionTypeClass,
+                isBasedExpressionType,
                 'expression',
             ),
         );

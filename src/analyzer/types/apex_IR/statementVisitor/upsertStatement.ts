@@ -11,7 +11,7 @@ import { QualifiedNameTypeClass, NameVisitor, isQualifiedNameType } from '../nam
 import {
     BasedExpressionTypeClass,
     ExpressionVisitor,
-    isBasedExpressionTypeClass,
+    isBasedExpressionType,
 } from '../expressionVisitor';
 import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
 
@@ -34,7 +34,7 @@ export class UpsertStatementTypeClass extends DmlStatementTypeClass<BasedExpress
         return new UpsertStatementTypeClass(
             isValidClass(
                 new ExpressionVisitor().visit(ctx.expression()),
-                isBasedExpressionTypeClass,
+                isBasedExpressionType,
                 'expression',
             ),
             ctx.qualifiedName()
@@ -64,4 +64,3 @@ export const isUpsertStatementType = (
 ): target is UpsertStatementTypeClass => {
     return target instanceof UpsertStatementTypeClass;
 };
-

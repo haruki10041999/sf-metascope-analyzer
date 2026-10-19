@@ -121,7 +121,7 @@ export {
 } from './whereConditionalExpression';
 export { isFilteringExpressionType, FilteringExpressionTypeClass } from './filteringExpression';
 
-export const isBasedExpressionTypeClass = (
+export const isBasedExpressionType = (
     target: CommonTypeClass,
 ): target is BasedExpressionTypeClass => {
     return (

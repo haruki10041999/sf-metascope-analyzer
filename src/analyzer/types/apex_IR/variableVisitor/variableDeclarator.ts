@@ -6,7 +6,7 @@ import { NormalIdTypeClass, IdVisitor, isNormalIdType } from '../idVisitor';
 import {
     BasedExpressionTypeClass,
     ExpressionVisitor,
-    isBasedExpressionTypeClass,
+    isBasedExpressionType,
 } from '../expressionVisitor';
 import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
 
@@ -32,7 +32,7 @@ export class VariableDeclaratorTypeClass extends VariableTypeClass<NormalIdTypeC
             ctx.expression()
                 ? isValidClass(
                       new ExpressionVisitor().visit(ctx.expression()),
-                      isBasedExpressionTypeClass,
+                      isBasedExpressionType,
                       'expression',
                   )
                 : null,

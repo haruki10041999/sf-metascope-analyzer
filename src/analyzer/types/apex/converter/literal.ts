@@ -1,95 +1,155 @@
 import {
+    LiteralTypeClass,
     NormalLiteralTypeClass,
+    PrimitiveLiteralTypeClass,
     SignedIntegerTypeClass,
     SignedNumberTypeClass,
     SoqlLiteralTypeClass,
-    SoslLiteralTypeClass,
     SoslLiteralAltTypeClass,
+    SoslLiteralTypeClass,
     WhenLiteralTypeClass,
     isNormalLiteralType,
     isSignedIntegerType,
     isSignedNumberType,
     isSoqlLiteralType,
-    isSoslLiteralType,
     isSoslLiteralAltType,
+    isSoslLiteralType,
     isWhenLiteralType,
 } from '../../apex_IR';
 
 import {
     ErrorInfo,
     SourceInfoMap,
+    AssignForValueRule,
+    ValueRuleValue,
     assignMultiClass,
-    isErrorInfo,
     isTargetTypeClass,
     makeErrorAssignRule,
-    makeErrorInfo,
     makeSourceInfo,
     makeEmptySourceInfoMap,
-    makeSingleSourceInfoMap,
-    makeArraySourceInfoMap,
 } from './commons';
 
-export const makeLiteralRule = (sourceInfo: SourceInfoMap, errorInfo: ErrorInfo[]) => {
+export type LiteralType = {
+    value: ValueRuleValue<string>;
+    valueType: string;
+};
+
+export const makeLiteralRule = (
+    sourceInfo: SourceInfoMap,
+    errorInfo: ErrorInfo[],
+): AssignForValueRule<NormalLiteralTypeClass, LiteralType> => ({
+    isValid: (target: unknown) => isTargetTypeClass(target, isNormalLiteralType),
+    construct: (literalTypeClass: NormalLiteralTypeClass) => {
+        sourceInfo[literalTypeClass.getType()] = makeSourceInfo(literalTypeClass);
+        return {
+            value: assignMultiClass(literalTypeClass.getValue(), [
+                {
+                    isValid: (target: unknown): target is string => typeof target === 'string',
+                    construct: (value: string) => value,
+                },
+                makeErrorAssignRule(errorInfo),
+            ]),
+            valueType: literalTypeClass.getValueType(),
+        };
+    },
+});
+
+export type SignLiteralType = {
+    value: ValueRuleValue<string>;
+    valueType: string;
+    operator: string | null;
+};
+
+export const makeSignedIntegerRule = (
+    sourceInfo: SourceInfoMap,
+    errorInfo: ErrorInfo[],
+): AssignForValueRule<SignedIntegerTypeClass, SignLiteralType> => ({
+    isValid: (target: unknown) => isTargetTypeClass(target, isSignedIntegerType),
+    construct: (literalTypeClass: SignedIntegerTypeClass) => {
+        sourceInfo[literalTypeClass.getType()] = makeSourceInfo(literalTypeClass);
+        return {
+            value: assignMultiClass(literalTypeClass.getValue(), [
+                {
+                    isValid: (target: unknown): target is string => typeof target === 'string',
+                    construct: (value: string) => value,
+                },
+                makeErrorAssignRule(errorInfo),
+            ]),
+            valueType: literalTypeClass.getValueType(),
+            operator: literalTypeClass.getOperator(),
+        };
+    },
+});
+
+export const makeSignedNumberRule = (
+    sourceInfo: SourceInfoMap,
+    errorInfo: ErrorInfo[],
+): AssignForValueRule<SignedNumberTypeClass, SignLiteralType> => ({
+    isValid: (target: unknown) => isTargetTypeClass(target, isSignedNumberType),
+    construct: (literalTypeClass: SignedNumberTypeClass) => {
+        sourceInfo[literalTypeClass.getType()] = makeSourceInfo(literalTypeClass);
+        return {
+            value: assignMultiClass(literalTypeClass.getValue(), [
+                {
+                    isValid: (target: unknown): target is string => typeof target === 'string',
+                    construct: (value: string) => value,
+                },
+                makeErrorAssignRule(errorInfo),
+            ]),
+            valueType: literalTypeClass.getValueType(),
+            operator: literalTypeClass.getOperator(),
+        };
+    },
+});
+
+export const makeSoqlLiteralRule = (
+    sourceInfo: SourceInfoMap,
+    errorInfo: ErrorInfo[],
+): AssignForValueRule<SoqlLiteralTypeClass, ValueRuleValue<unknown>> => {
     return {
-        isValid: (target: unknown) => isTargetTypeClass(target, isNormalLiteralType),
-        construct: (normalLiteralTypeClass: NormalLiteralTypeClass) => {
-            sourceInfo[normalLiteralTypeClass.getType()] = makeSourceInfo(normalLiteralTypeClass);
-            return {
-                value: assignMultiClass(normalLiteralTypeClass.getValue(), [
-                    {
-                        isValid: (target: unknown): target is string => typeof target === 'string',
-                        construct: (value: string) => {
-                            return value;
-                        },
-                    },
-                    makeErrorAssignRule(errorInfo),
-                ]),
-                valueType: normalLiteralTypeClass.getType(),
-            };
+        isValid: (target: unknown) => isTargetTypeClass(target, isSoqlLiteralType),
+        construct: (_typeClass: SoqlLiteralTypeClass) => {
+            const nestedSourceInfo = makeEmptySourceInfoMap();
+            throw new Error('Not implemented');
         },
     };
 };
 
-export const makeSignedIntegerRule = (sourceInfo: SourceInfoMap, errorInfo: ErrorInfo[]) => {
+export const makeSoslLiteralAltRule = (
+    sourceInfo: SourceInfoMap,
+    errorInfo: ErrorInfo[],
+): AssignForValueRule<SoslLiteralAltTypeClass, ValueRuleValue<unknown>> => {
     return {
-        isValid: (target: unknown) => isTargetTypeClass(target, isSignedIntegerType),
-        construct: (signedIntegerTypeClass: SignedIntegerTypeClass) => {
-            sourceInfo[signedIntegerTypeClass.getType()] = makeSourceInfo(signedIntegerTypeClass);
-            return {
-                value: assignMultiClass(signedIntegerTypeClass.getValue(), [
-                    {
-                        isValid: (target: unknown): target is string => typeof target === 'string',
-                        construct: (value: string) => {
-                            return value;
-                        },
-                    },
-                    makeErrorAssignRule(errorInfo),
-                ]),
-                valueType: signedIntegerTypeClass.getValueType(),
-                operator: signedIntegerTypeClass.getOperator(),
-            };
+        isValid: (target: unknown) => isTargetTypeClass(target, isSoslLiteralAltType),
+        construct: (_typeClass: SoslLiteralAltTypeClass) => {
+            const nestedSourceInfo = makeEmptySourceInfoMap();
+            throw new Error('Not implemented');
         },
     };
 };
 
-export const makeSignedNumberRule = (sourceInfo: SourceInfoMap, errorInfo: ErrorInfo[]) => {
+export const makeSoslLiteralRule = (
+    sourceInfo: SourceInfoMap,
+    errorInfo: ErrorInfo[],
+): AssignForValueRule<SoslLiteralTypeClass, ValueRuleValue<unknown>> => {
     return {
-        isValid: (target: unknown) => isTargetTypeClass(target, isSignedNumberType),
-        construct: (signedNumberTypeClass: SignedNumberTypeClass) => {
-            sourceInfo[signedNumberTypeClass.getType()] = makeSourceInfo(signedNumberTypeClass);
-            return {
-                value: assignMultiClass(signedNumberTypeClass.getValue(), [
-                    {
-                        isValid: (target: unknown): target is string => typeof target === 'string',
-                        construct: (value: string) => {
-                            return value;
-                        },
-                    },
-                    makeErrorAssignRule(errorInfo),
-                ]),
-                valueType: signedNumberTypeClass.getType(),
-                operator: signedNumberTypeClass.getOperator(),
-            };
+        isValid: (target: unknown) => isTargetTypeClass(target, isSoslLiteralType),
+        construct: (_typeClass: SoslLiteralTypeClass) => {
+            const nestedSourceInfo = makeEmptySourceInfoMap();
+            throw new Error('Not implemented');
+        },
+    };
+};
+
+export const makeWhenLiteralRule = (
+    sourceInfo: SourceInfoMap,
+    errorInfo: ErrorInfo[],
+): AssignForValueRule<WhenLiteralTypeClass, ValueRuleValue<unknown>> => {
+    return {
+        isValid: (target: unknown) => isTargetTypeClass(target, isWhenLiteralType),
+        construct: (_typeClass: WhenLiteralTypeClass) => {
+            const nestedSourceInfo = makeEmptySourceInfoMap();
+            throw new Error('Not implemented');
         },
     };
 };

@@ -6,7 +6,7 @@ import { WhenControlTypeClass, ControlVisitor, isWhenControlType } from '../cont
 import {
     BasedExpressionTypeClass,
     ExpressionVisitor,
-    isBasedExpressionTypeClass,
+    isBasedExpressionType,
 } from '../expressionVisitor';
 import { ErrorTypeClass, CommonTypeClass, isValidClass, isValidClassList } from '../commonVisitor';
 
@@ -29,7 +29,7 @@ export class SwitchStatementTypeClass extends StatementTypeClass<BasedExpression
         return new SwitchStatementTypeClass(
             isValidClass(
                 new ExpressionVisitor().visit(ctx.expression()),
-                isBasedExpressionTypeClass,
+                isBasedExpressionType,
                 'expression',
             ),
             isValidClassList(
@@ -51,4 +51,3 @@ export const isSwitchStatementType = (
 ): target is SwitchStatementTypeClass => {
     return target instanceof SwitchStatementTypeClass;
 };
-

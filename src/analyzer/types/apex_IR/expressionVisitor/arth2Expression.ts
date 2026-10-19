@@ -4,7 +4,7 @@ import {
     DoubleOperatorExpressionTypeClass,
     BasedExpressionTypeClass,
     ExpressionVisitor,
-    isBasedExpressionTypeClass,
+    isBasedExpressionType,
 } from '.';
 
 import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
@@ -34,12 +34,12 @@ export class Arth2ExpressionTypeClass extends DoubleOperatorExpressionTypeClass<
         return new Arth2ExpressionTypeClass(
             isValidClass(
                 new ExpressionVisitor().visit(ctx.expression(0)),
-                isBasedExpressionTypeClass,
+                isBasedExpressionType,
                 'expression',
             ),
             isValidClass(
                 new ExpressionVisitor().visit(ctx.expression(1)),
-                isBasedExpressionTypeClass,
+                isBasedExpressionType,
                 'expression',
             ),
             ctx.ADD() ? '+' : '-',
@@ -52,4 +52,3 @@ export const isArth2ExpressionType = (
 ): target is Arth2ExpressionTypeClass => {
     return target instanceof Arth2ExpressionTypeClass;
 };
-

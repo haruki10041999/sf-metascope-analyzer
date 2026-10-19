@@ -5,7 +5,7 @@ import { RestTypeClass } from '.';
 import {
     BasedExpressionTypeClass,
     ExpressionVisitor,
-    isBasedExpressionTypeClass,
+    isBasedExpressionType,
 } from '../expressionVisitor';
 import {
     ArrayInitializerTypeClass,
@@ -41,7 +41,7 @@ export class ArrayCreatorRestTypeClass extends RestTypeClass<ArrayInitializerTyp
         const size = ctx.expression()
             ? isValidClass(
                   new ExpressionVisitor().visit(ctx.expression()),
-                  isBasedExpressionTypeClass,
+                  isBasedExpressionType,
                   'expression',
               )
             : null;
@@ -59,4 +59,3 @@ export const isArrayCreatorRestType = (
 ): target is ArrayCreatorRestTypeClass => {
     return target instanceof ArrayCreatorRestTypeClass;
 };
-

@@ -1,137 +1,195 @@
 import {
-    NormalPrimaryTypeClass,
-    ThisPrimaryTypeClass,
-    VoidPrimaryTypeClass,
-    SuperPrimaryTypeClass,
     IdPrimaryTypeClass,
-    TypeRefPrimaryTypeClass,
     LiteralPrimaryTypeClass,
+    NormalPrimaryTypeClass,
+    PrimaryTypeClass,
     SoqlPrimaryTypeClass,
     SoslPrimaryTypeClass,
-    BasedPrimaryTypeClass,
-    NormalIdTypeClass,
-    isNormalPrimaryType,
-    isThisPrimaryType,
-    isVoidPrimaryType,
-    isSuperPrimaryType,
-    isTypeRefPrimaryType,
+    SuperPrimaryTypeClass,
+    ThisPrimaryTypeClass,
+    TypeRefPrimaryTypeClass,
+    VoidPrimaryTypeClass,
     isIdPrimaryType,
     isLiteralPrimaryType,
+    isNormalPrimaryType,
     isSoqlPrimaryType,
     isSoslPrimaryType,
-    isNormalIdType,
+    isSuperPrimaryType,
+    isThisPrimaryType,
+    isTypeRefPrimaryType,
+    isVoidPrimaryType,
 } from '../../apex_IR';
 
 import {
     ErrorInfo,
     SourceInfoMap,
+    AssignForValueRule,
+    ValueRuleValue,
     assignMultiClass,
-    isErrorInfo,
     isTargetTypeClass,
     makeErrorAssignRule,
-    makeErrorInfo,
     makeSourceInfo,
     makeEmptySourceInfoMap,
-    makeSingleSourceInfoMap,
-    makeArraySourceInfoMap,
 } from './commons';
 import { makeIdRule } from './id';
 import { makeLiteralRule } from './literal';
 
-export const makePrimaryRule = (sourceInfo: SourceInfoMap, errorInfo: ErrorInfo[]) => {
-    return {
-        isValid: (target: unknown) => isTargetTypeClass(target, isNormalPrimaryType),
-        construct: (primaryTypeClass: NormalPrimaryTypeClass) => {
-            return assignMultiClass(primaryTypeClass.getValue(), [
-                {
-                    isValid: (target: unknown): target is string => typeof target === 'string',
-                    construct: (value: string) => {
-                        sourceInfo[primaryTypeClass.getType()] = makeSourceInfo(primaryTypeClass);
-                        return value;
-                    },
+export const makeIdPrimaryRule = (
+    sourceInfo: SourceInfoMap,
+    errorInfo: ErrorInfo[],
+): AssignForValueRule<IdPrimaryTypeClass, ValueRuleValue<string>> => ({
+    isValid: (target: unknown) => isTargetTypeClass(target, isIdPrimaryType),
+    construct: (primaryTypeClass: IdPrimaryTypeClass) => {
+        const nestedSourceInfo = makeEmptySourceInfoMap();
+        const value = assignMultiClass(primaryTypeClass.getValue(), [
+            makeIdRule(nestedSourceInfo),
+            makeErrorAssignRule(errorInfo),
+        ]);
+        sourceInfo[primaryTypeClass.getType()] = nestedSourceInfo;
+        return value;
+    },
+});
+
+export const makeLiteralPrimaryRule = (
+    sourceInfo: SourceInfoMap,
+    errorInfo: ErrorInfo[],
+): AssignForValueRule<
+    LiteralPrimaryTypeClass,
+    ValueRuleValue<{ value: ValueRuleValue<string>; valueType: string }>
+> => ({
+    isValid: (target: unknown) => isTargetTypeClass(target, isLiteralPrimaryType),
+    construct: (primaryTypeClass: LiteralPrimaryTypeClass) => {
+        const nestedSourceInfo = makeEmptySourceInfoMap();
+        const value = assignMultiClass(primaryTypeClass.getValue(), [
+            makeLiteralRule(nestedSourceInfo, errorInfo),
+            makeErrorAssignRule(errorInfo),
+        ]);
+        sourceInfo[primaryTypeClass.getType()] = nestedSourceInfo;
+        return value;
+    },
+});
+
+export const makePrimaryRule = (
+    sourceInfo: SourceInfoMap,
+    errorInfo: ErrorInfo[],
+): AssignForValueRule<NormalPrimaryTypeClass, ValueRuleValue<string>> => ({
+    isValid: (target: unknown) => isTargetTypeClass(target, isNormalPrimaryType),
+    construct: (primaryTypeClass: NormalPrimaryTypeClass) =>
+        assignMultiClass(primaryTypeClass.getValue(), [
+            {
+                isValid: (target: unknown): target is string => typeof target === 'string',
+                construct: (value: string) => {
+                    sourceInfo[primaryTypeClass.getType()] = makeSourceInfo(primaryTypeClass);
+                    return value;
                 },
-                makeErrorAssignRule(errorInfo),
-            ]);
+            },
+            makeErrorAssignRule(errorInfo),
+        ]),
+});
+
+export const makeSoqlPrimaryRule = (
+    sourceInfo: SourceInfoMap,
+    errorInfo: ErrorInfo[],
+): AssignForValueRule<SoqlPrimaryTypeClass, ValueRuleValue<unknown>> => {
+    return {
+        isValid: (target: unknown) => isTargetTypeClass(target, isSoqlPrimaryType),
+        construct: (_typeClass: SoqlPrimaryTypeClass) => {
+            const nestedSourceInfo = makeEmptySourceInfoMap();
+            throw new Error('Not implemented');
         },
     };
 };
 
-export const makeThisPrimaryRule = (sourceInfo: SourceInfoMap, errorInfo: ErrorInfo[]) => {
+export const makeSoslPrimaryRule = (
+    sourceInfo: SourceInfoMap,
+    errorInfo: ErrorInfo[],
+): AssignForValueRule<SoslPrimaryTypeClass, ValueRuleValue<unknown>> => {
     return {
-        isValid: (target: unknown) => isTargetTypeClass(target, isThisPrimaryType),
-        construct: (thisPrimaryTypeClass: ThisPrimaryTypeClass) => {
-            return assignMultiClass(thisPrimaryTypeClass.getValue(), [
-                {
-                    isValid: (target: unknown): target is string => typeof target === 'string',
-                    construct: (value: string) => {
-                        sourceInfo[thisPrimaryTypeClass.getType()] =
-                            makeSourceInfo(thisPrimaryTypeClass);
-                        return value;
-                    },
+        isValid: (target: unknown) => isTargetTypeClass(target, isSoslPrimaryType),
+        construct: (_typeClass: SoslPrimaryTypeClass) => {
+            const nestedSourceInfo = makeEmptySourceInfoMap();
+            throw new Error('Not implemented');
+        },
+    };
+};
+
+export const makeSuperPrimaryRule = (
+    sourceInfo: SourceInfoMap,
+    errorInfo: ErrorInfo[],
+): AssignForValueRule<SuperPrimaryTypeClass, ValueRuleValue<string>> => ({
+    isValid: (target: unknown) => isTargetTypeClass(target, isSuperPrimaryType),
+    construct: (primaryTypeClass: SuperPrimaryTypeClass) =>
+        assignMultiClass(primaryTypeClass.getValue(), [
+            {
+                isValid: (target: unknown): target is string => typeof target === 'string',
+                construct: (value: string) => {
+                    sourceInfo[primaryTypeClass.getType()] = makeSourceInfo(primaryTypeClass);
+                    return value;
                 },
-                makeErrorAssignRule(errorInfo),
-            ]);
-        },
-    };
-};
+            },
+            makeErrorAssignRule(errorInfo),
+        ]),
+});
 
-export const makeSuperPrimaryRule = (sourceInfo: SourceInfoMap, errorInfo: ErrorInfo[]) => {
-    return {
-        isValid: (target: unknown) => isTargetTypeClass(target, isSuperPrimaryType),
-        construct: (superPrimaryTypeClass: SuperPrimaryTypeClass) => {
-            return assignMultiClass(superPrimaryTypeClass.getValue(), [
-                {
-                    isValid: (target: unknown): target is string => typeof target === 'string',
-                    construct: (value: string) => {
-                        sourceInfo[superPrimaryTypeClass.getType()] =
-                            makeSourceInfo(superPrimaryTypeClass);
-                        return value;
-                    },
+export const makeThisPrimaryRule = (
+    sourceInfo: SourceInfoMap,
+    errorInfo: ErrorInfo[],
+): AssignForValueRule<ThisPrimaryTypeClass, ValueRuleValue<string>> => ({
+    isValid: (target: unknown) => isTargetTypeClass(target, isThisPrimaryType),
+    construct: (primaryTypeClass: ThisPrimaryTypeClass) =>
+        assignMultiClass(primaryTypeClass.getValue(), [
+            {
+                isValid: (target: unknown): target is string => typeof target === 'string',
+                construct: (value: string) => {
+                    sourceInfo[primaryTypeClass.getType()] = makeSourceInfo(primaryTypeClass);
+                    return value;
                 },
-                makeErrorAssignRule(errorInfo),
-            ]);
-        },
-    };
-};
+            },
+            makeErrorAssignRule(errorInfo),
+        ]),
+});
 
-export const makeIdPrimaryRule = (sourceInfo: SourceInfoMap, errorInfo: ErrorInfo[]) => {
+export const makeTypeRefPrimaryRule = (
+    sourceInfo: SourceInfoMap,
+    errorInfo: ErrorInfo[],
+): AssignForValueRule<TypeRefPrimaryTypeClass, ValueRuleValue<unknown>> => {
     return {
-        isValid: (target: unknown) => isTargetTypeClass(target, isIdPrimaryType),
-        construct: (idPrimaryTypeClass: IdPrimaryTypeClass) => {
-            const idPrimaryType = idPrimaryTypeClass.getType();
-            const idPrimarySourceInfo = makeEmptySourceInfoMap();
-            const idPrimary = assignMultiClass(idPrimaryTypeClass.getValue(), [
-                makeIdRule(idPrimarySourceInfo),
-                makeErrorAssignRule(errorInfo),
-            ]);
-            sourceInfo[idPrimaryType] = idPrimarySourceInfo;
-            return idPrimary;
+        isValid: (target: unknown) => isTargetTypeClass(target, isTypeRefPrimaryType),
+        construct: (_typeClass: TypeRefPrimaryTypeClass) => {
+            const nestedSourceInfo = makeEmptySourceInfoMap();
+            throw new Error('Not implemented');
         },
     };
 };
 
-export const makeLiteralPrimaryRule = (sourceInfo: SourceInfoMap, errorInfo: ErrorInfo[]) => {
-    return {
-        isValid: (target: unknown) => isTargetTypeClass(target, isLiteralPrimaryType),
-        construct: (literalPrimaryTypeClass: LiteralPrimaryTypeClass) => {
-            const literalPrimaryType = literalPrimaryTypeClass.getType();
-            const literalPrimarySourceInfo = makeEmptySourceInfoMap();
-            const literal = assignMultiClass(literalPrimaryTypeClass.getValue(), [
-                makeLiteralRule(literalPrimarySourceInfo, errorInfo),
-                makeErrorAssignRule(errorInfo),
-            ]);
-            sourceInfo[literalPrimaryType] = literalPrimarySourceInfo;
-            return literal;
-        },
-    };
-};
+export const makeVoidPrimaryRule = (
+    sourceInfo: SourceInfoMap,
+    errorInfo: ErrorInfo[],
+): AssignForValueRule<VoidPrimaryTypeClass, ValueRuleValue<string>> => ({
+    isValid: (target: unknown) => isTargetTypeClass(target, isVoidPrimaryType),
+    construct: (primaryTypeClass: VoidPrimaryTypeClass) =>
+        assignMultiClass(primaryTypeClass.getValue(), [
+            {
+                isValid: (target: unknown): target is string => typeof target === 'string',
+                construct: (value: string) => {
+                    sourceInfo[primaryTypeClass.getType()] = makeSourceInfo(primaryTypeClass);
+                    return value;
+                },
+            },
+            makeErrorAssignRule(errorInfo),
+        ]),
+});
 
-export const makeBasedPrimaryRule = (sourceInfo: SourceInfoMap, errorInfo: ErrorInfo[]) => {
+export const makeBasePrimaryRule = (sourceInfo: SourceInfoMap, errorInfo: ErrorInfo[]) => {
     return [
-        makePrimaryRule(sourceInfo, errorInfo),
-        makeThisPrimaryRule(sourceInfo, errorInfo),
-        makeSuperPrimaryRule(sourceInfo, errorInfo),
         makeIdPrimaryRule(sourceInfo, errorInfo),
+        makePrimaryRule(sourceInfo, errorInfo),
+        makeVoidPrimaryRule(sourceInfo, errorInfo),
+        makeSuperPrimaryRule(sourceInfo, errorInfo),
+        makeThisPrimaryRule(sourceInfo, errorInfo),
         makeLiteralPrimaryRule(sourceInfo, errorInfo),
+        makeTypeRefPrimaryRule(sourceInfo, errorInfo),
+        makeSoqlPrimaryRule(sourceInfo, errorInfo),
+        makeSoslPrimaryRule(sourceInfo, errorInfo),
     ];
 };

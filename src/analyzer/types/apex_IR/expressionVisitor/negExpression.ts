@@ -3,7 +3,7 @@ import { NegExpressionContext } from '@apexdevtools/apex-parser';
 import {
     BasedExpressionTypeClass,
     ExpressionVisitor,
-    isBasedExpressionTypeClass,
+    isBasedExpressionType,
     SingleOperatorExpressionTypeClass,
 } from '.';
 
@@ -22,7 +22,7 @@ export class NegExpressionTypeClass extends SingleOperatorExpressionTypeClass<Ba
         return new NegExpressionTypeClass(
             isValidClass(
                 new ExpressionVisitor().visit(ctx.expression()),
-                isBasedExpressionTypeClass,
+                isBasedExpressionType,
                 'expression',
             ),
             ctx.TILDE() ? '~' : '!',
@@ -33,4 +33,3 @@ export class NegExpressionTypeClass extends SingleOperatorExpressionTypeClass<Ba
 export const isNegExpressionType = (target: CommonTypeClass): target is NegExpressionTypeClass => {
     return target instanceof NegExpressionTypeClass;
 };
-

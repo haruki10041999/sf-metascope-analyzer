@@ -4,7 +4,7 @@ import {
     ExpressionTypeClass,
     BasedExpressionTypeClass,
     ExpressionVisitor,
-    isBasedExpressionTypeClass,
+    isBasedExpressionType,
 } from '.';
 
 import { TypeRefTypeClass, TypeVisitor, isTypeRefType } from '../typeVisitor';
@@ -29,7 +29,7 @@ export class CastExpressionTypeClass extends ExpressionTypeClass<BasedExpression
         return new CastExpressionTypeClass(
             isValidClass(
                 new ExpressionVisitor().visit(ctx.expression()),
-                isBasedExpressionTypeClass,
+                isBasedExpressionType,
                 'expression',
             ),
             isValidClass(new TypeVisitor().visit(ctx.typeRef()), isTypeRefType, 'typeRef'),
@@ -46,4 +46,3 @@ export const isCastExpressionType = (
 ): target is CastExpressionTypeClass => {
     return target instanceof CastExpressionTypeClass;
 };
-

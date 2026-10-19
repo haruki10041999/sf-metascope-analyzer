@@ -30,25 +30,11 @@ export const makeSourceInfo = (typeClass: CommonTypeClass): SourceInfo => {
 };
 
 export type SourceInfoMap = {
-    [key: string]: SourceInfo | SourceInfoMap;
+    [key: string]: string | SourceInfo | SourceInfoMap;
 };
 
 export const makeEmptySourceInfoMap = (): SourceInfoMap => {
     return {};
-};
-
-export const makeSingleSourceInfoMap = (target: CommonTypeClass): SourceInfoMap => {
-    const sourceInfoMap = makeEmptySourceInfoMap();
-    sourceInfoMap[target.getType()] = makeSourceInfo(target);
-    return sourceInfoMap;
-};
-
-export const makeArraySourceInfoMap = (targets: CommonTypeClass[]): SourceInfoMap => {
-    const sourceInfoMap = makeEmptySourceInfoMap();
-    targets.forEach((target, index) => {
-        sourceInfoMap[`${target.getType()}_${index}`] = makeSourceInfo(target);
-    });
-    return sourceInfoMap;
 };
 
 export type ErrorInfo = {
@@ -82,9 +68,11 @@ type AnyAssignRule = {
     construct: (target: never) => unknown;
 };
 
+export type ValueRuleValue<T> = T | void | null;
+
 export type AssignForValueRule<TValue, TResult> = {
     isValid: (target: unknown) => target is TValue;
-    construct: (target: TValue) => TResult | void;
+    construct: (target: TValue) => TResult;
 };
 
 export const makeOutputErrorAssignRule = {
@@ -93,7 +81,9 @@ export const makeOutputErrorAssignRule = {
         return makeErrorInfo(target);
     },
 };
-export const makeErrorAssignRule = (errorInfo: ErrorInfo[]) => ({
+export const makeErrorAssignRule = (
+    errorInfo: ErrorInfo[],
+): AssignForValueRule<ErrorTypeClass, void> => ({
     isValid: (target: unknown) => isTargetTypeClass(target, isErrorType),
     construct: (typeClass: ErrorTypeClass): void => {
         errorInfo.push(makeErrorInfo(typeClass));
@@ -119,24 +109,3 @@ export const assignMultiClass = <const TRules extends readonly AnyAssignRule[]>(
 
     return null;
 };
-
-export const makeIdRule = (sourceInfo: SourceInfoMap) => {
-    return {
-        isValid: (target: unknown) => isTargetTypeClass(target, isNormalIdType),
-        construct: (idTypeClass: NormalIdTypeClass) => {
-            sourceInfo[idTypeClass.getType()] = makeSingleSourceInfoMap(idTypeClass);
-            return idTypeClass.getValue();
-        },
-    };
-};
-
-export const makeAnyIdRule = (sourceInfo: SourceInfoMap) => {
-    return {
-        isValid: (target: unknown) => isTargetTypeClass(target, isAnyIdType),
-        construct: (idTypeClass: AnyIdTypeClass) => {
-            sourceInfo[idTypeClass.getType()] = makeSingleSourceInfoMap(idTypeClass);
-            return idTypeClass.getValue();
-        },
-    };
-};
-

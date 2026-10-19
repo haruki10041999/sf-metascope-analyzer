@@ -10,7 +10,7 @@ import {
 import {
     BasedExpressionTypeClass,
     ExpressionVisitor,
-    isBasedExpressionTypeClass,
+    isBasedExpressionType,
 } from '../expressionVisitor';
 import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
 
@@ -30,7 +30,7 @@ export class UndeleteStatementTypeClass extends DmlStatementTypeClass<BasedExpre
         return new UndeleteStatementTypeClass(
             isValidClass(
                 new ExpressionVisitor().visit(ctx.expression()),
-                isBasedExpressionTypeClass,
+                isBasedExpressionType,
                 'expression',
             ),
             ctx.accessLevel()
@@ -49,4 +49,3 @@ export const isUndeleteStatementType = (
 ): target is UndeleteStatementTypeClass => {
     return target instanceof UndeleteStatementTypeClass;
 };
-
