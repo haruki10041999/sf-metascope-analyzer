@@ -37,6 +37,31 @@ export const makeEmptySourceInfoMap = (): SourceInfoMap => {
     return {};
 };
 
+export const writeSourceInfo = (
+    commonTypeClass: CommonTypeClass,
+    target: SourceInfoMap,
+    source: SourceInfoMap,
+) => {
+    let baseKey = commonTypeClass.getType();
+    const duplicateKeys = Object.keys(target).filter((key) => key.startsWith(`${baseKey}_`));
+    if (duplicateKeys.length > 0) {
+        baseKey = `${baseKey}_${duplicateKeys.length}`;
+    }
+
+    if (Object.hasOwn(target, baseKey)) {
+        const duplicateValue = target[baseKey]!;
+        delete target[baseKey];
+        target[`${baseKey}_1`] = duplicateValue;
+        baseKey = `${baseKey}_2`;
+    }
+
+    if (Object.keys(source).length > 0) {
+        target[baseKey] = source;
+    } else {
+        target[baseKey] = makeSourceInfo(commonTypeClass);
+    }
+};
+
 export type ErrorInfo = {
     errorCode: ErrorCode;
     contextType: string;
@@ -68,7 +93,7 @@ type AnyAssignRule = {
     construct: (target: never) => unknown;
 };
 
-export type ValueRuleValue<T> = T | void | null;
+export type ValueRuleValue<T> = T | { errorCode: ErrorCode; index: number } | null;
 
 export type AssignForValueRule<TValue, TResult> = {
     isValid: (target: unknown) => target is TValue;
@@ -83,10 +108,12 @@ export const makeOutputErrorAssignRule = {
 };
 export const makeErrorAssignRule = (
     errorInfo: ErrorInfo[],
-): AssignForValueRule<ErrorTypeClass, void> => ({
+): AssignForValueRule<ErrorTypeClass, { errorCode: ErrorCode; index: number }> => ({
     isValid: (target: unknown) => isTargetTypeClass(target, isErrorType),
-    construct: (typeClass: ErrorTypeClass): void => {
-        errorInfo.push(makeErrorInfo(typeClass));
+    construct: (typeClass: ErrorTypeClass) => {
+        const error = makeErrorInfo(typeClass);
+        errorInfo.push(error);
+        return { errorCode: error.errorCode, index: errorInfo.length };
     },
 });
 

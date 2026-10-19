@@ -1,8 +1,8 @@
+import { ne } from 'zod/v4/locales';
 import {
     IdPrimaryTypeClass,
     LiteralPrimaryTypeClass,
     NormalPrimaryTypeClass,
-    PrimaryTypeClass,
     SoqlPrimaryTypeClass,
     SoslPrimaryTypeClass,
     SuperPrimaryTypeClass,
@@ -32,7 +32,13 @@ import {
     makeEmptySourceInfoMap,
 } from './commons';
 import { makeIdRule } from './id';
-import { makeLiteralRule } from './literal';
+import {
+    makeLiteralRule,
+    makeSoqlLiteralRule,
+    makeSoslLiteralAltRule,
+    makeSoslLiteralRule,
+} from './literal';
+import { makeTypeRefRule } from './type';
 
 export const makeIdPrimaryRule = (
     sourceInfo: SourceInfoMap,
@@ -93,9 +99,14 @@ export const makeSoqlPrimaryRule = (
 ): AssignForValueRule<SoqlPrimaryTypeClass, ValueRuleValue<unknown>> => {
     return {
         isValid: (target: unknown) => isTargetTypeClass(target, isSoqlPrimaryType),
-        construct: (_typeClass: SoqlPrimaryTypeClass) => {
+        construct: (primaryTypeClass: SoqlPrimaryTypeClass) => {
             const nestedSourceInfo = makeEmptySourceInfoMap();
-            throw new Error('Not implemented');
+            const value = assignMultiClass(primaryTypeClass.getValue(), [
+                makeSoqlLiteralRule(nestedSourceInfo, errorInfo),
+                makeErrorAssignRule(errorInfo),
+            ]);
+            sourceInfo[primaryTypeClass.getType()] = nestedSourceInfo;
+            return value;
         },
     };
 };
@@ -106,9 +117,14 @@ export const makeSoslPrimaryRule = (
 ): AssignForValueRule<SoslPrimaryTypeClass, ValueRuleValue<unknown>> => {
     return {
         isValid: (target: unknown) => isTargetTypeClass(target, isSoslPrimaryType),
-        construct: (_typeClass: SoslPrimaryTypeClass) => {
+        construct: (primaryTypeClass: SoslPrimaryTypeClass) => {
             const nestedSourceInfo = makeEmptySourceInfoMap();
-            throw new Error('Not implemented');
+            const value = assignMultiClass(primaryTypeClass.getValue(), [
+                makeSoslLiteralRule(nestedSourceInfo, errorInfo),
+                makeErrorAssignRule(errorInfo),
+            ]);
+            sourceInfo[primaryTypeClass.getType()] = nestedSourceInfo;
+            return value;
         },
     };
 };
@@ -155,9 +171,14 @@ export const makeTypeRefPrimaryRule = (
 ): AssignForValueRule<TypeRefPrimaryTypeClass, ValueRuleValue<unknown>> => {
     return {
         isValid: (target: unknown) => isTargetTypeClass(target, isTypeRefPrimaryType),
-        construct: (_typeClass: TypeRefPrimaryTypeClass) => {
+        construct: (primaryTypeClass: TypeRefPrimaryTypeClass) => {
             const nestedSourceInfo = makeEmptySourceInfoMap();
-            throw new Error('Not implemented');
+            const value = assignMultiClass(primaryTypeClass.getValue(), [
+                makeTypeRefRule(nestedSourceInfo, errorInfo),
+                makeErrorAssignRule(errorInfo),
+            ]);
+            sourceInfo[primaryTypeClass.getType()] = nestedSourceInfo;
+            return value;
         },
     };
 };

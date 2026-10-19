@@ -3,8 +3,8 @@ import {
     BreakStatementTypeClass,
     ContinueStatementTypeClass,
     DeleteStatementTypeClass,
-    DmlStatementTypeClass,
     DoWhileStatementTypeClass,
+    ErrorTypeClass,
     ExpressionStatementTypeClass,
     ForStatementTypeClass,
     IfStatementTypeClass,
@@ -12,10 +12,9 @@ import {
     LocalVariableDeclarationStatementTypeClass,
     MergeStatementTypeClass,
     NormalStatementTypeClass,
+    ParExpressionTypeClass,
     ReturnStatementTypeClass,
     RunAsStatementTypeClass,
-    StatementListTypeClass,
-    StatementTypeClass,
     SwitchStatementTypeClass,
     ThrowStatementTypeClass,
     TryStatementTypeClass,
@@ -28,6 +27,7 @@ import {
     isContinueStatementType,
     isDeleteStatementType,
     isDoWhileStatementType,
+    isErrorType,
     isExpressionStatementType,
     isForStatementType,
     isIfStatementType,
@@ -35,6 +35,7 @@ import {
     isLocalVariableDeclarationStatementType,
     isMergeStatementType,
     isNormalStatementType,
+    isParExpressionType,
     isReturnStatementType,
     isRunAsStatementType,
     isSwitchStatementType,
@@ -45,6 +46,8 @@ import {
     isUpsertStatementType,
     isWhileStatementType,
 } from '../../apex_IR';
+import { makeBlockRule, makeFinallyBlockRule } from './block';
+import { makeCatchClauseRule } from './clause';
 
 import {
     ErrorInfo,
@@ -53,7 +56,15 @@ import {
     ValueRuleValue,
     makeEmptySourceInfoMap,
     isTargetTypeClass,
+    assignMultiClass,
+    makeErrorAssignRule,
+    makeSourceInfo,
 } from './commons';
+import { makeForControlRule, makeWhenControlRule } from './control';
+import { makeLocalVariableDeclarationRule } from './declaration';
+import { makeBaseExpressionRule, makeParExpressionRule } from './expression';
+import { makeExpressionListRule } from './list';
+import { makeQualifiedNameRule } from './name';
 
 export const makeAccessLevelRule = (
     sourceInfo: SourceInfoMap,
@@ -61,35 +72,44 @@ export const makeAccessLevelRule = (
 ): AssignForValueRule<AccessLevelTypeClass, ValueRuleValue<unknown>> => {
     return {
         isValid: (target: unknown) => isTargetTypeClass(target, isAccessLevelType),
-        construct: (_typeClass: AccessLevelTypeClass) => {
+        construct: (statementTypeClass: AccessLevelTypeClass) => {
             const nestedSourceInfo = makeEmptySourceInfoMap();
-            throw new Error('Not implemented');
+            const value = assignMultiClass(statementTypeClass.getValue(), [
+                {
+                    isValid: (target: unknown): target is string => typeof target === 'string',
+                    construct: (value: string) => {
+                        nestedSourceInfo['string'] = value;
+                        return value;
+                    },
+                },
+                makeErrorAssignRule(errorInfo),
+            ]);
+            sourceInfo[statementTypeClass.getType()] = nestedSourceInfo;
+            return value;
         },
     };
 };
 
 export const makeBreakStatementRule = (
     sourceInfo: SourceInfoMap,
-    errorInfo: ErrorInfo[],
 ): AssignForValueRule<BreakStatementTypeClass, ValueRuleValue<unknown>> => {
     return {
         isValid: (target: unknown) => isTargetTypeClass(target, isBreakStatementType),
-        construct: (_typeClass: BreakStatementTypeClass) => {
-            const nestedSourceInfo = makeEmptySourceInfoMap();
-            throw new Error('Not implemented');
+        construct: (statementTypeClass: BreakStatementTypeClass) => {
+            sourceInfo[statementTypeClass.getType()] = makeSourceInfo(statementTypeClass);
+            return statementTypeClass.getValue();
         },
     };
 };
 
 export const makeContinueStatementRule = (
     sourceInfo: SourceInfoMap,
-    errorInfo: ErrorInfo[],
 ): AssignForValueRule<ContinueStatementTypeClass, ValueRuleValue<unknown>> => {
     return {
         isValid: (target: unknown) => isTargetTypeClass(target, isContinueStatementType),
-        construct: (_typeClass: ContinueStatementTypeClass) => {
-            const nestedSourceInfo = makeEmptySourceInfoMap();
-            throw new Error('Not implemented');
+        construct: (statementTypeClass: ContinueStatementTypeClass) => {
+            sourceInfo[statementTypeClass.getType()] = makeSourceInfo(statementTypeClass);
+            return statementTypeClass.getValue();
         },
     };
 };
@@ -100,9 +120,18 @@ export const makeDeleteStatementRule = (
 ): AssignForValueRule<DeleteStatementTypeClass, ValueRuleValue<unknown>> => {
     return {
         isValid: (target: unknown) => isTargetTypeClass(target, isDeleteStatementType),
-        construct: (_typeClass: DeleteStatementTypeClass) => {
+        construct: (statementTypeClass: DeleteStatementTypeClass) => {
             const nestedSourceInfo = makeEmptySourceInfoMap();
-            throw new Error('Not implemented');
+            const target = assignMultiClass(statementTypeClass.getValue(), [
+                ...makeBaseExpressionRule(nestedSourceInfo, errorInfo),
+                makeErrorAssignRule(errorInfo),
+            ]);
+            const accessLevel = assignMultiClass(statementTypeClass.getAccessLevel(), [
+                makeAccessLevelRule(nestedSourceInfo, errorInfo),
+                makeErrorAssignRule(errorInfo),
+            ]);
+            sourceInfo[statementTypeClass.getType()] = nestedSourceInfo;
+            return { type: statementTypeClass.getType(), target, accessLevel };
         },
     };
 };
@@ -113,9 +142,18 @@ export const makeDoWhileStatementRule = (
 ): AssignForValueRule<DoWhileStatementTypeClass, ValueRuleValue<unknown>> => {
     return {
         isValid: (target: unknown) => isTargetTypeClass(target, isDoWhileStatementType),
-        construct: (_typeClass: DoWhileStatementTypeClass) => {
+        construct: (statementTypeClass: DoWhileStatementTypeClass) => {
             const nestedSourceInfo = makeEmptySourceInfoMap();
-            throw new Error('Not implemented');
+            const condition = assignMultiClass(statementTypeClass.getValue(), [
+                makeParExpressionRule(nestedSourceInfo, errorInfo),
+                makeErrorAssignRule(errorInfo),
+            ]);
+            const block = assignMultiClass(statementTypeClass.getBlock(), [
+                makeBlockRule(nestedSourceInfo, errorInfo),
+                makeErrorAssignRule(errorInfo),
+            ]);
+            sourceInfo[statementTypeClass.getType()] = nestedSourceInfo;
+            return { condition, block };
         },
     };
 };
@@ -126,9 +164,14 @@ export const makeExpressionStatementRule = (
 ): AssignForValueRule<ExpressionStatementTypeClass, ValueRuleValue<unknown>> => {
     return {
         isValid: (target: unknown) => isTargetTypeClass(target, isExpressionStatementType),
-        construct: (_typeClass: ExpressionStatementTypeClass) => {
+        construct: (statementTypeClass: ExpressionStatementTypeClass) => {
             const nestedSourceInfo = makeEmptySourceInfoMap();
-            throw new Error('Not implemented');
+            const value = assignMultiClass(statementTypeClass.getValue(), [
+                ...makeBaseExpressionRule(nestedSourceInfo, errorInfo),
+                makeErrorAssignRule(errorInfo),
+            ]);
+            sourceInfo[statementTypeClass.getType()] = nestedSourceInfo;
+            return value;
         },
     };
 };
@@ -139,9 +182,18 @@ export const makeForStatementRule = (
 ): AssignForValueRule<ForStatementTypeClass, ValueRuleValue<unknown>> => {
     return {
         isValid: (target: unknown) => isTargetTypeClass(target, isForStatementType),
-        construct: (_typeClass: ForStatementTypeClass) => {
+        construct: (statementTypeClass: ForStatementTypeClass) => {
             const nestedSourceInfo = makeEmptySourceInfoMap();
-            throw new Error('Not implemented');
+            const condition = assignMultiClass(statementTypeClass.getValue(), [
+                makeForControlRule(nestedSourceInfo, errorInfo),
+                makeErrorAssignRule(errorInfo),
+            ]);
+            const block = assignMultiClass(statementTypeClass.getValue(), [
+                makeBlockRule(nestedSourceInfo, errorInfo),
+                makeErrorAssignRule(errorInfo),
+            ]);
+            sourceInfo[statementTypeClass.getType()] = nestedSourceInfo;
+            return { condition, block };
         },
     };
 };
@@ -152,9 +204,60 @@ export const makeIfStatementRule = (
 ): AssignForValueRule<IfStatementTypeClass, ValueRuleValue<unknown>> => {
     return {
         isValid: (target: unknown) => isTargetTypeClass(target, isIfStatementType),
-        construct: (_typeClass: IfStatementTypeClass) => {
-            const nestedSourceInfo = makeEmptySourceInfoMap();
-            throw new Error('Not implemented');
+        construct: (statementTypeClass: IfStatementTypeClass) => {
+            const statement = assignMultiClass(statementTypeClass.getValue(), [
+                {
+                    isValid: (
+                        target: unknown,
+                    ): target is {
+                        value: ParExpressionTypeClass | string | ErrorTypeClass;
+                        block: NormalStatementTypeClass | ErrorTypeClass;
+                    }[] =>
+                        Array.isArray(target) &&
+                        target.every(
+                            (t) =>
+                                'value' in t &&
+                                'block' in t &&
+                                (isTargetTypeClass(t.value, isParExpressionType) ||
+                                    typeof t.value === 'string' ||
+                                    isTargetTypeClass(t.value, isErrorType)) &&
+                                (isTargetTypeClass(t.block, isNormalStatementType) ||
+                                    isTargetTypeClass(t.block, isErrorType)),
+                        ),
+                    construct: (
+                        values: {
+                            value: ParExpressionTypeClass | string | ErrorTypeClass;
+                            block: NormalStatementTypeClass | ErrorTypeClass;
+                        }[],
+                    ) => {
+                        const nestedSourceInfo = makeEmptySourceInfoMap();
+                        const value = values.forEach((v, index) => {
+                            const condition = assignMultiClass(v.value, [
+                                {
+                                    isValid: (target: unknown): target is string =>
+                                        typeof target === 'string',
+                                    construct: (value: string) => {
+                                        nestedSourceInfo['string'] = value;
+                                        return value;
+                                    },
+                                },
+                                makeParExpressionRule(nestedSourceInfo, errorInfo),
+                                makeErrorAssignRule(errorInfo),
+                            ]);
+                            const block = assignMultiClass(v.block, [
+                                makeStatementRule(nestedSourceInfo, errorInfo),
+                                makeErrorAssignRule(errorInfo),
+                            ]);
+                            sourceInfo[`${statementTypeClass.getType()}_${index}`] =
+                                nestedSourceInfo;
+                            return { condition, block };
+                        });
+                        return value;
+                    },
+                },
+                makeErrorAssignRule(errorInfo),
+            ]);
+            return statement;
         },
     };
 };
@@ -165,9 +268,18 @@ export const makeInsertStatementRule = (
 ): AssignForValueRule<InsertStatementTypeClass, ValueRuleValue<unknown>> => {
     return {
         isValid: (target: unknown) => isTargetTypeClass(target, isInsertStatementType),
-        construct: (_typeClass: InsertStatementTypeClass) => {
+        construct: (statementTypeClass: InsertStatementTypeClass) => {
             const nestedSourceInfo = makeEmptySourceInfoMap();
-            throw new Error('Not implemented');
+            const target = assignMultiClass(statementTypeClass.getValue(), [
+                ...makeBaseExpressionRule(nestedSourceInfo, errorInfo),
+                makeErrorAssignRule(errorInfo),
+            ]);
+            const accessLevel = assignMultiClass(statementTypeClass.getAccessLevel(), [
+                makeAccessLevelRule(nestedSourceInfo, errorInfo),
+                makeErrorAssignRule(errorInfo),
+            ]);
+            sourceInfo[statementTypeClass.getType()] = nestedSourceInfo;
+            return { type: statementTypeClass.getType(), target, accessLevel };
         },
     };
 };
@@ -179,9 +291,14 @@ export const makeLocalVariableDeclarationStatementRule = (
     return {
         isValid: (target: unknown) =>
             isTargetTypeClass(target, isLocalVariableDeclarationStatementType),
-        construct: (_typeClass: LocalVariableDeclarationStatementTypeClass) => {
+        construct: (statementTypeClass: LocalVariableDeclarationStatementTypeClass) => {
             const nestedSourceInfo = makeEmptySourceInfoMap();
-            throw new Error('Not implemented');
+            const value = assignMultiClass(statementTypeClass.getValue(), [
+                makeLocalVariableDeclarationRule(nestedSourceInfo, errorInfo),
+                makeErrorAssignRule(errorInfo),
+            ]);
+            sourceInfo[statementTypeClass.getType()] = nestedSourceInfo;
+            return value;
         },
     };
 };
@@ -192,22 +309,23 @@ export const makeMergeStatementRule = (
 ): AssignForValueRule<MergeStatementTypeClass, ValueRuleValue<unknown>> => {
     return {
         isValid: (target: unknown) => isTargetTypeClass(target, isMergeStatementType),
-        construct: (_typeClass: MergeStatementTypeClass) => {
+        construct: (statementTypeClass: MergeStatementTypeClass) => {
             const nestedSourceInfo = makeEmptySourceInfoMap();
-            throw new Error('Not implemented');
-        },
-    };
-};
-
-export const makeStatementRule = (
-    sourceInfo: SourceInfoMap,
-    errorInfo: ErrorInfo[],
-): AssignForValueRule<NormalStatementTypeClass, ValueRuleValue<unknown>> => {
-    return {
-        isValid: (target: unknown) => isTargetTypeClass(target, isNormalStatementType),
-        construct: (_typeClass: NormalStatementTypeClass) => {
-            const nestedSourceInfo = makeEmptySourceInfoMap();
-            throw new Error('Not implemented');
+            const targets = statementTypeClass.getValue().map((v, index) => {
+                const valueSourceInfo = makeEmptySourceInfoMap();
+                const value = assignMultiClass(v, [
+                    ...makeBaseExpressionRule(valueSourceInfo, errorInfo),
+                    makeErrorAssignRule(errorInfo),
+                ]);
+                nestedSourceInfo[`${statementTypeClass.getType()}_${index}`] = valueSourceInfo;
+                return value;
+            });
+            const accessLevel = assignMultiClass(statementTypeClass.getAccessLevel(), [
+                makeAccessLevelRule(nestedSourceInfo, errorInfo),
+                makeErrorAssignRule(errorInfo),
+            ]);
+            sourceInfo[statementTypeClass.getType()] = nestedSourceInfo;
+            return { type: statementTypeClass.getType(), targets, accessLevel };
         },
     };
 };
@@ -218,9 +336,14 @@ export const makeReturnStatementRule = (
 ): AssignForValueRule<ReturnStatementTypeClass, ValueRuleValue<unknown>> => {
     return {
         isValid: (target: unknown) => isTargetTypeClass(target, isReturnStatementType),
-        construct: (_typeClass: ReturnStatementTypeClass) => {
+        construct: (statementTypeClass: ReturnStatementTypeClass) => {
             const nestedSourceInfo = makeEmptySourceInfoMap();
-            throw new Error('Not implemented');
+            const value = assignMultiClass(statementTypeClass.getValue(), [
+                ...makeBaseExpressionRule(nestedSourceInfo, errorInfo),
+                makeErrorAssignRule(errorInfo),
+            ]);
+            sourceInfo[statementTypeClass.getType()] = nestedSourceInfo;
+            return value;
         },
     };
 };
@@ -231,9 +354,18 @@ export const makeRunAsStatementRule = (
 ): AssignForValueRule<RunAsStatementTypeClass, ValueRuleValue<unknown>> => {
     return {
         isValid: (target: unknown) => isTargetTypeClass(target, isRunAsStatementType),
-        construct: (_typeClass: RunAsStatementTypeClass) => {
+        construct: (statementTypeClass: RunAsStatementTypeClass) => {
             const nestedSourceInfo = makeEmptySourceInfoMap();
-            throw new Error('Not implemented');
+            const arg = assignMultiClass(statementTypeClass.getValue(), [
+                makeExpressionListRule(nestedSourceInfo, errorInfo),
+                makeErrorAssignRule(errorInfo),
+            ]);
+            const block = assignMultiClass(statementTypeClass.getBlock(), [
+                makeBlockRule(nestedSourceInfo, errorInfo),
+                makeErrorAssignRule(errorInfo),
+            ]);
+            sourceInfo[statementTypeClass.getType()] = nestedSourceInfo;
+            return { arg, block };
         },
     };
 };
@@ -244,9 +376,24 @@ export const makeSwitchStatementRule = (
 ): AssignForValueRule<SwitchStatementTypeClass, ValueRuleValue<unknown>> => {
     return {
         isValid: (target: unknown) => isTargetTypeClass(target, isSwitchStatementType),
-        construct: (_typeClass: SwitchStatementTypeClass) => {
+        construct: (statementTypeClass: SwitchStatementTypeClass) => {
             const nestedSourceInfo = makeEmptySourceInfoMap();
-            throw new Error('Not implemented');
+            const variant = assignMultiClass(statementTypeClass.getValue(), [
+                ...makeBaseExpressionRule(nestedSourceInfo, errorInfo),
+                makeErrorAssignRule(errorInfo),
+            ]);
+            const conditionBlocks = statementTypeClass.getBlocks().forEach((v, index) => {
+                const valueSourceInfo = makeEmptySourceInfoMap();
+                const value = assignMultiClass(v, [
+                    makeWhenControlRule(valueSourceInfo, errorInfo),
+                    makeErrorAssignRule(errorInfo),
+                ]);
+                nestedSourceInfo[`${statementTypeClass.getType()}_${index}`] = valueSourceInfo;
+                return value;
+            });
+
+            sourceInfo[statementTypeClass.getType()] = nestedSourceInfo;
+            return { variant, conditionBlocks };
         },
     };
 };
@@ -257,9 +404,14 @@ export const makeThrowStatementRule = (
 ): AssignForValueRule<ThrowStatementTypeClass, ValueRuleValue<unknown>> => {
     return {
         isValid: (target: unknown) => isTargetTypeClass(target, isThrowStatementType),
-        construct: (_typeClass: ThrowStatementTypeClass) => {
+        construct: (statementTypeClass: ThrowStatementTypeClass) => {
             const nestedSourceInfo = makeEmptySourceInfoMap();
-            throw new Error('Not implemented');
+            const value = assignMultiClass(statementTypeClass.getValue(), [
+                ...makeBaseExpressionRule(nestedSourceInfo, errorInfo),
+                makeErrorAssignRule(errorInfo),
+            ]);
+            sourceInfo[statementTypeClass.getType()] = nestedSourceInfo;
+            return value;
         },
     };
 };
@@ -270,9 +422,27 @@ export const makeTryStatementRule = (
 ): AssignForValueRule<TryStatementTypeClass, ValueRuleValue<unknown>> => {
     return {
         isValid: (target: unknown) => isTargetTypeClass(target, isTryStatementType),
-        construct: (_typeClass: TryStatementTypeClass) => {
+        construct: (statementTypeClass: TryStatementTypeClass) => {
             const nestedSourceInfo = makeEmptySourceInfoMap();
-            throw new Error('Not implemented');
+            const tryBlock = assignMultiClass(statementTypeClass.getValue(), [
+                makeBlockRule(nestedSourceInfo, errorInfo),
+                makeErrorAssignRule(errorInfo),
+            ]);
+            const catchBlock = statementTypeClass.getCatchBlock().forEach((v, index) => {
+                const valueSourceInfo = makeEmptySourceInfoMap();
+                const value = assignMultiClass(v, [
+                    makeCatchClauseRule(valueSourceInfo, errorInfo),
+                    makeErrorAssignRule(errorInfo),
+                ]);
+                nestedSourceInfo[`${statementTypeClass.getType}_${index}`] = valueSourceInfo;
+                return value;
+            });
+            const finallyBlock = assignMultiClass(statementTypeClass.getFinallyBlock(), [
+                makeFinallyBlockRule(nestedSourceInfo, errorInfo),
+                makeErrorAssignRule(errorInfo),
+            ]);
+            sourceInfo[statementTypeClass.getType()] = nestedSourceInfo;
+            return { tryBlock, catchBlock, finallyBlock };
         },
     };
 };
@@ -283,9 +453,18 @@ export const makeUndeleteStatementRule = (
 ): AssignForValueRule<UndeleteStatementTypeClass, ValueRuleValue<unknown>> => {
     return {
         isValid: (target: unknown) => isTargetTypeClass(target, isUndeleteStatementType),
-        construct: (_typeClass: UndeleteStatementTypeClass) => {
+        construct: (statementTypeClass: UndeleteStatementTypeClass) => {
             const nestedSourceInfo = makeEmptySourceInfoMap();
-            throw new Error('Not implemented');
+            const target = assignMultiClass(statementTypeClass.getValue(), [
+                ...makeBaseExpressionRule(nestedSourceInfo, errorInfo),
+                makeErrorAssignRule(errorInfo),
+            ]);
+            const accessLevel = assignMultiClass(statementTypeClass.getAccessLevel(), [
+                makeAccessLevelRule(nestedSourceInfo, errorInfo),
+                makeErrorAssignRule(errorInfo),
+            ]);
+            sourceInfo[statementTypeClass.getType()] = nestedSourceInfo;
+            return { type: statementTypeClass.getType(), target, accessLevel };
         },
     };
 };
@@ -296,9 +475,18 @@ export const makeUpdateStatementRule = (
 ): AssignForValueRule<UpdateStatementTypeClass, ValueRuleValue<unknown>> => {
     return {
         isValid: (target: unknown) => isTargetTypeClass(target, isUpdateStatementType),
-        construct: (_typeClass: UpdateStatementTypeClass) => {
+        construct: (statementTypeClass: UpdateStatementTypeClass) => {
             const nestedSourceInfo = makeEmptySourceInfoMap();
-            throw new Error('Not implemented');
+            const target = assignMultiClass(statementTypeClass.getValue(), [
+                ...makeBaseExpressionRule(nestedSourceInfo, errorInfo),
+                makeErrorAssignRule(errorInfo),
+            ]);
+            const accessLevel = assignMultiClass(statementTypeClass.getAccessLevel(), [
+                makeAccessLevelRule(nestedSourceInfo, errorInfo),
+                makeErrorAssignRule(errorInfo),
+            ]);
+            sourceInfo[statementTypeClass.getType()] = nestedSourceInfo;
+            return { type: statementTypeClass.getType(), target, accessLevel };
         },
     };
 };
@@ -309,9 +497,22 @@ export const makeUpsertStatementRule = (
 ): AssignForValueRule<UpsertStatementTypeClass, ValueRuleValue<unknown>> => {
     return {
         isValid: (target: unknown) => isTargetTypeClass(target, isUpsertStatementType),
-        construct: (_typeClass: UpsertStatementTypeClass) => {
+        construct: (statementTypeClass: UpsertStatementTypeClass) => {
             const nestedSourceInfo = makeEmptySourceInfoMap();
-            throw new Error('Not implemented');
+            const target = assignMultiClass(statementTypeClass.getValue(), [
+                ...makeBaseExpressionRule(nestedSourceInfo, errorInfo),
+                makeErrorAssignRule(errorInfo),
+            ]);
+            const accessLevel = assignMultiClass(statementTypeClass.getAccessLevel(), [
+                makeAccessLevelRule(nestedSourceInfo, errorInfo),
+                makeErrorAssignRule(errorInfo),
+            ]);
+            const key = assignMultiClass(statementTypeClass.getKey(), [
+                makeQualifiedNameRule(nestedSourceInfo, errorInfo),
+                makeErrorAssignRule(errorInfo),
+            ]);
+            sourceInfo[statementTypeClass.getType()] = nestedSourceInfo;
+            return { type: statementTypeClass.getType(), target, accessLevel, key };
         },
     };
 };
@@ -322,9 +523,53 @@ export const makeWhileStatementRule = (
 ): AssignForValueRule<WhileStatementTypeClass, ValueRuleValue<unknown>> => {
     return {
         isValid: (target: unknown) => isTargetTypeClass(target, isWhileStatementType),
-        construct: (_typeClass: WhileStatementTypeClass) => {
+        construct: (statementTypeClass: WhileStatementTypeClass) => {
             const nestedSourceInfo = makeEmptySourceInfoMap();
-            throw new Error('Not implemented');
+            const condition = assignMultiClass(statementTypeClass.getValue(), [
+                makeParExpressionRule(nestedSourceInfo, errorInfo),
+                makeErrorAssignRule(errorInfo),
+            ]);
+            const block = assignMultiClass(statementTypeClass.getBlock(), [
+                makeStatementRule(nestedSourceInfo, errorInfo),
+                makeErrorAssignRule(errorInfo),
+            ]);
+            sourceInfo[statementTypeClass.getType()] = nestedSourceInfo;
+            return { condition };
+        },
+    };
+};
+
+export const makeStatementRule = (
+    sourceInfo: SourceInfoMap,
+    errorInfo: ErrorInfo[],
+): AssignForValueRule<NormalStatementTypeClass, ValueRuleValue<unknown>> => {
+    return {
+        isValid: (target: unknown) => isTargetTypeClass(target, isNormalStatementType),
+        construct: (statementTypeClass: NormalStatementTypeClass) => {
+            const nestedSourceInfo = makeEmptySourceInfoMap();
+            const block = assignMultiClass(statementTypeClass.getValue(), [
+                makeBlockRule(nestedSourceInfo, errorInfo),
+                makeIfStatementRule(nestedSourceInfo, errorInfo),
+                makeSwitchStatementRule(nestedSourceInfo, errorInfo),
+                makeForControlRule(nestedSourceInfo, errorInfo),
+                makeWhileStatementRule(nestedSourceInfo, errorInfo),
+                makeDoWhileStatementRule(nestedSourceInfo, errorInfo),
+                makeTryStatementRule(nestedSourceInfo, errorInfo),
+                makeReturnStatementRule(nestedSourceInfo, errorInfo),
+                makeThrowStatementRule(nestedSourceInfo, errorInfo),
+                makeBreakStatementRule(nestedSourceInfo),
+                makeContinueStatementRule(nestedSourceInfo),
+                makeInsertStatementRule(nestedSourceInfo, errorInfo),
+                makeUpdateStatementRule(nestedSourceInfo, errorInfo),
+                makeDeleteStatementRule(nestedSourceInfo, errorInfo),
+                makeUndeleteStatementRule(nestedSourceInfo, errorInfo),
+                makeUpsertStatementRule(nestedSourceInfo, errorInfo),
+                makeMergeStatementRule(nestedSourceInfo, errorInfo),
+                makeRunAsStatementRule(nestedSourceInfo, errorInfo),
+                makeLocalVariableDeclarationRule(nestedSourceInfo, errorInfo),
+                makeExpressionStatementRule(nestedSourceInfo, errorInfo),
+                makeErrorAssignRule(errorInfo),
+            ]);
         },
     };
 };

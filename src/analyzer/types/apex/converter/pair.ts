@@ -10,6 +10,7 @@ import {
     isIdCreatedNamePairType,
     isMapCreatorRestPairType,
 } from '../../apex_IR';
+import { makeElementValueType } from '../modifier';
 
 import {
     ErrorInfo,
@@ -18,7 +19,13 @@ import {
     ValueRuleValue,
     makeEmptySourceInfoMap,
     isTargetTypeClass,
+    assignMultiClass,
+    makeErrorAssignRule,
 } from './commons';
+import { makeBaseExpressionRule } from './expression';
+import { makeAnyIdRule, makeIdRule } from './id';
+import { makeTypeListRule } from './list';
+import { makeElementValueRule } from './value';
 
 export const makeElementValuePairsRule = (
     sourceInfo: SourceInfoMap,
@@ -26,9 +33,18 @@ export const makeElementValuePairsRule = (
 ): AssignForValueRule<ElementValuePairsTypeClass, ValueRuleValue<unknown>> => {
     return {
         isValid: (target: unknown) => isTargetTypeClass(target, isElementValuePairsType),
-        construct: (_typeClass: ElementValuePairsTypeClass) => {
+        construct: (pairTypeClass: ElementValuePairsTypeClass) => {
             const nestedSourceInfo = makeEmptySourceInfoMap();
-            throw new Error('Not implemented');
+            const value = pairTypeClass.getValue().forEach((v, index) => {
+                const valueSourceInfo = makeEmptySourceInfoMap();
+                const value = assignMultiClass(v, [
+                    makeElementValuePairRule(valueSourceInfo, errorInfo),
+                    makeErrorAssignRule(errorInfo),
+                ]);
+                nestedSourceInfo[`${pairTypeClass.getType()}_${index}`] = valueSourceInfo;
+            });
+            sourceInfo[pairTypeClass.getType()] = nestedSourceInfo;
+            return value;
         },
     };
 };
@@ -39,9 +55,18 @@ export const makeElementValuePairRule = (
 ): AssignForValueRule<ElementValuePairTypeClass, ValueRuleValue<unknown>> => {
     return {
         isValid: (target: unknown) => isTargetTypeClass(target, isElementValuePairType),
-        construct: (_typeClass: ElementValuePairTypeClass) => {
+        construct: (pairTypeClass: ElementValuePairTypeClass) => {
             const nestedSourceInfo = makeEmptySourceInfoMap();
-            throw new Error('Not implemented');
+            const variant = assignMultiClass(pairTypeClass.getLeft(), [
+                makeIdRule(nestedSourceInfo),
+                makeErrorAssignRule(errorInfo),
+            ]);
+            const value = assignMultiClass(pairTypeClass.getRight(), [
+                makeElementValueRule(nestedSourceInfo, errorInfo),
+                makeErrorAssignRule(errorInfo),
+            ]);
+            sourceInfo[pairTypeClass.getType()] = nestedSourceInfo;
+            return { variant, value };
         },
     };
 };
@@ -52,9 +77,18 @@ export const makeIdCreatedNamePairRule = (
 ): AssignForValueRule<IdCreatedNamePairTypeClass, ValueRuleValue<unknown>> => {
     return {
         isValid: (target: unknown) => isTargetTypeClass(target, isIdCreatedNamePairType),
-        construct: (_typeClass: IdCreatedNamePairTypeClass) => {
+        construct: (pairTypeClass: IdCreatedNamePairTypeClass) => {
             const nestedSourceInfo = makeEmptySourceInfoMap();
-            throw new Error('Not implemented');
+            const collection = assignMultiClass(pairTypeClass.getLeft(), [
+                makeAnyIdRule(nestedSourceInfo),
+                makeErrorAssignRule(errorInfo),
+            ]);
+            const generic = assignMultiClass(pairTypeClass.getRight(), [
+                makeTypeListRule(nestedSourceInfo, errorInfo),
+                makeErrorAssignRule(errorInfo),
+            ]);
+            sourceInfo[pairTypeClass.getType()] = nestedSourceInfo;
+            return { collection, generic };
         },
     };
 };
@@ -65,9 +99,18 @@ export const makeMapCreatorRestPairRule = (
 ): AssignForValueRule<MapCreatorRestPairTypeClass, ValueRuleValue<unknown>> => {
     return {
         isValid: (target: unknown) => isTargetTypeClass(target, isMapCreatorRestPairType),
-        construct: (_typeClass: MapCreatorRestPairTypeClass) => {
+        construct: (pairTypeClass: MapCreatorRestPairTypeClass) => {
             const nestedSourceInfo = makeEmptySourceInfoMap();
-            throw new Error('Not implemented');
+            const key = assignMultiClass(pairTypeClass.getLeft(), [
+                ...makeBaseExpressionRule(nestedSourceInfo, errorInfo),
+                makeErrorAssignRule(errorInfo),
+            ]);
+            const value = assignMultiClass(pairTypeClass.getRight(), [
+                ...makeBaseExpressionRule(nestedSourceInfo, errorInfo),
+                makeErrorAssignRule(errorInfo),
+            ]);
+            sourceInfo[pairTypeClass.getType()] = nestedSourceInfo;
+            return { key, value };
         },
     };
 };

@@ -15,7 +15,13 @@ import {
     ValueRuleValue,
     makeEmptySourceInfoMap,
     isTargetTypeClass,
+    assignMultiClass,
+    makeErrorAssignRule,
 } from './commons';
+import { makeIdRule } from './id';
+import { makeFormalParameterListRule } from './list';
+import { makeModifierRule } from './modifier';
+import { makeTypeRefRule } from './type';
 
 export const makeFormalParametersRule = (
     sourceInfo: SourceInfoMap,
@@ -23,9 +29,14 @@ export const makeFormalParametersRule = (
 ): AssignForValueRule<FormalParametersTypeClass, ValueRuleValue<unknown>> => {
     return {
         isValid: (target: unknown) => isTargetTypeClass(target, isFormalParametersType),
-        construct: (_typeClass: FormalParametersTypeClass) => {
+        construct: (parameterTypeClass: FormalParametersTypeClass) => {
             const nestedSourceInfo = makeEmptySourceInfoMap();
-            throw new Error('Not implemented');
+            const value = assignMultiClass(parameterTypeClass.getValue(), [
+                makeFormalParameterListRule(nestedSourceInfo, errorInfo),
+                makeErrorAssignRule(errorInfo),
+            ]);
+            sourceInfo[parameterTypeClass.getType()] = nestedSourceInfo;
+            return value;
         },
     };
 };
@@ -36,9 +47,28 @@ export const makeFormalParameterRule = (
 ): AssignForValueRule<FormalParameterTypeClass, ValueRuleValue<unknown>> => {
     return {
         isValid: (target: unknown) => isTargetTypeClass(target, isFormalParameterType),
-        construct: (_typeClass: FormalParameterTypeClass) => {
+        construct: (parameterTypeClass: FormalParameterTypeClass) => {
             const nestedSourceInfo = makeEmptySourceInfoMap();
-            throw new Error('Not implemented');
+            const variant = assignMultiClass(parameterTypeClass.getValue(), [
+                makeIdRule(nestedSourceInfo),
+                makeErrorAssignRule(errorInfo),
+            ]);
+            const variantType = assignMultiClass(parameterTypeClass.getValueType(), [
+                makeTypeRefRule(nestedSourceInfo, errorInfo),
+                makeErrorAssignRule(errorInfo),
+            ]);
+            const modifier = parameterTypeClass.getModifier().forEach((v, index) => {
+                const valueSourceInfo = makeEmptySourceInfoMap();
+                const value = assignMultiClass(v, [
+                    makeModifierRule(valueSourceInfo, errorInfo),
+                    makeErrorAssignRule(errorInfo),
+                ]);
+                nestedSourceInfo[parameterTypeClass.getType()] = valueSourceInfo;
+                return value;
+            });
+
+            sourceInfo[parameterTypeClass.getType()] = nestedSourceInfo;
+            return { variant, variantType, modifier };
         },
     };
 };
@@ -49,9 +79,20 @@ export const makeSoqlFieldsParameterRule = (
 ): AssignForValueRule<SoqlFieldsParameterTypeClass, ValueRuleValue<unknown>> => {
     return {
         isValid: (target: unknown) => isTargetTypeClass(target, isSoqlFieldsParameterType),
-        construct: (_typeClass: SoqlFieldsParameterTypeClass) => {
+        construct: (parameterTypeClass: SoqlFieldsParameterTypeClass) => {
             const nestedSourceInfo = makeEmptySourceInfoMap();
-            throw new Error('Not implemented');
+            const value = assignMultiClass(parameterTypeClass.getValue(), [
+                {
+                    isValid: (target: unknown): target is string => typeof target === 'string',
+                    construct: (value: string) => {
+                        nestedSourceInfo['string'] = value;
+                        return value;
+                    },
+                },
+                makeErrorAssignRule(errorInfo),
+            ]);
+            sourceInfo[parameterTypeClass.getType()] = nestedSourceInfo;
+            return value;
         },
     };
 };

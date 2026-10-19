@@ -30,7 +30,12 @@ import {
 import { makeBoundExpressionRule } from './expression';
 import { makeIdRule } from './id';
 import { makeValueListRule } from './list';
-import { makeLiteralRule, makeSignedIntegerRule, makeSignedNumberRule } from './literal';
+import {
+    makeLiteralRule,
+    makeSignedIntegerRule,
+    makeSignedNumberRule,
+    makeWhenLiteralRule,
+} from './literal';
 import { makeFieldNameRule } from './name';
 import { makeDateFormulaRule, makeSubQueryRule } from './query';
 
@@ -145,7 +150,19 @@ export const makeWhenValueRule = (
                                 isTargetTypeClass(t, isWhenLiteralType) ||
                                 isTargetTypeClass(t, isErrorType),
                         ),
-                    construct: (values: (WhenLiteralTypeClass | ErrorTypeClass)[]) => {},
+                    construct: (values: (WhenLiteralTypeClass | ErrorTypeClass)[]) => {
+                        const value = values.forEach((v, index) => {
+                            const valueSourceInfo = makeEmptySourceInfoMap();
+                            const value = assignMultiClass(v, [
+                                makeWhenLiteralRule(valueSourceInfo, errorInfo),
+                                makeErrorAssignRule(errorInfo),
+                            ]);
+                            nestedSourceInfo[`${valueTypeClass.getType()}_${index}`] =
+                                valueSourceInfo;
+                            return value;
+                        });
+                        return value;
+                    },
                 },
                 makeIdRule(nestedSourceInfo),
                 makeErrorAssignRule(errorInfo),

@@ -10,6 +10,7 @@ import {
     isTriggerCaseType,
     isTriggerUnitType,
 } from '../../apex_IR';
+import { makeAnonymousBlockRule, makeBlockRule } from './block';
 
 import {
     ErrorInfo,
@@ -18,7 +19,11 @@ import {
     ValueRuleValue,
     makeEmptySourceInfoMap,
     isTargetTypeClass,
+    assignMultiClass,
+    makeErrorAssignRule,
 } from './commons';
+import { makeTypeDeclarationRule } from './declaration';
+import { makeIdRule } from './id';
 
 export const makeAnonymousUnitRule = (
     sourceInfo: SourceInfoMap,
@@ -26,9 +31,14 @@ export const makeAnonymousUnitRule = (
 ): AssignForValueRule<AnonymousUnitTypeClass, ValueRuleValue<unknown>> => {
     return {
         isValid: (target: unknown) => isTargetTypeClass(target, isAnonymousUnitType),
-        construct: (_typeClass: AnonymousUnitTypeClass) => {
+        construct: (unitTypeClass: AnonymousUnitTypeClass) => {
             const nestedSourceInfo = makeEmptySourceInfoMap();
-            throw new Error('Not implemented');
+            const unit = assignMultiClass(unitTypeClass.getValue(), [
+                makeAnonymousBlockRule(nestedSourceInfo, errorInfo),
+                makeErrorAssignRule(errorInfo),
+            ]);
+            sourceInfo[unitTypeClass.getType()] = nestedSourceInfo;
+            return unit;
         },
     };
 };
@@ -39,9 +49,14 @@ export const makeCompilationUnitRule = (
 ): AssignForValueRule<CompilationUnitTypeClass, ValueRuleValue<unknown>> => {
     return {
         isValid: (target: unknown) => isTargetTypeClass(target, isCompilationUnitType),
-        construct: (_typeClass: CompilationUnitTypeClass) => {
+        construct: (unitTypeClass: CompilationUnitTypeClass) => {
             const nestedSourceInfo = makeEmptySourceInfoMap();
-            throw new Error('Not implemented');
+            const unit = assignMultiClass(unitTypeClass.getValue(), [
+                makeTypeDeclarationRule(nestedSourceInfo, errorInfo),
+                makeErrorAssignRule(errorInfo),
+            ]);
+            sourceInfo[unitTypeClass.getType()] = nestedSourceInfo;
+            return unit;
         },
     };
 };
@@ -52,9 +67,22 @@ export const makeTriggerCaseRule = (
 ): AssignForValueRule<TriggerCaseTypeClass, ValueRuleValue<unknown>> => {
     return {
         isValid: (target: unknown) => isTargetTypeClass(target, isTriggerCaseType),
-        construct: (_typeClass: TriggerCaseTypeClass) => {
+        construct: (unitTypeClass: TriggerCaseTypeClass) => {
             const nestedSourceInfo = makeEmptySourceInfoMap();
-            throw new Error('Not implemented');
+            const timing = assignMultiClass(unitTypeClass.getValue(), [
+                {
+                    isValid: (target: unknown): target is string => typeof target === 'string',
+                    construct: (value: string) => {
+                        nestedSourceInfo['string_1'] = value;
+                        return value;
+                    },
+                },
+                makeErrorAssignRule(errorInfo),
+            ]);
+            const triggerType = unitTypeClass.getTriggerCaseType();
+            nestedSourceInfo['string_2'] = triggerType;
+            sourceInfo[unitTypeClass.getType()] = nestedSourceInfo;
+            return { triggerType, timing };
         },
     };
 };
@@ -65,9 +93,27 @@ export const makeTriggerUnitRule = (
 ): AssignForValueRule<TriggerUnitTypeClass, ValueRuleValue<unknown>> => {
     return {
         isValid: (target: unknown) => isTargetTypeClass(target, isTriggerUnitType),
-        construct: (_typeClass: TriggerUnitTypeClass) => {
+        construct: (unitTypeClass: TriggerUnitTypeClass) => {
             const nestedSourceInfo = makeEmptySourceInfoMap();
-            throw new Error('Not implemented');
+            const name = assignMultiClass(unitTypeClass.getValue(), [
+                makeIdRule(nestedSourceInfo),
+                makeErrorAssignRule(errorInfo),
+            ]);
+            const triggerCase = unitTypeClass.getTriggerCase().map((v, index) => {
+                const valueSourceInfo = makeEmptySourceInfoMap();
+                const value = assignMultiClass(v, [
+                    makeTriggerCaseRule(valueSourceInfo, errorInfo),
+                    makeErrorAssignRule(errorInfo),
+                ]);
+                nestedSourceInfo[`${unitTypeClass.getType()}_${index}`] = valueSourceInfo;
+                return value;
+            });
+            const block = assignMultiClass(unitTypeClass.getBlock(), [
+                makeBlockRule(nestedSourceInfo, errorInfo),
+                makeErrorAssignRule(errorInfo),
+            ]);
+            sourceInfo[unitTypeClass.getType()] = nestedSourceInfo;
+            return { name, triggerCase, block };
         },
     };
 };
