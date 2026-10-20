@@ -300,6 +300,40 @@ const unit = assignMultiClass(unitTypeClass, [
 ]);
 ```
 
+### 変換結果と source 情報の別ファイル出力
+
+サンプル生成は現行の `makeXxxUnitRule` を使い、1 回の parse / convert から次の 2 ファイルを保存します。
+
+| 保存先                                                    | 内容                                                                                                          |
+| --------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------- |
+| `docs/examples/apex-ir/converter-output/*.converted.json` | `converted`、入力ファイル名、`sourceHash`、`sourceFile`、構文エラー件数、変換エラーのコードと index           |
+| `docs/examples/apex-ir/source-output/*.source.json`       | `source`（SourceNode の木）、原文 `sourceText`、構文エラー詳細、変換エラー詳細、入力ファイル名と `sourceHash` |
+
+実行コマンド（リポジトリルート、PowerShell）:
+
+```powershell
+npx ttsx --noCheck --project docs\examples\apex-ir\tsconfig.converter.json docs\examples\apex-ir\generate-converter-output.ts
+```
+
+通常の解析では `*.converted.json` だけを読みます。エラーがある場合、または変換結果だけでは解析が難しい場合に、`sourceFile` を **converted ファイルを基準にした相対 URL** として解決し、source 情報を追加で読みます。ファイルを分離することで読み込みを遅延できますが、生成時の source 情報の収集は行います。
+
+```ts
+const result = JSON.parse(await readFile(convertedFile, 'utf8'));
+
+// エラー時や解析に原文・位置が必要になった段階でのみ実行する。
+const details = JSON.parse(await readFile(new URL(result.sourceFile, convertedFile), 'utf8'));
+if (details.file !== result.file || details.sourceHash !== result.sourceHash) {
+    throw new Error('Converted output and source information do not match');
+}
+```
+
+- `sourceHash` は入力原文（UTF-8）の SHA-256 です。古い source ファイルなど、異なる入力から生成した組み合わせを検出するために使います。
+- 正常ノードの位置は、`converted` 以下と同じ属性名・配列 index を `source.fields` でたどって取得します。プリミティブ自体に位置がない場合は、その親ノードの `span` を参照します。
+- 変換結果に含まれる `{ errorCode, index }` の `index` は **1 始まり**です。詳細は `details.conversionErrors[index - 1]` にあります。エラーノードの source スロットは `null` になることがあるため、エラーの位置・原文はこの詳細を使います。
+- parse 時の補完や読み飛ばしは `syntaxErrorCount` で検知し、詳細は `details.syntaxErrors` と `details.sourceText` で確認します。
+- source ファイルの欠落・JSON 読み込み失敗・ハッシュ不一致はエラーとして扱い、成功した解析結果として処理しません。
+- この保存形式と読み込み方はサンプル用です。viewer・MCP など実利用側への遅延読み込みの組み込みは別途行います。
+
 ## 型ごとの利用関数
 
 以下は、各型名が converter 関数の引数型または戻り値型に現れる箇所の一覧です。間接的に利用する関数ではなく、関数シグネチャで型を明示しているものを記載しています。Union のメンバー型は、その Union 型の行にまとめています。補助関数などで型名が直接シグネチャに現れない場合は、上記の型定義と各ファイルを参照してください。
