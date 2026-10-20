@@ -1,61 +1,88 @@
+import typia from 'typia';
+
 import {
     BodyTypeClass,
     ClassBodyTypeClass,
     InterfaceBodyTypeClass,
-    isClassBodyType,
-    isInterfaceBodyType,
+    isClassBodyType as isClassBodyTypeClass,
+    isInterfaceBodyType as isInterfaceBodyTypeClass,
 } from '../../apex_IR';
 
 import {
     ErrorInfo,
-    SourceInfoMap,
+    SourceSlot,
     AssignForValueRule,
     ValueRuleValue,
-    makeEmptySourceInfoMap,
     isTargetTypeClass,
     assignMultiClass,
     makeErrorAssignRule,
+    makeSourceNode,
+    sourceList,
 } from './commons';
-import { makeClassBodyDeclarationRule, makeInterfaceMethodDeclarationRule } from './declaration';
+import {
+    makeClassBodyDeclarationRule,
+    makeInterfaceMethodDeclarationRule,
+    ClassBodyDeclarationType,
+    InterfaceMethodDeclarationType,
+} from './declaration';
+
+export type ClassBodyType = {
+    type: string;
+    value: ValueRuleValue<ClassBodyDeclarationType>[];
+};
+
+export const isClassBodyType = typia.createIs<ClassBodyType>();
 
 export const makeClassBodyRule = (
-    sourceInfo: SourceInfoMap,
+    slot: SourceSlot,
     errorInfo: ErrorInfo[],
-): AssignForValueRule<ClassBodyTypeClass, ValueRuleValue<unknown>> => {
+): AssignForValueRule<ClassBodyTypeClass, ClassBodyType> => {
     return {
-        isValid: (target: unknown) => isTargetTypeClass(target, isClassBodyType),
+        isValid: (target: unknown) => isTargetTypeClass(target, isClassBodyTypeClass),
         construct: (bodyTypeClass: ClassBodyTypeClass) => {
-            const body = bodyTypeClass.getValue().map((v, index) => {
-                const nestedSourceInfo = makeEmptySourceInfoMap();
-                const value = assignMultiClass(v, [
-                    makeClassBodyDeclarationRule(nestedSourceInfo, errorInfo),
-                    makeErrorAssignRule(errorInfo),
-                ]);
-                sourceInfo[`${bodyTypeClass.getType}_${index}`] = nestedSourceInfo;
-                return value;
-            });
-            return body;
+            const node = makeSourceNode(bodyTypeClass);
+            const valueSource = sourceList(node, 'value');
+            const value = bodyTypeClass
+                .getValue()
+                .map((v, index) =>
+                    assignMultiClass(v, [
+                        makeClassBodyDeclarationRule(valueSource(index), errorInfo),
+                        makeErrorAssignRule(errorInfo),
+                    ]),
+                );
+            slot(node);
+            return { type: bodyTypeClass.getType(), value };
         },
     };
 };
 
+export type InterfaceBodyType = {
+    type: string;
+    value: ValueRuleValue<InterfaceMethodDeclarationType>[];
+};
+
+export const isInterfaceBodyType = typia.createIs<InterfaceBodyType>();
+
 export const makeInterfaceBodyRule = (
-    sourceInfo: SourceInfoMap,
+    slot: SourceSlot,
     errorInfo: ErrorInfo[],
-): AssignForValueRule<InterfaceBodyTypeClass, ValueRuleValue<unknown>> => {
+): AssignForValueRule<InterfaceBodyTypeClass, InterfaceBodyType> => {
     return {
-        isValid: (target: unknown) => isTargetTypeClass(target, isInterfaceBodyType),
+        isValid: (target: unknown) => isTargetTypeClass(target, isInterfaceBodyTypeClass),
         construct: (bodyTypeClass: InterfaceBodyTypeClass) => {
-            const body = bodyTypeClass.getValue().map((v, index) => {
-                const nestedSourceInfo = makeEmptySourceInfoMap();
-                const value = assignMultiClass(v, [
-                    makeInterfaceMethodDeclarationRule(nestedSourceInfo, errorInfo),
-                    makeErrorAssignRule(errorInfo),
-                ]);
-                sourceInfo[`${bodyTypeClass.getType}_${index}`] = nestedSourceInfo;
-                return value;
-            });
-            return body;
+            const node = makeSourceNode(bodyTypeClass);
+            const valueSource = sourceList(node, 'value');
+            const value = bodyTypeClass
+                .getValue()
+                .map((v, index) =>
+                    assignMultiClass(v, [
+                        makeInterfaceMethodDeclarationRule(valueSource(index), errorInfo),
+                        makeErrorAssignRule(errorInfo),
+                    ]),
+                );
+            slot(node);
+            return { type: bodyTypeClass.getType(), value };
         },
     };
 };
+

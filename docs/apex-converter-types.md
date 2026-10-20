@@ -10,6 +10,47 @@
 - `Expression` と `NormalStatement` は `type` 判別子を使う再帰的な構文木です。
 - 下記のメンバー一覧は converter の型定義に基づきます。各変換関数が常に全フィールドへ値を設定することを意味するものではありません。
 
+> **注意**: 下記の型ごとの一覧は旧仕様です。現在の converter の出力型は各ファイル内に定義されており、次の「出力型と型述語」「出力の共通ルール」を参照してください。
+
+## 出力型と型述語
+
+各 `makeXxxRule` は、そのファイルに定義する `XxxType` を返します。出力の構造を検証する `isXxxType = typia.createIs<XxxType>()` も同じファイルから export します。どちらも converter の `index.ts` 経由で利用できます。
+
+```ts
+export type SoqlLiteralType = {
+    type: string;
+    value: ValueRuleValue<unknown>;
+};
+
+export const isSoqlLiteralType = typia.createIs<SoqlLiteralType>();
+```
+
+- `type` は現段階では文字列型です。リテラル型によるノード種別の判別は行いません。
+- 入れ子の出力は `ValueRuleValue<unknown>` を基本とし、文字列・数値・真偽値・配列など明確な属性は具体的に型付けしています。入れ子が `unknown` の属性については、型述語は内部の構造までは検証しません。
+- `AssignForValueRule<IR型, XxxType>` によって、実際の変換結果と出力型の整合性をコンパイル時にも確認します。
+- 同名の IR 型述語がある場合は、import 時に `isXxxTypeClass` という別名を付けて区別しています。rule の `isValid` は引き続き IR を判定し、出力用の `isXxxType` は構造を検証します。
+- 型述語の実行には、既存の `ttsx` / `ttsc` による typia の変換が必要です。
+
+## 出力の共通ルール
+
+- すべての rule の出力は `{ type, ... }` のオブジェクトです。`type` は IR の `getType()`（例: `'classDeclaration'`, `'id'`）です。
+    - 子の値・配列・文字列だけを持つノード（ラッパー、リスト、id、break など）は `{ type, value }` です。
+    - 例外は 2 つです。IR 型を持たない if の分岐要素 `{ condition, block }` と、エラー `{ errorCode, index }` には `type` がありません。
+    - `soqlId` の `value` は、`id` の出力オブジェクト（またはエラー・`null`）です。
+- 属性名は次の規約で揃えています。
+
+| 意味                                                                          | 属性名                                                                                                                                                                       |
+| ----------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| ノードの主な中身（宣言名、オペランド、リスト要素、ラッパーの子、id の文字列） | `value`                                                                                                                                                                      |
+| 宣言・キャスト・パラメータ・メソッド戻り値の型                                | `valueType`                                                                                                                                                                  |
+| メソッド/コンストラクタ引数、関数パラメータ                                   | `param`                                                                                                                                                                      |
+| 二項式・ドット式・ペア                                                        | `left`, `operator`, `right`                                                                                                                                                  |
+| 単項式・キャスト                                                              | `value`, `operator` / `value`, `valueType`                                                                                                                                   |
+| 三項演算子                                                                    | `condition`, `trueValue`, `falseValue`                                                                                                                                       |
+| 修飾子 / 本体                                                                 | `modifier`（配列） / `block`（クラス本体は `body`）                                                                                                                          |
+| TypeRef / TypeName                                                            | `value`, `dimension` / `value`, `generic`                                                                                                                                    |
+| SOQL/SOSL の句                                                                | `from`, `whereClause`, `orderByClause`, `limitClause`, `offsetClause`, `groupByClause`, `withClause`, `forClause`, `updateList`, `usingScope`, `allRowsClause`, `alias` など |
+
 ## 型・名前・値
 
 ### [type.ts](../src/analyzer/types/apex/converter/type.ts)
@@ -227,10 +268,37 @@
 次のファイルは変換関数を提供します。追加の公開型エイリアスは定義していません。
 
 - [body.ts](../src/analyzer/types/apex/converter/body.ts): クラス／インターフェース本体
-- [commons.ts](../src/analyzer/types/apex/converter/commons.ts): IR値の型チェックとプリミティブ値取り出し
+- [commons.ts](../src/analyzer/types/apex/converter/commons.ts): IR値の型チェック、エラー記録、ソース位置情報（`SourceNode`）の記録
 - [id.ts](../src/analyzer/types/apex/converter/id.ts): ID値
 - [arguments.ts](../src/analyzer/types/apex/converter/arguments.ts): 引数リスト
 - [index.ts](../src/analyzer/types/apex/converter/index.ts): converter型・関数の再export
+
+## ソース位置情報（SourceNode）
+
+各 rule は変換結果とは別に、ソース位置の木 `SourceNode` を記録します。木の形は**変換結果と同じ**にしてあり、出力値と同じパスで位置をたどれます。
+
+```ts
+type SourceNode = {
+    type: string | null; // IR の型名。IR 型を持たない中間要素（if の分岐など）は null
+    span: SourceInfo | null; // そのノード自身の位置
+    fields: { [field: string]: SourceNode | (SourceNode | null)[] | null };
+};
+```
+
+- `fields` のキーは、出力オブジェクトの属性名（`type` 以外）と一致します。
+    - 例: 出力の `result.modifier[2]` の位置は `source.fields.modifier[2].span` です。
+- rule は `SourceInfoMap` ではなく書き込み先の `SourceSlot` を受け取り、自分のノードを 1 回だけ書き込みます。
+- 親は子に渡す書き込み先を `sourceField(node, 'block')`（単一）または `sourceList(node, 'modifier')(index)`（配列）で作ります。キーは作成した時点で `null` / `[]` として確保されるため、子がエラーや欠落の場合も形が崩れません。
+- 文字列などのプリミティブ値は位置を持たないので記録しません。値は変換結果側にあります。
+- 呼び出し元は、ルートの書き込み先を用意して受け取ります。
+
+```ts
+let source: SourceNode | null = null;
+const unit = assignMultiClass(unitTypeClass, [
+    makeCompilationUnitRule((node) => (source = node), errorInfo),
+    makeErrorAssignRule(errorInfo),
+]);
+```
 
 ## 型ごとの利用関数
 

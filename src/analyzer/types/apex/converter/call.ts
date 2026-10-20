@@ -1,88 +1,85 @@
 import typia from 'typia';
 
 import {
-    CallTypeClass,
     DotMethodCallTypeClass,
     MethodCallTypeClass,
-    isDotMethodCallType,
-    isMethodCallType,
-    isErrorType,
+    isDotMethodCallType as isDotMethodCallTypeClass,
+    isMethodCallType as isMethodCallTypeClass,
 } from '../../apex_IR';
 
 import {
     ErrorInfo,
-    SourceInfoMap,
-    makeEmptySourceInfoMap,
+    SourceSlot,
     AssignForValueRule,
     ValueRuleValue,
     isTargetTypeClass,
     assignMultiClass,
     makeErrorAssignRule,
+    makeSourceNode,
+    sourceField,
 } from './commons';
-import { makeAnyIdRule, makeIdRule } from './id';
-import { makeExpressionListRule } from './list';
+import { makeAnyIdRule, makeIdRule, AnyIdType, IdType } from './id';
+import { makeExpressionListRule, ExpressionListType } from './list';
 
 export type DotMethodCallType = {
-    member: ValueRuleValue<string>;
-    param: ValueRuleValue<ValueRuleValue<unknown>[]>;
+    type: string;
+    value: ValueRuleValue<AnyIdType>;
+    param: ValueRuleValue<ExpressionListType>;
 };
 
+export const isDotMethodCallType = typia.createIs<DotMethodCallType>();
+
 export const makeDotMethodCallRule = (
-    sourceInfo: SourceInfoMap,
+    slot: SourceSlot,
     errorInfo: ErrorInfo[],
 ): AssignForValueRule<DotMethodCallTypeClass, DotMethodCallType> => {
     return {
-        isValid: (target: unknown) => isTargetTypeClass(target, isDotMethodCallType),
+        isValid: (target: unknown) => isTargetTypeClass(target, isDotMethodCallTypeClass),
         construct: (callTypeClass: DotMethodCallTypeClass) => {
-            const nestedSourceInfo = makeEmptySourceInfoMap();
-            const member = assignMultiClass(callTypeClass.getValue(), [
-                makeAnyIdRule(nestedSourceInfo),
+            const node = makeSourceNode(callTypeClass);
+            const value = assignMultiClass(callTypeClass.getValue(), [
+                makeAnyIdRule(sourceField(node, 'value')),
                 makeErrorAssignRule(errorInfo),
             ]);
-            const paramTypeClass = callTypeClass.getParam();
-            let param: unknown[] | null = null;
-            if (paramTypeClass && isErrorType(paramTypeClass)) {
-                makeErrorAssignRule(errorInfo).construct(paramTypeClass);
-            } else if (paramTypeClass) {
-                param = makeExpressionListRule(nestedSourceInfo, errorInfo).construct(
-                    paramTypeClass,
-                );
-            }
-            sourceInfo[callTypeClass.getType()] = nestedSourceInfo;
-
-            return {
-                member,
-                param,
-            };
+            const param = assignMultiClass(callTypeClass.getParam(), [
+                makeExpressionListRule(sourceField(node, 'param'), errorInfo),
+                makeErrorAssignRule(errorInfo),
+            ]);
+            slot(node);
+            return { type: callTypeClass.getType(), value, param };
         },
     };
 };
 
 export type MethodCallType = {
-    member: ValueRuleValue<string>;
-    param: ValueRuleValue<ValueRuleValue<unknown>[]>;
+    type: string;
+    value: ValueRuleValue<IdType>;
+    param: ValueRuleValue<ExpressionListType>;
     reference: string | null;
 };
 
+export const isMethodCallType = typia.createIs<MethodCallType>();
+
 export const makeMethodCallRule = (
-    sourceInfo: SourceInfoMap,
+    slot: SourceSlot,
     errorInfo: ErrorInfo[],
 ): AssignForValueRule<MethodCallTypeClass, MethodCallType> => {
     return {
-        isValid: (target: unknown) => isTargetTypeClass(target, isMethodCallType),
+        isValid: (target: unknown) => isTargetTypeClass(target, isMethodCallTypeClass),
         construct: (callTypeClass: MethodCallTypeClass) => {
-            const nestedSourceInfo = makeEmptySourceInfoMap();
-            const member = assignMultiClass(callTypeClass.getValue(), [
-                makeIdRule(nestedSourceInfo),
+            const node = makeSourceNode(callTypeClass);
+            const value = assignMultiClass(callTypeClass.getValue(), [
+                makeIdRule(sourceField(node, 'value')),
                 makeErrorAssignRule(errorInfo),
             ]);
             const param = assignMultiClass(callTypeClass.getParam(), [
-                makeExpressionListRule(nestedSourceInfo, errorInfo),
+                makeExpressionListRule(sourceField(node, 'param'), errorInfo),
                 makeErrorAssignRule(errorInfo),
             ]);
             const reference = callTypeClass.getReference();
-            sourceInfo[callTypeClass.getType()] = nestedSourceInfo;
-            return { member, param, reference };
+            slot(node);
+            return { type: callTypeClass.getType(), value, param, reference };
         },
     };
 };
+

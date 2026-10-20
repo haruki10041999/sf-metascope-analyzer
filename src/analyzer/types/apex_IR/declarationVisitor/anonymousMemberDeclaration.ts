@@ -2,7 +2,6 @@ import { AnonymousMemberDeclarationContext } from '@apexdevtools/apex-parser';
 
 import {
     MethodDeclarationTypeClass,
-    ConstructorDeclarationTypeClass,
     InterfaceDeclarationTypeClass,
     ClassDeclarationTypeClass,
     EnumDeclarationTypeClass,
@@ -11,7 +10,6 @@ import {
     DeclarationTypeClass,
     DeclarationVisitor,
     isMethodDeclarationType,
-    isConstructorDeclarationType,
     isInterfaceDeclarationType,
     isClassDeclarationType,
     isEnumDeclarationType,
@@ -23,7 +21,6 @@ import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor'
 
 type AnonymousMemberDeclarationTypeClassType =
     | MethodDeclarationTypeClass
-    | ConstructorDeclarationTypeClass
     | InterfaceDeclarationTypeClass
     | ClassDeclarationTypeClass
     | EnumDeclarationTypeClass

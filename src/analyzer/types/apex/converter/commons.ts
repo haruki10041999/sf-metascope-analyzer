@@ -21,45 +21,71 @@ export type SourceInfo = {
 
 export const isSourceInfo = typia.createIs<SourceInfo>();
 
-export const makeSourceInfo = (typeClass: CommonTypeClass): SourceInfo => {
-    return {
-        context: typeClass.getSpan()!.context,
-        start: typeClass.getSpan()!.start,
-        end: typeClass.getSpan()!.end,
+export const makeSourceInfo = (typeClass: CommonTypeClass): SourceInfo | null => {
+    const span = typeClass.getSpan();
+    return span ? { context: span.context, start: span.start, end: span.end } : null;
+};
+
+/**
+ * 変換結果と同じ形をしたソース位置の木。
+ * `fields` のキーは rule が返すオブジェクトのプロパティ名に一致させる。
+ * rule が子の値をそのまま（オブジェクトに包まずに）返す場合は `value` を使う。
+ * 例: 出力 `result.modifier[2]` の位置は `source.fields.modifier[2].span`。
+ */
+export type SourceNode = {
+    /** IR の型名。if 分岐のような IR 型を持たない中間要素は null */
+    type: string | null;
+    span: SourceInfo | null;
+    fields: SourceFields;
+};
+
+export type SourceFields = {
+    [field: string]: SourceNode | (SourceNode | null)[] | null;
+};
+
+/** rule が自分の SourceNode を書き込む先。親が sourceField / sourceList で用意する */
+export type SourceSlot = (node: SourceNode) => void;
+
+export const makeSourceNode = (typeClass: CommonTypeClass): SourceNode => ({
+    type: typeClass.getType(),
+    span: makeSourceInfo(typeClass),
+    fields: {},
+});
+
+export const makeSourceGroup = (): SourceNode => ({ type: null, span: null, fields: {} });
+
+/** 子が無い・エラーの場合も出力と形を揃えるため、キーは呼び出し時点で null として確保する */
+export const sourceField = (parent: SourceNode, name: string): SourceSlot => {
+    if (!Object.hasOwn(parent.fields, name)) {
+        parent.fields[name] = null;
+    }
+    return (node) => {
+        parent.fields[name] = node;
     };
 };
 
+export const sourceList = (parent: SourceNode, name: string): ((index: number) => SourceSlot) => {
+    const current = parent.fields[name];
+    const items: (SourceNode | null)[] = Array.isArray(current) ? current : [];
+    parent.fields[name] = items;
+    return (index) => {
+        while (items.length <= index) {
+            items.push(null);
+        }
+        return (node) => {
+            items[index] = node;
+        };
+    };
+};
+
+/** @deprecated 旧出力層（types/apex 直下）向け。converter では SourceNode を使う */
 export type SourceInfoMap = {
     [key: string]: string | SourceInfo | SourceInfoMap;
 };
 
+/** @deprecated 旧出力層（types/apex 直下）向け。converter では SourceNode を使う */
 export const makeEmptySourceInfoMap = (): SourceInfoMap => {
     return {};
-};
-
-export const writeSourceInfo = (
-    commonTypeClass: CommonTypeClass,
-    target: SourceInfoMap,
-    source: SourceInfoMap,
-) => {
-    let baseKey = commonTypeClass.getType();
-    const duplicateKeys = Object.keys(target).filter((key) => key.startsWith(`${baseKey}_`));
-    if (duplicateKeys.length > 0) {
-        baseKey = `${baseKey}_${duplicateKeys.length}`;
-    }
-
-    if (Object.hasOwn(target, baseKey)) {
-        const duplicateValue = target[baseKey]!;
-        delete target[baseKey];
-        target[`${baseKey}_1`] = duplicateValue;
-        baseKey = `${baseKey}_2`;
-    }
-
-    if (Object.keys(source).length > 0) {
-        target[baseKey] = source;
-    } else {
-        target[baseKey] = makeSourceInfo(commonTypeClass);
-    }
 };
 
 export type ErrorInfo = {

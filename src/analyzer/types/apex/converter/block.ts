@@ -1,172 +1,242 @@
+import typia from 'typia';
+
 import {
     AnonymousBlockTypeClass,
-    BlockListTypeClass,
-    BlockTypeClass,
     FinallyBlockTypeClass,
     GetterTypeClass,
     NormalBlockTypeClass,
     PropertyBlockTypeClass,
     SetterTypeClass,
     TriggerBlockTypeClass,
-    isAnonymousBlockType,
-    isFinallyBlockType,
-    isGetterType,
+    isAnonymousBlockType as isAnonymousBlockTypeClass,
+    isFinallyBlockType as isFinallyBlockTypeClass,
+    isGetterType as isGetterTypeClass,
     isNormalBlockType,
-    isPropertyBlockType,
-    isSetterType,
-    isTriggerBlockType,
+    isPropertyBlockType as isPropertyBlockTypeClass,
+    isSetterType as isSetterTypeClass,
+    isTriggerBlockType as isTriggerBlockTypeClass,
 } from '../../apex_IR';
 
 import {
     ErrorInfo,
-    SourceInfoMap,
+    SourceSlot,
     AssignForValueRule,
     ValueRuleValue,
-    makeEmptySourceInfoMap,
     isTargetTypeClass,
     assignMultiClass,
     makeErrorAssignRule,
+    makeSourceNode,
+    sourceField,
+    sourceList,
 } from './commons';
-import { makeAnonymousBlockMemberRule, makeTriggerBlockMemberRule } from './member';
-import { makeModifierRule } from './modifier';
-import { makeStatementRule } from './statement';
+import {
+    makeAnonymousBlockMemberRule,
+    makeTriggerBlockMemberRule,
+    AnonymousBlockMemberType,
+    TriggerBlockMemberType,
+} from './member';
+import { makeModifierRule, ModifierType } from './modifier';
+import { makeStatementRule, StatementType } from './statement';
+
+export type AnonymousBlockType = {
+    type: string;
+    value: ValueRuleValue<AnonymousBlockMemberType>[];
+};
+
+export const isAnonymousBlockType = typia.createIs<AnonymousBlockType>();
 
 export const makeAnonymousBlockRule = (
-    sourceInfo: SourceInfoMap,
+    slot: SourceSlot,
     errorInfo: ErrorInfo[],
-): AssignForValueRule<AnonymousBlockTypeClass, ValueRuleValue<unknown>> => {
+): AssignForValueRule<AnonymousBlockTypeClass, AnonymousBlockType> => {
     return {
-        isValid: (target: unknown) => isTargetTypeClass(target, isAnonymousBlockType),
+        isValid: (target: unknown) => isTargetTypeClass(target, isAnonymousBlockTypeClass),
         construct: (blockTypeClass: AnonymousBlockTypeClass) => {
-            const block = blockTypeClass.getValue().map((v, index) => {
-                const nestedSourceInfo = makeEmptySourceInfoMap();
-                const value = assignMultiClass(v, [
-                    makeAnonymousBlockMemberRule(nestedSourceInfo, errorInfo),
-                    makeErrorAssignRule(errorInfo),
-                ]);
-                sourceInfo[`${blockTypeClass.getType()}_${index}`] = nestedSourceInfo;
-                return value;
-            });
-            return block;
+            const node = makeSourceNode(blockTypeClass);
+            const valueSource = sourceList(node, 'value');
+            const value = blockTypeClass
+                .getValue()
+                .map((v, index) =>
+                    assignMultiClass(v, [
+                        makeAnonymousBlockMemberRule(valueSource(index), errorInfo),
+                        makeErrorAssignRule(errorInfo),
+                    ]),
+                );
+            slot(node);
+            return { type: blockTypeClass.getType(), value };
         },
     };
 };
+
+export type FinallyBlockType = {
+    type: string;
+    block: ValueRuleValue<BlockType>;
+};
+
+export const isFinallyBlockType = typia.createIs<FinallyBlockType>();
 
 export const makeFinallyBlockRule = (
-    sourceInfo: SourceInfoMap,
+    slot: SourceSlot,
     errorInfo: ErrorInfo[],
-): AssignForValueRule<FinallyBlockTypeClass, ValueRuleValue<unknown>> => {
+): AssignForValueRule<FinallyBlockTypeClass, FinallyBlockType> => {
     return {
-        isValid: (target: unknown) => isTargetTypeClass(target, isFinallyBlockType),
+        isValid: (target: unknown) => isTargetTypeClass(target, isFinallyBlockTypeClass),
         construct: (blockTypeClass: FinallyBlockTypeClass) => {
-            const nestedSourceInfo = makeEmptySourceInfoMap();
+            const node = makeSourceNode(blockTypeClass);
             const block = assignMultiClass(blockTypeClass.getValue(), [
-                makeBlockRule(nestedSourceInfo, errorInfo),
+                makeBlockRule(sourceField(node, 'block'), errorInfo),
                 makeErrorAssignRule(errorInfo),
             ]);
-            sourceInfo[blockTypeClass.getType()] = nestedSourceInfo;
-            return block;
-        },
-    };
-};
-
-export const makeGetterRule = (
-    sourceInfo: SourceInfoMap,
-    errorInfo: ErrorInfo[],
-): AssignForValueRule<GetterTypeClass, ValueRuleValue<unknown>> => {
-    return {
-        isValid: (target: unknown) => isTargetTypeClass(target, isGetterType),
-        construct: (blockTypeClass: GetterTypeClass) => {
-            const nestedSourceInfo = makeEmptySourceInfoMap();
-            const block = assignMultiClass(blockTypeClass.getValue(), [
-                makeBlockRule(nestedSourceInfo, errorInfo),
-                makeErrorAssignRule(errorInfo),
-            ]);
-            sourceInfo[blockTypeClass.getType()] = nestedSourceInfo;
+            slot(node);
             return { type: blockTypeClass.getType(), block };
         },
     };
 };
 
-export const makeBlockRule = (
-    sourceInfo: SourceInfoMap,
+export type GetterType = {
+    type: string;
+    block: ValueRuleValue<BlockType>;
+};
+
+export const isGetterType = typia.createIs<GetterType>();
+
+export const makeGetterRule = (
+    slot: SourceSlot,
     errorInfo: ErrorInfo[],
-): AssignForValueRule<NormalBlockTypeClass, ValueRuleValue<unknown>> => {
+): AssignForValueRule<GetterTypeClass, GetterType> => {
+    return {
+        isValid: (target: unknown) => isTargetTypeClass(target, isGetterTypeClass),
+        construct: (blockTypeClass: GetterTypeClass) => {
+            const node = makeSourceNode(blockTypeClass);
+            const block = assignMultiClass(blockTypeClass.getValue(), [
+                makeBlockRule(sourceField(node, 'block'), errorInfo),
+                makeErrorAssignRule(errorInfo),
+            ]);
+            slot(node);
+            return { type: blockTypeClass.getType(), block };
+        },
+    };
+};
+
+export type BlockType = {
+    type: string;
+    value: ValueRuleValue<StatementType>[];
+};
+
+export const isBlockType = typia.createIs<BlockType>();
+
+export const makeBlockRule = (
+    slot: SourceSlot,
+    errorInfo: ErrorInfo[],
+): AssignForValueRule<NormalBlockTypeClass, BlockType> => {
     return {
         isValid: (target: unknown) => isTargetTypeClass(target, isNormalBlockType),
         construct: (blockTypeClass: NormalBlockTypeClass) => {
-            const block = blockTypeClass.getValue().map((v, index) => {
-                const nestedSourceInfo = makeEmptySourceInfoMap();
-                const value = assignMultiClass(v, [
-                    makeStatementRule(nestedSourceInfo, errorInfo),
-                    makeErrorAssignRule(errorInfo),
-                ]);
-                sourceInfo[`${blockTypeClass.getType()}_${index}`] = nestedSourceInfo;
-                return value;
-            });
-            return block;
+            const node = makeSourceNode(blockTypeClass);
+            const valueSource = sourceList(node, 'value');
+            const value = blockTypeClass
+                .getValue()
+                .map((v, index) =>
+                    assignMultiClass(v, [
+                        makeStatementRule(valueSource(index), errorInfo),
+                        makeErrorAssignRule(errorInfo),
+                    ]),
+                );
+            slot(node);
+            return { type: blockTypeClass.getType(), value };
         },
     };
 };
+
+export type PropertyBlockType = {
+    type: string;
+    value: ValueRuleValue<SetterType | GetterType>;
+    modifier: ValueRuleValue<ModifierType>[];
+};
+
+export const isPropertyBlockType = typia.createIs<PropertyBlockType>();
 
 export const makePropertyBlockRule = (
-    sourceInfo: SourceInfoMap,
+    slot: SourceSlot,
     errorInfo: ErrorInfo[],
-): AssignForValueRule<PropertyBlockTypeClass, ValueRuleValue<unknown>> => {
+): AssignForValueRule<PropertyBlockTypeClass, PropertyBlockType> => {
     return {
-        isValid: (target: unknown) => isTargetTypeClass(target, isPropertyBlockType),
+        isValid: (target: unknown) => isTargetTypeClass(target, isPropertyBlockTypeClass),
         construct: (blockTypeClass: PropertyBlockTypeClass) => {
-            const nestedSourceInfo = makeEmptySourceInfoMap();
-            const block = assignMultiClass(blockTypeClass.getValue(), [
-                makeSetterRule(nestedSourceInfo, errorInfo),
-                makeGetterRule(nestedSourceInfo, errorInfo),
+            const node = makeSourceNode(blockTypeClass);
+            const valueSource = sourceField(node, 'value');
+            const value = assignMultiClass(blockTypeClass.getValue(), [
+                makeSetterRule(valueSource, errorInfo),
+                makeGetterRule(valueSource, errorInfo),
                 makeErrorAssignRule(errorInfo),
             ]);
-            const modifier = assignMultiClass(blockTypeClass.getModifier(), [
-                makeModifierRule(nestedSourceInfo, errorInfo),
-                makeErrorAssignRule(errorInfo),
-            ]);
-            sourceInfo[blockTypeClass.getType()] = nestedSourceInfo;
-            return { block, modifier };
+            const modifierSource = sourceList(node, 'modifier');
+            const modifier = blockTypeClass
+                .getModifier()
+                .map((v, index) =>
+                    assignMultiClass(v, [
+                        makeModifierRule(modifierSource(index), errorInfo),
+                        makeErrorAssignRule(errorInfo),
+                    ]),
+                );
+            slot(node);
+            return { type: blockTypeClass.getType(), value, modifier };
         },
     };
 };
 
+export type SetterType = {
+    type: string;
+    block: ValueRuleValue<BlockType>;
+};
+
+export const isSetterType = typia.createIs<SetterType>();
+
 export const makeSetterRule = (
-    sourceInfo: SourceInfoMap,
+    slot: SourceSlot,
     errorInfo: ErrorInfo[],
-): AssignForValueRule<SetterTypeClass, ValueRuleValue<unknown>> => {
+): AssignForValueRule<SetterTypeClass, SetterType> => {
     return {
-        isValid: (target: unknown) => isTargetTypeClass(target, isSetterType),
+        isValid: (target: unknown) => isTargetTypeClass(target, isSetterTypeClass),
         construct: (blockTypeClass: SetterTypeClass) => {
-            const nestedSourceInfo = makeEmptySourceInfoMap();
+            const node = makeSourceNode(blockTypeClass);
             const block = assignMultiClass(blockTypeClass.getValue(), [
-                makeBlockRule(nestedSourceInfo, errorInfo),
+                makeBlockRule(sourceField(node, 'block'), errorInfo),
                 makeErrorAssignRule(errorInfo),
             ]);
-            sourceInfo[blockTypeClass.getType()] = nestedSourceInfo;
+            slot(node);
             return { type: blockTypeClass.getType(), block };
         },
     };
 };
 
+export type TriggerBlockType = {
+    type: string;
+    value: ValueRuleValue<TriggerBlockMemberType>[];
+};
+
+export const isTriggerBlockType = typia.createIs<TriggerBlockType>();
+
 export const makeTriggerBlockRule = (
-    sourceInfo: SourceInfoMap,
+    slot: SourceSlot,
     errorInfo: ErrorInfo[],
-): AssignForValueRule<TriggerBlockTypeClass, ValueRuleValue<unknown>> => {
+): AssignForValueRule<TriggerBlockTypeClass, TriggerBlockType> => {
     return {
-        isValid: (target: unknown) => isTargetTypeClass(target, isTriggerBlockType),
+        isValid: (target: unknown) => isTargetTypeClass(target, isTriggerBlockTypeClass),
         construct: (blockTypeClass: TriggerBlockTypeClass) => {
-            const block = blockTypeClass.getValue().map((v, index) => {
-                const nestedSourceInfo = makeEmptySourceInfoMap();
-                const value = assignMultiClass(v, [
-                    makeTriggerBlockMemberRule(nestedSourceInfo, errorInfo),
-                    makeErrorAssignRule(errorInfo),
-                ]);
-                sourceInfo[`${blockTypeClass.getType()}_${index}`] = nestedSourceInfo;
-                return value;
-            });
-            return block;
+            const node = makeSourceNode(blockTypeClass);
+            const valueSource = sourceList(node, 'value');
+            const value = blockTypeClass
+                .getValue()
+                .map((v, index) =>
+                    assignMultiClass(v, [
+                        makeTriggerBlockMemberRule(valueSource(index), errorInfo),
+                        makeErrorAssignRule(errorInfo),
+                    ]),
+                );
+            slot(node);
+            return { type: blockTypeClass.getType(), value };
         },
     };
 };
+

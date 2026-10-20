@@ -1,3 +1,5 @@
+import typia from 'typia';
+
 import {
     AnyIdTypeClass,
     IdListTypeClass,
@@ -6,75 +8,102 @@ import {
     NormalIdTypeClass,
     SoqlIdTypeClass,
     SoslIdTypeClass,
-    isAnyIdType,
+    isAnyIdType as isAnyIdTypeClass,
     isNormalIdType,
-    isSoqlIdType,
-    isSoslIdType,
+    isSoqlIdType as isSoqlIdTypeClass,
+    isSoslIdType as isSoslIdTypeClass,
 } from '../../apex_IR';
 
 import {
     ErrorInfo,
-    SourceInfoMap,
+    SourceSlot,
     AssignForValueRule,
     ValueRuleValue,
     assignMultiClass,
     isTargetTypeClass,
     makeErrorAssignRule,
-    makeSourceInfo,
-    makeEmptySourceInfoMap,
+    makeSourceNode,
+    sourceList,
+    sourceField,
 } from './commons';
 
-export const makeAnyIdRule = (
-    sourceInfo: SourceInfoMap,
-): AssignForValueRule<AnyIdTypeClass, ValueRuleValue<string>> => ({
-    isValid: (target: unknown) => isTargetTypeClass(target, isAnyIdType),
+export type AnyIdType = {
+    type: string;
+    value: string;
+};
+
+export const isAnyIdType = typia.createIs<AnyIdType>();
+
+export const makeAnyIdRule = (slot: SourceSlot): AssignForValueRule<AnyIdTypeClass, AnyIdType> => ({
+    isValid: (target: unknown) => isTargetTypeClass(target, isAnyIdTypeClass),
     construct: (idTypeClass: AnyIdTypeClass) => {
-        sourceInfo[idTypeClass.getType()] = makeSourceInfo(idTypeClass);
-        return idTypeClass.getValue();
+        slot(makeSourceNode(idTypeClass));
+        return { type: idTypeClass.getType(), value: idTypeClass.getValue() };
     },
 });
 
-export const makeIdRule = (
-    sourceInfo: SourceInfoMap,
-): AssignForValueRule<NormalIdTypeClass, string> => ({
+export type IdType = {
+    type: string;
+    value: string;
+};
+
+export const isIdType = typia.createIs<IdType>();
+
+export const makeIdRule = (slot: SourceSlot): AssignForValueRule<NormalIdTypeClass, IdType> => ({
     isValid: (target: unknown) => isTargetTypeClass(target, isNormalIdType),
     construct: (idTypeClass: NormalIdTypeClass) => {
-        sourceInfo[idTypeClass.getType()] = makeSourceInfo(idTypeClass);
-        return idTypeClass.getValue();
+        slot(makeSourceNode(idTypeClass));
+        return { type: idTypeClass.getType(), value: idTypeClass.getValue() };
     },
 });
+
+export type SoqlIdType = {
+    type: string;
+    value: ValueRuleValue<IdType>;
+};
+
+export const isSoqlIdType = typia.createIs<SoqlIdType>();
 
 export const makeSoqlIdRule = (
-    sourceInfo: SourceInfoMap,
+    slot: SourceSlot,
     errorInfo: ErrorInfo[],
-): AssignForValueRule<SoqlIdTypeClass, ValueRuleValue<string>> => ({
-    isValid: (target: unknown) => isTargetTypeClass(target, isSoqlIdType),
+): AssignForValueRule<SoqlIdTypeClass, SoqlIdType> => ({
+    isValid: (target: unknown) => isTargetTypeClass(target, isSoqlIdTypeClass),
     construct: (idTypeClass: SoqlIdTypeClass) => {
-        const nestedSourceInfo = makeEmptySourceInfoMap();
+        const node = makeSourceNode(idTypeClass);
         const id = assignMultiClass(idTypeClass.getValue(), [
-            makeIdRule(nestedSourceInfo),
+            makeIdRule(sourceField(node, 'value')),
             makeErrorAssignRule(errorInfo),
         ]);
-        sourceInfo[idTypeClass.getType()] = nestedSourceInfo;
-        return id;
+        slot(node);
+        return {
+            type: idTypeClass.getType(),
+            value: id,
+        };
     },
 });
 
+export type SoslIdType = {
+    type: string;
+    value: ValueRuleValue<IdType>[];
+};
+
+export const isSoslIdType = typia.createIs<SoslIdType>();
+
 export const makeSoslIdRule = (
-    sourceInfo: SourceInfoMap,
+    slot: SourceSlot,
     errorInfo: ErrorInfo[],
-): AssignForValueRule<SoslIdTypeClass, ValueRuleValue<string>[]> => ({
-    isValid: (target: unknown) => isTargetTypeClass(target, isSoslIdType),
+): AssignForValueRule<SoslIdTypeClass, SoslIdType> => ({
+    isValid: (target: unknown) => isTargetTypeClass(target, isSoslIdTypeClass),
     construct: (idTypeClass: SoslIdTypeClass) => {
-        const nestedSourceInfo = makeEmptySourceInfoMap();
-        const ids = idTypeClass.getValue().map((value, index) => {
-            const id = assignMultiClass(value, [
-                makeIdRule(nestedSourceInfo),
-                makeErrorAssignRule(errorInfo),
-            ]);
-            sourceInfo[`${value.getType()}_${index}`] = makeSourceInfo(value);
-            return id;
-        });
-        return ids;
+        const node = makeSourceNode(idTypeClass);
+        const idSource = sourceList(node, 'value');
+        const value = idTypeClass
+            .getValue()
+            .map((v, index) =>
+                assignMultiClass(v, [makeIdRule(idSource(index)), makeErrorAssignRule(errorInfo)]),
+            );
+        slot(node);
+        return { type: idTypeClass.getType(), value };
     },
 });

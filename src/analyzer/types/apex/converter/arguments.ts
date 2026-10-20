@@ -1,56 +1,74 @@
+import typia from 'typia';
+
 import {
     ArgumentsTypeClass,
     NormalArgumentsTypeClass,
     TypeArgumentsTypeClass,
     isNormalArgumentsType,
-    isTypeArgumentsType,
+    isTypeArgumentsType as isTypeArgumentsTypeClass,
 } from '../../apex_IR';
 
 import {
     ErrorInfo,
-    SourceInfoMap,
+    SourceSlot,
     AssignForValueRule,
     ValueRuleValue,
-    makeEmptySourceInfoMap,
     isTargetTypeClass,
     assignMultiClass,
     makeErrorAssignRule,
+    makeSourceNode,
+    sourceField,
 } from './commons';
-import { makeExpressionListRule, makeTypeListRule } from './list';
+import { makeExpressionListRule, makeTypeListRule, ExpressionListType, TypeListType } from './list';
+
+export type ArgumentsType = {
+    type: string;
+    value: ValueRuleValue<ExpressionListType>;
+};
+
+export const isArgumentsType = typia.createIs<ArgumentsType>();
 
 export const makeArgumentsRule = (
-    sourceInfo: SourceInfoMap,
+    slot: SourceSlot,
     errorInfo: ErrorInfo[],
-): AssignForValueRule<NormalArgumentsTypeClass, ValueRuleValue<unknown>> => {
+): AssignForValueRule<NormalArgumentsTypeClass, ArgumentsType> => {
     return {
         isValid: (target: unknown) => isTargetTypeClass(target, isNormalArgumentsType),
-        construct: (arugmentsTypeClass: NormalArgumentsTypeClass) => {
-            const nestedSourceInfo = makeEmptySourceInfoMap();
-            const value = assignMultiClass(arugmentsTypeClass.getValue(), [
-                makeExpressionListRule(nestedSourceInfo, errorInfo),
+        construct: (argumentsTypeClass: NormalArgumentsTypeClass) => {
+            const node = makeSourceNode(argumentsTypeClass);
+            const value = assignMultiClass(argumentsTypeClass.getValue(), [
+                makeExpressionListRule(sourceField(node, 'value'), errorInfo),
                 makeErrorAssignRule(errorInfo),
             ]);
 
-            sourceInfo[arugmentsTypeClass.getType()] = nestedSourceInfo;
-            return value;
+            slot(node);
+            return { type: argumentsTypeClass.getType(), value };
         },
     };
 };
+
+export type TypeArgumentsType = {
+    type: string;
+    value: ValueRuleValue<TypeListType>;
+};
+
+export const isTypeArgumentsType = typia.createIs<TypeArgumentsType>();
 
 export const makeTypeArgumentsRule = (
-    sourceInfo: SourceInfoMap,
+    slot: SourceSlot,
     errorInfo: ErrorInfo[],
-): AssignForValueRule<TypeArgumentsTypeClass, ValueRuleValue<unknown>> => {
+): AssignForValueRule<TypeArgumentsTypeClass, TypeArgumentsType> => {
     return {
-        isValid: (target: unknown) => isTargetTypeClass(target, isTypeArgumentsType),
-        construct: (arugmentsTypeClass: TypeArgumentsTypeClass) => {
-            const nestedSourceInfo = makeEmptySourceInfoMap();
-            const value = assignMultiClass(arugmentsTypeClass.getValue(), [
-                makeTypeListRule(nestedSourceInfo, errorInfo),
+        isValid: (target: unknown) => isTargetTypeClass(target, isTypeArgumentsTypeClass),
+        construct: (argumentsTypeClass: TypeArgumentsTypeClass) => {
+            const node = makeSourceNode(argumentsTypeClass);
+            const value = assignMultiClass(argumentsTypeClass.getValue(), [
+                makeTypeListRule(sourceField(node, 'value'), errorInfo),
                 makeErrorAssignRule(errorInfo),
             ]);
-            sourceInfo[arugmentsTypeClass.getType()] = nestedSourceInfo;
-            return value;
+            slot(node);
+            return { type: argumentsTypeClass.getType(), value };
         },
     };
 };
+

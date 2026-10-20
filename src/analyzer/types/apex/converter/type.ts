@@ -1,68 +1,85 @@
+import typia from 'typia';
+
 import {
     ArraySubscriptsTypeClass,
-    TypeListBaseTypeClass,
     TypeRefTypeClass,
-    TypeTypeClass,
-    isArraySubscriptsType,
-    isTypeRefType,
+    isArraySubscriptsType as isArraySubscriptsTypeClass,
+    isTypeRefType as isTypeRefTypeClass,
 } from '../../apex_IR';
 
 import {
     ErrorInfo,
-    SourceInfoMap,
+    SourceSlot,
     AssignForValueRule,
     ValueRuleValue,
-    makeEmptySourceInfoMap,
     assignMultiClass,
     makeErrorAssignRule,
-    makeSourceInfo,
     isTargetTypeClass,
+    makeSourceNode,
+    sourceField,
+    sourceList,
 } from './commons';
-import { makeTypeNameRule } from './name';
+import { makeTypeNameRule, TypeNameType } from './name';
+
+export type ArraySubscriptsType = {
+    type: string;
+    value: ValueRuleValue<number>;
+};
+
+export const isArraySubscriptsType = typia.createIs<ArraySubscriptsType>();
 
 export const makeArraySubscriptsRule = (
-    sourceInfo: SourceInfoMap,
+    slot: SourceSlot,
     errorInfo: ErrorInfo[],
-): AssignForValueRule<ArraySubscriptsTypeClass, ValueRuleValue<number>> => {
+): AssignForValueRule<ArraySubscriptsTypeClass, ArraySubscriptsType> => {
     return {
-        isValid: (target: unknown) => isTargetTypeClass(target, isArraySubscriptsType),
+        isValid: (target: unknown) => isTargetTypeClass(target, isArraySubscriptsTypeClass),
         construct: (typeTypeClass: ArraySubscriptsTypeClass) => {
             const value = assignMultiClass(typeTypeClass.getValue(), [
                 {
                     isValid: (target: unknown): target is number => typeof target === 'number',
-                    construct: (value: number) => {
-                        sourceInfo[typeTypeClass.getType()] = makeSourceInfo(typeTypeClass);
-                        return value;
-                    },
+                    construct: (value: number) => value,
                 },
                 makeErrorAssignRule(errorInfo),
             ]);
-            return value;
+            slot(makeSourceNode(typeTypeClass));
+            return { type: typeTypeClass.getType(), value };
         },
     };
 };
 
+export type TypeRefType = {
+    type: string;
+    value: ValueRuleValue<TypeNameType>[];
+    dimension: ValueRuleValue<unknown>;
+};
+
+export const isTypeRefType = typia.createIs<TypeRefType>();
+
 export const makeTypeRefRule = (
-    sourceInfo: SourceInfoMap,
+    slot: SourceSlot,
     errorInfo: ErrorInfo[],
-): AssignForValueRule<TypeRefTypeClass, ValueRuleValue<unknown>> => {
+): AssignForValueRule<TypeRefTypeClass, TypeRefType> => {
     return {
-        isValid: (target: unknown) => isTargetTypeClass(target, isTypeRefType),
+        isValid: (target: unknown) => isTargetTypeClass(target, isTypeRefTypeClass),
         construct: (typeTypeClass: TypeRefTypeClass) => {
-            const nestedSourceInfo = makeEmptySourceInfoMap();
-            const type = typeTypeClass.getValue().map((v) => {
-                const value = assignMultiClass(v, [
-                    makeTypeNameRule(nestedSourceInfo, errorInfo),
-                    makeErrorAssignRule(errorInfo),
-                ]);
-                return value;
-            });
-            const arrayDimention = assignMultiClass(typeTypeClass.getDimension(), [
-                makeArraySubscriptsRule(nestedSourceInfo, errorInfo),
+            const node = makeSourceNode(typeTypeClass);
+            const valueSource = sourceList(node, 'value');
+            const value = typeTypeClass
+                .getValue()
+                .map((v, index) =>
+                    assignMultiClass(v, [
+                        makeTypeNameRule(valueSource(index), errorInfo),
+                        makeErrorAssignRule(errorInfo),
+                    ]),
+                );
+            const dimension = assignMultiClass(typeTypeClass.getDimension(), [
+                makeArraySubscriptsRule(sourceField(node, 'dimension'), errorInfo),
                 makeErrorAssignRule(errorInfo),
             ]);
-            sourceInfo[typeTypeClass.getType()] = nestedSourceInfo;
-            return { type, arrayDimention };
+            slot(node);
+            return { type: typeTypeClass.getType(), value, dimension };
         },
     };
 };
+

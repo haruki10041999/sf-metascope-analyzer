@@ -1,3 +1,5 @@
+import typia from 'typia';
+
 import {
     AccessLevelTypeClass,
     BreakStatementTypeClass,
@@ -22,190 +24,280 @@ import {
     UpdateStatementTypeClass,
     UpsertStatementTypeClass,
     WhileStatementTypeClass,
-    isAccessLevelType,
-    isBreakStatementType,
-    isContinueStatementType,
-    isDeleteStatementType,
-    isDoWhileStatementType,
+    isAccessLevelType as isAccessLevelTypeClass,
+    isBreakStatementType as isBreakStatementTypeClass,
+    isContinueStatementType as isContinueStatementTypeClass,
+    isDeleteStatementType as isDeleteStatementTypeClass,
+    isDoWhileStatementType as isDoWhileStatementTypeClass,
     isErrorType,
-    isExpressionStatementType,
-    isForStatementType,
-    isIfStatementType,
-    isInsertStatementType,
-    isLocalVariableDeclarationStatementType,
-    isMergeStatementType,
+    isExpressionStatementType as isExpressionStatementTypeClass,
+    isForStatementType as isForStatementTypeClass,
+    isIfStatementType as isIfStatementTypeClass,
+    isInsertStatementType as isInsertStatementTypeClass,
+    isLocalVariableDeclarationStatementType as isLocalVariableDeclarationStatementTypeClass,
+    isMergeStatementType as isMergeStatementTypeClass,
     isNormalStatementType,
     isParExpressionType,
-    isReturnStatementType,
-    isRunAsStatementType,
-    isSwitchStatementType,
-    isThrowStatementType,
-    isTryStatementType,
-    isUndeleteStatementType,
-    isUpdateStatementType,
-    isUpsertStatementType,
-    isWhileStatementType,
+    isReturnStatementType as isReturnStatementTypeClass,
+    isRunAsStatementType as isRunAsStatementTypeClass,
+    isSwitchStatementType as isSwitchStatementTypeClass,
+    isThrowStatementType as isThrowStatementTypeClass,
+    isTryStatementType as isTryStatementTypeClass,
+    isUndeleteStatementType as isUndeleteStatementTypeClass,
+    isUpdateStatementType as isUpdateStatementTypeClass,
+    isUpsertStatementType as isUpsertStatementTypeClass,
+    isWhileStatementType as isWhileStatementTypeClass,
 } from '../../apex_IR';
-import { makeBlockRule, makeFinallyBlockRule } from './block';
-import { makeCatchClauseRule } from './clause';
 
 import {
     ErrorInfo,
-    SourceInfoMap,
+    SourceSlot,
     AssignForValueRule,
     ValueRuleValue,
-    makeEmptySourceInfoMap,
     isTargetTypeClass,
     assignMultiClass,
     makeErrorAssignRule,
-    makeSourceInfo,
+    makeSourceNode,
+    makeSourceGroup,
+    sourceField,
+    sourceList,
 } from './commons';
-import { makeForControlRule, makeWhenControlRule } from './control';
-import { makeLocalVariableDeclarationRule } from './declaration';
-import { makeBaseExpressionRule, makeParExpressionRule } from './expression';
-import { makeExpressionListRule } from './list';
-import { makeQualifiedNameRule } from './name';
+import {
+    makeForControlRule,
+    makeWhenControlRule,
+    ForControlType,
+    WhenControlType,
+} from './control';
+import { makeLocalVariableDeclarationRule, LocalVariableDeclarationType } from './declaration';
+import {
+    makeBaseExpressionRule,
+    makeParExpressionRule,
+    BaseExpressionType,
+    ParExpressionType,
+} from './expression';
+import { makeExpressionListRule, ExpressionListType } from './list';
+import { makeQualifiedNameRule, QualifiedNameType } from './name';
+import { makeBlockRule, makeFinallyBlockRule, BlockType, FinallyBlockType } from './block';
+import { makeCatchClauseRule, CatchClauseType } from './clause';
+
+export type AccessLevelType = {
+    type: string;
+    value: ValueRuleValue<string>;
+};
+
+export const isAccessLevelType = typia.createIs<AccessLevelType>();
 
 export const makeAccessLevelRule = (
-    sourceInfo: SourceInfoMap,
+    slot: SourceSlot,
     errorInfo: ErrorInfo[],
-): AssignForValueRule<AccessLevelTypeClass, ValueRuleValue<unknown>> => {
+): AssignForValueRule<AccessLevelTypeClass, AccessLevelType> => {
     return {
-        isValid: (target: unknown) => isTargetTypeClass(target, isAccessLevelType),
+        isValid: (target: unknown) => isTargetTypeClass(target, isAccessLevelTypeClass),
         construct: (statementTypeClass: AccessLevelTypeClass) => {
-            const nestedSourceInfo = makeEmptySourceInfoMap();
             const value = assignMultiClass(statementTypeClass.getValue(), [
                 {
                     isValid: (target: unknown): target is string => typeof target === 'string',
-                    construct: (value: string) => {
-                        nestedSourceInfo['string'] = value;
-                        return value;
-                    },
+                    construct: (value: string) => value,
                 },
                 makeErrorAssignRule(errorInfo),
             ]);
-            sourceInfo[statementTypeClass.getType()] = nestedSourceInfo;
-            return value;
+            slot(makeSourceNode(statementTypeClass));
+            return { type: statementTypeClass.getType(), value };
         },
     };
 };
+
+export type BreakStatementType = {
+    type: string;
+    value: ValueRuleValue<string>;
+};
+
+export const isBreakStatementType = typia.createIs<BreakStatementType>();
 
 export const makeBreakStatementRule = (
-    sourceInfo: SourceInfoMap,
-): AssignForValueRule<BreakStatementTypeClass, ValueRuleValue<unknown>> => {
+    slot: SourceSlot,
+    errorInfo: ErrorInfo[],
+): AssignForValueRule<BreakStatementTypeClass, BreakStatementType> => {
     return {
-        isValid: (target: unknown) => isTargetTypeClass(target, isBreakStatementType),
+        isValid: (target: unknown) => isTargetTypeClass(target, isBreakStatementTypeClass),
         construct: (statementTypeClass: BreakStatementTypeClass) => {
-            sourceInfo[statementTypeClass.getType()] = makeSourceInfo(statementTypeClass);
-            return statementTypeClass.getValue();
+            const value = assignMultiClass(statementTypeClass.getValue(), [
+                {
+                    isValid: (target: unknown): target is string => typeof target === 'string',
+                    construct: (value: string) => value,
+                },
+                makeErrorAssignRule(errorInfo),
+            ]);
+            slot(makeSourceNode(statementTypeClass));
+            return { type: statementTypeClass.getType(), value };
         },
     };
 };
+
+export type ContinueStatementType = {
+    type: string;
+    value: ValueRuleValue<string>;
+};
+
+export const isContinueStatementType = typia.createIs<ContinueStatementType>();
 
 export const makeContinueStatementRule = (
-    sourceInfo: SourceInfoMap,
-): AssignForValueRule<ContinueStatementTypeClass, ValueRuleValue<unknown>> => {
+    slot: SourceSlot,
+    errorInfo: ErrorInfo[],
+): AssignForValueRule<ContinueStatementTypeClass, ContinueStatementType> => {
     return {
-        isValid: (target: unknown) => isTargetTypeClass(target, isContinueStatementType),
+        isValid: (target: unknown) => isTargetTypeClass(target, isContinueStatementTypeClass),
         construct: (statementTypeClass: ContinueStatementTypeClass) => {
-            sourceInfo[statementTypeClass.getType()] = makeSourceInfo(statementTypeClass);
-            return statementTypeClass.getValue();
+            const value = assignMultiClass(statementTypeClass.getValue(), [
+                {
+                    isValid: (target: unknown): target is string => typeof target === 'string',
+                    construct: (value: string) => value,
+                },
+                makeErrorAssignRule(errorInfo),
+            ]);
+            slot(makeSourceNode(statementTypeClass));
+            return { type: statementTypeClass.getType(), value };
         },
     };
 };
 
+export type DeleteStatementType = {
+    type: string;
+    value: ValueRuleValue<BaseExpressionType>;
+    accessLevel: ValueRuleValue<AccessLevelType>;
+};
+
+export const isDeleteStatementType = typia.createIs<DeleteStatementType>();
+
 export const makeDeleteStatementRule = (
-    sourceInfo: SourceInfoMap,
+    slot: SourceSlot,
     errorInfo: ErrorInfo[],
-): AssignForValueRule<DeleteStatementTypeClass, ValueRuleValue<unknown>> => {
+): AssignForValueRule<DeleteStatementTypeClass, DeleteStatementType> => {
     return {
-        isValid: (target: unknown) => isTargetTypeClass(target, isDeleteStatementType),
+        isValid: (target: unknown) => isTargetTypeClass(target, isDeleteStatementTypeClass),
         construct: (statementTypeClass: DeleteStatementTypeClass) => {
-            const nestedSourceInfo = makeEmptySourceInfoMap();
-            const target = assignMultiClass(statementTypeClass.getValue(), [
-                ...makeBaseExpressionRule(nestedSourceInfo, errorInfo),
+            const node = makeSourceNode(statementTypeClass);
+            const value = assignMultiClass(statementTypeClass.getValue(), [
+                ...makeBaseExpressionRule(sourceField(node, 'value'), errorInfo),
                 makeErrorAssignRule(errorInfo),
             ]);
             const accessLevel = assignMultiClass(statementTypeClass.getAccessLevel(), [
-                makeAccessLevelRule(nestedSourceInfo, errorInfo),
+                makeAccessLevelRule(sourceField(node, 'accessLevel'), errorInfo),
                 makeErrorAssignRule(errorInfo),
             ]);
-            sourceInfo[statementTypeClass.getType()] = nestedSourceInfo;
-            return { type: statementTypeClass.getType(), target, accessLevel };
+            slot(node);
+            return { type: statementTypeClass.getType(), value, accessLevel };
         },
     };
 };
 
+export type DoWhileStatementType = {
+    type: string;
+    value: ValueRuleValue<ParExpressionType>;
+    block: ValueRuleValue<BlockType>;
+};
+
+export const isDoWhileStatementType = typia.createIs<DoWhileStatementType>();
+
 export const makeDoWhileStatementRule = (
-    sourceInfo: SourceInfoMap,
+    slot: SourceSlot,
     errorInfo: ErrorInfo[],
-): AssignForValueRule<DoWhileStatementTypeClass, ValueRuleValue<unknown>> => {
+): AssignForValueRule<DoWhileStatementTypeClass, DoWhileStatementType> => {
     return {
-        isValid: (target: unknown) => isTargetTypeClass(target, isDoWhileStatementType),
+        isValid: (target: unknown) => isTargetTypeClass(target, isDoWhileStatementTypeClass),
         construct: (statementTypeClass: DoWhileStatementTypeClass) => {
-            const nestedSourceInfo = makeEmptySourceInfoMap();
-            const condition = assignMultiClass(statementTypeClass.getValue(), [
-                makeParExpressionRule(nestedSourceInfo, errorInfo),
+            const node = makeSourceNode(statementTypeClass);
+            const value = assignMultiClass(statementTypeClass.getValue(), [
+                makeParExpressionRule(sourceField(node, 'value'), errorInfo),
                 makeErrorAssignRule(errorInfo),
             ]);
             const block = assignMultiClass(statementTypeClass.getBlock(), [
-                makeBlockRule(nestedSourceInfo, errorInfo),
+                makeBlockRule(sourceField(node, 'block'), errorInfo),
                 makeErrorAssignRule(errorInfo),
             ]);
-            sourceInfo[statementTypeClass.getType()] = nestedSourceInfo;
-            return { condition, block };
+            slot(node);
+            return { type: statementTypeClass.getType(), value, block };
         },
     };
 };
+
+export type ExpressionStatementType = {
+    type: string;
+    value: ValueRuleValue<BaseExpressionType>;
+};
+
+export const isExpressionStatementType = typia.createIs<ExpressionStatementType>();
 
 export const makeExpressionStatementRule = (
-    sourceInfo: SourceInfoMap,
+    slot: SourceSlot,
     errorInfo: ErrorInfo[],
-): AssignForValueRule<ExpressionStatementTypeClass, ValueRuleValue<unknown>> => {
+): AssignForValueRule<ExpressionStatementTypeClass, ExpressionStatementType> => {
     return {
-        isValid: (target: unknown) => isTargetTypeClass(target, isExpressionStatementType),
+        isValid: (target: unknown) => isTargetTypeClass(target, isExpressionStatementTypeClass),
         construct: (statementTypeClass: ExpressionStatementTypeClass) => {
-            const nestedSourceInfo = makeEmptySourceInfoMap();
+            const node = makeSourceNode(statementTypeClass);
             const value = assignMultiClass(statementTypeClass.getValue(), [
-                ...makeBaseExpressionRule(nestedSourceInfo, errorInfo),
+                ...makeBaseExpressionRule(sourceField(node, 'value'), errorInfo),
                 makeErrorAssignRule(errorInfo),
             ]);
-            sourceInfo[statementTypeClass.getType()] = nestedSourceInfo;
-            return value;
+            slot(node);
+            return { type: statementTypeClass.getType(), value };
         },
     };
 };
+
+export type ForStatementType = {
+    type: string;
+    value: ValueRuleValue<ForControlType>;
+    block: ValueRuleValue<StatementType>;
+};
+
+export const isForStatementType = typia.createIs<ForStatementType>();
 
 export const makeForStatementRule = (
-    sourceInfo: SourceInfoMap,
+    slot: SourceSlot,
     errorInfo: ErrorInfo[],
-): AssignForValueRule<ForStatementTypeClass, ValueRuleValue<unknown>> => {
+): AssignForValueRule<ForStatementTypeClass, ForStatementType> => {
     return {
-        isValid: (target: unknown) => isTargetTypeClass(target, isForStatementType),
+        isValid: (target: unknown) => isTargetTypeClass(target, isForStatementTypeClass),
         construct: (statementTypeClass: ForStatementTypeClass) => {
-            const nestedSourceInfo = makeEmptySourceInfoMap();
-            const condition = assignMultiClass(statementTypeClass.getValue(), [
-                makeForControlRule(nestedSourceInfo, errorInfo),
+            const node = makeSourceNode(statementTypeClass);
+            const value = assignMultiClass(statementTypeClass.getValue(), [
+                makeForControlRule(sourceField(node, 'value'), errorInfo),
                 makeErrorAssignRule(errorInfo),
             ]);
-            const block = assignMultiClass(statementTypeClass.getValue(), [
-                makeBlockRule(nestedSourceInfo, errorInfo),
+            const block = assignMultiClass(statementTypeClass.getBlock(), [
+                makeStatementRule(sourceField(node, 'block'), errorInfo),
                 makeErrorAssignRule(errorInfo),
             ]);
-            sourceInfo[statementTypeClass.getType()] = nestedSourceInfo;
-            return { condition, block };
+            slot(node);
+            return { type: statementTypeClass.getType(), value, block };
         },
     };
 };
 
+export type IfStatementType = {
+    type: string;
+    value: ValueRuleValue<
+        {
+            condition: ValueRuleValue<ParExpressionType | string>;
+            block: ValueRuleValue<StatementType>;
+        }[]
+    >;
+};
+
+export const isIfStatementType = typia.createIs<IfStatementType>();
+
 export const makeIfStatementRule = (
-    sourceInfo: SourceInfoMap,
+    slot: SourceSlot,
     errorInfo: ErrorInfo[],
-): AssignForValueRule<IfStatementTypeClass, ValueRuleValue<unknown>> => {
+): AssignForValueRule<IfStatementTypeClass, IfStatementType> => {
     return {
-        isValid: (target: unknown) => isTargetTypeClass(target, isIfStatementType),
+        isValid: (target: unknown) => isTargetTypeClass(target, isIfStatementTypeClass),
         construct: (statementTypeClass: IfStatementTypeClass) => {
-            const statement = assignMultiClass(statementTypeClass.getValue(), [
+            const node = makeSourceNode(statementTypeClass);
+            sourceField(node, 'value');
+            const value = assignMultiClass(statementTypeClass.getValue(), [
                 {
                     isValid: (
                         target: unknown,
@@ -230,346 +322,474 @@ export const makeIfStatementRule = (
                             block: NormalStatementTypeClass | ErrorTypeClass;
                         }[],
                     ) => {
-                        const nestedSourceInfo = makeEmptySourceInfoMap();
-                        const value = values.forEach((v, index) => {
+                        const branchSource = sourceList(node, 'value');
+                        return values.map((v, index) => {
+                            const group = makeSourceGroup();
                             const condition = assignMultiClass(v.value, [
                                 {
                                     isValid: (target: unknown): target is string =>
                                         typeof target === 'string',
-                                    construct: (value: string) => {
-                                        nestedSourceInfo['string'] = value;
-                                        return value;
-                                    },
+                                    construct: (value: string) => value,
                                 },
-                                makeParExpressionRule(nestedSourceInfo, errorInfo),
+                                makeParExpressionRule(sourceField(group, 'condition'), errorInfo),
                                 makeErrorAssignRule(errorInfo),
                             ]);
                             const block = assignMultiClass(v.block, [
-                                makeStatementRule(nestedSourceInfo, errorInfo),
+                                makeStatementRule(sourceField(group, 'block'), errorInfo),
                                 makeErrorAssignRule(errorInfo),
                             ]);
-                            sourceInfo[`${statementTypeClass.getType()}_${index}`] =
-                                nestedSourceInfo;
+                            branchSource(index)(group);
                             return { condition, block };
                         });
-                        return value;
                     },
                 },
                 makeErrorAssignRule(errorInfo),
             ]);
-            return statement;
+            slot(node);
+            return { type: statementTypeClass.getType(), value };
         },
     };
 };
+
+export type InsertStatementType = {
+    type: string;
+    value: ValueRuleValue<BaseExpressionType>;
+    accessLevel: ValueRuleValue<AccessLevelType>;
+};
+
+export const isInsertStatementType = typia.createIs<InsertStatementType>();
 
 export const makeInsertStatementRule = (
-    sourceInfo: SourceInfoMap,
+    slot: SourceSlot,
     errorInfo: ErrorInfo[],
-): AssignForValueRule<InsertStatementTypeClass, ValueRuleValue<unknown>> => {
+): AssignForValueRule<InsertStatementTypeClass, InsertStatementType> => {
     return {
-        isValid: (target: unknown) => isTargetTypeClass(target, isInsertStatementType),
+        isValid: (target: unknown) => isTargetTypeClass(target, isInsertStatementTypeClass),
         construct: (statementTypeClass: InsertStatementTypeClass) => {
-            const nestedSourceInfo = makeEmptySourceInfoMap();
-            const target = assignMultiClass(statementTypeClass.getValue(), [
-                ...makeBaseExpressionRule(nestedSourceInfo, errorInfo),
+            const node = makeSourceNode(statementTypeClass);
+            const value = assignMultiClass(statementTypeClass.getValue(), [
+                ...makeBaseExpressionRule(sourceField(node, 'value'), errorInfo),
                 makeErrorAssignRule(errorInfo),
             ]);
             const accessLevel = assignMultiClass(statementTypeClass.getAccessLevel(), [
-                makeAccessLevelRule(nestedSourceInfo, errorInfo),
+                makeAccessLevelRule(sourceField(node, 'accessLevel'), errorInfo),
                 makeErrorAssignRule(errorInfo),
             ]);
-            sourceInfo[statementTypeClass.getType()] = nestedSourceInfo;
-            return { type: statementTypeClass.getType(), target, accessLevel };
+            slot(node);
+            return { type: statementTypeClass.getType(), value, accessLevel };
         },
     };
 };
+
+export type LocalVariableDeclarationStatementType = {
+    type: string;
+    value: ValueRuleValue<LocalVariableDeclarationType>;
+};
+
+export const isLocalVariableDeclarationStatementType =
+    typia.createIs<LocalVariableDeclarationStatementType>();
 
 export const makeLocalVariableDeclarationStatementRule = (
-    sourceInfo: SourceInfoMap,
+    slot: SourceSlot,
     errorInfo: ErrorInfo[],
-): AssignForValueRule<LocalVariableDeclarationStatementTypeClass, ValueRuleValue<unknown>> => {
+): AssignForValueRule<
+    LocalVariableDeclarationStatementTypeClass,
+    LocalVariableDeclarationStatementType
+> => {
     return {
         isValid: (target: unknown) =>
-            isTargetTypeClass(target, isLocalVariableDeclarationStatementType),
+            isTargetTypeClass(target, isLocalVariableDeclarationStatementTypeClass),
         construct: (statementTypeClass: LocalVariableDeclarationStatementTypeClass) => {
-            const nestedSourceInfo = makeEmptySourceInfoMap();
+            const node = makeSourceNode(statementTypeClass);
             const value = assignMultiClass(statementTypeClass.getValue(), [
-                makeLocalVariableDeclarationRule(nestedSourceInfo, errorInfo),
+                makeLocalVariableDeclarationRule(sourceField(node, 'value'), errorInfo),
                 makeErrorAssignRule(errorInfo),
             ]);
-            sourceInfo[statementTypeClass.getType()] = nestedSourceInfo;
-            return value;
+            slot(node);
+            return { type: statementTypeClass.getType(), value };
         },
     };
 };
+
+export type MergeStatementType = {
+    type: string;
+    value: ValueRuleValue<BaseExpressionType>[];
+    accessLevel: ValueRuleValue<AccessLevelType>;
+};
+
+export const isMergeStatementType = typia.createIs<MergeStatementType>();
 
 export const makeMergeStatementRule = (
-    sourceInfo: SourceInfoMap,
+    slot: SourceSlot,
     errorInfo: ErrorInfo[],
-): AssignForValueRule<MergeStatementTypeClass, ValueRuleValue<unknown>> => {
+): AssignForValueRule<MergeStatementTypeClass, MergeStatementType> => {
     return {
-        isValid: (target: unknown) => isTargetTypeClass(target, isMergeStatementType),
+        isValid: (target: unknown) => isTargetTypeClass(target, isMergeStatementTypeClass),
         construct: (statementTypeClass: MergeStatementTypeClass) => {
-            const nestedSourceInfo = makeEmptySourceInfoMap();
-            const targets = statementTypeClass.getValue().map((v, index) => {
-                const valueSourceInfo = makeEmptySourceInfoMap();
-                const value = assignMultiClass(v, [
-                    ...makeBaseExpressionRule(valueSourceInfo, errorInfo),
-                    makeErrorAssignRule(errorInfo),
-                ]);
-                nestedSourceInfo[`${statementTypeClass.getType()}_${index}`] = valueSourceInfo;
-                return value;
-            });
+            const node = makeSourceNode(statementTypeClass);
+            const valueSource = sourceList(node, 'value');
+            const value = statementTypeClass
+                .getValue()
+                .map((v, index) =>
+                    assignMultiClass(v, [
+                        ...makeBaseExpressionRule(valueSource(index), errorInfo),
+                        makeErrorAssignRule(errorInfo),
+                    ]),
+                );
             const accessLevel = assignMultiClass(statementTypeClass.getAccessLevel(), [
-                makeAccessLevelRule(nestedSourceInfo, errorInfo),
+                makeAccessLevelRule(sourceField(node, 'accessLevel'), errorInfo),
                 makeErrorAssignRule(errorInfo),
             ]);
-            sourceInfo[statementTypeClass.getType()] = nestedSourceInfo;
-            return { type: statementTypeClass.getType(), targets, accessLevel };
+            slot(node);
+            return { type: statementTypeClass.getType(), value, accessLevel };
         },
     };
 };
+
+export type ReturnStatementType = {
+    type: string;
+    value: ValueRuleValue<BaseExpressionType>;
+};
+
+export const isReturnStatementType = typia.createIs<ReturnStatementType>();
 
 export const makeReturnStatementRule = (
-    sourceInfo: SourceInfoMap,
+    slot: SourceSlot,
     errorInfo: ErrorInfo[],
-): AssignForValueRule<ReturnStatementTypeClass, ValueRuleValue<unknown>> => {
+): AssignForValueRule<ReturnStatementTypeClass, ReturnStatementType> => {
     return {
-        isValid: (target: unknown) => isTargetTypeClass(target, isReturnStatementType),
+        isValid: (target: unknown) => isTargetTypeClass(target, isReturnStatementTypeClass),
         construct: (statementTypeClass: ReturnStatementTypeClass) => {
-            const nestedSourceInfo = makeEmptySourceInfoMap();
+            const node = makeSourceNode(statementTypeClass);
             const value = assignMultiClass(statementTypeClass.getValue(), [
-                ...makeBaseExpressionRule(nestedSourceInfo, errorInfo),
+                ...makeBaseExpressionRule(sourceField(node, 'value'), errorInfo),
                 makeErrorAssignRule(errorInfo),
             ]);
-            sourceInfo[statementTypeClass.getType()] = nestedSourceInfo;
-            return value;
+            slot(node);
+            return { type: statementTypeClass.getType(), value };
         },
     };
 };
 
+export type RunAsStatementType = {
+    type: string;
+    value: ValueRuleValue<ExpressionListType>;
+    block: ValueRuleValue<BlockType>;
+};
+
+export const isRunAsStatementType = typia.createIs<RunAsStatementType>();
+
 export const makeRunAsStatementRule = (
-    sourceInfo: SourceInfoMap,
+    slot: SourceSlot,
     errorInfo: ErrorInfo[],
-): AssignForValueRule<RunAsStatementTypeClass, ValueRuleValue<unknown>> => {
+): AssignForValueRule<RunAsStatementTypeClass, RunAsStatementType> => {
     return {
-        isValid: (target: unknown) => isTargetTypeClass(target, isRunAsStatementType),
+        isValid: (target: unknown) => isTargetTypeClass(target, isRunAsStatementTypeClass),
         construct: (statementTypeClass: RunAsStatementTypeClass) => {
-            const nestedSourceInfo = makeEmptySourceInfoMap();
-            const arg = assignMultiClass(statementTypeClass.getValue(), [
-                makeExpressionListRule(nestedSourceInfo, errorInfo),
+            const node = makeSourceNode(statementTypeClass);
+            const value = assignMultiClass(statementTypeClass.getValue(), [
+                makeExpressionListRule(sourceField(node, 'value'), errorInfo),
                 makeErrorAssignRule(errorInfo),
             ]);
             const block = assignMultiClass(statementTypeClass.getBlock(), [
-                makeBlockRule(nestedSourceInfo, errorInfo),
+                makeBlockRule(sourceField(node, 'block'), errorInfo),
                 makeErrorAssignRule(errorInfo),
             ]);
-            sourceInfo[statementTypeClass.getType()] = nestedSourceInfo;
-            return { arg, block };
+            slot(node);
+            return { type: statementTypeClass.getType(), value, block };
         },
     };
 };
+
+export type SwitchStatementType = {
+    type: string;
+    value: ValueRuleValue<BaseExpressionType>;
+    block: ValueRuleValue<WhenControlType>[];
+};
+
+export const isSwitchStatementType = typia.createIs<SwitchStatementType>();
 
 export const makeSwitchStatementRule = (
-    sourceInfo: SourceInfoMap,
+    slot: SourceSlot,
     errorInfo: ErrorInfo[],
-): AssignForValueRule<SwitchStatementTypeClass, ValueRuleValue<unknown>> => {
+): AssignForValueRule<SwitchStatementTypeClass, SwitchStatementType> => {
     return {
-        isValid: (target: unknown) => isTargetTypeClass(target, isSwitchStatementType),
+        isValid: (target: unknown) => isTargetTypeClass(target, isSwitchStatementTypeClass),
         construct: (statementTypeClass: SwitchStatementTypeClass) => {
-            const nestedSourceInfo = makeEmptySourceInfoMap();
-            const variant = assignMultiClass(statementTypeClass.getValue(), [
-                ...makeBaseExpressionRule(nestedSourceInfo, errorInfo),
+            const node = makeSourceNode(statementTypeClass);
+            const value = assignMultiClass(statementTypeClass.getValue(), [
+                ...makeBaseExpressionRule(sourceField(node, 'value'), errorInfo),
                 makeErrorAssignRule(errorInfo),
             ]);
-            const conditionBlocks = statementTypeClass.getBlocks().forEach((v, index) => {
-                const valueSourceInfo = makeEmptySourceInfoMap();
-                const value = assignMultiClass(v, [
-                    makeWhenControlRule(valueSourceInfo, errorInfo),
-                    makeErrorAssignRule(errorInfo),
-                ]);
-                nestedSourceInfo[`${statementTypeClass.getType()}_${index}`] = valueSourceInfo;
-                return value;
-            });
+            const blockSource = sourceList(node, 'block');
+            const block = statementTypeClass
+                .getBlocks()
+                .map((v, index) =>
+                    assignMultiClass(v, [
+                        makeWhenControlRule(blockSource(index), errorInfo),
+                        makeErrorAssignRule(errorInfo),
+                    ]),
+                );
 
-            sourceInfo[statementTypeClass.getType()] = nestedSourceInfo;
-            return { variant, conditionBlocks };
+            slot(node);
+            return { type: statementTypeClass.getType(), value, block };
         },
     };
 };
+
+export type ThrowStatementType = {
+    type: string;
+    value: ValueRuleValue<BaseExpressionType>;
+};
+
+export const isThrowStatementType = typia.createIs<ThrowStatementType>();
 
 export const makeThrowStatementRule = (
-    sourceInfo: SourceInfoMap,
+    slot: SourceSlot,
     errorInfo: ErrorInfo[],
-): AssignForValueRule<ThrowStatementTypeClass, ValueRuleValue<unknown>> => {
+): AssignForValueRule<ThrowStatementTypeClass, ThrowStatementType> => {
     return {
-        isValid: (target: unknown) => isTargetTypeClass(target, isThrowStatementType),
+        isValid: (target: unknown) => isTargetTypeClass(target, isThrowStatementTypeClass),
         construct: (statementTypeClass: ThrowStatementTypeClass) => {
-            const nestedSourceInfo = makeEmptySourceInfoMap();
+            const node = makeSourceNode(statementTypeClass);
             const value = assignMultiClass(statementTypeClass.getValue(), [
-                ...makeBaseExpressionRule(nestedSourceInfo, errorInfo),
+                ...makeBaseExpressionRule(sourceField(node, 'value'), errorInfo),
                 makeErrorAssignRule(errorInfo),
             ]);
-            sourceInfo[statementTypeClass.getType()] = nestedSourceInfo;
-            return value;
+            slot(node);
+            return { type: statementTypeClass.getType(), value };
         },
     };
 };
+
+export type TryStatementType = {
+    type: string;
+    block: ValueRuleValue<BlockType>;
+    catchBlock: ValueRuleValue<CatchClauseType>[];
+    finallyBlock: ValueRuleValue<FinallyBlockType>;
+};
+
+export const isTryStatementType = typia.createIs<TryStatementType>();
 
 export const makeTryStatementRule = (
-    sourceInfo: SourceInfoMap,
+    slot: SourceSlot,
     errorInfo: ErrorInfo[],
-): AssignForValueRule<TryStatementTypeClass, ValueRuleValue<unknown>> => {
+): AssignForValueRule<TryStatementTypeClass, TryStatementType> => {
     return {
-        isValid: (target: unknown) => isTargetTypeClass(target, isTryStatementType),
+        isValid: (target: unknown) => isTargetTypeClass(target, isTryStatementTypeClass),
         construct: (statementTypeClass: TryStatementTypeClass) => {
-            const nestedSourceInfo = makeEmptySourceInfoMap();
-            const tryBlock = assignMultiClass(statementTypeClass.getValue(), [
-                makeBlockRule(nestedSourceInfo, errorInfo),
+            const node = makeSourceNode(statementTypeClass);
+            const block = assignMultiClass(statementTypeClass.getValue(), [
+                makeBlockRule(sourceField(node, 'block'), errorInfo),
                 makeErrorAssignRule(errorInfo),
             ]);
-            const catchBlock = statementTypeClass.getCatchBlock().forEach((v, index) => {
-                const valueSourceInfo = makeEmptySourceInfoMap();
-                const value = assignMultiClass(v, [
-                    makeCatchClauseRule(valueSourceInfo, errorInfo),
-                    makeErrorAssignRule(errorInfo),
-                ]);
-                nestedSourceInfo[`${statementTypeClass.getType}_${index}`] = valueSourceInfo;
-                return value;
-            });
+            const catchBlockSource = sourceList(node, 'catchBlock');
+            const catchBlock = statementTypeClass
+                .getCatchBlock()
+                .map((v, index) =>
+                    assignMultiClass(v, [
+                        makeCatchClauseRule(catchBlockSource(index), errorInfo),
+                        makeErrorAssignRule(errorInfo),
+                    ]),
+                );
             const finallyBlock = assignMultiClass(statementTypeClass.getFinallyBlock(), [
-                makeFinallyBlockRule(nestedSourceInfo, errorInfo),
+                makeFinallyBlockRule(sourceField(node, 'finallyBlock'), errorInfo),
                 makeErrorAssignRule(errorInfo),
             ]);
-            sourceInfo[statementTypeClass.getType()] = nestedSourceInfo;
-            return { tryBlock, catchBlock, finallyBlock };
+            slot(node);
+            return { type: statementTypeClass.getType(), block, catchBlock, finallyBlock };
         },
     };
 };
+
+export type UndeleteStatementType = {
+    type: string;
+    value: ValueRuleValue<BaseExpressionType>;
+    accessLevel: ValueRuleValue<AccessLevelType>;
+};
+
+export const isUndeleteStatementType = typia.createIs<UndeleteStatementType>();
 
 export const makeUndeleteStatementRule = (
-    sourceInfo: SourceInfoMap,
+    slot: SourceSlot,
     errorInfo: ErrorInfo[],
-): AssignForValueRule<UndeleteStatementTypeClass, ValueRuleValue<unknown>> => {
+): AssignForValueRule<UndeleteStatementTypeClass, UndeleteStatementType> => {
     return {
-        isValid: (target: unknown) => isTargetTypeClass(target, isUndeleteStatementType),
+        isValid: (target: unknown) => isTargetTypeClass(target, isUndeleteStatementTypeClass),
         construct: (statementTypeClass: UndeleteStatementTypeClass) => {
-            const nestedSourceInfo = makeEmptySourceInfoMap();
-            const target = assignMultiClass(statementTypeClass.getValue(), [
-                ...makeBaseExpressionRule(nestedSourceInfo, errorInfo),
+            const node = makeSourceNode(statementTypeClass);
+            const value = assignMultiClass(statementTypeClass.getValue(), [
+                ...makeBaseExpressionRule(sourceField(node, 'value'), errorInfo),
                 makeErrorAssignRule(errorInfo),
             ]);
             const accessLevel = assignMultiClass(statementTypeClass.getAccessLevel(), [
-                makeAccessLevelRule(nestedSourceInfo, errorInfo),
+                makeAccessLevelRule(sourceField(node, 'accessLevel'), errorInfo),
                 makeErrorAssignRule(errorInfo),
             ]);
-            sourceInfo[statementTypeClass.getType()] = nestedSourceInfo;
-            return { type: statementTypeClass.getType(), target, accessLevel };
+            slot(node);
+            return { type: statementTypeClass.getType(), value, accessLevel };
         },
     };
 };
+
+export type UpdateStatementType = {
+    type: string;
+    value: ValueRuleValue<BaseExpressionType>;
+    accessLevel: ValueRuleValue<AccessLevelType>;
+};
+
+export const isUpdateStatementType = typia.createIs<UpdateStatementType>();
 
 export const makeUpdateStatementRule = (
-    sourceInfo: SourceInfoMap,
+    slot: SourceSlot,
     errorInfo: ErrorInfo[],
-): AssignForValueRule<UpdateStatementTypeClass, ValueRuleValue<unknown>> => {
+): AssignForValueRule<UpdateStatementTypeClass, UpdateStatementType> => {
     return {
-        isValid: (target: unknown) => isTargetTypeClass(target, isUpdateStatementType),
+        isValid: (target: unknown) => isTargetTypeClass(target, isUpdateStatementTypeClass),
         construct: (statementTypeClass: UpdateStatementTypeClass) => {
-            const nestedSourceInfo = makeEmptySourceInfoMap();
-            const target = assignMultiClass(statementTypeClass.getValue(), [
-                ...makeBaseExpressionRule(nestedSourceInfo, errorInfo),
+            const node = makeSourceNode(statementTypeClass);
+            const value = assignMultiClass(statementTypeClass.getValue(), [
+                ...makeBaseExpressionRule(sourceField(node, 'value'), errorInfo),
                 makeErrorAssignRule(errorInfo),
             ]);
             const accessLevel = assignMultiClass(statementTypeClass.getAccessLevel(), [
-                makeAccessLevelRule(nestedSourceInfo, errorInfo),
+                makeAccessLevelRule(sourceField(node, 'accessLevel'), errorInfo),
                 makeErrorAssignRule(errorInfo),
             ]);
-            sourceInfo[statementTypeClass.getType()] = nestedSourceInfo;
-            return { type: statementTypeClass.getType(), target, accessLevel };
+            slot(node);
+            return { type: statementTypeClass.getType(), value, accessLevel };
         },
     };
 };
 
+export type UpsertStatementType = {
+    type: string;
+    value: ValueRuleValue<BaseExpressionType>;
+    accessLevel: ValueRuleValue<AccessLevelType>;
+    key: ValueRuleValue<QualifiedNameType>;
+};
+
+export const isUpsertStatementType = typia.createIs<UpsertStatementType>();
+
 export const makeUpsertStatementRule = (
-    sourceInfo: SourceInfoMap,
+    slot: SourceSlot,
     errorInfo: ErrorInfo[],
-): AssignForValueRule<UpsertStatementTypeClass, ValueRuleValue<unknown>> => {
+): AssignForValueRule<UpsertStatementTypeClass, UpsertStatementType> => {
     return {
-        isValid: (target: unknown) => isTargetTypeClass(target, isUpsertStatementType),
+        isValid: (target: unknown) => isTargetTypeClass(target, isUpsertStatementTypeClass),
         construct: (statementTypeClass: UpsertStatementTypeClass) => {
-            const nestedSourceInfo = makeEmptySourceInfoMap();
-            const target = assignMultiClass(statementTypeClass.getValue(), [
-                ...makeBaseExpressionRule(nestedSourceInfo, errorInfo),
+            const node = makeSourceNode(statementTypeClass);
+            const value = assignMultiClass(statementTypeClass.getValue(), [
+                ...makeBaseExpressionRule(sourceField(node, 'value'), errorInfo),
                 makeErrorAssignRule(errorInfo),
             ]);
             const accessLevel = assignMultiClass(statementTypeClass.getAccessLevel(), [
-                makeAccessLevelRule(nestedSourceInfo, errorInfo),
+                makeAccessLevelRule(sourceField(node, 'accessLevel'), errorInfo),
                 makeErrorAssignRule(errorInfo),
             ]);
             const key = assignMultiClass(statementTypeClass.getKey(), [
-                makeQualifiedNameRule(nestedSourceInfo, errorInfo),
+                makeQualifiedNameRule(sourceField(node, 'key'), errorInfo),
                 makeErrorAssignRule(errorInfo),
             ]);
-            sourceInfo[statementTypeClass.getType()] = nestedSourceInfo;
-            return { type: statementTypeClass.getType(), target, accessLevel, key };
+            slot(node);
+            return { type: statementTypeClass.getType(), value, accessLevel, key };
         },
     };
 };
 
+export type WhileStatementType = {
+    type: string;
+    value: ValueRuleValue<ParExpressionType>;
+    block: ValueRuleValue<StatementType>;
+};
+
+export const isWhileStatementType = typia.createIs<WhileStatementType>();
+
 export const makeWhileStatementRule = (
-    sourceInfo: SourceInfoMap,
+    slot: SourceSlot,
     errorInfo: ErrorInfo[],
-): AssignForValueRule<WhileStatementTypeClass, ValueRuleValue<unknown>> => {
+): AssignForValueRule<WhileStatementTypeClass, WhileStatementType> => {
     return {
-        isValid: (target: unknown) => isTargetTypeClass(target, isWhileStatementType),
+        isValid: (target: unknown) => isTargetTypeClass(target, isWhileStatementTypeClass),
         construct: (statementTypeClass: WhileStatementTypeClass) => {
-            const nestedSourceInfo = makeEmptySourceInfoMap();
-            const condition = assignMultiClass(statementTypeClass.getValue(), [
-                makeParExpressionRule(nestedSourceInfo, errorInfo),
+            const node = makeSourceNode(statementTypeClass);
+            const value = assignMultiClass(statementTypeClass.getValue(), [
+                makeParExpressionRule(sourceField(node, 'value'), errorInfo),
                 makeErrorAssignRule(errorInfo),
             ]);
             const block = assignMultiClass(statementTypeClass.getBlock(), [
-                makeStatementRule(nestedSourceInfo, errorInfo),
+                makeStatementRule(sourceField(node, 'block'), errorInfo),
                 makeErrorAssignRule(errorInfo),
             ]);
-            sourceInfo[statementTypeClass.getType()] = nestedSourceInfo;
-            return { condition };
+            slot(node);
+            return { type: statementTypeClass.getType(), value, block };
         },
     };
 };
 
+export type StatementType = {
+    type: string;
+    value: ValueRuleValue<
+        | BlockType
+        | IfStatementType
+        | SwitchStatementType
+        | ForStatementType
+        | WhileStatementType
+        | DoWhileStatementType
+        | TryStatementType
+        | ReturnStatementType
+        | ThrowStatementType
+        | BreakStatementType
+        | ContinueStatementType
+        | InsertStatementType
+        | UpdateStatementType
+        | DeleteStatementType
+        | UndeleteStatementType
+        | UpsertStatementType
+        | MergeStatementType
+        | RunAsStatementType
+        | LocalVariableDeclarationStatementType
+        | ExpressionStatementType
+    >;
+};
+
+export const isStatementType = typia.createIs<StatementType>();
+
 export const makeStatementRule = (
-    sourceInfo: SourceInfoMap,
+    slot: SourceSlot,
     errorInfo: ErrorInfo[],
-): AssignForValueRule<NormalStatementTypeClass, ValueRuleValue<unknown>> => {
+): AssignForValueRule<NormalStatementTypeClass, StatementType> => {
     return {
         isValid: (target: unknown) => isTargetTypeClass(target, isNormalStatementType),
         construct: (statementTypeClass: NormalStatementTypeClass) => {
-            const nestedSourceInfo = makeEmptySourceInfoMap();
-            const block = assignMultiClass(statementTypeClass.getValue(), [
-                makeBlockRule(nestedSourceInfo, errorInfo),
-                makeIfStatementRule(nestedSourceInfo, errorInfo),
-                makeSwitchStatementRule(nestedSourceInfo, errorInfo),
-                makeForControlRule(nestedSourceInfo, errorInfo),
-                makeWhileStatementRule(nestedSourceInfo, errorInfo),
-                makeDoWhileStatementRule(nestedSourceInfo, errorInfo),
-                makeTryStatementRule(nestedSourceInfo, errorInfo),
-                makeReturnStatementRule(nestedSourceInfo, errorInfo),
-                makeThrowStatementRule(nestedSourceInfo, errorInfo),
-                makeBreakStatementRule(nestedSourceInfo),
-                makeContinueStatementRule(nestedSourceInfo),
-                makeInsertStatementRule(nestedSourceInfo, errorInfo),
-                makeUpdateStatementRule(nestedSourceInfo, errorInfo),
-                makeDeleteStatementRule(nestedSourceInfo, errorInfo),
-                makeUndeleteStatementRule(nestedSourceInfo, errorInfo),
-                makeUpsertStatementRule(nestedSourceInfo, errorInfo),
-                makeMergeStatementRule(nestedSourceInfo, errorInfo),
-                makeRunAsStatementRule(nestedSourceInfo, errorInfo),
-                makeLocalVariableDeclarationRule(nestedSourceInfo, errorInfo),
-                makeExpressionStatementRule(nestedSourceInfo, errorInfo),
+            const node = makeSourceNode(statementTypeClass);
+            const valueSource = sourceField(node, 'value');
+            const value = assignMultiClass(statementTypeClass.getValue(), [
+                makeBlockRule(valueSource, errorInfo),
+                makeIfStatementRule(valueSource, errorInfo),
+                makeSwitchStatementRule(valueSource, errorInfo),
+                makeForStatementRule(valueSource, errorInfo),
+                makeWhileStatementRule(valueSource, errorInfo),
+                makeDoWhileStatementRule(valueSource, errorInfo),
+                makeTryStatementRule(valueSource, errorInfo),
+                makeReturnStatementRule(valueSource, errorInfo),
+                makeThrowStatementRule(valueSource, errorInfo),
+                makeBreakStatementRule(valueSource, errorInfo),
+                makeContinueStatementRule(valueSource, errorInfo),
+                makeInsertStatementRule(valueSource, errorInfo),
+                makeUpdateStatementRule(valueSource, errorInfo),
+                makeDeleteStatementRule(valueSource, errorInfo),
+                makeUndeleteStatementRule(valueSource, errorInfo),
+                makeUpsertStatementRule(valueSource, errorInfo),
+                makeMergeStatementRule(valueSource, errorInfo),
+                makeRunAsStatementRule(valueSource, errorInfo),
+                makeLocalVariableDeclarationStatementRule(valueSource, errorInfo),
+                makeExpressionStatementRule(valueSource, errorInfo),
                 makeErrorAssignRule(errorInfo),
             ]);
+            slot(node);
+            return { type: statementTypeClass.getType(), value };
         },
     };
 };
+

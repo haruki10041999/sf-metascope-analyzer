@@ -1,98 +1,121 @@
+import typia from 'typia';
+
 import {
     FormalParametersTypeClass,
     FormalParameterTypeClass,
-    ParameterTypeClass,
     SoqlFieldsParameterTypeClass,
-    isFormalParametersType,
-    isFormalParameterType,
-    isSoqlFieldsParameterType,
+    isFormalParametersType as isFormalParametersTypeClass,
+    isFormalParameterType as isFormalParameterTypeClass,
+    isSoqlFieldsParameterType as isSoqlFieldsParameterTypeClass,
 } from '../../apex_IR';
 
 import {
     ErrorInfo,
-    SourceInfoMap,
+    SourceSlot,
     AssignForValueRule,
     ValueRuleValue,
-    makeEmptySourceInfoMap,
     isTargetTypeClass,
     assignMultiClass,
     makeErrorAssignRule,
+    makeSourceNode,
+    sourceField,
+    sourceList,
 } from './commons';
-import { makeIdRule } from './id';
-import { makeFormalParameterListRule } from './list';
-import { makeModifierRule } from './modifier';
-import { makeTypeRefRule } from './type';
+import { makeIdRule, IdType } from './id';
+import { makeFormalParameterListRule, FormalParameterListType } from './list';
+import { makeModifierRule, ModifierType } from './modifier';
+import { makeTypeRefRule, TypeRefType } from './type';
+
+export type FormalParametersType = {
+    type: string;
+    value: ValueRuleValue<FormalParameterListType>;
+};
+
+export const isFormalParametersType = typia.createIs<FormalParametersType>();
 
 export const makeFormalParametersRule = (
-    sourceInfo: SourceInfoMap,
+    slot: SourceSlot,
     errorInfo: ErrorInfo[],
-): AssignForValueRule<FormalParametersTypeClass, ValueRuleValue<unknown>> => {
+): AssignForValueRule<FormalParametersTypeClass, FormalParametersType> => {
     return {
-        isValid: (target: unknown) => isTargetTypeClass(target, isFormalParametersType),
+        isValid: (target: unknown) => isTargetTypeClass(target, isFormalParametersTypeClass),
         construct: (parameterTypeClass: FormalParametersTypeClass) => {
-            const nestedSourceInfo = makeEmptySourceInfoMap();
+            const node = makeSourceNode(parameterTypeClass);
             const value = assignMultiClass(parameterTypeClass.getValue(), [
-                makeFormalParameterListRule(nestedSourceInfo, errorInfo),
+                makeFormalParameterListRule(sourceField(node, 'value'), errorInfo),
                 makeErrorAssignRule(errorInfo),
             ]);
-            sourceInfo[parameterTypeClass.getType()] = nestedSourceInfo;
-            return value;
+            slot(node);
+            return { type: parameterTypeClass.getType(), value };
         },
     };
 };
+
+export type FormalParameterType = {
+    type: string;
+    value: ValueRuleValue<IdType>;
+    valueType: ValueRuleValue<TypeRefType>;
+    modifier: ValueRuleValue<ModifierType>[];
+};
+
+export const isFormalParameterType = typia.createIs<FormalParameterType>();
 
 export const makeFormalParameterRule = (
-    sourceInfo: SourceInfoMap,
+    slot: SourceSlot,
     errorInfo: ErrorInfo[],
-): AssignForValueRule<FormalParameterTypeClass, ValueRuleValue<unknown>> => {
+): AssignForValueRule<FormalParameterTypeClass, FormalParameterType> => {
     return {
-        isValid: (target: unknown) => isTargetTypeClass(target, isFormalParameterType),
+        isValid: (target: unknown) => isTargetTypeClass(target, isFormalParameterTypeClass),
         construct: (parameterTypeClass: FormalParameterTypeClass) => {
-            const nestedSourceInfo = makeEmptySourceInfoMap();
-            const variant = assignMultiClass(parameterTypeClass.getValue(), [
-                makeIdRule(nestedSourceInfo),
+            const node = makeSourceNode(parameterTypeClass);
+            const value = assignMultiClass(parameterTypeClass.getValue(), [
+                makeIdRule(sourceField(node, 'value')),
                 makeErrorAssignRule(errorInfo),
             ]);
-            const variantType = assignMultiClass(parameterTypeClass.getValueType(), [
-                makeTypeRefRule(nestedSourceInfo, errorInfo),
+            const valueType = assignMultiClass(parameterTypeClass.getValueType(), [
+                makeTypeRefRule(sourceField(node, 'valueType'), errorInfo),
                 makeErrorAssignRule(errorInfo),
             ]);
-            const modifier = parameterTypeClass.getModifier().forEach((v, index) => {
-                const valueSourceInfo = makeEmptySourceInfoMap();
-                const value = assignMultiClass(v, [
-                    makeModifierRule(valueSourceInfo, errorInfo),
-                    makeErrorAssignRule(errorInfo),
-                ]);
-                nestedSourceInfo[parameterTypeClass.getType()] = valueSourceInfo;
-                return value;
-            });
+            const modifierSource = sourceList(node, 'modifier');
+            const modifier = parameterTypeClass
+                .getModifier()
+                .map((v, index) =>
+                    assignMultiClass(v, [
+                        makeModifierRule(modifierSource(index), errorInfo),
+                        makeErrorAssignRule(errorInfo),
+                    ]),
+                );
 
-            sourceInfo[parameterTypeClass.getType()] = nestedSourceInfo;
-            return { variant, variantType, modifier };
+            slot(node);
+            return { type: parameterTypeClass.getType(), value, valueType, modifier };
         },
     };
 };
 
+export type SoqlFieldsParameterType = {
+    type: string;
+    value: ValueRuleValue<string>;
+};
+
+export const isSoqlFieldsParameterType = typia.createIs<SoqlFieldsParameterType>();
+
 export const makeSoqlFieldsParameterRule = (
-    sourceInfo: SourceInfoMap,
+    slot: SourceSlot,
     errorInfo: ErrorInfo[],
-): AssignForValueRule<SoqlFieldsParameterTypeClass, ValueRuleValue<unknown>> => {
+): AssignForValueRule<SoqlFieldsParameterTypeClass, SoqlFieldsParameterType> => {
     return {
-        isValid: (target: unknown) => isTargetTypeClass(target, isSoqlFieldsParameterType),
+        isValid: (target: unknown) => isTargetTypeClass(target, isSoqlFieldsParameterTypeClass),
         construct: (parameterTypeClass: SoqlFieldsParameterTypeClass) => {
-            const nestedSourceInfo = makeEmptySourceInfoMap();
             const value = assignMultiClass(parameterTypeClass.getValue(), [
                 {
                     isValid: (target: unknown): target is string => typeof target === 'string',
-                    construct: (value: string) => {
-                        nestedSourceInfo['string'] = value;
-                        return value;
-                    },
+                    construct: (value: string) => value,
                 },
                 makeErrorAssignRule(errorInfo),
             ]);
-            sourceInfo[parameterTypeClass.getType()] = nestedSourceInfo;
-            return value;
+            slot(makeSourceNode(parameterTypeClass));
+            return { type: parameterTypeClass.getType(), value };
         },
     };
 };
+

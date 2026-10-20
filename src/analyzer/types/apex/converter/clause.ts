@@ -1,8 +1,8 @@
+import typia from 'typia';
+
 import {
     AllRowsClauseTypeClass,
     CatchClauseTypeClass,
-    ClauseListTypeClass,
-    ClauseTypeClass,
     DataCategorySelectionTypeClass,
     ElseClauseTypeClass,
     FieldGroupByTypeClass,
@@ -21,303 +21,775 @@ import {
     WhenClauseTypeClass,
     WhereClauseTypeClass,
     WithClauseTypeClass,
-    isAllRowsClauseType,
-    isCatchClauseType,
-    isDataCategorySelectionType,
-    isElseClauseType,
-    isFieldGroupByType,
-    isFieldOrderType,
-    isFilteringSelectorType,
-    isForClausesType,
-    isGroupByClauseType,
-    isLimitClauseType,
-    isOffsetClauseType,
-    isOrderByClauseType,
-    isSoslClausesType,
-    isSoslWithClauseType,
-    isTypeOfType,
-    isUpdateTypeType,
-    isUsingScopeType,
-    isWhenClauseType,
-    isWhereClauseType,
-    isWithClauseType,
+    isAllRowsClauseType as isAllRowsClauseTypeClass,
+    isCatchClauseType as isCatchClauseTypeClass,
+    isDataCategorySelectionType as isDataCategorySelectionTypeClass,
+    isElseClauseType as isElseClauseTypeClass,
+    isFieldGroupByType as isFieldGroupByTypeClass,
+    isFieldOrderType as isFieldOrderTypeClass,
+    isFilteringSelectorType as isFilteringSelectorTypeClass,
+    isForClausesType as isForClausesTypeClass,
+    isGroupByClauseType as isGroupByClauseTypeClass,
+    isLimitClauseType as isLimitClauseTypeClass,
+    isOffsetClauseType as isOffsetClauseTypeClass,
+    isOrderByClauseType as isOrderByClauseTypeClass,
+    isSoslClausesType as isSoslClausesTypeClass,
+    isSoslWithClauseType as isSoslWithClauseTypeClass,
+    isTypeOfType as isTypeOfTypeClass,
+    isUpdateTypeType as isUpdateTypeTypeClass,
+    isUsingScopeType as isUsingScopeTypeClass,
+    isWhenClauseType as isWhenClauseTypeClass,
+    isWhereClauseType as isWhereClauseTypeClass,
+    isWithClauseType as isWithClauseTypeClass,
 } from '../../apex_IR';
 
 import {
     ErrorInfo,
-    SourceInfoMap,
+    SourceSlot,
     AssignForValueRule,
     ValueRuleValue,
-    makeEmptySourceInfoMap,
     isTargetTypeClass,
     assignMultiClass,
     makeErrorAssignRule,
-    makeSourceInfo,
+    makeSourceNode,
+    sourceField,
+    sourceList,
 } from './commons';
+import { makeIdRule, makeSoqlIdRule, IdType, SoqlIdType } from './id';
+import {
+    makeQualifiedNameRule,
+    makeDataCategoryNameRule,
+    makeFieldNameRule,
+    QualifiedNameType,
+    DataCategoryNameType,
+    FieldNameType,
+} from './name';
+import { makeBlockRule, BlockType } from './block';
+import { makeModifierRule, ModifierType } from './modifier';
+import {
+    makeFieldGroupByListRule,
+    makeFieldNameListRule,
+    makeFieldOrderListRule,
+    makeFieldSpecListRule,
+    makeNetworkListRule,
+    makeUpdateListRule,
+    FieldGroupByListType,
+    FieldNameListType,
+    FieldOrderListType,
+    FieldSpecListType,
+    NetworkListType,
+    UpdateListType,
+} from './list';
+import {
+    makeSoqlFunctionRule,
+    makeSearchGroupRule,
+    SoqlFunctionType,
+    SearchGroupType,
+} from './query';
+import {
+    makeBoundExpressionRule,
+    makeLogicalExpressionRule,
+    makeFilteringExpressionRule,
+    makeWhereLogicalExpressionRule,
+    BoundExpressionType,
+    LogicalExpressionType,
+    FilteringExpressionType,
+    WhereLogicalExpressionType,
+} from './expression';
+
+export type AllRowsClauseType = {
+    type: string;
+    value: ValueRuleValue<string>;
+};
+
+export const isAllRowsClauseType = typia.createIs<AllRowsClauseType>();
 
 export const makeAllRowsClauseRule = (
-    sourceInfo: SourceInfoMap,
+    slot: SourceSlot,
     errorInfo: ErrorInfo[],
-): AssignForValueRule<AllRowsClauseTypeClass, ValueRuleValue<string>> => {
+): AssignForValueRule<AllRowsClauseTypeClass, AllRowsClauseType> => {
     return {
-        isValid: (target: unknown) => isTargetTypeClass(target, isAllRowsClauseType),
+        isValid: (target: unknown) => isTargetTypeClass(target, isAllRowsClauseTypeClass),
         construct: (clauseTypeClass: AllRowsClauseTypeClass) => {
-            const clause = assignMultiClass(clauseTypeClass.getValue(), [
+            const value = assignMultiClass(clauseTypeClass.getValue(), [
                 {
                     isValid: (target: unknown): target is string => typeof target === 'string',
                     construct: (value: string) => value,
                 },
                 makeErrorAssignRule(errorInfo),
             ]);
-            sourceInfo[clauseTypeClass.getType()] = makeSourceInfo(clauseTypeClass);
-            return clause;
+            slot(makeSourceNode(clauseTypeClass));
+            return { type: clauseTypeClass.getType(), value };
         },
     };
 };
+
+export type CatchClauseType = {
+    type: string;
+    value: ValueRuleValue<IdType>;
+    valueType: ValueRuleValue<QualifiedNameType>;
+    block: ValueRuleValue<BlockType>;
+    modifier: ValueRuleValue<ModifierType>[];
+};
+
+export const isCatchClauseType = typia.createIs<CatchClauseType>();
 
 export const makeCatchClauseRule = (
-    sourceInfo: SourceInfoMap,
+    slot: SourceSlot,
     errorInfo: ErrorInfo[],
-): AssignForValueRule<CatchClauseTypeClass, ValueRuleValue<unknown>> => {
+): AssignForValueRule<CatchClauseTypeClass, CatchClauseType> => {
     return {
-        isValid: (target: unknown) => isTargetTypeClass(target, isCatchClauseType),
+        isValid: (target: unknown) => isTargetTypeClass(target, isCatchClauseTypeClass),
         construct: (clauseTypeClass: CatchClauseTypeClass) => {
-            const nestedSourceInfo = makeEmptySourceInfoMap();
-            throw new Error('Not implemented');
+            const node = makeSourceNode(clauseTypeClass);
+            const value = assignMultiClass(clauseTypeClass.getValue(), [
+                makeIdRule(sourceField(node, 'value')),
+                makeErrorAssignRule(errorInfo),
+            ]);
+
+            const valueType = assignMultiClass(clauseTypeClass.getValueType(), [
+                makeQualifiedNameRule(sourceField(node, 'valueType'), errorInfo),
+                makeErrorAssignRule(errorInfo),
+            ]);
+
+            const block = assignMultiClass(clauseTypeClass.getBlock(), [
+                makeBlockRule(sourceField(node, 'block'), errorInfo),
+                makeErrorAssignRule(errorInfo),
+            ]);
+
+            const modifierSource = sourceList(node, 'modifier');
+            const modifier = clauseTypeClass
+                .getModifier()
+                .map((v, index) =>
+                    assignMultiClass(v, [
+                        makeModifierRule(modifierSource(index), errorInfo),
+                        makeErrorAssignRule(errorInfo),
+                    ]),
+                );
+
+            slot(node);
+            return { type: clauseTypeClass.getType(), value, valueType, block, modifier };
         },
     };
 };
+
+export type DataCategorySelectionType = {
+    type: string;
+    value: ValueRuleValue<SoqlIdType>;
+    selector: ValueRuleValue<FilteringSelectorType>;
+    category: ValueRuleValue<DataCategoryNameType>;
+};
+
+export const isDataCategorySelectionType = typia.createIs<DataCategorySelectionType>();
 
 export const makeDataCategorySelectionRule = (
-    sourceInfo: SourceInfoMap,
+    slot: SourceSlot,
     errorInfo: ErrorInfo[],
-): AssignForValueRule<DataCategorySelectionTypeClass, ValueRuleValue<unknown>> => {
+): AssignForValueRule<DataCategorySelectionTypeClass, DataCategorySelectionType> => {
     return {
-        isValid: (target: unknown) => isTargetTypeClass(target, isDataCategorySelectionType),
+        isValid: (target: unknown) => isTargetTypeClass(target, isDataCategorySelectionTypeClass),
         construct: (clauseTypeClass: DataCategorySelectionTypeClass) => {
-            const nestedSourceInfo = makeEmptySourceInfoMap();
-            throw new Error('Not implemented');
+            const node = makeSourceNode(clauseTypeClass);
+            const value = assignMultiClass(clauseTypeClass.getValue(), [
+                makeSoqlIdRule(sourceField(node, 'value'), errorInfo),
+                makeErrorAssignRule(errorInfo),
+            ]);
+
+            const selector = assignMultiClass(clauseTypeClass.getSelector(), [
+                makeFilteringSelectorRule(sourceField(node, 'selector'), errorInfo),
+                makeErrorAssignRule(errorInfo),
+            ]);
+
+            const category = assignMultiClass(clauseTypeClass.getCategory(), [
+                makeDataCategoryNameRule(sourceField(node, 'category'), errorInfo),
+                makeErrorAssignRule(errorInfo),
+            ]);
+
+            slot(node);
+            return { type: clauseTypeClass.getType(), value, selector, category };
         },
     };
 };
+
+export type ElseClauseType = {
+    type: string;
+    value: ValueRuleValue<FieldNameListType>;
+};
+
+export const isElseClauseType = typia.createIs<ElseClauseType>();
 
 export const makeElseClauseRule = (
-    sourceInfo: SourceInfoMap,
+    slot: SourceSlot,
     errorInfo: ErrorInfo[],
-): AssignForValueRule<ElseClauseTypeClass, ValueRuleValue<unknown>> => {
+): AssignForValueRule<ElseClauseTypeClass, ElseClauseType> => {
     return {
-        isValid: (target: unknown) => isTargetTypeClass(target, isElseClauseType),
+        isValid: (target: unknown) => isTargetTypeClass(target, isElseClauseTypeClass),
         construct: (clauseTypeClass: ElseClauseTypeClass) => {
-            const nestedSourceInfo = makeEmptySourceInfoMap();
-            throw new Error('Not implemented');
+            const node = makeSourceNode(clauseTypeClass);
+            const value = assignMultiClass(clauseTypeClass.getValue(), [
+                makeFieldNameListRule(sourceField(node, 'value'), errorInfo),
+                makeErrorAssignRule(errorInfo),
+            ]);
+            slot(node);
+            return { type: clauseTypeClass.getType(), value };
         },
     };
 };
+
+export type FieldGroupByType = {
+    type: string;
+    value: ValueRuleValue<FieldNameType | SoqlFunctionType>;
+};
+
+export const isFieldGroupByType = typia.createIs<FieldGroupByType>();
 
 export const makeFieldGroupByRule = (
-    sourceInfo: SourceInfoMap,
+    slot: SourceSlot,
     errorInfo: ErrorInfo[],
-): AssignForValueRule<FieldGroupByTypeClass, ValueRuleValue<unknown>> => {
+): AssignForValueRule<FieldGroupByTypeClass, FieldGroupByType> => {
     return {
-        isValid: (target: unknown) => isTargetTypeClass(target, isFieldGroupByType),
+        isValid: (target: unknown) => isTargetTypeClass(target, isFieldGroupByTypeClass),
         construct: (clauseTypeClass: FieldGroupByTypeClass) => {
-            const nestedSourceInfo = makeEmptySourceInfoMap();
-            throw new Error('Not implemented');
+            const node = makeSourceNode(clauseTypeClass);
+            const value = assignMultiClass(clauseTypeClass.getValue(), [
+                makeFieldNameRule(sourceField(node, 'value'), errorInfo),
+                makeSoqlFunctionRule(sourceField(node, 'value'), errorInfo),
+                makeErrorAssignRule(errorInfo),
+            ]);
+            slot(node);
+            return { type: clauseTypeClass.getType(), value };
         },
     };
 };
+
+export type FieldOrderType = {
+    type: string;
+    value: ValueRuleValue<FieldNameType | SoqlFunctionType>;
+    direction: string | null;
+    nulls: string | null;
+};
+
+export const isFieldOrderType = typia.createIs<FieldOrderType>();
 
 export const makeFieldOrderRule = (
-    sourceInfo: SourceInfoMap,
+    slot: SourceSlot,
     errorInfo: ErrorInfo[],
-): AssignForValueRule<FieldOrderTypeClass, ValueRuleValue<unknown>> => {
+): AssignForValueRule<FieldOrderTypeClass, FieldOrderType> => {
     return {
-        isValid: (target: unknown) => isTargetTypeClass(target, isFieldOrderType),
+        isValid: (target: unknown) => isTargetTypeClass(target, isFieldOrderTypeClass),
         construct: (clauseTypeClass: FieldOrderTypeClass) => {
-            const nestedSourceInfo = makeEmptySourceInfoMap();
-            throw new Error('Not implemented');
+            const node = makeSourceNode(clauseTypeClass);
+            const value = assignMultiClass(clauseTypeClass.getValue(), [
+                makeFieldNameRule(sourceField(node, 'value'), errorInfo),
+                makeSoqlFunctionRule(sourceField(node, 'value'), errorInfo),
+                makeErrorAssignRule(errorInfo),
+            ]);
+            const direction = clauseTypeClass.getDirection();
+            const nulls = clauseTypeClass.getNulls();
+            slot(node);
+            return { type: clauseTypeClass.getType(), value, direction, nulls };
         },
     };
 };
+
+export type FilteringSelectorType = {
+    type: string;
+    value: ValueRuleValue<string>;
+};
+
+export const isFilteringSelectorType = typia.createIs<FilteringSelectorType>();
 
 export const makeFilteringSelectorRule = (
-    sourceInfo: SourceInfoMap,
+    slot: SourceSlot,
     errorInfo: ErrorInfo[],
-): AssignForValueRule<FilteringSelectorTypeClass, ValueRuleValue<unknown>> => {
+): AssignForValueRule<FilteringSelectorTypeClass, FilteringSelectorType> => {
     return {
-        isValid: (target: unknown) => isTargetTypeClass(target, isFilteringSelectorType),
+        isValid: (target: unknown) => isTargetTypeClass(target, isFilteringSelectorTypeClass),
         construct: (clauseTypeClass: FilteringSelectorTypeClass) => {
-            const nestedSourceInfo = makeEmptySourceInfoMap();
-            throw new Error('Not implemented');
+            const value = assignMultiClass(clauseTypeClass.getValue(), [
+                {
+                    isValid: (target: unknown): target is string => typeof target === 'string',
+                    construct: (value: string) => value,
+                },
+                makeErrorAssignRule(errorInfo),
+            ]);
+            slot(makeSourceNode(clauseTypeClass));
+            return { type: clauseTypeClass.getType(), value };
         },
     };
 };
+
+export type ForClausesType = {
+    type: string;
+    value: ValueRuleValue<string>[];
+};
+
+export const isForClausesType = typia.createIs<ForClausesType>();
 
 export const makeForClausesRule = (
-    sourceInfo: SourceInfoMap,
+    slot: SourceSlot,
     errorInfo: ErrorInfo[],
-): AssignForValueRule<ForClausesTypeClass, ValueRuleValue<unknown>> => {
+): AssignForValueRule<ForClausesTypeClass, ForClausesType> => {
     return {
-        isValid: (target: unknown) => isTargetTypeClass(target, isForClausesType),
+        isValid: (target: unknown) => isTargetTypeClass(target, isForClausesTypeClass),
         construct: (clauseTypeClass: ForClausesTypeClass) => {
-            const nestedSourceInfo = makeEmptySourceInfoMap();
-            throw new Error('Not implemented');
+            const value = clauseTypeClass.getValue().map((v) =>
+                assignMultiClass(v, [
+                    {
+                        isValid: (target: unknown): target is string => typeof target === 'string',
+                        construct: (value: string) => value,
+                    },
+                    makeErrorAssignRule(errorInfo),
+                ]),
+            );
+            slot(makeSourceNode(clauseTypeClass));
+            return { type: clauseTypeClass.getType(), value };
         },
     };
 };
+
+export type GroupByClauseType = {
+    type: string;
+    value: ValueRuleValue<FieldGroupByListType>;
+    mode: string | null;
+    having: ValueRuleValue<LogicalExpressionType>;
+};
+
+export const isGroupByClauseType = typia.createIs<GroupByClauseType>();
 
 export const makeGroupByClauseRule = (
-    sourceInfo: SourceInfoMap,
+    slot: SourceSlot,
     errorInfo: ErrorInfo[],
-): AssignForValueRule<GroupByClauseTypeClass, ValueRuleValue<unknown>> => {
+): AssignForValueRule<GroupByClauseTypeClass, GroupByClauseType> => {
     return {
-        isValid: (target: unknown) => isTargetTypeClass(target, isGroupByClauseType),
+        isValid: (target: unknown) => isTargetTypeClass(target, isGroupByClauseTypeClass),
         construct: (clauseTypeClass: GroupByClauseTypeClass) => {
-            const nestedSourceInfo = makeEmptySourceInfoMap();
-            throw new Error('Not implemented');
+            const node = makeSourceNode(clauseTypeClass);
+            const value = assignMultiClass(clauseTypeClass.getValue(), [
+                makeFieldGroupByListRule(sourceField(node, 'value'), errorInfo),
+                makeErrorAssignRule(errorInfo),
+            ]);
+
+            const mode = clauseTypeClass.getMode();
+
+            const having = assignMultiClass(clauseTypeClass.getHaving(), [
+                makeLogicalExpressionRule(sourceField(node, 'having'), errorInfo),
+                makeErrorAssignRule(errorInfo),
+            ]);
+
+            slot(node);
+            return {
+                type: clauseTypeClass.getType(),
+                value,
+                mode,
+                having,
+            };
         },
     };
 };
+
+export type LimitClauseType = {
+    type: string;
+    value: ValueRuleValue<string | BoundExpressionType>;
+};
+
+export const isLimitClauseType = typia.createIs<LimitClauseType>();
 
 export const makeLimitClauseRule = (
-    sourceInfo: SourceInfoMap,
+    slot: SourceSlot,
     errorInfo: ErrorInfo[],
-): AssignForValueRule<LimitClauseTypeClass, ValueRuleValue<unknown>> => {
+): AssignForValueRule<LimitClauseTypeClass, LimitClauseType> => {
     return {
-        isValid: (target: unknown) => isTargetTypeClass(target, isLimitClauseType),
+        isValid: (target: unknown) => isTargetTypeClass(target, isLimitClauseTypeClass),
         construct: (clauseTypeClass: LimitClauseTypeClass) => {
-            const nestedSourceInfo = makeEmptySourceInfoMap();
-            throw new Error('Not implemented');
+            const node = makeSourceNode(clauseTypeClass);
+            const value = assignMultiClass(clauseTypeClass.getValue(), [
+                {
+                    isValid: (target: unknown): target is string => typeof target === 'string',
+                    construct: (value: string) => value,
+                },
+                makeBoundExpressionRule(sourceField(node, 'value'), errorInfo),
+                makeErrorAssignRule(errorInfo),
+            ]);
+
+            slot(node);
+            return { type: clauseTypeClass.getType(), value };
         },
     };
 };
+
+export type OffsetClauseType = {
+    type: string;
+    value: ValueRuleValue<string | BoundExpressionType>;
+};
+
+export const isOffsetClauseType = typia.createIs<OffsetClauseType>();
 
 export const makeOffsetClauseRule = (
-    sourceInfo: SourceInfoMap,
+    slot: SourceSlot,
     errorInfo: ErrorInfo[],
-): AssignForValueRule<OffsetClauseTypeClass, ValueRuleValue<unknown>> => {
+): AssignForValueRule<OffsetClauseTypeClass, OffsetClauseType> => {
     return {
-        isValid: (target: unknown) => isTargetTypeClass(target, isOffsetClauseType),
+        isValid: (target: unknown) => isTargetTypeClass(target, isOffsetClauseTypeClass),
         construct: (clauseTypeClass: OffsetClauseTypeClass) => {
-            const nestedSourceInfo = makeEmptySourceInfoMap();
-            throw new Error('Not implemented');
+            const node = makeSourceNode(clauseTypeClass);
+            const value = assignMultiClass(clauseTypeClass.getValue(), [
+                {
+                    isValid: (target: unknown): target is string => typeof target === 'string',
+                    construct: (value: string) => value,
+                },
+                makeBoundExpressionRule(sourceField(node, 'value'), errorInfo),
+                makeErrorAssignRule(errorInfo),
+            ]);
+
+            slot(node);
+            return { type: clauseTypeClass.getType(), value };
         },
     };
 };
+
+export type OrderByClauseType = {
+    type: string;
+    value: ValueRuleValue<FieldOrderListType>;
+};
+
+export const isOrderByClauseType = typia.createIs<OrderByClauseType>();
 
 export const makeOrderByClauseRule = (
-    sourceInfo: SourceInfoMap,
+    slot: SourceSlot,
     errorInfo: ErrorInfo[],
-): AssignForValueRule<OrderByClauseTypeClass, ValueRuleValue<unknown>> => {
+): AssignForValueRule<OrderByClauseTypeClass, OrderByClauseType> => {
     return {
-        isValid: (target: unknown) => isTargetTypeClass(target, isOrderByClauseType),
+        isValid: (target: unknown) => isTargetTypeClass(target, isOrderByClauseTypeClass),
         construct: (clauseTypeClass: OrderByClauseTypeClass) => {
-            const nestedSourceInfo = makeEmptySourceInfoMap();
-            throw new Error('Not implemented');
+            const node = makeSourceNode(clauseTypeClass);
+            const value = assignMultiClass(clauseTypeClass.getValue(), [
+                makeFieldOrderListRule(sourceField(node, 'value'), errorInfo),
+                makeErrorAssignRule(errorInfo),
+            ]);
+
+            slot(node);
+            return { type: clauseTypeClass.getType(), value };
         },
     };
 };
+
+export type SoslClausesType = {
+    type: string;
+    value: ValueRuleValue<SearchGroupType>;
+    fieldSpecList: ValueRuleValue<FieldSpecListType>;
+    withList: ValueRuleValue<SoslWithClauseType>[] | null;
+    limitClause: ValueRuleValue<LimitClauseType>;
+    updateList: ValueRuleValue<UpdateListType>;
+};
+
+export const isSoslClausesType = typia.createIs<SoslClausesType>();
 
 export const makeSoslClausesRule = (
-    sourceInfo: SourceInfoMap,
+    slot: SourceSlot,
     errorInfo: ErrorInfo[],
-): AssignForValueRule<SoslClausesTypeClass, ValueRuleValue<unknown>> => {
+): AssignForValueRule<SoslClausesTypeClass, SoslClausesType> => {
     return {
-        isValid: (target: unknown) => isTargetTypeClass(target, isSoslClausesType),
+        isValid: (target: unknown) => isTargetTypeClass(target, isSoslClausesTypeClass),
         construct: (clauseTypeClass: SoslClausesTypeClass) => {
-            const nestedSourceInfo = makeEmptySourceInfoMap();
-            throw new Error('Not implemented');
+            const node = makeSourceNode(clauseTypeClass);
+            const value = assignMultiClass(clauseTypeClass.getValue(), [
+                makeSearchGroupRule(sourceField(node, 'value'), errorInfo),
+                makeErrorAssignRule(errorInfo),
+            ]);
+
+            const fieldSpecList = assignMultiClass(clauseTypeClass.getFieldSpecList(), [
+                makeFieldSpecListRule(sourceField(node, 'fieldSpecList'), errorInfo),
+                makeErrorAssignRule(errorInfo),
+            ]);
+
+            const withListValue = clauseTypeClass.getWithList();
+            let withList = null;
+            if (withListValue) {
+                const withListSource = sourceList(node, 'withList');
+                withList = withListValue.map((v, index) =>
+                    assignMultiClass(v, [
+                        makeSoslWithClauseRule(withListSource(index), errorInfo),
+                        makeErrorAssignRule(errorInfo),
+                    ]),
+                );
+            } else {
+                sourceField(node, 'withList');
+            }
+
+            const limitClause = assignMultiClass(clauseTypeClass.getLimitClause(), [
+                makeLimitClauseRule(sourceField(node, 'limitClause'), errorInfo),
+                makeErrorAssignRule(errorInfo),
+            ]);
+
+            const updateList = assignMultiClass(clauseTypeClass.getUpdateList(), [
+                makeUpdateListRule(sourceField(node, 'updateList'), errorInfo),
+                makeErrorAssignRule(errorInfo),
+            ]);
+
+            slot(node);
+            return {
+                type: clauseTypeClass.getType(),
+                value,
+                fieldSpecList,
+                withList,
+                limitClause,
+                updateList,
+            };
         },
     };
 };
+
+export type SoslWithClauseType = {
+    type: string;
+    value: ValueRuleValue<string>;
+    content: ValueRuleValue<
+        string | BoundExpressionType | FilteringExpressionType | NetworkListType
+    >;
+};
+
+export const isSoslWithClauseType = typia.createIs<SoslWithClauseType>();
 
 export const makeSoslWithClauseRule = (
-    sourceInfo: SourceInfoMap,
+    slot: SourceSlot,
     errorInfo: ErrorInfo[],
-): AssignForValueRule<SoslWithClauseTypeClass, ValueRuleValue<unknown>> => {
+): AssignForValueRule<SoslWithClauseTypeClass, SoslWithClauseType> => {
     return {
-        isValid: (target: unknown) => isTargetTypeClass(target, isSoslWithClauseType),
+        isValid: (target: unknown) => isTargetTypeClass(target, isSoslWithClauseTypeClass),
         construct: (clauseTypeClass: SoslWithClauseTypeClass) => {
-            const nestedSourceInfo = makeEmptySourceInfoMap();
-            throw new Error('Not implemented');
+            const node = makeSourceNode(clauseTypeClass);
+            const value = assignMultiClass(clauseTypeClass.getValue(), [
+                {
+                    isValid: (target: unknown): target is string => typeof target === 'string',
+                    construct: (value: string) => value,
+                },
+                makeErrorAssignRule(errorInfo),
+            ]);
+
+            const content = assignMultiClass(clauseTypeClass.getContent(), [
+                {
+                    isValid: (target: unknown): target is string => typeof target === 'string',
+                    construct: (value: string) => value,
+                },
+                makeBoundExpressionRule(sourceField(node, 'content'), errorInfo),
+                makeFilteringExpressionRule(sourceField(node, 'content'), errorInfo),
+                makeNetworkListRule(sourceField(node, 'content'), errorInfo),
+                makeErrorAssignRule(errorInfo),
+            ]);
+
+            slot(node);
+            return {
+                type: clauseTypeClass.getType(),
+                value,
+                content,
+            };
         },
     };
 };
+
+export type TypeOfType = {
+    type: string;
+    value: ValueRuleValue<FieldNameType>;
+    whenClause: ValueRuleValue<WhenClauseType>[];
+    elseClause: ValueRuleValue<ElseClauseType>;
+};
+
+export const isTypeOfType = typia.createIs<TypeOfType>();
 
 export const makeTypeOfRule = (
-    sourceInfo: SourceInfoMap,
+    slot: SourceSlot,
     errorInfo: ErrorInfo[],
-): AssignForValueRule<TypeOfTypeClass, ValueRuleValue<unknown>> => {
+): AssignForValueRule<TypeOfTypeClass, TypeOfType> => {
     return {
-        isValid: (target: unknown) => isTargetTypeClass(target, isTypeOfType),
+        isValid: (target: unknown) => isTargetTypeClass(target, isTypeOfTypeClass),
         construct: (clauseTypeClass: TypeOfTypeClass) => {
-            const nestedSourceInfo = makeEmptySourceInfoMap();
-            throw new Error('Not implemented');
+            const node = makeSourceNode(clauseTypeClass);
+
+            const value = assignMultiClass(clauseTypeClass.getValue(), [
+                makeFieldNameRule(sourceField(node, 'value'), errorInfo),
+                makeErrorAssignRule(errorInfo),
+            ]);
+
+            const whenClauseSource = sourceList(node, 'whenClause');
+            const whenClause = clauseTypeClass
+                .getWhenClause()
+                .map((v, index) =>
+                    assignMultiClass(v, [
+                        makeWhenClauseRule(whenClauseSource(index), errorInfo),
+                        makeErrorAssignRule(errorInfo),
+                    ]),
+                );
+
+            const elseClause = assignMultiClass(clauseTypeClass.getElseClause(), [
+                makeElseClauseRule(sourceField(node, 'elseClause'), errorInfo),
+                makeErrorAssignRule(errorInfo),
+            ]);
+
+            slot(node);
+            return {
+                type: clauseTypeClass.getType(),
+                value,
+                whenClause,
+                elseClause,
+            };
         },
     };
 };
+
+export type UpdateTypeType = {
+    type: string;
+    value: ValueRuleValue<string>;
+};
+
+export const isUpdateTypeType = typia.createIs<UpdateTypeType>();
 
 export const makeUpdateTypeRule = (
-    sourceInfo: SourceInfoMap,
+    slot: SourceSlot,
     errorInfo: ErrorInfo[],
-): AssignForValueRule<UpdateTypeTypeClass, ValueRuleValue<unknown>> => {
+): AssignForValueRule<UpdateTypeTypeClass, UpdateTypeType> => {
     return {
-        isValid: (target: unknown) => isTargetTypeClass(target, isUpdateTypeType),
+        isValid: (target: unknown) => isTargetTypeClass(target, isUpdateTypeTypeClass),
         construct: (clauseTypeClass: UpdateTypeTypeClass) => {
-            const nestedSourceInfo = makeEmptySourceInfoMap();
-            throw new Error('Not implemented');
+            const value = assignMultiClass(clauseTypeClass.getValue(), [
+                {
+                    isValid: (target: unknown): target is string => typeof target === 'string',
+                    construct: (value: string) => value,
+                },
+                makeErrorAssignRule(errorInfo),
+            ]);
+
+            slot(makeSourceNode(clauseTypeClass));
+            return { type: clauseTypeClass.getType(), value };
         },
     };
 };
+
+export type UsingScopeType = {
+    type: string;
+    value: ValueRuleValue<SoqlIdType>;
+};
+
+export const isUsingScopeType = typia.createIs<UsingScopeType>();
 
 export const makeUsingScopeRule = (
-    sourceInfo: SourceInfoMap,
+    slot: SourceSlot,
     errorInfo: ErrorInfo[],
-): AssignForValueRule<UsingScopeTypeClass, ValueRuleValue<unknown>> => {
+): AssignForValueRule<UsingScopeTypeClass, UsingScopeType> => {
     return {
-        isValid: (target: unknown) => isTargetTypeClass(target, isUsingScopeType),
+        isValid: (target: unknown) => isTargetTypeClass(target, isUsingScopeTypeClass),
         construct: (clauseTypeClass: UsingScopeTypeClass) => {
-            const nestedSourceInfo = makeEmptySourceInfoMap();
-            throw new Error('Not implemented');
+            const node = makeSourceNode(clauseTypeClass);
+            const value = assignMultiClass(clauseTypeClass.getValue(), [
+                makeSoqlIdRule(sourceField(node, 'value'), errorInfo),
+                makeErrorAssignRule(errorInfo),
+            ]);
+
+            slot(node);
+            return { type: clauseTypeClass.getType(), value };
         },
     };
 };
+
+export type WhenClauseType = {
+    type: string;
+    value: ValueRuleValue<FieldNameType>;
+    field: ValueRuleValue<FieldNameListType>;
+};
+
+export const isWhenClauseType = typia.createIs<WhenClauseType>();
 
 export const makeWhenClauseRule = (
-    sourceInfo: SourceInfoMap,
+    slot: SourceSlot,
     errorInfo: ErrorInfo[],
-): AssignForValueRule<WhenClauseTypeClass, ValueRuleValue<unknown>> => {
+): AssignForValueRule<WhenClauseTypeClass, WhenClauseType> => {
     return {
-        isValid: (target: unknown) => isTargetTypeClass(target, isWhenClauseType),
+        isValid: (target: unknown) => isTargetTypeClass(target, isWhenClauseTypeClass),
         construct: (clauseTypeClass: WhenClauseTypeClass) => {
-            const nestedSourceInfo = makeEmptySourceInfoMap();
-            throw new Error('Not implemented');
+            const node = makeSourceNode(clauseTypeClass);
+
+            const value = assignMultiClass(clauseTypeClass.getValue(), [
+                makeFieldNameRule(sourceField(node, 'value'), errorInfo),
+                makeErrorAssignRule(errorInfo),
+            ]);
+
+            const field = assignMultiClass(clauseTypeClass.getField(), [
+                makeFieldNameListRule(sourceField(node, 'field'), errorInfo),
+                makeErrorAssignRule(errorInfo),
+            ]);
+
+            slot(node);
+            return {
+                type: clauseTypeClass.getType(),
+                value,
+                field,
+            };
         },
     };
 };
+
+export type WhereClauseType = {
+    type: string;
+    value: ValueRuleValue<WhereLogicalExpressionType>;
+};
+
+export const isWhereClauseType = typia.createIs<WhereClauseType>();
 
 export const makeWhereClauseRule = (
-    sourceInfo: SourceInfoMap,
+    slot: SourceSlot,
     errorInfo: ErrorInfo[],
-): AssignForValueRule<WhereClauseTypeClass, ValueRuleValue<unknown>> => {
+): AssignForValueRule<WhereClauseTypeClass, WhereClauseType> => {
     return {
-        isValid: (target: unknown) => isTargetTypeClass(target, isWhereClauseType),
+        isValid: (target: unknown) => isTargetTypeClass(target, isWhereClauseTypeClass),
         construct: (clauseTypeClass: WhereClauseTypeClass) => {
-            const nestedSourceInfo = makeEmptySourceInfoMap();
-            throw new Error('Not implemented');
+            const node = makeSourceNode(clauseTypeClass);
+            const value = assignMultiClass(clauseTypeClass.getValue(), [
+                makeWhereLogicalExpressionRule(sourceField(node, 'value'), errorInfo),
+                makeErrorAssignRule(errorInfo),
+            ]);
+
+            slot(node);
+            return { type: clauseTypeClass.getType(), value };
         },
     };
 };
 
+export type WithClauseType = {
+    type: string;
+    value: ValueRuleValue<string | LogicalExpressionType>;
+    field: ValueRuleValue<FilteringExpressionType>;
+};
+
+export const isWithClauseType = typia.createIs<WithClauseType>();
+
 export const makeWithClauseRule = (
-    sourceInfo: SourceInfoMap,
+    slot: SourceSlot,
     errorInfo: ErrorInfo[],
-): AssignForValueRule<WithClauseTypeClass, ValueRuleValue<unknown>> => {
+): AssignForValueRule<WithClauseTypeClass, WithClauseType> => {
     return {
-        isValid: (target: unknown) => isTargetTypeClass(target, isWithClauseType),
+        isValid: (target: unknown) => isTargetTypeClass(target, isWithClauseTypeClass),
         construct: (clauseTypeClass: WithClauseTypeClass) => {
-            const nestedSourceInfo = makeEmptySourceInfoMap();
-            throw new Error('Not implemented');
+            const node = makeSourceNode(clauseTypeClass);
+            const value = assignMultiClass(clauseTypeClass.getValue(), [
+                {
+                    isValid: (target: unknown): target is string => typeof target === 'string',
+                    construct: (value: string) => value,
+                },
+                makeLogicalExpressionRule(sourceField(node, 'value'), errorInfo),
+                makeErrorAssignRule(errorInfo),
+            ]);
+
+            const field = assignMultiClass(clauseTypeClass.getField(), [
+                makeFilteringExpressionRule(sourceField(node, 'field'), errorInfo),
+                makeErrorAssignRule(errorInfo),
+            ]);
+
+            slot(node);
+            return {
+                type: clauseTypeClass.getType(),
+                value,
+                field,
+            };
         },
     };
 };
+

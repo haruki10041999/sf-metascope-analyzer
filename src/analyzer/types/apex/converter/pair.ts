@@ -1,116 +1,149 @@
+import typia from 'typia';
+
 import {
     ElementValuePairsTypeClass,
     ElementValuePairTypeClass,
     IdCreatedNamePairTypeClass,
     MapCreatorRestPairTypeClass,
-    PairListTypeClass,
-    PairTypeClass,
-    isElementValuePairsType,
-    isElementValuePairType,
-    isIdCreatedNamePairType,
-    isMapCreatorRestPairType,
+    isElementValuePairsType as isElementValuePairsTypeClass,
+    isElementValuePairType as isElementValuePairTypeClass,
+    isIdCreatedNamePairType as isIdCreatedNamePairTypeClass,
+    isMapCreatorRestPairType as isMapCreatorRestPairTypeClass,
 } from '../../apex_IR';
-import { makeElementValueType } from '../modifier';
-
 import {
     ErrorInfo,
-    SourceInfoMap,
+    SourceSlot,
     AssignForValueRule,
     ValueRuleValue,
-    makeEmptySourceInfoMap,
     isTargetTypeClass,
     assignMultiClass,
     makeErrorAssignRule,
+    makeSourceNode,
+    sourceField,
+    sourceList,
 } from './commons';
-import { makeBaseExpressionRule } from './expression';
-import { makeAnyIdRule, makeIdRule } from './id';
-import { makeTypeListRule } from './list';
-import { makeElementValueRule } from './value';
+import { makeBaseExpressionRule, BaseExpressionType } from './expression';
+import { makeAnyIdRule, makeIdRule, IdType, AnyIdType } from './id';
+import { makeTypeListRule, TypeListType } from './list';
+import { makeElementValueRule, ElementValueType } from './value';
+
+export type ElementValuePairsType = {
+    type: string;
+    value: ValueRuleValue<ElementValuePairType>[];
+};
+
+export const isElementValuePairsType = typia.createIs<ElementValuePairsType>();
 
 export const makeElementValuePairsRule = (
-    sourceInfo: SourceInfoMap,
+    slot: SourceSlot,
     errorInfo: ErrorInfo[],
-): AssignForValueRule<ElementValuePairsTypeClass, ValueRuleValue<unknown>> => {
+): AssignForValueRule<ElementValuePairsTypeClass, ElementValuePairsType> => {
     return {
-        isValid: (target: unknown) => isTargetTypeClass(target, isElementValuePairsType),
+        isValid: (target: unknown) => isTargetTypeClass(target, isElementValuePairsTypeClass),
         construct: (pairTypeClass: ElementValuePairsTypeClass) => {
-            const nestedSourceInfo = makeEmptySourceInfoMap();
-            const value = pairTypeClass.getValue().forEach((v, index) => {
-                const valueSourceInfo = makeEmptySourceInfoMap();
-                const value = assignMultiClass(v, [
-                    makeElementValuePairRule(valueSourceInfo, errorInfo),
-                    makeErrorAssignRule(errorInfo),
-                ]);
-                nestedSourceInfo[`${pairTypeClass.getType()}_${index}`] = valueSourceInfo;
-            });
-            sourceInfo[pairTypeClass.getType()] = nestedSourceInfo;
-            return value;
+            const node = makeSourceNode(pairTypeClass);
+            const valueSource = sourceList(node, 'value');
+            const value = pairTypeClass
+                .getValue()
+                .map((v, index) =>
+                    assignMultiClass(v, [
+                        makeElementValuePairRule(valueSource(index), errorInfo),
+                        makeErrorAssignRule(errorInfo),
+                    ]),
+                );
+            slot(node);
+            return { type: pairTypeClass.getType(), value };
         },
     };
 };
+
+export type ElementValuePairType = {
+    type: string;
+    left: ValueRuleValue<IdType>;
+    right: ValueRuleValue<ElementValueType>;
+};
+
+export const isElementValuePairType = typia.createIs<ElementValuePairType>();
 
 export const makeElementValuePairRule = (
-    sourceInfo: SourceInfoMap,
+    slot: SourceSlot,
     errorInfo: ErrorInfo[],
-): AssignForValueRule<ElementValuePairTypeClass, ValueRuleValue<unknown>> => {
+): AssignForValueRule<ElementValuePairTypeClass, ElementValuePairType> => {
     return {
-        isValid: (target: unknown) => isTargetTypeClass(target, isElementValuePairType),
+        isValid: (target: unknown) => isTargetTypeClass(target, isElementValuePairTypeClass),
         construct: (pairTypeClass: ElementValuePairTypeClass) => {
-            const nestedSourceInfo = makeEmptySourceInfoMap();
-            const variant = assignMultiClass(pairTypeClass.getLeft(), [
-                makeIdRule(nestedSourceInfo),
+            const node = makeSourceNode(pairTypeClass);
+            const left = assignMultiClass(pairTypeClass.getLeft(), [
+                makeIdRule(sourceField(node, 'left')),
                 makeErrorAssignRule(errorInfo),
             ]);
-            const value = assignMultiClass(pairTypeClass.getRight(), [
-                makeElementValueRule(nestedSourceInfo, errorInfo),
+            const right = assignMultiClass(pairTypeClass.getRight(), [
+                makeElementValueRule(sourceField(node, 'right'), errorInfo),
                 makeErrorAssignRule(errorInfo),
             ]);
-            sourceInfo[pairTypeClass.getType()] = nestedSourceInfo;
-            return { variant, value };
+            slot(node);
+            return { type: pairTypeClass.getType(), left, right };
         },
     };
 };
+
+export type IdCreatedNamePairType = {
+    type: string;
+    left: ValueRuleValue<AnyIdType>;
+    right: ValueRuleValue<TypeListType>;
+};
+
+export const isIdCreatedNamePairType = typia.createIs<IdCreatedNamePairType>();
 
 export const makeIdCreatedNamePairRule = (
-    sourceInfo: SourceInfoMap,
+    slot: SourceSlot,
     errorInfo: ErrorInfo[],
-): AssignForValueRule<IdCreatedNamePairTypeClass, ValueRuleValue<unknown>> => {
+): AssignForValueRule<IdCreatedNamePairTypeClass, IdCreatedNamePairType> => {
     return {
-        isValid: (target: unknown) => isTargetTypeClass(target, isIdCreatedNamePairType),
+        isValid: (target: unknown) => isTargetTypeClass(target, isIdCreatedNamePairTypeClass),
         construct: (pairTypeClass: IdCreatedNamePairTypeClass) => {
-            const nestedSourceInfo = makeEmptySourceInfoMap();
-            const collection = assignMultiClass(pairTypeClass.getLeft(), [
-                makeAnyIdRule(nestedSourceInfo),
+            const node = makeSourceNode(pairTypeClass);
+            const left = assignMultiClass(pairTypeClass.getLeft(), [
+                makeAnyIdRule(sourceField(node, 'left')),
                 makeErrorAssignRule(errorInfo),
             ]);
-            const generic = assignMultiClass(pairTypeClass.getRight(), [
-                makeTypeListRule(nestedSourceInfo, errorInfo),
+            const right = assignMultiClass(pairTypeClass.getRight(), [
+                makeTypeListRule(sourceField(node, 'right'), errorInfo),
                 makeErrorAssignRule(errorInfo),
             ]);
-            sourceInfo[pairTypeClass.getType()] = nestedSourceInfo;
-            return { collection, generic };
+            slot(node);
+            return { type: pairTypeClass.getType(), left, right };
         },
     };
 };
 
+export type MapCreatorRestPairType = {
+    type: string;
+    left: ValueRuleValue<BaseExpressionType>;
+    right: ValueRuleValue<BaseExpressionType>;
+};
+
+export const isMapCreatorRestPairType = typia.createIs<MapCreatorRestPairType>();
+
 export const makeMapCreatorRestPairRule = (
-    sourceInfo: SourceInfoMap,
+    slot: SourceSlot,
     errorInfo: ErrorInfo[],
-): AssignForValueRule<MapCreatorRestPairTypeClass, ValueRuleValue<unknown>> => {
+): AssignForValueRule<MapCreatorRestPairTypeClass, MapCreatorRestPairType> => {
     return {
-        isValid: (target: unknown) => isTargetTypeClass(target, isMapCreatorRestPairType),
+        isValid: (target: unknown) => isTargetTypeClass(target, isMapCreatorRestPairTypeClass),
         construct: (pairTypeClass: MapCreatorRestPairTypeClass) => {
-            const nestedSourceInfo = makeEmptySourceInfoMap();
-            const key = assignMultiClass(pairTypeClass.getLeft(), [
-                ...makeBaseExpressionRule(nestedSourceInfo, errorInfo),
+            const node = makeSourceNode(pairTypeClass);
+            const left = assignMultiClass(pairTypeClass.getLeft(), [
+                ...makeBaseExpressionRule(sourceField(node, 'left'), errorInfo),
                 makeErrorAssignRule(errorInfo),
             ]);
-            const value = assignMultiClass(pairTypeClass.getRight(), [
-                ...makeBaseExpressionRule(nestedSourceInfo, errorInfo),
+            const right = assignMultiClass(pairTypeClass.getRight(), [
+                ...makeBaseExpressionRule(sourceField(node, 'right'), errorInfo),
                 makeErrorAssignRule(errorInfo),
             ]);
-            sourceInfo[pairTypeClass.getType()] = nestedSourceInfo;
-            return { key, value };
+            slot(node);
+            return { type: pairTypeClass.getType(), left, right };
         },
     };
 };
+

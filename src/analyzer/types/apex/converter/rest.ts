@@ -1,3 +1,5 @@
+import typia from 'typia';
+
 import {
     ArrayCreatorRestTypeClass,
     ClassCreatorRestTypeClass,
@@ -5,162 +7,212 @@ import {
     MapCreatorRestTypeClass,
     NoRestTypeClass,
     SetCreatorRestTypeClass,
-    isArrayCreatorRestType,
-    isClassCreatorRestType,
-    isCreatorType,
-    isMapCreatorRestType,
-    isNoRestType,
-    isSetCreatorRestType,
+    isArrayCreatorRestType as isArrayCreatorRestTypeClass,
+    isClassCreatorRestType as isClassCreatorRestTypeClass,
+    isCreatorType as isCreatorTypeClass,
+    isMapCreatorRestType as isMapCreatorRestTypeClass,
+    isNoRestType as isNoRestTypeClass,
+    isSetCreatorRestType as isSetCreatorRestTypeClass,
 } from '../../apex_IR';
-import { makeArgumentsRule } from './arguments';
+import { ArgumentsType, makeArgumentsRule } from './arguments';
 
 import {
     ErrorInfo,
-    SourceInfoMap,
+    SourceSlot,
     AssignForValueRule,
     ValueRuleValue,
-    makeEmptySourceInfoMap,
     isTargetTypeClass,
     assignMultiClass,
     makeErrorAssignRule,
+    makeSourceNode,
+    sourceField,
+    sourceList,
 } from './commons';
-import { makeBaseExpressionRule } from './expression';
-import { makeCreatedNameRule } from './name';
-import { makeMapCreatorRestPairRule } from './pair';
-import { makeArrayInitializerRule } from './variable';
+import { makeBaseExpressionRule, BaseExpressionType } from './expression';
+import { makeCreatedNameRule, CreatedNameType } from './name';
+import { makeMapCreatorRestPairRule, MapCreatorRestPairType } from './pair';
+import { makeArrayInitializerRule, ArrayInitializerType } from './variable';
+
+export type ArrayCreatorRestType = {
+    type: string;
+    value: ValueRuleValue<ArrayInitializerType>;
+    size: ValueRuleValue<BaseExpressionType>;
+};
+
+export const isArrayCreatorRestType = typia.createIs<ArrayCreatorRestType>();
 
 export const makeArrayCreatorRestRule = (
-    sourceInfo: SourceInfoMap,
+    slot: SourceSlot,
     errorInfo: ErrorInfo[],
-): AssignForValueRule<ArrayCreatorRestTypeClass, ValueRuleValue<unknown>> => {
+): AssignForValueRule<ArrayCreatorRestTypeClass, ArrayCreatorRestType> => {
     return {
-        isValid: (target: unknown) => isTargetTypeClass(target, isArrayCreatorRestType),
+        isValid: (target: unknown) => isTargetTypeClass(target, isArrayCreatorRestTypeClass),
         construct: (restTypeClass: ArrayCreatorRestTypeClass) => {
-            const nestedSourceInfo = makeEmptySourceInfoMap();
-            const init = assignMultiClass(restTypeClass.getValue(), [
-                makeArrayInitializerRule(nestedSourceInfo, errorInfo),
+            const node = makeSourceNode(restTypeClass);
+            const value = assignMultiClass(restTypeClass.getValue(), [
+                makeArrayInitializerRule(sourceField(node, 'value'), errorInfo),
                 makeErrorAssignRule(errorInfo),
             ]);
             const size = assignMultiClass(restTypeClass.getSize(), [
-                ...makeBaseExpressionRule(nestedSourceInfo, errorInfo),
+                ...makeBaseExpressionRule(sourceField(node, 'size'), errorInfo),
                 makeErrorAssignRule(errorInfo),
             ]);
-            sourceInfo[restTypeClass.getType()] = nestedSourceInfo;
-            return { init, size };
+            slot(node);
+            return { type: restTypeClass.getType(), value, size };
         },
     };
 };
+
+export type ClassCreatorRestType = {
+    type: string;
+    value: ValueRuleValue<ArgumentsType>;
+};
+
+export const isClassCreatorRestType = typia.createIs<ClassCreatorRestType>();
 
 export const makeClassCreatorRestRule = (
-    sourceInfo: SourceInfoMap,
+    slot: SourceSlot,
     errorInfo: ErrorInfo[],
-): AssignForValueRule<ClassCreatorRestTypeClass, ValueRuleValue<unknown>> => {
+): AssignForValueRule<ClassCreatorRestTypeClass, ClassCreatorRestType> => {
     return {
-        isValid: (target: unknown) => isTargetTypeClass(target, isClassCreatorRestType),
+        isValid: (target: unknown) => isTargetTypeClass(target, isClassCreatorRestTypeClass),
         construct: (restTypeClass: ClassCreatorRestTypeClass) => {
-            const nestedSourceInfo = makeEmptySourceInfoMap();
+            const node = makeSourceNode(restTypeClass);
             const value = assignMultiClass(restTypeClass.getValue(), [
-                makeArgumentsRule(nestedSourceInfo, errorInfo),
+                makeArgumentsRule(sourceField(node, 'value'), errorInfo),
                 makeErrorAssignRule(errorInfo),
             ]);
-            sourceInfo[restTypeClass.getType()] = nestedSourceInfo;
-            return value;
+            slot(node);
+            return { type: restTypeClass.getType(), value };
         },
     };
 };
+
+export type MapCreatorRestType = {
+    type: string;
+    value: ValueRuleValue<MapCreatorRestPairType>[];
+};
+
+export const isMapCreatorRestType = typia.createIs<MapCreatorRestType>();
 
 export const makeMapCreatorRestRule = (
-    sourceInfo: SourceInfoMap,
+    slot: SourceSlot,
     errorInfo: ErrorInfo[],
-): AssignForValueRule<MapCreatorRestTypeClass, ValueRuleValue<unknown>> => {
+): AssignForValueRule<MapCreatorRestTypeClass, MapCreatorRestType> => {
     return {
-        isValid: (target: unknown) => isTargetTypeClass(target, isMapCreatorRestType),
+        isValid: (target: unknown) => isTargetTypeClass(target, isMapCreatorRestTypeClass),
         construct: (restTypeClass: MapCreatorRestTypeClass) => {
-            const nestedSourceInfo = makeEmptySourceInfoMap();
-            const value = restTypeClass.getValue().forEach((v, index) => {
-                const valueSourceInfo = makeEmptySourceInfoMap();
-                const value = assignMultiClass(v, [
-                    makeMapCreatorRestPairRule(valueSourceInfo, errorInfo),
-                    makeErrorAssignRule(errorInfo),
-                ]);
-                nestedSourceInfo[`${restTypeClass.getType()}_${index}`] = valueSourceInfo;
-                return value;
-            });
-            sourceInfo[restTypeClass.getType()] = nestedSourceInfo;
-            return value;
+            const node = makeSourceNode(restTypeClass);
+            const valueSource = sourceList(node, 'value');
+            const value = restTypeClass
+                .getValue()
+                .map((v, index) =>
+                    assignMultiClass(v, [
+                        makeMapCreatorRestPairRule(valueSource(index), errorInfo),
+                        makeErrorAssignRule(errorInfo),
+                    ]),
+                );
+            slot(node);
+            return { type: restTypeClass.getType(), value };
         },
     };
 };
 
+export type NoRestType = {
+    type: string;
+    value: ValueRuleValue<string>;
+};
+
+export const isNoRestType = typia.createIs<NoRestType>();
+
 export const makeNoRestRule = (
-    sourceInfo: SourceInfoMap,
+    slot: SourceSlot,
     errorInfo: ErrorInfo[],
-): AssignForValueRule<NoRestTypeClass, ValueRuleValue<unknown>> => {
+): AssignForValueRule<NoRestTypeClass, NoRestType> => {
     return {
-        isValid: (target: unknown) => isTargetTypeClass(target, isNoRestType),
+        isValid: (target: unknown) => isTargetTypeClass(target, isNoRestTypeClass),
         construct: (restTypeClass: NoRestTypeClass) => {
-            const nestedSourceInfo = makeEmptySourceInfoMap();
-            const rest = assignMultiClass(restTypeClass.getValue(), [
+            const value = assignMultiClass(restTypeClass.getValue(), [
                 {
                     isValid: (target: unknown): target is string => typeof target === 'string',
-                    construct: (value: string) => {
-                        nestedSourceInfo['string'] = value;
-                        return value;
-                    },
+                    construct: (value: string) => value,
                 },
                 makeErrorAssignRule(errorInfo),
             ]);
-            sourceInfo[restTypeClass.getType()] = nestedSourceInfo;
-            return rest;
+            slot(makeSourceNode(restTypeClass));
+            return { type: restTypeClass.getType(), value };
         },
     };
 };
+
+export type SetCreatorRestType = {
+    type: string;
+    value: ValueRuleValue<BaseExpressionType>[];
+};
+
+export const isSetCreatorRestType = typia.createIs<SetCreatorRestType>();
 
 export const makeSetCreatorRestRule = (
-    sourceInfo: SourceInfoMap,
+    slot: SourceSlot,
     errorInfo: ErrorInfo[],
-): AssignForValueRule<SetCreatorRestTypeClass, ValueRuleValue<unknown>> => {
+): AssignForValueRule<SetCreatorRestTypeClass, SetCreatorRestType> => {
     return {
-        isValid: (target: unknown) => isTargetTypeClass(target, isSetCreatorRestType),
+        isValid: (target: unknown) => isTargetTypeClass(target, isSetCreatorRestTypeClass),
         construct: (restTypeClass: SetCreatorRestTypeClass) => {
-            const nestedSourceInfo = makeEmptySourceInfoMap();
-            const value = restTypeClass.getValue().forEach((v, index) => {
-                const valueSourceInfo = makeEmptySourceInfoMap();
-                const value = assignMultiClass(v, [
-                    ...makeBaseExpressionRule(valueSourceInfo, errorInfo),
-                    makeErrorAssignRule(errorInfo),
-                ]);
-                nestedSourceInfo[`${restTypeClass.getType()}_${index}`] = valueSourceInfo;
-                return value;
-            });
-            sourceInfo[restTypeClass.getType()] = nestedSourceInfo;
-            return value;
+            const node = makeSourceNode(restTypeClass);
+            const valueSource = sourceList(node, 'value');
+            const value = restTypeClass
+                .getValue()
+                .map((v, index) =>
+                    assignMultiClass(v, [
+                        ...makeBaseExpressionRule(valueSource(index), errorInfo),
+                        makeErrorAssignRule(errorInfo),
+                    ]),
+                );
+            slot(node);
+            return { type: restTypeClass.getType(), value };
         },
     };
 };
 
+export type CreatorType = {
+    type: string;
+    value: ValueRuleValue<CreatedNameType>;
+    rest: ValueRuleValue<
+        | ArrayCreatorRestType
+        | ClassCreatorRestType
+        | MapCreatorRestType
+        | NoRestType
+        | SetCreatorRestType
+    >;
+};
+
+export const isCreatorType = typia.createIs<CreatorType>();
+
 export const makeCreatorRule = (
-    sourceInfo: SourceInfoMap,
+    slot: SourceSlot,
     errorInfo: ErrorInfo[],
-): AssignForValueRule<CreatorTypeClass, ValueRuleValue<unknown>> => {
+): AssignForValueRule<CreatorTypeClass, CreatorType> => {
     return {
-        isValid: (target: unknown) => isTargetTypeClass(target, isCreatorType),
+        isValid: (target: unknown) => isTargetTypeClass(target, isCreatorTypeClass),
         construct: (restTypeClass: CreatorTypeClass) => {
-            const nestedSourceInfo = makeEmptySourceInfoMap();
-            const name = assignMultiClass(restTypeClass.getValue(), [
-                makeCreatedNameRule(nestedSourceInfo, errorInfo),
+            const node = makeSourceNode(restTypeClass);
+            const value = assignMultiClass(restTypeClass.getValue(), [
+                makeCreatedNameRule(sourceField(node, 'value'), errorInfo),
                 makeErrorAssignRule(errorInfo),
             ]);
+            const restSource = sourceField(node, 'rest');
             const rest = assignMultiClass(restTypeClass.getContent(), [
-                makeArrayCreatorRestRule(nestedSourceInfo, errorInfo),
-                makeClassCreatorRestRule(nestedSourceInfo, errorInfo),
-                makeMapCreatorRestRule(nestedSourceInfo, errorInfo),
-                makeNoRestRule(nestedSourceInfo, errorInfo),
-                makeSetCreatorRestRule(nestedSourceInfo, errorInfo),
+                makeArrayCreatorRestRule(restSource, errorInfo),
+                makeClassCreatorRestRule(restSource, errorInfo),
+                makeMapCreatorRestRule(restSource, errorInfo),
+                makeNoRestRule(restSource, errorInfo),
+                makeSetCreatorRestRule(restSource, errorInfo),
                 makeErrorAssignRule(errorInfo),
             ]);
-            sourceInfo[restTypeClass.getType()] = nestedSourceInfo;
-            return { name, rest };
+            slot(node);
+            return { type: restTypeClass.getType(), value, rest };
         },
     };
 };
+

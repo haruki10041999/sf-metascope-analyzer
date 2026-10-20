@@ -1,103 +1,214 @@
+import typia from 'typia';
+
 import {
     CreatedNameTypeClass,
     DataCategoryNameTypeClass,
     DateFieldNameTypeClass,
     FieldNameTypeClass,
-    NameListTypeClass,
-    NameTypeClass,
     QualifiedNameTypeClass,
     TypeNameTypeClass,
-    isCreatedNameType,
-    isDataCategoryNameType,
-    isDateFieldNameType,
-    isFieldNameType,
-    isQualifiedNameType,
-    isTypeNameType,
+    isCreatedNameType as isCreatedNameTypeClass,
+    isDataCategoryNameType as isDataCategoryNameTypeClass,
+    isDateFieldNameType as isDateFieldNameTypeClass,
+    isFieldNameType as isFieldNameTypeClass,
+    isQualifiedNameType as isQualifiedNameTypeClass,
+    isTypeNameType as isTypeNameTypeClass,
 } from '../../apex_IR';
 
 import {
     ErrorInfo,
-    SourceInfoMap,
+    SourceSlot,
     AssignForValueRule,
     ValueRuleValue,
-    makeEmptySourceInfoMap,
     isTargetTypeClass,
+    assignMultiClass,
+    makeErrorAssignRule,
+    makeSourceNode,
+    sourceField,
+    sourceList,
 } from './commons';
+import { makeTypeArgumentsRule, TypeArgumentsType } from './arguments';
+import { makeIdRule, makeSoqlIdRule, IdType, SoqlIdType } from './id';
+import { makeIdCreatedNamePairRule, IdCreatedNamePairType } from './pair';
+
+export type CreatedNameType = {
+    type: string;
+    value: ValueRuleValue<IdCreatedNamePairType>[];
+};
+
+export const isCreatedNameType = typia.createIs<CreatedNameType>();
 
 export const makeCreatedNameRule = (
-    sourceInfo: SourceInfoMap,
+    slot: SourceSlot,
     errorInfo: ErrorInfo[],
-): AssignForValueRule<CreatedNameTypeClass, ValueRuleValue<unknown>> => {
+): AssignForValueRule<CreatedNameTypeClass, CreatedNameType> => {
     return {
-        isValid: (target: unknown) => isTargetTypeClass(target, isCreatedNameType),
-        construct: (_typeClass: CreatedNameTypeClass) => {
-            const nestedSourceInfo = makeEmptySourceInfoMap();
-            throw new Error('Not implemented');
+        isValid: (target: unknown) => isTargetTypeClass(target, isCreatedNameTypeClass),
+        construct: (nameTypeClass: CreatedNameTypeClass) => {
+            const node = makeSourceNode(nameTypeClass);
+            const valueSource = sourceList(node, 'value');
+            const value = nameTypeClass
+                .getValue()
+                .map((v, index) =>
+                    assignMultiClass(v, [
+                        makeIdCreatedNamePairRule(valueSource(index), errorInfo),
+                        makeErrorAssignRule(errorInfo),
+                    ]),
+                );
+            slot(node);
+            return { type: nameTypeClass.getType(), value };
         },
     };
 };
+
+export type DataCategoryNameType = {
+    type: string;
+    value: ValueRuleValue<unknown>[];
+};
+
+export const isDataCategoryNameType = typia.createIs<DataCategoryNameType>();
 
 export const makeDataCategoryNameRule = (
-    sourceInfo: SourceInfoMap,
+    slot: SourceSlot,
     errorInfo: ErrorInfo[],
-): AssignForValueRule<DataCategoryNameTypeClass, ValueRuleValue<unknown>> => {
+): AssignForValueRule<DataCategoryNameTypeClass, DataCategoryNameType> => {
     return {
-        isValid: (target: unknown) => isTargetTypeClass(target, isDataCategoryNameType),
-        construct: (_typeClass: DataCategoryNameTypeClass) => {
-            const nestedSourceInfo = makeEmptySourceInfoMap();
-            throw new Error('Not implemented');
+        isValid: (target: unknown) => isTargetTypeClass(target, isDataCategoryNameTypeClass),
+        construct: (nameTypeClass: DataCategoryNameTypeClass) => {
+            const node = makeSourceNode(nameTypeClass);
+            const valueSource = sourceList(node, 'value');
+            const value = nameTypeClass
+                .getValue()
+                .map((v, index) =>
+                    assignMultiClass(v, [
+                        makeSoqlIdRule(valueSource(index), errorInfo),
+                        makeErrorAssignRule(errorInfo),
+                    ]),
+                );
+            slot(node);
+            return { type: nameTypeClass.getType(), value };
         },
     };
 };
+
+export type DateFieldNameType = {
+    type: string;
+    value: ValueRuleValue<FieldNameType>;
+    isConvertTimeZone: boolean;
+};
+
+export const isDateFieldNameType = typia.createIs<DateFieldNameType>();
 
 export const makeDateFieldNameRule = (
-    sourceInfo: SourceInfoMap,
+    slot: SourceSlot,
     errorInfo: ErrorInfo[],
-): AssignForValueRule<DateFieldNameTypeClass, ValueRuleValue<unknown>> => {
+): AssignForValueRule<DateFieldNameTypeClass, DateFieldNameType> => {
     return {
-        isValid: (target: unknown) => isTargetTypeClass(target, isDateFieldNameType),
-        construct: (_typeClass: DateFieldNameTypeClass) => {
-            const nestedSourceInfo = makeEmptySourceInfoMap();
-            throw new Error('Not implemented');
+        isValid: (target: unknown) => isTargetTypeClass(target, isDateFieldNameTypeClass),
+        construct: (nameTypeClass: DateFieldNameTypeClass) => {
+            const node = makeSourceNode(nameTypeClass);
+            const value = assignMultiClass(nameTypeClass.getValue(), [
+                makeFieldNameRule(sourceField(node, 'value'), errorInfo),
+                makeErrorAssignRule(errorInfo),
+            ]);
+            const isConvertTimeZone = nameTypeClass.getConvertTimeZone();
+            slot(node);
+            return { type: nameTypeClass.getType(), value, isConvertTimeZone };
         },
     };
 };
+
+export type FieldNameType = {
+    type: string;
+    value: ValueRuleValue<SoqlIdType>[];
+};
+
+export const isFieldNameType = typia.createIs<FieldNameType>();
 
 export const makeFieldNameRule = (
-    sourceInfo: SourceInfoMap,
+    slot: SourceSlot,
     errorInfo: ErrorInfo[],
-): AssignForValueRule<FieldNameTypeClass, ValueRuleValue<unknown>> => {
+): AssignForValueRule<FieldNameTypeClass, FieldNameType> => {
     return {
-        isValid: (target: unknown) => isTargetTypeClass(target, isFieldNameType),
-        construct: (_typeClass: FieldNameTypeClass) => {
-            const nestedSourceInfo = makeEmptySourceInfoMap();
-            throw new Error('Not implemented');
+        isValid: (target: unknown) => isTargetTypeClass(target, isFieldNameTypeClass),
+        construct: (nameTypeClass: FieldNameTypeClass) => {
+            const node = makeSourceNode(nameTypeClass);
+            const valueSource = sourceList(node, 'value');
+            const value = nameTypeClass
+                .getValue()
+                .map((v, index) =>
+                    assignMultiClass(v, [
+                        makeSoqlIdRule(valueSource(index), errorInfo),
+                        makeErrorAssignRule(errorInfo),
+                    ]),
+                );
+            slot(node);
+            return { type: nameTypeClass.getType(), value };
         },
     };
 };
+
+export type QualifiedNameType = {
+    type: string;
+    value: ValueRuleValue<IdType>[];
+};
+
+export const isQualifiedNameType = typia.createIs<QualifiedNameType>();
 
 export const makeQualifiedNameRule = (
-    sourceInfo: SourceInfoMap,
+    slot: SourceSlot,
     errorInfo: ErrorInfo[],
-): AssignForValueRule<QualifiedNameTypeClass, ValueRuleValue<unknown>> => {
+): AssignForValueRule<QualifiedNameTypeClass, QualifiedNameType> => {
     return {
-        isValid: (target: unknown) => isTargetTypeClass(target, isQualifiedNameType),
-        construct: (_typeClass: QualifiedNameTypeClass) => {
-            const nestedSourceInfo = makeEmptySourceInfoMap();
-            throw new Error('Not implemented');
+        isValid: (target: unknown) => isTargetTypeClass(target, isQualifiedNameTypeClass),
+        construct: (nameTypeClass: QualifiedNameTypeClass) => {
+            const node = makeSourceNode(nameTypeClass);
+            const valueSource = sourceList(node, 'value');
+            const value = nameTypeClass
+                .getValue()
+                .map((v, index) =>
+                    assignMultiClass(v, [
+                        makeIdRule(valueSource(index)),
+                        makeErrorAssignRule(errorInfo),
+                    ]),
+                );
+            slot(node);
+            return { type: nameTypeClass.getType(), value };
         },
     };
 };
 
+export type TypeNameType = {
+    type: string;
+    value: ValueRuleValue<string | IdType>;
+    generic: ValueRuleValue<TypeArgumentsType>;
+};
+
+export const isTypeNameType = typia.createIs<TypeNameType>();
+
 export const makeTypeNameRule = (
-    sourceInfo: SourceInfoMap,
+    slot: SourceSlot,
     errorInfo: ErrorInfo[],
-): AssignForValueRule<TypeNameTypeClass, ValueRuleValue<unknown>> => {
+): AssignForValueRule<TypeNameTypeClass, TypeNameType> => {
     return {
-        isValid: (target: unknown) => isTargetTypeClass(target, isTypeNameType),
-        construct: (_typeClass: TypeNameTypeClass) => {
-            const nestedSourceInfo = makeEmptySourceInfoMap();
-            throw new Error('Not implemented');
+        isValid: (target: unknown) => isTargetTypeClass(target, isTypeNameTypeClass),
+        construct: (nameTypeClass: TypeNameTypeClass) => {
+            const node = makeSourceNode(nameTypeClass);
+            const value = assignMultiClass(nameTypeClass.getValue(), [
+                {
+                    isValid: (target: unknown): target is string => typeof target === 'string',
+                    construct: (value: string) => value,
+                },
+                makeIdRule(sourceField(node, 'value')),
+                makeErrorAssignRule(errorInfo),
+            ]);
+            const generic = assignMultiClass(nameTypeClass.getGeneric(), [
+                makeTypeArgumentsRule(sourceField(node, 'generic'), errorInfo),
+                makeErrorAssignRule(errorInfo),
+            ]);
+            slot(node);
+            return { type: nameTypeClass.getType(), value, generic };
         },
     };
 };
+

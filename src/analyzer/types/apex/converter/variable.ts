@@ -1,86 +1,116 @@
+import typia from 'typia';
+
 import {
     ArrayInitializerTypeClass,
     VariableDeclaratorsTypeClass,
     VariableDeclaratorTypeClass,
-    VariableListTypeClass,
-    VariableTypeClass,
-    isArrayInitializerType,
-    isVariableDeclaratorsType,
-    isVariableDeclaratorType,
+    isArrayInitializerType as isArrayInitializerTypeClass,
+    isVariableDeclaratorsType as isVariableDeclaratorsTypeClass,
+    isVariableDeclaratorType as isVariableDeclaratorTypeClass,
 } from '../../apex_IR';
 
 import {
     ErrorInfo,
-    SourceInfoMap,
+    SourceSlot,
     AssignForValueRule,
     ValueRuleValue,
-    makeEmptySourceInfoMap,
     isTargetTypeClass,
     assignMultiClass,
     makeErrorAssignRule,
+    makeSourceNode,
+    sourceField,
+    sourceList,
 } from './commons';
-import { makeBaseExpressionRule } from './expression';
-import { makeIdRule } from './id';
+import { makeBaseExpressionRule, BaseExpressionType } from './expression';
+import { makeIdRule, IdType } from './id';
+
+export type ArrayInitializerType = {
+    type: string;
+    value: ValueRuleValue<BaseExpressionType>[];
+};
+
+export const isArrayInitializerType = typia.createIs<ArrayInitializerType>();
 
 export const makeArrayInitializerRule = (
-    sourceInfo: SourceInfoMap,
+    slot: SourceSlot,
     errorInfo: ErrorInfo[],
-): AssignForValueRule<ArrayInitializerTypeClass, ValueRuleValue<unknown>> => {
+): AssignForValueRule<ArrayInitializerTypeClass, ArrayInitializerType> => {
     return {
-        isValid: (target: unknown) => isTargetTypeClass(target, isArrayInitializerType),
+        isValid: (target: unknown) => isTargetTypeClass(target, isArrayInitializerTypeClass),
         construct: (variableTypeClass: ArrayInitializerTypeClass) => {
-            const variable = variableTypeClass.getValue().map((v, index) => {
-                const nestedSourceInfo = makeEmptySourceInfoMap();
-                const value = assignMultiClass(v, [
-                    ...makeBaseExpressionRule(nestedSourceInfo, errorInfo),
-                    makeErrorAssignRule(errorInfo),
-                ]);
-                sourceInfo[`${variableTypeClass.getType()}_${index}`] = nestedSourceInfo;
-                return value;
-            });
-            return variable;
+            const node = makeSourceNode(variableTypeClass);
+            const valueSource = sourceList(node, 'value');
+            const value = variableTypeClass
+                .getValue()
+                .map((v, index) =>
+                    assignMultiClass(v, [
+                        ...makeBaseExpressionRule(valueSource(index), errorInfo),
+                        makeErrorAssignRule(errorInfo),
+                    ]),
+                );
+            slot(node);
+            return { type: variableTypeClass.getType(), value };
         },
     };
 };
+
+export type VariableDeclaratorsType = {
+    type: string;
+    value: ValueRuleValue<VariableDeclaratorType>[];
+};
+
+export const isVariableDeclaratorsType = typia.createIs<VariableDeclaratorsType>();
 
 export const makeVariableDeclaratorsRule = (
-    sourceInfo: SourceInfoMap,
+    slot: SourceSlot,
     errorInfo: ErrorInfo[],
-): AssignForValueRule<VariableDeclaratorsTypeClass, ValueRuleValue<unknown>> => {
+): AssignForValueRule<VariableDeclaratorsTypeClass, VariableDeclaratorsType> => {
     return {
-        isValid: (target: unknown) => isTargetTypeClass(target, isVariableDeclaratorsType),
+        isValid: (target: unknown) => isTargetTypeClass(target, isVariableDeclaratorsTypeClass),
         construct: (variableTypeClass: VariableDeclaratorsTypeClass) => {
-            const variable = variableTypeClass.getValue().map((v, index) => {
-                const nestedSourceInfo = makeEmptySourceInfoMap();
-                const value = assignMultiClass(v, [
-                    makeVariableDeclaratorRule(nestedSourceInfo, errorInfo),
-                    makeErrorAssignRule(errorInfo),
-                ]);
-                sourceInfo[`${variableTypeClass.getType()}_${index}`] = nestedSourceInfo;
-                return value;
-            });
-            return variable;
+            const node = makeSourceNode(variableTypeClass);
+            const valueSource = sourceList(node, 'value');
+            const value = variableTypeClass
+                .getValue()
+                .map((v, index) =>
+                    assignMultiClass(v, [
+                        makeVariableDeclaratorRule(valueSource(index), errorInfo),
+                        makeErrorAssignRule(errorInfo),
+                    ]),
+                );
+            slot(node);
+            return { type: variableTypeClass.getType(), value };
         },
     };
 };
 
+export type VariableDeclaratorType = {
+    type: string;
+    value: ValueRuleValue<IdType>;
+    init: ValueRuleValue<BaseExpressionType>;
+};
+
+export const isVariableDeclaratorType = typia.createIs<VariableDeclaratorType>();
+
 export const makeVariableDeclaratorRule = (
-    sourceInfo: SourceInfoMap,
+    slot: SourceSlot,
     errorInfo: ErrorInfo[],
-): AssignForValueRule<VariableDeclaratorTypeClass, ValueRuleValue<unknown>> => {
+): AssignForValueRule<VariableDeclaratorTypeClass, VariableDeclaratorType> => {
     return {
-        isValid: (target: unknown) => isTargetTypeClass(target, isVariableDeclaratorType),
+        isValid: (target: unknown) => isTargetTypeClass(target, isVariableDeclaratorTypeClass),
         construct: (variableTypeClass: VariableDeclaratorTypeClass) => {
-            const nestedSourceInfo = makeEmptySourceInfoMap();
-            const variant = assignMultiClass(variableTypeClass.getValue(), [
-                makeIdRule(nestedSourceInfo),
+            const node = makeSourceNode(variableTypeClass);
+            const value = assignMultiClass(variableTypeClass.getValue(), [
+                makeIdRule(sourceField(node, 'value')),
                 makeErrorAssignRule(errorInfo),
             ]);
             const init = assignMultiClass(variableTypeClass.getContent(), [
-                ...makeBaseExpressionRule(nestedSourceInfo, errorInfo),
+                ...makeBaseExpressionRule(sourceField(node, 'init'), errorInfo),
                 makeErrorAssignRule(errorInfo),
             ]);
-            sourceInfo[variableTypeClass.getType()] = nestedSourceInfo;
+            slot(node);
+            return { type: variableTypeClass.getType(), value, init };
         },
     };
 };
+

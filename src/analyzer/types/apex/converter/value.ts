@@ -1,3 +1,5 @@
+import typia from 'typia';
+
 import {
     CoordinateValueTypeClass,
     ElementValueTypeClass,
@@ -7,138 +9,201 @@ import {
     ValueTypeClass,
     WhenLiteralTypeClass,
     WhenValueTypeClass,
-    isCoordinateValueType,
-    isElementValueType,
+    isCoordinateValueType as isCoordinateValueTypeClass,
+    isElementValueType as isElementValueTypeClass,
     isErrorType,
-    isLocationValueType,
+    isLocationValueType as isLocationValueTypeClass,
     isNormalValueType,
     isWhenLiteralType,
-    isWhenValueType,
+    isWhenValueType as isWhenValueTypeClass,
 } from '../../apex_IR';
 
 import {
     ErrorInfo,
-    SourceInfoMap,
+    SourceSlot,
     AssignForValueRule,
     ValueRuleValue,
-    makeEmptySourceInfoMap,
     isTargetTypeClass,
     assignMultiClass,
     makeErrorAssignRule,
-    makeSourceInfo,
+    makeSourceNode,
+    sourceField,
+    sourceList,
 } from './commons';
-import { makeBoundExpressionRule } from './expression';
-import { makeIdRule } from './id';
-import { makeValueListRule } from './list';
+import { makeBoundExpressionRule, BoundExpressionType } from './expression';
+import { makeIdRule, IdType } from './id';
+import { makeValueListRule, ValueListType } from './list';
 import {
     makeLiteralRule,
-    makeSignedIntegerRule,
     makeSignedNumberRule,
     makeWhenLiteralRule,
+    LiteralType,
+    SignedNumberType,
+    SignedIntegerType,
+    WhenLiteralType,
 } from './literal';
-import { makeFieldNameRule } from './name';
-import { makeDateFormulaRule, makeSubQueryRule } from './query';
+import { makeFieldNameRule, FieldNameType } from './name';
+import { makeDateFormulaRule, makeSubQueryRule, DateFormulaType, SubQueryType } from './query';
+import { makeTypeRefRule, TypeRefType } from './type';
+
+export type CoordinateValueType = {
+    type: string;
+    value: ValueRuleValue<SignedNumberType | BoundExpressionType>;
+};
+
+export const isCoordinateValueType = typia.createIs<CoordinateValueType>();
 
 export const makeCoordinateValueRule = (
-    sourceInfo: SourceInfoMap,
+    slot: SourceSlot,
     errorInfo: ErrorInfo[],
-): AssignForValueRule<CoordinateValueTypeClass, ValueRuleValue<unknown>> => {
+): AssignForValueRule<CoordinateValueTypeClass, CoordinateValueType> => {
     return {
-        isValid: (target: unknown) => isTargetTypeClass(target, isCoordinateValueType),
+        isValid: (target: unknown) => isTargetTypeClass(target, isCoordinateValueTypeClass),
         construct: (valueTypeClass: CoordinateValueTypeClass) => {
-            const nestedSourceInfo = makeEmptySourceInfoMap();
+            const node = makeSourceNode(valueTypeClass);
+            const valueSource = sourceField(node, 'value');
             const value = assignMultiClass(valueTypeClass.getValue(), [
-                makeSignedIntegerRule(nestedSourceInfo, errorInfo),
-                makeSignedNumberRule(nestedSourceInfo, errorInfo),
+                makeSignedNumberRule(valueSource, errorInfo),
+                makeBoundExpressionRule(valueSource, errorInfo),
                 makeErrorAssignRule(errorInfo),
             ]);
-            sourceInfo[valueTypeClass.getType()] = sourceInfo;
-            return value;
+            slot(node);
+            return { type: valueTypeClass.getType(), value };
         },
     };
 };
+
+export type ElementValueType = {
+    type: string;
+    value: ValueRuleValue<LiteralType>;
+};
+
+export const isElementValueType = typia.createIs<ElementValueType>();
 
 export const makeElementValueRule = (
-    sourceInfo: SourceInfoMap,
+    slot: SourceSlot,
     errorInfo: ErrorInfo[],
-): AssignForValueRule<ElementValueTypeClass, ValueRuleValue<unknown>> => {
+): AssignForValueRule<ElementValueTypeClass, ElementValueType> => {
     return {
-        isValid: (target: unknown) => isTargetTypeClass(target, isElementValueType),
+        isValid: (target: unknown) => isTargetTypeClass(target, isElementValueTypeClass),
         construct: (valueTypeClass: ElementValueTypeClass) => {
-            const nestedSourceInfo = makeEmptySourceInfoMap();
+            const node = makeSourceNode(valueTypeClass);
+            const valueSource = sourceField(node, 'value');
             const value = assignMultiClass(valueTypeClass.getValue(), [
-                makeLiteralRule(nestedSourceInfo, errorInfo),
+                makeLiteralRule(valueSource, errorInfo),
                 makeErrorAssignRule(errorInfo),
             ]);
-            sourceInfo[valueTypeClass.getType()] = sourceInfo;
-            return value;
+            slot(node);
+            return { type: valueTypeClass.getType(), value };
         },
     };
 };
+
+export type LocationValueType = {
+    type: string;
+    value: ValueRuleValue<FieldNameType | BoundExpressionType>;
+    coordinates: ValueRuleValue<ValueRuleValue<CoordinateValueType>[]> | null;
+};
+
+export const isLocationValueType = typia.createIs<LocationValueType>();
 
 export const makeLocationValueRule = (
-    sourceInfo: SourceInfoMap,
+    slot: SourceSlot,
     errorInfo: ErrorInfo[],
-): AssignForValueRule<LocationValueTypeClass, ValueRuleValue<unknown>> => {
+): AssignForValueRule<LocationValueTypeClass, LocationValueType> => {
     return {
-        isValid: (target: unknown) => isTargetTypeClass(target, isLocationValueType),
+        isValid: (target: unknown) => isTargetTypeClass(target, isLocationValueTypeClass),
         construct: (valueTypeClass: LocationValueTypeClass) => {
-            const nestedSourceInfo = makeEmptySourceInfoMap();
+            const node = makeSourceNode(valueTypeClass);
+            const valueSource = sourceField(node, 'value');
             const value = assignMultiClass(valueTypeClass.getValue(), [
-                makeFieldNameRule(nestedSourceInfo, errorInfo),
-                makeBoundExpressionRule(nestedSourceInfo, errorInfo),
+                makeFieldNameRule(valueSource, errorInfo),
+                makeBoundExpressionRule(valueSource, errorInfo),
                 makeErrorAssignRule(errorInfo),
             ]);
-            sourceInfo[valueTypeClass.getType()] = sourceInfo;
-            return value;
+            const coordinatesTypeClass = valueTypeClass.getCoordinates();
+            let coordinates: ValueRuleValue<ValueRuleValue<CoordinateValueType>[]> | null = null;
+            if (coordinatesTypeClass) {
+                const coordinatesSource = sourceList(node, 'coordinates');
+                coordinates = coordinatesTypeClass.map((v, index) =>
+                    assignMultiClass(v, [
+                        makeCoordinateValueRule(coordinatesSource(index), errorInfo),
+                        makeErrorAssignRule(errorInfo),
+                    ]),
+                );
+            } else {
+                sourceField(node, 'coordinates');
+            }
+            slot(node);
+            return { type: valueTypeClass.getType(), value, coordinates };
         },
     };
 };
 
+export type ValueType = {
+    type: string;
+    value: ValueRuleValue<
+        | string
+        | SignedNumberType
+        | DateFormulaType
+        | SubQueryType
+        | ValueListType
+        | BoundExpressionType
+    >;
+    valueType: string;
+};
+
+export const isValueType = typia.createIs<ValueType>();
+
 export const makeValueRule = (
-    sourceInfo: SourceInfoMap,
+    slot: SourceSlot,
     errorInfo: ErrorInfo[],
-): AssignForValueRule<NormalValueTypeClass, ValueRuleValue<unknown>> => {
+): AssignForValueRule<NormalValueTypeClass, ValueType> => {
     return {
         isValid: (target: unknown) => isTargetTypeClass(target, isNormalValueType),
         construct: (valueTypeClass: NormalValueTypeClass) => {
-            const nestedSourceInfo = makeEmptySourceInfoMap();
+            const node = makeSourceNode(valueTypeClass);
+            const valueSource = sourceField(node, 'value');
             const value = assignMultiClass(valueTypeClass.getValue(), [
                 {
                     isValid: (target: unknown): target is string => typeof target === 'string',
-                    construct: (value: string) => {
-                        nestedSourceInfo['string'] = value;
-                        return value;
-                    },
+                    construct: (value: string) => value,
                 },
-                makeSignedNumberRule(nestedSourceInfo, errorInfo),
-                makeDateFormulaRule(nestedSourceInfo, errorInfo),
-                makeSubQueryRule(nestedSourceInfo, errorInfo),
-                makeValueListRule(nestedSourceInfo, errorInfo),
-                makeBoundExpressionRule(nestedSourceInfo, errorInfo),
+                makeSignedNumberRule(valueSource, errorInfo),
+                makeDateFormulaRule(valueSource, errorInfo),
+                makeSubQueryRule(valueSource, errorInfo),
+                makeValueListRule(valueSource, errorInfo),
+                makeBoundExpressionRule(valueSource, errorInfo),
                 makeErrorAssignRule(errorInfo),
             ]);
-            sourceInfo[valueTypeClass.getType()] = sourceInfo;
-            return value;
+            const valueType = valueTypeClass.getValueType();
+            slot(node);
+            return { type: valueTypeClass.getType(), value, valueType };
         },
     };
 };
 
+export type WhenValueType = {
+    type: string;
+    value: ValueRuleValue<string | IdType | ValueRuleValue<WhenLiteralType>[]>;
+    valueType: ValueRuleValue<TypeRefType>;
+};
+
+export const isWhenValueType = typia.createIs<WhenValueType>();
+
 export const makeWhenValueRule = (
-    sourceInfo: SourceInfoMap,
+    slot: SourceSlot,
     errorInfo: ErrorInfo[],
-): AssignForValueRule<WhenValueTypeClass, ValueRuleValue<unknown>> => {
+): AssignForValueRule<WhenValueTypeClass, WhenValueType> => {
     return {
-        isValid: (target: unknown) => isTargetTypeClass(target, isWhenValueType),
+        isValid: (target: unknown) => isTargetTypeClass(target, isWhenValueTypeClass),
         construct: (valueTypeClass: WhenValueTypeClass) => {
-            const nestedSourceInfo = makeEmptySourceInfoMap();
+            const node = makeSourceNode(valueTypeClass);
+            const valueSource = sourceField(node, 'value');
             const value = assignMultiClass(valueTypeClass.getValue(), [
                 {
                     isValid: (target: unknown): target is string => typeof target === 'string',
-                    construct: (value: string) => {
-                        nestedSourceInfo['string'] = value;
-                        return value;
-                    },
+                    construct: (value: string) => value,
                 },
                 {
                     isValid: (
@@ -151,24 +216,25 @@ export const makeWhenValueRule = (
                                 isTargetTypeClass(t, isErrorType),
                         ),
                     construct: (values: (WhenLiteralTypeClass | ErrorTypeClass)[]) => {
-                        const value = values.forEach((v, index) => {
-                            const valueSourceInfo = makeEmptySourceInfoMap();
-                            const value = assignMultiClass(v, [
-                                makeWhenLiteralRule(valueSourceInfo, errorInfo),
+                        const listSource = sourceList(node, 'value');
+                        return values.map((v, index) =>
+                            assignMultiClass(v, [
+                                makeWhenLiteralRule(listSource(index), errorInfo),
                                 makeErrorAssignRule(errorInfo),
-                            ]);
-                            nestedSourceInfo[`${valueTypeClass.getType()}_${index}`] =
-                                valueSourceInfo;
-                            return value;
-                        });
-                        return value;
+                            ]),
+                        );
                     },
                 },
-                makeIdRule(nestedSourceInfo),
+                makeIdRule(valueSource),
                 makeErrorAssignRule(errorInfo),
             ]);
-            sourceInfo[valueTypeClass.getType()] = sourceInfo;
-            return value;
+            const valueType = assignMultiClass(valueTypeClass.getValueType(), [
+                makeTypeRefRule(sourceField(node, 'valueType'), errorInfo),
+                makeErrorAssignRule(errorInfo),
+            ]);
+            slot(node);
+            return { type: valueTypeClass.getType(), value, valueType };
         },
     };
 };
+
