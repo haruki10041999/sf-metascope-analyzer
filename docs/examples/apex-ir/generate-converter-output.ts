@@ -12,6 +12,7 @@ import {
 } from '../../../src/analyzer/types/apex/converter/unit';
 import {
     assignMultiClass,
+    finalizeSourceTree,
     ErrorInfo,
     SourceNode,
     SourceSlot,
@@ -33,18 +34,19 @@ export const parseConverterSample = (
     const { parser } = ApexParserFactory.createLexerAndParser(source, syntaxErrors);
     const unit = new UnitVisitor().visit(rule(parser));
     const conversionErrors: ErrorInfo[] = [];
-    let sourceTree: SourceNode | null = null;
+    const sourceTree: { root: SourceNode | null } = { root: null };
     const slot: SourceSlot = (node) => {
-        sourceTree = node;
+        sourceTree.root = node;
     };
     const converted = assignMultiClass(unit, [
         makeCompilationUnitRule(slot, conversionErrors),
         makeTriggerUnitRule(slot, conversionErrors),
         makeAnonymousUnitRule(slot, conversionErrors),
     ]);
-    if (converted === null || sourceTree === null) {
+    if (converted === null || sourceTree.root === null) {
         throw new Error(`Unsupported unit type in ${file}: ${unit.getType()}`);
     }
+    finalizeSourceTree(sourceTree.root, converted, syntaxErrors.diagnostics);
 
     const sourceHash = createHash('sha256').update(source).digest('hex');
     const baseName = file.replace(/\.[^.]+$/, '');
@@ -62,13 +64,12 @@ export const parseConverterSample = (
     const sourceResult = {
         file,
         sourceHash,
-        sourceText: source,
         syntaxErrors: syntaxErrors.diagnostics,
         conversionErrors: conversionErrors.map((error, index) => ({
             ...error,
             index: index + 1,
         })),
-        source: sourceTree,
+        source: sourceTree.root,
     };
     return { convertedResult, sourceResult };
 };

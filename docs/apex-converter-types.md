@@ -275,12 +275,16 @@ export const isSoqlLiteralType = typia.createIs<SoqlLiteralType>();
 
 ## ソース位置情報（SourceNode）
 
-各 rule は変換結果とは別に、ソース位置の木 `SourceNode` を記録します。木の形は**変換結果と同じ**にしてあり、出力値と同じパスで位置をたどれます。
+各 rule は変換結果とは別に、ソース位置の木 `SourceNode` を記録します。子を記録する属性名と配列 index は変換結果と対応します。変換完了後に `finalizeSourceTree()` で整理し、**context は末端だけに保存**します。
 
 ```ts
 type SourceNode = {
     type: string | null; // IR の型名。IR 型を持たない中間要素（if の分岐など）は null
-    span: SourceInfo | null; // そのノード自身の位置
+    span: {
+        start: SourcePosition;
+        end: SourcePosition;
+        context?: string; // 末端のみ。分解できた親では省略する
+    } | null;
     fields: { [field: string]: SourceNode | (SourceNode | null)[] | null };
 };
 ```
@@ -290,6 +294,10 @@ type SourceNode = {
 - rule は `SourceInfoMap` ではなく書き込み先の `SourceSlot` を受け取り、自分のノードを 1 回だけ書き込みます。
 - 親は子に渡す書き込み先を `sourceField(node, 'block')`（単一）または `sourceList(node, 'modifier')(index)`（配列）で作ります。キーは作成した時点で `null` / `[]` として確保されるため、子がエラーや欠落の場合も形が崩れません。
 - 文字列などのプリミティブ値は位置を持たないので記録しません。値は変換結果側にあります。
+- 子へ分解できた親は座標だけを保持し、context は省略します。子がないノード（空配列や `null` スロットだけの場合を含む）は末端として context を保持します。
+- 直下の属性・配列要素に変換エラーが出たノードは、**そのノードの範囲で分解を打ち切り**ます。子の source 情報を除き、自分の座標・context を末端として残します。他の枝は通常どおり分解します。
+- 位置を持たない中間グループでエラーになった場合は、位置を持つ親を末端にします。構文エラーは診断位置を含む子へたどり、それ以上たどれない範囲で打ち切ります。回復後の木の外にある診断位置はルートで保持します。
+- この打ち切りは source の分解に対するものです。変換結果やエラーの一覧は変えません。
 - 呼び出し元は、ルートの書き込み先を用意して受け取ります。
 
 ```ts
@@ -298,16 +306,19 @@ const unit = assignMultiClass(unitTypeClass, [
     makeCompilationUnitRule((node) => (source = node), errorInfo),
     makeErrorAssignRule(errorInfo),
 ]);
+if (source && unit) {
+    finalizeSourceTree(source, unit, syntaxErrors.diagnostics);
+}
 ```
 
 ### 変換結果と source 情報の別ファイル出力
 
 サンプル生成は現行の `makeXxxUnitRule` を使い、1 回の parse / convert から次の 2 ファイルを保存します。
 
-| 保存先                                                    | 内容                                                                                                          |
-| --------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------- |
-| `docs/examples/apex-ir/converter-output/*.converted.json` | `converted`、入力ファイル名、`sourceHash`、`sourceFile`、構文エラー件数、変換エラーのコードと index           |
-| `docs/examples/apex-ir/source-output/*.source.json`       | `source`（SourceNode の木）、原文 `sourceText`、構文エラー詳細、変換エラー詳細、入力ファイル名と `sourceHash` |
+| 保存先                                                    | 内容                                                                                                       |
+| --------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------- |
+| `docs/examples/apex-ir/converter-output/*.converted.json` | `converted`、入力ファイル名、`sourceHash`、`sourceFile`、構文エラー件数、変換エラーのコードと index        |
+| `docs/examples/apex-ir/source-output/*.source.json`       | `source`（末端だけに context を保持する木）、構文エラー詳細、変換エラー詳細、入力ファイル名と `sourceHash` |
 
 実行コマンド（リポジトリルート、PowerShell）:
 
@@ -315,7 +326,7 @@ const unit = assignMultiClass(unitTypeClass, [
 npx ttsx --noCheck --project docs\examples\apex-ir\tsconfig.converter.json docs\examples\apex-ir\generate-converter-output.ts
 ```
 
-通常の解析では `*.converted.json` だけを読みます。エラーがある場合、または変換結果だけでは解析が難しい場合に、`sourceFile` を **converted ファイルを基準にした相対 URL** として解決し、source 情報を追加で読みます。ファイルを分離することで読み込みを遅延できますが、生成時の source 情報の収集は行います。
+通常の解析では `*.converted.json` だけを読みます。エラーがある場合、または変換結果だけでは解析が難しい場合に、`sourceFile` を **converted ファイルを基準にした相対 URL** として解決し、source 情報を追加で読みます。ファイルを分離することで読み込みを遅延できますが、生成時の source 情報の収集は行います。原文全体の `sourceText` は保存しません。末端以外の構文・空白・コメントを含む原文全体の復元は目的としていません。
 
 ```ts
 const result = JSON.parse(await readFile(convertedFile, 'utf8'));
@@ -330,7 +341,7 @@ if (details.file !== result.file || details.sourceHash !== result.sourceHash) {
 - `sourceHash` は入力原文（UTF-8）の SHA-256 です。古い source ファイルなど、異なる入力から生成した組み合わせを検出するために使います。
 - 正常ノードの位置は、`converted` 以下と同じ属性名・配列 index を `source.fields` でたどって取得します。プリミティブ自体に位置がない場合は、その親ノードの `span` を参照します。
 - 変換結果に含まれる `{ errorCode, index }` の `index` は **1 始まり**です。詳細は `details.conversionErrors[index - 1]` にあります。エラーノードの source スロットは `null` になることがあるため、エラーの位置・原文はこの詳細を使います。
-- parse 時の補完や読み飛ばしは `syntaxErrorCount` で検知し、詳細は `details.syntaxErrors` と `details.sourceText` で確認します。
+- parse 時の補完や読み飛ばしは `syntaxErrorCount` で検知し、詳細は `details.syntaxErrors` と、打ち切った末端の context で確認します。context は IR の `ctx.getText()` に由来するため、空白・コメントを含む完全な原文ではありません。
 - source ファイルの欠落・JSON 読み込み失敗・ハッシュ不一致はエラーとして扱い、成功した解析結果として処理しません。
 - この保存形式と読み込み方はサンプル用です。viewer・MCP など実利用側への遅延読み込みの組み込みは別途行います。
 
