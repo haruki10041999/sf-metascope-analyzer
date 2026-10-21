@@ -115,8 +115,11 @@ export const convertJson = async <T>(
     target: unknown,
     sourceObject: SourceJson[],
 ): Promise<RewriteJson<T>> => {
-    if (Array.isArray(target))
-        return target.map((item) => convertJson(item, sourceObject)) as RewriteJson<T>;
+    if (Array.isArray(target)) {
+        return (await Promise.all(
+            target.map((item) => convertJson(item, sourceObject)),
+        )) as RewriteJson<T>;
+    }
 
     if (target === null || typeof target !== 'object') {
         return target as RewriteJson<T>;
@@ -124,29 +127,31 @@ export const convertJson = async <T>(
 
     if (isCommonType(target)) {
         const { objectKey, sourceKey } = await makeHashKeys(target);
-
         const { sourceInfo, ...content } = target;
 
         registerSourceJson(sourceObject, objectKey, sourceKey, sourceInfo);
 
         return {
-            objectKey: objectKey,
-            sourceKey: sourceKey,
+            objectKey,
+            sourceKey,
             ...content,
         } as RewriteJson<T>;
     }
 
     const node = target as Record<string, unknown>;
-    return Object.fromEntries(
+
+    const entries = await Promise.all(
         Object.entries(node)
-            .filter(([_, value]) => !isSourceInfo(value))
-            .map(([key, child]) => [key, convertJson(child, sourceObject)]),
-    ) as RewriteJson<T>;
+            .filter(([, value]) => !isSourceInfo(value))
+            .map(async ([key, child]) => [key, await convertJson(child, sourceObject)] as const),
+    );
+
+    return Object.fromEntries(entries) as RewriteJson<T>;
 };
 
-export const extractErrors = <T>(target: unknown, errors: JsonType<ErrorInfo>[]): void => {
+export const searchJsonTypeAll = (target: unknown, jsonObjects: JsonType<CommonType>[]): void => {
     if (Array.isArray(target)) {
-        target.forEach((item) => extractErrors(item, errors));
+        target.forEach((item) => searchJsonTypeAll(item, jsonObjects));
         return;
     }
 
@@ -154,16 +159,22 @@ export const extractErrors = <T>(target: unknown, errors: JsonType<ErrorInfo>[])
         return;
     }
 
-    if (isJsonType(target, isErrorInfo)) {
-        errors.push(target);
-        return;
+    if (isJsonType(target, isCommonType)) {
+        jsonObjects.push(target);
     }
 
     const node = target as Record<string, unknown>;
 
     Object.values(node).forEach((child) => {
-        extractErrors(child, errors);
+        searchJsonTypeAll(child, jsonObjects);
     });
+};
+
+export const extractErrors = (target: unknown): JsonType<ErrorInfo>[] => {
+    const jsonTypes: JsonType<CommonType>[] = [];
+    searchJsonTypeAll(target, jsonTypes);
+
+    return jsonTypes.filter((object) => isJsonType(object, isErrorInfo));
 };
 
 export const findSourceInfo = (
@@ -172,20 +183,21 @@ export const findSourceInfo = (
     sourceKey: string,
 ): SourceInfo => {
     const object = sourceObject.find((object) => object.objectKey === objectKey);
-    if (object) {
-        const context = object.context;
 
-        const source = object.source.find((source) => (source.sourceKey = sourceKey));
+    if (object) {
+        const source = object.source.find((source) => source.sourceKey === sourceKey);
 
         if (source) {
+            const { sourceKey: _sourceKey, ...content } = source;
+
             return {
-                context: context,
-                ...source,
+                context: object.context,
+                ...content,
             };
         }
     }
 
-    throw new Error('sourceIno can not be found');
+    throw new Error('sourceInfo cannot be found');
 };
 
 export const outputError = <T, TOutput>(
