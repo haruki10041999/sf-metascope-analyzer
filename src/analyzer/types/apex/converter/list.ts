@@ -75,19 +75,17 @@ export type ExpressionListType = CommonType & {
 
 export const isExpressionListType = typia.createIs<ExpressionListType>();
 
-export const makeExpressionListRule = (
-    errorInfo: ErrorInfo[],
-): AssignForValueRule<ExpressionListTypeClass, ExpressionListType> => {
+export const makeExpressionListRule = (): AssignForValueRule<
+    ExpressionListTypeClass,
+    ExpressionListType
+> => {
     return {
         isValid: (target: unknown) => isTargetTypeClass(target, isExpressionListTypeClass),
         construct: (listTypeClass: ExpressionListTypeClass) => {
             const value = listTypeClass
                 .getValue()
                 .map((v) =>
-                    assignMultiClass(v, [
-                        ...makeBaseExpressionRule(errorInfo),
-                        makeErrorAssignRule(errorInfo),
-                    ]),
+                    assignMultiClass(v, [...makeBaseExpressionRule(), makeErrorAssignRule]),
                 );
             return {
                 type: listTypeClass.getType(),
@@ -104,20 +102,16 @@ export type FieldGroupByListType = CommonType & {
 
 export const isFieldGroupByListType = typia.createIs<FieldGroupByListType>();
 
-export const makeFieldGroupByListRule = (
-    errorInfo: ErrorInfo[],
-): AssignForValueRule<FieldGroupByListTypeClass, FieldGroupByListType> => {
+export const makeFieldGroupByListRule = (): AssignForValueRule<
+    FieldGroupByListTypeClass,
+    FieldGroupByListType
+> => {
     return {
         isValid: (target: unknown) => isTargetTypeClass(target, isFieldGroupByListTypeClass),
         construct: (listTypeClass: FieldGroupByListTypeClass) => {
             const value = listTypeClass
                 .getValue()
-                .map((v) =>
-                    assignMultiClass(v, [
-                        makeFieldGroupByRule(errorInfo),
-                        makeErrorAssignRule(errorInfo),
-                    ]),
-                );
+                .map((v) => assignMultiClass(v, [makeFieldGroupByRule(), makeErrorAssignRule]));
             return {
                 type: listTypeClass.getType(),
                 sourceInfo: makeSourceInfo(listTypeClass),
@@ -133,20 +127,13 @@ export type FieldListType = CommonType & {
 
 export const isFieldListType = typia.createIs<FieldListType>();
 
-export const makeFieldListRule = (
-    errorInfo: ErrorInfo[],
-): AssignForValueRule<FieldListTypeClass, FieldListType> => {
+export const makeFieldListRule = (): AssignForValueRule<FieldListTypeClass, FieldListType> => {
     return {
         isValid: (target: unknown) => isTargetTypeClass(target, isFieldListTypeClass),
         construct: (listTypeClass: FieldListTypeClass) => {
             const value = listTypeClass
                 .getValue()
-                .map((v) =>
-                    assignMultiClass(v, [
-                        makeSoslFieldRule(errorInfo),
-                        makeErrorAssignRule(errorInfo),
-                    ]),
-                );
+                .map((v) => assignMultiClass(v, [makeSoslFieldRule(), makeErrorAssignRule]));
             return {
                 type: listTypeClass.getType(),
                 sourceInfo: makeSourceInfo(listTypeClass),
@@ -162,20 +149,16 @@ export type FieldNameListType = CommonType & {
 
 export const isFieldNameListType = typia.createIs<FieldNameListType>();
 
-export const makeFieldNameListRule = (
-    errorInfo: ErrorInfo[],
-): AssignForValueRule<FieldNameListTypeClass, FieldNameListType> => {
+export const makeFieldNameListRule = (): AssignForValueRule<
+    FieldNameListTypeClass,
+    FieldNameListType
+> => {
     return {
         isValid: (target: unknown) => isTargetTypeClass(target, isFieldNameListTypeClass),
         construct: (listTypeClass: FieldNameListTypeClass) => {
             const value = listTypeClass
                 .getValue()
-                .map((v) =>
-                    assignMultiClass(v, [
-                        makeFieldNameRule(errorInfo),
-                        makeErrorAssignRule(errorInfo),
-                    ]),
-                );
+                .map((v) => assignMultiClass(v, [makeFieldNameRule(), makeErrorAssignRule]));
             return {
                 type: listTypeClass.getType(),
                 sourceInfo: makeSourceInfo(listTypeClass),
@@ -191,20 +174,16 @@ export type FieldOrderListType = CommonType & {
 
 export const isFieldOrderListType = typia.createIs<FieldOrderListType>();
 
-export const makeFieldOrderListRule = (
-    errorInfo: ErrorInfo[],
-): AssignForValueRule<FieldOrderListTypeClass, FieldOrderListType> => {
+export const makeFieldOrderListRule = (): AssignForValueRule<
+    FieldOrderListTypeClass,
+    FieldOrderListType
+> => {
     return {
         isValid: (target: unknown) => isTargetTypeClass(target, isFieldOrderListTypeClass),
         construct: (listTypeClass: FieldOrderListTypeClass) => {
             const value = listTypeClass
                 .getValue()
-                .map((v) =>
-                    assignMultiClass(v, [
-                        makeFieldOrderRule(errorInfo),
-                        makeErrorAssignRule(errorInfo),
-                    ]),
-                );
+                .map((v) => assignMultiClass(v, [makeFieldOrderRule(), makeErrorAssignRule]));
             return {
                 type: listTypeClass.getType(),
                 sourceInfo: makeSourceInfo(listTypeClass),
@@ -220,20 +199,16 @@ export type FieldSpecListType = CommonType & {
 
 export const isFieldSpecListType = typia.createIs<FieldSpecListType>();
 
-export const makeFieldSpecListRule = (
-    errorInfo: ErrorInfo[],
-): AssignForValueRule<FieldSpecListTypeClass, FieldSpecListType> => {
+export const makeFieldSpecListRule = (): AssignForValueRule<
+    FieldSpecListTypeClass,
+    FieldSpecListType
+> => {
     return {
         isValid: (target: unknown) => isTargetTypeClass(target, isFieldSpecListTypeClass),
         construct: (listTypeClass: FieldSpecListTypeClass) => {
             const value = listTypeClass
                 .getValue()
-                .map((v) =>
-                    assignMultiClass(v, [
-                        makeFieldSpecRule(errorInfo),
-                        makeErrorAssignRule(errorInfo),
-                    ]),
-                );
+                .map((v) => assignMultiClass(v, [makeFieldSpecRule(), makeErrorAssignRule]));
             return {
                 type: listTypeClass.getType(),
                 sourceInfo: makeSourceInfo(listTypeClass),
@@ -249,20 +224,16 @@ export type FormalParameterListType = CommonType & {
 
 export const isFormalParameterListType = typia.createIs<FormalParameterListType>();
 
-export const makeFormalParameterListRule = (
-    errorInfo: ErrorInfo[],
-): AssignForValueRule<FormalParameterListTypeClass, FormalParameterListType> => {
+export const makeFormalParameterListRule = (): AssignForValueRule<
+    FormalParameterListTypeClass,
+    FormalParameterListType
+> => {
     return {
         isValid: (target: unknown) => isTargetTypeClass(target, isFormalParameterListTypeClass),
         construct: (listTypeClass: FormalParameterListTypeClass) => {
             const value = listTypeClass
                 .getValue()
-                .map((v) =>
-                    assignMultiClass(v, [
-                        makeFormalParameterRule(errorInfo),
-                        makeErrorAssignRule(errorInfo),
-                    ]),
-                );
+                .map((v) => assignMultiClass(v, [makeFormalParameterRule(), makeErrorAssignRule]));
             return {
                 type: listTypeClass.getType(),
                 sourceInfo: makeSourceInfo(listTypeClass),
@@ -278,20 +249,16 @@ export type FromNameListType = CommonType & {
 
 export const isFromNameListType = typia.createIs<FromNameListType>();
 
-export const makeFromNameListRule = (
-    errorInfo: ErrorInfo[],
-): AssignForValueRule<FromNameListTypeClass, FromNameListType> => {
+export const makeFromNameListRule = (): AssignForValueRule<
+    FromNameListTypeClass,
+    FromNameListType
+> => {
     return {
         isValid: (target: unknown) => isTargetTypeClass(target, isFromNameListTypeClass),
         construct: (listTypeClass: FromNameListTypeClass) => {
             const value = listTypeClass
                 .getValue()
-                .map((v) =>
-                    assignMultiClass(v, [
-                        makeFromNameRule(errorInfo),
-                        makeErrorAssignRule(errorInfo),
-                    ]),
-                );
+                .map((v) => assignMultiClass(v, [makeFromNameRule(), makeErrorAssignRule]));
             return {
                 type: listTypeClass.getType(),
                 sourceInfo: makeSourceInfo(listTypeClass),
@@ -308,19 +275,17 @@ export type FromNameType = CommonType & {
 
 export const isFromNameType = typia.createIs<FromNameType>();
 
-export const makeFromNameRule = (
-    errorInfo: ErrorInfo[],
-): AssignForValueRule<FromNameTypeClass, FromNameType> => {
+export const makeFromNameRule = (): AssignForValueRule<FromNameTypeClass, FromNameType> => {
     return {
         isValid: (target: unknown) => isTargetTypeClass(target, isFromNameTypeClass),
         construct: (listTypeClass: FromNameTypeClass) => {
             const value = assignMultiClass(listTypeClass.getValue(), [
-                makeFieldNameRule(errorInfo),
-                makeErrorAssignRule(errorInfo),
+                makeFieldNameRule(),
+                makeErrorAssignRule,
             ]);
             const alias = assignMultiClass(listTypeClass.getAlias(), [
-                makeSoqlIdRule(errorInfo),
-                makeErrorAssignRule(errorInfo),
+                makeSoqlIdRule(),
+                makeErrorAssignRule,
                 makeNullAssignRule,
             ]);
             return {
@@ -339,17 +304,16 @@ export type NetworkListType = CommonType & {
 
 export const isNetworkListType = typia.createIs<NetworkListType>();
 
-export const makeNetworkListRule = (
-    errorInfo: ErrorInfo[],
-): AssignForValueRule<NetworkListTypeClass, NetworkListType> => {
+export const makeNetworkListRule = (): AssignForValueRule<
+    NetworkListTypeClass,
+    NetworkListType
+> => {
     return {
         isValid: (target: unknown) => isTargetTypeClass(target, isNetworkListTypeClass),
         construct: (listTypeClass: NetworkListTypeClass) => {
             const value = listTypeClass
                 .getValue()
-                .map((v) =>
-                    assignMultiClass(v, [makeStringAssignRule, makeErrorAssignRule(errorInfo)]),
-                );
+                .map((v) => assignMultiClass(v, [makeStringAssignRule, makeErrorAssignRule]));
             return {
                 type: listTypeClass.getType(),
                 sourceInfo: makeSourceInfo(listTypeClass),
@@ -365,20 +329,13 @@ export type SelectListType = CommonType & {
 
 export const isSelectListType = typia.createIs<SelectListType>();
 
-export const makeSelectListRule = (
-    errorInfo: ErrorInfo[],
-): AssignForValueRule<SelectListTypeClass, SelectListType> => {
+export const makeSelectListRule = (): AssignForValueRule<SelectListTypeClass, SelectListType> => {
     return {
         isValid: (target: unknown) => isTargetTypeClass(target, isSelectListTypeClass),
         construct: (listTypeClass: SelectListTypeClass) => {
             const value = listTypeClass
                 .getValue()
-                .map((v) =>
-                    assignMultiClass(v, [
-                        makeSelectEntryRule(errorInfo),
-                        makeErrorAssignRule(errorInfo),
-                    ]),
-                );
+                .map((v) => assignMultiClass(v, [makeSelectEntryRule(), makeErrorAssignRule]));
             return {
                 type: listTypeClass.getType(),
                 sourceInfo: makeSourceInfo(listTypeClass),
@@ -395,16 +352,14 @@ export type SoslFieldType = CommonType & {
 
 export const isSoslFieldType = typia.createIs<SoslFieldType>();
 
-export const makeSoslFieldRule = (
-    errorInfo: ErrorInfo[],
-): AssignForValueRule<SoslFieldTypeClass, SoslFieldType> => {
+export const makeSoslFieldRule = (): AssignForValueRule<SoslFieldTypeClass, SoslFieldType> => {
     return {
         isValid: (target: unknown) => isTargetTypeClass(target, isSoslFieldTypeClass),
         construct: (listTypeClass: SoslFieldTypeClass) => {
             const value = assignMultiClass(listTypeClass.getValue(), [
-                makeSoslIdRule(errorInfo),
-                makeSoqlFunctionRule(errorInfo),
-                makeErrorAssignRule(errorInfo),
+                makeSoslIdRule(),
+                makeSoqlFunctionRule(),
+                makeErrorAssignRule,
             ]);
             const func = listTypeClass.getFunc();
             return {
@@ -423,20 +378,16 @@ export type SubFieldListType = CommonType & {
 
 export const isSubFieldListType = typia.createIs<SubFieldListType>();
 
-export const makeSubFieldListRule = (
-    errorInfo: ErrorInfo[],
-): AssignForValueRule<SubFieldListTypeClass, SubFieldListType> => {
+export const makeSubFieldListRule = (): AssignForValueRule<
+    SubFieldListTypeClass,
+    SubFieldListType
+> => {
     return {
         isValid: (target: unknown) => isTargetTypeClass(target, isSubFieldListTypeClass),
         construct: (listTypeClass: SubFieldListTypeClass) => {
             const value = listTypeClass
                 .getValue()
-                .map((v) =>
-                    assignMultiClass(v, [
-                        makeSubFieldEntryRule(errorInfo),
-                        makeErrorAssignRule(errorInfo),
-                    ]),
-                );
+                .map((v) => assignMultiClass(v, [makeSubFieldEntryRule(), makeErrorAssignRule]));
             return {
                 type: listTypeClass.getType(),
                 sourceInfo: makeSourceInfo(listTypeClass),
@@ -452,20 +403,13 @@ export type TypeListType = CommonType & {
 
 export const isTypeListType = typia.createIs<TypeListType>();
 
-export const makeTypeListRule = (
-    errorInfo: ErrorInfo[],
-): AssignForValueRule<TypeListTypeClass, TypeListType> => {
+export const makeTypeListRule = (): AssignForValueRule<TypeListTypeClass, TypeListType> => {
     return {
         isValid: (target: unknown) => isTargetTypeClass(target, isTypeListTypeClass),
         construct: (listTypeClass: TypeListTypeClass) => {
             const value = listTypeClass
                 .getValue()
-                .map((v) =>
-                    assignMultiClass(v, [
-                        makeTypeRefRule(errorInfo),
-                        makeErrorAssignRule(errorInfo),
-                    ]),
-                );
+                .map((v) => assignMultiClass(v, [makeTypeRefRule(), makeErrorAssignRule]));
             return {
                 type: listTypeClass.getType(),
                 sourceInfo: makeSourceInfo(listTypeClass),
@@ -481,20 +425,13 @@ export type UpdateListType = CommonType & {
 
 export const isUpdateListType = typia.createIs<UpdateListType>();
 
-export const makeUpdateListRule = (
-    errorInfo: ErrorInfo[],
-): AssignForValueRule<UpdateListTypeClass, UpdateListType> => {
+export const makeUpdateListRule = (): AssignForValueRule<UpdateListTypeClass, UpdateListType> => {
     return {
         isValid: (target: unknown) => isTargetTypeClass(target, isUpdateListTypeClass),
         construct: (listTypeClass: UpdateListTypeClass) => {
             const value = listTypeClass
                 .getValue()
-                .map((v) =>
-                    assignMultiClass(v, [
-                        makeUpdateTypeRule(errorInfo),
-                        makeErrorAssignRule(errorInfo),
-                    ]),
-                );
+                .map((v) => assignMultiClass(v, [makeUpdateTypeRule(), makeErrorAssignRule]));
             return {
                 type: listTypeClass.getType(),
                 sourceInfo: makeSourceInfo(listTypeClass),
@@ -510,17 +447,13 @@ export type ValueListType = CommonType & {
 
 export const isValueListType = typia.createIs<ValueListType>();
 
-export const makeValueListRule = (
-    errorInfo: ErrorInfo[],
-): AssignForValueRule<ValueListTypeClass, ValueListType> => {
+export const makeValueListRule = (): AssignForValueRule<ValueListTypeClass, ValueListType> => {
     return {
         isValid: (target: unknown) => isTargetTypeClass(target, isValueListTypeClass),
         construct: (listTypeClass: ValueListTypeClass) => {
             const value = listTypeClass
                 .getValue()
-                .map((v) =>
-                    assignMultiClass(v, [makeValueRule(errorInfo), makeErrorAssignRule(errorInfo)]),
-                );
+                .map((v) => assignMultiClass(v, [makeValueRule(), makeErrorAssignRule]));
             return {
                 type: listTypeClass.getType(),
                 sourceInfo: makeSourceInfo(listTypeClass),

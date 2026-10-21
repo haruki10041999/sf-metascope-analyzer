@@ -28,19 +28,20 @@ export type DotMethodCallType = CommonType & {
 
 export const isDotMethodCallType = typia.createIs<DotMethodCallType>();
 
-export const makeDotMethodCallRule = (
-    errorInfo: ErrorInfo[],
-): AssignForValueRule<DotMethodCallTypeClass, DotMethodCallType> => {
+export const makeDotMethodCallRule = (): AssignForValueRule<
+    DotMethodCallTypeClass,
+    DotMethodCallType
+> => {
     return {
         isValid: (target: unknown) => isTargetTypeClass(target, isDotMethodCallTypeClass),
         construct: (callTypeClass: DotMethodCallTypeClass) => {
             const value = assignMultiClass(callTypeClass.getValue(), [
                 makeAnyIdRule(),
-                makeErrorAssignRule(errorInfo),
+                makeErrorAssignRule,
             ]);
             const param = assignMultiClass(callTypeClass.getParam(), [
-                makeExpressionListRule(errorInfo),
-                makeErrorAssignRule(errorInfo),
+                makeExpressionListRule(),
+                makeErrorAssignRule,
                 makeNullAssignRule,
             ]);
             return {
@@ -61,20 +62,18 @@ export type MethodCallType = CommonType & {
 
 export const isMethodCallType = typia.createIs<MethodCallType>();
 
-export const makeMethodCallRule = (
-    errorInfo: ErrorInfo[],
-): AssignForValueRule<MethodCallTypeClass, MethodCallType> => {
+export const makeMethodCallRule = (): AssignForValueRule<MethodCallTypeClass, MethodCallType> => {
     return {
         isValid: (target: unknown) => isTargetTypeClass(target, isMethodCallTypeClass),
         construct: (callTypeClass: MethodCallTypeClass) => {
             const value = assignMultiClass(callTypeClass.getValue(), [
                 makeIdRule(),
-                makeErrorAssignRule(errorInfo),
+                makeErrorAssignRule,
                 makeNullAssignRule,
             ]);
             const param = assignMultiClass(callTypeClass.getParam(), [
-                makeExpressionListRule(errorInfo),
-                makeErrorAssignRule(errorInfo),
+                makeExpressionListRule(),
+                makeErrorAssignRule,
                 makeNullAssignRule,
             ]);
             const reference = callTypeClass.getReference();

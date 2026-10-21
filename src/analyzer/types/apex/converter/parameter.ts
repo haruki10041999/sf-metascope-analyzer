@@ -32,15 +32,16 @@ export type FormalParametersType = CommonType & {
 
 export const isFormalParametersType = typia.createIs<FormalParametersType>();
 
-export const makeFormalParametersRule = (
-    errorInfo: ErrorInfo[],
-): AssignForValueRule<FormalParametersTypeClass, FormalParametersType> => {
+export const makeFormalParametersRule = (): AssignForValueRule<
+    FormalParametersTypeClass,
+    FormalParametersType
+> => {
     return {
         isValid: (target: unknown) => isTargetTypeClass(target, isFormalParametersTypeClass),
         construct: (parameterTypeClass: FormalParametersTypeClass) => {
             const value = assignMultiClass(parameterTypeClass.getValue(), [
-                makeFormalParameterListRule(errorInfo),
-                makeErrorAssignRule(errorInfo),
+                makeFormalParameterListRule(),
+                makeErrorAssignRule,
                 makeNullAssignRule,
             ]);
             return {
@@ -60,28 +61,24 @@ export type FormalParameterType = CommonType & {
 
 export const isFormalParameterType = typia.createIs<FormalParameterType>();
 
-export const makeFormalParameterRule = (
-    errorInfo: ErrorInfo[],
-): AssignForValueRule<FormalParameterTypeClass, FormalParameterType> => {
+export const makeFormalParameterRule = (): AssignForValueRule<
+    FormalParameterTypeClass,
+    FormalParameterType
+> => {
     return {
         isValid: (target: unknown) => isTargetTypeClass(target, isFormalParameterTypeClass),
         construct: (parameterTypeClass: FormalParameterTypeClass) => {
             const value = assignMultiClass(parameterTypeClass.getValue(), [
                 makeIdRule(),
-                makeErrorAssignRule(errorInfo),
+                makeErrorAssignRule,
             ]);
             const valueType = assignMultiClass(parameterTypeClass.getValueType(), [
-                makeTypeRefRule(errorInfo),
-                makeErrorAssignRule(errorInfo),
+                makeTypeRefRule(),
+                makeErrorAssignRule,
             ]);
             const modifier = parameterTypeClass
                 .getModifier()
-                .map((v) =>
-                    assignMultiClass(v, [
-                        makeModifierRule(errorInfo),
-                        makeErrorAssignRule(errorInfo),
-                    ]),
-                );
+                .map((v) => assignMultiClass(v, [makeModifierRule(), makeErrorAssignRule]));
 
             return {
                 type: parameterTypeClass.getType(),
@@ -100,15 +97,16 @@ export type SoqlFieldsParameterType = CommonType & {
 
 export const isSoqlFieldsParameterType = typia.createIs<SoqlFieldsParameterType>();
 
-export const makeSoqlFieldsParameterRule = (
-    errorInfo: ErrorInfo[],
-): AssignForValueRule<SoqlFieldsParameterTypeClass, SoqlFieldsParameterType> => {
+export const makeSoqlFieldsParameterRule = (): AssignForValueRule<
+    SoqlFieldsParameterTypeClass,
+    SoqlFieldsParameterType
+> => {
     return {
         isValid: (target: unknown) => isTargetTypeClass(target, isSoqlFieldsParameterTypeClass),
         construct: (parameterTypeClass: SoqlFieldsParameterTypeClass) => {
             const value = assignMultiClass(parameterTypeClass.getValue(), [
                 makeStringAssignRule,
-                makeErrorAssignRule(errorInfo),
+                makeErrorAssignRule,
             ]);
             return {
                 type: parameterTypeClass.getType(),

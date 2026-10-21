@@ -40,14 +40,12 @@ export type LiteralType = CommonType & {
 
 export const isLiteralType = typia.createIs<LiteralType>();
 
-export const makeLiteralRule = (
-    errorInfo: ErrorInfo[],
-): AssignForValueRule<NormalLiteralTypeClass, LiteralType> => ({
+export const makeLiteralRule = (): AssignForValueRule<NormalLiteralTypeClass, LiteralType> => ({
     isValid: (target: unknown) => isTargetTypeClass(target, isNormalLiteralType),
     construct: (literalTypeClass: NormalLiteralTypeClass) => {
         const value = assignMultiClass(literalTypeClass.getValue(), [
             makeStringAssignRule,
-            makeErrorAssignRule(errorInfo),
+            makeErrorAssignRule,
         ]);
         return {
             type: literalTypeClass.getType(),
@@ -66,14 +64,15 @@ export type SignedIntegerType = CommonType & {
 
 export const isSignedIntegerType = typia.createIs<SignedIntegerType>();
 
-export const makeSignedIntegerRule = (
-    errorInfo: ErrorInfo[],
-): AssignForValueRule<SignedIntegerTypeClass, SignedIntegerType> => ({
+export const makeSignedIntegerRule = (): AssignForValueRule<
+    SignedIntegerTypeClass,
+    SignedIntegerType
+> => ({
     isValid: (target: unknown) => isTargetTypeClass(target, isSignedIntegerTypeClass),
     construct: (literalTypeClass: SignedIntegerTypeClass) => {
         const value = assignMultiClass(literalTypeClass.getValue(), [
             makeStringAssignRule,
-            makeErrorAssignRule(errorInfo),
+            makeErrorAssignRule,
         ]);
         return {
             type: literalTypeClass.getType(),
@@ -93,14 +92,15 @@ export type SignedNumberType = CommonType & {
 
 export const isSignedNumberType = typia.createIs<SignedNumberType>();
 
-export const makeSignedNumberRule = (
-    errorInfo: ErrorInfo[],
-): AssignForValueRule<SignedNumberTypeClass, SignedNumberType> => ({
+export const makeSignedNumberRule = (): AssignForValueRule<
+    SignedNumberTypeClass,
+    SignedNumberType
+> => ({
     isValid: (target: unknown) => isTargetTypeClass(target, isSignedNumberTypeClass),
     construct: (literalTypeClass: SignedNumberTypeClass) => {
         const value = assignMultiClass(literalTypeClass.getValue(), [
             makeStringAssignRule,
-            makeErrorAssignRule(errorInfo),
+            makeErrorAssignRule,
         ]);
         return {
             type: literalTypeClass.getType(),
@@ -118,15 +118,16 @@ export type SoqlLiteralType = CommonType & {
 
 export const isSoqlLiteralType = typia.createIs<SoqlLiteralType>();
 
-export const makeSoqlLiteralRule = (
-    errorInfo: ErrorInfo[],
-): AssignForValueRule<SoqlLiteralTypeClass, SoqlLiteralType> => {
+export const makeSoqlLiteralRule = (): AssignForValueRule<
+    SoqlLiteralTypeClass,
+    SoqlLiteralType
+> => {
     return {
         isValid: (target: unknown) => isTargetTypeClass(target, isSoqlLiteralTypeClass),
         construct: (literalTypeClass: SoqlLiteralTypeClass) => {
             const value = assignMultiClass(literalTypeClass.getValue(), [
-                makeQueryRule(errorInfo),
-                makeErrorAssignRule(errorInfo),
+                makeQueryRule(),
+                makeErrorAssignRule,
             ]);
             return {
                 type: literalTypeClass.getType(),
@@ -144,19 +145,20 @@ export type SoslLiteralAltType = CommonType & {
 
 export const isSoslLiteralAltType = typia.createIs<SoslLiteralAltType>();
 
-export const makeSoslLiteralAltRule = (
-    errorInfo: ErrorInfo[],
-): AssignForValueRule<SoslLiteralAltTypeClass, SoslLiteralAltType> => {
+export const makeSoslLiteralAltRule = (): AssignForValueRule<
+    SoslLiteralAltTypeClass,
+    SoslLiteralAltType
+> => {
     return {
         isValid: (target: unknown) => isTargetTypeClass(target, isSoslLiteralAltTypeClass),
         construct: (literalTypeClass: SoslLiteralAltTypeClass) => {
             const value = assignMultiClass(literalTypeClass.getValue(), [
                 makeStringAssignRule,
-                makeErrorAssignRule(errorInfo),
+                makeErrorAssignRule,
             ]);
             const soslClauses = assignMultiClass(literalTypeClass.getSoslClauses(), [
-                makeSoslClausesRule(errorInfo),
-                makeErrorAssignRule(errorInfo),
+                makeSoslClausesRule(),
+                makeErrorAssignRule,
             ]);
             return {
                 type: literalTypeClass.getType(),
@@ -175,20 +177,21 @@ export type SoslLiteralType = CommonType & {
 
 export const isSoslLiteralType = typia.createIs<SoslLiteralType>();
 
-export const makeSoslLiteralRule = (
-    errorInfo: ErrorInfo[],
-): AssignForValueRule<SoslLiteralTypeClass, SoslLiteralType> => {
+export const makeSoslLiteralRule = (): AssignForValueRule<
+    SoslLiteralTypeClass,
+    SoslLiteralType
+> => {
     return {
         isValid: (target: unknown) => isTargetTypeClass(target, isSoslLiteralTypeClass),
         construct: (literalTypeClass: SoslLiteralTypeClass) => {
             const value = assignMultiClass(literalTypeClass.getValue(), [
                 makeStringAssignRule,
-                makeBoundExpressionRule(errorInfo),
-                makeErrorAssignRule(errorInfo),
+                makeBoundExpressionRule(),
+                makeErrorAssignRule,
             ]);
             const soslClauses = assignMultiClass(literalTypeClass.getSoslClauses(), [
-                makeSoslClausesRule(errorInfo),
-                makeErrorAssignRule(errorInfo),
+                makeSoslClausesRule(),
+                makeErrorAssignRule,
             ]);
             return {
                 type: literalTypeClass.getType(),
@@ -208,16 +211,17 @@ export type WhenLiteralType = CommonType & {
 
 export const isWhenLiteralType = typia.createIs<WhenLiteralType>();
 
-export const makeWhenLiteralRule = (
-    errorInfo: ErrorInfo[],
-): AssignForValueRule<WhenLiteralTypeClass, WhenLiteralType> => {
+export const makeWhenLiteralRule = (): AssignForValueRule<
+    WhenLiteralTypeClass,
+    WhenLiteralType
+> => {
     return {
         isValid: (target: unknown) => isTargetTypeClass(target, isWhenLiteralTypeClass),
         construct: (literalTypeClass: WhenLiteralTypeClass) => {
             const value = assignMultiClass(literalTypeClass.getValue(), [
                 makeStringAssignRule,
-                makeQualifiedNameRule(errorInfo),
-                makeErrorAssignRule(errorInfo),
+                makeQualifiedNameRule(),
+                makeErrorAssignRule,
             ]);
 
             const valueType = literalTypeClass.getValueType();

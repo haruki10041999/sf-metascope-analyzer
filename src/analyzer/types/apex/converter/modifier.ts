@@ -30,20 +30,18 @@ export type AnnotationType = CommonType & {
 
 export const isAnnotationType = typia.createIs<AnnotationType>();
 
-export const makeAnnotationRule = (
-    errorInfo: ErrorInfo[],
-): AssignForValueRule<AnnotationTypeClass, AnnotationType> => {
+export const makeAnnotationRule = (): AssignForValueRule<AnnotationTypeClass, AnnotationType> => {
     return {
         isValid: (target: unknown) => isTargetTypeClass(target, isAnnotationTypeClass),
         construct: (modifierTypeClass: AnnotationTypeClass) => {
             const value = assignMultiClass(modifierTypeClass.getValue(), [
                 makeIdRule(),
-                makeErrorAssignRule(errorInfo),
+                makeErrorAssignRule,
             ]);
             const param = assignMultiClass(modifierTypeClass.getParam(), [
-                makeElementValueRule(errorInfo),
-                makeElementValuePairsRule(errorInfo),
-                makeErrorAssignRule(errorInfo),
+                makeElementValueRule(),
+                makeElementValuePairsRule(),
+                makeErrorAssignRule,
                 makeNullAssignRule,
             ]);
 
@@ -63,16 +61,14 @@ export type ModifierType = CommonType & {
 
 export const isModifierType = typia.createIs<ModifierType>();
 
-export const makeModifierRule = (
-    errorInfo: ErrorInfo[],
-): AssignForValueRule<NormalModifierTypeClass, ModifierType> => {
+export const makeModifierRule = (): AssignForValueRule<NormalModifierTypeClass, ModifierType> => {
     return {
         isValid: (target: unknown) => isTargetTypeClass(target, isNormalModifierType),
         construct: (modifierTypeClass: NormalModifierTypeClass) => {
             const value = assignMultiClass(modifierTypeClass.getValue(), [
                 makeStringAssignRule,
-                makeAnnotationRule(errorInfo),
-                makeErrorAssignRule(errorInfo),
+                makeAnnotationRule(),
+                makeErrorAssignRule,
             ]);
             return {
                 type: modifierTypeClass.getType(),

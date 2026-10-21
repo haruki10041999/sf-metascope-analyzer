@@ -65,15 +65,10 @@ export type SoqlIdType = CommonType & {
 
 export const isSoqlIdType = typia.createIs<SoqlIdType>();
 
-export const makeSoqlIdRule = (
-    errorInfo: ErrorInfo[],
-): AssignForValueRule<SoqlIdTypeClass, SoqlIdType> => ({
+export const makeSoqlIdRule = (): AssignForValueRule<SoqlIdTypeClass, SoqlIdType> => ({
     isValid: (target: unknown) => isTargetTypeClass(target, isSoqlIdTypeClass),
     construct: (idTypeClass: SoqlIdTypeClass) => {
-        const id = assignMultiClass(idTypeClass.getValue(), [
-            makeIdRule(),
-            makeErrorAssignRule(errorInfo),
-        ]);
+        const id = assignMultiClass(idTypeClass.getValue(), [makeIdRule(), makeErrorAssignRule]);
         return {
             type: idTypeClass.getType(),
             sourceInfo: makeSourceInfo(idTypeClass),
@@ -88,14 +83,12 @@ export type SoslIdType = CommonType & {
 
 export const isSoslIdType = typia.createIs<SoslIdType>();
 
-export const makeSoslIdRule = (
-    errorInfo: ErrorInfo[],
-): AssignForValueRule<SoslIdTypeClass, SoslIdType> => ({
+export const makeSoslIdRule = (): AssignForValueRule<SoslIdTypeClass, SoslIdType> => ({
     isValid: (target: unknown) => isTargetTypeClass(target, isSoslIdTypeClass),
     construct: (idTypeClass: SoslIdTypeClass) => {
         const value = idTypeClass
             .getValue()
-            .map((v) => assignMultiClass(v, [makeIdRule(), makeErrorAssignRule(errorInfo)]));
+            .map((v) => assignMultiClass(v, [makeIdRule(), makeErrorAssignRule]));
         return { type: idTypeClass.getType(), sourceInfo: makeSourceInfo(idTypeClass), value };
     },
 });

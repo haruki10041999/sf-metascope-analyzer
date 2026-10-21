@@ -37,15 +37,16 @@ export type AnonymousUnitType = CommonType & {
 
 export const isAnonymousUnitType = typia.createIs<AnonymousUnitType>();
 
-export const makeAnonymousUnitRule = (
-    errorInfo: ErrorInfo[],
-): AssignForValueRule<AnonymousUnitTypeClass, AnonymousUnitType> => {
+export const makeAnonymousUnitRule = (): AssignForValueRule<
+    AnonymousUnitTypeClass,
+    AnonymousUnitType
+> => {
     return {
         isValid: (target: unknown) => isTargetTypeClass(target, isAnonymousUnitTypeClass),
         construct: (unitTypeClass: AnonymousUnitTypeClass) => {
             const value = assignMultiClass(unitTypeClass.getValue(), [
-                makeAnonymousBlockRule(errorInfo),
-                makeErrorAssignRule(errorInfo),
+                makeAnonymousBlockRule(),
+                makeErrorAssignRule,
             ]);
             return {
                 type: unitTypeClass.getType(),
@@ -62,15 +63,16 @@ export type CompilationUnitType = CommonType & {
 
 export const isCompilationUnitType = typia.createIs<CompilationUnitType>();
 
-export const makeCompilationUnitRule = (
-    errorInfo: ErrorInfo[],
-): AssignForValueRule<CompilationUnitTypeClass, CompilationUnitType> => {
+export const makeCompilationUnitRule = (): AssignForValueRule<
+    CompilationUnitTypeClass,
+    CompilationUnitType
+> => {
     return {
         isValid: (target: unknown) => isTargetTypeClass(target, isCompilationUnitTypeClass),
         construct: (unitTypeClass: CompilationUnitTypeClass) => {
             const value = assignMultiClass(unitTypeClass.getValue(), [
-                makeTypeDeclarationRule(errorInfo),
-                makeErrorAssignRule(errorInfo),
+                makeTypeDeclarationRule(),
+                makeErrorAssignRule,
             ]);
             return {
                 type: unitTypeClass.getType(),
@@ -88,15 +90,16 @@ export type TriggerCaseType = CommonType & {
 
 export const isTriggerCaseType = typia.createIs<TriggerCaseType>();
 
-export const makeTriggerCaseRule = (
-    errorInfo: ErrorInfo[],
-): AssignForValueRule<TriggerCaseTypeClass, TriggerCaseType> => {
+export const makeTriggerCaseRule = (): AssignForValueRule<
+    TriggerCaseTypeClass,
+    TriggerCaseType
+> => {
     return {
         isValid: (target: unknown) => isTargetTypeClass(target, isTriggerCaseTypeClass),
         construct: (unitTypeClass: TriggerCaseTypeClass) => {
             const timing = assignMultiClass(unitTypeClass.getValue(), [
                 makeStringAssignRule,
-                makeErrorAssignRule(errorInfo),
+                makeErrorAssignRule,
             ]);
             const triggerCaseType = unitTypeClass.getTriggerCaseType();
             return {
@@ -117,26 +120,22 @@ export type TriggerUnitType = CommonType & {
 
 export const isTriggerUnitType = typia.createIs<TriggerUnitType>();
 
-export const makeTriggerUnitRule = (
-    errorInfo: ErrorInfo[],
-): AssignForValueRule<TriggerUnitTypeClass, TriggerUnitType> => {
+export const makeTriggerUnitRule = (): AssignForValueRule<
+    TriggerUnitTypeClass,
+    TriggerUnitType
+> => {
     return {
         isValid: (target: unknown) => isTargetTypeClass(target, isTriggerUnitTypeClass),
         construct: (unitTypeClass: TriggerUnitTypeClass) => {
             const value = unitTypeClass
                 .getValue()
-                .map((v) => assignMultiClass(v, [makeIdRule(), makeErrorAssignRule(errorInfo)]));
+                .map((v) => assignMultiClass(v, [makeIdRule(), makeErrorAssignRule]));
             const triggerCase = unitTypeClass
                 .getTriggerCase()
-                .map((v) =>
-                    assignMultiClass(v, [
-                        makeTriggerCaseRule(errorInfo),
-                        makeErrorAssignRule(errorInfo),
-                    ]),
-                );
+                .map((v) => assignMultiClass(v, [makeTriggerCaseRule(), makeErrorAssignRule]));
             const block = assignMultiClass(unitTypeClass.getBlock(), [
-                makeTriggerBlockRule(errorInfo),
-                makeErrorAssignRule(errorInfo),
+                makeTriggerBlockRule(),
+                makeErrorAssignRule,
             ]);
             return {
                 type: unitTypeClass.getType(),

@@ -27,15 +27,16 @@ export type ArgumentsType = CommonType & {
 
 export const isArgumentsType = typia.createIs<ArgumentsType>();
 
-export const makeArgumentsRule = (
-    errorInfo: ErrorInfo[],
-): AssignForValueRule<NormalArgumentsTypeClass, ArgumentsType> => {
+export const makeArgumentsRule = (): AssignForValueRule<
+    NormalArgumentsTypeClass,
+    ArgumentsType
+> => {
     return {
         isValid: (target: unknown) => isTargetTypeClass(target, isNormalArgumentsType),
         construct: (argumentsTypeClass: NormalArgumentsTypeClass) => {
             const value = assignMultiClass(argumentsTypeClass.getValue(), [
-                makeExpressionListRule(errorInfo),
-                makeErrorAssignRule(errorInfo),
+                makeExpressionListRule(),
+                makeErrorAssignRule,
                 makeNullAssignRule,
             ]);
 
@@ -54,15 +55,16 @@ export type TypeArgumentsType = CommonType & {
 
 export const isTypeArgumentsType = typia.createIs<TypeArgumentsType>();
 
-export const makeTypeArgumentsRule = (
-    errorInfo: ErrorInfo[],
-): AssignForValueRule<TypeArgumentsTypeClass, TypeArgumentsType> => {
+export const makeTypeArgumentsRule = (): AssignForValueRule<
+    TypeArgumentsTypeClass,
+    TypeArgumentsType
+> => {
     return {
         isValid: (target: unknown) => isTargetTypeClass(target, isTypeArgumentsTypeClass),
         construct: (argumentsTypeClass: TypeArgumentsTypeClass) => {
             const value = assignMultiClass(argumentsTypeClass.getValue(), [
-                makeTypeListRule(errorInfo),
-                makeErrorAssignRule(errorInfo),
+                makeTypeListRule(),
+                makeErrorAssignRule,
                 makeNullAssignRule,
             ]);
             return {

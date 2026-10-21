@@ -23,16 +23,14 @@ export const makeSourceInfo = (typeClass: CommonTypeClass): SourceInfo => {
 };
 
 export type ErrorInfo = {
-    index: number;
     errorCode: ErrorCode;
     contextType: string;
     sourceInfo: SourceInfo;
 };
 
 export const isErrorInfo = typia.createIs<ErrorInfo>();
-export const makeErrorInfo = (index: number, typeClass: ErrorTypeClass): ErrorInfo => {
+export const makeErrorInfo = (typeClass: ErrorTypeClass): ErrorInfo => {
     return {
-        index: index,
         errorCode: typeClass.getCode(),
         contextType: typeClass.getContextType(),
         sourceInfo: makeSourceInfo(typeClass),
@@ -51,14 +49,7 @@ type AnyAssignRule = {
     construct: (target: never) => unknown;
 };
 
-export type ErrorType = {
-    errorCode: ErrorCode;
-    index: number;
-};
-
-export const isErrorType = typia.createIs<ErrorType>();
-
-export type ValueRuleValue<T> = T | ErrorType;
+export type ValueRuleValue<T> = T | ErrorInfo;
 
 export type CommonType = {
     type: string;
@@ -85,17 +76,12 @@ export const makeNullAssignRule = {
     construct: (value: null) => value,
 };
 
-export const makeErrorAssignRule = (
-    errorInfo: ErrorInfo[],
-): AssignForValueRule<ErrorTypeClass, ErrorType> => ({
+export const makeErrorAssignRule = {
     isValid: (target: unknown) => isTargetTypeClass(target, isErrorTypeClass),
     construct: (typeClass: ErrorTypeClass) => {
-        const index = errorInfo.length + 1;
-        const error = makeErrorInfo(index, typeClass);
-        errorInfo.push(error);
-        return { errorCode: error.errorCode, index: index };
+        return makeErrorInfo(typeClass);
     },
-});
+};
 
 type AssignForValueRuleResult<TRule> =
     TRule extends AssignForValueRule<infer _TValue, infer TResult> ? TResult : never;

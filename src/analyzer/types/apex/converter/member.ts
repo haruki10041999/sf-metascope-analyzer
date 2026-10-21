@@ -33,25 +33,21 @@ export type AnonymousBlockMemberType = CommonType & {
 
 export const isAnonymousBlockMemberType = typia.createIs<AnonymousBlockMemberType>();
 
-export const makeAnonymousBlockMemberRule = (
-    errorInfo: ErrorInfo[],
-): AssignForValueRule<AnonymousBlockMemberTypeClass, AnonymousBlockMemberType> => {
+export const makeAnonymousBlockMemberRule = (): AssignForValueRule<
+    AnonymousBlockMemberTypeClass,
+    AnonymousBlockMemberType
+> => {
     return {
         isValid: (target: unknown) => isTargetTypeClass(target, isAnonymousBlockMemberTypeClass),
         construct: (memberTypeClass: AnonymousBlockMemberTypeClass) => {
             const value = assignMultiClass(memberTypeClass.getValue(), [
-                makeAnonymousMemberDeclarationRule(errorInfo),
-                makeStatementRule(errorInfo),
-                makeErrorAssignRule(errorInfo),
+                makeAnonymousMemberDeclarationRule(),
+                makeStatementRule(),
+                makeErrorAssignRule,
             ]);
             const modifier = memberTypeClass
                 .getModifier()
-                .map((v) =>
-                    assignMultiClass(v, [
-                        makeModifierRule(errorInfo),
-                        makeErrorAssignRule(errorInfo),
-                    ]),
-                );
+                .map((v) => assignMultiClass(v, [makeModifierRule(), makeErrorAssignRule]));
             return {
                 type: memberTypeClass.getType(),
                 sourceInfo: makeSourceInfo(memberTypeClass),
@@ -69,25 +65,21 @@ export type TriggerBlockMemberType = CommonType & {
 
 export const isTriggerBlockMemberType = typia.createIs<TriggerBlockMemberType>();
 
-export const makeTriggerBlockMemberRule = (
-    errorInfo: ErrorInfo[],
-): AssignForValueRule<TriggerBlockMemberTypeClass, TriggerBlockMemberType> => {
+export const makeTriggerBlockMemberRule = (): AssignForValueRule<
+    TriggerBlockMemberTypeClass,
+    TriggerBlockMemberType
+> => {
     return {
         isValid: (target: unknown) => isTargetTypeClass(target, isTriggerBlockMemberTypeClass),
         construct: (memberTypeClass: TriggerBlockMemberTypeClass) => {
             const value = assignMultiClass(memberTypeClass.getValue(), [
-                makeTriggerMemberDeclarationRule(errorInfo),
-                makeStatementRule(errorInfo),
-                makeErrorAssignRule(errorInfo),
+                makeTriggerMemberDeclarationRule(),
+                makeStatementRule(),
+                makeErrorAssignRule,
             ]);
             const modifier = memberTypeClass
                 .getModifier()
-                .map((v) =>
-                    assignMultiClass(v, [
-                        makeModifierRule(errorInfo),
-                        makeErrorAssignRule(errorInfo),
-                    ]),
-                );
+                .map((v) => assignMultiClass(v, [makeModifierRule(), makeErrorAssignRule]));
             return {
                 type: memberTypeClass.getType(),
                 sourceInfo: makeSourceInfo(memberTypeClass),

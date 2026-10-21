@@ -56,7 +56,7 @@ export const makeIdPrimaryRule = (
     construct: (primaryTypeClass: IdPrimaryTypeClass) => {
         const value = assignMultiClass(primaryTypeClass.getValue(), [
             makeIdRule(),
-            makeErrorAssignRule(errorInfo),
+            makeErrorAssignRule,
         ]);
         return {
             type: primaryTypeClass.getType(),
@@ -78,8 +78,8 @@ export const makeLiteralPrimaryRule = (
     isValid: (target: unknown) => isTargetTypeClass(target, isLiteralPrimaryTypeClass),
     construct: (primaryTypeClass: LiteralPrimaryTypeClass) => {
         const value = assignMultiClass(primaryTypeClass.getValue(), [
-            makeLiteralRule(errorInfo),
-            makeErrorAssignRule(errorInfo),
+            makeLiteralRule(),
+            makeErrorAssignRule,
         ]);
         return {
             type: primaryTypeClass.getType(),
@@ -102,7 +102,7 @@ export const makePrimaryRule = (
     construct: (primaryTypeClass: NormalPrimaryTypeClass) => {
         const value = assignMultiClass(primaryTypeClass.getValue(), [
             makeStringAssignRule,
-            makeErrorAssignRule(errorInfo),
+            makeErrorAssignRule,
         ]);
         return {
             type: primaryTypeClass.getType(),
@@ -125,8 +125,8 @@ export const makeSoqlPrimaryRule = (
         isValid: (target: unknown) => isTargetTypeClass(target, isSoqlPrimaryTypeClass),
         construct: (primaryTypeClass: SoqlPrimaryTypeClass) => {
             const value = assignMultiClass(primaryTypeClass.getValue(), [
-                makeSoqlLiteralRule(errorInfo),
-                makeErrorAssignRule(errorInfo),
+                makeSoqlLiteralRule(),
+                makeErrorAssignRule,
             ]);
             return {
                 type: primaryTypeClass.getType(),
@@ -150,8 +150,8 @@ export const makeSoslPrimaryRule = (
         isValid: (target: unknown) => isTargetTypeClass(target, isSoslPrimaryTypeClass),
         construct: (primaryTypeClass: SoslPrimaryTypeClass) => {
             const value = assignMultiClass(primaryTypeClass.getValue(), [
-                makeSoslLiteralRule(errorInfo),
-                makeErrorAssignRule(errorInfo),
+                makeSoslLiteralRule(),
+                makeErrorAssignRule,
             ]);
             return {
                 type: primaryTypeClass.getType(),
@@ -175,7 +175,7 @@ export const makeSuperPrimaryRule = (
     construct: (primaryTypeClass: SuperPrimaryTypeClass) => {
         const value = assignMultiClass(primaryTypeClass.getValue(), [
             makeStringAssignRule,
-            makeErrorAssignRule(errorInfo),
+            makeErrorAssignRule,
         ]);
         return {
             type: primaryTypeClass.getType(),
@@ -198,7 +198,7 @@ export const makeThisPrimaryRule = (
     construct: (primaryTypeClass: ThisPrimaryTypeClass) => {
         const value = assignMultiClass(primaryTypeClass.getValue(), [
             makeStringAssignRule,
-            makeErrorAssignRule(errorInfo),
+            makeErrorAssignRule,
         ]);
         return {
             type: primaryTypeClass.getType(),
@@ -221,8 +221,8 @@ export const makeTypeRefPrimaryRule = (
         isValid: (target: unknown) => isTargetTypeClass(target, isTypeRefPrimaryTypeClass),
         construct: (primaryTypeClass: TypeRefPrimaryTypeClass) => {
             const value = assignMultiClass(primaryTypeClass.getValue(), [
-                makeTypeRefRule(errorInfo),
-                makeErrorAssignRule(errorInfo),
+                makeTypeRefRule(),
+                makeErrorAssignRule,
             ]);
             return {
                 type: primaryTypeClass.getType(),
@@ -246,7 +246,7 @@ export const makeVoidPrimaryRule = (
     construct: (primaryTypeClass: VoidPrimaryTypeClass) => {
         const value = assignMultiClass(primaryTypeClass.getValue(), [
             makeStringAssignRule,
-            makeErrorAssignRule(errorInfo),
+            makeErrorAssignRule,
         ]);
         return {
             type: primaryTypeClass.getType(),
@@ -269,16 +269,16 @@ export type BasePrimaryType =
 
 export const isBasePrimaryType = typia.createIs<BasePrimaryType>();
 
-export const makeBasePrimaryRule = (errorInfo: ErrorInfo[]) => {
+export const makeBasePrimaryRule = () => {
     return [
-        makeIdPrimaryRule(errorInfo),
-        makePrimaryRule(errorInfo),
-        makeVoidPrimaryRule(errorInfo),
-        makeSuperPrimaryRule(errorInfo),
-        makeThisPrimaryRule(errorInfo),
-        makeLiteralPrimaryRule(errorInfo),
-        makeTypeRefPrimaryRule(errorInfo),
-        makeSoqlPrimaryRule(errorInfo),
-        makeSoslPrimaryRule(errorInfo),
+        makeIdPrimaryRule(),
+        makePrimaryRule(),
+        makeVoidPrimaryRule(),
+        makeSuperPrimaryRule(),
+        makeThisPrimaryRule(),
+        makeLiteralPrimaryRule(),
+        makeTypeRefPrimaryRule(),
+        makeSoqlPrimaryRule(),
+        makeSoslPrimaryRule(),
     ];
 };

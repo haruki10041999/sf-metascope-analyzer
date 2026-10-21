@@ -31,19 +31,14 @@ export type ClassBodyType = CommonType & {
 
 export const isClassBodyType = typia.createIs<ClassBodyType>();
 
-export const makeClassBodyRule = (
-    errorInfo: ErrorInfo[],
-): AssignForValueRule<ClassBodyTypeClass, ClassBodyType> => {
+export const makeClassBodyRule = (): AssignForValueRule<ClassBodyTypeClass, ClassBodyType> => {
     return {
         isValid: (target: unknown) => isTargetTypeClass(target, isClassBodyTypeClass),
         construct: (bodyTypeClass: ClassBodyTypeClass) => {
             const value = bodyTypeClass
                 .getValue()
                 .map((v) =>
-                    assignMultiClass(v, [
-                        makeClassBodyDeclarationRule(errorInfo),
-                        makeErrorAssignRule(errorInfo),
-                    ]),
+                    assignMultiClass(v, [makeClassBodyDeclarationRule(), makeErrorAssignRule]),
                 );
             return {
                 type: bodyTypeClass.getType(),
@@ -60,9 +55,10 @@ export type InterfaceBodyType = CommonType & {
 
 export const isInterfaceBodyType = typia.createIs<InterfaceBodyType>();
 
-export const makeInterfaceBodyRule = (
-    errorInfo: ErrorInfo[],
-): AssignForValueRule<InterfaceBodyTypeClass, InterfaceBodyType> => {
+export const makeInterfaceBodyRule = (): AssignForValueRule<
+    InterfaceBodyTypeClass,
+    InterfaceBodyType
+> => {
     return {
         isValid: (target: unknown) => isTargetTypeClass(target, isInterfaceBodyTypeClass),
         construct: (bodyTypeClass: InterfaceBodyTypeClass) => {
@@ -70,8 +66,8 @@ export const makeInterfaceBodyRule = (
                 .getValue()
                 .map((v) =>
                     assignMultiClass(v, [
-                        makeInterfaceMethodDeclarationRule(errorInfo),
-                        makeErrorAssignRule(errorInfo),
+                        makeInterfaceMethodDeclarationRule(),
+                        makeErrorAssignRule,
                     ]),
                 );
             return {

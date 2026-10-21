@@ -2,7 +2,7 @@ import crypto from 'node:crypto';
 
 import typia from 'typia';
 
-import { SourceInfo, CommonType, ErrorType, isSourceInfo, isErrorType } from './converter';
+import { SourceInfo, ErrorInfo, CommonType, isSourceInfo, isErrorInfo } from './converter';
 
 export type JsonType<T> = {
     objectKey: string;
@@ -118,18 +118,18 @@ export const makeHashKeyAndSplit = async <T extends CommonType>(
 };
 
 export const outputError = <T, TOutput>(
-    target: T | ErrorType,
+    target: T | ErrorInfo,
     process: (target: T) => TOutput,
-): TOutput | ErrorType => {
-    if (isErrorType(target)) {
+): TOutput | ErrorInfo => {
+    if (isErrorInfo(target)) {
         return target;
     }
     return process(target);
 };
 
 export const outputErrorList = <T, TOutput>(
-    targets: (T | ErrorType)[],
+    targets: (T | ErrorInfo)[],
     process: (target: T) => TOutput,
-): (TOutput | ErrorType)[] => {
+): (TOutput | ErrorInfo)[] => {
     return targets.map((target) => outputError(target, process));
 };

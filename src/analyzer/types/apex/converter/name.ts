@@ -37,19 +37,17 @@ export type CreatedNameType = CommonType & {
 
 export const isCreatedNameType = typia.createIs<CreatedNameType>();
 
-export const makeCreatedNameRule = (
-    errorInfo: ErrorInfo[],
-): AssignForValueRule<CreatedNameTypeClass, CreatedNameType> => {
+export const makeCreatedNameRule = (): AssignForValueRule<
+    CreatedNameTypeClass,
+    CreatedNameType
+> => {
     return {
         isValid: (target: unknown) => isTargetTypeClass(target, isCreatedNameTypeClass),
         construct: (nameTypeClass: CreatedNameTypeClass) => {
             const value = nameTypeClass
                 .getValue()
                 .map((v) =>
-                    assignMultiClass(v, [
-                        makeIdCreatedNamePairRule(errorInfo),
-                        makeErrorAssignRule(errorInfo),
-                    ]),
+                    assignMultiClass(v, [makeIdCreatedNamePairRule(), makeErrorAssignRule]),
                 );
             return {
                 type: nameTypeClass.getType(),
@@ -66,20 +64,16 @@ export type DataCategoryNameType = CommonType & {
 
 export const isDataCategoryNameType = typia.createIs<DataCategoryNameType>();
 
-export const makeDataCategoryNameRule = (
-    errorInfo: ErrorInfo[],
-): AssignForValueRule<DataCategoryNameTypeClass, DataCategoryNameType> => {
+export const makeDataCategoryNameRule = (): AssignForValueRule<
+    DataCategoryNameTypeClass,
+    DataCategoryNameType
+> => {
     return {
         isValid: (target: unknown) => isTargetTypeClass(target, isDataCategoryNameTypeClass),
         construct: (nameTypeClass: DataCategoryNameTypeClass) => {
             const value = nameTypeClass
                 .getValue()
-                .map((v) =>
-                    assignMultiClass(v, [
-                        makeSoqlIdRule(errorInfo),
-                        makeErrorAssignRule(errorInfo),
-                    ]),
-                );
+                .map((v) => assignMultiClass(v, [makeSoqlIdRule(), makeErrorAssignRule]));
             return {
                 type: nameTypeClass.getType(),
                 sourceInfo: makeSourceInfo(nameTypeClass),
@@ -96,15 +90,16 @@ export type DateFieldNameType = CommonType & {
 
 export const isDateFieldNameType = typia.createIs<DateFieldNameType>();
 
-export const makeDateFieldNameRule = (
-    errorInfo: ErrorInfo[],
-): AssignForValueRule<DateFieldNameTypeClass, DateFieldNameType> => {
+export const makeDateFieldNameRule = (): AssignForValueRule<
+    DateFieldNameTypeClass,
+    DateFieldNameType
+> => {
     return {
         isValid: (target: unknown) => isTargetTypeClass(target, isDateFieldNameTypeClass),
         construct: (nameTypeClass: DateFieldNameTypeClass) => {
             const value = assignMultiClass(nameTypeClass.getValue(), [
-                makeFieldNameRule(errorInfo),
-                makeErrorAssignRule(errorInfo),
+                makeFieldNameRule(),
+                makeErrorAssignRule,
             ]);
             const isConvertTimeZone = nameTypeClass.getConvertTimeZone();
             return {
@@ -123,20 +118,13 @@ export type FieldNameType = CommonType & {
 
 export const isFieldNameType = typia.createIs<FieldNameType>();
 
-export const makeFieldNameRule = (
-    errorInfo: ErrorInfo[],
-): AssignForValueRule<FieldNameTypeClass, FieldNameType> => {
+export const makeFieldNameRule = (): AssignForValueRule<FieldNameTypeClass, FieldNameType> => {
     return {
         isValid: (target: unknown) => isTargetTypeClass(target, isFieldNameTypeClass),
         construct: (nameTypeClass: FieldNameTypeClass) => {
             const value = nameTypeClass
                 .getValue()
-                .map((v) =>
-                    assignMultiClass(v, [
-                        makeSoqlIdRule(errorInfo),
-                        makeErrorAssignRule(errorInfo),
-                    ]),
-                );
+                .map((v) => assignMultiClass(v, [makeSoqlIdRule(), makeErrorAssignRule]));
             return {
                 type: nameTypeClass.getType(),
                 sourceInfo: makeSourceInfo(nameTypeClass),
@@ -152,15 +140,16 @@ export type QualifiedNameType = CommonType & {
 
 export const isQualifiedNameType = typia.createIs<QualifiedNameType>();
 
-export const makeQualifiedNameRule = (
-    errorInfo: ErrorInfo[],
-): AssignForValueRule<QualifiedNameTypeClass, QualifiedNameType> => {
+export const makeQualifiedNameRule = (): AssignForValueRule<
+    QualifiedNameTypeClass,
+    QualifiedNameType
+> => {
     return {
         isValid: (target: unknown) => isTargetTypeClass(target, isQualifiedNameTypeClass),
         construct: (nameTypeClass: QualifiedNameTypeClass) => {
             const value = nameTypeClass
                 .getValue()
-                .map((v) => assignMultiClass(v, [makeIdRule(), makeErrorAssignRule(errorInfo)]));
+                .map((v) => assignMultiClass(v, [makeIdRule(), makeErrorAssignRule]));
             return {
                 type: nameTypeClass.getType(),
                 sourceInfo: makeSourceInfo(nameTypeClass),
@@ -177,20 +166,18 @@ export type TypeNameType = CommonType & {
 
 export const isTypeNameType = typia.createIs<TypeNameType>();
 
-export const makeTypeNameRule = (
-    errorInfo: ErrorInfo[],
-): AssignForValueRule<TypeNameTypeClass, TypeNameType> => {
+export const makeTypeNameRule = (): AssignForValueRule<TypeNameTypeClass, TypeNameType> => {
     return {
         isValid: (target: unknown) => isTargetTypeClass(target, isTypeNameTypeClass),
         construct: (nameTypeClass: TypeNameTypeClass) => {
             const value = assignMultiClass(nameTypeClass.getValue(), [
                 makeStringAssignRule,
                 makeIdRule(),
-                makeErrorAssignRule(errorInfo),
+                makeErrorAssignRule,
             ]);
             const generic = assignMultiClass(nameTypeClass.getGeneric(), [
-                makeTypeArgumentsRule(errorInfo),
-                makeErrorAssignRule(errorInfo),
+                makeTypeArgumentsRule(),
+                makeErrorAssignRule,
                 makeNullAssignRule,
             ]);
             return {

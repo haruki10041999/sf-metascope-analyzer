@@ -27,15 +27,16 @@ export type ArraySubscriptsType = CommonType & {
 
 export const isArraySubscriptsType = typia.createIs<ArraySubscriptsType>();
 
-export const makeArraySubscriptsRule = (
-    errorInfo: ErrorInfo[],
-): AssignForValueRule<ArraySubscriptsTypeClass, ArraySubscriptsType> => {
+export const makeArraySubscriptsRule = (): AssignForValueRule<
+    ArraySubscriptsTypeClass,
+    ArraySubscriptsType
+> => {
     return {
         isValid: (target: unknown) => isTargetTypeClass(target, isArraySubscriptsTypeClass),
         construct: (typeTypeClass: ArraySubscriptsTypeClass) => {
             const value = assignMultiClass(typeTypeClass.getValue(), [
                 makeNumberAssignRule,
-                makeErrorAssignRule(errorInfo),
+                makeErrorAssignRule,
                 makeNullAssignRule,
             ]);
             return {
@@ -54,23 +55,16 @@ export type TypeRefType = CommonType & {
 
 export const isTypeRefType = typia.createIs<TypeRefType>();
 
-export const makeTypeRefRule = (
-    errorInfo: ErrorInfo[],
-): AssignForValueRule<TypeRefTypeClass, TypeRefType> => {
+export const makeTypeRefRule = (): AssignForValueRule<TypeRefTypeClass, TypeRefType> => {
     return {
         isValid: (target: unknown) => isTargetTypeClass(target, isTypeRefTypeClass),
         construct: (typeTypeClass: TypeRefTypeClass) => {
             const value = typeTypeClass
                 .getValue()
-                .map((v) =>
-                    assignMultiClass(v, [
-                        makeTypeNameRule(errorInfo),
-                        makeErrorAssignRule(errorInfo),
-                    ]),
-                );
+                .map((v) => assignMultiClass(v, [makeTypeNameRule(), makeErrorAssignRule]));
             const dimension = assignMultiClass(typeTypeClass.getDimension(), [
-                makeArraySubscriptsRule(errorInfo),
-                makeErrorAssignRule(errorInfo),
+                makeArraySubscriptsRule(),
+                makeErrorAssignRule,
             ]);
             return {
                 type: typeTypeClass.getType(),
