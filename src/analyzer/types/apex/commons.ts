@@ -4,15 +4,39 @@ import typia from 'typia';
 
 import { SourceInfo, ErrorInfo, CommonType, isSourceInfo, isErrorInfo } from './converter';
 
-export type JsonType<T extends CommonType> = {
+export type Convert<T extends CommonType> = {
     objectKey: string;
     sourceKey: string;
 } & Omit<T, 'sourceInfo'>;
 
-export const isJsonType = <T extends CommonType>(
+export type JsonType = {
+    kind: string;
+    souceKeys: Record<string, string[]>;
+};
+
+export const writeSourceKeys = <T extends JsonType>(
+    target: T,
+    objectKey: string,
+    sourceKey: string,
+): void => {
+    if (!Object.keys(target.souceKeys)) {
+        target.souceKeys[objectKey] = [sourceKey];
+    } else {
+        target.souceKeys[objectKey]!.push(sourceKey);
+    }
+};
+
+export type ErrorJson = JsonType & {
+    kind: 'error';
+    kindType: string;
+};
+
+export const isErrorJson = typia.createIs<ErrorJson>();
+
+export const isConvert = <T extends CommonType>(
     target: unknown,
     isType: (target: unknown) => target is T,
-): target is JsonType<T> => {
+): target is Convert<T> => {
     if (target === null || typeof target !== 'object' || Array.isArray(target)) {
         return false;
     }
@@ -104,7 +128,7 @@ export const makeHashKeys = async <T extends CommonType>(
 };
 
 export type RewriteJson<T> = T extends CommonType
-    ? JsonType<T>
+    ? Convert<T>
     : T extends readonly (infer TItem)[]
       ? RewriteJson<TItem>[]
       : T extends object
@@ -149,9 +173,9 @@ export const convertJson = async <T>(
     return Object.fromEntries(entries) as RewriteJson<T>;
 };
 
-export const searchJsonTypeAll = (target: unknown, jsonObjects: JsonType<CommonType>[]): void => {
+const _searchConvertAll = (target: unknown, jsonObjects: Convert<CommonType>[]): void => {
     if (Array.isArray(target)) {
-        target.forEach((item) => searchJsonTypeAll(item, jsonObjects));
+        target.forEach((item) => _searchConvertAll(item, jsonObjects));
         return;
     }
 
@@ -159,38 +183,49 @@ export const searchJsonTypeAll = (target: unknown, jsonObjects: JsonType<CommonT
         return;
     }
 
-    if (isJsonType(target, isCommonType)) {
+    if (isConvert(target, isCommonType)) {
         jsonObjects.push(target);
     }
 
     const node = target as Record<string, unknown>;
 
     Object.values(node).forEach((child) => {
-        searchJsonTypeAll(child, jsonObjects);
+        _searchConvertAll(child, jsonObjects);
     });
 };
 
-export const extractErrors = <T extends CommonType>(target: JsonType<T>): JsonType<ErrorInfo>[] => {
-    const jsonTypes: JsonType<CommonType>[] = [];
-    searchJsonTypeAll(target, jsonTypes);
-
-    return jsonTypes.filter((object) => isJsonType(object, isErrorInfo));
-};
-
-export const removeSourceInfo = <T extends CommonType>(
+export const searchConvertAll = <T extends Convert<CommonType>>(
     target: T,
+): Convert<CommonType>[] => {
+    const convertTypes: Convert<CommonType>[] = [];
+    _searchConvertAll(target, convertTypes);
+    return convertTypes;
+};
+
+export const isError = (target: Convert<CommonType>[]): boolean => {
+    return target.some((t) => isConvert(target, isErrorInfo));
+};
+
+export const removeSourceInfo = (
     sourceObjects: SourceJson[],
+    sourceKeys: Record<string, string[]> | Convert<CommonType>[],
+    excludeSourceKeys?: string[],
 ): void => {
-    const jsonTypes: JsonType<CommonType>[] = [];
-    searchJsonTypeAll(target, jsonTypes);
+    let targetRecord: Record<string, string[]>;
+    if (Array.isArray(sourceKeys)) {
+        targetRecord = {};
+        sourceKeys.forEach((v) => {
+            if (!Object.keys(targetRecord).includes(v.objectKey)) {
+                targetRecord[v.objectKey] = [v.sourceKey];
+            } else {
+                targetRecord[v.objectKey]!.push(v.sourceKey);
+            }
+        });
+    } else {
+        targetRecord = sourceKeys;
+    }
 
-    const objectToSourceRecord: Record<string, string[]> = {};
-
-    jsonTypes.forEach(({ objectKey, sourceKey }) => {
-        (objectToSourceRecord[objectKey] ??= []).push(sourceKey);
-    });
-
-    Object.entries(objectToSourceRecord).forEach(([key, value]) => {
+    Object.entries(targetRecord).forEach(([key, value]) => {
         const sourceIndex = sourceObjects.findIndex((object) => object.objectKey === key);
 
         if (sourceIndex === -1) {
@@ -199,8 +234,13 @@ export const removeSourceInfo = <T extends CommonType>(
 
         const sourceObject = sourceObjects[sourceIndex]!;
 
+        let filteringSourceKeys = value;
+        if (excludeSourceKeys && excludeSourceKeys.length > 0) {
+            filteringSourceKeys = value.filter((v) => !excludeSourceKeys!.includes(v));
+        }
+
         sourceObject.source = sourceObject.source.filter(
-            (source) => !value.includes(source.sourceKey),
+            (source) => !filteringSourceKeys.includes(source.sourceKey),
         );
 
         if (sourceObject.source.length === 0) {
@@ -230,21 +270,4 @@ export const findSourceInfo = (
     }
 
     throw new Error('sourceInfo cannot be found');
-};
-
-export const outputError = <T, TOutput>(
-    target: T | ErrorInfo,
-    process: (target: T) => TOutput,
-): TOutput | ErrorInfo => {
-    if (isErrorInfo(target)) {
-        return target;
-    }
-    return process(target);
-};
-
-export const outputErrorList = <T, TOutput>(
-    targets: (T | ErrorInfo)[],
-    process: (target: T) => TOutput,
-): (TOutput | ErrorInfo)[] => {
-    return targets.map((target) => outputError(target, process));
 };

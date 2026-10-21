@@ -1,19 +1,19 @@
 import typia from 'typia';
 
 import {
-    JsonType,
+    Convert,
+    ErrorJson,
+    isConvert,
     SourceJson,
-    CommonTypeExtractSourceInfo,
-    makeHashKeyAndSplit,
-    outputError,
-    isCommonWithoutSourceInfo,
+    searchConvertAll,
+    isError,
+    writeSourceKeys,
+    removeSourceInfo,
 } from './commons';
 
 import {
     SourceInfo,
-    ErrorType,
     ValueRuleValue,
-    isErrorType,
     TypeRefType,
     TypeArgumentsType,
     TypeListType,
@@ -22,6 +22,7 @@ import {
     IdType,
     isIdType,
     isTypeRefType,
+    ErrorInfo,
 } from './converter';
 
 const isPrimitiveType = (type: string): boolean => {
@@ -92,103 +93,27 @@ export type TypeType = { objectType: 'type' } & (
 
 export const isTypeType = typia.createIs<TypeType>();
 
-export const makeTypeType = async (
-    target: TypeRefType | ErrorType,
-    source: SourceJson[],
-): Promise<JsonType<TypeType> | ErrorType> => {
-    if (isErrorType(target)) {
-        return target;
+export const makeTypeType = (
+    target: Convert<TypeRefType | ErrorInfo>,
+    sourceObject: SourceJson[],
+) => {
+    const convertJsons = searchConvertAll(target);
+    if (isError(convertJsons)) {
+        const error: ErrorJson = {
+            kind: 'error',
+            kindType: 'type',
+            souceKeys: {},
+        };
+        writeSourceKeys(error, target.objectKey, target.sourceKey);
+        removeSourceInfo(sourceObject, convertJsons, error.souceKeys[target.objectKey]!);
+
+        return error;
     }
 
-    const { objectKey, sourceKey, content } = await makeHashKeyAndSplit(target, source);
+    const _target = target as Convert<TypeRefType>;
 
-    const typeRef = makeTypeRef(content) as TypeRef;
-};
+    const { value:collection,generic:generic } = _target.value as TypeNameType[];
+    const {value:dimension} = _target.dimension as ArraySubscriptsType;
 
-const _makeTypeType = (typeRef: TypeRef): TypeType => {
-    const typeName = typeRef.typeName;
-    const dimension = typeRef.arrayDimension;
-
-    if (typeof dimension === 'number' && dimension > 0) {
-
-};
-
-type TypeRef = {
-    typeName: (TypeName | ErrorType)[];
-    arrayDimension: number | null | ErrorType;
-};
-
-type TypeName = {
-    collection: string | ErrorType;
-    typeList: (TypeRef | ErrorType)[] | ErrorType | null;
-};
-
-const makeTypeRef = (
-    target: ValueRuleValue<CommonTypeExtractSourceInfo<TypeRefType>>,
-): TypeRef | ErrorType => {
-    return outputError(target, (target: CommonTypeExtractSourceInfo<TypeRefType>) => {
-        const value = target.value;
-        const dimension = target.dimension;
-
-        const typeName = value.map((item) => makeTypeName(item));
-        const arrayDimension = makeArraySubscripts(dimension);
-
-        return {
-            typeName,
-            arrayDimension,
-        };
-    });
-};
-
-const makeTypeName = (
-    target: ValueRuleValue<CommonTypeExtractSourceInfo<TypeNameType>>,
-): TypeName | ErrorType => {
-    return outputError(target, (target: CommonTypeExtractSourceInfo<TypeNameType>) => {
-        const value = target.value;
-        const generic = target.generic;
-
-        const collection = outputError(
-            value,
-            (target: CommonTypeExtractSourceInfo<IdType> | string) => {
-                if (isCommonWithoutSourceInfo(target, isIdType)) {
-                    return target.value;
-                }
-
-                return target;
-            },
-        );
-
-        const typeList = generic ? makeTypeArguments(generic) : null;
-
-        return {
-            collection,
-            typeList,
-        };
-    });
-};
-
-const makeTypeList = (
-    target: CommonTypeExtractSourceInfo<TypeListType> | ErrorType,
-): (TypeRef | ErrorType)[] | ErrorType => {
-    return outputError(target, (target: CommonTypeExtractSourceInfo<TypeListType>) => {
-        return target.value.map((item) => makeTypeRef(item));
-    });
-};
-
-const makeTypeArguments = (
-    target: ValueRuleValue<CommonTypeExtractSourceInfo<TypeArgumentsType>>,
-): (TypeRef | ErrorType)[] | ErrorType | null => {
-    return outputError(target, (target: CommonTypeExtractSourceInfo<TypeArgumentsType>) => {
-        return target.value ? makeTypeList(target.value) : null;
-    });
-};
-
-const makeArraySubscripts = (
-    target: ValueRuleValue<CommonTypeExtractSourceInfo<ArraySubscriptsType>>,
-): number | null | ErrorType => {
-    return outputError(target, (target: CommonTypeExtractSourceInfo<ArraySubscriptsType>) => {
-        return outputError(target.value, (target: number | null) => {
-            return target;
-        });
-    });
+    if (dimension)
 };
