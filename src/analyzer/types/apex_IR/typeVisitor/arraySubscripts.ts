@@ -4,8 +4,8 @@ import { TypeTypeClass } from '.';
 
 import { CommonTypeClass } from '../commonVisitor';
 
-export class ArraySubscriptsTypeClass extends TypeTypeClass<number> {
-    private constructor(value: number) {
+export class ArraySubscriptsTypeClass extends TypeTypeClass<number | null> {
+    private constructor(value: number | null) {
         super('arraySubscripts', value);
     }
 
@@ -14,7 +14,9 @@ export class ArraySubscriptsTypeClass extends TypeTypeClass<number> {
             throw new Error('値が異常です。ArraySubscriptsContext: ' + ctx.getText());
         }
 
-        return new ArraySubscriptsTypeClass(ctx.LBRACK_list().length);
+        return new ArraySubscriptsTypeClass(
+            ctx.LBRACK_list().length > 0 ? ctx.LBRACK_list().length : null,
+        );
     }
 }
 

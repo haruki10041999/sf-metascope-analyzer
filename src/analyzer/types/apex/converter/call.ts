@@ -9,76 +9,82 @@ import {
 
 import {
     ErrorInfo,
-    SourceSlot,
+    CommonType,
     AssignForValueRule,
     ValueRuleValue,
     isTargetTypeClass,
     assignMultiClass,
     makeErrorAssignRule,
-    makeSourceNode,
-    sourceField,
+    makeNullAssignRule,
+    makeSourceInfo,
 } from './commons';
 import { makeAnyIdRule, makeIdRule, AnyIdType, IdType } from './id';
 import { makeExpressionListRule, ExpressionListType } from './list';
 
-export type DotMethodCallType = {
-    type: string;
+export type DotMethodCallType = CommonType & {
     value: ValueRuleValue<AnyIdType>;
-    param: ValueRuleValue<ExpressionListType>;
+    param: ValueRuleValue<ExpressionListType | null>;
 };
 
 export const isDotMethodCallType = typia.createIs<DotMethodCallType>();
 
 export const makeDotMethodCallRule = (
-    slot: SourceSlot,
     errorInfo: ErrorInfo[],
 ): AssignForValueRule<DotMethodCallTypeClass, DotMethodCallType> => {
     return {
         isValid: (target: unknown) => isTargetTypeClass(target, isDotMethodCallTypeClass),
         construct: (callTypeClass: DotMethodCallTypeClass) => {
-            const node = makeSourceNode(callTypeClass);
             const value = assignMultiClass(callTypeClass.getValue(), [
-                makeAnyIdRule(sourceField(node, 'value')),
+                makeAnyIdRule(),
                 makeErrorAssignRule(errorInfo),
             ]);
             const param = assignMultiClass(callTypeClass.getParam(), [
-                makeExpressionListRule(sourceField(node, 'param'), errorInfo),
+                makeExpressionListRule(errorInfo),
                 makeErrorAssignRule(errorInfo),
+                makeNullAssignRule,
             ]);
-            slot(node);
-            return { type: callTypeClass.getType(), value, param };
+            return {
+                type: callTypeClass.getType(),
+                sourceInfo: makeSourceInfo(callTypeClass),
+                value,
+                param,
+            };
         },
     };
 };
 
-export type MethodCallType = {
-    type: string;
-    value: ValueRuleValue<IdType>;
-    param: ValueRuleValue<ExpressionListType>;
+export type MethodCallType = CommonType & {
+    value: ValueRuleValue<IdType | null>;
+    param: ValueRuleValue<ExpressionListType | null>;
     reference: string | null;
 };
 
 export const isMethodCallType = typia.createIs<MethodCallType>();
 
 export const makeMethodCallRule = (
-    slot: SourceSlot,
     errorInfo: ErrorInfo[],
 ): AssignForValueRule<MethodCallTypeClass, MethodCallType> => {
     return {
         isValid: (target: unknown) => isTargetTypeClass(target, isMethodCallTypeClass),
         construct: (callTypeClass: MethodCallTypeClass) => {
-            const node = makeSourceNode(callTypeClass);
             const value = assignMultiClass(callTypeClass.getValue(), [
-                makeIdRule(sourceField(node, 'value')),
+                makeIdRule(),
                 makeErrorAssignRule(errorInfo),
+                makeNullAssignRule,
             ]);
             const param = assignMultiClass(callTypeClass.getParam(), [
-                makeExpressionListRule(sourceField(node, 'param'), errorInfo),
+                makeExpressionListRule(errorInfo),
                 makeErrorAssignRule(errorInfo),
+                makeNullAssignRule,
             ]);
             const reference = callTypeClass.getReference();
-            slot(node);
-            return { type: callTypeClass.getType(), value, param, reference };
+            return {
+                type: callTypeClass.getType(),
+                sourceInfo: makeSourceInfo(callTypeClass),
+                value,
+                param,
+                reference,
+            };
         },
     };
 };

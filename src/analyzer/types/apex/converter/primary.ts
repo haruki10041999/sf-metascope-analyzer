@@ -23,14 +23,14 @@ import {
 
 import {
     ErrorInfo,
-    SourceSlot,
+    CommonType,
     AssignForValueRule,
     ValueRuleValue,
     assignMultiClass,
     isTargetTypeClass,
     makeErrorAssignRule,
-    makeSourceNode,
-    sourceField,
+    makeSourceInfo,
+    makeStringAssignRule,
 } from './commons';
 import { makeIdRule, IdType } from './id';
 import {
@@ -43,224 +43,216 @@ import {
 } from './literal';
 import { makeTypeRefRule, TypeRefType } from './type';
 
-export type IdPrimaryType = {
-    type: string;
+export type IdPrimaryType = CommonType & {
     value: ValueRuleValue<IdType>;
 };
 
 export const isIdPrimaryType = typia.createIs<IdPrimaryType>();
 
 export const makeIdPrimaryRule = (
-    slot: SourceSlot,
     errorInfo: ErrorInfo[],
 ): AssignForValueRule<IdPrimaryTypeClass, IdPrimaryType> => ({
     isValid: (target: unknown) => isTargetTypeClass(target, isIdPrimaryTypeClass),
     construct: (primaryTypeClass: IdPrimaryTypeClass) => {
-        const node = makeSourceNode(primaryTypeClass);
         const value = assignMultiClass(primaryTypeClass.getValue(), [
-            makeIdRule(sourceField(node, 'value')),
+            makeIdRule(),
             makeErrorAssignRule(errorInfo),
         ]);
-        slot(node);
-        return { type: primaryTypeClass.getType(), value };
+        return {
+            type: primaryTypeClass.getType(),
+            sourceInfo: makeSourceInfo(primaryTypeClass),
+            value,
+        };
     },
 });
 
-export type LiteralPrimaryType = {
-    type: string;
+export type LiteralPrimaryType = CommonType & {
     value: ValueRuleValue<LiteralType>;
 };
 
 export const isLiteralPrimaryType = typia.createIs<LiteralPrimaryType>();
 
 export const makeLiteralPrimaryRule = (
-    slot: SourceSlot,
     errorInfo: ErrorInfo[],
 ): AssignForValueRule<LiteralPrimaryTypeClass, LiteralPrimaryType> => ({
     isValid: (target: unknown) => isTargetTypeClass(target, isLiteralPrimaryTypeClass),
     construct: (primaryTypeClass: LiteralPrimaryTypeClass) => {
-        const node = makeSourceNode(primaryTypeClass);
         const value = assignMultiClass(primaryTypeClass.getValue(), [
-            makeLiteralRule(sourceField(node, 'value'), errorInfo),
+            makeLiteralRule(errorInfo),
             makeErrorAssignRule(errorInfo),
         ]);
-        slot(node);
-        return { type: primaryTypeClass.getType(), value };
+        return {
+            type: primaryTypeClass.getType(),
+            sourceInfo: makeSourceInfo(primaryTypeClass),
+            value,
+        };
     },
 });
 
-export type PrimaryType = {
-    type: string;
+export type PrimaryType = CommonType & {
     value: ValueRuleValue<string>;
 };
 
 export const isPrimaryType = typia.createIs<PrimaryType>();
 
 export const makePrimaryRule = (
-    slot: SourceSlot,
     errorInfo: ErrorInfo[],
 ): AssignForValueRule<NormalPrimaryTypeClass, PrimaryType> => ({
     isValid: (target: unknown) => isTargetTypeClass(target, isNormalPrimaryType),
     construct: (primaryTypeClass: NormalPrimaryTypeClass) => {
         const value = assignMultiClass(primaryTypeClass.getValue(), [
-            {
-                isValid: (target: unknown): target is string => typeof target === 'string',
-                construct: (value: string) => value,
-            },
+            makeStringAssignRule,
             makeErrorAssignRule(errorInfo),
         ]);
-        slot(makeSourceNode(primaryTypeClass));
-        return { type: primaryTypeClass.getType(), value };
+        return {
+            type: primaryTypeClass.getType(),
+            sourceInfo: makeSourceInfo(primaryTypeClass),
+            value,
+        };
     },
 });
 
-export type SoqlPrimaryType = {
-    type: string;
+export type SoqlPrimaryType = CommonType & {
     value: ValueRuleValue<SoqlLiteralType>;
 };
 
 export const isSoqlPrimaryType = typia.createIs<SoqlPrimaryType>();
 
 export const makeSoqlPrimaryRule = (
-    slot: SourceSlot,
     errorInfo: ErrorInfo[],
 ): AssignForValueRule<SoqlPrimaryTypeClass, SoqlPrimaryType> => {
     return {
         isValid: (target: unknown) => isTargetTypeClass(target, isSoqlPrimaryTypeClass),
         construct: (primaryTypeClass: SoqlPrimaryTypeClass) => {
-            const node = makeSourceNode(primaryTypeClass);
             const value = assignMultiClass(primaryTypeClass.getValue(), [
-                makeSoqlLiteralRule(sourceField(node, 'value'), errorInfo),
+                makeSoqlLiteralRule(errorInfo),
                 makeErrorAssignRule(errorInfo),
             ]);
-            slot(node);
-            return { type: primaryTypeClass.getType(), value };
+            return {
+                type: primaryTypeClass.getType(),
+                sourceInfo: makeSourceInfo(primaryTypeClass),
+                value,
+            };
         },
     };
 };
 
-export type SoslPrimaryType = {
-    type: string;
+export type SoslPrimaryType = CommonType & {
     value: ValueRuleValue<SoslLiteralType>;
 };
 
 export const isSoslPrimaryType = typia.createIs<SoslPrimaryType>();
 
 export const makeSoslPrimaryRule = (
-    slot: SourceSlot,
     errorInfo: ErrorInfo[],
 ): AssignForValueRule<SoslPrimaryTypeClass, SoslPrimaryType> => {
     return {
         isValid: (target: unknown) => isTargetTypeClass(target, isSoslPrimaryTypeClass),
         construct: (primaryTypeClass: SoslPrimaryTypeClass) => {
-            const node = makeSourceNode(primaryTypeClass);
             const value = assignMultiClass(primaryTypeClass.getValue(), [
-                makeSoslLiteralRule(sourceField(node, 'value'), errorInfo),
+                makeSoslLiteralRule(errorInfo),
                 makeErrorAssignRule(errorInfo),
             ]);
-            slot(node);
-            return { type: primaryTypeClass.getType(), value };
+            return {
+                type: primaryTypeClass.getType(),
+                sourceInfo: makeSourceInfo(primaryTypeClass),
+                value,
+            };
         },
     };
 };
 
-export type SuperPrimaryType = {
-    type: string;
+export type SuperPrimaryType = CommonType & {
     value: ValueRuleValue<string>;
 };
 
 export const isSuperPrimaryType = typia.createIs<SuperPrimaryType>();
 
 export const makeSuperPrimaryRule = (
-    slot: SourceSlot,
     errorInfo: ErrorInfo[],
 ): AssignForValueRule<SuperPrimaryTypeClass, SuperPrimaryType> => ({
     isValid: (target: unknown) => isTargetTypeClass(target, isSuperPrimaryTypeClass),
     construct: (primaryTypeClass: SuperPrimaryTypeClass) => {
         const value = assignMultiClass(primaryTypeClass.getValue(), [
-            {
-                isValid: (target: unknown): target is string => typeof target === 'string',
-                construct: (value: string) => value,
-            },
+            makeStringAssignRule,
             makeErrorAssignRule(errorInfo),
         ]);
-        slot(makeSourceNode(primaryTypeClass));
-        return { type: primaryTypeClass.getType(), value };
+        return {
+            type: primaryTypeClass.getType(),
+            sourceInfo: makeSourceInfo(primaryTypeClass),
+            value,
+        };
     },
 });
 
-export type ThisPrimaryType = {
-    type: string;
+export type ThisPrimaryType = CommonType & {
     value: ValueRuleValue<string>;
 };
 
 export const isThisPrimaryType = typia.createIs<ThisPrimaryType>();
 
 export const makeThisPrimaryRule = (
-    slot: SourceSlot,
     errorInfo: ErrorInfo[],
 ): AssignForValueRule<ThisPrimaryTypeClass, ThisPrimaryType> => ({
     isValid: (target: unknown) => isTargetTypeClass(target, isThisPrimaryTypeClass),
     construct: (primaryTypeClass: ThisPrimaryTypeClass) => {
         const value = assignMultiClass(primaryTypeClass.getValue(), [
-            {
-                isValid: (target: unknown): target is string => typeof target === 'string',
-                construct: (value: string) => value,
-            },
+            makeStringAssignRule,
             makeErrorAssignRule(errorInfo),
         ]);
-        slot(makeSourceNode(primaryTypeClass));
-        return { type: primaryTypeClass.getType(), value };
+        return {
+            type: primaryTypeClass.getType(),
+            sourceInfo: makeSourceInfo(primaryTypeClass),
+            value,
+        };
     },
 });
 
-export type TypeRefPrimaryType = {
-    type: string;
+export type TypeRefPrimaryType = CommonType & {
     value: ValueRuleValue<TypeRefType>;
 };
 
 export const isTypeRefPrimaryType = typia.createIs<TypeRefPrimaryType>();
 
 export const makeTypeRefPrimaryRule = (
-    slot: SourceSlot,
     errorInfo: ErrorInfo[],
 ): AssignForValueRule<TypeRefPrimaryTypeClass, TypeRefPrimaryType> => {
     return {
         isValid: (target: unknown) => isTargetTypeClass(target, isTypeRefPrimaryTypeClass),
         construct: (primaryTypeClass: TypeRefPrimaryTypeClass) => {
-            const node = makeSourceNode(primaryTypeClass);
             const value = assignMultiClass(primaryTypeClass.getValue(), [
-                makeTypeRefRule(sourceField(node, 'value'), errorInfo),
+                makeTypeRefRule(errorInfo),
                 makeErrorAssignRule(errorInfo),
             ]);
-            slot(node);
-            return { type: primaryTypeClass.getType(), value };
+            return {
+                type: primaryTypeClass.getType(),
+                sourceInfo: makeSourceInfo(primaryTypeClass),
+                value,
+            };
         },
     };
 };
 
-export type VoidPrimaryType = {
-    type: string;
+export type VoidPrimaryType = CommonType & {
     value: ValueRuleValue<string>;
 };
 
 export const isVoidPrimaryType = typia.createIs<VoidPrimaryType>();
 
 export const makeVoidPrimaryRule = (
-    slot: SourceSlot,
     errorInfo: ErrorInfo[],
 ): AssignForValueRule<VoidPrimaryTypeClass, VoidPrimaryType> => ({
     isValid: (target: unknown) => isTargetTypeClass(target, isVoidPrimaryTypeClass),
     construct: (primaryTypeClass: VoidPrimaryTypeClass) => {
         const value = assignMultiClass(primaryTypeClass.getValue(), [
-            {
-                isValid: (target: unknown): target is string => typeof target === 'string',
-                construct: (value: string) => value,
-            },
+            makeStringAssignRule,
             makeErrorAssignRule(errorInfo),
         ]);
-        slot(makeSourceNode(primaryTypeClass));
-        return { type: primaryTypeClass.getType(), value };
+        return {
+            type: primaryTypeClass.getType(),
+            sourceInfo: makeSourceInfo(primaryTypeClass),
+            value,
+        };
     },
 });
 
@@ -277,16 +269,16 @@ export type BasePrimaryType =
 
 export const isBasePrimaryType = typia.createIs<BasePrimaryType>();
 
-export const makeBasePrimaryRule = (slot: SourceSlot, errorInfo: ErrorInfo[]) => {
+export const makeBasePrimaryRule = (errorInfo: ErrorInfo[]) => {
     return [
-        makeIdPrimaryRule(slot, errorInfo),
-        makePrimaryRule(slot, errorInfo),
-        makeVoidPrimaryRule(slot, errorInfo),
-        makeSuperPrimaryRule(slot, errorInfo),
-        makeThisPrimaryRule(slot, errorInfo),
-        makeLiteralPrimaryRule(slot, errorInfo),
-        makeTypeRefPrimaryRule(slot, errorInfo),
-        makeSoqlPrimaryRule(slot, errorInfo),
-        makeSoslPrimaryRule(slot, errorInfo),
+        makeIdPrimaryRule(errorInfo),
+        makePrimaryRule(errorInfo),
+        makeVoidPrimaryRule(errorInfo),
+        makeSuperPrimaryRule(errorInfo),
+        makeThisPrimaryRule(errorInfo),
+        makeLiteralPrimaryRule(errorInfo),
+        makeTypeRefPrimaryRule(errorInfo),
+        makeSoqlPrimaryRule(errorInfo),
+        makeSoslPrimaryRule(errorInfo),
     ];
 };

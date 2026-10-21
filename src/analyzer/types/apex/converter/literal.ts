@@ -19,22 +19,21 @@ import {
 
 import {
     ErrorInfo,
-    SourceSlot,
+    CommonType,
     AssignForValueRule,
     ValueRuleValue,
     assignMultiClass,
     isTargetTypeClass,
     makeErrorAssignRule,
-    makeSourceNode,
-    sourceField,
+    makeSourceInfo,
+    makeStringAssignRule,
 } from './commons';
 import { makeBoundExpressionRule, BoundExpressionType } from './expression';
 import { makeQueryRule, QueryType } from './query';
 import { makeSoslClausesRule, SoslClausesType } from './clause';
 import { makeQualifiedNameRule, QualifiedNameType } from './name';
 
-export type LiteralType = {
-    type: string;
+export type LiteralType = CommonType & {
     value: ValueRuleValue<string>;
     valueType: string;
 };
@@ -42,29 +41,24 @@ export type LiteralType = {
 export const isLiteralType = typia.createIs<LiteralType>();
 
 export const makeLiteralRule = (
-    slot: SourceSlot,
     errorInfo: ErrorInfo[],
 ): AssignForValueRule<NormalLiteralTypeClass, LiteralType> => ({
     isValid: (target: unknown) => isTargetTypeClass(target, isNormalLiteralType),
     construct: (literalTypeClass: NormalLiteralTypeClass) => {
         const value = assignMultiClass(literalTypeClass.getValue(), [
-            {
-                isValid: (target: unknown): target is string => typeof target === 'string',
-                construct: (value: string) => value,
-            },
+            makeStringAssignRule,
             makeErrorAssignRule(errorInfo),
         ]);
-        slot(makeSourceNode(literalTypeClass));
         return {
             type: literalTypeClass.getType(),
+            sourceInfo: makeSourceInfo(literalTypeClass),
             value,
             valueType: literalTypeClass.getValueType(),
         };
     },
 });
 
-export type SignedIntegerType = {
-    type: string;
+export type SignedIntegerType = CommonType & {
     value: ValueRuleValue<string>;
     valueType: string;
     operator: string | null;
@@ -73,21 +67,17 @@ export type SignedIntegerType = {
 export const isSignedIntegerType = typia.createIs<SignedIntegerType>();
 
 export const makeSignedIntegerRule = (
-    slot: SourceSlot,
     errorInfo: ErrorInfo[],
 ): AssignForValueRule<SignedIntegerTypeClass, SignedIntegerType> => ({
     isValid: (target: unknown) => isTargetTypeClass(target, isSignedIntegerTypeClass),
     construct: (literalTypeClass: SignedIntegerTypeClass) => {
         const value = assignMultiClass(literalTypeClass.getValue(), [
-            {
-                isValid: (target: unknown): target is string => typeof target === 'string',
-                construct: (value: string) => value,
-            },
+            makeStringAssignRule,
             makeErrorAssignRule(errorInfo),
         ]);
-        slot(makeSourceNode(literalTypeClass));
         return {
             type: literalTypeClass.getType(),
+            sourceInfo: makeSourceInfo(literalTypeClass),
             value,
             valueType: literalTypeClass.getValueType(),
             operator: literalTypeClass.getOperator(),
@@ -95,8 +85,7 @@ export const makeSignedIntegerRule = (
     },
 });
 
-export type SignedNumberType = {
-    type: string;
+export type SignedNumberType = CommonType & {
     value: ValueRuleValue<string>;
     valueType: string;
     operator: string | null;
@@ -105,21 +94,17 @@ export type SignedNumberType = {
 export const isSignedNumberType = typia.createIs<SignedNumberType>();
 
 export const makeSignedNumberRule = (
-    slot: SourceSlot,
     errorInfo: ErrorInfo[],
 ): AssignForValueRule<SignedNumberTypeClass, SignedNumberType> => ({
     isValid: (target: unknown) => isTargetTypeClass(target, isSignedNumberTypeClass),
     construct: (literalTypeClass: SignedNumberTypeClass) => {
         const value = assignMultiClass(literalTypeClass.getValue(), [
-            {
-                isValid: (target: unknown): target is string => typeof target === 'string',
-                construct: (value: string) => value,
-            },
+            makeStringAssignRule,
             makeErrorAssignRule(errorInfo),
         ]);
-        slot(makeSourceNode(literalTypeClass));
         return {
             type: literalTypeClass.getType(),
+            sourceInfo: makeSourceInfo(literalTypeClass),
             value,
             valueType: literalTypeClass.getValueType(),
             operator: literalTypeClass.getOperator(),
@@ -127,33 +112,32 @@ export const makeSignedNumberRule = (
     },
 });
 
-export type SoqlLiteralType = {
-    type: string;
+export type SoqlLiteralType = CommonType & {
     value: ValueRuleValue<QueryType>;
 };
 
 export const isSoqlLiteralType = typia.createIs<SoqlLiteralType>();
 
 export const makeSoqlLiteralRule = (
-    slot: SourceSlot,
     errorInfo: ErrorInfo[],
 ): AssignForValueRule<SoqlLiteralTypeClass, SoqlLiteralType> => {
     return {
         isValid: (target: unknown) => isTargetTypeClass(target, isSoqlLiteralTypeClass),
         construct: (literalTypeClass: SoqlLiteralTypeClass) => {
-            const node = makeSourceNode(literalTypeClass);
             const value = assignMultiClass(literalTypeClass.getValue(), [
-                makeQueryRule(sourceField(node, 'value'), errorInfo),
+                makeQueryRule(errorInfo),
                 makeErrorAssignRule(errorInfo),
             ]);
-            slot(node);
-            return { type: literalTypeClass.getType(), value };
+            return {
+                type: literalTypeClass.getType(),
+                sourceInfo: makeSourceInfo(literalTypeClass),
+                value,
+            };
         },
     };
 };
 
-export type SoslLiteralAltType = {
-    type: string;
+export type SoslLiteralAltType = CommonType & {
     value: ValueRuleValue<string>;
     soslClauses: ValueRuleValue<SoslClausesType>;
 };
@@ -161,27 +145,22 @@ export type SoslLiteralAltType = {
 export const isSoslLiteralAltType = typia.createIs<SoslLiteralAltType>();
 
 export const makeSoslLiteralAltRule = (
-    slot: SourceSlot,
     errorInfo: ErrorInfo[],
 ): AssignForValueRule<SoslLiteralAltTypeClass, SoslLiteralAltType> => {
     return {
         isValid: (target: unknown) => isTargetTypeClass(target, isSoslLiteralAltTypeClass),
         construct: (literalTypeClass: SoslLiteralAltTypeClass) => {
-            const node = makeSourceNode(literalTypeClass);
             const value = assignMultiClass(literalTypeClass.getValue(), [
-                {
-                    isValid: (target: unknown): target is string => typeof target === 'string',
-                    construct: (value: string) => value,
-                },
+                makeStringAssignRule,
                 makeErrorAssignRule(errorInfo),
             ]);
             const soslClauses = assignMultiClass(literalTypeClass.getSoslClauses(), [
-                makeSoslClausesRule(sourceField(node, 'soslClauses'), errorInfo),
+                makeSoslClausesRule(errorInfo),
                 makeErrorAssignRule(errorInfo),
             ]);
-            slot(node);
             return {
                 type: literalTypeClass.getType(),
+                sourceInfo: makeSourceInfo(literalTypeClass),
                 value,
                 soslClauses,
             };
@@ -189,8 +168,7 @@ export const makeSoslLiteralAltRule = (
     };
 };
 
-export type SoslLiteralType = {
-    type: string;
+export type SoslLiteralType = CommonType & {
     value: ValueRuleValue<string | BoundExpressionType>;
     soslClauses: ValueRuleValue<SoslClausesType>;
 };
@@ -198,28 +176,23 @@ export type SoslLiteralType = {
 export const isSoslLiteralType = typia.createIs<SoslLiteralType>();
 
 export const makeSoslLiteralRule = (
-    slot: SourceSlot,
     errorInfo: ErrorInfo[],
 ): AssignForValueRule<SoslLiteralTypeClass, SoslLiteralType> => {
     return {
         isValid: (target: unknown) => isTargetTypeClass(target, isSoslLiteralTypeClass),
         construct: (literalTypeClass: SoslLiteralTypeClass) => {
-            const node = makeSourceNode(literalTypeClass);
             const value = assignMultiClass(literalTypeClass.getValue(), [
-                {
-                    isValid: (target: unknown): target is string => typeof target === 'string',
-                    construct: (value: string) => value,
-                },
-                makeBoundExpressionRule(sourceField(node, 'value'), errorInfo),
+                makeStringAssignRule,
+                makeBoundExpressionRule(errorInfo),
                 makeErrorAssignRule(errorInfo),
             ]);
             const soslClauses = assignMultiClass(literalTypeClass.getSoslClauses(), [
-                makeSoslClausesRule(sourceField(node, 'soslClauses'), errorInfo),
+                makeSoslClausesRule(errorInfo),
                 makeErrorAssignRule(errorInfo),
             ]);
-            slot(node);
             return {
                 type: literalTypeClass.getType(),
+                sourceInfo: makeSourceInfo(literalTypeClass),
                 value,
                 soslClauses,
             };
@@ -227,8 +200,7 @@ export const makeSoslLiteralRule = (
     };
 };
 
-export type WhenLiteralType = {
-    type: string;
+export type WhenLiteralType = CommonType & {
     value: ValueRuleValue<string | QualifiedNameType>;
     valueType: string;
     operator: string | null;
@@ -237,29 +209,23 @@ export type WhenLiteralType = {
 export const isWhenLiteralType = typia.createIs<WhenLiteralType>();
 
 export const makeWhenLiteralRule = (
-    slot: SourceSlot,
     errorInfo: ErrorInfo[],
 ): AssignForValueRule<WhenLiteralTypeClass, WhenLiteralType> => {
     return {
         isValid: (target: unknown) => isTargetTypeClass(target, isWhenLiteralTypeClass),
         construct: (literalTypeClass: WhenLiteralTypeClass) => {
-            const node = makeSourceNode(literalTypeClass);
-
             const value = assignMultiClass(literalTypeClass.getValue(), [
-                {
-                    isValid: (target: unknown): target is string => typeof target === 'string',
-                    construct: (value: string) => value,
-                },
-                makeQualifiedNameRule(sourceField(node, 'value'), errorInfo),
+                makeStringAssignRule,
+                makeQualifiedNameRule(errorInfo),
                 makeErrorAssignRule(errorInfo),
             ]);
 
             const valueType = literalTypeClass.getValueType();
             const operator = literalTypeClass.getOperator();
 
-            slot(node);
             return {
                 type: literalTypeClass.getType(),
+                sourceInfo: makeSourceInfo(literalTypeClass),
                 value,
                 valueType,
                 operator,

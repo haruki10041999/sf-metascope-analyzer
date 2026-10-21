@@ -22,15 +22,15 @@ import {
 } from '../../apex_IR';
 import {
     ErrorInfo,
-    SourceSlot,
+    CommonType,
     AssignForValueRule,
     ValueRuleValue,
     isTargetTypeClass,
     assignMultiClass,
     makeErrorAssignRule,
-    makeSourceNode,
-    sourceField,
-    sourceList,
+    makeNullAssignRule,
+    makeSourceInfo,
+    makeStringAssignRule,
 } from './commons';
 import {
     makeAllRowsClauseRule,
@@ -73,118 +73,118 @@ import { makeDateFieldNameRule, makeFieldNameRule, DateFieldNameType, FieldNameT
 import { makeSoqlFieldsParameterRule, SoqlFieldsParameterType } from './parameter';
 import { makeLocationValueRule, LocationValueType } from './value';
 
-export type ComparisonOperatorType = {
-    type: string;
+export type ComparisonOperatorType = CommonType & {
     value: ValueRuleValue<string>;
 };
 
 export const isComparisonOperatorType = typia.createIs<ComparisonOperatorType>();
 
 export const makeComparisonOperatorRule = (
-    slot: SourceSlot,
     errorInfo: ErrorInfo[],
 ): AssignForValueRule<ComparisonOperatorTypeClass, ComparisonOperatorType> => {
     return {
         isValid: (target: unknown) => isTargetTypeClass(target, isComparisonOperatorTypeClass),
         construct: (queryTypeClass: ComparisonOperatorTypeClass) => {
             const value = assignMultiClass(queryTypeClass.getValue(), [
-                {
-                    isValid: (target: unknown): target is string => typeof target === 'string',
-                    construct: (value: string) => value,
-                },
+                makeStringAssignRule,
                 makeErrorAssignRule(errorInfo),
             ]);
-            slot(makeSourceNode(queryTypeClass));
-            return { type: queryTypeClass.getType(), value };
+            return {
+                type: queryTypeClass.getType(),
+                sourceInfo: makeSourceInfo(queryTypeClass),
+                value,
+            };
         },
     };
 };
 
-export type DateFormulaType = {
-    type: string;
+export type DateFormulaType = CommonType & {
     value: ValueRuleValue<string>;
-    param: ValueRuleValue<SignedIntegerType>;
+    param: ValueRuleValue<SignedIntegerType | null>;
 };
 
 export const isDateFormulaType = typia.createIs<DateFormulaType>();
 
 export const makeDateFormulaRule = (
-    slot: SourceSlot,
     errorInfo: ErrorInfo[],
 ): AssignForValueRule<DateFormulaTypeClass, DateFormulaType> => {
     return {
         isValid: (target: unknown) => isTargetTypeClass(target, isDateFormulaTypeClass),
         construct: (queryTypeClass: DateFormulaTypeClass) => {
-            const node = makeSourceNode(queryTypeClass);
             const value = assignMultiClass(queryTypeClass.getValue(), [
-                {
-                    isValid: (target: unknown): target is string => typeof target === 'string',
-                    construct: (value: string) => value,
-                },
+                makeStringAssignRule,
                 makeErrorAssignRule(errorInfo),
             ]);
             const param = assignMultiClass(queryTypeClass.getParam(), [
-                makeSignedIntegerRule(sourceField(node, 'param'), errorInfo),
+                makeSignedIntegerRule(errorInfo),
                 makeErrorAssignRule(errorInfo),
+                makeNullAssignRule,
             ]);
-            slot(node);
-            return { type: queryTypeClass.getType(), value, param };
+            return {
+                type: queryTypeClass.getType(),
+                sourceInfo: makeSourceInfo(queryTypeClass),
+                value,
+                param,
+            };
         },
     };
 };
 
-export type FieldSpecType = {
-    type: string;
+export type FieldSpecType = CommonType & {
     value: ValueRuleValue<SoslIdType>;
-    fieldList: ValueRuleValue<FieldListType>;
-    where: ValueRuleValue<LogicalExpressionType>;
-    listView: ValueRuleValue<SoslIdType>;
-    orderBy: ValueRuleValue<FieldOrderListType>;
-    limitClause: ValueRuleValue<LimitClauseType>;
-    offsetClause: ValueRuleValue<OffsetClauseType>;
+    fieldList: ValueRuleValue<FieldListType | null>;
+    where: ValueRuleValue<LogicalExpressionType | null>;
+    listView: ValueRuleValue<SoslIdType | null>;
+    orderBy: ValueRuleValue<FieldOrderListType | null>;
+    limitClause: ValueRuleValue<LimitClauseType | null>;
+    offsetClause: ValueRuleValue<OffsetClauseType | null>;
 };
 
 export const isFieldSpecType = typia.createIs<FieldSpecType>();
 
 export const makeFieldSpecRule = (
-    slot: SourceSlot,
     errorInfo: ErrorInfo[],
 ): AssignForValueRule<FieldSpecTypeClass, FieldSpecType> => {
     return {
         isValid: (target: unknown) => isTargetTypeClass(target, isFieldSpecTypeClass),
         construct: (queryTypeClass: FieldSpecTypeClass) => {
-            const node = makeSourceNode(queryTypeClass);
             const value = assignMultiClass(queryTypeClass.getValue(), [
-                makeSoslIdRule(sourceField(node, 'value'), errorInfo),
+                makeSoslIdRule(errorInfo),
                 makeErrorAssignRule(errorInfo),
             ]);
             const fieldList = assignMultiClass(queryTypeClass.getFieldList(), [
-                makeFieldListRule(sourceField(node, 'fieldList'), errorInfo),
+                makeFieldListRule(errorInfo),
                 makeErrorAssignRule(errorInfo),
+                makeNullAssignRule,
             ]);
             const where = assignMultiClass(queryTypeClass.getWhere(), [
-                makeLogicalExpressionRule(sourceField(node, 'where'), errorInfo),
+                makeLogicalExpressionRule(errorInfo),
                 makeErrorAssignRule(errorInfo),
+                makeNullAssignRule,
             ]);
             const listView = assignMultiClass(queryTypeClass.getListView(), [
-                makeSoslIdRule(sourceField(node, 'listView'), errorInfo),
+                makeSoslIdRule(errorInfo),
                 makeErrorAssignRule(errorInfo),
+                makeNullAssignRule,
             ]);
             const orderBy = assignMultiClass(queryTypeClass.getOrderBy(), [
-                makeFieldOrderListRule(sourceField(node, 'orderBy'), errorInfo),
+                makeFieldOrderListRule(errorInfo),
                 makeErrorAssignRule(errorInfo),
+                makeNullAssignRule,
             ]);
             const limitClause = assignMultiClass(queryTypeClass.getLimitClause(), [
-                makeLimitClauseRule(sourceField(node, 'limitClause'), errorInfo),
+                makeLimitClauseRule(errorInfo),
                 makeErrorAssignRule(errorInfo),
+                makeNullAssignRule,
             ]);
             const offsetClause = assignMultiClass(queryTypeClass.getOffsetClause(), [
-                makeOffsetClauseRule(sourceField(node, 'offsetClause'), errorInfo),
+                makeOffsetClauseRule(errorInfo),
                 makeErrorAssignRule(errorInfo),
+                makeNullAssignRule,
             ]);
-            slot(node);
             return {
                 type: queryTypeClass.getType(),
+                sourceInfo: makeSourceInfo(queryTypeClass),
                 value,
                 fieldList,
                 where,
@@ -197,84 +197,91 @@ export const makeFieldSpecRule = (
     };
 };
 
-export type QueryType = {
-    type: string;
+export type QueryType = CommonType & {
     value: ValueRuleValue<SelectListType>;
     from: ValueRuleValue<FromNameListType>;
-    forClause: ValueRuleValue<ForClausesType>;
-    usingScope: ValueRuleValue<UsingScopeType>;
-    whereClause: ValueRuleValue<WhereClauseType>;
-    withClause: ValueRuleValue<WithClauseType>;
-    groupByClause: ValueRuleValue<GroupByClauseType>;
-    orderByClause: ValueRuleValue<OrderByClauseType>;
-    limitClause: ValueRuleValue<LimitClauseType>;
-    offsetClause: ValueRuleValue<OffsetClauseType>;
-    allRowsClause: ValueRuleValue<AllRowsClauseType>;
-    updateList: ValueRuleValue<UpdateListType>;
+    forClause: ValueRuleValue<ForClausesType | null>;
+    usingScope: ValueRuleValue<UsingScopeType | null>;
+    whereClause: ValueRuleValue<WhereClauseType | null>;
+    withClause: ValueRuleValue<WithClauseType | null>;
+    groupByClause: ValueRuleValue<GroupByClauseType | null>;
+    orderByClause: ValueRuleValue<OrderByClauseType | null>;
+    limitClause: ValueRuleValue<LimitClauseType | null>;
+    offsetClause: ValueRuleValue<OffsetClauseType | null>;
+    allRowsClause: ValueRuleValue<AllRowsClauseType | null>;
+    updateList: ValueRuleValue<UpdateListType | null>;
 };
 
 export const isQueryType = typia.createIs<QueryType>();
 
 export const makeQueryRule = (
-    slot: SourceSlot,
     errorInfo: ErrorInfo[],
 ): AssignForValueRule<NormalQueryTypeClass, QueryType> => {
     return {
         isValid: (target: unknown) => isTargetTypeClass(target, isNormalQueryType),
         construct: (queryTypeClass: NormalQueryTypeClass) => {
-            const node = makeSourceNode(queryTypeClass);
             const value = assignMultiClass(queryTypeClass.getValue(), [
-                makeSelectListRule(sourceField(node, 'value'), errorInfo),
+                makeSelectListRule(errorInfo),
                 makeErrorAssignRule(errorInfo),
             ]);
             const from = assignMultiClass(queryTypeClass.getFrom(), [
-                makeFromNameListRule(sourceField(node, 'from'), errorInfo),
+                makeFromNameListRule(errorInfo),
                 makeErrorAssignRule(errorInfo),
             ]);
             const whereClause = assignMultiClass(queryTypeClass.getWhereClause(), [
-                makeWhereClauseRule(sourceField(node, 'whereClause'), errorInfo),
+                makeWhereClauseRule(errorInfo),
                 makeErrorAssignRule(errorInfo),
+                makeNullAssignRule,
             ]);
             const orderByClause = assignMultiClass(queryTypeClass.getOrderByClause(), [
-                makeOrderByClauseRule(sourceField(node, 'orderByClause'), errorInfo),
+                makeOrderByClauseRule(errorInfo),
                 makeErrorAssignRule(errorInfo),
+                makeNullAssignRule,
             ]);
             const forClause = assignMultiClass(queryTypeClass.getForClause(), [
-                makeForClausesRule(sourceField(node, 'forClause'), errorInfo),
+                makeForClausesRule(errorInfo),
                 makeErrorAssignRule(errorInfo),
+                makeNullAssignRule,
             ]);
             const limitClause = assignMultiClass(queryTypeClass.getLimitClause(), [
-                makeLimitClauseRule(sourceField(node, 'limitClause'), errorInfo),
+                makeLimitClauseRule(errorInfo),
                 makeErrorAssignRule(errorInfo),
+                makeNullAssignRule,
             ]);
             const offsetClause = assignMultiClass(queryTypeClass.getOffsetClause(), [
-                makeOffsetClauseRule(sourceField(node, 'offsetClause'), errorInfo),
+                makeOffsetClauseRule(errorInfo),
                 makeErrorAssignRule(errorInfo),
+                makeNullAssignRule,
             ]);
             const allRowsClause = assignMultiClass(queryTypeClass.getAllRowsClause(), [
-                makeAllRowsClauseRule(sourceField(node, 'allRowsClause'), errorInfo),
+                makeAllRowsClauseRule(errorInfo),
                 makeErrorAssignRule(errorInfo),
+                makeNullAssignRule,
             ]);
             const usingScope = assignMultiClass(queryTypeClass.getUsingScope(), [
-                makeUsingScopeRule(sourceField(node, 'usingScope'), errorInfo),
+                makeUsingScopeRule(errorInfo),
                 makeErrorAssignRule(errorInfo),
+                makeNullAssignRule,
             ]);
             const groupByClause = assignMultiClass(queryTypeClass.getGroupByClause(), [
-                makeGroupByClauseRule(sourceField(node, 'groupByClause'), errorInfo),
+                makeGroupByClauseRule(errorInfo),
                 makeErrorAssignRule(errorInfo),
+                makeNullAssignRule,
             ]);
             const updateList = assignMultiClass(queryTypeClass.getUpdateList(), [
-                makeUpdateListRule(sourceField(node, 'updateList'), errorInfo),
+                makeUpdateListRule(errorInfo),
                 makeErrorAssignRule(errorInfo),
+                makeNullAssignRule,
             ]);
             const withClause = assignMultiClass(queryTypeClass.getWithClause(), [
-                makeWithClauseRule(sourceField(node, 'withClause'), errorInfo),
+                makeWithClauseRule(errorInfo),
                 makeErrorAssignRule(errorInfo),
+                makeNullAssignRule,
             ]);
 
-            slot(node);
             return {
                 type: queryTypeClass.getType(),
+                sourceInfo: makeSourceInfo(queryTypeClass),
                 value,
                 from,
                 forClause,
@@ -292,35 +299,32 @@ export const makeQueryRule = (
     };
 };
 
-export type SearchGroupType = {
-    type: string;
+export type SearchGroupType = CommonType & {
     value: ValueRuleValue<string>;
 };
 
 export const isSearchGroupType = typia.createIs<SearchGroupType>();
 
 export const makeSearchGroupRule = (
-    slot: SourceSlot,
     errorInfo: ErrorInfo[],
 ): AssignForValueRule<SearchGroupTypeClass, SearchGroupType> => {
     return {
         isValid: (target: unknown) => isTargetTypeClass(target, isSearchGroupTypeClass),
         construct: (queryTypeClass: SearchGroupTypeClass) => {
             const value = assignMultiClass(queryTypeClass.getValue(), [
-                {
-                    isValid: (target: unknown): target is string => typeof target === 'string',
-                    construct: (value: string) => value,
-                },
+                makeStringAssignRule,
                 makeErrorAssignRule(errorInfo),
             ]);
-            slot(makeSourceNode(queryTypeClass));
-            return { type: queryTypeClass.getType(), value };
+            return {
+                type: queryTypeClass.getType(),
+                sourceInfo: makeSourceInfo(queryTypeClass),
+                value,
+            };
         },
     };
 };
 
-export type SoqlFunctionType = {
-    type: string;
+export type SoqlFunctionType = CommonType & {
     value: ValueRuleValue<string>;
     param: ValueRuleValue<
         | ValueRuleValue<LocationValueType | string>[]
@@ -328,24 +332,20 @@ export type SoqlFunctionType = {
         | DateFieldNameType
         | SoqlFunctionType
         | SoqlFieldsParameterType
+        | null
     >;
 };
 
 export const isSoqlFunctionType = typia.createIs<SoqlFunctionType>();
 
 export const makeSoqlFunctionRule = (
-    slot: SourceSlot,
     errorInfo: ErrorInfo[],
 ): AssignForValueRule<SoqlFunctionTypeClass, SoqlFunctionType> => {
     return {
         isValid: (target: unknown) => isTargetTypeClass(target, isSoqlFunctionTypeClass),
         construct: (queryTypeClass: SoqlFunctionTypeClass) => {
-            const node = makeSourceNode(queryTypeClass);
             const value = assignMultiClass(queryTypeClass.getValue(), [
-                {
-                    isValid: (target: unknown): target is string => typeof target === 'string',
-                    construct: (value: string) => value,
-                },
+                makeStringAssignRule,
                 makeErrorAssignRule(errorInfo),
             ]);
             const param = assignMultiClass(queryTypeClass.getParam(), [
@@ -361,85 +361,87 @@ export const makeSoqlFunctionRule = (
                                 isTargetTypeClass(t, isErrorType),
                         ),
                     construct: (values: (LocationValueTypeClass | ErrorTypeClass | string)[]) => {
-                        const paramSource = sourceList(node, 'param');
-                        return values.map((v, index) =>
+                        return values.map((v) =>
                             assignMultiClass(v, [
-                                {
-                                    isValid: (target: unknown): target is string =>
-                                        typeof target === 'string',
-                                    construct: (value: string) => value,
-                                },
-                                makeLocationValueRule(paramSource(index), errorInfo),
+                                makeStringAssignRule,
+                                makeLocationValueRule(errorInfo),
                                 makeErrorAssignRule(errorInfo),
                             ]),
                         );
                     },
                 },
-                makeFieldNameRule(sourceField(node, 'param'), errorInfo),
-                makeDateFieldNameRule(sourceField(node, 'param'), errorInfo),
-                makeSoqlFieldsParameterRule(sourceField(node, 'param'), errorInfo),
-                makeSoqlFunctionRule(sourceField(node, 'param'), errorInfo),
+                makeFieldNameRule(errorInfo),
+                makeDateFieldNameRule(errorInfo),
+                makeSoqlFieldsParameterRule(errorInfo),
+                makeSoqlFunctionRule(errorInfo),
                 makeErrorAssignRule(errorInfo),
+                makeNullAssignRule,
             ]);
-            slot(node);
-            return { type: queryTypeClass.getType(), value, param };
+            return {
+                type: queryTypeClass.getType(),
+                sourceInfo: makeSourceInfo(queryTypeClass),
+                value,
+                param,
+            };
         },
     };
 };
 
-export type SubQueryType = {
-    type: string;
+export type SubQueryType = CommonType & {
     value: ValueRuleValue<SubFieldListType>;
     from: ValueRuleValue<FromNameListType>;
-    forClause: ValueRuleValue<ForClausesType>;
-    whereClause: ValueRuleValue<WhereClauseType>;
-    orderByClause: ValueRuleValue<OrderByClauseType>;
-    limitClause: ValueRuleValue<LimitClauseType>;
-    updateList: ValueRuleValue<UpdateListType>;
+    forClause: ValueRuleValue<ForClausesType | null>;
+    whereClause: ValueRuleValue<WhereClauseType | null>;
+    orderByClause: ValueRuleValue<OrderByClauseType | null>;
+    limitClause: ValueRuleValue<LimitClauseType | null>;
+    updateList: ValueRuleValue<UpdateListType | null>;
 };
 
 export const isSubQueryType = typia.createIs<SubQueryType>();
 
 export const makeSubQueryRule = (
-    slot: SourceSlot,
     errorInfo: ErrorInfo[],
 ): AssignForValueRule<SubQueryTypeClass, SubQueryType> => {
     return {
         isValid: (target: unknown) => isTargetTypeClass(target, isSubQueryTypeClass),
         construct: (queryTypeClass: SubQueryTypeClass) => {
-            const node = makeSourceNode(queryTypeClass);
             const value = assignMultiClass(queryTypeClass.getValue(), [
-                makeSubFieldListRule(sourceField(node, 'value'), errorInfo),
+                makeSubFieldListRule(errorInfo),
                 makeErrorAssignRule(errorInfo),
             ]);
             const from = assignMultiClass(queryTypeClass.getFrom(), [
-                makeFromNameListRule(sourceField(node, 'from'), errorInfo),
+                makeFromNameListRule(errorInfo),
                 makeErrorAssignRule(errorInfo),
             ]);
             const whereClause = assignMultiClass(queryTypeClass.getWhereClause(), [
-                makeWhereClauseRule(sourceField(node, 'whereClause'), errorInfo),
+                makeWhereClauseRule(errorInfo),
                 makeErrorAssignRule(errorInfo),
+                makeNullAssignRule,
             ]);
             const orderByClause = assignMultiClass(queryTypeClass.getOrderByClause(), [
-                makeOrderByClauseRule(sourceField(node, 'orderByClause'), errorInfo),
+                makeOrderByClauseRule(errorInfo),
                 makeErrorAssignRule(errorInfo),
+                makeNullAssignRule,
             ]);
             const forClause = assignMultiClass(queryTypeClass.getForClause(), [
-                makeForClausesRule(sourceField(node, 'forClause'), errorInfo),
+                makeForClausesRule(errorInfo),
                 makeErrorAssignRule(errorInfo),
+                makeNullAssignRule,
             ]);
             const limitClause = assignMultiClass(queryTypeClass.getLimitClause(), [
-                makeLimitClauseRule(sourceField(node, 'limitClause'), errorInfo),
+                makeLimitClauseRule(errorInfo),
                 makeErrorAssignRule(errorInfo),
+                makeNullAssignRule,
             ]);
             const updateList = assignMultiClass(queryTypeClass.getUpdateList(), [
-                makeUpdateListRule(sourceField(node, 'updateList'), errorInfo),
+                makeUpdateListRule(errorInfo),
                 makeErrorAssignRule(errorInfo),
+                makeNullAssignRule,
             ]);
 
-            slot(node);
             return {
                 type: queryTypeClass.getType(),
+                sourceInfo: makeSourceInfo(queryTypeClass),
                 value,
                 from,
                 forClause,

@@ -13,15 +13,14 @@ import {
 
 import {
     ErrorInfo,
-    SourceSlot,
+    CommonType,
     AssignForValueRule,
     ValueRuleValue,
     isTargetTypeClass,
     assignMultiClass,
     makeErrorAssignRule,
-    makeSourceNode,
-    sourceField,
-    sourceList,
+    makeStringAssignRule,
+    makeSourceInfo,
 } from './commons';
 import {
     makeAnonymousBlockRule,
@@ -32,58 +31,57 @@ import {
 import { makeTypeDeclarationRule, TypeDeclarationType } from './declaration';
 import { makeIdRule, IdType } from './id';
 
-export type AnonymousUnitType = {
-    type: string;
+export type AnonymousUnitType = CommonType & {
     value: ValueRuleValue<AnonymousBlockType>;
 };
 
 export const isAnonymousUnitType = typia.createIs<AnonymousUnitType>();
 
 export const makeAnonymousUnitRule = (
-    slot: SourceSlot,
     errorInfo: ErrorInfo[],
 ): AssignForValueRule<AnonymousUnitTypeClass, AnonymousUnitType> => {
     return {
         isValid: (target: unknown) => isTargetTypeClass(target, isAnonymousUnitTypeClass),
         construct: (unitTypeClass: AnonymousUnitTypeClass) => {
-            const node = makeSourceNode(unitTypeClass);
             const value = assignMultiClass(unitTypeClass.getValue(), [
-                makeAnonymousBlockRule(sourceField(node, 'value'), errorInfo),
+                makeAnonymousBlockRule(errorInfo),
                 makeErrorAssignRule(errorInfo),
             ]);
-            slot(node);
-            return { type: unitTypeClass.getType(), value };
+            return {
+                type: unitTypeClass.getType(),
+                sourceInfo: makeSourceInfo(unitTypeClass),
+                value,
+            };
         },
     };
 };
 
-export type CompilationUnitType = {
-    type: string;
+export type CompilationUnitType = CommonType & {
     value: ValueRuleValue<TypeDeclarationType>;
 };
 
 export const isCompilationUnitType = typia.createIs<CompilationUnitType>();
 
 export const makeCompilationUnitRule = (
-    slot: SourceSlot,
     errorInfo: ErrorInfo[],
 ): AssignForValueRule<CompilationUnitTypeClass, CompilationUnitType> => {
     return {
         isValid: (target: unknown) => isTargetTypeClass(target, isCompilationUnitTypeClass),
         construct: (unitTypeClass: CompilationUnitTypeClass) => {
-            const node = makeSourceNode(unitTypeClass);
             const value = assignMultiClass(unitTypeClass.getValue(), [
-                makeTypeDeclarationRule(sourceField(node, 'value'), errorInfo),
+                makeTypeDeclarationRule(errorInfo),
                 makeErrorAssignRule(errorInfo),
             ]);
-            slot(node);
-            return { type: unitTypeClass.getType(), value };
+            return {
+                type: unitTypeClass.getType(),
+                sourceInfo: makeSourceInfo(unitTypeClass),
+                value,
+            };
         },
     };
 };
 
-export type TriggerCaseType = {
-    type: string;
+export type TriggerCaseType = CommonType & {
     timing: ValueRuleValue<string>;
     triggerCaseType: string;
 };
@@ -91,28 +89,27 @@ export type TriggerCaseType = {
 export const isTriggerCaseType = typia.createIs<TriggerCaseType>();
 
 export const makeTriggerCaseRule = (
-    slot: SourceSlot,
     errorInfo: ErrorInfo[],
 ): AssignForValueRule<TriggerCaseTypeClass, TriggerCaseType> => {
     return {
         isValid: (target: unknown) => isTargetTypeClass(target, isTriggerCaseTypeClass),
         construct: (unitTypeClass: TriggerCaseTypeClass) => {
             const timing = assignMultiClass(unitTypeClass.getValue(), [
-                {
-                    isValid: (target: unknown): target is string => typeof target === 'string',
-                    construct: (value: string) => value,
-                },
+                makeStringAssignRule,
                 makeErrorAssignRule(errorInfo),
             ]);
             const triggerCaseType = unitTypeClass.getTriggerCaseType();
-            slot(makeSourceNode(unitTypeClass));
-            return { type: unitTypeClass.getType(), timing, triggerCaseType };
+            return {
+                type: unitTypeClass.getType(),
+                sourceInfo: makeSourceInfo(unitTypeClass),
+                timing,
+                triggerCaseType,
+            };
         },
     };
 };
 
-export type TriggerUnitType = {
-    type: string;
+export type TriggerUnitType = CommonType & {
     value: ValueRuleValue<IdType>[];
     triggerCase: ValueRuleValue<TriggerCaseType>[];
     block: ValueRuleValue<TriggerBlockType>;
@@ -121,37 +118,33 @@ export type TriggerUnitType = {
 export const isTriggerUnitType = typia.createIs<TriggerUnitType>();
 
 export const makeTriggerUnitRule = (
-    slot: SourceSlot,
     errorInfo: ErrorInfo[],
 ): AssignForValueRule<TriggerUnitTypeClass, TriggerUnitType> => {
     return {
         isValid: (target: unknown) => isTargetTypeClass(target, isTriggerUnitTypeClass),
         construct: (unitTypeClass: TriggerUnitTypeClass) => {
-            const node = makeSourceNode(unitTypeClass);
-            const valueSource = sourceList(node, 'value');
             const value = unitTypeClass
                 .getValue()
-                .map((v, index) =>
-                    assignMultiClass(v, [
-                        makeIdRule(valueSource(index)),
-                        makeErrorAssignRule(errorInfo),
-                    ]),
-                );
-            const triggerCaseSource = sourceList(node, 'triggerCase');
+                .map((v) => assignMultiClass(v, [makeIdRule(), makeErrorAssignRule(errorInfo)]));
             const triggerCase = unitTypeClass
                 .getTriggerCase()
-                .map((v, index) =>
+                .map((v) =>
                     assignMultiClass(v, [
-                        makeTriggerCaseRule(triggerCaseSource(index), errorInfo),
+                        makeTriggerCaseRule(errorInfo),
                         makeErrorAssignRule(errorInfo),
                     ]),
                 );
             const block = assignMultiClass(unitTypeClass.getBlock(), [
-                makeTriggerBlockRule(sourceField(node, 'block'), errorInfo),
+                makeTriggerBlockRule(errorInfo),
                 makeErrorAssignRule(errorInfo),
             ]);
-            slot(node);
-            return { type: unitTypeClass.getType(), value, triggerCase, block };
+            return {
+                type: unitTypeClass.getType(),
+                sourceInfo: makeSourceInfo(unitTypeClass),
+                value,
+                triggerCase,
+                block,
+            };
         },
     };
 };

@@ -10,6 +10,7 @@
 - 各フォルダは `base.ts`（基底クラス）、`index.ts`（re-export と `XxxVisitor`）、TypeClass ごとのファイルで構成される。
 - 子ノードのフィールドは、変換に失敗した場合 `ErrorTypeClass` になり得る（型表記の `| ErrorTypeClass`）。
 - 文法上省略可能な要素は `null` になる（型表記の `| null`）。
+- nullable な全フィールドの一覧は [nullable フィールド](nullability.md) を参照。
 
 ## commonVisitor.ts
 

@@ -9,82 +9,86 @@ import {
 
 import {
     ErrorInfo,
-    SourceSlot,
+    CommonType,
     AssignForValueRule,
     ValueRuleValue,
     isTargetTypeClass,
     assignMultiClass,
     makeErrorAssignRule,
-    makeSourceNode,
-    sourceField,
+    makeNullAssignRule,
+    makeSourceInfo,
 } from './commons';
 import { makeFieldNameRule, FieldNameType } from './name';
 import { makeSoqlFunctionRule, makeSubQueryRule, SoqlFunctionType, SubQueryType } from './query';
 import { makeTypeOfRule, TypeOfType } from './clause';
 import { makeSoqlIdRule, SoqlIdType } from './id';
 
-export type SelectEntryType = {
-    type: string;
+export type SelectEntryType = CommonType & {
     value: ValueRuleValue<FieldNameType | SoqlFunctionType | SubQueryType | TypeOfType>;
-    alias: ValueRuleValue<SoqlIdType>;
+    alias: ValueRuleValue<SoqlIdType | null>;
 };
 
 export const isSelectEntryType = typia.createIs<SelectEntryType>();
 
 export const makeSelectEntryRule = (
-    slot: SourceSlot,
     errorInfo: ErrorInfo[],
 ): AssignForValueRule<SelectEntryTypeClass, SelectEntryType> => {
     return {
         isValid: (target: unknown) => isTargetTypeClass(target, isSelectEntryTypeClass),
         construct: (entryTypeClass: SelectEntryTypeClass) => {
-            const node = makeSourceNode(entryTypeClass);
             const value = assignMultiClass(entryTypeClass.getValue(), [
-                makeFieldNameRule(sourceField(node, 'value'), errorInfo),
-                makeSoqlFunctionRule(sourceField(node, 'value'), errorInfo),
-                makeSubQueryRule(sourceField(node, 'value'), errorInfo),
-                makeTypeOfRule(sourceField(node, 'value'), errorInfo),
+                makeFieldNameRule(errorInfo),
+                makeSoqlFunctionRule(errorInfo),
+                makeSubQueryRule(errorInfo),
+                makeTypeOfRule(errorInfo),
                 makeErrorAssignRule(errorInfo),
             ]);
             const alias = assignMultiClass(entryTypeClass.getAlias(), [
-                makeSoqlIdRule(sourceField(node, 'alias'), errorInfo),
+                makeSoqlIdRule(errorInfo),
                 makeErrorAssignRule(errorInfo),
+                makeNullAssignRule,
             ]);
-            slot(node);
-            return { type: entryTypeClass.getType(), value, alias };
+            return {
+                type: entryTypeClass.getType(),
+                sourceInfo: makeSourceInfo(entryTypeClass),
+                value,
+                alias,
+            };
         },
     };
 };
 
-export type SubFieldEntryType = {
-    type: string;
+export type SubFieldEntryType = CommonType & {
     value: ValueRuleValue<FieldNameType | SoqlFunctionType | SubQueryType | TypeOfType>;
-    alias: ValueRuleValue<SoqlIdType>;
+    alias: ValueRuleValue<SoqlIdType | null>;
 };
 
 export const isSubFieldEntryType = typia.createIs<SubFieldEntryType>();
 
 export const makeSubFieldEntryRule = (
-    slot: SourceSlot,
     errorInfo: ErrorInfo[],
 ): AssignForValueRule<SubFieldEntryTypeClass, SubFieldEntryType> => {
     return {
         isValid: (target: unknown) => isTargetTypeClass(target, isSubFieldEntryTypeClass),
         construct: (entryTypeClass: SubFieldEntryTypeClass) => {
-            const node = makeSourceNode(entryTypeClass);
             const value = assignMultiClass(entryTypeClass.getValue(), [
-                makeFieldNameRule(sourceField(node, 'value'), errorInfo),
-                makeSoqlFunctionRule(sourceField(node, 'value'), errorInfo),
-                makeSubQueryRule(sourceField(node, 'value'), errorInfo),
-                makeTypeOfRule(sourceField(node, 'value'), errorInfo),
+                makeFieldNameRule(errorInfo),
+                makeSoqlFunctionRule(errorInfo),
+                makeSubQueryRule(errorInfo),
+                makeTypeOfRule(errorInfo),
                 makeErrorAssignRule(errorInfo),
             ]);
             const alias = assignMultiClass(entryTypeClass.getAlias(), [
-                makeSoqlIdRule(sourceField(node, 'alias'), errorInfo),
+                makeSoqlIdRule(errorInfo),
                 makeErrorAssignRule(errorInfo),
+                makeNullAssignRule,
             ]);
-            slot(node);
-            return { type: entryTypeClass.getType(), value, alias };
+            return {
+                type: entryTypeClass.getType(),
+                sourceInfo: makeSourceInfo(entryTypeClass),
+                value,
+                alias,
+            };
         },
     };
 };

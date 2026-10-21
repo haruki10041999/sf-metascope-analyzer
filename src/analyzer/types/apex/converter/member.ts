@@ -9,15 +9,13 @@ import {
 
 import {
     ErrorInfo,
-    SourceSlot,
+    CommonType,
     AssignForValueRule,
     ValueRuleValue,
     isTargetTypeClass,
     assignMultiClass,
     makeErrorAssignRule,
-    makeSourceNode,
-    sourceField,
-    sourceList,
+    makeSourceInfo,
 } from './commons';
 import { makeModifierRule, ModifierType } from './modifier';
 import { makeStatementRule, StatementType } from './statement';
@@ -28,8 +26,7 @@ import {
     TriggerMemberDeclarationType,
 } from './declaration';
 
-export type AnonymousBlockMemberType = {
-    type: string;
+export type AnonymousBlockMemberType = CommonType & {
     value: ValueRuleValue<AnonymousMemberDeclarationType | StatementType>;
     modifier: ValueRuleValue<ModifierType>[];
 };
@@ -37,36 +34,35 @@ export type AnonymousBlockMemberType = {
 export const isAnonymousBlockMemberType = typia.createIs<AnonymousBlockMemberType>();
 
 export const makeAnonymousBlockMemberRule = (
-    slot: SourceSlot,
     errorInfo: ErrorInfo[],
 ): AssignForValueRule<AnonymousBlockMemberTypeClass, AnonymousBlockMemberType> => {
     return {
         isValid: (target: unknown) => isTargetTypeClass(target, isAnonymousBlockMemberTypeClass),
         construct: (memberTypeClass: AnonymousBlockMemberTypeClass) => {
-            const node = makeSourceNode(memberTypeClass);
-            const valueSource = sourceField(node, 'value');
             const value = assignMultiClass(memberTypeClass.getValue(), [
-                makeAnonymousMemberDeclarationRule(valueSource, errorInfo),
-                makeStatementRule(valueSource, errorInfo),
+                makeAnonymousMemberDeclarationRule(errorInfo),
+                makeStatementRule(errorInfo),
                 makeErrorAssignRule(errorInfo),
             ]);
-            const modifierSource = sourceList(node, 'modifier');
             const modifier = memberTypeClass
                 .getModifier()
-                .map((v, index) =>
+                .map((v) =>
                     assignMultiClass(v, [
-                        makeModifierRule(modifierSource(index), errorInfo),
+                        makeModifierRule(errorInfo),
                         makeErrorAssignRule(errorInfo),
                     ]),
                 );
-            slot(node);
-            return { type: memberTypeClass.getType(), value, modifier };
+            return {
+                type: memberTypeClass.getType(),
+                sourceInfo: makeSourceInfo(memberTypeClass),
+                value,
+                modifier,
+            };
         },
     };
 };
 
-export type TriggerBlockMemberType = {
-    type: string;
+export type TriggerBlockMemberType = CommonType & {
     value: ValueRuleValue<TriggerMemberDeclarationType | StatementType>;
     modifier: ValueRuleValue<ModifierType>[];
 };
@@ -74,30 +70,30 @@ export type TriggerBlockMemberType = {
 export const isTriggerBlockMemberType = typia.createIs<TriggerBlockMemberType>();
 
 export const makeTriggerBlockMemberRule = (
-    slot: SourceSlot,
     errorInfo: ErrorInfo[],
 ): AssignForValueRule<TriggerBlockMemberTypeClass, TriggerBlockMemberType> => {
     return {
         isValid: (target: unknown) => isTargetTypeClass(target, isTriggerBlockMemberTypeClass),
         construct: (memberTypeClass: TriggerBlockMemberTypeClass) => {
-            const node = makeSourceNode(memberTypeClass);
-            const valueSource = sourceField(node, 'value');
             const value = assignMultiClass(memberTypeClass.getValue(), [
-                makeTriggerMemberDeclarationRule(valueSource, errorInfo),
-                makeStatementRule(valueSource, errorInfo),
+                makeTriggerMemberDeclarationRule(errorInfo),
+                makeStatementRule(errorInfo),
                 makeErrorAssignRule(errorInfo),
             ]);
-            const modifierSource = sourceList(node, 'modifier');
             const modifier = memberTypeClass
                 .getModifier()
-                .map((v, index) =>
+                .map((v) =>
                     assignMultiClass(v, [
-                        makeModifierRule(modifierSource(index), errorInfo),
+                        makeModifierRule(errorInfo),
                         makeErrorAssignRule(errorInfo),
                     ]),
                 );
-            slot(node);
-            return { type: memberTypeClass.getType(), value, modifier };
+            return {
+                type: memberTypeClass.getType(),
+                sourceInfo: makeSourceInfo(memberTypeClass),
+                value,
+                modifier,
+            };
         },
     };
 };

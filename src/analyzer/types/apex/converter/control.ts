@@ -15,14 +15,14 @@ import {
 
 import {
     ErrorInfo,
-    SourceSlot,
+    CommonType,
     AssignForValueRule,
     ValueRuleValue,
     isTargetTypeClass,
     assignMultiClass,
     makeErrorAssignRule,
-    makeSourceNode,
-    sourceField,
+    makeNullAssignRule,
+    makeSourceInfo,
 } from './commons';
 import { makeBaseExpressionRule, BaseExpressionType } from './expression';
 import { makeIdRule, IdType } from './id';
@@ -32,8 +32,7 @@ import { makeExpressionListRule, ExpressionListType } from './list';
 import { makeWhenValueRule, WhenValueType } from './value';
 import { makeBlockRule, BlockType } from './block';
 
-export type EnhancedForControlType = {
-    type: string;
+export type EnhancedForControlType = CommonType & {
     value: ValueRuleValue<IdType>;
     valueType: ValueRuleValue<TypeRefType>;
     fromVariant: ValueRuleValue<BaseExpressionType>;
@@ -42,126 +41,131 @@ export type EnhancedForControlType = {
 export const isEnhancedForControlType = typia.createIs<EnhancedForControlType>();
 
 export const makeEnhancedForControlRule = (
-    slot: SourceSlot,
     errorInfo: ErrorInfo[],
 ): AssignForValueRule<EnhancedForControlTypeClass, EnhancedForControlType> => {
     return {
         isValid: (target: unknown) => isTargetTypeClass(target, isEnhancedForControlTypeClass),
         construct: (controlTypeClass: EnhancedForControlTypeClass) => {
-            const node = makeSourceNode(controlTypeClass);
             const value = assignMultiClass(controlTypeClass.getValue(), [
-                makeIdRule(sourceField(node, 'value')),
+                makeIdRule(),
                 makeErrorAssignRule(errorInfo),
             ]);
             const valueType = assignMultiClass(controlTypeClass.getValueType(), [
-                makeTypeRefRule(sourceField(node, 'valueType'), errorInfo),
+                makeTypeRefRule(errorInfo),
                 makeErrorAssignRule(errorInfo),
             ]);
 
             const fromVariant = assignMultiClass(controlTypeClass.getFromVariant(), [
-                ...makeBaseExpressionRule(sourceField(node, 'fromVariant'), errorInfo),
+                ...makeBaseExpressionRule(errorInfo),
                 makeErrorAssignRule(errorInfo),
             ]);
 
-            slot(node);
-            return { type: controlTypeClass.getType(), value, valueType, fromVariant };
+            return {
+                type: controlTypeClass.getType(),
+                sourceInfo: makeSourceInfo(controlTypeClass),
+                value,
+                valueType,
+                fromVariant,
+            };
         },
     };
 };
 
-export type ForControlType = {
-    type: string;
-    value: ValueRuleValue<EnhancedForControlType | BaseExpressionType>;
-    init: ValueRuleValue<ForInitType>;
-    update: ValueRuleValue<ForUpdateType>;
+export type ForControlType = CommonType & {
+    value: ValueRuleValue<EnhancedForControlType | BaseExpressionType | null>;
+    init: ValueRuleValue<ForInitType | null>;
+    update: ValueRuleValue<ForUpdateType | null>;
 };
 
 export const isForControlType = typia.createIs<ForControlType>();
 
 export const makeForControlRule = (
-    slot: SourceSlot,
     errorInfo: ErrorInfo[],
 ): AssignForValueRule<ForControlTypeClass, ForControlType> => {
     return {
         isValid: (target: unknown) => isTargetTypeClass(target, isForControlTypeClass),
         construct: (controlTypeClass: ForControlTypeClass) => {
-            const node = makeSourceNode(controlTypeClass);
-            const valueSource = sourceField(node, 'value');
             const value = assignMultiClass(controlTypeClass.getValue(), [
-                makeEnhancedForControlRule(valueSource, errorInfo),
-                ...makeBaseExpressionRule(valueSource, errorInfo),
+                makeEnhancedForControlRule(errorInfo),
+                ...makeBaseExpressionRule(errorInfo),
                 makeErrorAssignRule(errorInfo),
+                makeNullAssignRule,
             ]);
 
             const init = assignMultiClass(controlTypeClass.getInit(), [
-                makeForInitRule(sourceField(node, 'init'), errorInfo),
+                makeForInitRule(errorInfo),
                 makeErrorAssignRule(errorInfo),
+                makeNullAssignRule,
             ]);
             const update = assignMultiClass(controlTypeClass.getUpdate(), [
-                makeForUpdateRule(sourceField(node, 'update'), errorInfo),
+                makeForUpdateRule(errorInfo),
                 makeErrorAssignRule(errorInfo),
+                makeNullAssignRule,
             ]);
 
-            slot(node);
-            return { type: controlTypeClass.getType(), value, init, update };
+            return {
+                type: controlTypeClass.getType(),
+                sourceInfo: makeSourceInfo(controlTypeClass),
+                value,
+                init,
+                update,
+            };
         },
     };
 };
 
-export type ForInitType = {
-    type: string;
+export type ForInitType = CommonType & {
     value: ValueRuleValue<LocalVariableDeclarationType | ExpressionListType>;
 };
 
 export const isForInitType = typia.createIs<ForInitType>();
 
 export const makeForInitRule = (
-    slot: SourceSlot,
     errorInfo: ErrorInfo[],
 ): AssignForValueRule<ForInitTypeClass, ForInitType> => {
     return {
         isValid: (target: unknown) => isTargetTypeClass(target, isForInitTypeClass),
         construct: (controlTypeClass: ForInitTypeClass) => {
-            const node = makeSourceNode(controlTypeClass);
-            const valueSource = sourceField(node, 'value');
             const value = assignMultiClass(controlTypeClass.getValue(), [
-                makeLocalVariableDeclarationRule(valueSource, errorInfo),
-                makeExpressionListRule(valueSource, errorInfo),
+                makeLocalVariableDeclarationRule(errorInfo),
+                makeExpressionListRule(errorInfo),
                 makeErrorAssignRule(errorInfo),
             ]);
-            slot(node);
-            return { type: controlTypeClass.getType(), value };
+            return {
+                type: controlTypeClass.getType(),
+                sourceInfo: makeSourceInfo(controlTypeClass),
+                value,
+            };
         },
     };
 };
 
-export type ForUpdateType = {
-    type: string;
+export type ForUpdateType = CommonType & {
     value: ValueRuleValue<ExpressionListType>;
 };
 
 export const isForUpdateType = typia.createIs<ForUpdateType>();
 
 export const makeForUpdateRule = (
-    slot: SourceSlot,
     errorInfo: ErrorInfo[],
 ): AssignForValueRule<ForUpdateTypeClass, ForUpdateType> => {
     return {
         isValid: (target: unknown) => isTargetTypeClass(target, isForUpdateTypeClass),
         construct: (controlTypeClass: ForUpdateTypeClass) => {
-            const node = makeSourceNode(controlTypeClass);
             const value = assignMultiClass(controlTypeClass.getValue(), [
-                makeExpressionListRule(sourceField(node, 'value'), errorInfo),
+                makeExpressionListRule(errorInfo),
                 makeErrorAssignRule(errorInfo),
             ]);
-            slot(node);
-            return { type: controlTypeClass.getType(), value };
+            return {
+                type: controlTypeClass.getType(),
+                sourceInfo: makeSourceInfo(controlTypeClass),
+                value,
+            };
         },
     };
 };
 
-export type WhenControlType = {
-    type: string;
+export type WhenControlType = CommonType & {
     value: ValueRuleValue<WhenValueType>;
     block: ValueRuleValue<BlockType>;
 };
@@ -169,25 +173,27 @@ export type WhenControlType = {
 export const isWhenControlType = typia.createIs<WhenControlType>();
 
 export const makeWhenControlRule = (
-    slot: SourceSlot,
     errorInfo: ErrorInfo[],
 ): AssignForValueRule<WhenControlTypeClass, WhenControlType> => {
     return {
         isValid: (target: unknown) => isTargetTypeClass(target, isWhenControlTypeClass),
         construct: (controlTypeClass: WhenControlTypeClass) => {
-            const node = makeSourceNode(controlTypeClass);
             const value = assignMultiClass(controlTypeClass.getValue(), [
-                makeWhenValueRule(sourceField(node, 'value'), errorInfo),
+                makeWhenValueRule(errorInfo),
                 makeErrorAssignRule(errorInfo),
             ]);
 
             const block = assignMultiClass(controlTypeClass.getBlock(), [
-                makeBlockRule(sourceField(node, 'block'), errorInfo),
+                makeBlockRule(errorInfo),
                 makeErrorAssignRule(errorInfo),
             ]);
 
-            slot(node);
-            return { type: controlTypeClass.getType(), value, block };
+            return {
+                type: controlTypeClass.getType(),
+                sourceInfo: makeSourceInfo(controlTypeClass),
+                value,
+                block,
+            };
         },
     };
 };

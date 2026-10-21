@@ -9,76 +9,75 @@ import {
 
 import {
     ErrorInfo,
-    SourceSlot,
+    CommonType,
     AssignForValueRule,
     ValueRuleValue,
     assignMultiClass,
     makeErrorAssignRule,
     isTargetTypeClass,
-    makeSourceNode,
-    sourceField,
-    sourceList,
+    makeSourceInfo,
+    makeNumberAssignRule,
+    makeNullAssignRule,
 } from './commons';
 import { makeTypeNameRule, TypeNameType } from './name';
 
-export type ArraySubscriptsType = {
-    type: string;
-    value: ValueRuleValue<number>;
+export type ArraySubscriptsType = CommonType & {
+    value: ValueRuleValue<number | null>;
 };
 
 export const isArraySubscriptsType = typia.createIs<ArraySubscriptsType>();
 
 export const makeArraySubscriptsRule = (
-    slot: SourceSlot,
     errorInfo: ErrorInfo[],
 ): AssignForValueRule<ArraySubscriptsTypeClass, ArraySubscriptsType> => {
     return {
         isValid: (target: unknown) => isTargetTypeClass(target, isArraySubscriptsTypeClass),
         construct: (typeTypeClass: ArraySubscriptsTypeClass) => {
             const value = assignMultiClass(typeTypeClass.getValue(), [
-                {
-                    isValid: (target: unknown): target is number => typeof target === 'number',
-                    construct: (value: number) => value,
-                },
+                makeNumberAssignRule,
                 makeErrorAssignRule(errorInfo),
+                makeNullAssignRule,
             ]);
-            slot(makeSourceNode(typeTypeClass));
-            return { type: typeTypeClass.getType(), value };
+            return {
+                type: typeTypeClass.getType(),
+                sourceInfo: makeSourceInfo(typeTypeClass),
+                value,
+            };
         },
     };
 };
 
-export type TypeRefType = {
-    type: string;
+export type TypeRefType = CommonType & {
     value: ValueRuleValue<TypeNameType>[];
-    dimension: ValueRuleValue<unknown>;
+    dimension: ValueRuleValue<ArraySubscriptsType>;
 };
 
 export const isTypeRefType = typia.createIs<TypeRefType>();
 
 export const makeTypeRefRule = (
-    slot: SourceSlot,
     errorInfo: ErrorInfo[],
 ): AssignForValueRule<TypeRefTypeClass, TypeRefType> => {
     return {
         isValid: (target: unknown) => isTargetTypeClass(target, isTypeRefTypeClass),
         construct: (typeTypeClass: TypeRefTypeClass) => {
-            const node = makeSourceNode(typeTypeClass);
-            const valueSource = sourceList(node, 'value');
             const value = typeTypeClass
                 .getValue()
-                .map((v, index) =>
+                .map((v) =>
                     assignMultiClass(v, [
-                        makeTypeNameRule(valueSource(index), errorInfo),
+                        makeTypeNameRule(errorInfo),
                         makeErrorAssignRule(errorInfo),
                     ]),
                 );
             const dimension = assignMultiClass(typeTypeClass.getDimension(), [
-                makeArraySubscriptsRule(sourceField(node, 'dimension'), errorInfo),
+                makeArraySubscriptsRule(errorInfo),
                 makeErrorAssignRule(errorInfo),
             ]);
-            slot(node);
-            return { type: typeTypeClass.getType(), value, dimension };
+            return {
+                type: typeTypeClass.getType(),
+                sourceInfo: makeSourceInfo(typeTypeClass),
+                value,
+                dimension,
+            };
         },
     };
 };

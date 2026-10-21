@@ -1,30 +1,28 @@
 import typia from 'typia';
 
 import {
-    TypeRefTypeClass,
-    TypeNameTypeClass,
-    TypeListTypeClass,
-    TypeArgumentsTypeClass,
-    isTypeRefType,
-    isNormalIdType,
-    NormalIdTypeClass,
-    isTypeArgumentsType,
-    isTypeListType,
-    isTypeNameType,
-    isArraySubscriptsType,
-    ArraySubscriptsTypeClass,
-} from '../apex_IR';
+    JsonType,
+    SourceJson,
+    CommonTypeExtractSourceInfo,
+    makeHashKeyAndSplit,
+    outputError,
+    isCommonWithoutSourceInfo,
+} from './commons';
 
 import {
     SourceInfo,
-    ErrorInfo,
-    assignMultiClass,
-    makeErrorAssignRule,
-    isTargetTypeClass,
-    SourceInfoMap,
-    makeEmptySourceInfoMap,
-    makeSingleSourceInfoMap,
-} from './converter/commons';
+    ErrorType,
+    ValueRuleValue,
+    isErrorType,
+    TypeRefType,
+    TypeArgumentsType,
+    TypeListType,
+    TypeNameType,
+    ArraySubscriptsType,
+    IdType,
+    isIdType,
+    isTypeRefType,
+} from './converter';
 
 const isPrimitiveType = (type: string): boolean => {
     return [
@@ -60,15 +58,11 @@ type PrimitiveTypeType = {
     name: string;
 };
 
-export const isPrimitiveTypeType = typia.createIs<PrimitiveTypeType>();
-
 type CustomTypeType = {
     kind: 'custom';
     name: string[];
     generic?: TypeType[];
 };
-
-export const isCustomTypeType = typia.createIs<CustomTypeType>();
 
 type ArrayTypeType = {
     kind: 'array';
@@ -76,21 +70,15 @@ type ArrayTypeType = {
     dimension: number;
 };
 
-export const isArrayTypeType = typia.createIs<ArrayTypeType>();
-
 type ListTypeType = {
     kind: 'list';
     type: TypeType;
 };
 
-export const isListTypeType = typia.createIs<ListTypeType>();
-
 type SetTypeType = {
     kind: 'set';
     type: TypeType;
 };
-
-export const isSetTypeType = typia.createIs<SetTypeType>();
 
 type MapTypeType = {
     kind: 'map';
@@ -98,313 +86,109 @@ type MapTypeType = {
     valueType: TypeType;
 };
 
-export const isMapTypeType = typia.createIs<MapTypeType>();
-
-export type TypeType =
-    PrimitiveTypeType | CustomTypeType | ArrayTypeType | ListTypeType | SetTypeType | MapTypeType;
+export type TypeType = { objectType: 'type' } & (
+    PrimitiveTypeType | CustomTypeType | ArrayTypeType | ListTypeType | SetTypeType | MapTypeType
+);
 
 export const isTypeType = typia.createIs<TypeType>();
 
-type TypeRefTypeResult = {
-    typeRef: TypeNameTypeResult[];
-    arrayDimension: number | null | void;
-};
-
-type TypeNameTypeResult = {
-    collection: string | null | void;
-    generic: TypeRefTypeResult[] | null | void;
-};
-
-export const makeTypeListType = (
-    typeListTypeClass: TypeListTypeClass,
-    sourceInfo: SourceInfoMap,
-    errorInfo: ErrorInfo[],
-): TypeRefTypeResult[] => {
-    const typeListType = typeListTypeClass.getType();
-    const typeListSourceInfoMap = makeEmptySourceInfoMap();
-
-    const typeList: TypeRefTypeResult[] = typeListTypeClass
-        .getValue()
-        .map((value, index) =>
-            assignMultiClass(value, [
-                {
-                    isValid: (target: unknown) => isTargetTypeClass(target, isTypeRefType),
-                    construct: (typeClass: TypeRefTypeClass) => {
-                        const typeRefSourceInfoMap = makeEmptySourceInfoMap();
-                        const typeRef = makeTypeRefType(typeClass, typeRefSourceInfoMap, errorInfo);
-                        typeListSourceInfoMap[`${typeClass.getType()}_${index}`] =
-                            typeRefSourceInfoMap;
-                        return typeRef;
-                    },
-                },
-                makeErrorAssignRule(errorInfo),
-            ]),
-        )
-        .filter((item) => item != null);
-
-    sourceInfo[typeListType] = typeListSourceInfoMap;
-    return typeList;
-};
-
-export const makeTypeNameType = (
-    typeNameTypeClass: TypeNameTypeClass,
-    sourceInfo: SourceInfoMap,
-    errorInfo: ErrorInfo[],
-): TypeNameTypeResult => {
-    const typeNameType = typeNameTypeClass.getType();
-    const typeNameSourceInfoMap = makeEmptySourceInfoMap();
-    const collection = assignMultiClass(typeNameTypeClass.getValue(), [
-        {
-            isValid: (target: unknown) => isTargetTypeClass(target, isNormalIdType),
-            construct: (typeClass: NormalIdTypeClass) => {
-                typeNameSourceInfoMap[typeNameType] = makeSingleSourceInfoMap(typeClass);
-                return typeClass.getValue();
-            },
-        },
-        {
-            isValid: (target: unknown) => typeof target === 'string' && target === 'list',
-            construct: (typeClass: 'list') => {
-                return typeClass;
-            },
-        },
-        {
-            isValid: (target: unknown) => typeof target === 'string' && target === 'set',
-            construct: (typeClass: 'set') => {
-                return typeClass;
-            },
-        },
-        {
-            isValid: (target: unknown) => typeof target === 'string' && target === 'map',
-            construct: (typeClass: 'map') => {
-                return typeClass;
-            },
-        },
-        makeErrorAssignRule(errorInfo),
-    ]);
-    const generic = assignMultiClass(typeNameTypeClass.getGeneric(), [
-        {
-            isValid: (target: unknown) => isTargetTypeClass(target, isTypeArgumentsType),
-            construct: (typeClass: TypeArgumentsTypeClass) => {
-                const typeArugumentsType = typeClass.getType();
-                const typeArgumentsSourceInfoMap = makeEmptySourceInfoMap();
-                return assignMultiClass(typeClass.getValue(), [
-                    {
-                        isValid: (target: unknown) => isTargetTypeClass(target, isTypeListType),
-                        construct: (typeClass: TypeListTypeClass) => {
-                            const typeList = makeTypeListType(
-                                typeClass,
-                                typeArgumentsSourceInfoMap,
-                                errorInfo,
-                            );
-                            typeNameSourceInfoMap[typeArugumentsType] = typeArgumentsSourceInfoMap;
-                            return typeList;
-                        },
-                    },
-                    makeErrorAssignRule(errorInfo),
-                ]);
-            },
-        },
-        makeErrorAssignRule(errorInfo),
-    ]);
-
-    sourceInfo[typeNameType] = typeNameSourceInfoMap;
-    return { collection, generic };
-};
-
-export const makeTypeRefType = (
-    typeRefTypeClass: TypeRefTypeClass,
-    sourceInfo: SourceInfoMap,
-    errorInfo: ErrorInfo[],
-): TypeRefTypeResult => {
-    const typeRefType = typeRefTypeClass.getType();
-    const typeRefSourceInfoMap = makeEmptySourceInfoMap();
-    const typeRef = typeRefTypeClass
-        .getValue()
-        .map((v, index) => {
-            const typeRefItem = assignMultiClass(v, [
-                {
-                    isValid: (target: unknown) => isTargetTypeClass(target, isTypeNameType),
-                    construct: (typeClass: TypeNameTypeClass) => {
-                        const typeNameSourceInfoMap = makeEmptySourceInfoMap();
-                        const typeName = makeTypeNameType(
-                            typeClass,
-                            typeNameSourceInfoMap,
-                            errorInfo,
-                        );
-                        typeRefSourceInfoMap[`${typeClass.getType()}_${index}`] =
-                            typeNameSourceInfoMap;
-                        return typeName;
-                    },
-                },
-                makeErrorAssignRule(errorInfo),
-            ]);
-            return typeRefItem;
-        })
-        ?.filter((item) => item != null);
-    const arrayDimension = assignMultiClass(typeRefTypeClass.getDimension(), [
-        {
-            isValid: (target: unknown) => isTargetTypeClass(target, isArraySubscriptsType),
-            construct: (typeClass: ArraySubscriptsTypeClass) => {
-                const arraySubscriptsType = typeClass.getType();
-                const arraySubscriptsTypeClass = typeClass;
-                return assignMultiClass(typeClass, [
-                    {
-                        isValid: (target: unknown) => typeof target === 'number',
-                        construct: (typeClass: number) => {
-                            typeRefSourceInfoMap[arraySubscriptsType] =
-                                makeSingleSourceInfoMap(arraySubscriptsTypeClass);
-                            return typeClass;
-                        },
-                    },
-                    makeErrorAssignRule(errorInfo),
-                ]);
-            },
-        },
-        makeErrorAssignRule(errorInfo),
-    ]);
-
-    sourceInfo[typeRefType] = typeRefSourceInfoMap;
-    return { typeRef, arrayDimension };
-};
-
-const getTypeNameValue = (typeName: TypeNameTypeClass): string | undefined => {
-    const value = typeName.getValue();
-    if (typeof value === 'string') {
-        return value;
-    }
-    return isTargetTypeClass(value, isNormalIdType) ? value.getValue() : undefined;
-};
-
-const getGenericTypeRefs = (typeName: TypeNameTypeClass): TypeRefTypeClass[] | undefined => {
-    const argumentsType = typeName.getGeneric();
-    if (argumentsType === null) {
-        return [];
-    }
-    if (!isTargetTypeClass(argumentsType, isTypeArgumentsType)) {
-        return undefined;
+export const makeTypeType = async (
+    target: TypeRefType | ErrorType,
+    source: SourceJson[],
+): Promise<JsonType<TypeType> | ErrorType> => {
+    if (isErrorType(target)) {
+        return target;
     }
 
-    const typeList = argumentsType.getValue();
-    if (!isTargetTypeClass(typeList, isTypeListType)) {
-        return undefined;
-    }
+    const { objectKey, sourceKey, content } = await makeHashKeyAndSplit(target, source);
 
-    const values = typeList.getValue();
-    const typeRefs = values.filter((item): item is TypeRefTypeClass =>
-        isTargetTypeClass(item, isTypeRefType),
-    );
-    return typeRefs.length === values.length ? typeRefs : undefined;
+    const typeRef = makeTypeRef(content) as TypeRef;
 };
 
-const makeTypeTypeFromParts = (
-    typeNames: TypeNameTypeClass[],
-    dimension: number,
-): TypeType | undefined => {
-    if (typeNames.length === 0) {
-        return undefined;
-    }
+const _makeTypeType = (typeRef: TypeRef): TypeType => {
+    const typeName = typeRef.typeName;
+    const dimension = typeRef.arrayDimension;
 
-    if (dimension > 0) {
-        const arrayedTypeType = makeTypeTypeFromParts(typeNames, 0);
-        return arrayedTypeType
-            ? {
-                  kind: 'array',
-                  name: arrayedTypeType,
-                  dimension,
-              }
-            : undefined;
-    }
+    if (typeof dimension === 'number' && dimension > 0) {
 
-    if (typeNames.length === 1) {
-        const typeName = getTypeNameValue(typeNames[0]!);
-        if (!typeName) {
-            return undefined;
-        }
+};
 
-        const generic = getGenericTypeRefs(typeNames[0]!);
-        if (!generic) {
-            return undefined;
-        }
-        if (isPrimitiveType(typeName)) {
-            return {
-                kind: 'primitive',
-                name: typeName,
-            };
-        }
+type TypeRef = {
+    typeName: (TypeName | ErrorType)[];
+    arrayDimension: number | null | ErrorType;
+};
 
-        if (generic.length > 0) {
-            if ((isListType(typeName) || isSetType(typeName)) && generic.length === 1) {
-                const innerType = makeTypeType(generic[0]!);
-                if (innerType) {
-                    return {
-                        kind: isListType(typeName) ? 'list' : 'set',
-                        type: innerType,
-                    };
-                }
-            }
+type TypeName = {
+    collection: string | ErrorType;
+    typeList: (TypeRef | ErrorType)[] | ErrorType | null;
+};
 
-            if (isMapType(typeName) && generic.length === 2) {
-                const keyType = makeTypeType(generic[0]!);
-                const valueType = makeTypeType(generic[1]!);
+const makeTypeRef = (
+    target: ValueRuleValue<CommonTypeExtractSourceInfo<TypeRefType>>,
+): TypeRef | ErrorType => {
+    return outputError(target, (target: CommonTypeExtractSourceInfo<TypeRefType>) => {
+        const value = target.value;
+        const dimension = target.dimension;
 
-                if (keyType && valueType) {
-                    return {
-                        kind: 'map',
-                        keyType,
-                        valueType,
-                    };
-                }
-            }
-        }
+        const typeName = value.map((item) => makeTypeName(item));
+        const arrayDimension = makeArraySubscripts(dimension);
 
-        const typeType: TypeType = {
-            kind: 'custom',
-            name: [typeName],
+        return {
+            typeName,
+            arrayDimension,
         };
-
-        if (generic.length > 0) {
-            typeType.generic = generic
-                .map((genericType) => makeTypeType(genericType))
-                .filter((genericType) => genericType !== undefined);
-        }
-        return typeType;
-    }
-
-    const names = typeNames.map(getTypeNameValue);
-    if (!names.every((name): name is string => name !== undefined)) {
-        return undefined;
-    }
-
-    const typeType: TypeType = {
-        kind: 'custom',
-        name: names,
-    };
-    const generic = getGenericTypeRefs(typeNames.at(-1)!);
-    if (!generic) {
-        return undefined;
-    }
-    if (generic.length > 0) {
-        typeType.generic = generic
-            .map((genericType) => makeTypeType(genericType))
-            .filter((genericType) => genericType !== undefined);
-    }
-    return typeType;
+    });
 };
 
-export const makeTypeType = (type: TypeRefTypeClass): TypeType | undefined => {
-    const value = type.getValue();
-    const typeNames = value.filter((item): item is TypeNameTypeClass =>
-        isTargetTypeClass(item, isTypeNameType),
-    );
-    if (typeNames.length !== value.length) {
-        return undefined;
-    }
+const makeTypeName = (
+    target: ValueRuleValue<CommonTypeExtractSourceInfo<TypeNameType>>,
+): TypeName | ErrorType => {
+    return outputError(target, (target: CommonTypeExtractSourceInfo<TypeNameType>) => {
+        const value = target.value;
+        const generic = target.generic;
 
-    const dimensionClass = type.getDimension();
-    if (!isTargetTypeClass(dimensionClass, isArraySubscriptsType)) {
-        return undefined;
-    }
+        const collection = outputError(
+            value,
+            (target: CommonTypeExtractSourceInfo<IdType> | string) => {
+                if (isCommonWithoutSourceInfo(target, isIdType)) {
+                    return target.value;
+                }
 
-    const dimension = dimensionClass.getValue();
-    return typeof dimension === 'number' ? makeTypeTypeFromParts(typeNames, dimension) : undefined;
+                return target;
+            },
+        );
+
+        const typeList = generic ? makeTypeArguments(generic) : null;
+
+        return {
+            collection,
+            typeList,
+        };
+    });
+};
+
+const makeTypeList = (
+    target: CommonTypeExtractSourceInfo<TypeListType> | ErrorType,
+): (TypeRef | ErrorType)[] | ErrorType => {
+    return outputError(target, (target: CommonTypeExtractSourceInfo<TypeListType>) => {
+        return target.value.map((item) => makeTypeRef(item));
+    });
+};
+
+const makeTypeArguments = (
+    target: ValueRuleValue<CommonTypeExtractSourceInfo<TypeArgumentsType>>,
+): (TypeRef | ErrorType)[] | ErrorType | null => {
+    return outputError(target, (target: CommonTypeExtractSourceInfo<TypeArgumentsType>) => {
+        return target.value ? makeTypeList(target.value) : null;
+    });
+};
+
+const makeArraySubscripts = (
+    target: ValueRuleValue<CommonTypeExtractSourceInfo<ArraySubscriptsType>>,
+): number | null | ErrorType => {
+    return outputError(target, (target: CommonTypeExtractSourceInfo<ArraySubscriptsType>) => {
+        return outputError(target.value, (target: number | null) => {
+            return target;
+        });
+    });
 };

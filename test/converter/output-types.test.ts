@@ -3,22 +3,24 @@ import { readFile } from 'node:fs/promises';
 import { describe, it } from 'node:test';
 
 import * as converter from '../../src/analyzer/types/apex/converter';
-import {
-    CommonTypeClass,
-    ErrorTypeClass,
-    NormalIdTypeClass,
-} from '../../src/analyzer/types/apex_IR';
+import { CommonTypeClass, ErrorTypeClass } from '../../src/analyzer/types/apex_IR';
+import { IdVisitor } from '../../src/analyzer/types/apex_IR/idVisitor';
 import { UnitVisitor } from '../../src/analyzer/types/apex_IR/unitVisitor';
-import { ErrorInfo, SourceSlot } from '../../src/analyzer/types/apex/converter/commons';
+import { ErrorInfo } from '../../src/analyzer/types/apex/converter/commons';
 import { parse } from '../apex_IR/helpers';
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>
     value !== null && typeof value === 'object';
 
+const sourceInfo = {
+    context: 'Account',
+    start: { offset: 0, line: 1, column: 0 },
+    end: { offset: 7, line: 1, column: 7 },
+};
+
 const getRule = (factory: unknown, errors: ErrorInfo[]) => {
     assert.ok(typeof factory === 'function');
-    const slot: SourceSlot = () => undefined;
-    const rule: unknown = Reflect.apply(factory, undefined, [slot, errors]);
+    const rule: unknown = Reflect.apply(factory, undefined, [errors]);
     assert.ok(isRecord(rule));
     assert.ok(typeof rule.isValid === 'function');
     assert.ok(typeof rule.construct === 'function');
@@ -30,10 +32,11 @@ const validate = (predicate: unknown, value: unknown): boolean => {
     return Reflect.apply(predicate, undefined, [value]) === true;
 };
 
-const factories = Object.entries(converter).filter(
-    ([name]) => /^make.+Rule$/.test(name) && !/^makeBase/.test(name),
-);
 const exportsByName: Record<string, unknown> = converter;
+const factories = Object.entries(converter).filter(([name]) => {
+    if (!/^make.+Rule$/.test(name) || /^makeBase/.test(name)) return false;
+    return typeof exportsByName[`is${name.slice(4, -4)}Type`] === 'function';
+});
 
 describe('converter output types', () => {
     it('every converter rule exports its output predicate', () => {
@@ -47,28 +50,39 @@ describe('converter output types', () => {
     });
 
     it('id predicates validate values separately from the IR rule predicates', () => {
-        assert.equal(converter.isIdType({ type: 'id', value: 'Account' }), true);
-        assert.equal(converter.isIdType({ type: 'id', value: 1 }), false);
-        assert.equal(converter.isIdType({ value: 'Account' }), false);
-        const id = NormalIdTypeClass.create(parse('Account', (parser) => parser.id()));
-        const rule = converter.makeIdRule(() => undefined);
+        assert.equal(converter.isIdType({ type: 'id', sourceInfo, value: 'Account' }), true);
+        assert.equal(converter.isIdType({ type: 'id', sourceInfo, value: 1 }), false);
+        assert.equal(converter.isIdType({ type: 'id', value: 'Account' }), false);
+        assert.equal(converter.isIdType({ sourceInfo, value: 'Account' }), false);
+        const id = new IdVisitor().visit(parse('Account', (parser) => parser.id()));
+        const rule = converter.makeIdRule();
         assert.equal(rule.isValid(id), true);
-        assert.equal(rule.isValid({ type: 'id', value: 'Account' }), false);
-        assert.equal(converter.isIdType(rule.construct(id)), true);
+        assert.equal(rule.isValid({ type: 'id', sourceInfo, value: 'Account' }), false);
+        assert.ok(rule.isValid(id));
+        const output = rule.construct(id);
+        assert.equal(converter.isIdType(output), true);
+        assert.deepEqual(output.sourceInfo, sourceInfo);
         assert.equal(
             converter.isSoqlIdType({
                 type: 'soqlId',
-                value: { type: 'id', value: 'Account' },
+                sourceInfo,
+                value: { type: 'id', sourceInfo, value: 'Account' },
             }),
             true,
         );
-        assert.equal(converter.isSoqlIdType({ type: 'soqlId', value: 'Account' }), false);
-        assert.equal(converter.isSoslIdType({ type: 'soslId', value: [] }), true);
-        assert.equal(converter.isSoslIdType({ type: 'soslId', value: 'Account' }), false);
+        assert.equal(
+            converter.isSoqlIdType({ type: 'soqlId', sourceInfo, value: 'Account' }),
+            false,
+        );
+        assert.equal(converter.isSoslIdType({ type: 'soslId', sourceInfo, value: [] }), true);
+        assert.equal(
+            converter.isSoslIdType({ type: 'soslId', sourceInfo, value: 'Account' }),
+            false,
+        );
     });
 
     it('literal and list predicates validate their concrete attributes', () => {
-        const literal = { type: 'literal', value: '1', valueType: 'INTEGER' };
+        const literal = { type: 'literal', sourceInfo, value: '1', valueType: 'INTEGER' };
         assert.equal(converter.isLiteralType(literal), true);
         assert.equal(converter.isLiteralType({ ...literal, value: 1 }), false);
         assert.equal(converter.isLiteralType({ ...literal, valueType: null }), false);
@@ -79,9 +93,16 @@ describe('converter output types', () => {
             }),
             true,
         );
-        assert.equal(converter.isExpressionListType({ type: 'expressionList', value: [] }), true);
         assert.equal(
-            converter.isExpressionListType({ type: 'expressionList', value: 'invalid' }),
+            converter.isExpressionListType({ type: 'expressionList', sourceInfo, value: [] }),
+            true,
+        );
+        assert.equal(
+            converter.isExpressionListType({
+                type: 'expressionList',
+                sourceInfo,
+                value: 'invalid',
+            }),
             false,
         );
     });
@@ -129,7 +150,9 @@ describe('converter output types', () => {
                 assert.equal(validate(predicate, output), true, `${file}: ${name}`);
                 assert.ok(isRecord(output));
                 assert.equal(output.type, target.getType(), name);
+                assert.ok(isRecord(output.sourceInfo), name);
                 assert.equal(validate(predicate, { ...output, type: null }), false, name);
+                assert.equal(validate(predicate, { ...output, sourceInfo: null }), false, name);
                 checked++;
             }
             assert.ok(checked > 50, `Only checked ${checked} converter rules for ${file}`);

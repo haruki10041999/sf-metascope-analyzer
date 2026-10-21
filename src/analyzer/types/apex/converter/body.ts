@@ -10,14 +10,13 @@ import {
 
 import {
     ErrorInfo,
-    SourceSlot,
+    CommonType,
     AssignForValueRule,
     ValueRuleValue,
     isTargetTypeClass,
     assignMultiClass,
     makeErrorAssignRule,
-    makeSourceNode,
-    sourceList,
+    makeSourceInfo,
 } from './commons';
 import {
     makeClassBodyDeclarationRule,
@@ -26,62 +25,60 @@ import {
     InterfaceMethodDeclarationType,
 } from './declaration';
 
-export type ClassBodyType = {
-    type: string;
+export type ClassBodyType = CommonType & {
     value: ValueRuleValue<ClassBodyDeclarationType>[];
 };
 
 export const isClassBodyType = typia.createIs<ClassBodyType>();
 
 export const makeClassBodyRule = (
-    slot: SourceSlot,
     errorInfo: ErrorInfo[],
 ): AssignForValueRule<ClassBodyTypeClass, ClassBodyType> => {
     return {
         isValid: (target: unknown) => isTargetTypeClass(target, isClassBodyTypeClass),
         construct: (bodyTypeClass: ClassBodyTypeClass) => {
-            const node = makeSourceNode(bodyTypeClass);
-            const valueSource = sourceList(node, 'value');
             const value = bodyTypeClass
                 .getValue()
-                .map((v, index) =>
+                .map((v) =>
                     assignMultiClass(v, [
-                        makeClassBodyDeclarationRule(valueSource(index), errorInfo),
+                        makeClassBodyDeclarationRule(errorInfo),
                         makeErrorAssignRule(errorInfo),
                     ]),
                 );
-            slot(node);
-            return { type: bodyTypeClass.getType(), value };
+            return {
+                type: bodyTypeClass.getType(),
+                sourceInfo: makeSourceInfo(bodyTypeClass),
+                value,
+            };
         },
     };
 };
 
-export type InterfaceBodyType = {
-    type: string;
+export type InterfaceBodyType = CommonType & {
     value: ValueRuleValue<InterfaceMethodDeclarationType>[];
 };
 
 export const isInterfaceBodyType = typia.createIs<InterfaceBodyType>();
 
 export const makeInterfaceBodyRule = (
-    slot: SourceSlot,
     errorInfo: ErrorInfo[],
 ): AssignForValueRule<InterfaceBodyTypeClass, InterfaceBodyType> => {
     return {
         isValid: (target: unknown) => isTargetTypeClass(target, isInterfaceBodyTypeClass),
         construct: (bodyTypeClass: InterfaceBodyTypeClass) => {
-            const node = makeSourceNode(bodyTypeClass);
-            const valueSource = sourceList(node, 'value');
             const value = bodyTypeClass
                 .getValue()
-                .map((v, index) =>
+                .map((v) =>
                     assignMultiClass(v, [
-                        makeInterfaceMethodDeclarationRule(valueSource(index), errorInfo),
+                        makeInterfaceMethodDeclarationRule(errorInfo),
                         makeErrorAssignRule(errorInfo),
                     ]),
                 );
-            slot(node);
-            return { type: bodyTypeClass.getType(), value };
+            return {
+                type: bodyTypeClass.getType(),
+                sourceInfo: makeSourceInfo(bodyTypeClass),
+                value,
+            };
         },
     };
 };

@@ -11,105 +11,104 @@ import {
 
 import {
     ErrorInfo,
-    SourceSlot,
+    CommonType,
     AssignForValueRule,
     ValueRuleValue,
     isTargetTypeClass,
     assignMultiClass,
     makeErrorAssignRule,
-    makeSourceNode,
-    sourceField,
-    sourceList,
+    makeNullAssignRule,
+    makeSourceInfo,
 } from './commons';
 import { makeBaseExpressionRule, BaseExpressionType } from './expression';
 import { makeIdRule, IdType } from './id';
 
-export type ArrayInitializerType = {
-    type: string;
+export type ArrayInitializerType = CommonType & {
     value: ValueRuleValue<BaseExpressionType>[];
 };
 
 export const isArrayInitializerType = typia.createIs<ArrayInitializerType>();
 
 export const makeArrayInitializerRule = (
-    slot: SourceSlot,
     errorInfo: ErrorInfo[],
 ): AssignForValueRule<ArrayInitializerTypeClass, ArrayInitializerType> => {
     return {
         isValid: (target: unknown) => isTargetTypeClass(target, isArrayInitializerTypeClass),
         construct: (variableTypeClass: ArrayInitializerTypeClass) => {
-            const node = makeSourceNode(variableTypeClass);
-            const valueSource = sourceList(node, 'value');
             const value = variableTypeClass
                 .getValue()
-                .map((v, index) =>
+                .map((v) =>
                     assignMultiClass(v, [
-                        ...makeBaseExpressionRule(valueSource(index), errorInfo),
+                        ...makeBaseExpressionRule(errorInfo),
                         makeErrorAssignRule(errorInfo),
                     ]),
                 );
-            slot(node);
-            return { type: variableTypeClass.getType(), value };
+            return {
+                type: variableTypeClass.getType(),
+                sourceInfo: makeSourceInfo(variableTypeClass),
+                value,
+            };
         },
     };
 };
 
-export type VariableDeclaratorsType = {
-    type: string;
+export type VariableDeclaratorsType = CommonType & {
     value: ValueRuleValue<VariableDeclaratorType>[];
 };
 
 export const isVariableDeclaratorsType = typia.createIs<VariableDeclaratorsType>();
 
 export const makeVariableDeclaratorsRule = (
-    slot: SourceSlot,
     errorInfo: ErrorInfo[],
 ): AssignForValueRule<VariableDeclaratorsTypeClass, VariableDeclaratorsType> => {
     return {
         isValid: (target: unknown) => isTargetTypeClass(target, isVariableDeclaratorsTypeClass),
         construct: (variableTypeClass: VariableDeclaratorsTypeClass) => {
-            const node = makeSourceNode(variableTypeClass);
-            const valueSource = sourceList(node, 'value');
             const value = variableTypeClass
                 .getValue()
-                .map((v, index) =>
+                .map((v) =>
                     assignMultiClass(v, [
-                        makeVariableDeclaratorRule(valueSource(index), errorInfo),
+                        makeVariableDeclaratorRule(errorInfo),
                         makeErrorAssignRule(errorInfo),
                     ]),
                 );
-            slot(node);
-            return { type: variableTypeClass.getType(), value };
+            return {
+                type: variableTypeClass.getType(),
+                sourceInfo: makeSourceInfo(variableTypeClass),
+                value,
+            };
         },
     };
 };
 
-export type VariableDeclaratorType = {
-    type: string;
+export type VariableDeclaratorType = CommonType & {
     value: ValueRuleValue<IdType>;
-    init: ValueRuleValue<BaseExpressionType>;
+    init: ValueRuleValue<BaseExpressionType | null>;
 };
 
 export const isVariableDeclaratorType = typia.createIs<VariableDeclaratorType>();
 
 export const makeVariableDeclaratorRule = (
-    slot: SourceSlot,
     errorInfo: ErrorInfo[],
 ): AssignForValueRule<VariableDeclaratorTypeClass, VariableDeclaratorType> => {
     return {
         isValid: (target: unknown) => isTargetTypeClass(target, isVariableDeclaratorTypeClass),
         construct: (variableTypeClass: VariableDeclaratorTypeClass) => {
-            const node = makeSourceNode(variableTypeClass);
             const value = assignMultiClass(variableTypeClass.getValue(), [
-                makeIdRule(sourceField(node, 'value')),
+                makeIdRule(),
                 makeErrorAssignRule(errorInfo),
             ]);
             const init = assignMultiClass(variableTypeClass.getContent(), [
-                ...makeBaseExpressionRule(sourceField(node, 'init'), errorInfo),
+                ...makeBaseExpressionRule(errorInfo),
                 makeErrorAssignRule(errorInfo),
+                makeNullAssignRule,
             ]);
-            slot(node);
-            return { type: variableTypeClass.getType(), value, init };
+            return {
+                type: variableTypeClass.getType(),
+                sourceInfo: makeSourceInfo(variableTypeClass),
+                value,
+                init,
+            };
         },
     };
 };

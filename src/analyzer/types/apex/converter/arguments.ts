@@ -10,64 +10,66 @@ import {
 
 import {
     ErrorInfo,
-    SourceSlot,
+    CommonType,
     AssignForValueRule,
     ValueRuleValue,
     isTargetTypeClass,
     assignMultiClass,
     makeErrorAssignRule,
-    makeSourceNode,
-    sourceField,
+    makeNullAssignRule,
+    makeSourceInfo,
 } from './commons';
 import { makeExpressionListRule, makeTypeListRule, ExpressionListType, TypeListType } from './list';
 
-export type ArgumentsType = {
-    type: string;
-    value: ValueRuleValue<ExpressionListType>;
+export type ArgumentsType = CommonType & {
+    value: ValueRuleValue<ExpressionListType | null>;
 };
 
 export const isArgumentsType = typia.createIs<ArgumentsType>();
 
 export const makeArgumentsRule = (
-    slot: SourceSlot,
     errorInfo: ErrorInfo[],
 ): AssignForValueRule<NormalArgumentsTypeClass, ArgumentsType> => {
     return {
         isValid: (target: unknown) => isTargetTypeClass(target, isNormalArgumentsType),
         construct: (argumentsTypeClass: NormalArgumentsTypeClass) => {
-            const node = makeSourceNode(argumentsTypeClass);
             const value = assignMultiClass(argumentsTypeClass.getValue(), [
-                makeExpressionListRule(sourceField(node, 'value'), errorInfo),
+                makeExpressionListRule(errorInfo),
                 makeErrorAssignRule(errorInfo),
+                makeNullAssignRule,
             ]);
 
-            slot(node);
-            return { type: argumentsTypeClass.getType(), value };
+            return {
+                type: argumentsTypeClass.getType(),
+                sourceInfo: makeSourceInfo(argumentsTypeClass),
+                value,
+            };
         },
     };
 };
 
-export type TypeArgumentsType = {
-    type: string;
-    value: ValueRuleValue<TypeListType>;
+export type TypeArgumentsType = CommonType & {
+    value: ValueRuleValue<TypeListType | null>;
 };
 
 export const isTypeArgumentsType = typia.createIs<TypeArgumentsType>();
 
 export const makeTypeArgumentsRule = (
-    slot: SourceSlot,
     errorInfo: ErrorInfo[],
 ): AssignForValueRule<TypeArgumentsTypeClass, TypeArgumentsType> => {
     return {
         isValid: (target: unknown) => isTargetTypeClass(target, isTypeArgumentsTypeClass),
         construct: (argumentsTypeClass: TypeArgumentsTypeClass) => {
-            const node = makeSourceNode(argumentsTypeClass);
             const value = assignMultiClass(argumentsTypeClass.getValue(), [
-                makeTypeListRule(sourceField(node, 'value'), errorInfo),
+                makeTypeListRule(errorInfo),
                 makeErrorAssignRule(errorInfo),
+                makeNullAssignRule,
             ]);
-            slot(node);
-            return { type: argumentsTypeClass.getType(), value };
+            return {
+                type: argumentsTypeClass.getType(),
+                sourceInfo: makeSourceInfo(argumentsTypeClass),
+                value,
+            };
         },
     };
 };
