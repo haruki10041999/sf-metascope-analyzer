@@ -22,15 +22,21 @@ export const makeSourceInfo = (typeClass: CommonTypeClass): SourceInfo => {
     return { context: span.context, start: span.start, end: span.end };
 };
 
-export type ErrorInfo = {
+export type CommonType = {
+    type: string;
+    sourceInfo: SourceInfo;
+};
+
+export type ErrorInfo = CommonType & {
+    type: 'error';
     errorCode: ErrorCode;
     contextType: string;
-    sourceInfo: SourceInfo;
 };
 
 export const isErrorInfo = typia.createIs<ErrorInfo>();
 export const makeErrorInfo = (typeClass: ErrorTypeClass): ErrorInfo => {
     return {
+        type: 'error',
         errorCode: typeClass.getCode(),
         contextType: typeClass.getContextType(),
         sourceInfo: makeSourceInfo(typeClass),
@@ -50,11 +56,6 @@ type AnyAssignRule = {
 };
 
 export type ValueRuleValue<T> = T | ErrorInfo;
-
-export type CommonType = {
-    type: string;
-    sourceInfo: SourceInfo;
-};
 
 export type AssignForValueRule<TValue, TResult> = {
     isValid: (target: unknown) => target is TValue;
@@ -100,4 +101,3 @@ export const assignMultiClass = <const TRules extends readonly AnyAssignRule[]>(
         `Unsupported type: ${typeClass instanceof CommonTypeClass ? typeClass.getType() : typeof typeClass}`,
     );
 };
-

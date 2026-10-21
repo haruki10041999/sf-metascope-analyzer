@@ -1,4 +1,8 @@
-import { ApexParserBaseVisitor, ApexParserRuleContext } from '@apexdevtools/apex-parser';
+import {
+    ApexParserBaseVisitor,
+    ApexErrorListener,
+    ApexParserRuleContext,
+} from '@apexdevtools/apex-parser';
 
 export type SourcePosition = {
     offset: number;
@@ -33,7 +37,8 @@ export class CommonTypeClass {
     }
 }
 
-export type ErrorCode = 'NULL_CHILD' | 'UNSUPPORTED_CONTEXT' | 'TYPE_MISMATCH' | 'EXCEPTION';
+export type ErrorCode =
+    'NULL_CHILD' | 'UNSUPPORTED_CONTEXT' | 'TYPE_MISMATCH' | 'EXCEPTION' | 'UNRESOLVED';
 
 export class ErrorTypeClass extends CommonTypeClass {
     private code: ErrorCode;
@@ -181,5 +186,69 @@ export class CommonVisitor<T> extends ApexParserBaseVisitor<T | ErrorTypeClass> 
 
         (result as CommonTypeClass).setSpan(getSourceSpan(ctx));
         return result;
+    }
+}
+
+export class CommonErrorListener extends ApexErrorListener {
+    private originalSource: string;
+    private sourceLines: string[];
+    private lineOffsets: number[] = [];
+    private errorTypeClass: ErrorTypeClass[] = [];
+
+    constructor(source: string) {
+        super();
+
+        this.originalSource = source;
+        this.sourceLines = source.split(/\r\n|\n|\r/);
+
+        // 各行の開始位置を、元ソース上の offset として保持する
+        this.lineOffsets.push(0);
+
+        for (let i = 0; i < source.length; i++) {
+            if (source[i] === '\r') {
+                if (source[i + 1] === '\n') {
+                    i++;
+                }
+                this.lineOffsets.push(i + 1);
+            } else if (source[i] === '\n') {
+                this.lineOffsets.push(i + 1);
+            }
+        }
+    }
+
+    apexSyntaxError(line: number, column: number, msg: string): void {
+        const lineIndex = line - 1;
+        const sourceLine = this.sourceLines[lineIndex] ?? '';
+        const offset = (this.lineOffsets[lineIndex] ?? this.originalSource.length) + column;
+
+        // エラー位置の1文字を取得。行末・EOFなら空文字
+        const sourceCode = sourceLine.charAt(column);
+        const hasCharacter = column < sourceLine.length;
+
+        const start: SourcePosition = {
+            offset,
+            line,
+            column,
+        };
+
+        const end: SourcePosition = {
+            offset: offset + (hasCharacter ? 1 : 0),
+            line,
+            column: column + (hasCharacter ? 1 : 0),
+        };
+
+        const errorTypeClass = ErrorTypeClass.create('UNRESOLVED', 'unknown', sourceCode, msg);
+
+        errorTypeClass.setSpan({
+            context: sourceCode,
+            start,
+            end,
+        });
+
+        this.errorTypeClass.push(errorTypeClass);
+    }
+
+    getErrors(): ErrorTypeClass[] {
+        return this.errorTypeClass;
     }
 }
