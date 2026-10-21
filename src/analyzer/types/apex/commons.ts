@@ -170,11 +170,43 @@ export const searchJsonTypeAll = (target: unknown, jsonObjects: JsonType<CommonT
     });
 };
 
-export const extractErrors = (target: unknown): JsonType<ErrorInfo>[] => {
+export const extractErrors = <T extends CommonType>(target: JsonType<T>): JsonType<ErrorInfo>[] => {
     const jsonTypes: JsonType<CommonType>[] = [];
     searchJsonTypeAll(target, jsonTypes);
 
     return jsonTypes.filter((object) => isJsonType(object, isErrorInfo));
+};
+
+export const removeSourceInfo = <T extends CommonType>(
+    target: T,
+    sourceObjects: SourceJson[],
+): void => {
+    const jsonTypes: JsonType<CommonType>[] = [];
+    searchJsonTypeAll(target, jsonTypes);
+
+    const objectToSourceRecord: Record<string, string[]> = {};
+
+    jsonTypes.forEach(({ objectKey, sourceKey }) => {
+        (objectToSourceRecord[objectKey] ??= []).push(sourceKey);
+    });
+
+    Object.entries(objectToSourceRecord).forEach(([key, value]) => {
+        const sourceIndex = sourceObjects.findIndex((object) => object.objectKey === key);
+
+        if (sourceIndex === -1) {
+            return;
+        }
+
+        const sourceObject = sourceObjects[sourceIndex]!;
+
+        sourceObject.source = sourceObject.source.filter(
+            (source) => !value.includes(source.sourceKey),
+        );
+
+        if (sourceObject.source.length === 0) {
+            sourceObjects.splice(sourceIndex, 1);
+        }
+    });
 };
 
 export const findSourceInfo = (
