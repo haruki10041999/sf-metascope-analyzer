@@ -95,7 +95,7 @@ export const makeTypeJson = (
 
     const error: ErrorJson = makeJsonType('error', targetRecords, { kindType: 'type' });
 
-    if (!value && errorInfos.length > 0) {
+    if (!value || errorInfos.length > 0) {
         return { result: error, deleteKeys: deleteKeys };
     }
 
