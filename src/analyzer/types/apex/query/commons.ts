@@ -2,20 +2,17 @@ import typia from 'typia';
 
 import {
     Convert,
-    isConvert,
+    ConvertExcludeError,
+    GenerateResult,
     ErrorJson,
-    JsonType,
-    SourceJson,
-    searchConvertAll,
-    isError,
-    writeSourceKeys,
-    removeSourceInfo,
-    castExcludeErrorInfo,
-    castExcludeErrorInfoArray,
-    castConvert,
-    castConvertArray,
     isErrorJson,
-} from '../commons';
+    JsonType,
+    makeJsonType,
+    convertExcludeError,
+    collectDelteteKeys,
+    mergeRecord,
+    isConvert,
+} from '..//commons';
 
 import {
     ValueType,
@@ -50,8 +47,10 @@ export type SignedNumberJson = {
 };
 export const isSignedNumberJson = typia.createIs<SignedNumberJson>();
 
-export const makeSignedNumberJson = (target: Convert<SignedNumberType>): SignedNumberJson => {
-    const value = castExcludeErrorInfo(target.value);
+export const makeSignedNumberJson = (
+    target: ConvertExcludeError<SignedNumberType>,
+): SignedNumberJson => {
+    const value = target.valueType;
     const valueType = target.valueType;
     const operator = target.operator;
 
@@ -75,23 +74,23 @@ export type DateFormulaJson = {
 };
 export const isDateFormulaJson = typia.createIs<DateFormulaJson>();
 
-export const makeDateFormulaJson = (target: Convert<DateFormulaType>): DateFormulaJson => {
-    const func = castExcludeErrorInfo(target.value);
-    const param = castExcludeErrorInfo(target.param);
+export const makeDateFormulaJson = (
+    target: ConvertExcludeError<DateFormulaType>,
+): DateFormulaJson => {
+    const func = target.value;
+    const param = target.param;
 
     const dateFormulaJson: DateFormulaJson = {
         func: func,
     };
 
     if (param) {
-        const _param = castConvert(param);
-
-        const arg = castExcludeErrorInfo(_param.value);
+        const arg = param.value;
         dateFormulaJson.arg = arg;
 
-        dateFormulaJson.argType = _param.type;
+        dateFormulaJson.argType = param.type;
 
-        const argOperator = _param.operator;
+        const argOperator = param.operator;
         if (argOperator) {
             dateFormulaJson.argOperator = argOperator;
         }
@@ -112,53 +111,50 @@ export type ValueJson = {
 );
 export const isValueJson = typia.createIs<ValueJson>();
 
-export const makeValueJson = (target: Convert<ValueType>): ValueJson => {
-    const type = target.type;
+export const makeValueJson = (target: ConvertExcludeError<ValueType>): ValueJson => {
+    const type = target.valueType;
 
-    const value = castExcludeErrorInfo(target.value);
-    const _value = typeof value === 'string' ? value : castConvert(value);
+    const value = target.value;
 
-    if (typeof _value === 'string') {
+    if (typeof value === 'string') {
         return {
             type: type,
-            value: _value,
+            value: value,
         };
-    } else if (isConvert(_value, isDateFormulaType)) {
+    } else if (isConvert<DateFormulaType>(value)) {
         return {
             type: type,
-            ...makeDateFormulaJson(_value),
+            ...makeDateFormulaJson(value),
         };
-    } else if (isConvert(_value, isSignedNumberType)) {
+    } else if (isConvert<SignedIntegerType>(value)) {
         return {
             type: type,
-            ...makeSignedNumberJson(_value),
+            ...makeSignedNumberJson(value),
         };
-    } else if (isConvert(_value, isSubQueryType)) {
-        const subQueryJson = makeSubQueryJson(_value);
+    } else if (isConvert<SubQueryType>(value)) {
+        const subQueryJson = makeSubQueryJson(value as Convert<SubQueryType>);
         const { type, ...content } = subQueryJson;
         return {
             type: type,
             ...content,
         };
-    } else if (isConvert(_value, isValueListType)) {
-        const valueList = castConvertArray(castExcludeErrorInfoArray(_value.value));
-
+    } else if (isConvert<ValueListType>(value)) {
         return {
             type: type,
-            value: valueList.map((v) => makeValueJson(v)),
+            value: value.value.map((v) => makeValueJson(v)),
         };
     } else {
-        const __value = _value as Convert<BoundExpressionType>;
-        const expression = castConvert(castExcludeErrorInfo(__value.value));
         return {
             type: type,
-            ...makeExpressionJson(expression),
+            ...makeExpressionJson(value.value),
         };
     }
 };
 
-export const makeComparisonOperatorJson = (target: Convert<ComparisonOperatorType>): string => {
-    return castExcludeErrorInfo(target.value);
+export const makeComparisonOperatorJson = (
+    target: ConvertExcludeError<ComparisonOperatorType>,
+): string => {
+    return target.value;
 };
 
 export type SingleConditionJson = {
