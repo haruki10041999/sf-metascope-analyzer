@@ -59,7 +59,7 @@ export const makeCreatedNameRule = (): AssignForValueRule<
 };
 
 export type DataCategoryNameType = CommonType & {
-    value: ValueRuleValue<unknown>[];
+    value: ValueRuleValue<SoqlIdType>[];
 };
 
 export const isDataCategoryNameType = typia.createIs<DataCategoryNameType>();

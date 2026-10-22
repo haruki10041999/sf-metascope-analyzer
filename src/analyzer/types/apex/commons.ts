@@ -2,16 +2,39 @@ import crypto from 'node:crypto';
 
 import typia from 'typia';
 
-import { SourceInfo, ErrorInfo, CommonType, isSourceInfo, isErrorInfo } from './converter';
+import {
+    SourceInfo,
+    ErrorInfo,
+    CommonType,
+    isSourceInfo,
+    isErrorInfo,
+    ValueRuleValue,
+} from './converter';
 
 export type Convert<T extends CommonType> = {
     objectKey: string;
     sourceKey: string;
 } & Omit<T, 'sourceInfo'>;
 
+export const castConvert = <T extends CommonType>(target: T): Convert<T> => {
+    return target as unknown as Convert<T>;
+};
+
+export const castConvertArray = <T extends CommonType>(target: T[]): Convert<T>[] => {
+    return target.map((item) => castConvert(item));
+};
+
+export const castExcludeErrorInfo = <T>(target: ValueRuleValue<T>): T => {
+    return target as T;
+};
+
+export const castExcludeErrorInfoArray = <T>(target: ValueRuleValue<T>[]): T[] => {
+    return target.map((item) => castExcludeErrorInfo(item));
+};
+
 export type JsonType = {
     kind: string;
-    souceKeys: Record<string, string[]>;
+    sourceKeys: Record<string, string[]>;
 };
 
 export const writeSourceKeys = <T extends JsonType>(
@@ -19,10 +42,10 @@ export const writeSourceKeys = <T extends JsonType>(
     objectKey: string,
     sourceKey: string,
 ): void => {
-    if (!Object.keys(target.souceKeys)) {
-        target.souceKeys[objectKey] = [sourceKey];
+    if (!Object.keys(target.sourceKeys)) {
+        target.sourceKeys[objectKey] = [sourceKey];
     } else {
-        target.souceKeys[objectKey]!.push(sourceKey);
+        target.sourceKeys[objectKey]!.push(sourceKey);
     }
 };
 

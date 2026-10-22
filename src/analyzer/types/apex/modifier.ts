@@ -1,725 +1,386 @@
 import typia from 'typia';
 
 import {
-    ErrorInfo,
-    SourceInfoMap,
-    assignMultiClass,
-    isErrorInfo,
-    isTargetTypeClass,
-    makeErrorAssignRule,
-    makeErrorInfo,
-    makeSourceInfo,
-    makeEmptySourceInfoMap,
-    makeSingleSourceInfoMap,
-    makeArraySourceInfoMap,
-} from './converter/commons';
+    Convert,
+    isConvert,
+    ErrorJson,
+    JsonType,
+    SourceJson,
+    searchConvertAll,
+    isError,
+    writeSourceKeys,
+    removeSourceInfo,
+    castExcludeErrorInfo,
+    castExcludeErrorInfoArray,
+    castConvert,
+    castConvertArray,
+    isErrorJson,
+} from './commons';
 
 import {
-    NormalModifierTypeClass,
-    AnnotationTypeClass,
-    NormalLiteralTypeClass,
-    ElementValuePairTypeClass,
+    ModifierType,
+    AnnotationType,
+    ElementValuePairsType,
+    ErrorInfo,
     isAnnotationType,
-    isNormalIdType,
-    NormalIdTypeClass,
-    isErrorType,
-    ErrorTypeClass,
-    isElementValuePairType,
     isElementValueType,
-    ElementValueTypeClass,
-    isNormalLiteralType,
-    ElementValuePairsTypeClass,
     isElementValuePairsType,
-} from '../apex_IR';
+} from './converter';
 
-type AccessModifier = 'PUBLIC' | 'PRIVATE' | 'PROTECTED' | 'GLOBAL';
-type DeclarationModifier = 'STATIC' | 'FINAL' | 'ABSTRACT' | 'VIRTUAL' | 'OVERRIDE';
-type WebServiceModifier = 'WEBSERVICE';
-type TestModifier = 'TESTMETHOD';
-type SharingModifier = 'WITH_SHARING' | 'WITHOUT_SHARING' | 'INHERITED_SHARING';
-type OtherModifier = 'TRANSIENT';
+const isAccessModifier = (value: string): boolean =>
+    ['PUBLIC', 'PRIVATE', 'PROTECTED', 'GLOBAL'].includes(value.toUpperCase());
 
-const isAccessModifier = (value: string): value is AccessModifier =>
-    value === 'PUBLIC' || value === 'PRIVATE' || value === 'PROTECTED' || value === 'GLOBAL';
+const isDeclarationModifier = (value: string): boolean =>
+    ['STATIC', 'FINAL', 'ABSTRACT', 'VIRTUAL', 'OVERRIDE'].includes(value.toUpperCase());
 
-const isDeclarationModifier = (value: string): value is DeclarationModifier =>
-    value === 'STATIC' ||
-    value === 'FINAL' ||
-    value === 'ABSTRACT' ||
-    value === 'VIRTUAL' ||
-    value === 'OVERRIDE';
+const isWebServiceModifier = (value: string): boolean =>
+    ['WEBSERVICE'].includes(value.toUpperCase());
 
-const isWebServiceModifier = (value: string): value is WebServiceModifier => value === 'WEBSERVICE';
+const isTestModifier = (value: string): boolean => ['TESTMETHOD'].includes(value.toUpperCase());
 
-const isTestModifier = (value: string): value is TestModifier => value === 'TESTMETHOD';
+const isSharingModifier = (value: string): boolean =>
+    ['WITH_SHARING', 'WITHOUT_SHARING', 'INHERITED_SHARING'].includes(value.toUpperCase());
 
-const isSharingModifier = (value: string): value is SharingModifier =>
-    value === 'WITH_SHARING' || value === 'WITHOUT_SHARING' || value === 'INHERITED_SHARING';
+const isOtherModifier = (value: string): boolean => ['TRANSIENT'].includes(value.toUpperCase());
 
-const isOtherModifier = (value: string): value is OtherModifier => value === 'TRANSIENT';
-
-type LWCAnnotation = 'AURAENABLED';
-
-const isLWCAnnotation = (value: string): value is LWCAnnotation => {
+const isLWCAnnotation = (value: string): boolean => {
     return ['AURAENABLED'].includes(value.toUpperCase());
 };
 
-type FlowAnnotation = 'INVOCABLEMETHOD' | 'INVOCABLEVARIABLE';
-
-const isFlowAnnotation = (value: string): value is FlowAnnotation => {
+const isFlowAnnotation = (value: string): boolean => {
     return ['INVOCABLEMETHOD', 'INVOCABLEVARIABLE'].includes(value.toUpperCase());
 };
 
-type AsyncAnnotation = 'FUTURE';
-
-const isAsyncAnnotation = (value: string): value is AsyncAnnotation => {
+const isAsyncAnnotation = (value: string): boolean => {
     return ['FUTURE'].includes(value.toUpperCase());
 };
 
-type TestAnnotation = 'ISTEST' | 'TESTSETUP' | 'TESTVISIBLE';
-
-const isTestAnnotation = (value: string): value is TestAnnotation => {
+const isTestAnnotation = (value: string): boolean => {
     return ['ISTEST', 'TESTSETUP', 'TESTVISIBLE'].includes(value.toUpperCase());
 };
 
-type RestAnnotation =
-    'RESTRESOURCE' | 'HTTPDELETE' | 'HTTPGET' | 'HTTPPATCH' | 'HTTPPOST' | 'HTTPPUT';
-
-const isRestAnnotation = (value: string): value is RestAnnotation => {
+const isRestAnnotation = (value: string): boolean => {
     return ['RESTRESOURCE', 'HTTPDELETE', 'HTTPGET', 'HTTPPATCH', 'HTTPPOST', 'HTTPPUT'].includes(
         value.toUpperCase(),
     );
 };
 
-type VisualforceAnnotation = 'REMOTEACTION';
-
-const isVisualforceAnnotation = (value: string): value is VisualforceAnnotation => {
+const isVisualforceAnnotation = (value: string): boolean => {
     return ['REMOTEACTION'].includes(value.toUpperCase());
 };
 
-type AccessAnnotation = 'NAMESPACEACCESSIBLE';
-
-const isAccessAnnotation = (value: string): value is AccessAnnotation => {
+const isAccessAnnotation = (value: string): boolean => {
     return ['NAMESPACEACCESSIBLE'].includes(value.toUpperCase());
 };
 
-type SerializationAnnotation = 'JSONACCESS';
-
-const isSerializationAnnotation = (value: string): value is SerializationAnnotation => {
+const isSerializationAnnotation = (value: string): boolean => {
     return ['JSONACCESS'].includes(value.toUpperCase());
 };
 
-type ExecutionAnnotation = 'READONLY';
-
-const isExecutionAnnotation = (value: string): value is ExecutionAnnotation => {
+const isExecutionAnnotation = (value: string): boolean => {
     return ['READONLY'].includes(value.toUpperCase());
 };
 
-type CompatibilityAnnotation = 'DEPRECATED' | 'SUPPRESSWARNINGS';
-
-const isCompatibilityAnnotation = (value: string): value is CompatibilityAnnotation => {
+const isCompatibilityAnnotation = (value: string): boolean => {
     return ['DEPRECATED', 'SUPPRESSWARNINGS'].includes(value.toUpperCase());
 };
 
-type AnnotationParam = {
+export type AnnotationArgJson = {
     key?: string;
     value: string;
     valueType: string;
 };
 
-const isAnnotationParam = typia.createIs<AnnotationParam>();
-
-type LWCAnnotationType = {
-    name: LWCAnnotation;
-    param?: AnnotationParam | AnnotationParam[];
-};
-const isLWCAnnotationType = typia.createIs<LWCAnnotationType>();
-
-type FlowAnnotationType = {
-    name: FlowAnnotation;
-    param?: AnnotationParam | AnnotationParam[];
-};
-const isFlowAnnotationType = typia.createIs<FlowAnnotationType>();
-
-type AsyncAnnotationType = {
-    name: AsyncAnnotation;
-    param?: AnnotationParam | AnnotationParam[];
-};
-const isAsyncAnnotationType = typia.createIs<AsyncAnnotationType>();
-
-type TestAnnotationType = {
-    name: TestAnnotation;
-    param?: AnnotationParam | AnnotationParam[];
-};
-const isTestAnnotationType = typia.createIs<TestAnnotationType>();
-
-type RestAnnotationType = {
-    name: RestAnnotation;
-    param?: AnnotationParam | AnnotationParam[];
-};
-const isRestAnnotationType = typia.createIs<RestAnnotationType>();
-
-type VisualforceAnnotationType = {
-    name: VisualforceAnnotation;
-    param?: AnnotationParam | AnnotationParam[];
-};
-const isVisualforceAnnotationType = typia.createIs<VisualforceAnnotationType>();
-
-type AccessAnnotationType = {
-    name: AccessAnnotation;
-    param?: AnnotationParam | AnnotationParam[];
-};
-const isAccessAnnotationType = typia.createIs<AccessAnnotationType>();
-
-type SerializationAnnotationType = {
-    name: SerializationAnnotation;
-    param?: AnnotationParam | AnnotationParam[];
-};
-const isSerializationAnnotationType = typia.createIs<SerializationAnnotationType>();
-
-type ExecutionAnnotationType = {
-    name: ExecutionAnnotation;
-    param?: AnnotationParam | AnnotationParam[];
-};
-const isExecutionAnnotationType = typia.createIs<ExecutionAnnotationType>();
-
-type CompatibilityAnnotationType = {
-    name: CompatibilityAnnotation;
-    param?: AnnotationParam | AnnotationParam[];
-};
-const isCompatibilityAnnotationType = typia.createIs<CompatibilityAnnotationType>();
-
-type OtherAnnotationType = {
+export type AnnotationJson = JsonType & {
+    kind: 'modifier';
+    type: 'annotation';
     name: string;
-    param?: AnnotationParam | AnnotationParam[];
+    arg?: AnnotationArgJson | AnnotationArgJson[];
 };
-const isOtherAnnotationType = typia.createIs<OtherAnnotationType>();
 
-export type ModifierType = {
-    access?: AccessModifier[];
-    declaration?: DeclarationModifier[];
-    webService?: WebServiceModifier[];
-    test?: TestModifier[];
-    sharing?: SharingModifier[];
-    other?: OtherModifier[];
+export const isAnnotationJson = typia.createIs<AnnotationJson>();
+
+export type ModifierJson = JsonType & {
+    kind: 'modifier';
+    type: 'modifier';
+    name: string;
+};
+
+export const isModifierJson = typia.createIs<ModifierJson>();
+
+export type AllModifierJson = {
+    access?: ModifierJson[];
+    declaration?: ModifierJson[];
+    webService?: ModifierJson[];
+    test?: ModifierJson[];
+    sharing?: ModifierJson[];
+    other?: ModifierJson[];
     annotation?: {
-        lwc?: LWCAnnotationType[];
-        flow?: FlowAnnotationType[];
-        async?: AsyncAnnotationType[];
-        test?: TestAnnotationType[];
-        rest?: RestAnnotationType[];
-        visualforce?: VisualforceAnnotationType[];
-        access?: AccessAnnotationType[];
-        serialize?: SerializationAnnotationType[];
-        execution?: ExecutionAnnotationType[];
-        compatibility?: CompatibilityAnnotationType[];
-        other?: OtherAnnotationType[];
+        lwc?: AnnotationJson[];
+        flow?: AnnotationJson[];
+        async?: AnnotationJson[];
+        test?: AnnotationJson[];
+        rest?: AnnotationJson[];
+        visualforce?: AnnotationJson[];
+        access?: AnnotationJson[];
+        serialize?: AnnotationJson[];
+        execution?: AnnotationJson[];
+        compatibility?: AnnotationJson[];
+        other?: AnnotationJson[];
     };
+    error?: ErrorJson[];
 };
 
-export const isModifierType = typia.createIs<ModifierType>();
+const makeAnnotationJson = (
+    target: Convert<AnnotationType>,
+    targetObjectKey: string,
+    targetSourceKey: string,
+): AnnotationJson => {
+    const name = castConvert(castExcludeErrorInfo(target.value)).value;
 
-type ElementValueResult = {
-    value: string | null | void;
-    valueType: string;
-} | null | void;
-
-type ElementValuePairResult = {
-    key: string | null | void;
-    value: ElementValueResult | null;
-};
-
-type AnnotationResult = {
-    name: string | null | void;
-    annotationParam: AnnotationParam | AnnotationParam[] | null;
-};
-
-export const makeElementValueType = (
-    elementValueClass: ElementValueTypeClass,
-    sourceInfo: SourceInfoMap,
-    errorInfo: ErrorInfo[],
-): ElementValueResult => {
-    const elementValueType = elementValueClass.getType();
-    const elementValueSourceInfoMap = makeEmptySourceInfoMap();
-
-    const elementValue = assignMultiClass(elementValueClass.getValue(), [
-        {
-            isValid: (target: unknown) => isTargetTypeClass(target, isNormalLiteralType),
-            construct: (typeClass: NormalLiteralTypeClass) => {
-                const value = typeClass.getValue();
-                const valueType = typeClass.getValueType();
-                elementValueSourceInfoMap[typeClass.getType()] = makeSingleSourceInfoMap(typeClass);
-                return {
-                    value: assignMultiClass(value, [
-                        {
-                            isValid: (target: unknown) => typeof target === 'string',
-                            construct: (typeClass: string) => {
-                                return typeClass;
-                            },
-                        },
-                        makeErrorAssignRule(errorInfo),
-                    ]),
-                    valueType: valueType,
-                };
-            },
-        },
-        makeErrorAssignRule(errorInfo),
-    ]);
-
-    sourceInfo[elementValueType] = elementValueSourceInfoMap;
-
-    return elementValue;
-};
-
-const makeElementValuePairType = (
-    elementValuePairTypeClass: ElementValuePairTypeClass,
-    sourceInfo: SourceInfoMap,
-    errorInfo: ErrorInfo[],
-): ElementValuePairResult => {
-    const elementValuePairType = elementValuePairTypeClass.getType();
-    const elementValuePairSourceInfoMap = makeEmptySourceInfoMap();
-    const key = elementValuePairTypeClass.getLeft();
-    const value = elementValuePairTypeClass.getRight();
-
-    const elementValuePair = {
-        key: assignMultiClass(key, [
-            {
-                isValid: (target: unknown) => isTargetTypeClass(target, isNormalIdType),
-                construct: (typeClass: NormalIdTypeClass) => {
-                    elementValuePairSourceInfoMap[typeClass.getType()] =
-                        makeSingleSourceInfoMap(typeClass);
-                },
-            },
-            makeErrorAssignRule(errorInfo),
-        ]),
-        value: assignMultiClass(value, [
-            {
-                isValid: (target: unknown) => isTargetTypeClass(target, isElementValueType),
-                construct: (typeClass: ElementValueTypeClass) => {
-                    return makeElementValueType(
-                        typeClass,
-                        elementValuePairSourceInfoMap,
-                        errorInfo,
-                    );
-                },
-            },
-            makeErrorAssignRule(errorInfo),
-        ]),
+    const annotationJson: AnnotationJson = {
+        kind: 'modifier',
+        type: 'annotation',
+        sourceKeys: {},
+        name: name,
     };
 
-    sourceInfo[elementValuePairType] = elementValuePairSourceInfoMap;
-    return elementValuePair;
-};
+    const arg = target.param ? castConvert(castExcludeErrorInfo(target.param)) : null;
 
-const makeElementValuePairsType = (
-    elementValuePairsTypeClass: ElementValuePairsTypeClass,
-    sourceInfo: SourceInfoMap,
-    errorInfo: ErrorInfo[],
-): ElementValuePairResult[] => {
-    const elementValuePairsType = elementValuePairsTypeClass.getType();
-    const elementValuePairsSourceInfoMap = makeEmptySourceInfoMap();
-
-    const elementValuePairs = elementValuePairsTypeClass
-        .getValue()
-        .map((value) => {
-            return assignMultiClass(value, [
-                {
-                    isValid: (target: unknown) => isTargetTypeClass(target, isElementValuePairType),
-                    construct: (typeClass: ElementValuePairTypeClass) => {
-                        return makeElementValuePairType(
-                            typeClass,
-                            elementValuePairsSourceInfoMap,
-                            errorInfo,
-                        );
-                    },
-                },
-                makeErrorAssignRule(errorInfo),
-            ]);
-        })
-        .filter((value) => value != null);
-
-    sourceInfo[elementValuePairsType] = elementValuePairsSourceInfoMap;
-    return elementValuePairs;
-};
-
-const makeAnnotationType = (
-    annotationTypeClass: AnnotationTypeClass,
-    sourceInfo: SourceInfoMap,
-    errorInfo: ErrorInfo[],
-): AnnotationResult => {
-    const annotationType = annotationTypeClass.getType();
-    const annotationSourceInfoMap = makeEmptySourceInfoMap();
-
-    const name = assignMultiClass(annotationTypeClass.getValue(), [
-        {
-            isValid: (target: unknown) => isTargetTypeClass(target, isNormalIdType),
-            construct: (typeClass: NormalIdTypeClass) => {
-                annotationSourceInfoMap[typeClass.getType()] = makeSingleSourceInfoMap(typeClass);
-                return typeClass.getValue();
-            },
-        },
-        makeErrorAssignRule(errorInfo),
-    ]);
-
-    const param = assignMultiClass(annotationTypeClass.getParam(), [
-        {
-            isValid: (target: unknown) => isTargetTypeClass(target, isElementValueType),
-            construct: (typeClass: ElementValueTypeClass) => {
-                return makeElementValueType(typeClass, annotationSourceInfoMap, errorInfo);
-            },
-        },
-        {
-            isValid: (target: unknown) => isTargetTypeClass(target, isElementValuePairsType),
-            construct: (typeClass: ElementValuePairsTypeClass) => {
-                return makeElementValuePairsType(typeClass, annotationSourceInfoMap, errorInfo);
-            },
-        },
-        makeErrorAssignRule(errorInfo),
-    ]);
-
-    let annotationParam: AnnotationParam | AnnotationParam[] | null = null;
-    if (param != null) {
-        if (Array.isArray(param)) {
-            const annotationParams: AnnotationParam[] = [];
-            param.forEach((p) => {
-                const key = p.key;
-                const value = p.value?.value;
-                const valueType = p.value?.valueType;
-
-                if (key != null && value != null && valueType != null) {
-                    annotationParams.push({
-                        key: key,
-                        value: value,
-                        valueType: valueType,
-                    });
-                }
-            });
-            annotationParam = annotationParams;
+    if (arg) {
+        if (isConvert(arg, isElementValueType)) {
+            const literal = castConvert(castExcludeErrorInfo(arg.value));
+            const literalValue = castExcludeErrorInfo(literal.value);
+            const literalValueType = literal.valueType;
+            annotationJson.arg = {
+                value: literalValue,
+                valueType: literalValueType,
+            };
         } else {
-            const value = param.value;
-            const valueType = param.valueType;
-            if (value != null) {
-                annotationParam = {
-                    value: value,
+            const annotationArgs: AnnotationArgJson[] = [];
+            const pairs = arg as Convert<ElementValuePairsType>;
+            const pairList = castConvertArray(castExcludeErrorInfoArray(pairs.value));
+            pairList.forEach((pair) => {
+                const key = castConvert(castExcludeErrorInfo(pair.left)).value;
+                const value = castConvert(
+                    castExcludeErrorInfo(castExcludeErrorInfo(pair.right).value),
+                );
+                const literalValue = castExcludeErrorInfo(value.value);
+                const valueType = value.valueType;
+
+                annotationArgs.push({
+                    key: key,
+                    value: literalValue,
                     valueType: valueType,
-                };
-            }
+                });
+            });
+            annotationJson.arg = annotationArgs;
+
+            writeSourceKeys(annotationJson, targetObjectKey, targetSourceKey);
+            return annotationJson;
         }
     }
 
-    sourceInfo[annotationType] = annotationSourceInfoMap;
-
-    return {
-        name,
-        annotationParam,
-    };
+    writeSourceKeys(annotationJson, targetObjectKey, targetSourceKey);
+    return annotationJson;
 };
 
-export const makeModifierType = (
-    modifiers: NormalModifierTypeClass[],
-    sourceInfo: SourceInfoMap,
-    errorInfo: ErrorInfo[],
-): ModifierType | undefined => {
-    const modifierType: ModifierType = {};
+const makeModifierJson = (
+    target: Convert<ModifierType | ErrorInfo>,
+    sourceObject: SourceJson[],
+): ModifierJson | AnnotationJson | ErrorJson => {
+    const targetObjectKey = target.objectKey;
+    const targetSourceKey = target.sourceKey;
+    const convertJsons = searchConvertAll(target);
+    removeSourceInfo(sourceObject, convertJsons, [targetSourceKey]);
 
-    modifiers.forEach((modifier, index) => {
-        const modifierElement = assignMultiClass(modifier.getValue(), [
-            {
-                isValid: (target: unknown): target is AccessModifier =>
-                    typeof target === 'string' && isAccessModifier(target.toUpperCase()),
-                construct: (typeClass: AccessModifier) => {
-                    if (!modifierType.access) {
-                        modifierType.access = [];
-                    }
-                    sourceInfo[`${modifier.getType()}_${index}`] =
-                        makeSingleSourceInfoMap(modifier);
-                    modifierType.access.push(typeClass);
-                },
-            },
-            {
-                isValid: (target: unknown): target is DeclarationModifier =>
-                    typeof target === 'string' && isDeclarationModifier(target.toUpperCase()),
-                construct: (typeClass: DeclarationModifier) => {
-                    if (!modifierType.declaration) {
-                        modifierType.declaration = [];
-                    }
-                    sourceInfo[`${modifier.getType()}_${index}`] =
-                        makeSingleSourceInfoMap(modifier);
-                    modifierType.declaration.push(typeClass);
-                },
-            },
-            {
-                isValid: (target: unknown): target is WebServiceModifier =>
-                    typeof target === 'string' && isWebServiceModifier(target.toUpperCase()),
-                construct: (typeClass: WebServiceModifier) => {
-                    if (!modifierType.webService) {
-                        modifierType.webService = [];
-                    }
-                    sourceInfo[`${modifier.getType()}_${index}`] =
-                        makeSingleSourceInfoMap(modifier);
-                    modifierType.webService.push(typeClass);
-                },
-            },
-            {
-                isValid: (target: unknown): target is TestModifier =>
-                    typeof target === 'string' && isTestModifier(target.toUpperCase()),
-                construct: (typeClass: TestModifier) => {
-                    if (!modifierType.test) {
-                        modifierType.test = [];
-                    }
-                    sourceInfo[`${modifier.getType()}_${index}`] =
-                        makeSingleSourceInfoMap(modifier);
-                    modifierType.test.push(typeClass);
-                },
-            },
+    const error: ErrorJson = {
+        kind: 'error',
+        kindType: 'modifier',
+        sourceKeys: {},
+    };
 
-            {
-                isValid: (target: unknown): target is SharingModifier =>
-                    typeof target === 'string' && isSharingModifier(target.toUpperCase()),
-                construct: (typeClass: SharingModifier) => {
-                    if (!modifierType.sharing) {
-                        modifierType.sharing = [];
-                    }
-                    sourceInfo[`${modifier.getType()}_${index}`] =
-                        makeSingleSourceInfoMap(modifier);
-                    modifierType.sharing.push(typeClass);
-                },
-            },
+    writeSourceKeys(error, targetObjectKey, targetSourceKey);
 
-            {
-                isValid: (target: unknown): target is OtherModifier =>
-                    typeof target === 'string' && isOtherModifier(target.toUpperCase()),
-                construct: (typeClass: OtherModifier) => {
-                    if (!modifierType.other) {
-                        modifierType.other = [];
-                    }
-                    sourceInfo[`${modifier.getType()}_${index}`] =
-                        makeSingleSourceInfoMap(modifier);
-                    modifierType.other.push(typeClass);
-                },
-            },
-            {
-                isValid: (target: unknown) => isTargetTypeClass(target, isAnnotationType),
-                construct: (typeClass: AnnotationTypeClass) => {
-                    if (!modifierType.annotation) {
-                        modifierType.annotation = {};
-                    }
-                    const annotationSourceInfo = makeEmptySourceInfoMap();
-                    const { name, annotationParam } = makeAnnotationType(
-                        typeClass,
-                        annotationSourceInfo,
-                        errorInfo,
-                    );
-                    sourceInfo[`${modifier.getType()}_${index}`] = annotationSourceInfo;
+    if (isError(convertJsons)) {
+        return error;
+    }
 
-                    if (typeof name === 'string' && isLWCAnnotation(name)) {
-                        if (!modifierType.annotation.lwc) {
-                            modifierType.annotation.lwc = [];
-                        }
+    const _target = target as Convert<ModifierType>;
+    const value = castExcludeErrorInfo(_target.value);
+    const modifier = typeof value === 'string' ? value : castConvert(value);
 
-                        const annotation: LWCAnnotationType = {
-                            name,
-                        };
+    if (typeof modifier === 'string') {
+        const modifierJson: ModifierJson = {
+            kind: 'modifier',
+            type: 'modifier',
+            sourceKeys: {},
+            name: modifier,
+        };
 
-                        if (annotationParam != null) {
-                            annotation.param = annotationParam;
-                        }
+        writeSourceKeys(modifierJson, targetObjectKey, targetSourceKey);
+        return modifierJson;
+    }
 
-                        modifierType.annotation.lwc.push(annotation);
-                        return;
-                    }
+    if (isConvert(modifier, isAnnotationType)) {
+        const annotationJson = makeAnnotationJson(modifier, targetObjectKey, targetSourceKey);
 
-                    if (typeof name === 'string' && isFlowAnnotation(name)) {
-                        if (!modifierType.annotation.flow) {
-                            modifierType.annotation.flow = [];
-                        }
+        writeSourceKeys(annotationJson, targetObjectKey, targetSourceKey);
+        return annotationJson;
+    }
 
-                        const annotation: FlowAnnotationType = {
-                            name,
-                        };
+    return error;
+};
 
-                        if (annotationParam != null) {
-                            annotation.param = annotationParam;
-                        }
+export const makeAllModifierJson = (
+    target: Convert<ModifierType | ErrorInfo>[],
+    sourceObject: SourceJson[],
+): AllModifierJson => {
+    const allModifierJson: AllModifierJson = {};
 
-                        modifierType.annotation.flow.push(annotation);
-                        return;
-                    }
+    target.forEach((t) => {
+        const modifierJson = makeModifierJson(t, sourceObject);
+        if (isErrorJson(modifierJson)) {
+            if (!allModifierJson.error) {
+                allModifierJson.error = [];
+            }
+            allModifierJson.error.push(modifierJson);
+            return;
+        }
 
-                    if (typeof name === 'string' && isAsyncAnnotation(name)) {
-                        if (!modifierType.annotation.async) {
-                            modifierType.annotation.async = [];
-                        }
+        if (isModifierJson(modifierJson)) {
+            if (isAccessModifier(modifierJson.name)) {
+                if (!allModifierJson.access) {
+                    allModifierJson.access = [];
+                }
+                allModifierJson.access.push(modifierJson);
+                return;
+            }
 
-                        const annotation: AsyncAnnotationType = {
-                            name,
-                        };
+            if (isDeclarationModifier(modifierJson.name)) {
+                if (!allModifierJson.declaration) {
+                    allModifierJson.declaration = [];
+                }
+                allModifierJson.declaration.push(modifierJson);
+                return;
+            }
 
-                        if (annotationParam != null) {
-                            annotation.param = annotationParam;
-                        }
+            if (isWebServiceModifier(modifierJson.name)) {
+                if (!allModifierJson.webService) {
+                    allModifierJson.webService = [];
+                }
+                allModifierJson.webService.push(modifierJson);
+                return;
+            }
 
-                        modifierType.annotation.async.push(annotation);
-                        return;
-                    }
+            if (isTestModifier(modifierJson.name)) {
+                if (!allModifierJson.test) {
+                    allModifierJson.test = [];
+                }
+                allModifierJson.test.push(modifierJson);
+                return;
+            }
 
-                    if (typeof name === 'string' && isTestAnnotation(name)) {
-                        if (!modifierType.annotation.test) {
-                            modifierType.annotation.test = [];
-                        }
+            if (isSharingModifier(modifierJson.name)) {
+                if (!allModifierJson.sharing) {
+                    allModifierJson.sharing = [];
+                }
+                allModifierJson.sharing.push(modifierJson);
+                return;
+            }
 
-                        const annotation: TestAnnotationType = {
-                            name,
-                        };
+            if (isOtherModifier(modifierJson.name)) {
+                if (!allModifierJson.other) {
+                    allModifierJson.other = [];
+                }
+                allModifierJson.other.push(modifierJson);
+                return;
+            }
+        }
 
-                        if (annotationParam != null) {
-                            annotation.param = annotationParam;
-                        }
+        if (isAnnotationJson(modifierJson)) {
+            if (!allModifierJson.annotation) {
+                allModifierJson.annotation = {};
+            }
 
-                        modifierType.annotation.test.push(annotation);
-                        return;
-                    }
+            if (isLWCAnnotation(modifierJson.name)) {
+                if (!allModifierJson.annotation.lwc) {
+                    allModifierJson.annotation.lwc = [];
+                }
+                allModifierJson.annotation.lwc.push(modifierJson);
+                return;
+            }
 
-                    if (typeof name === 'string' && isRestAnnotation(name)) {
-                        if (!modifierType.annotation.rest) {
-                            modifierType.annotation.rest = [];
-                        }
+            if (isAsyncAnnotation(modifierJson.name)) {
+                if (!allModifierJson.annotation.async) {
+                    allModifierJson.annotation.async = [];
+                }
+                allModifierJson.annotation.async.push(modifierJson);
+                return;
+            }
 
-                        const annotation: RestAnnotationType = {
-                            name,
-                        };
+            if (isTestAnnotation(modifierJson.name)) {
+                if (!allModifierJson.annotation.test) {
+                    allModifierJson.annotation.test = [];
+                }
+                allModifierJson.annotation.test.push(modifierJson);
+                return;
+            }
 
-                        if (annotationParam != null) {
-                            annotation.param = annotationParam;
-                        }
+            if (isRestAnnotation(modifierJson.name)) {
+                if (!allModifierJson.annotation.rest) {
+                    allModifierJson.annotation.rest = [];
+                }
+                allModifierJson.annotation.rest.push(modifierJson);
+                return;
+            }
 
-                        modifierType.annotation.rest.push(annotation);
-                        return;
-                    }
+            if (isVisualforceAnnotation(modifierJson.name)) {
+                if (!allModifierJson.annotation.visualforce) {
+                    allModifierJson.annotation.visualforce = [];
+                }
+                allModifierJson.annotation.visualforce.push(modifierJson);
+                return;
+            }
 
-                    if (typeof name === 'string' && isVisualforceAnnotation(name)) {
-                        if (!modifierType.annotation.visualforce) {
-                            modifierType.annotation.visualforce = [];
-                        }
+            if (isAccessAnnotation(modifierJson.name)) {
+                if (!allModifierJson.annotation.access) {
+                    allModifierJson.annotation.access = [];
+                }
+                allModifierJson.annotation.access.push(modifierJson);
+                return;
+            }
 
-                        const annotation: VisualforceAnnotationType = {
-                            name,
-                        };
+            if (isSerializationAnnotation(modifierJson.name)) {
+                if (!allModifierJson.annotation.serialize) {
+                    allModifierJson.annotation.serialize = [];
+                }
+                allModifierJson.annotation.serialize.push(modifierJson);
+                return;
+            }
 
-                        if (annotationParam != null) {
-                            annotation.param = annotationParam;
-                        }
+            if (isExecutionAnnotation(modifierJson.name)) {
+                if (!allModifierJson.annotation.execution) {
+                    allModifierJson.annotation.execution = [];
+                }
+                allModifierJson.annotation.execution.push(modifierJson);
+                return;
+            }
 
-                        modifierType.annotation.visualforce.push(annotation);
-                        return;
-                    }
+            if (isCompatibilityAnnotation(modifierJson.name)) {
+                if (!allModifierJson.annotation.compatibility) {
+                    allModifierJson.annotation.compatibility = [];
+                }
+                allModifierJson.annotation.compatibility.push(modifierJson);
+                return;
+            }
 
-                    if (typeof name === 'string' && isAccessAnnotation(name)) {
-                        if (!modifierType.annotation.access) {
-                            modifierType.annotation.access = [];
-                        }
-
-                        const annotation: AccessAnnotationType = {
-                            name,
-                        };
-
-                        if (annotationParam != null) {
-                            annotation.param = annotationParam;
-                        }
-
-                        modifierType.annotation.access.push(annotation);
-                        return;
-                    }
-
-                    if (typeof name === 'string' && isAccessAnnotation(name)) {
-                        if (!modifierType.annotation.access) {
-                            modifierType.annotation.access = [];
-                        }
-
-                        const annotation: AccessAnnotationType = {
-                            name,
-                        };
-
-                        if (annotationParam != null) {
-                            annotation.param = annotationParam;
-                        }
-
-                        modifierType.annotation.access.push(annotation);
-                        return;
-                    }
-
-                    if (typeof name === 'string' && isSerializationAnnotation(name)) {
-                        if (!modifierType.annotation.serialize) {
-                            modifierType.annotation.serialize = [];
-                        }
-
-                        const annotation: SerializationAnnotationType = {
-                            name,
-                        };
-
-                        if (annotationParam != null) {
-                            annotation.param = annotationParam;
-                        }
-
-                        modifierType.annotation.serialize.push(annotation);
-                        return;
-                    }
-
-                    if (typeof name === 'string' && isExecutionAnnotation(name)) {
-                        if (!modifierType.annotation.execution) {
-                            modifierType.annotation.execution = [];
-                        }
-
-                        const annotation: ExecutionAnnotationType = {
-                            name,
-                        };
-
-                        if (annotationParam != null) {
-                            annotation.param = annotationParam;
-                        }
-
-                        modifierType.annotation.execution.push(annotation);
-                        return;
-                    }
-
-                    if (typeof name === 'string' && isCompatibilityAnnotation(name)) {
-                        if (!modifierType.annotation.compatibility) {
-                            modifierType.annotation.compatibility = [];
-                        }
-
-                        const annotation: CompatibilityAnnotationType = {
-                            name,
-                        };
-
-                        if (annotationParam != null) {
-                            annotation.param = annotationParam;
-                        }
-
-                        modifierType.annotation.compatibility.push(annotation);
-                        return;
-                    }
-
-                    if (typeof name === 'string') {
-                        if (!modifierType.annotation.other) {
-                            modifierType.annotation.other = [];
-                        }
-
-                        const annotation: OtherAnnotationType = {
-                            name,
-                        };
-
-                        if (annotationParam != null) {
-                            annotation.param = annotationParam;
-                        }
-
-                        modifierType.annotation.other.push(annotation);
-                        return;
-                    }
-                },
-            },
-            makeErrorAssignRule(errorInfo),
-        ]);
+            if (!allModifierJson.annotation.other) {
+                allModifierJson.annotation.other = [];
+            }
+            allModifierJson.annotation.other.push(modifierJson);
+        }
     });
 
-    return modifierType;
+    return allModifierJson;
 };

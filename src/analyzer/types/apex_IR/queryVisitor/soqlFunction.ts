@@ -252,3 +252,4 @@ export class SoqlFunctionTypeClass extends QueryTypeClass<SoqlFunctionValueType>
 export const isSoqlFunctionType = (target: CommonTypeClass): target is SoqlFunctionTypeClass => {
     return target instanceof SoqlFunctionTypeClass;
 };
+
