@@ -60,7 +60,7 @@ const makeDataCategorySelectionJson = (
 export type WithJson = JsonType & {
     kind: 'with';
     mode: string | LogicalConditionJson;
-    selection: DataCategorySelectionJson[];
+    selection?: DataCategorySelectionJson[];
 };
 export const isWithJson = typia.createIs<WithJson>();
 
