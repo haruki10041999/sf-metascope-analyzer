@@ -2,29 +2,24 @@ import typia from 'typia';
 
 import {
     Convert,
-    isConvert,
+    ConvertExcludeError,
+    GenerateResult,
     ErrorJson,
-    JsonType,
-    SourceJson,
-    searchConvertAll,
-    isError,
-    writeSourceKeys,
-    removeSourceInfo,
-    castExcludeErrorInfo,
-    castExcludeErrorInfoArray,
-    castConvert,
-    castConvertArray,
     isErrorJson,
+    JsonType,
+    makeJsonType,
+    convertExcludeError,
+    collectDelteteKeys,
+    mergeRecord,
+    isConvert,
 } from './commons';
 
 import {
     ModifierType,
     AnnotationType,
+    ElementValueType,
     ElementValuePairsType,
     ErrorInfo,
-    isAnnotationType,
-    isElementValueType,
-    isElementValuePairsType,
 } from './converter';
 
 const isAccessModifier = (value: string): boolean =>
@@ -132,41 +127,34 @@ export type AllModifierJson = {
 };
 
 const makeAnnotationJson = (
-    target: Convert<AnnotationType>,
-    targetObjectKey: string,
-    targetSourceKey: string,
+    target: ConvertExcludeError<AnnotationType>,
+    records: Record<string, string[]>,
 ): AnnotationJson => {
-    const name = castConvert(castExcludeErrorInfo(target.value)).value;
+    const name = target.value.value;
 
-    const annotationJson: AnnotationJson = {
-        kind: 'modifier',
+    const annotationJson: AnnotationJson = makeJsonType('modifier', records, {
         type: 'annotation',
-        sourceKeys: {},
         name: name,
-    };
+    });
 
-    const arg = target.param ? castConvert(castExcludeErrorInfo(target.param)) : null;
+    const arg = target.param ? target.param : null;
 
     if (arg) {
-        if (isConvert(arg, isElementValueType)) {
-            const literal = castConvert(castExcludeErrorInfo(arg.value));
-            const literalValue = castExcludeErrorInfo(literal.value);
-            const literalValueType = literal.valueType;
+        if (isConvert<ElementValueType>(arg)) {
+            const literalValue = arg.value.value;
+            const literalValueType = arg.value.valueType;
             annotationJson.arg = {
                 value: literalValue,
                 valueType: literalValueType,
             };
+            return annotationJson;
         } else {
             const annotationArgs: AnnotationArgJson[] = [];
-            const pairs = arg as Convert<ElementValuePairsType>;
-            const pairList = castConvertArray(castExcludeErrorInfoArray(pairs.value));
+            const pairList = arg.value;
             pairList.forEach((pair) => {
-                const key = castConvert(castExcludeErrorInfo(pair.left)).value;
-                const value = castConvert(
-                    castExcludeErrorInfo(castExcludeErrorInfo(pair.right).value),
-                );
-                const literalValue = castExcludeErrorInfo(value.value);
-                const valueType = value.valueType;
+                const key = pair.left.value;
+                const literalValue = pair.right.value.value;
+                const valueType = pair.right.value.valueType;
 
                 annotationArgs.push({
                     key: key,
@@ -175,212 +163,210 @@ const makeAnnotationJson = (
                 });
             });
             annotationJson.arg = annotationArgs;
-
-            writeSourceKeys(annotationJson, targetObjectKey, targetSourceKey);
             return annotationJson;
         }
     }
 
-    writeSourceKeys(annotationJson, targetObjectKey, targetSourceKey);
     return annotationJson;
 };
 
 const makeModifierJson = (
     target: Convert<ModifierType | ErrorInfo>,
-    sourceObject: SourceJson[],
-): ModifierJson | AnnotationJson | ErrorJson => {
-    const targetObjectKey = target.objectKey;
-    const targetSourceKey = target.sourceKey;
-    const convertJsons = searchConvertAll(target);
-    removeSourceInfo(sourceObject, convertJsons, [targetSourceKey]);
+): GenerateResult<ModifierJson | AnnotationJson | ErrorJson> => {
+    const targetRecords: Record<string, string[]> = { [target.objectKey]: [target.sourceKey] };
+    const deleteKeys = collectDelteteKeys(target, targetRecords);
 
-    const error: ErrorJson = {
-        kind: 'error',
-        kindType: 'modifier',
-        sourceKeys: {},
-    };
+    const { value, errorInfos } = convertExcludeError(target);
 
-    writeSourceKeys(error, targetObjectKey, targetSourceKey);
+    const error: ErrorJson = makeJsonType('error', targetRecords, { kindType: 'modifier' });
 
-    if (isError(convertJsons)) {
-        return error;
+    if (!value && errorInfos.length > 0) {
+        return { result: error, deleteKeys: deleteKeys };
     }
 
-    const _target = target as Convert<ModifierType>;
-    const value = castExcludeErrorInfo(_target.value);
-    const modifier = typeof value === 'string' ? value : castConvert(value);
-
+    const modifier = value!.value;
     if (typeof modifier === 'string') {
-        const modifierJson: ModifierJson = {
-            kind: 'modifier',
-            type: 'modifier',
-            sourceKeys: {},
-            name: modifier,
+        return {
+            result: makeJsonType('modifier', targetRecords, {
+                type: 'modifier',
+                name: modifier,
+            }),
+            deleteKeys: deleteKeys,
         };
-
-        writeSourceKeys(modifierJson, targetObjectKey, targetSourceKey);
-        return modifierJson;
     }
 
-    if (isConvert(modifier, isAnnotationType)) {
-        const annotationJson = makeAnnotationJson(modifier, targetObjectKey, targetSourceKey);
-
-        writeSourceKeys(annotationJson, targetObjectKey, targetSourceKey);
-        return annotationJson;
+    if (isConvert<AnnotationType>(target)) {
+        return {
+            result: makeAnnotationJson(modifier, targetRecords),
+            deleteKeys: deleteKeys,
+        };
     }
 
-    return error;
+    return {
+        result: error,
+        deleteKeys: deleteKeys,
+    };
 };
 
 export const makeAllModifierJson = (
     target: Convert<ModifierType | ErrorInfo>[],
-    sourceObject: SourceJson[],
-): AllModifierJson => {
+): GenerateResult<AllModifierJson> => {
     const allModifierJson: AllModifierJson = {};
+    let allDeleteKeys: Record<string, string[]> = {};
 
     target.forEach((t) => {
-        const modifierJson = makeModifierJson(t, sourceObject);
-        if (isErrorJson(modifierJson)) {
+        const { result, deleteKeys } = makeModifierJson(t);
+        allDeleteKeys = mergeRecord(allDeleteKeys, deleteKeys);
+
+        if (isErrorJson(result)) {
             if (!allModifierJson.error) {
                 allModifierJson.error = [];
             }
-            allModifierJson.error.push(modifierJson);
+            allModifierJson.error.push(result);
             return;
         }
 
-        if (isModifierJson(modifierJson)) {
-            if (isAccessModifier(modifierJson.name)) {
+        if (isModifierJson(result)) {
+            if (isAccessModifier(result.name)) {
                 if (!allModifierJson.access) {
                     allModifierJson.access = [];
                 }
-                allModifierJson.access.push(modifierJson);
+                allModifierJson.access.push(result);
                 return;
             }
 
-            if (isDeclarationModifier(modifierJson.name)) {
+            if (isDeclarationModifier(result.name)) {
                 if (!allModifierJson.declaration) {
                     allModifierJson.declaration = [];
                 }
-                allModifierJson.declaration.push(modifierJson);
+                allModifierJson.declaration.push(result);
                 return;
             }
 
-            if (isWebServiceModifier(modifierJson.name)) {
+            if (isWebServiceModifier(result.name)) {
                 if (!allModifierJson.webService) {
                     allModifierJson.webService = [];
                 }
-                allModifierJson.webService.push(modifierJson);
+                allModifierJson.webService.push(result);
                 return;
             }
 
-            if (isTestModifier(modifierJson.name)) {
+            if (isTestModifier(result.name)) {
                 if (!allModifierJson.test) {
                     allModifierJson.test = [];
                 }
-                allModifierJson.test.push(modifierJson);
+                allModifierJson.test.push(result);
                 return;
             }
 
-            if (isSharingModifier(modifierJson.name)) {
+            if (isSharingModifier(result.name)) {
                 if (!allModifierJson.sharing) {
                     allModifierJson.sharing = [];
                 }
-                allModifierJson.sharing.push(modifierJson);
+                allModifierJson.sharing.push(result);
                 return;
             }
 
-            if (isOtherModifier(modifierJson.name)) {
+            if (isOtherModifier(result.name)) {
                 if (!allModifierJson.other) {
                     allModifierJson.other = [];
                 }
-                allModifierJson.other.push(modifierJson);
+                allModifierJson.other.push(result);
                 return;
             }
         }
 
-        if (isAnnotationJson(modifierJson)) {
+        if (isAnnotationJson(result)) {
             if (!allModifierJson.annotation) {
                 allModifierJson.annotation = {};
             }
 
-            if (isLWCAnnotation(modifierJson.name)) {
+            if (isLWCAnnotation(result.name)) {
                 if (!allModifierJson.annotation.lwc) {
                     allModifierJson.annotation.lwc = [];
                 }
-                allModifierJson.annotation.lwc.push(modifierJson);
+                allModifierJson.annotation.lwc.push(result);
                 return;
             }
 
-            if (isAsyncAnnotation(modifierJson.name)) {
+            if (isFlowAnnotation(result.name)) {
+                if (!allModifierJson.annotation.flow) {
+                    allModifierJson.annotation.flow = [];
+                }
+                allModifierJson.annotation.flow.push(result);
+                return;
+            }
+
+            if (isAsyncAnnotation(result.name)) {
                 if (!allModifierJson.annotation.async) {
                     allModifierJson.annotation.async = [];
                 }
-                allModifierJson.annotation.async.push(modifierJson);
+                allModifierJson.annotation.async.push(result);
                 return;
             }
 
-            if (isTestAnnotation(modifierJson.name)) {
+            if (isTestAnnotation(result.name)) {
                 if (!allModifierJson.annotation.test) {
                     allModifierJson.annotation.test = [];
                 }
-                allModifierJson.annotation.test.push(modifierJson);
+                allModifierJson.annotation.test.push(result);
                 return;
             }
 
-            if (isRestAnnotation(modifierJson.name)) {
+            if (isRestAnnotation(result.name)) {
                 if (!allModifierJson.annotation.rest) {
                     allModifierJson.annotation.rest = [];
                 }
-                allModifierJson.annotation.rest.push(modifierJson);
+                allModifierJson.annotation.rest.push(result);
                 return;
             }
 
-            if (isVisualforceAnnotation(modifierJson.name)) {
+            if (isVisualforceAnnotation(result.name)) {
                 if (!allModifierJson.annotation.visualforce) {
                     allModifierJson.annotation.visualforce = [];
                 }
-                allModifierJson.annotation.visualforce.push(modifierJson);
+                allModifierJson.annotation.visualforce.push(result);
                 return;
             }
 
-            if (isAccessAnnotation(modifierJson.name)) {
+            if (isAccessAnnotation(result.name)) {
                 if (!allModifierJson.annotation.access) {
                     allModifierJson.annotation.access = [];
                 }
-                allModifierJson.annotation.access.push(modifierJson);
+                allModifierJson.annotation.access.push(result);
                 return;
             }
 
-            if (isSerializationAnnotation(modifierJson.name)) {
+            if (isSerializationAnnotation(result.name)) {
                 if (!allModifierJson.annotation.serialize) {
                     allModifierJson.annotation.serialize = [];
                 }
-                allModifierJson.annotation.serialize.push(modifierJson);
+                allModifierJson.annotation.serialize.push(result);
                 return;
             }
 
-            if (isExecutionAnnotation(modifierJson.name)) {
+            if (isExecutionAnnotation(result.name)) {
                 if (!allModifierJson.annotation.execution) {
                     allModifierJson.annotation.execution = [];
                 }
-                allModifierJson.annotation.execution.push(modifierJson);
+                allModifierJson.annotation.execution.push(result);
                 return;
             }
 
-            if (isCompatibilityAnnotation(modifierJson.name)) {
+            if (isCompatibilityAnnotation(result.name)) {
                 if (!allModifierJson.annotation.compatibility) {
                     allModifierJson.annotation.compatibility = [];
                 }
-                allModifierJson.annotation.compatibility.push(modifierJson);
+                allModifierJson.annotation.compatibility.push(result);
                 return;
             }
 
             if (!allModifierJson.annotation.other) {
                 allModifierJson.annotation.other = [];
             }
-            allModifierJson.annotation.other.push(modifierJson);
+            allModifierJson.annotation.other.push(result);
         }
     });
 
-    return allModifierJson;
+    return { result: allModifierJson, deleteKeys: allDeleteKeys };
 };

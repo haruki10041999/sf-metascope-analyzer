@@ -2,18 +2,13 @@ import typia from 'typia';
 
 import {
     Convert,
+    GenerateResult,
     ErrorJson,
     isErrorJson,
     JsonType,
-    SourceJson,
-    searchConvertAll,
-    isError,
-    writeSourceKeys,
-    removeSourceInfo,
-    castExcludeErrorInfo,
-    castExcludeErrorInfoArray,
-    castConvert,
-    castConvertArray,
+    makeJsonType,
+    convertExcludeError,
+    collectDelteteKeys,
 } from './commons';
 
 import { TypeRefType, ErrorInfo } from './converter';
@@ -62,7 +57,7 @@ export const isCustomTypeJson = typia.createIs<CustomTypeJson>();
 
 type ArrayTypeJson = JsonType & {
     collectionType: 'array';
-    elementType: string;
+    elementType: Omit<TypeJson, 'kind' | 'sourceKeys'>;
     dimension: number;
 };
 export const isArrayTypeJson = typia.createIs<ArrayTypeJson>();
@@ -92,168 +87,113 @@ export const isTypeJson = typia.createIs<TypeJson>();
 
 export const makeTypeJson = (
     target: Convert<TypeRefType | ErrorInfo>,
-    sourceObject: SourceJson[],
-): TypeJson | ErrorJson => {
-    const targetObjectKey = target.objectKey;
-    const targetSourceKey = target.sourceKey;
-    const convertJsons = searchConvertAll(target);
-    removeSourceInfo(sourceObject, convertJsons, [targetSourceKey]);
+): GenerateResult<TypeJson | ErrorJson> => {
+    const targetRecords: Record<string, string[]> = { [target.objectKey]: [target.sourceKey] };
+    const deleteKeys = collectDelteteKeys(target, targetRecords);
 
-    const error: ErrorJson = {
-        kind: 'error',
-        kindType: 'type',
-        sourceKeys: {},
-    };
+    const { value, errorInfos } = convertExcludeError(target);
 
-    writeSourceKeys(error, targetObjectKey, targetSourceKey);
+    const error: ErrorJson = makeJsonType('error', targetRecords, { kindType: 'type' });
 
-    if (isError(convertJsons)) {
-        return error;
+    if (!value && errorInfos.length > 0) {
+        return { result: error, deleteKeys: deleteKeys };
     }
 
-    const _target = target as Convert<TypeRefType>;
+    const collection = value!.value;
+    const dimension = value!.dimension.value;
 
-    const collection = castConvertArray(castExcludeErrorInfoArray(_target.value));
-    const collectionValue: { collection: string; generic: Convert<TypeRefType>[] | null }[] =
-        collection.map((item) => {
-            const collection =
-                typeof item.value === 'string'
-                    ? item.value
-                    : castConvert(castExcludeErrorInfo(item.value)).value;
-            const typeArgument = castExcludeErrorInfo(item.generic);
-            const typeList = typeArgument ? castExcludeErrorInfo(typeArgument.value) : null;
-            const generic = typeList
-                ? castConvertArray(castExcludeErrorInfoArray(typeList.value))
-                : null;
-
-            return { collection, generic };
-        });
-
-    const dimension = castConvert(castExcludeErrorInfo(_target.dimension));
-    const dimensionValue = castExcludeErrorInfo(dimension.value);
-
-    if (collectionValue.length === 1) {
-        const collectionItem = collectionValue.at(0)!;
-
-        if (isPrimitiveType(collectionItem.collection) && !collectionItem.generic) {
-            const typeType: PrimitiveTypeJson = {
-                kind: 'type',
-                sourceKeys: {},
-                type: 'primitive',
-                primitiveType: collectionItem.collection,
-            };
-            writeSourceKeys(typeType, targetObjectKey, targetSourceKey);
-            return typeType;
-        }
-
-        if (dimensionValue && !collectionItem.generic) {
-            const typeType: ArrayTypeJson = {
-                kind: 'type',
-                sourceKeys: {},
+    if (dimension) {
+        const { result } = makeTypeJson({
+            type: target.type,
+            objectKey: target.objectKey,
+            sourceKey: target.sourceKey,
+            value: collection,
+        } as Convert<TypeRefType>);
+        const { kind, sourceKeys, ...content } = result;
+        return {
+            result: makeJsonType('type', targetRecords, {
                 collectionType: 'array',
-                elementType: collectionItem.collection,
-                dimension: dimensionValue,
-            };
-            writeSourceKeys(typeType, targetObjectKey, targetSourceKey);
-            return typeType;
-        }
-
-        if (
-            (isListType(collectionItem.collection) || isSetType(collectionItem.collection)) &&
-            collectionItem.generic &&
-            collectionItem.generic.length === 1
-        ) {
-            const nestedTypeJson = makeTypeJson(collectionItem.generic.at(0)!, sourceObject);
-
-            if (isTypeJson(nestedTypeJson)) {
-                const { kind, sourceKeys, ...content } = nestedTypeJson;
-                const typeType: ListTypeJson | SetTypeJson = {
-                    kind: 'type',
-                    sourceKeys: {},
-                    collectionType: isListType(collectionItem.collection) ? 'list' : 'set',
-                    elementType: content,
-                };
-                writeSourceKeys(typeType, targetObjectKey, targetSourceKey);
-                return typeType;
-            }
-        }
-
-        if (
-            isMapType(collectionItem.collection) &&
-            collectionItem.generic &&
-            collectionItem.generic.length === 2
-        ) {
-            const keyTypeJson = makeTypeJson(collectionItem.generic.at(0)!, sourceObject);
-            const valueTypeJson = makeTypeJson(collectionItem.generic.at(1)!, sourceObject);
-
-            if (isTypeJson(keyTypeJson) && isTypeJson(valueTypeJson)) {
-                const { kind: _keyKind, sourceKeys: _keySourceKey, ...keyContent } = keyTypeJson;
-                const {
-                    kind: _valueKind,
-                    sourceKeys: _valueSourceKey,
-                    ...valueContent
-                } = valueTypeJson;
-
-                const typeType: MapTypeJson = {
-                    kind: 'type',
-                    sourceKeys: {},
-                    collectionType: 'map',
-                    keyType: keyContent,
-                    valueType: valueContent,
-                };
-                writeSourceKeys(typeType, targetObjectKey, targetSourceKey);
-                return typeType;
-            }
-        }
-
-        const typeType: CustomTypeJson = {
-            kind: 'type',
-            sourceKeys: {},
-            type: 'custom',
-            customType: collectionItem.collection,
+                elementType: content,
+                dimension: dimension,
+            }),
+            deleteKeys: deleteKeys,
         };
-
-        const genericedTypes: (TypeJson | ErrorJson)[] = [];
-        if (collectionItem.generic && collectionItem.generic.length > 0) {
-            genericedTypes.push(
-                ...collectionItem.generic.map((item) => {
-                    const typeJson = makeTypeJson(item, sourceObject);
-                    return typeJson;
-                }),
-            );
-        }
-
-        if (
-            genericedTypes.length === 0 ||
-            (genericedTypes.length > 0 && !genericedTypes.some((item) => isErrorJson(item)))
-        ) {
-            if (genericedTypes.length > 0) {
-                typeType.generic = (genericedTypes as TypeJson[]).map(
-                    ({ kind, sourceKeys, ...content }) => content,
-                );
-            }
-
-            writeSourceKeys(typeType, targetObjectKey, targetSourceKey);
-            return typeType;
-        }
     }
 
-    if (collectionValue.length > 0) {
-        const typeType: CustomTypeJson = {
-            kind: 'type',
-            sourceKeys: {},
-            type: 'custom',
-            customType: collectionValue.map((collection) => collection.collection),
-        };
+    if (collection.length === 1) {
+        const collectionItem = collection.at(0)!;
+        const collectionName =
+            typeof collectionItem.value === 'string'
+                ? collectionItem.value
+                : collectionItem.value.value;
+        const generic = collectionItem.generic
+            ? collectionItem.generic.value
+                ? collectionItem.generic.value.value
+                : null
+            : null;
 
-        const generic = collectionValue.at(-1)!.generic;
+        if (isPrimitiveType(collectionName) && !collectionItem.generic) {
+            return {
+                result: makeJsonType('type', targetRecords, {
+                    type: 'primitive',
+                    primitiveType: collectionName,
+                }),
+                deleteKeys: deleteKeys,
+            };
+        }
+
+        if (
+            (isListType(collectionName) || isSetType(collectionName)) &&
+            generic &&
+            generic.length === 1
+        ) {
+            const { result } = makeTypeJson(generic.at(0)!);
+
+            if (isTypeJson(result)) {
+                const { kind, sourceKeys, ...content } = result;
+                return {
+                    result: makeJsonType('type', targetRecords, {
+                        collectionType: isListType(collectionName) ? 'list' : 'set',
+                        elementType: content,
+                    }),
+                    deleteKeys: deleteKeys,
+                };
+            }
+        }
+
+        if (isMapType(collectionName) && generic && generic.length === 2) {
+            const { result: keyResult } = makeTypeJson(generic.at(0)!);
+            const { result: valueResult } = makeTypeJson(generic.at(1)!);
+
+            if (isTypeJson(keyResult) && isTypeJson(valueResult)) {
+                const { kind: keyKind, sourceKeys: keySourceKeys, ...keyContent } = keyResult;
+                const {
+                    kind: valueKind,
+                    sourceKeys: valueSourceKeys,
+                    ...valueContent
+                } = valueResult;
+                return {
+                    result: makeJsonType('type', targetRecords, {
+                        collectionType: 'map',
+                        keyType: keyContent,
+                        valueType: valueContent,
+                    }),
+                    deleteKeys: deleteKeys,
+                };
+            }
+        }
+
+        const typeType: CustomTypeJson = makeJsonType('type', targetRecords, {
+            type: 'custom',
+            customType: collectionName,
+        });
 
         const genericedTypes: (TypeJson | ErrorJson)[] = [];
         if (generic && generic.length > 0) {
             genericedTypes.push(
                 ...generic.map((item) => {
-                    const typeJson = makeTypeJson(item, sourceObject);
-                    return typeJson;
+                    const { result } = makeTypeJson(item);
+                    return result;
                 }),
             );
         }
@@ -268,10 +208,48 @@ export const makeTypeJson = (
                 );
             }
 
-            writeSourceKeys(typeType, targetObjectKey, targetSourceKey);
-            return typeType;
+            return { result: typeType, deleteKeys: deleteKeys };
         }
     }
 
-    return error;
+    if (collection.length > 0) {
+        const typeType: CustomTypeJson = makeJsonType('type', targetRecords, {
+            type: 'custom',
+            customType: collection.map((c) =>
+                typeof c.value === 'string' ? c.value : c.value.value,
+            ),
+        });
+
+        const genericTypeRef = collection.at(-1)!;
+        const generic = genericTypeRef.generic
+            ? genericTypeRef.generic.value
+                ? genericTypeRef.generic.value.value
+                : null
+            : null;
+
+        const genericedTypes: (TypeJson | ErrorJson)[] = [];
+        if (generic && generic.length > 0) {
+            genericedTypes.push(
+                ...generic.map((item) => {
+                    const { result } = makeTypeJson(item);
+                    return result;
+                }),
+            );
+        }
+
+        if (
+            genericedTypes.length === 0 ||
+            (genericedTypes.length > 0 && !genericedTypes.some((item) => isErrorJson(item)))
+        ) {
+            if (genericedTypes.length > 0) {
+                typeType.generic = (genericedTypes as TypeJson[]).map(
+                    ({ kind, sourceKeys, ...content }) => content,
+                );
+            }
+
+            return { result: typeType, deleteKeys: deleteKeys };
+        }
+    }
+
+    return { result: error, deleteKeys: deleteKeys };
 };
