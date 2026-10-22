@@ -11,6 +11,22 @@ import {
     ValueRuleValue,
 } from './converter';
 
+type RewriteCommonTypeExtractContent<T> = T extends CommonType
+    ? CommonTypeExtractContent<T>
+    : T extends readonly (infer TItem)[]
+      ? RewriteCommonTypeExtractContent<TItem>[]
+      : T extends object
+        ? { [K in keyof T]: RewriteCommonTypeExtractContent<T[K]> }
+        : T;
+
+type RewriteCommonTypeExtractSourceKey<T> = T extends CommonType
+    ? CommonTypeExtractSourceKey<T>
+    : T extends readonly (infer TItem)[]
+      ? RewriteCommonTypeExtractSourceKey<TItem>[]
+      : T extends object
+        ? { [K in keyof T]: RewriteCommonTypeExtractSourceKey<T[K]> }
+        : T;
+
 type RewriteConvert<T> = T extends CommonType
     ? Convert<T>
     : T extends readonly (infer TItem)[]
@@ -30,6 +46,16 @@ type RewriteConvertExcludeError<T> = T extends CommonType
               ]: RewriteConvertExcludeError<T[K]>;
           }
         : T;
+
+export type CommonTypeExtractContent<T extends CommonType> = {
+    sourceKey: string;
+} & {
+    [K in keyof Omit<T, 'sourceInfo'>]: RewriteCommonTypeExtractContent<Omit<T, 'sourceInfo'>[K]>;
+};
+
+export type CommonTypeExtractSourceKey<T extends CommonType> = {
+    [K in keyof Omit<T, 'sourceInfo'>]: RewriteCommonTypeExtractSourceKey<Omit<T, 'sourceInfo'>[K]>;
+};
 
 export type Convert<T extends CommonType> = {
     objectKey: string;
@@ -54,6 +80,10 @@ export type ConvertExcludeError<T extends CommonType> = T extends ErrorInfo
       };
 
 const isCommonType = typia.createIs<CommonType>();
+
+const isCommonTypeExtractContent = typia.createIs<CommonTypeExtractContent<CommonType>>();
+
+const isCommonTypeExtractSourceKey = typia.createIs<CommonTypeExtractSourceKey<CommonType>>();
 
 export const isConvert = <T extends CommonType>(target: unknown): target is Convert<T> => {
     return typia.is<Convert<T>>(target);
@@ -117,6 +147,31 @@ export const makeJsonType = <T extends JsonType>(
         ...properties,
     } as T;
 };
+
+const makeObjectKey = async (type: string, target: unknown): Promise<string> => {
+    const hash = await crypto.webcrypto.subtle.digest(
+        'SHA-256',
+        new TextEncoder().encode(JSON.stringify(target)),
+    );
+    const hashHex = Array.from(new Uint8Array(hash))
+        .map((b) => b.toString(16).padStart(2, '0'))
+        .join('');
+
+    return `${type}_${hashHex}`;
+};
+
+const makeSourceKey = async (type: string, target: SourceInfo): Promise<string> => {
+    const hash = await crypto.webcrypto.subtle.digest(
+        'SHA-256',
+        new TextEncoder().encode(JSON.stringify(target)),
+    );
+    const hashHex = Array.from(new Uint8Array(hash))
+        .map((b) => b.toString(16).padStart(2, '0'))
+        .join('');
+
+    return `${type}_${hashHex}`;
+};
+
 const registerSourceJson = (
     sourceObjects: SourceJson[],
     objectKey: string,
@@ -137,64 +192,35 @@ const registerSourceJson = (
     }
 };
 
-export const makeHashKeys = async <T extends CommonType>(
-    target: T,
-): Promise<{ objectKey: string; sourceKey: string }> => {
-    const { sourceInfo, ...rest } = target;
-    const { type, ...content } = rest;
-
-    const contentJson = JSON.stringify(content);
-    const sourceJson = JSON.stringify(sourceInfo);
-
-    const objextHash = await crypto.webcrypto.subtle.digest(
-        'SHA-256',
-        new TextEncoder().encode(contentJson),
-    );
-    const objectHashHex = Array.from(new Uint8Array(objextHash))
-        .map((b) => b.toString(16).padStart(2, '0'))
-        .join('');
-    const objectKey = `${type}_${objectHashHex}`;
-
-    const sourceHash = await crypto.webcrypto.subtle.digest(
-        'SHA-256',
-        new TextEncoder().encode(sourceJson),
-    );
-    const sourceHashHex = Array.from(new Uint8Array(sourceHash))
-        .map((b) => b.toString(16).padStart(2, '0'))
-        .join('');
-    const sourceKey = `${type}_${sourceHashHex}`;
-
-    return {
-        objectKey: objectKey,
-        sourceKey: sourceKey,
-    };
-};
-
-export const convertFromCommonType = async <T>(
+const _extractSourceInfo = async <T>(
     target: unknown,
-    sourceObject: SourceJson[],
-): Promise<RewriteConvert<T>> => {
+    sources: ({ sourceKey: string } & SourceInfo)[],
+): Promise<RewriteCommonTypeExtractContent<T>> => {
     if (Array.isArray(target)) {
         return (await Promise.all(
-            target.map((item) => convertFromCommonType(item, sourceObject)),
-        )) as RewriteConvert<T>;
+            target.map((item) => _extractSourceInfo(item, sources)),
+        )) as RewriteCommonTypeExtractContent<T>;
     }
 
     if (target === null || typeof target !== 'object') {
-        return target as RewriteConvert<T>;
+        return target as RewriteCommonTypeExtractContent<T>;
     }
 
     if (isCommonType(target)) {
-        const { objectKey, sourceKey } = await makeHashKeys(target);
         const { sourceInfo, ...content } = target;
+        const sourceKey = await makeSourceKey(content.type, sourceInfo);
+        sources.push({ sourceKey: sourceKey, ...sourceInfo });
 
-        registerSourceJson(sourceObject, objectKey, sourceKey, sourceInfo);
+        const entries = await Promise.all(
+            Object.entries(content).map(
+                async ([key, child]) => [key, await _extractSourceInfo(child, sources)] as const,
+            ),
+        );
 
         return {
-            objectKey,
             sourceKey,
-            ...content,
-        } as RewriteConvert<T>;
+            ...Object.fromEntries(entries),
+        } as RewriteCommonTypeExtractContent<T>;
     }
 
     const node = target as Record<string, unknown>;
@@ -202,13 +228,122 @@ export const convertFromCommonType = async <T>(
     const entries = await Promise.all(
         Object.entries(node)
             .filter(([, value]) => !isSourceInfo(value))
-            .map(
+            .map(async ([key, child]) => [key, await _extractSourceInfo(child, sources)] as const),
+    );
+
+    return Object.fromEntries(entries) as RewriteCommonTypeExtractContent<T>;
+};
+
+const extractSourceInfo = async <T extends CommonType>(
+    target: T,
+): Promise<{
+    result: CommonTypeExtractContent<T>;
+    source: ({ sourceKey: string } & SourceInfo)[];
+}> => {
+    const sources: ({ sourceKey: string } & SourceInfo)[] = [];
+
+    const result = (await _extractSourceInfo(target, sources)) as CommonTypeExtractContent<T>;
+
+    return {
+        result: result,
+        source: sources,
+    };
+};
+
+const _splitSourceKey = <T>(target: unknown): RewriteCommonTypeExtractSourceKey<T> => {
+    if (Array.isArray(target)) {
+        return target.map((item) => _splitSourceKey(item)) as RewriteCommonTypeExtractSourceKey<T>;
+    }
+
+    if (target === null || typeof target !== 'object') {
+        return target as RewriteCommonTypeExtractSourceKey<T>;
+    }
+
+    if (isCommonTypeExtractContent(target)) {
+        const { sourceKey: _, ...content } = target;
+
+        return Object.fromEntries(
+            Object.entries(content).map(([key, child]) => [key, _splitSourceKey(child)] as const),
+        ) as RewriteCommonTypeExtractSourceKey<T>;
+    }
+
+    const node = target as Record<string, unknown>;
+
+    const entries = Object.entries(node)
+        .filter(([key, value]) => key !== 'sourceKey')
+        .map(([key, child]) => [key, _splitSourceKey(child)] as const);
+
+    return Object.fromEntries(entries) as RewriteCommonTypeExtractSourceKey<T>;
+};
+
+const splitSourceKey = <T extends CommonType>(
+    target: CommonTypeExtractContent<T>,
+): { sourceKey: string; target: Omit<CommonTypeExtractContent<T>, 'sourceKey'> } => {
+    const { sourceKey, ...content } = target;
+
+    return {
+        sourceKey,
+        target: content,
+    };
+};
+
+const _makeConvertType = async <T>(
+    target: unknown,
+    sources: ({ sourceKey: string } & SourceInfo)[],
+    sourceObjects: SourceJson[],
+): Promise<RewriteConvert<T>> => {
+    if (Array.isArray(target)) {
+        return (await Promise.all(
+            target.map((item) => _makeConvertType(item, sources, sourceObjects)),
+        )) as RewriteConvert<T>;
+    }
+
+    if (target === null || typeof target !== 'object') {
+        return target as RewriteConvert<T>;
+    }
+
+    if (isCommonTypeExtractContent(target)) {
+        const { sourceKey, target: content } = splitSourceKey(target);
+        const objectKey = await makeObjectKey(content.type, _splitSourceKey(content));
+        const sourceInfoWithKey = sources.find((s) => s.sourceKey === sourceKey)!;
+        const { sourceKey: _, ...sourceInfo } = sourceInfoWithKey;
+        registerSourceJson(sourceObjects, objectKey, sourceKey, sourceInfo);
+
+        const entries = await Promise.all(
+            Object.entries(content).map(
                 async ([key, child]) =>
-                    [key, await convertFromCommonType(child, sourceObject)] as const,
+                    [key, await _makeConvertType(child, sources, sourceObjects)] as const,
             ),
+        );
+
+        return {
+            objectKey: objectKey,
+            sourceKey: sourceKey,
+            ...Object.fromEntries(entries),
+        } as RewriteConvert<T>;
+    }
+
+    const node = target as Record<string, unknown>;
+
+    const entries = await Promise.all(
+        Object.entries(node).map(
+            async ([key, child]) =>
+                [key, await _makeConvertType(child, sources, sourceObjects)] as const,
+        ),
     );
 
     return Object.fromEntries(entries) as RewriteConvert<T>;
+};
+
+export const makeConvertType = async <T extends CommonType>(
+    target: T,
+): Promise<{ result: Convert<T>; sourceObjects: SourceJson[] }> => {
+    const sourceObjects: SourceJson[] = [];
+    const { result, source } = await extractSourceInfo(target);
+
+    const convertResult = (await _makeConvertType(result, source, sourceObjects)) as Convert<T>;
+
+    return { result: convertResult, sourceObjects: sourceObjects };
 };
 
 const _collectDeleteKeys = (
@@ -226,8 +361,7 @@ const _collectDeleteKeys = (
     }
 
     if (isCommonConvert(target)) {
-        const objectKey = target.objectKey;
-        const sourceKey = target.sourceKey;
+        const { objectKey, sourceKey, ...content } = target;
 
         if (
             !excludingRecords ||
@@ -240,6 +374,10 @@ const _collectDeleteKeys = (
                 records[objectKey]!.push(sourceKey);
             }
         }
+
+        Object.entries(content).forEach((child) => {
+            _collectDeleteKeys(child, records, excludingRecords);
+        });
     }
 
     const node = target as Record<string, unknown>;
@@ -260,38 +398,41 @@ export const collectDelteteKeys = <T extends Convert<CommonType>>(
 
 const ERROR = Symbol('ERROR');
 
-const _convertExcludeError = (target: unknown, errorInfos: Convert<ErrorInfo>[]): unknown => {
+const _convertExcludeError = <T>(
+    target: unknown,
+    errorInfos: Convert<ErrorInfo>[],
+): RewriteConvertExcludeError<T> => {
     if (Array.isArray(target)) {
         return target
             .map((item) => _convertExcludeError(item, errorInfos))
-            .filter((item) => item !== ERROR);
+            .filter((item) => item !== ERROR) as RewriteConvertExcludeError<T>;
     }
 
     if (target === null || typeof target !== 'object') {
-        return target;
+        return target as RewriteConvertExcludeError<T>;
     }
 
     if (isErrorConvert(target)) {
         errorInfos.push(target);
-        return ERROR;
+        return ERROR as RewriteConvertExcludeError<T>;
     }
 
     const entries = Object.entries(target as Record<string, unknown>)
         .map(([key, child]) => [key, _convertExcludeError(child, errorInfos)] as const)
         .filter(([_, value]) => value !== ERROR);
 
-    return Object.fromEntries(entries);
+    return Object.fromEntries(entries) as RewriteConvertExcludeError<T>;
 };
 
 export const convertExcludeError = <T extends CommonType>(
     target: Convert<T>,
-): { value: RewriteConvertExcludeError<T> | undefined; errorInfos: Convert<ErrorInfo>[] } => {
+): { value: ConvertExcludeError<T> | undefined; errorInfos: Convert<ErrorInfo>[] } => {
     const errorInfos: Convert<ErrorInfo>[] = [];
 
     const result = _convertExcludeError(target, errorInfos);
 
     return {
-        value: result === ERROR ? undefined : (result as RewriteConvertExcludeError<T>),
+        value: result === ERROR ? undefined : (result as ConvertExcludeError<T>),
         errorInfos: errorInfos,
     };
 };

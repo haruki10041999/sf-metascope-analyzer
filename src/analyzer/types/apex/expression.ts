@@ -2,19 +2,16 @@ import typia from 'typia';
 
 import {
     Convert,
-    isConvert,
+    ConvertExcludeError,
+    GenerateResult,
     ErrorJson,
-    JsonType,
-    SourceJson,
-    searchConvertAll,
-    isError,
-    writeSourceKeys,
-    removeSourceInfo,
-    castExcludeErrorInfo,
-    castExcludeErrorInfoArray,
-    castConvert,
-    castConvertArray,
     isErrorJson,
+    JsonType,
+    makeJsonType,
+    convertExcludeError,
+    collectDelteteKeys,
+    mergeRecord,
+    isConvert,
 } from './commons';
 
 import { BaseExpressionType } from './converter';
@@ -25,7 +22,9 @@ export type ExpressionJson = {
 
 export const isExpressionJson = typia.createIs<ExpressionJson>();
 
-export const makeExpressionJson = (target: Convert<BaseExpressionType>): ExpressionJson => {
+export const makeExpressionJson = (
+    target: ConvertExcludeError<BaseExpressionType>,
+): ExpressionJson => {
     return {
         value: '',
     };

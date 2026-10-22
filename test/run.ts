@@ -8,4 +8,5 @@ import './apex_IR/type.test';
 import './apex_IR/unit.test';
 import './converter/examples.test';
 import './converter/output-types.test';
+import './converter/convert-exclude-error.test';
 import './converter/source-output.test';
