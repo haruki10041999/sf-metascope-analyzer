@@ -11,7 +11,10 @@ import {
 } from '../parameterVisitor';
 import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
 
-export class ConstructorDeclarationTypeClass extends DeclarationTypeClass<QualifiedNameTypeClass> {
+export class ConstructorDeclarationTypeClass extends DeclarationTypeClass<
+    'constructorDeclaration',
+    QualifiedNameTypeClass
+> {
     private param: FormalParametersTypeClass | ErrorTypeClass | null = null;
     private block: NormalBlockTypeClass | ErrorTypeClass;
 
@@ -57,7 +60,7 @@ export class ConstructorDeclarationTypeClass extends DeclarationTypeClass<Qualif
 }
 
 export const isConstructorDeclarationType = (
-    target: CommonTypeClass,
+    target: CommonTypeClass<string>,
 ): target is ConstructorDeclarationTypeClass => {
     return target instanceof ConstructorDeclarationTypeClass;
 };

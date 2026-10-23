@@ -5,7 +5,10 @@ import { PrimaryTypeClass } from '.';
 import { NormalLiteralTypeClass, LiteralVisitor, isNormalLiteralType } from '../literalVisitor';
 import { CommonTypeClass, ErrorTypeClass, isValidClass } from '../commonVisitor';
 
-export class LiteralPrimaryTypeClass extends PrimaryTypeClass<NormalLiteralTypeClass> {
+export class LiteralPrimaryTypeClass extends PrimaryTypeClass<
+    'literalPrimary',
+    NormalLiteralTypeClass
+> {
     private constructor(value: NormalLiteralTypeClass | ErrorTypeClass) {
         super('literalPrimary', value);
     }
@@ -22,8 +25,7 @@ export class LiteralPrimaryTypeClass extends PrimaryTypeClass<NormalLiteralTypeC
 }
 
 export const isLiteralPrimaryType = (
-    target: CommonTypeClass,
+    target: CommonTypeClass<string>,
 ): target is LiteralPrimaryTypeClass => {
     return target instanceof LiteralPrimaryTypeClass;
 };
-

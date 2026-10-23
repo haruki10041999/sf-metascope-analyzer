@@ -5,7 +5,7 @@ import { ListTypeClass } from '../listVisitor';
 import { SubFieldEntryTypeClass, EntryVisitor, isSubFieldEntryType } from '../entryVisitor';
 import { ErrorTypeClass, CommonTypeClass, isValidClassList } from '../commonVisitor';
 
-export class SubFieldListTypeClass extends ListTypeClass<SubFieldEntryTypeClass> {
+export class SubFieldListTypeClass extends ListTypeClass<'subFieldList', SubFieldEntryTypeClass> {
     private constructor(list: (SubFieldEntryTypeClass | ErrorTypeClass)[]) {
         super('subFieldList', list);
     }
@@ -26,7 +26,8 @@ export class SubFieldListTypeClass extends ListTypeClass<SubFieldEntryTypeClass>
     }
 }
 
-export const isSubFieldListType = (target: CommonTypeClass): target is SubFieldListTypeClass => {
+export const isSubFieldListType = (
+    target: CommonTypeClass<string>,
+): target is SubFieldListTypeClass => {
     return target instanceof SubFieldListTypeClass;
 };
-

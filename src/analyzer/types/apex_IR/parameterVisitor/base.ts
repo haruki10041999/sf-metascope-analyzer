@@ -1,8 +1,8 @@
 import { ErrorTypeClass, CommonTypeClass } from '../commonVisitor';
 
-export class ParameterTypeClass<T> extends CommonTypeClass {
+export class ParameterTypeClass<TName extends string, T> extends CommonTypeClass<TName> {
     private value: T | ErrorTypeClass;
-    constructor(type: string, value: T | ErrorTypeClass) {
+    constructor(type: TName, value: T | ErrorTypeClass) {
         super(type);
         this.value = value;
     }
@@ -13,7 +13,7 @@ export class ParameterTypeClass<T> extends CommonTypeClass {
 }
 
 export const isParameterTypeAll = (
-    target: CommonTypeClass,
-): target is ParameterTypeClass<unknown> => {
+    target: CommonTypeClass<string>,
+): target is ParameterTypeClass<string, unknown> => {
     return target instanceof ParameterTypeClass;
 };

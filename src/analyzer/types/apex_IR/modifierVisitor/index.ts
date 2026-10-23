@@ -12,7 +12,7 @@ import { CommonVisitor } from '../commonVisitor';
 export { isAnnotationType, AnnotationTypeClass } from './annotation';
 export { isNormalModifierType, NormalModifierTypeClass } from './normal';
 
-export class ModifierVisitor extends CommonVisitor<ModifierTypeClass<unknown>> {
+export class ModifierVisitor extends CommonVisitor<ModifierTypeClass<string, unknown>> {
     visitModifier(ctx: ModifierContext) {
         return NormalModifierTypeClass.create(ctx);
     }

@@ -16,6 +16,7 @@ import { NormalModifierTypeClass, ModifierVisitor, isNormalModifierType } from '
 import { ErrorTypeClass, CommonTypeClass, isValidClass, isValidClassList } from '../commonVisitor';
 
 export class AnonymousBlockMemberTypeClass extends MemberTypeClass<
+    'anonymousBlockMember',
     AnonymousMemberDeclarationTypeClass | NormalStatementTypeClass
 > {
     private constructor(
@@ -53,7 +54,7 @@ export class AnonymousBlockMemberTypeClass extends MemberTypeClass<
 }
 
 export const isAnonymousBlockMemberType = (
-    target: CommonTypeClass,
+    target: CommonTypeClass<string>,
 ): target is AnonymousBlockMemberTypeClass => {
     return target instanceof AnonymousBlockMemberTypeClass;
 };

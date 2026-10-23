@@ -6,7 +6,7 @@ import { TypeListTypeClass, ListVisitor, isTypeListType } from '../listVisitor';
 
 import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
 
-export class TypeArgumentsTypeClass extends ArgumentsTypeClass<TypeListTypeClass> {
+export class TypeArgumentsTypeClass extends ArgumentsTypeClass<'typeArguments', TypeListTypeClass> {
     private constructor(value: TypeListTypeClass | ErrorTypeClass | null) {
         super('typeArguments', value);
     }
@@ -29,6 +29,8 @@ export class TypeArgumentsTypeClass extends ArgumentsTypeClass<TypeListTypeClass
     }
 }
 
-export const isTypeArgumentsType = (target: CommonTypeClass): target is TypeArgumentsTypeClass => {
+export const isTypeArgumentsType = (
+    target: CommonTypeClass<string>,
+): target is TypeArgumentsTypeClass => {
     return target instanceof TypeArgumentsTypeClass;
 };

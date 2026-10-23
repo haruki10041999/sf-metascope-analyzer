@@ -30,7 +30,10 @@ type MemberDeclarationTypeClassType =
     | PropertyDeclarationTypeClass
     | FieldDeclarationTypeClass;
 
-export class MemberDeclarationTypeClass extends DeclarationTypeClass<MemberDeclarationTypeClassType> {
+export class MemberDeclarationTypeClass extends DeclarationTypeClass<
+    'memberDeclaration',
+    MemberDeclarationTypeClassType
+> {
     private constructor(value: MemberDeclarationTypeClassType | ErrorTypeClass) {
         super('memberDeclaration', value);
     }
@@ -98,7 +101,7 @@ export class MemberDeclarationTypeClass extends DeclarationTypeClass<MemberDecla
 }
 
 export const isMemberDeclarationType = (
-    target: CommonTypeClass,
+    target: CommonTypeClass<string>,
 ): target is MemberDeclarationTypeClass => {
     return target instanceof MemberDeclarationTypeClass;
 };

@@ -7,6 +7,7 @@ import { FieldNameTypeClass, NameVisitor, isFieldNameType } from '../nameVisitor
 import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
 
 export class FieldGroupByTypeClass extends ClauseTypeClass<
+    'fieldGroupBy',
     FieldNameTypeClass | SoqlFunctionTypeClass
 > {
     private constructor(value: FieldNameTypeClass | SoqlFunctionTypeClass | ErrorTypeClass) {
@@ -34,6 +35,8 @@ export class FieldGroupByTypeClass extends ClauseTypeClass<
     }
 }
 
-export const isFieldGroupByType = (target: CommonTypeClass): target is FieldGroupByTypeClass => {
+export const isFieldGroupByType = (
+    target: CommonTypeClass<string>,
+): target is FieldGroupByTypeClass => {
     return target instanceof FieldGroupByTypeClass;
 };

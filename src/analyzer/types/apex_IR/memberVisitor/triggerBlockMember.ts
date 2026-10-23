@@ -16,6 +16,7 @@ import { NormalModifierTypeClass, ModifierVisitor, isNormalModifierType } from '
 import { ErrorTypeClass, CommonTypeClass, isValidClass, isValidClassList } from '../commonVisitor';
 
 export class TriggerBlockMemberTypeClass extends MemberTypeClass<
+    'triggerBlockMember',
     TriggerMemberDeclarationTypeClass | NormalStatementTypeClass
 > {
     private constructor(
@@ -53,8 +54,7 @@ export class TriggerBlockMemberTypeClass extends MemberTypeClass<
 }
 
 export const isTriggerBlockMemberType = (
-    target: CommonTypeClass,
+    target: CommonTypeClass<string>,
 ): target is TriggerBlockMemberTypeClass => {
     return target instanceof TriggerBlockMemberTypeClass;
 };
-

@@ -5,7 +5,7 @@ import { PrimaryTypeClass } from '.';
 import { SoqlLiteralTypeClass, LiteralVisitor, isSoqlLiteralType } from '../literalVisitor';
 import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
 
-export class SoqlPrimaryTypeClass extends PrimaryTypeClass<SoqlLiteralTypeClass> {
+export class SoqlPrimaryTypeClass extends PrimaryTypeClass<'soqlPrimary', SoqlLiteralTypeClass> {
     private constructor(value: SoqlLiteralTypeClass | ErrorTypeClass) {
         super('soqlPrimary', value);
     }
@@ -16,7 +16,8 @@ export class SoqlPrimaryTypeClass extends PrimaryTypeClass<SoqlLiteralTypeClass>
     }
 }
 
-export const isSoqlPrimaryType = (target: CommonTypeClass): target is SoqlPrimaryTypeClass => {
+export const isSoqlPrimaryType = (
+    target: CommonTypeClass<string>,
+): target is SoqlPrimaryTypeClass => {
     return target instanceof SoqlPrimaryTypeClass;
 };
-

@@ -9,7 +9,10 @@ import {
 } from '../memberVisitor';
 import { ErrorTypeClass, CommonTypeClass, isValidClassList } from '../commonVisitor';
 
-export class TriggerBlockTypeClass extends BlockListTypeClass<TriggerBlockMemberTypeClass> {
+export class TriggerBlockTypeClass extends BlockListTypeClass<
+    'triggerBlock',
+    TriggerBlockMemberTypeClass
+> {
     private constructor(value: (TriggerBlockMemberTypeClass | ErrorTypeClass)[]) {
         super('triggerBlock', value);
     }
@@ -26,7 +29,8 @@ export class TriggerBlockTypeClass extends BlockListTypeClass<TriggerBlockMember
     }
 }
 
-export const isTriggerBlockType = (target: CommonTypeClass): target is TriggerBlockTypeClass => {
+export const isTriggerBlockType = (
+    target: CommonTypeClass<string>,
+): target is TriggerBlockTypeClass => {
     return target instanceof TriggerBlockTypeClass;
 };
-

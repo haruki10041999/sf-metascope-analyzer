@@ -4,7 +4,7 @@ import { UnitTypeClass } from '.';
 
 import { ErrorTypeClass, CommonTypeClass } from '../commonVisitor';
 
-export class TriggerCaseTypeClass extends UnitTypeClass<string> {
+export class TriggerCaseTypeClass extends UnitTypeClass<'triggerCase', string> {
     private triggerCaseType: string;
     private constructor(value: string, triggerCaseType: string) {
         super('triggerCase', value);
@@ -36,7 +36,8 @@ export class TriggerCaseTypeClass extends UnitTypeClass<string> {
     }
 }
 
-export const isTriggerCaseType = (target: CommonTypeClass): target is TriggerCaseTypeClass => {
+export const isTriggerCaseType = (
+    target: CommonTypeClass<string>,
+): target is TriggerCaseTypeClass => {
     return target instanceof TriggerCaseTypeClass;
 };
-

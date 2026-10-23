@@ -122,7 +122,7 @@ export {
 export { isFilteringExpressionType, FilteringExpressionTypeClass } from './filteringExpression';
 
 export const isBasedExpressionType = (
-    target: CommonTypeClass,
+    target: CommonTypeClass<string>,
 ): target is BasedExpressionTypeClass => {
     return (
         target instanceof NormalExpressionTypeClass ||

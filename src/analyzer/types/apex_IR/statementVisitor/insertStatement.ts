@@ -14,7 +14,10 @@ import {
 } from '../expressionVisitor';
 import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
 
-export class InsertStatementTypeClass extends DmlStatementTypeClass<BasedExpressionTypeClass> {
+export class InsertStatementTypeClass extends DmlStatementTypeClass<
+    'insertStatement',
+    BasedExpressionTypeClass
+> {
     private constructor(
         value: BasedExpressionTypeClass | ErrorTypeClass,
         accessLevel: AccessLevelTypeClass | ErrorTypeClass | null,
@@ -45,7 +48,7 @@ export class InsertStatementTypeClass extends DmlStatementTypeClass<BasedExpress
 }
 
 export const isInsertStatementType = (
-    target: CommonTypeClass,
+    target: CommonTypeClass<string>,
 ): target is InsertStatementTypeClass => {
     return target instanceof InsertStatementTypeClass;
 };

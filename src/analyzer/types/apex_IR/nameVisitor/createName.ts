@@ -5,7 +5,10 @@ import { NameListTypeClass } from '.';
 import { IdCreatedNamePairTypeClass, PairVisitor, isIdCreatedNamePairType } from '../pairVisitor';
 import { ErrorTypeClass, CommonTypeClass, isValidClassList } from '../commonVisitor';
 
-export class CreatedNameTypeClass extends NameListTypeClass<IdCreatedNamePairTypeClass> {
+export class CreatedNameTypeClass extends NameListTypeClass<
+    'createdName',
+    IdCreatedNamePairTypeClass
+> {
     private constructor(value: (IdCreatedNamePairTypeClass | ErrorTypeClass)[]) {
         super('createdName', value);
     }
@@ -26,6 +29,8 @@ export class CreatedNameTypeClass extends NameListTypeClass<IdCreatedNamePairTyp
     }
 }
 
-export const isCreatedNameType = (target: CommonTypeClass): target is CreatedNameTypeClass => {
+export const isCreatedNameType = (
+    target: CommonTypeClass<string>,
+): target is CreatedNameTypeClass => {
     return target instanceof CreatedNameTypeClass;
 };

@@ -1,9 +1,9 @@
 import { CommonTypeClass, ErrorTypeClass } from '../commonVisitor';
 
-export class ListTypeClass<T> extends CommonTypeClass {
+export class ListTypeClass<TName extends string, T> extends CommonTypeClass<TName> {
     private value: (T | ErrorTypeClass)[];
 
-    constructor(type: string, value: (T | ErrorTypeClass)[]) {
+    constructor(type: TName, value: (T | ErrorTypeClass)[]) {
         super(type);
         this.value = value;
     }
@@ -13,6 +13,8 @@ export class ListTypeClass<T> extends CommonTypeClass {
     }
 }
 
-export const isListTypeAll = (target: CommonTypeClass): target is ListTypeClass<unknown> => {
+export const isListTypeAll = (
+    target: CommonTypeClass<string>,
+): target is ListTypeClass<string, unknown> => {
     return target instanceof ListTypeClass;
 };

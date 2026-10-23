@@ -2,59 +2,38 @@ import typia from 'typia';
 
 import {
     Convert,
-    isConvert,
+    ConvertExcludeError,
     ErrorJson,
-    JsonType,
-    SourceJson,
-    searchConvertAll,
-    isError,
-    writeSourceKeys,
-    removeSourceInfo,
-    castExcludeErrorInfo,
-    castExcludeErrorInfoArray,
-    castConvert,
-    castConvertArray,
     isErrorJson,
-} from '../commons';
+    JsonType,
+    makeJsonType,
+    convertExcludeError,
+    mergeRecord,
+    isConvert,
+} from '..//commons';
 
 import { ForClausesType } from '../converter';
 
 export type ForJson = JsonType & {
-    kind: 'for';
+    kind: 'forClause';
     value: string;
 };
 export const isForJson = typia.createIs<ForJson>();
 
-export const makeForJson = (
-    target: Convert<ForClausesType>,
-    sourceObject: SourceJson[],
-): ForJson | ErrorJson => {
-    const targetObjectKey = target.objectKey;
-    const targetSourceKey = target.sourceKey;
-    const convertJsons = searchConvertAll(target);
+export const makeForJson = (target: Convert<ForClausesType>): ForJson | ErrorJson => {
+    const targetRecords: Record<string, string[]> = { [target.objectKey]: [target.sourceKey] };
 
-    removeSourceInfo(sourceObject, convertJsons, [targetSourceKey]);
-    const error: ErrorJson = {
-        kind: 'error',
-        kindType: 'for',
-        sourceKeys: {},
-    };
-    writeSourceKeys(error, targetObjectKey, targetSourceKey);
+    const { value, errorInfos } = convertExcludeError<ForClausesType>(target);
 
-    if (isError(convertJsons)) {
+    const error: ErrorJson = makeJsonType('error', targetRecords, { kindType: 'forClause' });
+
+    if (!value || errorInfos.length > 0) {
         return error;
     }
-
-    const value = castExcludeErrorInfoArray(target.value);
-
-    if (value.length === 1) {
-        const forJson: ForJson = {
-            kind: 'for',
-            sourceKeys: {},
-            value: value[0]!,
-        };
-        writeSourceKeys(forJson, targetObjectKey, targetSourceKey);
-        return forJson;
+    if (value.value.length === 1) {
+        return makeJsonType('forClause', targetRecords, {
+            value: value.value[0]!,
+        });
     }
 
     return error;

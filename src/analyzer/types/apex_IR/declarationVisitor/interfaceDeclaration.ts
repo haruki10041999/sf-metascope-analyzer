@@ -7,7 +7,10 @@ import { InterfaceBodyTypeClass, BodyVisitor, isInterfaceBodyType } from '../bod
 import { TypeListTypeClass, ListVisitor, isTypeListType } from '../listVisitor';
 import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
 
-export class InterfaceDeclarationTypeClass extends DeclarationTypeClass<NormalIdTypeClass> {
+export class InterfaceDeclarationTypeClass extends DeclarationTypeClass<
+    'interfaceDeclaration',
+    NormalIdTypeClass
+> {
     private body: InterfaceBodyTypeClass | ErrorTypeClass;
     private extend: TypeListTypeClass | ErrorTypeClass | null = null;
     private constructor(
@@ -44,7 +47,7 @@ export class InterfaceDeclarationTypeClass extends DeclarationTypeClass<NormalId
 }
 
 export const isInterfaceDeclarationType = (
-    target: CommonTypeClass,
+    target: CommonTypeClass<string>,
 ): target is InterfaceDeclarationTypeClass => {
     return target instanceof InterfaceDeclarationTypeClass;
 };

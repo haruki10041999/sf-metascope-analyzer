@@ -10,7 +10,10 @@ import {
 } from '../expressionVisitor';
 import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
 
-export class VariableDeclaratorTypeClass extends VariableTypeClass<NormalIdTypeClass> {
+export class VariableDeclaratorTypeClass extends VariableTypeClass<
+    'variableDeclarator',
+    NormalIdTypeClass
+> {
     private content: BasedExpressionTypeClass | ErrorTypeClass | null;
 
     private constructor(
@@ -45,7 +48,7 @@ export class VariableDeclaratorTypeClass extends VariableTypeClass<NormalIdTypeC
 }
 
 export const isVariableDeclaratorType = (
-    target: CommonTypeClass,
+    target: CommonTypeClass<string>,
 ): target is VariableDeclaratorTypeClass => {
     return target instanceof VariableDeclaratorTypeClass;
 };

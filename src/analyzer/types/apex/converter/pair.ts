@@ -1,5 +1,3 @@
-import typia from 'typia';
-
 import {
     ElementValuePairsTypeClass,
     ElementValuePairTypeClass,
@@ -11,7 +9,8 @@ import {
     isMapCreatorRestPairType as isMapCreatorRestPairTypeClass,
 } from '../../apex_IR';
 import {
-    ErrorInfo,
+    isCommonType,
+    ErrorType,
     CommonType,
     AssignForValueRule,
     ValueRuleValue,
@@ -21,130 +20,129 @@ import {
     makeNullAssignRule,
     makeSourceInfo,
 } from './commons';
-import { makeBaseExpressionRule, BaseExpressionType } from './expression';
-import { makeAnyIdRule, makeIdRule, IdType, AnyIdType } from './id';
-import { makeTypeListRule, TypeListType } from './list';
-import { makeElementValueRule, ElementValueType } from './value';
+import { makeBaseExpressionAssignRules, BaseExpressionType } from './expression';
+import { makeAnyIdAssignRule, makeIdAssignRule, IdType, AnyIdType } from './id';
+import { makeTypeListAssignRule, TypeListType } from './list';
+import { makeElementValueAssignRule, ElementValueType } from './value';
 
-export type ElementValuePairsType = CommonType & {
+export type ElementValuePairsType = CommonType<'elementValuePairs'> & {
     value: ValueRuleValue<ElementValuePairType>[];
 };
 
-export const isElementValuePairsType = typia.createIs<ElementValuePairsType>();
-
-export const makeElementValuePairsRule = (): AssignForValueRule<
-    ElementValuePairsTypeClass,
-    ElementValuePairsType
-> => {
-    return {
-        isValid: (target: unknown) => isTargetTypeClass(target, isElementValuePairsTypeClass),
-        construct: (pairTypeClass: ElementValuePairsTypeClass) => {
-            const value = pairTypeClass
-                .getValue()
-                .map((v) => assignMultiClass(v, [makeElementValuePairRule(), makeErrorAssignRule]));
-            return {
-                type: pairTypeClass.getType(),
-                sourceInfo: makeSourceInfo(pairTypeClass),
-                value,
-            };
-        },
-    };
+export const isElementValuePairsType = (value: unknown): value is ElementValuePairsType => {
+    return isCommonType(value) && value.type === 'elementValuePairs';
 };
 
-export type ElementValuePairType = CommonType & {
+export const makeElementValuePairsAssignRule: AssignForValueRule<
+    ElementValuePairsTypeClass,
+    ElementValuePairsType
+> = {
+    isValid: (target: unknown) => isTargetTypeClass(target, isElementValuePairsTypeClass),
+    construct: (pairTypeClass: ElementValuePairsTypeClass) => {
+        const value = pairTypeClass
+            .getValue()
+            .map((v) => assignMultiClass(v, [makeElementValuePairAssignRule, makeErrorAssignRule]));
+        return {
+            type: pairTypeClass.getType(),
+            sourceInfo: makeSourceInfo(pairTypeClass),
+            value,
+        };
+    },
+};
+
+export type ElementValuePairType = CommonType<'elementValuePair'> & {
     left: ValueRuleValue<IdType>;
     right: ValueRuleValue<ElementValueType>;
 };
 
-export const isElementValuePairType = typia.createIs<ElementValuePairType>();
-
-export const makeElementValuePairRule = (): AssignForValueRule<
-    ElementValuePairTypeClass,
-    ElementValuePairType
-> => {
-    return {
-        isValid: (target: unknown) => isTargetTypeClass(target, isElementValuePairTypeClass),
-        construct: (pairTypeClass: ElementValuePairTypeClass) => {
-            const left = assignMultiClass(pairTypeClass.getLeft(), [
-                makeIdRule(),
-                makeErrorAssignRule,
-            ]);
-            const right = assignMultiClass(pairTypeClass.getRight(), [
-                makeElementValueRule(),
-                makeErrorAssignRule,
-            ]);
-            return {
-                type: pairTypeClass.getType(),
-                sourceInfo: makeSourceInfo(pairTypeClass),
-                left,
-                right,
-            };
-        },
-    };
+export const isElementValuePairType = (value: unknown): value is ElementValuePairType => {
+    return isCommonType(value) && value.type === 'elementValuePair';
 };
 
-export type IdCreatedNamePairType = CommonType & {
+export const makeElementValuePairAssignRule: AssignForValueRule<
+    ElementValuePairTypeClass,
+    ElementValuePairType
+> = {
+    isValid: (target: unknown) => isTargetTypeClass(target, isElementValuePairTypeClass),
+    construct: (pairTypeClass: ElementValuePairTypeClass) => {
+        const left = assignMultiClass(pairTypeClass.getLeft(), [
+            makeIdAssignRule,
+            makeErrorAssignRule,
+        ]);
+        const right = assignMultiClass(pairTypeClass.getRight(), [
+            makeElementValueAssignRule,
+            makeErrorAssignRule,
+        ]);
+        return {
+            type: pairTypeClass.getType(),
+            sourceInfo: makeSourceInfo(pairTypeClass),
+            left,
+            right,
+        };
+    },
+};
+
+export type IdCreatedNamePairType = CommonType<'idCreatedNamePair'> & {
     left: ValueRuleValue<AnyIdType>;
     right: ValueRuleValue<TypeListType | null>;
 };
 
-export const isIdCreatedNamePairType = typia.createIs<IdCreatedNamePairType>();
-
-export const makeIdCreatedNamePairRule = (): AssignForValueRule<
-    IdCreatedNamePairTypeClass,
-    IdCreatedNamePairType
-> => {
-    return {
-        isValid: (target: unknown) => isTargetTypeClass(target, isIdCreatedNamePairTypeClass),
-        construct: (pairTypeClass: IdCreatedNamePairTypeClass) => {
-            const left = assignMultiClass(pairTypeClass.getLeft(), [
-                makeAnyIdRule(),
-                makeErrorAssignRule,
-            ]);
-            const right = assignMultiClass(pairTypeClass.getRight(), [
-                makeTypeListRule(),
-                makeErrorAssignRule,
-                makeNullAssignRule,
-            ]);
-            return {
-                type: pairTypeClass.getType(),
-                sourceInfo: makeSourceInfo(pairTypeClass),
-                left,
-                right,
-            };
-        },
-    };
+export const isIdCreatedNamePairType = (value: unknown): value is IdCreatedNamePairType => {
+    return isCommonType(value) && value.type === 'idCreatedNamePair';
 };
 
-export type MapCreatorRestPairType = CommonType & {
+export const makeIdCreatedNamePairAssignRule: AssignForValueRule<
+    IdCreatedNamePairTypeClass,
+    IdCreatedNamePairType
+> = {
+    isValid: (target: unknown) => isTargetTypeClass(target, isIdCreatedNamePairTypeClass),
+    construct: (pairTypeClass: IdCreatedNamePairTypeClass) => {
+        const left = assignMultiClass(pairTypeClass.getLeft(), [
+            makeAnyIdAssignRule,
+            makeErrorAssignRule,
+        ]);
+        const right = assignMultiClass(pairTypeClass.getRight(), [
+            makeTypeListAssignRule,
+            makeErrorAssignRule,
+            makeNullAssignRule,
+        ]);
+        return {
+            type: pairTypeClass.getType(),
+            sourceInfo: makeSourceInfo(pairTypeClass),
+            left,
+            right,
+        };
+    },
+};
+
+export type MapCreatorRestPairType = CommonType<'mapCreatorRestPair'> & {
     left: ValueRuleValue<BaseExpressionType>;
     right: ValueRuleValue<BaseExpressionType>;
 };
 
-export const isMapCreatorRestPairType = typia.createIs<MapCreatorRestPairType>();
-
-export const makeMapCreatorRestPairRule = (): AssignForValueRule<
-    MapCreatorRestPairTypeClass,
-    MapCreatorRestPairType
-> => {
-    return {
-        isValid: (target: unknown) => isTargetTypeClass(target, isMapCreatorRestPairTypeClass),
-        construct: (pairTypeClass: MapCreatorRestPairTypeClass) => {
-            const left = assignMultiClass(pairTypeClass.getLeft(), [
-                ...makeBaseExpressionRule(),
-                makeErrorAssignRule,
-            ]);
-            const right = assignMultiClass(pairTypeClass.getRight(), [
-                ...makeBaseExpressionRule(),
-                makeErrorAssignRule,
-            ]);
-            return {
-                type: pairTypeClass.getType(),
-                sourceInfo: makeSourceInfo(pairTypeClass),
-                left,
-                right,
-            };
-        },
-    };
+export const isMapCreatorRestPairType = (value: unknown): value is MapCreatorRestPairType => {
+    return isCommonType(value) && value.type === 'mapCreatorRestPair';
 };
 
+export const makeMapCreatorRestPairAssignRule: AssignForValueRule<
+    MapCreatorRestPairTypeClass,
+    MapCreatorRestPairType
+> = {
+    isValid: (target: unknown) => isTargetTypeClass(target, isMapCreatorRestPairTypeClass),
+    construct: (pairTypeClass: MapCreatorRestPairTypeClass) => {
+        const left = assignMultiClass(pairTypeClass.getLeft(), [
+            ...makeBaseExpressionAssignRules,
+            makeErrorAssignRule,
+        ]);
+        const right = assignMultiClass(pairTypeClass.getRight(), [
+            ...makeBaseExpressionAssignRules,
+            makeErrorAssignRule,
+        ]);
+        return {
+            type: pairTypeClass.getType(),
+            sourceInfo: makeSourceInfo(pairTypeClass),
+            left,
+            right,
+        };
+    },
+};

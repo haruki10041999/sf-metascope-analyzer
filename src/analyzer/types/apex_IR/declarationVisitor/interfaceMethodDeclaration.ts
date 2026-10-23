@@ -12,7 +12,10 @@ import {
 } from '../parameterVisitor';
 import { ErrorTypeClass, CommonTypeClass, isValidClass, isValidClassList } from '../commonVisitor';
 
-export class InterfaceMethodDeclarationTypeClass extends DeclarationTypeClass<NormalIdTypeClass> {
+export class InterfaceMethodDeclarationTypeClass extends DeclarationTypeClass<
+    'interfaceMethodDeclaration',
+    NormalIdTypeClass
+> {
     private valueType: TypeRefTypeClass | 'void' | ErrorTypeClass;
     private param: FormalParametersTypeClass | ErrorTypeClass | null = null;
     private modifier: (NormalModifierTypeClass | ErrorTypeClass)[] = [];
@@ -69,7 +72,7 @@ export class InterfaceMethodDeclarationTypeClass extends DeclarationTypeClass<No
 }
 
 export const isInterfaceMethodDeclarationType = (
-    target: CommonTypeClass,
+    target: CommonTypeClass<string>,
 ): target is InterfaceMethodDeclarationTypeClass => {
     return target instanceof InterfaceMethodDeclarationTypeClass;
 };

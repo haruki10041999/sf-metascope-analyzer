@@ -6,7 +6,10 @@ import { CommonTypeClass, ErrorTypeClass } from '../commonVisitor';
 
 type SoqlFieldsParameterValueType = 'ALL' | 'CUSTOM' | 'STANDARD';
 
-export class SoqlFieldsParameterTypeClass extends ParameterTypeClass<SoqlFieldsParameterValueType> {
+export class SoqlFieldsParameterTypeClass extends ParameterTypeClass<
+    'soqlFieldsParameter',
+    SoqlFieldsParameterValueType
+> {
     private constructor(value: SoqlFieldsParameterValueType | ErrorTypeClass) {
         super('soqlFieldsParameter', value);
     }
@@ -23,7 +26,7 @@ export class SoqlFieldsParameterTypeClass extends ParameterTypeClass<SoqlFieldsP
 }
 
 export const isSoqlFieldsParameterType = (
-    target: CommonTypeClass,
+    target: CommonTypeClass<string>,
 ): target is SoqlFieldsParameterTypeClass => {
     return target instanceof SoqlFieldsParameterTypeClass;
 };

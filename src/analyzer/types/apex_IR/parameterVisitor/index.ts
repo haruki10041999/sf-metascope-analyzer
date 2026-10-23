@@ -19,7 +19,7 @@ export { isFormalParameterType, FormalParameterTypeClass } from './formalParamet
 export { isSoqlFieldsParameterType, SoqlFieldsParameterTypeClass } from './soqlFieldsParameter';
 export { isFormalParametersType, FormalParametersTypeClass } from './formalParameters';
 
-export class ParameterVisitor extends CommonVisitor<ParameterTypeClass<unknown>> {
+export class ParameterVisitor extends CommonVisitor<ParameterTypeClass<string, unknown>> {
     visitFormalParameter(ctx: FormalParameterContext) {
         return FormalParameterTypeClass.create(ctx);
     }
@@ -32,4 +32,3 @@ export class ParameterVisitor extends CommonVisitor<ParameterTypeClass<unknown>>
         return SoqlFieldsParameterTypeClass.create(ctx);
     }
 }
-

@@ -14,6 +14,7 @@ import {
 import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
 
 export class FieldExpressionTypeClass extends DoubleOperatorExpressionTypeClass<
+    'fieldExpression',
     FieldNameTypeClass | SoqlFunctionTypeClass,
     ComparisonOperatorTypeClass,
     NormalValueTypeClass
@@ -58,8 +59,7 @@ export class FieldExpressionTypeClass extends DoubleOperatorExpressionTypeClass<
 }
 
 export const isFieldExpressionType = (
-    target: CommonTypeClass,
+    target: CommonTypeClass<string>,
 ): target is FieldExpressionTypeClass => {
     return target instanceof FieldExpressionTypeClass;
 };
-

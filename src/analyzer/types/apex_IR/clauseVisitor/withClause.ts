@@ -11,7 +11,10 @@ import {
 } from '../expressionVisitor';
 import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
 
-export class WithClauseTypeClass extends ClauseTypeClass<string | LogicalExpressionTypeClass> {
+export class WithClauseTypeClass extends ClauseTypeClass<
+    'withClause',
+    string | LogicalExpressionTypeClass
+> {
     private field: FilteringExpressionTypeClass | ErrorTypeClass | null = null;
 
     private constructor(
@@ -68,7 +71,8 @@ export class WithClauseTypeClass extends ClauseTypeClass<string | LogicalExpress
     }
 }
 
-export const isWithClauseType = (target: CommonTypeClass): target is WithClauseTypeClass => {
+export const isWithClauseType = (
+    target: CommonTypeClass<string>,
+): target is WithClauseTypeClass => {
     return target instanceof WithClauseTypeClass;
 };
-

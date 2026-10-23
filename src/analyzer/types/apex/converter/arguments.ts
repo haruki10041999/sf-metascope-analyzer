@@ -1,5 +1,3 @@
-import typia from 'typia';
-
 import {
     ArgumentsTypeClass,
     NormalArgumentsTypeClass,
@@ -9,7 +7,8 @@ import {
 } from '../../apex_IR';
 
 import {
-    ErrorInfo,
+    isCommonType,
+    ErrorType,
     CommonType,
     AssignForValueRule,
     ValueRuleValue,
@@ -19,23 +18,27 @@ import {
     makeNullAssignRule,
     makeSourceInfo,
 } from './commons';
-import { makeExpressionListRule, makeTypeListRule, ExpressionListType, TypeListType } from './list';
+import {
+    makeExpressionListAssignRule,
+    makeTypeListAssignRule,
+    ExpressionListType,
+    TypeListType,
+} from './list';
 
-export type ArgumentsType = CommonType & {
+export type ArgumentsType = CommonType<'arguments'> & {
     value: ValueRuleValue<ExpressionListType | null>;
 };
 
-export const isArgumentsType = typia.createIs<ArgumentsType>();
+export const isArgumentsType = (value: unknown): value is ArgumentsType => {
+    return isCommonType(value) && value.type === 'arguments';
+};
 
-export const makeArgumentsRule = (): AssignForValueRule<
-    NormalArgumentsTypeClass,
-    ArgumentsType
-> => {
-    return {
+export const makeArgumentsAssignRule: AssignForValueRule<NormalArgumentsTypeClass, ArgumentsType> =
+    {
         isValid: (target: unknown) => isTargetTypeClass(target, isNormalArgumentsType),
         construct: (argumentsTypeClass: NormalArgumentsTypeClass) => {
             const value = assignMultiClass(argumentsTypeClass.getValue(), [
-                makeExpressionListRule(),
+                makeExpressionListAssignRule,
                 makeErrorAssignRule,
                 makeNullAssignRule,
             ]);
@@ -47,32 +50,30 @@ export const makeArgumentsRule = (): AssignForValueRule<
             };
         },
     };
-};
 
-export type TypeArgumentsType = CommonType & {
+export type TypeArgumentsType = CommonType<'typeArguments'> & {
     value: ValueRuleValue<TypeListType | null>;
 };
 
-export const isTypeArgumentsType = typia.createIs<TypeArgumentsType>();
-
-export const makeTypeArgumentsRule = (): AssignForValueRule<
-    TypeArgumentsTypeClass,
-    TypeArgumentsType
-> => {
-    return {
-        isValid: (target: unknown) => isTargetTypeClass(target, isTypeArgumentsTypeClass),
-        construct: (argumentsTypeClass: TypeArgumentsTypeClass) => {
-            const value = assignMultiClass(argumentsTypeClass.getValue(), [
-                makeTypeListRule(),
-                makeErrorAssignRule,
-                makeNullAssignRule,
-            ]);
-            return {
-                type: argumentsTypeClass.getType(),
-                sourceInfo: makeSourceInfo(argumentsTypeClass),
-                value,
-            };
-        },
-    };
+export const isTypeArgumentsType = (value: unknown): value is TypeArgumentsType => {
+    return isCommonType(value) && value.type === 'typeArguments';
 };
 
+export const makeTypeArgumentsAssignRule: AssignForValueRule<
+    TypeArgumentsTypeClass,
+    TypeArgumentsType
+> = {
+    isValid: (target: unknown) => isTargetTypeClass(target, isTypeArgumentsTypeClass),
+    construct: (argumentsTypeClass: TypeArgumentsTypeClass) => {
+        const value = assignMultiClass(argumentsTypeClass.getValue(), [
+            makeTypeListAssignRule,
+            makeErrorAssignRule,
+            makeNullAssignRule,
+        ]);
+        return {
+            type: argumentsTypeClass.getType(),
+            sourceInfo: makeSourceInfo(argumentsTypeClass),
+            value,
+        };
+    },
+};

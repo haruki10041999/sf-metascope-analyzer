@@ -4,12 +4,12 @@ import path from 'path';
 import {
     assignMultiClass,
     CompilationUnitType,
-    makeCompilationUnitRule,
+    makeCompilationUnitAssignRule,
     TriggerUnitType,
-    makeTriggerUnitRule,
+    makeTriggerUnitAssignRule,
     AnonymousUnitType,
-    makeAnonymousUnitRule,
-    ErrorInfo,
+    makeAnonymousUnitAssignRule,
+    ErrorType,
     makeErrorAssignRule,
     UnitVisitor,
     CommonErrorListener,
@@ -28,9 +28,9 @@ export class ApexClsParser {
         const unitTypeClass = new UnitVisitor().visit(parser.compilationUnit());
 
         const unitConvertType = assignMultiClass(unitTypeClass, [
-            makeCompilationUnitRule(),
-            makeTriggerUnitRule(),
-            makeAnonymousUnitRule(),
+            makeCompilationUnitAssignRule,
+            makeTriggerUnitAssignRule,
+            makeAnonymousUnitAssignRule,
             makeErrorAssignRule,
         ]);
     }

@@ -15,7 +15,10 @@ import {
 
 import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
 
-export class ArrayCreatorRestTypeClass extends RestTypeClass<ArrayInitializerTypeClass | null> {
+export class ArrayCreatorRestTypeClass extends RestTypeClass<
+    'arrayCreatorRest',
+    ArrayInitializerTypeClass | null
+> {
     private size: BasedExpressionTypeClass | ErrorTypeClass | null = null;
     private constructor(
         value: ArrayInitializerTypeClass | ErrorTypeClass | null,
@@ -55,7 +58,7 @@ export class ArrayCreatorRestTypeClass extends RestTypeClass<ArrayInitializerTyp
 }
 
 export const isArrayCreatorRestType = (
-    target: CommonTypeClass,
+    target: CommonTypeClass<string>,
 ): target is ArrayCreatorRestTypeClass => {
     return target instanceof ArrayCreatorRestTypeClass;
 };

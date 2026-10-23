@@ -9,7 +9,10 @@ import {
 } from '../memberVisitor';
 import { ErrorTypeClass, CommonTypeClass, isValidClassList } from '../commonVisitor';
 
-export class AnonymousBlockTypeClass extends BlockListTypeClass<AnonymousBlockMemberTypeClass> {
+export class AnonymousBlockTypeClass extends BlockListTypeClass<
+    'anonymousBlock',
+    AnonymousBlockMemberTypeClass
+> {
     private constructor(value: (AnonymousBlockMemberTypeClass | ErrorTypeClass)[]) {
         super('anonymousBlock', value);
     }
@@ -27,8 +30,7 @@ export class AnonymousBlockTypeClass extends BlockListTypeClass<AnonymousBlockMe
 }
 
 export const isAnonymousBlockType = (
-    target: CommonTypeClass,
+    target: CommonTypeClass<string>,
 ): target is AnonymousBlockTypeClass => {
     return target instanceof AnonymousBlockTypeClass;
 };
-

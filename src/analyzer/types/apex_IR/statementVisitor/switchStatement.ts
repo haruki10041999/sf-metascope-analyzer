@@ -10,7 +10,10 @@ import {
 } from '../expressionVisitor';
 import { ErrorTypeClass, CommonTypeClass, isValidClass, isValidClassList } from '../commonVisitor';
 
-export class SwitchStatementTypeClass extends StatementTypeClass<BasedExpressionTypeClass> {
+export class SwitchStatementTypeClass extends StatementTypeClass<
+    'switchStatement',
+    BasedExpressionTypeClass
+> {
     private block: (WhenControlTypeClass | ErrorTypeClass)[];
 
     private constructor(
@@ -47,7 +50,7 @@ export class SwitchStatementTypeClass extends StatementTypeClass<BasedExpression
 }
 
 export const isSwitchStatementType = (
-    target: CommonTypeClass,
+    target: CommonTypeClass<string>,
 ): target is SwitchStatementTypeClass => {
     return target instanceof SwitchStatementTypeClass;
 };

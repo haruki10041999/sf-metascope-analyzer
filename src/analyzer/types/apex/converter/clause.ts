@@ -1,5 +1,3 @@
-import typia from 'typia';
-
 import {
     AllRowsClauseTypeClass,
     CatchClauseTypeClass,
@@ -44,7 +42,8 @@ import {
 } from '../../apex_IR';
 
 import {
-    ErrorInfo,
+    isCommonType,
+    ErrorType,
     CommonType,
     AssignForValueRule,
     ValueRuleValue,
@@ -55,24 +54,24 @@ import {
     makeStringAssignRule,
     makeSourceInfo,
 } from './commons';
-import { makeIdRule, makeSoqlIdRule, IdType, SoqlIdType } from './id';
+import { makeIdAssignRule, makeSoqlIdAssignRule, IdType, SoqlIdType } from './id';
 import {
-    makeQualifiedNameRule,
-    makeDataCategoryNameRule,
-    makeFieldNameRule,
+    makeQualifiedNameAssignRule,
+    makeDataCategoryNameAssignRule,
+    makeFieldNameAssignRule,
     QualifiedNameType,
     DataCategoryNameType,
     FieldNameType,
 } from './name';
-import { makeBlockRule, BlockType } from './block';
-import { makeModifierRule, ModifierType } from './modifier';
+import { makeBlockAssignRule, BlockType } from './block';
+import { makeModifierAssignRule, ModifierType } from './modifier';
 import {
-    makeFieldGroupByListRule,
-    makeFieldNameListRule,
-    makeFieldOrderListRule,
-    makeFieldSpecListRule,
-    makeNetworkListRule,
-    makeUpdateListRule,
+    makeFieldGroupByListAssignRule,
+    makeFieldNameListAssignRule,
+    makeFieldOrderListAssignRule,
+    makeFieldSpecListAssignRule,
+    makeNetworkListAssignRule,
+    makeUpdateListAssignRule,
     FieldGroupByListType,
     FieldNameListType,
     FieldOrderListType,
@@ -81,82 +80,81 @@ import {
     UpdateListType,
 } from './list';
 import {
-    makeSoqlFunctionRule,
-    makeSearchGroupRule,
+    makeSoqlFunctionAssignRule,
+    makeSearchGroupAssignRule,
     SoqlFunctionType,
     SearchGroupType,
 } from './query';
 import {
-    makeBoundExpressionRule,
-    makeLogicalExpressionRule,
-    makeFilteringExpressionRule,
-    makeWhereLogicalExpressionRule,
+    makeBoundExpressionAssignRule,
+    makeLogicalExpressionAssignRule,
+    makeFilteringExpressionAssignRule,
+    makeWhereLogicalExpressionAssignRule,
     BoundExpressionType,
     LogicalExpressionType,
     FilteringExpressionType,
     WhereLogicalExpressionType,
 } from './expression';
 
-export type AllRowsClauseType = CommonType & {
+export type AllRowsClauseType = CommonType<'allRowsClause'> & {
     value: ValueRuleValue<string>;
 };
 
-export const isAllRowsClauseType = typia.createIs<AllRowsClauseType>();
-
-export const makeAllRowsClauseRule = (): AssignForValueRule<
-    AllRowsClauseTypeClass,
-    AllRowsClauseType
-> => {
-    return {
-        isValid: (target: unknown) => isTargetTypeClass(target, isAllRowsClauseTypeClass),
-        construct: (clauseTypeClass: AllRowsClauseTypeClass) => {
-            const value = assignMultiClass(clauseTypeClass.getValue(), [
-                makeStringAssignRule,
-                makeErrorAssignRule,
-            ]);
-            return {
-                type: clauseTypeClass.getType(),
-                sourceInfo: makeSourceInfo(clauseTypeClass),
-                value,
-            };
-        },
-    };
+export const isAllRowsClauseType = (value: unknown): value is AllRowsClauseType => {
+    return isCommonType(value) && value.type === 'allRowsClause';
 };
 
-export type CatchClauseType = CommonType & {
+export const makeAllRowsClauseAssignRule: AssignForValueRule<
+    AllRowsClauseTypeClass,
+    AllRowsClauseType
+> = {
+    isValid: (target: unknown) => isTargetTypeClass(target, isAllRowsClauseTypeClass),
+    construct: (clauseTypeClass: AllRowsClauseTypeClass) => {
+        const value = assignMultiClass(clauseTypeClass.getValue(), [
+            makeStringAssignRule,
+            makeErrorAssignRule,
+        ]);
+        return {
+            type: clauseTypeClass.getType(),
+            sourceInfo: makeSourceInfo(clauseTypeClass),
+            value,
+        };
+    },
+};
+
+export type CatchClauseType = CommonType<'catchClause'> & {
     value: ValueRuleValue<IdType>;
     valueType: ValueRuleValue<QualifiedNameType>;
     block: ValueRuleValue<BlockType>;
     modifier: ValueRuleValue<ModifierType>[];
 };
 
-export const isCatchClauseType = typia.createIs<CatchClauseType>();
+export const isCatchClauseType = (value: unknown): value is CatchClauseType => {
+    return isCommonType(value) && value.type === 'catchClause';
+};
 
-export const makeCatchClauseRule = (): AssignForValueRule<
-    CatchClauseTypeClass,
-    CatchClauseType
-> => {
-    return {
+export const makeCatchClauseAssignRule: AssignForValueRule<CatchClauseTypeClass, CatchClauseType> =
+    {
         isValid: (target: unknown) => isTargetTypeClass(target, isCatchClauseTypeClass),
         construct: (clauseTypeClass: CatchClauseTypeClass) => {
             const value = assignMultiClass(clauseTypeClass.getValue(), [
-                makeIdRule(),
+                makeIdAssignRule,
                 makeErrorAssignRule,
             ]);
 
             const valueType = assignMultiClass(clauseTypeClass.getValueType(), [
-                makeQualifiedNameRule(),
+                makeQualifiedNameAssignRule,
                 makeErrorAssignRule,
             ]);
 
             const block = assignMultiClass(clauseTypeClass.getBlock(), [
-                makeBlockRule(),
+                makeBlockAssignRule,
                 makeErrorAssignRule,
             ]);
 
             const modifier = clauseTypeClass
                 .getModifier()
-                .map((v) => assignMultiClass(v, [makeModifierRule(), makeErrorAssignRule]));
+                .map((v) => assignMultiClass(v, [makeModifierAssignRule, makeErrorAssignRule]));
 
             return {
                 type: clauseTypeClass.getType(),
@@ -168,232 +166,230 @@ export const makeCatchClauseRule = (): AssignForValueRule<
             };
         },
     };
-};
 
-export type DataCategorySelectionType = CommonType & {
+export type DataCategorySelectionType = CommonType<'dataCategorySelection'> & {
     value: ValueRuleValue<SoqlIdType>;
     selector: ValueRuleValue<FilteringSelectorType>;
     category: ValueRuleValue<DataCategoryNameType>;
 };
 
-export const isDataCategorySelectionType = typia.createIs<DataCategorySelectionType>();
-
-export const makeDataCategorySelectionRule = (): AssignForValueRule<
-    DataCategorySelectionTypeClass,
-    DataCategorySelectionType
-> => {
-    return {
-        isValid: (target: unknown) => isTargetTypeClass(target, isDataCategorySelectionTypeClass),
-        construct: (clauseTypeClass: DataCategorySelectionTypeClass) => {
-            const value = assignMultiClass(clauseTypeClass.getValue(), [
-                makeSoqlIdRule(),
-                makeErrorAssignRule,
-            ]);
-
-            const selector = assignMultiClass(clauseTypeClass.getSelector(), [
-                makeFilteringSelectorRule(),
-                makeErrorAssignRule,
-            ]);
-
-            const category = assignMultiClass(clauseTypeClass.getCategory(), [
-                makeDataCategoryNameRule(),
-                makeErrorAssignRule,
-            ]);
-
-            return {
-                type: clauseTypeClass.getType(),
-                sourceInfo: makeSourceInfo(clauseTypeClass),
-                value,
-                selector,
-                category,
-            };
-        },
-    };
+export const isDataCategorySelectionType = (value: unknown): value is DataCategorySelectionType => {
+    return isCommonType(value) && value.type === 'dataCategorySelection';
 };
 
-export type ElseClauseType = CommonType & {
+export const makeDataCategorySelectionAssignRule: AssignForValueRule<
+    DataCategorySelectionTypeClass,
+    DataCategorySelectionType
+> = {
+    isValid: (target: unknown) => isTargetTypeClass(target, isDataCategorySelectionTypeClass),
+    construct: (clauseTypeClass: DataCategorySelectionTypeClass) => {
+        const value = assignMultiClass(clauseTypeClass.getValue(), [
+            makeSoqlIdAssignRule,
+            makeErrorAssignRule,
+        ]);
+
+        const selector = assignMultiClass(clauseTypeClass.getSelector(), [
+            makeFilteringSelectorAssignRule,
+            makeErrorAssignRule,
+        ]);
+
+        const category = assignMultiClass(clauseTypeClass.getCategory(), [
+            makeDataCategoryNameAssignRule,
+            makeErrorAssignRule,
+        ]);
+
+        return {
+            type: clauseTypeClass.getType(),
+            sourceInfo: makeSourceInfo(clauseTypeClass),
+            value,
+            selector,
+            category,
+        };
+    },
+};
+
+export type ElseClauseType = CommonType<'elseClause'> & {
     value: ValueRuleValue<FieldNameListType>;
 };
 
-export const isElseClauseType = typia.createIs<ElseClauseType>();
-
-export const makeElseClauseRule = (): AssignForValueRule<ElseClauseTypeClass, ElseClauseType> => {
-    return {
-        isValid: (target: unknown) => isTargetTypeClass(target, isElseClauseTypeClass),
-        construct: (clauseTypeClass: ElseClauseTypeClass) => {
-            const value = assignMultiClass(clauseTypeClass.getValue(), [
-                makeFieldNameListRule(),
-                makeErrorAssignRule,
-            ]);
-            return {
-                type: clauseTypeClass.getType(),
-                sourceInfo: makeSourceInfo(clauseTypeClass),
-                value,
-            };
-        },
-    };
+export const isElseClauseType = (value: unknown): value is ElseClauseType => {
+    return isCommonType(value) && value.type === 'elseClause';
 };
 
-export type FieldGroupByType = CommonType & {
+export const makeElseClauseAssignRule: AssignForValueRule<ElseClauseTypeClass, ElseClauseType> = {
+    isValid: (target: unknown) => isTargetTypeClass(target, isElseClauseTypeClass),
+    construct: (clauseTypeClass: ElseClauseTypeClass) => {
+        const value = assignMultiClass(clauseTypeClass.getValue(), [
+            makeFieldNameListAssignRule,
+            makeErrorAssignRule,
+        ]);
+        return {
+            type: clauseTypeClass.getType(),
+            sourceInfo: makeSourceInfo(clauseTypeClass),
+            value,
+        };
+    },
+};
+
+export type FieldGroupByType = CommonType<'fieldGroupBy'> & {
     value: ValueRuleValue<FieldNameType | SoqlFunctionType>;
 };
 
-export const isFieldGroupByType = typia.createIs<FieldGroupByType>();
-
-export const makeFieldGroupByRule = (): AssignForValueRule<
-    FieldGroupByTypeClass,
-    FieldGroupByType
-> => {
-    return {
-        isValid: (target: unknown) => isTargetTypeClass(target, isFieldGroupByTypeClass),
-        construct: (clauseTypeClass: FieldGroupByTypeClass) => {
-            const value = assignMultiClass(clauseTypeClass.getValue(), [
-                makeFieldNameRule(),
-                makeSoqlFunctionRule(),
-                makeErrorAssignRule,
-            ]);
-            return {
-                type: clauseTypeClass.getType(),
-                sourceInfo: makeSourceInfo(clauseTypeClass),
-                value,
-            };
-        },
-    };
+export const isFieldGroupByType = (value: unknown): value is FieldGroupByType => {
+    return isCommonType(value) && value.type === 'fieldGroupBy';
 };
 
-export type FieldOrderType = CommonType & {
+export const makeFieldGroupByAssignRule: AssignForValueRule<
+    FieldGroupByTypeClass,
+    FieldGroupByType
+> = {
+    isValid: (target: unknown) => isTargetTypeClass(target, isFieldGroupByTypeClass),
+    construct: (clauseTypeClass: FieldGroupByTypeClass) => {
+        const value = assignMultiClass(clauseTypeClass.getValue(), [
+            makeFieldNameAssignRule,
+            makeSoqlFunctionAssignRule,
+            makeErrorAssignRule,
+        ]);
+        return {
+            type: clauseTypeClass.getType(),
+            sourceInfo: makeSourceInfo(clauseTypeClass),
+            value,
+        };
+    },
+};
+
+export type FieldOrderType = CommonType<'fieldOrder'> & {
     value: ValueRuleValue<FieldNameType | SoqlFunctionType>;
     direction: string | null;
     nulls: string | null;
 };
 
-export const isFieldOrderType = typia.createIs<FieldOrderType>();
-
-export const makeFieldOrderRule = (): AssignForValueRule<FieldOrderTypeClass, FieldOrderType> => {
-    return {
-        isValid: (target: unknown) => isTargetTypeClass(target, isFieldOrderTypeClass),
-        construct: (clauseTypeClass: FieldOrderTypeClass) => {
-            const value = assignMultiClass(clauseTypeClass.getValue(), [
-                makeFieldNameRule(),
-                makeSoqlFunctionRule(),
-                makeErrorAssignRule,
-            ]);
-            const direction = clauseTypeClass.getDirection();
-            const nulls = clauseTypeClass.getNulls();
-            return {
-                type: clauseTypeClass.getType(),
-                sourceInfo: makeSourceInfo(clauseTypeClass),
-                value,
-                direction,
-                nulls,
-            };
-        },
-    };
+export const isFieldOrderType = (value: unknown): value is FieldOrderType => {
+    return isCommonType(value) && value.type === 'fieldOrder';
 };
 
-export type FilteringSelectorType = CommonType & {
+export const makeFieldOrderAssignRule: AssignForValueRule<FieldOrderTypeClass, FieldOrderType> = {
+    isValid: (target: unknown) => isTargetTypeClass(target, isFieldOrderTypeClass),
+    construct: (clauseTypeClass: FieldOrderTypeClass) => {
+        const value = assignMultiClass(clauseTypeClass.getValue(), [
+            makeFieldNameAssignRule,
+            makeSoqlFunctionAssignRule,
+            makeErrorAssignRule,
+        ]);
+        const direction = clauseTypeClass.getDirection();
+        const nulls = clauseTypeClass.getNulls();
+        return {
+            type: clauseTypeClass.getType(),
+            sourceInfo: makeSourceInfo(clauseTypeClass),
+            value,
+            direction,
+            nulls,
+        };
+    },
+};
+
+export type FilteringSelectorType = CommonType<'filteringSelector'> & {
     value: ValueRuleValue<string>;
 };
 
-export const isFilteringSelectorType = typia.createIs<FilteringSelectorType>();
-
-export const makeFilteringSelectorRule = (): AssignForValueRule<
-    FilteringSelectorTypeClass,
-    FilteringSelectorType
-> => {
-    return {
-        isValid: (target: unknown) => isTargetTypeClass(target, isFilteringSelectorTypeClass),
-        construct: (clauseTypeClass: FilteringSelectorTypeClass) => {
-            const value = assignMultiClass(clauseTypeClass.getValue(), [
-                makeStringAssignRule,
-                makeErrorAssignRule,
-            ]);
-            return {
-                type: clauseTypeClass.getType(),
-                sourceInfo: makeSourceInfo(clauseTypeClass),
-                value,
-            };
-        },
-    };
+export const isFilteringSelectorType = (value: unknown): value is FilteringSelectorType => {
+    return isCommonType(value) && value.type === 'filteringSelector';
 };
 
-export type ForClausesType = CommonType & {
+export const makeFilteringSelectorAssignRule: AssignForValueRule<
+    FilteringSelectorTypeClass,
+    FilteringSelectorType
+> = {
+    isValid: (target: unknown) => isTargetTypeClass(target, isFilteringSelectorTypeClass),
+    construct: (clauseTypeClass: FilteringSelectorTypeClass) => {
+        const value = assignMultiClass(clauseTypeClass.getValue(), [
+            makeStringAssignRule,
+            makeErrorAssignRule,
+        ]);
+        return {
+            type: clauseTypeClass.getType(),
+            sourceInfo: makeSourceInfo(clauseTypeClass),
+            value,
+        };
+    },
+};
+
+export type ForClausesType = CommonType<'forClauses'> & {
     value: ValueRuleValue<string>[];
 };
 
-export const isForClausesType = typia.createIs<ForClausesType>();
-
-export const makeForClausesRule = (): AssignForValueRule<ForClausesTypeClass, ForClausesType> => {
-    return {
-        isValid: (target: unknown) => isTargetTypeClass(target, isForClausesTypeClass),
-        construct: (clauseTypeClass: ForClausesTypeClass) => {
-            const value = clauseTypeClass
-                .getValue()
-                .map((v) => assignMultiClass(v, [makeStringAssignRule, makeErrorAssignRule]));
-            return {
-                type: clauseTypeClass.getType(),
-                sourceInfo: makeSourceInfo(clauseTypeClass),
-                value,
-            };
-        },
-    };
+export const isForClausesType = (value: unknown): value is ForClausesType => {
+    return isCommonType(value) && value.type === 'forClauses';
 };
 
-export type GroupByClauseType = CommonType & {
+export const makeForClausesAssignRule: AssignForValueRule<ForClausesTypeClass, ForClausesType> = {
+    isValid: (target: unknown) => isTargetTypeClass(target, isForClausesTypeClass),
+    construct: (clauseTypeClass: ForClausesTypeClass) => {
+        const value = clauseTypeClass
+            .getValue()
+            .map((v) => assignMultiClass(v, [makeStringAssignRule, makeErrorAssignRule]));
+        return {
+            type: clauseTypeClass.getType(),
+            sourceInfo: makeSourceInfo(clauseTypeClass),
+            value,
+        };
+    },
+};
+
+export type GroupByClauseType = CommonType<'groupByClause'> & {
     value: ValueRuleValue<FieldGroupByListType>;
     mode: string | null;
     having: ValueRuleValue<LogicalExpressionType | null>;
 };
 
-export const isGroupByClauseType = typia.createIs<GroupByClauseType>();
-
-export const makeGroupByClauseRule = (): AssignForValueRule<
-    GroupByClauseTypeClass,
-    GroupByClauseType
-> => {
-    return {
-        isValid: (target: unknown) => isTargetTypeClass(target, isGroupByClauseTypeClass),
-        construct: (clauseTypeClass: GroupByClauseTypeClass) => {
-            const value = assignMultiClass(clauseTypeClass.getValue(), [
-                makeFieldGroupByListRule(),
-                makeErrorAssignRule,
-            ]);
-
-            const mode = clauseTypeClass.getMode();
-
-            const having = assignMultiClass(clauseTypeClass.getHaving(), [
-                makeLogicalExpressionRule(),
-                makeErrorAssignRule,
-                makeNullAssignRule,
-            ]);
-
-            return {
-                type: clauseTypeClass.getType(),
-                sourceInfo: makeSourceInfo(clauseTypeClass),
-                value,
-                mode,
-                having,
-            };
-        },
-    };
+export const isGroupByClauseType = (value: unknown): value is GroupByClauseType => {
+    return isCommonType(value) && value.type === 'groupByClause';
 };
 
-export type LimitClauseType = CommonType & {
+export const makeGroupByClauseAssignRule: AssignForValueRule<
+    GroupByClauseTypeClass,
+    GroupByClauseType
+> = {
+    isValid: (target: unknown) => isTargetTypeClass(target, isGroupByClauseTypeClass),
+    construct: (clauseTypeClass: GroupByClauseTypeClass) => {
+        const value = assignMultiClass(clauseTypeClass.getValue(), [
+            makeFieldGroupByListAssignRule,
+            makeErrorAssignRule,
+        ]);
+
+        const mode = clauseTypeClass.getMode();
+
+        const having = assignMultiClass(clauseTypeClass.getHaving(), [
+            makeLogicalExpressionAssignRule,
+            makeErrorAssignRule,
+            makeNullAssignRule,
+        ]);
+
+        return {
+            type: clauseTypeClass.getType(),
+            sourceInfo: makeSourceInfo(clauseTypeClass),
+            value,
+            mode,
+            having,
+        };
+    },
+};
+
+export type LimitClauseType = CommonType<'limitClause'> & {
     value: ValueRuleValue<string | BoundExpressionType>;
 };
 
-export const isLimitClauseType = typia.createIs<LimitClauseType>();
+export const isLimitClauseType = (value: unknown): value is LimitClauseType => {
+    return isCommonType(value) && value.type === 'limitClause';
+};
 
-export const makeLimitClauseRule = (): AssignForValueRule<
-    LimitClauseTypeClass,
-    LimitClauseType
-> => {
-    return {
+export const makeLimitClauseAssignRule: AssignForValueRule<LimitClauseTypeClass, LimitClauseType> =
+    {
         isValid: (target: unknown) => isTargetTypeClass(target, isLimitClauseTypeClass),
         construct: (clauseTypeClass: LimitClauseTypeClass) => {
             const value = assignMultiClass(clauseTypeClass.getValue(), [
                 makeStringAssignRule,
-                makeBoundExpressionRule(),
+                makeBoundExpressionAssignRule,
                 makeErrorAssignRule,
             ]);
 
@@ -404,64 +400,63 @@ export const makeLimitClauseRule = (): AssignForValueRule<
             };
         },
     };
-};
 
-export type OffsetClauseType = CommonType & {
+export type OffsetClauseType = CommonType<'offsetClause'> & {
     value: ValueRuleValue<string | BoundExpressionType>;
 };
 
-export const isOffsetClauseType = typia.createIs<OffsetClauseType>();
-
-export const makeOffsetClauseRule = (): AssignForValueRule<
-    OffsetClauseTypeClass,
-    OffsetClauseType
-> => {
-    return {
-        isValid: (target: unknown) => isTargetTypeClass(target, isOffsetClauseTypeClass),
-        construct: (clauseTypeClass: OffsetClauseTypeClass) => {
-            const value = assignMultiClass(clauseTypeClass.getValue(), [
-                makeStringAssignRule,
-                makeBoundExpressionRule(),
-                makeErrorAssignRule,
-            ]);
-
-            return {
-                type: clauseTypeClass.getType(),
-                sourceInfo: makeSourceInfo(clauseTypeClass),
-                value,
-            };
-        },
-    };
+export const isOffsetClauseType = (value: unknown): value is OffsetClauseType => {
+    return isCommonType(value) && value.type === 'offsetClause';
 };
 
-export type OrderByClauseType = CommonType & {
+export const makeOffsetClauseAssignRule: AssignForValueRule<
+    OffsetClauseTypeClass,
+    OffsetClauseType
+> = {
+    isValid: (target: unknown) => isTargetTypeClass(target, isOffsetClauseTypeClass),
+    construct: (clauseTypeClass: OffsetClauseTypeClass) => {
+        const value = assignMultiClass(clauseTypeClass.getValue(), [
+            makeStringAssignRule,
+            makeBoundExpressionAssignRule,
+            makeErrorAssignRule,
+        ]);
+
+        return {
+            type: clauseTypeClass.getType(),
+            sourceInfo: makeSourceInfo(clauseTypeClass),
+            value,
+        };
+    },
+};
+
+export type OrderByClauseType = CommonType<'orderByClause'> & {
     value: ValueRuleValue<FieldOrderListType>;
 };
 
-export const isOrderByClauseType = typia.createIs<OrderByClauseType>();
-
-export const makeOrderByClauseRule = (): AssignForValueRule<
-    OrderByClauseTypeClass,
-    OrderByClauseType
-> => {
-    return {
-        isValid: (target: unknown) => isTargetTypeClass(target, isOrderByClauseTypeClass),
-        construct: (clauseTypeClass: OrderByClauseTypeClass) => {
-            const value = assignMultiClass(clauseTypeClass.getValue(), [
-                makeFieldOrderListRule(),
-                makeErrorAssignRule,
-            ]);
-
-            return {
-                type: clauseTypeClass.getType(),
-                sourceInfo: makeSourceInfo(clauseTypeClass),
-                value,
-            };
-        },
-    };
+export const isOrderByClauseType = (value: unknown): value is OrderByClauseType => {
+    return isCommonType(value) && value.type === 'orderByClause';
 };
 
-export type SoslClausesType = CommonType & {
+export const makeOrderByClauseAssignRule: AssignForValueRule<
+    OrderByClauseTypeClass,
+    OrderByClauseType
+> = {
+    isValid: (target: unknown) => isTargetTypeClass(target, isOrderByClauseTypeClass),
+    construct: (clauseTypeClass: OrderByClauseTypeClass) => {
+        const value = assignMultiClass(clauseTypeClass.getValue(), [
+            makeFieldOrderListAssignRule,
+            makeErrorAssignRule,
+        ]);
+
+        return {
+            type: clauseTypeClass.getType(),
+            sourceInfo: makeSourceInfo(clauseTypeClass),
+            value,
+        };
+    },
+};
+
+export type SoslClausesType = CommonType<'soslClauses'> & {
     value: ValueRuleValue<SearchGroupType | null>;
     fieldSpecList: ValueRuleValue<FieldSpecListType | null>;
     withList: ValueRuleValue<SoslWithClauseType>[] | null;
@@ -469,23 +464,22 @@ export type SoslClausesType = CommonType & {
     updateList: ValueRuleValue<UpdateListType | null>;
 };
 
-export const isSoslClausesType = typia.createIs<SoslClausesType>();
+export const isSoslClausesType = (value: unknown): value is SoslClausesType => {
+    return isCommonType(value) && value.type === 'soslClauses';
+};
 
-export const makeSoslClausesRule = (): AssignForValueRule<
-    SoslClausesTypeClass,
-    SoslClausesType
-> => {
-    return {
+export const makeSoslClausesAssignRule: AssignForValueRule<SoslClausesTypeClass, SoslClausesType> =
+    {
         isValid: (target: unknown) => isTargetTypeClass(target, isSoslClausesTypeClass),
         construct: (clauseTypeClass: SoslClausesTypeClass) => {
             const value = assignMultiClass(clauseTypeClass.getValue(), [
-                makeSearchGroupRule(),
+                makeSearchGroupAssignRule,
                 makeErrorAssignRule,
                 makeNullAssignRule,
             ]);
 
             const fieldSpecList = assignMultiClass(clauseTypeClass.getFieldSpecList(), [
-                makeFieldSpecListRule(),
+                makeFieldSpecListAssignRule,
                 makeErrorAssignRule,
                 makeNullAssignRule,
             ]);
@@ -494,18 +488,18 @@ export const makeSoslClausesRule = (): AssignForValueRule<
             let withList = null;
             if (withListValue) {
                 withList = withListValue.map((v) =>
-                    assignMultiClass(v, [makeSoslWithClauseRule(), makeErrorAssignRule]),
+                    assignMultiClass(v, [makeSoslWithClauseAssignRule, makeErrorAssignRule]),
                 );
             }
 
             const limitClause = assignMultiClass(clauseTypeClass.getLimitClause(), [
-                makeLimitClauseRule(),
+                makeLimitClauseAssignRule,
                 makeErrorAssignRule,
                 makeNullAssignRule,
             ]);
 
             const updateList = assignMultiClass(clauseTypeClass.getUpdateList(), [
-                makeUpdateListRule(),
+                makeUpdateListAssignRule,
                 makeErrorAssignRule,
                 makeNullAssignRule,
             ]);
@@ -521,180 +515,178 @@ export const makeSoslClausesRule = (): AssignForValueRule<
             };
         },
     };
-};
 
-export type SoslWithClauseType = CommonType & {
+export type SoslWithClauseType = CommonType<'soslWithClause'> & {
     value: ValueRuleValue<string>;
     content: ValueRuleValue<
         string | BoundExpressionType | FilteringExpressionType | NetworkListType | null
     >;
 };
 
-export const isSoslWithClauseType = typia.createIs<SoslWithClauseType>();
-
-export const makeSoslWithClauseRule = (): AssignForValueRule<
-    SoslWithClauseTypeClass,
-    SoslWithClauseType
-> => {
-    return {
-        isValid: (target: unknown) => isTargetTypeClass(target, isSoslWithClauseTypeClass),
-        construct: (clauseTypeClass: SoslWithClauseTypeClass) => {
-            const value = assignMultiClass(clauseTypeClass.getValue(), [
-                makeStringAssignRule,
-                makeErrorAssignRule,
-            ]);
-
-            const content = assignMultiClass(clauseTypeClass.getContent(), [
-                makeStringAssignRule,
-                makeBoundExpressionRule(),
-                makeFilteringExpressionRule(),
-                makeNetworkListRule(),
-                makeErrorAssignRule,
-                makeNullAssignRule,
-            ]);
-
-            return {
-                type: clauseTypeClass.getType(),
-                sourceInfo: makeSourceInfo(clauseTypeClass),
-                value,
-                content,
-            };
-        },
-    };
+export const isSoslWithClauseType = (value: unknown): value is SoslWithClauseType => {
+    return isCommonType(value) && value.type === 'soslWithClause';
 };
 
-export type TypeOfType = CommonType & {
+export const makeSoslWithClauseAssignRule: AssignForValueRule<
+    SoslWithClauseTypeClass,
+    SoslWithClauseType
+> = {
+    isValid: (target: unknown) => isTargetTypeClass(target, isSoslWithClauseTypeClass),
+    construct: (clauseTypeClass: SoslWithClauseTypeClass) => {
+        const value = assignMultiClass(clauseTypeClass.getValue(), [
+            makeStringAssignRule,
+            makeErrorAssignRule,
+        ]);
+
+        const content = assignMultiClass(clauseTypeClass.getContent(), [
+            makeStringAssignRule,
+            makeBoundExpressionAssignRule,
+            makeFilteringExpressionAssignRule,
+            makeNetworkListAssignRule,
+            makeErrorAssignRule,
+            makeNullAssignRule,
+        ]);
+
+        return {
+            type: clauseTypeClass.getType(),
+            sourceInfo: makeSourceInfo(clauseTypeClass),
+            value,
+            content,
+        };
+    },
+};
+
+export type TypeOfType = CommonType<'typeOf'> & {
     value: ValueRuleValue<FieldNameType>;
     whenClause: ValueRuleValue<WhenClauseType>[];
     elseClause: ValueRuleValue<ElseClauseType | null>;
 };
 
-export const isTypeOfType = typia.createIs<TypeOfType>();
-
-export const makeTypeOfRule = (): AssignForValueRule<TypeOfTypeClass, TypeOfType> => {
-    return {
-        isValid: (target: unknown) => isTargetTypeClass(target, isTypeOfTypeClass),
-        construct: (clauseTypeClass: TypeOfTypeClass) => {
-            const value = assignMultiClass(clauseTypeClass.getValue(), [
-                makeFieldNameRule(),
-                makeErrorAssignRule,
-            ]);
-
-            const whenClause = clauseTypeClass
-                .getWhenClause()
-                .map((v) => assignMultiClass(v, [makeWhenClauseRule(), makeErrorAssignRule]));
-
-            const elseClause = assignMultiClass(clauseTypeClass.getElseClause(), [
-                makeElseClauseRule(),
-                makeErrorAssignRule,
-                makeNullAssignRule,
-            ]);
-
-            return {
-                type: clauseTypeClass.getType(),
-                sourceInfo: makeSourceInfo(clauseTypeClass),
-                value,
-                whenClause,
-                elseClause,
-            };
-        },
-    };
+export const isTypeOfType = (value: unknown): value is TypeOfType => {
+    return isCommonType(value) && value.type === 'typeOf';
 };
 
-export type UpdateTypeType = CommonType & {
+export const makeTypeOfAssignRule: AssignForValueRule<TypeOfTypeClass, TypeOfType> = {
+    isValid: (target: unknown) => isTargetTypeClass(target, isTypeOfTypeClass),
+    construct: (clauseTypeClass: TypeOfTypeClass) => {
+        const value = assignMultiClass(clauseTypeClass.getValue(), [
+            makeFieldNameAssignRule,
+            makeErrorAssignRule,
+        ]);
+
+        const whenClause = clauseTypeClass
+            .getWhenClause()
+            .map((v) => assignMultiClass(v, [makeWhenClauseAssignRule, makeErrorAssignRule]));
+
+        const elseClause = assignMultiClass(clauseTypeClass.getElseClause(), [
+            makeElseClauseAssignRule,
+            makeErrorAssignRule,
+            makeNullAssignRule,
+        ]);
+
+        return {
+            type: clauseTypeClass.getType(),
+            sourceInfo: makeSourceInfo(clauseTypeClass),
+            value,
+            whenClause,
+            elseClause,
+        };
+    },
+};
+
+export type UpdateTypeType = CommonType<'updateType'> & {
     value: ValueRuleValue<string>;
 };
 
-export const isUpdateTypeType = typia.createIs<UpdateTypeType>();
-
-export const makeUpdateTypeRule = (): AssignForValueRule<UpdateTypeTypeClass, UpdateTypeType> => {
-    return {
-        isValid: (target: unknown) => isTargetTypeClass(target, isUpdateTypeTypeClass),
-        construct: (clauseTypeClass: UpdateTypeTypeClass) => {
-            const value = assignMultiClass(clauseTypeClass.getValue(), [
-                makeStringAssignRule,
-                makeErrorAssignRule,
-            ]);
-
-            return {
-                type: clauseTypeClass.getType(),
-                sourceInfo: makeSourceInfo(clauseTypeClass),
-                value,
-            };
-        },
-    };
+export const isUpdateTypeType = (value: unknown): value is UpdateTypeType => {
+    return isCommonType(value) && value.type === 'updateType';
 };
 
-export type UsingScopeType = CommonType & {
+export const makeUpdateTypeAssignRule: AssignForValueRule<UpdateTypeTypeClass, UpdateTypeType> = {
+    isValid: (target: unknown) => isTargetTypeClass(target, isUpdateTypeTypeClass),
+    construct: (clauseTypeClass: UpdateTypeTypeClass) => {
+        const value = assignMultiClass(clauseTypeClass.getValue(), [
+            makeStringAssignRule,
+            makeErrorAssignRule,
+        ]);
+
+        return {
+            type: clauseTypeClass.getType(),
+            sourceInfo: makeSourceInfo(clauseTypeClass),
+            value,
+        };
+    },
+};
+
+export type UsingScopeType = CommonType<'usingScope'> & {
     value: ValueRuleValue<SoqlIdType>;
 };
 
-export const isUsingScopeType = typia.createIs<UsingScopeType>();
-
-export const makeUsingScopeRule = (): AssignForValueRule<UsingScopeTypeClass, UsingScopeType> => {
-    return {
-        isValid: (target: unknown) => isTargetTypeClass(target, isUsingScopeTypeClass),
-        construct: (clauseTypeClass: UsingScopeTypeClass) => {
-            const value = assignMultiClass(clauseTypeClass.getValue(), [
-                makeSoqlIdRule(),
-                makeErrorAssignRule,
-            ]);
-
-            return {
-                type: clauseTypeClass.getType(),
-                sourceInfo: makeSourceInfo(clauseTypeClass),
-                value,
-            };
-        },
-    };
+export const isUsingScopeType = (value: unknown): value is UsingScopeType => {
+    return isCommonType(value) && value.type === 'usingScope';
 };
 
-export type WhenClauseType = CommonType & {
+export const makeUsingScopeAssignRule: AssignForValueRule<UsingScopeTypeClass, UsingScopeType> = {
+    isValid: (target: unknown) => isTargetTypeClass(target, isUsingScopeTypeClass),
+    construct: (clauseTypeClass: UsingScopeTypeClass) => {
+        const value = assignMultiClass(clauseTypeClass.getValue(), [
+            makeSoqlIdAssignRule,
+            makeErrorAssignRule,
+        ]);
+
+        return {
+            type: clauseTypeClass.getType(),
+            sourceInfo: makeSourceInfo(clauseTypeClass),
+            value,
+        };
+    },
+};
+
+export type WhenClauseType = CommonType<'whenClause'> & {
     value: ValueRuleValue<FieldNameType>;
     field: ValueRuleValue<FieldNameListType>;
 };
 
-export const isWhenClauseType = typia.createIs<WhenClauseType>();
-
-export const makeWhenClauseRule = (): AssignForValueRule<WhenClauseTypeClass, WhenClauseType> => {
-    return {
-        isValid: (target: unknown) => isTargetTypeClass(target, isWhenClauseTypeClass),
-        construct: (clauseTypeClass: WhenClauseTypeClass) => {
-            const value = assignMultiClass(clauseTypeClass.getValue(), [
-                makeFieldNameRule(),
-                makeErrorAssignRule,
-            ]);
-
-            const field = assignMultiClass(clauseTypeClass.getField(), [
-                makeFieldNameListRule(),
-                makeErrorAssignRule,
-            ]);
-
-            return {
-                type: clauseTypeClass.getType(),
-                sourceInfo: makeSourceInfo(clauseTypeClass),
-                value,
-                field,
-            };
-        },
-    };
+export const isWhenClauseType = (value: unknown): value is WhenClauseType => {
+    return isCommonType(value) && value.type === 'whenClause';
 };
 
-export type WhereClauseType = CommonType & {
+export const makeWhenClauseAssignRule: AssignForValueRule<WhenClauseTypeClass, WhenClauseType> = {
+    isValid: (target: unknown) => isTargetTypeClass(target, isWhenClauseTypeClass),
+    construct: (clauseTypeClass: WhenClauseTypeClass) => {
+        const value = assignMultiClass(clauseTypeClass.getValue(), [
+            makeFieldNameAssignRule,
+            makeErrorAssignRule,
+        ]);
+
+        const field = assignMultiClass(clauseTypeClass.getField(), [
+            makeFieldNameListAssignRule,
+            makeErrorAssignRule,
+        ]);
+
+        return {
+            type: clauseTypeClass.getType(),
+            sourceInfo: makeSourceInfo(clauseTypeClass),
+            value,
+            field,
+        };
+    },
+};
+
+export type WhereClauseType = CommonType<'whereClause'> & {
     value: ValueRuleValue<WhereLogicalExpressionType>;
 };
 
-export const isWhereClauseType = typia.createIs<WhereClauseType>();
+export const isWhereClauseType = (value: unknown): value is WhereClauseType => {
+    return isCommonType(value) && value.type === 'whereClause';
+};
 
-export const makeWhereClauseRule = (): AssignForValueRule<
-    WhereClauseTypeClass,
-    WhereClauseType
-> => {
-    return {
+export const makeWhereClauseAssignRule: AssignForValueRule<WhereClauseTypeClass, WhereClauseType> =
+    {
         isValid: (target: unknown) => isTargetTypeClass(target, isWhereClauseTypeClass),
         construct: (clauseTypeClass: WhereClauseTypeClass) => {
             const value = assignMultiClass(clauseTypeClass.getValue(), [
-                makeWhereLogicalExpressionRule(),
+                makeWhereLogicalExpressionAssignRule,
                 makeErrorAssignRule,
             ]);
 
@@ -705,38 +697,36 @@ export const makeWhereClauseRule = (): AssignForValueRule<
             };
         },
     };
-};
 
-export type WithClauseType = CommonType & {
+export type WithClauseType = CommonType<'withClause'> & {
     value: ValueRuleValue<string | LogicalExpressionType>;
     field: ValueRuleValue<FilteringExpressionType | null>;
 };
 
-export const isWithClauseType = typia.createIs<WithClauseType>();
-
-export const makeWithClauseRule = (): AssignForValueRule<WithClauseTypeClass, WithClauseType> => {
-    return {
-        isValid: (target: unknown) => isTargetTypeClass(target, isWithClauseTypeClass),
-        construct: (clauseTypeClass: WithClauseTypeClass) => {
-            const value = assignMultiClass(clauseTypeClass.getValue(), [
-                makeStringAssignRule,
-                makeLogicalExpressionRule(),
-                makeErrorAssignRule,
-            ]);
-
-            const field = assignMultiClass(clauseTypeClass.getField(), [
-                makeFilteringExpressionRule(),
-                makeErrorAssignRule,
-                makeNullAssignRule,
-            ]);
-
-            return {
-                type: clauseTypeClass.getType(),
-                sourceInfo: makeSourceInfo(clauseTypeClass),
-                value,
-                field,
-            };
-        },
-    };
+export const isWithClauseType = (value: unknown): value is WithClauseType => {
+    return isCommonType(value) && value.type === 'withClause';
 };
 
+export const makeWithClauseAssignRule: AssignForValueRule<WithClauseTypeClass, WithClauseType> = {
+    isValid: (target: unknown) => isTargetTypeClass(target, isWithClauseTypeClass),
+    construct: (clauseTypeClass: WithClauseTypeClass) => {
+        const value = assignMultiClass(clauseTypeClass.getValue(), [
+            makeStringAssignRule,
+            makeLogicalExpressionAssignRule,
+            makeErrorAssignRule,
+        ]);
+
+        const field = assignMultiClass(clauseTypeClass.getField(), [
+            makeFilteringExpressionAssignRule,
+            makeErrorAssignRule,
+            makeNullAssignRule,
+        ]);
+
+        return {
+            type: clauseTypeClass.getType(),
+            sourceInfo: makeSourceInfo(clauseTypeClass),
+            value,
+            field,
+        };
+    },
+};

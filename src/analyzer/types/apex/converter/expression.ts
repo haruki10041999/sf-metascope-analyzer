@@ -1,5 +1,3 @@
-import typia from 'typia';
-
 import {
     ArrayExpressionTypeClass,
     Arth1ExpressionTypeClass,
@@ -72,7 +70,8 @@ import {
 } from '../../apex_IR';
 
 import {
-    ErrorInfo,
+    isCommonType,
+    ErrorType,
     CommonType,
     AssignForValueRule,
     ValueRuleValue,
@@ -83,1164 +82,1167 @@ import {
     makeNullAssignRule,
     makeSourceInfo,
 } from './commons';
-import { makeAnyIdRule, AnyIdType } from './id';
-import { makeBasePrimaryRule, BasePrimaryType } from './primary';
-import { makeFieldNameRule, FieldNameType } from './name';
+import { makeAnyIdAssignRule, AnyIdType } from './id';
+import { makeBasePrimaryAssignRules, BasePrimaryType } from './primary';
+import { makeFieldNameAssignRule, FieldNameType } from './name';
 import {
-    makeSoqlFunctionRule,
-    makeComparisonOperatorRule,
+    makeSoqlFunctionAssignRule,
+    makeComparisonOperatorAssignRule,
     SoqlFunctionType,
     ComparisonOperatorType,
 } from './query';
-import { makeValueRule, ValueType } from './value';
-import { makeDataCategorySelectionRule, DataCategorySelectionType } from './clause';
-import { makeCreatorRule, CreatorType } from './rest';
-import { makeTypeRefRule, TypeRefType } from './type';
+import { makeValueAssignRule, ValueType } from './value';
+import { makeDataCategorySelectionAssignRule, DataCategorySelectionType } from './clause';
+import { makeCreatorAssignRule, CreatorType } from './rest';
+import { makeTypeRefAssignRule, TypeRefType } from './type';
 import {
-    makeDotMethodCallRule,
-    makeMethodCallRule,
+    makeDotMethodCallAssignRule,
+    makeMethodCallAssignRule,
     MethodCallType,
     DotMethodCallType,
 } from './call';
 
-export type ArrayExpressionType = CommonType & {
+export type ArrayExpressionType = CommonType<'arrayExpression'> & {
     value: ValueRuleValue<BaseExpressionType>;
     index: ValueRuleValue<BaseExpressionType>;
 };
 
-export const isArrayExpressionType = typia.createIs<ArrayExpressionType>();
+export const isArrayExpressionType = (value: unknown): value is ArrayExpressionType => {
+    return isCommonType(value) && value.type === 'arrayExpression';
+};
 
-export const makeArrayExpressionRule = (): AssignForValueRule<
+export const makeArrayExpressionAssignRule: AssignForValueRule<
     ArrayExpressionTypeClass,
     ArrayExpressionType
-> => {
-    return {
-        isValid: (target: unknown) => isTargetTypeClass(target, isArrayExpressionTypeClass),
-        construct: (expressionTypeClass: ArrayExpressionTypeClass) => {
-            const value = assignMultiClass(expressionTypeClass.getValue(), [
-                ...makeBaseExpressionRule(),
-                makeErrorAssignRule,
-            ]);
-            const index = assignMultiClass(expressionTypeClass.getIndex(), [
-                ...makeBaseExpressionRule(),
-                makeErrorAssignRule,
-            ]);
-            return {
-                type: expressionTypeClass.getType(),
-                sourceInfo: makeSourceInfo(expressionTypeClass),
-                value,
-                index,
-            };
-        },
-    };
+> = {
+    isValid: (target: unknown) => isTargetTypeClass(target, isArrayExpressionTypeClass),
+    construct: (expressionTypeClass: ArrayExpressionTypeClass) => {
+        const value = assignMultiClass(expressionTypeClass.getValue(), [
+            ...makeBaseExpressionAssignRules,
+            makeErrorAssignRule,
+        ]);
+        const index = assignMultiClass(expressionTypeClass.getIndex(), [
+            ...makeBaseExpressionAssignRules,
+            makeErrorAssignRule,
+        ]);
+        return {
+            type: expressionTypeClass.getType(),
+            sourceInfo: makeSourceInfo(expressionTypeClass),
+            value,
+            index,
+        };
+    },
 };
 
-export type Arth1ExpressionType = CommonType & {
+export type Arth1ExpressionType = CommonType<'arth1Expression'> & {
     left: ValueRuleValue<BaseExpressionType>;
     operator: ValueRuleValue<string>;
     right: ValueRuleValue<BaseExpressionType>;
 };
 
-export const isArth1ExpressionType = typia.createIs<Arth1ExpressionType>();
+export const isArth1ExpressionType = (value: unknown): value is Arth1ExpressionType => {
+    return isCommonType(value) && value.type === 'arth1Expression';
+};
 
-export const makeArth1ExpressionRule = (): AssignForValueRule<
+export const makeArth1ExpressionAssignRule: AssignForValueRule<
     Arth1ExpressionTypeClass,
     Arth1ExpressionType
-> => {
-    return {
-        isValid: (target: unknown) => isTargetTypeClass(target, isArth1ExpressionTypeClass),
-        construct: (expressionTypeClass: Arth1ExpressionTypeClass) => {
-            const left = assignMultiClass(expressionTypeClass.getLeft(), [
-                ...makeBaseExpressionRule(),
-                makeErrorAssignRule,
-            ]);
-            const right = assignMultiClass(expressionTypeClass.getRight(), [
-                ...makeBaseExpressionRule(),
-                makeErrorAssignRule,
-            ]);
-            const operator = assignMultiClass(expressionTypeClass.getOperator(), [
-                makeStringAssignRule,
-                makeErrorAssignRule,
-            ]);
-            return {
-                type: expressionTypeClass.getType(),
-                sourceInfo: makeSourceInfo(expressionTypeClass),
-                left,
-                operator,
-                right,
-            };
-        },
-    };
+> = {
+    isValid: (target: unknown) => isTargetTypeClass(target, isArth1ExpressionTypeClass),
+    construct: (expressionTypeClass: Arth1ExpressionTypeClass) => {
+        const left = assignMultiClass(expressionTypeClass.getLeft(), [
+            ...makeBaseExpressionAssignRules,
+            makeErrorAssignRule,
+        ]);
+        const right = assignMultiClass(expressionTypeClass.getRight(), [
+            ...makeBaseExpressionAssignRules,
+            makeErrorAssignRule,
+        ]);
+        const operator = assignMultiClass(expressionTypeClass.getOperator(), [
+            makeStringAssignRule,
+            makeErrorAssignRule,
+        ]);
+        return {
+            type: expressionTypeClass.getType(),
+            sourceInfo: makeSourceInfo(expressionTypeClass),
+            left,
+            operator,
+            right,
+        };
+    },
 };
 
-export type Arth2ExpressionType = CommonType & {
+export type Arth2ExpressionType = CommonType<'arth2Expression'> & {
     left: ValueRuleValue<BaseExpressionType>;
     operator: ValueRuleValue<string>;
     right: ValueRuleValue<BaseExpressionType>;
 };
 
-export const isArth2ExpressionType = typia.createIs<Arth2ExpressionType>();
+export const isArth2ExpressionType = (value: unknown): value is Arth2ExpressionType => {
+    return isCommonType(value) && value.type === 'arth2Expression';
+};
 
-export const makeArth2ExpressionRule = (): AssignForValueRule<
+export const makeArth2ExpressionAssignRule: AssignForValueRule<
     Arth2ExpressionTypeClass,
     Arth2ExpressionType
-> => {
-    return {
-        isValid: (target: unknown) => isTargetTypeClass(target, isArth2ExpressionTypeClass),
-        construct: (expressionTypeClass: Arth2ExpressionTypeClass) => {
-            const left = assignMultiClass(expressionTypeClass.getLeft(), [
-                ...makeBaseExpressionRule(),
-                makeErrorAssignRule,
-            ]);
-            const right = assignMultiClass(expressionTypeClass.getRight(), [
-                ...makeBaseExpressionRule(),
-                makeErrorAssignRule,
-            ]);
-            const operator = assignMultiClass(expressionTypeClass.getOperator(), [
-                makeStringAssignRule,
-                makeErrorAssignRule,
-            ]);
-            return {
-                type: expressionTypeClass.getType(),
-                sourceInfo: makeSourceInfo(expressionTypeClass),
-                left,
-                operator,
-                right,
-            };
-        },
-    };
+> = {
+    isValid: (target: unknown) => isTargetTypeClass(target, isArth2ExpressionTypeClass),
+    construct: (expressionTypeClass: Arth2ExpressionTypeClass) => {
+        const left = assignMultiClass(expressionTypeClass.getLeft(), [
+            ...makeBaseExpressionAssignRules,
+            makeErrorAssignRule,
+        ]);
+        const right = assignMultiClass(expressionTypeClass.getRight(), [
+            ...makeBaseExpressionAssignRules,
+            makeErrorAssignRule,
+        ]);
+        const operator = assignMultiClass(expressionTypeClass.getOperator(), [
+            makeStringAssignRule,
+            makeErrorAssignRule,
+        ]);
+        return {
+            type: expressionTypeClass.getType(),
+            sourceInfo: makeSourceInfo(expressionTypeClass),
+            left,
+            operator,
+            right,
+        };
+    },
 };
 
-export type AssignExpressionType = CommonType & {
+export type AssignExpressionType = CommonType<'assignExpression'> & {
     left: ValueRuleValue<BaseExpressionType>;
     operator: ValueRuleValue<string>;
     right: ValueRuleValue<BaseExpressionType>;
 };
 
-export const isAssignExpressionType = typia.createIs<AssignExpressionType>();
+export const isAssignExpressionType = (value: unknown): value is AssignExpressionType => {
+    return isCommonType(value) && value.type === 'assignExpression';
+};
 
-export const makeAssignExpressionRule = (): AssignForValueRule<
+export const makeAssignExpressionAssignRule: AssignForValueRule<
     AssignExpressionTypeClass,
     AssignExpressionType
-> => {
-    return {
-        isValid: (target: unknown) => isTargetTypeClass(target, isAssignExpressionTypeClass),
-        construct: (expressionTypeClass: AssignExpressionTypeClass) => {
-            const left = assignMultiClass(expressionTypeClass.getLeft(), [
-                ...makeBaseExpressionRule(),
-                makeErrorAssignRule,
-            ]);
-            const right = assignMultiClass(expressionTypeClass.getRight(), [
-                ...makeBaseExpressionRule(),
-                makeErrorAssignRule,
-            ]);
-            const operator = assignMultiClass(expressionTypeClass.getOperator(), [
-                makeStringAssignRule,
-                makeErrorAssignRule,
-            ]);
-            return {
-                type: expressionTypeClass.getType(),
-                sourceInfo: makeSourceInfo(expressionTypeClass),
-                left,
-                operator,
-                right,
-            };
-        },
-    };
+> = {
+    isValid: (target: unknown) => isTargetTypeClass(target, isAssignExpressionTypeClass),
+    construct: (expressionTypeClass: AssignExpressionTypeClass) => {
+        const left = assignMultiClass(expressionTypeClass.getLeft(), [
+            ...makeBaseExpressionAssignRules,
+            makeErrorAssignRule,
+        ]);
+        const right = assignMultiClass(expressionTypeClass.getRight(), [
+            ...makeBaseExpressionAssignRules,
+            makeErrorAssignRule,
+        ]);
+        const operator = assignMultiClass(expressionTypeClass.getOperator(), [
+            makeStringAssignRule,
+            makeErrorAssignRule,
+        ]);
+        return {
+            type: expressionTypeClass.getType(),
+            sourceInfo: makeSourceInfo(expressionTypeClass),
+            left,
+            operator,
+            right,
+        };
+    },
 };
 
-export type BitAndExpressionType = CommonType & {
+export type BitAndExpressionType = CommonType<'bitAndExpression'> & {
     left: ValueRuleValue<BaseExpressionType>;
     operator: ValueRuleValue<string>;
     right: ValueRuleValue<BaseExpressionType>;
 };
 
-export const isBitAndExpressionType = typia.createIs<BitAndExpressionType>();
+export const isBitAndExpressionType = (value: unknown): value is BitAndExpressionType => {
+    return isCommonType(value) && value.type === 'bitAndExpression';
+};
 
-export const makeBitAndExpressionRule = (): AssignForValueRule<
+export const makeBitAndExpressionAssignRule: AssignForValueRule<
     BitAndExpressionTypeClass,
     BitAndExpressionType
-> => {
-    return {
-        isValid: (target: unknown) => isTargetTypeClass(target, isBitAndExpressionTypeClass),
-        construct: (expressionTypeClass: BitAndExpressionTypeClass) => {
-            const left = assignMultiClass(expressionTypeClass.getLeft(), [
-                ...makeBaseExpressionRule(),
-                makeErrorAssignRule,
-            ]);
-            const right = assignMultiClass(expressionTypeClass.getRight(), [
-                ...makeBaseExpressionRule(),
-                makeErrorAssignRule,
-            ]);
-            const operator = assignMultiClass(expressionTypeClass.getOperator(), [
-                makeStringAssignRule,
-                makeErrorAssignRule,
-            ]);
-            return {
-                type: expressionTypeClass.getType(),
-                sourceInfo: makeSourceInfo(expressionTypeClass),
-                left,
-                operator,
-                right,
-            };
-        },
-    };
+> = {
+    isValid: (target: unknown) => isTargetTypeClass(target, isBitAndExpressionTypeClass),
+    construct: (expressionTypeClass: BitAndExpressionTypeClass) => {
+        const left = assignMultiClass(expressionTypeClass.getLeft(), [
+            ...makeBaseExpressionAssignRules,
+            makeErrorAssignRule,
+        ]);
+        const right = assignMultiClass(expressionTypeClass.getRight(), [
+            ...makeBaseExpressionAssignRules,
+            makeErrorAssignRule,
+        ]);
+        const operator = assignMultiClass(expressionTypeClass.getOperator(), [
+            makeStringAssignRule,
+            makeErrorAssignRule,
+        ]);
+        return {
+            type: expressionTypeClass.getType(),
+            sourceInfo: makeSourceInfo(expressionTypeClass),
+            left,
+            operator,
+            right,
+        };
+    },
 };
 
-export type BitExpressionType = CommonType & {
+export type BitExpressionType = CommonType<'bitExpression'> & {
     left: ValueRuleValue<BaseExpressionType>;
     operator: ValueRuleValue<string>;
     right: ValueRuleValue<BaseExpressionType>;
 };
 
-export const isBitExpressionType = typia.createIs<BitExpressionType>();
+export const isBitExpressionType = (value: unknown): value is BitExpressionType => {
+    return isCommonType(value) && value.type === 'bitExpression';
+};
 
-export const makeBitExpressionRule = (): AssignForValueRule<
+export const makeBitExpressionAssignRule: AssignForValueRule<
     BitExpressionTypeClass,
     BitExpressionType
-> => {
-    return {
-        isValid: (target: unknown) => isTargetTypeClass(target, isBitExpressionTypeClass),
-        construct: (expressionTypeClass: BitExpressionTypeClass) => {
-            const left = assignMultiClass(expressionTypeClass.getLeft(), [
-                ...makeBaseExpressionRule(),
-                makeErrorAssignRule,
-            ]);
-            const right = assignMultiClass(expressionTypeClass.getRight(), [
-                ...makeBaseExpressionRule(),
-                makeErrorAssignRule,
-            ]);
-            const operator = assignMultiClass(expressionTypeClass.getOperator(), [
-                makeStringAssignRule,
-                makeErrorAssignRule,
-            ]);
-            return {
-                type: expressionTypeClass.getType(),
-                sourceInfo: makeSourceInfo(expressionTypeClass),
-                left,
-                operator,
-                right,
-            };
-        },
-    };
+> = {
+    isValid: (target: unknown) => isTargetTypeClass(target, isBitExpressionTypeClass),
+    construct: (expressionTypeClass: BitExpressionTypeClass) => {
+        const left = assignMultiClass(expressionTypeClass.getLeft(), [
+            ...makeBaseExpressionAssignRules,
+            makeErrorAssignRule,
+        ]);
+        const right = assignMultiClass(expressionTypeClass.getRight(), [
+            ...makeBaseExpressionAssignRules,
+            makeErrorAssignRule,
+        ]);
+        const operator = assignMultiClass(expressionTypeClass.getOperator(), [
+            makeStringAssignRule,
+            makeErrorAssignRule,
+        ]);
+        return {
+            type: expressionTypeClass.getType(),
+            sourceInfo: makeSourceInfo(expressionTypeClass),
+            left,
+            operator,
+            right,
+        };
+    },
 };
 
-export type BitNotExpressionType = CommonType & {
+export type BitNotExpressionType = CommonType<'bitNotExpression'> & {
     left: ValueRuleValue<BaseExpressionType>;
     operator: ValueRuleValue<string>;
     right: ValueRuleValue<BaseExpressionType>;
 };
 
-export const isBitNotExpressionType = typia.createIs<BitNotExpressionType>();
+export const isBitNotExpressionType = (value: unknown): value is BitNotExpressionType => {
+    return isCommonType(value) && value.type === 'bitNotExpression';
+};
 
-export const makeBitNotExpressionRule = (): AssignForValueRule<
+export const makeBitNotExpressionAssignRule: AssignForValueRule<
     BitNotExpressionTypeClass,
     BitNotExpressionType
-> => {
-    return {
-        isValid: (target: unknown) => isTargetTypeClass(target, isBitNotExpressionTypeClass),
-        construct: (expressionTypeClass: BitNotExpressionTypeClass) => {
-            const left = assignMultiClass(expressionTypeClass.getLeft(), [
-                ...makeBaseExpressionRule(),
-                makeErrorAssignRule,
-            ]);
-            const right = assignMultiClass(expressionTypeClass.getRight(), [
-                ...makeBaseExpressionRule(),
-                makeErrorAssignRule,
-            ]);
-            const operator = assignMultiClass(expressionTypeClass.getOperator(), [
-                makeStringAssignRule,
-                makeErrorAssignRule,
-            ]);
-            return {
-                type: expressionTypeClass.getType(),
-                sourceInfo: makeSourceInfo(expressionTypeClass),
-                left,
-                operator,
-                right,
-            };
-        },
-    };
+> = {
+    isValid: (target: unknown) => isTargetTypeClass(target, isBitNotExpressionTypeClass),
+    construct: (expressionTypeClass: BitNotExpressionTypeClass) => {
+        const left = assignMultiClass(expressionTypeClass.getLeft(), [
+            ...makeBaseExpressionAssignRules,
+            makeErrorAssignRule,
+        ]);
+        const right = assignMultiClass(expressionTypeClass.getRight(), [
+            ...makeBaseExpressionAssignRules,
+            makeErrorAssignRule,
+        ]);
+        const operator = assignMultiClass(expressionTypeClass.getOperator(), [
+            makeStringAssignRule,
+            makeErrorAssignRule,
+        ]);
+        return {
+            type: expressionTypeClass.getType(),
+            sourceInfo: makeSourceInfo(expressionTypeClass),
+            left,
+            operator,
+            right,
+        };
+    },
 };
 
-export type BitOrExpressionType = CommonType & {
+export type BitOrExpressionType = CommonType<'bitOrExpression'> & {
     left: ValueRuleValue<BaseExpressionType>;
     operator: ValueRuleValue<string>;
     right: ValueRuleValue<BaseExpressionType>;
 };
 
-export const isBitOrExpressionType = typia.createIs<BitOrExpressionType>();
-
-export const makeBitOrExpressionRule = (): AssignForValueRule<
-    BitOrExpressionTypeClass,
-    BitOrExpressionType
-> => {
-    return {
-        isValid: (target: unknown) => isTargetTypeClass(target, isBitOrExpressionTypeClass),
-        construct: (expressionTypeClass: BitOrExpressionTypeClass) => {
-            const left = assignMultiClass(expressionTypeClass.getLeft(), [
-                ...makeBaseExpressionRule(),
-                makeErrorAssignRule,
-            ]);
-            const right = assignMultiClass(expressionTypeClass.getRight(), [
-                ...makeBaseExpressionRule(),
-                makeErrorAssignRule,
-            ]);
-            const operator = assignMultiClass(expressionTypeClass.getOperator(), [
-                makeStringAssignRule,
-                makeErrorAssignRule,
-            ]);
-            return {
-                type: expressionTypeClass.getType(),
-                sourceInfo: makeSourceInfo(expressionTypeClass),
-                left,
-                operator,
-                right,
-            };
-        },
-    };
+export const isBitOrExpressionType = (value: unknown): value is BitOrExpressionType => {
+    return isCommonType(value) && value.type === 'bitOrExpression';
 };
 
-export type BoundExpressionType = CommonType & {
+export const makeBitOrExpressionAssignRule: AssignForValueRule<
+    BitOrExpressionTypeClass,
+    BitOrExpressionType
+> = {
+    isValid: (target: unknown) => isTargetTypeClass(target, isBitOrExpressionTypeClass),
+    construct: (expressionTypeClass: BitOrExpressionTypeClass) => {
+        const left = assignMultiClass(expressionTypeClass.getLeft(), [
+            ...makeBaseExpressionAssignRules,
+            makeErrorAssignRule,
+        ]);
+        const right = assignMultiClass(expressionTypeClass.getRight(), [
+            ...makeBaseExpressionAssignRules,
+            makeErrorAssignRule,
+        ]);
+        const operator = assignMultiClass(expressionTypeClass.getOperator(), [
+            makeStringAssignRule,
+            makeErrorAssignRule,
+        ]);
+        return {
+            type: expressionTypeClass.getType(),
+            sourceInfo: makeSourceInfo(expressionTypeClass),
+            left,
+            operator,
+            right,
+        };
+    },
+};
+
+export type BoundExpressionType = CommonType<'boundExpression'> & {
     value: ValueRuleValue<BaseExpressionType>;
 };
 
-export const isBoundExpressionType = typia.createIs<BoundExpressionType>();
-
-export const makeBoundExpressionRule = (): AssignForValueRule<
-    BoundExpressionTypeClass,
-    BoundExpressionType
-> => {
-    return {
-        isValid: (target: unknown) => isTargetTypeClass(target, isBoundExpressionTypeClass),
-        construct: (expressionTypeClass: BoundExpressionTypeClass) => {
-            const value = assignMultiClass(expressionTypeClass.getValue(), [
-                ...makeBaseExpressionRule(),
-                makeErrorAssignRule,
-            ]);
-            return {
-                type: expressionTypeClass.getType(),
-                sourceInfo: makeSourceInfo(expressionTypeClass),
-                value,
-            };
-        },
-    };
+export const isBoundExpressionType = (value: unknown): value is BoundExpressionType => {
+    return isCommonType(value) && value.type === 'boundExpression';
 };
 
-export type CastExpressionType = CommonType & {
+export const makeBoundExpressionAssignRule: AssignForValueRule<
+    BoundExpressionTypeClass,
+    BoundExpressionType
+> = {
+    isValid: (target: unknown) => isTargetTypeClass(target, isBoundExpressionTypeClass),
+    construct: (expressionTypeClass: BoundExpressionTypeClass) => {
+        const value = assignMultiClass(expressionTypeClass.getValue(), [
+            ...makeBaseExpressionAssignRules,
+            makeErrorAssignRule,
+        ]);
+        return {
+            type: expressionTypeClass.getType(),
+            sourceInfo: makeSourceInfo(expressionTypeClass),
+            value,
+        };
+    },
+};
+
+export type CastExpressionType = CommonType<'castExpression'> & {
     value: ValueRuleValue<BaseExpressionType>;
     valueType: ValueRuleValue<TypeRefType>;
 };
 
-export const isCastExpressionType = typia.createIs<CastExpressionType>();
+export const isCastExpressionType = (value: unknown): value is CastExpressionType => {
+    return isCommonType(value) && value.type === 'castExpression';
+};
 
-export const makeCastExpressionRule = (): AssignForValueRule<
+export const makeCastExpressionAssignRule: AssignForValueRule<
     CastExpressionTypeClass,
     CastExpressionType
-> => {
-    return {
-        isValid: (target: unknown) => isTargetTypeClass(target, isCastExpressionTypeClass),
-        construct: (expressionTypeClass: CastExpressionTypeClass) => {
-            const value = assignMultiClass(expressionTypeClass.getValue(), [
-                ...makeBaseExpressionRule(),
-                makeErrorAssignRule,
-            ]);
-            const valueType = assignMultiClass(expressionTypeClass.getValueType(), [
-                makeTypeRefRule(),
-                makeErrorAssignRule,
-            ]);
+> = {
+    isValid: (target: unknown) => isTargetTypeClass(target, isCastExpressionTypeClass),
+    construct: (expressionTypeClass: CastExpressionTypeClass) => {
+        const value = assignMultiClass(expressionTypeClass.getValue(), [
+            ...makeBaseExpressionAssignRules,
+            makeErrorAssignRule,
+        ]);
+        const valueType = assignMultiClass(expressionTypeClass.getValueType(), [
+            makeTypeRefAssignRule,
+            makeErrorAssignRule,
+        ]);
 
-            return {
-                type: expressionTypeClass.getType(),
-                sourceInfo: makeSourceInfo(expressionTypeClass),
-                value,
-                valueType,
-            };
-        },
-    };
+        return {
+            type: expressionTypeClass.getType(),
+            sourceInfo: makeSourceInfo(expressionTypeClass),
+            value,
+            valueType,
+        };
+    },
 };
 
-export type CmpExpressionType = CommonType & {
+export type CmpExpressionType = CommonType<'cmpExpression'> & {
     left: ValueRuleValue<BaseExpressionType>;
     operator: ValueRuleValue<string>;
     right: ValueRuleValue<BaseExpressionType>;
 };
 
-export const isCmpExpressionType = typia.createIs<CmpExpressionType>();
+export const isCmpExpressionType = (value: unknown): value is CmpExpressionType => {
+    return isCommonType(value) && value.type === 'cmpExpression';
+};
 
-export const makeCmpExpressionRule = (): AssignForValueRule<
+export const makeCmpExpressionAssignRule: AssignForValueRule<
     CmpExpressionTypeClass,
     CmpExpressionType
-> => {
-    return {
-        isValid: (target: unknown) => isTargetTypeClass(target, isCmpExpressionTypeClass),
-        construct: (expressionTypeClass: CmpExpressionTypeClass) => {
-            const left = assignMultiClass(expressionTypeClass.getLeft(), [
-                ...makeBaseExpressionRule(),
-                makeErrorAssignRule,
-            ]);
-            const right = assignMultiClass(expressionTypeClass.getRight(), [
-                ...makeBaseExpressionRule(),
-                makeErrorAssignRule,
-            ]);
-            const operator = assignMultiClass(expressionTypeClass.getOperator(), [
-                makeStringAssignRule,
-                makeErrorAssignRule,
-            ]);
-            return {
-                type: expressionTypeClass.getType(),
-                sourceInfo: makeSourceInfo(expressionTypeClass),
-                left,
-                operator,
-                right,
-            };
-        },
-    };
+> = {
+    isValid: (target: unknown) => isTargetTypeClass(target, isCmpExpressionTypeClass),
+    construct: (expressionTypeClass: CmpExpressionTypeClass) => {
+        const left = assignMultiClass(expressionTypeClass.getLeft(), [
+            ...makeBaseExpressionAssignRules,
+            makeErrorAssignRule,
+        ]);
+        const right = assignMultiClass(expressionTypeClass.getRight(), [
+            ...makeBaseExpressionAssignRules,
+            makeErrorAssignRule,
+        ]);
+        const operator = assignMultiClass(expressionTypeClass.getOperator(), [
+            makeStringAssignRule,
+            makeErrorAssignRule,
+        ]);
+        return {
+            type: expressionTypeClass.getType(),
+            sourceInfo: makeSourceInfo(expressionTypeClass),
+            left,
+            operator,
+            right,
+        };
+    },
 };
 
-export type CoalExpressionType = CommonType & {
+export type CoalExpressionType = CommonType<'coalExpression'> & {
     left: ValueRuleValue<BaseExpressionType>;
     operator: ValueRuleValue<string>;
     right: ValueRuleValue<BaseExpressionType>;
 };
 
-export const isCoalExpressionType = typia.createIs<CoalExpressionType>();
-
-export const makeCoalExpressionRule = (): AssignForValueRule<
-    CoalExpressionTypeClass,
-    CoalExpressionType
-> => {
-    return {
-        isValid: (target: unknown) => isTargetTypeClass(target, isCoalExpressionTypeClass),
-        construct: (expressionTypeClass: CoalExpressionTypeClass) => {
-            const left = assignMultiClass(expressionTypeClass.getLeft(), [
-                ...makeBaseExpressionRule(),
-                makeErrorAssignRule,
-            ]);
-            const right = assignMultiClass(expressionTypeClass.getRight(), [
-                ...makeBaseExpressionRule(),
-                makeErrorAssignRule,
-            ]);
-            const operator = assignMultiClass(expressionTypeClass.getOperator(), [
-                makeStringAssignRule,
-                makeErrorAssignRule,
-            ]);
-            return {
-                type: expressionTypeClass.getType(),
-                sourceInfo: makeSourceInfo(expressionTypeClass),
-                left,
-                operator,
-                right,
-            };
-        },
-    };
+export const isCoalExpressionType = (value: unknown): value is CoalExpressionType => {
+    return isCommonType(value) && value.type === 'coalExpression';
 };
 
-export type CondExpressionType = CommonType & {
+export const makeCoalExpressionAssignRule: AssignForValueRule<
+    CoalExpressionTypeClass,
+    CoalExpressionType
+> = {
+    isValid: (target: unknown) => isTargetTypeClass(target, isCoalExpressionTypeClass),
+    construct: (expressionTypeClass: CoalExpressionTypeClass) => {
+        const left = assignMultiClass(expressionTypeClass.getLeft(), [
+            ...makeBaseExpressionAssignRules,
+            makeErrorAssignRule,
+        ]);
+        const right = assignMultiClass(expressionTypeClass.getRight(), [
+            ...makeBaseExpressionAssignRules,
+            makeErrorAssignRule,
+        ]);
+        const operator = assignMultiClass(expressionTypeClass.getOperator(), [
+            makeStringAssignRule,
+            makeErrorAssignRule,
+        ]);
+        return {
+            type: expressionTypeClass.getType(),
+            sourceInfo: makeSourceInfo(expressionTypeClass),
+            left,
+            operator,
+            right,
+        };
+    },
+};
+
+export type CondExpressionType = CommonType<'condExpression'> & {
     condition: ValueRuleValue<BaseExpressionType>;
     trueValue: ValueRuleValue<BaseExpressionType>;
     falseValue: ValueRuleValue<BaseExpressionType>;
 };
 
-export const isCondExpressionType = typia.createIs<CondExpressionType>();
-
-export const makeCondExpressionRule = (): AssignForValueRule<
-    CondExpressionTypeClass,
-    CondExpressionType
-> => {
-    return {
-        isValid: (target: unknown) => isTargetTypeClass(target, isCondExpressionTypeClass),
-        construct: (expressionTypeClass: CondExpressionTypeClass) => {
-            const condition = assignMultiClass(expressionTypeClass.getCondition(), [
-                ...makeBaseExpressionRule(),
-                makeErrorAssignRule,
-            ]);
-            const trueValue = assignMultiClass(expressionTypeClass.getTrueValue(), [
-                ...makeBaseExpressionRule(),
-                makeErrorAssignRule,
-            ]);
-            const falseValue = assignMultiClass(expressionTypeClass.getFalseValue(), [
-                ...makeBaseExpressionRule(),
-                makeErrorAssignRule,
-            ]);
-
-            return {
-                type: expressionTypeClass.getType(),
-                sourceInfo: makeSourceInfo(expressionTypeClass),
-                condition,
-                trueValue,
-                falseValue,
-            };
-        },
-    };
+export const isCondExpressionType = (value: unknown): value is CondExpressionType => {
+    return isCommonType(value) && value.type === 'condExpression';
 };
 
-export type ConditionalExpressionType = CommonType & {
+export const makeCondExpressionAssignRule: AssignForValueRule<
+    CondExpressionTypeClass,
+    CondExpressionType
+> = {
+    isValid: (target: unknown) => isTargetTypeClass(target, isCondExpressionTypeClass),
+    construct: (expressionTypeClass: CondExpressionTypeClass) => {
+        const condition = assignMultiClass(expressionTypeClass.getCondition(), [
+            ...makeBaseExpressionAssignRules,
+            makeErrorAssignRule,
+        ]);
+        const trueValue = assignMultiClass(expressionTypeClass.getTrueValue(), [
+            ...makeBaseExpressionAssignRules,
+            makeErrorAssignRule,
+        ]);
+        const falseValue = assignMultiClass(expressionTypeClass.getFalseValue(), [
+            ...makeBaseExpressionAssignRules,
+            makeErrorAssignRule,
+        ]);
+
+        return {
+            type: expressionTypeClass.getType(),
+            sourceInfo: makeSourceInfo(expressionTypeClass),
+            condition,
+            trueValue,
+            falseValue,
+        };
+    },
+};
+
+export type ConditionalExpressionType = CommonType<'conditionalExpression'> & {
     value: ValueRuleValue<FieldExpressionType | LogicalExpressionType>;
 };
 
-export const isConditionalExpressionType = typia.createIs<ConditionalExpressionType>();
-
-export const makeConditionalExpressionRule = (): AssignForValueRule<
-    ConditionalExpressionTypeClass,
-    ConditionalExpressionType
-> => {
-    return {
-        isValid: (target: unknown) => isTargetTypeClass(target, isConditionalExpressionTypeClass),
-        construct: (expressionTypeClass: ConditionalExpressionTypeClass) => {
-            const value = assignMultiClass(expressionTypeClass.getValue(), [
-                makeFieldExpressionRule(),
-                makeLogicalExpressionRule(),
-                makeErrorAssignRule,
-            ]);
-            return {
-                type: expressionTypeClass.getType(),
-                sourceInfo: makeSourceInfo(expressionTypeClass),
-                value,
-            };
-        },
-    };
+export const isConditionalExpressionType = (value: unknown): value is ConditionalExpressionType => {
+    return isCommonType(value) && value.type === 'conditionalExpression';
 };
 
-export type DotExpressionType = CommonType & {
+export const makeConditionalExpressionAssignRule: AssignForValueRule<
+    ConditionalExpressionTypeClass,
+    ConditionalExpressionType
+> = {
+    isValid: (target: unknown) => isTargetTypeClass(target, isConditionalExpressionTypeClass),
+    construct: (expressionTypeClass: ConditionalExpressionTypeClass) => {
+        const value = assignMultiClass(expressionTypeClass.getValue(), [
+            makeFieldExpressionAssignRule,
+            makeLogicalExpressionAssignRule,
+            makeErrorAssignRule,
+        ]);
+        return {
+            type: expressionTypeClass.getType(),
+            sourceInfo: makeSourceInfo(expressionTypeClass),
+            value,
+        };
+    },
+};
+
+export type DotExpressionType = CommonType<'dotExpression'> & {
     left: ValueRuleValue<BaseExpressionType>;
     operator: ValueRuleValue<string>;
     right: ValueRuleValue<AnyIdType | DotMethodCallType>;
 };
 
-export const isDotExpressionType = typia.createIs<DotExpressionType>();
-
-export const makeDotExpressionRule = (): AssignForValueRule<
-    DotExpressionTypeClass,
-    DotExpressionType
-> => {
-    return {
-        isValid: (target: unknown) => isTargetTypeClass(target, isDotExpressionTypeClass),
-        construct: (expressiontypeClass: DotExpressionTypeClass) => {
-            const left = assignMultiClass(expressiontypeClass.getLeft(), [
-                ...makeBaseExpressionRule(),
-                makeErrorAssignRule,
-            ]);
-            const operator = assignMultiClass(expressiontypeClass.getOperator(), [
-                makeStringAssignRule,
-                makeErrorAssignRule,
-            ]);
-            const right = assignMultiClass(expressiontypeClass.getRight(), [
-                makeAnyIdRule(),
-                makeDotMethodCallRule(),
-                makeErrorAssignRule,
-            ]);
-            return {
-                type: expressiontypeClass.getType(),
-                sourceInfo: makeSourceInfo(expressiontypeClass),
-                left,
-                operator,
-                right,
-            };
-        },
-    };
+export const isDotExpressionType = (value: unknown): value is DotExpressionType => {
+    return isCommonType(value) && value.type === 'dotExpression';
 };
 
-export type EqualityExpressionType = CommonType & {
+export const makeDotExpressionAssignRule: AssignForValueRule<
+    DotExpressionTypeClass,
+    DotExpressionType
+> = {
+    isValid: (target: unknown) => isTargetTypeClass(target, isDotExpressionTypeClass),
+    construct: (expressiontypeClass: DotExpressionTypeClass) => {
+        const left = assignMultiClass(expressiontypeClass.getLeft(), [
+            ...makeBaseExpressionAssignRules,
+            makeErrorAssignRule,
+        ]);
+        const operator = assignMultiClass(expressiontypeClass.getOperator(), [
+            makeStringAssignRule,
+            makeErrorAssignRule,
+        ]);
+        const right = assignMultiClass(expressiontypeClass.getRight(), [
+            makeAnyIdAssignRule,
+            makeDotMethodCallAssignRule,
+            makeErrorAssignRule,
+        ]);
+        return {
+            type: expressiontypeClass.getType(),
+            sourceInfo: makeSourceInfo(expressiontypeClass),
+            left,
+            operator,
+            right,
+        };
+    },
+};
+
+export type EqualityExpressionType = CommonType<'equalityExpression'> & {
     left: ValueRuleValue<BaseExpressionType>;
     operator: ValueRuleValue<string>;
     right: ValueRuleValue<BaseExpressionType>;
 };
 
-export const isEqualityExpressionType = typia.createIs<EqualityExpressionType>();
-
-export const makeEqualityExpressionRule = (): AssignForValueRule<
-    EqualityExpressionTypeClass,
-    EqualityExpressionType
-> => {
-    return {
-        isValid: (target: unknown) => isTargetTypeClass(target, isEqualityExpressionTypeClass),
-        construct: (expressionTypeClass: EqualityExpressionTypeClass) => {
-            const left = assignMultiClass(expressionTypeClass.getLeft(), [
-                ...makeBaseExpressionRule(),
-                makeErrorAssignRule,
-            ]);
-            const right = assignMultiClass(expressionTypeClass.getRight(), [
-                ...makeBaseExpressionRule(),
-                makeErrorAssignRule,
-            ]);
-            const operator = assignMultiClass(expressionTypeClass.getOperator(), [
-                makeStringAssignRule,
-                makeErrorAssignRule,
-            ]);
-            return {
-                type: expressionTypeClass.getType(),
-                sourceInfo: makeSourceInfo(expressionTypeClass),
-                left,
-                operator,
-                right,
-            };
-        },
-    };
+export const isEqualityExpressionType = (value: unknown): value is EqualityExpressionType => {
+    return isCommonType(value) && value.type === 'equalityExpression';
 };
 
-export type FieldExpressionType = CommonType & {
+export const makeEqualityExpressionAssignRule: AssignForValueRule<
+    EqualityExpressionTypeClass,
+    EqualityExpressionType
+> = {
+    isValid: (target: unknown) => isTargetTypeClass(target, isEqualityExpressionTypeClass),
+    construct: (expressionTypeClass: EqualityExpressionTypeClass) => {
+        const left = assignMultiClass(expressionTypeClass.getLeft(), [
+            ...makeBaseExpressionAssignRules,
+            makeErrorAssignRule,
+        ]);
+        const right = assignMultiClass(expressionTypeClass.getRight(), [
+            ...makeBaseExpressionAssignRules,
+            makeErrorAssignRule,
+        ]);
+        const operator = assignMultiClass(expressionTypeClass.getOperator(), [
+            makeStringAssignRule,
+            makeErrorAssignRule,
+        ]);
+        return {
+            type: expressionTypeClass.getType(),
+            sourceInfo: makeSourceInfo(expressionTypeClass),
+            left,
+            operator,
+            right,
+        };
+    },
+};
+
+export type FieldExpressionType = CommonType<'fieldExpression'> & {
     left: ValueRuleValue<FieldNameType | SoqlFunctionType>;
     operator: ValueRuleValue<ComparisonOperatorType>;
     right: ValueRuleValue<ValueType>;
 };
 
-export const isFieldExpressionType = typia.createIs<FieldExpressionType>();
-
-export const makeFieldExpressionRule = (): AssignForValueRule<
-    FieldExpressionTypeClass,
-    FieldExpressionType
-> => {
-    return {
-        isValid: (target: unknown) => isTargetTypeClass(target, isFieldExpressionTypeClass),
-        construct: (expressionTypeClass: FieldExpressionTypeClass) => {
-            const left = assignMultiClass(expressionTypeClass.getLeft(), [
-                makeFieldNameRule(),
-                makeSoqlFunctionRule(),
-                makeErrorAssignRule,
-            ]);
-            const right = assignMultiClass(expressionTypeClass.getRight(), [
-                makeValueRule(),
-                makeErrorAssignRule,
-            ]);
-            const operator = assignMultiClass(expressionTypeClass.getOperator(), [
-                makeComparisonOperatorRule(),
-                makeErrorAssignRule,
-            ]);
-            return {
-                type: expressionTypeClass.getType(),
-                sourceInfo: makeSourceInfo(expressionTypeClass),
-                left,
-                operator,
-                right,
-            };
-        },
-    };
+export const isFieldExpressionType = (value: unknown): value is FieldExpressionType => {
+    return isCommonType(value) && value.type === 'fieldExpression';
 };
 
-export type FilteringExpressionType = CommonType & {
+export const makeFieldExpressionAssignRule: AssignForValueRule<
+    FieldExpressionTypeClass,
+    FieldExpressionType
+> = {
+    isValid: (target: unknown) => isTargetTypeClass(target, isFieldExpressionTypeClass),
+    construct: (expressionTypeClass: FieldExpressionTypeClass) => {
+        const left = assignMultiClass(expressionTypeClass.getLeft(), [
+            makeFieldNameAssignRule,
+            makeSoqlFunctionAssignRule,
+            makeErrorAssignRule,
+        ]);
+        const right = assignMultiClass(expressionTypeClass.getRight(), [
+            makeValueAssignRule,
+            makeErrorAssignRule,
+        ]);
+        const operator = assignMultiClass(expressionTypeClass.getOperator(), [
+            makeComparisonOperatorAssignRule,
+            makeErrorAssignRule,
+        ]);
+        return {
+            type: expressionTypeClass.getType(),
+            sourceInfo: makeSourceInfo(expressionTypeClass),
+            left,
+            operator,
+            right,
+        };
+    },
+};
+
+export type FilteringExpressionType = CommonType<'filteringExpression'> & {
     value: ValueRuleValue<DataCategorySelectionType>[];
 };
 
-export const isFilteringExpressionType = typia.createIs<FilteringExpressionType>();
-
-export const makeFilteringExpressionRule = (): AssignForValueRule<
-    FilteringExpressionTypeClass,
-    FilteringExpressionType
-> => {
-    return {
-        isValid: (target: unknown) => isTargetTypeClass(target, isFilteringExpressionTypeClass),
-        construct: (expressionTypeClass: FilteringExpressionTypeClass) => {
-            const value = expressionTypeClass
-                .getValue()
-                .map((v) =>
-                    assignMultiClass(v, [makeDataCategorySelectionRule(), makeErrorAssignRule]),
-                );
-            return {
-                type: expressionTypeClass.getType(),
-                sourceInfo: makeSourceInfo(expressionTypeClass),
-                value,
-            };
-        },
-    };
+export const isFilteringExpressionType = (value: unknown): value is FilteringExpressionType => {
+    return isCommonType(value) && value.type === 'filteringExpression';
 };
 
-export type InstanceOfExpressionType = CommonType & {
+export const makeFilteringExpressionAssignRule: AssignForValueRule<
+    FilteringExpressionTypeClass,
+    FilteringExpressionType
+> = {
+    isValid: (target: unknown) => isTargetTypeClass(target, isFilteringExpressionTypeClass),
+    construct: (expressionTypeClass: FilteringExpressionTypeClass) => {
+        const value = expressionTypeClass
+            .getValue()
+            .map((v) =>
+                assignMultiClass(v, [makeDataCategorySelectionAssignRule, makeErrorAssignRule]),
+            );
+        return {
+            type: expressionTypeClass.getType(),
+            sourceInfo: makeSourceInfo(expressionTypeClass),
+            value,
+        };
+    },
+};
+
+export type InstanceOfExpressionType = CommonType<'instanceOfExpression'> & {
     left: ValueRuleValue<BaseExpressionType>;
     operator: ValueRuleValue<string>;
     right: ValueRuleValue<TypeRefType>;
 };
 
-export const isInstanceOfExpressionType = typia.createIs<InstanceOfExpressionType>();
-
-export const makeInstanceOfExpressionRule = (): AssignForValueRule<
-    InstanceOfExpressionTypeClass,
-    InstanceOfExpressionType
-> => {
-    return {
-        isValid: (target: unknown) => isTargetTypeClass(target, isInstanceOfExpressionTypeClass),
-        construct: (expressionTypeClass: InstanceOfExpressionTypeClass) => {
-            const left = assignMultiClass(expressionTypeClass.getLeft(), [
-                ...makeBaseExpressionRule(),
-                makeErrorAssignRule,
-            ]);
-            const right = assignMultiClass(expressionTypeClass.getRight(), [
-                makeTypeRefRule(),
-                makeErrorAssignRule,
-            ]);
-            const operator = assignMultiClass(expressionTypeClass.getOperator(), [
-                makeStringAssignRule,
-                makeErrorAssignRule,
-            ]);
-            return {
-                type: expressionTypeClass.getType(),
-                sourceInfo: makeSourceInfo(expressionTypeClass),
-                left,
-                operator,
-                right,
-            };
-        },
-    };
+export const isInstanceOfExpressionType = (value: unknown): value is InstanceOfExpressionType => {
+    return isCommonType(value) && value.type === 'instanceOfExpression';
 };
 
-export type LogAndExpressionType = CommonType & {
+export const makeInstanceOfExpressionAssignRule: AssignForValueRule<
+    InstanceOfExpressionTypeClass,
+    InstanceOfExpressionType
+> = {
+    isValid: (target: unknown) => isTargetTypeClass(target, isInstanceOfExpressionTypeClass),
+    construct: (expressionTypeClass: InstanceOfExpressionTypeClass) => {
+        const left = assignMultiClass(expressionTypeClass.getLeft(), [
+            ...makeBaseExpressionAssignRules,
+            makeErrorAssignRule,
+        ]);
+        const right = assignMultiClass(expressionTypeClass.getRight(), [
+            makeTypeRefAssignRule,
+            makeErrorAssignRule,
+        ]);
+        const operator = assignMultiClass(expressionTypeClass.getOperator(), [
+            makeStringAssignRule,
+            makeErrorAssignRule,
+        ]);
+        return {
+            type: expressionTypeClass.getType(),
+            sourceInfo: makeSourceInfo(expressionTypeClass),
+            left,
+            operator,
+            right,
+        };
+    },
+};
+
+export type LogAndExpressionType = CommonType<'logAndExpression'> & {
     left: ValueRuleValue<BaseExpressionType>;
     operator: ValueRuleValue<string>;
     right: ValueRuleValue<BaseExpressionType>;
 };
 
-export const isLogAndExpressionType = typia.createIs<LogAndExpressionType>();
-
-export const makeLogAndExpressionRule = (): AssignForValueRule<
-    LogAndExpressionTypeClass,
-    LogAndExpressionType
-> => {
-    return {
-        isValid: (target: unknown) => isTargetTypeClass(target, isLogAndExpressionTypeClass),
-        construct: (expressionTypeClass: LogAndExpressionTypeClass) => {
-            const left = assignMultiClass(expressionTypeClass.getLeft(), [
-                ...makeBaseExpressionRule(),
-                makeErrorAssignRule,
-            ]);
-            const right = assignMultiClass(expressionTypeClass.getRight(), [
-                ...makeBaseExpressionRule(),
-                makeErrorAssignRule,
-            ]);
-            const operator = assignMultiClass(expressionTypeClass.getOperator(), [
-                makeStringAssignRule,
-                makeErrorAssignRule,
-            ]);
-            return {
-                type: expressionTypeClass.getType(),
-                sourceInfo: makeSourceInfo(expressionTypeClass),
-                left,
-                operator,
-                right,
-            };
-        },
-    };
+export const isLogAndExpressionType = (value: unknown): value is LogAndExpressionType => {
+    return isCommonType(value) && value.type === 'logAndExpression';
 };
 
-export type LogicalExpressionType = CommonType & {
+export const makeLogAndExpressionAssignRule: AssignForValueRule<
+    LogAndExpressionTypeClass,
+    LogAndExpressionType
+> = {
+    isValid: (target: unknown) => isTargetTypeClass(target, isLogAndExpressionTypeClass),
+    construct: (expressionTypeClass: LogAndExpressionTypeClass) => {
+        const left = assignMultiClass(expressionTypeClass.getLeft(), [
+            ...makeBaseExpressionAssignRules,
+            makeErrorAssignRule,
+        ]);
+        const right = assignMultiClass(expressionTypeClass.getRight(), [
+            ...makeBaseExpressionAssignRules,
+            makeErrorAssignRule,
+        ]);
+        const operator = assignMultiClass(expressionTypeClass.getOperator(), [
+            makeStringAssignRule,
+            makeErrorAssignRule,
+        ]);
+        return {
+            type: expressionTypeClass.getType(),
+            sourceInfo: makeSourceInfo(expressionTypeClass),
+            left,
+            operator,
+            right,
+        };
+    },
+};
+
+export type LogicalExpressionType = CommonType<'logicalExpression'> & {
     value: ValueRuleValue<ConditionalExpressionType>[];
     operator: string | null;
 };
 
-export const isLogicalExpressionType = typia.createIs<LogicalExpressionType>();
-
-export const makeLogicalExpressionRule = (): AssignForValueRule<
-    LogicalExpressionTypeClass,
-    LogicalExpressionType
-> => {
-    return {
-        isValid: (target: unknown) => isTargetTypeClass(target, isLogicalExpressionTypeClass),
-        construct: (expressionTypeClass: LogicalExpressionTypeClass) => {
-            const value = expressionTypeClass
-                .getValue()
-                .map((v) =>
-                    assignMultiClass(v, [makeConditionalExpressionRule(), makeErrorAssignRule]),
-                );
-            const operator = expressionTypeClass.getOperator();
-            return {
-                type: expressionTypeClass.getType(),
-                sourceInfo: makeSourceInfo(expressionTypeClass),
-                value,
-                operator,
-            };
-        },
-    };
+export const isLogicalExpressionType = (value: unknown): value is LogicalExpressionType => {
+    return isCommonType(value) && value.type === 'logicalExpression';
 };
 
-export type LogOrExpressionType = CommonType & {
+export const makeLogicalExpressionAssignRule: AssignForValueRule<
+    LogicalExpressionTypeClass,
+    LogicalExpressionType
+> = {
+    isValid: (target: unknown) => isTargetTypeClass(target, isLogicalExpressionTypeClass),
+    construct: (expressionTypeClass: LogicalExpressionTypeClass) => {
+        const value = expressionTypeClass
+            .getValue()
+            .map((v) =>
+                assignMultiClass(v, [makeConditionalExpressionAssignRule, makeErrorAssignRule]),
+            );
+        const operator = expressionTypeClass.getOperator();
+        return {
+            type: expressionTypeClass.getType(),
+            sourceInfo: makeSourceInfo(expressionTypeClass),
+            value,
+            operator,
+        };
+    },
+};
+
+export type LogOrExpressionType = CommonType<'logOrExpression'> & {
     left: ValueRuleValue<BaseExpressionType>;
     operator: ValueRuleValue<string>;
     right: ValueRuleValue<BaseExpressionType>;
 };
 
-export const isLogOrExpressionType = typia.createIs<LogOrExpressionType>();
-
-export const makeLogOrExpressionRule = (): AssignForValueRule<
-    LogOrExpressionTypeClass,
-    LogOrExpressionType
-> => {
-    return {
-        isValid: (target: unknown) => isTargetTypeClass(target, isLogOrExpressionTypeClass),
-        construct: (expressionTypeClass: LogOrExpressionTypeClass) => {
-            const left = assignMultiClass(expressionTypeClass.getLeft(), [
-                ...makeBaseExpressionRule(),
-                makeErrorAssignRule,
-            ]);
-            const right = assignMultiClass(expressionTypeClass.getRight(), [
-                ...makeBaseExpressionRule(),
-                makeErrorAssignRule,
-            ]);
-            const operator = assignMultiClass(expressionTypeClass.getOperator(), [
-                makeStringAssignRule,
-                makeErrorAssignRule,
-            ]);
-            return {
-                type: expressionTypeClass.getType(),
-                sourceInfo: makeSourceInfo(expressionTypeClass),
-                left,
-                operator,
-                right,
-            };
-        },
-    };
+export const isLogOrExpressionType = (value: unknown): value is LogOrExpressionType => {
+    return isCommonType(value) && value.type === 'logOrExpression';
 };
 
-export type MethodCallExpressionType = CommonType & {
+export const makeLogOrExpressionAssignRule: AssignForValueRule<
+    LogOrExpressionTypeClass,
+    LogOrExpressionType
+> = {
+    isValid: (target: unknown) => isTargetTypeClass(target, isLogOrExpressionTypeClass),
+    construct: (expressionTypeClass: LogOrExpressionTypeClass) => {
+        const left = assignMultiClass(expressionTypeClass.getLeft(), [
+            ...makeBaseExpressionAssignRules,
+            makeErrorAssignRule,
+        ]);
+        const right = assignMultiClass(expressionTypeClass.getRight(), [
+            ...makeBaseExpressionAssignRules,
+            makeErrorAssignRule,
+        ]);
+        const operator = assignMultiClass(expressionTypeClass.getOperator(), [
+            makeStringAssignRule,
+            makeErrorAssignRule,
+        ]);
+        return {
+            type: expressionTypeClass.getType(),
+            sourceInfo: makeSourceInfo(expressionTypeClass),
+            left,
+            operator,
+            right,
+        };
+    },
+};
+
+export type MethodCallExpressionType = CommonType<'methodCallExpression'> & {
     value: ValueRuleValue<MethodCallType>;
 };
 
-export const isMethodCallExpressionType = typia.createIs<MethodCallExpressionType>();
-
-export const makeMethodCallExpressionRule = (): AssignForValueRule<
-    MethodCallExpressionTypeClass,
-    MethodCallExpressionType
-> => {
-    return {
-        isValid: (target: unknown) => isTargetTypeClass(target, isMethodCallExpressionTypeClass),
-        construct: (expressiontypeClass: MethodCallExpressionTypeClass) => {
-            const value = assignMultiClass(expressiontypeClass.getValue(), [
-                makeMethodCallRule(),
-                makeErrorAssignRule,
-            ]);
-            return {
-                type: expressiontypeClass.getType(),
-                sourceInfo: makeSourceInfo(expressiontypeClass),
-                value,
-            };
-        },
-    };
+export const isMethodCallExpressionType = (value: unknown): value is MethodCallExpressionType => {
+    return isCommonType(value) && value.type === 'methodCallExpression';
 };
 
-export type NegExpressionType = CommonType & {
+export const makeMethodCallExpressionAssignRule: AssignForValueRule<
+    MethodCallExpressionTypeClass,
+    MethodCallExpressionType
+> = {
+    isValid: (target: unknown) => isTargetTypeClass(target, isMethodCallExpressionTypeClass),
+    construct: (expressiontypeClass: MethodCallExpressionTypeClass) => {
+        const value = assignMultiClass(expressiontypeClass.getValue(), [
+            makeMethodCallAssignRule,
+            makeErrorAssignRule,
+        ]);
+        return {
+            type: expressiontypeClass.getType(),
+            sourceInfo: makeSourceInfo(expressiontypeClass),
+            value,
+        };
+    },
+};
+
+export type NegExpressionType = CommonType<'negExpression'> & {
     value: ValueRuleValue<BaseExpressionType>;
     operator: ValueRuleValue<string>;
 };
 
-export const isNegExpressionType = typia.createIs<NegExpressionType>();
-
-export const makeNegExpressionRule = (): AssignForValueRule<
-    NegExpressionTypeClass,
-    NegExpressionType
-> => {
-    return {
-        isValid: (target: unknown) => isTargetTypeClass(target, isNegExpressionTypeClass),
-        construct: (expressionTypeClass: NegExpressionTypeClass) => {
-            const value = assignMultiClass(expressionTypeClass.getValue(), [
-                ...makeBaseExpressionRule(),
-                makeErrorAssignRule,
-            ]);
-            const operator = assignMultiClass(expressionTypeClass.getOperator(), [
-                makeStringAssignRule,
-                makeErrorAssignRule,
-            ]);
-            return {
-                type: expressionTypeClass.getType(),
-                sourceInfo: makeSourceInfo(expressionTypeClass),
-                value,
-                operator,
-            };
-        },
-    };
+export const isNegExpressionType = (value: unknown): value is NegExpressionType => {
+    return isCommonType(value) && value.type === 'negExpression';
 };
 
-export type NewExpressionType = CommonType & {
+export const makeNegExpressionAssignRule: AssignForValueRule<
+    NegExpressionTypeClass,
+    NegExpressionType
+> = {
+    isValid: (target: unknown) => isTargetTypeClass(target, isNegExpressionTypeClass),
+    construct: (expressionTypeClass: NegExpressionTypeClass) => {
+        const value = assignMultiClass(expressionTypeClass.getValue(), [
+            ...makeBaseExpressionAssignRules,
+            makeErrorAssignRule,
+        ]);
+        const operator = assignMultiClass(expressionTypeClass.getOperator(), [
+            makeStringAssignRule,
+            makeErrorAssignRule,
+        ]);
+        return {
+            type: expressionTypeClass.getType(),
+            sourceInfo: makeSourceInfo(expressionTypeClass),
+            value,
+            operator,
+        };
+    },
+};
+
+export type NewExpressionType = CommonType<'newExpression'> & {
     value: ValueRuleValue<CreatorType>;
 };
 
-export const isNewExpressionType = typia.createIs<NewExpressionType>();
-
-export const makeNewExpressionRule = (): AssignForValueRule<
-    NewExpressionTypeClass,
-    NewExpressionType
-> => {
-    return {
-        isValid: (target: unknown) => isTargetTypeClass(target, isNewExpressionTypeClass),
-        construct: (expressionTypeClass: NewExpressionTypeClass) => {
-            const value = assignMultiClass(expressionTypeClass.getValue(), [
-                makeCreatorRule(),
-                makeErrorAssignRule,
-            ]);
-            return {
-                type: expressionTypeClass.getType(),
-                sourceInfo: makeSourceInfo(expressionTypeClass),
-                value,
-            };
-        },
-    };
+export const isNewExpressionType = (value: unknown): value is NewExpressionType => {
+    return isCommonType(value) && value.type === 'newExpression';
 };
 
-export type ExpressionType = CommonType & {
+export const makeNewExpressionAssignRule: AssignForValueRule<
+    NewExpressionTypeClass,
+    NewExpressionType
+> = {
+    isValid: (target: unknown) => isTargetTypeClass(target, isNewExpressionTypeClass),
+    construct: (expressionTypeClass: NewExpressionTypeClass) => {
+        const value = assignMultiClass(expressionTypeClass.getValue(), [
+            makeCreatorAssignRule,
+            makeErrorAssignRule,
+        ]);
+        return {
+            type: expressionTypeClass.getType(),
+            sourceInfo: makeSourceInfo(expressionTypeClass),
+            value,
+        };
+    },
+};
+
+export type ExpressionType = CommonType<'expression'> & {
     value: ValueRuleValue<string>;
 };
 
-export const isExpressionType = typia.createIs<ExpressionType>();
+export const isExpressionType = (value: unknown): value is ExpressionType => {
+    return isCommonType(value) && value.type === 'expression';
+};
 
-export const makeExpressionRule = (): AssignForValueRule<
+export const makeExpressionAssignRule: AssignForValueRule<
     NormalExpressionTypeClass,
     ExpressionType
-> => {
-    return {
-        isValid: (target: unknown) => isTargetTypeClass(target, isNormalExpressionTypeClass),
-        construct: (expressionTypeClass: NormalExpressionTypeClass) => {
-            const value = assignMultiClass(expressionTypeClass.getValue(), [
-                makeStringAssignRule,
-                makeErrorAssignRule,
-            ]);
-            return {
-                type: expressionTypeClass.getType(),
-                sourceInfo: makeSourceInfo(expressionTypeClass),
-                value,
-            };
-        },
-    };
+> = {
+    isValid: (target: unknown) => isTargetTypeClass(target, isNormalExpressionTypeClass),
+    construct: (expressionTypeClass: NormalExpressionTypeClass) => {
+        const value = assignMultiClass(expressionTypeClass.getValue(), [
+            makeStringAssignRule,
+            makeErrorAssignRule,
+        ]);
+        return {
+            type: expressionTypeClass.getType(),
+            sourceInfo: makeSourceInfo(expressionTypeClass),
+            value,
+        };
+    },
 };
 
-export type ParExpressionType = CommonType & {
+export type ParExpressionType = CommonType<'parExpression'> & {
     value: ValueRuleValue<BaseExpressionType>;
 };
 
-export const isParExpressionType = typia.createIs<ParExpressionType>();
+export const isParExpressionType = (value: unknown): value is ParExpressionType => {
+    return isCommonType(value) && value.type === 'parExpression';
+};
 
-export const makeParExpressionRule = (): AssignForValueRule<
+export const makeParExpressionAssignRule: AssignForValueRule<
     ParExpressionTypeClass,
     ParExpressionType
-> => {
-    return {
-        isValid: (target: unknown) => isTargetTypeClass(target, isParExpressionTypeClass),
-        construct: (expressionTypeClass: ParExpressionTypeClass) => {
-            const value = assignMultiClass(expressionTypeClass.getValue(), [
-                ...makeBaseExpressionRule(),
-                makeErrorAssignRule,
-            ]);
-            return {
-                type: expressionTypeClass.getType(),
-                sourceInfo: makeSourceInfo(expressionTypeClass),
-                value,
-            };
-        },
-    };
+> = {
+    isValid: (target: unknown) => isTargetTypeClass(target, isParExpressionTypeClass),
+    construct: (expressionTypeClass: ParExpressionTypeClass) => {
+        const value = assignMultiClass(expressionTypeClass.getValue(), [
+            ...makeBaseExpressionAssignRules,
+            makeErrorAssignRule,
+        ]);
+        return {
+            type: expressionTypeClass.getType(),
+            sourceInfo: makeSourceInfo(expressionTypeClass),
+            value,
+        };
+    },
 };
 
-export type PostOpExpressionType = CommonType & {
+export type PostOpExpressionType = CommonType<'postOpExpression'> & {
     value: ValueRuleValue<BaseExpressionType>;
     operator: ValueRuleValue<string>;
 };
 
-export const isPostOpExpressionType = typia.createIs<PostOpExpressionType>();
+export const isPostOpExpressionType = (value: unknown): value is PostOpExpressionType => {
+    return isCommonType(value) && value.type === 'postOpExpression';
+};
 
-export const makePostOpExpressionRule = (): AssignForValueRule<
+export const makePostOpExpressionAssignRule: AssignForValueRule<
     PostOpExpressionTypeClass,
     PostOpExpressionType
-> => {
-    return {
-        isValid: (target: unknown) => isTargetTypeClass(target, isPostOpExpressionTypeClass),
-        construct: (expressionTypeClass: PostOpExpressionTypeClass) => {
-            const value = assignMultiClass(expressionTypeClass.getValue(), [
-                ...makeBaseExpressionRule(),
-                makeErrorAssignRule,
-            ]);
-            const operator = assignMultiClass(expressionTypeClass.getOperator(), [
-                makeStringAssignRule,
-                makeErrorAssignRule,
-            ]);
-            return {
-                type: expressionTypeClass.getType(),
-                sourceInfo: makeSourceInfo(expressionTypeClass),
-                value,
-                operator,
-            };
-        },
-    };
+> = {
+    isValid: (target: unknown) => isTargetTypeClass(target, isPostOpExpressionTypeClass),
+    construct: (expressionTypeClass: PostOpExpressionTypeClass) => {
+        const value = assignMultiClass(expressionTypeClass.getValue(), [
+            ...makeBaseExpressionAssignRules,
+            makeErrorAssignRule,
+        ]);
+        const operator = assignMultiClass(expressionTypeClass.getOperator(), [
+            makeStringAssignRule,
+            makeErrorAssignRule,
+        ]);
+        return {
+            type: expressionTypeClass.getType(),
+            sourceInfo: makeSourceInfo(expressionTypeClass),
+            value,
+            operator,
+        };
+    },
 };
 
-export type PreOpExpressionType = CommonType & {
+export type PreOpExpressionType = CommonType<'preOpExpression'> & {
     value: ValueRuleValue<BaseExpressionType>;
     operator: ValueRuleValue<string>;
 };
 
-export const isPreOpExpressionType = typia.createIs<PreOpExpressionType>();
-
-export const makePreOpExpressionRule = (): AssignForValueRule<
-    PreOpExpressionTypeClass,
-    PreOpExpressionType
-> => {
-    return {
-        isValid: (target: unknown) => isTargetTypeClass(target, isPreOpExpressionTypeClass),
-        construct: (expressionTypeClass: PreOpExpressionTypeClass) => {
-            const value = assignMultiClass(expressionTypeClass.getValue(), [
-                ...makeBaseExpressionRule(),
-                makeErrorAssignRule,
-            ]);
-            const operator = assignMultiClass(expressionTypeClass.getOperator(), [
-                makeStringAssignRule,
-                makeErrorAssignRule,
-            ]);
-            return {
-                type: expressionTypeClass.getType(),
-                sourceInfo: makeSourceInfo(expressionTypeClass),
-                value,
-                operator,
-            };
-        },
-    };
+export const isPreOpExpressionType = (value: unknown): value is PreOpExpressionType => {
+    return isCommonType(value) && value.type === 'preOpExpression';
 };
 
-export type PrimaryExpressionType = CommonType & {
+export const makePreOpExpressionAssignRule: AssignForValueRule<
+    PreOpExpressionTypeClass,
+    PreOpExpressionType
+> = {
+    isValid: (target: unknown) => isTargetTypeClass(target, isPreOpExpressionTypeClass),
+    construct: (expressionTypeClass: PreOpExpressionTypeClass) => {
+        const value = assignMultiClass(expressionTypeClass.getValue(), [
+            ...makeBaseExpressionAssignRules,
+            makeErrorAssignRule,
+        ]);
+        const operator = assignMultiClass(expressionTypeClass.getOperator(), [
+            makeStringAssignRule,
+            makeErrorAssignRule,
+        ]);
+        return {
+            type: expressionTypeClass.getType(),
+            sourceInfo: makeSourceInfo(expressionTypeClass),
+            value,
+            operator,
+        };
+    },
+};
+
+export type PrimaryExpressionType = CommonType<'primaryExpression'> & {
     value: ValueRuleValue<BasePrimaryType>;
 };
 
-export const isPrimaryExpressionType = typia.createIs<PrimaryExpressionType>();
-
-export const makePrimaryExpressionRule = (): AssignForValueRule<
-    PrimaryExpressionTypeClass,
-    PrimaryExpressionType
-> => {
-    return {
-        isValid: (target: unknown) => isTargetTypeClass(target, isPrimaryExpressionTypeClass),
-        construct: (expressionTypeClass: PrimaryExpressionTypeClass) => {
-            const value = assignMultiClass(expressionTypeClass.getValue(), [
-                ...makeBasePrimaryRule(),
-                makeErrorAssignRule,
-            ]);
-            return {
-                type: expressionTypeClass.getType(),
-                sourceInfo: makeSourceInfo(expressionTypeClass),
-                value,
-            };
-        },
-    };
+export const isPrimaryExpressionType = (value: unknown): value is PrimaryExpressionType => {
+    return isCommonType(value) && value.type === 'primaryExpression';
 };
 
-export type SubExpressionType = CommonType & {
+export const makePrimaryExpressionAssignRule: AssignForValueRule<
+    PrimaryExpressionTypeClass,
+    PrimaryExpressionType
+> = {
+    isValid: (target: unknown) => isTargetTypeClass(target, isPrimaryExpressionTypeClass),
+    construct: (expressionTypeClass: PrimaryExpressionTypeClass) => {
+        const value = assignMultiClass(expressionTypeClass.getValue(), [
+            ...makeBasePrimaryAssignRules,
+            makeErrorAssignRule,
+        ]);
+        return {
+            type: expressionTypeClass.getType(),
+            sourceInfo: makeSourceInfo(expressionTypeClass),
+            value,
+        };
+    },
+};
+
+export type SubExpressionType = CommonType<'subExpression'> & {
     value: ValueRuleValue<BaseExpressionType>;
 };
 
-export const isSubExpressionType = typia.createIs<SubExpressionType>();
-
-export const makeSubExpressionRule = (): AssignForValueRule<
-    SubExpressionTypeClass,
-    SubExpressionType
-> => {
-    return {
-        isValid: (target: unknown) => isTargetTypeClass(target, isSubExpressionTypeClass),
-        construct: (expressionTypeClass: SubExpressionTypeClass) => {
-            const value = assignMultiClass(expressionTypeClass.getValue(), [
-                ...makeBaseExpressionRule(),
-                makeErrorAssignRule,
-            ]);
-            return {
-                type: expressionTypeClass.getType(),
-                sourceInfo: makeSourceInfo(expressionTypeClass),
-                value,
-            };
-        },
-    };
+export const isSubExpressionType = (value: unknown): value is SubExpressionType => {
+    return isCommonType(value) && value.type === 'subExpression';
 };
 
-export type WhereConditionalExpressionType = CommonType & {
+export const makeSubExpressionAssignRule: AssignForValueRule<
+    SubExpressionTypeClass,
+    SubExpressionType
+> = {
+    isValid: (target: unknown) => isTargetTypeClass(target, isSubExpressionTypeClass),
+    construct: (expressionTypeClass: SubExpressionTypeClass) => {
+        const value = assignMultiClass(expressionTypeClass.getValue(), [
+            ...makeBaseExpressionAssignRules,
+            makeErrorAssignRule,
+        ]);
+        return {
+            type: expressionTypeClass.getType(),
+            sourceInfo: makeSourceInfo(expressionTypeClass),
+            value,
+        };
+    },
+};
+
+export type WhereConditionalExpressionType = CommonType<'whereConditionalExpression'> & {
     value: ValueRuleValue<WhereFieldExpressionType | WhereLogicalExpressionType>;
 };
 
-export const isWhereConditionalExpressionType = typia.createIs<WhereConditionalExpressionType>();
-
-export const makeWhereConditionalExpressionRule = (): AssignForValueRule<
-    WhereConditionalExpressionTypeClass,
-    WhereConditionalExpressionType
-> => {
-    return {
-        isValid: (target: unknown) =>
-            isTargetTypeClass(target, isWhereConditionalExpressionTypeClass),
-        construct: (expressionTypeClass: WhereConditionalExpressionTypeClass) => {
-            const value = assignMultiClass(expressionTypeClass.getValue(), [
-                makeWhereFieldExpressionRule(),
-                makeWhereLogicalExpressionRule(),
-                makeErrorAssignRule,
-            ]);
-            return {
-                type: expressionTypeClass.getType(),
-                sourceInfo: makeSourceInfo(expressionTypeClass),
-                value,
-            };
-        },
-    };
+export const isWhereConditionalExpressionType = (
+    value: unknown,
+): value is WhereConditionalExpressionType => {
+    return isCommonType(value) && value.type === 'whereConditionalExpression';
 };
 
-export type WhereFieldExpressionType = CommonType & {
+export const makeWhereConditionalExpressionAssignRule: AssignForValueRule<
+    WhereConditionalExpressionTypeClass,
+    WhereConditionalExpressionType
+> = {
+    isValid: (target: unknown) => isTargetTypeClass(target, isWhereConditionalExpressionTypeClass),
+    construct: (expressionTypeClass: WhereConditionalExpressionTypeClass) => {
+        const value = assignMultiClass(expressionTypeClass.getValue(), [
+            makeWhereFieldExpressionAssignRule,
+            makeWhereLogicalExpressionAssignRule,
+            makeErrorAssignRule,
+        ]);
+        return {
+            type: expressionTypeClass.getType(),
+            sourceInfo: makeSourceInfo(expressionTypeClass),
+            value,
+        };
+    },
+};
+
+export type WhereFieldExpressionType = CommonType<'whereFieldExpression'> & {
     left: ValueRuleValue<string | FieldExpressionType>;
     operator: ValueRuleValue<ComparisonOperatorType | null>;
     right: ValueRuleValue<ValueType | null>;
 };
 
-export const isWhereFieldExpressionType = typia.createIs<WhereFieldExpressionType>();
-
-export const makeWhereFieldExpressionRule = (): AssignForValueRule<
-    WhereFieldExpressionTypeClass,
-    WhereFieldExpressionType
-> => {
-    return {
-        isValid: (target: unknown) => isTargetTypeClass(target, isWhereFieldExpressionTypeClass),
-        construct: (expressionTypeClass: WhereFieldExpressionTypeClass) => {
-            const left = assignMultiClass(expressionTypeClass.getLeft(), [
-                makeStringAssignRule,
-                makeFieldExpressionRule(),
-                makeErrorAssignRule,
-            ]);
-            const right = assignMultiClass(expressionTypeClass.getRight(), [
-                makeValueRule(),
-                makeErrorAssignRule,
-                makeNullAssignRule,
-            ]);
-            const operator = assignMultiClass(expressionTypeClass.getOperator(), [
-                makeComparisonOperatorRule(),
-                makeErrorAssignRule,
-                makeNullAssignRule,
-            ]);
-            return {
-                type: expressionTypeClass.getType(),
-                sourceInfo: makeSourceInfo(expressionTypeClass),
-                left,
-                operator,
-                right,
-            };
-        },
-    };
+export const isWhereFieldExpressionType = (value: unknown): value is WhereFieldExpressionType => {
+    return isCommonType(value) && value.type === 'whereFieldExpression';
 };
 
-export type WhereLogicalExpressionType = CommonType & {
+export const makeWhereFieldExpressionAssignRule: AssignForValueRule<
+    WhereFieldExpressionTypeClass,
+    WhereFieldExpressionType
+> = {
+    isValid: (target: unknown) => isTargetTypeClass(target, isWhereFieldExpressionTypeClass),
+    construct: (expressionTypeClass: WhereFieldExpressionTypeClass) => {
+        const left = assignMultiClass(expressionTypeClass.getLeft(), [
+            makeStringAssignRule,
+            makeFieldExpressionAssignRule,
+            makeErrorAssignRule,
+        ]);
+        const right = assignMultiClass(expressionTypeClass.getRight(), [
+            makeValueAssignRule,
+            makeErrorAssignRule,
+            makeNullAssignRule,
+        ]);
+        const operator = assignMultiClass(expressionTypeClass.getOperator(), [
+            makeComparisonOperatorAssignRule,
+            makeErrorAssignRule,
+            makeNullAssignRule,
+        ]);
+        return {
+            type: expressionTypeClass.getType(),
+            sourceInfo: makeSourceInfo(expressionTypeClass),
+            left,
+            operator,
+            right,
+        };
+    },
+};
+
+export type WhereLogicalExpressionType = CommonType<'whereLogicalExpression'> & {
     value: ValueRuleValue<WhereConditionalExpressionType>[];
     operator: string | null;
 };
 
-export const isWhereLogicalExpressionType = typia.createIs<WhereLogicalExpressionType>();
+export const isWhereLogicalExpressionType = (
+    value: unknown,
+): value is WhereLogicalExpressionType => {
+    return isCommonType(value) && value.type === 'whereLogicalExpression';
+};
 
-export const makeWhereLogicalExpressionRule = (): AssignForValueRule<
+export const makeWhereLogicalExpressionAssignRule: AssignForValueRule<
     WhereLogicalExpressionTypeClass,
     WhereLogicalExpressionType
-> => {
-    return {
-        isValid: (target: unknown) => isTargetTypeClass(target, isWhereLogicalExpressionTypeClass),
-        construct: (expressionTypeClass: WhereLogicalExpressionTypeClass) => {
-            const value = expressionTypeClass
-                .getValue()
-                .map((v) =>
-                    assignMultiClass(v, [
-                        makeWhereConditionalExpressionRule(),
-                        makeErrorAssignRule,
-                    ]),
-                );
-            const operator = expressionTypeClass.getOperator();
-            return {
-                type: expressionTypeClass.getType(),
-                sourceInfo: makeSourceInfo(expressionTypeClass),
-                value,
-                operator,
-            };
-        },
-    };
+> = {
+    isValid: (target: unknown) => isTargetTypeClass(target, isWhereLogicalExpressionTypeClass),
+    construct: (expressionTypeClass: WhereLogicalExpressionTypeClass) => {
+        const value = expressionTypeClass
+            .getValue()
+            .map((v) =>
+                assignMultiClass(v, [
+                    makeWhereConditionalExpressionAssignRule,
+                    makeErrorAssignRule,
+                ]),
+            );
+        const operator = expressionTypeClass.getOperator();
+        return {
+            type: expressionTypeClass.getType(),
+            sourceInfo: makeSourceInfo(expressionTypeClass),
+            value,
+            operator,
+        };
+    },
 };
 
 export type BaseExpressionType =
@@ -1270,33 +1272,30 @@ export type BaseExpressionType =
     | PostOpExpressionType
     | PreOpExpressionType;
 
-export const makeBaseExpressionRule = () => {
-    return [
-        makeExpressionRule(),
-        makePrimaryExpressionRule(),
-        makeDotExpressionRule(),
-        makeMethodCallExpressionRule(),
-        makeNewExpressionRule(),
-        makeCastExpressionRule(),
-        makeSubExpressionRule(),
-        makeArrayExpressionRule(),
-        makeArth1ExpressionRule(),
-        makeArth2ExpressionRule(),
-        makeAssignExpressionRule(),
-        makeBitAndExpressionRule(),
-        makeBitExpressionRule(),
-        makeBitOrExpressionRule(),
-        makeBitNotExpressionRule(),
-        makeCmpExpressionRule(),
-        makeCoalExpressionRule(),
-        makeCondExpressionRule(),
-        makeEqualityExpressionRule(),
-        makeInstanceOfExpressionRule(),
-        makeLogAndExpressionRule(),
-        makeLogOrExpressionRule(),
-        makeNegExpressionRule(),
-        makePostOpExpressionRule(),
-        makePreOpExpressionRule(),
-    ];
-};
-
+export const makeBaseExpressionAssignRules = [
+    makeExpressionAssignRule,
+    makePrimaryExpressionAssignRule,
+    makeDotExpressionAssignRule,
+    makeMethodCallExpressionAssignRule,
+    makeNewExpressionAssignRule,
+    makeCastExpressionAssignRule,
+    makeSubExpressionAssignRule,
+    makeArrayExpressionAssignRule,
+    makeArth1ExpressionAssignRule,
+    makeArth2ExpressionAssignRule,
+    makeAssignExpressionAssignRule,
+    makeBitAndExpressionAssignRule,
+    makeBitExpressionAssignRule,
+    makeBitOrExpressionAssignRule,
+    makeBitNotExpressionAssignRule,
+    makeCmpExpressionAssignRule,
+    makeCoalExpressionAssignRule,
+    makeCondExpressionAssignRule,
+    makeEqualityExpressionAssignRule,
+    makeInstanceOfExpressionAssignRule,
+    makeLogAndExpressionAssignRule,
+    makeLogOrExpressionAssignRule,
+    makeNegExpressionAssignRule,
+    makePostOpExpressionAssignRule,
+    makePreOpExpressionAssignRule,
+] as const;

@@ -22,7 +22,10 @@ type NormalModifierValueType =
     | 'INHERITED_SHARING'
     | AnnotationTypeClass;
 
-export class NormalModifierTypeClass extends ModifierTypeClass<NormalModifierValueType> {
+export class NormalModifierTypeClass extends ModifierTypeClass<
+    'modifier',
+    NormalModifierValueType
+> {
     private constructor(value: NormalModifierValueType | ErrorTypeClass) {
         super('modifier', value);
     }
@@ -93,8 +96,7 @@ export class NormalModifierTypeClass extends ModifierTypeClass<NormalModifierVal
 }
 
 export const isNormalModifierType = (
-    target: CommonTypeClass,
+    target: CommonTypeClass<string>,
 ): target is NormalModifierTypeClass => {
     return target instanceof NormalModifierTypeClass;
 };
-

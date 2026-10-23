@@ -11,6 +11,7 @@ import { TypeRefTypeClass, TypeVisitor, isTypeRefType } from '../typeVisitor';
 import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
 
 export class InstanceOfExpressionTypeClass extends DoubleOperatorExpressionTypeClass<
+    'instanceOfExpression',
     BasedExpressionTypeClass,
     string,
     TypeRefTypeClass
@@ -39,7 +40,7 @@ export class InstanceOfExpressionTypeClass extends DoubleOperatorExpressionTypeC
 }
 
 export const isInstanceOfExpressionType = (
-    target: CommonTypeClass,
+    target: CommonTypeClass<string>,
 ): target is InstanceOfExpressionTypeClass => {
     return target instanceof InstanceOfExpressionTypeClass;
 };

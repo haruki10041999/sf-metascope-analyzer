@@ -1,5 +1,3 @@
-import typia from 'typia';
-
 import {
     AccessLevelTypeClass,
     BreakStatementTypeClass,
@@ -50,7 +48,8 @@ import {
 } from '../../apex_IR';
 
 import {
-    ErrorInfo,
+    isCommonType,
+    ErrorType,
     CommonType,
     AssignForValueRule,
     ValueRuleValue,
@@ -62,34 +61,41 @@ import {
     makeStringAssignRule,
 } from './commons';
 import {
-    makeForControlRule,
-    makeWhenControlRule,
+    makeForControlAssignRule,
+    makeWhenControlAssignRule,
     ForControlType,
     WhenControlType,
 } from './control';
-import { makeLocalVariableDeclarationRule, LocalVariableDeclarationType } from './declaration';
 import {
-    makeBaseExpressionRule,
-    makeParExpressionRule,
+    makeLocalVariableDeclarationAssignRule,
+    LocalVariableDeclarationType,
+} from './declaration';
+import {
+    makeBaseExpressionAssignRules,
+    makeParExpressionAssignRule,
     BaseExpressionType,
     ParExpressionType,
 } from './expression';
-import { makeExpressionListRule, ExpressionListType } from './list';
-import { makeQualifiedNameRule, QualifiedNameType } from './name';
-import { makeBlockRule, makeFinallyBlockRule, BlockType, FinallyBlockType } from './block';
-import { makeCatchClauseRule, CatchClauseType } from './clause';
+import { makeExpressionListAssignRule, ExpressionListType } from './list';
+import { makeQualifiedNameAssignRule, QualifiedNameType } from './name';
+import {
+    makeBlockAssignRule,
+    makeFinallyBlockAssignRule,
+    BlockType,
+    FinallyBlockType,
+} from './block';
+import { makeCatchClauseAssignRule, CatchClauseType } from './clause';
 
-export type AccessLevelType = CommonType & {
+export type AccessLevelType = CommonType<'accessLevel'> & {
     value: ValueRuleValue<string>;
 };
 
-export const isAccessLevelType = typia.createIs<AccessLevelType>();
+export const isAccessLevelType = (value: unknown): value is AccessLevelType => {
+    return isCommonType(value) && value.type === 'accessLevel';
+};
 
-export const makeAccessLevelRule = (): AssignForValueRule<
-    AccessLevelTypeClass,
-    AccessLevelType
-> => {
-    return {
+export const makeAccessLevelAssignRule: AssignForValueRule<AccessLevelTypeClass, AccessLevelType> =
+    {
         isValid: (target: unknown) => isTargetTypeClass(target, isAccessLevelTypeClass),
         construct: (statementTypeClass: AccessLevelTypeClass) => {
             const value = assignMultiClass(statementTypeClass.getValue(), [
@@ -103,184 +109,183 @@ export const makeAccessLevelRule = (): AssignForValueRule<
             };
         },
     };
-};
 
-export type BreakStatementType = CommonType & {
+export type BreakStatementType = CommonType<'breakStatement'> & {
     value: ValueRuleValue<string>;
 };
 
-export const isBreakStatementType = typia.createIs<BreakStatementType>();
+export const isBreakStatementType = (value: unknown): value is BreakStatementType => {
+    return isCommonType(value) && value.type === 'breakStatement';
+};
 
-export const makeBreakStatementRule = (): AssignForValueRule<
+export const makeBreakStatementAssignRule: AssignForValueRule<
     BreakStatementTypeClass,
     BreakStatementType
-> => {
-    return {
-        isValid: (target: unknown) => isTargetTypeClass(target, isBreakStatementTypeClass),
-        construct: (statementTypeClass: BreakStatementTypeClass) => {
-            const value = assignMultiClass(statementTypeClass.getValue(), [
-                makeStringAssignRule,
-                makeErrorAssignRule,
-            ]);
-            return {
-                type: statementTypeClass.getType(),
-                sourceInfo: makeSourceInfo(statementTypeClass),
-                value,
-            };
-        },
-    };
+> = {
+    isValid: (target: unknown) => isTargetTypeClass(target, isBreakStatementTypeClass),
+    construct: (statementTypeClass: BreakStatementTypeClass) => {
+        const value = assignMultiClass(statementTypeClass.getValue(), [
+            makeStringAssignRule,
+            makeErrorAssignRule,
+        ]);
+        return {
+            type: statementTypeClass.getType(),
+            sourceInfo: makeSourceInfo(statementTypeClass),
+            value,
+        };
+    },
 };
 
-export type ContinueStatementType = CommonType & {
+export type ContinueStatementType = CommonType<'continueStatement'> & {
     value: ValueRuleValue<string>;
 };
 
-export const isContinueStatementType = typia.createIs<ContinueStatementType>();
-
-export const makeContinueStatementRule = (): AssignForValueRule<
-    ContinueStatementTypeClass,
-    ContinueStatementType
-> => {
-    return {
-        isValid: (target: unknown) => isTargetTypeClass(target, isContinueStatementTypeClass),
-        construct: (statementTypeClass: ContinueStatementTypeClass) => {
-            const value = assignMultiClass(statementTypeClass.getValue(), [
-                makeStringAssignRule,
-                makeErrorAssignRule,
-            ]);
-            return {
-                type: statementTypeClass.getType(),
-                sourceInfo: makeSourceInfo(statementTypeClass),
-                value,
-            };
-        },
-    };
+export const isContinueStatementType = (value: unknown): value is ContinueStatementType => {
+    return isCommonType(value) && value.type === 'continueStatement';
 };
 
-export type DeleteStatementType = CommonType & {
+export const makeContinueStatementAssignRule: AssignForValueRule<
+    ContinueStatementTypeClass,
+    ContinueStatementType
+> = {
+    isValid: (target: unknown) => isTargetTypeClass(target, isContinueStatementTypeClass),
+    construct: (statementTypeClass: ContinueStatementTypeClass) => {
+        const value = assignMultiClass(statementTypeClass.getValue(), [
+            makeStringAssignRule,
+            makeErrorAssignRule,
+        ]);
+        return {
+            type: statementTypeClass.getType(),
+            sourceInfo: makeSourceInfo(statementTypeClass),
+            value,
+        };
+    },
+};
+
+export type DeleteStatementType = CommonType<'deleteStatement'> & {
     value: ValueRuleValue<BaseExpressionType>;
     accessLevel: ValueRuleValue<AccessLevelType | null>;
 };
 
-export const isDeleteStatementType = typia.createIs<DeleteStatementType>();
-
-export const makeDeleteStatementRule = (): AssignForValueRule<
-    DeleteStatementTypeClass,
-    DeleteStatementType
-> => {
-    return {
-        isValid: (target: unknown) => isTargetTypeClass(target, isDeleteStatementTypeClass),
-        construct: (statementTypeClass: DeleteStatementTypeClass) => {
-            const value = assignMultiClass(statementTypeClass.getValue(), [
-                ...makeBaseExpressionRule(),
-                makeErrorAssignRule,
-            ]);
-            const accessLevel = assignMultiClass(statementTypeClass.getAccessLevel(), [
-                makeAccessLevelRule(),
-                makeErrorAssignRule,
-                makeNullAssignRule,
-            ]);
-            return {
-                type: statementTypeClass.getType(),
-                sourceInfo: makeSourceInfo(statementTypeClass),
-                value,
-                accessLevel,
-            };
-        },
-    };
+export const isDeleteStatementType = (value: unknown): value is DeleteStatementType => {
+    return isCommonType(value) && value.type === 'deleteStatement';
 };
 
-export type DoWhileStatementType = CommonType & {
+export const makeDeleteStatementAssignRule: AssignForValueRule<
+    DeleteStatementTypeClass,
+    DeleteStatementType
+> = {
+    isValid: (target: unknown) => isTargetTypeClass(target, isDeleteStatementTypeClass),
+    construct: (statementTypeClass: DeleteStatementTypeClass) => {
+        const value = assignMultiClass(statementTypeClass.getValue(), [
+            ...makeBaseExpressionAssignRules,
+            makeErrorAssignRule,
+        ]);
+        const accessLevel = assignMultiClass(statementTypeClass.getAccessLevel(), [
+            makeAccessLevelAssignRule,
+            makeErrorAssignRule,
+            makeNullAssignRule,
+        ]);
+        return {
+            type: statementTypeClass.getType(),
+            sourceInfo: makeSourceInfo(statementTypeClass),
+            value,
+            accessLevel,
+        };
+    },
+};
+
+export type DoWhileStatementType = CommonType<'doWhileStatement'> & {
     value: ValueRuleValue<ParExpressionType>;
     block: ValueRuleValue<BlockType>;
 };
 
-export const isDoWhileStatementType = typia.createIs<DoWhileStatementType>();
-
-export const makeDoWhileStatementRule = (): AssignForValueRule<
-    DoWhileStatementTypeClass,
-    DoWhileStatementType
-> => {
-    return {
-        isValid: (target: unknown) => isTargetTypeClass(target, isDoWhileStatementTypeClass),
-        construct: (statementTypeClass: DoWhileStatementTypeClass) => {
-            const value = assignMultiClass(statementTypeClass.getValue(), [
-                makeParExpressionRule(),
-                makeErrorAssignRule,
-            ]);
-            const block = assignMultiClass(statementTypeClass.getBlock(), [
-                makeBlockRule(),
-                makeErrorAssignRule,
-            ]);
-            return {
-                type: statementTypeClass.getType(),
-                sourceInfo: makeSourceInfo(statementTypeClass),
-                value,
-                block,
-            };
-        },
-    };
+export const isDoWhileStatementType = (value: unknown): value is DoWhileStatementType => {
+    return isCommonType(value) && value.type === 'doWhileStatement';
 };
 
-export type ExpressionStatementType = CommonType & {
+export const makeDoWhileStatementAssignRule: AssignForValueRule<
+    DoWhileStatementTypeClass,
+    DoWhileStatementType
+> = {
+    isValid: (target: unknown) => isTargetTypeClass(target, isDoWhileStatementTypeClass),
+    construct: (statementTypeClass: DoWhileStatementTypeClass) => {
+        const value = assignMultiClass(statementTypeClass.getValue(), [
+            makeParExpressionAssignRule,
+            makeErrorAssignRule,
+        ]);
+        const block = assignMultiClass(statementTypeClass.getBlock(), [
+            makeBlockAssignRule,
+            makeErrorAssignRule,
+        ]);
+        return {
+            type: statementTypeClass.getType(),
+            sourceInfo: makeSourceInfo(statementTypeClass),
+            value,
+            block,
+        };
+    },
+};
+
+export type ExpressionStatementType = CommonType<'expressionStatement'> & {
     value: ValueRuleValue<BaseExpressionType>;
 };
 
-export const isExpressionStatementType = typia.createIs<ExpressionStatementType>();
-
-export const makeExpressionStatementRule = (): AssignForValueRule<
-    ExpressionStatementTypeClass,
-    ExpressionStatementType
-> => {
-    return {
-        isValid: (target: unknown) => isTargetTypeClass(target, isExpressionStatementTypeClass),
-        construct: (statementTypeClass: ExpressionStatementTypeClass) => {
-            const value = assignMultiClass(statementTypeClass.getValue(), [
-                ...makeBaseExpressionRule(),
-                makeErrorAssignRule,
-            ]);
-            return {
-                type: statementTypeClass.getType(),
-                sourceInfo: makeSourceInfo(statementTypeClass),
-                value,
-            };
-        },
-    };
+export const isExpressionStatementType = (value: unknown): value is ExpressionStatementType => {
+    return isCommonType(value) && value.type === 'expressionStatement';
 };
 
-export type ForStatementType = CommonType & {
+export const makeExpressionStatementAssignRule: AssignForValueRule<
+    ExpressionStatementTypeClass,
+    ExpressionStatementType
+> = {
+    isValid: (target: unknown) => isTargetTypeClass(target, isExpressionStatementTypeClass),
+    construct: (statementTypeClass: ExpressionStatementTypeClass) => {
+        const value = assignMultiClass(statementTypeClass.getValue(), [
+            ...makeBaseExpressionAssignRules,
+            makeErrorAssignRule,
+        ]);
+        return {
+            type: statementTypeClass.getType(),
+            sourceInfo: makeSourceInfo(statementTypeClass),
+            value,
+        };
+    },
+};
+
+export type ForStatementType = CommonType<'forStatement'> & {
     value: ValueRuleValue<ForControlType>;
     block: ValueRuleValue<StatementType>;
 };
 
-export const isForStatementType = typia.createIs<ForStatementType>();
-
-export const makeForStatementRule = (): AssignForValueRule<
-    ForStatementTypeClass,
-    ForStatementType
-> => {
-    return {
-        isValid: (target: unknown) => isTargetTypeClass(target, isForStatementTypeClass),
-        construct: (statementTypeClass: ForStatementTypeClass) => {
-            const value = assignMultiClass(statementTypeClass.getValue(), [
-                makeForControlRule(),
-                makeErrorAssignRule,
-            ]);
-            const block = assignMultiClass(statementTypeClass.getBlock(), [
-                makeStatementRule(),
-                makeErrorAssignRule,
-            ]);
-            return {
-                type: statementTypeClass.getType(),
-                sourceInfo: makeSourceInfo(statementTypeClass),
-                value,
-                block,
-            };
-        },
-    };
+export const isForStatementType = (value: unknown): value is ForStatementType => {
+    return isCommonType(value) && value.type === 'forStatement';
 };
 
-export type IfStatementType = CommonType & {
+export const makeForStatementAssignRule: AssignForValueRule<
+    ForStatementTypeClass,
+    ForStatementType
+> = {
+    isValid: (target: unknown) => isTargetTypeClass(target, isForStatementTypeClass),
+    construct: (statementTypeClass: ForStatementTypeClass) => {
+        const value = assignMultiClass(statementTypeClass.getValue(), [
+            makeForControlAssignRule,
+            makeErrorAssignRule,
+        ]);
+        const block = assignMultiClass(statementTypeClass.getBlock(), [
+            makeStatementAssignRule,
+            makeErrorAssignRule,
+        ]);
+        return {
+            type: statementTypeClass.getType(),
+            sourceInfo: makeSourceInfo(statementTypeClass),
+            value,
+            block,
+        };
+    },
+};
+
+export type IfStatementType = CommonType<'ifStatement'> & {
     value: ValueRuleValue<
         {
             condition: ValueRuleValue<ParExpressionType | string>;
@@ -289,13 +294,12 @@ export type IfStatementType = CommonType & {
     >;
 };
 
-export const isIfStatementType = typia.createIs<IfStatementType>();
+export const isIfStatementType = (value: unknown): value is IfStatementType => {
+    return isCommonType(value) && value.type === 'ifStatement';
+};
 
-export const makeIfStatementRule = (): AssignForValueRule<
-    IfStatementTypeClass,
-    IfStatementType
-> => {
-    return {
+export const makeIfStatementAssignRule: AssignForValueRule<IfStatementTypeClass, IfStatementType> =
+    {
         isValid: (target: unknown) => isTargetTypeClass(target, isIfStatementTypeClass),
         construct: (statementTypeClass: IfStatementTypeClass) => {
             const value = assignMultiClass(statementTypeClass.getValue(), [
@@ -326,11 +330,11 @@ export const makeIfStatementRule = (): AssignForValueRule<
                         return values.map((v) => {
                             const condition = assignMultiClass(v.value, [
                                 makeStringAssignRule,
-                                makeParExpressionRule(),
+                                makeParExpressionAssignRule,
                                 makeErrorAssignRule,
                             ]);
                             const block = assignMultiClass(v.block, [
-                                makeStatementRule(),
+                                makeStatementAssignRule,
                                 makeErrorAssignRule,
                             ]);
                             return { condition, block };
@@ -346,397 +350,398 @@ export const makeIfStatementRule = (): AssignForValueRule<
             };
         },
     };
-};
 
-export type InsertStatementType = CommonType & {
+export type InsertStatementType = CommonType<'insertStatement'> & {
     value: ValueRuleValue<BaseExpressionType>;
     accessLevel: ValueRuleValue<AccessLevelType | null>;
 };
 
-export const isInsertStatementType = typia.createIs<InsertStatementType>();
+export const isInsertStatementType = (value: unknown): value is InsertStatementType => {
+    return isCommonType(value) && value.type === 'insertStatement';
+};
 
-export const makeInsertStatementRule = (): AssignForValueRule<
+export const makeInsertStatementAssignRule: AssignForValueRule<
     InsertStatementTypeClass,
     InsertStatementType
-> => {
-    return {
-        isValid: (target: unknown) => isTargetTypeClass(target, isInsertStatementTypeClass),
-        construct: (statementTypeClass: InsertStatementTypeClass) => {
-            const value = assignMultiClass(statementTypeClass.getValue(), [
-                ...makeBaseExpressionRule(),
-                makeErrorAssignRule,
-            ]);
-            const accessLevel = assignMultiClass(statementTypeClass.getAccessLevel(), [
-                makeAccessLevelRule(),
-                makeErrorAssignRule,
-                makeNullAssignRule,
-            ]);
-            return {
-                type: statementTypeClass.getType(),
-                sourceInfo: makeSourceInfo(statementTypeClass),
-                value,
-                accessLevel,
-            };
-        },
+> = {
+    isValid: (target: unknown) => isTargetTypeClass(target, isInsertStatementTypeClass),
+    construct: (statementTypeClass: InsertStatementTypeClass) => {
+        const value = assignMultiClass(statementTypeClass.getValue(), [
+            ...makeBaseExpressionAssignRules,
+            makeErrorAssignRule,
+        ]);
+        const accessLevel = assignMultiClass(statementTypeClass.getAccessLevel(), [
+            makeAccessLevelAssignRule,
+            makeErrorAssignRule,
+            makeNullAssignRule,
+        ]);
+        return {
+            type: statementTypeClass.getType(),
+            sourceInfo: makeSourceInfo(statementTypeClass),
+            value,
+            accessLevel,
+        };
+    },
+};
+
+export type LocalVariableDeclarationStatementType =
+    CommonType<'localVariableDeclarationStatement'> & {
+        value: ValueRuleValue<LocalVariableDeclarationType>;
     };
+
+export const isLocalVariableDeclarationStatementType = (
+    value: unknown,
+): value is LocalVariableDeclarationStatementType => {
+    return isCommonType(value) && value.type === 'localVariableDeclarationStatement';
 };
 
-export type LocalVariableDeclarationStatementType = CommonType & {
-    value: ValueRuleValue<LocalVariableDeclarationType>;
-};
-
-export const isLocalVariableDeclarationStatementType =
-    typia.createIs<LocalVariableDeclarationStatementType>();
-
-export const makeLocalVariableDeclarationStatementRule = (): AssignForValueRule<
+export const makeLocalVariableDeclarationStatementAssignRule: AssignForValueRule<
     LocalVariableDeclarationStatementTypeClass,
     LocalVariableDeclarationStatementType
-> => {
-    return {
-        isValid: (target: unknown) =>
-            isTargetTypeClass(target, isLocalVariableDeclarationStatementTypeClass),
-        construct: (statementTypeClass: LocalVariableDeclarationStatementTypeClass) => {
-            const value = assignMultiClass(statementTypeClass.getValue(), [
-                makeLocalVariableDeclarationRule(),
-                makeErrorAssignRule,
-            ]);
-            return {
-                type: statementTypeClass.getType(),
-                sourceInfo: makeSourceInfo(statementTypeClass),
-                value,
-            };
-        },
-    };
+> = {
+    isValid: (target: unknown) =>
+        isTargetTypeClass(target, isLocalVariableDeclarationStatementTypeClass),
+    construct: (statementTypeClass: LocalVariableDeclarationStatementTypeClass) => {
+        const value = assignMultiClass(statementTypeClass.getValue(), [
+            makeLocalVariableDeclarationAssignRule,
+            makeErrorAssignRule,
+        ]);
+        return {
+            type: statementTypeClass.getType(),
+            sourceInfo: makeSourceInfo(statementTypeClass),
+            value,
+        };
+    },
 };
 
-export type MergeStatementType = CommonType & {
+export type MergeStatementType = CommonType<'mergeStatement'> & {
     value: ValueRuleValue<BaseExpressionType>[];
     accessLevel: ValueRuleValue<AccessLevelType | null>;
 };
 
-export const isMergeStatementType = typia.createIs<MergeStatementType>();
-
-export const makeMergeStatementRule = (): AssignForValueRule<
-    MergeStatementTypeClass,
-    MergeStatementType
-> => {
-    return {
-        isValid: (target: unknown) => isTargetTypeClass(target, isMergeStatementTypeClass),
-        construct: (statementTypeClass: MergeStatementTypeClass) => {
-            const value = statementTypeClass
-                .getValue()
-                .map((v) =>
-                    assignMultiClass(v, [...makeBaseExpressionRule(), makeErrorAssignRule]),
-                );
-            const accessLevel = assignMultiClass(statementTypeClass.getAccessLevel(), [
-                makeAccessLevelRule(),
-                makeErrorAssignRule,
-                makeNullAssignRule,
-            ]);
-            return {
-                type: statementTypeClass.getType(),
-                sourceInfo: makeSourceInfo(statementTypeClass),
-                value,
-                accessLevel,
-            };
-        },
-    };
+export const isMergeStatementType = (value: unknown): value is MergeStatementType => {
+    return isCommonType(value) && value.type === 'mergeStatement';
 };
 
-export type ReturnStatementType = CommonType & {
+export const makeMergeStatementAssignRule: AssignForValueRule<
+    MergeStatementTypeClass,
+    MergeStatementType
+> = {
+    isValid: (target: unknown) => isTargetTypeClass(target, isMergeStatementTypeClass),
+    construct: (statementTypeClass: MergeStatementTypeClass) => {
+        const value = statementTypeClass
+            .getValue()
+            .map((v) =>
+                assignMultiClass(v, [...makeBaseExpressionAssignRules, makeErrorAssignRule]),
+            );
+        const accessLevel = assignMultiClass(statementTypeClass.getAccessLevel(), [
+            makeAccessLevelAssignRule,
+            makeErrorAssignRule,
+            makeNullAssignRule,
+        ]);
+        return {
+            type: statementTypeClass.getType(),
+            sourceInfo: makeSourceInfo(statementTypeClass),
+            value,
+            accessLevel,
+        };
+    },
+};
+
+export type ReturnStatementType = CommonType<'returnStatement'> & {
     value: ValueRuleValue<BaseExpressionType | null>;
 };
 
-export const isReturnStatementType = typia.createIs<ReturnStatementType>();
-
-export const makeReturnStatementRule = (): AssignForValueRule<
-    ReturnStatementTypeClass,
-    ReturnStatementType
-> => {
-    return {
-        isValid: (target: unknown) => isTargetTypeClass(target, isReturnStatementTypeClass),
-        construct: (statementTypeClass: ReturnStatementTypeClass) => {
-            const value = assignMultiClass(statementTypeClass.getValue(), [
-                ...makeBaseExpressionRule(),
-                makeErrorAssignRule,
-                makeNullAssignRule,
-            ]);
-            return {
-                type: statementTypeClass.getType(),
-                sourceInfo: makeSourceInfo(statementTypeClass),
-                value,
-            };
-        },
-    };
+export const isReturnStatementType = (value: unknown): value is ReturnStatementType => {
+    return isCommonType(value) && value.type === 'returnStatement';
 };
 
-export type RunAsStatementType = CommonType & {
+export const makeReturnStatementAssignRule: AssignForValueRule<
+    ReturnStatementTypeClass,
+    ReturnStatementType
+> = {
+    isValid: (target: unknown) => isTargetTypeClass(target, isReturnStatementTypeClass),
+    construct: (statementTypeClass: ReturnStatementTypeClass) => {
+        const value = assignMultiClass(statementTypeClass.getValue(), [
+            ...makeBaseExpressionAssignRules,
+            makeErrorAssignRule,
+            makeNullAssignRule,
+        ]);
+        return {
+            type: statementTypeClass.getType(),
+            sourceInfo: makeSourceInfo(statementTypeClass),
+            value,
+        };
+    },
+};
+
+export type RunAsStatementType = CommonType<'runAsStatement'> & {
     value: ValueRuleValue<ExpressionListType>;
     block: ValueRuleValue<BlockType>;
 };
 
-export const isRunAsStatementType = typia.createIs<RunAsStatementType>();
-
-export const makeRunAsStatementRule = (): AssignForValueRule<
-    RunAsStatementTypeClass,
-    RunAsStatementType
-> => {
-    return {
-        isValid: (target: unknown) => isTargetTypeClass(target, isRunAsStatementTypeClass),
-        construct: (statementTypeClass: RunAsStatementTypeClass) => {
-            const value = assignMultiClass(statementTypeClass.getValue(), [
-                makeExpressionListRule(),
-                makeErrorAssignRule,
-            ]);
-            const block = assignMultiClass(statementTypeClass.getBlock(), [
-                makeBlockRule(),
-                makeErrorAssignRule,
-            ]);
-            return {
-                type: statementTypeClass.getType(),
-                sourceInfo: makeSourceInfo(statementTypeClass),
-                value,
-                block,
-            };
-        },
-    };
+export const isRunAsStatementType = (value: unknown): value is RunAsStatementType => {
+    return isCommonType(value) && value.type === 'runAsStatement';
 };
 
-export type SwitchStatementType = CommonType & {
+export const makeRunAsStatementAssignRule: AssignForValueRule<
+    RunAsStatementTypeClass,
+    RunAsStatementType
+> = {
+    isValid: (target: unknown) => isTargetTypeClass(target, isRunAsStatementTypeClass),
+    construct: (statementTypeClass: RunAsStatementTypeClass) => {
+        const value = assignMultiClass(statementTypeClass.getValue(), [
+            makeExpressionListAssignRule,
+            makeErrorAssignRule,
+        ]);
+        const block = assignMultiClass(statementTypeClass.getBlock(), [
+            makeBlockAssignRule,
+            makeErrorAssignRule,
+        ]);
+        return {
+            type: statementTypeClass.getType(),
+            sourceInfo: makeSourceInfo(statementTypeClass),
+            value,
+            block,
+        };
+    },
+};
+
+export type SwitchStatementType = CommonType<'switchStatement'> & {
     value: ValueRuleValue<BaseExpressionType>;
     block: ValueRuleValue<WhenControlType>[];
 };
 
-export const isSwitchStatementType = typia.createIs<SwitchStatementType>();
-
-export const makeSwitchStatementRule = (): AssignForValueRule<
-    SwitchStatementTypeClass,
-    SwitchStatementType
-> => {
-    return {
-        isValid: (target: unknown) => isTargetTypeClass(target, isSwitchStatementTypeClass),
-        construct: (statementTypeClass: SwitchStatementTypeClass) => {
-            const value = assignMultiClass(statementTypeClass.getValue(), [
-                ...makeBaseExpressionRule(),
-                makeErrorAssignRule,
-            ]);
-            const block = statementTypeClass
-                .getBlocks()
-                .map((v) => assignMultiClass(v, [makeWhenControlRule(), makeErrorAssignRule]));
-
-            return {
-                type: statementTypeClass.getType(),
-                sourceInfo: makeSourceInfo(statementTypeClass),
-                value,
-                block,
-            };
-        },
-    };
+export const isSwitchStatementType = (value: unknown): value is SwitchStatementType => {
+    return isCommonType(value) && value.type === 'switchStatement';
 };
 
-export type ThrowStatementType = CommonType & {
+export const makeSwitchStatementAssignRule: AssignForValueRule<
+    SwitchStatementTypeClass,
+    SwitchStatementType
+> = {
+    isValid: (target: unknown) => isTargetTypeClass(target, isSwitchStatementTypeClass),
+    construct: (statementTypeClass: SwitchStatementTypeClass) => {
+        const value = assignMultiClass(statementTypeClass.getValue(), [
+            ...makeBaseExpressionAssignRules,
+            makeErrorAssignRule,
+        ]);
+        const block = statementTypeClass
+            .getBlocks()
+            .map((v) => assignMultiClass(v, [makeWhenControlAssignRule, makeErrorAssignRule]));
+
+        return {
+            type: statementTypeClass.getType(),
+            sourceInfo: makeSourceInfo(statementTypeClass),
+            value,
+            block,
+        };
+    },
+};
+
+export type ThrowStatementType = CommonType<'throwStatement'> & {
     value: ValueRuleValue<BaseExpressionType>;
 };
 
-export const isThrowStatementType = typia.createIs<ThrowStatementType>();
-
-export const makeThrowStatementRule = (): AssignForValueRule<
-    ThrowStatementTypeClass,
-    ThrowStatementType
-> => {
-    return {
-        isValid: (target: unknown) => isTargetTypeClass(target, isThrowStatementTypeClass),
-        construct: (statementTypeClass: ThrowStatementTypeClass) => {
-            const value = assignMultiClass(statementTypeClass.getValue(), [
-                ...makeBaseExpressionRule(),
-                makeErrorAssignRule,
-            ]);
-            return {
-                type: statementTypeClass.getType(),
-                sourceInfo: makeSourceInfo(statementTypeClass),
-                value,
-            };
-        },
-    };
+export const isThrowStatementType = (value: unknown): value is ThrowStatementType => {
+    return isCommonType(value) && value.type === 'throwStatement';
 };
 
-export type TryStatementType = CommonType & {
+export const makeThrowStatementAssignRule: AssignForValueRule<
+    ThrowStatementTypeClass,
+    ThrowStatementType
+> = {
+    isValid: (target: unknown) => isTargetTypeClass(target, isThrowStatementTypeClass),
+    construct: (statementTypeClass: ThrowStatementTypeClass) => {
+        const value = assignMultiClass(statementTypeClass.getValue(), [
+            ...makeBaseExpressionAssignRules,
+            makeErrorAssignRule,
+        ]);
+        return {
+            type: statementTypeClass.getType(),
+            sourceInfo: makeSourceInfo(statementTypeClass),
+            value,
+        };
+    },
+};
+
+export type TryStatementType = CommonType<'tryStatement'> & {
     block: ValueRuleValue<BlockType>;
     catchBlock: ValueRuleValue<CatchClauseType>[];
     finallyBlock: ValueRuleValue<FinallyBlockType | null>;
 };
 
-export const isTryStatementType = typia.createIs<TryStatementType>();
+export const isTryStatementType = (value: unknown): value is TryStatementType => {
+    return isCommonType(value) && value.type === 'tryStatement';
+};
 
-export const makeTryStatementRule = (): AssignForValueRule<
+export const makeTryStatementAssignRule: AssignForValueRule<
     TryStatementTypeClass,
     TryStatementType
-> => {
-    return {
-        isValid: (target: unknown) => isTargetTypeClass(target, isTryStatementTypeClass),
-        construct: (statementTypeClass: TryStatementTypeClass) => {
-            const block = assignMultiClass(statementTypeClass.getValue(), [
-                makeBlockRule(),
-                makeErrorAssignRule,
-            ]);
-            const catchBlock = statementTypeClass
-                .getCatchBlock()
-                .map((v) => assignMultiClass(v, [makeCatchClauseRule(), makeErrorAssignRule]));
-            const finallyBlock = assignMultiClass(statementTypeClass.getFinallyBlock(), [
-                makeFinallyBlockRule(),
-                makeErrorAssignRule,
-                makeNullAssignRule,
-            ]);
-            return {
-                type: statementTypeClass.getType(),
-                sourceInfo: makeSourceInfo(statementTypeClass),
-                block,
-                catchBlock,
-                finallyBlock,
-            };
-        },
-    };
+> = {
+    isValid: (target: unknown) => isTargetTypeClass(target, isTryStatementTypeClass),
+    construct: (statementTypeClass: TryStatementTypeClass) => {
+        const block = assignMultiClass(statementTypeClass.getValue(), [
+            makeBlockAssignRule,
+            makeErrorAssignRule,
+        ]);
+        const catchBlock = statementTypeClass
+            .getCatchBlock()
+            .map((v) => assignMultiClass(v, [makeCatchClauseAssignRule, makeErrorAssignRule]));
+        const finallyBlock = assignMultiClass(statementTypeClass.getFinallyBlock(), [
+            makeFinallyBlockAssignRule,
+            makeErrorAssignRule,
+            makeNullAssignRule,
+        ]);
+        return {
+            type: statementTypeClass.getType(),
+            sourceInfo: makeSourceInfo(statementTypeClass),
+            block,
+            catchBlock,
+            finallyBlock,
+        };
+    },
 };
 
-export type UndeleteStatementType = CommonType & {
+export type UndeleteStatementType = CommonType<'undeleteStatement'> & {
     value: ValueRuleValue<BaseExpressionType>;
     accessLevel: ValueRuleValue<AccessLevelType | null>;
 };
 
-export const isUndeleteStatementType = typia.createIs<UndeleteStatementType>();
+export const isUndeleteStatementType = (value: unknown): value is UndeleteStatementType => {
+    return isCommonType(value) && value.type === 'undeleteStatement';
+};
 
-export const makeUndeleteStatementRule = (): AssignForValueRule<
+export const makeUndeleteStatementAssignRule: AssignForValueRule<
     UndeleteStatementTypeClass,
     UndeleteStatementType
-> => {
-    return {
-        isValid: (target: unknown) => isTargetTypeClass(target, isUndeleteStatementTypeClass),
-        construct: (statementTypeClass: UndeleteStatementTypeClass) => {
-            const value = assignMultiClass(statementTypeClass.getValue(), [
-                ...makeBaseExpressionRule(),
-                makeErrorAssignRule,
-            ]);
-            const accessLevel = assignMultiClass(statementTypeClass.getAccessLevel(), [
-                makeAccessLevelRule(),
-                makeErrorAssignRule,
-                makeNullAssignRule,
-            ]);
-            return {
-                type: statementTypeClass.getType(),
-                sourceInfo: makeSourceInfo(statementTypeClass),
-                value,
-                accessLevel,
-            };
-        },
-    };
+> = {
+    isValid: (target: unknown) => isTargetTypeClass(target, isUndeleteStatementTypeClass),
+    construct: (statementTypeClass: UndeleteStatementTypeClass) => {
+        const value = assignMultiClass(statementTypeClass.getValue(), [
+            ...makeBaseExpressionAssignRules,
+            makeErrorAssignRule,
+        ]);
+        const accessLevel = assignMultiClass(statementTypeClass.getAccessLevel(), [
+            makeAccessLevelAssignRule,
+            makeErrorAssignRule,
+            makeNullAssignRule,
+        ]);
+        return {
+            type: statementTypeClass.getType(),
+            sourceInfo: makeSourceInfo(statementTypeClass),
+            value,
+            accessLevel,
+        };
+    },
 };
 
-export type UpdateStatementType = CommonType & {
+export type UpdateStatementType = CommonType<'updateStatement'> & {
     value: ValueRuleValue<BaseExpressionType>;
     accessLevel: ValueRuleValue<AccessLevelType | null>;
 };
 
-export const isUpdateStatementType = typia.createIs<UpdateStatementType>();
-
-export const makeUpdateStatementRule = (): AssignForValueRule<
-    UpdateStatementTypeClass,
-    UpdateStatementType
-> => {
-    return {
-        isValid: (target: unknown) => isTargetTypeClass(target, isUpdateStatementTypeClass),
-        construct: (statementTypeClass: UpdateStatementTypeClass) => {
-            const value = assignMultiClass(statementTypeClass.getValue(), [
-                ...makeBaseExpressionRule(),
-                makeErrorAssignRule,
-            ]);
-            const accessLevel = assignMultiClass(statementTypeClass.getAccessLevel(), [
-                makeAccessLevelRule(),
-                makeErrorAssignRule,
-                makeNullAssignRule,
-            ]);
-            return {
-                type: statementTypeClass.getType(),
-                sourceInfo: makeSourceInfo(statementTypeClass),
-                value,
-                accessLevel,
-            };
-        },
-    };
+export const isUpdateStatementType = (value: unknown): value is UpdateStatementType => {
+    return isCommonType(value) && value.type === 'updateStatement';
 };
 
-export type UpsertStatementType = CommonType & {
+export const makeUpdateStatementAssignRule: AssignForValueRule<
+    UpdateStatementTypeClass,
+    UpdateStatementType
+> = {
+    isValid: (target: unknown) => isTargetTypeClass(target, isUpdateStatementTypeClass),
+    construct: (statementTypeClass: UpdateStatementTypeClass) => {
+        const value = assignMultiClass(statementTypeClass.getValue(), [
+            ...makeBaseExpressionAssignRules,
+            makeErrorAssignRule,
+        ]);
+        const accessLevel = assignMultiClass(statementTypeClass.getAccessLevel(), [
+            makeAccessLevelAssignRule,
+            makeErrorAssignRule,
+            makeNullAssignRule,
+        ]);
+        return {
+            type: statementTypeClass.getType(),
+            sourceInfo: makeSourceInfo(statementTypeClass),
+            value,
+            accessLevel,
+        };
+    },
+};
+
+export type UpsertStatementType = CommonType<'upsertStatement'> & {
     value: ValueRuleValue<BaseExpressionType>;
     accessLevel: ValueRuleValue<AccessLevelType | null>;
     key: ValueRuleValue<QualifiedNameType | null>;
 };
 
-export const isUpsertStatementType = typia.createIs<UpsertStatementType>();
-
-export const makeUpsertStatementRule = (): AssignForValueRule<
-    UpsertStatementTypeClass,
-    UpsertStatementType
-> => {
-    return {
-        isValid: (target: unknown) => isTargetTypeClass(target, isUpsertStatementTypeClass),
-        construct: (statementTypeClass: UpsertStatementTypeClass) => {
-            const value = assignMultiClass(statementTypeClass.getValue(), [
-                ...makeBaseExpressionRule(),
-                makeErrorAssignRule,
-            ]);
-            const accessLevel = assignMultiClass(statementTypeClass.getAccessLevel(), [
-                makeAccessLevelRule(),
-                makeErrorAssignRule,
-                makeNullAssignRule,
-            ]);
-            const key = assignMultiClass(statementTypeClass.getKey(), [
-                makeQualifiedNameRule(),
-                makeErrorAssignRule,
-                makeNullAssignRule,
-            ]);
-            return {
-                type: statementTypeClass.getType(),
-                sourceInfo: makeSourceInfo(statementTypeClass),
-                value,
-                accessLevel,
-                key,
-            };
-        },
-    };
+export const isUpsertStatementType = (value: unknown): value is UpsertStatementType => {
+    return isCommonType(value) && value.type === 'upsertStatement';
 };
 
-export type WhileStatementType = CommonType & {
+export const makeUpsertStatementAssignRule: AssignForValueRule<
+    UpsertStatementTypeClass,
+    UpsertStatementType
+> = {
+    isValid: (target: unknown) => isTargetTypeClass(target, isUpsertStatementTypeClass),
+    construct: (statementTypeClass: UpsertStatementTypeClass) => {
+        const value = assignMultiClass(statementTypeClass.getValue(), [
+            ...makeBaseExpressionAssignRules,
+            makeErrorAssignRule,
+        ]);
+        const accessLevel = assignMultiClass(statementTypeClass.getAccessLevel(), [
+            makeAccessLevelAssignRule,
+            makeErrorAssignRule,
+            makeNullAssignRule,
+        ]);
+        const key = assignMultiClass(statementTypeClass.getKey(), [
+            makeQualifiedNameAssignRule,
+            makeErrorAssignRule,
+            makeNullAssignRule,
+        ]);
+        return {
+            type: statementTypeClass.getType(),
+            sourceInfo: makeSourceInfo(statementTypeClass),
+            value,
+            accessLevel,
+            key,
+        };
+    },
+};
+
+export type WhileStatementType = CommonType<'whileStatement'> & {
     value: ValueRuleValue<ParExpressionType>;
     block: ValueRuleValue<StatementType>;
 };
 
-export const isWhileStatementType = typia.createIs<WhileStatementType>();
-
-export const makeWhileStatementRule = (): AssignForValueRule<
-    WhileStatementTypeClass,
-    WhileStatementType
-> => {
-    return {
-        isValid: (target: unknown) => isTargetTypeClass(target, isWhileStatementTypeClass),
-        construct: (statementTypeClass: WhileStatementTypeClass) => {
-            const value = assignMultiClass(statementTypeClass.getValue(), [
-                makeParExpressionRule(),
-                makeErrorAssignRule,
-            ]);
-            const block = assignMultiClass(statementTypeClass.getBlock(), [
-                makeStatementRule(),
-                makeErrorAssignRule,
-            ]);
-            return {
-                type: statementTypeClass.getType(),
-                sourceInfo: makeSourceInfo(statementTypeClass),
-                value,
-                block,
-            };
-        },
-    };
+export const isWhileStatementType = (value: unknown): value is WhileStatementType => {
+    return isCommonType(value) && value.type === 'whileStatement';
 };
 
-export type StatementType = CommonType & {
+export const makeWhileStatementAssignRule: AssignForValueRule<
+    WhileStatementTypeClass,
+    WhileStatementType
+> = {
+    isValid: (target: unknown) => isTargetTypeClass(target, isWhileStatementTypeClass),
+    construct: (statementTypeClass: WhileStatementTypeClass) => {
+        const value = assignMultiClass(statementTypeClass.getValue(), [
+            makeParExpressionAssignRule,
+            makeErrorAssignRule,
+        ]);
+        const block = assignMultiClass(statementTypeClass.getBlock(), [
+            makeStatementAssignRule,
+            makeErrorAssignRule,
+        ]);
+        return {
+            type: statementTypeClass.getType(),
+            sourceInfo: makeSourceInfo(statementTypeClass),
+            value,
+            block,
+        };
+    },
+};
+
+export type StatementType = CommonType<'statement'> & {
     value: ValueRuleValue<
         | BlockType
         | IfStatementType
@@ -761,36 +766,35 @@ export type StatementType = CommonType & {
     >;
 };
 
-export const isStatementType = typia.createIs<StatementType>();
+export const isStatementType = (value: unknown): value is StatementType => {
+    return isCommonType(value) && value.type === 'statement';
+};
 
-export const makeStatementRule = (): AssignForValueRule<
-    NormalStatementTypeClass,
-    StatementType
-> => {
-    return {
+export const makeStatementAssignRule: AssignForValueRule<NormalStatementTypeClass, StatementType> =
+    {
         isValid: (target: unknown) => isTargetTypeClass(target, isNormalStatementType),
         construct: (statementTypeClass: NormalStatementTypeClass) => {
             const value = assignMultiClass(statementTypeClass.getValue(), [
-                makeBlockRule(),
-                makeIfStatementRule(),
-                makeSwitchStatementRule(),
-                makeForStatementRule(),
-                makeWhileStatementRule(),
-                makeDoWhileStatementRule(),
-                makeTryStatementRule(),
-                makeReturnStatementRule(),
-                makeThrowStatementRule(),
-                makeBreakStatementRule(),
-                makeContinueStatementRule(),
-                makeInsertStatementRule(),
-                makeUpdateStatementRule(),
-                makeDeleteStatementRule(),
-                makeUndeleteStatementRule(),
-                makeUpsertStatementRule(),
-                makeMergeStatementRule(),
-                makeRunAsStatementRule(),
-                makeLocalVariableDeclarationStatementRule(),
-                makeExpressionStatementRule(),
+                makeBlockAssignRule,
+                makeIfStatementAssignRule,
+                makeSwitchStatementAssignRule,
+                makeForStatementAssignRule,
+                makeWhileStatementAssignRule,
+                makeDoWhileStatementAssignRule,
+                makeTryStatementAssignRule,
+                makeReturnStatementAssignRule,
+                makeThrowStatementAssignRule,
+                makeBreakStatementAssignRule,
+                makeContinueStatementAssignRule,
+                makeInsertStatementAssignRule,
+                makeUpdateStatementAssignRule,
+                makeDeleteStatementAssignRule,
+                makeUndeleteStatementAssignRule,
+                makeUpsertStatementAssignRule,
+                makeMergeStatementAssignRule,
+                makeRunAsStatementAssignRule,
+                makeLocalVariableDeclarationStatementAssignRule,
+                makeExpressionStatementAssignRule,
                 makeErrorAssignRule,
             ]);
             return {
@@ -800,5 +804,3 @@ export const makeStatementRule = (): AssignForValueRule<
             };
         },
     };
-};
-

@@ -34,7 +34,7 @@ import {
 } from '../clauseVisitor';
 import { CommonTypeClass, ErrorTypeClass, isValidClass } from '../commonVisitor';
 
-export class NormalQueryTypeClass extends SoqlQueryTypeClass<SelectListTypeClass> {
+export class NormalQueryTypeClass extends SoqlQueryTypeClass<'query', SelectListTypeClass> {
     private usingScope: UsingScopeTypeClass | ErrorTypeClass | null = null;
     private withClause: WithClauseTypeClass | ErrorTypeClass | null = null;
     private groupByClause: GroupByClauseTypeClass | ErrorTypeClass | null = null;
@@ -170,7 +170,8 @@ export class NormalQueryTypeClass extends SoqlQueryTypeClass<SelectListTypeClass
     }
 }
 
-export const isNormalQueryType = (target: CommonTypeClass): target is NormalQueryTypeClass => {
+export const isNormalQueryType = (
+    target: CommonTypeClass<string>,
+): target is NormalQueryTypeClass => {
     return target instanceof NormalQueryTypeClass;
 };
-

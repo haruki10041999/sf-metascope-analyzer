@@ -26,7 +26,7 @@ type ValueTypeClassValue =
     | ValueListTypeClass
     | BoundExpressionTypeClass;
 
-export class NormalValueTypeClass extends ValueTypeClass<ValueTypeClassValue> {
+export class NormalValueTypeClass extends ValueTypeClass<'value', ValueTypeClassValue> {
     private valueType: string;
     private constructor(value: ValueTypeClassValue | ErrorTypeClass, valueType: string) {
         super('value', value);
@@ -128,7 +128,8 @@ export class NormalValueTypeClass extends ValueTypeClass<ValueTypeClassValue> {
     }
 }
 
-export const isNormalValueType = (target: CommonTypeClass): target is NormalValueTypeClass => {
+export const isNormalValueType = (
+    target: CommonTypeClass<string>,
+): target is NormalValueTypeClass => {
     return target instanceof NormalValueTypeClass;
 };
-

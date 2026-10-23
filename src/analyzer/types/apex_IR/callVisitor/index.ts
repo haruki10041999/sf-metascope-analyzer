@@ -12,7 +12,7 @@ import { CommonVisitor } from '../commonVisitor';
 export { isMethodCallType, MethodCallTypeClass } from './methodCall';
 export { isDotMethodCallType, DotMethodCallTypeClass } from './dotMethodCall';
 
-export class CallVisitor extends CommonVisitor<CallTypeClass<unknown, unknown>> {
+export class CallVisitor extends CommonVisitor<CallTypeClass<string, unknown, unknown>> {
     visitMethodCall(ctx: MethodCallContext) {
         return MethodCallTypeClass.create(ctx);
     }
@@ -21,4 +21,3 @@ export class CallVisitor extends CommonVisitor<CallTypeClass<unknown, unknown>> 
         return DotMethodCallTypeClass.create(ctx);
     }
 }
-

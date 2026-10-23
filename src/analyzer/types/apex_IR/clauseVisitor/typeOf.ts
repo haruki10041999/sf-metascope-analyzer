@@ -12,7 +12,7 @@ import {
 import { FieldNameTypeClass, NameVisitor, isFieldNameType } from '../nameVisitor';
 import { ErrorTypeClass, CommonTypeClass, isValidClass, isValidClassList } from '../commonVisitor';
 
-export class TypeOfTypeClass extends ClauseTypeClass<FieldNameTypeClass> {
+export class TypeOfTypeClass extends ClauseTypeClass<'typeOf', FieldNameTypeClass> {
     private whenClause: (WhenClauseTypeClass | ErrorTypeClass)[];
     private elseClause: ElseClauseTypeClass | ErrorTypeClass | null = null;
 
@@ -58,6 +58,6 @@ export class TypeOfTypeClass extends ClauseTypeClass<FieldNameTypeClass> {
     }
 }
 
-export const isTypeOfType = (target: CommonTypeClass): target is TypeOfTypeClass => {
+export const isTypeOfType = (target: CommonTypeClass<string>): target is TypeOfTypeClass => {
     return target instanceof TypeOfTypeClass;
 };

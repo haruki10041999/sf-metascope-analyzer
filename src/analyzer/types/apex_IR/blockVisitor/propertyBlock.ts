@@ -12,7 +12,10 @@ import {
 import { NormalModifierTypeClass, ModifierVisitor, isNormalModifierType } from '../modifierVisitor';
 import { ErrorTypeClass, CommonTypeClass, isValidClass, isValidClassList } from '../commonVisitor';
 
-export class PropertyBlockTypeClass extends BlockTypeClass<GetterTypeClass | SetterTypeClass> {
+export class PropertyBlockTypeClass extends BlockTypeClass<
+    'propertyBlock',
+    GetterTypeClass | SetterTypeClass
+> {
     private modifier: (NormalModifierTypeClass | ErrorTypeClass)[] = [];
     private constructor(
         value: GetterTypeClass | SetterTypeClass | ErrorTypeClass,
@@ -28,7 +31,7 @@ export class PropertyBlockTypeClass extends BlockTypeClass<GetterTypeClass | Set
         }
 
         return new PropertyBlockTypeClass(
-            isValidClass(
+            isValidClass<GetterTypeClass | SetterTypeClass>(
                 ctx.getter()
                     ? new BlockVisitor().visit(ctx.getter())
                     : new BlockVisitor().visit(ctx.setter()),
@@ -49,6 +52,8 @@ export class PropertyBlockTypeClass extends BlockTypeClass<GetterTypeClass | Set
     }
 }
 
-export const isPropertyBlockType = (target: CommonTypeClass): target is PropertyBlockTypeClass => {
+export const isPropertyBlockType = (
+    target: CommonTypeClass<string>,
+): target is PropertyBlockTypeClass => {
     return target instanceof PropertyBlockTypeClass;
 };

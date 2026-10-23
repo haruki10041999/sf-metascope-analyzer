@@ -20,7 +20,7 @@ import {
 import {
     SelectListType,
     SelectEntryType,
-    ErrorInfo,
+    ErrorType,
     isFieldNameType,
     isSoqlFunctionType,
     isTypeOfType,
@@ -43,7 +43,7 @@ export type SelectEntryJson = JsonType &
 export const isSelectEntryJson = typia.createIs<SelectEntryJson>();
 
 const makeSelectEntryJson = (
-    target: Convert<SelectEntryType | ErrorInfo>,
+    target: Convert<SelectEntryType | ErrorType>,
     sourceObject: SourceJson[],
 ): SelectEntryJson | ErrorJson => {
     const targetObjectKey = target.objectKey;

@@ -1,5 +1,3 @@
-import typia from 'typia';
-
 import {
     NormalLiteralTypeClass,
     SignedIntegerTypeClass,
@@ -18,7 +16,8 @@ import {
 } from '../../apex_IR';
 
 import {
-    ErrorInfo,
+    isCommonType,
+    ErrorType,
     CommonType,
     AssignForValueRule,
     ValueRuleValue,
@@ -28,19 +27,21 @@ import {
     makeSourceInfo,
     makeStringAssignRule,
 } from './commons';
-import { makeBoundExpressionRule, BoundExpressionType } from './expression';
-import { makeQueryRule, QueryType } from './query';
-import { makeSoslClausesRule, SoslClausesType } from './clause';
-import { makeQualifiedNameRule, QualifiedNameType } from './name';
+import { makeBoundExpressionAssignRule, BoundExpressionType } from './expression';
+import { makeQueryAssignRule, QueryType } from './query';
+import { makeSoslClausesAssignRule, SoslClausesType } from './clause';
+import { makeQualifiedNameAssignRule, QualifiedNameType } from './name';
 
-export type LiteralType = CommonType & {
+export type LiteralType = CommonType<'literal'> & {
     value: ValueRuleValue<string>;
     valueType: string;
 };
 
-export const isLiteralType = typia.createIs<LiteralType>();
+export const isLiteralType = (value: unknown): value is LiteralType => {
+    return isCommonType(value) && value.type === 'literal';
+};
 
-export const makeLiteralRule = (): AssignForValueRule<NormalLiteralTypeClass, LiteralType> => ({
+export const makeLiteralAssignRule: AssignForValueRule<NormalLiteralTypeClass, LiteralType> = {
     isValid: (target: unknown) => isTargetTypeClass(target, isNormalLiteralType),
     construct: (literalTypeClass: NormalLiteralTypeClass) => {
         const value = assignMultiClass(literalTypeClass.getValue(), [
@@ -54,20 +55,22 @@ export const makeLiteralRule = (): AssignForValueRule<NormalLiteralTypeClass, Li
             valueType: literalTypeClass.getValueType(),
         };
     },
-});
+};
 
-export type SignedIntegerType = CommonType & {
+export type SignedIntegerType = CommonType<'signedInteger'> & {
     value: ValueRuleValue<string>;
     valueType: string;
     operator: string | null;
 };
 
-export const isSignedIntegerType = typia.createIs<SignedIntegerType>();
+export const isSignedIntegerType = (value: unknown): value is SignedIntegerType => {
+    return isCommonType(value) && value.type === 'signedInteger';
+};
 
-export const makeSignedIntegerRule = (): AssignForValueRule<
+export const makeSignedIntegerAssignRule: AssignForValueRule<
     SignedIntegerTypeClass,
     SignedIntegerType
-> => ({
+> = {
     isValid: (target: unknown) => isTargetTypeClass(target, isSignedIntegerTypeClass),
     construct: (literalTypeClass: SignedIntegerTypeClass) => {
         const value = assignMultiClass(literalTypeClass.getValue(), [
@@ -82,20 +85,22 @@ export const makeSignedIntegerRule = (): AssignForValueRule<
             operator: literalTypeClass.getOperator(),
         };
     },
-});
+};
 
-export type SignedNumberType = CommonType & {
+export type SignedNumberType = CommonType<'signedNumber'> & {
     value: ValueRuleValue<string>;
     valueType: string;
     operator: string | null;
 };
 
-export const isSignedNumberType = typia.createIs<SignedNumberType>();
+export const isSignedNumberType = (value: unknown): value is SignedNumberType => {
+    return isCommonType(value) && value.type === 'signedNumber';
+};
 
-export const makeSignedNumberRule = (): AssignForValueRule<
+export const makeSignedNumberAssignRule: AssignForValueRule<
     SignedNumberTypeClass,
     SignedNumberType
-> => ({
+> = {
     isValid: (target: unknown) => isTargetTypeClass(target, isSignedNumberTypeClass),
     construct: (literalTypeClass: SignedNumberTypeClass) => {
         const value = assignMultiClass(literalTypeClass.getValue(), [
@@ -110,23 +115,22 @@ export const makeSignedNumberRule = (): AssignForValueRule<
             operator: literalTypeClass.getOperator(),
         };
     },
-});
+};
 
-export type SoqlLiteralType = CommonType & {
+export type SoqlLiteralType = CommonType<'soqlLiteral'> & {
     value: ValueRuleValue<QueryType>;
 };
 
-export const isSoqlLiteralType = typia.createIs<SoqlLiteralType>();
+export const isSoqlLiteralType = (value: unknown): value is SoqlLiteralType => {
+    return isCommonType(value) && value.type === 'soqlLiteral';
+};
 
-export const makeSoqlLiteralRule = (): AssignForValueRule<
-    SoqlLiteralTypeClass,
-    SoqlLiteralType
-> => {
-    return {
+export const makeSoqlLiteralAssignRule: AssignForValueRule<SoqlLiteralTypeClass, SoqlLiteralType> =
+    {
         isValid: (target: unknown) => isTargetTypeClass(target, isSoqlLiteralTypeClass),
         construct: (literalTypeClass: SoqlLiteralTypeClass) => {
             const value = assignMultiClass(literalTypeClass.getValue(), [
-                makeQueryRule(),
+                makeQueryAssignRule,
                 makeErrorAssignRule,
             ]);
             return {
@@ -136,61 +140,59 @@ export const makeSoqlLiteralRule = (): AssignForValueRule<
             };
         },
     };
-};
 
-export type SoslLiteralAltType = CommonType & {
+export type SoslLiteralAltType = CommonType<'soslLiteralAlt'> & {
     value: ValueRuleValue<string>;
     soslClauses: ValueRuleValue<SoslClausesType>;
 };
 
-export const isSoslLiteralAltType = typia.createIs<SoslLiteralAltType>();
-
-export const makeSoslLiteralAltRule = (): AssignForValueRule<
-    SoslLiteralAltTypeClass,
-    SoslLiteralAltType
-> => {
-    return {
-        isValid: (target: unknown) => isTargetTypeClass(target, isSoslLiteralAltTypeClass),
-        construct: (literalTypeClass: SoslLiteralAltTypeClass) => {
-            const value = assignMultiClass(literalTypeClass.getValue(), [
-                makeStringAssignRule,
-                makeErrorAssignRule,
-            ]);
-            const soslClauses = assignMultiClass(literalTypeClass.getSoslClauses(), [
-                makeSoslClausesRule(),
-                makeErrorAssignRule,
-            ]);
-            return {
-                type: literalTypeClass.getType(),
-                sourceInfo: makeSourceInfo(literalTypeClass),
-                value,
-                soslClauses,
-            };
-        },
-    };
+export const isSoslLiteralAltType = (value: unknown): value is SoslLiteralAltType => {
+    return isCommonType(value) && value.type === 'soslLiteralAlt';
 };
 
-export type SoslLiteralType = CommonType & {
+export const makeSoslLiteralAltAssignRule: AssignForValueRule<
+    SoslLiteralAltTypeClass,
+    SoslLiteralAltType
+> = {
+    isValid: (target: unknown) => isTargetTypeClass(target, isSoslLiteralAltTypeClass),
+    construct: (literalTypeClass: SoslLiteralAltTypeClass) => {
+        const value = assignMultiClass(literalTypeClass.getValue(), [
+            makeStringAssignRule,
+            makeErrorAssignRule,
+        ]);
+        const soslClauses = assignMultiClass(literalTypeClass.getSoslClauses(), [
+            makeSoslClausesAssignRule,
+            makeErrorAssignRule,
+        ]);
+        return {
+            type: literalTypeClass.getType(),
+            sourceInfo: makeSourceInfo(literalTypeClass),
+            value,
+            soslClauses,
+        };
+    },
+};
+
+export type SoslLiteralType = CommonType<'soslLiteral'> & {
     value: ValueRuleValue<string | BoundExpressionType>;
     soslClauses: ValueRuleValue<SoslClausesType>;
 };
 
-export const isSoslLiteralType = typia.createIs<SoslLiteralType>();
+export const isSoslLiteralType = (value: unknown): value is SoslLiteralType => {
+    return isCommonType(value) && value.type === 'soslLiteral';
+};
 
-export const makeSoslLiteralRule = (): AssignForValueRule<
-    SoslLiteralTypeClass,
-    SoslLiteralType
-> => {
-    return {
+export const makeSoslLiteralAssignRule: AssignForValueRule<SoslLiteralTypeClass, SoslLiteralType> =
+    {
         isValid: (target: unknown) => isTargetTypeClass(target, isSoslLiteralTypeClass),
         construct: (literalTypeClass: SoslLiteralTypeClass) => {
             const value = assignMultiClass(literalTypeClass.getValue(), [
                 makeStringAssignRule,
-                makeBoundExpressionRule(),
+                makeBoundExpressionAssignRule,
                 makeErrorAssignRule,
             ]);
             const soslClauses = assignMultiClass(literalTypeClass.getSoslClauses(), [
-                makeSoslClausesRule(),
+                makeSoslClausesAssignRule,
                 makeErrorAssignRule,
             ]);
             return {
@@ -201,26 +203,24 @@ export const makeSoslLiteralRule = (): AssignForValueRule<
             };
         },
     };
-};
 
-export type WhenLiteralType = CommonType & {
+export type WhenLiteralType = CommonType<'whenLiteral'> & {
     value: ValueRuleValue<string | QualifiedNameType>;
     valueType: string;
     operator: string | null;
 };
 
-export const isWhenLiteralType = typia.createIs<WhenLiteralType>();
+export const isWhenLiteralType = (value: unknown): value is WhenLiteralType => {
+    return isCommonType(value) && value.type === 'whenLiteral';
+};
 
-export const makeWhenLiteralRule = (): AssignForValueRule<
-    WhenLiteralTypeClass,
-    WhenLiteralType
-> => {
-    return {
+export const makeWhenLiteralAssignRule: AssignForValueRule<WhenLiteralTypeClass, WhenLiteralType> =
+    {
         isValid: (target: unknown) => isTargetTypeClass(target, isWhenLiteralTypeClass),
         construct: (literalTypeClass: WhenLiteralTypeClass) => {
             const value = assignMultiClass(literalTypeClass.getValue(), [
                 makeStringAssignRule,
-                makeQualifiedNameRule(),
+                makeQualifiedNameAssignRule,
                 makeErrorAssignRule,
             ]);
 
@@ -236,4 +236,3 @@ export const makeWhenLiteralRule = (): AssignForValueRule<
             };
         },
     };
-};

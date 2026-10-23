@@ -5,7 +5,10 @@ import { DeclarationListTypeClass } from '.';
 import { NormalIdTypeClass, IdVisitor, isNormalIdType } from '../idVisitor';
 import { ErrorTypeClass, CommonTypeClass, isValidClassList } from '../commonVisitor';
 
-export class EnumConstantsTypeClass extends DeclarationListTypeClass<NormalIdTypeClass> {
+export class EnumConstantsTypeClass extends DeclarationListTypeClass<
+    'enumConstants',
+    NormalIdTypeClass
+> {
     private constructor(value: (NormalIdTypeClass | ErrorTypeClass)[]) {
         super('enumConstants', value);
     }
@@ -26,6 +29,8 @@ export class EnumConstantsTypeClass extends DeclarationListTypeClass<NormalIdTyp
     }
 }
 
-export const isEnumConstantsType = (target: CommonTypeClass): target is EnumConstantsTypeClass => {
+export const isEnumConstantsType = (
+    target: CommonTypeClass<string>,
+): target is EnumConstantsTypeClass => {
     return target instanceof EnumConstantsTypeClass;
 };

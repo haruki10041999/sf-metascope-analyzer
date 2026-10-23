@@ -9,7 +9,10 @@ import {
 
 import { CommonTypeClass, ErrorTypeClass, isValidClass } from '../commonVisitor';
 
-export class ArrayExpressionTypeClass extends ExpressionTypeClass<BasedExpressionTypeClass> {
+export class ArrayExpressionTypeClass extends ExpressionTypeClass<
+    'arrayExpression',
+    BasedExpressionTypeClass
+> {
     private index: BasedExpressionTypeClass | ErrorTypeClass;
 
     private constructor(
@@ -45,7 +48,7 @@ export class ArrayExpressionTypeClass extends ExpressionTypeClass<BasedExpressio
 }
 
 export const isArrayExpressionType = (
-    target: CommonTypeClass,
+    target: CommonTypeClass<string>,
 ): target is ArrayExpressionTypeClass => {
     return target instanceof ArrayExpressionTypeClass;
 };

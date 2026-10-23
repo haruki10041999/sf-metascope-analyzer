@@ -9,7 +9,7 @@ import {
 } from '../declarationVisitor';
 import { ErrorTypeClass, CommonTypeClass, isValidClassList } from '../commonVisitor';
 
-export class ClassBodyTypeClass extends BodyTypeClass<ClassBodyDeclarationTypeClass> {
+export class ClassBodyTypeClass extends BodyTypeClass<'classBody', ClassBodyDeclarationTypeClass> {
     private constructor(value: (ClassBodyDeclarationTypeClass | ErrorTypeClass)[]) {
         super('classBody', value);
     }
@@ -26,6 +26,6 @@ export class ClassBodyTypeClass extends BodyTypeClass<ClassBodyDeclarationTypeCl
     }
 }
 
-export const isClassBodyType = (target: CommonTypeClass): target is ClassBodyTypeClass => {
+export const isClassBodyType = (target: CommonTypeClass<string>): target is ClassBodyTypeClass => {
     return target instanceof ClassBodyTypeClass;
 };

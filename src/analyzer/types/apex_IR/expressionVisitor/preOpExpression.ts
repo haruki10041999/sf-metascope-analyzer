@@ -9,7 +9,10 @@ import {
 
 import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
 
-export class PreOpExpressionTypeClass extends SingleOperatorExpressionTypeClass<BasedExpressionTypeClass> {
+export class PreOpExpressionTypeClass extends SingleOperatorExpressionTypeClass<
+    'preOpExpression',
+    BasedExpressionTypeClass
+> {
     private constructor(value: BasedExpressionTypeClass | ErrorTypeClass, operator: string) {
         super('preOpExpression', value, operator);
     }
@@ -43,7 +46,7 @@ export class PreOpExpressionTypeClass extends SingleOperatorExpressionTypeClass<
 }
 
 export const isPreOpExpressionType = (
-    target: CommonTypeClass,
+    target: CommonTypeClass<string>,
 ): target is PreOpExpressionTypeClass => {
     return target instanceof PreOpExpressionTypeClass;
 };

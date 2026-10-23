@@ -4,7 +4,7 @@ import { TypeTypeClass } from '.';
 
 import { CommonTypeClass } from '../commonVisitor';
 
-export class ArraySubscriptsTypeClass extends TypeTypeClass<number | null> {
+export class ArraySubscriptsTypeClass extends TypeTypeClass<'arraySubscripts', number | null> {
     private constructor(value: number | null) {
         super('arraySubscripts', value);
     }
@@ -21,7 +21,7 @@ export class ArraySubscriptsTypeClass extends TypeTypeClass<number | null> {
 }
 
 export const isArraySubscriptsType = (
-    target: CommonTypeClass,
+    target: CommonTypeClass<string>,
 ): target is ArraySubscriptsTypeClass => {
     return target instanceof ArraySubscriptsTypeClass;
 };

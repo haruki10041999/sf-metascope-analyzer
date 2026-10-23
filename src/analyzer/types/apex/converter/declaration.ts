@@ -1,5 +1,3 @@
-import typia from 'typia';
-
 import {
     AnonymousMemberDeclarationTypeClass,
     ClassBodyDeclarationTypeClass,
@@ -34,7 +32,8 @@ import {
 } from '../../apex_IR';
 
 import {
-    ErrorInfo,
+    isCommonType,
+    ErrorType,
     CommonType,
     AssignForValueRule,
     ValueRuleValue,
@@ -45,17 +44,27 @@ import {
     makeNullAssignRule,
     makeSourceInfo,
 } from './commons';
-import { makeBlockRule, makePropertyBlockRule, BlockType, PropertyBlockType } from './block';
-import { makeModifierRule, ModifierType } from './modifier';
-import { makeTypeRefRule, TypeRefType } from './type';
-import { makeTypeListRule, TypeListType } from './list';
-import { makeQualifiedNameRule, QualifiedNameType } from './name';
-import { makeFormalParametersRule, FormalParametersType } from './parameter';
-import { makeIdRule, IdType } from './id';
-import { makeVariableDeclaratorsRule, VariableDeclaratorsType } from './variable';
-import { makeClassBodyRule, makeInterfaceBodyRule, ClassBodyType, InterfaceBodyType } from './body';
+import {
+    makeBlockAssignRule,
+    makePropertyBlockAssignRule,
+    BlockType,
+    PropertyBlockType,
+} from './block';
+import { makeModifierAssignRule, ModifierType } from './modifier';
+import { makeTypeRefAssignRule, TypeRefType } from './type';
+import { makeTypeListAssignRule, TypeListType } from './list';
+import { makeQualifiedNameAssignRule, QualifiedNameType } from './name';
+import { makeFormalParametersAssignRule, FormalParametersType } from './parameter';
+import { makeIdAssignRule, IdType } from './id';
+import { makeVariableDeclaratorsAssignRule, VariableDeclaratorsType } from './variable';
+import {
+    makeClassBodyAssignRule,
+    makeInterfaceBodyAssignRule,
+    ClassBodyType,
+    InterfaceBodyType,
+} from './body';
 
-export type AnonymousMemberDeclarationType = CommonType & {
+export type AnonymousMemberDeclarationType = CommonType<'anonymousMemberDeclaration'> & {
     value: ValueRuleValue<
         | MethodDeclarationType
         | InterfaceDeclarationType
@@ -66,389 +75,394 @@ export type AnonymousMemberDeclarationType = CommonType & {
     >;
 };
 
-export const isAnonymousMemberDeclarationType = typia.createIs<AnonymousMemberDeclarationType>();
-
-export const makeAnonymousMemberDeclarationRule = (): AssignForValueRule<
-    AnonymousMemberDeclarationTypeClass,
-    AnonymousMemberDeclarationType
-> => {
-    return {
-        isValid: (target: unknown) =>
-            isTargetTypeClass(target, isAnonymousMemberDeclarationTypeClass),
-        construct: (declarationTypeClass: AnonymousMemberDeclarationTypeClass) => {
-            const value = assignMultiClass(declarationTypeClass.getValue(), [
-                makeMethodDeclarationRule(),
-                makeInterfaceDeclarationRule(),
-                makeClassDeclarationRule(),
-                makeEnumDeclarationRule(),
-                makePropertyDeclarationRule(),
-                makeFieldDeclarationRule(),
-                makeErrorAssignRule,
-            ]);
-            return {
-                type: declarationTypeClass.getType(),
-                sourceInfo: makeSourceInfo(declarationTypeClass),
-                value,
-            };
-        },
-    };
+export const isAnonymousMemberDeclarationType = (
+    value: unknown,
+): value is AnonymousMemberDeclarationType => {
+    return isCommonType(value) && value.type === 'anonymousMemberDeclaration';
 };
 
-export type ClassBodyDeclarationType = CommonType & {
+export const makeAnonymousMemberDeclarationAssignRule: AssignForValueRule<
+    AnonymousMemberDeclarationTypeClass,
+    AnonymousMemberDeclarationType
+> = {
+    isValid: (target: unknown) => isTargetTypeClass(target, isAnonymousMemberDeclarationTypeClass),
+    construct: (declarationTypeClass: AnonymousMemberDeclarationTypeClass) => {
+        const value = assignMultiClass(declarationTypeClass.getValue(), [
+            makeMethodDeclarationAssignRule,
+            makeInterfaceDeclarationAssignRule,
+            makeClassDeclarationAssignRule,
+            makeEnumDeclarationAssignRule,
+            makePropertyDeclarationAssignRule,
+            makeFieldDeclarationAssignRule,
+            makeErrorAssignRule,
+        ]);
+        return {
+            type: declarationTypeClass.getType(),
+            sourceInfo: makeSourceInfo(declarationTypeClass),
+            value,
+        };
+    },
+};
+
+export type ClassBodyDeclarationType = CommonType<'classBodyDeclaration'> & {
     value: ValueRuleValue<MemberDeclarationType | BlockType | null>;
     modifier: ValueRuleValue<ModifierType>[];
     isStatic: boolean;
 };
 
-export const isClassBodyDeclarationType = typia.createIs<ClassBodyDeclarationType>();
-
-export const makeClassBodyDeclarationRule = (): AssignForValueRule<
-    ClassBodyDeclarationTypeClass,
-    ClassBodyDeclarationType
-> => {
-    return {
-        isValid: (target: unknown) => isTargetTypeClass(target, isClassBodyDeclarationTypeClass),
-        construct: (declarationTypeClass: ClassBodyDeclarationTypeClass) => {
-            const value = assignMultiClass(declarationTypeClass.getValue(), [
-                makeMemberDeclarationRule(),
-                makeBlockRule(),
-                makeErrorAssignRule,
-                makeNullAssignRule,
-            ]);
-            const modifier = declarationTypeClass
-                .getModifier()
-                .map((v) => assignMultiClass(v, [makeModifierRule(), makeErrorAssignRule]));
-            const isStatic = declarationTypeClass.getIsStatic();
-
-            return {
-                type: declarationTypeClass.getType(),
-                sourceInfo: makeSourceInfo(declarationTypeClass),
-                value,
-                modifier,
-                isStatic,
-            };
-        },
-    };
+export const isClassBodyDeclarationType = (value: unknown): value is ClassBodyDeclarationType => {
+    return isCommonType(value) && value.type === 'classBodyDeclaration';
 };
 
-export type ClassDeclarationType = CommonType & {
+export const makeClassBodyDeclarationAssignRule: AssignForValueRule<
+    ClassBodyDeclarationTypeClass,
+    ClassBodyDeclarationType
+> = {
+    isValid: (target: unknown) => isTargetTypeClass(target, isClassBodyDeclarationTypeClass),
+    construct: (declarationTypeClass: ClassBodyDeclarationTypeClass) => {
+        const value = assignMultiClass(declarationTypeClass.getValue(), [
+            makeMemberDeclarationAssignRule,
+            makeBlockAssignRule,
+            makeErrorAssignRule,
+            makeNullAssignRule,
+        ]);
+        const modifier = declarationTypeClass
+            .getModifier()
+            .map((v) => assignMultiClass(v, [makeModifierAssignRule, makeErrorAssignRule]));
+        const isStatic = declarationTypeClass.getIsStatic();
+
+        return {
+            type: declarationTypeClass.getType(),
+            sourceInfo: makeSourceInfo(declarationTypeClass),
+            value,
+            modifier,
+            isStatic,
+        };
+    },
+};
+
+export type ClassDeclarationType = CommonType<'classDeclaration'> & {
     value: ValueRuleValue<IdType>;
     body: ValueRuleValue<ClassBodyType>;
     extend: ValueRuleValue<TypeRefType | null>;
     implement: ValueRuleValue<TypeListType | null>;
 };
 
-export const isClassDeclarationType = typia.createIs<ClassDeclarationType>();
-
-export const makeClassDeclarationRule = (): AssignForValueRule<
-    ClassDeclarationTypeClass,
-    ClassDeclarationType
-> => {
-    return {
-        isValid: (target: unknown) => isTargetTypeClass(target, isClassDeclarationTypeClass),
-        construct: (declarationTypeClass: ClassDeclarationTypeClass) => {
-            const value = assignMultiClass(declarationTypeClass.getValue(), [
-                makeIdRule(),
-                makeErrorAssignRule,
-            ]);
-
-            const body = assignMultiClass(declarationTypeClass.getBody(), [
-                makeClassBodyRule(),
-                makeErrorAssignRule,
-            ]);
-
-            const extend = assignMultiClass(declarationTypeClass.getExtend(), [
-                makeTypeRefRule(),
-                makeErrorAssignRule,
-                makeNullAssignRule,
-            ]);
-
-            const implement = assignMultiClass(declarationTypeClass.getImplement(), [
-                makeTypeListRule(),
-                makeErrorAssignRule,
-                makeNullAssignRule,
-            ]);
-
-            return {
-                type: declarationTypeClass.getType(),
-                sourceInfo: makeSourceInfo(declarationTypeClass),
-                value,
-                body,
-                extend,
-                implement,
-            };
-        },
-    };
+export const isClassDeclarationType = (value: unknown): value is ClassDeclarationType => {
+    return isCommonType(value) && value.type === 'classDeclaration';
 };
 
-export type ConstructorDeclarationType = CommonType & {
+export const makeClassDeclarationAssignRule: AssignForValueRule<
+    ClassDeclarationTypeClass,
+    ClassDeclarationType
+> = {
+    isValid: (target: unknown) => isTargetTypeClass(target, isClassDeclarationTypeClass),
+    construct: (declarationTypeClass: ClassDeclarationTypeClass) => {
+        const value = assignMultiClass(declarationTypeClass.getValue(), [
+            makeIdAssignRule,
+            makeErrorAssignRule,
+        ]);
+
+        const body = assignMultiClass(declarationTypeClass.getBody(), [
+            makeClassBodyAssignRule,
+            makeErrorAssignRule,
+        ]);
+
+        const extend = assignMultiClass(declarationTypeClass.getExtend(), [
+            makeTypeRefAssignRule,
+            makeErrorAssignRule,
+            makeNullAssignRule,
+        ]);
+
+        const implement = assignMultiClass(declarationTypeClass.getImplement(), [
+            makeTypeListAssignRule,
+            makeErrorAssignRule,
+            makeNullAssignRule,
+        ]);
+
+        return {
+            type: declarationTypeClass.getType(),
+            sourceInfo: makeSourceInfo(declarationTypeClass),
+            value,
+            body,
+            extend,
+            implement,
+        };
+    },
+};
+
+export type ConstructorDeclarationType = CommonType<'constructorDeclaration'> & {
     value: ValueRuleValue<QualifiedNameType>;
     param: ValueRuleValue<FormalParametersType | null>;
     block: ValueRuleValue<BlockType>;
 };
 
-export const isConstructorDeclarationType = typia.createIs<ConstructorDeclarationType>();
-
-export const makeConstructorDeclarationRule = (): AssignForValueRule<
-    ConstructorDeclarationTypeClass,
-    ConstructorDeclarationType
-> => {
-    return {
-        isValid: (target: unknown) => isTargetTypeClass(target, isConstructorDeclarationTypeClass),
-        construct: (declarationTypeClass: ConstructorDeclarationTypeClass) => {
-            const value = assignMultiClass(declarationTypeClass.getValue(), [
-                makeQualifiedNameRule(),
-                makeErrorAssignRule,
-            ]);
-
-            const param = assignMultiClass(declarationTypeClass.getParam(), [
-                makeFormalParametersRule(),
-                makeErrorAssignRule,
-                makeNullAssignRule,
-            ]);
-
-            const block = assignMultiClass(declarationTypeClass.getBlock(), [
-                makeBlockRule(),
-                makeErrorAssignRule,
-            ]);
-
-            return {
-                type: declarationTypeClass.getType(),
-                sourceInfo: makeSourceInfo(declarationTypeClass),
-                value,
-                param,
-                block,
-            };
-        },
-    };
+export const isConstructorDeclarationType = (
+    value: unknown,
+): value is ConstructorDeclarationType => {
+    return isCommonType(value) && value.type === 'constructorDeclaration';
 };
 
-export type EnumConstantsType = CommonType & {
+export const makeConstructorDeclarationAssignRule: AssignForValueRule<
+    ConstructorDeclarationTypeClass,
+    ConstructorDeclarationType
+> = {
+    isValid: (target: unknown) => isTargetTypeClass(target, isConstructorDeclarationTypeClass),
+    construct: (declarationTypeClass: ConstructorDeclarationTypeClass) => {
+        const value = assignMultiClass(declarationTypeClass.getValue(), [
+            makeQualifiedNameAssignRule,
+            makeErrorAssignRule,
+        ]);
+
+        const param = assignMultiClass(declarationTypeClass.getParam(), [
+            makeFormalParametersAssignRule,
+            makeErrorAssignRule,
+            makeNullAssignRule,
+        ]);
+
+        const block = assignMultiClass(declarationTypeClass.getBlock(), [
+            makeBlockAssignRule,
+            makeErrorAssignRule,
+        ]);
+
+        return {
+            type: declarationTypeClass.getType(),
+            sourceInfo: makeSourceInfo(declarationTypeClass),
+            value,
+            param,
+            block,
+        };
+    },
+};
+
+export type EnumConstantsType = CommonType<'enumConstants'> & {
     value: ValueRuleValue<IdType>[];
 };
 
-export const isEnumConstantsType = typia.createIs<EnumConstantsType>();
-
-export const makeEnumConstantsRule = (): AssignForValueRule<
-    EnumConstantsTypeClass,
-    EnumConstantsType
-> => {
-    return {
-        isValid: (target: unknown) => isTargetTypeClass(target, isEnumConstantsTypeClass),
-        construct: (declarationTypeClass: EnumConstantsTypeClass) => {
-            const value = declarationTypeClass
-                .getValue()
-                .map((v) => assignMultiClass(v, [makeIdRule(), makeErrorAssignRule]));
-            return {
-                type: declarationTypeClass.getType(),
-                sourceInfo: makeSourceInfo(declarationTypeClass),
-                value,
-            };
-        },
-    };
+export const isEnumConstantsType = (value: unknown): value is EnumConstantsType => {
+    return isCommonType(value) && value.type === 'enumConstants';
 };
 
-export type EnumDeclarationType = CommonType & {
+export const makeEnumConstantsAssignRule: AssignForValueRule<
+    EnumConstantsTypeClass,
+    EnumConstantsType
+> = {
+    isValid: (target: unknown) => isTargetTypeClass(target, isEnumConstantsTypeClass),
+    construct: (declarationTypeClass: EnumConstantsTypeClass) => {
+        const value = declarationTypeClass
+            .getValue()
+            .map((v) => assignMultiClass(v, [makeIdAssignRule, makeErrorAssignRule]));
+        return {
+            type: declarationTypeClass.getType(),
+            sourceInfo: makeSourceInfo(declarationTypeClass),
+            value,
+        };
+    },
+};
+
+export type EnumDeclarationType = CommonType<'enumDeclaration'> & {
     value: ValueRuleValue<IdType>;
     constant: ValueRuleValue<EnumConstantsType | null>;
 };
 
-export const isEnumDeclarationType = typia.createIs<EnumDeclarationType>();
-
-export const makeEnumDeclarationRule = (): AssignForValueRule<
-    EnumDeclarationTypeClass,
-    EnumDeclarationType
-> => {
-    return {
-        isValid: (target: unknown) => isTargetTypeClass(target, isEnumDeclarationTypeClass),
-        construct: (declarationTypeClass: EnumDeclarationTypeClass) => {
-            const value = assignMultiClass(declarationTypeClass.getValue(), [
-                makeIdRule(),
-                makeErrorAssignRule,
-            ]);
-            const constant = assignMultiClass(declarationTypeClass.getConstant(), [
-                makeEnumConstantsRule(),
-                makeErrorAssignRule,
-                makeNullAssignRule,
-            ]);
-            return {
-                type: declarationTypeClass.getType(),
-                sourceInfo: makeSourceInfo(declarationTypeClass),
-                value,
-                constant,
-            };
-        },
-    };
+export const isEnumDeclarationType = (value: unknown): value is EnumDeclarationType => {
+    return isCommonType(value) && value.type === 'enumDeclaration';
 };
 
-export type FieldDeclarationType = CommonType & {
+export const makeEnumDeclarationAssignRule: AssignForValueRule<
+    EnumDeclarationTypeClass,
+    EnumDeclarationType
+> = {
+    isValid: (target: unknown) => isTargetTypeClass(target, isEnumDeclarationTypeClass),
+    construct: (declarationTypeClass: EnumDeclarationTypeClass) => {
+        const value = assignMultiClass(declarationTypeClass.getValue(), [
+            makeIdAssignRule,
+            makeErrorAssignRule,
+        ]);
+        const constant = assignMultiClass(declarationTypeClass.getConstant(), [
+            makeEnumConstantsAssignRule,
+            makeErrorAssignRule,
+            makeNullAssignRule,
+        ]);
+        return {
+            type: declarationTypeClass.getType(),
+            sourceInfo: makeSourceInfo(declarationTypeClass),
+            value,
+            constant,
+        };
+    },
+};
+
+export type FieldDeclarationType = CommonType<'fieldDeclaration'> & {
     value: ValueRuleValue<VariableDeclaratorsType>;
     valueType: ValueRuleValue<TypeRefType>;
 };
 
-export const isFieldDeclarationType = typia.createIs<FieldDeclarationType>();
-
-export const makeFieldDeclarationRule = (): AssignForValueRule<
-    FieldDeclarationTypeClass,
-    FieldDeclarationType
-> => {
-    return {
-        isValid: (target: unknown) => isTargetTypeClass(target, isFieldDeclarationTypeClass),
-        construct: (declarationTypeClass: FieldDeclarationTypeClass) => {
-            const value = assignMultiClass(declarationTypeClass.getValue(), [
-                makeVariableDeclaratorsRule(),
-                makeErrorAssignRule,
-            ]);
-
-            const valueType = assignMultiClass(declarationTypeClass.getValueType(), [
-                makeTypeRefRule(),
-                makeErrorAssignRule,
-            ]);
-
-            return {
-                type: declarationTypeClass.getType(),
-                sourceInfo: makeSourceInfo(declarationTypeClass),
-                value,
-                valueType,
-            };
-        },
-    };
+export const isFieldDeclarationType = (value: unknown): value is FieldDeclarationType => {
+    return isCommonType(value) && value.type === 'fieldDeclaration';
 };
 
-export type InterfaceDeclarationType = CommonType & {
+export const makeFieldDeclarationAssignRule: AssignForValueRule<
+    FieldDeclarationTypeClass,
+    FieldDeclarationType
+> = {
+    isValid: (target: unknown) => isTargetTypeClass(target, isFieldDeclarationTypeClass),
+    construct: (declarationTypeClass: FieldDeclarationTypeClass) => {
+        const value = assignMultiClass(declarationTypeClass.getValue(), [
+            makeVariableDeclaratorsAssignRule,
+            makeErrorAssignRule,
+        ]);
+
+        const valueType = assignMultiClass(declarationTypeClass.getValueType(), [
+            makeTypeRefAssignRule,
+            makeErrorAssignRule,
+        ]);
+
+        return {
+            type: declarationTypeClass.getType(),
+            sourceInfo: makeSourceInfo(declarationTypeClass),
+            value,
+            valueType,
+        };
+    },
+};
+
+export type InterfaceDeclarationType = CommonType<'interfaceDeclaration'> & {
     value: ValueRuleValue<IdType>;
     body: ValueRuleValue<InterfaceBodyType>;
     extend: ValueRuleValue<TypeListType | null>;
 };
 
-export const isInterfaceDeclarationType = typia.createIs<InterfaceDeclarationType>();
-
-export const makeInterfaceDeclarationRule = (): AssignForValueRule<
-    InterfaceDeclarationTypeClass,
-    InterfaceDeclarationType
-> => {
-    return {
-        isValid: (target: unknown) => isTargetTypeClass(target, isInterfaceDeclarationTypeClass),
-        construct: (declarationTypeClass: InterfaceDeclarationTypeClass) => {
-            const value = assignMultiClass(declarationTypeClass.getValue(), [
-                makeIdRule(),
-                makeErrorAssignRule,
-            ]);
-
-            const body = assignMultiClass(declarationTypeClass.getBody(), [
-                makeInterfaceBodyRule(),
-                makeErrorAssignRule,
-            ]);
-
-            const extend = assignMultiClass(declarationTypeClass.getExtend(), [
-                makeTypeListRule(),
-                makeErrorAssignRule,
-                makeNullAssignRule,
-            ]);
-
-            return {
-                type: declarationTypeClass.getType(),
-                sourceInfo: makeSourceInfo(declarationTypeClass),
-                value,
-                body,
-                extend,
-            };
-        },
-    };
+export const isInterfaceDeclarationType = (value: unknown): value is InterfaceDeclarationType => {
+    return isCommonType(value) && value.type === 'interfaceDeclaration';
 };
 
-export type InterfaceMethodDeclarationType = CommonType & {
+export const makeInterfaceDeclarationAssignRule: AssignForValueRule<
+    InterfaceDeclarationTypeClass,
+    InterfaceDeclarationType
+> = {
+    isValid: (target: unknown) => isTargetTypeClass(target, isInterfaceDeclarationTypeClass),
+    construct: (declarationTypeClass: InterfaceDeclarationTypeClass) => {
+        const value = assignMultiClass(declarationTypeClass.getValue(), [
+            makeIdAssignRule,
+            makeErrorAssignRule,
+        ]);
+
+        const body = assignMultiClass(declarationTypeClass.getBody(), [
+            makeInterfaceBodyAssignRule,
+            makeErrorAssignRule,
+        ]);
+
+        const extend = assignMultiClass(declarationTypeClass.getExtend(), [
+            makeTypeListAssignRule,
+            makeErrorAssignRule,
+            makeNullAssignRule,
+        ]);
+
+        return {
+            type: declarationTypeClass.getType(),
+            sourceInfo: makeSourceInfo(declarationTypeClass),
+            value,
+            body,
+            extend,
+        };
+    },
+};
+
+export type InterfaceMethodDeclarationType = CommonType<'interfaceMethodDeclaration'> & {
     value: ValueRuleValue<IdType>;
     valueType: ValueRuleValue<string | TypeRefType>;
     param: ValueRuleValue<FormalParametersType | null>;
     modifier: ValueRuleValue<ModifierType>[];
 };
 
-export const isInterfaceMethodDeclarationType = typia.createIs<InterfaceMethodDeclarationType>();
-
-export const makeInterfaceMethodDeclarationRule = (): AssignForValueRule<
-    InterfaceMethodDeclarationTypeClass,
-    InterfaceMethodDeclarationType
-> => {
-    return {
-        isValid: (target: unknown) =>
-            isTargetTypeClass(target, isInterfaceMethodDeclarationTypeClass),
-        construct: (declarationTypeClass: InterfaceMethodDeclarationTypeClass) => {
-            const value = assignMultiClass(declarationTypeClass.getValue(), [
-                makeIdRule(),
-                makeErrorAssignRule,
-            ]);
-
-            const valueType = assignMultiClass(declarationTypeClass.getValueType(), [
-                makeStringAssignRule,
-                makeTypeRefRule(),
-                makeErrorAssignRule,
-            ]);
-
-            const param = assignMultiClass(declarationTypeClass.getParam(), [
-                makeFormalParametersRule(),
-                makeErrorAssignRule,
-                makeNullAssignRule,
-            ]);
-
-            const modifier = declarationTypeClass
-                .getModifier()
-                .map((v) => assignMultiClass(v, [makeModifierRule(), makeErrorAssignRule]));
-
-            return {
-                type: declarationTypeClass.getType(),
-                sourceInfo: makeSourceInfo(declarationTypeClass),
-                value,
-                valueType,
-                param,
-                modifier,
-            };
-        },
-    };
+export const isInterfaceMethodDeclarationType = (
+    value: unknown,
+): value is InterfaceMethodDeclarationType => {
+    return isCommonType(value) && value.type === 'interfaceMethodDeclaration';
 };
 
-export type LocalVariableDeclarationType = CommonType & {
+export const makeInterfaceMethodDeclarationAssignRule: AssignForValueRule<
+    InterfaceMethodDeclarationTypeClass,
+    InterfaceMethodDeclarationType
+> = {
+    isValid: (target: unknown) => isTargetTypeClass(target, isInterfaceMethodDeclarationTypeClass),
+    construct: (declarationTypeClass: InterfaceMethodDeclarationTypeClass) => {
+        const value = assignMultiClass(declarationTypeClass.getValue(), [
+            makeIdAssignRule,
+            makeErrorAssignRule,
+        ]);
+
+        const valueType = assignMultiClass(declarationTypeClass.getValueType(), [
+            makeStringAssignRule,
+            makeTypeRefAssignRule,
+            makeErrorAssignRule,
+        ]);
+
+        const param = assignMultiClass(declarationTypeClass.getParam(), [
+            makeFormalParametersAssignRule,
+            makeErrorAssignRule,
+            makeNullAssignRule,
+        ]);
+
+        const modifier = declarationTypeClass
+            .getModifier()
+            .map((v) => assignMultiClass(v, [makeModifierAssignRule, makeErrorAssignRule]));
+
+        return {
+            type: declarationTypeClass.getType(),
+            sourceInfo: makeSourceInfo(declarationTypeClass),
+            value,
+            valueType,
+            param,
+            modifier,
+        };
+    },
+};
+
+export type LocalVariableDeclarationType = CommonType<'localVariableDeclaration'> & {
     value: ValueRuleValue<VariableDeclaratorsType>;
     valueType: ValueRuleValue<TypeRefType>;
     modifier: ValueRuleValue<ModifierType>[];
 };
 
-export const isLocalVariableDeclarationType = typia.createIs<LocalVariableDeclarationType>();
-
-export const makeLocalVariableDeclarationRule = (): AssignForValueRule<
-    LocalVariableDeclarationTypeClass,
-    LocalVariableDeclarationType
-> => {
-    return {
-        isValid: (target: unknown) =>
-            isTargetTypeClass(target, isLocalVariableDeclarationTypeClass),
-        construct: (declarationTypeClass: LocalVariableDeclarationTypeClass) => {
-            const value = assignMultiClass(declarationTypeClass.getValue(), [
-                makeVariableDeclaratorsRule(),
-                makeErrorAssignRule,
-            ]);
-
-            const valueType = assignMultiClass(declarationTypeClass.getValueType(), [
-                makeTypeRefRule(),
-                makeErrorAssignRule,
-            ]);
-
-            const modifier = declarationTypeClass
-                .getModifier()
-                .map((v) => assignMultiClass(v, [makeModifierRule(), makeErrorAssignRule]));
-
-            return {
-                type: declarationTypeClass.getType(),
-                sourceInfo: makeSourceInfo(declarationTypeClass),
-                value,
-                valueType,
-                modifier,
-            };
-        },
-    };
+export const isLocalVariableDeclarationType = (
+    value: unknown,
+): value is LocalVariableDeclarationType => {
+    return isCommonType(value) && value.type === 'localVariableDeclaration';
 };
 
-export type MemberDeclarationType = CommonType & {
+export const makeLocalVariableDeclarationAssignRule: AssignForValueRule<
+    LocalVariableDeclarationTypeClass,
+    LocalVariableDeclarationType
+> = {
+    isValid: (target: unknown) => isTargetTypeClass(target, isLocalVariableDeclarationTypeClass),
+    construct: (declarationTypeClass: LocalVariableDeclarationTypeClass) => {
+        const value = assignMultiClass(declarationTypeClass.getValue(), [
+            makeVariableDeclaratorsAssignRule,
+            makeErrorAssignRule,
+        ]);
+
+        const valueType = assignMultiClass(declarationTypeClass.getValueType(), [
+            makeTypeRefAssignRule,
+            makeErrorAssignRule,
+        ]);
+
+        const modifier = declarationTypeClass
+            .getModifier()
+            .map((v) => assignMultiClass(v, [makeModifierAssignRule, makeErrorAssignRule]));
+
+        return {
+            type: declarationTypeClass.getType(),
+            sourceInfo: makeSourceInfo(declarationTypeClass),
+            value,
+            valueType,
+            modifier,
+        };
+    },
+};
+
+export type MemberDeclarationType = CommonType<'memberDeclaration'> & {
     value: ValueRuleValue<
         | MethodDeclarationType
         | ConstructorDeclarationType
@@ -460,126 +474,126 @@ export type MemberDeclarationType = CommonType & {
     >;
 };
 
-export const isMemberDeclarationType = typia.createIs<MemberDeclarationType>();
-
-export const makeMemberDeclarationRule = (): AssignForValueRule<
-    MemberDeclarationTypeClass,
-    MemberDeclarationType
-> => {
-    return {
-        isValid: (target: unknown) => isTargetTypeClass(target, isMemberDeclarationTypeClass),
-        construct: (declarationTypeClass: MemberDeclarationTypeClass) => {
-            const value = assignMultiClass(declarationTypeClass.getValue(), [
-                makeMethodDeclarationRule(),
-                makeConstructorDeclarationRule(),
-                makeInterfaceDeclarationRule(),
-                makeClassDeclarationRule(),
-                makeEnumDeclarationRule(),
-                makePropertyDeclarationRule(),
-                makeFieldDeclarationRule(),
-                makeErrorAssignRule,
-            ]);
-            return {
-                type: declarationTypeClass.getType(),
-                sourceInfo: makeSourceInfo(declarationTypeClass),
-                value,
-            };
-        },
-    };
+export const isMemberDeclarationType = (value: unknown): value is MemberDeclarationType => {
+    return isCommonType(value) && value.type === 'memberDeclaration';
 };
 
-export type MethodDeclarationType = CommonType & {
+export const makeMemberDeclarationAssignRule: AssignForValueRule<
+    MemberDeclarationTypeClass,
+    MemberDeclarationType
+> = {
+    isValid: (target: unknown) => isTargetTypeClass(target, isMemberDeclarationTypeClass),
+    construct: (declarationTypeClass: MemberDeclarationTypeClass) => {
+        const value = assignMultiClass(declarationTypeClass.getValue(), [
+            makeMethodDeclarationAssignRule,
+            makeConstructorDeclarationAssignRule,
+            makeInterfaceDeclarationAssignRule,
+            makeClassDeclarationAssignRule,
+            makeEnumDeclarationAssignRule,
+            makePropertyDeclarationAssignRule,
+            makeFieldDeclarationAssignRule,
+            makeErrorAssignRule,
+        ]);
+        return {
+            type: declarationTypeClass.getType(),
+            sourceInfo: makeSourceInfo(declarationTypeClass),
+            value,
+        };
+    },
+};
+
+export type MethodDeclarationType = CommonType<'methodDeclaration'> & {
     value: ValueRuleValue<IdType>;
     valueType: ValueRuleValue<string | TypeRefType>;
     param: ValueRuleValue<FormalParametersType | null>;
     block: ValueRuleValue<BlockType | null>;
 };
 
-export const isMethodDeclarationType = typia.createIs<MethodDeclarationType>();
-
-export const makeMethodDeclarationRule = (): AssignForValueRule<
-    MethodDeclarationTypeClass,
-    MethodDeclarationType
-> => {
-    return {
-        isValid: (target: unknown) => isTargetTypeClass(target, isMethodDeclarationTypeClass),
-        construct: (declarationTypeClass: MethodDeclarationTypeClass) => {
-            const value = assignMultiClass(declarationTypeClass.getValue(), [
-                makeIdRule(),
-                makeErrorAssignRule,
-            ]);
-
-            const valueType = assignMultiClass(declarationTypeClass.getValueType(), [
-                makeStringAssignRule,
-                makeTypeRefRule(),
-                makeErrorAssignRule,
-            ]);
-
-            const param = assignMultiClass(declarationTypeClass.getParam(), [
-                makeFormalParametersRule(),
-                makeErrorAssignRule,
-                makeNullAssignRule,
-            ]);
-
-            const block = assignMultiClass(declarationTypeClass.getBlock(), [
-                makeBlockRule(),
-                makeErrorAssignRule,
-                makeNullAssignRule,
-            ]);
-
-            return {
-                type: declarationTypeClass.getType(),
-                sourceInfo: makeSourceInfo(declarationTypeClass),
-                value,
-                valueType,
-                param,
-                block,
-            };
-        },
-    };
+export const isMethodDeclarationType = (value: unknown): value is MethodDeclarationType => {
+    return isCommonType(value) && value.type === 'methodDeclaration';
 };
 
-export type PropertyDeclarationType = CommonType & {
+export const makeMethodDeclarationAssignRule: AssignForValueRule<
+    MethodDeclarationTypeClass,
+    MethodDeclarationType
+> = {
+    isValid: (target: unknown) => isTargetTypeClass(target, isMethodDeclarationTypeClass),
+    construct: (declarationTypeClass: MethodDeclarationTypeClass) => {
+        const value = assignMultiClass(declarationTypeClass.getValue(), [
+            makeIdAssignRule,
+            makeErrorAssignRule,
+        ]);
+
+        const valueType = assignMultiClass(declarationTypeClass.getValueType(), [
+            makeStringAssignRule,
+            makeTypeRefAssignRule,
+            makeErrorAssignRule,
+        ]);
+
+        const param = assignMultiClass(declarationTypeClass.getParam(), [
+            makeFormalParametersAssignRule,
+            makeErrorAssignRule,
+            makeNullAssignRule,
+        ]);
+
+        const block = assignMultiClass(declarationTypeClass.getBlock(), [
+            makeBlockAssignRule,
+            makeErrorAssignRule,
+            makeNullAssignRule,
+        ]);
+
+        return {
+            type: declarationTypeClass.getType(),
+            sourceInfo: makeSourceInfo(declarationTypeClass),
+            value,
+            valueType,
+            param,
+            block,
+        };
+    },
+};
+
+export type PropertyDeclarationType = CommonType<'propertyDeclaration'> & {
     value: ValueRuleValue<IdType>;
     valueType: ValueRuleValue<TypeRefType>;
     block: ValueRuleValue<PropertyBlockType>[];
 };
 
-export const isPropertyDeclarationType = typia.createIs<PropertyDeclarationType>();
-
-export const makePropertyDeclarationRule = (): AssignForValueRule<
-    PropertyDeclarationTypeClass,
-    PropertyDeclarationType
-> => {
-    return {
-        isValid: (target: unknown) => isTargetTypeClass(target, isPropertyDeclarationTypeClass),
-        construct: (declarationTypeClass: PropertyDeclarationTypeClass) => {
-            const value = assignMultiClass(declarationTypeClass.getValue(), [
-                makeIdRule(),
-                makeErrorAssignRule,
-            ]);
-
-            const valueType = assignMultiClass(declarationTypeClass.getValueType(), [
-                makeTypeRefRule(),
-                makeErrorAssignRule,
-            ]);
-
-            const block = declarationTypeClass
-                .getBlock()
-                .map((v) => assignMultiClass(v, [makePropertyBlockRule(), makeErrorAssignRule]));
-
-            return {
-                type: declarationTypeClass.getType(),
-                sourceInfo: makeSourceInfo(declarationTypeClass),
-                value,
-                valueType,
-                block,
-            };
-        },
-    };
+export const isPropertyDeclarationType = (value: unknown): value is PropertyDeclarationType => {
+    return isCommonType(value) && value.type === 'propertyDeclaration';
 };
 
-export type TriggerMemberDeclarationType = CommonType & {
+export const makePropertyDeclarationAssignRule: AssignForValueRule<
+    PropertyDeclarationTypeClass,
+    PropertyDeclarationType
+> = {
+    isValid: (target: unknown) => isTargetTypeClass(target, isPropertyDeclarationTypeClass),
+    construct: (declarationTypeClass: PropertyDeclarationTypeClass) => {
+        const value = assignMultiClass(declarationTypeClass.getValue(), [
+            makeIdAssignRule,
+            makeErrorAssignRule,
+        ]);
+
+        const valueType = assignMultiClass(declarationTypeClass.getValueType(), [
+            makeTypeRefAssignRule,
+            makeErrorAssignRule,
+        ]);
+
+        const block = declarationTypeClass
+            .getBlock()
+            .map((v) => assignMultiClass(v, [makePropertyBlockAssignRule, makeErrorAssignRule]));
+
+        return {
+            type: declarationTypeClass.getType(),
+            sourceInfo: makeSourceInfo(declarationTypeClass),
+            value,
+            valueType,
+            block,
+        };
+    },
+};
+
+export type TriggerMemberDeclarationType = CommonType<'triggerMemberDeclaration'> & {
     value: ValueRuleValue<
         | MethodDeclarationType
         | InterfaceDeclarationType
@@ -590,66 +604,66 @@ export type TriggerMemberDeclarationType = CommonType & {
     >;
 };
 
-export const isTriggerMemberDeclarationType = typia.createIs<TriggerMemberDeclarationType>();
-
-export const makeTriggerMemberDeclarationRule = (): AssignForValueRule<
-    TriggerMemberDeclarationTypeClass,
-    TriggerMemberDeclarationType
-> => {
-    return {
-        isValid: (target: unknown) =>
-            isTargetTypeClass(target, isTriggerMemberDeclarationTypeClass),
-        construct: (declarationTypeClass: TriggerMemberDeclarationTypeClass) => {
-            const value = assignMultiClass(declarationTypeClass.getValue(), [
-                makeMethodDeclarationRule(),
-                makeInterfaceDeclarationRule(),
-                makeClassDeclarationRule(),
-                makeEnumDeclarationRule(),
-                makePropertyDeclarationRule(),
-                makeFieldDeclarationRule(),
-                makeErrorAssignRule,
-            ]);
-            return {
-                type: declarationTypeClass.getType(),
-                sourceInfo: makeSourceInfo(declarationTypeClass),
-                value,
-            };
-        },
-    };
+export const isTriggerMemberDeclarationType = (
+    value: unknown,
+): value is TriggerMemberDeclarationType => {
+    return isCommonType(value) && value.type === 'triggerMemberDeclaration';
 };
 
-export type TypeDeclarationType = CommonType & {
+export const makeTriggerMemberDeclarationAssignRule: AssignForValueRule<
+    TriggerMemberDeclarationTypeClass,
+    TriggerMemberDeclarationType
+> = {
+    isValid: (target: unknown) => isTargetTypeClass(target, isTriggerMemberDeclarationTypeClass),
+    construct: (declarationTypeClass: TriggerMemberDeclarationTypeClass) => {
+        const value = assignMultiClass(declarationTypeClass.getValue(), [
+            makeMethodDeclarationAssignRule,
+            makeInterfaceDeclarationAssignRule,
+            makeClassDeclarationAssignRule,
+            makeEnumDeclarationAssignRule,
+            makePropertyDeclarationAssignRule,
+            makeFieldDeclarationAssignRule,
+            makeErrorAssignRule,
+        ]);
+        return {
+            type: declarationTypeClass.getType(),
+            sourceInfo: makeSourceInfo(declarationTypeClass),
+            value,
+        };
+    },
+};
+
+export type TypeDeclarationType = CommonType<'typeDeclaration'> & {
     value: ValueRuleValue<InterfaceDeclarationType | ClassDeclarationType | EnumDeclarationType>;
     modifier: ValueRuleValue<ModifierType>[];
 };
 
-export const isTypeDeclarationType = typia.createIs<TypeDeclarationType>();
-
-export const makeTypeDeclarationRule = (): AssignForValueRule<
-    TypeDeclarationTypeClass,
-    TypeDeclarationType
-> => {
-    return {
-        isValid: (target: unknown) => isTargetTypeClass(target, isTypeDeclarationTypeClass),
-        construct: (declarationTypeClass: TypeDeclarationTypeClass) => {
-            const value = assignMultiClass(declarationTypeClass.getValue(), [
-                makeInterfaceDeclarationRule(),
-                makeClassDeclarationRule(),
-                makeEnumDeclarationRule(),
-                makeErrorAssignRule,
-            ]);
-
-            const modifier = declarationTypeClass
-                .getModifier()
-                .map((v) => assignMultiClass(v, [makeModifierRule(), makeErrorAssignRule]));
-
-            return {
-                type: declarationTypeClass.getType(),
-                sourceInfo: makeSourceInfo(declarationTypeClass),
-                value,
-                modifier,
-            };
-        },
-    };
+export const isTypeDeclarationType = (value: unknown): value is TypeDeclarationType => {
+    return isCommonType(value) && value.type === 'typeDeclaration';
 };
 
+export const makeTypeDeclarationAssignRule: AssignForValueRule<
+    TypeDeclarationTypeClass,
+    TypeDeclarationType
+> = {
+    isValid: (target: unknown) => isTargetTypeClass(target, isTypeDeclarationTypeClass),
+    construct: (declarationTypeClass: TypeDeclarationTypeClass) => {
+        const value = assignMultiClass(declarationTypeClass.getValue(), [
+            makeInterfaceDeclarationAssignRule,
+            makeClassDeclarationAssignRule,
+            makeEnumDeclarationAssignRule,
+            makeErrorAssignRule,
+        ]);
+
+        const modifier = declarationTypeClass
+            .getModifier()
+            .map((v) => assignMultiClass(v, [makeModifierAssignRule, makeErrorAssignRule]));
+
+        return {
+            type: declarationTypeClass.getType(),
+            sourceInfo: makeSourceInfo(declarationTypeClass),
+            value,
+            modifier,
+        };
+    },
+};

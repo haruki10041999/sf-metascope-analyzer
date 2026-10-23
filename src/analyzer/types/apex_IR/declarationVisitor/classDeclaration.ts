@@ -8,7 +8,10 @@ import { TypeListTypeClass, ListVisitor, isTypeListType } from '../listVisitor';
 import { TypeRefTypeClass, TypeVisitor, isTypeRefType } from '../typeVisitor';
 import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
 
-export class ClassDeclarationTypeClass extends DeclarationTypeClass<NormalIdTypeClass> {
+export class ClassDeclarationTypeClass extends DeclarationTypeClass<
+    'classDeclaration',
+    NormalIdTypeClass
+> {
     private body: ClassBodyTypeClass | ErrorTypeClass;
     private extend: TypeRefTypeClass | ErrorTypeClass | null;
     private implement: TypeListTypeClass | ErrorTypeClass | null;
@@ -56,7 +59,7 @@ export class ClassDeclarationTypeClass extends DeclarationTypeClass<NormalIdType
 }
 
 export const isClassDeclarationType = (
-    target: CommonTypeClass,
+    target: CommonTypeClass<string>,
 ): target is ClassDeclarationTypeClass => {
     return target instanceof ClassDeclarationTypeClass;
 };

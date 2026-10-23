@@ -27,7 +27,10 @@ type AnonymousMemberDeclarationTypeClassType =
     | PropertyDeclarationTypeClass
     | FieldDeclarationTypeClass;
 
-export class AnonymousMemberDeclarationTypeClass extends DeclarationTypeClass<AnonymousMemberDeclarationTypeClassType> {
+export class AnonymousMemberDeclarationTypeClass extends DeclarationTypeClass<
+    'anonymousMemberDeclaration',
+    AnonymousMemberDeclarationTypeClassType
+> {
     private constructor(value: AnonymousMemberDeclarationTypeClassType | ErrorTypeClass) {
         super('anonymousMemberDeclaration', value);
     }
@@ -88,8 +91,7 @@ export class AnonymousMemberDeclarationTypeClass extends DeclarationTypeClass<An
 }
 
 export const isAnonymousMemberDeclarationType = (
-    target: CommonTypeClass,
+    target: CommonTypeClass<string>,
 ): target is AnonymousMemberDeclarationTypeClass => {
     return target instanceof AnonymousMemberDeclarationTypeClass;
 };
-

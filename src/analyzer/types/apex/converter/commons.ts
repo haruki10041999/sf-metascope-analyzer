@@ -17,24 +17,36 @@ export type SourceInfo = {
 export const isSourceInfo = typia.createIs<SourceInfo>();
 
 // span は CommonVisitor.visit() が必ず設定する
-export const makeSourceInfo = (typeClass: CommonTypeClass): SourceInfo => {
+export const makeSourceInfo = (typeClass: CommonTypeClass<string>): SourceInfo => {
     const span = typeClass.getSpan()!;
     return { context: span.context, start: span.start, end: span.end };
 };
 
-export type CommonType = {
-    type: string;
+export type CommonType<TName extends string> = {
+    type: TName;
     sourceInfo: SourceInfo;
 };
 
-export type ErrorInfo = CommonType & {
-    type: 'error';
+// 各 isXxxType は、これで type の存在を確認してからリテラルを比較する
+export const isCommonType = (value: unknown): value is CommonType<string> => {
+    return (
+        typeof value === 'object' &&
+        value !== null &&
+        'type' in value &&
+        typeof value.type === 'string'
+    );
+};
+
+export type ErrorType = CommonType<'error'> & {
     errorCode: ErrorCode;
     contextType: string;
 };
 
-export const isErrorInfo = typia.createIs<ErrorInfo>();
-export const makeErrorInfo = (typeClass: ErrorTypeClass): ErrorInfo => {
+export const isErrorType = (value: unknown): value is ErrorType => {
+    return isCommonType(value) && value.type === 'error';
+};
+
+export const makeErrorType = (typeClass: ErrorTypeClass): ErrorType => {
     return {
         type: 'error',
         errorCode: typeClass.getCode(),
@@ -43,9 +55,9 @@ export const makeErrorInfo = (typeClass: ErrorTypeClass): ErrorInfo => {
     };
 };
 
-export const isTargetTypeClass = <T extends CommonTypeClass>(
+export const isTargetTypeClass = <T extends CommonTypeClass<string>>(
     target: unknown,
-    isValid: (target: CommonTypeClass) => target is T,
+    isValid: (target: CommonTypeClass<string>) => target is T,
 ): target is T => {
     return target instanceof CommonTypeClass && isValid(target);
 };
@@ -55,7 +67,7 @@ type AnyAssignRule = {
     construct: (target: never) => unknown;
 };
 
-export type ValueRuleValue<T> = T | ErrorInfo;
+export type ValueRuleValue<T> = T | ErrorType;
 
 export type AssignForValueRule<TValue, TResult> = {
     isValid: (target: unknown) => target is TValue;
@@ -80,7 +92,7 @@ export const makeNullAssignRule = {
 export const makeErrorAssignRule = {
     isValid: (target: unknown) => isTargetTypeClass(target, isErrorTypeClass),
     construct: (typeClass: ErrorTypeClass) => {
-        return makeErrorInfo(typeClass);
+        return makeErrorType(typeClass);
     },
 };
 

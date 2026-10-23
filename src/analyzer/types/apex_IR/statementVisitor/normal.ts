@@ -68,7 +68,10 @@ type NormalStatementTypeClassType =
     | LocalVariableDeclarationStatementTypeClass
     | ExpressionStatementTypeClass;
 
-export class NormalStatementTypeClass extends StatementTypeClass<NormalStatementTypeClassType> {
+export class NormalStatementTypeClass extends StatementTypeClass<
+    'statement',
+    NormalStatementTypeClassType
+> {
     private constructor(value: NormalStatementTypeClassType | ErrorTypeClass) {
         super('statement', value);
     }
@@ -224,8 +227,7 @@ export class NormalStatementTypeClass extends StatementTypeClass<NormalStatement
 }
 
 export const isNormalStatementType = (
-    target: CommonTypeClass,
+    target: CommonTypeClass<string>,
 ): target is NormalStatementTypeClass => {
     return target instanceof NormalStatementTypeClass;
 };
-

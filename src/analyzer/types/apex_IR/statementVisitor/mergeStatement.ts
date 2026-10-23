@@ -14,7 +14,10 @@ import {
 } from '../expressionVisitor';
 import { ErrorTypeClass, CommonTypeClass, isValidClass, isValidClassList } from '../commonVisitor';
 
-export class MergeStatementTypeClass extends StatementListTypeClass<BasedExpressionTypeClass> {
+export class MergeStatementTypeClass extends StatementListTypeClass<
+    'mergeStatement',
+    BasedExpressionTypeClass
+> {
     private accessLevel: AccessLevelTypeClass | ErrorTypeClass | null = null;
     private constructor(
         value: (BasedExpressionTypeClass | ErrorTypeClass)[],
@@ -52,7 +55,7 @@ export class MergeStatementTypeClass extends StatementListTypeClass<BasedExpress
 }
 
 export const isMergeStatementType = (
-    target: CommonTypeClass,
+    target: CommonTypeClass<string>,
 ): target is MergeStatementTypeClass => {
     return target instanceof MergeStatementTypeClass;
 };

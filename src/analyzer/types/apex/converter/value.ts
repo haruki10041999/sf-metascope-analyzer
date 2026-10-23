@@ -1,5 +1,3 @@
-import typia from 'typia';
-
 import {
     CoordinateValueTypeClass,
     ElementValueTypeClass,
@@ -19,7 +17,8 @@ import {
 } from '../../apex_IR';
 
 import {
-    ErrorInfo,
+    isCommonType,
+    ErrorType,
     CommonType,
     AssignForValueRule,
     ValueRuleValue,
@@ -30,113 +29,118 @@ import {
     makeSourceInfo,
     makeStringAssignRule,
 } from './commons';
-import { makeBoundExpressionRule, BoundExpressionType } from './expression';
-import { makeIdRule, IdType } from './id';
-import { makeValueListRule, ValueListType } from './list';
+import { makeBoundExpressionAssignRule, BoundExpressionType } from './expression';
+import { makeIdAssignRule, IdType } from './id';
+import { makeValueListAssignRule, ValueListType } from './list';
 import {
-    makeLiteralRule,
-    makeSignedNumberRule,
-    makeWhenLiteralRule,
+    makeLiteralAssignRule,
+    makeSignedNumberAssignRule,
+    makeWhenLiteralAssignRule,
     LiteralType,
     SignedNumberType,
     SignedIntegerType,
     WhenLiteralType,
 } from './literal';
-import { makeFieldNameRule, FieldNameType } from './name';
-import { makeDateFormulaRule, makeSubQueryRule, DateFormulaType, SubQueryType } from './query';
-import { makeTypeRefRule, TypeRefType } from './type';
+import { makeFieldNameAssignRule, FieldNameType } from './name';
+import {
+    makeDateFormulaAssignRule,
+    makeSubQueryAssignRule,
+    DateFormulaType,
+    SubQueryType,
+} from './query';
+import { makeTypeRefAssignRule, TypeRefType } from './type';
 
-export type CoordinateValueType = CommonType & {
+export type CoordinateValueType = CommonType<'coordinateValue'> & {
     value: ValueRuleValue<SignedNumberType | BoundExpressionType>;
 };
 
-export const isCoordinateValueType = typia.createIs<CoordinateValueType>();
-
-export const makeCoordinateValueRule = (): AssignForValueRule<
-    CoordinateValueTypeClass,
-    CoordinateValueType
-> => {
-    return {
-        isValid: (target: unknown) => isTargetTypeClass(target, isCoordinateValueTypeClass),
-        construct: (valueTypeClass: CoordinateValueTypeClass) => {
-            const value = assignMultiClass(valueTypeClass.getValue(), [
-                makeSignedNumberRule(),
-                makeBoundExpressionRule(),
-                makeErrorAssignRule,
-            ]);
-            return {
-                type: valueTypeClass.getType(),
-                sourceInfo: makeSourceInfo(valueTypeClass),
-                value,
-            };
-        },
-    };
+export const isCoordinateValueType = (value: unknown): value is CoordinateValueType => {
+    return isCommonType(value) && value.type === 'coordinateValue';
 };
 
-export type ElementValueType = CommonType & {
+export const makeCoordinateValueAssignRule: AssignForValueRule<
+    CoordinateValueTypeClass,
+    CoordinateValueType
+> = {
+    isValid: (target: unknown) => isTargetTypeClass(target, isCoordinateValueTypeClass),
+    construct: (valueTypeClass: CoordinateValueTypeClass) => {
+        const value = assignMultiClass(valueTypeClass.getValue(), [
+            makeSignedNumberAssignRule,
+            makeBoundExpressionAssignRule,
+            makeErrorAssignRule,
+        ]);
+        return {
+            type: valueTypeClass.getType(),
+            sourceInfo: makeSourceInfo(valueTypeClass),
+            value,
+        };
+    },
+};
+
+export type ElementValueType = CommonType<'elementValue'> & {
     value: ValueRuleValue<LiteralType>;
 };
 
-export const isElementValueType = typia.createIs<ElementValueType>();
-
-export const makeElementValueRule = (): AssignForValueRule<
-    ElementValueTypeClass,
-    ElementValueType
-> => {
-    return {
-        isValid: (target: unknown) => isTargetTypeClass(target, isElementValueTypeClass),
-        construct: (valueTypeClass: ElementValueTypeClass) => {
-            const value = assignMultiClass(valueTypeClass.getValue(), [
-                makeLiteralRule(),
-                makeErrorAssignRule,
-            ]);
-            return {
-                type: valueTypeClass.getType(),
-                sourceInfo: makeSourceInfo(valueTypeClass),
-                value,
-            };
-        },
-    };
+export const isElementValueType = (value: unknown): value is ElementValueType => {
+    return isCommonType(value) && value.type === 'elementValue';
 };
 
-export type LocationValueType = CommonType & {
+export const makeElementValueAssignRule: AssignForValueRule<
+    ElementValueTypeClass,
+    ElementValueType
+> = {
+    isValid: (target: unknown) => isTargetTypeClass(target, isElementValueTypeClass),
+    construct: (valueTypeClass: ElementValueTypeClass) => {
+        const value = assignMultiClass(valueTypeClass.getValue(), [
+            makeLiteralAssignRule,
+            makeErrorAssignRule,
+        ]);
+        return {
+            type: valueTypeClass.getType(),
+            sourceInfo: makeSourceInfo(valueTypeClass),
+            value,
+        };
+    },
+};
+
+export type LocationValueType = CommonType<'locationValue'> & {
     value: ValueRuleValue<FieldNameType | BoundExpressionType | null>;
     coordinates: ValueRuleValue<ValueRuleValue<CoordinateValueType>[]> | null;
 };
 
-export const isLocationValueType = typia.createIs<LocationValueType>();
-
-export const makeLocationValueRule = (): AssignForValueRule<
-    LocationValueTypeClass,
-    LocationValueType
-> => {
-    return {
-        isValid: (target: unknown) => isTargetTypeClass(target, isLocationValueTypeClass),
-        construct: (valueTypeClass: LocationValueTypeClass) => {
-            const value = assignMultiClass(valueTypeClass.getValue(), [
-                makeFieldNameRule(),
-                makeBoundExpressionRule(),
-                makeErrorAssignRule,
-                makeNullAssignRule,
-            ]);
-            const coordinatesTypeClass = valueTypeClass.getCoordinates();
-            let coordinates: ValueRuleValue<ValueRuleValue<CoordinateValueType>[]> | null = null;
-            if (coordinatesTypeClass) {
-                coordinates = coordinatesTypeClass.map((v) =>
-                    assignMultiClass(v, [makeCoordinateValueRule(), makeErrorAssignRule]),
-                );
-            }
-            return {
-                type: valueTypeClass.getType(),
-                sourceInfo: makeSourceInfo(valueTypeClass),
-                value,
-                coordinates,
-            };
-        },
-    };
+export const isLocationValueType = (value: unknown): value is LocationValueType => {
+    return isCommonType(value) && value.type === 'locationValue';
 };
 
-export type ValueType = CommonType & {
+export const makeLocationValueAssignRule: AssignForValueRule<
+    LocationValueTypeClass,
+    LocationValueType
+> = {
+    isValid: (target: unknown) => isTargetTypeClass(target, isLocationValueTypeClass),
+    construct: (valueTypeClass: LocationValueTypeClass) => {
+        const value = assignMultiClass(valueTypeClass.getValue(), [
+            makeFieldNameAssignRule,
+            makeBoundExpressionAssignRule,
+            makeErrorAssignRule,
+            makeNullAssignRule,
+        ]);
+        const coordinatesTypeClass = valueTypeClass.getCoordinates();
+        let coordinates: ValueRuleValue<ValueRuleValue<CoordinateValueType>[]> | null = null;
+        if (coordinatesTypeClass) {
+            coordinates = coordinatesTypeClass.map((v) =>
+                assignMultiClass(v, [makeCoordinateValueAssignRule, makeErrorAssignRule]),
+            );
+        }
+        return {
+            type: valueTypeClass.getType(),
+            sourceInfo: makeSourceInfo(valueTypeClass),
+            value,
+            coordinates,
+        };
+    },
+};
+
+export type ValueType = CommonType<'value'> & {
     value: ValueRuleValue<
         | string
         | SignedNumberType
@@ -148,76 +152,73 @@ export type ValueType = CommonType & {
     valueType: string;
 };
 
-export const isValueType = typia.createIs<ValueType>();
-
-export const makeValueRule = (): AssignForValueRule<NormalValueTypeClass, ValueType> => {
-    return {
-        isValid: (target: unknown) => isTargetTypeClass(target, isNormalValueType),
-        construct: (valueTypeClass: NormalValueTypeClass) => {
-            const value = assignMultiClass(valueTypeClass.getValue(), [
-                makeStringAssignRule,
-                makeSignedNumberRule(),
-                makeDateFormulaRule(),
-                makeSubQueryRule(),
-                makeValueListRule(),
-                makeBoundExpressionRule(),
-                makeErrorAssignRule,
-            ]);
-            const valueType = valueTypeClass.getValueType();
-            return {
-                type: valueTypeClass.getType(),
-                sourceInfo: makeSourceInfo(valueTypeClass),
-                value,
-                valueType,
-            };
-        },
-    };
+export const isValueType = (value: unknown): value is ValueType => {
+    return isCommonType(value) && value.type === 'value';
 };
 
-export type WhenValueType = CommonType & {
+export const makeValueAssignRule: AssignForValueRule<NormalValueTypeClass, ValueType> = {
+    isValid: (target: unknown) => isTargetTypeClass(target, isNormalValueType),
+    construct: (valueTypeClass: NormalValueTypeClass) => {
+        const value = assignMultiClass(valueTypeClass.getValue(), [
+            makeStringAssignRule,
+            makeSignedNumberAssignRule,
+            makeDateFormulaAssignRule,
+            makeSubQueryAssignRule,
+            makeValueListAssignRule,
+            makeBoundExpressionAssignRule,
+            makeErrorAssignRule,
+        ]);
+        const valueType = valueTypeClass.getValueType();
+        return {
+            type: valueTypeClass.getType(),
+            sourceInfo: makeSourceInfo(valueTypeClass),
+            value,
+            valueType,
+        };
+    },
+};
+
+export type WhenValueType = CommonType<'whenValue'> & {
     value: ValueRuleValue<string | IdType | ValueRuleValue<WhenLiteralType>[]>;
     valueType: ValueRuleValue<TypeRefType | null>;
 };
 
-export const isWhenValueType = typia.createIs<WhenValueType>();
-
-export const makeWhenValueRule = (): AssignForValueRule<WhenValueTypeClass, WhenValueType> => {
-    return {
-        isValid: (target: unknown) => isTargetTypeClass(target, isWhenValueTypeClass),
-        construct: (valueTypeClass: WhenValueTypeClass) => {
-            const value = assignMultiClass(valueTypeClass.getValue(), [
-                makeStringAssignRule,
-                {
-                    isValid: (
-                        target: unknown,
-                    ): target is (WhenLiteralTypeClass | ErrorTypeClass)[] =>
-                        Array.isArray(target) &&
-                        target.every(
-                            (t) =>
-                                isTargetTypeClass(t, isWhenLiteralType) ||
-                                isTargetTypeClass(t, isErrorType),
-                        ),
-                    construct: (values: (WhenLiteralTypeClass | ErrorTypeClass)[]) => {
-                        return values.map((v) =>
-                            assignMultiClass(v, [makeWhenLiteralRule(), makeErrorAssignRule]),
-                        );
-                    },
-                },
-                makeIdRule(),
-                makeErrorAssignRule,
-            ]);
-            const valueType = assignMultiClass(valueTypeClass.getValueType(), [
-                makeTypeRefRule(),
-                makeErrorAssignRule,
-                makeNullAssignRule,
-            ]);
-            return {
-                type: valueTypeClass.getType(),
-                sourceInfo: makeSourceInfo(valueTypeClass),
-                value,
-                valueType,
-            };
-        },
-    };
+export const isWhenValueType = (value: unknown): value is WhenValueType => {
+    return isCommonType(value) && value.type === 'whenValue';
 };
 
+export const makeWhenValueAssignRule: AssignForValueRule<WhenValueTypeClass, WhenValueType> = {
+    isValid: (target: unknown) => isTargetTypeClass(target, isWhenValueTypeClass),
+    construct: (valueTypeClass: WhenValueTypeClass) => {
+        const value = assignMultiClass(valueTypeClass.getValue(), [
+            makeStringAssignRule,
+            {
+                isValid: (target: unknown): target is (WhenLiteralTypeClass | ErrorTypeClass)[] =>
+                    Array.isArray(target) &&
+                    target.every(
+                        (t) =>
+                            isTargetTypeClass(t, isWhenLiteralType) ||
+                            isTargetTypeClass(t, isErrorType),
+                    ),
+                construct: (values: (WhenLiteralTypeClass | ErrorTypeClass)[]) => {
+                    return values.map((v) =>
+                        assignMultiClass(v, [makeWhenLiteralAssignRule, makeErrorAssignRule]),
+                    );
+                },
+            },
+            makeIdAssignRule,
+            makeErrorAssignRule,
+        ]);
+        const valueType = assignMultiClass(valueTypeClass.getValueType(), [
+            makeTypeRefAssignRule,
+            makeErrorAssignRule,
+            makeNullAssignRule,
+        ]);
+        return {
+            type: valueTypeClass.getType(),
+            sourceInfo: makeSourceInfo(valueTypeClass),
+            value,
+            valueType,
+        };
+    },
+};

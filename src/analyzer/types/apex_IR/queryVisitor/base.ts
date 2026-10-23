@@ -7,9 +7,9 @@ import type {
 } from '../clauseVisitor';
 import { ErrorTypeClass, CommonTypeClass } from '../commonVisitor';
 
-export class QueryTypeClass<T> extends CommonTypeClass {
+export class QueryTypeClass<TName extends string, T> extends CommonTypeClass<TName> {
     private value: T | ErrorTypeClass;
-    constructor(type: string, value: T | ErrorTypeClass) {
+    constructor(type: TName, value: T | ErrorTypeClass) {
         super(type);
         this.value = value;
     }
@@ -19,7 +19,7 @@ export class QueryTypeClass<T> extends CommonTypeClass {
     }
 }
 
-export class SoqlQueryTypeClass<T> extends QueryTypeClass<T> {
+export class SoqlQueryTypeClass<TName extends string, T> extends QueryTypeClass<TName, T> {
     private from: FromNameListTypeClass | ErrorTypeClass;
     private forClause: ForClausesTypeClass | ErrorTypeClass | null = null;
     private whereClause: WhereClauseTypeClass | ErrorTypeClass | null = null;
@@ -28,7 +28,7 @@ export class SoqlQueryTypeClass<T> extends QueryTypeClass<T> {
     private updateList: UpdateListTypeClass | ErrorTypeClass | null = null;
 
     constructor(
-        type: string,
+        type: TName,
         value: T | ErrorTypeClass,
         from: FromNameListTypeClass | ErrorTypeClass,
         forClause: ForClausesTypeClass | ErrorTypeClass | null,
@@ -71,8 +71,9 @@ export class SoqlQueryTypeClass<T> extends QueryTypeClass<T> {
     }
 }
 
-export type QueryAllTypeClass = QueryTypeClass<unknown> | SoqlQueryTypeClass<unknown>;
+export type QueryAllTypeClass =
+    QueryTypeClass<string, unknown> | SoqlQueryTypeClass<string, unknown>;
 
-export const isQueryTypeAll = (target: CommonTypeClass): target is QueryAllTypeClass => {
+export const isQueryTypeAll = (target: CommonTypeClass<string>): target is QueryAllTypeClass => {
     return target instanceof QueryTypeClass || target instanceof SoqlQueryTypeClass;
 };

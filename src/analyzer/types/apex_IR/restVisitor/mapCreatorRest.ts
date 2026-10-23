@@ -4,7 +4,10 @@ import { RestListTypeClass } from '.';
 
 import { MapCreatorRestPairTypeClass, PairVisitor, isMapCreatorRestPairType } from '../pairVisitor';
 import { ErrorTypeClass, CommonTypeClass, isValidClassList } from '../commonVisitor';
-export class MapCreatorRestTypeClass extends RestListTypeClass<MapCreatorRestPairTypeClass> {
+export class MapCreatorRestTypeClass extends RestListTypeClass<
+    'mapCreatorRest',
+    MapCreatorRestPairTypeClass
+> {
     private constructor(value: (MapCreatorRestPairTypeClass | ErrorTypeClass)[]) {
         super('mapCreatorRest', value);
     }
@@ -26,8 +29,7 @@ export class MapCreatorRestTypeClass extends RestListTypeClass<MapCreatorRestPai
 }
 
 export const isMapCreatorRestType = (
-    target: CommonTypeClass,
+    target: CommonTypeClass<string>,
 ): target is MapCreatorRestTypeClass => {
     return target instanceof MapCreatorRestTypeClass;
 };
-

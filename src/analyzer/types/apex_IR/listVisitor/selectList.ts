@@ -5,7 +5,7 @@ import { ListTypeClass } from '../listVisitor';
 import { SelectEntryTypeClass, EntryVisitor, isSelectEntryType } from '../entryVisitor';
 import { ErrorTypeClass, CommonTypeClass, isValidClassList } from '../commonVisitor';
 
-export class SelectListTypeClass extends ListTypeClass<SelectEntryTypeClass> {
+export class SelectListTypeClass extends ListTypeClass<'selectList', SelectEntryTypeClass> {
     private constructor(list: (SelectEntryTypeClass | ErrorTypeClass)[]) {
         super('selectList', list);
     }
@@ -26,7 +26,8 @@ export class SelectListTypeClass extends ListTypeClass<SelectEntryTypeClass> {
     }
 }
 
-export const isSelectListType = (target: CommonTypeClass): target is SelectListTypeClass => {
+export const isSelectListType = (
+    target: CommonTypeClass<string>,
+): target is SelectListTypeClass => {
     return target instanceof SelectListTypeClass;
 };
-

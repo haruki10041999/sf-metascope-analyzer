@@ -11,6 +11,7 @@ import { SignedNumberTypeClass, LiteralVisitor, isSignedNumberType } from '../li
 import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
 
 export class CoordinateValueTypeClass extends ValueTypeClass<
+    'coordinateValue',
     SignedNumberTypeClass | BoundExpressionTypeClass
 > {
     private constructor(value: SignedNumberTypeClass | BoundExpressionTypeClass | ErrorTypeClass) {
@@ -39,7 +40,7 @@ export class CoordinateValueTypeClass extends ValueTypeClass<
 }
 
 export const isCoordinateValueType = (
-    target: CommonTypeClass,
+    target: CommonTypeClass<string>,
 ): target is CoordinateValueTypeClass => {
     return target instanceof CoordinateValueTypeClass;
 };

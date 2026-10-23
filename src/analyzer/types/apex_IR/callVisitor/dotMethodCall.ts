@@ -6,7 +6,11 @@ import { AnyIdTypeClass, IdVisitor, isAnyIdType } from '../idVisitor';
 import { ExpressionListTypeClass, ListVisitor, isExpressionListType } from '../listVisitor';
 import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
 
-export class DotMethodCallTypeClass extends CallTypeClass<AnyIdTypeClass, ExpressionListTypeClass> {
+export class DotMethodCallTypeClass extends CallTypeClass<
+    'dotMethodCall',
+    AnyIdTypeClass,
+    ExpressionListTypeClass
+> {
     private constructor(
         value: AnyIdTypeClass | ErrorTypeClass,
         param: ExpressionListTypeClass | ErrorTypeClass | null,
@@ -32,6 +36,8 @@ export class DotMethodCallTypeClass extends CallTypeClass<AnyIdTypeClass, Expres
     }
 }
 
-export const isDotMethodCallType = (target: CommonTypeClass): target is DotMethodCallTypeClass => {
+export const isDotMethodCallType = (
+    target: CommonTypeClass<string>,
+): target is DotMethodCallTypeClass => {
     return target instanceof DotMethodCallTypeClass;
 };

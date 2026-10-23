@@ -1,10 +1,10 @@
 import { ErrorTypeClass, CommonTypeClass } from '../commonVisitor';
 
-export class PairTypeClass<Tleft, Tright> extends CommonTypeClass {
+export class PairTypeClass<TName extends string, Tleft, Tright> extends CommonTypeClass<TName> {
     private left: Tleft | ErrorTypeClass;
     private right: Tright | ErrorTypeClass;
 
-    constructor(type: string, left: Tleft | ErrorTypeClass, right: Tright | ErrorTypeClass) {
+    constructor(type: TName, left: Tleft | ErrorTypeClass, right: Tright | ErrorTypeClass) {
         super(type);
         this.left = left;
         this.right = right;
@@ -19,10 +19,10 @@ export class PairTypeClass<Tleft, Tright> extends CommonTypeClass {
     }
 }
 
-export class PairListTypeClass<T> extends CommonTypeClass {
+export class PairListTypeClass<TName extends string, T> extends CommonTypeClass<TName> {
     private value: (T | ErrorTypeClass)[];
 
-    constructor(type: string, value: (T | ErrorTypeClass)[]) {
+    constructor(type: TName, value: (T | ErrorTypeClass)[]) {
         super(type);
         this.value = value;
     }
@@ -32,8 +32,9 @@ export class PairListTypeClass<T> extends CommonTypeClass {
     }
 }
 
-export type PairAllTypeClass = PairTypeClass<unknown, unknown> | PairListTypeClass<unknown>;
+export type PairAllTypeClass =
+    PairTypeClass<string, unknown, unknown> | PairListTypeClass<string, unknown>;
 
-export const isPairTypeAll = (target: CommonTypeClass): target is PairAllTypeClass => {
+export const isPairTypeAll = (target: CommonTypeClass<string>): target is PairAllTypeClass => {
     return target instanceof PairTypeClass || target instanceof PairListTypeClass;
 };

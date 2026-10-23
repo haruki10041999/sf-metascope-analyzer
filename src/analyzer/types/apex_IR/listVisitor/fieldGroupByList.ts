@@ -5,7 +5,10 @@ import { ListTypeClass } from '.';
 import { FieldGroupByTypeClass, ClauseVisitor, isFieldGroupByType } from '../clauseVisitor';
 import { ErrorTypeClass, CommonTypeClass, isValidClassList } from '../commonVisitor';
 
-export class FieldGroupByListTypeClass extends ListTypeClass<FieldGroupByTypeClass> {
+export class FieldGroupByListTypeClass extends ListTypeClass<
+    'fieldGroupByList',
+    FieldGroupByTypeClass
+> {
     private constructor(value: (FieldGroupByTypeClass | ErrorTypeClass)[]) {
         super('fieldGroupByList', value);
     }
@@ -27,7 +30,7 @@ export class FieldGroupByListTypeClass extends ListTypeClass<FieldGroupByTypeCla
 }
 
 export const isFieldGroupByListType = (
-    target: CommonTypeClass,
+    target: CommonTypeClass<string>,
 ): target is FieldGroupByListTypeClass => {
     return target instanceof FieldGroupByListTypeClass;
 };

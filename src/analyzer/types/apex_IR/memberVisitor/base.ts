@@ -1,11 +1,11 @@
 import type { NormalModifierTypeClass } from '../modifierVisitor';
 import { ErrorTypeClass, CommonTypeClass } from '../commonVisitor';
 
-export class MemberTypeClass<T> extends CommonTypeClass {
+export class MemberTypeClass<TName extends string, T> extends CommonTypeClass<TName> {
     private value: T | ErrorTypeClass;
     private modifier: (NormalModifierTypeClass | ErrorTypeClass)[];
     constructor(
-        type: string,
+        type: TName,
         value: T | ErrorTypeClass,
         modifier: (NormalModifierTypeClass | ErrorTypeClass)[],
     ) {
@@ -23,6 +23,8 @@ export class MemberTypeClass<T> extends CommonTypeClass {
     }
 }
 
-export const isMemberTypeAll = (target: CommonTypeClass): target is MemberTypeClass<unknown> => {
+export const isMemberTypeAll = (
+    target: CommonTypeClass<string>,
+): target is MemberTypeClass<string, unknown> => {
     return target instanceof MemberTypeClass;
 };

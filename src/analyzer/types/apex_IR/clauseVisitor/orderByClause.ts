@@ -5,7 +5,10 @@ import { ClauseTypeClass } from '.';
 import { FieldOrderListTypeClass, ListVisitor, isFieldOrderListType } from '../listVisitor';
 import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
 
-export class OrderByClauseTypeClass extends ClauseTypeClass<FieldOrderListTypeClass> {
+export class OrderByClauseTypeClass extends ClauseTypeClass<
+    'orderByClause',
+    FieldOrderListTypeClass
+> {
     private constructor(value: FieldOrderListTypeClass | ErrorTypeClass) {
         super('orderByClause', value);
     }
@@ -25,6 +28,8 @@ export class OrderByClauseTypeClass extends ClauseTypeClass<FieldOrderListTypeCl
     }
 }
 
-export const isOrderByClauseType = (target: CommonTypeClass): target is OrderByClauseTypeClass => {
+export const isOrderByClauseType = (
+    target: CommonTypeClass<string>,
+): target is OrderByClauseTypeClass => {
     return target instanceof OrderByClauseTypeClass;
 };

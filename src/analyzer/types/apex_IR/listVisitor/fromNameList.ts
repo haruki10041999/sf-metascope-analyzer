@@ -7,7 +7,7 @@ import { SoqlIdTypeClass, IdVisitor, isSoqlIdType } from '../idVisitor';
 import { ErrorTypeClass, CommonTypeClass, getSourceSpan, isValidClass } from '../commonVisitor';
 
 // FROM 句の 1 オブジェクト（`Account a` の Account と a の組）
-export class FromNameTypeClass extends CommonTypeClass {
+export class FromNameTypeClass extends CommonTypeClass<'fromName'> {
     private value: FieldNameTypeClass | ErrorTypeClass;
     private alias: SoqlIdTypeClass | ErrorTypeClass | null;
 
@@ -44,11 +44,11 @@ export class FromNameTypeClass extends CommonTypeClass {
     }
 }
 
-export const isFromNameType = (target: CommonTypeClass): target is FromNameTypeClass => {
+export const isFromNameType = (target: CommonTypeClass<string>): target is FromNameTypeClass => {
     return target instanceof FromNameTypeClass;
 };
 
-export class FromNameListTypeClass extends ListTypeClass<FromNameTypeClass> {
+export class FromNameListTypeClass extends ListTypeClass<'fromNameList', FromNameTypeClass> {
     private constructor(value: (FromNameTypeClass | ErrorTypeClass)[]) {
         super('fromNameList', value);
     }
@@ -74,6 +74,8 @@ export class FromNameListTypeClass extends ListTypeClass<FromNameTypeClass> {
     }
 }
 
-export const isFromNameListType = (target: CommonTypeClass): target is FromNameListTypeClass => {
+export const isFromNameListType = (
+    target: CommonTypeClass<string>,
+): target is FromNameListTypeClass => {
     return target instanceof FromNameListTypeClass;
 };

@@ -4,7 +4,7 @@ import { IdListTypeClass, NormalIdTypeClass, IdVisitor, isNormalIdType } from '.
 
 import { CommonTypeClass, ErrorTypeClass, isValidClass, isValidClassList } from '../commonVisitor';
 
-export class SoslIdTypeClass extends IdListTypeClass<NormalIdTypeClass> {
+export class SoslIdTypeClass extends IdListTypeClass<'soslId', NormalIdTypeClass> {
     private constructor(value: (NormalIdTypeClass | ErrorTypeClass)[]) {
         super('soslId', value);
     }
@@ -38,6 +38,6 @@ export class SoslIdTypeClass extends IdListTypeClass<NormalIdTypeClass> {
     }
 }
 
-export const isSoslIdType = (target: CommonTypeClass): target is SoslIdTypeClass => {
+export const isSoslIdType = (target: CommonTypeClass<string>): target is SoslIdTypeClass => {
     return target instanceof SoslIdTypeClass;
 };

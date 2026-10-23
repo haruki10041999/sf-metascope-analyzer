@@ -10,7 +10,10 @@ import {
 } from '../expressionVisitor';
 import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
 
-export class DoWhileStatementTypeClass extends StatementTypeClass<ParExpressionTypeClass> {
+export class DoWhileStatementTypeClass extends StatementTypeClass<
+    'doWhileStatement',
+    ParExpressionTypeClass
+> {
     private block: NormalBlockTypeClass | ErrorTypeClass;
 
     private constructor(
@@ -42,8 +45,7 @@ export class DoWhileStatementTypeClass extends StatementTypeClass<ParExpressionT
 }
 
 export const isDoWhileStatementType = (
-    target: CommonTypeClass,
+    target: CommonTypeClass<string>,
 ): target is DoWhileStatementTypeClass => {
     return target instanceof DoWhileStatementTypeClass;
 };
-

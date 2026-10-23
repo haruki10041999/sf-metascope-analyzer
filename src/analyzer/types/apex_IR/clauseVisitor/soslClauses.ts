@@ -19,7 +19,10 @@ import {
 import { SearchGroupTypeClass, QueryVisitor, isSearchGroupType } from '../queryVisitor';
 import { ErrorTypeClass, CommonTypeClass, isValidClass, isValidClassList } from '../commonVisitor';
 
-export class SoslClausesTypeClass extends ClauseTypeClass<SearchGroupTypeClass | null> {
+export class SoslClausesTypeClass extends ClauseTypeClass<
+    'soslClauses',
+    SearchGroupTypeClass | null
+> {
     private fieldSpecList: FieldSpecListTypeClass | ErrorTypeClass | null;
     private withList: (SoslWithClauseTypeClass | ErrorTypeClass)[] | null;
     private limitClause: LimitClauseTypeClass | ErrorTypeClass | null;
@@ -98,7 +101,8 @@ export class SoslClausesTypeClass extends ClauseTypeClass<SearchGroupTypeClass |
     }
 }
 
-export const isSoslClausesType = (target: CommonTypeClass): target is SoslClausesTypeClass => {
+export const isSoslClausesType = (
+    target: CommonTypeClass<string>,
+): target is SoslClausesTypeClass => {
     return target instanceof SoslClausesTypeClass;
 };
-

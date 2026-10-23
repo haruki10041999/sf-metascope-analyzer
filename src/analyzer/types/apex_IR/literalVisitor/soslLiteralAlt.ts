@@ -5,7 +5,7 @@ import { LiteralTypeClass } from '.';
 import { SoslClausesTypeClass, ClauseVisitor, isSoslClausesType } from '../clauseVisitor';
 import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
 
-export class SoslLiteralAltTypeClass extends LiteralTypeClass<string> {
+export class SoslLiteralAltTypeClass extends LiteralTypeClass<'soslLiteralAlt', string> {
     private soslClauses: SoslClausesTypeClass | ErrorTypeClass;
 
     private constructor(value: string, soslClauses: SoslClausesTypeClass | ErrorTypeClass) {
@@ -34,8 +34,7 @@ export class SoslLiteralAltTypeClass extends LiteralTypeClass<string> {
 }
 
 export const isSoslLiteralAltType = (
-    target: CommonTypeClass,
+    target: CommonTypeClass<string>,
 ): target is SoslLiteralAltTypeClass => {
     return target instanceof SoslLiteralAltTypeClass;
 };
-

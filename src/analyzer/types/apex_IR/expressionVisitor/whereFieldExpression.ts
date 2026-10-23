@@ -16,6 +16,7 @@ import { NormalValueTypeClass, ValueVisitor, isNormalValueType } from '../valueV
 import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
 
 export class WhereFieldExpressionTypeClass extends DoubleOperatorExpressionTypeClass<
+    'whereFieldExpression',
     FieldExpressionTypeClass | string,
     ComparisonOperatorTypeClass | null,
     NormalValueTypeClass | null
@@ -61,8 +62,7 @@ export class WhereFieldExpressionTypeClass extends DoubleOperatorExpressionTypeC
 }
 
 export const isWhereFieldExpressionType = (
-    target: CommonTypeClass,
+    target: CommonTypeClass<string>,
 ): target is WhereFieldExpressionTypeClass => {
     return target instanceof WhereFieldExpressionTypeClass;
 };
-

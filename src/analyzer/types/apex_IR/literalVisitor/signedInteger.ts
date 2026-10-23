@@ -4,7 +4,7 @@ import { PrimitiveLiteralTypeClass } from '.';
 
 import { CommonTypeClass } from '../commonVisitor';
 
-export class SignedIntegerTypeClass extends PrimitiveLiteralTypeClass<string> {
+export class SignedIntegerTypeClass extends PrimitiveLiteralTypeClass<'signedInteger', string> {
     private operator: string | null;
 
     private constructor(value: string, operator: string | null) {
@@ -33,6 +33,8 @@ export class SignedIntegerTypeClass extends PrimitiveLiteralTypeClass<string> {
     }
 }
 
-export const isSignedIntegerType = (target: CommonTypeClass): target is SignedIntegerTypeClass => {
+export const isSignedIntegerType = (
+    target: CommonTypeClass<string>,
+): target is SignedIntegerTypeClass => {
     return target instanceof SignedIntegerTypeClass;
 };

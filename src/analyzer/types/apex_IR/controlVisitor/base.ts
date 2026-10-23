@@ -1,8 +1,8 @@
 import { ErrorTypeClass, CommonTypeClass } from '../commonVisitor';
 
-export class ControlTypeClass<T> extends CommonTypeClass {
+export class ControlTypeClass<TName extends string, T> extends CommonTypeClass<TName> {
     private value: T | ErrorTypeClass;
-    constructor(type: string, value: T | ErrorTypeClass) {
+    constructor(type: TName, value: T | ErrorTypeClass) {
         super(type);
         this.value = value;
     }
@@ -12,6 +12,8 @@ export class ControlTypeClass<T> extends CommonTypeClass {
     }
 }
 
-export const isControlTypeAll = (target: CommonTypeClass): target is ControlTypeClass<unknown> => {
+export const isControlTypeAll = (
+    target: CommonTypeClass<string>,
+): target is ControlTypeClass<string, unknown> => {
     return target instanceof ControlTypeClass;
 };

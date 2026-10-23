@@ -4,7 +4,7 @@ import { ListTypeClass, ListVisitor } from '.';
 
 import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
 
-export class NetworkListTypeClass extends ListTypeClass<string> {
+export class NetworkListTypeClass extends ListTypeClass<'networkList', string> {
     private constructor(value: (string | ErrorTypeClass)[]) {
         super('networkList', value);
     }
@@ -40,6 +40,8 @@ export class NetworkListTypeClass extends ListTypeClass<string> {
     }
 }
 
-export const isNetworkListType = (target: CommonTypeClass): target is NetworkListTypeClass => {
+export const isNetworkListType = (
+    target: CommonTypeClass<string>,
+): target is NetworkListTypeClass => {
     return target instanceof NetworkListTypeClass;
 };

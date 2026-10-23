@@ -5,7 +5,7 @@ import { ExpressionTypeClass } from '.';
 import { CreatorTypeClass, RestVisitor, isCreatorType } from '../restVisitor';
 import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
 
-export class NewExpressionTypeClass extends ExpressionTypeClass<CreatorTypeClass> {
+export class NewExpressionTypeClass extends ExpressionTypeClass<'newExpression', CreatorTypeClass> {
     private constructor(value: CreatorTypeClass | ErrorTypeClass) {
         super('newExpression', value);
     }
@@ -21,7 +21,8 @@ export class NewExpressionTypeClass extends ExpressionTypeClass<CreatorTypeClass
     }
 }
 
-export const isNewExpressionType = (target: CommonTypeClass): target is NewExpressionTypeClass => {
+export const isNewExpressionType = (
+    target: CommonTypeClass<string>,
+): target is NewExpressionTypeClass => {
     return target instanceof NewExpressionTypeClass;
 };
-

@@ -14,7 +14,10 @@ import {
 } from '../expressionVisitor';
 import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
 
-export class WhileStatementTypeClass extends StatementTypeClass<ParExpressionTypeClass> {
+export class WhileStatementTypeClass extends StatementTypeClass<
+    'whileStatement',
+    ParExpressionTypeClass
+> {
     private block: NormalStatementTypeClass | ErrorTypeClass;
 
     private constructor(
@@ -50,8 +53,7 @@ export class WhileStatementTypeClass extends StatementTypeClass<ParExpressionTyp
 }
 
 export const isWhileStatementType = (
-    target: CommonTypeClass,
+    target: CommonTypeClass<string>,
 ): target is WhileStatementTypeClass => {
     return target instanceof WhileStatementTypeClass;
 };
-

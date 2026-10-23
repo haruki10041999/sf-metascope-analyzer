@@ -16,7 +16,7 @@ import { CommonVisitor } from '../commonVisitor';
 export { isAnonymousBlockMemberType, AnonymousBlockMemberTypeClass } from './anonymousBlockMember';
 export { isTriggerBlockMemberType, TriggerBlockMemberTypeClass } from './triggerBlockMember';
 
-export class MemberVisitor extends CommonVisitor<MemberTypeClass<unknown>> {
+export class MemberVisitor extends CommonVisitor<MemberTypeClass<string, unknown>> {
     visitAnonymousBlockMember(ctx: AnonymousBlockMemberContext) {
         return AnonymousBlockMemberTypeClass.create(ctx);
     }
@@ -25,4 +25,3 @@ export class MemberVisitor extends CommonVisitor<MemberTypeClass<unknown>> {
         return TriggerBlockMemberTypeClass.create(ctx);
     }
 }
-

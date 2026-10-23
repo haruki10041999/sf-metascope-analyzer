@@ -12,6 +12,7 @@ import { NormalModifierTypeClass, ModifierVisitor, isNormalModifierType } from '
 import { CommonTypeClass, ErrorTypeClass, isValidClass, isValidClassList } from '../commonVisitor';
 
 export class ClassBodyDeclarationTypeClass extends DeclarationTypeClass<
+    'classBodyDeclaration',
     MemberDeclarationTypeClass | NormalBlockTypeClass | null
 > {
     private modifier: (NormalModifierTypeClass | ErrorTypeClass)[];
@@ -66,5 +67,5 @@ export class ClassBodyDeclarationTypeClass extends DeclarationTypeClass<
 }
 
 export const isClassBodyDeclarationType = (
-    target: CommonTypeClass,
+    target: CommonTypeClass<string>,
 ): target is ClassBodyDeclarationTypeClass => target instanceof ClassBodyDeclarationTypeClass;

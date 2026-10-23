@@ -8,7 +8,7 @@ import { QualifiedNameTypeClass, NameVisitor, isQualifiedNameType } from '../nam
 import { NormalModifierTypeClass, ModifierVisitor, isNormalModifierType } from '../modifierVisitor';
 import { CommonTypeClass, ErrorTypeClass, isValidClass, isValidClassList } from '../commonVisitor';
 
-export class CatchClauseTypeClass extends ClauseTypeClass<NormalIdTypeClass> {
+export class CatchClauseTypeClass extends ClauseTypeClass<'catchClause', NormalIdTypeClass> {
     private valueType: QualifiedNameTypeClass | ErrorTypeClass;
     private block: NormalBlockTypeClass | ErrorTypeClass;
     private modifier: (NormalModifierTypeClass | ErrorTypeClass)[];
@@ -60,6 +60,8 @@ export class CatchClauseTypeClass extends ClauseTypeClass<NormalIdTypeClass> {
     }
 }
 
-export const isCatchClauseType = (target: CommonTypeClass): target is CatchClauseTypeClass => {
+export const isCatchClauseType = (
+    target: CommonTypeClass<string>,
+): target is CatchClauseTypeClass => {
     return target instanceof CatchClauseTypeClass;
 };

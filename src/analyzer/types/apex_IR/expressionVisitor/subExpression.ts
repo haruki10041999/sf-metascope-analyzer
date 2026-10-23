@@ -9,7 +9,10 @@ import {
 
 import { CommonTypeClass, ErrorTypeClass, isValidClass } from '../commonVisitor';
 
-export class SubExpressionTypeClass extends ExpressionTypeClass<BasedExpressionTypeClass> {
+export class SubExpressionTypeClass extends ExpressionTypeClass<
+    'subExpression',
+    BasedExpressionTypeClass
+> {
     private constructor(value: BasedExpressionTypeClass | ErrorTypeClass) {
         super('subExpression', value);
     }
@@ -29,6 +32,8 @@ export class SubExpressionTypeClass extends ExpressionTypeClass<BasedExpressionT
     }
 }
 
-export const isSubExpressionType = (target: CommonTypeClass): target is SubExpressionTypeClass => {
+export const isSubExpressionType = (
+    target: CommonTypeClass<string>,
+): target is SubExpressionTypeClass => {
     return target instanceof SubExpressionTypeClass;
 };

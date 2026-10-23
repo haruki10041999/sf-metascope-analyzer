@@ -4,7 +4,7 @@ import { PrimitiveLiteralTypeClass } from '.';
 
 import { ErrorTypeClass, CommonTypeClass } from '../commonVisitor';
 
-export class NormalLiteralTypeClass extends PrimitiveLiteralTypeClass<string> {
+export class NormalLiteralTypeClass extends PrimitiveLiteralTypeClass<'literal', string> {
     private constructor(value: string | ErrorTypeClass, valueType: string) {
         super('literal', value, valueType);
     }
@@ -51,6 +51,8 @@ export class NormalLiteralTypeClass extends PrimitiveLiteralTypeClass<string> {
     }
 }
 
-export const isNormalLiteralType = (target: CommonTypeClass): target is NormalLiteralTypeClass => {
+export const isNormalLiteralType = (
+    target: CommonTypeClass<string>,
+): target is NormalLiteralTypeClass => {
     return target instanceof NormalLiteralTypeClass;
 };

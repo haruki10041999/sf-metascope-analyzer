@@ -10,7 +10,10 @@ import {
 import { SoslClausesTypeClass, ClauseVisitor, isSoslClausesType } from '../clauseVisitor';
 import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
 
-export class SoslLiteralTypeClass extends LiteralTypeClass<string | BoundExpressionTypeClass> {
+export class SoslLiteralTypeClass extends LiteralTypeClass<
+    'soslLiteral',
+    string | BoundExpressionTypeClass
+> {
     private soslClauses: SoslClausesTypeClass | ErrorTypeClass;
 
     private constructor(
@@ -47,7 +50,8 @@ export class SoslLiteralTypeClass extends LiteralTypeClass<string | BoundExpress
     }
 }
 
-export const isSoslLiteralType = (target: CommonTypeClass): target is SoslLiteralTypeClass => {
+export const isSoslLiteralType = (
+    target: CommonTypeClass<string>,
+): target is SoslLiteralTypeClass => {
     return target instanceof SoslLiteralTypeClass;
 };
-

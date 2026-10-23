@@ -2,66 +2,40 @@ import typia from 'typia';
 
 import {
     Convert,
-    isConvert,
     ErrorJson,
-    JsonType,
-    SourceJson,
-    searchConvertAll,
-    isError,
-    writeSourceKeys,
-    removeSourceInfo,
-    castExcludeErrorInfo,
-    castExcludeErrorInfoArray,
-    castConvert,
-    castConvertArray,
     isErrorJson,
+    JsonType,
+    makeJsonType,
+    convertExcludeError,
 } from '../commons';
 
 import { FromNameListType } from '../converter';
 
 export type FromJson = JsonType & {
-    kind: 'from';
-    from: {
-        field: string[];
-        alias?: string;
-    };
+    kind: 'fromClause';
+    field: string[];
+    alias?: string;
 };
 export const isFromJson = typia.createIs<FromJson>();
 
-export const makeFromJson = (
-    target: Convert<FromNameListType>,
-    sourceObject: SourceJson[],
-): FromJson | ErrorJson => {
-    const targetObjectKey = target.objectKey;
-    const targetSourceKey = target.sourceKey;
-    const convertJsons = searchConvertAll(target);
+export const makeFromJson = (target: Convert<FromNameListType>): FromJson | ErrorJson => {
+    const targetRecords: Record<string, string[]> = { [target.objectKey]: [target.sourceKey] };
 
-    removeSourceInfo(sourceObject, convertJsons, [targetSourceKey]);
-    const error: ErrorJson = {
-        kind: 'error',
-        kindType: 'from',
-        sourceKeys: {},
-    };
-    writeSourceKeys(error, targetObjectKey, targetSourceKey);
-    if (isError(convertJsons)) {
+    const { value, errorInfos } = convertExcludeError<FromNameListType>(target);
+
+    const error: ErrorJson = makeJsonType('error', targetRecords, { kindType: 'type' });
+
+    if (!value || errorInfos.length > 0) {
         return error;
     }
-
-    const _target = target as Convert<FromNameListType>;
-    const fromList = castConvertArray(castExcludeErrorInfoArray(_target.value));
 
     const froms: {
         field: string[];
         alias?: string;
-    }[] = fromList.map((from) => {
-        const fromName = castConvertArray(
-            castExcludeErrorInfoArray(castConvert(castExcludeErrorInfo(from.value)).value),
-        ).map((item) => castConvert(castExcludeErrorInfo(item.value)).value);
+    }[] = value.value.map((from) => {
+        const fromName = from.value.value.map((item) => item.value.value);
 
-        const alias = from.alias
-            ? castConvert(castExcludeErrorInfo(castConvert(castExcludeErrorInfo(from.alias)).value))
-                  .value
-            : null;
+        const alias = from.alias ? from.alias.value.value : null;
 
         const value: {
             field: string[];
@@ -76,13 +50,13 @@ export const makeFromJson = (
     });
 
     if (froms.length === 1) {
-        const fromJson: FromJson = {
-            kind: 'from',
-            sourceKeys: {},
-            from: froms[0]!,
-        };
+        const fromJson: FromJson = makeJsonType('fromClause', targetRecords, {
+            field: froms[0]!.field,
+        });
+        if (froms[0]!.alias) {
+            fromJson.alias = froms[0]!.alias;
+        }
 
-        writeSourceKeys(fromJson, targetObjectKey, targetSourceKey);
         return fromJson;
     }
 

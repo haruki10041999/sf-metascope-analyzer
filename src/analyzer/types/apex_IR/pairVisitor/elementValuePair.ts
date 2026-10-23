@@ -7,6 +7,7 @@ import { ElementValueTypeClass, ValueVisitor, isElementValueType } from '../valu
 import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
 
 export class ElementValuePairTypeClass extends PairTypeClass<
+    'elementValuePair',
     NormalIdTypeClass,
     ElementValueTypeClass
 > {
@@ -34,7 +35,7 @@ export class ElementValuePairTypeClass extends PairTypeClass<
 }
 
 export const isElementValuePairType = (
-    target: CommonTypeClass,
+    target: CommonTypeClass<string>,
 ): target is ElementValuePairTypeClass => {
     return target instanceof ElementValuePairTypeClass;
 };

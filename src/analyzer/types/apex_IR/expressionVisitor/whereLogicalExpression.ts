@@ -9,7 +9,10 @@ import {
 
 import { CommonTypeClass, ErrorTypeClass, isValidClassList } from '../commonVisitor';
 
-export class WhereLogicalExpressionTypeClass extends ExpressionListBaseTypeClass<WhereConditionalExpressionTypeClass> {
+export class WhereLogicalExpressionTypeClass extends ExpressionListBaseTypeClass<
+    'whereLogicalExpression',
+    WhereConditionalExpressionTypeClass
+> {
     private operator: string | null = null;
 
     private constructor(
@@ -52,8 +55,7 @@ export class WhereLogicalExpressionTypeClass extends ExpressionListBaseTypeClass
 }
 
 export const isWhereLogicalExpressionType = (
-    target: CommonTypeClass,
+    target: CommonTypeClass<string>,
 ): target is WhereLogicalExpressionTypeClass => {
     return target instanceof WhereLogicalExpressionTypeClass;
 };
-

@@ -4,7 +4,7 @@ import { StatementTypeClass } from '.';
 
 import { CommonTypeClass } from '../commonVisitor';
 
-export class BreakStatementTypeClass extends StatementTypeClass<string> {
+export class BreakStatementTypeClass extends StatementTypeClass<'breakStatement', string> {
     private constructor(value: string) {
         super('breakStatement', value);
     }
@@ -19,8 +19,7 @@ export class BreakStatementTypeClass extends StatementTypeClass<string> {
 }
 
 export const isBreakStatementType = (
-    target: CommonTypeClass,
+    target: CommonTypeClass<string>,
 ): target is BreakStatementTypeClass => {
     return target instanceof BreakStatementTypeClass;
 };
-

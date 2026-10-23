@@ -1,9 +1,9 @@
 import { ErrorTypeClass, CommonTypeClass } from '../commonVisitor';
 
-export class ExpressionTypeClass<T> extends CommonTypeClass {
+export class ExpressionTypeClass<TName extends string, T> extends CommonTypeClass<TName> {
     private value: T | ErrorTypeClass;
 
-    constructor(type: string, value: T | ErrorTypeClass) {
+    constructor(type: TName, value: T | ErrorTypeClass) {
         super(type);
         this.value = value;
     }
@@ -13,10 +13,10 @@ export class ExpressionTypeClass<T> extends CommonTypeClass {
     }
 }
 
-export class ExpressionListBaseTypeClass<T> extends CommonTypeClass {
+export class ExpressionListBaseTypeClass<TName extends string, T> extends CommonTypeClass<TName> {
     private value: (T | ErrorTypeClass)[];
 
-    constructor(type: string, value: (T | ErrorTypeClass)[]) {
+    constructor(type: TName, value: (T | ErrorTypeClass)[]) {
         super(type);
         this.value = value;
     }
@@ -26,11 +26,14 @@ export class ExpressionListBaseTypeClass<T> extends CommonTypeClass {
     }
 }
 
-export class SingleOperatorExpressionTypeClass<T> extends CommonTypeClass {
+export class SingleOperatorExpressionTypeClass<
+    TName extends string,
+    T,
+> extends CommonTypeClass<TName> {
     private operator: string;
     private value: T | ErrorTypeClass;
 
-    constructor(type: string, value: T | ErrorTypeClass, operator: string) {
+    constructor(type: TName, value: T | ErrorTypeClass, operator: string) {
         super(type);
         this.value = value;
         this.operator = operator;
@@ -45,13 +48,18 @@ export class SingleOperatorExpressionTypeClass<T> extends CommonTypeClass {
     }
 }
 
-export class DoubleOperatorExpressionTypeClass<Tleft, TOperator, Tright> extends CommonTypeClass {
+export class DoubleOperatorExpressionTypeClass<
+    TName extends string,
+    Tleft,
+    TOperator,
+    Tright,
+> extends CommonTypeClass<TName> {
     private left: Tleft | ErrorTypeClass;
     private right: Tright | ErrorTypeClass;
     private operator: TOperator | ErrorTypeClass;
 
     constructor(
-        type: string,
+        type: TName,
         left: Tleft | ErrorTypeClass,
         right: Tright | ErrorTypeClass,
         operator: TOperator | ErrorTypeClass,
@@ -75,13 +83,18 @@ export class DoubleOperatorExpressionTypeClass<Tleft, TOperator, Tright> extends
     }
 }
 
-export class ConditionExpressionTypeClass<TCondition, TTrue, TFalse> extends CommonTypeClass {
+export class ConditionExpressionTypeClass<
+    TName extends string,
+    TCondition,
+    TTrue,
+    TFalse,
+> extends CommonTypeClass<TName> {
     private condition: TCondition | ErrorTypeClass;
     private trueValue: TTrue | ErrorTypeClass;
     private falseValue: TFalse | ErrorTypeClass;
 
     constructor(
-        type: string,
+        type: TName,
         condition: TCondition | ErrorTypeClass,
         trueValue: TTrue | ErrorTypeClass,
         falseValue: TFalse | ErrorTypeClass,
@@ -106,13 +119,15 @@ export class ConditionExpressionTypeClass<TCondition, TTrue, TFalse> extends Com
 }
 
 export type ExpressionAllTypeClass =
-    | ExpressionTypeClass<unknown>
-    | ExpressionListBaseTypeClass<unknown>
-    | SingleOperatorExpressionTypeClass<unknown>
-    | DoubleOperatorExpressionTypeClass<unknown, unknown, unknown>
-    | ConditionExpressionTypeClass<unknown, unknown, unknown>;
+    | ExpressionTypeClass<string, unknown>
+    | ExpressionListBaseTypeClass<string, unknown>
+    | SingleOperatorExpressionTypeClass<string, unknown>
+    | DoubleOperatorExpressionTypeClass<string, unknown, unknown, unknown>
+    | ConditionExpressionTypeClass<string, unknown, unknown, unknown>;
 
-export const isExpressionTypeAll = (target: CommonTypeClass): target is ExpressionAllTypeClass => {
+export const isExpressionTypeAll = (
+    target: CommonTypeClass<string>,
+): target is ExpressionAllTypeClass => {
     return (
         target instanceof ExpressionTypeClass ||
         target instanceof ExpressionListBaseTypeClass ||

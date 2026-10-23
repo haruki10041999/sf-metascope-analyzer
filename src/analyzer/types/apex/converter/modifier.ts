@@ -1,5 +1,3 @@
-import typia from 'typia';
-
 import {
     AnnotationTypeClass,
     NormalModifierTypeClass,
@@ -8,7 +6,8 @@ import {
 } from '../../apex_IR';
 
 import {
-    ErrorInfo,
+    isCommonType,
+    ErrorType,
     CommonType,
     AssignForValueRule,
     ValueRuleValue,
@@ -19,63 +18,62 @@ import {
     makeNullAssignRule,
     makeSourceInfo,
 } from './commons';
-import { makeIdRule, IdType } from './id';
-import { makeElementValueRule, ElementValueType } from './value';
-import { makeElementValuePairsRule, ElementValuePairsType } from './pair';
+import { makeIdAssignRule, IdType } from './id';
+import { makeElementValueAssignRule, ElementValueType } from './value';
+import { makeElementValuePairsAssignRule, ElementValuePairsType } from './pair';
 
-export type AnnotationType = CommonType & {
+export type AnnotationType = CommonType<'annotation'> & {
     value: ValueRuleValue<IdType>;
     param: ValueRuleValue<ElementValueType | ElementValuePairsType | null>;
 };
 
-export const isAnnotationType = typia.createIs<AnnotationType>();
-
-export const makeAnnotationRule = (): AssignForValueRule<AnnotationTypeClass, AnnotationType> => {
-    return {
-        isValid: (target: unknown) => isTargetTypeClass(target, isAnnotationTypeClass),
-        construct: (modifierTypeClass: AnnotationTypeClass) => {
-            const value = assignMultiClass(modifierTypeClass.getValue(), [
-                makeIdRule(),
-                makeErrorAssignRule,
-            ]);
-            const param = assignMultiClass(modifierTypeClass.getParam(), [
-                makeElementValueRule(),
-                makeElementValuePairsRule(),
-                makeErrorAssignRule,
-                makeNullAssignRule,
-            ]);
-
-            return {
-                type: modifierTypeClass.getType(),
-                sourceInfo: makeSourceInfo(modifierTypeClass),
-                value,
-                param,
-            };
-        },
-    };
+export const isAnnotationType = (value: unknown): value is AnnotationType => {
+    return isCommonType(value) && value.type === 'annotation';
 };
 
-export type ModifierType = CommonType & {
+export const makeAnnotationAssignRule: AssignForValueRule<AnnotationTypeClass, AnnotationType> = {
+    isValid: (target: unknown) => isTargetTypeClass(target, isAnnotationTypeClass),
+    construct: (modifierTypeClass: AnnotationTypeClass) => {
+        const value = assignMultiClass(modifierTypeClass.getValue(), [
+            makeIdAssignRule,
+            makeErrorAssignRule,
+        ]);
+        const param = assignMultiClass(modifierTypeClass.getParam(), [
+            makeElementValueAssignRule,
+            makeElementValuePairsAssignRule,
+            makeErrorAssignRule,
+            makeNullAssignRule,
+        ]);
+
+        return {
+            type: modifierTypeClass.getType(),
+            sourceInfo: makeSourceInfo(modifierTypeClass),
+            value,
+            param,
+        };
+    },
+};
+
+export type ModifierType = CommonType<'modifier'> & {
     value: ValueRuleValue<string | AnnotationType>;
 };
 
-export const isModifierType = typia.createIs<ModifierType>();
-
-export const makeModifierRule = (): AssignForValueRule<NormalModifierTypeClass, ModifierType> => {
-    return {
-        isValid: (target: unknown) => isTargetTypeClass(target, isNormalModifierType),
-        construct: (modifierTypeClass: NormalModifierTypeClass) => {
-            const value = assignMultiClass(modifierTypeClass.getValue(), [
-                makeStringAssignRule,
-                makeAnnotationRule(),
-                makeErrorAssignRule,
-            ]);
-            return {
-                type: modifierTypeClass.getType(),
-                sourceInfo: makeSourceInfo(modifierTypeClass),
-                value,
-            };
-        },
-    };
+export const isModifierType = (value: unknown): value is ModifierType => {
+    return isCommonType(value) && value.type === 'modifier';
 };
 
+export const makeModifierAssignRule: AssignForValueRule<NormalModifierTypeClass, ModifierType> = {
+    isValid: (target: unknown) => isTargetTypeClass(target, isNormalModifierType),
+    construct: (modifierTypeClass: NormalModifierTypeClass) => {
+        const value = assignMultiClass(modifierTypeClass.getValue(), [
+            makeStringAssignRule,
+            makeAnnotationAssignRule,
+            makeErrorAssignRule,
+        ]);
+        return {
+            type: modifierTypeClass.getType(),
+            sourceInfo: makeSourceInfo(modifierTypeClass),
+            value,
+        };
+    },
+};

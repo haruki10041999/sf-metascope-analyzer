@@ -14,7 +14,7 @@ import {
 import { CreatedNameTypeClass, NameVisitor, isCreatedNameType } from '../nameVisitor';
 import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
 
-export class CreatorTypeClass extends RestTypeClass<CreatedNameTypeClass> {
+export class CreatorTypeClass extends RestTypeClass<'creator', CreatedNameTypeClass> {
     private content: RestAllTypeClass | ErrorTypeClass;
 
     private constructor(
@@ -80,7 +80,6 @@ export class CreatorTypeClass extends RestTypeClass<CreatedNameTypeClass> {
     }
 }
 
-export const isCreatorType = (target: CommonTypeClass): target is CreatorTypeClass => {
+export const isCreatorType = (target: CommonTypeClass<string>): target is CreatorTypeClass => {
     return target instanceof CreatorTypeClass;
 };
-

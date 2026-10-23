@@ -16,15 +16,15 @@ export type SourceSpan = {
     end: SourcePosition;
 };
 
-export class CommonTypeClass {
-    private type: string = '';
+export class CommonTypeClass<TName extends string> {
+    private type: TName;
     private span: SourceSpan | null = null;
 
-    constructor(type: string) {
+    constructor(type: TName) {
         this.type = type;
     }
 
-    getType(): string {
+    getType(): TName {
         return this.type;
     }
 
@@ -40,7 +40,7 @@ export class CommonTypeClass {
 export type ErrorCode =
     'NULL_CHILD' | 'UNSUPPORTED_CONTEXT' | 'TYPE_MISMATCH' | 'EXCEPTION' | 'UNRESOLVED';
 
-export class ErrorTypeClass extends CommonTypeClass {
+export class ErrorTypeClass extends CommonTypeClass<'AnalyzerError'> {
     private code: ErrorCode;
     private contextType: string = '';
     private context: string = '';
@@ -85,13 +85,13 @@ export class ErrorTypeClass extends CommonTypeClass {
     }
 }
 
-export const isErrorType = (target: CommonTypeClass): target is ErrorTypeClass => {
+export const isErrorType = (target: CommonTypeClass<string>): target is ErrorTypeClass => {
     return target instanceof ErrorTypeClass;
 };
 
-export const isValidClass = <T extends CommonTypeClass>(
-    target: CommonTypeClass,
-    isValidType: (target: CommonTypeClass) => target is T,
+export const isValidClass = <T extends CommonTypeClass<string>>(
+    target: CommonTypeClass<string>,
+    isValidType: (target: CommonTypeClass<string>) => target is T,
     type: string,
 ): T | ErrorTypeClass => {
     if (isErrorType(target) || isValidType(target)) {
@@ -109,10 +109,10 @@ export const isValidClass = <T extends CommonTypeClass>(
     return error;
 };
 
-export const isValidClassList = <T extends CommonTypeClass>(
+export const isValidClassList = <T extends CommonTypeClass<string>>(
     ctxs: ApexParserRuleContext[],
-    create: (ctx: ApexParserRuleContext) => CommonTypeClass,
-    isValidType: (target: CommonTypeClass) => target is T,
+    create: (ctx: ApexParserRuleContext) => CommonTypeClass<string>,
+    isValidType: (target: CommonTypeClass<string>) => target is T,
     type: string,
 ): (T | ErrorTypeClass)[] => {
     if (!ctxs || ctxs.length === 0) {
@@ -184,7 +184,7 @@ export class CommonVisitor<T> extends ApexParserBaseVisitor<T | ErrorTypeClass> 
             );
         }
 
-        (result as CommonTypeClass).setSpan(getSourceSpan(ctx));
+        (result as CommonTypeClass<string>).setSpan(getSourceSpan(ctx));
         return result;
     }
 }

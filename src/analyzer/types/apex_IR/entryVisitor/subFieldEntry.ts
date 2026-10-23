@@ -17,7 +17,10 @@ import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor'
 type SubFieldEntryTypeClassType =
     FieldNameTypeClass | SoqlFunctionTypeClass | SubQueryTypeClass | TypeOfTypeClass;
 
-export class SubFieldEntryTypeClass extends EntryTypeClass<SubFieldEntryTypeClassType> {
+export class SubFieldEntryTypeClass extends EntryTypeClass<
+    'subFieldEntry',
+    SubFieldEntryTypeClassType
+> {
     private alias: SoqlIdTypeClass | ErrorTypeClass | null;
 
     private constructor(
@@ -70,7 +73,8 @@ export class SubFieldEntryTypeClass extends EntryTypeClass<SubFieldEntryTypeClas
     }
 }
 
-export const isSubFieldEntryType = (target: CommonTypeClass): target is SubFieldEntryTypeClass => {
+export const isSubFieldEntryType = (
+    target: CommonTypeClass<string>,
+): target is SubFieldEntryTypeClass => {
     return target instanceof SubFieldEntryTypeClass;
 };
-

@@ -1,8 +1,8 @@
 import { ErrorTypeClass, CommonTypeClass } from '../commonVisitor';
 
-export class LiteralTypeClass<T> extends CommonTypeClass {
+export class LiteralTypeClass<TName extends string, T> extends CommonTypeClass<TName> {
     private value: T | ErrorTypeClass;
-    constructor(type: string, value: T | ErrorTypeClass) {
+    constructor(type: TName, value: T | ErrorTypeClass) {
         super(type);
         this.value = value;
     }
@@ -12,11 +12,11 @@ export class LiteralTypeClass<T> extends CommonTypeClass {
     }
 }
 
-export class PrimitiveLiteralTypeClass<T> extends CommonTypeClass {
+export class PrimitiveLiteralTypeClass<TName extends string, T> extends CommonTypeClass<TName> {
     private valueType: string;
     private value: T | ErrorTypeClass;
 
-    constructor(type: string, value: T | ErrorTypeClass, valueType: string) {
+    constructor(type: TName, value: T | ErrorTypeClass, valueType: string) {
         super(type);
         this.value = value;
         this.valueType = valueType;
@@ -31,8 +31,11 @@ export class PrimitiveLiteralTypeClass<T> extends CommonTypeClass {
     }
 }
 
-export type LiteralAllTypeClass = LiteralTypeClass<unknown> | PrimitiveLiteralTypeClass<unknown>;
+export type LiteralAllTypeClass =
+    LiteralTypeClass<string, unknown> | PrimitiveLiteralTypeClass<string, unknown>;
 
-export const isLiteralTypeAll = (target: CommonTypeClass): target is LiteralAllTypeClass => {
+export const isLiteralTypeAll = (
+    target: CommonTypeClass<string>,
+): target is LiteralAllTypeClass => {
     return target instanceof LiteralTypeClass || target instanceof PrimitiveLiteralTypeClass;
 };

@@ -25,7 +25,7 @@ import {
 import { CommonTypeClass, ErrorTypeClass, isValidClass } from '../commonVisitor';
 
 // value はオブジェクト名 (soslId[0])
-export class FieldSpecTypeClass extends QueryTypeClass<SoslIdTypeClass> {
+export class FieldSpecTypeClass extends QueryTypeClass<'fieldSpec', SoslIdTypeClass> {
     private fieldList: FieldListTypeClass | ErrorTypeClass | null;
     private where: LogicalExpressionTypeClass | ErrorTypeClass | null;
     private listView: SoslIdTypeClass | ErrorTypeClass | null;
@@ -127,7 +127,6 @@ export class FieldSpecTypeClass extends QueryTypeClass<SoslIdTypeClass> {
     }
 }
 
-export const isFieldSpecType = (target: CommonTypeClass): target is FieldSpecTypeClass => {
+export const isFieldSpecType = (target: CommonTypeClass<string>): target is FieldSpecTypeClass => {
     return target instanceof FieldSpecTypeClass;
 };
-

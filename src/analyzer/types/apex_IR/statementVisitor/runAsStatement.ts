@@ -6,7 +6,10 @@ import { NormalBlockTypeClass, BlockVisitor, isNormalBlockType } from '../blockV
 import { ExpressionListTypeClass, ListVisitor, isExpressionListType } from '../listVisitor';
 import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
 
-export class RunAsStatementTypeClass extends StatementTypeClass<ExpressionListTypeClass> {
+export class RunAsStatementTypeClass extends StatementTypeClass<
+    'runAsStatement',
+    ExpressionListTypeClass
+> {
     private block: NormalBlockTypeClass | ErrorTypeClass;
 
     private constructor(
@@ -38,7 +41,7 @@ export class RunAsStatementTypeClass extends StatementTypeClass<ExpressionListTy
 }
 
 export const isRunAsStatementType = (
-    target: CommonTypeClass,
+    target: CommonTypeClass<string>,
 ): target is RunAsStatementTypeClass => {
     return target instanceof RunAsStatementTypeClass;
 };

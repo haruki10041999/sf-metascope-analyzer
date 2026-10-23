@@ -7,7 +7,10 @@ import { NormalModifierTypeClass, ModifierVisitor, isNormalModifierType } from '
 import { TypeRefTypeClass, TypeVisitor, isTypeRefType } from '../typeVisitor';
 import { ErrorTypeClass, CommonTypeClass, isValidClass, isValidClassList } from '../commonVisitor';
 
-export class FormalParameterTypeClass extends ParameterTypeClass<NormalIdTypeClass> {
+export class FormalParameterTypeClass extends ParameterTypeClass<
+    'formalParameter',
+    NormalIdTypeClass
+> {
     private valueType: TypeRefTypeClass | ErrorTypeClass;
     private modifier: (NormalModifierTypeClass | ErrorTypeClass)[] = [];
 
@@ -48,7 +51,7 @@ export class FormalParameterTypeClass extends ParameterTypeClass<NormalIdTypeCla
 }
 
 export const isFormalParameterType = (
-    target: CommonTypeClass,
+    target: CommonTypeClass<string>,
 ): target is FormalParameterTypeClass => {
     return target instanceof FormalParameterTypeClass;
 };

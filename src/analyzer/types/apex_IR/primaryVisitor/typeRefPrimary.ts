@@ -5,7 +5,7 @@ import { PrimaryTypeClass } from '.';
 import { TypeRefTypeClass, TypeVisitor, isTypeRefType } from '../typeVisitor';
 import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
 
-export class TypeRefPrimaryTypeClass extends PrimaryTypeClass<TypeRefTypeClass> {
+export class TypeRefPrimaryTypeClass extends PrimaryTypeClass<'typeRefPrimary', TypeRefTypeClass> {
     private constructor(value: TypeRefTypeClass | ErrorTypeClass) {
         super('typeRefPrimary', value);
     }
@@ -22,8 +22,7 @@ export class TypeRefPrimaryTypeClass extends PrimaryTypeClass<TypeRefTypeClass> 
 }
 
 export const isTypeRefPrimaryType = (
-    target: CommonTypeClass,
+    target: CommonTypeClass<string>,
 ): target is TypeRefPrimaryTypeClass => {
     return target instanceof TypeRefPrimaryTypeClass;
 };
-

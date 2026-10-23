@@ -17,7 +17,7 @@ import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor'
 type SelectEntryTypeClassType =
     FieldNameTypeClass | SoqlFunctionTypeClass | SubQueryTypeClass | TypeOfTypeClass;
 
-export class SelectEntryTypeClass extends EntryTypeClass<SelectEntryTypeClassType> {
+export class SelectEntryTypeClass extends EntryTypeClass<'selectEntry', SelectEntryTypeClassType> {
     private alias: SoqlIdTypeClass | ErrorTypeClass | null;
 
     private constructor(
@@ -70,6 +70,8 @@ export class SelectEntryTypeClass extends EntryTypeClass<SelectEntryTypeClassTyp
     }
 }
 
-export const isSelectEntryType = (target: CommonTypeClass): target is SelectEntryTypeClass => {
+export const isSelectEntryType = (
+    target: CommonTypeClass<string>,
+): target is SelectEntryTypeClass => {
     return target instanceof SelectEntryTypeClass;
 };

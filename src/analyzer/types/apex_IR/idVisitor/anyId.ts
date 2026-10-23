@@ -4,7 +4,7 @@ import { IdValueTypeClass } from '.';
 
 import { CommonTypeClass } from '../commonVisitor';
 
-export class AnyIdTypeClass extends IdValueTypeClass<string> {
+export class AnyIdTypeClass extends IdValueTypeClass<'anyId', string> {
     private constructor(value: string) {
         super('anyId', value);
     }
@@ -14,6 +14,6 @@ export class AnyIdTypeClass extends IdValueTypeClass<string> {
     }
 }
 
-export const isAnyIdType = (target: CommonTypeClass): target is AnyIdTypeClass => {
+export const isAnyIdType = (target: CommonTypeClass<string>): target is AnyIdTypeClass => {
     return target instanceof AnyIdTypeClass;
 };

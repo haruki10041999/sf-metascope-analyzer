@@ -1,8 +1,8 @@
 import { CommonTypeClass, ErrorTypeClass } from '../commonVisitor';
 
-export class VariableTypeClass<T> extends CommonTypeClass {
+export class VariableTypeClass<TName extends string, T> extends CommonTypeClass<TName> {
     private value: T | ErrorTypeClass;
-    constructor(type: string, value: T | ErrorTypeClass) {
+    constructor(type: TName, value: T | ErrorTypeClass) {
         super(type);
         this.value = value;
     }
@@ -12,9 +12,9 @@ export class VariableTypeClass<T> extends CommonTypeClass {
     }
 }
 
-export class VariableListTypeClass<T> extends CommonTypeClass {
+export class VariableListTypeClass<TName extends string, T> extends CommonTypeClass<TName> {
     private value: (T | ErrorTypeClass)[];
-    constructor(type: string, value: (T | ErrorTypeClass)[]) {
+    constructor(type: TName, value: (T | ErrorTypeClass)[]) {
         super(type);
         this.value = value;
     }
@@ -24,8 +24,11 @@ export class VariableListTypeClass<T> extends CommonTypeClass {
     }
 }
 
-export type VariableAllTypeClass = VariableTypeClass<unknown> | VariableListTypeClass<unknown>;
+export type VariableAllTypeClass =
+    VariableTypeClass<string, unknown> | VariableListTypeClass<string, unknown>;
 
-export const isVariableTypeAll = (target: CommonTypeClass): target is VariableAllTypeClass => {
+export const isVariableTypeAll = (
+    target: CommonTypeClass<string>,
+): target is VariableAllTypeClass => {
     return target instanceof VariableTypeClass || target instanceof VariableListTypeClass;
 };

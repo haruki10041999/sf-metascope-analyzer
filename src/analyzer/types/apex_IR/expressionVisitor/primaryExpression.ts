@@ -6,7 +6,10 @@ import { BasedPrimaryTypeClass, PrimaryVisitor, isBasedPrimaryType } from '../pr
 
 import { CommonTypeClass, ErrorTypeClass, isValidClass } from '../commonVisitor';
 
-export class PrimaryExpressionTypeClass extends ExpressionTypeClass<BasedPrimaryTypeClass> {
+export class PrimaryExpressionTypeClass extends ExpressionTypeClass<
+    'primaryExpression',
+    BasedPrimaryTypeClass
+> {
     private constructor(value: BasedPrimaryTypeClass | ErrorTypeClass) {
         super('primaryExpression', value);
     }
@@ -23,8 +26,7 @@ export class PrimaryExpressionTypeClass extends ExpressionTypeClass<BasedPrimary
 }
 
 export const isPrimaryExpressionType = (
-    target: CommonTypeClass,
+    target: CommonTypeClass<string>,
 ): target is PrimaryExpressionTypeClass => {
     return target instanceof PrimaryExpressionTypeClass;
 };
-

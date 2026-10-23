@@ -11,7 +11,10 @@ import {
 import { TypeRefTypeClass, TypeVisitor, isTypeRefType } from '../typeVisitor';
 import { ErrorTypeClass, CommonTypeClass, isValidClass, isValidClassList } from '../commonVisitor';
 
-export class LocalVariableDeclarationTypeClass extends DeclarationTypeClass<VariableDeclaratorsTypeClass> {
+export class LocalVariableDeclarationTypeClass extends DeclarationTypeClass<
+    'localVariableDeclaration',
+    VariableDeclaratorsTypeClass
+> {
     private valueType: TypeRefTypeClass | ErrorTypeClass;
     private modifier: (NormalModifierTypeClass | ErrorTypeClass)[] = [];
 
@@ -56,7 +59,7 @@ export class LocalVariableDeclarationTypeClass extends DeclarationTypeClass<Vari
 }
 
 export const isLocalVariableDeclarationType = (
-    target: CommonTypeClass,
+    target: CommonTypeClass<string>,
 ): target is LocalVariableDeclarationTypeClass => {
     return target instanceof LocalVariableDeclarationTypeClass;
 };

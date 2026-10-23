@@ -24,7 +24,7 @@ export { isWhenValueType, WhenValueTypeClass } from './whenValue';
 export { isCoordinateValueType, CoordinateValueTypeClass } from './coordinateValue';
 export { isLocationValueType, LocationValueTypeClass } from './locationValue';
 
-export class ValueVisitor extends CommonVisitor<ValueTypeClass<unknown>> {
+export class ValueVisitor extends CommonVisitor<ValueTypeClass<string, unknown>> {
     visitValue(ctx: ValueContext) {
         return NormalValueTypeClass.create(ctx);
     }

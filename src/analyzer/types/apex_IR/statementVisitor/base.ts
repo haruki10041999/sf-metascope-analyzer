@@ -1,9 +1,9 @@
 import type { AccessLevelTypeClass } from './accessLevel';
 import { ErrorTypeClass, CommonTypeClass } from '../commonVisitor';
 
-export class StatementTypeClass<T> extends CommonTypeClass {
+export class StatementTypeClass<TName extends string, T> extends CommonTypeClass<TName> {
     private value: T | ErrorTypeClass;
-    constructor(type: string, value: T | ErrorTypeClass) {
+    constructor(type: TName, value: T | ErrorTypeClass) {
         super(type);
         this.value = value;
     }
@@ -13,9 +13,9 @@ export class StatementTypeClass<T> extends CommonTypeClass {
     }
 }
 
-export class StatementListTypeClass<T> extends CommonTypeClass {
+export class StatementListTypeClass<TName extends string, T> extends CommonTypeClass<TName> {
     private value: (T | ErrorTypeClass)[];
-    constructor(type: string, value: (T | ErrorTypeClass)[]) {
+    constructor(type: TName, value: (T | ErrorTypeClass)[]) {
         super(type);
         this.value = value;
     }
@@ -25,10 +25,10 @@ export class StatementListTypeClass<T> extends CommonTypeClass {
     }
 }
 
-export class DmlStatementTypeClass<T> extends StatementTypeClass<T> {
+export class DmlStatementTypeClass<TName extends string, T> extends StatementTypeClass<TName, T> {
     private accessLevel: AccessLevelTypeClass | ErrorTypeClass | null = null;
     constructor(
-        type: string,
+        type: TName,
         value: T | ErrorTypeClass,
         accessLevel: AccessLevelTypeClass | ErrorTypeClass | null,
     ) {
@@ -41,8 +41,11 @@ export class DmlStatementTypeClass<T> extends StatementTypeClass<T> {
     }
 }
 
-export type StatementAllTypeClass = StatementTypeClass<unknown> | StatementListTypeClass<unknown>;
+export type StatementAllTypeClass =
+    StatementTypeClass<string, unknown> | StatementListTypeClass<string, unknown>;
 
-export const isStatementTypeAll = (target: CommonTypeClass): target is StatementAllTypeClass => {
+export const isStatementTypeAll = (
+    target: CommonTypeClass<string>,
+): target is StatementAllTypeClass => {
     return target instanceof StatementTypeClass || target instanceof StatementListTypeClass;
 };

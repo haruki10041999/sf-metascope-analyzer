@@ -24,7 +24,7 @@ import {
 } from '../clauseVisitor';
 import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
 
-export class SubQueryTypeClass extends SoqlQueryTypeClass<SubFieldListTypeClass> {
+export class SubQueryTypeClass extends SoqlQueryTypeClass<'subQuery', SubFieldListTypeClass> {
     private constructor(
         value: SubFieldListTypeClass | ErrorTypeClass,
         from: FromNameListTypeClass | ErrorTypeClass,
@@ -102,6 +102,6 @@ export class SubQueryTypeClass extends SoqlQueryTypeClass<SubFieldListTypeClass>
     }
 }
 
-export const isSubQueryType = (target: CommonTypeClass): target is SubQueryTypeClass => {
+export const isSubQueryType = (target: CommonTypeClass<string>): target is SubQueryTypeClass => {
     return target instanceof SubQueryTypeClass;
 };

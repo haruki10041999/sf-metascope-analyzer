@@ -7,6 +7,7 @@ import { FieldNameTypeClass, NameVisitor, isFieldNameType } from '../nameVisitor
 import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
 
 export class FieldOrderTypeClass extends ClauseTypeClass<
+    'fieldOrder',
     FieldNameTypeClass | SoqlFunctionTypeClass
 > {
     private direction: string | null = null;
@@ -52,6 +53,8 @@ export class FieldOrderTypeClass extends ClauseTypeClass<
     }
 }
 
-export const isFieldOrderType = (target: CommonTypeClass): target is FieldOrderTypeClass => {
+export const isFieldOrderType = (
+    target: CommonTypeClass<string>,
+): target is FieldOrderTypeClass => {
     return target instanceof FieldOrderTypeClass;
 };

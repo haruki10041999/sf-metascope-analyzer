@@ -1,5 +1,3 @@
-import typia from 'typia';
-
 import {
     SelectEntryTypeClass,
     SubFieldEntryTypeClass,
@@ -8,7 +6,8 @@ import {
 } from '../../apex_IR';
 
 import {
-    ErrorInfo,
+    isCommonType,
+    ErrorType,
     CommonType,
     AssignForValueRule,
     ValueRuleValue,
@@ -18,34 +17,38 @@ import {
     makeNullAssignRule,
     makeSourceInfo,
 } from './commons';
-import { makeFieldNameRule, FieldNameType } from './name';
-import { makeSoqlFunctionRule, makeSubQueryRule, SoqlFunctionType, SubQueryType } from './query';
-import { makeTypeOfRule, TypeOfType } from './clause';
-import { makeSoqlIdRule, SoqlIdType } from './id';
+import { makeFieldNameAssignRule, FieldNameType } from './name';
+import {
+    makeSoqlFunctionAssignRule,
+    makeSubQueryAssignRule,
+    SoqlFunctionType,
+    SubQueryType,
+} from './query';
+import { makeTypeOfAssignRule, TypeOfType } from './clause';
+import { makeSoqlIdAssignRule, SoqlIdType } from './id';
 
-export type SelectEntryType = CommonType & {
+export type SelectEntryType = CommonType<'selectEntry'> & {
     value: ValueRuleValue<FieldNameType | SoqlFunctionType | SubQueryType | TypeOfType>;
     alias: ValueRuleValue<SoqlIdType | null>;
 };
 
-export const isSelectEntryType = typia.createIs<SelectEntryType>();
+export const isSelectEntryType = (value: unknown): value is SelectEntryType => {
+    return isCommonType(value) && value.type === 'selectEntry';
+};
 
-export const makeSelectEntryRule = (): AssignForValueRule<
-    SelectEntryTypeClass,
-    SelectEntryType
-> => {
-    return {
+export const makeSelectEntryAssignRule: AssignForValueRule<SelectEntryTypeClass, SelectEntryType> =
+    {
         isValid: (target: unknown) => isTargetTypeClass(target, isSelectEntryTypeClass),
         construct: (entryTypeClass: SelectEntryTypeClass) => {
             const value = assignMultiClass(entryTypeClass.getValue(), [
-                makeFieldNameRule(),
-                makeSoqlFunctionRule(),
-                makeSubQueryRule(),
-                makeTypeOfRule(),
+                makeFieldNameAssignRule,
+                makeSoqlFunctionAssignRule,
+                makeSubQueryAssignRule,
+                makeTypeOfAssignRule,
                 makeErrorAssignRule,
             ]);
             const alias = assignMultiClass(entryTypeClass.getAlias(), [
-                makeSoqlIdRule(),
+                makeSoqlIdAssignRule,
                 makeErrorAssignRule,
                 makeNullAssignRule,
             ]);
@@ -57,41 +60,39 @@ export const makeSelectEntryRule = (): AssignForValueRule<
             };
         },
     };
-};
 
-export type SubFieldEntryType = CommonType & {
+export type SubFieldEntryType = CommonType<'subFieldEntry'> & {
     value: ValueRuleValue<FieldNameType | SoqlFunctionType | SubQueryType | TypeOfType>;
     alias: ValueRuleValue<SoqlIdType | null>;
 };
 
-export const isSubFieldEntryType = typia.createIs<SubFieldEntryType>();
-
-export const makeSubFieldEntryRule = (): AssignForValueRule<
-    SubFieldEntryTypeClass,
-    SubFieldEntryType
-> => {
-    return {
-        isValid: (target: unknown) => isTargetTypeClass(target, isSubFieldEntryTypeClass),
-        construct: (entryTypeClass: SubFieldEntryTypeClass) => {
-            const value = assignMultiClass(entryTypeClass.getValue(), [
-                makeFieldNameRule(),
-                makeSoqlFunctionRule(),
-                makeSubQueryRule(),
-                makeTypeOfRule(),
-                makeErrorAssignRule,
-            ]);
-            const alias = assignMultiClass(entryTypeClass.getAlias(), [
-                makeSoqlIdRule(),
-                makeErrorAssignRule,
-                makeNullAssignRule,
-            ]);
-            return {
-                type: entryTypeClass.getType(),
-                sourceInfo: makeSourceInfo(entryTypeClass),
-                value,
-                alias,
-            };
-        },
-    };
+export const isSubFieldEntryType = (value: unknown): value is SubFieldEntryType => {
+    return isCommonType(value) && value.type === 'subFieldEntry';
 };
 
+export const makeSubFieldEntryAssignRule: AssignForValueRule<
+    SubFieldEntryTypeClass,
+    SubFieldEntryType
+> = {
+    isValid: (target: unknown) => isTargetTypeClass(target, isSubFieldEntryTypeClass),
+    construct: (entryTypeClass: SubFieldEntryTypeClass) => {
+        const value = assignMultiClass(entryTypeClass.getValue(), [
+            makeFieldNameAssignRule,
+            makeSoqlFunctionAssignRule,
+            makeSubQueryAssignRule,
+            makeTypeOfAssignRule,
+            makeErrorAssignRule,
+        ]);
+        const alias = assignMultiClass(entryTypeClass.getAlias(), [
+            makeSoqlIdAssignRule,
+            makeErrorAssignRule,
+            makeNullAssignRule,
+        ]);
+        return {
+            type: entryTypeClass.getType(),
+            sourceInfo: makeSourceInfo(entryTypeClass),
+            value,
+            alias,
+        };
+    },
+};

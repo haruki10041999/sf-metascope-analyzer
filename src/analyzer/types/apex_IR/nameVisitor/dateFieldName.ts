@@ -4,7 +4,7 @@ import { NameTypeClass, NameVisitor, FieldNameTypeClass, isFieldNameType } from 
 
 import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
 
-export class DateFieldNameTypeClass extends NameTypeClass<FieldNameTypeClass> {
+export class DateFieldNameTypeClass extends NameTypeClass<'dateFieldName', FieldNameTypeClass> {
     private isConvertTimeZone: boolean;
     private constructor(value: FieldNameTypeClass | ErrorTypeClass, isConvertTimeZone: boolean) {
         super('dateFieldName', value);
@@ -27,6 +27,8 @@ export class DateFieldNameTypeClass extends NameTypeClass<FieldNameTypeClass> {
     }
 }
 
-export const isDateFieldNameType = (target: CommonTypeClass): target is DateFieldNameTypeClass => {
+export const isDateFieldNameType = (
+    target: CommonTypeClass<string>,
+): target is DateFieldNameTypeClass => {
     return target instanceof DateFieldNameTypeClass;
 };

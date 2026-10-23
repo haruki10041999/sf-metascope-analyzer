@@ -9,7 +9,10 @@ import {
 } from '../clauseVisitor';
 import { ErrorTypeClass, CommonTypeClass, isValidClassList } from '../commonVisitor';
 
-export class FilteringExpressionTypeClass extends ExpressionListBaseTypeClass<DataCategorySelectionTypeClass> {
+export class FilteringExpressionTypeClass extends ExpressionListBaseTypeClass<
+    'filteringExpression',
+    DataCategorySelectionTypeClass
+> {
     private constructor(value: (DataCategorySelectionTypeClass | ErrorTypeClass)[]) {
         super('filteringExpression', value);
     }
@@ -35,8 +38,7 @@ export class FilteringExpressionTypeClass extends ExpressionListBaseTypeClass<Da
 }
 
 export const isFilteringExpressionType = (
-    target: CommonTypeClass,
+    target: CommonTypeClass<string>,
 ): target is FilteringExpressionTypeClass => {
     return target instanceof FilteringExpressionTypeClass;
 };
-

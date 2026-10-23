@@ -12,6 +12,7 @@ import {
 import { CommonTypeClass, ErrorTypeClass, isValidClass } from '../commonVisitor';
 
 export class WhereConditionalExpressionTypeClass extends ExpressionTypeClass<
+    'whereConditionalExpression',
     WhereLogicalExpressionTypeClass | WhereFieldExpressionTypeClass
 > {
     private constructor(
@@ -42,8 +43,7 @@ export class WhereConditionalExpressionTypeClass extends ExpressionTypeClass<
 }
 
 export const isWhereConditionalExpressionType = (
-    target: CommonTypeClass,
+    target: CommonTypeClass<string>,
 ): target is WhereConditionalExpressionTypeClass => {
     return target instanceof WhereConditionalExpressionTypeClass;
 };
-

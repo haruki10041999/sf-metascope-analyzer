@@ -10,7 +10,7 @@ import {
 import { TypeNameTypeClass, NameVisitor, isTypeNameType } from '../nameVisitor';
 import { ErrorTypeClass, CommonTypeClass, isValidClass, isValidClassList } from '../commonVisitor';
 
-export class TypeRefTypeClass extends TypeListBaseTypeClass<TypeNameTypeClass> {
+export class TypeRefTypeClass extends TypeListBaseTypeClass<'typeRef', TypeNameTypeClass> {
     private dimension: ArraySubscriptsTypeClass | ErrorTypeClass;
 
     private constructor(
@@ -46,6 +46,6 @@ export class TypeRefTypeClass extends TypeListBaseTypeClass<TypeNameTypeClass> {
     }
 }
 
-export const isTypeRefType = (target: CommonTypeClass): target is TypeRefTypeClass => {
+export const isTypeRefType = (target: CommonTypeClass<string>): target is TypeRefTypeClass => {
     return target instanceof TypeRefTypeClass;
 };

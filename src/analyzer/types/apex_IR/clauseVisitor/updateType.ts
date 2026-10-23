@@ -4,7 +4,7 @@ import { ClauseTypeClass } from '.';
 
 import { CommonTypeClass } from '../commonVisitor';
 
-export class UpdateTypeTypeClass extends ClauseTypeClass<string> {
+export class UpdateTypeTypeClass extends ClauseTypeClass<'updateType', string> {
     private constructor(value: string) {
         super('updateType', value);
     }
@@ -18,6 +18,8 @@ export class UpdateTypeTypeClass extends ClauseTypeClass<string> {
     }
 }
 
-export const isUpdateTypeType = (target: CommonTypeClass): target is UpdateTypeTypeClass => {
+export const isUpdateTypeType = (
+    target: CommonTypeClass<string>,
+): target is UpdateTypeTypeClass => {
     return target instanceof UpdateTypeTypeClass;
 };

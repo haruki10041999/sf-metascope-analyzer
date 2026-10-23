@@ -12,7 +12,7 @@ import { CommonVisitor } from '../commonVisitor';
 export { isNormalArgumentsType, NormalArgumentsTypeClass } from './normal';
 export { isTypeArgumentsType, TypeArgumentsTypeClass } from './typeArguments';
 
-export class ArgumentsVisitor extends CommonVisitor<ArgumentsTypeClass<unknown>> {
+export class ArgumentsVisitor extends CommonVisitor<ArgumentsTypeClass<string, unknown>> {
     visitArguments(ctx: ArgumentsContext) {
         return NormalArgumentsTypeClass.create(ctx);
     }

@@ -9,7 +9,10 @@ import {
 } from '../expressionVisitor';
 import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
 
-export class OffsetClauseTypeClass extends ClauseTypeClass<string | BoundExpressionTypeClass> {
+export class OffsetClauseTypeClass extends ClauseTypeClass<
+    'offsetClause',
+    string | BoundExpressionTypeClass
+> {
     private constructor(value: string | BoundExpressionTypeClass | ErrorTypeClass) {
         super('offsetClause', value);
     }
@@ -31,7 +34,8 @@ export class OffsetClauseTypeClass extends ClauseTypeClass<string | BoundExpress
     }
 }
 
-export const isOffsetClauseType = (target: CommonTypeClass): target is OffsetClauseTypeClass => {
+export const isOffsetClauseType = (
+    target: CommonTypeClass<string>,
+): target is OffsetClauseTypeClass => {
     return target instanceof OffsetClauseTypeClass;
 };
-

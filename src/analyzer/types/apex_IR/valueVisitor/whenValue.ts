@@ -9,7 +9,7 @@ import { ErrorTypeClass, CommonTypeClass, isValidClass, isValidClassList } from 
 
 type WhenValueValueType = (WhenLiteralTypeClass | ErrorTypeClass)[] | NormalIdTypeClass | 'else';
 
-export class WhenValueTypeClass extends ValueTypeClass<WhenValueValueType> {
+export class WhenValueTypeClass extends ValueTypeClass<'whenValue', WhenValueValueType> {
     private valueType: TypeRefTypeClass | ErrorTypeClass | null = null;
 
     private constructor(
@@ -54,6 +54,6 @@ export class WhenValueTypeClass extends ValueTypeClass<WhenValueValueType> {
     }
 }
 
-export const isWhenValueType = (target: CommonTypeClass): target is WhenValueTypeClass => {
+export const isWhenValueType = (target: CommonTypeClass<string>): target is WhenValueTypeClass => {
     return target instanceof WhenValueTypeClass;
 };

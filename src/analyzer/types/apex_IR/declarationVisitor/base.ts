@@ -1,8 +1,8 @@
 import { ErrorTypeClass, CommonTypeClass } from '../commonVisitor';
 
-export class DeclarationTypeClass<T> extends CommonTypeClass {
+export class DeclarationTypeClass<TName extends string, T> extends CommonTypeClass<TName> {
     private value: T | ErrorTypeClass;
-    constructor(type: string, value: T | ErrorTypeClass) {
+    constructor(type: TName, value: T | ErrorTypeClass) {
         super(type);
         this.value = value;
     }
@@ -12,9 +12,9 @@ export class DeclarationTypeClass<T> extends CommonTypeClass {
     }
 }
 
-export class DeclarationListTypeClass<T> extends CommonTypeClass {
+export class DeclarationListTypeClass<TName extends string, T> extends CommonTypeClass<TName> {
     private value: (T | ErrorTypeClass)[];
-    constructor(type: string, value: (T | ErrorTypeClass)[]) {
+    constructor(type: TName, value: (T | ErrorTypeClass)[]) {
         super(type);
         this.value = value;
     }
@@ -25,10 +25,10 @@ export class DeclarationListTypeClass<T> extends CommonTypeClass {
 }
 
 export type DeclarationAllTypeClass =
-    DeclarationTypeClass<unknown> | DeclarationListTypeClass<unknown>;
+    DeclarationTypeClass<string, unknown> | DeclarationListTypeClass<string, unknown>;
 
 export const isDeclarationTypeAll = (
-    target: CommonTypeClass,
+    target: CommonTypeClass<string>,
 ): target is DeclarationAllTypeClass => {
     return target instanceof DeclarationTypeClass || target instanceof DeclarationListTypeClass;
 };

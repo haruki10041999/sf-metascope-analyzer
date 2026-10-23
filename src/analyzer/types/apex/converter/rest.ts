@@ -1,5 +1,3 @@
-import typia from 'typia';
-
 import {
     ArrayCreatorRestTypeClass,
     ClassCreatorRestTypeClass,
@@ -14,10 +12,11 @@ import {
     isNoRestType as isNoRestTypeClass,
     isSetCreatorRestType as isSetCreatorRestTypeClass,
 } from '../../apex_IR';
-import { ArgumentsType, makeArgumentsRule } from './arguments';
+import { ArgumentsType, makeArgumentsAssignRule } from './arguments';
 
 import {
-    ErrorInfo,
+    isCommonType,
+    ErrorType,
     CommonType,
     AssignForValueRule,
     ValueRuleValue,
@@ -28,149 +27,149 @@ import {
     makeSourceInfo,
     makeStringAssignRule,
 } from './commons';
-import { makeBaseExpressionRule, BaseExpressionType } from './expression';
-import { makeCreatedNameRule, CreatedNameType } from './name';
-import { makeMapCreatorRestPairRule, MapCreatorRestPairType } from './pair';
-import { makeArrayInitializerRule, ArrayInitializerType } from './variable';
+import { makeBaseExpressionAssignRules, BaseExpressionType } from './expression';
+import { makeCreatedNameAssignRule, CreatedNameType } from './name';
+import { makeMapCreatorRestPairAssignRule, MapCreatorRestPairType } from './pair';
+import { makeArrayInitializerAssignRule, ArrayInitializerType } from './variable';
 
-export type ArrayCreatorRestType = CommonType & {
+export type ArrayCreatorRestType = CommonType<'arrayCreatorRest'> & {
     value: ValueRuleValue<ArrayInitializerType | null>;
     size: ValueRuleValue<BaseExpressionType | null>;
 };
 
-export const isArrayCreatorRestType = typia.createIs<ArrayCreatorRestType>();
-
-export const makeArrayCreatorRestRule = (): AssignForValueRule<
-    ArrayCreatorRestTypeClass,
-    ArrayCreatorRestType
-> => {
-    return {
-        isValid: (target: unknown) => isTargetTypeClass(target, isArrayCreatorRestTypeClass),
-        construct: (restTypeClass: ArrayCreatorRestTypeClass) => {
-            const value = assignMultiClass(restTypeClass.getValue(), [
-                makeArrayInitializerRule(),
-                makeErrorAssignRule,
-                makeNullAssignRule,
-            ]);
-            const size = assignMultiClass(restTypeClass.getSize(), [
-                ...makeBaseExpressionRule(),
-                makeErrorAssignRule,
-                makeNullAssignRule,
-            ]);
-            return {
-                type: restTypeClass.getType(),
-                sourceInfo: makeSourceInfo(restTypeClass),
-                value,
-                size,
-            };
-        },
-    };
+export const isArrayCreatorRestType = (value: unknown): value is ArrayCreatorRestType => {
+    return isCommonType(value) && value.type === 'arrayCreatorRest';
 };
 
-export type ClassCreatorRestType = CommonType & {
+export const makeArrayCreatorRestAssignRule: AssignForValueRule<
+    ArrayCreatorRestTypeClass,
+    ArrayCreatorRestType
+> = {
+    isValid: (target: unknown) => isTargetTypeClass(target, isArrayCreatorRestTypeClass),
+    construct: (restTypeClass: ArrayCreatorRestTypeClass) => {
+        const value = assignMultiClass(restTypeClass.getValue(), [
+            makeArrayInitializerAssignRule,
+            makeErrorAssignRule,
+            makeNullAssignRule,
+        ]);
+        const size = assignMultiClass(restTypeClass.getSize(), [
+            ...makeBaseExpressionAssignRules,
+            makeErrorAssignRule,
+            makeNullAssignRule,
+        ]);
+        return {
+            type: restTypeClass.getType(),
+            sourceInfo: makeSourceInfo(restTypeClass),
+            value,
+            size,
+        };
+    },
+};
+
+export type ClassCreatorRestType = CommonType<'classCreatorRest'> & {
     value: ValueRuleValue<ArgumentsType>;
 };
 
-export const isClassCreatorRestType = typia.createIs<ClassCreatorRestType>();
-
-export const makeClassCreatorRestRule = (): AssignForValueRule<
-    ClassCreatorRestTypeClass,
-    ClassCreatorRestType
-> => {
-    return {
-        isValid: (target: unknown) => isTargetTypeClass(target, isClassCreatorRestTypeClass),
-        construct: (restTypeClass: ClassCreatorRestTypeClass) => {
-            const value = assignMultiClass(restTypeClass.getValue(), [
-                makeArgumentsRule(),
-                makeErrorAssignRule,
-            ]);
-            return {
-                type: restTypeClass.getType(),
-                sourceInfo: makeSourceInfo(restTypeClass),
-                value,
-            };
-        },
-    };
+export const isClassCreatorRestType = (value: unknown): value is ClassCreatorRestType => {
+    return isCommonType(value) && value.type === 'classCreatorRest';
 };
 
-export type MapCreatorRestType = CommonType & {
+export const makeClassCreatorRestAssignRule: AssignForValueRule<
+    ClassCreatorRestTypeClass,
+    ClassCreatorRestType
+> = {
+    isValid: (target: unknown) => isTargetTypeClass(target, isClassCreatorRestTypeClass),
+    construct: (restTypeClass: ClassCreatorRestTypeClass) => {
+        const value = assignMultiClass(restTypeClass.getValue(), [
+            makeArgumentsAssignRule,
+            makeErrorAssignRule,
+        ]);
+        return {
+            type: restTypeClass.getType(),
+            sourceInfo: makeSourceInfo(restTypeClass),
+            value,
+        };
+    },
+};
+
+export type MapCreatorRestType = CommonType<'mapCreatorRest'> & {
     value: ValueRuleValue<MapCreatorRestPairType>[];
 };
 
-export const isMapCreatorRestType = typia.createIs<MapCreatorRestType>();
-
-export const makeMapCreatorRestRule = (): AssignForValueRule<
-    MapCreatorRestTypeClass,
-    MapCreatorRestType
-> => {
-    return {
-        isValid: (target: unknown) => isTargetTypeClass(target, isMapCreatorRestTypeClass),
-        construct: (restTypeClass: MapCreatorRestTypeClass) => {
-            const value = restTypeClass
-                .getValue()
-                .map((v) =>
-                    assignMultiClass(v, [makeMapCreatorRestPairRule(), makeErrorAssignRule]),
-                );
-            return {
-                type: restTypeClass.getType(),
-                sourceInfo: makeSourceInfo(restTypeClass),
-                value,
-            };
-        },
-    };
+export const isMapCreatorRestType = (value: unknown): value is MapCreatorRestType => {
+    return isCommonType(value) && value.type === 'mapCreatorRest';
 };
 
-export type NoRestType = CommonType & {
+export const makeMapCreatorRestAssignRule: AssignForValueRule<
+    MapCreatorRestTypeClass,
+    MapCreatorRestType
+> = {
+    isValid: (target: unknown) => isTargetTypeClass(target, isMapCreatorRestTypeClass),
+    construct: (restTypeClass: MapCreatorRestTypeClass) => {
+        const value = restTypeClass
+            .getValue()
+            .map((v) =>
+                assignMultiClass(v, [makeMapCreatorRestPairAssignRule, makeErrorAssignRule]),
+            );
+        return {
+            type: restTypeClass.getType(),
+            sourceInfo: makeSourceInfo(restTypeClass),
+            value,
+        };
+    },
+};
+
+export type NoRestType = CommonType<'noRest'> & {
     value: ValueRuleValue<string>;
 };
 
-export const isNoRestType = typia.createIs<NoRestType>();
-
-export const makeNoRestRule = (): AssignForValueRule<NoRestTypeClass, NoRestType> => {
-    return {
-        isValid: (target: unknown) => isTargetTypeClass(target, isNoRestTypeClass),
-        construct: (restTypeClass: NoRestTypeClass) => {
-            const value = assignMultiClass(restTypeClass.getValue(), [
-                makeStringAssignRule,
-                makeErrorAssignRule,
-            ]);
-            return {
-                type: restTypeClass.getType(),
-                sourceInfo: makeSourceInfo(restTypeClass),
-                value,
-            };
-        },
-    };
+export const isNoRestType = (value: unknown): value is NoRestType => {
+    return isCommonType(value) && value.type === 'noRest';
 };
 
-export type SetCreatorRestType = CommonType & {
+export const makeNoRestAssignRule: AssignForValueRule<NoRestTypeClass, NoRestType> = {
+    isValid: (target: unknown) => isTargetTypeClass(target, isNoRestTypeClass),
+    construct: (restTypeClass: NoRestTypeClass) => {
+        const value = assignMultiClass(restTypeClass.getValue(), [
+            makeStringAssignRule,
+            makeErrorAssignRule,
+        ]);
+        return {
+            type: restTypeClass.getType(),
+            sourceInfo: makeSourceInfo(restTypeClass),
+            value,
+        };
+    },
+};
+
+export type SetCreatorRestType = CommonType<'setCreatorRest'> & {
     value: ValueRuleValue<BaseExpressionType>[];
 };
 
-export const isSetCreatorRestType = typia.createIs<SetCreatorRestType>();
-
-export const makeSetCreatorRestRule = (): AssignForValueRule<
-    SetCreatorRestTypeClass,
-    SetCreatorRestType
-> => {
-    return {
-        isValid: (target: unknown) => isTargetTypeClass(target, isSetCreatorRestTypeClass),
-        construct: (restTypeClass: SetCreatorRestTypeClass) => {
-            const value = restTypeClass
-                .getValue()
-                .map((v) =>
-                    assignMultiClass(v, [...makeBaseExpressionRule(), makeErrorAssignRule]),
-                );
-            return {
-                type: restTypeClass.getType(),
-                sourceInfo: makeSourceInfo(restTypeClass),
-                value,
-            };
-        },
-    };
+export const isSetCreatorRestType = (value: unknown): value is SetCreatorRestType => {
+    return isCommonType(value) && value.type === 'setCreatorRest';
 };
 
-export type CreatorType = CommonType & {
+export const makeSetCreatorRestAssignRule: AssignForValueRule<
+    SetCreatorRestTypeClass,
+    SetCreatorRestType
+> = {
+    isValid: (target: unknown) => isTargetTypeClass(target, isSetCreatorRestTypeClass),
+    construct: (restTypeClass: SetCreatorRestTypeClass) => {
+        const value = restTypeClass
+            .getValue()
+            .map((v) =>
+                assignMultiClass(v, [...makeBaseExpressionAssignRules, makeErrorAssignRule]),
+            );
+        return {
+            type: restTypeClass.getType(),
+            sourceInfo: makeSourceInfo(restTypeClass),
+            value,
+        };
+    },
+};
+
+export type CreatorType = CommonType<'creator'> & {
     value: ValueRuleValue<CreatedNameType>;
     rest: ValueRuleValue<
         | ArrayCreatorRestType
@@ -181,31 +180,30 @@ export type CreatorType = CommonType & {
     >;
 };
 
-export const isCreatorType = typia.createIs<CreatorType>();
-
-export const makeCreatorRule = (): AssignForValueRule<CreatorTypeClass, CreatorType> => {
-    return {
-        isValid: (target: unknown) => isTargetTypeClass(target, isCreatorTypeClass),
-        construct: (restTypeClass: CreatorTypeClass) => {
-            const value = assignMultiClass(restTypeClass.getValue(), [
-                makeCreatedNameRule(),
-                makeErrorAssignRule,
-            ]);
-            const rest = assignMultiClass(restTypeClass.getContent(), [
-                makeArrayCreatorRestRule(),
-                makeClassCreatorRestRule(),
-                makeMapCreatorRestRule(),
-                makeNoRestRule(),
-                makeSetCreatorRestRule(),
-                makeErrorAssignRule,
-            ]);
-            return {
-                type: restTypeClass.getType(),
-                sourceInfo: makeSourceInfo(restTypeClass),
-                value,
-                rest,
-            };
-        },
-    };
+export const isCreatorType = (value: unknown): value is CreatorType => {
+    return isCommonType(value) && value.type === 'creator';
 };
 
+export const makeCreatorAssignRule: AssignForValueRule<CreatorTypeClass, CreatorType> = {
+    isValid: (target: unknown) => isTargetTypeClass(target, isCreatorTypeClass),
+    construct: (restTypeClass: CreatorTypeClass) => {
+        const value = assignMultiClass(restTypeClass.getValue(), [
+            makeCreatedNameAssignRule,
+            makeErrorAssignRule,
+        ]);
+        const rest = assignMultiClass(restTypeClass.getContent(), [
+            makeArrayCreatorRestAssignRule,
+            makeClassCreatorRestAssignRule,
+            makeMapCreatorRestAssignRule,
+            makeNoRestAssignRule,
+            makeSetCreatorRestAssignRule,
+            makeErrorAssignRule,
+        ]);
+        return {
+            type: restTypeClass.getType(),
+            sourceInfo: makeSourceInfo(restTypeClass),
+            value,
+            rest,
+        };
+    },
+};

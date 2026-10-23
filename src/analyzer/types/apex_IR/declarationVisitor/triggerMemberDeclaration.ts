@@ -27,7 +27,10 @@ type TriggerMemberDeclarationTypeClassType =
     | PropertyDeclarationTypeClass
     | FieldDeclarationTypeClass;
 
-export class TriggerMemberDeclarationTypeClass extends DeclarationTypeClass<TriggerMemberDeclarationTypeClassType> {
+export class TriggerMemberDeclarationTypeClass extends DeclarationTypeClass<
+    'triggerMemberDeclaration',
+    TriggerMemberDeclarationTypeClassType
+> {
     private constructor(value: TriggerMemberDeclarationTypeClassType | ErrorTypeClass) {
         super('triggerMemberDeclaration', value);
     }
@@ -88,8 +91,7 @@ export class TriggerMemberDeclarationTypeClass extends DeclarationTypeClass<Trig
 }
 
 export const isTriggerMemberDeclarationType = (
-    target: CommonTypeClass,
+    target: CommonTypeClass<string>,
 ): target is TriggerMemberDeclarationTypeClass => {
     return target instanceof TriggerMemberDeclarationTypeClass;
 };
-

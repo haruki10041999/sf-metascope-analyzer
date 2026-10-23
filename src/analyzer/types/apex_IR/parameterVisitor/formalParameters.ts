@@ -9,7 +9,10 @@ import {
 } from '../listVisitor';
 import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
 
-export class FormalParametersTypeClass extends ParameterTypeClass<FormalParameterListTypeClass | null> {
+export class FormalParametersTypeClass extends ParameterTypeClass<
+    'formalParameters',
+    FormalParameterListTypeClass | null
+> {
     private constructor(value: FormalParameterListTypeClass | ErrorTypeClass | null = null) {
         super('formalParameters', value);
     }
@@ -28,7 +31,7 @@ export class FormalParametersTypeClass extends ParameterTypeClass<FormalParamete
 }
 
 export const isFormalParametersType = (
-    target: CommonTypeClass,
+    target: CommonTypeClass<string>,
 ): target is FormalParametersTypeClass => {
     return target instanceof FormalParametersTypeClass;
 };

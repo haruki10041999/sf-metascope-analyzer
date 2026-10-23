@@ -17,7 +17,10 @@ import { ErrorTypeClass, CommonTypeClass, isValidClass, isValidClassList } from 
 export type TypeDeclarationClassType =
     ClassDeclarationTypeClass | EnumDeclarationTypeClass | InterfaceDeclarationTypeClass;
 
-export class TypeDeclarationTypeClass extends DeclarationTypeClass<TypeDeclarationClassType> {
+export class TypeDeclarationTypeClass extends DeclarationTypeClass<
+    'typeDeclaration',
+    TypeDeclarationClassType
+> {
     private modifier: (NormalModifierTypeClass | ErrorTypeClass)[];
     private constructor(
         value: TypeDeclarationClassType | ErrorTypeClass,
@@ -70,8 +73,7 @@ export class TypeDeclarationTypeClass extends DeclarationTypeClass<TypeDeclarati
 }
 
 export const isTypeDeclarationType = (
-    target: CommonTypeClass,
+    target: CommonTypeClass<string>,
 ): target is TypeDeclarationTypeClass => {
     return target instanceof TypeDeclarationTypeClass;
 };
-

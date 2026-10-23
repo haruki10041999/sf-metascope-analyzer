@@ -1,5 +1,3 @@
-import typia from 'typia';
-
 import {
     DotMethodCallTypeClass,
     MethodCallTypeClass,
@@ -8,7 +6,8 @@ import {
 } from '../../apex_IR';
 
 import {
-    ErrorInfo,
+    isCommonType,
+    ErrorType,
     CommonType,
     AssignForValueRule,
     ValueRuleValue,
@@ -18,73 +17,72 @@ import {
     makeNullAssignRule,
     makeSourceInfo,
 } from './commons';
-import { makeAnyIdRule, makeIdRule, AnyIdType, IdType } from './id';
-import { makeExpressionListRule, ExpressionListType } from './list';
+import { makeAnyIdAssignRule, makeIdAssignRule, AnyIdType, IdType } from './id';
+import { makeExpressionListAssignRule, ExpressionListType } from './list';
 
-export type DotMethodCallType = CommonType & {
+export type DotMethodCallType = CommonType<'dotMethodCall'> & {
     value: ValueRuleValue<AnyIdType>;
     param: ValueRuleValue<ExpressionListType | null>;
 };
 
-export const isDotMethodCallType = typia.createIs<DotMethodCallType>();
-
-export const makeDotMethodCallRule = (): AssignForValueRule<
-    DotMethodCallTypeClass,
-    DotMethodCallType
-> => {
-    return {
-        isValid: (target: unknown) => isTargetTypeClass(target, isDotMethodCallTypeClass),
-        construct: (callTypeClass: DotMethodCallTypeClass) => {
-            const value = assignMultiClass(callTypeClass.getValue(), [
-                makeAnyIdRule(),
-                makeErrorAssignRule,
-            ]);
-            const param = assignMultiClass(callTypeClass.getParam(), [
-                makeExpressionListRule(),
-                makeErrorAssignRule,
-                makeNullAssignRule,
-            ]);
-            return {
-                type: callTypeClass.getType(),
-                sourceInfo: makeSourceInfo(callTypeClass),
-                value,
-                param,
-            };
-        },
-    };
+export const isDotMethodCallType = (value: unknown): value is DotMethodCallType => {
+    return isCommonType(value) && value.type === 'dotMethodCall';
 };
 
-export type MethodCallType = CommonType & {
+export const makeDotMethodCallAssignRule: AssignForValueRule<
+    DotMethodCallTypeClass,
+    DotMethodCallType
+> = {
+    isValid: (target: unknown) => isTargetTypeClass(target, isDotMethodCallTypeClass),
+    construct: (callTypeClass: DotMethodCallTypeClass) => {
+        const value = assignMultiClass(callTypeClass.getValue(), [
+            makeAnyIdAssignRule,
+            makeErrorAssignRule,
+        ]);
+        const param = assignMultiClass(callTypeClass.getParam(), [
+            makeExpressionListAssignRule,
+            makeErrorAssignRule,
+            makeNullAssignRule,
+        ]);
+        return {
+            type: callTypeClass.getType(),
+            sourceInfo: makeSourceInfo(callTypeClass),
+            value,
+            param,
+        };
+    },
+};
+
+export type MethodCallType = CommonType<'methodCall'> & {
     value: ValueRuleValue<IdType | null>;
     param: ValueRuleValue<ExpressionListType | null>;
     reference: string | null;
 };
 
-export const isMethodCallType = typia.createIs<MethodCallType>();
-
-export const makeMethodCallRule = (): AssignForValueRule<MethodCallTypeClass, MethodCallType> => {
-    return {
-        isValid: (target: unknown) => isTargetTypeClass(target, isMethodCallTypeClass),
-        construct: (callTypeClass: MethodCallTypeClass) => {
-            const value = assignMultiClass(callTypeClass.getValue(), [
-                makeIdRule(),
-                makeErrorAssignRule,
-                makeNullAssignRule,
-            ]);
-            const param = assignMultiClass(callTypeClass.getParam(), [
-                makeExpressionListRule(),
-                makeErrorAssignRule,
-                makeNullAssignRule,
-            ]);
-            const reference = callTypeClass.getReference();
-            return {
-                type: callTypeClass.getType(),
-                sourceInfo: makeSourceInfo(callTypeClass),
-                value,
-                param,
-                reference,
-            };
-        },
-    };
+export const isMethodCallType = (value: unknown): value is MethodCallType => {
+    return isCommonType(value) && value.type === 'methodCall';
 };
 
+export const makeMethodCallAssignRule: AssignForValueRule<MethodCallTypeClass, MethodCallType> = {
+    isValid: (target: unknown) => isTargetTypeClass(target, isMethodCallTypeClass),
+    construct: (callTypeClass: MethodCallTypeClass) => {
+        const value = assignMultiClass(callTypeClass.getValue(), [
+            makeIdAssignRule,
+            makeErrorAssignRule,
+            makeNullAssignRule,
+        ]);
+        const param = assignMultiClass(callTypeClass.getParam(), [
+            makeExpressionListAssignRule,
+            makeErrorAssignRule,
+            makeNullAssignRule,
+        ]);
+        const reference = callTypeClass.getReference();
+        return {
+            type: callTypeClass.getType(),
+            sourceInfo: makeSourceInfo(callTypeClass),
+            value,
+            param,
+            reference,
+        };
+    },
+};

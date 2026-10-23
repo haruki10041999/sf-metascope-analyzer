@@ -6,7 +6,7 @@ import { PrimaryTypeClass } from '.';
 
 import { CommonTypeClass, ErrorTypeClass, isValidClass } from '../commonVisitor';
 
-export class IdPrimaryTypeClass extends PrimaryTypeClass<NormalIdTypeClass> {
+export class IdPrimaryTypeClass extends PrimaryTypeClass<'idPrimary', NormalIdTypeClass> {
     private constructor(value: NormalIdTypeClass | ErrorTypeClass) {
         super('idPrimary', value);
     }
@@ -22,7 +22,6 @@ export class IdPrimaryTypeClass extends PrimaryTypeClass<NormalIdTypeClass> {
     }
 }
 
-export const isIdPrimaryType = (target: CommonTypeClass): target is IdPrimaryTypeClass => {
+export const isIdPrimaryType = (target: CommonTypeClass<string>): target is IdPrimaryTypeClass => {
     return target instanceof IdPrimaryTypeClass;
 };
-

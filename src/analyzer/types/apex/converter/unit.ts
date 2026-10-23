@@ -1,5 +1,3 @@
-import typia from 'typia';
-
 import {
     AnonymousUnitTypeClass,
     CompilationUnitTypeClass,
@@ -12,7 +10,8 @@ import {
 } from '../../apex_IR';
 
 import {
-    ErrorInfo,
+    isCommonType,
+    ErrorType,
     CommonType,
     AssignForValueRule,
     ValueRuleValue,
@@ -23,78 +22,77 @@ import {
     makeSourceInfo,
 } from './commons';
 import {
-    makeAnonymousBlockRule,
-    makeTriggerBlockRule,
+    makeAnonymousBlockAssignRule,
+    makeTriggerBlockAssignRule,
     AnonymousBlockType,
     TriggerBlockType,
 } from './block';
-import { makeTypeDeclarationRule, TypeDeclarationType } from './declaration';
-import { makeIdRule, IdType } from './id';
+import { makeTypeDeclarationAssignRule, TypeDeclarationType } from './declaration';
+import { makeIdAssignRule, IdType } from './id';
 
-export type AnonymousUnitType = CommonType & {
+export type AnonymousUnitType = CommonType<'anonymousUnit'> & {
     value: ValueRuleValue<AnonymousBlockType>;
 };
 
-export const isAnonymousUnitType = typia.createIs<AnonymousUnitType>();
-
-export const makeAnonymousUnitRule = (): AssignForValueRule<
-    AnonymousUnitTypeClass,
-    AnonymousUnitType
-> => {
-    return {
-        isValid: (target: unknown) => isTargetTypeClass(target, isAnonymousUnitTypeClass),
-        construct: (unitTypeClass: AnonymousUnitTypeClass) => {
-            const value = assignMultiClass(unitTypeClass.getValue(), [
-                makeAnonymousBlockRule(),
-                makeErrorAssignRule,
-            ]);
-            return {
-                type: unitTypeClass.getType(),
-                sourceInfo: makeSourceInfo(unitTypeClass),
-                value,
-            };
-        },
-    };
+export const isAnonymousUnitType = (value: unknown): value is AnonymousUnitType => {
+    return isCommonType(value) && value.type === 'anonymousUnit';
 };
 
-export type CompilationUnitType = CommonType & {
+export const makeAnonymousUnitAssignRule: AssignForValueRule<
+    AnonymousUnitTypeClass,
+    AnonymousUnitType
+> = {
+    isValid: (target: unknown) => isTargetTypeClass(target, isAnonymousUnitTypeClass),
+    construct: (unitTypeClass: AnonymousUnitTypeClass) => {
+        const value = assignMultiClass(unitTypeClass.getValue(), [
+            makeAnonymousBlockAssignRule,
+            makeErrorAssignRule,
+        ]);
+        return {
+            type: unitTypeClass.getType(),
+            sourceInfo: makeSourceInfo(unitTypeClass),
+            value,
+        };
+    },
+};
+
+export type CompilationUnitType = CommonType<'compilationUnit'> & {
     value: ValueRuleValue<TypeDeclarationType>;
 };
 
-export const isCompilationUnitType = typia.createIs<CompilationUnitType>();
-
-export const makeCompilationUnitRule = (): AssignForValueRule<
-    CompilationUnitTypeClass,
-    CompilationUnitType
-> => {
-    return {
-        isValid: (target: unknown) => isTargetTypeClass(target, isCompilationUnitTypeClass),
-        construct: (unitTypeClass: CompilationUnitTypeClass) => {
-            const value = assignMultiClass(unitTypeClass.getValue(), [
-                makeTypeDeclarationRule(),
-                makeErrorAssignRule,
-            ]);
-            return {
-                type: unitTypeClass.getType(),
-                sourceInfo: makeSourceInfo(unitTypeClass),
-                value,
-            };
-        },
-    };
+export const isCompilationUnitType = (value: unknown): value is CompilationUnitType => {
+    return isCommonType(value) && value.type === 'compilationUnit';
 };
 
-export type TriggerCaseType = CommonType & {
+export const makeCompilationUnitAssignRule: AssignForValueRule<
+    CompilationUnitTypeClass,
+    CompilationUnitType
+> = {
+    isValid: (target: unknown) => isTargetTypeClass(target, isCompilationUnitTypeClass),
+    construct: (unitTypeClass: CompilationUnitTypeClass) => {
+        const value = assignMultiClass(unitTypeClass.getValue(), [
+            makeTypeDeclarationAssignRule,
+            makeErrorAssignRule,
+        ]);
+        return {
+            type: unitTypeClass.getType(),
+            sourceInfo: makeSourceInfo(unitTypeClass),
+            value,
+        };
+    },
+};
+
+export type TriggerCaseType = CommonType<'triggerCase'> & {
     timing: ValueRuleValue<string>;
     triggerCaseType: string;
 };
 
-export const isTriggerCaseType = typia.createIs<TriggerCaseType>();
+export const isTriggerCaseType = (value: unknown): value is TriggerCaseType => {
+    return isCommonType(value) && value.type === 'triggerCase';
+};
 
-export const makeTriggerCaseRule = (): AssignForValueRule<
-    TriggerCaseTypeClass,
-    TriggerCaseType
-> => {
-    return {
+export const makeTriggerCaseAssignRule: AssignForValueRule<TriggerCaseTypeClass, TriggerCaseType> =
+    {
         isValid: (target: unknown) => isTargetTypeClass(target, isTriggerCaseTypeClass),
         construct: (unitTypeClass: TriggerCaseTypeClass) => {
             const timing = assignMultiClass(unitTypeClass.getValue(), [
@@ -110,31 +108,29 @@ export const makeTriggerCaseRule = (): AssignForValueRule<
             };
         },
     };
-};
 
-export type TriggerUnitType = CommonType & {
+export type TriggerUnitType = CommonType<'triggerUnit'> & {
     value: ValueRuleValue<IdType>[];
     triggerCase: ValueRuleValue<TriggerCaseType>[];
     block: ValueRuleValue<TriggerBlockType>;
 };
 
-export const isTriggerUnitType = typia.createIs<TriggerUnitType>();
+export const isTriggerUnitType = (value: unknown): value is TriggerUnitType => {
+    return isCommonType(value) && value.type === 'triggerUnit';
+};
 
-export const makeTriggerUnitRule = (): AssignForValueRule<
-    TriggerUnitTypeClass,
-    TriggerUnitType
-> => {
-    return {
+export const makeTriggerUnitAssignRule: AssignForValueRule<TriggerUnitTypeClass, TriggerUnitType> =
+    {
         isValid: (target: unknown) => isTargetTypeClass(target, isTriggerUnitTypeClass),
         construct: (unitTypeClass: TriggerUnitTypeClass) => {
             const value = unitTypeClass
                 .getValue()
-                .map((v) => assignMultiClass(v, [makeIdRule(), makeErrorAssignRule]));
+                .map((v) => assignMultiClass(v, [makeIdAssignRule, makeErrorAssignRule]));
             const triggerCase = unitTypeClass
                 .getTriggerCase()
-                .map((v) => assignMultiClass(v, [makeTriggerCaseRule(), makeErrorAssignRule]));
+                .map((v) => assignMultiClass(v, [makeTriggerCaseAssignRule, makeErrorAssignRule]));
             const block = assignMultiClass(unitTypeClass.getBlock(), [
-                makeTriggerBlockRule(),
+                makeTriggerBlockAssignRule,
                 makeErrorAssignRule,
             ]);
             return {
@@ -146,5 +142,3 @@ export const makeTriggerUnitRule = (): AssignForValueRule<
             };
         },
     };
-};
-

@@ -9,7 +9,10 @@ import {
 
 import { CommonTypeClass, ErrorTypeClass, isValidClass } from '../commonVisitor';
 
-export class BoundExpressionTypeClass extends ExpressionTypeClass<BasedExpressionTypeClass> {
+export class BoundExpressionTypeClass extends ExpressionTypeClass<
+    'boundExpression',
+    BasedExpressionTypeClass
+> {
     private constructor(value: BasedExpressionTypeClass | ErrorTypeClass) {
         super('boundExpression', value);
     }
@@ -30,7 +33,7 @@ export class BoundExpressionTypeClass extends ExpressionTypeClass<BasedExpressio
 }
 
 export const isBoundExpressionType = (
-    target: CommonTypeClass,
+    target: CommonTypeClass<string>,
 ): target is BoundExpressionTypeClass => {
     return target instanceof BoundExpressionTypeClass;
 };

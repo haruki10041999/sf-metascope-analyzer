@@ -10,7 +10,10 @@ import {
 } from '../variableVisitor';
 import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
 
-export class FieldDeclarationTypeClass extends DeclarationTypeClass<VariableDeclaratorsTypeClass> {
+export class FieldDeclarationTypeClass extends DeclarationTypeClass<
+    'fieldDeclaration',
+    VariableDeclaratorsTypeClass
+> {
     private valueType: TypeRefTypeClass | ErrorTypeClass;
 
     private constructor(
@@ -42,7 +45,7 @@ export class FieldDeclarationTypeClass extends DeclarationTypeClass<VariableDecl
 }
 
 export const isFieldDeclarationType = (
-    target: CommonTypeClass,
+    target: CommonTypeClass<string>,
 ): target is FieldDeclarationTypeClass => {
     return target instanceof FieldDeclarationTypeClass;
 };

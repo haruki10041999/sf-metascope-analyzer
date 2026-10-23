@@ -11,7 +11,10 @@ import {
 import { TypeRefTypeClass, TypeVisitor, isTypeRefType } from '../typeVisitor';
 import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
 
-export class EnhancedForControlTypeClass extends ControlTypeClass<NormalIdTypeClass> {
+export class EnhancedForControlTypeClass extends ControlTypeClass<
+    'enhancedForControl',
+    NormalIdTypeClass
+> {
     private valueType: TypeRefTypeClass | ErrorTypeClass;
     private fromVariant: BasedExpressionTypeClass | ErrorTypeClass;
 
@@ -51,7 +54,7 @@ export class EnhancedForControlTypeClass extends ControlTypeClass<NormalIdTypeCl
 }
 
 export const isEnhancedForControlType = (
-    target: CommonTypeClass,
+    target: CommonTypeClass<string>,
 ): target is EnhancedForControlTypeClass => {
     return target instanceof EnhancedForControlTypeClass;
 };

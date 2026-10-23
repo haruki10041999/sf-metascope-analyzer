@@ -12,6 +12,7 @@ import { DotMethodCallTypeClass, CallVisitor, isDotMethodCallType } from '../cal
 import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
 
 export class DotExpressionTypeClass extends DoubleOperatorExpressionTypeClass<
+    'dotExpression',
     BasedExpressionTypeClass,
     string,
     AnyIdTypeClass | DotMethodCallTypeClass
@@ -51,6 +52,8 @@ export class DotExpressionTypeClass extends DoubleOperatorExpressionTypeClass<
     }
 }
 
-export const isDotExpressionType = (target: CommonTypeClass): target is DotExpressionTypeClass => {
+export const isDotExpressionType = (
+    target: CommonTypeClass<string>,
+): target is DotExpressionTypeClass => {
     return target instanceof DotExpressionTypeClass;
 };

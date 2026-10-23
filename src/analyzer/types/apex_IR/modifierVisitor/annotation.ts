@@ -7,7 +7,7 @@ import { ElementValueTypeClass, ValueVisitor, isElementValueType } from '../valu
 import { ElementValuePairsTypeClass, PairVisitor, isElementValuePairsType } from '../pairVisitor';
 import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
 
-export class AnnotationTypeClass extends ModifierTypeClass<NormalIdTypeClass> {
+export class AnnotationTypeClass extends ModifierTypeClass<'annotation', NormalIdTypeClass> {
     private param: ElementValueTypeClass | ElementValuePairsTypeClass | ErrorTypeClass | null =
         null;
 
@@ -52,7 +52,8 @@ export class AnnotationTypeClass extends ModifierTypeClass<NormalIdTypeClass> {
     }
 }
 
-export const isAnnotationType = (target: CommonTypeClass): target is AnnotationTypeClass => {
+export const isAnnotationType = (
+    target: CommonTypeClass<string>,
+): target is AnnotationTypeClass => {
     return target instanceof AnnotationTypeClass;
 };
-

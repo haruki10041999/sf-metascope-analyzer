@@ -1,5 +1,3 @@
-import typia from 'typia';
-
 import {
     ArraySubscriptsTypeClass,
     TypeRefTypeClass,
@@ -8,7 +6,8 @@ import {
 } from '../../apex_IR';
 
 import {
-    ErrorInfo,
+    isCommonType,
+    ErrorType,
     CommonType,
     AssignForValueRule,
     ValueRuleValue,
@@ -19,60 +18,59 @@ import {
     makeNumberAssignRule,
     makeNullAssignRule,
 } from './commons';
-import { makeTypeNameRule, TypeNameType } from './name';
+import { makeTypeNameAssignRule, TypeNameType } from './name';
 
-export type ArraySubscriptsType = CommonType & {
+export type ArraySubscriptsType = CommonType<'arraySubscripts'> & {
     value: ValueRuleValue<number | null>;
 };
 
-export const isArraySubscriptsType = typia.createIs<ArraySubscriptsType>();
-
-export const makeArraySubscriptsRule = (): AssignForValueRule<
-    ArraySubscriptsTypeClass,
-    ArraySubscriptsType
-> => {
-    return {
-        isValid: (target: unknown) => isTargetTypeClass(target, isArraySubscriptsTypeClass),
-        construct: (typeTypeClass: ArraySubscriptsTypeClass) => {
-            const value = assignMultiClass(typeTypeClass.getValue(), [
-                makeNumberAssignRule,
-                makeErrorAssignRule,
-                makeNullAssignRule,
-            ]);
-            return {
-                type: typeTypeClass.getType(),
-                sourceInfo: makeSourceInfo(typeTypeClass),
-                value,
-            };
-        },
-    };
+export const isArraySubscriptsType = (value: unknown): value is ArraySubscriptsType => {
+    return isCommonType(value) && value.type === 'arraySubscripts';
 };
 
-export type TypeRefType = CommonType & {
+export const makeArraySubscriptsAssignRule: AssignForValueRule<
+    ArraySubscriptsTypeClass,
+    ArraySubscriptsType
+> = {
+    isValid: (target: unknown) => isTargetTypeClass(target, isArraySubscriptsTypeClass),
+    construct: (typeTypeClass: ArraySubscriptsTypeClass) => {
+        const value = assignMultiClass(typeTypeClass.getValue(), [
+            makeNumberAssignRule,
+            makeErrorAssignRule,
+            makeNullAssignRule,
+        ]);
+        return {
+            type: typeTypeClass.getType(),
+            sourceInfo: makeSourceInfo(typeTypeClass),
+            value,
+        };
+    },
+};
+
+export type TypeRefType = CommonType<'typeRef'> & {
     value: ValueRuleValue<TypeNameType>[];
     dimension: ValueRuleValue<ArraySubscriptsType>;
 };
 
-export const isTypeRefType = typia.createIs<TypeRefType>();
-
-export const makeTypeRefRule = (): AssignForValueRule<TypeRefTypeClass, TypeRefType> => {
-    return {
-        isValid: (target: unknown) => isTargetTypeClass(target, isTypeRefTypeClass),
-        construct: (typeTypeClass: TypeRefTypeClass) => {
-            const value = typeTypeClass
-                .getValue()
-                .map((v) => assignMultiClass(v, [makeTypeNameRule(), makeErrorAssignRule]));
-            const dimension = assignMultiClass(typeTypeClass.getDimension(), [
-                makeArraySubscriptsRule(),
-                makeErrorAssignRule,
-            ]);
-            return {
-                type: typeTypeClass.getType(),
-                sourceInfo: makeSourceInfo(typeTypeClass),
-                value,
-                dimension,
-            };
-        },
-    };
+export const isTypeRefType = (value: unknown): value is TypeRefType => {
+    return isCommonType(value) && value.type === 'typeRef';
 };
 
+export const makeTypeRefAssignRule: AssignForValueRule<TypeRefTypeClass, TypeRefType> = {
+    isValid: (target: unknown) => isTargetTypeClass(target, isTypeRefTypeClass),
+    construct: (typeTypeClass: TypeRefTypeClass) => {
+        const value = typeTypeClass
+            .getValue()
+            .map((v) => assignMultiClass(v, [makeTypeNameAssignRule, makeErrorAssignRule]));
+        const dimension = assignMultiClass(typeTypeClass.getDimension(), [
+            makeArraySubscriptsAssignRule,
+            makeErrorAssignRule,
+        ]);
+        return {
+            type: typeTypeClass.getType(),
+            sourceInfo: makeSourceInfo(typeTypeClass),
+            value,
+            dimension,
+        };
+    },
+};

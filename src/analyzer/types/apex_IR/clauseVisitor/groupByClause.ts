@@ -10,7 +10,10 @@ import {
 import { FieldGroupByListTypeClass, ListVisitor, isFieldGroupByListType } from '../listVisitor';
 import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
 
-export class GroupByClauseTypeClass extends ClauseTypeClass<FieldGroupByListTypeClass> {
+export class GroupByClauseTypeClass extends ClauseTypeClass<
+    'groupByClause',
+    FieldGroupByListTypeClass
+> {
     private mode: string | null = null;
     private having: LogicalExpressionTypeClass | ErrorTypeClass | null = null;
 
@@ -55,6 +58,8 @@ export class GroupByClauseTypeClass extends ClauseTypeClass<FieldGroupByListType
     }
 }
 
-export const isGroupByClauseType = (target: CommonTypeClass): target is GroupByClauseTypeClass => {
+export const isGroupByClauseType = (
+    target: CommonTypeClass<string>,
+): target is GroupByClauseTypeClass => {
     return target instanceof GroupByClauseTypeClass;
 };

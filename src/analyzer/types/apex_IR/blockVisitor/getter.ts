@@ -4,7 +4,7 @@ import { NormalBlockTypeClass, BlockTypeClass, BlockVisitor, isNormalBlockType }
 
 import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
 
-export class GetterTypeClass extends BlockTypeClass<NormalBlockTypeClass | null> {
+export class GetterTypeClass extends BlockTypeClass<'getter', NormalBlockTypeClass | null> {
     private constructor(value: NormalBlockTypeClass | ErrorTypeClass | null) {
         super('getter', value);
     }
@@ -22,6 +22,6 @@ export class GetterTypeClass extends BlockTypeClass<NormalBlockTypeClass | null>
     }
 }
 
-export const isGetterType = (target: CommonTypeClass): target is GetterTypeClass => {
+export const isGetterType = (target: CommonTypeClass<string>): target is GetterTypeClass => {
     return target instanceof GetterTypeClass;
 };

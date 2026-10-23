@@ -3,13 +3,11 @@ import typia from 'typia';
 import {
     Convert,
     ConvertExcludeError,
-    GenerateResult,
     ErrorJson,
     isErrorJson,
     JsonType,
     makeJsonType,
     convertExcludeError,
-    collectDelteteKeys,
     mergeRecord,
     isConvert,
 } from '..//commons';
@@ -26,14 +24,7 @@ import {
     FieldExpressionType,
     LogicalExpressionType,
     SoqlFunctionType,
-    isDateFormulaType,
-    isSignedNumberType,
-    isValueListType,
-    isSubQueryType,
-    isBoundExpressionType,
-    isFieldExpressionType,
-    isFieldNameType,
-    isSoqlFunctionType,
+    FieldNameType,
 } from '../converter';
 
 import { ExpressionJson, makeExpressionJson } from '../expression';
@@ -132,7 +123,7 @@ export const makeValueJson = (target: ConvertExcludeError<ValueType>): ValueJson
             ...makeSignedNumberJson(value),
         };
     } else if (isConvert<SubQueryType>(value)) {
-        const subQueryJson = makeSubQueryJson(value as Convert<SubQueryType>);
+        const subQueryJson = makeSubQueryJson(value);
         const { type, ...content } = subQueryJson;
         return {
             type: type,
@@ -166,16 +157,14 @@ export type SingleConditionJson = {
 export const isSingleConditionJson = typia.createIs<SingleConditionJson>();
 
 export const makeSingleConditionJson = (
-    target: Convert<FieldExpressionType>,
+    target: ConvertExcludeError<FieldExpressionType>,
 ): SingleConditionJson => {
-    const field = castConvert(castExcludeErrorInfo(target.left));
-    const operator = makeComparisonOperatorJson(castConvert(castExcludeErrorInfo(target.operator)));
-    const value = makeValueJson(castConvert(castExcludeErrorInfo(target.right)));
+    const field = target.left;
+    const operator = makeComparisonOperatorJson(target.operator);
+    const value = makeValueJson(target.right);
 
-    if (isConvert(field, isFieldNameType)) {
-        const fieldValue = castConvertArray(castExcludeErrorInfoArray(field.value)).map(
-            (v) => castConvert(castExcludeErrorInfo(v.value)).value,
-        );
+    if (isConvert<FieldNameType>(field)) {
+        const fieldValue = field.value.map((v) => v.value.value);
 
         return {
             field: { type: 'field', name: fieldValue },
@@ -183,8 +172,7 @@ export const makeSingleConditionJson = (
             value: value,
         };
     } else {
-        const _field = field as Convert<SoqlFunctionType>;
-        const fieldValue = makeSoqlFunctionJson(_field);
+        const fieldValue = makeSoqlFunctionJson(field);
 
         return {
             field: fieldValue,
@@ -201,16 +189,15 @@ export type LogicalConditionJson = {
 export const isLogicalConditionJson = typia.createIs<LogicalConditionJson>();
 
 export const makeLogicalConditionJson = (
-    target: Convert<LogicalExpressionType>,
+    target: ConvertExcludeError<LogicalExpressionType>,
 ): LogicalConditionJson => {
     const operator = target.operator;
-    const condition = castConvertArray(castExcludeErrorInfoArray(target.value)).map((c) => {
-        const conditionalExpression = castConvert(castExcludeErrorInfo(c.value));
-        if (isConvert(conditionalExpression, isFieldExpressionType)) {
+    const condition = target.value.map((c) => {
+        const conditionalExpression = c.value;
+        if (isConvert<FieldExpressionType>(conditionalExpression)) {
             return makeSingleConditionJson(conditionalExpression);
         } else {
-            const _conditionalExpression = conditionalExpression as Convert<LogicalExpressionType>;
-            return makeLogicalConditionJson(_conditionalExpression);
+            return makeLogicalConditionJson(conditionalExpression);
         }
     });
 

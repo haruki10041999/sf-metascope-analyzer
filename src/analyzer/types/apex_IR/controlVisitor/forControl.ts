@@ -19,6 +19,7 @@ import {
 import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
 
 export class ForControlTypeClass extends ControlTypeClass<
+    'forControl',
     EnhancedForControlTypeClass | BasedExpressionTypeClass | null
 > {
     private init: ForInitTypeClass | ErrorTypeClass | null;
@@ -76,6 +77,8 @@ export class ForControlTypeClass extends ControlTypeClass<
     }
 }
 
-export const isForControlType = (target: CommonTypeClass): target is ForControlTypeClass => {
+export const isForControlType = (
+    target: CommonTypeClass<string>,
+): target is ForControlTypeClass => {
     return target instanceof ForControlTypeClass;
 };

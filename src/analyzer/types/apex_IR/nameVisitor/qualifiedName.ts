@@ -5,7 +5,7 @@ import { NameListTypeClass } from '.';
 import { NormalIdTypeClass, IdVisitor, isNormalIdType } from '../idVisitor';
 import { ErrorTypeClass, CommonTypeClass, isValidClassList } from '../commonVisitor';
 
-export class QualifiedNameTypeClass extends NameListTypeClass<NormalIdTypeClass> {
+export class QualifiedNameTypeClass extends NameListTypeClass<'qualifiedName', NormalIdTypeClass> {
     private constructor(value: (NormalIdTypeClass | ErrorTypeClass)[]) {
         super('qualifiedName', value);
     }
@@ -26,6 +26,8 @@ export class QualifiedNameTypeClass extends NameListTypeClass<NormalIdTypeClass>
     }
 }
 
-export const isQualifiedNameType = (target: CommonTypeClass): target is QualifiedNameTypeClass => {
+export const isQualifiedNameType = (
+    target: CommonTypeClass<string>,
+): target is QualifiedNameTypeClass => {
     return target instanceof QualifiedNameTypeClass;
 };

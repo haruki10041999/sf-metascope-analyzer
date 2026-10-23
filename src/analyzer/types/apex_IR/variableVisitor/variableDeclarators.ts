@@ -9,7 +9,10 @@ import {
 
 import { ErrorTypeClass, CommonTypeClass, isValidClassList } from '../commonVisitor';
 
-export class VariableDeclaratorsTypeClass extends VariableListTypeClass<VariableDeclaratorTypeClass> {
+export class VariableDeclaratorsTypeClass extends VariableListTypeClass<
+    'variableDeclarators',
+    VariableDeclaratorTypeClass
+> {
     private constructor(value: (VariableDeclaratorTypeClass | ErrorTypeClass)[]) {
         super('variableDeclarators', value);
     }
@@ -31,7 +34,7 @@ export class VariableDeclaratorsTypeClass extends VariableListTypeClass<Variable
 }
 
 export const isVariableDeclaratorsType = (
-    value: CommonTypeClass,
+    value: CommonTypeClass<string>,
 ): value is VariableDeclaratorsTypeClass => {
     return value instanceof VariableDeclaratorsTypeClass;
 };

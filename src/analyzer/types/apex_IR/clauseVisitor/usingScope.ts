@@ -5,7 +5,7 @@ import { ClauseTypeClass } from '.';
 import { SoqlIdTypeClass, IdVisitor, isSoqlIdType } from '../idVisitor';
 import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
 
-export class UsingScopeTypeClass extends ClauseTypeClass<SoqlIdTypeClass> {
+export class UsingScopeTypeClass extends ClauseTypeClass<'usingScope', SoqlIdTypeClass> {
     private constructor(value: SoqlIdTypeClass | ErrorTypeClass) {
         super('usingScope', value);
     }
@@ -21,6 +21,8 @@ export class UsingScopeTypeClass extends ClauseTypeClass<SoqlIdTypeClass> {
     }
 }
 
-export const isUsingScopeType = (target: CommonTypeClass): target is UsingScopeTypeClass => {
+export const isUsingScopeType = (
+    target: CommonTypeClass<string>,
+): target is UsingScopeTypeClass => {
     return target instanceof UsingScopeTypeClass;
 };

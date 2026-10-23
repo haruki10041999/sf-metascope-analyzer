@@ -6,7 +6,7 @@ import { ErrorTypeClass, CommonTypeClass } from '../commonVisitor';
 
 type FilteringSelectorField = 'AT' | 'ABOVE' | 'BELOW' | 'ABOVE_OR_BELOW';
 
-export class FilteringSelectorTypeClass extends ClauseTypeClass<string> {
+export class FilteringSelectorTypeClass extends ClauseTypeClass<'filteringSelector', string> {
     private constructor(value: string) {
         super('filteringSelector', value);
     }
@@ -32,8 +32,7 @@ export class FilteringSelectorTypeClass extends ClauseTypeClass<string> {
 }
 
 export const isFilteringSelectorType = (
-    target: CommonTypeClass,
+    target: CommonTypeClass<string>,
 ): target is FilteringSelectorTypeClass => {
     return target instanceof FilteringSelectorTypeClass;
 };
-

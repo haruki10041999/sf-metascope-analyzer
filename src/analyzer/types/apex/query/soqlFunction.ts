@@ -3,10 +3,12 @@ import typia from 'typia';
 import {
     Convert,
     isConvert,
-    castExcludeErrorInfo,
-    castExcludeErrorInfoArray,
-    castConvert,
-    castConvertArray,
+    ErrorJson,
+    isErrorJson,
+    JsonType,
+    makeJsonType,
+    convertExcludeError,
+    ConvertExcludeError,
 } from '../commons';
 
 import {
@@ -27,15 +29,8 @@ import {
 
 import { ExpressionJson, makeExpressionJson } from '../expression';
 
-const makeFieldNameJson = (target: Convert<FieldNameType>): string[] => {
-    const values: string[] = [];
-
-    const value = castConvertArray(castExcludeErrorInfoArray(target.value));
-    value.forEach((v) => {
-        const value = castConvert(castExcludeErrorInfo(v.value)).value;
-        values.push(value);
-    });
-    return values;
+const makeFieldNameJson = (target: ConvertExcludeError<FieldNameType>): string[] => {
+    return target.value.map((v) => v.value.value);
 };
 
 export type DateFieldNameJson = {
@@ -43,9 +38,8 @@ export type DateFieldNameJson = {
     isConvertTimeZone: boolean;
 };
 export const isDateFieldNameJson = typia.createIs<DateFieldNameJson>();
-const makeDateFieldParam = (target: Convert<DateFieldNameType>): DateFieldNameJson => {
-    const value = castConvert(castExcludeErrorInfo(target.value));
-    const name = makeFieldNameJson(value);
+const makeDateFieldParam = (target: ConvertExcludeError<DateFieldNameType>): DateFieldNameJson => {
+    const name = makeFieldNameJson(target.value);
     const isConvertTimeZone = target.isConvertTimeZone;
 
     return {
@@ -54,8 +48,10 @@ const makeDateFieldParam = (target: Convert<DateFieldNameType>): DateFieldNameJs
     };
 };
 
-const makeSoqlFieldParameterJson = (target: Convert<SoqlFieldsParameterType>): string => {
-    return castExcludeErrorInfo(target.value);
+const makeSoqlFieldParameterJson = (
+    target: ConvertExcludeError<SoqlFieldsParameterType>,
+): string => {
+    return target.value;
 };
 
 type CoordinateElementJson =
@@ -71,20 +67,18 @@ type CoordinateElementJson =
       };
 
 const makeCoordinateElementParamJson = (
-    target: Convert<CoordinateValueType>,
+    target: ConvertExcludeError<CoordinateValueType>,
 ): CoordinateElementJson => {
-    const value = castConvert(castExcludeErrorInfo(target.value));
-    if (isConvert(value, isBoundExpressionType)) {
-        const expressionValue = makeExpressionJson(value);
+    if (isConvert<BoundExpressionType>(target.value)) {
+        const expressionValue = makeExpressionJson(target.value);
         return {
             type: 'bind',
             value: expressionValue,
         };
     } else {
-        const _value = value as Convert<SignedNumberType>;
-        const literalValue = castExcludeErrorInfo(_value.value);
-        const valueType = _value.valueType;
-        const operator = _value.operator;
+        const literalValue = target.value.value;
+        const valueType = target.value.valueType;
+        const operator = target.value.operator;
 
         const coordinateElementParamJson: CoordinateElementJson = {
             type: 'literal',

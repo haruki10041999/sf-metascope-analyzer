@@ -5,7 +5,7 @@ import { ListTypeClass, ListVisitor } from '.';
 import { UpdateTypeTypeClass, ClauseVisitor, isUpdateTypeType } from '../clauseVisitor';
 import { ErrorTypeClass, CommonTypeClass, isValidClass, isValidClassList } from '../commonVisitor';
 
-export class UpdateListTypeClass extends ListTypeClass<UpdateTypeTypeClass> {
+export class UpdateListTypeClass extends ListTypeClass<'updateList', UpdateTypeTypeClass> {
     private constructor(value: (UpdateTypeTypeClass | ErrorTypeClass)[]) {
         super('updateList', value);
     }
@@ -41,6 +41,8 @@ export class UpdateListTypeClass extends ListTypeClass<UpdateTypeTypeClass> {
     }
 }
 
-export const isUpdateListType = (target: CommonTypeClass): target is UpdateListTypeClass => {
+export const isUpdateListType = (
+    target: CommonTypeClass<string>,
+): target is UpdateListTypeClass => {
     return target instanceof UpdateListTypeClass;
 };

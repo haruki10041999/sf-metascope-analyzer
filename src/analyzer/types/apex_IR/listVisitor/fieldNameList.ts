@@ -5,7 +5,7 @@ import { ListTypeClass } from '.';
 import { FieldNameTypeClass, NameVisitor, isFieldNameType } from '../nameVisitor';
 import { ErrorTypeClass, CommonTypeClass, isValidClassList } from '../commonVisitor';
 
-export class FieldNameListTypeClass extends ListTypeClass<FieldNameTypeClass> {
+export class FieldNameListTypeClass extends ListTypeClass<'fieldNameList', FieldNameTypeClass> {
     private constructor(value: (FieldNameTypeClass | ErrorTypeClass)[]) {
         super('fieldNameList', value);
     }
@@ -26,6 +26,8 @@ export class FieldNameListTypeClass extends ListTypeClass<FieldNameTypeClass> {
     }
 }
 
-export const isFieldNameListType = (target: CommonTypeClass): target is FieldNameListTypeClass => {
+export const isFieldNameListType = (
+    target: CommonTypeClass<string>,
+): target is FieldNameListTypeClass => {
     return target instanceof FieldNameListTypeClass;
 };

@@ -6,7 +6,10 @@ import { ExpressionListTypeClass, ListVisitor, isExpressionListType } from '../l
 
 import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
 
-export class NormalArgumentsTypeClass extends ArgumentsTypeClass<ExpressionListTypeClass> {
+export class NormalArgumentsTypeClass extends ArgumentsTypeClass<
+    'arguments',
+    ExpressionListTypeClass
+> {
     private constructor(value: ExpressionListTypeClass | ErrorTypeClass | null) {
         super('arguments', value);
     }
@@ -31,7 +34,7 @@ export class NormalArgumentsTypeClass extends ArgumentsTypeClass<ExpressionListT
 }
 
 export const isNormalArgumentsType = (
-    target: CommonTypeClass,
+    target: CommonTypeClass<string>,
 ): target is NormalArgumentsTypeClass => {
     return target instanceof NormalArgumentsTypeClass;
 };

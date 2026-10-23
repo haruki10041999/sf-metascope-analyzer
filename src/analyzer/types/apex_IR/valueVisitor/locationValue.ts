@@ -12,7 +12,10 @@ import { ErrorTypeClass, CommonTypeClass, isValidClass, isValidClassList } from 
 
 type LocationValueValue = FieldNameTypeClass | BoundExpressionTypeClass;
 
-export class LocationValueTypeClass extends ValueTypeClass<LocationValueValue | null> {
+export class LocationValueTypeClass extends ValueTypeClass<
+    'locationValue',
+    LocationValueValue | null
+> {
     // GEOLOCATION(lat, lng) 形式のときのみ [緯度, 経度]、それ以外は null
     private coordinates: (CoordinateValueTypeClass | ErrorTypeClass)[] | null;
 
@@ -66,7 +69,8 @@ export class LocationValueTypeClass extends ValueTypeClass<LocationValueValue | 
     }
 }
 
-export const isLocationValueType = (target: CommonTypeClass): target is LocationValueTypeClass => {
+export const isLocationValueType = (
+    target: CommonTypeClass<string>,
+): target is LocationValueTypeClass => {
     return target instanceof LocationValueTypeClass;
 };
-

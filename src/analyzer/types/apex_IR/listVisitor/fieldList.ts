@@ -9,7 +9,7 @@ import { ErrorTypeClass, CommonTypeClass, isValidClass, isValidClassList } from 
 type SoslFieldFunction = 'TOLABEL' | 'CONVERT_CURRENCY' | 'FORMAT';
 
 // 入れ子の fieldList を平坦化しても関数指定を失わないよう、項目ごとに関数名を持たせる
-export class SoslFieldTypeClass extends CommonTypeClass {
+export class SoslFieldTypeClass extends CommonTypeClass<'soslField'> {
     private value: SoslIdTypeClass | SoqlFunctionTypeClass | ErrorTypeClass;
     private func: SoslFieldFunction | null;
 
@@ -40,11 +40,11 @@ export class SoslFieldTypeClass extends CommonTypeClass {
     }
 }
 
-export const isSoslFieldType = (target: CommonTypeClass): target is SoslFieldTypeClass => {
+export const isSoslFieldType = (target: CommonTypeClass<string>): target is SoslFieldTypeClass => {
     return target instanceof SoslFieldTypeClass;
 };
 
-export class FieldListTypeClass extends ListTypeClass<SoslFieldTypeClass> {
+export class FieldListTypeClass extends ListTypeClass<'fieldList', SoslFieldTypeClass> {
     private constructor(value: (SoslFieldTypeClass | ErrorTypeClass)[]) {
         super('fieldList', value);
     }
@@ -92,6 +92,6 @@ export class FieldListTypeClass extends ListTypeClass<SoslFieldTypeClass> {
     }
 }
 
-export const isFieldListType = (target: CommonTypeClass): target is FieldListTypeClass => {
+export const isFieldListType = (target: CommonTypeClass<string>): target is FieldListTypeClass => {
     return target instanceof FieldListTypeClass;
 };

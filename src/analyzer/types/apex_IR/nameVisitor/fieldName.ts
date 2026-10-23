@@ -5,7 +5,7 @@ import { NameListTypeClass } from '.';
 import { SoqlIdTypeClass, IdVisitor, isSoqlIdType } from '../idVisitor';
 import { ErrorTypeClass, CommonTypeClass, isValidClassList } from '../commonVisitor';
 
-export class FieldNameTypeClass extends NameListTypeClass<SoqlIdTypeClass> {
+export class FieldNameTypeClass extends NameListTypeClass<'fieldName', SoqlIdTypeClass> {
     private constructor(value: (SoqlIdTypeClass | ErrorTypeClass)[]) {
         super('fieldName', value);
     }
@@ -26,6 +26,6 @@ export class FieldNameTypeClass extends NameListTypeClass<SoqlIdTypeClass> {
     }
 }
 
-export const isFieldNameType = (target: CommonTypeClass): target is FieldNameTypeClass => {
+export const isFieldNameType = (target: CommonTypeClass<string>): target is FieldNameTypeClass => {
     return target instanceof FieldNameTypeClass;
 };

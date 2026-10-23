@@ -4,7 +4,7 @@ import { RestTypeClass } from '.';
 
 import { CommonTypeClass } from '../commonVisitor';
 
-export class NoRestTypeClass extends RestTypeClass<string> {
+export class NoRestTypeClass extends RestTypeClass<'noRest', string> {
     private constructor(value: string) {
         super('noRest', value);
     }
@@ -14,7 +14,6 @@ export class NoRestTypeClass extends RestTypeClass<string> {
     }
 }
 
-export const isNoRestType = (target: CommonTypeClass): target is NoRestTypeClass => {
+export const isNoRestType = (target: CommonTypeClass<string>): target is NoRestTypeClass => {
     return target instanceof NoRestTypeClass;
 };
-

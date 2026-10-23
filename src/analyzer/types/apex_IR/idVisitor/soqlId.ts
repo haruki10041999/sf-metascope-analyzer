@@ -4,7 +4,7 @@ import { NormalIdTypeClass, IdTypeClass, IdVisitor, isNormalIdType } from '.';
 
 import { CommonTypeClass, ErrorTypeClass, isValidClass } from '../commonVisitor';
 
-export class SoqlIdTypeClass extends IdTypeClass<NormalIdTypeClass> {
+export class SoqlIdTypeClass extends IdTypeClass<'soqlId', NormalIdTypeClass> {
     private constructor(value: NormalIdTypeClass | ErrorTypeClass) {
         super('soqlId', value);
     }
@@ -16,6 +16,6 @@ export class SoqlIdTypeClass extends IdTypeClass<NormalIdTypeClass> {
     }
 }
 
-export const isSoqlIdType = (target: CommonTypeClass): target is SoqlIdTypeClass => {
+export const isSoqlIdType = (target: CommonTypeClass<string>): target is SoqlIdTypeClass => {
     return target instanceof SoqlIdTypeClass;
 };

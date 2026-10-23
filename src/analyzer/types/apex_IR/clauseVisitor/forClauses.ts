@@ -6,7 +6,7 @@ import { ErrorTypeClass, CommonTypeClass } from '../commonVisitor';
 
 type ForClauseValueType = 'VIEW' | 'UPDATE' | 'REFERENCE';
 
-export class ForClausesTypeClass extends ClauseListTypeClass<ForClauseValueType> {
+export class ForClausesTypeClass extends ClauseListTypeClass<'forClauses', ForClauseValueType> {
     private constructor(value: ForClauseValueType[]) {
         super('forClauses', value);
     }
@@ -32,7 +32,8 @@ export class ForClausesTypeClass extends ClauseListTypeClass<ForClauseValueType>
     }
 }
 
-export const isForClausesType = (target: CommonTypeClass): target is ForClausesTypeClass => {
+export const isForClausesType = (
+    target: CommonTypeClass<string>,
+): target is ForClausesTypeClass => {
     return target instanceof ForClausesTypeClass;
 };
-

@@ -10,7 +10,7 @@ import {
 import { ForControlTypeClass, ControlVisitor, isForControlType } from '../controlVisitor';
 import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
 
-export class ForStatementTypeClass extends StatementTypeClass<ForControlTypeClass> {
+export class ForStatementTypeClass extends StatementTypeClass<'forStatement', ForControlTypeClass> {
     private block: NormalStatementTypeClass | ErrorTypeClass;
 
     private constructor(
@@ -45,7 +45,8 @@ export class ForStatementTypeClass extends StatementTypeClass<ForControlTypeClas
     }
 }
 
-export const isForStatementType = (target: CommonTypeClass): target is ForStatementTypeClass => {
+export const isForStatementType = (
+    target: CommonTypeClass<string>,
+): target is ForStatementTypeClass => {
     return target instanceof ForStatementTypeClass;
 };
-

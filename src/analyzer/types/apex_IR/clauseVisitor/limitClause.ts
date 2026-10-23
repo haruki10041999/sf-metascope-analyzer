@@ -9,7 +9,10 @@ import {
 } from '../expressionVisitor';
 import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
 
-export class LimitClauseTypeClass extends ClauseTypeClass<string | BoundExpressionTypeClass> {
+export class LimitClauseTypeClass extends ClauseTypeClass<
+    'limitClause',
+    string | BoundExpressionTypeClass
+> {
     private constructor(value: string | BoundExpressionTypeClass | ErrorTypeClass) {
         super('limitClause', value);
     }
@@ -31,6 +34,8 @@ export class LimitClauseTypeClass extends ClauseTypeClass<string | BoundExpressi
     }
 }
 
-export const isLimitClauseType = (target: CommonTypeClass): target is LimitClauseTypeClass => {
+export const isLimitClauseType = (
+    target: CommonTypeClass<string>,
+): target is LimitClauseTypeClass => {
     return target instanceof LimitClauseTypeClass;
 };

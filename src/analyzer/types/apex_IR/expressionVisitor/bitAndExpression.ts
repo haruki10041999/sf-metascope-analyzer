@@ -10,6 +10,7 @@ import {
 import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
 
 export class BitAndExpressionTypeClass extends DoubleOperatorExpressionTypeClass<
+    'bitAndExpression',
     BasedExpressionTypeClass,
     string,
     BasedExpressionTypeClass
@@ -42,7 +43,7 @@ export class BitAndExpressionTypeClass extends DoubleOperatorExpressionTypeClass
 }
 
 export const isBitAndExpressionType = (
-    target: CommonTypeClass,
+    target: CommonTypeClass<string>,
 ): target is BitAndExpressionTypeClass => {
     return target instanceof BitAndExpressionTypeClass;
 };

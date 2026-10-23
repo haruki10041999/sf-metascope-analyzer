@@ -7,7 +7,10 @@ import { PropertyBlockTypeClass, BlockVisitor, isPropertyBlockType } from '../bl
 import { TypeRefTypeClass, TypeVisitor, isTypeRefType } from '../typeVisitor';
 import { ErrorTypeClass, CommonTypeClass, isValidClass, isValidClassList } from '../commonVisitor';
 
-export class PropertyDeclarationTypeClass extends DeclarationTypeClass<NormalIdTypeClass> {
+export class PropertyDeclarationTypeClass extends DeclarationTypeClass<
+    'propertyDeclaration',
+    NormalIdTypeClass
+> {
     private valueType: TypeRefTypeClass | ErrorTypeClass;
     private block: (PropertyBlockTypeClass | ErrorTypeClass)[] = [];
     private constructor(
@@ -47,7 +50,7 @@ export class PropertyDeclarationTypeClass extends DeclarationTypeClass<NormalIdT
 }
 
 export const isPropertyDeclarationType = (
-    target: CommonTypeClass,
+    target: CommonTypeClass<string>,
 ): target is PropertyDeclarationTypeClass => {
     return target instanceof PropertyDeclarationTypeClass;
 };

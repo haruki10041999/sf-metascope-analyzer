@@ -11,7 +11,10 @@ import { SoqlIdTypeClass, IdVisitor, isSoqlIdType } from '../idVisitor';
 import { DataCategoryNameTypeClass, NameVisitor, isDataCategoryNameType } from '../nameVisitor';
 import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
 
-export class DataCategorySelectionTypeClass extends ClauseTypeClass<SoqlIdTypeClass> {
+export class DataCategorySelectionTypeClass extends ClauseTypeClass<
+    'dataCategorySelection',
+    SoqlIdTypeClass
+> {
     private selector: FilteringSelectorTypeClass | ErrorTypeClass;
     private category: DataCategoryNameTypeClass | ErrorTypeClass;
 
@@ -55,8 +58,7 @@ export class DataCategorySelectionTypeClass extends ClauseTypeClass<SoqlIdTypeCl
 }
 
 export const isDataCategorySelectionType = (
-    target: CommonTypeClass,
+    target: CommonTypeClass<string>,
 ): target is DataCategorySelectionTypeClass => {
     return target instanceof DataCategorySelectionTypeClass;
 };
-

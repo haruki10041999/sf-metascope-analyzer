@@ -1,5 +1,3 @@
-import typia from 'typia';
-
 import {
     CreatedNameTypeClass,
     DataCategoryNameTypeClass,
@@ -16,7 +14,8 @@ import {
 } from '../../apex_IR';
 
 import {
-    ErrorInfo,
+    isCommonType,
+    ErrorType,
     CommonType,
     AssignForValueRule,
     ValueRuleValue,
@@ -27,27 +26,26 @@ import {
     makeErrorAssignRule,
     makeSourceInfo,
 } from './commons';
-import { makeTypeArgumentsRule, TypeArgumentsType } from './arguments';
-import { makeIdRule, makeSoqlIdRule, IdType, SoqlIdType } from './id';
-import { makeIdCreatedNamePairRule, IdCreatedNamePairType } from './pair';
+import { makeTypeArgumentsAssignRule, TypeArgumentsType } from './arguments';
+import { makeIdAssignRule, makeSoqlIdAssignRule, IdType, SoqlIdType } from './id';
+import { makeIdCreatedNamePairAssignRule, IdCreatedNamePairType } from './pair';
 
-export type CreatedNameType = CommonType & {
+export type CreatedNameType = CommonType<'createdName'> & {
     value: ValueRuleValue<IdCreatedNamePairType>[];
 };
 
-export const isCreatedNameType = typia.createIs<CreatedNameType>();
+export const isCreatedNameType = (value: unknown): value is CreatedNameType => {
+    return isCommonType(value) && value.type === 'createdName';
+};
 
-export const makeCreatedNameRule = (): AssignForValueRule<
-    CreatedNameTypeClass,
-    CreatedNameType
-> => {
-    return {
+export const makeCreatedNameAssignRule: AssignForValueRule<CreatedNameTypeClass, CreatedNameType> =
+    {
         isValid: (target: unknown) => isTargetTypeClass(target, isCreatedNameTypeClass),
         construct: (nameTypeClass: CreatedNameTypeClass) => {
             const value = nameTypeClass
                 .getValue()
                 .map((v) =>
-                    assignMultiClass(v, [makeIdCreatedNamePairRule(), makeErrorAssignRule]),
+                    assignMultiClass(v, [makeIdCreatedNamePairAssignRule, makeErrorAssignRule]),
                 );
             return {
                 type: nameTypeClass.getType(),
@@ -56,137 +54,135 @@ export const makeCreatedNameRule = (): AssignForValueRule<
             };
         },
     };
-};
 
-export type DataCategoryNameType = CommonType & {
+export type DataCategoryNameType = CommonType<'dataCategoryName'> & {
     value: ValueRuleValue<SoqlIdType>[];
 };
 
-export const isDataCategoryNameType = typia.createIs<DataCategoryNameType>();
-
-export const makeDataCategoryNameRule = (): AssignForValueRule<
-    DataCategoryNameTypeClass,
-    DataCategoryNameType
-> => {
-    return {
-        isValid: (target: unknown) => isTargetTypeClass(target, isDataCategoryNameTypeClass),
-        construct: (nameTypeClass: DataCategoryNameTypeClass) => {
-            const value = nameTypeClass
-                .getValue()
-                .map((v) => assignMultiClass(v, [makeSoqlIdRule(), makeErrorAssignRule]));
-            return {
-                type: nameTypeClass.getType(),
-                sourceInfo: makeSourceInfo(nameTypeClass),
-                value,
-            };
-        },
-    };
+export const isDataCategoryNameType = (value: unknown): value is DataCategoryNameType => {
+    return isCommonType(value) && value.type === 'dataCategoryName';
 };
 
-export type DateFieldNameType = CommonType & {
+export const makeDataCategoryNameAssignRule: AssignForValueRule<
+    DataCategoryNameTypeClass,
+    DataCategoryNameType
+> = {
+    isValid: (target: unknown) => isTargetTypeClass(target, isDataCategoryNameTypeClass),
+    construct: (nameTypeClass: DataCategoryNameTypeClass) => {
+        const value = nameTypeClass
+            .getValue()
+            .map((v) => assignMultiClass(v, [makeSoqlIdAssignRule, makeErrorAssignRule]));
+        return {
+            type: nameTypeClass.getType(),
+            sourceInfo: makeSourceInfo(nameTypeClass),
+            value,
+        };
+    },
+};
+
+export type DateFieldNameType = CommonType<'dateFieldName'> & {
     value: ValueRuleValue<FieldNameType>;
     isConvertTimeZone: boolean;
 };
 
-export const isDateFieldNameType = typia.createIs<DateFieldNameType>();
-
-export const makeDateFieldNameRule = (): AssignForValueRule<
-    DateFieldNameTypeClass,
-    DateFieldNameType
-> => {
-    return {
-        isValid: (target: unknown) => isTargetTypeClass(target, isDateFieldNameTypeClass),
-        construct: (nameTypeClass: DateFieldNameTypeClass) => {
-            const value = assignMultiClass(nameTypeClass.getValue(), [
-                makeFieldNameRule(),
-                makeErrorAssignRule,
-            ]);
-            const isConvertTimeZone = nameTypeClass.getConvertTimeZone();
-            return {
-                type: nameTypeClass.getType(),
-                sourceInfo: makeSourceInfo(nameTypeClass),
-                value,
-                isConvertTimeZone,
-            };
-        },
-    };
+export const isDateFieldNameType = (value: unknown): value is DateFieldNameType => {
+    return isCommonType(value) && value.type === 'dateFieldName';
 };
 
-export type FieldNameType = CommonType & {
+export const makeDateFieldNameAssignRule: AssignForValueRule<
+    DateFieldNameTypeClass,
+    DateFieldNameType
+> = {
+    isValid: (target: unknown) => isTargetTypeClass(target, isDateFieldNameTypeClass),
+    construct: (nameTypeClass: DateFieldNameTypeClass) => {
+        const value = assignMultiClass(nameTypeClass.getValue(), [
+            makeFieldNameAssignRule,
+            makeErrorAssignRule,
+        ]);
+        const isConvertTimeZone = nameTypeClass.getConvertTimeZone();
+        return {
+            type: nameTypeClass.getType(),
+            sourceInfo: makeSourceInfo(nameTypeClass),
+            value,
+            isConvertTimeZone,
+        };
+    },
+};
+
+export type FieldNameType = CommonType<'fieldName'> & {
     value: ValueRuleValue<SoqlIdType>[];
 };
 
-export const isFieldNameType = typia.createIs<FieldNameType>();
-
-export const makeFieldNameRule = (): AssignForValueRule<FieldNameTypeClass, FieldNameType> => {
-    return {
-        isValid: (target: unknown) => isTargetTypeClass(target, isFieldNameTypeClass),
-        construct: (nameTypeClass: FieldNameTypeClass) => {
-            const value = nameTypeClass
-                .getValue()
-                .map((v) => assignMultiClass(v, [makeSoqlIdRule(), makeErrorAssignRule]));
-            return {
-                type: nameTypeClass.getType(),
-                sourceInfo: makeSourceInfo(nameTypeClass),
-                value,
-            };
-        },
-    };
+export const isFieldNameType = (value: unknown): value is FieldNameType => {
+    return isCommonType(value) && value.type === 'fieldName';
 };
 
-export type QualifiedNameType = CommonType & {
+export const makeFieldNameAssignRule: AssignForValueRule<FieldNameTypeClass, FieldNameType> = {
+    isValid: (target: unknown) => isTargetTypeClass(target, isFieldNameTypeClass),
+    construct: (nameTypeClass: FieldNameTypeClass) => {
+        const value = nameTypeClass
+            .getValue()
+            .map((v) => assignMultiClass(v, [makeSoqlIdAssignRule, makeErrorAssignRule]));
+        return {
+            type: nameTypeClass.getType(),
+            sourceInfo: makeSourceInfo(nameTypeClass),
+            value,
+        };
+    },
+};
+
+export type QualifiedNameType = CommonType<'qualifiedName'> & {
     value: ValueRuleValue<IdType>[];
 };
 
-export const isQualifiedNameType = typia.createIs<QualifiedNameType>();
-
-export const makeQualifiedNameRule = (): AssignForValueRule<
-    QualifiedNameTypeClass,
-    QualifiedNameType
-> => {
-    return {
-        isValid: (target: unknown) => isTargetTypeClass(target, isQualifiedNameTypeClass),
-        construct: (nameTypeClass: QualifiedNameTypeClass) => {
-            const value = nameTypeClass
-                .getValue()
-                .map((v) => assignMultiClass(v, [makeIdRule(), makeErrorAssignRule]));
-            return {
-                type: nameTypeClass.getType(),
-                sourceInfo: makeSourceInfo(nameTypeClass),
-                value,
-            };
-        },
-    };
+export const isQualifiedNameType = (value: unknown): value is QualifiedNameType => {
+    return isCommonType(value) && value.type === 'qualifiedName';
 };
 
-export type TypeNameType = CommonType & {
+export const makeQualifiedNameAssignRule: AssignForValueRule<
+    QualifiedNameTypeClass,
+    QualifiedNameType
+> = {
+    isValid: (target: unknown) => isTargetTypeClass(target, isQualifiedNameTypeClass),
+    construct: (nameTypeClass: QualifiedNameTypeClass) => {
+        const value = nameTypeClass
+            .getValue()
+            .map((v) => assignMultiClass(v, [makeIdAssignRule, makeErrorAssignRule]));
+        return {
+            type: nameTypeClass.getType(),
+            sourceInfo: makeSourceInfo(nameTypeClass),
+            value,
+        };
+    },
+};
+
+export type TypeNameType = CommonType<'typeName'> & {
     value: ValueRuleValue<string | IdType>;
     generic: ValueRuleValue<TypeArgumentsType | null>;
 };
 
-export const isTypeNameType = typia.createIs<TypeNameType>();
-
-export const makeTypeNameRule = (): AssignForValueRule<TypeNameTypeClass, TypeNameType> => {
-    return {
-        isValid: (target: unknown) => isTargetTypeClass(target, isTypeNameTypeClass),
-        construct: (nameTypeClass: TypeNameTypeClass) => {
-            const value = assignMultiClass(nameTypeClass.getValue(), [
-                makeStringAssignRule,
-                makeIdRule(),
-                makeErrorAssignRule,
-            ]);
-            const generic = assignMultiClass(nameTypeClass.getGeneric(), [
-                makeTypeArgumentsRule(),
-                makeErrorAssignRule,
-                makeNullAssignRule,
-            ]);
-            return {
-                type: nameTypeClass.getType(),
-                sourceInfo: makeSourceInfo(nameTypeClass),
-                value,
-                generic,
-            };
-        },
-    };
+export const isTypeNameType = (value: unknown): value is TypeNameType => {
+    return isCommonType(value) && value.type === 'typeName';
 };
 
+export const makeTypeNameAssignRule: AssignForValueRule<TypeNameTypeClass, TypeNameType> = {
+    isValid: (target: unknown) => isTargetTypeClass(target, isTypeNameTypeClass),
+    construct: (nameTypeClass: TypeNameTypeClass) => {
+        const value = assignMultiClass(nameTypeClass.getValue(), [
+            makeStringAssignRule,
+            makeIdAssignRule,
+            makeErrorAssignRule,
+        ]);
+        const generic = assignMultiClass(nameTypeClass.getGeneric(), [
+            makeTypeArgumentsAssignRule,
+            makeErrorAssignRule,
+            makeNullAssignRule,
+        ]);
+        return {
+            type: nameTypeClass.getType(),
+            sourceInfo: makeSourceInfo(nameTypeClass),
+            value,
+            generic,
+        };
+    },
+};

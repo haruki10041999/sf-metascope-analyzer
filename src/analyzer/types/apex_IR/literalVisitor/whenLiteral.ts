@@ -7,7 +7,10 @@ import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor'
 
 type WhenLiteralValueType = string | QualifiedNameTypeClass;
 
-export class WhenLiteralTypeClass extends PrimitiveLiteralTypeClass<WhenLiteralValueType> {
+export class WhenLiteralTypeClass extends PrimitiveLiteralTypeClass<
+    'whenLiteral',
+    WhenLiteralValueType
+> {
     private operator: string | null;
 
     private constructor(
@@ -84,6 +87,8 @@ export class WhenLiteralTypeClass extends PrimitiveLiteralTypeClass<WhenLiteralV
     }
 }
 
-export const isWhenLiteralType = (target: CommonTypeClass): target is WhenLiteralTypeClass => {
+export const isWhenLiteralType = (
+    target: CommonTypeClass<string>,
+): target is WhenLiteralTypeClass => {
     return target instanceof WhenLiteralTypeClass;
 };

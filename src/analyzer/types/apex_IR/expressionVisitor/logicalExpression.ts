@@ -9,7 +9,10 @@ import {
 
 import { CommonTypeClass, ErrorTypeClass, isValidClassList } from '../commonVisitor';
 
-export class LogicalExpressionTypeClass extends ExpressionListBaseTypeClass<ConditionalExpressionTypeClass> {
+export class LogicalExpressionTypeClass extends ExpressionListBaseTypeClass<
+    'logicalExpression',
+    ConditionalExpressionTypeClass
+> {
     private operator: string | null = null;
 
     private constructor(
@@ -52,8 +55,7 @@ export class LogicalExpressionTypeClass extends ExpressionListBaseTypeClass<Cond
 }
 
 export const isLogicalExpressionType = (
-    target: CommonTypeClass,
+    target: CommonTypeClass<string>,
 ): target is LogicalExpressionTypeClass => {
     return target instanceof LogicalExpressionTypeClass;
 };
-

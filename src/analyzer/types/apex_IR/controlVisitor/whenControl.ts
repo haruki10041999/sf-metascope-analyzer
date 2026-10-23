@@ -6,7 +6,7 @@ import { WhenValueTypeClass, ValueVisitor, isWhenValueType } from '../valueVisit
 import { NormalBlockTypeClass, BlockVisitor, isNormalBlockType } from '../blockVisitor';
 import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
 
-export class WhenControlTypeClass extends ControlTypeClass<WhenValueTypeClass> {
+export class WhenControlTypeClass extends ControlTypeClass<'whenControl', WhenValueTypeClass> {
     private block: NormalBlockTypeClass | ErrorTypeClass;
     private constructor(
         value: WhenValueTypeClass | ErrorTypeClass,
@@ -32,6 +32,8 @@ export class WhenControlTypeClass extends ControlTypeClass<WhenValueTypeClass> {
     }
 }
 
-export const isWhenControlType = (target: CommonTypeClass): target is WhenControlTypeClass => {
+export const isWhenControlType = (
+    target: CommonTypeClass<string>,
+): target is WhenControlTypeClass => {
     return target instanceof WhenControlTypeClass;
 };

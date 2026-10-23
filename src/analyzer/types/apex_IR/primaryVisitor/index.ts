@@ -38,7 +38,9 @@ export { isLiteralPrimaryType, LiteralPrimaryTypeClass } from './literalPrimary'
 export { isSoslPrimaryType, SoslPrimaryTypeClass } from './soslPrimary';
 export { isTypeRefPrimaryType, TypeRefPrimaryTypeClass } from './typeRefPrimary';
 
-export const isBasedPrimaryType = (target: CommonTypeClass): target is BasedPrimaryTypeClass => {
+export const isBasedPrimaryType = (
+    target: CommonTypeClass<string>,
+): target is BasedPrimaryTypeClass => {
     return (
         isNormalPrimaryType(target) ||
         isThisPrimaryType(target) ||
@@ -52,7 +54,7 @@ export const isBasedPrimaryType = (target: CommonTypeClass): target is BasedPrim
     );
 };
 
-export class PrimaryVisitor extends CommonVisitor<PrimaryTypeClass<unknown>> {
+export class PrimaryVisitor extends CommonVisitor<PrimaryTypeClass<string, unknown>> {
     visitPrimary(ctx: PrimaryContext) {
         return NormalPrimaryTypeClass.create(ctx);
     }
@@ -89,4 +91,3 @@ export class PrimaryVisitor extends CommonVisitor<PrimaryTypeClass<unknown>> {
         return SoslPrimaryTypeClass.create(ctx);
     }
 }
-

@@ -10,6 +10,7 @@ import {
 import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
 
 export class MapCreatorRestPairTypeClass extends PairTypeClass<
+    'mapCreatorRestPair',
     BasedExpressionTypeClass,
     BasedExpressionTypeClass
 > {
@@ -41,7 +42,7 @@ export class MapCreatorRestPairTypeClass extends PairTypeClass<
 }
 
 export const isMapCreatorRestPairType = (
-    target: CommonTypeClass,
+    target: CommonTypeClass<string>,
 ): target is MapCreatorRestPairTypeClass => {
     return target instanceof MapCreatorRestPairTypeClass;
 };

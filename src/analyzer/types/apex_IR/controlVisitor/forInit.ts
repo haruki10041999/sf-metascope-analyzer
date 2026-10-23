@@ -11,6 +11,7 @@ import { ExpressionListTypeClass, ListVisitor, isExpressionListType } from '../l
 import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
 
 export class ForInitTypeClass extends ControlTypeClass<
+    'forInit',
     LocalVariableDeclarationTypeClass | ExpressionListTypeClass
 > {
     private constructor(
@@ -40,6 +41,6 @@ export class ForInitTypeClass extends ControlTypeClass<
     }
 }
 
-export const isForInitType = (target: CommonTypeClass): target is ForInitTypeClass => {
+export const isForInitType = (target: CommonTypeClass<string>): target is ForInitTypeClass => {
     return target instanceof ForInitTypeClass;
 };

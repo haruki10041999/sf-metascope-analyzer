@@ -25,7 +25,7 @@ export { isForUpdateType, ForUpdateTypeClass } from './forUpdate';
 export { isWhenControlType, WhenControlTypeClass } from './whenControl';
 export { isEnhancedForControlType, EnhancedForControlTypeClass } from './enhancedForControl';
 
-export class ControlVisitor extends CommonVisitor<ControlTypeClass<unknown>> {
+export class ControlVisitor extends CommonVisitor<ControlTypeClass<string, unknown>> {
     visitForControl(ctx: ForControlContext) {
         return ForControlTypeClass.create(ctx);
     }

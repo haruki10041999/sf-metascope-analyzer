@@ -15,7 +15,7 @@ import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor'
 type SoslWithClauseContent =
     string | BoundExpressionTypeClass | FilteringExpressionTypeClass | NetworkListTypeClass;
 
-export class SoslWithClauseTypeClass extends ClauseTypeClass<string> {
+export class SoslWithClauseTypeClass extends ClauseTypeClass<'soslWithClause', string> {
     private content: SoslWithClauseContent | ErrorTypeClass | null = null;
 
     private constructor(value: string, content: SoslWithClauseContent | ErrorTypeClass | null) {
@@ -98,8 +98,7 @@ export class SoslWithClauseTypeClass extends ClauseTypeClass<string> {
 }
 
 export const isSoslWithClauseType = (
-    target: CommonTypeClass,
+    target: CommonTypeClass<string>,
 ): target is SoslWithClauseTypeClass => {
     return target instanceof SoslWithClauseTypeClass;
 };
-

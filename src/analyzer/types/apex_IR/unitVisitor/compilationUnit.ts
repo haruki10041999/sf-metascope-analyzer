@@ -9,7 +9,10 @@ import {
 } from '../declarationVisitor';
 import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
 
-export class CompilationUnitTypeClass extends UnitTypeClass<TypeDeclarationTypeClass> {
+export class CompilationUnitTypeClass extends UnitTypeClass<
+    'compilationUnit',
+    TypeDeclarationTypeClass
+> {
     private constructor(value: TypeDeclarationTypeClass | ErrorTypeClass) {
         super('compilationUnit', value);
     }
@@ -30,8 +33,7 @@ export class CompilationUnitTypeClass extends UnitTypeClass<TypeDeclarationTypeC
 }
 
 export const isCompilationUnitType = (
-    target: CommonTypeClass,
+    target: CommonTypeClass<string>,
 ): target is CompilationUnitTypeClass => {
     return target instanceof CompilationUnitTypeClass;
 };
-

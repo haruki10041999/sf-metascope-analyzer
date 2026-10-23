@@ -5,7 +5,7 @@ import { ValueTypeClass } from '.';
 import { NormalLiteralTypeClass, LiteralVisitor, isNormalLiteralType } from '../literalVisitor';
 import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
 
-export class ElementValueTypeClass extends ValueTypeClass<NormalLiteralTypeClass> {
+export class ElementValueTypeClass extends ValueTypeClass<'elementValue', NormalLiteralTypeClass> {
     private constructor(value: NormalLiteralTypeClass | ErrorTypeClass) {
         super('elementValue', value);
     }
@@ -21,6 +21,8 @@ export class ElementValueTypeClass extends ValueTypeClass<NormalLiteralTypeClass
     }
 }
 
-export const isElementValueType = (target: CommonTypeClass): target is ElementValueTypeClass => {
+export const isElementValueType = (
+    target: CommonTypeClass<string>,
+): target is ElementValueTypeClass => {
     return target instanceof ElementValueTypeClass;
 };

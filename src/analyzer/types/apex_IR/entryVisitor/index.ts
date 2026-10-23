@@ -16,7 +16,7 @@ import { CommonVisitor } from '../commonVisitor';
 export { isSelectEntryType, SelectEntryTypeClass } from './selectEntry';
 export { isSubFieldEntryType, SubFieldEntryTypeClass } from './subFieldEntry';
 
-export class EntryVisitor extends CommonVisitor<EntryTypeClass<unknown>> {
+export class EntryVisitor extends CommonVisitor<EntryTypeClass<string, unknown>> {
     visitSelectEntry(ctx: SelectEntryContext) {
         return SelectEntryTypeClass.create(ctx);
     }

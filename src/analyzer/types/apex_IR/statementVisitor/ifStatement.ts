@@ -19,9 +19,12 @@ type IfStatementTypeClassType = {
     block: NormalStatementTypeClass | ErrorTypeClass;
 };
 
-export class IfStatementTypeClass extends StatementTypeClass<IfStatementTypeClassType[]> {
-    private constructor(type: string, value: IfStatementTypeClassType[] | ErrorTypeClass) {
-        super(type, value);
+export class IfStatementTypeClass extends StatementTypeClass<
+    'ifStatement',
+    IfStatementTypeClassType[]
+> {
+    private constructor(value: IfStatementTypeClassType[] | ErrorTypeClass) {
+        super('ifStatement', value);
     }
 
     static create(ctx: IfStatementContext): IfStatementTypeClass {
@@ -81,11 +84,12 @@ export class IfStatementTypeClass extends StatementTypeClass<IfStatementTypeClas
             break;
         }
 
-        return new IfStatementTypeClass('ifStatement', conditionTypes);
+        return new IfStatementTypeClass(conditionTypes);
     }
 }
 
-export const isIfStatementType = (target: CommonTypeClass): target is IfStatementTypeClass => {
+export const isIfStatementType = (
+    target: CommonTypeClass<string>,
+): target is IfStatementTypeClass => {
     return target instanceof IfStatementTypeClass;
 };
-

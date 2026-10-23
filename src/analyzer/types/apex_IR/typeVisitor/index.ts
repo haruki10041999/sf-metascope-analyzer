@@ -12,7 +12,7 @@ import { CommonVisitor } from '../commonVisitor';
 export { isArraySubscriptsType, ArraySubscriptsTypeClass } from './arraySubscripts';
 export { isTypeRefType, TypeRefTypeClass } from './typeRef';
 
-export class TypeVisitor extends CommonVisitor<TypeTypeClass<unknown>> {
+export class TypeVisitor extends CommonVisitor<TypeTypeClass<string, unknown>> {
     visitArraySubscripts(ctx: ArraySubscriptsContext) {
         return ArraySubscriptsTypeClass.create(ctx);
     }

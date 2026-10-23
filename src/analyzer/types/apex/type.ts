@@ -2,16 +2,14 @@ import typia from 'typia';
 
 import {
     Convert,
-    GenerateResult,
     ErrorJson,
     isErrorJson,
     JsonType,
     makeJsonType,
     convertExcludeError,
-    collectDelteteKeys,
 } from './commons';
 
-import { TypeRefType, ErrorInfo } from './converter';
+import { TypeRefType, ErrorType } from './converter';
 
 const isPrimitiveType = (type: string): boolean => {
     return [
@@ -85,39 +83,33 @@ export type TypeJson =
     PrimitiveTypeJson | CustomTypeJson | ArrayTypeJson | ListTypeJson | SetTypeJson | MapTypeJson;
 export const isTypeJson = typia.createIs<TypeJson>();
 
-export const makeTypeJson = (
-    target: Convert<TypeRefType | ErrorInfo>,
-): GenerateResult<TypeJson | ErrorJson> => {
+export const makeTypeJson = (target: Convert<TypeRefType | ErrorType>): TypeJson | ErrorJson => {
     const targetRecords: Record<string, string[]> = { [target.objectKey]: [target.sourceKey] };
-    const deleteKeys = collectDelteteKeys(target, targetRecords);
 
-    const { value, errorInfos } = convertExcludeError(target);
+    const { value, errorInfos } = convertExcludeError<TypeRefType | ErrorType>(target);
 
     const error: ErrorJson = makeJsonType('error', targetRecords, { kindType: 'type' });
 
     if (!value || errorInfos.length > 0) {
-        return { result: error, deleteKeys: deleteKeys };
+        return error;
     }
 
     const collection = value!.value;
     const dimension = value!.dimension.value;
 
     if (dimension) {
-        const { result } = makeTypeJson({
+        const result = makeTypeJson({
             type: target.type,
             objectKey: target.objectKey,
             sourceKey: target.sourceKey,
             value: collection,
         } as Convert<TypeRefType>);
-        const { kind, sourceKeys, ...content } = result;
-        return {
-            result: makeJsonType('type', targetRecords, {
-                collectionType: 'array',
-                elementType: content,
-                dimension: dimension,
-            }),
-            deleteKeys: deleteKeys,
-        };
+        const { kind, sourceKeys, ...content } = result as TypeJson;
+        return makeJsonType('type', targetRecords, {
+            collectionType: 'array',
+            elementType: content,
+            dimension: dimension,
+        });
     }
 
     if (collection.length === 1) {
@@ -133,13 +125,10 @@ export const makeTypeJson = (
             : null;
 
         if (isPrimitiveType(collectionName) && !collectionItem.generic) {
-            return {
-                result: makeJsonType('type', targetRecords, {
-                    type: 'primitive',
-                    primitiveType: collectionName,
-                }),
-                deleteKeys: deleteKeys,
-            };
+            return makeJsonType('type', targetRecords, {
+                type: 'primitive',
+                primitiveType: collectionName,
+            });
         }
 
         if (
@@ -147,23 +136,20 @@ export const makeTypeJson = (
             generic &&
             generic.length === 1
         ) {
-            const { result } = makeTypeJson(generic.at(0)!);
+            const result = makeTypeJson(generic.at(0)!);
 
             if (isTypeJson(result)) {
-                const { kind, sourceKeys, ...content } = result;
-                return {
-                    result: makeJsonType('type', targetRecords, {
-                        collectionType: isListType(collectionName) ? 'list' : 'set',
-                        elementType: content,
-                    }),
-                    deleteKeys: deleteKeys,
-                };
+                const { kind, sourceKeys, ...content } = result as TypeJson;
+                return makeJsonType('type', targetRecords, {
+                    collectionType: isListType(collectionName) ? 'list' : 'set',
+                    elementType: content,
+                });
             }
         }
 
         if (isMapType(collectionName) && generic && generic.length === 2) {
-            const { result: keyResult } = makeTypeJson(generic.at(0)!);
-            const { result: valueResult } = makeTypeJson(generic.at(1)!);
+            const keyResult = makeTypeJson(generic.at(0)!);
+            const valueResult = makeTypeJson(generic.at(1)!);
 
             if (isTypeJson(keyResult) && isTypeJson(valueResult)) {
                 const { kind: keyKind, sourceKeys: keySourceKeys, ...keyContent } = keyResult;
@@ -172,14 +158,11 @@ export const makeTypeJson = (
                     sourceKeys: valueSourceKeys,
                     ...valueContent
                 } = valueResult;
-                return {
-                    result: makeJsonType('type', targetRecords, {
-                        collectionType: 'map',
-                        keyType: keyContent,
-                        valueType: valueContent,
-                    }),
-                    deleteKeys: deleteKeys,
-                };
+                return makeJsonType('type', targetRecords, {
+                    collectionType: 'map',
+                    keyType: keyContent,
+                    valueType: valueContent,
+                });
             }
         }
 
@@ -192,7 +175,7 @@ export const makeTypeJson = (
         if (generic && generic.length > 0) {
             genericedTypes.push(
                 ...generic.map((item) => {
-                    const { result } = makeTypeJson(item);
+                    const result = makeTypeJson(item);
                     return result;
                 }),
             );
@@ -208,7 +191,7 @@ export const makeTypeJson = (
                 );
             }
 
-            return { result: typeType, deleteKeys: deleteKeys };
+            return typeType;
         }
     }
 
@@ -231,7 +214,7 @@ export const makeTypeJson = (
         if (generic && generic.length > 0) {
             genericedTypes.push(
                 ...generic.map((item) => {
-                    const { result } = makeTypeJson(item);
+                    const result = makeTypeJson(item);
                     return result;
                 }),
             );
@@ -247,9 +230,9 @@ export const makeTypeJson = (
                 );
             }
 
-            return { result: typeType, deleteKeys: deleteKeys };
+            return typeType;
         }
     }
 
-    return { result: error, deleteKeys: deleteKeys };
+    return error;
 };

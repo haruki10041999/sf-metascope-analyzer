@@ -10,6 +10,7 @@ import {
 import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
 
 export class CondExpressionTypeClass extends ConditionExpressionTypeClass<
+    'condExpression',
     BasedExpressionTypeClass,
     BasedExpressionTypeClass,
     BasedExpressionTypeClass
@@ -48,7 +49,7 @@ export class CondExpressionTypeClass extends ConditionExpressionTypeClass<
 }
 
 export const isCondExpressionType = (
-    target: CommonTypeClass,
+    target: CommonTypeClass<string>,
 ): target is CondExpressionTypeClass => {
     return target instanceof CondExpressionTypeClass;
 };

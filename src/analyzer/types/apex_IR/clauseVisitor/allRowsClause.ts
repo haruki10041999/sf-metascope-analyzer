@@ -4,7 +4,7 @@ import { ClauseTypeClass } from '.';
 
 import { ErrorTypeClass, CommonTypeClass } from '../commonVisitor';
 
-export class AllRowsClauseTypeClass extends ClauseTypeClass<string> {
+export class AllRowsClauseTypeClass extends ClauseTypeClass<'allRowsClause', string> {
     private constructor(value: string | ErrorTypeClass) {
         super('allRowsClause', value);
     }
@@ -18,7 +18,8 @@ export class AllRowsClauseTypeClass extends ClauseTypeClass<string> {
     }
 }
 
-export const isAllRowsClauseType = (target: CommonTypeClass): target is AllRowsClauseTypeClass => {
+export const isAllRowsClauseType = (
+    target: CommonTypeClass<string>,
+): target is AllRowsClauseTypeClass => {
     return target instanceof AllRowsClauseTypeClass;
 };
-

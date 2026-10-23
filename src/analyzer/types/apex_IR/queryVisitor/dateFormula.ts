@@ -109,7 +109,7 @@ const isDateFormulaWithFunctionType = (ctx: DateFormulaContext): boolean => {
 
 export type DateFormulaValueType = DateFormulaFunctionType | DateFormulaWithFunctionType;
 
-export class DateFormulaTypeClass extends QueryTypeClass<DateFormulaValueType> {
+export class DateFormulaTypeClass extends QueryTypeClass<'dateFormula', DateFormulaValueType> {
     private param: SignedIntegerTypeClass | ErrorTypeClass | null = null;
 
     private constructor(
@@ -236,6 +236,8 @@ export class DateFormulaTypeClass extends QueryTypeClass<DateFormulaValueType> {
     }
 }
 
-export const isDateFormulaType = (target: CommonTypeClass): target is DateFormulaTypeClass => {
+export const isDateFormulaType = (
+    target: CommonTypeClass<string>,
+): target is DateFormulaTypeClass => {
     return target instanceof DateFormulaTypeClass;
 };

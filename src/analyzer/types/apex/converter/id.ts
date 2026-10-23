@@ -1,5 +1,3 @@
-import typia from 'typia';
-
 import {
     AnyIdTypeClass,
     IdListTypeClass,
@@ -15,7 +13,8 @@ import {
 } from '../../apex_IR';
 
 import {
-    ErrorInfo,
+    isCommonType,
+    ErrorType,
     CommonType,
     AssignForValueRule,
     ValueRuleValue,
@@ -25,13 +24,15 @@ import {
     makeSourceInfo,
 } from './commons';
 
-export type AnyIdType = CommonType & {
+export type AnyIdType = CommonType<'anyId'> & {
     value: string;
 };
 
-export const isAnyIdType = typia.createIs<AnyIdType>();
+export const isAnyIdType = (value: unknown): value is AnyIdType => {
+    return isCommonType(value) && value.type === 'anyId';
+};
 
-export const makeAnyIdRule = (): AssignForValueRule<AnyIdTypeClass, AnyIdType> => ({
+export const makeAnyIdAssignRule: AssignForValueRule<AnyIdTypeClass, AnyIdType> = {
     isValid: (target: unknown) => isTargetTypeClass(target, isAnyIdTypeClass),
     construct: (idTypeClass: AnyIdTypeClass) => {
         return {
@@ -40,15 +41,17 @@ export const makeAnyIdRule = (): AssignForValueRule<AnyIdTypeClass, AnyIdType> =
             value: idTypeClass.getValue(),
         };
     },
-});
+};
 
-export type IdType = CommonType & {
+export type IdType = CommonType<'id'> & {
     value: string;
 };
 
-export const isIdType = typia.createIs<IdType>();
+export const isIdType = (value: unknown): value is IdType => {
+    return isCommonType(value) && value.type === 'id';
+};
 
-export const makeIdRule = (): AssignForValueRule<NormalIdTypeClass, IdType> => ({
+export const makeIdAssignRule: AssignForValueRule<NormalIdTypeClass, IdType> = {
     isValid: (target: unknown) => isTargetTypeClass(target, isNormalIdType),
     construct: (idTypeClass: NormalIdTypeClass) => {
         return {
@@ -57,38 +60,45 @@ export const makeIdRule = (): AssignForValueRule<NormalIdTypeClass, IdType> => (
             value: idTypeClass.getValue(),
         };
     },
-});
+};
 
-export type SoqlIdType = CommonType & {
+export type SoqlIdType = CommonType<'soqlId'> & {
     value: ValueRuleValue<IdType>;
 };
 
-export const isSoqlIdType = typia.createIs<SoqlIdType>();
+export const isSoqlIdType = (value: unknown): value is SoqlIdType => {
+    return isCommonType(value) && value.type === 'soqlId';
+};
 
-export const makeSoqlIdRule = (): AssignForValueRule<SoqlIdTypeClass, SoqlIdType> => ({
+export const makeSoqlIdAssignRule: AssignForValueRule<SoqlIdTypeClass, SoqlIdType> = {
     isValid: (target: unknown) => isTargetTypeClass(target, isSoqlIdTypeClass),
     construct: (idTypeClass: SoqlIdTypeClass) => {
-        const id = assignMultiClass(idTypeClass.getValue(), [makeIdRule(), makeErrorAssignRule]);
+        const id = assignMultiClass(idTypeClass.getValue(), [
+            makeIdAssignRule,
+            makeErrorAssignRule,
+        ]);
         return {
             type: idTypeClass.getType(),
             sourceInfo: makeSourceInfo(idTypeClass),
             value: id,
         };
     },
-});
+};
 
-export type SoslIdType = CommonType & {
+export type SoslIdType = CommonType<'soslId'> & {
     value: ValueRuleValue<IdType>[];
 };
 
-export const isSoslIdType = typia.createIs<SoslIdType>();
+export const isSoslIdType = (value: unknown): value is SoslIdType => {
+    return isCommonType(value) && value.type === 'soslId';
+};
 
-export const makeSoslIdRule = (): AssignForValueRule<SoslIdTypeClass, SoslIdType> => ({
+export const makeSoslIdAssignRule: AssignForValueRule<SoslIdTypeClass, SoslIdType> = {
     isValid: (target: unknown) => isTargetTypeClass(target, isSoslIdTypeClass),
     construct: (idTypeClass: SoslIdTypeClass) => {
         const value = idTypeClass
             .getValue()
-            .map((v) => assignMultiClass(v, [makeIdRule(), makeErrorAssignRule]));
+            .map((v) => assignMultiClass(v, [makeIdAssignRule, makeErrorAssignRule]));
         return { type: idTypeClass.getType(), sourceInfo: makeSourceInfo(idTypeClass), value };
     },
-});
+};

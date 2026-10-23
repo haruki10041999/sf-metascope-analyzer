@@ -6,7 +6,7 @@ import { CommonTypeClass } from '../commonVisitor';
 
 type AccessLevelValueType = 'SYSTEM' | 'USER';
 
-export class AccessLevelTypeClass extends StatementTypeClass<AccessLevelValueType> {
+export class AccessLevelTypeClass extends StatementTypeClass<'accessLevel', AccessLevelValueType> {
     private constructor(value: AccessLevelValueType) {
         super('accessLevel', value);
     }
@@ -20,6 +20,8 @@ export class AccessLevelTypeClass extends StatementTypeClass<AccessLevelValueTyp
     }
 }
 
-export const isAccessLevelType = (target: CommonTypeClass): target is AccessLevelTypeClass => {
+export const isAccessLevelType = (
+    target: CommonTypeClass<string>,
+): target is AccessLevelTypeClass => {
     return target instanceof AccessLevelTypeClass;
 };

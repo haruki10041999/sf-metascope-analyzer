@@ -9,7 +9,10 @@ import {
 } from '../argumentsVisitor';
 import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
 
-export class ClassCreatorRestTypeClass extends RestTypeClass<NormalArgumentsTypeClass> {
+export class ClassCreatorRestTypeClass extends RestTypeClass<
+    'classCreatorRest',
+    NormalArgumentsTypeClass
+> {
     private constructor(value: NormalArgumentsTypeClass | ErrorTypeClass) {
         super('classCreatorRest', value);
     }
@@ -30,8 +33,7 @@ export class ClassCreatorRestTypeClass extends RestTypeClass<NormalArgumentsType
 }
 
 export const isClassCreatorRestType = (
-    target: CommonTypeClass,
+    target: CommonTypeClass<string>,
 ): target is ClassCreatorRestTypeClass => {
     return target instanceof ClassCreatorRestTypeClass;
 };
-

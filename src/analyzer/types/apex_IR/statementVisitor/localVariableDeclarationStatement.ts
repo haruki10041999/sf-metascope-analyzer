@@ -9,7 +9,10 @@ import {
 } from '../declarationVisitor';
 import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
 
-export class LocalVariableDeclarationStatementTypeClass extends StatementTypeClass<LocalVariableDeclarationTypeClass> {
+export class LocalVariableDeclarationStatementTypeClass extends StatementTypeClass<
+    'localVariableDeclarationStatement',
+    LocalVariableDeclarationTypeClass
+> {
     private constructor(value: LocalVariableDeclarationTypeClass | ErrorTypeClass) {
         super('localVariableDeclarationStatement', value);
     }
@@ -32,8 +35,7 @@ export class LocalVariableDeclarationStatementTypeClass extends StatementTypeCla
 }
 
 export const isLocalVariableDeclarationStatementType = (
-    target: CommonTypeClass,
+    target: CommonTypeClass<string>,
 ): target is LocalVariableDeclarationStatementTypeClass => {
     return target instanceof LocalVariableDeclarationStatementTypeClass;
 };
-

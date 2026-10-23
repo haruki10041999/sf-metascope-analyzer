@@ -6,7 +6,7 @@ import { NormalIdTypeClass, IdVisitor, isNormalIdType } from '../idVisitor';
 import { TriggerBlockTypeClass, BlockVisitor, isTriggerBlockType } from '../blockVisitor';
 import { ErrorTypeClass, CommonTypeClass, isValidClass, isValidClassList } from '../commonVisitor';
 
-export class TriggerUnitTypeClass extends UnitListTypeClass<NormalIdTypeClass> {
+export class TriggerUnitTypeClass extends UnitListTypeClass<'triggerUnit', NormalIdTypeClass> {
     private triggerCase: (TriggerCaseTypeClass | ErrorTypeClass)[];
     private block: TriggerBlockTypeClass | ErrorTypeClass;
 
@@ -62,4 +62,3 @@ export class TriggerUnitTypeClass extends UnitListTypeClass<NormalIdTypeClass> {
 export const isTriggerUnitType = (value: any): value is TriggerUnitTypeClass => {
     return value instanceof TriggerUnitTypeClass;
 };
-

@@ -12,7 +12,7 @@ import { CommonVisitor } from '../commonVisitor';
 export { isClassBodyType, ClassBodyTypeClass } from './classBody';
 export { isInterfaceBodyType, InterfaceBodyTypeClass } from './interfaceBody';
 
-export class BodyVisitor extends CommonVisitor<BodyTypeClass<unknown>> {
+export class BodyVisitor extends CommonVisitor<BodyTypeClass<string, unknown>> {
     visitClassBody(ctx: ClassBodyContext) {
         return ClassBodyTypeClass.create(ctx);
     }

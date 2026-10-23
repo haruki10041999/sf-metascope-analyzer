@@ -4,7 +4,7 @@ import { QueryTypeClass } from '.';
 
 import { ErrorTypeClass, CommonTypeClass } from '../commonVisitor';
 
-export class SearchGroupTypeClass extends QueryTypeClass<string> {
+export class SearchGroupTypeClass extends QueryTypeClass<'searchGroup', string> {
     private constructor(value: string) {
         super('searchGroup', value);
     }
@@ -32,6 +32,8 @@ export class SearchGroupTypeClass extends QueryTypeClass<string> {
     }
 }
 
-export const isSearchGroupType = (target: CommonTypeClass): target is SearchGroupTypeClass => {
+export const isSearchGroupType = (
+    target: CommonTypeClass<string>,
+): target is SearchGroupTypeClass => {
     return target instanceof SearchGroupTypeClass;
 };

@@ -10,7 +10,7 @@ import {
 
 import { ErrorTypeClass, CommonTypeClass, isValidClassList } from '../commonVisitor';
 
-export class NormalBlockTypeClass extends BlockListTypeClass<NormalStatementTypeClass> {
+export class NormalBlockTypeClass extends BlockListTypeClass<'block', NormalStatementTypeClass> {
     private constructor(value: (NormalStatementTypeClass | ErrorTypeClass)[]) {
         super('block', value);
     }
@@ -27,7 +27,8 @@ export class NormalBlockTypeClass extends BlockListTypeClass<NormalStatementType
     }
 }
 
-export const isNormalBlockType = (target: CommonTypeClass): target is NormalBlockTypeClass => {
+export const isNormalBlockType = (
+    target: CommonTypeClass<string>,
+): target is NormalBlockTypeClass => {
     return target instanceof NormalBlockTypeClass;
 };
-

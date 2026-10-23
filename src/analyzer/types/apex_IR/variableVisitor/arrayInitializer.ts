@@ -9,7 +9,10 @@ import {
 } from '../expressionVisitor';
 import { ErrorTypeClass, CommonTypeClass, isValidClassList } from '../commonVisitor';
 
-export class ArrayInitializerTypeClass extends VariableListTypeClass<BasedExpressionTypeClass> {
+export class ArrayInitializerTypeClass extends VariableListTypeClass<
+    'arrayInitializer',
+    BasedExpressionTypeClass
+> {
     private constructor(value: (BasedExpressionTypeClass | ErrorTypeClass)[]) {
         super('arrayInitializer', value);
     }
@@ -27,7 +30,8 @@ export class ArrayInitializerTypeClass extends VariableListTypeClass<BasedExpres
 }
 
 export const isArrayInitializerType = (
-    target: CommonTypeClass,
+    target: CommonTypeClass<string>,
 ): target is ArrayInitializerTypeClass => {
     return target instanceof ArrayInitializerTypeClass;
 };
+

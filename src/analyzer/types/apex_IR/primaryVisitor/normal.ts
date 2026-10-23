@@ -3,7 +3,7 @@ import { PrimaryContext } from '@apexdevtools/apex-parser';
 import { PrimaryTypeClass } from '.';
 import { CommonTypeClass } from '../commonVisitor';
 
-export class NormalPrimaryTypeClass extends PrimaryTypeClass<string> {
+export class NormalPrimaryTypeClass extends PrimaryTypeClass<'primary', string> {
     private constructor(value: string) {
         super('primary', value);
     }
@@ -13,7 +13,8 @@ export class NormalPrimaryTypeClass extends PrimaryTypeClass<string> {
     }
 }
 
-export const isNormalPrimaryType = (target: CommonTypeClass): target is NormalPrimaryTypeClass => {
+export const isNormalPrimaryType = (
+    target: CommonTypeClass<string>,
+): target is NormalPrimaryTypeClass => {
     return target instanceof NormalPrimaryTypeClass;
 };
-

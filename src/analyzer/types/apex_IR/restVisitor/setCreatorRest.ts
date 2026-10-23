@@ -9,7 +9,10 @@ import {
 } from '../expressionVisitor';
 import { ErrorTypeClass, CommonTypeClass, isValidClassList } from '../commonVisitor';
 
-export class SetCreatorRestTypeClass extends RestListTypeClass<BasedExpressionTypeClass> {
+export class SetCreatorRestTypeClass extends RestListTypeClass<
+    'setCreatorRest',
+    BasedExpressionTypeClass
+> {
     private constructor(value: (BasedExpressionTypeClass | ErrorTypeClass)[]) {
         super('setCreatorRest', value);
     }
@@ -31,7 +34,7 @@ export class SetCreatorRestTypeClass extends RestListTypeClass<BasedExpressionTy
 }
 
 export const isSetCreatorRestType = (
-    target: CommonTypeClass,
+    target: CommonTypeClass<string>,
 ): target is SetCreatorRestTypeClass => {
     return target instanceof SetCreatorRestTypeClass;
 };

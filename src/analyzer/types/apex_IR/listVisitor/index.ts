@@ -61,7 +61,7 @@ export {
 } from './fieldList';
 export { isFieldSpecListType, FieldSpecListTypeClass } from './fieldSpecList';
 
-export class ListVisitor extends CommonVisitor<ListTypeClass<unknown>> {
+export class ListVisitor extends CommonVisitor<ListTypeClass<string, unknown>> {
     visitTypeList(ctx: TypeListContext) {
         return TypeListTypeClass.create(ctx);
     }

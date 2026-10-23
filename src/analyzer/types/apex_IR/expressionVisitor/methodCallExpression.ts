@@ -5,7 +5,10 @@ import { ExpressionTypeClass } from '../expressionVisitor';
 import { MethodCallTypeClass, CallVisitor, isMethodCallType } from '../callVisitor';
 import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
 
-export class MethodCallExpressionTypeClass extends ExpressionTypeClass<MethodCallTypeClass> {
+export class MethodCallExpressionTypeClass extends ExpressionTypeClass<
+    'methodCallExpression',
+    MethodCallTypeClass
+> {
     private constructor(value: MethodCallTypeClass | ErrorTypeClass) {
         super('methodCallExpression', value);
     }
@@ -22,8 +25,7 @@ export class MethodCallExpressionTypeClass extends ExpressionTypeClass<MethodCal
 }
 
 export const isMethodCallExpressionType = (
-    target: CommonTypeClass,
+    target: CommonTypeClass<string>,
 ): target is MethodCallExpressionTypeClass => {
     return target instanceof MethodCallExpressionTypeClass;
 };
-

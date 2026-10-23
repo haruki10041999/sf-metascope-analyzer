@@ -12,7 +12,10 @@ import {
 import { CatchClauseTypeClass, ClauseVisitor, isCatchClauseType } from '../clauseVisitor';
 import { ErrorTypeClass, CommonTypeClass, isValidClass, isValidClassList } from '../commonVisitor';
 
-export class TryStatementTypeClass extends StatementTypeClass<NormalBlockTypeClass> {
+export class TryStatementTypeClass extends StatementTypeClass<
+    'tryStatement',
+    NormalBlockTypeClass
+> {
     private catchBlock: (CatchClauseTypeClass | ErrorTypeClass)[];
     private finallyBlock: FinallyBlockTypeClass | ErrorTypeClass | null = null;
 
@@ -58,7 +61,8 @@ export class TryStatementTypeClass extends StatementTypeClass<NormalBlockTypeCla
     }
 }
 
-export const isTryStatementType = (target: CommonTypeClass): target is TryStatementTypeClass => {
+export const isTryStatementType = (
+    target: CommonTypeClass<string>,
+): target is TryStatementTypeClass => {
     return target instanceof TryStatementTypeClass;
 };
-

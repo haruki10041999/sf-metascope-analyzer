@@ -6,7 +6,7 @@ import { FieldNameTypeClass, NameVisitor, isFieldNameType } from '../nameVisitor
 import { FieldNameListTypeClass, ListVisitor, isFieldNameListType } from '../listVisitor';
 import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
 
-export class WhenClauseTypeClass extends ClauseTypeClass<FieldNameTypeClass> {
+export class WhenClauseTypeClass extends ClauseTypeClass<'whenClause', FieldNameTypeClass> {
     private field: FieldNameListTypeClass | ErrorTypeClass;
 
     private constructor(
@@ -37,6 +37,8 @@ export class WhenClauseTypeClass extends ClauseTypeClass<FieldNameTypeClass> {
     }
 }
 
-export const isWhenClauseType = (target: CommonTypeClass): target is WhenClauseTypeClass => {
+export const isWhenClauseType = (
+    target: CommonTypeClass<string>,
+): target is WhenClauseTypeClass => {
     return target instanceof WhenClauseTypeClass;
 };

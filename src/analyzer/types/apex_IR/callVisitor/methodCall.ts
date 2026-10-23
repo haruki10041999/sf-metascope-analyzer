@@ -7,6 +7,7 @@ import { ExpressionListTypeClass, ListVisitor, isExpressionListType } from '../l
 import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
 
 export class MethodCallTypeClass extends CallTypeClass<
+    'methodCall',
     NormalIdTypeClass | null,
     ExpressionListTypeClass
 > {
@@ -45,7 +46,8 @@ export class MethodCallTypeClass extends CallTypeClass<
     }
 }
 
-export const isMethodCallType = (target: CommonTypeClass): target is MethodCallTypeClass => {
+export const isMethodCallType = (
+    target: CommonTypeClass<string>,
+): target is MethodCallTypeClass => {
     return target instanceof MethodCallTypeClass;
 };
-

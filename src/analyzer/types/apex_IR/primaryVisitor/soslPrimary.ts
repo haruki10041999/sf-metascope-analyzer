@@ -5,7 +5,7 @@ import { PrimaryTypeClass } from '.';
 import { SoslLiteralTypeClass, LiteralVisitor, isSoslLiteralType } from '../literalVisitor';
 import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
 
-export class SoslPrimaryTypeClass extends PrimaryTypeClass<SoslLiteralTypeClass> {
+export class SoslPrimaryTypeClass extends PrimaryTypeClass<'soslPrimary', SoslLiteralTypeClass> {
     private constructor(value: SoslLiteralTypeClass | ErrorTypeClass) {
         super('soslPrimary', value);
     }
@@ -25,7 +25,8 @@ export class SoslPrimaryTypeClass extends PrimaryTypeClass<SoslLiteralTypeClass>
     }
 }
 
-export const isSoslPrimaryType = (target: CommonTypeClass): target is SoslPrimaryTypeClass => {
+export const isSoslPrimaryType = (
+    target: CommonTypeClass<string>,
+): target is SoslPrimaryTypeClass => {
     return target instanceof SoslPrimaryTypeClass;
 };
-

@@ -10,7 +10,10 @@ import {
 import { TypeRefTypeClass, TypeVisitor, isTypeRefType } from '../typeVisitor';
 import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
 
-export class CastExpressionTypeClass extends ExpressionTypeClass<BasedExpressionTypeClass> {
+export class CastExpressionTypeClass extends ExpressionTypeClass<
+    'castExpression',
+    BasedExpressionTypeClass
+> {
     private valueType: TypeRefTypeClass | ErrorTypeClass;
 
     private constructor(
@@ -42,7 +45,7 @@ export class CastExpressionTypeClass extends ExpressionTypeClass<BasedExpression
 }
 
 export const isCastExpressionType = (
-    target: CommonTypeClass,
+    target: CommonTypeClass<string>,
 ): target is CastExpressionTypeClass => {
     return target instanceof CastExpressionTypeClass;
 };

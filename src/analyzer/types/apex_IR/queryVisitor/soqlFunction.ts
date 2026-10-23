@@ -100,7 +100,7 @@ type SoqlParameterType =
     | (LocationValueTypeClass | ErrorTypeClass | string)[]
     | SoqlFunctionTypeClass;
 
-export class SoqlFunctionTypeClass extends QueryTypeClass<SoqlFunctionValueType> {
+export class SoqlFunctionTypeClass extends QueryTypeClass<'soqlFunction', SoqlFunctionValueType> {
     private param: SoqlParameterType | ErrorTypeClass | null = null;
 
     private constructor(
@@ -249,7 +249,8 @@ export class SoqlFunctionTypeClass extends QueryTypeClass<SoqlFunctionValueType>
     }
 }
 
-export const isSoqlFunctionType = (target: CommonTypeClass): target is SoqlFunctionTypeClass => {
+export const isSoqlFunctionType = (
+    target: CommonTypeClass<string>,
+): target is SoqlFunctionTypeClass => {
     return target instanceof SoqlFunctionTypeClass;
 };
-

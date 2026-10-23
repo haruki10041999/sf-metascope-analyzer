@@ -7,7 +7,10 @@ import { NormalIdTypeClass, IdVisitor, isNormalIdType } from '../idVisitor';
 
 import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
 
-export class TypeNameTypeClass extends NameTypeClass<NormalIdTypeClass | 'list' | 'set' | 'map'> {
+export class TypeNameTypeClass extends NameTypeClass<
+    'typeName',
+    NormalIdTypeClass | 'list' | 'set' | 'map'
+> {
     private generic: TypeArgumentsTypeClass | ErrorTypeClass | null;
 
     private constructor(
@@ -47,6 +50,6 @@ export class TypeNameTypeClass extends NameTypeClass<NormalIdTypeClass | 'list' 
     }
 }
 
-export const isTypeNameType = (target: CommonTypeClass): target is TypeNameTypeClass => {
+export const isTypeNameType = (target: CommonTypeClass<string>): target is TypeNameTypeClass => {
     return target instanceof TypeNameTypeClass;
 };

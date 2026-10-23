@@ -6,7 +6,10 @@ import { SoqlIdTypeClass, isSoqlIdType, IdVisitor } from '../idVisitor';
 
 import { ErrorTypeClass, CommonTypeClass, isValidClassList } from '../commonVisitor';
 
-export class DataCategoryNameTypeClass extends NameListTypeClass<SoqlIdTypeClass> {
+export class DataCategoryNameTypeClass extends NameListTypeClass<
+    'dataCategoryName',
+    SoqlIdTypeClass
+> {
     private constructor(value: (SoqlIdTypeClass | ErrorTypeClass)[]) {
         super('dataCategoryName', value);
     }
@@ -28,7 +31,7 @@ export class DataCategoryNameTypeClass extends NameListTypeClass<SoqlIdTypeClass
 }
 
 export const isDataCategoryNameType = (
-    target: CommonTypeClass,
+    target: CommonTypeClass<string>,
 ): target is DataCategoryNameTypeClass => {
     return target instanceof DataCategoryNameTypeClass;
 };

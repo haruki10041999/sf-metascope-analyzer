@@ -12,6 +12,7 @@ import {
 import { CommonTypeClass, ErrorTypeClass, isValidClass } from '../commonVisitor';
 
 export class ConditionalExpressionTypeClass extends ExpressionTypeClass<
+    'conditionalExpression',
     LogicalExpressionTypeClass | FieldExpressionTypeClass
 > {
     private constructor(
@@ -42,8 +43,7 @@ export class ConditionalExpressionTypeClass extends ExpressionTypeClass<
 }
 
 export const isConditionalExpressionType = (
-    target: CommonTypeClass,
+    target: CommonTypeClass<string>,
 ): target is ConditionalExpressionTypeClass => {
     return target instanceof ConditionalExpressionTypeClass;
 };
-

@@ -5,7 +5,7 @@ import { ListTypeClass } from '../listVisitor';
 import { NormalValueTypeClass, ValueVisitor, isNormalValueType } from '../valueVisitor';
 import { ErrorTypeClass, CommonTypeClass, isValidClassList } from '../commonVisitor';
 
-export class ValueListTypeClass extends ListTypeClass<NormalValueTypeClass> {
+export class ValueListTypeClass extends ListTypeClass<'valueList', NormalValueTypeClass> {
     private constructor(value: (NormalValueTypeClass | ErrorTypeClass)[]) {
         super('valueList', value);
     }
@@ -26,6 +26,6 @@ export class ValueListTypeClass extends ListTypeClass<NormalValueTypeClass> {
     }
 }
 
-export const isValueListType = (target: CommonTypeClass): target is ValueListTypeClass => {
+export const isValueListType = (target: CommonTypeClass<string>): target is ValueListTypeClass => {
     return target instanceof ValueListTypeClass;
 };

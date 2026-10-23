@@ -1,5 +1,3 @@
-import typia from 'typia';
-
 import {
     ArrayInitializerTypeClass,
     VariableDeclaratorsTypeClass,
@@ -10,7 +8,8 @@ import {
 } from '../../apex_IR';
 
 import {
-    ErrorInfo,
+    isCommonType,
+    ErrorType,
     CommonType,
     AssignForValueRule,
     ValueRuleValue,
@@ -20,93 +19,92 @@ import {
     makeNullAssignRule,
     makeSourceInfo,
 } from './commons';
-import { makeBaseExpressionRule, BaseExpressionType } from './expression';
-import { makeIdRule, IdType } from './id';
+import { makeBaseExpressionAssignRules, BaseExpressionType } from './expression';
+import { makeIdAssignRule, IdType } from './id';
 
-export type ArrayInitializerType = CommonType & {
+export type ArrayInitializerType = CommonType<'arrayInitializer'> & {
     value: ValueRuleValue<BaseExpressionType>[];
 };
 
-export const isArrayInitializerType = typia.createIs<ArrayInitializerType>();
-
-export const makeArrayInitializerRule = (): AssignForValueRule<
-    ArrayInitializerTypeClass,
-    ArrayInitializerType
-> => {
-    return {
-        isValid: (target: unknown) => isTargetTypeClass(target, isArrayInitializerTypeClass),
-        construct: (variableTypeClass: ArrayInitializerTypeClass) => {
-            const value = variableTypeClass
-                .getValue()
-                .map((v) =>
-                    assignMultiClass(v, [...makeBaseExpressionRule(), makeErrorAssignRule]),
-                );
-            return {
-                type: variableTypeClass.getType(),
-                sourceInfo: makeSourceInfo(variableTypeClass),
-                value,
-            };
-        },
-    };
+export const isArrayInitializerType = (value: unknown): value is ArrayInitializerType => {
+    return isCommonType(value) && value.type === 'arrayInitializer';
 };
 
-export type VariableDeclaratorsType = CommonType & {
+export const makeArrayInitializerAssignRule: AssignForValueRule<
+    ArrayInitializerTypeClass,
+    ArrayInitializerType
+> = {
+    isValid: (target: unknown) => isTargetTypeClass(target, isArrayInitializerTypeClass),
+    construct: (variableTypeClass: ArrayInitializerTypeClass) => {
+        const value = variableTypeClass
+            .getValue()
+            .map((v) =>
+                assignMultiClass(v, [...makeBaseExpressionAssignRules, makeErrorAssignRule]),
+            );
+        return {
+            type: variableTypeClass.getType(),
+            sourceInfo: makeSourceInfo(variableTypeClass),
+            value,
+        };
+    },
+};
+
+export type VariableDeclaratorsType = CommonType<'variableDeclarators'> & {
     value: ValueRuleValue<VariableDeclaratorType>[];
 };
 
-export const isVariableDeclaratorsType = typia.createIs<VariableDeclaratorsType>();
-
-export const makeVariableDeclaratorsRule = (): AssignForValueRule<
-    VariableDeclaratorsTypeClass,
-    VariableDeclaratorsType
-> => {
-    return {
-        isValid: (target: unknown) => isTargetTypeClass(target, isVariableDeclaratorsTypeClass),
-        construct: (variableTypeClass: VariableDeclaratorsTypeClass) => {
-            const value = variableTypeClass
-                .getValue()
-                .map((v) =>
-                    assignMultiClass(v, [makeVariableDeclaratorRule(), makeErrorAssignRule]),
-                );
-            return {
-                type: variableTypeClass.getType(),
-                sourceInfo: makeSourceInfo(variableTypeClass),
-                value,
-            };
-        },
-    };
+export const isVariableDeclaratorsType = (value: unknown): value is VariableDeclaratorsType => {
+    return isCommonType(value) && value.type === 'variableDeclarators';
 };
 
-export type VariableDeclaratorType = CommonType & {
+export const makeVariableDeclaratorsAssignRule: AssignForValueRule<
+    VariableDeclaratorsTypeClass,
+    VariableDeclaratorsType
+> = {
+    isValid: (target: unknown) => isTargetTypeClass(target, isVariableDeclaratorsTypeClass),
+    construct: (variableTypeClass: VariableDeclaratorsTypeClass) => {
+        const value = variableTypeClass
+            .getValue()
+            .map((v) =>
+                assignMultiClass(v, [makeVariableDeclaratorAssignRule, makeErrorAssignRule]),
+            );
+        return {
+            type: variableTypeClass.getType(),
+            sourceInfo: makeSourceInfo(variableTypeClass),
+            value,
+        };
+    },
+};
+
+export type VariableDeclaratorType = CommonType<'variableDeclarator'> & {
     value: ValueRuleValue<IdType>;
     init: ValueRuleValue<BaseExpressionType | null>;
 };
 
-export const isVariableDeclaratorType = typia.createIs<VariableDeclaratorType>();
-
-export const makeVariableDeclaratorRule = (): AssignForValueRule<
-    VariableDeclaratorTypeClass,
-    VariableDeclaratorType
-> => {
-    return {
-        isValid: (target: unknown) => isTargetTypeClass(target, isVariableDeclaratorTypeClass),
-        construct: (variableTypeClass: VariableDeclaratorTypeClass) => {
-            const value = assignMultiClass(variableTypeClass.getValue(), [
-                makeIdRule(),
-                makeErrorAssignRule,
-            ]);
-            const init = assignMultiClass(variableTypeClass.getContent(), [
-                ...makeBaseExpressionRule(),
-                makeErrorAssignRule,
-                makeNullAssignRule,
-            ]);
-            return {
-                type: variableTypeClass.getType(),
-                sourceInfo: makeSourceInfo(variableTypeClass),
-                value,
-                init,
-            };
-        },
-    };
+export const isVariableDeclaratorType = (value: unknown): value is VariableDeclaratorType => {
+    return isCommonType(value) && value.type === 'variableDeclarator';
 };
 
+export const makeVariableDeclaratorAssignRule: AssignForValueRule<
+    VariableDeclaratorTypeClass,
+    VariableDeclaratorType
+> = {
+    isValid: (target: unknown) => isTargetTypeClass(target, isVariableDeclaratorTypeClass),
+    construct: (variableTypeClass: VariableDeclaratorTypeClass) => {
+        const value = assignMultiClass(variableTypeClass.getValue(), [
+            makeIdAssignRule,
+            makeErrorAssignRule,
+        ]);
+        const init = assignMultiClass(variableTypeClass.getContent(), [
+            ...makeBaseExpressionAssignRules,
+            makeErrorAssignRule,
+            makeNullAssignRule,
+        ]);
+        return {
+            type: variableTypeClass.getType(),
+            sourceInfo: makeSourceInfo(variableTypeClass),
+            value,
+            init,
+        };
+    },
+};

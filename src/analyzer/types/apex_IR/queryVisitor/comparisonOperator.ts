@@ -18,7 +18,10 @@ type ComparisonOperatorValueType =
     | 'INCLUDES'
     | 'EXCLUDES';
 
-export class ComparisonOperatorTypeClass extends QueryTypeClass<ComparisonOperatorValueType> {
+export class ComparisonOperatorTypeClass extends QueryTypeClass<
+    'comparisonOperator',
+    ComparisonOperatorValueType
+> {
     private constructor(value: ComparisonOperatorValueType | ErrorTypeClass) {
         super('comparisonOperator', value);
     }
@@ -66,8 +69,7 @@ export class ComparisonOperatorTypeClass extends QueryTypeClass<ComparisonOperat
 }
 
 export const isComparisonOperatorType = (
-    target: CommonTypeClass,
+    target: CommonTypeClass<string>,
 ): target is ComparisonOperatorTypeClass => {
     return target instanceof ComparisonOperatorTypeClass;
 };
-

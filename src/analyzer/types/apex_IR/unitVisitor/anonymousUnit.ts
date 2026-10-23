@@ -5,7 +5,10 @@ import { UnitTypeClass } from '.';
 import { AnonymousBlockTypeClass, BlockVisitor, isAnonymousBlockType } from '../blockVisitor';
 import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
 
-export class AnonymousUnitTypeClass extends UnitTypeClass<AnonymousBlockTypeClass> {
+export class AnonymousUnitTypeClass extends UnitTypeClass<
+    'anonymousUnit',
+    AnonymousBlockTypeClass
+> {
     private constructor(value: AnonymousBlockTypeClass | ErrorTypeClass) {
         super('anonymousUnit', value);
     }
@@ -25,7 +28,8 @@ export class AnonymousUnitTypeClass extends UnitTypeClass<AnonymousBlockTypeClas
     }
 }
 
-export const isAnonymousUnitType = (target: CommonTypeClass): target is AnonymousUnitTypeClass => {
+export const isAnonymousUnitType = (
+    target: CommonTypeClass<string>,
+): target is AnonymousUnitTypeClass => {
     return target instanceof AnonymousUnitTypeClass;
 };
-

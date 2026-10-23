@@ -9,7 +9,10 @@ import {
 
 import { ErrorTypeClass, CommonTypeClass, isValidClassList } from '../commonVisitor';
 
-export class ElementValuePairsTypeClass extends PairListTypeClass<ElementValuePairTypeClass> {
+export class ElementValuePairsTypeClass extends PairListTypeClass<
+    'elementValuePairs',
+    ElementValuePairTypeClass
+> {
     private constructor(value: (ElementValuePairTypeClass | ErrorTypeClass)[]) {
         super('elementValuePairs', value);
     }
@@ -31,7 +34,7 @@ export class ElementValuePairsTypeClass extends PairListTypeClass<ElementValuePa
 }
 
 export const isElementValuePairsType = (
-    target: CommonTypeClass,
+    target: CommonTypeClass<string>,
 ): target is ElementValuePairsTypeClass => {
     return target instanceof ElementValuePairsTypeClass;
 };

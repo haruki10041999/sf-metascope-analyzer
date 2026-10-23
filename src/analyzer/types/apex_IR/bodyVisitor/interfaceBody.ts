@@ -9,7 +9,10 @@ import {
 } from '../declarationVisitor';
 import { ErrorTypeClass, CommonTypeClass, isValidClassList } from '../commonVisitor';
 
-export class InterfaceBodyTypeClass extends BodyTypeClass<InterfaceMethodDeclarationTypeClass> {
+export class InterfaceBodyTypeClass extends BodyTypeClass<
+    'interfaceBody',
+    InterfaceMethodDeclarationTypeClass
+> {
     private constructor(value: (InterfaceMethodDeclarationTypeClass | ErrorTypeClass)[]) {
         super('interfaceBody', value);
     }
@@ -26,6 +29,8 @@ export class InterfaceBodyTypeClass extends BodyTypeClass<InterfaceMethodDeclara
     }
 }
 
-export const isInterfaceBodyType = (target: CommonTypeClass): target is InterfaceBodyTypeClass => {
+export const isInterfaceBodyType = (
+    target: CommonTypeClass<string>,
+): target is InterfaceBodyTypeClass => {
     return target instanceof InterfaceBodyTypeClass;
 };

@@ -7,6 +7,7 @@ import { TypeListTypeClass, ListVisitor, isTypeListType } from '../listVisitor';
 import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
 
 export class IdCreatedNamePairTypeClass extends PairTypeClass<
+    'idCreatedNamePair',
     AnyIdTypeClass,
     TypeListTypeClass | null
 > {
@@ -33,7 +34,7 @@ export class IdCreatedNamePairTypeClass extends PairTypeClass<
 }
 
 export const isIdCreatedNamePairType = (
-    target: CommonTypeClass,
+    target: CommonTypeClass<string>,
 ): target is IdCreatedNamePairTypeClass => {
     return target instanceof IdCreatedNamePairTypeClass;
 };

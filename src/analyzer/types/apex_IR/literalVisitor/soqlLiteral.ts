@@ -5,7 +5,7 @@ import { LiteralTypeClass } from '.';
 import { NormalQueryTypeClass, QueryVisitor, isNormalQueryType } from '../queryVisitor';
 import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
 
-export class SoqlLiteralTypeClass extends LiteralTypeClass<NormalQueryTypeClass> {
+export class SoqlLiteralTypeClass extends LiteralTypeClass<'soqlLiteral', NormalQueryTypeClass> {
     private constructor(value: NormalQueryTypeClass | ErrorTypeClass) {
         super('soqlLiteral', value);
     }
@@ -17,7 +17,8 @@ export class SoqlLiteralTypeClass extends LiteralTypeClass<NormalQueryTypeClass>
     }
 }
 
-export const isSoqlLiteralType = (target: CommonTypeClass): target is SoqlLiteralTypeClass => {
+export const isSoqlLiteralType = (
+    target: CommonTypeClass<string>,
+): target is SoqlLiteralTypeClass => {
     return target instanceof SoqlLiteralTypeClass;
 };
-
