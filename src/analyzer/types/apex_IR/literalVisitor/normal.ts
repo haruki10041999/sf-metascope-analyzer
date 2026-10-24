@@ -4,8 +4,14 @@ import { PrimitiveLiteralTypeClass } from '.';
 
 import { ErrorTypeClass, CommonTypeClass } from '../commonVisitor';
 
-export class NormalLiteralTypeClass extends PrimitiveLiteralTypeClass<'literal', string> {
-    private constructor(value: string | ErrorTypeClass, valueType: string) {
+type LiteralType = 'integer' | 'long' | 'number' | 'string' | 'longText' | 'boolean' | 'null';
+
+export class NormalLiteralTypeClass extends PrimitiveLiteralTypeClass<
+    'literal',
+    string,
+    LiteralType
+> {
+    private constructor(value: string, valueType: LiteralType) {
         super('literal', value, valueType);
     }
 
@@ -23,7 +29,7 @@ export class NormalLiteralTypeClass extends PrimitiveLiteralTypeClass<'literal',
         }
 
         let value: string | ErrorTypeClass;
-        let valueType: string;
+        let valueType: LiteralType;
         if (ctx.IntegerLiteral()) {
             value = ctx.IntegerLiteral().getText();
             valueType = 'integer';
@@ -38,7 +44,7 @@ export class NormalLiteralTypeClass extends PrimitiveLiteralTypeClass<'literal',
             valueType = 'string';
         } else if (ctx.MultilineStringLiteral()) {
             value = ctx.MultilineStringLiteral().getText();
-            valueType = 'multilineString';
+            valueType = 'longText';
         } else if (ctx.BooleanLiteral()) {
             value = ctx.BooleanLiteral().getText();
             valueType = 'boolean';

@@ -79,6 +79,15 @@ export const makeStringAssignRule = {
     construct: (value: string) => value,
 };
 
+export const makeLimitedStringAssignRule = <const TElement extends string>(
+    allowedValues: readonly TElement[],
+) => ({
+    isValid: (target: unknown): target is TElement =>
+        typeof target === 'string' && allowedValues.includes(target as TElement),
+
+    construct: (value: TElement): TElement => value,
+});
+
 export const makeNumberAssignRule = {
     isValid: (target: unknown): target is number => typeof target === 'number',
     construct: (value: number) => value,

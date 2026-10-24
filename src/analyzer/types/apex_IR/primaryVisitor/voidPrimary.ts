@@ -1,9 +1,9 @@
 import { VoidPrimaryContext } from '@apexdevtools/apex-parser';
 
-import { PrimaryTypeClass } from '.';
+import { PrimaryValueTypeClass } from '.';
 import { CommonTypeClass } from '../commonVisitor';
 
-export class VoidPrimaryTypeClass extends PrimaryTypeClass<'voidPrimary', string> {
+export class VoidPrimaryTypeClass extends PrimaryValueTypeClass<'voidPrimary', string> {
     private constructor(value: string) {
         super('voidPrimary', value);
     }

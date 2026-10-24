@@ -1,11 +1,14 @@
 import { UpdateTypeContext } from '@apexdevtools/apex-parser';
 
-import { ClauseTypeClass } from '.';
+import { ClauseValueTypeClass } from '.';
 
 import { CommonTypeClass } from '../commonVisitor';
 
-export class UpdateTypeTypeClass extends ClauseTypeClass<'updateType', string> {
-    private constructor(value: string) {
+export class UpdateTypeTypeClass extends ClauseValueTypeClass<
+    'updateType',
+    'TRACKING' | 'VIEWSTAT'
+> {
+    private constructor(value: 'TRACKING' | 'VIEWSTAT') {
         super('updateType', value);
     }
 

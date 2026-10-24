@@ -1,12 +1,15 @@
 import { ForClausesContext } from '@apexdevtools/apex-parser';
 
-import { ClauseListTypeClass } from '.';
+import { ClauseValueListTypeClass } from '.';
 
 import { ErrorTypeClass, CommonTypeClass } from '../commonVisitor';
 
 type ForClauseValueType = 'VIEW' | 'UPDATE' | 'REFERENCE';
 
-export class ForClausesTypeClass extends ClauseListTypeClass<'forClauses', ForClauseValueType> {
+export class ForClausesTypeClass extends ClauseValueListTypeClass<
+    'forClauses',
+    ForClauseValueType
+> {
     private constructor(value: ForClauseValueType[]) {
         super('forClauses', value);
     }

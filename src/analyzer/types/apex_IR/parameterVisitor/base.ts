@@ -1,5 +1,17 @@
 import { ErrorTypeClass, CommonTypeClass } from '../commonVisitor';
 
+export class ParameterValueTypeClass<TName extends string, T> extends CommonTypeClass<TName> {
+    private value: T;
+    constructor(type: TName, value: T) {
+        super(type);
+        this.value = value;
+    }
+
+    getValue(): T {
+        return this.value;
+    }
+}
+
 export class ParameterTypeClass<TName extends string, T> extends CommonTypeClass<TName> {
     private value: T | ErrorTypeClass;
     constructor(type: TName, value: T | ErrorTypeClass) {
@@ -12,8 +24,11 @@ export class ParameterTypeClass<TName extends string, T> extends CommonTypeClass
     }
 }
 
+export type ParameterAllTypeClass =
+    ParameterValueTypeClass<string, unknown> | ParameterTypeClass<string, unknown>;
+
 export const isParameterTypeAll = (
     target: CommonTypeClass<string>,
 ): target is ParameterTypeClass<string, unknown> => {
-    return target instanceof ParameterTypeClass;
+    return target instanceof ParameterValueTypeClass || target instanceof ParameterTypeClass;
 };

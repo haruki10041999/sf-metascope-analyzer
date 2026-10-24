@@ -1,7 +1,7 @@
 import { BitExpressionContext } from '@apexdevtools/apex-parser';
 
 import {
-    DoubleOperatorExpressionTypeClass,
+    DoubleStringOperatorExpressionTypeClass,
     BasedExpressionTypeClass,
     ExpressionVisitor,
     isBasedExpressionType,
@@ -9,7 +9,7 @@ import {
 
 import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
 
-export class BitExpressionTypeClass extends DoubleOperatorExpressionTypeClass<
+export class BitExpressionTypeClass extends DoubleStringOperatorExpressionTypeClass<
     'bitExpression',
     BasedExpressionTypeClass,
     string,
@@ -32,16 +32,14 @@ export class BitExpressionTypeClass extends DoubleOperatorExpressionTypeClass<
         ) {
             throw new Error('値が異常です。BitExpressionContext: ' + ctx.getText());
         }
-        let operator: string = '';
+        let operator: string;
 
         if (ctx.LT_list() && ctx.LT_list().length > 0) {
             operator = ctx
                 .LT_list()
                 .map((node) => node.getText())
                 .join('');
-        }
-
-        if (ctx.GT_list() && ctx.GT_list().length > 0) {
+        } else {
             operator = ctx
                 .GT_list()
                 .map((node) => node.getText())

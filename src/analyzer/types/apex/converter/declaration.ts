@@ -42,6 +42,7 @@ import {
     makeErrorAssignRule,
     makeStringAssignRule,
     makeNullAssignRule,
+    makeLimitedStringAssignRule,
     makeSourceInfo,
 } from './commons';
 import {
@@ -371,7 +372,7 @@ export const makeInterfaceDeclarationAssignRule: AssignForValueRule<
 
 export type InterfaceMethodDeclarationType = CommonType<'interfaceMethodDeclaration'> & {
     value: ValueRuleValue<IdType>;
-    valueType: ValueRuleValue<string | TypeRefType>;
+    valueType: ValueRuleValue<'void' | TypeRefType>;
     param: ValueRuleValue<FormalParametersType | null>;
     modifier: ValueRuleValue<ModifierType>[];
 };
@@ -394,7 +395,7 @@ export const makeInterfaceMethodDeclarationAssignRule: AssignForValueRule<
         ]);
 
         const valueType = assignMultiClass(declarationTypeClass.getValueType(), [
-            makeStringAssignRule,
+            makeLimitedStringAssignRule(['void']),
             makeTypeRefAssignRule,
             makeErrorAssignRule,
         ]);
@@ -504,7 +505,7 @@ export const makeMemberDeclarationAssignRule: AssignForValueRule<
 
 export type MethodDeclarationType = CommonType<'methodDeclaration'> & {
     value: ValueRuleValue<IdType>;
-    valueType: ValueRuleValue<string | TypeRefType>;
+    valueType: ValueRuleValue<'void' | TypeRefType>;
     param: ValueRuleValue<FormalParametersType | null>;
     block: ValueRuleValue<BlockType | null>;
 };
@@ -525,7 +526,7 @@ export const makeMethodDeclarationAssignRule: AssignForValueRule<
         ]);
 
         const valueType = assignMultiClass(declarationTypeClass.getValueType(), [
-            makeStringAssignRule,
+            makeLimitedStringAssignRule(['void']),
             makeTypeRefAssignRule,
             makeErrorAssignRule,
         ]);

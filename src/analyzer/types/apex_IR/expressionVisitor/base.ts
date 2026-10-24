@@ -1,5 +1,18 @@
 import { ErrorTypeClass, CommonTypeClass } from '../commonVisitor';
 
+export class ExpressionValueTypeClass<TName extends string, T> extends CommonTypeClass<TName> {
+    private value: T;
+
+    constructor(type: TName, value: T) {
+        super(type);
+        this.value = value;
+    }
+
+    getValue(): T {
+        return this.value;
+    }
+}
+
 export class ExpressionTypeClass<TName extends string, T> extends CommonTypeClass<TName> {
     private value: T | ErrorTypeClass;
 
@@ -29,11 +42,12 @@ export class ExpressionListBaseTypeClass<TName extends string, T> extends Common
 export class SingleOperatorExpressionTypeClass<
     TName extends string,
     T,
+    TOperator extends string,
 > extends CommonTypeClass<TName> {
-    private operator: string;
+    private operator: TOperator;
     private value: T | ErrorTypeClass;
 
-    constructor(type: TName, value: T | ErrorTypeClass, operator: string) {
+    constructor(type: TName, value: T | ErrorTypeClass, operator: TOperator) {
         super(type);
         this.value = value;
         this.operator = operator;
@@ -43,7 +57,42 @@ export class SingleOperatorExpressionTypeClass<
         return this.value;
     }
 
-    getOperator(): string {
+    getOperator(): TOperator {
+        return this.operator;
+    }
+}
+
+export class DoubleStringOperatorExpressionTypeClass<
+    TName extends string,
+    Tleft,
+    TOperator extends string,
+    Tright,
+> extends CommonTypeClass<TName> {
+    private left: Tleft | ErrorTypeClass;
+    private right: Tright | ErrorTypeClass;
+    private operator: TOperator;
+
+    constructor(
+        type: TName,
+        left: Tleft | ErrorTypeClass,
+        right: Tright | ErrorTypeClass,
+        operator: TOperator,
+    ) {
+        super(type);
+        this.left = left;
+        this.right = right;
+        this.operator = operator;
+    }
+
+    getLeft(): Tleft | ErrorTypeClass {
+        return this.left;
+    }
+
+    getRight(): Tright | ErrorTypeClass {
+        return this.right;
+    }
+
+    getOperator(): TOperator {
         return this.operator;
     }
 }
@@ -119,9 +168,11 @@ export class ConditionExpressionTypeClass<
 }
 
 export type ExpressionAllTypeClass =
+    | ExpressionValueTypeClass<string, unknown>
     | ExpressionTypeClass<string, unknown>
     | ExpressionListBaseTypeClass<string, unknown>
-    | SingleOperatorExpressionTypeClass<string, unknown>
+    | SingleOperatorExpressionTypeClass<string, unknown, string>
+    | DoubleStringOperatorExpressionTypeClass<string, unknown, string, unknown>
     | DoubleOperatorExpressionTypeClass<string, unknown, unknown, unknown>
     | ConditionExpressionTypeClass<string, unknown, unknown, unknown>;
 
@@ -129,9 +180,11 @@ export const isExpressionTypeAll = (
     target: CommonTypeClass<string>,
 ): target is ExpressionAllTypeClass => {
     return (
+        target instanceof ExpressionValueTypeClass ||
         target instanceof ExpressionTypeClass ||
         target instanceof ExpressionListBaseTypeClass ||
         target instanceof SingleOperatorExpressionTypeClass ||
+        target instanceof DoubleStringOperatorExpressionTypeClass ||
         target instanceof DoubleOperatorExpressionTypeClass ||
         target instanceof ConditionExpressionTypeClass
     );

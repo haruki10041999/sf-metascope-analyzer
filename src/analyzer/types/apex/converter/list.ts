@@ -349,7 +349,7 @@ export const makeSelectListAssignRule: AssignForValueRule<SelectListTypeClass, S
 
 export type SoslFieldType = CommonType<'soslField'> & {
     value: ValueRuleValue<SoslIdType | SoqlFunctionType>;
-    func: string | null;
+    func: 'TOLABEL' | 'CONVERT_CURRENCY' | 'FORMAT' | null;
 };
 
 export const isSoslFieldType = (value: unknown): value is SoslFieldType => {

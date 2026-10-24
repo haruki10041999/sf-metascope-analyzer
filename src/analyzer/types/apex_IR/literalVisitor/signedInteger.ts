@@ -4,10 +4,14 @@ import { PrimitiveLiteralTypeClass } from '.';
 
 import { CommonTypeClass } from '../commonVisitor';
 
-export class SignedIntegerTypeClass extends PrimitiveLiteralTypeClass<'signedInteger', string> {
-    private operator: string | null;
+export class SignedIntegerTypeClass extends PrimitiveLiteralTypeClass<
+    'signedInteger',
+    string,
+    'integer'
+> {
+    private operator: '+' | '-' | null;
 
-    private constructor(value: string, operator: string | null) {
+    private constructor(value: string, operator: '+' | '-' | null) {
         super('signedInteger', value, 'integer');
         this.operator = operator;
     }
@@ -17,7 +21,7 @@ export class SignedIntegerTypeClass extends PrimitiveLiteralTypeClass<'signedInt
             throw new Error('値が異常です。SignedIntegerContext: ' + ctx.getText());
         }
 
-        let operator: string | null = null;
+        let operator: '+' | '-' | null = null;
         if (ctx.ADD()) {
             operator = '+';
         } else if (ctx.SUB()) {
@@ -28,7 +32,7 @@ export class SignedIntegerTypeClass extends PrimitiveLiteralTypeClass<'signedInt
         return new SignedIntegerTypeClass(value, operator);
     }
 
-    getOperator(): string | null {
+    getOperator(): '+' | '-' | null {
         return this.operator;
     }
 }

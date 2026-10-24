@@ -49,7 +49,7 @@ import {
 
 import {
     isCommonType,
-    ErrorType,
+    makeLimitedStringAssignRule,
     CommonType,
     AssignForValueRule,
     ValueRuleValue,
@@ -87,7 +87,7 @@ import {
 import { makeCatchClauseAssignRule, CatchClauseType } from './clause';
 
 export type AccessLevelType = CommonType<'accessLevel'> & {
-    value: ValueRuleValue<string>;
+    value: 'SYSTEM' | 'USER';
 };
 
 export const isAccessLevelType = (value: unknown): value is AccessLevelType => {
@@ -98,20 +98,16 @@ export const makeAccessLevelAssignRule: AssignForValueRule<AccessLevelTypeClass,
     {
         isValid: (target: unknown) => isTargetTypeClass(target, isAccessLevelTypeClass),
         construct: (statementTypeClass: AccessLevelTypeClass) => {
-            const value = assignMultiClass(statementTypeClass.getValue(), [
-                makeStringAssignRule,
-                makeErrorAssignRule,
-            ]);
             return {
                 type: statementTypeClass.getType(),
                 sourceInfo: makeSourceInfo(statementTypeClass),
-                value,
+                value: statementTypeClass.getValue(),
             };
         },
     };
 
 export type BreakStatementType = CommonType<'breakStatement'> & {
-    value: ValueRuleValue<string>;
+    value: string;
 };
 
 export const isBreakStatementType = (value: unknown): value is BreakStatementType => {
@@ -124,20 +120,16 @@ export const makeBreakStatementAssignRule: AssignForValueRule<
 > = {
     isValid: (target: unknown) => isTargetTypeClass(target, isBreakStatementTypeClass),
     construct: (statementTypeClass: BreakStatementTypeClass) => {
-        const value = assignMultiClass(statementTypeClass.getValue(), [
-            makeStringAssignRule,
-            makeErrorAssignRule,
-        ]);
         return {
             type: statementTypeClass.getType(),
             sourceInfo: makeSourceInfo(statementTypeClass),
-            value,
+            value: statementTypeClass.getValue(),
         };
     },
 };
 
 export type ContinueStatementType = CommonType<'continueStatement'> & {
-    value: ValueRuleValue<string>;
+    value: string;
 };
 
 export const isContinueStatementType = (value: unknown): value is ContinueStatementType => {
@@ -150,14 +142,10 @@ export const makeContinueStatementAssignRule: AssignForValueRule<
 > = {
     isValid: (target: unknown) => isTargetTypeClass(target, isContinueStatementTypeClass),
     construct: (statementTypeClass: ContinueStatementTypeClass) => {
-        const value = assignMultiClass(statementTypeClass.getValue(), [
-            makeStringAssignRule,
-            makeErrorAssignRule,
-        ]);
         return {
             type: statementTypeClass.getType(),
             sourceInfo: makeSourceInfo(statementTypeClass),
-            value,
+            value: statementTypeClass.getValue(),
         };
     },
 };

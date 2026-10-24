@@ -19,6 +19,7 @@ import {
     assignMultiClass,
     makeErrorAssignRule,
     makeStringAssignRule,
+    makeLimitedStringAssignRule,
     makeSourceInfo,
 } from './commons';
 import {
@@ -83,8 +84,8 @@ export const makeCompilationUnitAssignRule: AssignForValueRule<
 };
 
 export type TriggerCaseType = CommonType<'triggerCase'> & {
-    timing: ValueRuleValue<string>;
-    triggerCaseType: string;
+    timing: 'BEFORE' | 'AFTER';
+    triggerCaseType: 'INSERT' | 'UPDATE' | 'DELETE' | 'UNDELETE';
 };
 
 export const isTriggerCaseType = (value: unknown): value is TriggerCaseType => {
@@ -95,16 +96,11 @@ export const makeTriggerCaseAssignRule: AssignForValueRule<TriggerCaseTypeClass,
     {
         isValid: (target: unknown) => isTargetTypeClass(target, isTriggerCaseTypeClass),
         construct: (unitTypeClass: TriggerCaseTypeClass) => {
-            const timing = assignMultiClass(unitTypeClass.getValue(), [
-                makeStringAssignRule,
-                makeErrorAssignRule,
-            ]);
-            const triggerCaseType = unitTypeClass.getTriggerCaseType();
             return {
                 type: unitTypeClass.getType(),
                 sourceInfo: makeSourceInfo(unitTypeClass),
-                timing,
-                triggerCaseType,
+                timing: unitTypeClass.getValue(),
+                triggerCaseType: unitTypeClass.getTriggerCaseType(),
             };
         },
     };

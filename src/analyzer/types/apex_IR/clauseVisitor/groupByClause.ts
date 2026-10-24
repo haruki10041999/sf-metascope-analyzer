@@ -14,12 +14,12 @@ export class GroupByClauseTypeClass extends ClauseTypeClass<
     'groupByClause',
     FieldGroupByListTypeClass
 > {
-    private mode: string | null = null;
+    private mode: 'ROLLUP' | 'CUBE' | null = null;
     private having: LogicalExpressionTypeClass | ErrorTypeClass | null = null;
 
     private constructor(
         value: FieldGroupByListTypeClass | ErrorTypeClass,
-        mode: string | null,
+        mode: 'ROLLUP' | 'CUBE' | null,
         having: LogicalExpressionTypeClass | ErrorTypeClass | null,
     ) {
         super('groupByClause', value);
@@ -49,7 +49,7 @@ export class GroupByClauseTypeClass extends ClauseTypeClass<
         );
     }
 
-    getMode(): string | null {
+    getMode(): 'ROLLUP' | 'CUBE' | null {
         return this.mode;
     }
 

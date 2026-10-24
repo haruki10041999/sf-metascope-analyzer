@@ -16,6 +16,7 @@ import {
     makeErrorAssignRule,
     makeStringAssignRule,
     makeNullAssignRule,
+    makeLimitedStringAssignRule,
     makeSourceInfo,
 } from './commons';
 import { makeIdAssignRule, IdType } from './id';
@@ -55,7 +56,24 @@ export const makeAnnotationAssignRule: AssignForValueRule<AnnotationTypeClass, A
 };
 
 export type ModifierType = CommonType<'modifier'> & {
-    value: ValueRuleValue<string | AnnotationType>;
+    value: ValueRuleValue<
+        | 'GLOBAL'
+        | 'PUBLIC'
+        | 'PROTECTED'
+        | 'PRIVATE'
+        | 'TRANSIENT'
+        | 'STATIC'
+        | 'ABSTRACT'
+        | 'FINAL'
+        | 'WEBSERVICE'
+        | 'OVERRIDE'
+        | 'VIRTUAL'
+        | 'TESTMETHOD'
+        | 'WITH_SHARING'
+        | 'WITHOUT_SHARING'
+        | 'INHERITED_SHARING'
+        | AnnotationType
+    >;
 };
 
 export const isModifierType = (value: unknown): value is ModifierType => {
@@ -66,7 +84,23 @@ export const makeModifierAssignRule: AssignForValueRule<NormalModifierTypeClass,
     isValid: (target: unknown) => isTargetTypeClass(target, isNormalModifierType),
     construct: (modifierTypeClass: NormalModifierTypeClass) => {
         const value = assignMultiClass(modifierTypeClass.getValue(), [
-            makeStringAssignRule,
+            makeLimitedStringAssignRule([
+                'GLOBAL',
+                'PUBLIC',
+                'PROTECTED',
+                'PRIVATE',
+                'TRANSIENT',
+                'STATIC',
+                'ABSTRACT',
+                'FINAL',
+                'WEBSERVICE',
+                'OVERRIDE',
+                'VIRTUAL',
+                'TESTMETHOD',
+                'WITH_SHARING',
+                'WITHOUT_SHARING',
+                'INHERITED_SHARING',
+            ]),
             makeAnnotationAssignRule,
             makeErrorAssignRule,
         ]);

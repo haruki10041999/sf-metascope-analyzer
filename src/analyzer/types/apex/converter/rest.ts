@@ -120,7 +120,7 @@ export const makeMapCreatorRestAssignRule: AssignForValueRule<
 };
 
 export type NoRestType = CommonType<'noRest'> & {
-    value: ValueRuleValue<string>;
+    value: string;
 };
 
 export const isNoRestType = (value: unknown): value is NoRestType => {
@@ -130,14 +130,10 @@ export const isNoRestType = (value: unknown): value is NoRestType => {
 export const makeNoRestAssignRule: AssignForValueRule<NoRestTypeClass, NoRestType> = {
     isValid: (target: unknown) => isTargetTypeClass(target, isNoRestTypeClass),
     construct: (restTypeClass: NoRestTypeClass) => {
-        const value = assignMultiClass(restTypeClass.getValue(), [
-            makeStringAssignRule,
-            makeErrorAssignRule,
-        ]);
         return {
             type: restTypeClass.getType(),
             sourceInfo: makeSourceInfo(restTypeClass),
-            value,
+            value: restTypeClass.getValue(),
         };
     },
 };

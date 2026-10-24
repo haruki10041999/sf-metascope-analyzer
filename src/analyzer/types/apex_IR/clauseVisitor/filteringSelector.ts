@@ -1,13 +1,16 @@
 import { FilteringSelectorContext } from '@apexdevtools/apex-parser';
 
-import { ClauseTypeClass } from '.';
+import { ClauseValueTypeClass } from '.';
 
 import { ErrorTypeClass, CommonTypeClass } from '../commonVisitor';
 
 type FilteringSelectorField = 'AT' | 'ABOVE' | 'BELOW' | 'ABOVE_OR_BELOW';
 
-export class FilteringSelectorTypeClass extends ClauseTypeClass<'filteringSelector', string> {
-    private constructor(value: string) {
+export class FilteringSelectorTypeClass extends ClauseValueTypeClass<
+    'filteringSelector',
+    FilteringSelectorField
+> {
+    private constructor(value: FilteringSelectorField) {
         super('filteringSelector', value);
     }
 
@@ -16,7 +19,7 @@ export class FilteringSelectorTypeClass extends ClauseTypeClass<'filteringSelect
             throw new Error(`値が異常です。FilteringSelectorContext:${ctx.getText()}`);
         }
 
-        let value: string = '';
+        let value: FilteringSelectorField;
         if (ctx.AT()) {
             value = 'AT';
         } else if (ctx.ABOVE()) {

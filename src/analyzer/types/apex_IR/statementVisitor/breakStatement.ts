@@ -1,10 +1,10 @@
 import { BreakStatementContext } from '@apexdevtools/apex-parser';
 
-import { StatementTypeClass } from '.';
+import { StatementValueTypeClass } from '.';
 
 import { CommonTypeClass } from '../commonVisitor';
 
-export class BreakStatementTypeClass extends StatementTypeClass<'breakStatement', string> {
+export class BreakStatementTypeClass extends StatementValueTypeClass<'breakStatement', string> {
     private constructor(value: string) {
         super('breakStatement', value);
     }

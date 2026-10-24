@@ -24,6 +24,7 @@ import {
     makeStringAssignRule,
     makeNullAssignRule,
     makeErrorAssignRule,
+    makeLimitedStringAssignRule,
     makeSourceInfo,
 } from './commons';
 import { makeTypeArgumentsAssignRule, TypeArgumentsType } from './arguments';
@@ -157,7 +158,7 @@ export const makeQualifiedNameAssignRule: AssignForValueRule<
 };
 
 export type TypeNameType = CommonType<'typeName'> & {
-    value: ValueRuleValue<string | IdType>;
+    value: ValueRuleValue<'list' | 'set' | 'map' | IdType>;
     generic: ValueRuleValue<TypeArgumentsType | null>;
 };
 
@@ -169,7 +170,7 @@ export const makeTypeNameAssignRule: AssignForValueRule<TypeNameTypeClass, TypeN
     isValid: (target: unknown) => isTargetTypeClass(target, isTypeNameTypeClass),
     construct: (nameTypeClass: TypeNameTypeClass) => {
         const value = assignMultiClass(nameTypeClass.getValue(), [
-            makeStringAssignRule,
+            makeLimitedStringAssignRule(['list', 'set', 'map']),
             makeIdAssignRule,
             makeErrorAssignRule,
         ]);

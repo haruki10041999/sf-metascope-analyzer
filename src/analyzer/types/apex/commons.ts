@@ -56,8 +56,8 @@ export type StructureJsonType<TKind extends string> = {
     sourceKeys: { [key: string]: Record<string, string[]> | Record<string, string[]>[] };
     [key: string]:
         | TKind
-        | Omit<JsonType<string>, 'sourceKeys'>
-        | Omit<JsonType<string>, 'sourceKeys'>[]
+        | Omit<JsonType<string> | StructureJsonType<string>, 'sourceKeys'>
+        | Omit<JsonType<string> | StructureJsonType<string>, 'sourceKeys'>[]
         | { [key: string]: Record<string, string[]> | Record<string, string[]>[] };
 };
 

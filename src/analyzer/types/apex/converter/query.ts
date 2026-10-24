@@ -26,6 +26,7 @@ import {
     ValueRuleValue,
     isTargetTypeClass,
     assignMultiClass,
+    makeLimitedStringAssignRule,
     makeErrorAssignRule,
     makeNullAssignRule,
     makeSourceInfo,
@@ -78,7 +79,20 @@ import { makeSoqlFieldsParameterAssignRule, SoqlFieldsParameterType } from './pa
 import { makeLocationValueAssignRule, LocationValueType } from './value';
 
 export type ComparisonOperatorType = CommonType<'comparisonOperator'> & {
-    value: ValueRuleValue<string>;
+    value: ValueRuleValue<
+        | '='
+        | '!='
+        | '<'
+        | '>'
+        | '<='
+        | '>='
+        | '<>'
+        | 'LIKE'
+        | 'IN'
+        | 'NOT IN'
+        | 'INCLUDES'
+        | 'EXCLUDES'
+    >;
 };
 
 export const isComparisonOperatorType = (value: unknown): value is ComparisonOperatorType => {
@@ -92,7 +106,20 @@ export const makeComparisonOperatorAssignRule: AssignForValueRule<
     isValid: (target: unknown) => isTargetTypeClass(target, isComparisonOperatorTypeClass),
     construct: (queryTypeClass: ComparisonOperatorTypeClass) => {
         const value = assignMultiClass(queryTypeClass.getValue(), [
-            makeStringAssignRule,
+            makeLimitedStringAssignRule([
+                '=',
+                '!=',
+                '<',
+                '>',
+                '<=',
+                '>=',
+                '<>',
+                'LIKE',
+                'IN',
+                'NOT IN',
+                'INCLUDES',
+                'EXCLUDES',
+            ]),
             makeErrorAssignRule,
         ]);
         return {
@@ -103,10 +130,62 @@ export const makeComparisonOperatorAssignRule: AssignForValueRule<
     },
 };
 
-export type DateFormulaType = CommonType<'dateFormula'> & {
-    value: ValueRuleValue<string>;
-    param: ValueRuleValue<SignedIntegerType | null>;
-};
+export type DateFormulaType = CommonType<'dateFormula'> &
+    (
+        | {
+              value: ValueRuleValue<
+                  | 'YESTERDAY'
+                  | 'TODAY'
+                  | 'TOMORROW'
+                  | 'LAST_WEEK'
+                  | 'THIS_WEEK'
+                  | 'NEXT_WEEK'
+                  | 'LAST_MONTH'
+                  | 'THIS_MONTH'
+                  | 'NEXT_MONTH'
+                  | 'LAST_90_DAYS'
+                  | 'NEXT_90_DAYS'
+                  | 'THIS_QUARTER'
+                  | 'LAST_QUARTER'
+                  | 'NEXT_QUARTER'
+                  | 'THIS_YEAR'
+                  | 'LAST_YEAR'
+                  | 'NEXT_YEAR'
+                  | 'THIS_FISCAL_QUARTER'
+                  | 'LAST_FISCAL_QUARTER'
+                  | 'NEXT_FISCAL_QUARTER'
+                  | 'THIS_FISCAL_YEAR'
+                  | 'LAST_FISCAL_YEAR'
+                  | 'NEXT_FISCAL_YEAR'
+              >;
+          }
+        | {
+              value: ValueRuleValue<
+                  | 'LAST_N_DAYS_N'
+                  | 'NEXT_N_DAYS_N'
+                  | 'N_DAYS_AGO_N'
+                  | 'NEXT_N_WEEKS_N'
+                  | 'LAST_N_WEEKS_N'
+                  | 'N_WEEKS_AGO_N'
+                  | 'NEXT_N_MONTHS_N'
+                  | 'LAST_N_MONTHS_N'
+                  | 'N_MONTHS_AGO_N'
+                  | 'NEXT_N_QUARTERS_N'
+                  | 'LAST_N_QUARTERS_N'
+                  | 'N_QUARTERS_AGO_N'
+                  | 'NEXT_N_FISCAL_QUARTERS_N'
+                  | 'LAST_N_FISCAL_QUARTERS_N'
+                  | 'N_FISCAL_QUARTERS_AGO_N'
+                  | 'NEXT_N_YEARS_N'
+                  | 'LAST_N_YEARS_N'
+                  | 'N_YEARS_AGO_N'
+                  | 'NEXT_N_FISCAL_YEARS_N'
+                  | 'LAST_N_FISCAL_YEARS_N'
+                  | 'N_FISCAL_YEARS_AGO_N'
+              >;
+              param: ValueRuleValue<SignedIntegerType>;
+          }
+    );
 
 export const isDateFormulaType = (value: unknown): value is DateFormulaType => {
     return isCommonType(value) && value.type === 'dateFormula';
@@ -117,20 +196,99 @@ export const makeDateFormulaAssignRule: AssignForValueRule<DateFormulaTypeClass,
         isValid: (target: unknown) => isTargetTypeClass(target, isDateFormulaTypeClass),
         construct: (queryTypeClass: DateFormulaTypeClass) => {
             const value = assignMultiClass(queryTypeClass.getValue(), [
-                makeStringAssignRule,
+                makeLimitedStringAssignRule([
+                    'YESTERDAY',
+                    'TODAY',
+                    'TOMORROW',
+                    'LAST_WEEK',
+                    'THIS_WEEK',
+                    'NEXT_WEEK',
+                    'LAST_MONTH',
+                    'THIS_MONTH',
+                    'NEXT_MONTH',
+                    'LAST_90_DAYS',
+                    'NEXT_90_DAYS',
+                    'THIS_QUARTER',
+                    'LAST_QUARTER',
+                    'NEXT_QUARTER',
+                    'THIS_YEAR',
+                    'LAST_YEAR',
+                    'NEXT_YEAR',
+                    'THIS_FISCAL_QUARTER',
+                    'LAST_FISCAL_QUARTER',
+                    'NEXT_FISCAL_QUARTER',
+                    'THIS_FISCAL_YEAR',
+                    'LAST_FISCAL_YEAR',
+                    'NEXT_FISCAL_YEAR',
+                ]),
+                makeLimitedStringAssignRule([
+                    'LAST_N_DAYS_N',
+                    'NEXT_N_DAYS_N',
+                    'N_DAYS_AGO_N',
+                    'NEXT_N_WEEKS_N',
+                    'LAST_N_WEEKS_N',
+                    'N_WEEKS_AGO_N',
+                    'NEXT_N_MONTHS_N',
+                    'LAST_N_MONTHS_N',
+                    'N_MONTHS_AGO_N',
+                    'NEXT_N_QUARTERS_N',
+                    'LAST_N_QUARTERS_N',
+                    'N_QUARTERS_AGO_N',
+                    'NEXT_N_FISCAL_QUARTERS_N',
+                    'LAST_N_FISCAL_QUARTERS_N',
+                    'N_FISCAL_QUARTERS_AGO_N',
+                    'NEXT_N_YEARS_N',
+                    'LAST_N_YEARS_N',
+                    'N_YEARS_AGO_N',
+                    'NEXT_N_FISCAL_YEARS_N',
+                    'LAST_N_FISCAL_YEARS_N',
+                    'N_FISCAL_YEARS_AGO_N',
+                ]),
                 makeErrorAssignRule,
             ]);
-            const param = assignMultiClass(queryTypeClass.getParam(), [
-                makeSignedIntegerAssignRule,
-                makeErrorAssignRule,
-                makeNullAssignRule,
-            ]);
-            return {
-                type: queryTypeClass.getType(),
-                sourceInfo: makeSourceInfo(queryTypeClass),
-                value,
-                param,
-            };
+
+            if (
+                value === 'YESTERDAY' ||
+                value === 'TODAY' ||
+                value === 'TOMORROW' ||
+                value === 'LAST_WEEK' ||
+                value === 'THIS_WEEK' ||
+                value === 'NEXT_WEEK' ||
+                value === 'LAST_MONTH' ||
+                value === 'THIS_MONTH' ||
+                value === 'NEXT_MONTH' ||
+                value === 'LAST_90_DAYS' ||
+                value === 'NEXT_90_DAYS' ||
+                value === 'THIS_QUARTER' ||
+                value === 'LAST_QUARTER' ||
+                value === 'NEXT_QUARTER' ||
+                value === 'THIS_YEAR' ||
+                value === 'LAST_YEAR' ||
+                value === 'NEXT_YEAR' ||
+                value === 'THIS_FISCAL_QUARTER' ||
+                value === 'LAST_FISCAL_QUARTER' ||
+                value === 'NEXT_FISCAL_QUARTER' ||
+                value === 'THIS_FISCAL_YEAR' ||
+                value === 'LAST_FISCAL_YEAR' ||
+                value === 'NEXT_FISCAL_YEAR'
+            ) {
+                return {
+                    type: queryTypeClass.getType(),
+                    sourceInfo: makeSourceInfo(queryTypeClass),
+                    value,
+                };
+            } else {
+                const param = assignMultiClass(queryTypeClass.getParam(), [
+                    makeSignedIntegerAssignRule,
+                    makeErrorAssignRule,
+                ]);
+                return {
+                    type: queryTypeClass.getType(),
+                    sourceInfo: makeSourceInfo(queryTypeClass),
+                    value,
+                    param,
+                };
+            }
         },
     };
 
@@ -300,7 +458,7 @@ export const makeQueryAssignRule: AssignForValueRule<NormalQueryTypeClass, Query
 };
 
 export type SearchGroupType = CommonType<'searchGroup'> & {
-    value: ValueRuleValue<string>;
+    value: 'ALL' | 'EMAIL' | 'NAME' | 'PHONE' | 'SIDEBAR';
 };
 
 export const isSearchGroupType = (value: unknown): value is SearchGroupType => {
@@ -311,29 +469,62 @@ export const makeSearchGroupAssignRule: AssignForValueRule<SearchGroupTypeClass,
     {
         isValid: (target: unknown) => isTargetTypeClass(target, isSearchGroupTypeClass),
         construct: (queryTypeClass: SearchGroupTypeClass) => {
-            const value = assignMultiClass(queryTypeClass.getValue(), [
-                makeStringAssignRule,
-                makeErrorAssignRule,
-            ]);
             return {
                 type: queryTypeClass.getType(),
                 sourceInfo: makeSourceInfo(queryTypeClass),
-                value,
+                value: queryTypeClass.getValue(),
             };
         },
     };
 
-export type SoqlFunctionType = CommonType<'soqlFunction'> & {
-    value: ValueRuleValue<string>;
-    param: ValueRuleValue<
-        | ValueRuleValue<LocationValueType | string>[]
-        | FieldNameType
-        | DateFieldNameType
-        | SoqlFunctionType
-        | SoqlFieldsParameterType
-        | null
-    >;
-};
+export type SoqlFunctionType = CommonType<'soqlFunction'> &
+    (
+        | {
+              value:
+                  | 'AVG'
+                  | 'COUNT_DISTINCT'
+                  | 'MIN'
+                  | 'MAX'
+                  | 'SUM'
+                  | 'TOLABEL'
+                  | 'GROUPING'
+                  | 'CONVERT_CURRENCY';
+              param: ValueRuleValue<FieldNameType>;
+          }
+        | {
+              value:
+                  | 'CALENDAR_MONTH'
+                  | 'CALENDAR_QUARTER'
+                  | 'CALENDAR_YEAR'
+                  | 'DAY_IN_MONTH'
+                  | 'DAY_IN_WEEK'
+                  | 'DAY_IN_YEAR'
+                  | 'DAY_ONLY'
+                  | 'FISCAL_MONTH'
+                  | 'FISCAL_QUARTER'
+                  | 'FISCAL_YEAR'
+                  | 'HOUR_IN_DAY'
+                  | 'WEEK_IN_MONTH'
+                  | 'WEEK_IN_YEAR';
+              param: ValueRuleValue<DateFieldNameType>;
+          }
+        | {
+              value: 'COUNT';
+              param: ValueRuleValue<FieldNameType | null>;
+          }
+        | {
+              value: 'FORMAT';
+              param: ValueRuleValue<FieldNameType | SoqlFunctionType>;
+          }
+        | {
+              value: 'FIELDS';
+              param: ValueRuleValue<SoqlFieldsParameterType>;
+          }
+        | {
+              value: 'DISTANCE';
+              param: ValueRuleValue<LocationValueType | string>[];
+          }
+    );
 
 export const isSoqlFunctionType = (value: unknown): value is SoqlFunctionType => {
     return isCommonType(value) && value.type === 'soqlFunction';
@@ -345,45 +536,122 @@ export const makeSoqlFunctionAssignRule: AssignForValueRule<
 > = {
     isValid: (target: unknown) => isTargetTypeClass(target, isSoqlFunctionTypeClass),
     construct: (queryTypeClass: SoqlFunctionTypeClass) => {
-        const value = assignMultiClass(queryTypeClass.getValue(), [
-            makeStringAssignRule,
-            makeErrorAssignRule,
-        ]);
-        const param = assignMultiClass(queryTypeClass.getParam(), [
-            {
-                isValid: (
-                    target: unknown,
-                ): target is (LocationValueTypeClass | ErrorTypeClass | string)[] =>
-                    Array.isArray(target) &&
-                    target.every(
-                        (t) =>
-                            isTargetTypeClass(t, isLocationValueType) ||
-                            typeof t === 'string' ||
-                            isTargetTypeClass(t, isErrorType),
-                    ),
-                construct: (values: (LocationValueTypeClass | ErrorTypeClass | string)[]) => {
-                    return values.map((v) =>
-                        assignMultiClass(v, [
-                            makeStringAssignRule,
-                            makeLocationValueAssignRule,
-                            makeErrorAssignRule,
-                        ]),
-                    );
+        const value = queryTypeClass.getValue();
+
+        if (
+            value === 'AVG' ||
+            value === 'COUNT_DISTINCT' ||
+            value === 'MIN' ||
+            value === 'MAX' ||
+            value === 'SUM' ||
+            value === 'TOLABEL' ||
+            value === 'GROUPING' ||
+            value === 'CONVERT_CURRENCY'
+        ) {
+            const param = assignMultiClass(queryTypeClass.getParam(), [
+                makeFieldNameAssignRule,
+                makeErrorAssignRule,
+            ]);
+
+            return {
+                type: queryTypeClass.getType(),
+                sourceInfo: makeSourceInfo(queryTypeClass),
+                value,
+                param,
+            };
+        } else if (
+            value === 'CALENDAR_MONTH' ||
+            value === 'CALENDAR_QUARTER' ||
+            value === 'CALENDAR_YEAR' ||
+            value === 'DAY_IN_MONTH' ||
+            value === 'DAY_IN_WEEK' ||
+            value === 'DAY_IN_YEAR' ||
+            value === 'DAY_ONLY' ||
+            value === 'FISCAL_MONTH' ||
+            value === 'FISCAL_QUARTER' ||
+            value === 'FISCAL_YEAR' ||
+            value === 'HOUR_IN_DAY' ||
+            value === 'WEEK_IN_MONTH' ||
+            value === 'WEEK_IN_YEAR'
+        ) {
+            const param = assignMultiClass(queryTypeClass.getParam(), [
+                makeDateFieldNameAssignRule,
+                makeErrorAssignRule,
+            ]);
+
+            return {
+                type: queryTypeClass.getType(),
+                sourceInfo: makeSourceInfo(queryTypeClass),
+                value,
+                param,
+            };
+        } else if (value === 'COUNT') {
+            const param = assignMultiClass(queryTypeClass.getParam(), [
+                makeFieldNameAssignRule,
+                makeErrorAssignRule,
+            ]);
+            return {
+                type: queryTypeClass.getType(),
+                sourceInfo: makeSourceInfo(queryTypeClass),
+                value,
+                param,
+            };
+        } else if (value === 'FIELDS') {
+            const param = assignMultiClass(queryTypeClass.getParam(), [
+                makeSoqlFieldsParameterAssignRule,
+                makeErrorAssignRule,
+            ]);
+            return {
+                type: queryTypeClass.getType(),
+                sourceInfo: makeSourceInfo(queryTypeClass),
+                value,
+                param,
+            };
+        } else if (value === 'FORMAT') {
+            const param = assignMultiClass(queryTypeClass.getParam(), [
+                makeFieldNameAssignRule,
+                makeSoqlFunctionAssignRule,
+                makeErrorAssignRule,
+            ]);
+
+            return {
+                type: queryTypeClass.getType(),
+                sourceInfo: makeSourceInfo(queryTypeClass),
+                value,
+                param,
+            };
+        } else {
+            const param = assignMultiClass(queryTypeClass.getParam(), [
+                {
+                    isValid: (
+                        target: unknown,
+                    ): target is (LocationValueTypeClass | ErrorTypeClass | string)[] =>
+                        Array.isArray(target) &&
+                        target.every(
+                            (t) =>
+                                isTargetTypeClass(t, isLocationValueType) ||
+                                typeof t === 'string' ||
+                                isTargetTypeClass(t, isErrorType),
+                        ),
+                    construct: (values: (LocationValueTypeClass | ErrorTypeClass | string)[]) => {
+                        return values.map((v) =>
+                            assignMultiClass(v, [
+                                makeStringAssignRule,
+                                makeLocationValueAssignRule,
+                                makeErrorAssignRule,
+                            ]),
+                        );
+                    },
                 },
-            },
-            makeFieldNameAssignRule,
-            makeDateFieldNameAssignRule,
-            makeSoqlFieldsParameterAssignRule,
-            makeSoqlFunctionAssignRule,
-            makeErrorAssignRule,
-            makeNullAssignRule,
-        ]);
-        return {
-            type: queryTypeClass.getType(),
-            sourceInfo: makeSourceInfo(queryTypeClass),
-            value,
-            param,
-        };
+            ]);
+
+            return {
+                type: queryTypeClass.getType(),
+                sourceInfo: makeSourceInfo(queryTypeClass),
+                value,
+                param,
+            };
+        }
     },
 };
 

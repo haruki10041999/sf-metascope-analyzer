@@ -11,12 +11,12 @@ export class MethodCallTypeClass extends CallTypeClass<
     NormalIdTypeClass | null,
     ExpressionListTypeClass
 > {
-    private reference: string | null = null;
+    private reference: 'this' | 'super' | null = null;
 
     private constructor(
         value: NormalIdTypeClass | ErrorTypeClass | null,
         param: ExpressionListTypeClass | ErrorTypeClass | null,
-        reference: string | null,
+        reference: 'this' | 'super' | null,
     ) {
         super('methodCall', value, param);
         this.reference = reference;
@@ -41,7 +41,7 @@ export class MethodCallTypeClass extends CallTypeClass<
         );
     }
 
-    getReference(): string | null {
+    getReference(): 'this' | 'super' | null {
         return this.reference;
     }
 }

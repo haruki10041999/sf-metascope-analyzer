@@ -1,9 +1,9 @@
 import { ThisPrimaryContext } from '@apexdevtools/apex-parser';
 
-import { PrimaryTypeClass } from '.';
+import { PrimaryValueTypeClass } from '.';
 import { CommonTypeClass } from '../commonVisitor';
 
-export class ThisPrimaryTypeClass extends PrimaryTypeClass<'thisPrimary', string> {
+export class ThisPrimaryTypeClass extends PrimaryValueTypeClass<'thisPrimary', string> {
     private constructor(value: string) {
         super('thisPrimary', value);
     }

@@ -1,7 +1,7 @@
 import { EqualityExpressionContext } from '@apexdevtools/apex-parser';
 
 import {
-    DoubleOperatorExpressionTypeClass,
+    DoubleStringOperatorExpressionTypeClass,
     BasedExpressionTypeClass,
     ExpressionVisitor,
     isBasedExpressionType,
@@ -9,16 +9,18 @@ import {
 
 import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
 
-export class EqualityExpressionTypeClass extends DoubleOperatorExpressionTypeClass<
+type EqualityOperatorType = '===' | '!==' | '==' | '!=' | '<>';
+
+export class EqualityExpressionTypeClass extends DoubleStringOperatorExpressionTypeClass<
     'equalityExpression',
     BasedExpressionTypeClass,
-    string,
+    EqualityOperatorType,
     BasedExpressionTypeClass
 > {
     private constructor(
         left: BasedExpressionTypeClass | ErrorTypeClass,
         right: BasedExpressionTypeClass | ErrorTypeClass,
-        operator: string,
+        operator: EqualityOperatorType,
     ) {
         super('equalityExpression', left, right, operator);
     }
@@ -38,7 +40,7 @@ export class EqualityExpressionTypeClass extends DoubleOperatorExpressionTypeCla
             throw new Error('値が異常です。EqualityExpressionContext: ' + ctx.getText());
         }
 
-        let operator: string;
+        let operator: EqualityOperatorType;
 
         if (ctx.TRIPLEEQUAL()) {
             operator = '===';

@@ -9,7 +9,6 @@ import {
     makeJsonType,
     convertExcludeError,
     mergeRecord,
-    isConvert,
 } from '..//commons';
 
 import {
@@ -90,46 +89,51 @@ export const makeDateFormulaJson = (
     return dateFormulaJson;
 };
 
-export type ValueJson = {
-    type: string;
-} & (
-    | { value: string }
-    | SignedNumberJson
-    | DateFormulaJson
-    | Omit<SubQueryJson, 'type'>
-    | { value: ValueJson[] }
-    | ExpressionJson
-);
+export type ValueJson =
+    | {
+          type: 'string';
+          value: string;
+      }
+    | ({
+          type: 'number';
+      } & SignedNumberJson)
+    | ({
+          type: 'dateFormula';
+      } & DateFormulaJson)
+    | ({
+          type: 'subQuery';
+      } & Omit<SubQueryJson, 'type'>)
+    | { type: 'list'; value: ValueJson[] }
+    | ({ type: 'bind' } & ExpressionJson);
+
 export const isValueJson = typia.createIs<ValueJson>();
 
 export const makeValueJson = (target: ConvertExcludeError<ValueType>): ValueJson => {
-    const type = target.valueType;
-
     const value = target.value;
 
     if (typeof value === 'string') {
         return {
-            type: type,
+            type: 'string',
             value: value,
         };
-    } else if (isConvert<DateFormulaType>(value)) {
+    } else if (value.type === 'dateFormula') {
         return {
             type: type,
             ...makeDateFormulaJson(value),
         };
-    } else if (isConvert<SignedIntegerType>(value)) {
+    } else if (value.type === 'signedNumber') {
         return {
             type: type,
             ...makeSignedNumberJson(value),
         };
-    } else if (isConvert<SubQueryType>(value)) {
+    } else if (value.type === 'subQuery') {
         const subQueryJson = makeSubQueryJson(value);
         const { type, ...content } = subQueryJson;
         return {
             type: type,
             ...content,
         };
-    } else if (isConvert<ValueListType>(value)) {
+    } else if (value.type === 'valueList') {
         return {
             type: type,
             value: value.value.map((v) => makeValueJson(v)),
@@ -163,7 +167,7 @@ export const makeSingleConditionJson = (
     const operator = makeComparisonOperatorJson(target.operator);
     const value = makeValueJson(target.right);
 
-    if (isConvert<FieldNameType>(field)) {
+    if (value.type === 'fieldName') {
         const fieldValue = field.value.map((v) => v.value.value);
 
         return {

@@ -1,7 +1,7 @@
 import { LogAndExpressionContext } from '@apexdevtools/apex-parser';
 
 import {
-    DoubleOperatorExpressionTypeClass,
+    DoubleStringOperatorExpressionTypeClass,
     BasedExpressionTypeClass,
     ExpressionVisitor,
     isBasedExpressionType,
@@ -9,10 +9,10 @@ import {
 
 import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
 
-export class LogAndExpressionTypeClass extends DoubleOperatorExpressionTypeClass<
+export class LogAndExpressionTypeClass extends DoubleStringOperatorExpressionTypeClass<
     'logAndExpression',
     BasedExpressionTypeClass,
-    string,
+    '&&',
     BasedExpressionTypeClass
 > {
     private constructor(

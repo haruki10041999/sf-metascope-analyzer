@@ -28,6 +28,7 @@ import {
     makeNullAssignRule,
     makeSourceInfo,
     makeStringAssignRule,
+    makeLimitedStringAssignRule,
 } from './commons';
 import { makeBoundExpressionAssignRule, BoundExpressionType } from './expression';
 import { makeIdAssignRule, IdType } from './id';
@@ -104,8 +105,9 @@ export const makeElementValueAssignRule: AssignForValueRule<
 };
 
 export type LocationValueType = CommonType<'locationValue'> & {
-    value: ValueRuleValue<FieldNameType | BoundExpressionType | null>;
-    coordinates: ValueRuleValue<ValueRuleValue<CoordinateValueType>[]> | null;
+    value: ValueRuleValue<
+        FieldNameType | BoundExpressionType | ValueRuleValue<CoordinateValueType>[]
+    >;
 };
 
 export const isLocationValueType = (value: unknown): value is LocationValueType => {
@@ -119,38 +121,77 @@ export const makeLocationValueAssignRule: AssignForValueRule<
     isValid: (target: unknown) => isTargetTypeClass(target, isLocationValueTypeClass),
     construct: (valueTypeClass: LocationValueTypeClass) => {
         const value = assignMultiClass(valueTypeClass.getValue(), [
+            {
+                isValid: (
+                    target: unknown,
+                ): target is (CoordinateValueTypeClass | ErrorTypeClass)[] =>
+                    Array.isArray(target) &&
+                    target.every(
+                        (t) =>
+                            isTargetTypeClass(t, isCoordinateValueTypeClass) ||
+                            isTargetTypeClass(t, isErrorType),
+                    ),
+                construct: (values: (CoordinateValueTypeClass | ErrorTypeClass)[]) => {
+                    return values.map((v) => {
+                        return assignMultiClass(v, [
+                            makeCoordinateValueAssignRule,
+                            makeErrorAssignRule,
+                        ]);
+                    });
+                },
+            },
             makeFieldNameAssignRule,
             makeBoundExpressionAssignRule,
             makeErrorAssignRule,
-            makeNullAssignRule,
         ]);
-        const coordinatesTypeClass = valueTypeClass.getCoordinates();
-        let coordinates: ValueRuleValue<ValueRuleValue<CoordinateValueType>[]> | null = null;
-        if (coordinatesTypeClass) {
-            coordinates = coordinatesTypeClass.map((v) =>
-                assignMultiClass(v, [makeCoordinateValueAssignRule, makeErrorAssignRule]),
-            );
-        }
+
         return {
             type: valueTypeClass.getType(),
             sourceInfo: makeSourceInfo(valueTypeClass),
             value,
-            coordinates,
         };
     },
 };
 
-export type ValueType = CommonType<'value'> & {
-    value: ValueRuleValue<
-        | string
-        | SignedNumberType
-        | DateFormulaType
-        | SubQueryType
-        | ValueListType
-        | BoundExpressionType
-    >;
-    valueType: string;
-};
+export type ValueType = CommonType<'value'> &
+    (
+        | {
+              value: string;
+              valueType:
+                  | 'null'
+                  | 'boolean'
+                  | 'string'
+                  | 'integer'
+                  | 'longText'
+                  | 'date'
+                  | 'time'
+                  | 'dateTime'
+                  | 'currency';
+          }
+        | {
+              value: SignedNumberType;
+              valueType: 'number';
+          }
+        | {
+              value: DateFormulaType;
+              valueType: 'dateFormula';
+          }
+        | {
+              value: SubQueryType;
+              valueType: 'subQuery';
+          }
+        | {
+              value: ValueListType;
+              valueType: 'list';
+          }
+        | {
+              value: BoundExpressionType;
+              valueType: 'bind';
+          }
+        | {
+              value: ErrorType;
+          }
+    );
 
 export const isValueType = (value: unknown): value is ValueType => {
     return isCommonType(value) && value.type === 'value';
@@ -168,20 +209,84 @@ export const makeValueAssignRule: AssignForValueRule<NormalValueTypeClass, Value
             makeBoundExpressionAssignRule,
             makeErrorAssignRule,
         ]);
-        const valueType = valueTypeClass.getValueType();
-        return {
-            type: valueTypeClass.getType(),
-            sourceInfo: makeSourceInfo(valueTypeClass),
-            value,
-            valueType,
-        };
+
+        if (typeof value === 'string') {
+            const valueType = valueTypeClass.getValueType() as
+                | 'null'
+                | 'boolean'
+                | 'string'
+                | 'integer'
+                | 'longText'
+                | 'date'
+                | 'time'
+                | 'dateTime'
+                | 'currency';
+            return {
+                type: valueTypeClass.getType(),
+                sourceInfo: makeSourceInfo(valueTypeClass),
+                value,
+                valueType,
+            };
+        } else if (value.type === 'signedNumber') {
+            const valueType = valueTypeClass.getValueType() as 'number';
+            return {
+                type: valueTypeClass.getType(),
+                sourceInfo: makeSourceInfo(valueTypeClass),
+                value,
+                valueType,
+            };
+        } else if (value.type === 'dateFormula') {
+            const valueType = valueTypeClass.getValueType() as 'dateFormula';
+            return {
+                type: valueTypeClass.getType(),
+                sourceInfo: makeSourceInfo(valueTypeClass),
+                value,
+                valueType,
+            };
+        } else if (value.type === 'subQuery') {
+            const valueType = valueTypeClass.getValueType() as 'subQuery';
+            return {
+                type: valueTypeClass.getType(),
+                sourceInfo: makeSourceInfo(valueTypeClass),
+                value,
+                valueType,
+            };
+        } else if (value.type === 'valueList') {
+            const valueType = valueTypeClass.getValueType() as 'list';
+            return {
+                type: valueTypeClass.getType(),
+                sourceInfo: makeSourceInfo(valueTypeClass),
+                value,
+                valueType,
+            };
+        } else if (value.type === 'boundExpression') {
+            const valueType = valueTypeClass.getValueType() as 'bind';
+            return {
+                type: valueTypeClass.getType(),
+                sourceInfo: makeSourceInfo(valueTypeClass),
+                value,
+                valueType,
+            };
+        } else {
+            return {
+                type: valueTypeClass.getType(),
+                sourceInfo: makeSourceInfo(valueTypeClass),
+                value,
+            };
+        }
     },
 };
 
-export type WhenValueType = CommonType<'whenValue'> & {
-    value: ValueRuleValue<string | IdType | ValueRuleValue<WhenLiteralType>[]>;
-    valueType: ValueRuleValue<TypeRefType | null>;
-};
+export type WhenValueType = CommonType<'whenValue'> &
+    (
+        | {
+              value: ValueRuleValue<'else' | ValueRuleValue<WhenLiteralType>[]>;
+          }
+        | {
+              value: ValueRuleValue<IdType>;
+              valueType: ValueRuleValue<TypeRefType>;
+          }
+    );
 
 export const isWhenValueType = (value: unknown): value is WhenValueType => {
     return isCommonType(value) && value.type === 'whenValue';
@@ -191,7 +296,7 @@ export const makeWhenValueAssignRule: AssignForValueRule<WhenValueTypeClass, Whe
     isValid: (target: unknown) => isTargetTypeClass(target, isWhenValueTypeClass),
     construct: (valueTypeClass: WhenValueTypeClass) => {
         const value = assignMultiClass(valueTypeClass.getValue(), [
-            makeStringAssignRule,
+            makeLimitedStringAssignRule(['else']),
             {
                 isValid: (target: unknown): target is (WhenLiteralTypeClass | ErrorTypeClass)[] =>
                     Array.isArray(target) &&
@@ -209,16 +314,24 @@ export const makeWhenValueAssignRule: AssignForValueRule<WhenValueTypeClass, Whe
             makeIdAssignRule,
             makeErrorAssignRule,
         ]);
-        const valueType = assignMultiClass(valueTypeClass.getValueType(), [
-            makeTypeRefAssignRule,
-            makeErrorAssignRule,
-            makeNullAssignRule,
-        ]);
-        return {
-            type: valueTypeClass.getType(),
-            sourceInfo: makeSourceInfo(valueTypeClass),
-            value,
-            valueType,
-        };
+
+        if (isCommonType(value) && value.type === 'id') {
+            const valueType = assignMultiClass(valueTypeClass.getValueType(), [
+                makeTypeRefAssignRule,
+                makeErrorAssignRule,
+            ]);
+            return {
+                type: valueTypeClass.getType(),
+                sourceInfo: makeSourceInfo(valueTypeClass),
+                value,
+                valueType,
+            };
+        } else {
+            return {
+                type: valueTypeClass.getType(),
+                sourceInfo: makeSourceInfo(valueTypeClass),
+                value,
+            };
+        }
     },
 };

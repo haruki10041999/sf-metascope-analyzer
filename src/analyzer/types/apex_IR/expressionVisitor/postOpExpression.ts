@@ -11,9 +11,10 @@ import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor'
 
 export class PostOpExpressionTypeClass extends SingleOperatorExpressionTypeClass<
     'postOpExpression',
-    BasedExpressionTypeClass
+    BasedExpressionTypeClass,
+    '++' | '--'
 > {
-    private constructor(value: BasedExpressionTypeClass | ErrorTypeClass, operator: string) {
+    private constructor(value: BasedExpressionTypeClass | ErrorTypeClass, operator: '++' | '--') {
         super('postOpExpression', value, operator);
     }
 

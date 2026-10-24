@@ -13,11 +13,11 @@ export class LogicalExpressionTypeClass extends ExpressionListBaseTypeClass<
     'logicalExpression',
     ConditionalExpressionTypeClass
 > {
-    private operator: string | null = null;
+    private operator: 'AND' | 'OR' | 'NOT' | null = null;
 
     private constructor(
         value: (ConditionalExpressionTypeClass | ErrorTypeClass)[],
-        operator: string | null,
+        operator: 'AND' | 'OR' | 'NOT' | null,
     ) {
         super('logicalExpression', value);
         this.operator = operator;
@@ -49,7 +49,7 @@ export class LogicalExpressionTypeClass extends ExpressionListBaseTypeClass<
         );
     }
 
-    getOperator(): string | null {
+    getOperator(): 'AND' | 'OR' | 'NOT' | null {
         return this.operator;
     }
 }

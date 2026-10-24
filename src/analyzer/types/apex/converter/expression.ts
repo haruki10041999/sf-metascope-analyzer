@@ -79,6 +79,7 @@ import {
     assignMultiClass,
     makeErrorAssignRule,
     makeStringAssignRule,
+    makeLimitedStringAssignRule,
     makeNullAssignRule,
     makeSourceInfo,
 } from './commons';
@@ -136,7 +137,7 @@ export const makeArrayExpressionAssignRule: AssignForValueRule<
 
 export type Arth1ExpressionType = CommonType<'arth1Expression'> & {
     left: ValueRuleValue<BaseExpressionType>;
-    operator: ValueRuleValue<string>;
+    operator: '*' | '/';
     right: ValueRuleValue<BaseExpressionType>;
 };
 
@@ -158,10 +159,7 @@ export const makeArth1ExpressionAssignRule: AssignForValueRule<
             ...makeBaseExpressionAssignRules,
             makeErrorAssignRule,
         ]);
-        const operator = assignMultiClass(expressionTypeClass.getOperator(), [
-            makeStringAssignRule,
-            makeErrorAssignRule,
-        ]);
+        const operator = expressionTypeClass.getOperator();
         return {
             type: expressionTypeClass.getType(),
             sourceInfo: makeSourceInfo(expressionTypeClass),
@@ -174,7 +172,7 @@ export const makeArth1ExpressionAssignRule: AssignForValueRule<
 
 export type Arth2ExpressionType = CommonType<'arth2Expression'> & {
     left: ValueRuleValue<BaseExpressionType>;
-    operator: ValueRuleValue<string>;
+    operator: '+' | '-';
     right: ValueRuleValue<BaseExpressionType>;
 };
 
@@ -196,10 +194,8 @@ export const makeArth2ExpressionAssignRule: AssignForValueRule<
             ...makeBaseExpressionAssignRules,
             makeErrorAssignRule,
         ]);
-        const operator = assignMultiClass(expressionTypeClass.getOperator(), [
-            makeStringAssignRule,
-            makeErrorAssignRule,
-        ]);
+        const operator = expressionTypeClass.getOperator();
+
         return {
             type: expressionTypeClass.getType(),
             sourceInfo: makeSourceInfo(expressionTypeClass),
@@ -212,7 +208,9 @@ export const makeArth2ExpressionAssignRule: AssignForValueRule<
 
 export type AssignExpressionType = CommonType<'assignExpression'> & {
     left: ValueRuleValue<BaseExpressionType>;
-    operator: ValueRuleValue<string>;
+    operator: ValueRuleValue<
+        '=' | '+=' | '-=' | '*=' | '/=' | '&=' | '|=' | '^=' | '>>=' | '>>>=' | '<<='
+    >;
     right: ValueRuleValue<BaseExpressionType>;
 };
 
@@ -235,7 +233,19 @@ export const makeAssignExpressionAssignRule: AssignForValueRule<
             makeErrorAssignRule,
         ]);
         const operator = assignMultiClass(expressionTypeClass.getOperator(), [
-            makeStringAssignRule,
+            makeLimitedStringAssignRule([
+                '=',
+                '+=',
+                '-=',
+                '*=',
+                '/=',
+                '&=',
+                '|=',
+                '^=',
+                '>>=',
+                '>>>=',
+                '<<=',
+            ]),
             makeErrorAssignRule,
         ]);
         return {
@@ -250,7 +260,7 @@ export const makeAssignExpressionAssignRule: AssignForValueRule<
 
 export type BitAndExpressionType = CommonType<'bitAndExpression'> & {
     left: ValueRuleValue<BaseExpressionType>;
-    operator: ValueRuleValue<string>;
+    operator: '&';
     right: ValueRuleValue<BaseExpressionType>;
 };
 
@@ -272,10 +282,7 @@ export const makeBitAndExpressionAssignRule: AssignForValueRule<
             ...makeBaseExpressionAssignRules,
             makeErrorAssignRule,
         ]);
-        const operator = assignMultiClass(expressionTypeClass.getOperator(), [
-            makeStringAssignRule,
-            makeErrorAssignRule,
-        ]);
+        const operator = expressionTypeClass.getOperator();
         return {
             type: expressionTypeClass.getType(),
             sourceInfo: makeSourceInfo(expressionTypeClass),
@@ -288,7 +295,7 @@ export const makeBitAndExpressionAssignRule: AssignForValueRule<
 
 export type BitExpressionType = CommonType<'bitExpression'> & {
     left: ValueRuleValue<BaseExpressionType>;
-    operator: ValueRuleValue<string>;
+    operator: string;
     right: ValueRuleValue<BaseExpressionType>;
 };
 
@@ -310,10 +317,7 @@ export const makeBitExpressionAssignRule: AssignForValueRule<
             ...makeBaseExpressionAssignRules,
             makeErrorAssignRule,
         ]);
-        const operator = assignMultiClass(expressionTypeClass.getOperator(), [
-            makeStringAssignRule,
-            makeErrorAssignRule,
-        ]);
+        const operator = expressionTypeClass.getOperator();
         return {
             type: expressionTypeClass.getType(),
             sourceInfo: makeSourceInfo(expressionTypeClass),
@@ -326,7 +330,7 @@ export const makeBitExpressionAssignRule: AssignForValueRule<
 
 export type BitNotExpressionType = CommonType<'bitNotExpression'> & {
     left: ValueRuleValue<BaseExpressionType>;
-    operator: ValueRuleValue<string>;
+    operator: '^';
     right: ValueRuleValue<BaseExpressionType>;
 };
 
@@ -348,10 +352,7 @@ export const makeBitNotExpressionAssignRule: AssignForValueRule<
             ...makeBaseExpressionAssignRules,
             makeErrorAssignRule,
         ]);
-        const operator = assignMultiClass(expressionTypeClass.getOperator(), [
-            makeStringAssignRule,
-            makeErrorAssignRule,
-        ]);
+        const operator = expressionTypeClass.getOperator();
         return {
             type: expressionTypeClass.getType(),
             sourceInfo: makeSourceInfo(expressionTypeClass),
@@ -364,7 +365,7 @@ export const makeBitNotExpressionAssignRule: AssignForValueRule<
 
 export type BitOrExpressionType = CommonType<'bitOrExpression'> & {
     left: ValueRuleValue<BaseExpressionType>;
-    operator: ValueRuleValue<string>;
+    operator: '|';
     right: ValueRuleValue<BaseExpressionType>;
 };
 
@@ -386,10 +387,8 @@ export const makeBitOrExpressionAssignRule: AssignForValueRule<
             ...makeBaseExpressionAssignRules,
             makeErrorAssignRule,
         ]);
-        const operator = assignMultiClass(expressionTypeClass.getOperator(), [
-            makeStringAssignRule,
-            makeErrorAssignRule,
-        ]);
+        const operator = expressionTypeClass.getOperator();
+
         return {
             type: expressionTypeClass.getType(),
             sourceInfo: makeSourceInfo(expressionTypeClass),
@@ -461,7 +460,7 @@ export const makeCastExpressionAssignRule: AssignForValueRule<
 
 export type CmpExpressionType = CommonType<'cmpExpression'> & {
     left: ValueRuleValue<BaseExpressionType>;
-    operator: ValueRuleValue<string>;
+    operator: string;
     right: ValueRuleValue<BaseExpressionType>;
 };
 
@@ -483,10 +482,8 @@ export const makeCmpExpressionAssignRule: AssignForValueRule<
             ...makeBaseExpressionAssignRules,
             makeErrorAssignRule,
         ]);
-        const operator = assignMultiClass(expressionTypeClass.getOperator(), [
-            makeStringAssignRule,
-            makeErrorAssignRule,
-        ]);
+        const operator = expressionTypeClass.getOperator();
+
         return {
             type: expressionTypeClass.getType(),
             sourceInfo: makeSourceInfo(expressionTypeClass),
@@ -499,7 +496,7 @@ export const makeCmpExpressionAssignRule: AssignForValueRule<
 
 export type CoalExpressionType = CommonType<'coalExpression'> & {
     left: ValueRuleValue<BaseExpressionType>;
-    operator: ValueRuleValue<string>;
+    operator: '??';
     right: ValueRuleValue<BaseExpressionType>;
 };
 
@@ -521,10 +518,8 @@ export const makeCoalExpressionAssignRule: AssignForValueRule<
             ...makeBaseExpressionAssignRules,
             makeErrorAssignRule,
         ]);
-        const operator = assignMultiClass(expressionTypeClass.getOperator(), [
-            makeStringAssignRule,
-            makeErrorAssignRule,
-        ]);
+        const operator = expressionTypeClass.getOperator();
+
         return {
             type: expressionTypeClass.getType(),
             sourceInfo: makeSourceInfo(expressionTypeClass),
@@ -603,7 +598,7 @@ export const makeConditionalExpressionAssignRule: AssignForValueRule<
 
 export type DotExpressionType = CommonType<'dotExpression'> & {
     left: ValueRuleValue<BaseExpressionType>;
-    operator: ValueRuleValue<string>;
+    operator: '.' | '?.';
     right: ValueRuleValue<AnyIdType | DotMethodCallType>;
 };
 
@@ -621,10 +616,8 @@ export const makeDotExpressionAssignRule: AssignForValueRule<
             ...makeBaseExpressionAssignRules,
             makeErrorAssignRule,
         ]);
-        const operator = assignMultiClass(expressiontypeClass.getOperator(), [
-            makeStringAssignRule,
-            makeErrorAssignRule,
-        ]);
+        const operator = expressiontypeClass.getOperator();
+
         const right = assignMultiClass(expressiontypeClass.getRight(), [
             makeAnyIdAssignRule,
             makeDotMethodCallAssignRule,
@@ -642,7 +635,7 @@ export const makeDotExpressionAssignRule: AssignForValueRule<
 
 export type EqualityExpressionType = CommonType<'equalityExpression'> & {
     left: ValueRuleValue<BaseExpressionType>;
-    operator: ValueRuleValue<string>;
+    operator: '===' | '!==' | '==' | '!=' | '<>';
     right: ValueRuleValue<BaseExpressionType>;
 };
 
@@ -664,10 +657,8 @@ export const makeEqualityExpressionAssignRule: AssignForValueRule<
             ...makeBaseExpressionAssignRules,
             makeErrorAssignRule,
         ]);
-        const operator = assignMultiClass(expressionTypeClass.getOperator(), [
-            makeStringAssignRule,
-            makeErrorAssignRule,
-        ]);
+        const operator = expressionTypeClass.getOperator();
+
         return {
             type: expressionTypeClass.getType(),
             sourceInfo: makeSourceInfo(expressionTypeClass),
@@ -746,7 +737,7 @@ export const makeFilteringExpressionAssignRule: AssignForValueRule<
 
 export type InstanceOfExpressionType = CommonType<'instanceOfExpression'> & {
     left: ValueRuleValue<BaseExpressionType>;
-    operator: ValueRuleValue<string>;
+    operator: 'instanceof';
     right: ValueRuleValue<TypeRefType>;
 };
 
@@ -768,10 +759,8 @@ export const makeInstanceOfExpressionAssignRule: AssignForValueRule<
             makeTypeRefAssignRule,
             makeErrorAssignRule,
         ]);
-        const operator = assignMultiClass(expressionTypeClass.getOperator(), [
-            makeStringAssignRule,
-            makeErrorAssignRule,
-        ]);
+        const operator = expressionTypeClass.getOperator();
+
         return {
             type: expressionTypeClass.getType(),
             sourceInfo: makeSourceInfo(expressionTypeClass),
@@ -784,7 +773,7 @@ export const makeInstanceOfExpressionAssignRule: AssignForValueRule<
 
 export type LogAndExpressionType = CommonType<'logAndExpression'> & {
     left: ValueRuleValue<BaseExpressionType>;
-    operator: ValueRuleValue<string>;
+    operator: '&&';
     right: ValueRuleValue<BaseExpressionType>;
 };
 
@@ -806,10 +795,8 @@ export const makeLogAndExpressionAssignRule: AssignForValueRule<
             ...makeBaseExpressionAssignRules,
             makeErrorAssignRule,
         ]);
-        const operator = assignMultiClass(expressionTypeClass.getOperator(), [
-            makeStringAssignRule,
-            makeErrorAssignRule,
-        ]);
+        const operator = expressionTypeClass.getOperator();
+
         return {
             type: expressionTypeClass.getType(),
             sourceInfo: makeSourceInfo(expressionTypeClass),
@@ -822,7 +809,7 @@ export const makeLogAndExpressionAssignRule: AssignForValueRule<
 
 export type LogicalExpressionType = CommonType<'logicalExpression'> & {
     value: ValueRuleValue<ConditionalExpressionType>[];
-    operator: string | null;
+    operator: 'AND' | 'OR' | 'NOT' | null;
 };
 
 export const isLogicalExpressionType = (value: unknown): value is LogicalExpressionType => {
@@ -852,7 +839,7 @@ export const makeLogicalExpressionAssignRule: AssignForValueRule<
 
 export type LogOrExpressionType = CommonType<'logOrExpression'> & {
     left: ValueRuleValue<BaseExpressionType>;
-    operator: ValueRuleValue<string>;
+    operator: '||';
     right: ValueRuleValue<BaseExpressionType>;
 };
 
@@ -874,10 +861,8 @@ export const makeLogOrExpressionAssignRule: AssignForValueRule<
             ...makeBaseExpressionAssignRules,
             makeErrorAssignRule,
         ]);
-        const operator = assignMultiClass(expressionTypeClass.getOperator(), [
-            makeStringAssignRule,
-            makeErrorAssignRule,
-        ]);
+        const operator = expressionTypeClass.getOperator();
+
         return {
             type: expressionTypeClass.getType(),
             sourceInfo: makeSourceInfo(expressionTypeClass),
@@ -916,7 +901,7 @@ export const makeMethodCallExpressionAssignRule: AssignForValueRule<
 
 export type NegExpressionType = CommonType<'negExpression'> & {
     value: ValueRuleValue<BaseExpressionType>;
-    operator: ValueRuleValue<string>;
+    operator: '~' | '!';
 };
 
 export const isNegExpressionType = (value: unknown): value is NegExpressionType => {
@@ -933,10 +918,8 @@ export const makeNegExpressionAssignRule: AssignForValueRule<
             ...makeBaseExpressionAssignRules,
             makeErrorAssignRule,
         ]);
-        const operator = assignMultiClass(expressionTypeClass.getOperator(), [
-            makeStringAssignRule,
-            makeErrorAssignRule,
-        ]);
+        const operator = expressionTypeClass.getOperator();
+
         return {
             type: expressionTypeClass.getType(),
             sourceInfo: makeSourceInfo(expressionTypeClass),
@@ -973,7 +956,7 @@ export const makeNewExpressionAssignRule: AssignForValueRule<
 };
 
 export type ExpressionType = CommonType<'expression'> & {
-    value: ValueRuleValue<string>;
+    value: string;
 };
 
 export const isExpressionType = (value: unknown): value is ExpressionType => {
@@ -986,14 +969,10 @@ export const makeExpressionAssignRule: AssignForValueRule<
 > = {
     isValid: (target: unknown) => isTargetTypeClass(target, isNormalExpressionTypeClass),
     construct: (expressionTypeClass: NormalExpressionTypeClass) => {
-        const value = assignMultiClass(expressionTypeClass.getValue(), [
-            makeStringAssignRule,
-            makeErrorAssignRule,
-        ]);
         return {
             type: expressionTypeClass.getType(),
             sourceInfo: makeSourceInfo(expressionTypeClass),
-            value,
+            value: expressionTypeClass.getValue(),
         };
     },
 };
@@ -1026,7 +1005,7 @@ export const makeParExpressionAssignRule: AssignForValueRule<
 
 export type PostOpExpressionType = CommonType<'postOpExpression'> & {
     value: ValueRuleValue<BaseExpressionType>;
-    operator: ValueRuleValue<string>;
+    operator: '++' | '--';
 };
 
 export const isPostOpExpressionType = (value: unknown): value is PostOpExpressionType => {
@@ -1043,10 +1022,8 @@ export const makePostOpExpressionAssignRule: AssignForValueRule<
             ...makeBaseExpressionAssignRules,
             makeErrorAssignRule,
         ]);
-        const operator = assignMultiClass(expressionTypeClass.getOperator(), [
-            makeStringAssignRule,
-            makeErrorAssignRule,
-        ]);
+        const operator = expressionTypeClass.getOperator();
+
         return {
             type: expressionTypeClass.getType(),
             sourceInfo: makeSourceInfo(expressionTypeClass),
@@ -1058,7 +1035,7 @@ export const makePostOpExpressionAssignRule: AssignForValueRule<
 
 export type PreOpExpressionType = CommonType<'preOpExpression'> & {
     value: ValueRuleValue<BaseExpressionType>;
-    operator: ValueRuleValue<string>;
+    operator: '++' | '--' | '+' | '-';
 };
 
 export const isPreOpExpressionType = (value: unknown): value is PreOpExpressionType => {
@@ -1075,10 +1052,8 @@ export const makePreOpExpressionAssignRule: AssignForValueRule<
             ...makeBaseExpressionAssignRules,
             makeErrorAssignRule,
         ]);
-        const operator = assignMultiClass(expressionTypeClass.getOperator(), [
-            makeStringAssignRule,
-            makeErrorAssignRule,
-        ]);
+        const operator = expressionTypeClass.getOperator();
+
         return {
             type: expressionTypeClass.getType(),
             sourceInfo: makeSourceInfo(expressionTypeClass),
@@ -1212,7 +1187,7 @@ export const makeWhereFieldExpressionAssignRule: AssignForValueRule<
 
 export type WhereLogicalExpressionType = CommonType<'whereLogicalExpression'> & {
     value: ValueRuleValue<WhereConditionalExpressionType>[];
-    operator: string | null;
+    operator: 'AND' | 'OR' | 'NOT' | null;
 };
 
 export const isWhereLogicalExpressionType = (

@@ -9,16 +9,19 @@ import {
 
 import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
 
+type AssignOperatorType =
+    '=' | '+=' | '-=' | '*=' | '/=' | '&=' | '|=' | '^=' | '>>=' | '>>>=' | '<<=';
+
 export class AssignExpressionTypeClass extends DoubleOperatorExpressionTypeClass<
     'assignExpression',
     BasedExpressionTypeClass,
-    string,
+    AssignOperatorType,
     BasedExpressionTypeClass
 > {
     private constructor(
         left: BasedExpressionTypeClass | ErrorTypeClass,
         right: BasedExpressionTypeClass | ErrorTypeClass,
-        operator: string,
+        operator: AssignOperatorType,
     ) {
         super('assignExpression', left, right, operator);
     }
@@ -42,48 +45,28 @@ export class AssignExpressionTypeClass extends DoubleOperatorExpressionTypeClass
             throw new Error('値が異常です。AssignExpressionContext: ' + ctx.getText());
         }
 
-        let operator = '';
+        let operator: AssignOperatorType;
         if (ctx.ASSIGN()) {
             operator = '=';
-        }
-
-        if (ctx.ADD_ASSIGN()) {
+        } else if (ctx.ADD_ASSIGN()) {
             operator = '+=';
-        }
-
-        if (ctx.SUB_ASSIGN()) {
+        } else if (ctx.SUB_ASSIGN()) {
             operator = '-=';
-        }
-
-        if (ctx.MUL_ASSIGN()) {
+        } else if (ctx.MUL_ASSIGN()) {
             operator = '*=';
-        }
-
-        if (ctx.DIV_ASSIGN()) {
+        } else if (ctx.DIV_ASSIGN()) {
             operator = '/=';
-        }
-
-        if (ctx.AND_ASSIGN()) {
+        } else if (ctx.AND_ASSIGN()) {
             operator = '&=';
-        }
-
-        if (ctx.OR_ASSIGN()) {
+        } else if (ctx.OR_ASSIGN()) {
             operator = '|=';
-        }
-
-        if (ctx.XOR_ASSIGN()) {
+        } else if (ctx.XOR_ASSIGN()) {
             operator = '^=';
-        }
-
-        if (ctx.RSHIFT_ASSIGN()) {
+        } else if (ctx.RSHIFT_ASSIGN()) {
             operator = '>>=';
-        }
-
-        if (ctx.URSHIFT_ASSIGN()) {
+        } else if (ctx.URSHIFT_ASSIGN()) {
             operator = '>>>=';
-        }
-
-        if (ctx.LSHIFT_ASSIGN()) {
+        } else {
             operator = '<<=';
         }
 

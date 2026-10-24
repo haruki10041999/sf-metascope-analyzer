@@ -10,12 +10,12 @@ export class FieldOrderTypeClass extends ClauseTypeClass<
     'fieldOrder',
     FieldNameTypeClass | SoqlFunctionTypeClass
 > {
-    private direction: string | null = null;
-    private nulls: string | null = null;
+    private direction: 'ASC' | 'DESC' | null = null;
+    private nulls: 'FIRST' | 'LAST' | null = null;
     private constructor(
         value: FieldNameTypeClass | SoqlFunctionTypeClass | ErrorTypeClass,
-        direction: string | null,
-        nulls: string | null,
+        direction: 'ASC' | 'DESC' | null,
+        nulls: 'FIRST' | 'LAST' | null,
     ) {
         super('fieldOrder', value);
         this.direction = direction;
@@ -44,11 +44,11 @@ export class FieldOrderTypeClass extends ClauseTypeClass<
         );
     }
 
-    getDirection(): string | null {
+    getDirection(): 'ASC' | 'DESC' | null {
         return this.direction;
     }
 
-    getNulls(): string | null {
+    getNulls(): 'FIRST' | 'LAST' | null {
         return this.nulls;
     }
 }

@@ -1,5 +1,18 @@
 import { CommonTypeClass, ErrorTypeClass } from '../commonVisitor';
 
+export class TypeValueTypeClass<TName extends string, T> extends CommonTypeClass<TName> {
+    private value: T;
+
+    constructor(type: TName, value: T) {
+        super(type);
+        this.value = value;
+    }
+
+    getValue(): T {
+        return this.value;
+    }
+}
+
 export class TypeTypeClass<TName extends string, T> extends CommonTypeClass<TName> {
     private value: T | ErrorTypeClass;
 
@@ -27,8 +40,14 @@ export class TypeListBaseTypeClass<TName extends string, T> extends CommonTypeCl
 }
 
 export type TypeAllTypeClass =
-    TypeTypeClass<string, unknown> | TypeListBaseTypeClass<string, unknown>;
+    | TypeValueTypeClass<string, unknown>
+    | TypeTypeClass<string, unknown>
+    | TypeListBaseTypeClass<string, unknown>;
 
 export const isTypeTypeAll = (target: CommonTypeClass<string>): target is TypeAllTypeClass => {
-    return target instanceof TypeTypeClass || target instanceof TypeListBaseTypeClass;
+    return (
+        target instanceof TypeValueTypeClass ||
+        target instanceof TypeTypeClass ||
+        target instanceof TypeListBaseTypeClass
+    );
 };

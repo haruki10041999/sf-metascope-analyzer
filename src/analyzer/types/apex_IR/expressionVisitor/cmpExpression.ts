@@ -1,7 +1,7 @@
 import { CmpExpressionContext } from '@apexdevtools/apex-parser';
 
 import {
-    DoubleOperatorExpressionTypeClass,
+    DoubleStringOperatorExpressionTypeClass,
     BasedExpressionTypeClass,
     ExpressionVisitor,
     isBasedExpressionType,
@@ -9,7 +9,7 @@ import {
 
 import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
 
-export class CmpExpressionTypeClass extends DoubleOperatorExpressionTypeClass<
+export class CmpExpressionTypeClass extends DoubleStringOperatorExpressionTypeClass<
     'cmpExpression',
     BasedExpressionTypeClass,
     string,

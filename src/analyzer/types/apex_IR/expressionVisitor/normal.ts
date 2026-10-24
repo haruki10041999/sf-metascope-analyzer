@@ -1,10 +1,10 @@
 import { ExpressionContext } from '@apexdevtools/apex-parser';
 
-import { ExpressionTypeClass } from '.';
+import { ExpressionValueTypeClass } from '.';
 
 import { CommonTypeClass } from '../commonVisitor';
 
-export class NormalExpressionTypeClass extends ExpressionTypeClass<'expression', string> {
+export class NormalExpressionTypeClass extends ExpressionValueTypeClass<'expression', string> {
     private constructor(value: string) {
         super('expression', value);
     }
@@ -19,4 +19,3 @@ export const isNormalExpressionType = (
 ): target is NormalExpressionTypeClass => {
     return target instanceof NormalExpressionTypeClass;
 };
-

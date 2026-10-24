@@ -13,11 +13,11 @@ export class WhereLogicalExpressionTypeClass extends ExpressionListBaseTypeClass
     'whereLogicalExpression',
     WhereConditionalExpressionTypeClass
 > {
-    private operator: string | null = null;
+    private operator: 'AND' | 'OR' | 'NOT' | null = null;
 
     private constructor(
         value: (WhereConditionalExpressionTypeClass | ErrorTypeClass)[],
-        operator: string | null,
+        operator: 'AND' | 'OR' | 'NOT' | null,
     ) {
         super('whereLogicalExpression', value);
         this.operator = operator;
@@ -49,7 +49,7 @@ export class WhereLogicalExpressionTypeClass extends ExpressionListBaseTypeClass
         );
     }
 
-    getOperator(): string | null {
+    getOperator(): 'AND' | 'OR' | 'NOT' | null {
         return this.operator;
     }
 }

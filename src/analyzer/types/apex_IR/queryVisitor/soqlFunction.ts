@@ -1,6 +1,6 @@
 import { SoqlFunctionContext } from '@apexdevtools/apex-parser';
 
-import { QueryTypeClass, QueryVisitor } from '.';
+import { QueryValueTypeClass, QueryVisitor } from '.';
 
 import {
     DateFieldNameTypeClass,
@@ -100,11 +100,14 @@ type SoqlParameterType =
     | (LocationValueTypeClass | ErrorTypeClass | string)[]
     | SoqlFunctionTypeClass;
 
-export class SoqlFunctionTypeClass extends QueryTypeClass<'soqlFunction', SoqlFunctionValueType> {
+export class SoqlFunctionTypeClass extends QueryValueTypeClass<
+    'soqlFunction',
+    SoqlFunctionValueType
+> {
     private param: SoqlParameterType | ErrorTypeClass | null = null;
 
     private constructor(
-        value: SoqlFunctionValueType | ErrorTypeClass,
+        value: SoqlFunctionValueType,
         param: SoqlParameterType | ErrorTypeClass | null,
     ) {
         super('soqlFunction', value);
@@ -113,12 +116,15 @@ export class SoqlFunctionTypeClass extends QueryTypeClass<'soqlFunction', SoqlFu
 
     static create(ctx: SoqlFunctionContext): SoqlFunctionTypeClass {
         if (
-            !isNormalFunctionType(ctx) &&
-            !isFormatFunctionType(ctx) &&
+            (!isNormalFunctionType(ctx) || !ctx.fieldName()) &&
+            (!isFormatFunctionType(ctx) || (!ctx.fieldName() && !ctx.soqlFunction())) &&
             !isCountFunctionType(ctx) &&
-            !isFieldsFunctionType(ctx) &&
-            !isDistanceFunctionType(ctx) &&
-            !isDateFunctionType(ctx)
+            (!isFieldsFunctionType(ctx) || !ctx.soqlFieldsParameter()) &&
+            (!isDistanceFunctionType(ctx) ||
+                !ctx.locationValue_list() ||
+                (!ctx.StringLiteral() &&
+                !ctx.MultilineStringLiteral()) &&
+            (!isDateFunctionType(ctx) || !ctx.dateFieldName())
         ) {
             throw new Error('値が異常です。SoqlFunctionContext: ' + ctx.getText());
         }

@@ -10,21 +10,12 @@ import {
 } from '../expressionVisitor';
 import { ErrorTypeClass, CommonTypeClass, isValidClass, isValidClassList } from '../commonVisitor';
 
-type LocationValueValue = FieldNameTypeClass | BoundExpressionTypeClass;
+type LocationValueValue =
+    FieldNameTypeClass | BoundExpressionTypeClass | (CoordinateValueTypeClass | ErrorTypeClass)[];
 
-export class LocationValueTypeClass extends ValueTypeClass<
-    'locationValue',
-    LocationValueValue | null
-> {
-    // GEOLOCATION(lat, lng) 形式のときのみ [緯度, 経度]、それ以外は null
-    private coordinates: (CoordinateValueTypeClass | ErrorTypeClass)[] | null;
-
-    private constructor(
-        value: LocationValueValue | ErrorTypeClass | null,
-        coordinates: (CoordinateValueTypeClass | ErrorTypeClass)[] | null,
-    ) {
+export class LocationValueTypeClass extends ValueTypeClass<'locationValue', LocationValueValue> {
+    private constructor(value: LocationValueValue | ErrorTypeClass) {
         super('locationValue', value);
-        this.coordinates = coordinates;
     }
 
     static create(ctx: LocationValueContext): LocationValueTypeClass {
@@ -36,20 +27,16 @@ export class LocationValueTypeClass extends ValueTypeClass<
             throw new Error('値が異常です。LocationValueContext: ' + ctx.getText());
         }
 
+        let value: LocationValueValue | ErrorTypeClass;
         if (ctx.GEOLOCATION()) {
-            return new LocationValueTypeClass(
-                null,
-                isValidClassList(
-                    ctx.coordinateValue_list(),
-                    (ctx) => new ValueVisitor().visit(ctx),
-                    isCoordinateValueType,
-                    'coordinateValue',
-                ),
+            value = isValidClassList(
+                ctx.coordinateValue_list(),
+                (ctx) => new ValueVisitor().visit(ctx),
+                isCoordinateValueType,
+                'coordinateValue',
             );
-        }
-
-        return new LocationValueTypeClass(
-            ctx.fieldName()
+        } else {
+            value = ctx.fieldName()
                 ? isValidClass(
                       new NameVisitor().visit(ctx.fieldName()),
                       isFieldNameType,
@@ -59,13 +46,10 @@ export class LocationValueTypeClass extends ValueTypeClass<
                       new ExpressionVisitor().visit(ctx.boundExpression()),
                       isBoundExpressionType,
                       'boundExpression',
-                  ),
-            null,
-        );
-    }
+                  );
+        }
 
-    getCoordinates(): (CoordinateValueTypeClass | ErrorTypeClass)[] | null {
-        return this.coordinates;
+        return new LocationValueTypeClass(value);
     }
 }
 

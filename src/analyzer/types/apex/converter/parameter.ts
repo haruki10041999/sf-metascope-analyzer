@@ -18,6 +18,7 @@ import {
     makeErrorAssignRule,
     makeNullAssignRule,
     makeStringAssignRule,
+    makeLimitedStringAssignRule,
     makeSourceInfo,
 } from './commons';
 import { makeIdAssignRule, IdType } from './id';
@@ -91,7 +92,7 @@ export const makeFormalParameterAssignRule: AssignForValueRule<
 };
 
 export type SoqlFieldsParameterType = CommonType<'soqlFieldsParameter'> & {
-    value: ValueRuleValue<string>;
+    value: 'ALL' | 'CUSTOM' | 'STANDARD';
 };
 
 export const isSoqlFieldsParameterType = (value: unknown): value is SoqlFieldsParameterType => {
@@ -104,14 +105,10 @@ export const makeSoqlFieldsParameterAssignRule: AssignForValueRule<
 > = {
     isValid: (target: unknown) => isTargetTypeClass(target, isSoqlFieldsParameterTypeClass),
     construct: (parameterTypeClass: SoqlFieldsParameterTypeClass) => {
-        const value = assignMultiClass(parameterTypeClass.getValue(), [
-            makeStringAssignRule,
-            makeErrorAssignRule,
-        ]);
         return {
             type: parameterTypeClass.getType(),
             sourceInfo: makeSourceInfo(parameterTypeClass),
-            value,
+            value: parameterTypeClass.getValue(),
         };
     },
 };

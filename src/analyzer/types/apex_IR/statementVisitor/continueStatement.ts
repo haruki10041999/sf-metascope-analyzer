@@ -1,10 +1,13 @@
 import { ContinueStatementContext } from '@apexdevtools/apex-parser';
 
-import { StatementTypeClass } from '.';
+import { StatementValueTypeClass } from '.';
 
 import { CommonTypeClass } from '../commonVisitor';
 
-export class ContinueStatementTypeClass extends StatementTypeClass<'continueStatement', string> {
+export class ContinueStatementTypeClass extends StatementValueTypeClass<
+    'continueStatement',
+    string
+> {
     private constructor(value: string) {
         super('continueStatement', value);
     }

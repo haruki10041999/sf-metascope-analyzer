@@ -11,14 +11,18 @@ import {
 } from '../expressionVisitor';
 import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
 
-export class WithClauseTypeClass extends ClauseTypeClass<
-    'withClause',
-    string | LogicalExpressionTypeClass
-> {
+type WithClauseType =
+    | 'SYSTEM_MODE'
+    | 'USER_MODE'
+    | 'SECURITY_ENFORCED'
+    | 'DATA_CATEGORY'
+    | LogicalExpressionTypeClass;
+
+export class WithClauseTypeClass extends ClauseTypeClass<'withClause', WithClauseType> {
     private field: FilteringExpressionTypeClass | ErrorTypeClass | null = null;
 
     private constructor(
-        value: string | LogicalExpressionTypeClass | ErrorTypeClass,
+        value: WithClauseType | ErrorTypeClass,
         field: FilteringExpressionTypeClass | ErrorTypeClass | null,
     ) {
         super('withClause', value);
@@ -37,7 +41,7 @@ export class WithClauseTypeClass extends ClauseTypeClass<
             throw new Error('値が異常です。WithClauseContext: ' + ctx.getText());
         }
 
-        let value: string | LogicalExpressionTypeClass | ErrorTypeClass;
+        let value: WithClauseType | ErrorTypeClass;
         if (ctx.SYSTEM_MODE()) {
             value = 'SYSTEM_MODE';
         } else if (ctx.USER_MODE()) {

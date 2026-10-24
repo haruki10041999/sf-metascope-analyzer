@@ -40,39 +40,39 @@ const isMapType = (type: string): boolean => {
     return 'MAP' === type.toUpperCase();
 };
 
-type PrimitiveTypeJson = JsonType & {
+type PrimitiveTypeJson = JsonType<'type'> & {
     type: 'primitive';
     primitiveType: string;
 };
 export const isPrimitiveTypeJson = typia.createIs<PrimitiveTypeJson>();
 
-type CustomTypeJson = JsonType & {
+type CustomTypeJson = JsonType<'type'> & {
     type: 'custom';
     customType: string | string[];
     generic?: Omit<TypeJson, 'kind' | 'sourceKeys'>[];
 };
 export const isCustomTypeJson = typia.createIs<CustomTypeJson>();
 
-type ArrayTypeJson = JsonType & {
+type ArrayTypeJson = JsonType<'type'> & {
     collectionType: 'array';
     elementType: Omit<TypeJson, 'kind' | 'sourceKeys'>;
     dimension: number;
 };
 export const isArrayTypeJson = typia.createIs<ArrayTypeJson>();
 
-type ListTypeJson = JsonType & {
+type ListTypeJson = JsonType<'type'> & {
     collectionType: 'list';
     elementType: Omit<TypeJson, 'kind' | 'sourceKeys'>;
 };
 export const isListTypeJson = typia.createIs<ListTypeJson>();
 
-type SetTypeJson = JsonType & {
+type SetTypeJson = JsonType<'type'> & {
     collectionType: 'set';
     elementType: Omit<TypeJson, 'kind' | 'sourceKeys'>;
 };
 export const isSetTypeJson = typia.createIs<SetTypeJson>();
 
-type MapTypeJson = JsonType & {
+type MapTypeJson = JsonType<'type'> & {
     collectionType: 'map';
     keyType: Omit<TypeJson, 'kind' | 'sourceKeys'>;
     valueType: Omit<TypeJson, 'kind' | 'sourceKeys'>;

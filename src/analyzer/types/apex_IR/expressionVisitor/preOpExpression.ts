@@ -11,9 +11,13 @@ import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor'
 
 export class PreOpExpressionTypeClass extends SingleOperatorExpressionTypeClass<
     'preOpExpression',
-    BasedExpressionTypeClass
+    BasedExpressionTypeClass,
+    '++' | '--' | '+' | '-'
 > {
-    private constructor(value: BasedExpressionTypeClass | ErrorTypeClass, operator: string) {
+    private constructor(
+        value: BasedExpressionTypeClass | ErrorTypeClass,
+        operator: '++' | '--' | '+' | '-',
+    ) {
         super('preOpExpression', value, operator);
     }
 
@@ -22,7 +26,7 @@ export class PreOpExpressionTypeClass extends SingleOperatorExpressionTypeClass<
             throw new Error('値が異常です。PreOpExpressionContext: ' + ctx.getText());
         }
 
-        let operator: string;
+        let operator: '++' | '--' | '+' | '-';
 
         if (ctx.INC()) {
             operator = '++';

@@ -1,24 +1,25 @@
 import { WhenLiteralContext } from '@apexdevtools/apex-parser';
 
-import { PrimitiveLiteralTypeClass, LiteralVisitor } from '.';
+import { LiteralTypeClass, LiteralVisitor } from '.';
 
 import { QualifiedNameTypeClass, NameVisitor, isQualifiedNameType } from '../nameVisitor';
 import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
 
 type WhenLiteralValueType = string | QualifiedNameTypeClass;
 
-export class WhenLiteralTypeClass extends PrimitiveLiteralTypeClass<
-    'whenLiteral',
-    WhenLiteralValueType
-> {
+type WhenLiteralValueTypeType = 'integer' | 'long' | 'string' | 'longText' | 'id' | 'null';
+
+export class WhenLiteralTypeClass extends LiteralTypeClass<'whenLiteral', WhenLiteralValueType> {
+    private valueType: WhenLiteralValueTypeType;
     private operator: string | null;
 
     private constructor(
         value: WhenLiteralValueType | ErrorTypeClass,
+        valueType: WhenLiteralValueTypeType,
         operator: string | null,
-        valueType: string,
     ) {
-        super('whenLiteral', value, valueType);
+        super('whenLiteral', value);
+        this.valueType = valueType;
         this.operator = operator;
     }
 
@@ -37,7 +38,7 @@ export class WhenLiteralTypeClass extends PrimitiveLiteralTypeClass<
 
         let value: WhenLiteralValueType | ErrorTypeClass;
         let operator: string | null = null;
-        let valueType: string;
+        let valueType: WhenLiteralValueTypeType;
         if (ctx.IntegerLiteral() || ctx.LongLiteral()) {
             value = ctx.IntegerLiteral()
                 ? ctx.IntegerLiteral().getText()
@@ -45,22 +46,24 @@ export class WhenLiteralTypeClass extends PrimitiveLiteralTypeClass<
             valueType = ctx.IntegerLiteral() ? 'integer' : 'long';
 
             // 符号は複数並び得るため、ソース順のまま連結する
-            operator = [...ctx.ADD_list(), ...ctx.SUB_list()]
-                .sort((a, b) => a.symbol.tokenIndex - b.symbol.tokenIndex)
-                .map((node) => node.getText())
-                .join('');
+            if ([...ctx.ADD_list(), ...ctx.SUB_list()].length > 0) {
+                operator = [...ctx.ADD_list(), ...ctx.SUB_list()]
+                    .sort((a, b) => a.symbol.tokenIndex - b.symbol.tokenIndex)
+                    .map((node) => node.getText())
+                    .join('');
+            }
         } else if (ctx.StringLiteral() || ctx.MultilineStringLiteral()) {
             value = ctx.StringLiteral()
                 ? ctx.StringLiteral().getText()
                 : ctx.MultilineStringLiteral().getText();
-            valueType = ctx.StringLiteral() ? 'string' : 'multilineString';
+            valueType = ctx.StringLiteral() ? 'string' : 'longText';
         } else if (ctx.qualifiedName()) {
             value = isValidClass(
                 new NameVisitor().visit(ctx.qualifiedName()),
                 isQualifiedNameType,
                 'qualifiedName',
             );
-            valueType = 'qualifiedName';
+            valueType = 'id';
         } else if (ctx.whenLiteral()) {
             const valueTypeClass = isValidClass(
                 new LiteralVisitor().visit(ctx.whenLiteral()),
@@ -79,7 +82,11 @@ export class WhenLiteralTypeClass extends PrimitiveLiteralTypeClass<
             valueType = 'null';
         }
 
-        return new WhenLiteralTypeClass(value, operator, valueType);
+        return new WhenLiteralTypeClass(value, valueType, operator);
+    }
+
+    getValueType(): WhenLiteralValueTypeType {
+        return this.valueType;
     }
 
     getOperator(): string | null {

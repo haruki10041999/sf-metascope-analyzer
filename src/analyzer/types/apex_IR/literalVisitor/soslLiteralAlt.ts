@@ -1,11 +1,11 @@
 import { SoslLiteralAltContext } from '@apexdevtools/apex-parser';
 
-import { LiteralTypeClass } from '.';
+import { LiteralValueTypeClass } from '.';
 
 import { SoslClausesTypeClass, ClauseVisitor, isSoslClausesType } from '../clauseVisitor';
 import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
 
-export class SoslLiteralAltTypeClass extends LiteralTypeClass<'soslLiteralAlt', string> {
+export class SoslLiteralAltTypeClass extends LiteralValueTypeClass<'soslLiteralAlt', string> {
     private soslClauses: SoslClausesTypeClass | ErrorTypeClass;
 
     private constructor(value: string, soslClauses: SoslClausesTypeClass | ErrorTypeClass) {

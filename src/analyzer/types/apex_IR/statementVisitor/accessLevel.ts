@@ -1,12 +1,15 @@
 import { AccessLevelContext } from '@apexdevtools/apex-parser';
 
-import { StatementTypeClass } from '.';
+import { StatementValueTypeClass } from '.';
 
 import { CommonTypeClass } from '../commonVisitor';
 
 type AccessLevelValueType = 'SYSTEM' | 'USER';
 
-export class AccessLevelTypeClass extends StatementTypeClass<'accessLevel', AccessLevelValueType> {
+export class AccessLevelTypeClass extends StatementValueTypeClass<
+    'accessLevel',
+    AccessLevelValueType
+> {
     private constructor(value: AccessLevelValueType) {
         super('accessLevel', value);
     }

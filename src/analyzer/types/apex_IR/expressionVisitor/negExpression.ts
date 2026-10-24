@@ -11,9 +11,10 @@ import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor'
 
 export class NegExpressionTypeClass extends SingleOperatorExpressionTypeClass<
     'negExpression',
-    BasedExpressionTypeClass
+    BasedExpressionTypeClass,
+    '~' | '!'
 > {
-    private constructor(value: BasedExpressionTypeClass | ErrorTypeClass, operator: string) {
+    private constructor(value: BasedExpressionTypeClass | ErrorTypeClass, operator: '~' | '!') {
         super('negExpression', value, operator);
     }
 

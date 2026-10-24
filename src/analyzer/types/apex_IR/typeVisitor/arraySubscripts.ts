@@ -1,10 +1,10 @@
 import { ArraySubscriptsContext } from '@apexdevtools/apex-parser';
 
-import { TypeTypeClass } from '.';
+import { TypeValueTypeClass } from '.';
 
 import { CommonTypeClass } from '../commonVisitor';
 
-export class ArraySubscriptsTypeClass extends TypeTypeClass<'arraySubscripts', number | null> {
+export class ArraySubscriptsTypeClass extends TypeValueTypeClass<'arraySubscripts', number | null> {
     private constructor(value: number | null) {
         super('arraySubscripts', value);
     }

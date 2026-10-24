@@ -33,8 +33,8 @@ import { makeSoslClausesAssignRule, SoslClausesType } from './clause';
 import { makeQualifiedNameAssignRule, QualifiedNameType } from './name';
 
 export type LiteralType = CommonType<'literal'> & {
-    value: ValueRuleValue<string>;
-    valueType: string;
+    value: string;
+    valueType: 'integer' | 'long' | 'number' | 'string' | 'longText' | 'boolean' | 'null';
 };
 
 export const isLiteralType = (value: unknown): value is LiteralType => {
@@ -44,23 +44,19 @@ export const isLiteralType = (value: unknown): value is LiteralType => {
 export const makeLiteralAssignRule: AssignForValueRule<NormalLiteralTypeClass, LiteralType> = {
     isValid: (target: unknown) => isTargetTypeClass(target, isNormalLiteralType),
     construct: (literalTypeClass: NormalLiteralTypeClass) => {
-        const value = assignMultiClass(literalTypeClass.getValue(), [
-            makeStringAssignRule,
-            makeErrorAssignRule,
-        ]);
         return {
             type: literalTypeClass.getType(),
             sourceInfo: makeSourceInfo(literalTypeClass),
-            value,
+            value: literalTypeClass.getValue(),
             valueType: literalTypeClass.getValueType(),
         };
     },
 };
 
 export type SignedIntegerType = CommonType<'signedInteger'> & {
-    value: ValueRuleValue<string>;
-    valueType: string;
-    operator: string | null;
+    value: string;
+    valueType: 'integer';
+    operator: '+' | '-' | null;
 };
 
 export const isSignedIntegerType = (value: unknown): value is SignedIntegerType => {
@@ -73,14 +69,10 @@ export const makeSignedIntegerAssignRule: AssignForValueRule<
 > = {
     isValid: (target: unknown) => isTargetTypeClass(target, isSignedIntegerTypeClass),
     construct: (literalTypeClass: SignedIntegerTypeClass) => {
-        const value = assignMultiClass(literalTypeClass.getValue(), [
-            makeStringAssignRule,
-            makeErrorAssignRule,
-        ]);
         return {
             type: literalTypeClass.getType(),
             sourceInfo: makeSourceInfo(literalTypeClass),
-            value,
+            value: literalTypeClass.getValue(),
             valueType: literalTypeClass.getValueType(),
             operator: literalTypeClass.getOperator(),
         };
@@ -88,9 +80,9 @@ export const makeSignedIntegerAssignRule: AssignForValueRule<
 };
 
 export type SignedNumberType = CommonType<'signedNumber'> & {
-    value: ValueRuleValue<string>;
-    valueType: string;
-    operator: string | null;
+    value: string;
+    valueType: 'number' | 'integer';
+    operator: '+' | '-' | null;
 };
 
 export const isSignedNumberType = (value: unknown): value is SignedNumberType => {
@@ -103,14 +95,10 @@ export const makeSignedNumberAssignRule: AssignForValueRule<
 > = {
     isValid: (target: unknown) => isTargetTypeClass(target, isSignedNumberTypeClass),
     construct: (literalTypeClass: SignedNumberTypeClass) => {
-        const value = assignMultiClass(literalTypeClass.getValue(), [
-            makeStringAssignRule,
-            makeErrorAssignRule,
-        ]);
         return {
             type: literalTypeClass.getType(),
             sourceInfo: makeSourceInfo(literalTypeClass),
-            value,
+            value: literalTypeClass.getValue(),
             valueType: literalTypeClass.getValueType(),
             operator: literalTypeClass.getOperator(),
         };
@@ -142,7 +130,7 @@ export const makeSoqlLiteralAssignRule: AssignForValueRule<SoqlLiteralTypeClass,
     };
 
 export type SoslLiteralAltType = CommonType<'soslLiteralAlt'> & {
-    value: ValueRuleValue<string>;
+    value: string;
     soslClauses: ValueRuleValue<SoslClausesType>;
 };
 
@@ -156,10 +144,6 @@ export const makeSoslLiteralAltAssignRule: AssignForValueRule<
 > = {
     isValid: (target: unknown) => isTargetTypeClass(target, isSoslLiteralAltTypeClass),
     construct: (literalTypeClass: SoslLiteralAltTypeClass) => {
-        const value = assignMultiClass(literalTypeClass.getValue(), [
-            makeStringAssignRule,
-            makeErrorAssignRule,
-        ]);
         const soslClauses = assignMultiClass(literalTypeClass.getSoslClauses(), [
             makeSoslClausesAssignRule,
             makeErrorAssignRule,
@@ -167,7 +151,7 @@ export const makeSoslLiteralAltAssignRule: AssignForValueRule<
         return {
             type: literalTypeClass.getType(),
             sourceInfo: makeSourceInfo(literalTypeClass),
-            value,
+            value: literalTypeClass.getValue(),
             soslClauses,
         };
     },
@@ -204,11 +188,23 @@ export const makeSoslLiteralAssignRule: AssignForValueRule<SoslLiteralTypeClass,
         },
     };
 
-export type WhenLiteralType = CommonType<'whenLiteral'> & {
-    value: ValueRuleValue<string | QualifiedNameType>;
-    valueType: string;
-    operator: string | null;
-};
+export type WhenLiteralType =
+    | (CommonType<'whenLiteral'> & {
+          value: string;
+          valueType: 'string' | 'longText' | 'null';
+      })
+    | {
+          value: string;
+          valueType: 'integer' | 'long';
+          operator: string | null;
+      }
+    | {
+          value: QualifiedNameType;
+          valueType: 'id';
+      }
+    | {
+          value: ErrorType;
+      };
 
 export const isWhenLiteralType = (value: unknown): value is WhenLiteralType => {
     return isCommonType(value) && value.type === 'whenLiteral';
@@ -224,15 +220,41 @@ export const makeWhenLiteralAssignRule: AssignForValueRule<WhenLiteralTypeClass,
                 makeErrorAssignRule,
             ]);
 
-            const valueType = literalTypeClass.getValueType();
-            const operator = literalTypeClass.getOperator();
+            if (typeof value === 'string') {
+                const valueType = literalTypeClass.getValueType() as
+                    'integer' | 'long' | 'string' | 'longText' | 'null';
 
-            return {
-                type: literalTypeClass.getType(),
-                sourceInfo: makeSourceInfo(literalTypeClass),
-                value,
-                valueType,
-                operator,
-            };
+                if (valueType === 'integer' || valueType === 'long') {
+                    const operator = literalTypeClass.getOperator();
+                    return {
+                        type: literalTypeClass.getType(),
+                        sourceInfo: makeSourceInfo(literalTypeClass),
+                        value,
+                        valueType,
+                        operator,
+                    };
+                } else {
+                    return {
+                        type: literalTypeClass.getType(),
+                        sourceInfo: makeSourceInfo(literalTypeClass),
+                        value,
+                        valueType,
+                    };
+                }
+            } else if (value.type === 'qualifiedName') {
+                const valueType = literalTypeClass.getValueType() as 'id';
+                return {
+                    type: literalTypeClass.getType(),
+                    sourceInfo: makeSourceInfo(literalTypeClass),
+                    value,
+                    valueType,
+                };
+            } else {
+                return {
+                    type: literalTypeClass.getType(),
+                    sourceInfo: makeSourceInfo(literalTypeClass),
+                    value: value,
+                };
+            }
         },
     };

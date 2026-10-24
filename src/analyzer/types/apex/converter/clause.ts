@@ -53,6 +53,7 @@ import {
     makeNullAssignRule,
     makeStringAssignRule,
     makeSourceInfo,
+    makeLimitedStringAssignRule,
 } from './commons';
 import { makeIdAssignRule, makeSoqlIdAssignRule, IdType, SoqlIdType } from './id';
 import {
@@ -97,7 +98,7 @@ import {
 } from './expression';
 
 export type AllRowsClauseType = CommonType<'allRowsClause'> & {
-    value: ValueRuleValue<string>;
+    value: string;
 };
 
 export const isAllRowsClauseType = (value: unknown): value is AllRowsClauseType => {
@@ -110,14 +111,10 @@ export const makeAllRowsClauseAssignRule: AssignForValueRule<
 > = {
     isValid: (target: unknown) => isTargetTypeClass(target, isAllRowsClauseTypeClass),
     construct: (clauseTypeClass: AllRowsClauseTypeClass) => {
-        const value = assignMultiClass(clauseTypeClass.getValue(), [
-            makeStringAssignRule,
-            makeErrorAssignRule,
-        ]);
         return {
             type: clauseTypeClass.getType(),
             sourceInfo: makeSourceInfo(clauseTypeClass),
-            value,
+            value: clauseTypeClass.getValue(),
         };
     },
 };
@@ -260,8 +257,8 @@ export const makeFieldGroupByAssignRule: AssignForValueRule<
 
 export type FieldOrderType = CommonType<'fieldOrder'> & {
     value: ValueRuleValue<FieldNameType | SoqlFunctionType>;
-    direction: string | null;
-    nulls: string | null;
+    direction: 'ASC' | 'DESC' | null;
+    nulls: 'FIRST' | 'LAST' | null;
 };
 
 export const isFieldOrderType = (value: unknown): value is FieldOrderType => {
@@ -289,7 +286,7 @@ export const makeFieldOrderAssignRule: AssignForValueRule<FieldOrderTypeClass, F
 };
 
 export type FilteringSelectorType = CommonType<'filteringSelector'> & {
-    value: ValueRuleValue<string>;
+    value: 'AT' | 'ABOVE' | 'BELOW' | 'ABOVE_OR_BELOW';
 };
 
 export const isFilteringSelectorType = (value: unknown): value is FilteringSelectorType => {
@@ -302,20 +299,16 @@ export const makeFilteringSelectorAssignRule: AssignForValueRule<
 > = {
     isValid: (target: unknown) => isTargetTypeClass(target, isFilteringSelectorTypeClass),
     construct: (clauseTypeClass: FilteringSelectorTypeClass) => {
-        const value = assignMultiClass(clauseTypeClass.getValue(), [
-            makeStringAssignRule,
-            makeErrorAssignRule,
-        ]);
         return {
             type: clauseTypeClass.getType(),
             sourceInfo: makeSourceInfo(clauseTypeClass),
-            value,
+            value: clauseTypeClass.getValue(),
         };
     },
 };
 
 export type ForClausesType = CommonType<'forClauses'> & {
-    value: ValueRuleValue<string>[];
+    value: ('VIEW' | 'UPDATE' | 'REFERENCE')[];
 };
 
 export const isForClausesType = (value: unknown): value is ForClausesType => {
@@ -325,20 +318,17 @@ export const isForClausesType = (value: unknown): value is ForClausesType => {
 export const makeForClausesAssignRule: AssignForValueRule<ForClausesTypeClass, ForClausesType> = {
     isValid: (target: unknown) => isTargetTypeClass(target, isForClausesTypeClass),
     construct: (clauseTypeClass: ForClausesTypeClass) => {
-        const value = clauseTypeClass
-            .getValue()
-            .map((v) => assignMultiClass(v, [makeStringAssignRule, makeErrorAssignRule]));
         return {
             type: clauseTypeClass.getType(),
             sourceInfo: makeSourceInfo(clauseTypeClass),
-            value,
+            value: clauseTypeClass.getValue(),
         };
     },
 };
 
 export type GroupByClauseType = CommonType<'groupByClause'> & {
     value: ValueRuleValue<FieldGroupByListType>;
-    mode: string | null;
+    mode: 'ROLLUP' | 'CUBE' | null;
     having: ValueRuleValue<LogicalExpressionType | null>;
 };
 
@@ -516,12 +506,34 @@ export const makeSoslClausesAssignRule: AssignForValueRule<SoslClausesTypeClass,
         },
     };
 
-export type SoslWithClauseType = CommonType<'soslWithClause'> & {
-    value: ValueRuleValue<string>;
-    content: ValueRuleValue<
-        string | BoundExpressionType | FilteringExpressionType | NetworkListType | null
-    >;
-};
+export type SoslWithClauseType =
+    | (CommonType<'soslWithClause'> & {
+          value: 'DIVISION' | 'PRICEBOOKID';
+          content: ValueRuleValue<string | BoundExpressionType>;
+      })
+    | {
+          value: 'DATA_CATEGORY';
+          content: ValueRuleValue<FilteringExpressionType>;
+      }
+    | {
+          value: 'SNIPPET';
+          content: ValueRuleValue<string | null>;
+      }
+    | {
+          value: 'SPELL_CORRECTION';
+          content: string | null;
+      }
+    | {
+          value: 'NETWORK';
+          content: ValueRuleValue<string | NetworkListType>;
+      }
+    | {
+          value: 'METADATA';
+          content: ValueRuleValue<string>;
+      }
+    | {
+          value: 'HIGHLIGHT' | 'SYSTEM_MODE' | 'USER_MODE';
+      };
 
 export const isSoslWithClauseType = (value: unknown): value is SoslWithClauseType => {
     return isCommonType(value) && value.type === 'soslWithClause';
@@ -533,26 +545,84 @@ export const makeSoslWithClauseAssignRule: AssignForValueRule<
 > = {
     isValid: (target: unknown) => isTargetTypeClass(target, isSoslWithClauseTypeClass),
     construct: (clauseTypeClass: SoslWithClauseTypeClass) => {
-        const value = assignMultiClass(clauseTypeClass.getValue(), [
-            makeStringAssignRule,
-            makeErrorAssignRule,
-        ]);
+        const value = clauseTypeClass.getValue();
 
-        const content = assignMultiClass(clauseTypeClass.getContent(), [
-            makeStringAssignRule,
-            makeBoundExpressionAssignRule,
-            makeFilteringExpressionAssignRule,
-            makeNetworkListAssignRule,
-            makeErrorAssignRule,
-            makeNullAssignRule,
-        ]);
+        if (value === 'DIVISION' || value === 'PRICEBOOKID') {
+            const content = assignMultiClass(clauseTypeClass.getContent(), [
+                makeStringAssignRule,
+                makeBoundExpressionAssignRule,
+                makeErrorAssignRule,
+            ]);
+            return {
+                type: clauseTypeClass.getType(),
+                sourceInfo: makeSourceInfo(clauseTypeClass),
+                value,
+                content,
+            };
+        } else if (value === 'DATA_CATEGORY') {
+            const content = assignMultiClass(clauseTypeClass.getContent(), [
+                makeFilteringExpressionAssignRule,
+                makeErrorAssignRule,
+            ]);
 
-        return {
-            type: clauseTypeClass.getType(),
-            sourceInfo: makeSourceInfo(clauseTypeClass),
-            value,
-            content,
-        };
+            return {
+                type: clauseTypeClass.getType(),
+                sourceInfo: makeSourceInfo(clauseTypeClass),
+                value,
+                content,
+            };
+        } else if (value === 'SNIPPET') {
+            const content = assignMultiClass(clauseTypeClass.getContent(), [
+                makeStringAssignRule,
+                makeErrorAssignRule,
+                makeNullAssignRule,
+            ]);
+
+            return {
+                type: clauseTypeClass.getType(),
+                sourceInfo: makeSourceInfo(clauseTypeClass),
+                value,
+                content,
+            };
+        } else if (value === 'SPELL_CORRECTION') {
+            return {
+                type: clauseTypeClass.getType(),
+                sourceInfo: makeSourceInfo(clauseTypeClass),
+                value,
+                content: clauseTypeClass.getContent() as string | null,
+            };
+        } else if (value === 'NETWORK') {
+            const content = assignMultiClass(clauseTypeClass.getContent(), [
+                makeStringAssignRule,
+                makeNetworkListAssignRule,
+                makeErrorAssignRule,
+            ]);
+
+            return {
+                type: clauseTypeClass.getType(),
+                sourceInfo: makeSourceInfo(clauseTypeClass),
+                value,
+                content,
+            };
+        } else if (value === 'METADATA') {
+            const content = assignMultiClass(clauseTypeClass.getContent(), [
+                makeStringAssignRule,
+                makeErrorAssignRule,
+            ]);
+
+            return {
+                type: clauseTypeClass.getType(),
+                sourceInfo: makeSourceInfo(clauseTypeClass),
+                value,
+                content,
+            };
+        } else {
+            return {
+                type: clauseTypeClass.getType(),
+                sourceInfo: makeSourceInfo(clauseTypeClass),
+                value,
+            };
+        }
     },
 };
 
@@ -595,7 +665,7 @@ export const makeTypeOfAssignRule: AssignForValueRule<TypeOfTypeClass, TypeOfTyp
 };
 
 export type UpdateTypeType = CommonType<'updateType'> & {
-    value: ValueRuleValue<string>;
+    value: 'TRACKING' | 'VIEWSTAT';
 };
 
 export const isUpdateTypeType = (value: unknown): value is UpdateTypeType => {
@@ -605,15 +675,10 @@ export const isUpdateTypeType = (value: unknown): value is UpdateTypeType => {
 export const makeUpdateTypeAssignRule: AssignForValueRule<UpdateTypeTypeClass, UpdateTypeType> = {
     isValid: (target: unknown) => isTargetTypeClass(target, isUpdateTypeTypeClass),
     construct: (clauseTypeClass: UpdateTypeTypeClass) => {
-        const value = assignMultiClass(clauseTypeClass.getValue(), [
-            makeStringAssignRule,
-            makeErrorAssignRule,
-        ]);
-
         return {
             type: clauseTypeClass.getType(),
             sourceInfo: makeSourceInfo(clauseTypeClass),
-            value,
+            value: clauseTypeClass.getValue(),
         };
     },
 };
@@ -698,10 +763,16 @@ export const makeWhereClauseAssignRule: AssignForValueRule<WhereClauseTypeClass,
         },
     };
 
-export type WithClauseType = CommonType<'withClause'> & {
-    value: ValueRuleValue<string | LogicalExpressionType>;
-    field: ValueRuleValue<FilteringExpressionType | null>;
-};
+export type WithClauseType =
+    | (CommonType<'withClause'> & {
+          value: ValueRuleValue<
+              'SYSTEM_MODE' | 'USER_MODE' | 'SECURITY_ENFORCED' | LogicalExpressionType
+          >;
+      })
+    | {
+          value: 'DATA_CATEGORY';
+          field: ValueRuleValue<FilteringExpressionType>;
+      };
 
 export const isWithClauseType = (value: unknown): value is WithClauseType => {
     return isCommonType(value) && value.type === 'withClause';
@@ -711,22 +782,34 @@ export const makeWithClauseAssignRule: AssignForValueRule<WithClauseTypeClass, W
     isValid: (target: unknown) => isTargetTypeClass(target, isWithClauseTypeClass),
     construct: (clauseTypeClass: WithClauseTypeClass) => {
         const value = assignMultiClass(clauseTypeClass.getValue(), [
-            makeStringAssignRule,
+            makeLimitedStringAssignRule([
+                'SYSTEM_MODE',
+                'USER_MODE',
+                'SECURITY_ENFORCED',
+                'DATA_CATEGORY',
+            ]),
             makeLogicalExpressionAssignRule,
             makeErrorAssignRule,
         ]);
 
-        const field = assignMultiClass(clauseTypeClass.getField(), [
-            makeFilteringExpressionAssignRule,
-            makeErrorAssignRule,
-            makeNullAssignRule,
-        ]);
+        if (value === 'DATA_CATEGORY') {
+            const field = assignMultiClass(clauseTypeClass.getField(), [
+                makeFilteringExpressionAssignRule,
+                makeErrorAssignRule,
+            ]);
 
-        return {
-            type: clauseTypeClass.getType(),
-            sourceInfo: makeSourceInfo(clauseTypeClass),
-            value,
-            field,
-        };
+            return {
+                type: clauseTypeClass.getType(),
+                sourceInfo: makeSourceInfo(clauseTypeClass),
+                value,
+                field,
+            };
+        } else {
+            return {
+                type: clauseTypeClass.getType(),
+                sourceInfo: makeSourceInfo(clauseTypeClass),
+                value,
+            };
+        }
     },
 };

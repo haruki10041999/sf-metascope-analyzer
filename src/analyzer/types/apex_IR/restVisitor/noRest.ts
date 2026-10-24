@@ -1,10 +1,10 @@
 import { NoRestContext } from '@apexdevtools/apex-parser';
 
-import { RestTypeClass } from '.';
+import { RestValueTypeClass } from '.';
 
 import { CommonTypeClass } from '../commonVisitor';
 
-export class NoRestTypeClass extends RestTypeClass<'noRest', string> {
+export class NoRestTypeClass extends RestValueTypeClass<'noRest', string> {
     private constructor(value: string) {
         super('noRest', value);
     }

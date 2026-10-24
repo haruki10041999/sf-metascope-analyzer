@@ -1,6 +1,18 @@
 import type { AccessLevelTypeClass } from './accessLevel';
 import { ErrorTypeClass, CommonTypeClass } from '../commonVisitor';
 
+export class StatementValueTypeClass<TName extends string, T> extends CommonTypeClass<TName> {
+    private value: T;
+    constructor(type: TName, value: T) {
+        super(type);
+        this.value = value;
+    }
+
+    getValue(): T {
+        return this.value;
+    }
+}
+
 export class StatementTypeClass<TName extends string, T> extends CommonTypeClass<TName> {
     private value: T | ErrorTypeClass;
     constructor(type: TName, value: T | ErrorTypeClass) {
@@ -42,10 +54,16 @@ export class DmlStatementTypeClass<TName extends string, T> extends StatementTyp
 }
 
 export type StatementAllTypeClass =
-    StatementTypeClass<string, unknown> | StatementListTypeClass<string, unknown>;
+    | StatementValueTypeClass<string, unknown>
+    | StatementTypeClass<string, unknown>
+    | StatementListTypeClass<string, unknown>;
 
 export const isStatementTypeAll = (
     target: CommonTypeClass<string>,
 ): target is StatementAllTypeClass => {
-    return target instanceof StatementTypeClass || target instanceof StatementListTypeClass;
+    return (
+        target instanceof StatementValueTypeClass ||
+        target instanceof StatementTypeClass ||
+        target instanceof StatementListTypeClass
+    );
 };

@@ -53,11 +53,18 @@ export const makeDotMethodCallAssignRule: AssignForValueRule<
     },
 };
 
-export type MethodCallType = CommonType<'methodCall'> & {
-    value: ValueRuleValue<IdType | null>;
-    param: ValueRuleValue<ExpressionListType | null>;
-    reference: string | null;
-};
+export type MethodCallType = CommonType<'methodCall'> &
+    (
+        | {
+              value: ValueRuleValue<IdType>;
+              param: ValueRuleValue<ExpressionListType | null>;
+              reference: 'this' | 'super' | null;
+          }
+        | {
+              value: 'this' | 'super';
+              param: ValueRuleValue<ExpressionListType | null>;
+          }
+    );
 
 export const isMethodCallType = (value: unknown): value is MethodCallType => {
     return isCommonType(value) && value.type === 'methodCall';
@@ -77,12 +84,22 @@ export const makeMethodCallAssignRule: AssignForValueRule<MethodCallTypeClass, M
             makeNullAssignRule,
         ]);
         const reference = callTypeClass.getReference();
-        return {
-            type: callTypeClass.getType(),
-            sourceInfo: makeSourceInfo(callTypeClass),
-            value,
-            param,
-            reference,
-        };
+
+        if (value === null) {
+            return {
+                type: callTypeClass.getType(),
+                sourceInfo: makeSourceInfo(callTypeClass),
+                value: reference as 'this' | 'super',
+                param,
+            };
+        } else {
+            return {
+                type: callTypeClass.getType(),
+                sourceInfo: makeSourceInfo(callTypeClass),
+                value,
+                param,
+                reference,
+            };
+        }
     },
 };

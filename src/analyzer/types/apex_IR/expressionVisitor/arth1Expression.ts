@@ -1,7 +1,7 @@
 import { Arth1ExpressionContext } from '@apexdevtools/apex-parser';
 
 import {
-    DoubleOperatorExpressionTypeClass,
+    DoubleStringOperatorExpressionTypeClass,
     BasedExpressionTypeClass,
     ExpressionVisitor,
     isBasedExpressionType,
@@ -9,16 +9,16 @@ import {
 
 import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
 
-export class Arth1ExpressionTypeClass extends DoubleOperatorExpressionTypeClass<
+export class Arth1ExpressionTypeClass extends DoubleStringOperatorExpressionTypeClass<
     'arth1Expression',
     BasedExpressionTypeClass,
-    string,
+    '*' | '/',
     BasedExpressionTypeClass
 > {
     private constructor(
         left: BasedExpressionTypeClass | ErrorTypeClass,
         right: BasedExpressionTypeClass | ErrorTypeClass,
-        operator: string,
+        operator: '*' | '/',
     ) {
         super('arth1Expression', left, right, operator);
     }

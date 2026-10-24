@@ -1,6 +1,6 @@
 import { BitNotExpressionContext } from '@apexdevtools/apex-parser';
 import {
-    DoubleOperatorExpressionTypeClass,
+    DoubleStringOperatorExpressionTypeClass,
     BasedExpressionTypeClass,
     ExpressionVisitor,
     isBasedExpressionType,
@@ -8,10 +8,10 @@ import {
 
 import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
 
-export class BitNotExpressionTypeClass extends DoubleOperatorExpressionTypeClass<
+export class BitNotExpressionTypeClass extends DoubleStringOperatorExpressionTypeClass<
     'bitNotExpression',
     BasedExpressionTypeClass,
-    string,
+    '^',
     BasedExpressionTypeClass
 > {
     private constructor(

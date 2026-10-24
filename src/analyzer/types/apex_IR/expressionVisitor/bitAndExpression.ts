@@ -1,7 +1,7 @@
 import { BitAndExpressionContext } from '@apexdevtools/apex-parser';
 
 import {
-    DoubleOperatorExpressionTypeClass,
+    DoubleStringOperatorExpressionTypeClass,
     BasedExpressionTypeClass,
     ExpressionVisitor,
     isBasedExpressionType,
@@ -9,10 +9,10 @@ import {
 
 import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
 
-export class BitAndExpressionTypeClass extends DoubleOperatorExpressionTypeClass<
+export class BitAndExpressionTypeClass extends DoubleStringOperatorExpressionTypeClass<
     'bitAndExpression',
     BasedExpressionTypeClass,
-    string,
+    '&',
     BasedExpressionTypeClass
 > {
     private constructor(

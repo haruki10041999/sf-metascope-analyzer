@@ -26,9 +26,25 @@ type ValueTypeClassValue =
     | ValueListTypeClass
     | BoundExpressionTypeClass;
 
+type ValueType =
+    | 'null'
+    | 'boolean'
+    | 'number'
+    | 'string'
+    | 'longText'
+    | 'date'
+    | 'time'
+    | 'dateTime'
+    | 'dateFormula'
+    | 'currency'
+    | 'integer'
+    | 'subQuery'
+    | 'list'
+    | 'bind';
+
 export class NormalValueTypeClass extends ValueTypeClass<'value', ValueTypeClassValue> {
-    private valueType: string;
-    private constructor(value: ValueTypeClassValue | ErrorTypeClass, valueType: string) {
+    private valueType: ValueType;
+    private constructor(value: ValueTypeClassValue | ErrorTypeClass, valueType: ValueType) {
         super('value', value);
         this.valueType = valueType;
     }
@@ -54,7 +70,7 @@ export class NormalValueTypeClass extends ValueTypeClass<'value', ValueTypeClass
         }
 
         let value: ValueTypeClassValue | ErrorTypeClass;
-        let valueType: string;
+        let valueType: ValueType;
 
         if (ctx.NULL()) {
             value = 'null';
@@ -68,13 +84,13 @@ export class NormalValueTypeClass extends ValueTypeClass<'value', ValueTypeClass
                 isSignedNumberType,
                 'signedNumber',
             );
-            valueType = 'signedNumber';
+            valueType = 'number';
         } else if (ctx.StringLiteral()) {
             value = ctx.StringLiteral().getText();
             valueType = 'string';
         } else if (ctx.MultilineStringLiteral()) {
             value = ctx.MultilineStringLiteral().getText();
-            valueType = 'multilineString';
+            valueType = 'longText';
         } else if (ctx.DateLiteral()) {
             value = ctx.DateLiteral().getText();
             valueType = 'date';
@@ -93,7 +109,7 @@ export class NormalValueTypeClass extends ValueTypeClass<'value', ValueTypeClass
             valueType = 'dateFormula';
         } else if (ctx.IntegralCurrencyLiteral()) {
             value = ctx.IntegralCurrencyLiteral().getText();
-            valueType = 'integralCurrency';
+            valueType = 'currency';
         } else if (ctx.IntegerLiteral()) {
             value = ctx.IntegerLiteral().getText();
             valueType = 'integer';
@@ -110,20 +126,20 @@ export class NormalValueTypeClass extends ValueTypeClass<'value', ValueTypeClass
                 isValueListType,
                 'valueList',
             );
-            valueType = 'valueList';
+            valueType = 'list';
         } else {
             value = isValidClass(
                 new ExpressionVisitor().visit(ctx.boundExpression()),
                 isBoundExpressionType,
                 'boundExpression',
             );
-            valueType = 'boundExpression';
+            valueType = 'bind';
         }
 
         return new NormalValueTypeClass(value, valueType);
     }
 
-    getValueType(): string {
+    getValueType(): ValueType {
         return this.valueType;
     }
 }

@@ -73,6 +73,7 @@ export const isSoqlLiteralType = typia.createIs<SoqlLiteralType>();
 - `SoslLiteral`: `value?: string | Expression`, `soslClauses: SoslClauses`。
 - `SoslLiteralAlt`: `value?: string`, `soslClauses: SoslClauses`。
 - `SignedLiteral`: `value?: string`, `valueType: string`, `operator?: string`。符号付きリテラルです。
+- IRのLiteral系TypeClassがどのparser contextから生成され、converterでどう振り分けられるかは[apex-literal-typeclass.md](./apex-literal-typeclass.md)を参照してください。
 
 ### [value.ts](../src/analyzer/types/apex/converter/value.ts)
 

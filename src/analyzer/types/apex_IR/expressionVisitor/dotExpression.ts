@@ -1,7 +1,7 @@
 import { DotExpressionContext } from '@apexdevtools/apex-parser';
 
 import {
-    DoubleOperatorExpressionTypeClass,
+    DoubleStringOperatorExpressionTypeClass,
     BasedExpressionTypeClass,
     ExpressionVisitor,
     isBasedExpressionType,
@@ -11,16 +11,16 @@ import { AnyIdTypeClass, IdVisitor, isAnyIdType } from '../idVisitor';
 import { DotMethodCallTypeClass, CallVisitor, isDotMethodCallType } from '../callVisitor';
 import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
 
-export class DotExpressionTypeClass extends DoubleOperatorExpressionTypeClass<
+export class DotExpressionTypeClass extends DoubleStringOperatorExpressionTypeClass<
     'dotExpression',
     BasedExpressionTypeClass,
-    string,
+    '.' | '?.',
     AnyIdTypeClass | DotMethodCallTypeClass
 > {
     private constructor(
         left: BasedExpressionTypeClass | ErrorTypeClass,
         right: AnyIdTypeClass | DotMethodCallTypeClass | ErrorTypeClass,
-        operator: string,
+        operator: '.' | '?.',
     ) {
         super('dotExpression', left, right, operator);
     }

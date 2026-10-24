@@ -10,7 +10,7 @@ import {
     makeJsonType,
     convertExcludeError,
     mergeRecord,
-    isConvert,
+    isConvertOf,
 } from './commons';
 
 import {
@@ -85,8 +85,7 @@ export type AnnotationArgJson = {
     valueType: string;
 };
 
-export type AnnotationJson = JsonType & {
-    kind: 'modifier';
+export type AnnotationJson = JsonType<'modifier'> & {
     type: 'annotation';
     name: string;
     arg?: AnnotationArgJson | AnnotationArgJson[];
@@ -94,16 +93,14 @@ export type AnnotationJson = JsonType & {
 
 export const isAnnotationJson = typia.createIs<AnnotationJson>();
 
-export type ModifierJson = JsonType & {
-    kind: 'modifier';
+export type ModifierJson = JsonType<'modifier'> & {
     type: 'modifier';
     name: string;
 };
 
 export const isModifierJson = typia.createIs<ModifierJson>();
 
-export type AllModifierJson = StructureJsonType & {
-    kind: 'modifiers';
+export type AllModifierJson = StructureJsonType<'modifiers'> & {
     sourceKeys: { [key: string]: Record<string, string[]>[] };
     access?: Omit<ModifierJson, 'sourceKeys'>[];
     declaration?: Omit<ModifierJson, 'sourceKeys'>[];
@@ -139,7 +136,7 @@ const makeAnnotationJson = (
     const arg = target.param ? target.param : null;
 
     if (arg) {
-        if (isConvert<ElementValueType>(arg)) {
+        if (arg.type === 'elementValue') {
             const literalValue = arg.value.value;
             const literalValueType = arg.value.valueType;
             annotationJson.arg = {
@@ -190,7 +187,7 @@ export const makeModifierJson = (
         });
     }
 
-    if (isConvert<AnnotationType>(target)) {
+    if (modifier.type === 'annotation') {
         return makeAnnotationJson(modifier, targetRecords);
     }
 
@@ -204,7 +201,6 @@ export const makeAllModifierJson = (
         kind: 'modifiers',
         sourceKeys: {},
     };
-    let allDeleteKeys: Record<string, string[]> = {};
 
     target.forEach((t) => {
         const result = makeModifierJson(t);

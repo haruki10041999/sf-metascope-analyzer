@@ -1,7 +1,7 @@
 import { CoalExpressionContext } from '@apexdevtools/apex-parser';
 
 import {
-    DoubleOperatorExpressionTypeClass,
+    DoubleStringOperatorExpressionTypeClass,
     BasedExpressionTypeClass,
     ExpressionVisitor,
     isBasedExpressionType,
@@ -9,10 +9,10 @@ import {
 
 import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
 
-export class CoalExpressionTypeClass extends DoubleOperatorExpressionTypeClass<
+export class CoalExpressionTypeClass extends DoubleStringOperatorExpressionTypeClass<
     'coalExpression',
     BasedExpressionTypeClass,
-    string,
+    '??',
     BasedExpressionTypeClass
 > {
     private constructor(

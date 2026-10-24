@@ -1,12 +1,15 @@
 import { TriggerCaseContext } from '@apexdevtools/apex-parser';
 
-import { UnitTypeClass } from '.';
+import { UnitValueTypeClass } from '.';
 
 import { ErrorTypeClass, CommonTypeClass } from '../commonVisitor';
 
-export class TriggerCaseTypeClass extends UnitTypeClass<'triggerCase', string> {
-    private triggerCaseType: string;
-    private constructor(value: string, triggerCaseType: string) {
+export class TriggerCaseTypeClass extends UnitValueTypeClass<'triggerCase', 'BEFORE' | 'AFTER'> {
+    private triggerCaseType: 'INSERT' | 'UPDATE' | 'DELETE' | 'UNDELETE';
+    private constructor(
+        value: 'BEFORE' | 'AFTER',
+        triggerCaseType: 'INSERT' | 'UPDATE' | 'DELETE' | 'UNDELETE',
+    ) {
         super('triggerCase', value);
         this.triggerCaseType = triggerCaseType;
     }
@@ -31,7 +34,7 @@ export class TriggerCaseTypeClass extends UnitTypeClass<'triggerCase', string> {
         );
     }
 
-    getTriggerCaseType(): string {
+    getTriggerCaseType(): 'INSERT' | 'UPDATE' | 'DELETE' | 'UNDELETE' {
         return this.triggerCaseType;
     }
 }

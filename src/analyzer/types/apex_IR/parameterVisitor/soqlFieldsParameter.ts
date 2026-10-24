@@ -1,16 +1,16 @@
 import { SoqlFieldsParameterContext } from '@apexdevtools/apex-parser';
 
-import { ParameterTypeClass } from '.';
+import { ParameterValueTypeClass } from '.';
 
 import { CommonTypeClass, ErrorTypeClass } from '../commonVisitor';
 
 type SoqlFieldsParameterValueType = 'ALL' | 'CUSTOM' | 'STANDARD';
 
-export class SoqlFieldsParameterTypeClass extends ParameterTypeClass<
+export class SoqlFieldsParameterTypeClass extends ParameterValueTypeClass<
     'soqlFieldsParameter',
     SoqlFieldsParameterValueType
 > {
-    private constructor(value: SoqlFieldsParameterValueType | ErrorTypeClass) {
+    private constructor(value: SoqlFieldsParameterValueType) {
         super('soqlFieldsParameter', value);
     }
 

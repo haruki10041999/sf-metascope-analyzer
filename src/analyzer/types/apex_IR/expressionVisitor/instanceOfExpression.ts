@@ -1,7 +1,7 @@
 import { InstanceOfExpressionContext } from '@apexdevtools/apex-parser';
 
 import {
-    DoubleOperatorExpressionTypeClass,
+    DoubleStringOperatorExpressionTypeClass,
     BasedExpressionTypeClass,
     ExpressionVisitor,
     isBasedExpressionType,
@@ -10,10 +10,10 @@ import {
 import { TypeRefTypeClass, TypeVisitor, isTypeRefType } from '../typeVisitor';
 import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
 
-export class InstanceOfExpressionTypeClass extends DoubleOperatorExpressionTypeClass<
+export class InstanceOfExpressionTypeClass extends DoubleStringOperatorExpressionTypeClass<
     'instanceOfExpression',
     BasedExpressionTypeClass,
-    string,
+    'instanceof',
     TypeRefTypeClass
 > {
     private constructor(

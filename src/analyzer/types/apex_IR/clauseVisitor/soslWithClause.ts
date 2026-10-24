@@ -1,6 +1,6 @@
 import { SoslWithClauseContext } from '@apexdevtools/apex-parser';
 
-import { ClauseTypeClass } from '.';
+import { ClauseValueTypeClass } from '.';
 
 import {
     BoundExpressionTypeClass,
@@ -12,13 +12,31 @@ import {
 import { NetworkListTypeClass, ListVisitor, isNetworkListType } from '../listVisitor';
 import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
 
+type SoslWithClauseValueType =
+    | 'DIVISION'
+    | 'PRICEBOOKID'
+    | 'DATA_CATEGORY'
+    | 'SNIPPET'
+    | 'SPELL_CORRECTION'
+    | 'NETWORK'
+    | 'METADATA'
+    | 'HIGHLIGHT'
+    | 'SYSTEM_MODE'
+    | 'USER_MODE';
+
 type SoslWithClauseContent =
     string | BoundExpressionTypeClass | FilteringExpressionTypeClass | NetworkListTypeClass;
 
-export class SoslWithClauseTypeClass extends ClauseTypeClass<'soslWithClause', string> {
+export class SoslWithClauseTypeClass extends ClauseValueTypeClass<
+    'soslWithClause',
+    SoslWithClauseValueType
+> {
     private content: SoslWithClauseContent | ErrorTypeClass | null = null;
 
-    private constructor(value: string, content: SoslWithClauseContent | ErrorTypeClass | null) {
+    private constructor(
+        value: SoslWithClauseValueType,
+        content: SoslWithClauseContent | ErrorTypeClass | null,
+    ) {
         super('soslWithClause', value);
         this.content = content;
     }
@@ -40,7 +58,7 @@ export class SoslWithClauseTypeClass extends ClauseTypeClass<'soslWithClause', s
             throw new Error('値が異常です。SoslWithClauseContext: ' + ctx.getText());
         }
 
-        let value: string;
+        let value: SoslWithClauseValueType;
         let content: SoslWithClauseContent | ErrorTypeClass | null = null;
 
         if (ctx.DIVISION() || ctx.PRICEBOOKID()) {

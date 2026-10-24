@@ -91,7 +91,7 @@ export const makeLiteralPrimaryAssignRule: AssignForValueRule<
 };
 
 export type PrimaryType = CommonType<'primary'> & {
-    value: ValueRuleValue<string>;
+    value: string;
 };
 
 export const isPrimaryType = (value: unknown): value is PrimaryType => {
@@ -101,14 +101,10 @@ export const isPrimaryType = (value: unknown): value is PrimaryType => {
 export const makePrimaryAssignRule: AssignForValueRule<NormalPrimaryTypeClass, PrimaryType> = {
     isValid: (target: unknown) => isTargetTypeClass(target, isNormalPrimaryType),
     construct: (primaryTypeClass: NormalPrimaryTypeClass) => {
-        const value = assignMultiClass(primaryTypeClass.getValue(), [
-            makeStringAssignRule,
-            makeErrorAssignRule,
-        ]);
         return {
             type: primaryTypeClass.getType(),
             sourceInfo: makeSourceInfo(primaryTypeClass),
-            value,
+            value: primaryTypeClass.getValue(),
         };
     },
 };
@@ -162,7 +158,7 @@ export const makeSoslPrimaryAssignRule: AssignForValueRule<SoslPrimaryTypeClass,
     };
 
 export type SuperPrimaryType = CommonType<'superPrimary'> & {
-    value: ValueRuleValue<string>;
+    value: string;
 };
 
 export const isSuperPrimaryType = (value: unknown): value is SuperPrimaryType => {
@@ -175,20 +171,16 @@ export const makeSuperPrimaryAssignRule: AssignForValueRule<
 > = {
     isValid: (target: unknown) => isTargetTypeClass(target, isSuperPrimaryTypeClass),
     construct: (primaryTypeClass: SuperPrimaryTypeClass) => {
-        const value = assignMultiClass(primaryTypeClass.getValue(), [
-            makeStringAssignRule,
-            makeErrorAssignRule,
-        ]);
         return {
             type: primaryTypeClass.getType(),
             sourceInfo: makeSourceInfo(primaryTypeClass),
-            value,
+            value: primaryTypeClass.getValue(),
         };
     },
 };
 
 export type ThisPrimaryType = CommonType<'thisPrimary'> & {
-    value: ValueRuleValue<string>;
+    value: string;
 };
 
 export const isThisPrimaryType = (value: unknown): value is ThisPrimaryType => {
@@ -199,14 +191,10 @@ export const makeThisPrimaryAssignRule: AssignForValueRule<ThisPrimaryTypeClass,
     {
         isValid: (target: unknown) => isTargetTypeClass(target, isThisPrimaryTypeClass),
         construct: (primaryTypeClass: ThisPrimaryTypeClass) => {
-            const value = assignMultiClass(primaryTypeClass.getValue(), [
-                makeStringAssignRule,
-                makeErrorAssignRule,
-            ]);
             return {
                 type: primaryTypeClass.getType(),
                 sourceInfo: makeSourceInfo(primaryTypeClass),
-                value,
+                value: primaryTypeClass.getValue(),
             };
         },
     };
@@ -238,7 +226,7 @@ export const makeTypeRefPrimaryAssignRule: AssignForValueRule<
 };
 
 export type VoidPrimaryType = CommonType<'voidPrimary'> & {
-    value: ValueRuleValue<string>;
+    value: string;
 };
 
 export const isVoidPrimaryType = (value: unknown): value is VoidPrimaryType => {
@@ -249,14 +237,10 @@ export const makeVoidPrimaryAssignRule: AssignForValueRule<VoidPrimaryTypeClass,
     {
         isValid: (target: unknown) => isTargetTypeClass(target, isVoidPrimaryTypeClass),
         construct: (primaryTypeClass: VoidPrimaryTypeClass) => {
-            const value = assignMultiClass(primaryTypeClass.getValue(), [
-                makeStringAssignRule,
-                makeErrorAssignRule,
-            ]);
             return {
                 type: primaryTypeClass.getType(),
                 sourceInfo: makeSourceInfo(primaryTypeClass),
-                value,
+                value: primaryTypeClass.getValue(),
             };
         },
     };

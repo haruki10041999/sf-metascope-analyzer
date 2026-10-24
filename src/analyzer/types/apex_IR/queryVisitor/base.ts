@@ -7,6 +7,18 @@ import type {
 } from '../clauseVisitor';
 import { ErrorTypeClass, CommonTypeClass } from '../commonVisitor';
 
+export class QueryValueTypeClass<TName extends string, T> extends CommonTypeClass<TName> {
+    private value: T;
+    constructor(type: TName, value: T) {
+        super(type);
+        this.value = value;
+    }
+
+    getValue(): T {
+        return this.value;
+    }
+}
+
 export class QueryTypeClass<TName extends string, T> extends CommonTypeClass<TName> {
     private value: T | ErrorTypeClass;
     constructor(type: TName, value: T | ErrorTypeClass) {
@@ -72,8 +84,14 @@ export class SoqlQueryTypeClass<TName extends string, T> extends QueryTypeClass<
 }
 
 export type QueryAllTypeClass =
-    QueryTypeClass<string, unknown> | SoqlQueryTypeClass<string, unknown>;
+    | QueryValueTypeClass<string, unknown>
+    | QueryTypeClass<string, unknown>
+    | SoqlQueryTypeClass<string, unknown>;
 
 export const isQueryTypeAll = (target: CommonTypeClass<string>): target is QueryAllTypeClass => {
-    return target instanceof QueryTypeClass || target instanceof SoqlQueryTypeClass;
+    return (
+        target instanceof QueryValueTypeClass ||
+        target instanceof QueryTypeClass ||
+        target instanceof SoqlQueryTypeClass
+    );
 };

@@ -21,7 +21,7 @@ import {
 import { makeTypeNameAssignRule, TypeNameType } from './name';
 
 export type ArraySubscriptsType = CommonType<'arraySubscripts'> & {
-    value: ValueRuleValue<number | null>;
+    value: number | null;
 };
 
 export const isArraySubscriptsType = (value: unknown): value is ArraySubscriptsType => {
@@ -34,15 +34,10 @@ export const makeArraySubscriptsAssignRule: AssignForValueRule<
 > = {
     isValid: (target: unknown) => isTargetTypeClass(target, isArraySubscriptsTypeClass),
     construct: (typeTypeClass: ArraySubscriptsTypeClass) => {
-        const value = assignMultiClass(typeTypeClass.getValue(), [
-            makeNumberAssignRule,
-            makeErrorAssignRule,
-            makeNullAssignRule,
-        ]);
         return {
             type: typeTypeClass.getType(),
             sourceInfo: makeSourceInfo(typeTypeClass),
-            value,
+            value: typeTypeClass.getValue(),
         };
     },
 };

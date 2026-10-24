@@ -1,11 +1,11 @@
 import { AllRowsClauseContext } from '@apexdevtools/apex-parser';
 
-import { ClauseTypeClass } from '.';
+import { ClauseValueTypeClass } from '.';
 
 import { ErrorTypeClass, CommonTypeClass } from '../commonVisitor';
 
-export class AllRowsClauseTypeClass extends ClauseTypeClass<'allRowsClause', string> {
-    private constructor(value: string | ErrorTypeClass) {
+export class AllRowsClauseTypeClass extends ClauseValueTypeClass<'allRowsClause', string> {
+    private constructor(value: string) {
         super('allRowsClause', value);
     }
 

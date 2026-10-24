@@ -1,11 +1,13 @@
 import { SearchGroupContext } from '@apexdevtools/apex-parser';
 
-import { QueryTypeClass } from '.';
+import { QueryValueTypeClass } from '.';
 
 import { ErrorTypeClass, CommonTypeClass } from '../commonVisitor';
 
-export class SearchGroupTypeClass extends QueryTypeClass<'searchGroup', string> {
-    private constructor(value: string) {
+type SearchGroupValueType = 'ALL' | 'EMAIL' | 'NAME' | 'PHONE' | 'SIDEBAR';
+
+export class SearchGroupTypeClass extends QueryValueTypeClass<'searchGroup', SearchGroupValueType> {
+    private constructor(value: SearchGroupValueType) {
         super('searchGroup', value);
     }
 
@@ -14,7 +16,7 @@ export class SearchGroupTypeClass extends QueryTypeClass<'searchGroup', string> 
             throw new Error('値が異常です。SearchGroupContext: ' + ctx.getText());
         }
 
-        let value: string;
+        let value: SearchGroupValueType;
 
         if (ctx.ALL()) {
             value = 'ALL';
