@@ -1,7 +1,7 @@
 import { AssignExpressionContext } from '@apexdevtools/apex-parser';
 
 import {
-    DoubleOperatorExpressionTypeClass,
+    DoubleStringOperatorExpressionTypeClass,
     BasedExpressionTypeClass,
     ExpressionVisitor,
     isBasedExpressionType,
@@ -12,7 +12,7 @@ import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor'
 type AssignOperatorType =
     '=' | '+=' | '-=' | '*=' | '/=' | '&=' | '|=' | '^=' | '>>=' | '>>>=' | '<<=';
 
-export class AssignExpressionTypeClass extends DoubleOperatorExpressionTypeClass<
+export class AssignExpressionTypeClass extends DoubleStringOperatorExpressionTypeClass<
     'assignExpression',
     BasedExpressionTypeClass,
     AssignOperatorType,

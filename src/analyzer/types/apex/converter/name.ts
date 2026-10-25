@@ -157,10 +157,17 @@ export const makeQualifiedNameAssignRule: AssignForValueRule<
     },
 };
 
-export type TypeNameType = CommonType<'typeName'> & {
-    value: ValueRuleValue<'list' | 'set' | 'map' | IdType>;
-    generic: ValueRuleValue<TypeArgumentsType | null>;
-};
+export type TypeNameType = CommonType<'typeName'> &
+    (
+        | {
+              value: 'list' | 'set' | 'map';
+          }
+        | {
+              value: ValueRuleValue<IdType>;
+          }
+    ) & {
+        generic: ValueRuleValue<TypeArgumentsType | null>;
+    };
 
 export const isTypeNameType = (value: unknown): value is TypeNameType => {
     return isCommonType(value) && value.type === 'typeName';

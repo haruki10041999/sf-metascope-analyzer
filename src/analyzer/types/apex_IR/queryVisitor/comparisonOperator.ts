@@ -1,6 +1,6 @@
 import { ComparisonOperatorContext } from '@apexdevtools/apex-parser';
 
-import { QueryTypeClass } from './index';
+import { QueryValueTypeClass } from './index';
 
 import { CommonTypeClass, ErrorTypeClass } from '../commonVisitor';
 
@@ -18,11 +18,11 @@ type ComparisonOperatorValueType =
     | 'INCLUDES'
     | 'EXCLUDES';
 
-export class ComparisonOperatorTypeClass extends QueryTypeClass<
+export class ComparisonOperatorTypeClass extends QueryValueTypeClass<
     'comparisonOperator',
     ComparisonOperatorValueType
 > {
-    private constructor(value: ComparisonOperatorValueType | ErrorTypeClass) {
+    private constructor(value: ComparisonOperatorValueType) {
         super('comparisonOperator', value);
     }
 

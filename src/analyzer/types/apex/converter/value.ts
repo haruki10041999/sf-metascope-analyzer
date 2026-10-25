@@ -280,11 +280,17 @@ export const makeValueAssignRule: AssignForValueRule<NormalValueTypeClass, Value
 export type WhenValueType = CommonType<'whenValue'> &
     (
         | {
-              value: ValueRuleValue<'else' | ValueRuleValue<WhenLiteralType>[]>;
+              value: 'else';
+          }
+        | {
+              value: ValueRuleValue<WhenLiteralType>[];
           }
         | {
               value: ValueRuleValue<IdType>;
               valueType: ValueRuleValue<TypeRefType>;
+          }
+        | {
+              value: ErrorType;
           }
     );
 
@@ -315,7 +321,19 @@ export const makeWhenValueAssignRule: AssignForValueRule<WhenValueTypeClass, Whe
             makeErrorAssignRule,
         ]);
 
-        if (isCommonType(value) && value.type === 'id') {
+        if (value === 'else') {
+            return {
+                type: valueTypeClass.getType(),
+                sourceInfo: makeSourceInfo(valueTypeClass),
+                value,
+            };
+        } else if (Array.isArray(value)) {
+            return {
+                type: valueTypeClass.getType(),
+                sourceInfo: makeSourceInfo(valueTypeClass),
+                value,
+            };
+        } else if (isCommonType(value) && value.type === 'id') {
             const valueType = assignMultiClass(valueTypeClass.getValueType(), [
                 makeTypeRefAssignRule,
                 makeErrorAssignRule,

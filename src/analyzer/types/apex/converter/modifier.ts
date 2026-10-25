@@ -55,26 +55,30 @@ export const makeAnnotationAssignRule: AssignForValueRule<AnnotationTypeClass, A
     },
 };
 
-export type ModifierType = CommonType<'modifier'> & {
-    value: ValueRuleValue<
-        | 'GLOBAL'
-        | 'PUBLIC'
-        | 'PROTECTED'
-        | 'PRIVATE'
-        | 'TRANSIENT'
-        | 'STATIC'
-        | 'ABSTRACT'
-        | 'FINAL'
-        | 'WEBSERVICE'
-        | 'OVERRIDE'
-        | 'VIRTUAL'
-        | 'TESTMETHOD'
-        | 'WITH_SHARING'
-        | 'WITHOUT_SHARING'
-        | 'INHERITED_SHARING'
-        | AnnotationType
-    >;
-};
+export type ModifierType = CommonType<'modifier'> &
+    (
+        | {
+              value:
+                  | 'GLOBAL'
+                  | 'PUBLIC'
+                  | 'PROTECTED'
+                  | 'PRIVATE'
+                  | 'TRANSIENT'
+                  | 'STATIC'
+                  | 'ABSTRACT'
+                  | 'FINAL'
+                  | 'WEBSERVICE'
+                  | 'OVERRIDE'
+                  | 'VIRTUAL'
+                  | 'TESTMETHOD'
+                  | 'WITH_SHARING'
+                  | 'WITHOUT_SHARING'
+                  | 'INHERITED_SHARING';
+          }
+        | {
+              value: ValueRuleValue<AnnotationType>;
+          }
+    );
 
 export const isModifierType = (value: unknown): value is ModifierType => {
     return isCommonType(value) && value.type === 'modifier';

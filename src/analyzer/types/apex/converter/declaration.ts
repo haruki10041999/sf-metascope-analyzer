@@ -372,10 +372,10 @@ export const makeInterfaceDeclarationAssignRule: AssignForValueRule<
 
 export type InterfaceMethodDeclarationType = CommonType<'interfaceMethodDeclaration'> & {
     value: ValueRuleValue<IdType>;
-    valueType: ValueRuleValue<'void' | TypeRefType>;
-    param: ValueRuleValue<FormalParametersType | null>;
-    modifier: ValueRuleValue<ModifierType>[];
-};
+} & ({ valueType: 'void' } | { valueType: ValueRuleValue<TypeRefType> }) & {
+        param: ValueRuleValue<FormalParametersType | null>;
+        modifier: ValueRuleValue<ModifierType>[];
+    };
 
 export const isInterfaceMethodDeclarationType = (
     value: unknown,
@@ -505,10 +505,10 @@ export const makeMemberDeclarationAssignRule: AssignForValueRule<
 
 export type MethodDeclarationType = CommonType<'methodDeclaration'> & {
     value: ValueRuleValue<IdType>;
-    valueType: ValueRuleValue<'void' | TypeRefType>;
-    param: ValueRuleValue<FormalParametersType | null>;
-    block: ValueRuleValue<BlockType | null>;
-};
+} & ({ valueType: 'void' } | { valueType: ValueRuleValue<TypeRefType> }) & {
+        param: ValueRuleValue<FormalParametersType | null>;
+        block: ValueRuleValue<BlockType | null>;
+    };
 
 export const isMethodDeclarationType = (value: unknown): value is MethodDeclarationType => {
     return isCommonType(value) && value.type === 'methodDeclaration';

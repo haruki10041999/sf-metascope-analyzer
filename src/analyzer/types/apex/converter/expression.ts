@@ -208,9 +208,7 @@ export const makeArth2ExpressionAssignRule: AssignForValueRule<
 
 export type AssignExpressionType = CommonType<'assignExpression'> & {
     left: ValueRuleValue<BaseExpressionType>;
-    operator: ValueRuleValue<
-        '=' | '+=' | '-=' | '*=' | '/=' | '&=' | '|=' | '^=' | '>>=' | '>>>=' | '<<='
-    >;
+    operator: '=' | '+=' | '-=' | '*=' | '/=' | '&=' | '|=' | '^=' | '>>=' | '>>>=' | '<<=';
     right: ValueRuleValue<BaseExpressionType>;
 };
 
@@ -232,27 +230,11 @@ export const makeAssignExpressionAssignRule: AssignForValueRule<
             ...makeBaseExpressionAssignRules,
             makeErrorAssignRule,
         ]);
-        const operator = assignMultiClass(expressionTypeClass.getOperator(), [
-            makeLimitedStringAssignRule([
-                '=',
-                '+=',
-                '-=',
-                '*=',
-                '/=',
-                '&=',
-                '|=',
-                '^=',
-                '>>=',
-                '>>>=',
-                '<<=',
-            ]),
-            makeErrorAssignRule,
-        ]);
         return {
             type: expressionTypeClass.getType(),
             sourceInfo: makeSourceInfo(expressionTypeClass),
             left,
-            operator,
+            operator: expressionTypeClass.getOperator(),
             right,
         };
     },

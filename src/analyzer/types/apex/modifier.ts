@@ -9,8 +9,8 @@ import {
     StructureJsonType,
     makeJsonType,
     convertExcludeError,
-    mergeRecord,
-    isConvertOf,
+    registerJson,
+    makeStructureJsonType,
 } from './commons';
 
 import {
@@ -95,13 +95,27 @@ export const isAnnotationJson = typia.createIs<AnnotationJson>();
 
 export type ModifierJson = JsonType<'modifier'> & {
     type: 'modifier';
-    name: string;
+    name:
+        | 'GLOBAL'
+        | 'PUBLIC'
+        | 'PROTECTED'
+        | 'PRIVATE'
+        | 'TRANSIENT'
+        | 'STATIC'
+        | 'ABSTRACT'
+        | 'FINAL'
+        | 'WEBSERVICE'
+        | 'OVERRIDE'
+        | 'VIRTUAL'
+        | 'TESTMETHOD'
+        | 'WITH_SHARING'
+        | 'WITHOUT_SHARING'
+        | 'INHERITED_SHARING';
 };
 
 export const isModifierJson = typia.createIs<ModifierJson>();
 
 export type AllModifierJson = StructureJsonType<'modifiers'> & {
-    sourceKeys: { [key: string]: Record<string, string[]>[] };
     access?: Omit<ModifierJson, 'sourceKeys'>[];
     declaration?: Omit<ModifierJson, 'sourceKeys'>[];
     webService?: Omit<ModifierJson, 'sourceKeys'>[];
@@ -197,214 +211,109 @@ export const makeModifierJson = (
 export const makeAllModifierJson = (
     target: Convert<ModifierType | ErrorType>[],
 ): AllModifierJson => {
-    const allModifierJson: AllModifierJson = {
-        kind: 'modifiers',
-        sourceKeys: {},
+    const properties: Record<string, JsonType<string>[]> = {};
+    const add = (attribute: string, value: JsonType<string>) => {
+        if (!properties[attribute]) {
+            properties[attribute] = [];
+        }
+        properties[attribute].push(value);
     };
 
     target.forEach((t) => {
         const result = makeModifierJson(t);
 
         if (isErrorJson(result)) {
-            if (!allModifierJson.error) {
-                allModifierJson.sourceKeys['error'] = [];
-                allModifierJson.error = [];
-            }
-
-            const { sourceKeys, ...content } = result;
-
-            allModifierJson.error.push(content);
-            allModifierJson.sourceKeys['error']!.push(result.sourceKeys);
+            add('error', result);
             return;
         }
 
         if (isModifierJson(result)) {
             if (isAccessModifier(result.name)) {
-                if (!allModifierJson.access) {
-                    allModifierJson.sourceKeys['access'] = [];
-                    allModifierJson.access = [];
-                }
-
-                const { sourceKeys, ...content } = result;
-
-                allModifierJson.access.push(content);
-                allModifierJson.sourceKeys['access']!.push(result.sourceKeys);
+                add('access', result);
                 return;
             }
 
             if (isDeclarationModifier(result.name)) {
-                if (!allModifierJson.declaration) {
-                    allModifierJson.sourceKeys['declaration'] = [];
-                    allModifierJson.declaration = [];
-                }
-                const { sourceKeys, ...content } = result;
-                allModifierJson.declaration.push(content);
-                allModifierJson.sourceKeys['declaration']!.push(result.sourceKeys);
+                add('declaration', result);
                 return;
             }
 
             if (isWebServiceModifier(result.name)) {
-                if (!allModifierJson.webService) {
-                    allModifierJson.sourceKeys['webService'] = [];
-                    allModifierJson.webService = [];
-                }
-                const { sourceKeys, ...content } = result;
-                allModifierJson.webService.push(content);
-                allModifierJson.sourceKeys['webService']!.push(result.sourceKeys);
+                add('webService', result);
                 return;
             }
 
             if (isTestModifier(result.name)) {
-                if (!allModifierJson.test) {
-                    allModifierJson.sourceKeys['test'] = [];
-                    allModifierJson.test = [];
-                }
-                const { sourceKeys, ...content } = result;
-                allModifierJson.test.push(content);
-                allModifierJson.sourceKeys['test']!.push(result.sourceKeys);
+                add('test', result);
                 return;
             }
 
             if (isSharingModifier(result.name)) {
-                if (!allModifierJson.sharing) {
-                    allModifierJson.sourceKeys['sharing'] = [];
-                    allModifierJson.sharing = [];
-                }
-                const { sourceKeys, ...content } = result;
-                allModifierJson.sharing.push(content);
-                allModifierJson.sourceKeys['sharing']!.push(result.sourceKeys);
+                add('sharing', result);
                 return;
             }
 
             if (isOtherModifier(result.name)) {
-                if (!allModifierJson.other) {
-                    allModifierJson.sourceKeys['other'] = [];
-                    allModifierJson.other = [];
-                }
-                const { sourceKeys, ...content } = result;
-                allModifierJson.other.push(content);
-                allModifierJson.sourceKeys['other']!.push(result.sourceKeys);
-                return;
+                add('other', result);
             }
         }
 
         if (isAnnotationJson(result)) {
             if (isLWCAnnotation(result.name)) {
-                if (!allModifierJson.lwcAnnotation) {
-                    allModifierJson.sourceKeys['lwcAnnotation'] = [];
-                    allModifierJson.lwcAnnotation = [];
-                }
-                const { sourceKeys, ...content } = result;
-                allModifierJson.lwcAnnotation.push(content);
-                allModifierJson.sourceKeys['lwcAnnotation']!.push(result.sourceKeys);
+                add('lwcAnnotation', result);
                 return;
             }
 
             if (isFlowAnnotation(result.name)) {
-                if (!allModifierJson.flowAnnotation) {
-                    allModifierJson.sourceKeys['flowAnnotation'] = [];
-                    allModifierJson.flowAnnotation = [];
-                }
-                const { sourceKeys, ...content } = result;
-                allModifierJson.flowAnnotation.push(content);
-                allModifierJson.sourceKeys['flowAnnotation']!.push(result.sourceKeys);
+                add('flowAnnotation', result);
                 return;
             }
 
             if (isAsyncAnnotation(result.name)) {
-                if (!allModifierJson.asyncAnnotation) {
-                    allModifierJson.sourceKeys['asyncAnnotation'] = [];
-                    allModifierJson.asyncAnnotation = [];
-                }
-                const { sourceKeys, ...content } = result;
-                allModifierJson.asyncAnnotation.push(content);
-                allModifierJson.sourceKeys['asyncAnnotation']!.push(result.sourceKeys);
+                add('asyncAnnotation', result);
                 return;
             }
 
             if (isTestAnnotation(result.name)) {
-                if (!allModifierJson.testAnnotation) {
-                    allModifierJson.sourceKeys['testAnnotation'] = [];
-                    allModifierJson.testAnnotation = [];
-                }
-                const { sourceKeys, ...content } = result;
-                allModifierJson.testAnnotation.push(content);
-                allModifierJson.sourceKeys['testAnnotation']!.push(result.sourceKeys);
+                add('testAnnotation', result);
                 return;
             }
 
             if (isRestAnnotation(result.name)) {
-                if (!allModifierJson.restAnnotation) {
-                    allModifierJson.sourceKeys['restAnnotation'] = [];
-                    allModifierJson.restAnnotation = [];
-                }
-                const { sourceKeys, ...content } = result;
-                allModifierJson.restAnnotation.push(content);
-                allModifierJson.sourceKeys['restAnnotation']!.push(result.sourceKeys);
+                add('restAnnotation', result);
                 return;
             }
 
             if (isVisualforceAnnotation(result.name)) {
-                if (!allModifierJson.visualforceAnnotation) {
-                    allModifierJson.sourceKeys['visualforceAnnotation'] = [];
-                    allModifierJson.visualforceAnnotation = [];
-                }
-                const { sourceKeys, ...content } = result;
-                allModifierJson.visualforceAnnotation.push(content);
-                allModifierJson.sourceKeys['visualforceAnnotation']!.push(result.sourceKeys);
+                add('visualforceAnnotation', result);
                 return;
             }
 
             if (isAccessAnnotation(result.name)) {
-                if (!allModifierJson.accessAnnotation) {
-                    allModifierJson.sourceKeys['accessAnnotation'] = [];
-                    allModifierJson.accessAnnotation = [];
-                }
-                const { sourceKeys, ...content } = result;
-                allModifierJson.accessAnnotation.push(content);
-                allModifierJson.sourceKeys['accessAnnotation']!.push(result.sourceKeys);
+                add('accessAnnotation', result);
                 return;
             }
 
             if (isSerializationAnnotation(result.name)) {
-                if (!allModifierJson.serializeAnnotation) {
-                    allModifierJson.sourceKeys['serializeAnnotation'] = [];
-                    allModifierJson.serializeAnnotation = [];
-                }
-                const { sourceKeys, ...content } = result;
-                allModifierJson.serializeAnnotation.push(content);
-                allModifierJson.sourceKeys['serializeAnnotation']!.push(result.sourceKeys);
+                add('serializeAnnotation', result);
                 return;
             }
 
             if (isExecutionAnnotation(result.name)) {
-                if (!allModifierJson.executionAnnotation) {
-                    allModifierJson.sourceKeys['executionAnnotation'] = [];
-                    allModifierJson.executionAnnotation = [];
-                }
-                const { sourceKeys, ...content } = result;
-                allModifierJson.executionAnnotation.push(content);
-                allModifierJson.sourceKeys['executionAnnotation']!.push(result.sourceKeys);
+                add('executionAnnotation', result);
                 return;
             }
 
             if (isCompatibilityAnnotation(result.name)) {
-                if (!allModifierJson.compatibilityAnnotation) {
-                    allModifierJson.sourceKeys['compatibilityAnnotation'] = [];
-                    allModifierJson.compatibilityAnnotation = [];
-                }
-                const { sourceKeys, ...content } = result;
-                allModifierJson.compatibilityAnnotation.push(content);
-                allModifierJson.sourceKeys['compatibilityAnnotation']!.push(result.sourceKeys);
+                add('compatibilityAnnotation', result);
                 return;
             }
 
-            if (!allModifierJson.otherAnnotation) {
-                allModifierJson.otherAnnotation = [];
-            }
-            allModifierJson.otherAnnotation.push(result);
+            add('otherAnnotation', result);
         }
     });
+
+    const allModifierJson: AllModifierJson = makeStructureJsonType('modifiers', properties);
 
     return allModifierJson;
 };

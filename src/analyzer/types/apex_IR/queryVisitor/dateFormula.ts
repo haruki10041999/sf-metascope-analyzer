@@ -1,6 +1,6 @@
 import { DateFormulaContext } from '@apexdevtools/apex-parser';
 
-import { QueryTypeClass } from '../queryVisitor';
+import { QueryValueTypeClass } from '../queryVisitor';
 
 import { SignedIntegerTypeClass, LiteralVisitor, isSignedIntegerType } from '../literalVisitor';
 import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
@@ -109,11 +109,11 @@ const isDateFormulaWithFunctionType = (ctx: DateFormulaContext): boolean => {
 
 export type DateFormulaValueType = DateFormulaFunctionType | DateFormulaWithFunctionType;
 
-export class DateFormulaTypeClass extends QueryTypeClass<'dateFormula', DateFormulaValueType> {
+export class DateFormulaTypeClass extends QueryValueTypeClass<'dateFormula', DateFormulaValueType> {
     private param: SignedIntegerTypeClass | ErrorTypeClass | null = null;
 
     private constructor(
-        value: DateFormulaValueType | ErrorTypeClass,
+        value: DateFormulaValueType,
         param: SignedIntegerTypeClass | ErrorTypeClass | null,
     ) {
         super('dateFormula', value);

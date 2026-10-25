@@ -7,6 +7,7 @@ import {
     JsonType,
     makeJsonType,
     convertExcludeError,
+    ConvertExcludeError,
 } from './commons';
 
 import { TypeRefType, ErrorType } from './converter';
@@ -83,10 +84,18 @@ export type TypeJson =
     PrimitiveTypeJson | CustomTypeJson | ArrayTypeJson | ListTypeJson | SetTypeJson | MapTypeJson;
 export const isTypeJson = typia.createIs<TypeJson>();
 
-export const makeTypeJson = (target: Convert<TypeRefType | ErrorType>): TypeJson | ErrorJson => {
-    const targetRecords: Record<string, string[]> = { [target.objectKey]: [target.sourceKey] };
+export const makeTypeJson = (
+    target: Convert<TypeRefType> | ConvertExcludeError<TypeRefType>,
+    records?: Record<string, string[]>,
+): TypeJson | ErrorJson => {
+    let targetRecords: Record<string, string[]>;
+    if (records) {
+        targetRecords = records;
+    } else {
+        targetRecords = { [target.objectKey]: [target.sourceKey] };
+    }
 
-    const { value, errorInfos } = convertExcludeError<TypeRefType | ErrorType>(target);
+    const { value, errorInfos } = convertExcludeError<TypeRefType>(target);
 
     const error: ErrorJson = makeJsonType('error', targetRecords, { kindType: 'type' });
 

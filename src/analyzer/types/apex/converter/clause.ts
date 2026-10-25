@@ -763,16 +763,19 @@ export const makeWhereClauseAssignRule: AssignForValueRule<WhereClauseTypeClass,
         },
     };
 
-export type WithClauseType =
-    | (CommonType<'withClause'> & {
-          value: ValueRuleValue<
-              'SYSTEM_MODE' | 'USER_MODE' | 'SECURITY_ENFORCED' | LogicalExpressionType
-          >;
-      })
-    | {
-          value: 'DATA_CATEGORY';
-          field: ValueRuleValue<FilteringExpressionType>;
-      };
+export type WithClauseType = CommonType<'withClause'> &
+    (
+        | {
+              value: 'SYSTEM_MODE' | 'USER_MODE' | 'SECURITY_ENFORCED';
+          }
+        | {
+              value: ValueRuleValue<LogicalExpressionType>;
+          }
+        | {
+              value: 'DATA_CATEGORY';
+              field: ValueRuleValue<FilteringExpressionType>;
+          }
+    );
 
 export const isWithClauseType = (value: unknown): value is WithClauseType => {
     return isCommonType(value) && value.type === 'withClause';
