@@ -231,8 +231,9 @@ export const makeSoqlFunctionJson = (
     return convertValue<'soqlFunction', 'soqlFunction', SoqlFunctionType, SoqlFunctionJson>(
         ['soqlFunction'],
         target,
+        ['soqlFunction'],
         'soqlFunction',
-        (kind, target, targetRecords, errorJson) => {
+        (target, targetRecords, errorJson) => {
             if (
                 target.value === 'AVG' ||
                 target.value === 'COUNT_DISTINCT' ||
@@ -243,7 +244,7 @@ export const makeSoqlFunctionJson = (
                 target.value === 'GROUPING' ||
                 target.value === 'CONVERT_CURRENCY'
             ) {
-                return makeJsonType(kind, targetRecords, {
+                return makeJsonType('soqlFunction', targetRecords, {
                     func: target.value,
                     arg: makeFieldNameJson(target.param),
                 });
@@ -262,14 +263,18 @@ export const makeSoqlFunctionJson = (
                 target.value === 'WEEK_IN_MONTH' ||
                 target.value === 'WEEK_IN_YEAR'
             ) {
-                return makeJsonType(kind, targetRecords, {
+                return makeJsonType('soqlFunction', targetRecords, {
                     func: target.value,
                     arg: makeDateFieldNameJson(target.param),
                 });
             } else if (target.value === 'COUNT') {
-                const soqlFunctionJson = makeJsonType(kind, targetRecords, {
-                    func: target.value,
-                });
+                const soqlFunctionJson: SoqlFunctionJson = makeJsonType(
+                    'soqlFunction',
+                    targetRecords,
+                    {
+                        func: target.value,
+                    },
+                );
                 if (target.param) {
                     soqlFunctionJson.arg = makeFieldNameJson(target.param);
                 }
@@ -277,25 +282,25 @@ export const makeSoqlFunctionJson = (
                 return soqlFunctionJson;
             } else if (target.value === 'FORMAT') {
                 if (target.param.type === 'fieldName') {
-                    return makeJsonType(kind, targetRecords, {
+                    return makeJsonType('soqlFunction', targetRecords, {
                         func: target.value,
                         arg: makeFieldNameJson(target.param),
                     });
                 } else {
                     const paramSoqlFunction = makeSoqlFunctionJson(target.param);
                     const { kind, sourceKeys, ...content } = paramSoqlFunction;
-                    return makeJsonType(kind, targetRecords, {
+                    return makeJsonType('soqlFunction', targetRecords, {
                         func: target.value,
                         arg: content,
                     });
                 }
             } else if (target.value === 'FIELDS') {
-                return makeJsonType(kind, targetRecords, {
+                return makeJsonType('soqlFunction', targetRecords, {
                     func: target.value,
                     arg: makeSoqlFieldParameterJson(target.param),
                 });
             } else if (target.value === 'DISTANCE') {
-                return makeJsonType(kind, targetRecords, {
+                return makeJsonType('soqlFunction', targetRecords, {
                     func: target.value,
                     arg: makeDistanceValueJson(target.param),
                 });
@@ -303,5 +308,6 @@ export const makeSoqlFunctionJson = (
                 return errorJson;
             }
         },
+        targetRecords,
     );
 };

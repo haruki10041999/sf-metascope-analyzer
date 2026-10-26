@@ -3,31 +3,32 @@ import typia from 'typia';
 import {
     Convert,
     isConvert,
-    castExcludeErrorInfo,
-    castExcludeErrorInfoArray,
-    castConvert,
-    castConvertArray,
+    ErrorJson,
+    isErrorJson,
+    JsonType,
+    makeJsonType,
+    convertExcludeError,
+    ConvertExcludeError,
+    ConvertType,
+    convertValue,
 } from '../commons';
 
 import { TypeOfType, FieldNameType, WhenClauseType, ElseClauseType } from '../converter';
 
-export type WhenJson = {
-    object: string[];
-    field: string[][];
-};
-export const isWhenJson = typia.createIs<WhenJson>();
+export type TypeOfBlockJson =
+    | {
+          object: string[];
+          field: string[][];
+      }
+    | {
+          object: 'else';
+          field: string[][];
+      };
+export const isWhenJson = typia.createIs<TypeOfBlockJson>();
 
-const makeWhenJson = (target: Convert<WhenClauseType>): WhenJson => {
-    const fieldName = castConvert(castExcludeErrorInfo(target.value));
-    const object = castConvertArray(castExcludeErrorInfoArray(fieldName.value)).map((v) => {
-        return castConvert(castExcludeErrorInfo(v.value)).value;
-    });
-
-    const fieldNameList = castConvert(castExcludeErrorInfo(target.field));
-    const field = castConvertArray(castExcludeErrorInfoArray(fieldNameList.value)).map((v) => {
-        const ids = castConvertArray(castExcludeErrorInfoArray(v.value));
-        return ids.map((id) => castConvert(castExcludeErrorInfo(id.value)).value);
-    });
+const makeWhenJson = (target: ConvertExcludeError<WhenClauseType>): TypeOfBlockJson => {
+    const object = target.value.value.map((v) => v.value.value);
+    const field = target.field.value.map((v) => v.value.map((v) => v.value.value));
 
     return {
         object: object,
@@ -35,43 +36,42 @@ const makeWhenJson = (target: Convert<WhenClauseType>): WhenJson => {
     };
 };
 
-const makeElseJson = (target: Convert<ElseClauseType>): string[][] => {
-    const fieldNameList = castConvert(castExcludeErrorInfo(target.value));
-    return castConvertArray(castExcludeErrorInfoArray(fieldNameList.value)).map((v) => {
-        const ids = castConvertArray(castExcludeErrorInfoArray(v.value));
-        return ids.map((id) => castConvert(castExcludeErrorInfo(id.value)).value);
-    });
+const makeElseJson = (target: ConvertExcludeError<ElseClauseType>): TypeOfBlockJson => {
+    const value = target.value.value.map((v) => v.value.map((v) => v.value.value));
+    return {
+        object: 'else',
+        field: value,
+    };
 };
 
-export type TypeOfJson = {
-    type: 'typeOf';
+export type TypeOfJson = JsonType<'typeOf'> & {
     field: string[];
-    when: WhenJson[];
-    elseField?: string[][];
+    block: TypeOfBlockJson[];
 };
 export const isTypeOfJson = typia.createIs<TypeOfJson>();
 
-export const makeTypeOfJson = (target: Convert<TypeOfType>): TypeOfJson => {
-    const fieldName = castConvert(castExcludeErrorInfo(target.value));
-    const field = castConvertArray(castExcludeErrorInfoArray(fieldName.value)).map((v) => {
-        return castConvert(castExcludeErrorInfo(v.value)).value;
-    });
+export const makeTypeOfJson = (
+    target: ConvertType<TypeOfType>,
+    targetRecords?: Record<string, string[]>,
+): TypeOfJson | ErrorJson => {
+    return convertValue<'typeOf', 'typeOf', TypeOfType, TypeOfJson>(
+        ['typeOf'],
+        target,
+        ['typeOf'],
+        'typeOf',
+        (target, targetRecords) => {
+            const typeOfBlocks: TypeOfBlockJson[] = [];
+            target.whenClause.forEach((v) => {
+                typeOfBlocks.push(makeWhenJson(v));
+            });
+            if (target.elseClause) {
+                typeOfBlocks.push(makeElseJson(target.elseClause));
+            }
 
-    const when = castConvertArray(castExcludeErrorInfoArray(target.whenClause)).map((v) =>
-        makeWhenJson(v),
+            return makeJsonType('typeOf', targetRecords, {
+                block: typeOfBlocks,
+            });
+        },
+        targetRecords,
     );
-
-    const typeofJson: TypeOfJson = {
-        type: 'typeOf',
-        field: field,
-        when: when,
-    };
-
-    const elseClause = castExcludeErrorInfo(target.elseClause);
-    const elseField = elseClause ? makeElseJson(castConvert(elseClause)) : undefined;
-    if (elseField) {
-        typeofJson.elseField = elseField;
-    }
-
-    return typeofJson;
 };

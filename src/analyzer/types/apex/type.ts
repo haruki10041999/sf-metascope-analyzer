@@ -91,8 +91,9 @@ export const makeTypeJson = (
     return convertValue<'typeRef', 'type', TypeRefType, TypeJson>(
         ['typeRef'],
         target,
+        ['type'],
         'type',
-        (kind, target, targetRecords, errorJson) => {
+        (target, targetRecords, errorJson) => {
             const collection = target.value;
             const dimension = target.dimension.value;
 
@@ -103,7 +104,7 @@ export const makeTypeJson = (
                     dimension: { ...target.dimension, value: null },
                 });
                 const { kind, sourceKeys, ...content } = result as TypeJson;
-                return makeJsonType(kind, targetRecords, {
+                return makeJsonType('type', targetRecords, {
                     collectionType: 'array',
                     elementType: content,
                     dimension: dimension,
@@ -123,7 +124,7 @@ export const makeTypeJson = (
                     : null;
 
                 if (isPrimitiveType(collectionName) && !collectionItem.generic) {
-                    return makeJsonType(kind, targetRecords, {
+                    return makeJsonType('type', targetRecords, {
                         type: 'primitive',
                         primitiveType: collectionName,
                     });
@@ -138,7 +139,7 @@ export const makeTypeJson = (
 
                     if (isTypeJson(result)) {
                         const { kind, sourceKeys, ...content } = result as TypeJson;
-                        return makeJsonType(kind, targetRecords, {
+                        return makeJsonType('type', targetRecords, {
                             collectionType: isListType(collectionName) ? 'list' : 'set',
                             elementType: content,
                         });
@@ -160,7 +161,7 @@ export const makeTypeJson = (
                             sourceKeys: valueSourceKeys,
                             ...valueContent
                         } = valueResult;
-                        return makeJsonType(kind, targetRecords, {
+                        return makeJsonType('type', targetRecords, {
                             collectionType: 'map',
                             keyType: keyContent,
                             valueType: valueContent,
@@ -168,7 +169,7 @@ export const makeTypeJson = (
                     }
                 }
 
-                const typeType: CustomTypeJson = makeJsonType(kind, targetRecords, {
+                const typeType: CustomTypeJson = makeJsonType('type', targetRecords, {
                     type: 'custom',
                     customType: collectionName,
                 });
@@ -198,7 +199,7 @@ export const makeTypeJson = (
             }
 
             if (collection.length > 0) {
-                const typeType: CustomTypeJson = makeJsonType(kind, targetRecords, {
+                const typeType: CustomTypeJson = makeJsonType('type', targetRecords, {
                     type: 'custom',
                     customType: collection.map((c) =>
                         typeof c.value === 'string' ? c.value : c.value.value,
@@ -241,4 +242,3 @@ export const makeTypeJson = (
         targetRecords,
     );
 };
-

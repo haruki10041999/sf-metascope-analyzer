@@ -161,13 +161,13 @@ export const convertValue = <
     TName extends string,
     TKind extends string,
     TCommonType extends CommonType<TName>,
-    TResult extends JsonType<TKind> | StructureJsonType<TKind>,
+    TResult extends JsonType<TKind> | StructureJsonType<TKind> | ErrorJson,
 >(
     types: readonly TName[],
     target: ConvertType<TCommonType> & ConvertKeys,
-    kind: TKind,
+    kinds: readonly TKind[],
+    errorKind: string,
     process: (
-        kind: TKind,
         target: ConvertExcludeError<TCommonType>,
         // 常に渡すため必須。2 引数の関数（StructureJsonType 用など）もそのまま渡せる
         targetRecords: Record<string, string[]>,
@@ -179,13 +179,26 @@ export const convertValue = <
         [target.objectKey]: [target.sourceKey],
     };
 
-    const errorJson: ErrorJson = makeJsonType<'error', ErrorJson>('error', record, {
-        kindType: kind,
+    const errorJson: ErrorJson = makeJsonType('error', record, {
+        kindType: errorKind,
     });
+
+    const processTarget = (value: ConvertExcludeError<TCommonType>) => {
+        const result = process(value, record, errorJson);
+        if (isErrorJson(result)) {
+            return result;
+        }
+
+        if (!kinds.some((kind) => kind === result.kind)) {
+            throw new Error(`Unsupported output kind: ${result.kind}`);
+        }
+
+        return result;
+    };
 
     // 型ガードで target を絞り込むと巨大な交差型の計算で StructureJsonType の解決が壊れるため、判定のみに使う
     if (isSpicifyConvertExcludeError(target as unknown, types)) {
-        return process(kind, target as ConvertExcludeError<TCommonType>, record, errorJson);
+        return processTarget(target as ConvertExcludeError<TCommonType>);
     }
 
     const { value, errorInfos } = convertExcludeError(target as Convert<TCommonType>);
@@ -194,7 +207,7 @@ export const convertValue = <
     }
 
     // value は !value で絞り込まれ `ExcludeErrorNode<T> & {}` になり、そのまま渡すと同様に型解決が壊れるため明示する
-    return process(kind, value as ConvertExcludeError<TCommonType>, record, errorJson);
+    return processTarget(value as ConvertExcludeError<TCommonType>);
 };
 
 export type SourceJson = {
@@ -267,7 +280,8 @@ export type StructureSourceKeys = {
         | JsonType<string>['sourceKeys']
         | JsonType<string>['sourceKeys'][]
         | StructureSourceKeys
-        | StructureSourceKeys[];
+        | StructureSourceKeys[]
+        | (JsonType<string>['sourceKeys'] | StructureSourceKeys)[];
 };
 
 // Omit<StructureJsonType<string>, 'sourceKeys'> 相当（文字列のインデックスシグネチャのため kind も string に含まれる）
@@ -277,17 +291,22 @@ export type StructureJsonContent = {
 
 type StructureJsonValue =
     | string
-    | Omit<JsonType<string>, 'sourceKeys'>
-    | Omit<JsonType<string>, 'sourceKeys'>[]
+    | Omit<JsonType<string>, 'kind' | 'sourceKeys'>
+    | Omit<JsonType<string>, 'kind' | 'sourceKeys'>[]
     | StructureJsonContent
     | StructureJsonContent[]
     | StructureSourceKeys;
 
-export type StructureJsonType<TKind extends string> = {
+type RegisteredJsonValue =
+    JsonType<string> | JsonType<string>[] | StructureJsonType<string> | StructureJsonType<string>[];
+
+export type StructureJsonType<
+    TKind extends string,
+    TContent extends Record<string, StructureJsonValue> = {},
+> = {
     kind: TKind;
     sourceKeys: StructureSourceKeys;
-    [key: string]: TKind | StructureJsonValue;
-};
+} & TContent;
 
 export const isStructureJsonType = typia.createIs<StructureJsonType<string>>();
 
@@ -313,39 +332,35 @@ export const makeJsonType = <Tkind extends string, T extends JsonType<Tkind>>(
 export const registerJson = (
     target: StructureJsonType<string>,
     attribute: string,
-    element:
-        | JsonType<string>
-        | JsonType<string>[]
-        | StructureJsonType<string>
-        | StructureJsonType<string>[],
+    element: RegisteredJsonValue,
 ): void => {
     if (Array.isArray(element)) {
         if (element.every((e) => isJsonType(e))) {
-            const jsonTypeList: Omit<JsonType<string>, 'sourceKeys'>[] = [];
+            const jsonTypeList: Omit<JsonType<string>, 'kind' | 'sourceKeys'>[] = [];
             const sourceKeyList: JsonType<string>['sourceKeys'][] = [];
 
             element.forEach((e) => {
-                const { sourceKeys, ...content } = e;
+                const { kind, sourceKeys, ...content } = e;
                 jsonTypeList.push(content);
                 sourceKeyList.push(sourceKeys);
             });
-            target[attribute] = jsonTypeList;
+            Object.assign(target, { [attribute]: jsonTypeList });
             target['sourceKeys'][attribute] = sourceKeyList;
         } else {
-            const jsonTypeList: Omit<StructureJsonType<string>, 'sourceKeys'>[] = [];
+            const jsonTypeList: Omit<StructureJsonType<string>, 'kind' | 'sourceKeys'>[] = [];
             const sourceKeyList: StructureJsonType<string>['sourceKeys'][] = [];
 
             element.forEach((e) => {
-                const { sourceKeys, ...content } = e;
+                const { kind, sourceKeys, ...content } = e;
                 jsonTypeList.push(content);
                 sourceKeyList.push(sourceKeys);
             });
-            target[attribute] = jsonTypeList;
+            Object.assign(target, { [attribute]: jsonTypeList });
             target['sourceKeys'][attribute] = sourceKeyList;
         }
     } else {
-        const { sourceKeys, ...content } = element;
-        target[attribute] = content;
+        const { kind, sourceKeys, ...content } = element;
+        Object.assign(target, { [attribute]: content });
         target.sourceKeys[attribute] = sourceKeys;
     }
 };
@@ -362,14 +377,23 @@ const _makeStructureJsonType = <Tkind extends string, T extends StructureJsonTyp
     } as T;
 };
 
-export const makeStructureJsonType = <Tkind extends string, T extends StructureJsonType<Tkind>>(
-    kind: T['kind'],
-    properties: Omit<T, 'kind' | 'sourceKeys'> = {} as Omit<T, 'kind' | 'sourceKeys'>,
-): StructureJsonType<Tkind> => {
-    const target: StructureJsonType<string> = { kind: kind, sourceKeys: {} };
+export const makeStructureJsonType = <
+    Tkind extends string,
+    TContent extends Record<string, RegisteredJsonValue> = {},
+    TAddContent extends Record<string, unknown> = {},
+>(
+    kind: Tkind,
+    properties: TContent = {} as TContent,
+    addInfo: TAddContent = {} as TAddContent,
+): StructureJsonType<Tkind, TContent> & TAddContent => {
+    const target: StructureJsonType<string> = { kind, sourceKeys: {} };
     Object.entries(properties).map(([key, value]) => registerJson(target, key, value));
 
-    return target as StructureJsonType<Tkind>;
+    if (Object.keys(addInfo).length > 0) {
+        Object.assign(target, addInfo);
+    }
+
+    return target as StructureJsonType<Tkind, TContent> & TAddContent;
 };
 
 type RestoredJsonValue =

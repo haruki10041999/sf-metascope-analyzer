@@ -25,7 +25,7 @@ import {
 import { makeTypeJson, TypeJson } from './type';
 
 type StringPrimaryJson = JsonType<'primary'> & {
-    primaryType:'primary' | 'voidPrimary' | 'superPrimary' | 'thisPrimary' | 'idPrimary'
+    primaryType: 'primary' | 'voidPrimary' | 'superPrimary' | 'thisPrimary' | 'idPrimary';
     value: string;
 };
 
@@ -36,14 +36,20 @@ const makeStringPrimary = (
     targetRecords: Record<string, string[]>,
 ): StringPrimaryJson => {
     if (target.type === 'idPrimary') {
-        return makeJsonType('primary', targetRecords, { primaryType:target.type, value: target.value.value });
+        return makeJsonType('primary', targetRecords, {
+            primaryType: target.type,
+            value: target.value.value,
+        });
     }
 
-    return makeJsonType('primary', targetRecords, { primaryType:target.type, value: target.value });
+    return makeJsonType('primary', targetRecords, {
+        primaryType: target.type,
+        value: target.value,
+    });
 };
 
 type LiteralPrimaryJson = JsonType<'primary'> & {
-    primaryType:'literalPrimary';
+    primaryType: 'literalPrimary';
     value: string;
     valueType: 'integer' | 'long' | 'number' | 'string' | 'longText' | 'boolean' | 'null';
 };
@@ -53,33 +59,36 @@ const makeLiteralPrimary = (
     targetRecords: Record<string, string[]>,
 ): LiteralPrimaryJson => {
     return makeJsonType('primary', targetRecords, {
-        primaryType:target.type,
+        primaryType: target.type,
         value: target.value.value,
         valueType: target.value.valueType,
     });
 };
 
 type TypeRefPrimaryJson = JsonType<'primary'> & {
-    primaryType:'typeRefPrimary',
-} & Omit<TypeJson, 'kind' | 'sourceKeys'>
+    primaryType: 'typeRefPrimary';
+} & Omit<TypeJson, 'kind' | 'sourceKeys'>;
 
-const makeTypeRefPrimary = (target:ConvertExcludeError<TypeRefPrimaryType>,targetRecords:Record<string,string[]>):TypeRefPrimaryJson | ErrorJson => {
-    const typeJson:TypeJson | ErrorJson = makeTypeJson(target.value,targetRecords)
+const makeTypeRefPrimary = (
+    target: ConvertExcludeError<TypeRefPrimaryType>,
+    targetRecords: Record<string, string[]>,
+): TypeRefPrimaryJson | ErrorJson => {
+    const typeJson: TypeJson | ErrorJson = makeTypeJson(target.value, targetRecords);
 
     if (typeJson.kind === 'error') {
-        return makeJsonType('error',targetRecords,{
-            kindType:'primary'
-        })
+        return makeJsonType('error', targetRecords, {
+            kindType: 'primary',
+        });
     } else {
-        const {kind,sourceKeys,...content} = typeJson
-        return makeJsonType('primary',targetRecords, {
-            primaryType:target.type,
-            ...content
-        })
+        const { kind, sourceKeys, ...content } = typeJson;
+        return makeJsonType('primary', targetRecords, {
+            primaryType: target.type,
+            ...content,
+        });
     }
-}
+};
 
-export type PrimaryJson = StringPrimaryJson;
+export type PrimaryJson = StringPrimaryJson | LiteralPrimaryJson | TypeRefPrimaryJson;
 
 export const isPrimaryJson = typia.createIs<PrimaryJson>();
 
@@ -89,13 +98,32 @@ export const makePrimaryJson = (
 ): PrimaryJson | ErrorJson => {
     if (target.type === 'error') {
         return makeJsonType('error', targetRecords, { kindType: 'primary' });
-    } else if (
-        target.type === 'primary' ||
-        target.type === 'superPrimary' ||
-        target.type === 'thisPrimary' ||
-        target.type === 'voidPrimary' ||
-        target.type === 'idPrimary' ||
-    ) {
-        return makeStringPrimary(target, targetRecords);
     }
+
+    const { value, errorInfos } = convertExcludeError<BasePrimaryType>(
+        target as Convert<BasePrimaryType>,
+    );
+    if (!value || errorInfos.length > 0) {
+        return makeJsonType('error', targetRecords, { kindType: 'primary' });
+    }
+
+    if (
+        value.type === 'primary' ||
+        value.type === 'superPrimary' ||
+        value.type === 'thisPrimary' ||
+        value.type === 'voidPrimary' ||
+        value.type === 'idPrimary'
+    ) {
+        return makeStringPrimary(value, targetRecords);
+    }
+
+    if (value.type === 'literalPrimary') {
+        return makeLiteralPrimary(value, targetRecords);
+    }
+
+    if (value.type === 'typeRefPrimary') {
+        return makeTypeRefPrimary(value, targetRecords);
+    }
+
+    return makeJsonType('error', targetRecords, { kindType: 'primary' });
 };

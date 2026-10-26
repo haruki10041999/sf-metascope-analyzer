@@ -11,6 +11,8 @@ import {
     mergeRecord,
     convertValue,
     ConvertType,
+    StructureJsonType,
+    makeStructureJsonType,
 } from '..//commons';
 
 import {
@@ -32,6 +34,7 @@ import {
 import { ExpressionJson, makeExpressionJson } from '../expression';
 import { SubQueryJson, makeSubQueryJson } from './subQuery';
 import { SoqlFunctionJson, makeSoqlFunctionJson } from './soqlFunction';
+import { FieldJson, makeFieldJson } from './select';
 
 export type SignedNumberJson = {
     value: string;
@@ -189,138 +192,223 @@ export type ValueJson = JsonType<'value'> &
 
 export const isValueJson = typia.createIs<ValueJson>();
 
-export const makeValueJson = (target: ConvertType<ValueType>,targetRecord?: Record<string, string[]>): ValueJson | ErrorJson => {
+export const makeValueJson = (
+    target: ConvertType<ValueType>,
+    targetRecords?: Record<string, string[]>,
+): ValueJson | ErrorJson => {
     return convertValue<'value', 'value', ValueType, ValueJson | ErrorJson>(
+        ['value'],
+        target,
+        ['value'],
+        'value',
+        (value, records, errorJson) => {
+            if (!('valueType' in value)) {
+                return errorJson;
+            }
 
+            if (typeof value.value === 'string') {
+                return makeJsonType('value', records, {
+                    type: value.valueType,
+                    value: value.value,
+                });
+            }
 
-    const targetRecords: Record<string, string[]> = { [target.objectKey]: [target.sourceKey] };
+            if (value.valueType === 'number') {
+                const signedNumberJson = makeSignedNumberJson(value.value);
+                return makeJsonType('value', records, {
+                    type: value.valueType,
+                    ...signedNumberJson,
+                });
+            }
 
-    const { value, errorInfos } = convertExcludeError<ValueType | ErrorType>(target);
+            if (value.valueType === 'dateFormula') {
+                const dateFormulaJson = makeDateFormulaJson(value.value);
+                return makeJsonType('value', records, {
+                    type: value.valueType,
+                    ...dateFormulaJson,
+                });
+            }
 
-    const error: ErrorJson = makeJsonType('error', targetRecords, { kindType: 'value' });
+            if (value.valueType === 'subQuery') {
+                const subQueryJson = makeSubQueryJson(value.value);
+                if (isErrorJson(subQueryJson)) {
+                    return errorJson;
+                }
 
-    if (!value || errorInfos.length > 0 || !('valueType' in value)) {
-        return error;
-    }
+                const { kind, sourceKeys, ...content } = subQueryJson;
+                return makeJsonType('value', records, {
+                    type: value.valueType,
+                    ...content,
+                });
+            }
 
-    if (typeof value.value === 'string') {
-        return makeJsonType('value', targetRecords, {
-            type: value.valueType,
-            value: value.value,
-        });
-    }
+            if (value.valueType === 'list') {
+                const values = value.value.value.map((item) => makeValueJson(item));
+                if (values.some(isErrorJson)) {
+                    return errorJson;
+                }
 
-    if (value.valueType === 'number') {
-        const signedNumberJson = makeSignedNumberJson(value.value);
-        return makeJsonType('value', targetRecords, {
-            type: value.valueType,
-            ...signedNumberJson,
-        });
-    }
+                return makeJsonType('value', records, {
+                    type: value.valueType,
+                    value: values.map(({ kind, sourceKeys, ...content }) => content),
+                });
+            }
 
-    if (value.valueType === 'dateFormula') {
-        const dateForumlaJson = makeDateFormulaJson(value.value);
-        return makeJsonType('value', targetRecords, {
-            type: value.valueType,
-            ...dateForumlaJson,
-        });
-    }
+            if (value.valueType === 'bind') {
+                const expressionJson = makeExpressionJson(value.value.value);
+                return makeJsonType('value', records, {
+                    type: value.valueType,
+                    ...expressionJson,
+                });
+            }
 
-    if (value.valueType === 'subQuery') {
-        const subQueryJson = makeSubQueryJson(value.value);
-        const { type, ...content } = subQueryJson;
-
-        return makeJsonType('value', targetRecords, {
-            type: value.valueType,
-            ...content,
-        });
-    }
-
-    if (value.valueType === 'list') {
-        return makeJsonType('value', targetRecords, {
-            type: value.valueType,
-            value: value.value.value.map((v) => {
-                const { kind, sourceKeys, ...content } = makeValueJson(v);
-                return content;
-            }),
-        });
-    }
-
-    if (value.valueType === 'bind') {
-        const expressionJson = makeExpressionJson(value.value.value);
-        return makeJsonType('value', targetRecords, {
-            type: value.valueType,
-            ...expressionJson,
-        });
-    }
+            return errorJson;
+        },
+        targetRecords,
+    );
 };
+
+export type QueryOperatorJson = JsonType<'queryOperator'> & {
+    operator:
+        | '='
+        | '!='
+        | '<'
+        | '>'
+        | '<='
+        | '>='
+        | '<>'
+        | 'LIKE'
+        | 'IN'
+        | 'NOT IN'
+        | 'INCLUDES'
+        | 'EXCLUDES';
+};
+export const isQueryOperatorJson = typia.createIs<QueryOperatorJson>();
 
 export const makeComparisonOperatorJson = (
     target: ConvertExcludeError<ComparisonOperatorType>,
-): string => {
+):
+    | '='
+    | '!='
+    | '<'
+    | '>'
+    | '<='
+    | '>='
+    | '<>'
+    | 'LIKE'
+    | 'IN'
+    | 'NOT IN'
+    | 'INCLUDES'
+    | 'EXCLUDES' => {
     return target.value;
 };
 
-export type SingleConditionJson = {
-    field: { type: 'field'; name: string[] } | SoqlFunctionJson;
-    operator: string;
-    value: ValueJson;
+export type SingleConditionJson = StructureJsonType<
+    'singleCondition',
+    {
+        field: Omit<FieldJson | SoqlFunctionJson | ErrorJson, 'kind' | 'sourceKeys'>;
+        value: Omit<ValueJson | ErrorJson, 'kind' | 'sourceKeys'>;
+    }
+> & {
+    operator:
+        | '='
+        | '!='
+        | '<'
+        | '>'
+        | '<='
+        | '>='
+        | '<>'
+        | 'LIKE'
+        | 'IN'
+        | 'NOT IN'
+        | 'INCLUDES'
+        | 'EXCLUDES';
 };
 
 export const isSingleConditionJson = typia.createIs<SingleConditionJson>();
 
 export const makeSingleConditionJson = (
-    target: ConvertExcludeError<FieldExpressionType>,
-): SingleConditionJson => {
-    const field = target.left;
-    const operator = makeComparisonOperatorJson(target.operator);
-    const value = makeValueJson(target.right);
+    target: ConvertType<FieldExpressionType>,
+    targetRecords?: Record<string, string[]>,
+): SingleConditionJson | ErrorJson => {
+    return convertValue<
+        'fieldExpression',
+        'singleCondition',
+        FieldExpressionType,
+        SingleConditionJson
+    >(
+        ['fieldExpression'],
+        target,
+        ['singleCondition'],
+        'singleCondition',
+        (target, _targetRecords, _errorJson) => {
+            const field = target.left;
+            const operator = makeComparisonOperatorJson(target.operator);
+            const value = makeValueJson(target.right);
 
-    if (value.type === 'fieldName') {
-        const fieldValue = field.value.map((v) => v.value.value);
+            let fieldValue: FieldJson | SoqlFunctionJson | ErrorJson;
+            if (field.type === 'fieldName') {
+                fieldValue = makeFieldJson(field);
+            } else {
+                fieldValue = makeSoqlFunctionJson(field);
+            }
 
-        return {
-            field: { type: 'field', name: fieldValue },
-            operator: operator,
-            value: value,
-        };
-    } else {
-        const fieldValue = makeSoqlFunctionJson(field);
+            return makeStructureJsonType(
+                'singleCondition',
+                {
+                    field: fieldValue,
+                    value: value,
+                },
+                { operator: operator },
+            );
+        },
+        targetRecords,
+    );
+};
 
-        return {
-            field: fieldValue,
-            operator: operator,
-            value: value,
-        };
+export type LogicalConditionJson = StructureJsonType<
+    'logicalCondition',
+    {
+        condition: Omit<
+            SingleConditionJson | LogicalConditionJson | ErrorJson,
+            'kind' | 'sourceKeys'
+        >[];
     }
-};
+> & { operator?: 'AND' | 'OR' | 'NOT' };
 
-export type LogicalConditionJson = {
-    operator?: string;
-    condition: (SingleConditionJson | LogicalConditionJson)[];
-};
 export const isLogicalConditionJson = typia.createIs<LogicalConditionJson>();
 
 export const makeLogicalConditionJson = (
-    target: ConvertExcludeError<LogicalExpressionType>,
-): LogicalConditionJson => {
-    const operator = target.operator;
-    const condition = target.value.map((c) => {
-        const conditionalExpression = c.value;
-        if (isConvert<FieldExpressionType>(conditionalExpression)) {
-            return makeSingleConditionJson(conditionalExpression);
-        } else {
-            return makeLogicalConditionJson(conditionalExpression);
-        }
-    });
+    target: ConvertType<LogicalExpressionType>,
+    targetRecords?: Record<string, string[]>,
+): LogicalConditionJson | ErrorJson => {
+    return convertValue<
+        'logicalExpression',
+        'logicalCondition',
+        LogicalExpressionType,
+        LogicalConditionJson
+    >(
+        ['logicalExpression'],
+        target,
+        ['logicalCondition'],
+        'logicalCondition',
+        (target, _targetRecord, _errorJson) => {
+            const operator = target.operator;
+            const condition: (SingleConditionJson | LogicalConditionJson | ErrorJson)[] = [];
+            target.value.forEach((v) => {
+                if (v.value.type === 'fieldExpression') {
+                    condition.push(makeSingleConditionJson(v.value))
+                } else {
+                    condition.push(makeLogicalConditionJson(v.value))
+                }
+            });
 
-    const logicalConditonJson: LogicalConditionJson = {
-        condition: condition,
-    };
-
-    if (operator) {
-        logicalConditonJson.operator = operator;
-    }
-
-    return logicalConditonJson;
-};
+            return makeStructureJsonType('logicalCondition',{
+                condition:condition
+            },{
+                ...{operator !== null?{operator:operator}:{}}
+            })
+        },
+        targetRecords,
+    );
+}
