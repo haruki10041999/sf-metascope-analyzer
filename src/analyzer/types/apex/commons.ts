@@ -2,7 +2,7 @@ import { createHash } from 'node:crypto';
 
 import typia from 'typia';
 
-import { SourceInfo, ErrorType, CommonType } from './converter';
+import { SourceInfo, ErrorType, CommonType, isCommonType } from './converter';
 
 // sourceInfo を外し objectKey / sourceKey を付けた形。union は分配されるため type で絞り込める
 type ConvertNode<T> =
@@ -31,10 +31,6 @@ const hash = (value: unknown): string => {
     return createHash('sha256').update(JSON.stringify(value)).digest('hex');
 };
 
-const isCommonNode = (value: unknown): value is CommonType<string> => {
-    return isRecord(value) && typeof value.type === 'string' && 'sourceInfo' in value;
-};
-
 type SourceRegistration = { objectKey: string; sourceKey: string; sourceInfo: SourceInfo };
 
 /**
@@ -56,7 +52,7 @@ const convertNode = (
     }
 
     // 親を子より先に登録する（前順）ため、子の処理前に登録位置を確保する
-    const isCommon = isCommonNode(target);
+    const isCommon = isCommonType(target);
     const index = registrations.length;
     if (isCommon) {
         registrations.push(null);

@@ -28,14 +28,7 @@ export type CommonType<TName extends string> = {
 };
 
 // 各 isXxxType は、これで type の存在を確認してからリテラルを比較する
-export const isCommonType = (value: unknown): value is CommonType<string> => {
-    return (
-        typeof value === 'object' &&
-        value !== null &&
-        'type' in value &&
-        typeof value.type === 'string'
-    );
-};
+export const isCommonType = typia.createIs<CommonType<string>>();
 
 export type ErrorType = CommonType<'error'> & {
     errorCode: ErrorCode;
