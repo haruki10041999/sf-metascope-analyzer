@@ -9,6 +9,8 @@ import {
     makeJsonType,
     convertExcludeError,
     mergeRecord,
+    convertValue,
+    ConvertType,
 } from '..//commons';
 
 import {
@@ -187,7 +189,10 @@ export type ValueJson = JsonType<'value'> &
 
 export const isValueJson = typia.createIs<ValueJson>();
 
-export const makeValueJson = (target: Convert<ValueType | ErrorType>): ValueJson | ErrorJson => {
+export const makeValueJson = (target: ConvertType<ValueType>,targetRecord?: Record<string, string[]>): ValueJson | ErrorJson => {
+    return convertValue<'value', 'value', ValueType, ValueJson | ErrorJson>(
+
+
     const targetRecords: Record<string, string[]> = { [target.objectKey]: [target.sourceKey] };
 
     const { value, errorInfos } = convertExcludeError<ValueType | ErrorType>(target);

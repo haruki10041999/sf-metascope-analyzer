@@ -9,6 +9,8 @@ import {
     makeJsonType,
     convertExcludeError,
     ConvertExcludeError,
+    ConvertType,
+    convertValue,
 } from '../commons';
 
 import {
@@ -38,7 +40,9 @@ export type DateFieldNameJson = {
     isConvertTimeZone: boolean;
 };
 export const isDateFieldNameJson = typia.createIs<DateFieldNameJson>();
-const makeDateFieldParam = (target: ConvertExcludeError<DateFieldNameType>): DateFieldNameJson => {
+const makeDateFieldNameJson = (
+    target: ConvertExcludeError<DateFieldNameType>,
+): DateFieldNameJson => {
     const name = makeFieldNameJson(target.value);
     const isConvertTimeZone = target.isConvertTimeZone;
 
@@ -50,7 +54,7 @@ const makeDateFieldParam = (target: ConvertExcludeError<DateFieldNameType>): Dat
 
 const makeSoqlFieldParameterJson = (
     target: ConvertExcludeError<SoqlFieldsParameterType>,
-): string => {
+): 'ALL' | 'CUSTOM' | 'STANDARD' => {
     return target.value;
 };
 
@@ -69,8 +73,8 @@ type CoordinateElementJson =
 const makeCoordinateElementParamJson = (
     target: ConvertExcludeError<CoordinateValueType>,
 ): CoordinateElementJson => {
-    if (isConvert<BoundExpressionType>(target.value)) {
-        const expressionValue = makeExpressionJson(target.value);
+    if (target.value.type === 'boundExpression') {
+        const expressionValue = makeExpressionJson(target.value.value);
         return {
             type: 'bind',
             value: expressionValue,
@@ -100,7 +104,7 @@ type CoordinateValueJson = {
 };
 
 const makeCoordinateParamValueJson = (
-    target: Convert<CoordinateValueType>[],
+    target: ConvertExcludeError<CoordinateValueType>[],
 ): CoordinateValueJson => {
     const latitude = makeCoordinateElementParamJson(target[0]!);
     const longitude = makeCoordinateElementParamJson(target[1]!);
@@ -111,130 +115,193 @@ const makeCoordinateParamValueJson = (
     };
 };
 
+type LocationValueElementJson =
+    | {
+          type: 'field';
+          field: string[];
+      }
+    | {
+          type: 'bind';
+          field: ExpressionJson;
+      }
+    | {
+          type: 'coordinate';
+          field: CoordinateValueJson;
+      };
+
+const makeLocationValueElementJson = (
+    target: ConvertExcludeError<LocationValueType>,
+): LocationValueElementJson => {
+    if (Array.isArray(target.value)) {
+        return {
+            type: 'coordinate',
+            field: makeCoordinateParamValueJson(target.value),
+        };
+    } else if (target.value.type === 'fieldName') {
+        const fieldValue = makeFieldNameJson(target.value);
+        return {
+            type: 'field',
+            field: fieldValue,
+        };
+    } else {
+        const expressionValue = makeExpressionJson(target.value.value);
+        return {
+            type: 'bind',
+            field: expressionValue,
+        };
+    }
+};
+
 export type DistanceValueJson = {
-    field: string[];
-    target:
-        | {
-              type: 'bind';
-              value: ExpressionJson;
-          }
-        | ({
-              type: 'coordinate';
-          } & CoordinateValueJson);
+    field: LocationValueElementJson;
+    target: LocationValueElementJson;
     unit: string;
 };
 export const isDistanceValueJson = typia.createIs<DistanceValueJson>();
 
 export const makeDistanceValueJson = (
-    target: (Convert<LocationValueType> | string)[],
+    target: (ConvertExcludeError<LocationValueType> | string)[],
 ): DistanceValueJson => {
-    const fieldParam = target[0]! as Convert<LocationValueType>;
-    const targetParam = target[1]! as Convert<LocationValueType>;
+    const fieldParam = target[0]! as ConvertExcludeError<LocationValueType>;
+    const targetParam = target[1]! as ConvertExcludeError<LocationValueType>;
     const unit = target[2]! as string;
 
-    const field = makeFieldNameJson(
-        castConvert(castExcludeErrorInfo(fieldParam.value) as FieldNameType),
-    );
-
-    let targetValue:
-        | {
-              type: 'bind';
-              value: ExpressionJson;
-          }
-        | ({
-              type: 'coordinate';
-          } & CoordinateValueJson);
-    const targetValueParamValue = castExcludeErrorInfo(targetParam.value);
-    const targetValueParamCoodinates = targetParam.coordinates;
-    const targetValueParamValueConverted = targetValueParamValue
-        ? castConvert(
-              castExcludeErrorInfo(
-                  (castConvert(targetValueParamValue) as Convert<BoundExpressionType>).value,
-              ),
-          )
-        : null;
-    const targetValueParamCoordinatesConverted = targetValueParamCoodinates
-        ? castConvertArray(
-              castExcludeErrorInfoArray(castExcludeErrorInfo(targetValueParamCoodinates)),
-          )
-        : null;
-    if (targetValueParamValueConverted) {
-        const expression = makeExpressionJson(targetValueParamValueConverted);
-        targetValue = {
-            type: 'bind',
-            value: expression,
-        };
-    } else {
-        const coordinates = makeCoordinateParamValueJson(targetValueParamCoordinatesConverted!);
-        targetValue = {
-            type: 'coordinate',
-            ...coordinates,
-        };
-    }
-
     return {
-        field,
-        target: targetValue,
-        unit,
+        field: makeLocationValueElementJson(fieldParam),
+        target: makeLocationValueElementJson(targetParam),
+        unit: unit,
     };
 };
 
-export type SoqlFunctionJson = {
-    type: 'soqlFunction';
-    func: string;
-    param?:
-        string | string[] | DateFieldNameJson | DistanceValueJson | Omit<SoqlFunctionJson, 'type'>;
-};
+export type SoqlFunctionJson = JsonType<'soqlFunction'> &
+    (
+        | {
+              func:
+                  | 'AVG'
+                  | 'COUNT_DISTINCT'
+                  | 'MIN'
+                  | 'MAX'
+                  | 'SUM'
+                  | 'TOLABEL'
+                  | 'GROUPING'
+                  | 'CONVERT_CURRENCY';
+              arg: string[];
+          }
+        | {
+              func:
+                  | 'CALENDAR_MONTH'
+                  | 'CALENDAR_QUARTER'
+                  | 'CALENDAR_YEAR'
+                  | 'DAY_IN_MONTH'
+                  | 'DAY_IN_WEEK'
+                  | 'DAY_IN_YEAR'
+                  | 'DAY_ONLY'
+                  | 'FISCAL_MONTH'
+                  | 'FISCAL_QUARTER'
+                  | 'FISCAL_YEAR'
+                  | 'HOUR_IN_DAY'
+                  | 'WEEK_IN_MONTH'
+                  | 'WEEK_IN_YEAR';
+              arg: DateFieldNameJson;
+          }
+        | {
+              func: 'COUNT';
+              arg?: string[];
+          }
+        | {
+              func: 'FORMAT';
+              arg: string[] | Omit<SoqlFunctionJson, 'kind' | 'sourceKeys'>;
+          }
+        | {
+              func: 'FIELDS';
+              arg: 'ALL' | 'CUSTOM' | 'STANDARD';
+          }
+        | {
+              func: 'DISTANCE';
+              arg: DistanceValueJson;
+          }
+    );
 
 export const isSoqlFunctionJson = typia.createIs<SoqlFunctionJson>();
 
-export const makeSoqlFunctionJson = (target: Convert<SoqlFunctionType>) => {
-    const func = castExcludeErrorInfo(target.value);
+export const makeSoqlFunctionJson = (
+    target: ConvertType<SoqlFunctionType>,
+    targetRecords?: Record<string, string[]>,
+): SoqlFunctionJson | ErrorJson => {
+    return convertValue<'soqlFunction', 'soqlFunction', SoqlFunctionType, SoqlFunctionJson>(
+        ['soqlFunction'],
+        target,
+        'soqlFunction',
+        (kind, target, targetRecords, errorJson) => {
+            if (
+                target.value === 'AVG' ||
+                target.value === 'COUNT_DISTINCT' ||
+                target.value === 'MIN' ||
+                target.value === 'MAX' ||
+                target.value === 'SUM' ||
+                target.value === 'TOLABEL' ||
+                target.value === 'GROUPING' ||
+                target.value === 'CONVERT_CURRENCY'
+            ) {
+                return makeJsonType(kind, targetRecords, {
+                    func: target.value,
+                    arg: makeFieldNameJson(target.param),
+                });
+            } else if (
+                target.value === 'CALENDAR_MONTH' ||
+                target.value === 'CALENDAR_QUARTER' ||
+                target.value === 'CALENDAR_YEAR' ||
+                target.value === 'DAY_IN_MONTH' ||
+                target.value === 'DAY_IN_WEEK' ||
+                target.value === 'DAY_IN_YEAR' ||
+                target.value === 'DAY_ONLY' ||
+                target.value === 'FISCAL_MONTH' ||
+                target.value === 'FISCAL_QUARTER' ||
+                target.value === 'FISCAL_YEAR' ||
+                target.value === 'HOUR_IN_DAY' ||
+                target.value === 'WEEK_IN_MONTH' ||
+                target.value === 'WEEK_IN_YEAR'
+            ) {
+                return makeJsonType(kind, targetRecords, {
+                    func: target.value,
+                    arg: makeDateFieldNameJson(target.param),
+                });
+            } else if (target.value === 'COUNT') {
+                const soqlFunctionJson = makeJsonType(kind, targetRecords, {
+                    func: target.value,
+                });
+                if (target.param) {
+                    soqlFunctionJson.arg = makeFieldNameJson(target.param);
+                }
 
-    const soqlFunctionJson: SoqlFunctionJson = {
-        type: 'soqlFunction',
-        func: func,
-    };
-
-    const param = castExcludeErrorInfo(target.param);
-    const paramValue = param
-        ? Array.isArray(param)
-            ? param.map((p) => {
-                  if (typeof p === 'string') {
-                      return p;
-                  } else {
-                      return castConvert(castExcludeErrorInfo(p));
-                  }
-              })
-            : castConvert(param)
-        : null;
-
-    if (isConvert(paramValue, isFieldNameType)) {
-        soqlFunctionJson.param = makeFieldNameJson(paramValue);
-        return soqlFunctionJson;
-    }
-
-    if (isConvert(paramValue, isDateFieldNameType)) {
-        soqlFunctionJson.param = makeDateFieldParam(paramValue);
-        return soqlFunctionJson;
-    }
-
-    if (isConvert(paramValue, isSoqlFieldsParameterType)) {
-        soqlFunctionJson.param = makeSoqlFieldParameterJson(paramValue);
-        return soqlFunctionJson;
-    }
-
-    if (isConvert(paramValue, isSoqlFunctionType)) {
-        const param = makeSoqlFunctionJson(paramValue);
-        const { type, ...content } = param;
-        soqlFunctionJson.param = content;
-        return soqlFunctionJson;
-    }
-
-    if (Array.isArray(paramValue)) {
-        soqlFunctionJson.param = makeDistanceValueJson(paramValue);
-        return soqlFunctionJson;
-    }
-
-    return soqlFunctionJson;
+                return soqlFunctionJson;
+            } else if (target.value === 'FORMAT') {
+                if (target.param.type === 'fieldName') {
+                    return makeJsonType(kind, targetRecords, {
+                        func: target.value,
+                        arg: makeFieldNameJson(target.param),
+                    });
+                } else {
+                    const paramSoqlFunction = makeSoqlFunctionJson(target.param);
+                    const { kind, sourceKeys, ...content } = paramSoqlFunction;
+                    return makeJsonType(kind, targetRecords, {
+                        func: target.value,
+                        arg: content,
+                    });
+                }
+            } else if (target.value === 'FIELDS') {
+                return makeJsonType(kind, targetRecords, {
+                    func: target.value,
+                    arg: makeSoqlFieldParameterJson(target.param),
+                });
+            } else if (target.value === 'DISTANCE') {
+                return makeJsonType(kind, targetRecords, {
+                    func: target.value,
+                    arg: makeDistanceValueJson(target.param),
+                });
+            } else {
+                return errorJson;
+            }
+        },
+    );
 };

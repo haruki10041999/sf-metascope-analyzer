@@ -155,45 +155,46 @@ export const convertExcludeError = <T extends CommonType<string>>(
 export type ConvertType<T extends CommonType<string>> =
     Convert<T | ErrorType> | ConvertExcludeError<T>;
 
+type ConvertKeys = { objectKey: string; sourceKey: string };
+
 export const convertValue = <
     TName extends string,
     TKind extends string,
     TCommonType extends CommonType<TName>,
-    TConvert extends ConvertType<TCommonType>,
+    TResult extends JsonType<TKind> | StructureJsonType<TKind>,
 >(
     types: readonly TName[],
-    target: TConvert,
+    target: ConvertType<TCommonType> & ConvertKeys,
     kind: TKind,
     process: (
         kind: TKind,
         target: ConvertExcludeError<TCommonType>,
+        // 常に渡すため必須。2 引数の関数（StructureJsonType 用など）もそのまま渡せる
         targetRecords: Record<string, string[]>,
-    ) => JsonType<TKind> | StructureJsonType<TKind>,
+        errorJson: ErrorJson,
+    ) => TResult | ErrorJson,
     targetRecords?: Record<string, string[]>,
-): JsonType<TKind> | StructureJsonType<TKind> | ErrorJson => {
-    let record: Record<string, string[]>;
-    if (targetRecords) {
-        record = targetRecords;
-    } else {
-        record = { [target.objectKey]: [target.sourceKey] };
+): TResult | ErrorJson => {
+    const record: Record<string, string[]> = targetRecords ?? {
+        [target.objectKey]: [target.sourceKey],
+    };
+
+    const errorJson: ErrorJson = makeJsonType<'error', ErrorJson>('error', record, {
+        kindType: kind,
+    });
+
+    // 型ガードで target を絞り込むと巨大な交差型の計算で StructureJsonType の解決が壊れるため、判定のみに使う
+    if (isSpicifyConvertExcludeError(target as unknown, types)) {
+        return process(kind, target as ConvertExcludeError<TCommonType>, record, errorJson);
     }
 
-    if (isSpicifyConvertExcludeError(target, types)) {
-        return process(kind, target, record);
-    } else {
-        const { value, errorInfos } = convertExcludeError(target);
-        if (!value || errorInfos.length > 0) {
-            let record: Record<string, string[]>;
-            if (targetRecords) {
-                record = targetRecords;
-            } else {
-                record = { [target.objectKey]: [target.sourceKey] };
-            }
-            return makeJsonType('error', record, { kindType: kind });
-        }
-
-        return process(kind, target, record);
+    const { value, errorInfos } = convertExcludeError(target as Convert<TCommonType>);
+    if (!value || errorInfos.length > 0) {
+        return errorJson;
     }
+
+    // value は !value で絞り込まれ `ExcludeErrorNode<T> & {}` になり、そのまま渡すと同様に型解決が壊れるため明示する
+    return process(kind, value as ConvertExcludeError<TCommonType>, record, errorJson);
 };
 
 export type SourceJson = {
@@ -258,28 +259,34 @@ export type JsonType<TKind extends string> = {
 
 export const isJsonType = typia.createIs<JsonType<string>>();
 
+// 型定義の中で自分自身を StructureJsonType<string>['sourceKeys'] や Omit<StructureJsonType<string>, ...> で参照すると
+// keyof の計算が循環し、型の解決順によって StructureJsonType が壊れる（sourceKeys が存在しない扱いになる）。
+// そのため再帰する部分を名前付きの型として切り出す
+export type StructureSourceKeys = {
+    [key: string]:
+        | JsonType<string>['sourceKeys']
+        | JsonType<string>['sourceKeys'][]
+        | StructureSourceKeys
+        | StructureSourceKeys[];
+};
+
+// Omit<StructureJsonType<string>, 'sourceKeys'> 相当（文字列のインデックスシグネチャのため kind も string に含まれる）
+export type StructureJsonContent = {
+    [key: string]: StructureJsonValue;
+};
+
+type StructureJsonValue =
+    | string
+    | Omit<JsonType<string>, 'sourceKeys'>
+    | Omit<JsonType<string>, 'sourceKeys'>[]
+    | StructureJsonContent
+    | StructureJsonContent[]
+    | StructureSourceKeys;
+
 export type StructureJsonType<TKind extends string> = {
     kind: TKind;
-    sourceKeys: {
-        [key: string]:
-            | JsonType<string>['sourceKeys']
-            | JsonType<string>['sourceKeys'][]
-            | StructureJsonType<string>['sourceKeys']
-            | StructureJsonType<string>['sourceKeys'][];
-    };
-    [key: string]:
-        | TKind
-        | Omit<JsonType<string>, 'sourceKeys'>
-        | Omit<JsonType<string>, 'sourceKeys'>[]
-        | Omit<StructureJsonType<string>, 'sourceKeys'>
-        | Omit<StructureJsonType<string>, 'sourceKeys'>[]
-        | {
-              [key: string]:
-                  | JsonType<string>['sourceKeys']
-                  | JsonType<string>['sourceKeys'][]
-                  | StructureJsonType<string>['sourceKeys']
-                  | StructureJsonType<string>['sourceKeys'][];
-          };
+    sourceKeys: StructureSourceKeys;
+    [key: string]: TKind | StructureJsonValue;
 };
 
 export const isStructureJsonType = typia.createIs<StructureJsonType<string>>();

@@ -121,9 +121,8 @@ export class SoqlFunctionTypeClass extends QueryValueTypeClass<
             !isCountFunctionType(ctx) &&
             (!isFieldsFunctionType(ctx) || !ctx.soqlFieldsParameter()) &&
             (!isDistanceFunctionType(ctx) ||
-                !ctx.locationValue_list() ||
-                (!ctx.StringLiteral() &&
-                !ctx.MultilineStringLiteral()) &&
+                ctx.locationValue_list().length != 2 ||
+                (!ctx.StringLiteral() && !ctx.MultilineStringLiteral())) &&
             (!isDateFunctionType(ctx) || !ctx.dateFieldName())
         ) {
             throw new Error('値が異常です。SoqlFunctionContext: ' + ctx.getText());
@@ -260,3 +259,4 @@ export const isSoqlFunctionType = (
 ): target is SoqlFunctionTypeClass => {
     return target instanceof SoqlFunctionTypeClass;
 };
+
