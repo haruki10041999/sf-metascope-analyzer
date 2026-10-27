@@ -525,7 +525,7 @@ export type SoslWithClauseType =
       }
     | {
           value: 'METADATA';
-          content: ValueRuleValue<string>;
+          content: string;
       }
     | {
           value: 'HIGHLIGHT' | 'SYSTEM_MODE' | 'USER_MODE';
@@ -588,16 +588,11 @@ export const makeSoslWithClauseAssignRule: AssignForValueRule<
                 content,
             };
         } else if (value === 'METADATA') {
-            const content = assignMultiClass(clauseTypeClass.getContent(), [
-                makeStringAssignRule,
-                makeErrorAssignRule,
-            ]);
-
             return {
                 type: clauseTypeClass.getType(),
                 sourceInfo: makeSourceInfo(clauseTypeClass),
                 value,
-                content,
+                content: clauseTypeClass.getContent() as string,
             };
         } else {
             return {
@@ -799,4 +794,3 @@ export const makeWithClauseAssignRule: AssignForValueRule<WithClauseTypeClass, W
         }
     },
 };
-

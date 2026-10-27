@@ -141,7 +141,10 @@ export type SoslWithJson = JsonType<'withClause'> &
               value?: string;
           }
         | {
-              mode: 'SPELL_CORRECTION';
-              value?: string;
+              mode: 'NETWORK' | 'METADATA';
+              value: string;
+          }
+        | {
+              mode: 'HIGHLIGHT' | 'SYSTEM_MODE' | 'USER_MODE';
           }
     );
