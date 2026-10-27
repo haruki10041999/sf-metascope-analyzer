@@ -306,8 +306,11 @@ export const makeComparisonOperatorJson = (
 export type SingleConditionJson = StructureJsonType<
     'singleCondition',
     {
-        field: Omit<FieldJson | SoqlFunctionJson | ErrorJson, 'kind' | 'sourceKeys'>;
-        value: Omit<ValueJson | ErrorJson, 'kind' | 'sourceKeys'>;
+        field:
+            | Omit<FieldJson, 'sourceKeys'>
+            | Omit<SoqlFunctionJson, 'sourceKeys'>
+            | Omit<ErrorJson, 'sourceKeys'>;
+        value: Omit<ValueJson, 'sourceKeys'> | Omit<ErrorJson, 'sourceKeys'>;
     }
 > & {
     operator:
@@ -369,10 +372,11 @@ export const makeSingleConditionJson = (
 export type LogicalConditionJson = StructureJsonType<
     'logicalCondition',
     {
-        condition: Omit<
-            SingleConditionJson | LogicalConditionJson | ErrorJson,
-            'kind' | 'sourceKeys'
-        >[];
+        condition: (
+            | Omit<SingleConditionJson, 'sourceKeys'>
+            | Omit<LogicalConditionJson, 'sourceKeys'>
+            | Omit<ErrorJson, 'sourceKeys'>
+        )[];
     }
 > & { operator?: 'AND' | 'OR' | 'NOT' };
 
@@ -397,18 +401,18 @@ export const makeLogicalConditionJson = (
             const condition: (SingleConditionJson | LogicalConditionJson | ErrorJson)[] = [];
             target.value.forEach((v) => {
                 if (v.value.type === 'fieldExpression') {
-                    condition.push(makeSingleConditionJson(v.value))
+                    condition.push(makeSingleConditionJson(v.value));
                 } else {
-                    condition.push(makeLogicalConditionJson(v.value))
+                    condition.push(makeLogicalConditionJson(v.value));
                 }
             });
 
-            return makeStructureJsonType('logicalCondition',{
-                condition:condition
-            },{
-                ...{operator !== null?{operator:operator}:{}}
-            })
+            return makeStructureJsonType(
+                'logicalCondition',
+                { condition: condition },
+                operator !== null ? { operator } : {},
+            );
         },
         targetRecords,
     );
-}
+};

@@ -53,24 +53,24 @@ export const isModifierJson = typia.createIs<ModifierJson>();
 export type ModifiersJson = StructureJsonType<
     'modifiers',
     {
-        access?: Omit<ModifierJson, 'kind' | 'sourceKeys'>[];
-        declaration?: Omit<ModifierJson, 'kind' | 'sourceKeys'>[];
-        webService?: Omit<ModifierJson, 'kind' | 'sourceKeys'>[];
-        test?: Omit<ModifierJson, 'kind' | 'sourceKeys'>[];
-        sharing?: Omit<ModifierJson, 'kind' | 'sourceKeys'>[];
-        other?: Omit<ModifierJson, 'kind' | 'sourceKeys'>[];
-        lwcAnnotation?: Omit<AnnotationJson, 'kind' | 'sourceKeys'>[];
-        flowAnnotation?: Omit<AnnotationJson, 'kind' | 'sourceKeys'>[];
-        asyncAnnotation?: Omit<AnnotationJson, 'kind' | 'sourceKeys'>[];
-        testAnnotation?: Omit<AnnotationJson, 'kind' | 'sourceKeys'>[];
-        restAnnotation?: Omit<AnnotationJson, 'kind' | 'sourceKeys'>[];
-        visualforceAnnotation?: Omit<AnnotationJson, 'kind' | 'sourceKeys'>[];
-        accessAnnotation?: Omit<AnnotationJson, 'kind' | 'sourceKeys'>[];
-        serializeAnnotation?: Omit<AnnotationJson, 'kind' | 'sourceKeys'>[];
-        executionAnnotation?: Omit<AnnotationJson, 'kind' | 'sourceKeys'>[];
-        compatibilityAnnotation?: Omit<AnnotationJson, 'kind' | 'sourceKeys'>[];
-        otherAnnotation?: Omit<AnnotationJson, 'kind' | 'sourceKeys'>[];
-        error?: Omit<ErrorJson, 'kind' | 'sourceKeys'>[];
+        access?: Omit<ModifierJson, 'sourceKeys'>[];
+        declaration?: Omit<ModifierJson, 'sourceKeys'>[];
+        webService?: Omit<ModifierJson, 'sourceKeys'>[];
+        test?: Omit<ModifierJson, 'sourceKeys'>[];
+        sharing?: Omit<ModifierJson, 'sourceKeys'>[];
+        other?: Omit<ModifierJson, 'sourceKeys'>[];
+        lwcAnnotation?: Omit<AnnotationJson, 'sourceKeys'>[];
+        flowAnnotation?: Omit<AnnotationJson, 'sourceKeys'>[];
+        asyncAnnotation?: Omit<AnnotationJson, 'sourceKeys'>[];
+        testAnnotation?: Omit<AnnotationJson, 'sourceKeys'>[];
+        restAnnotation?: Omit<AnnotationJson, 'sourceKeys'>[];
+        visualforceAnnotation?: Omit<AnnotationJson, 'sourceKeys'>[];
+        accessAnnotation?: Omit<AnnotationJson, 'sourceKeys'>[];
+        serializeAnnotation?: Omit<AnnotationJson, 'sourceKeys'>[];
+        executionAnnotation?: Omit<AnnotationJson, 'sourceKeys'>[];
+        compatibilityAnnotation?: Omit<AnnotationJson, 'sourceKeys'>[];
+        otherAnnotation?: Omit<AnnotationJson, 'sourceKeys'>[];
+        error?: Omit<ErrorJson, 'sourceKeys'>[];
     }
 >;
 

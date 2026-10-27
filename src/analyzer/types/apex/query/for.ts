@@ -9,32 +9,40 @@ import {
     makeJsonType,
     convertExcludeError,
     mergeRecord,
-    isConvert,
+    convertValue,
+    ConvertType,
+    StructureJsonType,
+    makeStructureJsonType,
 } from '..//commons';
 
 import { ForClausesType } from '../converter';
 
-export type ForJson = JsonType & {
-    kind: 'forClause';
+export type ForJson = JsonType<'forClause'> & {
     value: string;
 };
 export const isForJson = typia.createIs<ForJson>();
 
-export const makeForJson = (target: Convert<ForClausesType>): ForJson | ErrorJson => {
-    const targetRecords: Record<string, string[]> = { [target.objectKey]: [target.sourceKey] };
+export const makeForJson = (
+    target: ConvertType<ForClausesType>,
+    targetRecords?: Record<string, string[]>,
+): ForJson | ErrorJson => {
+    return convertValue<'forClauses', 'forClause', ForClausesType, ForJson>(
+        ['forClauses'],
+        target,
+        ['forClause'],
+        'forClause',
+        (target, targetRecords, errorJson) => {
+            const forJsons = target.value.map((v) => {
+                const forJson: ForJson = makeJsonType('forClause', targetRecords, {
+                    value: v,
+                });
 
-    const { value, errorInfos } = convertExcludeError<ForClausesType>(target);
+                return forJson;
+            });
 
-    const error: ErrorJson = makeJsonType('error', targetRecords, { kindType: 'forClause' });
-
-    if (!value || errorInfos.length > 0) {
-        return error;
-    }
-    if (value.value.length === 1) {
-        return makeJsonType('forClause', targetRecords, {
-            value: value.value[0]!,
-        });
-    }
-
-    return error;
+            return forJsons.length === 1 ? forJsons[0]! : errorJson;
+        },
+        targetRecords,
+    );
 };
+

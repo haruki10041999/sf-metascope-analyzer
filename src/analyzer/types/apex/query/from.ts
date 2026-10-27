@@ -2,63 +2,52 @@ import typia from 'typia';
 
 import {
     Convert,
+    ConvertExcludeError,
     ErrorJson,
     isErrorJson,
     JsonType,
     makeJsonType,
     convertExcludeError,
-} from '../commons';
+    mergeRecord,
+    convertValue,
+    ConvertType,
+    StructureJsonType,
+    makeStructureJsonType,
+} from '..//commons';
 
 import { FromNameListType } from '../converter';
 
-export type FromJson = JsonType & {
-    kind: 'fromClause';
+export type FromJson = JsonType<'fromClause'> & {
     field: string[];
     alias?: string;
 };
 export const isFromJson = typia.createIs<FromJson>();
 
-export const makeFromJson = (target: Convert<FromNameListType>): FromJson | ErrorJson => {
-    const targetRecords: Record<string, string[]> = { [target.objectKey]: [target.sourceKey] };
+export const makeFromJson = (
+    target: ConvertType<FromNameListType>,
+    targetRecords?: Record<string, string[]>,
+): FromJson | ErrorJson => {
+    return convertValue<'fromNameList', 'fromClause', FromNameListType, FromJson>(
+        ['fromNameList'],
+        target,
+        ['fromClause'],
+        'fromClause',
+        (target, targetRecords, errorJson) => {
+            const fromJsons = target.value.map((v) => {
+                const fromJson: FromJson = makeJsonType('fromClause', targetRecords, {
+                    field: v.value.value.map((item) => item.value.value),
+                });
 
-    const { value, errorInfos } = convertExcludeError<FromNameListType>(target);
+                if (v.alias) {
+                    fromJson.alias = v.alias.value.value;
+                }
 
-    const error: ErrorJson = makeJsonType('error', targetRecords, { kindType: 'type' });
+                return fromJson;
+            });
 
-    if (!value || errorInfos.length > 0) {
-        return error;
-    }
-
-    const froms: {
-        field: string[];
-        alias?: string;
-    }[] = value.value.map((from) => {
-        const fromName = from.value.value.map((item) => item.value.value);
-
-        const alias = from.alias ? from.alias.value.value : null;
-
-        const value: {
-            field: string[];
-            alias?: string;
-        } = {
-            field: fromName,
-        };
-        if (alias) {
-            value.alias = alias;
-        }
-        return value;
-    });
-
-    if (froms.length === 1) {
-        const fromJson: FromJson = makeJsonType('fromClause', targetRecords, {
-            field: froms[0]!.field,
-        });
-        if (froms[0]!.alias) {
-            fromJson.alias = froms[0]!.alias;
-        }
-
-        return fromJson;
-    }
-
-    return error;
+            return fromJsons.length === 1 ? fromJsons[0]! : errorJson;
+        },
+        targetRecords,
+    );
 };
+

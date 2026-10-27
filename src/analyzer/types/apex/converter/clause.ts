@@ -516,11 +516,7 @@ export type SoslWithClauseType =
           content: ValueRuleValue<FilteringExpressionType>;
       }
     | {
-          value: 'SNIPPET';
-          content: ValueRuleValue<string | null>;
-      }
-    | {
-          value: 'SPELL_CORRECTION';
+          value: 'SNIPPET' | 'SPELL_CORRECTION';
           content: string | null;
       }
     | {
@@ -571,20 +567,7 @@ export const makeSoslWithClauseAssignRule: AssignForValueRule<
                 value,
                 content,
             };
-        } else if (value === 'SNIPPET') {
-            const content = assignMultiClass(clauseTypeClass.getContent(), [
-                makeStringAssignRule,
-                makeErrorAssignRule,
-                makeNullAssignRule,
-            ]);
-
-            return {
-                type: clauseTypeClass.getType(),
-                sourceInfo: makeSourceInfo(clauseTypeClass),
-                value,
-                content,
-            };
-        } else if (value === 'SPELL_CORRECTION') {
+        } else if (value === 'SNIPPET' || value === 'SPELL_CORRECTION') {
             return {
                 type: clauseTypeClass.getType(),
                 sourceInfo: makeSourceInfo(clauseTypeClass),
@@ -816,3 +799,4 @@ export const makeWithClauseAssignRule: AssignForValueRule<WithClauseTypeClass, W
         }
     },
 };
+

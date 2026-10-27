@@ -291,14 +291,19 @@ export type StructureJsonContent = {
 
 type StructureJsonValue =
     | string
-    | Omit<JsonType<string>, 'kind' | 'sourceKeys'>
-    | Omit<JsonType<string>, 'kind' | 'sourceKeys'>[]
+    | Omit<JsonType<string>, 'sourceKeys'>
+    | Omit<JsonType<string>, 'sourceKeys'>[]
+    | (Omit<JsonType<string>, 'sourceKeys'> | StructureJsonContent)[]
     | StructureJsonContent
     | StructureJsonContent[]
     | StructureSourceKeys;
 
 type RegisteredJsonValue =
-    JsonType<string> | JsonType<string>[] | StructureJsonType<string> | StructureJsonType<string>[];
+    | JsonType<string>
+    | JsonType<string>[]
+    | StructureJsonType<string>
+    | StructureJsonType<string>[]
+    | (JsonType<string> | StructureJsonType<string>)[];
 
 export type StructureJsonType<
     TKind extends string,
@@ -335,31 +340,19 @@ export const registerJson = (
     element: RegisteredJsonValue,
 ): void => {
     if (Array.isArray(element)) {
-        if (element.every((e) => isJsonType(e))) {
-            const jsonTypeList: Omit<JsonType<string>, 'kind' | 'sourceKeys'>[] = [];
-            const sourceKeyList: JsonType<string>['sourceKeys'][] = [];
+        // JsonType と StructureJsonType が混在していても、要素ごとの sourceKeys を同じ位置に保持する
+        const contentList: Record<string, unknown>[] = [];
+        const sourceKeyList: (JsonType<string>['sourceKeys'] | StructureSourceKeys)[] = [];
 
-            element.forEach((e) => {
-                const { kind, sourceKeys, ...content } = e;
-                jsonTypeList.push(content);
-                sourceKeyList.push(sourceKeys);
-            });
-            Object.assign(target, { [attribute]: jsonTypeList });
-            target['sourceKeys'][attribute] = sourceKeyList;
-        } else {
-            const jsonTypeList: Omit<StructureJsonType<string>, 'kind' | 'sourceKeys'>[] = [];
-            const sourceKeyList: StructureJsonType<string>['sourceKeys'][] = [];
-
-            element.forEach((e) => {
-                const { kind, sourceKeys, ...content } = e;
-                jsonTypeList.push(content);
-                sourceKeyList.push(sourceKeys);
-            });
-            Object.assign(target, { [attribute]: jsonTypeList });
-            target['sourceKeys'][attribute] = sourceKeyList;
-        }
+        element.forEach((e: JsonType<string> | StructureJsonType<string>) => {
+            const { sourceKeys, ...content } = e;
+            contentList.push(content);
+            sourceKeyList.push(sourceKeys);
+        });
+        Object.assign(target, { [attribute]: contentList });
+        target.sourceKeys[attribute] = sourceKeyList;
     } else {
-        const { kind, sourceKeys, ...content } = element;
+        const { sourceKeys, ...content } = element;
         Object.assign(target, { [attribute]: content });
         target.sourceKeys[attribute] = sourceKeys;
     }
@@ -380,7 +373,8 @@ const _makeStructureJsonType = <Tkind extends string, T extends StructureJsonTyp
 export const makeStructureJsonType = <
     Tkind extends string,
     TContent extends Record<string, RegisteredJsonValue> = {},
-    TAddContent extends Record<string, unknown> = {},
+    // const 型パラメーターにしないと { mode: 'DATA_CATEGORY' } などのリテラルが string に広がる
+    const TAddContent extends Record<string, unknown> = {},
 >(
     kind: Tkind,
     properties: TContent = {} as TContent,
@@ -396,8 +390,7 @@ export const makeStructureJsonType = <
     return target as StructureJsonType<Tkind, TContent> & TAddContent;
 };
 
-type RestoredJsonValue =
-    JsonType<string> | JsonType<string>[] | StructureJsonType<string> | StructureJsonType<string>[];
+type RestoredJsonValue = RegisteredJsonValue;
 
 const restoreJsonValue = (property: unknown, sourceKeys: unknown): RestoredJsonValue => {
     if (Array.isArray(property)) {
@@ -405,10 +398,10 @@ const restoreJsonValue = (property: unknown, sourceKeys: unknown): RestoredJsonV
             throw new Error('sourceKeys do not match the property');
         }
 
-        const restored = property.map((item, index) => restoreJsonValue(item, sourceKeys[index]));
-        return isRecordRecordStringArray(sourceKeys)
-            ? (restored as JsonType<string>[])
-            : (restored as StructureJsonType<string>[]);
+        // 要素ごとに JsonType / StructureJsonType を判定して復元するため、混在配列もそのまま返せる
+        return property.map((item, index) => restoreJsonValue(item, sourceKeys[index])) as (
+            JsonType<string> | StructureJsonType<string>
+        )[];
     }
 
     if (!isRecord(property) || typeof property.kind !== 'string') {
@@ -445,11 +438,7 @@ export const restoreJson = <
 >(
     source: TJson,
     attribute: TKey,
-):
-    | JsonType<string>
-    | JsonType<string>[]
-    | StructureJsonType<string>
-    | StructureJsonType<string>[] => {
+): RestoredJsonValue => {
     const sourceKeys = source['sourceKeys'][attribute];
     const property = source[attribute]!;
 
@@ -514,7 +503,8 @@ const _gatherSourceKeys = (
         | JsonType<string>['sourceKeys']
         | JsonType<string>['sourceKeys'][]
         | StructureJsonType<string>['sourceKeys']
-        | StructureJsonType<string>['sourceKeys'][],
+        | StructureJsonType<string>['sourceKeys'][]
+        | (JsonType<string>['sourceKeys'] | StructureJsonType<string>['sourceKeys'])[],
     allKeys: Record<string, string[]>,
 ): void => {
     if (Array.isArray(sourceKeys)) {

@@ -27,4 +27,17 @@ describe('restoreJson', () => {
         assert.deepEqual(restoreJson(root, 'nested'), { ...nested, child: nestedLeaf });
         assert.deepEqual(restoreJson(root, 'nestedList'), [{ ...nested, child: nestedLeaf }]);
     });
+
+    it('registers and restores arrays mixing JsonType and StructureJsonType', () => {
+        const leaf = makeJsonType('leaf', { file: ['leaf-source'] }, { value: 'leaf-value' });
+        const nestedLeaf = makeJsonType('nested-leaf', { file: ['nested-source'] });
+        const nested = makeStructureJsonType('nested', { child: nestedLeaf });
+        const root = makeStructureJsonType('root', { mixed: [leaf, nested] });
+
+        assert.deepEqual(root.sourceKeys.mixed, [
+            { file: ['leaf-source'] },
+            { child: { file: ['nested-source'] } },
+        ]);
+        assert.deepEqual(restoreJson(root, 'mixed'), [leaf, { ...nested, child: nestedLeaf }]);
+    });
 });

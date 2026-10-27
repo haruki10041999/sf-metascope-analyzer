@@ -2,22 +2,21 @@ import typia from 'typia';
 
 import {
     Convert,
-    isConvert,
+    ConvertExcludeError,
     ErrorJson,
-    JsonType,
-    SourceJson,
-    searchConvertAll,
-    isError,
-    writeSourceKeys,
-    removeSourceInfo,
-    castExcludeErrorInfo,
-    castExcludeErrorInfoArray,
-    castConvert,
-    castConvertArray,
     isErrorJson,
+    JsonType,
+    makeJsonType,
+    convertExcludeError,
+    mergeRecord,
+    convertValue,
+    ConvertType,
+    StructureJsonType,
+    makeStructureJsonType,
 } from '../commons';
 
 import {
+    SoslWithClauseType,
     WithClauseType,
     FilteringExpressionType,
     DataCategorySelectionType,
@@ -26,56 +25,123 @@ import {
 } from '../converter';
 
 import { makeLogicalConditionJson, LogicalConditionJson } from './commons';
+import { ExpressionJson } from '../expression';
 
-const makeDataCategoryNameJson = (target: Convert<DataCategoryNameType>): string[] => {
-    return castConvertArray(castExcludeErrorInfoArray(target.value)).map(
-        (v) => castConvert(castExcludeErrorInfo(v.value)).value,
-    );
+const makeDataCategoryNameJson = (target: ConvertExcludeError<DataCategoryNameType>): string[] => {
+    return target.value.map((v) => v.value.value);
 };
 
-export type DataCategorySelectionJson = {
+const makeFilteringSelectorJson = (
+    target: ConvertExcludeError<FilteringSelectorType>,
+): 'AT' | 'ABOVE' | 'BELOW' | 'ABOVE_OR_BELOW' => {
+    return target.value;
+};
+
+export type DataCategorySelectionJson = JsonType<'categoryCondition'> & {
     group: string;
-    selector: string;
-    field: string[];
+    selector: 'AT' | 'ABOVE' | 'BELOW' | 'ABOVE_OR_BELOW';
+    category: string[];
 };
 
 export const isDataCategorySelectionJson = typia.createIs<DataCategorySelectionJson>();
 
 const makeDataCategorySelectionJson = (
-    target: Convert<DataCategorySelectionType>,
-): DataCategorySelectionJson => {
-    const group = castConvert(
-        castExcludeErrorInfo(castConvert(castExcludeErrorInfo(target.value)).value),
-    ).value;
-    const selector = castExcludeErrorInfo(castConvert(castExcludeErrorInfo(target.selector)).value);
-    const field = makeDataCategoryNameJson(castConvert(castExcludeErrorInfo(target.category)));
-
-    return {
-        group: group,
-        selector: selector,
-        field: field,
-    };
+    target: ConvertType<DataCategorySelectionType>,
+    targetRecords?: Record<string, string[]>,
+): DataCategorySelectionJson | ErrorJson => {
+    return convertValue<
+        'dataCategorySelection',
+        'categoryCondition',
+        DataCategorySelectionType,
+        DataCategorySelectionJson
+    >(
+        ['dataCategorySelection'],
+        target,
+        ['categoryCondition'],
+        'categoryCondition',
+        (target, targetRecords, _) => {
+            return makeJsonType('categoryCondition', targetRecords, {
+                group: target.value.value.value,
+                selector: makeFilteringSelectorJson(target.selector),
+                category: makeDataCategoryNameJson(target.category),
+            });
+        },
+        targetRecords,
+    );
 };
 
-export type WithJson = JsonType & {
-    kind: 'with';
-    mode: string | LogicalConditionJson;
-    selection?: DataCategorySelectionJson[];
-};
-export const isWithJson = typia.createIs<WithJson>();
+export type WithJson =
+    | (JsonType<'withClause'> & {
+          mode: 'SYSTEM_MODE' | 'USER_MODE' | 'SECURITY_ENFORCED';
+      })
+    | StructureJsonType<'withClause', { mode: LogicalConditionJson | ErrorJson }>
+    | ({ mode: 'DATA_CATEGORY' } & StructureJsonType<
+          'withClause',
+          { selection: (DataCategorySelectionJson | ErrorJson)[] }
+      >);
 
 export const makeWithJson = (
     target: Convert<WithClauseType>,
-    sourceObject: SourceJson[],
-): WithJson => {
-    const mode = castExcludeErrorInfo(castConvert(castExcludeErrorInfo(target.mode)).value);
-    const selection = castConvert(castExcludeErrorInfo(target.selection)).value.map(
-        makeDataCategorySelectionJson,
+    targetRecords?: Record<string, string[]>,
+): WithJson | ErrorJson => {
+    return convertValue<'withClause', 'withClause', WithClauseType, WithJson>(
+        ['withClause'],
+        target,
+        ['withClause'],
+        'withClause',
+        (target, targetRecords, _) => {
+            if (
+                target.value === 'SYSTEM_MODE' ||
+                target.value === 'USER_MODE' ||
+                target.value === 'SECURITY_ENFORCED'
+            ) {
+                return makeJsonType('withClause', targetRecords, {
+                    mode: target.value,
+                });
+            }
+            if (target.value === 'DATA_CATEGORY') {
+                return makeStructureJsonType(
+                    'withClause',
+                    {
+                        selection: target.field.value.map((v) =>
+                            makeDataCategorySelectionJson(v, targetRecords),
+                        ),
+                    },
+                    { mode: 'DATA_CATEGORY' },
+                );
+            }
+            return makeStructureJsonType('withClause', {
+                mode: makeLogicalConditionJson(target.value),
+            });
+        },
+        targetRecords,
     );
-
-    return {
-        kind: 'with',
-        mode: mode,
-        selection: selection,
-    };
 };
+
+export type SoslWithJson = JsonType<'withClause'> &
+    (
+        | {
+              mode: 'DIVISION' | 'PRICEBOOKID';
+              value:
+                  | {
+                        type: 'literal';
+                        value: string;
+                    }
+                  | {
+                        type: 'bind';
+                        value: ExpressionJson;
+                    };
+          }
+        | {
+              mode: 'DATA_CATEGORY';
+              value: (DataCategorySelectionJson | ErrorJson)[];
+          }
+        | {
+              mode: 'SNIPPET' | 'SPELL_CORRECTION';
+              value?: string;
+          }
+        | {
+              mode: 'SPELL_CORRECTION';
+              value?: string;
+          }
+    );

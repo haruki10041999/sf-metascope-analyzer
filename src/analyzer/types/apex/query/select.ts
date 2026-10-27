@@ -94,13 +94,13 @@ const makeSelectEntryJson = (
 };
 
 export type SelectJson = StructureJsonType<
-    'select',
+    'selectClause',
     {
-        field?: Omit<FieldJson, 'kind' | 'sourceKeys'>[];
-        soqlFunction?: Omit<SoqlFunctionJson, 'kind' | 'sourceKeys'>[];
-        typeOf?: Omit<TypeOfJson, 'kind' | 'sourceKeys'>[];
-        subQuery?: Omit<SubQueryJson, 'kind' | 'sourceKeys'>[];
-        error?: Omit<ErrorJson, 'kind' | 'sourceKeys'>[];
+        field?: Omit<FieldJson, 'sourceKeys'>[];
+        soqlFunction?: Omit<SoqlFunctionJson, 'sourceKeys'>[];
+        typeOf?: Omit<TypeOfJson, 'sourceKeys'>[];
+        subQuery?: Omit<SubQueryJson, 'sourceKeys'>[];
+        error?: Omit<ErrorJson, 'sourceKeys'>[];
     }
 >;
 
@@ -111,14 +111,14 @@ export const makeSelectJson = (
 ): SelectJson | ErrorJson => {
     return convertValue<
         'selectList' | 'subFieldList',
-        'select',
+        'selectClause',
         SelectListType | SubFieldListType,
         SelectJson
     >(
         ['selectList', 'subFieldList'],
         target,
-        ['select'],
-        'select',
+        ['selectClause'],
+        'selectClause',
         (target, _targetRecords, _errorJson) => {
             const fields: FieldJson[] = [];
             const soqlFunctions: SoqlFunctionJson[] = [];
@@ -150,7 +150,7 @@ export const makeSelectJson = (
                 ...(errors.length > 0 ? { error: errors } : {}),
             };
 
-            return makeStructureJsonType('select', properties) as SelectJson;
+            return makeStructureJsonType('selectClause', properties) as SelectJson;
         },
     );
 };
