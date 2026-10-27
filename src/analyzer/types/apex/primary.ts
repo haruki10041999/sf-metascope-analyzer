@@ -4,6 +4,7 @@ import {
     Convert,
     convertExcludeError,
     ConvertExcludeError,
+    ConvertType,
     ErrorJson,
     isErrorJson,
     JsonType,
@@ -24,71 +25,40 @@ import {
 } from './converter';
 import { makeTypeJson, TypeJson } from './type';
 
-type StringPrimaryJson = JsonType<'primary'> & {
-    primaryType: 'primary' | 'voidPrimary' | 'superPrimary' | 'thisPrimary' | 'idPrimary';
-    value: string;
-};
-
 const makeStringPrimary = (
     target: ConvertExcludeError<
         PrimaryType | SuperPrimaryType | ThisPrimaryType | VoidPrimaryType | IdPrimaryType
     >,
-    targetRecords: Record<string, string[]>,
-): StringPrimaryJson => {
+): string => {
     if (target.type === 'idPrimary') {
-        return makeJsonType('primary', targetRecords, {
-            primaryType: target.type,
-            value: target.value.value,
-        });
+        return target.value.value;
     }
 
-    return makeJsonType('primary', targetRecords, {
-        primaryType: target.type,
-        value: target.value,
-    });
+    return target.value;
 };
 
-type LiteralPrimaryJson = JsonType<'primary'> & {
-    primaryType: 'literalPrimary';
+type LiteralPrimaryJson = {
     value: string;
     valueType: 'integer' | 'long' | 'number' | 'string' | 'longText' | 'boolean' | 'null';
 };
 
 const makeLiteralPrimary = (
     target: ConvertExcludeError<LiteralPrimaryType>,
-    targetRecords: Record<string, string[]>,
 ): LiteralPrimaryJson => {
-    return makeJsonType('primary', targetRecords, {
-        primaryType: target.type,
+    return {
         value: target.value.value,
         valueType: target.value.valueType,
-    });
+    };
 };
-
-type TypeRefPrimaryJson = JsonType<'primary'> & {
-    primaryType: 'typeRefPrimary';
-} & Omit<TypeJson, 'kind' | 'sourceKeys'>;
 
 const makeTypeRefPrimary = (
     target: ConvertExcludeError<TypeRefPrimaryType>,
-    targetRecords: Record<string, string[]>,
-): TypeRefPrimaryJson | ErrorJson => {
-    const typeJson: TypeJson | ErrorJson = makeTypeJson(target.value, targetRecords);
-
-    if (typeJson.kind === 'error') {
-        return makeJsonType('error', targetRecords, {
-            kindType: 'primary',
-        });
-    } else {
-        const { kind, sourceKeys, ...content } = typeJson;
-        return makeJsonType('primary', targetRecords, {
-            primaryType: target.type,
-            ...content,
-        });
-    }
+    targetRecords?: Record<string, string[]>,
+): TypeJson | ErrorJson => {
+    return makeTypeJson(target.value, targetRecords);
 };
 
-export type PrimaryJson = StringPrimaryJson | LiteralPrimaryJson | TypeRefPrimaryJson;
+export type PrimaryJson = string | LiteralPrimaryJson | TypeJson;
 
 export const isPrimaryJson = typia.createIs<PrimaryJson>();
 

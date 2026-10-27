@@ -49,33 +49,33 @@ export const isPrimitiveTypeJson = typia.createIs<PrimitiveTypeJson>();
 type CustomTypeJson = JsonType<'type'> & {
     type: 'custom';
     customType: string | string[];
-    generic?: Omit<TypeJson, 'kind' | 'sourceKeys'>[];
+    generic?: Omit<TypeJson | ErrorJson, 'kind' | 'sourceKeys'>[];
 };
 export const isCustomTypeJson = typia.createIs<CustomTypeJson>();
 
 type ArrayTypeJson = JsonType<'type'> & {
     collectionType: 'array';
-    elementType: Omit<TypeJson, 'kind' | 'sourceKeys'>;
+    elementType: Omit<TypeJson | ErrorJson, 'kind' | 'sourceKeys'>;
     dimension: number;
 };
 export const isArrayTypeJson = typia.createIs<ArrayTypeJson>();
 
 type ListTypeJson = JsonType<'type'> & {
     collectionType: 'list';
-    elementType: Omit<TypeJson, 'kind' | 'sourceKeys'>;
+    elementType: Omit<TypeJson | ErrorJson, 'kind' | 'sourceKeys'>;
 };
 export const isListTypeJson = typia.createIs<ListTypeJson>();
 
 type SetTypeJson = JsonType<'type'> & {
     collectionType: 'set';
-    elementType: Omit<TypeJson, 'kind' | 'sourceKeys'>;
+    elementType: Omit<TypeJson | ErrorJson, 'kind' | 'sourceKeys'>;
 };
 export const isSetTypeJson = typia.createIs<SetTypeJson>();
 
 type MapTypeJson = JsonType<'type'> & {
     collectionType: 'map';
-    keyType: Omit<TypeJson, 'kind' | 'sourceKeys'>;
-    valueType: Omit<TypeJson, 'kind' | 'sourceKeys'>;
+    keyType: Omit<TypeJson | ErrorJson, 'kind' | 'sourceKeys'>;
+    valueType: Omit<TypeJson | ErrorJson, 'kind' | 'sourceKeys'>;
 };
 export const isMapTypeJson = typia.createIs<MapTypeJson>();
 
@@ -93,17 +93,16 @@ export const makeTypeJson = (
         target,
         ['type'],
         'type',
-        (target, targetRecords, errorJson) => {
+        (target, targetRecords, _errorJson) => {
             const collection = target.value;
             const dimension = target.dimension.value;
 
             if (dimension) {
-                // 次元を外した要素型として再帰する
                 const result = makeTypeJson({
                     ...target,
                     dimension: { ...target.dimension, value: null },
                 });
-                const { kind, sourceKeys, ...content } = result as TypeJson;
+                const { kind, sourceKeys, ...content } = result;
                 return makeJsonType('type', targetRecords, {
                     collectionType: 'array',
                     elementType: content,
@@ -137,107 +136,58 @@ export const makeTypeJson = (
                 ) {
                     const result = makeTypeJson(generic.at(0)!);
 
-                    if (isTypeJson(result)) {
-                        const { kind, sourceKeys, ...content } = result as TypeJson;
-                        return makeJsonType('type', targetRecords, {
-                            collectionType: isListType(collectionName) ? 'list' : 'set',
-                            elementType: content,
-                        });
-                    }
+                    const { kind, sourceKeys, ...content } = result;
+                    return makeJsonType('type', targetRecords, {
+                        collectionType: isListType(collectionName) ? 'list' : 'set',
+                        elementType: content,
+                    });
                 }
 
                 if (isMapType(collectionName) && generic && generic.length === 2) {
                     const keyResult = makeTypeJson(generic.at(0)!);
                     const valueResult = makeTypeJson(generic.at(1)!);
 
-                    if (isTypeJson(keyResult) && isTypeJson(valueResult)) {
-                        const {
-                            kind: keyKind,
-                            sourceKeys: keySourceKeys,
-                            ...keyContent
-                        } = keyResult;
-                        const {
-                            kind: valueKind,
-                            sourceKeys: valueSourceKeys,
-                            ...valueContent
-                        } = valueResult;
-                        return makeJsonType('type', targetRecords, {
-                            collectionType: 'map',
-                            keyType: keyContent,
-                            valueType: valueContent,
-                        });
-                    }
+                    const { kind: keyKind, sourceKeys: keySourceKeys, ...keyContent } = keyResult;
+                    const {
+                        kind: valueKind,
+                        sourceKeys: valueSourceKeys,
+                        ...valueContent
+                    } = valueResult;
+                    return makeJsonType('type', targetRecords, {
+                        collectionType: 'map',
+                        keyType: keyContent,
+                        valueType: valueContent,
+                    });
                 }
 
-                const typeType: CustomTypeJson = makeJsonType('type', targetRecords, {
+                return makeJsonType('type', targetRecords, {
                     type: 'custom',
                     customType: collectionName,
+                    ...(generic && generic.length > 0
+                        ? {
+                              generic: generic.map((item) => {
+                                  return makeTypeJson(item);
+                              }),
+                          }
+                        : {}),
                 });
-
-                const genericedTypes: (TypeJson | ErrorJson)[] = [];
-                if (generic && generic.length > 0) {
-                    genericedTypes.push(
-                        ...generic.map((item) => {
-                            const result = makeTypeJson(item);
-                            return result;
-                        }),
-                    );
-                }
-
-                if (
-                    genericedTypes.length === 0 ||
-                    (genericedTypes.length > 0 && !genericedTypes.some((item) => isErrorJson(item)))
-                ) {
-                    if (genericedTypes.length > 0) {
-                        typeType.generic = (genericedTypes as TypeJson[]).map(
-                            ({ kind, sourceKeys, ...content }) => content,
-                        );
-                    }
-
-                    return typeType;
-                }
-            }
-
-            if (collection.length > 0) {
-                const typeType: CustomTypeJson = makeJsonType('type', targetRecords, {
+            } else {
+                const generic = collection.at(-1)!.generic?.value?.value;
+                return makeJsonType('type', targetRecords, {
                     type: 'custom',
                     customType: collection.map((c) =>
                         typeof c.value === 'string' ? c.value : c.value.value,
                     ),
+                    ...(generic && generic.length > 0
+                        ? {
+                              generic: generic.map((item) => {
+                                  const result = makeTypeJson(item);
+                                  return result;
+                              }),
+                          }
+                        : {}),
                 });
-
-                const genericTypeRef = collection.at(-1)!;
-                const generic = genericTypeRef.generic
-                    ? genericTypeRef.generic.value
-                        ? genericTypeRef.generic.value.value
-                        : null
-                    : null;
-
-                const genericedTypes: (TypeJson | ErrorJson)[] = [];
-                if (generic && generic.length > 0) {
-                    genericedTypes.push(
-                        ...generic.map((item) => {
-                            const result = makeTypeJson(item);
-                            return result;
-                        }),
-                    );
-                }
-
-                if (
-                    genericedTypes.length === 0 ||
-                    (genericedTypes.length > 0 && !genericedTypes.some((item) => isErrorJson(item)))
-                ) {
-                    if (genericedTypes.length > 0) {
-                        typeType.generic = (genericedTypes as TypeJson[]).map(
-                            ({ kind, sourceKeys, ...content }) => content,
-                        );
-                    }
-
-                    return typeType;
-                }
             }
-
-            return errorJson;
         },
         targetRecords,
     );
