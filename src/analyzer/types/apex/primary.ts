@@ -5,11 +5,11 @@ import {
     convertExcludeError,
     ConvertExcludeError,
     ConvertType,
+    convertValue,
     ErrorJson,
     isErrorJson,
     JsonType,
     makeJsonType,
-    StructureJsonType,
 } from './commons';
 
 import {
@@ -24,17 +24,15 @@ import {
     VoidPrimaryType,
 } from './converter';
 import { makeTypeJson, TypeJson } from './type';
+import { SoqlJson, makeSoqlJson } from './query/soql';
+import { SoslJson, makeSoslJson } from './query/sosl';
 
 const makeStringPrimary = (
     target: ConvertExcludeError<
         PrimaryType | SuperPrimaryType | ThisPrimaryType | VoidPrimaryType | IdPrimaryType
     >,
 ): string => {
-    if (target.type === 'idPrimary') {
-        return target.value.value;
-    }
-
-    return target.value;
+    return typeof target.value === 'string' ? target.value : target.value.value;
 };
 
 type LiteralPrimaryJson = {
@@ -51,49 +49,28 @@ const makeLiteralPrimary = (
     };
 };
 
-const makeTypeRefPrimary = (
-    target: ConvertExcludeError<TypeRefPrimaryType>,
-    targetRecords?: Record<string, string[]>,
-): TypeJson | ErrorJson => {
-    return makeTypeJson(target.value, targetRecords);
-};
-
-export type PrimaryJson = string | LiteralPrimaryJson | TypeJson;
+export type PrimaryJson = string | LiteralPrimaryJson | TypeJson | SoqlJson | SoslJson;
 
 export const isPrimaryJson = typia.createIs<PrimaryJson>();
 
 export const makePrimaryJson = (
-    target: Convert<BasePrimaryType | ErrorType>,
-    targetRecords: Record<string, string[]>,
+    target: ConvertExcludeError<BasePrimaryType>,
 ): PrimaryJson | ErrorJson => {
-    if (target.type === 'error') {
-        return makeJsonType('error', targetRecords, { kindType: 'primary' });
-    }
-
-    const { value, errorInfos } = convertExcludeError<BasePrimaryType>(
-        target as Convert<BasePrimaryType>,
-    );
-    if (!value || errorInfos.length > 0) {
-        return makeJsonType('error', targetRecords, { kindType: 'primary' });
-    }
-
     if (
-        value.type === 'primary' ||
-        value.type === 'superPrimary' ||
-        value.type === 'thisPrimary' ||
-        value.type === 'voidPrimary' ||
-        value.type === 'idPrimary'
+        target.type === 'primary' ||
+        target.type === 'superPrimary' ||
+        target.type === 'thisPrimary' ||
+        target.type === 'voidPrimary' ||
+        target.type === 'idPrimary'
     ) {
-        return makeStringPrimary(value, targetRecords);
+        return makeStringPrimary(target);
+    } else if (target.type === 'literalPrimary') {
+        return makeLiteralPrimary(target);
+    } else if (target.type === 'typeRefPrimary') {
+        return makeTypeJson(target.value);
+    } else if (target.type === 'soqlPrimary') {
+        return makeSoqlJson(target.value.value);
+    } else {
+        return makeSoslJson(target.value);
     }
-
-    if (value.type === 'literalPrimary') {
-        return makeLiteralPrimary(value, targetRecords);
-    }
-
-    if (value.type === 'typeRefPrimary') {
-        return makeTypeRefPrimary(value, targetRecords);
-    }
-
-    return makeJsonType('error', targetRecords, { kindType: 'primary' });
 };

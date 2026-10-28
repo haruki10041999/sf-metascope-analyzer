@@ -519,6 +519,7 @@ export const makeSoqlFunctionAssignRule: AssignForValueRule<
             const param = assignMultiClass(queryTypeClass.getParam(), [
                 makeFieldNameAssignRule,
                 makeErrorAssignRule,
+                makeNullAssignRule,
             ]);
             return {
                 type: queryTypeClass.getType(),
@@ -649,3 +650,4 @@ export const makeSubQueryAssignRule: AssignForValueRule<SubQueryTypeClass, SubQu
         };
     },
 };
+

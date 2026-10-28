@@ -3,6 +3,7 @@ import typia from 'typia';
 import {
     Convert,
     ConvertExcludeError,
+    ConvertType,
     convertValue,
     ErrorJson,
     JsonType,
@@ -44,118 +45,80 @@ import {
     CondExpressionType,
 } from './converter';
 import { makeTypeJson, TypeJson } from './type';
+import { PrimaryJson, makePrimaryJson } from './primary';
 
-const omitSourceKeys = <T extends { sourceKeys: Record<string, string[]> }>(
-    target: T,
-): Omit<T, 'sourceKeys'> => {
-    const { sourceKeys: _sourceKeys, ...content } = target;
-    return content;
+const makeExpressionJson = (target: ConvertExcludeError<ExpressionType>): string => {
+    return target.value;
 };
 
-export type ExpressionJson = JsonType<'expression'> & {
-    value: string;
-};
-
-const makeExpressionJson = (target: ConvertExcludeError<ExpressionType>): ExpressionJson => {
-    const targetRecord: Record<string, string[]> = { [target.objectKey]: [target.sourceKey] };
-    return makeJsonType('expression', targetRecord, { value: target.value });
-};
-
-export type DotMethodCallJson = JsonType<'methodCall'> & {
-    object: Omit<BaseExpressionJson | ErrorJson, 'sourceKeys'>;
+export type DotMethodCallJson = {
+    object: BaseExpressionJson | ErrorJson;
     operator: '.' | '?.';
     member: string;
-    memberArg?: string;
+    memberArg?: (BaseExpressionJson | ErrorJson)[];
 };
 
 const makeDotMethodCallJson = (
-    target: Convert<DotExpressionType>,
-    targetRecords?: Record<string, string[]>,
-): DotMethodCallJson | ErrorJson => {
-    return convertValue<'dotExpression', 'methodCall', DotExpressionType, DotMethodCallJson>(
-        ['dotExpression'],
-        target,
-        ['methodCall'],
-        'methodCall',
-        (target, targetRecords, _errorJson) => {
-            const { sourceKeys, ...object } = makeExpressionJsonConvert(target.left);
-            const operator = target.operator;
+    target: ConvertExcludeError<DotExpressionType>,
+): DotMethodCallJson => {
+    const object = makeExpressionJsonConvert(target.left);
+    const operator = target.operator;
 
-            if (target.right.type === 'anyId') {
-                return makeJsonType('methodCall', targetRecords, {
-                    object: object,
-                    operator: operator,
-                    member: target.right.value,
-                });
-            } else {
-                const member = target.right.value;
-                const memberArg = target.right.param
-                    ? target.right.param.value.map((v) => {
-                          const { sourceKeys, ...arg } = makeExpressionJsonConvert(v);
-                          return arg;
-                      })
-                    : null;
+    if (target.right.type === 'anyId') {
+        return {
+            object: object,
+            operator: operator,
+            member: target.right.value,
+        };
+    } else {
+        const member = target.right.value.value;
+        const memberArg = target.right.param
+            ? target.right.param.value.map((v) => {
+                  return makeExpressionJsonConvert(v);
+              })
+            : null;
 
-                return makeJsonType('methodCall', targetRecords, {
-                    object: object,
-                    operator: operator,
-                    member: member,
-                    ...(memberArg ? { memberArg: memberArg } : {}),
-                });
-            }
-        },
-        targetRecords,
-    );
+        return {
+            object: object,
+            operator: operator,
+            member: member,
+            ...(memberArg ? { memberArg: memberArg } : {}),
+        };
+    }
 };
 
-export type MethodCallJson = JsonType<'methodCall'> & {
+export type MethodCallJson = {
     member: 'this' | 'super' | string;
-    memberArg?: Omit<BaseExpressionJson | ErrorJson, 'sourceKeys'>[];
+    memberArg?: (BaseExpressionJson | ErrorJson)[];
     ref?: 'this' | 'super';
 };
 
 const makeMethodCallJson = (
-    target: Convert<MethodCallExpressionType>,
-    targetRecords?: Record<string, string[]>,
-): MethodCallJson | ErrorJson => {
-    return convertValue<
-        'methodCallExpression',
-        'methodCall',
-        MethodCallExpressionType,
-        MethodCallJson
-    >(
-        ['methodCallExpression'],
-        target,
-        ['methodCall'],
-        'methodCall',
-        (target, targetRecords, _errorJson) => {
-            const memberArg = target.value.param
-                ? target.value.param.value.map((v) => {
-                      const { sourceKeys, ...arg } = makeExpressionJsonConvert(v);
-                      return arg;
-                  })
-                : null;
+    target: ConvertExcludeError<MethodCallExpressionType>,
+): MethodCallJson => {
+    const memberArg = target.value.param
+        ? target.value.param.value.map((v) => {
+              return makeExpressionJsonConvert(v);
+          })
+        : null;
 
-            if (typeof target.value.value === 'string') {
-                return makeJsonType('methodCall', targetRecords, {
-                    member: target.value.value,
-                    ...(memberArg ? { memberArg: memberArg } : {}),
-                });
-            } else {
-                return makeJsonType('methodCall', targetRecords, {
-                    member: target.value.value.value,
-                    ...(memberArg ? { memberArg: memberArg } : {}),
-                    ...(target.value.reference ? { ref: target.value.reference } : {}),
-                });
-            }
-        },
-        targetRecords,
-    );
+    if (typeof target.value.value === 'string') {
+        return {
+            member: target.value.value,
+            ...(memberArg ? { memberArg: memberArg } : {}),
+        };
+    } else {
+        return {
+            member: target.value.value.value,
+            ...(memberArg ? { memberArg: memberArg } : {}),
+            ...(target.value.reference ? { ref: target.value.reference } : {}),
+        };
+    }
 };
 
 type InstanceNameJson = {
     collection: string[];
-    generic?: Omit<TypeJson | ErrorJson, 'kind' | 'sourceKeys'>[];
+    generic?: (TypeJson | ErrorJson)[];
 };
 
 export const makeInstanceNameJson = (
@@ -167,8 +130,7 @@ export const makeInstanceNameJson = (
         ...(generic && generic.value.length > 0
             ? {
                   generic: generic.value.map((v) => {
-                      const { kind, sourceKeys, ...content } = makeTypeJson(v);
-                      return content;
+                      return makeTypeJson(v);
                   }),
               }
             : {}),
@@ -176,18 +138,18 @@ export const makeInstanceNameJson = (
 };
 
 type ArrayInitInstanceJson = {
-    init?: Omit<BaseExpressionJson | ErrorJson, 'sourceKeys'>[];
-    size?: Omit<BaseExpressionJson | ErrorJson, 'sourceKeys'>;
+    init?: (BaseExpressionJson | ErrorJson)[];
+    size?: BaseExpressionJson | ErrorJson;
 };
 
 type ClassInitInstanceJson = {
-    arg?: Omit<BaseExpressionJson | ErrorJson, 'sourceKeys'>[];
+    arg?: (BaseExpressionJson | ErrorJson)[];
 };
 
 type MapInitInstanceJson = {
     init?: {
-        key: Omit<BaseExpressionJson | ErrorJson, 'sourceKeys'>;
-        value: Omit<BaseExpressionJson | ErrorJson, 'sourceKeys'>;
+        key: BaseExpressionJson | ErrorJson;
+        value: BaseExpressionJson | ErrorJson;
     }[];
 };
 
@@ -196,7 +158,7 @@ type NoInitInstanceJson = {
 };
 
 type SetInitInstanceJson = {
-    arg?: Omit<BaseExpressionJson | ErrorJson, 'sourceKeys'>[];
+    init?: (BaseExpressionJson | ErrorJson)[];
 };
 
 export const makeInitInstanceJson = (
@@ -217,22 +179,16 @@ export const makeInitInstanceJson = (
         return {
             ...(target.value
                 ? {
-                      init: target.value.value.map((v) =>
-                          omitSourceKeys(makeExpressionJsonConvert(v)),
-                      ),
+                      init: target.value.value.map((v) => makeExpressionJsonConvert(v)),
                   }
                 : {}),
-            ...(target.size
-                ? { size: omitSourceKeys(makeExpressionJsonConvert(target.size)) }
-                : {}),
+            ...(target.size ? { size: makeExpressionJsonConvert(target.size) } : {}),
         };
     } else if (target.type === 'classCreatorRest') {
         return {
             ...(target.value.value
                 ? {
-                      arg: target.value.value.value.map((v) =>
-                          omitSourceKeys(makeExpressionJsonConvert(v)),
-                      ),
+                      arg: target.value.value.value.map((v) => makeExpressionJsonConvert(v)),
                   }
                 : {}),
         };
@@ -242,8 +198,8 @@ export const makeInitInstanceJson = (
                 ? {
                       init: target.value.map((v) => {
                           return {
-                              key: omitSourceKeys(makeExpressionJsonConvert(v.left)),
-                              value: omitSourceKeys(makeExpressionJsonConvert(v.right)),
+                              key: makeExpressionJsonConvert(v.left),
+                              value: makeExpressionJsonConvert(v.right),
                           };
                       }),
                   }
@@ -257,15 +213,14 @@ export const makeInitInstanceJson = (
         return {
             ...(target.value
                 ? {
-                      init: target.value.map((v) => omitSourceKeys(makeExpressionJsonConvert(v))),
+                      init: target.value.map((v) => makeExpressionJsonConvert(v)),
                   }
                 : {}),
         };
     }
 };
 
-type NewInstanceJson = JsonType<'newInstance'> &
-    CreatedNameType &
+type NewInstanceJson = InstanceNameJson &
     (
         | ArrayInitInstanceJson
         | ClassInitInstanceJson
@@ -274,99 +229,52 @@ type NewInstanceJson = JsonType<'newInstance'> &
         | SetInitInstanceJson
     );
 
-const makeNewInstanceJson = (
-    target: Convert<NewExpressionType>,
-    targetRecords?: Record<string, string[]>,
-): NewInstanceJson | ErrorJson => {
-    return convertValue<'newExpression', 'newInstance', NewExpressionType, NewInstanceJson>(
-        ['newExpression'],
-        target,
-        ['newInstance'],
-        'newInstance',
-        (target, targetRecords, _errorJson) => {
-            return makeJsonType('newInstance', targetRecords, {
-                ...makeInstanceNameJson(target.value.value),
-                ...makeInitInstanceJson(target.value.rest),
-            });
-        },
-        targetRecords,
-    );
+const makeNewInstanceJson = (target: ConvertExcludeError<NewExpressionType>): NewInstanceJson => {
+    return {
+        ...makeInstanceNameJson(target.value.value),
+        ...makeInitInstanceJson(target.value.rest),
+    };
 };
 
-type CastJson = JsonType<'cast'> & {
-    target: Omit<BaseExpressionJson | ErrorJson, 'sourceKeys'>;
-    convertType: Omit<TypeJson | ErrorJson, 'sourceKeys'>;
+type CastJson = {
+    target: BaseExpressionJson | ErrorJson;
+    convertType: TypeJson | ErrorJson;
 };
 
-const makeCastJson = (
-    target: Convert<CastExpressionType>,
-    targetRecords?: Record<string, string[]>,
-): CastJson | ErrorJson => {
-    return convertValue<'castExpression', 'cast', CastExpressionType, CastJson>(
-        ['castExpression'],
-        target,
-        ['cast'],
-        'cast',
-        (target, targetRecords, _errorJson) => {
-            return makeJsonType('cast', targetRecords, {
-                target: omitSourceKeys(makeExpressionJsonConvert(target.value)),
-                convertType: omitSourceKeys(makeTypeJson(target.valueType)),
-            });
-        },
-        targetRecords,
-    );
+const makeCastJson = (target: ConvertExcludeError<CastExpressionType>): CastJson => {
+    const typeJson = makeTypeJson(target.valueType);
+    return {
+        target: makeExpressionJsonConvert(target.value),
+        convertType: typeJson,
+    };
 };
 
-type SubJson = JsonType<'sub'> & {
-    value: Omit<BaseExpressionJson | ErrorJson, 'sourceKeys'>;
+type SubJson = {
+    value: BaseExpressionJson | ErrorJson;
     parentheSize: '()';
 };
 
-const makeSubJson = (
-    target: Convert<SubExpressionType>,
-    targetRecords?: Record<string, string[]>,
-): SubJson | ErrorJson => {
-    return convertValue<'subExpression', 'sub', SubExpressionType, SubJson>(
-        ['subExpression'],
-        target,
-        ['sub'],
-        'sub',
-        (target, targetRecords, _errorJson) => {
-            return makeJsonType('sub', targetRecords, {
-                value: omitSourceKeys(makeExpressionJsonConvert(target.value)),
-                parentheSize: '()',
-            });
-        },
-        targetRecords,
-    );
+const makeSubJson = (target: ConvertExcludeError<SubExpressionType>): SubJson => {
+    return {
+        value: makeExpressionJsonConvert(target.value),
+        parentheSize: '()',
+    };
 };
 
-type ArrayJson = JsonType<'array'> & {
-    variant: Omit<BaseExpressionJson | ErrorJson, 'sourceKeys'>;
-    index: Omit<BaseExpressionJson | ErrorJson, 'sourceKeys'>;
+type ArrayJson = {
+    variant: BaseExpressionJson | ErrorJson;
+    index: BaseExpressionJson | ErrorJson;
 };
 
-const makeArrayJson = (
-    target: Convert<ArrayExpressionType>,
-    targetRecords?: Record<string, string[]>,
-): ArrayJson | ErrorJson => {
-    return convertValue<'arrayExpression', 'array', ArrayExpressionType, ArrayJson>(
-        ['arrayExpression'],
-        target,
-        ['array'],
-        'array',
-        (target, targetRecords, _errorJson) => {
-            return makeJsonType('array', targetRecords, {
-                variant: omitSourceKeys(makeExpressionJsonConvert(target.value)),
-                index: omitSourceKeys(makeExpressionJsonConvert(target.index)),
-            });
-        },
-        targetRecords,
-    );
+const makeArrayJson = (target: ConvertExcludeError<ArrayExpressionType>): ArrayJson => {
+    return {
+        variant: makeExpressionJsonConvert(target.value),
+        index: makeExpressionJsonConvert(target.index),
+    };
 };
 
-type FormulaJson = JsonType<'formula'> & {
-    left: Omit<BaseExpressionJson | ErrorJson, 'sourceKeys'>;
+type FormulaJson = {
+    left: BaseExpressionJson | ErrorJson;
     operator:
         | '*'
         | '/'
@@ -397,7 +305,7 @@ type FormulaJson = JsonType<'formula'> & {
         | '~'
         | '!'
         | string;
-    right: Omit<BaseExpressionJson | ErrorJson, 'sourceKeys'>;
+    right: BaseExpressionJson | ErrorJson;
 };
 
 type FormulaExpressionType =
@@ -414,142 +322,107 @@ type FormulaExpressionType =
     | LogAndExpressionType
     | LogOrExpressionType;
 
-const makeFormulaJson = (
-    target: Convert<FormulaExpressionType>,
-    targetRecords?: Record<string, string[]>,
-): FormulaJson | ErrorJson => {
-    return convertValue<
-        FormulaExpressionType['type'],
-        'formula',
-        FormulaExpressionType,
-        FormulaJson
-    >(
-        [
-            'arth1Expression',
-            'arth2Expression',
-            'assignExpression',
-            'bitAndExpression',
-            'bitExpression',
-            'bitNotExpression',
-            'bitOrExpression',
-            'cmpExpression',
-            'coalExpression',
-            'equalityExpression',
-            'logAndExpression',
-            'logOrExpression',
-        ],
-        target,
-        ['formula'],
-        'formula',
-        (target, targetRecords, _errorJson) => {
-            return makeJsonType('formula', targetRecords, {
-                left: omitSourceKeys(makeExpressionJsonConvert(target.left)),
-                operator: target.operator,
-                right: omitSourceKeys(makeExpressionJsonConvert(target.right)),
-            });
-        },
-        targetRecords,
-    );
+const makeFormulaJson = (target: ConvertExcludeError<FormulaExpressionType>): FormulaJson => {
+    return {
+        left: makeExpressionJsonConvert(target.left),
+        operator: target.operator,
+        right: makeExpressionJsonConvert(target.right),
+    };
 };
 
-type InstanceofJson = JsonType<'formula'> & {
-    target: Omit<BaseExpressionJson | ErrorJson, 'sourceKeys'>;
+type InstanceofJson = {
+    target: BaseExpressionJson | ErrorJson;
     operator: 'instanceof';
-    type: Omit<TypeJson | ErrorJson, 'kind' | 'sourceKeys'>;
+    type: TypeJson | ErrorJson;
 };
 
 const makeInstanceofJson = (
-    target: Convert<InstanceOfExpressionType>,
-    targetRecords?: Record<string, string[]>,
-): InstanceofJson | ErrorJson => {
-    return convertValue<
-        'instanceOfExpression',
-        'formula',
-        InstanceOfExpressionType,
-        InstanceofJson
-    >(
-        ['instanceOfExpression'],
-        target,
-        ['formula'],
-        'formula',
-        (target, targetRecords, _errorJson) => {
-            const { kind, sourceKeys, ...type } = makeTypeJson(target.right);
-            return makeJsonType('formula', targetRecords, {
-                target: omitSourceKeys(makeExpressionJsonConvert(target.left)),
-                operator: target.operator,
-                type: type,
-            });
-        },
-        targetRecords,
-    );
+    target: ConvertExcludeError<InstanceOfExpressionType>,
+): InstanceofJson => {
+    const typeJson = makeTypeJson(target.right);
+
+    return {
+        target: makeExpressionJsonConvert(target.left),
+        operator: target.operator,
+        type: typeJson,
+    };
 };
 
-type UnaryJson = JsonType<'unary'> & {
-    variant: Omit<BaseExpressionJson | ErrorJson, 'sourceKeys'>;
-} & (
-        | {
-              operator: '~' | '!' | '++' | '--' | '+' | '-';
-              operatorLocation: 'front';
-          }
-        | {
-              operator: '++' | '--';
-              operatorLocation: 'back';
-          }
-    );
+type UnaryJson = {
+    variant: BaseExpressionJson | ErrorJson;
+} & {
+    operator: '~' | '!' | '++' | '--' | '+' | '-';
+    operatorLocation: 'front' | 'back';
+};
 
 type UnaryExpressionType = PreOpExpressionType | PostOpExpressionType | NegExpressionType;
 
-const makeUnaryJson = (
-    target: Convert<UnaryExpressionType>,
-    targetRecords?: Record<string, string[]>,
-): UnaryJson | ErrorJson => {
-    return convertValue<UnaryExpressionType['type'], 'unary', UnaryExpressionType, UnaryJson>(
-        ['preOpExpression', 'postOpExpression', 'negExpression'],
-        target,
-        ['unary'],
-        'unary',
-        (target, targetRecords, _errorJson) => {
-            return makeJsonType('unary', targetRecords, {
-                variant: omitSourceKeys(makeExpressionJsonConvert(target.value)),
-                operator: target.operator,
-                operatorLocation: target.type === 'postOpExpression' ? 'back' : 'front',
-            });
-        },
-        targetRecords,
-    );
+const makeUnaryJson = (target: ConvertExcludeError<UnaryExpressionType>): UnaryJson => {
+    return {
+        variant: makeExpressionJsonConvert(target.value),
+        operator: target.operator,
+        operatorLocation: target.type === 'postOpExpression' ? 'back' : 'front',
+    };
 };
 
-type TernaryJson = JsonType<'tenary'> & {
-    condition: Omit<BaseExpressionJson | ErrorJson, 'sourceKeys'>;
-    trueValue: Omit<BaseExpressionJson | ErrorJson, 'sourceKeys'>;
-    falseValue: Omit<BaseExpressionJson | ErrorJson, 'sourceKeys'>;
+type TernaryJson = {
+    condition: BaseExpressionJson | ErrorJson;
+    trueValue: BaseExpressionJson | ErrorJson;
+    falseValue: BaseExpressionJson | ErrorJson;
 };
 
-const makeTernaryJson = (
-    target: Convert<CondExpressionType>,
-    targetRecords?: Record<string, string[]>,
-): TernaryJson | ErrorJson => {
-    return convertValue<'condExpression', 'tenary', CondExpressionType, TernaryJson>(
-        ['condExpression'],
-        target,
-        ['tenary'],
-        'tenary',
-        (target, targetRecords, _errorJson) => {
-            return makeJsonType('tenary', targetRecords, {
-                condition: omitSourceKeys(makeExpressionJsonConvert(target.condition)),
-                trueValue: omitSourceKeys(makeExpressionJsonConvert(target.trueValue)),
-                falseValue: omitSourceKeys(makeExpressionJsonConvert(target.falseValue)),
-            });
-        },
-        targetRecords,
-    );
+const makeTernaryJson = (target: ConvertExcludeError<CondExpressionType>): TernaryJson => {
+    return {
+        condition: makeExpressionJsonConvert(target.condition),
+        trueValue: makeExpressionJsonConvert(target.trueValue),
+        falseValue: makeExpressionJsonConvert(target.falseValue),
+    };
 };
 
-export type BaseExpressionJson = ExpressionJson;
+export type BaseExpressionJson =
+    | string
+    | PrimaryJson
+    | DotMethodCallJson
+    | MethodCallJson
+    | NewInstanceJson
+    | CastJson
+    | SubJson
+    | ArrayJson
+    | FormulaJson
+    | InstanceofJson
+    | UnaryJson
+    | TernaryJson;
 
 export const makeExpressionJsonConvert = (
-    target: Convert<BaseExpressionType>,
-    targetRecords?: Record<string, string[]>,
-): BaseExpressionJson => {
-    throw new Error('hoge');
+    target: ConvertExcludeError<BaseExpressionType>,
+): BaseExpressionJson | ErrorJson => {
+    if (target.type === 'expression') {
+        return makeExpressionJson(target);
+    } else if (target.type === 'primaryExpression') {
+        return makePrimaryJson(target.value);
+    } else if (target.type === 'dotExpression') {
+        return makeDotMethodCallJson(target);
+    } else if (target.type === 'methodCallExpression') {
+        return makeMethodCallJson(target);
+    } else if (target.type === 'newExpression') {
+        return makeNewInstanceJson(target);
+    } else if (target.type === 'castExpression') {
+        return makeCastJson(target);
+    } else if (target.type === 'subExpression') {
+        return makeSubJson(target);
+    } else if (target.type === 'arrayExpression') {
+        return makeArrayJson(target);
+    } else if (target.type === 'instanceOfExpression') {
+        return makeInstanceofJson(target);
+    } else if (target.type === 'condExpression') {
+        return makeTernaryJson(target);
+    } else if (
+        target.type === 'preOpExpression' ||
+        target.type === 'postOpExpression' ||
+        target.type === 'negExpression'
+    ) {
+        return makeUnaryJson(target);
+    } else {
+        return makeFormulaJson(target);
+    }
 };

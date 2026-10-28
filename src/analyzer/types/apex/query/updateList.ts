@@ -11,8 +11,6 @@ import {
     mergeRecord,
     convertValue,
     ConvertType,
-    StructureJsonType,
-    makeStructureJsonType,
 } from '../commons';
 
 import { UpdateListType, UpdateTypeType } from '../converter';
@@ -27,12 +25,11 @@ export const makeUpdateListJson = (
     target: ConvertType<UpdateListType>,
     targetRecords?: Record<string, string[]>,
 ): UpdateListJson | ErrorJson => {
-    return convertValue<'updateList', 'updateClause', UpdateListType, UpdateListJson>(
+    return convertValue<'updateList', UpdateListType, UpdateListJson>(
         ['updateList'],
         target,
-        ['updateClause'],
         'updateClause',
-        (target, targetRecords, _) => {
+        (target, targetRecords) => {
             return makeJsonType('updateClause', targetRecords, {
                 value: target.value.map((v) => v.value),
             });

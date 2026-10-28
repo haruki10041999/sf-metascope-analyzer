@@ -8,9 +8,6 @@ import {
     convertValue,
     ConvertExcludeError,
     ConvertType,
-    StructureJsonType,
-    makeStructureJsonType,
-    registerJson,
 } from './commons';
 
 import { ModifierType, AnnotationType } from './converter';
@@ -29,7 +26,6 @@ export type AnnotationJson = JsonType<'annotation'> & {
 export const isAnnotationJson = typia.createIs<AnnotationJson>();
 
 export type ModifierJson = JsonType<'modifier'> & {
-    type: 'modifier';
     name:
         | 'GLOBAL'
         | 'PUBLIC'
@@ -50,29 +46,26 @@ export type ModifierJson = JsonType<'modifier'> & {
 
 export const isModifierJson = typia.createIs<ModifierJson>();
 
-export type ModifiersJson = StructureJsonType<
-    'modifiers',
-    {
-        access?: Omit<ModifierJson, 'sourceKeys'>[];
-        declaration?: Omit<ModifierJson, 'sourceKeys'>[];
-        webService?: Omit<ModifierJson, 'sourceKeys'>[];
-        test?: Omit<ModifierJson, 'sourceKeys'>[];
-        sharing?: Omit<ModifierJson, 'sourceKeys'>[];
-        other?: Omit<ModifierJson, 'sourceKeys'>[];
-        lwcAnnotation?: Omit<AnnotationJson, 'sourceKeys'>[];
-        flowAnnotation?: Omit<AnnotationJson, 'sourceKeys'>[];
-        asyncAnnotation?: Omit<AnnotationJson, 'sourceKeys'>[];
-        testAnnotation?: Omit<AnnotationJson, 'sourceKeys'>[];
-        restAnnotation?: Omit<AnnotationJson, 'sourceKeys'>[];
-        visualforceAnnotation?: Omit<AnnotationJson, 'sourceKeys'>[];
-        accessAnnotation?: Omit<AnnotationJson, 'sourceKeys'>[];
-        serializeAnnotation?: Omit<AnnotationJson, 'sourceKeys'>[];
-        executionAnnotation?: Omit<AnnotationJson, 'sourceKeys'>[];
-        compatibilityAnnotation?: Omit<AnnotationJson, 'sourceKeys'>[];
-        otherAnnotation?: Omit<AnnotationJson, 'sourceKeys'>[];
-        error?: Omit<ErrorJson, 'sourceKeys'>[];
-    }
->;
+export type ModifiersJson = {
+    access?: Omit<ModifierJson, 'sourceKeys'>[];
+    declaration?: Omit<ModifierJson, 'sourceKeys'>[];
+    webService?: Omit<ModifierJson, 'sourceKeys'>[];
+    test?: Omit<ModifierJson, 'sourceKeys'>[];
+    sharing?: Omit<ModifierJson, 'sourceKeys'>[];
+    other?: Omit<ModifierJson, 'sourceKeys'>[];
+    lwcAnnotation?: Omit<AnnotationJson, 'sourceKeys'>[];
+    flowAnnotation?: Omit<AnnotationJson, 'sourceKeys'>[];
+    asyncAnnotation?: Omit<AnnotationJson, 'sourceKeys'>[];
+    testAnnotation?: Omit<AnnotationJson, 'sourceKeys'>[];
+    restAnnotation?: Omit<AnnotationJson, 'sourceKeys'>[];
+    visualforceAnnotation?: Omit<AnnotationJson, 'sourceKeys'>[];
+    accessAnnotation?: Omit<AnnotationJson, 'sourceKeys'>[];
+    serializeAnnotation?: Omit<AnnotationJson, 'sourceKeys'>[];
+    executionAnnotation?: Omit<AnnotationJson, 'sourceKeys'>[];
+    compatibilityAnnotation?: Omit<AnnotationJson, 'sourceKeys'>[];
+    otherAnnotation?: Omit<AnnotationJson, 'sourceKeys'>[];
+    error?: Omit<ErrorJson, 'sourceKeys'>[];
+};
 
 export const isModifiersJson = typia.createIs<ModifiersJson>();
 
@@ -119,90 +112,70 @@ const isCompatibilityAnnotation = (value: string): boolean =>
     ['DEPRECATED', 'SUPPRESSWARNINGS'].includes(value.toUpperCase());
 
 const makeAnnotationJson = (
-    target: ConvertType<AnnotationType>,
-    targetRecords?: Record<string, string[]>,
-): AnnotationJson | ErrorJson => {
-    return convertValue<'annotation', 'annotation', AnnotationType, AnnotationJson>(
-        ['annotation'],
-        target,
-        ['annotation'],
-        'annotation',
-        (target, targetRecords, _) => {
-            const name = target.value.value;
-            const annotationJson: AnnotationJson = makeJsonType('annotation', targetRecords, {
-                name: name,
-            });
+    target: ConvertExcludeError<AnnotationType>,
+    targetRecords: Record<string, string[]>,
+): AnnotationJson => {
+    const name = target.value.value;
+    const annotationJson: AnnotationJson = makeJsonType('annotation', targetRecords, {
+        name: name,
+    });
 
-            const arg = target.param ? target.param : null;
+    const arg = target.param ? target.param : null;
 
-            if (arg) {
-                if (arg.type === 'elementValue') {
-                    const literalValue = arg.value.value;
-                    const literalValueType = arg.value.valueType;
-                    annotationJson.arg = {
-                        value: literalValue,
-                        valueType: literalValueType,
-                    };
-                    return annotationJson;
-                } else {
-                    const annotationArgs: AnnotationArgJson[] = [];
-                    const pairList = arg.value;
-                    pairList.forEach((pair) => {
-                        const key = pair.left.value;
-                        const literalValue = pair.right.value.value;
-                        const valueType = pair.right.value.valueType;
-
-                        annotationArgs.push({
-                            key: key,
-                            value: literalValue,
-                            valueType: valueType,
-                        });
-                    });
-                    annotationJson.arg = annotationArgs;
-                    return annotationJson;
-                }
-            }
-
+    if (arg) {
+        if (arg.type === 'elementValue') {
+            const literalValue = arg.value.value;
+            const literalValueType = arg.value.valueType;
+            annotationJson.arg = {
+                value: literalValue,
+                valueType: literalValueType,
+            };
             return annotationJson;
-        },
-        targetRecords,
-    );
+        } else {
+            const annotationArgs: AnnotationArgJson[] = [];
+            const pairList = arg.value;
+            pairList.forEach((pair) => {
+                const key = pair.left.value;
+                const literalValue = pair.right.value.value;
+                const valueType = pair.right.value.valueType;
+
+                annotationArgs.push({
+                    key: key,
+                    value: literalValue,
+                    valueType: valueType,
+                });
+            });
+            annotationJson.arg = annotationArgs;
+            return annotationJson;
+        }
+    }
+
+    return annotationJson;
 };
 
 export const makeModifierJson = (
     target: ConvertType<ModifierType>,
     targetRecords?: Record<string, string[]>,
 ): ModifierJson | AnnotationJson | ErrorJson => {
-    return convertValue<
-        'modifier' | 'annotation',
-        'modifier' | 'annotation',
-        ModifierType,
-        ModifierJson | AnnotationJson
-    >(
+    return convertValue<'modifier' | 'annotation', ModifierType, ModifierJson | AnnotationJson>(
         ['modifier', 'annotation'],
         target,
-        ['modifier', 'annotation'],
         'modifier',
-        (target, targetRecords, errorJson) => {
+        (target, targetRecords) => {
             const modifier = target!.value;
             if (typeof modifier === 'string') {
                 return makeJsonType('modifier', targetRecords, {
-                    type: 'modifier',
                     name: modifier,
                 });
-            }
-
-            if (modifier.type === 'annotation') {
+            } else {
                 return makeAnnotationJson(modifier, targetRecords);
             }
-
-            return errorJson;
         },
         targetRecords,
     );
 };
 
-export const makeModifiersJson = (targets: ConvertType<ModifierType>[]): ModifiersJson => {
+export const makeModifiersJson = (targets: ConvertExcludeError<ModifierType>[]): ModifiersJson => {
     const modifiers: Record<string, ModifierJson[]> = {};
     const annotations: Record<string, AnnotationJson[]> = {};
     const errors: ErrorJson[] = [];
@@ -263,10 +236,10 @@ export const makeModifiersJson = (targets: ConvertType<ModifierType>[]): Modifie
         }
     });
 
-    const properties: Record<string, ModifierJson[] | AnnotationJson[] | ErrorJson[]> = {
+    return {
         ...modifiers,
         ...annotations,
         ...(errors.length > 0 ? { error: errors } : {}),
     };
-    return makeStructureJsonType('modifiers', properties);
 };
+

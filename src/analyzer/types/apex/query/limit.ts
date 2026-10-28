@@ -11,12 +11,10 @@ import {
     mergeRecord,
     convertValue,
     ConvertType,
-    StructureJsonType,
-    makeStructureJsonType,
 } from '../commons';
 
 import { LimitClauseType } from '../converter';
-import { ExpressionJson, makeExpressionJson } from '../expression';
+import { BaseExpressionJson, makeExpressionJsonConvert } from '../expression';
 
 export type LimitJson = JsonType<'limitClause'> &
     (
@@ -26,7 +24,7 @@ export type LimitJson = JsonType<'limitClause'> &
           }
         | {
               type: 'bind';
-              value: ExpressionJson;
+              value: BaseExpressionJson | ErrorJson;
           }
     );
 
@@ -36,19 +34,18 @@ export const makeLimitJson = (
     target: ConvertType<LimitClauseType>,
     targetRecords?: Record<string, string[]>,
 ): LimitJson | ErrorJson => {
-    return convertValue<'limitClause', 'limitClause', LimitClauseType, LimitJson>(
+    return convertValue<'limitClause', LimitClauseType, LimitJson>(
         ['limitClause'],
         target,
-        ['limitClause'],
         'limitClause',
-        (target, targetRecords, _) => {
+        (target, targetRecords) => {
             if (typeof target.value === 'string') {
                 return makeJsonType('limitClause', targetRecords, {
                     type: 'literal',
                     value: target.value,
                 });
             } else {
-                const expressionJson = makeExpressionJson(target.value.value);
+                const expressionJson = makeExpressionJsonConvert(target.value.value);
                 return makeJsonType('limitClause', targetRecords, {
                     type: 'bind',
                     value: expressionJson,

@@ -506,30 +506,32 @@ export const makeSoslClausesAssignRule: AssignForValueRule<SoslClausesTypeClass,
         },
     };
 
-export type SoslWithClauseType =
-    | (CommonType<'soslWithClause'> & {
-          value: 'DIVISION' | 'PRICEBOOKID';
-          content: ValueRuleValue<string | BoundExpressionType>;
-      })
-    | {
-          value: 'DATA_CATEGORY';
-          content: ValueRuleValue<FilteringExpressionType>;
-      }
-    | {
-          value: 'SNIPPET' | 'SPELL_CORRECTION';
-          content: string | null;
-      }
-    | {
-          value: 'NETWORK';
-          content: ValueRuleValue<string | NetworkListType>;
-      }
-    | {
-          value: 'METADATA';
-          content: string;
-      }
-    | {
-          value: 'HIGHLIGHT' | 'SYSTEM_MODE' | 'USER_MODE';
-      };
+export type SoslWithClauseType = CommonType<'soslWithClause'> &
+    (
+        | {
+              value: 'DIVISION' | 'PRICEBOOKID';
+              content: ValueRuleValue<string | BoundExpressionType>;
+          }
+        | {
+              value: 'DATA_CATEGORY';
+              content: ValueRuleValue<FilteringExpressionType>;
+          }
+        | {
+              value: 'SNIPPET' | 'SPELL_CORRECTION';
+              content: string | null;
+          }
+        | {
+              value: 'NETWORK';
+              content: ValueRuleValue<string | NetworkListType>;
+          }
+        | {
+              value: 'METADATA';
+              content: string;
+          }
+        | {
+              value: 'HIGHLIGHT' | 'SYSTEM_MODE' | 'USER_MODE';
+          }
+    );
 
 export const isSoslWithClauseType = (value: unknown): value is SoslWithClauseType => {
     return isCommonType(value) && value.type === 'soslWithClause';

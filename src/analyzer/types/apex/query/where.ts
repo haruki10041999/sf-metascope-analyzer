@@ -11,8 +11,6 @@ import {
     mergeRecord,
     convertValue,
     ConvertType,
-    StructureJsonType,
-    makeStructureJsonType,
 } from '..//commons';
 
 import {
@@ -37,12 +35,7 @@ import {
 } from './commons';
 
 type WhereSingleConditionJson =
-    | (StructureJsonType<
-          'singleCondition',
-          {
-              value: Omit<ValueJson, 'sourceKeys'> | Omit<ErrorJson, 'sourceKeys'>;
-          }
-      > & {
+    | (JsonType<'singleCondition'> & {
           field: string;
           operator:
               | '='
@@ -57,6 +50,7 @@ type WhereSingleConditionJson =
               | 'NOT IN'
               | 'INCLUDES'
               | 'EXCLUDES';
+          value: ValueJson;
       })
     | SingleConditionJson;
 
@@ -68,112 +62,63 @@ export const makeWhereSingleConditionJson = (
 ): WhereSingleConditionJson | ErrorJson => {
     return convertValue<
         'whereFieldExpression',
-        'singleCondition',
         WhereFieldExpressionType,
-        WhereSingleConditionJson
+        WhereSingleConditionJson | ErrorJson
     >(
         ['whereFieldExpression'],
         target,
-        ['singleCondition'],
         'singleCondition',
-        (target, _, errorJson) => {
-            if (typeof target.left === 'string' && target.operator && target.right) {
+        (target, targetRecords) => {
+            if (typeof target.left === 'string') {
                 const field = target.left;
-                const operator = makeComparisonOperatorJson(target.operator);
-                const value = makeValueJson(target.right);
-                return makeStructureJsonType(
-                    'singleCondition',
-                    {
-                        value: value,
-                    },
-                    {
-                        field: field,
-                        operator: operator,
-                    },
-                );
-            } else if (!(typeof target.left === 'string')) {
-                return makeSingleConditionJson(target.left);
+                const operator = makeComparisonOperatorJson(target.operator!);
+                const value = makeValueJson(target.right!);
+                return makeJsonType('singleCondition', targetRecords, {
+                    value: value,
+                    field: field,
+                    operator: operator,
+                });
             } else {
-                return errorJson;
+                return makeSingleConditionJson(target.left, targetRecords);
             }
         },
         targetRecords,
     );
 };
 
-type WhereLogicalExpressionJson = StructureJsonType<
-    'logicalCondition',
-    {
-        condition: (
-            | Omit<WhereSingleConditionJson, 'sourceKeys'>
-            | Omit<WhereLogicalExpressionJson, 'sourceKeys'>
-            | Omit<ErrorJson, 'sourceKeys'>
-        )[];
-    }
-> & { operator?: 'AND' | 'OR' | 'NOT' };
+type WhereLogicalExpressionJson = {
+    condition: (WhereSingleConditionJson | WhereLogicalExpressionJson | ErrorJson)[];
+    operator?: 'AND' | 'OR' | 'NOT';
+};
 
 export const isWhereLogicalExpressionJson = typia.createIs<WhereLogicalExpressionJson>();
 
 export const makeWhereLogicalExpressionJson = (
-    target: ConvertType<WhereLogicalExpressionType>,
-    targetRecords?: Record<string, string[]>,
-): WhereLogicalExpressionJson | ErrorJson => {
-    return convertValue<
-        'whereLogicalExpression',
-        'logicalCondition',
-        WhereLogicalExpressionType,
-        WhereLogicalExpressionJson
-    >(
-        ['whereLogicalExpression'],
-        target,
-        ['logicalCondition'],
-        'logicalCondition',
-        (target, _targetRecord, _errorJson) => {
-            const operator = target.operator;
-            const condition: (WhereSingleConditionJson | WhereLogicalExpressionJson | ErrorJson)[] =
-                [];
-            target.value.forEach((v) => {
-                if (v.value.type === 'whereFieldExpression') {
-                    condition.push(makeWhereSingleConditionJson(v.value));
-                } else {
-                    condition.push(makeWhereLogicalExpressionJson(v.value));
-                }
-            });
-            return makeStructureJsonType(
-                'logicalCondition',
-                {
-                    condition: condition,
-                },
-                operator !== null ? { operator } : {},
-            );
-        },
-        targetRecords,
-    );
+    target: ConvertExcludeError<WhereLogicalExpressionType>,
+): WhereLogicalExpressionJson => {
+    const operator = target.operator;
+    const condition: (WhereSingleConditionJson | WhereLogicalExpressionJson | ErrorJson)[] = [];
+    target.value.forEach((v) => {
+        if (v.value.type === 'whereFieldExpression') {
+            condition.push(makeWhereSingleConditionJson(v.value));
+        } else {
+            condition.push(makeWhereLogicalExpressionJson(v.value));
+        }
+    });
+    return {
+        condition: condition,
+        ...(operator !== null ? { operator } : {}),
+    };
 };
 
-export type WhereJson = StructureJsonType<
-    'whereClause',
-    {
-        condition: Omit<WhereLogicalExpressionJson, 'sourceKeys'> | Omit<ErrorJson, 'sourceKeys'>;
-    }
->;
+export type WhereJson = {
+    condition: WhereLogicalExpressionJson;
+};
+
 export const isWhereJson = typia.createIs<WhereJson>();
 
-export const makeWhereJson = (
-    target: ConvertType<WhereClauseType>,
-    targetRecords?: Record<string, string[]>,
-): WhereJson | ErrorJson => {
-    return convertValue<'whereClause', 'whereClause', WhereClauseType, WhereJson>(
-        ['whereClause'],
-        target,
-        ['whereClause'],
-        'whereClause',
-        (target, _targetRecord, _errorJson) => {
-            const condition = makeWhereLogicalExpressionJson(target.value);
-            return makeStructureJsonType('whereClause', {
-                condition: condition,
-            });
-        },
-        targetRecords,
-    );
+export const makeWhereJson = (target: ConvertExcludeError<WhereClauseType>): WhereJson => {
+    return {
+        condition: makeWhereLogicalExpressionJson(target.value),
+    };
 };

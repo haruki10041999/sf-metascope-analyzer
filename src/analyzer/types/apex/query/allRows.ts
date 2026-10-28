@@ -11,12 +11,9 @@ import {
     mergeRecord,
     convertValue,
     ConvertType,
-    StructureJsonType,
-    makeStructureJsonType,
 } from '../commons';
 
 import { AllRowsClauseType } from '../converter';
-import { ExpressionJson, makeExpressionJson } from '../expression';
 
 export type AllRowsJson = JsonType<'allRowsClause'> & {
     value: string;
@@ -28,12 +25,11 @@ export const makeAllRowsJson = (
     target: ConvertType<AllRowsClauseType>,
     targetRecords?: Record<string, string[]>,
 ): AllRowsJson | ErrorJson => {
-    return convertValue<'allRowsClause', 'allRowsClause', AllRowsClauseType, AllRowsJson>(
+    return convertValue<'allRowsClause', AllRowsClauseType, AllRowsJson>(
         ['allRowsClause'],
         target,
-        ['allRowsClause'],
         'allRowsClause',
-        (target, targetRecords, _) => {
+        (target, targetRecords) => {
             return makeJsonType('allRowsClause', targetRecords, {
                 value: target.value,
             });

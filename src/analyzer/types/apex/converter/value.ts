@@ -190,6 +190,7 @@ export type ValueType = CommonType<'value'> &
           }
         | {
               value: ErrorType;
+              valueType: 'error';
           }
     );
 
@@ -272,6 +273,7 @@ export const makeValueAssignRule: AssignForValueRule<NormalValueTypeClass, Value
                 type: valueTypeClass.getType(),
                 sourceInfo: makeSourceInfo(valueTypeClass),
                 value,
+                valueType: 'error',
             };
         }
     },
@@ -288,9 +290,6 @@ export type WhenValueType = CommonType<'whenValue'> &
         | {
               value: ValueRuleValue<IdType>;
               valueType: ValueRuleValue<TypeRefType>;
-          }
-        | {
-              value: ErrorType;
           }
     );
 
@@ -333,7 +332,7 @@ export const makeWhenValueAssignRule: AssignForValueRule<WhenValueTypeClass, Whe
                 sourceInfo: makeSourceInfo(valueTypeClass),
                 value,
             };
-        } else if (isCommonType(value) && value.type === 'id') {
+        } else {
             const valueType = assignMultiClass(valueTypeClass.getValueType(), [
                 makeTypeRefAssignRule,
                 makeErrorAssignRule,
@@ -344,12 +343,7 @@ export const makeWhenValueAssignRule: AssignForValueRule<WhenValueTypeClass, Whe
                 value,
                 valueType,
             };
-        } else {
-            return {
-                type: valueTypeClass.getType(),
-                sourceInfo: makeSourceInfo(valueTypeClass),
-                value,
-            };
         }
     },
 };
+
