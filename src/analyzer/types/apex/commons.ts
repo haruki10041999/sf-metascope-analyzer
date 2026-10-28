@@ -112,6 +112,10 @@ export const isSpicifyConvertExcludeError = <TName extends string>(
 
 const ERROR = Symbol('ERROR');
 
+const isRecord = (value: unknown): value is Record<string, unknown> => {
+    return value !== null && typeof value === 'object' && !Array.isArray(value);
+};
+
 const isErrorConvert = (value: unknown): value is Convert<ErrorType> => {
     return isRecord(value) && value.type === 'error';
 };
@@ -157,22 +161,14 @@ export type ConvertType<T extends CommonType<string>> =
 
 type ConvertKeys = { objectKey: string; sourceKey: string };
 
-export const convertValue = <
-    TName extends string,
-    TKind extends string,
-    TCommonType extends CommonType<TName>,
-    TResult extends JsonType<TKind> | StructureJsonType<TKind> | ErrorJson,
->(
+export const convertValue = <TName extends string, TCommonType extends CommonType<TName>, TResult>(
     types: readonly TName[],
     target: ConvertType<TCommonType> & ConvertKeys,
-    kinds: readonly TKind[],
     errorKind: string,
     process: (
         target: ConvertExcludeError<TCommonType>,
-        // 常に渡すため必須。2 引数の関数（StructureJsonType 用など）もそのまま渡せる
         targetRecords: Record<string, string[]>,
-        errorJson: ErrorJson,
-    ) => TResult | ErrorJson,
+    ) => TResult,
     targetRecords?: Record<string, string[]>,
 ): TResult | ErrorJson => {
     const record: Record<string, string[]> = targetRecords ?? {
@@ -183,22 +179,9 @@ export const convertValue = <
         kindType: errorKind,
     });
 
-    const processTarget = (value: ConvertExcludeError<TCommonType>) => {
-        const result = process(value, record, errorJson);
-        if (isErrorJson(result)) {
-            return result;
-        }
-
-        if (!kinds.some((kind) => kind === result.kind)) {
-            throw new Error(`Unsupported output kind: ${result.kind}`);
-        }
-
-        return result;
-    };
-
     // 型ガードで target を絞り込むと巨大な交差型の計算で StructureJsonType の解決が壊れるため、判定のみに使う
     if (isSpicifyConvertExcludeError(target as unknown, types)) {
-        return processTarget(target as ConvertExcludeError<TCommonType>);
+        return process(target as ConvertExcludeError<TCommonType>, record);
     }
 
     const { value, errorInfos } = convertExcludeError(target as Convert<TCommonType>);
@@ -207,7 +190,7 @@ export const convertValue = <
     }
 
     // value は !value で絞り込まれ `ExcludeErrorNode<T> & {}` になり、そのまま渡すと同様に型解決が壊れるため明示する
-    return processTarget(value as ConvertExcludeError<TCommonType>);
+    return process(value as ConvertExcludeError<TCommonType>, record);
 };
 
 export type SourceJson = {
@@ -272,48 +255,12 @@ export type JsonType<TKind extends string> = {
 
 export const isJsonType = typia.createIs<JsonType<string>>();
 
-// 型定義の中で自分自身を StructureJsonType<string>['sourceKeys'] や Omit<StructureJsonType<string>, ...> で参照すると
-// keyof の計算が循環し、型の解決順によって StructureJsonType が壊れる（sourceKeys が存在しない扱いになる）。
-// そのため再帰する部分を名前付きの型として切り出す
-export type StructureSourceKeys = {
-    [key: string]:
-        | JsonType<string>['sourceKeys']
-        | JsonType<string>['sourceKeys'][]
-        | StructureSourceKeys
-        | StructureSourceKeys[]
-        | (JsonType<string>['sourceKeys'] | StructureSourceKeys)[];
+export const isSpecificJsonType = <T extends string>(
+    target: unknown,
+    types: readonly T[],
+): target is JsonType<T> => {
+    return isJsonType(target) && types.includes(target.kind as T);
 };
-
-// Omit<StructureJsonType<string>, 'sourceKeys'> 相当（文字列のインデックスシグネチャのため kind も string に含まれる）
-export type StructureJsonContent = {
-    [key: string]: StructureJsonValue;
-};
-
-type StructureJsonValue =
-    | string
-    | Omit<JsonType<string>, 'sourceKeys'>
-    | Omit<JsonType<string>, 'sourceKeys'>[]
-    | (Omit<JsonType<string>, 'sourceKeys'> | StructureJsonContent)[]
-    | StructureJsonContent
-    | StructureJsonContent[]
-    | StructureSourceKeys;
-
-type RegisteredJsonValue =
-    | JsonType<string>
-    | JsonType<string>[]
-    | StructureJsonType<string>
-    | StructureJsonType<string>[]
-    | (JsonType<string> | StructureJsonType<string>)[];
-
-export type StructureJsonType<
-    TKind extends string,
-    TContent extends Record<string, StructureJsonValue> = {},
-> = {
-    kind: TKind;
-    sourceKeys: StructureSourceKeys;
-} & TContent;
-
-export const isStructureJsonType = typia.createIs<StructureJsonType<string>>();
 
 export type ErrorJson = JsonType<'error'> & {
     kind: 'error';
@@ -334,205 +281,74 @@ export const makeJsonType = <Tkind extends string, T extends JsonType<Tkind>>(
     } as T;
 };
 
-export const registerJson = (
-    target: StructureJsonType<string>,
-    attribute: string,
-    element: RegisteredJsonValue,
-): void => {
-    if (Array.isArray(element)) {
-        // JsonType と StructureJsonType が混在していても、要素ごとの sourceKeys を同じ位置に保持する
-        const contentList: Record<string, unknown>[] = [];
-        const sourceKeyList: (JsonType<string>['sourceKeys'] | StructureSourceKeys)[] = [];
-
-        element.forEach((e: JsonType<string> | StructureJsonType<string>) => {
-            const { sourceKeys, ...content } = e;
-            contentList.push(content);
-            sourceKeyList.push(sourceKeys);
-        });
-        Object.assign(target, { [attribute]: contentList });
-        target.sourceKeys[attribute] = sourceKeyList;
-    } else {
-        const { sourceKeys, ...content } = element;
-        Object.assign(target, { [attribute]: content });
-        target.sourceKeys[attribute] = sourceKeys;
-    }
-};
-
-const _makeStructureJsonType = <Tkind extends string, T extends StructureJsonType<Tkind>>(
-    kind: T['kind'],
-    record: T['sourceKeys'],
-    properties: Omit<T, 'kind' | 'sourceKeys'> = {} as Omit<T, 'kind' | 'sourceKeys'>,
-): T => {
-    return {
-        kind,
-        sourceKeys: record,
-        ...properties,
-    } as T;
-};
-
-export const makeStructureJsonType = <
-    Tkind extends string,
-    TContent extends Record<string, RegisteredJsonValue> = {},
-    // const 型パラメーターにしないと { mode: 'DATA_CATEGORY' } などのリテラルが string に広がる
-    const TAddContent extends Record<string, unknown> = {},
->(
-    kind: Tkind,
-    properties: TContent = {} as TContent,
-    addInfo: TAddContent = {} as TAddContent,
-): StructureJsonType<Tkind, TContent> & TAddContent => {
-    const target: StructureJsonType<string> = { kind, sourceKeys: {} };
-    Object.entries(properties).map(([key, value]) => registerJson(target, key, value));
-
-    if (Object.keys(addInfo).length > 0) {
-        Object.assign(target, addInfo);
-    }
-
-    return target as StructureJsonType<Tkind, TContent> & TAddContent;
-};
-
-type RestoredJsonValue = RegisteredJsonValue;
-
-const restoreJsonValue = (property: unknown, sourceKeys: unknown): RestoredJsonValue => {
-    if (Array.isArray(property)) {
-        if (!Array.isArray(sourceKeys) || property.length !== sourceKeys.length) {
-            throw new Error('sourceKeys do not match the property');
-        }
-
-        // 要素ごとに JsonType / StructureJsonType を判定して復元するため、混在配列もそのまま返せる
-        return property.map((item, index) => restoreJsonValue(item, sourceKeys[index])) as (
-            JsonType<string> | StructureJsonType<string>
-        )[];
-    }
-
-    if (!isRecord(property) || typeof property.kind !== 'string') {
-        throw new Error('property cannot be restored');
-    }
-
-    const { kind, ...content } = property;
-    if (isRecordStringArray(sourceKeys)) {
-        return { kind, sourceKeys, ...content } as JsonType<string>;
-    }
-
-    if (!isRecord(sourceKeys)) {
-        throw new Error('sourceKeys cannot be restored');
-    }
-
-    const restoredProperties = Object.fromEntries(
-        Object.entries(content).map(([key, value]) => [
-            key,
-            restoreJsonValue(value, sourceKeys[key]),
-        ]),
-    );
-
-    return _makeStructureJsonType(
-        kind,
-        sourceKeys as StructureJsonType<string>['sourceKeys'],
-        restoredProperties as Omit<StructureJsonType<string>, 'kind' | 'sourceKeys'>,
-    );
-};
-
-export const restoreJson = <
-    TName extends string,
-    TJson extends StructureJsonType<TName>,
-    TKey extends Exclude<keyof TJson, 'kind' | 'sourceKeys'> & string,
->(
-    source: TJson,
-    attribute: TKey,
-): RestoredJsonValue => {
-    const sourceKeys = source['sourceKeys'][attribute];
-    const property = source[attribute]!;
-
-    return restoreJsonValue(property, sourceKeys);
-};
-
-const _mergeRecord = (
-    target: Record<string, string[]>,
-    source: Record<string, string[]>,
-): Record<string, string[]> => {
-    const _target = { ...target };
-
-    Object.entries(source).forEach(([objectKey, sourceKey]) => {
-        const targetObjectRecords = _target[objectKey];
-        if (!targetObjectRecords) {
-            _target[objectKey] = sourceKey;
-        } else {
-            targetObjectRecords.push(
-                ...sourceKey.filter((item) => !targetObjectRecords.includes(item)),
-            );
-        }
-    });
-
-    return _target;
-};
-
-const isRecord = (value: unknown): value is Record<string, unknown> => {
-    return typeof value === 'object' && value !== null && !Array.isArray(value);
-};
-
-const isRecordStringArray = (value: unknown): value is Record<string, string[]> => {
-    return (
-        isRecord(value) &&
-        Object.values(value).every(
-            (v) => Array.isArray(v) && v.every((item) => typeof item === 'string'),
-        )
-    );
-};
-
-const isRecordRecordStringArray = (value: unknown): value is Record<string, string[]>[] => {
-    return Array.isArray(value) && value.every((v) => isRecordStringArray(v));
-};
-
 export const mergeRecord = (
     target: Record<string, string[]>,
-    sourceKeys: Record<string, string[]> | Record<string, string[]>[],
+    sourceKeys: Record<string, string[]>,
 ): Record<string, string[]> => {
-    let source: Record<string, string[]> = {};
-    if (isRecordStringArray(sourceKeys)) {
-        source = { ...sourceKeys };
-    } else if (isRecordRecordStringArray(sourceKeys)) {
-        sourceKeys.forEach((record) => {
-            source = _mergeRecord(source, record);
-        });
-    }
+    const result = Object.fromEntries(
+        Object.entries(target).map(([key, values]) => [key, [...values]]),
+    );
 
-    return _mergeRecord(target, source);
-};
+    for (const [objectKey, sourceKey] of Object.entries(sourceKeys)) {
+        const targetRecords = result[objectKey];
 
-const _gatherSourceKeys = (
-    sourceKeys:
-        | JsonType<string>['sourceKeys']
-        | JsonType<string>['sourceKeys'][]
-        | StructureJsonType<string>['sourceKeys']
-        | StructureJsonType<string>['sourceKeys'][]
-        | (JsonType<string>['sourceKeys'] | StructureJsonType<string>['sourceKeys'])[],
-    allKeys: Record<string, string[]>,
-): void => {
-    if (Array.isArray(sourceKeys)) {
-        sourceKeys.forEach((s) => {
-            _gatherSourceKeys(s, allKeys);
-        });
-    } else {
-        if (isRecordStringArray(sourceKeys)) {
-            allKeys = mergeRecord(allKeys, sourceKeys);
+        if (!targetRecords) {
+            result[objectKey] = [...new Set(sourceKey)];
         } else {
-            Object.entries(sourceKeys).forEach(([_, value]) => {
-                _gatherSourceKeys(value, allKeys);
-            });
+            const existing = new Set(targetRecords);
+
+            for (const key of sourceKey) {
+                if (!existing.has(key)) {
+                    targetRecords.push(key);
+                    existing.add(key);
+                }
+            }
         }
     }
+
+    return result;
 };
 
-const gatherSourceKeys = (sourcekeys: StructureJsonType<string>['sourceKeys']) => {
+const _gatherSourceKeys = (target: unknown, allKeys: Record<string, string[]>): void => {
+    if (Array.isArray(target)) {
+        for (const item of target) {
+            _gatherSourceKeys(item, allKeys);
+        }
+        return;
+    }
+
+    if (target === null || typeof target !== 'object') {
+        return;
+    }
+
+    if (isJsonType(target)) {
+        Object.assign(allKeys, mergeRecord(allKeys, target.sourceKeys));
+
+        for (const [key, value] of Object.entries(target)) {
+            if (key !== 'kind' && key !== 'sourceKeys') {
+                _gatherSourceKeys(value, allKeys);
+            }
+        }
+
+        return;
+    }
+
+    for (const value of Object.values(target)) {
+        _gatherSourceKeys(value, allKeys);
+    }
+};
+
+const gatherSourceKeys = (target: JsonType<string>) => {
     let allKeys: Record<string, string[]> = {};
-    _gatherSourceKeys(sourcekeys, allKeys);
+    _gatherSourceKeys(target, allKeys);
     return allKeys;
 };
 
 export const regenerateSourceObjects = (
     sourceObjects: SourceJson[],
-    jsonType: StructureJsonType<string>,
+    jsonType: JsonType<string>,
 ): SourceJson[] => {
-    const excludeSourceKeys: Record<string, string[]> = gatherSourceKeys(jsonType['sourceKeys']);
+    const excludeSourceKeys: Record<string, string[]> = gatherSourceKeys(jsonType);
 
     const regenerate: SourceJson[] = [];
 

@@ -54,10 +54,9 @@ export const makeTypeOfJson = (
     target: ConvertType<TypeOfType>,
     targetRecords?: Record<string, string[]>,
 ): TypeOfJson | ErrorJson => {
-    return convertValue<'typeOf', 'typeOf', TypeOfType, TypeOfJson>(
+    return convertValue<'typeOf', TypeOfType, TypeOfJson>(
         ['typeOf'],
         target,
-        ['typeOf'],
         'typeOf',
         (target, targetRecords) => {
             const typeOfBlocks: TypeOfBlockJson[] = [];
@@ -69,6 +68,7 @@ export const makeTypeOfJson = (
             }
 
             return makeJsonType('typeOf', targetRecords, {
+                field: target.value.value.map((v) => v.value.value),
                 block: typeOfBlocks,
             });
         },

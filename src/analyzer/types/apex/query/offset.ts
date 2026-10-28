@@ -11,12 +11,10 @@ import {
     mergeRecord,
     convertValue,
     ConvertType,
-    StructureJsonType,
-    makeStructureJsonType,
 } from '../commons';
 
 import { OffsetClauseType } from '../converter';
-import { ExpressionJson, makeExpressionJson } from '../expression';
+import { BaseExpressionJson, makeExpressionJsonConvert } from '../expression';
 
 export type OffsetJson = JsonType<'offsetClause'> &
     (
@@ -26,7 +24,7 @@ export type OffsetJson = JsonType<'offsetClause'> &
           }
         | {
               type: 'bind';
-              value: ExpressionJson;
+              value: BaseExpressionJson | ErrorJson;
           }
     );
 
@@ -36,19 +34,18 @@ export const makeOffsetJson = (
     target: ConvertType<OffsetClauseType>,
     targetRecords?: Record<string, string[]>,
 ): OffsetJson | ErrorJson => {
-    return convertValue<'offsetClause', 'offsetClause', OffsetClauseType, OffsetJson>(
+    return convertValue<'offsetClause', OffsetClauseType, OffsetJson>(
         ['offsetClause'],
         target,
-        ['offsetClause'],
         'offsetClause',
-        (target, targetRecords, _) => {
+        (target, targetRecords) => {
             if (typeof target.value === 'string') {
                 return makeJsonType('offsetClause', targetRecords, {
                     type: 'literal',
                     value: target.value,
                 });
             } else {
-                const expressionJson = makeExpressionJson(target.value.value);
+                const expressionJson = makeExpressionJsonConvert(target.value.value);
                 return makeJsonType('offsetClause', targetRecords, {
                     type: 'bind',
                     value: expressionJson,

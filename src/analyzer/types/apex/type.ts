@@ -88,12 +88,11 @@ export const makeTypeJson = (
     targetRecords?: Record<string, string[]>,
 ): TypeJson | ErrorJson => {
     // ConvertType は条件型のため target から TCommonType を推論できず、明示しないと CommonType<'typeRef'> に落ちる
-    return convertValue<'typeRef', 'type', TypeRefType, TypeJson>(
+    return convertValue<'typeRef', TypeRefType, TypeJson>(
         ['typeRef'],
         target,
-        ['type'],
         'type',
-        (target, targetRecords, _errorJson) => {
+        (target, targetRecords) => {
             const collection = target.value;
             const dimension = target.dimension.value;
 
@@ -192,3 +191,4 @@ export const makeTypeJson = (
         targetRecords,
     );
 };
+

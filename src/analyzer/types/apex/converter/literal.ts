@@ -199,11 +199,8 @@ export type WhenLiteralType =
           operator: string | null;
       }
     | {
-          value: QualifiedNameType;
+          value: ValueRuleValue<QualifiedNameType>;
           valueType: 'id';
-      }
-    | {
-          value: ErrorType;
       };
 
 export const isWhenLiteralType = (value: unknown): value is WhenLiteralType => {
@@ -241,19 +238,13 @@ export const makeWhenLiteralAssignRule: AssignForValueRule<WhenLiteralTypeClass,
                         valueType,
                     };
                 }
-            } else if (value.type === 'qualifiedName') {
+            } else {
                 const valueType = literalTypeClass.getValueType() as 'id';
                 return {
                     type: literalTypeClass.getType(),
                     sourceInfo: makeSourceInfo(literalTypeClass),
                     value,
                     valueType,
-                };
-            } else {
-                return {
-                    type: literalTypeClass.getType(),
-                    sourceInfo: makeSourceInfo(literalTypeClass),
-                    value: value,
                 };
             }
         },

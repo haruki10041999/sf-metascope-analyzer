@@ -33,7 +33,7 @@ export const makeUsingScopeJson = (
         'usingScopeClause',
         (target, targetRecords, _) => {
             return makeJsonType('usingScopeClause', targetRecords, {
-                value: target.value,
+                value: target.value.value.value,
             });
         },
         targetRecords,

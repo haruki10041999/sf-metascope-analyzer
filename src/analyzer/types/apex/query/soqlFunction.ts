@@ -29,7 +29,7 @@ import {
     isSoqlFieldsParameterType,
 } from '../converter';
 
-import { ExpressionJson, makeExpressionJson } from '../expression';
+import { BaseExpressionJson, makeExpressionJsonConvert } from '../expression';
 
 const makeFieldNameJson = (target: ConvertExcludeError<FieldNameType>): string[] => {
     return target.value.map((v) => v.value.value);
@@ -61,7 +61,7 @@ const makeSoqlFieldParameterJson = (
 type CoordinateElementJson =
     | {
           type: 'bind';
-          value: ExpressionJson;
+          value: BaseExpressionJson | ErrorJson;
       }
     | {
           type: 'literal';
@@ -74,7 +74,7 @@ const makeCoordinateElementParamJson = (
     target: ConvertExcludeError<CoordinateValueType>,
 ): CoordinateElementJson => {
     if (target.value.type === 'boundExpression') {
-        const expressionValue = makeExpressionJson(target.value.value);
+        const expressionValue = makeExpressionJsonConvert(target.value.value);
         return {
             type: 'bind',
             value: expressionValue,
@@ -122,7 +122,7 @@ type LocationValueElementJson =
       }
     | {
           type: 'bind';
-          field: ExpressionJson;
+          field: BaseExpressionJson | ErrorJson;
       }
     | {
           type: 'coordinate';
@@ -144,7 +144,7 @@ const makeLocationValueElementJson = (
             field: fieldValue,
         };
     } else {
-        const expressionValue = makeExpressionJson(target.value.value);
+        const expressionValue = makeExpressionJsonConvert(target.value.value);
         return {
             type: 'bind',
             field: expressionValue,
@@ -210,7 +210,7 @@ export type SoqlFunctionJson = JsonType<'soqlFunction'> &
           }
         | {
               func: 'FORMAT';
-              arg: string[] | Omit<SoqlFunctionJson, 'kind' | 'sourceKeys'>;
+              arg: string[] | Omit<SoqlFunctionJson, 'kind' | 'sourceKeys'> | ErrorJson;
           }
         | {
               func: 'FIELDS';
@@ -228,12 +228,11 @@ export const makeSoqlFunctionJson = (
     target: ConvertType<SoqlFunctionType>,
     targetRecords?: Record<string, string[]>,
 ): SoqlFunctionJson | ErrorJson => {
-    return convertValue<'soqlFunction', 'soqlFunction', SoqlFunctionType, SoqlFunctionJson>(
+    return convertValue<'soqlFunction', SoqlFunctionType, SoqlFunctionJson>(
         ['soqlFunction'],
         target,
-        ['soqlFunction'],
         'soqlFunction',
-        (target, targetRecords, errorJson) => {
+        (target, targetRecords) => {
             if (
                 target.value === 'AVG' ||
                 target.value === 'COUNT_DISTINCT' ||
@@ -288,6 +287,12 @@ export const makeSoqlFunctionJson = (
                     });
                 } else {
                     const paramSoqlFunction = makeSoqlFunctionJson(target.param);
+                    if (paramSoqlFunction.kind === 'error') {
+                        return makeJsonType('soqlFunction', targetRecords, {
+                            func: target.value,
+                            arg: paramSoqlFunction,
+                        });
+                    }
                     const { kind, sourceKeys, ...content } = paramSoqlFunction;
                     return makeJsonType('soqlFunction', targetRecords, {
                         func: target.value,
@@ -299,13 +304,13 @@ export const makeSoqlFunctionJson = (
                     func: target.value,
                     arg: makeSoqlFieldParameterJson(target.param),
                 });
-            } else if (target.value === 'DISTANCE') {
+            } else {
                 return makeJsonType('soqlFunction', targetRecords, {
                     func: target.value,
-                    arg: makeDistanceValueJson(target.param),
+                    arg: makeDistanceValueJson(
+                        target.param as (ConvertExcludeError<LocationValueType> | string)[],
+                    ),
                 });
-            } else {
-                return errorJson;
             }
         },
         targetRecords,

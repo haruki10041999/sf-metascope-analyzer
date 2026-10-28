@@ -11,43 +11,46 @@ import {
     mergeRecord,
     convertValue,
     ConvertType,
-    StructureJsonType,
-    makeStructureJsonType,
 } from '..//commons';
 
-import { FromNameListType } from '../converter';
+import { FromNameType, FromNameListType } from '../converter';
 
-export type FromJson = JsonType<'fromClause'> & {
+type FromFieldJson = JsonType<'fromField'> & {
     field: string[];
     alias?: string;
 };
-export const isFromJson = typia.createIs<FromJson>();
 
-export const makeFromJson = (
-    target: ConvertType<FromNameListType>,
+const makeFromFieldJson = (
+    target: ConvertType<FromNameType>,
     targetRecords?: Record<string, string[]>,
-): FromJson | ErrorJson => {
-    return convertValue<'fromNameList', 'fromClause', FromNameListType, FromJson>(
-        ['fromNameList'],
+): FromFieldJson | ErrorJson => {
+    return convertValue<'fromName', FromNameType, FromFieldJson>(
+        ['fromName'],
         target,
-        ['fromClause'],
-        'fromClause',
-        (target, targetRecords, errorJson) => {
-            const fromJsons = target.value.map((v) => {
-                const fromJson: FromJson = makeJsonType('fromClause', targetRecords, {
-                    field: v.value.value.map((item) => item.value.value),
-                });
-
-                if (v.alias) {
-                    fromJson.alias = v.alias.value.value;
-                }
-
-                return fromJson;
+        'fromField',
+        (target, targetRecords) => {
+            const fromFieldJson: FromFieldJson = makeJsonType('fromField', targetRecords, {
+                field: target.value.value.map((item) => item.value.value),
             });
 
-            return fromJsons.length === 1 ? fromJsons[0]! : errorJson;
+            if (target.alias) {
+                fromFieldJson.alias = target.alias.value.value;
+            }
+
+            return fromFieldJson;
         },
         targetRecords,
     );
+};
+
+export type FromJson = {
+    field: (FromFieldJson | ErrorJson)[];
+};
+export const isFromJson = typia.createIs<FromJson>();
+
+export const makeFromJson = (target: ConvertExcludeError<FromNameListType>): FromJson => {
+    return {
+        field: target.value.map((v) => makeFromFieldJson(v)),
+    };
 };
 
