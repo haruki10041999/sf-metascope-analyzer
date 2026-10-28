@@ -28,10 +28,15 @@ import {
     ExpressionListType,
     RunAsStatementType,
     StatementType,
+    BaseExpressionType,
+    WhenValueType,
+    SwitchStatementType,
+    ThrowStatementType,
 } from './converter';
 import { BaseExpressionJson, makeExpressionJsonConvert } from './expression';
 import { TypeJson, makeTypeJson } from './type';
 import { LocalVariableDeclarationJson, makeLocalVariableDeclarationJson } from './declaration';
+import { ModifiersJson } from './modifier';
 
 const makeAccessLevelJson = (target: ConvertExcludeError<AccessLevelType>): 'SYSTEM' | 'USER' => {
     return target.value;
@@ -97,21 +102,21 @@ export const makeDeleteStatementJson = (
     );
 };
 
-export type StatementConditionJson = JsonType<'statementCondition'> & {
+export type DoWhileConditionJson = JsonType<'doWhileConditionJson'> & {
     condition: BaseExpressionJson | ErrorJson;
 };
-export const isStatementConditionJson = typia.createIs<StatementConditionJson>();
+export const isDoWhileConditionJson = typia.createIs<DoWhileConditionJson>();
 
-const makeStatementConditionJson = (
+const makeDoWhileConditionJson = (
     target: ConvertType<ParExpressionType>,
     targetRecords?: Record<string, string[]>,
-): StatementConditionJson | ErrorJson => {
-    return convertValue<'parExpression', ParExpressionType, StatementConditionJson>(
+): DoWhileConditionJson | ErrorJson => {
+    return convertValue<'parExpression', ParExpressionType, DoWhileConditionJson>(
         ['parExpression'],
         target,
         'statementCondition',
         (target, targetRecords) => {
-            return makeJsonType('statementCondition', targetRecords, {
+            return makeJsonType('doWhileConditionJson', targetRecords, {
                 condition: makeExpressionJsonConvert(target.value),
             });
         },
@@ -121,16 +126,18 @@ const makeStatementConditionJson = (
 
 export type DoWhileStatementJson = {
     type: 'doWhileStatement';
-    condition: StatementConditionJson | ErrorJson;
+    condition: DoWhileConditionJson | ErrorJson;
     body: (BaseStatementJson | ErrorJson)[];
 };
 export const isDoWhileStatementJson = typia.createIs<DoWhileStatementJson>();
 
-const makeDoWhileStatementJson = (target: ConvertExcludeError<DoWhileStatementType>) => {
+const makeDoWhileStatementJson = (
+    target: ConvertExcludeError<DoWhileStatementType>,
+): DoWhileStatementJson => {
     return {
         type: 'doWhileStatement',
-        condition: makeStatementConditionJson(target.value),
-        body: [],
+        condition: makeDoWhileConditionJson(target.value),
+        body: target.block.value.map((b) => makeStatementJson(b)),
     };
 };
 
@@ -226,10 +233,37 @@ const makeForStatementJson = (target: ConvertExcludeError<ForStatementType>): Fo
     };
 };
 
+export type IfConditionJson = JsonType<'ifConditionJson'> & {
+    condition: 'else' | BaseExpressionJson | ErrorJson;
+};
+export const IfConditionJson = typia.createIs<IfConditionJson>();
+
+const makeIfConditionJson = (
+    target: ConvertType<ParExpressionType> | 'else',
+    targetRecords?: Record<string, string[]>,
+): IfConditionJson | ErrorJson => {
+    if (typeof target === 'string') {
+        return makeJsonType('ifConditionJson', targetRecords ?? {}, {
+            condition: target,
+        });
+    }
+    return convertValue<'parExpression', ParExpressionType, IfConditionJson>(
+        ['parExpression'],
+        target,
+        'statementCondition',
+        (target, targetRecords) => {
+            return makeJsonType('ifConditionJson', targetRecords, {
+                condition: makeExpressionJsonConvert(target.value),
+            });
+        },
+        targetRecords,
+    );
+};
+
 type IfStatementJson = {
     type: 'ifStatement';
     conditionBlock: {
-        condition: StatementConditionJson | ErrorJson;
+        condition: IfConditionJson | ErrorJson;
         block: BaseStatementJson | ErrorJson;
     }[];
 };
@@ -242,8 +276,10 @@ const makeIfStatementJson = (target: ConvertExcludeError<IfStatementType>): IfSt
         conditionBlock: target.value.map((block) => {
             const condition =
                 typeof block.condition === 'string'
-                    ? block.condition
-                    : makeStatementConditionJson(block.condition);
+                    ? makeIfConditionJson(block.condition, {
+                          [target.objectKey]: [target.sourceKey],
+                      })
+                    : makeIfConditionJson(block.condition);
             return {
                 condition: condition,
                 block: makeStatementJson(block.block),
@@ -376,7 +412,7 @@ const makeRunAsConditionJson = (
 
 type RunAsStatementJson = {
     type: 'runAsStatement';
-    condition: RunAsConditionJson;
+    condition: ErrorJson | RunAsConditionJson;
     block: (BaseStatementJson | ErrorJson)[];
 };
 
@@ -387,19 +423,224 @@ export const makeRunAsStatementJson = (
 ): RunAsStatementJson => {
     return {
         type: 'runAsStatement',
-        condition: target.value.value.map((v) => makeRunAsConditionJson(v)),
+        condition: makeRunAsConditionJson(target.value),
         block: target.block.value.map((v) => makeStatementJson(v)),
     };
 };
 
-type WhenConditionJson = JsonType<'whenCondition'> & {
+type WhenVariantJson = JsonType<'whenVariant'> & {
     variant: BaseExpressionJson | ErrorJson;
-    condition:'else' | {value:string | string[],valueType:'string' | 'longText' | 'null' | 'integer' | 'long'|'id',operator?:string}[] |{value:string,valueType:TypeJson | ErrorJson}
-}
+};
 
+export const isWhenVariantJson = typia.createIs<WhenVariantJson>();
 
+export const makeWhenVariantJson = (
+    target: ConvertType<BaseExpressionType>,
+    targetRecords?: Record<string, string[]>,
+): WhenVariantJson | ErrorJson => {
+    return convertValue<
+        | 'expression'
+        | 'primaryExpression'
+        | 'dotExpression'
+        | 'methodCallExpression'
+        | 'newExpression'
+        | 'castExpression'
+        | 'subExpression'
+        | 'arrayExpression'
+        | 'arth1Expression'
+        | 'arth2Expression'
+        | 'assignExpression'
+        | 'bitAndExpression'
+        | 'bitExpression'
+        | 'bitOrExpression'
+        | 'bitNotExpression'
+        | 'cmpExpression'
+        | 'coalExpression'
+        | 'condExpression'
+        | 'equalityExpression'
+        | 'instanceOfExpression'
+        | 'logAndExpression'
+        | 'logOrExpression'
+        | 'negExpression'
+        | 'postOpExpression'
+        | 'preOpExpression',
+        BaseExpressionType,
+        WhenVariantJson
+    >(
+        [
+            'expression',
+            'primaryExpression',
+            'dotExpression',
+            'methodCallExpression',
+            'newExpression',
+            'castExpression',
+            'subExpression',
+            'arrayExpression',
+            'arth1Expression',
+            'arth2Expression',
+            'assignExpression',
+            'bitAndExpression',
+            'bitExpression',
+            'bitOrExpression',
+            'bitNotExpression',
+            'cmpExpression',
+            'coalExpression',
+            'condExpression',
+            'equalityExpression',
+            'instanceOfExpression',
+            'logAndExpression',
+            'logOrExpression',
+            'negExpression',
+            'postOpExpression',
+            'preOpExpression',
+        ],
+        target,
+        'whenVariant',
+        (target, targetRecords) => {
+            return makeJsonType('whenVariant', targetRecords, {
+                variant: makeExpressionJsonConvert(target),
+            });
+        },
+        targetRecords,
+    );
+};
+
+type WhenConditionJson = JsonType<'whenCondition'> & {
+    condition:
+        | 'else'
+        | (
+              | {
+                    value: string;
+                    valueType: 'string' | 'longText' | 'null';
+                }
+              | {
+                    value: string;
+                    valueType: 'integer' | 'long';
+                    operator?: string;
+                }
+              | {
+                    value: string[];
+                    valueType: 'id';
+                }
+          )[]
+        | { value: string; valueType: TypeJson | ErrorJson };
+};
+
+export const makeWhenConditionJson = (
+    target: ConvertType<WhenValueType>,
+    targetRecords?: Record<string, string[]>,
+): WhenConditionJson | ErrorJson => {
+    return convertValue<'whenValue', WhenValueType, WhenConditionJson>(
+        ['whenValue'],
+        target,
+        'whenCondition',
+        (target, targetRecords) => {
+            if (typeof target.value === 'string') {
+                return makeJsonType('whenCondition', targetRecords, { condition: 'else' });
+            } else if (Array.isArray(target.value)) {
+                return makeJsonType('whenCondition', targetRecords, {
+                    condition: target.value.map((v) => {
+                        if (
+                            v.valueType === 'string' ||
+                            v.valueType === 'longText' ||
+                            v.valueType === 'null'
+                        ) {
+                            return {
+                                value: v.value,
+                                valueType: v.valueType,
+                            };
+                        } else if (v.valueType === 'integer' || v.valueType === 'long') {
+                            return {
+                                value: v.value,
+                                valueType: v.valueType,
+                                ...(v.operator ? { operator: v.operator } : {}),
+                            };
+                        } else if (v.valueType === 'id') {
+                            return {
+                                value: v.value.value.map((part) => part.value),
+                                valueType: v.valueType,
+                            };
+                        }
+
+                        throw new Error(`Unsupported when literal type: ${v.valueType}`);
+                    }),
+                });
+            } else if ('valueType' in target) {
+                return makeJsonType('whenCondition', targetRecords, {
+                    condition: {
+                        value: target.value.value,
+                        valueType: makeTypeJson(target.valueType),
+                    },
+                });
+            } else {
+                throw new Error('Unsupported when value variant');
+            }
+        },
+        targetRecords,
+    );
+};
+
+type SwitchStatementJson = {
+    type: 'switchStatement';
+    variant: WhenVariantJson | ErrorJson;
+    block: {
+        condition: WhenConditionJson | ErrorJson;
+        block: (BaseStatementJson | ErrorJson)[];
+    }[];
+};
+
+export const isSwitchStatementJson = typia.createIs<SwitchStatementJson>();
+
+const makeSwitchStatementJson = (
+    target: ConvertExcludeError<SwitchStatementType>,
+): SwitchStatementJson => {
+    return {
+        type: 'switchStatement',
+        variant: makeWhenVariantJson(target.value),
+        block: target.block.map((b) => {
+            return {
+                condition: makeWhenConditionJson(b.value),
+                block: b.block.value.map((b) => makeStatementJson(b)),
+            };
+        }),
+    };
+};
+
+type ThrowStatementJson = JsonType<'throw'> & {
+    value: BaseExpressionJson | ErrorJson;
+};
+
+export const isThrowStatementJson = typia.createIs<ThrowStatementJson>();
+
+export const makeThrowStatementJson = (
+    target: ConvertType<ThrowStatementType>,
+    targetRecords?: Record<string, string[]>,
+): ThrowStatementJson | ErrorJson => {
+    return convertValue<'throwStatement', ThrowStatementType, ThrowStatementJson>(
+        ['throwStatement'],
+        target,
+        'throw',
+        (target, targetRecords) => {
+            return makeJsonType('throw', targetRecords, {
+                value: makeExpressionJsonConvert(target.value),
+            });
+        },
+        targetRecords,
+    );
+};
+
+type TryConditionJson = JsonType<'tryCondition'> &
+    (
+        | { value: 'try' | 'finally' }
+        | {
+              exception: string;
+              exceptionType: string[];
+              modifier: ModifiersJson;
+          }
+    );
 
 export type BaseStatementJson =
+    | (BaseStatementJson | ErrorJson)[]
     | BreakStatementJson
     | ContinueStatementJson
     | DeleteStatementJson
@@ -411,46 +652,44 @@ export type BaseStatementJson =
     | LocalVariableStatementJson
     | MergeStatementJson
     | ReturnStatementJson
-    | RunAsStatementJson;
+    | RunAsStatementJson
+    | SwitchStatementJson
+    | ThrowStatementJson;
 
-
-export const makeStatementJson(
+export const makeStatementJson = (
     target: ConvertExcludeError<StatementType>,
 ): BaseStatementJson | ErrorJson => {
+    if (target.value.type === 'block') {
+        return target.value.value.map((v) => makeStatementJson(v));
+    }
+
     if (target.value.type === 'breakStatement') {
         return makeBreakStatementJson(target.value);
-    }
-    else if (target.value.type === 'continueStatement') {
+    } else if (target.value.type === 'continueStatement') {
         return makeContinueStatementJson(target.value);
-    }
-    else if (target.value.type === 'deleteStatement') {
+    } else if (target.value.type === 'deleteStatement') {
         return makeDeleteStatementJson(target.value);
-    }
-    else if (target.value.type === 'doWhileStatement') {
+    } else if (target.value.type === 'doWhileStatement') {
         return makeDoWhileStatementJson(target.value);
-    }
-    else if (target.value.type === 'expressionStatement') {
+    } else if (target.value.type === 'expressionStatement') {
         return makeExpressionStatementJson(target.value);
-    }
-    else if (target.value.type === 'forStatement') {
+    } else if (target.value.type === 'forStatement') {
         return makeForStatementJson(target.value);
-    }
-    else if (target.value.type === 'ifStatement') {
+    } else if (target.value.type === 'ifStatement') {
         return makeIfStatementJson(target.value);
-    }
-    else if (target.value.type === 'insertStatement') {
+    } else if (target.value.type === 'insertStatement') {
         return makeInsertStatementJson(target.value);
-    }
-    else if (target.value.type === 'localVariableStatement') {
+    } else if (target.value.type === 'localVariableDeclarationStatement') {
         return makeLocalVariableStatementJson(target.value);
-    }
-    else if (target.value.type === 'mergeStatement') {
+    } else if (target.value.type === 'mergeStatement') {
         return makeMergeStatementJson(target.value);
-    }
-    else if (target.value.type === 'returnStatement') {
+    } else if (target.value.type === 'returnStatement') {
         return makeReturnStatementJson(target.value);
-    }
-    else if (target.value.type === 'runAsStatement') {
+    } else if (target.value.type === 'runAsStatement') {
         return makeRunAsStatementJson(target.value);
+    } else if (target.value.type === 'switchStatement') {
+        return makeSwitchStatementJson(target.value);
+    } else if (target.value.type === 'throwStatement') {
+        return makeThrowStatementJson(target.value);
     }
-}
+};

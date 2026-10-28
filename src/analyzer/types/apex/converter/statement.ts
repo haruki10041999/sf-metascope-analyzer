@@ -276,7 +276,7 @@ export const makeForStatementAssignRule: AssignForValueRule<
 export type IfStatementType = CommonType<'ifStatement'> & {
     value: ValueRuleValue<
         {
-            condition: ValueRuleValue<ParExpressionType | string>;
+            condition: ValueRuleValue<ParExpressionType | 'else'>;
             block: ValueRuleValue<StatementType>;
         }[]
     >;
@@ -295,7 +295,7 @@ export const makeIfStatementAssignRule: AssignForValueRule<IfStatementTypeClass,
                     isValid: (
                         target: unknown,
                     ): target is {
-                        value: ParExpressionTypeClass | string | ErrorTypeClass;
+                        value: ParExpressionTypeClass | 'else' | ErrorTypeClass;
                         block: NormalStatementTypeClass | ErrorTypeClass;
                     }[] =>
                         Array.isArray(target) &&
@@ -304,7 +304,7 @@ export const makeIfStatementAssignRule: AssignForValueRule<IfStatementTypeClass,
                                 'value' in t &&
                                 'block' in t &&
                                 (isTargetTypeClass(t.value, isParExpressionType) ||
-                                    typeof t.value === 'string' ||
+                                    (typeof t.value === 'string' && t.value === 'else') ||
                                     isTargetTypeClass(t.value, isErrorType)) &&
                                 (isTargetTypeClass(t.block, isNormalStatementType) ||
                                     isTargetTypeClass(t.block, isErrorType)),
@@ -317,7 +317,7 @@ export const makeIfStatementAssignRule: AssignForValueRule<IfStatementTypeClass,
                     ) => {
                         return values.map((v) => {
                             const condition = assignMultiClass(v.value, [
-                                makeStringAssignRule,
+                                makeLimitedStringAssignRule(['else']),
                                 makeParExpressionAssignRule,
                                 makeErrorAssignRule,
                             ]);

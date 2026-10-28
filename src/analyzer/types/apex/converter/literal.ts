@@ -193,15 +193,15 @@ export type WhenLiteralType =
           value: string;
           valueType: 'string' | 'longText' | 'null';
       })
-    | {
+    | (CommonType<'whenLiteral'> & {
           value: string;
           valueType: 'integer' | 'long';
           operator: string | null;
-      }
-    | {
+      })
+    | (CommonType<'whenLiteral'> & {
           value: ValueRuleValue<QualifiedNameType>;
           valueType: 'id';
-      };
+      });
 
 export const isWhenLiteralType = (value: unknown): value is WhenLiteralType => {
     return isCommonType(value) && value.type === 'whenLiteral';
