@@ -91,7 +91,7 @@ const _gatherSourceKeys = (target: unknown, allKeys: Record<string, string[]>): 
     }
 };
 
-const gatherSourceKeys = (target: JsonType<string>) => {
+const gatherSourceKeys = (target: unknown) => {
     let allKeys: Record<string, string[]> = {};
     _gatherSourceKeys(target, allKeys);
     return allKeys;
@@ -99,9 +99,9 @@ const gatherSourceKeys = (target: JsonType<string>) => {
 
 export const regenerateSourceObjects = (
     sourceObjects: SourceJson[],
-    jsonType: JsonType<string>,
+    target: unknown,
 ): SourceJson[] => {
-    const excludeSourceKeys: Record<string, string[]> = gatherSourceKeys(jsonType);
+    const excludeSourceKeys: Record<string, string[]> = gatherSourceKeys(target);
 
     const regenerate: SourceJson[] = [];
 
@@ -122,3 +122,4 @@ export const regenerateSourceObjects = (
 
     return regenerate;
 };
+

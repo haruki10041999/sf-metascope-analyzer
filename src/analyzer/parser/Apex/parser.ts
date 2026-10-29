@@ -14,12 +14,14 @@ import {
     UnitVisitor,
     CommonErrorListener,
     makeCompilationUnitJson,
+    CompilationUnitJson,
     makeTriggerUnitJson,
+    TriggerUnitJson,
     makeAnonymousUnitJson,
+    AnonymousUnitJson,
     makeConvertType,
     regenerateSourceObjects,
     JsonType,
-    ErrorCode,
     SourceJson,
     ErrorJson,
     isErrorJson,
@@ -28,7 +30,7 @@ import {
 import { ApexParserFactory } from '@apexdevtools/apex-parser';
 
 type ResolvedErrorType = {
-    code: ErrorCode;
+    code: string;
     contextType: string;
     context: string;
     errorMessage: string;
@@ -44,17 +46,17 @@ type SaveFileType = {
       }
     | {
           dataType: 'anonymousUnit';
-          result: AnonymousUnitType;
+          result: AnonymousUnitJson;
           sourceObjects: SourceJson[];
       }
     | {
           dataType: 'compilationUnit';
-          result: CompilationUnitType;
+          result: CompilationUnitJson;
           sourceObjects: SourceJson[];
       }
     | {
           dataType: 'triggerUnit';
-          result: TriggerUnitType;
+          result: TriggerUnitJson;
           sourceObjects: SourceJson[];
       }
 );
@@ -107,83 +109,53 @@ export class ApexClsParser {
             return {
                 filePath: filePath,
                 resolvedError: unResolvedErrors,
+                dataType: 'anonymousUnit',
                 result: unit,
-                sourceObjects: regenerateSourceObjects(sourceObjects, unit as JsonType<string>),
+                sourceObjects: regenerateSourceObjects(sourceObjects, unit),
             };
         } else if (result.type === 'compilationUnit') {
             const unit = makeCompilationUnitJson(result);
+            if (isErrorJson(unit)) {
+                return {
+                    filePath: filePath,
+                    resolvedError: unResolvedErrors,
+                    dataType: 'error',
+                    result: unit,
+                };
+            }
             return {
                 filePath: filePath,
                 resolvedError: unResolvedErrors,
+                dataType: 'compilationUnit',
                 result: unit,
-                sourceObjects: regenerateSourceObjects(sourceObjects, unit as JsonType<string>),
+                sourceObjects: regenerateSourceObjects(sourceObjects, unit),
             };
         } else {
             const unit = makeTriggerUnitJson(result);
+            if (isErrorJson(unit)) {
+                return {
+                    filePath: filePath,
+                    resolvedError: unResolvedErrors,
+                    dataType: 'error',
+                    result: unit,
+                };
+            }
             return {
                 filePath: filePath,
                 resolvedError: unResolvedErrors,
+                dataType: 'triggerUnit',
                 result: unit,
-                sourceObjects: regenerateSourceObjects(sourceObjects, unit as JsonType<string>),
+                sourceObjects: regenerateSourceObjects(sourceObjects, unit),
             };
         }
     }
 
-    static async saveApexClasses();
+    static async saveErrors(target: Extract<SaveFileType, { dataType: 'error' }>) {}
 
-    static async findClsFiles(repogitoryDir: string): Promise<string[]> {
-        const clsDir = path.join(repogitoryDir, 'force-app', 'main', 'default', 'classes');
+    static async saveApexClasses(target: Extract<SaveFileType, { dataType: 'compilationUnit' }>) {}
 
-        const result: string[] = [];
+    static async saveTriggerUnits(target: Extract<SaveFileType, { dataType: 'triggerUnit' }>) {}
 
-        for (const entry of await fs.readdir(clsDir, { withFileTypes: true })) {
-            const fullPath = path.join(clsDir, entry.name);
-
-            if (entry.isDirectory()) {
-                result.push(...(await this.findClsFiles(fullPath)));
-            } else if (entry.isFile() && entry.name.endsWith('.cls')) {
-                result.push(fullPath);
-            }
-        }
-
-        return result;
-    }
-
-    static async saveApexClass(clsData: ClsDataType, outputDir: string): Promise<void> {
-        if (clsData.value) {
-            const resultDir = path.join(outputDir, 'cls');
-            await fs.mkdir(resultDir, { recursive: true });
-            const resultPath = path.join(
-                resultDir,
-                path.basename(path.basename(clsData.filePath).replace('.cls', '.json')),
-            );
-
-            await fs.writeFile(resultPath, JSON.stringify(clsData.value, null, 2), 'utf-8');
-        }
-
-        if (clsData.errorClasses && clsData.errorClasses.length > 0) {
-            const failedDir = path.join(outputDir, 'failed');
-            await fs.mkdir(failedDir, { recursive: true });
-            const failedPath = path.join(
-                failedDir,
-                path.basename(path.basename(clsData.filePath).replace('.cls', '.json')),
-            );
-            await fs.writeFile(
-                failedPath,
-                JSON.stringify(
-                    clsData.errorClasses.map((error) => errorToJson(error)),
-                    null,
-                    2,
-                ),
-                'utf-8',
-            );
-        }
-    }
-
-    static async saveAllApexClasses(clsDataArray: ClsDataType[], outputDir: string): Promise<void> {
-        for (const clsData of clsDataArray) {
-            await this.saveApexClass(clsData, outputDir);
-        }
-    }
+    static async saveAnonymousUnits(target: Extract<SaveFileType, { dataType: 'anonymousUnit' }>) {}
 }
 
