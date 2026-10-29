@@ -431,7 +431,7 @@ export const makeRunAsStatementJson = (
     );
 };
 
-type WhenVariantJson = JsonType<'whenVariant'> & {
+type WhenVariantJson = JsonType<'switchVariant'> & {
     variant: BaseExpressionJson | ErrorJson;
 };
 
@@ -469,7 +469,7 @@ export const makeWhenVariantJson = (
         BaseExpressionType,
         WhenVariantJson
     >(target, 'whenVariant', (target, targetRecords) => {
-        return makeJsonType('whenVariant', targetRecords.base, {
+        return makeJsonType('switchVariant', targetRecords.base, {
             variant: makeExpressionJsonConvert(target),
         });
     });
