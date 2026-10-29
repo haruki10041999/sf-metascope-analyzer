@@ -5,6 +5,9 @@ import {
     isErrorJson,
     isErrorNode,
     makeErrorJson,
+    JsonType,
+    makeJsonType,
+    ConvertKeys,
 } from './commons';
 
 import {
@@ -60,8 +63,8 @@ const makeExpressionListJson = (
     return target.value.map((v) => makeExpressionJsonConvert(v));
 };
 
-export type DotMethodCallJson = {
-    kind: 'object' | 'method';
+export type DotMethodCallJson = JsonType<'memberAccess'> & {
+    type: 'object' | 'method';
     object: BaseExpressionJson | ErrorJson;
     operator: '.' | '?.';
     member: string;
@@ -79,30 +82,32 @@ const makeDotMethodCallJson = (
         return makeErrorJson(right, ERROR_KIND);
     }
 
+    const targetRecords: ConvertKeys = { objectKey: target.objectKey, sourceKey: target.sourceKey };
+
     if (right.type === 'anyId') {
-        return {
-            kind: 'object',
+        return makeJsonType('memberAccess', targetRecords, {
+            type: 'object',
             object: object,
             operator: operator,
             member: right.value,
-        };
+        });
     }
 
     if (isErrorNode(right.value)) {
         return makeErrorJson(right.value, ERROR_KIND);
     }
 
-    return {
-        kind: 'method',
+    return makeJsonType('memberAccess', targetRecords, {
+        type: 'method',
         object: object,
         operator: operator,
         member: right.value.value,
         ...(right.param ? { memberArg: makeExpressionListJson(right.param) } : {}),
-    };
+    });
 };
 
-export type MethodCallJson = {
-    kind: 'method';
+export type MethodCallJson = JsonType<'memberAccess'> & {
+    type: 'method';
     member: 'this' | 'super' | string;
     memberArg?: (BaseExpressionJson | ErrorJson)[] | ErrorJson;
     ref?: 'this' | 'super';
@@ -118,24 +123,26 @@ const makeMethodCallJson = (
 
     const memberArg = methodCall.param ? makeExpressionListJson(methodCall.param) : null;
 
+    const targetRecords: ConvertKeys = { objectKey: target.objectKey, sourceKey: target.sourceKey };
+
     if (typeof methodCall.value === 'string') {
-        return {
-            kind: 'method',
+        return makeJsonType('memberAccess', targetRecords, {
+            type: 'method',
             member: methodCall.value,
             ...(memberArg ? { memberArg: memberArg } : {}),
-        };
+        });
     }
 
     if (isErrorNode(methodCall.value)) {
         return makeErrorJson(methodCall.value, ERROR_KIND);
     }
 
-    return {
-        kind: 'method',
+    return makeJsonType('memberAccess', targetRecords, {
+        type: 'method',
         member: methodCall.value.value,
         ...(memberArg ? { memberArg: memberArg } : {}),
         ...('reference' in methodCall && methodCall.reference ? { ref: methodCall.reference } : {}),
-    };
+    });
 };
 
 type InstanceNameJson = {
