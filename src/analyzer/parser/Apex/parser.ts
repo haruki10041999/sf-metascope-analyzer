@@ -13,17 +13,66 @@ import {
     makeErrorAssignRule,
     UnitVisitor,
     CommonErrorListener,
+    makeCompilationUnitJson,
+    makeTriggerUnitJson,
+    makeAnonymousUnitJson,
+    makeConvertType,
+    regenerateSourceObjects,
+    JsonType,
+    ErrorCode,
+    SourceJson,
+    ErrorJson,
+    isErrorJson,
 } from '../../types';
 
 import { ApexParserFactory } from '@apexdevtools/apex-parser';
 
+type ResolvedErrorType = {
+    code: ErrorCode;
+    contextType: string;
+    context: string;
+    errorMessage: string;
+};
+
+type SaveFileType = {
+    filePath: string;
+    resolvedError: ResolvedErrorType[];
+} & (
+    | {
+          dataType: 'error';
+          result: ErrorType | ErrorJson;
+      }
+    | {
+          dataType: 'anonymousUnit';
+          result: AnonymousUnitType;
+          sourceObjects: SourceJson[];
+      }
+    | {
+          dataType: 'compilationUnit';
+          result: CompilationUnitType;
+          sourceObjects: SourceJson[];
+      }
+    | {
+          dataType: 'triggerUnit';
+          result: TriggerUnitType;
+          sourceObjects: SourceJson[];
+      }
+);
+
 export class ApexClsParser {
-    static async parseApexClass(filePath: string) {
+    static async parseApexClass(filePath: string): Promise<SaveFileType> {
         const source = await fs.readFile(filePath, 'utf-8');
         const errorListener = new CommonErrorListener(source);
 
         const { parser } = ApexParserFactory.createLexerAndParser(source, errorListener);
         const unResolvedError = errorListener.getErrors();
+
+        const unResolvedErrors: ResolvedErrorType[] = unResolvedError.map((error) => ({
+            code: error.getCode(),
+            contextType: error.getContextType(),
+            context: error.getContext(),
+            errorMessage: error.getParseErrorMessage(),
+        }));
 
         const unitTypeClass = new UnitVisitor().visit(parser.compilationUnit());
 
@@ -33,7 +82,54 @@ export class ApexClsParser {
             makeAnonymousUnitAssignRule,
             makeErrorAssignRule,
         ]);
+
+        if (unitConvertType.type === 'error') {
+            return {
+                filePath: filePath,
+                resolvedError: unResolvedErrors,
+                dataType: 'error',
+                result: unitConvertType,
+            };
+        }
+
+        const { result, sourceObjects } = await makeConvertType(unitConvertType);
+
+        if (result.type === 'anonymousUnit') {
+            const unit = makeAnonymousUnitJson(result);
+            if (isErrorJson(unit)) {
+                return {
+                    filePath: filePath,
+                    resolvedError: unResolvedErrors,
+                    dataType: 'error',
+                    result: unit,
+                };
+            }
+            return {
+                filePath: filePath,
+                resolvedError: unResolvedErrors,
+                result: unit,
+                sourceObjects: regenerateSourceObjects(sourceObjects, unit as JsonType<string>),
+            };
+        } else if (result.type === 'compilationUnit') {
+            const unit = makeCompilationUnitJson(result);
+            return {
+                filePath: filePath,
+                resolvedError: unResolvedErrors,
+                result: unit,
+                sourceObjects: regenerateSourceObjects(sourceObjects, unit as JsonType<string>),
+            };
+        } else {
+            const unit = makeTriggerUnitJson(result);
+            return {
+                filePath: filePath,
+                resolvedError: unResolvedErrors,
+                result: unit,
+                sourceObjects: regenerateSourceObjects(sourceObjects, unit as JsonType<string>),
+            };
+        }
     }
+
+    static async saveApexClasses();
 
     static async findClsFiles(repogitoryDir: string): Promise<string[]> {
         const clsDir = path.join(repogitoryDir, 'force-app', 'main', 'default', 'classes');
@@ -90,3 +186,4 @@ export class ApexClsParser {
         }
     }
 }
+

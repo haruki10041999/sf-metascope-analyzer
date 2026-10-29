@@ -1,17 +1,23 @@
 import { ApexParser, ApexParserFactory } from '@apexdevtools/apex-parser';
 
-import { ApexSyntaxErrorCollector } from '../../src/analyzer/parser/Apex/apexSyntaxError';
-import { CommonTypeClass, ErrorTypeClass } from '../../src/analyzer/types/apex_IR/commonVisitor';
+import {
+    CommonErrorListener,
+    CommonTypeClass,
+    ErrorTypeClass,
+} from '../../src/analyzer/types/apex_IR/commonVisitor';
 
 // 構文エラーがあるとエラー回復後の木を検証してしまうため、テスト入力側の誤りとして即失敗させる
 export const parse = <T>(source: string, rule: (parser: ApexParser) => T): T => {
-    const syntaxErrors = new ApexSyntaxErrorCollector();
-    const { parser } = ApexParserFactory.createLexerAndParser(source, syntaxErrors);
+    const errorListener = new CommonErrorListener(source);
+    const { parser } = ApexParserFactory.createLexerAndParser(source, errorListener);
     const ctx = rule(parser);
-    if (syntaxErrors.diagnostics.length > 0) {
-        throw new Error(
-            `テスト用ソースに構文エラーがあります: ${JSON.stringify(syntaxErrors.diagnostics)}`,
-        );
+    const syntaxErrors = errorListener.getErrors().map((error) => ({
+        line: error.getSpan()?.start.line,
+        column: error.getSpan()?.start.column,
+        message: error.getParseErrorMessage(),
+    }));
+    if (syntaxErrors.length > 0) {
+        throw new Error(`テスト用ソースに構文エラーがあります: ${JSON.stringify(syntaxErrors)}`);
     }
     return ctx;
 };

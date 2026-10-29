@@ -5,8 +5,10 @@
         "rootDir": "../../.."
     },
     "include": [
+        "pipeline.ts",
+        "generate-ir.ts",
         "generate-converter-output.ts",
-        "../../../test/converter/source-output.test.ts",
-        "../../../test/converter/output-types.test.ts"
+        "generate-json-output.ts",
+        "../apex-json/*.ts"
     ]
 }

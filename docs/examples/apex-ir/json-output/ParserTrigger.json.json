@@ -1,447 +1,560 @@
 {
   "file": "ParserTrigger.trigger",
   "syntaxErrors": [],
-  "conversionErrors": [],
-  "converted": {
+  "json": {
     "fileType": "trigger",
     "name": "ParserTrigger",
     "object": "Account",
-    "triggerCase": [
+    "case": [
       {
-        "kind": "INSERT",
+        "kind": "triggerCase",
+        "sourceKeys": {
+          "objectKey": "triggerCase_316568da8f721a3a",
+          "sourceKey": "triggerCase_27fe9ded810c4b47"
+        },
+        "actionType": "INSERT",
         "timing": "BEFORE"
       },
       {
-        "kind": "UPDATE",
+        "kind": "triggerCase",
+        "sourceKeys": {
+          "objectKey": "triggerCase_527139dcae9807c2",
+          "sourceKey": "triggerCase_ba129a601a52431d"
+        },
+        "actionType": "UPDATE",
         "timing": "BEFORE"
       },
       {
-        "kind": "DELETE",
+        "kind": "triggerCase",
+        "sourceKeys": {
+          "objectKey": "triggerCase_4c55d4ce17c27a3d",
+          "sourceKey": "triggerCase_3956154976a8177b"
+        },
+        "actionType": "DELETE",
         "timing": "BEFORE"
       },
       {
-        "kind": "INSERT",
+        "kind": "triggerCase",
+        "sourceKeys": {
+          "objectKey": "triggerCase_586450eedfcbf1d9",
+          "sourceKey": "triggerCase_1ad25a72b6ae8c11"
+        },
+        "actionType": "INSERT",
         "timing": "AFTER"
       },
       {
-        "kind": "UPDATE",
+        "kind": "triggerCase",
+        "sourceKeys": {
+          "objectKey": "triggerCase_e969f8b9bb84b657",
+          "sourceKey": "triggerCase_a737052897630d2f"
+        },
+        "actionType": "UPDATE",
         "timing": "AFTER"
       },
       {
-        "kind": "DELETE",
+        "kind": "triggerCase",
+        "sourceKeys": {
+          "objectKey": "triggerCase_524b643fd8f640d1",
+          "sourceKey": "triggerCase_b4a36323f4093fc9"
+        },
+        "actionType": "DELETE",
         "timing": "AFTER"
       },
       {
-        "kind": "UNDELETE",
+        "kind": "triggerCase",
+        "sourceKeys": {
+          "objectKey": "triggerCase_3e9fb1971885148b",
+          "sourceKey": "triggerCase_be6a44a9f236d8d3"
+        },
+        "actionType": "UNDELETE",
         "timing": "AFTER"
       }
     ],
     "block": [
       {
-        "kind": "expression",
-        "block": {
-          "kind": "method",
-          "object": {
-            "kind": "id",
-            "value": "System"
+        "type": "statement",
+        "statement": {
+          "kind": "expression",
+          "sourceKeys": {
+            "objectKey": "expressionStatement_d0fd58282a9be606",
+            "sourceKey": "expressionStatement_c4d594e1b3638b13"
           },
-          "dot": ".",
-          "name": "debug",
-          "arg": [
-            {
-              "kind": "field",
-              "object": {
-                "kind": "id",
-                "value": "Trigger"
-              },
-              "dot": ".",
-              "name": "isExecuting"
-            }
-          ]
-        }
+          "value": {
+            "object": "System",
+            "operator": ".",
+            "member": "debug",
+            "memberArg": [
+              {
+                "object": "Trigger",
+                "operator": ".",
+                "member": "isExecuting"
+              }
+            ]
+          }
+        },
+        "modifier": {}
       },
       {
-        "kind": "expression",
-        "block": {
-          "kind": "method",
-          "object": {
-            "kind": "id",
-            "value": "System"
+        "type": "statement",
+        "statement": {
+          "kind": "expression",
+          "sourceKeys": {
+            "objectKey": "expressionStatement_7c6a5aa73cc0bd2f",
+            "sourceKey": "expressionStatement_71bae6b4939c18c8"
           },
-          "dot": ".",
-          "name": "debug",
-          "arg": [
-            {
-              "kind": "field",
-              "object": {
-                "kind": "id",
-                "value": "Trigger"
-              },
-              "dot": ".",
-              "name": "isBefore"
-            }
-          ]
-        }
+          "value": {
+            "object": "System",
+            "operator": ".",
+            "member": "debug",
+            "memberArg": [
+              {
+                "object": "Trigger",
+                "operator": ".",
+                "member": "isBefore"
+              }
+            ]
+          }
+        },
+        "modifier": {}
       },
       {
-        "kind": "expression",
-        "block": {
-          "kind": "method",
-          "object": {
-            "kind": "id",
-            "value": "System"
+        "type": "statement",
+        "statement": {
+          "kind": "expression",
+          "sourceKeys": {
+            "objectKey": "expressionStatement_0526f06a51e5a025",
+            "sourceKey": "expressionStatement_533a4590f02e591e"
           },
-          "dot": ".",
-          "name": "debug",
-          "arg": [
-            {
-              "kind": "field",
-              "object": {
-                "kind": "id",
-                "value": "Trigger"
-              },
-              "dot": ".",
-              "name": "isAfter"
-            }
-          ]
-        }
+          "value": {
+            "object": "System",
+            "operator": ".",
+            "member": "debug",
+            "memberArg": [
+              {
+                "object": "Trigger",
+                "operator": ".",
+                "member": "isAfter"
+              }
+            ]
+          }
+        },
+        "modifier": {}
       },
       {
-        "kind": "expression",
-        "block": {
-          "kind": "method",
-          "object": {
-            "kind": "id",
-            "value": "System"
+        "type": "statement",
+        "statement": {
+          "kind": "expression",
+          "sourceKeys": {
+            "objectKey": "expressionStatement_39d0f72bd83c2a66",
+            "sourceKey": "expressionStatement_521db29dd8a16088"
           },
-          "dot": ".",
-          "name": "debug",
-          "arg": [
-            {
-              "kind": "field",
-              "object": {
-                "kind": "id",
-                "value": "Trigger"
-              },
-              "dot": ".",
-              "name": "isInsert"
-            }
-          ]
-        }
+          "value": {
+            "object": "System",
+            "operator": ".",
+            "member": "debug",
+            "memberArg": [
+              {
+                "object": "Trigger",
+                "operator": ".",
+                "member": "isInsert"
+              }
+            ]
+          }
+        },
+        "modifier": {}
       },
       {
-        "kind": "expression",
-        "block": {
-          "kind": "method",
-          "object": {
-            "kind": "id",
-            "value": "System"
+        "type": "statement",
+        "statement": {
+          "kind": "expression",
+          "sourceKeys": {
+            "objectKey": "expressionStatement_888c7c396174b109",
+            "sourceKey": "expressionStatement_d1d3689559655f88"
           },
-          "dot": ".",
-          "name": "debug",
-          "arg": [
-            {
-              "kind": "field",
-              "object": {
-                "kind": "id",
-                "value": "Trigger"
-              },
-              "dot": ".",
-              "name": "isUpdate"
-            }
-          ]
-        }
+          "value": {
+            "object": "System",
+            "operator": ".",
+            "member": "debug",
+            "memberArg": [
+              {
+                "object": "Trigger",
+                "operator": ".",
+                "member": "isUpdate"
+              }
+            ]
+          }
+        },
+        "modifier": {}
       },
       {
-        "kind": "expression",
-        "block": {
-          "kind": "method",
-          "object": {
-            "kind": "id",
-            "value": "System"
+        "type": "statement",
+        "statement": {
+          "kind": "expression",
+          "sourceKeys": {
+            "objectKey": "expressionStatement_fd7573db75fba617",
+            "sourceKey": "expressionStatement_4ade1ac52d0dff60"
           },
-          "dot": ".",
-          "name": "debug",
-          "arg": [
-            {
-              "kind": "field",
-              "object": {
-                "kind": "id",
-                "value": "Trigger"
-              },
-              "dot": ".",
-              "name": "isDelete"
-            }
-          ]
-        }
+          "value": {
+            "object": "System",
+            "operator": ".",
+            "member": "debug",
+            "memberArg": [
+              {
+                "object": "Trigger",
+                "operator": ".",
+                "member": "isDelete"
+              }
+            ]
+          }
+        },
+        "modifier": {}
       },
       {
-        "kind": "expression",
-        "block": {
-          "kind": "method",
-          "object": {
-            "kind": "id",
-            "value": "System"
+        "type": "statement",
+        "statement": {
+          "kind": "expression",
+          "sourceKeys": {
+            "objectKey": "expressionStatement_783b38974f2007b2",
+            "sourceKey": "expressionStatement_dffa423209fee12d"
           },
-          "dot": ".",
-          "name": "debug",
-          "arg": [
-            {
-              "kind": "field",
-              "object": {
-                "kind": "id",
-                "value": "Trigger"
-              },
-              "dot": ".",
-              "name": "isUndelete"
-            }
-          ]
-        }
+          "value": {
+            "object": "System",
+            "operator": ".",
+            "member": "debug",
+            "memberArg": [
+              {
+                "object": "Trigger",
+                "operator": ".",
+                "member": "isUndelete"
+              }
+            ]
+          }
+        },
+        "modifier": {}
       },
       {
-        "kind": "expression",
-        "block": {
-          "kind": "method",
-          "object": {
-            "kind": "id",
-            "value": "System"
+        "type": "statement",
+        "statement": {
+          "kind": "expression",
+          "sourceKeys": {
+            "objectKey": "expressionStatement_5f7e247ae1554b97",
+            "sourceKey": "expressionStatement_4a731958ef874bf0"
           },
-          "dot": ".",
-          "name": "debug",
-          "arg": [
-            {
-              "kind": "field",
-              "object": {
-                "kind": "id",
-                "value": "Trigger"
-              },
-              "dot": ".",
-              "name": "new"
-            }
-          ]
-        }
+          "value": {
+            "object": "System",
+            "operator": ".",
+            "member": "debug",
+            "memberArg": [
+              {
+                "object": "Trigger",
+                "operator": ".",
+                "member": "new"
+              }
+            ]
+          }
+        },
+        "modifier": {}
       },
       {
-        "kind": "expression",
-        "block": {
-          "kind": "method",
-          "object": {
-            "kind": "id",
-            "value": "System"
+        "type": "statement",
+        "statement": {
+          "kind": "expression",
+          "sourceKeys": {
+            "objectKey": "expressionStatement_3bf4093ddc418e62",
+            "sourceKey": "expressionStatement_c264582f26e66b08"
           },
-          "dot": ".",
-          "name": "debug",
-          "arg": [
-            {
-              "kind": "field",
-              "object": {
-                "kind": "id",
-                "value": "Trigger"
-              },
-              "dot": ".",
-              "name": "old"
-            }
-          ]
-        }
+          "value": {
+            "object": "System",
+            "operator": ".",
+            "member": "debug",
+            "memberArg": [
+              {
+                "object": "Trigger",
+                "operator": ".",
+                "member": "old"
+              }
+            ]
+          }
+        },
+        "modifier": {}
       },
       {
-        "kind": "expression",
-        "block": {
-          "kind": "method",
-          "object": {
-            "kind": "id",
-            "value": "System"
+        "type": "statement",
+        "statement": {
+          "kind": "expression",
+          "sourceKeys": {
+            "objectKey": "expressionStatement_398d911d6011a4f4",
+            "sourceKey": "expressionStatement_ec0608ceefa55dbd"
           },
-          "dot": ".",
-          "name": "debug",
-          "arg": [
-            {
-              "kind": "field",
-              "object": {
-                "kind": "id",
-                "value": "Trigger"
-              },
-              "dot": ".",
-              "name": "newMap"
-            }
-          ]
-        }
+          "value": {
+            "object": "System",
+            "operator": ".",
+            "member": "debug",
+            "memberArg": [
+              {
+                "object": "Trigger",
+                "operator": ".",
+                "member": "newMap"
+              }
+            ]
+          }
+        },
+        "modifier": {}
       },
       {
-        "kind": "expression",
-        "block": {
-          "kind": "method",
-          "object": {
-            "kind": "id",
-            "value": "System"
+        "type": "statement",
+        "statement": {
+          "kind": "expression",
+          "sourceKeys": {
+            "objectKey": "expressionStatement_515a5803b33b51bc",
+            "sourceKey": "expressionStatement_66a599a8e4b77845"
           },
-          "dot": ".",
-          "name": "debug",
-          "arg": [
-            {
-              "kind": "field",
-              "object": {
-                "kind": "id",
-                "value": "Trigger"
-              },
-              "dot": ".",
-              "name": "oldMap"
-            }
-          ]
-        }
+          "value": {
+            "object": "System",
+            "operator": ".",
+            "member": "debug",
+            "memberArg": [
+              {
+                "object": "Trigger",
+                "operator": ".",
+                "member": "oldMap"
+              }
+            ]
+          }
+        },
+        "modifier": {}
       },
       {
-        "kind": "expression",
-        "block": {
-          "kind": "method",
-          "object": {
-            "kind": "id",
-            "value": "System"
+        "type": "statement",
+        "statement": {
+          "kind": "expression",
+          "sourceKeys": {
+            "objectKey": "expressionStatement_b4ab64d6276fca2b",
+            "sourceKey": "expressionStatement_a85e51387ed63065"
           },
-          "dot": ".",
-          "name": "debug",
-          "arg": [
-            {
-              "kind": "field",
-              "object": {
-                "kind": "id",
-                "value": "Trigger"
-              },
-              "dot": ".",
-              "name": "operationType"
-            }
-          ]
-        }
+          "value": {
+            "object": "System",
+            "operator": ".",
+            "member": "debug",
+            "memberArg": [
+              {
+                "object": "Trigger",
+                "operator": ".",
+                "member": "operationType"
+              }
+            ]
+          }
+        },
+        "modifier": {}
       },
       {
-        "kind": "expression",
-        "block": {
-          "kind": "method",
-          "object": {
-            "kind": "id",
-            "value": "System"
+        "type": "statement",
+        "statement": {
+          "kind": "expression",
+          "sourceKeys": {
+            "objectKey": "expressionStatement_8271e054f799b529",
+            "sourceKey": "expressionStatement_9945d45f08691448"
           },
-          "dot": ".",
-          "name": "debug",
-          "arg": [
-            {
-              "kind": "field",
-              "object": {
-                "kind": "id",
-                "value": "Trigger"
-              },
-              "dot": ".",
-              "name": "size"
-            }
-          ]
-        }
+          "value": {
+            "object": "System",
+            "operator": ".",
+            "member": "debug",
+            "memberArg": [
+              {
+                "object": "Trigger",
+                "operator": ".",
+                "member": "size"
+              }
+            ]
+          }
+        },
+        "modifier": {}
       },
       {
         "kind": "field",
-        "variant": [
+        "sourceKeys": {
+          "objectKey": "fieldDeclaration_dfab416fd851d22d",
+          "sourceKey": "fieldDeclaration_9cc734078f371c90"
+        },
+        "variants": [
           {
-            "variant": "PREFIX",
-            "initValue": {
-              "kind": "literal",
-              "value": "Trigger: ",
+            "name": "PREFIX",
+            "init": {
+              "value": "'Trigger: '",
               "valueType": "string"
             }
           }
         ],
         "variantType": {
-          "kind": "primitive",
-          "name": "String"
+          "kind": "type",
+          "sourceKeys": {
+            "objectKey": "typeRef_a13e3e8b5328228b",
+            "sourceKey": "typeRef_627b5dbc36c897cf"
+          },
+          "type": "primitive",
+          "primitiveType": "String"
         },
         "modifier": {
           "access": [
-            "PRIVATE"
+            {
+              "kind": "modifier",
+              "sourceKeys": {
+                "objectKey": "modifier_0cc039a77999b188",
+                "sourceKey": "modifier_83d45737507ce60f"
+              },
+              "name": "PRIVATE"
+            }
           ],
           "declaration": [
-            "STATIC",
-            "FINAL"
+            {
+              "kind": "modifier",
+              "sourceKeys": {
+                "objectKey": "modifier_355af635756cc383",
+                "sourceKey": "modifier_e09354a079970454"
+              },
+              "name": "STATIC"
+            },
+            {
+              "kind": "modifier",
+              "sourceKeys": {
+                "objectKey": "modifier_9d4bf2c8006d61ce",
+                "sourceKey": "modifier_365957995b6ff04f"
+              },
+              "name": "FINAL"
+            }
           ]
         }
       },
       {
         "kind": "field",
-        "variant": [
+        "sourceKeys": {
+          "objectKey": "fieldDeclaration_3027167950cccea2",
+          "sourceKey": "fieldDeclaration_86caa99a80b1fdb1"
+        },
+        "variants": [
           {
-            "variant": "invocationCount",
-            "initValue": {
-              "kind": "literal",
+            "name": "invocationCount",
+            "init": {
               "value": "0",
               "valueType": "integer"
             }
           }
         ],
         "variantType": {
-          "kind": "primitive",
-          "name": "Integer"
+          "kind": "type",
+          "sourceKeys": {
+            "objectKey": "typeRef_55792e748cf1fa8f",
+            "sourceKey": "typeRef_9479cc602e2c8e03"
+          },
+          "type": "primitive",
+          "primitiveType": "Integer"
         },
         "modifier": {
           "declaration": [
-            "STATIC"
+            {
+              "kind": "modifier",
+              "sourceKeys": {
+                "objectKey": "modifier_355af635756cc383",
+                "sourceKey": "modifier_de496c14c584a3fc"
+              },
+              "name": "STATIC"
+            }
           ]
         }
       },
       {
         "kind": "property",
-        "variant": "label",
-        "variantType": {
-          "kind": "primitive",
-          "name": "String"
-        },
-        "block": [
-          {
-            "kind": "getter"
+        "sourceKeys": {
+          "base": {
+            "objectKey": "propertyDeclaration_5fb74b8c1b54cbb7",
+            "sourceKey": "propertyDeclaration_e41df37e65814207"
           },
-          {
-            "kind": "setter"
+          "name": {
+            "objectKey": "id_4d0fec55c1319e13",
+            "sourceKey": "id_b9abd0dd30998f64"
           }
-        ],
+        },
+        "name": "label",
+        "variantType": {
+          "kind": "type",
+          "sourceKeys": {
+            "objectKey": "typeRef_a13e3e8b5328228b",
+            "sourceKey": "typeRef_e52e63b4726e9534"
+          },
+          "type": "primitive",
+          "primitiveType": "String"
+        },
+        "isGetter": true,
+        "getterContent": {
+          "modifier": {}
+        },
+        "isSetter": true,
+        "setterContent": {
+          "modifier": {}
+        },
         "modifier": {
           "access": [
-            "PUBLIC"
+            {
+              "kind": "modifier",
+              "sourceKeys": {
+                "objectKey": "modifier_a04213395735c45e",
+                "sourceKey": "modifier_240443fc995c67d8"
+              },
+              "name": "PUBLIC"
+            }
           ]
         }
       },
       {
         "kind": "method",
+        "sourceKeys": {
+          "base": {
+            "objectKey": "methodDeclaration_53b2934bfa02ee48",
+            "sourceKey": "methodDeclaration_fe1a40ba66929f7d"
+          },
+          "name": {
+            "objectKey": "id_e6dfdb0965307f78",
+            "sourceKey": "id_9e7da58f2764d1ec"
+          }
+        },
         "name": "log",
         "returnType": "void",
         "param": [
           {
+            "kind": "parameter",
+            "sourceKeys": {
+              "objectKey": "formalParameter_ef84b69d46cc7b1d",
+              "sourceKey": "formalParameter_a5d064fbb9090d64"
+            },
             "variant": "message",
             "variantType": {
-              "kind": "primitive",
-              "name": "String"
-            }
+              "kind": "type",
+              "sourceKeys": {
+                "objectKey": "typeRef_a13e3e8b5328228b",
+                "sourceKey": "typeRef_ba74bec39301e811"
+              },
+              "type": "primitive",
+              "primitiveType": "String"
+            },
+            "modifier": {}
           }
         ],
         "block": [
           {
-            "blockIndex": 1,
             "kind": "expression",
-            "block": {
-              "kind": "method",
-              "object": {
-                "kind": "id",
-                "value": "System"
-              },
-              "dot": ".",
-              "name": "debug",
-              "arg": [
+            "sourceKeys": {
+              "objectKey": "expressionStatement_26afa799025e1f28",
+              "sourceKey": "expressionStatement_df82b7fb90e0c725"
+            },
+            "value": {
+              "object": "System",
+              "operator": ".",
+              "member": "debug",
+              "memberArg": [
                 {
-                  "kind": "expression",
-                  "left": {
-                    "kind": "id",
-                    "value": "PREFIX"
-                  },
+                  "left": "PREFIX",
                   "operator": "+",
-                  "right": {
-                    "kind": "id",
-                    "value": "message"
-                  }
+                  "right": "message"
                 }
               ]
             }
@@ -449,33 +562,59 @@
         ],
         "modifier": {
           "access": [
-            "PRIVATE"
+            {
+              "kind": "modifier",
+              "sourceKeys": {
+                "objectKey": "modifier_0cc039a77999b188",
+                "sourceKey": "modifier_526f6ef30321e823"
+              },
+              "name": "PRIVATE"
+            }
           ]
         }
       },
       {
         "kind": "class",
+        "sourceKeys": {
+          "base": {
+            "objectKey": "classDeclaration_2e5ae04016458617",
+            "sourceKey": "classDeclaration_f4ea1de60c713580"
+          },
+          "name": {
+            "objectKey": "id_4b06a4b8cf98ea97",
+            "sourceKey": "id_de1cda0ac9edac7b"
+          }
+        },
         "name": "TriggerHelper",
         "method": [
           {
+            "kind": "method",
+            "sourceKeys": {
+              "base": {
+                "objectKey": "methodDeclaration_c80ee56a67db6cd8",
+                "sourceKey": "methodDeclaration_2ac8cfcbf5ac40ea"
+              },
+              "name": {
+                "objectKey": "id_173f4a982cfa79db",
+                "sourceKey": "id_558ea48bdbe05a4e"
+              }
+            },
             "name": "run",
             "returnType": "void",
             "block": [
               {
-                "blockIndex": 1,
                 "kind": "expression",
-                "block": {
-                  "kind": "method",
-                  "object": {
-                    "kind": "id",
-                    "value": "System"
-                  },
-                  "dot": ".",
-                  "name": "debug",
-                  "arg": [
+                "sourceKeys": {
+                  "objectKey": "expressionStatement_13f84d0017826f30",
+                  "sourceKey": "expressionStatement_23d3a5d7c9c40e99"
+                },
+                "value": {
+                  "object": "System",
+                  "operator": ".",
+                  "member": "debug",
+                  "memberArg": [
                     {
-                      "kind": "literal",
-                      "value": "helper",
+                      "value": "'helper'",
                       "valueType": "string"
                     }
                   ]
@@ -484,677 +623,816 @@
             ],
             "modifier": {
               "access": [
-                "PUBLIC"
+                {
+                  "kind": "modifier",
+                  "sourceKeys": {
+                    "objectKey": "modifier_a04213395735c45e",
+                    "sourceKey": "modifier_50ebeffb61f6e7fc"
+                  },
+                  "name": "PUBLIC"
+                }
               ]
             }
           }
         ],
         "modifier": {
           "access": [
-            "PUBLIC"
+            {
+              "kind": "modifier",
+              "sourceKeys": {
+                "objectKey": "modifier_a04213395735c45e",
+                "sourceKey": "modifier_488d154ee6483ec5"
+              },
+              "name": "PUBLIC"
+            }
           ]
         }
       },
       {
         "kind": "interface",
+        "sourceKeys": {
+          "base": {
+            "objectKey": "interfaceDeclaration_5a77971207eeacbc",
+            "sourceKey": "interfaceDeclaration_c3c1dc3f4111e7f4"
+          },
+          "name": {
+            "objectKey": "id_2f9f32222eeebf8e",
+            "sourceKey": "id_735e242171286f86"
+          }
+        },
         "name": "TriggerHandler",
         "block": [
           {
+            "kind": "interfaceMethod",
+            "sourceKeys": {
+              "base": {
+                "objectKey": "interfaceMethodDeclaration_47a1928436f2f16a",
+                "sourceKey": "interfaceMethodDeclaration_6fd041a1865b232d"
+              },
+              "name": {
+                "objectKey": "id_7b9ae991e1ae993a",
+                "sourceKey": "id_f0fbab2a5c66da8a"
+              }
+            },
             "name": "handle",
-            "returnType": "void"
+            "returnType": "void",
+            "modifier": {}
           }
         ],
         "modifier": {
           "access": [
-            "PUBLIC"
+            {
+              "kind": "modifier",
+              "sourceKeys": {
+                "objectKey": "modifier_a04213395735c45e",
+                "sourceKey": "modifier_4ef3306375d617f0"
+              },
+              "name": "PUBLIC"
+            }
           ]
         }
       },
       {
         "kind": "enum",
+        "sourceKeys": {
+          "base": {
+            "objectKey": "enumDeclaration_303dd9e9f7467a9b",
+            "sourceKey": "enumDeclaration_cc02fa3c70588d64"
+          },
+          "name": {
+            "objectKey": "id_2543e15c80c0211a",
+            "sourceKey": "id_75ba13101c35b8ee"
+          }
+        },
         "name": "Phase",
-        "constant": [
-          "BEFORE_PHASE",
-          "AFTER_PHASE"
+        "members": [
+          {
+            "kind": "enumConstant",
+            "sourceKeys": {
+              "objectKey": "id_929329ad5e7d778f",
+              "sourceKey": "id_656c8abcbadbaabc"
+            },
+            "name": "BEFORE_PHASE"
+          },
+          {
+            "kind": "enumConstant",
+            "sourceKeys": {
+              "objectKey": "id_50fbf67a289ac725",
+              "sourceKey": "id_806155f16fe7726a"
+            },
+            "name": "AFTER_PHASE"
+          }
         ],
         "modifier": {
           "access": [
-            "PUBLIC"
+            {
+              "kind": "modifier",
+              "sourceKeys": {
+                "objectKey": "modifier_a04213395735c45e",
+                "sourceKey": "modifier_6c8693e7e019fe90"
+              },
+              "name": "PUBLIC"
+            }
           ]
         }
       },
       {
-        "kind": "switch",
-        "variant": {
-          "kind": "field",
-          "object": {
-            "kind": "id",
-            "value": "Trigger"
+        "type": "statement",
+        "statement": {
+          "kind": "switch",
+          "sourceKeys": {
+            "objectKey": "switchStatement_08d4c7ecb473dbcf",
+            "sourceKey": "switchStatement_809404043e466dd9"
           },
-          "dot": ".",
-          "name": "operationType"
-        },
-        "block": [
-          {
-            "conditionValue": [
-              {
-                "value": [
-                  "BEFORE_INSERT"
-                ],
-                "valueType": "qualifiedName"
-              },
-              {
-                "value": [
-                  "BEFORE_UPDATE"
-                ],
-                "valueType": "qualifiedName"
-              }
-            ],
-            "block": [
-              {
-                "blockIndex": 1,
-                "kind": "expression",
-                "block": {
-                  "kind": "postfix",
-                  "value": {
-                    "kind": "id",
-                    "value": "invocationCount"
-                  },
-                  "operator": "++"
-                }
-              }
-            ]
-          },
-          {
-            "conditionValue": [
-              {
-                "value": [
-                  "AFTER_DELETE"
-                ],
-                "valueType": "qualifiedName"
-              }
-            ],
-            "block": [
-              {
-                "blockIndex": 1,
-                "kind": "expression",
-                "block": {
-                  "kind": "postfix",
-                  "value": {
-                    "kind": "id",
-                    "value": "invocationCount"
-                  },
-                  "operator": "--"
-                }
-              }
-            ]
-          },
-          {
-            "conditionValue": {
-              "value": "else"
+          "variant": {
+            "kind": "whenVariant",
+            "sourceKeys": {
+              "objectKey": "dotExpression_0386a7be49497350",
+              "sourceKey": "dotExpression_e96f65a84f075e8f"
             },
-            "block": [
-              {
-                "blockIndex": 1,
-                "kind": "expression",
-                "block": {
-                  "kind": "expression",
-                  "left": {
-                    "kind": "id",
-                    "value": "invocationCount"
+            "variant": {
+              "object": "Trigger",
+              "operator": ".",
+              "member": "operationType"
+            }
+          },
+          "block": [
+            {
+              "condition": {
+                "kind": "switchCondition",
+                "sourceKeys": {
+                  "objectKey": "whenValue_8aa1a633c2d14391",
+                  "sourceKey": "whenValue_ed36a69f373ed2ef"
+                },
+                "condition": [
+                  {
+                    "value": [
+                      "BEFORE_INSERT"
+                    ],
+                    "valueType": "id"
                   },
-                  "operator": "+=",
-                  "right": {
-                    "kind": "literal",
-                    "value": "0",
-                    "valueType": "integer"
+                  {
+                    "value": [
+                      "BEFORE_UPDATE"
+                    ],
+                    "valueType": "id"
                   }
-                }
-              }
-            ]
-          }
-        ]
-      },
-      {
-        "kind": "if",
-        "block": [
-          {
-            "condition": {
-              "kind": "expression",
-              "left": {
-                "kind": "field",
-                "object": {
-                  "kind": "id",
-                  "value": "Trigger"
-                },
-                "dot": ".",
-                "name": "isBefore"
+                ]
               },
-              "operator": "&&",
-              "right": {
-                "kind": "field",
-                "object": {
-                  "kind": "id",
-                  "value": "Trigger"
-                },
-                "dot": ".",
-                "name": "isInsert"
-              }
-            },
-            "block": {
               "block": [
                 {
-                  "blockIndex": 1,
-                  "kind": "for",
-                  "condition": {
-                    "variableName": "account",
-                    "variableType": {
-                      "kind": "custom",
-                      "name": [
-                        "Account"
-                      ]
-                    },
-                    "iterable": {
-                      "kind": "field",
-                      "object": {
-                        "kind": "id",
-                        "value": "Trigger"
-                      },
-                      "dot": ".",
-                      "name": "new"
-                    }
+                  "kind": "expression",
+                  "sourceKeys": {
+                    "objectKey": "expressionStatement_1fb95cee552cd2f1",
+                    "sourceKey": "expressionStatement_5290daa26c6591d5"
                   },
-                  "block": {
-                    "block": [
-                      {
-                        "blockIndex": 1,
-                        "kind": "if",
-                        "block": [
-                          {
-                            "condition": {
-                              "kind": "method",
-                              "object": {
-                                "kind": "id",
-                                "value": "String"
-                              },
-                              "dot": ".",
-                              "name": "isBlank",
-                              "arg": [
-                                {
-                                  "kind": "field",
-                                  "object": {
-                                    "kind": "id",
-                                    "value": "account"
-                                  },
-                                  "dot": ".",
-                                  "name": "Name"
-                                }
-                              ]
-                            },
-                            "block": [
-                              {
-                                "blockIndex": 1,
-                                "kind": "expression",
-                                "block": {
-                                  "kind": "expression",
-                                  "left": {
-                                    "kind": "field",
-                                    "object": {
-                                      "kind": "id",
-                                      "value": "account"
-                                    },
-                                    "dot": ".",
-                                    "name": "Name"
-                                  },
-                                  "operator": "=",
-                                  "right": {
-                                    "kind": "literal",
-                                    "value": "Default Account",
-                                    "valueType": "string"
-                                  }
-                                }
-                              }
-                            ]
-                          }
-                        ]
-                      },
-                      {
-                        "blockIndex": 2,
-                        "kind": "expression",
-                        "block": {
-                          "kind": "expression",
-                          "left": {
-                            "kind": "field",
-                            "object": {
-                              "kind": "id",
-                              "value": "account"
-                            },
-                            "dot": ".",
-                            "name": "Description"
-                          },
-                          "operator": "=",
-                          "right": {
-                            "kind": "literal",
-                            "value": "Created by trigger",
-                            "valueType": "string"
-                          }
-                        }
-                      }
-                    ]
+                  "value": {
+                    "variant": "invocationCount",
+                    "operator": "++",
+                    "operatorLocation": "back"
+                  }
+                }
+              ]
+            },
+            {
+              "condition": {
+                "kind": "switchCondition",
+                "sourceKeys": {
+                  "objectKey": "whenValue_1f6ca8e1e73f27f7",
+                  "sourceKey": "whenValue_15523ace2cae6d41"
+                },
+                "condition": [
+                  {
+                    "value": [
+                      "AFTER_DELETE"
+                    ],
+                    "valueType": "id"
+                  }
+                ]
+              },
+              "block": [
+                {
+                  "kind": "expression",
+                  "sourceKeys": {
+                    "objectKey": "expressionStatement_1e96c7fc1adda877",
+                    "sourceKey": "expressionStatement_8fc1ddf13fb32a6e"
+                  },
+                  "value": {
+                    "variant": "invocationCount",
+                    "operator": "--",
+                    "operatorLocation": "back"
+                  }
+                }
+              ]
+            },
+            {
+              "condition": {
+                "kind": "switchCondition",
+                "sourceKeys": {
+                  "objectKey": "whenValue_32cb709adcb7919f",
+                  "sourceKey": "whenValue_102ddcf2d77c454a"
+                },
+                "condition": "else"
+              },
+              "block": [
+                {
+                  "kind": "expression",
+                  "sourceKeys": {
+                    "objectKey": "expressionStatement_8b7d4ec0bf73ee0e",
+                    "sourceKey": "expressionStatement_e467cc9bd9df1392"
+                  },
+                  "value": {
+                    "left": "invocationCount",
+                    "operator": "+=",
+                    "right": {
+                      "value": "0",
+                      "valueType": "integer"
+                    }
                   }
                 }
               ]
             }
-          }
-        ]
+          ]
+        },
+        "modifier": {}
       },
       {
-        "kind": "if",
-        "block": [
-          {
-            "condition": {
-              "kind": "expression",
-              "left": {
-                "kind": "field",
-                "object": {
-                  "kind": "id",
-                  "value": "Trigger"
+        "type": "statement",
+        "statement": {
+          "kind": "if",
+          "sourceKeys": {
+            "objectKey": "ifStatement_d3af86438dbe228f",
+            "sourceKey": "ifStatement_2a30a203e27b151b"
+          },
+          "conditionBlock": [
+            {
+              "condition": {
+                "kind": "ifCondition",
+                "sourceKeys": {
+                  "objectKey": "parExpression_da59c98d67fd287f",
+                  "sourceKey": "parExpression_33317616ca9ae273"
                 },
-                "dot": ".",
-                "name": "isBefore"
+                "condition": {
+                  "left": {
+                    "object": "Trigger",
+                    "operator": ".",
+                    "member": "isBefore"
+                  },
+                  "operator": "&&",
+                  "right": {
+                    "object": "Trigger",
+                    "operator": ".",
+                    "member": "isInsert"
+                  }
+                }
               },
-              "operator": "&&",
-              "right": {
-                "kind": "field",
-                "object": {
-                  "kind": "id",
-                  "value": "Trigger"
-                },
-                "dot": ".",
-                "name": "isUpdate"
-              }
-            },
-            "block": {
               "block": [
                 {
-                  "blockIndex": 1,
                   "kind": "for",
+                  "sourceKeys": {
+                    "objectKey": "forStatement_2b97ae1daadc6d61",
+                    "sourceKey": "forStatement_3dd9e5c3653f94d3"
+                  },
                   "condition": {
-                    "variableName": "account",
-                    "variableType": {
-                      "kind": "custom",
-                      "name": [
-                        "Account"
-                      ]
+                    "kind": "forCondition",
+                    "sourceKeys": {
+                      "objectKey": "forControl_97179282f8221e58",
+                      "sourceKey": "forControl_31d96199cf3bf328"
                     },
-                    "iterable": {
-                      "kind": "field",
-                      "object": {
-                        "kind": "id",
-                        "value": "Trigger"
+                    "initializer": "account",
+                    "initializeType": {
+                      "kind": "type",
+                      "sourceKeys": {
+                        "objectKey": "typeRef_16c0945431044f5d",
+                        "sourceKey": "typeRef_cdb47b930ceaf888"
                       },
-                      "dot": ".",
-                      "name": "new"
+                      "type": "custom",
+                      "customType": "Account"
+                    },
+                    "baseObject": {
+                      "object": "Trigger",
+                      "operator": ".",
+                      "member": "new"
                     }
                   },
-                  "block": {
-                    "block": [
-                      {
-                        "blockIndex": 1,
-                        "kind": "declarationRef",
-                        "declarationKind": "localVariable",
+                  "block": [
+                    {
+                      "kind": "if",
+                      "sourceKeys": {
+                        "objectKey": "ifStatement_cdc92be88345c1e6",
+                        "sourceKey": "ifStatement_369ff0dc0245f19c"
+                      },
+                      "conditionBlock": [
+                        {
+                          "condition": {
+                            "kind": "ifCondition",
+                            "sourceKeys": {
+                              "objectKey": "parExpression_5c671620698b6b95",
+                              "sourceKey": "parExpression_039c17762e3be56c"
+                            },
+                            "condition": {
+                              "object": "String",
+                              "operator": ".",
+                              "member": "isBlank",
+                              "memberArg": [
+                                {
+                                  "object": "account",
+                                  "operator": ".",
+                                  "member": "Name"
+                                }
+                              ]
+                            }
+                          },
+                          "block": [
+                            {
+                              "kind": "expression",
+                              "sourceKeys": {
+                                "objectKey": "expressionStatement_ba1409d3710514b4",
+                                "sourceKey": "expressionStatement_e30d12030acceb2e"
+                              },
+                              "value": {
+                                "left": {
+                                  "object": "account",
+                                  "operator": ".",
+                                  "member": "Name"
+                                },
+                                "operator": "=",
+                                "right": {
+                                  "value": "'Default Account'",
+                                  "valueType": "string"
+                                }
+                              }
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "kind": "expression",
+                      "sourceKeys": {
+                        "objectKey": "expressionStatement_e675fb3d7caaeade",
+                        "sourceKey": "expressionStatement_7778b9b1083da38d"
+                      },
+                      "value": {
+                        "left": {
+                          "object": "account",
+                          "operator": ".",
+                          "member": "Description"
+                        },
+                        "operator": "=",
+                        "right": {
+                          "value": "'Created by trigger'",
+                          "valueType": "string"
+                        }
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        "modifier": {}
+      },
+      {
+        "type": "statement",
+        "statement": {
+          "kind": "if",
+          "sourceKeys": {
+            "objectKey": "ifStatement_b17495c314a2e9ff",
+            "sourceKey": "ifStatement_3e947c3619f44976"
+          },
+          "conditionBlock": [
+            {
+              "condition": {
+                "kind": "ifCondition",
+                "sourceKeys": {
+                  "objectKey": "parExpression_f17fd3fb116b5d02",
+                  "sourceKey": "parExpression_91d70a8d5c886254"
+                },
+                "condition": {
+                  "left": {
+                    "object": "Trigger",
+                    "operator": ".",
+                    "member": "isBefore"
+                  },
+                  "operator": "&&",
+                  "right": {
+                    "object": "Trigger",
+                    "operator": ".",
+                    "member": "isUpdate"
+                  }
+                }
+              },
+              "block": [
+                {
+                  "kind": "for",
+                  "sourceKeys": {
+                    "objectKey": "forStatement_f31ba885bd12065d",
+                    "sourceKey": "forStatement_84178396b1966a1a"
+                  },
+                  "condition": {
+                    "kind": "forCondition",
+                    "sourceKeys": {
+                      "objectKey": "forControl_97179282f8221e58",
+                      "sourceKey": "forControl_90520d86a427128c"
+                    },
+                    "initializer": "account",
+                    "initializeType": {
+                      "kind": "type",
+                      "sourceKeys": {
+                        "objectKey": "typeRef_16c0945431044f5d",
+                        "sourceKey": "typeRef_7dc86b5d0ca0f57a"
+                      },
+                      "type": "custom",
+                      "customType": "Account"
+                    },
+                    "baseObject": {
+                      "object": "Trigger",
+                      "operator": ".",
+                      "member": "new"
+                    }
+                  },
+                  "block": [
+                    {
+                      "kind": "localVariable",
+                      "sourceKeys": {
+                        "objectKey": "localVariableDeclarationStatement_83464544313bf3c7",
+                        "sourceKey": "localVariableDeclarationStatement_41eaa483e8015bfe"
+                      },
+                      "variable": {
                         "variants": [
                           {
-                            "index": 1
+                            "name": "oldAccount",
+                            "init": {
+                              "object": {
+                                "object": "Trigger",
+                                "operator": ".",
+                                "member": "oldMap"
+                              },
+                              "operator": ".",
+                              "member": "get",
+                              "memberArg": [
+                                {
+                                  "object": "account",
+                                  "operator": ".",
+                                  "member": "Id"
+                                }
+                              ]
+                            }
                           }
-                        ]
+                        ],
+                        "variantsType": {
+                          "kind": "type",
+                          "sourceKeys": {
+                            "objectKey": "typeRef_16c0945431044f5d",
+                            "sourceKey": "typeRef_1254a7cb77805dfe"
+                          },
+                          "type": "custom",
+                          "customType": "Account"
+                        },
+                        "modifier": {}
+                      }
+                    },
+                    {
+                      "kind": "if",
+                      "sourceKeys": {
+                        "objectKey": "ifStatement_cd13dd8accf67012",
+                        "sourceKey": "ifStatement_627ec9876a05d4ba"
                       },
-                      {
-                        "blockIndex": 2,
-                        "kind": "if",
-                        "block": [
-                          {
+                      "conditionBlock": [
+                        {
+                          "condition": {
+                            "kind": "ifCondition",
+                            "sourceKeys": {
+                              "objectKey": "parExpression_5f40d773e04bc120",
+                              "sourceKey": "parExpression_93f37adac9ef06bb"
+                            },
                             "condition": {
-                              "kind": "expression",
                               "left": {
-                                "kind": "field",
-                                "object": {
-                                  "kind": "id",
-                                  "value": "account"
-                                },
-                                "dot": ".",
-                                "name": "Name"
+                                "object": "account",
+                                "operator": ".",
+                                "member": "Name"
                               },
                               "operator": "!=",
                               "right": {
-                                "kind": "field",
-                                "object": {
-                                  "kind": "id",
-                                  "value": "oldAccount"
-                                },
-                                "dot": ".",
-                                "name": "Name"
+                                "object": "oldAccount",
+                                "operator": ".",
+                                "member": "Name"
                               }
-                            },
-                            "block": [
-                              {
-                                "blockIndex": 1,
-                                "kind": "expression",
-                                "block": {
-                                  "kind": "expression",
-                                  "left": {
-                                    "kind": "field",
-                                    "object": {
-                                      "kind": "id",
-                                      "value": "account"
-                                    },
-                                    "dot": ".",
-                                    "name": "Description"
-                                  },
-                                  "operator": "=",
-                                  "right": {
-                                    "kind": "literal",
-                                    "value": "Name changed",
-                                    "valueType": "string"
-                                  }
+                            }
+                          },
+                          "block": [
+                            {
+                              "kind": "expression",
+                              "sourceKeys": {
+                                "objectKey": "expressionStatement_8c4b2356992ab266",
+                                "sourceKey": "expressionStatement_b85a3c6dd12b0401"
+                              },
+                              "value": {
+                                "left": {
+                                  "object": "account",
+                                  "operator": ".",
+                                  "member": "Description"
+                                },
+                                "operator": "=",
+                                "right": {
+                                  "value": "'Name changed'",
+                                  "valueType": "string"
                                 }
                               }
-                            ]
-                          }
-                        ]
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "kind": "if",
+                      "sourceKeys": {
+                        "objectKey": "ifStatement_aae8ab67e2d2a8c2",
+                        "sourceKey": "ifStatement_8f325ee3efa6d9b0"
                       },
-                      {
-                        "blockIndex": 3,
-                        "kind": "if",
-                        "block": [
-                          {
+                      "conditionBlock": [
+                        {
+                          "condition": {
+                            "kind": "ifCondition",
+                            "sourceKeys": {
+                              "objectKey": "parExpression_db6a6e911a9628c9",
+                              "sourceKey": "parExpression_c7fd2e44204c73f6"
+                            },
                             "condition": {
-                              "kind": "expression",
                               "left": {
-                                "kind": "field",
-                                "object": {
-                                  "kind": "id",
-                                  "value": "account"
-                                },
-                                "dot": ".",
-                                "name": "AnnualRevenue"
+                                "object": "account",
+                                "operator": ".",
+                                "member": "AnnualRevenue"
                               },
                               "operator": "<",
                               "right": {
-                                "kind": "literal",
                                 "value": "0",
                                 "valueType": "integer"
                               }
-                            },
-                            "block": [
-                              {
-                                "blockIndex": 1,
-                                "kind": "expression",
-                                "block": {
-                                  "kind": "method",
-                                  "object": {
-                                    "kind": "id",
-                                    "value": "account"
-                                  },
-                                  "dot": ".",
-                                  "name": "addError",
-                                  "arg": [
-                                    {
-                                      "kind": "literal",
-                                      "value": "AnnualRevenue must be positive",
-                                      "valueType": "string"
-                                    }
-                                  ]
-                                }
+                            }
+                          },
+                          "block": [
+                            {
+                              "kind": "expression",
+                              "sourceKeys": {
+                                "objectKey": "expressionStatement_b87a4e87ece683c3",
+                                "sourceKey": "expressionStatement_4ccbeb00d4baa815"
+                              },
+                              "value": {
+                                "object": "account",
+                                "operator": ".",
+                                "member": "addError",
+                                "memberArg": [
+                                  {
+                                    "value": "'AnnualRevenue must be positive'",
+                                    "valueType": "string"
+                                  }
+                                ]
                               }
-                            ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        "modifier": {}
+      },
+      {
+        "type": "statement",
+        "statement": {
+          "kind": "if",
+          "sourceKeys": {
+            "objectKey": "ifStatement_57768b93d665a953",
+            "sourceKey": "ifStatement_a246ccaf623c4fc6"
+          },
+          "conditionBlock": [
+            {
+              "condition": {
+                "kind": "ifCondition",
+                "sourceKeys": {
+                  "objectKey": "parExpression_381cd08385571215",
+                  "sourceKey": "parExpression_2525209318108e83"
+                },
+                "condition": {
+                  "left": {
+                    "object": "Trigger",
+                    "operator": ".",
+                    "member": "isBefore"
+                  },
+                  "operator": "&&",
+                  "right": {
+                    "object": "Trigger",
+                    "operator": ".",
+                    "member": "isDelete"
+                  }
+                }
+              },
+              "block": [
+                {
+                  "kind": "for",
+                  "sourceKeys": {
+                    "objectKey": "forStatement_fc4ed2af615dda2f",
+                    "sourceKey": "forStatement_92e30e24646b7bb1"
+                  },
+                  "condition": {
+                    "kind": "forCondition",
+                    "sourceKeys": {
+                      "objectKey": "forControl_352574c40b842621",
+                      "sourceKey": "forControl_adc747df6c29a58a"
+                    },
+                    "initializer": "account",
+                    "initializeType": {
+                      "kind": "type",
+                      "sourceKeys": {
+                        "objectKey": "typeRef_16c0945431044f5d",
+                        "sourceKey": "typeRef_d3babc4326bc7168"
+                      },
+                      "type": "custom",
+                      "customType": "Account"
+                    },
+                    "baseObject": {
+                      "object": "Trigger",
+                      "operator": ".",
+                      "member": "old"
+                    }
+                  },
+                  "block": [
+                    {
+                      "kind": "expression",
+                      "sourceKeys": {
+                        "objectKey": "expressionStatement_0011bbb991416421",
+                        "sourceKey": "expressionStatement_7fc43cecbc50d138"
+                      },
+                      "value": {
+                        "object": "System",
+                        "operator": ".",
+                        "member": "debug",
+                        "memberArg": [
+                          {
+                            "left": {
+                              "value": "'Deleting: '",
+                              "valueType": "string"
+                            },
+                            "operator": "+",
+                            "right": {
+                              "object": "account",
+                              "operator": ".",
+                              "member": "Name"
+                            }
                           }
                         ]
                       }
-                    ],
-                    "localVariable": [
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        "modifier": {}
+      },
+      {
+        "type": "statement",
+        "statement": {
+          "kind": "if",
+          "sourceKeys": {
+            "objectKey": "ifStatement_dacb8e98ee84ba09",
+            "sourceKey": "ifStatement_b30ebc2e72ede331"
+          },
+          "conditionBlock": [
+            {
+              "condition": {
+                "kind": "ifCondition",
+                "sourceKeys": {
+                  "objectKey": "parExpression_a3e44d55ce0dd4e9",
+                  "sourceKey": "parExpression_5038210c1f43498b"
+                },
+                "condition": {
+                  "left": {
+                    "object": "Trigger",
+                    "operator": ".",
+                    "member": "isAfter"
+                  },
+                  "operator": "&&",
+                  "right": {
+                    "object": "Trigger",
+                    "operator": ".",
+                    "member": "isInsert"
+                  }
+                }
+              },
+              "block": [
+                {
+                  "kind": "localVariable",
+                  "sourceKeys": {
+                    "objectKey": "localVariableDeclarationStatement_74b0dd8886d3d39f",
+                    "sourceKey": "localVariableDeclarationStatement_07ddd06e5e11da3f"
+                  },
+                  "variable": {
+                    "variants": [
                       {
-                        "localVariableIndex": 1,
-                        "variant": "oldAccount",
-                        "variantType": {
-                          "kind": "custom",
-                          "name": [
-                            "Account"
-                          ]
-                        },
-                        "initialValue": {
-                          "kind": "method",
-                          "object": {
-                            "kind": "field",
-                            "object": {
-                              "kind": "id",
-                              "value": "Trigger"
-                            },
-                            "dot": ".",
-                            "name": "oldMap"
-                          },
-                          "dot": ".",
-                          "name": "get",
-                          "arg": [
+                        "name": "contacts",
+                        "init": {
+                          "collection": [
+                            "List"
+                          ],
+                          "generic": [
                             {
-                              "kind": "field",
-                              "object": {
-                                "kind": "id",
-                                "value": "account"
+                              "kind": "type",
+                              "sourceKeys": {
+                                "objectKey": "typeRef_b5837cead0b16ac8",
+                                "sourceKey": "typeRef_2846649f5d7257c7"
                               },
-                              "dot": ".",
-                              "name": "Id"
+                              "type": "custom",
+                              "customType": "Contact"
                             }
                           ]
                         }
                       }
-                    ]
-                  }
-                }
-              ]
-            }
-          }
-        ]
-      },
-      {
-        "kind": "if",
-        "block": [
-          {
-            "condition": {
-              "kind": "expression",
-              "left": {
-                "kind": "field",
-                "object": {
-                  "kind": "id",
-                  "value": "Trigger"
-                },
-                "dot": ".",
-                "name": "isBefore"
-              },
-              "operator": "&&",
-              "right": {
-                "kind": "field",
-                "object": {
-                  "kind": "id",
-                  "value": "Trigger"
-                },
-                "dot": ".",
-                "name": "isDelete"
-              }
-            },
-            "block": [
-              {
-                "blockIndex": 1,
-                "kind": "for",
-                "condition": {
-                  "variableName": "account",
-                  "variableType": {
-                    "kind": "custom",
-                    "name": [
-                      "Account"
-                    ]
-                  },
-                  "iterable": {
-                    "kind": "field",
-                    "object": {
-                      "kind": "id",
-                      "value": "Trigger"
-                    },
-                    "dot": ".",
-                    "name": "old"
-                  }
-                },
-                "block": [
-                  {
-                    "blockIndex": 1,
-                    "kind": "expression",
-                    "block": {
-                      "kind": "method",
-                      "object": {
-                        "kind": "id",
-                        "value": "System"
+                    ],
+                    "variantsType": {
+                      "kind": "type",
+                      "sourceKeys": {
+                        "objectKey": "typeRef_20d637d3397e2cf4",
+                        "sourceKey": "typeRef_2d05e02b4f639172"
                       },
-                      "dot": ".",
-                      "name": "debug",
-                      "arg": [
-                        {
-                          "kind": "expression",
-                          "left": {
-                            "kind": "literal",
-                            "value": "Deleting: ",
-                            "valueType": "string"
-                          },
-                          "operator": "+",
-                          "right": {
-                            "kind": "field",
-                            "object": {
-                              "kind": "id",
-                              "value": "account"
-                            },
-                            "dot": ".",
-                            "name": "Name"
-                          }
-                        }
-                      ]
-                    }
+                      "collectionType": "list",
+                      "elementType": {
+                        "type": "custom",
+                        "customType": "Contact"
+                      }
+                    },
+                    "modifier": {}
                   }
-                ]
-              }
-            ]
-          }
-        ]
-      },
-      {
-        "kind": "if",
-        "block": [
-          {
-            "condition": {
-              "kind": "expression",
-              "left": {
-                "kind": "field",
-                "object": {
-                  "kind": "id",
-                  "value": "Trigger"
-                },
-                "dot": ".",
-                "name": "isAfter"
-              },
-              "operator": "&&",
-              "right": {
-                "kind": "field",
-                "object": {
-                  "kind": "id",
-                  "value": "Trigger"
-                },
-                "dot": ".",
-                "name": "isInsert"
-              }
-            },
-            "block": {
-              "block": [
-                {
-                  "blockIndex": 1,
-                  "kind": "declarationRef",
-                  "declarationKind": "localVariable",
-                  "variants": [
-                    {
-                      "index": 1
-                    }
-                  ]
                 },
                 {
-                  "blockIndex": 2,
                   "kind": "for",
+                  "sourceKeys": {
+                    "objectKey": "forStatement_af2e5532409481ae",
+                    "sourceKey": "forStatement_ae1b5acd3011d522"
+                  },
                   "condition": {
-                    "variableName": "account",
-                    "variableType": {
-                      "kind": "custom",
-                      "name": [
-                        "Account"
-                      ]
+                    "kind": "forCondition",
+                    "sourceKeys": {
+                      "objectKey": "forControl_97179282f8221e58",
+                      "sourceKey": "forControl_33144eccd28a5284"
                     },
-                    "iterable": {
-                      "kind": "field",
-                      "object": {
-                        "kind": "id",
-                        "value": "Trigger"
+                    "initializer": "account",
+                    "initializeType": {
+                      "kind": "type",
+                      "sourceKeys": {
+                        "objectKey": "typeRef_16c0945431044f5d",
+                        "sourceKey": "typeRef_bf2a233e516fd7fb"
                       },
-                      "dot": ".",
-                      "name": "new"
+                      "type": "custom",
+                      "customType": "Account"
+                    },
+                    "baseObject": {
+                      "object": "Trigger",
+                      "operator": ".",
+                      "member": "new"
                     }
                   },
                   "block": [
                     {
-                      "blockIndex": 1,
                       "kind": "expression",
-                      "block": {
-                        "kind": "method",
-                        "object": {
-                          "kind": "id",
-                          "value": "contacts"
-                        },
-                        "dot": ".",
-                        "name": "add",
-                        "arg": [
+                      "sourceKeys": {
+                        "objectKey": "expressionStatement_687fd76e297c5932",
+                        "sourceKey": "expressionStatement_92465727c1add60d"
+                      },
+                      "value": {
+                        "object": "contacts",
+                        "operator": ".",
+                        "member": "add",
+                        "memberArg": [
                           {
-                            "typeName": [
+                            "collection": [
                               "Contact"
                             ],
-                            "kind": "instance",
-                            "creatorType": "class",
                             "arg": [
                               {
-                                "kind": "expression",
-                                "left": {
-                                  "kind": "id",
-                                  "value": "LastName"
-                                },
+                                "left": "LastName",
                                 "operator": "=",
                                 "right": {
-                                  "kind": "field",
-                                  "object": {
-                                    "kind": "id",
-                                    "value": "account"
-                                  },
-                                  "dot": ".",
-                                  "name": "Name"
+                                  "object": "account",
+                                  "operator": ".",
+                                  "member": "Name"
                                 }
                               },
                               {
-                                "kind": "expression",
-                                "left": {
-                                  "kind": "id",
-                                  "value": "AccountId"
-                                },
+                                "left": "AccountId",
                                 "operator": "=",
                                 "right": {
-                                  "kind": "field",
-                                  "object": {
-                                    "kind": "id",
-                                    "value": "account"
-                                  },
-                                  "dot": ".",
-                                  "name": "Id"
+                                  "object": "account",
+                                  "operator": ".",
+                                  "member": "Id"
                                 }
                               }
                             ]
@@ -1165,719 +1443,821 @@
                   ]
                 },
                 {
-                  "blockIndex": 3,
                   "kind": "if",
-                  "block": [
+                  "sourceKeys": {
+                    "objectKey": "ifStatement_de5124d11137d8ee",
+                    "sourceKey": "ifStatement_f89838382c6443f6"
+                  },
+                  "conditionBlock": [
                     {
                       "condition": {
-                        "kind": "prefix",
-                        "value": {
-                          "kind": "method",
-                          "object": {
-                            "kind": "id",
-                            "value": "contacts"
-                          },
-                          "dot": ".",
-                          "name": "isEmpty"
+                        "kind": "ifCondition",
+                        "sourceKeys": {
+                          "objectKey": "parExpression_c90f61046ccc002c",
+                          "sourceKey": "parExpression_067457b3b3c21560"
                         },
-                        "operator": "!"
+                        "condition": {
+                          "variant": {
+                            "object": "contacts",
+                            "operator": ".",
+                            "member": "isEmpty"
+                          },
+                          "operator": "!",
+                          "operatorLocation": "front"
+                        }
                       },
                       "block": [
                         {
-                          "blockIndex": 1,
-                          "kind": "declarationRef",
-                          "declarationKind": "dml",
-                          "index": 1
-                        }
-                      ],
-                      "dml": [
-                        {
-                          "dmlIndex": 1,
                           "kind": "insert",
-                          "value": {
-                            "kind": "id",
-                            "value": "contacts"
+                          "sourceKeys": {
+                            "objectKey": "insertStatement_1b79ac72d4f4f7b3",
+                            "sourceKey": "insertStatement_f253a299ab961e8f"
                           },
+                          "field": "contacts",
                           "accessLevel": "USER"
                         }
                       ]
                     }
                   ]
                 }
-              ],
-              "localVariable": [
-                {
-                  "localVariableIndex": 1,
-                  "variant": "contacts",
-                  "variantType": {
-                    "kind": "list",
-                    "type": {
-                      "kind": "custom",
-                      "name": [
-                        "Contact"
-                      ]
-                    }
-                  },
-                  "initialValue": {
-                    "typeName": [
-                      "List"
-                    ],
-                    "generic": [
-                      {
-                        "kind": "custom",
-                        "name": [
-                          "Contact"
-                        ]
-                      }
-                    ],
-                    "kind": "instance",
-                    "creatorType": "class"
-                  }
-                }
               ]
             }
-          }
-        ]
+          ]
+        },
+        "modifier": {}
       },
       {
-        "kind": "if",
-        "block": [
-          {
-            "condition": {
-              "kind": "expression",
-              "left": {
-                "kind": "field",
-                "object": {
-                  "kind": "id",
-                  "value": "Trigger"
+        "type": "statement",
+        "statement": {
+          "kind": "if",
+          "sourceKeys": {
+            "objectKey": "ifStatement_dbfa839301c2e62d",
+            "sourceKey": "ifStatement_0d1368bee1b9ed18"
+          },
+          "conditionBlock": [
+            {
+              "condition": {
+                "kind": "ifCondition",
+                "sourceKeys": {
+                  "objectKey": "parExpression_40cb21d89bd70f65",
+                  "sourceKey": "parExpression_60ecf77e29add360"
                 },
-                "dot": ".",
-                "name": "isAfter"
-              },
-              "operator": "&&",
-              "right": {
-                "kind": "field",
-                "object": {
-                  "kind": "id",
-                  "value": "Trigger"
-                },
-                "dot": ".",
-                "name": "isUpdate"
-              }
-            },
-            "block": [
-              {
-                "blockIndex": 1,
-                "kind": "declarationRef",
-                "declarationKind": "localVariable",
-                "variants": [
-                  {
-                    "index": 1
-                  }
-                ]
-              },
-              {
-                "blockIndex": 2,
-                "kind": "expression",
-                "block": {
-                  "kind": "method",
-                  "object": {
-                    "kind": "id",
-                    "value": "accountIds"
+                "condition": {
+                  "left": {
+                    "object": "Trigger",
+                    "operator": ".",
+                    "member": "isAfter"
                   },
-                  "dot": ".",
-                  "name": "addAll",
-                  "arg": [
-                    {
-                      "kind": "method",
-                      "object": {
-                        "kind": "field",
-                        "object": {
-                          "kind": "id",
-                          "value": "Trigger"
-                        },
-                        "dot": ".",
-                        "name": "newMap"
-                      },
-                      "dot": ".",
-                      "name": "keySet"
-                    }
-                  ]
+                  "operator": "&&",
+                  "right": {
+                    "object": "Trigger",
+                    "operator": ".",
+                    "member": "isUpdate"
+                  }
                 }
               },
-              {
-                "blockIndex": 3,
-                "kind": "declarationRef",
-                "declarationKind": "localVariable",
-                "variants": [
-                  {
-                    "index": 2
-                  }
-                ]
-              },
-              {
-                "blockIndex": 4,
-                "kind": "declarationRef",
-                "declarationKind": "localVariable",
-                "variants": [
-                  {
-                    "index": 3
-                  }
-                ]
-              },
-              {
-                "blockIndex": 5,
-                "kind": "for",
-                "condition": {
-                  "variableName": "account",
-                  "variableType": {
-                    "kind": "custom",
-                    "name": [
-                      "Account"
-                    ]
+              "block": [
+                {
+                  "kind": "localVariable",
+                  "sourceKeys": {
+                    "objectKey": "localVariableDeclarationStatement_14e51778898af045",
+                    "sourceKey": "localVariableDeclarationStatement_56d69de4fe65fca1"
                   },
-                  "iterable": {
-                    "kind": "id",
-                    "value": "accounts"
-                  }
-                },
-                "block": [
-                  {
-                    "blockIndex": 1,
-                    "kind": "for",
-                    "condition": {
-                      "variableName": "contact",
-                      "variableType": {
-                        "kind": "custom",
-                        "name": [
-                          "Contact"
-                        ]
-                      },
-                      "iterable": {
-                        "kind": "field",
-                        "object": {
-                          "kind": "id",
-                          "value": "account"
-                        },
-                        "dot": ".",
-                        "name": "Contacts"
-                      }
-                    },
-                    "block": [
+                  "variable": {
+                    "variants": [
                       {
-                        "blockIndex": 1,
-                        "kind": "expression",
-                        "block": {
-                          "kind": "expression",
-                          "left": {
-                            "kind": "field",
-                            "object": {
-                              "kind": "id",
-                              "value": "contact"
-                            },
-                            "dot": ".",
-                            "name": "Description"
-                          },
-                          "operator": "=",
-                          "right": {
-                            "kind": "field",
-                            "object": {
-                              "kind": "id",
-                              "value": "account"
-                            },
-                            "dot": ".",
-                            "name": "Name"
-                          }
-                        }
-                      },
-                      {
-                        "blockIndex": 2,
-                        "kind": "expression",
-                        "block": {
-                          "kind": "method",
-                          "object": {
-                            "kind": "id",
-                            "value": "toUpdate"
-                          },
-                          "dot": ".",
-                          "name": "add",
-                          "arg": [
+                        "name": "accountIds",
+                        "init": {
+                          "collection": [
+                            "Set"
+                          ],
+                          "generic": [
                             {
-                              "kind": "id",
-                              "value": "contact"
+                              "kind": "type",
+                              "sourceKeys": {
+                                "objectKey": "typeRef_3d04cbf9478b92e2",
+                                "sourceKey": "typeRef_a2738eb5db1dd152"
+                              },
+                              "type": "primitive",
+                              "primitiveType": "Id"
                             }
                           ]
                         }
                       }
-                    ]
-                  }
-                ]
-              },
-              {
-                "blockIndex": 6,
-                "kind": "declarationRef",
-                "declarationKind": "dml",
-                "index": 1
-              }
-            ],
-            "localVariable": [
-              {
-                "localVariableIndex": 1,
-                "variant": "accountIds",
-                "variantType": {
-                  "kind": "set",
-                  "type": {
-                    "kind": "primitive",
-                    "name": "Id"
-                  }
-                },
-                "initialValue": {
-                  "typeName": [
-                    "Set"
-                  ],
-                  "generic": [
-                    {
-                      "kind": "primitive",
-                      "name": "Id"
-                    }
-                  ],
-                  "kind": "instance",
-                  "creatorType": "class"
-                }
-              },
-              {
-                "localVariableIndex": 2,
-                "variant": "accounts",
-                "variantType": {
-                  "kind": "list",
-                  "type": {
-                    "kind": "custom",
-                    "name": [
-                      "Account"
-                    ]
-                  }
-                },
-                "initialValue": {
-                  "kind": "queryRef",
-                  "queryKind": "soql",
-                  "index": 1
-                }
-              },
-              {
-                "localVariableIndex": 3,
-                "variant": "toUpdate",
-                "variantType": {
-                  "kind": "list",
-                  "type": {
-                    "kind": "custom",
-                    "name": [
-                      "Contact"
-                    ]
-                  }
-                },
-                "initialValue": {
-                  "typeName": [
-                    "List"
-                  ],
-                  "generic": [
-                    {
-                      "kind": "custom",
-                      "name": [
-                        "Contact"
-                      ]
-                    }
-                  ],
-                  "kind": "instance",
-                  "creatorType": "class"
-                }
-              }
-            ],
-            "dml": [
-              {
-                "dmlIndex": 1,
-                "kind": "update",
-                "value": {
-                  "kind": "id",
-                  "value": "toUpdate"
-                }
-              }
-            ]
-          }
-        ]
-      },
-      {
-        "kind": "if",
-        "block": [
-          {
-            "condition": {
-              "kind": "expression",
-              "left": {
-                "kind": "field",
-                "object": {
-                  "kind": "id",
-                  "value": "Trigger"
-                },
-                "dot": ".",
-                "name": "isAfter"
-              },
-              "operator": "&&",
-              "right": {
-                "kind": "field",
-                "object": {
-                  "kind": "id",
-                  "value": "Trigger"
-                },
-                "dot": ".",
-                "name": "isDelete"
-              }
-            },
-            "block": [
-              {
-                "blockIndex": 1,
-                "kind": "declarationRef",
-                "declarationKind": "localVariable",
-                "variants": [
-                  {
-                    "index": 1
-                  }
-                ]
-              },
-              {
-                "blockIndex": 2,
-                "kind": "declarationRef",
-                "declarationKind": "dml",
-                "index": 1
-              },
-              {
-                "blockIndex": 3,
-                "kind": "for",
-                "condition": {
-                  "variableName": "account",
-                  "variableType": {
-                    "kind": "custom",
-                    "name": [
-                      "Account"
-                    ]
-                  },
-                  "iterable": {
-                    "kind": "field",
-                    "object": {
-                      "kind": "id",
-                      "value": "Trigger"
-                    },
-                    "dot": ".",
-                    "name": "old"
-                  }
-                },
-                "block": [
-                  {
-                    "blockIndex": 1,
-                    "kind": "expression",
-                    "block": {
-                      "kind": "method",
-                      "object": {
-                        "kind": "id",
-                        "value": "System"
+                    ],
+                    "variantsType": {
+                      "kind": "type",
+                      "sourceKeys": {
+                        "objectKey": "typeRef_24f17573a601e5e9",
+                        "sourceKey": "typeRef_7d416eb0d08c4504"
                       },
-                      "dot": ".",
-                      "name": "debug",
-                      "arg": [
-                        {
-                          "kind": "expression",
-                          "left": {
-                            "kind": "literal",
-                            "value": "Deleted: ",
-                            "valueType": "string"
-                          },
-                          "operator": "+",
-                          "right": {
-                            "kind": "field",
-                            "object": {
-                              "kind": "id",
-                              "value": "account"
-                            },
-                            "dot": ".",
-                            "name": "Id"
-                          }
-                        }
-                      ]
-                    }
+                      "collectionType": "set",
+                      "elementType": {
+                        "type": "primitive",
+                        "primitiveType": "Id"
+                      }
+                    },
+                    "modifier": {}
                   }
-                ]
-              }
-            ],
-            "localVariable": [
-              {
-                "localVariableIndex": 1,
-                "variant": "tasks",
-                "variantType": {
-                  "kind": "list",
-                  "type": {
-                    "kind": "custom",
-                    "name": [
-                      "Task"
+                },
+                {
+                  "kind": "expression",
+                  "sourceKeys": {
+                    "objectKey": "expressionStatement_8978b84a5f220117",
+                    "sourceKey": "expressionStatement_b33ae0450913b47c"
+                  },
+                  "value": {
+                    "object": "accountIds",
+                    "operator": ".",
+                    "member": "addAll",
+                    "memberArg": [
+                      {
+                        "object": {
+                          "object": "Trigger",
+                          "operator": ".",
+                          "member": "newMap"
+                        },
+                        "operator": ".",
+                        "member": "keySet"
+                      }
                     ]
                   }
                 },
-                "initialValue": {
-                  "kind": "queryRef",
-                  "queryKind": "soql",
-                  "index": 2
-                }
-              }
-            ],
-            "dml": [
-              {
-                "dmlIndex": 1,
-                "kind": "delete",
-                "value": {
-                  "kind": "id",
-                  "value": "tasks"
-                }
-              }
-            ]
-          }
-        ]
-      },
-      {
-        "kind": "if",
-        "block": [
-          {
-            "condition": {
-              "kind": "expression",
-              "left": {
-                "kind": "field",
-                "object": {
-                  "kind": "id",
-                  "value": "Trigger"
-                },
-                "dot": ".",
-                "name": "isAfter"
-              },
-              "operator": "&&",
-              "right": {
-                "kind": "field",
-                "object": {
-                  "kind": "id",
-                  "value": "Trigger"
-                },
-                "dot": ".",
-                "name": "isUndelete"
-              }
-            },
-            "block": [
-              {
-                "blockIndex": 1,
-                "kind": "try",
-                "block": [
-                  {
-                    "type": "try",
-                    "block": [
+                {
+                  "kind": "localVariable",
+                  "sourceKeys": {
+                    "objectKey": "localVariableDeclarationStatement_6564a5c54681495a",
+                    "sourceKey": "localVariableDeclarationStatement_cc2faf88a014fd37"
+                  },
+                  "variable": {
+                    "variants": [
                       {
-                        "blockIndex": 1,
-                        "kind": "for",
-                        "condition": {
-                          "variableName": "account",
-                          "variableType": {
-                            "kind": "custom",
-                            "name": [
-                              "Account"
+                        "name": "accounts",
+                        "init": {
+                          "kind": "soql",
+                          "sourceKeys": {
+                            "objectKey": "query_a66a262c2f0d73cb",
+                            "sourceKey": "query_15a2baac9bd1ce4a"
+                          },
+                          "select": {
+                            "field": [
+                              {
+                                "kind": "selectEntry",
+                                "sourceKeys": {
+                                  "objectKey": "selectEntry_1a6e1da553674376",
+                                  "sourceKey": "selectEntry_b8999b5f7fbd24d0"
+                                },
+                                "type": "field",
+                                "field": [
+                                  "Id"
+                                ]
+                              },
+                              {
+                                "kind": "selectEntry",
+                                "sourceKeys": {
+                                  "objectKey": "selectEntry_15970c8b542d5d3d",
+                                  "sourceKey": "selectEntry_1fb0ed8eaf1f2741"
+                                },
+                                "type": "field",
+                                "field": [
+                                  "Name"
+                                ]
+                              },
+                              {
+                                "kind": "selectEntry",
+                                "sourceKeys": {
+                                  "objectKey": "selectEntry_13f8d70dedbca0b9",
+                                  "sourceKey": "selectEntry_eb9de3b8347d4d07"
+                                },
+                                "type": "field",
+                                "field": [
+                                  "Industry"
+                                ]
+                              }
+                            ],
+                            "subQuery": [
+                              {
+                                "kind": "subQuery",
+                                "sourceKeys": {
+                                  "objectKey": "subQuery_1eecf3c6da20ea5a",
+                                  "sourceKey": "subQuery_47b839e95b0b493a"
+                                },
+                                "select": {
+                                  "field": [
+                                    {
+                                      "kind": "selectEntry",
+                                      "sourceKeys": {
+                                        "objectKey": "subFieldEntry_a31eb73652f5f2ec",
+                                        "sourceKey": "subFieldEntry_b0e626919da87cbc"
+                                      },
+                                      "type": "field",
+                                      "field": [
+                                        "Id"
+                                      ]
+                                    },
+                                    {
+                                      "kind": "selectEntry",
+                                      "sourceKeys": {
+                                        "objectKey": "subFieldEntry_bb003060f5665c3e",
+                                        "sourceKey": "subFieldEntry_0bba647c6f132633"
+                                      },
+                                      "type": "field",
+                                      "field": [
+                                        "FirstName"
+                                      ]
+                                    },
+                                    {
+                                      "kind": "selectEntry",
+                                      "sourceKeys": {
+                                        "objectKey": "subFieldEntry_97c3fa0ab8de64a4",
+                                        "sourceKey": "subFieldEntry_97af576d062f3a3b"
+                                      },
+                                      "type": "field",
+                                      "field": [
+                                        "LastName"
+                                      ]
+                                    }
+                                  ]
+                                },
+                                "from": {
+                                  "field": [
+                                    {
+                                      "kind": "fromField",
+                                      "sourceKeys": {
+                                        "objectKey": "fromName_5ed7c7042062a255",
+                                        "sourceKey": "fromName_d962013c1cc4b983"
+                                      },
+                                      "field": [
+                                        "Contacts"
+                                      ]
+                                    }
+                                  ]
+                                }
+                              }
                             ]
                           },
-                          "iterable": {
-                            "kind": "field",
-                            "object": {
-                              "kind": "id",
-                              "value": "Trigger"
-                            },
-                            "dot": ".",
-                            "name": "new"
-                          }
-                        },
-                        "block": [
-                          {
-                            "blockIndex": 1,
-                            "kind": "expression",
-                            "block": {
-                              "kind": "method",
-                              "isSuper": false,
-                              "isThis": false,
-                              "name": "log",
-                              "arg": [
+                          "from": {
+                            "field": [
+                              {
+                                "kind": "fromField",
+                                "sourceKeys": {
+                                  "objectKey": "fromName_4fac8444b015aa9c",
+                                  "sourceKey": "fromName_15b85eae24f056f2"
+                                },
+                                "field": [
+                                  "Account"
+                                ]
+                              }
+                            ]
+                          },
+                          "where": {
+                            "condition": {
+                              "condition": [
                                 {
-                                  "kind": "expression",
-                                  "left": {
-                                    "kind": "literal",
-                                    "value": "Restored: ",
-                                    "valueType": "string"
+                                  "kind": "singleCondition",
+                                  "sourceKeys": {
+                                    "objectKey": "fieldExpression_f54f696ae7f1e0a5",
+                                    "sourceKey": "fieldExpression_d4f53aa337a6a4ac"
                                   },
-                                  "operator": "+",
-                                  "right": {
-                                    "kind": "field",
-                                    "object": {
-                                      "kind": "id",
-                                      "value": "account"
-                                    },
-                                    "dot": ".",
-                                    "name": "Id"
+                                  "field": {
+                                    "type": "field",
+                                    "field": [
+                                      "Id"
+                                    ]
+                                  },
+                                  "operator": "IN",
+                                  "value": {
+                                    "type": "bind",
+                                    "value": "accountIds"
                                   }
                                 }
                               ]
                             }
                           }
-                        ]
+                        }
                       }
-                    ]
-                  },
-                  {
-                    "type": "catch",
-                    "exception": "e",
-                    "exceptionType": [
-                      "Exception"
                     ],
-                    "block": [
+                    "variantsType": {
+                      "kind": "type",
+                      "sourceKeys": {
+                        "objectKey": "typeRef_e7a6126512547d3d",
+                        "sourceKey": "typeRef_8007408171cb2017"
+                      },
+                      "collectionType": "list",
+                      "elementType": {
+                        "type": "custom",
+                        "customType": "Account"
+                      }
+                    },
+                    "modifier": {}
+                  }
+                },
+                {
+                  "kind": "localVariable",
+                  "sourceKeys": {
+                    "objectKey": "localVariableDeclarationStatement_e9ad9e3012383e32",
+                    "sourceKey": "localVariableDeclarationStatement_266d273fd2daef7b"
+                  },
+                  "variable": {
+                    "variants": [
                       {
-                        "blockIndex": 1,
-                        "kind": "expression",
-                        "block": {
-                          "kind": "method",
-                          "object": {
-                            "kind": "id",
-                            "value": "System"
-                          },
-                          "dot": ".",
-                          "name": "debug",
-                          "arg": [
+                        "name": "toUpdate",
+                        "init": {
+                          "collection": [
+                            "List"
+                          ],
+                          "generic": [
                             {
-                              "kind": "method",
-                              "object": {
-                                "kind": "id",
-                                "value": "e"
+                              "kind": "type",
+                              "sourceKeys": {
+                                "objectKey": "typeRef_b5837cead0b16ac8",
+                                "sourceKey": "typeRef_7220103afed8596b"
                               },
-                              "dot": ".",
-                              "name": "getMessage"
+                              "type": "custom",
+                              "customType": "Contact"
                             }
                           ]
                         }
                       }
-                    ]
+                    ],
+                    "variantsType": {
+                      "kind": "type",
+                      "sourceKeys": {
+                        "objectKey": "typeRef_20d637d3397e2cf4",
+                        "sourceKey": "typeRef_660a788d4f0b9634"
+                      },
+                      "collectionType": "list",
+                      "elementType": {
+                        "type": "custom",
+                        "customType": "Contact"
+                      }
+                    },
+                    "modifier": {}
                   }
-                ]
-              }
-            ]
-          }
-        ]
-      }
-    ],
-    "soql": [
-      {
-        "soqlIndex": 1,
-        "select": {
-          "field": [
-            {
-              "field": [
-                "Id"
-              ]
-            },
-            {
-              "field": [
-                "Industry"
-              ]
-            },
-            {
-              "field": [
-                "Name"
-              ]
-            }
-          ],
-          "subQuery": [
-            {
-              "field": {
-                "select": {
-                  "field": [
-                    {
-                      "field": [
-                        "FirstName"
-                      ]
+                },
+                {
+                  "kind": "for",
+                  "sourceKeys": {
+                    "objectKey": "forStatement_cb411f5a141d5868",
+                    "sourceKey": "forStatement_8a704a1503cb10ba"
+                  },
+                  "condition": {
+                    "kind": "forCondition",
+                    "sourceKeys": {
+                      "objectKey": "forControl_b2f6c0931b0479f2",
+                      "sourceKey": "forControl_ee3d14ea1667de3e"
                     },
-                    {
-                      "field": [
-                        "Id"
-                      ]
+                    "initializer": "account",
+                    "initializeType": {
+                      "kind": "type",
+                      "sourceKeys": {
+                        "objectKey": "typeRef_16c0945431044f5d",
+                        "sourceKey": "typeRef_51d7d63239a936ab"
+                      },
+                      "type": "custom",
+                      "customType": "Account"
                     },
+                    "baseObject": "accounts"
+                  },
+                  "block": [
                     {
-                      "field": [
-                        "LastName"
+                      "kind": "for",
+                      "sourceKeys": {
+                        "objectKey": "forStatement_7193cfa5e01f5d43",
+                        "sourceKey": "forStatement_2dc17d2bb56300a2"
+                      },
+                      "condition": {
+                        "kind": "forCondition",
+                        "sourceKeys": {
+                          "objectKey": "forControl_35923210e589efd0",
+                          "sourceKey": "forControl_029f4d2e93b8fd78"
+                        },
+                        "initializer": "contact",
+                        "initializeType": {
+                          "kind": "type",
+                          "sourceKeys": {
+                            "objectKey": "typeRef_b5837cead0b16ac8",
+                            "sourceKey": "typeRef_f31346cce218ab1e"
+                          },
+                          "type": "custom",
+                          "customType": "Contact"
+                        },
+                        "baseObject": {
+                          "object": "account",
+                          "operator": ".",
+                          "member": "Contacts"
+                        }
+                      },
+                      "block": [
+                        {
+                          "kind": "expression",
+                          "sourceKeys": {
+                            "objectKey": "expressionStatement_2eb27b7b9a08ca5c",
+                            "sourceKey": "expressionStatement_5f09a9d6998f7bbb"
+                          },
+                          "value": {
+                            "left": {
+                              "object": "contact",
+                              "operator": ".",
+                              "member": "Description"
+                            },
+                            "operator": "=",
+                            "right": {
+                              "object": "account",
+                              "operator": ".",
+                              "member": "Name"
+                            }
+                          }
+                        },
+                        {
+                          "kind": "expression",
+                          "sourceKeys": {
+                            "objectKey": "expressionStatement_5141a93b5de12b48",
+                            "sourceKey": "expressionStatement_9582ff0c9dc1901d"
+                          },
+                          "value": {
+                            "object": "toUpdate",
+                            "operator": ".",
+                            "member": "add",
+                            "memberArg": [
+                              "contact"
+                            ]
+                          }
+                        }
                       ]
                     }
                   ]
                 },
-                "from": {
-                  "field": "Contacts"
+                {
+                  "kind": "update",
+                  "sourceKeys": {
+                    "objectKey": "updateStatement_de650e075021e94f",
+                    "sourceKey": "updateStatement_3f9362cbb8333d2a"
+                  },
+                  "field": "toUpdate"
                 }
-              }
-            }
-          ]
-        },
-        "from": {
-          "field": "Account"
-        },
-        "where": [
-          {
-            "field": [
-              "Id"
-            ],
-            "operator": "IN",
-            "value": {
-              "kind": "bind",
-              "value": {
-                "kind": "id",
-                "value": "accountIds"
-              }
-            }
-          }
-        ]
-      },
-      {
-        "soqlIndex": 2,
-        "select": {
-          "field": [
-            {
-              "field": [
-                "Id"
               ]
             }
           ]
         },
-        "from": {
-          "field": "Task"
-        },
-        "where": [
-          {
-            "field": [
-              "WhatId"
-            ],
-            "operator": "IN",
-            "value": {
-              "kind": "bind",
-              "value": {
-                "kind": "method",
-                "object": {
-                  "kind": "field",
-                  "object": {
-                    "kind": "id",
-                    "value": "Trigger"
-                  },
-                  "dot": ".",
-                  "name": "oldMap"
+        "modifier": {}
+      },
+      {
+        "type": "statement",
+        "statement": {
+          "kind": "if",
+          "sourceKeys": {
+            "objectKey": "ifStatement_4ce0cbb2c387ae34",
+            "sourceKey": "ifStatement_3d66706bb9c9926d"
+          },
+          "conditionBlock": [
+            {
+              "condition": {
+                "kind": "ifCondition",
+                "sourceKeys": {
+                  "objectKey": "parExpression_9945d8b3e734a789",
+                  "sourceKey": "parExpression_8a04253c428a3fcb"
                 },
-                "dot": ".",
-                "name": "keySet"
-              }
+                "condition": {
+                  "left": {
+                    "object": "Trigger",
+                    "operator": ".",
+                    "member": "isAfter"
+                  },
+                  "operator": "&&",
+                  "right": {
+                    "object": "Trigger",
+                    "operator": ".",
+                    "member": "isDelete"
+                  }
+                }
+              },
+              "block": [
+                {
+                  "kind": "localVariable",
+                  "sourceKeys": {
+                    "objectKey": "localVariableDeclarationStatement_f0d36d4995cedfce",
+                    "sourceKey": "localVariableDeclarationStatement_820ccc2232727311"
+                  },
+                  "variable": {
+                    "variants": [
+                      {
+                        "name": "tasks",
+                        "init": {
+                          "kind": "soql",
+                          "sourceKeys": {
+                            "objectKey": "query_0dce18924f920e19",
+                            "sourceKey": "query_2043c1f67860eef9"
+                          },
+                          "select": {
+                            "field": [
+                              {
+                                "kind": "selectEntry",
+                                "sourceKeys": {
+                                  "objectKey": "selectEntry_1a6e1da553674376",
+                                  "sourceKey": "selectEntry_e8a43a5a25629feb"
+                                },
+                                "type": "field",
+                                "field": [
+                                  "Id"
+                                ]
+                              }
+                            ]
+                          },
+                          "from": {
+                            "field": [
+                              {
+                                "kind": "fromField",
+                                "sourceKeys": {
+                                  "objectKey": "fromName_af54090379795252",
+                                  "sourceKey": "fromName_f4bbad7cd0500ee3"
+                                },
+                                "field": [
+                                  "Task"
+                                ]
+                              }
+                            ]
+                          },
+                          "where": {
+                            "condition": {
+                              "condition": [
+                                {
+                                  "kind": "singleCondition",
+                                  "sourceKeys": {
+                                    "objectKey": "fieldExpression_5744b2c607c15e05",
+                                    "sourceKey": "fieldExpression_61a9cca7eb9c77b9"
+                                  },
+                                  "field": {
+                                    "type": "field",
+                                    "field": [
+                                      "WhatId"
+                                    ]
+                                  },
+                                  "operator": "IN",
+                                  "value": {
+                                    "type": "bind",
+                                    "value": {
+                                      "object": {
+                                        "object": "Trigger",
+                                        "operator": ".",
+                                        "member": "oldMap"
+                                      },
+                                      "operator": ".",
+                                      "member": "keySet"
+                                    }
+                                  }
+                                }
+                              ]
+                            }
+                          },
+                          "allRows": {
+                            "kind": "allRowsClause",
+                            "sourceKeys": {
+                              "objectKey": "allRowsClause_fe858f1bdc8b714c",
+                              "sourceKey": "allRowsClause_6d7c1839a704a174"
+                            },
+                            "value": "ALL ROWS"
+                          }
+                        }
+                      }
+                    ],
+                    "variantsType": {
+                      "kind": "type",
+                      "sourceKeys": {
+                        "objectKey": "typeRef_9d3e7fc6f7468e5b",
+                        "sourceKey": "typeRef_db3bc72a8937cef6"
+                      },
+                      "collectionType": "list",
+                      "elementType": {
+                        "type": "custom",
+                        "customType": "Task"
+                      }
+                    },
+                    "modifier": {}
+                  }
+                },
+                {
+                  "kind": "delete",
+                  "sourceKeys": {
+                    "objectKey": "deleteStatement_6ce3ac392825ce8d",
+                    "sourceKey": "deleteStatement_67a833c0c641b12b"
+                  },
+                  "field": "tasks"
+                },
+                {
+                  "kind": "for",
+                  "sourceKeys": {
+                    "objectKey": "forStatement_9a9b78724ded9b9b",
+                    "sourceKey": "forStatement_92ac454fa824dd5e"
+                  },
+                  "condition": {
+                    "kind": "forCondition",
+                    "sourceKeys": {
+                      "objectKey": "forControl_352574c40b842621",
+                      "sourceKey": "forControl_6b784d0989a1d6a4"
+                    },
+                    "initializer": "account",
+                    "initializeType": {
+                      "kind": "type",
+                      "sourceKeys": {
+                        "objectKey": "typeRef_16c0945431044f5d",
+                        "sourceKey": "typeRef_e2c93af76c7a29fc"
+                      },
+                      "type": "custom",
+                      "customType": "Account"
+                    },
+                    "baseObject": {
+                      "object": "Trigger",
+                      "operator": ".",
+                      "member": "old"
+                    }
+                  },
+                  "block": [
+                    {
+                      "kind": "expression",
+                      "sourceKeys": {
+                        "objectKey": "expressionStatement_7def96cb86bcebde",
+                        "sourceKey": "expressionStatement_abd1b48344b8cc8b"
+                      },
+                      "value": {
+                        "object": "System",
+                        "operator": ".",
+                        "member": "debug",
+                        "memberArg": [
+                          {
+                            "left": {
+                              "value": "'Deleted: '",
+                              "valueType": "string"
+                            },
+                            "operator": "+",
+                            "right": {
+                              "object": "account",
+                              "operator": ".",
+                              "member": "Id"
+                            }
+                          }
+                        ]
+                      }
+                    }
+                  ]
+                }
+              ]
             }
-          }
-        ],
-        "allRows": "ALL ROWS"
+          ]
+        },
+        "modifier": {}
+      },
+      {
+        "type": "statement",
+        "statement": {
+          "kind": "if",
+          "sourceKeys": {
+            "objectKey": "ifStatement_0957922e43282f07",
+            "sourceKey": "ifStatement_4f70f1ac4ac880f4"
+          },
+          "conditionBlock": [
+            {
+              "condition": {
+                "kind": "ifCondition",
+                "sourceKeys": {
+                  "objectKey": "parExpression_745d101b543551e5",
+                  "sourceKey": "parExpression_20a45f59ec2f3c2b"
+                },
+                "condition": {
+                  "left": {
+                    "object": "Trigger",
+                    "operator": ".",
+                    "member": "isAfter"
+                  },
+                  "operator": "&&",
+                  "right": {
+                    "object": "Trigger",
+                    "operator": ".",
+                    "member": "isUndelete"
+                  }
+                }
+              },
+              "block": [
+                {
+                  "kind": "try",
+                  "sourceKeys": {
+                    "objectKey": "tryStatement_18a2f478b8157943",
+                    "sourceKey": "tryStatement_4608709fb2945393"
+                  },
+                  "block": [
+                    {
+                      "condition": "try",
+                      "block": [
+                        {
+                          "kind": "for",
+                          "sourceKeys": {
+                            "objectKey": "forStatement_f94e86fbbf228c9e",
+                            "sourceKey": "forStatement_e87f3dd3e332cd26"
+                          },
+                          "condition": {
+                            "kind": "forCondition",
+                            "sourceKeys": {
+                              "objectKey": "forControl_97179282f8221e58",
+                              "sourceKey": "forControl_9f5d983a45ae1d78"
+                            },
+                            "initializer": "account",
+                            "initializeType": {
+                              "kind": "type",
+                              "sourceKeys": {
+                                "objectKey": "typeRef_16c0945431044f5d",
+                                "sourceKey": "typeRef_52ca1cdd075e00d3"
+                              },
+                              "type": "custom",
+                              "customType": "Account"
+                            },
+                            "baseObject": {
+                              "object": "Trigger",
+                              "operator": ".",
+                              "member": "new"
+                            }
+                          },
+                          "block": [
+                            {
+                              "kind": "expression",
+                              "sourceKeys": {
+                                "objectKey": "expressionStatement_11d669e487eb6034",
+                                "sourceKey": "expressionStatement_b107389a7ff6981a"
+                              },
+                              "value": {
+                                "member": "log",
+                                "memberArg": [
+                                  {
+                                    "left": {
+                                      "value": "'Restored: '",
+                                      "valueType": "string"
+                                    },
+                                    "operator": "+",
+                                    "right": {
+                                      "object": "account",
+                                      "operator": ".",
+                                      "member": "Id"
+                                    }
+                                  }
+                                ]
+                              }
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "condition": "catch",
+                      "catchCondition": {
+                        "kind": "catchCondition",
+                        "sourceKeys": {
+                          "base": {
+                            "objectKey": "catchClause_d18616b0bc9c1332",
+                            "sourceKey": "catchClause_09a95f60f1cb2f04"
+                          },
+                          "exception": {
+                            "objectKey": "id_b6ffa7df1c4da983",
+                            "sourceKey": "id_f197f985216c37f9"
+                          },
+                          "exceptionType": {
+                            "objectKey": "qualifiedName_cab76848af5ff734",
+                            "sourceKey": "qualifiedName_6fbba2658719029f"
+                          }
+                        },
+                        "exception": "e",
+                        "exceptionType": [
+                          "Exception"
+                        ],
+                        "modifier": []
+                      },
+                      "block": [
+                        {
+                          "kind": "expression",
+                          "sourceKeys": {
+                            "objectKey": "expressionStatement_0b611757aa6ac3b6",
+                            "sourceKey": "expressionStatement_1d8e3c260526a7a5"
+                          },
+                          "value": {
+                            "object": "System",
+                            "operator": ".",
+                            "member": "debug",
+                            "memberArg": [
+                              {
+                                "object": "e",
+                                "operator": ".",
+                                "member": "getMessage"
+                              }
+                            ]
+                          }
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        "modifier": {}
       }
     ]
   }

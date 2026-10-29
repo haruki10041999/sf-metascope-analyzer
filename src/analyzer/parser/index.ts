@@ -1,3 +1,2 @@
 export * from './metadata';
-export * from './Apex/apexSyntaxError';
-
+export * from './Apex/parser';
