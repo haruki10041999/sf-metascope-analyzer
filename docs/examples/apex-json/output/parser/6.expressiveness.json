@@ -1,0 +1,34 @@
+{
+  "sample": "parser",
+  "order": {
+    "classMembers": {
+      "lists": 0,
+      "orderLost": 0
+    },
+    "selectEntries": {
+      "lists": 7,
+      "orderLost": 0
+    },
+    "modifiers": {
+      "lists": 0,
+      "orderLost": 0
+    }
+  },
+  "ambiguity": {
+    "fieldAccess": 8,
+    "noArgCall": 10,
+    "newExpressions": 18,
+    "emptyNew": {
+      "classCreatorRest": 3
+    }
+  },
+  "notRepresented": {
+    "comments": 37,
+    "commentChars": 1831,
+    "notSet": 0
+  },
+  "discriminated": {
+    "withKind": 275,
+    "withoutKind": 469
+  }
+}

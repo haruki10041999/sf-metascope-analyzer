@@ -1,0 +1,1441 @@
+{
+  "syntaxErrors": [
+    {
+      "line": 1,
+      "column": 12,
+      "message": "no viable alternative at input 'Integer x = ;'"
+    },
+    {
+      "line": 1,
+      "column": 12,
+      "message": "extraneous input ';' expecting {'after', 'before', 'get', 'inherited', 'instanceof', 'new', 'null', 'set', 'sharing', 'super', 'switch', 'this', 'transient', 'trigger', 'void', 'when', 'with', 'without', 'list', 'map', 'system', 'user', 'select', 'count', 'from', 'as', 'using', 'scope', 'where', 'order', 'by', 'limit', 'and', 'or', 'not', 'avg', 'count_distinct', 'min', 'max', 'sum', 'typeof', 'end', 'then', 'like', 'in', 'includes', 'excludes', 'asc', 'desc', 'nulls', 'first', 'last', 'group', 'all', 'rows', 'view', 'having', 'rollup', 'tolabel', 'offset', 'data', 'category', 'at', 'above', 'below', 'above_or_below', 'security_enforced', 'system_mode', 'user_mode', 'reference', 'cube', 'format', 'tracking', 'viewstat', 'custom', 'standard', 'distance', 'geolocation', 'grouping', 'convertcurrency', 'formula', 'calendar_month', 'calendar_quarter', 'calendar_year', 'day_in_month', 'day_in_week', 'day_in_year', 'day_only', 'fiscal_month', 'fiscal_quarter', 'fiscal_year', 'hour_in_day', 'week_in_month', 'week_in_year', 'converttimezone', 'yesterday', 'today', 'tomorrow', 'last_week', 'this_week', 'next_week', 'last_month', 'this_month', 'next_month', 'last_90_days', 'next_90_days', 'last_n_days', 'next_n_days', 'n_days_ago', 'next_n_weeks', 'last_n_weeks', 'n_weeks_ago', 'next_n_months', 'last_n_months', 'n_months_ago', 'this_quarter', 'last_quarter', 'next_quarter', 'next_n_quarters', 'last_n_quarters', 'n_quarters_ago', 'this_year', 'last_year', 'next_year', 'next_n_years', 'last_n_years', 'n_years_ago', 'this_fiscal_quarter', 'last_fiscal_quarter', 'next_fiscal_quarter', 'next_n_fiscal_quarters', 'last_n_fiscal_quarters', 'n_fiscal_quarters_ago', 'this_fiscal_year', 'last_fiscal_year', 'next_fiscal_year', 'next_n_fiscal_years', 'last_n_fiscal_years', 'n_fiscal_years_ago', IntegralCurrencyLiteral, 'find', 'email', 'name', 'phone', 'sidebar', 'fields', 'metadata', 'pricebookid', 'network', 'snippet', 'target_length', 'division', 'returning', 'listview', 'highlight', 'spell_correction', FindLiteral, IntegerLiteral, LongLiteral, NumberLiteral, BooleanLiteral, MultilineStringLiteral, StringLiteral, '(', '[', '!', '~', '++', '--', '+', '-', Identifier}"
+    },
+    {
+      "line": 2,
+      "column": 14,
+      "message": "mismatched input 'accs' expecting '.'"
+    },
+    {
+      "line": 2,
+      "column": 58,
+      "message": "no viable alternative at input 'Name = LIMIT'"
+    },
+    {
+      "line": 2,
+      "column": 64,
+      "message": "missing ';' at '1'"
+    },
+    {
+      "line": 2,
+      "column": 65,
+      "message": "extraneous input ']' expecting ';'"
+    },
+    {
+      "line": 4,
+      "column": 11,
+      "message": "mismatched input ')' expecting {'after', 'before', 'get', 'inherited', 'instanceof', 'new', 'null', 'set', 'sharing', 'super', 'switch', 'this', 'transient', 'trigger', 'void', 'when', 'with', 'without', 'list', 'map', 'system', 'user', 'select', 'count', 'from', 'as', 'using', 'scope', 'where', 'order', 'by', 'limit', 'and', 'or', 'not', 'avg', 'count_distinct', 'min', 'max', 'sum', 'typeof', 'end', 'then', 'like', 'in', 'includes', 'excludes', 'asc', 'desc', 'nulls', 'first', 'last', 'group', 'all', 'rows', 'view', 'having', 'rollup', 'tolabel', 'offset', 'data', 'category', 'at', 'above', 'below', 'above_or_below', 'security_enforced', 'system_mode', 'user_mode', 'reference', 'cube', 'format', 'tracking', 'viewstat', 'custom', 'standard', 'distance', 'geolocation', 'grouping', 'convertcurrency', 'formula', 'calendar_month', 'calendar_quarter', 'calendar_year', 'day_in_month', 'day_in_week', 'day_in_year', 'day_only', 'fiscal_month', 'fiscal_quarter', 'fiscal_year', 'hour_in_day', 'week_in_month', 'week_in_year', 'converttimezone', 'yesterday', 'today', 'tomorrow', 'last_week', 'this_week', 'next_week', 'last_month', 'this_month', 'next_month', 'last_90_days', 'next_90_days', 'last_n_days', 'next_n_days', 'n_days_ago', 'next_n_weeks', 'last_n_weeks', 'n_weeks_ago', 'next_n_months', 'last_n_months', 'n_months_ago', 'this_quarter', 'last_quarter', 'next_quarter', 'next_n_quarters', 'last_n_quarters', 'n_quarters_ago', 'this_year', 'last_year', 'next_year', 'next_n_years', 'last_n_years', 'n_years_ago', 'this_fiscal_quarter', 'last_fiscal_quarter', 'next_fiscal_quarter', 'next_n_fiscal_quarters', 'last_n_fiscal_quarters', 'n_fiscal_quarters_ago', 'this_fiscal_year', 'last_fiscal_year', 'next_fiscal_year', 'next_n_fiscal_years', 'last_n_fiscal_years', 'n_fiscal_years_ago', IntegralCurrencyLiteral, 'find', 'email', 'name', 'phone', 'sidebar', 'fields', 'metadata', 'pricebookid', 'network', 'snippet', 'target_length', 'division', 'returning', 'listview', 'highlight', 'spell_correction', FindLiteral, IntegerLiteral, LongLiteral, NumberLiteral, BooleanLiteral, MultilineStringLiteral, StringLiteral, '(', '[', '!', '~', '++', '--', '+', '-', Identifier}"
+    },
+    {
+      "line": 6,
+      "column": 9,
+      "message": "extraneous input '+' expecting ';'"
+    }
+  ],
+  "commonType": {
+    "type": "anonymousUnit",
+    "sourceInfo": {
+      "context": "Integerx=;List<Account><missing ';'>accs=[SELECTIdFROMAccountWHERE<missing ';'>Name=LIMIT<missing ';'>1];for(;;){foo(1,);}returnx+;<EOF>",
+      "start": {
+        "offset": 0,
+        "line": 1,
+        "column": 0
+      },
+      "end": {
+        "offset": 120,
+        "line": 6,
+        "column": 11
+      }
+    },
+    "value": {
+      "type": "anonymousBlock",
+      "sourceInfo": {
+        "context": "Integerx=;List<Account><missing ';'>accs=[SELECTIdFROMAccountWHERE<missing ';'>Name=LIMIT<missing ';'>1];for(;;){foo(1,);}returnx+;",
+        "start": {
+          "offset": 0,
+          "line": 1,
+          "column": 0
+        },
+        "end": {
+          "offset": 120,
+          "line": 6,
+          "column": 11
+        }
+      },
+      "value": [
+        {
+          "type": "error",
+          "errorCode": "EXCEPTION",
+          "contextType": "AnonymousBlockMemberContext",
+          "sourceInfo": {
+            "context": "",
+            "start": {
+              "offset": 0,
+              "line": 1,
+              "column": 0
+            },
+            "end": {
+              "offset": 0,
+              "line": 1,
+              "column": 0
+            }
+          }
+        },
+        {
+          "type": "error",
+          "errorCode": "EXCEPTION",
+          "contextType": "AnonymousBlockMemberContext",
+          "sourceInfo": {
+            "context": "Integer",
+            "start": {
+              "offset": 0,
+              "line": 1,
+              "column": 0
+            },
+            "end": {
+              "offset": 7,
+              "line": 1,
+              "column": 7
+            }
+          }
+        },
+        {
+          "type": "anonymousBlockMember",
+          "sourceInfo": {
+            "context": "x=;List<Account><missing ';'>",
+            "start": {
+              "offset": 8,
+              "line": 1,
+              "column": 8
+            },
+            "end": {
+              "offset": 27,
+              "line": 2,
+              "column": 13
+            }
+          },
+          "value": {
+            "type": "statement",
+            "sourceInfo": {
+              "context": "x=;List<Account><missing ';'>",
+              "start": {
+                "offset": 8,
+                "line": 1,
+                "column": 8
+              },
+              "end": {
+                "offset": 27,
+                "line": 2,
+                "column": 13
+              }
+            },
+            "value": {
+              "type": "expressionStatement",
+              "sourceInfo": {
+                "context": "x=;List<Account><missing ';'>",
+                "start": {
+                  "offset": 8,
+                  "line": 1,
+                  "column": 8
+                },
+                "end": {
+                  "offset": 27,
+                  "line": 2,
+                  "column": 13
+                }
+              },
+              "value": {
+                "type": "assignExpression",
+                "sourceInfo": {
+                  "context": "x=;List<Account>",
+                  "start": {
+                    "offset": 8,
+                    "line": 1,
+                    "column": 8
+                  },
+                  "end": {
+                    "offset": 27,
+                    "line": 2,
+                    "column": 13
+                  }
+                },
+                "left": {
+                  "type": "primaryExpression",
+                  "sourceInfo": {
+                    "context": "x",
+                    "start": {
+                      "offset": 8,
+                      "line": 1,
+                      "column": 8
+                    },
+                    "end": {
+                      "offset": 9,
+                      "line": 1,
+                      "column": 9
+                    }
+                  },
+                  "value": {
+                    "type": "idPrimary",
+                    "sourceInfo": {
+                      "context": "x",
+                      "start": {
+                        "offset": 8,
+                        "line": 1,
+                        "column": 8
+                      },
+                      "end": {
+                        "offset": 9,
+                        "line": 1,
+                        "column": 9
+                      }
+                    },
+                    "value": {
+                      "type": "id",
+                      "sourceInfo": {
+                        "context": "x",
+                        "start": {
+                          "offset": 8,
+                          "line": 1,
+                          "column": 8
+                        },
+                        "end": {
+                          "offset": 9,
+                          "line": 1,
+                          "column": 9
+                        }
+                      },
+                      "value": "x"
+                    }
+                  }
+                },
+                "operator": "=",
+                "right": {
+                  "type": "primaryExpression",
+                  "sourceInfo": {
+                    "context": ";List<Account>",
+                    "start": {
+                      "offset": 12,
+                      "line": 1,
+                      "column": 12
+                    },
+                    "end": {
+                      "offset": 27,
+                      "line": 2,
+                      "column": 13
+                    }
+                  },
+                  "value": {
+                    "type": "typeRefPrimary",
+                    "sourceInfo": {
+                      "context": "List<Account>",
+                      "start": {
+                        "offset": 14,
+                        "line": 2,
+                        "column": 0
+                      },
+                      "end": {
+                        "offset": 27,
+                        "line": 2,
+                        "column": 13
+                      }
+                    },
+                    "value": {
+                      "type": "typeRef",
+                      "sourceInfo": {
+                        "context": "List<Account>",
+                        "start": {
+                          "offset": 14,
+                          "line": 2,
+                          "column": 0
+                        },
+                        "end": {
+                          "offset": 27,
+                          "line": 2,
+                          "column": 13
+                        }
+                      },
+                      "value": [
+                        {
+                          "type": "typeName",
+                          "sourceInfo": {
+                            "context": "List<Account>",
+                            "start": {
+                              "offset": 14,
+                              "line": 2,
+                              "column": 0
+                            },
+                            "end": {
+                              "offset": 27,
+                              "line": 2,
+                              "column": 13
+                            }
+                          },
+                          "value": "list",
+                          "generic": {
+                            "type": "typeArguments",
+                            "sourceInfo": {
+                              "context": "<Account>",
+                              "start": {
+                                "offset": 18,
+                                "line": 2,
+                                "column": 4
+                              },
+                              "end": {
+                                "offset": 27,
+                                "line": 2,
+                                "column": 13
+                              }
+                            },
+                            "value": {
+                              "type": "typeList",
+                              "sourceInfo": {
+                                "context": "Account",
+                                "start": {
+                                  "offset": 19,
+                                  "line": 2,
+                                  "column": 5
+                                },
+                                "end": {
+                                  "offset": 26,
+                                  "line": 2,
+                                  "column": 12
+                                }
+                              },
+                              "value": [
+                                {
+                                  "type": "typeRef",
+                                  "sourceInfo": {
+                                    "context": "Account",
+                                    "start": {
+                                      "offset": 19,
+                                      "line": 2,
+                                      "column": 5
+                                    },
+                                    "end": {
+                                      "offset": 26,
+                                      "line": 2,
+                                      "column": 12
+                                    }
+                                  },
+                                  "value": [
+                                    {
+                                      "type": "typeName",
+                                      "sourceInfo": {
+                                        "context": "Account",
+                                        "start": {
+                                          "offset": 19,
+                                          "line": 2,
+                                          "column": 5
+                                        },
+                                        "end": {
+                                          "offset": 26,
+                                          "line": 2,
+                                          "column": 12
+                                        }
+                                      },
+                                      "value": {
+                                        "type": "id",
+                                        "sourceInfo": {
+                                          "context": "Account",
+                                          "start": {
+                                            "offset": 19,
+                                            "line": 2,
+                                            "column": 5
+                                          },
+                                          "end": {
+                                            "offset": 26,
+                                            "line": 2,
+                                            "column": 12
+                                          }
+                                        },
+                                        "value": "Account"
+                                      },
+                                      "generic": null
+                                    }
+                                  ],
+                                  "dimension": {
+                                    "type": "arraySubscripts",
+                                    "sourceInfo": {
+                                      "context": "",
+                                      "start": {
+                                        "offset": 26,
+                                        "line": 2,
+                                        "column": 12
+                                      },
+                                      "end": {
+                                        "offset": 26,
+                                        "line": 2,
+                                        "column": 12
+                                      }
+                                    },
+                                    "value": null
+                                  }
+                                }
+                              ]
+                            }
+                          }
+                        }
+                      ],
+                      "dimension": {
+                        "type": "arraySubscripts",
+                        "sourceInfo": {
+                          "context": "",
+                          "start": {
+                            "offset": 28,
+                            "line": 2,
+                            "column": 14
+                          },
+                          "end": {
+                            "offset": 28,
+                            "line": 2,
+                            "column": 14
+                          }
+                        },
+                        "value": null
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "modifier": []
+        },
+        {
+          "type": "anonymousBlockMember",
+          "sourceInfo": {
+            "context": "accs=[SELECTIdFROMAccountWHERE<missing ';'>",
+            "start": {
+              "offset": 28,
+              "line": 2,
+              "column": 14
+            },
+            "end": {
+              "offset": 64,
+              "line": 2,
+              "column": 50
+            }
+          },
+          "value": {
+            "type": "statement",
+            "sourceInfo": {
+              "context": "accs=[SELECTIdFROMAccountWHERE<missing ';'>",
+              "start": {
+                "offset": 28,
+                "line": 2,
+                "column": 14
+              },
+              "end": {
+                "offset": 64,
+                "line": 2,
+                "column": 50
+              }
+            },
+            "value": {
+              "type": "expressionStatement",
+              "sourceInfo": {
+                "context": "accs=[SELECTIdFROMAccountWHERE<missing ';'>",
+                "start": {
+                  "offset": 28,
+                  "line": 2,
+                  "column": 14
+                },
+                "end": {
+                  "offset": 64,
+                  "line": 2,
+                  "column": 50
+                }
+              },
+              "value": {
+                "type": "assignExpression",
+                "sourceInfo": {
+                  "context": "accs=[SELECTIdFROMAccountWHERE",
+                  "start": {
+                    "offset": 28,
+                    "line": 2,
+                    "column": 14
+                  },
+                  "end": {
+                    "offset": 64,
+                    "line": 2,
+                    "column": 50
+                  }
+                },
+                "left": {
+                  "type": "primaryExpression",
+                  "sourceInfo": {
+                    "context": "accs",
+                    "start": {
+                      "offset": 28,
+                      "line": 2,
+                      "column": 14
+                    },
+                    "end": {
+                      "offset": 32,
+                      "line": 2,
+                      "column": 18
+                    }
+                  },
+                  "value": {
+                    "type": "idPrimary",
+                    "sourceInfo": {
+                      "context": "accs",
+                      "start": {
+                        "offset": 28,
+                        "line": 2,
+                        "column": 14
+                      },
+                      "end": {
+                        "offset": 32,
+                        "line": 2,
+                        "column": 18
+                      }
+                    },
+                    "value": {
+                      "type": "id",
+                      "sourceInfo": {
+                        "context": "accs",
+                        "start": {
+                          "offset": 28,
+                          "line": 2,
+                          "column": 14
+                        },
+                        "end": {
+                          "offset": 32,
+                          "line": 2,
+                          "column": 18
+                        }
+                      },
+                      "value": "accs"
+                    }
+                  }
+                },
+                "operator": "=",
+                "right": {
+                  "type": "primaryExpression",
+                  "sourceInfo": {
+                    "context": "[SELECTIdFROMAccountWHERE",
+                    "start": {
+                      "offset": 35,
+                      "line": 2,
+                      "column": 21
+                    },
+                    "end": {
+                      "offset": 64,
+                      "line": 2,
+                      "column": 50
+                    }
+                  },
+                  "value": {
+                    "type": "soqlPrimary",
+                    "sourceInfo": {
+                      "context": "[SELECTIdFROMAccountWHERE",
+                      "start": {
+                        "offset": 35,
+                        "line": 2,
+                        "column": 21
+                      },
+                      "end": {
+                        "offset": 64,
+                        "line": 2,
+                        "column": 50
+                      }
+                    },
+                    "value": {
+                      "type": "soqlLiteral",
+                      "sourceInfo": {
+                        "context": "[SELECTIdFROMAccountWHERE",
+                        "start": {
+                          "offset": 35,
+                          "line": 2,
+                          "column": 21
+                        },
+                        "end": {
+                          "offset": 64,
+                          "line": 2,
+                          "column": 50
+                        }
+                      },
+                      "value": {
+                        "type": "query",
+                        "sourceInfo": {
+                          "context": "SELECTIdFROMAccountWHERE",
+                          "start": {
+                            "offset": 36,
+                            "line": 2,
+                            "column": 22
+                          },
+                          "end": {
+                            "offset": 64,
+                            "line": 2,
+                            "column": 50
+                          }
+                        },
+                        "value": {
+                          "type": "selectList",
+                          "sourceInfo": {
+                            "context": "Id",
+                            "start": {
+                              "offset": 43,
+                              "line": 2,
+                              "column": 29
+                            },
+                            "end": {
+                              "offset": 45,
+                              "line": 2,
+                              "column": 31
+                            }
+                          },
+                          "value": [
+                            {
+                              "type": "selectEntry",
+                              "sourceInfo": {
+                                "context": "Id",
+                                "start": {
+                                  "offset": 43,
+                                  "line": 2,
+                                  "column": 29
+                                },
+                                "end": {
+                                  "offset": 45,
+                                  "line": 2,
+                                  "column": 31
+                                }
+                              },
+                              "value": {
+                                "type": "fieldName",
+                                "sourceInfo": {
+                                  "context": "Id",
+                                  "start": {
+                                    "offset": 43,
+                                    "line": 2,
+                                    "column": 29
+                                  },
+                                  "end": {
+                                    "offset": 45,
+                                    "line": 2,
+                                    "column": 31
+                                  }
+                                },
+                                "value": [
+                                  {
+                                    "type": "soqlId",
+                                    "sourceInfo": {
+                                      "context": "Id",
+                                      "start": {
+                                        "offset": 43,
+                                        "line": 2,
+                                        "column": 29
+                                      },
+                                      "end": {
+                                        "offset": 45,
+                                        "line": 2,
+                                        "column": 31
+                                      }
+                                    },
+                                    "value": {
+                                      "type": "id",
+                                      "sourceInfo": {
+                                        "context": "Id",
+                                        "start": {
+                                          "offset": 43,
+                                          "line": 2,
+                                          "column": 29
+                                        },
+                                        "end": {
+                                          "offset": 45,
+                                          "line": 2,
+                                          "column": 31
+                                        }
+                                      },
+                                      "value": "Id"
+                                    }
+                                  }
+                                ]
+                              },
+                              "alias": null
+                            }
+                          ]
+                        },
+                        "from": {
+                          "type": "fromNameList",
+                          "sourceInfo": {
+                            "context": "Account",
+                            "start": {
+                              "offset": 51,
+                              "line": 2,
+                              "column": 37
+                            },
+                            "end": {
+                              "offset": 58,
+                              "line": 2,
+                              "column": 44
+                            }
+                          },
+                          "value": [
+                            {
+                              "type": "fromName",
+                              "sourceInfo": {
+                                "context": "Account",
+                                "start": {
+                                  "offset": 51,
+                                  "line": 2,
+                                  "column": 37
+                                },
+                                "end": {
+                                  "offset": 58,
+                                  "line": 2,
+                                  "column": 44
+                                }
+                              },
+                              "value": {
+                                "type": "fieldName",
+                                "sourceInfo": {
+                                  "context": "Account",
+                                  "start": {
+                                    "offset": 51,
+                                    "line": 2,
+                                    "column": 37
+                                  },
+                                  "end": {
+                                    "offset": 58,
+                                    "line": 2,
+                                    "column": 44
+                                  }
+                                },
+                                "value": [
+                                  {
+                                    "type": "soqlId",
+                                    "sourceInfo": {
+                                      "context": "Account",
+                                      "start": {
+                                        "offset": 51,
+                                        "line": 2,
+                                        "column": 37
+                                      },
+                                      "end": {
+                                        "offset": 58,
+                                        "line": 2,
+                                        "column": 44
+                                      }
+                                    },
+                                    "value": {
+                                      "type": "id",
+                                      "sourceInfo": {
+                                        "context": "Account",
+                                        "start": {
+                                          "offset": 51,
+                                          "line": 2,
+                                          "column": 37
+                                        },
+                                        "end": {
+                                          "offset": 58,
+                                          "line": 2,
+                                          "column": 44
+                                        }
+                                      },
+                                      "value": "Account"
+                                    }
+                                  }
+                                ]
+                              },
+                              "alias": null
+                            }
+                          ]
+                        },
+                        "forClause": null,
+                        "usingScope": null,
+                        "whereClause": {
+                          "type": "whereClause",
+                          "sourceInfo": {
+                            "context": "WHERE",
+                            "start": {
+                              "offset": 59,
+                              "line": 2,
+                              "column": 45
+                            },
+                            "end": {
+                              "offset": 64,
+                              "line": 2,
+                              "column": 50
+                            }
+                          },
+                          "value": {
+                            "type": "error",
+                            "errorCode": "EXCEPTION",
+                            "contextType": "WhereLogicalExpressionContext",
+                            "sourceInfo": {
+                              "context": "",
+                              "start": {
+                                "offset": 65,
+                                "line": 2,
+                                "column": 51
+                              },
+                              "end": {
+                                "offset": 65,
+                                "line": 2,
+                                "column": 51
+                              }
+                            }
+                          }
+                        },
+                        "withClause": null,
+                        "groupByClause": null,
+                        "orderByClause": null,
+                        "limitClause": null,
+                        "offsetClause": null,
+                        "allRowsClause": null,
+                        "updateList": null
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "modifier": []
+        },
+        {
+          "type": "anonymousBlockMember",
+          "sourceInfo": {
+            "context": "Name=LIMIT<missing ';'>",
+            "start": {
+              "offset": 65,
+              "line": 2,
+              "column": 51
+            },
+            "end": {
+              "offset": 77,
+              "line": 2,
+              "column": 63
+            }
+          },
+          "value": {
+            "type": "statement",
+            "sourceInfo": {
+              "context": "Name=LIMIT<missing ';'>",
+              "start": {
+                "offset": 65,
+                "line": 2,
+                "column": 51
+              },
+              "end": {
+                "offset": 77,
+                "line": 2,
+                "column": 63
+              }
+            },
+            "value": {
+              "type": "expressionStatement",
+              "sourceInfo": {
+                "context": "Name=LIMIT<missing ';'>",
+                "start": {
+                  "offset": 65,
+                  "line": 2,
+                  "column": 51
+                },
+                "end": {
+                  "offset": 77,
+                  "line": 2,
+                  "column": 63
+                }
+              },
+              "value": {
+                "type": "assignExpression",
+                "sourceInfo": {
+                  "context": "Name=LIMIT",
+                  "start": {
+                    "offset": 65,
+                    "line": 2,
+                    "column": 51
+                  },
+                  "end": {
+                    "offset": 77,
+                    "line": 2,
+                    "column": 63
+                  }
+                },
+                "left": {
+                  "type": "primaryExpression",
+                  "sourceInfo": {
+                    "context": "Name",
+                    "start": {
+                      "offset": 65,
+                      "line": 2,
+                      "column": 51
+                    },
+                    "end": {
+                      "offset": 69,
+                      "line": 2,
+                      "column": 55
+                    }
+                  },
+                  "value": {
+                    "type": "idPrimary",
+                    "sourceInfo": {
+                      "context": "Name",
+                      "start": {
+                        "offset": 65,
+                        "line": 2,
+                        "column": 51
+                      },
+                      "end": {
+                        "offset": 69,
+                        "line": 2,
+                        "column": 55
+                      }
+                    },
+                    "value": {
+                      "type": "id",
+                      "sourceInfo": {
+                        "context": "Name",
+                        "start": {
+                          "offset": 65,
+                          "line": 2,
+                          "column": 51
+                        },
+                        "end": {
+                          "offset": 69,
+                          "line": 2,
+                          "column": 55
+                        }
+                      },
+                      "value": "Name"
+                    }
+                  }
+                },
+                "operator": "=",
+                "right": {
+                  "type": "primaryExpression",
+                  "sourceInfo": {
+                    "context": "LIMIT",
+                    "start": {
+                      "offset": 72,
+                      "line": 2,
+                      "column": 58
+                    },
+                    "end": {
+                      "offset": 77,
+                      "line": 2,
+                      "column": 63
+                    }
+                  },
+                  "value": {
+                    "type": "idPrimary",
+                    "sourceInfo": {
+                      "context": "LIMIT",
+                      "start": {
+                        "offset": 72,
+                        "line": 2,
+                        "column": 58
+                      },
+                      "end": {
+                        "offset": 77,
+                        "line": 2,
+                        "column": 63
+                      }
+                    },
+                    "value": {
+                      "type": "id",
+                      "sourceInfo": {
+                        "context": "LIMIT",
+                        "start": {
+                          "offset": 72,
+                          "line": 2,
+                          "column": 58
+                        },
+                        "end": {
+                          "offset": 77,
+                          "line": 2,
+                          "column": 63
+                        }
+                      },
+                      "value": "LIMIT"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "modifier": []
+        },
+        {
+          "type": "anonymousBlockMember",
+          "sourceInfo": {
+            "context": "1];",
+            "start": {
+              "offset": 78,
+              "line": 2,
+              "column": 64
+            },
+            "end": {
+              "offset": 81,
+              "line": 2,
+              "column": 67
+            }
+          },
+          "value": {
+            "type": "statement",
+            "sourceInfo": {
+              "context": "1];",
+              "start": {
+                "offset": 78,
+                "line": 2,
+                "column": 64
+              },
+              "end": {
+                "offset": 81,
+                "line": 2,
+                "column": 67
+              }
+            },
+            "value": {
+              "type": "expressionStatement",
+              "sourceInfo": {
+                "context": "1];",
+                "start": {
+                  "offset": 78,
+                  "line": 2,
+                  "column": 64
+                },
+                "end": {
+                  "offset": 81,
+                  "line": 2,
+                  "column": 67
+                }
+              },
+              "value": {
+                "type": "primaryExpression",
+                "sourceInfo": {
+                  "context": "1",
+                  "start": {
+                    "offset": 78,
+                    "line": 2,
+                    "column": 64
+                  },
+                  "end": {
+                    "offset": 79,
+                    "line": 2,
+                    "column": 65
+                  }
+                },
+                "value": {
+                  "type": "literalPrimary",
+                  "sourceInfo": {
+                    "context": "1",
+                    "start": {
+                      "offset": 78,
+                      "line": 2,
+                      "column": 64
+                    },
+                    "end": {
+                      "offset": 79,
+                      "line": 2,
+                      "column": 65
+                    }
+                  },
+                  "value": {
+                    "type": "literal",
+                    "sourceInfo": {
+                      "context": "1",
+                      "start": {
+                        "offset": 78,
+                        "line": 2,
+                        "column": 64
+                      },
+                      "end": {
+                        "offset": 79,
+                        "line": 2,
+                        "column": 65
+                      }
+                    },
+                    "value": "1",
+                    "valueType": "integer"
+                  }
+                }
+              }
+            }
+          },
+          "modifier": []
+        },
+        {
+          "type": "anonymousBlockMember",
+          "sourceInfo": {
+            "context": "for(;;){foo(1,);}",
+            "start": {
+              "offset": 82,
+              "line": 3,
+              "column": 0
+            },
+            "end": {
+              "offset": 108,
+              "line": 5,
+              "column": 1
+            }
+          },
+          "value": {
+            "type": "statement",
+            "sourceInfo": {
+              "context": "for(;;){foo(1,);}",
+              "start": {
+                "offset": 82,
+                "line": 3,
+                "column": 0
+              },
+              "end": {
+                "offset": 108,
+                "line": 5,
+                "column": 1
+              }
+            },
+            "value": {
+              "type": "forStatement",
+              "sourceInfo": {
+                "context": "for(;;){foo(1,);}",
+                "start": {
+                  "offset": 82,
+                  "line": 3,
+                  "column": 0
+                },
+                "end": {
+                  "offset": 108,
+                  "line": 5,
+                  "column": 1
+                }
+              },
+              "value": {
+                "type": "forControl",
+                "sourceInfo": {
+                  "context": ";;",
+                  "start": {
+                    "offset": 87,
+                    "line": 3,
+                    "column": 5
+                  },
+                  "end": {
+                    "offset": 89,
+                    "line": 3,
+                    "column": 7
+                  }
+                },
+                "value": null,
+                "init": null,
+                "update": null
+              },
+              "block": {
+                "type": "statement",
+                "sourceInfo": {
+                  "context": "{foo(1,);}",
+                  "start": {
+                    "offset": 91,
+                    "line": 3,
+                    "column": 9
+                  },
+                  "end": {
+                    "offset": 108,
+                    "line": 5,
+                    "column": 1
+                  }
+                },
+                "value": {
+                  "type": "block",
+                  "sourceInfo": {
+                    "context": "{foo(1,);}",
+                    "start": {
+                      "offset": 91,
+                      "line": 3,
+                      "column": 9
+                    },
+                    "end": {
+                      "offset": 108,
+                      "line": 5,
+                      "column": 1
+                    }
+                  },
+                  "value": [
+                    {
+                      "type": "statement",
+                      "sourceInfo": {
+                        "context": "foo(1,);",
+                        "start": {
+                          "offset": 97,
+                          "line": 4,
+                          "column": 4
+                        },
+                        "end": {
+                          "offset": 106,
+                          "line": 4,
+                          "column": 13
+                        }
+                      },
+                      "value": {
+                        "type": "expressionStatement",
+                        "sourceInfo": {
+                          "context": "foo(1,);",
+                          "start": {
+                            "offset": 97,
+                            "line": 4,
+                            "column": 4
+                          },
+                          "end": {
+                            "offset": 106,
+                            "line": 4,
+                            "column": 13
+                          }
+                        },
+                        "value": {
+                          "type": "methodCallExpression",
+                          "sourceInfo": {
+                            "context": "foo(1,)",
+                            "start": {
+                              "offset": 97,
+                              "line": 4,
+                              "column": 4
+                            },
+                            "end": {
+                              "offset": 105,
+                              "line": 4,
+                              "column": 12
+                            }
+                          },
+                          "value": {
+                            "type": "methodCall",
+                            "sourceInfo": {
+                              "context": "foo(1,)",
+                              "start": {
+                                "offset": 97,
+                                "line": 4,
+                                "column": 4
+                              },
+                              "end": {
+                                "offset": 105,
+                                "line": 4,
+                                "column": 12
+                              }
+                            },
+                            "value": {
+                              "type": "id",
+                              "sourceInfo": {
+                                "context": "foo",
+                                "start": {
+                                  "offset": 97,
+                                  "line": 4,
+                                  "column": 4
+                                },
+                                "end": {
+                                  "offset": 100,
+                                  "line": 4,
+                                  "column": 7
+                                }
+                              },
+                              "value": "foo"
+                            },
+                            "param": {
+                              "type": "expressionList",
+                              "sourceInfo": {
+                                "context": "1,",
+                                "start": {
+                                  "offset": 101,
+                                  "line": 4,
+                                  "column": 8
+                                },
+                                "end": {
+                                  "offset": 103,
+                                  "line": 4,
+                                  "column": 10
+                                }
+                              },
+                              "value": [
+                                {
+                                  "type": "primaryExpression",
+                                  "sourceInfo": {
+                                    "context": "1",
+                                    "start": {
+                                      "offset": 101,
+                                      "line": 4,
+                                      "column": 8
+                                    },
+                                    "end": {
+                                      "offset": 102,
+                                      "line": 4,
+                                      "column": 9
+                                    }
+                                  },
+                                  "value": {
+                                    "type": "literalPrimary",
+                                    "sourceInfo": {
+                                      "context": "1",
+                                      "start": {
+                                        "offset": 101,
+                                        "line": 4,
+                                        "column": 8
+                                      },
+                                      "end": {
+                                        "offset": 102,
+                                        "line": 4,
+                                        "column": 9
+                                      }
+                                    },
+                                    "value": {
+                                      "type": "literal",
+                                      "sourceInfo": {
+                                        "context": "1",
+                                        "start": {
+                                          "offset": 101,
+                                          "line": 4,
+                                          "column": 8
+                                        },
+                                        "end": {
+                                          "offset": 102,
+                                          "line": 4,
+                                          "column": 9
+                                        }
+                                      },
+                                      "value": "1",
+                                      "valueType": "integer"
+                                    }
+                                  }
+                                },
+                                {
+                                  "type": "error",
+                                  "errorCode": "UNSUPPORTED_CONTEXT",
+                                  "contextType": "ExpressionContext",
+                                  "sourceInfo": {
+                                    "context": "",
+                                    "start": {
+                                      "offset": 104,
+                                      "line": 4,
+                                      "column": 11
+                                    },
+                                    "end": {
+                                      "offset": 104,
+                                      "line": 4,
+                                      "column": 11
+                                    }
+                                  }
+                                }
+                              ]
+                            },
+                            "reference": null
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "modifier": []
+        },
+        {
+          "type": "anonymousBlockMember",
+          "sourceInfo": {
+            "context": "returnx+;",
+            "start": {
+              "offset": 109,
+              "line": 6,
+              "column": 0
+            },
+            "end": {
+              "offset": 120,
+              "line": 6,
+              "column": 11
+            }
+          },
+          "value": {
+            "type": "statement",
+            "sourceInfo": {
+              "context": "returnx+;",
+              "start": {
+                "offset": 109,
+                "line": 6,
+                "column": 0
+              },
+              "end": {
+                "offset": 120,
+                "line": 6,
+                "column": 11
+              }
+            },
+            "value": {
+              "type": "returnStatement",
+              "sourceInfo": {
+                "context": "returnx+;",
+                "start": {
+                  "offset": 109,
+                  "line": 6,
+                  "column": 0
+                },
+                "end": {
+                  "offset": 120,
+                  "line": 6,
+                  "column": 11
+                }
+              },
+              "value": {
+                "type": "primaryExpression",
+                "sourceInfo": {
+                  "context": "x",
+                  "start": {
+                    "offset": 116,
+                    "line": 6,
+                    "column": 7
+                  },
+                  "end": {
+                    "offset": 117,
+                    "line": 6,
+                    "column": 8
+                  }
+                },
+                "value": {
+                  "type": "idPrimary",
+                  "sourceInfo": {
+                    "context": "x",
+                    "start": {
+                      "offset": 116,
+                      "line": 6,
+                      "column": 7
+                    },
+                    "end": {
+                      "offset": 117,
+                      "line": 6,
+                      "column": 8
+                    }
+                  },
+                  "value": {
+                    "type": "id",
+                    "sourceInfo": {
+                      "context": "x",
+                      "start": {
+                        "offset": 116,
+                        "line": 6,
+                        "column": 7
+                      },
+                      "end": {
+                        "offset": 117,
+                        "line": 6,
+                        "column": 8
+                      }
+                    },
+                    "value": "x"
+                  }
+                }
+              }
+            }
+          },
+          "modifier": []
+        }
+      ]
+    }
+  }
+}

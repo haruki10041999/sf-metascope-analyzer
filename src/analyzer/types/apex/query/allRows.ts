@@ -1,17 +1,6 @@
 import typia from 'typia';
 
-import {
-    Convert,
-    ConvertExcludeError,
-    ErrorJson,
-    isErrorJson,
-    JsonType,
-    makeJsonType,
-    convertExcludeError,
-    mergeRecord,
-    convertValue,
-    ConvertType,
-} from '../commons';
+import { ErrorJson, JsonType, makeJsonType, convertValue, ConvertType } from '../commons';
 
 import { AllRowsClauseType } from '../converter';
 
@@ -23,17 +12,15 @@ export const isAllRowsJson = typia.createIs<AllRowsJson>();
 
 export const makeAllRowsJson = (
     target: ConvertType<AllRowsClauseType>,
-    targetRecords?: Record<string, string[]>,
 ): AllRowsJson | ErrorJson => {
     return convertValue<'allRowsClause', AllRowsClauseType, AllRowsJson>(
-        ['allRowsClause'],
         target,
         'allRowsClause',
         (target, targetRecords) => {
-            return makeJsonType('allRowsClause', targetRecords, {
+            return makeJsonType('allRowsClause', targetRecords.base, {
                 value: target.value,
             });
         },
-        targetRecords,
     );
 };
+

@@ -1,17 +1,6 @@
 import typia from 'typia';
 
-import {
-    Convert,
-    ConvertExcludeError,
-    ErrorJson,
-    isErrorJson,
-    JsonType,
-    makeJsonType,
-    convertExcludeError,
-    mergeRecord,
-    convertValue,
-    ConvertType,
-} from '../commons';
+import { ErrorJson, JsonType, makeJsonType, convertValue, ConvertType } from '../commons';
 
 import { UpdateListType, UpdateTypeType } from '../converter';
 
@@ -23,17 +12,15 @@ export const isUpdateListJson = typia.createIs<UpdateListJson>();
 
 export const makeUpdateListJson = (
     target: ConvertType<UpdateListType>,
-    targetRecords?: Record<string, string[]>,
 ): UpdateListJson | ErrorJson => {
     return convertValue<'updateList', UpdateListType, UpdateListJson>(
-        ['updateList'],
         target,
         'updateClause',
         (target, targetRecords) => {
-            return makeJsonType('updateClause', targetRecords, {
+            return makeJsonType('updateClause', targetRecords.base, {
                 value: target.value.map((v) => v.value),
             });
         },
-        targetRecords,
     );
 };
+

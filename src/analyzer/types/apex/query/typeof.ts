@@ -24,7 +24,7 @@ export type TypeOfBlockJson =
           object: 'else';
           field: string[][];
       };
-export const isWhenJson = typia.createIs<TypeOfBlockJson>();
+export const isTypeOfBlockJson = typia.createIs<TypeOfBlockJson>();
 
 const makeWhenJson = (target: ConvertExcludeError<WhenClauseType>): TypeOfBlockJson => {
     const object = target.value.value.map((v) => v.value.value);
@@ -44,34 +44,21 @@ const makeElseJson = (target: ConvertExcludeError<ElseClauseType>): TypeOfBlockJ
     };
 };
 
-export type TypeOfJson = JsonType<'typeOf'> & {
+export type TypeOfJson = {
+    type: 'typeOf';
     field: string[];
     block: TypeOfBlockJson[];
 };
 export const isTypeOfJson = typia.createIs<TypeOfJson>();
 
-export const makeTypeOfJson = (
-    target: ConvertType<TypeOfType>,
-    targetRecords?: Record<string, string[]>,
-): TypeOfJson | ErrorJson => {
-    return convertValue<'typeOf', TypeOfType, TypeOfJson>(
-        ['typeOf'],
-        target,
-        'typeOf',
-        (target, targetRecords) => {
-            const typeOfBlocks: TypeOfBlockJson[] = [];
-            target.whenClause.forEach((v) => {
-                typeOfBlocks.push(makeWhenJson(v));
-            });
-            if (target.elseClause) {
-                typeOfBlocks.push(makeElseJson(target.elseClause));
-            }
-
-            return makeJsonType('typeOf', targetRecords, {
-                field: target.value.value.map((v) => v.value.value),
-                block: typeOfBlocks,
-            });
-        },
-        targetRecords,
-    );
+export const makeTypeOfJson = (target: ConvertExcludeError<TypeOfType>): TypeOfJson => {
+    return {
+        type: 'typeOf',
+        field: target.value.value.map((v) => v.value.value),
+        block: [
+            ...target.whenClause.map((v) => makeWhenJson(v)),
+            ...(target.elseClause ? [makeElseJson(target.elseClause)] : []),
+        ],
+    };
 };
+

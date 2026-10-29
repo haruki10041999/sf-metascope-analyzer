@@ -37,11 +37,12 @@ describe('makeLogicalConditionJson', () => {
 
             const json = makeLogicalConditionJson(result);
 
+            // 論理条件は非境界ノード（キーを持たない）。単一条件だけが境界ノード
             assert.ok(isLogicalConditionJson(json));
             assert.equal(Object.hasOwn(json, 'operator'), operator !== null);
             assert.equal(json.operator, operator ?? undefined);
-            assert.deepEqual(json.condition, [{ kind: 'logicalCondition', condition: [] }]);
-            assert.deepEqual(json.sourceKeys, { condition: [{ condition: [] }] });
+            assert.deepEqual(json.condition, [{ condition: [] }]);
+            assert.equal(Object.hasOwn(json, 'sourceKeys'), false);
         });
     }
 });

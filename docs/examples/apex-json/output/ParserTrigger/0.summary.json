@@ -1,0 +1,15 @@
+{
+  "file": "ParserTrigger.trigger",
+  "syntaxErrors": 0,
+  "converterErrors": 0,
+  "errorJson": 0,
+  "errorJsonKinds": [],
+  "sourceObjects": {
+    "before": 656,
+    "after": 136
+  },
+  "sources": {
+    "before": 1109,
+    "after": 159
+  }
+}

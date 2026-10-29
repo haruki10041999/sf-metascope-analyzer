@@ -1,17 +1,14 @@
 import typia from 'typia';
 
 import {
-    Convert,
-    ConvertExcludeError,
     ErrorJson,
-    isErrorJson,
     JsonType,
     makeJsonType,
-    convertExcludeError,
-    mergeRecord,
     convertValue,
     ConvertType,
-} from '..//commons';
+    isErrorNode,
+    makeErrorJson,
+} from '../commons';
 
 import { FromNameType, FromNameListType } from '../converter';
 
@@ -20,16 +17,12 @@ type FromFieldJson = JsonType<'fromField'> & {
     alias?: string;
 };
 
-const makeFromFieldJson = (
-    target: ConvertType<FromNameType>,
-    targetRecords?: Record<string, string[]>,
-): FromFieldJson | ErrorJson => {
+const makeFromFieldJson = (target: ConvertType<FromNameType>): FromFieldJson | ErrorJson => {
     return convertValue<'fromName', FromNameType, FromFieldJson>(
-        ['fromName'],
         target,
         'fromField',
         (target, targetRecords) => {
-            const fromFieldJson: FromFieldJson = makeJsonType('fromField', targetRecords, {
+            const fromFieldJson: FromFieldJson = makeJsonType('fromField', targetRecords.base, {
                 field: target.value.value.map((item) => item.value.value),
             });
 
@@ -39,7 +32,6 @@ const makeFromFieldJson = (
 
             return fromFieldJson;
         },
-        targetRecords,
     );
 };
 
@@ -48,7 +40,11 @@ export type FromJson = {
 };
 export const isFromJson = typia.createIs<FromJson>();
 
-export const makeFromJson = (target: ConvertExcludeError<FromNameListType>): FromJson => {
+export const makeFromJson = (target: ConvertType<FromNameListType>): FromJson | ErrorJson => {
+    if (isErrorNode(target)) {
+        return makeErrorJson(target, 'from');
+    }
+
     return {
         field: target.value.map((v) => makeFromFieldJson(v)),
     };

@@ -185,12 +185,8 @@ export type ValueType = CommonType<'value'> &
               valueType: 'list';
           }
         | {
-              value: BoundExpressionType;
+              value: ValueRuleValue<BoundExpressionType>;
               valueType: 'bind';
-          }
-        | {
-              value: ErrorType;
-              valueType: 'error';
           }
     );
 
@@ -260,20 +256,13 @@ export const makeValueAssignRule: AssignForValueRule<NormalValueTypeClass, Value
                 value,
                 valueType,
             };
-        } else if (value.type === 'boundExpression') {
+        } else {
             const valueType = valueTypeClass.getValueType() as 'bind';
             return {
                 type: valueTypeClass.getType(),
                 sourceInfo: makeSourceInfo(valueTypeClass),
                 value,
                 valueType,
-            };
-        } else {
-            return {
-                type: valueTypeClass.getType(),
-                sourceInfo: makeSourceInfo(valueTypeClass),
-                value,
-                valueType: 'error',
             };
         }
     },

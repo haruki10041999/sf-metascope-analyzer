@@ -129,6 +129,20 @@ export const makeSoqlLiteralAssignRule: AssignForValueRule<SoqlLiteralTypeClass,
         },
     };
 
+// FindLiteral（[FIND '...'）/ FindLiteralAlt（[FIND {...}）のトークンから検索語だけを取り出す。
+// 形式が想定外のときはトークンの文字列をそのまま返す
+const FIND_LITERAL_PATTERN = /^\[\s*FIND\s*(?:'((?:\\.|[^\\'])*)'|\{((?:\\.|[^\\}])*)\})\s*$/i;
+
+export const extractFindSearchTerm = (token: string): string => {
+    const match = token.match(FIND_LITERAL_PATTERN);
+    return match ? (match[1] ?? match[2] ?? token) : token;
+};
+
+const makeFindLiteralAssignRule = {
+    isValid: (target: unknown): target is string => typeof target === 'string',
+    construct: (value: string) => extractFindSearchTerm(value),
+};
+
 export type SoslLiteralAltType = CommonType<'soslLiteralAlt'> & {
     value: string;
     soslClauses: ValueRuleValue<SoslClausesType>;
@@ -151,7 +165,7 @@ export const makeSoslLiteralAltAssignRule: AssignForValueRule<
         return {
             type: literalTypeClass.getType(),
             sourceInfo: makeSourceInfo(literalTypeClass),
-            value: literalTypeClass.getValue(),
+            value: extractFindSearchTerm(literalTypeClass.getValue()),
             soslClauses,
         };
     },
@@ -171,7 +185,7 @@ export const makeSoslLiteralAssignRule: AssignForValueRule<SoslLiteralTypeClass,
         isValid: (target: unknown) => isTargetTypeClass(target, isSoslLiteralTypeClass),
         construct: (literalTypeClass: SoslLiteralTypeClass) => {
             const value = assignMultiClass(literalTypeClass.getValue(), [
-                makeStringAssignRule,
+                makeFindLiteralAssignRule,
                 makeBoundExpressionAssignRule,
                 makeErrorAssignRule,
             ]);

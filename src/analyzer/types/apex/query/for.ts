@@ -1,17 +1,6 @@
 import typia from 'typia';
 
-import {
-    Convert,
-    ConvertExcludeError,
-    ErrorJson,
-    isErrorJson,
-    JsonType,
-    makeJsonType,
-    convertExcludeError,
-    mergeRecord,
-    convertValue,
-    ConvertType,
-} from '..//commons';
+import { ErrorJson, JsonType, makeJsonType, convertValue, ConvertType } from '../commons';
 
 import { ForClausesType } from '../converter';
 
@@ -20,20 +9,15 @@ export type ForJson = JsonType<'forClause'> & {
 };
 export const isForJson = typia.createIs<ForJson>();
 
-export const makeForJson = (
-    target: ConvertType<ForClausesType>,
-    targetRecords?: Record<string, string[]>,
-): ForJson | ErrorJson => {
+export const makeForJson = (target: ConvertType<ForClausesType>): ForJson | ErrorJson => {
     return convertValue<'forClauses', ForClausesType, ForJson>(
-        ['forClauses'],
         target,
         'forClause',
         (target, targetRecords) => {
-            return makeJsonType('forClause', targetRecords, {
+            return makeJsonType('forClause', targetRecords.base, {
                 value: target.value,
             });
         },
-        targetRecords,
     );
 };
 

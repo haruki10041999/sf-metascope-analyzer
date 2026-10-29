@@ -11,5 +11,4 @@ import './converter/modifier-json.test';
 import './converter/query-commons.test';
 import './converter/output-types.test';
 import './converter/convert-exclude-error.test';
-import './converter/restore-json.test';
-import './converter/source-output.test';
+import './converter/json-error-handling.test';

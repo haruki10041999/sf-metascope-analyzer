@@ -1,0 +1,149 @@
+{
+  "sample": "ParserTest",
+  "size": {
+    "sourceBytes": 22889,
+    "prettyFileBytes": {
+      "1.common-type.json": 4446778,
+      "2.convert-node.json": 1724478,
+      "2.source-all.json": 1791429,
+      "3.json.json": 344750,
+      "4.source.json": 330891
+    },
+    "commonType": {
+      "minifiedBytes": 976626,
+      "gzipBytes": 70073
+    },
+    "convertNode": {
+      "minifiedBytes": 637578,
+      "gzipBytes": 100557
+    },
+    "json": {
+      "minifiedBytes": 160149,
+      "gzipBytes": 26930
+    },
+    "jsonWithoutSourceKeys": {
+      "minifiedBytes": 70922,
+      "gzipBytes": 6982
+    },
+    "sourceAll": {
+      "minifiedBytes": 1036550,
+      "gzipBytes": 142968
+    },
+    "source": {
+      "minifiedBytes": 199390,
+      "gzipBytes": 42935
+    }
+  },
+  "coverage": {
+    "all": {
+      "nonWhitespaceChars": 14620,
+      "charRate": 0.9942544459644322,
+      "codeLines": 513,
+      "lineRate": 0.9922027290448343
+    },
+    "regenerated": {
+      "nonWhitespaceChars": 14620,
+      "charRate": 0.9942544459644322,
+      "codeLines": 513,
+      "lineRate": 0.9922027290448343
+    }
+  },
+  "span": {
+    "all": {
+      "count": 5048,
+      "median": 8,
+      "p90": 52,
+      "max": 22601
+    },
+    "regenerated": {
+      "count": 853,
+      "median": 13,
+      "p90": 75,
+      "max": 22525
+    }
+  },
+  "values": {
+    "total": 1224,
+    "retained": 1224,
+    "rate": 1,
+    "missingTop": []
+  },
+  "structure": {
+    "objects": 1818,
+    "boundary": 799,
+    "typeOnly": 150,
+    "undiscriminated": 869,
+    "unresolvedSourceKeys": 0,
+    "errorJson": 0,
+    "kinds": {
+      "type": 170,
+      "modifier": 81,
+      "localVariable": 75,
+      "expression": 74,
+      "selectEntry": 68,
+      "method": 33,
+      "singleCondition": 31,
+      "fromField": 30,
+      "parameter": 28,
+      "soql": 28,
+      "return": 24,
+      "field": 13,
+      "switchCondition": 11,
+      "soslField": 11,
+      "limitClause": 9,
+      "orderField": 7,
+      "sosl": 6,
+      "class": 5,
+      "annotation": 5,
+      "ifCondition": 5,
+      "for": 5,
+      "forCondition": 5,
+      "categoryCondition": 5,
+      "enumConstant": 4,
+      "if": 4,
+      "switch": 4,
+      "whenVariant": 4,
+      "groupBy": 4,
+      "property": 3,
+      "upsert": 3,
+      "offsetClause": 3,
+      "forClause": 3,
+      "constructor": 3,
+      "enum": 2,
+      "break": 2,
+      "try": 2,
+      "catchCondition": 2,
+      "insert": 2,
+      "merge": 2,
+      "runAs": 2,
+      "runAsCondition": 2,
+      "subQuery": 2,
+      "updateClause": 2,
+      "interface": 2,
+      "interfaceMethod": 2,
+      "continue": 1,
+      "while": 1,
+      "whileCondition": 1,
+      "doWhile": 1,
+      "doWhileCondition": 1,
+      "throw": 1,
+      "update": 1,
+      "delete": 1,
+      "undelete": 1,
+      "usingScopeClause": 1,
+      "allRowsClause": 1
+    }
+  },
+  "objectKeys": {
+    "all": {
+      "objectKeys": 2705,
+      "sharedObjectKeys": 383,
+      "maxSourcesPerObjectKey": 232
+    },
+    "regenerated": {
+      "objectKeys": 593,
+      "sharedObjectKeys": 51,
+      "maxSourcesPerObjectKey": 33
+    }
+  }
+}

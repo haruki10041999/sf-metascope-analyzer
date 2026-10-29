@@ -1,15 +1,8 @@
 import typia from 'typia';
 
-import {
-    ErrorJson,
-    isErrorJson,
-    JsonType,
-    makeJsonType,
-    convertValue,
-    ConvertType,
-} from './commons';
+import { ConvertExcludeError, ConvertType, ErrorJson, JsonType, convertValue, makeJsonType } from './commons';
 
-import { TypeRefType, ErrorType } from './converter';
+import { TypeRefType } from './converter';
 
 const isPrimitiveType = (type: string): boolean => {
     return [
@@ -40,155 +33,137 @@ const isMapType = (type: string): boolean => {
     return 'MAP' === type.toUpperCase();
 };
 
-type PrimitiveTypeJson = JsonType<'type'> & {
+// 型の中身。境界ノード（TypeJson）は最上位の型だけで、ジェネリクス・要素型はこの形（キーなし）で持つ
+type PrimitiveTypeContentJson = {
     type: 'primitive';
     primitiveType: string;
 };
-export const isPrimitiveTypeJson = typia.createIs<PrimitiveTypeJson>();
 
-type CustomTypeJson = JsonType<'type'> & {
+type CustomTypeContentJson = {
     type: 'custom';
     customType: string | string[];
-    generic?: Omit<TypeJson | ErrorJson, 'kind' | 'sourceKeys'>[];
+    generic?: TypeContentJson[];
 };
-export const isCustomTypeJson = typia.createIs<CustomTypeJson>();
 
-type ArrayTypeJson = JsonType<'type'> & {
+type ArrayTypeContentJson = {
     collectionType: 'array';
-    elementType: Omit<TypeJson | ErrorJson, 'kind' | 'sourceKeys'>;
+    elementType: TypeContentJson;
     dimension: number;
 };
+
+type ListTypeContentJson = {
+    collectionType: 'list';
+    elementType: TypeContentJson;
+};
+
+type SetTypeContentJson = {
+    collectionType: 'set';
+    elementType: TypeContentJson;
+};
+
+type MapTypeContentJson = {
+    collectionType: 'map';
+    keyType: TypeContentJson;
+    valueType: TypeContentJson;
+};
+
+export type TypeContentJson =
+    | PrimitiveTypeContentJson
+    | CustomTypeContentJson
+    | ArrayTypeContentJson
+    | ListTypeContentJson
+    | SetTypeContentJson
+    | MapTypeContentJson;
+
+type PrimitiveTypeJson = JsonType<'type'> & PrimitiveTypeContentJson;
+export const isPrimitiveTypeJson = typia.createIs<PrimitiveTypeJson>();
+
+type CustomTypeJson = JsonType<'type'> & CustomTypeContentJson;
+export const isCustomTypeJson = typia.createIs<CustomTypeJson>();
+
+type ArrayTypeJson = JsonType<'type'> & ArrayTypeContentJson;
 export const isArrayTypeJson = typia.createIs<ArrayTypeJson>();
 
-type ListTypeJson = JsonType<'type'> & {
-    collectionType: 'list';
-    elementType: Omit<TypeJson | ErrorJson, 'kind' | 'sourceKeys'>;
-};
+type ListTypeJson = JsonType<'type'> & ListTypeContentJson;
 export const isListTypeJson = typia.createIs<ListTypeJson>();
 
-type SetTypeJson = JsonType<'type'> & {
-    collectionType: 'set';
-    elementType: Omit<TypeJson | ErrorJson, 'kind' | 'sourceKeys'>;
-};
+type SetTypeJson = JsonType<'type'> & SetTypeContentJson;
 export const isSetTypeJson = typia.createIs<SetTypeJson>();
 
-type MapTypeJson = JsonType<'type'> & {
-    collectionType: 'map';
-    keyType: Omit<TypeJson | ErrorJson, 'kind' | 'sourceKeys'>;
-    valueType: Omit<TypeJson | ErrorJson, 'kind' | 'sourceKeys'>;
-};
+type MapTypeJson = JsonType<'type'> & MapTypeContentJson;
 export const isMapTypeJson = typia.createIs<MapTypeJson>();
 
 export type TypeJson =
     PrimitiveTypeJson | CustomTypeJson | ArrayTypeJson | ListTypeJson | SetTypeJson | MapTypeJson;
 export const isTypeJson = typia.createIs<TypeJson>();
 
-export const makeTypeJson = (
-    target: ConvertType<TypeRefType>,
-    targetRecords?: Record<string, string[]>,
-): TypeJson | ErrorJson => {
-    // ConvertType は条件型のため target から TCommonType を推論できず、明示しないと CommonType<'typeRef'> に落ちる
-    return convertValue<'typeRef', TypeRefType, TypeJson>(
-        ['typeRef'],
-        target,
-        'type',
-        (target, targetRecords) => {
-            const collection = target.value;
-            const dimension = target.dimension.value;
+// 境界ノードの検査を通った後に呼ぶため、エラーノードは含まれない
+const makeTypeContentJson = (target: ConvertExcludeError<TypeRefType>): TypeContentJson => {
+    const collection = target.value;
+    const dimension = target.dimension.value;
 
-            if (dimension) {
-                const result = makeTypeJson({
-                    ...target,
-                    dimension: { ...target.dimension, value: null },
-                });
-                const { kind, sourceKeys, ...content } = result;
-                return makeJsonType('type', targetRecords, {
-                    collectionType: 'array',
-                    elementType: content,
-                    dimension: dimension,
-                });
-            }
+    if (dimension) {
+        return {
+            collectionType: 'array',
+            elementType: makeTypeContentJson({
+                ...target,
+                dimension: { ...target.dimension, value: null },
+            }),
+            dimension: dimension,
+        };
+    }
 
-            if (collection.length === 1) {
-                const collectionItem = collection.at(0)!;
-                const collectionName =
-                    typeof collectionItem.value === 'string'
-                        ? collectionItem.value
-                        : collectionItem.value.value;
-                const generic = collectionItem.generic
-                    ? collectionItem.generic.value
-                        ? collectionItem.generic.value.value
-                        : null
-                    : null;
+    const nameOf = (item: (typeof collection)[number]) =>
+        typeof item.value === 'string' ? item.value : item.value.value;
 
-                if (isPrimitiveType(collectionName) && !collectionItem.generic) {
-                    return makeJsonType('type', targetRecords, {
-                        type: 'primitive',
-                        primitiveType: collectionName,
-                    });
-                }
+    if (collection.length !== 1) {
+        const generic = collection.at(-1)?.generic?.value?.value;
+        return {
+            type: 'custom',
+            customType: collection.map(nameOf),
+            ...(generic && generic.length > 0
+                ? { generic: generic.map((item) => makeTypeContentJson(item)) }
+                : {}),
+        };
+    }
 
-                if (
-                    (isListType(collectionName) || isSetType(collectionName)) &&
-                    generic &&
-                    generic.length === 1
-                ) {
-                    const result = makeTypeJson(generic.at(0)!);
+    const collectionItem = collection.at(0)!;
+    const collectionName = nameOf(collectionItem);
+    const generic = collectionItem.generic?.value?.value ?? null;
 
-                    const { kind, sourceKeys, ...content } = result;
-                    return makeJsonType('type', targetRecords, {
-                        collectionType: isListType(collectionName) ? 'list' : 'set',
-                        elementType: content,
-                    });
-                }
+    if (isPrimitiveType(collectionName) && !collectionItem.generic) {
+        return {
+            type: 'primitive',
+            primitiveType: collectionName,
+        };
+    }
 
-                if (isMapType(collectionName) && generic && generic.length === 2) {
-                    const keyResult = makeTypeJson(generic.at(0)!);
-                    const valueResult = makeTypeJson(generic.at(1)!);
+    if ((isListType(collectionName) || isSetType(collectionName)) && generic?.length === 1) {
+        return {
+            collectionType: isListType(collectionName) ? 'list' : 'set',
+            elementType: makeTypeContentJson(generic[0]!),
+        };
+    }
 
-                    const { kind: keyKind, sourceKeys: keySourceKeys, ...keyContent } = keyResult;
-                    const {
-                        kind: valueKind,
-                        sourceKeys: valueSourceKeys,
-                        ...valueContent
-                    } = valueResult;
-                    return makeJsonType('type', targetRecords, {
-                        collectionType: 'map',
-                        keyType: keyContent,
-                        valueType: valueContent,
-                    });
-                }
+    if (isMapType(collectionName) && generic?.length === 2) {
+        return {
+            collectionType: 'map',
+            keyType: makeTypeContentJson(generic[0]!),
+            valueType: makeTypeContentJson(generic[1]!),
+        };
+    }
 
-                return makeJsonType('type', targetRecords, {
-                    type: 'custom',
-                    customType: collectionName,
-                    ...(generic && generic.length > 0
-                        ? {
-                              generic: generic.map((item) => {
-                                  return makeTypeJson(item);
-                              }),
-                          }
-                        : {}),
-                });
-            } else {
-                const generic = collection.at(-1)!.generic?.value?.value;
-                return makeJsonType('type', targetRecords, {
-                    type: 'custom',
-                    customType: collection.map((c) =>
-                        typeof c.value === 'string' ? c.value : c.value.value,
-                    ),
-                    ...(generic && generic.length > 0
-                        ? {
-                              generic: generic.map((item) => {
-                                  const result = makeTypeJson(item);
-                                  return result;
-                              }),
-                          }
-                        : {}),
-                });
-            }
-        },
-        targetRecords,
-    );
+    return {
+        type: 'custom',
+        customType: collectionName,
+        ...(generic && generic.length > 0
+            ? { generic: generic.map((item) => makeTypeContentJson(item)) }
+            : {}),
+    };
 };
 
+export const makeTypeJson = (target: ConvertType<TypeRefType>): TypeJson | ErrorJson => {
+    return convertValue<'typeRef', TypeRefType, TypeJson>(target, 'type', (target, targetRecords) => {
+        return makeJsonType('type', targetRecords.base, makeTypeContentJson(target));
+    });
+};

@@ -1,233 +1,138 @@
 import { readFile } from 'node:fs/promises';
-import { before, describe, it } from 'node:test';
+import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
 
 import type { ApexParser, ApexParserRuleContext } from '@apexdevtools/apex-parser';
 
-import { parse } from '../apex_IR/helpers';
-
-type UnitVisitorModule = typeof import('../../src/analyzer/types/apex_IR/unitVisitor');
-type ConverterModule = typeof import('../../src/analyzer/types/apex/converter');
-type UnitOutputModule = typeof import('../../src/analyzer/types/apex/unit');
-type IRModule = typeof import('../../src/analyzer/types/apex_IR');
-let unitVisitor: UnitVisitorModule;
-let converter: ConverterModule;
-let unitOutput: UnitOutputModule;
-let ir: IRModule;
-
-before(async () => {
-    unitVisitor = await import('../../src/analyzer/types/apex_IR/unitVisitor');
-    converter = await import('../../src/analyzer/types/apex/converter');
-    unitOutput = await import('../../src/analyzer/types/apex/unit');
-    ir = await import('../../src/analyzer/types/apex_IR');
-});
+import { find, toJson, unitRules } from './helpers';
 
 const examples: [string, (p: ApexParser) => ApexParserRuleContext][] = [
-    ['ParserTest.cls', (p) => p.compilationUnit()],
-    ['ParserTrigger.trigger', (p) => p.triggerUnit()],
-    ['parser.apex', (p) => p.anonymousUnit()],
+    ['ParserTest.cls', unitRules.cls],
+    ['ParserTrigger.trigger', unitRules.trigger],
+    ['parser.apex', unitRules.anonymous],
 ];
 
 const load = (file: string) =>
     readFile(new URL(`../../docs/examples/apex-ir/${file}`, import.meta.url), 'utf8');
 
-const convert = async (file: string, rule: (p: ApexParser) => ApexParserRuleContext) => {
-    const unit = new unitVisitor.UnitVisitor().visit(parse(await load(file), rule));
-    const errors: InstanceType<IRModule['ErrorTypeClass']>[] = [];
-    let converted: unknown;
-    if (ir.isCompilationUnitType(unit)) converted = converter.compilationUnitConvert(unit, errors);
-    else if (ir.isTriggerUnitType(unit)) converted = converter.triggerUnitConvert(unit, errors);
-    else if (ir.isAnonymousUnitType(unit)) converted = converter.anonymousUnitConvert(unit, errors);
-    else throw new Error(`Unsupported unit type: ${unit.getType()}`);
-    return {
-        unit,
-        converted: JSON.parse(JSON.stringify(converted)),
-        convertedClass: converted,
-        errors,
-    };
+const convert = async (index: number) => {
+    const [file, rule] = examples[index]!;
+    return toJson(await load(file), rule);
 };
 
-const convertOutput = async (file: string, rule: (p: ApexParser) => ApexParserRuleContext) => {
-    const result = await convert(file, rule);
-    let output: unknown;
-    if (ir.isCompilationUnitType(result.unit)) {
-        output = unitOutput.makeCompilationUnitType(result.convertedClass as any);
-    } else if (ir.isTriggerUnitType(result.unit)) {
-        output = unitOutput.makeTriggerUnitType(result.convertedClass as any);
-    } else if (ir.isAnonymousUnitType(result.unit)) {
-        output = unitOutput.makeAnonymousUnitType(result.convertedClass as any);
-    }
-    return JSON.parse(JSON.stringify(output));
-};
+// CommonType のうち、ソース由来でない（変換器が付けた）値を持つキー
+const META_KEYS = new Set(['type', 'sourceInfo', 'errorCode', 'contextType', 'valueType']);
 
-// IR の構造キーや、converter が null に正規化する arraySubscripts の 0 / isStatic の false は比較対象外
-const SKIP_KEYS = new Set(['type', 'span', 'contextType']);
-const collectValues = (node: unknown, out = new Map<string, number>()) => {
-    if (node === null || node === undefined || node === 0 || node === false) return out;
-    if (Array.isArray(node)) {
-        node.forEach((n) => collectValues(n, out));
-    } else if (typeof node === 'object') {
-        Object.entries(node).forEach(([k, v]) => !SKIP_KEYS.has(k) && collectValues(v, out));
-    } else {
-        const key = `${typeof node}:${String(node)}`;
-        out.set(key, (out.get(key) ?? 0) + 1);
+const countValues = (target: unknown, skip: Set<string>, out = new Map<string, number>()) => {
+    if (Array.isArray(target)) {
+        target.forEach((item) => countValues(item, skip, out));
+    } else if (target !== null && typeof target === 'object') {
+        for (const [key, value] of Object.entries(target)) {
+            if (skip.has(key)) continue;
+            if (typeof value === 'string' || typeof value === 'number') {
+                out.set(String(value), (out.get(String(value)) ?? 0) + 1);
+            } else {
+                countValues(value, skip, out);
+            }
+        }
+    } else if (typeof target === 'string') {
+        out.set(target, (out.get(target) ?? 0) + 1);
     }
     return out;
 };
 
-const find = (node: any, predicate: (n: any) => boolean): any[] => {
-    if (node === null || typeof node !== 'object') return [];
-    const self = predicate(node) ? [node] : [];
-    return [...self, ...Object.values(node).flatMap((v) => find(v, predicate))];
-};
+describe('JSON 出力 / docs/examples/apex-ir', () => {
+    for (const [index, [file]] of examples.entries()) {
+        it(`${file}: エラーノードなしで変換でき、CommonType の値を欠落させない`, async () => {
+            const { commonType, json } = await convert(index);
+            assert.equal(find(commonType, (n) => n.type === 'error').length, 0);
+            assert.equal(find(json, (n) => n.kind === 'error').length, 0);
 
-describe('converter / docs/examples/apex-ir', () => {
-    for (const [file, rule] of examples) {
-        it(`${file} を変換エラーなしで変換でき、IR の値を欠落させない`, async () => {
-            const { unit, converted, errors } = await convert(file, rule);
-            assert.equal(errors.length, 0);
-
-            const irValues = collectValues(JSON.parse(JSON.stringify(unit)));
-            const convertedValues = collectValues(converted);
-            const missing = [...irValues]
-                .filter(([k, n]) => (convertedValues.get(k) ?? 0) < n)
-                .map(([k, n]) => `${k} x${n - (convertedValues.get(k) ?? 0)}`);
+            const expected = countValues(commonType, META_KEYS);
+            const actual = countValues(json, new Set(['sourceKeys']));
+            const missing = [...expected]
+                .filter(([value, count]) => (actual.get(value) ?? 0) < count)
+                .map(([value, count]) => `${value} x${count - (actual.get(value) ?? 0)}`);
             assert.deepEqual(missing, []);
+        });
+
+        it(`${file}: JSON の sourceKeys がすべて絞り込み後の SourceJson から引ける`, async () => {
+            const { json, sourceObjects, allSourceObjects } = await convert(index);
+            const registered = new Set(
+                sourceObjects.flatMap((o) => o.source.map((s) => `${o.objectKey}/${s.sourceKey}`)),
+            );
+            const keys = find(json, (n) => n.sourceKeys !== undefined).flatMap((n) =>
+                'objectKey' in n.sourceKeys
+                    ? [n.sourceKeys]
+                    : Object.values(n.sourceKeys).flat(),
+            );
+            assert.ok(keys.length > 0);
+            keys.forEach((k: any) => assert.ok(registered.has(`${k.objectKey}/${k.sourceKey}`)));
+            assert.ok(sourceObjects.length < allSourceObjects.length);
         });
     }
 
-    it('フィールド宣言の変数名・初期値を保持する', async () => {
-        const { converted } = await convert(...examples[0]);
-        const fields = find(converted, (n) => n.type === 'field').map((n) => n.declaration);
-        assert.deepEqual(
-            fields
-                .find((f) => f.value.some((v: any) => v.value === 'first'))
-                .value.map((v: any) => v.value),
-            ['first', 'second', 'third'],
-        );
-    });
-
-    it('トップレベル型の修飾子と implements を保持する', async () => {
-        const { converted } = await convert(...examples[0]);
-        const modifiers = converted.modifier.map((m: any) => m.value.modifier);
-        assert.ok(modifiers.includes('INHERITED_SHARING'));
-        assert.deepEqual(
-            converted.value.declaration.implement.map((t: any) => t.value[0].value),
-            ['ParserInterface', 'Comparable'],
-        );
-    });
-
-    it('getter 本体・merge 対象・GROUP BY / HAVING を保持する', async () => {
-        const { converted } = await convert(...examples[0]);
-        const getter = find(converted, (n) => n.type === 'getter' && n.value.length > 0);
-        assert.equal(getter.length, 1);
-
-        const merges = find(converted, (n) => n.type === 'merge');
-        merges.forEach((m) => assert.equal(m.statement.value.length, 2));
-
-        const groupBy = find(converted, (n) => n.groupByClause?.mode === 'ROLLUP');
-        assert.equal(groupBy.length, 1);
-    });
-
-    it('if / for 本体のブロック文を保持する', async () => {
-        const { converted } = await convert(...examples[2]);
-        const blocks = find(converted, (n) => n.type === 'block');
-        assert.ok(blocks.length > 0);
-        blocks.forEach((b) => assert.ok(Array.isArray(b.statement)));
-    });
-
-    it('トリガー名・対象 SObject とトリガー内メンバー宣言を保持する', async () => {
-        const { converted } = await convert(...examples[1]);
-        assert.deepEqual(converted.value, ['ParserTrigger', 'Account']);
-        const declarations = converted.block.filter((b: any) => b.modifier.length > 0);
-        assert.ok(declarations.length > 0);
-        declarations.forEach((d: any) => assert.notEqual(d.value?.value, null));
-    });
-
-    it('JSON 出力で SOQL の LIMIT / OFFSET と日付式の引数を保持する', async () => {
-        const output = await convertOutput(...examples[0]);
-        const offsetQueries = find(
-            output,
-            (n) => n.offset !== undefined && n.from?.field !== undefined,
-        );
-        assert.equal(offsetQueries.length, 2);
-        assert.ok(
-            offsetQueries.some(
-                (query) => query.limit?.kind === 'number' && query.limit.value === '100',
-            ),
-        );
-        assert.ok(
-            offsetQueries.some(
-                (query) => query.limit?.kind === 'bind' && query.limit.value.value === 'pageSize',
-            ),
-        );
-        assert.ok(offsetQueries.some((query) => query.offset?.value === '10'));
-        assert.ok(offsetQueries.some((query) => query.offset?.kind === 'bind'));
-
-        const dateFormula = find(output, (n) => n.kind === 'dateFormula').find(
-            (value) => value.funcName === 'LAST_N_DAYS_N',
-        );
-        assert.equal(dateFormula?.param?.value, '30');
-    });
-
-    it('JSON 出力で空 return / for と finally の有無を保持する', async () => {
-        const output = await convertOutput(...examples[0]);
-        assert.ok(find(output, (n) => n.kind === 'return' && n.block === undefined).length > 0);
-        assert.ok(
-            find(output, (n) => n.kind === 'for' && Object.keys(n.condition ?? {}).length === 0)
-                .length > 0,
-        );
-
-        const triggerOutput = await convertOutput(...examples[1]);
-        const tryStatements = find(triggerOutput, (n) => n.kind === 'try');
-        assert.ok(tryStatements.length > 0);
-        tryStatements.forEach((statement) =>
-            assert.equal(
-                statement.block.some((block: any) => block.type === 'finally'),
-                false,
-            ),
-        );
-    });
-
-    it('JSON 出力で修飾子と型付きキー名を保持する', async () => {
-        const output = await convertOutput(...examples[0]);
-        assert.ok(find(output, (n) => n.sharing?.includes('INHERITED_SHARING')).length > 0);
-        assert.ok(find(output, (n) => n.externalKey !== undefined).length > 0);
-        assert.ok(find(output, (n) => n.exceptionType !== undefined).length > 0);
-        assert.ok(
-            find(output, (n) => n.kind === 'ternary' && n.trueValue !== undefined).length > 0,
-        );
-    });
-
-    it('JSON 出力で配列アクセスと空の配列生成を区別する', async () => {
-        const output = await convertOutput(...examples[0]);
-        const arrayAccesses = find(output, (n) => n.kind === 'arrayAccess');
-        assert.ok(arrayAccesses.some((n) => n.object?.value === 'sized'));
-        assert.ok(arrayAccesses.some((n) => n.object?.value === 'numbers'));
-        assert.ok(
-            find(output, (n) => n.creatorType === 'array' && Array.isArray(n.initValue)).length > 0,
-        );
-        assert.ok(
-            find(output, (n) => n.creatorType === 'set' && n.initialValue?.length === 0).length > 0,
-        );
-        assert.ok(
-            find(output, (n) => n.creatorType === 'list' && n.initialValue?.length === 2).length >
-                0,
-        );
-    });
-
-    it('anonymous / trigger の SOQL・SOSL を unit 単位で抽出する', async () => {
-        for (const example of [examples[1], examples[2]]) {
-            const output = await convertOutput(...example);
-            const references = find(output, (n) => n.kind === 'queryRef');
-            const inlineQueries = find(output, (n) => n.kind === 'soql' || n.kind === 'sosl');
-
-            assert.ok(references.length > 0);
-            assert.equal(inlineQueries.length, 0);
-            references.forEach((reference) => {
-                const indexKey = `${reference.queryKind}Index`;
-                assert.ok(find(output, (n) => n[indexKey] === reference.index).length > 0);
+    it('宣言は名前の位置を持つ境界ノードになる', async () => {
+        const { json } = await convert(0);
+        for (const kind of ['class', 'method', 'constructor', 'property', 'enum', 'interface']) {
+            const declarations = find(json, (n) => n.kind === kind);
+            assert.ok(declarations.length > 0, kind);
+            declarations.forEach((d) => {
+                assert.ok(d.sourceKeys.base, kind);
+                assert.ok(d.sourceKeys.name, kind);
             });
         }
+        // field は初期値まで含めて 1 つの境界ノード
+        const fields = find(json, (n) => n.kind === 'field');
+        assert.ok(fields.length > 0);
+        fields.forEach((f) => assert.ok(f.sourceKeys.objectKey));
+        // enum の定数も位置を持つ
+        assert.ok(find(json, (n) => n.kind === 'enumConstant').length > 0);
+    });
+
+    it('クラスのコンストラクタは constructors に入り、constructor プロパティを使わない', async () => {
+        const { json } = await convert(0);
+        const classes = find(json, (n) => n.kind === 'class');
+        assert.ok(classes.some((c) => Array.isArray(c.constructors)));
+        classes.forEach((c) => assert.equal(Object.hasOwn(c, 'constructor'), false));
+    });
+
+    it('複合文・SOQL / SOSL は境界ノードになる', async () => {
+        const { json } = await convert(0);
+        for (const kind of ['if', 'for', 'while', 'doWhile', 'switch', 'try', 'runAs', 'soql', 'sosl', 'subQuery']) {
+            assert.ok(find(json, (n) => n.kind === kind && n.sourceKeys).length > 0, kind);
+        }
+    });
+
+    it('内側の型（ジェネリクス・要素型）はキーを持たない', async () => {
+        const { json } = await convert(0);
+        const collections = find(json, (n) => n.kind === 'type' && n.collectionType === 'map');
+        assert.ok(collections.length > 0);
+        collections.forEach((t) => {
+            assert.equal(t.keyType.kind, undefined);
+            assert.equal(t.keyType.sourceKeys, undefined);
+            assert.equal(t.valueType.sourceKeys, undefined);
+        });
+    });
+
+    it('SOSL の検索語だけを find に持つ', async () => {
+        const { json } = await convert(0);
+        const finds = find(json, (n) => n.kind === 'sosl').map((n) => n.find);
+        assert.ok(finds.includes('test'));
+        assert.ok(finds.includes('a@example.com'));
+        finds
+            .filter((f) => typeof f === 'string')
+            .forEach((f) => assert.equal(/FIND/i.test(f), false));
+    });
+
+    it('トリガー名・対象 SObject・トリガー条件を保持する', async () => {
+        const { json } = await convert(1);
+        assert.equal(json.name, 'ParserTrigger');
+        assert.equal(json.object, 'Account');
+        assert.ok(json.case.length > 0);
+        json.case.forEach((c: any) => {
+            assert.equal(c.kind, 'triggerCase');
+            assert.ok(c.sourceKeys.objectKey);
+        });
     });
 });

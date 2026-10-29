@@ -1,0 +1,139 @@
+{
+  "sample": "parser",
+  "size": {
+    "sourceBytes": 7316,
+    "prettyFileBytes": {
+      "1.common-type.json": 1494142,
+      "2.convert-node.json": 604280,
+      "2.source-all.json": 759986,
+      "3.json.json": 116135,
+      "4.source.json": 104364
+    },
+    "commonType": {
+      "minifiedBytes": 389451,
+      "gzipBytes": 28342
+    },
+    "convertNode": {
+      "minifiedBytes": 276684,
+      "gzipBytes": 44391
+    },
+    "json": {
+      "minifiedBytes": 57664,
+      "gzipBytes": 10164
+    },
+    "jsonWithoutSourceKeys": {
+      "minifiedBytes": 28436,
+      "gzipBytes": 3221
+    },
+    "sourceAll": {
+      "minifiedBytes": 428972,
+      "gzipBytes": 60690
+    },
+    "source": {
+      "minifiedBytes": 60053,
+      "gzipBytes": 13219
+    }
+  },
+  "coverage": {
+    "all": {
+      "nonWhitespaceChars": 5737,
+      "charRate": 0.9630468886177445,
+      "codeLines": 174,
+      "lineRate": 1
+    },
+    "regenerated": {
+      "nonWhitespaceChars": 5737,
+      "charRate": 0.6974028237754925,
+      "codeLines": 174,
+      "lineRate": 1
+    }
+  },
+  "span": {
+    "all": {
+      "count": 2185,
+      "median": 8,
+      "p90": 45,
+      "max": 6946
+    },
+    "regenerated": {
+      "count": 285,
+      "median": 15,
+      "p90": 69,
+      "max": 355
+    }
+  },
+  "values": {
+    "total": 519,
+    "retained": 519,
+    "rate": 1,
+    "missingTop": []
+  },
+  "structure": {
+    "objects": 744,
+    "boundary": 274,
+    "typeOnly": 66,
+    "undiscriminated": 404,
+    "unresolvedSourceKeys": 0,
+    "errorJson": 0,
+    "kinds": {
+      "type": 72,
+      "field": 46,
+      "expression": 31,
+      "selectEntry": 23,
+      "soql": 10,
+      "fromField": 10,
+      "modifier": 7,
+      "singleCondition": 6,
+      "ifCondition": 6,
+      "if": 5,
+      "parameter": 4,
+      "soslField": 4,
+      "method": 3,
+      "return": 3,
+      "limitClause": 3,
+      "for": 3,
+      "forCondition": 3,
+      "switchCondition": 3,
+      "enumConstant": 2,
+      "insert": 2,
+      "localVariable": 2,
+      "catchCondition": 2,
+      "class": 1,
+      "interface": 1,
+      "interfaceMethod": 1,
+      "enum": 1,
+      "update": 1,
+      "upsert": 1,
+      "merge": 1,
+      "delete": 1,
+      "undelete": 1,
+      "groupBy": 1,
+      "forClause": 1,
+      "sosl": 1,
+      "continue": 1,
+      "break": 1,
+      "while": 1,
+      "whileCondition": 1,
+      "doWhile": 1,
+      "doWhileCondition": 1,
+      "switch": 1,
+      "whenVariant": 1,
+      "try": 1,
+      "throw": 1,
+      "runAs": 1,
+      "runAsCondition": 1
+    }
+  },
+  "objectKeys": {
+    "all": {
+      "objectKeys": 1318,
+      "sharedObjectKeys": 204,
+      "maxSourcesPerObjectKey": 87
+    },
+    "regenerated": {
+      "objectKeys": 211,
+      "sharedObjectKeys": 17,
+      "maxSourcesPerObjectKey": 15
+    }
+  }
+}

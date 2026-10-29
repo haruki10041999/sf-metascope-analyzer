@@ -1,0 +1,2885 @@
+[
+  {
+    "objectKey": "triggerCase_316568da8f721a3a",
+    "context": "beforeinsert",
+    "source": [
+      {
+        "sourceKey": "triggerCase_27fe9ded810c4b47",
+        "start": {
+          "offset": 104,
+          "line": 3,
+          "column": 4
+        },
+        "end": {
+          "offset": 117,
+          "line": 3,
+          "column": 17
+        }
+      }
+    ]
+  },
+  {
+    "objectKey": "triggerCase_527139dcae9807c2",
+    "context": "beforeupdate",
+    "source": [
+      {
+        "sourceKey": "triggerCase_ba129a601a52431d",
+        "start": {
+          "offset": 124,
+          "line": 4,
+          "column": 4
+        },
+        "end": {
+          "offset": 137,
+          "line": 4,
+          "column": 17
+        }
+      }
+    ]
+  },
+  {
+    "objectKey": "triggerCase_4c55d4ce17c27a3d",
+    "context": "beforedelete",
+    "source": [
+      {
+        "sourceKey": "triggerCase_3956154976a8177b",
+        "start": {
+          "offset": 144,
+          "line": 5,
+          "column": 4
+        },
+        "end": {
+          "offset": 157,
+          "line": 5,
+          "column": 17
+        }
+      }
+    ]
+  },
+  {
+    "objectKey": "triggerCase_586450eedfcbf1d9",
+    "context": "afterinsert",
+    "source": [
+      {
+        "sourceKey": "triggerCase_1ad25a72b6ae8c11",
+        "start": {
+          "offset": 164,
+          "line": 6,
+          "column": 4
+        },
+        "end": {
+          "offset": 176,
+          "line": 6,
+          "column": 16
+        }
+      }
+    ]
+  },
+  {
+    "objectKey": "triggerCase_e969f8b9bb84b657",
+    "context": "afterupdate",
+    "source": [
+      {
+        "sourceKey": "triggerCase_a737052897630d2f",
+        "start": {
+          "offset": 183,
+          "line": 7,
+          "column": 4
+        },
+        "end": {
+          "offset": 195,
+          "line": 7,
+          "column": 16
+        }
+      }
+    ]
+  },
+  {
+    "objectKey": "triggerCase_524b643fd8f640d1",
+    "context": "afterdelete",
+    "source": [
+      {
+        "sourceKey": "triggerCase_b4a36323f4093fc9",
+        "start": {
+          "offset": 202,
+          "line": 8,
+          "column": 4
+        },
+        "end": {
+          "offset": 214,
+          "line": 8,
+          "column": 16
+        }
+      }
+    ]
+  },
+  {
+    "objectKey": "triggerCase_3e9fb1971885148b",
+    "context": "afterundelete",
+    "source": [
+      {
+        "sourceKey": "triggerCase_be6a44a9f236d8d3",
+        "start": {
+          "offset": 221,
+          "line": 9,
+          "column": 4
+        },
+        "end": {
+          "offset": 235,
+          "line": 9,
+          "column": 18
+        }
+      }
+    ]
+  },
+  {
+    "objectKey": "expressionStatement_d0fd58282a9be606",
+    "context": "System.debug(Trigger.isExecuting);",
+    "source": [
+      {
+        "sourceKey": "expressionStatement_c4d594e1b3638b13",
+        "start": {
+          "offset": 422,
+          "line": 16,
+          "column": 4
+        },
+        "end": {
+          "offset": 456,
+          "line": 16,
+          "column": 38
+        }
+      }
+    ]
+  },
+  {
+    "objectKey": "expressionStatement_7c6a5aa73cc0bd2f",
+    "context": "System.debug(Trigger.isBefore);",
+    "source": [
+      {
+        "sourceKey": "expressionStatement_71bae6b4939c18c8",
+        "start": {
+          "offset": 462,
+          "line": 17,
+          "column": 4
+        },
+        "end": {
+          "offset": 493,
+          "line": 17,
+          "column": 35
+        }
+      }
+    ]
+  },
+  {
+    "objectKey": "expressionStatement_0526f06a51e5a025",
+    "context": "System.debug(Trigger.isAfter);",
+    "source": [
+      {
+        "sourceKey": "expressionStatement_533a4590f02e591e",
+        "start": {
+          "offset": 499,
+          "line": 18,
+          "column": 4
+        },
+        "end": {
+          "offset": 529,
+          "line": 18,
+          "column": 34
+        }
+      }
+    ]
+  },
+  {
+    "objectKey": "expressionStatement_39d0f72bd83c2a66",
+    "context": "System.debug(Trigger.isInsert);",
+    "source": [
+      {
+        "sourceKey": "expressionStatement_521db29dd8a16088",
+        "start": {
+          "offset": 535,
+          "line": 19,
+          "column": 4
+        },
+        "end": {
+          "offset": 566,
+          "line": 19,
+          "column": 35
+        }
+      }
+    ]
+  },
+  {
+    "objectKey": "expressionStatement_888c7c396174b109",
+    "context": "System.debug(Trigger.isUpdate);",
+    "source": [
+      {
+        "sourceKey": "expressionStatement_d1d3689559655f88",
+        "start": {
+          "offset": 572,
+          "line": 20,
+          "column": 4
+        },
+        "end": {
+          "offset": 603,
+          "line": 20,
+          "column": 35
+        }
+      }
+    ]
+  },
+  {
+    "objectKey": "expressionStatement_fd7573db75fba617",
+    "context": "System.debug(Trigger.isDelete);",
+    "source": [
+      {
+        "sourceKey": "expressionStatement_4ade1ac52d0dff60",
+        "start": {
+          "offset": 609,
+          "line": 21,
+          "column": 4
+        },
+        "end": {
+          "offset": 640,
+          "line": 21,
+          "column": 35
+        }
+      }
+    ]
+  },
+  {
+    "objectKey": "expressionStatement_783b38974f2007b2",
+    "context": "System.debug(Trigger.isUndelete);",
+    "source": [
+      {
+        "sourceKey": "expressionStatement_dffa423209fee12d",
+        "start": {
+          "offset": 646,
+          "line": 22,
+          "column": 4
+        },
+        "end": {
+          "offset": 679,
+          "line": 22,
+          "column": 37
+        }
+      }
+    ]
+  },
+  {
+    "objectKey": "expressionStatement_5f7e247ae1554b97",
+    "context": "System.debug(Trigger.new);",
+    "source": [
+      {
+        "sourceKey": "expressionStatement_4a731958ef874bf0",
+        "start": {
+          "offset": 685,
+          "line": 23,
+          "column": 4
+        },
+        "end": {
+          "offset": 711,
+          "line": 23,
+          "column": 30
+        }
+      }
+    ]
+  },
+  {
+    "objectKey": "expressionStatement_3bf4093ddc418e62",
+    "context": "System.debug(Trigger.old);",
+    "source": [
+      {
+        "sourceKey": "expressionStatement_c264582f26e66b08",
+        "start": {
+          "offset": 717,
+          "line": 24,
+          "column": 4
+        },
+        "end": {
+          "offset": 743,
+          "line": 24,
+          "column": 30
+        }
+      }
+    ]
+  },
+  {
+    "objectKey": "expressionStatement_398d911d6011a4f4",
+    "context": "System.debug(Trigger.newMap);",
+    "source": [
+      {
+        "sourceKey": "expressionStatement_ec0608ceefa55dbd",
+        "start": {
+          "offset": 749,
+          "line": 25,
+          "column": 4
+        },
+        "end": {
+          "offset": 778,
+          "line": 25,
+          "column": 33
+        }
+      }
+    ]
+  },
+  {
+    "objectKey": "expressionStatement_515a5803b33b51bc",
+    "context": "System.debug(Trigger.oldMap);",
+    "source": [
+      {
+        "sourceKey": "expressionStatement_66a599a8e4b77845",
+        "start": {
+          "offset": 784,
+          "line": 26,
+          "column": 4
+        },
+        "end": {
+          "offset": 813,
+          "line": 26,
+          "column": 33
+        }
+      }
+    ]
+  },
+  {
+    "objectKey": "expressionStatement_b4ab64d6276fca2b",
+    "context": "System.debug(Trigger.operationType);",
+    "source": [
+      {
+        "sourceKey": "expressionStatement_a85e51387ed63065",
+        "start": {
+          "offset": 819,
+          "line": 27,
+          "column": 4
+        },
+        "end": {
+          "offset": 855,
+          "line": 27,
+          "column": 40
+        }
+      }
+    ]
+  },
+  {
+    "objectKey": "expressionStatement_8271e054f799b529",
+    "context": "System.debug(Trigger.size);",
+    "source": [
+      {
+        "sourceKey": "expressionStatement_9945d45f08691448",
+        "start": {
+          "offset": 861,
+          "line": 28,
+          "column": 4
+        },
+        "end": {
+          "offset": 888,
+          "line": 28,
+          "column": 31
+        }
+      }
+    ]
+  },
+  {
+    "objectKey": "fieldDeclaration_dfab416fd851d22d",
+    "context": "StringPREFIX='Trigger: ';",
+    "source": [
+      {
+        "sourceKey": "fieldDeclaration_9cc734078f371c90",
+        "start": {
+          "offset": 1130,
+          "line": 35,
+          "column": 25
+        },
+        "end": {
+          "offset": 1158,
+          "line": 35,
+          "column": 53
+        }
+      }
+    ]
+  },
+  {
+    "objectKey": "typeRef_a13e3e8b5328228b",
+    "context": "String",
+    "source": [
+      {
+        "sourceKey": "typeRef_627b5dbc36c897cf",
+        "start": {
+          "offset": 1130,
+          "line": 35,
+          "column": 25
+        },
+        "end": {
+          "offset": 1136,
+          "line": 35,
+          "column": 31
+        }
+      },
+      {
+        "sourceKey": "typeRef_e52e63b4726e9534",
+        "start": {
+          "offset": 1216,
+          "line": 39,
+          "column": 11
+        },
+        "end": {
+          "offset": 1222,
+          "line": 39,
+          "column": 17
+        }
+      },
+      {
+        "sourceKey": "typeRef_ba74bec39301e811",
+        "start": {
+          "offset": 1267,
+          "line": 41,
+          "column": 21
+        },
+        "end": {
+          "offset": 1273,
+          "line": 41,
+          "column": 27
+        }
+      }
+    ]
+  },
+  {
+    "objectKey": "modifier_0cc039a77999b188",
+    "context": "private",
+    "source": [
+      {
+        "sourceKey": "modifier_83d45737507ce60f",
+        "start": {
+          "offset": 1109,
+          "line": 35,
+          "column": 4
+        },
+        "end": {
+          "offset": 1116,
+          "line": 35,
+          "column": 11
+        }
+      },
+      {
+        "sourceKey": "modifier_526f6ef30321e823",
+        "start": {
+          "offset": 1250,
+          "line": 41,
+          "column": 4
+        },
+        "end": {
+          "offset": 1257,
+          "line": 41,
+          "column": 11
+        }
+      }
+    ]
+  },
+  {
+    "objectKey": "modifier_355af635756cc383",
+    "context": "static",
+    "source": [
+      {
+        "sourceKey": "modifier_e09354a079970454",
+        "start": {
+          "offset": 1117,
+          "line": 35,
+          "column": 12
+        },
+        "end": {
+          "offset": 1123,
+          "line": 35,
+          "column": 18
+        }
+      },
+      {
+        "sourceKey": "modifier_de496c14c584a3fc",
+        "start": {
+          "offset": 1166,
+          "line": 37,
+          "column": 4
+        },
+        "end": {
+          "offset": 1172,
+          "line": 37,
+          "column": 10
+        }
+      }
+    ]
+  },
+  {
+    "objectKey": "modifier_9d4bf2c8006d61ce",
+    "context": "final",
+    "source": [
+      {
+        "sourceKey": "modifier_365957995b6ff04f",
+        "start": {
+          "offset": 1124,
+          "line": 35,
+          "column": 19
+        },
+        "end": {
+          "offset": 1129,
+          "line": 35,
+          "column": 24
+        }
+      }
+    ]
+  },
+  {
+    "objectKey": "fieldDeclaration_3027167950cccea2",
+    "context": "IntegerinvocationCount=0;",
+    "source": [
+      {
+        "sourceKey": "fieldDeclaration_86caa99a80b1fdb1",
+        "start": {
+          "offset": 1173,
+          "line": 37,
+          "column": 11
+        },
+        "end": {
+          "offset": 1201,
+          "line": 37,
+          "column": 39
+        }
+      }
+    ]
+  },
+  {
+    "objectKey": "typeRef_55792e748cf1fa8f",
+    "context": "Integer",
+    "source": [
+      {
+        "sourceKey": "typeRef_9479cc602e2c8e03",
+        "start": {
+          "offset": 1173,
+          "line": 37,
+          "column": 11
+        },
+        "end": {
+          "offset": 1180,
+          "line": 37,
+          "column": 18
+        }
+      }
+    ]
+  },
+  {
+    "objectKey": "propertyDeclaration_5fb74b8c1b54cbb7",
+    "context": "Stringlabel{get;set;}",
+    "source": [
+      {
+        "sourceKey": "propertyDeclaration_e41df37e65814207",
+        "start": {
+          "offset": 1216,
+          "line": 39,
+          "column": 11
+        },
+        "end": {
+          "offset": 1242,
+          "line": 39,
+          "column": 37
+        }
+      }
+    ]
+  },
+  {
+    "objectKey": "id_4d0fec55c1319e13",
+    "context": "label",
+    "source": [
+      {
+        "sourceKey": "id_b9abd0dd30998f64",
+        "start": {
+          "offset": 1223,
+          "line": 39,
+          "column": 18
+        },
+        "end": {
+          "offset": 1228,
+          "line": 39,
+          "column": 23
+        }
+      }
+    ]
+  },
+  {
+    "objectKey": "modifier_a04213395735c45e",
+    "context": "public",
+    "source": [
+      {
+        "sourceKey": "modifier_240443fc995c67d8",
+        "start": {
+          "offset": 1209,
+          "line": 39,
+          "column": 4
+        },
+        "end": {
+          "offset": 1215,
+          "line": 39,
+          "column": 10
+        }
+      },
+      {
+        "sourceKey": "modifier_50ebeffb61f6e7fc",
+        "start": {
+          "offset": 1378,
+          "line": 46,
+          "column": 8
+        },
+        "end": {
+          "offset": 1384,
+          "line": 46,
+          "column": 14
+        }
+      },
+      {
+        "sourceKey": "modifier_488d154ee6483ec5",
+        "start": {
+          "offset": 1340,
+          "line": 45,
+          "column": 4
+        },
+        "end": {
+          "offset": 1346,
+          "line": 45,
+          "column": 10
+        }
+      },
+      {
+        "sourceKey": "modifier_4ef3306375d617f0",
+        "start": {
+          "offset": 1460,
+          "line": 51,
+          "column": 4
+        },
+        "end": {
+          "offset": 1466,
+          "line": 51,
+          "column": 10
+        }
+      },
+      {
+        "sourceKey": "modifier_6c8693e7e019fe90",
+        "start": {
+          "offset": 1532,
+          "line": 55,
+          "column": 4
+        },
+        "end": {
+          "offset": 1538,
+          "line": 55,
+          "column": 10
+        }
+      }
+    ]
+  },
+  {
+    "objectKey": "methodDeclaration_53b2934bfa02ee48",
+    "context": "voidlog(Stringmessage){System.debug(PREFIX+message);}",
+    "source": [
+      {
+        "sourceKey": "methodDeclaration_fe1a40ba66929f7d",
+        "start": {
+          "offset": 1258,
+          "line": 41,
+          "column": 12
+        },
+        "end": {
+          "offset": 1332,
+          "line": 43,
+          "column": 5
+        }
+      }
+    ]
+  },
+  {
+    "objectKey": "id_e6dfdb0965307f78",
+    "context": "log",
+    "source": [
+      {
+        "sourceKey": "id_9e7da58f2764d1ec",
+        "start": {
+          "offset": 1263,
+          "line": 41,
+          "column": 17
+        },
+        "end": {
+          "offset": 1266,
+          "line": 41,
+          "column": 20
+        }
+      }
+    ]
+  },
+  {
+    "objectKey": "formalParameter_ef84b69d46cc7b1d",
+    "context": "Stringmessage",
+    "source": [
+      {
+        "sourceKey": "formalParameter_a5d064fbb9090d64",
+        "start": {
+          "offset": 1267,
+          "line": 41,
+          "column": 21
+        },
+        "end": {
+          "offset": 1281,
+          "line": 41,
+          "column": 35
+        }
+      }
+    ]
+  },
+  {
+    "objectKey": "expressionStatement_26afa799025e1f28",
+    "context": "System.debug(PREFIX+message);",
+    "source": [
+      {
+        "sourceKey": "expressionStatement_df82b7fb90e0c725",
+        "start": {
+          "offset": 1294,
+          "line": 42,
+          "column": 8
+        },
+        "end": {
+          "offset": 1325,
+          "line": 42,
+          "column": 39
+        }
+      }
+    ]
+  },
+  {
+    "objectKey": "classDeclaration_2e5ae04016458617",
+    "context": "classTriggerHelper{publicvoidrun(){System.debug('helper');}}",
+    "source": [
+      {
+        "sourceKey": "classDeclaration_f4ea1de60c713580",
+        "start": {
+          "offset": 1347,
+          "line": 45,
+          "column": 11
+        },
+        "end": {
+          "offset": 1452,
+          "line": 49,
+          "column": 5
+        }
+      }
+    ]
+  },
+  {
+    "objectKey": "id_4b06a4b8cf98ea97",
+    "context": "TriggerHelper",
+    "source": [
+      {
+        "sourceKey": "id_de1cda0ac9edac7b",
+        "start": {
+          "offset": 1353,
+          "line": 45,
+          "column": 17
+        },
+        "end": {
+          "offset": 1366,
+          "line": 45,
+          "column": 30
+        }
+      }
+    ]
+  },
+  {
+    "objectKey": "methodDeclaration_c80ee56a67db6cd8",
+    "context": "voidrun(){System.debug('helper');}",
+    "source": [
+      {
+        "sourceKey": "methodDeclaration_2ac8cfcbf5ac40ea",
+        "start": {
+          "offset": 1385,
+          "line": 46,
+          "column": 15
+        },
+        "end": {
+          "offset": 1445,
+          "line": 48,
+          "column": 9
+        }
+      }
+    ]
+  },
+  {
+    "objectKey": "id_173f4a982cfa79db",
+    "context": "run",
+    "source": [
+      {
+        "sourceKey": "id_558ea48bdbe05a4e",
+        "start": {
+          "offset": 1390,
+          "line": 46,
+          "column": 20
+        },
+        "end": {
+          "offset": 1393,
+          "line": 46,
+          "column": 23
+        }
+      }
+    ]
+  },
+  {
+    "objectKey": "expressionStatement_13f84d0017826f30",
+    "context": "System.debug('helper');",
+    "source": [
+      {
+        "sourceKey": "expressionStatement_23d3a5d7c9c40e99",
+        "start": {
+          "offset": 1411,
+          "line": 47,
+          "column": 12
+        },
+        "end": {
+          "offset": 1434,
+          "line": 47,
+          "column": 35
+        }
+      }
+    ]
+  },
+  {
+    "objectKey": "interfaceDeclaration_5a77971207eeacbc",
+    "context": "interfaceTriggerHandler{voidhandle();}",
+    "source": [
+      {
+        "sourceKey": "interfaceDeclaration_c3c1dc3f4111e7f4",
+        "start": {
+          "offset": 1467,
+          "line": 51,
+          "column": 11
+        },
+        "end": {
+          "offset": 1524,
+          "line": 53,
+          "column": 5
+        }
+      }
+    ]
+  },
+  {
+    "objectKey": "id_2f9f32222eeebf8e",
+    "context": "TriggerHandler",
+    "source": [
+      {
+        "sourceKey": "id_735e242171286f86",
+        "start": {
+          "offset": 1477,
+          "line": 51,
+          "column": 21
+        },
+        "end": {
+          "offset": 1491,
+          "line": 51,
+          "column": 35
+        }
+      }
+    ]
+  },
+  {
+    "objectKey": "interfaceMethodDeclaration_47a1928436f2f16a",
+    "context": "voidhandle();",
+    "source": [
+      {
+        "sourceKey": "interfaceMethodDeclaration_6fd041a1865b232d",
+        "start": {
+          "offset": 1503,
+          "line": 52,
+          "column": 8
+        },
+        "end": {
+          "offset": 1517,
+          "line": 52,
+          "column": 22
+        }
+      }
+    ]
+  },
+  {
+    "objectKey": "id_7b9ae991e1ae993a",
+    "context": "handle",
+    "source": [
+      {
+        "sourceKey": "id_f0fbab2a5c66da8a",
+        "start": {
+          "offset": 1508,
+          "line": 52,
+          "column": 13
+        },
+        "end": {
+          "offset": 1514,
+          "line": 52,
+          "column": 19
+        }
+      }
+    ]
+  },
+  {
+    "objectKey": "enumDeclaration_303dd9e9f7467a9b",
+    "context": "enumPhase{BEFORE_PHASE,AFTER_PHASE}",
+    "source": [
+      {
+        "sourceKey": "enumDeclaration_cc02fa3c70588d64",
+        "start": {
+          "offset": 1539,
+          "line": 55,
+          "column": 11
+        },
+        "end": {
+          "offset": 1602,
+          "line": 58,
+          "column": 5
+        }
+      }
+    ]
+  },
+  {
+    "objectKey": "id_2543e15c80c0211a",
+    "context": "Phase",
+    "source": [
+      {
+        "sourceKey": "id_75ba13101c35b8ee",
+        "start": {
+          "offset": 1544,
+          "line": 55,
+          "column": 16
+        },
+        "end": {
+          "offset": 1549,
+          "line": 55,
+          "column": 21
+        }
+      }
+    ]
+  },
+  {
+    "objectKey": "id_929329ad5e7d778f",
+    "context": "BEFORE_PHASE",
+    "source": [
+      {
+        "sourceKey": "id_656c8abcbadbaabc",
+        "start": {
+          "offset": 1561,
+          "line": 56,
+          "column": 8
+        },
+        "end": {
+          "offset": 1573,
+          "line": 56,
+          "column": 20
+        }
+      }
+    ]
+  },
+  {
+    "objectKey": "id_50fbf67a289ac725",
+    "context": "AFTER_PHASE",
+    "source": [
+      {
+        "sourceKey": "id_806155f16fe7726a",
+        "start": {
+          "offset": 1584,
+          "line": 57,
+          "column": 8
+        },
+        "end": {
+          "offset": 1595,
+          "line": 57,
+          "column": 19
+        }
+      }
+    ]
+  },
+  {
+    "objectKey": "switchStatement_08d4c7ecb473dbcf",
+    "context": "switchonTrigger.operationType{whenBEFORE_INSERT,BEFORE_UPDATE{invocationCount++;}whenAFTER_DELETE{invocationCount--;}whenelse{invocationCount+=0;}}",
+    "source": [
+      {
+        "sourceKey": "switchStatement_809404043e466dd9",
+        "start": {
+          "offset": 1796,
+          "line": 65,
+          "column": 4
+        },
+        "end": {
+          "offset": 2063,
+          "line": 75,
+          "column": 5
+        }
+      }
+    ]
+  },
+  {
+    "objectKey": "dotExpression_0386a7be49497350",
+    "context": "Trigger.operationType",
+    "source": [
+      {
+        "sourceKey": "dotExpression_e96f65a84f075e8f",
+        "start": {
+          "offset": 1806,
+          "line": 65,
+          "column": 14
+        },
+        "end": {
+          "offset": 1827,
+          "line": 65,
+          "column": 35
+        }
+      }
+    ]
+  },
+  {
+    "objectKey": "whenValue_8aa1a633c2d14391",
+    "context": "BEFORE_INSERT,BEFORE_UPDATE",
+    "source": [
+      {
+        "sourceKey": "whenValue_ed36a69f373ed2ef",
+        "start": {
+          "offset": 1844,
+          "line": 66,
+          "column": 13
+        },
+        "end": {
+          "offset": 1872,
+          "line": 66,
+          "column": 41
+        }
+      }
+    ]
+  },
+  {
+    "objectKey": "expressionStatement_1fb95cee552cd2f1",
+    "context": "invocationCount++;",
+    "source": [
+      {
+        "sourceKey": "expressionStatement_5290daa26c6591d5",
+        "start": {
+          "offset": 1888,
+          "line": 67,
+          "column": 12
+        },
+        "end": {
+          "offset": 1906,
+          "line": 67,
+          "column": 30
+        }
+      }
+    ]
+  },
+  {
+    "objectKey": "whenValue_1f6ca8e1e73f27f7",
+    "context": "AFTER_DELETE",
+    "source": [
+      {
+        "sourceKey": "whenValue_15523ace2cae6d41",
+        "start": {
+          "offset": 1932,
+          "line": 69,
+          "column": 13
+        },
+        "end": {
+          "offset": 1944,
+          "line": 69,
+          "column": 25
+        }
+      }
+    ]
+  },
+  {
+    "objectKey": "expressionStatement_1e96c7fc1adda877",
+    "context": "invocationCount--;",
+    "source": [
+      {
+        "sourceKey": "expressionStatement_8fc1ddf13fb32a6e",
+        "start": {
+          "offset": 1960,
+          "line": 70,
+          "column": 12
+        },
+        "end": {
+          "offset": 1978,
+          "line": 70,
+          "column": 30
+        }
+      }
+    ]
+  },
+  {
+    "objectKey": "whenValue_32cb709adcb7919f",
+    "context": "else",
+    "source": [
+      {
+        "sourceKey": "whenValue_102ddcf2d77c454a",
+        "start": {
+          "offset": 2004,
+          "line": 72,
+          "column": 13
+        },
+        "end": {
+          "offset": 2008,
+          "line": 72,
+          "column": 17
+        }
+      }
+    ]
+  },
+  {
+    "objectKey": "expressionStatement_8b7d4ec0bf73ee0e",
+    "context": "invocationCount+=0;",
+    "source": [
+      {
+        "sourceKey": "expressionStatement_e467cc9bd9df1392",
+        "start": {
+          "offset": 2024,
+          "line": 73,
+          "column": 12
+        },
+        "end": {
+          "offset": 2045,
+          "line": 73,
+          "column": 33
+        }
+      }
+    ]
+  },
+  {
+    "objectKey": "ifStatement_d3af86438dbe228f",
+    "context": "if(Trigger.isBefore&&Trigger.isInsert){for(Accountaccount:Trigger.new){if(String.isBlank(account.Name)){account.Name='Default Account';}account.Description='Created by trigger';}}",
+    "source": [
+      {
+        "sourceKey": "ifStatement_2a30a203e27b151b",
+        "start": {
+          "offset": 2235,
+          "line": 82,
+          "column": 4
+        },
+        "end": {
+          "offset": 2521,
+          "line": 92,
+          "column": 5
+        }
+      }
+    ]
+  },
+  {
+    "objectKey": "parExpression_da59c98d67fd287f",
+    "context": "(Trigger.isBefore&&Trigger.isInsert)",
+    "source": [
+      {
+        "sourceKey": "parExpression_33317616ca9ae273",
+        "start": {
+          "offset": 2238,
+          "line": 82,
+          "column": 7
+        },
+        "end": {
+          "offset": 2276,
+          "line": 82,
+          "column": 45
+        }
+      }
+    ]
+  },
+  {
+    "objectKey": "forStatement_2b97ae1daadc6d61",
+    "context": "for(Accountaccount:Trigger.new){if(String.isBlank(account.Name)){account.Name='Default Account';}account.Description='Created by trigger';}",
+    "source": [
+      {
+        "sourceKey": "forStatement_3dd9e5c3653f94d3",
+        "start": {
+          "offset": 2290,
+          "line": 84,
+          "column": 8
+        },
+        "end": {
+          "offset": 2514,
+          "line": 91,
+          "column": 9
+        }
+      }
+    ]
+  },
+  {
+    "objectKey": "forControl_97179282f8221e58",
+    "context": "Accountaccount:Trigger.new",
+    "source": [
+      {
+        "sourceKey": "forControl_31d96199cf3bf328",
+        "start": {
+          "offset": 2295,
+          "line": 84,
+          "column": 13
+        },
+        "end": {
+          "offset": 2324,
+          "line": 84,
+          "column": 42
+        }
+      },
+      {
+        "sourceKey": "forControl_90520d86a427128c",
+        "start": {
+          "offset": 2753,
+          "line": 101,
+          "column": 13
+        },
+        "end": {
+          "offset": 2782,
+          "line": 101,
+          "column": 42
+        }
+      },
+      {
+        "sourceKey": "forControl_33144eccd28a5284",
+        "start": {
+          "offset": 3752,
+          "line": 136,
+          "column": 13
+        },
+        "end": {
+          "offset": 3781,
+          "line": 136,
+          "column": 42
+        }
+      },
+      {
+        "sourceKey": "forControl_9f5d983a45ae1d78",
+        "start": {
+          "offset": 5742,
+          "line": 210,
+          "column": 17
+        },
+        "end": {
+          "offset": 5771,
+          "line": 210,
+          "column": 46
+        }
+      }
+    ]
+  },
+  {
+    "objectKey": "typeRef_16c0945431044f5d",
+    "context": "Account",
+    "source": [
+      {
+        "sourceKey": "typeRef_cdb47b930ceaf888",
+        "start": {
+          "offset": 2295,
+          "line": 84,
+          "column": 13
+        },
+        "end": {
+          "offset": 2302,
+          "line": 84,
+          "column": 20
+        }
+      },
+      {
+        "sourceKey": "typeRef_7dc86b5d0ca0f57a",
+        "start": {
+          "offset": 2753,
+          "line": 101,
+          "column": 13
+        },
+        "end": {
+          "offset": 2760,
+          "line": 101,
+          "column": 20
+        }
+      },
+      {
+        "sourceKey": "typeRef_1254a7cb77805dfe",
+        "start": {
+          "offset": 2801,
+          "line": 103,
+          "column": 12
+        },
+        "end": {
+          "offset": 2808,
+          "line": 103,
+          "column": 19
+        }
+      },
+      {
+        "sourceKey": "typeRef_d3babc4326bc7168",
+        "start": {
+          "offset": 3359,
+          "line": 122,
+          "column": 13
+        },
+        "end": {
+          "offset": 3366,
+          "line": 122,
+          "column": 20
+        }
+      },
+      {
+        "sourceKey": "typeRef_bf2a233e516fd7fb",
+        "start": {
+          "offset": 3752,
+          "line": 136,
+          "column": 13
+        },
+        "end": {
+          "offset": 3759,
+          "line": 136,
+          "column": 20
+        }
+      },
+      {
+        "sourceKey": "typeRef_51d7d63239a936ab",
+        "start": {
+          "offset": 4789,
+          "line": 176,
+          "column": 13
+        },
+        "end": {
+          "offset": 4796,
+          "line": 176,
+          "column": 20
+        }
+      },
+      {
+        "sourceKey": "typeRef_e2c93af76c7a29fc",
+        "start": {
+          "offset": 5386,
+          "line": 197,
+          "column": 13
+        },
+        "end": {
+          "offset": 5393,
+          "line": 197,
+          "column": 20
+        }
+      },
+      {
+        "sourceKey": "typeRef_52ca1cdd075e00d3",
+        "start": {
+          "offset": 5742,
+          "line": 210,
+          "column": 17
+        },
+        "end": {
+          "offset": 5749,
+          "line": 210,
+          "column": 24
+        }
+      }
+    ]
+  },
+  {
+    "objectKey": "ifStatement_cdc92be88345c1e6",
+    "context": "if(String.isBlank(account.Name)){account.Name='Default Account';}",
+    "source": [
+      {
+        "sourceKey": "ifStatement_369ff0dc0245f19c",
+        "start": {
+          "offset": 2343,
+          "line": 86,
+          "column": 12
+        },
+        "end": {
+          "offset": 2444,
+          "line": 88,
+          "column": 13
+        }
+      }
+    ]
+  },
+  {
+    "objectKey": "parExpression_5c671620698b6b95",
+    "context": "(String.isBlank(account.Name))",
+    "source": [
+      {
+        "sourceKey": "parExpression_039c17762e3be56c",
+        "start": {
+          "offset": 2346,
+          "line": 86,
+          "column": 15
+        },
+        "end": {
+          "offset": 2376,
+          "line": 86,
+          "column": 45
+        }
+      }
+    ]
+  },
+  {
+    "objectKey": "expressionStatement_ba1409d3710514b4",
+    "context": "account.Name='Default Account';",
+    "source": [
+      {
+        "sourceKey": "expressionStatement_e30d12030acceb2e",
+        "start": {
+          "offset": 2396,
+          "line": 87,
+          "column": 16
+        },
+        "end": {
+          "offset": 2429,
+          "line": 87,
+          "column": 49
+        }
+      }
+    ]
+  },
+  {
+    "objectKey": "expressionStatement_e675fb3d7caaeade",
+    "context": "account.Description='Created by trigger';",
+    "source": [
+      {
+        "sourceKey": "expressionStatement_7778b9b1083da38d",
+        "start": {
+          "offset": 2460,
+          "line": 90,
+          "column": 12
+        },
+        "end": {
+          "offset": 2503,
+          "line": 90,
+          "column": 55
+        }
+      }
+    ]
+  },
+  {
+    "objectKey": "ifStatement_b17495c314a2e9ff",
+    "context": "if(Trigger.isBefore&&Trigger.isUpdate){for(Accountaccount:Trigger.new){AccountoldAccount=Trigger.oldMap.get(account.Id);if(account.Name!=oldAccount.Name){account.Description='Name changed';}if(account.AnnualRevenue<0){account.addError('AnnualRevenue must be positive');}}}",
+    "source": [
+      {
+        "sourceKey": "ifStatement_3e947c3619f44976",
+        "start": {
+          "offset": 2693,
+          "line": 99,
+          "column": 4
+        },
+        "end": {
+          "offset": 3127,
+          "line": 113,
+          "column": 5
+        }
+      }
+    ]
+  },
+  {
+    "objectKey": "parExpression_f17fd3fb116b5d02",
+    "context": "(Trigger.isBefore&&Trigger.isUpdate)",
+    "source": [
+      {
+        "sourceKey": "parExpression_91d70a8d5c886254",
+        "start": {
+          "offset": 2696,
+          "line": 99,
+          "column": 7
+        },
+        "end": {
+          "offset": 2734,
+          "line": 99,
+          "column": 45
+        }
+      }
+    ]
+  },
+  {
+    "objectKey": "forStatement_f31ba885bd12065d",
+    "context": "for(Accountaccount:Trigger.new){AccountoldAccount=Trigger.oldMap.get(account.Id);if(account.Name!=oldAccount.Name){account.Description='Name changed';}if(account.AnnualRevenue<0){account.addError('AnnualRevenue must be positive');}}",
+    "source": [
+      {
+        "sourceKey": "forStatement_84178396b1966a1a",
+        "start": {
+          "offset": 2748,
+          "line": 101,
+          "column": 8
+        },
+        "end": {
+          "offset": 3120,
+          "line": 112,
+          "column": 9
+        }
+      }
+    ]
+  },
+  {
+    "objectKey": "localVariableDeclarationStatement_83464544313bf3c7",
+    "context": "AccountoldAccount=Trigger.oldMap.get(account.Id);",
+    "source": [
+      {
+        "sourceKey": "localVariableDeclarationStatement_41eaa483e8015bfe",
+        "start": {
+          "offset": 2801,
+          "line": 103,
+          "column": 12
+        },
+        "end": {
+          "offset": 2853,
+          "line": 103,
+          "column": 64
+        }
+      }
+    ]
+  },
+  {
+    "objectKey": "ifStatement_cd13dd8accf67012",
+    "context": "if(account.Name!=oldAccount.Name){account.Description='Name changed';}",
+    "source": [
+      {
+        "sourceKey": "ifStatement_627ec9876a05d4ba",
+        "start": {
+          "offset": 2869,
+          "line": 105,
+          "column": 12
+        },
+        "end": {
+          "offset": 2977,
+          "line": 107,
+          "column": 13
+        }
+      }
+    ]
+  },
+  {
+    "objectKey": "parExpression_5f40d773e04bc120",
+    "context": "(account.Name!=oldAccount.Name)",
+    "source": [
+      {
+        "sourceKey": "parExpression_93f37adac9ef06bb",
+        "start": {
+          "offset": 2872,
+          "line": 105,
+          "column": 15
+        },
+        "end": {
+          "offset": 2905,
+          "line": 105,
+          "column": 48
+        }
+      }
+    ]
+  },
+  {
+    "objectKey": "expressionStatement_8c4b2356992ab266",
+    "context": "account.Description='Name changed';",
+    "source": [
+      {
+        "sourceKey": "expressionStatement_b85a3c6dd12b0401",
+        "start": {
+          "offset": 2925,
+          "line": 106,
+          "column": 16
+        },
+        "end": {
+          "offset": 2962,
+          "line": 106,
+          "column": 53
+        }
+      }
+    ]
+  },
+  {
+    "objectKey": "ifStatement_aae8ab67e2d2a8c2",
+    "context": "if(account.AnnualRevenue<0){account.addError('AnnualRevenue must be positive');}",
+    "source": [
+      {
+        "sourceKey": "ifStatement_8f325ee3efa6d9b0",
+        "start": {
+          "offset": 2993,
+          "line": 109,
+          "column": 12
+        },
+        "end": {
+          "offset": 3109,
+          "line": 111,
+          "column": 13
+        }
+      }
+    ]
+  },
+  {
+    "objectKey": "parExpression_db6a6e911a9628c9",
+    "context": "(account.AnnualRevenue<0)",
+    "source": [
+      {
+        "sourceKey": "parExpression_c7fd2e44204c73f6",
+        "start": {
+          "offset": 2996,
+          "line": 109,
+          "column": 15
+        },
+        "end": {
+          "offset": 3023,
+          "line": 109,
+          "column": 42
+        }
+      }
+    ]
+  },
+  {
+    "objectKey": "expressionStatement_b87a4e87ece683c3",
+    "context": "account.addError('AnnualRevenue must be positive');",
+    "source": [
+      {
+        "sourceKey": "expressionStatement_4ccbeb00d4baa815",
+        "start": {
+          "offset": 3043,
+          "line": 110,
+          "column": 16
+        },
+        "end": {
+          "offset": 3094,
+          "line": 110,
+          "column": 67
+        }
+      }
+    ]
+  },
+  {
+    "objectKey": "ifStatement_57768b93d665a953",
+    "context": "if(Trigger.isBefore&&Trigger.isDelete){for(Accountaccount:Trigger.old){System.debug('Deleting: '+account.Name);}}",
+    "source": [
+      {
+        "sourceKey": "ifStatement_a246ccaf623c4fc6",
+        "start": {
+          "offset": 3299,
+          "line": 120,
+          "column": 4
+        },
+        "end": {
+          "offset": 3465,
+          "line": 125,
+          "column": 5
+        }
+      }
+    ]
+  },
+  {
+    "objectKey": "parExpression_381cd08385571215",
+    "context": "(Trigger.isBefore&&Trigger.isDelete)",
+    "source": [
+      {
+        "sourceKey": "parExpression_2525209318108e83",
+        "start": {
+          "offset": 3302,
+          "line": 120,
+          "column": 7
+        },
+        "end": {
+          "offset": 3340,
+          "line": 120,
+          "column": 45
+        }
+      }
+    ]
+  },
+  {
+    "objectKey": "forStatement_fc4ed2af615dda2f",
+    "context": "for(Accountaccount:Trigger.old){System.debug('Deleting: '+account.Name);}",
+    "source": [
+      {
+        "sourceKey": "forStatement_92e30e24646b7bb1",
+        "start": {
+          "offset": 3354,
+          "line": 122,
+          "column": 8
+        },
+        "end": {
+          "offset": 3458,
+          "line": 124,
+          "column": 9
+        }
+      }
+    ]
+  },
+  {
+    "objectKey": "forControl_352574c40b842621",
+    "context": "Accountaccount:Trigger.old",
+    "source": [
+      {
+        "sourceKey": "forControl_adc747df6c29a58a",
+        "start": {
+          "offset": 3359,
+          "line": 122,
+          "column": 13
+        },
+        "end": {
+          "offset": 3388,
+          "line": 122,
+          "column": 42
+        }
+      },
+      {
+        "sourceKey": "forControl_6b784d0989a1d6a4",
+        "start": {
+          "offset": 5386,
+          "line": 197,
+          "column": 13
+        },
+        "end": {
+          "offset": 5415,
+          "line": 197,
+          "column": 42
+        }
+      }
+    ]
+  },
+  {
+    "objectKey": "expressionStatement_0011bbb991416421",
+    "context": "System.debug('Deleting: '+account.Name);",
+    "source": [
+      {
+        "sourceKey": "expressionStatement_7fc43cecbc50d138",
+        "start": {
+          "offset": 3405,
+          "line": 123,
+          "column": 12
+        },
+        "end": {
+          "offset": 3447,
+          "line": 123,
+          "column": 54
+        }
+      }
+    ]
+  },
+  {
+    "objectKey": "ifStatement_dacb8e98ee84ba09",
+    "context": "if(Trigger.isAfter&&Trigger.isInsert){List<Contact>contacts=newList<Contact>();for(Accountaccount:Trigger.new){contacts.add(newContact(LastName=account.Name,AccountId=account.Id));}if(!contacts.isEmpty()){insertasusercontacts;}}",
+    "source": [
+      {
+        "sourceKey": "ifStatement_b30ebc2e72ede331",
+        "start": {
+          "offset": 3636,
+          "line": 132,
+          "column": 4
+        },
+        "end": {
+          "offset": 4071,
+          "line": 148,
+          "column": 5
+        }
+      }
+    ]
+  },
+  {
+    "objectKey": "parExpression_a3e44d55ce0dd4e9",
+    "context": "(Trigger.isAfter&&Trigger.isInsert)",
+    "source": [
+      {
+        "sourceKey": "parExpression_5038210c1f43498b",
+        "start": {
+          "offset": 3639,
+          "line": 132,
+          "column": 7
+        },
+        "end": {
+          "offset": 3676,
+          "line": 132,
+          "column": 44
+        }
+      }
+    ]
+  },
+  {
+    "objectKey": "localVariableDeclarationStatement_74b0dd8886d3d39f",
+    "context": "List<Contact>contacts=newList<Contact>();",
+    "source": [
+      {
+        "sourceKey": "localVariableDeclarationStatement_07ddd06e5e11da3f",
+        "start": {
+          "offset": 3690,
+          "line": 134,
+          "column": 8
+        },
+        "end": {
+          "offset": 3735,
+          "line": 134,
+          "column": 53
+        }
+      }
+    ]
+  },
+  {
+    "objectKey": "typeRef_b5837cead0b16ac8",
+    "context": "Contact",
+    "source": [
+      {
+        "sourceKey": "typeRef_2846649f5d7257c7",
+        "start": {
+          "offset": 3724,
+          "line": 134,
+          "column": 42
+        },
+        "end": {
+          "offset": 3731,
+          "line": 134,
+          "column": 49
+        }
+      },
+      {
+        "sourceKey": "typeRef_7220103afed8596b",
+        "start": {
+          "offset": 4761,
+          "line": 174,
+          "column": 42
+        },
+        "end": {
+          "offset": 4768,
+          "line": 174,
+          "column": 49
+        }
+      },
+      {
+        "sourceKey": "typeRef_f31346cce218ab1e",
+        "start": {
+          "offset": 4837,
+          "line": 177,
+          "column": 17
+        },
+        "end": {
+          "offset": 4844,
+          "line": 177,
+          "column": 24
+        }
+      }
+    ]
+  },
+  {
+    "objectKey": "typeRef_20d637d3397e2cf4",
+    "context": "List<Contact>",
+    "source": [
+      {
+        "sourceKey": "typeRef_2d05e02b4f639172",
+        "start": {
+          "offset": 3690,
+          "line": 134,
+          "column": 8
+        },
+        "end": {
+          "offset": 3703,
+          "line": 134,
+          "column": 21
+        }
+      },
+      {
+        "sourceKey": "typeRef_660a788d4f0b9634",
+        "start": {
+          "offset": 4727,
+          "line": 174,
+          "column": 8
+        },
+        "end": {
+          "offset": 4740,
+          "line": 174,
+          "column": 21
+        }
+      }
+    ]
+  },
+  {
+    "objectKey": "forStatement_af2e5532409481ae",
+    "context": "for(Accountaccount:Trigger.new){contacts.add(newContact(LastName=account.Name,AccountId=account.Id));}",
+    "source": [
+      {
+        "sourceKey": "forStatement_ae1b5acd3011d522",
+        "start": {
+          "offset": 3747,
+          "line": 136,
+          "column": 8
+        },
+        "end": {
+          "offset": 3977,
+          "line": 143,
+          "column": 9
+        }
+      }
+    ]
+  },
+  {
+    "objectKey": "expressionStatement_687fd76e297c5932",
+    "context": "contacts.add(newContact(LastName=account.Name,AccountId=account.Id));",
+    "source": [
+      {
+        "sourceKey": "expressionStatement_92465727c1add60d",
+        "start": {
+          "offset": 3798,
+          "line": 137,
+          "column": 12
+        },
+        "end": {
+          "offset": 3966,
+          "line": 142,
+          "column": 14
+        }
+      }
+    ]
+  },
+  {
+    "objectKey": "ifStatement_de5124d11137d8ee",
+    "context": "if(!contacts.isEmpty()){insertasusercontacts;}",
+    "source": [
+      {
+        "sourceKey": "ifStatement_f89838382c6443f6",
+        "start": {
+          "offset": 3989,
+          "line": 145,
+          "column": 8
+        },
+        "end": {
+          "offset": 4064,
+          "line": 147,
+          "column": 9
+        }
+      }
+    ]
+  },
+  {
+    "objectKey": "parExpression_c90f61046ccc002c",
+    "context": "(!contacts.isEmpty())",
+    "source": [
+      {
+        "sourceKey": "parExpression_067457b3b3c21560",
+        "start": {
+          "offset": 3992,
+          "line": 145,
+          "column": 11
+        },
+        "end": {
+          "offset": 4013,
+          "line": 145,
+          "column": 32
+        }
+      }
+    ]
+  },
+  {
+    "objectKey": "insertStatement_1b79ac72d4f4f7b3",
+    "context": "insertasusercontacts;",
+    "source": [
+      {
+        "sourceKey": "insertStatement_f253a299ab961e8f",
+        "start": {
+          "offset": 4029,
+          "line": 146,
+          "column": 12
+        },
+        "end": {
+          "offset": 4053,
+          "line": 146,
+          "column": 36
+        }
+      }
+    ]
+  },
+  {
+    "objectKey": "ifStatement_dbfa839301c2e62d",
+    "context": "if(Trigger.isAfter&&Trigger.isUpdate){Set<Id>accountIds=newSet<Id>();accountIds.addAll(Trigger.newMap.keySet());List<Account>accounts=[SELECTId,Name,Industry,(SELECTId,FirstName,LastNameFROMContacts)FROMAccountWHEREIdIN:accountIds];List<Contact>toUpdate=newList<Contact>();for(Accountaccount:accounts){for(Contactcontact:account.Contacts){contact.Description=account.Name;toUpdate.add(contact);}}updatetoUpdate;}",
+    "source": [
+      {
+        "sourceKey": "ifStatement_0d1368bee1b9ed18",
+        "start": {
+          "offset": 4242,
+          "line": 155,
+          "column": 4
+        },
+        "end": {
+          "offset": 5028,
+          "line": 184,
+          "column": 5
+        }
+      }
+    ]
+  },
+  {
+    "objectKey": "parExpression_40cb21d89bd70f65",
+    "context": "(Trigger.isAfter&&Trigger.isUpdate)",
+    "source": [
+      {
+        "sourceKey": "parExpression_60ecf77e29add360",
+        "start": {
+          "offset": 4245,
+          "line": 155,
+          "column": 7
+        },
+        "end": {
+          "offset": 4282,
+          "line": 155,
+          "column": 44
+        }
+      }
+    ]
+  },
+  {
+    "objectKey": "localVariableDeclarationStatement_14e51778898af045",
+    "context": "Set<Id>accountIds=newSet<Id>();",
+    "source": [
+      {
+        "sourceKey": "localVariableDeclarationStatement_56d69de4fe65fca1",
+        "start": {
+          "offset": 4296,
+          "line": 157,
+          "column": 8
+        },
+        "end": {
+          "offset": 4331,
+          "line": 157,
+          "column": 43
+        }
+      }
+    ]
+  },
+  {
+    "objectKey": "typeRef_3d04cbf9478b92e2",
+    "context": "Id",
+    "source": [
+      {
+        "sourceKey": "typeRef_a2738eb5db1dd152",
+        "start": {
+          "offset": 4325,
+          "line": 157,
+          "column": 37
+        },
+        "end": {
+          "offset": 4327,
+          "line": 157,
+          "column": 39
+        }
+      }
+    ]
+  },
+  {
+    "objectKey": "typeRef_24f17573a601e5e9",
+    "context": "Set<Id>",
+    "source": [
+      {
+        "sourceKey": "typeRef_7d416eb0d08c4504",
+        "start": {
+          "offset": 4296,
+          "line": 157,
+          "column": 8
+        },
+        "end": {
+          "offset": 4303,
+          "line": 157,
+          "column": 15
+        }
+      }
+    ]
+  },
+  {
+    "objectKey": "expressionStatement_8978b84a5f220117",
+    "context": "accountIds.addAll(Trigger.newMap.keySet());",
+    "source": [
+      {
+        "sourceKey": "expressionStatement_b33ae0450913b47c",
+        "start": {
+          "offset": 4343,
+          "line": 159,
+          "column": 8
+        },
+        "end": {
+          "offset": 4386,
+          "line": 159,
+          "column": 51
+        }
+      }
+    ]
+  },
+  {
+    "objectKey": "localVariableDeclarationStatement_6564a5c54681495a",
+    "context": "List<Account>accounts=[SELECTId,Name,Industry,(SELECTId,FirstName,LastNameFROMContacts)FROMAccountWHEREIdIN:accountIds];",
+    "source": [
+      {
+        "sourceKey": "localVariableDeclarationStatement_cc2faf88a014fd37",
+        "start": {
+          "offset": 4398,
+          "line": 161,
+          "column": 8
+        },
+        "end": {
+          "offset": 4715,
+          "line": 172,
+          "column": 10
+        }
+      }
+    ]
+  },
+  {
+    "objectKey": "query_a66a262c2f0d73cb",
+    "context": "SELECTId,Name,Industry,(SELECTId,FirstName,LastNameFROMContacts)FROMAccountWHEREIdIN:accountIds",
+    "source": [
+      {
+        "sourceKey": "query_15a2baac9bd1ce4a",
+        "start": {
+          "offset": 4438,
+          "line": 162,
+          "column": 12
+        },
+        "end": {
+          "offset": 4703,
+          "line": 171,
+          "column": 35
+        }
+      }
+    ]
+  },
+  {
+    "objectKey": "selectEntry_1a6e1da553674376",
+    "context": "Id",
+    "source": [
+      {
+        "sourceKey": "selectEntry_b8999b5f7fbd24d0",
+        "start": {
+          "offset": 4462,
+          "line": 163,
+          "column": 16
+        },
+        "end": {
+          "offset": 4464,
+          "line": 163,
+          "column": 18
+        }
+      },
+      {
+        "sourceKey": "selectEntry_e8a43a5a25629feb",
+        "start": {
+          "offset": 5280,
+          "line": 193,
+          "column": 35
+        },
+        "end": {
+          "offset": 5282,
+          "line": 193,
+          "column": 37
+        }
+      }
+    ]
+  },
+  {
+    "objectKey": "selectEntry_15970c8b542d5d3d",
+    "context": "Name",
+    "source": [
+      {
+        "sourceKey": "selectEntry_1fb0ed8eaf1f2741",
+        "start": {
+          "offset": 4483,
+          "line": 164,
+          "column": 16
+        },
+        "end": {
+          "offset": 4487,
+          "line": 164,
+          "column": 20
+        }
+      }
+    ]
+  },
+  {
+    "objectKey": "selectEntry_13f8d70dedbca0b9",
+    "context": "Industry",
+    "source": [
+      {
+        "sourceKey": "selectEntry_eb9de3b8347d4d07",
+        "start": {
+          "offset": 4506,
+          "line": 165,
+          "column": 16
+        },
+        "end": {
+          "offset": 4514,
+          "line": 165,
+          "column": 24
+        }
+      }
+    ]
+  },
+  {
+    "objectKey": "subQuery_1eecf3c6da20ea5a",
+    "context": "SELECTId,FirstName,LastNameFROMContacts",
+    "source": [
+      {
+        "sourceKey": "subQuery_47b839e95b0b493a",
+        "start": {
+          "offset": 4556,
+          "line": 167,
+          "column": 20
+        },
+        "end": {
+          "offset": 4621,
+          "line": 168,
+          "column": 33
+        }
+      }
+    ]
+  },
+  {
+    "objectKey": "subFieldEntry_a31eb73652f5f2ec",
+    "context": "Id",
+    "source": [
+      {
+        "sourceKey": "subFieldEntry_b0e626919da87cbc",
+        "start": {
+          "offset": 4563,
+          "line": 167,
+          "column": 27
+        },
+        "end": {
+          "offset": 4565,
+          "line": 167,
+          "column": 29
+        }
+      }
+    ]
+  },
+  {
+    "objectKey": "subFieldEntry_bb003060f5665c3e",
+    "context": "FirstName",
+    "source": [
+      {
+        "sourceKey": "subFieldEntry_0bba647c6f132633",
+        "start": {
+          "offset": 4567,
+          "line": 167,
+          "column": 31
+        },
+        "end": {
+          "offset": 4576,
+          "line": 167,
+          "column": 40
+        }
+      }
+    ]
+  },
+  {
+    "objectKey": "subFieldEntry_97c3fa0ab8de64a4",
+    "context": "LastName",
+    "source": [
+      {
+        "sourceKey": "subFieldEntry_97af576d062f3a3b",
+        "start": {
+          "offset": 4578,
+          "line": 167,
+          "column": 42
+        },
+        "end": {
+          "offset": 4586,
+          "line": 167,
+          "column": 50
+        }
+      }
+    ]
+  },
+  {
+    "objectKey": "fromName_5ed7c7042062a255",
+    "context": "Contacts",
+    "source": [
+      {
+        "sourceKey": "fromName_d962013c1cc4b983",
+        "start": {
+          "offset": 4613,
+          "line": 168,
+          "column": 25
+        },
+        "end": {
+          "offset": 4621,
+          "line": 168,
+          "column": 33
+        }
+      }
+    ]
+  },
+  {
+    "objectKey": "fromName_4fac8444b015aa9c",
+    "context": "Account",
+    "source": [
+      {
+        "sourceKey": "fromName_15b85eae24f056f2",
+        "start": {
+          "offset": 4659,
+          "line": 170,
+          "column": 17
+        },
+        "end": {
+          "offset": 4666,
+          "line": 170,
+          "column": 24
+        }
+      }
+    ]
+  },
+  {
+    "objectKey": "fieldExpression_f54f696ae7f1e0a5",
+    "context": "IdIN:accountIds",
+    "source": [
+      {
+        "sourceKey": "fieldExpression_d4f53aa337a6a4ac",
+        "start": {
+          "offset": 4686,
+          "line": 171,
+          "column": 18
+        },
+        "end": {
+          "offset": 4703,
+          "line": 171,
+          "column": 35
+        }
+      }
+    ]
+  },
+  {
+    "objectKey": "typeRef_e7a6126512547d3d",
+    "context": "List<Account>",
+    "source": [
+      {
+        "sourceKey": "typeRef_8007408171cb2017",
+        "start": {
+          "offset": 4398,
+          "line": 161,
+          "column": 8
+        },
+        "end": {
+          "offset": 4411,
+          "line": 161,
+          "column": 21
+        }
+      }
+    ]
+  },
+  {
+    "objectKey": "localVariableDeclarationStatement_e9ad9e3012383e32",
+    "context": "List<Contact>toUpdate=newList<Contact>();",
+    "source": [
+      {
+        "sourceKey": "localVariableDeclarationStatement_266d273fd2daef7b",
+        "start": {
+          "offset": 4727,
+          "line": 174,
+          "column": 8
+        },
+        "end": {
+          "offset": 4772,
+          "line": 174,
+          "column": 53
+        }
+      }
+    ]
+  },
+  {
+    "objectKey": "forStatement_cb411f5a141d5868",
+    "context": "for(Accountaccount:accounts){for(Contactcontact:account.Contacts){contact.Description=account.Name;toUpdate.add(contact);}}",
+    "source": [
+      {
+        "sourceKey": "forStatement_8a704a1503cb10ba",
+        "start": {
+          "offset": 4784,
+          "line": 176,
+          "column": 8
+        },
+        "end": {
+          "offset": 4993,
+          "line": 181,
+          "column": 9
+        }
+      }
+    ]
+  },
+  {
+    "objectKey": "forControl_b2f6c0931b0479f2",
+    "context": "Accountaccount:accounts",
+    "source": [
+      {
+        "sourceKey": "forControl_ee3d14ea1667de3e",
+        "start": {
+          "offset": 4789,
+          "line": 176,
+          "column": 13
+        },
+        "end": {
+          "offset": 4815,
+          "line": 176,
+          "column": 39
+        }
+      }
+    ]
+  },
+  {
+    "objectKey": "forStatement_7193cfa5e01f5d43",
+    "context": "for(Contactcontact:account.Contacts){contact.Description=account.Name;toUpdate.add(contact);}",
+    "source": [
+      {
+        "sourceKey": "forStatement_2dc17d2bb56300a2",
+        "start": {
+          "offset": 4832,
+          "line": 177,
+          "column": 12
+        },
+        "end": {
+          "offset": 4982,
+          "line": 180,
+          "column": 13
+        }
+      }
+    ]
+  },
+  {
+    "objectKey": "forControl_35923210e589efd0",
+    "context": "Contactcontact:account.Contacts",
+    "source": [
+      {
+        "sourceKey": "forControl_029f4d2e93b8fd78",
+        "start": {
+          "offset": 4837,
+          "line": 177,
+          "column": 17
+        },
+        "end": {
+          "offset": 4871,
+          "line": 177,
+          "column": 51
+        }
+      }
+    ]
+  },
+  {
+    "objectKey": "expressionStatement_2eb27b7b9a08ca5c",
+    "context": "contact.Description=account.Name;",
+    "source": [
+      {
+        "sourceKey": "expressionStatement_5f09a9d6998f7bbb",
+        "start": {
+          "offset": 4892,
+          "line": 178,
+          "column": 16
+        },
+        "end": {
+          "offset": 4927,
+          "line": 178,
+          "column": 51
+        }
+      }
+    ]
+  },
+  {
+    "objectKey": "expressionStatement_5141a93b5de12b48",
+    "context": "toUpdate.add(contact);",
+    "source": [
+      {
+        "sourceKey": "expressionStatement_9582ff0c9dc1901d",
+        "start": {
+          "offset": 4945,
+          "line": 179,
+          "column": 16
+        },
+        "end": {
+          "offset": 4967,
+          "line": 179,
+          "column": 38
+        }
+      }
+    ]
+  },
+  {
+    "objectKey": "updateStatement_de650e075021e94f",
+    "context": "updatetoUpdate;",
+    "source": [
+      {
+        "sourceKey": "updateStatement_3f9362cbb8333d2a",
+        "start": {
+          "offset": 5005,
+          "line": 183,
+          "column": 8
+        },
+        "end": {
+          "offset": 5021,
+          "line": 183,
+          "column": 24
+        }
+      }
+    ]
+  },
+  {
+    "objectKey": "ifStatement_4ce0cbb2c387ae34",
+    "context": "if(Trigger.isAfter&&Trigger.isDelete){List<Task>tasks=[SELECTIdFROMTaskWHEREWhatIdIN:Trigger.oldMap.keySet()ALLROWS];deletetasks;for(Accountaccount:Trigger.old){System.debug('Deleted: '+account.Id);}}",
+    "source": [
+      {
+        "sourceKey": "ifStatement_3d66706bb9c9926d",
+        "start": {
+          "offset": 5199,
+          "line": 191,
+          "column": 4
+        },
+        "end": {
+          "offset": 5489,
+          "line": 200,
+          "column": 5
+        }
+      }
+    ]
+  },
+  {
+    "objectKey": "parExpression_9945d8b3e734a789",
+    "context": "(Trigger.isAfter&&Trigger.isDelete)",
+    "source": [
+      {
+        "sourceKey": "parExpression_8a04253c428a3fcb",
+        "start": {
+          "offset": 5202,
+          "line": 191,
+          "column": 7
+        },
+        "end": {
+          "offset": 5239,
+          "line": 191,
+          "column": 44
+        }
+      }
+    ]
+  },
+  {
+    "objectKey": "localVariableDeclarationStatement_f0d36d4995cedfce",
+    "context": "List<Task>tasks=[SELECTIdFROMTaskWHEREWhatIdIN:Trigger.oldMap.keySet()ALLROWS];",
+    "source": [
+      {
+        "sourceKey": "localVariableDeclarationStatement_820ccc2232727311",
+        "start": {
+          "offset": 5253,
+          "line": 193,
+          "column": 8
+        },
+        "end": {
+          "offset": 5344,
+          "line": 193,
+          "column": 99
+        }
+      }
+    ]
+  },
+  {
+    "objectKey": "query_0dce18924f920e19",
+    "context": "SELECTIdFROMTaskWHEREWhatIdIN:Trigger.oldMap.keySet()ALLROWS",
+    "source": [
+      {
+        "sourceKey": "query_2043c1f67860eef9",
+        "start": {
+          "offset": 5273,
+          "line": 193,
+          "column": 28
+        },
+        "end": {
+          "offset": 5342,
+          "line": 193,
+          "column": 97
+        }
+      }
+    ]
+  },
+  {
+    "objectKey": "fromName_af54090379795252",
+    "context": "Task",
+    "source": [
+      {
+        "sourceKey": "fromName_f4bbad7cd0500ee3",
+        "start": {
+          "offset": 5288,
+          "line": 193,
+          "column": 43
+        },
+        "end": {
+          "offset": 5292,
+          "line": 193,
+          "column": 47
+        }
+      }
+    ]
+  },
+  {
+    "objectKey": "fieldExpression_5744b2c607c15e05",
+    "context": "WhatIdIN:Trigger.oldMap.keySet()",
+    "source": [
+      {
+        "sourceKey": "fieldExpression_61a9cca7eb9c77b9",
+        "start": {
+          "offset": 5299,
+          "line": 193,
+          "column": 54
+        },
+        "end": {
+          "offset": 5333,
+          "line": 193,
+          "column": 88
+        }
+      }
+    ]
+  },
+  {
+    "objectKey": "allRowsClause_fe858f1bdc8b714c",
+    "context": "ALLROWS",
+    "source": [
+      {
+        "sourceKey": "allRowsClause_6d7c1839a704a174",
+        "start": {
+          "offset": 5334,
+          "line": 193,
+          "column": 89
+        },
+        "end": {
+          "offset": 5342,
+          "line": 193,
+          "column": 97
+        }
+      }
+    ]
+  },
+  {
+    "objectKey": "typeRef_9d3e7fc6f7468e5b",
+    "context": "List<Task>",
+    "source": [
+      {
+        "sourceKey": "typeRef_db3bc72a8937cef6",
+        "start": {
+          "offset": 5253,
+          "line": 193,
+          "column": 8
+        },
+        "end": {
+          "offset": 5263,
+          "line": 193,
+          "column": 18
+        }
+      }
+    ]
+  },
+  {
+    "objectKey": "deleteStatement_6ce3ac392825ce8d",
+    "context": "deletetasks;",
+    "source": [
+      {
+        "sourceKey": "deleteStatement_67a833c0c641b12b",
+        "start": {
+          "offset": 5356,
+          "line": 195,
+          "column": 8
+        },
+        "end": {
+          "offset": 5369,
+          "line": 195,
+          "column": 21
+        }
+      }
+    ]
+  },
+  {
+    "objectKey": "forStatement_9a9b78724ded9b9b",
+    "context": "for(Accountaccount:Trigger.old){System.debug('Deleted: '+account.Id);}",
+    "source": [
+      {
+        "sourceKey": "forStatement_92ac454fa824dd5e",
+        "start": {
+          "offset": 5381,
+          "line": 197,
+          "column": 8
+        },
+        "end": {
+          "offset": 5482,
+          "line": 199,
+          "column": 9
+        }
+      }
+    ]
+  },
+  {
+    "objectKey": "expressionStatement_7def96cb86bcebde",
+    "context": "System.debug('Deleted: '+account.Id);",
+    "source": [
+      {
+        "sourceKey": "expressionStatement_abd1b48344b8cc8b",
+        "start": {
+          "offset": 5432,
+          "line": 198,
+          "column": 12
+        },
+        "end": {
+          "offset": 5471,
+          "line": 198,
+          "column": 51
+        }
+      }
+    ]
+  },
+  {
+    "objectKey": "ifStatement_0957922e43282f07",
+    "context": "if(Trigger.isAfter&&Trigger.isUndelete){try{for(Accountaccount:Trigger.new){log('Restored: '+account.Id);}}catch(Exceptione){System.debug(e.getMessage());}}",
+    "source": [
+      {
+        "sourceKey": "ifStatement_4f70f1ac4ac880f4",
+        "start": {
+          "offset": 5662,
+          "line": 207,
+          "column": 4
+        },
+        "end": {
+          "offset": 5932,
+          "line": 216,
+          "column": 5
+        }
+      }
+    ]
+  },
+  {
+    "objectKey": "parExpression_745d101b543551e5",
+    "context": "(Trigger.isAfter&&Trigger.isUndelete)",
+    "source": [
+      {
+        "sourceKey": "parExpression_20a45f59ec2f3c2b",
+        "start": {
+          "offset": 5665,
+          "line": 207,
+          "column": 7
+        },
+        "end": {
+          "offset": 5704,
+          "line": 207,
+          "column": 46
+        }
+      }
+    ]
+  },
+  {
+    "objectKey": "tryStatement_18a2f478b8157943",
+    "context": "try{for(Accountaccount:Trigger.new){log('Restored: '+account.Id);}}catch(Exceptione){System.debug(e.getMessage());}",
+    "source": [
+      {
+        "sourceKey": "tryStatement_4608709fb2945393",
+        "start": {
+          "offset": 5718,
+          "line": 209,
+          "column": 8
+        },
+        "end": {
+          "offset": 5925,
+          "line": 215,
+          "column": 9
+        }
+      }
+    ]
+  },
+  {
+    "objectKey": "forStatement_f94e86fbbf228c9e",
+    "context": "for(Accountaccount:Trigger.new){log('Restored: '+account.Id);}",
+    "source": [
+      {
+        "sourceKey": "forStatement_e87f3dd3e332cd26",
+        "start": {
+          "offset": 5737,
+          "line": 210,
+          "column": 12
+        },
+        "end": {
+          "offset": 5838,
+          "line": 212,
+          "column": 13
+        }
+      }
+    ]
+  },
+  {
+    "objectKey": "expressionStatement_11d669e487eb6034",
+    "context": "log('Restored: '+account.Id);",
+    "source": [
+      {
+        "sourceKey": "expressionStatement_b107389a7ff6981a",
+        "start": {
+          "offset": 5792,
+          "line": 211,
+          "column": 16
+        },
+        "end": {
+          "offset": 5823,
+          "line": 211,
+          "column": 47
+        }
+      }
+    ]
+  },
+  {
+    "objectKey": "catchClause_d18616b0bc9c1332",
+    "context": "catch(Exceptione){System.debug(e.getMessage());}",
+    "source": [
+      {
+        "sourceKey": "catchClause_09a95f60f1cb2f04",
+        "start": {
+          "offset": 5850,
+          "line": 213,
+          "column": 10
+        },
+        "end": {
+          "offset": 5925,
+          "line": 215,
+          "column": 9
+        }
+      }
+    ]
+  },
+  {
+    "objectKey": "id_b6ffa7df1c4da983",
+    "context": "e",
+    "source": [
+      {
+        "sourceKey": "id_f197f985216c37f9",
+        "start": {
+          "offset": 5867,
+          "line": 213,
+          "column": 27
+        },
+        "end": {
+          "offset": 5868,
+          "line": 213,
+          "column": 28
+        }
+      }
+    ]
+  },
+  {
+    "objectKey": "qualifiedName_cab76848af5ff734",
+    "context": "Exception",
+    "source": [
+      {
+        "sourceKey": "qualifiedName_6fbba2658719029f",
+        "start": {
+          "offset": 5857,
+          "line": 213,
+          "column": 17
+        },
+        "end": {
+          "offset": 5866,
+          "line": 213,
+          "column": 26
+        }
+      }
+    ]
+  },
+  {
+    "objectKey": "expressionStatement_0b611757aa6ac3b6",
+    "context": "System.debug(e.getMessage());",
+    "source": [
+      {
+        "sourceKey": "expressionStatement_1d8e3c260526a7a5",
+        "start": {
+          "offset": 5885,
+          "line": 214,
+          "column": 12
+        },
+        "end": {
+          "offset": 5914,
+          "line": 214,
+          "column": 41
+        }
+      }
+    ]
+  }
+]

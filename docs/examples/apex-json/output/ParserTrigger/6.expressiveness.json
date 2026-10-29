@@ -1,0 +1,34 @@
+{
+  "sample": "ParserTrigger",
+  "order": {
+    "classMembers": {
+      "lists": 0,
+      "orderLost": 0
+    },
+    "selectEntries": {
+      "lists": 2,
+      "orderLost": 0
+    },
+    "modifiers": {
+      "lists": 1,
+      "orderLost": 0
+    }
+  },
+  "ambiguity": {
+    "fieldAccess": 53,
+    "noArgCall": 4,
+    "newExpressions": 4,
+    "emptyNew": {
+      "classCreatorRest": 3
+    }
+  },
+  "notRepresented": {
+    "comments": 31,
+    "commentChars": 1594,
+    "notSet": 0
+  },
+  "discriminated": {
+    "withKind": 151,
+    "withoutKind": 243
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "file": "parser.apex",
+  "syntaxErrors": 0,
+  "converterErrors": 0,
+  "errorJson": 0,
+  "errorJsonKinds": [],
+  "sourceObjects": {
+    "before": 1318,
+    "after": 211
+  },
+  "sources": {
+    "before": 2185,
+    "after": 285
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "file": "ParserTest.cls",
+  "syntaxErrors": 0,
+  "converterErrors": 0,
+  "errorJson": 0,
+  "errorJsonKinds": [],
+  "sourceObjects": {
+    "before": 2705,
+    "after": 593
+  },
+  "sources": {
+    "before": 5048,
+    "after": 853
+  }
+}

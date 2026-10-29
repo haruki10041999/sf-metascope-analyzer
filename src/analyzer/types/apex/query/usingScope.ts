@@ -1,19 +1,6 @@
 import typia from 'typia';
 
-import {
-    Convert,
-    ConvertExcludeError,
-    ErrorJson,
-    isErrorJson,
-    JsonType,
-    makeJsonType,
-    convertExcludeError,
-    mergeRecord,
-    convertValue,
-    ConvertType,
-    StructureJsonType,
-    makeStructureJsonType,
-} from '../commons';
+import { ErrorJson, JsonType, makeJsonType, convertValue, ConvertType } from '../commons';
 
 import { UsingScopeType } from '../converter';
 
@@ -24,18 +11,15 @@ export const isUsingScopeJson = typia.createIs<UsingScopeJson>();
 
 export const makeUsingScopeJson = (
     target: ConvertType<UsingScopeType>,
-    targetRecords?: Record<string, string[]>,
 ): UsingScopeJson | ErrorJson => {
-    return convertValue<'usingScope', 'usingScopeClause', UsingScopeType, UsingScopeJson>(
-        ['usingScope'],
+    return convertValue<'usingScope', UsingScopeType, UsingScopeJson>(
         target,
-        ['usingScopeClause'],
         'usingScopeClause',
-        (target, targetRecords, _) => {
-            return makeJsonType('usingScopeClause', targetRecords, {
+        (target, targetRecords) => {
+            return makeJsonType('usingScopeClause', targetRecords.base, {
                 value: target.value.value.value,
             });
         },
-        targetRecords,
     );
 };
+

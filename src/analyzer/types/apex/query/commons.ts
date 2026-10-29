@@ -1,31 +1,23 @@
 import typia from 'typia';
 
 import {
-    Convert,
     ConvertExcludeError,
     ErrorJson,
     JsonType,
     makeJsonType,
-    convertExcludeError,
-    mergeRecord,
     convertValue,
     ConvertType,
-} from '..//commons';
+    isErrorNode,
+    makeErrorJson,
+} from '../commons';
 
 import {
     ValueType,
     SignedNumberType,
     DateFormulaType,
-    SubQueryType,
-    ValueListType,
-    BoundExpressionType,
-    SignedIntegerType,
     ComparisonOperatorType,
     FieldExpressionType,
     LogicalExpressionType,
-    SoqlFunctionType,
-    FieldNameType,
-    ErrorType,
 } from '../converter';
 
 import { BaseExpressionJson, makeExpressionJsonConvert } from '../expression';
@@ -179,17 +171,13 @@ export type ValueJson =
     | ({
           type: 'dateFormula';
       } & DateFormulaJson)
-    | { type: 'subQuery'; value: SubQueryJson }
+    | { type: 'subQuery'; value: SubQueryJson | ErrorJson }
     | { type: 'list'; value: ValueJson[] }
     | { type: 'bind'; value: BaseExpressionJson | ErrorJson };
 
 export const isValueJson = typia.createIs<ValueJson>();
 
 export const makeValueJson = (target: ConvertExcludeError<ValueType>): ValueJson => {
-    if (target.valueType === 'error') {
-        throw new Error('Cannot convert error value to JSON');
-    }
-
     if (target.valueType === 'number') {
         return {
             type: target.valueType,
@@ -223,23 +211,6 @@ export const makeValueJson = (target: ConvertExcludeError<ValueType>): ValueJson
     }
 };
 
-export type QueryOperatorJson = JsonType<'queryOperator'> & {
-    operator:
-        | '='
-        | '!='
-        | '<'
-        | '>'
-        | '<='
-        | '>='
-        | '<>'
-        | 'LIKE'
-        | 'IN'
-        | 'NOT IN'
-        | 'INCLUDES'
-        | 'EXCLUDES';
-};
-export const isQueryOperatorJson = typia.createIs<QueryOperatorJson>();
-
 export const makeComparisonOperatorJson = (
     target: ConvertExcludeError<ComparisonOperatorType>,
 ):
@@ -259,7 +230,7 @@ export const makeComparisonOperatorJson = (
 };
 
 export type SingleConditionJson = JsonType<'singleCondition'> & {
-    field: Omit<FieldJson | SoqlFunctionJson, 'sourceKeys'> | ErrorJson;
+    field: FieldJson | SoqlFunctionJson;
     operator:
         | '='
         | '!='
@@ -280,10 +251,8 @@ export const isSingleConditionJson = typia.createIs<SingleConditionJson>();
 
 export const makeSingleConditionJson = (
     target: ConvertType<FieldExpressionType>,
-    targetRecords?: Record<string, string[]>,
 ): SingleConditionJson | ErrorJson => {
     return convertValue<'fieldExpression', FieldExpressionType, SingleConditionJson>(
-        ['fieldExpression'],
         target,
         'singleCondition',
         (target, targetRecords) => {
@@ -291,29 +260,20 @@ export const makeSingleConditionJson = (
             const operator = makeComparisonOperatorJson(target.operator);
             const value = makeValueJson(target.right);
 
-            let fieldValue: FieldJson | SoqlFunctionJson | ErrorJson;
             if (field.type === 'fieldName') {
-                fieldValue = makeFieldJson(field, targetRecords);
+                return makeJsonType('singleCondition', targetRecords.base, {
+                    field: makeFieldJson(field),
+                    operator: operator,
+                    value: value,
+                });
             } else {
-                fieldValue = makeSoqlFunctionJson(field, targetRecords);
-            }
-
-            if (fieldValue.kind === 'error') {
-                return makeJsonType('singleCondition', targetRecords, {
-                    field: fieldValue,
+                return makeJsonType('singleCondition', targetRecords.base, {
+                    field: makeSoqlFunctionJson(field),
                     operator: operator,
                     value: value,
                 });
             }
-
-            const { sourceKeys, ...content } = fieldValue;
-            return makeJsonType('singleCondition', targetRecords, {
-                field: content,
-                operator: operator,
-                value: value,
-            });
         },
-        targetRecords,
     );
 };
 
@@ -325,15 +285,22 @@ export type LogicalConditionJson = {
 export const isLogicalConditionJson = typia.createIs<LogicalConditionJson>();
 
 export const makeLogicalConditionJson = (
-    target: ConvertExcludeError<LogicalExpressionType>,
-): LogicalConditionJson => {
+    target: ConvertType<LogicalExpressionType>,
+): LogicalConditionJson | ErrorJson => {
+    if (isErrorNode(target)) {
+        return makeErrorJson(target, 'logicalCondition');
+    }
+
     const operator = target.operator;
     const condition: (SingleConditionJson | LogicalConditionJson | ErrorJson)[] = [];
     target.value.forEach((v) => {
-        if (v.value.type === 'fieldExpression') {
-            condition.push(makeSingleConditionJson(v.value));
-        } else {
+        if (isErrorNode(v)) {
+            condition.push(makeErrorJson(v, 'logicalCondition'));
+        } else if (v.value.type === 'logicalExpression') {
             condition.push(makeLogicalConditionJson(v.value));
+        } else {
+            // fieldExpression とエラーノードは境界ノード側で処理する
+            condition.push(makeSingleConditionJson(v.value));
         }
     });
 
@@ -342,3 +309,4 @@ export const makeLogicalConditionJson = (
         ...(operator !== null ? { operator: operator } : {}),
     };
 };
+

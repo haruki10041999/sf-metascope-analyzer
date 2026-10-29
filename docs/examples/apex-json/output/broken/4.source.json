@@ -1,0 +1,205 @@
+[
+  {
+    "objectKey": "error_6cb7b0d1be38dc51",
+    "context": "",
+    "source": [
+      {
+        "sourceKey": "error_ad227c7f8a469882",
+        "start": {
+          "offset": 0,
+          "line": 1,
+          "column": 0
+        },
+        "end": {
+          "offset": 0,
+          "line": 1,
+          "column": 0
+        }
+      },
+      {
+        "sourceKey": "error_11523a219594fa1f",
+        "start": {
+          "offset": 0,
+          "line": 1,
+          "column": 0
+        },
+        "end": {
+          "offset": 7,
+          "line": 1,
+          "column": 7
+        }
+      }
+    ]
+  },
+  {
+    "objectKey": "expressionStatement_0a912e365a1f73a5",
+    "context": "x=;List<Account><missing ';'>",
+    "source": [
+      {
+        "sourceKey": "expressionStatement_ef190fea339c0135",
+        "start": {
+          "offset": 8,
+          "line": 1,
+          "column": 8
+        },
+        "end": {
+          "offset": 27,
+          "line": 2,
+          "column": 13
+        }
+      }
+    ]
+  },
+  {
+    "objectKey": "typeRef_e7a6126512547d3d",
+    "context": "List<Account>",
+    "source": [
+      {
+        "sourceKey": "typeRef_c8d5413ffa36b5c5",
+        "start": {
+          "offset": 14,
+          "line": 2,
+          "column": 0
+        },
+        "end": {
+          "offset": 27,
+          "line": 2,
+          "column": 13
+        }
+      }
+    ]
+  },
+  {
+    "objectKey": "expressionStatement_ad738a5e66ff0abc",
+    "context": "accs=[SELECTIdFROMAccountWHERE<missing ';'>",
+    "source": [
+      {
+        "sourceKey": "expressionStatement_de82d94f88084f12",
+        "start": {
+          "offset": 28,
+          "line": 2,
+          "column": 14
+        },
+        "end": {
+          "offset": 64,
+          "line": 2,
+          "column": 50
+        }
+      }
+    ]
+  },
+  {
+    "objectKey": "expressionStatement_98f52853defe00f3",
+    "context": "Name=LIMIT<missing ';'>",
+    "source": [
+      {
+        "sourceKey": "expressionStatement_dcae1b8b0a7a2098",
+        "start": {
+          "offset": 65,
+          "line": 2,
+          "column": 51
+        },
+        "end": {
+          "offset": 77,
+          "line": 2,
+          "column": 63
+        }
+      }
+    ]
+  },
+  {
+    "objectKey": "expressionStatement_b679657725f1f6ad",
+    "context": "1];",
+    "source": [
+      {
+        "sourceKey": "expressionStatement_a440f7314eadc0d7",
+        "start": {
+          "offset": 78,
+          "line": 2,
+          "column": 64
+        },
+        "end": {
+          "offset": 81,
+          "line": 2,
+          "column": 67
+        }
+      }
+    ]
+  },
+  {
+    "objectKey": "forStatement_de7d26cd731c22aa",
+    "context": "for(;;){foo(1,);}",
+    "source": [
+      {
+        "sourceKey": "forStatement_4ca7891fe193513f",
+        "start": {
+          "offset": 82,
+          "line": 3,
+          "column": 0
+        },
+        "end": {
+          "offset": 108,
+          "line": 5,
+          "column": 1
+        }
+      }
+    ]
+  },
+  {
+    "objectKey": "forControl_bbc5452d8df18502",
+    "context": ";;",
+    "source": [
+      {
+        "sourceKey": "forControl_8bd9119e3875d248",
+        "start": {
+          "offset": 87,
+          "line": 3,
+          "column": 5
+        },
+        "end": {
+          "offset": 89,
+          "line": 3,
+          "column": 7
+        }
+      }
+    ]
+  },
+  {
+    "objectKey": "expressionStatement_be200fe7c6279aa2",
+    "context": "foo(1,);",
+    "source": [
+      {
+        "sourceKey": "expressionStatement_8b363c08d32196d7",
+        "start": {
+          "offset": 97,
+          "line": 4,
+          "column": 4
+        },
+        "end": {
+          "offset": 106,
+          "line": 4,
+          "column": 13
+        }
+      }
+    ]
+  },
+  {
+    "objectKey": "returnStatement_f80ab14f3b18a0e7",
+    "context": "returnx+;",
+    "source": [
+      {
+        "sourceKey": "returnStatement_a28423e24bac4f28",
+        "start": {
+          "offset": 109,
+          "line": 6,
+          "column": 0
+        },
+        "end": {
+          "offset": 120,
+          "line": 6,
+          "column": 11
+        }
+      }
+    ]
+  }
+]

@@ -8,6 +8,7 @@ import {
     convertValue,
     ConvertExcludeError,
     ConvertType,
+    ConvertKeys,
 } from './commons';
 
 import { ModifierType, AnnotationType } from './converter';
@@ -47,24 +48,24 @@ export type ModifierJson = JsonType<'modifier'> & {
 export const isModifierJson = typia.createIs<ModifierJson>();
 
 export type ModifiersJson = {
-    access?: Omit<ModifierJson, 'sourceKeys'>[];
-    declaration?: Omit<ModifierJson, 'sourceKeys'>[];
-    webService?: Omit<ModifierJson, 'sourceKeys'>[];
-    test?: Omit<ModifierJson, 'sourceKeys'>[];
-    sharing?: Omit<ModifierJson, 'sourceKeys'>[];
-    other?: Omit<ModifierJson, 'sourceKeys'>[];
-    lwcAnnotation?: Omit<AnnotationJson, 'sourceKeys'>[];
-    flowAnnotation?: Omit<AnnotationJson, 'sourceKeys'>[];
-    asyncAnnotation?: Omit<AnnotationJson, 'sourceKeys'>[];
-    testAnnotation?: Omit<AnnotationJson, 'sourceKeys'>[];
-    restAnnotation?: Omit<AnnotationJson, 'sourceKeys'>[];
-    visualforceAnnotation?: Omit<AnnotationJson, 'sourceKeys'>[];
-    accessAnnotation?: Omit<AnnotationJson, 'sourceKeys'>[];
-    serializeAnnotation?: Omit<AnnotationJson, 'sourceKeys'>[];
-    executionAnnotation?: Omit<AnnotationJson, 'sourceKeys'>[];
-    compatibilityAnnotation?: Omit<AnnotationJson, 'sourceKeys'>[];
-    otherAnnotation?: Omit<AnnotationJson, 'sourceKeys'>[];
-    error?: Omit<ErrorJson, 'sourceKeys'>[];
+    access?: ModifierJson[];
+    declaration?: ModifierJson[];
+    webService?: ModifierJson[];
+    test?: ModifierJson[];
+    sharing?: ModifierJson[];
+    other?: ModifierJson[];
+    lwcAnnotation?: AnnotationJson[];
+    flowAnnotation?: AnnotationJson[];
+    asyncAnnotation?: AnnotationJson[];
+    testAnnotation?: AnnotationJson[];
+    restAnnotation?: AnnotationJson[];
+    visualforceAnnotation?: AnnotationJson[];
+    accessAnnotation?: AnnotationJson[];
+    serializeAnnotation?: AnnotationJson[];
+    executionAnnotation?: AnnotationJson[];
+    compatibilityAnnotation?: AnnotationJson[];
+    otherAnnotation?: AnnotationJson[];
+    error?: ErrorJson[];
 };
 
 export const isModifiersJson = typia.createIs<ModifiersJson>();
@@ -81,8 +82,6 @@ const isTestModifier = (value: string): boolean => value.toUpperCase() === 'TEST
 
 const isSharingModifier = (value: string): boolean =>
     ['WITH_SHARING', 'WITHOUT_SHARING', 'INHERITED_SHARING'].includes(value.toUpperCase());
-
-const isOtherModifier = (value: string): boolean => value.toUpperCase() === 'TRANSIENT';
 
 const isLWCAnnotation = (value: string): boolean => value.toUpperCase() === 'AURAENABLED';
 
@@ -113,7 +112,7 @@ const isCompatibilityAnnotation = (value: string): boolean =>
 
 const makeAnnotationJson = (
     target: ConvertExcludeError<AnnotationType>,
-    targetRecords: Record<string, string[]>,
+    targetRecords: ConvertKeys,
 ): AnnotationJson => {
     const name = target.value.value;
     const annotationJson: AnnotationJson = makeJsonType('annotation', targetRecords, {
@@ -155,27 +154,24 @@ const makeAnnotationJson = (
 
 export const makeModifierJson = (
     target: ConvertType<ModifierType>,
-    targetRecords?: Record<string, string[]>,
 ): ModifierJson | AnnotationJson | ErrorJson => {
-    return convertValue<'modifier' | 'annotation', ModifierType, ModifierJson | AnnotationJson>(
-        ['modifier', 'annotation'],
+    return convertValue<'modifier', ModifierType, ModifierJson | AnnotationJson>(
         target,
         'modifier',
         (target, targetRecords) => {
             const modifier = target!.value;
             if (typeof modifier === 'string') {
-                return makeJsonType('modifier', targetRecords, {
+                return makeJsonType('modifier', targetRecords.base, {
                     name: modifier,
                 });
             } else {
-                return makeAnnotationJson(modifier, targetRecords);
+                return makeAnnotationJson(modifier, targetRecords.base);
             }
         },
-        targetRecords,
     );
 };
 
-export const makeModifiersJson = (targets: ConvertExcludeError<ModifierType>[]): ModifiersJson => {
+export const makeModifiersJson = (targets: ConvertType<ModifierType>[]): ModifiersJson => {
     const modifiers: Record<string, ModifierJson[]> = {};
     const annotations: Record<string, AnnotationJson[]> = {};
     const errors: ErrorJson[] = [];
@@ -189,12 +185,13 @@ export const makeModifiersJson = (targets: ConvertExcludeError<ModifierType>[]):
     targets.forEach((target) => {
         const result = makeModifierJson(target);
 
-        if (isErrorJson(result)) {
+        // 判別は kind で行う（isModifierJson は name を既知の修飾子に限るため、未知の修飾子を取りこぼす）
+        if (result.kind === 'error') {
             errors.push(result);
             return;
         }
 
-        if (isModifierJson(result)) {
+        if (result.kind === 'modifier') {
             if (isAccessModifier(result.name)) {
                 addModifier('access', result);
             } else if (isDeclarationModifier(result.name)) {
@@ -205,7 +202,8 @@ export const makeModifiersJson = (targets: ConvertExcludeError<ModifierType>[]):
                 addModifier('test', result);
             } else if (isSharingModifier(result.name)) {
                 addModifier('sharing', result);
-            } else if (isOtherModifier(result.name)) {
+            } else {
+                // TRANSIENT と、どの分類にも当たらない修飾子（捨てずに残す）
                 addModifier('other', result);
             }
             return;

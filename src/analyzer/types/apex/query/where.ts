@@ -1,28 +1,19 @@
 import typia from 'typia';
 
 import {
-    Convert,
-    ConvertExcludeError,
     ErrorJson,
-    isErrorJson,
     JsonType,
     makeJsonType,
-    convertExcludeError,
-    mergeRecord,
     convertValue,
     ConvertType,
-} from '..//commons';
+    isErrorNode,
+    makeErrorJson,
+} from '../commons';
 
 import {
     WhereClauseType,
     WhereLogicalExpressionType,
-    WhereConditionalExpressionType,
     WhereFieldExpressionType,
-    FieldExpressionType,
-    ComparisonOperatorType,
-    ValueType,
-    isFieldExpressionType,
-    isWhereFieldExpressionType,
 } from '../converter';
 
 import {
@@ -58,32 +49,25 @@ export const isWhereSingleConditionJson = typia.createIs<WhereSingleConditionJso
 
 export const makeWhereSingleConditionJson = (
     target: ConvertType<WhereFieldExpressionType>,
-    targetRecords?: Record<string, string[]>,
 ): WhereSingleConditionJson | ErrorJson => {
     return convertValue<
         'whereFieldExpression',
         WhereFieldExpressionType,
         WhereSingleConditionJson | ErrorJson
-    >(
-        ['whereFieldExpression'],
-        target,
-        'singleCondition',
-        (target, targetRecords) => {
-            if (typeof target.left === 'string') {
-                const field = target.left;
-                const operator = makeComparisonOperatorJson(target.operator!);
-                const value = makeValueJson(target.right!);
-                return makeJsonType('singleCondition', targetRecords, {
-                    value: value,
-                    field: field,
-                    operator: operator,
-                });
-            } else {
-                return makeSingleConditionJson(target.left, targetRecords);
-            }
-        },
-        targetRecords,
-    );
+    >(target, 'singleCondition', (target, targetRecords) => {
+        if (typeof target.left === 'string') {
+            const field = target.left;
+            const operator = makeComparisonOperatorJson(target.operator!);
+            const value = makeValueJson(target.right!);
+            return makeJsonType('singleCondition', targetRecords.base, {
+                value: value,
+                field: field,
+                operator: operator,
+            });
+        } else {
+            return makeSingleConditionJson(target.left);
+        }
+    });
 };
 
 type WhereLogicalExpressionJson = {
@@ -94,15 +78,22 @@ type WhereLogicalExpressionJson = {
 export const isWhereLogicalExpressionJson = typia.createIs<WhereLogicalExpressionJson>();
 
 export const makeWhereLogicalExpressionJson = (
-    target: ConvertExcludeError<WhereLogicalExpressionType>,
-): WhereLogicalExpressionJson => {
+    target: ConvertType<WhereLogicalExpressionType>,
+): WhereLogicalExpressionJson | ErrorJson => {
+    if (isErrorNode(target)) {
+        return makeErrorJson(target, 'whereCondition');
+    }
+
     const operator = target.operator;
     const condition: (WhereSingleConditionJson | WhereLogicalExpressionJson | ErrorJson)[] = [];
     target.value.forEach((v) => {
-        if (v.value.type === 'whereFieldExpression') {
-            condition.push(makeWhereSingleConditionJson(v.value));
-        } else {
+        if (isErrorNode(v)) {
+            condition.push(makeErrorJson(v, 'whereCondition'));
+        } else if (v.value.type === 'whereLogicalExpression') {
             condition.push(makeWhereLogicalExpressionJson(v.value));
+        } else {
+            // whereFieldExpression とエラーノードは境界ノード側で処理する
+            condition.push(makeWhereSingleConditionJson(v.value));
         }
     });
     return {
@@ -112,13 +103,18 @@ export const makeWhereLogicalExpressionJson = (
 };
 
 export type WhereJson = {
-    condition: WhereLogicalExpressionJson;
+    condition: WhereLogicalExpressionJson | ErrorJson;
 };
 
 export const isWhereJson = typia.createIs<WhereJson>();
 
-export const makeWhereJson = (target: ConvertExcludeError<WhereClauseType>): WhereJson => {
+export const makeWhereJson = (target: ConvertType<WhereClauseType>): WhereJson | ErrorJson => {
+    if (isErrorNode(target)) {
+        return makeErrorJson(target, 'where');
+    }
+
     return {
         condition: makeWhereLogicalExpressionJson(target.value),
     };
 };
+

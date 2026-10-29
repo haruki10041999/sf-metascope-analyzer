@@ -1,0 +1,484 @@
+{
+  "objectKey": "anonymousUnit_db617e2a6756f4a1",
+  "sourceKey": "anonymousUnit_a2ec5b0a2e8a9b8c",
+  "type": "anonymousUnit",
+  "value": {
+    "objectKey": "anonymousBlock_fabced4a570e38f9",
+    "sourceKey": "anonymousBlock_797828eb3a24b1a6",
+    "type": "anonymousBlock",
+    "value": [
+      {
+        "objectKey": "error_6cb7b0d1be38dc51",
+        "sourceKey": "error_ad227c7f8a469882",
+        "type": "error",
+        "errorCode": "EXCEPTION",
+        "contextType": "AnonymousBlockMemberContext"
+      },
+      {
+        "objectKey": "error_6cb7b0d1be38dc51",
+        "sourceKey": "error_11523a219594fa1f",
+        "type": "error",
+        "errorCode": "EXCEPTION",
+        "contextType": "AnonymousBlockMemberContext"
+      },
+      {
+        "objectKey": "anonymousBlockMember_498b794e5cfd51c6",
+        "sourceKey": "anonymousBlockMember_ef190fea339c0135",
+        "type": "anonymousBlockMember",
+        "value": {
+          "objectKey": "statement_acca157e07d3b3a5",
+          "sourceKey": "statement_ef190fea339c0135",
+          "type": "statement",
+          "value": {
+            "objectKey": "expressionStatement_0a912e365a1f73a5",
+            "sourceKey": "expressionStatement_ef190fea339c0135",
+            "type": "expressionStatement",
+            "value": {
+              "objectKey": "assignExpression_5bce1e4bfb4464e8",
+              "sourceKey": "assignExpression_31abfdb2f3947457",
+              "type": "assignExpression",
+              "left": {
+                "objectKey": "primaryExpression_1a5f0206679d2004",
+                "sourceKey": "primaryExpression_dd54166cd598c45b",
+                "type": "primaryExpression",
+                "value": {
+                  "objectKey": "idPrimary_4791b6d2c1df9d6e",
+                  "sourceKey": "idPrimary_dd54166cd598c45b",
+                  "type": "idPrimary",
+                  "value": {
+                    "objectKey": "id_c357c5d89a4a17b9",
+                    "sourceKey": "id_dd54166cd598c45b",
+                    "type": "id",
+                    "value": "x"
+                  }
+                }
+              },
+              "operator": "=",
+              "right": {
+                "objectKey": "primaryExpression_8144559b00f72245",
+                "sourceKey": "primaryExpression_b8c74abc898b2c4b",
+                "type": "primaryExpression",
+                "value": {
+                  "objectKey": "typeRefPrimary_544630d3e6b3ee07",
+                  "sourceKey": "typeRefPrimary_c8d5413ffa36b5c5",
+                  "type": "typeRefPrimary",
+                  "value": {
+                    "objectKey": "typeRef_e7a6126512547d3d",
+                    "sourceKey": "typeRef_c8d5413ffa36b5c5",
+                    "type": "typeRef",
+                    "value": [
+                      {
+                        "objectKey": "typeName_838b76f99055551a",
+                        "sourceKey": "typeName_c8d5413ffa36b5c5",
+                        "type": "typeName",
+                        "value": "list",
+                        "generic": {
+                          "objectKey": "typeArguments_566ec63e712a34c1",
+                          "sourceKey": "typeArguments_04c49a711fa78337",
+                          "type": "typeArguments",
+                          "value": {
+                            "objectKey": "typeList_08368ead663d673b",
+                            "sourceKey": "typeList_c37073dc87f100d1",
+                            "type": "typeList",
+                            "value": [
+                              {
+                                "objectKey": "typeRef_16c0945431044f5d",
+                                "sourceKey": "typeRef_c37073dc87f100d1",
+                                "type": "typeRef",
+                                "value": [
+                                  {
+                                    "objectKey": "typeName_981aec850662d894",
+                                    "sourceKey": "typeName_c37073dc87f100d1",
+                                    "type": "typeName",
+                                    "value": {
+                                      "objectKey": "id_382b59e24ea8be8c",
+                                      "sourceKey": "id_c37073dc87f100d1",
+                                      "type": "id",
+                                      "value": "Account"
+                                    },
+                                    "generic": null
+                                  }
+                                ],
+                                "dimension": {
+                                  "objectKey": "arraySubscripts_3db49ad4f56e376e",
+                                  "sourceKey": "arraySubscripts_bb890ef42082a74a",
+                                  "type": "arraySubscripts",
+                                  "value": null
+                                }
+                              }
+                            ]
+                          }
+                        }
+                      }
+                    ],
+                    "dimension": {
+                      "objectKey": "arraySubscripts_3db49ad4f56e376e",
+                      "sourceKey": "arraySubscripts_3fbdb13016ab60cd",
+                      "type": "arraySubscripts",
+                      "value": null
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "modifier": []
+      },
+      {
+        "objectKey": "anonymousBlockMember_1d9f6583ca9f5c7e",
+        "sourceKey": "anonymousBlockMember_de82d94f88084f12",
+        "type": "anonymousBlockMember",
+        "value": {
+          "objectKey": "statement_5170021d93b89c11",
+          "sourceKey": "statement_de82d94f88084f12",
+          "type": "statement",
+          "value": {
+            "objectKey": "expressionStatement_ad738a5e66ff0abc",
+            "sourceKey": "expressionStatement_de82d94f88084f12",
+            "type": "expressionStatement",
+            "value": {
+              "objectKey": "assignExpression_dd05eb51f3318293",
+              "sourceKey": "assignExpression_299829cec0224f8a",
+              "type": "assignExpression",
+              "left": {
+                "objectKey": "primaryExpression_a630582be6fdb671",
+                "sourceKey": "primaryExpression_648781b46eb08633",
+                "type": "primaryExpression",
+                "value": {
+                  "objectKey": "idPrimary_fb8567968e7a0e60",
+                  "sourceKey": "idPrimary_648781b46eb08633",
+                  "type": "idPrimary",
+                  "value": {
+                    "objectKey": "id_a9aed2f80e4fd9a4",
+                    "sourceKey": "id_648781b46eb08633",
+                    "type": "id",
+                    "value": "accs"
+                  }
+                }
+              },
+              "operator": "=",
+              "right": {
+                "objectKey": "primaryExpression_26034b77a1f5b71f",
+                "sourceKey": "primaryExpression_9ef6b5617301d211",
+                "type": "primaryExpression",
+                "value": {
+                  "objectKey": "soqlPrimary_40f9ed0daeb67948",
+                  "sourceKey": "soqlPrimary_9ef6b5617301d211",
+                  "type": "soqlPrimary",
+                  "value": {
+                    "objectKey": "soqlLiteral_f48850d86a505d6c",
+                    "sourceKey": "soqlLiteral_9ef6b5617301d211",
+                    "type": "soqlLiteral",
+                    "value": {
+                      "objectKey": "query_79a95aee643f0df4",
+                      "sourceKey": "query_d30099d29bac940f",
+                      "type": "query",
+                      "value": {
+                        "objectKey": "selectList_f337d9789f1a0da4",
+                        "sourceKey": "selectList_c5cbe29b7d43528d",
+                        "type": "selectList",
+                        "value": [
+                          {
+                            "objectKey": "selectEntry_1a6e1da553674376",
+                            "sourceKey": "selectEntry_c5cbe29b7d43528d",
+                            "type": "selectEntry",
+                            "value": {
+                              "objectKey": "fieldName_c3e6e1753a63cd82",
+                              "sourceKey": "fieldName_c5cbe29b7d43528d",
+                              "type": "fieldName",
+                              "value": [
+                                {
+                                  "objectKey": "soqlId_548c7d18da980fb5",
+                                  "sourceKey": "soqlId_c5cbe29b7d43528d",
+                                  "type": "soqlId",
+                                  "value": {
+                                    "objectKey": "id_a92df10871592dcf",
+                                    "sourceKey": "id_c5cbe29b7d43528d",
+                                    "type": "id",
+                                    "value": "Id"
+                                  }
+                                }
+                              ]
+                            },
+                            "alias": null
+                          }
+                        ]
+                      },
+                      "from": {
+                        "objectKey": "fromNameList_fc8e7f8a3102cfbb",
+                        "sourceKey": "fromNameList_6b45e30bfc106097",
+                        "type": "fromNameList",
+                        "value": [
+                          {
+                            "objectKey": "fromName_4fac8444b015aa9c",
+                            "sourceKey": "fromName_6b45e30bfc106097",
+                            "type": "fromName",
+                            "value": {
+                              "objectKey": "fieldName_efcbac6e4782eafa",
+                              "sourceKey": "fieldName_6b45e30bfc106097",
+                              "type": "fieldName",
+                              "value": [
+                                {
+                                  "objectKey": "soqlId_36ba7c1616ad1d0c",
+                                  "sourceKey": "soqlId_6b45e30bfc106097",
+                                  "type": "soqlId",
+                                  "value": {
+                                    "objectKey": "id_382b59e24ea8be8c",
+                                    "sourceKey": "id_6b45e30bfc106097",
+                                    "type": "id",
+                                    "value": "Account"
+                                  }
+                                }
+                              ]
+                            },
+                            "alias": null
+                          }
+                        ]
+                      },
+                      "forClause": null,
+                      "usingScope": null,
+                      "whereClause": {
+                        "objectKey": "whereClause_a71aebcdfc53cd4c",
+                        "sourceKey": "whereClause_1fbc1b75ee8c143c",
+                        "type": "whereClause",
+                        "value": {
+                          "objectKey": "error_e3f4716f0296c47a",
+                          "sourceKey": "error_f2f5e05f63dfd8f1",
+                          "type": "error",
+                          "errorCode": "EXCEPTION",
+                          "contextType": "WhereLogicalExpressionContext"
+                        }
+                      },
+                      "withClause": null,
+                      "groupByClause": null,
+                      "orderByClause": null,
+                      "limitClause": null,
+                      "offsetClause": null,
+                      "allRowsClause": null,
+                      "updateList": null
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "modifier": []
+      },
+      {
+        "objectKey": "anonymousBlockMember_87b5268c05000c9c",
+        "sourceKey": "anonymousBlockMember_dcae1b8b0a7a2098",
+        "type": "anonymousBlockMember",
+        "value": {
+          "objectKey": "statement_147a7952bbb86402",
+          "sourceKey": "statement_dcae1b8b0a7a2098",
+          "type": "statement",
+          "value": {
+            "objectKey": "expressionStatement_98f52853defe00f3",
+            "sourceKey": "expressionStatement_dcae1b8b0a7a2098",
+            "type": "expressionStatement",
+            "value": {
+              "objectKey": "assignExpression_7a75b8ac9e83693b",
+              "sourceKey": "assignExpression_e3c6efd3595b6118",
+              "type": "assignExpression",
+              "left": {
+                "objectKey": "primaryExpression_ab40190f09a37c19",
+                "sourceKey": "primaryExpression_52ddb47a7fcb7730",
+                "type": "primaryExpression",
+                "value": {
+                  "objectKey": "idPrimary_74222add9169b384",
+                  "sourceKey": "idPrimary_52ddb47a7fcb7730",
+                  "type": "idPrimary",
+                  "value": {
+                    "objectKey": "id_a19947a47d8972f4",
+                    "sourceKey": "id_52ddb47a7fcb7730",
+                    "type": "id",
+                    "value": "Name"
+                  }
+                }
+              },
+              "operator": "=",
+              "right": {
+                "objectKey": "primaryExpression_7d1222f8db618f90",
+                "sourceKey": "primaryExpression_8a82ae316c94f0bc",
+                "type": "primaryExpression",
+                "value": {
+                  "objectKey": "idPrimary_2cafe0e183450d3f",
+                  "sourceKey": "idPrimary_8a82ae316c94f0bc",
+                  "type": "idPrimary",
+                  "value": {
+                    "objectKey": "id_9471d24be2c4a174",
+                    "sourceKey": "id_8a82ae316c94f0bc",
+                    "type": "id",
+                    "value": "LIMIT"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "modifier": []
+      },
+      {
+        "objectKey": "anonymousBlockMember_5ff4e7f5b63b9737",
+        "sourceKey": "anonymousBlockMember_a440f7314eadc0d7",
+        "type": "anonymousBlockMember",
+        "value": {
+          "objectKey": "statement_9046940ac09a0671",
+          "sourceKey": "statement_a440f7314eadc0d7",
+          "type": "statement",
+          "value": {
+            "objectKey": "expressionStatement_b679657725f1f6ad",
+            "sourceKey": "expressionStatement_a440f7314eadc0d7",
+            "type": "expressionStatement",
+            "value": {
+              "objectKey": "primaryExpression_cc171d55b0a91086",
+              "sourceKey": "primaryExpression_91294b3f33d13e19",
+              "type": "primaryExpression",
+              "value": {
+                "objectKey": "literalPrimary_e84655d2df6f0e42",
+                "sourceKey": "literalPrimary_91294b3f33d13e19",
+                "type": "literalPrimary",
+                "value": {
+                  "objectKey": "literal_fb5627d59521b262",
+                  "sourceKey": "literal_91294b3f33d13e19",
+                  "type": "literal",
+                  "value": "1",
+                  "valueType": "integer"
+                }
+              }
+            }
+          }
+        },
+        "modifier": []
+      },
+      {
+        "objectKey": "anonymousBlockMember_ba412c94bd84f8d0",
+        "sourceKey": "anonymousBlockMember_4ca7891fe193513f",
+        "type": "anonymousBlockMember",
+        "value": {
+          "objectKey": "statement_ab7ad5288ca8aa98",
+          "sourceKey": "statement_4ca7891fe193513f",
+          "type": "statement",
+          "value": {
+            "objectKey": "forStatement_de7d26cd731c22aa",
+            "sourceKey": "forStatement_4ca7891fe193513f",
+            "type": "forStatement",
+            "value": {
+              "objectKey": "forControl_bbc5452d8df18502",
+              "sourceKey": "forControl_8bd9119e3875d248",
+              "type": "forControl",
+              "value": null,
+              "init": null,
+              "update": null
+            },
+            "block": {
+              "objectKey": "statement_b3669df1fe39f0fc",
+              "sourceKey": "statement_d4b1db06109b08d0",
+              "type": "statement",
+              "value": {
+                "objectKey": "block_266104f4a9e6e906",
+                "sourceKey": "block_d4b1db06109b08d0",
+                "type": "block",
+                "value": [
+                  {
+                    "objectKey": "statement_7b8ea3d56d958ce7",
+                    "sourceKey": "statement_8b363c08d32196d7",
+                    "type": "statement",
+                    "value": {
+                      "objectKey": "expressionStatement_be200fe7c6279aa2",
+                      "sourceKey": "expressionStatement_8b363c08d32196d7",
+                      "type": "expressionStatement",
+                      "value": {
+                        "objectKey": "methodCallExpression_d112ab154e881b9c",
+                        "sourceKey": "methodCallExpression_67762b238b7fe1d4",
+                        "type": "methodCallExpression",
+                        "value": {
+                          "objectKey": "methodCall_daad6baeaa73c2ef",
+                          "sourceKey": "methodCall_67762b238b7fe1d4",
+                          "type": "methodCall",
+                          "value": {
+                            "objectKey": "id_96a9e32fcc6db411",
+                            "sourceKey": "id_1023f12a011b7bc6",
+                            "type": "id",
+                            "value": "foo"
+                          },
+                          "param": {
+                            "objectKey": "expressionList_dd3acadf43596633",
+                            "sourceKey": "expressionList_1dcca8f8cba1758d",
+                            "type": "expressionList",
+                            "value": [
+                              {
+                                "objectKey": "primaryExpression_cc171d55b0a91086",
+                                "sourceKey": "primaryExpression_9bfa710f9dadd625",
+                                "type": "primaryExpression",
+                                "value": {
+                                  "objectKey": "literalPrimary_e84655d2df6f0e42",
+                                  "sourceKey": "literalPrimary_9bfa710f9dadd625",
+                                  "type": "literalPrimary",
+                                  "value": {
+                                    "objectKey": "literal_fb5627d59521b262",
+                                    "sourceKey": "literal_9bfa710f9dadd625",
+                                    "type": "literal",
+                                    "value": "1",
+                                    "valueType": "integer"
+                                  }
+                                }
+                              },
+                              {
+                                "objectKey": "error_aa596890e5580f93",
+                                "sourceKey": "error_fdee9fec4ecc57f7",
+                                "type": "error",
+                                "errorCode": "UNSUPPORTED_CONTEXT",
+                                "contextType": "ExpressionContext"
+                              }
+                            ]
+                          },
+                          "reference": null
+                        }
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "modifier": []
+      },
+      {
+        "objectKey": "anonymousBlockMember_9bbf14596900f78e",
+        "sourceKey": "anonymousBlockMember_a28423e24bac4f28",
+        "type": "anonymousBlockMember",
+        "value": {
+          "objectKey": "statement_87585800f003d990",
+          "sourceKey": "statement_a28423e24bac4f28",
+          "type": "statement",
+          "value": {
+            "objectKey": "returnStatement_f80ab14f3b18a0e7",
+            "sourceKey": "returnStatement_a28423e24bac4f28",
+            "type": "returnStatement",
+            "value": {
+              "objectKey": "primaryExpression_1a5f0206679d2004",
+              "sourceKey": "primaryExpression_87b7a15bdb6d5f3e",
+              "type": "primaryExpression",
+              "value": {
+                "objectKey": "idPrimary_4791b6d2c1df9d6e",
+                "sourceKey": "idPrimary_87b7a15bdb6d5f3e",
+                "type": "idPrimary",
+                "value": {
+                  "objectKey": "id_c357c5d89a4a17b9",
+                  "sourceKey": "id_87b7a15bdb6d5f3e",
+                  "type": "id",
+                  "value": "x"
+                }
+              }
+            }
+          }
+        },
+        "modifier": []
+      }
+    ]
+  }
+}

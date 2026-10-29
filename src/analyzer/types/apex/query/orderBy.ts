@@ -1,59 +1,42 @@
 import typia from 'typia';
 
 import {
-    Convert,
-    ConvertExcludeError,
     ErrorJson,
-    isErrorJson,
-    JsonType,
-    makeJsonType,
-    convertExcludeError,
-    mergeRecord,
     convertValue,
     ConvertType,
+    JsonType,
+    makeJsonType,
+    isErrorNode,
+    makeErrorJson,
 } from '../commons';
 
 import { OrderByClauseType, FieldOrderListType, FieldOrderType } from '../converter';
 import { FieldJson, makeFieldJson } from './select';
 import { SoqlFunctionJson, makeSoqlFunctionJson } from './soqlFunction';
 
+export type FieldOrderJson = JsonType<'orderField'> &
+    (FieldJson | SoqlFunctionJson) & {
+        direction?: 'ASC' | 'DESC';
+        nulls?: 'FIRST' | 'LAST';
+    };
+
 export const makeFieldOrderJson = (
     target: ConvertType<FieldOrderType>,
-    targetRecords?: Record<string, string[]>,
-):
-    | ((FieldJson | SoqlFunctionJson) & {
-          direction?: 'ASC' | 'DESC';
-          nulls?: 'FIRST' | 'LAST';
-      })
-    | ErrorJson => {
-    return convertValue<
-        'fieldOrder',
-        FieldOrderType,
-        | ((FieldJson | SoqlFunctionJson) & {
-              direction?: 'ASC' | 'DESC';
-              nulls?: 'FIRST' | 'LAST';
-          })
-        | ErrorJson
-    >(
-        ['fieldOrder'],
+): FieldOrderJson | ErrorJson => {
+    return convertValue<'fieldOrder', FieldOrderType, FieldOrderJson>(
         target,
-        'fieldOrder',
+        'orderField',
         (target, targetRecords) => {
-            let result: FieldJson | SoqlFunctionJson | ErrorJson;
+            let result: FieldJson | SoqlFunctionJson;
             if (target.value.type === 'fieldName') {
-                result = makeFieldJson(target.value, targetRecords);
+                result = makeFieldJson(target.value);
             } else {
-                result = makeSoqlFunctionJson(target.value, targetRecords);
+                result = makeSoqlFunctionJson(target.value);
             }
+            const finalResult: FieldOrderJson = makeJsonType('orderField', targetRecords.base, {
+                ...result,
+            });
 
-            if (isErrorJson(result)) {
-                return result;
-            }
-
-            const finalResult: (FieldJson | SoqlFunctionJson) & {
-                direction?: 'ASC' | 'DESC';
-                nulls?: 'FIRST' | 'LAST';
-            } = { ...result };
             if (target.direction) {
                 finalResult.direction = target.direction;
             }
@@ -62,22 +45,25 @@ export const makeFieldOrderJson = (
             }
             return finalResult;
         },
-        targetRecords,
     );
 };
 
 export type OrderByJson = {
-    orderBy: (
-        | ((FieldJson | SoqlFunctionJson) & {
-              direction?: 'ASC' | 'DESC';
-              nulls?: 'FIRST' | 'LAST';
-          })
-        | ErrorJson
-    )[];
+    orderBy: (FieldOrderJson | ErrorJson)[];
 };
 
-export const makeOrderByJson = (target: ConvertExcludeError<OrderByClauseType>): OrderByJson => {
+export const makeOrderByJson = (
+    target: ConvertType<OrderByClauseType>,
+): OrderByJson | ErrorJson => {
+    if (isErrorNode(target)) {
+        return makeErrorJson(target, 'orderBy');
+    }
+    if (isErrorNode(target.value)) {
+        return makeErrorJson(target.value, 'orderBy');
+    }
+
     return {
         orderBy: target.value.value.map((v) => makeFieldOrderJson(v)),
     };
 };
+

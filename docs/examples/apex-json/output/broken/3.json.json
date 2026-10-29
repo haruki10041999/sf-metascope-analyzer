@@ -1,0 +1,131 @@
+{
+  "fileType": "anonymous",
+  "block": [
+    {
+      "kind": "error",
+      "sourceKeys": {
+        "objectKey": "error_6cb7b0d1be38dc51",
+        "sourceKey": "error_ad227c7f8a469882"
+      },
+      "kindType": "unit"
+    },
+    {
+      "kind": "error",
+      "sourceKeys": {
+        "objectKey": "error_6cb7b0d1be38dc51",
+        "sourceKey": "error_11523a219594fa1f"
+      },
+      "kindType": "unit"
+    },
+    {
+      "type": "statement",
+      "statement": {
+        "kind": "expression",
+        "sourceKeys": {
+          "objectKey": "expressionStatement_0a912e365a1f73a5",
+          "sourceKey": "expressionStatement_ef190fea339c0135"
+        },
+        "value": {
+          "left": "x",
+          "operator": "=",
+          "right": {
+            "kind": "type",
+            "sourceKeys": {
+              "objectKey": "typeRef_e7a6126512547d3d",
+              "sourceKey": "typeRef_c8d5413ffa36b5c5"
+            },
+            "collectionType": "list",
+            "elementType": {
+              "type": "custom",
+              "customType": "Account"
+            }
+          }
+        }
+      },
+      "modifier": {}
+    },
+    {
+      "type": "statement",
+      "statement": {
+        "kind": "error",
+        "sourceKeys": {
+          "objectKey": "expressionStatement_ad738a5e66ff0abc",
+          "sourceKey": "expressionStatement_de82d94f88084f12"
+        },
+        "kindType": "expression"
+      },
+      "modifier": {}
+    },
+    {
+      "type": "statement",
+      "statement": {
+        "kind": "expression",
+        "sourceKeys": {
+          "objectKey": "expressionStatement_98f52853defe00f3",
+          "sourceKey": "expressionStatement_dcae1b8b0a7a2098"
+        },
+        "value": {
+          "left": "Name",
+          "operator": "=",
+          "right": "LIMIT"
+        }
+      },
+      "modifier": {}
+    },
+    {
+      "type": "statement",
+      "statement": {
+        "kind": "expression",
+        "sourceKeys": {
+          "objectKey": "expressionStatement_b679657725f1f6ad",
+          "sourceKey": "expressionStatement_a440f7314eadc0d7"
+        },
+        "value": {
+          "value": "1",
+          "valueType": "integer"
+        }
+      },
+      "modifier": {}
+    },
+    {
+      "type": "statement",
+      "statement": {
+        "kind": "for",
+        "sourceKeys": {
+          "objectKey": "forStatement_de7d26cd731c22aa",
+          "sourceKey": "forStatement_4ca7891fe193513f"
+        },
+        "condition": {
+          "kind": "forCondition",
+          "sourceKeys": {
+            "objectKey": "forControl_bbc5452d8df18502",
+            "sourceKey": "forControl_8bd9119e3875d248"
+          }
+        },
+        "block": [
+          {
+            "kind": "error",
+            "sourceKeys": {
+              "objectKey": "expressionStatement_be200fe7c6279aa2",
+              "sourceKey": "expressionStatement_8b363c08d32196d7"
+            },
+            "kindType": "expression"
+          }
+        ]
+      },
+      "modifier": {}
+    },
+    {
+      "type": "statement",
+      "statement": {
+        "kind": "return",
+        "sourceKeys": {
+          "objectKey": "returnStatement_f80ab14f3b18a0e7",
+          "sourceKey": "returnStatement_a28423e24bac4f28"
+        },
+        "field": "x"
+      },
+      "modifier": {}
+    }
+  ]
+}

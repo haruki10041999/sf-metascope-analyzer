@@ -9,6 +9,9 @@ import {
     ConvertType,
     convertValue,
     ConvertExcludeError,
+    isSpecificJsonType,
+    isErrorNode,
+    makeErrorJson,
 } from '../commons';
 
 import {
@@ -21,106 +24,110 @@ import {
 
 import { SoqlFunctionJson, makeSoqlFunctionJson } from './soqlFunction';
 import { TypeOfJson, makeTypeOfJson } from './typeof';
-import { SubQueryJson, isSubQueryJson, makeSubQueryJson } from './subQuery';
+import { SubQueryJson, makeSubQueryJson } from './subQuery';
 
-export type FieldJson = JsonType<'field'> & {
+export type FieldJson = {
+    type: 'field';
     field: string[];
 };
 
 export const isFieldJson = typia.createIs<FieldJson>();
 
-export const makeFieldJson = (
-    target: ConvertType<FieldNameType>,
-    targetRecords?: Record<string, string[]>,
-): FieldJson | ErrorJson => {
-    return convertValue<'fieldName', FieldNameType, FieldJson>(
-        ['fieldName'],
-        target,
-        'field',
-        (target, targetRecords) => {
-            return makeJsonType('field', targetRecords, {
-                field: target.value.map((v) => v.value.value),
-            });
-        },
-        targetRecords,
-    );
+export const makeFieldJson = (target: ConvertExcludeError<FieldNameType>): FieldJson => {
+    return {
+        type: 'field',
+        field: target.value.map((v) => v.value.value),
+    };
 };
 
-export type SelectEntryJson = (FieldJson | SoqlFunctionJson | TypeOfJson | SubQueryJson) & {
+export type SelectEntryJson = (
+    (JsonType<'selectEntry'> & (FieldJson | SoqlFunctionJson | TypeOfJson)) | SubQueryJson
+) & {
     alias?: string;
 };
 export const isSelectEntryJson = typia.createIs<SelectEntryJson>();
 
 const makeSelectEntryJson = (
     target: ConvertType<SelectEntryType | SubFieldEntryType>,
-    targetRecords?: Record<string, string[]>,
 ): SelectEntryJson | ErrorJson => {
     return convertValue<
         'selectEntry' | 'subFieldEntry',
         SelectEntryType | SubFieldEntryType,
         SelectEntryJson | ErrorJson
-    >(
-        ['selectEntry', 'subFieldEntry'],
-        target,
-        'selectEntry',
-        (target, targetRecords) => {
-            let value: SelectEntryJson | ErrorJson;
-            if (target.value.type === 'fieldName') {
-                value = makeFieldJson(target.value, targetRecords);
-            } else if (target.value.type === 'soqlFunction') {
-                value = makeSoqlFunctionJson(target.value, targetRecords);
-            } else if (target.value.type === 'subQuery') {
-                value = makeSubQueryJson(target.value);
-            } else {
-                value = makeTypeOfJson(target.value, targetRecords);
-            }
+    >(target, 'selectEntry', (target, targetRecords) => {
+        let value: SelectEntryJson | ErrorJson;
+        if (target.value.type === 'fieldName') {
+            value = makeJsonType('selectEntry', targetRecords.base, {
+                ...makeFieldJson(target.value),
+            });
+        } else if (target.value.type === 'soqlFunction') {
+            value = makeJsonType('selectEntry', targetRecords.base, {
+                ...makeSoqlFunctionJson(target.value),
+            });
+        } else if (target.value.type === 'subQuery') {
+            value = makeSubQueryJson(target.value);
+        } else {
+            value = makeJsonType('selectEntry', targetRecords.base, {
+                ...makeTypeOfJson(target.value),
+            });
+        }
 
-            if (isErrorJson(value)) {
-                return value;
-            }
+        if (isErrorJson(value)) {
+            return value;
+        }
 
-            const result: SelectEntryJson = { ...value };
-            if (target.alias) {
-                result.alias = target.alias.value.value;
-            }
-            return result;
-        },
-        targetRecords,
-    );
+        const result: SelectEntryJson = { ...value };
+        if (target.alias) {
+            result.alias = target.alias.value.value;
+        }
+        return result;
+    });
 };
 
 export type SelectJson = {
-    field?: FieldJson[];
-    soqlFunction?: SoqlFunctionJson[];
-    typeOf?: TypeOfJson[];
-    subQuery?: SubQueryJson[];
+    field?: SelectEntryJson[];
+    soqlFunction?: SelectEntryJson[];
+    typeOf?: SelectEntryJson[];
+    subQuery?: SelectEntryJson[];
     error?: ErrorJson[];
 };
 
 export const isSelectJson = typia.createIs<SelectJson>();
 
 export const makeSelectJson = (
-    target: ConvertExcludeError<SelectListType | SubFieldListType>,
-): SelectJson => {
-    const fields: FieldJson[] = [];
-    const soqlFunctions: SoqlFunctionJson[] = [];
-    const subQueries: SubQueryJson[] = [];
-    const typeOfs: TypeOfJson[] = [];
+    target: ConvertType<SelectListType | SubFieldListType>,
+): SelectJson | ErrorJson => {
+    if (isErrorNode(target)) {
+        return makeErrorJson(target, 'select');
+    }
+
+    const fields: SelectEntryJson[] = [];
+    const soqlFunctions: SelectEntryJson[] = [];
+    const subQueries: SelectEntryJson[] = [];
+    const typeOfs: SelectEntryJson[] = [];
     const errors: ErrorJson[] = [];
 
     target.value.forEach((v) => {
         const value = makeSelectEntryJson(v);
-        if (isSubQueryJson(value)) {
-            subQueries.push(value);
-        } else if (value.kind === 'typeOf') {
-            typeOfs.push(value);
-        } else if (value.kind === 'field') {
-            fields.push(value);
-        } else if (value.kind === 'soqlFunction') {
-            soqlFunctions.push(value);
-        } else {
-            errors.push(value);
+        if (isSpecificJsonType(value, ['selectEntry', 'error'])) {
+            if (value.kind === 'error') {
+                errors.push(value);
+                return;
+            }
+
+            if (value.type === 'typeOf') {
+                typeOfs.push(value);
+                return;
+            } else if (value.type === 'field') {
+                fields.push(value);
+                return;
+            } else {
+                soqlFunctions.push(value);
+                return;
+            }
         }
+
+        subQueries.push(value);
     });
 
     return {
@@ -131,3 +138,4 @@ export const makeSelectJson = (
         ...(errors.length > 0 ? { error: errors } : {}),
     };
 };
+

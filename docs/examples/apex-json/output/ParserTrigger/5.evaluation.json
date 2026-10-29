@@ -1,0 +1,125 @@
+{
+  "sample": "ParserTrigger",
+  "size": {
+    "sourceBytes": 6091,
+    "prettyFileBytes": {
+      "1.common-type.json": 923556,
+      "2.convert-node.json": 356701,
+      "2.source-all.json": 392409,
+      "3.json.json": 75213,
+      "4.source.json": 62526
+    },
+    "commonType": {
+      "minifiedBytes": 207260,
+      "gzipBytes": 15237
+    },
+    "convertNode": {
+      "minifiedBytes": 138000,
+      "gzipBytes": 22828
+    },
+    "json": {
+      "minifiedBytes": 32483,
+      "gzipBytes": 5962
+    },
+    "jsonWithoutSourceKeys": {
+      "minifiedBytes": 15864,
+      "gzipBytes": 1815
+    },
+    "sourceAll": {
+      "minifiedBytes": 224777,
+      "gzipBytes": 31394
+    },
+    "source": {
+      "minifiedBytes": 37274,
+      "gzipBytes": 7756
+    }
+  },
+  "coverage": {
+    "all": {
+      "nonWhitespaceChars": 4027,
+      "charRate": 0.986093866401788,
+      "codeLines": 130,
+      "lineRate": 1
+    },
+    "regenerated": {
+      "nonWhitespaceChars": 4027,
+      "charRate": 0.6168363546064067,
+      "codeLines": 130,
+      "lineRate": 0.9769230769230769
+    }
+  },
+  "span": {
+    "all": {
+      "count": 1109,
+      "median": 9,
+      "p90": 75,
+      "max": 5871
+    },
+    "regenerated": {
+      "count": 159,
+      "median": 27,
+      "p90": 166,
+      "max": 786
+    }
+  },
+  "values": {
+    "total": 369,
+    "retained": 369,
+    "rate": 1,
+    "missingTop": []
+  },
+  "structure": {
+    "objects": 394,
+    "boundary": 150,
+    "typeOnly": 31,
+    "undiscriminated": 213,
+    "unresolvedSourceKeys": 0,
+    "errorJson": 0,
+    "kinds": {
+      "expression": 30,
+      "type": 21,
+      "if": 11,
+      "ifCondition": 11,
+      "modifier": 10,
+      "for": 8,
+      "forCondition": 8,
+      "triggerCase": 7,
+      "selectEntry": 7,
+      "localVariable": 6,
+      "switchCondition": 3,
+      "fromField": 3,
+      "field": 2,
+      "method": 2,
+      "enumConstant": 2,
+      "soql": 2,
+      "singleCondition": 2,
+      "property": 1,
+      "parameter": 1,
+      "class": 1,
+      "interface": 1,
+      "interfaceMethod": 1,
+      "enum": 1,
+      "switch": 1,
+      "whenVariant": 1,
+      "insert": 1,
+      "subQuery": 1,
+      "update": 1,
+      "allRowsClause": 1,
+      "delete": 1,
+      "try": 1,
+      "catchCondition": 1
+    }
+  },
+  "objectKeys": {
+    "all": {
+      "objectKeys": 656,
+      "sharedObjectKeys": 105,
+      "maxSourcesPerObjectKey": 37
+    },
+    "regenerated": {
+      "objectKeys": 136,
+      "sharedObjectKeys": 10,
+      "maxSourcesPerObjectKey": 8
+    }
+  }
+}

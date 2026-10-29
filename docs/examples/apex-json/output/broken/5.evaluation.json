@@ -1,0 +1,130 @@
+{
+  "sample": "broken",
+  "size": {
+    "sourceBytes": 121,
+    "prettyFileBytes": {
+      "1.common-type.json": 53855,
+      "2.convert-node.json": 20682,
+      "2.source-all.json": 30118,
+      "3.json.json": 3269,
+      "4.source.json": 4072
+    },
+    "commonType": {
+      "minifiedBytes": 13769,
+      "gzipBytes": 1382
+    },
+    "convertNode": {
+      "minifiedBytes": 10636,
+      "gzipBytes": 2445
+    },
+    "json": {
+      "minifiedBytes": 2030,
+      "gzipBytes": 624
+    },
+    "jsonWithoutSourceKeys": {
+      "minifiedBytes": 863,
+      "gzipBytes": 269
+    },
+    "sourceAll": {
+      "minifiedBytes": 16848,
+      "gzipBytes": 2555
+    },
+    "source": {
+      "minifiedBytes": 2306,
+      "gzipBytes": 663
+    }
+  },
+  "coverage": {
+    "all": {
+      "nonWhitespaceChars": 92,
+      "charRate": 1,
+      "codeLines": 6,
+      "lineRate": 1
+    },
+    "regenerated": {
+      "nonWhitespaceChars": 92,
+      "charRate": 1,
+      "codeLines": 6,
+      "lineRate": 1
+    }
+  },
+  "span": {
+    "all": {
+      "count": 83,
+      "median": 7,
+      "p90": 29,
+      "max": 120
+    },
+    "regenerated": {
+      "count": 11,
+      "median": 11,
+      "p90": 26,
+      "max": 36
+    }
+  },
+  "values": {
+    "total": 15,
+    "retained": 9,
+    "rate": 0.6,
+    "missingTop": [
+      {
+        "value": "=",
+        "missing": 1,
+        "expected": 3
+      },
+      {
+        "value": "Account",
+        "missing": 1,
+        "expected": 2
+      },
+      {
+        "value": "accs",
+        "missing": 1,
+        "expected": 1
+      },
+      {
+        "value": "Id",
+        "missing": 1,
+        "expected": 1
+      },
+      {
+        "value": "1",
+        "missing": 1,
+        "expected": 2
+      },
+      {
+        "value": "foo",
+        "missing": 1,
+        "expected": 1
+      }
+    ]
+  },
+  "structure": {
+    "objects": 28,
+    "boundary": 11,
+    "typeOnly": 8,
+    "undiscriminated": 9,
+    "unresolvedSourceKeys": 0,
+    "errorJson": 4,
+    "kinds": {
+      "error": 4,
+      "expression": 3,
+      "type": 1,
+      "for": 1,
+      "forCondition": 1,
+      "return": 1
+    }
+  },
+  "objectKeys": {
+    "all": {
+      "objectKeys": 74,
+      "sharedObjectKeys": 9,
+      "maxSourcesPerObjectKey": 2
+    },
+    "regenerated": {
+      "objectKeys": 10,
+      "sharedObjectKeys": 1,
+      "maxSourcesPerObjectKey": 2
+    }
+  }
+}

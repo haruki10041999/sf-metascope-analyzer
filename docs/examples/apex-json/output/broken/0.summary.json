@@ -1,0 +1,18 @@
+{
+  "file": "broken.apex",
+  "syntaxErrors": 8,
+  "converterErrors": 4,
+  "errorJson": 4,
+  "errorJsonKinds": [
+    "unit",
+    "expression"
+  ],
+  "sourceObjects": {
+    "before": 74,
+    "after": 10
+  },
+  "sources": {
+    "before": 83,
+    "after": 11
+  }
+}

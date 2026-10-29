@@ -1,25 +1,22 @@
 import typia from 'typia';
 
 import {
-    Convert,
     ConvertExcludeError,
     ErrorJson,
-    isErrorJson,
     JsonType,
     makeJsonType,
-    convertExcludeError,
-    mergeRecord,
     convertValue,
     ConvertType,
+    isErrorNode,
+    makeErrorJson,
 } from '../commons';
 
 import {
     SoslWithClauseType,
     WithClauseType,
-    FilteringExpressionType,
-    NetworkListType,
     DataCategorySelectionType,
     DataCategoryNameType,
+    FilteringExpressionType,
     FilteringSelectorType,
 } from '../converter';
 
@@ -46,37 +43,43 @@ export const isDataCategorySelectionJson = typia.createIs<DataCategorySelectionJ
 
 const makeDataCategorySelectionJson = (
     target: ConvertType<DataCategorySelectionType>,
-    targetRecords?: Record<string, string[]>,
 ): DataCategorySelectionJson | ErrorJson => {
     return convertValue<
         'dataCategorySelection',
         DataCategorySelectionType,
         DataCategorySelectionJson
-    >(
-        ['dataCategorySelection'],
-        target,
-        'categoryCondition',
-        (target, targetRecords) => {
-            return makeJsonType('categoryCondition', targetRecords, {
-                group: target.value.value.value,
-                selector: makeFilteringSelectorJson(target.selector),
-                category: makeDataCategoryNameJson(target.category),
-            });
-        },
-        targetRecords,
-    );
+    >(target, 'categoryCondition', (target, targetRecords) => {
+        return makeJsonType('categoryCondition', targetRecords.base, {
+            group: target.value.value.value,
+            selector: makeFilteringSelectorJson(target.selector),
+            category: makeDataCategoryNameJson(target.category),
+        });
+    });
 };
 
 export type WithJson =
     | {
           mode: 'SYSTEM_MODE' | 'USER_MODE' | 'SECURITY_ENFORCED';
       }
-    | { mode: LogicalConditionJson }
-    | { mode: 'DATA_CATEGORY'; selection: (DataCategorySelectionJson | ErrorJson)[] };
+    | { mode: LogicalConditionJson | ErrorJson }
+    | { mode: 'DATA_CATEGORY'; selection: (DataCategorySelectionJson | ErrorJson)[] | ErrorJson };
 
 export const isWithJson = typia.createIs<WithJson>();
 
-export const makeWithJson = (target: ConvertExcludeError<WithClauseType>): WithJson => {
+const makeDataCategorySelectionListJson = (
+    target: ConvertType<FilteringExpressionType>,
+): (DataCategorySelectionJson | ErrorJson)[] | ErrorJson => {
+    if (isErrorNode(target)) {
+        return makeErrorJson(target, 'categoryCondition');
+    }
+    return target.value.map((v) => makeDataCategorySelectionJson(v));
+};
+
+export const makeWithJson = (target: ConvertType<WithClauseType>): WithJson | ErrorJson => {
+    if (isErrorNode(target)) {
+        return makeErrorJson(target, 'with');
+    }
+
     if (
         target.value === 'SYSTEM_MODE' ||
         target.value === 'USER_MODE' ||
@@ -86,10 +89,10 @@ export const makeWithJson = (target: ConvertExcludeError<WithClauseType>): WithJ
             mode: target.value,
         };
     }
-    if (target.value === 'DATA_CATEGORY') {
+    if (target.value === 'DATA_CATEGORY' && 'field' in target) {
         return {
             mode: 'DATA_CATEGORY',
-            selection: target.field.value.map((v) => makeDataCategorySelectionJson(v)),
+            selection: makeDataCategorySelectionListJson(target.field),
         };
     }
     return {
@@ -112,7 +115,7 @@ export type SoslWithJson =
       }
     | {
           mode: 'DATA_CATEGORY';
-          value: (DataCategorySelectionJson | ErrorJson)[];
+          value: (DataCategorySelectionJson | ErrorJson)[] | ErrorJson;
       }
     | {
           mode: 'SNIPPET' | 'SPELL_CORRECTION';
@@ -120,7 +123,7 @@ export type SoslWithJson =
       }
     | {
           mode: 'NETWORK';
-          value: string[];
+          value: (string | ErrorJson)[] | ErrorJson;
       }
     | {
           mode: 'METADATA';
@@ -130,22 +133,31 @@ export type SoslWithJson =
           mode: 'HIGHLIGHT' | 'SYSTEM_MODE' | 'USER_MODE';
       };
 
-export const makeSoslWithJson = (target: ConvertExcludeError<SoslWithClauseType>): SoslWithJson => {
+export const makeSoslWithJson = (
+    target: ConvertType<SoslWithClauseType>,
+): SoslWithJson | ErrorJson => {
+    if (isErrorNode(target)) {
+        return makeErrorJson(target, 'soslWith');
+    }
+
     if (target.value === 'DIVISION' || target.value === 'PRICEBOOKID') {
+        if (typeof target.content === 'string') {
+            return { mode: target.value, value: { type: 'literal', value: target.content } };
+        }
+        if (isErrorNode(target.content)) {
+            return makeErrorJson(target.content, 'soslWith');
+        }
         return {
             mode: target.value,
-            value:
-                typeof target.content === 'string'
-                    ? { type: 'literal', value: target.content }
-                    : {
-                          type: 'bind',
-                          value: makeExpressionJsonConvert(target.content.value),
-                      },
+            value: {
+                type: 'bind',
+                value: makeExpressionJsonConvert(target.content.value),
+            },
         };
     } else if (target.value === 'DATA_CATEGORY') {
         return {
             mode: 'DATA_CATEGORY',
-            value: target.content.value.map((item) => makeDataCategorySelectionJson(item)),
+            value: makeDataCategorySelectionListJson(target.content),
         };
     } else if (target.value === 'SNIPPET' || target.value === 'SPELL_CORRECTION') {
         return {
@@ -153,9 +165,17 @@ export const makeSoslWithJson = (target: ConvertExcludeError<SoslWithClauseType>
             ...(target.content ? { value: target.content } : {}),
         };
     } else if (target.value === 'NETWORK') {
+        if (typeof target.content === 'string') {
+            return { mode: target.value, value: [target.content] };
+        }
+        if (isErrorNode(target.content)) {
+            return makeErrorJson(target.content, 'soslWith');
+        }
         return {
             mode: target.value,
-            value: typeof target.content === 'string' ? [target.content] : target.content.value,
+            value: target.content.value.map((v) =>
+                typeof v === 'string' ? v : makeErrorJson(v, 'soslWith'),
+            ),
         };
     } else if (target.value === 'METADATA') {
         return {
@@ -168,3 +188,4 @@ export const makeSoslWithJson = (target: ConvertExcludeError<SoslWithClauseType>
         };
     }
 };
+
