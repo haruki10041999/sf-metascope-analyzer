@@ -2,6 +2,7 @@ import {
     ConvertType,
     ConvertWithError,
     ErrorJson,
+    isErrorJson,
     isErrorNode,
     makeErrorJson,
 } from './commons';
@@ -60,6 +61,7 @@ const makeExpressionListJson = (
 };
 
 export type DotMethodCallJson = {
+    kind: 'object' | 'method';
     object: BaseExpressionJson | ErrorJson;
     operator: '.' | '?.';
     member: string;
@@ -79,6 +81,7 @@ const makeDotMethodCallJson = (
 
     if (right.type === 'anyId') {
         return {
+            kind: 'object',
             object: object,
             operator: operator,
             member: right.value,
@@ -90,6 +93,7 @@ const makeDotMethodCallJson = (
     }
 
     return {
+        kind: 'method',
         object: object,
         operator: operator,
         member: right.value.value,
@@ -98,6 +102,7 @@ const makeDotMethodCallJson = (
 };
 
 export type MethodCallJson = {
+    kind: 'method';
     member: 'this' | 'super' | string;
     memberArg?: (BaseExpressionJson | ErrorJson)[] | ErrorJson;
     ref?: 'this' | 'super';
@@ -115,6 +120,7 @@ const makeMethodCallJson = (
 
     if (typeof methodCall.value === 'string') {
         return {
+            kind: 'method',
             member: methodCall.value,
             ...(memberArg ? { memberArg: memberArg } : {}),
         };
@@ -125,11 +131,10 @@ const makeMethodCallJson = (
     }
 
     return {
+        kind: 'method',
         member: methodCall.value.value,
         ...(memberArg ? { memberArg: memberArg } : {}),
-        ...('reference' in methodCall && methodCall.reference
-            ? { ref: methodCall.reference }
-            : {}),
+        ...('reference' in methodCall && methodCall.reference ? { ref: methodCall.reference } : {}),
     };
 };
 
@@ -175,15 +180,18 @@ export const makeInstanceNameJson = (
 };
 
 type ArrayInitInstanceJson = {
+    kind: 'array';
     init?: (BaseExpressionJson | ErrorJson)[];
     size?: BaseExpressionJson | ErrorJson;
 };
 
 type ClassInitInstanceJson = {
+    kind: 'class';
     arg?: (BaseExpressionJson | ErrorJson)[];
 };
 
 type MapInitInstanceJson = {
+    kind: 'map';
     init?: (
         | {
               key: BaseExpressionJson | ErrorJson;
@@ -194,10 +202,12 @@ type MapInitInstanceJson = {
 };
 
 type NoInitInstanceJson = {
+    kind: 'no';
     value: string;
 };
 
 type SetInitInstanceJson = {
+    kind: 'list || set';
     init?: (BaseExpressionJson | ErrorJson)[];
 };
 
@@ -226,6 +236,7 @@ export const makeInitInstanceJson = (
             return makeErrorJson(target.value, ERROR_KIND);
         }
         return {
+            kind: 'array',
             ...(target.value
                 ? {
                       init: target.value.value.map((v) => makeExpressionJsonConvert(v)),
@@ -238,12 +249,13 @@ export const makeInitInstanceJson = (
             return makeErrorJson(target.value, ERROR_KIND);
         }
         if (!target.value.value) {
-            return {};
+            return { kind: 'class' };
         }
         const arg = makeExpressionListJson(target.value.value);
-        return Array.isArray(arg) ? { arg: arg } : arg;
+        return Array.isArray(arg) ? { kind: 'class', arg: arg } : arg;
     } else if (target.type === 'mapCreatorRest') {
         return {
+            kind: 'map',
             ...(target.value.length > 0
                 ? {
                       init: target.value.map((v) => {
@@ -260,10 +272,12 @@ export const makeInitInstanceJson = (
         };
     } else if (target.type === 'noRest') {
         return {
+            kind: 'no',
             value: target.value,
         };
     } else {
         return {
+            kind: 'list || set',
             ...(target.value
                 ? {
                       init: target.value.map((v) => makeExpressionJsonConvert(v)),
@@ -284,12 +298,12 @@ const makeNewInstanceJson = (
     }
 
     const instanceName = makeInstanceNameJson(creator.value);
-    if ('kind' in instanceName) {
+    if (isErrorJson(instanceName)) {
         return instanceName;
     }
 
     const initInstance = makeInitInstanceJson(creator.rest);
-    if ('kind' in initInstance) {
+    if (isErrorJson(initInstance)) {
         return initInstance;
     }
 
@@ -399,9 +413,7 @@ type InstanceofJson = {
     type: TypeJson | ErrorJson;
 };
 
-const makeInstanceofJson = (
-    target: ConvertWithError<InstanceOfExpressionType>,
-): InstanceofJson => {
+const makeInstanceofJson = (target: ConvertWithError<InstanceOfExpressionType>): InstanceofJson => {
     const typeJson = makeTypeJson(target.right);
 
     return {

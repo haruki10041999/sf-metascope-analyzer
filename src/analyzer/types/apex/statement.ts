@@ -10,9 +10,9 @@ import {
     makeJsonType,
     StructureJson,
     makeStructureJson,
-    ConvertKeys,
     isErrorNode,
     makeErrorJson,
+    ConvertKeys,
 } from './commons';
 
 import {
@@ -237,7 +237,9 @@ type ForStatementJson = JsonType<'for'> & {
 
 export const isForStatementJson = typia.createIs<ForStatementJson>();
 
-const makeForStatementJson = (target: ConvertType<ForStatementType>): ForStatementJson | ErrorJson => {
+const makeForStatementJson = (
+    target: ConvertType<ForStatementType>,
+): ForStatementJson | ErrorJson => {
     return convertValue<'forStatement', ForStatementType, ForStatementJson>(
         target,
         'for',
@@ -592,7 +594,13 @@ export const makeThrowStatementJson = (
     );
 };
 
-type CatchConditionJson = StructureJson<'catchCondition'> & {
+type CatchConditionJson = StructureJson<
+    'catchCondition',
+    {
+        exception: ConvertKeys;
+        exceptionType: ConvertKeys;
+    }
+> & {
     exception: string;
     exceptionType: string[];
     modifier: (ModifierJson | AnnotationJson | ErrorJson)[];
@@ -603,7 +611,15 @@ export const isCatchConditionJson = typia.createIs<CatchConditionJson>();
 const makeCatchConditionJson = (
     target: ConvertType<CatchClauseType>,
 ): CatchConditionJson | ErrorJson => {
-    return convertValue<'catchClause', CatchClauseType, CatchConditionJson>(
+    return convertValue<
+        'catchClause',
+        CatchClauseType,
+        CatchConditionJson,
+        {
+            exception: ConvertKeys;
+            exceptionType: ConvertKeys;
+        }
+    >(
         target,
         'catchCondition',
         (target, targetRecords) => {
@@ -642,7 +658,9 @@ type TryStatementJson = JsonType<'try'> & {
 
 export const isTryStatementJson = typia.createIs<TryStatementJson>();
 
-const makeTryBlocksJson = (target: ConvertWithError<TryStatementType>): TryStatementJson['block'] => {
+const makeTryBlocksJson = (
+    target: ConvertWithError<TryStatementType>,
+): TryStatementJson['block'] => {
     const tryBlock: { condition: 'try'; block: (StatementJson | ErrorJson)[] } = {
         condition: 'try',
         block: makeBlockJson(target.block),
@@ -687,7 +705,9 @@ const makeTryBlocksJson = (target: ConvertWithError<TryStatementType>): TryState
     return [tryBlock, ...catchBlocks, ...(finallyBlock ? [finallyBlock] : [])];
 };
 
-const makeTryStatementJson = (target: ConvertType<TryStatementType>): TryStatementJson | ErrorJson => {
+const makeTryStatementJson = (
+    target: ConvertType<TryStatementType>,
+): TryStatementJson | ErrorJson => {
     return convertValue<'tryStatement', TryStatementType, TryStatementJson>(
         target,
         'try',
@@ -897,4 +917,3 @@ export const makeBlockJson = (target: ConvertType<BlockType>): (StatementJson | 
 
     return target.value.map((s) => makeStatementJson(s));
 };
-

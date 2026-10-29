@@ -85,11 +85,7 @@ const makeSelectEntryJson = (
 };
 
 export type SelectJson = {
-    field?: SelectEntryJson[];
-    soqlFunction?: SelectEntryJson[];
-    typeOf?: SelectEntryJson[];
-    subQuery?: SelectEntryJson[];
-    error?: ErrorJson[];
+    field: (SelectEntryJson | ErrorJson)[];
 };
 
 export const isSelectJson = typia.createIs<SelectJson>();
@@ -101,41 +97,7 @@ export const makeSelectJson = (
         return makeErrorJson(target, 'select');
     }
 
-    const fields: SelectEntryJson[] = [];
-    const soqlFunctions: SelectEntryJson[] = [];
-    const subQueries: SelectEntryJson[] = [];
-    const typeOfs: SelectEntryJson[] = [];
-    const errors: ErrorJson[] = [];
-
-    target.value.forEach((v) => {
-        const value = makeSelectEntryJson(v);
-        if (isSpecificJsonType(value, ['selectEntry', 'error'])) {
-            if (value.kind === 'error') {
-                errors.push(value);
-                return;
-            }
-
-            if (value.type === 'typeOf') {
-                typeOfs.push(value);
-                return;
-            } else if (value.type === 'field') {
-                fields.push(value);
-                return;
-            } else {
-                soqlFunctions.push(value);
-                return;
-            }
-        }
-
-        subQueries.push(value);
-    });
-
     return {
-        ...(fields.length > 0 ? { field: fields } : {}),
-        ...(soqlFunctions.length > 0 ? { soqlFunction: soqlFunctions } : {}),
-        ...(subQueries.length > 0 ? { subQuery: subQueries } : {}),
-        ...(typeOfs.length > 0 ? { typeOf: typeOfs } : {}),
-        ...(errors.length > 0 ? { error: errors } : {}),
+        field: target.value.map((v) => makeSelectEntryJson(v)),
     };
 };
-

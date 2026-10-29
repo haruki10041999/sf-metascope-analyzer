@@ -5,20 +5,18 @@ import { ConvertExcludeError, ConvertType, convertExcludeError } from './exclude
 import { ConvertKeys, ErrorJson, makeJsonType } from './json';
 import { isRecord } from './utils';
 
-export type StructureSourceKeys = {
+export type StructureSourceKeys<TRecord extends Record<string, ConvertKeys | ConvertKeys[]>> = {
     base: ConvertKeys;
-} & {
-    [key: string]: ConvertKeys | ConvertKeys[];
-};
+} & TRecord;
 
-export type ConvertValueOptions = {
+export type ConvertValueOptions<TKey extends string = string> = {
     /**
      * エラー検査の対象から外すプロパティ。外したプロパティは子の変換関数がエラーを処理する。
      * 'children' はノード自身だけを検査する（子はすべて対象外）。
      */
     exclude?: readonly string[] | 'children';
     /** StructureJson の sourceKeys に集める子ノード。{ JSON 側の名前: 変換元のプロパティ名 } */
-    record?: Readonly<Record<string, string>>;
+    record?: Readonly<Record<TKey, string>>;
 };
 
 const toKeys = (target: unknown): ConvertKeys | ConvertKeys[] | null => {
@@ -38,11 +36,11 @@ const toKeys = (target: unknown): ConvertKeys | ConvertKeys[] | null => {
     return null;
 };
 
-const makeStructureSourceKeys = (
+const makeStructureSourceKeys = <TRecord extends Record<string, ConvertKeys | ConvertKeys[]>>(
     target: ConvertKeys & Record<string, unknown>,
     record: Readonly<Record<string, string>>,
-): StructureSourceKeys => {
-    const sourceKeys: StructureSourceKeys = {
+): StructureSourceKeys<TRecord> => {
+    const sourceKeys: Record<string, ConvertKeys | ConvertKeys[]> = {
         base: { objectKey: target.objectKey, sourceKey: target.sourceKey },
     };
     for (const [name, property] of Object.entries(record)) {
@@ -51,7 +49,7 @@ const makeStructureSourceKeys = (
             sourceKeys[name] = keys;
         }
     }
-    return sourceKeys;
+    return sourceKeys as StructureSourceKeys<TRecord>;
 };
 
 // エラー検査の対象になる部分だけを残す
@@ -75,17 +73,25 @@ const pickCheckTarget = (
  * 境界ノードを変換する。検査範囲（既定は部分木全体）にエラーノードがあれば ErrorJson を返す。
  * process には検査を通った target がそのまま渡る（exclude したプロパティにはエラーが残りうる）。
  */
-export const convertValue = <TName extends string, TCommonType extends CommonType<TName>, TResult>(
+export const convertValue = <
+    TName extends string,
+    TCommonType extends CommonType<TName>,
+    TResult,
+    TRecord extends Record<string, ConvertKeys | ConvertKeys[]> = Record<
+        string,
+        ConvertKeys | ConvertKeys[]
+    >,
+>(
     target: ConvertType<TCommonType> & ConvertKeys,
     kind: string,
     process: (
         target: ConvertExcludeError<TCommonType>,
-        targetRecords: StructureSourceKeys,
+        targetRecords: StructureSourceKeys<TRecord>,
     ) => TResult,
     options: ConvertValueOptions = {},
 ): TResult | ErrorJson => {
     const node = target as unknown as ConvertKeys & Record<string, unknown>;
-    const record = makeStructureSourceKeys(node, options.record ?? {});
+    const record = makeStructureSourceKeys<TRecord>(node, options.record ?? {});
 
     const { errorInfos } = convertExcludeError(
         pickCheckTarget(node, options.exclude) as Convert<TCommonType>,

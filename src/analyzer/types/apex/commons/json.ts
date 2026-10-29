@@ -16,12 +16,16 @@ export const isSpecificJsonType = <T extends string>(
     return isJsonType(target) && types.includes(target.kind as T);
 };
 
-export type StructureJson<TKind extends string> = {
+export type StructureJson<
+    TKind extends string,
+    TRecord extends Record<string, ConvertKeys | ConvertKeys[]>,
+> = {
     kind: TKind;
-    sourceKeys: { [key: string]: ConvertKeys | ConvertKeys[] };
+    sourceKeys: { base: ConvertKeys } & TRecord;
 };
 
-export const isStructureJson = typia.createIs<StructureJson<string>>();
+export const isStructureJson =
+    typia.createIs<StructureJson<string, Record<string, ConvertKeys | ConvertKeys[]>>>();
 
 export type ErrorJson = JsonType<'error'> & {
     kind: 'error';
@@ -50,20 +54,27 @@ export const makeJsonType = <Tkind extends string, T extends JsonType<Tkind>>(
 
 // 境界ノードの範囲外にあるエラーノードを、エラーノード自身のキーで ErrorJson にする
 export const makeErrorJson = (target: ConvertKeys, kindType: string): ErrorJson => {
-    return makeJsonType('error', { objectKey: target.objectKey, sourceKey: target.sourceKey }, {
-        kindType,
-    });
+    return makeJsonType(
+        'error',
+        { objectKey: target.objectKey, sourceKey: target.sourceKey },
+        {
+            kindType,
+        },
+    );
 };
 
-export const makeStructureJson =<TKind extends string, T extends StructureJson<TKind>>(
-    kind: T['kind'],
-    sourceKeys: { [key: string]: ConvertKeys | ConvertKeys[] },
-    properties: Omit<T, 'kind' | 'sourceKeys'> = {} as Omit<T, 'kind' | 'sourceKeys'>,
-): T => {
+export const makeStructureJson = <
+    const TKind extends string,
+    TRecord extends Record<string, ConvertKeys | ConvertKeys[]>,
+    TProperties extends object = {},
+>(
+    kind: TKind,
+    sourceKeys: { base: ConvertKeys } & TRecord,
+    properties?: TProperties,
+): StructureJson<TKind, { base: ConvertKeys } & TRecord> & TProperties => {
     return {
         kind,
         sourceKeys,
         ...properties,
-    } as T;
+    } as StructureJson<TKind, { base: ConvertKeys } & TRecord> & TProperties;
 };
-

@@ -36,10 +36,14 @@ import { ModifiersJson, makeModifiersJson } from './modifier';
 // 直下のエラーノードは、その位置に ErrorJson として残す
 const ERROR_KIND = 'unit';
 
+export type MemberStatementJson = {
+    kind: 'statement';
+    statement: StatementJson | ErrorJson;
+    modifier: ModifiersJson;
+};
+
 type BlockMemberJson =
-    | (MemberDeclarationJson & { modifier: ModifiersJson })
-    | { type: 'statement'; statement: StatementJson | ErrorJson; modifier: ModifiersJson }
-    | ErrorJson;
+    (MemberDeclarationJson & { modifier: ModifiersJson }) | MemberStatementJson | ErrorJson;
 
 const makeBlockMemberJson = (
     target: ConvertType<AnonymousBlockMemberType | TriggerBlockMemberType>,
@@ -56,7 +60,7 @@ const makeBlockMemberJson = (
     const modifier = makeModifiersJson(target.modifier);
     if (member.type === 'statement') {
         return {
-            type: 'statement',
+            kind: 'statement',
             statement: makeStatementJson(member),
             modifier: modifier,
         };
@@ -192,4 +196,3 @@ export const makeCompilationUnitJson = (
         modifier: makeModifiersJson(typeDeclaration.modifier),
     };
 };
-
