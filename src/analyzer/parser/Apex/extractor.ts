@@ -95,8 +95,8 @@ type ReplacedDeclaration =
     | (ReplacedClassDeclaration & { modifier: ModifiersJson })
     | JsonType<'notSet'>;
 
-type OriginalDeclarationReference = RefPointedDeclaration<OriginalDeclaration>;
-type ReplacedDeclarationReference = RefPointedDeclaration<ReplacedDeclaration>;
+export type OriginalDeclarationReference = RefPointedDeclaration<OriginalDeclaration>;
+export type ReplacedDeclarationReference = RefPointedDeclaration<ReplacedDeclaration>;
 
 type SourceBlockMember =
     OriginalDeclaration | InitializerBlockJson | MemberStatementJson | ErrorJson;
@@ -160,6 +160,7 @@ const _replaceDeclarationRef = (
 
 export const replaceDeclarationRef = (
     target: Extract<CompilationUnitJson, { kind: 'class' }> | AnonymousUnitJson | TriggerUnitJson,
+    path: string,
 ): {
     unit: ReplacedCompilationUnit | ReplacedAnonymousUnit | ReplacedTriggerUnit;
     declarations: ReplacedDeclarationReference[];
@@ -170,7 +171,7 @@ export const replaceDeclarationRef = (
     const replacedDeclarations: ReplacedDeclarationReference[] = [];
 
     const { block, ...rest } = target;
-    _replaceDeclarationRef(block, '.', refPoints, replacedBlocks, declarations);
+    _replaceDeclarationRef(block, path, refPoints, replacedBlocks, declarations);
 
     const replacedBaseUnit: ReplacedCompilationUnit | ReplacedAnonymousUnit | ReplacedTriggerUnit =
         {

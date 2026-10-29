@@ -1,5 +1,6 @@
 import fs, { mkdir, writeFile } from 'node:fs/promises';
 import path from 'path';
+import { pathToFileURL } from 'node:url';
 
 import {
     assignMultiClass,
@@ -20,14 +21,20 @@ import {
     makeAnonymousUnitJson,
     AnonymousUnitJson,
     makeConvertType,
-    regenerateSourceObjects,
     JsonType,
     SourceJson,
     ErrorJson,
     isErrorJson,
+    regenerateSourceObjects,
 } from '../../types';
 
-import { replaceDeclarationRef } from './extractor';
+import {
+    ReplacedAnonymousUnit,
+    ReplacedCompilationUnit,
+    ReplacedDeclarationReference,
+    replaceDeclarationRef,
+    ReplacedTriggerUnit,
+} from './extractor';
 
 import { ApexParserFactory } from '@apexdevtools/apex-parser';
 
@@ -38,28 +45,52 @@ type ResolvedErrorType = {
     errorMessage: string;
 };
 
-type SaveFileType = {
+type FileStructureType = {
     filePath: string;
     resolvedError: ResolvedErrorType[];
 } & (
     | {
           dataType: 'error';
-          result: ErrorType | ErrorJson;
+          result: {
+              id: string;
+              base: ErrorType | ErrorJson;
+              sourceObject?: SourceJson[];
+          };
       }
     | {
-          dataType: 'anonymousUnit';
-          result: AnonymousUnitJson;
-          sourceObjects: SourceJson[];
+          dataType: 'enum' | 'interface';
+          result: {
+              id: string;
+              base: CompilationUnitJson;
+              sourceObject: SourceJson[];
+          };
       }
     | {
-          dataType: 'compilationUnit';
-          result: CompilationUnitJson;
-          sourceObjects: SourceJson[];
+          dataType: 'class';
+          result: {
+              id: string;
+              base: ReplacedCompilationUnit;
+              declaration: ReplacedDeclarationReference[];
+              sourceObject: SourceJson[];
+          };
       }
     | {
-          dataType: 'triggerUnit';
-          result: TriggerUnitJson;
-          sourceObjects: SourceJson[];
+          dataType: 'trigger';
+          result: {
+              id: string;
+              base: ReplacedTriggerUnit;
+              declaration: ReplacedDeclarationReference[];
+              sourceObject: SourceJson[];
+          };
+      }
+    | {
+          dataType: 'anonymous';
+          result: {
+              id: string;
+              base: ReplacedAnonymousUnit;
+              declaration: ReplacedDeclarationReference[];
+              sourceObject: SourceJson[];
+          };
       }
 );
 
@@ -75,14 +106,16 @@ type SaveDataInfo = {
 };
 
 export class ApexClsParser {
-    static async parseApexClass(filePath: string): Promise<SaveFileType> {
+    static async parseApexClass(filePath: string): Promise<FileStructureType> {
+        const id = `${path.basename(filePath).split('.')[0]!}_${crypto.randomUUID()}`;
+
         const source = await fs.readFile(filePath, 'utf-8');
         const errorListener = new CommonErrorListener(source);
 
         const { parser } = ApexParserFactory.createLexerAndParser(source, errorListener);
         const unResolvedError = errorListener.getErrors();
 
-        const unResolvedErrors: ResolvedErrorType[] = unResolvedError.map((error) => ({
+        const resolvedErrors: ResolvedErrorType[] = unResolvedError.map((error) => ({
             code: error.getCode(),
             contextType: error.getContextType(),
             context: error.getContext(),
@@ -101,71 +134,101 @@ export class ApexClsParser {
         if (unitConvertType.type === 'error') {
             return {
                 filePath: filePath,
-                resolvedError: unResolvedErrors,
+                resolvedError: resolvedErrors,
                 dataType: 'error',
-                result: unitConvertType,
+                result: {
+                    id: id,
+                    base: unitConvertType,
+                },
             };
         }
 
         const { result, sourceObjects } = await makeConvertType(unitConvertType);
 
-        if (result.type === 'anonymousUnit') {
-            const unit = makeAnonymousUnitJson(result);
-            if (isErrorJson(unit)) {
-                return {
-                    filePath: filePath,
-                    resolvedError: unResolvedErrors,
-                    dataType: 'error',
-                    result: unit,
-                };
-            }
+        let unit: CompilationUnitJson | TriggerUnitJson | AnonymousUnitJson | ErrorJson;
+        if (result.type === 'compilationUnit') {
+            unit = makeCompilationUnitJson(result);
+        } else if (result.type === 'anonymousUnit') {
+            unit = makeAnonymousUnitJson(result);
+        } else {
+            unit = makeTriggerUnitJson(result);
+        }
+
+        const regenerateSource = regenerateSourceObjects(sourceObjects, unit);
+
+        if (isErrorJson(unit)) {
             return {
                 filePath: filePath,
-                resolvedError: unResolvedErrors,
-                dataType: 'anonymousUnit',
-                result: unit,
-                sourceObjects: regenerateSourceObjects(sourceObjects, unit),
+                resolvedError: resolvedErrors,
+                dataType: 'error',
+                result: {
+                    id: id,
+                    base: unit,
+                    sourceObject: regenerateSource,
+                },
             };
-        } else if (result.type === 'compilationUnit') {
-            const unit = makeCompilationUnitJson(result);
-            if (isErrorJson(unit)) {
-                return {
-                    filePath: filePath,
-                    resolvedError: unResolvedErrors,
-                    dataType: 'error',
-                    result: unit,
-                };
-            }
+        }
+
+        if (unit.fileType === 'cls' && (unit.kind === 'interface' || unit.kind === 'enum')) {
+            unit;
             return {
                 filePath: filePath,
-                resolvedError: unResolvedErrors,
-                dataType: 'compilationUnit',
-                result: unit,
-                sourceObjects: regenerateSourceObjects(sourceObjects, unit),
+                resolvedError: resolvedErrors,
+                dataType: unit.kind,
+                result: {
+                    id: id,
+                    base: unit,
+                    sourceObject: regenerateSource,
+                },
+            };
+        }
+
+        const { unit: replacedUnit, declarations: extractDeclarations } = replaceDeclarationRef(
+            unit,
+            id,
+        );
+
+        if (replacedUnit.fileType === 'cls') {
+            return {
+                filePath: filePath,
+                resolvedError: resolvedErrors,
+                dataType: 'class',
+                result: {
+                    id: id,
+                    base: replacedUnit,
+                    declaration: extractDeclarations,
+                    sourceObject: regenerateSourceObjects(sourceObjects, unit),
+                },
+            };
+        } else if (replacedUnit.fileType === 'trigger') {
+            return {
+                filePath: filePath,
+                resolvedError: resolvedErrors,
+                dataType: 'trigger',
+                result: {
+                    id: id,
+                    base: replacedUnit,
+                    declaration: extractDeclarations,
+                    sourceObject: regenerateSourceObjects(sourceObjects, unit),
+                },
             };
         } else {
-            const unit = makeTriggerUnitJson(result);
-            if (isErrorJson(unit)) {
-                return {
-                    filePath: filePath,
-                    resolvedError: unResolvedErrors,
-                    dataType: 'error',
-                    result: unit,
-                };
-            }
             return {
                 filePath: filePath,
-                resolvedError: unResolvedErrors,
-                dataType: 'triggerUnit',
-                result: unit,
-                sourceObjects: regenerateSourceObjects(sourceObjects, unit),
+                resolvedError: resolvedErrors,
+                dataType: 'anonymous',
+                result: {
+                    id: id,
+                    base: replacedUnit,
+                    declaration: extractDeclarations,
+                    sourceObject: regenerateSourceObjects(sourceObjects, unit),
+                },
             };
         }
     }
 
-    static saveApexFile(baseDir: string, target: SaveFileType): SaveDataInfo[] {
-        const jsonBaseName = path.basename(target.filePath).split('.')[0]!;
-        const outputDirectory = new URL(path.join(baseDir, jsonBaseName), process.cwd());
+    static saveApexFile(baseDir: string, target: FileStructureType): SaveDataInfo[] {
+        const outputDirectory = pathToFileURL(baseDir);
 
         const baseInfo: BaseInfo = {
             dataType: target.dataType,
@@ -173,53 +236,41 @@ export class ApexClsParser {
             unResolvedError: target.resolvedError,
         };
 
-        const baseInfoFile = new URL('./basInfo.json', outputDirectory);
+        const baseInfoFile = new URL(`./${target.result}/basInfo.json`, outputDirectory);
 
         const saveDataInfo: SaveDataInfo[] = [{ outputPath: baseInfoFile, data: baseInfo }];
 
-        if (target.dataType === 'error') {
-            const errorInfoFile = new URL(
-                `./${path.basename(target.filePath).split('.')[0]!}.json`,
-                outputDirectory,
-            );
-            saveDataInfo.push({ outputPath: errorInfoFile, data: target.result });
-        } else {
-            const sourceInfoFile = new URL('./sourceInfo.json', outputDirectory);
-            saveDataInfo.push({ outputPath: sourceInfoFile, data: target.sourceObjects });
+        if ('sourceObject' in target.result) {
+            const sourceInfoFile = new URL(`./${target.result}/sourceInfo.json`, outputDirectory);
+            saveDataInfo.push({ outputPath: sourceInfoFile, data: target.result.sourceObject });
+        }
 
-            if (
-                target.result.fileType === 'cls' &&
-                (target.result.kind === 'interface' || target.result.kind === 'enum')
-            ) {
-                const jsonObjectFile = new URL(`./unit.json`, outputDirectory);
-                saveDataInfo.push({ outputPath: jsonObjectFile, data: target.result });
-            } else {
-                const jsonObjectDirectory = new URL(`./result`, outputDirectory);
+        const baseJsonFile = new URL(`./${target.result}/base.json`, outputDirectory);
+        saveDataInfo.push({ outputPath: baseJsonFile, data: target.result });
 
-                const { unit, declarations } = replaceDeclarationRef(target.result);
-
-                const baseUnitFile = new URL(`./unit.json`, jsonObjectDirectory);
-                saveDataInfo.push({ outputPath: baseUnitFile, data: unit });
-
-                declarations.forEach((d) => {
-                    if (d.declaration.kind === 'class') {
-                        const classFile = new URL(
-                            `${d.path}/${d.declaration.sourceKeys.base.objectKey}/class.json`,
-                            jsonObjectDirectory,
-                        );
-                        saveDataInfo.push({ outputPath: classFile, data: d.declaration });
-                    } else {
-                        const declarationFile = new URL(
-                            `${d.path}/${'base' in d.declaration.sourceKeys ? d.declaration.sourceKeys.base.objectKey : d.declaration.sourceKeys.objectKey}.json`,
-                            jsonObjectDirectory,
-                        );
-                        saveDataInfo.push({
-                            outputPath: declarationFile,
-                            data: { ref: d.refPoint, result: d.declaration },
-                        });
-                    }
-                });
-            }
+        if (
+            target.dataType === 'class' ||
+            target.dataType === 'trigger' ||
+            target.dataType === 'anonymous'
+        ) {
+            target.result.declaration.forEach((d) => {
+                if (d.declaration.kind === 'class') {
+                    const classFile = new URL(
+                        `${d.path}/${d.declaration.sourceKeys.base.objectKey}/class.json`,
+                        outputDirectory,
+                    );
+                    saveDataInfo.push({ outputPath: classFile, data: d.declaration });
+                } else {
+                    const declarationFile = new URL(
+                        `${d.path}/${'base' in d.declaration.sourceKeys ? d.declaration.sourceKeys.base.objectKey : d.declaration.sourceKeys.objectKey}.json`,
+                        outputDirectory,
+                    );
+                    saveDataInfo.push({
+                        outputPath: declarationFile,
+                        data: { ref: d.refPoint, result: d.declaration },
+                    });
+                }
+            });
         }
 
         return saveDataInfo;
