@@ -9,6 +9,8 @@
         "generate-ir.ts",
         "generate-converter-output.ts",
         "generate-json-output.ts",
+        "generate-parser-output.ts",
+        "generate-parser-developer-output.ts",
         "../apex-json/*.ts"
     ]
 }

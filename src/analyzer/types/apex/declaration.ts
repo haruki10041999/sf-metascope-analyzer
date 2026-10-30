@@ -536,3 +536,4 @@ export const makeMemberDeclarationJson = (
         return makeConstructorDeclarationJson(declaration);
     }
 };
+

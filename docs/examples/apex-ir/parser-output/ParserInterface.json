@@ -1,0 +1,1042 @@
+{
+  "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\apex-ir\\ParserInterface.cls",
+  "resolvedError": [],
+  "dataType": "interface",
+  "result": {
+    "id": "ParserInterface",
+    "base": {
+      "fileType": "cls",
+      "kind": "interface",
+      "sourceKeys": {
+        "base": {
+          "objectKey": "interfaceDeclaration_a844c24c3455b259",
+          "sourceKey": "interfaceDeclaration_f93c798c4990ebe8"
+        },
+        "name": {
+          "objectKey": "id_efd501115fb77dbe",
+          "sourceKey": "id_5e5e8d42e6027e9e"
+        }
+      },
+      "name": "ParserInterface",
+      "block": [
+        {
+          "kind": "interfaceMethod",
+          "sourceKeys": {
+            "base": {
+              "objectKey": "interfaceMethodDeclaration_f1fdb6d1bf23af39",
+              "sourceKey": "interfaceMethodDeclaration_293d20ea909db129"
+            },
+            "name": {
+              "objectKey": "id_fcf208664faa8da7",
+              "sourceKey": "id_54ecd37fec85e450"
+            }
+          },
+          "name": "execute",
+          "returnType": "void",
+          "param": [
+            {
+              "kind": "parameter",
+              "sourceKeys": {
+                "objectKey": "formalParameter_55e1ef62401ca4a3",
+                "sourceKey": "formalParameter_9572a9b6fdb044df"
+              },
+              "variant": "context",
+              "variantType": {
+                "kind": "type",
+                "index": 1,
+                "sourceKey": {
+                  "objectKey": "typeRef_18082b2d86f4ba92",
+                  "sourceKey": "typeRef_b8548788e6ad7836"
+                }
+              },
+              "modifier": {}
+            }
+          ],
+          "modifier": {}
+        },
+        {
+          "kind": "interfaceMethod",
+          "sourceKeys": {
+            "base": {
+              "objectKey": "interfaceMethodDeclaration_fa59c5903e77c0e7",
+              "sourceKey": "interfaceMethodDeclaration_c7d722607e1fdc40"
+            },
+            "name": {
+              "objectKey": "id_3bcd5775a8157932",
+              "sourceKey": "id_92edd959ec35fb21"
+            }
+          },
+          "name": "count",
+          "returnType": {
+            "kind": "type",
+            "index": 2,
+            "sourceKey": {
+              "objectKey": "typeRef_55792e748cf1fa8f",
+              "sourceKey": "typeRef_f70c5eaf19b3dfe0"
+            }
+          },
+          "modifier": {}
+        },
+        {
+          "kind": "interfaceMethod",
+          "sourceKeys": {
+            "base": {
+              "objectKey": "interfaceMethodDeclaration_94182377a42d8a1f",
+              "sourceKey": "interfaceMethodDeclaration_7bc481a5ca4041ad"
+            },
+            "name": {
+              "objectKey": "id_e01c822c256618ee",
+              "sourceKey": "id_3210fd05603b457e"
+            }
+          },
+          "name": "findAccounts",
+          "returnType": {
+            "kind": "type",
+            "index": 3,
+            "sourceKey": {
+              "objectKey": "typeRef_e7a6126512547d3d",
+              "sourceKey": "typeRef_d7055424ba13e2bc"
+            }
+          },
+          "param": [
+            {
+              "kind": "parameter",
+              "sourceKeys": {
+                "objectKey": "formalParameter_f413b3307ad085a4",
+                "sourceKey": "formalParameter_447f45e2d7d368be"
+              },
+              "variant": "name",
+              "variantType": {
+                "kind": "type",
+                "index": 4,
+                "sourceKey": {
+                  "objectKey": "typeRef_a13e3e8b5328228b",
+                  "sourceKey": "typeRef_bfba5c2b2862e8e2"
+                }
+              },
+              "modifier": {}
+            },
+            {
+              "kind": "parameter",
+              "sourceKeys": {
+                "objectKey": "formalParameter_90f2bd031b0f0ddc",
+                "sourceKey": "formalParameter_0767859a203bb936"
+              },
+              "variant": "ownerIds",
+              "variantType": {
+                "kind": "type",
+                "index": 5,
+                "sourceKey": {
+                  "objectKey": "typeRef_24f17573a601e5e9",
+                  "sourceKey": "typeRef_ea740410a375056b"
+                }
+              },
+              "modifier": {}
+            }
+          ],
+          "modifier": {}
+        },
+        {
+          "kind": "interfaceMethod",
+          "sourceKeys": {
+            "base": {
+              "objectKey": "interfaceMethodDeclaration_7f4aa0fd3784c564",
+              "sourceKey": "interfaceMethodDeclaration_b7acfbef33655de4"
+            },
+            "name": {
+              "objectKey": "id_e8cf0b485c4ea088",
+              "sourceKey": "id_aaf5015940dff332"
+            }
+          },
+          "name": "groupContacts",
+          "returnType": {
+            "kind": "type",
+            "index": 6,
+            "sourceKey": {
+              "objectKey": "typeRef_d1b84da196cb9c4a",
+              "sourceKey": "typeRef_50acf09449dfc583"
+            }
+          },
+          "param": [
+            {
+              "kind": "parameter",
+              "sourceKeys": {
+                "objectKey": "formalParameter_cbf684d8775e1acc",
+                "sourceKey": "formalParameter_9b1b4af406f8e00e"
+              },
+              "variant": "accounts",
+              "variantType": {
+                "kind": "type",
+                "index": 7,
+                "sourceKey": {
+                  "objectKey": "typeRef_e7a6126512547d3d",
+                  "sourceKey": "typeRef_aac9373baadc7f12"
+                }
+              },
+              "modifier": {}
+            }
+          ],
+          "modifier": {}
+        },
+        {
+          "kind": "interfaceMethod",
+          "sourceKeys": {
+            "base": {
+              "objectKey": "interfaceMethodDeclaration_d59048aa6b05beb8",
+              "sourceKey": "interfaceMethodDeclaration_e932045ad747fb6d"
+            },
+            "name": {
+              "objectKey": "id_3957e992ff764c2a",
+              "sourceKey": "id_22c5429e33e57806"
+            }
+          },
+          "name": "save",
+          "returnType": {
+            "kind": "type",
+            "index": 8,
+            "sourceKey": {
+              "objectKey": "typeRef_1899afb85044d9b0",
+              "sourceKey": "typeRef_55b9e7d9231f0bc7"
+            }
+          },
+          "param": [
+            {
+              "kind": "parameter",
+              "sourceKeys": {
+                "objectKey": "formalParameter_a46e2584b74eb1c0",
+                "sourceKey": "formalParameter_de898465c651b0d1"
+              },
+              "variant": "record",
+              "variantType": {
+                "kind": "type",
+                "index": 9,
+                "sourceKey": {
+                  "objectKey": "typeRef_24cd68d67f5694b3",
+                  "sourceKey": "typeRef_0d239b821d81a600"
+                }
+              },
+              "modifier": {}
+            }
+          ],
+          "modifier": {}
+        }
+      ],
+      "extend": [
+        {
+          "kind": "type",
+          "index": 10,
+          "sourceKey": {
+            "objectKey": "typeRef_48850bb7b31741a4",
+            "sourceKey": "typeRef_a1eba780f718f807"
+          }
+        },
+        {
+          "kind": "type",
+          "index": 11,
+          "sourceKey": {
+            "objectKey": "typeRef_e3de1e200a5c0c3b",
+            "sourceKey": "typeRef_adeb6cf5ceaed8e2"
+          }
+        }
+      ],
+      "modifier": {
+        "access": [
+          {
+            "kind": "modifier",
+            "sourceKeys": {
+              "objectKey": "modifier_a04213395735c45e",
+              "sourceKey": "modifier_7c8cf3c428c32faf"
+            },
+            "name": "PUBLIC"
+          }
+        ]
+      }
+    },
+    "semantic": [
+      {
+        "kind": "type",
+        "path": "ParserInterface",
+        "result": [
+          {
+            "refPoint": {
+              "kind": "type",
+              "index": 1,
+              "sourceKey": {
+                "objectKey": "typeRef_18082b2d86f4ba92",
+                "sourceKey": "typeRef_b8548788e6ad7836"
+              }
+            },
+            "data": {
+              "kind": "type",
+              "sourceKeys": {
+                "objectKey": "typeRef_18082b2d86f4ba92",
+                "sourceKey": "typeRef_b8548788e6ad7836"
+              },
+              "type": "custom",
+              "customType": "SchedulableContext"
+            }
+          },
+          {
+            "refPoint": {
+              "kind": "type",
+              "index": 2,
+              "sourceKey": {
+                "objectKey": "typeRef_55792e748cf1fa8f",
+                "sourceKey": "typeRef_f70c5eaf19b3dfe0"
+              }
+            },
+            "data": {
+              "kind": "type",
+              "sourceKeys": {
+                "objectKey": "typeRef_55792e748cf1fa8f",
+                "sourceKey": "typeRef_f70c5eaf19b3dfe0"
+              },
+              "type": "primitive",
+              "primitiveType": "Integer"
+            }
+          },
+          {
+            "refPoint": {
+              "kind": "type",
+              "index": 3,
+              "sourceKey": {
+                "objectKey": "typeRef_e7a6126512547d3d",
+                "sourceKey": "typeRef_d7055424ba13e2bc"
+              }
+            },
+            "data": {
+              "kind": "type",
+              "sourceKeys": {
+                "objectKey": "typeRef_e7a6126512547d3d",
+                "sourceKey": "typeRef_d7055424ba13e2bc"
+              },
+              "collectionType": "list",
+              "elementType": {
+                "type": "custom",
+                "customType": "Account"
+              }
+            }
+          },
+          {
+            "refPoint": {
+              "kind": "type",
+              "index": 4,
+              "sourceKey": {
+                "objectKey": "typeRef_a13e3e8b5328228b",
+                "sourceKey": "typeRef_bfba5c2b2862e8e2"
+              }
+            },
+            "data": {
+              "kind": "type",
+              "sourceKeys": {
+                "objectKey": "typeRef_a13e3e8b5328228b",
+                "sourceKey": "typeRef_bfba5c2b2862e8e2"
+              },
+              "type": "primitive",
+              "primitiveType": "String"
+            }
+          },
+          {
+            "refPoint": {
+              "kind": "type",
+              "index": 5,
+              "sourceKey": {
+                "objectKey": "typeRef_24f17573a601e5e9",
+                "sourceKey": "typeRef_ea740410a375056b"
+              }
+            },
+            "data": {
+              "kind": "type",
+              "sourceKeys": {
+                "objectKey": "typeRef_24f17573a601e5e9",
+                "sourceKey": "typeRef_ea740410a375056b"
+              },
+              "collectionType": "set",
+              "elementType": {
+                "type": "primitive",
+                "primitiveType": "Id"
+              }
+            }
+          },
+          {
+            "refPoint": {
+              "kind": "type",
+              "index": 6,
+              "sourceKey": {
+                "objectKey": "typeRef_d1b84da196cb9c4a",
+                "sourceKey": "typeRef_50acf09449dfc583"
+              }
+            },
+            "data": {
+              "kind": "type",
+              "sourceKeys": {
+                "objectKey": "typeRef_d1b84da196cb9c4a",
+                "sourceKey": "typeRef_50acf09449dfc583"
+              },
+              "collectionType": "map",
+              "keyType": {
+                "type": "primitive",
+                "primitiveType": "Id"
+              },
+              "valueType": {
+                "collectionType": "list",
+                "elementType": {
+                  "type": "custom",
+                  "customType": "Contact"
+                }
+              }
+            }
+          },
+          {
+            "refPoint": {
+              "kind": "type",
+              "index": 7,
+              "sourceKey": {
+                "objectKey": "typeRef_e7a6126512547d3d",
+                "sourceKey": "typeRef_aac9373baadc7f12"
+              }
+            },
+            "data": {
+              "kind": "type",
+              "sourceKeys": {
+                "objectKey": "typeRef_e7a6126512547d3d",
+                "sourceKey": "typeRef_aac9373baadc7f12"
+              },
+              "collectionType": "list",
+              "elementType": {
+                "type": "custom",
+                "customType": "Account"
+              }
+            }
+          },
+          {
+            "refPoint": {
+              "kind": "type",
+              "index": 8,
+              "sourceKey": {
+                "objectKey": "typeRef_1899afb85044d9b0",
+                "sourceKey": "typeRef_55b9e7d9231f0bc7"
+              }
+            },
+            "data": {
+              "kind": "type",
+              "sourceKeys": {
+                "objectKey": "typeRef_1899afb85044d9b0",
+                "sourceKey": "typeRef_55b9e7d9231f0bc7"
+              },
+              "type": "custom",
+              "customType": [
+                "Database",
+                "SaveResult"
+              ]
+            }
+          },
+          {
+            "refPoint": {
+              "kind": "type",
+              "index": 9,
+              "sourceKey": {
+                "objectKey": "typeRef_24cd68d67f5694b3",
+                "sourceKey": "typeRef_0d239b821d81a600"
+              }
+            },
+            "data": {
+              "kind": "type",
+              "sourceKeys": {
+                "objectKey": "typeRef_24cd68d67f5694b3",
+                "sourceKey": "typeRef_0d239b821d81a600"
+              },
+              "type": "custom",
+              "customType": "SObject"
+            }
+          },
+          {
+            "refPoint": {
+              "kind": "type",
+              "index": 10,
+              "sourceKey": {
+                "objectKey": "typeRef_48850bb7b31741a4",
+                "sourceKey": "typeRef_a1eba780f718f807"
+              }
+            },
+            "data": {
+              "kind": "type",
+              "sourceKeys": {
+                "objectKey": "typeRef_48850bb7b31741a4",
+                "sourceKey": "typeRef_a1eba780f718f807"
+              },
+              "type": "custom",
+              "customType": "Comparable"
+            }
+          },
+          {
+            "refPoint": {
+              "kind": "type",
+              "index": 11,
+              "sourceKey": {
+                "objectKey": "typeRef_e3de1e200a5c0c3b",
+                "sourceKey": "typeRef_adeb6cf5ceaed8e2"
+              }
+            },
+            "data": {
+              "kind": "type",
+              "sourceKeys": {
+                "objectKey": "typeRef_e3de1e200a5c0c3b",
+                "sourceKey": "typeRef_adeb6cf5ceaed8e2"
+              },
+              "type": "custom",
+              "customType": "Schedulable"
+            }
+          }
+        ]
+      }
+    ],
+    "sourceObject": [
+      {
+        "objectKey": "interfaceDeclaration_a844c24c3455b259",
+        "context": "interfaceParserInterfaceextendsComparable,Schedulable{voidexecute(SchedulableContextcontext);Integercount();List<Account>findAccounts(Stringname,Set<Id>ownerIds);Map<Id,List<Contact>>groupContacts(List<Account>accounts);Database.SaveResultsave(SObjectrecord);}",
+        "source": [
+          {
+            "sourceKey": "interfaceDeclaration_f93c798c4990ebe8",
+            "start": {
+              "offset": 60,
+              "line": 2,
+              "column": 7
+            },
+            "end": {
+              "offset": 367,
+              "line": 12,
+              "column": 1
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "id_efd501115fb77dbe",
+        "context": "ParserInterface",
+        "source": [
+          {
+            "sourceKey": "id_5e5e8d42e6027e9e",
+            "start": {
+              "offset": 70,
+              "line": 2,
+              "column": 17
+            },
+            "end": {
+              "offset": 85,
+              "line": 2,
+              "column": 32
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "interfaceMethodDeclaration_f1fdb6d1bf23af39",
+        "context": "voidexecute(SchedulableContextcontext);",
+        "source": [
+          {
+            "sourceKey": "interfaceMethodDeclaration_293d20ea909db129",
+            "start": {
+              "offset": 124,
+              "line": 3,
+              "column": 4
+            },
+            "end": {
+              "offset": 165,
+              "line": 3,
+              "column": 45
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "id_fcf208664faa8da7",
+        "context": "execute",
+        "source": [
+          {
+            "sourceKey": "id_54ecd37fec85e450",
+            "start": {
+              "offset": 129,
+              "line": 3,
+              "column": 9
+            },
+            "end": {
+              "offset": 136,
+              "line": 3,
+              "column": 16
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "formalParameter_55e1ef62401ca4a3",
+        "context": "SchedulableContextcontext",
+        "source": [
+          {
+            "sourceKey": "formalParameter_9572a9b6fdb044df",
+            "start": {
+              "offset": 137,
+              "line": 3,
+              "column": 17
+            },
+            "end": {
+              "offset": 163,
+              "line": 3,
+              "column": 43
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "typeRef_18082b2d86f4ba92",
+        "context": "SchedulableContext",
+        "source": [
+          {
+            "sourceKey": "typeRef_b8548788e6ad7836",
+            "start": {
+              "offset": 137,
+              "line": 3,
+              "column": 17
+            },
+            "end": {
+              "offset": 155,
+              "line": 3,
+              "column": 35
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "interfaceMethodDeclaration_fa59c5903e77c0e7",
+        "context": "Integercount();",
+        "source": [
+          {
+            "sourceKey": "interfaceMethodDeclaration_c7d722607e1fdc40",
+            "start": {
+              "offset": 171,
+              "line": 5,
+              "column": 4
+            },
+            "end": {
+              "offset": 187,
+              "line": 5,
+              "column": 20
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "id_3bcd5775a8157932",
+        "context": "count",
+        "source": [
+          {
+            "sourceKey": "id_92edd959ec35fb21",
+            "start": {
+              "offset": 179,
+              "line": 5,
+              "column": 12
+            },
+            "end": {
+              "offset": 184,
+              "line": 5,
+              "column": 17
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "typeRef_55792e748cf1fa8f",
+        "context": "Integer",
+        "source": [
+          {
+            "sourceKey": "typeRef_f70c5eaf19b3dfe0",
+            "start": {
+              "offset": 171,
+              "line": 5,
+              "column": 4
+            },
+            "end": {
+              "offset": 178,
+              "line": 5,
+              "column": 11
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "interfaceMethodDeclaration_94182377a42d8a1f",
+        "context": "List<Account>findAccounts(Stringname,Set<Id>ownerIds);",
+        "source": [
+          {
+            "sourceKey": "interfaceMethodDeclaration_7bc481a5ca4041ad",
+            "start": {
+              "offset": 193,
+              "line": 7,
+              "column": 4
+            },
+            "end": {
+              "offset": 251,
+              "line": 7,
+              "column": 62
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "id_e01c822c256618ee",
+        "context": "findAccounts",
+        "source": [
+          {
+            "sourceKey": "id_3210fd05603b457e",
+            "start": {
+              "offset": 207,
+              "line": 7,
+              "column": 18
+            },
+            "end": {
+              "offset": 219,
+              "line": 7,
+              "column": 30
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "typeRef_e7a6126512547d3d",
+        "context": "List<Account>",
+        "source": [
+          {
+            "sourceKey": "typeRef_d7055424ba13e2bc",
+            "start": {
+              "offset": 193,
+              "line": 7,
+              "column": 4
+            },
+            "end": {
+              "offset": 206,
+              "line": 7,
+              "column": 17
+            }
+          },
+          {
+            "sourceKey": "typeRef_aac9373baadc7f12",
+            "start": {
+              "offset": 294,
+              "line": 9,
+              "column": 41
+            },
+            "end": {
+              "offset": 307,
+              "line": 9,
+              "column": 54
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "formalParameter_f413b3307ad085a4",
+        "context": "Stringname",
+        "source": [
+          {
+            "sourceKey": "formalParameter_447f45e2d7d368be",
+            "start": {
+              "offset": 220,
+              "line": 7,
+              "column": 31
+            },
+            "end": {
+              "offset": 231,
+              "line": 7,
+              "column": 42
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "typeRef_a13e3e8b5328228b",
+        "context": "String",
+        "source": [
+          {
+            "sourceKey": "typeRef_bfba5c2b2862e8e2",
+            "start": {
+              "offset": 220,
+              "line": 7,
+              "column": 31
+            },
+            "end": {
+              "offset": 226,
+              "line": 7,
+              "column": 37
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "formalParameter_90f2bd031b0f0ddc",
+        "context": "Set<Id>ownerIds",
+        "source": [
+          {
+            "sourceKey": "formalParameter_0767859a203bb936",
+            "start": {
+              "offset": 233,
+              "line": 7,
+              "column": 44
+            },
+            "end": {
+              "offset": 249,
+              "line": 7,
+              "column": 60
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "typeRef_24f17573a601e5e9",
+        "context": "Set<Id>",
+        "source": [
+          {
+            "sourceKey": "typeRef_ea740410a375056b",
+            "start": {
+              "offset": 233,
+              "line": 7,
+              "column": 44
+            },
+            "end": {
+              "offset": 240,
+              "line": 7,
+              "column": 51
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "interfaceMethodDeclaration_7f4aa0fd3784c564",
+        "context": "Map<Id,List<Contact>>groupContacts(List<Account>accounts);",
+        "source": [
+          {
+            "sourceKey": "interfaceMethodDeclaration_b7acfbef33655de4",
+            "start": {
+              "offset": 257,
+              "line": 9,
+              "column": 4
+            },
+            "end": {
+              "offset": 318,
+              "line": 9,
+              "column": 65
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "id_e8cf0b485c4ea088",
+        "context": "groupContacts",
+        "source": [
+          {
+            "sourceKey": "id_aaf5015940dff332",
+            "start": {
+              "offset": 280,
+              "line": 9,
+              "column": 27
+            },
+            "end": {
+              "offset": 293,
+              "line": 9,
+              "column": 40
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "typeRef_d1b84da196cb9c4a",
+        "context": "Map<Id,List<Contact>>",
+        "source": [
+          {
+            "sourceKey": "typeRef_50acf09449dfc583",
+            "start": {
+              "offset": 257,
+              "line": 9,
+              "column": 4
+            },
+            "end": {
+              "offset": 279,
+              "line": 9,
+              "column": 26
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "formalParameter_cbf684d8775e1acc",
+        "context": "List<Account>accounts",
+        "source": [
+          {
+            "sourceKey": "formalParameter_9b1b4af406f8e00e",
+            "start": {
+              "offset": 294,
+              "line": 9,
+              "column": 41
+            },
+            "end": {
+              "offset": 316,
+              "line": 9,
+              "column": 63
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "interfaceMethodDeclaration_d59048aa6b05beb8",
+        "context": "Database.SaveResultsave(SObjectrecord);",
+        "source": [
+          {
+            "sourceKey": "interfaceMethodDeclaration_e932045ad747fb6d",
+            "start": {
+              "offset": 324,
+              "line": 11,
+              "column": 4
+            },
+            "end": {
+              "offset": 365,
+              "line": 11,
+              "column": 45
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "id_3957e992ff764c2a",
+        "context": "save",
+        "source": [
+          {
+            "sourceKey": "id_22c5429e33e57806",
+            "start": {
+              "offset": 344,
+              "line": 11,
+              "column": 24
+            },
+            "end": {
+              "offset": 348,
+              "line": 11,
+              "column": 28
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "typeRef_1899afb85044d9b0",
+        "context": "Database.SaveResult",
+        "source": [
+          {
+            "sourceKey": "typeRef_55b9e7d9231f0bc7",
+            "start": {
+              "offset": 324,
+              "line": 11,
+              "column": 4
+            },
+            "end": {
+              "offset": 343,
+              "line": 11,
+              "column": 23
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "formalParameter_a46e2584b74eb1c0",
+        "context": "SObjectrecord",
+        "source": [
+          {
+            "sourceKey": "formalParameter_de898465c651b0d1",
+            "start": {
+              "offset": 349,
+              "line": 11,
+              "column": 29
+            },
+            "end": {
+              "offset": 363,
+              "line": 11,
+              "column": 43
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "typeRef_24cd68d67f5694b3",
+        "context": "SObject",
+        "source": [
+          {
+            "sourceKey": "typeRef_0d239b821d81a600",
+            "start": {
+              "offset": 349,
+              "line": 11,
+              "column": 29
+            },
+            "end": {
+              "offset": 356,
+              "line": 11,
+              "column": 36
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "typeRef_48850bb7b31741a4",
+        "context": "Comparable",
+        "source": [
+          {
+            "sourceKey": "typeRef_a1eba780f718f807",
+            "start": {
+              "offset": 94,
+              "line": 2,
+              "column": 41
+            },
+            "end": {
+              "offset": 104,
+              "line": 2,
+              "column": 51
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "typeRef_e3de1e200a5c0c3b",
+        "context": "Schedulable",
+        "source": [
+          {
+            "sourceKey": "typeRef_adeb6cf5ceaed8e2",
+            "start": {
+              "offset": 106,
+              "line": 2,
+              "column": 53
+            },
+            "end": {
+              "offset": 117,
+              "line": 2,
+              "column": 64
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "modifier_a04213395735c45e",
+        "context": "public",
+        "source": [
+          {
+            "sourceKey": "modifier_7c8cf3c428c32faf",
+            "start": {
+              "offset": 53,
+              "line": 2,
+              "column": 0
+            },
+            "end": {
+              "offset": 59,
+              "line": 2,
+              "column": 6
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

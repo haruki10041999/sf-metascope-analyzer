@@ -34,6 +34,8 @@ export const unitRules = {
 // docs/examples/apex-ir のサンプル
 export const samples: { file: string; rule: UnitRule }[] = [
     { file: 'ParserTest.cls', rule: unitRules.cls },
+    { file: 'ParserInterface.cls', rule: unitRules.cls },
+    { file: 'ParserEnum.cls', rule: unitRules.cls },
     { file: 'ParserTrigger.trigger', rule: unitRules.trigger },
     { file: 'parser.apex', rule: unitRules.anonymous },
 ];

@@ -2,6 +2,8 @@ import fs, { mkdir, writeFile } from 'node:fs/promises';
 import path from 'path';
 import { pathToFileURL } from 'node:url';
 
+import { Packr } from 'msgpackr';
+
 import {
     assignMultiClass,
     CompilationUnitType,
@@ -26,14 +28,25 @@ import {
     ErrorJson,
     isErrorJson,
     regenerateSourceObjects,
+    TypeJson,
+    SoqlJson,
+    SoslJson,
+    DotMethodCallJson,
+    MethodCallJson,
 } from '../../types';
 
 import {
-    ReplacedAnonymousUnit,
-    ReplacedCompilationUnit,
+    SemanticReplacedAnonymousUnit,
+    SemanticReplacedCompilationUnit,
     ReplacedDeclarationReference,
     replaceDeclarationRef,
-    ReplacedTriggerUnit,
+    SemanticReplacedTriggerUnit,
+    RefPointedStructureArray,
+    ReplaceSemanticRef,
+    SemanticJson,
+    SemanticRefPoint,
+    replaceSemanticRef,
+    isSemanticJson,
 } from './extractor';
 
 import { ApexParserFactory } from '@apexdevtools/apex-parser';
@@ -45,7 +58,7 @@ type ResolvedErrorType = {
     errorMessage: string;
 };
 
-type FileStructureType = {
+export type FileStructureType = {
     filePath: string;
     resolvedError: ResolvedErrorType[];
 } & (
@@ -61,7 +74,15 @@ type FileStructureType = {
           dataType: 'enum' | 'interface';
           result: {
               id: string;
-              base: CompilationUnitJson;
+              base: ReplaceSemanticRef<
+                  Extract<CompilationUnitJson, { kind: 'enum' | 'interface' }>,
+                  SemanticJson,
+                  SemanticRefPoint
+              >;
+              semantic: RefPointedStructureArray<
+                  'type' | 'soql' | 'sosl' | 'memberAccess',
+                  TypeJson | SoqlJson | SoslJson | DotMethodCallJson | MethodCallJson
+              >[];
               sourceObject: SourceJson[];
           };
       }
@@ -69,8 +90,12 @@ type FileStructureType = {
           dataType: 'class';
           result: {
               id: string;
-              base: ReplacedCompilationUnit;
+              base: SemanticReplacedCompilationUnit;
               declaration: ReplacedDeclarationReference[];
+              semantic: RefPointedStructureArray<
+                  'type' | 'soql' | 'sosl' | 'memberAccess',
+                  TypeJson | SoqlJson | SoslJson | DotMethodCallJson | MethodCallJson
+              >[];
               sourceObject: SourceJson[];
           };
       }
@@ -78,8 +103,12 @@ type FileStructureType = {
           dataType: 'trigger';
           result: {
               id: string;
-              base: ReplacedTriggerUnit;
+              base: SemanticReplacedTriggerUnit;
               declaration: ReplacedDeclarationReference[];
+              semantic: RefPointedStructureArray<
+                  'type' | 'soql' | 'sosl' | 'memberAccess',
+                  TypeJson | SoqlJson | SoslJson | DotMethodCallJson | MethodCallJson
+              >[];
               sourceObject: SourceJson[];
           };
       }
@@ -87,32 +116,64 @@ type FileStructureType = {
           dataType: 'anonymous';
           result: {
               id: string;
-              base: ReplacedAnonymousUnit;
+              base: SemanticReplacedAnonymousUnit;
               declaration: ReplacedDeclarationReference[];
+              semantic: RefPointedStructureArray<
+                  'type' | 'soql' | 'sosl' | 'memberAccess',
+                  TypeJson | SoqlJson | SoslJson | DotMethodCallJson | MethodCallJson
+              >[];
               sourceObject: SourceJson[];
           };
       }
 );
 
-type BaseInfo = {
+export type BaseInfo = {
     dataType: string;
     filePath: string;
     unResolvedError: ResolvedErrorType[];
 };
 
-type SaveDataInfo = {
+export type SaveDataInfo = {
     outputPath: URL;
     data: unknown;
 };
 
-export class ApexClsParser {
-    static async parseApexClass(filePath: string): Promise<FileStructureType> {
-        const id = `${path.basename(filePath).split('.')[0]!}_${crypto.randomUUID()}`;
+// 本番保存用。records (同じキー構成をまとめる msgpackr 独自拡張) を使い、サイズと読み込み速度を優先する。
+// structures (構造定義の共有) は使わないため、1 ファイル単体で読み込める。
+// records を使うので msgpackr 以外の MessagePack 実装では読めない点に注意。
+const packr = new Packr({ useRecords: true });
 
+export class ApexParser {
+    static async searchApexFiles(rootDir: string): Promise<string[]> {
+        const entries = await fs.readdir(rootDir, { recursive: true, withFileTypes: true });
+
+        return entries
+            .filter(
+                (entry) =>
+                    entry.isFile() &&
+                    ['.apex', '.cls', '.trigger'].includes(path.extname(entry.name).toLowerCase()),
+            )
+            .map((entry) => path.join(entry.parentPath, entry.name));
+    }
+
+    static async parseApexClass(filePath: string): Promise<FileStructureType> {
+        const baseName = path.parse(filePath).name;
         const source = await fs.readFile(filePath, 'utf-8');
         const errorListener = new CommonErrorListener(source);
 
         const { parser } = ApexParserFactory.createLexerAndParser(source, errorListener);
+
+        // 拡張子で解析ルールを切り替える
+        const extension = path.extname(filePath).toLowerCase();
+        const unitContext =
+            extension === '.trigger'
+                ? parser.triggerUnit()
+                : extension === '.apex'
+                  ? parser.anonymousUnit()
+                  : parser.compilationUnit();
+        const unitTypeClass = new UnitVisitor().visit(unitContext);
+
+        // 構文エラーは解析後にしか集まらないため、ここで取得する
         const unResolvedError = errorListener.getErrors();
 
         const resolvedErrors: ResolvedErrorType[] = unResolvedError.map((error) => ({
@@ -121,8 +182,6 @@ export class ApexClsParser {
             context: error.getContext(),
             errorMessage: error.getParseErrorMessage(),
         }));
-
-        const unitTypeClass = new UnitVisitor().visit(parser.compilationUnit());
 
         const unitConvertType = assignMultiClass(unitTypeClass, [
             makeCompilationUnitAssignRule,
@@ -137,7 +196,7 @@ export class ApexClsParser {
                 resolvedError: resolvedErrors,
                 dataType: 'error',
                 result: {
-                    id: id,
+                    id: baseName,
                     base: unitConvertType,
                 },
             };
@@ -162,7 +221,7 @@ export class ApexClsParser {
                 resolvedError: resolvedErrors,
                 dataType: 'error',
                 result: {
-                    id: id,
+                    id: baseName,
                     base: unit,
                     sourceObject: regenerateSource,
                 },
@@ -170,23 +229,30 @@ export class ApexClsParser {
         }
 
         if (unit.fileType === 'cls' && (unit.kind === 'interface' || unit.kind === 'enum')) {
-            unit;
+            const { base, refPoints } = replaceSemanticRef<
+                typeof unit,
+                SemanticJson['kind'],
+                SemanticJson,
+                SemanticRefPoint
+            >(unit, baseName, isSemanticJson);
             return {
                 filePath: filePath,
                 resolvedError: resolvedErrors,
                 dataType: unit.kind,
                 result: {
-                    id: id,
-                    base: unit,
+                    id: baseName,
+                    base: base,
+                    semantic: [...refPoints.values()],
                     sourceObject: regenerateSource,
                 },
             };
         }
 
-        const { unit: replacedUnit, declarations: extractDeclarations } = replaceDeclarationRef(
-            unit,
-            id,
-        );
+        const {
+            unit: replacedUnit,
+            declarations: extractDeclarations,
+            semantic: extractSemantic,
+        } = replaceDeclarationRef(unit, baseName);
 
         if (replacedUnit.fileType === 'cls') {
             return {
@@ -194,9 +260,10 @@ export class ApexClsParser {
                 resolvedError: resolvedErrors,
                 dataType: 'class',
                 result: {
-                    id: id,
+                    id: baseName,
                     base: replacedUnit,
                     declaration: extractDeclarations,
+                    semantic: extractSemantic,
                     sourceObject: regenerateSourceObjects(sourceObjects, unit),
                 },
             };
@@ -206,9 +273,10 @@ export class ApexClsParser {
                 resolvedError: resolvedErrors,
                 dataType: 'trigger',
                 result: {
-                    id: id,
+                    id: baseName,
                     base: replacedUnit,
                     declaration: extractDeclarations,
+                    semantic: extractSemantic,
                     sourceObject: regenerateSourceObjects(sourceObjects, unit),
                 },
             };
@@ -218,61 +286,52 @@ export class ApexClsParser {
                 resolvedError: resolvedErrors,
                 dataType: 'anonymous',
                 result: {
-                    id: id,
+                    id: baseName,
                     base: replacedUnit,
                     declaration: extractDeclarations,
+                    semantic: extractSemantic,
                     sourceObject: regenerateSourceObjects(sourceObjects, unit),
                 },
             };
         }
     }
 
+    // 本番用: FileStructureType を msgpackr で <baseDir>/<id>.msgpack に保存する
     static saveApexFile(baseDir: string, target: FileStructureType): SaveDataInfo[] {
-        const outputDirectory = pathToFileURL(baseDir);
+        // 末尾が '/' でないと相対 URL が親ディレクトリ基準で解決されるため、必ず付ける
+        const outputDirectory = pathToFileURL(path.join(baseDir, path.sep));
+        const encodingData = packr.pack(target);
 
-        const baseInfo: BaseInfo = {
-            dataType: target.dataType,
-            filePath: target.filePath,
-            unResolvedError: target.resolvedError,
-        };
+        return [
+            {
+                outputPath: new URL(`./${target.result.id}.msgpack`, outputDirectory),
+                data: encodingData,
+            },
+        ];
+    }
 
-        const baseInfoFile = new URL(`./${target.result}/basInfo.json`, outputDirectory);
+    //開発者でのデータ確認用
+    static saveApexFileForDevelopper(baseDir: string, target: FileStructureType): SaveDataInfo[] {
+        // 末尾が '/' でないと相対 URL が親ディレクトリ基準で解決されるため、必ず付ける
+        const outputDirectory = pathToFileURL(path.join(baseDir, path.sep));
 
-        const saveDataInfo: SaveDataInfo[] = [{ outputPath: baseInfoFile, data: baseInfo }];
+        return [
+            {
+                outputPath: new URL(`./${target.result.id}.json`, outputDirectory),
+                data: `${JSON.stringify(target, null, 2)}\n`,
+            },
+        ];
+    }
 
-        if ('sourceObject' in target.result) {
-            const sourceInfoFile = new URL(`./${target.result}/sourceInfo.json`, outputDirectory);
-            saveDataInfo.push({ outputPath: sourceInfoFile, data: target.result.sourceObject });
-        }
+    // 本番用: saveApexFile で保存した <baseDir>/<id>.msgpack を読み込む
+    static async readApexMsgPack(baseDir: string, id: string): Promise<FileStructureType> {
+        const inputFile = path.join(baseDir, `${id}.msgpack`);
 
-        const baseJsonFile = new URL(`./${target.result}/base.json`, outputDirectory);
-        saveDataInfo.push({ outputPath: baseJsonFile, data: target.result });
+        const content = await fs.readFile(inputFile).catch(() => {
+            throw new Error(`Saved Apex file not found: ${inputFile}`);
+        });
 
-        if (
-            target.dataType === 'class' ||
-            target.dataType === 'trigger' ||
-            target.dataType === 'anonymous'
-        ) {
-            target.result.declaration.forEach((d) => {
-                if (d.declaration.kind === 'class') {
-                    const classFile = new URL(
-                        `${d.path}/${d.declaration.sourceKeys.base.objectKey}/class.json`,
-                        outputDirectory,
-                    );
-                    saveDataInfo.push({ outputPath: classFile, data: d.declaration });
-                } else {
-                    const declarationFile = new URL(
-                        `${d.path}/${'base' in d.declaration.sourceKeys ? d.declaration.sourceKeys.base.objectKey : d.declaration.sourceKeys.objectKey}.json`,
-                        outputDirectory,
-                    );
-                    saveDataInfo.push({
-                        outputPath: declarationFile,
-                        data: { ref: d.refPoint, result: d.declaration },
-                    });
-                }
-            });
-        }
-
-        return saveDataInfo;
+        return packr.unpack(content) as FileStructureType;
     }
 }
+

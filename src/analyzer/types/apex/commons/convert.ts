@@ -78,5 +78,9 @@ export const makeConvertType = async <T extends CommonType<string>>(
     const registrations: (SourceRegistration | null)[] = [];
     const [result] = convertNode(target, registrations);
 
-    return { result: result as Convert<T>, sourceObjects: makeSourceObjects(registrations) };
+    return {
+        result: result as Convert<T>,
+        sourceObjects: makeSourceObjects(registrations),
+    };
 };
+

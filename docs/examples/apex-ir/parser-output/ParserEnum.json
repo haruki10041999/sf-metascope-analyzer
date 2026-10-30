@@ -1,0 +1,205 @@
+{
+  "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\apex-ir\\ParserEnum.cls",
+  "resolvedError": [],
+  "dataType": "enum",
+  "result": {
+    "id": "ParserEnum",
+    "base": {
+      "fileType": "cls",
+      "kind": "enum",
+      "sourceKeys": {
+        "base": {
+          "objectKey": "enumDeclaration_8e5f002d735e14da",
+          "sourceKey": "enumDeclaration_a1e1b7e91e06b7c8"
+        },
+        "name": {
+          "objectKey": "id_dd32a7fc22fbb1e9",
+          "sourceKey": "id_9ee0e47584924033"
+        }
+      },
+      "name": "ParserEnum",
+      "members": [
+        {
+          "kind": "enumConstant",
+          "sourceKeys": {
+            "objectKey": "id_319907c39b3bba35",
+            "sourceKey": "id_994f6ebbf1f30828"
+          },
+          "name": "DRAFT"
+        },
+        {
+          "kind": "enumConstant",
+          "sourceKeys": {
+            "objectKey": "id_d52e53c83bc760c4",
+            "sourceKey": "id_d0b256d0c31f4648"
+          },
+          "name": "SUBMITTED"
+        },
+        {
+          "kind": "enumConstant",
+          "sourceKeys": {
+            "objectKey": "id_b5d4453f52acfdb8",
+            "sourceKey": "id_4bb1005ca30dbf51"
+          },
+          "name": "APPROVED"
+        },
+        {
+          "kind": "enumConstant",
+          "sourceKeys": {
+            "objectKey": "id_781cf8a9d0748ff6",
+            "sourceKey": "id_cbf9b51b2c4d62d5"
+          },
+          "name": "REJECTED"
+        }
+      ],
+      "modifier": {
+        "access": [
+          {
+            "kind": "modifier",
+            "sourceKeys": {
+              "objectKey": "modifier_a04213395735c45e",
+              "sourceKey": "modifier_6e82f13b0890901a"
+            },
+            "name": "PUBLIC"
+          }
+        ]
+      }
+    },
+    "semantic": [],
+    "sourceObject": [
+      {
+        "objectKey": "enumDeclaration_8e5f002d735e14da",
+        "context": "enumParserEnum{DRAFT,SUBMITTED,APPROVED,REJECTED}",
+        "source": [
+          {
+            "sourceKey": "enumDeclaration_a1e1b7e91e06b7c8",
+            "start": {
+              "offset": 50,
+              "line": 2,
+              "column": 7
+            },
+            "end": {
+              "offset": 122,
+              "line": 7,
+              "column": 1
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "id_dd32a7fc22fbb1e9",
+        "context": "ParserEnum",
+        "source": [
+          {
+            "sourceKey": "id_9ee0e47584924033",
+            "start": {
+              "offset": 55,
+              "line": 2,
+              "column": 12
+            },
+            "end": {
+              "offset": 65,
+              "line": 2,
+              "column": 22
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "id_319907c39b3bba35",
+        "context": "DRAFT",
+        "source": [
+          {
+            "sourceKey": "id_994f6ebbf1f30828",
+            "start": {
+              "offset": 72,
+              "line": 3,
+              "column": 4
+            },
+            "end": {
+              "offset": 77,
+              "line": 3,
+              "column": 9
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "id_d52e53c83bc760c4",
+        "context": "SUBMITTED",
+        "source": [
+          {
+            "sourceKey": "id_d0b256d0c31f4648",
+            "start": {
+              "offset": 83,
+              "line": 4,
+              "column": 4
+            },
+            "end": {
+              "offset": 92,
+              "line": 4,
+              "column": 13
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "id_b5d4453f52acfdb8",
+        "context": "APPROVED",
+        "source": [
+          {
+            "sourceKey": "id_4bb1005ca30dbf51",
+            "start": {
+              "offset": 98,
+              "line": 5,
+              "column": 4
+            },
+            "end": {
+              "offset": 106,
+              "line": 5,
+              "column": 12
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "id_781cf8a9d0748ff6",
+        "context": "REJECTED",
+        "source": [
+          {
+            "sourceKey": "id_cbf9b51b2c4d62d5",
+            "start": {
+              "offset": 112,
+              "line": 6,
+              "column": 4
+            },
+            "end": {
+              "offset": 120,
+              "line": 6,
+              "column": 12
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "modifier_a04213395735c45e",
+        "context": "public",
+        "source": [
+          {
+            "sourceKey": "modifier_6e82f13b0890901a",
+            "start": {
+              "offset": 43,
+              "line": 2,
+              "column": 0
+            },
+            "end": {
+              "offset": 49,
+              "line": 2,
+              "column": 6
+            }
+          }
+        ]
+      }
+    ]
+  }
+}
