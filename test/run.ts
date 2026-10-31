@@ -12,3 +12,5 @@ import './converter/query-commons.test';
 import './converter/output-types.test';
 import './converter/convert-exclude-error.test';
 import './converter/json-error-handling.test';
+import './processor/extract-convert.test';
+import './processor/statement-diff.test';

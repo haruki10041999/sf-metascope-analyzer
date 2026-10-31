@@ -13,6 +13,8 @@ import {
     isErrorNode,
     makeErrorJson,
     ConvertKeys,
+    isJsonType,
+    isStructureJson,
 } from './commons';
 
 import {
@@ -230,7 +232,7 @@ const makeForConditionJson = (
     );
 };
 
-type ForStatementJson = JsonType<'for'> & {
+export type ForStatementJson = JsonType<'for'> & {
     condition: ForConditionJson | ErrorJson;
     block: StatementJson | ErrorJson;
 };
@@ -272,7 +274,7 @@ const makeIfConditionJson = (
     );
 };
 
-type IfStatementJson = JsonType<'if'> & {
+export type IfStatementJson = JsonType<'if'> & {
     conditionBlock:
         | {
               condition: 'else' | IfConditionJson | ErrorJson;
@@ -305,7 +307,7 @@ const makeIfStatementJson = (target: ConvertType<IfStatementType>): IfStatementJ
     );
 };
 
-type InsertStatementJson = JsonType<'insert'> & {
+export type InsertStatementJson = JsonType<'insert'> & {
     field: BaseExpressionJson | ErrorJson;
     accessLevel?: 'SYSTEM' | 'USER';
 };
@@ -328,7 +330,7 @@ export const makeInsertStatementJson = (
     );
 };
 
-type LocalVariableStatementJson = JsonType<'localVariable'> & {
+export type LocalVariableStatementJson = JsonType<'localVariable'> & {
     variable: LocalVariableDeclarationJson;
 };
 export const isLocalVariableStatementJson = typia.createIs<LocalVariableStatementJson>();
@@ -347,7 +349,7 @@ export const makeLocalVariableStatementJson = (
     });
 };
 
-type MergeStatementJson = JsonType<'merge'> & {
+export type MergeStatementJson = JsonType<'merge'> & {
     field: (BaseExpressionJson | ErrorJson)[];
     accessLevel?: 'SYSTEM' | 'USER';
 };
@@ -370,7 +372,7 @@ export const makeMergeStatementJson = (
     );
 };
 
-type ReturnStatementJson = JsonType<'return'> & {
+export type ReturnStatementJson = JsonType<'return'> & {
     field?: BaseExpressionJson | ErrorJson;
 };
 export const isReturnStatementJson = typia.createIs<ReturnStatementJson>();
@@ -389,7 +391,7 @@ export const makeReturnStatementJson = (
     );
 };
 
-type RunAsConditionJson = JsonType<'runAsCondition'> & {
+export type RunAsConditionJson = JsonType<'runAsCondition'> & {
     field: (BaseExpressionJson | ErrorJson)[];
 };
 export const isRunAsConditionJson = typia.createIs<RunAsConditionJson>();
@@ -408,7 +410,7 @@ const makeRunAsConditionJson = (
     );
 };
 
-type RunAsStatementJson = JsonType<'runAs'> & {
+export type RunAsStatementJson = JsonType<'runAs'> & {
     condition: ErrorJson | RunAsConditionJson;
     block: (StatementJson | ErrorJson)[];
 };
@@ -431,7 +433,7 @@ export const makeRunAsStatementJson = (
     );
 };
 
-type WhenVariantJson = JsonType<'switchVariant'> & {
+export type WhenVariantJson = JsonType<'switchVariant'> & {
     variant: BaseExpressionJson | ErrorJson;
 };
 
@@ -475,7 +477,7 @@ export const makeWhenVariantJson = (
     });
 };
 
-type WhenConditionJson = JsonType<'switchCondition'> & {
+export type WhenConditionJson = JsonType<'switchCondition'> & {
     condition:
         | 'else'
         | (
@@ -537,7 +539,7 @@ export const makeWhenConditionJson = (
     );
 };
 
-type SwitchStatementJson = JsonType<'switch'> & {
+export type SwitchStatementJson = JsonType<'switch'> & {
     variant: WhenVariantJson | ErrorJson;
     block: (
         | {
@@ -574,7 +576,7 @@ const makeSwitchStatementJson = (
     );
 };
 
-type ThrowStatementJson = JsonType<'throw'> & {
+export type ThrowStatementJson = JsonType<'throw'> & {
     value: BaseExpressionJson | ErrorJson;
 };
 
@@ -594,7 +596,7 @@ export const makeThrowStatementJson = (
     );
 };
 
-type CatchConditionJson = StructureJson<
+export type CatchConditionJson = StructureJson<
     'catchCondition',
     {
         exception: ConvertKeys;
@@ -637,7 +639,7 @@ const makeCatchConditionJson = (
     );
 };
 
-type TryStatementJson = JsonType<'try'> & {
+export type TryStatementJson = JsonType<'try'> & {
     block: (
         | {
               condition: 'try';
@@ -720,7 +722,7 @@ const makeTryStatementJson = (
     );
 };
 
-type UndeleteStatementJson = JsonType<'undelete'> & {
+export type UndeleteStatementJson = JsonType<'undelete'> & {
     field: BaseExpressionJson | ErrorJson;
     accessLevel?: 'SYSTEM' | 'USER';
 };
@@ -743,7 +745,7 @@ export const makeUndeleteStatementJson = (
     );
 };
 
-type UpdateStatementJson = JsonType<'update'> & {
+export type UpdateStatementJson = JsonType<'update'> & {
     field: BaseExpressionJson | ErrorJson;
     accessLevel?: 'SYSTEM' | 'USER';
 };
@@ -766,7 +768,7 @@ export const makeUpdateStatementJson = (
     );
 };
 
-type UpsertStatementJson = JsonType<'upsert'> & {
+export type UpsertStatementJson = JsonType<'upsert'> & {
     field: BaseExpressionJson | ErrorJson;
     accessLevel?: 'SYSTEM' | 'USER';
     key?: string[];

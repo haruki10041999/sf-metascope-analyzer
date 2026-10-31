@@ -16,4 +16,4 @@ export {
 } from './json';
 export type { SourceJson } from './source';
 export { findSourceInfo, regenerateSourceObjects } from './source';
-
+export { hash } from './utils';

@@ -32,7 +32,7 @@ export type ErrorJson = JsonType<'error'> & {
     kindType: string;
 };
 
-export const isErrorJson = typia.createIs<JsonType<'error'>>();
+export const isErrorJson = typia.createIs<ErrorJson>();
 
 // union の各要素ごとに Omit する（通常の Omit は union の共通キーしか残さない）
 type DistributiveOmit<T, K extends PropertyKey> = T extends unknown ? Omit<T, K> : never;

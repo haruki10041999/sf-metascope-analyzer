@@ -8,14 +8,123 @@
 - 入力は `FileStructureType` の宣言 (`declaration[].result.data`) から取り出した文の配列。どの宣言同士を比べるかは `DeclarationDiff` 側で決まっている前提とする。
 - 差分の判定には、各ノードが持つ `sourceKeys.objectKey` / `sourceKeys.sourceKey` を使う。
 
+## 1.1 現在の kind 抽出と出力例
+
+`extractConvertKeys` は、最上位の文について `kind` と `sourceKeys` を残す。子の JSON は走査し、文 kind が見つかった位置ではその kind の `sourceKeys` だけを親のプロパティに記録する。子の `kind` や `value` などのプリミティブ属性は出力しない。配列中の文は順番を保った `ConvertKeys[]` にする。
+
+例として、`if` の条件ブロックに `return` と `break` がある場合:
+
+```ts
+const input = [
+    {
+        kind: 'if',
+        sourceKeys: { objectKey: 'file-1', sourceKey: 'if-1' },
+        conditionBlock: [
+            {
+                condition: {
+                    kind: 'ifCondition',
+                    sourceKeys: { objectKey: 'file-1', sourceKey: 'if-condition-1' },
+                    condition: {
+                        kind: 'error',
+                        sourceKeys: { objectKey: 'file-1', sourceKey: 'condition-error-1' },
+                        kindType: 'expression',
+                    },
+                },
+                block: {
+                    kind: 'return',
+                    sourceKeys: { objectKey: 'file-1', sourceKey: 'return-1' },
+                    field: {
+                        kind: 'error',
+                        sourceKeys: { objectKey: 'file-1', sourceKey: 'return-error-1' },
+                        kindType: 'expression',
+                    },
+                },
+            },
+            {
+                condition: 'else',
+                block: {
+                    kind: 'break',
+                    sourceKeys: { objectKey: 'file-1', sourceKey: 'break-1' },
+                    value: 'break',
+                },
+            },
+        ],
+    },
+];
+```
+
+`extractConvertKeys(input)` の出力:
+
+```ts
+[
+    {
+        kind: 'if',
+        sourceKeys: { objectKey: 'file-1', sourceKey: 'if-1' },
+        conditionBlock: [
+            { objectKey: 'file-1', sourceKey: 'return-1' },
+            { objectKey: 'file-1', sourceKey: 'break-1' },
+        ],
+    },
+];
+```
+
+このケースは [statement-diff.test.ts](../test/processor/statement-diff.test.ts) のテストで検証する。`ifCondition` と `ErrorJson` は抽出対象の文 kind ではないため、それら自身のキーは出力せず、配下を走査する。`return` / `break` は文 kind なので、そのキーを取り出した時点で配下の `field` / `value` は走査しない。
+
+## 1.2 Statement 関連の kind 一覧
+
+以下は [statement.ts](../src/analyzer/types/apex/statement.ts) で定義される JSON kind。トップレベル文 kind の一覧は抽出処理の `statementKinds` と一致させる。
+
+### `StatementJson` のトップレベル文 kind (19)
+
+| kind            | 文の種類           |
+| --------------- | ------------------ |
+| `break`         | break 文           |
+| `continue`      | continue 文        |
+| `delete`        | delete 文          |
+| `doWhile`       | do-while 文        |
+| `expression`    | 式文               |
+| `for`           | for 文             |
+| `if`            | if 文              |
+| `insert`        | insert 文          |
+| `localVariable` | ローカル変数宣言文 |
+| `merge`         | merge 文           |
+| `return`        | return 文          |
+| `runAs`         | runAs 文           |
+| `switch`        | switch 文          |
+| `throw`         | throw 文           |
+| `try`           | try 文             |
+| `undelete`      | undelete 文        |
+| `update`        | update 文          |
+| `upsert`        | upsert 文          |
+| `while`         | while 文           |
+
+### 文の配下にある補助 JSON kind (8)
+
+これらは条件、switch のラベル、catch 節などを表し、トップレベル文 kind としては扱わない。抽出時はそのノード自身のキーを採用せず、子孫に文 kind があれば探索を続ける。
+
+| kind               | 用途                                     |
+| ------------------ | ---------------------------------------- |
+| `doWhileCondition` | do-while の条件                          |
+| `forCondition`     | for の制御部                             |
+| `ifCondition`      | if / else if の条件                      |
+| `runAsCondition`   | runAs の対象                             |
+| `switchVariant`    | switch の型条件                          |
+| `switchCondition`  | switch の when 条件                      |
+| `catchCondition`   | catch の例外名・例外型 (`StructureJson`) |
+| `whileCondition`   | while の条件                             |
+
+### `ErrorJson`
+
+`ErrorJson` の kind は `error`。これは文 kind 一覧に含めないため、`extractConvertKeys` のトップレベルに渡した場合は結果から除外される。文の配下にある場合も、エラー自身のキーは抽出しない。
+
 ## 2. 前提: objectKey / sourceKey の性質
 
 `src/analyzer/types/apex/commons/convert.ts` の `convertNode` で付与される。
 
-| キー | 計算元 | 変わる条件 | 同じ内容の文が複数あるとき |
-|---|---|---|---|
-| `objectKey` | `${type}_${hash(内容)}`。内容は `sourceInfo` / `objectKey` / `sourceKey` を除いたもので、**子の内容も含む** | 文の中身 (子孫を含む) が変わったとき | **同じ値になる** |
-| `sourceKey` | `${type}_${hash(sourceInfo)}`。`sourceInfo` は `ctx.getText()` と開始・終了位置 (offset / line / column) | 中身が変わったとき、**または位置がずれたとき** | 位置が違うので別の値になる |
+| キー        | 計算元                                                                                                      | 変わる条件                                     | 同じ内容の文が複数あるとき |
+| ----------- | ----------------------------------------------------------------------------------------------------------- | ---------------------------------------------- | -------------------------- |
+| `objectKey` | `${type}_${hash(内容)}`。内容は `sourceInfo` / `objectKey` / `sourceKey` を除いたもので、**子の内容も含む** | 文の中身 (子孫を含む) が変わったとき           | **同じ値になる**           |
+| `sourceKey` | `${type}_${hash(sourceInfo)}`。`sourceInfo` は `ctx.getText()` と開始・終了位置 (offset / line / column)    | 中身が変わったとき、**または位置がずれたとき** | 位置が違うので別の値になる |
 
 ここから次のことが言える。
 
@@ -27,12 +136,12 @@
 ## 3. 方針の要点
 
 - **一致の判定は `objectKey` で行う。** 置き換え後の JSON を中身ごと比べること (deep equal) はしない。
-  - `FileStructureType` の文は、semantic (type / soql / sosl / memberAccess) が `{ kind, index, sourceKey }` の参照に置き換わっている。`index` は宣言の中での通し番号なので、前の文に SOQL が 1 つ増えただけで、後ろの文の参照もすべてずれる。
-  - 文自身の `objectKey` は参照に置き換える前 (変換時) に計算されているので、semantic の中身も含んだ値になっている。そのため、参照のずれの影響を受けない。
+    - `FileStructureType` の文は、semantic (type / soql / sosl / memberAccess) が `{ kind, index, sourceKey }` の参照に置き換わっている。`index` は宣言の中での通し番号なので、前の文に SOQL が 1 つ増えただけで、後ろの文の参照もすべてずれる。
+    - 文自身の `objectKey` は参照に置き換える前 (変換時) に計算されているので、semantic の中身も含んだ値になっている。そのため、参照のずれの影響を受けない。
 - **順序は LCS (最長共通部分列) で合わせる。** `objectKey` の並びの LCS を取り、LCS に入った要素を `unchanged` とする。重複する `objectKey` も、LCS なら出現順に正しく対応付けられる。
 - **LCS に入らなかった要素は、隣り合う `unchanged` の間 (gap) ごとに対応付ける。** gap の中で `kind` が同じものを順番に組にして `changed` とし、残りは `removed` / `added` にする。
 - **`sourceKey` は差分の判定に使わない。位置が変わっただけの文は `unchanged` とする。**
-  - `sourceKey` を使うのは、`sourceObject` (`findSourceInfo`) から元のソースの位置や文字列を引いて表示するときだけ。
+    - `sourceKey` を使うのは、`sourceObject` (`findSourceInfo`) から元のソースの位置や文字列を引いて表示するときだけ。
 - **入れ子のブロックは、`changed` になった文だけを再帰的に比べる。** `unchanged` の文は子孫も同じなので、中に入る必要はない。
 
 ## 4. アルゴリズム
@@ -41,11 +150,11 @@
 
 `StatementJson` には、`sourceKeys` を持たない要素がある。
 
-| 要素 | キー |
-|---|---|
-| 通常の文 (`JsonType` / `StructureJson`) | `sourceKeys.objectKey` (`StructureJson` は `sourceKeys.base.objectKey`) |
-| `ErrorJson` | `sourceKeys.objectKey` (通常の文と同じ) |
-| 入れ子の配列 (`{ ... }` のブロック。`StatementJson` 自体が `(StatementJson \| ErrorJson)[]` を含む) | 子のキーの並びから作る: `block_${hash(子のキーの配列)}` |
+| 要素                                                                                                | キー                                                                    |
+| --------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------- |
+| 通常の文 (`JsonType` / `StructureJson`)                                                             | `sourceKeys.objectKey` (`StructureJson` は `sourceKeys.base.objectKey`) |
+| `ErrorJson`                                                                                         | `sourceKeys.objectKey` (通常の文と同じ)                                 |
+| 入れ子の配列 (`{ ... }` のブロック。`StatementJson` 自体が `(StatementJson \| ErrorJson)[]` を含む) | 子のキーの並びから作る: `block_${hash(子のキーの配列)}`                 |
 
 ブロックのキーも子の `objectKey` だけから作るので、「同じなら中身も同じ」という性質は保たれる。
 
@@ -70,15 +179,15 @@ makeStatementDiff(before, after):
 `changed` の文のうち、次のものは子の文の並びを持つので再帰して `children` を作る。
 子ブロックにはラベルを付け、before と after で**ラベルが同じブロック同士**を比べる。片方にしかないブロック (例: `else` の追加) は空配列と比べるので、中の文はすべて `added` / `removed` になる。
 
-| kind | 子の文の並び | ラベル |
-|---|---|---|
-| `if` | `conditionBlock[].block` | `if[0]`, `if[1]`, ... (条件の並び順) |
-| `for` | `block` | `block` |
-| `while` / `doWhile` | `body` | `body` |
-| `runAs` | `block` | `block` |
-| `switch` | `block[].block` | `when[0]`, `when[1]`, ... |
-| `try` | try / catch / finally の各ブロック | `try[0]`, `catch[1]`, `finally[2]` |
-| 入れ子の配列 | 配列そのもの | `block` |
+| kind                | 子の文の並び                       | ラベル                               |
+| ------------------- | ---------------------------------- | ------------------------------------ |
+| `if`                | `conditionBlock[].block`           | `if[0]`, `if[1]`, ... (条件の並び順) |
+| `for`               | `block`                            | `block`                              |
+| `while` / `doWhile` | `body`                             | `body`                               |
+| `runAs`             | `block`                            | `block`                              |
+| `switch`            | `block[].block`                    | `when[0]`, `when[1]`, ...            |
+| `try`               | try / catch / finally の各ブロック | `try[0]`, `catch[1]`, `finally[2]`   |
+| 入れ子の配列        | 配列そのもの                       | `block`                              |
 
 `for` / `while` / `if` のブロックは、`{ }` がない 1 文だけの場合もあるので、配列でなければ 1 要素の配列として扱う。
 
@@ -130,11 +239,11 @@ before                     after
                            [4] return b;
 ```
 
-| 結果 | 内容 |
-|---|---|
-| unchanged | before[0] ↔ after[0]、before[1] ↔ after[2] (位置は変わったが中身は同じ)、before[3] ↔ after[4] |
-| added | after[1] `log('x');` |
-| changed | before[2] ↔ after[3] (同じ gap の中の `if` 同士)。`children` の `if[0]` に `x();` → `y();` の差分が入る |
+| 結果      | 内容                                                                                                    |
+| --------- | ------------------------------------------------------------------------------------------------------- |
+| unchanged | before[0] ↔ after[0]、before[1] ↔ after[2] (位置は変わったが中身は同じ)、before[3] ↔ after[4]           |
+| added     | after[1] `log('x');`                                                                                    |
+| changed   | before[2] ↔ after[3] (同じ gap の中の `if` 同士)。`children` の `if[0]` に `x();` → `y();` の差分が入る |
 
 after[2] の `b = query(...)` は、前に文が 1 つ増えたことで semantic の参照の index がずれる可能性がある。それでも `objectKey` は同じなので `unchanged` になる。
 
@@ -168,16 +277,16 @@ unchanged b[5]->a[5] return x;
 
 ## 7. エッジケース
 
-| ケース | 扱い |
-|---|---|
-| 同じ内容の文が複数ある | LCS が出現順に対応付ける。Map での対応付けはしない |
-| 文の順番の入れ替え (移動) | LCS に入らなかった側が `removed` + `added` になる。必要なら後処理で、同じ `objectKey` の `removed` と `added` の組を `moved` にまとめる (未決事項) |
-| 空白・コメントだけの変更、位置の移動 | `objectKey` は変わらないので `unchanged` |
-| `if` の条件の途中に `else if` を追加 | 条件ブロックを並び順 (`if[0]`, `if[1]`, ...) で対応付けるため、追加した位置より後ろのブロックがずれて `changed` / `added` になる |
-| semantic の中身だけ変わった (例: SOQL の条件) | 文の `objectKey` が変わるので `changed`。どの semantic が変わったかは、参照 (`refPoint.sourceKey.objectKey`) 同士を比べればわかる |
-| `ErrorJson` | 通常の文と同じく `objectKey` で比べる。構文エラーの直し途中は、`removed` (エラー) と `added` (正しい文) になりやすい |
-| 片方が空配列 | すべて `added` または `removed` |
-| 宣言そのものが `ErrorJson` (ブロックが取れない) | `makeStatementDiff` には渡さず、`DeclarationDiff` 側で扱う |
+| ケース                                          | 扱い                                                                                                                                               |
+| ----------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 同じ内容の文が複数ある                          | LCS が出現順に対応付ける。Map での対応付けはしない                                                                                                 |
+| 文の順番の入れ替え (移動)                       | LCS に入らなかった側が `removed` + `added` になる。必要なら後処理で、同じ `objectKey` の `removed` と `added` の組を `moved` にまとめる (未決事項) |
+| 空白・コメントだけの変更、位置の移動            | `objectKey` は変わらないので `unchanged`                                                                                                           |
+| `if` の条件の途中に `else if` を追加            | 条件ブロックを並び順 (`if[0]`, `if[1]`, ...) で対応付けるため、追加した位置より後ろのブロックがずれて `changed` / `added` になる                   |
+| semantic の中身だけ変わった (例: SOQL の条件)   | 文の `objectKey` が変わるので `changed`。どの semantic が変わったかは、参照 (`refPoint.sourceKey.objectKey`) 同士を比べればわかる                  |
+| `ErrorJson`                                     | 通常の文と同じく `objectKey` で比べる。構文エラーの直し途中は、`removed` (エラー) と `added` (正しい文) になりやすい                               |
+| 片方が空配列                                    | すべて `added` または `removed`                                                                                                                    |
+| 宣言そのものが `ErrorJson` (ブロックが取れない) | `makeStatementDiff` には渡さず、`DeclarationDiff` 側で扱う                                                                                         |
 
 ## 8. 計算量
 
@@ -390,15 +499,15 @@ export const makeStatementDiff = (
 
 ### 関数の役割
 
-| 関数 | 役割 |
-|---|---|
-| `getKey` | 比較用のキー。文は `objectKey`、入れ子の配列は子のキーの並びのハッシュ |
-| `getKind` | gap の中で `changed` の組を作るときの判定に使う種類 (`if` / `localVariable` / 入れ子の配列は `block` など) |
-| `getChildBlocks` | 入れ子のブロックを、ラベル付きで取り出す (4.3 の表) |
-| `lcs` | キーの並びの LCS。単純な動的計画法 (O(n × m)) |
-| `diffGap` | LCS に入らなかった区間の `changed` / `removed` / `added` の振り分け |
-| `diffChildBlocks` | `changed` の文の子ブロックを、ラベルが同じもの同士で再帰的に比べる |
-| `makeStatementDiff` | 公開する関数。LCS の結果と gap の処理をつないで、差分の配列を返す |
+| 関数                | 役割                                                                                                       |
+| ------------------- | ---------------------------------------------------------------------------------------------------------- |
+| `getKey`            | 比較用のキー。文は `objectKey`、入れ子の配列は子のキーの並びのハッシュ                                     |
+| `getKind`           | gap の中で `changed` の組を作るときの判定に使う種類 (`if` / `localVariable` / 入れ子の配列は `block` など) |
+| `getChildBlocks`    | 入れ子のブロックを、ラベル付きで取り出す (4.3 の表)                                                        |
+| `lcs`               | キーの並びの LCS。単純な動的計画法 (O(n × m))                                                              |
+| `diffGap`           | LCS に入らなかった区間の `changed` / `removed` / `added` の振り分け                                        |
+| `diffChildBlocks`   | `changed` の文の子ブロックを、ラベルが同じもの同士で再帰的に比べる                                         |
+| `makeStatementDiff` | 公開する関数。LCS の結果と gap の処理をつないで、差分の配列を返す                                          |
 
 ## 11. 未決事項
 

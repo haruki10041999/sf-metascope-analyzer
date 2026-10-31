@@ -1,20 +1,173 @@
 {
-  "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\apex-ir\\ParserInterface.cls",
+  "filePath": "C:\\WS\\sf-metascope-analyzer\\docs\\examples\\apex-ir\\ParserInterface.cls",
   "resolvedError": [],
-  "dataType": "interface",
+  "dataType": "cls",
   "result": {
     "id": "ParserInterface",
+    "convertkeys": {
+      "interface": {
+        "objectKey": "interfaceDeclaration_a844c24c3455b259",
+        "sourceKey": "interfaceDeclaration_00e94444a4e49296"
+      },
+      "block": [
+        {
+          "interfaceMethod": {
+            "objectKey": "interfaceMethodDeclaration_f1fdb6d1bf23af39",
+            "sourceKey": "interfaceMethodDeclaration_3bdc35bd155599c5"
+          },
+          "param": [
+            {
+              "parameter": {
+                "objectKey": "formalParameter_55e1ef62401ca4a3",
+                "sourceKey": "formalParameter_1f0b0c612b3a6753"
+              },
+              "variantType": {
+                "type": {
+                  "objectKey": "typeRef_18082b2d86f4ba92",
+                  "sourceKey": "typeRef_71854130bdfb2da2"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "interfaceMethod": {
+            "objectKey": "interfaceMethodDeclaration_fa59c5903e77c0e7",
+            "sourceKey": "interfaceMethodDeclaration_fee62f9efdb4a38f"
+          },
+          "returnType": {
+            "type": {
+              "objectKey": "typeRef_55792e748cf1fa8f",
+              "sourceKey": "typeRef_d489310a84a97b09"
+            }
+          }
+        },
+        {
+          "interfaceMethod": {
+            "objectKey": "interfaceMethodDeclaration_94182377a42d8a1f",
+            "sourceKey": "interfaceMethodDeclaration_a3e874ac8a369b05"
+          },
+          "returnType": {
+            "type": {
+              "objectKey": "typeRef_e7a6126512547d3d",
+              "sourceKey": "typeRef_b08063df6ae7393c"
+            }
+          },
+          "param": [
+            {
+              "parameter": {
+                "objectKey": "formalParameter_f413b3307ad085a4",
+                "sourceKey": "formalParameter_5385ca2fc360feef"
+              },
+              "variantType": {
+                "type": {
+                  "objectKey": "typeRef_a13e3e8b5328228b",
+                  "sourceKey": "typeRef_0ec9ba7233a256bc"
+                }
+              }
+            },
+            {
+              "parameter": {
+                "objectKey": "formalParameter_90f2bd031b0f0ddc",
+                "sourceKey": "formalParameter_0a0b6144f66064c7"
+              },
+              "variantType": {
+                "type": {
+                  "objectKey": "typeRef_24f17573a601e5e9",
+                  "sourceKey": "typeRef_7c834a2408636d1b"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "interfaceMethod": {
+            "objectKey": "interfaceMethodDeclaration_7f4aa0fd3784c564",
+            "sourceKey": "interfaceMethodDeclaration_d9e69584a2852aa6"
+          },
+          "returnType": {
+            "type": {
+              "objectKey": "typeRef_d1b84da196cb9c4a",
+              "sourceKey": "typeRef_b4341826d97805f5"
+            }
+          },
+          "param": [
+            {
+              "parameter": {
+                "objectKey": "formalParameter_cbf684d8775e1acc",
+                "sourceKey": "formalParameter_35f7182ca2865802"
+              },
+              "variantType": {
+                "type": {
+                  "objectKey": "typeRef_e7a6126512547d3d",
+                  "sourceKey": "typeRef_015da58ef1b038ed"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "interfaceMethod": {
+            "objectKey": "interfaceMethodDeclaration_d59048aa6b05beb8",
+            "sourceKey": "interfaceMethodDeclaration_f524ab37f859ff00"
+          },
+          "returnType": {
+            "type": {
+              "objectKey": "typeRef_1899afb85044d9b0",
+              "sourceKey": "typeRef_59b6b5e32bd596e1"
+            }
+          },
+          "param": [
+            {
+              "parameter": {
+                "objectKey": "formalParameter_a46e2584b74eb1c0",
+                "sourceKey": "formalParameter_1501fe6e55737a67"
+              },
+              "variantType": {
+                "type": {
+                  "objectKey": "typeRef_24cd68d67f5694b3",
+                  "sourceKey": "typeRef_3025c263b394e1e4"
+                }
+              }
+            }
+          ]
+        }
+      ],
+      "extend": [
+        {
+          "type": {
+            "objectKey": "typeRef_48850bb7b31741a4",
+            "sourceKey": "typeRef_db1656f13b93db2b"
+          }
+        },
+        {
+          "type": {
+            "objectKey": "typeRef_e3de1e200a5c0c3b",
+            "sourceKey": "typeRef_57226abcda96446e"
+          }
+        }
+      ],
+      "modifier": {
+        "access": [
+          {
+            "modifier": {
+              "objectKey": "modifier_a04213395735c45e",
+              "sourceKey": "modifier_c1199373c400a481"
+            }
+          }
+        ]
+      }
+    },
     "base": {
-      "fileType": "cls",
       "kind": "interface",
       "sourceKeys": {
         "base": {
           "objectKey": "interfaceDeclaration_a844c24c3455b259",
-          "sourceKey": "interfaceDeclaration_f93c798c4990ebe8"
+          "sourceKey": "interfaceDeclaration_00e94444a4e49296"
         },
         "name": {
           "objectKey": "id_efd501115fb77dbe",
-          "sourceKey": "id_5e5e8d42e6027e9e"
+          "sourceKey": "id_b8a1a9f62e039411"
         }
       },
       "name": "ParserInterface",
@@ -24,11 +177,11 @@
           "sourceKeys": {
             "base": {
               "objectKey": "interfaceMethodDeclaration_f1fdb6d1bf23af39",
-              "sourceKey": "interfaceMethodDeclaration_293d20ea909db129"
+              "sourceKey": "interfaceMethodDeclaration_3bdc35bd155599c5"
             },
             "name": {
               "objectKey": "id_fcf208664faa8da7",
-              "sourceKey": "id_54ecd37fec85e450"
+              "sourceKey": "id_25723d752558576f"
             }
           },
           "name": "execute",
@@ -38,16 +191,17 @@
               "kind": "parameter",
               "sourceKeys": {
                 "objectKey": "formalParameter_55e1ef62401ca4a3",
-                "sourceKey": "formalParameter_9572a9b6fdb044df"
+                "sourceKey": "formalParameter_1f0b0c612b3a6753"
               },
               "variant": "context",
               "variantType": {
                 "kind": "type",
-                "index": 1,
-                "sourceKey": {
+                "sourceKeys": {
                   "objectKey": "typeRef_18082b2d86f4ba92",
-                  "sourceKey": "typeRef_b8548788e6ad7836"
-                }
+                  "sourceKey": "typeRef_71854130bdfb2da2"
+                },
+                "type": "custom",
+                "customType": "SchedulableContext"
               },
               "modifier": {}
             }
@@ -59,21 +213,22 @@
           "sourceKeys": {
             "base": {
               "objectKey": "interfaceMethodDeclaration_fa59c5903e77c0e7",
-              "sourceKey": "interfaceMethodDeclaration_c7d722607e1fdc40"
+              "sourceKey": "interfaceMethodDeclaration_fee62f9efdb4a38f"
             },
             "name": {
               "objectKey": "id_3bcd5775a8157932",
-              "sourceKey": "id_92edd959ec35fb21"
+              "sourceKey": "id_cea6c8555a7e18c2"
             }
           },
           "name": "count",
           "returnType": {
             "kind": "type",
-            "index": 2,
-            "sourceKey": {
+            "sourceKeys": {
               "objectKey": "typeRef_55792e748cf1fa8f",
-              "sourceKey": "typeRef_f70c5eaf19b3dfe0"
-            }
+              "sourceKey": "typeRef_d489310a84a97b09"
+            },
+            "type": "primitive",
+            "primitiveType": "Integer"
           },
           "modifier": {}
         },
@@ -82,20 +237,24 @@
           "sourceKeys": {
             "base": {
               "objectKey": "interfaceMethodDeclaration_94182377a42d8a1f",
-              "sourceKey": "interfaceMethodDeclaration_7bc481a5ca4041ad"
+              "sourceKey": "interfaceMethodDeclaration_a3e874ac8a369b05"
             },
             "name": {
               "objectKey": "id_e01c822c256618ee",
-              "sourceKey": "id_3210fd05603b457e"
+              "sourceKey": "id_caaef8f533310bb6"
             }
           },
           "name": "findAccounts",
           "returnType": {
             "kind": "type",
-            "index": 3,
-            "sourceKey": {
+            "sourceKeys": {
               "objectKey": "typeRef_e7a6126512547d3d",
-              "sourceKey": "typeRef_d7055424ba13e2bc"
+              "sourceKey": "typeRef_b08063df6ae7393c"
+            },
+            "collectionType": "list",
+            "elementType": {
+              "type": "custom",
+              "customType": "Account"
             }
           },
           "param": [
@@ -103,16 +262,17 @@
               "kind": "parameter",
               "sourceKeys": {
                 "objectKey": "formalParameter_f413b3307ad085a4",
-                "sourceKey": "formalParameter_447f45e2d7d368be"
+                "sourceKey": "formalParameter_5385ca2fc360feef"
               },
               "variant": "name",
               "variantType": {
                 "kind": "type",
-                "index": 4,
-                "sourceKey": {
+                "sourceKeys": {
                   "objectKey": "typeRef_a13e3e8b5328228b",
-                  "sourceKey": "typeRef_bfba5c2b2862e8e2"
-                }
+                  "sourceKey": "typeRef_0ec9ba7233a256bc"
+                },
+                "type": "primitive",
+                "primitiveType": "String"
               },
               "modifier": {}
             },
@@ -120,15 +280,19 @@
               "kind": "parameter",
               "sourceKeys": {
                 "objectKey": "formalParameter_90f2bd031b0f0ddc",
-                "sourceKey": "formalParameter_0767859a203bb936"
+                "sourceKey": "formalParameter_0a0b6144f66064c7"
               },
               "variant": "ownerIds",
               "variantType": {
                 "kind": "type",
-                "index": 5,
-                "sourceKey": {
+                "sourceKeys": {
                   "objectKey": "typeRef_24f17573a601e5e9",
-                  "sourceKey": "typeRef_ea740410a375056b"
+                  "sourceKey": "typeRef_7c834a2408636d1b"
+                },
+                "collectionType": "set",
+                "elementType": {
+                  "type": "primitive",
+                  "primitiveType": "Id"
                 }
               },
               "modifier": {}
@@ -141,20 +305,31 @@
           "sourceKeys": {
             "base": {
               "objectKey": "interfaceMethodDeclaration_7f4aa0fd3784c564",
-              "sourceKey": "interfaceMethodDeclaration_b7acfbef33655de4"
+              "sourceKey": "interfaceMethodDeclaration_d9e69584a2852aa6"
             },
             "name": {
               "objectKey": "id_e8cf0b485c4ea088",
-              "sourceKey": "id_aaf5015940dff332"
+              "sourceKey": "id_478705098516d02c"
             }
           },
           "name": "groupContacts",
           "returnType": {
             "kind": "type",
-            "index": 6,
-            "sourceKey": {
+            "sourceKeys": {
               "objectKey": "typeRef_d1b84da196cb9c4a",
-              "sourceKey": "typeRef_50acf09449dfc583"
+              "sourceKey": "typeRef_b4341826d97805f5"
+            },
+            "collectionType": "map",
+            "keyType": {
+              "type": "primitive",
+              "primitiveType": "Id"
+            },
+            "valueType": {
+              "collectionType": "list",
+              "elementType": {
+                "type": "custom",
+                "customType": "Contact"
+              }
             }
           },
           "param": [
@@ -162,15 +337,19 @@
               "kind": "parameter",
               "sourceKeys": {
                 "objectKey": "formalParameter_cbf684d8775e1acc",
-                "sourceKey": "formalParameter_9b1b4af406f8e00e"
+                "sourceKey": "formalParameter_35f7182ca2865802"
               },
               "variant": "accounts",
               "variantType": {
                 "kind": "type",
-                "index": 7,
-                "sourceKey": {
+                "sourceKeys": {
                   "objectKey": "typeRef_e7a6126512547d3d",
-                  "sourceKey": "typeRef_aac9373baadc7f12"
+                  "sourceKey": "typeRef_015da58ef1b038ed"
+                },
+                "collectionType": "list",
+                "elementType": {
+                  "type": "custom",
+                  "customType": "Account"
                 }
               },
               "modifier": {}
@@ -183,37 +362,42 @@
           "sourceKeys": {
             "base": {
               "objectKey": "interfaceMethodDeclaration_d59048aa6b05beb8",
-              "sourceKey": "interfaceMethodDeclaration_e932045ad747fb6d"
+              "sourceKey": "interfaceMethodDeclaration_f524ab37f859ff00"
             },
             "name": {
               "objectKey": "id_3957e992ff764c2a",
-              "sourceKey": "id_22c5429e33e57806"
+              "sourceKey": "id_6022fa1aad1eda9b"
             }
           },
           "name": "save",
           "returnType": {
             "kind": "type",
-            "index": 8,
-            "sourceKey": {
+            "sourceKeys": {
               "objectKey": "typeRef_1899afb85044d9b0",
-              "sourceKey": "typeRef_55b9e7d9231f0bc7"
-            }
+              "sourceKey": "typeRef_59b6b5e32bd596e1"
+            },
+            "type": "custom",
+            "customType": [
+              "Database",
+              "SaveResult"
+            ]
           },
           "param": [
             {
               "kind": "parameter",
               "sourceKeys": {
                 "objectKey": "formalParameter_a46e2584b74eb1c0",
-                "sourceKey": "formalParameter_de898465c651b0d1"
+                "sourceKey": "formalParameter_1501fe6e55737a67"
               },
               "variant": "record",
               "variantType": {
                 "kind": "type",
-                "index": 9,
-                "sourceKey": {
+                "sourceKeys": {
                   "objectKey": "typeRef_24cd68d67f5694b3",
-                  "sourceKey": "typeRef_0d239b821d81a600"
-                }
+                  "sourceKey": "typeRef_3025c263b394e1e4"
+                },
+                "type": "custom",
+                "customType": "SObject"
               },
               "modifier": {}
             }
@@ -224,19 +408,21 @@
       "extend": [
         {
           "kind": "type",
-          "index": 10,
-          "sourceKey": {
+          "sourceKeys": {
             "objectKey": "typeRef_48850bb7b31741a4",
-            "sourceKey": "typeRef_a1eba780f718f807"
-          }
+            "sourceKey": "typeRef_db1656f13b93db2b"
+          },
+          "type": "custom",
+          "customType": "Comparable"
         },
         {
           "kind": "type",
-          "index": 11,
-          "sourceKey": {
+          "sourceKeys": {
             "objectKey": "typeRef_e3de1e200a5c0c3b",
-            "sourceKey": "typeRef_adeb6cf5ceaed8e2"
-          }
+            "sourceKey": "typeRef_57226abcda96446e"
+          },
+          "type": "custom",
+          "customType": "Schedulable"
         }
       ],
       "modifier": {
@@ -245,266 +431,27 @@
             "kind": "modifier",
             "sourceKeys": {
               "objectKey": "modifier_a04213395735c45e",
-              "sourceKey": "modifier_7c8cf3c428c32faf"
+              "sourceKey": "modifier_c1199373c400a481"
             },
             "name": "PUBLIC"
           }
         ]
       }
     },
-    "semantic": [
-      {
-        "kind": "type",
-        "path": "ParserInterface",
-        "result": [
-          {
-            "refPoint": {
-              "kind": "type",
-              "index": 1,
-              "sourceKey": {
-                "objectKey": "typeRef_18082b2d86f4ba92",
-                "sourceKey": "typeRef_b8548788e6ad7836"
-              }
-            },
-            "data": {
-              "kind": "type",
-              "sourceKeys": {
-                "objectKey": "typeRef_18082b2d86f4ba92",
-                "sourceKey": "typeRef_b8548788e6ad7836"
-              },
-              "type": "custom",
-              "customType": "SchedulableContext"
-            }
-          },
-          {
-            "refPoint": {
-              "kind": "type",
-              "index": 2,
-              "sourceKey": {
-                "objectKey": "typeRef_55792e748cf1fa8f",
-                "sourceKey": "typeRef_f70c5eaf19b3dfe0"
-              }
-            },
-            "data": {
-              "kind": "type",
-              "sourceKeys": {
-                "objectKey": "typeRef_55792e748cf1fa8f",
-                "sourceKey": "typeRef_f70c5eaf19b3dfe0"
-              },
-              "type": "primitive",
-              "primitiveType": "Integer"
-            }
-          },
-          {
-            "refPoint": {
-              "kind": "type",
-              "index": 3,
-              "sourceKey": {
-                "objectKey": "typeRef_e7a6126512547d3d",
-                "sourceKey": "typeRef_d7055424ba13e2bc"
-              }
-            },
-            "data": {
-              "kind": "type",
-              "sourceKeys": {
-                "objectKey": "typeRef_e7a6126512547d3d",
-                "sourceKey": "typeRef_d7055424ba13e2bc"
-              },
-              "collectionType": "list",
-              "elementType": {
-                "type": "custom",
-                "customType": "Account"
-              }
-            }
-          },
-          {
-            "refPoint": {
-              "kind": "type",
-              "index": 4,
-              "sourceKey": {
-                "objectKey": "typeRef_a13e3e8b5328228b",
-                "sourceKey": "typeRef_bfba5c2b2862e8e2"
-              }
-            },
-            "data": {
-              "kind": "type",
-              "sourceKeys": {
-                "objectKey": "typeRef_a13e3e8b5328228b",
-                "sourceKey": "typeRef_bfba5c2b2862e8e2"
-              },
-              "type": "primitive",
-              "primitiveType": "String"
-            }
-          },
-          {
-            "refPoint": {
-              "kind": "type",
-              "index": 5,
-              "sourceKey": {
-                "objectKey": "typeRef_24f17573a601e5e9",
-                "sourceKey": "typeRef_ea740410a375056b"
-              }
-            },
-            "data": {
-              "kind": "type",
-              "sourceKeys": {
-                "objectKey": "typeRef_24f17573a601e5e9",
-                "sourceKey": "typeRef_ea740410a375056b"
-              },
-              "collectionType": "set",
-              "elementType": {
-                "type": "primitive",
-                "primitiveType": "Id"
-              }
-            }
-          },
-          {
-            "refPoint": {
-              "kind": "type",
-              "index": 6,
-              "sourceKey": {
-                "objectKey": "typeRef_d1b84da196cb9c4a",
-                "sourceKey": "typeRef_50acf09449dfc583"
-              }
-            },
-            "data": {
-              "kind": "type",
-              "sourceKeys": {
-                "objectKey": "typeRef_d1b84da196cb9c4a",
-                "sourceKey": "typeRef_50acf09449dfc583"
-              },
-              "collectionType": "map",
-              "keyType": {
-                "type": "primitive",
-                "primitiveType": "Id"
-              },
-              "valueType": {
-                "collectionType": "list",
-                "elementType": {
-                  "type": "custom",
-                  "customType": "Contact"
-                }
-              }
-            }
-          },
-          {
-            "refPoint": {
-              "kind": "type",
-              "index": 7,
-              "sourceKey": {
-                "objectKey": "typeRef_e7a6126512547d3d",
-                "sourceKey": "typeRef_aac9373baadc7f12"
-              }
-            },
-            "data": {
-              "kind": "type",
-              "sourceKeys": {
-                "objectKey": "typeRef_e7a6126512547d3d",
-                "sourceKey": "typeRef_aac9373baadc7f12"
-              },
-              "collectionType": "list",
-              "elementType": {
-                "type": "custom",
-                "customType": "Account"
-              }
-            }
-          },
-          {
-            "refPoint": {
-              "kind": "type",
-              "index": 8,
-              "sourceKey": {
-                "objectKey": "typeRef_1899afb85044d9b0",
-                "sourceKey": "typeRef_55b9e7d9231f0bc7"
-              }
-            },
-            "data": {
-              "kind": "type",
-              "sourceKeys": {
-                "objectKey": "typeRef_1899afb85044d9b0",
-                "sourceKey": "typeRef_55b9e7d9231f0bc7"
-              },
-              "type": "custom",
-              "customType": [
-                "Database",
-                "SaveResult"
-              ]
-            }
-          },
-          {
-            "refPoint": {
-              "kind": "type",
-              "index": 9,
-              "sourceKey": {
-                "objectKey": "typeRef_24cd68d67f5694b3",
-                "sourceKey": "typeRef_0d239b821d81a600"
-              }
-            },
-            "data": {
-              "kind": "type",
-              "sourceKeys": {
-                "objectKey": "typeRef_24cd68d67f5694b3",
-                "sourceKey": "typeRef_0d239b821d81a600"
-              },
-              "type": "custom",
-              "customType": "SObject"
-            }
-          },
-          {
-            "refPoint": {
-              "kind": "type",
-              "index": 10,
-              "sourceKey": {
-                "objectKey": "typeRef_48850bb7b31741a4",
-                "sourceKey": "typeRef_a1eba780f718f807"
-              }
-            },
-            "data": {
-              "kind": "type",
-              "sourceKeys": {
-                "objectKey": "typeRef_48850bb7b31741a4",
-                "sourceKey": "typeRef_a1eba780f718f807"
-              },
-              "type": "custom",
-              "customType": "Comparable"
-            }
-          },
-          {
-            "refPoint": {
-              "kind": "type",
-              "index": 11,
-              "sourceKey": {
-                "objectKey": "typeRef_e3de1e200a5c0c3b",
-                "sourceKey": "typeRef_adeb6cf5ceaed8e2"
-              }
-            },
-            "data": {
-              "kind": "type",
-              "sourceKeys": {
-                "objectKey": "typeRef_e3de1e200a5c0c3b",
-                "sourceKey": "typeRef_adeb6cf5ceaed8e2"
-              },
-              "type": "custom",
-              "customType": "Schedulable"
-            }
-          }
-        ]
-      }
-    ],
     "sourceObject": [
       {
         "objectKey": "interfaceDeclaration_a844c24c3455b259",
         "context": "interfaceParserInterfaceextendsComparable,Schedulable{voidexecute(SchedulableContextcontext);Integercount();List<Account>findAccounts(Stringname,Set<Id>ownerIds);Map<Id,List<Contact>>groupContacts(List<Account>accounts);Database.SaveResultsave(SObjectrecord);}",
         "source": [
           {
-            "sourceKey": "interfaceDeclaration_f93c798c4990ebe8",
+            "sourceKey": "interfaceDeclaration_00e94444a4e49296",
             "start": {
-              "offset": 60,
+              "offset": 61,
               "line": 2,
               "column": 7
             },
             "end": {
-              "offset": 367,
+              "offset": 378,
               "line": 12,
               "column": 1
             }
@@ -516,14 +463,14 @@
         "context": "ParserInterface",
         "source": [
           {
-            "sourceKey": "id_5e5e8d42e6027e9e",
+            "sourceKey": "id_b8a1a9f62e039411",
             "start": {
-              "offset": 70,
+              "offset": 71,
               "line": 2,
               "column": 17
             },
             "end": {
-              "offset": 85,
+              "offset": 86,
               "line": 2,
               "column": 32
             }
@@ -535,14 +482,14 @@
         "context": "voidexecute(SchedulableContextcontext);",
         "source": [
           {
-            "sourceKey": "interfaceMethodDeclaration_293d20ea909db129",
+            "sourceKey": "interfaceMethodDeclaration_3bdc35bd155599c5",
             "start": {
-              "offset": 124,
+              "offset": 126,
               "line": 3,
               "column": 4
             },
             "end": {
-              "offset": 165,
+              "offset": 167,
               "line": 3,
               "column": 45
             }
@@ -554,14 +501,14 @@
         "context": "execute",
         "source": [
           {
-            "sourceKey": "id_54ecd37fec85e450",
+            "sourceKey": "id_25723d752558576f",
             "start": {
-              "offset": 129,
+              "offset": 131,
               "line": 3,
               "column": 9
             },
             "end": {
-              "offset": 136,
+              "offset": 138,
               "line": 3,
               "column": 16
             }
@@ -573,14 +520,14 @@
         "context": "SchedulableContextcontext",
         "source": [
           {
-            "sourceKey": "formalParameter_9572a9b6fdb044df",
+            "sourceKey": "formalParameter_1f0b0c612b3a6753",
             "start": {
-              "offset": 137,
+              "offset": 139,
               "line": 3,
               "column": 17
             },
             "end": {
-              "offset": 163,
+              "offset": 165,
               "line": 3,
               "column": 43
             }
@@ -592,14 +539,14 @@
         "context": "SchedulableContext",
         "source": [
           {
-            "sourceKey": "typeRef_b8548788e6ad7836",
+            "sourceKey": "typeRef_71854130bdfb2da2",
             "start": {
-              "offset": 137,
+              "offset": 139,
               "line": 3,
               "column": 17
             },
             "end": {
-              "offset": 155,
+              "offset": 157,
               "line": 3,
               "column": 35
             }
@@ -611,14 +558,14 @@
         "context": "Integercount();",
         "source": [
           {
-            "sourceKey": "interfaceMethodDeclaration_c7d722607e1fdc40",
+            "sourceKey": "interfaceMethodDeclaration_fee62f9efdb4a38f",
             "start": {
-              "offset": 171,
+              "offset": 175,
               "line": 5,
               "column": 4
             },
             "end": {
-              "offset": 187,
+              "offset": 191,
               "line": 5,
               "column": 20
             }
@@ -630,14 +577,14 @@
         "context": "count",
         "source": [
           {
-            "sourceKey": "id_92edd959ec35fb21",
+            "sourceKey": "id_cea6c8555a7e18c2",
             "start": {
-              "offset": 179,
+              "offset": 183,
               "line": 5,
               "column": 12
             },
             "end": {
-              "offset": 184,
+              "offset": 188,
               "line": 5,
               "column": 17
             }
@@ -649,14 +596,14 @@
         "context": "Integer",
         "source": [
           {
-            "sourceKey": "typeRef_f70c5eaf19b3dfe0",
+            "sourceKey": "typeRef_d489310a84a97b09",
             "start": {
-              "offset": 171,
+              "offset": 175,
               "line": 5,
               "column": 4
             },
             "end": {
-              "offset": 178,
+              "offset": 182,
               "line": 5,
               "column": 11
             }
@@ -668,14 +615,14 @@
         "context": "List<Account>findAccounts(Stringname,Set<Id>ownerIds);",
         "source": [
           {
-            "sourceKey": "interfaceMethodDeclaration_7bc481a5ca4041ad",
+            "sourceKey": "interfaceMethodDeclaration_a3e874ac8a369b05",
             "start": {
-              "offset": 193,
+              "offset": 199,
               "line": 7,
               "column": 4
             },
             "end": {
-              "offset": 251,
+              "offset": 257,
               "line": 7,
               "column": 62
             }
@@ -687,14 +634,14 @@
         "context": "findAccounts",
         "source": [
           {
-            "sourceKey": "id_3210fd05603b457e",
+            "sourceKey": "id_caaef8f533310bb6",
             "start": {
-              "offset": 207,
+              "offset": 213,
               "line": 7,
               "column": 18
             },
             "end": {
-              "offset": 219,
+              "offset": 225,
               "line": 7,
               "column": 30
             }
@@ -706,27 +653,27 @@
         "context": "List<Account>",
         "source": [
           {
-            "sourceKey": "typeRef_d7055424ba13e2bc",
+            "sourceKey": "typeRef_b08063df6ae7393c",
             "start": {
-              "offset": 193,
+              "offset": 199,
               "line": 7,
               "column": 4
             },
             "end": {
-              "offset": 206,
+              "offset": 212,
               "line": 7,
               "column": 17
             }
           },
           {
-            "sourceKey": "typeRef_aac9373baadc7f12",
+            "sourceKey": "typeRef_015da58ef1b038ed",
             "start": {
-              "offset": 294,
+              "offset": 302,
               "line": 9,
               "column": 41
             },
             "end": {
-              "offset": 307,
+              "offset": 315,
               "line": 9,
               "column": 54
             }
@@ -738,14 +685,14 @@
         "context": "Stringname",
         "source": [
           {
-            "sourceKey": "formalParameter_447f45e2d7d368be",
+            "sourceKey": "formalParameter_5385ca2fc360feef",
             "start": {
-              "offset": 220,
+              "offset": 226,
               "line": 7,
               "column": 31
             },
             "end": {
-              "offset": 231,
+              "offset": 237,
               "line": 7,
               "column": 42
             }
@@ -757,14 +704,14 @@
         "context": "String",
         "source": [
           {
-            "sourceKey": "typeRef_bfba5c2b2862e8e2",
+            "sourceKey": "typeRef_0ec9ba7233a256bc",
             "start": {
-              "offset": 220,
+              "offset": 226,
               "line": 7,
               "column": 31
             },
             "end": {
-              "offset": 226,
+              "offset": 232,
               "line": 7,
               "column": 37
             }
@@ -776,14 +723,14 @@
         "context": "Set<Id>ownerIds",
         "source": [
           {
-            "sourceKey": "formalParameter_0767859a203bb936",
+            "sourceKey": "formalParameter_0a0b6144f66064c7",
             "start": {
-              "offset": 233,
+              "offset": 239,
               "line": 7,
               "column": 44
             },
             "end": {
-              "offset": 249,
+              "offset": 255,
               "line": 7,
               "column": 60
             }
@@ -795,14 +742,14 @@
         "context": "Set<Id>",
         "source": [
           {
-            "sourceKey": "typeRef_ea740410a375056b",
+            "sourceKey": "typeRef_7c834a2408636d1b",
             "start": {
-              "offset": 233,
+              "offset": 239,
               "line": 7,
               "column": 44
             },
             "end": {
-              "offset": 240,
+              "offset": 246,
               "line": 7,
               "column": 51
             }
@@ -814,14 +761,14 @@
         "context": "Map<Id,List<Contact>>groupContacts(List<Account>accounts);",
         "source": [
           {
-            "sourceKey": "interfaceMethodDeclaration_b7acfbef33655de4",
+            "sourceKey": "interfaceMethodDeclaration_d9e69584a2852aa6",
             "start": {
-              "offset": 257,
+              "offset": 265,
               "line": 9,
               "column": 4
             },
             "end": {
-              "offset": 318,
+              "offset": 326,
               "line": 9,
               "column": 65
             }
@@ -833,14 +780,14 @@
         "context": "groupContacts",
         "source": [
           {
-            "sourceKey": "id_aaf5015940dff332",
+            "sourceKey": "id_478705098516d02c",
             "start": {
-              "offset": 280,
+              "offset": 288,
               "line": 9,
               "column": 27
             },
             "end": {
-              "offset": 293,
+              "offset": 301,
               "line": 9,
               "column": 40
             }
@@ -852,14 +799,14 @@
         "context": "Map<Id,List<Contact>>",
         "source": [
           {
-            "sourceKey": "typeRef_50acf09449dfc583",
+            "sourceKey": "typeRef_b4341826d97805f5",
             "start": {
-              "offset": 257,
+              "offset": 265,
               "line": 9,
               "column": 4
             },
             "end": {
-              "offset": 279,
+              "offset": 287,
               "line": 9,
               "column": 26
             }
@@ -871,14 +818,14 @@
         "context": "List<Account>accounts",
         "source": [
           {
-            "sourceKey": "formalParameter_9b1b4af406f8e00e",
+            "sourceKey": "formalParameter_35f7182ca2865802",
             "start": {
-              "offset": 294,
+              "offset": 302,
               "line": 9,
               "column": 41
             },
             "end": {
-              "offset": 316,
+              "offset": 324,
               "line": 9,
               "column": 63
             }
@@ -890,14 +837,14 @@
         "context": "Database.SaveResultsave(SObjectrecord);",
         "source": [
           {
-            "sourceKey": "interfaceMethodDeclaration_e932045ad747fb6d",
+            "sourceKey": "interfaceMethodDeclaration_f524ab37f859ff00",
             "start": {
-              "offset": 324,
+              "offset": 334,
               "line": 11,
               "column": 4
             },
             "end": {
-              "offset": 365,
+              "offset": 375,
               "line": 11,
               "column": 45
             }
@@ -909,14 +856,14 @@
         "context": "save",
         "source": [
           {
-            "sourceKey": "id_22c5429e33e57806",
+            "sourceKey": "id_6022fa1aad1eda9b",
             "start": {
-              "offset": 344,
+              "offset": 354,
               "line": 11,
               "column": 24
             },
             "end": {
-              "offset": 348,
+              "offset": 358,
               "line": 11,
               "column": 28
             }
@@ -928,14 +875,14 @@
         "context": "Database.SaveResult",
         "source": [
           {
-            "sourceKey": "typeRef_55b9e7d9231f0bc7",
+            "sourceKey": "typeRef_59b6b5e32bd596e1",
             "start": {
-              "offset": 324,
+              "offset": 334,
               "line": 11,
               "column": 4
             },
             "end": {
-              "offset": 343,
+              "offset": 353,
               "line": 11,
               "column": 23
             }
@@ -947,14 +894,14 @@
         "context": "SObjectrecord",
         "source": [
           {
-            "sourceKey": "formalParameter_de898465c651b0d1",
+            "sourceKey": "formalParameter_1501fe6e55737a67",
             "start": {
-              "offset": 349,
+              "offset": 359,
               "line": 11,
               "column": 29
             },
             "end": {
-              "offset": 363,
+              "offset": 373,
               "line": 11,
               "column": 43
             }
@@ -966,14 +913,14 @@
         "context": "SObject",
         "source": [
           {
-            "sourceKey": "typeRef_0d239b821d81a600",
+            "sourceKey": "typeRef_3025c263b394e1e4",
             "start": {
-              "offset": 349,
+              "offset": 359,
               "line": 11,
               "column": 29
             },
             "end": {
-              "offset": 356,
+              "offset": 366,
               "line": 11,
               "column": 36
             }
@@ -985,14 +932,14 @@
         "context": "Comparable",
         "source": [
           {
-            "sourceKey": "typeRef_a1eba780f718f807",
+            "sourceKey": "typeRef_db1656f13b93db2b",
             "start": {
-              "offset": 94,
+              "offset": 95,
               "line": 2,
               "column": 41
             },
             "end": {
-              "offset": 104,
+              "offset": 105,
               "line": 2,
               "column": 51
             }
@@ -1004,14 +951,14 @@
         "context": "Schedulable",
         "source": [
           {
-            "sourceKey": "typeRef_adeb6cf5ceaed8e2",
+            "sourceKey": "typeRef_57226abcda96446e",
             "start": {
-              "offset": 106,
+              "offset": 107,
               "line": 2,
               "column": 53
             },
             "end": {
-              "offset": 117,
+              "offset": 118,
               "line": 2,
               "column": 64
             }
@@ -1023,14 +970,14 @@
         "context": "public",
         "source": [
           {
-            "sourceKey": "modifier_7c8cf3c428c32faf",
+            "sourceKey": "modifier_c1199373c400a481",
             "start": {
-              "offset": 53,
+              "offset": 54,
               "line": 2,
               "column": 0
             },
             "end": {
-              "offset": 59,
+              "offset": 60,
               "line": 2,
               "column": 6
             }

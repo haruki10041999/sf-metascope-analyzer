@@ -33,21 +33,12 @@ import {
     SoslJson,
     DotMethodCallJson,
     MethodCallJson,
+    StructureJson,
+    ConvertKeys,
+    hash,
+    ErrorTypeClass,
+    SourceSpan,
 } from '../../types';
-
-import {
-    SemanticReplacedAnonymousUnit,
-    SemanticReplacedCompilationUnit,
-    ReplacedDeclarationReference,
-    replaceDeclarationRef,
-    SemanticReplacedTriggerUnit,
-    RefPointedStructureArray,
-    ReplaceSemanticRef,
-    SemanticJson,
-    SemanticRefPoint,
-    replaceSemanticRef,
-    isSemanticJson,
-} from './extractor';
 
 import { ApexParserFactory } from '@apexdevtools/apex-parser';
 
@@ -58,84 +49,54 @@ type ResolvedErrorType = {
     errorMessage: string;
 };
 
-export type FileStructureType = {
+export type ErrorFileStructureType = {
     filePath: string;
-    resolvedError: ResolvedErrorType[];
-} & (
-    | {
-          dataType: 'error';
-          result: {
-              id: string;
-              base: ErrorType | ErrorJson;
-              sourceObject?: SourceJson[];
-          };
-      }
-    | {
-          dataType: 'enum' | 'interface';
-          result: {
-              id: string;
-              base: ReplaceSemanticRef<
-                  Extract<CompilationUnitJson, { kind: 'enum' | 'interface' }>,
-                  SemanticJson,
-                  SemanticRefPoint
-              >;
-              semantic: RefPointedStructureArray<
-                  'type' | 'soql' | 'sosl' | 'memberAccess',
-                  TypeJson | SoqlJson | SoslJson | DotMethodCallJson | MethodCallJson
-              >[];
-              sourceObject: SourceJson[];
-          };
-      }
-    | {
-          dataType: 'class';
-          result: {
-              id: string;
-              base: SemanticReplacedCompilationUnit;
-              declaration: ReplacedDeclarationReference[];
-              semantic: RefPointedStructureArray<
-                  'type' | 'soql' | 'sosl' | 'memberAccess',
-                  TypeJson | SoqlJson | SoslJson | DotMethodCallJson | MethodCallJson
-              >[];
-              sourceObject: SourceJson[];
-          };
-      }
-    | {
-          dataType: 'trigger';
-          result: {
-              id: string;
-              base: SemanticReplacedTriggerUnit;
-              declaration: ReplacedDeclarationReference[];
-              semantic: RefPointedStructureArray<
-                  'type' | 'soql' | 'sosl' | 'memberAccess',
-                  TypeJson | SoqlJson | SoslJson | DotMethodCallJson | MethodCallJson
-              >[];
-              sourceObject: SourceJson[];
-          };
-      }
-    | {
-          dataType: 'anonymous';
-          result: {
-              id: string;
-              base: SemanticReplacedAnonymousUnit;
-              declaration: ReplacedDeclarationReference[];
-              semantic: RefPointedStructureArray<
-                  'type' | 'soql' | 'sosl' | 'memberAccess',
-                  TypeJson | SoqlJson | SoslJson | DotMethodCallJson | MethodCallJson
-              >[];
-              sourceObject: SourceJson[];
-          };
-      }
-);
+    resolvedError: ({ sourceKeys: ConvertKeys } & ResolvedErrorType & SourceSpan)[];
+    dataType: 'error';
+    result: {
+        id: string;
+        base: ErrorType | ErrorJson;
+        sourceObject?: SourceJson[];
+    };
+};
 
-export type BaseInfo = {
-    dataType: string;
+export type FileStructureType<T extends { fileType: string } = { fileType: string }> = {
     filePath: string;
-    unResolvedError: ResolvedErrorType[];
+    resolvedError: ({ sourceKeys: ConvertKeys } & ResolvedErrorType & SourceSpan)[];
+    dataType: T['fileType'];
+    result: {
+        id: string;
+        base: Omit<T, 'fileType'>;
+        sourceObject: SourceJson[];
+    };
 };
 
 export type SaveDataInfo = {
     outputPath: URL;
     data: unknown;
+};
+
+export const makeResolvedError = (
+    target: ErrorTypeClass,
+): { sourceKeys: ConvertKeys } & ResolvedErrorType & SourceSpan => {
+    const resolvedErrorType: ResolvedErrorType = {
+        code: target.getCode(),
+        contextType: target.getContextType(),
+        context: target.getContext(),
+        errorMessage: target.getParseErrorMessage(),
+    };
+
+    const sourceSpan = target.getSpan()!;
+    const sourceKeys: ConvertKeys = {
+        objectKey: hash(resolvedErrorType),
+        sourceKey: hash(sourceSpan),
+    };
+
+    return {
+        sourceKeys: sourceKeys,
+        ...resolvedErrorType,
+        ...sourceSpan,
+    };
 };
 
 // 本番保存用。records (同じキー構成をまとめる msgpackr 独自拡張) を使い、サイズと読み込み速度を優先する。
@@ -156,8 +117,10 @@ export class ApexParser {
             .map((entry) => path.join(entry.parentPath, entry.name));
     }
 
-    static async parseApexClass(filePath: string): Promise<FileStructureType> {
-        const baseName = path.parse(filePath).name;
+    static async parseApexClass(
+        filePath: string,
+    ): Promise<ErrorFileStructureType | FileStructureType> {
+        const baseName = path.basename(filePath);
         const source = await fs.readFile(filePath, 'utf-8');
         const errorListener = new CommonErrorListener(source);
 
@@ -176,12 +139,8 @@ export class ApexParser {
         // 構文エラーは解析後にしか集まらないため、ここで取得する
         const unResolvedError = errorListener.getErrors();
 
-        const resolvedErrors: ResolvedErrorType[] = unResolvedError.map((error) => ({
-            code: error.getCode(),
-            contextType: error.getContextType(),
-            context: error.getContext(),
-            errorMessage: error.getParseErrorMessage(),
-        }));
+        const resolvedErrors: ({ sourceKeys: ConvertKeys } & ResolvedErrorType & SourceSpan)[] =
+            unResolvedError.map((error) => makeResolvedError(error));
 
         const unitConvertType = assignMultiClass(unitTypeClass, [
             makeCompilationUnitAssignRule,
@@ -226,71 +185,16 @@ export class ApexParser {
                     sourceObject: regenerateSource,
                 },
             };
-        }
-
-        if (unit.fileType === 'cls' && (unit.kind === 'interface' || unit.kind === 'enum')) {
-            const { base, refPoints } = replaceSemanticRef<
-                typeof unit,
-                SemanticJson['kind'],
-                SemanticJson,
-                SemanticRefPoint
-            >(unit, baseName, isSemanticJson);
-            return {
-                filePath: filePath,
-                resolvedError: resolvedErrors,
-                dataType: unit.kind,
-                result: {
-                    id: baseName,
-                    base: base,
-                    semantic: [...refPoints.values()],
-                    sourceObject: regenerateSource,
-                },
-            };
-        }
-
-        const {
-            unit: replacedUnit,
-            declarations: extractDeclarations,
-            semantic: extractSemantic,
-        } = replaceDeclarationRef(unit, baseName);
-
-        if (replacedUnit.fileType === 'cls') {
-            return {
-                filePath: filePath,
-                resolvedError: resolvedErrors,
-                dataType: 'class',
-                result: {
-                    id: baseName,
-                    base: replacedUnit,
-                    declaration: extractDeclarations,
-                    semantic: extractSemantic,
-                    sourceObject: regenerateSourceObjects(sourceObjects, unit),
-                },
-            };
-        } else if (replacedUnit.fileType === 'trigger') {
-            return {
-                filePath: filePath,
-                resolvedError: resolvedErrors,
-                dataType: 'trigger',
-                result: {
-                    id: baseName,
-                    base: replacedUnit,
-                    declaration: extractDeclarations,
-                    semantic: extractSemantic,
-                    sourceObject: regenerateSourceObjects(sourceObjects, unit),
-                },
-            };
         } else {
+            const { fileType, ...rest } = unit;
             return {
                 filePath: filePath,
                 resolvedError: resolvedErrors,
-                dataType: 'anonymous',
+                dataType: fileType,
                 result: {
                     id: baseName,
-                    base: replacedUnit,
-                    declaration: extractDeclarations,
-                    semantic: extractSemantic,
-                    sourceObject: regenerateSourceObjects(sourceObjects, unit),
+                    base: rest,
+                    sourceObject: regenerateSource,
                 },
             };
         }
@@ -331,7 +235,11 @@ export class ApexParser {
             throw new Error(`Saved Apex file not found: ${inputFile}`);
         });
 
-        return packr.unpack(content) as FileStructureType;
+        return packr.unpack(content) as FileStructureType<
+            { fileType: string } & (
+                | JsonType<string>
+                | StructureJson<string, Record<string, ConvertKeys | ConvertKeys[]>>
+            )
+        >;
     }
 }
-
