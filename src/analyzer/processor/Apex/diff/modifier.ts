@@ -1,5 +1,3 @@
-import { DiffAttributeArray } from '../commons';
-
 import {
     ModifiersJson,
     ModifierJson,
@@ -12,12 +10,11 @@ type Modifier = {
     modifierType: string;
 } & (ModifierJson | AnnotationJson | ErrorJson);
 
-type ModifierDiff = {
+export type ModifierDiff = {
+    kind: 'modifier';
     common: {
-        objectkey: string;
-        data: Omit<Modifier, 'sourceKeys'>;
-        before: Omit<ConvertKeys, 'objectKey'>;
-        after: Omit<ConvertKeys, 'objectKey'>;
+        sourceKeys: { before: ConvertKeys; after: ConvertKeys };
+        value: Omit<Modifier, 'sourceKeys'>;
     }[];
     before: Modifier[];
     after: Modifier[];
@@ -39,11 +36,8 @@ export const makeTypedModifierJsons = (target: ModifiersJson): Modifier[] => {
     return modifiers;
 };
 
-export const makeModifierDiff = (
-    before: ModifiersJson,
-    after: ModifiersJson,
-): Modifier[] | ModifierDiff => {
-    const common: Modifier[] = [];
+export const makeModifierDiff = (before: ModifiersJson, after: ModifiersJson): ModifierDiff => {
+    const common: ModifierDiff['common'] = [];
     const _before: Modifier[] = [];
     const _after = makeTypedModifierJsons(after);
 
@@ -51,19 +45,23 @@ export const makeModifierDiff = (
         const index = _after.findIndex((a) => a.sourceKeys.objectKey === b.sourceKeys.objectKey);
 
         if (index !== -1) {
-            const [a] = _after.splice(index, 1);
+            const { sourceKeys: beforeSorceKeys, ...rest } = b;
+            const { sourceKeys: afterSourceKeys, ..._rest } = _after[index]!;
 
-            common.push(b);
+            common.push({
+                sourceKeys: { before: beforeSorceKeys, after: afterSourceKeys },
+                value: rest,
+            });
+            _after.splice(index, 1);
         } else {
             _before.push(b);
         }
     });
 
-    return _before.length === 0 && _after.length === 0
-        ? common
-        : {
-              common,
-              before: _before,
-              after: _after,
-          };
+    return {
+        kind: 'modifier',
+        common,
+        before: _before,
+        after: _after,
+    };
 };

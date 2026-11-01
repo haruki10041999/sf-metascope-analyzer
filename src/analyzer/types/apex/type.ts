@@ -1,6 +1,13 @@
 import typia from 'typia';
 
-import { ConvertExcludeError, ConvertType, ErrorJson, JsonType, convertValue, makeJsonType } from './commons';
+import {
+    ConvertExcludeError,
+    ConvertType,
+    ErrorJson,
+    JsonType,
+    convertValue,
+    makeJsonType,
+} from './commons';
 
 import { TypeRefType } from './converter';
 
@@ -34,35 +41,35 @@ const isMapType = (type: string): boolean => {
 };
 
 // 型の中身。境界ノード（TypeJson）は最上位の型だけで、ジェネリクス・要素型はこの形（キーなし）で持つ
-type PrimitiveTypeContentJson = {
+export type PrimitiveTypeContentJson = {
     type: 'primitive';
     primitiveType: string;
 };
 
-type CustomTypeContentJson = {
+export type CustomTypeContentJson = {
     type: 'custom';
     customType: string | string[];
     generic?: TypeContentJson[];
 };
 
-type ArrayTypeContentJson = {
-    collectionType: 'array';
+export type ArrayTypeContentJson = {
+    type: 'array';
     elementType: TypeContentJson;
     dimension: number;
 };
 
-type ListTypeContentJson = {
-    collectionType: 'list';
+export type ListTypeContentJson = {
+    type: 'list';
     elementType: TypeContentJson;
 };
 
-type SetTypeContentJson = {
-    collectionType: 'set';
+export type SetTypeContentJson = {
+    type: 'set';
     elementType: TypeContentJson;
 };
 
-type MapTypeContentJson = {
-    collectionType: 'map';
+export type MapTypeContentJson = {
+    type: 'map';
     keyType: TypeContentJson;
     valueType: TypeContentJson;
 };
@@ -104,7 +111,7 @@ const makeTypeContentJson = (target: ConvertExcludeError<TypeRefType>): TypeCont
 
     if (dimension) {
         return {
-            collectionType: 'array',
+            type: 'array',
             elementType: makeTypeContentJson({
                 ...target,
                 dimension: { ...target.dimension, value: null },
@@ -140,14 +147,14 @@ const makeTypeContentJson = (target: ConvertExcludeError<TypeRefType>): TypeCont
 
     if ((isListType(collectionName) || isSetType(collectionName)) && generic?.length === 1) {
         return {
-            collectionType: isListType(collectionName) ? 'list' : 'set',
+            type: isListType(collectionName) ? 'list' : 'set',
             elementType: makeTypeContentJson(generic[0]!),
         };
     }
 
     if (isMapType(collectionName) && generic?.length === 2) {
         return {
-            collectionType: 'map',
+            type: 'map',
             keyType: makeTypeContentJson(generic[0]!),
             valueType: makeTypeContentJson(generic[1]!),
         };
@@ -163,7 +170,11 @@ const makeTypeContentJson = (target: ConvertExcludeError<TypeRefType>): TypeCont
 };
 
 export const makeTypeJson = (target: ConvertType<TypeRefType>): TypeJson | ErrorJson => {
-    return convertValue<'typeRef', TypeRefType, TypeJson>(target, 'type', (target, targetRecords) => {
-        return makeJsonType('type', targetRecords.base, makeTypeContentJson(target));
-    });
+    return convertValue<'typeRef', TypeRefType, TypeJson>(
+        target,
+        'type',
+        (target, targetRecords) => {
+            return makeJsonType('type', targetRecords.base, makeTypeContentJson(target));
+        },
+    );
 };
