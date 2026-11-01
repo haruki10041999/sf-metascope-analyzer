@@ -1,6 +1,16 @@
-import { ErrorFileStructureType, FileStructureType } from '../../parser';
-import { CompilationUnitJson } from '../../types';
-import { DiffAttribute, DiffAttributeArray } from './commons';
+import { ErrorFileStructureType, FileStructureType } from '../../../parser';
+import { CompilationUnitJson } from '../../../types';
+
+export type UnitDiffAttribute<T> = {
+    before: T;
+    after: T;
+};
+
+export type UnitDiffAttributeArray<T> = {
+    common: T[];
+    before: T[];
+    after: T[];
+};
 
 export type UnitDiff =
     | {
@@ -15,38 +25,40 @@ export type UnitDiff =
           filePath: (FileStructureType | ErrorFileStructureType)['filePath'];
           dataType: (FileStructureType | ErrorFileStructureType)['dataType'];
           resolvedError: (FileStructureType | ErrorFileStructureType)['resolvedError'];
-          target: DiffAttribute<(FileStructureType | ErrorFileStructureType)['result']>;
+          target: UnitDiffAttribute<(FileStructureType | ErrorFileStructureType)['result']>;
       }
     | {
           status: 'changed';
           filePath: (FileStructureType | ErrorFileStructureType)['filePath'];
           dataType:
               | (FileStructureType | ErrorFileStructureType)['dataType']
-              | DiffAttribute<(FileStructureType | ErrorFileStructureType)['dataType']>;
+              | UnitDiffAttribute<(FileStructureType | ErrorFileStructureType)['dataType']>;
           resolvedError:
               | (FileStructureType | ErrorFileStructureType)['resolvedError']
-              | DiffAttributeArray<
+              | UnitDiffAttributeArray<
                     (FileStructureType | ErrorFileStructureType)['resolvedError'][number]
                 >;
-          target: DiffAttribute<(FileStructureType | ErrorFileStructureType)['result']>;
+          target: UnitDiffAttribute<(FileStructureType | ErrorFileStructureType)['result']>;
       };
 
 export type ClsFileDiff =
     | {
           status: 'unchanged';
           kind: FileStructureType<CompilationUnitJson>['result']['base']['kind'];
-          target: DiffAttribute<FileStructureType<CompilationUnitJson>['result']>;
+          target: UnitDiffAttribute<FileStructureType<CompilationUnitJson>['result']>;
       }
     | {
           status: 'changed';
-          kind: DiffAttribute<FileStructureType<CompilationUnitJson>['result']['base']['kind']>;
-          target: DiffAttribute<FileStructureType<CompilationUnitJson>['result']>;
+          kind: UnitDiffAttribute<FileStructureType<CompilationUnitJson>['result']['base']['kind']>;
+          target: UnitDiffAttribute<FileStructureType<CompilationUnitJson>['result']>;
       };
 
 const makeResolvedErrorDiff = (
     before: (FileStructureType | ErrorFileStructureType)['resolvedError'],
     after: (FileStructureType | ErrorFileStructureType)['resolvedError'],
-): DiffAttributeArray<(FileStructureType | ErrorFileStructureType)['resolvedError'][number]> => {
+): UnitDiffAttributeArray<
+    (FileStructureType | ErrorFileStructureType)['resolvedError'][number]
+> => {
     const common: (FileStructureType | ErrorFileStructureType)['resolvedError'] = [];
     const _before: (FileStructureType | ErrorFileStructureType)['resolvedError'] = [];
     const _after: (FileStructureType | ErrorFileStructureType)['resolvedError'] = [...after];
@@ -66,7 +78,7 @@ const makeResolvedErrorDiff = (
     return {
         common: common,
         before: _before,
-        after: after,
+        after: _after,
     };
 };
 
@@ -98,7 +110,9 @@ export const makeUnitDiffs = (
                 result: afterResult,
             } = _after.at(filePathIndex)!;
 
-            const target: DiffAttribute<(FileStructureType | ErrorFileStructureType)['result']> = {
+            const target: UnitDiffAttribute<
+                (FileStructureType | ErrorFileStructureType)['result']
+            > = {
                 before: result,
                 after: afterResult,
             };
@@ -153,7 +167,7 @@ export const makeUnitDiffs = (
 };
 
 export const makeClsFileDiff = (
-    target: DiffAttribute<FileStructureType<CompilationUnitJson>['result']>[],
+    target: UnitDiffAttribute<FileStructureType<CompilationUnitJson>['result']>[],
 ): ClsFileDiff[] => {
     const clsFileDiff: ClsFileDiff[] = [];
 

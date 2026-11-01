@@ -82,7 +82,10 @@ const makeDotMethodCallJson = (
         return makeErrorJson(right, ERROR_KIND);
     }
 
-    const targetRecords: ConvertKeys = { objectKey: target.objectKey, sourceKey: target.sourceKey };
+    const targetRecords: ConvertKeys = {
+        objectKey: target.objectKey,
+        sourceKey: target.sourceKey,
+    };
 
     if (right.type === 'anyId') {
         return makeJsonType('memberAccess', targetRecords, {
@@ -123,7 +126,10 @@ const makeMethodCallJson = (
 
     const memberArg = methodCall.param ? makeExpressionListJson(methodCall.param) : null;
 
-    const targetRecords: ConvertKeys = { objectKey: target.objectKey, sourceKey: target.sourceKey };
+    const targetRecords: ConvertKeys = {
+        objectKey: target.objectKey,
+        sourceKey: target.sourceKey,
+    };
 
     if (typeof methodCall.value === 'string') {
         return makeJsonType('memberAccess', targetRecords, {

@@ -3,59 +3,21 @@
   "resolvedError": [],
   "dataType": "cls",
   "result": {
-    "id": "ParserEnum",
-    "convertkeys": {
-      "enum": {
-        "objectKey": "enumDeclaration_8e5f002d735e14da",
-        "sourceKey": "enumDeclaration_404e0fab36180d0c"
-      },
-      "members": [
-        {
-          "enumConstant": {
-            "objectKey": "id_319907c39b3bba35",
-            "sourceKey": "id_3389b0b50f8d987a"
-          }
-        },
-        {
-          "enumConstant": {
-            "objectKey": "id_d52e53c83bc760c4",
-            "sourceKey": "id_b40d28dbf8ab5ce0"
-          }
-        },
-        {
-          "enumConstant": {
-            "objectKey": "id_b5d4453f52acfdb8",
-            "sourceKey": "id_afc3b0d85da1c626"
-          }
-        },
-        {
-          "enumConstant": {
-            "objectKey": "id_781cf8a9d0748ff6",
-            "sourceKey": "id_0c4212607e73c28a"
-          }
-        }
-      ],
-      "modifier": {
-        "access": [
-          {
-            "modifier": {
-              "objectKey": "modifier_a04213395735c45e",
-              "sourceKey": "modifier_84b05e1606ce77e6"
-            }
-          }
-        ]
-      }
-    },
+    "id": "ParserEnum.cls",
     "base": {
       "kind": "enum",
       "sourceKeys": {
         "base": {
           "objectKey": "enumDeclaration_8e5f002d735e14da",
-          "sourceKey": "enumDeclaration_404e0fab36180d0c"
+          "sourceKey": "enumDeclaration_7c06adaa6555aa21",
+          "startKey": "enumDeclaration_e8af88b5672a7a7d",
+          "endKey": "enumDeclaration_f696bdea5cc24a25"
         },
         "name": {
           "objectKey": "id_dd32a7fc22fbb1e9",
-          "sourceKey": "id_ee698f7c594d3b5c"
+          "sourceKey": "id_de70aa1eaea830f2",
+          "startKey": "id_553bc87e080dc45d",
+          "endKey": "id_4ac3e92fc682a68f"
         }
       },
       "name": "ParserEnum",
@@ -64,7 +26,9 @@
           "kind": "enumConstant",
           "sourceKeys": {
             "objectKey": "id_319907c39b3bba35",
-            "sourceKey": "id_3389b0b50f8d987a"
+            "sourceKey": "id_7fd8e72c9acf95a2",
+            "startKey": "id_ed1f2bf2a614dcdb",
+            "endKey": "id_1b062457334b863b"
           },
           "name": "DRAFT"
         },
@@ -72,7 +36,9 @@
           "kind": "enumConstant",
           "sourceKeys": {
             "objectKey": "id_d52e53c83bc760c4",
-            "sourceKey": "id_b40d28dbf8ab5ce0"
+            "sourceKey": "id_cea503d700199020",
+            "startKey": "id_141f52dbed8b42b9",
+            "endKey": "id_c8dbd9131aba14fe"
           },
           "name": "SUBMITTED"
         },
@@ -80,7 +46,9 @@
           "kind": "enumConstant",
           "sourceKeys": {
             "objectKey": "id_b5d4453f52acfdb8",
-            "sourceKey": "id_afc3b0d85da1c626"
+            "sourceKey": "id_6ab40310bc045be6",
+            "startKey": "id_e52e0824d46d51af",
+            "endKey": "id_2d063f24c861084b"
           },
           "name": "APPROVED"
         },
@@ -88,7 +56,9 @@
           "kind": "enumConstant",
           "sourceKeys": {
             "objectKey": "id_781cf8a9d0748ff6",
-            "sourceKey": "id_0c4212607e73c28a"
+            "sourceKey": "id_0bc27776e6f7a567",
+            "startKey": "id_26326bcfdd6e7bc7",
+            "endKey": "id_0304110d386b9d90"
           },
           "name": "REJECTED"
         }
@@ -99,7 +69,9 @@
             "kind": "modifier",
             "sourceKeys": {
               "objectKey": "modifier_a04213395735c45e",
-              "sourceKey": "modifier_84b05e1606ce77e6"
+              "sourceKey": "modifier_0c5be8332ae6705a",
+              "startKey": "modifier_7ad58b431c89ba02",
+              "endKey": "modifier_39f8537a972aadd0"
             },
             "name": "PUBLIC"
           }
@@ -112,7 +84,9 @@
         "context": "enumParserEnum{DRAFT,SUBMITTED,APPROVED,REJECTED}",
         "source": [
           {
-            "sourceKey": "enumDeclaration_404e0fab36180d0c",
+            "sourceKey": "enumDeclaration_7c06adaa6555aa21",
+            "startKey": "enumDeclaration_e8af88b5672a7a7d",
+            "endKey": "enumDeclaration_f696bdea5cc24a25",
             "start": {
               "offset": 51,
               "line": 2,
@@ -131,7 +105,9 @@
         "context": "ParserEnum",
         "source": [
           {
-            "sourceKey": "id_ee698f7c594d3b5c",
+            "sourceKey": "id_de70aa1eaea830f2",
+            "startKey": "id_553bc87e080dc45d",
+            "endKey": "id_4ac3e92fc682a68f",
             "start": {
               "offset": 56,
               "line": 2,
@@ -150,7 +126,9 @@
         "context": "DRAFT",
         "source": [
           {
-            "sourceKey": "id_3389b0b50f8d987a",
+            "sourceKey": "id_7fd8e72c9acf95a2",
+            "startKey": "id_ed1f2bf2a614dcdb",
+            "endKey": "id_1b062457334b863b",
             "start": {
               "offset": 74,
               "line": 3,
@@ -169,7 +147,9 @@
         "context": "SUBMITTED",
         "source": [
           {
-            "sourceKey": "id_b40d28dbf8ab5ce0",
+            "sourceKey": "id_cea503d700199020",
+            "startKey": "id_141f52dbed8b42b9",
+            "endKey": "id_c8dbd9131aba14fe",
             "start": {
               "offset": 86,
               "line": 4,
@@ -188,7 +168,9 @@
         "context": "APPROVED",
         "source": [
           {
-            "sourceKey": "id_afc3b0d85da1c626",
+            "sourceKey": "id_6ab40310bc045be6",
+            "startKey": "id_e52e0824d46d51af",
+            "endKey": "id_2d063f24c861084b",
             "start": {
               "offset": 102,
               "line": 5,
@@ -207,7 +189,9 @@
         "context": "REJECTED",
         "source": [
           {
-            "sourceKey": "id_0c4212607e73c28a",
+            "sourceKey": "id_0bc27776e6f7a567",
+            "startKey": "id_26326bcfdd6e7bc7",
+            "endKey": "id_0304110d386b9d90",
             "start": {
               "offset": 117,
               "line": 6,
@@ -226,7 +210,9 @@
         "context": "public",
         "source": [
           {
-            "sourceKey": "modifier_84b05e1606ce77e6",
+            "sourceKey": "modifier_0c5be8332ae6705a",
+            "startKey": "modifier_7ad58b431c89ba02",
+            "endKey": "modifier_39f8537a972aadd0",
             "start": {
               "offset": 44,
               "line": 2,

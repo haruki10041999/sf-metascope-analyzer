@@ -1,6 +1,9 @@
 import typia from 'typia';
 
-export type ConvertKeys = { objectKey: string; sourceKey: string };
+export type ConvertKeys = {
+    objectKey: string;
+    sourceKey: string;
+};
 
 export type JsonType<TKind extends string> = {
     kind: TKind;
@@ -56,7 +59,10 @@ export const makeJsonType = <Tkind extends string, T extends JsonType<Tkind>>(
 export const makeErrorJson = (target: ConvertKeys, kindType: string): ErrorJson => {
     return makeJsonType(
         'error',
-        { objectKey: target.objectKey, sourceKey: target.sourceKey },
+        {
+            objectKey: target.objectKey,
+            sourceKey: target.sourceKey,
+        },
         {
             kindType,
         },

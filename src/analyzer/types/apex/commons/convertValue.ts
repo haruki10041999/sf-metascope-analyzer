@@ -29,9 +29,12 @@ const toKeys = (target: unknown): ConvertKeys | ConvertKeys[] | null => {
     if (
         isRecord(target) &&
         typeof target.objectKey === 'string' &&
-        typeof target.sourceKey === 'string'
+        typeof target.sourceKey === 'string' &&
     ) {
-        return { objectKey: target.objectKey, sourceKey: target.sourceKey };
+        return {
+            objectKey: target.objectKey,
+            sourceKey: target.sourceKey
+        };
     }
     return null;
 };
@@ -41,7 +44,10 @@ const makeStructureSourceKeys = <TRecord extends Record<string, ConvertKeys | Co
     record: Readonly<Record<string, string>>,
 ): StructureSourceKeys<TRecord> => {
     const sourceKeys: Record<string, ConvertKeys | ConvertKeys[]> = {
-        base: { objectKey: target.objectKey, sourceKey: target.sourceKey },
+        base: {
+            objectKey: target.objectKey,
+            sourceKey: target.sourceKey,
+        },
     };
     for (const [name, property] of Object.entries(record)) {
         const keys = toKeys(target[property]);

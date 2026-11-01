@@ -4,12 +4,13 @@ import { CommonType, ErrorType } from '../converter';
 
 import { Convert } from './convert';
 import { isRecord } from './utils';
+import { ConvertKeys } from './json';
 
 // 値が ErrorType のみのプロパティは never として残る（実行時はキーごと消える）
 type ExcludeErrorNode<T> = T extends ErrorType
     ? never
     : T extends CommonType<string>
-      ? { objectKey: string; sourceKey: string } & {
+      ? ConvertKeys & {
             [K in Exclude<keyof T, 'sourceInfo'>]: ExcludeErrorNode<T[K]>;
         }
       : T extends readonly (infer U)[]

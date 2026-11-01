@@ -77,7 +77,7 @@ const makeTypeListJson = (
     return target.value.map((t) => makeTypeJson(t));
 };
 
-type VariantJson = {
+export type VariantJson = {
     name: string | ErrorJson;
     init?: BaseExpressionJson | ErrorJson;
 };
@@ -134,7 +134,7 @@ export const makeMethodDeclarationJson = (
     );
 };
 
-type InterfaceMethodJson = StructureJson<'interfaceMethod', { name: ConvertKeys }> & {
+export type InterfaceMethodJson = StructureJson<'interfaceMethod', { name: ConvertKeys }> & {
     name: string | ErrorJson;
     returnType: 'void' | TypeJson | ErrorJson;
     param?: (ParameterJson | ErrorJson)[] | ErrorJson;
@@ -200,10 +200,13 @@ export const makeInterfaceDeclarationJson = (
 };
 
 export type InitializerBlockJson = {
+    kind: 'initializer';
     block: (StatementJson | ErrorJson)[];
     modifier: ModifiersJson;
     isStatic: boolean;
 };
+
+export type NotSetBlockJson = JsonType<'notSet'>;
 
 export type ClassDeclarationJson = StructureJson<'class', { name: ConvertKeys }> & {
     name: string | ErrorJson;
@@ -216,7 +219,7 @@ export type ClassDeclarationJson = StructureJson<'class', { name: ConvertKeys }>
         | (InterfaceDeclarationJson & { modifier: ModifiersJson })
         | (ConstructorDeclarationJson & { modifier: ModifiersJson })
         | (ClassDeclarationJson & { modifier: ModifiersJson })
-        | JsonType<'notSet'>
+        | NotSetBlockJson
         | ErrorJson
     )[];
     extend?: TypeJson | ErrorJson;
@@ -264,7 +267,10 @@ export const makeClassDeclarationJson = (
                         block.push(
                             makeJsonType(
                                 'notSet',
-                                { objectKey: b.objectKey, sourceKey: b.sourceKey },
+                                {
+                                    objectKey: b.objectKey,
+                                    sourceKey: b.sourceKey,
+                                },
                                 {},
                             ),
                         );
@@ -278,6 +284,7 @@ export const makeClassDeclarationJson = (
                     const modifier = makeModifiersJson(b.modifier);
                     if (member.type === 'block') {
                         block.push({
+                            kind: 'initializer',
                             block: makeBlockJson(member),
                             modifier: modifier,
                             isStatic: b.isStatic,
@@ -355,7 +362,7 @@ export const makeEnumDeclarationJson = (
     );
 };
 
-type AccessorContentJson = {
+export type AccessorContentJson = {
     block?: (StatementJson | ErrorJson)[];
     modifier: ModifiersJson;
 };

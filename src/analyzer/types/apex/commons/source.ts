@@ -8,7 +8,11 @@ export type SourceJson = {
     source: ({ sourceKey: string } & Omit<SourceInfo, 'context'>)[];
 };
 
-export type SourceRegistration = { objectKey: string; sourceKey: string; sourceInfo: SourceInfo };
+export type SourceRegistration = {
+    objectKey: string;
+    sourceKey: string;
+    sourceInfo: SourceInfo;
+};
 
 export const makeSourceObjects = (registrations: (SourceRegistration | null)[]): SourceJson[] => {
     const sourceObjects = new Map<string, SourceJson>();
@@ -122,4 +126,3 @@ export const regenerateSourceObjects = (
 
     return regenerate;
 };
-

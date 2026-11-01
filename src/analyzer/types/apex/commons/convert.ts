@@ -4,11 +4,11 @@ import { CommonType, isCommonType } from '../converter';
 
 import { SourceJson, SourceRegistration, makeSourceObjects } from './source';
 import { hash, isRecord } from './utils';
+import { ConvertKeys } from './json';
 
-// sourceInfo を外し objectKey / sourceKey を付けた形。union は分配されるため type で絞り込める
 type ConvertNode<T> =
     T extends CommonType<string>
-        ? { objectKey: string; sourceKey: string } & {
+        ? ConvertKeys & {
               [K in Exclude<keyof T, 'sourceInfo'>]: ConvertNode<T[K]>;
           }
         : T extends readonly (infer U)[]
@@ -64,9 +64,15 @@ const convertNode = (
         return [converted, keyBody];
     }
 
-    const sourceKey = `${target.type}_${hash(target.sourceInfo)}`;
+    const { context, ...rest } = target.sourceInfo;
+
+    const sourceKey = `${target.type}_${hash(rest)}`;
     const objectKey = `${target.type}_${hash(keyBody)}`;
-    registrations[index] = { objectKey, sourceKey, sourceInfo: target.sourceInfo };
+    registrations[index] = {
+        objectKey,
+        sourceKey,
+        sourceInfo: target.sourceInfo,
+    };
 
     return [{ objectKey, sourceKey, ...converted }, keyBody];
 };
@@ -83,4 +89,3 @@ export const makeConvertType = async <T extends CommonType<string>>(
         sourceObjects: makeSourceObjects(registrations),
     };
 };
-
