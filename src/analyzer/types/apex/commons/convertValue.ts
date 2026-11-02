@@ -29,11 +29,11 @@ const toKeys = (target: unknown): ConvertKeys | ConvertKeys[] | null => {
     if (
         isRecord(target) &&
         typeof target.objectKey === 'string' &&
-        typeof target.sourceKey === 'string' &&
+        typeof target.sourceKey === 'string'
     ) {
         return {
             objectKey: target.objectKey,
-            sourceKey: target.sourceKey
+            sourceKey: target.sourceKey,
         };
     }
     return null;
@@ -110,3 +110,4 @@ export const convertValue = <
 
     return process(target as ConvertExcludeError<TCommonType>, record);
 };
+

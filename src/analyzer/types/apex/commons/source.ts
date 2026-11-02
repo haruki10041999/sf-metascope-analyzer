@@ -1,6 +1,6 @@
 import { SourceInfo } from '../converter';
 
-import { ConvertKeys, JsonType, isJsonType, isStructureJson } from './json';
+import { ConvertKeys, JsonType, isJsonType, isStructureJsonType } from './json';
 
 export type SourceJson = {
     objectKey: string;
@@ -81,7 +81,7 @@ const _gatherSourceKeys = (target: unknown, allKeys: Record<string, string[]>): 
 
     if (isJsonType(target)) {
         addKeys(target.sourceKeys);
-    } else if (isStructureJson(target)) {
+    } else if (isStructureJsonType(target)) {
         Object.values(target.sourceKeys).forEach((value) => {
             (Array.isArray(value) ? value : [value]).forEach(addKeys);
         });
@@ -126,3 +126,4 @@ export const regenerateSourceObjects = (
 
     return regenerate;
 };
+

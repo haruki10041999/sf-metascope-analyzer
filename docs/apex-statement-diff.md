@@ -1,5 +1,7 @@
 # StatementDiff 実装方針
 
+> 文・ブロックの Diff は GumTree で取る方針に変更した（[apex-gumtree-diff.md](./apex-gumtree-diff.md)）。この文書の `objectKey` / `sourceKey` の性質（2 章）は引き続き前提として使う。
+
 `src/analyzer/processor/Apex/diff/statement.ts` の `makeStatementDiff` の実装方針。
 
 ## 1. 目的とスコープ
@@ -102,16 +104,16 @@ const input = [
 
 これらは条件、switch のラベル、catch 節などを表し、トップレベル文 kind としては扱わない。抽出時はそのノード自身のキーを採用せず、子孫に文 kind があれば探索を続ける。
 
-| kind               | 用途                                     |
-| ------------------ | ---------------------------------------- |
-| `doWhileCondition` | do-while の条件                          |
-| `forCondition`     | for の制御部                             |
-| `ifCondition`      | if / else if の条件                      |
-| `runAsCondition`   | runAs の対象                             |
-| `switchVariant`    | switch の型条件                          |
-| `switchCondition`  | switch の when 条件                      |
-| `catchCondition`   | catch の例外名・例外型 (`StructureJson`) |
-| `whileCondition`   | while の条件                             |
+| kind               | 用途                                         |
+| ------------------ | -------------------------------------------- |
+| `doWhileCondition` | do-while の条件                              |
+| `forCondition`     | for の制御部                                 |
+| `ifCondition`      | if / else if の条件                          |
+| `runAsCondition`   | runAs の対象                                 |
+| `switchVariant`    | switch の型条件                              |
+| `switchCondition`  | switch の when 条件                          |
+| `catchCondition`   | catch の例外名・例外型 (`StructureJsonType`) |
+| `whileCondition`   | while の条件                                 |
 
 ### `ErrorJson`
 
@@ -150,11 +152,11 @@ const input = [
 
 `StatementJson` には、`sourceKeys` を持たない要素がある。
 
-| 要素                                                                                                | キー                                                                    |
-| --------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------- |
-| 通常の文 (`JsonType` / `StructureJson`)                                                             | `sourceKeys.objectKey` (`StructureJson` は `sourceKeys.base.objectKey`) |
-| `ErrorJson`                                                                                         | `sourceKeys.objectKey` (通常の文と同じ)                                 |
-| 入れ子の配列 (`{ ... }` のブロック。`StatementJson` 自体が `(StatementJson \| ErrorJson)[]` を含む) | 子のキーの並びから作る: `block_${hash(子のキーの配列)}`                 |
+| 要素                                                                                                | キー                                                                        |
+| --------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------- |
+| 通常の文 (`JsonType` / `StructureJsonType`)                                                         | `sourceKeys.objectKey` (`StructureJsonType` は `sourceKeys.base.objectKey`) |
+| `ErrorJson`                                                                                         | `sourceKeys.objectKey` (通常の文と同じ)                                     |
+| 入れ子の配列 (`{ ... }` のブロック。`StatementJson` 自体が `(StatementJson \| ErrorJson)[]` を含む) | 子のキーの並びから作る: `block_${hash(子のキーの配列)}`                     |
 
 ブロックのキーも子の `objectKey` だけから作るので、「同じなら中身も同じ」という性質は保たれる。
 

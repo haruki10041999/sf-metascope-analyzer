@@ -1,42 +1,51 @@
-import { ConvertKeys, ErrorJson, isErrorJson, ParameterJson, TypeJson } from '../../../types';
+import { ErrorJson, ParameterJson } from '../../../types';
 
+import {
+    ListItemDiff,
+    Match,
+    NodeDiff,
+    Sources,
+    ValueDiff,
+    makeNodeDiff,
+    makeSequenceDiff,
+    makeValueDiff,
+} from './commons';
 import { TypeDiff, makeTypeDiff } from './type';
 import { ModifierDiff, makeModifierDiff } from './modifier';
 
-export type ParameterDiff = {
-    kind: 'parameter';
-    sourceKeys: { before: ConvertKeys };
-    variant:
-        | { status: 'unchanged'; value: string }
-        | { status: 'changed'; before: string; after: string };
-    variantType:
-        | TypeDiff
-        | { status: 'unchanged'; value: TypeJson | ErrorJson }
-        | { status: 'changed'; before: TypeJson | ErrorJson; after: TypeJson | ErrorJson };
-    modifier: ModifierDiff;
+export type ParameterDiff = NodeDiff<
+    'parameter',
+    ParameterJson,
+    {
+        variant: ValueDiff<string>;
+        variantType: TypeDiff;
+        modifier: ModifierDiff[];
+    }
+>;
+
+export const makeParameterDiff = (
+    before: ParameterJson | ErrorJson,
+    after: ParameterJson | ErrorJson,
+    match: Match = 'slot',
+): ParameterDiff => {
+    return makeNodeDiff('parameter', before, after, match, (b, a) => ({
+        variant: makeValueDiff(b.variant, a.variant),
+        variantType: makeTypeDiff(b.variantType, a.variantType),
+        modifier: makeModifierDiff(b.modifier, a.modifier),
+    }));
 };
 
-export const makeParameterDiff = (before: ParameterJson, after: ParameterJson): ParameterDiff => {
-    const variant =
-        before.variant === after.variant
-            ? { status: 'unchanged', value: before.variant }
-            : { status: 'changed', before: before.variant, after: after.variant };
-    const variantType =
-        isErrorJson(before.variantType) || isErrorJson(after.variantType)
-            ? isErrorJson(before.variantType) && isErrorJson(after.variantType)
-                ? { status: 'unchanged', value: before.variantType }
-                : {
-                      status: 'changed',
-                      before: before.variantType,
-                      after: after.variantType,
-                  }
-            : makeTypeDiff(before.variantType, after.variantType);
-    const modifier = makeModifierDiff(before.modifier, after.modifier);
+/** パラメータは位置で識別されるので C. 順序付き列。入れ替えは moved になる */
+export type ParametersDiff = ListItemDiff<'parameter', ParameterJson | ErrorJson, ParameterDiff>;
 
-    return {
-        kind: 'parameter',
-        variant: variant,
-        variantType: variantType,
-        modifier: modifier,
-    };
+export const makeParametersDiff = (
+    before: (ParameterJson | ErrorJson)[],
+    after: (ParameterJson | ErrorJson)[],
+    sources?: Sources,
+): ParametersDiff[] => {
+    // 構文エラーの直し途中 (ErrorJson ↔ ParameterJson) も同じ位置のパラメータとして組にする
+    return makeSequenceDiff('parameter', before, after, makeParameterDiff, {
+        sources,
+        canPair: () => true,
+    });
 };

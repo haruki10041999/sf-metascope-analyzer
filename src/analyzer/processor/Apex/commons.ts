@@ -4,16 +4,17 @@ import {
     JsonType,
     SourceInfo,
     SourceJson,
-    StructureJson,
+    StructureJsonType,
     isJsonType,
-    isStructureJson,
+    isStructureJsonType,
     makeJsonType,
 } from '../../types';
 
 export type ExtractConvertNode<T> = T extends readonly (infer U)[]
     ? ExtractConvertNode<U>[]
     : T extends
-            JsonType<string> | StructureJson<string, Record<string, ConvertKeys | ConvertKeys[]>>
+            | JsonType<string>
+            | StructureJsonType<string, Record<string, ConvertKeys | ConvertKeys[]>>
       ? T extends { kind: infer Kind extends string }
           ? {
                 [K in Kind]: ConvertKeys;
@@ -34,11 +35,13 @@ type ExtractConvertNodeProperties<T> = {
 };
 
 export type ExtractConvert<
-    T extends JsonType<string> | StructureJson<string, Record<string, ConvertKeys | ConvertKeys[]>>,
+    T extends
+        JsonType<string> | StructureJsonType<string, Record<string, ConvertKeys | ConvertKeys[]>>,
 > = ExtractConvertNode<T>;
 
-const makeConvertKeys = (
-    target: JsonType<string> | StructureJson<string, Record<string, ConvertKeys | ConvertKeys[]>>,
+export const makeConvertKeys = (
+    target:
+        JsonType<string> | StructureJsonType<string, Record<string, ConvertKeys | ConvertKeys[]>>,
 ): ConvertKeys => {
     if (isJsonType(target)) {
         return target.sourceKeys;
@@ -60,7 +63,7 @@ const _extractConvertKeys = (target: unknown): unknown => {
         return undefined;
     }
 
-    if (isJsonType(target) || isStructureJson(target)) {
+    if (isJsonType(target) || isStructureJsonType(target)) {
         const { kind } = target;
 
         const children = Object.fromEntries(
@@ -86,7 +89,8 @@ const _extractConvertKeys = (target: unknown): unknown => {
 };
 
 export const extractConvert = <
-    T extends JsonType<string> | StructureJson<string, Record<string, ConvertKeys | ConvertKeys[]>>,
+    T extends
+        JsonType<string> | StructureJsonType<string, Record<string, ConvertKeys | ConvertKeys[]>>,
 >(
     target: unknown,
 ): ExtractConvert<T> => {
@@ -94,7 +98,8 @@ export const extractConvert = <
 };
 
 export const matchdJsonIndexes = <
-    T extends JsonType<string> | StructureJson<string, Record<string, ConvertKeys | ConvertKeys[]>>,
+    T extends
+        JsonType<string> | StructureJsonType<string, Record<string, ConvertKeys | ConvertKeys[]>>,
 >(
     target: T[],
     objectKey: string,
@@ -136,27 +141,24 @@ export const findConvertKeys = (target: unknown, property: Set<string>): Convert
 };
 
 export const findSourceInfo = <
-    T extends JsonType<string> | StructureJson<string, Record<string, ConvertKeys | ConvertKeys[]>>,
+    T extends
+        JsonType<string> | StructureJsonType<string, Record<string, ConvertKeys | ConvertKeys[]>>,
 >(
     sourceInfo: SourceJson[],
     baseJson: T,
 ): { sourceKeys: ConvertKeys } & SourceInfo => {
-    sourceInfo.forEach((si) => {
-        if (si.objectKey === baseJson.sourceKeys.objectKey) {
-            const source = si.source;
+    const baseConvertKeys = makeConvertKeys(baseJson);
+    const si = sourceInfo.find((si) => si.objectKey === baseConvertKeys.objectKey);
+    const s = si?.source.find((s) => s.sourceKey === baseConvertKeys.sourceKey);
 
-            source.forEach((s) => {
-                if (s.sourceKey === baseJson.sourceKeys.sourceKey) {
-                    const { sourceKey, ...rest } = s;
-                    return {
-                        sourceKeys: { objectKey: si.objectKey, sourceKey: sourceKey },
-                        context: si.context,
-                        ...rest,
-                    };
-                }
-            });
-        }
-    });
+    if (si && s) {
+        const { sourceKey, ...rest } = s;
+        return {
+            sourceKeys: { objectKey: si.objectKey, sourceKey: sourceKey },
+            context: si.context,
+            ...rest,
+        };
+    }
 
     throw new Error(
         `target is not found:${JSON.stringify({ kind: baseJson.kind, sourcekeys: baseJson.sourceKeys })}`,
@@ -164,7 +166,8 @@ export const findSourceInfo = <
 };
 
 const _findJson = <
-    T extends JsonType<string> | StructureJson<string, Record<string, ConvertKeys | ConvertKeys[]>>,
+    T extends
+        JsonType<string> | StructureJsonType<string, Record<string, ConvertKeys | ConvertKeys[]>>,
 >(
     target: unknown,
     baseJson: T,
@@ -185,7 +188,7 @@ const _findJson = <
         return undefined;
     }
 
-    if (isJsonType(target) || isStructureJson(target)) {
+    if (isJsonType(target) || isStructureJsonType(target)) {
         const baseConvertKeys = makeConvertKeys(baseJson);
         const convertKeys = makeConvertKeys(target);
 
@@ -210,11 +213,12 @@ const _findJson = <
 };
 
 export const findJson = <
-    T extends JsonType<string> | StructureJson<string, Record<string, ConvertKeys | ConvertKeys[]>>,
+    T extends
+        JsonType<string> | StructureJsonType<string, Record<string, ConvertKeys | ConvertKeys[]>>,
 >(
     target: unknown,
     baseJson: T,
-): JsonType<string> | StructureJson<string, Record<string, ConvertKeys | ConvertKeys[]>> => {
+): JsonType<string> | StructureJsonType<string, Record<string, ConvertKeys | ConvertKeys[]>> => {
     const targetJson = _findJson(target, baseJson);
 
     if (!targetJson) {
@@ -240,14 +244,15 @@ export const findErrorJsons = (
 };
 
 const _matchedObjectJson = <
-    T extends JsonType<string> | StructureJson<string, Record<string, ConvertKeys | ConvertKeys[]>>,
+    T extends
+        JsonType<string> | StructureJsonType<string, Record<string, ConvertKeys | ConvertKeys[]>>,
 >(
     target: unknown,
     baseJson: T,
     results: T[],
 ):
     | JsonType<string>
-    | StructureJson<string, Record<string, ConvertKeys | ConvertKeys[]>>
+    | StructureJsonType<string, Record<string, ConvertKeys | ConvertKeys[]>>
     | undefined => {
     if (Array.isArray(target)) {
         for (const value of target) {
@@ -259,7 +264,7 @@ const _matchedObjectJson = <
         return undefined;
     }
 
-    if (isJsonType(target) || isStructureJson(target)) {
+    if (isJsonType(target) || isStructureJsonType(target)) {
         const baseConvertKeys = makeConvertKeys(baseJson);
         const convertKeys = makeConvertKeys(target);
 
@@ -274,7 +279,8 @@ const _matchedObjectJson = <
 };
 
 export const matchedObjectJson = <
-    T extends JsonType<string> | StructureJson<string, Record<string, ConvertKeys | ConvertKeys[]>>,
+    T extends
+        JsonType<string> | StructureJsonType<string, Record<string, ConvertKeys | ConvertKeys[]>>,
 >(
     target: unknown,
     baseJson: T,
@@ -316,5 +322,30 @@ export const getSourceDistance = (
         range,
         center,
     };
+};
+
+// 範囲の隙間 → 中心 → 始点 → 終点 の順で比較し、小さいほど近い
+export const compareSourceDistance = (a: SourceDistance, b: SourceDistance): number => {
+    return a.range - b.range || a.center - b.center || a.start - b.start || a.end - b.end;
+};
+
+export const findNearestIndex = <T>(
+    base: { sourceKeys: ConvertKeys } & SourceInfo,
+    candidates: T[],
+    getSourceInfo: (candidate: T) => { sourceKeys: ConvertKeys } & SourceInfo,
+): number => {
+    let nearestIndex = -1;
+    let nearestDistance: SourceDistance | undefined;
+
+    candidates.forEach((candidate, index) => {
+        const distance = getSourceDistance(base, getSourceInfo(candidate));
+
+        if (!nearestDistance || compareSourceDistance(distance, nearestDistance) < 0) {
+            nearestIndex = index;
+            nearestDistance = distance;
+        }
+    });
+
+    return nearestIndex;
 };
 

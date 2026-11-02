@@ -19,7 +19,7 @@ export const isSpecificJsonType = <T extends string>(
     return isJsonType(target) && types.includes(target.kind as T);
 };
 
-export type StructureJson<
+export type StructureJsonType<
     TKind extends string,
     TRecord extends Record<string, ConvertKeys | ConvertKeys[]>,
 > = {
@@ -27,8 +27,8 @@ export type StructureJson<
     sourceKeys: { base: ConvertKeys } & TRecord;
 };
 
-export const isStructureJson =
-    typia.createIs<StructureJson<string, Record<string, ConvertKeys | ConvertKeys[]>>>();
+export const isStructureJsonType =
+    typia.createIs<StructureJsonType<string, Record<string, ConvertKeys | ConvertKeys[]>>>();
 
 export type ErrorJson = JsonType<'error'> & {
     kind: 'error';
@@ -77,10 +77,11 @@ export const makeStructureJson = <
     kind: TKind,
     sourceKeys: { base: ConvertKeys } & TRecord,
     properties?: TProperties,
-): StructureJson<TKind, { base: ConvertKeys } & TRecord> & TProperties => {
+): StructureJsonType<TKind, { base: ConvertKeys } & TRecord> & TProperties => {
     return {
         kind,
         sourceKeys,
         ...properties,
-    } as StructureJson<TKind, { base: ConvertKeys } & TRecord> & TProperties;
+    } as StructureJsonType<TKind, { base: ConvertKeys } & TRecord> & TProperties;
 };
+

@@ -6,7 +6,7 @@ import {
     ConvertWithError,
     ErrorJson,
     JsonType,
-    StructureJson,
+    StructureJsonType,
     convertValue,
     isErrorNode,
     makeErrorJson,
@@ -43,7 +43,7 @@ const ERROR_KIND = 'declaration';
 /**
  * 宣言は境界ノード。field は初期値まで含めて部分木全体を検査し、
  * それ以外（本体を持つ宣言）はノード自身だけを検査する。本体・引数・型は子の変換関数がエラーを処理する。
- * StructureJson の sourceKeys には、宣言全体（base）と名前（name）の位置を持つ。
+ * StructureJsonType の sourceKeys には、宣言全体（base）と名前（name）の位置を持つ。
  */
 const DECLARATION_OPTIONS = { exclude: 'children', record: { name: 'value' } } as const;
 
@@ -100,7 +100,7 @@ const makeVariantsJson = (
     });
 };
 
-export type MethodDeclarationJson = StructureJson<'method', { name: ConvertKeys }> & {
+export type MethodDeclarationJson = StructureJsonType<'method', { name: ConvertKeys }> & {
     name: string | ErrorJson;
     returnType: 'void' | TypeJson | ErrorJson;
     param?: (ParameterJson | ErrorJson)[] | ErrorJson;
@@ -134,7 +134,7 @@ export const makeMethodDeclarationJson = (
     );
 };
 
-export type InterfaceMethodJson = StructureJson<'interfaceMethod', { name: ConvertKeys }> & {
+export type InterfaceMethodJson = StructureJsonType<'interfaceMethod', { name: ConvertKeys }> & {
     name: string | ErrorJson;
     returnType: 'void' | TypeJson | ErrorJson;
     param?: (ParameterJson | ErrorJson)[] | ErrorJson;
@@ -166,7 +166,7 @@ const makeInterfaceMethodJson = (
     );
 };
 
-export type InterfaceDeclarationJson = StructureJson<'interface', { name: ConvertKeys }> & {
+export type InterfaceDeclarationJson = StructureJsonType<'interface', { name: ConvertKeys }> & {
     name: string | ErrorJson;
     block?: (InterfaceMethodJson | ErrorJson)[] | ErrorJson;
     extend?: (TypeJson | ErrorJson)[] | ErrorJson;
@@ -208,7 +208,7 @@ export type InitializerBlockJson = {
 
 export type NotSetBlockJson = JsonType<'notSet'>;
 
-export type ClassDeclarationJson = StructureJson<'class', { name: ConvertKeys }> & {
+export type ClassDeclarationJson = StructureJsonType<'class', { name: ConvertKeys }> & {
     name: string | ErrorJson;
     block: (
         | InitializerBlockJson
@@ -327,7 +327,7 @@ const makeEnumConstantJson = (target: ConvertType<IdType>): EnumConstantJson | E
     );
 };
 
-export type EnumDeclarationJson = StructureJson<'enum', { name: ConvertKeys }> & {
+export type EnumDeclarationJson = StructureJsonType<'enum', { name: ConvertKeys }> & {
     name: string | ErrorJson;
     members?: (EnumConstantJson | ErrorJson)[] | ErrorJson;
 };
@@ -367,7 +367,7 @@ export type AccessorContentJson = {
     modifier: ModifiersJson;
 };
 
-export type PropertyDeclarationJson = StructureJson<'property', { name: ConvertKeys }> & {
+export type PropertyDeclarationJson = StructureJsonType<'property', { name: ConvertKeys }> & {
     name: string | ErrorJson;
     variantType: TypeJson | ErrorJson;
     isGetter: boolean;
@@ -456,7 +456,7 @@ export const makeFieldDeclarationJson = (
     );
 };
 
-export type ConstructorDeclarationJson = StructureJson<'constructor', { name: ConvertKeys }> & {
+export type ConstructorDeclarationJson = StructureJsonType<'constructor', { name: ConvertKeys }> & {
     name: (string | ErrorJson)[] | ErrorJson;
     param?: (ParameterJson | ErrorJson)[] | ErrorJson;
     block: (StatementJson | ErrorJson)[];
@@ -543,3 +543,4 @@ export const makeMemberDeclarationJson = (
         return makeConstructorDeclarationJson(declaration);
     }
 };
+

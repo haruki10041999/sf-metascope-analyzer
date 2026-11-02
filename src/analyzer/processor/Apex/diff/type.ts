@@ -1,6 +1,8 @@
 import {
     ArrayTypeContentJson,
+    ConvertKeys,
     CustomTypeContentJson,
+    ErrorJson,
     ListTypeContentJson,
     MapTypeContentJson,
     PrimitiveTypeContentJson,
@@ -9,317 +11,288 @@ import {
     TypeJson,
 } from '../../../types';
 
-export type PrimitiveTypeContentDiff = {
+import {
+    Body,
+    ListItemDiff,
+    Match,
+    NodeDiff,
+    Sources,
+    ValueDiff,
+    isSameValue,
+    makeNodeDiff,
+    makeSetDiff,
+    makeValueDiff,
+    pairAsSequence,
+    toBody,
+} from './commons';
+
+// ---------------------------------------------------------------------------
+// 型の中身 (TypeContentJson) の差分
+// ---------------------------------------------------------------------------
+
+export type PrimitiveTypeShapeDiff = {
     type: 'primitive';
-    primitiveType:
-        | {
-              status: 'unchanged';
-              value: string;
-          }
-        | {
-              status: 'changed';
-              value: { before: string; after: string };
-          };
+    primitiveType: ValueDiff<string>;
 };
 
-export const makePrimitiveTypeContentDiff = (
-    before: PrimitiveTypeContentJson,
-    after: PrimitiveTypeContentJson,
-): PrimitiveTypeContentDiff => {
-    if (before.primitiveType === after.primitiveType) {
-        return {
-            type: 'primitive',
-            primitiveType: {
-                status: 'unchanged',
-                value: before.primitiveType,
-            },
-        };
-    } else {
-        return {
-            type: 'primitive',
-            primitiveType: {
-                status: 'changed',
-                value: { before: before.primitiveType, after: after.primitiveType },
-            },
-        };
-    }
-};
+export type CustomTypePartDiff = ValueDiff<string> | { status: 'added' | 'removed'; value: string };
 
-export type CustomTypeContentDiff = {
+/** generic は C. 順序付き列 (位置が意味を持つ) */
+export type GenericDiff =
+    | (TypeContentDiff & { index: { before: number; after: number } })
+    | {
+          status: 'moved';
+          match: Match;
+          index: { before: number; after: number };
+          value: TypeContentJson;
+      }
+    | { status: 'added' | 'removed'; index: number; value: TypeContentJson };
+
+export type CustomTypeShapeDiff = {
     type: 'custom';
-    customType:
-        | {
-              status: 'unchanged';
-              value: string | string[];
-          }
-        | {
-              status: 'changed';
-              value:
-                  | { before: string | string[]; after: string | string[] }
-                  | (
-                        | {
-                              status: 'added' | 'removed' | 'unchanged';
-                              value: string;
-                          }
-                        | {
-                              status: 'changed';
-                              before: string;
-                              after: string;
-                          }
-                    )[];
-          };
-    generic?:
-        | (TypeContentDiff | { status: 'added' | 'removed'; value: TypeContentJson })[]
-        | { status: 'changed'; before: TypeContentJson[] | null; after: TypeContentJson[] | null };
+    customType: ValueDiff<string | string[]> | { status: 'changed'; parts: CustomTypePartDiff[] };
+    generic: GenericDiff[];
 };
 
-export const makeCustomTypeContentDiff = (
-    before: CustomTypeContentJson,
-    after: CustomTypeContentJson,
-): CustomTypeContentDiff => {
-    let customTypeDiff: CustomTypeContentDiff['customType'];
-
-    if (
-        (typeof before.customType === 'string' &&
-            typeof after.customType === 'string' &&
-            before.customType === after.customType) ||
-        (Array.isArray(before.customType) &&
-            Array.isArray(after.customType) &&
-            before.customType.every((b, index) => b === after.customType[index]))
-    ) {
-        customTypeDiff = {
-            status: 'unchanged',
-            value: before.customType,
-        };
-    } else if (Array.isArray(before.customType) && Array.isArray(after.customType)) {
-        const customTypeArrayDiff: (
-            | {
-                  status: 'added' | 'removed' | 'unchanged';
-                  value: string;
-              }
-            | {
-                  status: 'changed';
-                  before: string;
-                  after: string;
-              }
-        )[] = [];
-
-        const length = Math.max(before.customType.length, after.customType.length);
-
-        for (let index = 0; index < length; index++) {
-            const b = before.customType[index];
-            const a = after.customType[index];
-
-            if (b === undefined && a !== undefined) {
-                customTypeArrayDiff.push({
-                    status: 'added',
-                    value: a,
-                });
-            } else if (b !== undefined && a === undefined) {
-                customTypeArrayDiff.push({
-                    status: 'removed',
-                    value: b,
-                });
-            } else if (b !== undefined && a !== undefined) {
-                if (b === a) {
-                    customTypeArrayDiff.push({
-                        status: 'unchanged',
-                        value: b,
-                    });
-                } else {
-                    customTypeArrayDiff.push({
-                        status: 'changed',
-                        before: b,
-                        after: a,
-                    });
-                }
-            }
-        }
-
-        customTypeDiff = {
-            status: 'changed',
-            value: customTypeArrayDiff,
-        };
-    } else {
-        customTypeDiff = {
-            status: 'changed',
-            value: { before: before.customType, after: after.customType },
-        };
-    }
-
-    const diff: CustomTypeContentDiff = {
-        type: 'custom',
-        customType: customTypeDiff,
-    };
-
-    if (before.generic || after.generic) {
-        if (before.generic && after.generic) {
-            const genericDiff: (
-                TypeContentDiff | { status: 'added' | 'removed'; value: TypeContentJson }
-            )[] = [];
-            const _after = [...after.generic];
-
-            const length = Math.max(before.generic.length, after.generic.length);
-
-            for (let index = 0; index < length; index++) {
-                const b = before.generic[index];
-                const a = after.generic[index];
-
-                if (b === undefined && a !== undefined) {
-                    genericDiff.push({ status: 'added', value: a });
-                } else if (b !== undefined && a === undefined) {
-                    genericDiff.push({
-                        status: 'removed',
-                        value: b,
-                    });
-                } else if (b !== undefined && a !== undefined) {
-                    const typeContentDiff = makeTypeContentDiff(b, a);
-                    genericDiff.push(typeContentDiff);
-                }
-            }
-            diff.generic = genericDiff;
-        } else {
-            diff.generic = {
-                status: 'changed',
-                before: before.generic || null,
-                after: after.generic || null,
-            };
-        }
-    }
-
-    return diff;
-};
-
-export type ArrayTypeContentDiff = {
+export type ArrayTypeShapeDiff = {
     type: 'array';
     elementType: TypeContentDiff;
-    dimention:
-        | {
-              status: 'unchanged';
-              value: number;
-          }
-        | {
-              status: 'changed';
-              value: { before: number; after: number };
-          };
+    dimension: ValueDiff<number>;
 };
 
-export const makeArrayTypeContentDiff = (
-    before: ArrayTypeContentJson,
-    after: ArrayTypeContentJson,
-): ArrayTypeContentDiff => {
-    const elementTypeContentDiff = makeTypeContentDiff(before.elementType, after.elementType);
-
-    return {
-        type: 'array',
-        elementType: elementTypeContentDiff,
-        dimention:
-            before.dimension === after.dimension
-                ? { status: 'unchanged', value: before.dimension }
-                : {
-                      status: 'changed',
-                      value: { before: before.dimension, after: after.dimension },
-                  },
-    };
-};
-
-export type ListTypeContentDiff = {
+export type ListTypeShapeDiff = {
     type: 'list';
     elementType: TypeContentDiff;
 };
 
-export const makeListTypeContentDiff = (
-    before: ListTypeContentJson,
-    after: ListTypeContentJson,
-): ListTypeContentDiff => {
-    return {
-        type: 'list',
-        elementType: makeTypeContentDiff(before.elementType, after.elementType),
-    };
-};
-
-export type SetTypeContentDiff = {
+export type SetTypeShapeDiff = {
     type: 'set';
     elementType: TypeContentDiff;
 };
 
-export const makeSetTypeContentDiff = (
-    before: SetTypeContentJson,
-    after: SetTypeContentJson,
-): SetTypeContentDiff => {
-    return {
-        type: 'set',
-        elementType: makeTypeContentDiff(before.elementType, after.elementType),
-    };
-};
-
-export type MapTypeContentDiff = {
+export type MapTypeShapeDiff = {
     type: 'map';
     keyType: TypeContentDiff;
     valueType: TypeContentDiff;
 };
 
-export const makeMapTypeContentDiff = (
-    before: MapTypeContentJson,
-    after: MapTypeContentJson,
-): MapTypeContentDiff => {
-    return {
-        type: 'map',
-        keyType: makeTypeContentDiff(before.keyType, after.keyType),
-        valueType: makeTypeContentDiff(before.valueType, after.valueType),
-    };
-};
+/** type が同じ型同士のプロパティごとの差分 */
+export type TypeShapeDiff =
+    | PrimitiveTypeShapeDiff
+    | CustomTypeShapeDiff
+    | ArrayTypeShapeDiff
+    | ListTypeShapeDiff
+    | SetTypeShapeDiff
+    | MapTypeShapeDiff;
 
 export type TypeContentDiff =
-    | PrimitiveTypeContentDiff
-    | CustomTypeContentDiff
-    | ArrayTypeContentDiff
-    | ListTypeContentDiff
-    | SetTypeContentDiff
-    | MapTypeContentDiff
-    | {
-          status: 'changed';
-          before: TypeContentJson;
-          after: TypeContentJson;
-      };
+    | { status: 'unchanged'; value: TypeContentJson }
+    | { status: 'changed'; fields: TypeShapeDiff }
+    | { status: 'changed'; before: TypeContentJson; after: TypeContentJson };
+
+/** 修飾名 (a.b.C) は後ろ揃えで要素を対応付ける */
+const makeCustomTypeNameDiff = (
+    before: CustomTypeContentJson['customType'],
+    after: CustomTypeContentJson['customType'],
+): CustomTypeShapeDiff['customType'] => {
+    if (!Array.isArray(before) || !Array.isArray(after) || isSameValue(before, after)) {
+        return makeValueDiff(before, after);
+    }
+
+    const parts: CustomTypePartDiff[] = [];
+    const length = Math.max(before.length, after.length);
+
+    for (let offset = 1; offset <= length; offset++) {
+        const b = before[before.length - offset];
+        const a = after[after.length - offset];
+
+        if (b === undefined && a !== undefined) {
+            parts.push({ status: 'added', value: a });
+        } else if (b !== undefined && a === undefined) {
+            parts.push({ status: 'removed', value: b });
+        } else if (b !== undefined && a !== undefined) {
+            parts.push(makeValueDiff(b, a));
+        }
+    }
+
+    return { status: 'changed', parts: parts.reverse() };
+};
+
+const makeGenericDiff = (before: TypeContentJson[], after: TypeContentJson[]): GenericDiff[] => {
+    const pairings = pairAsSequence(
+        before.map((b) => JSON.stringify(b)),
+        after.map((a) => JSON.stringify(a)),
+    );
+
+    return pairings.map((p): GenericDiff => {
+        if (p.status === 'removed') {
+            return { status: 'removed', index: p.before, value: before[p.before]! };
+        }
+        if (p.status === 'added') {
+            return { status: 'added', index: p.after, value: after[p.after]! };
+        }
+
+        const index = { before: p.before, after: p.after };
+        if (p.status === 'moved') {
+            return { status: 'moved', match: p.match, index, value: before[p.before]! };
+        }
+        return { ...makeTypeContentDiff(before[p.before]!, after[p.after]!), index };
+    });
+};
+
+const makeTypeShapeDiff = (
+    before: TypeContentJson,
+    after: TypeContentJson,
+): TypeShapeDiff | undefined => {
+    if (before.type === 'primitive' && after.type === 'primitive') {
+        return makePrimitiveTypeShapeDiff(before, after);
+    } else if (before.type === 'custom' && after.type === 'custom') {
+        return makeCustomTypeShapeDiff(before, after);
+    } else if (before.type === 'array' && after.type === 'array') {
+        return makeArrayTypeShapeDiff(before, after);
+    } else if (before.type === 'list' && after.type === 'list') {
+        return makeListTypeShapeDiff(before, after);
+    } else if (before.type === 'set' && after.type === 'set') {
+        return makeSetTypeShapeDiff(before, after);
+    } else if (before.type === 'map' && after.type === 'map') {
+        return makeMapTypeShapeDiff(before, after);
+    }
+
+    return undefined;
+};
+
+export const makePrimitiveTypeShapeDiff = (
+    before: PrimitiveTypeContentJson,
+    after: PrimitiveTypeContentJson,
+): PrimitiveTypeShapeDiff => ({
+    type: 'primitive',
+    primitiveType: makeValueDiff(before.primitiveType, after.primitiveType),
+});
+
+export const makeCustomTypeShapeDiff = (
+    before: CustomTypeContentJson,
+    after: CustomTypeContentJson,
+): CustomTypeShapeDiff => ({
+    type: 'custom',
+    customType: makeCustomTypeNameDiff(before.customType, after.customType),
+    generic: makeGenericDiff(before.generic ?? [], after.generic ?? []),
+});
+
+export const makeArrayTypeShapeDiff = (
+    before: ArrayTypeContentJson,
+    after: ArrayTypeContentJson,
+): ArrayTypeShapeDiff => ({
+    type: 'array',
+    elementType: makeTypeContentDiff(before.elementType, after.elementType),
+    dimension: makeValueDiff(before.dimension, after.dimension),
+});
+
+export const makeListTypeShapeDiff = (
+    before: ListTypeContentJson,
+    after: ListTypeContentJson,
+): ListTypeShapeDiff => ({
+    type: 'list',
+    elementType: makeTypeContentDiff(before.elementType, after.elementType),
+});
+
+export const makeSetTypeShapeDiff = (
+    before: SetTypeContentJson,
+    after: SetTypeContentJson,
+): SetTypeShapeDiff => ({
+    type: 'set',
+    elementType: makeTypeContentDiff(before.elementType, after.elementType),
+});
+
+export const makeMapTypeShapeDiff = (
+    before: MapTypeContentJson,
+    after: MapTypeContentJson,
+): MapTypeShapeDiff => ({
+    type: 'map',
+    keyType: makeTypeContentDiff(before.keyType, after.keyType),
+    valueType: makeTypeContentDiff(before.valueType, after.valueType),
+});
 
 export const makeTypeContentDiff = (
     before: TypeContentJson,
     after: TypeContentJson,
 ): TypeContentDiff => {
-    if (before.type === 'primitive' && after.type === 'primitive') {
-        return makePrimitiveTypeContentDiff(before, after);
-    } else if (before.type === 'custom' && after.type === 'custom') {
-        return makeCustomTypeContentDiff(before, after);
-    } else if (before.type === 'list' && after.type === 'list') {
-        return makeListTypeContentDiff(before, after);
-    } else if (before.type === 'set' && after.type === 'set') {
-        return makeSetTypeContentDiff(before, after);
-    } else if (before.type === 'map' && after.type === 'map') {
-        return makeMapTypeContentDiff(before, after);
-    } else if (before.type === 'array' && after.type === 'array') {
-        return makeArrayTypeContentDiff(before, after);
-    } else {
-        return {
-            status: 'changed',
-            before: before,
-            after: after,
-        };
+    if (isSameValue(before, after)) {
+        return { status: 'unchanged', value: before };
     }
+
+    const fields = makeTypeShapeDiff(before, after);
+
+    return fields
+        ? { status: 'changed', fields: fields }
+        : { status: 'changed', before: before, after: after };
 };
 
-export type TypeDiff = {
-    kind: 'type';
-    sourceKeys: { before: TypeJson['sourceKeys']; after: TypeJson['sourceKeys'] };
-} & TypeContentDiff;
+// ---------------------------------------------------------------------------
+// TypeJson (ノード) の差分
+// ---------------------------------------------------------------------------
 
-export const makeTypeDiff = (before: TypeJson, after: TypeJson): TypeDiff => {
-    const { kind: _beforeKind, sourceKeys: beforeSourceKeys, ...beforeRest } = before;
-    const { kind: _afterKind, sourceKeys: afterSourceKeys, ...afterRest } = after;
+export type TypeDiff = NodeDiff<'type', TypeJson, TypeShapeDiff>;
+
+export const makeTypeDiff = (
+    before: TypeJson | ErrorJson,
+    after: TypeJson | ErrorJson,
+    match: Match = 'slot',
+): TypeDiff => {
+    return makeNodeDiff('type', before, after, match, (b, a) =>
+        makeTypeShapeDiff(toBody(b) as TypeContentJson, toBody(a) as TypeContentJson),
+    );
+};
+
+export type TypeWithVoidDiff =
+    | TypeDiff
+    | { kind: 'type'; status: 'unchanged'; value: 'void' }
+    | {
+          kind: 'type';
+          sourceKeys: { before?: ConvertKeys; after?: ConvertKeys };
+          status: 'changed';
+          match: Match;
+          before: Body<TypeJson | ErrorJson> | 'void';
+          after: Body<TypeJson | ErrorJson> | 'void';
+      };
+
+export const makeTypeWithVoidDiff = (
+    before: 'void' | TypeJson | ErrorJson,
+    after: 'void' | TypeJson | ErrorJson,
+    match: Match = 'slot',
+): TypeWithVoidDiff => {
+    if (before === 'void' && after === 'void') {
+        return { kind: 'type', status: 'unchanged', value: 'void' };
+    }
+
+    if (before !== 'void' && after !== 'void') {
+        return makeTypeDiff(before, after, match);
+    }
 
     return {
         kind: 'type',
-        sourceKeys: { before: beforeSourceKeys, after: afterSourceKeys },
-        ...makeTypeContentDiff(beforeRest, afterRest),
+        sourceKeys: {
+            ...(before !== 'void' ? { before: before.sourceKeys } : {}),
+            ...(after !== 'void' ? { after: after.sourceKeys } : {}),
+        },
+        status: 'changed',
+        match,
+        before: before === 'void' ? 'void' : toBody(before),
+        after: after === 'void' ? 'void' : toBody(after),
     };
+};
+
+/** 型の並び (implements / interface の extends)。順序は意味を持たないので B. 集合 */
+export type TypesDiff = ListItemDiff<'type', TypeJson | ErrorJson, TypeDiff>;
+
+export const makeTypesDiff = (
+    before: (TypeJson | ErrorJson)[],
+    after: (TypeJson | ErrorJson)[],
+    sources?: Sources,
+): TypesDiff[] => {
+    return makeSetDiff('type', before, after, makeTypeDiff, sources);
+};
+
+/** オーバーロードの識別などに使う、型の比較用キー */
+export const getTypeKey = (target: TypeJson | ErrorJson): string => {
+    return target.kind === 'error' ? 'error' : JSON.stringify(toBody(target));
 };

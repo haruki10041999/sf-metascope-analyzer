@@ -8,13 +8,13 @@ import {
     ErrorJson,
     JsonType,
     makeJsonType,
-    StructureJson,
+    StructureJsonType,
     makeStructureJson,
     isErrorNode,
     makeErrorJson,
     ConvertKeys,
     isJsonType,
-    isStructureJson,
+    isStructureJsonType,
 } from './commons';
 
 import {
@@ -596,7 +596,7 @@ export const makeThrowStatementJson = (
     );
 };
 
-export type CatchConditionJson = StructureJson<
+export type CatchConditionJson = StructureJsonType<
     'catchCondition',
     {
         exception: ConvertKeys;
@@ -919,3 +919,4 @@ export const makeBlockJson = (target: ConvertType<BlockType>): (StatementJson | 
 
     return target.value.map((s) => makeStatementJson(s));
 };
+

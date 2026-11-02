@@ -1,6 +1,14 @@
 import { ErrorFileStructureType, FileStructureType } from '../../../parser';
 import { CompilationUnitJson } from '../../../types';
 
+import {
+    TypeDeclarationDiff,
+    UnitContentDiff,
+    makeTypeDeclarationDiff,
+    hasChange,
+    makeUnitContentDiff,
+} from './unitBody';
+
 export type UnitDiffAttribute<T> = {
     before: T;
     after: T;
@@ -14,7 +22,7 @@ export type UnitDiffAttributeArray<T> = {
 
 export type UnitDiff =
     | {
-          status: 'add' | 'removed';
+          status: 'added' | 'removed';
           filePath: (FileStructureType | ErrorFileStructureType)['filePath'];
           dataType: (FileStructureType | ErrorFileStructureType)['dataType'];
           resolvedError: (FileStructureType | ErrorFileStructureType)['resolvedError'];
@@ -26,6 +34,8 @@ export type UnitDiff =
           dataType: (FileStructureType | ErrorFileStructureType)['dataType'];
           resolvedError: (FileStructureType | ErrorFileStructureType)['resolvedError'];
           target: UnitDiffAttribute<(FileStructureType | ErrorFileStructureType)['result']>;
+          // ファイルの中身の差分 (dataType が同じで、どちらもエラーでないとき)
+          content?: UnitContentDiff;
       }
     | {
           status: 'changed';
@@ -39,9 +49,10 @@ export type UnitDiff =
                     (FileStructureType | ErrorFileStructureType)['resolvedError'][number]
                 >;
           target: UnitDiffAttribute<(FileStructureType | ErrorFileStructureType)['result']>;
+          content?: UnitContentDiff;
       };
 
-export type ClsFileDiff =
+export type ClsFileDiff = (
     | {
           status: 'unchanged';
           kind: FileStructureType<CompilationUnitJson>['result']['base']['kind'];
@@ -51,7 +62,11 @@ export type ClsFileDiff =
           status: 'changed';
           kind: UnitDiffAttribute<FileStructureType<CompilationUnitJson>['result']['base']['kind']>;
           target: UnitDiffAttribute<FileStructureType<CompilationUnitJson>['result']>;
-      };
+      }
+) & {
+    // 型宣言 (class / interface / enum) の中身の差分
+    content: TypeDeclarationDiff;
+};
 
 const makeResolvedErrorDiff = (
     before: (FileStructureType | ErrorFileStructureType)['resolvedError'],
@@ -67,7 +82,7 @@ const makeResolvedErrorDiff = (
         const objectKey = b.sourceKeys.objectKey;
         const index = _after.findIndex((a) => a.sourceKeys.objectKey === objectKey);
 
-        if (index !== -1) {
+        if (index === -1) {
             _before.push(b);
         } else {
             common.push(b);
@@ -119,11 +134,16 @@ export const makeUnitDiffs = (
 
             const isSameDataType = dataType === afterDataType;
             const resolvedErrorDiff = makeResolvedErrorDiff(resolvedError, afterResolvedError);
+            const content =
+                isSameDataType && dataType !== 'error'
+                    ? makeUnitContentDiff(dataType, result, afterResult)
+                    : undefined;
 
             if (
                 isSameDataType &&
                 resolvedErrorDiff.before.length === 0 &&
-                resolvedErrorDiff.after.length === 0
+                resolvedErrorDiff.after.length === 0 &&
+                !hasChange(content)
             ) {
                 unitDiff.push({
                     status: 'unchanged',
@@ -131,6 +151,7 @@ export const makeUnitDiffs = (
                     dataType: dataType,
                     resolvedError: resolvedErrorDiff.common,
                     target: target,
+                    ...(content ? { content } : {}),
                 });
             } else {
                 unitDiff.push({
@@ -145,6 +166,7 @@ export const makeUnitDiffs = (
                             ? resolvedErrorDiff.common
                             : resolvedErrorDiff,
                     target: target,
+                    ...(content ? { content } : {}),
                 });
             }
 
@@ -155,7 +177,7 @@ export const makeUnitDiffs = (
     _after.forEach((a) => {
         const { dataType, filePath, resolvedError, result } = a;
         unitDiff.push({
-            status: 'add',
+            status: 'added',
             filePath: filePath,
             dataType: dataType,
             resolvedError: resolvedError,
@@ -172,17 +194,24 @@ export const makeClsFileDiff = (
     const clsFileDiff: ClsFileDiff[] = [];
 
     target.forEach((t) => {
+        const content = makeTypeDeclarationDiff(t.before.base, t.after.base, {
+            before: t.before.sourceObject,
+            after: t.after.sourceObject,
+        });
+
         if (t.before.base.kind === t.after.base.kind) {
             clsFileDiff.push({
                 status: 'unchanged',
                 kind: t.before.base.kind,
                 target: t,
+                content,
             });
         } else {
             clsFileDiff.push({
                 status: 'changed',
                 kind: { before: t.before.base.kind, after: t.after.base.kind },
                 target: t,
+                content,
             });
         }
     });
