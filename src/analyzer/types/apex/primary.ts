@@ -31,7 +31,7 @@ const makeStringPrimary = (
     return target.value.value;
 };
 
-type LiteralPrimaryJson = {
+export type LiteralPrimaryJson = {
     value: string;
     valueType: 'integer' | 'long' | 'number' | 'string' | 'longText' | 'boolean' | 'null';
 };

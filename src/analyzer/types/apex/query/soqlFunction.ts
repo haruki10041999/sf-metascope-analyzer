@@ -42,7 +42,7 @@ const makeSoqlFieldParameterJson = (
     return target.value;
 };
 
-type CoordinateElementJson =
+export type CoordinateElementJson =
     | {
           type: 'bind';
           value: BaseExpressionJson | ErrorJson;
@@ -82,7 +82,7 @@ const makeCoordinateElementParamJson = (
     }
 };
 
-type CoordinateValueJson = {
+export type CoordinateValueJson = {
     latitude: CoordinateElementJson;
     longitude: CoordinateElementJson;
 };
@@ -301,4 +301,3 @@ export const makeSoqlFunctionJson = (
         };
     }
 };
-

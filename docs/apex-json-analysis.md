@@ -235,7 +235,7 @@ type KindDiff<T extends JsonNode> = NodeDiff<T['kind'], T, FieldsOf<T>> & {
 
 - `T | ErrorJson` のプロパティは、`NodeDiff` の「値を丸ごと before / after に持つ」形（apex-json-diff-policy.md 3.2）で表す。
 - 親をまたいで移動したノード（GumTree の `moved`）は、移動先の `fields` の中に `status: 'moved'` と `from` を持たせて出す。移動元には出さない（apex-gumtree-diff.md 5.3 と同じ）。
-- 再帰する型（`StatementJson` の中の `StatementJson`）は、TypeScript の型の深さの上限に当たらないよう、文の型は `interface` で切る（[class.ts](../src/analyzer/processor/Apex/diff/declaration/class.ts) の `ClassFields` と同じやり方）。
+- 再帰する型（`StatementJson` の中の `StatementJson`）は、TypeScript の型の深さの上限に当たらないよう、文の型は `interface` で切る（[declaration.ts](../src/analyzer/processor/Apex/diff/declaration.ts) の `ClassFields` と同じやり方）。
 
 ### 6.4 kind ごとの Diff 型の一覧
 

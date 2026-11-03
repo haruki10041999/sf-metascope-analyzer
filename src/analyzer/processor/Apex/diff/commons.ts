@@ -7,6 +7,7 @@ import {
     getSourceDistance,
     makeConvertKeys,
 } from '../commons';
+import { isRecord } from '../../../types/apex/commons/utils';
 
 // 方針: docs/apex-json-diff-policy.md
 
@@ -33,17 +34,76 @@ export const getObjectKey = (node: JsonNode): string => makeConvertKeys(node).ob
 
 export type Sources = { before: SourceJson[]; after: SourceJson[] };
 
+const quoteKeyString = (value: string): string =>
+    `"${value.replace(/[\\"\u0000-\u001f]/g, (character) => {
+        switch (character) {
+            case '"':
+                return '\\"';
+            case '\\':
+                return '\\\\';
+            case '\b':
+                return '\\b';
+            case '\f':
+                return '\\f';
+            case '\n':
+                return '\\n';
+            case '\r':
+                return '\\r';
+            case '\t':
+                return '\\t';
+            default:
+                return `\\u${character.charCodeAt(0).toString(16).padStart(4, '0')}`;
+        }
+    })}"`;
+
 const isNode = (value: unknown): value is JsonNode =>
     typeof value === 'object' && value !== null && 'kind' in value && 'sourceKeys' in value;
 
-/** 値の比較用キー。ノードは objectKey、それ以外は値そのもの */
+/** 値の比較用キー。ネストした JSON ノードも objectKey で比較する */
 export const getValueKey = (value: unknown): string => {
-    return isNode(value) ? getObjectKey(value) : JSON.stringify(value);
+    if (isNode(value)) {
+        return `node:${getObjectKey(value)}`;
+    }
+    if (Array.isArray(value)) {
+        return `[${value.map(getValueKey).join(',')}]`;
+    }
+    if (isRecord(value)) {
+        const entries = Object.keys(value).sort((a, b) =>
+            a === b ? 0 : a === 'type' ? -1 : b === 'type' ? 1 : a.localeCompare(b),
+        );
+        return `{${entries
+            .map((key) => `${quoteKeyString(key)}:${getValueKey(value[key])}`)
+            .join(',')}}`;
+    }
+    if (value === null) return 'null';
+    if (value === undefined) return 'undefined';
+    switch (typeof value) {
+        case 'string':
+            return quoteKeyString(value);
+        case 'number':
+            return Number.isFinite(value)
+                ? String(value)
+                : Number.isNaN(value)
+                  ? 'NaN'
+                  : value > 0
+                    ? 'Infinity'
+                    : '-Infinity';
+        case 'boolean':
+            return value ? 'boolean:true' : 'boolean:false';
+        case 'bigint':
+            return `bigint:${value}`;
+        case 'symbol':
+            return `symbol:${String(value.description)}`;
+        case 'function':
+            return `function:${value.name}`;
+        case 'object':
+            return `object:${String(value)}`;
+    }
+    return `other:${String(value)}`;
 };
 
-export const isSameValue = (before: unknown, after: unknown): boolean => {
-    return getValueKey(before) === getValueKey(after);
-};
+export const isSameValue = (before: unknown, after: unknown): boolean =>
+    getValueKey(before) === getValueKey(after);
 
 // ---------------------------------------------------------------------------
 // 値・ノードの差分
@@ -52,11 +112,10 @@ export const isSameValue = (before: unknown, after: unknown): boolean => {
 export type ValueDiff<T> =
     { status: 'unchanged'; value: T } | { status: 'changed'; before: T; after: T };
 
-export const makeValueDiff = <T>(before: T, after: T): ValueDiff<T> => {
-    return isSameValue(before, after)
+export const makeValueDiff = <T>(before: T, after: T): ValueDiff<T> =>
+    isSameValue(before, after)
         ? { status: 'unchanged', value: before }
-        : { status: 'changed', before: before, after: after };
-};
+        : { status: 'changed', before, after };
 
 /** 任意項目 (`?`) の差分。両方あれば中の差分、片方だけなら added / removed */
 export type OptionalDiff<T, D> =

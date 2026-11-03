@@ -1,6 +1,6 @@
 import { TypeJson, hash } from '../../../../types';
 
-import { JsonNode, getObjectKey } from '../commons';
+import { JsonNode, getObjectKey, getValueKey } from '../commons';
 import { getTypeKey } from '../type';
 
 // 方針: docs/apex-gumtree-diff.md 3 章・4 章
@@ -12,7 +12,7 @@ export type GumTreeNode = {
     /** 同じラベル同士だけを対応付ける */
     label: string;
     /** ノード自身のプリミティブのプロパティ。違えば更新 (changed) */
-    values: Record<string, unknown>;
+    values: Record<string, DiffFieldValue>;
     /** 同形の判定。実ノードは objectKey、仮想ノードは子の hash から作る */
     hash: string;
     /** 値を見ない形だけの hash (recovery で使う) */
@@ -31,9 +31,12 @@ export type GumTreeNode = {
     size: number;
 };
 
-type Primitive = string | number | boolean | null;
+export type DiffPrimitive = string | number | boolean | null;
+export type DiffFieldValue = DiffPrimitive | DiffPrimitive[];
+export type DiffNodeValue =
+    DiffPrimitive | JsonNode | { [key: string]: DiffNodeValue | undefined } | DiffNodeValue[];
 
-const isPrimitive = (value: unknown): value is Primitive =>
+const isPrimitive = (value: unknown): value is DiffPrimitive =>
     value === null || ['string', 'number', 'boolean'].includes(typeof value);
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>
@@ -42,9 +45,12 @@ const isRecord = (value: unknown): value is Record<string, unknown> =>
 const isJsonNode = (value: unknown): value is JsonNode =>
     isRecord(value) && typeof value.kind === 'string' && isRecord(value.sourceKeys);
 
-/** プリミティブ、またはプリミティブだけの配列は、ノードにせず親の values に入れる */
-const isValueLike = (value: unknown): boolean =>
-    isPrimitive(value) || (Array.isArray(value) && value.length > 0 && value.every(isPrimitive));
+/** catch の例外型名は分類済みの修飾名なので、配列全体を値として比較する */
+const isAtomicArray = (label: string, role: string) =>
+    label === 'catchCondition' && role === 'exceptionType';
+
+const isValueLike = (value: unknown): value is DiffFieldValue =>
+    isPrimitive(value) || (Array.isArray(value) && value.every(isPrimitive));
 
 // ---------------------------------------------------------------------------
 // ラベル
@@ -108,15 +114,6 @@ const UNORDERED_LABELS = [
 
 const isOrdered = (label: string) => !UNORDERED_LABELS.some((pattern) => pattern.test(label));
 
-/**
- * 式の並びのプロパティ。要素が識別子 (文字列) だけでもノードにする
- * (`foo(a)` → `foo(a, b.c())` で、値とノードの間で形が変わらないようにするため)
- */
-const isExpressionList = (owner: string, role: string) =>
-    ['memberArg', 'arg', 'init', 'update'].includes(role) ||
-    (role === 'field' && (owner === 'merge' || owner === 'runAsCondition')) ||
-    (role === 'initializer' && owner === 'forCondition:basic');
-
 /** 文の並び (block) を持つプロパティか。try / switch の block は節の並びなので除く */
 const isBlockRole = (owner: string, role: string) =>
     (role === 'block' || role === 'body') && owner !== 'try' && owner !== 'switch';
@@ -127,7 +124,7 @@ const isBlockRole = (owner: string, role: string) =>
 
 type NodeInit = {
     label: string;
-    values?: Record<string, unknown>;
+    values?: Record<string, DiffFieldValue>;
     children?: GumTreeNode[];
     role: string;
     raw: unknown;
@@ -156,7 +153,7 @@ const makeNode = ({ label, values = {}, children = [], role, raw, source }: Node
 
 /** オブジェクトのプロパティを values と子に分ける */
 const splitProperties = (label: string, value: Record<string, unknown>) => {
-    const values: Record<string, unknown> = {};
+    const values: Record<string, DiffFieldValue> = {};
     const children: GumTreeNode[] = [];
 
     Object.entries(value).forEach(([key, v]) => {
@@ -167,9 +164,11 @@ const splitProperties = (label: string, value: Record<string, unknown>) => {
             children.push(makeBlockNode(v, key));
         } else if (key === 'modifier' && isRecord(v)) {
             children.push(makeModifiersNode(v));
-        } else if (Array.isArray(v) && isExpressionList(label, key)) {
+        } else if (Array.isArray(v) && isAtomicArray(label, key) && isValueLike(v)) {
+            values[key] = v;
+        } else if (Array.isArray(v)) {
             children.push(makeTreeNode(v, label, key));
-        } else if (isValueLike(v) || (Array.isArray(v) && v.length === 0)) {
+        } else if (isValueLike(v)) {
             values[key] = v;
         } else {
             children.push(makeTreeNode(v, label, key));
@@ -239,7 +238,7 @@ const makeTreeNode = (value: unknown, owner: string, role: string): GumTreeNode 
 
     return makeNode({
         label: 'unknown',
-        values: { value: JSON.stringify(value) },
+        values: { value: getValueKey(value) },
         role,
         raw: value,
     });

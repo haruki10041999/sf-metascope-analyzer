@@ -79,6 +79,12 @@ public with sharing class AccountService extends BaseService implements Schedula
             i--;
         } while (i > 0);
         for (Integer j = 0; j < 10; j++) {
+            if (j == 1) {
+                continue;
+            }
+            if (j == 2) {
+                break;
+            }
             log(j);
         }
         try {

@@ -9,7 +9,7 @@ import {
     toBody,
 } from '../commons';
 import { Mappings } from './matcher';
-import { GumTreeNode, preOrder } from './tree';
+import { DiffFieldValue, DiffNodeValue, GumTreeNode, preOrder } from './tree';
 
 // 方針: docs/apex-gumtree-diff.md 5 章
 
@@ -20,32 +20,57 @@ export type MovedFrom = {
     parentSourceKeys?: JsonNode['sourceKeys'];
 };
 
-export type GumTreeDiff = {
+export type GumTreeFieldDiff<T extends DiffFieldValue = DiffFieldValue> = OptionalDiff<
+    T,
+    ValueDiff<T>
+>;
+
+type PrimitiveKeys<T> = T extends object
+    ? {
+          [K in keyof T]-?: Exclude<T[K], undefined> extends DiffFieldValue ? K : never;
+      }[keyof T]
+    : never;
+
+export type GumTreeFields<T> = T extends object
+    ? Partial<{
+          [K in PrimitiveKeys<T>]: GumTreeFieldDiff<
+              Exclude<T[K & keyof T], undefined> & DiffFieldValue
+          >;
+      }> &
+          Record<string, GumTreeFieldDiff>
+    : Record<string, GumTreeFieldDiff>;
+
+type DiffValue<T> = T extends JsonNode ? Omit<T, 'kind' | 'sourceKeys'> : T;
+
+export type GumTreeDiff<TValue extends DiffNodeValue = DiffNodeValue> = {
     label: string;
     role: string;
     sourceKeys: { before?: JsonNode['sourceKeys']; after?: JsonNode['sourceKeys'] };
     index: { before?: number; after?: number };
 } & (
-    | { status: 'unchanged'; match: Match; value: unknown }
-    | { status: 'moved'; match: Match; value: unknown; from: MovedFrom }
+    | { status: 'unchanged'; match: Match; value: DiffValue<TValue> }
+    | { status: 'moved'; match: Match; value: DiffValue<TValue>; from: MovedFrom }
     | {
           status: 'changed';
           match: Match;
           moved?: MovedFrom;
-          fields: Record<string, OptionalDiff<unknown, ValueDiff<unknown>>>;
+          fields: GumTreeFields<TValue>;
           children: GumTreeDiff[];
       }
-    | { status: 'removed'; value: unknown }
+    | { status: 'removed'; value: DiffValue<TValue> }
     // 移動してきた子孫を含む追加は、children に子の差分を持つ
-    | { status: 'added'; value: unknown; children?: GumTreeDiff[] }
+    | { status: 'added'; value: DiffValue<TValue>; children?: GumTreeDiff[] }
 );
+
+export type GumTreeDiffOf<TValue extends DiffNodeValue> = GumTreeDiff<TValue>[];
 
 const makeSourceKeys = (before: GumTreeNode | undefined, after: GumTreeNode | undefined) => ({
     ...(before?.source ? { before: before.source.sourceKeys } : {}),
     ...(after?.source ? { after: after.source.sourceKeys } : {}),
 });
 
-const getValue = (node: GumTreeNode): unknown => (node.source ? toBody(node.source) : node.raw);
+const getValue = <TValue extends DiffNodeValue>(node: GumTreeNode): DiffValue<TValue> =>
+    (node.source ? toBody(node.source) : node.raw) as DiffValue<TValue>;
 
 const getMovedFrom = (node: GumTreeNode): MovedFrom => {
     const parent = node.parent!;
@@ -56,7 +81,7 @@ const getMovedFrom = (node: GumTreeNode): MovedFrom => {
     };
 };
 
-const makeFields = (before: GumTreeNode, after: GumTreeNode) => {
+const makeFields = (before: GumTreeNode, after: GumTreeNode): Record<string, GumTreeFieldDiff> => {
     const keys = [...new Set([...Object.keys(before.values), ...Object.keys(after.values)])];
     return Object.fromEntries(
         keys.map((key) => [
@@ -67,11 +92,11 @@ const makeFields = (before: GumTreeNode, after: GumTreeNode) => {
 };
 
 /** GumTree の対応から、根 (block) の子の差分を作る */
-export const makeGumTreeDiff = (
+export const makeGumTreeDiff = <TValue extends DiffNodeValue = DiffNodeValue>(
     root1: GumTreeNode,
     root2: GumTreeNode,
     mappings: Mappings,
-): GumTreeDiff[] => {
+): GumTreeDiff<TValue>[] => {
     const { src, dst } = mappings;
 
     /** 対応付いた組の部分木が、すべて同じ位置どうしで対応しているか */
@@ -91,7 +116,7 @@ export const makeGumTreeDiff = (
         t2: GumTreeNode,
         index: { before: number; after: number },
         from: MovedFrom | undefined,
-    ): GumTreeDiff => {
+    ): GumTreeDiff<TValue> => {
         const base = {
             label: t2.label,
             role: t2.role,
@@ -111,12 +136,12 @@ export const makeGumTreeDiff = (
             status: 'changed',
             match,
             ...(from ? { moved: from } : {}),
-            fields: makeFields(t1, t2),
+            fields: makeFields(t1, t2) as GumTreeFields<TValue>,
             children: makeChildrenDiff(t1, t2),
         };
     };
 
-    const makeAddedDiff = (t2: GumTreeNode, index: number): GumTreeDiff => {
+    const makeAddedDiff = (t2: GumTreeNode, index: number): GumTreeDiff<TValue> => {
         const base = {
             label: t2.label,
             role: t2.role,
@@ -144,7 +169,7 @@ export const makeGumTreeDiff = (
         };
     };
 
-    const makeRemovedDiff = (t1: GumTreeNode, index: number): GumTreeDiff => ({
+    const makeRemovedDiff = (t1: GumTreeNode, index: number): GumTreeDiff<TValue> => ({
         label: t1.label,
         role: t1.role,
         sourceKeys: makeSourceKeys(t1, undefined),
@@ -200,5 +225,5 @@ export const makeGumTreeDiff = (
             .map((e) => e.diff);
     };
 
-    return makeChildrenDiff(root1, root2);
+    return makeChildrenDiff(root1, root2) as GumTreeDiff<TValue>[];
 };

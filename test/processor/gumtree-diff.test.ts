@@ -5,15 +5,22 @@ import { describe, it } from 'node:test';
 import {
     makeBlockDiff,
     makeGumTreeBlockDiff,
-} from '../../src/analyzer/processor/Apex/diff/declaration/commons';
+    makeFieldDeclarationDiff,
+} from '../../src/analyzer/processor/Apex/diff/declaration';
+import {
+    ExpressionDiff,
+    makeExpressionDiff,
+} from '../../src/analyzer/processor/Apex/diff/expression';
 import { GumTreeDiff } from '../../src/analyzer/processor/Apex/diff/gumtree/diff';
 import { matchTrees } from '../../src/analyzer/processor/Apex/diff/gumtree/matcher';
 import { makeBlockTree } from '../../src/analyzer/processor/Apex/diff/gumtree/tree';
+import { StatementDiff, makeStatementDiff } from '../../src/analyzer/processor/Apex/diff/statement';
 import {
     makeAnonymousUnitDiff,
     makeTriggerUnitDiff,
     makeTypeDeclarationDiff,
 } from '../../src/analyzer/processor/Apex/diff/unitBody';
+import { StatementJson, UpsertStatementJson } from '../../src/analyzer/types';
 import { find, toJson, unitRules } from '../converter/helpers';
 
 /** メソッド本体の文の並びと、そのソース位置 */
@@ -35,11 +42,28 @@ const diffBodies = async (before: string, after: string) => {
     });
 };
 
+const toExpression = async (expression: string) => {
+    const { json } = await toJson(
+        `public class Foo { public void run() { Integer value = ${expression}; } }`,
+        unitRules.cls,
+    );
+    const [statement] = find(json, (node) => node.kind === 'localVariable');
+    return statement.variable.variants[0].init;
+};
+
 /** 差分の木を前順にたどって [label, status] を並べる */
 const flatten = (diffs: GumTreeDiff[]): GumTreeDiff[] =>
     diffs.flatMap((d) => [d, ...('children' in d && d.children ? flatten(d.children) : [])]);
 
 const statuses = (diffs: GumTreeDiff[]) => diffs.map((d) => [d.label, d.status]);
+
+const flattenTypedDiff = (value: unknown): Record<string, unknown>[] => {
+    if (Array.isArray(value)) return value.flatMap(flattenTypedDiff);
+    if (typeof value !== 'object' || value === null) return [];
+    const record = value as Record<string, unknown>;
+    const children = Object.values(record).flatMap(flattenTypedDiff);
+    return [...(typeof record.status === 'string' ? [record] : []), ...children];
+};
 
 describe('gumtree tree', () => {
     it('uses objectKey as the hash of real nodes and wraps a single statement body in a block', async () => {
@@ -163,8 +187,80 @@ describe('gumtree block diff', () => {
         assert.equal(flatten(diffs).filter((d) => d.status === 'moved').length, 0);
     });
 
-    it('is used by makeBlockDiff', () => {
-        assert.equal(makeBlockDiff, makeGumTreeBlockDiff);
+    it('uses GumTree to pair block entries and returns typed list diffs', () => {
+        assert.deepEqual(makeBlockDiff([], []), []);
+        assert.deepEqual(
+            makeBlockDiff(['a();'], ['a();', 'b();']).map(({ status, index }) => [status, index]),
+            [
+                ['unchanged', { before: 0, after: 0 }],
+                ['added', 1],
+            ],
+        );
+    });
+});
+
+describe('expression and statement diff entry points', () => {
+    it('compares nested expression nodes through makeExpressionDiff', async () => {
+        const before = await toExpression('1 + 2');
+        const after = await toExpression('1 + 3');
+        const diffs: ExpressionDiff = makeExpressionDiff(before, after);
+        const literal = flattenTypedDiff(diffs).find(
+            (diff) => diff.before === '2' && diff.after === '3',
+        );
+
+        assert.ok(literal && literal.status === 'changed');
+    });
+
+    it('compares one statement and its nested expression through makeStatementDiff', async () => {
+        const before = (await toBody('Integer value = 1;')).block[0] as StatementJson;
+        const after = (await toBody('Integer value = 2;')).block[0] as StatementJson;
+        const diffs: StatementDiff[] = makeStatementDiff(before, after);
+
+        assert.equal(diffs[0]?.kind, 'localVariable');
+        assert.equal(diffs[0]?.status, 'changed');
+        assert.ok(
+            flattenTypedDiff(diffs).some(
+                (diff) => diff.status === 'changed' && diff.before === '1' && diff.after === '2',
+            ),
+        );
+    });
+
+    it('diffs primitive statement arrays element by element', () => {
+        const before: UpsertStatementJson = {
+            kind: 'upsert',
+            sourceKeys: { objectKey: 'before', sourceKey: 'before-source' },
+            field: 'Account',
+            key: ['ExternalId__c'],
+        };
+        const after: UpsertStatementJson = {
+            kind: 'upsert',
+            sourceKeys: { objectKey: 'after', sourceKey: 'after-source' },
+            field: 'Account',
+            key: ['ExternalId__c', 'Namespace__c'],
+        };
+        const diff: StatementDiff[] = makeStatementDiff(before, after);
+        const keyList = diff[0]?.status === 'changed' ? diff[0].fields.key : undefined;
+
+        assert.ok(Array.isArray(keyList));
+        assert.deepEqual(
+            keyList.map((item) => item.status),
+            ['unchanged', 'added'],
+        );
+    });
+
+    it('uses the expression diff for field initializers', async () => {
+        const before = await toJson('public class Foo { Integer value = 1; }', unitRules.cls);
+        const after = await toJson('public class Foo { Integer value = 2; }', unitRules.cls);
+        const [beforeField] = find(before.json, (node) => node.kind === 'field');
+        const [afterField] = find(after.json, (node) => node.kind === 'field');
+        const diff = makeFieldDeclarationDiff(beforeField, afterField);
+
+        assert.ok(diff.status === 'changed' && 'fields' in diff);
+        assert.ok(
+            flattenTypedDiff(diff).some(
+                (item) => item.status === 'changed' && item.before === '1' && item.after === '2',
+            ),
+        );
     });
 });
 
@@ -180,11 +276,8 @@ describe('unit diff', () => {
             [['method', 'changed']],
         );
         assert.deepEqual(
-            diff.block.statement.map((d) => [d.label, d.status]),
-            [
-                ['statement', 'unchanged'],
-                ['statement', 'moved'],
-            ],
+            diff.block.statement.map((d) => d.status),
+            ['unchanged', 'moved'],
         );
     });
 

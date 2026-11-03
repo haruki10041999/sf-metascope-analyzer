@@ -151,7 +151,7 @@ const makeMethodCallJson = (
     });
 };
 
-type InstanceNameJson = {
+export type InstanceNameJson = {
     collection: string[];
     generic?: (TypeJson | ErrorJson)[];
 };
@@ -192,18 +192,18 @@ export const makeInstanceNameJson = (
     };
 };
 
-type ArrayInitInstanceJson = {
+export type ArrayInitInstanceJson = {
     kind: 'array';
     init?: (BaseExpressionJson | ErrorJson)[];
     size?: BaseExpressionJson | ErrorJson;
 };
 
-type ClassInitInstanceJson = {
+export type ClassInitInstanceJson = {
     kind: 'class';
     arg?: (BaseExpressionJson | ErrorJson)[];
 };
 
-type MapInitInstanceJson = {
+export type MapInitInstanceJson = {
     kind: 'map';
     init?: (
         | {
@@ -214,17 +214,17 @@ type MapInitInstanceJson = {
     )[];
 };
 
-type NoInitInstanceJson = {
+export type NoInitInstanceJson = {
     kind: 'no';
     value: string;
 };
 
-type SetInitInstanceJson = {
+export type SetInitInstanceJson = {
     kind: 'list || set';
     init?: (BaseExpressionJson | ErrorJson)[];
 };
 
-type InitInstanceJson =
+export type InitInstanceJson =
     | ArrayInitInstanceJson
     | ClassInitInstanceJson
     | MapInitInstanceJson
@@ -300,7 +300,7 @@ export const makeInitInstanceJson = (
     }
 };
 
-type NewInstanceJson = InstanceNameJson & InitInstanceJson;
+export type NewInstanceJson = InstanceNameJson & InitInstanceJson;
 
 const makeNewInstanceJson = (
     target: ConvertWithError<NewExpressionType>,
@@ -326,7 +326,7 @@ const makeNewInstanceJson = (
     };
 };
 
-type CastJson = {
+export type CastJson = {
     target: BaseExpressionJson | ErrorJson;
     convertType: TypeJson | ErrorJson;
 };
@@ -339,7 +339,7 @@ const makeCastJson = (target: ConvertWithError<CastExpressionType>): CastJson =>
     };
 };
 
-type SubJson = {
+export type SubJson = {
     value: BaseExpressionJson | ErrorJson;
     parentheses: '()';
 };
@@ -351,7 +351,7 @@ const makeSubJson = (target: ConvertWithError<SubExpressionType>): SubJson => {
     };
 };
 
-type ArrayJson = {
+export type ArrayJson = {
     variant: BaseExpressionJson | ErrorJson;
     index: BaseExpressionJson | ErrorJson;
 };
@@ -363,7 +363,7 @@ const makeArrayJson = (target: ConvertWithError<ArrayExpressionType>): ArrayJson
     };
 };
 
-type FormulaJson = {
+export type FormulaJson = {
     left: BaseExpressionJson | ErrorJson;
     operator:
         | '*'
@@ -420,7 +420,7 @@ const makeFormulaJson = (target: ConvertWithError<FormulaExpressionType>): Formu
     };
 };
 
-type InstanceofJson = {
+export type InstanceofJson = {
     target: BaseExpressionJson | ErrorJson;
     operator: 'instanceof';
     type: TypeJson | ErrorJson;
@@ -436,7 +436,7 @@ const makeInstanceofJson = (target: ConvertWithError<InstanceOfExpressionType>):
     };
 };
 
-type UnaryJson = {
+export type UnaryJson = {
     variant: BaseExpressionJson | ErrorJson;
 } & {
     operator: '~' | '!' | '++' | '--' | '+' | '-';
@@ -453,7 +453,7 @@ const makeUnaryJson = (target: ConvertWithError<UnaryExpressionType>): UnaryJson
     };
 };
 
-type TernaryJson = {
+export type TernaryJson = {
     condition: BaseExpressionJson | ErrorJson;
     trueValue: BaseExpressionJson | ErrorJson;
     falseValue: BaseExpressionJson | ErrorJson;

@@ -1,6 +1,5 @@
 import { ErrorFileStructureType, FileStructureType } from '../../../parser';
 import { CompilationUnitJson } from '../../../types';
-
 import {
     TypeDeclarationDiff,
     UnitContentDiff,

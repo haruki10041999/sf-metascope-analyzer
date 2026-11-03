@@ -186,17 +186,14 @@ type ListItemDiff<K extends string, T, D> =
 
 ### 6.4 式
 
-| kind / 型                             | 分類 | 子の比較                                                              |
-| ------------------------------------- | ---- | --------------------------------------------------------------------- |
-| `memberAccess`（`DotMethodCallJson`） | A    | `type` / `operator` / `member`: 値 / `object`: A / `memberArg`: **C** |
-| `memberAccess`（`MethodCallJson`）    | A    | `member` / `ref`: 値 / `memberArg`: **C**                             |
-| kind を持たない式                     | A    | 当面は `objectKey` の一致だけを見る（中までは比べない）               |
+式は JSON のプロパティごとに再帰的に比較する。`memberAccess` や kind を持たない式にも、JSON にない `kind` / `sourceKeys` は追加しない。配列要素の対応付けと順序差分の抽出には GumTree を内部利用するが、公開する式 Diff は JSON 構造に沿った型付き差分である。
 
-- 式の中まで比べるかは、文の Diff の未決事項（条件式のどこが変わったか）と合わせて決める。
+- 公開入口は `makeExpressionDiff`。[types/apex/expression.ts](../src/analyzer/types/apex/expression.ts) の各 JSON 型に対応する `*Diff` 型を [diff/expression.ts](../src/analyzer/processor/Apex/diff/expression.ts) に定義し、`ExpressionDiff<T>` は入力型に応じた差分型を返す。
+- `JsonType` / `StructureJsonType` にない kind や sourceKeys は追加しない。型を持たない object や primitive も、そのプロパティ名と値に応じた Diff 型にする。
 
 ### 6.5 文
 
-文の並びと文の中は GumTree で比べる（[apex-gumtree-diff.md](./apex-gumtree-diff.md)）。下の表は、GumTree の木を作るときの子の順序（C は `ordered`、B は `ordered: false`）の参考として残す。
+文は JSON のプロパティごとに再帰比較し、配列の要素対応と順序・移動の判定に限って GumTree を内部利用する（[apex-gumtree-diff.md](./apex-gumtree-diff.md)）。下の表は、GumTree に渡す配列の順序意味（C は順序あり、B は順序なし）の参考として残す。
 
 | kind                                                                    | 子の比較                                                                                                       |
 | ----------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------- |
@@ -209,9 +206,11 @@ type ListItemDiff<K extends string, T, D> =
 | `try` の `block`                                                        | **C**（catch は上から順に照合されるため）                                                                      |
 | `catchCondition`（Structure）                                           | `exception`: 値 / `exceptionType`: 値（修飾名の配列を丸ごと） / `modifier`: B                                  |
 | `merge`                                                                 | `field`: 位置のスロット（[0] がマスター、[1] が重複）として A                                                  |
-| `insert` / `update` / `upsert` / `delete` / `undelete`                  | `field`: A / `accessLevel`: 値（任意項目） / `upsert.key`: 値                                                  |
+| `insert` / `update` / `upsert` / `delete` / `undelete`                  | `field`: A / `accessLevel`: 値（任意項目） / `upsert.key`: C                                                   |
 | `localVariable`                                                         | `variable` の `variants`: D（キー: 変数名） / 型: A                                                            |
-| `return` / `throw` / `expression` / `break` / `continue`                | 値・式: A                                                                                                      |
+| `return` / `throw` / `expression` / `break` / `continue`                | 値・式: A。式は6.4に従って最下層まで比較する                                                                   |
+
+文も [types/apex/statement.ts](../src/analyzer/types/apex/statement.ts) の各 JSON 型と 1 対 1 に対応する専用 `*Diff` 型を [diff/statement.ts](../src/analyzer/processor/Apex/diff/statement.ts) に定義する。`StatementDiff<T>` と `makeStatementDiff` は入力型に応じた構造 Diff を返す。文配列・宣言本文の `makeBlockDiff` は GumTree で要素を対応付けた後、型付きリスト Diff を返す。
 
 ### 6.6 SOQL / SOSL
 
@@ -233,6 +232,8 @@ type ListItemDiff<K extends string, T, D> =
 
 ## 7. 実装状況
 
+Diff の型定義は `types/apex` の JSON 生成モジュール（`declaration`、`expression`、`modifier`、`param`、`primary`、`statement`、`type`、`unit`、`query`）に対応するファイルへ配置する。各 `*Json` 型には `*JsonDiff` を用意し、個別の比較ロジックを持つ既存 Diff 型がある場合はそれを対応型として再利用する。`JsonType` / `StructureJsonType` のジェネリック定義とソース位置用 `SourceJson` は差分対象ではない。
+
 共通部品は [diff/commons.ts](../src/analyzer/processor/Apex/diff/commons.ts) にある。
 
 | 関数                                  | 役割                                              |
@@ -247,21 +248,23 @@ type ListItemDiff<K extends string, T, D> =
 
 並べ方: C は before の index 順で、`added` は gap の中の `changed` / `removed` の後ろに置く。B / D は before の index 順のあとに `added` を置く。
 
-| 対象                                                                         | 状態                                                                         |
-| ---------------------------------------------------------------------------- | ---------------------------------------------------------------------------- |
-| [type.ts](../src/analyzer/processor/Apex/diff/type.ts)                       | 済。`makeTypesDiff` は B、`generic` は C、`dimention` → `dimension`          |
-| [modifier.ts](../src/analyzer/processor/Apex/diff/modifier.ts)               | 済（B）                                                                      |
-| [parameter.ts](../src/analyzer/processor/Apex/diff/parameter.ts)             | 済（C）                                                                      |
-| [interface.ts](../src/analyzer/processor/Apex/diff/declaration/interface.ts) | 済。interface（`extend`: B、`block`: D）と interfaceMethod                   |
-| [enum.ts](../src/analyzer/processor/Apex/diff/declaration/enum.ts)           | 済（`members`: C）                                                           |
-| [unit.ts](../src/analyzer/processor/Apex/diff/unit.ts)                       | `'add'` → `'added'`、`makeResolvedErrorDiff` の条件の逆転を修正              |
-| class / method / constructor / property / field                              | 済。[apex-declaration-diff.md](./apex-declaration-diff.md)（本体は GumTree） |
-| 文・式・SOQL / SOSL                                                          | 済（GumTree。[apex-gumtree-diff.md](./apex-gumtree-diff.md) 7 章）           |
+- [type.ts](../src/analyzer/processor/Apex/diff/type.ts): 済。`makeTypesDiff` は B、`generic` は C、`dimention` → `dimension`
+- [modifier.ts](../src/analyzer/processor/Apex/diff/modifier.ts): 済（B）
+- [parameter.ts](../src/analyzer/processor/Apex/diff/parameter.ts): 済（C）
+- [declaration.ts](../src/analyzer/processor/Apex/diff/declaration.ts): interface（`extend`: B、`block`: D）、interfaceMethod、enum（`members`: C）、および class / method / constructor / property / field
+- [unit.ts](../src/analyzer/processor/Apex/diff/unit.ts): `'add'` → `'added'`、`makeResolvedErrorDiff` の条件の逆転を修正
+- class / method / constructor / property / field: 済。[apex-declaration-diff.md](./apex-declaration-diff.md)（本体は GumTree）
+- 文: 済（専用構造 Diff。GumTree は配列の対応付けのみ。[apex-gumtree-diff.md](./apex-gumtree-diff.md) 7 章）
+- SOQL / SOSL query-level Diff: 済（[diff/query/](../src/analyzer/processor/Apex/diff/query/)）。配列の意味に応じて B / C を使い分け、各型に対応するモジュールに実装する
+- Apex 式 / 文の構造 Diff: 済（型付き構造 Diff。GumTree は配列要素の対応付けと移動判定に限定）。式の入口は `makeExpressionDiff`、文・ブロックの入口は `makeStatementDiff` / `makeBlockDiff`
+
+Query-level Diff の初版は、SELECT 項目を B、FROM / ORDER BY / GROUP BY field と SOSL RETURNING 節を C として比較する。WHERE / HAVING の AND / OR 条件は集合として比較し、SOQL `WITH` は mode / DATA_CATEGORY selection まで構造化する。式は6.4に従い、SOSL RETURNING の WHERE 条件は引き続き値比較とする。
 
 ## 8. 未決事項
 
 - `moved` を独立した status にするか（C のみ）。apex-statement-diff.md の未決事項と同時に決める。
 - 距離のしきい値と、使う指標（`range` → `center` → `start` → `end` の順で比べる今の `compareSourceDistance` でよいか）。
 - D でリネームを推定するか（同じ kind の `removed` / `added` を、本体の `objectKey` の一致や距離で組にし `match: 'nearest'` にする）。
-- 式の中まで構造の差分を出すか（6.4）。
+- GumTree の対応付けだけでは説明しきれない配列の意味を追加で識別する必要があるか。
+- SOQL / SOSL の初版で値全体の比較にとどめたプロパティ（特に SOSL RETURNING の WHERE 条件）をどこまで構造化するか。
 - 2 章の分類のうち、意味上どちらとも取れるもの（SELECT の項目、クラスのメンバーの並び順）で、順序の変化を情報として出すか。

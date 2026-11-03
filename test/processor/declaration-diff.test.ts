@@ -1,11 +1,11 @@
 import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
 
-import { makeEnumDiff } from '../../src/analyzer/processor/Apex/diff/declaration/enum';
 import {
+    makeEnumDiff,
     getInterfaceMethodKey,
     makeInterfaceDiff,
-} from '../../src/analyzer/processor/Apex/diff/declaration/interface';
+} from '../../src/analyzer/processor/Apex/diff/declaration';
 import type {
     EnumConstantJson,
     EnumDeclarationJson,

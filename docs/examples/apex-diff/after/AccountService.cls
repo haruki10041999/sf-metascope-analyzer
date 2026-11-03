@@ -85,6 +85,12 @@ public without sharing class AccountService extends BaseService implements Sched
             i--;
         } while (i >= 0);
         for (Integer j = 0; j < 10; j += 2) {
+            if (j == 0) {
+                continue;
+            }
+            if (j == 3) {
+                break;
+            }
             log(j);
         }
         try {
@@ -122,7 +128,7 @@ public without sharing class AccountService extends BaseService implements Sched
 
     public List<AggregateResult> stats() {
         return [
-            SELECT COUNT(Id) cnt, Name, (SELECT Id, Name FROM Contacts)
+            SELECT COUNT(Id) cnt, Name, (SELECT Id FROM Contacts WHERE LastName != null)
             FROM Account acc
             USING SCOPE team
             WHERE (Industry = 'IT' AND Name LIKE 'a%') OR (NOT Rating = 'Warm')

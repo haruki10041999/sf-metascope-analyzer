@@ -19,6 +19,7 @@ import {
     Sources,
     ValueDiff,
     isSameValue,
+    getValueKey,
     makeNodeDiff,
     makeSetDiff,
     makeValueDiff,
@@ -119,10 +120,7 @@ const makeCustomTypeNameDiff = (
 };
 
 const makeGenericDiff = (before: TypeContentJson[], after: TypeContentJson[]): GenericDiff[] => {
-    const pairings = pairAsSequence(
-        before.map((b) => JSON.stringify(b)),
-        after.map((a) => JSON.stringify(a)),
-    );
+    const pairings = pairAsSequence(before.map(getValueKey), after.map(getValueKey));
 
     return pairings.map((p): GenericDiff => {
         if (p.status === 'removed') {
@@ -146,15 +144,20 @@ const makeTypeShapeDiff = (
 ): TypeShapeDiff | undefined => {
     if (before.type === 'primitive' && after.type === 'primitive') {
         return makePrimitiveTypeShapeDiff(before, after);
-    } else if (before.type === 'custom' && after.type === 'custom') {
+    }
+    if (before.type === 'custom' && after.type === 'custom') {
         return makeCustomTypeShapeDiff(before, after);
-    } else if (before.type === 'array' && after.type === 'array') {
+    }
+    if (before.type === 'array' && after.type === 'array') {
         return makeArrayTypeShapeDiff(before, after);
-    } else if (before.type === 'list' && after.type === 'list') {
+    }
+    if (before.type === 'list' && after.type === 'list') {
         return makeListTypeShapeDiff(before, after);
-    } else if (before.type === 'set' && after.type === 'set') {
+    }
+    if (before.type === 'set' && after.type === 'set') {
         return makeSetTypeShapeDiff(before, after);
-    } else if (before.type === 'map' && after.type === 'map') {
+    }
+    if (before.type === 'map' && after.type === 'map') {
         return makeMapTypeShapeDiff(before, after);
     }
 
@@ -222,9 +225,7 @@ export const makeTypeContentDiff = (
 
     const fields = makeTypeShapeDiff(before, after);
 
-    return fields
-        ? { status: 'changed', fields: fields }
-        : { status: 'changed', before: before, after: after };
+    return fields ? { status: 'changed', fields } : { status: 'changed', before, after };
 };
 
 // ---------------------------------------------------------------------------
@@ -294,5 +295,5 @@ export const makeTypesDiff = (
 
 /** オーバーロードの識別などに使う、型の比較用キー */
 export const getTypeKey = (target: TypeJson | ErrorJson): string => {
-    return target.kind === 'error' ? 'error' : JSON.stringify(toBody(target));
+    return target.kind === 'error' ? 'error' : getValueKey(toBody(target));
 };

@@ -2,12 +2,21 @@ import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
 
 import {
+    getValueKey,
     pairAsSequence,
     pairAsSet,
     pairByKey,
 } from '../../src/analyzer/processor/Apex/diff/commons';
 
 describe('diff pairing', () => {
+    it('uses structural keys without depending on object property order', () => {
+        assert.equal(
+            getValueKey({ left: 1, right: [true, 'x'] }),
+            getValueKey({ right: [true, 'x'], left: 1 }),
+        );
+        assert.notEqual(getValueKey(['left', 'right']), getValueKey(['right', 'left']));
+    });
+
     it('pairs a set by objectKey only', () => {
         assert.deepEqual(pairAsSet(['a', 'b', 'c'], ['c', 'x', 'a']), [
             { status: 'unchanged', match: 'identical', before: 0, after: 2 },

@@ -14,7 +14,7 @@ type Node = Record<string, any>;
 const isRecord = (value: unknown): value is Node =>
     typeof value === 'object' && value !== null && !Array.isArray(value);
 
-/** 差分の木から、status を持つノードを前順で集める (target は元の JSON なので除く) */
+/** 差分の木から status を持つノードを前順で集める */
 const collect = (diff: unknown, out: Node[] = []): Node[] => {
     if (Array.isArray(diff)) {
         diff.forEach((d) => collect(d, out));
@@ -22,16 +22,10 @@ const collect = (diff: unknown, out: Node[] = []): Node[] => {
         if (typeof diff.status === 'string') {
             out.push(diff);
         }
-        Object.entries(diff).forEach(([key, value]) => {
-            if (key !== 'target' && key !== 'value') {
-                collect(value, out);
-            }
-        });
+        Object.values(diff).forEach((value) => collect(value, out));
     }
     return out;
 };
-
-const kindOf = (node: Node) => node.kind ?? node.label;
 
 describe('diff samples (docs/examples/apex-diff)', () => {
     let diffs: Diffs;
@@ -120,40 +114,56 @@ describe('diff samples (docs/examples/apex-diff)', () => {
 
     it('field: the initial value is diffed as an expression tree', () => {
         const literal = contentNodes('AccountService.cls').find(
-            (n) => n.label === 'literal' && n.fields?.value?.before === '100',
+            (n) => n.before === '100' && n.after === '200',
         );
-        assert.deepEqual(literal?.fields.value, { status: 'changed', before: '100', after: '200' });
+        assert.deepEqual(literal, { status: 'changed', before: '100', after: '200' });
     });
 
     it('statement: a statement moved from finally into catch is reported once as moved', () => {
         const nodes = contentNodes('AccountService.cls');
-        const moved = nodes.find((n) => n.status === 'moved' && n.label === 'expression');
+        const moved = nodes.find((n) => n.status === 'moved' && n.value?.kind === 'expression');
         assert.equal(moved?.from.parent, 'block');
-        assert.ok(nodes.some((n) => n.label === 'try.finally' && n.status === 'removed'));
+        assert.ok(nodes.some((n) => n.status === 'removed' && n.value?.condition === 'finally'));
     });
 
     it('soql: reordered SELECT fields are not a diff, changed clauses are', () => {
         const nodes = contentNodes('AccountService.cls');
-        const syncSelect = nodes.filter(
-            (n) => n.label === 'selectEntry' && n.status !== 'unchanged' && n.status !== 'added',
-        );
-        // SELECT Id, Name → SELECT Name, Id は差分にならない。ALL ROWS のクエリの Id → Name だけが changed
-        assert.equal(syncSelect.length, 1);
+        const syncSelect = nodes.filter((n) => n.kind === 'selectEntry' && n.status === 'changed');
+        // SELECT Id, Name → SELECT Name, Id は差分にならない。ALL ROWS の Id → Name は集合要素の削除・追加。
+        assert.equal(syncSelect.length, 0);
         assert.deepEqual(
-            nodes.filter((n) => n.label === 'groupBy').map((n) => n.fields.mode),
+            nodes
+                .filter(
+                    (n) =>
+                        n.kind === 'selectEntry' &&
+                        (n.status === 'removed' || n.status === 'added') &&
+                        n.value?.type === 'field',
+                )
+                .map((n) => [n.status, n.value.field]),
+            [
+                ['removed', ['Id']],
+                ['added', ['Name']],
+            ],
+        );
+        assert.ok(nodes.some((n) => n.kind === 'subQuery' && n.status === 'changed'));
+        assert.deepEqual(
+            nodes.filter((n) => n.kind === 'groupBy').map((n) => n.fields.mode),
             [{ status: 'changed', before: 'ROLLUP', after: 'CUBE' }],
         );
     });
 
-    it('trigger: cases as a set, a small expression moved into a new condition', () => {
+    it('trigger: cases as a set, condition expressions retain their typed shape', () => {
         const nodes = contentNodes('AccountTrigger.trigger');
         assert.deepEqual(
             nodes.filter((n) => n.kind === 'triggerCase').map((n) => n.status),
             ['removed', 'unchanged', 'added'],
         );
-        const moved = nodes.find((n) => n.status === 'moved');
-        assert.equal(moved?.label, 'memberAccess:object');
-        assert.equal(moved?.from.parent, 'ifCondition');
+        const condition = nodes.find((n) => n.kind === 'ifCondition' && n.status === 'changed');
+        assert.ok(condition && 'fields' in condition);
+        const expression = condition.fields.condition;
+        assert.equal(expression.status, 'changed');
+        assert.equal(expression.before.kind, 'memberAccess');
+        assert.equal(expression.after.operator, '&&');
     });
 
     it('anonymous: declarations and statements are diffed separately', () => {
@@ -180,7 +190,7 @@ describe('diff samples (docs/examples/apex-diff)', () => {
         assert.equal(diff.resolvedError.after.length, 2);
         assert.ok(
             contentNodes('Broken.cls').some(
-                (n) => n.label === 'error:localVariable' && n.status === 'added',
+                (n) => n.status === 'added' && n.value?.kind === 'error',
             ),
         );
     });

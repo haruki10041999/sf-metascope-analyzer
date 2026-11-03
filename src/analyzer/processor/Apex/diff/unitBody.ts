@@ -18,13 +18,16 @@ import {
     makeSetDiff,
     makeValueDiff,
 } from './commons';
+import { ModifierDiff, makeModifierItemsDiff, makeTypedModifierJsons } from './modifier';
 import {
     ClassBodyDiff,
     ClassMemberDiff,
+    ClassMemberJson,
     makeClassBodyDiff,
     makeClassMemberDiff,
-} from './declaration/class';
-import { BlockDiff, ClassMemberJson, makeGumTreeBlockDiff } from './declaration/commons';
+} from './declaration';
+import { BlockDiff, StatementValueDiff, makeBlockDiff, makeStatementValueDiff } from './statement';
+import { TypedListDiff, TypedListItemDiff } from './typed';
 
 // 方針: docs/apex-declaration-diff.md 6 章、docs/apex-gumtree-diff.md 7.3
 
@@ -80,6 +83,9 @@ export const makeTypeDeclarationDiff = (
 
 type BlockMemberJson = Exclude<AnonymousUnitJson['block'], ErrorJson>[number];
 type NonStatementMemberJson = Exclude<BlockMemberJson, MemberStatementJson>;
+type MemberStatementValueDiff =
+    StatementValueDiff | { statement: StatementValueDiff; modifier: ModifierDiff[] };
+type MemberStatementDiff = TypedListDiff<MemberStatementJson, MemberStatementValueDiff>;
 
 /**
  * 宣言と文が混ざった本文。宣言と ErrorJson はクラス本文と同じ方法 (makeClassBodyDiff)、
@@ -87,7 +93,7 @@ type NonStatementMemberJson = Exclude<BlockMemberJson, MemberStatementJson>;
  */
 export type BlockMembersDiff = {
     member: ClassBodyDiff[];
-    statement: BlockDiff;
+    statement: MemberStatementDiff;
 };
 
 const isStatementMember = (member: BlockMemberJson): member is MemberStatementJson =>
@@ -95,6 +101,54 @@ const isStatementMember = (member: BlockMemberJson): member is MemberStatementJs
 
 const isNonStatementMember = (member: BlockMemberJson): member is NonStatementMemberJson =>
     !isStatementMember(member);
+
+const makeMemberStatementsDiff = (
+    before: MemberStatementJson[],
+    after: MemberStatementJson[],
+    sources?: Sources,
+): MemberStatementDiff => {
+    const statementDiffs: BlockDiff = makeBlockDiff(
+        before.map((member) => member.statement),
+        after.map((member) => member.statement),
+        sources,
+    );
+
+    return statementDiffs.map(
+        (diff): TypedListItemDiff<MemberStatementJson, MemberStatementValueDiff> => {
+            if (diff.status === 'removed') {
+                return { ...diff, value: before[diff.index]! };
+            }
+            if (diff.status === 'added') {
+                return { ...diff, value: after[diff.index]! };
+            }
+
+            const beforeMember = before[diff.index.before]!;
+            const afterMember = after[diff.index.after]!;
+            const modifier = makeModifierItemsDiff(
+                makeTypedModifierJsons(beforeMember.modifier),
+                makeTypedModifierJsons(afterMember.modifier),
+            );
+            const hasModifierChanges = modifier.some((item) => item.status !== 'unchanged');
+
+            if (diff.status === 'unchanged' && !hasModifierChanges) {
+                return { ...diff, value: afterMember };
+            }
+
+            const statement =
+                diff.status === 'unchanged'
+                    ? makeStatementValueDiff(beforeMember.statement, afterMember.statement, sources)
+                    : diff.value;
+            const value: MemberStatementValueDiff = hasModifierChanges
+                ? { statement, modifier }
+                : statement;
+            return {
+                ...diff,
+                status: diff.status === 'unchanged' ? 'changed' : diff.status,
+                value,
+            };
+        },
+    );
+};
 
 export const makeBlockMembersDiff = (
     before: BlockMemberJson[],
@@ -107,7 +161,7 @@ export const makeBlockMembersDiff = (
             after.filter(isNonStatementMember),
             sources,
         ),
-        statement: makeGumTreeBlockDiff(
+        statement: makeMemberStatementsDiff(
             before.filter(isStatementMember),
             after.filter(isStatementMember),
             sources,

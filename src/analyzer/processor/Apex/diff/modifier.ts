@@ -19,7 +19,7 @@ import {
     toBody,
 } from './commons';
 
-type Modifier = {
+export type ModifierValue = {
     modifierType: string;
 } & (ModifierJson | AnnotationJson | ErrorJson);
 
@@ -42,12 +42,12 @@ export type ModifierDiff = {
     | {
           status: 'added' | 'removed';
           sourceKeys: ConvertKeys;
-          value: Body<Modifier>;
+          value: Body<ModifierValue>;
       }
     | {
           status: 'unchanged';
           sourceKeys: { before: ConvertKeys; after: ConvertKeys };
-          value: Body<Modifier>;
+          value: Body<ModifierValue>;
       }
     | {
           status: 'changed';
@@ -59,9 +59,8 @@ export type ModifierDiff = {
       }
 );
 
-export const makeTypedModifierJsons = (target: ModifiersJson): Modifier[] => {
-    const modifiers: ({ modifierType: string } & (ModifierJson | AnnotationJson | ErrorJson))[] =
-        [];
+export const makeTypedModifierJsons = (target: ModifiersJson): ModifierValue[] => {
+    const modifiers: ModifierValue[] = [];
 
     Object.entries(target).forEach(([key, value]) => {
         value.forEach((v) => {
@@ -103,25 +102,25 @@ export const makeAnnotationArgsDiff = (
 };
 
 /** アノテーションは名前 (大文字小文字を区別しない) で対応付ける。修飾子・エラーはキーなし (集合) */
-const getModifierId = (modifier: Modifier): string | undefined =>
+const getModifierId = (modifier: ModifierValue): string | undefined =>
     modifier.kind === 'annotation'
         ? `${modifier.modifierType}:${modifier.name.toLowerCase()}`
         : undefined;
 
-export const makeModifierDiff = (before: ModifiersJson, after: ModifiersJson): ModifierDiff[] => {
-    const _before = makeTypedModifierJsons(before);
-    const _after = makeTypedModifierJsons(after);
-
+export const makeModifierItemsDiff = (
+    before: ModifierValue[],
+    after: ModifierValue[],
+): ModifierDiff[] => {
     const pairings = pairByKey(
-        _before.map(getModifierId),
-        _after.map(getModifierId),
-        _before.map(getObjectKey),
-        _after.map(getObjectKey),
+        before.map(getModifierId),
+        after.map(getModifierId),
+        before.map(getObjectKey),
+        after.map(getObjectKey),
     );
 
     return pairings.map((p): ModifierDiff => {
         if (p.status === 'removed') {
-            const b = _before[p.before]!;
+            const b = before[p.before]!;
             return {
                 kind: 'modifier',
                 status: 'removed',
@@ -131,7 +130,7 @@ export const makeModifierDiff = (before: ModifiersJson, after: ModifiersJson): M
         }
 
         if (p.status === 'added') {
-            const a = _after[p.after]!;
+            const a = after[p.after]!;
             return {
                 kind: 'modifier',
                 status: 'added',
@@ -140,8 +139,8 @@ export const makeModifierDiff = (before: ModifiersJson, after: ModifiersJson): M
             };
         }
 
-        const b = _before[p.before]!;
-        const a = _after[p.after]!;
+        const b = before[p.before]!;
+        const a = after[p.after]!;
         const sourceKeys = { before: b.sourceKeys, after: a.sourceKeys };
 
         // 名前で対応付いたアノテーションのうち、引数が変わったもの
@@ -160,3 +159,6 @@ export const makeModifierDiff = (before: ModifiersJson, after: ModifiersJson): M
         return { kind: 'modifier', status: 'unchanged', sourceKeys, value: toBody(b) };
     });
 };
+
+export const makeModifierDiff = (before: ModifiersJson, after: ModifiersJson): ModifierDiff[] =>
+    makeModifierItemsDiff(makeTypedModifierJsons(before), makeTypedModifierJsons(after));

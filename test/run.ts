@@ -16,6 +16,7 @@ import './processor/extract-convert.test';
 import './processor/statement-diff.test';
 import './processor/type-diff.test';
 import './processor/parameter-diff.test';
+import './processor/query/query-diff.test';
 import './processor/diff-commons.test';
 import './processor/declaration-diff.test';
 import './processor/class-diff.test';

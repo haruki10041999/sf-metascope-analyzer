@@ -3,13 +3,13 @@ import { describe, it } from 'node:test';
 
 import {
     ClassBodyDiff,
+    getMemberKey,
     makeClassBodyDiff,
     makeClassDiff,
-} from '../../src/analyzer/processor/Apex/diff/declaration/class';
-import { getMemberKey } from '../../src/analyzer/processor/Apex/diff/declaration/commons';
-import { makeFieldDiff } from '../../src/analyzer/processor/Apex/diff/declaration/field';
-import { makeMethodDiff } from '../../src/analyzer/processor/Apex/diff/declaration/method';
-import { makePropertyDiff } from '../../src/analyzer/processor/Apex/diff/declaration/property';
+    makeFieldDeclarationDiff,
+    makeMethodDiff,
+    makePropertyDiff,
+} from '../../src/analyzer/processor/Apex/diff/declaration';
 import type {
     ClassDeclarationJson,
     ConstructorDeclarationJson,
@@ -252,7 +252,7 @@ describe('member diff', () => {
     });
 
     it('matches field variables by name', () => {
-        const diff = makeFieldDiff(field('f1', ['a', 'b']), field('f2', ['b', 'c']));
+        const diff = makeFieldDeclarationDiff(field('f1', ['a', 'b']), field('f2', ['b', 'c']));
         assert.ok(diff.status === 'changed' && 'fields' in diff);
         assert.ok(Array.isArray(diff.fields.variants));
         assert.deepEqual(

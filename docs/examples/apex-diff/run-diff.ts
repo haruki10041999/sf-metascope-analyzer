@@ -159,7 +159,6 @@ const short = (value: unknown) => {
 
 /** 差分の値として扱い、中に入らないプロパティ */
 const LEAF_KEYS = new Set([
-    'value',
     'before',
     'after',
     'sourceKeys',
@@ -176,7 +175,6 @@ const LEAF_KEYS = new Set([
     'filePath',
     'dataType',
     'modifierType',
-    'name',
 ]);
 
 const renderDiff = (
@@ -245,7 +243,7 @@ const renderDiff = (
         }
 
         Object.entries(node).forEach(([k, v]) => {
-            if (!LEAF_KEYS.has(k)) {
+            if (!LEAF_KEYS.has(k) && !(k === 'value' && !isRecord(v) && !Array.isArray(v))) {
                 walk(v, k, nextDepth);
             }
         });

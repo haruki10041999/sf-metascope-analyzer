@@ -28,7 +28,7 @@ import { UpdateListJson, makeUpdateListJson } from './updateList';
 
 const ERROR_KIND = 'sosl';
 
-type SoslFieldJson = JsonType<'soslField'> & {
+export type SoslFieldJson = JsonType<'soslField'> & {
     field: string[] | SoqlFunctionJson;
     func?: 'TOLABEL' | 'CONVERT_CURRENCY' | 'FORMAT';
 };
@@ -58,7 +58,7 @@ const makeSoslFieldJson = (target: ConvertType<SoslFieldType>): SoslFieldJson | 
     );
 };
 
-type FieldSpecJson = {
+export type FieldSpecJson = {
     object: (string | ErrorJson)[] | ErrorJson;
     field?: (SoslFieldJson | ErrorJson)[] | ErrorJson;
     where?: LogicalConditionJson | ErrorJson;

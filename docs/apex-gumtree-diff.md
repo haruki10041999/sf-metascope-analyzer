@@ -1,6 +1,6 @@
 # 文・ブロックの Diff 実装方針（GumTree）
 
-メソッド本体などの文の並び（`(StatementJson | ErrorJson)[]`）の差分を、GumTree アルゴリズムで取るための方針。対象は [src/analyzer/types/apex/](../src/analyzer/types/apex/) の JsonType / StructureJsonType（[apex-json-reference.md](./apex-json-reference.md)）。
+メソッド本体などの文の並び（`(StatementJson | ErrorJson)[]`）について、GumTree で要素を対応付け、順序変更や移動を抽出する方針。GumTree 自体のノード差分は内部情報であり、公開 API は JSON プロパティに対応した型付き Diff を返す。対象は [src/analyzer/types/apex/](../src/analyzer/types/apex/) の JsonType / StructureJsonType（[apex-json-reference.md](./apex-json-reference.md)）。
 
 - 宣言（class / method など）の対応付けは今までどおり [apex-declaration-diff.md](./apex-declaration-diff.md) の D（キー対応）で行う。GumTree を使うのは、対応付いた宣言の**本体の中**だけ。
 - [apex-statement-diff.md](./apex-statement-diff.md) の LCS + gap の方針は、この文書で置き換える。`objectKey` の性質（同じなら子孫まで同じ）は、そのまま前提として使う。
@@ -90,8 +90,7 @@ type GumTreeNode = {
 - 木の根は、比べるブロック 1 つ（メソッド本体など）を表す `block` の仮想ノード。
 - 文の配列の仮想ノードは `block` / `body` のプロパティから作る。`try` / `switch` の `block` は節の並びなので除く。
 - `ModifiersJson`（`{ access: [...], ... }`）は、分類キーをまたいで 1 つの `modifiers` の仮想ノード（順序なし）にまとめる。
-- 文字列・数値・真偽値などのプリミティブと、プリミティブだけの配列は、ノードにせず親の `values`（3.3）に入れる。識別子も、プロパティの値なら親の値になる（`return a;` → `return` の値 `field=a`）。
-- 式の並び（`memberArg`、`arg`、`init`、`update`、`merge` / `runAsCondition` の `field`、通常 for の `initializer`）は、要素が識別子（文字列）だけでも仮想ノードにし、文字列はラベル `name` の葉にする。`foo(a)` → `foo(a, b.c())` で、値とノードの間で形が変わらないようにするため。それ以外の配列でも、プリミティブとオブジェクトが混ざっていれば同じ扱いにする。
+- 文字列・数値・真偽値などのプリミティブは親の `values`（3.3）に入れる。配列は要素を個別の子ノードとして比較し、空配列も配列ノードとして表す。識別子の要素はラベル `name` の葉にする（`foo(a)` → `foo(a, b.c())` でも配列要素の差分形を保つ）。
 
 ### 3.2 ラベル
 
@@ -104,13 +103,14 @@ type GumTreeNode = {
 
 ### 3.3 値
 
-ノード自身が持つプリミティブのプロパティ（子ノードにならないもの）を `values` に持つ（下の表は `key=value` で書いた例）。対応付いた組の `values` はプロパティごとに比べて `fields` に出す。
+ノード自身が持つプリミティブのプロパティ（子ノードにならないもの）を `values` に持つ（下の表は `key=value` で書いた例）。対応付いた組の `values` はプロパティごとに型付き `ValueDiff` にして `fields` に出す。配列は `values` にまとめず、要素ごとの子 Diff にする。
+例外として `catchCondition.exceptionType` は修飾名を表す配列なので、方針書どおり配列全体を値として比較する。
 
 | ノード                         | 値                                               |
 | ------------------------------ | ------------------------------------------------ |
 | `break` / `continue`           | `value=break`（ラベル付き break ならそのラベル） |
 | `insert` / `update` などの DML | `accessLevel=USER`                               |
-| `upsert`                       | `accessLevel=…;key=Account.ExtId__c`             |
+| `upsert`                       | `accessLevel=…`（`key` は順序付きの子ノード列）  |
 | `memberAccess`                 | `member=foo;operator=.`                          |
 | 式 `FormulaJson`               | `operator=+`                                     |
 | `catchCondition`               | `exception=e;exceptionType=DmlException`         |
@@ -145,7 +145,7 @@ type GumTreeNode = {
 | `variant` + `index`                         | `arrayAccess`              | なし                            | `variant`, `index`                     |
 | `collection` + 初期化部分（`new`）          | `new:${初期化部分の kind}` | `collection=…`                  | `generic`, 初期化部分の各要素          |
 
-判定は [expression.ts](../src/analyzer/types/apex/expression.ts) の型に合わせて 1 つの関数（`getExpressionLabel`）にまとめ、型が増えたらここを直す。判定できない形は、ラベル `expression`・値は `JSON.stringify` の葉にする（取りこぼしても落ちないようにする）。
+判定は [expression.ts](../src/analyzer/types/apex/expression.ts) の型に合わせて 1 つの関数（`getExpressionLabel`）にまとめ、型が増えたらここを直す。判定できない形は、ラベル `unknown`・値は `getValueKey` による葉にする（取りこぼしても落ちないようにする）。
 
 ## 4. 文ごとの木の形
 
@@ -242,7 +242,7 @@ type BlockDiff = GumTreeDiff[]; // 根の block の子 (= 文の並び) の差�
 
 ### 5.4 宣言の Diff との接続
 
-- 宣言側は [declaration/commons.ts](../src/analyzer/processor/Apex/diff/declaration/commons.ts) の `makeBlockDiff` だけを呼んでいる。ここを GumTree 版（`makeGumTreeBlockDiff`）に差し替える。
+- 宣言側は [declaration.ts](../src/analyzer/processor/Apex/diff/declaration.ts) の `makeBlockDiff` を呼び出す。
 - `BlockDiff` の型が変わるので、`MethodDiff` などの `block` の型は自動で追従する。暫定版 `makeOpaqueBlockDiff` はテスト用に残す。
 - 初期化ブロックの判定キー（`getInitializerKey`）は文のキーから作っているので、変更は要らない。
 
@@ -268,14 +268,16 @@ Top-down は O(n²)（n はノード数）、Bottom-up は候補の絞り込み�
 
 ### 7.1 GumTree 本体
 
-| 項目                                                                   | 場所                                                                                      |
-| ---------------------------------------------------------------------- | ----------------------------------------------------------------------------------------- |
-| JSON → `GumTreeNode` の変換（3 章・4 章）。`getExpressionLabel` を含む | [diff/gumtree/tree.ts](../src/analyzer/processor/Apex/diff/gumtree/tree.ts)               |
-| Top-down / Bottom-up / Recovery（2 章）                                | [diff/gumtree/matcher.ts](../src/analyzer/processor/Apex/diff/gumtree/matcher.ts)         |
-| mapping → `GumTreeDiff` の変換（5 章）                                 | [diff/gumtree/diff.ts](../src/analyzer/processor/Apex/diff/gumtree/diff.ts)               |
-| `makeGumTreeBlockDiff`。`makeBlockDiff` はこれを使う（5.4）            | [diff/declaration/commons.ts](../src/analyzer/processor/Apex/diff/declaration/commons.ts) |
-| `Match` への `similar` / `recovery` の追加                             | [diff/commons.ts](../src/analyzer/processor/Apex/diff/commons.ts)                         |
-| テスト                                                                 | test/processor/gumtree-diff.test.ts                                                       |
+| 項目                                                                                                               | 場所                                                                              |
+| ------------------------------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------- |
+| JSON → `GumTreeNode` の変換（3 章・4 章）。`getExpressionLabel` を含む                                             | [diff/gumtree/tree.ts](../src/analyzer/processor/Apex/diff/gumtree/tree.ts)       |
+| Top-down / Bottom-up / Recovery（2 章）                                                                            | [diff/gumtree/matcher.ts](../src/analyzer/processor/Apex/diff/gumtree/matcher.ts) |
+| mapping → `GumTreeDiff` の変換（5 章）                                                                             | [diff/gumtree/diff.ts](../src/analyzer/processor/Apex/diff/gumtree/diff.ts)       |
+| 内部配列対応付け `makeGumTreeBlockDiff`。公開文 API `makeStatementDiff` / `makeBlockDiff` は型付き構造 Diff を返す | [diff/statement.ts](../src/analyzer/processor/Apex/diff/statement.ts)             |
+| 単一式の公開 API `makeExpressionDiff`（型付き構造 Diff）                                                           | [diff/expression.ts](../src/analyzer/processor/Apex/diff/expression.ts)           |
+| GumTree の内部対応付け結果型                                                                                       | [diff/gumtree/diff.ts](../src/analyzer/processor/Apex/diff/gumtree/diff.ts)       |
+| `Match` への `similar` / `recovery` の追加                                                                         | [diff/commons.ts](../src/analyzer/processor/Apex/diff/commons.ts)                 |
+| テスト                                                                                                             | test/processor/gumtree-diff.test.ts                                               |
 
 テストは実際の Apex のソースを変換した JSON で行う（test/converter/helpers.ts の `toJson`）。観点:
 
@@ -293,9 +295,9 @@ Top-down は O(n²)（n はノード数）、Bottom-up は候補の絞り込み�
 | 宣言                   | `class` / `interface` / `interfaceMethod` / `enum` / `enumConstant` / `method` / `constructor` / `property` / `field` / `notSet`                                                                                              | 済（D / C / B。apex-declaration-diff.md）。本体は GumTree |
 | ユニット               | `triggerCase`                                                                                                                                                                                                                 | 済（B）                                                   |
 | 修飾子・パラメータ・型 | `modifier` / `annotation` / `parameter` / `type`                                                                                                                                                                              | 済。宣言の中は専用の Diff、文の中は GumTree のノード      |
-| 文（19 種）            | `break` / `continue` / `delete` / `doWhile` / `expression` / `for` / `if` / `insert` / `localVariable` / `merge` / `return` / `runAs` / `switch` / `throw` / `try` / `undelete` / `update` / `upsert` / `while`               | 済（GumTree）                                             |
-| 文の補助ノード（8 種） | `doWhileCondition` / `forCondition` / `ifCondition` / `runAsCondition` / `switchVariant` / `switchCondition` / `catchCondition` / `whileCondition`                                                                            | 済（GumTree）                                             |
-| 式                     | `memberAccess`（`DotMethodCallJson` / `MethodCallJson`）                                                                                                                                                                      | 済（GumTree。kind のない式は仮想ノード）                  |
+| 文（19 種）            | `break` / `continue` / `delete` / `doWhile` / `expression` / `for` / `if` / `insert` / `localVariable` / `merge` / `return` / `runAs` / `switch` / `throw` / `try` / `undelete` / `update` / `upsert` / `while`               | 済（専用構造 Diff。GumTree は配列対応付けのみ）           |
+| 文の補助ノード（8 種） | `doWhileCondition` / `forCondition` / `ifCondition` / `runAsCondition` / `switchVariant` / `switchCondition` / `catchCondition` / `whileCondition`                                                                            | 済（専用構造 Diff）                                       |
+| 式                     | `BaseExpressionJson`（`memberAccess` と kind を持たない formula / literal / cast / call 等の式）                                                                                                                              | 済（`makeExpressionDiff`。GumTree の仮想ノードも含む）    |
 | SOQL                   | `soql` / `subQuery` / `selectEntry` / `fromField` / `singleCondition` / `groupBy` / `orderField` / `limitClause` / `offsetClause` / `forClause` / `updateClause` / `allRowsClause` / `usingScopeClause` / `categoryCondition` | 済（GumTree。順序なしの並びは 6.2）                       |
 | SOSL                   | `sosl` / `soslField`                                                                                                                                                                                                          | 済（同上）                                                |
 | エラー                 | `error`                                                                                                                                                                                                                       | 済                                                        |
@@ -307,7 +309,7 @@ Top-down は O(n²)（n はノード数）、Bottom-up は候補の絞り込み�
 | `initializer`（sourceKeys なし）                                          | 済（クラス本文の C）。本体は GumTree                                                                                                                                                             |
 | 匿名 Apex / トリガーの本文（`BlockMemberJson[]`）                         | 済（[diff/unitBody.ts](../src/analyzer/processor/Apex/diff/unitBody.ts) の `makeBlockMembersDiff`）。宣言と ErrorJson は `makeClassBodyDiff`、`kind: 'statement'` の要素（修飾子ごと）は GumTree |
 | 匿名 Apex / トリガーのユニット                                            | 済（`makeAnonymousUnitDiff` / `makeTriggerUnitDiff`）。`makeUnitDiffs` から呼ぶ                                                                                                                  |
-| field の初期値                                                            | 済。式 1 つを根の block の子にした木で GumTree（`makeGumTreeBlockDiff([init], [init])`）。変数の判定キーにも木の hash を使う（式の JSON は中に位置を含むため）                                   |
+| field の初期値                                                            | 済。`makeExpressionDiff` で GumTree 比較し、変数の判定キーにも木の hash を使う（式の JSON は中に位置を含むため）                                                                                 |
 | [unit.ts](../src/analyzer/processor/Apex/diff/unit.ts) の `makeUnitDiffs` | 済。dataType が同じでエラーでないファイルに `content`（`makeUnitContentDiff`）を付ける。中身に変化があれば、ファイルの status も `changed` にする                                                |
 | `CompilationUnitJson`（`class` / `interface` / `enum` + `modifier`）      | 済（`makeTypeDeclarationDiff`）。[unit.ts](../src/analyzer/processor/Apex/diff/unit.ts) の `makeClsFileDiff` の結果に `content` として入れる                                                     |
 
