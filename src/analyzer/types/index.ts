@@ -10,6 +10,9 @@ export * from './apex';
 // Apex IR: 各 isXxxType が ./apex（converter）の同名の判定関数と衝突するため、名前空間で公開する
 export * as apexIR from './apex_IR';
 
+// LWC IR: Babel Standardized ノード型と型ガード
+export * as lwcIR from './lwc_IR';
+
 // IR のうち、解析の入口で使うものは直接公開する
 export {
     ApexCommonErrorListener,
@@ -17,4 +20,3 @@ export {
     ApexErrorTypeClass,
     UnitVisitor,
 } from './apex_IR';
-

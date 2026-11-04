@@ -2,12 +2,39 @@ import type { Node, SourceLocation } from '@babel/types';
 
 import type { SourcePosition, SourceSpan } from '../commons/source';
 
+// Babel の Position は SourcePosition と同じ基準 (line は 1 始まり、column / index は 0 始まり、
+// loc.end は範囲の次の文字) なので、index を offset に移すだけでよい。Position 自体は export されていない
+const toSourcePosition = (position: SourceLocation['start']): SourcePosition => ({
+    offset: position.index,
+    line: position.line,
+    column: position.column,
+});
+
+// Babel のノードは getText() を持たないため、元のソースから切り出す
+export const getSourceSpan = (ctx: Node, source: string): SourceSpan | null => {
+    if (!ctx.loc) {
+        return null;
+    }
+
+    return {
+        context: source.slice(ctx.loc.start.index, ctx.loc.end.index),
+        start: toSourcePosition(ctx.loc.start),
+        end: toSourcePosition(ctx.loc.end),
+    };
+};
+
 export class LwcCommonTypeClass<TName extends string> {
     private type: TName;
+    private originalSource: string;
     private span: SourceSpan | null = null;
 
-    constructor(type: TName) {
+    constructor(type: TName, originalSource: string) {
         this.type = type;
+        this.originalSource = originalSource;
+    }
+
+    getOriginalSource(): string {
+        return this.originalSource;
     }
 
     getType(): TName {
@@ -23,10 +50,6 @@ export class LwcCommonTypeClass<TName extends string> {
     }
 }
 
-export abstract class LwcCommonBaseClass<TName extends string> extends LwcCommonTypeClass<TName> {
-    static abstract create(ctx: Node): LwcCommonTypeClass<TName> | LwcErrorTypeClass;
-}
-
 export type ErrorCode =
     'NULL_CHILD' | 'UNSUPPORTED_CONTEXT' | 'TYPE_MISMATCH' | 'EXCEPTION' | 'UNRESOLVED';
 
@@ -37,12 +60,13 @@ export class LwcErrorTypeClass extends LwcCommonTypeClass<'AnalyzerError'> {
     private errorMessage: string = '';
 
     private constructor(
+        originalSource: string,
         code: ErrorCode,
         contextType: string,
         context: string,
         errorMessage: string,
     ) {
-        super('AnalyzerError');
+        super('AnalyzerError', originalSource);
         this.code = code;
         this.contextType = contextType;
         this.context = context;
@@ -50,12 +74,13 @@ export class LwcErrorTypeClass extends LwcCommonTypeClass<'AnalyzerError'> {
     }
 
     static create(
+        originalSource: string,
         code: ErrorCode,
         contextType: string,
         context: string,
         errorMessage: string,
     ): LwcErrorTypeClass {
-        return new LwcErrorTypeClass(code, contextType, context, errorMessage);
+        return new LwcErrorTypeClass(originalSource, code, contextType, context, errorMessage);
     }
 
     getCode(): ErrorCode {
@@ -79,103 +104,54 @@ export const isErrorType = (target: LwcCommonTypeClass<string>): target is LwcEr
     return target instanceof LwcErrorTypeClass;
 };
 
-export const isLwcValidClass = <T extends LwcCommonTypeClass<string>>(
-    target: LwcCommonTypeClass<string>,
-    isValidType: (target: LwcCommonTypeClass<string>) => target is T,
-    type: string,
-): T | LwcErrorTypeClass => {
-    if (isErrorType(target) || isValidType(target)) {
-        return target;
-    }
-
-    // 親ノード全体を失わないよう、型不一致は子だけをエラーノードに置き換える
-    const error = LwcErrorTypeClass.create(
-        'TYPE_MISMATCH',
-        type,
-        target.getType(),
-        `想定していた型と違います 想定:${type} 実値:${target.getType()}`,
-    );
-    error.setSpan(target.getSpan());
-    return error;
+export type EvaluatePair<
+    TNode extends Node,
+    TCommonTypeClass extends LwcCommonTypeClass<string>,
+> = {
+    isNode: (target: Node | null | undefined) => target is TNode;
+    instance: (target: Node, originalSource: string) => TCommonTypeClass;
 };
 
-export const isLwcValidClassList = <T extends LwcCommonTypeClass<string>>(
-    ctxs: Node[],
-    create: (ctx: Node) => LwcCommonTypeClass<string>,
-    isValidType: (target: LwcCommonTypeClass<string>) => target is T,
-    type: string,
-): (T | LwcErrorTypeClass)[] => {
-    if (!ctxs || ctxs.length === 0) {
-        return [];
-    }
-
-    return ctxs.map((ctx) => {
-        return isLwcValidClass(create(ctx), isValidType, type);
-    });
-};
-
-// Babel の Position は SourcePosition と同じ基準 (line は 1 始まり、column / index は 0 始まり、
-// loc.end は範囲の次の文字) なので、index を offset に移すだけでよい。Position 自体は export されていない
-const toSourcePosition = (position: SourceLocation['start']): SourcePosition => ({
-    offset: position.index,
-    line: position.line,
-    column: position.column,
+export const makeEvaluatePair = <
+    TNode extends Node,
+    TCommonTypeClass extends LwcCommonTypeClass<string>,
+>(
+    isNode: (target: Node | null | undefined) => target is TNode,
+    instance: (target: TNode, originalSource: string) => TCommonTypeClass,
+): EvaluatePair<TNode, TCommonTypeClass> => ({
+    isNode,
+    instance: (target, originalSource) => {
+        if (!isNode(target)) {
+            throw new Error(`想定していた Babel ノード型と違います: ${target.type}`);
+        }
+        return instance(target, originalSource);
+    },
 });
 
-// Babel のノードは getText() を持たないため、元のソースから切り出す
-export const getSourceSpan = (ctx: Node, source: string): SourceSpan | null => {
-    if (!ctx.loc) {
-        return null;
-    }
-
-    return {
-        context: source.slice(ctx.loc.start.index, ctx.loc.end.index),
-        start: toSourcePosition(ctx.loc.start),
-        end: toSourcePosition(ctx.loc.end),
-    };
-};
-
-type EvaluatePair<TNode extends Node, TCommonTypeClass extends LwcCommonTypeClass<string>> = {
-    commonTypeClass: TCommonTypeClass;
-    isNode: (target: Node) => target is TNode;
-};
-
-type AnyEvaluatePair<
-    TNode extends Node,
-    TCommonTypeClass extends LwcCommonTypeClass<string>,
-> = EvaluatePair<TNode, TCommonTypeClass>;
+type EvaluatePairInstance<TPair> = TPair extends {
+    instance: (
+        target: Node,
+        originalSource: string,
+    ) => infer TResult extends LwcCommonTypeClass<string>;
+}
+    ? TResult
+    : never;
 
 export abstract class LwcCommonVisitor<
-    TNode extends Node,
-    TCommonTypeClass extends LwcCommonTypeClass<string>,
+    TEvaluatePair extends {
+        isNode: (target: Node | null | undefined) => boolean;
+        instance: (target: Node, originalSource: string) => LwcCommonTypeClass<string>;
+    },
 > {
-    abstract evaluatePair: AnyEvaluatePair<Node, TCommonTypeClass>[];
+    abstract evaluatePair: readonly TEvaluatePair[];
 
-    visit(ctx: Node, originalSource: string): TCommonTypeClass | LwcErrorTypeClass {
-        for (const pair of this.evaluatePair) {
-            if (pair.isNode(ctx)) {
-                return pair.commonTypeClass;
-            }
-        }
-
-        return new LwcErrorTypeClass(/* ... */);
-    }
-}
-
-// Babel には ANTLR の生成 Visitor がないため、ノードの type から visitXxx を引いて呼ぶ
-// (ClassProperty → visitClassProperty)。サブクラスは対応するノードの visitXxx だけを定義する
-export class LwcCommonParser<T> {
-    private originalSource: string;
-    private;
-
-    constructor(source: string) {
-        this.originalSource = source;
-    }
-
-    visit(ctx: Node | null | undefined): T | LwcErrorTypeClass {
-        // Babel の AST は任意の子要素 (初期値・戻り値の型など) が無いと null / undefined になる
+    visit(
+        ctx: Node | null | undefined,
+        originalSource: string,
+    ): EvaluatePairInstance<TEvaluatePair> | LwcErrorTypeClass {
         if (!ctx) {
             return LwcErrorTypeClass.create(
+                originalSource,
                 'NULL_CHILD',
                 'null',
                 '',
@@ -183,25 +159,30 @@ export class LwcCommonParser<T> {
             );
         }
 
-        const span = getSourceSpan(ctx, this.originalSource);
+        const span = getSourceSpan(ctx, originalSource);
         const context = span?.context ?? '';
-        let result: T | LwcErrorTypeClass;
+
+        let result: LwcCommonTypeClass<string> | LwcErrorTypeClass | undefined;
+
         try {
-            const method = (this as unknown as Record<string, unknown>)[`visit${ctx.type}`];
-            const visited: unknown =
-                typeof method === 'function' ? method.call(this, ctx) : undefined;
-            // visitXxx が無い、または ApexCommonTypeClass 以外を返したときは弾く
-            result =
-                visited instanceof LwcCommonTypeClass
-                    ? (visited as T | LwcErrorTypeClass)
-                    : LwcErrorTypeClass.create(
-                          'UNSUPPORTED_CONTEXT',
-                          ctx.type,
-                          context,
-                          `${this.constructor.name} は ${ctx.type} に対応していません`,
-                      );
+            for (const pair of this.evaluatePair) {
+                if (pair.isNode(ctx)) {
+                    result = pair.instance(ctx, originalSource);
+                    break;
+                }
+            }
+            if (!result) {
+                result = LwcErrorTypeClass.create(
+                    originalSource,
+                    'UNSUPPORTED_CONTEXT',
+                    ctx.type,
+                    context,
+                    `${this.constructor.name} は ${ctx.type} に対応していません`,
+                );
+            }
         } catch (error) {
             result = LwcErrorTypeClass.create(
+                originalSource,
                 'EXCEPTION',
                 ctx.type,
                 context,
@@ -209,8 +190,9 @@ export class LwcCommonParser<T> {
             );
         }
 
-        (result as LwcCommonTypeClass<string>).setSpan(span);
-        return result;
+        result.setSpan(span);
+
+        return result as EvaluatePairInstance<TEvaluatePair> | LwcErrorTypeClass;
     }
 }
 
@@ -249,6 +231,7 @@ export class LwcCommonErrorListener {
         // message の末尾の " (行:列)" は span と重なるので除く
         const message = error.message.replace(/ \(\d+:\d+\)$/, '');
         const errorTypeClass = LwcErrorTypeClass.create(
+            this.originalSource,
             'UNRESOLVED',
             error.reasonCode,
             sourceCode,

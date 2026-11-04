@@ -174,7 +174,7 @@ export class ApexCommonVisitor<T> extends ApexParserBaseVisitor<T | ApexErrorTyp
             );
         }
 
-        (result as ApexCommonTypeClass<string>).setSpan(getSourceSpan(ctx));
+        result.setSpan(getSourceSpan(ctx));
         return result;
     }
 }
