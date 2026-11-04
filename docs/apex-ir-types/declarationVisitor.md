@@ -1,7 +1,7 @@
 # declarationVisitor
 
 型・メンバー・ローカル変数などの宣言を扱う。トップレベル型宣言、クラス本体内の宣言、クラス/インターフェース/enum 宣言、メソッド・コンストラクタ・フィールド・プロパティ宣言、ローカル変数宣言を IR に変換する。
-子フィールドは変換失敗時に `ErrorTypeClass`（`type: 'AnalyzerError'`, `contextType` / `context` / `errorMessage`）になり得る。`modifier` 要素（modifierVisitor の `NormalModifierTypeClass`）の `value` は `'GLOBAL'` / `'PUBLIC'` / `'PROTECTED'` / `'PRIVATE'` / `'TRANSIENT'` / `'STATIC'` / `'ABSTRACT'` / `'FINAL'` / `'WEBSERVICE'` / `'OVERRIDE'` / `'VIRTUAL'` / `'TESTMETHOD'` / `'WITH_SHARING'` / `'WITHOUT_SHARING'` / `'INHERITED_SHARING'` またはアノテーション（`AnnotationTypeClass`）。
+子フィールドは変換失敗時に `ApexErrorTypeClass`（`type: 'AnalyzerError'`, `contextType` / `context` / `errorMessage`）になり得る。`modifier` 要素（modifierVisitor の `NormalModifierTypeClass`）の `value` は `'GLOBAL'` / `'PUBLIC'` / `'PROTECTED'` / `'PRIVATE'` / `'TRANSIENT'` / `'STATIC'` / `'ABSTRACT'` / `'FINAL'` / `'WEBSERVICE'` / `'OVERRIDE'` / `'VIRTUAL'` / `'TESTMETHOD'` / `'WITH_SHARING'` / `'WITHOUT_SHARING'` / `'INHERITED_SHARING'` またはアノテーション（`AnnotationTypeClass`）。
 
 ## Visitor
 
@@ -33,10 +33,10 @@
 
 | 変数    | 型                    | 内容                                   |
 | ------- | --------------------- | -------------------------------------- |
-| `type`  | `string`              | ノード種別（CommonTypeClass から継承） |
-| `value` | `T \| ErrorTypeClass` | 子ノード                               |
+| `type`  | `string`              | ノード種別（ApexCommonTypeClass から継承） |
+| `value` | `T \| ApexErrorTypeClass` | 子ノード                               |
 
-ゲッター: `getValue()`, `getType()`（CommonTypeClass）
+ゲッター: `getValue()`, `getType()`（ApexCommonTypeClass）
 
 ### `DeclarationListTypeClass<T>`
 
@@ -44,10 +44,10 @@
 
 | 変数    | 型                        | 内容                                   |
 | ------- | ------------------------- | -------------------------------------- |
-| `type`  | `string`                  | ノード種別（CommonTypeClass から継承） |
-| `value` | `(T \| ErrorTypeClass)[]` | 子ノードの配列                         |
+| `type`  | `string`                  | ノード種別（ApexCommonTypeClass から継承） |
+| `value` | `(T \| ApexErrorTypeClass)[]` | 子ノードの配列                         |
 
-ゲッター: `getValue()`, `getType()`（CommonTypeClass）
+ゲッター: `getValue()`, `getType()`（ApexCommonTypeClass）
 
 ### `DeclarationAllTypeClass`
 
@@ -69,8 +69,8 @@
 | 変数       | 型                                              | 内容                                                                       |
 | ---------- | ----------------------------------------------- | -------------------------------------------------------------------------- |
 | `type`     | `'typeDeclaration'`                             | 継承                                                                       |
-| `value`    | `TypeDeclarationClassType \| ErrorTypeClass`    | `classDeclaration` / `enumDeclaration` / `interfaceDeclaration` のいずれか |
-| `modifier` | `(NormalModifierTypeClass \| ErrorTypeClass)[]` | 型の修飾子。無ければ `[]`                                                  |
+| `value`    | `TypeDeclarationClassType \| ApexErrorTypeClass`    | `classDeclaration` / `enumDeclaration` / `interfaceDeclaration` のいずれか |
+| `modifier` | `(NormalModifierTypeClass \| ApexErrorTypeClass)[]` | 型の修飾子。無ければ `[]`                                                  |
 
 ゲッター: `getValue()`（継承）, `getModifier()`。ガード: `isTypeDeclarationType`
 
@@ -109,10 +109,10 @@ global inherited sharing virtual class ParserTest extends BaseParser implements 
 | 変数        | 型                                            | 内容                                                               |
 | ----------- | --------------------------------------------- | ------------------------------------------------------------------ |
 | `type`      | `'classDeclaration'`                          | 継承                                                               |
-| `value`     | `NormalIdTypeClass \| ErrorTypeClass`         | クラス名（`id`）                                                   |
-| `body`      | `ClassBodyTypeClass \| ErrorTypeClass`        | クラス本体（bodyVisitor の `classBody`）                           |
-| `extend`    | `TypeRefTypeClass \| ErrorTypeClass \| null`  | 親クラス（`typeRef`）。`extends` が無ければ `null`                 |
-| `implement` | `TypeListTypeClass \| ErrorTypeClass \| null` | 実装インターフェース（`typeList`）。`implements` が無ければ `null` |
+| `value`     | `NormalIdTypeClass \| ApexErrorTypeClass`         | クラス名（`id`）                                                   |
+| `body`      | `ClassBodyTypeClass \| ApexErrorTypeClass`        | クラス本体（bodyVisitor の `classBody`）                           |
+| `extend`    | `TypeRefTypeClass \| ApexErrorTypeClass \| null`  | 親クラス（`typeRef`）。`extends` が無ければ `null`                 |
+| `implement` | `TypeListTypeClass \| ApexErrorTypeClass \| null` | 実装インターフェース（`typeList`）。`implements` が無ければ `null` |
 
 ゲッター: `getValue()`（継承）, `getBody()`, `getExtend()`, `getImplement()`。ガード: `isClassDeclarationType`
 
@@ -147,9 +147,9 @@ public class CustomException extends Exception {
 | 変数     | 型                                            | 内容                                                              |
 | -------- | --------------------------------------------- | ----------------------------------------------------------------- |
 | `type`   | `'interfaceDeclaration'`                      | 継承                                                              |
-| `value`  | `NormalIdTypeClass \| ErrorTypeClass`         | インターフェース名（`id`）                                        |
-| `body`   | `InterfaceBodyTypeClass \| ErrorTypeClass`    | 本体（bodyVisitor の `interfaceBody`）                            |
-| `extend` | `TypeListTypeClass \| ErrorTypeClass \| null` | 継承元インターフェース（`typeList`）。`extends` が無ければ `null` |
+| `value`  | `NormalIdTypeClass \| ApexErrorTypeClass`         | インターフェース名（`id`）                                        |
+| `body`   | `InterfaceBodyTypeClass \| ApexErrorTypeClass`    | 本体（bodyVisitor の `interfaceBody`）                            |
+| `extend` | `TypeListTypeClass \| ApexErrorTypeClass \| null` | 継承元インターフェース（`typeList`）。`extends` が無ければ `null` |
 
 ゲッター: `getValue()`（継承）, `getBody()`, `getExtend()`。ガード: `isInterfaceDeclarationType`
 
@@ -189,8 +189,8 @@ public interface ExtendedHandler extends Handler, Comparable {
 | 変数       | 型                                                 | 内容                                              |
 | ---------- | -------------------------------------------------- | ------------------------------------------------- |
 | `type`     | `'enumDeclaration'`                                | 継承                                              |
-| `value`    | `NormalIdTypeClass \| ErrorTypeClass`              | enum 名（`id`）                                   |
-| `constant` | `EnumConstantsTypeClass \| ErrorTypeClass \| null` | 定数リスト。空 enum（`enum X {}`）の場合は `null` |
+| `value`    | `NormalIdTypeClass \| ApexErrorTypeClass`              | enum 名（`id`）                                   |
+| `constant` | `EnumConstantsTypeClass \| ApexErrorTypeClass \| null` | 定数リスト。空 enum（`enum X {}`）の場合は `null` |
 
 ゲッター: `getValue()`（継承）, `getConstant()`。ガード: `isEnumDeclarationType`
 
@@ -214,7 +214,7 @@ enum EmptyEnum {}
 | 変数    | 型                                        | 内容                 |
 | ------- | ----------------------------------------- | -------------------- |
 | `type`  | `'enumConstants'`                         | 継承                 |
-| `value` | `(NormalIdTypeClass \| ErrorTypeClass)[]` | 定数名（`id`）の配列 |
+| `value` | `(NormalIdTypeClass \| ApexErrorTypeClass)[]` | 定数名（`id`）の配列 |
 
 ゲッター: `getValue()`（継承）。ガード: `isEnumConstantsType`
 
@@ -241,8 +241,8 @@ public enum Status { AAA, BBB, CCC, DDD }
 | 変数       | 型                                                                             | 内容                                                                                                           |
 | ---------- | ------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------- |
 | `type`     | `'classBodyDeclaration'`                                                       | 継承                                                                                                           |
-| `value`    | `MemberDeclarationTypeClass \| NormalBlockTypeClass \| ErrorTypeClass \| null` | メンバー宣言なら `memberDeclaration`、初期化子なら `block`。単独の `;` の場合は `null`                         |
-| `modifier` | `(NormalModifierTypeClass \| ErrorTypeClass)[]`                                | メンバー宣言の修飾子。初期化子・`;` では `[]`                                                                  |
+| `value`    | `MemberDeclarationTypeClass \| NormalBlockTypeClass \| ApexErrorTypeClass \| null` | メンバー宣言なら `memberDeclaration`、初期化子なら `block`。単独の `;` の場合は `null`                         |
+| `modifier` | `(NormalModifierTypeClass \| ApexErrorTypeClass)[]`                                | メンバー宣言の修飾子。初期化子・`;` では `[]`                                                                  |
 | `isStatic` | `boolean`                                                                      | `static { ... }` 初期化子のとき `true`。メンバー宣言の `static` 修飾子は `modifier` 側に入り、こちらは `false` |
 
 ゲッター: `getValue()`（継承）, `getModifier()`, `getIsStatic()`。ガード: `isClassBodyDeclarationType`
@@ -278,7 +278,7 @@ static {
 | 変数    | 型                                                 | 内容                                                                             |
 | ------- | -------------------------------------------------- | -------------------------------------------------------------------------------- |
 | `type`  | `'memberDeclaration'`                              | 継承                                                                             |
-| `value` | `MemberDeclarationTypeClassType \| ErrorTypeClass` | 実際の宣言（method / constructor / interface / class / enum / property / field） |
+| `value` | `MemberDeclarationTypeClassType \| ApexErrorTypeClass` | 実際の宣言（method / constructor / interface / class / enum / property / field） |
 
 ゲッター: `getValue()`（継承）。ガード: `isMemberDeclarationType`
 
@@ -309,7 +309,7 @@ public static final Integer MAX_SIZE = 100;
 | 変数    | 型                                                        | 内容                                                               |
 | ------- | --------------------------------------------------------- | ------------------------------------------------------------------ |
 | `type`  | `'triggerMemberDeclaration'`                              | 継承                                                               |
-| `value` | `TriggerMemberDeclarationTypeClassType \| ErrorTypeClass` | 実際の宣言（method / interface / class / enum / property / field） |
+| `value` | `TriggerMemberDeclarationTypeClassType \| ApexErrorTypeClass` | 実際の宣言（method / interface / class / enum / property / field） |
 
 ゲッター: `getValue()`（継承）。ガード: `isTriggerMemberDeclarationType`
 
@@ -340,7 +340,7 @@ private static final String PREFIX = 'Trigger: ';
 | 変数    | 型                                                          | 内容                                                               |
 | ------- | ----------------------------------------------------------- | ------------------------------------------------------------------ |
 | `type`  | `'anonymousMemberDeclaration'`                              | 継承                                                               |
-| `value` | `AnonymousMemberDeclarationTypeClassType \| ErrorTypeClass` | 実際の宣言（method / interface / class / enum / property / field） |
+| `value` | `AnonymousMemberDeclarationTypeClassType \| ApexErrorTypeClass` | 実際の宣言（method / interface / class / enum / property / field） |
 
 ゲッター: `getValue()`（継承）。ガード: `isAnonymousMemberDeclarationType`
 
@@ -373,10 +373,10 @@ public class AnonymousHelper { ... }
 | 変数        | 型                                                    | 内容                                                                                                                |
 | ----------- | ----------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------- |
 | `type`      | `'methodDeclaration'`                                 | 継承                                                                                                                |
-| `value`     | `NormalIdTypeClass \| ErrorTypeClass`                 | メソッド名（`id`）                                                                                                  |
-| `valueType` | `TypeRefTypeClass \| 'void' \| ErrorTypeClass`        | 戻り値型。`void` の場合は文字列 `'void'`                                                                            |
-| `param`     | `FormalParametersTypeClass \| ErrorTypeClass \| null` | 引数（`formalParameters`）。文法上必須のため通常 `null` にならない（引数なしは `formalParameters.value` が `null`） |
-| `block`     | `NormalBlockTypeClass \| ErrorTypeClass \| null`      | 本体。abstract メソッド等で本体が無い（`;` で終わる）場合は `null`                                                  |
+| `value`     | `NormalIdTypeClass \| ApexErrorTypeClass`                 | メソッド名（`id`）                                                                                                  |
+| `valueType` | `TypeRefTypeClass \| 'void' \| ApexErrorTypeClass`        | 戻り値型。`void` の場合は文字列 `'void'`                                                                            |
+| `param`     | `FormalParametersTypeClass \| ApexErrorTypeClass \| null` | 引数（`formalParameters`）。文法上必須のため通常 `null` にならない（引数なしは `formalParameters.value` が `null`） |
+| `block`     | `NormalBlockTypeClass \| ApexErrorTypeClass \| null`      | 本体。abstract メソッド等で本体が無い（`;` で終わる）場合は `null`                                                  |
 
 ゲッター: `getValue()`（継承）, `getValueType()`, `getParam()`, `getBlock()`。ガード: `isMethodDeclarationType`
 
@@ -406,9 +406,9 @@ public abstract void execute();
 | 変数    | 型                                                    | 内容                                                               |
 | ------- | ----------------------------------------------------- | ------------------------------------------------------------------ |
 | `type`  | `'constructorDeclaration'`                            | 継承                                                               |
-| `value` | `QualifiedNameTypeClass \| ErrorTypeClass`            | コンストラクタ名（`qualifiedName`）                                |
-| `param` | `FormalParametersTypeClass \| ErrorTypeClass \| null` | 引数（`formalParameters`）。文法上必須のため通常 `null` にならない |
-| `block` | `NormalBlockTypeClass \| ErrorTypeClass`              | 本体                                                               |
+| `value` | `QualifiedNameTypeClass \| ApexErrorTypeClass`            | コンストラクタ名（`qualifiedName`）                                |
+| `param` | `FormalParametersTypeClass \| ApexErrorTypeClass \| null` | 引数（`formalParameters`）。文法上必須のため通常 `null` にならない |
+| `block` | `NormalBlockTypeClass \| ApexErrorTypeClass`              | 本体                                                               |
 
 ゲッター: `getValue()`（継承）, `getParam()`, `getBlock()`。ガード: `isConstructorDeclarationType`
 
@@ -443,8 +443,8 @@ public ParserTest(String name) {
 | 変数        | 型                                               | 内容                                                     |
 | ----------- | ------------------------------------------------ | -------------------------------------------------------- |
 | `type`      | `'fieldDeclaration'`                             | 継承                                                     |
-| `value`     | `VariableDeclaratorsTypeClass \| ErrorTypeClass` | 宣言子の並び（variableVisitor の `variableDeclarators`） |
-| `valueType` | `TypeRefTypeClass \| ErrorTypeClass`             | フィールドの型                                           |
+| `value`     | `VariableDeclaratorsTypeClass \| ApexErrorTypeClass` | 宣言子の並び（variableVisitor の `variableDeclarators`） |
+| `valueType` | `TypeRefTypeClass \| ApexErrorTypeClass`             | フィールドの型                                           |
 
 ゲッター: `getValue()`（継承）, `getValueType()`。ガード: `isFieldDeclarationType`
 
@@ -487,9 +487,9 @@ public static final Integer MAX_SIZE = 100;
 | 変数        | 型                                             | 内容                                                                       |
 | ----------- | ---------------------------------------------- | -------------------------------------------------------------------------- |
 | `type`      | `'propertyDeclaration'`                        | 継承                                                                       |
-| `value`     | `NormalIdTypeClass \| ErrorTypeClass`          | プロパティ名（`id`）                                                       |
-| `valueType` | `TypeRefTypeClass \| ErrorTypeClass`           | プロパティの型                                                             |
-| `block`     | `(PropertyBlockTypeClass \| ErrorTypeClass)[]` | アクセサ（blockVisitor の `propertyBlock`）の配列。アクセサが無ければ `[]` |
+| `value`     | `NormalIdTypeClass \| ApexErrorTypeClass`          | プロパティ名（`id`）                                                       |
+| `valueType` | `TypeRefTypeClass \| ApexErrorTypeClass`           | プロパティの型                                                             |
+| `block`     | `(PropertyBlockTypeClass \| ApexErrorTypeClass)[]` | アクセサ（blockVisitor の `propertyBlock`）の配列。アクセサが無ければ `[]` |
 
 ゲッター: `getValue()`（継承）, `getValueType()`, `getBlock()`。ガード: `isPropertyDeclarationType`
 
@@ -525,10 +525,10 @@ public String autoProperty { get; set; }
 | 変数        | 型                                                    | 内容                                                               |
 | ----------- | ----------------------------------------------------- | ------------------------------------------------------------------ |
 | `type`      | `'interfaceMethodDeclaration'`                        | 継承                                                               |
-| `value`     | `NormalIdTypeClass \| ErrorTypeClass`                 | メソッド名（`id`）                                                 |
-| `valueType` | `TypeRefTypeClass \| 'void' \| ErrorTypeClass`        | 戻り値型。`void` の場合は文字列 `'void'`                           |
-| `param`     | `FormalParametersTypeClass \| ErrorTypeClass \| null` | 引数（`formalParameters`）。文法上必須のため通常 `null` にならない |
-| `modifier`  | `(NormalModifierTypeClass \| ErrorTypeClass)[]`       | 修飾子。無ければ `[]`                                              |
+| `value`     | `NormalIdTypeClass \| ApexErrorTypeClass`                 | メソッド名（`id`）                                                 |
+| `valueType` | `TypeRefTypeClass \| 'void' \| ApexErrorTypeClass`        | 戻り値型。`void` の場合は文字列 `'void'`                           |
+| `param`     | `FormalParametersTypeClass \| ApexErrorTypeClass \| null` | 引数（`formalParameters`）。文法上必須のため通常 `null` にならない |
+| `modifier`  | `(NormalModifierTypeClass \| ApexErrorTypeClass)[]`       | 修飾子。無ければ `[]`                                              |
 
 ゲッター: `getValue()`（継承）, `getValueType()`, `getParam()`, `getModifier()`。ガード: `isInterfaceMethodDeclarationType`
 
@@ -565,9 +565,9 @@ String describe(Integer level, List<String> tags);
 | 変数        | 型                                               | 内容                                                     |
 | ----------- | ------------------------------------------------ | -------------------------------------------------------- |
 | `type`      | `'localVariableDeclaration'`                     | 継承                                                     |
-| `value`     | `VariableDeclaratorsTypeClass \| ErrorTypeClass` | 宣言子の並び（variableVisitor の `variableDeclarators`） |
-| `valueType` | `TypeRefTypeClass \| ErrorTypeClass`             | 変数の型                                                 |
-| `modifier`  | `(NormalModifierTypeClass \| ErrorTypeClass)[]`  | 修飾子（`final` 等）。無ければ `[]`                      |
+| `value`     | `VariableDeclaratorsTypeClass \| ApexErrorTypeClass` | 宣言子の並び（variableVisitor の `variableDeclarators`） |
+| `valueType` | `TypeRefTypeClass \| ApexErrorTypeClass`             | 変数の型                                                 |
+| `modifier`  | `(NormalModifierTypeClass \| ApexErrorTypeClass)[]`  | 修飾子（`final` 等）。無ければ `[]`                      |
 
 ゲッター: `getValue()`（継承）, `getValueType()`, `getModifier()`。ガード: `isLocalVariableDeclarationType`
 

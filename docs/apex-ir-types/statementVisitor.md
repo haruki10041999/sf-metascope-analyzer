@@ -1,7 +1,7 @@
 # statementVisitor
 
 Apex の文（`statement` 規則とその各代替）を IR に変換する。制御構文・DML・`System.runAs`・ローカル変数宣言・式文、および DML のアクセスレベル（`as user` / `as system`）を扱う。
-子要素の変換に失敗した場合、そのフィールドには `ErrorTypeClass`（`type: 'AnalyzerError'`、`contextType` / `context` / `errorMessage`）が入る。`create` が例外を投げた場合はノード自体が `ErrorTypeClass` になる。
+子要素の変換に失敗した場合、そのフィールドには `ApexErrorTypeClass`（`type: 'AnalyzerError'`、`contextType` / `context` / `errorMessage`）が入る。`create` が例外を投げた場合はノード自体が `ApexErrorTypeClass` になる。
 
 ## Visitor
 
@@ -37,8 +37,8 @@ Apex の文（`statement` 規則とその各代替）を IR に変換する。�
 
 | 変数    | 型                    | 内容                                   |
 | ------- | --------------------- | -------------------------------------- |
-| `type`  | `string`              | ノード種別（CommonTypeClass から継承） |
-| `value` | `T \| ErrorTypeClass` | 文の主要素（式・条件・制御部など）     |
+| `type`  | `string`              | ノード種別（ApexCommonTypeClass から継承） |
+| `value` | `T \| ApexErrorTypeClass` | 文の主要素（式・条件・制御部など）     |
 
 ゲッター: `getValue()`, `getType()`
 
@@ -48,8 +48,8 @@ Apex の文（`statement` 規則とその各代替）を IR に変換する。�
 
 | 変数    | 型                        | 内容                                   |
 | ------- | ------------------------- | -------------------------------------- |
-| `type`  | `string`                  | ノード種別（CommonTypeClass から継承） |
-| `value` | `(T \| ErrorTypeClass)[]` | 要素の配列                             |
+| `type`  | `string`                  | ノード種別（ApexCommonTypeClass から継承） |
+| `value` | `(T \| ApexErrorTypeClass)[]` | 要素の配列                             |
 
 ゲッター: `getValue()`, `getType()`
 
@@ -59,9 +59,9 @@ Apex の文（`statement` 規則とその各代替）を IR に変換する。�
 
 | 変数          | 型                                               | 内容                                       |
 | ------------- | ------------------------------------------------ | ------------------------------------------ |
-| `type`        | `string`                                         | ノード種別（CommonTypeClass から継承）     |
-| `value`       | `T \| ErrorTypeClass`                            | DML 対象の式                               |
-| `accessLevel` | `AccessLevelTypeClass \| ErrorTypeClass \| null` | `as user` / `as system`。指定なしは `null` |
+| `type`        | `string`                                         | ノード種別（ApexCommonTypeClass から継承）     |
+| `value`       | `T \| ApexErrorTypeClass`                            | DML 対象の式                               |
+| `accessLevel` | `AccessLevelTypeClass \| ApexErrorTypeClass \| null` | `as user` / `as system`。指定なしは `null` |
 
 ゲッター: `getValue()`, `getAccessLevel()`, `getType()`
 
@@ -85,7 +85,7 @@ Apex の文（`statement` 規則とその各代替）を IR に変換する。�
 | 変数    | 型                                               | 内容                                                                                                                                                                                                                                                                                                                    |
 | ------- | ------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `type`  | `'statement'`                                    | 継承                                                                                                                                                                                                                                                                                                                    |
-| `value` | `NormalStatementTypeClassType \| ErrorTypeClass` | 実際の文。`NormalStatementTypeClassType` は `NormalBlockTypeClass`（`'block'`）と本フォルダの各 `XxxStatementTypeClass`（If / Switch / For / While / DoWhile / Try / Return / Throw / Break / Continue / Insert / Update / Delete / Undelete / Upsert / Merge / RunAs / LocalVariableDeclaration / Expression）の union |
+| `value` | `NormalStatementTypeClassType \| ApexErrorTypeClass` | 実際の文。`NormalStatementTypeClassType` は `NormalBlockTypeClass`（`'block'`）と本フォルダの各 `XxxStatementTypeClass`（If / Switch / For / While / DoWhile / Try / Return / Throw / Break / Continue / Insert / Update / Delete / Undelete / Upsert / Merge / RunAs / LocalVariableDeclaration / Expression）の union |
 
 ゲッター: `getValue()`
 
@@ -115,14 +115,14 @@ counter = 0;
 | 変数    | 型                                             | 内容                                                                                                       |
 | ------- | ---------------------------------------------- | ---------------------------------------------------------------------------------------------------------- |
 | `type`  | `'ifStatement'`                                | 継承                                                                                                       |
-| `value` | `IfStatementTypeClassType[] \| ErrorTypeClass` | 分岐の配列（先頭が `if`、続いて `else if`、最後に `else`）。各要素は `type` を持たないプレーンオブジェクト |
+| `value` | `IfStatementTypeClassType[] \| ApexErrorTypeClass` | 分岐の配列（先頭が `if`、続いて `else if`、最後に `else`）。各要素は `type` を持たないプレーンオブジェクト |
 
 `IfStatementTypeClassType`（各要素）:
 
 | 変数    | 型                                                   | 内容                                          |
 | ------- | ---------------------------------------------------- | --------------------------------------------- |
-| `value` | `ParExpressionTypeClass \| 'else' \| ErrorTypeClass` | 条件式。最後の `else` 分岐では文字列 `'else'` |
-| `block` | `NormalStatementTypeClass \| ErrorTypeClass`         | 分岐の本体（`'statement'`）                   |
+| `value` | `ParExpressionTypeClass \| 'else' \| ApexErrorTypeClass` | 条件式。最後の `else` 分岐では文字列 `'else'` |
+| `block` | `NormalStatementTypeClass \| ApexErrorTypeClass`         | 分岐の本体（`'statement'`）                   |
 
 ゲッター: `getValue()`
 
@@ -165,8 +165,8 @@ if (value > 100) {
 | 変数    | 型                                           | 内容                                                   |
 | ------- | -------------------------------------------- | ------------------------------------------------------ |
 | `type`  | `'switchStatement'`                          | 継承                                                   |
-| `value` | `ExpressionAllTypeClass \| ErrorTypeClass`   | `switch on` の対象式                                   |
-| `block` | `(WhenControlTypeClass \| ErrorTypeClass)[]` | `when` 節（`'whenControl'`）の配列。`when else` も含む |
+| `value` | `ExpressionAllTypeClass \| ApexErrorTypeClass`   | `switch on` の対象式                                   |
+| `block` | `(WhenControlTypeClass \| ApexErrorTypeClass)[]` | `when` 節（`'whenControl'`）の配列。`when else` も含む |
 
 ゲッター: `getValue()`, `getBlocks()`
 
@@ -199,8 +199,8 @@ switch on text {
 | 変数    | 型                                           | 内容                                                                                                  |
 | ------- | -------------------------------------------- | ----------------------------------------------------------------------------------------------------- |
 | `type`  | `'forStatement'`                             | 継承                                                                                                  |
-| `value` | `ForControlTypeClass \| ErrorTypeClass`      | 制御部（`'forControl'`。init / 条件 / update、または拡張 for の変数とコレクション）                   |
-| `block` | `NormalStatementTypeClass \| ErrorTypeClass` | 本体の文（`'statement'`）。本体が `;` のみの場合は `create` が例外となりノード全体が `ErrorTypeClass` |
+| `value` | `ForControlTypeClass \| ApexErrorTypeClass`      | 制御部（`'forControl'`。init / 条件 / update、または拡張 for の変数とコレクション）                   |
+| `block` | `NormalStatementTypeClass \| ApexErrorTypeClass` | 本体の文（`'statement'`）。本体が `;` のみの場合は `create` が例外となりノード全体が `ApexErrorTypeClass` |
 
 ゲッター: `getValue()`, `getBlock()`
 
@@ -233,8 +233,8 @@ for (Integer i = 0, j = 10; i < j; i++, j--) { ... }
 | 変数    | 型                                           | 内容                                                                                                  |
 | ------- | -------------------------------------------- | ----------------------------------------------------------------------------------------------------- |
 | `type`  | `'whileStatement'`                           | 継承                                                                                                  |
-| `value` | `ParExpressionTypeClass \| ErrorTypeClass`   | 括弧付き条件式（`'parExpression'`）                                                                   |
-| `block` | `NormalStatementTypeClass \| ErrorTypeClass` | 本体の文（`'statement'`）。本体が `;` のみの場合は `create` が例外となりノード全体が `ErrorTypeClass` |
+| `value` | `ParExpressionTypeClass \| ApexErrorTypeClass`   | 括弧付き条件式（`'parExpression'`）                                                                   |
+| `block` | `NormalStatementTypeClass \| ApexErrorTypeClass` | 本体の文（`'statement'`）。本体が `;` のみの場合は `create` が例外となりノード全体が `ApexErrorTypeClass` |
 
 ゲッター: `getValue()`, `getBlock()`
 
@@ -267,8 +267,8 @@ while (value > 0) {
 | 変数    | 型                                         | 内容                                                        |
 | ------- | ------------------------------------------ | ----------------------------------------------------------- |
 | `type`  | `'doWhileStatement'`                       | 継承                                                        |
-| `value` | `ParExpressionTypeClass \| ErrorTypeClass` | 括弧付き条件式（`'parExpression'`）                         |
-| `block` | `NormalBlockTypeClass \| ErrorTypeClass`   | 本体ブロック（`'block'`。`statement` ではなく直接ブロック） |
+| `value` | `ParExpressionTypeClass \| ApexErrorTypeClass` | 括弧付き条件式（`'parExpression'`）                         |
+| `block` | `NormalBlockTypeClass \| ApexErrorTypeClass`   | 本体ブロック（`'block'`。`statement` ではなく直接ブロック） |
 
 ゲッター: `getValue()`, `getBlock()`
 
@@ -301,9 +301,9 @@ do {
 | 変数           | 型                                                | 内容                                                     |
 | -------------- | ------------------------------------------------- | -------------------------------------------------------- |
 | `type`         | `'tryStatement'`                                  | 継承                                                     |
-| `value`        | `NormalBlockTypeClass \| ErrorTypeClass`          | try ブロック（`'block'`）                                |
-| `catchBlock`   | `(CatchClauseTypeClass \| ErrorTypeClass)[]`      | catch 節（`'catchClause'`）の配列。catch が無ければ `[]` |
-| `finallyBlock` | `FinallyBlockTypeClass \| ErrorTypeClass \| null` | finally ブロック（`'finallyBlock'`）。無ければ `null`    |
+| `value`        | `NormalBlockTypeClass \| ApexErrorTypeClass`          | try ブロック（`'block'`）                                |
+| `catchBlock`   | `(CatchClauseTypeClass \| ApexErrorTypeClass)[]`      | catch 節（`'catchClause'`）の配列。catch が無ければ `[]` |
+| `finallyBlock` | `FinallyBlockTypeClass \| ApexErrorTypeClass \| null` | finally ブロック（`'finallyBlock'`）。無ければ `null`    |
 
 ゲッター: `getValue()`, `getCatchBlock()`, `getFinallyBlock()`
 
@@ -355,7 +355,7 @@ try {
 | 変数    | 型                                                 | 内容                                     |
 | ------- | -------------------------------------------------- | ---------------------------------------- |
 | `type`  | `'returnStatement'`                                | 継承                                     |
-| `value` | `ExpressionAllTypeClass \| ErrorTypeClass \| null` | 戻り値の式。`return;`（式なし）は `null` |
+| `value` | `ExpressionAllTypeClass \| ApexErrorTypeClass \| null` | 戻り値の式。`return;`（式なし）は `null` |
 
 ゲッター: `getValue()`
 
@@ -379,7 +379,7 @@ if (value == 0) return;
 | 変数    | 型                                         | 内容             |
 | ------- | ------------------------------------------ | ---------------- |
 | `type`  | `'throwStatement'`                         | 継承             |
-| `value` | `ExpressionAllTypeClass \| ErrorTypeClass` | 送出する例外の式 |
+| `value` | `ExpressionAllTypeClass \| ApexErrorTypeClass` | 送出する例外の式 |
 
 ゲッター: `getValue()`
 
@@ -457,8 +457,8 @@ continue;
 | 変数          | 型                                               | 内容                                            |
 | ------------- | ------------------------------------------------ | ----------------------------------------------- |
 | `type`        | `'insertStatement'`                              | 継承                                            |
-| `value`       | `ExpressionAllTypeClass \| ErrorTypeClass`       | DML 対象の式                                    |
-| `accessLevel` | `AccessLevelTypeClass \| ErrorTypeClass \| null` | 継承。`as user` / `as system` 指定なしは `null` |
+| `value`       | `ExpressionAllTypeClass \| ApexErrorTypeClass`       | DML 対象の式                                    |
+| `accessLevel` | `AccessLevelTypeClass \| ApexErrorTypeClass \| null` | 継承。`as user` / `as system` 指定なしは `null` |
 
 ゲッター: `getValue()`, `getAccessLevel()`
 
@@ -486,8 +486,8 @@ insert account;
 | 変数          | 型                                               | 内容                    |
 | ------------- | ------------------------------------------------ | ----------------------- |
 | `type`        | `'updateStatement'`                              | 継承                    |
-| `value`       | `ExpressionAllTypeClass \| ErrorTypeClass`       | DML 対象の式            |
-| `accessLevel` | `AccessLevelTypeClass \| ErrorTypeClass \| null` | 継承。指定なしは `null` |
+| `value`       | `ExpressionAllTypeClass \| ApexErrorTypeClass`       | DML 対象の式            |
+| `accessLevel` | `AccessLevelTypeClass \| ApexErrorTypeClass \| null` | 継承。指定なしは `null` |
 
 ゲッター: `getValue()`, `getAccessLevel()`
 
@@ -515,8 +515,8 @@ update as system accounts;
 | 変数          | 型                                               | 内容                    |
 | ------------- | ------------------------------------------------ | ----------------------- |
 | `type`        | `'deleteStatement'`                              | 継承                    |
-| `value`       | `ExpressionAllTypeClass \| ErrorTypeClass`       | DML 対象の式            |
-| `accessLevel` | `AccessLevelTypeClass \| ErrorTypeClass \| null` | 継承。指定なしは `null` |
+| `value`       | `ExpressionAllTypeClass \| ApexErrorTypeClass`       | DML 対象の式            |
+| `accessLevel` | `AccessLevelTypeClass \| ApexErrorTypeClass \| null` | 継承。指定なしは `null` |
 
 ゲッター: `getValue()`, `getAccessLevel()`
 
@@ -544,8 +544,8 @@ delete account;
 | 変数          | 型                                               | 内容                    |
 | ------------- | ------------------------------------------------ | ----------------------- |
 | `type`        | `'undeleteStatement'`                            | 継承                    |
-| `value`       | `ExpressionAllTypeClass \| ErrorTypeClass`       | DML 対象の式            |
-| `accessLevel` | `AccessLevelTypeClass \| ErrorTypeClass \| null` | 継承。指定なしは `null` |
+| `value`       | `ExpressionAllTypeClass \| ApexErrorTypeClass`       | DML 対象の式            |
+| `accessLevel` | `AccessLevelTypeClass \| ApexErrorTypeClass \| null` | 継承。指定なしは `null` |
 
 ゲッター: `getValue()`, `getAccessLevel()`
 
@@ -573,9 +573,9 @@ undelete account;
 | 変数          | 型                                                 | 内容                                                 |
 | ------------- | -------------------------------------------------- | ---------------------------------------------------- |
 | `type`        | `'upsertStatement'`                                | 継承                                                 |
-| `value`       | `ExpressionAllTypeClass \| ErrorTypeClass`         | DML 対象の式                                         |
-| `accessLevel` | `AccessLevelTypeClass \| ErrorTypeClass \| null`   | 継承。指定なしは `null`                              |
-| `key`         | `QualifiedNameTypeClass \| ErrorTypeClass \| null` | 外部 ID 項目（`'qualifiedName'`）。指定なしは `null` |
+| `value`       | `ExpressionAllTypeClass \| ApexErrorTypeClass`         | DML 対象の式                                         |
+| `accessLevel` | `AccessLevelTypeClass \| ApexErrorTypeClass \| null`   | 継承。指定なしは `null`                              |
+| `key`         | `QualifiedNameTypeClass \| ApexErrorTypeClass \| null` | 外部 ID 項目（`'qualifiedName'`）。指定なしは `null` |
 
 ゲッター: `getValue()`, `getAccessLevel()`, `getKey()`
 
@@ -613,8 +613,8 @@ upsert accounts Account.ExternalId__c;
 | 変数          | 型                                               | 内容                                                                               |
 | ------------- | ------------------------------------------------ | ---------------------------------------------------------------------------------- |
 | `type`        | `'mergeStatement'`                               | 継承                                                                               |
-| `value`       | `(ExpressionAllTypeClass \| ErrorTypeClass)[]`   | 長さ 2 の配列（[0] マージ先、[1] マージ元）。式が 2 つでない場合は `create` が例外 |
-| `accessLevel` | `AccessLevelTypeClass \| ErrorTypeClass \| null` | `as user` / `as system`。指定なしは `null`                                         |
+| `value`       | `(ExpressionAllTypeClass \| ApexErrorTypeClass)[]`   | 長さ 2 の配列（[0] マージ先、[1] マージ元）。式が 2 つでない場合は `create` が例外 |
+| `accessLevel` | `AccessLevelTypeClass \| ApexErrorTypeClass \| null` | `as user` / `as system`。指定なしは `null`                                         |
 
 ゲッター: `getValue()`, `getAccessLevel()`
 
@@ -651,8 +651,8 @@ merge as system account duplicate;
 | 変数    | 型                                          | 内容                                                                   |
 | ------- | ------------------------------------------- | ---------------------------------------------------------------------- |
 | `type`  | `'runAsStatement'`                          | 継承                                                                   |
-| `value` | `ExpressionListTypeClass \| ErrorTypeClass` | 引数の式リスト（`'expressionList'`）。引数なしの場合は `create` が例外 |
-| `block` | `NormalBlockTypeClass \| ErrorTypeClass`    | 本体ブロック（`'block'`）                                              |
+| `value` | `ExpressionListTypeClass \| ApexErrorTypeClass` | 引数の式リスト（`'expressionList'`）。引数なしの場合は `create` が例外 |
+| `block` | `NormalBlockTypeClass \| ApexErrorTypeClass`    | 本体ブロック（`'block'`）                                              |
 
 ゲッター: `getValue()`, `getBlock()`
 
@@ -682,7 +682,7 @@ System.runAs(user) {
 | 変数    | 型                                                    | 内容                                     |
 | ------- | ----------------------------------------------------- | ---------------------------------------- |
 | `type`  | `'localVariableDeclarationStatement'`                 | 継承                                     |
-| `value` | `LocalVariableDeclarationTypeClass \| ErrorTypeClass` | 変数宣言（`'localVariableDeclaration'`） |
+| `value` | `LocalVariableDeclarationTypeClass \| ApexErrorTypeClass` | 変数宣言（`'localVariableDeclaration'`） |
 
 ゲッター: `getValue()`
 
@@ -714,7 +714,7 @@ Integer k;
 | 変数    | 型                                         | 内容           |
 | ------- | ------------------------------------------ | -------------- |
 | `type`  | `'expressionStatement'`                    | 継承           |
-| `value` | `ExpressionAllTypeClass \| ErrorTypeClass` | 文を構成する式 |
+| `value` | `ExpressionAllTypeClass \| ApexErrorTypeClass` | 文を構成する式 |
 
 ゲッター: `getValue()`
 
@@ -746,7 +746,7 @@ counter = 0;
 | 変数    | 型                                             | 内容                                                                                    |
 | ------- | ---------------------------------------------- | --------------------------------------------------------------------------------------- |
 | `type`  | `'accessLevel'`                                | 継承                                                                                    |
-| `value` | `AccessLevelValueType`（`'SYSTEM' \| 'USER'`） | 大文字に正規化したアクセスレベル。基底の型上は `\| ErrorTypeClass` だが実際は常に文字列 |
+| `value` | `AccessLevelValueType`（`'SYSTEM' \| 'USER'`） | 大文字に正規化したアクセスレベル。基底の型上は `\| ApexErrorTypeClass` だが実際は常に文字列 |
 
 ゲッター: `getValue()`
 

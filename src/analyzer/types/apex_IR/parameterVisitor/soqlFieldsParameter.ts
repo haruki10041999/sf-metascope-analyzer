@@ -2,7 +2,7 @@ import { SoqlFieldsParameterContext } from '@apexdevtools/apex-parser';
 
 import { ParameterValueTypeClass } from '.';
 
-import { CommonTypeClass, ErrorTypeClass } from '../commonVisitor';
+import { ApexCommonTypeClass, ApexErrorTypeClass } from '../commonVisitor';
 
 type SoqlFieldsParameterValueType = 'ALL' | 'CUSTOM' | 'STANDARD';
 
@@ -26,7 +26,7 @@ export class SoqlFieldsParameterTypeClass extends ParameterValueTypeClass<
 }
 
 export const isSoqlFieldsParameterType = (
-    target: CommonTypeClass<string>,
+    target: ApexCommonTypeClass<string>,
 ): target is SoqlFieldsParameterTypeClass => {
     return target instanceof SoqlFieldsParameterTypeClass;
 };

@@ -20,8 +20,8 @@
 
 | 変数    | 型                    | 内容                                      |
 | ------- | --------------------- | ----------------------------------------- |
-| `type`  | `string`              | ノード種別（CommonTypeClass から継承）    |
-| `value` | `T \| ErrorTypeClass` | 修飾子の値。変換失敗時は `ErrorTypeClass` |
+| `type`  | `string`              | ノード種別（ApexCommonTypeClass から継承）    |
+| `value` | `T \| ApexErrorTypeClass` | 修飾子の値。変換失敗時は `ApexErrorTypeClass` |
 
 ゲッター: `getValue()`, `getType()`（継承）
 
@@ -44,7 +44,7 @@
 | 変数    | 型                                          | 内容                                                                                                                                                                                                                                                    |
 | ------- | ------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `type`  | `'modifier'`                                | 継承                                                                                                                                                                                                                                                    |
-| `value` | `NormalModifierValueType \| ErrorTypeClass` | キーワード修飾子の文字列（`with sharing` → `'WITH_SHARING'`、`inherited sharing` → `'INHERITED_SHARING'`。`INHERITED` と `SHARING` の両トークンが必要）、またはアノテーション。アノテーションの変換に失敗した場合は `ErrorTypeClass`。null にはならない |
+| `value` | `NormalModifierValueType \| ApexErrorTypeClass` | キーワード修飾子の文字列（`with sharing` → `'WITH_SHARING'`、`inherited sharing` → `'INHERITED_SHARING'`。`INHERITED` と `SHARING` の両トークンが必要）、またはアノテーション。アノテーションの変換に失敗した場合は `ApexErrorTypeClass`。null にはならない |
 
 ゲッター: `getValue()`
 
@@ -70,8 +70,8 @@ public static final Integer MAX_SIZE = 100;
 | 変数    | 型                                                                              | 内容                                                                                                             |
 | ------- | ------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------- |
 | `type`  | `'annotation'`                                                                  | 継承                                                                                                             |
-| `value` | `NormalIdTypeClass \| ErrorTypeClass`                                           | アノテーション名（`id` ノード）                                                                                  |
-| `param` | `ElementValueTypeClass \| ElementValuePairsTypeClass \| ErrorTypeClass \| null` | 括弧内の引数。`@X(v)` なら `elementValue`、`@X(k=v ...)` なら `elementValuePairs`。括弧が無い／空の場合は `null` |
+| `value` | `NormalIdTypeClass \| ApexErrorTypeClass`                                           | アノテーション名（`id` ノード）                                                                                  |
+| `param` | `ElementValueTypeClass \| ElementValuePairsTypeClass \| ApexErrorTypeClass \| null` | 括弧内の引数。`@X(v)` なら `elementValue`、`@X(k=v ...)` なら `elementValuePairs`。括弧が無い／空の場合は `null` |
 
 ゲッター: `getValue()`, `getParam()`
 

@@ -1,7 +1,7 @@
 # blockVisitor
 
 `{ ... }` で囲まれるブロック系の文法要素を扱う。通常ブロック（`block`）、`finally` ブロック、プロパティの `get` / `set` アクセサ、トリガー本体、匿名 Apex 本体を IR に変換する。
-子フィールドは変換失敗時に `ErrorTypeClass`（`type: 'AnalyzerError'`, `contextType` / `context` / `errorMessage`）になり得る。
+子フィールドは変換失敗時に `ApexErrorTypeClass`（`type: 'AnalyzerError'`, `contextType` / `context` / `errorMessage`）になり得る。
 
 ## Visitor
 
@@ -25,10 +25,10 @@
 
 | 変数    | 型                    | 内容                                   |
 | ------- | --------------------- | -------------------------------------- |
-| `type`  | `string`              | ノード種別（CommonTypeClass から継承） |
-| `value` | `T \| ErrorTypeClass` | 子ノード                               |
+| `type`  | `string`              | ノード種別（ApexCommonTypeClass から継承） |
+| `value` | `T \| ApexErrorTypeClass` | 子ノード                               |
 
-ゲッター: `getValue()`, `getType()`（CommonTypeClass）
+ゲッター: `getValue()`, `getType()`（ApexCommonTypeClass）
 
 ### `BlockListTypeClass<T>`
 
@@ -36,10 +36,10 @@
 
 | 変数    | 型                        | 内容                                   |
 | ------- | ------------------------- | -------------------------------------- |
-| `type`  | `string`                  | ノード種別（CommonTypeClass から継承） |
-| `value` | `(T \| ErrorTypeClass)[]` | 子ノードの配列                         |
+| `type`  | `string`                  | ノード種別（ApexCommonTypeClass から継承） |
+| `value` | `(T \| ApexErrorTypeClass)[]` | 子ノードの配列                         |
 
-ゲッター: `getValue()`, `getType()`（CommonTypeClass）
+ゲッター: `getValue()`, `getType()`（ApexCommonTypeClass）
 
 ### `BlockAllTypeClass`
 
@@ -61,7 +61,7 @@
 | 変数    | 型                                               | 内容                                                                       |
 | ------- | ------------------------------------------------ | -------------------------------------------------------------------------- |
 | `type`  | `'block'`                                        | 継承                                                                       |
-| `value` | `(NormalStatementTypeClass \| ErrorTypeClass)[]` | ブロック内の文（statementVisitor の `statement`）。空ブロック `{}` は `[]` |
+| `value` | `(NormalStatementTypeClass \| ApexErrorTypeClass)[]` | ブロック内の文（statementVisitor の `statement`）。空ブロック `{}` は `[]` |
 
 ゲッター: `getValue()`（継承）。ガード: `isNormalBlockType`
 
@@ -90,7 +90,7 @@
 | 変数    | 型                                       | 内容                     |
 | ------- | ---------------------------------------- | ------------------------ |
 | `type`  | `'finallyBlock'`                         | 継承                     |
-| `value` | `NormalBlockTypeClass \| ErrorTypeClass` | `finally` の本体ブロック |
+| `value` | `NormalBlockTypeClass \| ApexErrorTypeClass` | `finally` の本体ブロック |
 
 ゲッター: `getValue()`（継承）。ガード: `isFinallyBlockType`
 
@@ -122,8 +122,8 @@ finally {
 | 変数       | 型                                                     | 内容                                                                                                        |
 | ---------- | ------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------- |
 | `type`     | `'propertyBlock'`                                      | 継承                                                                                                        |
-| `value`    | `GetterTypeClass \| SetterTypeClass \| ErrorTypeClass` | `get` なら `getter`、`set` なら `setter`                                                                    |
-| `modifier` | `(NormalModifierTypeClass \| ErrorTypeClass)[]`        | アクセサの修飾子（`private set` の `PRIVATE` 等。値の一覧は declarationVisitor.md 冒頭参照）。無ければ `[]` |
+| `value`    | `GetterTypeClass \| SetterTypeClass \| ApexErrorTypeClass` | `get` なら `getter`、`set` なら `setter`                                                                    |
+| `modifier` | `(NormalModifierTypeClass \| ApexErrorTypeClass)[]`        | アクセサの修飾子（`private set` の `PRIVATE` 等。値の一覧は declarationVisitor.md 冒頭参照）。無ければ `[]` |
 
 ゲッター: `getValue()`（継承）, `getModifier()`。ガード: `isPropertyBlockType`
 
@@ -154,7 +154,7 @@ public Integer readOnlyProperty { get; private set; }
 | 変数    | 型                                               | 内容                                                  |
 | ------- | ------------------------------------------------ | ----------------------------------------------------- |
 | `type`  | `'getter'`                                       | 継承                                                  |
-| `value` | `NormalBlockTypeClass \| ErrorTypeClass \| null` | アクセサ本体。自動プロパティ（`get;`）の場合は `null` |
+| `value` | `NormalBlockTypeClass \| ApexErrorTypeClass \| null` | アクセサ本体。自動プロパティ（`get;`）の場合は `null` |
 
 ゲッター: `getValue()`（継承）。ガード: `isGetterType`
 
@@ -178,7 +178,7 @@ get { return counter == null ? 0 : counter; }
 | 変数    | 型                                               | 内容                                                  |
 | ------- | ------------------------------------------------ | ----------------------------------------------------- |
 | `type`  | `'setter'`                                       | 継承                                                  |
-| `value` | `NormalBlockTypeClass \| ErrorTypeClass \| null` | アクセサ本体。自動プロパティ（`set;`）の場合は `null` |
+| `value` | `NormalBlockTypeClass \| ApexErrorTypeClass \| null` | アクセサ本体。自動プロパティ（`set;`）の場合は `null` |
 
 ゲッター: `getValue()`（継承）。ガード: `isSetterType`
 
@@ -202,7 +202,7 @@ set;
 | 変数    | 型                                                    | 内容                                                                            |
 | ------- | ----------------------------------------------------- | ------------------------------------------------------------------------------- |
 | `type`  | `'anonymousBlock'`                                    | 継承                                                                            |
-| `value` | `(AnonymousBlockMemberTypeClass \| ErrorTypeClass)[]` | 各メンバー（memberVisitor の `anonymousBlockMember`）。メンバーが 0 件なら `[]` |
+| `value` | `(AnonymousBlockMemberTypeClass \| ApexErrorTypeClass)[]` | 各メンバー（memberVisitor の `anonymousBlockMember`）。メンバーが 0 件なら `[]` |
 
 ゲッター: `getValue()`（継承）。ガード: `isAnonymousBlockType`
 
@@ -241,7 +241,7 @@ System.debug('x');
 | 変数    | 型                                                  | 内容                                                                         |
 | ------- | --------------------------------------------------- | ---------------------------------------------------------------------------- |
 | `type`  | `'triggerBlock'`                                    | 継承                                                                         |
-| `value` | `(TriggerBlockMemberTypeClass \| ErrorTypeClass)[]` | 各メンバー（memberVisitor の `triggerBlockMember`）。本体が空 `{}` なら `[]` |
+| `value` | `(TriggerBlockMemberTypeClass \| ApexErrorTypeClass)[]` | 各メンバー（memberVisitor の `triggerBlockMember`）。本体が空 `{}` なら `[]` |
 
 ゲッター: `getValue()`（継承）。ガード: `isTriggerBlockType`
 

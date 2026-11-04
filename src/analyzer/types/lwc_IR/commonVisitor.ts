@@ -151,7 +151,7 @@ export abstract class LwcCommonVisitor<
 > {
     abstract evaluatePair: AnyEvaluatePair<Node, TCommonTypeClass>[];
 
-    visit(ctx: Node): TCommonTypeClass | LwcErrorTypeClass {
+    visit(ctx: Node, originalSource: string): TCommonTypeClass | LwcErrorTypeClass {
         for (const pair of this.evaluatePair) {
             if (pair.isNode(ctx)) {
                 return pair.commonTypeClass;

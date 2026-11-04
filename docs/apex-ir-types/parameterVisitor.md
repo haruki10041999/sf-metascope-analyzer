@@ -20,8 +20,8 @@
 
 | 変数    | 型                    | 内容                                            |
 | ------- | --------------------- | ----------------------------------------------- |
-| `type`  | `string`              | ノード種別（CommonTypeClass から継承）          |
-| `value` | `T \| ErrorTypeClass` | パラメータの主値。変換失敗時は `ErrorTypeClass` |
+| `type`  | `string`              | ノード種別（ApexCommonTypeClass から継承）          |
+| `value` | `T \| ApexErrorTypeClass` | パラメータの主値。変換失敗時は `ApexErrorTypeClass` |
 
 ゲッター: `getValue()`, `getType()`（継承）
 
@@ -41,7 +41,7 @@
 | 変数    | 型                                                       | 内容                                                                        |
 | ------- | -------------------------------------------------------- | --------------------------------------------------------------------------- |
 | `type`  | `'formalParameters'`                                     | 継承                                                                        |
-| `value` | `FormalParameterListTypeClass \| ErrorTypeClass \| null` | 仮引数リスト（`formalParameterList` ノード）。引数なし `()` の場合は `null` |
+| `value` | `FormalParameterListTypeClass \| ApexErrorTypeClass \| null` | 仮引数リスト（`formalParameterList` ノード）。引数なし `()` の場合は `null` |
 
 ゲッター: `getValue()`
 
@@ -76,9 +76,9 @@ webservice static String legacy() { ... }
 | 変数        | 型                                              | 内容                                               |
 | ----------- | ----------------------------------------------- | -------------------------------------------------- |
 | `type`      | `'formalParameter'`                             | 継承                                               |
-| `value`     | `NormalIdTypeClass \| ErrorTypeClass`           | 引数名（`id` ノード）                              |
-| `valueType` | `TypeRefTypeClass \| ErrorTypeClass`            | 引数の型（`typeRef` ノード）                       |
-| `modifier`  | `(NormalModifierTypeClass \| ErrorTypeClass)[]` | 修飾子（`final` やアノテーション）。無ければ空配列 |
+| `value`     | `NormalIdTypeClass \| ApexErrorTypeClass`           | 引数名（`id` ノード）                              |
+| `valueType` | `TypeRefTypeClass \| ApexErrorTypeClass`            | 引数の型（`typeRef` ノード）                       |
+| `modifier`  | `(NormalModifierTypeClass \| ApexErrorTypeClass)[]` | 修飾子（`final` やアノテーション）。無ければ空配列 |
 
 ゲッター: `getValue()`, `getValueType()`, `getModifier()`
 
@@ -115,7 +115,7 @@ public static String getName(Id recordId) { ... }
 | 変数    | 型                                               | 内容                                                              |
 | ------- | ------------------------------------------------ | ----------------------------------------------------------------- |
 | `type`  | `'soqlFieldsParameter'`                          | 継承                                                              |
-| `value` | `SoqlFieldsParameterValueType \| ErrorTypeClass` | `'ALL'` / `'CUSTOM'` / `'STANDARD'` のいずれか。null にはならない |
+| `value` | `SoqlFieldsParameterValueType \| ApexErrorTypeClass` | `'ALL'` / `'CUSTOM'` / `'STANDARD'` のいずれか。null にはならない |
 
 ゲッター: `getValue()`
 

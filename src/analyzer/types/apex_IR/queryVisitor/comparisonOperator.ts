@@ -2,7 +2,7 @@ import { ComparisonOperatorContext } from '@apexdevtools/apex-parser';
 
 import { QueryValueTypeClass } from './index';
 
-import { CommonTypeClass, ErrorTypeClass } from '../commonVisitor';
+import { ApexCommonTypeClass, ApexErrorTypeClass } from '../commonVisitor';
 
 type ComparisonOperatorValueType =
     | '='
@@ -69,7 +69,7 @@ export class ComparisonOperatorTypeClass extends QueryValueTypeClass<
 }
 
 export const isComparisonOperatorType = (
-    target: CommonTypeClass<string>,
+    target: ApexCommonTypeClass<string>,
 ): target is ComparisonOperatorTypeClass => {
     return target instanceof ComparisonOperatorTypeClass;
 };

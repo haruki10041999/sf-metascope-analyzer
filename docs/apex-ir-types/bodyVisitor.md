@@ -1,7 +1,7 @@
 # bodyVisitor
 
 クラス本体（`classBody`）とインターフェース本体（`interfaceBody`）の `{ ... }` を扱う。本体内の宣言の並びを保持する。
-子フィールドは変換失敗時に `ErrorTypeClass`（`type: 'AnalyzerError'`, `contextType` / `context` / `errorMessage`）になり得る。
+子フィールドは変換失敗時に `ApexErrorTypeClass`（`type: 'AnalyzerError'`, `contextType` / `context` / `errorMessage`）になり得る。
 
 ## Visitor
 
@@ -20,10 +20,10 @@
 
 | 変数    | 型                        | 内容                                   |
 | ------- | ------------------------- | -------------------------------------- |
-| `type`  | `string`                  | ノード種別（CommonTypeClass から継承） |
-| `value` | `(T \| ErrorTypeClass)[]` | 本体内の宣言の配列                     |
+| `type`  | `string`                  | ノード種別（ApexCommonTypeClass から継承） |
+| `value` | `(T \| ApexErrorTypeClass)[]` | 本体内の宣言の配列                     |
 
-ゲッター: `getValue()`, `getType()`（CommonTypeClass）
+ゲッター: `getValue()`, `getType()`（ApexCommonTypeClass）
 
 ### `isBodyTypeAll`
 
@@ -41,7 +41,7 @@
 | 変数    | 型                                                    | 内容                                                                    |
 | ------- | ----------------------------------------------------- | ----------------------------------------------------------------------- |
 | `type`  | `'classBody'`                                         | 継承                                                                    |
-| `value` | `(ClassBodyDeclarationTypeClass \| ErrorTypeClass)[]` | 各宣言（declarationVisitor の `classBodyDeclaration`）。空クラスは `[]` |
+| `value` | `(ClassBodyDeclarationTypeClass \| ApexErrorTypeClass)[]` | 各宣言（declarationVisitor の `classBodyDeclaration`）。空クラスは `[]` |
 
 ゲッター: `getValue()`（継承）。ガード: `isClassBodyType`
 
@@ -66,7 +66,7 @@ public class CustomException extends Exception {
 | 変数    | 型                                                          | 内容                                                                              |
 | ------- | ----------------------------------------------------------- | --------------------------------------------------------------------------------- |
 | `type`  | `'interfaceBody'`                                           | 継承                                                                              |
-| `value` | `(InterfaceMethodDeclarationTypeClass \| ErrorTypeClass)[]` | 各メソッド宣言（declarationVisitor の `interfaceMethodDeclaration`）。空なら `[]` |
+| `value` | `(InterfaceMethodDeclarationTypeClass \| ApexErrorTypeClass)[]` | 各メソッド宣言（declarationVisitor の `interfaceMethodDeclaration`）。空なら `[]` |
 
 ゲッター: `getValue()`（継承）。ガード: `isInterfaceBodyType`
 

@@ -1,7 +1,7 @@
 # idVisitor
 
 識別子（`id` / `anyId`）と SOQL・SOSL 内の識別子（`soqlId` / `soslId`）を IR に変換する。他の Visitor から名前・項目名・オブジェクト名の末端ノードとして使われる。
-子要素の変換に失敗した場合、そのフィールドには `ErrorTypeClass`（`type: 'AnalyzerError'`、`contextType` / `context` / `errorMessage`）が入る（`IdValueTypeClass` 系は文字列のみで子を持たない）。
+子要素の変換に失敗した場合、そのフィールドには `ApexErrorTypeClass`（`type: 'AnalyzerError'`、`contextType` / `context` / `errorMessage`）が入る（`IdValueTypeClass` 系は文字列のみで子を持たない）。
 
 ## Visitor
 
@@ -16,11 +16,11 @@
 
 ### `IdValueTypeClass<T>`
 
-素の値（文字列）を持つ識別子の基底。`value` に `ErrorTypeClass` を取らない。
+素の値（文字列）を持つ識別子の基底。`value` に `ApexErrorTypeClass` を取らない。
 
 | 変数    | 型       | 内容                                   |
 | ------- | -------- | -------------------------------------- |
-| `type`  | `string` | ノード種別（CommonTypeClass から継承） |
+| `type`  | `string` | ノード種別（ApexCommonTypeClass から継承） |
 | `value` | `T`      | 識別子の値                             |
 
 ゲッター: `getValue()`, `getType()`
@@ -31,8 +31,8 @@
 
 | 変数    | 型                    | 内容                                   |
 | ------- | --------------------- | -------------------------------------- |
-| `type`  | `string`              | ノード種別（CommonTypeClass から継承） |
-| `value` | `T \| ErrorTypeClass` | 子ノード                               |
+| `type`  | `string`              | ノード種別（ApexCommonTypeClass から継承） |
+| `value` | `T \| ApexErrorTypeClass` | 子ノード                               |
 
 ゲッター: `getValue()`, `getType()`
 
@@ -42,8 +42,8 @@
 
 | 変数    | 型                        | 内容                                   |
 | ------- | ------------------------- | -------------------------------------- |
-| `type`  | `string`                  | ノード種別（CommonTypeClass から継承） |
-| `value` | `(T \| ErrorTypeClass)[]` | 子ノードの配列                         |
+| `type`  | `string`                  | ノード種別（ApexCommonTypeClass から継承） |
+| `value` | `(T \| ApexErrorTypeClass)[]` | 子ノードの配列                         |
 
 ゲッター: `getValue()`, `getType()`
 
@@ -115,7 +115,7 @@ new List<String>()
 | 変数    | 型                                    | 内容             |
 | ------- | ------------------------------------- | ---------------- |
 | `type`  | `'soqlId'`                            | 継承             |
-| `value` | `NormalIdTypeClass \| ErrorTypeClass` | 識別子（`'id'`） |
+| `value` | `NormalIdTypeClass \| ApexErrorTypeClass` | 識別子（`'id'`） |
 
 ゲッター: `getValue()`
 
@@ -139,7 +139,7 @@ new List<String>()
 | 変数    | 型                                        | 内容                                                                                                                                |
 | ------- | ----------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
 | `type`  | `'soslId'`                                | 継承                                                                                                                                |
-| `value` | `(NormalIdTypeClass \| ErrorTypeClass)[]` | ドット区切りの各要素（`'id'`）を先頭から順に並べた配列。1 件以上。入れ子の `soslId` 変換に失敗した場合はその位置に `ErrorTypeClass` |
+| `value` | `(NormalIdTypeClass \| ApexErrorTypeClass)[]` | ドット区切りの各要素（`'id'`）を先頭から順に並べた配列。1 件以上。入れ子の `soslId` 変換に失敗した場合はその位置に `ApexErrorTypeClass` |
 
 ゲッター: `getValue()`
 

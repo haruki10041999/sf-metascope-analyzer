@@ -22,8 +22,8 @@
 
 | 変数    | 型                    | 内容                                   |
 | ------- | --------------------- | -------------------------------------- |
-| `type`  | `string`              | ノード種別（CommonTypeClass から継承） |
-| `value` | `T \| ErrorTypeClass` | 主値。変換失敗時は `ErrorTypeClass`    |
+| `type`  | `string`              | ノード種別（ApexCommonTypeClass から継承） |
+| `value` | `T \| ApexErrorTypeClass` | 主値。変換失敗時は `ApexErrorTypeClass`    |
 
 ゲッター: `getValue()`, `getType()`（継承）
 
@@ -43,9 +43,9 @@
 | 変数     | 型                                                                                | 内容                                                                                                         |
 | -------- | --------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------ |
 | `type`   | `'forControl'`                                                                    | 継承                                                                                                         |
-| `value`  | `EnhancedForControlTypeClass \| ExpressionAllTypeClass \| null \| ErrorTypeClass` | 拡張 for なら `enhancedForControl` ノード、従来型なら条件式。従来型で条件式が無い場合（`for (;;)`）は `null` |
-| `init`   | `ForInitTypeClass \| ErrorTypeClass \| null`                                      | 初期化部。省略時・拡張 for の場合は `null`                                                                   |
-| `update` | `ForUpdateTypeClass \| ErrorTypeClass \| null`                                    | 更新部。省略時・拡張 for の場合は `null`                                                                     |
+| `value`  | `EnhancedForControlTypeClass \| ExpressionAllTypeClass \| null \| ApexErrorTypeClass` | 拡張 for なら `enhancedForControl` ノード、従来型なら条件式。従来型で条件式が無い場合（`for (;;)`）は `null` |
+| `init`   | `ForInitTypeClass \| ApexErrorTypeClass \| null`                                      | 初期化部。省略時・拡張 for の場合は `null`                                                                   |
+| `update` | `ForUpdateTypeClass \| ApexErrorTypeClass \| null`                                    | 更新部。省略時・拡張 for の場合は `null`                                                                     |
 
 ゲッター: `getValue()`（独自ゲッターなし）
 
@@ -82,7 +82,7 @@ for (;;) { ... }
 | 変数    | 型                                                                               | 内容                                                                                              |
 | ------- | -------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------- |
 | `type`  | `'forInit'`                                                                      | 継承                                                                                              |
-| `value` | `LocalVariableDeclarationTypeClass \| ExpressionListTypeClass \| ErrorTypeClass` | `Integer i = 0` なら `localVariableDeclaration`、`k = 0` なら `expressionList`。null にはならない |
+| `value` | `LocalVariableDeclarationTypeClass \| ExpressionListTypeClass \| ApexErrorTypeClass` | `Integer i = 0` なら `localVariableDeclaration`、`k = 0` なら `expressionList`。null にはならない |
 
 ゲッター: `getValue()`
 
@@ -132,7 +132,7 @@ for (Integer i = 0, j = 10; i < j; i++, j--) { ... }
 | 変数    | 型                                          | 内容                                                         |
 | ------- | ------------------------------------------- | ------------------------------------------------------------ |
 | `type`  | `'forUpdate'`                               | 継承                                                         |
-| `value` | `ExpressionListTypeClass \| ErrorTypeClass` | 更新式のリスト（`expressionList` ノード）。null にはならない |
+| `value` | `ExpressionListTypeClass \| ApexErrorTypeClass` | 更新式のリスト（`expressionList` ノード）。null にはならない |
 
 ゲッター: `getValue()`
 
@@ -165,9 +165,9 @@ for (Integer i = 0, j = 10; i < j; i++, j--) { ... }
 | 変数          | 型                                         | 内容                                         |
 | ------------- | ------------------------------------------ | -------------------------------------------- |
 | `type`        | `'enhancedForControl'`                     | 継承                                         |
-| `value`       | `NormalIdTypeClass \| ErrorTypeClass`      | ループ変数名（`id` ノード）                  |
-| `valueType`   | `TypeRefTypeClass \| ErrorTypeClass`       | ループ変数の型（`typeRef` ノード）           |
-| `fromVariant` | `ExpressionAllTypeClass \| ErrorTypeClass` | 反復対象の式（変数、SOQL、`Trigger.new` 等） |
+| `value`       | `NormalIdTypeClass \| ApexErrorTypeClass`      | ループ変数名（`id` ノード）                  |
+| `valueType`   | `TypeRefTypeClass \| ApexErrorTypeClass`       | ループ変数の型（`typeRef` ノード）           |
+| `fromVariant` | `ExpressionAllTypeClass \| ApexErrorTypeClass` | 反復対象の式（変数、SOQL、`Trigger.new` 等） |
 
 ゲッター: `getValue()`, `getValueType()`, `getFromVariant()`
 
@@ -200,8 +200,8 @@ for (Account account : accounts) { ... }
 | 変数    | 型                                       | 内容                                                                |
 | ------- | ---------------------------------------- | ------------------------------------------------------------------- |
 | `type`  | `'whenControl'`                          | 継承                                                                |
-| `value` | `WhenValueTypeClass \| ErrorTypeClass`   | マッチ条件（`whenValue` ノード。リテラル列・型パターン・`else` 等） |
-| `block` | `NormalBlockTypeClass \| ErrorTypeClass` | 節の本体ブロック（`block` ノード）                                  |
+| `value` | `WhenValueTypeClass \| ApexErrorTypeClass`   | マッチ条件（`whenValue` ノード。リテラル列・型パターン・`else` 等） |
+| `block` | `NormalBlockTypeClass \| ApexErrorTypeClass` | 節の本体ブロック（`block` ノード）                                  |
 
 ゲッター: `getValue()`, `getBlock()`
 

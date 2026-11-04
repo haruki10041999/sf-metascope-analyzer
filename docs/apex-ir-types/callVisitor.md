@@ -19,9 +19,9 @@
 
 | 変数    | 型                                 | 内容                                   |
 | ------- | ---------------------------------- | -------------------------------------- |
-| `type`  | `string`                           | ノード種別（CommonTypeClass から継承） |
-| `value` | `T \| ErrorTypeClass`              | 呼び出すメソッド名                     |
-| `param` | `Tparam \| ErrorTypeClass \| null` | 実引数。引数なし `()` の場合は `null`  |
+| `type`  | `string`                           | ノード種別（ApexCommonTypeClass から継承） |
+| `value` | `T \| ApexErrorTypeClass`              | 呼び出すメソッド名                     |
+| `param` | `Tparam \| ApexErrorTypeClass \| null` | 実引数。引数なし `()` の場合は `null`  |
 
 ゲッター: `getValue()`, `getParam()`, `getType()`（継承）
 
@@ -41,8 +41,8 @@
 | 変数        | 型                                                  | 内容                                                                            |
 | ----------- | --------------------------------------------------- | ------------------------------------------------------------------------------- |
 | `type`      | `'methodCall'`                                      | 継承                                                                            |
-| `value`     | `NormalIdTypeClass \| null \| ErrorTypeClass`       | メソッド名（`id` ノード）。`this(...)` / `super(...)` の場合は `null`           |
-| `param`     | `ExpressionListTypeClass \| ErrorTypeClass \| null` | 実引数（`expressionList` ノード）。引数なしは `null`                            |
+| `value`     | `NormalIdTypeClass \| null \| ApexErrorTypeClass`       | メソッド名（`id` ノード）。`this(...)` / `super(...)` の場合は `null`           |
+| `param`     | `ExpressionListTypeClass \| ApexErrorTypeClass \| null` | 実引数（`expressionList` ノード）。引数なしは `null`                            |
 | `reference` | `string \| null`                                    | `this(...)` なら `'this'`、`super(...)` なら `'super'`、通常の呼び出しは `null` |
 
 ゲッター: `getValue()`, `getParam()`, `getReference()`
@@ -87,8 +87,8 @@ hook();
 | 変数    | 型                                                  | 内容                                                 |
 | ------- | --------------------------------------------------- | ---------------------------------------------------- |
 | `type`  | `'dotMethodCall'`                                   | 継承                                                 |
-| `value` | `AnyIdTypeClass \| ErrorTypeClass`                  | メソッド名（`anyId` ノード。予約語も可）             |
-| `param` | `ExpressionListTypeClass \| ErrorTypeClass \| null` | 実引数（`expressionList` ノード）。引数なしは `null` |
+| `value` | `AnyIdTypeClass \| ApexErrorTypeClass`                  | メソッド名（`anyId` ノード。予約語も可）             |
+| `param` | `ExpressionListTypeClass \| ApexErrorTypeClass \| null` | 実引数（`expressionList` ノード）。引数なしは `null` |
 
 ゲッター: `getValue()`, `getParam()`
 

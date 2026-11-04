@@ -2,7 +2,7 @@ import { SearchGroupContext } from '@apexdevtools/apex-parser';
 
 import { QueryValueTypeClass } from '.';
 
-import { ErrorTypeClass, CommonTypeClass } from '../commonVisitor';
+import { ApexErrorTypeClass, ApexCommonTypeClass } from '../commonVisitor';
 
 type SearchGroupValueType = 'ALL' | 'EMAIL' | 'NAME' | 'PHONE' | 'SIDEBAR';
 
@@ -35,7 +35,7 @@ export class SearchGroupTypeClass extends QueryValueTypeClass<'searchGroup', Sea
 }
 
 export const isSearchGroupType = (
-    target: CommonTypeClass<string>,
+    target: ApexCommonTypeClass<string>,
 ): target is SearchGroupTypeClass => {
     return target instanceof SearchGroupTypeClass;
 };

@@ -1,7 +1,7 @@
 # memberVisitor
 
 トリガー本体・匿名 Apex 本体の 1 要素（メンバー）を扱う。各メンバーは「修飾子付きのメンバー宣言」か「文」のどちらか。
-子フィールドは変換失敗時に `ErrorTypeClass`（`type: 'AnalyzerError'`, `contextType` / `context` / `errorMessage`）になり得る。
+子フィールドは変換失敗時に `ApexErrorTypeClass`（`type: 'AnalyzerError'`, `contextType` / `context` / `errorMessage`）になり得る。
 
 ## Visitor
 
@@ -20,11 +20,11 @@
 
 | 変数       | 型                                              | 内容                                                                                                                                                                                                                                                                                                                            |
 | ---------- | ----------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `type`     | `string`                                        | ノード種別（CommonTypeClass から継承）                                                                                                                                                                                                                                                                                          |
-| `value`    | `T \| ErrorTypeClass`                           | メンバー本体                                                                                                                                                                                                                                                                                                                    |
-| `modifier` | `(NormalModifierTypeClass \| ErrorTypeClass)[]` | メンバー宣言に付く修飾子。無ければ `[]`。各要素の `value` は `'GLOBAL'` / `'PUBLIC'` / `'PROTECTED'` / `'PRIVATE'` / `'TRANSIENT'` / `'STATIC'` / `'ABSTRACT'` / `'FINAL'` / `'WEBSERVICE'` / `'OVERRIDE'` / `'VIRTUAL'` / `'TESTMETHOD'` / `'WITH_SHARING'` / `'WITHOUT_SHARING'` / `'INHERITED_SHARING'` またはアノテーション |
+| `type`     | `string`                                        | ノード種別（ApexCommonTypeClass から継承）                                                                                                                                                                                                                                                                                          |
+| `value`    | `T \| ApexErrorTypeClass`                           | メンバー本体                                                                                                                                                                                                                                                                                                                    |
+| `modifier` | `(NormalModifierTypeClass \| ApexErrorTypeClass)[]` | メンバー宣言に付く修飾子。無ければ `[]`。各要素の `value` は `'GLOBAL'` / `'PUBLIC'` / `'PROTECTED'` / `'PRIVATE'` / `'TRANSIENT'` / `'STATIC'` / `'ABSTRACT'` / `'FINAL'` / `'WEBSERVICE'` / `'OVERRIDE'` / `'VIRTUAL'` / `'TESTMETHOD'` / `'WITH_SHARING'` / `'WITHOUT_SHARING'` / `'INHERITED_SHARING'` またはアノテーション |
 
-ゲッター: `getValue()`, `getModifier()`, `getType()`（CommonTypeClass）
+ゲッター: `getValue()`, `getModifier()`, `getType()`（ApexCommonTypeClass）
 
 ### `isMemberTypeAll`
 
@@ -42,8 +42,8 @@
 | 変数       | 型                                                                                  | 内容                                                                  |
 | ---------- | ----------------------------------------------------------------------------------- | --------------------------------------------------------------------- |
 | `type`     | `'anonymousBlockMember'`                                                            | 継承                                                                  |
-| `value`    | `AnonymousMemberDeclarationTypeClass \| NormalStatementTypeClass \| ErrorTypeClass` | メンバー宣言なら `anonymousMemberDeclaration`、それ以外は `statement` |
-| `modifier` | `(NormalModifierTypeClass \| ErrorTypeClass)[]`                                     | 継承。メンバー宣言の修飾子。`statement` の場合は `[]`                 |
+| `value`    | `AnonymousMemberDeclarationTypeClass \| NormalStatementTypeClass \| ApexErrorTypeClass` | メンバー宣言なら `anonymousMemberDeclaration`、それ以外は `statement` |
+| `modifier` | `(NormalModifierTypeClass \| ApexErrorTypeClass)[]`                                     | 継承。メンバー宣言の修飾子。`statement` の場合は `[]`                 |
 
 ゲッター: `getValue()`, `getModifier()`（継承）。ガード: `isAnonymousBlockMemberType`
 
@@ -80,8 +80,8 @@ static String describe(Object value) {
 | 変数       | 型                                                                                | 内容                                                                |
 | ---------- | --------------------------------------------------------------------------------- | ------------------------------------------------------------------- |
 | `type`     | `'triggerBlockMember'`                                                            | 継承                                                                |
-| `value`    | `TriggerMemberDeclarationTypeClass \| NormalStatementTypeClass \| ErrorTypeClass` | メンバー宣言なら `triggerMemberDeclaration`、それ以外は `statement` |
-| `modifier` | `(NormalModifierTypeClass \| ErrorTypeClass)[]`                                   | 継承。メンバー宣言の修飾子。`statement` の場合は `[]`               |
+| `value`    | `TriggerMemberDeclarationTypeClass \| NormalStatementTypeClass \| ApexErrorTypeClass` | メンバー宣言なら `triggerMemberDeclaration`、それ以外は `statement` |
+| `modifier` | `(NormalModifierTypeClass \| ApexErrorTypeClass)[]`                                   | 継承。メンバー宣言の修飾子。`statement` の場合は `[]`               |
 
 ゲッター: `getValue()`, `getModifier()`（継承）。ガード: `isTriggerBlockMemberType`
 

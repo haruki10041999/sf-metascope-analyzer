@@ -19,8 +19,8 @@
 
 | 変数 | 型 | 内容 |
 | --- | --- | --- |
-| `type` | `string` | ノード種別（CommonTypeClass から継承） |
-| `value` | `T \| ErrorTypeClass` | 主値。変換失敗時は `ErrorTypeClass` |
+| `type` | `string` | ノード種別（ApexCommonTypeClass から継承） |
+| `value` | `T \| ApexErrorTypeClass` | 主値。変換失敗時は `ApexErrorTypeClass` |
 
 ゲッター: `getValue()`, `getType()`（継承）
 
@@ -30,8 +30,8 @@
 
 | 変数 | 型 | 内容 |
 | --- | --- | --- |
-| `type` | `string` | ノード種別（CommonTypeClass から継承） |
-| `value` | `(T \| ErrorTypeClass)[]` | 要素の配列。各要素は変換失敗時に `ErrorTypeClass` |
+| `type` | `string` | ノード種別（ApexCommonTypeClass から継承） |
+| `value` | `(T \| ApexErrorTypeClass)[]` | 要素の配列。各要素は変換失敗時に `ApexErrorTypeClass` |
 
 ゲッター: `getValue()`, `getType()`（継承）
 
@@ -55,8 +55,8 @@
 | 変数 | 型 | 内容 |
 | --- | --- | --- |
 | `type` | `'typeRef'` | 継承 |
-| `value` | `(TypeNameTypeClass \| ErrorTypeClass)[]` | ドットで区切られた型名の配列（`System.Type` → 2 要素）。1 個以上 |
-| `dimension` | `ArraySubscriptsTypeClass \| ErrorTypeClass` | 配列次元。配列でなくても `value: 0` のノードが入る（null にはならない） |
+| `value` | `(TypeNameTypeClass \| ApexErrorTypeClass)[]` | ドットで区切られた型名の配列（`System.Type` → 2 要素）。1 個以上 |
+| `dimension` | `ArraySubscriptsTypeClass \| ApexErrorTypeClass` | 配列次元。配列でなくても `value: 0` のノードが入る（null にはならない） |
 
 ゲッター: `getValue()`, `getDimension()`
 
@@ -99,7 +99,7 @@ List<String> names;
 | 変数 | 型 | 内容 |
 | --- | --- | --- |
 | `type` | `'arraySubscripts'` | 継承 |
-| `value` | `number` | `[]` の個数。配列でない型は `0`。`[` と `]` の数が一致しない場合は生成時に例外となり、親側で `ErrorTypeClass` に置き換わる |
+| `value` | `number` | `[]` の個数。配列でない型は `0`。`[` と `]` の数が一致しない場合は生成時に例外となり、親側で `ApexErrorTypeClass` に置き換わる |
 
 ゲッター: `getValue()`
 

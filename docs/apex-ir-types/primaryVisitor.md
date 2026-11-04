@@ -1,7 +1,7 @@
 # primaryVisitor
 
 式の最小単位である `primary`（`this` / `super` / リテラル / 識別子 / `型.class` / SOQL / SOSL）を IR に変換する。生成ノードは `PrimaryExpressionTypeClass`（`'primaryExpression'`）の `value` に入る。
-子要素の変換に失敗した場合、そのフィールドには `ErrorTypeClass`（`type: 'AnalyzerError'`、`contextType` / `context` / `errorMessage`）が入る。
+子要素の変換に失敗した場合、そのフィールドには `ApexErrorTypeClass`（`type: 'AnalyzerError'`、`contextType` / `context` / `errorMessage`）が入る。
 
 ## Visitor
 
@@ -25,8 +25,8 @@
 
 | 変数    | 型                    | 内容                                   |
 | ------- | --------------------- | -------------------------------------- |
-| `type`  | `string`              | ノード種別（CommonTypeClass から継承） |
-| `value` | `T \| ErrorTypeClass` | primary の中身（文字列または子ノード） |
+| `type`  | `string`              | ノード種別（ApexCommonTypeClass から継承） |
+| `value` | `T \| ApexErrorTypeClass` | primary の中身（文字列または子ノード） |
 
 ゲッター: `getValue()`, `getType()`
 
@@ -134,7 +134,7 @@ System.Type voidType = void.class;
 | 変数    | 型                                   | 内容                  |
 | ------- | ------------------------------------ | --------------------- |
 | `type`  | `'typeRefPrimary'`                   | 継承                  |
-| `value` | `TypeRefTypeClass \| ErrorTypeClass` | 型参照（`'typeRef'`） |
+| `value` | `TypeRefTypeClass \| ApexErrorTypeClass` | 型参照（`'typeRef'`） |
 
 ゲッター: `getValue()`
 
@@ -165,7 +165,7 @@ System.Type stringType = String.class;
 | 変数    | 型                                    | 内容             |
 | ------- | ------------------------------------- | ---------------- |
 | `type`  | `'idPrimary'`                         | 継承             |
-| `value` | `NormalIdTypeClass \| ErrorTypeClass` | 識別子（`'id'`） |
+| `value` | `NormalIdTypeClass \| ApexErrorTypeClass` | 識別子（`'id'`） |
 
 ゲッター: `getValue()`
 
@@ -189,7 +189,7 @@ counter = 0;
 | 変数    | 型                                         | 内容                    |
 | ------- | ------------------------------------------ | ----------------------- |
 | `type`  | `'literalPrimary'`                         | 継承                    |
-| `value` | `NormalLiteralTypeClass \| ErrorTypeClass` | リテラル（`'literal'`） |
+| `value` | `NormalLiteralTypeClass \| ApexErrorTypeClass` | リテラル（`'literal'`） |
 
 ゲッター: `getValue()`
 
@@ -213,7 +213,7 @@ public static final Integer MAX_SIZE = 100;
 | 変数    | 型                                       | 内容                             |
 | ------- | ---------------------------------------- | -------------------------------- |
 | `type`  | `'soqlPrimary'`                          | 継承                             |
-| `value` | `SoqlLiteralTypeClass \| ErrorTypeClass` | SOQL リテラル（`'soqlLiteral'`） |
+| `value` | `SoqlLiteralTypeClass \| ApexErrorTypeClass` | SOQL リテラル（`'soqlLiteral'`） |
 
 ゲッター: `getValue()`
 
@@ -248,7 +248,7 @@ public static final Integer MAX_SIZE = 100;
 | 変数    | 型                                       | 内容                             |
 | ------- | ---------------------------------------- | -------------------------------- |
 | `type`  | `'soslPrimary'`                          | 継承                             |
-| `value` | `SoslLiteralTypeClass \| ErrorTypeClass` | SOSL リテラル（`'soslLiteral'`） |
+| `value` | `SoslLiteralTypeClass \| ApexErrorTypeClass` | SOSL リテラル（`'soslLiteral'`） |
 
 ゲッター: `getValue()`
 

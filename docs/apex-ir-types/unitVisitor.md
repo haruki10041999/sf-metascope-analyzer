@@ -1,7 +1,7 @@
 # unitVisitor
 
 Apex ソース 1 ファイル分のルートノードを扱う。クラス/インターフェース/enum ファイル（`compilationUnit`）、匿名 Apex（`anonymousUnit`）、トリガー（`triggerUnit`）と、トリガーの起動条件（`triggerCase`）を IR に変換する。
-子フィールドは変換失敗時に `ErrorTypeClass`（`type: 'AnalyzerError'`, `contextType` / `context` / `errorMessage`）になり得る。
+子フィールドは変換失敗時に `ApexErrorTypeClass`（`type: 'AnalyzerError'`, `contextType` / `context` / `errorMessage`）になり得る。
 
 ## Visitor
 
@@ -22,10 +22,10 @@ Apex ソース 1 ファイル分のルートノードを扱う。クラス/イ�
 
 | 変数    | 型                    | 内容                                   |
 | ------- | --------------------- | -------------------------------------- |
-| `type`  | `string`              | ノード種別（CommonTypeClass から継承） |
-| `value` | `T \| ErrorTypeClass` | 子ノードまたは値                       |
+| `type`  | `string`              | ノード種別（ApexCommonTypeClass から継承） |
+| `value` | `T \| ApexErrorTypeClass` | 子ノードまたは値                       |
 
-ゲッター: `getValue()`, `getType()`（CommonTypeClass）
+ゲッター: `getValue()`, `getType()`（ApexCommonTypeClass）
 
 ### `UnitListTypeClass<T>`
 
@@ -33,10 +33,10 @@ Apex ソース 1 ファイル分のルートノードを扱う。クラス/イ�
 
 | 変数    | 型                        | 内容                                   |
 | ------- | ------------------------- | -------------------------------------- |
-| `type`  | `string`                  | ノード種別（CommonTypeClass から継承） |
-| `value` | `(T \| ErrorTypeClass)[]` | 子ノードの配列                         |
+| `type`  | `string`                  | ノード種別（ApexCommonTypeClass から継承） |
+| `value` | `(T \| ApexErrorTypeClass)[]` | 子ノードの配列                         |
 
-ゲッター: `getValue()`, `getType()`（CommonTypeClass）
+ゲッター: `getValue()`, `getType()`（ApexCommonTypeClass）
 
 ### `UnitAllTypeClass`
 
@@ -58,7 +58,7 @@ Apex ソース 1 ファイル分のルートノードを扱う。クラス/イ�
 | 変数    | 型                                           | 内容                                                          |
 | ------- | -------------------------------------------- | ------------------------------------------------------------- |
 | `type`  | `'compilationUnit'`                          | 継承                                                          |
-| `value` | `TypeDeclarationTypeClass \| ErrorTypeClass` | トップレベル型宣言（declarationVisitor の `typeDeclaration`） |
+| `value` | `TypeDeclarationTypeClass \| ApexErrorTypeClass` | トップレベル型宣言（declarationVisitor の `typeDeclaration`） |
 
 ゲッター: `getValue()`（継承）。ガード: `isCompilationUnitType`
 
@@ -95,7 +95,7 @@ global inherited sharing virtual class ParserTest extends BaseParser implements 
 | 変数    | 型                                          | 内容                                                                                                  |
 | ------- | ------------------------------------------- | ----------------------------------------------------------------------------------------------------- |
 | `type`  | `'anonymousUnit'`                           | 継承                                                                                                  |
-| `value` | `AnonymousBlockTypeClass \| ErrorTypeClass` | 匿名ブロック（blockVisitor の `anonymousBlock`）。メンバーが 0 件なら `value: []` の `anonymousBlock` |
+| `value` | `AnonymousBlockTypeClass \| ApexErrorTypeClass` | 匿名ブロック（blockVisitor の `anonymousBlock`）。メンバーが 0 件なら `value: []` の `anonymousBlock` |
 
 ゲッター: `getValue()`（継承）。ガード: `isAnonymousUnitType`
 
@@ -136,9 +136,9 @@ Id accountId;
 | 変数          | 型                                           | 内容                                                                                             |
 | ------------- | -------------------------------------------- | ------------------------------------------------------------------------------------------------ |
 | `type`        | `'triggerUnit'`                              | 継承                                                                                             |
-| `value`       | `(NormalIdTypeClass \| ErrorTypeClass)[]`    | `id` のリスト。`[0]` がトリガー名、`[1]` が対象 SObject 名                                       |
-| `triggerCase` | `(TriggerCaseTypeClass \| ErrorTypeClass)[]` | 起動条件（`before insert` 等）のリスト                                                           |
-| `block`       | `TriggerBlockTypeClass \| ErrorTypeClass`    | トリガー本体（blockVisitor の `triggerBlock`）。本体が空 `{}` なら `value: []` の `triggerBlock` |
+| `value`       | `(NormalIdTypeClass \| ApexErrorTypeClass)[]`    | `id` のリスト。`[0]` がトリガー名、`[1]` が対象 SObject 名                                       |
+| `triggerCase` | `(TriggerCaseTypeClass \| ApexErrorTypeClass)[]` | 起動条件（`before insert` 等）のリスト                                                           |
+| `block`       | `TriggerBlockTypeClass \| ApexErrorTypeClass`    | トリガー本体（blockVisitor の `triggerBlock`）。本体が空 `{}` なら `value: []` の `triggerBlock` |
 
 ゲッター: `getValue()`（継承）, `getTriggerCase()`, `getBlock()`。ガード: `isTriggerUnitType`（引数型は `any`）
 

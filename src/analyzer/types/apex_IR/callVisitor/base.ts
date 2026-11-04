@@ -1,26 +1,26 @@
-import { ErrorTypeClass, CommonTypeClass } from '../commonVisitor';
+import { ApexErrorTypeClass, ApexCommonTypeClass } from '../commonVisitor';
 
-export class CallTypeClass<TName extends string, T, Tparam> extends CommonTypeClass<TName> {
-    private value: T | ErrorTypeClass;
-    private param: Tparam | ErrorTypeClass | null;
+export class CallTypeClass<TName extends string, T, Tparam> extends ApexCommonTypeClass<TName> {
+    private value: T | ApexErrorTypeClass;
+    private param: Tparam | ApexErrorTypeClass | null;
 
-    constructor(type: TName, value: T | ErrorTypeClass, param: Tparam | ErrorTypeClass | null) {
+    constructor(type: TName, value: T | ApexErrorTypeClass, param: Tparam | ApexErrorTypeClass | null) {
         super(type);
         this.value = value;
         this.param = param;
     }
 
-    getValue(): T | ErrorTypeClass {
+    getValue(): T | ApexErrorTypeClass {
         return this.value;
     }
 
-    getParam(): Tparam | ErrorTypeClass | null {
+    getParam(): Tparam | ApexErrorTypeClass | null {
         return this.param;
     }
 }
 
 export const isCallTypeAll = (
-    target: CommonTypeClass<string>,
+    target: ApexCommonTypeClass<string>,
 ): target is CallTypeClass<string, unknown, unknown> => {
     return target instanceof CallTypeClass;
 };

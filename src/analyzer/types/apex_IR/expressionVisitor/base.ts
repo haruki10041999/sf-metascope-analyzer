@@ -1,6 +1,6 @@
-import { ErrorTypeClass, CommonTypeClass } from '../commonVisitor';
+import { ApexErrorTypeClass, ApexCommonTypeClass } from '../commonVisitor';
 
-export class ExpressionValueTypeClass<TName extends string, T> extends CommonTypeClass<TName> {
+export class ExpressionValueTypeClass<TName extends string, T> extends ApexCommonTypeClass<TName> {
     private value: T;
 
     constructor(type: TName, value: T) {
@@ -13,28 +13,28 @@ export class ExpressionValueTypeClass<TName extends string, T> extends CommonTyp
     }
 }
 
-export class ExpressionTypeClass<TName extends string, T> extends CommonTypeClass<TName> {
-    private value: T | ErrorTypeClass;
+export class ExpressionTypeClass<TName extends string, T> extends ApexCommonTypeClass<TName> {
+    private value: T | ApexErrorTypeClass;
 
-    constructor(type: TName, value: T | ErrorTypeClass) {
+    constructor(type: TName, value: T | ApexErrorTypeClass) {
         super(type);
         this.value = value;
     }
 
-    getValue(): T | ErrorTypeClass {
+    getValue(): T | ApexErrorTypeClass {
         return this.value;
     }
 }
 
-export class ExpressionListBaseTypeClass<TName extends string, T> extends CommonTypeClass<TName> {
-    private value: (T | ErrorTypeClass)[];
+export class ExpressionListBaseTypeClass<TName extends string, T> extends ApexCommonTypeClass<TName> {
+    private value: (T | ApexErrorTypeClass)[];
 
-    constructor(type: TName, value: (T | ErrorTypeClass)[]) {
+    constructor(type: TName, value: (T | ApexErrorTypeClass)[]) {
         super(type);
         this.value = value;
     }
 
-    getValue(): (T | ErrorTypeClass)[] {
+    getValue(): (T | ApexErrorTypeClass)[] {
         return this.value;
     }
 }
@@ -43,17 +43,17 @@ export class SingleOperatorExpressionTypeClass<
     TName extends string,
     T,
     TOperator extends string,
-> extends CommonTypeClass<TName> {
+> extends ApexCommonTypeClass<TName> {
     private operator: TOperator;
-    private value: T | ErrorTypeClass;
+    private value: T | ApexErrorTypeClass;
 
-    constructor(type: TName, value: T | ErrorTypeClass, operator: TOperator) {
+    constructor(type: TName, value: T | ApexErrorTypeClass, operator: TOperator) {
         super(type);
         this.value = value;
         this.operator = operator;
     }
 
-    getValue(): T | ErrorTypeClass {
+    getValue(): T | ApexErrorTypeClass {
         return this.value;
     }
 
@@ -67,15 +67,15 @@ export class DoubleStringOperatorExpressionTypeClass<
     Tleft,
     TOperator extends string,
     Tright,
-> extends CommonTypeClass<TName> {
-    private left: Tleft | ErrorTypeClass;
-    private right: Tright | ErrorTypeClass;
+> extends ApexCommonTypeClass<TName> {
+    private left: Tleft | ApexErrorTypeClass;
+    private right: Tright | ApexErrorTypeClass;
     private operator: TOperator;
 
     constructor(
         type: TName,
-        left: Tleft | ErrorTypeClass,
-        right: Tright | ErrorTypeClass,
+        left: Tleft | ApexErrorTypeClass,
+        right: Tright | ApexErrorTypeClass,
         operator: TOperator,
     ) {
         super(type);
@@ -84,11 +84,11 @@ export class DoubleStringOperatorExpressionTypeClass<
         this.operator = operator;
     }
 
-    getLeft(): Tleft | ErrorTypeClass {
+    getLeft(): Tleft | ApexErrorTypeClass {
         return this.left;
     }
 
-    getRight(): Tright | ErrorTypeClass {
+    getRight(): Tright | ApexErrorTypeClass {
         return this.right;
     }
 
@@ -102,16 +102,16 @@ export class DoubleOperatorExpressionTypeClass<
     Tleft,
     TOperator,
     Tright,
-> extends CommonTypeClass<TName> {
-    private left: Tleft | ErrorTypeClass;
-    private right: Tright | ErrorTypeClass;
-    private operator: TOperator | ErrorTypeClass;
+> extends ApexCommonTypeClass<TName> {
+    private left: Tleft | ApexErrorTypeClass;
+    private right: Tright | ApexErrorTypeClass;
+    private operator: TOperator | ApexErrorTypeClass;
 
     constructor(
         type: TName,
-        left: Tleft | ErrorTypeClass,
-        right: Tright | ErrorTypeClass,
-        operator: TOperator | ErrorTypeClass,
+        left: Tleft | ApexErrorTypeClass,
+        right: Tright | ApexErrorTypeClass,
+        operator: TOperator | ApexErrorTypeClass,
     ) {
         super(type);
         this.left = left;
@@ -119,15 +119,15 @@ export class DoubleOperatorExpressionTypeClass<
         this.operator = operator;
     }
 
-    getLeft(): Tleft | ErrorTypeClass {
+    getLeft(): Tleft | ApexErrorTypeClass {
         return this.left;
     }
 
-    getRight(): Tright | ErrorTypeClass {
+    getRight(): Tright | ApexErrorTypeClass {
         return this.right;
     }
 
-    getOperator(): TOperator | ErrorTypeClass {
+    getOperator(): TOperator | ApexErrorTypeClass {
         return this.operator;
     }
 }
@@ -137,16 +137,16 @@ export class ConditionExpressionTypeClass<
     TCondition,
     TTrue,
     TFalse,
-> extends CommonTypeClass<TName> {
-    private condition: TCondition | ErrorTypeClass;
-    private trueValue: TTrue | ErrorTypeClass;
-    private falseValue: TFalse | ErrorTypeClass;
+> extends ApexCommonTypeClass<TName> {
+    private condition: TCondition | ApexErrorTypeClass;
+    private trueValue: TTrue | ApexErrorTypeClass;
+    private falseValue: TFalse | ApexErrorTypeClass;
 
     constructor(
         type: TName,
-        condition: TCondition | ErrorTypeClass,
-        trueValue: TTrue | ErrorTypeClass,
-        falseValue: TFalse | ErrorTypeClass,
+        condition: TCondition | ApexErrorTypeClass,
+        trueValue: TTrue | ApexErrorTypeClass,
+        falseValue: TFalse | ApexErrorTypeClass,
     ) {
         super(type);
         this.condition = condition;
@@ -154,15 +154,15 @@ export class ConditionExpressionTypeClass<
         this.falseValue = falseValue;
     }
 
-    getCondition(): TCondition | ErrorTypeClass {
+    getCondition(): TCondition | ApexErrorTypeClass {
         return this.condition;
     }
 
-    getTrueValue(): TTrue | ErrorTypeClass {
+    getTrueValue(): TTrue | ApexErrorTypeClass {
         return this.trueValue;
     }
 
-    getFalseValue(): TFalse | ErrorTypeClass {
+    getFalseValue(): TFalse | ApexErrorTypeClass {
         return this.falseValue;
     }
 }
@@ -177,7 +177,7 @@ export type ExpressionAllTypeClass =
     | ConditionExpressionTypeClass<string, unknown, unknown, unknown>;
 
 export const isExpressionTypeAll = (
-    target: CommonTypeClass<string>,
+    target: ApexCommonTypeClass<string>,
 ): target is ExpressionAllTypeClass => {
     return (
         target instanceof ExpressionValueTypeClass ||

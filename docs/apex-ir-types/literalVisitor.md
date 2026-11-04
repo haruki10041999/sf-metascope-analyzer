@@ -1,7 +1,7 @@
 # literalVisitor
 
 リテラル類（通常リテラル・`switch` の `when` 値・符号付き数値・SOQL/SOSL リテラル）を IR に変換する。プリミティブ系は `valueType` で値の種類を区別する。
-子要素の変換に失敗した場合、そのフィールドには `ErrorTypeClass`（`type: 'AnalyzerError'`、`contextType` / `context` / `errorMessage`）が入る。
+子要素の変換に失敗した場合、そのフィールドには `ApexErrorTypeClass`（`type: 'AnalyzerError'`、`contextType` / `context` / `errorMessage`）が入る。
 
 ## Visitor
 
@@ -23,8 +23,8 @@
 
 | 変数    | 型                    | 内容                                   |
 | ------- | --------------------- | -------------------------------------- |
-| `type`  | `string`              | ノード種別（CommonTypeClass から継承） |
-| `value` | `T \| ErrorTypeClass` | リテラルの中身                         |
+| `type`  | `string`              | ノード種別（ApexCommonTypeClass から継承） |
+| `value` | `T \| ApexErrorTypeClass` | リテラルの中身                         |
 
 ゲッター: `getValue()`, `getType()`
 
@@ -34,9 +34,9 @@
 
 | 変数        | 型                    | 内容                                   |
 | ----------- | --------------------- | -------------------------------------- |
-| `type`      | `string`              | ノード種別（CommonTypeClass から継承） |
+| `type`      | `string`              | ノード種別（ApexCommonTypeClass から継承） |
 | `valueType` | `string`              | 値の種類（各サブクラス参照）           |
-| `value`     | `T \| ErrorTypeClass` | リテラル値                             |
+| `value`     | `T \| ApexErrorTypeClass` | リテラル値                             |
 
 ゲッター: `getValue()`, `getValueType()`（戻り値の型は `string | null` だが実際は常に文字列）, `getType()`
 
@@ -61,7 +61,7 @@
 | ----------- | -------------------------- | --------------------------------------------------------------------------------------------------------------- |
 | `type`      | `'literal'`                | 継承                                                                                                            |
 | `valueType` | `string`                   | `'integer'` \| `'long'` \| `'number'` \| `'string'` \| `'multilineString'` \| `'boolean'` \| `'null'`           |
-| `value`     | `string \| ErrorTypeClass` | トークンのテキスト（文字列リテラルは引用符込み、`null` リテラルは文字列 `'null'`）。`create` 経由では常に文字列 |
+| `value`     | `string \| ApexErrorTypeClass` | トークンのテキスト（文字列リテラルは引用符込み、`null` リテラルは文字列 `'null'`）。`create` 経由では常に文字列 |
 
 ゲッター: `getValue()`, `getValueType()`
 
@@ -87,7 +87,7 @@ public static final Integer MAX_SIZE = 100;
 | ----------- | ---------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `type`      | `'whenLiteral'`                          | 継承                                                                                                                                                                                                                                                      |
 | `valueType` | `string`                                 | `'integer'` \| `'long'` \| `'string'` \| `'multilineString'` \| `'qualifiedName'` \| `'null'`（括弧付きは内側の値の種類）                                                                                                                                 |
-| `value`     | `WhenLiteralValueType \| ErrorTypeClass` | integer / long: トークンのテキスト（文字列、符号は含まない）。string: 引用符込みのテキスト。multilineString: ソースのままのテキスト（改行も保持）。qualifiedName: `QualifiedNameTypeClass`（列挙値など）。括弧付き: 内側の値に展開。null: 文字列 `'null'` |
+| `value`     | `WhenLiteralValueType \| ApexErrorTypeClass` | integer / long: トークンのテキスト（文字列、符号は含まない）。string: 引用符込みのテキスト。multilineString: ソースのままのテキスト（改行も保持）。qualifiedName: `QualifiedNameTypeClass`（列挙値など）。括弧付き: 内側の値に展開。null: 文字列 `'null'` |
 | `operator`  | `string \| null`                         | 数値の前の符号（`+` / `-` トークンをすべてソース順に連結した文字列。例: `-1` → `'-'`、`+-1` → `'+-'`、符号なし → `''`）。数値以外は `null`                                                                                                                |
 
 ゲッター: `getValue()`, `getValueType()`, `getOperator()`
@@ -172,7 +172,7 @@ AND AnnualRevenue <= -1.5
 | 変数    | 型                                       | 内容                |
 | ------- | ---------------------------------------- | ------------------- |
 | `type`  | `'soqlLiteral'`                          | 継承                |
-| `value` | `NormalQueryTypeClass \| ErrorTypeClass` | クエリ（`'query'`） |
+| `value` | `NormalQueryTypeClass \| ApexErrorTypeClass` | クエリ（`'query'`） |
 
 ゲッター: `getValue()`
 
@@ -205,8 +205,8 @@ AND AnnualRevenue <= -1.5
 | 変数          | 型                                                     | 内容                                                                                                                                                                   |
 | ------------- | ------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `type`        | `'soslLiteral'`                                        | 継承                                                                                                                                                                   |
-| `value`       | `string \| BoundExpressionTypeClass \| ErrorTypeClass` | 検索語が文字列の場合は `FindLiteral` トークンのテキスト（`[FIND` を含む。例 `"[FIND 'test'"`）。`FIND :var` の場合は `BoundExpressionTypeClass`（`'boundExpression'`） |
-| `soslClauses` | `SoslClausesTypeClass \| ErrorTypeClass`               | `IN` / `RETURNING` / `WITH` / `LIMIT` 等の句（`'soslClauses'`）                                                                                                        |
+| `value`       | `string \| BoundExpressionTypeClass \| ApexErrorTypeClass` | 検索語が文字列の場合は `FindLiteral` トークンのテキスト（`[FIND` を含む。例 `"[FIND 'test'"`）。`FIND :var` の場合は `BoundExpressionTypeClass`（`'boundExpression'`） |
+| `soslClauses` | `SoslClausesTypeClass \| ApexErrorTypeClass`               | `IN` / `RETURNING` / `WITH` / `LIMIT` 等の句（`'soslClauses'`）                                                                                                        |
 
 ゲッター: `getValue()`, `getSoslClauses()`
 
@@ -233,7 +233,7 @@ AND AnnualRevenue <= -1.5
 | ------------- | ---------------------------------------- | ----------------------------------- |
 | `type`        | `'soslLiteralAlt'`                       | 継承                                |
 | `value`       | `string`                                 | `FindLiteralAlt` トークンのテキスト |
-| `soslClauses` | `SoslClausesTypeClass \| ErrorTypeClass` | SOSL 句（`'soslClauses'`）          |
+| `soslClauses` | `SoslClausesTypeClass \| ApexErrorTypeClass` | SOSL 句（`'soslClauses'`）          |
 
 ゲッター: `getValue()`, `getSoslClauses()`
 

@@ -1,7 +1,7 @@
 # pairVisitor
 
 左右 2 要素の組（アノテーション引数 `name=value`、`new` の型名と型引数、Map 初期化子の `key => value`）と、その一覧を IR に変換する。
-子要素の変換に失敗した場合、そのフィールドには `ErrorTypeClass`（`type: 'AnalyzerError'`、`contextType` / `context` / `errorMessage`）が入る。
+子要素の変換に失敗した場合、そのフィールドには `ApexErrorTypeClass`（`type: 'AnalyzerError'`、`contextType` / `context` / `errorMessage`）が入る。
 
 ## Visitor
 
@@ -20,9 +20,9 @@
 
 | 変数    | 型                         | 内容                                   |
 | ------- | -------------------------- | -------------------------------------- |
-| `type`  | `string`                   | ノード種別（CommonTypeClass から継承） |
-| `left`  | `Tleft \| ErrorTypeClass`  | 左要素                                 |
-| `right` | `Tright \| ErrorTypeClass` | 右要素                                 |
+| `type`  | `string`                   | ノード種別（ApexCommonTypeClass から継承） |
+| `left`  | `Tleft \| ApexErrorTypeClass`  | 左要素                                 |
+| `right` | `Tright \| ApexErrorTypeClass` | 右要素                                 |
 
 ゲッター: `getLeft()`, `getRight()`, `getType()`
 
@@ -32,8 +32,8 @@
 
 | 変数    | 型                        | 内容                                   |
 | ------- | ------------------------- | -------------------------------------- |
-| `type`  | `string`                  | ノード種別（CommonTypeClass から継承） |
-| `value` | `(T \| ErrorTypeClass)[]` | ペアの配列                             |
+| `type`  | `string`                  | ノード種別（ApexCommonTypeClass から継承） |
+| `value` | `(T \| ApexErrorTypeClass)[]` | ペアの配列                             |
 
 ゲッター: `getValue()`, `getType()`
 
@@ -57,8 +57,8 @@
 | 変数    | 型                                        | 内容                       |
 | ------- | ----------------------------------------- | -------------------------- |
 | `type`  | `'elementValuePair'`                      | 継承                       |
-| `left`  | `NormalIdTypeClass \| ErrorTypeClass`     | 引数名（`'id'`）           |
-| `right` | `ElementValueTypeClass \| ErrorTypeClass` | 引数値（`'elementValue'`） |
+| `left`  | `NormalIdTypeClass \| ApexErrorTypeClass`     | 引数名（`'id'`）           |
+| `right` | `ElementValueTypeClass \| ApexErrorTypeClass` | 引数値（`'elementValue'`） |
 
 ゲッター: `getLeft()`, `getRight()`
 
@@ -89,7 +89,7 @@
 | 変数    | 型                                                | 内容                                                              |
 | ------- | ------------------------------------------------- | ----------------------------------------------------------------- |
 | `type`  | `'elementValuePairs'`                             | 継承                                                              |
-| `value` | `(ElementValuePairTypeClass \| ErrorTypeClass)[]` | `'elementValuePair'` の配列。1 件以上（0 件なら `create` が例外） |
+| `value` | `(ElementValuePairTypeClass \| ApexErrorTypeClass)[]` | `'elementValuePair'` の配列。1 件以上（0 件なら `create` が例外） |
 
 ゲッター: `getValue()`
 
@@ -116,8 +116,8 @@
 | 変数    | 型                                            | 内容                                                                      |
 | ------- | --------------------------------------------- | ------------------------------------------------------------------------- |
 | `type`  | `'idCreatedNamePair'`                         | 継承                                                                      |
-| `left`  | `AnyIdTypeClass \| ErrorTypeClass`            | 型名（`'anyId'`）                                                         |
-| `right` | `TypeListTypeClass \| ErrorTypeClass \| null` | 型引数 `<...>`（`'typeList'`）。型引数なし（`new Account()` 等）は `null` |
+| `left`  | `AnyIdTypeClass \| ApexErrorTypeClass`            | 型名（`'anyId'`）                                                         |
+| `right` | `TypeListTypeClass \| ApexErrorTypeClass \| null` | 型引数 `<...>`（`'typeList'`）。型引数なし（`new Account()` 等）は `null` |
 
 ゲッター: `getLeft()`, `getRight()`
 
@@ -143,8 +143,8 @@ new Account(Name = 'Test', Industry = 'Technology')
 | 変数    | 型                                         | 内容     |
 | ------- | ------------------------------------------ | -------- |
 | `type`  | `'mapCreatorRestPair'`                     | 継承     |
-| `left`  | `ExpressionAllTypeClass \| ErrorTypeClass` | キーの式 |
-| `right` | `ExpressionAllTypeClass \| ErrorTypeClass` | 値の式   |
+| `left`  | `ExpressionAllTypeClass \| ApexErrorTypeClass` | キーの式 |
+| `right` | `ExpressionAllTypeClass \| ApexErrorTypeClass` | 値の式   |
 
 ゲッター: `getLeft()`, `getRight()`
 

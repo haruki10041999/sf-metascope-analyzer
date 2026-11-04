@@ -5,9 +5,9 @@ import type {
     OrderByClauseTypeClass,
     LimitClauseTypeClass,
 } from '../clauseVisitor';
-import { ErrorTypeClass, CommonTypeClass } from '../commonVisitor';
+import { ApexErrorTypeClass, ApexCommonTypeClass } from '../commonVisitor';
 
-export class QueryValueTypeClass<TName extends string, T> extends CommonTypeClass<TName> {
+export class QueryValueTypeClass<TName extends string, T> extends ApexCommonTypeClass<TName> {
     private value: T;
     constructor(type: TName, value: T) {
         super(type);
@@ -19,35 +19,35 @@ export class QueryValueTypeClass<TName extends string, T> extends CommonTypeClas
     }
 }
 
-export class QueryTypeClass<TName extends string, T> extends CommonTypeClass<TName> {
-    private value: T | ErrorTypeClass;
-    constructor(type: TName, value: T | ErrorTypeClass) {
+export class QueryTypeClass<TName extends string, T> extends ApexCommonTypeClass<TName> {
+    private value: T | ApexErrorTypeClass;
+    constructor(type: TName, value: T | ApexErrorTypeClass) {
         super(type);
         this.value = value;
     }
 
-    getValue(): T | ErrorTypeClass {
+    getValue(): T | ApexErrorTypeClass {
         return this.value;
     }
 }
 
 export class SoqlQueryTypeClass<TName extends string, T> extends QueryTypeClass<TName, T> {
-    private from: FromNameListTypeClass | ErrorTypeClass;
-    private forClause: ForClausesTypeClass | ErrorTypeClass | null = null;
-    private whereClause: WhereClauseTypeClass | ErrorTypeClass | null = null;
-    private orderByClause: OrderByClauseTypeClass | ErrorTypeClass | null = null;
-    private limitClause: LimitClauseTypeClass | ErrorTypeClass | null = null;
-    private updateList: UpdateListTypeClass | ErrorTypeClass | null = null;
+    private from: FromNameListTypeClass | ApexErrorTypeClass;
+    private forClause: ForClausesTypeClass | ApexErrorTypeClass | null = null;
+    private whereClause: WhereClauseTypeClass | ApexErrorTypeClass | null = null;
+    private orderByClause: OrderByClauseTypeClass | ApexErrorTypeClass | null = null;
+    private limitClause: LimitClauseTypeClass | ApexErrorTypeClass | null = null;
+    private updateList: UpdateListTypeClass | ApexErrorTypeClass | null = null;
 
     constructor(
         type: TName,
-        value: T | ErrorTypeClass,
-        from: FromNameListTypeClass | ErrorTypeClass,
-        forClause: ForClausesTypeClass | ErrorTypeClass | null,
-        whereClause: WhereClauseTypeClass | ErrorTypeClass | null,
-        orderByClause: OrderByClauseTypeClass | ErrorTypeClass | null,
-        limitClause: LimitClauseTypeClass | ErrorTypeClass | null,
-        updateList: UpdateListTypeClass | ErrorTypeClass | null,
+        value: T | ApexErrorTypeClass,
+        from: FromNameListTypeClass | ApexErrorTypeClass,
+        forClause: ForClausesTypeClass | ApexErrorTypeClass | null,
+        whereClause: WhereClauseTypeClass | ApexErrorTypeClass | null,
+        orderByClause: OrderByClauseTypeClass | ApexErrorTypeClass | null,
+        limitClause: LimitClauseTypeClass | ApexErrorTypeClass | null,
+        updateList: UpdateListTypeClass | ApexErrorTypeClass | null,
     ) {
         super(type, value);
         this.from = from;
@@ -58,27 +58,27 @@ export class SoqlQueryTypeClass<TName extends string, T> extends QueryTypeClass<
         this.updateList = updateList;
     }
 
-    getFrom(): FromNameListTypeClass | ErrorTypeClass {
+    getFrom(): FromNameListTypeClass | ApexErrorTypeClass {
         return this.from;
     }
 
-    getForClause(): ForClausesTypeClass | ErrorTypeClass | null {
+    getForClause(): ForClausesTypeClass | ApexErrorTypeClass | null {
         return this.forClause;
     }
 
-    getWhereClause(): WhereClauseTypeClass | ErrorTypeClass | null {
+    getWhereClause(): WhereClauseTypeClass | ApexErrorTypeClass | null {
         return this.whereClause;
     }
 
-    getOrderByClause(): OrderByClauseTypeClass | ErrorTypeClass | null {
+    getOrderByClause(): OrderByClauseTypeClass | ApexErrorTypeClass | null {
         return this.orderByClause;
     }
 
-    getLimitClause(): LimitClauseTypeClass | ErrorTypeClass | null {
+    getLimitClause(): LimitClauseTypeClass | ApexErrorTypeClass | null {
         return this.limitClause;
     }
 
-    getUpdateList(): UpdateListTypeClass | ErrorTypeClass | null {
+    getUpdateList(): UpdateListTypeClass | ApexErrorTypeClass | null {
         return this.updateList;
     }
 }
@@ -88,7 +88,7 @@ export type QueryAllTypeClass =
     | QueryTypeClass<string, unknown>
     | SoqlQueryTypeClass<string, unknown>;
 
-export const isQueryTypeAll = (target: CommonTypeClass<string>): target is QueryAllTypeClass => {
+export const isQueryTypeAll = (target: ApexCommonTypeClass<string>): target is QueryAllTypeClass => {
     return (
         target instanceof QueryValueTypeClass ||
         target instanceof QueryTypeClass ||

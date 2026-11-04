@@ -20,8 +20,8 @@
 
 | 変数    | 型                    | 内容                                   |
 | ------- | --------------------- | -------------------------------------- |
-| `type`  | `string`              | ノード種別（CommonTypeClass から継承） |
-| `value` | `T \| ErrorTypeClass` | 主値。変換失敗時は `ErrorTypeClass`    |
+| `type`  | `string`              | ノード種別（ApexCommonTypeClass から継承） |
+| `value` | `T \| ApexErrorTypeClass` | 主値。変換失敗時は `ApexErrorTypeClass`    |
 
 ゲッター: `getValue()`, `getType()`（継承）
 
@@ -31,8 +31,8 @@
 
 | 変数    | 型                        | 内容                                              |
 | ------- | ------------------------- | ------------------------------------------------- |
-| `type`  | `string`                  | ノード種別（CommonTypeClass から継承）            |
-| `value` | `(T \| ErrorTypeClass)[]` | 要素の配列。各要素は変換失敗時に `ErrorTypeClass` |
+| `type`  | `string`                  | ノード種別（ApexCommonTypeClass から継承）            |
+| `value` | `(T \| ApexErrorTypeClass)[]` | 要素の配列。各要素は変換失敗時に `ApexErrorTypeClass` |
 
 ゲッター: `getValue()`, `getType()`（継承）
 
@@ -56,7 +56,7 @@
 | 変数    | 型                                                  | 内容                     |
 | ------- | --------------------------------------------------- | ------------------------ |
 | `type`  | `'variableDeclarators'`                             | 継承                     |
-| `value` | `(VariableDeclaratorTypeClass \| ErrorTypeClass)[]` | 宣言子の配列（1 個以上） |
+| `value` | `(VariableDeclaratorTypeClass \| ApexErrorTypeClass)[]` | 宣言子の配列（1 個以上） |
 
 ゲッター: `getValue()`
 
@@ -99,8 +99,8 @@ private Integer first = 1, second, third = 3;
 | 変数      | 型                                                 | 内容                                                     |
 | --------- | -------------------------------------------------- | -------------------------------------------------------- |
 | `type`    | `'variableDeclarator'`                             | 継承                                                     |
-| `value`   | `NormalIdTypeClass \| ErrorTypeClass`              | 変数名（`id` ノード）                                    |
-| `content` | `ExpressionAllTypeClass \| ErrorTypeClass \| null` | 初期化式。`= expr` が無い場合（`String name;`）は `null` |
+| `value`   | `NormalIdTypeClass \| ApexErrorTypeClass`              | 変数名（`id` ノード）                                    |
+| `content` | `ExpressionAllTypeClass \| ApexErrorTypeClass \| null` | 初期化式。`= expr` が無い場合（`String name;`）は `null` |
 
 ゲッター: `getValue()`, `getContent()`
 
@@ -134,7 +134,7 @@ public static final Integer MAX_SIZE = 100;
 | 変数    | 型                                             | 内容                                                   |
 | ------- | ---------------------------------------------- | ------------------------------------------------------ |
 | `type`  | `'arrayInitializer'`                           | 継承                                                   |
-| `value` | `(ExpressionAllTypeClass \| ErrorTypeClass)[]` | 要素式の配列。`{}` の場合は空配列（null にはならない） |
+| `value` | `(ExpressionAllTypeClass \| ApexErrorTypeClass)[]` | 要素式の配列。`{}` の場合は空配列（null にはならない） |
 
 ゲッター: `getValue()`
 

@@ -1,19 +1,19 @@
-import { CommonTypeClass, ErrorTypeClass } from '../commonVisitor';
+import { ApexCommonTypeClass, ApexErrorTypeClass } from '../commonVisitor';
 
-export class ArgumentsTypeClass<TName extends string, T> extends CommonTypeClass<TName> {
-    private value: T | ErrorTypeClass | null = null;
-    constructor(type: TName, value: T | ErrorTypeClass | null) {
+export class ArgumentsTypeClass<TName extends string, T> extends ApexCommonTypeClass<TName> {
+    private value: T | ApexErrorTypeClass | null = null;
+    constructor(type: TName, value: T | ApexErrorTypeClass | null) {
         super(type);
         this.value = value;
     }
 
-    getValue(): T | ErrorTypeClass | null {
+    getValue(): T | ApexErrorTypeClass | null {
         return this.value;
     }
 }
 
 export const isArugumentsTypeAll = (
-    target: CommonTypeClass<string>,
+    target: ApexCommonTypeClass<string>,
 ): target is ArgumentsTypeClass<string, unknown> => {
     return target instanceof ArgumentsTypeClass;
 };

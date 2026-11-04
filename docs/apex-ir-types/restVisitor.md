@@ -1,7 +1,7 @@
 # restVisitor
 
 `new` 式の `creator`（生成する型名と、それに続く「残り部分」= コンストラクタ引数・配列サイズ/初期化子・Map/Set 初期化子・空の `{}`）を IR に変換する。`CreatorTypeClass` は `NewExpressionTypeClass`（`'newExpression'`）の `value` に入る。
-子要素の変換に失敗した場合、そのフィールドには `ErrorTypeClass`（`type: 'AnalyzerError'`、`contextType` / `context` / `errorMessage`）が入る。
+子要素の変換に失敗した場合、そのフィールドには `ApexErrorTypeClass`（`type: 'AnalyzerError'`、`contextType` / `context` / `errorMessage`）が入る。
 
 ## Visitor
 
@@ -22,8 +22,8 @@
 
 | 変数    | 型                    | 内容                                   |
 | ------- | --------------------- | -------------------------------------- |
-| `type`  | `string`              | ノード種別（CommonTypeClass から継承） |
-| `value` | `T \| ErrorTypeClass` | ノードの主要素                         |
+| `type`  | `string`              | ノード種別（ApexCommonTypeClass から継承） |
+| `value` | `T \| ApexErrorTypeClass` | ノードの主要素                         |
 
 ゲッター: `getValue()`, `getType()`
 
@@ -33,8 +33,8 @@
 
 | 変数    | 型                        | 内容                                   |
 | ------- | ------------------------- | -------------------------------------- |
-| `type`  | `string`                  | ノード種別（CommonTypeClass から継承） |
-| `value` | `(T \| ErrorTypeClass)[]` | 要素の配列                             |
+| `type`  | `string`                  | ノード種別（ApexCommonTypeClass から継承） |
+| `value` | `(T \| ApexErrorTypeClass)[]` | 要素の配列                             |
 
 ゲッター: `getValue()`, `getType()`
 
@@ -58,8 +58,8 @@
 | 変数      | 型                                       | 内容                                                                                                                                                        |
 | --------- | ---------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `type`    | `'creator'`                              | 継承                                                                                                                                                        |
-| `value`   | `CreatedNameTypeClass \| ErrorTypeClass` | 生成する型名（`'createdName'`）                                                                                                                             |
-| `content` | `RestAllTypeClass \| ErrorTypeClass`     | rest 部分。`NoRestTypeClass` / `ClassCreatorRestTypeClass` / `ArrayCreatorRestTypeClass` / `MapCreatorRestTypeClass` / `SetCreatorRestTypeClass` のいずれか |
+| `value`   | `CreatedNameTypeClass \| ApexErrorTypeClass` | 生成する型名（`'createdName'`）                                                                                                                             |
+| `content` | `RestAllTypeClass \| ApexErrorTypeClass`     | rest 部分。`NoRestTypeClass` / `ClassCreatorRestTypeClass` / `ArrayCreatorRestTypeClass` / `MapCreatorRestTypeClass` / `SetCreatorRestTypeClass` のいずれか |
 
 ゲッター: `getValue()`, `getContent()`
 
@@ -111,7 +111,7 @@ Set<String> emptySet = new Set<String>{};
 | 変数    | 型                                           | 内容                                                                             |
 | ------- | -------------------------------------------- | -------------------------------------------------------------------------------- |
 | `type`  | `'classCreatorRest'`                         | 継承                                                                             |
-| `value` | `NormalArgumentsTypeClass \| ErrorTypeClass` | 引数（`'arguments'`）。引数なし `()` の場合は `arguments` 側の `value` が `null` |
+| `value` | `NormalArgumentsTypeClass \| ApexErrorTypeClass` | 引数（`'arguments'`）。引数なし `()` の場合は `arguments` 側の `value` が `null` |
 
 ゲッター: `getValue()`
 
@@ -135,8 +135,8 @@ new List<String>()
 | 変数    | 型                                                    | 内容                                                                 |
 | ------- | ----------------------------------------------------- | -------------------------------------------------------------------- |
 | `type`  | `'arrayCreatorRest'`                                  | 継承                                                                 |
-| `value` | `ArrayInitializerTypeClass \| ErrorTypeClass \| null` | 初期化子（`'arrayInitializer'`）。サイズ指定形式（`[n]`）では `null` |
-| `size`  | `ExpressionAllTypeClass \| ErrorTypeClass \| null`    | 配列サイズの式。初期化子形式（`[] {...}`）では `null`                |
+| `value` | `ArrayInitializerTypeClass \| ApexErrorTypeClass \| null` | 初期化子（`'arrayInitializer'`）。サイズ指定形式（`[n]`）では `null` |
+| `size`  | `ExpressionAllTypeClass \| ApexErrorTypeClass \| null`    | 配列サイズの式。初期化子形式（`[] {...}`）では `null`                |
 
 ゲッター: `getValue()`, `getSize()`
 
@@ -162,7 +162,7 @@ Integer[] numbers = new Integer[] { 1, 2, 3 };
 | 変数    | 型                                                  | 内容                                                                                 |
 | ------- | --------------------------------------------------- | ------------------------------------------------------------------------------------ |
 | `type`  | `'mapCreatorRest'`                                  | 継承                                                                                 |
-| `value` | `(MapCreatorRestPairTypeClass \| ErrorTypeClass)[]` | キーと値のペア（`'mapCreatorRestPair'`）の配列。1 件以上（0 件なら `create` が例外） |
+| `value` | `(MapCreatorRestPairTypeClass \| ApexErrorTypeClass)[]` | キーと値のペア（`'mapCreatorRestPair'`）の配列。1 件以上（0 件なら `create` が例外） |
 
 ゲッター: `getValue()`
 
@@ -192,7 +192,7 @@ Map<String, Integer> initializedMap = new Map<String, Integer>{ 'a' => 1, 'b' =>
 | 変数    | 型                                             | 内容                                                 |
 | ------- | ---------------------------------------------- | ---------------------------------------------------- |
 | `type`  | `'setCreatorRest'`                             | 継承                                                 |
-| `value` | `(ExpressionAllTypeClass \| ErrorTypeClass)[]` | 要素の式の配列。1 件以上（0 件なら `create` が例外） |
+| `value` | `(ExpressionAllTypeClass \| ApexErrorTypeClass)[]` | 要素の式の配列。1 件以上（0 件なら `create` が例外） |
 
 ゲッター: `getValue()`
 

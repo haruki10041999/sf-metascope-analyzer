@@ -19,8 +19,8 @@
 
 | 変数    | 型                            | 内容                                                         |
 | ------- | ----------------------------- | ------------------------------------------------------------ |
-| `type`  | `string`                      | ノード種別（CommonTypeClass から継承）                       |
-| `value` | `T \| ErrorTypeClass \| null` | 括弧内のリスト。空なら `null`、変換失敗時は `ErrorTypeClass` |
+| `type`  | `string`                      | ノード種別（ApexCommonTypeClass から継承）                       |
+| `value` | `T \| ApexErrorTypeClass \| null` | 括弧内のリスト。空なら `null`、変換失敗時は `ApexErrorTypeClass` |
 
 ゲッター: `getValue()`, `getType()`（継承）
 
@@ -40,7 +40,7 @@
 | 変数    | 型                                                  | 内容                                                              |
 | ------- | --------------------------------------------------- | ----------------------------------------------------------------- |
 | `type`  | `'arguments'`                                       | 継承                                                              |
-| `value` | `ExpressionListTypeClass \| ErrorTypeClass \| null` | 実引数の式リスト（`expressionList` ノード）。`()` の場合は `null` |
+| `value` | `ExpressionListTypeClass \| ApexErrorTypeClass \| null` | 実引数の式リスト（`expressionList` ノード）。`()` の場合は `null` |
 
 ゲッター: `getValue()`
 
@@ -82,7 +82,7 @@ Account account = new Account(Name = 'Test', Industry = 'Technology');
 | 変数    | 型                                            | 内容                                                                |
 | ------- | --------------------------------------------- | ------------------------------------------------------------------- |
 | `type`  | `'typeArguments'`                             | 継承                                                                |
-| `value` | `TypeListTypeClass \| ErrorTypeClass \| null` | 型引数のリスト（`typeList` ノード）。`typeList` が無い場合は `null` |
+| `value` | `TypeListTypeClass \| ApexErrorTypeClass \| null` | 型引数のリスト（`typeList` ノード）。`typeList` が無い場合は `null` |
 
 ゲッター: `getValue()`
 

@@ -3,7 +3,7 @@ import { readFile } from 'node:fs/promises';
 import { describe, it } from 'node:test';
 
 import * as converter from '../../src/analyzer/types/apex/converter';
-import { CommonTypeClass, ErrorTypeClass } from '../../src/analyzer/types/apex_IR';
+import { ApexCommonTypeClass, ApexErrorTypeClass } from '../../src/analyzer/types/apex_IR';
 import { IdVisitor } from '../../src/analyzer/types/apex_IR/idVisitor';
 import { UnitVisitor } from '../../src/analyzer/types/apex_IR/unitVisitor';
 import { parse } from '../apex_IR/helpers';
@@ -85,12 +85,12 @@ describe('converter output types', () => {
                 return parser.anonymousUnit();
             });
             const unit = new UnitVisitor().visit(context);
-            const nodes = new Map<string, CommonTypeClass>();
+            const nodes = new Map<string, ApexCommonTypeClass>();
             const seen = new Set<object>();
             const visit = (value: unknown) => {
                 if (!isRecord(value) || seen.has(value)) return;
                 seen.add(value);
-                if (value instanceof CommonTypeClass && !(value instanceof ErrorTypeClass)) {
+                if (value instanceof ApexCommonTypeClass && !(value instanceof ApexErrorTypeClass)) {
                     if (!nodes.has(value.getType())) nodes.set(value.getType(), value);
                 }
                 Object.values(value).forEach(visit);
