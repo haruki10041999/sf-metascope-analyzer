@@ -1,13 +1,14 @@
-import { ConvertKeys, ErrorJson, JsonType, SourceJson, StructureJsonType } from '../../../types';
+import { ConvertKeys, ErrorJson, JsonType, StructureJsonType } from '../../../types';
 
 import {
-    SourceDistance,
     compareSourceDistance,
-    findSourceInfo,
+    findNodeSourceInfo,
     getSourceDistance,
     makeConvertKeys,
-} from '../commons';
-import { isRecord } from '../../../types/apex/commons/utils';
+    SourceDistance,
+    SourceObject,
+} from '../source';
+import { isRecord } from '../../../types/commons/utils';
 
 // 方針: docs/apex-json-diff-policy.md
 
@@ -32,7 +33,8 @@ export const toBody = <T extends JsonNode>(node: T): Body<T> => {
 
 export const getObjectKey = (node: JsonNode): string => makeConvertKeys(node).objectKey;
 
-export type Sources = { before: SourceJson[]; after: SourceJson[] };
+/** before / after のソース位置 (Apex の SourceJson、XML の XmlSourceJson のどちらも入る) */
+export type Sources = { before: SourceObject[]; after: SourceObject[] };
 
 const quoteKeyString = (value: string): string =>
     `"${value.replace(/[\\"\u0000-\u001f]/g, (character) => {
@@ -56,7 +58,8 @@ const quoteKeyString = (value: string): string =>
         }
     })}"`;
 
-const isNode = (value: unknown): value is JsonNode =>
+/** kind と sourceKeys を持つ JSON ノード (JsonType / StructureJsonType) か */
+export const isNode = (value: unknown): value is JsonNode =>
     typeof value === 'object' && value !== null && 'kind' in value && 'sourceKeys' in value;
 
 /** 値の比較用キー。ネストした JSON ノードも objectKey で比較する */
@@ -106,20 +109,133 @@ export const isSameValue = (before: unknown, after: unknown): boolean =>
     getValueKey(before) === getValueKey(after);
 
 // ---------------------------------------------------------------------------
+// kind / sourceKeys と中身の分離
+// ---------------------------------------------------------------------------
+
+/** before / after で同じなら値 1 つ、違えば { before, after } */
+export type Pair<T> = T | { before: T; after: T };
+
+/**
+ * 対応付いた組の sourceKeys。before / after を、キー (objectKey / sourceKey、StructureJsonType は base / name など) ごとに
+ * まとめ、同じ値なら単体、違えば { before, after } にする
+ */
+export type SourceKeysDiff<K> = K extends string
+    ? Pair<string>
+    : K extends readonly (infer E)[]
+      ? SourceKeysDiff<E>[] | { before: K; after: K }
+      : K extends object
+        ? { [P in keyof K]: SourceKeysDiff<K[P]> | { before: K[P]; after: K[P] } }
+        : Pair<K>;
+
+export const makeSourceKeysDiff = <K>(before: K, after: K): SourceKeysDiff<K> => {
+    if (typeof before === 'string' && typeof after === 'string') {
+        return (before === after ? before : { before, after }) as SourceKeysDiff<K>;
+    }
+    if (Array.isArray(before) && Array.isArray(after) && before.length === after.length) {
+        return before.map((b, index) => makeSourceKeysDiff(b, after[index])) as SourceKeysDiff<K>;
+    }
+    if (isRecord(before) && isRecord(after) && !Array.isArray(before) && !Array.isArray(after)) {
+        const keys = [...new Set([...Object.keys(before), ...Object.keys(after)])];
+        return Object.fromEntries(
+            keys.map((key) => {
+                const b = before[key];
+                const a = after[key];
+                return [
+                    key,
+                    b === undefined || a === undefined
+                        ? { before: b, after: a }
+                        : makeSourceKeysDiff(b, a),
+                ];
+            }),
+        ) as SourceKeysDiff<K>;
+    }
+    return (isSameValue(before, after) ? before : { before, after }) as SourceKeysDiff<K>;
+};
+
+type NodeOf<T> = Extract<T, JsonNode>;
+
+/** JSON ノードなら kind / sourceKeys を除いた中身、それ以外はそのまま */
+export type Content<T> = T extends JsonNode ? Body<T> : T;
+
+/** 片側だけの値の kind / sourceKeys (値が JSON ノードのときだけ持つ) */
+export type NodeKeys<T> = [NodeOf<T>] extends [never]
+    ? {}
+    : { kind?: NodeOf<T>['kind']; sourceKeys?: NodeOf<T>['sourceKeys'] };
+
+/** 組になった値の kind / sourceKeys。kind は同じなら単体、片方だけが JSON ノードならその側だけを持つ */
+export type NodePairKeys<T> = [NodeOf<T>] extends [never]
+    ? {}
+    : {
+          kind?:
+              Pair<NodeOf<T>['kind']> | { before?: NodeOf<T>['kind']; after?: NodeOf<T>['kind'] };
+          sourceKeys?:
+              | SourceKeysDiff<NodeOf<T>['sourceKeys']>
+              | { before?: NodeOf<T>['sourceKeys']; after?: NodeOf<T>['sourceKeys'] };
+      };
+
+export const toContent = <T>(value: T): Content<T> =>
+    (isNode(value) ? toBody(value) : value) as Content<T>;
+
+/** 値が JSON ノードなら { kind, sourceKeys }、そうでなければ {} */
+export const getNodeKeys = <T>(value: T): NodeKeys<T> =>
+    (isNode(value) ? { kind: value.kind, sourceKeys: value.sourceKeys } : {}) as NodeKeys<T>;
+
+/** 組になった値の { kind, sourceKeys }。どちらも JSON ノードでなければ {} */
+export const getNodePairKeys = <T>(before: T, after: T): NodePairKeys<T> => {
+    const b = isNode(before) ? before : undefined;
+    const a = isNode(after) ? after : undefined;
+    if (!b && !a) {
+        return {} as NodePairKeys<T>;
+    }
+    if (b && a) {
+        return {
+            kind: b.kind === a.kind ? b.kind : { before: b.kind, after: a.kind },
+            sourceKeys: makeSourceKeysDiff(b.sourceKeys, a.sourceKeys),
+        } as NodePairKeys<T>;
+    }
+    return {
+        kind: b ? { before: b.kind } : { after: a!.kind },
+        sourceKeys: b ? { before: b.sourceKeys } : { after: a!.sourceKeys },
+    } as NodePairKeys<T>;
+};
+
+// ---------------------------------------------------------------------------
 // 値・ノードの差分
 // ---------------------------------------------------------------------------
 
+/** 形が違う (kind が違う・片方がエラーなど) ときの差分。kind / sourceKeys を分け、中身を丸ごと before / after に持つ */
+export type ReplacementDiff<T> = NodePairKeys<T> & {
+    status: 'changed';
+    before: Content<T>;
+    after: Content<T>;
+};
+
+export const makeReplacementDiff = <T>(before: T, after: T): ReplacementDiff<T> =>
+    ({
+        ...getNodePairKeys(before, after),
+        status: 'changed',
+        before: toContent(before),
+        after: toContent(after),
+    }) as ReplacementDiff<T>;
+
+/** 値の差分。値が JSON ノードなら kind / sourceKeys を中身から分ける */
 export type ValueDiff<T> =
-    { status: 'unchanged'; value: T } | { status: 'changed'; before: T; after: T };
+    (NodePairKeys<T> & { status: 'unchanged'; value: Content<T> }) | ReplacementDiff<T>;
 
 export const makeValueDiff = <T>(before: T, after: T): ValueDiff<T> =>
     isSameValue(before, after)
-        ? { status: 'unchanged', value: before }
-        : { status: 'changed', before, after };
+        ? ({
+              ...getNodePairKeys(before, after),
+              status: 'unchanged',
+              value: toContent(before),
+          } as ValueDiff<T>)
+        : makeReplacementDiff(before, after);
 
 /** 任意項目 (`?`) の差分。両方あれば中の差分、片方だけなら added / removed */
 export type OptionalDiff<T, D> =
-    D | { status: 'added' | 'removed'; value: T } | { status: 'unchanged'; value: undefined };
+    | D
+    | (NodeKeys<T> & { status: 'added' | 'removed'; value: Content<T> })
+    | { status: 'unchanged'; value: undefined };
 
 export const makeOptionalDiff = <T, D>(
     before: T | undefined,
@@ -129,11 +245,13 @@ export const makeOptionalDiff = <T, D>(
     if (before === undefined && after === undefined) {
         return { status: 'unchanged', value: undefined };
     }
-    if (before === undefined) {
-        return { status: 'added', value: after! };
-    }
-    if (after === undefined) {
-        return { status: 'removed', value: before };
+    if (before === undefined || after === undefined) {
+        const value = (before ?? after)!;
+        return {
+            ...getNodeKeys(value),
+            status: before === undefined ? 'added' : 'removed',
+            value: toContent(value),
+        } as OptionalDiff<T, D>;
     }
     return makeDiff(before, after);
 };
@@ -143,7 +261,7 @@ export type Identity<T> = (node: T) => string;
 
 export type NodeDiff<K extends string, T extends JsonNode, Fields> = {
     kind: K;
-    sourceKeys: { before: (T | ErrorJson)['sourceKeys']; after: (T | ErrorJson)['sourceKeys'] };
+    sourceKeys: SourceKeysDiff<(T | ErrorJson)['sourceKeys']>;
 } & (
     | { status: 'unchanged'; value: Body<T | ErrorJson> }
     | { status: 'changed'; match: Match; fields: Fields }
@@ -169,10 +287,10 @@ export const makeNodeDiff = <K extends string, T extends JsonNode & { kind: K },
     identity: Identity<T | ErrorJson> = getObjectKey,
 ): NodeDiff<K, T, Fields> => {
     // T の制約から sourceKeys が広がるため、元の型に戻す
-    const sourceKeys = {
-        before: before.sourceKeys as (T | ErrorJson)['sourceKeys'],
-        after: after.sourceKeys as (T | ErrorJson)['sourceKeys'],
-    };
+    const sourceKeys = makeSourceKeysDiff(
+        before.sourceKeys as (T | ErrorJson)['sourceKeys'],
+        after.sourceKeys as (T | ErrorJson)['sourceKeys'],
+    );
 
     if (identity(before) === identity(after)) {
         return { kind, sourceKeys, status: 'unchanged', value: toBody<T | ErrorJson>(before) };
@@ -196,6 +314,14 @@ export const makeNodeDiff = <K extends string, T extends JsonNode & { kind: K },
         after: toBody<T | ErrorJson>(after),
     };
 };
+
+/** ErrorJson 同士の差分 (文・式・宣言のどこに現れても同じ形) */
+export type ErrorJsonDiff = NodeDiff<'error', ErrorJson, { kindType: ValueDiff<string> }>;
+
+export const makeErrorJsonDiff = (before: ErrorJson, after: ErrorJson): ErrorJsonDiff =>
+    makeNodeDiff('error', before, after, 'slot', (b, a) => ({
+        kindType: makeValueDiff(b.kindType, a.kindType),
+    }));
 
 // ---------------------------------------------------------------------------
 // 配列の対応付け (B. 集合 / C. 順序付き列 / D. キー対応)
@@ -480,16 +606,17 @@ export const pairByKey = (
 
 export type ListItemDiff<K extends string, T extends JsonNode, D> =
     | (D & { index: { before: number; after: number } })
+    // 要素自身の kind (読めなかった要素は 'error')
     | {
-          kind: K;
+          kind: T['kind'];
           status: 'moved';
           match: Match;
           index: { before: number; after: number };
-          sourceKeys: { before: T['sourceKeys']; after: T['sourceKeys'] };
+          sourceKeys: SourceKeysDiff<T['sourceKeys']>;
           value: Body<T>;
       }
     | {
-          kind: K;
+          kind: T['kind'];
           status: 'added' | 'removed';
           index: number;
           sourceKeys: T['sourceKeys'];
@@ -507,10 +634,10 @@ export const makeListDiff = <K extends string, T extends JsonNode, D>(
         if (p.status === 'removed') {
             const b = before[p.before]!;
             return {
-                kind,
+                kind: b.kind,
+                sourceKeys: b.sourceKeys,
                 status: 'removed',
                 index: p.before,
-                sourceKeys: b.sourceKeys,
                 value: toBody(b),
             };
         }
@@ -518,10 +645,10 @@ export const makeListDiff = <K extends string, T extends JsonNode, D>(
         if (p.status === 'added') {
             const a = after[p.after]!;
             return {
-                kind,
+                kind: a.kind,
+                sourceKeys: a.sourceKeys,
                 status: 'added',
                 index: p.after,
-                sourceKeys: a.sourceKeys,
                 value: toBody(a),
             };
         }
@@ -532,11 +659,11 @@ export const makeListDiff = <K extends string, T extends JsonNode, D>(
 
         if (p.status === 'moved') {
             return {
-                kind,
+                kind: b.kind,
+                sourceKeys: makeSourceKeysDiff<T['sourceKeys']>(b.sourceKeys, a.sourceKeys),
                 status: 'moved',
                 match: p.match,
                 index,
-                sourceKeys: { before: b.sourceKeys, after: a.sourceKeys },
                 value: toBody(b),
             };
         }
@@ -555,8 +682,8 @@ export const makeDistance = (
         return undefined;
     }
 
-    const beforeInfo = before.map((b) => findSourceInfo(sources.before, b));
-    const afterInfo = after.map((a) => findSourceInfo(sources.after, a));
+    const beforeInfo = before.map((b) => findNodeSourceInfo(sources.before, b));
+    const afterInfo = after.map((a) => findNodeSourceInfo(sources.after, a));
 
     return (b, a) => getSourceDistance(beforeInfo[b]!, afterInfo[a]!);
 };

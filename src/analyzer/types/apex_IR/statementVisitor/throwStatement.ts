@@ -7,13 +7,13 @@ import {
     ExpressionVisitor,
     isBasedExpressionType,
 } from '../expressionVisitor';
-import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
+import { ApexErrorTypeClass, ApexCommonTypeClass, isApexValidClass } from '../commonVisitor';
 
 export class ThrowStatementTypeClass extends StatementTypeClass<
     'throwStatement',
     BasedExpressionTypeClass
 > {
-    private constructor(value: BasedExpressionTypeClass | ErrorTypeClass) {
+    private constructor(value: BasedExpressionTypeClass | ApexErrorTypeClass) {
         super('throwStatement', value);
     }
 
@@ -23,7 +23,7 @@ export class ThrowStatementTypeClass extends StatementTypeClass<
         }
 
         return new ThrowStatementTypeClass(
-            isValidClass(
+            isApexValidClass(
                 new ExpressionVisitor().visit(ctx.expression()),
                 isBasedExpressionType,
                 'expression',
@@ -33,7 +33,8 @@ export class ThrowStatementTypeClass extends StatementTypeClass<
 }
 
 export const isThrowStatementType = (
-    target: CommonTypeClass<string>,
+    target: ApexCommonTypeClass<string>,
 ): target is ThrowStatementTypeClass => {
     return target instanceof ThrowStatementTypeClass;
 };
+

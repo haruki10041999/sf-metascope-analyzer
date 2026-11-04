@@ -1,6 +1,7 @@
 import typia from 'typia';
 
-import { ErrorJson, JsonType, makeJsonType, convertValue, ConvertType } from '../commons';
+import { convertValue, ConvertType } from '../commons';
+import { ErrorJson, JsonType, makeJsonType } from '../../commons';
 
 import { ForClausesType } from '../converter';
 
@@ -20,4 +21,3 @@ export const makeForJson = (target: ConvertType<ForClausesType>): ForJson | Erro
         },
     );
 };
-

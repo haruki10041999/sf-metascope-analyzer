@@ -22,17 +22,17 @@ import {
     isOrderByClauseType,
     isLimitClauseType,
 } from '../clauseVisitor';
-import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
+import { ApexErrorTypeClass, ApexCommonTypeClass, isApexValidClass } from '../commonVisitor';
 
 export class SubQueryTypeClass extends SoqlQueryTypeClass<'subQuery', SubFieldListTypeClass> {
     private constructor(
-        value: SubFieldListTypeClass | ErrorTypeClass,
-        from: FromNameListTypeClass | ErrorTypeClass,
-        forClause: ForClausesTypeClass | ErrorTypeClass | null,
-        whereClause: WhereClauseTypeClass | ErrorTypeClass | null,
-        orderByClause: OrderByClauseTypeClass | ErrorTypeClass | null,
-        limitClause: LimitClauseTypeClass | ErrorTypeClass | null,
-        updateList: UpdateListTypeClass | ErrorTypeClass | null,
+        value: SubFieldListTypeClass | ApexErrorTypeClass,
+        from: FromNameListTypeClass | ApexErrorTypeClass,
+        forClause: ForClausesTypeClass | ApexErrorTypeClass | null,
+        whereClause: WhereClauseTypeClass | ApexErrorTypeClass | null,
+        orderByClause: OrderByClauseTypeClass | ApexErrorTypeClass | null,
+        limitClause: LimitClauseTypeClass | ApexErrorTypeClass | null,
+        updateList: UpdateListTypeClass | ApexErrorTypeClass | null,
     ) {
         super(
             'subQuery',
@@ -52,47 +52,47 @@ export class SubQueryTypeClass extends SoqlQueryTypeClass<'subQuery', SubFieldLi
         }
 
         return new SubQueryTypeClass(
-            isValidClass(
+            isApexValidClass(
                 new ListVisitor().visit(ctx.subFieldList()),
                 isSubFieldListType,
                 'subFieldList',
             ),
-            isValidClass(
+            isApexValidClass(
                 new ListVisitor().visit(ctx.fromNameList()),
                 isFromNameListType,
                 'fromNameList',
             ),
             // forClauses は文法上常に生成されるため、FOR が無ければ null にする
             ctx.forClauses() && ctx.forClauses().FOR_list().length > 0
-                ? isValidClass(
+                ? isApexValidClass(
                       new ClauseVisitor().visit(ctx.forClauses()),
                       isForClausesType,
                       'forClauses',
                   )
                 : null,
             ctx.whereClause()
-                ? isValidClass(
+                ? isApexValidClass(
                       new ClauseVisitor().visit(ctx.whereClause()),
                       isWhereClauseType,
                       'whereClause',
                   )
                 : null,
             ctx.orderByClause()
-                ? isValidClass(
+                ? isApexValidClass(
                       new ClauseVisitor().visit(ctx.orderByClause()),
                       isOrderByClauseType,
                       'orderByClause',
                   )
                 : null,
             ctx.limitClause()
-                ? isValidClass(
+                ? isApexValidClass(
                       new ClauseVisitor().visit(ctx.limitClause()),
                       isLimitClauseType,
                       'limitClause',
                   )
                 : null,
             ctx.updateList()
-                ? isValidClass(
+                ? isApexValidClass(
                       new ListVisitor().visit(ctx.updateList()),
                       isUpdateListType,
                       'updateList',
@@ -102,6 +102,9 @@ export class SubQueryTypeClass extends SoqlQueryTypeClass<'subQuery', SubFieldLi
     }
 }
 
-export const isSubQueryType = (target: CommonTypeClass<string>): target is SubQueryTypeClass => {
+export const isSubQueryType = (
+    target: ApexCommonTypeClass<string>,
+): target is SubQueryTypeClass => {
     return target instanceof SubQueryTypeClass;
 };
+

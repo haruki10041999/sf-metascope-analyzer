@@ -2,8 +2,8 @@ import { CommonType } from '../converter';
 
 import { Convert } from './convert';
 import { ConvertExcludeError, ConvertType, convertExcludeError } from './excludeError';
-import { ConvertKeys, ErrorJson, makeJsonType } from './json';
-import { isRecord } from './utils';
+import { ConvertKeys, ErrorJson, makeJsonType } from '../../commons/json';
+import { isRecord } from '../../commons/utils';
 
 export type StructureSourceKeys<TRecord extends Record<string, ConvertKeys | ConvertKeys[]>> = {
     base: ConvertKeys;
@@ -110,4 +110,3 @@ export const convertValue = <
 
     return process(target as ConvertExcludeError<TCommonType>, record);
 };
-

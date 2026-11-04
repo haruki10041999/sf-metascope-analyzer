@@ -21,7 +21,7 @@
 | `visitFieldList`           | `FieldListContext`           | `FieldListTypeClass`           |
 | `visitFieldSpecList`       | `FieldSpecListContext`       | `FieldSpecListTypeClass`       |
 
-`ListVisitor` は `CommonVisitor<ListTypeClass<unknown>>` を継承する。`create()` が例外を投げた場合や子要素が無い場合は `ErrorTypeClass` が返る。
+`ListVisitor` は `ApexCommonVisitor<ListTypeClass<unknown>>` を継承する。`create()` が例外を投げた場合や子要素が無い場合は `ApexErrorTypeClass` が返る。
 
 ## 基底クラス（base.ts）
 
@@ -29,10 +29,10 @@
 
 listVisitor の全 TypeClass の基底。要素の配列を `value` に持つ。
 
-| 変数    | 型                        | 内容                                                                         |
-| ------- | ------------------------- | ---------------------------------------------------------------------------- |
-| `type`  | `string`                  | ノード種別（CommonTypeClass から継承）                                       |
-| `value` | `(T \| ErrorTypeClass)[]` | 要素の配列（ソース順）。型不一致の要素は個別に `ErrorTypeClass` に置き換わる |
+| 変数    | 型                            | 内容                                                                             |
+| ------- | ----------------------------- | -------------------------------------------------------------------------------- |
+| `type`  | `string`                      | ノード種別（ApexCommonTypeClass から継承）                                       |
+| `value` | `(T \| ApexErrorTypeClass)[]` | 要素の配列（ソース順）。型不一致の要素は個別に `ApexErrorTypeClass` に置き換わる |
 
 ゲッター: `getType()`, `getValue()`
 
@@ -49,10 +49,10 @@ listVisitor の全 TypeClass の基底。要素の配列を `value` に持つ。
 - **元 Context**: `ExpressionListContext`（文法: `expression (, expression)*`）
 - **役割**: メソッド呼び出しなどの実引数リスト。
 
-| 変数    | 型                                             | 内容                   |
-| ------- | ---------------------------------------------- | ---------------------- |
-| `type`  | `'expressionList'`                             | 継承                   |
-| `value` | `(ExpressionAllTypeClass \| ErrorTypeClass)[]` | 各引数の式（1 件以上） |
+| 変数    | 型                                                 | 内容                   |
+| ------- | -------------------------------------------------- | ---------------------- |
+| `type`  | `'expressionList'`                                 | 継承                   |
+| `value` | `(ExpressionAllTypeClass \| ApexErrorTypeClass)[]` | 各引数の式（1 件以上） |
 
 ゲッター: `getValue()`
 
@@ -76,10 +76,10 @@ System.debug(value);
 - **元 Context**: `FieldGroupByListContext`（文法: `fieldGroupBy (, fieldGroupBy)*`）
 - **役割**: GROUP BY の項目リスト。
 
-| 変数    | 型                                            | 内容                       |
-| ------- | --------------------------------------------- | -------------------------- |
-| `type`  | `'fieldGroupByList'`                          | 継承                       |
-| `value` | `(FieldGroupByTypeClass \| ErrorTypeClass)[]` | グループ化項目（1 件以上） |
+| 変数    | 型                                                | 内容                       |
+| ------- | ------------------------------------------------- | -------------------------- |
+| `type`  | `'fieldGroupByList'`                              | 継承                       |
+| `value` | `(FieldGroupByTypeClass \| ApexErrorTypeClass)[]` | グループ化項目（1 件以上） |
 
 ゲッター: `getValue()`
 
@@ -103,10 +103,10 @@ GROUP BY Industry
 - **元 Context**: `FieldListContext`（文法概略: `(soslId | TOLABEL(soslId) | CONVERT_CURRENCY(soslId) | FORMAT(soslId) | soqlFunction) (, fieldList)*`）
 - **役割**: SOSL `RETURNING Obj(...)` の括弧内の取得項目。再帰する `fieldList` は 1 つの配列に平坦化し、各項目は自身の関数指定を `SoslFieldTypeClass` として保持する。
 
-| 変数    | 型                                         | 内容                                                                                                                                 |
-| ------- | ------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------ |
-| `type`  | `'fieldList'`                              | 継承                                                                                                                                 |
-| `value` | `(SoslFieldTypeClass \| ErrorTypeClass)[]` | 項目。各階層で `soslId` があればそれを、無ければ `soqlFunction` を `soslField` として追加し、続けて入れ子の `fieldList` の要素を追加 |
+| 変数    | 型                                             | 内容                                                                                                                                 |
+| ------- | ---------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
+| `type`  | `'fieldList'`                                  | 継承                                                                                                                                 |
+| `value` | `(SoslFieldTypeClass \| ApexErrorTypeClass)[]` | 項目。各階層で `soslId` があればそれを、無ければ `soqlFunction` を `soslField` として追加し、続けて入れ子の `fieldList` の要素を追加 |
 
 ゲッター: `getValue()`
 
@@ -140,15 +140,15 @@ RETURNING Contact(Id, TOLABEL(Type))
 ### `SoslFieldTypeClass`（fieldList.ts）
 
 - **type**: `'soslField'`
-- **継承**: `CommonTypeClass`
+- **継承**: `ApexCommonTypeClass`
 - **元 Context**: なし（Visitor ではなく `FieldListTypeClass` が直接生成する）
 - **役割**: SOSL `fieldList` の項目 1 件と、それに付いた関数指定の組。`span` は `value` の範囲。
 
-| 変数    | 型                                                           | 内容                                                                  |
-| ------- | ------------------------------------------------------------ | --------------------------------------------------------------------- |
-| `type`  | `'soslField'`                                                | 継承                                                                  |
-| `value` | `SoslIdTypeClass \| SoqlFunctionTypeClass \| ErrorTypeClass` | 項目名、または関数                                                    |
-| `func`  | `'TOLABEL' \| 'CONVERT_CURRENCY' \| 'FORMAT' \| null`        | 項目を囲む `TOLABEL` / `CONVERT_CURRENCY` / `FORMAT`。無ければ `null` |
+| 変数    | 型                                                               | 内容                                                                  |
+| ------- | ---------------------------------------------------------------- | --------------------------------------------------------------------- |
+| `type`  | `'soslField'`                                                    | 継承                                                                  |
+| `value` | `SoslIdTypeClass \| SoqlFunctionTypeClass \| ApexErrorTypeClass` | 項目名、または関数                                                    |
+| `func`  | `'TOLABEL' \| 'CONVERT_CURRENCY' \| 'FORMAT' \| null`            | 項目を囲む `TOLABEL` / `CONVERT_CURRENCY` / `FORMAT`。無ければ `null` |
 
 ゲッター: `getValue()`, `getFunc()`
 
@@ -161,10 +161,10 @@ RETURNING Contact(Id, TOLABEL(Type))
 - **元 Context**: `FieldNameListContext`（文法: `fieldName (, fieldName)*`）
 - **役割**: `TYPEOF` の THEN / ELSE の項目リスト。
 
-| 変数    | 型                                         | 内容               |
-| ------- | ------------------------------------------ | ------------------ |
-| `type`  | `'fieldNameList'`                          | 継承               |
-| `value` | `(FieldNameTypeClass \| ErrorTypeClass)[]` | 項目名（1 件以上） |
+| 変数    | 型                                             | 内容               |
+| ------- | ---------------------------------------------- | ------------------ |
+| `type`  | `'fieldNameList'`                              | 継承               |
+| `value` | `(FieldNameTypeClass \| ApexErrorTypeClass)[]` | 項目名（1 件以上） |
 
 ゲッター: `getValue()`
 
@@ -185,10 +185,10 @@ ELSE Name
 - **元 Context**: `FieldOrderListContext`（文法: `fieldOrder (, fieldOrder)*`）
 - **役割**: ORDER BY の項目リスト（SOQL / SOSL fieldSpec 共通）。
 
-| 変数    | 型                                          | 内容                     |
-| ------- | ------------------------------------------- | ------------------------ |
-| `type`  | `'fieldOrderList'`                          | 継承                     |
-| `value` | `(FieldOrderTypeClass \| ErrorTypeClass)[]` | 並び替え項目（1 件以上） |
+| 変数    | 型                                              | 内容                     |
+| ------- | ----------------------------------------------- | ------------------------ |
+| `type`  | `'fieldOrderList'`                              | 継承                     |
+| `value` | `(FieldOrderTypeClass \| ApexErrorTypeClass)[]` | 並び替え項目（1 件以上） |
 
 ゲッター: `getValue()`
 
@@ -219,10 +219,10 @@ ORDER BY LastName
 - **元 Context**: `FieldSpecListContext`（文法: `fieldSpec (, fieldSpecList)*`）
 - **役割**: SOSL `RETURNING` の対象オブジェクト一覧。再帰する `fieldSpecList` は 1 つの配列に平坦化する。
 
-| 変数    | 型                                         | 内容                         |
-| ------- | ------------------------------------------ | ---------------------------- |
-| `type`  | `'fieldSpecList'`                          | 継承                         |
-| `value` | `(FieldSpecTypeClass \| ErrorTypeClass)[]` | 対象オブジェクト（1 件以上） |
+| 変数    | 型                                             | 内容                         |
+| ------- | ---------------------------------------------- | ---------------------------- |
+| `type`  | `'fieldSpecList'`                              | 継承                         |
+| `value` | `(FieldSpecTypeClass \| ApexErrorTypeClass)[]` | 対象オブジェクト（1 件以上） |
 
 ゲッター: `getValue()`
 
@@ -257,10 +257,10 @@ RETURNING Contact
 - **元 Context**: `FormalParameterListContext`（文法: `formalParameter (, formalParameter)*`）
 - **役割**: メソッド / コンストラクタの仮引数リスト。
 
-| 変数    | 型                                               | 内容               |
-| ------- | ------------------------------------------------ | ------------------ |
-| `type`  | `'formalParameterList'`                          | 継承               |
-| `value` | `(FormalParameterTypeClass \| ErrorTypeClass)[]` | 仮引数（1 件以上） |
+| 変数    | 型                                                   | 内容               |
+| ------- | ---------------------------------------------------- | ------------------ |
+| `type`  | `'formalParameterList'`                              | 継承               |
+| `value` | `(FormalParameterTypeClass \| ApexErrorTypeClass)[]` | 仮引数（1 件以上） |
 
 ゲッター: `getValue()`
 
@@ -291,14 +291,14 @@ private void runAsExample(User user) { ... }
 - **元 Context**: `FromNameListContext`（文法: `fieldName soqlId? (, fieldName soqlId?)*`）
 - **役割**: SOQL の FROM 対象。各 `fieldName` と直後の `soqlId`（エイリアス）を `FromNameTypeClass` として組にする。
 
-| 変数    | 型                                        | 内容                                                 |
-| ------- | ----------------------------------------- | ---------------------------------------------------- |
-| `type`  | `'fromNameList'`                          | 継承                                                 |
-| `value` | `(FromNameTypeClass \| ErrorTypeClass)[]` | オブジェクト名とエイリアスの組（ソース順、1 件以上） |
+| 変数    | 型                                            | 内容                                                 |
+| ------- | --------------------------------------------- | ---------------------------------------------------- |
+| `type`  | `'fromNameList'`                              | 継承                                                 |
+| `value` | `(FromNameTypeClass \| ApexErrorTypeClass)[]` | オブジェクト名とエイリアスの組（ソース順、1 件以上） |
 
 ゲッター: `getValue()`
 
-`fieldName` が 1 件も無い場合は例外（→ `ErrorTypeClass`）。
+`fieldName` が 1 件も無い場合は例外（→ `ApexErrorTypeClass`）。
 
 例:
 
@@ -328,15 +328,15 @@ FROM Account a
 ### `FromNameTypeClass`（fromNameList.ts）
 
 - **type**: `'fromName'`
-- **継承**: `CommonTypeClass`
+- **継承**: `ApexCommonTypeClass`
 - **元 Context**: なし（Visitor ではなく `FromNameListTypeClass` が直接生成する）
 - **役割**: FROM 対象 1 件（`Account a` の `Account` と `a` の組）。`span` はオブジェクト名の先頭からエイリアス（無ければオブジェクト名）の末尾まで。
 
-| 変数    | 型                                          | 内容                        |
-| ------- | ------------------------------------------- | --------------------------- |
-| `type`  | `'fromName'`                                | 継承                        |
-| `value` | `FieldNameTypeClass \| ErrorTypeClass`      | オブジェクト名              |
-| `alias` | `SoqlIdTypeClass \| ErrorTypeClass \| null` | エイリアス。無ければ `null` |
+| 変数    | 型                                              | 内容                        |
+| ------- | ----------------------------------------------- | --------------------------- |
+| `type`  | `'fromName'`                                    | 継承                        |
+| `value` | `FieldNameTypeClass \| ApexErrorTypeClass`      | オブジェクト名              |
+| `alias` | `SoqlIdTypeClass \| ApexErrorTypeClass \| null` | エイリアス。無ければ `null` |
 
 ゲッター: `getValue()`, `getAlias()`
 
@@ -349,10 +349,10 @@ FROM Account a
 - **元 Context**: `NetworkListContext`（文法: `(StringLiteral | MultilineStringLiteral) (, networkList)?`）
 - **役割**: SOSL `WITH NETWORK IN (...)` のネットワーク ID 一覧。再帰する `networkList` は 1 つの配列に平坦化する。
 
-| 変数    | 型                             | 内容                                   |
-| ------- | ------------------------------ | -------------------------------------- |
-| `type`  | `'networkList'`                | 継承                                   |
-| `value` | `(string \| ErrorTypeClass)[]` | 文字列リテラルのテキスト（引用符付き） |
+| 変数    | 型                                 | 内容                                   |
+| ------- | ---------------------------------- | -------------------------------------- |
+| `type`  | `'networkList'`                    | 継承                                   |
+| `value` | `(string \| ApexErrorTypeClass)[]` | 文字列リテラルのテキスト（引用符付き） |
 
 ゲッター: `getValue()`
 
@@ -373,10 +373,10 @@ WITH NETWORK IN ('0DBxx0000000001', '0DBxx0000000002')
 - **元 Context**: `SelectListContext`（文法: `selectEntry (, selectEntry)*`）
 - **役割**: トップレベル `query` の SELECT 項目リスト。
 
-| 変数    | 型                                           | 内容                    |
-| ------- | -------------------------------------------- | ----------------------- |
-| `type`  | `'selectList'`                               | 継承                    |
-| `value` | `(SelectEntryTypeClass \| ErrorTypeClass)[]` | SELECT 項目（1 件以上） |
+| 変数    | 型                                               | 内容                    |
+| ------- | ------------------------------------------------ | ----------------------- |
+| `type`  | `'selectList'`                                   | 継承                    |
+| `value` | `(SelectEntryTypeClass \| ApexErrorTypeClass)[]` | SELECT 項目（1 件以上） |
 
 ゲッター: `getValue()`
 
@@ -406,10 +406,10 @@ WITH NETWORK IN ('0DBxx0000000001', '0DBxx0000000002')
 - **元 Context**: `SubFieldListContext`（文法: `subFieldEntry (, subFieldEntry)*`）
 - **役割**: `subQuery` の SELECT 項目リスト。
 
-| 変数    | 型                                             | 内容                    |
-| ------- | ---------------------------------------------- | ----------------------- |
-| `type`  | `'subFieldList'`                               | 継承                    |
-| `value` | `(SubFieldEntryTypeClass \| ErrorTypeClass)[]` | SELECT 項目（1 件以上） |
+| 変数    | 型                                                 | 内容                    |
+| ------- | -------------------------------------------------- | ----------------------- |
+| `type`  | `'subFieldList'`                                   | 継承                    |
+| `value` | `(SubFieldEntryTypeClass \| ApexErrorTypeClass)[]` | SELECT 項目（1 件以上） |
 
 ゲッター: `getValue()`
 
@@ -435,10 +435,10 @@ OwnerId IN (SELECT Id FROM User WHERE IsActive = true)
 - **元 Context**: `TypeListContext`（文法: `typeRef (, typeRef)*`）
 - **役割**: 型引数（`<...>` の中身）や `implements` / `extends` の型リスト。
 
-| 変数    | 型                                       | 内容               |
-| ------- | ---------------------------------------- | ------------------ |
-| `type`  | `'typeList'`                             | 継承               |
-| `value` | `(TypeRefTypeClass \| ErrorTypeClass)[]` | 型参照（1 件以上） |
+| 変数    | 型                                           | 内容               |
+| ------- | -------------------------------------------- | ------------------ |
+| `type`  | `'typeList'`                                 | 継承               |
+| `value` | `(TypeRefTypeClass \| ApexErrorTypeClass)[]` | 型参照（1 件以上） |
 
 ゲッター: `getValue()`
 
@@ -473,10 +473,10 @@ Map<Id, Account>
 - **元 Context**: `UpdateListContext`（文法: `updateType (, updateList)?`）
 - **役割**: SOQL / SOSL の `UPDATE TRACKING, VIEWSTAT`。再帰する `updateList` は 1 つの配列に平坦化する。
 
-| 変数    | 型                                          | 内容                     |
-| ------- | ------------------------------------------- | ------------------------ |
-| `type`  | `'updateList'`                              | 継承                     |
-| `value` | `(UpdateTypeTypeClass \| ErrorTypeClass)[]` | `updateType`（1 件以上） |
+| 変数    | 型                                              | 内容                     |
+| ------- | ----------------------------------------------- | ------------------------ |
+| `type`  | `'updateList'`                                  | 継承                     |
+| `value` | `(UpdateTypeTypeClass \| ApexErrorTypeClass)[]` | `updateType`（1 件以上） |
 
 ゲッター: `getValue()`
 
@@ -503,10 +503,10 @@ Map<Id, Account>
 - **元 Context**: `ValueListContext`（文法: `( value (, value)* )`）
 - **役割**: WHERE 句の `IN (...)` / `INCLUDES (...)` などの値リスト。
 
-| 変数    | 型                                           | 内容           |
-| ------- | -------------------------------------------- | -------------- |
-| `type`  | `'valueList'`                                | 継承           |
-| `value` | `(NormalValueTypeClass \| ErrorTypeClass)[]` | 値（1 件以上） |
+| 変数    | 型                                               | 内容           |
+| ------- | ------------------------------------------------ | -------------- |
+| `type`  | `'valueList'`                                    | 継承           |
+| `value` | `(NormalValueTypeClass \| ApexErrorTypeClass)[]` | 値（1 件以上） |
 
 ゲッター: `getValue()`
 

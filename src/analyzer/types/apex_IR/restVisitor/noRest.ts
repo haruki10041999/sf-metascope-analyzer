@@ -2,7 +2,7 @@ import { NoRestContext } from '@apexdevtools/apex-parser';
 
 import { RestValueTypeClass } from '.';
 
-import { CommonTypeClass } from '../commonVisitor';
+import { ApexCommonTypeClass } from '../commonVisitor';
 
 export class NoRestTypeClass extends RestValueTypeClass<'noRest', string> {
     private constructor(value: string) {
@@ -14,6 +14,7 @@ export class NoRestTypeClass extends RestValueTypeClass<'noRest', string> {
     }
 }
 
-export const isNoRestType = (target: CommonTypeClass<string>): target is NoRestTypeClass => {
+export const isNoRestType = (target: ApexCommonTypeClass<string>): target is NoRestTypeClass => {
     return target instanceof NoRestTypeClass;
 };
+

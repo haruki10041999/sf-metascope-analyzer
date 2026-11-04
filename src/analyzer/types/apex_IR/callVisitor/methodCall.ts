@@ -4,7 +4,7 @@ import { CallTypeClass } from '.';
 
 import { NormalIdTypeClass, IdVisitor, isNormalIdType } from '../idVisitor';
 import { ExpressionListTypeClass, ListVisitor, isExpressionListType } from '../listVisitor';
-import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
+import { ApexErrorTypeClass, ApexCommonTypeClass, isApexValidClass } from '../commonVisitor';
 
 export class MethodCallTypeClass extends CallTypeClass<
     'methodCall',
@@ -14,8 +14,8 @@ export class MethodCallTypeClass extends CallTypeClass<
     private reference: 'this' | 'super' | null = null;
 
     private constructor(
-        value: NormalIdTypeClass | ErrorTypeClass | null,
-        param: ExpressionListTypeClass | ErrorTypeClass | null,
+        value: NormalIdTypeClass | ApexErrorTypeClass | null,
+        param: ExpressionListTypeClass | ApexErrorTypeClass | null,
         reference: 'this' | 'super' | null,
     ) {
         super('methodCall', value, param);
@@ -29,9 +29,11 @@ export class MethodCallTypeClass extends CallTypeClass<
         }
 
         return new MethodCallTypeClass(
-            ctx.id() ? isValidClass(new IdVisitor().visit(ctx.id()), isNormalIdType, 'id') : null,
+            ctx.id()
+                ? isApexValidClass(new IdVisitor().visit(ctx.id()), isNormalIdType, 'id')
+                : null,
             ctx.expressionList()
-                ? isValidClass(
+                ? isApexValidClass(
                       new ListVisitor().visit(ctx.expressionList()),
                       isExpressionListType,
                       'expressionList',
@@ -47,7 +49,8 @@ export class MethodCallTypeClass extends CallTypeClass<
 }
 
 export const isMethodCallType = (
-    target: CommonTypeClass<string>,
+    target: ApexCommonTypeClass<string>,
 ): target is MethodCallTypeClass => {
     return target instanceof MethodCallTypeClass;
 };
+

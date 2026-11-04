@@ -1,19 +1,20 @@
 import { ErrorJson, UpdateListJson } from '../../../../types';
 
-import { Match, NodeDiff, makeNodeDiff } from '../commons';
-import { ValueListItemDiff, makeUnorderedValueListDiff } from './commons';
+import { Match, NodeDiff, makeNodeDiff } from '../../../commons/diff/commons';
+import { makeUnorderedValueListDiff } from './commons';
+import { TypedListItemDiff } from '../../../commons/diff/list';
 
-export type UpdateListDiff = NodeDiff<
+export type UpdateListJsonDiff = NodeDiff<
     'updateClause',
     UpdateListJson,
-    { value: ValueListItemDiff<UpdateListJson['value'][number]>[] }
+    { value: TypedListItemDiff<UpdateListJson['value'][number], never>[] }
 >;
 
 export const makeUpdateListDiff = (
     before: UpdateListJson | ErrorJson,
     after: UpdateListJson | ErrorJson,
     match: Match = 'slot',
-): UpdateListDiff =>
+): UpdateListJsonDiff =>
     makeNodeDiff('updateClause', before, after, match, (b, a) => ({
         value: makeUnorderedValueListDiff(b.value, a.value),
     }));

@@ -9,19 +9,19 @@ import {
     ParameterVisitor,
     isFormalParametersType,
 } from '../parameterVisitor';
-import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
+import { ApexErrorTypeClass, ApexCommonTypeClass, isApexValidClass } from '../commonVisitor';
 
 export class ConstructorDeclarationTypeClass extends DeclarationTypeClass<
     'constructorDeclaration',
     QualifiedNameTypeClass
 > {
-    private param: FormalParametersTypeClass | ErrorTypeClass | null = null;
-    private block: NormalBlockTypeClass | ErrorTypeClass;
+    private param: FormalParametersTypeClass | ApexErrorTypeClass | null = null;
+    private block: NormalBlockTypeClass | ApexErrorTypeClass;
 
     private constructor(
-        value: QualifiedNameTypeClass | ErrorTypeClass,
-        param: FormalParametersTypeClass | ErrorTypeClass | null,
-        block: NormalBlockTypeClass | ErrorTypeClass,
+        value: QualifiedNameTypeClass | ApexErrorTypeClass,
+        param: FormalParametersTypeClass | ApexErrorTypeClass | null,
+        block: NormalBlockTypeClass | ApexErrorTypeClass,
     ) {
         super('constructorDeclaration', value);
         this.param = param;
@@ -34,33 +34,33 @@ export class ConstructorDeclarationTypeClass extends DeclarationTypeClass<
         }
 
         return new ConstructorDeclarationTypeClass(
-            isValidClass(
+            isApexValidClass(
                 new NameVisitor().visit(ctx.qualifiedName()),
                 isQualifiedNameType,
                 'qualifiedName',
             ),
             ctx.formalParameters()
-                ? isValidClass(
+                ? isApexValidClass(
                       new ParameterVisitor().visit(ctx.formalParameters()),
                       isFormalParametersType,
                       'formalParameters',
                   )
                 : null,
-            isValidClass(new BlockVisitor().visit(ctx.block()), isNormalBlockType, 'block'),
+            isApexValidClass(new BlockVisitor().visit(ctx.block()), isNormalBlockType, 'block'),
         );
     }
 
-    getParam(): FormalParametersTypeClass | ErrorTypeClass | null {
+    getParam(): FormalParametersTypeClass | ApexErrorTypeClass | null {
         return this.param;
     }
 
-    getBlock(): NormalBlockTypeClass | ErrorTypeClass {
+    getBlock(): NormalBlockTypeClass | ApexErrorTypeClass {
         return this.block;
     }
 }
 
 export const isConstructorDeclarationType = (
-    target: CommonTypeClass<string>,
+    target: ApexCommonTypeClass<string>,
 ): target is ConstructorDeclarationTypeClass => {
     return target instanceof ConstructorDeclarationTypeClass;
 };

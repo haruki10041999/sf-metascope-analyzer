@@ -2,7 +2,7 @@ import { ForClausesContext } from '@apexdevtools/apex-parser';
 
 import { ClauseValueListTypeClass } from '.';
 
-import { ErrorTypeClass, CommonTypeClass } from '../commonVisitor';
+import { ApexErrorTypeClass, ApexCommonTypeClass } from '../commonVisitor';
 
 type ForClauseValueType = 'VIEW' | 'UPDATE' | 'REFERENCE';
 
@@ -36,7 +36,8 @@ export class ForClausesTypeClass extends ClauseValueListTypeClass<
 }
 
 export const isForClausesType = (
-    target: CommonTypeClass<string>,
+    target: ApexCommonTypeClass<string>,
 ): target is ForClausesTypeClass => {
     return target instanceof ForClausesTypeClass;
 };
+

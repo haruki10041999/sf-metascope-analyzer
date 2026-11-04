@@ -48,7 +48,7 @@ import { LocalVariableDeclarationStatementTypeClass } from './localVariableDecla
 import { ExpressionStatementTypeClass } from './expressionStatement';
 import { AccessLevelTypeClass } from './accessLevel';
 
-import { CommonVisitor } from '../commonVisitor';
+import { ApexCommonVisitor } from '../commonVisitor';
 
 export { isNormalStatementType, NormalStatementTypeClass } from './normal';
 export { isReturnStatementType, ReturnStatementTypeClass } from './returnStatement';
@@ -75,7 +75,7 @@ export {
 export { isExpressionStatementType, ExpressionStatementTypeClass } from './expressionStatement';
 export { isAccessLevelType, AccessLevelTypeClass } from './accessLevel';
 
-export class StatementVisitor extends CommonVisitor<StatementAllTypeClass> {
+export class StatementVisitor extends ApexCommonVisitor<StatementAllTypeClass> {
     visitStatement(ctx: StatementContext) {
         return NormalStatementTypeClass.create(ctx);
     }

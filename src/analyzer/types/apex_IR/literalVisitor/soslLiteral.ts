@@ -8,17 +8,17 @@ import {
     isBoundExpressionType,
 } from '../expressionVisitor';
 import { SoslClausesTypeClass, ClauseVisitor, isSoslClausesType } from '../clauseVisitor';
-import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
+import { ApexErrorTypeClass, ApexCommonTypeClass, isApexValidClass } from '../commonVisitor';
 
 export class SoslLiteralTypeClass extends LiteralTypeClass<
     'soslLiteral',
     string | BoundExpressionTypeClass
 > {
-    private soslClauses: SoslClausesTypeClass | ErrorTypeClass;
+    private soslClauses: SoslClausesTypeClass | ApexErrorTypeClass;
 
     private constructor(
-        value: string | BoundExpressionTypeClass | ErrorTypeClass,
-        soslClauses: SoslClausesTypeClass | ErrorTypeClass,
+        value: string | BoundExpressionTypeClass | ApexErrorTypeClass,
+        soslClauses: SoslClausesTypeClass | ApexErrorTypeClass,
     ) {
         super('soslLiteral', value);
         this.soslClauses = soslClauses;
@@ -32,12 +32,12 @@ export class SoslLiteralTypeClass extends LiteralTypeClass<
         return new SoslLiteralTypeClass(
             ctx.FindLiteral()
                 ? ctx.FindLiteral().getText()
-                : isValidClass(
+                : isApexValidClass(
                       new ExpressionVisitor().visit(ctx.boundExpression()),
                       isBoundExpressionType,
                       'boundExpression',
                   ),
-            isValidClass(
+            isApexValidClass(
                 new ClauseVisitor().visit(ctx.soslClauses()),
                 isSoslClausesType,
                 'soslClauses',
@@ -45,13 +45,14 @@ export class SoslLiteralTypeClass extends LiteralTypeClass<
         );
     }
 
-    getSoslClauses(): SoslClausesTypeClass | ErrorTypeClass {
+    getSoslClauses(): SoslClausesTypeClass | ApexErrorTypeClass {
         return this.soslClauses;
     }
 }
 
 export const isSoslLiteralType = (
-    target: CommonTypeClass<string>,
+    target: ApexCommonTypeClass<string>,
 ): target is SoslLiteralTypeClass => {
     return target instanceof SoslLiteralTypeClass;
 };
+

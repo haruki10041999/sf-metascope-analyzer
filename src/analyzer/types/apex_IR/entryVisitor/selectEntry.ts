@@ -12,17 +12,17 @@ import {
     isSubQueryType,
     isSoqlFunctionType,
 } from '../queryVisitor';
-import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
+import { ApexErrorTypeClass, ApexCommonTypeClass, isApexValidClass } from '../commonVisitor';
 
 type SelectEntryTypeClassType =
     FieldNameTypeClass | SoqlFunctionTypeClass | SubQueryTypeClass | TypeOfTypeClass;
 
 export class SelectEntryTypeClass extends EntryTypeClass<'selectEntry', SelectEntryTypeClassType> {
-    private alias: SoqlIdTypeClass | ErrorTypeClass | null;
+    private alias: SoqlIdTypeClass | ApexErrorTypeClass | null;
 
     private constructor(
-        value: SelectEntryTypeClassType | ErrorTypeClass,
-        alias: SoqlIdTypeClass | ErrorTypeClass | null,
+        value: SelectEntryTypeClassType | ApexErrorTypeClass,
+        alias: SoqlIdTypeClass | ApexErrorTypeClass | null,
     ) {
         super('selectEntry', value);
         this.alias = alias;
@@ -33,45 +33,49 @@ export class SelectEntryTypeClass extends EntryTypeClass<'selectEntry', SelectEn
             throw new Error('値が異常です。SelectEntryContext: ' + ctx.getText());
         }
 
-        let value: SelectEntryTypeClassType | ErrorTypeClass;
+        let value: SelectEntryTypeClassType | ApexErrorTypeClass;
         if (ctx.fieldName()) {
-            value = isValidClass(
+            value = isApexValidClass(
                 new NameVisitor().visit(ctx.fieldName()),
                 isFieldNameType,
                 'fieldName',
             );
         } else if (ctx.soqlFunction()) {
-            value = isValidClass(
+            value = isApexValidClass(
                 new QueryVisitor().visit(ctx.soqlFunction()),
                 isSoqlFunctionType,
                 'soqlFunction',
             );
         } else if (ctx.subQuery()) {
-            value = isValidClass(
+            value = isApexValidClass(
                 new QueryVisitor().visit(ctx.subQuery()),
                 isSubQueryType,
                 'subQuery',
             );
         } else {
-            value = isValidClass(new ClauseVisitor().visit(ctx.typeOf()), isTypeOfType, 'typeOf');
+            value = isApexValidClass(
+                new ClauseVisitor().visit(ctx.typeOf()),
+                isTypeOfType,
+                'typeOf',
+            );
         }
 
         // 文法上 soqlId は常に別名（`COUNT(Id) total`）
         return new SelectEntryTypeClass(
             value,
             ctx.soqlId()
-                ? isValidClass(new IdVisitor().visit(ctx.soqlId()), isSoqlIdType, 'soqlId')
+                ? isApexValidClass(new IdVisitor().visit(ctx.soqlId()), isSoqlIdType, 'soqlId')
                 : null,
         );
     }
 
-    getAlias(): SoqlIdTypeClass | ErrorTypeClass | null {
+    getAlias(): SoqlIdTypeClass | ApexErrorTypeClass | null {
         return this.alias;
     }
 }
 
 export const isSelectEntryType = (
-    target: CommonTypeClass<string>,
+    target: ApexCommonTypeClass<string>,
 ): target is SelectEntryTypeClass => {
     return target instanceof SelectEntryTypeClass;
 };

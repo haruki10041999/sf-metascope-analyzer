@@ -7,7 +7,7 @@ import {
     isBasedExpressionType,
 } from '.';
 
-import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
+import { ApexErrorTypeClass, ApexCommonTypeClass, isApexValidClass } from '../commonVisitor';
 
 export class Arth1ExpressionTypeClass extends DoubleStringOperatorExpressionTypeClass<
     'arth1Expression',
@@ -16,8 +16,8 @@ export class Arth1ExpressionTypeClass extends DoubleStringOperatorExpressionType
     BasedExpressionTypeClass
 > {
     private constructor(
-        left: BasedExpressionTypeClass | ErrorTypeClass,
-        right: BasedExpressionTypeClass | ErrorTypeClass,
+        left: BasedExpressionTypeClass | ApexErrorTypeClass,
+        right: BasedExpressionTypeClass | ApexErrorTypeClass,
         operator: '*' | '/',
     ) {
         super('arth1Expression', left, right, operator);
@@ -33,12 +33,12 @@ export class Arth1ExpressionTypeClass extends DoubleStringOperatorExpressionType
         }
 
         return new Arth1ExpressionTypeClass(
-            isValidClass(
+            isApexValidClass(
                 new ExpressionVisitor().visit(ctx.expression(0)),
                 isBasedExpressionType,
                 'expression',
             ),
-            isValidClass(
+            isApexValidClass(
                 new ExpressionVisitor().visit(ctx.expression(1)),
                 isBasedExpressionType,
                 'expression',
@@ -49,7 +49,8 @@ export class Arth1ExpressionTypeClass extends DoubleStringOperatorExpressionType
 }
 
 export const isArth1ExpressionType = (
-    target: CommonTypeClass<string>,
+    target: ApexCommonTypeClass<string>,
 ): target is Arth1ExpressionTypeClass => {
     return target instanceof Arth1ExpressionTypeClass;
 };
+

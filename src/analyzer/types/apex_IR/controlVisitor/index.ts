@@ -17,7 +17,7 @@ import { ForUpdateTypeClass } from './forUpdate';
 import { EnhancedForControlTypeClass } from './enhancedForControl';
 import { WhenControlTypeClass } from './whenControl';
 
-import { CommonVisitor } from '../commonVisitor';
+import { ApexCommonVisitor } from '../commonVisitor';
 
 export { isForControlType, ForControlTypeClass } from './forControl';
 export { isForInitType, ForInitTypeClass } from './forInit';
@@ -25,7 +25,7 @@ export { isForUpdateType, ForUpdateTypeClass } from './forUpdate';
 export { isWhenControlType, WhenControlTypeClass } from './whenControl';
 export { isEnhancedForControlType, EnhancedForControlTypeClass } from './enhancedForControl';
 
-export class ControlVisitor extends CommonVisitor<ControlTypeClass<string, unknown>> {
+export class ControlVisitor extends ApexCommonVisitor<ControlTypeClass<string, unknown>> {
     visitForControl(ctx: ForControlContext) {
         return ForControlTypeClass.create(ctx);
     }

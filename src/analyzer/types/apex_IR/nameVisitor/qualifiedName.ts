@@ -3,10 +3,10 @@ import { QualifiedNameContext } from '@apexdevtools/apex-parser';
 import { NameListTypeClass } from '.';
 
 import { NormalIdTypeClass, IdVisitor, isNormalIdType } from '../idVisitor';
-import { ErrorTypeClass, CommonTypeClass, isValidClassList } from '../commonVisitor';
+import { ApexErrorTypeClass, ApexCommonTypeClass, isApexValidClassList } from '../commonVisitor';
 
 export class QualifiedNameTypeClass extends NameListTypeClass<'qualifiedName', NormalIdTypeClass> {
-    private constructor(value: (NormalIdTypeClass | ErrorTypeClass)[]) {
+    private constructor(value: (NormalIdTypeClass | ApexErrorTypeClass)[]) {
         super('qualifiedName', value);
     }
 
@@ -16,7 +16,7 @@ export class QualifiedNameTypeClass extends NameListTypeClass<'qualifiedName', N
         }
 
         return new QualifiedNameTypeClass(
-            isValidClassList(
+            isApexValidClassList(
                 ctx.id_list(),
                 (ctx) => new IdVisitor().visit(ctx),
                 isNormalIdType,
@@ -27,7 +27,7 @@ export class QualifiedNameTypeClass extends NameListTypeClass<'qualifiedName', N
 }
 
 export const isQualifiedNameType = (
-    target: CommonTypeClass<string>,
+    target: ApexCommonTypeClass<string>,
 ): target is QualifiedNameTypeClass => {
     return target instanceof QualifiedNameTypeClass;
 };

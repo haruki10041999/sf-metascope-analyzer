@@ -12,15 +12,15 @@ import {
     ExpressionVisitor,
     isBasedExpressionType,
 } from '../expressionVisitor';
-import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
+import { ApexErrorTypeClass, ApexCommonTypeClass, isApexValidClass } from '../commonVisitor';
 
 export class InsertStatementTypeClass extends DmlStatementTypeClass<
     'insertStatement',
     BasedExpressionTypeClass
 > {
     private constructor(
-        value: BasedExpressionTypeClass | ErrorTypeClass,
-        accessLevel: AccessLevelTypeClass | ErrorTypeClass | null,
+        value: BasedExpressionTypeClass | ApexErrorTypeClass,
+        accessLevel: AccessLevelTypeClass | ApexErrorTypeClass | null,
     ) {
         super('insertStatement', value, accessLevel);
     }
@@ -31,13 +31,13 @@ export class InsertStatementTypeClass extends DmlStatementTypeClass<
         }
 
         return new InsertStatementTypeClass(
-            isValidClass(
+            isApexValidClass(
                 new ExpressionVisitor().visit(ctx.expression()),
                 isBasedExpressionType,
                 'expression',
             ),
             ctx.accessLevel()
-                ? isValidClass(
+                ? isApexValidClass(
                       new StatementVisitor().visit(ctx.accessLevel()),
                       isAccessLevelType,
                       'accessLevel',
@@ -48,7 +48,8 @@ export class InsertStatementTypeClass extends DmlStatementTypeClass<
 }
 
 export const isInsertStatementType = (
-    target: CommonTypeClass<string>,
+    target: ApexCommonTypeClass<string>,
 ): target is InsertStatementTypeClass => {
     return target instanceof InsertStatementTypeClass;
 };
+

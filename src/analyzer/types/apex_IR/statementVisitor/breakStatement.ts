@@ -2,7 +2,7 @@ import { BreakStatementContext } from '@apexdevtools/apex-parser';
 
 import { StatementValueTypeClass } from '.';
 
-import { CommonTypeClass } from '../commonVisitor';
+import { ApexCommonTypeClass } from '../commonVisitor';
 
 export class BreakStatementTypeClass extends StatementValueTypeClass<'breakStatement', string> {
     private constructor(value: string) {
@@ -19,7 +19,8 @@ export class BreakStatementTypeClass extends StatementValueTypeClass<'breakState
 }
 
 export const isBreakStatementType = (
-    target: CommonTypeClass<string>,
+    target: ApexCommonTypeClass<string>,
 ): target is BreakStatementTypeClass => {
     return target instanceof BreakStatementTypeClass;
 };
+

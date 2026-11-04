@@ -4,13 +4,13 @@ import { ArgumentsTypeClass } from '.';
 
 import { ExpressionListTypeClass, ListVisitor, isExpressionListType } from '../listVisitor';
 
-import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
+import { ApexErrorTypeClass, ApexCommonTypeClass, isApexValidClass } from '../commonVisitor';
 
 export class NormalArgumentsTypeClass extends ArgumentsTypeClass<
     'arguments',
     ExpressionListTypeClass
 > {
-    private constructor(value: ExpressionListTypeClass | ErrorTypeClass | null) {
+    private constructor(value: ExpressionListTypeClass | ApexErrorTypeClass | null) {
         super('arguments', value);
     }
 
@@ -19,10 +19,10 @@ export class NormalArgumentsTypeClass extends ArgumentsTypeClass<
             throw new Error('値が異常です。ArgumentsContext: ' + ctx.getText());
         }
 
-        let value: ExpressionListTypeClass | ErrorTypeClass | null = null;
+        let value: ExpressionListTypeClass | ApexErrorTypeClass | null = null;
 
         if (ctx.expressionList()) {
-            value = isValidClass(
+            value = isApexValidClass(
                 new ListVisitor().visit(ctx.expressionList()),
                 isExpressionListType,
                 'expressionList',
@@ -34,7 +34,7 @@ export class NormalArgumentsTypeClass extends ArgumentsTypeClass<
 }
 
 export const isNormalArgumentsType = (
-    target: CommonTypeClass<string>,
+    target: ApexCommonTypeClass<string>,
 ): target is NormalArgumentsTypeClass => {
     return target instanceof NormalArgumentsTypeClass;
 };

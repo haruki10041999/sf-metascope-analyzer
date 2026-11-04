@@ -9,17 +9,18 @@ import {
     makeNodeDiff,
     makeSetDiff,
     makeValueDiff,
-} from '../commons';
-import { ValueListItemDiff, makeUnorderedValueListDiff } from './commons';
-import { LogicalConditionDiff, makeLogicalConditionDiff } from './where';
+} from '../../../commons/diff/commons';
+import { makeUnorderedValueListDiff } from './commons';
+import { TypedListItemDiff } from '../../../commons/diff/list';
+import { LogicalConditionJsonDiff, makeLogicalConditionDiff } from './where';
 
-export type DataCategorySelectionDiff = NodeDiff<
+export type DataCategorySelectionJsonDiff = NodeDiff<
     'categoryCondition',
     DataCategorySelectionJson,
     {
         group: ValueDiff<string>;
         selector: ValueDiff<DataCategorySelectionJson['selector']>;
-        category: ValueListItemDiff<string>[];
+        category: TypedListItemDiff<string, never>[];
     }
 >;
 
@@ -27,7 +28,7 @@ export const makeDataCategorySelectionDiff = (
     before: DataCategorySelectionJson | ErrorJson,
     after: DataCategorySelectionJson | ErrorJson,
     match: Match = 'slot',
-): DataCategorySelectionDiff =>
+): DataCategorySelectionJsonDiff =>
     makeNodeDiff('categoryCondition', before, after, match, (b, a) => ({
         group: makeValueDiff(b.group, a.group),
         selector: makeValueDiff(b.selector, a.selector),
@@ -36,25 +37,25 @@ export const makeDataCategorySelectionDiff = (
 
 export type WithFieldsDiff =
     | { mode: ValueDiff<'SYSTEM_MODE' | 'USER_MODE' | 'SECURITY_ENFORCED'> }
-    | { mode: LogicalConditionDiff }
+    | { mode: LogicalConditionJsonDiff }
     | {
           mode: ValueDiff<'DATA_CATEGORY'>;
           selection:
               | ListItemDiff<
                     'categoryCondition',
                     DataCategorySelectionJson | ErrorJson,
-                    DataCategorySelectionDiff
+                    DataCategorySelectionJsonDiff
                 >[]
               | ValueDiff<(DataCategorySelectionJson | ErrorJson)[] | ErrorJson>;
       };
 
-export type WithDiff =
+export type WithJsonDiff =
     ValueDiff<WithJson | ErrorJson> | { status: 'changed'; fields: WithFieldsDiff };
 
 export const makeWithDiff = (
     before: WithJson | ErrorJson,
     after: WithJson | ErrorJson,
-): WithDiff => {
+): WithJsonDiff => {
     if (isErrorJson(before) || isErrorJson(after) || getValueKey(before) === getValueKey(after)) {
         return makeValueDiff(before, after);
     }

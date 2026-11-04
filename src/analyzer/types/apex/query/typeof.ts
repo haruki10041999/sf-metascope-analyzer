@@ -3,15 +3,12 @@ import typia from 'typia';
 import {
     Convert,
     isConvert,
-    ErrorJson,
-    isErrorJson,
-    JsonType,
-    makeJsonType,
     convertExcludeError,
     ConvertExcludeError,
     ConvertType,
     convertValue,
 } from '../commons';
+import { ErrorJson, isErrorJson, JsonType, makeJsonType } from '../../commons';
 
 import { TypeOfType, FieldNameType, WhenClauseType, ElseClauseType } from '../converter';
 
@@ -61,4 +58,3 @@ export const makeTypeOfJson = (target: ConvertExcludeError<TypeOfType>): TypeOfJ
         ],
     };
 };
-

@@ -1,3 +1,6 @@
 export * from './workerPool';
-export * from './apexTask';
+export * from './workerTask';
+export * from './batchWorker';
 export * from './apexWorker';
+export * from './objectWorker';
+export * from './objectTranslationWorker';

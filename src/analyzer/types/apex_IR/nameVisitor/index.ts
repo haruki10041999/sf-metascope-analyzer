@@ -18,7 +18,7 @@ import { FieldNameTypeClass } from './fieldName';
 import { DateFieldNameTypeClass } from './dateFieldName';
 import { DataCategoryNameTypeClass } from './dataCategoryName';
 
-import { CommonVisitor } from '../commonVisitor';
+import { ApexCommonVisitor } from '../commonVisitor';
 
 export { isQualifiedNameType, QualifiedNameTypeClass } from './qualifiedName';
 export { isTypeNameType, TypeNameTypeClass } from './typeName';
@@ -27,7 +27,7 @@ export { isFieldNameType, FieldNameTypeClass } from './fieldName';
 export { isDateFieldNameType, DateFieldNameTypeClass } from './dateFieldName';
 export { isDataCategoryNameType, DataCategoryNameTypeClass } from './dataCategoryName';
 
-export class NameVisitor extends CommonVisitor<NameAllTypeClass> {
+export class NameVisitor extends ApexCommonVisitor<NameAllTypeClass> {
     visitQualifiedName(ctx: QualifiedNameContext) {
         return QualifiedNameTypeClass.create(ctx);
     }

@@ -3,10 +3,10 @@ import { SoslPrimaryContext } from '@apexdevtools/apex-parser';
 import { PrimaryTypeClass } from '.';
 
 import { SoslLiteralTypeClass, LiteralVisitor, isSoslLiteralType } from '../literalVisitor';
-import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
+import { ApexErrorTypeClass, ApexCommonTypeClass, isApexValidClass } from '../commonVisitor';
 
 export class SoslPrimaryTypeClass extends PrimaryTypeClass<'soslPrimary', SoslLiteralTypeClass> {
-    private constructor(value: SoslLiteralTypeClass | ErrorTypeClass) {
+    private constructor(value: SoslLiteralTypeClass | ApexErrorTypeClass) {
         super('soslPrimary', value);
     }
 
@@ -16,7 +16,7 @@ export class SoslPrimaryTypeClass extends PrimaryTypeClass<'soslPrimary', SoslLi
         }
 
         return new SoslPrimaryTypeClass(
-            isValidClass(
+            isApexValidClass(
                 new LiteralVisitor().visit(ctx.soslLiteral()),
                 isSoslLiteralType,
                 'soslLiteral',
@@ -26,7 +26,8 @@ export class SoslPrimaryTypeClass extends PrimaryTypeClass<'soslPrimary', SoslLi
 }
 
 export const isSoslPrimaryType = (
-    target: CommonTypeClass<string>,
+    target: ApexCommonTypeClass<string>,
 ): target is SoslPrimaryTypeClass => {
     return target instanceof SoslPrimaryTypeClass;
 };
+

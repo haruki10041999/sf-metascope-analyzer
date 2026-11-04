@@ -2,20 +2,20 @@ import { SoqlIdContext } from '@apexdevtools/apex-parser';
 
 import { NormalIdTypeClass, IdTypeClass, IdVisitor, isNormalIdType } from '.';
 
-import { CommonTypeClass, ErrorTypeClass, isValidClass } from '../commonVisitor';
+import { ApexCommonTypeClass, ApexErrorTypeClass, isApexValidClass } from '../commonVisitor';
 
 export class SoqlIdTypeClass extends IdTypeClass<'soqlId', NormalIdTypeClass> {
-    private constructor(value: NormalIdTypeClass | ErrorTypeClass) {
+    private constructor(value: NormalIdTypeClass | ApexErrorTypeClass) {
         super('soqlId', value);
     }
 
     static create(ctx: SoqlIdContext): SoqlIdTypeClass {
         return new SoqlIdTypeClass(
-            isValidClass(new IdVisitor().visit(ctx.id()), isNormalIdType, 'id'),
+            isApexValidClass(new IdVisitor().visit(ctx.id()), isNormalIdType, 'id'),
         );
     }
 }
 
-export const isSoqlIdType = (target: CommonTypeClass<string>): target is SoqlIdTypeClass => {
+export const isSoqlIdType = (target: ApexCommonTypeClass<string>): target is SoqlIdTypeClass => {
     return target instanceof SoqlIdTypeClass;
 };

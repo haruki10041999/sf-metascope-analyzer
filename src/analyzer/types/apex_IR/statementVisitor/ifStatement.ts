@@ -12,18 +12,18 @@ import {
     ExpressionVisitor,
     isParExpressionType,
 } from '../expressionVisitor';
-import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
+import { ApexErrorTypeClass, ApexCommonTypeClass, isApexValidClass } from '../commonVisitor';
 
 type IfStatementTypeClassType = {
-    value: ParExpressionTypeClass | 'else' | ErrorTypeClass;
-    block: NormalStatementTypeClass | ErrorTypeClass;
+    value: ParExpressionTypeClass | 'else' | ApexErrorTypeClass;
+    block: NormalStatementTypeClass | ApexErrorTypeClass;
 };
 
 export class IfStatementTypeClass extends StatementTypeClass<
     'ifStatement',
     IfStatementTypeClassType[]
 > {
-    private constructor(value: IfStatementTypeClassType[] | ErrorTypeClass) {
+    private constructor(value: IfStatementTypeClassType[] | ApexErrorTypeClass) {
         super('ifStatement', value);
     }
 
@@ -36,7 +36,7 @@ export class IfStatementTypeClass extends StatementTypeClass<
 
         let currentCtx: IfStatementContext | undefined = ctx;
         while (currentCtx) {
-            const currentCondition = isValidClass(
+            const currentCondition = isApexValidClass(
                 new ExpressionVisitor().visit(currentCtx.parExpression()),
                 isParExpressionType,
                 'parExpression',
@@ -44,7 +44,7 @@ export class IfStatementTypeClass extends StatementTypeClass<
 
             const statements: StatementContext[] = currentCtx.statement_list();
 
-            const currentStatement = isValidClass(
+            const currentStatement = isApexValidClass(
                 new StatementVisitor().visit(statements.at(0)!),
                 isNormalStatementType,
                 'statement',
@@ -71,7 +71,7 @@ export class IfStatementTypeClass extends StatementTypeClass<
                 continue;
             }
 
-            const elseStatement = isValidClass(
+            const elseStatement = isApexValidClass(
                 new StatementVisitor().visit(elseStatementCtx),
                 isNormalStatementType,
                 'statement',
@@ -89,7 +89,8 @@ export class IfStatementTypeClass extends StatementTypeClass<
 }
 
 export const isIfStatementType = (
-    target: CommonTypeClass<string>,
+    target: ApexCommonTypeClass<string>,
 ): target is IfStatementTypeClass => {
     return target instanceof IfStatementTypeClass;
 };
+

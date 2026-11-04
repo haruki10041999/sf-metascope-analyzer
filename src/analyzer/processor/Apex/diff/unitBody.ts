@@ -5,6 +5,8 @@ import {
     MemberStatementJson,
     TriggerCaseJson,
     TriggerUnitJson,
+    ApexClassMetaJson,
+    ApexTriggerMetaJson,
 } from '../../../types';
 
 import {
@@ -12,22 +14,29 @@ import {
     ListItemDiff,
     Match,
     NodeDiff,
+    SourceKeysDiff,
     Sources,
     ValueDiff,
     makeNodeDiff,
     makeSetDiff,
+    makeSourceKeysDiff,
     makeValueDiff,
-} from './commons';
-import { ModifierDiff, makeModifierItemsDiff, makeTypedModifierJsons } from './modifier';
+} from '../../commons/diff/commons';
+import { ModifiersJsonDiff, makeModifierItemsDiff, makeTypedModifierJsons } from './modifier';
 import {
     ClassBodyDiff,
-    ClassMemberDiff,
+    MemberDeclarationJsonDiff,
     ClassMemberJson,
     makeClassBodyDiff,
     makeClassMemberDiff,
 } from './declaration';
-import { BlockDiff, StatementValueDiff, makeBlockDiff, makeStatementValueDiff } from './statement';
-import { TypedListDiff, TypedListItemDiff } from './typed';
+import {
+    ApexClassMetaJsonDiff,
+    ApexTriggerMetaJsonDiff,
+    makeApexClassMetaDiff,
+    makeApexTriggerMetaDiff,
+} from './meta';
+import { BlockDiff, makeBlockDiff } from './statement';
 
 // 方針: docs/apex-declaration-diff.md 6 章、docs/apex-gumtree-diff.md 7.3
 
@@ -38,14 +47,11 @@ import { TypedListDiff, TypedListItemDiff } from './typed';
 type TypeDeclarationJson = Omit<CompilationUnitJson, 'fileType'>;
 
 /** 同じ kind ならクラスメンバーと同じ形の差分、kind が変わったら丸ごと */
-export type TypeDeclarationDiff =
-    | ClassMemberDiff
+export type CompilationUnitJsonDiff =
+    | MemberDeclarationJsonDiff
     | {
           kind: { before: string; after: string };
-          sourceKeys: {
-              before: TypeDeclarationJson['sourceKeys'];
-              after: TypeDeclarationJson['sourceKeys'];
-          };
+          sourceKeys: SourceKeysDiff<TypeDeclarationJson['sourceKeys']>;
           status: 'changed';
           match: Match;
           before: Body<TypeDeclarationJson>;
@@ -56,13 +62,13 @@ export const makeTypeDeclarationDiff = (
     before: TypeDeclarationJson,
     after: TypeDeclarationJson,
     sources?: Sources,
-): TypeDeclarationDiff => {
+): CompilationUnitJsonDiff => {
     if (before.kind !== after.kind) {
         const { kind: _bk, sourceKeys: _bs, ...b } = before;
         const { kind: _ak, sourceKeys: _as, ...a } = after;
         return {
             kind: { before: before.kind, after: after.kind },
-            sourceKeys: { before: before.sourceKeys, after: after.sourceKeys },
+            sourceKeys: makeSourceKeysDiff(before.sourceKeys, after.sourceKeys),
             status: 'changed',
             match: 'slot',
             before: b as Body<TypeDeclarationJson>,
@@ -83,9 +89,11 @@ export const makeTypeDeclarationDiff = (
 
 type BlockMemberJson = Exclude<AnonymousUnitJson['block'], ErrorJson>[number];
 type NonStatementMemberJson = Exclude<BlockMemberJson, MemberStatementJson>;
-type MemberStatementValueDiff =
-    StatementValueDiff | { statement: StatementValueDiff; modifier: ModifierDiff[] };
-type MemberStatementDiff = TypedListDiff<MemberStatementJson, MemberStatementValueDiff>;
+/**
+ * 本文の文 (`kind: 'statement'` の要素) の差分。文の差分 (BlockDiff の要素) に、文に付いた修飾子の差分を足した形。
+ * 修飾子は文のノードの外にあるので、クラスメンバーと同じく外側の modifier に持つ
+ */
+export type MemberStatementJsonDiff = BlockDiff[number] & { modifier: ModifiersJsonDiff };
 
 /**
  * 宣言と文が混ざった本文。宣言と ErrorJson はクラス本文と同じ方法 (makeClassBodyDiff)、
@@ -93,7 +101,7 @@ type MemberStatementDiff = TypedListDiff<MemberStatementJson, MemberStatementVal
  */
 export type BlockMembersDiff = {
     member: ClassBodyDiff[];
-    statement: MemberStatementDiff;
+    statement: MemberStatementJsonDiff[];
 };
 
 const isStatementMember = (member: BlockMemberJson): member is MemberStatementJson =>
@@ -106,48 +114,28 @@ const makeMemberStatementsDiff = (
     before: MemberStatementJson[],
     after: MemberStatementJson[],
     sources?: Sources,
-): MemberStatementDiff => {
+): MemberStatementJsonDiff[] => {
     const statementDiffs: BlockDiff = makeBlockDiff(
         before.map((member) => member.statement),
         after.map((member) => member.statement),
         sources,
     );
+    const modifiersOf = (member: MemberStatementJson | undefined) =>
+        makeTypedModifierJsons(member?.modifier ?? {});
 
-    return statementDiffs.map(
-        (diff): TypedListItemDiff<MemberStatementJson, MemberStatementValueDiff> => {
-            if (diff.status === 'removed') {
-                return { ...diff, value: before[diff.index]! };
-            }
-            if (diff.status === 'added') {
-                return { ...diff, value: after[diff.index]! };
-            }
-
-            const beforeMember = before[diff.index.before]!;
-            const afterMember = after[diff.index.after]!;
-            const modifier = makeModifierItemsDiff(
-                makeTypedModifierJsons(beforeMember.modifier),
-                makeTypedModifierJsons(afterMember.modifier),
-            );
-            const hasModifierChanges = modifier.some((item) => item.status !== 'unchanged');
-
-            if (diff.status === 'unchanged' && !hasModifierChanges) {
-                return { ...diff, value: afterMember };
-            }
-
-            const statement =
-                diff.status === 'unchanged'
-                    ? makeStatementValueDiff(beforeMember.statement, afterMember.statement, sources)
-                    : diff.value;
-            const value: MemberStatementValueDiff = hasModifierChanges
-                ? { statement, modifier }
-                : statement;
-            return {
-                ...diff,
-                status: diff.status === 'unchanged' ? 'changed' : diff.status,
-                value,
-            };
-        },
-    );
+    return statementDiffs.map((diff): MemberStatementJsonDiff => {
+        const index = (diff as { index: number | { before: number; after: number } }).index;
+        const [beforeMember, afterMember] =
+            typeof index === 'number'
+                ? (diff as { status: string }).status === 'removed'
+                    ? [before[index], undefined]
+                    : [undefined, after[index]]
+                : [before[index.before], after[index.after]];
+        return {
+            ...diff,
+            modifier: makeModifierItemsDiff(modifiersOf(beforeMember), modifiersOf(afterMember)),
+        } as MemberStatementJsonDiff;
+    });
 };
 
 export const makeBlockMembersDiff = (
@@ -181,7 +169,7 @@ const makeBlockMembersOrErrorDiff = (
         : makeValueDiff(before, after);
 };
 
-export type AnonymousUnitDiff = {
+export type AnonymousUnitJsonDiff = {
     fileType: 'anonymous';
     block: BlockMembersOrErrorDiff;
 };
@@ -190,7 +178,7 @@ export const makeAnonymousUnitDiff = (
     before: AnonymousUnitJson,
     after: AnonymousUnitJson,
     sources?: Sources,
-): AnonymousUnitDiff => {
+): AnonymousUnitJsonDiff => {
     return {
         fileType: 'anonymous',
         block: makeBlockMembersOrErrorDiff(before.block, after.block, sources),
@@ -198,7 +186,7 @@ export const makeAnonymousUnitDiff = (
 };
 
 /** トリガーの対象イベント (before insert など) は B. 集合 */
-export type TriggerCasesDiff = ListItemDiff<
+export type TriggerCaseJsonDiff = ListItemDiff<
     'triggerCase',
     TriggerCaseJson | ErrorJson,
     NodeDiff<'triggerCase', TriggerCaseJson, undefined>
@@ -208,7 +196,7 @@ export const makeTriggerCasesDiff = (
     before: (TriggerCaseJson | ErrorJson)[],
     after: (TriggerCaseJson | ErrorJson)[],
     sources?: Sources,
-): TriggerCasesDiff[] => {
+): TriggerCaseJsonDiff[] => {
     return makeSetDiff(
         'triggerCase',
         before,
@@ -218,11 +206,11 @@ export const makeTriggerCasesDiff = (
     );
 };
 
-export type TriggerUnitDiff = {
+export type TriggerUnitJsonDiff = {
     fileType: 'trigger';
     name: ValueDiff<string | ErrorJson>;
     object: ValueDiff<string | ErrorJson>;
-    case: TriggerCasesDiff[];
+    case: TriggerCaseJsonDiff[];
     block: BlockMembersOrErrorDiff;
 };
 
@@ -230,7 +218,7 @@ export const makeTriggerUnitDiff = (
     before: TriggerUnitJson,
     after: TriggerUnitJson,
     sources?: Sources,
-): TriggerUnitDiff => {
+): TriggerUnitJsonDiff => {
     return {
         fileType: 'trigger',
         name: makeValueDiff(before.name, after.name),
@@ -244,7 +232,12 @@ export const makeTriggerUnitDiff = (
 // ファイル単位の中身
 // ---------------------------------------------------------------------------
 
-export type UnitContentDiff = TypeDeclarationDiff | TriggerUnitDiff | AnonymousUnitDiff;
+export type UnitContentDiff =
+    | CompilationUnitJsonDiff
+    | TriggerUnitJsonDiff
+    | AnonymousUnitJsonDiff
+    | ApexClassMetaJsonDiff
+    | ApexTriggerMetaJsonDiff;
 
 /** FileStructureType の result (base は fileType を除いた JSON) */
 type UnitResult = { base: unknown; sourceObject?: Sources['before'] | undefined };
@@ -282,25 +275,18 @@ export const makeUnitContentDiff = (
                 { fileType: 'anonymous', ...(after.base as Omit<AnonymousUnitJson, 'fileType'>) },
                 sources,
             );
+        // クラス・トリガーのメタデータ (-meta.xml)
+        case 'apexClassMeta':
+            return makeApexClassMetaDiff(
+                before.base as ApexClassMetaJson,
+                after.base as ApexClassMetaJson,
+            );
+        case 'apexTriggerMeta':
+            return makeApexTriggerMetaDiff(
+                before.base as ApexTriggerMetaJson,
+                after.base as ApexTriggerMetaJson,
+            );
         default:
             return undefined;
     }
-};
-
-/** 差分の中に unchanged 以外の status が 1 つでもあれば、変化ありとする */
-export const hasChange = (diff: unknown): boolean => {
-    if (Array.isArray(diff)) {
-        return diff.some(hasChange);
-    }
-    if (typeof diff !== 'object' || diff === null) {
-        return false;
-    }
-    const record = diff as Record<string, unknown>;
-    if (typeof record.status === 'string' && record.status !== 'unchanged') {
-        return true;
-    }
-    // unchanged のノードは value に元の JSON を持つだけなので、中は見ない
-    return record.status === 'unchanged'
-        ? false
-        : Object.entries(record).some(([key, value]) => key !== 'value' && hasChange(value));
 };

@@ -3,13 +3,13 @@ import { AnonymousUnitContext } from '@apexdevtools/apex-parser';
 import { UnitTypeClass } from '.';
 
 import { AnonymousBlockTypeClass, BlockVisitor, isAnonymousBlockType } from '../blockVisitor';
-import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
+import { ApexErrorTypeClass, ApexCommonTypeClass, isApexValidClass } from '../commonVisitor';
 
 export class AnonymousUnitTypeClass extends UnitTypeClass<
     'anonymousUnit',
     AnonymousBlockTypeClass
 > {
-    private constructor(value: AnonymousBlockTypeClass | ErrorTypeClass) {
+    private constructor(value: AnonymousBlockTypeClass | ApexErrorTypeClass) {
         super('anonymousUnit', value);
     }
 
@@ -19,7 +19,7 @@ export class AnonymousUnitTypeClass extends UnitTypeClass<
         }
 
         return new AnonymousUnitTypeClass(
-            isValidClass(
+            isApexValidClass(
                 new BlockVisitor().visit(ctx.anonymousBlock()),
                 isAnonymousBlockType,
                 'anonymousUnit',
@@ -29,7 +29,8 @@ export class AnonymousUnitTypeClass extends UnitTypeClass<
 }
 
 export const isAnonymousUnitType = (
-    target: CommonTypeClass<string>,
+    target: ApexCommonTypeClass<string>,
 ): target is AnonymousUnitTypeClass => {
     return target instanceof AnonymousUnitTypeClass;
 };
+

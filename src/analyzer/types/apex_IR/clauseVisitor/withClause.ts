@@ -9,7 +9,7 @@ import {
     isFilteringExpressionType,
     isLogicalExpressionType,
 } from '../expressionVisitor';
-import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
+import { ApexErrorTypeClass, ApexCommonTypeClass, isApexValidClass } from '../commonVisitor';
 
 type WithClauseType =
     | 'SYSTEM_MODE'
@@ -19,11 +19,11 @@ type WithClauseType =
     | LogicalExpressionTypeClass;
 
 export class WithClauseTypeClass extends ClauseTypeClass<'withClause', WithClauseType> {
-    private field: FilteringExpressionTypeClass | ErrorTypeClass | null = null;
+    private field: FilteringExpressionTypeClass | ApexErrorTypeClass | null = null;
 
     private constructor(
-        value: WithClauseType | ErrorTypeClass,
-        field: FilteringExpressionTypeClass | ErrorTypeClass | null,
+        value: WithClauseType | ApexErrorTypeClass,
+        field: FilteringExpressionTypeClass | ApexErrorTypeClass | null,
     ) {
         super('withClause', value);
         this.field = field;
@@ -41,7 +41,7 @@ export class WithClauseTypeClass extends ClauseTypeClass<'withClause', WithClaus
             throw new Error('値が異常です。WithClauseContext: ' + ctx.getText());
         }
 
-        let value: WithClauseType | ErrorTypeClass;
+        let value: WithClauseType | ApexErrorTypeClass;
         if (ctx.SYSTEM_MODE()) {
             value = 'SYSTEM_MODE';
         } else if (ctx.USER_MODE()) {
@@ -51,7 +51,7 @@ export class WithClauseTypeClass extends ClauseTypeClass<'withClause', WithClaus
         } else if (ctx.DATA() && ctx.CATEGORY()) {
             value = 'DATA_CATEGORY';
         } else {
-            value = isValidClass(
+            value = isApexValidClass(
                 new ExpressionVisitor().visit(ctx.logicalExpression()),
                 isLogicalExpressionType,
                 'logicalExpression',
@@ -61,7 +61,7 @@ export class WithClauseTypeClass extends ClauseTypeClass<'withClause', WithClaus
         return new WithClauseTypeClass(
             value,
             ctx.DATA() && ctx.CATEGORY()
-                ? isValidClass(
+                ? isApexValidClass(
                       new ExpressionVisitor().visit(ctx.filteringExpression()),
                       isFilteringExpressionType,
                       'filteringExpression',
@@ -70,13 +70,14 @@ export class WithClauseTypeClass extends ClauseTypeClass<'withClause', WithClaus
         );
     }
 
-    getField(): FilteringExpressionTypeClass | ErrorTypeClass | null {
+    getField(): FilteringExpressionTypeClass | ApexErrorTypeClass | null {
         return this.field;
     }
 }
 
 export const isWithClauseType = (
-    target: CommonTypeClass<string>,
+    target: ApexCommonTypeClass<string>,
 ): target is WithClauseTypeClass => {
     return target instanceof WithClauseTypeClass;
 };
+

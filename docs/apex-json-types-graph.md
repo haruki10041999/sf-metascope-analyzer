@@ -15,11 +15,11 @@
 
 ## 共通基底型
 
-| 型                              | 宣言                                                          | 形状・用途                                                                                                           |
-| ------------------------------- | ------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------- |
-| `JsonType<TKind>`               | [commons/json.ts](../src/analyzer/types/apex/commons/json.ts) | `{ kind: TKind; sourceKeys: ConvertKeys }`。通常のソース範囲付きノード。                                             |
-| `StructureJson<TKind, TRecord>` | [commons/json.ts](../src/analyzer/types/apex/commons/json.ts) | `{ kind: TKind; sourceKeys: { base: ConvertKeys } & TRecord }`。ノード全体の `base` と、選択した子要素のキーも保持。 |
-| `ErrorJson`                     | [commons/json.ts](../src/analyzer/types/apex/commons/json.ts) | `JsonType<'error'> & { kindType: string }`。変換エラーを表す。                                                       |
+| 型                              | 宣言                                                     | 形状・用途                                                                                                           |
+| ------------------------------- | -------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------- |
+| `JsonType<TKind>`               | [commons/json.ts](../src/analyzer/types/commons/json.ts) | `{ kind: TKind; sourceKeys: ConvertKeys }`。通常のソース範囲付きノード。                                             |
+| `StructureJson<TKind, TRecord>` | [commons/json.ts](../src/analyzer/types/commons/json.ts) | `{ kind: TKind; sourceKeys: { base: ConvertKeys } & TRecord }`。ノード全体の `base` と、選択した子要素のキーも保持。 |
+| `ErrorJson`                     | [commons/json.ts](../src/analyzer/types/commons/json.ts) | `JsonType<'error'> & { kindType: string }`。変換エラーを表す。                                                       |
 
 `ConvertKeys` は `{ objectKey: string; sourceKey: string }`。各具象ノードに記載したフィールドは、基底型の `kind` / `sourceKeys` に追加されるプロパティです。
 

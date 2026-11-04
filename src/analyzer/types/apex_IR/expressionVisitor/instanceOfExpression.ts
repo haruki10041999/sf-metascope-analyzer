@@ -8,7 +8,7 @@ import {
 } from '.';
 
 import { TypeRefTypeClass, TypeVisitor, isTypeRefType } from '../typeVisitor';
-import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
+import { ApexErrorTypeClass, ApexCommonTypeClass, isApexValidClass } from '../commonVisitor';
 
 export class InstanceOfExpressionTypeClass extends DoubleStringOperatorExpressionTypeClass<
     'instanceOfExpression',
@@ -17,8 +17,8 @@ export class InstanceOfExpressionTypeClass extends DoubleStringOperatorExpressio
     TypeRefTypeClass
 > {
     private constructor(
-        left: BasedExpressionTypeClass | ErrorTypeClass,
-        right: TypeRefTypeClass | ErrorTypeClass,
+        left: BasedExpressionTypeClass | ApexErrorTypeClass,
+        right: TypeRefTypeClass | ApexErrorTypeClass,
     ) {
         super('instanceOfExpression', left, right, 'instanceof');
     }
@@ -29,18 +29,19 @@ export class InstanceOfExpressionTypeClass extends DoubleStringOperatorExpressio
         }
 
         return new InstanceOfExpressionTypeClass(
-            isValidClass(
+            isApexValidClass(
                 new ExpressionVisitor().visit(ctx.expression()),
                 isBasedExpressionType,
                 'expression',
             ),
-            isValidClass(new TypeVisitor().visit(ctx.typeRef()), isTypeRefType, 'typeRef'),
+            isApexValidClass(new TypeVisitor().visit(ctx.typeRef()), isTypeRefType, 'typeRef'),
         );
     }
 }
 
 export const isInstanceOfExpressionType = (
-    target: CommonTypeClass<string>,
+    target: ApexCommonTypeClass<string>,
 ): target is InstanceOfExpressionTypeClass => {
     return target instanceof InstanceOfExpressionTypeClass;
 };
+

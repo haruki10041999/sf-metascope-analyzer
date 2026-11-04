@@ -8,13 +8,13 @@ import {
     isBasedExpressionType,
 } from '../expressionVisitor';
 
-import { ErrorTypeClass, CommonTypeClass, isValidClassList } from '../commonVisitor';
+import { ApexErrorTypeClass, ApexCommonTypeClass, isApexValidClassList } from '../commonVisitor';
 
 export class ExpressionListTypeClass extends ListTypeClass<
     'expressionList',
     BasedExpressionTypeClass
 > {
-    private constructor(value: (BasedExpressionTypeClass | ErrorTypeClass)[]) {
+    private constructor(value: (BasedExpressionTypeClass | ApexErrorTypeClass)[]) {
         super('expressionList', value);
     }
 
@@ -24,7 +24,7 @@ export class ExpressionListTypeClass extends ListTypeClass<
         }
 
         return new ExpressionListTypeClass(
-            isValidClassList(
+            isApexValidClassList(
                 ctx.expression_list(),
                 (ctx) => new ExpressionVisitor().visit(ctx),
                 isBasedExpressionType,
@@ -35,7 +35,7 @@ export class ExpressionListTypeClass extends ListTypeClass<
 }
 
 export const isExpressionListType = (
-    target: CommonTypeClass<string>,
+    target: ApexCommonTypeClass<string>,
 ): target is ExpressionListTypeClass => {
     return target instanceof ExpressionListTypeClass;
 };

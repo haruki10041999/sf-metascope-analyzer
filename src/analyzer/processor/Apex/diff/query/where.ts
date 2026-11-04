@@ -6,7 +6,14 @@ import {
     isErrorJson,
 } from '../../../../types';
 
-import { ValueDiff, getValueKey, makeOptionalDiff, makeValueDiff, pairAsSet } from '../commons';
+import {
+    ValueDiff,
+    getValueKey,
+    makeOptionalDiff,
+    makeValueDiff,
+} from '../../../commons/diff/commons';
+import { TypedListDiff } from '../../../commons/diff/list';
+import { makeUnorderedValueListDiff } from './commons';
 
 type WhereSingleJson =
     | (JsonType<'singleCondition'> & {
@@ -20,47 +27,29 @@ export type LogicalCondition = {
     operator?: 'AND' | 'OR' | 'NOT';
 };
 
-export type ConditionItemDiff =
-    | { status: 'unchanged'; index: { before: number; after: number }; value: unknown }
-    | { status: 'removed'; index: number; value: unknown }
-    | { status: 'added'; index: number; value: unknown };
+type ConditionItem = WhereSingleJson | LogicalCondition | ErrorJson;
 
-export type LogicalConditionDiff =
+export type LogicalConditionJsonDiff =
     | ValueDiff<LogicalCondition | ErrorJson>
     | {
           status: 'changed';
-          operator: import('../commons').OptionalDiff<
+          operator: import('../../../commons/diff/commons').OptionalDiff<
               'AND' | 'OR' | 'NOT',
               ValueDiff<'AND' | 'OR' | 'NOT'>
           >;
-          condition:
-              ConditionItemDiff[] | ValueDiff<(WhereSingleJson | LogicalCondition | ErrorJson)[]>;
+          condition: TypedListDiff<ConditionItem, never> | ValueDiff<ConditionItem[]>;
       };
 
+/** AND / OR の項は B. 集合 */
 const makeConditionItemsDiff = (
-    before: (WhereSingleJson | LogicalCondition | ErrorJson)[],
-    after: (WhereSingleJson | LogicalCondition | ErrorJson)[],
-): ConditionItemDiff[] => {
-    const pairings = pairAsSet(before.map(getValueKey), after.map(getValueKey));
-    return pairings.map((pairing): ConditionItemDiff => {
-        if (pairing.status === 'removed') {
-            return { status: 'removed', index: pairing.before, value: before[pairing.before]! };
-        }
-        if (pairing.status === 'added') {
-            return { status: 'added', index: pairing.after, value: after[pairing.after]! };
-        }
-        return {
-            status: 'unchanged',
-            index: { before: pairing.before, after: pairing.after },
-            value: before[pairing.before]!,
-        };
-    });
-};
+    before: ConditionItem[],
+    after: ConditionItem[],
+): TypedListDiff<ConditionItem, never> => makeUnorderedValueListDiff(before, after);
 
 export const makeLogicalConditionDiff = (
     before: LogicalCondition | ErrorJson,
     after: LogicalCondition | ErrorJson,
-): LogicalConditionDiff => {
+): LogicalConditionJsonDiff => {
     if (isErrorJson(before) || isErrorJson(after) || getValueKey(before) === getValueKey(after)) {
         return makeValueDiff(before, after);
     }
@@ -75,14 +64,14 @@ export const makeLogicalConditionDiff = (
     };
 };
 
-export type WhereDiff =
-    | { condition: LogicalConditionDiff }
+export type WhereJsonDiff =
+    | { condition: LogicalConditionJsonDiff }
     | ValueDiff<{ condition: LogicalCondition | ErrorJson } | ErrorJson>;
 
 export const makeWhereDiff = (
     before: WhereJson | ErrorJson,
     after: WhereJson | ErrorJson,
-): WhereDiff => {
+): WhereJsonDiff => {
     if (isErrorJson(before) || isErrorJson(after)) return makeValueDiff(before, after);
     return { condition: makeLogicalConditionDiff(before.condition, after.condition) };
 };

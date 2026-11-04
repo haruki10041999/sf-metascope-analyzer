@@ -4,10 +4,10 @@ import { NormalIdTypeClass, IdVisitor, isNormalIdType } from '../idVisitor';
 
 import { PrimaryTypeClass } from '.';
 
-import { CommonTypeClass, ErrorTypeClass, isValidClass } from '../commonVisitor';
+import { ApexCommonTypeClass, ApexErrorTypeClass, isApexValidClass } from '../commonVisitor';
 
 export class IdPrimaryTypeClass extends PrimaryTypeClass<'idPrimary', NormalIdTypeClass> {
-    private constructor(value: NormalIdTypeClass | ErrorTypeClass) {
+    private constructor(value: NormalIdTypeClass | ApexErrorTypeClass) {
         super('idPrimary', value);
     }
 
@@ -17,11 +17,14 @@ export class IdPrimaryTypeClass extends PrimaryTypeClass<'idPrimary', NormalIdTy
         }
 
         return new IdPrimaryTypeClass(
-            isValidClass(new IdVisitor().visit(ctx.id()), isNormalIdType, 'id'),
+            isApexValidClass(new IdVisitor().visit(ctx.id()), isNormalIdType, 'id'),
         );
     }
 }
 
-export const isIdPrimaryType = (target: CommonTypeClass<string>): target is IdPrimaryTypeClass => {
+export const isIdPrimaryType = (
+    target: ApexCommonTypeClass<string>,
+): target is IdPrimaryTypeClass => {
     return target instanceof IdPrimaryTypeClass;
 };
+

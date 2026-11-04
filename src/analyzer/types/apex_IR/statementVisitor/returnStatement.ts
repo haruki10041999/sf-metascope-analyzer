@@ -7,13 +7,13 @@ import {
     ExpressionVisitor,
     isBasedExpressionType,
 } from '../expressionVisitor';
-import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
+import { ApexErrorTypeClass, ApexCommonTypeClass, isApexValidClass } from '../commonVisitor';
 
 export class ReturnStatementTypeClass extends StatementTypeClass<
     'returnStatement',
     BasedExpressionTypeClass | null
 > {
-    private constructor(value: BasedExpressionTypeClass | ErrorTypeClass | null) {
+    private constructor(value: BasedExpressionTypeClass | ApexErrorTypeClass | null) {
         super('returnStatement', value);
     }
 
@@ -21,7 +21,7 @@ export class ReturnStatementTypeClass extends StatementTypeClass<
         // void メソッドの `return;` は式を持たない
         return new ReturnStatementTypeClass(
             ctx.expression()
-                ? isValidClass(
+                ? isApexValidClass(
                       new ExpressionVisitor().visit(ctx.expression()),
                       isBasedExpressionType,
                       'expression',
@@ -32,7 +32,8 @@ export class ReturnStatementTypeClass extends StatementTypeClass<
 }
 
 export const isReturnStatementType = (
-    target: CommonTypeClass<string>,
+    target: ApexCommonTypeClass<string>,
 ): target is ReturnStatementTypeClass => {
     return target instanceof ReturnStatementTypeClass;
 };
+

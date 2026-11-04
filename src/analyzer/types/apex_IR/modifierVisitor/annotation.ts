@@ -5,15 +5,15 @@ import { ModifierTypeClass } from '../modifierVisitor';
 import { NormalIdTypeClass, IdVisitor, isNormalIdType } from '../idVisitor';
 import { ElementValueTypeClass, ValueVisitor, isElementValueType } from '../valueVisitor';
 import { ElementValuePairsTypeClass, PairVisitor, isElementValuePairsType } from '../pairVisitor';
-import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
+import { ApexErrorTypeClass, ApexCommonTypeClass, isApexValidClass } from '../commonVisitor';
 
 export class AnnotationTypeClass extends ModifierTypeClass<'annotation', NormalIdTypeClass> {
-    private param: ElementValueTypeClass | ElementValuePairsTypeClass | ErrorTypeClass | null =
+    private param: ElementValueTypeClass | ElementValuePairsTypeClass | ApexErrorTypeClass | null =
         null;
 
     private constructor(
-        value: NormalIdTypeClass | ErrorTypeClass,
-        param: ElementValueTypeClass | ElementValuePairsTypeClass | ErrorTypeClass | null,
+        value: NormalIdTypeClass | ApexErrorTypeClass,
+        param: ElementValueTypeClass | ElementValuePairsTypeClass | ApexErrorTypeClass | null,
     ) {
         super('annotation', value);
         this.param = param;
@@ -24,17 +24,17 @@ export class AnnotationTypeClass extends ModifierTypeClass<'annotation', NormalI
             throw new Error('値が異常です。AnnotationContext: ' + ctx.getText());
         }
 
-        let param: ElementValueTypeClass | ElementValuePairsTypeClass | ErrorTypeClass | null =
+        let param: ElementValueTypeClass | ElementValuePairsTypeClass | ApexErrorTypeClass | null =
             null;
 
         if (ctx.elementValue()) {
-            param = isValidClass(
+            param = isApexValidClass(
                 new ValueVisitor().visit(ctx.elementValue()),
                 isElementValueType,
                 'elementValue',
             );
         } else if (ctx.elementValuePairs()) {
-            param = isValidClass(
+            param = isApexValidClass(
                 new PairVisitor().visit(ctx.elementValuePairs()),
                 isElementValuePairsType,
                 'elementValuePairs',
@@ -42,18 +42,19 @@ export class AnnotationTypeClass extends ModifierTypeClass<'annotation', NormalI
         }
 
         return new AnnotationTypeClass(
-            isValidClass(new IdVisitor().visit(ctx.id()), isNormalIdType, 'id'),
+            isApexValidClass(new IdVisitor().visit(ctx.id()), isNormalIdType, 'id'),
             param,
         );
     }
 
-    getParam(): ElementValueTypeClass | ElementValuePairsTypeClass | ErrorTypeClass | null {
+    getParam(): ElementValueTypeClass | ElementValuePairsTypeClass | ApexErrorTypeClass | null {
         return this.param;
     }
 }
 
 export const isAnnotationType = (
-    target: CommonTypeClass<string>,
+    target: ApexCommonTypeClass<string>,
 ): target is AnnotationTypeClass => {
     return target instanceof AnnotationTypeClass;
 };
+

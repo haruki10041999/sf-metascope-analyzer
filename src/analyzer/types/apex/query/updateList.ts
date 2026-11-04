@@ -1,6 +1,7 @@
 import typia from 'typia';
 
-import { ErrorJson, JsonType, makeJsonType, convertValue, ConvertType } from '../commons';
+import { convertValue, ConvertType } from '../commons';
+import { ErrorJson, JsonType, makeJsonType } from '../../commons';
 
 import { UpdateListType, UpdateTypeType } from '../converter';
 
@@ -23,4 +24,3 @@ export const makeUpdateListJson = (
         },
     );
 };
-

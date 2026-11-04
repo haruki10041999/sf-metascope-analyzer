@@ -10,19 +10,24 @@ import {
     isFinallyBlockType,
 } from '../blockVisitor';
 import { CatchClauseTypeClass, ClauseVisitor, isCatchClauseType } from '../clauseVisitor';
-import { ErrorTypeClass, CommonTypeClass, isValidClass, isValidClassList } from '../commonVisitor';
+import {
+    ApexErrorTypeClass,
+    ApexCommonTypeClass,
+    isApexValidClass,
+    isApexValidClassList,
+} from '../commonVisitor';
 
 export class TryStatementTypeClass extends StatementTypeClass<
     'tryStatement',
     NormalBlockTypeClass
 > {
-    private catchBlock: (CatchClauseTypeClass | ErrorTypeClass)[];
-    private finallyBlock: FinallyBlockTypeClass | ErrorTypeClass | null = null;
+    private catchBlock: (CatchClauseTypeClass | ApexErrorTypeClass)[];
+    private finallyBlock: FinallyBlockTypeClass | ApexErrorTypeClass | null = null;
 
     private constructor(
-        value: NormalBlockTypeClass | ErrorTypeClass,
-        catchBlock: (CatchClauseTypeClass | ErrorTypeClass)[],
-        finallyBlock: FinallyBlockTypeClass | ErrorTypeClass | null = null,
+        value: NormalBlockTypeClass | ApexErrorTypeClass,
+        catchBlock: (CatchClauseTypeClass | ApexErrorTypeClass)[],
+        finallyBlock: FinallyBlockTypeClass | ApexErrorTypeClass | null = null,
     ) {
         super('tryStatement', value);
         this.catchBlock = catchBlock;
@@ -35,15 +40,15 @@ export class TryStatementTypeClass extends StatementTypeClass<
         }
 
         return new TryStatementTypeClass(
-            isValidClass(new BlockVisitor().visit(ctx.block()), isNormalBlockType, 'block'),
-            isValidClassList(
+            isApexValidClass(new BlockVisitor().visit(ctx.block()), isNormalBlockType, 'block'),
+            isApexValidClassList(
                 ctx.catchClause_list() || [],
                 (ctx) => new ClauseVisitor().visit(ctx),
                 isCatchClauseType,
                 'catchClause',
             ),
             ctx.finallyBlock()
-                ? isValidClass(
+                ? isApexValidClass(
                       new BlockVisitor().visit(ctx.finallyBlock()),
                       isFinallyBlockType,
                       'finallyBlock',
@@ -52,17 +57,18 @@ export class TryStatementTypeClass extends StatementTypeClass<
         );
     }
 
-    getCatchBlock(): (CatchClauseTypeClass | ErrorTypeClass)[] {
+    getCatchBlock(): (CatchClauseTypeClass | ApexErrorTypeClass)[] {
         return this.catchBlock;
     }
 
-    getFinallyBlock(): FinallyBlockTypeClass | ErrorTypeClass | null {
+    getFinallyBlock(): FinallyBlockTypeClass | ApexErrorTypeClass | null {
         return this.finallyBlock;
     }
 }
 
 export const isTryStatementType = (
-    target: CommonTypeClass<string>,
+    target: ApexCommonTypeClass<string>,
 ): target is TryStatementTypeClass => {
     return target instanceof TryStatementTypeClass;
 };
+

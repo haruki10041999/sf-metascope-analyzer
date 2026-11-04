@@ -7,14 +7,17 @@ import {
     SingleOperatorExpressionTypeClass,
 } from '.';
 
-import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
+import { ApexErrorTypeClass, ApexCommonTypeClass, isApexValidClass } from '../commonVisitor';
 
 export class PostOpExpressionTypeClass extends SingleOperatorExpressionTypeClass<
     'postOpExpression',
     BasedExpressionTypeClass,
     '++' | '--'
 > {
-    private constructor(value: BasedExpressionTypeClass | ErrorTypeClass, operator: '++' | '--') {
+    private constructor(
+        value: BasedExpressionTypeClass | ApexErrorTypeClass,
+        operator: '++' | '--',
+    ) {
         super('postOpExpression', value, operator);
     }
 
@@ -24,7 +27,7 @@ export class PostOpExpressionTypeClass extends SingleOperatorExpressionTypeClass
         }
 
         return new PostOpExpressionTypeClass(
-            isValidClass(
+            isApexValidClass(
                 new ExpressionVisitor().visit(ctx.expression()),
                 isBasedExpressionType,
                 'expression',
@@ -35,7 +38,8 @@ export class PostOpExpressionTypeClass extends SingleOperatorExpressionTypeClass
 }
 
 export const isPostOpExpressionType = (
-    target: CommonTypeClass<string>,
+    target: ApexCommonTypeClass<string>,
 ): target is PostOpExpressionTypeClass => {
     return target instanceof PostOpExpressionTypeClass;
 };
+

@@ -1,7 +1,7 @@
 import { SuperPrimaryContext } from '@apexdevtools/apex-parser';
 
 import { PrimaryValueTypeClass } from '.';
-import { CommonTypeClass } from '../commonVisitor';
+import { ApexCommonTypeClass } from '../commonVisitor';
 
 export class SuperPrimaryTypeClass extends PrimaryValueTypeClass<'superPrimary', string> {
     private constructor(value: string) {
@@ -18,7 +18,8 @@ export class SuperPrimaryTypeClass extends PrimaryValueTypeClass<'superPrimary',
 }
 
 export const isSuperPrimaryType = (
-    target: CommonTypeClass<string>,
+    target: ApexCommonTypeClass<string>,
 ): target is SuperPrimaryTypeClass => {
     return target instanceof SuperPrimaryTypeClass;
 };
+

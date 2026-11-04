@@ -7,7 +7,10 @@
  */
 import { ApexParser, ApexParserFactory, ApexParserRuleContext } from '@apexdevtools/apex-parser';
 
-import { CommonErrorListener, ErrorTypeClass } from '../../../src/analyzer/types/apex_IR/commonVisitor';
+import {
+    ApexCommonErrorListener,
+    ApexErrorTypeClass,
+} from '../../../src/analyzer/types/apex_IR/commonVisitor';
 import { UnitVisitor } from '../../../src/analyzer/types/apex_IR/unitVisitor';
 import {
     JsonType,
@@ -44,15 +47,15 @@ export const sampleUrl = (file: string) => new URL(`./${file}`, import.meta.url)
 
 export const baseName = (file: string) => file.replace(/\.[^.]+$/, '');
 
-/** 構文エラーを CommonErrorListener で集めながら IR を作る */
+/** 構文エラーを ApexCommonErrorListener で集めながら IR を作る */
 export const parseUnit = (source: string, rule: UnitRule) => {
-    const errorListener = new CommonErrorListener(source);
+    const errorListener = new ApexCommonErrorListener(source);
     const { parser } = ApexParserFactory.createLexerAndParser(source, errorListener);
     const unit = new UnitVisitor().visit(rule(parser));
     return { unit, syntaxErrors: errorListener.getErrors() };
 };
 
-export const toSyntaxErrorJson = (errors: ErrorTypeClass[]) =>
+export const toSyntaxErrorJson = (errors: ApexErrorTypeClass[]) =>
     errors.map((error) => {
         const span = error.getSpan();
         return {
@@ -90,3 +93,4 @@ export const toJsonOutput = async (commonType: { type: string }) => {
         sourceObjects: regenerateSourceObjects(sourceObjects, json as JsonType<string>),
     };
 };
+

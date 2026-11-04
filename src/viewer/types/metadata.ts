@@ -1,38 +1,23 @@
-import { Edge } from 'reactflow';
-import {
-    MetadataObject,
-    MetadataObjectDiff,
-    MetadataField,
-    MetadataFieldDiff,
-    MetadataDependency,
-    MetadataDependencyDiff,
-} from '../../analyzer';
+import type { DependencyView, FieldView, ObjectView } from '../../analyzer';
 
-export type {
-    MetadataObject,
-    MetadataObjectDiff,
-    MetadataField,
-    MetadataFieldDiff,
-    MetadataDependency,
-    MetadataDependencyDiff,
-} from '../../analyzer';
+export type { DependencyView, FieldView, ObjectView, ViewStatus } from '../../analyzer';
 
 import { NodeSize } from './commons';
 
-export type Field = (MetadataField | MetadataFieldDiff) & {
+export type Field = FieldView & {
     id: string;
     height: number;
 };
 
-export const toField = (metadata: MetadataField | MetadataFieldDiff): Field => {
+export const toField = (field: FieldView): Field => {
     return {
-        ...metadata,
+        ...field,
         id: crypto.randomUUID(),
         height: 24,
     };
 };
 
-export type ObjectNode = (Omit<MetadataObject, 'fields'> | Omit<MetadataObjectDiff, 'fields'>) &
+export type ObjectNode = Omit<ObjectView, 'fields'> &
     NodeSize & {
         id: string;
         fields: Field[];
@@ -44,26 +29,23 @@ export type ObjectNode = (Omit<MetadataObject, 'fields'> | Omit<MetadataObjectDi
     };
 
 export const toObjectNode = (
-    metadata: MetadataObject | MetadataObjectDiff,
+    metadata: ObjectView,
     onToggleExpand: (id: string) => void,
 ): ObjectNode => {
-    const fields: Field[] = metadata.fields.map((field) => toField(field));
-    const objectNode: ObjectNode = {
+    const { fields, ...object } = metadata;
+    return {
+        ...object,
         id: crypto.randomUUID(),
-        apiName: metadata.apiName,
-        dataType: metadata.dataType,
-        fields,
+        fields: fields.map((field) => toField(field)),
         width: 280,
         originalHeight: 88,
         height: 88,
         isExpanded: false,
         onToggleExpand,
-        status: 'status' in metadata ? metadata.status : undefined,
     };
-    return objectNode;
 };
 
-export type DependencyEdge = (MetadataDependency | MetadataDependencyDiff) & {
+export type DependencyEdge = DependencyView & {
     id: string;
     sourceId: string;
     targetId: string;
@@ -71,7 +53,7 @@ export type DependencyEdge = (MetadataDependency | MetadataDependencyDiff) & {
 
 export const toDependencyEdge = (
     objectNodes: ObjectNode[],
-    dependency: MetadataDependency | MetadataDependencyDiff,
+    dependency: DependencyView,
 ): DependencyEdge | undefined => {
     const sourceObject = objectNodes.find(
         (objectNode) => objectNode.apiName === dependency.parentObjectApiName,

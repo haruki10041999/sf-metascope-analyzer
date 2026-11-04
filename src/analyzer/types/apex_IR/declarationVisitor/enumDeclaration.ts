@@ -8,17 +8,17 @@ import {
 } from '.';
 
 import { NormalIdTypeClass, IdVisitor, isNormalIdType } from '../idVisitor';
-import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
+import { ApexErrorTypeClass, ApexCommonTypeClass, isApexValidClass } from '../commonVisitor';
 
 export class EnumDeclarationTypeClass extends DeclarationTypeClass<
     'enumDeclaration',
     NormalIdTypeClass
 > {
-    private constant: EnumConstantsTypeClass | ErrorTypeClass | null = null;
+    private constant: EnumConstantsTypeClass | ApexErrorTypeClass | null = null;
 
     private constructor(
-        value: NormalIdTypeClass | ErrorTypeClass,
-        constant: EnumConstantsTypeClass | ErrorTypeClass | null,
+        value: NormalIdTypeClass | ApexErrorTypeClass,
+        constant: EnumConstantsTypeClass | ApexErrorTypeClass | null,
     ) {
         super('enumDeclaration', value);
         this.constant = constant;
@@ -30,9 +30,9 @@ export class EnumDeclarationTypeClass extends DeclarationTypeClass<
         }
 
         return new EnumDeclarationTypeClass(
-            isValidClass(new IdVisitor().visit(ctx.id()), isNormalIdType, 'id'),
+            isApexValidClass(new IdVisitor().visit(ctx.id()), isNormalIdType, 'id'),
             ctx.enumConstants()
-                ? isValidClass(
+                ? isApexValidClass(
                       new DeclarationVisitor().visit(ctx.enumConstants()),
                       isEnumConstantsType,
                       'enumConstants',
@@ -41,13 +41,13 @@ export class EnumDeclarationTypeClass extends DeclarationTypeClass<
         );
     }
 
-    getConstant(): EnumConstantsTypeClass | ErrorTypeClass | null {
+    getConstant(): EnumConstantsTypeClass | ApexErrorTypeClass | null {
         return this.constant;
     }
 }
 
 export const isEnumDeclarationType = (
-    target: CommonTypeClass<string>,
+    target: ApexCommonTypeClass<string>,
 ): target is EnumDeclarationTypeClass => {
     return target instanceof EnumDeclarationTypeClass;
 };

@@ -13,7 +13,7 @@ import {
     isComparisonOperatorType,
 } from '../queryVisitor';
 import { NormalValueTypeClass, ValueVisitor, isNormalValueType } from '../valueVisitor';
-import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
+import { ApexErrorTypeClass, ApexCommonTypeClass, isApexValidClass } from '../commonVisitor';
 
 export class WhereFieldExpressionTypeClass extends DoubleOperatorExpressionTypeClass<
     'whereFieldExpression',
@@ -22,9 +22,9 @@ export class WhereFieldExpressionTypeClass extends DoubleOperatorExpressionTypeC
     NormalValueTypeClass | null
 > {
     private constructor(
-        left: FieldExpressionTypeClass | string | ErrorTypeClass,
-        operator: ComparisonOperatorTypeClass | ErrorTypeClass | null,
-        right: NormalValueTypeClass | ErrorTypeClass | null,
+        left: FieldExpressionTypeClass | string | ApexErrorTypeClass,
+        operator: ComparisonOperatorTypeClass | ApexErrorTypeClass | null,
+        right: NormalValueTypeClass | ApexErrorTypeClass | null,
     ) {
         super('whereFieldExpression', left, right, operator);
     }
@@ -35,7 +35,7 @@ export class WhereFieldExpressionTypeClass extends DoubleOperatorExpressionTypeC
         const fieldExpression = ctx.fieldExpression();
         if (fieldExpression) {
             return new WhereFieldExpressionTypeClass(
-                isValidClass(
+                isApexValidClass(
                     new ExpressionVisitor().visit(fieldExpression),
                     isFieldExpressionType,
                     'fieldExpression',
@@ -51,18 +51,19 @@ export class WhereFieldExpressionTypeClass extends DoubleOperatorExpressionTypeC
 
         return new WhereFieldExpressionTypeClass(
             ctx.FORMULA().getText() + '(' + ctx.StringLiteral().getText() + ')',
-            isValidClass(
+            isApexValidClass(
                 new QueryVisitor().visit(ctx.comparisonOperator()),
                 isComparisonOperatorType,
                 'comparisonOperator',
             ),
-            isValidClass(new ValueVisitor().visit(ctx.value()), isNormalValueType, 'value'),
+            isApexValidClass(new ValueVisitor().visit(ctx.value()), isNormalValueType, 'value'),
         );
     }
 }
 
 export const isWhereFieldExpressionType = (
-    target: CommonTypeClass<string>,
+    target: ApexCommonTypeClass<string>,
 ): target is WhereFieldExpressionTypeClass => {
     return target instanceof WhereFieldExpressionTypeClass;
 };
+

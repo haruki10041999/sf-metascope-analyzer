@@ -1,6 +1,7 @@
 import typia from 'typia';
 
-import { ConvertType, ConvertWithError, ErrorJson, JsonType, convertValue, makeJsonType } from '../commons';
+import { ConvertType, ConvertWithError, convertValue } from '../commons';
+import { ErrorJson, JsonType, makeJsonType } from '../../commons';
 
 import { QueryType } from '../converter';
 

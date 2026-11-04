@@ -1,6 +1,6 @@
-import { ErrorTypeClass, CommonTypeClass } from '../commonVisitor';
+import { ApexErrorTypeClass, ApexCommonTypeClass } from '../commonVisitor';
 
-export class UnitValueTypeClass<TName extends string, T> extends CommonTypeClass<TName> {
+export class UnitValueTypeClass<TName extends string, T> extends ApexCommonTypeClass<TName> {
     private value: T;
     constructor(type: TName, value: T) {
         super(type);
@@ -12,26 +12,26 @@ export class UnitValueTypeClass<TName extends string, T> extends CommonTypeClass
     }
 }
 
-export class UnitTypeClass<TName extends string, T> extends CommonTypeClass<TName> {
-    private value: T | ErrorTypeClass;
-    constructor(type: TName, value: T | ErrorTypeClass) {
+export class UnitTypeClass<TName extends string, T> extends ApexCommonTypeClass<TName> {
+    private value: T | ApexErrorTypeClass;
+    constructor(type: TName, value: T | ApexErrorTypeClass) {
         super(type);
         this.value = value;
     }
 
-    getValue(): T | ErrorTypeClass {
+    getValue(): T | ApexErrorTypeClass {
         return this.value;
     }
 }
 
-export class UnitListTypeClass<TName extends string, T> extends CommonTypeClass<TName> {
-    private value: (T | ErrorTypeClass)[];
-    constructor(type: TName, value: (T | ErrorTypeClass)[]) {
+export class UnitListTypeClass<TName extends string, T> extends ApexCommonTypeClass<TName> {
+    private value: (T | ApexErrorTypeClass)[];
+    constructor(type: TName, value: (T | ApexErrorTypeClass)[]) {
         super(type);
         this.value = value;
     }
 
-    getValue(): (T | ErrorTypeClass)[] {
+    getValue(): (T | ApexErrorTypeClass)[] {
         return this.value;
     }
 }
@@ -41,7 +41,7 @@ export type UnitAllTypeClass =
     | UnitTypeClass<string, unknown>
     | UnitListTypeClass<string, unknown>;
 
-export const isUnitTypeAll = (target: CommonTypeClass<string>): target is UnitAllTypeClass => {
+export const isUnitTypeAll = (target: ApexCommonTypeClass<string>): target is UnitAllTypeClass => {
     return (
         target instanceof UnitValueTypeClass ||
         target instanceof UnitTypeClass ||

@@ -15,14 +15,14 @@ import { IdCreatedNamePairTypeClass } from './idCreatedNamePair';
 import { MapCreatorRestPairTypeClass } from './mapCreatorRestPair';
 import { ElementValuePairsTypeClass } from './elementValuePairs';
 
-import { CommonVisitor } from '../commonVisitor';
+import { ApexCommonVisitor } from '../commonVisitor';
 
 export { isElementValuePairType, ElementValuePairTypeClass } from './elementValuePair';
 export { isIdCreatedNamePairType, IdCreatedNamePairTypeClass } from './idCreatedNamePair';
 export { isMapCreatorRestPairType, MapCreatorRestPairTypeClass } from './mapCreatorRestPair';
 export { isElementValuePairsType, ElementValuePairsTypeClass } from './elementValuePairs';
 
-export class PairVisitor extends CommonVisitor<PairAllTypeClass> {
+export class PairVisitor extends ApexCommonVisitor<PairAllTypeClass> {
     visitIdCreatedNamePair(ctx: IdCreatedNamePairContext) {
         return IdCreatedNamePairTypeClass.create(ctx);
     }

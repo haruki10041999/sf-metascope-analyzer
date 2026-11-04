@@ -128,6 +128,8 @@ const input = [
 | `objectKey` | `${type}_${hash(内容)}`。内容は `sourceInfo` / `objectKey` / `sourceKey` を除いたもので、**子の内容も含む** | 文の中身 (子孫を含む) が変わったとき           | **同じ値になる**           |
 | `sourceKey` | `${type}_${hash(sourceInfo)}`。`sourceInfo` は `ctx.getText()` と開始・終了位置 (offset / line / column)    | 中身が変わったとき、**または位置がずれたとき** | 位置が違うので別の値になる |
 
+`offset` は改行コード (CRLF / LF) で変わるので、`ApexParser.parseApexClass` はソースを LF にそろえてから解析する (`.editorconfig` が CRLF のため、エディタで保存しただけで sourceKey が変わるのを防ぐ)。
+
 ここから次のことが言える。
 
 1. **`objectKey` が同じなら、その文は子孫まで含めて同じ内容。** 中身を見て比べる必要はない。

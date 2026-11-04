@@ -15,7 +15,12 @@ import {
     isSoqlFieldsParameterType,
 } from '../parameterVisitor';
 import { LocationValueTypeClass, ValueVisitor, isLocationValueType } from '../valueVisitor';
-import { ErrorTypeClass, CommonTypeClass, isValidClass, isValidClassList } from '../commonVisitor';
+import {
+    ApexErrorTypeClass,
+    ApexCommonTypeClass,
+    isApexValidClass,
+    isApexValidClassList,
+} from '../commonVisitor';
 
 type NormalSoqlFunctionType =
     'AVG' | 'COUNT_DISTINCT' | 'MIN' | 'MAX' | 'SUM' | 'TOLABEL' | 'GROUPING' | 'CONVERT_CURRENCY';
@@ -97,18 +102,18 @@ type SoqlParameterType =
     | FieldNameTypeClass
     | DateFieldNameTypeClass
     | SoqlFieldsParameterTypeClass
-    | (LocationValueTypeClass | ErrorTypeClass | string)[]
+    | (LocationValueTypeClass | ApexErrorTypeClass | string)[]
     | SoqlFunctionTypeClass;
 
 export class SoqlFunctionTypeClass extends QueryValueTypeClass<
     'soqlFunction',
     SoqlFunctionValueType
 > {
-    private param: SoqlParameterType | ErrorTypeClass | null = null;
+    private param: SoqlParameterType | ApexErrorTypeClass | null = null;
 
     private constructor(
         value: SoqlFunctionValueType,
-        param: SoqlParameterType | ErrorTypeClass | null,
+        param: SoqlParameterType | ApexErrorTypeClass | null,
     ) {
         super('soqlFunction', value);
         this.param = param;
@@ -128,8 +133,8 @@ export class SoqlFunctionTypeClass extends QueryValueTypeClass<
             throw new Error('値が異常です。SoqlFunctionContext: ' + ctx.getText());
         }
 
-        let value: SoqlFunctionValueType | ErrorTypeClass;
-        let param: SoqlParameterType | ErrorTypeClass | null = null;
+        let value: SoqlFunctionValueType | ApexErrorTypeClass;
+        let param: SoqlParameterType | ApexErrorTypeClass | null = null;
 
         if (isNormalFunctionType(ctx)) {
             if (ctx.AVG()) {
@@ -150,7 +155,7 @@ export class SoqlFunctionTypeClass extends QueryValueTypeClass<
                 value = 'CONVERT_CURRENCY';
             }
 
-            param = isValidClass(
+            param = isApexValidClass(
                 new NameVisitor().visit(ctx.fieldName()),
                 isFieldNameType,
                 'fieldName',
@@ -184,7 +189,7 @@ export class SoqlFunctionTypeClass extends QueryValueTypeClass<
                 value = 'WEEK_IN_YEAR';
             }
 
-            param = isValidClass(
+            param = isApexValidClass(
                 new NameVisitor().visit(ctx.dateFieldName()),
                 isDateFieldNameType,
                 'dateFieldName',
@@ -194,7 +199,7 @@ export class SoqlFunctionTypeClass extends QueryValueTypeClass<
 
             // `COUNT()` は引数なし、`COUNT(field)` は fieldName
             if (ctx.fieldName()) {
-                param = isValidClass(
+                param = isApexValidClass(
                     new NameVisitor().visit(ctx.fieldName()),
                     isFieldNameType,
                     'fieldName',
@@ -204,13 +209,13 @@ export class SoqlFunctionTypeClass extends QueryValueTypeClass<
             value = 'FORMAT';
 
             if (ctx.fieldName()) {
-                param = isValidClass(
+                param = isApexValidClass(
                     new NameVisitor().visit(ctx.fieldName()),
                     isFieldNameType,
                     'fieldName',
                 );
             } else if (ctx.soqlFunction()) {
-                param = isValidClass(
+                param = isApexValidClass(
                     new QueryVisitor().visit(ctx.soqlFunction()),
                     isSoqlFunctionType,
                     'soqlFunction',
@@ -219,7 +224,7 @@ export class SoqlFunctionTypeClass extends QueryValueTypeClass<
         } else if (isFieldsFunctionType(ctx)) {
             value = 'FIELDS';
 
-            param = isValidClass(
+            param = isApexValidClass(
                 new ParameterVisitor().visit(ctx.soqlFieldsParameter()),
                 isSoqlFieldsParameterType,
                 'soqlFieldsParameter',
@@ -227,10 +232,10 @@ export class SoqlFunctionTypeClass extends QueryValueTypeClass<
         } else {
             value = 'DISTANCE';
 
-            const distanceParam: (LocationValueTypeClass | ErrorTypeClass | string)[] = [];
+            const distanceParam: (LocationValueTypeClass | ApexErrorTypeClass | string)[] = [];
 
             distanceParam.push(
-                ...isValidClassList(
+                ...isApexValidClassList(
                     ctx.locationValue_list() || [],
                     (ctx) => new ValueVisitor().visit(ctx),
                     isLocationValueType,
@@ -249,13 +254,13 @@ export class SoqlFunctionTypeClass extends QueryValueTypeClass<
         return new SoqlFunctionTypeClass(value, param);
     }
 
-    getParam(): SoqlParameterType | ErrorTypeClass | null {
+    getParam(): SoqlParameterType | ApexErrorTypeClass | null {
         return this.param;
     }
 }
 
 export const isSoqlFunctionType = (
-    target: CommonTypeClass<string>,
+    target: ApexCommonTypeClass<string>,
 ): target is SoqlFunctionTypeClass => {
     return target instanceof SoqlFunctionTypeClass;
 };

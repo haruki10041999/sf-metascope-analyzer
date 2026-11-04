@@ -1,7 +1,7 @@
 import {
     ComparisonOperatorTypeClass,
     DateFormulaTypeClass,
-    ErrorTypeClass,
+    ApexErrorTypeClass,
     FieldSpecTypeClass,
     LocationValueTypeClass,
     NormalQueryTypeClass,
@@ -556,7 +556,7 @@ export const makeSoqlFunctionAssignRule: AssignForValueRule<
                 {
                     isValid: (
                         target: unknown,
-                    ): target is (LocationValueTypeClass | ErrorTypeClass | string)[] =>
+                    ): target is (LocationValueTypeClass | ApexErrorTypeClass | string)[] =>
                         Array.isArray(target) &&
                         target.every(
                             (t) =>
@@ -564,7 +564,9 @@ export const makeSoqlFunctionAssignRule: AssignForValueRule<
                                 typeof t === 'string' ||
                                 isTargetTypeClass(t, isErrorType),
                         ),
-                    construct: (values: (LocationValueTypeClass | ErrorTypeClass | string)[]) => {
+                    construct: (
+                        values: (LocationValueTypeClass | ApexErrorTypeClass | string)[],
+                    ) => {
                         return values.map((v) =>
                             assignMultiClass(v, [
                                 makeStringAssignRule,

@@ -7,7 +7,7 @@ import {
     ExpressionVisitor,
     isBasedExpressionType,
 } from '../expressionVisitor';
-import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
+import { ApexErrorTypeClass, ApexCommonTypeClass, isApexValidClass } from '../commonVisitor';
 
 export class MapCreatorRestPairTypeClass extends PairTypeClass<
     'mapCreatorRestPair',
@@ -15,8 +15,8 @@ export class MapCreatorRestPairTypeClass extends PairTypeClass<
     BasedExpressionTypeClass
 > {
     private constructor(
-        left: BasedExpressionTypeClass | ErrorTypeClass,
-        right: BasedExpressionTypeClass | ErrorTypeClass,
+        left: BasedExpressionTypeClass | ApexErrorTypeClass,
+        right: BasedExpressionTypeClass | ApexErrorTypeClass,
     ) {
         super('mapCreatorRestPair', left, right);
     }
@@ -27,12 +27,12 @@ export class MapCreatorRestPairTypeClass extends PairTypeClass<
         }
 
         return new MapCreatorRestPairTypeClass(
-            isValidClass(
+            isApexValidClass(
                 new ExpressionVisitor().visit(ctx.expression(0)),
                 isBasedExpressionType,
                 'expression',
             ),
-            isValidClass(
+            isApexValidClass(
                 new ExpressionVisitor().visit(ctx.expression(1)),
                 isBasedExpressionType,
                 'expression',
@@ -42,7 +42,7 @@ export class MapCreatorRestPairTypeClass extends PairTypeClass<
 }
 
 export const isMapCreatorRestPairType = (
-    target: CommonTypeClass<string>,
+    target: ApexCommonTypeClass<string>,
 ): target is MapCreatorRestPairTypeClass => {
     return target instanceof MapCreatorRestPairTypeClass;
 };

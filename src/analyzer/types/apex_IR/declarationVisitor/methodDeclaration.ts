@@ -10,21 +10,21 @@ import {
     ParameterVisitor,
     isFormalParametersType,
 } from '../parameterVisitor';
-import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
+import { ApexErrorTypeClass, ApexCommonTypeClass, isApexValidClass } from '../commonVisitor';
 
 export class MethodDeclarationTypeClass extends DeclarationTypeClass<
     'methodDeclaration',
     NormalIdTypeClass
 > {
-    private valueType: TypeRefTypeClass | 'void' | ErrorTypeClass;
-    private param: FormalParametersTypeClass | ErrorTypeClass | null = null;
-    private block: NormalBlockTypeClass | ErrorTypeClass | null;
+    private valueType: TypeRefTypeClass | 'void' | ApexErrorTypeClass;
+    private param: FormalParametersTypeClass | ApexErrorTypeClass | null = null;
+    private block: NormalBlockTypeClass | ApexErrorTypeClass | null;
 
     private constructor(
-        value: NormalIdTypeClass | ErrorTypeClass,
-        valueType: TypeRefTypeClass | 'void' | ErrorTypeClass,
-        param: FormalParametersTypeClass | ErrorTypeClass | null,
-        block: NormalBlockTypeClass | ErrorTypeClass | null,
+        value: NormalIdTypeClass | ApexErrorTypeClass,
+        valueType: TypeRefTypeClass | 'void' | ApexErrorTypeClass,
+        param: FormalParametersTypeClass | ApexErrorTypeClass | null,
+        block: NormalBlockTypeClass | ApexErrorTypeClass | null,
     ) {
         super('methodDeclaration', value);
         this.valueType = valueType;
@@ -38,12 +38,16 @@ export class MethodDeclarationTypeClass extends DeclarationTypeClass<
         }
 
         return new MethodDeclarationTypeClass(
-            isValidClass(new IdVisitor().visit(ctx.id()), isNormalIdType, 'id'),
+            isApexValidClass(new IdVisitor().visit(ctx.id()), isNormalIdType, 'id'),
             ctx.VOID()
                 ? 'void'
-                : isValidClass(new TypeVisitor().visit(ctx.typeRef()), isTypeRefType, 'typeRef'),
+                : isApexValidClass(
+                      new TypeVisitor().visit(ctx.typeRef()),
+                      isTypeRefType,
+                      'typeRef',
+                  ),
             ctx.formalParameters()
-                ? isValidClass(
+                ? isApexValidClass(
                       new ParameterVisitor().visit(ctx.formalParameters()),
                       isFormalParametersType,
                       'formalParameters',
@@ -51,26 +55,31 @@ export class MethodDeclarationTypeClass extends DeclarationTypeClass<
                 : null,
             // abstract メソッドは本体を持たない（`void run();`）
             ctx.block()
-                ? isValidClass(new BlockVisitor().visit(ctx.block()), isNormalBlockType, 'block')
+                ? isApexValidClass(
+                      new BlockVisitor().visit(ctx.block()),
+                      isNormalBlockType,
+                      'block',
+                  )
                 : null,
         );
     }
 
-    getValueType(): TypeRefTypeClass | 'void' | ErrorTypeClass {
+    getValueType(): TypeRefTypeClass | 'void' | ApexErrorTypeClass {
         return this.valueType;
     }
 
-    getParam(): FormalParametersTypeClass | ErrorTypeClass | null {
+    getParam(): FormalParametersTypeClass | ApexErrorTypeClass | null {
         return this.param;
     }
 
-    getBlock(): NormalBlockTypeClass | ErrorTypeClass | null {
+    getBlock(): NormalBlockTypeClass | ApexErrorTypeClass | null {
         return this.block;
     }
 }
 
 export const isMethodDeclarationType = (
-    target: CommonTypeClass<string>,
+    target: ApexCommonTypeClass<string>,
 ): target is MethodDeclarationTypeClass => {
     return target instanceof MethodDeclarationTypeClass;
 };
+

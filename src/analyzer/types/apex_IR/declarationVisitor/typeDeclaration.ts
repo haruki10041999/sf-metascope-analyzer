@@ -12,7 +12,12 @@ import {
 } from '.';
 
 import { NormalModifierTypeClass, ModifierVisitor, isNormalModifierType } from '../modifierVisitor';
-import { ErrorTypeClass, CommonTypeClass, isValidClass, isValidClassList } from '../commonVisitor';
+import {
+    ApexErrorTypeClass,
+    ApexCommonTypeClass,
+    isApexValidClass,
+    isApexValidClassList,
+} from '../commonVisitor';
 
 export type TypeDeclarationClassType =
     ClassDeclarationTypeClass | EnumDeclarationTypeClass | InterfaceDeclarationTypeClass;
@@ -21,10 +26,10 @@ export class TypeDeclarationTypeClass extends DeclarationTypeClass<
     'typeDeclaration',
     TypeDeclarationClassType
 > {
-    private modifier: (NormalModifierTypeClass | ErrorTypeClass)[];
+    private modifier: (NormalModifierTypeClass | ApexErrorTypeClass)[];
     private constructor(
-        value: TypeDeclarationClassType | ErrorTypeClass,
-        modifier: (NormalModifierTypeClass | ErrorTypeClass)[],
+        value: TypeDeclarationClassType | ApexErrorTypeClass,
+        modifier: (NormalModifierTypeClass | ApexErrorTypeClass)[],
     ) {
         super('typeDeclaration', value);
         this.modifier = modifier;
@@ -35,21 +40,21 @@ export class TypeDeclarationTypeClass extends DeclarationTypeClass<
             throw new Error('値が異常です。TypeDeclarationType: ' + ctx.getText());
         }
 
-        let value: TypeDeclarationClassType | ErrorTypeClass;
+        let value: TypeDeclarationClassType | ApexErrorTypeClass;
         if (ctx.classDeclaration()) {
-            value = isValidClass(
+            value = isApexValidClass(
                 new DeclarationVisitor().visit(ctx.classDeclaration()),
                 isClassDeclarationType,
                 'classDeclaration',
             );
         } else if (ctx.enumDeclaration()) {
-            value = isValidClass(
+            value = isApexValidClass(
                 new DeclarationVisitor().visit(ctx.enumDeclaration()),
                 isEnumDeclarationType,
                 'enumDeclaration',
             );
         } else {
-            value = isValidClass(
+            value = isApexValidClass(
                 new DeclarationVisitor().visit(ctx.interfaceDeclaration()),
                 isInterfaceDeclarationType,
                 'interfaceDeclaration',
@@ -58,7 +63,7 @@ export class TypeDeclarationTypeClass extends DeclarationTypeClass<
 
         return new TypeDeclarationTypeClass(
             value,
-            isValidClassList(
+            isApexValidClassList(
                 ctx.modifier_list(),
                 (ctx) => new ModifierVisitor().visit(ctx),
                 isNormalModifierType,
@@ -67,13 +72,14 @@ export class TypeDeclarationTypeClass extends DeclarationTypeClass<
         );
     }
 
-    getModifier(): (NormalModifierTypeClass | ErrorTypeClass)[] {
+    getModifier(): (NormalModifierTypeClass | ApexErrorTypeClass)[] {
         return this.modifier;
     }
 }
 
 export const isTypeDeclarationType = (
-    target: CommonTypeClass<string>,
+    target: ApexCommonTypeClass<string>,
 ): target is TypeDeclarationTypeClass => {
     return target instanceof TypeDeclarationTypeClass;
 };
+

@@ -34,7 +34,7 @@ import { SubFieldListTypeClass } from './subFieldList';
 import { FieldListTypeClass } from './fieldList';
 import { FieldSpecListTypeClass } from './fieldSpecList';
 
-import { CommonVisitor } from '../commonVisitor';
+import { ApexCommonVisitor } from '../commonVisitor';
 
 export { isTypeListType, TypeListTypeClass } from './typeList';
 export { isFormalParameterListType, FormalParameterListTypeClass } from './formalParameterList';
@@ -61,7 +61,7 @@ export {
 } from './fieldList';
 export { isFieldSpecListType, FieldSpecListTypeClass } from './fieldSpecList';
 
-export class ListVisitor extends CommonVisitor<ListTypeClass<string, unknown>> {
+export class ListVisitor extends ApexCommonVisitor<ListTypeClass<string, unknown>> {
     visitTypeList(ctx: TypeListContext) {
         return TypeListTypeClass.create(ctx);
     }

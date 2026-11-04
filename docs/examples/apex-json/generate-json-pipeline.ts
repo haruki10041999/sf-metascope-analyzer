@@ -1,7 +1,7 @@
 /**
  * apex の JSON 生成の流れを、サンプルごとに段階別の JSON として出力する。
  *
- * 1. ソース → IR（UnitVisitor）→ CommonType（converter）。構文エラーは CommonErrorListener で収集
+ * 1. ソース → IR（UnitVisitor）→ CommonType（converter）。構文エラーは ApexCommonErrorListener で収集
  * 2. CommonType → ConvertNode + SourceJson[]（makeConvertType）
  * 3. ConvertNode → JSON（make*UnitJson）
  * 4. JSON に残った objectKey / sourceKey だけで SourceJson[] を作り直す（regenerateSourceObjects）
@@ -31,7 +31,11 @@ const outputDirectory = new URL('./output/', import.meta.url);
 const targets: { file: string; rule: UnitRule; url: URL }[] = [
     ...samples.map(({ file, rule }) => ({ file, rule, url: sampleUrl(file) })),
     // エラー経路の確認用（構文エラーを含む）
-    { file: 'broken.apex', rule: unitRules.anonymous, url: new URL('./broken.apex', import.meta.url) },
+    {
+        file: 'broken.apex',
+        rule: unitRules.anonymous,
+        url: new URL('./broken.apex', import.meta.url),
+    },
 ];
 
 // 集計用: ツリー中の { type: 'error' }（converter のエラー）と { kind: 'error' }（ErrorJson）を数える
@@ -88,3 +92,4 @@ for (const { file, rule, url } of targets) {
     console.log(JSON.stringify(summary));
     console.log(`  -> ${fileURLToPath(directory)}`);
 }
+

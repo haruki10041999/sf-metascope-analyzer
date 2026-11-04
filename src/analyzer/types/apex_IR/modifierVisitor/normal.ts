@@ -2,7 +2,12 @@ import { ModifierContext } from '@apexdevtools/apex-parser';
 
 import { AnnotationTypeClass, ModifierTypeClass, ModifierVisitor, isAnnotationType } from '.';
 
-import { CommonTypeClass, ErrorTypeClass, isErrorType, isValidClass } from '../commonVisitor';
+import {
+    ApexCommonTypeClass,
+    ApexErrorTypeClass,
+    isErrorType,
+    isApexValidClass,
+} from '../commonVisitor';
 
 type NormalModifierValueType =
     | 'GLOBAL'
@@ -26,7 +31,7 @@ export class NormalModifierTypeClass extends ModifierTypeClass<
     'modifier',
     NormalModifierValueType
 > {
-    private constructor(value: NormalModifierValueType | ErrorTypeClass) {
+    private constructor(value: NormalModifierValueType | ApexErrorTypeClass) {
         super('modifier', value);
     }
 
@@ -52,7 +57,7 @@ export class NormalModifierTypeClass extends ModifierTypeClass<
             throw new Error('値が異常です。ModifierContext: ' + ctx.getText());
         }
 
-        let value: NormalModifierValueType | ErrorTypeClass;
+        let value: NormalModifierValueType | ApexErrorTypeClass;
         if (ctx.GLOBAL()) {
             value = 'GLOBAL';
         } else if (ctx.PUBLIC()) {
@@ -84,7 +89,7 @@ export class NormalModifierTypeClass extends ModifierTypeClass<
         } else if (ctx.INHERITED() && ctx.SHARING()) {
             value = 'INHERITED_SHARING';
         } else {
-            value = isValidClass(
+            value = isApexValidClass(
                 new ModifierVisitor().visit(ctx.annotation()),
                 isAnnotationType,
                 'annotation',
@@ -96,7 +101,8 @@ export class NormalModifierTypeClass extends ModifierTypeClass<
 }
 
 export const isNormalModifierType = (
-    target: CommonTypeClass<string>,
+    target: ApexCommonTypeClass<string>,
 ): target is NormalModifierTypeClass => {
     return target instanceof NormalModifierTypeClass;
 };
+

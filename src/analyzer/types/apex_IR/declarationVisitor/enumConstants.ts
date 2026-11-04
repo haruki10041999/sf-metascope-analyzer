@@ -3,13 +3,13 @@ import { EnumConstantsContext } from '@apexdevtools/apex-parser';
 import { DeclarationListTypeClass } from '.';
 
 import { NormalIdTypeClass, IdVisitor, isNormalIdType } from '../idVisitor';
-import { ErrorTypeClass, CommonTypeClass, isValidClassList } from '../commonVisitor';
+import { ApexErrorTypeClass, ApexCommonTypeClass, isApexValidClassList } from '../commonVisitor';
 
 export class EnumConstantsTypeClass extends DeclarationListTypeClass<
     'enumConstants',
     NormalIdTypeClass
 > {
-    private constructor(value: (NormalIdTypeClass | ErrorTypeClass)[]) {
+    private constructor(value: (NormalIdTypeClass | ApexErrorTypeClass)[]) {
         super('enumConstants', value);
     }
 
@@ -19,7 +19,7 @@ export class EnumConstantsTypeClass extends DeclarationListTypeClass<
         }
 
         return new EnumConstantsTypeClass(
-            isValidClassList(
+            isApexValidClassList(
                 ctx.id_list(),
                 (ctx) => new IdVisitor().visit(ctx),
                 isNormalIdType,
@@ -30,7 +30,7 @@ export class EnumConstantsTypeClass extends DeclarationListTypeClass<
 }
 
 export const isEnumConstantsType = (
-    target: CommonTypeClass<string>,
+    target: ApexCommonTypeClass<string>,
 ): target is EnumConstantsTypeClass => {
     return target instanceof EnumConstantsTypeClass;
 };

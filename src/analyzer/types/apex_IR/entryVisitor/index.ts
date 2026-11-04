@@ -11,12 +11,12 @@ import type { EntryTypeClass } from './base';
 import { SelectEntryTypeClass } from './selectEntry';
 import { SubFieldEntryTypeClass } from './subFieldEntry';
 
-import { CommonVisitor } from '../commonVisitor';
+import { ApexCommonVisitor } from '../commonVisitor';
 
 export { isSelectEntryType, SelectEntryTypeClass } from './selectEntry';
 export { isSubFieldEntryType, SubFieldEntryTypeClass } from './subFieldEntry';
 
-export class EntryVisitor extends CommonVisitor<EntryTypeClass<string, unknown>> {
+export class EntryVisitor extends ApexCommonVisitor<EntryTypeClass<string, unknown>> {
     visitSelectEntry(ctx: SelectEntryContext) {
         return SelectEntryTypeClass.create(ctx);
     }

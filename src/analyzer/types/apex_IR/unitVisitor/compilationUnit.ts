@@ -7,13 +7,13 @@ import {
     DeclarationVisitor,
     isTypeDeclarationType,
 } from '../declarationVisitor';
-import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
+import { ApexErrorTypeClass, ApexCommonTypeClass, isApexValidClass } from '../commonVisitor';
 
 export class CompilationUnitTypeClass extends UnitTypeClass<
     'compilationUnit',
     TypeDeclarationTypeClass
 > {
-    private constructor(value: TypeDeclarationTypeClass | ErrorTypeClass) {
+    private constructor(value: TypeDeclarationTypeClass | ApexErrorTypeClass) {
         super('compilationUnit', value);
     }
 
@@ -23,7 +23,7 @@ export class CompilationUnitTypeClass extends UnitTypeClass<
         }
 
         return new CompilationUnitTypeClass(
-            isValidClass(
+            isApexValidClass(
                 new DeclarationVisitor().visit(ctx.typeDeclaration()),
                 isTypeDeclarationType,
                 'typeDeclaration',
@@ -33,7 +33,8 @@ export class CompilationUnitTypeClass extends UnitTypeClass<
 }
 
 export const isCompilationUnitType = (
-    target: CommonTypeClass<string>,
+    target: ApexCommonTypeClass<string>,
 ): target is CompilationUnitTypeClass => {
     return target instanceof CompilationUnitTypeClass;
 };
+

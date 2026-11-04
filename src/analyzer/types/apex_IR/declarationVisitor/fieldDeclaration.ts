@@ -8,17 +8,17 @@ import {
     VariableVisitor,
     isVariableDeclaratorsType,
 } from '../variableVisitor';
-import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
+import { ApexErrorTypeClass, ApexCommonTypeClass, isApexValidClass } from '../commonVisitor';
 
 export class FieldDeclarationTypeClass extends DeclarationTypeClass<
     'fieldDeclaration',
     VariableDeclaratorsTypeClass
 > {
-    private valueType: TypeRefTypeClass | ErrorTypeClass;
+    private valueType: TypeRefTypeClass | ApexErrorTypeClass;
 
     private constructor(
-        value: VariableDeclaratorsTypeClass | ErrorTypeClass,
-        valueType: TypeRefTypeClass | ErrorTypeClass,
+        value: VariableDeclaratorsTypeClass | ApexErrorTypeClass,
+        valueType: TypeRefTypeClass | ApexErrorTypeClass,
     ) {
         super('fieldDeclaration', value);
         this.valueType = valueType;
@@ -30,22 +30,22 @@ export class FieldDeclarationTypeClass extends DeclarationTypeClass<
         }
 
         return new FieldDeclarationTypeClass(
-            isValidClass(
+            isApexValidClass(
                 new VariableVisitor().visit(ctx.variableDeclarators()),
                 isVariableDeclaratorsType,
                 'variableDeclarators',
             ),
-            isValidClass(new TypeVisitor().visit(ctx.typeRef()), isTypeRefType, 'typeRef'),
+            isApexValidClass(new TypeVisitor().visit(ctx.typeRef()), isTypeRefType, 'typeRef'),
         );
     }
 
-    getValueType(): TypeRefTypeClass | ErrorTypeClass {
+    getValueType(): TypeRefTypeClass | ApexErrorTypeClass {
         return this.valueType;
     }
 }
 
 export const isFieldDeclarationType = (
-    target: CommonTypeClass<string>,
+    target: ApexCommonTypeClass<string>,
 ): target is FieldDeclarationTypeClass => {
     return target instanceof FieldDeclarationTypeClass;
 };

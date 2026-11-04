@@ -1,14 +1,7 @@
 import typia from 'typia';
 
-import {
-    ErrorJson,
-    JsonType,
-    makeJsonType,
-    convertValue,
-    ConvertType,
-    isErrorNode,
-    makeErrorJson,
-} from '../commons';
+import { convertValue, ConvertType, isErrorNode } from '../commons';
+import { ErrorJson, JsonType, makeJsonType, makeErrorJson } from '../../commons';
 
 import {
     WhereClauseType,
@@ -117,4 +110,3 @@ export const makeWhereJson = (target: ConvertType<WhereClauseType>): WhereJson |
         condition: makeWhereLogicalExpressionJson(target.value),
     };
 };
-

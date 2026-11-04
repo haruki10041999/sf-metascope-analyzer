@@ -2,10 +2,10 @@ import { SetterContext } from '@apexdevtools/apex-parser';
 
 import { NormalBlockTypeClass, BlockTypeClass, BlockVisitor, isNormalBlockType } from '.';
 
-import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
+import { ApexErrorTypeClass, ApexCommonTypeClass, isApexValidClass } from '../commonVisitor';
 
 export class SetterTypeClass extends BlockTypeClass<'setter', NormalBlockTypeClass | null> {
-    private constructor(value: NormalBlockTypeClass | ErrorTypeClass | null) {
+    private constructor(value: NormalBlockTypeClass | ApexErrorTypeClass | null) {
         super('setter', value);
     }
 
@@ -16,12 +16,16 @@ export class SetterTypeClass extends BlockTypeClass<'setter', NormalBlockTypeCla
 
         return new SetterTypeClass(
             ctx.block()
-                ? isValidClass(new BlockVisitor().visit(ctx.block()), isNormalBlockType, 'block')
+                ? isApexValidClass(
+                      new BlockVisitor().visit(ctx.block()),
+                      isNormalBlockType,
+                      'block',
+                  )
                 : null,
         );
     }
 }
 
-export const isSetterType = (target: CommonTypeClass<string>): target is SetterTypeClass => {
+export const isSetterType = (target: ApexCommonTypeClass<string>): target is SetterTypeClass => {
     return target instanceof SetterTypeClass;
 };

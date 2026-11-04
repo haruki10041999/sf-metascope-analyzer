@@ -7,7 +7,7 @@ import {
     isBasedExpressionType,
 } from '.';
 
-import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
+import { ApexErrorTypeClass, ApexCommonTypeClass, isApexValidClass } from '../commonVisitor';
 
 export class CoalExpressionTypeClass extends DoubleStringOperatorExpressionTypeClass<
     'coalExpression',
@@ -16,8 +16,8 @@ export class CoalExpressionTypeClass extends DoubleStringOperatorExpressionTypeC
     BasedExpressionTypeClass
 > {
     private constructor(
-        left: BasedExpressionTypeClass | ErrorTypeClass,
-        right: BasedExpressionTypeClass | ErrorTypeClass,
+        left: BasedExpressionTypeClass | ApexErrorTypeClass,
+        right: BasedExpressionTypeClass | ApexErrorTypeClass,
     ) {
         super('coalExpression', left, right, '??');
     }
@@ -28,12 +28,12 @@ export class CoalExpressionTypeClass extends DoubleStringOperatorExpressionTypeC
         }
 
         return new CoalExpressionTypeClass(
-            isValidClass(
+            isApexValidClass(
                 new ExpressionVisitor().visit(ctx.expression(0)),
                 isBasedExpressionType,
                 'expression',
             ),
-            isValidClass(
+            isApexValidClass(
                 new ExpressionVisitor().visit(ctx.expression(1)),
                 isBasedExpressionType,
                 'expression',
@@ -43,7 +43,8 @@ export class CoalExpressionTypeClass extends DoubleStringOperatorExpressionTypeC
 }
 
 export const isCoalExpressionType = (
-    target: CommonTypeClass<string>,
+    target: ApexCommonTypeClass<string>,
 ): target is CoalExpressionTypeClass => {
     return target instanceof CoalExpressionTypeClass;
 };
+

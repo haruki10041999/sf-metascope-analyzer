@@ -1,6 +1,6 @@
 import { TypeJson, hash } from '../../../../types';
 
-import { JsonNode, getObjectKey, getValueKey } from '../commons';
+import { JsonNode, getObjectKey, getValueKey } from '../../../commons/diff/commons';
 import { getTypeKey } from '../type';
 
 // 方針: docs/apex-gumtree-diff.md 3 章・4 章

@@ -17,7 +17,7 @@ import {
     isFieldDeclarationType,
 } from '.';
 
-import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
+import { ApexErrorTypeClass, ApexCommonTypeClass, isApexValidClass } from '../commonVisitor';
 
 type TriggerMemberDeclarationTypeClassType =
     | MethodDeclarationTypeClass
@@ -31,7 +31,7 @@ export class TriggerMemberDeclarationTypeClass extends DeclarationTypeClass<
     'triggerMemberDeclaration',
     TriggerMemberDeclarationTypeClassType
 > {
-    private constructor(value: TriggerMemberDeclarationTypeClassType | ErrorTypeClass) {
+    private constructor(value: TriggerMemberDeclarationTypeClassType | ApexErrorTypeClass) {
         super('triggerMemberDeclaration', value);
     }
 
@@ -47,39 +47,39 @@ export class TriggerMemberDeclarationTypeClass extends DeclarationTypeClass<
             throw new Error('値が異常です。TriggerMemberDeclarationContext: ' + ctx.getText());
         }
 
-        let value: TriggerMemberDeclarationTypeClassType | ErrorTypeClass;
+        let value: TriggerMemberDeclarationTypeClassType | ApexErrorTypeClass;
         if (ctx.methodDeclaration()) {
-            value = isValidClass(
+            value = isApexValidClass(
                 new DeclarationVisitor().visit(ctx.methodDeclaration()),
                 isMethodDeclarationType,
                 'MethodDeclaration',
             );
         } else if (ctx.interfaceDeclaration()) {
-            value = isValidClass(
+            value = isApexValidClass(
                 new DeclarationVisitor().visit(ctx.interfaceDeclaration()),
                 isInterfaceDeclarationType,
                 'InterfaceDeclaration',
             );
         } else if (ctx.classDeclaration()) {
-            value = isValidClass(
+            value = isApexValidClass(
                 new DeclarationVisitor().visit(ctx.classDeclaration()),
                 isClassDeclarationType,
                 'ClassDeclaration',
             );
         } else if (ctx.enumDeclaration()) {
-            value = isValidClass(
+            value = isApexValidClass(
                 new DeclarationVisitor().visit(ctx.enumDeclaration()),
                 isEnumDeclarationType,
                 'EnumDeclaration',
             );
         } else if (ctx.propertyDeclaration()) {
-            value = isValidClass(
+            value = isApexValidClass(
                 new DeclarationVisitor().visit(ctx.propertyDeclaration()),
                 isPropertyDeclarationType,
                 'PropertyDeclaration',
             );
         } else {
-            value = isValidClass(
+            value = isApexValidClass(
                 new DeclarationVisitor().visit(ctx.fieldDeclaration()),
                 isFieldDeclarationType,
                 'FieldDeclaration',
@@ -91,7 +91,8 @@ export class TriggerMemberDeclarationTypeClass extends DeclarationTypeClass<
 }
 
 export const isTriggerMemberDeclarationType = (
-    target: CommonTypeClass<string>,
+    target: ApexCommonTypeClass<string>,
 ): target is TriggerMemberDeclarationTypeClass => {
     return target instanceof TriggerMemberDeclarationTypeClass;
 };
+

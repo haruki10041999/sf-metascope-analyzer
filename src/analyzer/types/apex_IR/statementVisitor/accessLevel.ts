@@ -2,7 +2,7 @@ import { AccessLevelContext } from '@apexdevtools/apex-parser';
 
 import { StatementValueTypeClass } from '.';
 
-import { CommonTypeClass } from '../commonVisitor';
+import { ApexCommonTypeClass } from '../commonVisitor';
 
 type AccessLevelValueType = 'SYSTEM' | 'USER';
 
@@ -24,7 +24,7 @@ export class AccessLevelTypeClass extends StatementValueTypeClass<
 }
 
 export const isAccessLevelType = (
-    target: CommonTypeClass<string>,
+    target: ApexCommonTypeClass<string>,
 ): target is AccessLevelTypeClass => {
     return target instanceof AccessLevelTypeClass;
 };

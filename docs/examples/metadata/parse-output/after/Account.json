@@ -1,0 +1,304 @@
+{
+  "filePath": "Account",
+  "resolvedError": [],
+  "dataType": "object",
+  "result": {
+    "id": "Account",
+    "base": {
+      "kind": "object",
+      "sourceKeys": {
+        "objectKey": "object_77337bfaccbd1b91",
+        "sourceKey": "object_5e4501090ced50f4"
+      },
+      "apiName": "Account",
+      "objectType": "standard",
+      "sharingModel": "ReadWrite",
+      "enableHistory": false,
+      "fields": [
+        {
+          "kind": "field",
+          "sourceKeys": {
+            "objectKey": "field_8050f1612ac790f5",
+            "sourceKey": "field_e9b180230c37aa13"
+          },
+          "apiName": "Tier__c",
+          "label": "Customer Tier",
+          "type": "Picklist",
+          "valueSet": {
+            "restricted": true,
+            "sorted": false,
+            "values": [
+              {
+                "kind": "picklistValue",
+                "sourceKeys": {
+                  "objectKey": "picklistValue_57899d4a3f43506f",
+                  "sourceKey": "picklistValue_856f67301494b5eb"
+                },
+                "fullName": "Platinum",
+                "label": "Platinum",
+                "default": false
+              },
+              {
+                "kind": "picklistValue",
+                "sourceKeys": {
+                  "objectKey": "picklistValue_8892b2345ea4b0cf",
+                  "sourceKey": "picklistValue_c262693a12b138b2"
+                },
+                "fullName": "Gold",
+                "label": "Gold",
+                "default": true
+              },
+              {
+                "kind": "picklistValue",
+                "sourceKeys": {
+                  "objectKey": "picklistValue_5ca05c9404ebde40",
+                  "sourceKey": "picklistValue_ec1567c3c6550bd2"
+                },
+                "fullName": "Silver",
+                "label": "Silver",
+                "default": false
+              },
+              {
+                "kind": "picklistValue",
+                "sourceKeys": {
+                  "objectKey": "picklistValue_cbe9cfbf5ea776b8",
+                  "sourceKey": "picklistValue_55f4b6aeae376075"
+                },
+                "fullName": "Bronze",
+                "label": "Bronze",
+                "default": false
+              }
+            ]
+          }
+        }
+      ],
+      "validationRules": [
+        {
+          "kind": "validationRule",
+          "sourceKeys": {
+            "objectKey": "validationRule_07648dd08d700d0c",
+            "sourceKey": "validationRule_71df2abd615a8158"
+          },
+          "fullName": "Name_Required",
+          "active": true,
+          "errorConditionFormula": "ISBLANK(Name)",
+          "errorMessage": "Name is required."
+        }
+      ],
+      "listViews": [
+        {
+          "kind": "listView",
+          "sourceKeys": {
+            "objectKey": "listView_dbaeb7554dbfa303",
+            "sourceKey": "listView_ef3e138b50fc4fc3"
+          },
+          "fullName": "AllAccounts",
+          "label": "All Accounts",
+          "filterScope": "Everything",
+          "columns": [
+            "ACCOUNT.NAME",
+            "Tier__c",
+            "ACCOUNT.TYPE"
+          ]
+        }
+      ],
+      "compactLayouts": [
+        {
+          "kind": "compactLayout",
+          "sourceKeys": {
+            "objectKey": "compactLayout_eafc2f29d0af8e85",
+            "sourceKey": "compactLayout_54246797a77fa97d"
+          },
+          "fullName": "AccountCompact",
+          "label": "Account Compact",
+          "fields": [
+            "Name",
+            "Tier__c"
+          ]
+        }
+      ]
+    },
+    "sourceObject": [
+      {
+        "objectKey": "picklistValue_57899d4a3f43506f",
+        "context": "<value>\n                <fullName>Platinum</fullName>\n                <default>false</default>\n                <label>Platinum</label>\n            </value>",
+        "source": [
+          {
+            "sourceKey": "picklistValue_856f67301494b5eb",
+            "filePath": "Account/fields/Tier__c.field-meta.xml",
+            "start": {
+              "offset": 322,
+              "line": 10,
+              "column": 12
+            },
+            "end": {
+              "offset": 477,
+              "line": 14,
+              "column": 20
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "picklistValue_8892b2345ea4b0cf",
+        "context": "<value>\n                <fullName>Gold</fullName>\n                <default>true</default>\n                <label>Gold</label>\n            </value>",
+        "source": [
+          {
+            "sourceKey": "picklistValue_c262693a12b138b2",
+            "filePath": "Account/fields/Tier__c.field-meta.xml",
+            "start": {
+              "offset": 490,
+              "line": 15,
+              "column": 12
+            },
+            "end": {
+              "offset": 636,
+              "line": 19,
+              "column": 20
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "picklistValue_5ca05c9404ebde40",
+        "context": "<value>\n                <fullName>Silver</fullName>\n                <default>false</default>\n                <label>Silver</label>\n            </value>",
+        "source": [
+          {
+            "sourceKey": "picklistValue_ec1567c3c6550bd2",
+            "filePath": "Account/fields/Tier__c.field-meta.xml",
+            "start": {
+              "offset": 649,
+              "line": 20,
+              "column": 12
+            },
+            "end": {
+              "offset": 800,
+              "line": 24,
+              "column": 20
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "picklistValue_cbe9cfbf5ea776b8",
+        "context": "<value>\n                <fullName>Bronze</fullName>\n                <default>false</default>\n                <label>Bronze</label>\n            </value>",
+        "source": [
+          {
+            "sourceKey": "picklistValue_55f4b6aeae376075",
+            "filePath": "Account/fields/Tier__c.field-meta.xml",
+            "start": {
+              "offset": 813,
+              "line": 25,
+              "column": 12
+            },
+            "end": {
+              "offset": 964,
+              "line": 29,
+              "column": 20
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "field_8050f1612ac790f5",
+        "context": "<CustomField xmlns=\"http://soap.sforce.com/2006/04/metadata\">\n    <fullName>Tier__c</fullName>\n    <label>Customer Tier</label>\n    <type>Picklist</type>\n    <valueSet>\n        <restricted>true</restricted>\n        <valueSetDefinition>\n            <sorted>false</sorted>\n            <value>\n                <fullName>Platinum</fullName>\n                <default>false</default>\n                <label>Platinum</label>\n            </value>\n            <value>\n                <fullName>Gold</fullName>\n                <default>true</default>\n                <label>Gold</label>\n            </value>\n            <value>\n                <fullName>Silver</fullName>\n                <default>false</default>\n                <label>Silver</label>\n            </value>\n            <value>\n                <fullName>Bronze</fullName>\n                <default>false</default>\n                <label>Bronze</label>\n            </value>\n        </valueSetDefinition>\n    </valueSet>\n</CustomField>",
+        "source": [
+          {
+            "sourceKey": "field_e9b180230c37aa13",
+            "filePath": "Account/fields/Tier__c.field-meta.xml",
+            "start": {
+              "offset": 39,
+              "line": 2,
+              "column": 0
+            },
+            "end": {
+              "offset": 1025,
+              "line": 32,
+              "column": 14
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "validationRule_07648dd08d700d0c",
+        "context": "<ValidationRule xmlns=\"http://soap.sforce.com/2006/04/metadata\">\n    <fullName>Name_Required</fullName>\n    <active>true</active>\n    <errorConditionFormula>ISBLANK(Name)</errorConditionFormula>\n    <errorMessage>Name is required.</errorMessage>\n</ValidationRule>",
+        "source": [
+          {
+            "sourceKey": "validationRule_71df2abd615a8158",
+            "filePath": "Account/validationRules/Name_Required.validationRule-meta.xml",
+            "start": {
+              "offset": 39,
+              "line": 2,
+              "column": 0
+            },
+            "end": {
+              "offset": 302,
+              "line": 7,
+              "column": 17
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "listView_dbaeb7554dbfa303",
+        "context": "<ListView xmlns=\"http://soap.sforce.com/2006/04/metadata\">\n    <fullName>AllAccounts</fullName>\n    <columns>ACCOUNT.NAME</columns>\n    <columns>Tier__c</columns>\n    <columns>ACCOUNT.TYPE</columns>\n    <filterScope>Everything</filterScope>\n    <label>All Accounts</label>\n</ListView>",
+        "source": [
+          {
+            "sourceKey": "listView_ef3e138b50fc4fc3",
+            "filePath": "Account/listViews/AllAccounts.listView-meta.xml",
+            "start": {
+              "offset": 39,
+              "line": 2,
+              "column": 0
+            },
+            "end": {
+              "offset": 323,
+              "line": 9,
+              "column": 11
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "compactLayout_eafc2f29d0af8e85",
+        "context": "<CompactLayout xmlns=\"http://soap.sforce.com/2006/04/metadata\">\n    <fullName>AccountCompact</fullName>\n    <fields>Name</fields>\n    <fields>Tier__c</fields>\n    <label>Account Compact</label>\n</CompactLayout>",
+        "source": [
+          {
+            "sourceKey": "compactLayout_54246797a77fa97d",
+            "filePath": "Account/compactLayouts/AccountCompact.compactLayout-meta.xml",
+            "start": {
+              "offset": 39,
+              "line": 2,
+              "column": 0
+            },
+            "end": {
+              "offset": 249,
+              "line": 7,
+              "column": 16
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "object_77337bfaccbd1b91",
+        "context": "<CustomObject xmlns=\"http://soap.sforce.com/2006/04/metadata\">\n    <enableHistory>false</enableHistory>\n    <sharingModel>ReadWrite</sharingModel>\n</CustomObject>",
+        "source": [
+          {
+            "sourceKey": "object_5e4501090ced50f4",
+            "filePath": "Account/Account.object-meta.xml",
+            "start": {
+              "offset": 39,
+              "line": 2,
+              "column": 0
+            },
+            "end": {
+              "offset": 201,
+              "line": 5,
+              "column": 15
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

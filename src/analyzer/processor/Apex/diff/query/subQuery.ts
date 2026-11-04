@@ -12,37 +12,37 @@ import {
     makeNodeDiff,
     makeOptionalDiff,
     makeValueDiff,
-} from '../commons';
+} from '../../../commons/diff/commons';
 import { FromClauseJson, FromFieldsDiff, makeFromDiff } from './from';
-import { ForDiff, makeForDiff } from './for';
-import { LimitDiff, makeLimitDiff } from './limit';
-import { OrderByDiff, makeOrderByDiff } from './orderBy';
-import { SelectDiff, makeSelectDiff } from './select';
-import { UpdateListDiff, makeUpdateListDiff } from './updateList';
-import { WhereDiff, makeWhereDiff } from './where';
+import { ForJsonDiff, makeForDiff } from './for';
+import { LimitJsonDiff, makeLimitDiff } from './limit';
+import { OrderByJsonDiff, makeOrderByDiff } from './orderBy';
+import { SelectJsonDiff, makeSelectDiff } from './select';
+import { UpdateListJsonDiff, makeUpdateListDiff } from './updateList';
+import { WhereJsonDiff, makeWhereDiff } from './where';
 
 export type SubQueryEntryJson = SubQueryJson & { alias?: string };
 export type SubQueryBody = Body<SubQueryEntryJson>;
 
 export type SubQueryFieldsDiff = {
-    select: SelectDiff;
+    select: SelectJsonDiff;
     from: FromFieldsDiff | ValueDiff<FromClauseJson | ErrorJson>;
-    where: OptionalDiff<SubQueryJson['where'], WhereDiff>;
-    for: OptionalDiff<SubQueryJson['for'], ForDiff>;
-    orderBy: OptionalDiff<SubQueryJson['orderBy'], OrderByDiff>;
-    limit: OptionalDiff<SubQueryJson['limit'], LimitDiff>;
-    updateList: OptionalDiff<SubQueryJson['updateList'], UpdateListDiff>;
+    where: OptionalDiff<SubQueryJson['where'], WhereJsonDiff>;
+    for: OptionalDiff<SubQueryJson['for'], ForJsonDiff>;
+    orderBy: OptionalDiff<SubQueryJson['orderBy'], OrderByJsonDiff>;
+    limit: OptionalDiff<SubQueryJson['limit'], LimitJsonDiff>;
+    updateList: OptionalDiff<SubQueryJson['updateList'], UpdateListJsonDiff>;
     alias: OptionalDiff<string, ValueDiff<string>>;
 };
 
-export type SubQueryDiff = NodeDiff<'subQuery', SubQueryEntryJson, SubQueryFieldsDiff>;
+export type SubQueryJsonDiff = NodeDiff<'subQuery', SubQueryEntryJson, SubQueryFieldsDiff>;
 
 export const makeSubQueryDiff = (
     before: SubQueryEntryJson | ErrorJson,
     after: SubQueryEntryJson | ErrorJson,
     match: Match = 'slot',
     sources?: Sources,
-): SubQueryDiff =>
+): SubQueryJsonDiff =>
     makeNodeDiff(
         'subQuery',
         before,

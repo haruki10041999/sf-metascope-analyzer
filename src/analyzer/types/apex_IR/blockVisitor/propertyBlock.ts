@@ -10,16 +10,21 @@ import {
 } from '.';
 
 import { NormalModifierTypeClass, ModifierVisitor, isNormalModifierType } from '../modifierVisitor';
-import { ErrorTypeClass, CommonTypeClass, isValidClass, isValidClassList } from '../commonVisitor';
+import {
+    ApexErrorTypeClass,
+    ApexCommonTypeClass,
+    isApexValidClass,
+    isApexValidClassList,
+} from '../commonVisitor';
 
 export class PropertyBlockTypeClass extends BlockTypeClass<
     'propertyBlock',
     GetterTypeClass | SetterTypeClass
 > {
-    private modifier: (NormalModifierTypeClass | ErrorTypeClass)[] = [];
+    private modifier: (NormalModifierTypeClass | ApexErrorTypeClass)[] = [];
     private constructor(
-        value: GetterTypeClass | SetterTypeClass | ErrorTypeClass,
-        modifier: (NormalModifierTypeClass | ErrorTypeClass)[],
+        value: GetterTypeClass | SetterTypeClass | ApexErrorTypeClass,
+        modifier: (NormalModifierTypeClass | ApexErrorTypeClass)[],
     ) {
         super('propertyBlock', value);
         this.modifier = modifier;
@@ -31,14 +36,14 @@ export class PropertyBlockTypeClass extends BlockTypeClass<
         }
 
         return new PropertyBlockTypeClass(
-            isValidClass<GetterTypeClass | SetterTypeClass>(
+            isApexValidClass<GetterTypeClass | SetterTypeClass>(
                 ctx.getter()
                     ? new BlockVisitor().visit(ctx.getter())
                     : new BlockVisitor().visit(ctx.setter()),
                 ctx.getter() ? isGetterType : isSetterType,
                 'value',
             ),
-            isValidClassList(
+            isApexValidClassList(
                 ctx.modifier_list(),
                 (modifierCtx) => new ModifierVisitor().visit(modifierCtx),
                 isNormalModifierType,
@@ -47,13 +52,13 @@ export class PropertyBlockTypeClass extends BlockTypeClass<
         );
     }
 
-    getModifier(): (NormalModifierTypeClass | ErrorTypeClass)[] {
+    getModifier(): (NormalModifierTypeClass | ApexErrorTypeClass)[] {
         return this.modifier;
     }
 }
 
 export const isPropertyBlockType = (
-    target: CommonTypeClass<string>,
+    target: ApexCommonTypeClass<string>,
 ): target is PropertyBlockTypeClass => {
     return target instanceof PropertyBlockTypeClass;
 };

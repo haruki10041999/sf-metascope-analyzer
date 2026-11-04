@@ -1,6 +1,6 @@
-import { ErrorTypeClass, CommonTypeClass } from '../commonVisitor';
+import { ApexErrorTypeClass, ApexCommonTypeClass } from '../commonVisitor';
 
-export class ClauseValueTypeClass<TName extends string, T> extends CommonTypeClass<TName> {
+export class ClauseValueTypeClass<TName extends string, T> extends ApexCommonTypeClass<TName> {
     private value: T;
 
     constructor(type: TName, value: T) {
@@ -13,19 +13,19 @@ export class ClauseValueTypeClass<TName extends string, T> extends CommonTypeCla
     }
 }
 
-export class ClauseTypeClass<TName extends string, T> extends CommonTypeClass<TName> {
-    private value: T | ErrorTypeClass;
-    constructor(type: TName, value: T | ErrorTypeClass) {
+export class ClauseTypeClass<TName extends string, T> extends ApexCommonTypeClass<TName> {
+    private value: T | ApexErrorTypeClass;
+    constructor(type: TName, value: T | ApexErrorTypeClass) {
         super(type);
         this.value = value;
     }
 
-    getValue(): T | ErrorTypeClass {
+    getValue(): T | ApexErrorTypeClass {
         return this.value;
     }
 }
 
-export class ClauseValueListTypeClass<TName extends string, T> extends CommonTypeClass<TName> {
+export class ClauseValueListTypeClass<TName extends string, T> extends ApexCommonTypeClass<TName> {
     private value: T[];
     constructor(type: TName, value: T[]) {
         super(type);
@@ -37,14 +37,14 @@ export class ClauseValueListTypeClass<TName extends string, T> extends CommonTyp
     }
 }
 
-export class ClauseListTypeClass<TName extends string, T> extends CommonTypeClass<TName> {
-    private value: (T | ErrorTypeClass)[];
-    constructor(type: TName, value: (T | ErrorTypeClass)[]) {
+export class ClauseListTypeClass<TName extends string, T> extends ApexCommonTypeClass<TName> {
+    private value: (T | ApexErrorTypeClass)[];
+    constructor(type: TName, value: (T | ApexErrorTypeClass)[]) {
         super(type);
         this.value = value;
     }
 
-    getValue(): (T | ErrorTypeClass)[] {
+    getValue(): (T | ApexErrorTypeClass)[] {
         return this.value;
     }
 }
@@ -55,7 +55,9 @@ export type ClauseAllTypeClass =
     | ClauseValueListTypeClass<string, unknown>
     | ClauseListTypeClass<string, unknown>;
 
-export const isClauseTypeAll = (target: CommonTypeClass<string>): target is ClauseAllTypeClass => {
+export const isClauseTypeAll = (
+    target: ApexCommonTypeClass<string>,
+): target is ClauseAllTypeClass => {
     return (
         target instanceof ClauseValueTypeClass ||
         target instanceof ClauseTypeClass ||

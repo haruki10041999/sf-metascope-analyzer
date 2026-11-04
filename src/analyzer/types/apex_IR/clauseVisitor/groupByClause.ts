@@ -8,19 +8,19 @@ import {
     isLogicalExpressionType,
 } from '../expressionVisitor';
 import { FieldGroupByListTypeClass, ListVisitor, isFieldGroupByListType } from '../listVisitor';
-import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
+import { ApexErrorTypeClass, ApexCommonTypeClass, isApexValidClass } from '../commonVisitor';
 
 export class GroupByClauseTypeClass extends ClauseTypeClass<
     'groupByClause',
     FieldGroupByListTypeClass
 > {
     private mode: 'ROLLUP' | 'CUBE' | null = null;
-    private having: LogicalExpressionTypeClass | ErrorTypeClass | null = null;
+    private having: LogicalExpressionTypeClass | ApexErrorTypeClass | null = null;
 
     private constructor(
-        value: FieldGroupByListTypeClass | ErrorTypeClass,
+        value: FieldGroupByListTypeClass | ApexErrorTypeClass,
         mode: 'ROLLUP' | 'CUBE' | null,
-        having: LogicalExpressionTypeClass | ErrorTypeClass | null,
+        having: LogicalExpressionTypeClass | ApexErrorTypeClass | null,
     ) {
         super('groupByClause', value);
         this.mode = mode;
@@ -33,14 +33,14 @@ export class GroupByClauseTypeClass extends ClauseTypeClass<
         }
 
         return new GroupByClauseTypeClass(
-            isValidClass(
+            isApexValidClass(
                 new ListVisitor().visit(ctx.fieldGroupByList()),
                 isFieldGroupByListType,
                 'fieldGroupByList',
             ),
             ctx.ROLLUP() ? 'ROLLUP' : ctx.CUBE() ? 'CUBE' : null,
             ctx.HAVING() && ctx.logicalExpression()
-                ? isValidClass(
+                ? isApexValidClass(
                       new ExpressionVisitor().visit(ctx.logicalExpression()),
                       isLogicalExpressionType,
                       'logicalExpression',
@@ -53,13 +53,14 @@ export class GroupByClauseTypeClass extends ClauseTypeClass<
         return this.mode;
     }
 
-    getHaving(): LogicalExpressionTypeClass | ErrorTypeClass | null {
+    getHaving(): LogicalExpressionTypeClass | ApexErrorTypeClass | null {
         return this.having;
     }
 }
 
 export const isGroupByClauseType = (
-    target: CommonTypeClass<string>,
+    target: ApexCommonTypeClass<string>,
 ): target is GroupByClauseTypeClass => {
     return target instanceof GroupByClauseTypeClass;
 };
+

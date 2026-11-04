@@ -8,43 +8,43 @@ import {
     ValueDiff,
     makeNodeDiff,
     makeOptionalDiff,
-} from '../commons';
-import { FromClauseJson, FromFieldsDiff, makeFromDiff } from './from';
-import { GroupByDiff, makeGroupByDiff } from './groupby';
-import { OrderByDiff, makeOrderByDiff } from './orderBy';
-import { WhereDiff, makeWhereDiff } from './where';
-import { WithDiff, makeWithDiff } from './with';
-import { AllRowsDiff, makeAllRowsDiff } from './allRows';
-import { ForDiff, makeForDiff } from './for';
-import { LimitDiff, makeLimitDiff } from './limit';
-import { OffsetDiff, makeOffsetDiff } from './offset';
-import { UpdateListDiff, makeUpdateListDiff } from './updateList';
-import { UsingScopeDiff, makeUsingScopeDiff } from './usingScope';
-import { SelectDiff, makeSelectDiff } from './select';
+} from '../../../commons/diff/commons';
+import { FromJsonDiff, makeFromDiff } from './from';
+import { GroupByJsonDiff, makeGroupByDiff } from './groupby';
+import { OrderByJsonDiff, makeOrderByDiff } from './orderBy';
+import { WhereJsonDiff, makeWhereDiff } from './where';
+import { WithJsonDiff, makeWithDiff } from './with';
+import { AllRowsJsonDiff, makeAllRowsDiff } from './allRows';
+import { ForJsonDiff, makeForDiff } from './for';
+import { LimitJsonDiff, makeLimitDiff } from './limit';
+import { OffsetJsonDiff, makeOffsetDiff } from './offset';
+import { UpdateListJsonDiff, makeUpdateListDiff } from './updateList';
+import { UsingScopeJsonDiff, makeUsingScopeDiff } from './usingScope';
+import { SelectJsonDiff, makeSelectDiff } from './select';
 
 export type SoqlFieldsDiff = {
-    select: SelectDiff;
-    from: FromFieldsDiff | ValueDiff<FromClauseJson | ErrorJson>;
-    where: OptionalDiff<SoqlJson['where'], WhereDiff>;
-    for: OptionalDiff<SoqlJson['for'], ForDiff>;
-    usingScope: OptionalDiff<SoqlJson['usingScope'], UsingScopeDiff>;
-    with: OptionalDiff<SoqlJson['with'], WithDiff>;
-    groupBy: OptionalDiff<SoqlJson['groupBy'], GroupByDiff>;
-    orderBy: OptionalDiff<SoqlJson['orderBy'], OrderByDiff>;
-    limit: OptionalDiff<LimitJson | ErrorJson, LimitDiff>;
-    offset: OptionalDiff<OffsetJson | ErrorJson, OffsetDiff>;
-    allRows: OptionalDiff<SoqlJson['allRows'], AllRowsDiff>;
-    updateList: OptionalDiff<SoqlJson['updateList'], UpdateListDiff>;
+    select: SelectJsonDiff;
+    from: FromJsonDiff;
+    where: OptionalDiff<SoqlJson['where'], WhereJsonDiff>;
+    for: OptionalDiff<SoqlJson['for'], ForJsonDiff>;
+    usingScope: OptionalDiff<SoqlJson['usingScope'], UsingScopeJsonDiff>;
+    with: OptionalDiff<SoqlJson['with'], WithJsonDiff>;
+    groupBy: OptionalDiff<SoqlJson['groupBy'], GroupByJsonDiff>;
+    orderBy: OptionalDiff<SoqlJson['orderBy'], OrderByJsonDiff>;
+    limit: OptionalDiff<LimitJson | ErrorJson, LimitJsonDiff>;
+    offset: OptionalDiff<OffsetJson | ErrorJson, OffsetJsonDiff>;
+    allRows: OptionalDiff<SoqlJson['allRows'], AllRowsJsonDiff>;
+    updateList: OptionalDiff<SoqlJson['updateList'], UpdateListJsonDiff>;
 };
 
-export type SoqlDiff = NodeDiff<'soql', SoqlJson, SoqlFieldsDiff>;
+export type SoqlJsonDiff = NodeDiff<'soql', SoqlJson, SoqlFieldsDiff>;
 
 export const makeSoqlDiff = (
     before: SoqlJson | ErrorJson,
     after: SoqlJson | ErrorJson,
     sources?: Sources,
     match: Match = 'slot',
-): SoqlDiff =>
+): SoqlJsonDiff =>
     makeNodeDiff('soql', before, after, match, (b, a) => ({
         select: makeSelectDiff(
             isErrorJson(b.select) ? b.select : b.select.field,

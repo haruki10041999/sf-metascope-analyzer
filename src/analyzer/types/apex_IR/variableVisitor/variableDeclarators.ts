@@ -7,13 +7,13 @@ import {
     isVariableDeclaratorType,
 } from '.';
 
-import { ErrorTypeClass, CommonTypeClass, isValidClassList } from '../commonVisitor';
+import { ApexErrorTypeClass, ApexCommonTypeClass, isApexValidClassList } from '../commonVisitor';
 
 export class VariableDeclaratorsTypeClass extends VariableListTypeClass<
     'variableDeclarators',
     VariableDeclaratorTypeClass
 > {
-    private constructor(value: (VariableDeclaratorTypeClass | ErrorTypeClass)[]) {
+    private constructor(value: (VariableDeclaratorTypeClass | ApexErrorTypeClass)[]) {
         super('variableDeclarators', value);
     }
 
@@ -23,7 +23,7 @@ export class VariableDeclaratorsTypeClass extends VariableListTypeClass<
         }
 
         return new VariableDeclaratorsTypeClass(
-            isValidClassList(
+            isApexValidClassList(
                 ctx.variableDeclarator_list(),
                 (ctx) => new VariableVisitor().visit(ctx),
                 isVariableDeclaratorType,
@@ -34,7 +34,7 @@ export class VariableDeclaratorsTypeClass extends VariableListTypeClass<
 }
 
 export const isVariableDeclaratorsType = (
-    value: CommonTypeClass<string>,
+    value: ApexCommonTypeClass<string>,
 ): value is VariableDeclaratorsTypeClass => {
     return value instanceof VariableDeclaratorsTypeClass;
 };

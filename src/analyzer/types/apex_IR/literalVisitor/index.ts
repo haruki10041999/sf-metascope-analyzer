@@ -20,7 +20,7 @@ import { SignedIntegerTypeClass } from './signedInteger';
 import { SignedNumberTypeClass } from './signedNumber';
 import { SoqlLiteralTypeClass } from './soqlLiteral';
 
-import { CommonVisitor } from '../commonVisitor';
+import { ApexCommonVisitor } from '../commonVisitor';
 
 export { isNormalLiteralType, NormalLiteralTypeClass } from './normal';
 export { isWhenLiteralType, WhenLiteralTypeClass } from './whenLiteral';
@@ -30,7 +30,7 @@ export { isSoqlLiteralType, SoqlLiteralTypeClass } from './soqlLiteral';
 export { isSoslLiteralType, SoslLiteralTypeClass } from './soslLiteral';
 export { isSoslLiteralAltType, SoslLiteralAltTypeClass } from './soslLiteralAlt';
 
-export class LiteralVisitor extends CommonVisitor<LiteralAllTypeClass> {
+export class LiteralVisitor extends ApexCommonVisitor<LiteralAllTypeClass> {
     visitLiteral(ctx: LiteralContext) {
         return NormalLiteralTypeClass.create(ctx);
     }

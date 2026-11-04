@@ -5,16 +5,22 @@ import { ValueTypeClass } from '.';
 import { WhenLiteralTypeClass, LiteralVisitor, isWhenLiteralType } from '../literalVisitor';
 import { NormalIdTypeClass, IdVisitor, isNormalIdType } from '../idVisitor';
 import { TypeRefTypeClass, TypeVisitor, isTypeRefType } from '../typeVisitor';
-import { ErrorTypeClass, CommonTypeClass, isValidClass, isValidClassList } from '../commonVisitor';
+import {
+    ApexErrorTypeClass,
+    ApexCommonTypeClass,
+    isApexValidClass,
+    isApexValidClassList,
+} from '../commonVisitor';
 
-type WhenValueValueType = (WhenLiteralTypeClass | ErrorTypeClass)[] | NormalIdTypeClass | 'else';
+type WhenValueValueType =
+    (WhenLiteralTypeClass | ApexErrorTypeClass)[] | NormalIdTypeClass | 'else';
 
 export class WhenValueTypeClass extends ValueTypeClass<'whenValue', WhenValueValueType> {
-    private valueType: TypeRefTypeClass | ErrorTypeClass | null = null;
+    private valueType: TypeRefTypeClass | ApexErrorTypeClass | null = null;
 
     private constructor(
-        value: WhenValueValueType | ErrorTypeClass,
-        valueType: TypeRefTypeClass | ErrorTypeClass | null,
+        value: WhenValueValueType | ApexErrorTypeClass,
+        valueType: TypeRefTypeClass | ApexErrorTypeClass | null,
     ) {
         super('whenValue', value);
         this.valueType = valueType;
@@ -25,21 +31,21 @@ export class WhenValueTypeClass extends ValueTypeClass<'whenValue', WhenValueVal
             throw new Error('値が異常です。WhenValueContext: ' + ctx.getText());
         }
 
-        let value: WhenValueValueType | ErrorTypeClass;
-        let valueType: TypeRefTypeClass | ErrorTypeClass | null = null;
+        let value: WhenValueValueType | ApexErrorTypeClass;
+        let valueType: TypeRefTypeClass | ApexErrorTypeClass | null = null;
 
         if (ctx.ELSE()) {
             value = 'else';
         } else if (ctx.whenLiteral_list().length > 0) {
-            value = isValidClassList(
+            value = isApexValidClassList(
                 ctx.whenLiteral_list(),
                 (ctx) => new LiteralVisitor().visit(ctx),
                 isWhenLiteralType,
                 'whenLiteral',
             );
         } else {
-            value = isValidClass(new IdVisitor().visit(ctx.id()), isNormalIdType, 'id');
-            valueType = isValidClass(
+            value = isApexValidClass(new IdVisitor().visit(ctx.id()), isNormalIdType, 'id');
+            valueType = isApexValidClass(
                 new TypeVisitor().visit(ctx.typeRef()),
                 isTypeRefType,
                 'typeRef',
@@ -49,11 +55,13 @@ export class WhenValueTypeClass extends ValueTypeClass<'whenValue', WhenValueVal
         return new WhenValueTypeClass(value, valueType);
     }
 
-    getValueType(): TypeRefTypeClass | ErrorTypeClass | null {
+    getValueType(): TypeRefTypeClass | ApexErrorTypeClass | null {
         return this.valueType;
     }
 }
 
-export const isWhenValueType = (target: CommonTypeClass<string>): target is WhenValueTypeClass => {
+export const isWhenValueType = (
+    target: ApexCommonTypeClass<string>,
+): target is WhenValueTypeClass => {
     return target instanceof WhenValueTypeClass;
 };

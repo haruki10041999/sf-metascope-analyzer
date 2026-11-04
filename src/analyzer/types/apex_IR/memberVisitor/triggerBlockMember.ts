@@ -13,15 +13,20 @@ import {
     isNormalStatementType,
 } from '../statementVisitor';
 import { NormalModifierTypeClass, ModifierVisitor, isNormalModifierType } from '../modifierVisitor';
-import { ErrorTypeClass, CommonTypeClass, isValidClass, isValidClassList } from '../commonVisitor';
+import {
+    ApexErrorTypeClass,
+    ApexCommonTypeClass,
+    isApexValidClass,
+    isApexValidClassList,
+} from '../commonVisitor';
 
 export class TriggerBlockMemberTypeClass extends MemberTypeClass<
     'triggerBlockMember',
     TriggerMemberDeclarationTypeClass | NormalStatementTypeClass
 > {
     private constructor(
-        value: TriggerMemberDeclarationTypeClass | NormalStatementTypeClass | ErrorTypeClass,
-        modifier: (NormalModifierTypeClass | ErrorTypeClass)[],
+        value: TriggerMemberDeclarationTypeClass | NormalStatementTypeClass | ApexErrorTypeClass,
+        modifier: (NormalModifierTypeClass | ApexErrorTypeClass)[],
     ) {
         super('triggerBlockMember', value, modifier);
     }
@@ -33,17 +38,17 @@ export class TriggerBlockMemberTypeClass extends MemberTypeClass<
 
         return new TriggerBlockMemberTypeClass(
             ctx.triggerMemberDeclaration()
-                ? isValidClass(
+                ? isApexValidClass(
                       new DeclarationVisitor().visit(ctx.triggerMemberDeclaration()),
                       isTriggerMemberDeclarationType,
                       'triggerMemberDeclaration',
                   )
-                : isValidClass(
+                : isApexValidClass(
                       new StatementVisitor().visit(ctx.statement()),
                       isNormalStatementType,
                       'statement',
                   ),
-            isValidClassList(
+            isApexValidClassList(
                 ctx.modifier_list(),
                 (ctx) => new ModifierVisitor().visit(ctx),
                 isNormalModifierType,
@@ -54,7 +59,8 @@ export class TriggerBlockMemberTypeClass extends MemberTypeClass<
 }
 
 export const isTriggerBlockMemberType = (
-    target: CommonTypeClass<string>,
+    target: ApexCommonTypeClass<string>,
 ): target is TriggerBlockMemberTypeClass => {
     return target instanceof TriggerBlockMemberTypeClass;
 };
+

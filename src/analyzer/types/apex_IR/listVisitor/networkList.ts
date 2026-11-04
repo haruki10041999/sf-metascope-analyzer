@@ -2,10 +2,10 @@ import { NetworkListContext } from '@apexdevtools/apex-parser';
 
 import { ListTypeClass, ListVisitor } from '.';
 
-import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
+import { ApexErrorTypeClass, ApexCommonTypeClass, isApexValidClass } from '../commonVisitor';
 
 export class NetworkListTypeClass extends ListTypeClass<'networkList', string> {
-    private constructor(value: (string | ErrorTypeClass)[]) {
+    private constructor(value: (string | ApexErrorTypeClass)[]) {
         super('networkList', value);
     }
 
@@ -14,7 +14,7 @@ export class NetworkListTypeClass extends ListTypeClass<'networkList', string> {
             throw new Error('値が異常です。NetworkListContext: ' + ctx.getText());
         }
 
-        const value: (string | ErrorTypeClass)[] = [];
+        const value: (string | ApexErrorTypeClass)[] = [];
 
         if (ctx.StringLiteral()) {
             value.push(ctx.StringLiteral().getText());
@@ -23,7 +23,7 @@ export class NetworkListTypeClass extends ListTypeClass<'networkList', string> {
         }
 
         if (ctx.networkList()) {
-            const nested = isValidClass(
+            const nested = isApexValidClass(
                 new ListVisitor().visit(ctx.networkList()),
                 isNetworkListType,
                 'networkList',
@@ -41,7 +41,8 @@ export class NetworkListTypeClass extends ListTypeClass<'networkList', string> {
 }
 
 export const isNetworkListType = (
-    target: CommonTypeClass<string>,
+    target: ApexCommonTypeClass<string>,
 ): target is NetworkListTypeClass => {
     return target instanceof NetworkListTypeClass;
 };
+

@@ -9,19 +9,19 @@ import {
 
 import { SoqlIdTypeClass, IdVisitor, isSoqlIdType } from '../idVisitor';
 import { DataCategoryNameTypeClass, NameVisitor, isDataCategoryNameType } from '../nameVisitor';
-import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
+import { ApexErrorTypeClass, ApexCommonTypeClass, isApexValidClass } from '../commonVisitor';
 
 export class DataCategorySelectionTypeClass extends ClauseTypeClass<
     'dataCategorySelection',
     SoqlIdTypeClass
 > {
-    private selector: FilteringSelectorTypeClass | ErrorTypeClass;
-    private category: DataCategoryNameTypeClass | ErrorTypeClass;
+    private selector: FilteringSelectorTypeClass | ApexErrorTypeClass;
+    private category: DataCategoryNameTypeClass | ApexErrorTypeClass;
 
     private constructor(
-        value: SoqlIdTypeClass | ErrorTypeClass,
-        selector: FilteringSelectorTypeClass | ErrorTypeClass,
-        category: DataCategoryNameTypeClass | ErrorTypeClass,
+        value: SoqlIdTypeClass | ApexErrorTypeClass,
+        selector: FilteringSelectorTypeClass | ApexErrorTypeClass,
+        category: DataCategoryNameTypeClass | ApexErrorTypeClass,
     ) {
         super('dataCategorySelection', value);
         this.selector = selector;
@@ -34,13 +34,13 @@ export class DataCategorySelectionTypeClass extends ClauseTypeClass<
         }
 
         return new DataCategorySelectionTypeClass(
-            isValidClass(new IdVisitor().visit(ctx.soqlId()), isSoqlIdType, 'soqlId'),
-            isValidClass(
+            isApexValidClass(new IdVisitor().visit(ctx.soqlId()), isSoqlIdType, 'soqlId'),
+            isApexValidClass(
                 new ClauseVisitor().visit(ctx.filteringSelector()),
                 isFilteringSelectorType,
                 'filteringSelector',
             ),
-            isValidClass(
+            isApexValidClass(
                 new NameVisitor().visit(ctx.dataCategoryName()),
                 isDataCategoryNameType,
                 'dataCategoryName',
@@ -48,17 +48,18 @@ export class DataCategorySelectionTypeClass extends ClauseTypeClass<
         );
     }
 
-    getSelector(): FilteringSelectorTypeClass | ErrorTypeClass {
+    getSelector(): FilteringSelectorTypeClass | ApexErrorTypeClass {
         return this.selector;
     }
 
-    getCategory(): DataCategoryNameTypeClass | ErrorTypeClass {
+    getCategory(): DataCategoryNameTypeClass | ApexErrorTypeClass {
         return this.category;
     }
 }
 
 export const isDataCategorySelectionType = (
-    target: CommonTypeClass<string>,
+    target: ApexCommonTypeClass<string>,
 ): target is DataCategorySelectionTypeClass => {
     return target instanceof DataCategorySelectionTypeClass;
 };
+

@@ -2,7 +2,7 @@ import { UpdateTypeContext } from '@apexdevtools/apex-parser';
 
 import { ClauseValueTypeClass } from '.';
 
-import { CommonTypeClass } from '../commonVisitor';
+import { ApexCommonTypeClass } from '../commonVisitor';
 
 export class UpdateTypeTypeClass extends ClauseValueTypeClass<
     'updateType',
@@ -22,7 +22,8 @@ export class UpdateTypeTypeClass extends ClauseValueTypeClass<
 }
 
 export const isUpdateTypeType = (
-    target: CommonTypeClass<string>,
+    target: ApexCommonTypeClass<string>,
 ): target is UpdateTypeTypeClass => {
     return target instanceof UpdateTypeTypeClass;
 };
+

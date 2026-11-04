@@ -4,19 +4,9 @@ import {
     ApexParserRuleContext,
 } from '@apexdevtools/apex-parser';
 
-export type SourcePosition = {
-    offset: number;
-    line: number;
-    column: number;
-};
+import type { SourcePosition, SourceSpan } from '../commons/source';
 
-export type SourceSpan = {
-    context: string;
-    start: SourcePosition;
-    end: SourcePosition;
-};
-
-export class CommonTypeClass<TName extends string> {
+export class ApexCommonTypeClass<TName extends string> {
     private type: TName;
     private span: SourceSpan | null = null;
 
@@ -40,7 +30,7 @@ export class CommonTypeClass<TName extends string> {
 export type ErrorCode =
     'NULL_CHILD' | 'UNSUPPORTED_CONTEXT' | 'TYPE_MISMATCH' | 'EXCEPTION' | 'UNRESOLVED';
 
-export class ErrorTypeClass extends CommonTypeClass<'AnalyzerError'> {
+export class ApexErrorTypeClass extends ApexCommonTypeClass<'AnalyzerError'> {
     private code: ErrorCode;
     private contextType: string = '';
     private context: string = '';
@@ -64,8 +54,8 @@ export class ErrorTypeClass extends CommonTypeClass<'AnalyzerError'> {
         contextType: string,
         context: string,
         errorMessage: string,
-    ): ErrorTypeClass {
-        return new ErrorTypeClass(code, contextType, context, errorMessage);
+    ): ApexErrorTypeClass {
+        return new ApexErrorTypeClass(code, contextType, context, errorMessage);
     }
 
     getCode(): ErrorCode {
@@ -85,21 +75,21 @@ export class ErrorTypeClass extends CommonTypeClass<'AnalyzerError'> {
     }
 }
 
-export const isErrorType = (target: CommonTypeClass<string>): target is ErrorTypeClass => {
-    return target instanceof ErrorTypeClass;
+export const isErrorType = (target: ApexCommonTypeClass<string>): target is ApexErrorTypeClass => {
+    return target instanceof ApexErrorTypeClass;
 };
 
-export const isValidClass = <T extends CommonTypeClass<string>>(
-    target: CommonTypeClass<string>,
-    isValidType: (target: CommonTypeClass<string>) => target is T,
+export const isApexValidClass = <T extends ApexCommonTypeClass<string>>(
+    target: ApexCommonTypeClass<string>,
+    isValidType: (target: ApexCommonTypeClass<string>) => target is T,
     type: string,
-): T | ErrorTypeClass => {
+): T | ApexErrorTypeClass => {
     if (isErrorType(target) || isValidType(target)) {
         return target;
     }
 
     // 親ノード全体を失わないよう、型不一致は子だけをエラーノードに置き換える
-    const error = ErrorTypeClass.create(
+    const error = ApexErrorTypeClass.create(
         'TYPE_MISMATCH',
         type,
         target.getType(),
@@ -109,18 +99,18 @@ export const isValidClass = <T extends CommonTypeClass<string>>(
     return error;
 };
 
-export const isValidClassList = <T extends CommonTypeClass<string>>(
+export const isApexValidClassList = <T extends ApexCommonTypeClass<string>>(
     ctxs: ApexParserRuleContext[],
-    create: (ctx: ApexParserRuleContext) => CommonTypeClass<string>,
-    isValidType: (target: CommonTypeClass<string>) => target is T,
+    create: (ctx: ApexParserRuleContext) => ApexCommonTypeClass<string>,
+    isValidType: (target: ApexCommonTypeClass<string>) => target is T,
     type: string,
-): (T | ErrorTypeClass)[] => {
+): (T | ApexErrorTypeClass)[] => {
     if (!ctxs || ctxs.length === 0) {
         return [];
     }
 
     return ctxs.map((ctx) => {
-        return isValidClass(create(ctx), isValidType, type);
+        return isApexValidClass(create(ctx), isValidType, type);
     });
 };
 
@@ -150,11 +140,11 @@ export const getSourceSpan = (ctx: ApexParserRuleContext): SourceSpan | null => 
     };
 };
 
-export class CommonVisitor<T> extends ApexParserBaseVisitor<T | ErrorTypeClass> {
+export class ApexCommonVisitor<T> extends ApexParserBaseVisitor<T | ApexErrorTypeClass> {
     override visit(ctx: ApexParserRuleContext) {
         // 生成 getter は型上 non-null だが、任意の子要素が無いと実行時は null を返す
         if (!ctx) {
-            return ErrorTypeClass.create(
+            return ApexErrorTypeClass.create(
                 'NULL_CHILD',
                 'null',
                 '',
@@ -162,21 +152,21 @@ export class CommonVisitor<T> extends ApexParserBaseVisitor<T | ErrorTypeClass> 
             );
         }
 
-        let result: T | ErrorTypeClass;
+        let result: T | ApexErrorTypeClass;
         try {
             const visited = super.visit(ctx);
             // Visitor に visitXxx が無いと visitChildren の戻り値（配列等）が返るため弾く
             result =
-                visited instanceof CommonTypeClass
+                visited instanceof ApexCommonTypeClass
                     ? visited
-                    : ErrorTypeClass.create(
+                    : ApexErrorTypeClass.create(
                           'UNSUPPORTED_CONTEXT',
                           ctx.constructor.name,
                           ctx.getText(),
                           `${this.constructor.name} は ${ctx.constructor.name} に対応していません`,
                       );
         } catch (error) {
-            result = ErrorTypeClass.create(
+            result = ApexErrorTypeClass.create(
                 'EXCEPTION',
                 ctx.constructor.name,
                 ctx.getText(),
@@ -184,16 +174,16 @@ export class CommonVisitor<T> extends ApexParserBaseVisitor<T | ErrorTypeClass> 
             );
         }
 
-        (result as CommonTypeClass<string>).setSpan(getSourceSpan(ctx));
+        (result as ApexCommonTypeClass<string>).setSpan(getSourceSpan(ctx));
         return result;
     }
 }
 
-export class CommonErrorListener extends ApexErrorListener {
+export class ApexCommonErrorListener extends ApexErrorListener {
     private originalSource: string;
     private sourceLines: string[];
     private lineOffsets: number[] = [];
-    private errorTypeClass: ErrorTypeClass[] = [];
+    private errorTypeClass: ApexErrorTypeClass[] = [];
 
     constructor(source: string) {
         super();
@@ -237,7 +227,7 @@ export class CommonErrorListener extends ApexErrorListener {
             column: column + (hasCharacter ? 1 : 0),
         };
 
-        const errorTypeClass = ErrorTypeClass.create('UNRESOLVED', 'unknown', sourceCode, msg);
+        const errorTypeClass = ApexErrorTypeClass.create('UNRESOLVED', 'unknown', sourceCode, msg);
 
         errorTypeClass.setSpan({
             context: sourceCode,
@@ -248,7 +238,7 @@ export class CommonErrorListener extends ApexErrorListener {
         this.errorTypeClass.push(errorTypeClass);
     }
 
-    getErrors(): ErrorTypeClass[] {
+    getErrors(): ApexErrorTypeClass[] {
         return this.errorTypeClass;
     }
 }

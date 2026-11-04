@@ -13,7 +13,7 @@
 | `visitDateFieldName`    | `DateFieldNameContext`    | `DateFieldNameTypeClass`    |
 | `visitDataCategoryName` | `DataCategoryNameContext` | `DataCategoryNameTypeClass` |
 
-`NameVisitor` は `CommonVisitor<NameAllTypeClass>` を継承する。`create()` が例外を投げた場合や子要素が無い場合は `ErrorTypeClass` が返る。
+`NameVisitor` は `ApexCommonVisitor<NameAllTypeClass>` を継承する。`create()` が例外を投げた場合や子要素が無い場合は `ApexErrorTypeClass` が返る。
 
 ## 基底クラス（base.ts）
 
@@ -21,10 +21,10 @@
 
 単一の `value` を持つ名前ノードの基底。
 
-| 変数    | 型                    | 内容                                   |
-| ------- | --------------------- | -------------------------------------- |
-| `type`  | `string`              | ノード種別（CommonTypeClass から継承） |
-| `value` | `T \| ErrorTypeClass` | 名前の本体                             |
+| 変数    | 型                        | 内容                                       |
+| ------- | ------------------------- | ------------------------------------------ |
+| `type`  | `string`                  | ノード種別（ApexCommonTypeClass から継承） |
+| `value` | `T \| ApexErrorTypeClass` | 名前の本体                                 |
 
 ゲッター: `getType()`, `getValue()`
 
@@ -32,10 +32,10 @@
 
 名前の構成要素（ドット区切りの各部分など）を配列で持つ名前ノードの基底。
 
-| 変数    | 型                        | 内容                                   |
-| ------- | ------------------------- | -------------------------------------- |
-| `type`  | `string`                  | ノード種別（CommonTypeClass から継承） |
-| `value` | `(T \| ErrorTypeClass)[]` | 構成要素の配列（ソース順）             |
+| 変数    | 型                            | 内容                                       |
+| ------- | ----------------------------- | ------------------------------------------ |
+| `type`  | `string`                      | ノード種別（ApexCommonTypeClass から継承） |
+| `value` | `(T \| ApexErrorTypeClass)[]` | 構成要素の配列（ソース順）                 |
 
 ゲッター: `getType()`, `getValue()`
 
@@ -56,10 +56,10 @@
 - **元 Context**: `CreatedNameContext`（文法: `idCreatedNamePair (. idCreatedNamePair)*`）
 - **役割**: `new Xxx(...)` の生成対象の型名。各部分は名前と型引数のペア。
 
-| 変数    | 型                                                 | 内容                                                                               |
-| ------- | -------------------------------------------------- | ---------------------------------------------------------------------------------- |
-| `type`  | `'createdName'`                                    | 継承                                                                               |
-| `value` | `(IdCreatedNamePairTypeClass \| ErrorTypeClass)[]` | ドット区切りの各部分（`left` = 名前、`right` = 型引数の `typeList` または `null`） |
+| 変数    | 型                                                     | 内容                                                                               |
+| ------- | ------------------------------------------------------ | ---------------------------------------------------------------------------------- |
+| `type`  | `'createdName'`                                        | 継承                                                                               |
+| `value` | `(IdCreatedNamePairTypeClass \| ApexErrorTypeClass)[]` | ドット区切りの各部分（`left` = 名前、`right` = 型引数の `typeList` または `null`） |
 
 ゲッター: `getValue()`
 
@@ -89,10 +89,10 @@ names = new List<String>();
 - **元 Context**: `DataCategoryNameContext`（文法: `soqlId | ( soqlId (, soqlId)* )`）
 - **役割**: データカテゴリ条件の右辺のカテゴリ名（単一または括弧内の複数）。
 
-| 変数    | 型                                      | 内容                   |
-| ------- | --------------------------------------- | ---------------------- |
-| `type`  | `'dataCategoryName'`                    | 継承                   |
-| `value` | `(SoqlIdTypeClass \| ErrorTypeClass)[]` | カテゴリ名（1 件以上） |
+| 変数    | 型                                          | 内容                   |
+| ------- | ------------------------------------------- | ---------------------- |
+| `type`  | `'dataCategoryName'`                        | 継承                   |
+| `value` | `(SoqlIdTypeClass \| ApexErrorTypeClass)[]` | カテゴリ名（1 件以上） |
 
 ゲッター: `getValue()`
 
@@ -119,11 +119,11 @@ WITH DATA CATEGORY Geography__c AT (Usa__c, Uk__c)
 - **元 Context**: `DateFieldNameContext`（文法: `CONVERT_TIMEZONE ( fieldName ) | fieldName`）
 - **役割**: SOQL 日付関数（`CALENDAR_MONTH` など）の引数となる日付項目。
 
-| 変数                | 型                                     | 内容                                           |
-| ------------------- | -------------------------------------- | ---------------------------------------------- |
-| `type`              | `'dateFieldName'`                      | 継承                                           |
-| `value`             | `FieldNameTypeClass \| ErrorTypeClass` | 日付項目名                                     |
-| `isConvertTimeZone` | `boolean`                              | `convertTimezone(...)` で囲まれていれば `true` |
+| 変数                | 型                                         | 内容                                           |
+| ------------------- | ------------------------------------------ | ---------------------------------------------- |
+| `type`              | `'dateFieldName'`                          | 継承                                           |
+| `value`             | `FieldNameTypeClass \| ApexErrorTypeClass` | 日付項目名                                     |
+| `isConvertTimeZone` | `boolean`                                  | `convertTimezone(...)` で囲まれていれば `true` |
 
 ゲッター: `getValue()`, `getConvertTimeZone()`（戻り値型の宣言は `boolean | null`）
 
@@ -148,10 +148,10 @@ CALENDAR_MONTH(CreatedDate)
 - **元 Context**: `FieldNameContext`（文法: `soqlId (. soqlId)*`）
 - **役割**: SOQL の項目名・オブジェクト名（リレーションをたどるドット区切りを含む）。
 
-| 変数    | 型                                      | 内容                             |
-| ------- | --------------------------------------- | -------------------------------- |
-| `type`  | `'fieldName'`                           | 継承                             |
-| `value` | `(SoqlIdTypeClass \| ErrorTypeClass)[]` | ドット区切りの各部分（1 件以上） |
+| 変数    | 型                                          | 内容                             |
+| ------- | ------------------------------------------- | -------------------------------- |
+| `type`  | `'fieldName'`                               | 継承                             |
+| `value` | `(SoqlIdTypeClass \| ApexErrorTypeClass)[]` | ドット区切りの各部分（1 件以上） |
 
 ゲッター: `getValue()`
 
@@ -179,10 +179,10 @@ SELECT Parent.Owner.Name FROM Account
 - **元 Context**: `QualifiedNameContext`（文法: `id (. id)*`）
 - **役割**: Apex のドット区切り修飾名（`catch` の例外型、`switch` の enum 値など）。
 
-| 変数    | 型                                        | 内容                             |
-| ------- | ----------------------------------------- | -------------------------------- |
-| `type`  | `'qualifiedName'`                         | 継承                             |
-| `value` | `(NormalIdTypeClass \| ErrorTypeClass)[]` | ドット区切りの各部分（1 件以上） |
+| 変数    | 型                                            | 内容                             |
+| ------- | --------------------------------------------- | -------------------------------- |
+| `type`  | `'qualifiedName'`                             | 継承                             |
+| `value` | `(NormalIdTypeClass \| ApexErrorTypeClass)[]` | ドット区切りの各部分（1 件以上） |
 
 ゲッター: `getValue()`
 
@@ -203,11 +203,11 @@ SELECT Parent.Owner.Name FROM Account
 - **元 Context**: `TypeNameContext`（文法: `LIST typeArguments? | SET typeArguments? | MAP typeArguments? | id typeArguments?`）
 - **役割**: 型参照（`typeRef`）を構成する型名 1 つ。
 
-| 変数      | 型                                                                | 内容                                                                                  |
-| --------- | ----------------------------------------------------------------- | ------------------------------------------------------------------------------------- |
-| `type`    | `'typeName'`                                                      | 継承                                                                                  |
-| `value`   | `NormalIdTypeClass \| 'list' \| 'set' \| 'map' \| ErrorTypeClass` | `List` / `Set` / `Map` は小文字の文字列 `'list'` / `'set'` / `'map'`、それ以外は `id` |
-| `generic` | `TypeArgumentsTypeClass \| ErrorTypeClass \| null`                | 型引数 `<...>`。省略時（ユーザー定義型や `List` 単体）は `null`                       |
+| 変数      | 型                                                                    | 内容                                                                                  |
+| --------- | --------------------------------------------------------------------- | ------------------------------------------------------------------------------------- |
+| `type`    | `'typeName'`                                                          | 継承                                                                                  |
+| `value`   | `NormalIdTypeClass \| 'list' \| 'set' \| 'map' \| ApexErrorTypeClass` | `List` / `Set` / `Map` は小文字の文字列 `'list'` / `'set'` / `'map'`、それ以外は `id` |
+| `generic` | `TypeArgumentsTypeClass \| ApexErrorTypeClass \| null`                | 型引数 `<...>`。省略時（ユーザー定義型や `List` 単体）は `null`                       |
 
 ゲッター: `getValue()`, `getGeneric()`
 

@@ -1,6 +1,7 @@
 import typia from 'typia';
 
-import { ConvertType, convertValue, ErrorJson, JsonType, makeJsonType } from './commons';
+import { ConvertType, convertValue } from './commons';
+import { ErrorJson, JsonType, makeJsonType } from '../commons';
 import { TypeJson, makeTypeJson } from './type';
 import { ModifiersJson, makeModifiersJson } from './modifier';
 import { FormalParameterType } from './converter';

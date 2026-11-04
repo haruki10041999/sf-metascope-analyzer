@@ -1,13 +1,6 @@
 import typia from 'typia';
-import {
-    ConvertType,
-    ErrorJson,
-    JsonType,
-    convertValue,
-    isErrorNode,
-    makeErrorJson,
-    makeJsonType,
-} from './commons';
+import { ConvertType, convertValue, isErrorNode } from './commons';
+import { ErrorJson, JsonType, makeErrorJson, makeJsonType } from '../commons';
 
 import {
     AnonymousBlockMemberType,

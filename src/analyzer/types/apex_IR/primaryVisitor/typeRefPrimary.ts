@@ -3,10 +3,10 @@ import { TypeRefPrimaryContext } from '@apexdevtools/apex-parser';
 import { PrimaryTypeClass } from '.';
 
 import { TypeRefTypeClass, TypeVisitor, isTypeRefType } from '../typeVisitor';
-import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
+import { ApexErrorTypeClass, ApexCommonTypeClass, isApexValidClass } from '../commonVisitor';
 
 export class TypeRefPrimaryTypeClass extends PrimaryTypeClass<'typeRefPrimary', TypeRefTypeClass> {
-    private constructor(value: TypeRefTypeClass | ErrorTypeClass) {
+    private constructor(value: TypeRefTypeClass | ApexErrorTypeClass) {
         super('typeRefPrimary', value);
     }
 
@@ -16,13 +16,14 @@ export class TypeRefPrimaryTypeClass extends PrimaryTypeClass<'typeRefPrimary', 
         }
 
         return new TypeRefPrimaryTypeClass(
-            isValidClass(new TypeVisitor().visit(ctx.typeRef()), isTypeRefType, 'typeRef'),
+            isApexValidClass(new TypeVisitor().visit(ctx.typeRef()), isTypeRefType, 'typeRef'),
         );
     }
 }
 
 export const isTypeRefPrimaryType = (
-    target: CommonTypeClass<string>,
+    target: ApexCommonTypeClass<string>,
 ): target is TypeRefPrimaryTypeClass => {
     return target instanceof TypeRefPrimaryTypeClass;
 };
+

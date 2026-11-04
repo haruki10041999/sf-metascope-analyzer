@@ -3,10 +3,10 @@ import { ElementValueContext } from '@apexdevtools/apex-parser';
 import { ValueTypeClass } from '.';
 
 import { NormalLiteralTypeClass, LiteralVisitor, isNormalLiteralType } from '../literalVisitor';
-import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
+import { ApexErrorTypeClass, ApexCommonTypeClass, isApexValidClass } from '../commonVisitor';
 
 export class ElementValueTypeClass extends ValueTypeClass<'elementValue', NormalLiteralTypeClass> {
-    private constructor(value: NormalLiteralTypeClass | ErrorTypeClass) {
+    private constructor(value: NormalLiteralTypeClass | ApexErrorTypeClass) {
         super('elementValue', value);
     }
 
@@ -16,13 +16,17 @@ export class ElementValueTypeClass extends ValueTypeClass<'elementValue', Normal
         }
 
         return new ElementValueTypeClass(
-            isValidClass(new LiteralVisitor().visit(ctx.literal()), isNormalLiteralType, 'literal'),
+            isApexValidClass(
+                new LiteralVisitor().visit(ctx.literal()),
+                isNormalLiteralType,
+                'literal',
+            ),
         );
     }
 }
 
 export const isElementValueType = (
-    target: CommonTypeClass<string>,
+    target: ApexCommonTypeClass<string>,
 ): target is ElementValueTypeClass => {
     return target instanceof ElementValueTypeClass;
 };

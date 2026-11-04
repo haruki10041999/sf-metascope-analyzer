@@ -3,10 +3,10 @@ import { ValueListContext } from '@apexdevtools/apex-parser';
 import { ListTypeClass } from '../listVisitor';
 
 import { NormalValueTypeClass, ValueVisitor, isNormalValueType } from '../valueVisitor';
-import { ErrorTypeClass, CommonTypeClass, isValidClassList } from '../commonVisitor';
+import { ApexErrorTypeClass, ApexCommonTypeClass, isApexValidClassList } from '../commonVisitor';
 
 export class ValueListTypeClass extends ListTypeClass<'valueList', NormalValueTypeClass> {
-    private constructor(value: (NormalValueTypeClass | ErrorTypeClass)[]) {
+    private constructor(value: (NormalValueTypeClass | ApexErrorTypeClass)[]) {
         super('valueList', value);
     }
 
@@ -16,7 +16,7 @@ export class ValueListTypeClass extends ListTypeClass<'valueList', NormalValueTy
         }
 
         return new ValueListTypeClass(
-            isValidClassList(
+            isApexValidClassList(
                 ctx.value_list(),
                 (ctx) => new ValueVisitor().visit(ctx),
                 isNormalValueType,
@@ -26,6 +26,9 @@ export class ValueListTypeClass extends ListTypeClass<'valueList', NormalValueTy
     }
 }
 
-export const isValueListType = (target: CommonTypeClass<string>): target is ValueListTypeClass => {
+export const isValueListType = (
+    target: ApexCommonTypeClass<string>,
+): target is ValueListTypeClass => {
     return target instanceof ValueListTypeClass;
 };
+

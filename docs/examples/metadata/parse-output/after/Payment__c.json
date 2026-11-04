@@ -1,0 +1,108 @@
+{
+  "filePath": "Payment__c",
+  "resolvedError": [],
+  "dataType": "object",
+  "result": {
+    "id": "Payment__c",
+    "base": {
+      "kind": "object",
+      "sourceKeys": {
+        "objectKey": "object_26afaae55d7091a5",
+        "sourceKey": "object_fea90b9aeb1e99a1"
+      },
+      "apiName": "Payment__c",
+      "objectType": "custom",
+      "label": "Payment",
+      "pluralLabel": "Payments",
+      "sharingModel": "ReadWrite",
+      "deploymentStatus": "Deployed",
+      "fields": [
+        {
+          "kind": "field",
+          "sourceKeys": {
+            "objectKey": "field_0c45addf81de67bd",
+            "sourceKey": "field_04beaf30fa5fb9b0"
+          },
+          "apiName": "Invoice__c",
+          "label": "Invoice",
+          "type": "Lookup",
+          "referenceTo": "Invoice__c",
+          "relationshipName": "Payments",
+          "deleteConstraint": "Restrict"
+        },
+        {
+          "kind": "field",
+          "sourceKeys": {
+            "objectKey": "field_809a86e5355c178f",
+            "sourceKey": "field_9688c3386967cd79"
+          },
+          "apiName": "Paid_At__c",
+          "label": "Paid At",
+          "type": "DateTime"
+        }
+      ]
+    },
+    "sourceObject": [
+      {
+        "objectKey": "field_0c45addf81de67bd",
+        "context": "<fields>\n        <fullName>Invoice__c</fullName>\n        <deleteConstraint>Restrict</deleteConstraint>\n        <label>Invoice</label>\n        <referenceTo>Invoice__c</referenceTo>\n        <relationshipName>Payments</relationshipName>\n        <type>Lookup</type>\n    </fields>",
+        "source": [
+          {
+            "sourceKey": "field_04beaf30fa5fb9b0",
+            "filePath": "Payment__c/Payment__c.object-meta.xml",
+            "start": {
+              "offset": 156,
+              "line": 4,
+              "column": 4
+            },
+            "end": {
+              "offset": 431,
+              "line": 11,
+              "column": 13
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "field_809a86e5355c178f",
+        "context": "<fields>\n        <fullName>Paid_At__c</fullName>\n        <label>Paid At</label>\n        <type>DateTime</type>\n    </fields>",
+        "source": [
+          {
+            "sourceKey": "field_9688c3386967cd79",
+            "filePath": "Payment__c/Payment__c.object-meta.xml",
+            "start": {
+              "offset": 436,
+              "line": 12,
+              "column": 4
+            },
+            "end": {
+              "offset": 559,
+              "line": 16,
+              "column": 13
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "object_26afaae55d7091a5",
+        "context": "<CustomObject xmlns=\"http://soap.sforce.com/2006/04/metadata\">\n    <deploymentStatus>Deployed</deploymentStatus>\n    <fields>\n        <fullName>Invoice__c</fullName>\n        <deleteConstraint>Restrict</deleteConstraint>\n        <label>Invoice</label>\n        <referenceTo>Invoice__c</referenceTo>\n        <relationshipName>Payments</relationshipName>\n        <type>Lookup</type>\n    </fields>\n    <fields>\n        <fullName>Paid_At__c</fullName>\n        <label>Paid At</label>\n        <type>DateTime</type>\n    </fields>\n    <label>Payment</label>\n    <pluralLabel>Payments</pluralLabel>\n    <sharingModel>ReadWrite</sharingModel>\n</CustomObject>",
+        "source": [
+          {
+            "sourceKey": "object_fea90b9aeb1e99a1",
+            "filePath": "Payment__c/Payment__c.object-meta.xml",
+            "start": {
+              "offset": 39,
+              "line": 2,
+              "column": 0
+            },
+            "end": {
+              "offset": 685,
+              "line": 20,
+              "column": 15
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

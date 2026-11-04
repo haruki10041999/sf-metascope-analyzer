@@ -3,10 +3,15 @@ import { FieldSpecListContext } from '@apexdevtools/apex-parser';
 import { ListTypeClass, ListVisitor } from '.';
 
 import { FieldSpecTypeClass, QueryVisitor, isFieldSpecType } from '../queryVisitor';
-import { ErrorTypeClass, CommonTypeClass, isValidClass, isValidClassList } from '../commonVisitor';
+import {
+    ApexErrorTypeClass,
+    ApexCommonTypeClass,
+    isApexValidClass,
+    isApexValidClassList,
+} from '../commonVisitor';
 
 export class FieldSpecListTypeClass extends ListTypeClass<'fieldSpecList', FieldSpecTypeClass> {
-    private constructor(value: (FieldSpecTypeClass | ErrorTypeClass)[]) {
+    private constructor(value: (FieldSpecTypeClass | ApexErrorTypeClass)[]) {
         super('fieldSpecList', value);
     }
 
@@ -15,12 +20,16 @@ export class FieldSpecListTypeClass extends ListTypeClass<'fieldSpecList', Field
             throw new Error('値が異常です。FieldSpecListContext: ' + ctx.getText());
         }
 
-        const value: (FieldSpecTypeClass | ErrorTypeClass)[] = [
-            isValidClass(new QueryVisitor().visit(ctx.fieldSpec()), isFieldSpecType, 'fieldSpec'),
+        const value: (FieldSpecTypeClass | ApexErrorTypeClass)[] = [
+            isApexValidClass(
+                new QueryVisitor().visit(ctx.fieldSpec()),
+                isFieldSpecType,
+                'fieldSpec',
+            ),
         ];
 
         if (ctx.fieldSpecList_list() && ctx.fieldSpecList_list().length > 0) {
-            const nested = isValidClassList(
+            const nested = isApexValidClassList(
                 ctx.fieldSpecList_list(),
                 (ctx) => new ListVisitor().visit(ctx),
                 isFieldSpecListType,
@@ -41,7 +50,8 @@ export class FieldSpecListTypeClass extends ListTypeClass<'fieldSpecList', Field
 }
 
 export const isFieldSpecListType = (
-    target: CommonTypeClass<string>,
+    target: ApexCommonTypeClass<string>,
 ): target is FieldSpecListTypeClass => {
     return target instanceof FieldSpecListTypeClass;
 };
+

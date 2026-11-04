@@ -11,7 +11,7 @@ import {
     isSoqlFunctionType,
     isComparisonOperatorType,
 } from '../queryVisitor';
-import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
+import { ApexErrorTypeClass, ApexCommonTypeClass, isApexValidClass } from '../commonVisitor';
 
 export class FieldExpressionTypeClass extends DoubleOperatorExpressionTypeClass<
     'fieldExpression',
@@ -20,9 +20,9 @@ export class FieldExpressionTypeClass extends DoubleOperatorExpressionTypeClass<
     NormalValueTypeClass
 > {
     private constructor(
-        left: FieldNameTypeClass | SoqlFunctionTypeClass | ErrorTypeClass,
-        operator: ComparisonOperatorTypeClass | ErrorTypeClass,
-        right: NormalValueTypeClass | ErrorTypeClass,
+        left: FieldNameTypeClass | SoqlFunctionTypeClass | ApexErrorTypeClass,
+        operator: ComparisonOperatorTypeClass | ApexErrorTypeClass,
+        right: NormalValueTypeClass | ApexErrorTypeClass,
     ) {
         super('fieldExpression', left, right, operator);
     }
@@ -38,28 +38,29 @@ export class FieldExpressionTypeClass extends DoubleOperatorExpressionTypeClass<
 
         return new FieldExpressionTypeClass(
             ctx.fieldName()
-                ? isValidClass(
+                ? isApexValidClass(
                       new NameVisitor().visit(ctx.fieldName()!),
                       isFieldNameType,
                       'fieldName',
                   )
-                : isValidClass(
+                : isApexValidClass(
                       new QueryVisitor().visit(ctx.soqlFunction()!),
                       isSoqlFunctionType,
                       'soqlFunction',
                   ),
-            isValidClass(
+            isApexValidClass(
                 new QueryVisitor().visit(ctx.comparisonOperator()),
                 isComparisonOperatorType,
                 'comparisonOperator',
             ),
-            isValidClass(new ValueVisitor().visit(ctx.value()), isNormalValueType, 'value'),
+            isApexValidClass(new ValueVisitor().visit(ctx.value()), isNormalValueType, 'value'),
         );
     }
 }
 
 export const isFieldExpressionType = (
-    target: CommonTypeClass<string>,
+    target: ApexCommonTypeClass<string>,
 ): target is FieldExpressionTypeClass => {
     return target instanceof FieldExpressionTypeClass;
 };
+

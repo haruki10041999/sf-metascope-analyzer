@@ -1,7 +1,7 @@
 import { ThisPrimaryContext } from '@apexdevtools/apex-parser';
 
 import { PrimaryValueTypeClass } from '.';
-import { CommonTypeClass } from '../commonVisitor';
+import { ApexCommonTypeClass } from '../commonVisitor';
 
 export class ThisPrimaryTypeClass extends PrimaryValueTypeClass<'thisPrimary', string> {
     private constructor(value: string) {
@@ -18,7 +18,8 @@ export class ThisPrimaryTypeClass extends PrimaryValueTypeClass<'thisPrimary', s
 }
 
 export const isThisPrimaryType = (
-    target: CommonTypeClass<string>,
+    target: ApexCommonTypeClass<string>,
 ): target is ThisPrimaryTypeClass => {
     return target instanceof ThisPrimaryTypeClass;
 };
+

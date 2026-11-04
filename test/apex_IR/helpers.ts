@@ -1,14 +1,14 @@
 import { ApexParser, ApexParserFactory } from '@apexdevtools/apex-parser';
 
 import {
-    CommonErrorListener,
-    CommonTypeClass,
-    ErrorTypeClass,
+    ApexCommonErrorListener,
+    ApexCommonTypeClass,
+    ApexErrorTypeClass,
 } from '../../src/analyzer/types/apex_IR/commonVisitor';
 
 // 構文エラーがあるとエラー回復後の木を検証してしまうため、テスト入力側の誤りとして即失敗させる
 export const parse = <T>(source: string, rule: (parser: ApexParser) => T): T => {
-    const errorListener = new CommonErrorListener(source);
+    const errorListener = new ApexCommonErrorListener(source);
     const { parser } = ApexParserFactory.createLexerAndParser(source, errorListener);
     const ctx = rule(parser);
     const syntaxErrors = errorListener.getErrors().map((error) => ({
@@ -22,13 +22,13 @@ export const parse = <T>(source: string, rule: (parser: ApexParser) => T): T => 
     return ctx;
 };
 
-export const collectErrors = (node: unknown, seen = new Set<object>()): ErrorTypeClass[] => {
+export const collectErrors = (node: unknown, seen = new Set<object>()): ApexErrorTypeClass[] => {
     if (node === null || typeof node !== 'object' || seen.has(node)) {
         return [];
     }
     seen.add(node);
 
-    if (node instanceof ErrorTypeClass) {
+    if (node instanceof ApexErrorTypeClass) {
         return [node];
     }
 
@@ -41,11 +41,11 @@ export const collectTypes = (node: unknown, seen = new Set<object>()): string[] 
     }
     seen.add(node);
 
-    const self = node instanceof CommonTypeClass ? [node.getType()] : [];
+    const self = node instanceof ApexCommonTypeClass ? [node.getType()] : [];
     return [...self, ...Object.values(node).flatMap((child) => collectTypes(child, seen))];
 };
 
-export const formatErrors = (errors: ErrorTypeClass[]): string =>
+export const formatErrors = (errors: ApexErrorTypeClass[]): string =>
     errors
         .map((e) => `${e.getContextType()}: ${e.getParseErrorMessage()} (${e.getContext()})`)
         .join('\n');

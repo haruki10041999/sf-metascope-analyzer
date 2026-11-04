@@ -1,14 +1,12 @@
+import { ConvertType, ConvertWithError, isErrorNode } from './commons';
 import {
-    ConvertType,
-    ConvertWithError,
     ErrorJson,
     isErrorJson,
-    isErrorNode,
     makeErrorJson,
     JsonType,
     makeJsonType,
     ConvertKeys,
-} from './commons';
+} from '../commons';
 
 import {
     ArrayCreatorRestType,
@@ -518,3 +516,4 @@ export const makeExpressionJsonConvert = (
         return makeFormulaJson(target);
     }
 };
+

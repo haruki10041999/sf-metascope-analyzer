@@ -3,13 +3,13 @@ import { FieldGroupByListContext } from '@apexdevtools/apex-parser';
 import { ListTypeClass } from '.';
 
 import { FieldGroupByTypeClass, ClauseVisitor, isFieldGroupByType } from '../clauseVisitor';
-import { ErrorTypeClass, CommonTypeClass, isValidClassList } from '../commonVisitor';
+import { ApexErrorTypeClass, ApexCommonTypeClass, isApexValidClassList } from '../commonVisitor';
 
 export class FieldGroupByListTypeClass extends ListTypeClass<
     'fieldGroupByList',
     FieldGroupByTypeClass
 > {
-    private constructor(value: (FieldGroupByTypeClass | ErrorTypeClass)[]) {
+    private constructor(value: (FieldGroupByTypeClass | ApexErrorTypeClass)[]) {
         super('fieldGroupByList', value);
     }
 
@@ -19,7 +19,7 @@ export class FieldGroupByListTypeClass extends ListTypeClass<
         }
 
         return new FieldGroupByListTypeClass(
-            isValidClassList(
+            isApexValidClassList(
                 ctx.fieldGroupBy_list(),
                 (ctx) => new ClauseVisitor().visit(ctx),
                 isFieldGroupByType,
@@ -30,7 +30,8 @@ export class FieldGroupByListTypeClass extends ListTypeClass<
 }
 
 export const isFieldGroupByListType = (
-    target: CommonTypeClass<string>,
+    target: ApexCommonTypeClass<string>,
 ): target is FieldGroupByListTypeClass => {
     return target instanceof FieldGroupByListTypeClass;
 };
+

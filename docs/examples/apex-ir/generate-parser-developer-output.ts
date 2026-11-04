@@ -11,7 +11,7 @@ import { join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import { ApexParser } from '../../../src/analyzer/parser/Apex/parser';
-import { writeSaveDataInfo } from '../../../src/analyzer/worker';
+import { writeSaveDataInfo } from '../../../src/analyzer/parser/commons';
 
 import { sampleUrl, samples } from './pipeline';
 
@@ -31,7 +31,7 @@ for (const entry of await readdir(outDirectory)) {
 }
 
 for (const filePath of files) {
-    const parsed = await ApexParser.parseApexClass(filePath);
+    const parsed = await ApexParser.parseApexFile(filePath);
     const saveDataInfo = ApexParser.saveApexFileForDevelopper(outDirectory, parsed);
     await writeSaveDataInfo(saveDataInfo);
 

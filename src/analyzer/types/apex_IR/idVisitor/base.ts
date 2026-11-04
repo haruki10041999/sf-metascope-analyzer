@@ -1,6 +1,6 @@
-import { ErrorTypeClass, CommonTypeClass } from '../commonVisitor';
+import { ApexErrorTypeClass, ApexCommonTypeClass } from '../commonVisitor';
 
-export class IdValueTypeClass<TName extends string, T> extends CommonTypeClass<TName> {
+export class IdValueTypeClass<TName extends string, T> extends ApexCommonTypeClass<TName> {
     private value: T;
 
     constructor(type: TName, value: T) {
@@ -13,28 +13,28 @@ export class IdValueTypeClass<TName extends string, T> extends CommonTypeClass<T
     }
 }
 
-export class IdTypeClass<TName extends string, T> extends CommonTypeClass<TName> {
-    private value: T | ErrorTypeClass;
+export class IdTypeClass<TName extends string, T> extends ApexCommonTypeClass<TName> {
+    private value: T | ApexErrorTypeClass;
 
-    constructor(type: TName, value: T | ErrorTypeClass) {
+    constructor(type: TName, value: T | ApexErrorTypeClass) {
         super(type);
         this.value = value;
     }
 
-    getValue(): T | ErrorTypeClass {
+    getValue(): T | ApexErrorTypeClass {
         return this.value;
     }
 }
 
-export class IdListTypeClass<TName extends string, T> extends CommonTypeClass<TName> {
-    private value: (T | ErrorTypeClass)[];
+export class IdListTypeClass<TName extends string, T> extends ApexCommonTypeClass<TName> {
+    private value: (T | ApexErrorTypeClass)[];
 
-    constructor(type: TName, value: (T | ErrorTypeClass)[]) {
+    constructor(type: TName, value: (T | ApexErrorTypeClass)[]) {
         super(type);
         this.value = value;
     }
 
-    getValue(): (T | ErrorTypeClass)[] {
+    getValue(): (T | ApexErrorTypeClass)[] {
         return this.value;
     }
 }
@@ -44,7 +44,7 @@ export type IdAllTypeClass =
     | IdTypeClass<string, unknown>
     | IdListTypeClass<string, unknown>;
 
-export const isIdTypeAll = (target: CommonTypeClass<string>): target is IdAllTypeClass => {
+export const isIdTypeAll = (target: ApexCommonTypeClass<string>): target is IdAllTypeClass => {
     return (
         target instanceof IdValueTypeClass ||
         target instanceof IdTypeClass ||

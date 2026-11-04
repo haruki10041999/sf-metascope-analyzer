@@ -11,14 +11,14 @@ import {
     makeOptionalDiff,
     makeSequenceDiff,
     makeValueDiff,
-} from '../commons';
+} from '../../../commons/diff/commons';
 import { FieldTerm, FieldTermDiff, makeFieldTermDiff } from './commons';
 
-export type OrderFieldDiff = NodeDiff<
+export type FieldOrderJsonDiff = NodeDiff<
     'orderField',
     FieldOrderJson,
     {
-        field: FieldTermDiff | ValueDiff<FieldTerm>;
+        field: FieldTermDiff;
         direction: OptionalDiff<'ASC' | 'DESC', ValueDiff<'ASC' | 'DESC'>>;
         nulls: OptionalDiff<'FIRST' | 'LAST', ValueDiff<'FIRST' | 'LAST'>>;
     }
@@ -28,22 +28,22 @@ export const makeOrderFieldDiff = (
     before: FieldOrderJson | ErrorJson,
     after: FieldOrderJson | ErrorJson,
     match: Match = 'slot',
-): OrderFieldDiff =>
+): FieldOrderJsonDiff =>
     makeNodeDiff('orderField', before, after, match, (b, a) => ({
-        field: makeFieldTermDiff(b, a) ?? makeValueDiff(b, a),
+        field: makeFieldTermDiff(b, a),
         direction: makeOptionalDiff(b.direction, a.direction, makeValueDiff),
         nulls: makeOptionalDiff(b.nulls, a.nulls, makeValueDiff),
     }));
 
-export type OrderByDiff =
-    | { orderBy: ListItemDiff<'orderField', FieldOrderJson | ErrorJson, OrderFieldDiff>[] }
+export type OrderByJsonDiff =
+    | { orderBy: ListItemDiff<'orderField', FieldOrderJson | ErrorJson, FieldOrderJsonDiff>[] }
     | ValueDiff<OrderByJson | ErrorJson>;
 
 export const makeOrderByDiff = (
     before: OrderByJson | ErrorJson,
     after: OrderByJson | ErrorJson,
     sources?: Sources,
-): OrderByDiff => {
+): OrderByJsonDiff => {
     if (isErrorJson(before) || isErrorJson(after)) return makeValueDiff(before, after);
     return {
         orderBy: makeSequenceDiff('orderField', before.orderBy, after.orderBy, makeOrderFieldDiff, {

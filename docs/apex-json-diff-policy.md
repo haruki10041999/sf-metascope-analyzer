@@ -7,11 +7,11 @@
 
 ## 1. 前提
 
-| キー        | 性質                                                                                          | Diff での使い方                                  |
-| ----------- | --------------------------------------------------------------------------------------------- | ------------------------------------------------ |
-| `objectKey` | 子孫を含む内容のハッシュ。位置・空白・コメントでは変わらない。同じ内容なら重複しうる          | **一致の判定**に使う                             |
-| `sourceKey` | ソース位置を含むハッシュ。位置がずれると変わる                                                | 判定には使わない。`findSourceInfo` で位置を引く  |
-| ソース位置  | `findSourceInfo` で引いた `start` / `end`。`getSourceDistance` で before / after の距離を測る | 対応付けの**推定**（同じ kind の組を選ぶ）に使う |
+| キー        | 性質                                                                                                                         | Diff での使い方                                  |
+| ----------- | ---------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------ |
+| `objectKey` | 子孫を含む内容のハッシュ。位置・空白・コメントでは変わらない。同じ内容なら重複しうる                                         | **一致の判定**に使う                             |
+| `sourceKey` | ソース位置を含むハッシュ。位置がずれると変わる（改行コードは LF にそろえてから解析するので、CRLF / LF の違いでは変わらない） | 判定には使わない。`findSourceInfo` で位置を引く  |
+| ソース位置  | `findSourceInfo` で引いた `start` / `end`。`getSourceDistance` で before / after の距離を測る                                | 対応付けの**推定**（同じ kind の組を選ぶ）に使う |
 
 - `objectKey` が一致すれば子孫まで同じなので、中に入って比べない（`unchanged` で打ち切る）。
 - before と after は別ファイルなので、距離は近似。距離で決めた対応付けは「推定」として扱う（4章）。
@@ -97,13 +97,27 @@
 type Match = 'identical' | 'key' | 'slot' | 'nearest';
 type Body<T> = Omit<T, 'kind' | 'sourceKeys'>;
 
-/** プリミティブ値の差分 */
-type ValueDiff<T> = { status: 'unchanged'; value: T } | { status: 'changed'; before: T; after: T };
+/** before / after で同じなら値 1 つ、違えば { before, after } */
+type Pair<T> = T | { before: T; after: T };
+
+/**
+ * 対応付いた組の sourceKeys。キー (objectKey / sourceKey、StructureJsonType は base / name …) ごとに Pair にする。
+ * 例: { objectKey: 'typeRef_55…', sourceKey: { before: 'typeRef_d2…', after: 'typeRef_2a…' } }
+ */
+type SourceKeysDiff<K> = { [P in keyof K]: Pair<…> };
+
+/** 値の差分。値が JSON ノードなら kind / sourceKeys を中身から分ける */
+type ValueDiff<T> =
+    | { kind?; sourceKeys?; status: 'unchanged'; value: Content<T> }
+    | ReplacementDiff<T>;
+
+/** 形が違う (kind が違う・片方がエラーなど) ときの差分 */
+type ReplacementDiff<T> = { kind?; sourceKeys?; status: 'changed'; before: Content<T>; after: Content<T> };
 
 /** 1 組のノードの差分。Fields はプロパティごとの差分 */
 type NodeDiff<K extends string, T, Fields> = {
     kind: K;
-    sourceKeys: { before: ConvertKeys; after: ConvertKeys };
+    sourceKeys: SourceKeysDiff<ConvertKeys>;
 } & (
     | { status: 'unchanged'; value: Body<T> }
     | { status: 'changed'; match: Match; fields: Fields }
@@ -115,24 +129,25 @@ type ListItemDiff<K extends string, T, D> =
     | (D & { index: { before: number; after: number } })
     | {
           kind: K;
+          sourceKeys: SourceKeysDiff<ConvertKeys>;
           status: 'moved';
           match: Match;
           index: { before: number; after: number };
-          sourceKeys: { before: ConvertKeys; after: ConvertKeys };
           value: Body<T>;
       }
     | {
           kind: K;
+          sourceKeys: ConvertKeys;
           status: 'added' | 'removed';
           index: number;
-          sourceKeys: ConvertKeys;
           value: Body<T | ErrorJson>;
       };
 ```
 
 - status ごとに union のメンバーを分ける（`'changed' | 'unchanged'` を 1 つにまとめると `Extract` が `never` になる）。
-- 値からは `kind` / `sourceKeys` を除き、`sourceKeys` は `{ before, after }` にまとめる。
-- StructureJsonType の `sourceKeys`（`{ base, name, ... }`）もそのまま `before` / `after` に入れる。
+- **`kind` / `sourceKeys` と中身は分ける。** 値（`value` / `before` / `after`）からは `kind` / `sourceKeys` を除き、差分のノードの直下に置く。値が JSON ノードでない（文字列・kind を持たない式など）ときは持たない。片方だけが JSON ノードのとき（式がエラーになったなど）は、その側だけを `{ before }` / `{ after }` で持つ。
+- **`sourceKeys` は objectKey / sourceKey ごとにまとめる。** 同じなら単体、違えば `{ before, after }`（`makeSourceKeysDiff`）。位置だけがずれたノードは `objectKey` が単体、`sourceKey` が `{ before, after }` になる。StructureJsonType の `sourceKeys`（`{ base, name, ... }`）は、`base` / `name` などのキーごとに同じ規則でまとめる。`added` / `removed` は片側しかないので、`sourceKeys` をそのまま持つ。
+- **配列の要素の差分は 1 段にする。** 要素の中身の差分（`fields` など）に、対応付けの根拠（`match`）と位置（`index`）を足した形にし、`value` の中に差分を入れ子にしない（文の並び・式の並び・型付きリストのすべて。[typed.ts](../src/analyzer/processor/Apex/diff/typed.ts) の `makeTypedListDiff` / `makeTypedArrayDiff`）。
 - 配列の差分は before の index 順に並べ、`added` は直前の対応付いた要素の後ろに置く（after の index と before の index を混ぜて並べ替えない）。
 
 ## 6. 型ごとの方針
@@ -186,10 +201,11 @@ type ListItemDiff<K extends string, T, D> =
 
 ### 6.4 式
 
-式は JSON のプロパティごとに再帰的に比較する。`memberAccess` や kind を持たない式にも、JSON にない `kind` / `sourceKeys` は追加しない。配列要素の対応付けと順序差分の抽出には GumTree を内部利用するが、公開する式 Diff は JSON 構造に沿った型付き差分である。
+式は JSON のプロパティごとに再帰的に比較する。`memberAccess` や kind を持たない式にも、JSON にない `kind` / `sourceKeys` は追加しない。式の中の配列（メソッドの引数、`new` の初期化子など）は位置が意味を持つので **C**（LCS + gap 内で位置順）で対応付ける。GumTree は文の並び（6.5）の対応付けにだけ使い、式の中では使わない（汎用の配列に GumTree を使うと、位置の意味を持つ配列まで類似度で組み替えられるため）。
 
-- 公開入口は `makeExpressionDiff`。[types/apex/expression.ts](../src/analyzer/types/apex/expression.ts) の各 JSON 型に対応する `*Diff` 型を [diff/expression.ts](../src/analyzer/processor/Apex/diff/expression.ts) に定義し、`ExpressionDiff<T>` は入力型に応じた差分型を返す。
+- 公開入口は `makeExpressionDiff`。[types/apex/expression.ts](../src/analyzer/types/apex/expression.ts) の各 JSON 型に対応する `*Diff` 型を [diff/expression.ts](../src/analyzer/processor/Apex/diff/expression.ts) に定義し、`BaseExpressionJsonDiff<T>` は入力型に応じた差分型を返す。式の種類（kind や形）が変わったときは、kind / sourceKeys を分けて値を丸ごと持つ `ReplacementDiff` になる。
 - `JsonType` / `StructureJsonType` にない kind や sourceKeys は追加しない。型を持たない object や primitive も、そのプロパティ名と値に応じた Diff 型にする。
+- `NewInstanceJson` は初期化部分の `kind`（`'array'` / `'map'` など）を持つが、`sourceKeys` を持たないので JSON ノードとしては扱わない（`kind` と `sourceKeys` の両方を持つものだけを JSON ノードとみなす）。
 
 ### 6.5 文
 
@@ -210,7 +226,13 @@ type ListItemDiff<K extends string, T, D> =
 | `localVariable`                                                         | `variable` の `variants`: D（キー: 変数名） / 型: A                                                            |
 | `return` / `throw` / `expression` / `break` / `continue`                | 値・式: A。式は6.4に従って最下層まで比較する                                                                   |
 
-文も [types/apex/statement.ts](../src/analyzer/types/apex/statement.ts) の各 JSON 型と 1 対 1 に対応する専用 `*Diff` 型を [diff/statement.ts](../src/analyzer/processor/Apex/diff/statement.ts) に定義する。`StatementDiff<T>` と `makeStatementDiff` は入力型に応じた構造 Diff を返す。文配列・宣言本文の `makeBlockDiff` は GumTree で要素を対応付けた後、型付きリスト Diff を返す。
+文も [types/apex/statement.ts](../src/analyzer/types/apex/statement.ts) の各 JSON 型と 1 対 1 に対応する専用 `*Diff` 型を [diff/statement.ts](../src/analyzer/processor/Apex/diff/statement.ts) に定義する。`StatementJsonDiff<T>` と `makeStatementDiff` は入力型に応じた構造 Diff を返す（kind が違うときは値を丸ごと持つ `ReplacementDiff`）。文配列・宣言本文の `makeBlockDiff` は GumTree で要素を対応付けた後、型付きリスト Diff を返す。別のブロックから移動してきた文（`moved`）は、移動元の文と比べる。
+
+文の中の配列は、GumTree ではなく上の表の分類で対応付ける。
+
+- `if` の `conditionBlock` / `switch` の `block` / `try` の `block` は C。ただし `else` の節と条件のある節、`try` / `catch` / `finally` の種類が違う節は組にしない。
+- `when` のリテラル配列は B、`localVariable` の `variants` は D（キー: 変数名）、`merge` の `field` は位置のスロット（A）。
+- `catchCondition.exceptionType` は修飾名の配列を丸ごと値として比べる。`else` の節の条件は `ValueDiff<'else'>`。
 
 ### 6.6 SOQL / SOSL
 
@@ -234,7 +256,13 @@ type ListItemDiff<K extends string, T, D> =
 
 Diff の型定義は `types/apex` の JSON 生成モジュール（`declaration`、`expression`、`modifier`、`param`、`primary`、`statement`、`type`、`unit`、`query`）に対応するファイルへ配置する。各 `*Json` 型には `*JsonDiff` を用意し、個別の比較ロジックを持つ既存 Diff 型がある場合はそれを対応型として再利用する。`JsonType` / `StructureJsonType` のジェネリック定義とソース位置用 `SourceJson` は差分対象ではない。
 
-共通部品は [diff/commons.ts](../src/analyzer/processor/Apex/diff/commons.ts) にある。
+- `*JsonDiff` は別名（`type XJsonDiff = XDiff`）を作らず、Diff 型そのものの名前にする（例: `MethodDeclarationJsonDiff`、`IfStatementJsonDiff`、`SoqlJsonDiff`）。式・文の入口の型は `BaseExpressionJsonDiff<T>` / `StatementJsonDiff<T>`。
+- 1 つの Diff 型で複数の JSON 型を扱っていたものは分ける（修飾子は `ModifierJsonDiff` / `AnnotationJsonDiff`、並び全体は `ModifiersJsonDiff`）。B. 集合の中でしか現れず値として比べるもの（`ValueJson`、`CoordinateValueJson` など）は `ValueDiff<…>`、集合の要素は `TypedListItemDiff<…, never>` で定義する。
+- どの文・式・宣言にも現れるエラーの差分は [commons.ts](../src/analyzer/processor/commons/diff/commons.ts) の `ErrorJsonDiff`、形が違うときの差分は `ReplacementDiff` にまとめる。
+- 再エクスポートはせず、[diff/index.ts](../src/analyzer/processor/Apex/diff/index.ts) から各ファイル（共通部品の `commons` / `typed`、`unitBody` を含む）を公開する。
+- field の変数（`VariantJson` は kind を持たない）の要素は `FieldVariantDiff`。
+
+共通部品は [processor/commons/diff/commons.ts](../src/analyzer/processor/commons/diff/commons.ts) にある。
 
 | 関数                                  | 役割                                              |
 | ------------------------------------- | ------------------------------------------------- |
@@ -250,7 +278,7 @@ Diff の型定義は `types/apex` の JSON 生成モジュール（`declaration`
 
 - [type.ts](../src/analyzer/processor/Apex/diff/type.ts): 済。`makeTypesDiff` は B、`generic` は C、`dimention` → `dimension`
 - [modifier.ts](../src/analyzer/processor/Apex/diff/modifier.ts): 済（B）
-- [parameter.ts](../src/analyzer/processor/Apex/diff/parameter.ts): 済（C）
+- [param.ts](../src/analyzer/processor/Apex/diff/param.ts): 済（C）
 - [declaration.ts](../src/analyzer/processor/Apex/diff/declaration.ts): interface（`extend`: B、`block`: D）、interfaceMethod、enum（`members`: C）、および class / method / constructor / property / field
 - [unit.ts](../src/analyzer/processor/Apex/diff/unit.ts): `'add'` → `'added'`、`makeResolvedErrorDiff` の条件の逆転を修正
 - class / method / constructor / property / field: 済。[apex-declaration-diff.md](./apex-declaration-diff.md)（本体は GumTree）

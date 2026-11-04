@@ -1,12 +1,18 @@
-import { ErrorFileStructureType, FileStructureType } from '../../../parser';
+import { ApexFileStructureType, ApexMetaParseResult, ApexParseResult } from '../../../parser';
+
+/** 比べるファイル 1 つの解析結果。Apex のソース (.cls / .trigger / .apex) とメタデータ (-meta.xml) */
+export type ApexUnitParseResult = ApexParseResult | ApexMetaParseResult;
+
+/** 構文エラー・読めなかった XML (ソースと -meta.xml で形が少し違う) */
+type ResolvedError = ApexUnitParseResult['resolvedError'][number];
 import { CompilationUnitJson } from '../../../types';
 import {
-    TypeDeclarationDiff,
+    CompilationUnitJsonDiff,
     UnitContentDiff,
     makeTypeDeclarationDiff,
-    hasChange,
     makeUnitContentDiff,
 } from './unitBody';
+import { hasChange } from '../../commons/diff/change';
 
 export type UnitDiffAttribute<T> = {
     before: T;
@@ -22,60 +28,55 @@ export type UnitDiffAttributeArray<T> = {
 export type UnitDiff =
     | {
           status: 'added' | 'removed';
-          filePath: (FileStructureType | ErrorFileStructureType)['filePath'];
-          dataType: (FileStructureType | ErrorFileStructureType)['dataType'];
-          resolvedError: (FileStructureType | ErrorFileStructureType)['resolvedError'];
-          target: (FileStructureType | ErrorFileStructureType)['result'];
+          filePath: ApexUnitParseResult['filePath'];
+          dataType: ApexUnitParseResult['dataType'];
+          resolvedError: ResolvedError[];
+          target: ApexUnitParseResult['result'];
       }
     | {
           status: 'unchanged';
-          filePath: (FileStructureType | ErrorFileStructureType)['filePath'];
-          dataType: (FileStructureType | ErrorFileStructureType)['dataType'];
-          resolvedError: (FileStructureType | ErrorFileStructureType)['resolvedError'];
-          target: UnitDiffAttribute<(FileStructureType | ErrorFileStructureType)['result']>;
+          filePath: ApexUnitParseResult['filePath'];
+          dataType: ApexUnitParseResult['dataType'];
+          resolvedError: ResolvedError[];
+          target: UnitDiffAttribute<ApexUnitParseResult['result']>;
           // ファイルの中身の差分 (dataType が同じで、どちらもエラーでないとき)
           content?: UnitContentDiff;
       }
     | {
           status: 'changed';
-          filePath: (FileStructureType | ErrorFileStructureType)['filePath'];
+          filePath: ApexUnitParseResult['filePath'];
           dataType:
-              | (FileStructureType | ErrorFileStructureType)['dataType']
-              | UnitDiffAttribute<(FileStructureType | ErrorFileStructureType)['dataType']>;
-          resolvedError:
-              | (FileStructureType | ErrorFileStructureType)['resolvedError']
-              | UnitDiffAttributeArray<
-                    (FileStructureType | ErrorFileStructureType)['resolvedError'][number]
-                >;
-          target: UnitDiffAttribute<(FileStructureType | ErrorFileStructureType)['result']>;
+              ApexUnitParseResult['dataType'] | UnitDiffAttribute<ApexUnitParseResult['dataType']>;
+          resolvedError: ResolvedError[] | UnitDiffAttributeArray<ResolvedError>;
+          target: UnitDiffAttribute<ApexUnitParseResult['result']>;
           content?: UnitContentDiff;
       };
 
 export type ClsFileDiff = (
     | {
           status: 'unchanged';
-          kind: FileStructureType<CompilationUnitJson>['result']['base']['kind'];
-          target: UnitDiffAttribute<FileStructureType<CompilationUnitJson>['result']>;
+          kind: ApexFileStructureType<CompilationUnitJson>['result']['base']['kind'];
+          target: UnitDiffAttribute<ApexFileStructureType<CompilationUnitJson>['result']>;
       }
     | {
           status: 'changed';
-          kind: UnitDiffAttribute<FileStructureType<CompilationUnitJson>['result']['base']['kind']>;
-          target: UnitDiffAttribute<FileStructureType<CompilationUnitJson>['result']>;
+          kind: UnitDiffAttribute<
+              ApexFileStructureType<CompilationUnitJson>['result']['base']['kind']
+          >;
+          target: UnitDiffAttribute<ApexFileStructureType<CompilationUnitJson>['result']>;
       }
 ) & {
     // 型宣言 (class / interface / enum) の中身の差分
-    content: TypeDeclarationDiff;
+    content: CompilationUnitJsonDiff;
 };
 
 const makeResolvedErrorDiff = (
-    before: (FileStructureType | ErrorFileStructureType)['resolvedError'],
-    after: (FileStructureType | ErrorFileStructureType)['resolvedError'],
-): UnitDiffAttributeArray<
-    (FileStructureType | ErrorFileStructureType)['resolvedError'][number]
-> => {
-    const common: (FileStructureType | ErrorFileStructureType)['resolvedError'] = [];
-    const _before: (FileStructureType | ErrorFileStructureType)['resolvedError'] = [];
-    const _after: (FileStructureType | ErrorFileStructureType)['resolvedError'] = [...after];
+    before: ResolvedError[],
+    after: ResolvedError[],
+): UnitDiffAttributeArray<ResolvedError> => {
+    const common: ResolvedError[] = [];
+    const _before: ResolvedError[] = [];
+    const _after: ResolvedError[] = [...after];
 
     before.forEach((b) => {
         const objectKey = b.sourceKeys.objectKey;
@@ -97,8 +98,8 @@ const makeResolvedErrorDiff = (
 };
 
 export const makeUnitDiffs = (
-    before: (FileStructureType | ErrorFileStructureType)[],
-    after: (FileStructureType | ErrorFileStructureType)[],
+    before: ApexUnitParseResult[],
+    after: ApexUnitParseResult[],
 ): UnitDiff[] => {
     const unitDiff: UnitDiff[] = [];
 
@@ -124,9 +125,7 @@ export const makeUnitDiffs = (
                 result: afterResult,
             } = _after.at(filePathIndex)!;
 
-            const target: UnitDiffAttribute<
-                (FileStructureType | ErrorFileStructureType)['result']
-            > = {
+            const target: UnitDiffAttribute<ApexUnitParseResult['result']> = {
                 before: result,
                 after: afterResult,
             };
@@ -188,7 +187,7 @@ export const makeUnitDiffs = (
 };
 
 export const makeClsFileDiff = (
-    target: UnitDiffAttribute<FileStructureType<CompilationUnitJson>['result']>[],
+    target: UnitDiffAttribute<ApexFileStructureType<CompilationUnitJson>['result']>[],
 ): ClsFileDiff[] => {
     const clsFileDiff: ClsFileDiff[] = [];
 

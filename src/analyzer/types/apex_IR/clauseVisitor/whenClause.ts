@@ -4,14 +4,14 @@ import { ClauseTypeClass } from '.';
 
 import { FieldNameTypeClass, NameVisitor, isFieldNameType } from '../nameVisitor';
 import { FieldNameListTypeClass, ListVisitor, isFieldNameListType } from '../listVisitor';
-import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
+import { ApexErrorTypeClass, ApexCommonTypeClass, isApexValidClass } from '../commonVisitor';
 
 export class WhenClauseTypeClass extends ClauseTypeClass<'whenClause', FieldNameTypeClass> {
-    private field: FieldNameListTypeClass | ErrorTypeClass;
+    private field: FieldNameListTypeClass | ApexErrorTypeClass;
 
     private constructor(
-        value: FieldNameTypeClass | ErrorTypeClass,
-        field: FieldNameListTypeClass | ErrorTypeClass,
+        value: FieldNameTypeClass | ApexErrorTypeClass,
+        field: FieldNameListTypeClass | ApexErrorTypeClass,
     ) {
         super('whenClause', value);
         this.field = field;
@@ -23,8 +23,12 @@ export class WhenClauseTypeClass extends ClauseTypeClass<'whenClause', FieldName
         }
 
         return new WhenClauseTypeClass(
-            isValidClass(new NameVisitor().visit(ctx.fieldName()), isFieldNameType, 'fieldName'),
-            isValidClass(
+            isApexValidClass(
+                new NameVisitor().visit(ctx.fieldName()),
+                isFieldNameType,
+                'fieldName',
+            ),
+            isApexValidClass(
                 new ListVisitor().visit(ctx.fieldNameList()),
                 isFieldNameListType,
                 'fieldNameList',
@@ -32,13 +36,14 @@ export class WhenClauseTypeClass extends ClauseTypeClass<'whenClause', FieldName
         );
     }
 
-    getField(): FieldNameListTypeClass | ErrorTypeClass {
+    getField(): FieldNameListTypeClass | ApexErrorTypeClass {
         return this.field;
     }
 }
 
 export const isWhenClauseType = (
-    target: CommonTypeClass<string>,
+    target: ApexCommonTypeClass<string>,
 ): target is WhenClauseTypeClass => {
     return target instanceof WhenClauseTypeClass;
 };
+

@@ -9,19 +9,24 @@ import {
     isVariableDeclaratorsType,
 } from '../variableVisitor';
 import { TypeRefTypeClass, TypeVisitor, isTypeRefType } from '../typeVisitor';
-import { ErrorTypeClass, CommonTypeClass, isValidClass, isValidClassList } from '../commonVisitor';
+import {
+    ApexErrorTypeClass,
+    ApexCommonTypeClass,
+    isApexValidClass,
+    isApexValidClassList,
+} from '../commonVisitor';
 
 export class LocalVariableDeclarationTypeClass extends DeclarationTypeClass<
     'localVariableDeclaration',
     VariableDeclaratorsTypeClass
 > {
-    private valueType: TypeRefTypeClass | ErrorTypeClass;
-    private modifier: (NormalModifierTypeClass | ErrorTypeClass)[] = [];
+    private valueType: TypeRefTypeClass | ApexErrorTypeClass;
+    private modifier: (NormalModifierTypeClass | ApexErrorTypeClass)[] = [];
 
     private constructor(
-        value: VariableDeclaratorsTypeClass | ErrorTypeClass,
-        valueType: TypeRefTypeClass | ErrorTypeClass,
-        modifier: (NormalModifierTypeClass | ErrorTypeClass)[],
+        value: VariableDeclaratorsTypeClass | ApexErrorTypeClass,
+        valueType: TypeRefTypeClass | ApexErrorTypeClass,
+        modifier: (NormalModifierTypeClass | ApexErrorTypeClass)[],
     ) {
         super('localVariableDeclaration', value);
         this.valueType = valueType;
@@ -34,13 +39,13 @@ export class LocalVariableDeclarationTypeClass extends DeclarationTypeClass<
         }
 
         return new LocalVariableDeclarationTypeClass(
-            isValidClass(
+            isApexValidClass(
                 new VariableVisitor().visit(ctx.variableDeclarators()),
                 isVariableDeclaratorsType,
                 'variableDeclarators',
             ),
-            isValidClass(new TypeVisitor().visit(ctx.typeRef()), isTypeRefType, 'typeRef'),
-            isValidClassList(
+            isApexValidClass(new TypeVisitor().visit(ctx.typeRef()), isTypeRefType, 'typeRef'),
+            isApexValidClassList(
                 ctx.modifier_list(),
                 (ctx) => new ModifierVisitor().visit(ctx),
                 isNormalModifierType,
@@ -49,17 +54,17 @@ export class LocalVariableDeclarationTypeClass extends DeclarationTypeClass<
         );
     }
 
-    getValueType(): TypeRefTypeClass | ErrorTypeClass {
+    getValueType(): TypeRefTypeClass | ApexErrorTypeClass {
         return this.valueType;
     }
 
-    getModifier(): (NormalModifierTypeClass | ErrorTypeClass)[] {
+    getModifier(): (NormalModifierTypeClass | ApexErrorTypeClass)[] {
         return this.modifier;
     }
 }
 
 export const isLocalVariableDeclarationType = (
-    target: CommonTypeClass<string>,
+    target: ApexCommonTypeClass<string>,
 ): target is LocalVariableDeclarationTypeClass => {
     return target instanceof LocalVariableDeclarationTypeClass;
 };

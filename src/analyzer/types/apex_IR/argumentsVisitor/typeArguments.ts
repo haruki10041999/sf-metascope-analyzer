@@ -4,10 +4,10 @@ import { ArgumentsTypeClass } from '.';
 
 import { TypeListTypeClass, ListVisitor, isTypeListType } from '../listVisitor';
 
-import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
+import { ApexErrorTypeClass, ApexCommonTypeClass, isApexValidClass } from '../commonVisitor';
 
 export class TypeArgumentsTypeClass extends ArgumentsTypeClass<'typeArguments', TypeListTypeClass> {
-    private constructor(value: TypeListTypeClass | ErrorTypeClass | null) {
+    private constructor(value: TypeListTypeClass | ApexErrorTypeClass | null) {
         super('typeArguments', value);
     }
 
@@ -16,9 +16,9 @@ export class TypeArgumentsTypeClass extends ArgumentsTypeClass<'typeArguments', 
             throw new Error('値が異常です。TypeArgumentsContext: ' + ctx.getText());
         }
 
-        let value: TypeListTypeClass | ErrorTypeClass | null = null;
+        let value: TypeListTypeClass | ApexErrorTypeClass | null = null;
         if (ctx.typeList()) {
-            value = isValidClass(
+            value = isApexValidClass(
                 new ListVisitor().visit(ctx.typeList()),
                 isTypeListType,
                 'typeList',
@@ -30,7 +30,7 @@ export class TypeArgumentsTypeClass extends ArgumentsTypeClass<'typeArguments', 
 }
 
 export const isTypeArgumentsType = (
-    target: CommonTypeClass<string>,
+    target: ApexCommonTypeClass<string>,
 ): target is TypeArgumentsTypeClass => {
     return target instanceof TypeArgumentsTypeClass;
 };

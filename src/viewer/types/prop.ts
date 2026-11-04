@@ -1,13 +1,9 @@
-import {
-    MetadataObject,
-    MetadataObjectDiff,
-    MetadataDependency,
-    MetadataDependencyDiff,
-} from './metadata';
+import { DependencyView, ObjectView } from './metadata';
 
+/** 表示するオブジェクトと参照関係。差分のレポートでは各要素が status を持つ */
 export type MetadataProp = {
-    metadata: MetadataObject[] | MetadataObjectDiff[];
-    dependency: MetadataDependency[] | MetadataDependencyDiff[];
+    metadata: ObjectView[];
+    dependency: DependencyView[];
 };
 
 export type Prop = { type: 'metadata' } & MetadataProp;

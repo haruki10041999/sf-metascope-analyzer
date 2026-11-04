@@ -25,7 +25,7 @@ import {
     makeValueDiff,
     pairAsSequence,
     toBody,
-} from './commons';
+} from '../../commons/diff/commons';
 
 // ---------------------------------------------------------------------------
 // 型の中身 (TypeContentJson) の差分
@@ -40,7 +40,7 @@ export type CustomTypePartDiff = ValueDiff<string> | { status: 'added' | 'remove
 
 /** generic は C. 順序付き列 (位置が意味を持つ) */
 export type GenericDiff =
-    | (TypeContentDiff & { index: { before: number; after: number } })
+    | (TypeContentJsonDiff & { index: { before: number; after: number } })
     | {
           status: 'moved';
           match: Match;
@@ -57,24 +57,24 @@ export type CustomTypeShapeDiff = {
 
 export type ArrayTypeShapeDiff = {
     type: 'array';
-    elementType: TypeContentDiff;
+    elementType: TypeContentJsonDiff;
     dimension: ValueDiff<number>;
 };
 
 export type ListTypeShapeDiff = {
     type: 'list';
-    elementType: TypeContentDiff;
+    elementType: TypeContentJsonDiff;
 };
 
 export type SetTypeShapeDiff = {
     type: 'set';
-    elementType: TypeContentDiff;
+    elementType: TypeContentJsonDiff;
 };
 
 export type MapTypeShapeDiff = {
     type: 'map';
-    keyType: TypeContentDiff;
-    valueType: TypeContentDiff;
+    keyType: TypeContentJsonDiff;
+    valueType: TypeContentJsonDiff;
 };
 
 /** type が同じ型同士のプロパティごとの差分 */
@@ -86,7 +86,7 @@ export type TypeShapeDiff =
     | SetTypeShapeDiff
     | MapTypeShapeDiff;
 
-export type TypeContentDiff =
+export type TypeContentJsonDiff =
     | { status: 'unchanged'; value: TypeContentJson }
     | { status: 'changed'; fields: TypeShapeDiff }
     | { status: 'changed'; before: TypeContentJson; after: TypeContentJson };
@@ -218,7 +218,7 @@ export const makeMapTypeShapeDiff = (
 export const makeTypeContentDiff = (
     before: TypeContentJson,
     after: TypeContentJson,
-): TypeContentDiff => {
+): TypeContentJsonDiff => {
     if (isSameValue(before, after)) {
         return { status: 'unchanged', value: before };
     }
@@ -232,20 +232,20 @@ export const makeTypeContentDiff = (
 // TypeJson (ノード) の差分
 // ---------------------------------------------------------------------------
 
-export type TypeDiff = NodeDiff<'type', TypeJson, TypeShapeDiff>;
+export type TypeJsonDiff = NodeDiff<'type', TypeJson, TypeShapeDiff>;
 
 export const makeTypeDiff = (
     before: TypeJson | ErrorJson,
     after: TypeJson | ErrorJson,
     match: Match = 'slot',
-): TypeDiff => {
+): TypeJsonDiff => {
     return makeNodeDiff('type', before, after, match, (b, a) =>
         makeTypeShapeDiff(toBody(b) as TypeContentJson, toBody(a) as TypeContentJson),
     );
 };
 
 export type TypeWithVoidDiff =
-    | TypeDiff
+    | TypeJsonDiff
     | { kind: 'type'; status: 'unchanged'; value: 'void' }
     | {
           kind: 'type';
@@ -283,7 +283,7 @@ export const makeTypeWithVoidDiff = (
 };
 
 /** 型の並び (implements / interface の extends)。順序は意味を持たないので B. 集合 */
-export type TypesDiff = ListItemDiff<'type', TypeJson | ErrorJson, TypeDiff>;
+export type TypesDiff = ListItemDiff<'type', TypeJson | ErrorJson, TypeJsonDiff>;
 
 export const makeTypesDiff = (
     before: (TypeJson | ErrorJson)[],
@@ -292,6 +292,23 @@ export const makeTypesDiff = (
 ): TypesDiff[] => {
     return makeSetDiff('type', before, after, makeTypeDiff, sources);
 };
+
+/** type が決まった型の中身の差分 (type が違えば TypeContentJsonDiff の丸ごと changed になる) */
+type TypeContentDiffOf<T extends TypeContentJson, S extends TypeShapeDiff> =
+    { status: 'unchanged'; value: T } | { status: 'changed'; fields: S };
+
+export type PrimitiveTypeContentJsonDiff = TypeContentDiffOf<
+    PrimitiveTypeContentJson,
+    PrimitiveTypeShapeDiff
+>;
+export type CustomTypeContentJsonDiff = TypeContentDiffOf<
+    CustomTypeContentJson,
+    CustomTypeShapeDiff
+>;
+export type ArrayTypeContentJsonDiff = TypeContentDiffOf<ArrayTypeContentJson, ArrayTypeShapeDiff>;
+export type ListTypeContentJsonDiff = TypeContentDiffOf<ListTypeContentJson, ListTypeShapeDiff>;
+export type SetTypeContentJsonDiff = TypeContentDiffOf<SetTypeContentJson, SetTypeShapeDiff>;
+export type MapTypeContentJsonDiff = TypeContentDiffOf<MapTypeContentJson, MapTypeShapeDiff>;
 
 /** オーバーロードの識別などに使う、型の比較用キー */
 export const getTypeKey = (target: TypeJson | ErrorJson): string => {

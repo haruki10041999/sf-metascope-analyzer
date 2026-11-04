@@ -1,10 +1,7 @@
 import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
 
-import {
-    ParametersDiff,
-    makeParametersDiff,
-} from '../../src/analyzer/processor/Apex/diff/parameter';
+import { ParametersDiff, makeParametersDiff } from '../../src/analyzer/processor/Apex/diff/param';
 import type { ParameterJson, SourceJson } from '../../src/analyzer/types';
 
 const makeParameter = (objectKey: string, sourceKey: string, variant: string): ParameterJson => ({

@@ -4,16 +4,21 @@ import { TriggerCaseTypeClass, UnitListTypeClass, UnitVisitor, isTriggerCaseType
 
 import { NormalIdTypeClass, IdVisitor, isNormalIdType } from '../idVisitor';
 import { TriggerBlockTypeClass, BlockVisitor, isTriggerBlockType } from '../blockVisitor';
-import { ErrorTypeClass, CommonTypeClass, isValidClass, isValidClassList } from '../commonVisitor';
+import {
+    ApexErrorTypeClass,
+    ApexCommonTypeClass,
+    isApexValidClass,
+    isApexValidClassList,
+} from '../commonVisitor';
 
 export class TriggerUnitTypeClass extends UnitListTypeClass<'triggerUnit', NormalIdTypeClass> {
-    private triggerCase: (TriggerCaseTypeClass | ErrorTypeClass)[];
-    private block: TriggerBlockTypeClass | ErrorTypeClass;
+    private triggerCase: (TriggerCaseTypeClass | ApexErrorTypeClass)[];
+    private block: TriggerBlockTypeClass | ApexErrorTypeClass;
 
     private constructor(
-        value: (NormalIdTypeClass | ErrorTypeClass)[],
-        triggerCase: (TriggerCaseTypeClass | ErrorTypeClass)[],
-        block: TriggerBlockTypeClass | ErrorTypeClass,
+        value: (NormalIdTypeClass | ApexErrorTypeClass)[],
+        triggerCase: (TriggerCaseTypeClass | ApexErrorTypeClass)[],
+        block: TriggerBlockTypeClass | ApexErrorTypeClass,
     ) {
         super('triggerUnit', value);
         this.triggerCase = triggerCase;
@@ -30,19 +35,19 @@ export class TriggerUnitTypeClass extends UnitListTypeClass<'triggerUnit', Norma
         }
 
         return new TriggerUnitTypeClass(
-            isValidClassList(
+            isApexValidClassList(
                 ctx.id_list(),
                 (ctx) => new IdVisitor().visit(ctx),
                 isNormalIdType,
                 'id',
             ),
-            isValidClassList(
+            isApexValidClassList(
                 ctx.triggerCase_list(),
                 (ctx) => new UnitVisitor().visit(ctx),
                 isTriggerCaseType,
                 'triggerCase',
             ),
-            isValidClass(
+            isApexValidClass(
                 new BlockVisitor().visit(ctx.triggerBlock()),
                 isTriggerBlockType,
                 'triggerBlock',
@@ -50,11 +55,11 @@ export class TriggerUnitTypeClass extends UnitListTypeClass<'triggerUnit', Norma
         );
     }
 
-    getTriggerCase(): (TriggerCaseTypeClass | ErrorTypeClass)[] {
+    getTriggerCase(): (TriggerCaseTypeClass | ApexErrorTypeClass)[] {
         return this.triggerCase;
     }
 
-    getBlock(): TriggerBlockTypeClass | ErrorTypeClass {
+    getBlock(): TriggerBlockTypeClass | ApexErrorTypeClass {
         return this.block;
     }
 }
@@ -62,3 +67,4 @@ export class TriggerUnitTypeClass extends UnitListTypeClass<'triggerUnit', Norma
 export const isTriggerUnitType = (value: any): value is TriggerUnitTypeClass => {
     return value instanceof TriggerUnitTypeClass;
 };
+

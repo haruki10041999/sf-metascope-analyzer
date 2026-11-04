@@ -10,7 +10,7 @@ import {
     isFilteringExpressionType,
 } from '../expressionVisitor';
 import { NetworkListTypeClass, ListVisitor, isNetworkListType } from '../listVisitor';
-import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
+import { ApexErrorTypeClass, ApexCommonTypeClass, isApexValidClass } from '../commonVisitor';
 
 type SoslWithClauseValueType =
     | 'DIVISION'
@@ -31,11 +31,11 @@ export class SoslWithClauseTypeClass extends ClauseValueTypeClass<
     'soslWithClause',
     SoslWithClauseValueType
 > {
-    private content: SoslWithClauseContent | ErrorTypeClass | null = null;
+    private content: SoslWithClauseContent | ApexErrorTypeClass | null = null;
 
     private constructor(
         value: SoslWithClauseValueType,
-        content: SoslWithClauseContent | ErrorTypeClass | null,
+        content: SoslWithClauseContent | ApexErrorTypeClass | null,
     ) {
         super('soslWithClause', value);
         this.content = content;
@@ -59,7 +59,7 @@ export class SoslWithClauseTypeClass extends ClauseValueTypeClass<
         }
 
         let value: SoslWithClauseValueType;
-        let content: SoslWithClauseContent | ErrorTypeClass | null = null;
+        let content: SoslWithClauseContent | ApexErrorTypeClass | null = null;
 
         if (ctx.DIVISION() || ctx.PRICEBOOKID()) {
             value = ctx.DIVISION() ? 'DIVISION' : 'PRICEBOOKID';
@@ -67,14 +67,14 @@ export class SoslWithClauseTypeClass extends ClauseValueTypeClass<
                 ? ctx.StringLiteral().getText()
                 : ctx.MultilineStringLiteral()
                   ? ctx.MultilineStringLiteral().getText()
-                  : isValidClass(
+                  : isApexValidClass(
                         new ExpressionVisitor().visit(ctx.boundExpression()),
                         isBoundExpressionType,
                         'boundExpression',
                     );
         } else if (ctx.DATA() && ctx.CATEGORY()) {
             value = 'DATA_CATEGORY';
-            content = isValidClass(
+            content = isApexValidClass(
                 new ExpressionVisitor().visit(ctx.filteringExpression()),
                 isFilteringExpressionType,
                 'filteringExpression',
@@ -90,7 +90,7 @@ export class SoslWithClauseTypeClass extends ClauseValueTypeClass<
             value = 'NETWORK';
             // `NETWORK IN (...)` と `NETWORK = '...'` の 2 形式がある
             content = ctx.networkList()
-                ? isValidClass(
+                ? isApexValidClass(
                       new ListVisitor().visit(ctx.networkList()),
                       isNetworkListType,
                       'networkList',
@@ -110,13 +110,14 @@ export class SoslWithClauseTypeClass extends ClauseValueTypeClass<
         return new SoslWithClauseTypeClass(value, content);
     }
 
-    getContent(): SoslWithClauseContent | ErrorTypeClass | null {
+    getContent(): SoslWithClauseContent | ApexErrorTypeClass | null {
         return this.content;
     }
 }
 
 export const isSoslWithClauseType = (
-    target: CommonTypeClass<string>,
+    target: ApexCommonTypeClass<string>,
 ): target is SoslWithClauseTypeClass => {
     return target instanceof SoslWithClauseTypeClass;
 };
+

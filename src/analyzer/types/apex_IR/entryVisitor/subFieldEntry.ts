@@ -12,7 +12,7 @@ import {
     isSubQueryType,
     isSoqlFunctionType,
 } from '../queryVisitor';
-import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
+import { ApexErrorTypeClass, ApexCommonTypeClass, isApexValidClass } from '../commonVisitor';
 
 type SubFieldEntryTypeClassType =
     FieldNameTypeClass | SoqlFunctionTypeClass | SubQueryTypeClass | TypeOfTypeClass;
@@ -21,11 +21,11 @@ export class SubFieldEntryTypeClass extends EntryTypeClass<
     'subFieldEntry',
     SubFieldEntryTypeClassType
 > {
-    private alias: SoqlIdTypeClass | ErrorTypeClass | null;
+    private alias: SoqlIdTypeClass | ApexErrorTypeClass | null;
 
     private constructor(
-        value: SubFieldEntryTypeClassType | ErrorTypeClass,
-        alias: SoqlIdTypeClass | ErrorTypeClass | null,
+        value: SubFieldEntryTypeClassType | ApexErrorTypeClass,
+        alias: SoqlIdTypeClass | ApexErrorTypeClass | null,
     ) {
         super('subFieldEntry', value);
         this.alias = alias;
@@ -36,45 +36,50 @@ export class SubFieldEntryTypeClass extends EntryTypeClass<
             throw new Error('値が異常です。SubFieldEntryContext: ' + ctx.getText());
         }
 
-        let value: SubFieldEntryTypeClassType | ErrorTypeClass;
+        let value: SubFieldEntryTypeClassType | ApexErrorTypeClass;
         if (ctx.fieldName()) {
-            value = isValidClass(
+            value = isApexValidClass(
                 new NameVisitor().visit(ctx.fieldName()),
                 isFieldNameType,
                 'fieldName',
             );
         } else if (ctx.soqlFunction()) {
-            value = isValidClass(
+            value = isApexValidClass(
                 new QueryVisitor().visit(ctx.soqlFunction()),
                 isSoqlFunctionType,
                 'soqlFunction',
             );
         } else if (ctx.subQuery()) {
-            value = isValidClass(
+            value = isApexValidClass(
                 new QueryVisitor().visit(ctx.subQuery()),
                 isSubQueryType,
                 'subQuery',
             );
         } else {
-            value = isValidClass(new ClauseVisitor().visit(ctx.typeOf()), isTypeOfType, 'typeOf');
+            value = isApexValidClass(
+                new ClauseVisitor().visit(ctx.typeOf()),
+                isTypeOfType,
+                'typeOf',
+            );
         }
 
         // 文法上 soqlId は常に別名
         return new SubFieldEntryTypeClass(
             value,
             ctx.soqlId()
-                ? isValidClass(new IdVisitor().visit(ctx.soqlId()), isSoqlIdType, 'soqlId')
+                ? isApexValidClass(new IdVisitor().visit(ctx.soqlId()), isSoqlIdType, 'soqlId')
                 : null,
         );
     }
 
-    getAlias(): SoqlIdTypeClass | ErrorTypeClass | null {
+    getAlias(): SoqlIdTypeClass | ApexErrorTypeClass | null {
         return this.alias;
     }
 }
 
 export const isSubFieldEntryType = (
-    target: CommonTypeClass<string>,
+    target: ApexCommonTypeClass<string>,
 ): target is SubFieldEntryTypeClass => {
     return target instanceof SubFieldEntryTypeClass;
 };
+

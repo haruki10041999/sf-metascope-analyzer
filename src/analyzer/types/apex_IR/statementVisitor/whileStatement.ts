@@ -12,17 +12,17 @@ import {
     ExpressionVisitor,
     isParExpressionType,
 } from '../expressionVisitor';
-import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
+import { ApexErrorTypeClass, ApexCommonTypeClass, isApexValidClass } from '../commonVisitor';
 
 export class WhileStatementTypeClass extends StatementTypeClass<
     'whileStatement',
     ParExpressionTypeClass
 > {
-    private block: NormalStatementTypeClass | ErrorTypeClass;
+    private block: NormalStatementTypeClass | ApexErrorTypeClass;
 
     private constructor(
-        value: ParExpressionTypeClass | ErrorTypeClass,
-        block: NormalStatementTypeClass | ErrorTypeClass,
+        value: ParExpressionTypeClass | ApexErrorTypeClass,
+        block: NormalStatementTypeClass | ApexErrorTypeClass,
     ) {
         super('whileStatement', value);
         this.block = block;
@@ -34,12 +34,12 @@ export class WhileStatementTypeClass extends StatementTypeClass<
         }
 
         return new WhileStatementTypeClass(
-            isValidClass(
+            isApexValidClass(
                 new ExpressionVisitor().visit(ctx.parExpression()),
                 isParExpressionType,
                 'parExpression',
             ),
-            isValidClass(
+            isApexValidClass(
                 new StatementVisitor().visit(ctx.statement()),
                 isNormalStatementType,
                 'statement',
@@ -53,7 +53,8 @@ export class WhileStatementTypeClass extends StatementTypeClass<
 }
 
 export const isWhileStatementType = (
-    target: CommonTypeClass<string>,
+    target: ApexCommonTypeClass<string>,
 ): target is WhileStatementTypeClass => {
     return target instanceof WhileStatementTypeClass;
 };
+

@@ -1,0 +1,78 @@
+{
+  "filePath": "Legacy_Item__c",
+  "resolvedError": [],
+  "dataType": "object",
+  "result": {
+    "id": "Legacy_Item__c",
+    "base": {
+      "kind": "object",
+      "sourceKeys": {
+        "objectKey": "object_99859d88c21a4eff",
+        "sourceKey": "object_2f75641dfb4d0bf7"
+      },
+      "apiName": "Legacy_Item__c",
+      "objectType": "custom",
+      "label": "Legacy Item",
+      "pluralLabel": "Legacy Items",
+      "sharingModel": "ReadWrite",
+      "deploymentStatus": "Deployed",
+      "fields": [
+        {
+          "kind": "field",
+          "sourceKeys": {
+            "objectKey": "field_d3f023f9bb515b13",
+            "sourceKey": "field_ad0a1b317ae2f9d0"
+          },
+          "apiName": "Invoice__c",
+          "label": "Invoice",
+          "type": "Lookup",
+          "referenceTo": "Invoice__c",
+          "relationshipName": "Legacy_Items",
+          "deleteConstraint": "SetNull"
+        }
+      ]
+    },
+    "sourceObject": [
+      {
+        "objectKey": "field_d3f023f9bb515b13",
+        "context": "<CustomField xmlns=\"http://soap.sforce.com/2006/04/metadata\">\n    <fullName>Invoice__c</fullName>\n    <deleteConstraint>SetNull</deleteConstraint>\n    <label>Invoice</label>\n    <referenceTo>Invoice__c</referenceTo>\n    <relationshipName>Legacy_Items</relationshipName>\n    <type>Lookup</type>\n</CustomField>",
+        "source": [
+          {
+            "sourceKey": "field_ad0a1b317ae2f9d0",
+            "filePath": "Legacy_Item__c/fields/Invoice__c.field-meta.xml",
+            "start": {
+              "offset": 39,
+              "line": 2,
+              "column": 0
+            },
+            "end": {
+              "offset": 347,
+              "line": 9,
+              "column": 14
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "object_99859d88c21a4eff",
+        "context": "<CustomObject xmlns=\"http://soap.sforce.com/2006/04/metadata\">\n    <deploymentStatus>Deployed</deploymentStatus>\n    <label>Legacy Item</label>\n    <pluralLabel>Legacy Items</pluralLabel>\n    <sharingModel>ReadWrite</sharingModel>\n</CustomObject>",
+        "source": [
+          {
+            "sourceKey": "object_2f75641dfb4d0bf7",
+            "filePath": "Legacy_Item__c/Legacy_Item__c.object-meta.xml",
+            "start": {
+              "offset": 39,
+              "line": 2,
+              "column": 0
+            },
+            "end": {
+              "offset": 285,
+              "line": 7,
+              "column": 15
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -1,19 +1,27 @@
 import {
+    CoordinateElementJson,
+    CoordinateValueJson,
     DateFieldNameJson,
     DistanceValueJson,
     ErrorJson,
     SoqlFunctionJson,
 } from '../../../../types';
 
-import { OptionalDiff, ValueDiff, isSameValue, makeOptionalDiff, makeValueDiff } from '../commons';
+import {
+    OptionalDiff,
+    ValueDiff,
+    isSameValue,
+    makeOptionalDiff,
+    makeValueDiff,
+} from '../../../commons/diff/commons';
 import { FieldPathDiff, makeFieldPathDiff } from './select';
 
-export type DateFieldNameDiff = {
+export type DateFieldNameJsonDiff = {
     name: FieldPathDiff;
     isConvertTimeZone: ValueDiff<boolean>;
 };
 
-export type DistanceValueDiff = {
+export type DistanceValueJsonDiff = {
     field: ValueDiff<DistanceValueJson['field']>;
     target: ValueDiff<DistanceValueJson['target']>;
     unit: ValueDiff<string>;
@@ -32,12 +40,12 @@ export type SoqlFunctionArgDiff =
           status: 'changed';
           fields:
               | { type: 'fieldPath'; value: FieldPathDiff }
-              | { type: 'dateFieldName'; value: DateFieldNameDiff }
-              | { type: 'distance'; value: DistanceValueDiff }
+              | { type: 'dateFieldName'; value: DateFieldNameJsonDiff }
+              | { type: 'distance'; value: DistanceValueJsonDiff }
               | { type: 'nestedFunction'; value: NestedSoqlFunctionDiff };
       };
 
-export type SoqlFunctionDiff = {
+export type SoqlFunctionJsonDiff = {
     type: SoqlFunctionJson['type'];
     func: ValueDiff<SoqlFunctionJson['func']>;
     arg: OptionalDiff<NonNullable<SoqlFunctionJson['arg']>, SoqlFunctionArgDiff>;
@@ -70,7 +78,7 @@ const isNestedFunction = (
 const makeDistanceValueDiff = (
     before: DistanceValueJson,
     after: DistanceValueJson,
-): DistanceValueDiff => ({
+): DistanceValueJsonDiff => ({
     field: makeValueDiff(before.field, after.field),
     target: makeValueDiff(before.target, after.target),
     unit: makeValueDiff(before.unit, after.unit),
@@ -133,10 +141,14 @@ const makeSoqlFunctionArgDiff = (
 export const makeSoqlFunctionDiff = (
     before: SoqlFunctionJson,
     after: SoqlFunctionJson,
-): SoqlFunctionDiff => ({
+): SoqlFunctionJsonDiff => ({
     type: 'soqlFunction',
     func: makeValueDiff(before.func, after.func),
     arg: makeOptionalDiff(before.arg, after.arg, (beforeArg, afterArg) =>
         makeSoqlFunctionArgDiff(before.func, after.func, beforeArg, afterArg),
     ),
 });
+
+/** DISTANCE の座標は値として比べる */
+export type CoordinateElementJsonDiff = ValueDiff<CoordinateElementJson>;
+export type CoordinateValueJsonDiff = ValueDiff<CoordinateValueJson>;

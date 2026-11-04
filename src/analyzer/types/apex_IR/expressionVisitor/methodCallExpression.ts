@@ -3,13 +3,13 @@ import { MethodCallExpressionContext } from '@apexdevtools/apex-parser';
 import { ExpressionTypeClass } from '../expressionVisitor';
 
 import { MethodCallTypeClass, CallVisitor, isMethodCallType } from '../callVisitor';
-import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
+import { ApexErrorTypeClass, ApexCommonTypeClass, isApexValidClass } from '../commonVisitor';
 
 export class MethodCallExpressionTypeClass extends ExpressionTypeClass<
     'methodCallExpression',
     MethodCallTypeClass
 > {
-    private constructor(value: MethodCallTypeClass | ErrorTypeClass) {
+    private constructor(value: MethodCallTypeClass | ApexErrorTypeClass) {
         super('methodCallExpression', value);
     }
 
@@ -19,13 +19,14 @@ export class MethodCallExpressionTypeClass extends ExpressionTypeClass<
         }
 
         return new MethodCallExpressionTypeClass(
-            isValidClass(new CallVisitor().visit(ctx.methodCall()), isMethodCallType, 'value'),
+            isApexValidClass(new CallVisitor().visit(ctx.methodCall()), isMethodCallType, 'value'),
         );
     }
 }
 
 export const isMethodCallExpressionType = (
-    target: CommonTypeClass<string>,
+    target: ApexCommonTypeClass<string>,
 ): target is MethodCallExpressionTypeClass => {
     return target instanceof MethodCallExpressionTypeClass;
 };
+

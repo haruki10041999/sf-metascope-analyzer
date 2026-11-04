@@ -2,7 +2,7 @@ import { FilteringSelectorContext } from '@apexdevtools/apex-parser';
 
 import { ClauseValueTypeClass } from '.';
 
-import { ErrorTypeClass, CommonTypeClass } from '../commonVisitor';
+import { ApexErrorTypeClass, ApexCommonTypeClass } from '../commonVisitor';
 
 type FilteringSelectorField = 'AT' | 'ABOVE' | 'BELOW' | 'ABOVE_OR_BELOW';
 
@@ -35,7 +35,8 @@ export class FilteringSelectorTypeClass extends ClauseValueTypeClass<
 }
 
 export const isFilteringSelectorType = (
-    target: CommonTypeClass<string>,
+    target: ApexCommonTypeClass<string>,
 ): target is FilteringSelectorTypeClass => {
     return target instanceof FilteringSelectorTypeClass;
 };
+

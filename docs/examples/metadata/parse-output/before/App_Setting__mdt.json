@@ -1,0 +1,75 @@
+{
+  "filePath": "App_Setting__mdt",
+  "resolvedError": [],
+  "dataType": "object",
+  "result": {
+    "id": "App_Setting__mdt",
+    "base": {
+      "kind": "object",
+      "sourceKeys": {
+        "objectKey": "object_af13afaa91d16251",
+        "sourceKey": "object_013076ad22b8d583"
+      },
+      "apiName": "App_Setting__mdt",
+      "objectType": "customMetadata",
+      "label": "App Setting",
+      "pluralLabel": "App Settings",
+      "visibility": "Public",
+      "fields": [
+        {
+          "kind": "field",
+          "sourceKeys": {
+            "objectKey": "field_174879fdc3993fa7",
+            "sourceKey": "field_ff2305cde7be4892"
+          },
+          "apiName": "Value__c",
+          "label": "Value",
+          "type": "Text",
+          "length": 255
+        }
+      ]
+    },
+    "sourceObject": [
+      {
+        "objectKey": "field_174879fdc3993fa7",
+        "context": "<CustomField xmlns=\"http://soap.sforce.com/2006/04/metadata\">\n    <fullName>Value__c</fullName>\n    <fieldManageability>DeveloperControlled</fieldManageability>\n    <label>Value</label>\n    <length>255</length>\n    <type>Text</type>\n</CustomField>",
+        "source": [
+          {
+            "sourceKey": "field_ff2305cde7be4892",
+            "filePath": "App_Setting__mdt/fields/Value__c.field-meta.xml",
+            "start": {
+              "offset": 39,
+              "line": 2,
+              "column": 0
+            },
+            "end": {
+              "offset": 286,
+              "line": 8,
+              "column": 14
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "object_af13afaa91d16251",
+        "context": "<CustomObject xmlns=\"http://soap.sforce.com/2006/04/metadata\">\n    <label>App Setting</label>\n    <pluralLabel>App Settings</pluralLabel>\n    <visibility>Public</visibility>\n</CustomObject>",
+        "source": [
+          {
+            "sourceKey": "object_013076ad22b8d583",
+            "filePath": "App_Setting__mdt/App_Setting__mdt.object-meta.xml",
+            "start": {
+              "offset": 39,
+              "line": 2,
+              "column": 0
+            },
+            "end": {
+              "offset": 228,
+              "line": 6,
+              "column": 15
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

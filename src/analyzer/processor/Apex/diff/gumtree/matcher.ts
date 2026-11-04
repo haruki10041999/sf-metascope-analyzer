@@ -1,6 +1,6 @@
-import { SourceDistance, compareSourceDistance } from '../../commons';
+import { SourceDistance, compareSourceDistance } from '../../../commons/source';
 
-import { Match, lcs } from '../commons';
+import { Match, lcs } from '../../../commons/diff/commons';
 import { GumTreeNode, descendants, postOrder, preOrder } from './tree';
 
 // 方針: docs/apex-gumtree-diff.md 2 章

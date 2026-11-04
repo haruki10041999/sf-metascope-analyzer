@@ -1,12 +1,12 @@
 import typia from 'typia';
 
 import {
-    CommonTypeClass,
-    ErrorTypeClass,
-    SourcePosition,
+    ApexCommonTypeClass,
+    ApexErrorTypeClass,
     ErrorCode,
-    isErrorType as isErrorTypeClass,
+    isErrorType as isApexErrorTypeClass,
 } from '../../apex_IR';
+import { SourcePosition } from '../../commons/source';
 
 export type SourceInfo = {
     context: string;
@@ -16,8 +16,8 @@ export type SourceInfo = {
 
 export const isSourceInfo = typia.createIs<SourceInfo>();
 
-// span は CommonVisitor.visit() が必ず設定する
-export const makeSourceInfo = (typeClass: CommonTypeClass<string>): SourceInfo => {
+// span は ApexCommonVisitor.visit() が必ず設定する
+export const makeSourceInfo = (typeClass: ApexCommonTypeClass<string>): SourceInfo => {
     const span = typeClass.getSpan()!;
     return { context: span.context, start: span.start, end: span.end };
 };
@@ -39,7 +39,7 @@ export const isErrorType = (value: unknown): value is ErrorType => {
     return isCommonType(value) && value.type === 'error';
 };
 
-export const makeErrorType = (typeClass: ErrorTypeClass): ErrorType => {
+export const makeErrorType = (typeClass: ApexErrorTypeClass): ErrorType => {
     return {
         type: 'error',
         errorCode: typeClass.getCode(),
@@ -48,11 +48,11 @@ export const makeErrorType = (typeClass: ErrorTypeClass): ErrorType => {
     };
 };
 
-export const isTargetTypeClass = <T extends CommonTypeClass<string>>(
+export const isTargetTypeClass = <T extends ApexCommonTypeClass<string>>(
     target: unknown,
-    isValid: (target: CommonTypeClass<string>) => target is T,
+    isValid: (target: ApexCommonTypeClass<string>) => target is T,
 ): target is T => {
-    return target instanceof CommonTypeClass && isValid(target);
+    return target instanceof ApexCommonTypeClass && isValid(target);
 };
 
 type AnyAssignRule = {
@@ -92,8 +92,8 @@ export const makeNullAssignRule = {
 };
 
 export const makeErrorAssignRule = {
-    isValid: (target: unknown) => isTargetTypeClass(target, isErrorTypeClass),
-    construct: (typeClass: ErrorTypeClass) => {
+    isValid: (target: unknown) => isTargetTypeClass(target, isApexErrorTypeClass),
+    construct: (typeClass: ApexErrorTypeClass) => {
         return makeErrorType(typeClass);
     },
 };
@@ -112,6 +112,7 @@ export const assignMultiClass = <const TRules extends readonly AnyAssignRule[]>(
     }
 
     throw new Error(
-        `Unsupported type: ${typeClass instanceof CommonTypeClass ? typeClass.getType() : typeof typeClass}`,
+        `Unsupported type: ${typeClass instanceof ApexCommonTypeClass ? typeClass.getType() : typeof typeClass}`,
     );
 };
+

@@ -1,6 +1,12 @@
 import { TypeOfBlockJson, TypeOfJson } from '../../../../types';
 
-import { ValueDiff, getValueKey, isSameValue, makeValueDiff, pairAsSequence } from '../commons';
+import {
+    ValueDiff,
+    getValueKey,
+    isSameValue,
+    makeValueDiff,
+    pairAsSequence,
+} from '../../../commons/diff/commons';
 import { FieldPathDiff, makeFieldPathDiff } from './select';
 
 export type TypeOfBlockFieldsDiff = {
@@ -8,7 +14,7 @@ export type TypeOfBlockFieldsDiff = {
     field: ValueDiff<string[][]>;
 };
 
-export type TypeOfBlockDiff =
+export type TypeOfBlockJsonDiff =
     | {
           status: 'unchanged' | 'moved';
           index: { before: number; after: number };
@@ -21,22 +27,22 @@ export type TypeOfBlockDiff =
       }
     | { status: 'added' | 'removed'; index: number; value: TypeOfBlockJson };
 
-export type TypeOfDiff = {
+export type TypeOfJsonDiff = {
     type: 'typeOf';
     field: FieldPathDiff;
-    block: TypeOfBlockDiff[];
+    block: TypeOfBlockJsonDiff[];
 };
 
 const makeTypeOfBlocksDiff = (
     before: TypeOfBlockJson[],
     after: TypeOfBlockJson[],
-): TypeOfBlockDiff[] => {
+): TypeOfBlockJsonDiff[] => {
     const pairings = pairAsSequence(
         before.map((block) => getValueKey(block.object)),
         after.map((block) => getValueKey(block.object)),
     );
 
-    return pairings.map((pairing): TypeOfBlockDiff => {
+    return pairings.map((pairing): TypeOfBlockJsonDiff => {
         if (pairing.status === 'removed') {
             return { status: 'removed', index: pairing.before, value: before[pairing.before]! };
         }
@@ -62,7 +68,7 @@ const makeTypeOfBlocksDiff = (
     });
 };
 
-export const makeTypeOfDiff = (before: TypeOfJson, after: TypeOfJson): TypeOfDiff => ({
+export const makeTypeOfDiff = (before: TypeOfJson, after: TypeOfJson): TypeOfJsonDiff => ({
     type: 'typeOf',
     field: makeFieldPathDiff(before.field, after.field),
     block: makeTypeOfBlocksDiff(before.block, after.block),

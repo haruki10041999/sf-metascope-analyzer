@@ -7,12 +7,12 @@ import type { BodyTypeClass } from './base';
 import { ClassBodyTypeClass } from './classBody';
 import { InterfaceBodyTypeClass } from './interfaceBody';
 
-import { CommonVisitor } from '../commonVisitor';
+import { ApexCommonVisitor } from '../commonVisitor';
 
 export { isClassBodyType, ClassBodyTypeClass } from './classBody';
 export { isInterfaceBodyType, InterfaceBodyTypeClass } from './interfaceBody';
 
-export class BodyVisitor extends CommonVisitor<BodyTypeClass<string, unknown>> {
+export class BodyVisitor extends ApexCommonVisitor<BodyTypeClass<string, unknown>> {
     visitClassBody(ctx: ClassBodyContext) {
         return ClassBodyTypeClass.create(ctx);
     }

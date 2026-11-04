@@ -7,13 +7,13 @@ import {
     ExpressionVisitor,
     isBoundExpressionType,
 } from '../expressionVisitor';
-import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
+import { ApexErrorTypeClass, ApexCommonTypeClass, isApexValidClass } from '../commonVisitor';
 
 export class LimitClauseTypeClass extends ClauseTypeClass<
     'limitClause',
     string | BoundExpressionTypeClass
 > {
-    private constructor(value: string | BoundExpressionTypeClass | ErrorTypeClass) {
+    private constructor(value: string | BoundExpressionTypeClass | ApexErrorTypeClass) {
         super('limitClause', value);
     }
 
@@ -25,7 +25,7 @@ export class LimitClauseTypeClass extends ClauseTypeClass<
         return new LimitClauseTypeClass(
             ctx.IntegerLiteral()
                 ? ctx.IntegerLiteral().getText()
-                : isValidClass(
+                : isApexValidClass(
                       new ExpressionVisitor().visit(ctx.boundExpression()),
                       isBoundExpressionType,
                       'boundExpression',
@@ -35,7 +35,8 @@ export class LimitClauseTypeClass extends ClauseTypeClass<
 }
 
 export const isLimitClauseType = (
-    target: CommonTypeClass<string>,
+    target: ApexCommonTypeClass<string>,
 ): target is LimitClauseTypeClass => {
     return target instanceof LimitClauseTypeClass;
 };
+

@@ -3,10 +3,15 @@ import { UpdateListContext } from '@apexdevtools/apex-parser';
 import { ListTypeClass, ListVisitor } from '.';
 
 import { UpdateTypeTypeClass, ClauseVisitor, isUpdateTypeType } from '../clauseVisitor';
-import { ErrorTypeClass, CommonTypeClass, isValidClass, isValidClassList } from '../commonVisitor';
+import {
+    ApexErrorTypeClass,
+    ApexCommonTypeClass,
+    isApexValidClass,
+    isApexValidClassList,
+} from '../commonVisitor';
 
 export class UpdateListTypeClass extends ListTypeClass<'updateList', UpdateTypeTypeClass> {
-    private constructor(value: (UpdateTypeTypeClass | ErrorTypeClass)[]) {
+    private constructor(value: (UpdateTypeTypeClass | ApexErrorTypeClass)[]) {
         super('updateList', value);
     }
 
@@ -15,8 +20,8 @@ export class UpdateListTypeClass extends ListTypeClass<'updateList', UpdateTypeT
             throw new Error('値が異常です。UpdateListContext: ' + ctx.getText());
         }
 
-        const value: (UpdateTypeTypeClass | ErrorTypeClass)[] = [
-            isValidClass(
+        const value: (UpdateTypeTypeClass | ApexErrorTypeClass)[] = [
+            isApexValidClass(
                 new ClauseVisitor().visit(ctx.updateType()),
                 isUpdateTypeType,
                 'updateType',
@@ -24,7 +29,7 @@ export class UpdateListTypeClass extends ListTypeClass<'updateList', UpdateTypeT
         ];
 
         if (ctx.updateList()) {
-            const nested = isValidClass(
+            const nested = isApexValidClass(
                 new ListVisitor().visit(ctx.updateList()),
                 isUpdateListType,
                 'updateList',
@@ -42,7 +47,8 @@ export class UpdateListTypeClass extends ListTypeClass<'updateList', UpdateTypeT
 }
 
 export const isUpdateListType = (
-    target: CommonTypeClass<string>,
+    target: ApexCommonTypeClass<string>,
 ): target is UpdateListTypeClass => {
     return target instanceof UpdateListTypeClass;
 };
+

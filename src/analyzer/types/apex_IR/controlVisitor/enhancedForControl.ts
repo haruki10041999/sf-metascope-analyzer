@@ -9,19 +9,19 @@ import {
     isBasedExpressionType,
 } from '../expressionVisitor';
 import { TypeRefTypeClass, TypeVisitor, isTypeRefType } from '../typeVisitor';
-import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
+import { ApexErrorTypeClass, ApexCommonTypeClass, isApexValidClass } from '../commonVisitor';
 
 export class EnhancedForControlTypeClass extends ControlTypeClass<
     'enhancedForControl',
     NormalIdTypeClass
 > {
-    private valueType: TypeRefTypeClass | ErrorTypeClass;
-    private fromVariant: BasedExpressionTypeClass | ErrorTypeClass;
+    private valueType: TypeRefTypeClass | ApexErrorTypeClass;
+    private fromVariant: BasedExpressionTypeClass | ApexErrorTypeClass;
 
     private constructor(
-        value: NormalIdTypeClass | ErrorTypeClass,
-        valueType: TypeRefTypeClass | ErrorTypeClass,
-        fromVariant: BasedExpressionTypeClass | ErrorTypeClass,
+        value: NormalIdTypeClass | ApexErrorTypeClass,
+        valueType: TypeRefTypeClass | ApexErrorTypeClass,
+        fromVariant: BasedExpressionTypeClass | ApexErrorTypeClass,
     ) {
         super('enhancedForControl', value);
         this.valueType = valueType;
@@ -34,9 +34,9 @@ export class EnhancedForControlTypeClass extends ControlTypeClass<
         }
 
         return new EnhancedForControlTypeClass(
-            isValidClass(new IdVisitor().visit(ctx.id()), isNormalIdType, 'id'),
-            isValidClass(new TypeVisitor().visit(ctx.typeRef()), isTypeRefType, 'typeRef'),
-            isValidClass(
+            isApexValidClass(new IdVisitor().visit(ctx.id()), isNormalIdType, 'id'),
+            isApexValidClass(new TypeVisitor().visit(ctx.typeRef()), isTypeRefType, 'typeRef'),
+            isApexValidClass(
                 new ExpressionVisitor().visit(ctx.expression()),
                 isBasedExpressionType,
                 'expression',
@@ -44,17 +44,17 @@ export class EnhancedForControlTypeClass extends ControlTypeClass<
         );
     }
 
-    getValueType(): TypeRefTypeClass | ErrorTypeClass {
+    getValueType(): TypeRefTypeClass | ApexErrorTypeClass {
         return this.valueType;
     }
 
-    getFromVariant(): BasedExpressionTypeClass | ErrorTypeClass {
+    getFromVariant(): BasedExpressionTypeClass | ApexErrorTypeClass {
         return this.fromVariant;
     }
 }
 
 export const isEnhancedForControlType = (
-    target: CommonTypeClass<string>,
+    target: ApexCommonTypeClass<string>,
 ): target is EnhancedForControlTypeClass => {
     return target instanceof EnhancedForControlTypeClass;
 };

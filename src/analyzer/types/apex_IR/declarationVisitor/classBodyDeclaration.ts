@@ -9,18 +9,23 @@ import {
 
 import { NormalBlockTypeClass, BlockVisitor, isNormalBlockType } from '../blockVisitor';
 import { NormalModifierTypeClass, ModifierVisitor, isNormalModifierType } from '../modifierVisitor';
-import { CommonTypeClass, ErrorTypeClass, isValidClass, isValidClassList } from '../commonVisitor';
+import {
+    ApexCommonTypeClass,
+    ApexErrorTypeClass,
+    isApexValidClass,
+    isApexValidClassList,
+} from '../commonVisitor';
 
 export class ClassBodyDeclarationTypeClass extends DeclarationTypeClass<
     'classBodyDeclaration',
     MemberDeclarationTypeClass | NormalBlockTypeClass | null
 > {
-    private modifier: (NormalModifierTypeClass | ErrorTypeClass)[];
+    private modifier: (NormalModifierTypeClass | ApexErrorTypeClass)[];
     private isStatic: boolean = false;
 
     private constructor(
-        value: MemberDeclarationTypeClass | NormalBlockTypeClass | ErrorTypeClass | null,
-        modifier: (NormalModifierTypeClass | ErrorTypeClass)[],
+        value: MemberDeclarationTypeClass | NormalBlockTypeClass | ApexErrorTypeClass | null,
+        modifier: (NormalModifierTypeClass | ApexErrorTypeClass)[],
         isStatic: boolean,
     ) {
         super('classBodyDeclaration', value);
@@ -33,21 +38,26 @@ export class ClassBodyDeclarationTypeClass extends DeclarationTypeClass<
             throw new Error('値が異常です。ClassBodyDeclarationContext: ' + ctx.getText());
         }
 
-        let value: MemberDeclarationTypeClass | NormalBlockTypeClass | ErrorTypeClass | null = null;
+        let value: MemberDeclarationTypeClass | NormalBlockTypeClass | ApexErrorTypeClass | null =
+            null;
         if (ctx.memberDeclaration()) {
-            value = isValidClass(
+            value = isApexValidClass(
                 new DeclarationVisitor().visit(ctx.memberDeclaration()),
                 isMemberDeclarationType,
                 'memberDeclaration',
             );
         } else if (ctx.block()) {
-            value = isValidClass(new BlockVisitor().visit(ctx.block()), isNormalBlockType, 'block');
+            value = isApexValidClass(
+                new BlockVisitor().visit(ctx.block()),
+                isNormalBlockType,
+                'block',
+            );
         }
 
         // 単独の `;` は文法上許される空宣言なので value は null
         return new ClassBodyDeclarationTypeClass(
             value,
-            isValidClassList(
+            isApexValidClassList(
                 ctx.modifier_list(),
                 (ctx) => new ModifierVisitor().visit(ctx),
                 isNormalModifierType,
@@ -57,7 +67,7 @@ export class ClassBodyDeclarationTypeClass extends DeclarationTypeClass<
         );
     }
 
-    getModifier(): (NormalModifierTypeClass | ErrorTypeClass)[] {
+    getModifier(): (NormalModifierTypeClass | ApexErrorTypeClass)[] {
         return this.modifier;
     }
 
@@ -67,5 +77,5 @@ export class ClassBodyDeclarationTypeClass extends DeclarationTypeClass<
 }
 
 export const isClassBodyDeclarationType = (
-    target: CommonTypeClass<string>,
+    target: ApexCommonTypeClass<string>,
 ): target is ClassBodyDeclarationTypeClass => target instanceof ClassBodyDeclarationTypeClass;

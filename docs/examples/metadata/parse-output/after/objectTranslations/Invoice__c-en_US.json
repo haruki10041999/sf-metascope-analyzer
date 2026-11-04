@@ -1,0 +1,40 @@
+{
+  "filePath": "Invoice__c-en_US",
+  "resolvedError": [],
+  "dataType": "objectTranslation",
+  "result": {
+    "id": "Invoice__c-en_US",
+    "base": {
+      "kind": "objectTranslation",
+      "sourceKeys": {
+        "objectKey": "objectTranslation_c9686b86c92954ea",
+        "sourceKey": "objectTranslation_d3d36f3cec3f2aef"
+      },
+      "objectApiName": "Invoice__c",
+      "locale": "en_US",
+      "nameFieldLabel": "Invoice No."
+    },
+    "sourceObject": [
+      {
+        "objectKey": "objectTranslation_c9686b86c92954ea",
+        "context": "<CustomObjectTranslation xmlns=\"http://soap.sforce.com/2006/04/metadata\">\n\n    <nameFieldLabel>Invoice No.</nameFieldLabel>\n</CustomObjectTranslation>",
+        "source": [
+          {
+            "sourceKey": "objectTranslation_d3d36f3cec3f2aef",
+            "filePath": "Invoice__c-en_US/Invoice__c-en_US.objectTranslation-meta.xml",
+            "start": {
+              "offset": 39,
+              "line": 2,
+              "column": 0
+            },
+            "end": {
+              "offset": 189,
+              "line": 5,
+              "column": 26
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

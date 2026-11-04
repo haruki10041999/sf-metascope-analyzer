@@ -8,17 +8,17 @@ import {
 } from '.';
 
 import { TypeRefTypeClass, TypeVisitor, isTypeRefType } from '../typeVisitor';
-import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
+import { ApexErrorTypeClass, ApexCommonTypeClass, isApexValidClass } from '../commonVisitor';
 
 export class CastExpressionTypeClass extends ExpressionTypeClass<
     'castExpression',
     BasedExpressionTypeClass
 > {
-    private valueType: TypeRefTypeClass | ErrorTypeClass;
+    private valueType: TypeRefTypeClass | ApexErrorTypeClass;
 
     private constructor(
-        value: BasedExpressionTypeClass | ErrorTypeClass,
-        valueType: TypeRefTypeClass | ErrorTypeClass,
+        value: BasedExpressionTypeClass | ApexErrorTypeClass,
+        valueType: TypeRefTypeClass | ApexErrorTypeClass,
     ) {
         super('castExpression', value);
         this.valueType = valueType;
@@ -30,22 +30,23 @@ export class CastExpressionTypeClass extends ExpressionTypeClass<
         }
 
         return new CastExpressionTypeClass(
-            isValidClass(
+            isApexValidClass(
                 new ExpressionVisitor().visit(ctx.expression()),
                 isBasedExpressionType,
                 'expression',
             ),
-            isValidClass(new TypeVisitor().visit(ctx.typeRef()), isTypeRefType, 'typeRef'),
+            isApexValidClass(new TypeVisitor().visit(ctx.typeRef()), isTypeRefType, 'typeRef'),
         );
     }
 
-    getValueType(): TypeRefTypeClass | ErrorTypeClass {
+    getValueType(): TypeRefTypeClass | ApexErrorTypeClass {
         return this.valueType;
     }
 }
 
 export const isCastExpressionType = (
-    target: CommonTypeClass<string>,
+    target: ApexCommonTypeClass<string>,
 ): target is CastExpressionTypeClass => {
     return target instanceof CastExpressionTypeClass;
 };
+

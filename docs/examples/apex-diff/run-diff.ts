@@ -1,5 +1,5 @@
 /**
- * Diff の動作検証。before/ と after/ の同じ名前のファイルを本番と同じ流れ (ApexParser.parseApexClass) で変換し、
+ * Diff の動作検証。before/ と after/ の同じ名前のファイルを本番と同じ流れ (ApexParser.parseApexFile) で変換し、
  * makeUnitDiffs で比べた結果を diff-output/ に出力する。
  *
  * - diff-output/unit-diff.json: makeUnitDiffs の結果 (target は大きいので除く)
@@ -90,6 +90,7 @@ export const ALL_KINDS = {
         'categoryCondition',
     ],
     SOSL: ['sosl', 'soslField'],
+    'メタデータ (-meta.xml)': ['apexClassMeta', 'apexTriggerMeta'],
     エラー: ['error'],
 };
 
@@ -104,7 +105,7 @@ export const parseDirectory = async (directory: string) => {
     const files = (await readdir(directory)).sort();
     return Promise.all(
         files.map(async (file) => ({
-            ...(await ApexParser.parseApexClass(path.join(directory, file))),
+            ...(await ApexParser.parseApexFile(path.join(directory, file))),
             filePath: file,
         })),
     );
@@ -152,10 +153,34 @@ const findNestedText = (
     );
 };
 
+const isPairRecord = (value: unknown): value is { before?: unknown; after?: unknown } =>
+    isRecord(value) &&
+    Object.keys(value).length > 0 &&
+    Object.keys(value).every((key) => key === 'before' || key === 'after');
+
+/**
+ * 差分の sourceKeys (objectKey / sourceKey ごとに「同じなら単体、違えば { before, after }」) から、
+ * 片側の sourceKeys を取り出す
+ */
+const pickSide = (value: unknown, side: 'before' | 'after'): unknown => {
+    if (isPairRecord(value)) {
+        return value[side];
+    }
+    if (Array.isArray(value)) {
+        return value.map((v) => pickSide(v, side));
+    }
+    if (isRecord(value)) {
+        return Object.fromEntries(Object.entries(value).map(([k, v]) => [k, pickSide(v, side)]));
+    }
+    return value;
+};
+
 const short = (value: unknown) => {
     const text = JSON.stringify(value) ?? 'undefined';
     return text.length > 70 ? `${text.slice(0, 70)}…` : text;
 };
+
+const DIFF_STATUSES = new Set(['unchanged', 'changed', 'added', 'removed', 'moved']);
 
 /** 差分の値として扱い、中に入らないプロパティ */
 const LEAF_KEYS = new Set([
@@ -195,10 +220,12 @@ const renderDiff = (
             return;
         }
 
+        // status が差分の語彙のときだけ差分のノード (-meta.xml の <status> のような、中身の status と区別する)
+        const isDiffNode = typeof node.status === 'string' && DIFF_STATUSES.has(node.status);
         let nextDepth = depth;
-        if (typeof node.status === 'string' && node.status !== 'unchanged') {
+        if (isDiffNode && node.status !== 'unchanged') {
             const kind = isRecord(node.kind)
-                ? `${String(node.kind.before)} → ${String(node.kind.after)}`
+                ? `${String(node.kind.before ?? '-')} → ${String(node.kind.after ?? '-')}`
                 : (node.kind ?? node.label ?? node.key ?? key);
             const name =
                 typeof node.name === 'string'
@@ -212,12 +239,14 @@ const renderDiff = (
             }
 
             const keys =
-                isRecord(node.sourceKeys) &&
-                ('before' in node.sourceKeys || 'after' in node.sourceKeys)
-                    ? node.sourceKeys
-                    : node.status === 'removed'
-                      ? { before: node.sourceKeys }
-                      : { after: node.sourceKeys };
+                node.status === 'removed'
+                    ? { before: node.sourceKeys }
+                    : node.status === 'added'
+                      ? { after: node.sourceKeys }
+                      : {
+                            before: pickSide(node.sourceKeys, 'before'),
+                            after: pickSide(node.sourceKeys, 'after'),
+                        };
             const beforeText = lookup.before(keys.before);
             const afterText = lookup.after(keys.after);
 
@@ -243,7 +272,11 @@ const renderDiff = (
         }
 
         Object.entries(node).forEach(([k, v]) => {
-            if (!LEAF_KEYS.has(k) && !(k === 'value' && !isRecord(v) && !Array.isArray(v))) {
+            // 差分のノードの value は元の JSON (中身) なので入らない。status は値の差分 (fields.status) のときだけ入る
+            if (isDiffNode && k === 'value') return;
+            if (k === 'status' && isRecord(v)) {
+                walk(v, k, nextDepth);
+            } else if (!LEAF_KEYS.has(k) && !(k === 'value' && !isRecord(v) && !Array.isArray(v))) {
                 walk(v, k, nextDepth);
             }
         });
@@ -283,8 +316,6 @@ export const countDiffKinds = (diff: unknown, counts: Map<string, number>) => {
     }
     if (typeof diff.status === 'string') {
         const kinds = [
-            // 名前で対応付いて引数だけが変わった修飾子はアノテーション
-            diff.kind === 'modifier' && diff.status === 'changed' ? 'annotation' : undefined,
             diff.kind,
             typeof diff.label === 'string' ? diff.label.split(':')[0] : undefined,
             isRecord(diff.value) ? diff.value.kind : undefined,

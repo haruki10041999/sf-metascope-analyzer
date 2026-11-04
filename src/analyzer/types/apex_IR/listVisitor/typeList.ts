@@ -4,10 +4,10 @@ import { ListTypeClass } from '../listVisitor';
 
 import { TypeRefTypeClass, TypeVisitor, isTypeRefType } from '../typeVisitor';
 
-import { ErrorTypeClass, CommonTypeClass, isValidClassList } from '../commonVisitor';
+import { ApexErrorTypeClass, ApexCommonTypeClass, isApexValidClassList } from '../commonVisitor';
 
 export class TypeListTypeClass extends ListTypeClass<'typeList', TypeRefTypeClass> {
-    private constructor(value: (TypeRefTypeClass | ErrorTypeClass)[]) {
+    private constructor(value: (TypeRefTypeClass | ApexErrorTypeClass)[]) {
         super('typeList', value);
     }
 
@@ -17,7 +17,7 @@ export class TypeListTypeClass extends ListTypeClass<'typeList', TypeRefTypeClas
         }
 
         return new TypeListTypeClass(
-            isValidClassList(
+            isApexValidClassList(
                 ctx.typeRef_list(),
                 (ctx) => new TypeVisitor().visit(ctx),
                 isTypeRefType,
@@ -27,6 +27,8 @@ export class TypeListTypeClass extends ListTypeClass<'typeList', TypeRefTypeClas
     }
 }
 
-export const isTypeListType = (target: CommonTypeClass<string>): target is TypeListTypeClass => {
+export const isTypeListType = (
+    target: ApexCommonTypeClass<string>,
+): target is TypeListTypeClass => {
     return target instanceof TypeListTypeClass;
 };

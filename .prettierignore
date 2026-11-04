@@ -2,3 +2,6 @@
 .nvmrc
 .sf/
 node_modules/
+
+# LWC のテンプレート (Prettier は {式} の属性を引用符で囲んで壊す)
+**/lwc/**/*.html

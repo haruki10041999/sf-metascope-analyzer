@@ -7,12 +7,12 @@ import type { ModifierTypeClass } from './base';
 import { AnnotationTypeClass } from './annotation';
 import { NormalModifierTypeClass } from './normal';
 
-import { CommonVisitor } from '../commonVisitor';
+import { ApexCommonVisitor } from '../commonVisitor';
 
 export { isAnnotationType, AnnotationTypeClass } from './annotation';
 export { isNormalModifierType, NormalModifierTypeClass } from './normal';
 
-export class ModifierVisitor extends CommonVisitor<ModifierTypeClass<string, unknown>> {
+export class ModifierVisitor extends ApexCommonVisitor<ModifierTypeClass<string, unknown>> {
     visitModifier(ctx: ModifierContext) {
         return NormalModifierTypeClass.create(ctx);
     }

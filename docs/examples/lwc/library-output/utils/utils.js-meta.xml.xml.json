@@ -1,0 +1,51 @@
+{
+  "name": "LightningComponentBundle",
+  "attributes": {
+    "xmlns": "http://soap.sforce.com/2006/04/metadata"
+  },
+  "children": [
+    {
+      "name": "apiVersion",
+      "attributes": {},
+      "children": [],
+      "text": "61.0",
+      "start": {
+        "offset": 118,
+        "line": 3,
+        "column": 4
+      },
+      "end": {
+        "offset": 147,
+        "line": 3,
+        "column": 33
+      }
+    },
+    {
+      "name": "isExposed",
+      "attributes": {},
+      "children": [],
+      "text": "false",
+      "start": {
+        "offset": 152,
+        "line": 4,
+        "column": 4
+      },
+      "end": {
+        "offset": 180,
+        "line": 4,
+        "column": 32
+      }
+    }
+  ],
+  "text": "",
+  "start": {
+    "offset": 39,
+    "line": 2,
+    "column": 0
+  },
+  "end": {
+    "offset": 208,
+    "line": 5,
+    "column": 27
+  }
+}

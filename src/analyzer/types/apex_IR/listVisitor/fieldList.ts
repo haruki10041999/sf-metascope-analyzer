@@ -4,17 +4,22 @@ import { ListTypeClass, ListVisitor } from '.';
 
 import { SoslIdTypeClass, IdVisitor, isSoslIdType } from '../idVisitor';
 import { SoqlFunctionTypeClass, QueryVisitor, isSoqlFunctionType } from '../queryVisitor';
-import { ErrorTypeClass, CommonTypeClass, isValidClass, isValidClassList } from '../commonVisitor';
+import {
+    ApexErrorTypeClass,
+    ApexCommonTypeClass,
+    isApexValidClass,
+    isApexValidClassList,
+} from '../commonVisitor';
 
 type SoslFieldFunction = 'TOLABEL' | 'CONVERT_CURRENCY' | 'FORMAT';
 
 // 入れ子の fieldList を平坦化しても関数指定を失わないよう、項目ごとに関数名を持たせる
-export class SoslFieldTypeClass extends CommonTypeClass<'soslField'> {
-    private value: SoslIdTypeClass | SoqlFunctionTypeClass | ErrorTypeClass;
+export class SoslFieldTypeClass extends ApexCommonTypeClass<'soslField'> {
+    private value: SoslIdTypeClass | SoqlFunctionTypeClass | ApexErrorTypeClass;
     private func: SoslFieldFunction | null;
 
     private constructor(
-        value: SoslIdTypeClass | SoqlFunctionTypeClass | ErrorTypeClass,
+        value: SoslIdTypeClass | SoqlFunctionTypeClass | ApexErrorTypeClass,
         func: SoslFieldFunction | null,
     ) {
         super('soslField');
@@ -23,7 +28,7 @@ export class SoslFieldTypeClass extends CommonTypeClass<'soslField'> {
     }
 
     static create(
-        value: SoslIdTypeClass | SoqlFunctionTypeClass | ErrorTypeClass,
+        value: SoslIdTypeClass | SoqlFunctionTypeClass | ApexErrorTypeClass,
         func: SoslFieldFunction | null,
     ): SoslFieldTypeClass {
         const field = new SoslFieldTypeClass(value, func);
@@ -31,7 +36,7 @@ export class SoslFieldTypeClass extends CommonTypeClass<'soslField'> {
         return field;
     }
 
-    getValue(): SoslIdTypeClass | SoqlFunctionTypeClass | ErrorTypeClass {
+    getValue(): SoslIdTypeClass | SoqlFunctionTypeClass | ApexErrorTypeClass {
         return this.value;
     }
 
@@ -40,12 +45,14 @@ export class SoslFieldTypeClass extends CommonTypeClass<'soslField'> {
     }
 }
 
-export const isSoslFieldType = (target: CommonTypeClass<string>): target is SoslFieldTypeClass => {
+export const isSoslFieldType = (
+    target: ApexCommonTypeClass<string>,
+): target is SoslFieldTypeClass => {
     return target instanceof SoslFieldTypeClass;
 };
 
 export class FieldListTypeClass extends ListTypeClass<'fieldList', SoslFieldTypeClass> {
-    private constructor(value: (SoslFieldTypeClass | ErrorTypeClass)[]) {
+    private constructor(value: (SoslFieldTypeClass | ApexErrorTypeClass)[]) {
         super('fieldList', value);
     }
 
@@ -56,8 +63,8 @@ export class FieldListTypeClass extends ListTypeClass<'fieldList', SoslFieldType
 
         const head =
             ctx.soslId_list().length > 0
-                ? isValidClass(new IdVisitor().visit(ctx.soslId(0)), isSoslIdType, 'soslId')
-                : isValidClass(
+                ? isApexValidClass(new IdVisitor().visit(ctx.soslId(0)), isSoslIdType, 'soslId')
+                : isApexValidClass(
                       new QueryVisitor().visit(ctx.soqlFunction()),
                       isSoqlFunctionType,
                       'soqlFunction',
@@ -71,11 +78,11 @@ export class FieldListTypeClass extends ListTypeClass<'fieldList', SoslFieldType
                 ? 'FORMAT'
                 : null;
 
-        const value: (SoslFieldTypeClass | ErrorTypeClass)[] = [
+        const value: (SoslFieldTypeClass | ApexErrorTypeClass)[] = [
             SoslFieldTypeClass.create(head, func),
         ];
 
-        isValidClassList(
+        isApexValidClassList(
             ctx.fieldList_list(),
             (ctx) => new ListVisitor().visit(ctx),
             isFieldListType,
@@ -92,6 +99,8 @@ export class FieldListTypeClass extends ListTypeClass<'fieldList', SoslFieldType
     }
 }
 
-export const isFieldListType = (target: CommonTypeClass<string>): target is FieldListTypeClass => {
+export const isFieldListType = (
+    target: ApexCommonTypeClass<string>,
+): target is FieldListTypeClass => {
     return target instanceof FieldListTypeClass;
 };

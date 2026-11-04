@@ -4,7 +4,7 @@ import { CallTypeClass } from '.';
 
 import { AnyIdTypeClass, IdVisitor, isAnyIdType } from '../idVisitor';
 import { ExpressionListTypeClass, ListVisitor, isExpressionListType } from '../listVisitor';
-import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
+import { ApexErrorTypeClass, ApexCommonTypeClass, isApexValidClass } from '../commonVisitor';
 
 export class DotMethodCallTypeClass extends CallTypeClass<
     'dotMethodCall',
@@ -12,8 +12,8 @@ export class DotMethodCallTypeClass extends CallTypeClass<
     ExpressionListTypeClass
 > {
     private constructor(
-        value: AnyIdTypeClass | ErrorTypeClass,
-        param: ExpressionListTypeClass | ErrorTypeClass | null,
+        value: AnyIdTypeClass | ApexErrorTypeClass,
+        param: ExpressionListTypeClass | ApexErrorTypeClass | null,
     ) {
         super('dotMethodCall', value, param);
     }
@@ -24,9 +24,9 @@ export class DotMethodCallTypeClass extends CallTypeClass<
         }
 
         return new DotMethodCallTypeClass(
-            isValidClass(new IdVisitor().visit(ctx.anyId()), isAnyIdType, 'anyId'),
+            isApexValidClass(new IdVisitor().visit(ctx.anyId()), isAnyIdType, 'anyId'),
             ctx.expressionList()
-                ? isValidClass(
+                ? isApexValidClass(
                       new ListVisitor().visit(ctx.expressionList()),
                       isExpressionListType,
                       'expressionList',
@@ -37,7 +37,8 @@ export class DotMethodCallTypeClass extends CallTypeClass<
 }
 
 export const isDotMethodCallType = (
-    target: CommonTypeClass<string>,
+    target: ApexCommonTypeClass<string>,
 ): target is DotMethodCallTypeClass => {
     return target instanceof DotMethodCallTypeClass;
 };
+

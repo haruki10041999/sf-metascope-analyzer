@@ -1,0 +1,684 @@
+{
+  "metadata": [
+    {
+      "apiName": "Account",
+      "objectType": "standard",
+      "fields": [
+        {
+          "apiName": "Id",
+          "origin": "implicit",
+          "valueType": "Id",
+          "status": "unchanged"
+        },
+        {
+          "apiName": "Name",
+          "origin": "implicit",
+          "valueType": "String",
+          "status": "unchanged"
+        },
+        {
+          "apiName": "CreatedDate",
+          "origin": "implicit",
+          "valueType": "DateTime",
+          "status": "unchanged"
+        },
+        {
+          "apiName": "CreatedById",
+          "origin": "implicit",
+          "valueType": "Reference",
+          "referenceTo": "User",
+          "relationType": "Lookup",
+          "status": "unchanged"
+        },
+        {
+          "apiName": "LastModifiedDate",
+          "origin": "implicit",
+          "valueType": "DateTime",
+          "status": "unchanged"
+        },
+        {
+          "apiName": "LastModifiedById",
+          "origin": "implicit",
+          "valueType": "Reference",
+          "referenceTo": "User",
+          "relationType": "Lookup",
+          "status": "unchanged"
+        },
+        {
+          "apiName": "SystemModstamp",
+          "origin": "implicit",
+          "valueType": "DateTime",
+          "status": "unchanged"
+        },
+        {
+          "apiName": "IsDeleted",
+          "origin": "implicit",
+          "valueType": "Boolean",
+          "status": "unchanged"
+        },
+        {
+          "apiName": "Tier__c",
+          "origin": "metadata",
+          "valueType": "String",
+          "fieldType": "Picklist",
+          "label": "Customer Tier",
+          "status": "changed"
+        }
+      ],
+      "status": "changed"
+    },
+    {
+      "apiName": "App_Setting__mdt",
+      "objectType": "customMetadata",
+      "label": "App Setting",
+      "fields": [
+        {
+          "apiName": "Id",
+          "origin": "implicit",
+          "valueType": "Id",
+          "status": "unchanged"
+        },
+        {
+          "apiName": "Name",
+          "origin": "implicit",
+          "valueType": "String",
+          "status": "unchanged"
+        },
+        {
+          "apiName": "CreatedDate",
+          "origin": "implicit",
+          "valueType": "DateTime",
+          "status": "unchanged"
+        },
+        {
+          "apiName": "CreatedById",
+          "origin": "implicit",
+          "valueType": "Reference",
+          "referenceTo": "User",
+          "relationType": "Lookup",
+          "status": "unchanged"
+        },
+        {
+          "apiName": "LastModifiedDate",
+          "origin": "implicit",
+          "valueType": "DateTime",
+          "status": "unchanged"
+        },
+        {
+          "apiName": "LastModifiedById",
+          "origin": "implicit",
+          "valueType": "Reference",
+          "referenceTo": "User",
+          "relationType": "Lookup",
+          "status": "unchanged"
+        },
+        {
+          "apiName": "Value__c",
+          "origin": "metadata",
+          "valueType": "String",
+          "fieldType": "Text",
+          "label": "Value",
+          "status": "unchanged"
+        }
+      ],
+      "status": "unchanged"
+    },
+    {
+      "apiName": "Broken__c",
+      "objectType": "custom",
+      "label": "Broken",
+      "fields": [
+        {
+          "apiName": "Id",
+          "origin": "implicit",
+          "valueType": "Id",
+          "status": "unchanged"
+        },
+        {
+          "apiName": "Name",
+          "origin": "implicit",
+          "valueType": "String",
+          "status": "unchanged"
+        },
+        {
+          "apiName": "CreatedDate",
+          "origin": "implicit",
+          "valueType": "DateTime",
+          "status": "unchanged"
+        },
+        {
+          "apiName": "CreatedById",
+          "origin": "implicit",
+          "valueType": "Reference",
+          "referenceTo": "User",
+          "relationType": "Lookup",
+          "status": "unchanged"
+        },
+        {
+          "apiName": "LastModifiedDate",
+          "origin": "implicit",
+          "valueType": "DateTime",
+          "status": "unchanged"
+        },
+        {
+          "apiName": "LastModifiedById",
+          "origin": "implicit",
+          "valueType": "Reference",
+          "referenceTo": "User",
+          "relationType": "Lookup",
+          "status": "unchanged"
+        },
+        {
+          "apiName": "SystemModstamp",
+          "origin": "implicit",
+          "valueType": "DateTime",
+          "status": "unchanged"
+        },
+        {
+          "apiName": "IsDeleted",
+          "origin": "implicit",
+          "valueType": "Boolean",
+          "status": "unchanged"
+        },
+        {
+          "apiName": "Code__c",
+          "origin": "metadata",
+          "valueType": "String",
+          "fieldType": "Text",
+          "label": "Code",
+          "status": "removed"
+        }
+      ],
+      "status": "changed"
+    },
+    {
+      "apiName": "Invoice__c",
+      "objectType": "custom",
+      "label": "Invoice",
+      "fields": [
+        {
+          "apiName": "Id",
+          "origin": "implicit",
+          "valueType": "Id",
+          "status": "unchanged"
+        },
+        {
+          "apiName": "Name",
+          "origin": "implicit",
+          "valueType": "String",
+          "status": "unchanged"
+        },
+        {
+          "apiName": "CreatedDate",
+          "origin": "implicit",
+          "valueType": "DateTime",
+          "status": "unchanged"
+        },
+        {
+          "apiName": "CreatedById",
+          "origin": "implicit",
+          "valueType": "Reference",
+          "referenceTo": "User",
+          "relationType": "Lookup",
+          "status": "unchanged"
+        },
+        {
+          "apiName": "LastModifiedDate",
+          "origin": "implicit",
+          "valueType": "DateTime",
+          "status": "unchanged"
+        },
+        {
+          "apiName": "LastModifiedById",
+          "origin": "implicit",
+          "valueType": "Reference",
+          "referenceTo": "User",
+          "relationType": "Lookup",
+          "status": "unchanged"
+        },
+        {
+          "apiName": "SystemModstamp",
+          "origin": "implicit",
+          "valueType": "DateTime",
+          "status": "unchanged"
+        },
+        {
+          "apiName": "IsDeleted",
+          "origin": "implicit",
+          "valueType": "Boolean",
+          "status": "unchanged"
+        },
+        {
+          "apiName": "Account__c",
+          "origin": "metadata",
+          "valueType": "Reference",
+          "fieldType": "Lookup",
+          "label": "Account",
+          "referenceTo": "Account",
+          "relationType": "Lookup",
+          "status": "changed"
+        },
+        {
+          "apiName": "Amount__c",
+          "origin": "metadata",
+          "valueType": "Double",
+          "fieldType": "Currency",
+          "label": "Amount",
+          "status": "changed"
+        },
+        {
+          "apiName": "Approved__c",
+          "origin": "metadata",
+          "valueType": "Boolean",
+          "fieldType": "Checkbox",
+          "label": "Approved",
+          "status": "added"
+        },
+        {
+          "apiName": "Due_Date__c",
+          "origin": "metadata",
+          "valueType": "Date",
+          "fieldType": "Date",
+          "label": "Due Date",
+          "status": "unchanged"
+        },
+        {
+          "apiName": "Is_Overdue__c",
+          "origin": "metadata",
+          "valueType": "Boolean",
+          "fieldType": "Checkbox",
+          "label": "Is Overdue",
+          "status": "unchanged"
+        },
+        {
+          "apiName": "Status__c",
+          "origin": "metadata",
+          "valueType": "String",
+          "fieldType": "Picklist",
+          "label": "Status",
+          "status": "changed"
+        },
+        {
+          "apiName": "Note__c",
+          "origin": "metadata",
+          "valueType": "String",
+          "fieldType": "Text",
+          "label": "Note",
+          "status": "removed"
+        }
+      ],
+      "status": "changed"
+    },
+    {
+      "apiName": "Invoice_Line__c",
+      "objectType": "custom",
+      "label": "Invoice Line",
+      "fields": [
+        {
+          "apiName": "Id",
+          "origin": "implicit",
+          "valueType": "Id",
+          "status": "unchanged"
+        },
+        {
+          "apiName": "Name",
+          "origin": "implicit",
+          "valueType": "String",
+          "status": "unchanged"
+        },
+        {
+          "apiName": "CreatedDate",
+          "origin": "implicit",
+          "valueType": "DateTime",
+          "status": "unchanged"
+        },
+        {
+          "apiName": "CreatedById",
+          "origin": "implicit",
+          "valueType": "Reference",
+          "referenceTo": "User",
+          "relationType": "Lookup",
+          "status": "unchanged"
+        },
+        {
+          "apiName": "LastModifiedDate",
+          "origin": "implicit",
+          "valueType": "DateTime",
+          "status": "unchanged"
+        },
+        {
+          "apiName": "LastModifiedById",
+          "origin": "implicit",
+          "valueType": "Reference",
+          "referenceTo": "User",
+          "relationType": "Lookup",
+          "status": "unchanged"
+        },
+        {
+          "apiName": "SystemModstamp",
+          "origin": "implicit",
+          "valueType": "DateTime",
+          "status": "unchanged"
+        },
+        {
+          "apiName": "IsDeleted",
+          "origin": "implicit",
+          "valueType": "Boolean",
+          "status": "unchanged"
+        },
+        {
+          "apiName": "Invoice__c",
+          "origin": "metadata",
+          "valueType": "Reference",
+          "fieldType": "MasterDetail",
+          "label": "Invoice",
+          "referenceTo": "Invoice__c",
+          "relationType": "MasterDetail",
+          "status": "unchanged"
+        },
+        {
+          "apiName": "Product__c",
+          "origin": "metadata",
+          "valueType": "Reference",
+          "fieldType": "Lookup",
+          "label": "Product",
+          "referenceTo": "Product2",
+          "relationType": "Lookup",
+          "status": "unchanged"
+        },
+        {
+          "apiName": "Quantity__c",
+          "origin": "metadata",
+          "valueType": "Double",
+          "fieldType": "Number",
+          "label": "Quantity",
+          "status": "changed"
+        }
+      ],
+      "status": "changed"
+    },
+    {
+      "apiName": "Legacy_Item__c",
+      "objectType": "custom",
+      "label": "Legacy Item",
+      "fields": [
+        {
+          "apiName": "Id",
+          "origin": "implicit",
+          "valueType": "Id",
+          "status": "removed"
+        },
+        {
+          "apiName": "Name",
+          "origin": "implicit",
+          "valueType": "String",
+          "status": "removed"
+        },
+        {
+          "apiName": "CreatedDate",
+          "origin": "implicit",
+          "valueType": "DateTime",
+          "status": "removed"
+        },
+        {
+          "apiName": "CreatedById",
+          "origin": "implicit",
+          "valueType": "Reference",
+          "referenceTo": "User",
+          "relationType": "Lookup",
+          "status": "removed"
+        },
+        {
+          "apiName": "LastModifiedDate",
+          "origin": "implicit",
+          "valueType": "DateTime",
+          "status": "removed"
+        },
+        {
+          "apiName": "LastModifiedById",
+          "origin": "implicit",
+          "valueType": "Reference",
+          "referenceTo": "User",
+          "relationType": "Lookup",
+          "status": "removed"
+        },
+        {
+          "apiName": "SystemModstamp",
+          "origin": "implicit",
+          "valueType": "DateTime",
+          "status": "removed"
+        },
+        {
+          "apiName": "IsDeleted",
+          "origin": "implicit",
+          "valueType": "Boolean",
+          "status": "removed"
+        },
+        {
+          "apiName": "Invoice__c",
+          "origin": "metadata",
+          "valueType": "Reference",
+          "fieldType": "Lookup",
+          "label": "Invoice",
+          "referenceTo": "Invoice__c",
+          "relationType": "Lookup",
+          "status": "removed"
+        }
+      ],
+      "status": "removed"
+    },
+    {
+      "apiName": "Payment__c",
+      "objectType": "custom",
+      "label": "Payment",
+      "fields": [
+        {
+          "apiName": "Id",
+          "origin": "implicit",
+          "valueType": "Id",
+          "status": "added"
+        },
+        {
+          "apiName": "Name",
+          "origin": "implicit",
+          "valueType": "String",
+          "status": "added"
+        },
+        {
+          "apiName": "CreatedDate",
+          "origin": "implicit",
+          "valueType": "DateTime",
+          "status": "added"
+        },
+        {
+          "apiName": "CreatedById",
+          "origin": "implicit",
+          "valueType": "Reference",
+          "referenceTo": "User",
+          "relationType": "Lookup",
+          "status": "added"
+        },
+        {
+          "apiName": "LastModifiedDate",
+          "origin": "implicit",
+          "valueType": "DateTime",
+          "status": "added"
+        },
+        {
+          "apiName": "LastModifiedById",
+          "origin": "implicit",
+          "valueType": "Reference",
+          "referenceTo": "User",
+          "relationType": "Lookup",
+          "status": "added"
+        },
+        {
+          "apiName": "SystemModstamp",
+          "origin": "implicit",
+          "valueType": "DateTime",
+          "status": "added"
+        },
+        {
+          "apiName": "IsDeleted",
+          "origin": "implicit",
+          "valueType": "Boolean",
+          "status": "added"
+        },
+        {
+          "apiName": "Invoice__c",
+          "origin": "metadata",
+          "valueType": "Reference",
+          "fieldType": "Lookup",
+          "label": "Invoice",
+          "referenceTo": "Invoice__c",
+          "relationType": "Lookup",
+          "status": "added"
+        },
+        {
+          "apiName": "Paid_At__c",
+          "origin": "metadata",
+          "valueType": "DateTime",
+          "fieldType": "DateTime",
+          "label": "Paid At",
+          "status": "added"
+        }
+      ],
+      "status": "added"
+    }
+  ],
+  "dependency": [
+    {
+      "parentObjectApiName": "Account",
+      "parentFieldApiName": "CreatedById",
+      "childObjectApiName": "User",
+      "type": "Lookup",
+      "status": "unchanged"
+    },
+    {
+      "parentObjectApiName": "Account",
+      "parentFieldApiName": "LastModifiedById",
+      "childObjectApiName": "User",
+      "type": "Lookup",
+      "status": "unchanged"
+    },
+    {
+      "parentObjectApiName": "App_Setting__mdt",
+      "parentFieldApiName": "CreatedById",
+      "childObjectApiName": "User",
+      "type": "Lookup",
+      "status": "unchanged"
+    },
+    {
+      "parentObjectApiName": "App_Setting__mdt",
+      "parentFieldApiName": "LastModifiedById",
+      "childObjectApiName": "User",
+      "type": "Lookup",
+      "status": "unchanged"
+    },
+    {
+      "parentObjectApiName": "Broken__c",
+      "parentFieldApiName": "CreatedById",
+      "childObjectApiName": "User",
+      "type": "Lookup",
+      "status": "unchanged"
+    },
+    {
+      "parentObjectApiName": "Broken__c",
+      "parentFieldApiName": "LastModifiedById",
+      "childObjectApiName": "User",
+      "type": "Lookup",
+      "status": "unchanged"
+    },
+    {
+      "parentObjectApiName": "Invoice_Line__c",
+      "parentFieldApiName": "CreatedById",
+      "childObjectApiName": "User",
+      "type": "Lookup",
+      "status": "unchanged"
+    },
+    {
+      "parentObjectApiName": "Invoice_Line__c",
+      "parentFieldApiName": "LastModifiedById",
+      "childObjectApiName": "User",
+      "type": "Lookup",
+      "status": "unchanged"
+    },
+    {
+      "parentObjectApiName": "Invoice_Line__c",
+      "parentFieldApiName": "Invoice__c",
+      "childObjectApiName": "Invoice__c",
+      "type": "MasterDetail",
+      "status": "unchanged"
+    },
+    {
+      "parentObjectApiName": "Invoice_Line__c",
+      "parentFieldApiName": "Product__c",
+      "childObjectApiName": "Product2",
+      "type": "Lookup",
+      "status": "unchanged"
+    },
+    {
+      "parentObjectApiName": "Invoice__c",
+      "parentFieldApiName": "CreatedById",
+      "childObjectApiName": "User",
+      "type": "Lookup",
+      "status": "unchanged"
+    },
+    {
+      "parentObjectApiName": "Invoice__c",
+      "parentFieldApiName": "LastModifiedById",
+      "childObjectApiName": "User",
+      "type": "Lookup",
+      "status": "unchanged"
+    },
+    {
+      "parentObjectApiName": "Invoice__c",
+      "parentFieldApiName": "Account__c",
+      "childObjectApiName": "Account",
+      "type": "Lookup",
+      "status": "unchanged"
+    },
+    {
+      "parentObjectApiName": "Payment__c",
+      "parentFieldApiName": "CreatedById",
+      "childObjectApiName": "User",
+      "type": "Lookup",
+      "status": "added"
+    },
+    {
+      "parentObjectApiName": "Payment__c",
+      "parentFieldApiName": "LastModifiedById",
+      "childObjectApiName": "User",
+      "type": "Lookup",
+      "status": "added"
+    },
+    {
+      "parentObjectApiName": "Payment__c",
+      "parentFieldApiName": "Invoice__c",
+      "childObjectApiName": "Invoice__c",
+      "type": "Lookup",
+      "status": "added"
+    },
+    {
+      "parentObjectApiName": "Legacy_Item__c",
+      "parentFieldApiName": "CreatedById",
+      "childObjectApiName": "User",
+      "type": "Lookup",
+      "status": "removed"
+    },
+    {
+      "parentObjectApiName": "Legacy_Item__c",
+      "parentFieldApiName": "LastModifiedById",
+      "childObjectApiName": "User",
+      "type": "Lookup",
+      "status": "removed"
+    },
+    {
+      "parentObjectApiName": "Legacy_Item__c",
+      "parentFieldApiName": "Invoice__c",
+      "childObjectApiName": "Invoice__c",
+      "type": "Lookup",
+      "status": "removed"
+    }
+  ]
+}

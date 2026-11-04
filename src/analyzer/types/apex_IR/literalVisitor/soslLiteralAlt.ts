@@ -3,12 +3,12 @@ import { SoslLiteralAltContext } from '@apexdevtools/apex-parser';
 import { LiteralValueTypeClass } from '.';
 
 import { SoslClausesTypeClass, ClauseVisitor, isSoslClausesType } from '../clauseVisitor';
-import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
+import { ApexErrorTypeClass, ApexCommonTypeClass, isApexValidClass } from '../commonVisitor';
 
 export class SoslLiteralAltTypeClass extends LiteralValueTypeClass<'soslLiteralAlt', string> {
-    private soslClauses: SoslClausesTypeClass | ErrorTypeClass;
+    private soslClauses: SoslClausesTypeClass | ApexErrorTypeClass;
 
-    private constructor(value: string, soslClauses: SoslClausesTypeClass | ErrorTypeClass) {
+    private constructor(value: string, soslClauses: SoslClausesTypeClass | ApexErrorTypeClass) {
         super('soslLiteralAlt', value);
         this.soslClauses = soslClauses;
     }
@@ -20,7 +20,7 @@ export class SoslLiteralAltTypeClass extends LiteralValueTypeClass<'soslLiteralA
 
         return new SoslLiteralAltTypeClass(
             ctx.FindLiteralAlt().getText(),
-            isValidClass(
+            isApexValidClass(
                 new ClauseVisitor().visit(ctx.soslClauses()),
                 isSoslClausesType,
                 'soslClauses',
@@ -28,13 +28,14 @@ export class SoslLiteralAltTypeClass extends LiteralValueTypeClass<'soslLiteralA
         );
     }
 
-    getSoslClauses(): SoslClausesTypeClass | ErrorTypeClass {
+    getSoslClauses(): SoslClausesTypeClass | ApexErrorTypeClass {
         return this.soslClauses;
     }
 }
 
 export const isSoslLiteralAltType = (
-    target: CommonTypeClass<string>,
+    target: ApexCommonTypeClass<string>,
 ): target is SoslLiteralAltTypeClass => {
     return target instanceof SoslLiteralAltTypeClass;
 };
+

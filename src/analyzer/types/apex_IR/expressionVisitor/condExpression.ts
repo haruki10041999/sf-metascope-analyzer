@@ -7,7 +7,7 @@ import {
     isBasedExpressionType,
 } from '.';
 
-import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
+import { ApexErrorTypeClass, ApexCommonTypeClass, isApexValidClass } from '../commonVisitor';
 
 export class CondExpressionTypeClass extends ConditionExpressionTypeClass<
     'condExpression',
@@ -16,9 +16,9 @@ export class CondExpressionTypeClass extends ConditionExpressionTypeClass<
     BasedExpressionTypeClass
 > {
     private constructor(
-        condition: BasedExpressionTypeClass | ErrorTypeClass,
-        trueValue: BasedExpressionTypeClass | ErrorTypeClass,
-        falseValue: BasedExpressionTypeClass | ErrorTypeClass,
+        condition: BasedExpressionTypeClass | ApexErrorTypeClass,
+        trueValue: BasedExpressionTypeClass | ApexErrorTypeClass,
+        falseValue: BasedExpressionTypeClass | ApexErrorTypeClass,
     ) {
         super('condExpression', condition, trueValue, falseValue);
     }
@@ -29,17 +29,17 @@ export class CondExpressionTypeClass extends ConditionExpressionTypeClass<
         }
 
         return new CondExpressionTypeClass(
-            isValidClass(
+            isApexValidClass(
                 new ExpressionVisitor().visit(ctx.expression(0)),
                 isBasedExpressionType,
                 'expression',
             ),
-            isValidClass(
+            isApexValidClass(
                 new ExpressionVisitor().visit(ctx.expression(1)),
                 isBasedExpressionType,
                 'expression',
             ),
-            isValidClass(
+            isApexValidClass(
                 new ExpressionVisitor().visit(ctx.expression(2)),
                 isBasedExpressionType,
                 'expression',
@@ -49,7 +49,8 @@ export class CondExpressionTypeClass extends ConditionExpressionTypeClass<
 }
 
 export const isCondExpressionType = (
-    target: CommonTypeClass<string>,
+    target: ApexCommonTypeClass<string>,
 ): target is CondExpressionTypeClass => {
     return target instanceof CondExpressionTypeClass;
 };
+

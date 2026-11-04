@@ -7,19 +7,19 @@ import {
     MemberVisitor,
     isTriggerBlockMemberType,
 } from '../memberVisitor';
-import { ErrorTypeClass, CommonTypeClass, isValidClassList } from '../commonVisitor';
+import { ApexErrorTypeClass, ApexCommonTypeClass, isApexValidClassList } from '../commonVisitor';
 
 export class TriggerBlockTypeClass extends BlockListTypeClass<
     'triggerBlock',
     TriggerBlockMemberTypeClass
 > {
-    private constructor(value: (TriggerBlockMemberTypeClass | ErrorTypeClass)[]) {
+    private constructor(value: (TriggerBlockMemberTypeClass | ApexErrorTypeClass)[]) {
         super('triggerBlock', value);
     }
 
     static create(ctx: TriggerBlockContext): TriggerBlockTypeClass {
         return new TriggerBlockTypeClass(
-            isValidClassList(
+            isApexValidClassList(
                 ctx.triggerBlockMember_list(),
                 (ctx) => new MemberVisitor().visit(ctx),
                 isTriggerBlockMemberType,
@@ -30,7 +30,8 @@ export class TriggerBlockTypeClass extends BlockListTypeClass<
 }
 
 export const isTriggerBlockType = (
-    target: CommonTypeClass<string>,
+    target: ApexCommonTypeClass<string>,
 ): target is TriggerBlockTypeClass => {
     return target instanceof TriggerBlockTypeClass;
 };
+

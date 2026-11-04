@@ -1,0 +1,18 @@
+{
+    "name": "lwc-ssr-lbc-probe",
+    "private": true,
+    "type": "module",
+    "description": "lightning-base-components を @lwc/engine-server で描画する試作 (docs/lwc-snapshot-plan.md 2 章)。採用が決まるまで本体の依存関係には入れない",
+    "scripts": {
+        "snapshot": "rollup -c && node dist/out.mjs"
+    },
+    "devDependencies": {
+        "@lwc/engine-dom": "9.5.1",
+        "@lwc/engine-server": "9.5.1",
+        "@lwc/rollup-plugin": "9.5.1",
+        "@lwc/synthetic-shadow": "9.5.1",
+        "@lwc/wire-service": "9.5.1",
+        "lightning-base-components": "1.28.19-alpha",
+        "rollup": "^4"
+    }
+}

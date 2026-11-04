@@ -2,7 +2,7 @@ import { TriggerCaseContext } from '@apexdevtools/apex-parser';
 
 import { UnitValueTypeClass } from '.';
 
-import { ErrorTypeClass, CommonTypeClass } from '../commonVisitor';
+import { ApexErrorTypeClass, ApexCommonTypeClass } from '../commonVisitor';
 
 export class TriggerCaseTypeClass extends UnitValueTypeClass<'triggerCase', 'BEFORE' | 'AFTER'> {
     private triggerCaseType: 'INSERT' | 'UPDATE' | 'DELETE' | 'UNDELETE';
@@ -40,7 +40,8 @@ export class TriggerCaseTypeClass extends UnitValueTypeClass<'triggerCase', 'BEF
 }
 
 export const isTriggerCaseType = (
-    target: CommonTypeClass<string>,
+    target: ApexCommonTypeClass<string>,
 ): target is TriggerCaseTypeClass => {
     return target instanceof TriggerCaseTypeClass;
 };
+

@@ -33,7 +33,11 @@ const afterError: ErrorJson = {
     sourceKeys: afterKeys,
     kindType: 'type',
 };
-const sourceKeys = { before: beforeKeys, after: afterKeys };
+// objectKey / sourceKey ごとに、同じなら単体、違えば { before, after }
+const sourceKeys = {
+    objectKey: { before: 'before', after: 'after' },
+    sourceKey: { before: 'before-source', after: 'after-source' },
+};
 
 describe('type diff', () => {
     it('compares valid type contents', () => {
@@ -53,7 +57,10 @@ describe('type diff', () => {
         const moved = { ...before, sourceKeys: { objectKey: 'before', sourceKey: 'moved' } };
         assert.deepEqual(makeTypeDiff(before, moved), {
             kind: 'type',
-            sourceKeys: { before: beforeKeys, after: moved.sourceKeys },
+            sourceKeys: {
+                objectKey: 'before',
+                sourceKey: { before: 'before-source', after: 'moved' },
+            },
             status: 'unchanged',
             value: { type: 'primitive', primitiveType: 'Integer' },
         });

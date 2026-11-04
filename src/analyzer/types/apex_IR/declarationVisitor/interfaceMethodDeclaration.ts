@@ -10,21 +10,26 @@ import {
     ParameterVisitor,
     isFormalParametersType,
 } from '../parameterVisitor';
-import { ErrorTypeClass, CommonTypeClass, isValidClass, isValidClassList } from '../commonVisitor';
+import {
+    ApexErrorTypeClass,
+    ApexCommonTypeClass,
+    isApexValidClass,
+    isApexValidClassList,
+} from '../commonVisitor';
 
 export class InterfaceMethodDeclarationTypeClass extends DeclarationTypeClass<
     'interfaceMethodDeclaration',
     NormalIdTypeClass
 > {
-    private valueType: TypeRefTypeClass | 'void' | ErrorTypeClass;
-    private param: FormalParametersTypeClass | ErrorTypeClass | null = null;
-    private modifier: (NormalModifierTypeClass | ErrorTypeClass)[] = [];
+    private valueType: TypeRefTypeClass | 'void' | ApexErrorTypeClass;
+    private param: FormalParametersTypeClass | ApexErrorTypeClass | null = null;
+    private modifier: (NormalModifierTypeClass | ApexErrorTypeClass)[] = [];
 
     private constructor(
-        value: NormalIdTypeClass | ErrorTypeClass,
-        valueType: TypeRefTypeClass | 'void' | ErrorTypeClass,
-        param: FormalParametersTypeClass | ErrorTypeClass | null,
-        modifier: (NormalModifierTypeClass | ErrorTypeClass)[],
+        value: NormalIdTypeClass | ApexErrorTypeClass,
+        valueType: TypeRefTypeClass | 'void' | ApexErrorTypeClass,
+        param: FormalParametersTypeClass | ApexErrorTypeClass | null,
+        modifier: (NormalModifierTypeClass | ApexErrorTypeClass)[],
     ) {
         super('interfaceMethodDeclaration', value);
         this.valueType = valueType;
@@ -38,18 +43,22 @@ export class InterfaceMethodDeclarationTypeClass extends DeclarationTypeClass<
         }
 
         return new InterfaceMethodDeclarationTypeClass(
-            isValidClass(new IdVisitor().visit(ctx.id()), isNormalIdType, 'id'),
+            isApexValidClass(new IdVisitor().visit(ctx.id()), isNormalIdType, 'id'),
             ctx.VOID()
                 ? 'void'
-                : isValidClass(new TypeVisitor().visit(ctx.typeRef()), isTypeRefType, 'typeRef'),
+                : isApexValidClass(
+                      new TypeVisitor().visit(ctx.typeRef()),
+                      isTypeRefType,
+                      'typeRef',
+                  ),
             ctx.formalParameters()
-                ? isValidClass(
+                ? isApexValidClass(
                       new ParameterVisitor().visit(ctx.formalParameters()),
                       isFormalParametersType,
                       'formalParameters',
                   )
                 : null,
-            isValidClassList(
+            isApexValidClassList(
                 ctx.modifier_list(),
                 (ctx) => new ModifierVisitor().visit(ctx),
                 isNormalModifierType,
@@ -58,21 +67,21 @@ export class InterfaceMethodDeclarationTypeClass extends DeclarationTypeClass<
         );
     }
 
-    getValueType(): TypeRefTypeClass | 'void' | ErrorTypeClass {
+    getValueType(): TypeRefTypeClass | 'void' | ApexErrorTypeClass {
         return this.valueType;
     }
 
-    getParam(): FormalParametersTypeClass | ErrorTypeClass | null {
+    getParam(): FormalParametersTypeClass | ApexErrorTypeClass | null {
         return this.param;
     }
 
-    getModifier(): (NormalModifierTypeClass | ErrorTypeClass)[] {
+    getModifier(): (NormalModifierTypeClass | ApexErrorTypeClass)[] {
         return this.modifier;
     }
 }
 
 export const isInterfaceMethodDeclarationType = (
-    target: CommonTypeClass<string>,
+    target: ApexCommonTypeClass<string>,
 ): target is InterfaceMethodDeclarationTypeClass => {
     return target instanceof InterfaceMethodDeclarationTypeClass;
 };

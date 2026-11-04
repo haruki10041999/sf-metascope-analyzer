@@ -15,7 +15,7 @@ import { AnonymousUnitTypeClass } from './anonymousUnit';
 import { TriggerUnitTypeClass } from './triggerUnit';
 import { TriggerCaseTypeClass } from './triggerCase';
 
-import { CommonVisitor } from '../commonVisitor';
+import { ApexCommonVisitor } from '../commonVisitor';
 
 export { isCompilationUnitType, CompilationUnitTypeClass } from './compilationUnit';
 export { isAnonymousUnitType, AnonymousUnitTypeClass } from './anonymousUnit';
@@ -23,7 +23,7 @@ export { isTriggerUnitType, TriggerUnitTypeClass } from './triggerUnit';
 
 export { isTriggerCaseType, TriggerCaseTypeClass } from './triggerCase';
 
-export class UnitVisitor extends CommonVisitor<UnitAllTypeClass> {
+export class UnitVisitor extends ApexCommonVisitor<UnitAllTypeClass> {
     visitCompilationUnit(ctx: CompilationUnitContext) {
         return CompilationUnitTypeClass.create(ctx);
     }

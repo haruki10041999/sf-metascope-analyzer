@@ -3,13 +3,13 @@ import { OrderByClauseContext } from '@apexdevtools/apex-parser';
 import { ClauseTypeClass } from '.';
 
 import { FieldOrderListTypeClass, ListVisitor, isFieldOrderListType } from '../listVisitor';
-import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
+import { ApexErrorTypeClass, ApexCommonTypeClass, isApexValidClass } from '../commonVisitor';
 
 export class OrderByClauseTypeClass extends ClauseTypeClass<
     'orderByClause',
     FieldOrderListTypeClass
 > {
-    private constructor(value: FieldOrderListTypeClass | ErrorTypeClass) {
+    private constructor(value: FieldOrderListTypeClass | ApexErrorTypeClass) {
         super('orderByClause', value);
     }
 
@@ -19,7 +19,7 @@ export class OrderByClauseTypeClass extends ClauseTypeClass<
         }
 
         return new OrderByClauseTypeClass(
-            isValidClass(
+            isApexValidClass(
                 new ListVisitor().visit(ctx.fieldOrderList()),
                 isFieldOrderListType,
                 'fieldOrderList',
@@ -29,7 +29,8 @@ export class OrderByClauseTypeClass extends ClauseTypeClass<
 }
 
 export const isOrderByClauseType = (
-    target: CommonTypeClass<string>,
+    target: ApexCommonTypeClass<string>,
 ): target is OrderByClauseTypeClass => {
     return target instanceof OrderByClauseTypeClass;
 };
+

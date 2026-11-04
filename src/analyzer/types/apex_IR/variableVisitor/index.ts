@@ -12,13 +12,13 @@ import { ArrayInitializerTypeClass } from './arrayInitializer';
 import { VariableDeclaratorTypeClass } from './variableDeclarator';
 import { VariableDeclaratorsTypeClass } from './variableDeclarators';
 
-import { CommonVisitor } from '../commonVisitor';
+import { ApexCommonVisitor } from '../commonVisitor';
 
 export { isArrayInitializerType, ArrayInitializerTypeClass } from './arrayInitializer';
 export { isVariableDeclaratorType, VariableDeclaratorTypeClass } from './variableDeclarator';
 export { isVariableDeclaratorsType, VariableDeclaratorsTypeClass } from './variableDeclarators';
 
-export class VariableVisitor extends CommonVisitor<VariableAllTypeClass> {
+export class VariableVisitor extends ApexCommonVisitor<VariableAllTypeClass> {
     visitArrayInitializer(ctx: ArrayInitializerContext) {
         return ArrayInitializerTypeClass.create(ctx);
     }

@@ -55,6 +55,13 @@ describe('diff samples (docs/examples/apex-diff)', () => {
             'Unchanged.cls': 'unchanged',
             'script.apex': 'changed',
             'NewHelper.cls': 'added',
+            // クラス・トリガーのメタデータ (中身は test/parser/apex-meta.test.ts で確かめる)
+            'AccountService.cls-meta.xml': 'changed',
+            'AccountTrigger.trigger-meta.xml': 'changed',
+            'Broken.cls-meta.xml': 'changed',
+            'OldHelper.cls-meta.xml': 'removed',
+            'Unchanged.cls-meta.xml': 'unchanged',
+            'NewHelper.cls-meta.xml': 'added',
         });
     });
 
@@ -101,7 +108,7 @@ describe('diff samples (docs/examples/apex-diff)', () => {
 
     it('annotation: arguments are compared by key', () => {
         const annotations = contentNodes('AccountService.cls').filter(
-            (n) => n.kind === 'modifier' && n.status === 'changed',
+            (n) => n.kind === 'annotation' && n.status === 'changed',
         );
         assert.deepEqual(
             annotations.map((n) => [n.name, n.fields.arg.map((a: Node) => [a.key, a.status])]),
@@ -121,7 +128,7 @@ describe('diff samples (docs/examples/apex-diff)', () => {
 
     it('statement: a statement moved from finally into catch is reported once as moved', () => {
         const nodes = contentNodes('AccountService.cls');
-        const moved = nodes.find((n) => n.status === 'moved' && n.value?.kind === 'expression');
+        const moved = nodes.find((n) => n.status === 'moved' && n.kind === 'expression');
         assert.equal(moved?.from.parent, 'block');
         assert.ok(nodes.some((n) => n.status === 'removed' && n.value?.condition === 'finally'));
     });
@@ -162,7 +169,8 @@ describe('diff samples (docs/examples/apex-diff)', () => {
         assert.ok(condition && 'fields' in condition);
         const expression = condition.fields.condition;
         assert.equal(expression.status, 'changed');
-        assert.equal(expression.before.kind, 'memberAccess');
+        // kind / sourceKeys は中身から分ける。after の && の式は JSON ノードではないので before 側だけを持つ
+        assert.deepEqual(expression.kind, { before: 'memberAccess' });
         assert.equal(expression.after.operator, '&&');
     });
 
@@ -189,9 +197,7 @@ describe('diff samples (docs/examples/apex-diff)', () => {
         assert.ok(!Array.isArray(diff.resolvedError) && diff.status === 'changed');
         assert.equal(diff.resolvedError.after.length, 2);
         assert.ok(
-            contentNodes('Broken.cls').some(
-                (n) => n.status === 'added' && n.value?.kind === 'error',
-            ),
+            contentNodes('Broken.cls').some((n) => n.status === 'added' && n.kind === 'error'),
         );
     });
 

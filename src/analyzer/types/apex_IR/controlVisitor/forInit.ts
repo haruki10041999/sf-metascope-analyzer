@@ -8,14 +8,14 @@ import {
     isLocalVariableDeclarationType,
 } from '../declarationVisitor';
 import { ExpressionListTypeClass, ListVisitor, isExpressionListType } from '../listVisitor';
-import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
+import { ApexErrorTypeClass, ApexCommonTypeClass, isApexValidClass } from '../commonVisitor';
 
 export class ForInitTypeClass extends ControlTypeClass<
     'forInit',
     LocalVariableDeclarationTypeClass | ExpressionListTypeClass
 > {
     private constructor(
-        value: LocalVariableDeclarationTypeClass | ExpressionListTypeClass | ErrorTypeClass,
+        value: LocalVariableDeclarationTypeClass | ExpressionListTypeClass | ApexErrorTypeClass,
     ) {
         super('forInit', value);
     }
@@ -27,12 +27,12 @@ export class ForInitTypeClass extends ControlTypeClass<
 
         return new ForInitTypeClass(
             ctx.localVariableDeclaration()
-                ? isValidClass(
+                ? isApexValidClass(
                       new DeclarationVisitor().visit(ctx.localVariableDeclaration()),
                       isLocalVariableDeclarationType,
                       'localVariableDeclaration',
                   )
-                : isValidClass(
+                : isApexValidClass(
                       new ListVisitor().visit(ctx.expressionList()),
                       isExpressionListType,
                       'expressionList',
@@ -41,6 +41,6 @@ export class ForInitTypeClass extends ControlTypeClass<
     }
 }
 
-export const isForInitType = (target: CommonTypeClass<string>): target is ForInitTypeClass => {
+export const isForInitType = (target: ApexCommonTypeClass<string>): target is ForInitTypeClass => {
     return target instanceof ForInitTypeClass;
 };

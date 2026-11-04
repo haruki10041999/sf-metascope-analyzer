@@ -7,19 +7,19 @@ import {
     ExpressionVisitor,
     isBasedExpressionType,
 } from '../expressionVisitor';
-import { ErrorTypeClass, CommonTypeClass, isValidClassList } from '../commonVisitor';
+import { ApexErrorTypeClass, ApexCommonTypeClass, isApexValidClassList } from '../commonVisitor';
 
 export class ArrayInitializerTypeClass extends VariableListTypeClass<
     'arrayInitializer',
     BasedExpressionTypeClass
 > {
-    private constructor(value: (BasedExpressionTypeClass | ErrorTypeClass)[]) {
+    private constructor(value: (BasedExpressionTypeClass | ApexErrorTypeClass)[]) {
         super('arrayInitializer', value);
     }
 
     public static create(ctx: ArrayInitializerContext) {
         return new ArrayInitializerTypeClass(
-            isValidClassList(
+            isApexValidClassList(
                 ctx.expression_list(),
                 (ctx) => new ExpressionVisitor().visit(ctx),
                 isBasedExpressionType,
@@ -30,7 +30,7 @@ export class ArrayInitializerTypeClass extends VariableListTypeClass<
 }
 
 export const isArrayInitializerType = (
-    target: CommonTypeClass<string>,
+    target: ApexCommonTypeClass<string>,
 ): target is ArrayInitializerTypeClass => {
     return target instanceof ArrayInitializerTypeClass;
 };

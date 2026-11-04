@@ -1,7 +1,7 @@
 import { VoidPrimaryContext } from '@apexdevtools/apex-parser';
 
 import { PrimaryValueTypeClass } from '.';
-import { CommonTypeClass } from '../commonVisitor';
+import { ApexCommonTypeClass } from '../commonVisitor';
 
 export class VoidPrimaryTypeClass extends PrimaryValueTypeClass<'voidPrimary', string> {
     private constructor(value: string) {
@@ -18,7 +18,8 @@ export class VoidPrimaryTypeClass extends PrimaryValueTypeClass<'voidPrimary', s
 }
 
 export const isVoidPrimaryType = (
-    target: CommonTypeClass<string>,
+    target: ApexCommonTypeClass<string>,
 ): target is VoidPrimaryTypeClass => {
     return target instanceof VoidPrimaryTypeClass;
 };
+

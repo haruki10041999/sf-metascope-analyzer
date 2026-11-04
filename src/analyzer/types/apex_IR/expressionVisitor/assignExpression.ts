@@ -7,7 +7,7 @@ import {
     isBasedExpressionType,
 } from '.';
 
-import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
+import { ApexErrorTypeClass, ApexCommonTypeClass, isApexValidClass } from '../commonVisitor';
 
 type AssignOperatorType =
     '=' | '+=' | '-=' | '*=' | '/=' | '&=' | '|=' | '^=' | '>>=' | '>>>=' | '<<=';
@@ -19,8 +19,8 @@ export class AssignExpressionTypeClass extends DoubleStringOperatorExpressionTyp
     BasedExpressionTypeClass
 > {
     private constructor(
-        left: BasedExpressionTypeClass | ErrorTypeClass,
-        right: BasedExpressionTypeClass | ErrorTypeClass,
+        left: BasedExpressionTypeClass | ApexErrorTypeClass,
+        right: BasedExpressionTypeClass | ApexErrorTypeClass,
         operator: AssignOperatorType,
     ) {
         super('assignExpression', left, right, operator);
@@ -71,12 +71,12 @@ export class AssignExpressionTypeClass extends DoubleStringOperatorExpressionTyp
         }
 
         return new AssignExpressionTypeClass(
-            isValidClass(
+            isApexValidClass(
                 new ExpressionVisitor().visit(ctx.expression(0)),
                 isBasedExpressionType,
                 'expression',
             ),
-            isValidClass(
+            isApexValidClass(
                 new ExpressionVisitor().visit(ctx.expression(1)),
                 isBasedExpressionType,
                 'expression',
@@ -87,7 +87,8 @@ export class AssignExpressionTypeClass extends DoubleStringOperatorExpressionTyp
 }
 
 export const isAssignExpressionType = (
-    target: CommonTypeClass<string>,
+    target: ApexCommonTypeClass<string>,
 ): target is AssignExpressionTypeClass => {
     return target instanceof AssignExpressionTypeClass;
 };
+

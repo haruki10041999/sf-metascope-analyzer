@@ -19,7 +19,7 @@ import {
     isFieldDeclarationType,
 } from '.';
 
-import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
+import { ApexErrorTypeClass, ApexCommonTypeClass, isApexValidClass } from '../commonVisitor';
 
 type MemberDeclarationTypeClassType =
     | MethodDeclarationTypeClass
@@ -34,7 +34,7 @@ export class MemberDeclarationTypeClass extends DeclarationTypeClass<
     'memberDeclaration',
     MemberDeclarationTypeClassType
 > {
-    private constructor(value: MemberDeclarationTypeClassType | ErrorTypeClass) {
+    private constructor(value: MemberDeclarationTypeClassType | ApexErrorTypeClass) {
         super('memberDeclaration', value);
     }
 
@@ -51,45 +51,45 @@ export class MemberDeclarationTypeClass extends DeclarationTypeClass<
             throw new Error('値が異常です。MemberDeclarationContext: ' + ctx.getText());
         }
 
-        let value: MemberDeclarationTypeClassType | ErrorTypeClass;
+        let value: MemberDeclarationTypeClassType | ApexErrorTypeClass;
         if (ctx.methodDeclaration()) {
-            value = isValidClass(
+            value = isApexValidClass(
                 new DeclarationVisitor().visit(ctx.methodDeclaration()),
                 isMethodDeclarationType,
                 'MethodDeclaration',
             );
         } else if (ctx.constructorDeclaration()) {
-            value = isValidClass(
+            value = isApexValidClass(
                 new DeclarationVisitor().visit(ctx.constructorDeclaration()),
                 isConstructorDeclarationType,
                 'ConstructorDeclaration',
             );
         } else if (ctx.interfaceDeclaration()) {
-            value = isValidClass(
+            value = isApexValidClass(
                 new DeclarationVisitor().visit(ctx.interfaceDeclaration()),
                 isInterfaceDeclarationType,
                 'InterfaceDeclaration',
             );
         } else if (ctx.classDeclaration()) {
-            value = isValidClass(
+            value = isApexValidClass(
                 new DeclarationVisitor().visit(ctx.classDeclaration()),
                 isClassDeclarationType,
                 'ClassDeclaration',
             );
         } else if (ctx.enumDeclaration()) {
-            value = isValidClass(
+            value = isApexValidClass(
                 new DeclarationVisitor().visit(ctx.enumDeclaration()),
                 isEnumDeclarationType,
                 'EnumDeclaration',
             );
         } else if (ctx.propertyDeclaration()) {
-            value = isValidClass(
+            value = isApexValidClass(
                 new DeclarationVisitor().visit(ctx.propertyDeclaration()),
                 isPropertyDeclarationType,
                 'PropertyDeclaration',
             );
         } else {
-            value = isValidClass(
+            value = isApexValidClass(
                 new DeclarationVisitor().visit(ctx.fieldDeclaration()),
                 isFieldDeclarationType,
                 'FieldDeclaration',
@@ -101,7 +101,7 @@ export class MemberDeclarationTypeClass extends DeclarationTypeClass<
 }
 
 export const isMemberDeclarationType = (
-    target: CommonTypeClass<string>,
+    target: ApexCommonTypeClass<string>,
 ): target is MemberDeclarationTypeClass => {
     return target instanceof MemberDeclarationTypeClass;
 };

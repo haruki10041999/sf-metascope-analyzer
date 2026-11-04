@@ -8,13 +8,20 @@ import {
     ExpressionVisitor,
     isBoundExpressionType,
 } from '../expressionVisitor';
-import { ErrorTypeClass, CommonTypeClass, isValidClass, isValidClassList } from '../commonVisitor';
+import {
+    ApexErrorTypeClass,
+    ApexCommonTypeClass,
+    isApexValidClass,
+    isApexValidClassList,
+} from '../commonVisitor';
 
 type LocationValueValue =
-    FieldNameTypeClass | BoundExpressionTypeClass | (CoordinateValueTypeClass | ErrorTypeClass)[];
+    | FieldNameTypeClass
+    | BoundExpressionTypeClass
+    | (CoordinateValueTypeClass | ApexErrorTypeClass)[];
 
 export class LocationValueTypeClass extends ValueTypeClass<'locationValue', LocationValueValue> {
-    private constructor(value: LocationValueValue | ErrorTypeClass) {
+    private constructor(value: LocationValueValue | ApexErrorTypeClass) {
         super('locationValue', value);
     }
 
@@ -27,9 +34,9 @@ export class LocationValueTypeClass extends ValueTypeClass<'locationValue', Loca
             throw new Error('値が異常です。LocationValueContext: ' + ctx.getText());
         }
 
-        let value: LocationValueValue | ErrorTypeClass;
+        let value: LocationValueValue | ApexErrorTypeClass;
         if (ctx.GEOLOCATION()) {
-            value = isValidClassList(
+            value = isApexValidClassList(
                 ctx.coordinateValue_list(),
                 (ctx) => new ValueVisitor().visit(ctx),
                 isCoordinateValueType,
@@ -37,12 +44,12 @@ export class LocationValueTypeClass extends ValueTypeClass<'locationValue', Loca
             );
         } else {
             value = ctx.fieldName()
-                ? isValidClass(
+                ? isApexValidClass(
                       new NameVisitor().visit(ctx.fieldName()),
                       isFieldNameType,
                       'fieldName',
                   )
-                : isValidClass(
+                : isApexValidClass(
                       new ExpressionVisitor().visit(ctx.boundExpression()),
                       isBoundExpressionType,
                       'boundExpression',
@@ -54,7 +61,8 @@ export class LocationValueTypeClass extends ValueTypeClass<'locationValue', Loca
 }
 
 export const isLocationValueType = (
-    target: CommonTypeClass<string>,
+    target: ApexCommonTypeClass<string>,
 ): target is LocationValueTypeClass => {
     return target instanceof LocationValueTypeClass;
 };
+

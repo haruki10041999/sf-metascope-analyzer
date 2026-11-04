@@ -7,17 +7,17 @@ import {
     isBasedExpressionType,
 } from '.';
 
-import { CommonTypeClass, ErrorTypeClass, isValidClass } from '../commonVisitor';
+import { ApexCommonTypeClass, ApexErrorTypeClass, isApexValidClass } from '../commonVisitor';
 
 export class ArrayExpressionTypeClass extends ExpressionTypeClass<
     'arrayExpression',
     BasedExpressionTypeClass
 > {
-    private index: BasedExpressionTypeClass | ErrorTypeClass;
+    private index: BasedExpressionTypeClass | ApexErrorTypeClass;
 
     private constructor(
-        value: BasedExpressionTypeClass | ErrorTypeClass,
-        index: BasedExpressionTypeClass | ErrorTypeClass,
+        value: BasedExpressionTypeClass | ApexErrorTypeClass,
+        index: BasedExpressionTypeClass | ApexErrorTypeClass,
     ) {
         super('arrayExpression', value);
         this.index = index;
@@ -29,12 +29,12 @@ export class ArrayExpressionTypeClass extends ExpressionTypeClass<
         }
 
         return new ArrayExpressionTypeClass(
-            isValidClass(
+            isApexValidClass(
                 new ExpressionVisitor().visit(ctx.expression(0)),
                 isBasedExpressionType,
                 'expression',
             ),
-            isValidClass(
+            isApexValidClass(
                 new ExpressionVisitor().visit(ctx.expression(1)),
                 isBasedExpressionType,
                 'expression',
@@ -42,13 +42,14 @@ export class ArrayExpressionTypeClass extends ExpressionTypeClass<
         );
     }
 
-    getIndex(): BasedExpressionTypeClass | ErrorTypeClass {
+    getIndex(): BasedExpressionTypeClass | ApexErrorTypeClass {
         return this.index;
     }
 }
 
 export const isArrayExpressionType = (
-    target: CommonTypeClass<string>,
+    target: ApexCommonTypeClass<string>,
 ): target is ArrayExpressionTypeClass => {
     return target instanceof ArrayExpressionTypeClass;
 };
+

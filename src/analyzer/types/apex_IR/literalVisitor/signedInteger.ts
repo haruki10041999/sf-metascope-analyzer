@@ -2,7 +2,7 @@ import { SignedIntegerContext } from '@apexdevtools/apex-parser';
 
 import { PrimitiveLiteralTypeClass } from '.';
 
-import { CommonTypeClass } from '../commonVisitor';
+import { ApexCommonTypeClass } from '../commonVisitor';
 
 export class SignedIntegerTypeClass extends PrimitiveLiteralTypeClass<
     'signedInteger',
@@ -38,7 +38,8 @@ export class SignedIntegerTypeClass extends PrimitiveLiteralTypeClass<
 }
 
 export const isSignedIntegerType = (
-    target: CommonTypeClass<string>,
+    target: ApexCommonTypeClass<string>,
 ): target is SignedIntegerTypeClass => {
     return target instanceof SignedIntegerTypeClass;
 };
+

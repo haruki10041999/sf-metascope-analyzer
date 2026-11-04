@@ -20,7 +20,7 @@ import { PropertyBlockTypeClass } from './propertyBlock';
 import { GetterTypeClass } from './getter';
 import { SetterTypeClass } from './setter';
 
-import { CommonVisitor } from '../commonVisitor';
+import { ApexCommonVisitor } from '../commonVisitor';
 
 export { isNormalBlockType, NormalBlockTypeClass } from './normal';
 export { isFinallyBlockType, FinallyBlockTypeClass } from './finallyBlock';
@@ -30,7 +30,7 @@ export { isSetterType, SetterTypeClass } from './setter';
 export { isAnonymousBlockType, AnonymousBlockTypeClass } from './anonymousBlock';
 export { isTriggerBlockType, TriggerBlockTypeClass } from './triggerBlock';
 
-export class BlockVisitor extends CommonVisitor<BlockAllTypeClass> {
+export class BlockVisitor extends ApexCommonVisitor<BlockAllTypeClass> {
     visitBlock(ctx: BlockContext) {
         return NormalBlockTypeClass.create(ctx);
     }

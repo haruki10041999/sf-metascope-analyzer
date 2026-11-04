@@ -36,7 +36,7 @@ import { EnumDeclarationTypeClass } from './enumDeclaration';
 import { ConstructorDeclarationTypeClass } from './constructorDeclaration';
 import { EnumConstantsTypeClass } from './enumConstants';
 
-import { CommonVisitor } from '../commonVisitor';
+import { ApexCommonVisitor } from '../commonVisitor';
 
 export { isTypeDeclarationType, TypeDeclarationTypeClass } from './typeDeclaration';
 export { isMemberDeclarationType, MemberDeclarationTypeClass } from './memberDeclaration';
@@ -69,7 +69,7 @@ export {
     AnonymousMemberDeclarationTypeClass,
 } from './anonymousMemberDeclaration';
 
-export class DeclarationVisitor extends CommonVisitor<DeclarationAllTypeClass> {
+export class DeclarationVisitor extends ApexCommonVisitor<DeclarationAllTypeClass> {
     visitMemberDeclaration(ctx: MemberDeclarationContext) {
         return MemberDeclarationTypeClass.create(ctx);
     }

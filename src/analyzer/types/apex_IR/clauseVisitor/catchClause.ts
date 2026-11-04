@@ -6,18 +6,23 @@ import { NormalIdTypeClass, IdVisitor, isNormalIdType } from '../idVisitor';
 import { NormalBlockTypeClass, BlockVisitor, isNormalBlockType } from '../blockVisitor';
 import { QualifiedNameTypeClass, NameVisitor, isQualifiedNameType } from '../nameVisitor';
 import { NormalModifierTypeClass, ModifierVisitor, isNormalModifierType } from '../modifierVisitor';
-import { CommonTypeClass, ErrorTypeClass, isValidClass, isValidClassList } from '../commonVisitor';
+import {
+    ApexCommonTypeClass,
+    ApexErrorTypeClass,
+    isApexValidClass,
+    isApexValidClassList,
+} from '../commonVisitor';
 
 export class CatchClauseTypeClass extends ClauseTypeClass<'catchClause', NormalIdTypeClass> {
-    private valueType: QualifiedNameTypeClass | ErrorTypeClass;
-    private block: NormalBlockTypeClass | ErrorTypeClass;
-    private modifier: (NormalModifierTypeClass | ErrorTypeClass)[];
+    private valueType: QualifiedNameTypeClass | ApexErrorTypeClass;
+    private block: NormalBlockTypeClass | ApexErrorTypeClass;
+    private modifier: (NormalModifierTypeClass | ApexErrorTypeClass)[];
 
     private constructor(
-        value: NormalIdTypeClass | ErrorTypeClass,
-        valueType: QualifiedNameTypeClass | ErrorTypeClass,
-        block: NormalBlockTypeClass | ErrorTypeClass,
-        modifier: (NormalModifierTypeClass | ErrorTypeClass)[],
+        value: NormalIdTypeClass | ApexErrorTypeClass,
+        valueType: QualifiedNameTypeClass | ApexErrorTypeClass,
+        block: NormalBlockTypeClass | ApexErrorTypeClass,
+        modifier: (NormalModifierTypeClass | ApexErrorTypeClass)[],
     ) {
         super('catchClause', value);
         this.valueType = valueType;
@@ -31,14 +36,14 @@ export class CatchClauseTypeClass extends ClauseTypeClass<'catchClause', NormalI
         }
 
         return new CatchClauseTypeClass(
-            isValidClass(new IdVisitor().visit(ctx.id()), isNormalIdType, 'id'),
-            isValidClass(
+            isApexValidClass(new IdVisitor().visit(ctx.id()), isNormalIdType, 'id'),
+            isApexValidClass(
                 new NameVisitor().visit(ctx.qualifiedName()),
                 isQualifiedNameType,
                 'qualifiedName',
             ),
-            isValidClass(new BlockVisitor().visit(ctx.block()), isNormalBlockType, 'block'),
-            isValidClassList(
+            isApexValidClass(new BlockVisitor().visit(ctx.block()), isNormalBlockType, 'block'),
+            isApexValidClassList(
                 ctx.modifier_list() || [],
                 (ctx) => new ModifierVisitor().visit(ctx),
                 isNormalModifierType,
@@ -47,21 +52,21 @@ export class CatchClauseTypeClass extends ClauseTypeClass<'catchClause', NormalI
         );
     }
 
-    getValueType(): QualifiedNameTypeClass | ErrorTypeClass {
+    getValueType(): QualifiedNameTypeClass | ApexErrorTypeClass {
         return this.valueType;
     }
 
-    getBlock(): NormalBlockTypeClass | ErrorTypeClass {
+    getBlock(): NormalBlockTypeClass | ApexErrorTypeClass {
         return this.block;
     }
 
-    getModifier(): (NormalModifierTypeClass | ErrorTypeClass)[] {
+    getModifier(): (NormalModifierTypeClass | ApexErrorTypeClass)[] {
         return this.modifier;
     }
 }
 
 export const isCatchClauseType = (
-    target: CommonTypeClass<string>,
+    target: ApexCommonTypeClass<string>,
 ): target is CatchClauseTypeClass => {
     return target instanceof CatchClauseTypeClass;
 };

@@ -1,0 +1,13 @@
+<template>
+    <lightning-card title={title} icon-name="standard:account">
+        <template lwc:if={hasRows}>
+            <ul class="slds-list_dotted">
+                <template for:each={rows} for:item="row">
+                    <li key={row.Id}><c-child name={row.Name} onselect={handleSelect}></c-child></li>
+                </template>
+            </ul>
+        </template>
+        <template lwc:else><p class="empty">データがありません</p></template>
+        <lightning-button slot="footer" label="追加" variant="brand"></lightning-button>
+    </lightning-card>
+</template>

@@ -1,0 +1,4 @@
+{
+  "warnings": [],
+  "code": "const formatter = new Intl.NumberFormat('ja-JP', {\n  style: 'currency',\n  currency: 'JPY'\n});\nexport const formatAmount = value => formatter.format(value);\nexport function toRows(records) {\n  return records.map(record => record);\n}"
+}

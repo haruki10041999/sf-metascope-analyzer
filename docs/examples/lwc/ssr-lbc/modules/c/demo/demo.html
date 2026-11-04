@@ -1,0 +1,33 @@
+<template>
+    <lightning-card title="{title}" icon-name="standard:account">
+        <lightning-button slot="actions" label="新規" variant="brand"></lightning-button>
+        <lightning-layout multiple-rows>
+            <lightning-layout-item size="6"
+                ><lightning-input label="名前" value="Acme"></lightning-input
+            ></lightning-layout-item>
+            <lightning-layout-item size="6"
+                ><lightning-combobox
+                    label="状態"
+                    value="active"
+                    options="{options}"
+                ></lightning-combobox
+            ></lightning-layout-item>
+        </lightning-layout>
+        <lightning-badge label="重要"></lightning-badge>
+        <lightning-formatted-number
+            value="1234.5"
+            format-style="currency"
+            currency-code="JPY"
+        ></lightning-formatted-number>
+        <lightning-datatable
+            key-field="Id"
+            data="{rows}"
+            columns="{columns}"
+            hide-checkbox-column
+        ></lightning-datatable>
+        <lightning-tabset
+            ><lightning-tab label="概要">概要の内容</lightning-tab
+            ><lightning-tab label="詳細">詳細の内容</lightning-tab></lightning-tabset
+        >
+    </lightning-card>
+</template>

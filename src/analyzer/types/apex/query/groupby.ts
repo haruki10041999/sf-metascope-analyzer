@@ -1,13 +1,7 @@
 import typia from 'typia';
 
-import {
-    ConvertExcludeError,
-    ErrorJson,
-    convertValue,
-    ConvertType,
-    JsonType,
-    makeJsonType,
-} from '../commons';
+import { ConvertExcludeError, convertValue, ConvertType } from '../commons';
+import { ErrorJson, JsonType, makeJsonType } from '../../commons';
 
 import { GroupByClauseType, FieldGroupByType } from '../converter';
 
@@ -48,4 +42,3 @@ export const makeGroupByJson = (
         },
     );
 };
-

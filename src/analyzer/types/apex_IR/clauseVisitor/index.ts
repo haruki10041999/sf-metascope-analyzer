@@ -46,7 +46,7 @@ import { UpdateTypeTypeClass } from './updateType';
 import { UsingScopeTypeClass } from './usingScope';
 import { TypeOfTypeClass } from './typeOf';
 
-import { CommonVisitor } from '../commonVisitor';
+import { ApexCommonVisitor } from '../commonVisitor';
 
 export { isAllRowsClauseType, AllRowsClauseTypeClass } from './allRowsClause';
 export { isCatchClauseType, CatchClauseTypeClass } from './catchClause';
@@ -72,7 +72,7 @@ export { isWithClauseType, WithClauseTypeClass } from './withClause';
 export { isSoslClausesType, SoslClausesTypeClass } from './soslClauses';
 export { isSoslWithClauseType, SoslWithClauseTypeClass } from './soslWithClause';
 
-export class ClauseVisitor extends CommonVisitor<ClauseAllTypeClass> {
+export class ClauseVisitor extends ApexCommonVisitor<ClauseAllTypeClass> {
     visitCatchClause(ctx: CatchClauseContext) {
         return CatchClauseTypeClass.create(ctx);
     }

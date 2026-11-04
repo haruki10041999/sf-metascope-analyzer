@@ -2,7 +2,7 @@ import { ArraySubscriptsContext } from '@apexdevtools/apex-parser';
 
 import { TypeValueTypeClass } from '.';
 
-import { CommonTypeClass } from '../commonVisitor';
+import { ApexCommonTypeClass } from '../commonVisitor';
 
 export class ArraySubscriptsTypeClass extends TypeValueTypeClass<'arraySubscripts', number | null> {
     private constructor(value: number | null) {
@@ -21,7 +21,7 @@ export class ArraySubscriptsTypeClass extends TypeValueTypeClass<'arraySubscript
 }
 
 export const isArraySubscriptsType = (
-    target: CommonTypeClass<string>,
+    target: ApexCommonTypeClass<string>,
 ): target is ArraySubscriptsTypeClass => {
     return target instanceof ArraySubscriptsTypeClass;
 };

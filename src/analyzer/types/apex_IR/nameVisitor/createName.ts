@@ -3,13 +3,13 @@ import { CreatedNameContext } from '@apexdevtools/apex-parser';
 import { NameListTypeClass } from '.';
 
 import { IdCreatedNamePairTypeClass, PairVisitor, isIdCreatedNamePairType } from '../pairVisitor';
-import { ErrorTypeClass, CommonTypeClass, isValidClassList } from '../commonVisitor';
+import { ApexErrorTypeClass, ApexCommonTypeClass, isApexValidClassList } from '../commonVisitor';
 
 export class CreatedNameTypeClass extends NameListTypeClass<
     'createdName',
     IdCreatedNamePairTypeClass
 > {
-    private constructor(value: (IdCreatedNamePairTypeClass | ErrorTypeClass)[]) {
+    private constructor(value: (IdCreatedNamePairTypeClass | ApexErrorTypeClass)[]) {
         super('createdName', value);
     }
 
@@ -19,7 +19,7 @@ export class CreatedNameTypeClass extends NameListTypeClass<
         }
 
         return new CreatedNameTypeClass(
-            isValidClassList(
+            isApexValidClassList(
                 ctx.idCreatedNamePair_list(),
                 (ctx) => new PairVisitor().visit(ctx),
                 isIdCreatedNamePairType,
@@ -30,7 +30,7 @@ export class CreatedNameTypeClass extends NameListTypeClass<
 }
 
 export const isCreatedNameType = (
-    target: CommonTypeClass<string>,
+    target: ApexCommonTypeClass<string>,
 ): target is CreatedNameTypeClass => {
     return target instanceof CreatedNameTypeClass;
 };

@@ -12,52 +12,61 @@ import {
     Match,
     OptionalDiff,
     ValueDiff,
+    SourceKeysDiff,
     getObjectKey,
     makeOptionalDiff,
+    makeSourceKeysDiff,
     makeValueDiff,
     pairByKey,
     toBody,
-} from './commons';
+} from '../../commons/diff/commons';
 
 export type ModifierValue = {
     modifierType: string;
 } & (ModifierJson | AnnotationJson | ErrorJson);
 
 /** キーを持つ引数の差分 (`@RestResource(urlMapping='/a')` の urlMapping など) */
-export type AnnotationArgDiff = { key: string } & OptionalDiff<
+export type AnnotationArgJsonDiff = { key: string } & OptionalDiff<
     AnnotationArgJson,
     ValueDiff<AnnotationArgJson>
 >;
 
 /** 引数がすべてキーを持てばキーで対応付け、そうでなければ値を丸ごと比べる */
-export type AnnotationArgsDiff = AnnotationArgDiff[] | ValueDiff<AnnotationJson['arg'] | null>;
+export type AnnotationArgsDiff = AnnotationArgJsonDiff[] | ValueDiff<AnnotationJson['arg'] | null>;
 
-/**
- * 修飾子・アノテーションは B. 集合 (分類キーをまたいで 1 つの集合にする)。
- * ただしアノテーションは名前で対応付け (D)、引数だけが変わったものを changed にする。
- */
-export type ModifierDiff = {
-    kind: 'modifier';
-} & (
+/** 修飾子・アノテーション・エラーのどれか 1 つの、集合の要素としての差分。値には分類キー (modifierType) を足す */
+type ModifierItemDiff<K extends string, T> = { kind: K } & (
     | {
           status: 'added' | 'removed';
           sourceKeys: ConvertKeys;
-          value: Body<ModifierValue>;
+          value: Body<T> & { modifierType: string };
       }
     | {
           status: 'unchanged';
-          sourceKeys: { before: ConvertKeys; after: ConvertKeys };
-          value: Body<ModifierValue>;
+          sourceKeys: SourceKeysDiff<ConvertKeys>;
+          value: Body<T> & { modifierType: string };
       }
+);
+
+export type ModifierJsonDiff = ModifierItemDiff<'modifier', ModifierJson>;
+
+/** アノテーションは名前で対応付け (D)、引数だけが変わったものを changed にする */
+export type AnnotationJsonDiff =
+    | ModifierItemDiff<'annotation', AnnotationJson>
     | {
+          kind: 'annotation';
+          sourceKeys: SourceKeysDiff<ConvertKeys>;
           status: 'changed';
           match: Match;
-          sourceKeys: { before: ConvertKeys; after: ConvertKeys };
           modifierType: string;
           name: string;
           fields: { arg: AnnotationArgsDiff };
-      }
-);
+      };
+
+/** 修飾子・アノテーションは B. 集合 (分類キーをまたいで 1 つの集合にする) */
+export type ModifiersJsonDiff = (
+    ModifierJsonDiff | AnnotationJsonDiff | ModifierItemDiff<'error', ErrorJson>
+)[];
 
 export const makeTypedModifierJsons = (target: ModifiersJson): ModifierValue[] => {
     const modifiers: ModifierValue[] = [];
@@ -110,7 +119,7 @@ const getModifierId = (modifier: ModifierValue): string | undefined =>
 export const makeModifierItemsDiff = (
     before: ModifierValue[],
     after: ModifierValue[],
-): ModifierDiff[] => {
+): ModifiersJsonDiff => {
     const pairings = pairByKey(
         before.map(getModifierId),
         after.map(getModifierId),
@@ -118,47 +127,42 @@ export const makeModifierItemsDiff = (
         after.map(getObjectKey),
     );
 
-    return pairings.map((p): ModifierDiff => {
-        if (p.status === 'removed') {
-            const b = before[p.before]!;
+    return pairings.map((p): ModifiersJsonDiff[number] => {
+        if (p.status === 'removed' || p.status === 'added') {
+            const item = p.status === 'removed' ? before[p.before]! : after[p.after]!;
             return {
-                kind: 'modifier',
-                status: 'removed',
-                sourceKeys: b.sourceKeys,
-                value: toBody(b),
-            };
-        }
-
-        if (p.status === 'added') {
-            const a = after[p.after]!;
-            return {
-                kind: 'modifier',
-                status: 'added',
-                sourceKeys: a.sourceKeys,
-                value: toBody(a),
-            };
+                kind: item.kind,
+                sourceKeys: item.sourceKeys,
+                status: p.status,
+                value: toBody(item),
+            } as ModifiersJsonDiff[number];
         }
 
         const b = before[p.before]!;
         const a = after[p.after]!;
-        const sourceKeys = { before: b.sourceKeys, after: a.sourceKeys };
+        const sourceKeys = makeSourceKeysDiff<ConvertKeys>(b.sourceKeys, a.sourceKeys);
 
         // 名前で対応付いたアノテーションのうち、引数が変わったもの
         if (p.status === 'changed' && b.kind === 'annotation' && a.kind === 'annotation') {
             return {
-                kind: 'modifier',
+                kind: 'annotation',
+                sourceKeys,
                 status: 'changed',
                 match: p.match,
-                sourceKeys,
                 modifierType: b.modifierType,
                 name: a.name,
                 fields: { arg: makeAnnotationArgsDiff(b.arg, a.arg) },
             };
         }
 
-        return { kind: 'modifier', status: 'unchanged', sourceKeys, value: toBody(b) };
+        return {
+            kind: b.kind,
+            sourceKeys,
+            status: 'unchanged',
+            value: toBody(b),
+        } as ModifiersJsonDiff[number];
     });
 };
 
-export const makeModifierDiff = (before: ModifiersJson, after: ModifiersJson): ModifierDiff[] =>
+export const makeModifierDiff = (before: ModifiersJson, after: ModifiersJson): ModifiersJsonDiff =>
     makeModifierItemsDiff(makeTypedModifierJsons(before), makeTypedModifierJsons(after));

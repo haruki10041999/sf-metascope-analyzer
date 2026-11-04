@@ -4,7 +4,7 @@ import { PairTypeClass } from '.';
 
 import { NormalIdTypeClass, IdVisitor, isNormalIdType } from '../idVisitor';
 import { ElementValueTypeClass, ValueVisitor, isElementValueType } from '../valueVisitor';
-import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
+import { ApexErrorTypeClass, ApexCommonTypeClass, isApexValidClass } from '../commonVisitor';
 
 export class ElementValuePairTypeClass extends PairTypeClass<
     'elementValuePair',
@@ -12,8 +12,8 @@ export class ElementValuePairTypeClass extends PairTypeClass<
     ElementValueTypeClass
 > {
     private constructor(
-        left: NormalIdTypeClass | ErrorTypeClass,
-        right: ElementValueTypeClass | ErrorTypeClass,
+        left: NormalIdTypeClass | ApexErrorTypeClass,
+        right: ElementValueTypeClass | ApexErrorTypeClass,
     ) {
         super('elementValuePair', left, right);
     }
@@ -24,8 +24,8 @@ export class ElementValuePairTypeClass extends PairTypeClass<
         }
 
         return new ElementValuePairTypeClass(
-            isValidClass(new IdVisitor().visit(ctx.id()), isNormalIdType, 'id'),
-            isValidClass(
+            isApexValidClass(new IdVisitor().visit(ctx.id()), isNormalIdType, 'id'),
+            isApexValidClass(
                 new ValueVisitor().visit(ctx.elementValue()),
                 isElementValueType,
                 'elementValue',
@@ -35,7 +35,7 @@ export class ElementValuePairTypeClass extends PairTypeClass<
 }
 
 export const isElementValuePairType = (
-    target: CommonTypeClass<string>,
+    target: ApexCommonTypeClass<string>,
 ): target is ElementValuePairTypeClass => {
     return target instanceof ElementValuePairTypeClass;
 };

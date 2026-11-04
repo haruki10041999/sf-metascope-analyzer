@@ -7,18 +7,12 @@ import {
     makeOptionalDiff,
     makeValueDiff,
     toBody,
-} from '../commons';
+} from '../../../commons/diff/commons';
+import { MovedFrom } from '../../../commons/diff/list';
 import { Mappings } from './matcher';
 import { DiffFieldValue, DiffNodeValue, GumTreeNode, preOrder } from './tree';
 
 // 方針: docs/apex-gumtree-diff.md 5 章
-
-/** 移動元。移動したノードは移動先に 1 回だけ出し、移動元をここに持つ */
-export type MovedFrom = {
-    parent: string;
-    index: number;
-    parentSourceKeys?: JsonNode['sourceKeys'];
-};
 
 export type GumTreeFieldDiff<T extends DiffFieldValue = DiffFieldValue> = OptionalDiff<
     T,

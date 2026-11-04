@@ -7,7 +7,7 @@ import {
     isBasedExpressionType,
 } from '.';
 
-import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
+import { ApexErrorTypeClass, ApexCommonTypeClass, isApexValidClass } from '../commonVisitor';
 
 type EqualityOperatorType = '===' | '!==' | '==' | '!=' | '<>';
 
@@ -18,8 +18,8 @@ export class EqualityExpressionTypeClass extends DoubleStringOperatorExpressionT
     BasedExpressionTypeClass
 > {
     private constructor(
-        left: BasedExpressionTypeClass | ErrorTypeClass,
-        right: BasedExpressionTypeClass | ErrorTypeClass,
+        left: BasedExpressionTypeClass | ApexErrorTypeClass,
+        right: BasedExpressionTypeClass | ApexErrorTypeClass,
         operator: EqualityOperatorType,
     ) {
         super('equalityExpression', left, right, operator);
@@ -55,12 +55,12 @@ export class EqualityExpressionTypeClass extends DoubleStringOperatorExpressionT
         }
 
         return new EqualityExpressionTypeClass(
-            isValidClass(
+            isApexValidClass(
                 new ExpressionVisitor().visit(ctx.expression(0)),
                 isBasedExpressionType,
                 'expression',
             ),
-            isValidClass(
+            isApexValidClass(
                 new ExpressionVisitor().visit(ctx.expression(1)),
                 isBasedExpressionType,
                 'expression',
@@ -71,7 +71,8 @@ export class EqualityExpressionTypeClass extends DoubleStringOperatorExpressionT
 }
 
 export const isEqualityExpressionType = (
-    target: CommonTypeClass<string>,
+    target: ApexCommonTypeClass<string>,
 ): target is EqualityExpressionTypeClass => {
     return target instanceof EqualityExpressionTypeClass;
 };
+

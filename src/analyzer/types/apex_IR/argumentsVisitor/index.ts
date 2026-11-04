@@ -7,12 +7,12 @@ import type { ArgumentsTypeClass } from './base';
 import { NormalArgumentsTypeClass } from './normal';
 import { TypeArgumentsTypeClass } from './typeArguments';
 
-import { CommonVisitor } from '../commonVisitor';
+import { ApexCommonVisitor } from '../commonVisitor';
 
 export { isNormalArgumentsType, NormalArgumentsTypeClass } from './normal';
 export { isTypeArgumentsType, TypeArgumentsTypeClass } from './typeArguments';
 
-export class ArgumentsVisitor extends CommonVisitor<ArgumentsTypeClass<string, unknown>> {
+export class ArgumentsVisitor extends ApexCommonVisitor<ArgumentsTypeClass<string, unknown>> {
     visitArguments(ctx: ArgumentsContext) {
         return NormalArgumentsTypeClass.create(ctx);
     }

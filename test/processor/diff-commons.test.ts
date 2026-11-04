@@ -6,7 +6,7 @@ import {
     pairAsSequence,
     pairAsSet,
     pairByKey,
-} from '../../src/analyzer/processor/Apex/diff/commons';
+} from '../../src/analyzer/processor/commons/diff/commons';
 
 describe('diff pairing', () => {
     it('uses structural keys without depending on object property order', () => {

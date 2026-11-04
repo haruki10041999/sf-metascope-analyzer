@@ -13,16 +13,16 @@ import {
     isArrayInitializerType,
 } from '../variableVisitor';
 
-import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
+import { ApexErrorTypeClass, ApexCommonTypeClass, isApexValidClass } from '../commonVisitor';
 
 export class ArrayCreatorRestTypeClass extends RestTypeClass<
     'arrayCreatorRest',
     ArrayInitializerTypeClass | null
 > {
-    private size: BasedExpressionTypeClass | ErrorTypeClass | null = null;
+    private size: BasedExpressionTypeClass | ApexErrorTypeClass | null = null;
     private constructor(
-        value: ArrayInitializerTypeClass | ErrorTypeClass | null,
-        size: BasedExpressionTypeClass | ErrorTypeClass | null,
+        value: ArrayInitializerTypeClass | ApexErrorTypeClass | null,
+        size: BasedExpressionTypeClass | ApexErrorTypeClass | null,
     ) {
         super('arrayCreatorRest', value);
         this.size = size;
@@ -34,7 +34,7 @@ export class ArrayCreatorRestTypeClass extends RestTypeClass<
         }
 
         const value = ctx.arrayInitializer()
-            ? isValidClass(
+            ? isApexValidClass(
                   new VariableVisitor().visit(ctx.arrayInitializer()),
                   isArrayInitializerType,
                   'arrayInitializer',
@@ -42,7 +42,7 @@ export class ArrayCreatorRestTypeClass extends RestTypeClass<
             : null;
 
         const size = ctx.expression()
-            ? isValidClass(
+            ? isApexValidClass(
                   new ExpressionVisitor().visit(ctx.expression()),
                   isBasedExpressionType,
                   'expression',
@@ -52,13 +52,14 @@ export class ArrayCreatorRestTypeClass extends RestTypeClass<
         return new ArrayCreatorRestTypeClass(value, size);
     }
 
-    getSize(): BasedExpressionTypeClass | ErrorTypeClass | null {
+    getSize(): BasedExpressionTypeClass | ApexErrorTypeClass | null {
         return this.size;
     }
 }
 
 export const isArrayCreatorRestType = (
-    target: CommonTypeClass<string>,
+    target: ApexCommonTypeClass<string>,
 ): target is ArrayCreatorRestTypeClass => {
     return target instanceof ArrayCreatorRestTypeClass;
 };
+

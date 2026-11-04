@@ -8,7 +8,7 @@
 
 ## 1. 共通基底型
 
-定義: [commons/json.ts](../src/analyzer/types/apex/commons/json.ts)
+定義: [commons/json.ts](../src/analyzer/types/commons/json.ts)
 
 ```ts
 type ConvertKeys = { objectKey: string; sourceKey: string };

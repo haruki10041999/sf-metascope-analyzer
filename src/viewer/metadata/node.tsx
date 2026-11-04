@@ -18,8 +18,8 @@ export const ObjectNodeComponent: React.FC<NodeProps<ObjectNode>> = ({ data }) =
             <Handle type="target" position={Position.Top} id="top" />
             <div className="object_node_name">
                 {data.apiName}
-                {'status' in data && (
-                    <span className={`status_badge status_badge_${data.status.toLowerCase()}`}>
+                {data.status && (
+                    <span className={`status_badge status_badge_${data.status}`}>
                         {data.status}
                     </span>
                 )}
@@ -28,19 +28,15 @@ export const ObjectNodeComponent: React.FC<NodeProps<ObjectNode>> = ({ data }) =
                 <div className="object_node_fields">
                     {data.fields.map((field) => (
                         <div key={field.id} className="object_node_field">
-                            {'status' in field && (
-                                <span
-                                    className={`status_badge status_badge_${field.status.toLowerCase()}`}
-                                >
+                            {field.status && (
+                                <span className={`status_badge status_badge_${field.status}`}>
                                     {field.status}
                                 </span>
                             )}
                             <span className="object_node_field_name">{field.apiName}</span>
 
                             <span className="object_node_field_type">
-                                {field.type === 'Lookup' || field.type === 'MasterDetail'
-                                    ? field.referenceObjectApiName
-                                    : field.type}
+                                {field.referenceTo ?? field.fieldType ?? field.valueType}
                             </span>
                         </div>
                     ))}
@@ -90,8 +86,8 @@ export const DependencyEdgeComponent: React.FC<EdgeProps<DependencyEdge>> = ({
                     }}
                 >
                     <span className="dependency-edge-field">{data.parentFieldApiName}</span>
-                    {'status' in data && (
-                        <span className={`status_badge status_badge_${data.status.toLowerCase()}`}>
+                    {data.status && (
+                        <span className={`status_badge status_badge_${data.status}`}>
                             {data.status}
                         </span>
                     )}

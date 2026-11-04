@@ -3,7 +3,7 @@ import { WhenLiteralContext } from '@apexdevtools/apex-parser';
 import { LiteralTypeClass, LiteralVisitor } from '.';
 
 import { QualifiedNameTypeClass, NameVisitor, isQualifiedNameType } from '../nameVisitor';
-import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
+import { ApexErrorTypeClass, ApexCommonTypeClass, isApexValidClass } from '../commonVisitor';
 
 type WhenLiteralValueType = string | QualifiedNameTypeClass;
 
@@ -14,7 +14,7 @@ export class WhenLiteralTypeClass extends LiteralTypeClass<'whenLiteral', WhenLi
     private operator: string | null;
 
     private constructor(
-        value: WhenLiteralValueType | ErrorTypeClass,
+        value: WhenLiteralValueType | ApexErrorTypeClass,
         valueType: WhenLiteralValueTypeType,
         operator: string | null,
     ) {
@@ -36,7 +36,7 @@ export class WhenLiteralTypeClass extends LiteralTypeClass<'whenLiteral', WhenLi
             throw new Error('値が異常です。WhenLiteralContext: ' + ctx.getText());
         }
 
-        let value: WhenLiteralValueType | ErrorTypeClass;
+        let value: WhenLiteralValueType | ApexErrorTypeClass;
         let operator: string | null = null;
         let valueType: WhenLiteralValueTypeType;
         if (ctx.IntegerLiteral() || ctx.LongLiteral()) {
@@ -58,14 +58,14 @@ export class WhenLiteralTypeClass extends LiteralTypeClass<'whenLiteral', WhenLi
                 : ctx.MultilineStringLiteral().getText();
             valueType = ctx.StringLiteral() ? 'string' : 'longText';
         } else if (ctx.qualifiedName()) {
-            value = isValidClass(
+            value = isApexValidClass(
                 new NameVisitor().visit(ctx.qualifiedName()),
                 isQualifiedNameType,
                 'qualifiedName',
             );
             valueType = 'id';
         } else if (ctx.whenLiteral()) {
-            const valueTypeClass = isValidClass(
+            const valueTypeClass = isApexValidClass(
                 new LiteralVisitor().visit(ctx.whenLiteral()),
                 isWhenLiteralType,
                 'whenLiteral',
@@ -95,7 +95,7 @@ export class WhenLiteralTypeClass extends LiteralTypeClass<'whenLiteral', WhenLi
 }
 
 export const isWhenLiteralType = (
-    target: CommonTypeClass<string>,
+    target: ApexCommonTypeClass<string>,
 ): target is WhenLiteralTypeClass => {
     return target instanceof WhenLiteralTypeClass;
 };

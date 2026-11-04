@@ -4,13 +4,13 @@ import { ExpressionTypeClass } from '.';
 
 import { BasedPrimaryTypeClass, PrimaryVisitor, isBasedPrimaryType } from '../primaryVisitor';
 
-import { CommonTypeClass, ErrorTypeClass, isValidClass } from '../commonVisitor';
+import { ApexCommonTypeClass, ApexErrorTypeClass, isApexValidClass } from '../commonVisitor';
 
 export class PrimaryExpressionTypeClass extends ExpressionTypeClass<
     'primaryExpression',
     BasedPrimaryTypeClass
 > {
-    private constructor(value: BasedPrimaryTypeClass | ErrorTypeClass) {
+    private constructor(value: BasedPrimaryTypeClass | ApexErrorTypeClass) {
         super('primaryExpression', value);
     }
 
@@ -20,13 +20,18 @@ export class PrimaryExpressionTypeClass extends ExpressionTypeClass<
         }
 
         return new PrimaryExpressionTypeClass(
-            isValidClass(new PrimaryVisitor().visit(ctx.primary()), isBasedPrimaryType, 'primary'),
+            isApexValidClass(
+                new PrimaryVisitor().visit(ctx.primary()),
+                isBasedPrimaryType,
+                'primary',
+            ),
         );
     }
 }
 
 export const isPrimaryExpressionType = (
-    target: CommonTypeClass<string>,
+    target: ApexCommonTypeClass<string>,
 ): target is PrimaryExpressionTypeClass => {
     return target instanceof PrimaryExpressionTypeClass;
 };
+

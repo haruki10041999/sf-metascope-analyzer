@@ -1,21 +1,15 @@
-import fs, { mkdir, writeFile } from 'node:fs/promises';
+import fs from 'node:fs/promises';
 import path from 'path';
-import { pathToFileURL } from 'node:url';
-
-import { Packr } from 'msgpackr';
 
 import {
     assignMultiClass,
-    CompilationUnitType,
     makeCompilationUnitAssignRule,
-    TriggerUnitType,
     makeTriggerUnitAssignRule,
-    AnonymousUnitType,
     makeAnonymousUnitAssignRule,
     ErrorType,
     makeErrorAssignRule,
     UnitVisitor,
-    CommonErrorListener,
+    ApexCommonErrorListener,
     makeCompilationUnitJson,
     CompilationUnitJson,
     makeTriggerUnitJson,
@@ -28,41 +22,37 @@ import {
     ErrorJson,
     isErrorJson,
     regenerateSourceObjects,
-    TypeJson,
-    SoqlJson,
-    SoslJson,
-    DotMethodCallJson,
-    MethodCallJson,
-    StructureJson,
+    StructureJsonType,
     ConvertKeys,
     hash,
-    ErrorTypeClass,
+    ApexErrorTypeClass,
     SourceSpan,
+    ApexMetaJson,
+    XmlReadProblem,
+    XmlSourceJson,
+    XmlSourceRegistry,
+    getApexMetaSuffix,
+    makeApexMetaJson,
 } from '../../types';
 
 import { ApexParserFactory } from '@apexdevtools/apex-parser';
 
-type ResolvedErrorType = {
-    code: string;
-    contextType: string;
-    context: string;
-    errorMessage: string;
-};
+import {
+    SaveDataInfo,
+    ApexResolvedError,
+    XmlResolvedError,
+    makeJsonSaveData,
+    makeMsgPackSaveData,
+    readMsgPack,
+    readSource,
+    readXmlFile,
+    toXmlResolvedError,
+    toApexResolvedError,
+} from '../commons';
 
-export type ErrorFileStructureType = {
+export type ApexFileStructureType<T extends { fileType: string } = { fileType: string }> = {
     filePath: string;
-    resolvedError: ({ sourceKeys: ConvertKeys } & ResolvedErrorType & SourceSpan)[];
-    dataType: 'error';
-    result: {
-        id: string;
-        base: ErrorType | ErrorJson;
-        sourceObject?: SourceJson[];
-    };
-};
-
-export type FileStructureType<T extends { fileType: string } = { fileType: string }> = {
-    filePath: string;
-    resolvedError: ({ sourceKeys: ConvertKeys } & ResolvedErrorType & SourceSpan)[];
+    resolvedError: ({ sourceKeys: ConvertKeys } & ApexResolvedError & SourceSpan)[];
     dataType: T['fileType'];
     result: {
         id: string;
@@ -71,58 +61,113 @@ export type FileStructureType<T extends { fileType: string } = { fileType: strin
     };
 };
 
-export type SaveDataInfo = {
-    outputPath: URL;
-    data: unknown;
-};
-
-export const makeResolvedError = (
-    target: ErrorTypeClass,
-): { sourceKeys: ConvertKeys } & ResolvedErrorType & SourceSpan => {
-    const resolvedErrorType: ResolvedErrorType = {
-        code: target.getCode(),
-        contextType: target.getContextType(),
-        context: target.getContext(),
-        errorMessage: target.getParseErrorMessage(),
-    };
-
-    const sourceSpan = target.getSpan()!;
-    const sourceKeys: ConvertKeys = {
-        objectKey: hash(resolvedErrorType),
-        sourceKey: hash(sourceSpan),
-    };
-
-    return {
-        sourceKeys: sourceKeys,
-        ...resolvedErrorType,
-        ...sourceSpan,
+export type ErrorApexFileStructureType = {
+    filePath: string;
+    resolvedError: ({ sourceKeys: ConvertKeys } & ApexResolvedError & SourceSpan)[];
+    dataType: 'error';
+    result: {
+        id: string;
+        base: ErrorType | ErrorJson;
+        sourceObject?: SourceJson[];
     };
 };
 
-// 本番保存用。records (同じキー構成をまとめる msgpackr 独自拡張) を使い、サイズと読み込み速度を優先する。
-// structures (構造定義の共有) は使わないため、1 ファイル単体で読み込める。
-// records を使うので msgpackr 以外の MessagePack 実装では読めない点に注意。
-const packr = new Packr({ useRecords: true });
+export type ApexParseResult = ErrorApexFileStructureType | ApexFileStructureType;
+
+export type DiffFileInfo = {
+    filePath: string;
+    pastParsedResultPath: string;
+};
+
+/** クラス・トリガーのメタデータ (-meta.xml) の解析結果。Apex の ApexFileStructureType と同じ形 */
+export type ApexMetaFileStructureType = {
+    filePath: string;
+    resolvedError: XmlResolvedError[];
+    dataType: ApexMetaJson['kind'];
+    result: {
+        /** ファイル名 (<名前>.cls-meta.xml など) */
+        id: string;
+        base: ApexMetaJson;
+        sourceObject: XmlSourceJson[];
+    };
+};
+
+/** -meta.xml が読めなかったとき */
+export type ErrorApexMetaFileStructureType = {
+    filePath: string;
+    resolvedError: XmlResolvedError[];
+    dataType: 'error';
+    result: {
+        id: string;
+        base: ErrorJson;
+        sourceObject: XmlSourceJson[];
+    };
+};
+
+export type ApexMetaParseResult = ApexMetaFileStructureType | ErrorApexMetaFileStructureType;
+
+const APEX_SOURCE_EXTENSIONS = ['.apex', '.cls', '.trigger'];
 
 export class ApexParser {
-    static async searchApexFiles(rootDir: string): Promise<string[]> {
+    /** rootDir の下の Apex のファイル。includeMeta なら、クラス・トリガーのメタデータ (-meta.xml) も含める */
+    static async searchApexFiles(
+        rootDir: string,
+        { includeMeta = true }: { includeMeta?: boolean } = {},
+    ): Promise<string[]> {
         const entries = await fs.readdir(rootDir, { recursive: true, withFileTypes: true });
 
         return entries
             .filter(
                 (entry) =>
                     entry.isFile() &&
-                    ['.apex', '.cls', '.trigger'].includes(path.extname(entry.name).toLowerCase()),
+                    (APEX_SOURCE_EXTENSIONS.includes(path.extname(entry.name).toLowerCase()) ||
+                        (includeMeta && getApexMetaSuffix(entry.name) !== undefined)),
             )
             .map((entry) => path.join(entry.parentPath, entry.name));
     }
 
-    static async parseApexClass(
-        filePath: string,
-    ): Promise<ErrorFileStructureType | FileStructureType> {
+    /** ファイルの種類で解析を切り替える。-meta.xml は parseApexMeta、それ以外は parseApexClass */
+    static async parseApexFile(filePath: string): Promise<ApexParseResult | ApexMetaParseResult> {
+        return getApexMetaSuffix(filePath)
+            ? ApexParser.parseApexMeta(filePath)
+            : ApexParser.parseApexClass(filePath);
+    }
+
+    /** クラス・トリガーのメタデータ (<名前>.cls-meta.xml / <名前>.trigger-meta.xml) を読む */
+    static async parseApexMeta(filePath: string): Promise<ApexMetaParseResult> {
         const baseName = path.basename(filePath);
-        const source = await fs.readFile(filePath, 'utf-8');
-        const errorListener = new CommonErrorListener(source);
+        const suffix = getApexMetaSuffix(baseName);
+        if (!suffix) {
+            throw new Error(`not an Apex metadata file: ${filePath}`);
+        }
+
+        // ソース位置のファイルのパスは、実行環境に依らないようファイル名にする
+        const file = await readXmlFile(filePath, baseName, baseName.slice(0, -suffix.length));
+        const registry = new XmlSourceRegistry();
+        const problems: XmlReadProblem[] = [];
+        const meta = makeApexMetaJson(suffix, file, registry, problems);
+        const resolvedError = problems.map(toXmlResolvedError);
+        const sourceObject = registry.toSourceObjects();
+
+        return meta.kind === 'error'
+            ? {
+                  filePath,
+                  resolvedError,
+                  dataType: 'error',
+                  result: { id: baseName, base: meta, sourceObject },
+              }
+            : {
+                  filePath,
+                  resolvedError,
+                  dataType: meta.kind,
+                  result: { id: baseName, base: meta, sourceObject },
+              };
+    }
+
+    static async parseApexClass(filePath: string): Promise<ApexParseResult> {
+        const baseName = path.basename(filePath);
+        const source = await readSource(filePath);
+        const errorListener = new ApexCommonErrorListener(source);
 
         const { parser } = ApexParserFactory.createLexerAndParser(source, errorListener);
 
@@ -139,8 +184,8 @@ export class ApexParser {
         // 構文エラーは解析後にしか集まらないため、ここで取得する
         const unResolvedError = errorListener.getErrors();
 
-        const resolvedErrors: ({ sourceKeys: ConvertKeys } & ResolvedErrorType & SourceSpan)[] =
-            unResolvedError.map((error) => makeResolvedError(error));
+        const resolvedErrors: ({ sourceKeys: ConvertKeys } & ApexResolvedError & SourceSpan)[] =
+            unResolvedError.map((error) => toApexResolvedError(error));
 
         const unitConvertType = assignMultiClass(unitTypeClass, [
             makeCompilationUnitAssignRule,
@@ -200,46 +245,45 @@ export class ApexParser {
         }
     }
 
-    // 本番用: FileStructureType を msgpackr で <baseDir>/<id>.msgpack に保存する
-    static saveApexFile(baseDir: string, target: FileStructureType): SaveDataInfo[] {
-        // 末尾が '/' でないと相対 URL が親ディレクトリ基準で解決されるため、必ず付ける
-        const outputDirectory = pathToFileURL(path.join(baseDir, path.sep));
-        const encodingData = packr.pack(target);
+    // 本番用: 解析結果を msgpackr で <baseDir>/<id>.msgpack に保存する
+    static saveApexFile(
+        baseDir: string,
+        target: ApexParseResult | ApexMetaParseResult,
+    ): SaveDataInfo[] {
+        const filePath = target.filePath;
+        const id = filePath.endsWith('.xml')
+            ? `apexMeta_${target.result.id}`
+            : `apex_${target.result.id}`;
 
-        return [
-            {
-                outputPath: new URL(`./${target.result.id}.msgpack`, outputDirectory),
-                data: encodingData,
-            },
-        ];
+        return [makeMsgPackSaveData('Apex', baseDir, id, target)];
     }
 
     //開発者でのデータ確認用
-    static saveApexFileForDevelopper(baseDir: string, target: FileStructureType): SaveDataInfo[] {
-        // 末尾が '/' でないと相対 URL が親ディレクトリ基準で解決されるため、必ず付ける
-        const outputDirectory = pathToFileURL(path.join(baseDir, path.sep));
-
-        return [
-            {
-                outputPath: new URL(`./${target.result.id}.json`, outputDirectory),
-                data: `${JSON.stringify(target, null, 2)}\n`,
-            },
-        ];
+    static saveApexFileForDevelopper(
+        baseDir: string,
+        target: ApexParseResult | ApexMetaParseResult,
+    ): SaveDataInfo[] {
+        const filePath = target.filePath;
+        const id = filePath.endsWith('.xml')
+            ? `apexMeta_${target.result.id}`
+            : `apex_${target.result.id}`;
+        return [makeJsonSaveData('Apex', baseDir, id, target)];
     }
 
     // 本番用: saveApexFile で保存した <baseDir>/<id>.msgpack を読み込む
-    static async readApexMsgPack(baseDir: string, id: string): Promise<FileStructureType> {
-        const inputFile = path.join(baseDir, `${id}.msgpack`);
-
-        const content = await fs.readFile(inputFile).catch(() => {
-            throw new Error(`Saved Apex file not found: ${inputFile}`);
-        });
-
-        return packr.unpack(content) as FileStructureType<
-            { fileType: string } & (
-                | JsonType<string>
-                | StructureJson<string, Record<string, ConvertKeys | ConvertKeys[]>>
-            )
-        >;
+    static async readApexMsgPack(
+        baseDir: string,
+        id: string,
+    ): Promise<ApexParseResult | ApexMetaParseResult> {
+        return readMsgPack<
+            | ApexFileStructureType<
+                  { fileType: string } & (
+                      | JsonType<string>
+                      | StructureJsonType<string, Record<string, ConvertKeys | ConvertKeys[]>>
+                  )
+              >
+            | ApexMetaFileStructureType
+        >(baseDir, id, 'Apex');
     }
 }
+

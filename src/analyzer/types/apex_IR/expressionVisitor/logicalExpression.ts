@@ -7,7 +7,7 @@ import {
     isConditionalExpressionType,
 } from '.';
 
-import { CommonTypeClass, ErrorTypeClass, isValidClassList } from '../commonVisitor';
+import { ApexCommonTypeClass, ApexErrorTypeClass, isApexValidClassList } from '../commonVisitor';
 
 export class LogicalExpressionTypeClass extends ExpressionListBaseTypeClass<
     'logicalExpression',
@@ -16,7 +16,7 @@ export class LogicalExpressionTypeClass extends ExpressionListBaseTypeClass<
     private operator: 'AND' | 'OR' | 'NOT' | null = null;
 
     private constructor(
-        value: (ConditionalExpressionTypeClass | ErrorTypeClass)[],
+        value: (ConditionalExpressionTypeClass | ApexErrorTypeClass)[],
         operator: 'AND' | 'OR' | 'NOT' | null,
     ) {
         super('logicalExpression', value);
@@ -33,7 +33,7 @@ export class LogicalExpressionTypeClass extends ExpressionListBaseTypeClass<
         }
 
         return new LogicalExpressionTypeClass(
-            isValidClassList(
+            isApexValidClassList(
                 ctx.conditionalExpression_list(),
                 (ctx) => new ExpressionVisitor().visit(ctx),
                 isConditionalExpressionType,
@@ -55,7 +55,8 @@ export class LogicalExpressionTypeClass extends ExpressionListBaseTypeClass<
 }
 
 export const isLogicalExpressionType = (
-    target: CommonTypeClass<string>,
+    target: ApexCommonTypeClass<string>,
 ): target is LogicalExpressionTypeClass => {
     return target instanceof LogicalExpressionTypeClass;
 };
+

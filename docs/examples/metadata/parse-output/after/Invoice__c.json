@@ -1,0 +1,558 @@
+{
+  "filePath": "Invoice__c",
+  "resolvedError": [],
+  "dataType": "object",
+  "result": {
+    "id": "Invoice__c",
+    "base": {
+      "kind": "object",
+      "sourceKeys": {
+        "objectKey": "object_27445cec161da543",
+        "sourceKey": "object_0ee90c06256c23de"
+      },
+      "apiName": "Invoice__c",
+      "objectType": "custom",
+      "label": "Invoice",
+      "pluralLabel": "Invoices",
+      "description": "請求書",
+      "sharingModel": "ReadWrite",
+      "deploymentStatus": "Deployed",
+      "enableActivities": true,
+      "enableReports": true,
+      "nameField": {
+        "label": "Invoice Number",
+        "type": "AutoNumber",
+        "displayFormat": "INV-{0000}"
+      },
+      "fields": [
+        {
+          "kind": "field",
+          "sourceKeys": {
+            "objectKey": "field_3e3d19384d814250",
+            "sourceKey": "field_255896ec20246a16"
+          },
+          "apiName": "Account__c",
+          "label": "Account",
+          "type": "Lookup",
+          "required": false,
+          "referenceTo": "Account",
+          "relationshipName": "Invoices",
+          "relationshipLabel": "Invoices",
+          "deleteConstraint": "Restrict"
+        },
+        {
+          "kind": "field",
+          "sourceKeys": {
+            "objectKey": "field_db7d96657aa0c849",
+            "sourceKey": "field_9b0d812563887bcc"
+          },
+          "apiName": "Amount__c",
+          "label": "Amount",
+          "inlineHelpText": "税込みの金額",
+          "type": "Currency",
+          "required": true,
+          "precision": 16,
+          "scale": 2
+        },
+        {
+          "kind": "field",
+          "sourceKeys": {
+            "objectKey": "field_4c4d2b0c875f5107",
+            "sourceKey": "field_7f2c95c0c48caf39"
+          },
+          "apiName": "Approved__c",
+          "label": "Approved",
+          "type": "Checkbox",
+          "defaultValue": "false"
+        },
+        {
+          "kind": "field",
+          "sourceKeys": {
+            "objectKey": "field_c2ec27f0f3f5c9bb",
+            "sourceKey": "field_a616a764ec1980a4"
+          },
+          "apiName": "Due_Date__c",
+          "label": "Due Date",
+          "type": "Date"
+        },
+        {
+          "kind": "field",
+          "sourceKeys": {
+            "objectKey": "field_a7205ebd964bc5c5",
+            "sourceKey": "field_be03fe263f3af0d1"
+          },
+          "apiName": "Is_Overdue__c",
+          "label": "Is Overdue",
+          "type": "Checkbox",
+          "formula": "AND(NOT(ISPICKVAL(Status__c, 'Paid')), Due_Date__c < TODAY())"
+        },
+        {
+          "kind": "field",
+          "sourceKeys": {
+            "objectKey": "field_e95a717c41ac7173",
+            "sourceKey": "field_0bea8b450a3c1f7f"
+          },
+          "apiName": "Status__c",
+          "label": "Status",
+          "type": "Picklist",
+          "valueSet": {
+            "restricted": true,
+            "sorted": false,
+            "values": [
+              {
+                "kind": "picklistValue",
+                "sourceKeys": {
+                  "objectKey": "picklistValue_b8b1322aec0c83d6",
+                  "sourceKey": "picklistValue_3d56a5eb216021c1"
+                },
+                "fullName": "Draft",
+                "label": "Draft",
+                "default": true
+              },
+              {
+                "kind": "picklistValue",
+                "sourceKeys": {
+                  "objectKey": "picklistValue_935e8048a3fc47c0",
+                  "sourceKey": "picklistValue_4eebb15cd738969c"
+                },
+                "fullName": "Paid",
+                "label": "Paid (Closed)",
+                "default": false
+              },
+              {
+                "kind": "picklistValue",
+                "sourceKeys": {
+                  "objectKey": "picklistValue_814a7aa48f10bec2",
+                  "sourceKey": "picklistValue_feadc8b60ed04713"
+                },
+                "fullName": "Overdue",
+                "label": "Overdue",
+                "default": false
+              }
+            ]
+          }
+        }
+      ],
+      "validationRules": [
+        {
+          "kind": "validationRule",
+          "sourceKeys": {
+            "objectKey": "validationRule_fdedab7cc3824cbd",
+            "sourceKey": "validationRule_0a64b99c273a2cb0"
+          },
+          "fullName": "Amount_Positive",
+          "active": true,
+          "errorConditionFormula": "Amount__c <= 0",
+          "errorDisplayField": "Amount__c",
+          "errorMessage": "Amount must be greater than zero."
+        },
+        {
+          "kind": "validationRule",
+          "sourceKeys": {
+            "objectKey": "validationRule_fce4409b2b112a60",
+            "sourceKey": "validationRule_94b3926734de10df"
+          },
+          "fullName": "Due_Date_Required",
+          "active": false,
+          "errorConditionFormula": "ISBLANK(Due_Date__c)",
+          "errorMessage": "Due date is required."
+        }
+      ],
+      "recordTypes": [
+        {
+          "kind": "recordType",
+          "sourceKeys": {
+            "objectKey": "recordType_af17dff17d7209c7",
+            "sourceKey": "recordType_8d6c5e734f64b4e6"
+          },
+          "fullName": "Standard",
+          "label": "Standard",
+          "active": true,
+          "picklistValues": [
+            {
+              "kind": "recordTypePicklist",
+              "sourceKeys": {
+                "objectKey": "recordTypePicklist_a0c6e0288c99e466",
+                "sourceKey": "recordTypePicklist_4278d06dfd38227b"
+              },
+              "picklist": "Status__c",
+              "values": [
+                {
+                  "fullName": "Draft",
+                  "default": true
+                },
+                {
+                  "fullName": "Overdue",
+                  "default": false
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "fieldSets": [
+        {
+          "kind": "fieldSet",
+          "sourceKeys": {
+            "objectKey": "fieldSet_5aefe28417acc5e0",
+            "sourceKey": "fieldSet_90f14bed7fe437cf"
+          },
+          "fullName": "Summary",
+          "label": "Summary",
+          "description": "請求書の概要",
+          "displayedFields": [
+            {
+              "field": "Status__c",
+              "isFieldManaged": false,
+              "isRequired": false
+            },
+            {
+              "field": "Amount__c",
+              "isFieldManaged": false,
+              "isRequired": false
+            }
+          ]
+        }
+      ],
+      "webLinks": [
+        {
+          "kind": "webLink",
+          "sourceKeys": {
+            "objectKey": "webLink_54933ffac2922cef",
+            "sourceKey": "webLink_00953da115915f65"
+          },
+          "fullName": "Send_Invoice",
+          "masterLabel": "Send Invoice",
+          "availability": "online",
+          "displayType": "button",
+          "linkType": "url",
+          "openType": "replace",
+          "protected": false,
+          "url": "/lightning/cmp/c__sendInvoice?c__id={!Invoice__c.Id}"
+        }
+      ]
+    },
+    "sourceObject": [
+      {
+        "objectKey": "field_3e3d19384d814250",
+        "context": "<CustomField xmlns=\"http://soap.sforce.com/2006/04/metadata\">\n    <fullName>Account__c</fullName>\n    <deleteConstraint>Restrict</deleteConstraint>\n    <label>Account</label>\n    <referenceTo>Account</referenceTo>\n    <relationshipLabel>Invoices</relationshipLabel>\n    <relationshipName>Invoices</relationshipName>\n    <required>false</required>\n    <type>Lookup</type>\n</CustomField>",
+        "source": [
+          {
+            "sourceKey": "field_255896ec20246a16",
+            "filePath": "Invoice__c/fields/Account__c.field-meta.xml",
+            "start": {
+              "offset": 39,
+              "line": 2,
+              "column": 0
+            },
+            "end": {
+              "offset": 424,
+              "line": 11,
+              "column": 14
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "field_db7d96657aa0c849",
+        "context": "<CustomField xmlns=\"http://soap.sforce.com/2006/04/metadata\">\n    <fullName>Amount__c</fullName>\n    <inlineHelpText>税込みの金額</inlineHelpText>\n    <label>Amount</label>\n    <precision>16</precision>\n    <required>true</required>\n    <scale>2</scale>\n    <type>Currency</type>\n</CustomField>",
+        "source": [
+          {
+            "sourceKey": "field_9b0d812563887bcc",
+            "filePath": "Invoice__c/fields/Amount__c.field-meta.xml",
+            "start": {
+              "offset": 39,
+              "line": 2,
+              "column": 0
+            },
+            "end": {
+              "offset": 327,
+              "line": 10,
+              "column": 14
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "field_4c4d2b0c875f5107",
+        "context": "<CustomField xmlns=\"http://soap.sforce.com/2006/04/metadata\">\n    <fullName>Approved__c</fullName>\n    <defaultValue>false</defaultValue>\n    <label>Approved</label>\n    <type>Checkbox</type>\n</CustomField>",
+        "source": [
+          {
+            "sourceKey": "field_7f2c95c0c48caf39",
+            "filePath": "Invoice__c/fields/Approved__c.field-meta.xml",
+            "start": {
+              "offset": 39,
+              "line": 2,
+              "column": 0
+            },
+            "end": {
+              "offset": 245,
+              "line": 7,
+              "column": 14
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "field_c2ec27f0f3f5c9bb",
+        "context": "<CustomField xmlns=\"http://soap.sforce.com/2006/04/metadata\">\n    <fullName>Due_Date__c</fullName>\n    <label>Due Date</label>\n    <type>Date</type>\n</CustomField>",
+        "source": [
+          {
+            "sourceKey": "field_a616a764ec1980a4",
+            "filePath": "Invoice__c/fields/Due_Date__c.field-meta.xml",
+            "start": {
+              "offset": 39,
+              "line": 2,
+              "column": 0
+            },
+            "end": {
+              "offset": 202,
+              "line": 6,
+              "column": 14
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "field_a7205ebd964bc5c5",
+        "context": "<CustomField xmlns=\"http://soap.sforce.com/2006/04/metadata\">\n    <fullName>Is_Overdue__c</fullName>\n    <formula>AND(NOT(ISPICKVAL(Status__c, &apos;Paid&apos;)), Due_Date__c &lt; TODAY())</formula>\n    <label>Is Overdue</label>\n    <type>Checkbox</type>\n</CustomField>",
+        "source": [
+          {
+            "sourceKey": "field_be03fe263f3af0d1",
+            "filePath": "Invoice__c/fields/Is_Overdue__c.field-meta.xml",
+            "start": {
+              "offset": 39,
+              "line": 2,
+              "column": 0
+            },
+            "end": {
+              "offset": 308,
+              "line": 7,
+              "column": 14
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "picklistValue_b8b1322aec0c83d6",
+        "context": "<value>\n                <fullName>Draft</fullName>\n                <default>true</default>\n                <label>Draft</label>\n            </value>",
+        "source": [
+          {
+            "sourceKey": "picklistValue_3d56a5eb216021c1",
+            "filePath": "Invoice__c/fields/Status__c.field-meta.xml",
+            "start": {
+              "offset": 317,
+              "line": 10,
+              "column": 12
+            },
+            "end": {
+              "offset": 465,
+              "line": 14,
+              "column": 20
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "picklistValue_935e8048a3fc47c0",
+        "context": "<value>\n                <fullName>Paid</fullName>\n                <default>false</default>\n                <label>Paid (Closed)</label>\n            </value>",
+        "source": [
+          {
+            "sourceKey": "picklistValue_4eebb15cd738969c",
+            "filePath": "Invoice__c/fields/Status__c.field-meta.xml",
+            "start": {
+              "offset": 478,
+              "line": 15,
+              "column": 12
+            },
+            "end": {
+              "offset": 634,
+              "line": 19,
+              "column": 20
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "picklistValue_814a7aa48f10bec2",
+        "context": "<value>\n                <fullName>Overdue</fullName>\n                <default>false</default>\n                <label>Overdue</label>\n            </value>",
+        "source": [
+          {
+            "sourceKey": "picklistValue_feadc8b60ed04713",
+            "filePath": "Invoice__c/fields/Status__c.field-meta.xml",
+            "start": {
+              "offset": 647,
+              "line": 20,
+              "column": 12
+            },
+            "end": {
+              "offset": 800,
+              "line": 24,
+              "column": 20
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "field_e95a717c41ac7173",
+        "context": "<CustomField xmlns=\"http://soap.sforce.com/2006/04/metadata\">\n    <fullName>Status__c</fullName>\n    <label>Status</label>\n    <type>Picklist</type>\n    <valueSet>\n        <restricted>true</restricted>\n        <valueSetDefinition>\n            <sorted>false</sorted>\n            <value>\n                <fullName>Draft</fullName>\n                <default>true</default>\n                <label>Draft</label>\n            </value>\n            <value>\n                <fullName>Paid</fullName>\n                <default>false</default>\n                <label>Paid (Closed)</label>\n            </value>\n            <value>\n                <fullName>Overdue</fullName>\n                <default>false</default>\n                <label>Overdue</label>\n            </value>\n        </valueSetDefinition>\n    </valueSet>\n</CustomField>",
+        "source": [
+          {
+            "sourceKey": "field_0bea8b450a3c1f7f",
+            "filePath": "Invoice__c/fields/Status__c.field-meta.xml",
+            "start": {
+              "offset": 39,
+              "line": 2,
+              "column": 0
+            },
+            "end": {
+              "offset": 861,
+              "line": 27,
+              "column": 14
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "validationRule_fdedab7cc3824cbd",
+        "context": "<ValidationRule xmlns=\"http://soap.sforce.com/2006/04/metadata\">\n    <fullName>Amount_Positive</fullName>\n    <active>true</active>\n    <errorConditionFormula>Amount__c &lt;= 0</errorConditionFormula>\n    <errorDisplayField>Amount__c</errorDisplayField>\n    <errorMessage>Amount must be greater than zero.</errorMessage>\n</ValidationRule>",
+        "source": [
+          {
+            "sourceKey": "validationRule_0a64b99c273a2cb0",
+            "filePath": "Invoice__c/validationRules/Amount_Positive.validationRule-meta.xml",
+            "start": {
+              "offset": 39,
+              "line": 2,
+              "column": 0
+            },
+            "end": {
+              "offset": 377,
+              "line": 8,
+              "column": 17
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "validationRule_fce4409b2b112a60",
+        "context": "<ValidationRule xmlns=\"http://soap.sforce.com/2006/04/metadata\">\n    <fullName>Due_Date_Required</fullName>\n    <active>false</active>\n    <errorConditionFormula>ISBLANK(Due_Date__c)</errorConditionFormula>\n    <errorMessage>Due date is required.</errorMessage>\n</ValidationRule>",
+        "source": [
+          {
+            "sourceKey": "validationRule_94b3926734de10df",
+            "filePath": "Invoice__c/validationRules/Due_Date_Required.validationRule-meta.xml",
+            "start": {
+              "offset": 39,
+              "line": 2,
+              "column": 0
+            },
+            "end": {
+              "offset": 318,
+              "line": 7,
+              "column": 17
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "recordTypePicklist_a0c6e0288c99e466",
+        "context": "<picklistValues>\n        <picklist>Status__c</picklist>\n        <values>\n            <fullName>Draft</fullName>\n            <default>true</default>\n        </values>\n        <values>\n            <fullName>Overdue</fullName>\n            <default>false</default>\n        </values>\n    </picklistValues>",
+        "source": [
+          {
+            "sourceKey": "recordTypePicklist_4278d06dfd38227b",
+            "filePath": "Invoice__c/recordTypes/Standard.recordType-meta.xml",
+            "start": {
+              "offset": 192,
+              "line": 6,
+              "column": 4
+            },
+            "end": {
+              "offset": 492,
+              "line": 16,
+              "column": 21
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "recordType_af17dff17d7209c7",
+        "context": "<RecordType xmlns=\"http://soap.sforce.com/2006/04/metadata\">\n    <fullName>Standard</fullName>\n    <active>true</active>\n    <label>Standard</label>\n    <picklistValues>\n        <picklist>Status__c</picklist>\n        <values>\n            <fullName>Draft</fullName>\n            <default>true</default>\n        </values>\n        <values>\n            <fullName>Overdue</fullName>\n            <default>false</default>\n        </values>\n    </picklistValues>\n</RecordType>",
+        "source": [
+          {
+            "sourceKey": "recordType_8d6c5e734f64b4e6",
+            "filePath": "Invoice__c/recordTypes/Standard.recordType-meta.xml",
+            "start": {
+              "offset": 39,
+              "line": 2,
+              "column": 0
+            },
+            "end": {
+              "offset": 506,
+              "line": 17,
+              "column": 13
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "fieldSet_5aefe28417acc5e0",
+        "context": "<FieldSet xmlns=\"http://soap.sforce.com/2006/04/metadata\">\n    <fullName>Summary</fullName>\n    <description>請求書の概要</description>\n    <displayedFields>\n        <field>Status__c</field>\n        <isFieldManaged>false</isFieldManaged>\n        <isRequired>false</isRequired>\n    </displayedFields>\n    <displayedFields>\n        <field>Amount__c</field>\n        <isFieldManaged>false</isFieldManaged>\n        <isRequired>false</isRequired>\n    </displayedFields>\n    <label>Summary</label>\n</FieldSet>",
+        "source": [
+          {
+            "sourceKey": "fieldSet_90f14bed7fe437cf",
+            "filePath": "Invoice__c/fieldSets/Summary.fieldSet-meta.xml",
+            "start": {
+              "offset": 39,
+              "line": 2,
+              "column": 0
+            },
+            "end": {
+              "offset": 535,
+              "line": 16,
+              "column": 11
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "webLink_54933ffac2922cef",
+        "context": "<WebLink xmlns=\"http://soap.sforce.com/2006/04/metadata\">\n    <fullName>Send_Invoice</fullName>\n    <availability>online</availability>\n    <displayType>button</displayType>\n    <linkType>url</linkType>\n    <masterLabel>Send Invoice</masterLabel>\n    <openType>replace</openType>\n    <protected>false</protected>\n    <url>/lightning/cmp/c__sendInvoice?c__id={!Invoice__c.Id}</url>\n</WebLink>",
+        "source": [
+          {
+            "sourceKey": "webLink_00953da115915f65",
+            "filePath": "Invoice__c/webLinks/Send_Invoice.webLink-meta.xml",
+            "start": {
+              "offset": 39,
+              "line": 2,
+              "column": 0
+            },
+            "end": {
+              "offset": 430,
+              "line": 11,
+              "column": 10
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "object_27445cec161da543",
+        "context": "<CustomObject xmlns=\"http://soap.sforce.com/2006/04/metadata\">\n    <deploymentStatus>Deployed</deploymentStatus>\n    <description>請求書</description>\n    <enableActivities>true</enableActivities>\n    <enableReports>true</enableReports>\n    <label>Invoice</label>\n    <nameField>\n        <displayFormat>INV-{0000}</displayFormat>\n        <label>Invoice Number</label>\n        <type>AutoNumber</type>\n    </nameField>\n    <pluralLabel>Invoices</pluralLabel>\n    <sharingModel>ReadWrite</sharingModel>\n</CustomObject>",
+        "source": [
+          {
+            "sourceKey": "object_0ee90c06256c23de",
+            "filePath": "Invoice__c/Invoice__c.object-meta.xml",
+            "start": {
+              "offset": 39,
+              "line": 2,
+              "column": 0
+            },
+            "end": {
+              "offset": 551,
+              "line": 15,
+              "column": 15
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

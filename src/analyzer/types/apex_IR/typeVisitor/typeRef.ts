@@ -8,14 +8,19 @@ import {
 } from '.';
 
 import { TypeNameTypeClass, NameVisitor, isTypeNameType } from '../nameVisitor';
-import { ErrorTypeClass, CommonTypeClass, isValidClass, isValidClassList } from '../commonVisitor';
+import {
+    ApexErrorTypeClass,
+    ApexCommonTypeClass,
+    isApexValidClass,
+    isApexValidClassList,
+} from '../commonVisitor';
 
 export class TypeRefTypeClass extends TypeListBaseTypeClass<'typeRef', TypeNameTypeClass> {
-    private dimension: ArraySubscriptsTypeClass | ErrorTypeClass;
+    private dimension: ArraySubscriptsTypeClass | ApexErrorTypeClass;
 
     private constructor(
-        value: (TypeNameTypeClass | ErrorTypeClass)[],
-        dimension: ArraySubscriptsTypeClass | ErrorTypeClass,
+        value: (TypeNameTypeClass | ApexErrorTypeClass)[],
+        dimension: ArraySubscriptsTypeClass | ApexErrorTypeClass,
     ) {
         super('typeRef', value);
         this.dimension = dimension;
@@ -27,13 +32,13 @@ export class TypeRefTypeClass extends TypeListBaseTypeClass<'typeRef', TypeNameT
         }
 
         return new TypeRefTypeClass(
-            isValidClassList(
+            isApexValidClassList(
                 ctx.typeName_list(),
                 (ctx) => new NameVisitor().visit(ctx),
                 isTypeNameType,
                 'typeName',
             ),
-            isValidClass(
+            isApexValidClass(
                 new TypeVisitor().visit(ctx.arraySubscripts()),
                 isArraySubscriptsType,
                 'arraySubscripts',
@@ -41,11 +46,11 @@ export class TypeRefTypeClass extends TypeListBaseTypeClass<'typeRef', TypeNameT
         );
     }
 
-    getDimension(): ArraySubscriptsTypeClass | ErrorTypeClass {
+    getDimension(): ArraySubscriptsTypeClass | ApexErrorTypeClass {
         return this.dimension;
     }
 }
 
-export const isTypeRefType = (target: CommonTypeClass<string>): target is TypeRefTypeClass => {
+export const isTypeRefType = (target: ApexCommonTypeClass<string>): target is TypeRefTypeClass => {
     return target instanceof TypeRefTypeClass;
 };

@@ -32,8 +32,8 @@
 
 - 一致の判定キー（identity）を差し替えられるようにする。クラスメンバーでは次の値を使う。
     - `memberIdentity = objectKey + '|' + 修飾子の objectKey をソートして連結したもの`
-- [diff/commons.ts](../src/analyzer/processor/Apex/diff/commons.ts) の `makeNodeDiff` / `makeKeyedDiff` / `makeSetDiff` に、省略可能な `identity`（既定は `getObjectKey`）を追加する。
-- 修飾子の差分は、メンバーの差分の `fields` には入れず、外側に `modifier: ModifierDiff[]` として持たせる（3.2）。こうすると、既存の `InterfaceDiff` / `EnumDiff` をクラスメンバーとしてそのまま使える。
+- [processor/commons/diff/commons.ts](../src/analyzer/processor/commons/diff/commons.ts) の `makeNodeDiff` / `makeKeyedDiff` / `makeSetDiff` に、省略可能な `identity`（既定は `getObjectKey`）を追加する。
+- 修飾子の差分は、メンバーの差分の `fields` には入れず、外側に `modifier: ModifiersJsonDiff` として持たせる（3.2）。こうすると、既存の `InterfaceDeclarationJsonDiff` / `EnumDeclarationJsonDiff` をクラスメンバーとしてそのまま使える。
 
 なお `interfaceMethod` の `modifier` はノード自身の子なので `objectKey` に含まれており、この問題はない。
 
@@ -45,7 +45,7 @@
 
 - 判定キーは `isStatic` + 修飾子の `objectKey` + 文の `objectKey` の並びから作る（apex-statement-diff.md 4.1 の、ブロックのキーの作り方と同じ）。
 - 対応付けは `pairAsSequence` を直接使う（C）。gap 内の組は距離なしで位置順（`match: 'slot'`）にする。
-- 出力は `sourceKeys` を持たない専用の型 `InitializerDiff` にする。index は「クラス本文の中の index」で持つ（初期化ブロックだけを数えた index ではない）。
+- 出力は `sourceKeys` を持たない専用の型 `InitializerBlockJsonDiff` にする。index は「クラス本文の中の index」で持つ（初期化ブロックだけを数えた index ではない）。
 
 ### 2.3 文の Diff（`makeStatementDiff`）
 
@@ -91,11 +91,11 @@ type OptionalDiff<T, D> =
 対応:
 
 - 変数は `pairByKey` を直接使い、変数名で対応付ける（名前が `ErrorJson` のものは集合として比べる）。
-- `init` は [diff/expression.ts](../src/analyzer/processor/Apex/diff/expression.ts) の `makeExpressionDiff` で GumTree 比較する。変数の対応付けには式を木にした hash を使う（JSON 内のソース位置に影響されない）。
+- `init` は [diff/expression.ts](../src/analyzer/processor/Apex/diff/expression.ts) の `makeExpressionDiff` で構造比較する。変数の対応付けには式を木にした hash を使う（JSON 内のソース位置に影響されない）。
 
 ## 3. 共通部品
 
-### 3.1 [diff/commons.ts](../src/analyzer/processor/Apex/diff/commons.ts) に足すもの
+### 3.1 [processor/commons/diff/commons.ts](../src/analyzer/processor/commons/diff/commons.ts) に足すもの
 
 | 追加                                | 用途                                                                               |
 | ----------------------------------- | ---------------------------------------------------------------------------------- |
@@ -104,14 +104,14 @@ type OptionalDiff<T, D> =
 
 ### 3.2 `diff/declaration.ts`
 
-| 関数・型                       | 内容                                                                             |
-| ------------------------------ | -------------------------------------------------------------------------------- |
-| `getSignatureKey(name, param)` | `名前(型キー,型キー,...)`。interfaceMethod と method / constructor の識別に使う  |
-| `getMemberKey(member)`         | クラスメンバーの識別キー（4.6）                                                  |
-| `getMemberIdentity(member)`    | 2.1 の判定キー                                                                   |
-| `BlockDiffer` / `BlockDiff`    | 文の並びの差分の型（2.3、実装は diff/statement.ts）                              |
-| `makeOpaqueBlockDiff`          | GumTree を使わない簡易版（比較用）                                               |
-| `ClassMemberDiff<D>`           | `D & { modifier: ModifierDiff[] }`。クラスメンバーの差分に修飾子の差分を足した形 |
+| 関数・型                       | 内容                                                                                |
+| ------------------------------ | ----------------------------------------------------------------------------------- |
+| `getSignatureKey(name, param)` | `名前(型キー,型キー,...)`。interfaceMethod と method / constructor の識別に使う     |
+| `getMemberKey(member)`         | クラスメンバーの識別キー（4.6）                                                     |
+| `getMemberIdentity(member)`    | 2.1 の判定キー                                                                      |
+| `BlockDiffer` / `BlockDiff`    | 文の並びの差分の型（2.3、実装は diff/statement.ts）                                 |
+| `makeOpaqueBlockDiff`          | GumTree を使わない簡易版（比較用）                                                  |
+| `MemberDeclarationJsonDiff<D>` | `D & { modifier: ModifiersJsonDiff }`。クラスメンバーの差分に修飾子の差分を足した形 |
 
 ## 4. 型ごとの設計
 
@@ -141,48 +141,48 @@ type OptionalDiff<T, D> =
 
 ### 4.3 property（`diff/declaration.ts`）
 
-| プロパティ                        | 差分                                                     |
-| --------------------------------- | -------------------------------------------------------- |
-| `name`                            | `ValueDiff<string \| ErrorJson>`                         |
-| `variantType`                     | `TypeDiff`（A）                                          |
-| `getterContent` / `setterContent` | `OptionalDiff<AccessorContentJson, AccessorContentDiff>` |
-| `error`                           | `ErrorJson` の集合（B）                                  |
+| プロパティ                        | 差分                                                         |
+| --------------------------------- | ------------------------------------------------------------ |
+| `name`                            | `ValueDiff<string \| ErrorJson>`                             |
+| `variantType`                     | `TypeJsonDiff`（A）                                          |
+| `getterContent` / `setterContent` | `OptionalDiff<AccessorContentJson, AccessorContentJsonDiff>` |
+| `error`                           | `ErrorJson` の集合（B）                                      |
 
-`AccessorContentDiff` は `{ block: OptionalDiff<…, BlockDiff>; modifier: ModifierDiff[] }`（`get;` ↔ `get { … }` は `block` の `added` / `removed`）。
+`AccessorContentJsonDiff` は `{ block: OptionalDiff<…, BlockDiff>; modifier: ModifiersJsonDiff }`（`get;` ↔ `get { … }` は `block` の `added` / `removed`）。
 
 - `isGetter` / `isSetter` は `getterContent` / `setterContent` の有無と同じ情報なので、差分には持たせない。
 - 識別キー: `property:` + 名前。
 
 ### 4.4 field（`diff/declaration.ts`）
 
-| プロパティ    | 差分                                                 |
-| ------------- | ---------------------------------------------------- |
-| `variantType` | `TypeDiff`（A）                                      |
-| `variants`    | `ListOrErrorDiff<VariantDiff, …>`（変数名で D。2.5） |
+| プロパティ    | 差分                                                      |
+| ------------- | --------------------------------------------------------- |
+| `variantType` | `TypeJsonDiff`（A）                                       |
+| `variants`    | `ListOrErrorDiff<FieldVariantDiff, …>`（変数名で D。2.5） |
 
-`VariantDiff` は `{ name, status, init: OptionalDiff<式, BlockDiff> }`。初期値の式は GumTree で比べる（apex-gumtree-diff.md 7.3）。
+`FieldVariantDiff` は配列の要素の差分（`{ status, name, init: OptionalDiff<式, BaseExpressionJsonDiff>, match, index }`）。初期値の式は `makeExpressionDiff` で比べる（apex-json-diff-policy.md 6.4）。field 宣言全体の型は `FieldDeclarationJsonDiff`。
 
 - 識別キー: `field:` + 変数名をカンマで連結（`Integer a, b;` → `field:a,b`）。名前がエラーの変数を含む場合はキーなし。
 - field は JsonType なので、`objectKey` は初期値まで含めた全体のハッシュ。初期値だけの変更も `changed` で拾える。
 
 ### 4.5 initializer（クラス本文の中だけ）
 
-| プロパティ | 差分                  |
-| ---------- | --------------------- |
-| `isStatic` | `ValueDiff<boolean>`  |
-| `modifier` | `ModifierDiff[]`（B） |
-| `block`    | `BlockDiff`           |
+| プロパティ | 差分                     |
+| ---------- | ------------------------ |
+| `isStatic` | `ValueDiff<boolean>`     |
+| `modifier` | `ModifiersJsonDiff`（B） |
+| `block`    | `BlockDiff`              |
 
 2.2 のとおり `sourceKeys` を持たない専用の型にする。
 
 ### 4.6 class（`diff/declaration.ts`）
 
-| プロパティ  | 差分                                            |
-| ----------- | ----------------------------------------------- |
-| `name`      | `ValueDiff<string \| ErrorJson>`                |
-| `extend`    | `OptionalDiff<TypeJson \| ErrorJson, TypeDiff>` |
-| `implement` | `ListOrErrorDiff<TypesDiff, …>`（B）            |
-| `block`     | `ClassBodyDiff[]`（下記）                       |
+| プロパティ  | 差分                                                |
+| ----------- | --------------------------------------------------- |
+| `name`      | `ValueDiff<string \| ErrorJson>`                    |
+| `extend`    | `OptionalDiff<TypeJson \| ErrorJson, TypeJsonDiff>` |
+| `implement` | `ListOrErrorDiff<TypesDiff, …>`（B）                |
+| `block`     | `ClassBodyDiff[]`（下記）                           |
 
 クラス本文（`block`）は、要素を 3 つのグループに分けて比べ、結果を 1 つの配列にまとめる。
 
@@ -193,7 +193,7 @@ type OptionalDiff<T, D> =
 | `notSet` / `ErrorJson`                                                                   | B    | `objectKey`                                                                  |
 
 - キーに `kind` を入れるので、対応付いた組は必ず同じ kind。メンバーの差分は kind で振り分けて、各 `make〇〇Diff` を呼ぶ（`makeClassMemberDiff`）。入れ子のクラスは `makeClassDiff` を再帰で呼ぶ。
-- 名前のあるメンバーは、判定キーに `getMemberIdentity` を使う（2.1）。修飾子の差分は `ClassMemberDiff` の `modifier` に入れる。
+- 名前のあるメンバーは、判定キーに `getMemberIdentity` を使う（2.1）。修飾子の差分は `MemberDeclarationJsonDiff` の `modifier` に入れる。
 - 並べ方は B / D と同じ（before の index 順のあとに `added`）。index はクラス本文全体での位置。メンバーの並び順の変化は報告しない。
 
 ## 5. 実装と確認
@@ -208,10 +208,10 @@ type OptionalDiff<T, D> =
 
 ## 7. 実装状況
 
-| ファイル                                                             | 内容                                                                                                                                 |
-| -------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
-| [diff/commons.ts](../src/analyzer/processor/Apex/diff/commons.ts)    | `Identity`（`makeNodeDiff` / `makeSetDiff` / `makeKeyedDiff` の判定キー）、`makeOptionalDiff`、`remapPairings`、`getValueKey` を追加 |
-| [declaration.ts](../src/analyzer/processor/Apex/diff/declaration.ts) | 識別キー、interface / enum / field / property / method / constructor / class とクラス本文の Diff                                     |
-| [unit.ts](../src/analyzer/processor/Apex/diff/unit.ts)               | `makeClsFileDiff` の結果に `content`（`makeTypeDeclarationDiff`）を追加                                                              |
+| ファイル                                                                               | 内容                                                                                                                                 |
+| -------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
+| [processor/commons/diff/commons.ts](../src/analyzer/processor/commons/diff/commons.ts) | `Identity`（`makeNodeDiff` / `makeSetDiff` / `makeKeyedDiff` の判定キー）、`makeOptionalDiff`、`remapPairings`、`getValueKey` を追加 |
+| [declaration.ts](../src/analyzer/processor/Apex/diff/declaration.ts)                   | 識別キー、interface / enum / field / property / method / constructor / class とクラス本文の Diff                                     |
+| [unit.ts](../src/analyzer/processor/Apex/diff/unit.ts)                                 | `makeClsFileDiff` の結果に `content`（`makeTypeDeclarationDiff`）を追加                                                              |
 
 テストは test/processor/class-diff.test.ts。

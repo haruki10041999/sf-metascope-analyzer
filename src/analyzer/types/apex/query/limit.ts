@@ -1,6 +1,7 @@
 import typia from 'typia';
 
-import { ErrorJson, JsonType, makeJsonType, convertValue, ConvertType } from '../commons';
+import { convertValue, ConvertType } from '../commons';
+import { ErrorJson, JsonType, makeJsonType } from '../../commons';
 
 import { LimitClauseType } from '../converter';
 import { BaseExpressionJson, makeExpressionJsonConvert } from '../expression';
@@ -39,4 +40,3 @@ export const makeLimitJson = (target: ConvertType<LimitClauseType>): LimitJson |
         },
     );
 };
-

@@ -1,0 +1,437 @@
+{
+  "filePath": "Invoice__c-ja",
+  "resolvedError": [],
+  "dataType": "objectTranslation",
+  "result": {
+    "id": "Invoice__c-ja",
+    "base": {
+      "kind": "objectTranslation",
+      "sourceKeys": {
+        "objectKey": "objectTranslation_3c2d655c83ab504d",
+        "sourceKey": "objectTranslation_53a3b33d94e742a5"
+      },
+      "objectApiName": "Invoice__c",
+      "locale": "ja",
+      "nameFieldLabel": "請求書番号",
+      "fields": [
+        {
+          "kind": "fieldTranslation",
+          "sourceKeys": {
+            "objectKey": "fieldTranslation_cbed259110d83caf",
+            "sourceKey": "fieldTranslation_8e74997381ee1e7c"
+          },
+          "name": "Account__c",
+          "label": "取引先",
+          "relationshipLabel": "請求書"
+        },
+        {
+          "kind": "fieldTranslation",
+          "sourceKeys": {
+            "objectKey": "fieldTranslation_d198782cd6dfe89b",
+            "sourceKey": "fieldTranslation_005de5cefe19657e"
+          },
+          "name": "Amount__c",
+          "label": "金額"
+        },
+        {
+          "kind": "fieldTranslation",
+          "sourceKeys": {
+            "objectKey": "fieldTranslation_25324e98b71d3440",
+            "sourceKey": "fieldTranslation_511f7a0f359a3a36"
+          },
+          "name": "Due_Date__c",
+          "label": "Due Date"
+        },
+        {
+          "kind": "fieldTranslation",
+          "sourceKeys": {
+            "objectKey": "fieldTranslation_fb4f41ba2c92fbf5",
+            "sourceKey": "fieldTranslation_4fb21aac7bf9d56d"
+          },
+          "name": "Note__c",
+          "label": "メモ"
+        },
+        {
+          "kind": "fieldTranslation",
+          "sourceKeys": {
+            "objectKey": "fieldTranslation_5e8702097780253c",
+            "sourceKey": "fieldTranslation_a59ac1df752a8704"
+          },
+          "name": "Status__c",
+          "label": "ステータス",
+          "picklistValues": [
+            {
+              "kind": "picklistValueTranslation",
+              "sourceKeys": {
+                "objectKey": "picklistValueTranslation_909cf31343b9ccc4",
+                "sourceKey": "picklistValueTranslation_09b4682bdca83bff"
+              },
+              "masterLabel": "Draft",
+              "translation": "下書き"
+            },
+            {
+              "kind": "picklistValueTranslation",
+              "sourceKeys": {
+                "objectKey": "picklistValueTranslation_a3f78eea90b98f82",
+                "sourceKey": "picklistValueTranslation_270869eefddfc9ca"
+              },
+              "masterLabel": "Sent",
+              "translation": "送付済み"
+            },
+            {
+              "kind": "picklistValueTranslation",
+              "sourceKeys": {
+                "objectKey": "picklistValueTranslation_378062dee77c36cf",
+                "sourceKey": "picklistValueTranslation_4c79ad4e487fd357"
+              },
+              "masterLabel": "Paid",
+              "translation": "支払済み"
+            }
+          ]
+        }
+      ],
+      "recordTypes": [
+        {
+          "kind": "recordTypeTranslation",
+          "sourceKeys": {
+            "objectKey": "recordTypeTranslation_7ca05a4432a58e3a",
+            "sourceKey": "recordTypeTranslation_c302b44ca1a22640"
+          },
+          "name": "Standard",
+          "label": "標準"
+        }
+      ],
+      "validationRules": [
+        {
+          "kind": "validationRuleTranslation",
+          "sourceKeys": {
+            "objectKey": "validationRuleTranslation_184cc1335101582d",
+            "sourceKey": "validationRuleTranslation_961e1937b6216236"
+          },
+          "name": "Amount_Positive",
+          "errorMessage": "金額は正の値にしてください。"
+        }
+      ],
+      "webLinks": [
+        {
+          "kind": "webLinkTranslation",
+          "sourceKeys": {
+            "objectKey": "webLinkTranslation_fb636f42c8a7f613",
+            "sourceKey": "webLinkTranslation_5871df9a7a22bb22"
+          },
+          "name": "Send_Invoice",
+          "label": "請求書を送付"
+        }
+      ],
+      "fieldSets": [
+        {
+          "kind": "fieldSetTranslation",
+          "sourceKeys": {
+            "objectKey": "fieldSetTranslation_44a8995d9bb799a8",
+            "sourceKey": "fieldSetTranslation_edd5182d9b37e436"
+          },
+          "name": "Summary",
+          "label": "概要"
+        }
+      ],
+      "layouts": [
+        {
+          "kind": "layoutTranslation",
+          "sourceKeys": {
+            "objectKey": "layoutTranslation_3a2124ee9e969dee",
+            "sourceKey": "layoutTranslation_f9bd716cd023e9f5"
+          },
+          "layout": "Invoice Layout",
+          "sections": [
+            {
+              "section": "Information",
+              "label": "請求情報"
+            }
+          ]
+        }
+      ]
+    },
+    "sourceObject": [
+      {
+        "objectKey": "fieldTranslation_cbed259110d83caf",
+        "context": "<CustomFieldTranslation xmlns=\"http://soap.sforce.com/2006/04/metadata\">\n    <label>取引先</label>\n    <name>Account__c</name>\n    <relationshipLabel>請求書</relationshipLabel>\n</CustomFieldTranslation>",
+        "source": [
+          {
+            "sourceKey": "fieldTranslation_8e74997381ee1e7c",
+            "filePath": "Invoice__c-ja/Account__c.fieldTranslation-meta.xml",
+            "start": {
+              "offset": 39,
+              "line": 2,
+              "column": 0
+            },
+            "end": {
+              "offset": 235,
+              "line": 6,
+              "column": 25
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "fieldTranslation_d198782cd6dfe89b",
+        "context": "<CustomFieldTranslation xmlns=\"http://soap.sforce.com/2006/04/metadata\">\n    <label>金額</label>\n    <name>Amount__c</name>\n</CustomFieldTranslation>",
+        "source": [
+          {
+            "sourceKey": "fieldTranslation_005de5cefe19657e",
+            "filePath": "Invoice__c-ja/Amount__c.fieldTranslation-meta.xml",
+            "start": {
+              "offset": 39,
+              "line": 2,
+              "column": 0
+            },
+            "end": {
+              "offset": 186,
+              "line": 5,
+              "column": 25
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "fieldTranslation_25324e98b71d3440",
+        "context": "<CustomFieldTranslation xmlns=\"http://soap.sforce.com/2006/04/metadata\">\n    <label>Due Date</label>\n    <name>Due_Date__c</name>\n</CustomFieldTranslation>",
+        "source": [
+          {
+            "sourceKey": "fieldTranslation_511f7a0f359a3a36",
+            "filePath": "Invoice__c-ja/Due_Date__c.fieldTranslation-meta.xml",
+            "start": {
+              "offset": 39,
+              "line": 2,
+              "column": 0
+            },
+            "end": {
+              "offset": 194,
+              "line": 5,
+              "column": 25
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "fieldTranslation_fb4f41ba2c92fbf5",
+        "context": "<CustomFieldTranslation xmlns=\"http://soap.sforce.com/2006/04/metadata\">\n    <label>メモ</label>\n    <name>Note__c</name>\n</CustomFieldTranslation>",
+        "source": [
+          {
+            "sourceKey": "fieldTranslation_4fb21aac7bf9d56d",
+            "filePath": "Invoice__c-ja/Note__c.fieldTranslation-meta.xml",
+            "start": {
+              "offset": 39,
+              "line": 2,
+              "column": 0
+            },
+            "end": {
+              "offset": 184,
+              "line": 5,
+              "column": 25
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "picklistValueTranslation_909cf31343b9ccc4",
+        "context": "<picklistValues>\n        <masterLabel>Draft</masterLabel>\n        <translation>下書き</translation>\n    </picklistValues>",
+        "source": [
+          {
+            "sourceKey": "picklistValueTranslation_09b4682bdca83bff",
+            "filePath": "Invoice__c-ja/Status__c.fieldTranslation-meta.xml",
+            "start": {
+              "offset": 168,
+              "line": 5,
+              "column": 4
+            },
+            "end": {
+              "offset": 286,
+              "line": 8,
+              "column": 21
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "picklistValueTranslation_a3f78eea90b98f82",
+        "context": "<picklistValues>\n        <masterLabel>Sent</masterLabel>\n        <translation>送付済み</translation>\n    </picklistValues>",
+        "source": [
+          {
+            "sourceKey": "picklistValueTranslation_270869eefddfc9ca",
+            "filePath": "Invoice__c-ja/Status__c.fieldTranslation-meta.xml",
+            "start": {
+              "offset": 291,
+              "line": 9,
+              "column": 4
+            },
+            "end": {
+              "offset": 409,
+              "line": 12,
+              "column": 21
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "picklistValueTranslation_378062dee77c36cf",
+        "context": "<picklistValues>\n        <masterLabel>Paid</masterLabel>\n        <translation>支払済み</translation>\n    </picklistValues>",
+        "source": [
+          {
+            "sourceKey": "picklistValueTranslation_4c79ad4e487fd357",
+            "filePath": "Invoice__c-ja/Status__c.fieldTranslation-meta.xml",
+            "start": {
+              "offset": 414,
+              "line": 13,
+              "column": 4
+            },
+            "end": {
+              "offset": 532,
+              "line": 16,
+              "column": 21
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "fieldTranslation_5e8702097780253c",
+        "context": "<CustomFieldTranslation xmlns=\"http://soap.sforce.com/2006/04/metadata\">\n    <label>ステータス</label>\n    <name>Status__c</name>\n    <picklistValues>\n        <masterLabel>Draft</masterLabel>\n        <translation>下書き</translation>\n    </picklistValues>\n    <picklistValues>\n        <masterLabel>Sent</masterLabel>\n        <translation>送付済み</translation>\n    </picklistValues>\n    <picklistValues>\n        <masterLabel>Paid</masterLabel>\n        <translation>支払済み</translation>\n    </picklistValues>\n</CustomFieldTranslation>",
+        "source": [
+          {
+            "sourceKey": "fieldTranslation_a59ac1df752a8704",
+            "filePath": "Invoice__c-ja/Status__c.fieldTranslation-meta.xml",
+            "start": {
+              "offset": 39,
+              "line": 2,
+              "column": 0
+            },
+            "end": {
+              "offset": 558,
+              "line": 17,
+              "column": 25
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "recordTypeTranslation_7ca05a4432a58e3a",
+        "context": "<recordTypes>\n        <label>標準</label>\n        <name>Standard</name>\n    </recordTypes>",
+        "source": [
+          {
+            "sourceKey": "recordTypeTranslation_c302b44ca1a22640",
+            "filePath": "Invoice__c-ja/Invoice__c-ja.objectTranslation-meta.xml",
+            "start": {
+              "offset": 431,
+              "line": 15,
+              "column": 4
+            },
+            "end": {
+              "offset": 519,
+              "line": 18,
+              "column": 18
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "validationRuleTranslation_184cc1335101582d",
+        "context": "<validationRules>\n        <errorMessage>金額は正の値にしてください。</errorMessage>\n        <name>Amount_Positive</name>\n    </validationRules>",
+        "source": [
+          {
+            "sourceKey": "validationRuleTranslation_961e1937b6216236",
+            "filePath": "Invoice__c-ja/Invoice__c-ja.objectTranslation-meta.xml",
+            "start": {
+              "offset": 524,
+              "line": 19,
+              "column": 4
+            },
+            "end": {
+              "offset": 653,
+              "line": 22,
+              "column": 22
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "webLinkTranslation_fb636f42c8a7f613",
+        "context": "<webLinks>\n        <label>請求書を送付</label>\n        <name>Send_Invoice</name>\n    </webLinks>",
+        "source": [
+          {
+            "sourceKey": "webLinkTranslation_5871df9a7a22bb22",
+            "filePath": "Invoice__c-ja/Invoice__c-ja.objectTranslation-meta.xml",
+            "start": {
+              "offset": 658,
+              "line": 23,
+              "column": 4
+            },
+            "end": {
+              "offset": 748,
+              "line": 26,
+              "column": 15
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "fieldSetTranslation_44a8995d9bb799a8",
+        "context": "<fieldSets>\n        <label>概要</label>\n        <name>Summary</name>\n    </fieldSets>",
+        "source": [
+          {
+            "sourceKey": "fieldSetTranslation_edd5182d9b37e436",
+            "filePath": "Invoice__c-ja/Invoice__c-ja.objectTranslation-meta.xml",
+            "start": {
+              "offset": 117,
+              "line": 3,
+              "column": 4
+            },
+            "end": {
+              "offset": 200,
+              "line": 6,
+              "column": 16
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "layoutTranslation_3a2124ee9e969dee",
+        "context": "<layouts>\n        <layout>Invoice Layout</layout>\n        <sections>\n            <label>請求情報</label>\n            <section>Information</section>\n        </sections>\n    </layouts>",
+        "source": [
+          {
+            "sourceKey": "layoutTranslation_f9bd716cd023e9f5",
+            "filePath": "Invoice__c-ja/Invoice__c-ja.objectTranslation-meta.xml",
+            "start": {
+              "offset": 205,
+              "line": 7,
+              "column": 4
+            },
+            "end": {
+              "offset": 383,
+              "line": 13,
+              "column": 14
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "objectTranslation_3c2d655c83ab504d",
+        "context": "<CustomObjectTranslation xmlns=\"http://soap.sforce.com/2006/04/metadata\">\n    <fieldSets>\n        <label>概要</label>\n        <name>Summary</name>\n    </fieldSets>\n    <layouts>\n        <layout>Invoice Layout</layout>\n        <sections>\n            <label>請求情報</label>\n            <section>Information</section>\n        </sections>\n    </layouts>\n    <nameFieldLabel>請求書番号</nameFieldLabel>\n    <recordTypes>\n        <label>標準</label>\n        <name>Standard</name>\n    </recordTypes>\n    <validationRules>\n        <errorMessage>金額は正の値にしてください。</errorMessage>\n        <name>Amount_Positive</name>\n    </validationRules>\n    <webLinks>\n        <label>請求書を送付</label>\n        <name>Send_Invoice</name>\n    </webLinks>\n</CustomObjectTranslation>",
+        "source": [
+          {
+            "sourceKey": "objectTranslation_53a3b33d94e742a5",
+            "filePath": "Invoice__c-ja/Invoice__c-ja.objectTranslation-meta.xml",
+            "start": {
+              "offset": 39,
+              "line": 2,
+              "column": 0
+            },
+            "end": {
+              "offset": 775,
+              "line": 27,
+              "column": 26
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

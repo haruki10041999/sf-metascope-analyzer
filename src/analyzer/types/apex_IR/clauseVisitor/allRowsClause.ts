@@ -2,7 +2,7 @@ import { AllRowsClauseContext } from '@apexdevtools/apex-parser';
 
 import { ClauseValueTypeClass } from '.';
 
-import { ErrorTypeClass, CommonTypeClass } from '../commonVisitor';
+import { ApexErrorTypeClass, ApexCommonTypeClass } from '../commonVisitor';
 
 export class AllRowsClauseTypeClass extends ClauseValueTypeClass<'allRowsClause', string> {
     private constructor(value: string) {
@@ -19,7 +19,8 @@ export class AllRowsClauseTypeClass extends ClauseValueTypeClass<'allRowsClause'
 }
 
 export const isAllRowsClauseType = (
-    target: CommonTypeClass<string>,
+    target: ApexCommonTypeClass<string>,
 ): target is AllRowsClauseTypeClass => {
     return target instanceof AllRowsClauseTypeClass;
 };
+

@@ -75,7 +75,7 @@ import { WhereLogicalExpressionTypeClass } from './whereLogicalExpression';
 import { WhereConditionalExpressionTypeClass } from './whereConditionalExpression';
 import { WhereFieldExpressionTypeClass } from './whereFieldExpression';
 
-import { CommonTypeClass, CommonVisitor } from '../commonVisitor';
+import { ApexCommonTypeClass, ApexCommonVisitor } from '../commonVisitor';
 
 export { isArrayExpressionType, ArrayExpressionTypeClass } from './arrayExpression';
 export { isArth1ExpressionType, Arth1ExpressionTypeClass } from './arth1Expression';
@@ -122,7 +122,7 @@ export {
 export { isFilteringExpressionType, FilteringExpressionTypeClass } from './filteringExpression';
 
 export const isBasedExpressionType = (
-    target: CommonTypeClass<string>,
+    target: ApexCommonTypeClass<string>,
 ): target is BasedExpressionTypeClass => {
     return (
         target instanceof NormalExpressionTypeClass ||
@@ -153,7 +153,7 @@ export const isBasedExpressionType = (
     );
 };
 
-export class ExpressionVisitor extends CommonVisitor<BasedExpressionTypeClass> {
+export class ExpressionVisitor extends ApexCommonVisitor<BasedExpressionTypeClass> {
     visitExpression(ctx: ExpressionContext) {
         return NormalExpressionTypeClass.create(ctx);
     }

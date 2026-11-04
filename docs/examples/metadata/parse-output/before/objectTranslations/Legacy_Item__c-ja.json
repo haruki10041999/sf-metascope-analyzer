@@ -1,0 +1,71 @@
+{
+  "filePath": "Legacy_Item__c-ja",
+  "resolvedError": [],
+  "dataType": "objectTranslation",
+  "result": {
+    "id": "Legacy_Item__c-ja",
+    "base": {
+      "kind": "objectTranslation",
+      "sourceKeys": {
+        "objectKey": "objectTranslation_c3d7df0e327a0cef",
+        "sourceKey": "objectTranslation_142972ca2b4932a1"
+      },
+      "objectApiName": "Legacy_Item__c",
+      "locale": "ja",
+      "nameFieldLabel": "旧品目名",
+      "fields": [
+        {
+          "kind": "fieldTranslation",
+          "sourceKeys": {
+            "objectKey": "fieldTranslation_505d1a0991427ba9",
+            "sourceKey": "fieldTranslation_442eb4ee3001b55d"
+          },
+          "name": "Invoice__c",
+          "label": "請求書"
+        }
+      ]
+    },
+    "sourceObject": [
+      {
+        "objectKey": "fieldTranslation_505d1a0991427ba9",
+        "context": "<CustomFieldTranslation xmlns=\"http://soap.sforce.com/2006/04/metadata\">\n    <label>請求書</label>\n    <name>Invoice__c</name>\n</CustomFieldTranslation>",
+        "source": [
+          {
+            "sourceKey": "fieldTranslation_442eb4ee3001b55d",
+            "filePath": "Legacy_Item__c-ja/Invoice__c.fieldTranslation-meta.xml",
+            "start": {
+              "offset": 39,
+              "line": 2,
+              "column": 0
+            },
+            "end": {
+              "offset": 188,
+              "line": 5,
+              "column": 25
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "objectTranslation_c3d7df0e327a0cef",
+        "context": "<CustomObjectTranslation xmlns=\"http://soap.sforce.com/2006/04/metadata\">\n    <nameFieldLabel>旧品目名</nameFieldLabel>\n</CustomObjectTranslation>",
+        "source": [
+          {
+            "sourceKey": "objectTranslation_142972ca2b4932a1",
+            "filePath": "Legacy_Item__c-ja/Legacy_Item__c-ja.objectTranslation-meta.xml",
+            "start": {
+              "offset": 39,
+              "line": 2,
+              "column": 0
+            },
+            "end": {
+              "offset": 181,
+              "line": 4,
+              "column": 26
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

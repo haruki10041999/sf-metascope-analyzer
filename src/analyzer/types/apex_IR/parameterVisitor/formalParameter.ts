@@ -5,19 +5,24 @@ import { ParameterTypeClass } from '../parameterVisitor';
 import { NormalIdTypeClass, IdVisitor, isNormalIdType } from '../idVisitor';
 import { NormalModifierTypeClass, ModifierVisitor, isNormalModifierType } from '../modifierVisitor';
 import { TypeRefTypeClass, TypeVisitor, isTypeRefType } from '../typeVisitor';
-import { ErrorTypeClass, CommonTypeClass, isValidClass, isValidClassList } from '../commonVisitor';
+import {
+    ApexErrorTypeClass,
+    ApexCommonTypeClass,
+    isApexValidClass,
+    isApexValidClassList,
+} from '../commonVisitor';
 
 export class FormalParameterTypeClass extends ParameterTypeClass<
     'formalParameter',
     NormalIdTypeClass
 > {
-    private valueType: TypeRefTypeClass | ErrorTypeClass;
-    private modifier: (NormalModifierTypeClass | ErrorTypeClass)[] = [];
+    private valueType: TypeRefTypeClass | ApexErrorTypeClass;
+    private modifier: (NormalModifierTypeClass | ApexErrorTypeClass)[] = [];
 
     private constructor(
-        value: NormalIdTypeClass | ErrorTypeClass,
-        valueType: TypeRefTypeClass | ErrorTypeClass,
-        modifier: (NormalModifierTypeClass | ErrorTypeClass)[],
+        value: NormalIdTypeClass | ApexErrorTypeClass,
+        valueType: TypeRefTypeClass | ApexErrorTypeClass,
+        modifier: (NormalModifierTypeClass | ApexErrorTypeClass)[],
     ) {
         super('formalParameter', value);
         this.valueType = valueType;
@@ -30,9 +35,9 @@ export class FormalParameterTypeClass extends ParameterTypeClass<
         }
 
         return new FormalParameterTypeClass(
-            isValidClass(new IdVisitor().visit(ctx.id()), isNormalIdType, 'id'),
-            isValidClass(new TypeVisitor().visit(ctx.typeRef()), isTypeRefType, 'typeRef'),
-            isValidClassList(
+            isApexValidClass(new IdVisitor().visit(ctx.id()), isNormalIdType, 'id'),
+            isApexValidClass(new TypeVisitor().visit(ctx.typeRef()), isTypeRefType, 'typeRef'),
+            isApexValidClassList(
                 ctx.modifier_list() || [],
                 (ctx) => new ModifierVisitor().visit(ctx),
                 isNormalModifierType,
@@ -41,17 +46,17 @@ export class FormalParameterTypeClass extends ParameterTypeClass<
         );
     }
 
-    getValueType(): TypeRefTypeClass | ErrorTypeClass {
+    getValueType(): TypeRefTypeClass | ApexErrorTypeClass {
         return this.valueType;
     }
 
-    getModifier(): (NormalModifierTypeClass | ErrorTypeClass)[] {
+    getModifier(): (NormalModifierTypeClass | ApexErrorTypeClass)[] {
         return this.modifier;
     }
 }
 
 export const isFormalParameterType = (
-    target: CommonTypeClass<string>,
+    target: ApexCommonTypeClass<string>,
 ): target is FormalParameterTypeClass => {
     return target instanceof FormalParameterTypeClass;
 };

@@ -7,13 +7,13 @@ import {
     ArgumentsVisitor,
     isNormalArgumentsType,
 } from '../argumentsVisitor';
-import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
+import { ApexErrorTypeClass, ApexCommonTypeClass, isApexValidClass } from '../commonVisitor';
 
 export class ClassCreatorRestTypeClass extends RestTypeClass<
     'classCreatorRest',
     NormalArgumentsTypeClass
 > {
-    private constructor(value: NormalArgumentsTypeClass | ErrorTypeClass) {
+    private constructor(value: NormalArgumentsTypeClass | ApexErrorTypeClass) {
         super('classCreatorRest', value);
     }
 
@@ -23,7 +23,7 @@ export class ClassCreatorRestTypeClass extends RestTypeClass<
         }
 
         return new ClassCreatorRestTypeClass(
-            isValidClass(
+            isApexValidClass(
                 new ArgumentsVisitor().visit(ctx.arguments()),
                 isNormalArgumentsType,
                 'arguments',
@@ -33,7 +33,8 @@ export class ClassCreatorRestTypeClass extends RestTypeClass<
 }
 
 export const isClassCreatorRestType = (
-    target: CommonTypeClass<string>,
+    target: ApexCommonTypeClass<string>,
 ): target is ClassCreatorRestTypeClass => {
     return target instanceof ClassCreatorRestTypeClass;
 };
+

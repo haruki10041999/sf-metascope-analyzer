@@ -1,4 +1,7 @@
+// Apex / メタデータ / LWC で共通の型と部品 (JsonType・ソース位置・XML → JSON)
 export * from './commons';
+
+// メタデータ (オブジェクト): XML → JSON 生成層
 export * from './metadata';
 
 // Apex: converter（IR → CommonType）と JSON 生成層（CommonType → JSON）
@@ -9,9 +12,9 @@ export * as apexIR from './apex_IR';
 
 // IR のうち、解析の入口で使うものは直接公開する
 export {
-    CommonErrorListener,
-    CommonTypeClass,
-    ErrorTypeClass,
+    ApexCommonErrorListener,
+    ApexCommonTypeClass,
+    ApexErrorTypeClass,
     UnitVisitor,
 } from './apex_IR';
-export type { SourcePosition, SourceSpan } from './apex_IR';
+

@@ -16,19 +16,19 @@ import {
     ExpressionVisitor,
     isBasedExpressionType,
 } from '../expressionVisitor';
-import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
+import { ApexErrorTypeClass, ApexCommonTypeClass, isApexValidClass } from '../commonVisitor';
 
 export class ForControlTypeClass extends ControlTypeClass<
     'forControl',
     EnhancedForControlTypeClass | BasedExpressionTypeClass | null
 > {
-    private init: ForInitTypeClass | ErrorTypeClass | null;
-    private update: ForUpdateTypeClass | ErrorTypeClass | null;
+    private init: ForInitTypeClass | ApexErrorTypeClass | null;
+    private update: ForUpdateTypeClass | ApexErrorTypeClass | null;
 
     private constructor(
-        value: EnhancedForControlTypeClass | BasedExpressionTypeClass | ErrorTypeClass | null,
-        init: ForInitTypeClass | ErrorTypeClass | null,
-        update: ForUpdateTypeClass | ErrorTypeClass | null,
+        value: EnhancedForControlTypeClass | BasedExpressionTypeClass | ApexErrorTypeClass | null,
+        init: ForInitTypeClass | ApexErrorTypeClass | null,
+        update: ForUpdateTypeClass | ApexErrorTypeClass | null,
     ) {
         super('forControl', value);
         this.init = init;
@@ -37,16 +37,17 @@ export class ForControlTypeClass extends ControlTypeClass<
 
     // `for (;;)` のように初期化・条件・更新はすべて任意
     static create(ctx: ForControlContext): ForControlTypeClass {
-        let value: EnhancedForControlTypeClass | BasedExpressionTypeClass | ErrorTypeClass | null =
+        let value:
+            EnhancedForControlTypeClass | BasedExpressionTypeClass | ApexErrorTypeClass | null =
             null;
         if (ctx.enhancedForControl()) {
-            value = isValidClass(
+            value = isApexValidClass(
                 new ControlVisitor().visit(ctx.enhancedForControl()),
                 isEnhancedForControlType,
                 'enhancedForControl',
             );
         } else if (ctx.expression()) {
-            value = isValidClass(
+            value = isApexValidClass(
                 new ExpressionVisitor().visit(ctx.expression()),
                 isBasedExpressionType,
                 'expression',
@@ -56,10 +57,14 @@ export class ForControlTypeClass extends ControlTypeClass<
         return new ForControlTypeClass(
             value,
             ctx.forInit()
-                ? isValidClass(new ControlVisitor().visit(ctx.forInit()), isForInitType, 'forInit')
+                ? isApexValidClass(
+                      new ControlVisitor().visit(ctx.forInit()),
+                      isForInitType,
+                      'forInit',
+                  )
                 : null,
             ctx.forUpdate()
-                ? isValidClass(
+                ? isApexValidClass(
                       new ControlVisitor().visit(ctx.forUpdate()),
                       isForUpdateType,
                       'forUpdate',
@@ -68,17 +73,17 @@ export class ForControlTypeClass extends ControlTypeClass<
         );
     }
 
-    getInit(): ForInitTypeClass | ErrorTypeClass | null {
+    getInit(): ForInitTypeClass | ApexErrorTypeClass | null {
         return this.init;
     }
 
-    getUpdate(): ForUpdateTypeClass | ErrorTypeClass | null {
+    getUpdate(): ForUpdateTypeClass | ApexErrorTypeClass | null {
         return this.update;
     }
 }
 
 export const isForControlType = (
-    target: CommonTypeClass<string>,
+    target: ApexCommonTypeClass<string>,
 ): target is ForControlTypeClass => {
     return target instanceof ForControlTypeClass;
 };

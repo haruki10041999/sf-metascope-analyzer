@@ -9,17 +9,17 @@ import {
     makeNodeDiff,
     makeSequenceDiff,
     makeValueDiff,
-} from './commons';
-import { TypeDiff, makeTypeDiff } from './type';
-import { ModifierDiff, makeModifierDiff } from './modifier';
+} from '../../commons/diff/commons';
+import { TypeJsonDiff, makeTypeDiff } from './type';
+import { ModifiersJsonDiff, makeModifierDiff } from './modifier';
 
-export type ParameterDiff = NodeDiff<
+export type ParameterJsonDiff = NodeDiff<
     'parameter',
     ParameterJson,
     {
         variant: ValueDiff<string>;
-        variantType: TypeDiff;
-        modifier: ModifierDiff[];
+        variantType: TypeJsonDiff;
+        modifier: ModifiersJsonDiff;
     }
 >;
 
@@ -27,7 +27,7 @@ export const makeParameterDiff = (
     before: ParameterJson | ErrorJson,
     after: ParameterJson | ErrorJson,
     match: Match = 'slot',
-): ParameterDiff => {
+): ParameterJsonDiff => {
     return makeNodeDiff('parameter', before, after, match, (b, a) => ({
         variant: makeValueDiff(b.variant, a.variant),
         variantType: makeTypeDiff(b.variantType, a.variantType),
@@ -36,7 +36,11 @@ export const makeParameterDiff = (
 };
 
 /** パラメータは位置で識別されるので C. 順序付き列。入れ替えは moved になる */
-export type ParametersDiff = ListItemDiff<'parameter', ParameterJson | ErrorJson, ParameterDiff>;
+export type ParametersDiff = ListItemDiff<
+    'parameter',
+    ParameterJson | ErrorJson,
+    ParameterJsonDiff
+>;
 
 export const makeParametersDiff = (
     before: (ParameterJson | ErrorJson)[],

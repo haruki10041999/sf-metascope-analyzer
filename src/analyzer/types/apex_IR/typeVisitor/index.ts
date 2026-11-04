@@ -7,12 +7,12 @@ import type { TypeTypeClass } from './base';
 import { ArraySubscriptsTypeClass } from './arraySubscripts';
 import { TypeRefTypeClass } from './typeRef';
 
-import { CommonVisitor } from '../commonVisitor';
+import { ApexCommonVisitor } from '../commonVisitor';
 
 export { isArraySubscriptsType, ArraySubscriptsTypeClass } from './arraySubscripts';
 export { isTypeRefType, TypeRefTypeClass } from './typeRef';
 
-export class TypeVisitor extends CommonVisitor<TypeTypeClass<string, unknown>> {
+export class TypeVisitor extends ApexCommonVisitor<TypeTypeClass<string, unknown>> {
     visitArraySubscripts(ctx: ArraySubscriptsContext) {
         return ArraySubscriptsTypeClass.create(ctx);
     }

@@ -13,17 +13,17 @@ import {
     ExpressionVisitor,
     isBasedExpressionType,
 } from '../expressionVisitor';
-import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
+import { ApexErrorTypeClass, ApexCommonTypeClass, isApexValidClass } from '../commonVisitor';
 
 export class UpsertStatementTypeClass extends DmlStatementTypeClass<
     'upsertStatement',
     BasedExpressionTypeClass
 > {
-    private key: QualifiedNameTypeClass | ErrorTypeClass | null = null;
+    private key: QualifiedNameTypeClass | ApexErrorTypeClass | null = null;
     private constructor(
-        value: BasedExpressionTypeClass | ErrorTypeClass,
-        key: QualifiedNameTypeClass | ErrorTypeClass | null,
-        accessLevel: AccessLevelTypeClass | ErrorTypeClass | null,
+        value: BasedExpressionTypeClass | ApexErrorTypeClass,
+        key: QualifiedNameTypeClass | ApexErrorTypeClass | null,
+        accessLevel: AccessLevelTypeClass | ApexErrorTypeClass | null,
     ) {
         super('upsertStatement', value, accessLevel);
         this.key = key;
@@ -35,20 +35,20 @@ export class UpsertStatementTypeClass extends DmlStatementTypeClass<
         }
 
         return new UpsertStatementTypeClass(
-            isValidClass(
+            isApexValidClass(
                 new ExpressionVisitor().visit(ctx.expression()),
                 isBasedExpressionType,
                 'expression',
             ),
             ctx.qualifiedName()
-                ? isValidClass(
+                ? isApexValidClass(
                       new NameVisitor().visit(ctx.qualifiedName()),
                       isQualifiedNameType,
                       'qualifiedName',
                   )
                 : null,
             ctx.accessLevel()
-                ? isValidClass(
+                ? isApexValidClass(
                       new StatementVisitor().visit(ctx.accessLevel()),
                       isAccessLevelType,
                       'accessLevel',
@@ -57,13 +57,14 @@ export class UpsertStatementTypeClass extends DmlStatementTypeClass<
         );
     }
 
-    getKey(): QualifiedNameTypeClass | ErrorTypeClass | null {
+    getKey(): QualifiedNameTypeClass | ApexErrorTypeClass | null {
         return this.key;
     }
 }
 
 export const isUpsertStatementType = (
-    target: CommonTypeClass<string>,
+    target: ApexCommonTypeClass<string>,
 ): target is UpsertStatementTypeClass => {
     return target instanceof UpsertStatementTypeClass;
 };
+

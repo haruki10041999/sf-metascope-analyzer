@@ -1,6 +1,7 @@
 import typia from 'typia';
 
-import { ConvertExcludeError, ConvertKeys, ErrorJson, makeErrorJson } from '../commons';
+import { ConvertExcludeError } from '../commons';
+import { ConvertKeys, ErrorJson, makeErrorJson } from '../../commons';
 
 import {
     FieldNameType,

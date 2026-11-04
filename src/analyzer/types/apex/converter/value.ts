@@ -1,7 +1,7 @@
 import {
     CoordinateValueTypeClass,
     ElementValueTypeClass,
-    ErrorTypeClass,
+    ApexErrorTypeClass,
     LocationValueTypeClass,
     NormalValueTypeClass,
     ValueTypeClass,
@@ -124,14 +124,14 @@ export const makeLocationValueAssignRule: AssignForValueRule<
             {
                 isValid: (
                     target: unknown,
-                ): target is (CoordinateValueTypeClass | ErrorTypeClass)[] =>
+                ): target is (CoordinateValueTypeClass | ApexErrorTypeClass)[] =>
                     Array.isArray(target) &&
                     target.every(
                         (t) =>
                             isTargetTypeClass(t, isCoordinateValueTypeClass) ||
                             isTargetTypeClass(t, isErrorType),
                     ),
-                construct: (values: (CoordinateValueTypeClass | ErrorTypeClass)[]) => {
+                construct: (values: (CoordinateValueTypeClass | ApexErrorTypeClass)[]) => {
                     return values.map((v) => {
                         return assignMultiClass(v, [
                             makeCoordinateValueAssignRule,
@@ -292,14 +292,16 @@ export const makeWhenValueAssignRule: AssignForValueRule<WhenValueTypeClass, Whe
         const value = assignMultiClass(valueTypeClass.getValue(), [
             makeLimitedStringAssignRule(['else']),
             {
-                isValid: (target: unknown): target is (WhenLiteralTypeClass | ErrorTypeClass)[] =>
+                isValid: (
+                    target: unknown,
+                ): target is (WhenLiteralTypeClass | ApexErrorTypeClass)[] =>
                     Array.isArray(target) &&
                     target.every(
                         (t) =>
                             isTargetTypeClass(t, isWhenLiteralType) ||
                             isTargetTypeClass(t, isErrorType),
                     ),
-                construct: (values: (WhenLiteralTypeClass | ErrorTypeClass)[]) => {
+                construct: (values: (WhenLiteralTypeClass | ApexErrorTypeClass)[]) => {
                     return values.map((v) =>
                         assignMultiClass(v, [makeWhenLiteralAssignRule, makeErrorAssignRule]),
                     );

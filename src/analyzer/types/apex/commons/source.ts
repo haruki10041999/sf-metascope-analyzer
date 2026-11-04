@@ -1,6 +1,6 @@
 import { SourceInfo } from '../converter';
 
-import { ConvertKeys, JsonType, isJsonType, isStructureJsonType } from './json';
+import { ConvertKeys, JsonType, isJsonType, isStructureJsonType } from '../../commons/json';
 
 export type SourceJson = {
     objectKey: string;
@@ -126,4 +126,3 @@ export const regenerateSourceObjects = (
 
     return regenerate;
 };
-

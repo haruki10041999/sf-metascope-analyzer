@@ -8,17 +8,17 @@ import {
     ExpressionVisitor,
     isBasedExpressionType,
 } from '../expressionVisitor';
-import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
+import { ApexErrorTypeClass, ApexCommonTypeClass, isApexValidClass } from '../commonVisitor';
 
 export class VariableDeclaratorTypeClass extends VariableTypeClass<
     'variableDeclarator',
     NormalIdTypeClass
 > {
-    private content: BasedExpressionTypeClass | ErrorTypeClass | null;
+    private content: BasedExpressionTypeClass | ApexErrorTypeClass | null;
 
     private constructor(
-        value: NormalIdTypeClass | ErrorTypeClass,
-        content: BasedExpressionTypeClass | ErrorTypeClass | null,
+        value: NormalIdTypeClass | ApexErrorTypeClass,
+        content: BasedExpressionTypeClass | ApexErrorTypeClass | null,
     ) {
         super('variableDeclarator', value);
         this.content = content;
@@ -30,10 +30,10 @@ export class VariableDeclaratorTypeClass extends VariableTypeClass<
         }
 
         return new VariableDeclaratorTypeClass(
-            isValidClass(new IdVisitor().visit(ctx.id()), isNormalIdType, 'id'),
+            isApexValidClass(new IdVisitor().visit(ctx.id()), isNormalIdType, 'id'),
             // 初期化子は任意（`String name;`）
             ctx.expression()
-                ? isValidClass(
+                ? isApexValidClass(
                       new ExpressionVisitor().visit(ctx.expression()),
                       isBasedExpressionType,
                       'expression',
@@ -42,13 +42,13 @@ export class VariableDeclaratorTypeClass extends VariableTypeClass<
         );
     }
 
-    getContent(): BasedExpressionTypeClass | ErrorTypeClass | null {
+    getContent(): BasedExpressionTypeClass | ApexErrorTypeClass | null {
         return this.content;
     }
 }
 
 export const isVariableDeclaratorType = (
-    target: CommonTypeClass<string>,
+    target: ApexCommonTypeClass<string>,
 ): target is VariableDeclaratorTypeClass => {
     return target instanceof VariableDeclaratorTypeClass;
 };

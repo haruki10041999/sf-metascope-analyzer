@@ -7,13 +7,13 @@ import {
     DeclarationVisitor,
     isLocalVariableDeclarationType,
 } from '../declarationVisitor';
-import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
+import { ApexErrorTypeClass, ApexCommonTypeClass, isApexValidClass } from '../commonVisitor';
 
 export class LocalVariableDeclarationStatementTypeClass extends StatementTypeClass<
     'localVariableDeclarationStatement',
     LocalVariableDeclarationTypeClass
 > {
-    private constructor(value: LocalVariableDeclarationTypeClass | ErrorTypeClass) {
+    private constructor(value: LocalVariableDeclarationTypeClass | ApexErrorTypeClass) {
         super('localVariableDeclarationStatement', value);
     }
 
@@ -25,7 +25,7 @@ export class LocalVariableDeclarationStatementTypeClass extends StatementTypeCla
         }
 
         return new LocalVariableDeclarationStatementTypeClass(
-            isValidClass(
+            isApexValidClass(
                 new DeclarationVisitor().visit(ctx.localVariableDeclaration()),
                 isLocalVariableDeclarationType,
                 'localVariableDeclaration',
@@ -35,7 +35,8 @@ export class LocalVariableDeclarationStatementTypeClass extends StatementTypeCla
 }
 
 export const isLocalVariableDeclarationStatementType = (
-    target: CommonTypeClass<string>,
+    target: ApexCommonTypeClass<string>,
 ): target is LocalVariableDeclarationStatementTypeClass => {
     return target instanceof LocalVariableDeclarationStatementTypeClass;
 };
+

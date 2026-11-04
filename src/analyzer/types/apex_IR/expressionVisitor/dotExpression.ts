@@ -9,7 +9,7 @@ import {
 
 import { AnyIdTypeClass, IdVisitor, isAnyIdType } from '../idVisitor';
 import { DotMethodCallTypeClass, CallVisitor, isDotMethodCallType } from '../callVisitor';
-import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
+import { ApexErrorTypeClass, ApexCommonTypeClass, isApexValidClass } from '../commonVisitor';
 
 export class DotExpressionTypeClass extends DoubleStringOperatorExpressionTypeClass<
     'dotExpression',
@@ -18,8 +18,8 @@ export class DotExpressionTypeClass extends DoubleStringOperatorExpressionTypeCl
     AnyIdTypeClass | DotMethodCallTypeClass
 > {
     private constructor(
-        left: BasedExpressionTypeClass | ErrorTypeClass,
-        right: AnyIdTypeClass | DotMethodCallTypeClass | ErrorTypeClass,
+        left: BasedExpressionTypeClass | ApexErrorTypeClass,
+        right: AnyIdTypeClass | DotMethodCallTypeClass | ApexErrorTypeClass,
         operator: '.' | '?.',
     ) {
         super('dotExpression', left, right, operator);
@@ -35,14 +35,14 @@ export class DotExpressionTypeClass extends DoubleStringOperatorExpressionTypeCl
         }
 
         return new DotExpressionTypeClass(
-            isValidClass(
+            isApexValidClass(
                 new ExpressionVisitor().visit(ctx.expression()),
                 isBasedExpressionType,
                 'expression',
             ),
             ctx.anyId()
-                ? isValidClass(new IdVisitor().visit(ctx.anyId()), isAnyIdType, 'anyId')
-                : isValidClass(
+                ? isApexValidClass(new IdVisitor().visit(ctx.anyId()), isAnyIdType, 'anyId')
+                : isApexValidClass(
                       new CallVisitor().visit(ctx.dotMethodCall()),
                       isDotMethodCallType,
                       'dotMethodCall',
@@ -53,7 +53,8 @@ export class DotExpressionTypeClass extends DoubleStringOperatorExpressionTypeCl
 }
 
 export const isDotExpressionType = (
-    target: CommonTypeClass<string>,
+    target: ApexCommonTypeClass<string>,
 ): target is DotExpressionTypeClass => {
     return target instanceof DotExpressionTypeClass;
 };
+

@@ -7,13 +7,13 @@ import {
     ExpressionVisitor,
     isBoundExpressionType,
 } from '../expressionVisitor';
-import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
+import { ApexErrorTypeClass, ApexCommonTypeClass, isApexValidClass } from '../commonVisitor';
 
 export class OffsetClauseTypeClass extends ClauseTypeClass<
     'offsetClause',
     string | BoundExpressionTypeClass
 > {
-    private constructor(value: string | BoundExpressionTypeClass | ErrorTypeClass) {
+    private constructor(value: string | BoundExpressionTypeClass | ApexErrorTypeClass) {
         super('offsetClause', value);
     }
 
@@ -25,7 +25,7 @@ export class OffsetClauseTypeClass extends ClauseTypeClass<
         return new OffsetClauseTypeClass(
             ctx.IntegerLiteral()
                 ? ctx.IntegerLiteral().getText()
-                : isValidClass(
+                : isApexValidClass(
                       new ExpressionVisitor().visit(ctx.boundExpression()),
                       isBoundExpressionType,
                       'boundExpression',
@@ -35,7 +35,8 @@ export class OffsetClauseTypeClass extends ClauseTypeClass<
 }
 
 export const isOffsetClauseType = (
-    target: CommonTypeClass<string>,
+    target: ApexCommonTypeClass<string>,
 ): target is OffsetClauseTypeClass => {
     return target instanceof OffsetClauseTypeClass;
 };
+

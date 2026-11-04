@@ -5,7 +5,6 @@ import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js'
 import { z } from 'zod';
 
 import { MetadataProcessor } from '../analyzer/processor/Metadata/metadata';
-import { MetadataDependencyProcessor } from '../analyzer/processor/Metadata/dependency';
 
 import type { BuildReportOptions } from '../builder/htmlBuilder';
 import { buildReportHtml } from '../builder/htmlBuilder';
@@ -14,7 +13,6 @@ const repositoryRoot = path.resolve(process.cwd());
 
 type MetadataContext = {
     metadata: MetadataProcessor;
-    dependency: MetadataDependencyProcessor;
 };
 
 type AppContext = {
@@ -27,25 +25,14 @@ const createMetadataContext = async (
     repositoryRoot: string,
     saveRoot: string,
 ): Promise<MetadataContext> => {
-    const baseName = path.basename(repositoryRoot);
-    const saveResultPath = path.join(saveRoot, baseName);
-
     const metadataProcessor = await MetadataProcessor.create(saveRoot, repositoryRoot);
 
-    try {
-        await fs.access(saveResultPath);
-    } catch {
+    // 前回の解析結果がなければ、今の状態を基準として保存する
+    if (!(await metadataProcessor.hasSavedObjects())) {
         await metadataProcessor.save();
     }
 
-    const dependencyProcessor = new MetadataDependencyProcessor(
-        metadataProcessor.getMetadataObjectDiffs(),
-    );
-
-    return {
-        metadata: metadataProcessor,
-        dependency: dependencyProcessor,
-    };
+    return { metadata: metadataProcessor };
 };
 
 const createServer = (context: AppContext): McpServer => {
@@ -66,9 +53,6 @@ const createServer = (context: AppContext): McpServer => {
         async () => {
             try {
                 await context.metadataContext.metadata.save();
-                context.metadataContext.dependency.reset(
-                    context.metadataContext.metadata.getMetadataObjectDiffs(),
-                );
 
                 const result = {
                     message: '成功しました',
@@ -121,33 +105,17 @@ const createServer = (context: AppContext): McpServer => {
             },
         },
         async ({ baseDir, isDiff, targetObjectApiNames }) => {
-            const metadata = isDiff
-                ? targetObjectApiNames
-                    ? context.metadataContext.metadata.getRelatedMetadataObjectsDiff(
-                          targetObjectApiNames.targetObjectApiNames,
-                          targetObjectApiNames.depth,
-                      )
-                    : context.metadataContext.metadata.getMetadataObjectDiffs()
-                : targetObjectApiNames
-                  ? context.metadataContext.metadata.getRelatedMetadataObjects(
-                        targetObjectApiNames.targetObjectApiNames,
-                        targetObjectApiNames.depth,
-                    )
-                  : context.metadataContext.metadata.getMetadataObjects();
-
-            const dependency = isDiff
-                ? targetObjectApiNames
-                    ? context.metadataContext.dependency.getDependencyDiff(
-                          targetObjectApiNames.targetObjectApiNames,
-                          targetObjectApiNames.depth,
-                      )
-                    : context.metadataContext.dependency.getAllDependencyDiff()
-                : targetObjectApiNames
-                  ? context.metadataContext.dependency.getDependency(
-                        targetObjectApiNames.targetObjectApiNames,
-                        targetObjectApiNames.depth,
-                    )
-                  : context.metadataContext.dependency.getAllDependency();
+            const viewOptions = {
+                isDiff,
+                ...(targetObjectApiNames
+                    ? {
+                          targets: targetObjectApiNames.targetObjectApiNames,
+                          depth: targetObjectApiNames.depth,
+                      }
+                    : {}),
+            };
+            const metadata = context.metadataContext.metadata.getObjectViews(viewOptions);
+            const dependency = context.metadataContext.metadata.getDependencyViews(viewOptions);
 
             const builderOption: BuildReportOptions = {
                 title: 'metadata解析レポート',

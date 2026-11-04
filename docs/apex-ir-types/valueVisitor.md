@@ -12,7 +12,7 @@ SOQL の比較右辺の値、`switch` の `when` 値、アノテーション引�
 | `visitCoordinateValue` | `CoordinateValueContext` | `CoordinateValueTypeClass` |
 | `visitLocationValue`   | `LocationValueContext`   | `LocationValueTypeClass`   |
 
-`ValueVisitor` は `CommonVisitor<ValueTypeClass<unknown>>` を継承する。`create()` が例外を投げた場合や子要素が無い場合は `ErrorTypeClass` が返る。
+`ValueVisitor` は `ApexCommonVisitor<ValueTypeClass<unknown>>` を継承する。`create()` が例外を投げた場合や子要素が無い場合は `ApexErrorTypeClass` が返る。
 
 ## 基底クラス（base.ts）
 
@@ -20,10 +20,10 @@ SOQL の比較右辺の値、`switch` の `when` 値、アノテーション引�
 
 valueVisitor の全 TypeClass の基底。`type` と単一の `value` を持つ。
 
-| 変数    | 型                    | 内容                                   |
-| ------- | --------------------- | -------------------------------------- |
-| `type`  | `string`              | ノード種別（CommonTypeClass から継承） |
-| `value` | `T \| ErrorTypeClass` | 値の本体                               |
+| 変数    | 型                        | 内容                                       |
+| ------- | ------------------------- | ------------------------------------------ |
+| `type`  | `string`                  | ノード種別（ApexCommonTypeClass から継承） |
+| `value` | `T \| ApexErrorTypeClass` | 値の本体                                   |
 
 ゲッター: `getType()`, `getValue()`
 
@@ -40,10 +40,10 @@ valueVisitor の全 TypeClass の基底。`type` と単一の `value` を持つ�
 - **元 Context**: `CoordinateValueContext`（文法: `signedNumber | boundExpression`）
 - **役割**: `GEOLOCATION(緯度, 経度)` の座標 1 つ。
 
-| 変数    | 型                                                                    | 内容                        |
-| ------- | --------------------------------------------------------------------- | --------------------------- |
-| `type`  | `'coordinateValue'`                                                   | 継承                        |
-| `value` | `SignedNumberTypeClass \| BoundExpressionTypeClass \| ErrorTypeClass` | 数値リテラル、または `:var` |
+| 変数    | 型                                                                        | 内容                        |
+| ------- | ------------------------------------------------------------------------- | --------------------------- |
+| `type`  | `'coordinateValue'`                                                       | 継承                        |
+| `value` | `SignedNumberTypeClass \| BoundExpressionTypeClass \| ApexErrorTypeClass` | 数値リテラル、または `:var` |
 
 ゲッター: `getValue()`
 
@@ -67,10 +67,10 @@ GEOLOCATION(37.775, -122.418)
 - **元 Context**: `ElementValueContext`（文法: `literal`）
 - **役割**: アノテーション引数（`@Xxx(key=value)` の `value`）。
 
-| 変数    | 型                                         | 内容     |
-| ------- | ------------------------------------------ | -------- |
-| `type`  | `'elementValue'`                           | 継承     |
-| `value` | `NormalLiteralTypeClass \| ErrorTypeClass` | リテラル |
+| 変数    | 型                                             | 内容     |
+| ------- | ---------------------------------------------- | -------- |
+| `type`  | `'elementValue'`                               | 継承     |
+| `value` | `NormalLiteralTypeClass \| ApexErrorTypeClass` | リテラル |
 
 ゲッター: `getValue()`
 
@@ -91,15 +91,15 @@ GEOLOCATION(37.775, -122.418)
 - **元 Context**: `LocationValueContext`（文法: `fieldName | boundExpression | GEOLOCATION ( coordinateValue , coordinateValue )`）
 - **役割**: SOQL `DISTANCE(...)` の位置引数。
 
-| 変数          | 型                                                                         | 内容                                                                |
-| ------------- | -------------------------------------------------------------------------- | ------------------------------------------------------------------- |
-| `type`        | `'locationValue'`                                                          | 継承                                                                |
-| `value`       | `FieldNameTypeClass \| BoundExpressionTypeClass \| ErrorTypeClass \| null` | 位置項目名 / `:var`。`GEOLOCATION(...)` 形式では `null`             |
-| `coordinates` | `(CoordinateValueTypeClass \| ErrorTypeClass)[] \| null`                   | `GEOLOCATION(...)` 形式のときのみ `[緯度, 経度]`。それ以外は `null` |
+| 変数          | 型                                                                             | 内容                                                                |
+| ------------- | ------------------------------------------------------------------------------ | ------------------------------------------------------------------- |
+| `type`        | `'locationValue'`                                                              | 継承                                                                |
+| `value`       | `FieldNameTypeClass \| BoundExpressionTypeClass \| ApexErrorTypeClass \| null` | 位置項目名 / `:var`。`GEOLOCATION(...)` 形式では `null`             |
+| `coordinates` | `(CoordinateValueTypeClass \| ApexErrorTypeClass)[] \| null`                   | `GEOLOCATION(...)` 形式のときのみ `[緯度, 経度]`。それ以外は `null` |
 
 ゲッター: `getValue()`, `getCoordinates()`
 
-`fieldName` / `boundExpression` が無く、`GEOLOCATION` と 2 件の `coordinateValue` も揃っていない場合は例外（→ `ErrorTypeClass`）。
+`fieldName` / `boundExpression` が無く、`GEOLOCATION` と 2 件の `coordinateValue` も揃っていない場合は例外（→ `ApexErrorTypeClass`）。
 
 例:
 
@@ -144,11 +144,11 @@ DISTANCE(BillingAddress, GEOLOCATION(37.775, -122.418), 'km')
 - **元 Context**: `ValueContext`（文法概略: `NULL | BooleanLiteral | signedNumber | StringLiteral | MultilineStringLiteral | DateLiteral | TimeLiteral | DateTimeLiteral | dateFormula | IntegralCurrencyLiteral ... | ( subQuery ) | valueList | boundExpression`）
 - **役割**: SOQL WHERE / HAVING の比較右辺の値。
 
-| 変数        | 型                                      | 内容                                     |
-| ----------- | --------------------------------------- | ---------------------------------------- |
-| `type`      | `'value'`                               | 継承                                     |
-| `value`     | `ValueTypeClassValue \| ErrorTypeClass` | 値（`valueType` により型が決まる、下記） |
-| `valueType` | `string`                                | 値の種類（下記）                         |
+| 変数        | 型                                          | 内容                                     |
+| ----------- | ------------------------------------------- | ---------------------------------------- |
+| `type`      | `'value'`                                   | 継承                                     |
+| `value`     | `ValueTypeClassValue \| ApexErrorTypeClass` | 値（`valueType` により型が決まる、下記） |
+| `valueType` | `string`                                    | 値の種類（下記）                         |
 
 | `valueType`                        | `value`                                  |
 | ---------------------------------- | ---------------------------------------- |
@@ -189,15 +189,15 @@ AND LastModifiedDate > 2026-01-01T00:00:00Z
 ### `WhenValueTypeClass`（whenValue.ts）
 
 - **type**: `'whenValue'`
-- **継承**: `ValueTypeClass<WhenValueValueType>`（`WhenValueValueType` = `(WhenLiteralTypeClass | ErrorTypeClass)[] | NormalIdTypeClass | 'else'`）
+- **継承**: `ValueTypeClass<WhenValueValueType>`（`WhenValueValueType` = `(WhenLiteralTypeClass | ApexErrorTypeClass)[] | NormalIdTypeClass | 'else'`）
 - **元 Context**: `WhenValueContext`（文法: `ELSE | whenLiteral (, whenLiteral)* | typeRef id`）
 - **役割**: `switch on` の `when` に続く値。
 
-| 変数        | 型                                           | 内容                                                                                                                               |
-| ----------- | -------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
-| `type`      | `'whenValue'`                                | 継承                                                                                                                               |
-| `value`     | `WhenValueValueType \| ErrorTypeClass`       | `when else` は `'else'`、リテラル列（`when 'B', 'C'` / enum 値）は `whenLiteral` の配列、型判定（`when Account a`）は変数名の `id` |
-| `valueType` | `TypeRefTypeClass \| ErrorTypeClass \| null` | 型判定形式のときの型。それ以外は `null`                                                                                            |
+| 変数        | 型                                               | 内容                                                                                                                               |
+| ----------- | ------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------- |
+| `type`      | `'whenValue'`                                    | 継承                                                                                                                               |
+| `value`     | `WhenValueValueType \| ApexErrorTypeClass`       | `when else` は `'else'`、リテラル列（`when 'B', 'C'` / enum 値）は `whenLiteral` の配列、型判定（`when Account a`）は変数名の `id` |
+| `valueType` | `TypeRefTypeClass \| ApexErrorTypeClass \| null` | 型判定形式のときの型。それ以外は `null`                                                                                            |
 
 ゲッター: `getValue()`, `getValueType()`
 

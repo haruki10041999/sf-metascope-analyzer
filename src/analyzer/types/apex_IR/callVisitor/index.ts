@@ -7,12 +7,12 @@ import type { CallTypeClass } from './base';
 import { MethodCallTypeClass } from './methodCall';
 import { DotMethodCallTypeClass } from './dotMethodCall';
 
-import { CommonVisitor } from '../commonVisitor';
+import { ApexCommonVisitor } from '../commonVisitor';
 
 export { isMethodCallType, MethodCallTypeClass } from './methodCall';
 export { isDotMethodCallType, DotMethodCallTypeClass } from './dotMethodCall';
 
-export class CallVisitor extends CommonVisitor<CallTypeClass<string, unknown, unknown>> {
+export class CallVisitor extends ApexCommonVisitor<CallTypeClass<string, unknown, unknown>> {
     visitMethodCall(ctx: MethodCallContext) {
         return MethodCallTypeClass.create(ctx);
     }
@@ -21,3 +21,4 @@ export class CallVisitor extends CommonVisitor<CallTypeClass<string, unknown, un
         return DotMethodCallTypeClass.create(ctx);
     }
 }
+

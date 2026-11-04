@@ -5,17 +5,19 @@ import {
     ConvertType,
     ConvertWithError,
     convertValue,
+    isErrorNode,
+} from './commons';
+import {
     ErrorJson,
     JsonType,
     makeJsonType,
     StructureJsonType,
     makeStructureJson,
-    isErrorNode,
     makeErrorJson,
     ConvertKeys,
     isJsonType,
     isStructureJsonType,
-} from './commons';
+} from '../commons';
 
 import {
     AccessLevelType,
@@ -919,4 +921,3 @@ export const makeBlockJson = (target: ConvertType<BlockType>): (StatementJson | 
 
     return target.value.map((s) => makeStatementJson(s));
 };
-

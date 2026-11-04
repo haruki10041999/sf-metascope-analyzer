@@ -12,16 +12,21 @@ import {
     ExpressionVisitor,
     isBasedExpressionType,
 } from '../expressionVisitor';
-import { ErrorTypeClass, CommonTypeClass, isValidClass, isValidClassList } from '../commonVisitor';
+import {
+    ApexErrorTypeClass,
+    ApexCommonTypeClass,
+    isApexValidClass,
+    isApexValidClassList,
+} from '../commonVisitor';
 
 export class MergeStatementTypeClass extends StatementListTypeClass<
     'mergeStatement',
     BasedExpressionTypeClass
 > {
-    private accessLevel: AccessLevelTypeClass | ErrorTypeClass | null = null;
+    private accessLevel: AccessLevelTypeClass | ApexErrorTypeClass | null = null;
     private constructor(
-        value: (BasedExpressionTypeClass | ErrorTypeClass)[],
-        accessLevel: AccessLevelTypeClass | ErrorTypeClass | null,
+        value: (BasedExpressionTypeClass | ApexErrorTypeClass)[],
+        accessLevel: AccessLevelTypeClass | ApexErrorTypeClass | null,
     ) {
         super('mergeStatement', value);
         this.accessLevel = accessLevel;
@@ -33,14 +38,14 @@ export class MergeStatementTypeClass extends StatementListTypeClass<
         }
 
         return new MergeStatementTypeClass(
-            isValidClassList(
+            isApexValidClassList(
                 ctx.expression_list(),
                 (ctx) => new ExpressionVisitor().visit(ctx),
                 isBasedExpressionType,
                 'expression',
             ),
             ctx.accessLevel()
-                ? isValidClass(
+                ? isApexValidClass(
                       new StatementVisitor().visit(ctx.accessLevel()),
                       isAccessLevelType,
                       'accessLevel',
@@ -49,13 +54,14 @@ export class MergeStatementTypeClass extends StatementListTypeClass<
         );
     }
 
-    getAccessLevel(): AccessLevelTypeClass | ErrorTypeClass | null {
+    getAccessLevel(): AccessLevelTypeClass | ApexErrorTypeClass | null {
         return this.accessLevel;
     }
 }
 
 export const isMergeStatementType = (
-    target: CommonTypeClass<string>,
+    target: ApexCommonTypeClass<string>,
 ): target is MergeStatementTypeClass => {
     return target instanceof MergeStatementTypeClass;
 };
+

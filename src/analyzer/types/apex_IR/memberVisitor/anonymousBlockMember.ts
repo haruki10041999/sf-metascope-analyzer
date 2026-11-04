@@ -13,15 +13,20 @@ import {
     isNormalStatementType,
 } from '../statementVisitor';
 import { NormalModifierTypeClass, ModifierVisitor, isNormalModifierType } from '../modifierVisitor';
-import { ErrorTypeClass, CommonTypeClass, isValidClass, isValidClassList } from '../commonVisitor';
+import {
+    ApexErrorTypeClass,
+    ApexCommonTypeClass,
+    isApexValidClass,
+    isApexValidClassList,
+} from '../commonVisitor';
 
 export class AnonymousBlockMemberTypeClass extends MemberTypeClass<
     'anonymousBlockMember',
     AnonymousMemberDeclarationTypeClass | NormalStatementTypeClass
 > {
     private constructor(
-        value: AnonymousMemberDeclarationTypeClass | NormalStatementTypeClass | ErrorTypeClass,
-        modifier: (NormalModifierTypeClass | ErrorTypeClass)[],
+        value: AnonymousMemberDeclarationTypeClass | NormalStatementTypeClass | ApexErrorTypeClass,
+        modifier: (NormalModifierTypeClass | ApexErrorTypeClass)[],
     ) {
         super('anonymousBlockMember', value, modifier);
     }
@@ -33,17 +38,17 @@ export class AnonymousBlockMemberTypeClass extends MemberTypeClass<
 
         return new AnonymousBlockMemberTypeClass(
             ctx.anonymousMemberDeclaration()
-                ? isValidClass(
+                ? isApexValidClass(
                       new DeclarationVisitor().visit(ctx.anonymousMemberDeclaration()),
                       isAnonymousMemberDeclarationType,
                       'anonymousMemberDeclaration',
                   )
-                : isValidClass(
+                : isApexValidClass(
                       new StatementVisitor().visit(ctx.statement()),
                       isNormalStatementType,
                       'statement',
                   ),
-            isValidClassList(
+            isApexValidClassList(
                 ctx.modifier_list(),
                 (ctx) => new ModifierVisitor().visit(ctx),
                 isNormalModifierType,
@@ -54,7 +59,8 @@ export class AnonymousBlockMemberTypeClass extends MemberTypeClass<
 }
 
 export const isAnonymousBlockMemberType = (
-    target: CommonTypeClass<string>,
+    target: ApexCommonTypeClass<string>,
 ): target is AnonymousBlockMemberTypeClass => {
     return target instanceof AnonymousBlockMemberTypeClass;
 };
+

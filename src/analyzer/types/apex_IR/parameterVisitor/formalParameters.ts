@@ -7,20 +7,20 @@ import {
     ListVisitor,
     isFormalParameterListType,
 } from '../listVisitor';
-import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
+import { ApexErrorTypeClass, ApexCommonTypeClass, isApexValidClass } from '../commonVisitor';
 
 export class FormalParametersTypeClass extends ParameterTypeClass<
     'formalParameters',
     FormalParameterListTypeClass | null
 > {
-    private constructor(value: FormalParameterListTypeClass | ErrorTypeClass | null = null) {
+    private constructor(value: FormalParameterListTypeClass | ApexErrorTypeClass | null = null) {
         super('formalParameters', value);
     }
 
     static create(ctx: FormalParametersContext): FormalParametersTypeClass {
         return new FormalParametersTypeClass(
             ctx.formalParameterList()
-                ? isValidClass(
+                ? isApexValidClass(
                       new ListVisitor().visit(ctx.formalParameterList()),
                       isFormalParameterListType,
                       'formalParameterList',
@@ -31,7 +31,7 @@ export class FormalParametersTypeClass extends ParameterTypeClass<
 }
 
 export const isFormalParametersType = (
-    target: CommonTypeClass<string>,
+    target: ApexCommonTypeClass<string>,
 ): target is FormalParametersTypeClass => {
     return target instanceof FormalParametersTypeClass;
 };

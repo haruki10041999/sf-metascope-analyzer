@@ -2,7 +2,7 @@ import { IdContext } from '@apexdevtools/apex-parser';
 
 import { IdValueTypeClass } from '.';
 
-import { CommonTypeClass } from '../commonVisitor';
+import { ApexCommonTypeClass } from '../commonVisitor';
 
 export class NormalIdTypeClass extends IdValueTypeClass<'id', string> {
     private constructor(value: string) {
@@ -14,6 +14,9 @@ export class NormalIdTypeClass extends IdValueTypeClass<'id', string> {
     }
 }
 
-export const isNormalIdType = (target: CommonTypeClass<string>): target is NormalIdTypeClass => {
+export const isNormalIdType = (
+    target: ApexCommonTypeClass<string>,
+): target is NormalIdTypeClass => {
     return target instanceof NormalIdTypeClass;
 };
+

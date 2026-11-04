@@ -2,19 +2,21 @@ import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import { describe, it } from 'node:test';
 
+import { makeFieldDeclarationDiff } from '../../src/analyzer/processor/Apex/diff/declaration';
 import {
-    makeBlockDiff,
-    makeGumTreeBlockDiff,
-    makeFieldDeclarationDiff,
-} from '../../src/analyzer/processor/Apex/diff/declaration';
-import {
-    ExpressionDiff,
+    BaseExpressionJsonDiff,
     makeExpressionDiff,
 } from '../../src/analyzer/processor/Apex/diff/expression';
 import { GumTreeDiff } from '../../src/analyzer/processor/Apex/diff/gumtree/diff';
 import { matchTrees } from '../../src/analyzer/processor/Apex/diff/gumtree/matcher';
 import { makeBlockTree } from '../../src/analyzer/processor/Apex/diff/gumtree/tree';
-import { StatementDiff, makeStatementDiff } from '../../src/analyzer/processor/Apex/diff/statement';
+import {
+    StatementJsonDiff,
+    makeBlockDiff,
+    makeGumTreeBlockDiff,
+    StatementReplacementDiff,
+    makeStatementDiff,
+} from '../../src/analyzer/processor/Apex/diff/statement';
 import {
     makeAnonymousUnitDiff,
     makeTriggerUnitDiff,
@@ -203,7 +205,7 @@ describe('expression and statement diff entry points', () => {
     it('compares nested expression nodes through makeExpressionDiff', async () => {
         const before = await toExpression('1 + 2');
         const after = await toExpression('1 + 3');
-        const diffs: ExpressionDiff = makeExpressionDiff(before, after);
+        const diffs: BaseExpressionJsonDiff = makeExpressionDiff(before, after);
         const literal = flattenTypedDiff(diffs).find(
             (diff) => diff.before === '2' && diff.after === '3',
         );
@@ -214,12 +216,13 @@ describe('expression and statement diff entry points', () => {
     it('compares one statement and its nested expression through makeStatementDiff', async () => {
         const before = (await toBody('Integer value = 1;')).block[0] as StatementJson;
         const after = (await toBody('Integer value = 2;')).block[0] as StatementJson;
-        const diffs: StatementDiff[] = makeStatementDiff(before, after);
+        const diff = makeStatementDiff(before, after);
 
-        assert.equal(diffs[0]?.kind, 'localVariable');
-        assert.equal(diffs[0]?.status, 'changed');
+        assert.ok('kind' in diff);
+        assert.equal(diff.kind, 'localVariable');
+        assert.equal(diff.status, 'changed');
         assert.ok(
-            flattenTypedDiff(diffs).some(
+            flattenTypedDiff(diff).some(
                 (diff) => diff.status === 'changed' && diff.before === '1' && diff.after === '2',
             ),
         );
@@ -238,8 +241,9 @@ describe('expression and statement diff entry points', () => {
             field: 'Account',
             key: ['ExternalId__c', 'Namespace__c'],
         };
-        const diff: StatementDiff[] = makeStatementDiff(before, after);
-        const keyList = diff[0]?.status === 'changed' ? diff[0].fields.key : undefined;
+        const diff: StatementJsonDiff<UpsertStatementJson> | StatementReplacementDiff =
+            makeStatementDiff(before, after);
+        const keyList = 'kind' in diff && 'fields' in diff ? diff.fields.key : undefined;
 
         assert.ok(Array.isArray(keyList));
         assert.deepEqual(
@@ -355,3 +359,88 @@ describe('gumtree diff on the example file', () => {
         });
     });
 });
+
+describe('typed statement diff follows the policy', () => {
+    const blockDiff = async (before: string, after: string) =>
+        makeBlockDiff((await toBody(before)).block, (await toBody(after)).block);
+    const fieldsOf = (value: unknown) => (value as { fields: Record<string, any> }).fields;
+
+    it('compares a statement moved out of a nested block with its original statement', async () => {
+        const [moved] = await blockDiff('if (x) { a(1); } b();', 'a(1); if (x) { } b();');
+
+        // 移動元の文と比べるので、中身は同じ (moved) になる。kind / sourceKeys は中身 (value) から分ける
+        const item = moved as Record<string, any>;
+        assert.equal(item.status, 'moved');
+        assert.equal(item.kind, 'expression');
+        assert.equal(item.sourceKeys.objectKey.before, undefined, 'objectKey は同じなので単体');
+        assert.ok(!('kind' in item.value) && !('sourceKeys' in item.value));
+    });
+
+    it('diffs new expressions structurally even though they have an init kind', async () => {
+        const diff = await blockDiff(
+            "Map<String, Integer> m = new Map<String, Integer>{ 'a' => 1 };",
+            "Map<String, Integer> m = new Map<String, Integer>{ 'a' => 2 };",
+        );
+        const init = flattenTypedDiff(diff).find((item) => 'collection' in fieldsOfOrEmpty(item));
+
+        assert.ok(init, 'new Map の差分が fields (collection / generic / init) を持つ');
+        assert.ok(
+            flattenTypedDiff(diff).some(
+                (item) => item.status === 'changed' && item.before === '1' && item.after === '2',
+            ),
+        );
+    });
+
+    it('treats the literals of a when clause as a set', async () => {
+        const diff = await blockDiff(
+            'switch on x { when 1, 2 { a(); } when else { b(); } }',
+            'switch on x { when 2, 1 { a(); } when else { b(); } }',
+        );
+        const when = fieldsOf(fieldsOf(diff[0]).block[0]);
+        const literals = fieldsOf(when.condition).condition as { status: string }[];
+
+        assert.deepEqual(
+            literals.map((item) => item.status),
+            ['unchanged', 'unchanged'],
+        );
+    });
+
+    it('pairs try / catch / finally clauses only with the same kind of clause', async () => {
+        const diff = await blockDiff(
+            'try { a(); } finally { c(); }',
+            'try { a(); } catch (Exception e) { d(); } finally { c(1); }',
+        );
+        const clauses = fieldsOf(diff[0]).block as { status: string; index: unknown }[];
+
+        assert.deepEqual(
+            clauses.map((item) => [item.status, item.index]),
+            [
+                ['unchanged', { before: 0, after: 0 }],
+                ['added', 1],
+                ['changed', { before: 1, after: 2 }],
+            ],
+        );
+    });
+
+    it('pairs local variables by name', async () => {
+        const diff = await blockDiff('Integer a = 1, b = 2;', 'Integer b = 2, a = 3;');
+        const variants = fieldsOf(fieldsOf(diff[0]).variable).variants as {
+            status: string;
+            match: string;
+            index: unknown;
+        }[];
+
+        assert.deepEqual(
+            variants.map((item) => [item.status, item.match, item.index]),
+            [
+                ['changed', 'key', { before: 0, after: 1 }],
+                ['unchanged', 'identical', { before: 1, after: 0 }],
+            ],
+        );
+    });
+});
+
+const fieldsOfOrEmpty = (item: Record<string, unknown>): Record<string, unknown> =>
+    typeof item.fields === 'object' && item.fields !== null
+        ? (item.fields as Record<string, unknown>)
+        : {};

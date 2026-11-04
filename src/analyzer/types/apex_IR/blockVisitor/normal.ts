@@ -8,16 +8,16 @@ import {
     isNormalStatementType,
 } from '../statementVisitor';
 
-import { ErrorTypeClass, CommonTypeClass, isValidClassList } from '../commonVisitor';
+import { ApexErrorTypeClass, ApexCommonTypeClass, isApexValidClassList } from '../commonVisitor';
 
 export class NormalBlockTypeClass extends BlockListTypeClass<'block', NormalStatementTypeClass> {
-    private constructor(value: (NormalStatementTypeClass | ErrorTypeClass)[]) {
+    private constructor(value: (NormalStatementTypeClass | ApexErrorTypeClass)[]) {
         super('block', value);
     }
 
     static create(ctx: BlockContext): NormalBlockTypeClass {
         return new NormalBlockTypeClass(
-            isValidClassList(
+            isApexValidClassList(
                 ctx.statement_list(),
                 (ctx) => new StatementVisitor().visit(ctx),
                 isNormalStatementType,
@@ -28,7 +28,8 @@ export class NormalBlockTypeClass extends BlockListTypeClass<'block', NormalStat
 }
 
 export const isNormalBlockType = (
-    target: CommonTypeClass<string>,
+    target: ApexCommonTypeClass<string>,
 ): target is NormalBlockTypeClass => {
     return target instanceof NormalBlockTypeClass;
 };
+

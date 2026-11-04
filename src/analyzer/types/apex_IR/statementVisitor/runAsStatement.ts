@@ -4,17 +4,17 @@ import { StatementTypeClass } from '../statementVisitor';
 
 import { NormalBlockTypeClass, BlockVisitor, isNormalBlockType } from '../blockVisitor';
 import { ExpressionListTypeClass, ListVisitor, isExpressionListType } from '../listVisitor';
-import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
+import { ApexErrorTypeClass, ApexCommonTypeClass, isApexValidClass } from '../commonVisitor';
 
 export class RunAsStatementTypeClass extends StatementTypeClass<
     'runAsStatement',
     ExpressionListTypeClass
 > {
-    private block: NormalBlockTypeClass | ErrorTypeClass;
+    private block: NormalBlockTypeClass | ApexErrorTypeClass;
 
     private constructor(
-        value: ExpressionListTypeClass | ErrorTypeClass,
-        block: NormalBlockTypeClass | ErrorTypeClass,
+        value: ExpressionListTypeClass | ApexErrorTypeClass,
+        block: NormalBlockTypeClass | ApexErrorTypeClass,
     ) {
         super('runAsStatement', value);
         this.block = block;
@@ -26,22 +26,23 @@ export class RunAsStatementTypeClass extends StatementTypeClass<
         }
 
         return new RunAsStatementTypeClass(
-            isValidClass(
+            isApexValidClass(
                 new ListVisitor().visit(ctx.expressionList()),
                 isExpressionListType,
                 'expressionList',
             ),
-            isValidClass(new BlockVisitor().visit(ctx.block()), isNormalBlockType, 'block'),
+            isApexValidClass(new BlockVisitor().visit(ctx.block()), isNormalBlockType, 'block'),
         );
     }
 
-    getBlock(): NormalBlockTypeClass | ErrorTypeClass {
+    getBlock(): NormalBlockTypeClass | ApexErrorTypeClass {
         return this.block;
     }
 }
 
 export const isRunAsStatementType = (
-    target: CommonTypeClass<string>,
+    target: ApexCommonTypeClass<string>,
 ): target is RunAsStatementTypeClass => {
     return target instanceof RunAsStatementTypeClass;
 };
+

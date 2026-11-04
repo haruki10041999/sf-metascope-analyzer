@@ -13,17 +13,17 @@ import {
     makeOptionalDiff,
     makeSetDiff,
     makeValueDiff,
-} from '../commons';
-import { SubQueryDiff, makeSubQueryDiff } from './subQuery';
-import { SoqlFunctionDiff, makeSoqlFunctionDiff } from './soqlFunction';
-import { TypeOfDiff, makeTypeOfDiff } from './typeof';
+} from '../../../commons/diff/commons';
+import { SubQueryJsonDiff, makeSubQueryDiff } from './subQuery';
+import { SoqlFunctionJsonDiff, makeSoqlFunctionDiff } from './soqlFunction';
+import { TypeOfJsonDiff, makeTypeOfDiff } from './typeof';
 
 export type FieldPartDiff = (ValueDiff<string> | { status: 'added' | 'removed'; value: string })[];
 
 export type FieldPathDiff =
     { status: 'unchanged'; value: string[] } | { status: 'changed'; parts: FieldPartDiff };
 
-export type FieldDiff = {
+export type FieldJsonDiff = {
     type: 'field';
     field: FieldPathDiff;
 };
@@ -48,7 +48,7 @@ export const makeFieldPathDiff = (before: string[], after: string[]): FieldPathD
     return { status: 'changed', parts: parts.reverse() };
 };
 
-export const makeFieldDiff = (before: FieldJson, after: FieldJson): FieldDiff => ({
+export const makeFieldDiff = (before: FieldJson, after: FieldJson): FieldJsonDiff => ({
     type: 'field',
     field: makeFieldPathDiff(before.field, after.field),
 });
@@ -57,28 +57,28 @@ export type SelectEntryFieldsDiff =
     | {
           type: 'field';
           alias: OptionalDiff<string, ValueDiff<string>>;
-          content: FieldDiff;
+          content: FieldJsonDiff;
       }
     | {
           type: 'soqlFunction';
           alias: OptionalDiff<string, ValueDiff<string>>;
-          content: SoqlFunctionDiff;
+          content: SoqlFunctionJsonDiff;
       }
     | {
           type: 'typeOf';
           alias: OptionalDiff<string, ValueDiff<string>>;
-          content: TypeOfDiff;
+          content: TypeOfJsonDiff;
       };
 
 type SelectEntryNode = Extract<SelectEntryJson, { kind: 'selectEntry' }>;
 
-export type SelectEntryDiff =
-    NodeDiff<'selectEntry', SelectEntryNode, SelectEntryFieldsDiff> | SubQueryDiff;
+export type SelectEntryJsonDiff =
+    NodeDiff<'selectEntry', SelectEntryNode, SelectEntryFieldsDiff> | SubQueryJsonDiff;
 
 export type SelectEntriesDiff = ListItemDiff<
     'selectEntry',
     SelectEntryJson | ErrorJson,
-    SelectEntryDiff
+    SelectEntryJsonDiff
 >;
 
 const selectEntryIdentity = (entry: SelectEntryJson | ErrorJson): string => {
@@ -97,7 +97,7 @@ export const makeSelectEntryDiff = (
     before: SelectEntryJson | ErrorJson,
     after: SelectEntryJson | ErrorJson,
     match: Match = 'slot',
-): SelectEntryDiff => {
+): SelectEntryJsonDiff => {
     if (before.kind === 'subQuery' && after.kind === 'subQuery') {
         const subQueryMatch =
             before.sourceKeys.objectKey === after.sourceKeys.objectKey ? match : 'key';
@@ -144,14 +144,14 @@ export const makeSelectEntriesDiff = (
 ): SelectEntriesDiff[] =>
     makeSetDiff('selectEntry', before, after, makeSelectEntryDiff, sources, selectEntryIdentity);
 
-export type SelectDiff =
+export type SelectJsonDiff =
     { field: SelectEntriesDiff[] } | ValueDiff<(SelectEntryJson | ErrorJson)[] | ErrorJson>;
 
 export const makeSelectDiff = (
     before: (SelectEntryJson | ErrorJson)[] | ErrorJson,
     after: (SelectEntryJson | ErrorJson)[] | ErrorJson,
     sources?: Sources,
-): SelectDiff => {
+): SelectJsonDiff => {
     if (Array.isArray(before) && Array.isArray(after)) {
         return { field: makeSelectEntriesDiff(before, after, sources) };
     }

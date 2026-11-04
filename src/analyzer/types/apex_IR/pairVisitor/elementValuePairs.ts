@@ -7,13 +7,13 @@ import {
     isElementValuePairType,
 } from '.';
 
-import { ErrorTypeClass, CommonTypeClass, isValidClassList } from '../commonVisitor';
+import { ApexErrorTypeClass, ApexCommonTypeClass, isApexValidClassList } from '../commonVisitor';
 
 export class ElementValuePairsTypeClass extends PairListTypeClass<
     'elementValuePairs',
     ElementValuePairTypeClass
 > {
-    private constructor(value: (ElementValuePairTypeClass | ErrorTypeClass)[]) {
+    private constructor(value: (ElementValuePairTypeClass | ApexErrorTypeClass)[]) {
         super('elementValuePairs', value);
     }
 
@@ -23,7 +23,7 @@ export class ElementValuePairsTypeClass extends PairListTypeClass<
         }
 
         return new ElementValuePairsTypeClass(
-            isValidClassList(
+            isApexValidClassList(
                 ctx.elementValuePair_list(),
                 (ctx) => new PairVisitor().visit(ctx),
                 isElementValuePairType,
@@ -34,7 +34,7 @@ export class ElementValuePairsTypeClass extends PairListTypeClass<
 }
 
 export const isElementValuePairsType = (
-    target: CommonTypeClass<string>,
+    target: ApexCommonTypeClass<string>,
 ): target is ElementValuePairsTypeClass => {
     return target instanceof ElementValuePairsTypeClass;
 };

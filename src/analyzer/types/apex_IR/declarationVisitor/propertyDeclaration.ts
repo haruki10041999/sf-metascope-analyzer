@@ -5,18 +5,23 @@ import { DeclarationTypeClass } from '.';
 import { NormalIdTypeClass, IdVisitor, isNormalIdType } from '../idVisitor';
 import { PropertyBlockTypeClass, BlockVisitor, isPropertyBlockType } from '../blockVisitor';
 import { TypeRefTypeClass, TypeVisitor, isTypeRefType } from '../typeVisitor';
-import { ErrorTypeClass, CommonTypeClass, isValidClass, isValidClassList } from '../commonVisitor';
+import {
+    ApexErrorTypeClass,
+    ApexCommonTypeClass,
+    isApexValidClass,
+    isApexValidClassList,
+} from '../commonVisitor';
 
 export class PropertyDeclarationTypeClass extends DeclarationTypeClass<
     'propertyDeclaration',
     NormalIdTypeClass
 > {
-    private valueType: TypeRefTypeClass | ErrorTypeClass;
-    private block: (PropertyBlockTypeClass | ErrorTypeClass)[] = [];
+    private valueType: TypeRefTypeClass | ApexErrorTypeClass;
+    private block: (PropertyBlockTypeClass | ApexErrorTypeClass)[] = [];
     private constructor(
-        value: NormalIdTypeClass | ErrorTypeClass,
-        valueType: TypeRefTypeClass | ErrorTypeClass,
-        block: (PropertyBlockTypeClass | ErrorTypeClass)[],
+        value: NormalIdTypeClass | ApexErrorTypeClass,
+        valueType: TypeRefTypeClass | ApexErrorTypeClass,
+        block: (PropertyBlockTypeClass | ApexErrorTypeClass)[],
     ) {
         super('propertyDeclaration', value);
         this.valueType = valueType;
@@ -29,9 +34,9 @@ export class PropertyDeclarationTypeClass extends DeclarationTypeClass<
         }
 
         return new PropertyDeclarationTypeClass(
-            isValidClass(new IdVisitor().visit(ctx.id()), isNormalIdType, 'id'),
-            isValidClass(new TypeVisitor().visit(ctx.typeRef()), isTypeRefType, 'typeRef'),
-            isValidClassList(
+            isApexValidClass(new IdVisitor().visit(ctx.id()), isNormalIdType, 'id'),
+            isApexValidClass(new TypeVisitor().visit(ctx.typeRef()), isTypeRefType, 'typeRef'),
+            isApexValidClassList(
                 ctx.propertyBlock_list(),
                 (ctx) => new BlockVisitor().visit(ctx),
                 isPropertyBlockType,
@@ -40,17 +45,17 @@ export class PropertyDeclarationTypeClass extends DeclarationTypeClass<
         );
     }
 
-    getValueType(): TypeRefTypeClass | ErrorTypeClass {
+    getValueType(): TypeRefTypeClass | ApexErrorTypeClass {
         return this.valueType;
     }
 
-    getBlock(): (PropertyBlockTypeClass | ErrorTypeClass)[] {
+    getBlock(): (PropertyBlockTypeClass | ApexErrorTypeClass)[] {
         return this.block;
     }
 }
 
 export const isPropertyDeclarationType = (
-    target: CommonTypeClass<string>,
+    target: ApexCommonTypeClass<string>,
 ): target is PropertyDeclarationTypeClass => {
     return target instanceof PropertyDeclarationTypeClass;
 };

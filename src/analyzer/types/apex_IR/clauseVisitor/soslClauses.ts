@@ -17,23 +17,28 @@ import {
     isUpdateListType,
 } from '../listVisitor';
 import { SearchGroupTypeClass, QueryVisitor, isSearchGroupType } from '../queryVisitor';
-import { ErrorTypeClass, CommonTypeClass, isValidClass, isValidClassList } from '../commonVisitor';
+import {
+    ApexErrorTypeClass,
+    ApexCommonTypeClass,
+    isApexValidClass,
+    isApexValidClassList,
+} from '../commonVisitor';
 
 export class SoslClausesTypeClass extends ClauseTypeClass<
     'soslClauses',
     SearchGroupTypeClass | null
 > {
-    private fieldSpecList: FieldSpecListTypeClass | ErrorTypeClass | null;
-    private withList: (SoslWithClauseTypeClass | ErrorTypeClass)[] | null;
-    private limitClause: LimitClauseTypeClass | ErrorTypeClass | null;
-    private updateList: UpdateListTypeClass | ErrorTypeClass | null;
+    private fieldSpecList: FieldSpecListTypeClass | ApexErrorTypeClass | null;
+    private withList: (SoslWithClauseTypeClass | ApexErrorTypeClass)[] | null;
+    private limitClause: LimitClauseTypeClass | ApexErrorTypeClass | null;
+    private updateList: UpdateListTypeClass | ApexErrorTypeClass | null;
 
     private constructor(
-        value: SearchGroupTypeClass | ErrorTypeClass | null,
-        fieldSpecList: FieldSpecListTypeClass | ErrorTypeClass | null,
-        withList: (SoslWithClauseTypeClass | ErrorTypeClass)[] | null,
-        limitClause: LimitClauseTypeClass | ErrorTypeClass | null,
-        updateList: UpdateListTypeClass | ErrorTypeClass | null,
+        value: SearchGroupTypeClass | ApexErrorTypeClass | null,
+        fieldSpecList: FieldSpecListTypeClass | ApexErrorTypeClass | null,
+        withList: (SoslWithClauseTypeClass | ApexErrorTypeClass)[] | null,
+        limitClause: LimitClauseTypeClass | ApexErrorTypeClass | null,
+        updateList: UpdateListTypeClass | ApexErrorTypeClass | null,
     ) {
         super('soslClauses', value);
         this.fieldSpecList = fieldSpecList;
@@ -46,21 +51,21 @@ export class SoslClausesTypeClass extends ClauseTypeClass<
         // `IN ... FIELDS` / `RETURNING ...` はいずれも任意
         return new SoslClausesTypeClass(
             ctx.searchGroup()
-                ? isValidClass(
+                ? isApexValidClass(
                       new QueryVisitor().visit(ctx.searchGroup()),
                       isSearchGroupType,
                       'searchGroup',
                   )
                 : null,
             ctx.fieldSpecList()
-                ? isValidClass(
+                ? isApexValidClass(
                       new ListVisitor().visit(ctx.fieldSpecList()),
                       isFieldSpecListType,
                       'fieldSpecList',
                   )
                 : null,
             ctx.soslWithClause_list() && ctx.soslWithClause_list().length > 0
-                ? isValidClassList(
+                ? isApexValidClassList(
                       ctx.soslWithClause_list(),
                       (ctx) => new ClauseVisitor().visit(ctx),
                       isSoslWithClauseType,
@@ -68,14 +73,14 @@ export class SoslClausesTypeClass extends ClauseTypeClass<
                   )
                 : null,
             ctx.limitClause()
-                ? isValidClass(
+                ? isApexValidClass(
                       new ClauseVisitor().visit(ctx.limitClause()),
                       isLimitClauseType,
                       'limitClause',
                   )
                 : null,
             ctx.UPDATE() && ctx.updateList()
-                ? isValidClass(
+                ? isApexValidClass(
                       new ListVisitor().visit(ctx.updateList()),
                       isUpdateListType,
                       'updateList',
@@ -84,25 +89,26 @@ export class SoslClausesTypeClass extends ClauseTypeClass<
         );
     }
 
-    getFieldSpecList(): FieldSpecListTypeClass | ErrorTypeClass | null {
+    getFieldSpecList(): FieldSpecListTypeClass | ApexErrorTypeClass | null {
         return this.fieldSpecList;
     }
 
-    getWithList(): (SoslWithClauseTypeClass | ErrorTypeClass)[] | null {
+    getWithList(): (SoslWithClauseTypeClass | ApexErrorTypeClass)[] | null {
         return this.withList;
     }
 
-    getLimitClause(): LimitClauseTypeClass | ErrorTypeClass | null {
+    getLimitClause(): LimitClauseTypeClass | ApexErrorTypeClass | null {
         return this.limitClause;
     }
 
-    getUpdateList(): UpdateListTypeClass | ErrorTypeClass | null {
+    getUpdateList(): UpdateListTypeClass | ApexErrorTypeClass | null {
         return this.updateList;
     }
 }
 
 export const isSoslClausesType = (
-    target: CommonTypeClass<string>,
+    target: ApexCommonTypeClass<string>,
 ): target is SoslClausesTypeClass => {
     return target instanceof SoslClausesTypeClass;
 };
+

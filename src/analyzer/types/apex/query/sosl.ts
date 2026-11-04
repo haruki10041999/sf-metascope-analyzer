@@ -1,13 +1,5 @@
-import {
-    ErrorJson,
-    JsonType,
-    makeJsonType,
-    convertValue,
-    ConvertType,
-    ConvertWithError,
-    isErrorNode,
-    makeErrorJson,
-} from '../commons';
+import { convertValue, ConvertType, ConvertWithError, isErrorNode } from '../commons';
+import { ErrorJson, JsonType, makeJsonType, makeErrorJson } from '../../commons';
 
 import {
     FieldSpecType,

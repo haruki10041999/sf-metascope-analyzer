@@ -4,7 +4,7 @@ import {
     ContinueStatementTypeClass,
     DeleteStatementTypeClass,
     DoWhileStatementTypeClass,
-    ErrorTypeClass,
+    ApexErrorTypeClass,
     ExpressionStatementTypeClass,
     ForStatementTypeClass,
     IfStatementTypeClass,
@@ -295,8 +295,8 @@ export const makeIfStatementAssignRule: AssignForValueRule<IfStatementTypeClass,
                     isValid: (
                         target: unknown,
                     ): target is {
-                        value: ParExpressionTypeClass | 'else' | ErrorTypeClass;
-                        block: NormalStatementTypeClass | ErrorTypeClass;
+                        value: ParExpressionTypeClass | 'else' | ApexErrorTypeClass;
+                        block: NormalStatementTypeClass | ApexErrorTypeClass;
                     }[] =>
                         Array.isArray(target) &&
                         target.every(
@@ -311,8 +311,8 @@ export const makeIfStatementAssignRule: AssignForValueRule<IfStatementTypeClass,
                         ),
                     construct: (
                         values: {
-                            value: ParExpressionTypeClass | string | ErrorTypeClass;
-                            block: NormalStatementTypeClass | ErrorTypeClass;
+                            value: ParExpressionTypeClass | string | ApexErrorTypeClass;
+                            block: NormalStatementTypeClass | ApexErrorTypeClass;
                         }[],
                     ) => {
                         return values.map((v) => {
@@ -792,3 +792,4 @@ export const makeStatementAssignRule: AssignForValueRule<NormalStatementTypeClas
             };
         },
     };
+

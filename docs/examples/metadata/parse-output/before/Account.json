@@ -1,0 +1,242 @@
+{
+  "filePath": "Account",
+  "resolvedError": [],
+  "dataType": "object",
+  "result": {
+    "id": "Account",
+    "base": {
+      "kind": "object",
+      "sourceKeys": {
+        "objectKey": "object_430341013dfd0604",
+        "sourceKey": "object_d3c23da4c239845d"
+      },
+      "apiName": "Account",
+      "objectType": "standard",
+      "sharingModel": "ReadWrite",
+      "enableHistory": true,
+      "fields": [
+        {
+          "kind": "field",
+          "sourceKeys": {
+            "objectKey": "field_108148fbe373bc5a",
+            "sourceKey": "field_fc9abb3ca21d6dab"
+          },
+          "apiName": "Tier__c",
+          "label": "Tier",
+          "type": "Picklist",
+          "required": false,
+          "valueSet": {
+            "restricted": true,
+            "sorted": false,
+            "values": [
+              {
+                "kind": "picklistValue",
+                "sourceKeys": {
+                  "objectKey": "picklistValue_8892b2345ea4b0cf",
+                  "sourceKey": "picklistValue_a60ac581e3e13487"
+                },
+                "fullName": "Gold",
+                "label": "Gold",
+                "default": true
+              },
+              {
+                "kind": "picklistValue",
+                "sourceKeys": {
+                  "objectKey": "picklistValue_5ca05c9404ebde40",
+                  "sourceKey": "picklistValue_5121773bd65c250e"
+                },
+                "fullName": "Silver",
+                "label": "Silver",
+                "default": false
+              },
+              {
+                "kind": "picklistValue",
+                "sourceKeys": {
+                  "objectKey": "picklistValue_cbe9cfbf5ea776b8",
+                  "sourceKey": "picklistValue_4a0692dc56ffce1d"
+                },
+                "fullName": "Bronze",
+                "label": "Bronze",
+                "default": false
+              }
+            ]
+          }
+        }
+      ],
+      "listViews": [
+        {
+          "kind": "listView",
+          "sourceKeys": {
+            "objectKey": "listView_7a0f3e1f72139cff",
+            "sourceKey": "listView_ef3e138b50fc4fc3"
+          },
+          "fullName": "AllAccounts",
+          "label": "All Accounts",
+          "filterScope": "Everything",
+          "columns": [
+            "ACCOUNT.NAME",
+            "ACCOUNT.TYPE",
+            "Tier__c"
+          ]
+        }
+      ],
+      "compactLayouts": [
+        {
+          "kind": "compactLayout",
+          "sourceKeys": {
+            "objectKey": "compactLayout_eafc2f29d0af8e85",
+            "sourceKey": "compactLayout_54246797a77fa97d"
+          },
+          "fullName": "AccountCompact",
+          "label": "Account Compact",
+          "fields": [
+            "Name",
+            "Tier__c"
+          ]
+        }
+      ]
+    },
+    "sourceObject": [
+      {
+        "objectKey": "picklistValue_8892b2345ea4b0cf",
+        "context": "<value>\n                <fullName>Gold</fullName>\n                <default>true</default>\n                <label>Gold</label>\n            </value>",
+        "source": [
+          {
+            "sourceKey": "picklistValue_a60ac581e3e13487",
+            "filePath": "Account/fields/Tier__c.field-meta.xml",
+            "start": {
+              "offset": 344,
+              "line": 11,
+              "column": 12
+            },
+            "end": {
+              "offset": 490,
+              "line": 15,
+              "column": 20
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "picklistValue_5ca05c9404ebde40",
+        "context": "<value>\n                <fullName>Silver</fullName>\n                <default>false</default>\n                <label>Silver</label>\n            </value>",
+        "source": [
+          {
+            "sourceKey": "picklistValue_5121773bd65c250e",
+            "filePath": "Account/fields/Tier__c.field-meta.xml",
+            "start": {
+              "offset": 503,
+              "line": 16,
+              "column": 12
+            },
+            "end": {
+              "offset": 654,
+              "line": 20,
+              "column": 20
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "picklistValue_cbe9cfbf5ea776b8",
+        "context": "<value>\n                <fullName>Bronze</fullName>\n                <default>false</default>\n                <label>Bronze</label>\n            </value>",
+        "source": [
+          {
+            "sourceKey": "picklistValue_4a0692dc56ffce1d",
+            "filePath": "Account/fields/Tier__c.field-meta.xml",
+            "start": {
+              "offset": 667,
+              "line": 21,
+              "column": 12
+            },
+            "end": {
+              "offset": 818,
+              "line": 25,
+              "column": 20
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "field_108148fbe373bc5a",
+        "context": "<CustomField xmlns=\"http://soap.sforce.com/2006/04/metadata\">\n    <fullName>Tier__c</fullName>\n    <label>Tier</label>\n    <required>false</required>\n    <type>Picklist</type>\n    <valueSet>\n        <restricted>true</restricted>\n        <valueSetDefinition>\n            <sorted>false</sorted>\n            <value>\n                <fullName>Gold</fullName>\n                <default>true</default>\n                <label>Gold</label>\n            </value>\n            <value>\n                <fullName>Silver</fullName>\n                <default>false</default>\n                <label>Silver</label>\n            </value>\n            <value>\n                <fullName>Bronze</fullName>\n                <default>false</default>\n                <label>Bronze</label>\n            </value>\n        </valueSetDefinition>\n    </valueSet>\n</CustomField>",
+        "source": [
+          {
+            "sourceKey": "field_fc9abb3ca21d6dab",
+            "filePath": "Account/fields/Tier__c.field-meta.xml",
+            "start": {
+              "offset": 39,
+              "line": 2,
+              "column": 0
+            },
+            "end": {
+              "offset": 879,
+              "line": 28,
+              "column": 14
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "listView_7a0f3e1f72139cff",
+        "context": "<ListView xmlns=\"http://soap.sforce.com/2006/04/metadata\">\n    <fullName>AllAccounts</fullName>\n    <columns>ACCOUNT.NAME</columns>\n    <columns>ACCOUNT.TYPE</columns>\n    <columns>Tier__c</columns>\n    <filterScope>Everything</filterScope>\n    <label>All Accounts</label>\n</ListView>",
+        "source": [
+          {
+            "sourceKey": "listView_ef3e138b50fc4fc3",
+            "filePath": "Account/listViews/AllAccounts.listView-meta.xml",
+            "start": {
+              "offset": 39,
+              "line": 2,
+              "column": 0
+            },
+            "end": {
+              "offset": 323,
+              "line": 9,
+              "column": 11
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "compactLayout_eafc2f29d0af8e85",
+        "context": "<CompactLayout xmlns=\"http://soap.sforce.com/2006/04/metadata\">\n    <fullName>AccountCompact</fullName>\n    <fields>Name</fields>\n    <fields>Tier__c</fields>\n    <label>Account Compact</label>\n</CompactLayout>",
+        "source": [
+          {
+            "sourceKey": "compactLayout_54246797a77fa97d",
+            "filePath": "Account/compactLayouts/AccountCompact.compactLayout-meta.xml",
+            "start": {
+              "offset": 39,
+              "line": 2,
+              "column": 0
+            },
+            "end": {
+              "offset": 249,
+              "line": 7,
+              "column": 16
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "object_430341013dfd0604",
+        "context": "<CustomObject xmlns=\"http://soap.sforce.com/2006/04/metadata\">\n    <enableHistory>true</enableHistory>\n    <sharingModel>ReadWrite</sharingModel>\n</CustomObject>",
+        "source": [
+          {
+            "sourceKey": "object_d3c23da4c239845d",
+            "filePath": "Account/Account.object-meta.xml",
+            "start": {
+              "offset": 39,
+              "line": 2,
+              "column": 0
+            },
+            "end": {
+              "offset": 200,
+              "line": 5,
+              "column": 15
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

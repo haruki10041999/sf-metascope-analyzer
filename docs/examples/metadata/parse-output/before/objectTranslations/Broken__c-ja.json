@@ -1,0 +1,71 @@
+{
+  "filePath": "Broken__c-ja",
+  "resolvedError": [],
+  "dataType": "objectTranslation",
+  "result": {
+    "id": "Broken__c-ja",
+    "base": {
+      "kind": "objectTranslation",
+      "sourceKeys": {
+        "objectKey": "objectTranslation_8c6f9bbb38309e14",
+        "sourceKey": "objectTranslation_d3f352bd3fa4c751"
+      },
+      "objectApiName": "Broken__c",
+      "locale": "ja",
+      "nameFieldLabel": "壊れた",
+      "fields": [
+        {
+          "kind": "fieldTranslation",
+          "sourceKeys": {
+            "objectKey": "fieldTranslation_f470dccc52d910c4",
+            "sourceKey": "fieldTranslation_ac7b864be35b8a2c"
+          },
+          "name": "Code__c",
+          "label": "コード"
+        }
+      ]
+    },
+    "sourceObject": [
+      {
+        "objectKey": "fieldTranslation_f470dccc52d910c4",
+        "context": "<CustomFieldTranslation xmlns=\"http://soap.sforce.com/2006/04/metadata\">\n    <label>コード</label>\n    <name>Code__c</name>\n</CustomFieldTranslation>",
+        "source": [
+          {
+            "sourceKey": "fieldTranslation_ac7b864be35b8a2c",
+            "filePath": "Broken__c-ja/Code__c.fieldTranslation-meta.xml",
+            "start": {
+              "offset": 39,
+              "line": 2,
+              "column": 0
+            },
+            "end": {
+              "offset": 185,
+              "line": 5,
+              "column": 25
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "objectTranslation_8c6f9bbb38309e14",
+        "context": "<CustomObjectTranslation xmlns=\"http://soap.sforce.com/2006/04/metadata\">\n    <nameFieldLabel>壊れた</nameFieldLabel>\n</CustomObjectTranslation>",
+        "source": [
+          {
+            "sourceKey": "objectTranslation_d3f352bd3fa4c751",
+            "filePath": "Broken__c-ja/Broken__c-ja.objectTranslation-meta.xml",
+            "start": {
+              "offset": 39,
+              "line": 2,
+              "column": 0
+            },
+            "end": {
+              "offset": 180,
+              "line": 4,
+              "column": 26
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

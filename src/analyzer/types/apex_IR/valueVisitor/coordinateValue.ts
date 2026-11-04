@@ -8,13 +8,15 @@ import {
     isBoundExpressionType,
 } from '../expressionVisitor';
 import { SignedNumberTypeClass, LiteralVisitor, isSignedNumberType } from '../literalVisitor';
-import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
+import { ApexErrorTypeClass, ApexCommonTypeClass, isApexValidClass } from '../commonVisitor';
 
 export class CoordinateValueTypeClass extends ValueTypeClass<
     'coordinateValue',
     SignedNumberTypeClass | BoundExpressionTypeClass
 > {
-    private constructor(value: SignedNumberTypeClass | BoundExpressionTypeClass | ErrorTypeClass) {
+    private constructor(
+        value: SignedNumberTypeClass | BoundExpressionTypeClass | ApexErrorTypeClass,
+    ) {
         super('coordinateValue', value);
     }
 
@@ -25,12 +27,12 @@ export class CoordinateValueTypeClass extends ValueTypeClass<
 
         return new CoordinateValueTypeClass(
             ctx.signedNumber()
-                ? isValidClass(
+                ? isApexValidClass(
                       new LiteralVisitor().visit(ctx.signedNumber()),
                       isSignedNumberType,
                       'signedNumber',
                   )
-                : isValidClass(
+                : isApexValidClass(
                       new ExpressionVisitor().visit(ctx.boundExpression()),
                       isBoundExpressionType,
                       'boundExpression',
@@ -40,7 +42,8 @@ export class CoordinateValueTypeClass extends ValueTypeClass<
 }
 
 export const isCoordinateValueType = (
-    target: CommonTypeClass<string>,
+    target: ApexCommonTypeClass<string>,
 ): target is CoordinateValueTypeClass => {
     return target instanceof CoordinateValueTypeClass;
 };
+

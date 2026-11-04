@@ -32,28 +32,28 @@ import {
     isOffsetClauseType,
     isAllRowsClauseType,
 } from '../clauseVisitor';
-import { CommonTypeClass, ErrorTypeClass, isValidClass } from '../commonVisitor';
+import { ApexCommonTypeClass, ApexErrorTypeClass, isApexValidClass } from '../commonVisitor';
 
 export class NormalQueryTypeClass extends SoqlQueryTypeClass<'query', SelectListTypeClass> {
-    private usingScope: UsingScopeTypeClass | ErrorTypeClass | null = null;
-    private withClause: WithClauseTypeClass | ErrorTypeClass | null = null;
-    private groupByClause: GroupByClauseTypeClass | ErrorTypeClass | null = null;
-    private offsetClause: OffsetClauseTypeClass | ErrorTypeClass | null = null;
-    private allRowsClause: AllRowsClauseTypeClass | ErrorTypeClass | null = null;
+    private usingScope: UsingScopeTypeClass | ApexErrorTypeClass | null = null;
+    private withClause: WithClauseTypeClass | ApexErrorTypeClass | null = null;
+    private groupByClause: GroupByClauseTypeClass | ApexErrorTypeClass | null = null;
+    private offsetClause: OffsetClauseTypeClass | ApexErrorTypeClass | null = null;
+    private allRowsClause: AllRowsClauseTypeClass | ApexErrorTypeClass | null = null;
 
     private constructor(
-        value: SelectListTypeClass | ErrorTypeClass,
-        from: FromNameListTypeClass | ErrorTypeClass,
-        forClause: ForClausesTypeClass | ErrorTypeClass | null,
-        usingScope: UsingScopeTypeClass | ErrorTypeClass | null,
-        whereClause: WhereClauseTypeClass | ErrorTypeClass | null,
-        withClause: WithClauseTypeClass | ErrorTypeClass | null,
-        groupByClause: GroupByClauseTypeClass | ErrorTypeClass | null,
-        orderByClause: OrderByClauseTypeClass | ErrorTypeClass | null,
-        limitClause: LimitClauseTypeClass | ErrorTypeClass | null,
-        offsetClause: OffsetClauseTypeClass | ErrorTypeClass | null,
-        allRowsClause: AllRowsClauseTypeClass | ErrorTypeClass | null,
-        updateList: UpdateListTypeClass | ErrorTypeClass | null,
+        value: SelectListTypeClass | ApexErrorTypeClass,
+        from: FromNameListTypeClass | ApexErrorTypeClass,
+        forClause: ForClausesTypeClass | ApexErrorTypeClass | null,
+        usingScope: UsingScopeTypeClass | ApexErrorTypeClass | null,
+        whereClause: WhereClauseTypeClass | ApexErrorTypeClass | null,
+        withClause: WithClauseTypeClass | ApexErrorTypeClass | null,
+        groupByClause: GroupByClauseTypeClass | ApexErrorTypeClass | null,
+        orderByClause: OrderByClauseTypeClass | ApexErrorTypeClass | null,
+        limitClause: LimitClauseTypeClass | ApexErrorTypeClass | null,
+        offsetClause: OffsetClauseTypeClass | ApexErrorTypeClass | null,
+        allRowsClause: AllRowsClauseTypeClass | ApexErrorTypeClass | null,
+        updateList: UpdateListTypeClass | ApexErrorTypeClass | null,
     ) {
         super('query', value, from, forClause, whereClause, orderByClause, limitClause, updateList);
         this.usingScope = usingScope;
@@ -69,78 +69,82 @@ export class NormalQueryTypeClass extends SoqlQueryTypeClass<'query', SelectList
         }
 
         return new NormalQueryTypeClass(
-            isValidClass(new ListVisitor().visit(ctx.selectList()), isSelectListType, 'selectList'),
-            isValidClass(
+            isApexValidClass(
+                new ListVisitor().visit(ctx.selectList()),
+                isSelectListType,
+                'selectList',
+            ),
+            isApexValidClass(
                 new ListVisitor().visit(ctx.fromNameList()),
                 isFromNameListType,
                 'fromNameList',
             ),
             // forClauses は文法上常に生成されるため、FOR が無ければ null にする
             ctx.forClauses() && ctx.forClauses().FOR_list().length > 0
-                ? isValidClass(
+                ? isApexValidClass(
                       new ClauseVisitor().visit(ctx.forClauses()),
                       isForClausesType,
                       'forClauses',
                   )
                 : null,
             ctx.usingScope()
-                ? isValidClass(
+                ? isApexValidClass(
                       new ClauseVisitor().visit(ctx.usingScope()),
                       isUsingScopeType,
                       'usingScope',
                   )
                 : null,
             ctx.whereClause()
-                ? isValidClass(
+                ? isApexValidClass(
                       new ClauseVisitor().visit(ctx.whereClause()),
                       isWhereClauseType,
                       'whereClause',
                   )
                 : null,
             ctx.withClause()
-                ? isValidClass(
+                ? isApexValidClass(
                       new ClauseVisitor().visit(ctx.withClause()),
                       isWithClauseType,
                       'withClause',
                   )
                 : null,
             ctx.groupByClause()
-                ? isValidClass(
+                ? isApexValidClass(
                       new ClauseVisitor().visit(ctx.groupByClause()),
                       isGroupByClauseType,
                       'groupByClause',
                   )
                 : null,
             ctx.orderByClause()
-                ? isValidClass(
+                ? isApexValidClass(
                       new ClauseVisitor().visit(ctx.orderByClause()),
                       isOrderByClauseType,
                       'orderByClause',
                   )
                 : null,
             ctx.limitClause()
-                ? isValidClass(
+                ? isApexValidClass(
                       new ClauseVisitor().visit(ctx.limitClause()),
                       isLimitClauseType,
                       'limitClause',
                   )
                 : null,
             ctx.offsetClause()
-                ? isValidClass(
+                ? isApexValidClass(
                       new ClauseVisitor().visit(ctx.offsetClause()),
                       isOffsetClauseType,
                       'offsetClause',
                   )
                 : null,
             ctx.allRowsClause()
-                ? isValidClass(
+                ? isApexValidClass(
                       new ClauseVisitor().visit(ctx.allRowsClause()),
                       isAllRowsClauseType,
                       'allRowsClause',
                   )
                 : null,
             ctx.updateList()
-                ? isValidClass(
+                ? isApexValidClass(
                       new ListVisitor().visit(ctx.updateList()),
                       isUpdateListType,
                       'updateList',
@@ -149,29 +153,30 @@ export class NormalQueryTypeClass extends SoqlQueryTypeClass<'query', SelectList
         );
     }
 
-    getUsingScope(): UsingScopeTypeClass | ErrorTypeClass | null {
+    getUsingScope(): UsingScopeTypeClass | ApexErrorTypeClass | null {
         return this.usingScope;
     }
 
-    getWithClause(): WithClauseTypeClass | ErrorTypeClass | null {
+    getWithClause(): WithClauseTypeClass | ApexErrorTypeClass | null {
         return this.withClause;
     }
 
-    getGroupByClause(): GroupByClauseTypeClass | ErrorTypeClass | null {
+    getGroupByClause(): GroupByClauseTypeClass | ApexErrorTypeClass | null {
         return this.groupByClause;
     }
 
-    getOffsetClause(): OffsetClauseTypeClass | ErrorTypeClass | null {
+    getOffsetClause(): OffsetClauseTypeClass | ApexErrorTypeClass | null {
         return this.offsetClause;
     }
 
-    getAllRowsClause(): AllRowsClauseTypeClass | ErrorTypeClass | null {
+    getAllRowsClause(): AllRowsClauseTypeClass | ApexErrorTypeClass | null {
         return this.allRowsClause;
     }
 }
 
 export const isNormalQueryType = (
-    target: CommonTypeClass<string>,
+    target: ApexCommonTypeClass<string>,
 ): target is NormalQueryTypeClass => {
     return target instanceof NormalQueryTypeClass;
 };
+

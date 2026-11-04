@@ -1,15 +1,7 @@
 import typia from 'typia';
 
-import {
-    ConvertExcludeError,
-    ErrorJson,
-    JsonType,
-    makeJsonType,
-    convertValue,
-    ConvertType,
-    isErrorNode,
-    makeErrorJson,
-} from '../commons';
+import { ConvertExcludeError, convertValue, ConvertType, isErrorNode } from '../commons';
+import { ErrorJson, JsonType, makeJsonType, makeErrorJson } from '../../commons';
 
 import {
     SoslWithClauseType,
@@ -188,4 +180,3 @@ export const makeSoslWithJson = (
         };
     }
 };
-

@@ -1,6 +1,6 @@
-import { ErrorTypeClass, CommonTypeClass } from '../commonVisitor';
+import { ApexErrorTypeClass, ApexCommonTypeClass } from '../commonVisitor';
 
-export class LiteralValueTypeClass<TName extends string, T> extends CommonTypeClass<TName> {
+export class LiteralValueTypeClass<TName extends string, T> extends ApexCommonTypeClass<TName> {
     private value: T;
     constructor(type: TName, value: T) {
         super(type);
@@ -12,14 +12,14 @@ export class LiteralValueTypeClass<TName extends string, T> extends CommonTypeCl
     }
 }
 
-export class LiteralTypeClass<TName extends string, T> extends CommonTypeClass<TName> {
-    private value: T | ErrorTypeClass;
-    constructor(type: TName, value: T | ErrorTypeClass) {
+export class LiteralTypeClass<TName extends string, T> extends ApexCommonTypeClass<TName> {
+    private value: T | ApexErrorTypeClass;
+    constructor(type: TName, value: T | ApexErrorTypeClass) {
         super(type);
         this.value = value;
     }
 
-    getValue(): T | ErrorTypeClass {
+    getValue(): T | ApexErrorTypeClass {
         return this.value;
     }
 }
@@ -28,7 +28,7 @@ export class PrimitiveLiteralTypeClass<
     TName extends string,
     T,
     TValueType extends string,
-> extends CommonTypeClass<TName> {
+> extends ApexCommonTypeClass<TName> {
     private valueType: TValueType;
     private value: T;
 
@@ -53,7 +53,7 @@ export type LiteralAllTypeClass =
     | PrimitiveLiteralTypeClass<string, unknown, string>;
 
 export const isLiteralTypeAll = (
-    target: CommonTypeClass<string>,
+    target: ApexCommonTypeClass<string>,
 ): target is LiteralAllTypeClass => {
     return (
         target instanceof LiteralValueTypeClass ||

@@ -1,29 +1,34 @@
 import { LiteralPrimaryJson, PrimaryJson, SoslJson, SoqlJson, TypeJson } from '../../../types';
-import { ValueDiff, makeValueDiff } from './commons';
-import { TypeDiff, makeTypeDiff } from './type';
-import { SoqlDiff, makeSoqlDiff } from './query/soql';
-import { SoslDiff, makeSoslDiff } from './query/sosl';
-import { TypedObjectDiff } from './typed';
+import {
+    ReplacementDiff,
+    ValueDiff,
+    makeReplacementDiff,
+    makeValueDiff,
+} from '../../commons/diff/commons';
+import { TypeJsonDiff, makeTypeDiff } from './type';
+import { SoqlJsonDiff, makeSoqlDiff } from './query/soql';
+import { SoslJsonDiff, makeSoslDiff } from './query/sosl';
+import { TypedObjectDiff } from '../../commons/diff/list';
 
-export type LiteralPrimaryDiff = TypedObjectDiff<
+export type LiteralPrimaryJsonDiff = TypedObjectDiff<
     LiteralPrimaryJson,
     {
         value: ValueDiff<string>;
         valueType: ValueDiff<LiteralPrimaryJson['valueType']>;
     }
 >;
-export type PrimaryDiff =
+export type PrimaryJsonDiff =
     | ValueDiff<string>
-    | LiteralPrimaryDiff
-    | TypeDiff
-    | SoqlDiff
-    | SoslDiff
-    | { status: 'changed'; before: PrimaryJson; after: PrimaryJson };
+    | LiteralPrimaryJsonDiff
+    | TypeJsonDiff
+    | SoqlJsonDiff
+    | SoslJsonDiff
+    | ReplacementDiff<PrimaryJson>;
 
 export const makeLiteralPrimaryDiff = (
     before: LiteralPrimaryJson,
     after: LiteralPrimaryJson,
-): LiteralPrimaryDiff =>
+): LiteralPrimaryJsonDiff =>
     before.value === after.value && before.valueType === after.valueType
         ? { status: 'unchanged', value: before }
         : {
@@ -34,7 +39,7 @@ export const makeLiteralPrimaryDiff = (
               },
           };
 
-export const makePrimaryDiff = (before: PrimaryJson, after: PrimaryJson): PrimaryDiff => {
+export const makePrimaryDiff = (before: PrimaryJson, after: PrimaryJson): PrimaryJsonDiff => {
     if (typeof before === 'string' && typeof after === 'string') {
         return makeValueDiff(before, after);
     }
@@ -44,7 +49,7 @@ export const makePrimaryDiff = (before: PrimaryJson, after: PrimaryJson): Primar
         typeof after === 'object' &&
         'kind' in after
     ) {
-        if (before.kind !== after.kind) return { status: 'changed', before, after };
+        if (before.kind !== after.kind) return makeReplacementDiff(before, after);
         switch (before.kind) {
             case 'type':
                 return makeTypeDiff(before as TypeJson, after as TypeJson);
@@ -53,7 +58,7 @@ export const makePrimaryDiff = (before: PrimaryJson, after: PrimaryJson): Primar
             case 'sosl':
                 return makeSoslDiff(before as SoslJson, after as SoslJson);
         }
-        return { status: 'changed', before, after };
+        return makeReplacementDiff(before, after);
     }
     if (
         typeof before === 'object' &&
@@ -63,5 +68,5 @@ export const makePrimaryDiff = (before: PrimaryJson, after: PrimaryJson): Primar
     ) {
         return makeLiteralPrimaryDiff(before as LiteralPrimaryJson, after as LiteralPrimaryJson);
     }
-    return { status: 'changed', before, after };
+    return makeReplacementDiff(before, after);
 };

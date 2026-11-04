@@ -3,13 +3,13 @@ import { LiteralPrimaryContext } from '@apexdevtools/apex-parser';
 import { PrimaryTypeClass } from '.';
 
 import { NormalLiteralTypeClass, LiteralVisitor, isNormalLiteralType } from '../literalVisitor';
-import { CommonTypeClass, ErrorTypeClass, isValidClass } from '../commonVisitor';
+import { ApexCommonTypeClass, ApexErrorTypeClass, isApexValidClass } from '../commonVisitor';
 
 export class LiteralPrimaryTypeClass extends PrimaryTypeClass<
     'literalPrimary',
     NormalLiteralTypeClass
 > {
-    private constructor(value: NormalLiteralTypeClass | ErrorTypeClass) {
+    private constructor(value: NormalLiteralTypeClass | ApexErrorTypeClass) {
         super('literalPrimary', value);
     }
 
@@ -19,13 +19,18 @@ export class LiteralPrimaryTypeClass extends PrimaryTypeClass<
         }
 
         return new LiteralPrimaryTypeClass(
-            isValidClass(new LiteralVisitor().visit(ctx.literal()), isNormalLiteralType, 'literal'),
+            isApexValidClass(
+                new LiteralVisitor().visit(ctx.literal()),
+                isNormalLiteralType,
+                'literal',
+            ),
         );
     }
 }
 
 export const isLiteralPrimaryType = (
-    target: CommonTypeClass<string>,
+    target: ApexCommonTypeClass<string>,
 ): target is LiteralPrimaryTypeClass => {
     return target instanceof LiteralPrimaryTypeClass;
 };
+

@@ -16,7 +16,7 @@ import {
     isSubQueryType,
 } from '../queryVisitor';
 import { SignedNumberTypeClass, LiteralVisitor, isSignedNumberType } from '../literalVisitor';
-import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
+import { ApexErrorTypeClass, ApexCommonTypeClass, isApexValidClass } from '../commonVisitor';
 
 type ValueTypeClassValue =
     | string
@@ -44,7 +44,7 @@ type ValueType =
 
 export class NormalValueTypeClass extends ValueTypeClass<'value', ValueTypeClassValue> {
     private valueType: ValueType;
-    private constructor(value: ValueTypeClassValue | ErrorTypeClass, valueType: ValueType) {
+    private constructor(value: ValueTypeClassValue | ApexErrorTypeClass, valueType: ValueType) {
         super('value', value);
         this.valueType = valueType;
     }
@@ -69,7 +69,7 @@ export class NormalValueTypeClass extends ValueTypeClass<'value', ValueTypeClass
             throw new Error('値が異常です。ValueContext: ' + ctx.getText());
         }
 
-        let value: ValueTypeClassValue | ErrorTypeClass;
+        let value: ValueTypeClassValue | ApexErrorTypeClass;
         let valueType: ValueType;
 
         if (ctx.NULL()) {
@@ -79,7 +79,7 @@ export class NormalValueTypeClass extends ValueTypeClass<'value', ValueTypeClass
             value = ctx.BooleanLiteral().getText();
             valueType = 'boolean';
         } else if (ctx.signedNumber()) {
-            value = isValidClass(
+            value = isApexValidClass(
                 new LiteralVisitor().visit(ctx.signedNumber()),
                 isSignedNumberType,
                 'signedNumber',
@@ -101,7 +101,7 @@ export class NormalValueTypeClass extends ValueTypeClass<'value', ValueTypeClass
             value = ctx.DateTimeLiteral().getText();
             valueType = 'dateTime';
         } else if (ctx.dateFormula()) {
-            value = isValidClass(
+            value = isApexValidClass(
                 new QueryVisitor().visit(ctx.dateFormula()),
                 isDateFormulaType,
                 'dateFormula',
@@ -114,21 +114,21 @@ export class NormalValueTypeClass extends ValueTypeClass<'value', ValueTypeClass
             value = ctx.IntegerLiteral().getText();
             valueType = 'integer';
         } else if (ctx.subQuery()) {
-            value = isValidClass(
+            value = isApexValidClass(
                 new QueryVisitor().visit(ctx.subQuery()),
                 isSubQueryType,
                 'subQuery',
             );
             valueType = 'subQuery';
         } else if (ctx.valueList()) {
-            value = isValidClass(
+            value = isApexValidClass(
                 new ListVisitor().visit(ctx.valueList()),
                 isValueListType,
                 'valueList',
             );
             valueType = 'list';
         } else {
-            value = isValidClass(
+            value = isApexValidClass(
                 new ExpressionVisitor().visit(ctx.boundExpression()),
                 isBoundExpressionType,
                 'boundExpression',
@@ -145,7 +145,8 @@ export class NormalValueTypeClass extends ValueTypeClass<'value', ValueTypeClass
 }
 
 export const isNormalValueType = (
-    target: CommonTypeClass<string>,
+    target: ApexCommonTypeClass<string>,
 ): target is NormalValueTypeClass => {
     return target instanceof NormalValueTypeClass;
 };
+

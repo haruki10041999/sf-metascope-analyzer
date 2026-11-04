@@ -3,7 +3,7 @@ import { DateFormulaContext } from '@apexdevtools/apex-parser';
 import { QueryValueTypeClass } from '../queryVisitor';
 
 import { SignedIntegerTypeClass, LiteralVisitor, isSignedIntegerType } from '../literalVisitor';
-import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
+import { ApexErrorTypeClass, ApexCommonTypeClass, isApexValidClass } from '../commonVisitor';
 
 type DateFormulaFunctionType =
     | 'YESTERDAY'
@@ -110,11 +110,11 @@ const isDateFormulaWithFunctionType = (ctx: DateFormulaContext): boolean => {
 export type DateFormulaValueType = DateFormulaFunctionType | DateFormulaWithFunctionType;
 
 export class DateFormulaTypeClass extends QueryValueTypeClass<'dateFormula', DateFormulaValueType> {
-    private param: SignedIntegerTypeClass | ErrorTypeClass | null = null;
+    private param: SignedIntegerTypeClass | ApexErrorTypeClass | null = null;
 
     private constructor(
         value: DateFormulaValueType,
-        param: SignedIntegerTypeClass | ErrorTypeClass | null,
+        param: SignedIntegerTypeClass | ApexErrorTypeClass | null,
     ) {
         super('dateFormula', value);
         this.param = param;
@@ -125,8 +125,8 @@ export class DateFormulaTypeClass extends QueryValueTypeClass<'dateFormula', Dat
             throw new Error('値が異常です。DateFormulaContext: ' + ctx.getText());
         }
 
-        let value: DateFormulaValueType | ErrorTypeClass;
-        let param: SignedIntegerTypeClass | ErrorTypeClass | null = null;
+        let value: DateFormulaValueType | ApexErrorTypeClass;
+        let param: SignedIntegerTypeClass | ApexErrorTypeClass | null = null;
 
         if (isDateFormulaFunctionType(ctx)) {
             if (ctx.YESTERDAY()) {
@@ -177,7 +177,7 @@ export class DateFormulaTypeClass extends QueryValueTypeClass<'dateFormula', Dat
                 value = 'NEXT_FISCAL_YEAR';
             }
         } else {
-            param = isValidClass(
+            param = isApexValidClass(
                 new LiteralVisitor().visit(ctx.signedInteger()),
                 isSignedIntegerType,
                 'signedInteger',
@@ -231,13 +231,14 @@ export class DateFormulaTypeClass extends QueryValueTypeClass<'dateFormula', Dat
         return new DateFormulaTypeClass(value, param);
     }
 
-    getParam(): SignedIntegerTypeClass | ErrorTypeClass | null {
+    getParam(): SignedIntegerTypeClass | ApexErrorTypeClass | null {
         return this.param;
     }
 }
 
 export const isDateFormulaType = (
-    target: CommonTypeClass<string>,
+    target: ApexCommonTypeClass<string>,
 ): target is DateFormulaTypeClass => {
     return target instanceof DateFormulaTypeClass;
 };
+

@@ -1,0 +1,92 @@
+{
+  "filePath": "Broken__c-ja",
+  "resolvedError": [
+    {
+      "sourceKeys": {
+        "objectKey": "error_29c74a952f75ff8f",
+        "sourceKey": "error_d8a010b1093ce50d"
+      },
+      "code": "XML_SYNTAX",
+      "contextType": "fieldTranslation",
+      "context": "    <label>コード</lable>",
+      "errorMessage": "</label> expected but </lable> found",
+      "filePath": "Broken__c-ja/Code__c.fieldTranslation-meta.xml",
+      "start": {
+        "offset": 133,
+        "line": 3,
+        "column": 21
+      },
+      "end": {
+        "offset": 133,
+        "line": 3,
+        "column": 21
+      }
+    }
+  ],
+  "dataType": "objectTranslation",
+  "result": {
+    "id": "Broken__c-ja",
+    "base": {
+      "kind": "objectTranslation",
+      "sourceKeys": {
+        "objectKey": "objectTranslation_3f2ab7e38fb78c3d",
+        "sourceKey": "objectTranslation_d3f352bd3fa4c751"
+      },
+      "objectApiName": "Broken__c",
+      "locale": "ja",
+      "nameFieldLabel": "壊れた",
+      "fields": [
+        {
+          "kind": "error",
+          "sourceKeys": {
+            "objectKey": "error_29c74a952f75ff8f",
+            "sourceKey": "error_d8a010b1093ce50d"
+          },
+          "kindType": "fieldTranslation"
+        }
+      ]
+    },
+    "sourceObject": [
+      {
+        "objectKey": "error_29c74a952f75ff8f",
+        "context": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<CustomFieldTranslation xmlns=\"http://soap.sforce.com/2006/04/metadata\">\n    <label>コード</lable>\n    <name>Code__c</name>\n</CustomFieldTranslation>\n",
+        "source": [
+          {
+            "sourceKey": "error_d8a010b1093ce50d",
+            "filePath": "Broken__c-ja/Code__c.fieldTranslation-meta.xml",
+            "start": {
+              "offset": 133,
+              "line": 3,
+              "column": 21
+            },
+            "end": {
+              "offset": 133,
+              "line": 3,
+              "column": 21
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "objectTranslation_3f2ab7e38fb78c3d",
+        "context": "<CustomObjectTranslation xmlns=\"http://soap.sforce.com/2006/04/metadata\">\n    <nameFieldLabel>壊れた</nameFieldLabel>\n</CustomObjectTranslation>",
+        "source": [
+          {
+            "sourceKey": "objectTranslation_d3f352bd3fa4c751",
+            "filePath": "Broken__c-ja/Broken__c-ja.objectTranslation-meta.xml",
+            "start": {
+              "offset": 39,
+              "line": 2,
+              "column": 0
+            },
+            "end": {
+              "offset": 180,
+              "line": 4,
+              "column": 26
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

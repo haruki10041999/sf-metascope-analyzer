@@ -2,7 +2,7 @@ import { ContinueStatementContext } from '@apexdevtools/apex-parser';
 
 import { StatementValueTypeClass } from '.';
 
-import { CommonTypeClass } from '../commonVisitor';
+import { ApexCommonTypeClass } from '../commonVisitor';
 
 export class ContinueStatementTypeClass extends StatementValueTypeClass<
     'continueStatement',
@@ -22,7 +22,8 @@ export class ContinueStatementTypeClass extends StatementValueTypeClass<
 }
 
 export const isContinueStatementType = (
-    target: CommonTypeClass<string>,
+    target: ApexCommonTypeClass<string>,
 ): target is ContinueStatementTypeClass => {
     return target instanceof ContinueStatementTypeClass;
 };
+

@@ -9,14 +9,14 @@ import {
     isFieldExpressionType,
 } from '.';
 
-import { CommonTypeClass, ErrorTypeClass, isValidClass } from '../commonVisitor';
+import { ApexCommonTypeClass, ApexErrorTypeClass, isApexValidClass } from '../commonVisitor';
 
 export class ConditionalExpressionTypeClass extends ExpressionTypeClass<
     'conditionalExpression',
     LogicalExpressionTypeClass | FieldExpressionTypeClass
 > {
     private constructor(
-        value: LogicalExpressionTypeClass | FieldExpressionTypeClass | ErrorTypeClass,
+        value: LogicalExpressionTypeClass | FieldExpressionTypeClass | ApexErrorTypeClass,
     ) {
         super('conditionalExpression', value);
     }
@@ -28,12 +28,12 @@ export class ConditionalExpressionTypeClass extends ExpressionTypeClass<
 
         return new ConditionalExpressionTypeClass(
             ctx.logicalExpression()
-                ? isValidClass(
+                ? isApexValidClass(
                       new ExpressionVisitor().visit(ctx.logicalExpression()),
                       isLogicalExpressionType,
                       'logicalExpression',
                   )
-                : isValidClass(
+                : isApexValidClass(
                       new ExpressionVisitor().visit(ctx.fieldExpression()),
                       isFieldExpressionType,
                       'fieldExpression',
@@ -43,7 +43,8 @@ export class ConditionalExpressionTypeClass extends ExpressionTypeClass<
 }
 
 export const isConditionalExpressionType = (
-    target: CommonTypeClass<string>,
+    target: ApexCommonTypeClass<string>,
 ): target is ConditionalExpressionTypeClass => {
     return target instanceof ConditionalExpressionTypeClass;
 };
+

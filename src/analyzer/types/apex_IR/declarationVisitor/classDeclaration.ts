@@ -6,21 +6,21 @@ import { NormalIdTypeClass, IdVisitor, isNormalIdType } from '../idVisitor';
 import { ClassBodyTypeClass, BodyVisitor, isClassBodyType } from '../bodyVisitor';
 import { TypeListTypeClass, ListVisitor, isTypeListType } from '../listVisitor';
 import { TypeRefTypeClass, TypeVisitor, isTypeRefType } from '../typeVisitor';
-import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
+import { ApexErrorTypeClass, ApexCommonTypeClass, isApexValidClass } from '../commonVisitor';
 
 export class ClassDeclarationTypeClass extends DeclarationTypeClass<
     'classDeclaration',
     NormalIdTypeClass
 > {
-    private body: ClassBodyTypeClass | ErrorTypeClass;
-    private extend: TypeRefTypeClass | ErrorTypeClass | null;
-    private implement: TypeListTypeClass | ErrorTypeClass | null;
+    private body: ClassBodyTypeClass | ApexErrorTypeClass;
+    private extend: TypeRefTypeClass | ApexErrorTypeClass | null;
+    private implement: TypeListTypeClass | ApexErrorTypeClass | null;
 
     private constructor(
-        value: NormalIdTypeClass | ErrorTypeClass,
-        body: ClassBodyTypeClass | ErrorTypeClass,
-        extend: TypeRefTypeClass | ErrorTypeClass | null,
-        implement: TypeListTypeClass | ErrorTypeClass | null,
+        value: NormalIdTypeClass | ApexErrorTypeClass,
+        body: ClassBodyTypeClass | ApexErrorTypeClass,
+        extend: TypeRefTypeClass | ApexErrorTypeClass | null,
+        implement: TypeListTypeClass | ApexErrorTypeClass | null,
     ) {
         super('classDeclaration', value);
         this.body = body;
@@ -34,32 +34,40 @@ export class ClassDeclarationTypeClass extends DeclarationTypeClass<
         }
 
         return new ClassDeclarationTypeClass(
-            isValidClass(new IdVisitor().visit(ctx.id()), isNormalIdType, 'id'),
-            isValidClass(new BodyVisitor().visit(ctx.classBody()), isClassBodyType, 'classBody'),
+            isApexValidClass(new IdVisitor().visit(ctx.id()), isNormalIdType, 'id'),
+            isApexValidClass(
+                new BodyVisitor().visit(ctx.classBody()),
+                isClassBodyType,
+                'classBody',
+            ),
             ctx.EXTENDS() && ctx.typeRef()
-                ? isValidClass(new TypeVisitor().visit(ctx.typeRef()), isTypeRefType, 'typeRef')
+                ? isApexValidClass(new TypeVisitor().visit(ctx.typeRef()), isTypeRefType, 'typeRef')
                 : null,
             ctx.IMPLEMENTS() && ctx.typeList()
-                ? isValidClass(new ListVisitor().visit(ctx.typeList()), isTypeListType, 'typeList')
+                ? isApexValidClass(
+                      new ListVisitor().visit(ctx.typeList()),
+                      isTypeListType,
+                      'typeList',
+                  )
                 : null,
         );
     }
 
-    getBody(): ClassBodyTypeClass | ErrorTypeClass {
+    getBody(): ClassBodyTypeClass | ApexErrorTypeClass {
         return this.body;
     }
 
-    getExtend(): TypeRefTypeClass | ErrorTypeClass | null {
+    getExtend(): TypeRefTypeClass | ApexErrorTypeClass | null {
         return this.extend;
     }
 
-    getImplement(): TypeListTypeClass | ErrorTypeClass | null {
+    getImplement(): TypeListTypeClass | ApexErrorTypeClass | null {
         return this.implement;
     }
 }
 
 export const isClassDeclarationType = (
-    target: CommonTypeClass<string>,
+    target: ApexCommonTypeClass<string>,
 ): target is ClassDeclarationTypeClass => {
     return target instanceof ClassDeclarationTypeClass;
 };

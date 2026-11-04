@@ -8,17 +8,22 @@ import {
     ExpressionVisitor,
     isBasedExpressionType,
 } from '../expressionVisitor';
-import { ErrorTypeClass, CommonTypeClass, isValidClass, isValidClassList } from '../commonVisitor';
+import {
+    ApexErrorTypeClass,
+    ApexCommonTypeClass,
+    isApexValidClass,
+    isApexValidClassList,
+} from '../commonVisitor';
 
 export class SwitchStatementTypeClass extends StatementTypeClass<
     'switchStatement',
     BasedExpressionTypeClass
 > {
-    private block: (WhenControlTypeClass | ErrorTypeClass)[];
+    private block: (WhenControlTypeClass | ApexErrorTypeClass)[];
 
     private constructor(
-        value: BasedExpressionTypeClass | ErrorTypeClass,
-        blocks: (WhenControlTypeClass | ErrorTypeClass)[],
+        value: BasedExpressionTypeClass | ApexErrorTypeClass,
+        blocks: (WhenControlTypeClass | ApexErrorTypeClass)[],
     ) {
         super('switchStatement', value);
         this.block = blocks;
@@ -30,12 +35,12 @@ export class SwitchStatementTypeClass extends StatementTypeClass<
         }
 
         return new SwitchStatementTypeClass(
-            isValidClass(
+            isApexValidClass(
                 new ExpressionVisitor().visit(ctx.expression()),
                 isBasedExpressionType,
                 'expression',
             ),
-            isValidClassList(
+            isApexValidClassList(
                 ctx.whenControl_list(),
                 (ctx) => new ControlVisitor().visit(ctx),
                 isWhenControlType,
@@ -44,13 +49,14 @@ export class SwitchStatementTypeClass extends StatementTypeClass<
         );
     }
 
-    getBlocks(): (WhenControlTypeClass | ErrorTypeClass)[] {
+    getBlocks(): (WhenControlTypeClass | ApexErrorTypeClass)[] {
         return this.block;
     }
 }
 
 export const isSwitchStatementType = (
-    target: CommonTypeClass<string>,
+    target: ApexCommonTypeClass<string>,
 ): target is SwitchStatementTypeClass => {
     return target instanceof SwitchStatementTypeClass;
 };
+

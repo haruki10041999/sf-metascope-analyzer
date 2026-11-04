@@ -2,7 +2,7 @@ import { LiteralContext } from '@apexdevtools/apex-parser';
 
 import { PrimitiveLiteralTypeClass } from '.';
 
-import { ErrorTypeClass, CommonTypeClass } from '../commonVisitor';
+import { ApexErrorTypeClass, ApexCommonTypeClass } from '../commonVisitor';
 
 type LiteralType = 'integer' | 'long' | 'number' | 'string' | 'longText' | 'boolean' | 'null';
 
@@ -28,7 +28,7 @@ export class NormalLiteralTypeClass extends PrimitiveLiteralTypeClass<
             throw new Error('値が異常です。LiteralContext: ' + ctx.getText());
         }
 
-        let value: string | ErrorTypeClass;
+        let value: string | ApexErrorTypeClass;
         let valueType: LiteralType;
         if (ctx.IntegerLiteral()) {
             value = ctx.IntegerLiteral().getText();
@@ -58,7 +58,8 @@ export class NormalLiteralTypeClass extends PrimitiveLiteralTypeClass<
 }
 
 export const isNormalLiteralType = (
-    target: CommonTypeClass<string>,
+    target: ApexCommonTypeClass<string>,
 ): target is NormalLiteralTypeClass => {
     return target instanceof NormalLiteralTypeClass;
 };
+

@@ -9,7 +9,7 @@ import {
     makeSoqlFunctionDiff,
     makeSoslDiff,
 } from '../../../src/analyzer/processor/Apex/diff/query';
-import { makeValueDiff } from '../../../src/analyzer/processor/Apex/diff/commons';
+import { makeValueDiff } from '../../../src/analyzer/processor/commons/diff/commons';
 import type {
     ErrorJson,
     FieldOrderJson,
@@ -203,10 +203,13 @@ describe('SOQL and SOSL diff', () => {
         const diff = makeSoslDiff(before, after);
         assert.equal(diff.status, 'changed');
         if (diff.status === 'changed' && 'fields' in diff) {
+            // エラーの kind / sourceKeys は中身から分け、エラー側だけを持つ
             assert.deepEqual(diff.fields.find, {
+                kind: { after: 'error' },
+                sourceKeys: { after: error.sourceKeys },
                 status: 'changed',
                 before: 'Acme',
-                after: error,
+                after: { kindType: 'sosl' },
             });
         } else {
             assert.fail('Expected a field-level SOSL diff');

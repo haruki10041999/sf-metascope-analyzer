@@ -11,4 +11,5 @@ export * from './primary';
 export * from './statement';
 export * from './type';
 export * from './unit';
+export * from './meta';
 export * from './query';

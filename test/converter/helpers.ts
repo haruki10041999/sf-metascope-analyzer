@@ -9,11 +9,8 @@ import {
     makeErrorAssignRule,
     makeTriggerUnitAssignRule,
 } from '../../src/analyzer/types/apex/converter';
-import {
-    JsonType,
-    makeConvertType,
-    regenerateSourceObjects,
-} from '../../src/analyzer/types/apex/commons';
+import { makeConvertType, regenerateSourceObjects } from '../../src/analyzer/types/apex/commons';
+import { JsonType } from '../../src/analyzer/types/commons';
 import {
     makeAnonymousUnitJson,
     makeCompilationUnitJson,
@@ -26,7 +23,10 @@ export const unitRules = {
     anonymous: (parser: ApexParser) => parser.anonymousUnit(),
 };
 
-export const toCommonType = (source: string, rule: (parser: ApexParser) => ApexParserRuleContext) => {
+export const toCommonType = (
+    source: string,
+    rule: (parser: ApexParser) => ApexParserRuleContext,
+) => {
     const unit = new UnitVisitor().visit(parse(source, rule));
     return assignMultiClass(unit, [
         makeCompilationUnitAssignRule,
@@ -40,7 +40,10 @@ export const toCommonType = (source: string, rule: (parser: ApexParser) => ApexP
  * 本番と同じ流れで変換する。
  * CommonType → ConvertNode + SourceJson[] → JSON → JSON に残ったキーだけの SourceJson[]
  */
-export const toJson = async (source: string, rule: (parser: ApexParser) => ApexParserRuleContext) => {
+export const toJson = async (
+    source: string,
+    rule: (parser: ApexParser) => ApexParserRuleContext,
+) => {
     const commonType = toCommonType(source, rule);
     const { result, sourceObjects } = await makeConvertType(commonType);
     const converted = result as { type: string };
@@ -51,7 +54,12 @@ export const toJson = async (source: string, rule: (parser: ApexParser) => ApexP
               ? makeTriggerUnitJson(converted as never)
               : makeAnonymousUnitJson(converted as never);
     const source_ = regenerateSourceObjects(sourceObjects, json as JsonType<string>);
-    return { commonType, json: json as any, sourceObjects: source_, allSourceObjects: sourceObjects };
+    return {
+        commonType,
+        json: json as any,
+        sourceObjects: source_,
+        allSourceObjects: sourceObjects,
+    };
 };
 
 export const find = (node: any, predicate: (n: any) => boolean): any[] => {

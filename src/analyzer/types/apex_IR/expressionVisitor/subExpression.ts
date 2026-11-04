@@ -7,13 +7,13 @@ import {
     isBasedExpressionType,
 } from '.';
 
-import { CommonTypeClass, ErrorTypeClass, isValidClass } from '../commonVisitor';
+import { ApexCommonTypeClass, ApexErrorTypeClass, isApexValidClass } from '../commonVisitor';
 
 export class SubExpressionTypeClass extends ExpressionTypeClass<
     'subExpression',
     BasedExpressionTypeClass
 > {
-    private constructor(value: BasedExpressionTypeClass | ErrorTypeClass) {
+    private constructor(value: BasedExpressionTypeClass | ApexErrorTypeClass) {
         super('subExpression', value);
     }
 
@@ -23,7 +23,7 @@ export class SubExpressionTypeClass extends ExpressionTypeClass<
         }
 
         return new SubExpressionTypeClass(
-            isValidClass(
+            isApexValidClass(
                 new ExpressionVisitor().visit(ctx.expression()),
                 isBasedExpressionType,
                 'expression',
@@ -33,7 +33,8 @@ export class SubExpressionTypeClass extends ExpressionTypeClass<
 }
 
 export const isSubExpressionType = (
-    target: CommonTypeClass<string>,
+    target: ApexCommonTypeClass<string>,
 ): target is SubExpressionTypeClass => {
     return target instanceof SubExpressionTypeClass;
 };
+

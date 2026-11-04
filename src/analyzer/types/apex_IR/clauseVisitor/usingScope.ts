@@ -3,10 +3,10 @@ import { UsingScopeContext } from '@apexdevtools/apex-parser';
 import { ClauseTypeClass } from '.';
 
 import { SoqlIdTypeClass, IdVisitor, isSoqlIdType } from '../idVisitor';
-import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
+import { ApexErrorTypeClass, ApexCommonTypeClass, isApexValidClass } from '../commonVisitor';
 
 export class UsingScopeTypeClass extends ClauseTypeClass<'usingScope', SoqlIdTypeClass> {
-    private constructor(value: SoqlIdTypeClass | ErrorTypeClass) {
+    private constructor(value: SoqlIdTypeClass | ApexErrorTypeClass) {
         super('usingScope', value);
     }
 
@@ -16,13 +16,14 @@ export class UsingScopeTypeClass extends ClauseTypeClass<'usingScope', SoqlIdTyp
         }
 
         return new UsingScopeTypeClass(
-            isValidClass(new IdVisitor().visit(ctx.soqlId()), isSoqlIdType, 'soqlId'),
+            isApexValidClass(new IdVisitor().visit(ctx.soqlId()), isSoqlIdType, 'soqlId'),
         );
     }
 }
 
 export const isUsingScopeType = (
-    target: CommonTypeClass<string>,
+    target: ApexCommonTypeClass<string>,
 ): target is UsingScopeTypeClass => {
     return target instanceof UsingScopeTypeClass;
 };
+

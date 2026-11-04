@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObjectTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fieldSets>
+        <label>概要</label>
+        <name>Summary</name>
+    </fieldSets>
+    <layouts>
+        <layout>Invoice Layout</layout>
+        <sections>
+            <label>請求情報</label>
+            <section>Information</section>
+        </sections>
+    </layouts>
+    <nameFieldLabel>請求書番号</nameFieldLabel>
+    <recordTypes>
+        <label>標準</label>
+        <name>Standard</name>
+    </recordTypes>
+    <validationRules>
+        <errorMessage>金額は正の値にしてください。</errorMessage>
+        <name>Amount_Positive</name>
+    </validationRules>
+    <webLinks>
+        <label>請求書を送付</label>
+        <name>Send_Invoice</name>
+    </webLinks>
+</CustomObjectTranslation>

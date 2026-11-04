@@ -11,7 +11,7 @@ import {
     makeOptionalDiff,
     makeSequenceDiff,
     makeValueDiff,
-} from '../commons';
+} from '../../../commons/diff/commons';
 import { FieldPathDiff, makeFieldPathDiff } from './select';
 
 export type FromFieldJson = JsonType<'fromField'> & { field: string[]; alias?: string };
@@ -38,11 +38,14 @@ export const makeFromFieldDiff = (
 
 export type FromFieldsDiff = ListItemDiff<'fromField', FromFieldJson | ErrorJson, FromFieldDiff>[];
 
+/** FROM の項目は C. 順序付き列 (先頭が主オブジェクト)。FROM 自体がエラーなら値を丸ごと比べる */
+export type FromJsonDiff = FromFieldsDiff | ValueDiff<FromJson | FromClauseJson | ErrorJson>;
+
 export const makeFromDiff = (
     before: FromJson | FromClauseJson | ErrorJson,
     after: FromJson | FromClauseJson | ErrorJson,
     sources?: Sources,
-): FromFieldsDiff | ValueDiff<FromJson | FromClauseJson | ErrorJson> => {
+): FromJsonDiff => {
     if (isErrorJson(before) || isErrorJson(after)) return makeValueDiff(before, after);
     return makeSequenceDiff('fromField', before.field, after.field, makeFromFieldDiff, { sources });
 };

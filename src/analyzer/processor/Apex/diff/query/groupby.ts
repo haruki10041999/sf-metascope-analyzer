@@ -8,17 +8,18 @@ import {
     makeNodeDiff,
     makeOptionalDiff,
     makeValueDiff,
-} from '../commons';
-import { FieldTermListItemDiff, makeFieldTermSequenceDiff } from './commons';
-import { LogicalCondition, LogicalConditionDiff, makeLogicalConditionDiff } from './where';
+} from '../../../commons/diff/commons';
+import { TypedListDiff } from '../../../commons/diff/list';
+import { FieldTerm, FieldTermDiff, makeFieldTermSequenceDiff } from './commons';
+import { LogicalCondition, LogicalConditionJsonDiff, makeLogicalConditionDiff } from './where';
 
-export type GroupByDiff = NodeDiff<
+export type GroupByJsonDiff = NodeDiff<
     'groupBy',
     GroupByJson,
     {
-        field: FieldTermListItemDiff[];
+        field: TypedListDiff<FieldTerm, FieldTermDiff>;
         mode: OptionalDiff<'ROLLUP' | 'CUBE', ValueDiff<'ROLLUP' | 'CUBE'>>;
-        having: OptionalDiff<LogicalCondition | ErrorJson, LogicalConditionDiff>;
+        having: OptionalDiff<LogicalCondition | ErrorJson, LogicalConditionJsonDiff>;
     }
 >;
 
@@ -26,7 +27,7 @@ export const makeGroupByDiff = (
     before: GroupByJson | ErrorJson,
     after: GroupByJson | ErrorJson,
     match: Match = 'slot',
-): GroupByDiff =>
+): GroupByJsonDiff =>
     makeNodeDiff('groupBy', before, after, match, (b, a) => ({
         field: makeFieldTermSequenceDiff(b.field, a.field),
         mode: makeOptionalDiff(b.mode, a.mode, makeValueDiff),

@@ -1,0 +1,43 @@
+<template>
+    <lightning-card title={title} icon-name="standard:account">
+        <lightning-button slot="actions" label="更新" onclick={refresh}></lightning-button>
+        <p class="parent">{parentName}</p>
+        <template lwc:if={hasRows}>
+            <template lwc:if={isTable}>
+                <table class="slds-table" lwc:ref="table">
+                    <tbody>
+                        <template for:each={rows} for:item="row" for:index="index">
+                            <tr key={row.id}>
+                                <td>
+                                    <c-account-row
+                                        record-id={row.id}
+                                        name={row.name}
+                                        amount={row.amount}
+                                        onselect={handleSelect}
+                                    ></c-account-row>
+                                </td>
+                                <td><button data-id={row.id} onclick={handleDelete}>削除</button></td>
+                            </tr>
+                        </template>
+                    </tbody>
+                </table>
+            </template>
+            <template lwc:else>
+                <template iterator:it={rows}>
+                    <div key={it.value.id} class="tile">
+                        <span lwc:if={it.first}>先頭: </span>{it.value.name}
+                    </div>
+                </template>
+            </template>
+            <p class="total">合計: {totalAmount}</p>
+        </template>
+        <template lwc:elseif={error}>
+            <c-error-panel errors={error}></c-error-panel>
+        </template>
+        <template lwc:else>
+            <p class="empty">取引先がありません</p>
+        </template>
+        <div class="chart" lwc:dom="manual"></div>
+        <slot name="footer"></slot>
+    </lightning-card>
+</template>

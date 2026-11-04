@@ -3,8 +3,8 @@ import typia from 'typia';
 import { CommonType, isCommonType } from '../converter';
 
 import { SourceJson, SourceRegistration, makeSourceObjects } from './source';
-import { hash, isRecord } from './utils';
-import { ConvertKeys } from './json';
+import { hash, isRecord } from '../../commons/utils';
+import { ConvertKeys } from '../../commons/json';
 
 type ConvertNode<T> =
     T extends CommonType<string>

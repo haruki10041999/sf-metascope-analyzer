@@ -6,22 +6,22 @@
 
 - IR は `new UnitVisitor().visit(ctx)` の結果を `JSON.stringify` したもの。JSON のキーは各クラスの private フィールド名と一致する。
 - 全ノードは `type`（ノード種別の文字列）と `span`（ソース上の範囲）を持つ。JSON では `span` は `type` の直後に出力される。
-- `span` は `CommonVisitor.visit()` が Visitor 経由で生成された全ノードに自動設定する。
+- `span` は `ApexCommonVisitor.visit()` が Visitor 経由で生成された全ノードに自動設定する。
 - 各フォルダは `base.ts`（基底クラス）、`index.ts`（re-export と `XxxVisitor`）、TypeClass ごとのファイルで構成される。
-- 子ノードのフィールドは、変換に失敗した場合 `ErrorTypeClass` になり得る（型表記の `| ErrorTypeClass`）。
+- 子ノードのフィールドは、変換に失敗した場合 `ApexErrorTypeClass` になり得る（型表記の `| ApexErrorTypeClass`）。
 - 文法上省略可能な要素は `null` になる（型表記の `| null`）。
 - nullable な全フィールドの一覧は [nullable フィールド](nullability.md) を参照。
 
 ## commonVisitor.ts
 
-### `CommonTypeClass`
+### `ApexCommonTypeClass`
 
 全 TypeClass の基底。
 
-| 変数   | 型                   | 内容                                             |
-| ------ | -------------------- | ------------------------------------------------ |
-| `type` | `string`             | ノード種別                                       |
-| `span` | `SourceSpan \| null` | ソース上の範囲（`CommonVisitor.visit()` が設定） |
+| 変数   | 型                   | 内容                                                 |
+| ------ | -------------------- | ---------------------------------------------------- |
+| `type` | `string`             | ノード種別                                           |
+| `span` | `SourceSpan \| null` | ソース上の範囲（`ApexCommonVisitor.visit()` が設定） |
 
 ゲッター: `getType()`, `getSpan()`
 
@@ -38,7 +38,7 @@ type SourcePosition = { offset: number; line: number; column: number };
 - `end.offset` は排他的（範囲の最終文字の次の位置）。
 - 空のルール（例: 次元 0 の `arraySubscripts`）は `start` と `end` が同じ位置になる。
 
-### `ErrorTypeClass`（type: `'AnalyzerError'`）
+### `ApexErrorTypeClass`（type: `'AnalyzerError'`）
 
 変換に失敗したノードの代わりに置かれるエラーノード。解析全体を止めずに部分結果を残すために使う。
 
@@ -52,26 +52,26 @@ type SourcePosition = { offset: number; line: number; column: number };
 
 ゲッター: `getCode()`, `getContextType()`, `getContext()`, `getParseErrorMessage()`
 
-生成は `ErrorTypeClass.create(code, contextType, context, errorMessage)` で行う（コンストラクタは private）。
+生成は `ApexErrorTypeClass.create(code, contextType, context, errorMessage)` で行う（コンストラクタは private）。
 
 `ErrorCode = 'NULL_CHILD' | 'UNSUPPORTED_CONTEXT' | 'TYPE_MISMATCH' | 'EXCEPTION'`
 
-| コード                | 発生条件                                                              |
-| --------------------- | --------------------------------------------------------------------- |
-| `NULL_CHILD`          | `visit(null)`（任意の子要素が無い）。`span` は `null`                 |
-| `UNSUPPORTED_CONTEXT` | Visitor に対応する `visitXxx` が無い                                  |
-| `TYPE_MISMATCH`       | `isValidClass` の型不一致（置き換え元の子ノードの `span` を引き継ぐ） |
-| `EXCEPTION`           | `create()` 内で例外が発生した                                         |
+| コード                | 発生条件                                                                  |
+| --------------------- | ------------------------------------------------------------------------- |
+| `NULL_CHILD`          | `visit(null)`（任意の子要素が無い）。`span` は `null`                     |
+| `UNSUPPORTED_CONTEXT` | Visitor に対応する `visitXxx` が無い                                      |
+| `TYPE_MISMATCH`       | `isApexValidClass` の型不一致（置き換え元の子ノードの `span` を引き継ぐ） |
+| `EXCEPTION`           | `create()` 内で例外が発生した                                             |
 
 ### 関数・Visitor
 
-| 名前                                          | 内容                                                                                                                          |
-| --------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
-| `isErrorType(target)`                         | `ErrorTypeClass` かどうかの型ガード                                                                                           |
-| `isValidClass(target, guard, type)`           | `target` が `guard` を満たせばそのまま返す。満たさなければ `ErrorTypeClass`（`TYPE_MISMATCH`）に置き換える                    |
-| `isValidClassList(ctxs, create, guard, type)` | Context 配列を変換し、各要素に `isValidClass` を適用する                                                                      |
-| `getSourceSpan(ctx)`                          | Context の開始・終了トークンから `SourceSpan` を求める                                                                        |
-| `CommonVisitor<T>`                            | 全 Visitor の基底。`visit()` は null・例外・未対応 Context をすべて `ErrorTypeClass` に変換し、結果ノードに `span` を設定する |
+| 名前                                              | 内容                                                                                                                              |
+| ------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------- |
+| `isErrorType(target)`                             | `ApexErrorTypeClass` かどうかの型ガード                                                                                           |
+| `isApexValidClass(target, guard, type)`           | `target` が `guard` を満たせばそのまま返す。満たさなければ `ApexErrorTypeClass`（`TYPE_MISMATCH`）に置き換える                    |
+| `isApexValidClassList(ctxs, create, guard, type)` | Context 配列を変換し、各要素に `isApexValidClass` を適用する                                                                      |
+| `getSourceSpan(ctx)`                              | Context の開始・終了トークンから `SourceSpan` を求める                                                                            |
+| `ApexCommonVisitor<T>`                            | 全 Visitor の基底。`visit()` は null・例外・未対応 Context をすべて `ApexErrorTypeClass` に変換し、結果ノードに `span` を設定する |
 
 ## フォルダ一覧
 

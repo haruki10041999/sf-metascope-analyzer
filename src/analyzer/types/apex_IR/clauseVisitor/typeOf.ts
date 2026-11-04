@@ -10,16 +10,21 @@ import {
 } from '.';
 
 import { FieldNameTypeClass, NameVisitor, isFieldNameType } from '../nameVisitor';
-import { ErrorTypeClass, CommonTypeClass, isValidClass, isValidClassList } from '../commonVisitor';
+import {
+    ApexErrorTypeClass,
+    ApexCommonTypeClass,
+    isApexValidClass,
+    isApexValidClassList,
+} from '../commonVisitor';
 
 export class TypeOfTypeClass extends ClauseTypeClass<'typeOf', FieldNameTypeClass> {
-    private whenClause: (WhenClauseTypeClass | ErrorTypeClass)[];
-    private elseClause: ElseClauseTypeClass | ErrorTypeClass | null = null;
+    private whenClause: (WhenClauseTypeClass | ApexErrorTypeClass)[];
+    private elseClause: ElseClauseTypeClass | ApexErrorTypeClass | null = null;
 
     private constructor(
-        value: FieldNameTypeClass | ErrorTypeClass,
-        whenClause: (WhenClauseTypeClass | ErrorTypeClass)[],
-        elseClause: ElseClauseTypeClass | ErrorTypeClass | null,
+        value: FieldNameTypeClass | ApexErrorTypeClass,
+        whenClause: (WhenClauseTypeClass | ApexErrorTypeClass)[],
+        elseClause: ElseClauseTypeClass | ApexErrorTypeClass | null,
     ) {
         super('typeOf', value);
         this.whenClause = whenClause;
@@ -32,15 +37,19 @@ export class TypeOfTypeClass extends ClauseTypeClass<'typeOf', FieldNameTypeClas
         }
 
         return new TypeOfTypeClass(
-            isValidClass(new NameVisitor().visit(ctx.fieldName()), isFieldNameType, 'fieldName'),
-            isValidClassList(
+            isApexValidClass(
+                new NameVisitor().visit(ctx.fieldName()),
+                isFieldNameType,
+                'fieldName',
+            ),
+            isApexValidClassList(
                 ctx.whenClause_list(),
                 (ctx) => new ClauseVisitor().visit(ctx),
                 isWhenClauseType,
                 'whenClause',
             ),
             ctx.elseClause()
-                ? isValidClass(
+                ? isApexValidClass(
                       new ClauseVisitor().visit(ctx.elseClause()),
                       isElseClauseType,
                       'elseClause',
@@ -49,15 +58,16 @@ export class TypeOfTypeClass extends ClauseTypeClass<'typeOf', FieldNameTypeClas
         );
     }
 
-    getWhenClause(): (WhenClauseTypeClass | ErrorTypeClass)[] {
+    getWhenClause(): (WhenClauseTypeClass | ApexErrorTypeClass)[] {
         return this.whenClause;
     }
 
-    getElseClause(): ElseClauseTypeClass | ErrorTypeClass | null {
+    getElseClause(): ElseClauseTypeClass | ApexErrorTypeClass | null {
         return this.elseClause;
     }
 }
 
-export const isTypeOfType = (target: CommonTypeClass<string>): target is TypeOfTypeClass => {
+export const isTypeOfType = (target: ApexCommonTypeClass<string>): target is TypeOfTypeClass => {
     return target instanceof TypeOfTypeClass;
 };
+

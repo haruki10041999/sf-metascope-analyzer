@@ -2,10 +2,10 @@ import { GetterContext } from '@apexdevtools/apex-parser';
 
 import { NormalBlockTypeClass, BlockTypeClass, BlockVisitor, isNormalBlockType } from '.';
 
-import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
+import { ApexErrorTypeClass, ApexCommonTypeClass, isApexValidClass } from '../commonVisitor';
 
 export class GetterTypeClass extends BlockTypeClass<'getter', NormalBlockTypeClass | null> {
-    private constructor(value: NormalBlockTypeClass | ErrorTypeClass | null) {
+    private constructor(value: NormalBlockTypeClass | ApexErrorTypeClass | null) {
         super('getter', value);
     }
 
@@ -16,12 +16,16 @@ export class GetterTypeClass extends BlockTypeClass<'getter', NormalBlockTypeCla
 
         return new GetterTypeClass(
             ctx.block()
-                ? isValidClass(new BlockVisitor().visit(ctx.block()), isNormalBlockType, 'block')
+                ? isApexValidClass(
+                      new BlockVisitor().visit(ctx.block()),
+                      isNormalBlockType,
+                      'block',
+                  )
                 : null,
         );
     }
 }
 
-export const isGetterType = (target: CommonTypeClass<string>): target is GetterTypeClass => {
+export const isGetterType = (target: ApexCommonTypeClass<string>): target is GetterTypeClass => {
     return target instanceof GetterTypeClass;
 };

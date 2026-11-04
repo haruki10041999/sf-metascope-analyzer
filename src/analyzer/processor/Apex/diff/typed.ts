@@ -1,71 +1,21 @@
 import { ErrorJson } from '../../../types';
 
+import { JsonNode, Match, Sources } from '../../commons/diff/commons';
 import {
-    JsonNode,
-    Match,
-    OptionalDiff,
-    Sources,
-    ValueDiff,
-    getValueKey,
-    makeValueDiff,
-    toBody,
-} from './commons';
-import { GumTreeDiff, MovedFrom } from './gumtree/diff';
+    MovedFrom,
+    TypedListDiff,
+    makePairedItem,
+    makeSingleItem,
+    makeUnchangedItem,
+} from '../../commons/diff/list';
+import { GumTreeDiff } from './gumtree/diff';
 
-type Primitive = string | number | boolean | null | undefined;
 type DiffNode = JsonNode | ErrorJson;
 type DiffObject = Record<string, unknown>;
 
-type OptionalPropertyDiff<T> = undefined extends T
-    ? OptionalDiff<Exclude<T, undefined>, TypedJsonDiff<Exclude<T, undefined>>>
-    : TypedJsonDiff<T>;
-
-export type TypedFieldsDiff<T extends object> = {
-    [K in keyof T as K extends 'kind' | 'sourceKeys' ? never : K]: OptionalPropertyDiff<T[K]>;
-};
-
-export type TypedNodeDiff<T extends DiffNode> = {
-    kind: T['kind'];
-    sourceKeys: { before: T['sourceKeys']; after: T['sourceKeys'] };
-} & (
-    | { status: 'unchanged'; value: Omit<T, 'kind' | 'sourceKeys'> }
-    | { status: 'changed'; match: Match; fields: TypedFieldsDiff<T> }
-    | {
-          status: 'changed';
-          match: Match;
-          before: Omit<T, 'kind' | 'sourceKeys'>;
-          after: Omit<T, 'kind' | 'sourceKeys'>;
-      }
-);
-
-export type TypedObjectDiff<T extends object, Fields = TypedFieldsDiff<T>> =
-    | { status: 'unchanged'; value: T }
-    | { status: 'changed'; fields: Fields }
-    | { status: 'changed'; before: T; after: T };
-
-export type TypedListItemDiff<T, NestedDiff = TypedJsonDiff<T>> =
-    | { status: 'unchanged'; match: Match; index: { before: number; after: number }; value: T }
-    | {
-          status: 'changed' | 'moved';
-          match: Match;
-          index: { before: number; after: number };
-          value: NestedDiff;
-          from?: { parent: string; index: number };
-      }
-    | { status: 'removed'; index: number; value: T }
-    | { status: 'added'; index: number; value: T };
-
-export type TypedListDiff<T, NestedDiff = TypedJsonDiff<T>> = TypedListItemDiff<T, NestedDiff>[];
-
-export type TypedJsonDiff<T> = T extends Primitive
-    ? ValueDiff<T>
-    : T extends DiffNode
-      ? TypedNodeDiff<T>
-      : T extends (infer Item)[]
-        ? TypedListDiff<Item>
-        : T extends object
-          ? TypedObjectDiff<T>
-          : ValueDiff<T>;
+// ---------------------------------------------------------------------------
+// GumTree で対応付ける配列 (文の並び)
+// ---------------------------------------------------------------------------
 
 export type TypedDiffBuilder = (
     before: unknown[],
@@ -115,9 +65,7 @@ export const makeTypedDiffContext = (
 ): { gumTreeDiffs: GumTreeDiff[]; context: TypedDiffContext } => {
     const gumTreeDiffs = build(before, after, sources);
     const beforeNodes = new Map<string, DiffNode>();
-    const afterNodes = new Map<string, DiffNode>();
     collectSourceNodes(before, beforeNodes);
-    collectSourceNodes(after, afterNodes);
 
     const context: TypedDiffContext = { movedFrom: new Set(), movedTo: new Map() };
     const visit = (diffs: GumTreeDiff[]) => {
@@ -154,73 +102,8 @@ const isDiffNode = (value: unknown): value is DiffNode =>
 const isObject = (value: unknown): value is DiffObject =>
     typeof value === 'object' && value !== null && !Array.isArray(value);
 
-const getObjectFields = (
-    before: DiffObject,
-    after: DiffObject,
-    build: TypedDiffBuilder,
-    sources?: Sources,
-    context?: TypedDiffContext,
-) => {
-    const keys = new Set([...Object.keys(before), ...Object.keys(after)]);
-    return Object.fromEntries(
-        [...keys].map((key) => {
-            const beforeValue = before[key];
-            const afterValue = after[key];
-            if (beforeValue === undefined || afterValue === undefined) {
-                return [
-                    key,
-                    beforeValue === undefined
-                        ? { status: 'added', value: afterValue }
-                        : { status: 'removed', value: beforeValue },
-                ];
-            }
-            return [key, makeTypedJsonDiff(beforeValue, afterValue, build, sources, context)];
-        }),
-    );
-};
-
-const makeNodeDiff = <T extends DiffNode>(
-    before: T,
-    after: T,
-    build: TypedDiffBuilder,
-    sources?: Sources,
-    context?: TypedDiffContext,
-): TypedNodeDiff<T> => {
-    const sourceKeys = { before: before.sourceKeys, after: after.sourceKeys };
-    if (getValueKey(before) === getValueKey(after)) {
-        return { kind: after.kind, sourceKeys, status: 'unchanged', value: toBody(after) };
-    }
-
-    if (before.kind !== after.kind) {
-        return {
-            kind: after.kind,
-            sourceKeys,
-            status: 'changed',
-            match: 'slot',
-            before: toBody(before),
-            after: toBody(after),
-        };
-    }
-
-    const fields = getObjectFields(
-        before as unknown as DiffObject,
-        after as unknown as DiffObject,
-        build,
-        sources,
-        context,
-    );
-    delete fields.kind;
-    delete fields.sourceKeys;
-    return {
-        kind: after.kind,
-        sourceKeys,
-        status: 'changed',
-        match: 'slot',
-        fields,
-    } as TypedNodeDiff<T>;
-};
-
-export const makeTypedArrayDiff = <T>(
+/** GumTree の対応 (precomputed、なければ build で作る) から、型付きリスト Diff を作る */
+export const makeTypedArrayDiff = <T, D>(
     before: T[],
     after: T[],
     build: TypedDiffBuilder,
@@ -228,97 +111,60 @@ export const makeTypedArrayDiff = <T>(
     sources?: Sources,
     context?: TypedDiffContext,
     precomputed?: GumTreeDiff[],
-): TypedListItemDiff<T, unknown>[] => {
+): TypedListDiff<T, D> => {
     const gumTreeDiffs = precomputed ?? build(before, after, sources);
     const diffItem = (beforeItem: T, afterItem: T) =>
-        makeItemDiff(beforeItem, afterItem, sources, context);
-    const items: TypedListItemDiff<T, unknown>[] = [];
+        makeItemDiff(beforeItem, afterItem, sources, context) as D;
+    const items: TypedListDiff<T, D> = [];
 
     for (const diff of gumTreeDiffs) {
         if (diff.status === 'removed') {
             const index = diff.index.before!;
+            // 別の場所へ移動したものは、移動先に 1 回だけ出す
             if (context?.movedFrom.has(getSourceKey(before[index]) ?? '')) continue;
-            items.push({ status: 'removed', index, value: before[index]! });
+            items.push(makeSingleItem('removed', before[index]!, index));
             continue;
         }
         if (diff.status === 'added') {
             const index = diff.index.after!;
             const moved = context?.movedTo.get(getSourceKey(after[index]) ?? '');
             if (moved) {
-                items.push({
-                    status: 'moved',
-                    match: moved.match,
-                    index: { before: moved.from.index, after: index },
-                    value: diffItem(moved.before as T, after[index]!),
-                    from: moved.from,
-                });
+                items.push(
+                    makePairedItem(
+                        diffItem(moved.before as T, after[index]!),
+                        'moved',
+                        moved.match,
+                        { before: moved.from.index, after: index },
+                        moved.from,
+                    ),
+                );
                 continue;
             }
-            items.push({ status: 'added', index, value: after[index]! });
+            items.push(makeSingleItem('added', after[index]!, index));
             continue;
         }
 
-        const beforeIndex = diff.index.before!;
-        const afterIndex = diff.index.after!;
-        const beforeValue = before[beforeIndex]!;
-        const afterValue = after[afterIndex]!;
+        const index = { before: diff.index.before!, after: diff.index.after! };
+        const afterValue = after[index.after]!;
         if (diff.status === 'unchanged') {
-            items.push({
-                status: 'unchanged',
-                match: diff.match,
-                index: { before: beforeIndex, after: afterIndex },
-                value: afterValue,
-            });
-        } else {
-            items.push({
-                status: diff.status,
-                match: diff.match,
-                index: { before: beforeIndex, after: afterIndex },
-                value: diffItem(beforeValue, afterValue),
-                ...(diff.status === 'moved' ? { from: diff.from } : {}),
-            });
+            items.push(makeUnchangedItem(before[index.before]!, afterValue, diff.match, index));
+            continue;
         }
+        const from = diff.status === 'moved' ? diff.from : diff.moved;
+        // 別の親から移動してきたものの index.before は移動元の親の中の位置なので、
+        // before[index] ではなく、移動元のノードを引く
+        const moved = from ? context?.movedTo.get(getSourceKey(afterValue) ?? '') : undefined;
+        const beforeValue = (moved?.before as T | undefined) ?? before[index.before]!;
+        items.push(
+            makePairedItem(
+                diffItem(beforeValue, afterValue),
+                from ? 'moved' : 'changed',
+                diff.match,
+                index,
+                from,
+            ),
+        );
     }
 
     return items;
-};
-
-export const makeTypedJsonDiff = <Before, After>(
-    before: Before,
-    after: After,
-    build: TypedDiffBuilder,
-    sources?: Sources,
-    context?: TypedDiffContext,
-): TypedJsonDiff<Before | After> => {
-    if (isDiffNode(before) && isDiffNode(after)) {
-        return makeNodeDiff(
-            before,
-            after as unknown as typeof before,
-            build,
-            sources,
-            context,
-        ) as unknown as TypedJsonDiff<Before | After>;
-    }
-    if (Array.isArray(before) && Array.isArray(after)) {
-        return makeValueDiff<Before | After>(
-            before as Before | After,
-            after as Before | After,
-        ) as TypedJsonDiff<Before | After>;
-    }
-    if (isObject(before) && isObject(after)) {
-        if (getValueKey(before) === getValueKey(after)) {
-            return { status: 'unchanged', value: after } as TypedJsonDiff<Before | After>;
-        }
-        if (isDiffNode(before) !== isDiffNode(after)) {
-            return { status: 'changed', before, after } as TypedJsonDiff<Before | After>;
-        }
-        return {
-            status: 'changed',
-            fields: getObjectFields(before, after, build, sources, context),
-        } as TypedJsonDiff<Before | After>;
-    }
-    return makeValueDiff<Before | After>(
-        before as Before | After,
-        after as Before | After,
-    ) as TypedJsonDiff<Before | After>;
 };

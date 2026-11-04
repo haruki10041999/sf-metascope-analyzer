@@ -22,25 +22,25 @@ import {
     isLimitClauseType,
     isOffsetClauseType,
 } from '../clauseVisitor';
-import { CommonTypeClass, ErrorTypeClass, isValidClass } from '../commonVisitor';
+import { ApexCommonTypeClass, ApexErrorTypeClass, isApexValidClass } from '../commonVisitor';
 
 // value はオブジェクト名 (soslId[0])
 export class FieldSpecTypeClass extends QueryTypeClass<'fieldSpec', SoslIdTypeClass> {
-    private fieldList: FieldListTypeClass | ErrorTypeClass | null;
-    private where: LogicalExpressionTypeClass | ErrorTypeClass | null;
-    private listView: SoslIdTypeClass | ErrorTypeClass | null;
-    private orderBy: FieldOrderListTypeClass | ErrorTypeClass | null;
-    private limitClause: LimitClauseTypeClass | ErrorTypeClass | null;
-    private offsetClause: OffsetClauseTypeClass | ErrorTypeClass | null;
+    private fieldList: FieldListTypeClass | ApexErrorTypeClass | null;
+    private where: LogicalExpressionTypeClass | ApexErrorTypeClass | null;
+    private listView: SoslIdTypeClass | ApexErrorTypeClass | null;
+    private orderBy: FieldOrderListTypeClass | ApexErrorTypeClass | null;
+    private limitClause: LimitClauseTypeClass | ApexErrorTypeClass | null;
+    private offsetClause: OffsetClauseTypeClass | ApexErrorTypeClass | null;
 
     private constructor(
-        value: SoslIdTypeClass | ErrorTypeClass,
-        fieldList: FieldListTypeClass | ErrorTypeClass | null,
-        where: LogicalExpressionTypeClass | ErrorTypeClass | null,
-        listView: SoslIdTypeClass | ErrorTypeClass | null,
-        orderBy: FieldOrderListTypeClass | ErrorTypeClass | null,
-        limitClause: LimitClauseTypeClass | ErrorTypeClass | null,
-        offsetClause: OffsetClauseTypeClass | ErrorTypeClass | null,
+        value: SoslIdTypeClass | ApexErrorTypeClass,
+        fieldList: FieldListTypeClass | ApexErrorTypeClass | null,
+        where: LogicalExpressionTypeClass | ApexErrorTypeClass | null,
+        listView: SoslIdTypeClass | ApexErrorTypeClass | null,
+        orderBy: FieldOrderListTypeClass | ApexErrorTypeClass | null,
+        limitClause: LimitClauseTypeClass | ApexErrorTypeClass | null,
+        offsetClause: OffsetClauseTypeClass | ApexErrorTypeClass | null,
     ) {
         super('fieldSpec', value);
         this.fieldList = fieldList;
@@ -60,40 +60,40 @@ export class FieldSpecTypeClass extends QueryTypeClass<'fieldSpec', SoslIdTypeCl
         const listViewCtx = ctx.LISTVIEW() ? ctx.soslId(1) : null;
 
         return new FieldSpecTypeClass(
-            isValidClass(new IdVisitor().visit(ctx.soslId(0)), isSoslIdType, 'soslId'),
+            isApexValidClass(new IdVisitor().visit(ctx.soslId(0)), isSoslIdType, 'soslId'),
             ctx.fieldList()
-                ? isValidClass(
+                ? isApexValidClass(
                       new ListVisitor().visit(ctx.fieldList()),
                       isFieldListType,
                       'fieldList',
                   )
                 : null,
             ctx.logicalExpression()
-                ? isValidClass(
+                ? isApexValidClass(
                       new ExpressionVisitor().visit(ctx.logicalExpression()),
                       isLogicalExpressionType,
                       'logicalExpression',
                   )
                 : null,
             listViewCtx
-                ? isValidClass(new IdVisitor().visit(listViewCtx), isSoslIdType, 'soslId')
+                ? isApexValidClass(new IdVisitor().visit(listViewCtx), isSoslIdType, 'soslId')
                 : null,
             ctx.fieldOrderList()
-                ? isValidClass(
+                ? isApexValidClass(
                       new ListVisitor().visit(ctx.fieldOrderList()),
                       isFieldOrderListType,
                       'fieldOrderList',
                   )
                 : null,
             ctx.limitClause()
-                ? isValidClass(
+                ? isApexValidClass(
                       new ClauseVisitor().visit(ctx.limitClause()),
                       isLimitClauseType,
                       'limitClause',
                   )
                 : null,
             ctx.offsetClause()
-                ? isValidClass(
+                ? isApexValidClass(
                       new ClauseVisitor().visit(ctx.offsetClause()),
                       isOffsetClauseType,
                       'offsetClause',
@@ -102,31 +102,34 @@ export class FieldSpecTypeClass extends QueryTypeClass<'fieldSpec', SoslIdTypeCl
         );
     }
 
-    getFieldList(): FieldListTypeClass | ErrorTypeClass | null {
+    getFieldList(): FieldListTypeClass | ApexErrorTypeClass | null {
         return this.fieldList;
     }
 
-    getWhere(): LogicalExpressionTypeClass | ErrorTypeClass | null {
+    getWhere(): LogicalExpressionTypeClass | ApexErrorTypeClass | null {
         return this.where;
     }
 
-    getListView(): SoslIdTypeClass | ErrorTypeClass | null {
+    getListView(): SoslIdTypeClass | ApexErrorTypeClass | null {
         return this.listView;
     }
 
-    getOrderBy(): FieldOrderListTypeClass | ErrorTypeClass | null {
+    getOrderBy(): FieldOrderListTypeClass | ApexErrorTypeClass | null {
         return this.orderBy;
     }
 
-    getLimitClause(): LimitClauseTypeClass | ErrorTypeClass | null {
+    getLimitClause(): LimitClauseTypeClass | ApexErrorTypeClass | null {
         return this.limitClause;
     }
 
-    getOffsetClause(): OffsetClauseTypeClass | ErrorTypeClass | null {
+    getOffsetClause(): OffsetClauseTypeClass | ApexErrorTypeClass | null {
         return this.offsetClause;
     }
 }
 
-export const isFieldSpecType = (target: CommonTypeClass<string>): target is FieldSpecTypeClass => {
+export const isFieldSpecType = (
+    target: ApexCommonTypeClass<string>,
+): target is FieldSpecTypeClass => {
     return target instanceof FieldSpecTypeClass;
 };
+

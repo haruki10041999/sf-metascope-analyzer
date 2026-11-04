@@ -1,0 +1,1229 @@
+[
+  {
+    "id": "Account",
+    "status": "changed",
+    "filePath": "Account",
+    "dataType": "object",
+    "resolvedError": [],
+    "content": {
+      "kind": "object",
+      "sourceKeys": {
+        "objectKey": {
+          "before": "object_430341013dfd0604",
+          "after": "object_77337bfaccbd1b91"
+        },
+        "sourceKey": {
+          "before": "object_d3c23da4c239845d",
+          "after": "object_5e4501090ced50f4"
+        }
+      },
+      "status": "changed",
+      "match": "key",
+      "fields": {
+        "apiName": {
+          "status": "unchanged",
+          "value": "Account"
+        },
+        "objectType": {
+          "status": "unchanged",
+          "value": "standard"
+        },
+        "sharingModel": {
+          "status": "unchanged",
+          "value": "ReadWrite"
+        },
+        "enableHistory": {
+          "status": "changed",
+          "before": true,
+          "after": false
+        },
+        "fields": [
+          {
+            "kind": "field",
+            "sourceKeys": {
+              "objectKey": {
+                "before": "field_108148fbe373bc5a",
+                "after": "field_8050f1612ac790f5"
+              },
+              "sourceKey": {
+                "before": "field_fc9abb3ca21d6dab",
+                "after": "field_e9b180230c37aa13"
+              }
+            },
+            "status": "changed",
+            "match": "key",
+            "fields": {
+              "apiName": {
+                "status": "unchanged",
+                "value": "Tier__c"
+              },
+              "label": {
+                "status": "changed",
+                "before": "Tier",
+                "after": "Customer Tier"
+              },
+              "type": {
+                "status": "unchanged",
+                "value": "Picklist"
+              },
+              "required": {
+                "status": "removed",
+                "value": false
+              },
+              "valueSet": {
+                "restricted": {
+                  "status": "unchanged",
+                  "value": true
+                },
+                "sorted": {
+                  "status": "unchanged",
+                  "value": false
+                },
+                "values": [
+                  {
+                    "kind": "picklistValue",
+                    "sourceKeys": {
+                      "objectKey": "picklistValue_8892b2345ea4b0cf",
+                      "sourceKey": {
+                        "before": "picklistValue_a60ac581e3e13487",
+                        "after": "picklistValue_c262693a12b138b2"
+                      }
+                    },
+                    "status": "unchanged",
+                    "value": {
+                      "fullName": "Gold",
+                      "label": "Gold",
+                      "default": true
+                    },
+                    "index": {
+                      "before": 0,
+                      "after": 1
+                    }
+                  },
+                  {
+                    "kind": "picklistValue",
+                    "sourceKeys": {
+                      "objectKey": "picklistValue_5ca05c9404ebde40",
+                      "sourceKey": {
+                        "before": "picklistValue_5121773bd65c250e",
+                        "after": "picklistValue_ec1567c3c6550bd2"
+                      }
+                    },
+                    "status": "unchanged",
+                    "value": {
+                      "fullName": "Silver",
+                      "label": "Silver",
+                      "default": false
+                    },
+                    "index": {
+                      "before": 1,
+                      "after": 2
+                    }
+                  },
+                  {
+                    "kind": "picklistValue",
+                    "sourceKeys": {
+                      "objectKey": "picklistValue_cbe9cfbf5ea776b8",
+                      "sourceKey": {
+                        "before": "picklistValue_4a0692dc56ffce1d",
+                        "after": "picklistValue_55f4b6aeae376075"
+                      }
+                    },
+                    "status": "unchanged",
+                    "value": {
+                      "fullName": "Bronze",
+                      "label": "Bronze",
+                      "default": false
+                    },
+                    "index": {
+                      "before": 2,
+                      "after": 3
+                    }
+                  },
+                  {
+                    "kind": "picklistValue",
+                    "sourceKeys": {
+                      "objectKey": "picklistValue_57899d4a3f43506f",
+                      "sourceKey": "picklistValue_856f67301494b5eb"
+                    },
+                    "status": "added",
+                    "index": 0,
+                    "value": {
+                      "fullName": "Platinum",
+                      "label": "Platinum",
+                      "default": false
+                    }
+                  }
+                ]
+              }
+            },
+            "index": {
+              "before": 0,
+              "after": 0
+            }
+          }
+        ],
+        "validationRules": {
+          "status": "added",
+          "value": [
+            {
+              "kind": "validationRule",
+              "sourceKeys": {
+                "objectKey": "validationRule_07648dd08d700d0c",
+                "sourceKey": "validationRule_71df2abd615a8158"
+              },
+              "value": {
+                "fullName": "Name_Required",
+                "active": true,
+                "errorConditionFormula": "ISBLANK(Name)",
+                "errorMessage": "Name is required."
+              }
+            }
+          ]
+        },
+        "listViews": [
+          {
+            "kind": "listView",
+            "sourceKeys": {
+              "objectKey": {
+                "before": "listView_7a0f3e1f72139cff",
+                "after": "listView_dbaeb7554dbfa303"
+              },
+              "sourceKey": "listView_ef3e138b50fc4fc3"
+            },
+            "status": "changed",
+            "match": "key",
+            "fields": {
+              "fullName": {
+                "status": "unchanged",
+                "value": "AllAccounts"
+              },
+              "label": {
+                "status": "unchanged",
+                "value": "All Accounts"
+              },
+              "filterScope": {
+                "status": "unchanged",
+                "value": "Everything"
+              },
+              "columns": [
+                {
+                  "status": "unchanged",
+                  "match": "identical",
+                  "index": {
+                    "before": 0,
+                    "after": 0
+                  },
+                  "value": "ACCOUNT.NAME"
+                },
+                {
+                  "status": "moved",
+                  "value": "ACCOUNT.TYPE",
+                  "match": "identical",
+                  "index": {
+                    "before": 1,
+                    "after": 2
+                  }
+                },
+                {
+                  "status": "unchanged",
+                  "match": "identical",
+                  "index": {
+                    "before": 2,
+                    "after": 1
+                  },
+                  "value": "Tier__c"
+                }
+              ]
+            },
+            "index": {
+              "before": 0,
+              "after": 0
+            }
+          }
+        ],
+        "compactLayouts": [
+          {
+            "kind": "compactLayout",
+            "sourceKeys": {
+              "objectKey": "compactLayout_eafc2f29d0af8e85",
+              "sourceKey": "compactLayout_54246797a77fa97d"
+            },
+            "status": "unchanged",
+            "value": {
+              "fullName": "AccountCompact",
+              "label": "Account Compact",
+              "fields": [
+                "Name",
+                "Tier__c"
+              ]
+            },
+            "index": {
+              "before": 0,
+              "after": 0
+            }
+          }
+        ]
+      }
+    }
+  },
+  {
+    "id": "App_Setting__mdt",
+    "status": "unchanged",
+    "filePath": "App_Setting__mdt",
+    "dataType": "object",
+    "resolvedError": [],
+    "content": {
+      "kind": "object",
+      "sourceKeys": {
+        "objectKey": "object_af13afaa91d16251",
+        "sourceKey": {
+          "before": "object_013076ad22b8d583",
+          "after": "object_2af00f581cb7c023"
+        }
+      },
+      "status": "unchanged",
+      "value": {
+        "apiName": "App_Setting__mdt",
+        "objectType": "customMetadata",
+        "label": "App Setting",
+        "pluralLabel": "App Settings",
+        "visibility": "Public",
+        "fields": [
+          {
+            "kind": "field",
+            "sourceKeys": {
+              "objectKey": "field_174879fdc3993fa7",
+              "sourceKey": "field_ff2305cde7be4892"
+            },
+            "apiName": "Value__c",
+            "label": "Value",
+            "type": "Text",
+            "length": 255
+          }
+        ]
+      }
+    }
+  },
+  {
+    "id": "Broken__c",
+    "status": "changed",
+    "filePath": "Broken__c",
+    "dataType": "object",
+    "resolvedError": [
+      {
+        "status": "added",
+        "index": 0,
+        "value": {
+          "sourceKeys": {
+            "objectKey": "error_e6cd0a1da7567a97",
+            "sourceKey": "error_63685c4984ada19e"
+          },
+          "code": "XML_SYNTAX",
+          "contextType": "field",
+          "context": "    <length>10</lenght>",
+          "errorMessage": "</length> expected but </lenght> found",
+          "filePath": "Broken__c/fields/Code__c.field-meta.xml",
+          "start": {
+            "offset": 180,
+            "line": 5,
+            "column": 22
+          },
+          "end": {
+            "offset": 180,
+            "line": 5,
+            "column": 22
+          }
+        }
+      },
+      {
+        "status": "added",
+        "index": 1,
+        "value": {
+          "sourceKeys": {
+            "objectKey": "error_df6f0870b1e56b70",
+            "sourceKey": "error_34bf9dfe2a11ca04"
+          },
+          "code": "UNEXPECTED_ROOT",
+          "contextType": "field",
+          "context": "<ValidationRule xmlns=\"http://soap.sforce.com/2006/04/metadata\">",
+          "errorMessage": "<CustomField> expected but <ValidationRule> found",
+          "filePath": "Broken__c/fields/Misplaced__c.field-meta.xml",
+          "start": {
+            "offset": 39,
+            "line": 2,
+            "column": 0
+          },
+          "end": {
+            "offset": 39,
+            "line": 2,
+            "column": 0
+          }
+        }
+      }
+    ],
+    "content": {
+      "kind": "object",
+      "sourceKeys": {
+        "objectKey": {
+          "before": "object_2818aaf05e0d8a53",
+          "after": "object_fc983e9dc3783925"
+        },
+        "sourceKey": "object_2ba1815a360d4e42"
+      },
+      "status": "changed",
+      "match": "key",
+      "fields": {
+        "apiName": {
+          "status": "unchanged",
+          "value": "Broken__c"
+        },
+        "objectType": {
+          "status": "unchanged",
+          "value": "custom"
+        },
+        "label": {
+          "status": "unchanged",
+          "value": "Broken"
+        },
+        "pluralLabel": {
+          "status": "unchanged",
+          "value": "Brokens"
+        },
+        "sharingModel": {
+          "status": "unchanged",
+          "value": "ReadWrite"
+        },
+        "deploymentStatus": {
+          "status": "unchanged",
+          "value": "Deployed"
+        },
+        "fields": [
+          {
+            "kind": "field",
+            "sourceKeys": {
+              "objectKey": "field_ee7b36c1c5a46d6f",
+              "sourceKey": "field_e340ec43b36f218c"
+            },
+            "status": "removed",
+            "index": 0,
+            "value": {
+              "apiName": "Code__c",
+              "label": "Code",
+              "type": "Text",
+              "length": 10
+            }
+          },
+          {
+            "kind": "error",
+            "sourceKeys": {
+              "objectKey": "error_e6cd0a1da7567a97",
+              "sourceKey": "error_63685c4984ada19e"
+            },
+            "status": "added",
+            "index": 0,
+            "value": {
+              "kindType": "field"
+            }
+          },
+          {
+            "kind": "error",
+            "sourceKeys": {
+              "objectKey": "error_df6f0870b1e56b70",
+              "sourceKey": "error_34bf9dfe2a11ca04"
+            },
+            "status": "added",
+            "index": 1,
+            "value": {
+              "kindType": "field"
+            }
+          }
+        ]
+      }
+    }
+  },
+  {
+    "id": "Invoice__c",
+    "status": "changed",
+    "filePath": "Invoice__c",
+    "dataType": "object",
+    "resolvedError": [],
+    "content": {
+      "kind": "object",
+      "sourceKeys": {
+        "objectKey": {
+          "before": "object_b9ddf9e66c0f6296",
+          "after": "object_27445cec161da543"
+        },
+        "sourceKey": "object_0ee90c06256c23de"
+      },
+      "status": "changed",
+      "match": "key",
+      "fields": {
+        "apiName": {
+          "status": "unchanged",
+          "value": "Invoice__c"
+        },
+        "objectType": {
+          "status": "unchanged",
+          "value": "custom"
+        },
+        "label": {
+          "status": "unchanged",
+          "value": "Invoice"
+        },
+        "pluralLabel": {
+          "status": "unchanged",
+          "value": "Invoices"
+        },
+        "description": {
+          "status": "unchanged",
+          "value": "請求書"
+        },
+        "sharingModel": {
+          "status": "unchanged",
+          "value": "ReadWrite"
+        },
+        "deploymentStatus": {
+          "status": "unchanged",
+          "value": "Deployed"
+        },
+        "enableActivities": {
+          "status": "unchanged",
+          "value": true
+        },
+        "enableReports": {
+          "status": "unchanged",
+          "value": true
+        },
+        "nameField": {
+          "status": "unchanged",
+          "value": {
+            "label": "Invoice Number",
+            "type": "AutoNumber",
+            "displayFormat": "INV-{0000}"
+          }
+        },
+        "fields": [
+          {
+            "kind": "field",
+            "sourceKeys": {
+              "objectKey": {
+                "before": "field_ad25dea8e6fc703d",
+                "after": "field_3e3d19384d814250"
+              },
+              "sourceKey": {
+                "before": "field_f6c460a9da6db203",
+                "after": "field_255896ec20246a16"
+              }
+            },
+            "status": "changed",
+            "match": "key",
+            "fields": {
+              "apiName": {
+                "status": "unchanged",
+                "value": "Account__c"
+              },
+              "label": {
+                "status": "unchanged",
+                "value": "Account"
+              },
+              "type": {
+                "status": "unchanged",
+                "value": "Lookup"
+              },
+              "required": {
+                "status": "unchanged",
+                "value": false
+              },
+              "referenceTo": {
+                "status": "unchanged",
+                "value": "Account"
+              },
+              "relationshipName": {
+                "status": "unchanged",
+                "value": "Invoices"
+              },
+              "relationshipLabel": {
+                "status": "unchanged",
+                "value": "Invoices"
+              },
+              "deleteConstraint": {
+                "status": "changed",
+                "before": "SetNull",
+                "after": "Restrict"
+              }
+            },
+            "index": {
+              "before": 0,
+              "after": 0
+            }
+          },
+          {
+            "kind": "field",
+            "sourceKeys": {
+              "objectKey": {
+                "before": "field_cbe5a53d3a461c46",
+                "after": "field_db7d96657aa0c849"
+              },
+              "sourceKey": {
+                "before": "field_6bea3d920a7c150a",
+                "after": "field_9b0d812563887bcc"
+              }
+            },
+            "status": "changed",
+            "match": "key",
+            "fields": {
+              "apiName": {
+                "status": "unchanged",
+                "value": "Amount__c"
+              },
+              "label": {
+                "status": "unchanged",
+                "value": "Amount"
+              },
+              "inlineHelpText": {
+                "status": "added",
+                "value": "税込みの金額"
+              },
+              "type": {
+                "status": "unchanged",
+                "value": "Currency"
+              },
+              "required": {
+                "status": "unchanged",
+                "value": true
+              },
+              "precision": {
+                "status": "changed",
+                "before": 18,
+                "after": 16
+              },
+              "scale": {
+                "status": "unchanged",
+                "value": 2
+              }
+            },
+            "index": {
+              "before": 1,
+              "after": 1
+            }
+          },
+          {
+            "kind": "field",
+            "sourceKeys": {
+              "objectKey": "field_c2ec27f0f3f5c9bb",
+              "sourceKey": "field_a616a764ec1980a4"
+            },
+            "status": "unchanged",
+            "value": {
+              "apiName": "Due_Date__c",
+              "label": "Due Date",
+              "type": "Date"
+            },
+            "index": {
+              "before": 2,
+              "after": 3
+            }
+          },
+          {
+            "kind": "field",
+            "sourceKeys": {
+              "objectKey": "field_a7205ebd964bc5c5",
+              "sourceKey": "field_be03fe263f3af0d1"
+            },
+            "status": "unchanged",
+            "value": {
+              "apiName": "Is_Overdue__c",
+              "label": "Is Overdue",
+              "type": "Checkbox",
+              "formula": "AND(NOT(ISPICKVAL(Status__c, 'Paid')), Due_Date__c < TODAY())"
+            },
+            "index": {
+              "before": 3,
+              "after": 4
+            }
+          },
+          {
+            "kind": "field",
+            "sourceKeys": {
+              "objectKey": "field_fbd0ad0d62d464e1",
+              "sourceKey": "field_8b5692e4a6be33e7"
+            },
+            "status": "removed",
+            "index": 4,
+            "value": {
+              "apiName": "Note__c",
+              "label": "Note",
+              "type": "Text",
+              "length": 255
+            }
+          },
+          {
+            "kind": "field",
+            "sourceKeys": {
+              "objectKey": {
+                "before": "field_13d3db7e312ed9a9",
+                "after": "field_e95a717c41ac7173"
+              },
+              "sourceKey": {
+                "before": "field_8d0ee9a334e30086",
+                "after": "field_0bea8b450a3c1f7f"
+              }
+            },
+            "status": "changed",
+            "match": "key",
+            "fields": {
+              "apiName": {
+                "status": "unchanged",
+                "value": "Status__c"
+              },
+              "label": {
+                "status": "unchanged",
+                "value": "Status"
+              },
+              "type": {
+                "status": "unchanged",
+                "value": "Picklist"
+              },
+              "valueSet": {
+                "restricted": {
+                  "status": "unchanged",
+                  "value": true
+                },
+                "sorted": {
+                  "status": "unchanged",
+                  "value": false
+                },
+                "values": [
+                  {
+                    "kind": "picklistValue",
+                    "sourceKeys": {
+                      "objectKey": "picklistValue_b8b1322aec0c83d6",
+                      "sourceKey": "picklistValue_3d56a5eb216021c1"
+                    },
+                    "status": "unchanged",
+                    "value": {
+                      "fullName": "Draft",
+                      "label": "Draft",
+                      "default": true
+                    },
+                    "index": {
+                      "before": 0,
+                      "after": 0
+                    }
+                  },
+                  {
+                    "kind": "picklistValue",
+                    "sourceKeys": {
+                      "objectKey": "picklistValue_bdbf32ccb858c226",
+                      "sourceKey": "picklistValue_aee4067dbb3ee4f9"
+                    },
+                    "status": "removed",
+                    "index": 1,
+                    "value": {
+                      "fullName": "Sent",
+                      "label": "Sent",
+                      "default": false
+                    }
+                  },
+                  {
+                    "kind": "picklistValue",
+                    "sourceKeys": {
+                      "objectKey": {
+                        "before": "picklistValue_64307455e085b066",
+                        "after": "picklistValue_935e8048a3fc47c0"
+                      },
+                      "sourceKey": {
+                        "before": "picklistValue_ecd9e253fbf88ce3",
+                        "after": "picklistValue_4eebb15cd738969c"
+                      }
+                    },
+                    "status": "changed",
+                    "match": "key",
+                    "fields": {
+                      "fullName": {
+                        "status": "unchanged",
+                        "value": "Paid"
+                      },
+                      "label": {
+                        "status": "changed",
+                        "before": "Paid",
+                        "after": "Paid (Closed)"
+                      },
+                      "default": {
+                        "status": "unchanged",
+                        "value": false
+                      }
+                    },
+                    "index": {
+                      "before": 2,
+                      "after": 1
+                    }
+                  },
+                  {
+                    "kind": "picklistValue",
+                    "sourceKeys": {
+                      "objectKey": "picklistValue_814a7aa48f10bec2",
+                      "sourceKey": "picklistValue_feadc8b60ed04713"
+                    },
+                    "status": "added",
+                    "index": 2,
+                    "value": {
+                      "fullName": "Overdue",
+                      "label": "Overdue",
+                      "default": false
+                    }
+                  }
+                ]
+              }
+            },
+            "index": {
+              "before": 5,
+              "after": 5
+            }
+          },
+          {
+            "kind": "field",
+            "sourceKeys": {
+              "objectKey": "field_4c4d2b0c875f5107",
+              "sourceKey": "field_7f2c95c0c48caf39"
+            },
+            "status": "added",
+            "index": 2,
+            "value": {
+              "apiName": "Approved__c",
+              "label": "Approved",
+              "type": "Checkbox",
+              "defaultValue": "false"
+            }
+          }
+        ],
+        "validationRules": [
+          {
+            "kind": "validationRule",
+            "sourceKeys": {
+              "objectKey": {
+                "before": "validationRule_fc639549cd223d51",
+                "after": "validationRule_fdedab7cc3824cbd"
+              },
+              "sourceKey": {
+                "before": "validationRule_47ca9c2f97fa5b8a",
+                "after": "validationRule_0a64b99c273a2cb0"
+              }
+            },
+            "status": "changed",
+            "match": "key",
+            "fields": {
+              "fullName": {
+                "status": "unchanged",
+                "value": "Amount_Positive"
+              },
+              "active": {
+                "status": "unchanged",
+                "value": true
+              },
+              "errorConditionFormula": {
+                "status": "unchanged",
+                "value": "Amount__c <= 0"
+              },
+              "errorDisplayField": {
+                "status": "unchanged",
+                "value": "Amount__c"
+              },
+              "errorMessage": {
+                "status": "changed",
+                "before": "Amount must be positive.",
+                "after": "Amount must be greater than zero."
+              }
+            },
+            "index": {
+              "before": 0,
+              "after": 0
+            }
+          },
+          {
+            "kind": "validationRule",
+            "sourceKeys": {
+              "objectKey": "validationRule_fce4409b2b112a60",
+              "sourceKey": "validationRule_94b3926734de10df"
+            },
+            "status": "added",
+            "index": 1,
+            "value": {
+              "fullName": "Due_Date_Required",
+              "active": false,
+              "errorConditionFormula": "ISBLANK(Due_Date__c)",
+              "errorMessage": "Due date is required."
+            }
+          }
+        ],
+        "recordTypes": [
+          {
+            "kind": "recordType",
+            "sourceKeys": {
+              "objectKey": {
+                "before": "recordType_32e33dd00c75517f",
+                "after": "recordType_af17dff17d7209c7"
+              },
+              "sourceKey": {
+                "before": "recordType_274e4785c74e64ab",
+                "after": "recordType_8d6c5e734f64b4e6"
+              }
+            },
+            "status": "changed",
+            "match": "key",
+            "fields": {
+              "fullName": {
+                "status": "unchanged",
+                "value": "Standard"
+              },
+              "label": {
+                "status": "unchanged",
+                "value": "Standard"
+              },
+              "active": {
+                "status": "unchanged",
+                "value": true
+              },
+              "picklistValues": [
+                {
+                  "kind": "recordTypePicklist",
+                  "sourceKeys": {
+                    "objectKey": {
+                      "before": "recordTypePicklist_08a60835c501e7ec",
+                      "after": "recordTypePicklist_a0c6e0288c99e466"
+                    },
+                    "sourceKey": {
+                      "before": "recordTypePicklist_af0ca83e2dcb35b1",
+                      "after": "recordTypePicklist_4278d06dfd38227b"
+                    }
+                  },
+                  "status": "changed",
+                  "match": "key",
+                  "fields": {
+                    "picklist": {
+                      "status": "unchanged",
+                      "value": "Status__c"
+                    },
+                    "values": [
+                      {
+                        "status": "unchanged",
+                        "match": "identical",
+                        "index": {
+                          "before": 0,
+                          "after": 0
+                        },
+                        "value": {
+                          "fullName": "Draft",
+                          "default": true
+                        }
+                      },
+                      {
+                        "status": "removed",
+                        "index": 1,
+                        "value": {
+                          "fullName": "Sent",
+                          "default": false
+                        }
+                      },
+                      {
+                        "status": "added",
+                        "index": 1,
+                        "value": {
+                          "fullName": "Overdue",
+                          "default": false
+                        }
+                      }
+                    ]
+                  },
+                  "index": {
+                    "before": 0,
+                    "after": 0
+                  }
+                }
+              ]
+            },
+            "index": {
+              "before": 0,
+              "after": 0
+            }
+          }
+        ],
+        "fieldSets": [
+          {
+            "kind": "fieldSet",
+            "sourceKeys": {
+              "objectKey": {
+                "before": "fieldSet_06f2d71292822d15",
+                "after": "fieldSet_5aefe28417acc5e0"
+              },
+              "sourceKey": "fieldSet_90f14bed7fe437cf"
+            },
+            "status": "changed",
+            "match": "key",
+            "fields": {
+              "fullName": {
+                "status": "unchanged",
+                "value": "Summary"
+              },
+              "label": {
+                "status": "unchanged",
+                "value": "Summary"
+              },
+              "description": {
+                "status": "unchanged",
+                "value": "請求書の概要"
+              },
+              "displayedFields": [
+                {
+                  "status": "moved",
+                  "value": {
+                    "field": "Amount__c",
+                    "isFieldManaged": false,
+                    "isRequired": false
+                  },
+                  "match": "identical",
+                  "index": {
+                    "before": 0,
+                    "after": 1
+                  }
+                },
+                {
+                  "status": "unchanged",
+                  "match": "identical",
+                  "index": {
+                    "before": 1,
+                    "after": 0
+                  },
+                  "value": {
+                    "field": "Status__c",
+                    "isFieldManaged": false,
+                    "isRequired": false
+                  }
+                }
+              ]
+            },
+            "index": {
+              "before": 0,
+              "after": 0
+            }
+          }
+        ],
+        "webLinks": [
+          {
+            "kind": "webLink",
+            "sourceKeys": {
+              "objectKey": {
+                "before": "webLink_ad04f1d6d26fc751",
+                "after": "webLink_54933ffac2922cef"
+              },
+              "sourceKey": {
+                "before": "webLink_eda15c2f56468792",
+                "after": "webLink_00953da115915f65"
+              }
+            },
+            "status": "changed",
+            "match": "key",
+            "fields": {
+              "fullName": {
+                "status": "unchanged",
+                "value": "Send_Invoice"
+              },
+              "masterLabel": {
+                "status": "unchanged",
+                "value": "Send Invoice"
+              },
+              "availability": {
+                "status": "unchanged",
+                "value": "online"
+              },
+              "displayType": {
+                "status": "unchanged",
+                "value": "button"
+              },
+              "linkType": {
+                "status": "unchanged",
+                "value": "url"
+              },
+              "openType": {
+                "status": "unchanged",
+                "value": "replace"
+              },
+              "protected": {
+                "status": "unchanged",
+                "value": false
+              },
+              "url": {
+                "status": "changed",
+                "before": "/apex/SendInvoice?id={!Invoice__c.Id}",
+                "after": "/lightning/cmp/c__sendInvoice?c__id={!Invoice__c.Id}"
+              }
+            },
+            "index": {
+              "before": 0,
+              "after": 0
+            }
+          }
+        ]
+      }
+    }
+  },
+  {
+    "id": "Invoice_Line__c",
+    "status": "changed",
+    "filePath": "Invoice_Line__c",
+    "dataType": "object",
+    "resolvedError": [],
+    "content": {
+      "kind": "object",
+      "sourceKeys": {
+        "objectKey": {
+          "before": "object_63e00749cc070ce7",
+          "after": "object_dfd4abc4302f2faf"
+        },
+        "sourceKey": "object_97265b6e92059763"
+      },
+      "status": "changed",
+      "match": "key",
+      "fields": {
+        "apiName": {
+          "status": "unchanged",
+          "value": "Invoice_Line__c"
+        },
+        "objectType": {
+          "status": "unchanged",
+          "value": "custom"
+        },
+        "label": {
+          "status": "unchanged",
+          "value": "Invoice Line"
+        },
+        "pluralLabel": {
+          "status": "unchanged",
+          "value": "Invoice Lines"
+        },
+        "sharingModel": {
+          "status": "unchanged",
+          "value": "ControlledByParent"
+        },
+        "deploymentStatus": {
+          "status": "unchanged",
+          "value": "Deployed"
+        },
+        "nameField": {
+          "status": "unchanged",
+          "value": {
+            "label": "Line Name",
+            "type": "Text"
+          }
+        },
+        "fields": [
+          {
+            "kind": "field",
+            "sourceKeys": {
+              "objectKey": "field_34db8b7725bd7582",
+              "sourceKey": "field_0a6d60509fda0d7c"
+            },
+            "status": "unchanged",
+            "value": {
+              "apiName": "Invoice__c",
+              "label": "Invoice",
+              "type": "MasterDetail",
+              "referenceTo": "Invoice__c",
+              "relationshipName": "Lines",
+              "relationshipOrder": 0,
+              "reparentableMasterDetail": false,
+              "writeRequiresMasterRead": false
+            },
+            "index": {
+              "before": 0,
+              "after": 0
+            }
+          },
+          {
+            "kind": "field",
+            "sourceKeys": {
+              "objectKey": "field_f86006f44e039698",
+              "sourceKey": "field_ac821ce419745792"
+            },
+            "status": "unchanged",
+            "value": {
+              "apiName": "Product__c",
+              "label": "Product",
+              "type": "Lookup",
+              "referenceTo": "Product2",
+              "relationshipName": "Invoice_Lines",
+              "deleteConstraint": "SetNull"
+            },
+            "index": {
+              "before": 1,
+              "after": 1
+            }
+          },
+          {
+            "kind": "field",
+            "sourceKeys": {
+              "objectKey": {
+                "before": "field_fe527520bec6a708",
+                "after": "field_761ff7b8a95f2bc3"
+              },
+              "sourceKey": "field_cec9f4879c00dbe3"
+            },
+            "status": "changed",
+            "match": "key",
+            "fields": {
+              "apiName": {
+                "status": "unchanged",
+                "value": "Quantity__c"
+              },
+              "label": {
+                "status": "unchanged",
+                "value": "Quantity"
+              },
+              "type": {
+                "status": "unchanged",
+                "value": "Number"
+              },
+              "precision": {
+                "status": "unchanged",
+                "value": 18
+              },
+              "scale": {
+                "status": "changed",
+                "before": 0,
+                "after": 2
+              }
+            },
+            "index": {
+              "before": 2,
+              "after": 2
+            }
+          }
+        ]
+      }
+    }
+  },
+  {
+    "id": "Legacy_Item__c",
+    "status": "removed",
+    "filePath": {
+      "before": "Legacy_Item__c"
+    },
+    "dataType": {
+      "before": "object"
+    },
+    "resolvedError": []
+  },
+  {
+    "id": "Payment__c",
+    "status": "added",
+    "filePath": {
+      "after": "Payment__c"
+    },
+    "dataType": {
+      "after": "object"
+    },
+    "resolvedError": []
+  }
+]

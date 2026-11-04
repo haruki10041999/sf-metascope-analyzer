@@ -7,13 +7,13 @@ import {
     ExpressionVisitor,
     isWhereLogicalExpressionType,
 } from '../expressionVisitor';
-import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
+import { ApexErrorTypeClass, ApexCommonTypeClass, isApexValidClass } from '../commonVisitor';
 
 export class WhereClauseTypeClass extends ClauseTypeClass<
     'whereClause',
     WhereLogicalExpressionTypeClass
 > {
-    private constructor(value: WhereLogicalExpressionTypeClass | ErrorTypeClass) {
+    private constructor(value: WhereLogicalExpressionTypeClass | ApexErrorTypeClass) {
         super('whereClause', value);
     }
 
@@ -23,7 +23,7 @@ export class WhereClauseTypeClass extends ClauseTypeClass<
         }
 
         return new WhereClauseTypeClass(
-            isValidClass(
+            isApexValidClass(
                 new ExpressionVisitor().visit(ctx.whereLogicalExpression()),
                 isWhereLogicalExpressionType,
                 'whereLogicalExpression',
@@ -33,7 +33,8 @@ export class WhereClauseTypeClass extends ClauseTypeClass<
 }
 
 export const isWhereClauseType = (
-    target: CommonTypeClass<string>,
+    target: ApexCommonTypeClass<string>,
 ): target is WhereClauseTypeClass => {
     return target instanceof WhereClauseTypeClass;
 };
+

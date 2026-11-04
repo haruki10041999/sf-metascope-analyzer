@@ -1,6 +1,7 @@
 import typia from 'typia';
 
-import { ConvertType, ConvertWithError, ErrorJson, isErrorNode, makeErrorJson } from './commons';
+import { ConvertType, ConvertWithError, isErrorNode } from './commons';
+import { ErrorJson, makeErrorJson } from '../commons';
 
 import {
     BasePrimaryType,

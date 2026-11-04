@@ -3,10 +3,10 @@ import { FieldNameContext } from '@apexdevtools/apex-parser';
 import { NameListTypeClass } from '.';
 
 import { SoqlIdTypeClass, IdVisitor, isSoqlIdType } from '../idVisitor';
-import { ErrorTypeClass, CommonTypeClass, isValidClassList } from '../commonVisitor';
+import { ApexErrorTypeClass, ApexCommonTypeClass, isApexValidClassList } from '../commonVisitor';
 
 export class FieldNameTypeClass extends NameListTypeClass<'fieldName', SoqlIdTypeClass> {
-    private constructor(value: (SoqlIdTypeClass | ErrorTypeClass)[]) {
+    private constructor(value: (SoqlIdTypeClass | ApexErrorTypeClass)[]) {
         super('fieldName', value);
     }
 
@@ -16,7 +16,7 @@ export class FieldNameTypeClass extends NameListTypeClass<'fieldName', SoqlIdTyp
         }
 
         return new FieldNameTypeClass(
-            isValidClassList(
+            isApexValidClassList(
                 ctx.soqlId_list(),
                 (ctx) => new IdVisitor().visit(ctx),
                 isSoqlIdType,
@@ -26,6 +26,8 @@ export class FieldNameTypeClass extends NameListTypeClass<'fieldName', SoqlIdTyp
     }
 }
 
-export const isFieldNameType = (target: CommonTypeClass<string>): target is FieldNameTypeClass => {
+export const isFieldNameType = (
+    target: ApexCommonTypeClass<string>,
+): target is FieldNameTypeClass => {
     return target instanceof FieldNameTypeClass;
 };

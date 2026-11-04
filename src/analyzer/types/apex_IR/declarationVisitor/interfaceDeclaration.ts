@@ -5,18 +5,18 @@ import { DeclarationTypeClass } from '.';
 import { NormalIdTypeClass, IdVisitor, isNormalIdType } from '../idVisitor';
 import { InterfaceBodyTypeClass, BodyVisitor, isInterfaceBodyType } from '../bodyVisitor';
 import { TypeListTypeClass, ListVisitor, isTypeListType } from '../listVisitor';
-import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
+import { ApexErrorTypeClass, ApexCommonTypeClass, isApexValidClass } from '../commonVisitor';
 
 export class InterfaceDeclarationTypeClass extends DeclarationTypeClass<
     'interfaceDeclaration',
     NormalIdTypeClass
 > {
-    private body: InterfaceBodyTypeClass | ErrorTypeClass;
-    private extend: TypeListTypeClass | ErrorTypeClass | null = null;
+    private body: InterfaceBodyTypeClass | ApexErrorTypeClass;
+    private extend: TypeListTypeClass | ApexErrorTypeClass | null = null;
     private constructor(
-        value: NormalIdTypeClass | ErrorTypeClass,
-        body: InterfaceBodyTypeClass | ErrorTypeClass,
-        extend: TypeListTypeClass | ErrorTypeClass | null,
+        value: NormalIdTypeClass | ApexErrorTypeClass,
+        body: InterfaceBodyTypeClass | ApexErrorTypeClass,
+        extend: TypeListTypeClass | ApexErrorTypeClass | null,
     ) {
         super('interfaceDeclaration', value);
         this.body = body;
@@ -29,25 +29,33 @@ export class InterfaceDeclarationTypeClass extends DeclarationTypeClass<
         }
 
         return new InterfaceDeclarationTypeClass(
-            isValidClass(new IdVisitor().visit(ctx.id()), isNormalIdType, 'id'),
-            isValidClass(new BodyVisitor().visit(ctx.interfaceBody()), isInterfaceBodyType, 'body'),
+            isApexValidClass(new IdVisitor().visit(ctx.id()), isNormalIdType, 'id'),
+            isApexValidClass(
+                new BodyVisitor().visit(ctx.interfaceBody()),
+                isInterfaceBodyType,
+                'body',
+            ),
             ctx.EXTENDS() && ctx.typeList()
-                ? isValidClass(new ListVisitor().visit(ctx.typeList()), isTypeListType, 'extend')
+                ? isApexValidClass(
+                      new ListVisitor().visit(ctx.typeList()),
+                      isTypeListType,
+                      'extend',
+                  )
                 : null,
         );
     }
 
-    getBody(): InterfaceBodyTypeClass | ErrorTypeClass {
+    getBody(): InterfaceBodyTypeClass | ApexErrorTypeClass {
         return this.body;
     }
 
-    getExtend(): TypeListTypeClass | ErrorTypeClass | null {
+    getExtend(): TypeListTypeClass | ApexErrorTypeClass | null {
         return this.extend;
     }
 }
 
 export const isInterfaceDeclarationType = (
-    target: CommonTypeClass<string>,
+    target: ApexCommonTypeClass<string>,
 ): target is InterfaceDeclarationTypeClass => {
     return target instanceof InterfaceDeclarationTypeClass;
 };

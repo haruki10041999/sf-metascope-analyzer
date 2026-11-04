@@ -19,7 +19,7 @@ import { MapCreatorRestTypeClass } from './mapCreatorRest';
 import { SetCreatorRestTypeClass } from './setCreatorRest';
 import { CreatorTypeClass } from './creator';
 
-import { CommonVisitor } from '../commonVisitor';
+import { ApexCommonVisitor } from '../commonVisitor';
 
 export { isNoRestType, NoRestTypeClass } from './noRest';
 export { isClassCreatorRestType, ClassCreatorRestTypeClass } from './classCreatorRest';
@@ -28,7 +28,7 @@ export { isMapCreatorRestType, MapCreatorRestTypeClass } from './mapCreatorRest'
 export { isSetCreatorRestType, SetCreatorRestTypeClass } from './setCreatorRest';
 export { isCreatorType, CreatorTypeClass } from './creator';
 
-export class RestVisitor extends CommonVisitor<RestAllTypeClass> {
+export class RestVisitor extends ApexCommonVisitor<RestAllTypeClass> {
     visitNoRest(ctx: NoRestContext) {
         return NoRestTypeClass.create(ctx);
     }

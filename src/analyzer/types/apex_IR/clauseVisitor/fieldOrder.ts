@@ -4,7 +4,7 @@ import { ClauseTypeClass } from '.';
 
 import { SoqlFunctionTypeClass, QueryVisitor, isSoqlFunctionType } from '../queryVisitor';
 import { FieldNameTypeClass, NameVisitor, isFieldNameType } from '../nameVisitor';
-import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
+import { ApexErrorTypeClass, ApexCommonTypeClass, isApexValidClass } from '../commonVisitor';
 
 export class FieldOrderTypeClass extends ClauseTypeClass<
     'fieldOrder',
@@ -13,7 +13,7 @@ export class FieldOrderTypeClass extends ClauseTypeClass<
     private direction: 'ASC' | 'DESC' | null = null;
     private nulls: 'FIRST' | 'LAST' | null = null;
     private constructor(
-        value: FieldNameTypeClass | SoqlFunctionTypeClass | ErrorTypeClass,
+        value: FieldNameTypeClass | SoqlFunctionTypeClass | ApexErrorTypeClass,
         direction: 'ASC' | 'DESC' | null,
         nulls: 'FIRST' | 'LAST' | null,
     ) {
@@ -29,12 +29,12 @@ export class FieldOrderTypeClass extends ClauseTypeClass<
 
         return new FieldOrderTypeClass(
             ctx.fieldName()
-                ? isValidClass(
+                ? isApexValidClass(
                       new NameVisitor().visit(ctx.fieldName()),
                       isFieldNameType,
                       'fieldName',
                   )
-                : isValidClass(
+                : isApexValidClass(
                       new QueryVisitor().visit(ctx.soqlFunction()),
                       isSoqlFunctionType,
                       'soqlFunction',
@@ -54,7 +54,8 @@ export class FieldOrderTypeClass extends ClauseTypeClass<
 }
 
 export const isFieldOrderType = (
-    target: CommonTypeClass<string>,
+    target: ApexCommonTypeClass<string>,
 ): target is FieldOrderTypeClass => {
     return target instanceof FieldOrderTypeClass;
 };
+

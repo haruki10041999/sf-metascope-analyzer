@@ -9,14 +9,14 @@ import { AnyIdTypeClass } from './anyId';
 import { SoqlIdTypeClass } from './soqlId';
 import { SoslIdTypeClass } from './soslId';
 
-import { CommonVisitor } from '../commonVisitor';
+import { ApexCommonVisitor } from '../commonVisitor';
 
 export { isNormalIdType, NormalIdTypeClass } from './normal';
 export { isAnyIdType, AnyIdTypeClass } from './anyId';
 export { isSoqlIdType, SoqlIdTypeClass } from './soqlId';
 export { isSoslIdType, SoslIdTypeClass } from './soslId';
 
-export class IdVisitor extends CommonVisitor<IdAllTypeClass> {
+export class IdVisitor extends ApexCommonVisitor<IdAllTypeClass> {
     visitId(ctx: IdContext) {
         return NormalIdTypeClass.create(ctx);
     }

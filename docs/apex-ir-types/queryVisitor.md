@@ -14,7 +14,7 @@ SOQL クエリ本体（`query` / `subQuery`）と、SOQL/SOSL 内で使う部品
 | `visitSearchGroup`        | `SearchGroupContext`        | `SearchGroupTypeClass`        |
 | `visitSoqlFunction`       | `SoqlFunctionContext`       | `SoqlFunctionTypeClass`       |
 
-`QueryVisitor` は `CommonVisitor<QueryAllTypeClass>` を継承する。`create()` が例外を投げた場合や子要素が無い場合は `ErrorTypeClass` が返る。
+`QueryVisitor` は `ApexCommonVisitor<QueryAllTypeClass>` を継承する。`create()` が例外を投げた場合や子要素が無い場合は `ApexErrorTypeClass` が返る。
 
 ## 基底クラス（base.ts）
 
@@ -22,10 +22,10 @@ SOQL クエリ本体（`query` / `subQuery`）と、SOQL/SOSL 内で使う部品
 
 queryVisitor の全 TypeClass の基底。`type` と単一の `value` を持つ。
 
-| 変数    | 型                    | 内容                                         |
-| ------- | --------------------- | -------------------------------------------- |
-| `type`  | `string`              | ノード種別（CommonTypeClass から継承）       |
-| `value` | `T \| ErrorTypeClass` | ノードの主値（サブクラスごとに意味が異なる） |
+| 変数    | 型                        | 内容                                         |
+| ------- | ------------------------- | -------------------------------------------- |
+| `type`  | `string`                  | ノード種別（ApexCommonTypeClass から継承）   |
+| `value` | `T \| ApexErrorTypeClass` | ノードの主値（サブクラスごとに意味が異なる） |
 
 ゲッター: `getType()`, `getValue()`
 
@@ -33,16 +33,16 @@ queryVisitor の全 TypeClass の基底。`type` と単一の `value` を持つ�
 
 `QueryTypeClass<T>` を継承し、`query` と `subQuery` に共通する句を保持する。
 
-| 変数            | 型                                                 | 内容                                                   |
-| --------------- | -------------------------------------------------- | ------------------------------------------------------ |
-| `type`          | `string`                                           | ノード種別（CommonTypeClass から継承）                 |
-| `value`         | `T \| ErrorTypeClass`                              | SELECT 対象リスト                                      |
-| `from`          | `FromNameListTypeClass \| ErrorTypeClass`          | FROM 句                                                |
-| `forClause`     | `ForClausesTypeClass \| ErrorTypeClass \| null`    | FOR VIEW / UPDATE / REFERENCE。FOR 句が無ければ `null` |
-| `whereClause`   | `WhereClauseTypeClass \| ErrorTypeClass \| null`   | WHERE 句。無ければ `null`                              |
-| `orderByClause` | `OrderByClauseTypeClass \| ErrorTypeClass \| null` | ORDER BY 句。無ければ `null`                           |
-| `limitClause`   | `LimitClauseTypeClass \| ErrorTypeClass \| null`   | LIMIT 句。無ければ `null`                              |
-| `updateList`    | `UpdateListTypeClass \| ErrorTypeClass \| null`    | `UPDATE TRACKING, VIEWSTAT`。無ければ `null`           |
+| 変数            | 型                                                     | 内容                                                   |
+| --------------- | ------------------------------------------------------ | ------------------------------------------------------ |
+| `type`          | `string`                                               | ノード種別（ApexCommonTypeClass から継承）             |
+| `value`         | `T \| ApexErrorTypeClass`                              | SELECT 対象リスト                                      |
+| `from`          | `FromNameListTypeClass \| ApexErrorTypeClass`          | FROM 句                                                |
+| `forClause`     | `ForClausesTypeClass \| ApexErrorTypeClass \| null`    | FOR VIEW / UPDATE / REFERENCE。FOR 句が無ければ `null` |
+| `whereClause`   | `WhereClauseTypeClass \| ApexErrorTypeClass \| null`   | WHERE 句。無ければ `null`                              |
+| `orderByClause` | `OrderByClauseTypeClass \| ApexErrorTypeClass \| null` | ORDER BY 句。無ければ `null`                           |
+| `limitClause`   | `LimitClauseTypeClass \| ApexErrorTypeClass \| null`   | LIMIT 句。無ければ `null`                              |
+| `updateList`    | `UpdateListTypeClass \| ApexErrorTypeClass \| null`    | `UPDATE TRACKING, VIEWSTAT`。無ければ `null`           |
 
 ゲッター: `getValue()`, `getFrom()`, `getForClause()`, `getWhereClause()`, `getOrderByClause()`, `getLimitClause()`, `getUpdateList()`
 
@@ -63,25 +63,25 @@ queryVisitor の全 TypeClass の基底。`type` と単一の `value` を持つ�
 - **元 Context**: `QueryContext`（文法: `SELECT selectList FROM fromNameList usingScope? whereClause? withClause? groupByClause? orderByClause? limitClause? offsetClause? allRowsClause? forClauses (UPDATE updateList)?`）
 - **役割**: トップレベルの SOQL クエリ（`[SELECT ...]`）。
 
-| 変数            | 型                                                 | 内容                                     |
-| --------------- | -------------------------------------------------- | ---------------------------------------- |
-| `type`          | `'query'`                                          | 継承                                     |
-| `value`         | `SelectListTypeClass \| ErrorTypeClass`            | SELECT 句の項目リスト                    |
-| `from`          | `FromNameListTypeClass \| ErrorTypeClass`          | 継承。FROM 句                            |
-| `forClause`     | `ForClausesTypeClass \| ErrorTypeClass \| null`    | 継承。FOR 句が無ければ `null`            |
-| `whereClause`   | `WhereClauseTypeClass \| ErrorTypeClass \| null`   | 継承。無ければ `null`                    |
-| `orderByClause` | `OrderByClauseTypeClass \| ErrorTypeClass \| null` | 継承。無ければ `null`                    |
-| `limitClause`   | `LimitClauseTypeClass \| ErrorTypeClass \| null`   | 継承。無ければ `null`                    |
-| `updateList`    | `UpdateListTypeClass \| ErrorTypeClass \| null`    | 継承。無ければ `null`                    |
-| `usingScope`    | `UsingScopeTypeClass \| ErrorTypeClass \| null`    | `USING SCOPE xxx`。無ければ `null`       |
-| `withClause`    | `WithClauseTypeClass \| ErrorTypeClass \| null`    | `WITH ...`。無ければ `null`              |
-| `groupByClause` | `GroupByClauseTypeClass \| ErrorTypeClass \| null` | GROUP BY（HAVING 含む）。無ければ `null` |
-| `offsetClause`  | `OffsetClauseTypeClass \| ErrorTypeClass \| null`  | OFFSET 句。無ければ `null`               |
-| `allRowsClause` | `AllRowsClauseTypeClass \| ErrorTypeClass \| null` | `ALL ROWS`。無ければ `null`              |
+| 変数            | 型                                                     | 内容                                     |
+| --------------- | ------------------------------------------------------ | ---------------------------------------- |
+| `type`          | `'query'`                                              | 継承                                     |
+| `value`         | `SelectListTypeClass \| ApexErrorTypeClass`            | SELECT 句の項目リスト                    |
+| `from`          | `FromNameListTypeClass \| ApexErrorTypeClass`          | 継承。FROM 句                            |
+| `forClause`     | `ForClausesTypeClass \| ApexErrorTypeClass \| null`    | 継承。FOR 句が無ければ `null`            |
+| `whereClause`   | `WhereClauseTypeClass \| ApexErrorTypeClass \| null`   | 継承。無ければ `null`                    |
+| `orderByClause` | `OrderByClauseTypeClass \| ApexErrorTypeClass \| null` | 継承。無ければ `null`                    |
+| `limitClause`   | `LimitClauseTypeClass \| ApexErrorTypeClass \| null`   | 継承。無ければ `null`                    |
+| `updateList`    | `UpdateListTypeClass \| ApexErrorTypeClass \| null`    | 継承。無ければ `null`                    |
+| `usingScope`    | `UsingScopeTypeClass \| ApexErrorTypeClass \| null`    | `USING SCOPE xxx`。無ければ `null`       |
+| `withClause`    | `WithClauseTypeClass \| ApexErrorTypeClass \| null`    | `WITH ...`。無ければ `null`              |
+| `groupByClause` | `GroupByClauseTypeClass \| ApexErrorTypeClass \| null` | GROUP BY（HAVING 含む）。無ければ `null` |
+| `offsetClause`  | `OffsetClauseTypeClass \| ApexErrorTypeClass \| null`  | OFFSET 句。無ければ `null`               |
+| `allRowsClause` | `AllRowsClauseTypeClass \| ApexErrorTypeClass \| null` | `ALL ROWS`。無ければ `null`              |
 
 ゲッター: 継承分に加え `getUsingScope()`, `getWithClause()`, `getGroupByClause()`, `getOffsetClause()`, `getAllRowsClause()`
 
-`selectList` または `fromNameList` が無い場合は例外（→ `ErrorTypeClass`）。
+`selectList` または `fromNameList` が無い場合は例外（→ `ApexErrorTypeClass`）。
 
 例:
 
@@ -117,20 +117,20 @@ queryVisitor の全 TypeClass の基底。`type` と単一の `value` を持つ�
 - **元 Context**: `SubQueryContext`（文法: `SELECT subFieldList FROM fromNameList whereClause? orderByClause? limitClause? forClauses (UPDATE updateList)?`）
 - **役割**: SELECT 句内の子リレーションクエリ、および `IN (SELECT ...)` の半結合クエリ。独自フィールドは持たない。
 
-| 変数            | 型                                                 | 内容                                  |
-| --------------- | -------------------------------------------------- | ------------------------------------- |
-| `type`          | `'subQuery'`                                       | 継承                                  |
-| `value`         | `SubFieldListTypeClass \| ErrorTypeClass`          | SELECT 句の項目リスト                 |
-| `from`          | `FromNameListTypeClass \| ErrorTypeClass`          | 継承。FROM 句（子リレーション名など） |
-| `forClause`     | `ForClausesTypeClass \| ErrorTypeClass \| null`    | 継承。FOR 句が無ければ `null`         |
-| `whereClause`   | `WhereClauseTypeClass \| ErrorTypeClass \| null`   | 継承。無ければ `null`                 |
-| `orderByClause` | `OrderByClauseTypeClass \| ErrorTypeClass \| null` | 継承。無ければ `null`                 |
-| `limitClause`   | `LimitClauseTypeClass \| ErrorTypeClass \| null`   | 継承。無ければ `null`                 |
-| `updateList`    | `UpdateListTypeClass \| ErrorTypeClass \| null`    | 継承。無ければ `null`                 |
+| 変数            | 型                                                     | 内容                                  |
+| --------------- | ------------------------------------------------------ | ------------------------------------- |
+| `type`          | `'subQuery'`                                           | 継承                                  |
+| `value`         | `SubFieldListTypeClass \| ApexErrorTypeClass`          | SELECT 句の項目リスト                 |
+| `from`          | `FromNameListTypeClass \| ApexErrorTypeClass`          | 継承。FROM 句（子リレーション名など） |
+| `forClause`     | `ForClausesTypeClass \| ApexErrorTypeClass \| null`    | 継承。FOR 句が無ければ `null`         |
+| `whereClause`   | `WhereClauseTypeClass \| ApexErrorTypeClass \| null`   | 継承。無ければ `null`                 |
+| `orderByClause` | `OrderByClauseTypeClass \| ApexErrorTypeClass \| null` | 継承。無ければ `null`                 |
+| `limitClause`   | `LimitClauseTypeClass \| ApexErrorTypeClass \| null`   | 継承。無ければ `null`                 |
+| `updateList`    | `UpdateListTypeClass \| ApexErrorTypeClass \| null`    | 継承。無ければ `null`                 |
 
 ゲッター: 継承分のみ（`getValue()`, `getFrom()`, `getForClause()`, `getWhereClause()`, `getOrderByClause()`, `getLimitClause()`, `getUpdateList()`）
 
-`subFieldList` または `fromNameList` が無い場合は例外（→ `ErrorTypeClass`）。
+`subFieldList` または `fromNameList` が無い場合は例外（→ `ApexErrorTypeClass`）。
 
 例:
 
@@ -172,10 +172,10 @@ queryVisitor の全 TypeClass の基底。`type` と単一の `value` を持つ�
 - **元 Context**: `ComparisonOperatorContext`（文法: `= | != | < | > | < = | > = | <> | LIKE | IN | NOT IN | INCLUDES | EXCLUDES`）
 - **役割**: WHERE / HAVING の比較演算子。`<=` / `>=` は `LT`/`GT` と `ASSIGN` の 2 トークンから合成する。
 
-| 変数    | 型                                              | 内容                                                                                                                     |
-| ------- | ----------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
-| `type`  | `'comparisonOperator'`                          | 継承                                                                                                                     |
-| `value` | `ComparisonOperatorValueType \| ErrorTypeClass` | `'='` / `'!='` / `'<'` / `'>'` / `'<='` / `'>='` / `'<>'` / `'LIKE'` / `'IN'` / `'NOT IN'` / `'INCLUDES'` / `'EXCLUDES'` |
+| 変数    | 型                                                  | 内容                                                                                                                     |
+| ------- | --------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
+| `type`  | `'comparisonOperator'`                              | 継承                                                                                                                     |
+| `value` | `ComparisonOperatorValueType \| ApexErrorTypeClass` | `'='` / `'!='` / `'<'` / `'>'` / `'<='` / `'>='` / `'<>'` / `'LIKE'` / `'IN'` / `'NOT IN'` / `'INCLUDES'` / `'EXCLUDES'` |
 
 ゲッター: `getValue()`
 
@@ -196,11 +196,11 @@ WHERE Id NOT IN :ids
 - **元 Context**: `DateFormulaContext`（文法: `TODAY | LAST_WEEK | ... | LAST_N_DAYS_N COLON signedInteger | ...`）
 - **役割**: SOQL の日付リテラル（`TODAY`, `LAST_N_DAYS:30` など）。
 
-| 変数    | 型                                                 | 内容                                                 |
-| ------- | -------------------------------------------------- | ---------------------------------------------------- |
-| `type`  | `'dateFormula'`                                    | 継承                                                 |
-| `value` | `DateFormulaValueType \| ErrorTypeClass`           | 日付リテラル名（下記）                               |
-| `param` | `SignedIntegerTypeClass \| ErrorTypeClass \| null` | `:n` の値。`*_N` 系のみ設定され、引数なし系は `null` |
+| 変数    | 型                                                     | 内容                                                 |
+| ------- | ------------------------------------------------------ | ---------------------------------------------------- |
+| `type`  | `'dateFormula'`                                        | 継承                                                 |
+| `value` | `DateFormulaValueType \| ApexErrorTypeClass`           | 日付リテラル名（下記）                               |
+| `param` | `SignedIntegerTypeClass \| ApexErrorTypeClass \| null` | `:n` の値。`*_N` 系のみ設定され、引数なし系は `null` |
 
 `DateFormulaValueType` = 引数なし系 | 引数あり系:
 
@@ -230,16 +230,16 @@ AND CreatedDate = LAST_N_DAYS:30
 - **元 Context**: `FieldSpecContext`（文法: `soslId (LPAREN fieldList (WHERE logicalExpression)? (USING LISTVIEW = soslId)? (ORDER BY fieldOrderList)? limitClause? offsetClause? RPAREN)?`）
 - **役割**: SOSL `RETURNING` の対象オブジェクト 1 件と、その括弧内オプション。
 
-| 変数           | 型                                                     | 内容                                                              |
-| -------------- | ------------------------------------------------------ | ----------------------------------------------------------------- |
-| `type`         | `'fieldSpec'`                                          | 継承                                                              |
-| `value`        | `SoslIdTypeClass \| ErrorTypeClass`                    | オブジェクト名（`soslId(0)`）                                     |
-| `fieldList`    | `FieldListTypeClass \| ErrorTypeClass \| null`         | 取得項目。括弧が無ければ `null`                                   |
-| `where`        | `LogicalExpressionTypeClass \| ErrorTypeClass \| null` | WHERE 条件。無ければ `null`                                       |
-| `listView`     | `SoslIdTypeClass \| ErrorTypeClass \| null`            | `USING LISTVIEW = xxx` のビュー名（`soslId(1)`）。無ければ `null` |
-| `orderBy`      | `FieldOrderListTypeClass \| ErrorTypeClass \| null`    | ORDER BY。無ければ `null`                                         |
-| `limitClause`  | `LimitClauseTypeClass \| ErrorTypeClass \| null`       | LIMIT。無ければ `null`                                            |
-| `offsetClause` | `OffsetClauseTypeClass \| ErrorTypeClass \| null`      | OFFSET。無ければ `null`                                           |
+| 変数           | 型                                                         | 内容                                                              |
+| -------------- | ---------------------------------------------------------- | ----------------------------------------------------------------- |
+| `type`         | `'fieldSpec'`                                              | 継承                                                              |
+| `value`        | `SoslIdTypeClass \| ApexErrorTypeClass`                    | オブジェクト名（`soslId(0)`）                                     |
+| `fieldList`    | `FieldListTypeClass \| ApexErrorTypeClass \| null`         | 取得項目。括弧が無ければ `null`                                   |
+| `where`        | `LogicalExpressionTypeClass \| ApexErrorTypeClass \| null` | WHERE 条件。無ければ `null`                                       |
+| `listView`     | `SoslIdTypeClass \| ApexErrorTypeClass \| null`            | `USING LISTVIEW = xxx` のビュー名（`soslId(1)`）。無ければ `null` |
+| `orderBy`      | `FieldOrderListTypeClass \| ApexErrorTypeClass \| null`    | ORDER BY。無ければ `null`                                         |
+| `limitClause`  | `LimitClauseTypeClass \| ApexErrorTypeClass \| null`       | LIMIT。無ければ `null`                                            |
+| `offsetClause` | `OffsetClauseTypeClass \| ApexErrorTypeClass \| null`      | OFFSET。無ければ `null`                                           |
 
 ゲッター: `getValue()`, `getFieldList()`, `getWhere()`, `getListView()`, `getOrderBy()`, `getLimitClause()`, `getOffsetClause()`
 
@@ -300,13 +300,13 @@ RETURNING Lead(Id, FirstName, LastName USING LISTVIEW = MyLeads OFFSET 5)
 - **元 Context**: `SoqlFunctionContext`（文法: `AVG(fieldName) | COUNT() | COUNT(fieldName) | ... | CALENDAR_MONTH(dateFieldName) | ... | FORMAT(fieldName | soqlFunction) | FIELDS(soqlFieldsParameter) | DISTANCE(locationValue, locationValue, StringLiteral)`）
 - **役割**: SOQL の集計・日付・変換関数呼び出し。
 
-| 変数    | 型                                            | 内容                                 |
-| ------- | --------------------------------------------- | ------------------------------------ |
-| `type`  | `'soqlFunction'`                              | 継承                                 |
-| `value` | `SoqlFunctionValueType \| ErrorTypeClass`     | 関数名（下記）                       |
-| `param` | `SoqlParameterType \| ErrorTypeClass \| null` | 引数（関数名ごとに型が異なる、下記） |
+| 変数    | 型                                                | 内容                                 |
+| ------- | ------------------------------------------------- | ------------------------------------ |
+| `type`  | `'soqlFunction'`                                  | 継承                                 |
+| `value` | `SoqlFunctionValueType \| ApexErrorTypeClass`     | 関数名（下記）                       |
+| `param` | `SoqlParameterType \| ApexErrorTypeClass \| null` | 引数（関数名ごとに型が異なる、下記） |
 
-`SoqlParameterType` = `FieldNameTypeClass | DateFieldNameTypeClass | SoqlFieldsParameterTypeClass | (LocationValueTypeClass | ErrorTypeClass | string | string[])[] | SoqlFunctionTypeClass`
+`SoqlParameterType` = `FieldNameTypeClass | DateFieldNameTypeClass | SoqlFieldsParameterTypeClass | (LocationValueTypeClass | ApexErrorTypeClass | string | string[])[] | SoqlFunctionTypeClass`
 
 | 関数名（`value`）                                                                                                                                                                                                                          | `param`                                                                                                                                          |
 | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------ |

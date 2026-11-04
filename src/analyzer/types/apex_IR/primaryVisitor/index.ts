@@ -26,7 +26,7 @@ import { isIdPrimaryType, IdPrimaryTypeClass } from './idPrimary';
 import { isLiteralPrimaryType, LiteralPrimaryTypeClass } from './literalPrimary';
 import { isSoslPrimaryType, SoslPrimaryTypeClass } from './soslPrimary';
 
-import { CommonTypeClass, CommonVisitor } from '../commonVisitor';
+import { ApexCommonTypeClass, ApexCommonVisitor } from '../commonVisitor';
 
 export { isNormalPrimaryType, NormalPrimaryTypeClass } from './normal';
 export { isThisPrimaryType, ThisPrimaryTypeClass } from './thisPrimary';
@@ -39,7 +39,7 @@ export { isSoslPrimaryType, SoslPrimaryTypeClass } from './soslPrimary';
 export { isTypeRefPrimaryType, TypeRefPrimaryTypeClass } from './typeRefPrimary';
 
 export const isBasedPrimaryType = (
-    target: CommonTypeClass<string>,
+    target: ApexCommonTypeClass<string>,
 ): target is BasedPrimaryTypeClass => {
     return (
         isNormalPrimaryType(target) ||
@@ -54,7 +54,7 @@ export const isBasedPrimaryType = (
     );
 };
 
-export class PrimaryVisitor extends CommonVisitor<PrimaryTypeClass<string, unknown>> {
+export class PrimaryVisitor extends ApexCommonVisitor<PrimaryTypeClass<string, unknown>> {
     visitPrimary(ctx: PrimaryContext) {
         return NormalPrimaryTypeClass.create(ctx);
     }
@@ -91,3 +91,4 @@ export class PrimaryVisitor extends CommonVisitor<PrimaryTypeClass<string, unkno
         return SoslPrimaryTypeClass.create(ctx);
     }
 }
+

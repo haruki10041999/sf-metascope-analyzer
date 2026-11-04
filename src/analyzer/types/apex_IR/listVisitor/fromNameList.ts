@@ -4,16 +4,21 @@ import { ListTypeClass } from '../listVisitor';
 
 import { FieldNameTypeClass, NameVisitor, isFieldNameType } from '../nameVisitor';
 import { SoqlIdTypeClass, IdVisitor, isSoqlIdType } from '../idVisitor';
-import { ErrorTypeClass, CommonTypeClass, getSourceSpan, isValidClass } from '../commonVisitor';
+import {
+    ApexErrorTypeClass,
+    ApexCommonTypeClass,
+    getSourceSpan,
+    isApexValidClass,
+} from '../commonVisitor';
 
 // FROM 句の 1 オブジェクト（`Account a` の Account と a の組）
-export class FromNameTypeClass extends CommonTypeClass<'fromName'> {
-    private value: FieldNameTypeClass | ErrorTypeClass;
-    private alias: SoqlIdTypeClass | ErrorTypeClass | null;
+export class FromNameTypeClass extends ApexCommonTypeClass<'fromName'> {
+    private value: FieldNameTypeClass | ApexErrorTypeClass;
+    private alias: SoqlIdTypeClass | ApexErrorTypeClass | null;
 
     private constructor(
-        value: FieldNameTypeClass | ErrorTypeClass,
-        alias: SoqlIdTypeClass | ErrorTypeClass | null,
+        value: FieldNameTypeClass | ApexErrorTypeClass,
+        alias: SoqlIdTypeClass | ApexErrorTypeClass | null,
     ) {
         super('fromName');
         this.value = value;
@@ -22,8 +27,8 @@ export class FromNameTypeClass extends CommonTypeClass<'fromName'> {
 
     static create(fieldName: FieldNameContext, alias: SoqlIdContext | null): FromNameTypeClass {
         const fromName = new FromNameTypeClass(
-            isValidClass(new NameVisitor().visit(fieldName), isFieldNameType, 'fieldName'),
-            alias ? isValidClass(new IdVisitor().visit(alias), isSoqlIdType, 'soqlId') : null,
+            isApexValidClass(new NameVisitor().visit(fieldName), isFieldNameType, 'fieldName'),
+            alias ? isApexValidClass(new IdVisitor().visit(alias), isSoqlIdType, 'soqlId') : null,
         );
         const start = getSourceSpan(fieldName);
         const end = alias ? getSourceSpan(alias) : start;
@@ -35,21 +40,23 @@ export class FromNameTypeClass extends CommonTypeClass<'fromName'> {
         return fromName;
     }
 
-    getValue(): FieldNameTypeClass | ErrorTypeClass {
+    getValue(): FieldNameTypeClass | ApexErrorTypeClass {
         return this.value;
     }
 
-    getAlias(): SoqlIdTypeClass | ErrorTypeClass | null {
+    getAlias(): SoqlIdTypeClass | ApexErrorTypeClass | null {
         return this.alias;
     }
 }
 
-export const isFromNameType = (target: CommonTypeClass<string>): target is FromNameTypeClass => {
+export const isFromNameType = (
+    target: ApexCommonTypeClass<string>,
+): target is FromNameTypeClass => {
     return target instanceof FromNameTypeClass;
 };
 
 export class FromNameListTypeClass extends ListTypeClass<'fromNameList', FromNameTypeClass> {
-    private constructor(value: (FromNameTypeClass | ErrorTypeClass)[]) {
+    private constructor(value: (FromNameTypeClass | ApexErrorTypeClass)[]) {
         super('fromNameList', value);
     }
 
@@ -75,7 +82,8 @@ export class FromNameListTypeClass extends ListTypeClass<'fromNameList', FromNam
 }
 
 export const isFromNameListType = (
-    target: CommonTypeClass<string>,
+    target: ApexCommonTypeClass<string>,
 ): target is FromNameListTypeClass => {
     return target instanceof FromNameListTypeClass;
 };
+

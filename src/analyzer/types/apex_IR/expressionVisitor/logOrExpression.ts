@@ -7,7 +7,7 @@ import {
     isBasedExpressionType,
 } from '.';
 
-import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
+import { ApexErrorTypeClass, ApexCommonTypeClass, isApexValidClass } from '../commonVisitor';
 
 export class LogOrExpressionTypeClass extends DoubleStringOperatorExpressionTypeClass<
     'logOrExpression',
@@ -16,8 +16,8 @@ export class LogOrExpressionTypeClass extends DoubleStringOperatorExpressionType
     BasedExpressionTypeClass
 > {
     private constructor(
-        left: BasedExpressionTypeClass | ErrorTypeClass,
-        right: BasedExpressionTypeClass | ErrorTypeClass,
+        left: BasedExpressionTypeClass | ApexErrorTypeClass,
+        right: BasedExpressionTypeClass | ApexErrorTypeClass,
     ) {
         super('logOrExpression', left, right, '||');
     }
@@ -28,12 +28,12 @@ export class LogOrExpressionTypeClass extends DoubleStringOperatorExpressionType
         }
 
         return new LogOrExpressionTypeClass(
-            isValidClass(
+            isApexValidClass(
                 new ExpressionVisitor().visit(ctx.expression(0)),
                 isBasedExpressionType,
                 'expression',
             ),
-            isValidClass(
+            isApexValidClass(
                 new ExpressionVisitor().visit(ctx.expression(1)),
                 isBasedExpressionType,
                 'expression',
@@ -43,7 +43,8 @@ export class LogOrExpressionTypeClass extends DoubleStringOperatorExpressionType
 }
 
 export const isLogOrExpressionType = (
-    target: CommonTypeClass<string>,
+    target: ApexCommonTypeClass<string>,
 ): target is LogOrExpressionTypeClass => {
     return target instanceof LogOrExpressionTypeClass;
 };
+

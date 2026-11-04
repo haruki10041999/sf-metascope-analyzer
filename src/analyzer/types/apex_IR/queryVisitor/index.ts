@@ -21,7 +21,7 @@ import { FieldSpecTypeClass } from './fieldSpec';
 import { SoqlFunctionTypeClass } from './soqlFunction';
 import { SearchGroupTypeClass } from './searchGroup';
 
-import { CommonVisitor } from '../commonVisitor';
+import { ApexCommonVisitor } from '../commonVisitor';
 
 export { isComparisonOperatorType, ComparisonOperatorTypeClass } from './comparisonOperator';
 export { isDateFormulaType, DateFormulaTypeClass } from './dateFormula';
@@ -31,7 +31,7 @@ export { isNormalQueryType, NormalQueryTypeClass } from './normal';
 export { isSubQueryType, SubQueryTypeClass } from './subQuery';
 export { isFieldSpecType, FieldSpecTypeClass } from './fieldSpec';
 
-export class QueryVisitor extends CommonVisitor<QueryAllTypeClass> {
+export class QueryVisitor extends ApexCommonVisitor<QueryAllTypeClass> {
     visitQuery(ctx: QueryContext) {
         return NormalQueryTypeClass.create(ctx);
     }

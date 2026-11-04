@@ -1,0 +1,225 @@
+{
+  "filePath": "Account-ja",
+  "resolvedError": [],
+  "dataType": "objectTranslation",
+  "result": {
+    "id": "Account-ja",
+    "base": {
+      "kind": "objectTranslation",
+      "sourceKeys": {
+        "objectKey": "objectTranslation_f0f9dc380e5be678",
+        "sourceKey": "objectTranslation_99876454374dab6d"
+      },
+      "objectApiName": "Account",
+      "locale": "ja",
+      "fields": [
+        {
+          "kind": "fieldTranslation",
+          "sourceKeys": {
+            "objectKey": "fieldTranslation_7801d539ecfc4bba",
+            "sourceKey": "fieldTranslation_85e8bf4d34a17c7c"
+          },
+          "name": "Name",
+          "label": "取引先名"
+        },
+        {
+          "kind": "fieldTranslation",
+          "sourceKeys": {
+            "objectKey": "fieldTranslation_bb198cf939361d93",
+            "sourceKey": "fieldTranslation_79fc08e9f5016360"
+          },
+          "name": "Tier__c",
+          "label": "顧客ランク",
+          "picklistValues": [
+            {
+              "kind": "picklistValueTranslation",
+              "sourceKeys": {
+                "objectKey": "picklistValueTranslation_3468ed03635cd998",
+                "sourceKey": "picklistValueTranslation_4cb956972b989b48"
+              },
+              "masterLabel": "Platinum",
+              "translation": "プラチナ"
+            },
+            {
+              "kind": "picklistValueTranslation",
+              "sourceKeys": {
+                "objectKey": "picklistValueTranslation_b1601dd584dd8f04",
+                "sourceKey": "picklistValueTranslation_15af8fe2511b23fb"
+              },
+              "masterLabel": "Gold",
+              "translation": "ゴールド"
+            },
+            {
+              "kind": "picklistValueTranslation",
+              "sourceKeys": {
+                "objectKey": "picklistValueTranslation_3c2827d111fb3f7e",
+                "sourceKey": "picklistValueTranslation_7d7ffcf4e2deca0b"
+              },
+              "masterLabel": "Silver",
+              "translation": "シルバー"
+            }
+          ]
+        }
+      ],
+      "caseValues": [
+        {
+          "value": "取引先",
+          "plural": false
+        }
+      ],
+      "validationRules": [
+        {
+          "kind": "validationRuleTranslation",
+          "sourceKeys": {
+            "objectKey": "validationRuleTranslation_1d169eaf06bbc280",
+            "sourceKey": "validationRuleTranslation_743470e4ad806af4"
+          },
+          "name": "Name_Required",
+          "errorMessage": "取引先名は必須です。"
+        }
+      ]
+    },
+    "sourceObject": [
+      {
+        "objectKey": "fieldTranslation_7801d539ecfc4bba",
+        "context": "<CustomFieldTranslation xmlns=\"http://soap.sforce.com/2006/04/metadata\">\n    <label>取引先名</label>\n    <name>Name</name>\n</CustomFieldTranslation>",
+        "source": [
+          {
+            "sourceKey": "fieldTranslation_85e8bf4d34a17c7c",
+            "filePath": "Account-ja/Name.fieldTranslation-meta.xml",
+            "start": {
+              "offset": 39,
+              "line": 2,
+              "column": 0
+            },
+            "end": {
+              "offset": 183,
+              "line": 5,
+              "column": 25
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "picklistValueTranslation_3468ed03635cd998",
+        "context": "<picklistValues>\n        <masterLabel>Platinum</masterLabel>\n        <translation>プラチナ</translation>\n    </picklistValues>",
+        "source": [
+          {
+            "sourceKey": "picklistValueTranslation_4cb956972b989b48",
+            "filePath": "Account-ja/Tier__c.fieldTranslation-meta.xml",
+            "start": {
+              "offset": 166,
+              "line": 5,
+              "column": 4
+            },
+            "end": {
+              "offset": 288,
+              "line": 8,
+              "column": 21
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "picklistValueTranslation_b1601dd584dd8f04",
+        "context": "<picklistValues>\n        <masterLabel>Gold</masterLabel>\n        <translation>ゴールド</translation>\n    </picklistValues>",
+        "source": [
+          {
+            "sourceKey": "picklistValueTranslation_15af8fe2511b23fb",
+            "filePath": "Account-ja/Tier__c.fieldTranslation-meta.xml",
+            "start": {
+              "offset": 293,
+              "line": 9,
+              "column": 4
+            },
+            "end": {
+              "offset": 411,
+              "line": 12,
+              "column": 21
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "picklistValueTranslation_3c2827d111fb3f7e",
+        "context": "<picklistValues>\n        <masterLabel>Silver</masterLabel>\n        <translation>シルバー</translation>\n    </picklistValues>",
+        "source": [
+          {
+            "sourceKey": "picklistValueTranslation_7d7ffcf4e2deca0b",
+            "filePath": "Account-ja/Tier__c.fieldTranslation-meta.xml",
+            "start": {
+              "offset": 416,
+              "line": 13,
+              "column": 4
+            },
+            "end": {
+              "offset": 536,
+              "line": 16,
+              "column": 21
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "fieldTranslation_bb198cf939361d93",
+        "context": "<CustomFieldTranslation xmlns=\"http://soap.sforce.com/2006/04/metadata\">\n    <label>顧客ランク</label>\n    <name>Tier__c</name>\n    <picklistValues>\n        <masterLabel>Platinum</masterLabel>\n        <translation>プラチナ</translation>\n    </picklistValues>\n    <picklistValues>\n        <masterLabel>Gold</masterLabel>\n        <translation>ゴールド</translation>\n    </picklistValues>\n    <picklistValues>\n        <masterLabel>Silver</masterLabel>\n        <translation>シルバー</translation>\n    </picklistValues>\n</CustomFieldTranslation>",
+        "source": [
+          {
+            "sourceKey": "fieldTranslation_79fc08e9f5016360",
+            "filePath": "Account-ja/Tier__c.fieldTranslation-meta.xml",
+            "start": {
+              "offset": 39,
+              "line": 2,
+              "column": 0
+            },
+            "end": {
+              "offset": 562,
+              "line": 17,
+              "column": 25
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "validationRuleTranslation_1d169eaf06bbc280",
+        "context": "<validationRules>\n        <errorMessage>取引先名は必須です。</errorMessage>\n        <name>Name_Required</name>\n    </validationRules>",
+        "source": [
+          {
+            "sourceKey": "validationRuleTranslation_743470e4ad806af4",
+            "filePath": "Account-ja/Account-ja.objectTranslation-meta.xml",
+            "start": {
+              "offset": 210,
+              "line": 7,
+              "column": 4
+            },
+            "end": {
+              "offset": 333,
+              "line": 10,
+              "column": 22
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "objectTranslation_f0f9dc380e5be678",
+        "context": "<CustomObjectTranslation xmlns=\"http://soap.sforce.com/2006/04/metadata\">\n    <caseValues>\n        <plural>false</plural>\n        <value>取引先</value>\n    </caseValues>\n    <validationRules>\n        <errorMessage>取引先名は必須です。</errorMessage>\n        <name>Name_Required</name>\n    </validationRules>\n</CustomObjectTranslation>",
+        "source": [
+          {
+            "sourceKey": "objectTranslation_99876454374dab6d",
+            "filePath": "Account-ja/Account-ja.objectTranslation-meta.xml",
+            "start": {
+              "offset": 39,
+              "line": 2,
+              "column": 0
+            },
+            "end": {
+              "offset": 360,
+              "line": 11,
+              "column": 26
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

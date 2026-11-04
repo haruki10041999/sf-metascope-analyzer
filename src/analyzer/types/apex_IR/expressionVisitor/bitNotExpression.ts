@@ -6,7 +6,7 @@ import {
     isBasedExpressionType,
 } from '.';
 
-import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
+import { ApexErrorTypeClass, ApexCommonTypeClass, isApexValidClass } from '../commonVisitor';
 
 export class BitNotExpressionTypeClass extends DoubleStringOperatorExpressionTypeClass<
     'bitNotExpression',
@@ -15,8 +15,8 @@ export class BitNotExpressionTypeClass extends DoubleStringOperatorExpressionTyp
     BasedExpressionTypeClass
 > {
     private constructor(
-        left: BasedExpressionTypeClass | ErrorTypeClass,
-        right: BasedExpressionTypeClass | ErrorTypeClass,
+        left: BasedExpressionTypeClass | ApexErrorTypeClass,
+        right: BasedExpressionTypeClass | ApexErrorTypeClass,
     ) {
         super('bitNotExpression', left, right, '^');
     }
@@ -27,12 +27,12 @@ export class BitNotExpressionTypeClass extends DoubleStringOperatorExpressionTyp
         }
 
         return new BitNotExpressionTypeClass(
-            isValidClass(
+            isApexValidClass(
                 new ExpressionVisitor().visit(ctx.expression(0)),
                 isBasedExpressionType,
                 'expression',
             ),
-            isValidClass(
+            isApexValidClass(
                 new ExpressionVisitor().visit(ctx.expression(1)),
                 isBasedExpressionType,
                 'expression',
@@ -42,7 +42,8 @@ export class BitNotExpressionTypeClass extends DoubleStringOperatorExpressionTyp
 }
 
 export const isBitNotExpressionType = (
-    target: CommonTypeClass<string>,
+    target: ApexCommonTypeClass<string>,
 ): target is BitNotExpressionTypeClass => {
     return target instanceof BitNotExpressionTypeClass;
 };
+

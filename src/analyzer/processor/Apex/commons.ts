@@ -9,6 +9,7 @@ import {
     isStructureJsonType,
     makeJsonType,
 } from '../../types';
+import { makeConvertKeys } from '../commons/source';
 
 export type ExtractConvertNode<T> = T extends readonly (infer U)[]
     ? ExtractConvertNode<U>[]
@@ -38,17 +39,6 @@ export type ExtractConvert<
     T extends
         JsonType<string> | StructureJsonType<string, Record<string, ConvertKeys | ConvertKeys[]>>,
 > = ExtractConvertNode<T>;
-
-export const makeConvertKeys = (
-    target:
-        JsonType<string> | StructureJsonType<string, Record<string, ConvertKeys | ConvertKeys[]>>,
-): ConvertKeys => {
-    if (isJsonType(target)) {
-        return target.sourceKeys;
-    }
-
-    return target.sourceKeys.base;
-};
 
 const _extractConvertKeys = (target: unknown): unknown => {
     if (Array.isArray(target)) {
@@ -138,31 +128,6 @@ export const findConvertKeys = (target: unknown, property: Set<string>): Convert
     _findConvertKeys(target, property, result);
 
     return result;
-};
-
-export const findSourceInfo = <
-    T extends
-        JsonType<string> | StructureJsonType<string, Record<string, ConvertKeys | ConvertKeys[]>>,
->(
-    sourceInfo: SourceJson[],
-    baseJson: T,
-): { sourceKeys: ConvertKeys } & SourceInfo => {
-    const baseConvertKeys = makeConvertKeys(baseJson);
-    const si = sourceInfo.find((si) => si.objectKey === baseConvertKeys.objectKey);
-    const s = si?.source.find((s) => s.sourceKey === baseConvertKeys.sourceKey);
-
-    if (si && s) {
-        const { sourceKey, ...rest } = s;
-        return {
-            sourceKeys: { objectKey: si.objectKey, sourceKey: sourceKey },
-            context: si.context,
-            ...rest,
-        };
-    }
-
-    throw new Error(
-        `target is not found:${JSON.stringify({ kind: baseJson.kind, sourcekeys: baseJson.sourceKeys })}`,
-    );
 };
 
 const _findJson = <
@@ -290,62 +255,3 @@ export const matchedObjectJson = <
 
     return results;
 };
-
-export type SourceDistance = {
-    start: number;
-    end: number;
-    range: number;
-    center: number;
-};
-
-export const getSourceDistance = (
-    a: { sourceKeys: ConvertKeys } & SourceInfo,
-    b: { sourceKeys: ConvertKeys } & SourceInfo,
-): SourceDistance => {
-    const start = Math.abs(a.start.offset - b.start.offset);
-    const end = Math.abs(a.end.offset - b.end.offset);
-
-    const range =
-        a.end.offset < b.start.offset
-            ? b.start.offset - a.end.offset
-            : b.end.offset < a.start.offset
-              ? a.start.offset - b.end.offset
-              : 0;
-
-    const center = Math.abs(
-        (a.start.offset + a.end.offset) / 2 - (b.start.offset + b.end.offset) / 2,
-    );
-
-    return {
-        start,
-        end,
-        range,
-        center,
-    };
-};
-
-// 範囲の隙間 → 中心 → 始点 → 終点 の順で比較し、小さいほど近い
-export const compareSourceDistance = (a: SourceDistance, b: SourceDistance): number => {
-    return a.range - b.range || a.center - b.center || a.start - b.start || a.end - b.end;
-};
-
-export const findNearestIndex = <T>(
-    base: { sourceKeys: ConvertKeys } & SourceInfo,
-    candidates: T[],
-    getSourceInfo: (candidate: T) => { sourceKeys: ConvertKeys } & SourceInfo,
-): number => {
-    let nearestIndex = -1;
-    let nearestDistance: SourceDistance | undefined;
-
-    candidates.forEach((candidate, index) => {
-        const distance = getSourceDistance(base, getSourceInfo(candidate));
-
-        if (!nearestDistance || compareSourceDistance(distance, nearestDistance) < 0) {
-            nearestIndex = index;
-            nearestDistance = distance;
-        }
-    });
-
-    return nearestIndex;
-};
-

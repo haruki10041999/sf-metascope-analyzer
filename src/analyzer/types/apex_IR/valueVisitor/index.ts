@@ -16,7 +16,7 @@ import { WhenValueTypeClass } from './whenValue';
 import { CoordinateValueTypeClass } from './coordinateValue';
 import { LocationValueTypeClass } from './locationValue';
 
-import { CommonVisitor } from '../commonVisitor';
+import { ApexCommonVisitor } from '../commonVisitor';
 
 export { isNormalValueType, NormalValueTypeClass } from './normal';
 export { isElementValueType, ElementValueTypeClass } from './elementValue';
@@ -24,7 +24,7 @@ export { isWhenValueType, WhenValueTypeClass } from './whenValue';
 export { isCoordinateValueType, CoordinateValueTypeClass } from './coordinateValue';
 export { isLocationValueType, LocationValueTypeClass } from './locationValue';
 
-export class ValueVisitor extends CommonVisitor<ValueTypeClass<string, unknown>> {
+export class ValueVisitor extends ApexCommonVisitor<ValueTypeClass<string, unknown>> {
     visitValue(ctx: ValueContext) {
         return NormalValueTypeClass.create(ctx);
     }

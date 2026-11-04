@@ -3,10 +3,10 @@ import { NewExpressionContext } from '@apexdevtools/apex-parser';
 import { ExpressionTypeClass } from '.';
 
 import { CreatorTypeClass, RestVisitor, isCreatorType } from '../restVisitor';
-import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
+import { ApexErrorTypeClass, ApexCommonTypeClass, isApexValidClass } from '../commonVisitor';
 
 export class NewExpressionTypeClass extends ExpressionTypeClass<'newExpression', CreatorTypeClass> {
-    private constructor(value: CreatorTypeClass | ErrorTypeClass) {
+    private constructor(value: CreatorTypeClass | ApexErrorTypeClass) {
         super('newExpression', value);
     }
 
@@ -16,13 +16,14 @@ export class NewExpressionTypeClass extends ExpressionTypeClass<'newExpression',
         }
 
         return new NewExpressionTypeClass(
-            isValidClass(new RestVisitor().visit(ctx.creator()), isCreatorType, 'creator'),
+            isApexValidClass(new RestVisitor().visit(ctx.creator()), isCreatorType, 'creator'),
         );
     }
 }
 
 export const isNewExpressionType = (
-    target: CommonTypeClass<string>,
+    target: ApexCommonTypeClass<string>,
 ): target is NewExpressionTypeClass => {
     return target instanceof NewExpressionTypeClass;
 };
+

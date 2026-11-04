@@ -13,13 +13,13 @@ import { FormalParameterTypeClass } from './formalParameter';
 import { FormalParametersTypeClass } from './formalParameters';
 import { SoqlFieldsParameterTypeClass } from './soqlFieldsParameter';
 
-import { CommonVisitor } from '../commonVisitor';
+import { ApexCommonVisitor } from '../commonVisitor';
 
 export { isFormalParameterType, FormalParameterTypeClass } from './formalParameter';
 export { isSoqlFieldsParameterType, SoqlFieldsParameterTypeClass } from './soqlFieldsParameter';
 export { isFormalParametersType, FormalParametersTypeClass } from './formalParameters';
 
-export class ParameterVisitor extends CommonVisitor<ParameterTypeClass<string, unknown>> {
+export class ParameterVisitor extends ApexCommonVisitor<ParameterTypeClass<string, unknown>> {
     visitFormalParameter(ctx: FormalParameterContext) {
         return FormalParameterTypeClass.create(ctx);
     }
@@ -32,3 +32,4 @@ export class ParameterVisitor extends CommonVisitor<ParameterTypeClass<string, u
         return SoqlFieldsParameterTypeClass.create(ctx);
     }
 }
+

@@ -1,0 +1,428 @@
+[
+  {
+    "id": "Account-ja",
+    "status": "added",
+    "filePath": {
+      "after": "Account-ja"
+    },
+    "dataType": {
+      "after": "objectTranslation"
+    },
+    "resolvedError": []
+  },
+  {
+    "id": "Broken__c-ja",
+    "status": "changed",
+    "filePath": "Broken__c-ja",
+    "dataType": "objectTranslation",
+    "resolvedError": [
+      {
+        "status": "added",
+        "index": 0,
+        "value": {
+          "sourceKeys": {
+            "objectKey": "error_29c74a952f75ff8f",
+            "sourceKey": "error_d8a010b1093ce50d"
+          },
+          "code": "XML_SYNTAX",
+          "contextType": "fieldTranslation",
+          "context": "    <label>コード</lable>",
+          "errorMessage": "</label> expected but </lable> found",
+          "filePath": "Broken__c-ja/Code__c.fieldTranslation-meta.xml",
+          "start": {
+            "offset": 133,
+            "line": 3,
+            "column": 21
+          },
+          "end": {
+            "offset": 133,
+            "line": 3,
+            "column": 21
+          }
+        }
+      }
+    ],
+    "content": {
+      "kind": "objectTranslation",
+      "sourceKeys": {
+        "objectKey": {
+          "before": "objectTranslation_8c6f9bbb38309e14",
+          "after": "objectTranslation_3f2ab7e38fb78c3d"
+        },
+        "sourceKey": "objectTranslation_d3f352bd3fa4c751"
+      },
+      "status": "changed",
+      "match": "key",
+      "fields": {
+        "objectApiName": {
+          "status": "unchanged",
+          "value": "Broken__c"
+        },
+        "locale": {
+          "status": "unchanged",
+          "value": "ja"
+        },
+        "nameFieldLabel": {
+          "status": "unchanged",
+          "value": "壊れた"
+        },
+        "fields": [
+          {
+            "kind": "fieldTranslation",
+            "sourceKeys": {
+              "objectKey": "fieldTranslation_f470dccc52d910c4",
+              "sourceKey": "fieldTranslation_ac7b864be35b8a2c"
+            },
+            "status": "removed",
+            "index": 0,
+            "value": {
+              "name": "Code__c",
+              "label": "コード"
+            }
+          },
+          {
+            "kind": "error",
+            "sourceKeys": {
+              "objectKey": "error_29c74a952f75ff8f",
+              "sourceKey": "error_d8a010b1093ce50d"
+            },
+            "status": "added",
+            "index": 0,
+            "value": {
+              "kindType": "fieldTranslation"
+            }
+          }
+        ]
+      }
+    }
+  },
+  {
+    "id": "Invoice__c-en_US",
+    "status": "unchanged",
+    "filePath": "Invoice__c-en_US",
+    "dataType": "objectTranslation",
+    "resolvedError": [],
+    "content": {
+      "kind": "objectTranslation",
+      "sourceKeys": {
+        "objectKey": "objectTranslation_c9686b86c92954ea",
+        "sourceKey": {
+          "before": "objectTranslation_1433a328ad71659d",
+          "after": "objectTranslation_d3d36f3cec3f2aef"
+        }
+      },
+      "status": "unchanged",
+      "value": {
+        "objectApiName": "Invoice__c",
+        "locale": "en_US",
+        "nameFieldLabel": "Invoice No."
+      }
+    }
+  },
+  {
+    "id": "Invoice__c-ja",
+    "status": "changed",
+    "filePath": "Invoice__c-ja",
+    "dataType": "objectTranslation",
+    "resolvedError": [],
+    "content": {
+      "kind": "objectTranslation",
+      "sourceKeys": {
+        "objectKey": {
+          "before": "objectTranslation_3c2d655c83ab504d",
+          "after": "objectTranslation_961763512a38d47c"
+        },
+        "sourceKey": "objectTranslation_53a3b33d94e742a5"
+      },
+      "status": "changed",
+      "match": "key",
+      "fields": {
+        "objectApiName": {
+          "status": "unchanged",
+          "value": "Invoice__c"
+        },
+        "locale": {
+          "status": "unchanged",
+          "value": "ja"
+        },
+        "nameFieldLabel": {
+          "status": "unchanged",
+          "value": "請求書番号"
+        },
+        "fields": [
+          {
+            "kind": "fieldTranslation",
+            "sourceKeys": {
+              "objectKey": {
+                "before": "fieldTranslation_cbed259110d83caf",
+                "after": "fieldTranslation_09f308ad643dfaa5"
+              },
+              "sourceKey": {
+                "before": "fieldTranslation_8e74997381ee1e7c",
+                "after": "fieldTranslation_b8086fcc1248d9d4"
+              }
+            },
+            "status": "changed",
+            "match": "key",
+            "fields": {
+              "name": {
+                "status": "unchanged",
+                "value": "Account__c"
+              },
+              "label": {
+                "status": "unchanged",
+                "value": "取引先"
+              },
+              "relationshipLabel": {
+                "status": "changed",
+                "before": "請求書",
+                "after": "請求書一覧"
+              }
+            },
+            "index": {
+              "before": 0,
+              "after": 0
+            }
+          },
+          {
+            "kind": "fieldTranslation",
+            "sourceKeys": {
+              "objectKey": "fieldTranslation_d198782cd6dfe89b",
+              "sourceKey": "fieldTranslation_005de5cefe19657e"
+            },
+            "status": "unchanged",
+            "value": {
+              "name": "Amount__c",
+              "label": "金額"
+            },
+            "index": {
+              "before": 1,
+              "after": 1
+            }
+          },
+          {
+            "kind": "fieldTranslation",
+            "sourceKeys": {
+              "objectKey": "fieldTranslation_25324e98b71d3440",
+              "sourceKey": "fieldTranslation_511f7a0f359a3a36"
+            },
+            "status": "unchanged",
+            "value": {
+              "name": "Due_Date__c",
+              "label": "Due Date"
+            },
+            "index": {
+              "before": 2,
+              "after": 2
+            }
+          },
+          {
+            "kind": "fieldTranslation",
+            "sourceKeys": {
+              "objectKey": "fieldTranslation_fb4f41ba2c92fbf5",
+              "sourceKey": "fieldTranslation_4fb21aac7bf9d56d"
+            },
+            "status": "unchanged",
+            "value": {
+              "name": "Note__c",
+              "label": "メモ"
+            },
+            "index": {
+              "before": 3,
+              "after": 3
+            }
+          },
+          {
+            "kind": "fieldTranslation",
+            "sourceKeys": {
+              "objectKey": {
+                "before": "fieldTranslation_5e8702097780253c",
+                "after": "fieldTranslation_3519f3a3f6354d54"
+              },
+              "sourceKey": {
+                "before": "fieldTranslation_a59ac1df752a8704",
+                "after": "fieldTranslation_2c6f7608452e8ff9"
+              }
+            },
+            "status": "changed",
+            "match": "key",
+            "fields": {
+              "name": {
+                "status": "unchanged",
+                "value": "Status__c"
+              },
+              "label": {
+                "status": "changed",
+                "before": "ステータス",
+                "after": "状態"
+              },
+              "picklistValues": [
+                {
+                  "kind": "picklistValueTranslation",
+                  "sourceKeys": {
+                    "objectKey": "picklistValueTranslation_909cf31343b9ccc4",
+                    "sourceKey": {
+                      "before": "picklistValueTranslation_09b4682bdca83bff",
+                      "after": "picklistValueTranslation_ae2494d8d57c3654"
+                    }
+                  },
+                  "status": "unchanged",
+                  "value": {
+                    "masterLabel": "Draft",
+                    "translation": "下書き"
+                  },
+                  "index": {
+                    "before": 0,
+                    "after": 0
+                  }
+                },
+                {
+                  "kind": "picklistValueTranslation",
+                  "sourceKeys": {
+                    "objectKey": "picklistValueTranslation_a3f78eea90b98f82",
+                    "sourceKey": "picklistValueTranslation_270869eefddfc9ca"
+                  },
+                  "status": "removed",
+                  "index": 1,
+                  "value": {
+                    "masterLabel": "Sent",
+                    "translation": "送付済み"
+                  }
+                },
+                {
+                  "kind": "picklistValueTranslation",
+                  "sourceKeys": {
+                    "objectKey": "picklistValueTranslation_378062dee77c36cf",
+                    "sourceKey": {
+                      "before": "picklistValueTranslation_4c79ad4e487fd357",
+                      "after": "picklistValueTranslation_b8a8663718fac3f9"
+                    }
+                  },
+                  "status": "unchanged",
+                  "value": {
+                    "masterLabel": "Paid",
+                    "translation": "支払済み"
+                  },
+                  "index": {
+                    "before": 2,
+                    "after": 1
+                  }
+                }
+              ]
+            },
+            "index": {
+              "before": 4,
+              "after": 4
+            }
+          }
+        ],
+        "recordTypes": [
+          {
+            "kind": "recordTypeTranslation",
+            "sourceKeys": {
+              "objectKey": "recordTypeTranslation_7ca05a4432a58e3a",
+              "sourceKey": "recordTypeTranslation_c302b44ca1a22640"
+            },
+            "status": "unchanged",
+            "value": {
+              "name": "Standard",
+              "label": "標準"
+            },
+            "index": {
+              "before": 0,
+              "after": 0
+            }
+          }
+        ],
+        "validationRules": [
+          {
+            "kind": "validationRuleTranslation",
+            "sourceKeys": {
+              "objectKey": "validationRuleTranslation_184cc1335101582d",
+              "sourceKey": "validationRuleTranslation_961e1937b6216236"
+            },
+            "status": "unchanged",
+            "value": {
+              "name": "Amount_Positive",
+              "errorMessage": "金額は正の値にしてください。"
+            },
+            "index": {
+              "before": 0,
+              "after": 0
+            }
+          }
+        ],
+        "webLinks": [
+          {
+            "kind": "webLinkTranslation",
+            "sourceKeys": {
+              "objectKey": "webLinkTranslation_fb636f42c8a7f613",
+              "sourceKey": "webLinkTranslation_5871df9a7a22bb22"
+            },
+            "status": "unchanged",
+            "value": {
+              "name": "Send_Invoice",
+              "label": "請求書を送付"
+            },
+            "index": {
+              "before": 0,
+              "after": 0
+            }
+          }
+        ],
+        "fieldSets": [
+          {
+            "kind": "fieldSetTranslation",
+            "sourceKeys": {
+              "objectKey": "fieldSetTranslation_44a8995d9bb799a8",
+              "sourceKey": "fieldSetTranslation_edd5182d9b37e436"
+            },
+            "status": "unchanged",
+            "value": {
+              "name": "Summary",
+              "label": "概要"
+            },
+            "index": {
+              "before": 0,
+              "after": 0
+            }
+          }
+        ],
+        "layouts": [
+          {
+            "kind": "layoutTranslation",
+            "sourceKeys": {
+              "objectKey": "layoutTranslation_3a2124ee9e969dee",
+              "sourceKey": "layoutTranslation_f9bd716cd023e9f5"
+            },
+            "status": "unchanged",
+            "value": {
+              "layout": "Invoice Layout",
+              "sections": [
+                {
+                  "section": "Information",
+                  "label": "請求情報"
+                }
+              ]
+            },
+            "index": {
+              "before": 0,
+              "after": 0
+            }
+          }
+        ]
+      }
+    }
+  },
+  {
+    "id": "Legacy_Item__c-ja",
+    "status": "removed",
+    "filePath": {
+      "before": "Legacy_Item__c-ja"
+    },
+    "dataType": {
+      "before": "objectTranslation"
+    },
+    "resolvedError": []
+  }
+]

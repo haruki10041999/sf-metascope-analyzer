@@ -3,10 +3,10 @@ import { SelectListContext } from '@apexdevtools/apex-parser';
 import { ListTypeClass } from '../listVisitor';
 
 import { SelectEntryTypeClass, EntryVisitor, isSelectEntryType } from '../entryVisitor';
-import { ErrorTypeClass, CommonTypeClass, isValidClassList } from '../commonVisitor';
+import { ApexErrorTypeClass, ApexCommonTypeClass, isApexValidClassList } from '../commonVisitor';
 
 export class SelectListTypeClass extends ListTypeClass<'selectList', SelectEntryTypeClass> {
-    private constructor(list: (SelectEntryTypeClass | ErrorTypeClass)[]) {
+    private constructor(list: (SelectEntryTypeClass | ApexErrorTypeClass)[]) {
         super('selectList', list);
     }
 
@@ -16,7 +16,7 @@ export class SelectListTypeClass extends ListTypeClass<'selectList', SelectEntry
         }
 
         return new SelectListTypeClass(
-            isValidClassList(
+            isApexValidClassList(
                 ctx.selectEntry_list(),
                 (ctx) => new EntryVisitor().visit(ctx),
                 isSelectEntryType,
@@ -27,7 +27,8 @@ export class SelectListTypeClass extends ListTypeClass<'selectList', SelectEntry
 }
 
 export const isSelectListType = (
-    target: CommonTypeClass<string>,
+    target: ApexCommonTypeClass<string>,
 ): target is SelectListTypeClass => {
     return target instanceof SelectListTypeClass;
 };
+

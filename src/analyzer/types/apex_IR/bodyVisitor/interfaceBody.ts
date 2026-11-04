@@ -7,19 +7,19 @@ import {
     DeclarationVisitor,
     isInterfaceMethodDeclarationType,
 } from '../declarationVisitor';
-import { ErrorTypeClass, CommonTypeClass, isValidClassList } from '../commonVisitor';
+import { ApexErrorTypeClass, ApexCommonTypeClass, isApexValidClassList } from '../commonVisitor';
 
 export class InterfaceBodyTypeClass extends BodyTypeClass<
     'interfaceBody',
     InterfaceMethodDeclarationTypeClass
 > {
-    private constructor(value: (InterfaceMethodDeclarationTypeClass | ErrorTypeClass)[]) {
+    private constructor(value: (InterfaceMethodDeclarationTypeClass | ApexErrorTypeClass)[]) {
         super('interfaceBody', value);
     }
 
     static create(ctx: InterfaceBodyContext): InterfaceBodyTypeClass {
         return new InterfaceBodyTypeClass(
-            isValidClassList(
+            isApexValidClassList(
                 ctx.interfaceMethodDeclaration_list(),
                 (ctx) => new DeclarationVisitor().visit(ctx),
                 isInterfaceMethodDeclarationType,
@@ -30,7 +30,7 @@ export class InterfaceBodyTypeClass extends BodyTypeClass<
 }
 
 export const isInterfaceBodyType = (
-    target: CommonTypeClass<string>,
+    target: ApexCommonTypeClass<string>,
 ): target is InterfaceBodyTypeClass => {
     return target instanceof InterfaceBodyTypeClass;
 };

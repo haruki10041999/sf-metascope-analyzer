@@ -4,13 +4,13 @@ import { ControlTypeClass } from '.';
 
 import { WhenValueTypeClass, ValueVisitor, isWhenValueType } from '../valueVisitor';
 import { NormalBlockTypeClass, BlockVisitor, isNormalBlockType } from '../blockVisitor';
-import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
+import { ApexErrorTypeClass, ApexCommonTypeClass, isApexValidClass } from '../commonVisitor';
 
 export class WhenControlTypeClass extends ControlTypeClass<'whenControl', WhenValueTypeClass> {
-    private block: NormalBlockTypeClass | ErrorTypeClass;
+    private block: NormalBlockTypeClass | ApexErrorTypeClass;
     private constructor(
-        value: WhenValueTypeClass | ErrorTypeClass,
-        block: NormalBlockTypeClass | ErrorTypeClass,
+        value: WhenValueTypeClass | ApexErrorTypeClass,
+        block: NormalBlockTypeClass | ApexErrorTypeClass,
     ) {
         super('whenControl', value);
         this.block = block;
@@ -22,18 +22,22 @@ export class WhenControlTypeClass extends ControlTypeClass<'whenControl', WhenVa
         }
 
         return new WhenControlTypeClass(
-            isValidClass(new ValueVisitor().visit(ctx.whenValue()), isWhenValueType, 'whenValue'),
-            isValidClass(new BlockVisitor().visit(ctx.block()), isNormalBlockType, 'block'),
+            isApexValidClass(
+                new ValueVisitor().visit(ctx.whenValue()),
+                isWhenValueType,
+                'whenValue',
+            ),
+            isApexValidClass(new BlockVisitor().visit(ctx.block()), isNormalBlockType, 'block'),
         );
     }
 
-    getBlock(): NormalBlockTypeClass | ErrorTypeClass {
+    getBlock(): NormalBlockTypeClass | ApexErrorTypeClass {
         return this.block;
     }
 }
 
 export const isWhenControlType = (
-    target: CommonTypeClass<string>,
+    target: ApexCommonTypeClass<string>,
 ): target is WhenControlTypeClass => {
     return target instanceof WhenControlTypeClass;
 };

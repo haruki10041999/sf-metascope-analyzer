@@ -1,0 +1,149 @@
+{
+  "filePath": "Invoice_Line__c",
+  "resolvedError": [],
+  "dataType": "object",
+  "result": {
+    "id": "Invoice_Line__c",
+    "base": {
+      "kind": "object",
+      "sourceKeys": {
+        "objectKey": "object_63e00749cc070ce7",
+        "sourceKey": "object_97265b6e92059763"
+      },
+      "apiName": "Invoice_Line__c",
+      "objectType": "custom",
+      "label": "Invoice Line",
+      "pluralLabel": "Invoice Lines",
+      "sharingModel": "ControlledByParent",
+      "deploymentStatus": "Deployed",
+      "nameField": {
+        "label": "Line Name",
+        "type": "Text"
+      },
+      "fields": [
+        {
+          "kind": "field",
+          "sourceKeys": {
+            "objectKey": "field_34db8b7725bd7582",
+            "sourceKey": "field_0a6d60509fda0d7c"
+          },
+          "apiName": "Invoice__c",
+          "label": "Invoice",
+          "type": "MasterDetail",
+          "referenceTo": "Invoice__c",
+          "relationshipName": "Lines",
+          "relationshipOrder": 0,
+          "reparentableMasterDetail": false,
+          "writeRequiresMasterRead": false
+        },
+        {
+          "kind": "field",
+          "sourceKeys": {
+            "objectKey": "field_f86006f44e039698",
+            "sourceKey": "field_ac821ce419745792"
+          },
+          "apiName": "Product__c",
+          "label": "Product",
+          "type": "Lookup",
+          "referenceTo": "Product2",
+          "relationshipName": "Invoice_Lines",
+          "deleteConstraint": "SetNull"
+        },
+        {
+          "kind": "field",
+          "sourceKeys": {
+            "objectKey": "field_fe527520bec6a708",
+            "sourceKey": "field_cec9f4879c00dbe3"
+          },
+          "apiName": "Quantity__c",
+          "label": "Quantity",
+          "type": "Number",
+          "precision": 18,
+          "scale": 0
+        }
+      ]
+    },
+    "sourceObject": [
+      {
+        "objectKey": "field_34db8b7725bd7582",
+        "context": "<CustomField xmlns=\"http://soap.sforce.com/2006/04/metadata\">\n    <fullName>Invoice__c</fullName>\n    <label>Invoice</label>\n    <referenceTo>Invoice__c</referenceTo>\n    <relationshipName>Lines</relationshipName>\n    <relationshipOrder>0</relationshipOrder>\n    <reparentableMasterDetail>false</reparentableMasterDetail>\n    <type>MasterDetail</type>\n    <writeRequiresMasterRead>false</writeRequiresMasterRead>\n</CustomField>",
+        "source": [
+          {
+            "sourceKey": "field_0a6d60509fda0d7c",
+            "filePath": "Invoice_Line__c/fields/Invoice__c.field-meta.xml",
+            "start": {
+              "offset": 39,
+              "line": 2,
+              "column": 0
+            },
+            "end": {
+              "offset": 466,
+              "line": 11,
+              "column": 14
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "field_f86006f44e039698",
+        "context": "<CustomField xmlns=\"http://soap.sforce.com/2006/04/metadata\">\n    <fullName>Product__c</fullName>\n    <deleteConstraint>SetNull</deleteConstraint>\n    <label>Product</label>\n    <referenceTo>Product2</referenceTo>\n    <relationshipName>Invoice_Lines</relationshipName>\n    <type>Lookup</type>\n</CustomField>",
+        "source": [
+          {
+            "sourceKey": "field_ac821ce419745792",
+            "filePath": "Invoice_Line__c/fields/Product__c.field-meta.xml",
+            "start": {
+              "offset": 39,
+              "line": 2,
+              "column": 0
+            },
+            "end": {
+              "offset": 346,
+              "line": 9,
+              "column": 14
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "field_fe527520bec6a708",
+        "context": "<CustomField xmlns=\"http://soap.sforce.com/2006/04/metadata\">\n    <fullName>Quantity__c</fullName>\n    <label>Quantity</label>\n    <precision>18</precision>\n    <scale>0</scale>\n    <type>Number</type>\n</CustomField>",
+        "source": [
+          {
+            "sourceKey": "field_cec9f4879c00dbe3",
+            "filePath": "Invoice_Line__c/fields/Quantity__c.field-meta.xml",
+            "start": {
+              "offset": 39,
+              "line": 2,
+              "column": 0
+            },
+            "end": {
+              "offset": 255,
+              "line": 8,
+              "column": 14
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "object_63e00749cc070ce7",
+        "context": "<CustomObject xmlns=\"http://soap.sforce.com/2006/04/metadata\">\n    <deploymentStatus>Deployed</deploymentStatus>\n    <label>Invoice Line</label>\n    <nameField>\n        <label>Line Name</label>\n        <type>Text</type>\n    </nameField>\n    <pluralLabel>Invoice Lines</pluralLabel>\n    <sharingModel>ControlledByParent</sharingModel>\n</CustomObject>",
+        "source": [
+          {
+            "sourceKey": "object_97265b6e92059763",
+            "filePath": "Invoice_Line__c/Invoice_Line__c.object-meta.xml",
+            "start": {
+              "offset": 39,
+              "line": 2,
+              "column": 0
+            },
+            "end": {
+              "offset": 388,
+              "line": 11,
+              "column": 15
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

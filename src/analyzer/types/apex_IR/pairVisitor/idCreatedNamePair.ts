@@ -4,7 +4,7 @@ import { PairTypeClass } from '.';
 
 import { AnyIdTypeClass, IdVisitor, isAnyIdType } from '../idVisitor';
 import { TypeListTypeClass, ListVisitor, isTypeListType } from '../listVisitor';
-import { ErrorTypeClass, CommonTypeClass, isValidClass } from '../commonVisitor';
+import { ApexErrorTypeClass, ApexCommonTypeClass, isApexValidClass } from '../commonVisitor';
 
 export class IdCreatedNamePairTypeClass extends PairTypeClass<
     'idCreatedNamePair',
@@ -12,8 +12,8 @@ export class IdCreatedNamePairTypeClass extends PairTypeClass<
     TypeListTypeClass | null
 > {
     private constructor(
-        left: AnyIdTypeClass | ErrorTypeClass,
-        right: TypeListTypeClass | ErrorTypeClass | null,
+        left: AnyIdTypeClass | ApexErrorTypeClass,
+        right: TypeListTypeClass | ApexErrorTypeClass | null,
     ) {
         super('idCreatedNamePair', left, right);
     }
@@ -24,17 +24,21 @@ export class IdCreatedNamePairTypeClass extends PairTypeClass<
         }
 
         return new IdCreatedNamePairTypeClass(
-            isValidClass(new IdVisitor().visit(ctx.anyId()), isAnyIdType, 'anyId'),
+            isApexValidClass(new IdVisitor().visit(ctx.anyId()), isAnyIdType, 'anyId'),
             // 型引数 `<...>` は任意（`new Account()`）
             ctx.typeList()
-                ? isValidClass(new ListVisitor().visit(ctx.typeList()), isTypeListType, 'typeList')
+                ? isApexValidClass(
+                      new ListVisitor().visit(ctx.typeList()),
+                      isTypeListType,
+                      'typeList',
+                  )
                 : null,
         );
     }
 }
 
 export const isIdCreatedNamePairType = (
-    target: CommonTypeClass<string>,
+    target: ApexCommonTypeClass<string>,
 ): target is IdCreatedNamePairTypeClass => {
     return target instanceof IdCreatedNamePairTypeClass;
 };
