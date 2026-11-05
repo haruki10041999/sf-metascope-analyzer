@@ -1,0 +1,232 @@
+import { hash } from '../../../../types';
+
+import { JsonNode, getObjectKey, getValueKey } from '../commons';
+
+// GumTree の木 (Apex・LWC で共通)。方針: docs/apex-gumtree-diff.md 3 章・4 章、docs/lwc-diff-policy.md
+// 言語ごとに違うのはラベルの付け方などだけなので、それを GumTreeLanguage として渡す (Apex は processor/Apex/diff/gumtree/tree.ts)
+
+/** GumTree が比べる木のノード。JsonType / StructureJsonType は実ノード、それ以外は仮想ノード */
+export type GumTreeNode = {
+    /** 木の中での前順の番号 */
+    id: number;
+    /** 同じラベル同士だけを対応付ける */
+    label: string;
+    /** ノード自身のプリミティブのプロパティ。違えば更新 (changed) */
+    values: Record<string, DiffFieldValue>;
+    /** 同形の判定。実ノードは objectKey、仮想ノードは子の hash から作る */
+    hash: string;
+    /** 値を見ない形だけの hash (recovery で使う) */
+    structureHash: string;
+    /** 親のどのプロパティにあるか */
+    role: string;
+    /** 子の順序が意味を持つか */
+    ordered: boolean;
+    children: GumTreeNode[];
+    parent: GumTreeNode | undefined;
+    /** 元の値 */
+    raw: unknown;
+    /** 元の JsonType / StructureJsonType。仮想ノードは undefined */
+    source: JsonNode | undefined;
+    height: number;
+    size: number;
+};
+
+export type DiffPrimitive = string | number | boolean | null;
+export type DiffFieldValue = DiffPrimitive | DiffPrimitive[];
+export type DiffNodeValue =
+    DiffPrimitive | JsonNode | { [key: string]: DiffNodeValue | undefined } | DiffNodeValue[];
+
+/** 言語ごとの木の作り方 */
+export type GumTreeLanguage = {
+    /** JSON ノード (kind と sourceKeys を持つ) のラベル。既定は kind */
+    nodeLabel?: (node: JsonNode) => string;
+    /** kind を持たない値のラベル。undefined なら `${親のラベル}.${プロパティ名}` */
+    valueLabel?: (
+        owner: string,
+        role: string,
+        value: Record<string, unknown>,
+    ) => string | undefined;
+    /** 子の順序が意味を持つか (既定はすべて順序あり) */
+    isOrdered?: (label: string) => boolean;
+    /** 文の並び (block) を持つプロパティか。文の並びは、要素 1 つの本体も並びにする */
+    isBlockRole?: (owner: string, role: string) => boolean;
+    /** 配列全体を 1 つの値として比べるプロパティか */
+    isAtomicArray?: (label: string, role: string) => boolean;
+    /** 中身を比べずに葉にする JSON ノードの値 (Apex の型)。undefined なら中身も木にする */
+    leafValues?: (node: JsonNode) => Record<string, DiffFieldValue> | undefined;
+    /** 子を 1 つの並びにまとめ直すプロパティ (Apex の修飾子: 分類キーをまたいで 1 つの順序なしの並び) */
+    groupProperty?: (
+        key: string,
+        value: unknown,
+    ) => { label: string; role: string; items: unknown[] } | undefined;
+};
+
+const isPrimitive = (value: unknown): value is DiffPrimitive =>
+    value === null || ['string', 'number', 'boolean'].includes(typeof value);
+
+const isRecord = (value: unknown): value is Record<string, unknown> =>
+    typeof value === 'object' && value !== null && !Array.isArray(value);
+
+const isJsonNode = (value: unknown): value is JsonNode =>
+    isRecord(value) && typeof value.kind === 'string' && isRecord(value.sourceKeys);
+
+const isValueLike = (value: unknown): value is DiffFieldValue =>
+    isPrimitive(value) || (Array.isArray(value) && value.every(isPrimitive));
+
+type NodeInit = {
+    label: string;
+    values?: Record<string, DiffFieldValue>;
+    children?: GumTreeNode[];
+    role: string;
+    raw: unknown;
+    source?: JsonNode | undefined;
+};
+
+/** 言語の設定から、木を作る関数を作る */
+export const makeGumTreeBuilder = (language: GumTreeLanguage) => {
+    const nodeLabel = language.nodeLabel ?? ((node: JsonNode) => node.kind);
+    const isOrdered = language.isOrdered ?? (() => true);
+    const isBlockRole = language.isBlockRole ?? (() => false);
+    const isAtomicArray = language.isAtomicArray ?? (() => false);
+
+    const makeNode = ({ label, values = {}, children = [], role, raw, source }: NodeInit) => {
+        const node: GumTreeNode = {
+            id: -1,
+            label,
+            values,
+            hash: source
+                ? getObjectKey(source)
+                : hash([label, values, children.map((c) => c.hash)]),
+            structureHash: hash([label, children.map((c) => c.structureHash)]),
+            role,
+            ordered: isOrdered(label),
+            children,
+            parent: undefined,
+            raw,
+            source,
+            height: 1 + Math.max(0, ...children.map((c) => c.height)),
+            size: 1 + children.reduce((sum, c) => sum + c.size, 0),
+        };
+        children.forEach((c) => (c.parent = node));
+        return node;
+    };
+
+    /** オブジェクトのプロパティを values と子に分ける (位置の sourceKeys は比べない) */
+    const splitProperties = (label: string, value: Record<string, unknown>) => {
+        const values: Record<string, DiffFieldValue> = {};
+        const children: GumTreeNode[] = [];
+
+        Object.entries(value).forEach(([key, v]) => {
+            if (key === 'kind' || key === 'sourceKeys' || v === undefined) {
+                return;
+            }
+            const group = language.groupProperty?.(key, v);
+            if (group) {
+                const items = group.items.map((item) => makeTreeNode(item, group.label, key));
+                children.push(
+                    makeNode({ label: group.label, children: items, role: group.role, raw: v }),
+                );
+            } else if (isBlockRole(label, key)) {
+                children.push(makeBlockNode(v, key));
+            } else if (Array.isArray(v) && isAtomicArray(label, key) && isValueLike(v)) {
+                values[key] = v;
+            } else if (Array.isArray(v)) {
+                children.push(makeTreeNode(v, label, key));
+            } else if (isValueLike(v)) {
+                values[key] = v;
+            } else {
+                children.push(makeTreeNode(v, label, key));
+            }
+        });
+
+        return { values, children };
+    };
+
+    /** 文の並び。{ } のない 1 文だけの本体も要素 1 つの block にする */
+    const makeBlockNode = (value: unknown, role: string): GumTreeNode => {
+        const list = Array.isArray(value) ? value : [value];
+        const children = list.map((item) =>
+            Array.isArray(item)
+                ? makeBlockNode(item, 'statement')
+                : makeTreeNode(item, 'block', 'statement'),
+        );
+        return makeNode({ label: 'block', children, role, raw: value });
+    };
+
+    const makeTreeNode = (value: unknown, owner: string, role: string): GumTreeNode => {
+        if (isPrimitive(value)) {
+            // 式の位置にある識別子など
+            return makeNode({ label: 'name', values: { value }, role, raw: value });
+        }
+
+        if (Array.isArray(value)) {
+            const label = `${owner}.${role}`;
+            const children = value.map((item) => makeTreeNode(item, owner, role));
+            return makeNode({ label, children, role, raw: value });
+        }
+
+        if (isJsonNode(value)) {
+            const label = nodeLabel(value);
+            const leaf = language.leafValues?.(value);
+            if (leaf) {
+                return makeNode({ label, values: leaf, role, raw: value, source: value });
+            }
+            return makeNode({
+                label,
+                ...splitProperties(label, value),
+                role,
+                raw: value,
+                source: value,
+            });
+        }
+
+        if (isRecord(value)) {
+            const label = language.valueLabel?.(owner, role, value) ?? `${owner}.${role}`;
+            return makeNode({ label, ...splitProperties(label, value), role, raw: value });
+        }
+
+        return makeNode({
+            label: 'unknown',
+            values: { value: getValueKey(value) },
+            role,
+            raw: value,
+        });
+    };
+
+    const assignIds = (root: GumTreeNode) => {
+        preOrder(root).forEach((node, index) => (node.id = index));
+        return root;
+    };
+
+    return {
+        /** 文の並びから木を作る。根は block の仮想ノード */
+        makeBlockTree: (statements: unknown[]): GumTreeNode =>
+            assignIds(makeBlockNode(statements, 'root')),
+    };
+};
+
+// ---------------------------------------------------------------------------
+// 走査
+// ---------------------------------------------------------------------------
+
+export const preOrder = (root: GumTreeNode): GumTreeNode[] => {
+    const nodes: GumTreeNode[] = [];
+    const visit = (node: GumTreeNode) => {
+        nodes.push(node);
+        node.children.forEach(visit);
+    };
+    visit(root);
+    return nodes;
+};
+
+export const postOrder = (root: GumTreeNode): GumTreeNode[] => {
+    const nodes: GumTreeNode[] = [];
+    const visit = (node: GumTreeNode) => {
+        node.children.forEach(visit);
+        nodes.push(node);
+    };
+    visit(root);
+    return nodes;
+};
+
+export const descendants = (node: GumTreeNode): GumTreeNode[] => preOrder(node).slice(1);

@@ -22,7 +22,12 @@ import {
     isLimitClauseType,
     isOffsetClauseType,
 } from '../clauseVisitor';
-import { ApexCommonTypeClass, ApexErrorTypeClass, isApexValidClass } from '../commonVisitor';
+import {
+    ApexCommonTypeClass,
+    ApexErrorTypeClass,
+    visitNode,
+    visitOptionalNode,
+} from '../commonVisitor';
 
 // value はオブジェクト名 (soslId[0])
 export class FieldSpecTypeClass extends QueryTypeClass<'fieldSpec', SoslIdTypeClass> {
@@ -60,45 +65,33 @@ export class FieldSpecTypeClass extends QueryTypeClass<'fieldSpec', SoslIdTypeCl
         const listViewCtx = ctx.LISTVIEW() ? ctx.soslId(1) : null;
 
         return new FieldSpecTypeClass(
-            isApexValidClass(new IdVisitor().visit(ctx.soslId(0)), isSoslIdType, 'soslId'),
-            ctx.fieldList()
-                ? isApexValidClass(
-                      new ListVisitor().visit(ctx.fieldList()),
-                      isFieldListType,
-                      'fieldList',
-                  )
-                : null,
-            ctx.logicalExpression()
-                ? isApexValidClass(
-                      new ExpressionVisitor().visit(ctx.logicalExpression()),
-                      isLogicalExpressionType,
-                      'logicalExpression',
-                  )
-                : null,
-            listViewCtx
-                ? isApexValidClass(new IdVisitor().visit(listViewCtx), isSoslIdType, 'soslId')
-                : null,
-            ctx.fieldOrderList()
-                ? isApexValidClass(
-                      new ListVisitor().visit(ctx.fieldOrderList()),
-                      isFieldOrderListType,
-                      'fieldOrderList',
-                  )
-                : null,
-            ctx.limitClause()
-                ? isApexValidClass(
-                      new ClauseVisitor().visit(ctx.limitClause()),
-                      isLimitClauseType,
-                      'limitClause',
-                  )
-                : null,
-            ctx.offsetClause()
-                ? isApexValidClass(
-                      new ClauseVisitor().visit(ctx.offsetClause()),
-                      isOffsetClauseType,
-                      'offsetClause',
-                  )
-                : null,
+            visitNode(new IdVisitor(), ctx.soslId(0), isSoslIdType, 'soslId'),
+            visitOptionalNode(new ListVisitor(), ctx.fieldList(), isFieldListType, 'fieldList'),
+            visitOptionalNode(
+                new ExpressionVisitor(),
+                ctx.logicalExpression(),
+                isLogicalExpressionType,
+                'logicalExpression',
+            ),
+            visitOptionalNode(new IdVisitor(), listViewCtx, isSoslIdType, 'soslId'),
+            visitOptionalNode(
+                new ListVisitor(),
+                ctx.fieldOrderList(),
+                isFieldOrderListType,
+                'fieldOrderList',
+            ),
+            visitOptionalNode(
+                new ClauseVisitor(),
+                ctx.limitClause(),
+                isLimitClauseType,
+                'limitClause',
+            ),
+            visitOptionalNode(
+                new ClauseVisitor(),
+                ctx.offsetClause(),
+                isOffsetClauseType,
+                'offsetClause',
+            ),
         );
     }
 
@@ -132,4 +125,3 @@ export const isFieldSpecType = (
 ): target is FieldSpecTypeClass => {
     return target instanceof FieldSpecTypeClass;
 };
-

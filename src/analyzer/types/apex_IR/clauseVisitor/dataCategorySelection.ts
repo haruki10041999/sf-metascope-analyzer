@@ -9,7 +9,7 @@ import {
 
 import { SoqlIdTypeClass, IdVisitor, isSoqlIdType } from '../idVisitor';
 import { DataCategoryNameTypeClass, NameVisitor, isDataCategoryNameType } from '../nameVisitor';
-import { ApexErrorTypeClass, ApexCommonTypeClass, isApexValidClass } from '../commonVisitor';
+import { ApexErrorTypeClass, ApexCommonTypeClass, visitNode } from '../commonVisitor';
 
 export class DataCategorySelectionTypeClass extends ClauseTypeClass<
     'dataCategorySelection',
@@ -34,14 +34,16 @@ export class DataCategorySelectionTypeClass extends ClauseTypeClass<
         }
 
         return new DataCategorySelectionTypeClass(
-            isApexValidClass(new IdVisitor().visit(ctx.soqlId()), isSoqlIdType, 'soqlId'),
-            isApexValidClass(
-                new ClauseVisitor().visit(ctx.filteringSelector()),
+            visitNode(new IdVisitor(), ctx.soqlId(), isSoqlIdType, 'soqlId'),
+            visitNode(
+                new ClauseVisitor(),
+                ctx.filteringSelector(),
                 isFilteringSelectorType,
                 'filteringSelector',
             ),
-            isApexValidClass(
-                new NameVisitor().visit(ctx.dataCategoryName()),
+            visitNode(
+                new NameVisitor(),
+                ctx.dataCategoryName(),
                 isDataCategoryNameType,
                 'dataCategoryName',
             ),
@@ -62,4 +64,3 @@ export const isDataCategorySelectionType = (
 ): target is DataCategorySelectionTypeClass => {
     return target instanceof DataCategorySelectionTypeClass;
 };
-

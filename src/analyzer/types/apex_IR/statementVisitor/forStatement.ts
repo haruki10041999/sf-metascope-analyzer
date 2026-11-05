@@ -8,7 +8,7 @@ import {
 } from '.';
 
 import { ForControlTypeClass, ControlVisitor, isForControlType } from '../controlVisitor';
-import { ApexErrorTypeClass, ApexCommonTypeClass, isApexValidClass } from '../commonVisitor';
+import { ApexErrorTypeClass, ApexCommonTypeClass, visitNode } from '../commonVisitor';
 
 export class ForStatementTypeClass extends StatementTypeClass<'forStatement', ForControlTypeClass> {
     private block: NormalStatementTypeClass | ApexErrorTypeClass;
@@ -27,16 +27,8 @@ export class ForStatementTypeClass extends StatementTypeClass<'forStatement', Fo
         }
 
         return new ForStatementTypeClass(
-            isApexValidClass(
-                new ControlVisitor().visit(ctx.forControl()),
-                isForControlType,
-                'forControl',
-            ),
-            isApexValidClass(
-                new StatementVisitor().visit(ctx.statement()),
-                isNormalStatementType,
-                'statement',
-            ),
+            visitNode(new ControlVisitor(), ctx.forControl(), isForControlType, 'forControl'),
+            visitNode(new StatementVisitor(), ctx.statement(), isNormalStatementType, 'statement'),
         );
     }
 
@@ -50,4 +42,3 @@ export const isForStatementType = (
 ): target is ForStatementTypeClass => {
     return target instanceof ForStatementTypeClass;
 };
-

@@ -9,7 +9,12 @@ import {
     ParameterVisitor,
     isFormalParametersType,
 } from '../parameterVisitor';
-import { ApexErrorTypeClass, ApexCommonTypeClass, isApexValidClass } from '../commonVisitor';
+import {
+    ApexErrorTypeClass,
+    ApexCommonTypeClass,
+    visitNode,
+    visitOptionalNode,
+} from '../commonVisitor';
 
 export class ConstructorDeclarationTypeClass extends DeclarationTypeClass<
     'constructorDeclaration',
@@ -34,19 +39,14 @@ export class ConstructorDeclarationTypeClass extends DeclarationTypeClass<
         }
 
         return new ConstructorDeclarationTypeClass(
-            isApexValidClass(
-                new NameVisitor().visit(ctx.qualifiedName()),
-                isQualifiedNameType,
-                'qualifiedName',
+            visitNode(new NameVisitor(), ctx.qualifiedName(), isQualifiedNameType, 'qualifiedName'),
+            visitOptionalNode(
+                new ParameterVisitor(),
+                ctx.formalParameters(),
+                isFormalParametersType,
+                'formalParameters',
             ),
-            ctx.formalParameters()
-                ? isApexValidClass(
-                      new ParameterVisitor().visit(ctx.formalParameters()),
-                      isFormalParametersType,
-                      'formalParameters',
-                  )
-                : null,
-            isApexValidClass(new BlockVisitor().visit(ctx.block()), isNormalBlockType, 'block'),
+            visitNode(new BlockVisitor(), ctx.block(), isNormalBlockType, 'block'),
         );
     }
 

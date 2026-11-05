@@ -10,7 +10,12 @@ import {
     ParameterVisitor,
     isFormalParametersType,
 } from '../parameterVisitor';
-import { ApexErrorTypeClass, ApexCommonTypeClass, isApexValidClass } from '../commonVisitor';
+import {
+    ApexErrorTypeClass,
+    ApexCommonTypeClass,
+    visitNode,
+    visitOptionalNode,
+} from '../commonVisitor';
 
 export class MethodDeclarationTypeClass extends DeclarationTypeClass<
     'methodDeclaration',
@@ -38,29 +43,18 @@ export class MethodDeclarationTypeClass extends DeclarationTypeClass<
         }
 
         return new MethodDeclarationTypeClass(
-            isApexValidClass(new IdVisitor().visit(ctx.id()), isNormalIdType, 'id'),
+            visitNode(new IdVisitor(), ctx.id(), isNormalIdType, 'id'),
             ctx.VOID()
                 ? 'void'
-                : isApexValidClass(
-                      new TypeVisitor().visit(ctx.typeRef()),
-                      isTypeRefType,
-                      'typeRef',
-                  ),
-            ctx.formalParameters()
-                ? isApexValidClass(
-                      new ParameterVisitor().visit(ctx.formalParameters()),
-                      isFormalParametersType,
-                      'formalParameters',
-                  )
-                : null,
+                : visitNode(new TypeVisitor(), ctx.typeRef(), isTypeRefType, 'typeRef'),
+            visitOptionalNode(
+                new ParameterVisitor(),
+                ctx.formalParameters(),
+                isFormalParametersType,
+                'formalParameters',
+            ),
             // abstract メソッドは本体を持たない（`void run();`）
-            ctx.block()
-                ? isApexValidClass(
-                      new BlockVisitor().visit(ctx.block()),
-                      isNormalBlockType,
-                      'block',
-                  )
-                : null,
+            visitOptionalNode(new BlockVisitor(), ctx.block(), isNormalBlockType, 'block'),
         );
     }
 
@@ -82,4 +76,3 @@ export const isMethodDeclarationType = (
 ): target is MethodDeclarationTypeClass => {
     return target instanceof MethodDeclarationTypeClass;
 };
-

@@ -8,7 +8,12 @@ import {
 } from '.';
 
 import { NormalIdTypeClass, IdVisitor, isNormalIdType } from '../idVisitor';
-import { ApexErrorTypeClass, ApexCommonTypeClass, isApexValidClass } from '../commonVisitor';
+import {
+    ApexErrorTypeClass,
+    ApexCommonTypeClass,
+    visitNode,
+    visitOptionalNode,
+} from '../commonVisitor';
 
 export class EnumDeclarationTypeClass extends DeclarationTypeClass<
     'enumDeclaration',
@@ -30,14 +35,13 @@ export class EnumDeclarationTypeClass extends DeclarationTypeClass<
         }
 
         return new EnumDeclarationTypeClass(
-            isApexValidClass(new IdVisitor().visit(ctx.id()), isNormalIdType, 'id'),
-            ctx.enumConstants()
-                ? isApexValidClass(
-                      new DeclarationVisitor().visit(ctx.enumConstants()),
-                      isEnumConstantsType,
-                      'enumConstants',
-                  )
-                : null,
+            visitNode(new IdVisitor(), ctx.id(), isNormalIdType, 'id'),
+            visitOptionalNode(
+                new DeclarationVisitor(),
+                ctx.enumConstants(),
+                isEnumConstantsType,
+                'enumConstants',
+            ),
         );
     }
 

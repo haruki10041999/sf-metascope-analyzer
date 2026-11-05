@@ -2,7 +2,7 @@ import { SoqlIdContext } from '@apexdevtools/apex-parser';
 
 import { NormalIdTypeClass, IdTypeClass, IdVisitor, isNormalIdType } from '.';
 
-import { ApexCommonTypeClass, ApexErrorTypeClass, isApexValidClass } from '../commonVisitor';
+import { ApexCommonTypeClass, ApexErrorTypeClass, visitNode } from '../commonVisitor';
 
 export class SoqlIdTypeClass extends IdTypeClass<'soqlId', NormalIdTypeClass> {
     private constructor(value: NormalIdTypeClass | ApexErrorTypeClass) {
@@ -10,9 +10,7 @@ export class SoqlIdTypeClass extends IdTypeClass<'soqlId', NormalIdTypeClass> {
     }
 
     static create(ctx: SoqlIdContext): SoqlIdTypeClass {
-        return new SoqlIdTypeClass(
-            isApexValidClass(new IdVisitor().visit(ctx.id()), isNormalIdType, 'id'),
-        );
+        return new SoqlIdTypeClass(visitNode(new IdVisitor(), ctx.id(), isNormalIdType, 'id'));
     }
 }
 

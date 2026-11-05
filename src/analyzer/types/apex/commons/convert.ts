@@ -28,6 +28,21 @@ export const isSpecifyConvert = <TName extends string>(
     return isConvert(target) && types.includes(target.type as TName);
 };
 
+/** オブジェクトのキーを (入れ子も) 名前の順に並べ替えたもの。配列の順序はそのまま */
+export const sortKeys = (value: unknown): unknown => {
+    if (Array.isArray(value)) {
+        return value.map(sortKeys);
+    }
+    if (!isRecord(value)) {
+        return value;
+    }
+    return Object.fromEntries(
+        Object.keys(value)
+            .sort()
+            .map((key) => [key, sortKeys(value[key])]),
+    );
+};
+
 /**
  * 1パスで変換する。戻り値は [変換後ノード, objectKey 計算用の内容]。
  * 子の objectKey 計算用の内容を親に返すことで、部分木を再走査せずに済む。
@@ -67,7 +82,8 @@ const convertNode = (
     const { context, ...rest } = target.sourceInfo;
 
     const sourceKey = `${target.type}_${hash(rest)}`;
-    const objectKey = `${target.type}_${hash(keyBody)}`;
+    // キーの順序に依らないようにする (converter が IR のフィールドの順に出力するため、順序は意味を持たない)
+    const objectKey = `${target.type}_${hash(sortKeys(keyBody))}`;
     registrations[index] = {
         objectKey,
         sourceKey,

@@ -19,7 +19,7 @@ import {
     isFieldDeclarationType,
 } from '.';
 
-import { ApexErrorTypeClass, ApexCommonTypeClass, isApexValidClass } from '../commonVisitor';
+import { ApexErrorTypeClass, ApexCommonTypeClass, visitNode } from '../commonVisitor';
 
 type MemberDeclarationTypeClassType =
     | MethodDeclarationTypeClass
@@ -53,44 +53,51 @@ export class MemberDeclarationTypeClass extends DeclarationTypeClass<
 
         let value: MemberDeclarationTypeClassType | ApexErrorTypeClass;
         if (ctx.methodDeclaration()) {
-            value = isApexValidClass(
-                new DeclarationVisitor().visit(ctx.methodDeclaration()),
+            value = visitNode(
+                new DeclarationVisitor(),
+                ctx.methodDeclaration(),
                 isMethodDeclarationType,
                 'MethodDeclaration',
             );
         } else if (ctx.constructorDeclaration()) {
-            value = isApexValidClass(
-                new DeclarationVisitor().visit(ctx.constructorDeclaration()),
+            value = visitNode(
+                new DeclarationVisitor(),
+                ctx.constructorDeclaration(),
                 isConstructorDeclarationType,
                 'ConstructorDeclaration',
             );
         } else if (ctx.interfaceDeclaration()) {
-            value = isApexValidClass(
-                new DeclarationVisitor().visit(ctx.interfaceDeclaration()),
+            value = visitNode(
+                new DeclarationVisitor(),
+                ctx.interfaceDeclaration(),
                 isInterfaceDeclarationType,
                 'InterfaceDeclaration',
             );
         } else if (ctx.classDeclaration()) {
-            value = isApexValidClass(
-                new DeclarationVisitor().visit(ctx.classDeclaration()),
+            value = visitNode(
+                new DeclarationVisitor(),
+                ctx.classDeclaration(),
                 isClassDeclarationType,
                 'ClassDeclaration',
             );
         } else if (ctx.enumDeclaration()) {
-            value = isApexValidClass(
-                new DeclarationVisitor().visit(ctx.enumDeclaration()),
+            value = visitNode(
+                new DeclarationVisitor(),
+                ctx.enumDeclaration(),
                 isEnumDeclarationType,
                 'EnumDeclaration',
             );
         } else if (ctx.propertyDeclaration()) {
-            value = isApexValidClass(
-                new DeclarationVisitor().visit(ctx.propertyDeclaration()),
+            value = visitNode(
+                new DeclarationVisitor(),
+                ctx.propertyDeclaration(),
                 isPropertyDeclarationType,
                 'PropertyDeclaration',
             );
         } else {
-            value = isApexValidClass(
-                new DeclarationVisitor().visit(ctx.fieldDeclaration()),
+            value = visitNode(
+                new DeclarationVisitor(),
+                ctx.fieldDeclaration(),
                 isFieldDeclarationType,
                 'FieldDeclaration',
             );

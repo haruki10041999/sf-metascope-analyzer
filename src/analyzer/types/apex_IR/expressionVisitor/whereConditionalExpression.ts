@@ -9,7 +9,7 @@ import {
     isWhereFieldExpressionType,
 } from '.';
 
-import { ApexCommonTypeClass, ApexErrorTypeClass, isApexValidClass } from '../commonVisitor';
+import { ApexCommonTypeClass, ApexErrorTypeClass, visitNode } from '../commonVisitor';
 
 export class WhereConditionalExpressionTypeClass extends ExpressionTypeClass<
     'whereConditionalExpression',
@@ -28,13 +28,15 @@ export class WhereConditionalExpressionTypeClass extends ExpressionTypeClass<
 
         return new WhereConditionalExpressionTypeClass(
             ctx.whereLogicalExpression()
-                ? isApexValidClass(
-                      new ExpressionVisitor().visit(ctx.whereLogicalExpression()),
+                ? visitNode(
+                      new ExpressionVisitor(),
+                      ctx.whereLogicalExpression(),
                       isWhereLogicalExpressionType,
                       'whereLogicalExpression',
                   )
-                : isApexValidClass(
-                      new ExpressionVisitor().visit(ctx.whereFieldExpression()),
+                : visitNode(
+                      new ExpressionVisitor(),
+                      ctx.whereFieldExpression(),
                       isWhereFieldExpressionType,
                       'whereFieldExpression',
                   ),
@@ -47,4 +49,3 @@ export const isWhereConditionalExpressionType = (
 ): target is WhereConditionalExpressionTypeClass => {
     return target instanceof WhereConditionalExpressionTypeClass;
 };
-

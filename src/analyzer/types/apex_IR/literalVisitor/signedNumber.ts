@@ -55,4 +55,3 @@ export const isSignedNumberType = (
 ): target is SignedNumberTypeClass => {
     return target instanceof SignedNumberTypeClass;
 };
-

@@ -4,7 +4,7 @@
 
 | 分類 | kind | JSON | 差分 |
 | --- | --- | --- | --- |
-| 宣言 | `class` | 11 | 6 |
+| 宣言 | `class` | 11 | 5 |
 | 宣言 | `interface` | 3 | 2 |
 | 宣言 | `interfaceMethod` | 6 | 3 |
 | 宣言 | `method` | 26 | 13 |

@@ -40,4 +40,3 @@ export const isForClausesType = (
 ): target is ForClausesTypeClass => {
     return target instanceof ForClausesTypeClass;
 };
-

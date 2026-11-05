@@ -1,0 +1,176 @@
+{
+  "filePath": "docs/examples/apex-diff/before/Shape.cls",
+  "resolvedError": [],
+  "dataType": "cls",
+  "result": {
+    "id": "Shape.cls",
+    "base": {
+      "kind": "interface",
+      "sourceKeys": {
+        "base": {
+          "objectKey": "interfaceDeclaration_69745dc4fa0b20fa",
+          "sourceKey": "interfaceDeclaration_2406a62d45facf6d"
+        },
+        "name": {
+          "objectKey": "id_68e21f1e96e0e9a5",
+          "sourceKey": "id_d8cb6dfe81dbd243"
+        }
+      },
+      "name": "Shape",
+      "block": [
+        {
+          "kind": "interfaceMethod",
+          "sourceKeys": {
+            "base": {
+              "objectKey": "interfaceMethodDeclaration_e1629d4e34a15a0c",
+              "sourceKey": "interfaceMethodDeclaration_c9db753275b43d1f"
+            },
+            "name": {
+              "objectKey": "id_ac16552af7f5d4ca",
+              "sourceKey": "id_506e48e25dc12fd3"
+            }
+          },
+          "name": "area",
+          "returnType": {
+            "kind": "type",
+            "sourceKeys": {
+              "objectKey": "typeRef_a51d4b1dbf7db086",
+              "sourceKey": "typeRef_35e5b06d80202b98"
+            },
+            "type": "primitive",
+            "primitiveType": "Decimal"
+          },
+          "modifier": {}
+        }
+      ],
+      "modifier": {
+        "access": [
+          {
+            "kind": "modifier",
+            "sourceKeys": {
+              "objectKey": "modifier_a04213395735c45e",
+              "sourceKey": "modifier_83442bd3f55cf1b2"
+            },
+            "name": "PUBLIC"
+          }
+        ]
+      }
+    },
+    "sourceObject": [
+      {
+        "objectKey": "interfaceDeclaration_69745dc4fa0b20fa",
+        "context": "interface Shape {\n    Decimal area();\n}",
+        "source": [
+          {
+            "sourceKey": "interfaceDeclaration_2406a62d45facf6d",
+            "start": {
+              "offset": 7,
+              "line": 1,
+              "column": 7
+            },
+            "end": {
+              "offset": 46,
+              "line": 3,
+              "column": 1
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "id_68e21f1e96e0e9a5",
+        "context": "Shape",
+        "source": [
+          {
+            "sourceKey": "id_d8cb6dfe81dbd243",
+            "start": {
+              "offset": 17,
+              "line": 1,
+              "column": 17
+            },
+            "end": {
+              "offset": 22,
+              "line": 1,
+              "column": 22
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "interfaceMethodDeclaration_e1629d4e34a15a0c",
+        "context": "Decimal area();",
+        "source": [
+          {
+            "sourceKey": "interfaceMethodDeclaration_c9db753275b43d1f",
+            "start": {
+              "offset": 29,
+              "line": 2,
+              "column": 4
+            },
+            "end": {
+              "offset": 44,
+              "line": 2,
+              "column": 19
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "id_ac16552af7f5d4ca",
+        "context": "area",
+        "source": [
+          {
+            "sourceKey": "id_506e48e25dc12fd3",
+            "start": {
+              "offset": 37,
+              "line": 2,
+              "column": 12
+            },
+            "end": {
+              "offset": 41,
+              "line": 2,
+              "column": 16
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "typeRef_a51d4b1dbf7db086",
+        "context": "Decimal",
+        "source": [
+          {
+            "sourceKey": "typeRef_35e5b06d80202b98",
+            "start": {
+              "offset": 29,
+              "line": 2,
+              "column": 4
+            },
+            "end": {
+              "offset": 36,
+              "line": 2,
+              "column": 11
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "modifier_a04213395735c45e",
+        "context": "public",
+        "source": [
+          {
+            "sourceKey": "modifier_83442bd3f55cf1b2",
+            "start": {
+              "offset": 0,
+              "line": 1,
+              "column": 0
+            },
+            "end": {
+              "offset": 6,
+              "line": 1,
+              "column": 6
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

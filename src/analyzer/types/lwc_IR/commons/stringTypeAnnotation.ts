@@ -2,15 +2,15 @@ import { isStringTypeAnnotation, type StringTypeAnnotation } from '@babel/types'
 import { EvaluatePair, LwcCommonTypeClass, makeEvaluatePair } from '../commonVisitor';
 
 export class StringTypeAnnotationTypeClass extends LwcCommonTypeClass<'stringTypeAnnotation'> {
-    private constructor(originalSource: string) {
-        super('stringTypeAnnotation', originalSource);
+    private constructor() {
+        super('stringTypeAnnotation');
     }
 
     static create(
-        target: StringTypeAnnotation,
-        originalSource: string,
+        _target: StringTypeAnnotation,
+        _originalSource: string,
     ): StringTypeAnnotationTypeClass {
-        throw new Error('StringTypeAnnotationTypeClass.create is not implemented: ' + target.type);
+        return new StringTypeAnnotationTypeClass();
     }
 }
 

@@ -3,7 +3,7 @@ import { OrderByClauseContext } from '@apexdevtools/apex-parser';
 import { ClauseTypeClass } from '.';
 
 import { FieldOrderListTypeClass, ListVisitor, isFieldOrderListType } from '../listVisitor';
-import { ApexErrorTypeClass, ApexCommonTypeClass, isApexValidClass } from '../commonVisitor';
+import { ApexErrorTypeClass, ApexCommonTypeClass, visitNode } from '../commonVisitor';
 
 export class OrderByClauseTypeClass extends ClauseTypeClass<
     'orderByClause',
@@ -19,8 +19,9 @@ export class OrderByClauseTypeClass extends ClauseTypeClass<
         }
 
         return new OrderByClauseTypeClass(
-            isApexValidClass(
-                new ListVisitor().visit(ctx.fieldOrderList()),
+            visitNode(
+                new ListVisitor(),
+                ctx.fieldOrderList(),
                 isFieldOrderListType,
                 'fieldOrderList',
             ),
@@ -33,4 +34,3 @@ export const isOrderByClauseType = (
 ): target is OrderByClauseTypeClass => {
     return target instanceof OrderByClauseTypeClass;
 };
-

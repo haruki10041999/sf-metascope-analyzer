@@ -1,13 +1,43 @@
 import { isTSArrayType, type TSArrayType } from '@babel/types';
-import { EvaluatePair, LwcCommonTypeClass, makeEvaluatePair } from '../commonVisitor';
+import {
+    EvaluatePair,
+    LwcCommonTypeClass,
+    LwcErrorTypeClass,
+    makeEvaluatePair,
+    visitNode,
+} from '../commonVisitor';
+import { tSTypeVisitorEvaluatePairs, type TSTypeTypeClass } from '../tsTypeVisitor';
+
+export type TSArrayTypeFields = {
+    elementType: TSTypeTypeClass | LwcErrorTypeClass;
+};
 
 export class TSArrayTypeTypeClass extends LwcCommonTypeClass<'tSArrayType'> {
-    private constructor(originalSource: string) {
-        super('tSArrayType', originalSource);
+    private readonly value: TSArrayTypeFields;
+
+    private constructor(value: TSArrayTypeFields) {
+        super('tSArrayType');
+        this.value = value;
     }
 
     static create(target: TSArrayType, originalSource: string): TSArrayTypeTypeClass {
-        throw new Error('TSArrayTypeTypeClass.create is not implemented: ' + target.type);
+        return new TSArrayTypeTypeClass({
+            elementType: visitNode(
+                target.elementType,
+                originalSource,
+                tSTypeVisitorEvaluatePairs(),
+                'TSTypeVisitor',
+            ),
+        });
+    }
+
+    /** すべてのフィールド (Babel の value フィールドの getter getValue() と区別する。getChildNodes もこれから作る) */
+    override getFields(): TSArrayTypeFields {
+        return this.value;
+    }
+
+    getElementType(): TSArrayTypeFields['elementType'] {
+        return this.value.elementType;
     }
 }
 

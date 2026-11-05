@@ -11,8 +11,8 @@ import { TypeNameTypeClass, NameVisitor, isTypeNameType } from '../nameVisitor';
 import {
     ApexErrorTypeClass,
     ApexCommonTypeClass,
-    isApexValidClass,
-    isApexValidClassList,
+    visitNodeList,
+    visitNode,
 } from '../commonVisitor';
 
 export class TypeRefTypeClass extends TypeListBaseTypeClass<'typeRef', TypeNameTypeClass> {
@@ -32,14 +32,10 @@ export class TypeRefTypeClass extends TypeListBaseTypeClass<'typeRef', TypeNameT
         }
 
         return new TypeRefTypeClass(
-            isApexValidClassList(
-                ctx.typeName_list(),
-                (ctx) => new NameVisitor().visit(ctx),
-                isTypeNameType,
-                'typeName',
-            ),
-            isApexValidClass(
-                new TypeVisitor().visit(ctx.arraySubscripts()),
+            visitNodeList(new NameVisitor(), ctx.typeName_list(), isTypeNameType, 'typeName'),
+            visitNode(
+                new TypeVisitor(),
+                ctx.arraySubscripts(),
                 isArraySubscriptsType,
                 'arraySubscripts',
             ),

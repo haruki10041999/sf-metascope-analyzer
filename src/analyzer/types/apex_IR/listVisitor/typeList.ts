@@ -4,7 +4,7 @@ import { ListTypeClass } from '../listVisitor';
 
 import { TypeRefTypeClass, TypeVisitor, isTypeRefType } from '../typeVisitor';
 
-import { ApexErrorTypeClass, ApexCommonTypeClass, isApexValidClassList } from '../commonVisitor';
+import { ApexErrorTypeClass, ApexCommonTypeClass, visitNodeList } from '../commonVisitor';
 
 export class TypeListTypeClass extends ListTypeClass<'typeList', TypeRefTypeClass> {
     private constructor(value: (TypeRefTypeClass | ApexErrorTypeClass)[]) {
@@ -17,12 +17,7 @@ export class TypeListTypeClass extends ListTypeClass<'typeList', TypeRefTypeClas
         }
 
         return new TypeListTypeClass(
-            isApexValidClassList(
-                ctx.typeRef_list(),
-                (ctx) => new TypeVisitor().visit(ctx),
-                isTypeRefType,
-                'typeRef',
-            ),
+            visitNodeList(new TypeVisitor(), ctx.typeRef_list(), isTypeRefType, 'typeRef'),
         );
     }
 }

@@ -7,7 +7,7 @@ import {
     isElementValuePairType,
 } from '.';
 
-import { ApexErrorTypeClass, ApexCommonTypeClass, isApexValidClassList } from '../commonVisitor';
+import { ApexErrorTypeClass, ApexCommonTypeClass, visitNodeList } from '../commonVisitor';
 
 export class ElementValuePairsTypeClass extends PairListTypeClass<
     'elementValuePairs',
@@ -23,9 +23,9 @@ export class ElementValuePairsTypeClass extends PairListTypeClass<
         }
 
         return new ElementValuePairsTypeClass(
-            isApexValidClassList(
+            visitNodeList(
+                new PairVisitor(),
                 ctx.elementValuePair_list(),
-                (ctx) => new PairVisitor().visit(ctx),
                 isElementValuePairType,
                 'elementValuePair',
             ),

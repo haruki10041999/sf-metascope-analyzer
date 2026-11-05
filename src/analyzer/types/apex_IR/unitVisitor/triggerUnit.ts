@@ -7,8 +7,8 @@ import { TriggerBlockTypeClass, BlockVisitor, isTriggerBlockType } from '../bloc
 import {
     ApexErrorTypeClass,
     ApexCommonTypeClass,
-    isApexValidClass,
-    isApexValidClassList,
+    visitNodeList,
+    visitNode,
 } from '../commonVisitor';
 
 export class TriggerUnitTypeClass extends UnitListTypeClass<'triggerUnit', NormalIdTypeClass> {
@@ -35,23 +35,14 @@ export class TriggerUnitTypeClass extends UnitListTypeClass<'triggerUnit', Norma
         }
 
         return new TriggerUnitTypeClass(
-            isApexValidClassList(
-                ctx.id_list(),
-                (ctx) => new IdVisitor().visit(ctx),
-                isNormalIdType,
-                'id',
-            ),
-            isApexValidClassList(
+            visitNodeList(new IdVisitor(), ctx.id_list(), isNormalIdType, 'id'),
+            visitNodeList(
+                new UnitVisitor(),
                 ctx.triggerCase_list(),
-                (ctx) => new UnitVisitor().visit(ctx),
                 isTriggerCaseType,
                 'triggerCase',
             ),
-            isApexValidClass(
-                new BlockVisitor().visit(ctx.triggerBlock()),
-                isTriggerBlockType,
-                'triggerBlock',
-            ),
+            visitNode(new BlockVisitor(), ctx.triggerBlock(), isTriggerBlockType, 'triggerBlock'),
         );
     }
 
@@ -67,4 +58,3 @@ export class TriggerUnitTypeClass extends UnitListTypeClass<'triggerUnit', Norma
 export const isTriggerUnitType = (value: any): value is TriggerUnitTypeClass => {
     return value instanceof TriggerUnitTypeClass;
 };
-

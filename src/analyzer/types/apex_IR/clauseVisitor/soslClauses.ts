@@ -20,8 +20,8 @@ import { SearchGroupTypeClass, QueryVisitor, isSearchGroupType } from '../queryV
 import {
     ApexErrorTypeClass,
     ApexCommonTypeClass,
-    isApexValidClass,
-    isApexValidClassList,
+    visitNodeList,
+    visitOptionalNode,
 } from '../commonVisitor';
 
 export class SoslClausesTypeClass extends ClauseTypeClass<
@@ -50,42 +50,39 @@ export class SoslClausesTypeClass extends ClauseTypeClass<
     static create(ctx: SoslClausesContext): SoslClausesTypeClass {
         // `IN ... FIELDS` / `RETURNING ...` はいずれも任意
         return new SoslClausesTypeClass(
-            ctx.searchGroup()
-                ? isApexValidClass(
-                      new QueryVisitor().visit(ctx.searchGroup()),
-                      isSearchGroupType,
-                      'searchGroup',
-                  )
-                : null,
-            ctx.fieldSpecList()
-                ? isApexValidClass(
-                      new ListVisitor().visit(ctx.fieldSpecList()),
-                      isFieldSpecListType,
-                      'fieldSpecList',
-                  )
-                : null,
+            visitOptionalNode(
+                new QueryVisitor(),
+                ctx.searchGroup(),
+                isSearchGroupType,
+                'searchGroup',
+            ),
+            visitOptionalNode(
+                new ListVisitor(),
+                ctx.fieldSpecList(),
+                isFieldSpecListType,
+                'fieldSpecList',
+            ),
             ctx.soslWithClause_list() && ctx.soslWithClause_list().length > 0
-                ? isApexValidClassList(
+                ? visitNodeList(
+                      new ClauseVisitor(),
                       ctx.soslWithClause_list(),
-                      (ctx) => new ClauseVisitor().visit(ctx),
                       isSoslWithClauseType,
                       'soslWithClause',
                   )
                 : null,
-            ctx.limitClause()
-                ? isApexValidClass(
-                      new ClauseVisitor().visit(ctx.limitClause()),
-                      isLimitClauseType,
-                      'limitClause',
-                  )
-                : null,
-            ctx.UPDATE() && ctx.updateList()
-                ? isApexValidClass(
-                      new ListVisitor().visit(ctx.updateList()),
-                      isUpdateListType,
-                      'updateList',
-                  )
-                : null,
+            visitOptionalNode(
+                new ClauseVisitor(),
+                ctx.limitClause(),
+                isLimitClauseType,
+                'limitClause',
+            ),
+            ctx.UPDATE() &&
+                visitOptionalNode(
+                    new ListVisitor(),
+                    ctx.updateList(),
+                    isUpdateListType,
+                    'updateList',
+                ),
         );
     }
 
@@ -111,4 +108,3 @@ export const isSoslClausesType = (
 ): target is SoslClausesTypeClass => {
     return target instanceof SoslClausesTypeClass;
 };
-

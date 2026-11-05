@@ -39,4 +39,3 @@ export const isFilteringSelectorType = (
 ): target is FilteringSelectorTypeClass => {
     return target instanceof FilteringSelectorTypeClass;
 };
-

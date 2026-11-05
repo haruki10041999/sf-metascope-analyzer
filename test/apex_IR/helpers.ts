@@ -1,10 +1,10 @@
 import { ApexParser, ApexParserFactory } from '@apexdevtools/apex-parser';
 
 import {
-    ApexCommonErrorListener,
     ApexCommonTypeClass,
     ApexErrorTypeClass,
 } from '../../src/analyzer/types/apex_IR/commonVisitor';
+import { ApexCommonErrorListener } from '../../src/analyzer/parser/Apex/errorListener';
 
 // 構文エラーがあるとエラー回復後の木を検証してしまうため、テスト入力側の誤りとして即失敗させる
 export const parse = <T>(source: string, rule: (parser: ApexParser) => T): T => {

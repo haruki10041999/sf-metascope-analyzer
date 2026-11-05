@@ -1,16 +1,46 @@
 import { isExpressionStatement, type ExpressionStatement } from '@babel/types';
-import { EvaluatePair, LwcCommonTypeClass, makeEvaluatePair } from '../commonVisitor';
+import {
+    EvaluatePair,
+    LwcCommonTypeClass,
+    LwcErrorTypeClass,
+    makeEvaluatePair,
+    visitNode,
+} from '../commonVisitor';
+import { expressionVisitorEvaluatePairs, type ExpressionTypeClass } from '../expressionVisitor';
+
+export type ExpressionStatementFields = {
+    expression: ExpressionTypeClass | LwcErrorTypeClass;
+};
 
 export class ExpressionStatementTypeClass extends LwcCommonTypeClass<'expressionStatement'> {
-    private constructor(originalSource: string) {
-        super('expressionStatement', originalSource);
+    private readonly value: ExpressionStatementFields;
+
+    private constructor(value: ExpressionStatementFields) {
+        super('expressionStatement');
+        this.value = value;
     }
 
     static create(
         target: ExpressionStatement,
         originalSource: string,
     ): ExpressionStatementTypeClass {
-        throw new Error('ExpressionStatementTypeClass.create is not implemented: ' + target.type);
+        return new ExpressionStatementTypeClass({
+            expression: visitNode(
+                target.expression,
+                originalSource,
+                expressionVisitorEvaluatePairs(),
+                'ExpressionVisitor',
+            ),
+        });
+    }
+
+    /** すべてのフィールド (Babel の value フィールドの getter getValue() と区別する。getChildNodes もこれから作る) */
+    override getFields(): ExpressionStatementFields {
+        return this.value;
+    }
+
+    getExpression(): ExpressionStatementFields['expression'] {
+        return this.value.expression;
     }
 }
 

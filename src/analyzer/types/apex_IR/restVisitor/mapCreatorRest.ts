@@ -3,7 +3,7 @@ import { MapCreatorRestContext } from '@apexdevtools/apex-parser';
 import { RestListTypeClass } from '.';
 
 import { MapCreatorRestPairTypeClass, PairVisitor, isMapCreatorRestPairType } from '../pairVisitor';
-import { ApexErrorTypeClass, ApexCommonTypeClass, isApexValidClassList } from '../commonVisitor';
+import { ApexErrorTypeClass, ApexCommonTypeClass, visitNodeList } from '../commonVisitor';
 export class MapCreatorRestTypeClass extends RestListTypeClass<
     'mapCreatorRest',
     MapCreatorRestPairTypeClass
@@ -18,9 +18,9 @@ export class MapCreatorRestTypeClass extends RestListTypeClass<
         }
 
         return new MapCreatorRestTypeClass(
-            isApexValidClassList(
+            visitNodeList(
+                new PairVisitor(),
                 ctx.mapCreatorRestPair_list(),
-                (ctx) => new PairVisitor().visit(ctx),
                 isMapCreatorRestPairType,
                 'mapCreatorRestPair',
             ),
@@ -33,4 +33,3 @@ export const isMapCreatorRestType = (
 ): target is MapCreatorRestTypeClass => {
     return target instanceof MapCreatorRestTypeClass;
 };
-

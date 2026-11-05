@@ -63,7 +63,9 @@ describe('commonVisitor', () => {
         const result = new expr.ExpressionVisitor().visit(
             parse('a +\n  bb', (p) => p.expression()),
         );
+        // context は元のソースの切り出し (空白・改行を残す)
         assert.deepEqual(result.getSpan(), {
+            context: 'a +\n  bb',
             start: { offset: 0, line: 1, column: 0 },
             end: { offset: 8, line: 2, column: 4 },
         });

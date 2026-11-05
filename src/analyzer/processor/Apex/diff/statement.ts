@@ -55,9 +55,14 @@ import {
     pairByKey,
 } from '../../commons/diff/commons';
 import { SourceDistance, findNodeSourceInfo, getSourceDistance } from '../../commons/source';
-import { GumTreeDiff, makeGumTreeDiff } from './gumtree/diff';
-import { matchTrees } from './gumtree/matcher';
-import { DiffNodeValue, GumTreeNode, makeBlockTree } from './gumtree/tree';
+import {
+    DiffNodeValue,
+    GumTreeDiff,
+    GumTreeNode,
+    makeGumTreeDiff,
+    matchTrees,
+} from '../../commons/diff/gumtree';
+import { makeBlockTree } from './gumtree/tree';
 import {
     ExpressionListDiff,
     BaseExpressionJsonDiff,

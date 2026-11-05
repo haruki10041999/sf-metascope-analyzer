@@ -15,8 +15,8 @@ import {
 import {
     ApexErrorTypeClass,
     ApexCommonTypeClass,
-    isApexValidClass,
-    isApexValidClassList,
+    visitNodeList,
+    visitOptionalNode,
 } from '../commonVisitor';
 
 export class MergeStatementTypeClass extends StatementListTypeClass<
@@ -38,19 +38,18 @@ export class MergeStatementTypeClass extends StatementListTypeClass<
         }
 
         return new MergeStatementTypeClass(
-            isApexValidClassList(
+            visitNodeList(
+                new ExpressionVisitor(),
                 ctx.expression_list(),
-                (ctx) => new ExpressionVisitor().visit(ctx),
                 isBasedExpressionType,
                 'expression',
             ),
-            ctx.accessLevel()
-                ? isApexValidClass(
-                      new StatementVisitor().visit(ctx.accessLevel()),
-                      isAccessLevelType,
-                      'accessLevel',
-                  )
-                : null,
+            visitOptionalNode(
+                new StatementVisitor(),
+                ctx.accessLevel(),
+                isAccessLevelType,
+                'accessLevel',
+            ),
         );
     }
 
@@ -64,4 +63,3 @@ export const isMergeStatementType = (
 ): target is MergeStatementTypeClass => {
     return target instanceof MergeStatementTypeClass;
 };
-

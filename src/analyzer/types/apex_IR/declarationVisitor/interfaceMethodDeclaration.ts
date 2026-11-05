@@ -13,8 +13,9 @@ import {
 import {
     ApexErrorTypeClass,
     ApexCommonTypeClass,
-    isApexValidClass,
-    isApexValidClassList,
+    visitNodeList,
+    visitNode,
+    visitOptionalNode,
 } from '../commonVisitor';
 
 export class InterfaceMethodDeclarationTypeClass extends DeclarationTypeClass<
@@ -43,24 +44,19 @@ export class InterfaceMethodDeclarationTypeClass extends DeclarationTypeClass<
         }
 
         return new InterfaceMethodDeclarationTypeClass(
-            isApexValidClass(new IdVisitor().visit(ctx.id()), isNormalIdType, 'id'),
+            visitNode(new IdVisitor(), ctx.id(), isNormalIdType, 'id'),
             ctx.VOID()
                 ? 'void'
-                : isApexValidClass(
-                      new TypeVisitor().visit(ctx.typeRef()),
-                      isTypeRefType,
-                      'typeRef',
-                  ),
-            ctx.formalParameters()
-                ? isApexValidClass(
-                      new ParameterVisitor().visit(ctx.formalParameters()),
-                      isFormalParametersType,
-                      'formalParameters',
-                  )
-                : null,
-            isApexValidClassList(
+                : visitNode(new TypeVisitor(), ctx.typeRef(), isTypeRefType, 'typeRef'),
+            visitOptionalNode(
+                new ParameterVisitor(),
+                ctx.formalParameters(),
+                isFormalParametersType,
+                'formalParameters',
+            ),
+            visitNodeList(
+                new ModifierVisitor(),
                 ctx.modifier_list(),
-                (ctx) => new ModifierVisitor().visit(ctx),
                 isNormalModifierType,
                 'modifier_list',
             ),

@@ -160,4 +160,3 @@ export class StatementVisitor extends ApexCommonVisitor<StatementAllTypeClass> {
         return AccessLevelTypeClass.create(ctx);
     }
 }
-

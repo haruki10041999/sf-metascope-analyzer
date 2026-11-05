@@ -9,7 +9,7 @@ import {
     isBasedExpressionType,
 } from '../expressionVisitor';
 import { TypeRefTypeClass, TypeVisitor, isTypeRefType } from '../typeVisitor';
-import { ApexErrorTypeClass, ApexCommonTypeClass, isApexValidClass } from '../commonVisitor';
+import { ApexErrorTypeClass, ApexCommonTypeClass, visitNode } from '../commonVisitor';
 
 export class EnhancedForControlTypeClass extends ControlTypeClass<
     'enhancedForControl',
@@ -34,10 +34,11 @@ export class EnhancedForControlTypeClass extends ControlTypeClass<
         }
 
         return new EnhancedForControlTypeClass(
-            isApexValidClass(new IdVisitor().visit(ctx.id()), isNormalIdType, 'id'),
-            isApexValidClass(new TypeVisitor().visit(ctx.typeRef()), isTypeRefType, 'typeRef'),
-            isApexValidClass(
-                new ExpressionVisitor().visit(ctx.expression()),
+            visitNode(new IdVisitor(), ctx.id(), isNormalIdType, 'id'),
+            visitNode(new TypeVisitor(), ctx.typeRef(), isTypeRefType, 'typeRef'),
+            visitNode(
+                new ExpressionVisitor(),
+                ctx.expression(),
                 isBasedExpressionType,
                 'expression',
             ),

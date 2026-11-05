@@ -3,7 +3,7 @@ import { SubFieldListContext } from '@apexdevtools/apex-parser';
 import { ListTypeClass } from '../listVisitor';
 
 import { SubFieldEntryTypeClass, EntryVisitor, isSubFieldEntryType } from '../entryVisitor';
-import { ApexErrorTypeClass, ApexCommonTypeClass, isApexValidClassList } from '../commonVisitor';
+import { ApexErrorTypeClass, ApexCommonTypeClass, visitNodeList } from '../commonVisitor';
 
 export class SubFieldListTypeClass extends ListTypeClass<'subFieldList', SubFieldEntryTypeClass> {
     private constructor(list: (SubFieldEntryTypeClass | ApexErrorTypeClass)[]) {
@@ -16,9 +16,9 @@ export class SubFieldListTypeClass extends ListTypeClass<'subFieldList', SubFiel
         }
 
         return new SubFieldListTypeClass(
-            isApexValidClassList(
+            visitNodeList(
+                new EntryVisitor(),
                 ctx.subFieldEntry_list(),
-                (ctx) => new EntryVisitor().visit(ctx),
                 isSubFieldEntryType,
                 'subFieldEntry',
             ),
@@ -31,4 +31,3 @@ export const isSubFieldListType = (
 ): target is SubFieldListTypeClass => {
     return target instanceof SubFieldListTypeClass;
 };
-

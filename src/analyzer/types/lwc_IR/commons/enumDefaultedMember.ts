@@ -1,16 +1,49 @@
 import { isEnumDefaultedMember, type EnumDefaultedMember } from '@babel/types';
-import { EvaluatePair, LwcCommonTypeClass, makeEvaluatePair } from '../commonVisitor';
+import {
+    EvaluatePair,
+    LwcCommonTypeClass,
+    LwcErrorTypeClass,
+    lazyPairs,
+    makeEvaluatePair,
+    visitNode,
+} from '../commonVisitor';
+import { identifierTypePair, type IdentifierTypeClass } from './identifier';
+
+const enumDefaultedMemberIdPairs = lazyPairs(() => [identifierTypePair] as const);
+
+export type EnumDefaultedMemberFields = {
+    id: IdentifierTypeClass | LwcErrorTypeClass;
+};
 
 export class EnumDefaultedMemberTypeClass extends LwcCommonTypeClass<'enumDefaultedMember'> {
-    private constructor(originalSource: string) {
-        super('enumDefaultedMember', originalSource);
+    private readonly value: EnumDefaultedMemberFields;
+
+    private constructor(value: EnumDefaultedMemberFields) {
+        super('enumDefaultedMember');
+        this.value = value;
     }
 
     static create(
         target: EnumDefaultedMember,
         originalSource: string,
     ): EnumDefaultedMemberTypeClass {
-        throw new Error('EnumDefaultedMemberTypeClass.create is not implemented: ' + target.type);
+        return new EnumDefaultedMemberTypeClass({
+            id: visitNode(
+                target.id,
+                originalSource,
+                enumDefaultedMemberIdPairs(),
+                'EnumDefaultedMember.id',
+            ),
+        });
+    }
+
+    /** すべてのフィールド (Babel の value フィールドの getter getValue() と区別する。getChildNodes もこれから作る) */
+    override getFields(): EnumDefaultedMemberFields {
+        return this.value;
+    }
+
+    getId(): EnumDefaultedMemberFields['id'] {
+        return this.value.id;
     }
 }
 

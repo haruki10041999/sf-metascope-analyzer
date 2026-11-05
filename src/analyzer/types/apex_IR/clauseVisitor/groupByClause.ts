@@ -8,7 +8,12 @@ import {
     isLogicalExpressionType,
 } from '../expressionVisitor';
 import { FieldGroupByListTypeClass, ListVisitor, isFieldGroupByListType } from '../listVisitor';
-import { ApexErrorTypeClass, ApexCommonTypeClass, isApexValidClass } from '../commonVisitor';
+import {
+    ApexErrorTypeClass,
+    ApexCommonTypeClass,
+    visitNode,
+    visitOptionalNode,
+} from '../commonVisitor';
 
 export class GroupByClauseTypeClass extends ClauseTypeClass<
     'groupByClause',
@@ -33,19 +38,20 @@ export class GroupByClauseTypeClass extends ClauseTypeClass<
         }
 
         return new GroupByClauseTypeClass(
-            isApexValidClass(
-                new ListVisitor().visit(ctx.fieldGroupByList()),
+            visitNode(
+                new ListVisitor(),
+                ctx.fieldGroupByList(),
                 isFieldGroupByListType,
                 'fieldGroupByList',
             ),
             ctx.ROLLUP() ? 'ROLLUP' : ctx.CUBE() ? 'CUBE' : null,
-            ctx.HAVING() && ctx.logicalExpression()
-                ? isApexValidClass(
-                      new ExpressionVisitor().visit(ctx.logicalExpression()),
-                      isLogicalExpressionType,
-                      'logicalExpression',
-                  )
-                : null,
+            ctx.HAVING() &&
+                visitOptionalNode(
+                    new ExpressionVisitor(),
+                    ctx.logicalExpression(),
+                    isLogicalExpressionType,
+                    'logicalExpression',
+                ),
         );
     }
 
@@ -63,4 +69,3 @@ export const isGroupByClauseType = (
 ): target is GroupByClauseTypeClass => {
     return target instanceof GroupByClauseTypeClass;
 };
-

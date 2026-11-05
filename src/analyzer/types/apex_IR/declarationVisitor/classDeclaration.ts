@@ -6,7 +6,12 @@ import { NormalIdTypeClass, IdVisitor, isNormalIdType } from '../idVisitor';
 import { ClassBodyTypeClass, BodyVisitor, isClassBodyType } from '../bodyVisitor';
 import { TypeListTypeClass, ListVisitor, isTypeListType } from '../listVisitor';
 import { TypeRefTypeClass, TypeVisitor, isTypeRefType } from '../typeVisitor';
-import { ApexErrorTypeClass, ApexCommonTypeClass, isApexValidClass } from '../commonVisitor';
+import {
+    ApexErrorTypeClass,
+    ApexCommonTypeClass,
+    visitNode,
+    visitOptionalNode,
+} from '../commonVisitor';
 
 export class ClassDeclarationTypeClass extends DeclarationTypeClass<
     'classDeclaration',
@@ -34,22 +39,12 @@ export class ClassDeclarationTypeClass extends DeclarationTypeClass<
         }
 
         return new ClassDeclarationTypeClass(
-            isApexValidClass(new IdVisitor().visit(ctx.id()), isNormalIdType, 'id'),
-            isApexValidClass(
-                new BodyVisitor().visit(ctx.classBody()),
-                isClassBodyType,
-                'classBody',
-            ),
-            ctx.EXTENDS() && ctx.typeRef()
-                ? isApexValidClass(new TypeVisitor().visit(ctx.typeRef()), isTypeRefType, 'typeRef')
-                : null,
-            ctx.IMPLEMENTS() && ctx.typeList()
-                ? isApexValidClass(
-                      new ListVisitor().visit(ctx.typeList()),
-                      isTypeListType,
-                      'typeList',
-                  )
-                : null,
+            visitNode(new IdVisitor(), ctx.id(), isNormalIdType, 'id'),
+            visitNode(new BodyVisitor(), ctx.classBody(), isClassBodyType, 'classBody'),
+            ctx.EXTENDS() &&
+                visitOptionalNode(new TypeVisitor(), ctx.typeRef(), isTypeRefType, 'typeRef'),
+            ctx.IMPLEMENTS() &&
+                visitOptionalNode(new ListVisitor(), ctx.typeList(), isTypeListType, 'typeList'),
         );
     }
 

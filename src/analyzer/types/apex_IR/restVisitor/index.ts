@@ -53,4 +53,3 @@ export class RestVisitor extends ApexCommonVisitor<RestAllTypeClass> {
         return CreatorTypeClass.create(ctx);
     }
 }
-

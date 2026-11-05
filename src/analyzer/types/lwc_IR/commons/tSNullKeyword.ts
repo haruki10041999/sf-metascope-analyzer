@@ -2,12 +2,12 @@ import { isTSNullKeyword, type TSNullKeyword } from '@babel/types';
 import { EvaluatePair, LwcCommonTypeClass, makeEvaluatePair } from '../commonVisitor';
 
 export class TSNullKeywordTypeClass extends LwcCommonTypeClass<'tSNullKeyword'> {
-    private constructor(originalSource: string) {
-        super('tSNullKeyword', originalSource);
+    private constructor() {
+        super('tSNullKeyword');
     }
 
-    static create(target: TSNullKeyword, originalSource: string): TSNullKeywordTypeClass {
-        throw new Error('TSNullKeywordTypeClass.create is not implemented: ' + target.type);
+    static create(_target: TSNullKeyword, _originalSource: string): TSNullKeywordTypeClass {
+        return new TSNullKeywordTypeClass();
     }
 }
 

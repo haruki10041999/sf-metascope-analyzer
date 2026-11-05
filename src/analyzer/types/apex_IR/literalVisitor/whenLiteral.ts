@@ -3,7 +3,7 @@ import { WhenLiteralContext } from '@apexdevtools/apex-parser';
 import { LiteralTypeClass, LiteralVisitor } from '.';
 
 import { QualifiedNameTypeClass, NameVisitor, isQualifiedNameType } from '../nameVisitor';
-import { ApexErrorTypeClass, ApexCommonTypeClass, isApexValidClass } from '../commonVisitor';
+import { ApexErrorTypeClass, ApexCommonTypeClass, visitNode } from '../commonVisitor';
 
 type WhenLiteralValueType = string | QualifiedNameTypeClass;
 
@@ -58,15 +58,17 @@ export class WhenLiteralTypeClass extends LiteralTypeClass<'whenLiteral', WhenLi
                 : ctx.MultilineStringLiteral().getText();
             valueType = ctx.StringLiteral() ? 'string' : 'longText';
         } else if (ctx.qualifiedName()) {
-            value = isApexValidClass(
-                new NameVisitor().visit(ctx.qualifiedName()),
+            value = visitNode(
+                new NameVisitor(),
+                ctx.qualifiedName(),
                 isQualifiedNameType,
                 'qualifiedName',
             );
             valueType = 'id';
         } else if (ctx.whenLiteral()) {
-            const valueTypeClass = isApexValidClass(
-                new LiteralVisitor().visit(ctx.whenLiteral()),
+            const valueTypeClass = visitNode(
+                new LiteralVisitor(),
+                ctx.whenLiteral(),
                 isWhenLiteralType,
                 'whenLiteral',
             );

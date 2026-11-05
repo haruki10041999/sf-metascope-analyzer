@@ -9,8 +9,8 @@
       {
         "kind": "triggerCase",
         "sourceKeys": {
-          "objectKey": "triggerCase_316568da8f721a3a",
-          "sourceKey": "triggerCase_27fe9ded810c4b47"
+          "objectKey": "triggerCase_600d5ffdca8e4a58",
+          "sourceKey": "triggerCase_bb8928335153be23"
         },
         "actionType": "INSERT",
         "timing": "BEFORE"
@@ -18,8 +18,8 @@
       {
         "kind": "triggerCase",
         "sourceKeys": {
-          "objectKey": "triggerCase_527139dcae9807c2",
-          "sourceKey": "triggerCase_ba129a601a52431d"
+          "objectKey": "triggerCase_ce1deb804ef261b4",
+          "sourceKey": "triggerCase_52d18d6f59d2da6d"
         },
         "actionType": "UPDATE",
         "timing": "BEFORE"
@@ -27,8 +27,8 @@
       {
         "kind": "triggerCase",
         "sourceKeys": {
-          "objectKey": "triggerCase_4c55d4ce17c27a3d",
-          "sourceKey": "triggerCase_3956154976a8177b"
+          "objectKey": "triggerCase_cf0b947cbae51616",
+          "sourceKey": "triggerCase_9f2b2a13bcc1d40c"
         },
         "actionType": "DELETE",
         "timing": "BEFORE"
@@ -36,8 +36,8 @@
       {
         "kind": "triggerCase",
         "sourceKeys": {
-          "objectKey": "triggerCase_586450eedfcbf1d9",
-          "sourceKey": "triggerCase_1ad25a72b6ae8c11"
+          "objectKey": "triggerCase_d4f685ab60e68fa0",
+          "sourceKey": "triggerCase_05a0942a490134e1"
         },
         "actionType": "INSERT",
         "timing": "AFTER"
@@ -45,8 +45,8 @@
       {
         "kind": "triggerCase",
         "sourceKeys": {
-          "objectKey": "triggerCase_e969f8b9bb84b657",
-          "sourceKey": "triggerCase_a737052897630d2f"
+          "objectKey": "triggerCase_cb2041e3455b1769",
+          "sourceKey": "triggerCase_9f49e07048f3136a"
         },
         "actionType": "UPDATE",
         "timing": "AFTER"
@@ -54,8 +54,8 @@
       {
         "kind": "triggerCase",
         "sourceKeys": {
-          "objectKey": "triggerCase_524b643fd8f640d1",
-          "sourceKey": "triggerCase_b4a36323f4093fc9"
+          "objectKey": "triggerCase_eea41ffb2eb17de1",
+          "sourceKey": "triggerCase_767e6ea188c0fd37"
         },
         "actionType": "DELETE",
         "timing": "AFTER"
@@ -63,8 +63,8 @@
       {
         "kind": "triggerCase",
         "sourceKeys": {
-          "objectKey": "triggerCase_3e9fb1971885148b",
-          "sourceKey": "triggerCase_be6a44a9f236d8d3"
+          "objectKey": "triggerCase_384c0a5cc20477dd",
+          "sourceKey": "triggerCase_8d6829356909a891"
         },
         "actionType": "UNDELETE",
         "timing": "AFTER"
@@ -72,19 +72,31 @@
     ],
     "block": [
       {
-        "type": "statement",
+        "kind": "statement",
         "statement": {
           "kind": "expression",
           "sourceKeys": {
-            "objectKey": "expressionStatement_d0fd58282a9be606",
-            "sourceKey": "expressionStatement_c4d594e1b3638b13"
+            "objectKey": "expressionStatement_f195a47adac294e1",
+            "sourceKey": "expressionStatement_f4fcb3ab43f23fc4"
           },
           "value": {
+            "kind": "memberAccess",
+            "sourceKeys": {
+              "objectKey": "dotExpression_b564850166b2dbe6",
+              "sourceKey": "dotExpression_26a27bc350c3b444"
+            },
+            "type": "method",
             "object": "System",
             "operator": ".",
             "member": "debug",
             "memberArg": [
               {
+                "kind": "memberAccess",
+                "sourceKeys": {
+                  "objectKey": "dotExpression_b22df9fcf771bc79",
+                  "sourceKey": "dotExpression_baeb9f1016c29b88"
+                },
+                "type": "object",
                 "object": "Trigger",
                 "operator": ".",
                 "member": "isExecuting"
@@ -95,19 +107,31 @@
         "modifier": {}
       },
       {
-        "type": "statement",
+        "kind": "statement",
         "statement": {
           "kind": "expression",
           "sourceKeys": {
-            "objectKey": "expressionStatement_7c6a5aa73cc0bd2f",
-            "sourceKey": "expressionStatement_71bae6b4939c18c8"
+            "objectKey": "expressionStatement_150a00701d4b6585",
+            "sourceKey": "expressionStatement_f8e0fb48d4aac550"
           },
           "value": {
+            "kind": "memberAccess",
+            "sourceKeys": {
+              "objectKey": "dotExpression_de03d13d84d69344",
+              "sourceKey": "dotExpression_30b64d3cc0212f6e"
+            },
+            "type": "method",
             "object": "System",
             "operator": ".",
             "member": "debug",
             "memberArg": [
               {
+                "kind": "memberAccess",
+                "sourceKeys": {
+                  "objectKey": "dotExpression_e69ad3612606c1ea",
+                  "sourceKey": "dotExpression_0c01d6eb79549419"
+                },
+                "type": "object",
                 "object": "Trigger",
                 "operator": ".",
                 "member": "isBefore"
@@ -118,19 +142,31 @@
         "modifier": {}
       },
       {
-        "type": "statement",
+        "kind": "statement",
         "statement": {
           "kind": "expression",
           "sourceKeys": {
-            "objectKey": "expressionStatement_0526f06a51e5a025",
-            "sourceKey": "expressionStatement_533a4590f02e591e"
+            "objectKey": "expressionStatement_461e2a3ea9ecbdde",
+            "sourceKey": "expressionStatement_1956063c8bf891d4"
           },
           "value": {
+            "kind": "memberAccess",
+            "sourceKeys": {
+              "objectKey": "dotExpression_fd4fb26d9c13fd44",
+              "sourceKey": "dotExpression_b2fb51bbe9be36a6"
+            },
+            "type": "method",
             "object": "System",
             "operator": ".",
             "member": "debug",
             "memberArg": [
               {
+                "kind": "memberAccess",
+                "sourceKeys": {
+                  "objectKey": "dotExpression_2a328865aefdd5bd",
+                  "sourceKey": "dotExpression_33c3f665b62cee70"
+                },
+                "type": "object",
                 "object": "Trigger",
                 "operator": ".",
                 "member": "isAfter"
@@ -141,19 +177,31 @@
         "modifier": {}
       },
       {
-        "type": "statement",
+        "kind": "statement",
         "statement": {
           "kind": "expression",
           "sourceKeys": {
-            "objectKey": "expressionStatement_39d0f72bd83c2a66",
-            "sourceKey": "expressionStatement_521db29dd8a16088"
+            "objectKey": "expressionStatement_d917ab43e58ee711",
+            "sourceKey": "expressionStatement_421fb2ae02dae997"
           },
           "value": {
+            "kind": "memberAccess",
+            "sourceKeys": {
+              "objectKey": "dotExpression_280c782179c39598",
+              "sourceKey": "dotExpression_71a39557ea3865f7"
+            },
+            "type": "method",
             "object": "System",
             "operator": ".",
             "member": "debug",
             "memberArg": [
               {
+                "kind": "memberAccess",
+                "sourceKeys": {
+                  "objectKey": "dotExpression_49025812e308bb15",
+                  "sourceKey": "dotExpression_a3adaa28858c2d41"
+                },
+                "type": "object",
                 "object": "Trigger",
                 "operator": ".",
                 "member": "isInsert"
@@ -164,19 +212,31 @@
         "modifier": {}
       },
       {
-        "type": "statement",
+        "kind": "statement",
         "statement": {
           "kind": "expression",
           "sourceKeys": {
-            "objectKey": "expressionStatement_888c7c396174b109",
-            "sourceKey": "expressionStatement_d1d3689559655f88"
+            "objectKey": "expressionStatement_602d6428018acd71",
+            "sourceKey": "expressionStatement_8b0ebba968278abf"
           },
           "value": {
+            "kind": "memberAccess",
+            "sourceKeys": {
+              "objectKey": "dotExpression_c09be7b8f7cab65c",
+              "sourceKey": "dotExpression_1aec02155968d2da"
+            },
+            "type": "method",
             "object": "System",
             "operator": ".",
             "member": "debug",
             "memberArg": [
               {
+                "kind": "memberAccess",
+                "sourceKeys": {
+                  "objectKey": "dotExpression_9be32e6b1c825b94",
+                  "sourceKey": "dotExpression_64eebceab2963cd7"
+                },
+                "type": "object",
                 "object": "Trigger",
                 "operator": ".",
                 "member": "isUpdate"
@@ -187,19 +247,31 @@
         "modifier": {}
       },
       {
-        "type": "statement",
+        "kind": "statement",
         "statement": {
           "kind": "expression",
           "sourceKeys": {
-            "objectKey": "expressionStatement_fd7573db75fba617",
-            "sourceKey": "expressionStatement_4ade1ac52d0dff60"
+            "objectKey": "expressionStatement_741b56edcf98e582",
+            "sourceKey": "expressionStatement_faa890727ee5f1b2"
           },
           "value": {
+            "kind": "memberAccess",
+            "sourceKeys": {
+              "objectKey": "dotExpression_12869dc080abb14a",
+              "sourceKey": "dotExpression_4e3c0864fc6f4110"
+            },
+            "type": "method",
             "object": "System",
             "operator": ".",
             "member": "debug",
             "memberArg": [
               {
+                "kind": "memberAccess",
+                "sourceKeys": {
+                  "objectKey": "dotExpression_17218d3ec9cb6edd",
+                  "sourceKey": "dotExpression_09f7655a459657ba"
+                },
+                "type": "object",
                 "object": "Trigger",
                 "operator": ".",
                 "member": "isDelete"
@@ -210,19 +282,31 @@
         "modifier": {}
       },
       {
-        "type": "statement",
+        "kind": "statement",
         "statement": {
           "kind": "expression",
           "sourceKeys": {
-            "objectKey": "expressionStatement_783b38974f2007b2",
-            "sourceKey": "expressionStatement_dffa423209fee12d"
+            "objectKey": "expressionStatement_960eeaad0065d238",
+            "sourceKey": "expressionStatement_045ee133e840b438"
           },
           "value": {
+            "kind": "memberAccess",
+            "sourceKeys": {
+              "objectKey": "dotExpression_daffc4cf8df681fe",
+              "sourceKey": "dotExpression_098f58ee9b29c38b"
+            },
+            "type": "method",
             "object": "System",
             "operator": ".",
             "member": "debug",
             "memberArg": [
               {
+                "kind": "memberAccess",
+                "sourceKeys": {
+                  "objectKey": "dotExpression_dd15bc4a1f17f6f6",
+                  "sourceKey": "dotExpression_bedcd3132754d632"
+                },
+                "type": "object",
                 "object": "Trigger",
                 "operator": ".",
                 "member": "isUndelete"
@@ -233,19 +317,31 @@
         "modifier": {}
       },
       {
-        "type": "statement",
+        "kind": "statement",
         "statement": {
           "kind": "expression",
           "sourceKeys": {
-            "objectKey": "expressionStatement_5f7e247ae1554b97",
-            "sourceKey": "expressionStatement_4a731958ef874bf0"
+            "objectKey": "expressionStatement_18234ebb000f07c9",
+            "sourceKey": "expressionStatement_3dc08cea967295ae"
           },
           "value": {
+            "kind": "memberAccess",
+            "sourceKeys": {
+              "objectKey": "dotExpression_ae9f446dcea09e22",
+              "sourceKey": "dotExpression_6984d58e3d7333f8"
+            },
+            "type": "method",
             "object": "System",
             "operator": ".",
             "member": "debug",
             "memberArg": [
               {
+                "kind": "memberAccess",
+                "sourceKeys": {
+                  "objectKey": "dotExpression_2708e278520178f9",
+                  "sourceKey": "dotExpression_0193f867e98f8dab"
+                },
+                "type": "object",
                 "object": "Trigger",
                 "operator": ".",
                 "member": "new"
@@ -256,19 +352,31 @@
         "modifier": {}
       },
       {
-        "type": "statement",
+        "kind": "statement",
         "statement": {
           "kind": "expression",
           "sourceKeys": {
-            "objectKey": "expressionStatement_3bf4093ddc418e62",
-            "sourceKey": "expressionStatement_c264582f26e66b08"
+            "objectKey": "expressionStatement_9e660be77c9eb4be",
+            "sourceKey": "expressionStatement_b002032abe867cb0"
           },
           "value": {
+            "kind": "memberAccess",
+            "sourceKeys": {
+              "objectKey": "dotExpression_ce2283ded15a8f65",
+              "sourceKey": "dotExpression_8cf0649a94a82f60"
+            },
+            "type": "method",
             "object": "System",
             "operator": ".",
             "member": "debug",
             "memberArg": [
               {
+                "kind": "memberAccess",
+                "sourceKeys": {
+                  "objectKey": "dotExpression_b2b7eac04e184f61",
+                  "sourceKey": "dotExpression_77ce809e84a8d7a9"
+                },
+                "type": "object",
                 "object": "Trigger",
                 "operator": ".",
                 "member": "old"
@@ -279,19 +387,31 @@
         "modifier": {}
       },
       {
-        "type": "statement",
+        "kind": "statement",
         "statement": {
           "kind": "expression",
           "sourceKeys": {
-            "objectKey": "expressionStatement_398d911d6011a4f4",
-            "sourceKey": "expressionStatement_ec0608ceefa55dbd"
+            "objectKey": "expressionStatement_291669bf4076861b",
+            "sourceKey": "expressionStatement_f7f9ccb3b86cb134"
           },
           "value": {
+            "kind": "memberAccess",
+            "sourceKeys": {
+              "objectKey": "dotExpression_3ad82ee2bbba5a2f",
+              "sourceKey": "dotExpression_7eb5f882d167f39d"
+            },
+            "type": "method",
             "object": "System",
             "operator": ".",
             "member": "debug",
             "memberArg": [
               {
+                "kind": "memberAccess",
+                "sourceKeys": {
+                  "objectKey": "dotExpression_8b578fb1fcaab4f4",
+                  "sourceKey": "dotExpression_1025408fa9e530cd"
+                },
+                "type": "object",
                 "object": "Trigger",
                 "operator": ".",
                 "member": "newMap"
@@ -302,19 +422,31 @@
         "modifier": {}
       },
       {
-        "type": "statement",
+        "kind": "statement",
         "statement": {
           "kind": "expression",
           "sourceKeys": {
-            "objectKey": "expressionStatement_515a5803b33b51bc",
-            "sourceKey": "expressionStatement_66a599a8e4b77845"
+            "objectKey": "expressionStatement_aee3045819982aeb",
+            "sourceKey": "expressionStatement_a3dd32cc1a83b42e"
           },
           "value": {
+            "kind": "memberAccess",
+            "sourceKeys": {
+              "objectKey": "dotExpression_b6ea19f8ca9a9de8",
+              "sourceKey": "dotExpression_9a199b990de7bc2a"
+            },
+            "type": "method",
             "object": "System",
             "operator": ".",
             "member": "debug",
             "memberArg": [
               {
+                "kind": "memberAccess",
+                "sourceKeys": {
+                  "objectKey": "dotExpression_35d496173d0b4be9",
+                  "sourceKey": "dotExpression_e90c0034a3cdbec5"
+                },
+                "type": "object",
                 "object": "Trigger",
                 "operator": ".",
                 "member": "oldMap"
@@ -325,19 +457,31 @@
         "modifier": {}
       },
       {
-        "type": "statement",
+        "kind": "statement",
         "statement": {
           "kind": "expression",
           "sourceKeys": {
-            "objectKey": "expressionStatement_b4ab64d6276fca2b",
-            "sourceKey": "expressionStatement_a85e51387ed63065"
+            "objectKey": "expressionStatement_fb3d3c412a005f43",
+            "sourceKey": "expressionStatement_036469afe93ba8fe"
           },
           "value": {
+            "kind": "memberAccess",
+            "sourceKeys": {
+              "objectKey": "dotExpression_69c9e95ae1537f09",
+              "sourceKey": "dotExpression_96ddc572307e9644"
+            },
+            "type": "method",
             "object": "System",
             "operator": ".",
             "member": "debug",
             "memberArg": [
               {
+                "kind": "memberAccess",
+                "sourceKeys": {
+                  "objectKey": "dotExpression_e37eed7ba0381c39",
+                  "sourceKey": "dotExpression_a99b95b5f1fe7081"
+                },
+                "type": "object",
                 "object": "Trigger",
                 "operator": ".",
                 "member": "operationType"
@@ -348,19 +492,31 @@
         "modifier": {}
       },
       {
-        "type": "statement",
+        "kind": "statement",
         "statement": {
           "kind": "expression",
           "sourceKeys": {
-            "objectKey": "expressionStatement_8271e054f799b529",
-            "sourceKey": "expressionStatement_9945d45f08691448"
+            "objectKey": "expressionStatement_3c2685a164717113",
+            "sourceKey": "expressionStatement_fca9d5a3bcc40ae3"
           },
           "value": {
+            "kind": "memberAccess",
+            "sourceKeys": {
+              "objectKey": "dotExpression_906da8dcf2dd5316",
+              "sourceKey": "dotExpression_d9e1cf9678b96238"
+            },
+            "type": "method",
             "object": "System",
             "operator": ".",
             "member": "debug",
             "memberArg": [
               {
+                "kind": "memberAccess",
+                "sourceKeys": {
+                  "objectKey": "dotExpression_651c3e07ee7e3d0c",
+                  "sourceKey": "dotExpression_15973107ff7e3e90"
+                },
+                "type": "object",
                 "object": "Trigger",
                 "operator": ".",
                 "member": "size"
@@ -373,13 +529,21 @@
       {
         "kind": "field",
         "sourceKeys": {
-          "objectKey": "fieldDeclaration_dfab416fd851d22d",
-          "sourceKey": "fieldDeclaration_9cc734078f371c90"
+          "objectKey": "fieldDeclaration_1d563e4e17657225",
+          "sourceKey": "fieldDeclaration_95215e241c8b2edb"
         },
         "variants": [
           {
+            "sourceKeys": {
+              "objectKey": "variableDeclarator_677c85afc17e2d27",
+              "sourceKey": "variableDeclarator_292b07cf023a1f80"
+            },
             "name": "PREFIX",
             "init": {
+              "sourceKeys": {
+                "objectKey": "literal_47f958d8aa270103",
+                "sourceKey": "literal_5e2795eda821b604"
+              },
               "value": "'Trigger: '",
               "valueType": "string"
             }
@@ -388,8 +552,8 @@
         "variantType": {
           "kind": "type",
           "sourceKeys": {
-            "objectKey": "typeRef_a13e3e8b5328228b",
-            "sourceKey": "typeRef_627b5dbc36c897cf"
+            "objectKey": "typeRef_0f82fcb626301929",
+            "sourceKey": "typeRef_e36038b0cbc7cf42"
           },
           "type": "primitive",
           "primitiveType": "String"
@@ -400,7 +564,7 @@
               "kind": "modifier",
               "sourceKeys": {
                 "objectKey": "modifier_0cc039a77999b188",
-                "sourceKey": "modifier_83d45737507ce60f"
+                "sourceKey": "modifier_dc9ab8ef11106851"
               },
               "name": "PRIVATE"
             }
@@ -410,7 +574,7 @@
               "kind": "modifier",
               "sourceKeys": {
                 "objectKey": "modifier_355af635756cc383",
-                "sourceKey": "modifier_e09354a079970454"
+                "sourceKey": "modifier_809c59faea4c47a1"
               },
               "name": "STATIC"
             },
@@ -418,7 +582,7 @@
               "kind": "modifier",
               "sourceKeys": {
                 "objectKey": "modifier_9d4bf2c8006d61ce",
-                "sourceKey": "modifier_365957995b6ff04f"
+                "sourceKey": "modifier_7bbdaa9ec4d3612b"
               },
               "name": "FINAL"
             }
@@ -428,13 +592,21 @@
       {
         "kind": "field",
         "sourceKeys": {
-          "objectKey": "fieldDeclaration_3027167950cccea2",
-          "sourceKey": "fieldDeclaration_86caa99a80b1fdb1"
+          "objectKey": "fieldDeclaration_6c3b66f6585ac5ab",
+          "sourceKey": "fieldDeclaration_9b8b3e8f1ad5130e"
         },
         "variants": [
           {
+            "sourceKeys": {
+              "objectKey": "variableDeclarator_9467bdef1e2eb28b",
+              "sourceKey": "variableDeclarator_4a5cc43d212cde10"
+            },
             "name": "invocationCount",
             "init": {
+              "sourceKeys": {
+                "objectKey": "literal_c0d97fe34037a338",
+                "sourceKey": "literal_008f368ec8bcefec"
+              },
               "value": "0",
               "valueType": "integer"
             }
@@ -443,8 +615,8 @@
         "variantType": {
           "kind": "type",
           "sourceKeys": {
-            "objectKey": "typeRef_55792e748cf1fa8f",
-            "sourceKey": "typeRef_9479cc602e2c8e03"
+            "objectKey": "typeRef_1a870c360196e41a",
+            "sourceKey": "typeRef_2f97ca6e1e419bde"
           },
           "type": "primitive",
           "primitiveType": "Integer"
@@ -455,7 +627,7 @@
               "kind": "modifier",
               "sourceKeys": {
                 "objectKey": "modifier_355af635756cc383",
-                "sourceKey": "modifier_de496c14c584a3fc"
+                "sourceKey": "modifier_529d95b6aafde4b7"
               },
               "name": "STATIC"
             }
@@ -466,20 +638,20 @@
         "kind": "property",
         "sourceKeys": {
           "base": {
-            "objectKey": "propertyDeclaration_5fb74b8c1b54cbb7",
-            "sourceKey": "propertyDeclaration_e41df37e65814207"
+            "objectKey": "propertyDeclaration_2e1230b11aa29922",
+            "sourceKey": "propertyDeclaration_9e13cfc196c45c7b"
           },
           "name": {
             "objectKey": "id_4d0fec55c1319e13",
-            "sourceKey": "id_b9abd0dd30998f64"
+            "sourceKey": "id_756c7d5960099657"
           }
         },
         "name": "label",
         "variantType": {
           "kind": "type",
           "sourceKeys": {
-            "objectKey": "typeRef_a13e3e8b5328228b",
-            "sourceKey": "typeRef_e52e63b4726e9534"
+            "objectKey": "typeRef_0f82fcb626301929",
+            "sourceKey": "typeRef_c960d1786eff5774"
           },
           "type": "primitive",
           "primitiveType": "String"
@@ -498,7 +670,7 @@
               "kind": "modifier",
               "sourceKeys": {
                 "objectKey": "modifier_a04213395735c45e",
-                "sourceKey": "modifier_240443fc995c67d8"
+                "sourceKey": "modifier_e88528477cef9eb0"
               },
               "name": "PUBLIC"
             }
@@ -509,12 +681,12 @@
         "kind": "method",
         "sourceKeys": {
           "base": {
-            "objectKey": "methodDeclaration_53b2934bfa02ee48",
-            "sourceKey": "methodDeclaration_fe1a40ba66929f7d"
+            "objectKey": "methodDeclaration_7b1f0741ffb0fb7c",
+            "sourceKey": "methodDeclaration_65ce894de047c7f9"
           },
           "name": {
             "objectKey": "id_e6dfdb0965307f78",
-            "sourceKey": "id_9e7da58f2764d1ec"
+            "sourceKey": "id_a3c5ee4d7773f5c7"
           }
         },
         "name": "log",
@@ -523,15 +695,15 @@
           {
             "kind": "parameter",
             "sourceKeys": {
-              "objectKey": "formalParameter_ef84b69d46cc7b1d",
-              "sourceKey": "formalParameter_a5d064fbb9090d64"
+              "objectKey": "formalParameter_a52bf6f5cb211eba",
+              "sourceKey": "formalParameter_2cf39bc5a658cd1a"
             },
             "variant": "message",
             "variantType": {
               "kind": "type",
               "sourceKeys": {
-                "objectKey": "typeRef_a13e3e8b5328228b",
-                "sourceKey": "typeRef_ba74bec39301e811"
+                "objectKey": "typeRef_0f82fcb626301929",
+                "sourceKey": "typeRef_a0db9bfe313f1380"
               },
               "type": "primitive",
               "primitiveType": "String"
@@ -543,15 +715,25 @@
           {
             "kind": "expression",
             "sourceKeys": {
-              "objectKey": "expressionStatement_26afa799025e1f28",
-              "sourceKey": "expressionStatement_df82b7fb90e0c725"
+              "objectKey": "expressionStatement_06a837e3cbd579ff",
+              "sourceKey": "expressionStatement_17d71f5b8990c80b"
             },
             "value": {
+              "kind": "memberAccess",
+              "sourceKeys": {
+                "objectKey": "dotExpression_9cb12007e853a65a",
+                "sourceKey": "dotExpression_2779b6ffd8ffeb9d"
+              },
+              "type": "method",
               "object": "System",
               "operator": ".",
               "member": "debug",
               "memberArg": [
                 {
+                  "sourceKeys": {
+                    "objectKey": "arth2Expression_9b653e4bc0210c82",
+                    "sourceKey": "arth2Expression_2498edeb87077e6d"
+                  },
                   "left": "PREFIX",
                   "operator": "+",
                   "right": "message"
@@ -566,7 +748,7 @@
               "kind": "modifier",
               "sourceKeys": {
                 "objectKey": "modifier_0cc039a77999b188",
-                "sourceKey": "modifier_526f6ef30321e823"
+                "sourceKey": "modifier_3f2dc7c223d34a8d"
               },
               "name": "PRIVATE"
             }
@@ -577,26 +759,26 @@
         "kind": "class",
         "sourceKeys": {
           "base": {
-            "objectKey": "classDeclaration_2e5ae04016458617",
-            "sourceKey": "classDeclaration_f4ea1de60c713580"
+            "objectKey": "classDeclaration_b7a959f7b600a96f",
+            "sourceKey": "classDeclaration_68b2d4bca323f08e"
           },
           "name": {
             "objectKey": "id_4b06a4b8cf98ea97",
-            "sourceKey": "id_de1cda0ac9edac7b"
+            "sourceKey": "id_9b36e302b5426ad6"
           }
         },
         "name": "TriggerHelper",
-        "method": [
+        "block": [
           {
             "kind": "method",
             "sourceKeys": {
               "base": {
-                "objectKey": "methodDeclaration_c80ee56a67db6cd8",
-                "sourceKey": "methodDeclaration_2ac8cfcbf5ac40ea"
+                "objectKey": "methodDeclaration_70a88e62ee69da1f",
+                "sourceKey": "methodDeclaration_9fbf5e1d87ec8cb5"
               },
               "name": {
                 "objectKey": "id_173f4a982cfa79db",
-                "sourceKey": "id_558ea48bdbe05a4e"
+                "sourceKey": "id_407d27f6cb0c5994"
               }
             },
             "name": "run",
@@ -605,15 +787,25 @@
               {
                 "kind": "expression",
                 "sourceKeys": {
-                  "objectKey": "expressionStatement_13f84d0017826f30",
-                  "sourceKey": "expressionStatement_23d3a5d7c9c40e99"
+                  "objectKey": "expressionStatement_22a773e26a7d142c",
+                  "sourceKey": "expressionStatement_e4f2c91039a792fd"
                 },
                 "value": {
+                  "kind": "memberAccess",
+                  "sourceKeys": {
+                    "objectKey": "dotExpression_639b460dc0438494",
+                    "sourceKey": "dotExpression_0ddb5f0c47be02c3"
+                  },
+                  "type": "method",
                   "object": "System",
                   "operator": ".",
                   "member": "debug",
                   "memberArg": [
                     {
+                      "sourceKeys": {
+                        "objectKey": "literal_06d380cb641797e7",
+                        "sourceKey": "literal_00aadb5cc5b61c24"
+                      },
                       "value": "'helper'",
                       "valueType": "string"
                     }
@@ -627,7 +819,7 @@
                   "kind": "modifier",
                   "sourceKeys": {
                     "objectKey": "modifier_a04213395735c45e",
-                    "sourceKey": "modifier_50ebeffb61f6e7fc"
+                    "sourceKey": "modifier_a5efc2f162964026"
                   },
                   "name": "PUBLIC"
                 }
@@ -641,7 +833,7 @@
               "kind": "modifier",
               "sourceKeys": {
                 "objectKey": "modifier_a04213395735c45e",
-                "sourceKey": "modifier_488d154ee6483ec5"
+                "sourceKey": "modifier_a7ced59096f4dc7b"
               },
               "name": "PUBLIC"
             }
@@ -652,12 +844,12 @@
         "kind": "interface",
         "sourceKeys": {
           "base": {
-            "objectKey": "interfaceDeclaration_5a77971207eeacbc",
-            "sourceKey": "interfaceDeclaration_c3c1dc3f4111e7f4"
+            "objectKey": "interfaceDeclaration_84ad9b35e6ea3d46",
+            "sourceKey": "interfaceDeclaration_31b104d3ad3fce79"
           },
           "name": {
             "objectKey": "id_2f9f32222eeebf8e",
-            "sourceKey": "id_735e242171286f86"
+            "sourceKey": "id_847a151cb835d5a2"
           }
         },
         "name": "TriggerHandler",
@@ -666,12 +858,12 @@
             "kind": "interfaceMethod",
             "sourceKeys": {
               "base": {
-                "objectKey": "interfaceMethodDeclaration_47a1928436f2f16a",
-                "sourceKey": "interfaceMethodDeclaration_6fd041a1865b232d"
+                "objectKey": "interfaceMethodDeclaration_0225585f807cace6",
+                "sourceKey": "interfaceMethodDeclaration_5f4ba3fdc3d4787d"
               },
               "name": {
                 "objectKey": "id_7b9ae991e1ae993a",
-                "sourceKey": "id_f0fbab2a5c66da8a"
+                "sourceKey": "id_901acd764b8b767b"
               }
             },
             "name": "handle",
@@ -685,7 +877,7 @@
               "kind": "modifier",
               "sourceKeys": {
                 "objectKey": "modifier_a04213395735c45e",
-                "sourceKey": "modifier_4ef3306375d617f0"
+                "sourceKey": "modifier_873a257e0613a7b7"
               },
               "name": "PUBLIC"
             }
@@ -696,12 +888,12 @@
         "kind": "enum",
         "sourceKeys": {
           "base": {
-            "objectKey": "enumDeclaration_303dd9e9f7467a9b",
-            "sourceKey": "enumDeclaration_cc02fa3c70588d64"
+            "objectKey": "enumDeclaration_eb8aea8f36f9ab65",
+            "sourceKey": "enumDeclaration_9b86e3da8caf8512"
           },
           "name": {
             "objectKey": "id_2543e15c80c0211a",
-            "sourceKey": "id_75ba13101c35b8ee"
+            "sourceKey": "id_293b952dc1311142"
           }
         },
         "name": "Phase",
@@ -710,7 +902,7 @@
             "kind": "enumConstant",
             "sourceKeys": {
               "objectKey": "id_929329ad5e7d778f",
-              "sourceKey": "id_656c8abcbadbaabc"
+              "sourceKey": "id_23d8a0e4f823be43"
             },
             "name": "BEFORE_PHASE"
           },
@@ -718,7 +910,7 @@
             "kind": "enumConstant",
             "sourceKeys": {
               "objectKey": "id_50fbf67a289ac725",
-              "sourceKey": "id_806155f16fe7726a"
+              "sourceKey": "id_0b16b19e0e4983dc"
             },
             "name": "AFTER_PHASE"
           }
@@ -729,7 +921,7 @@
               "kind": "modifier",
               "sourceKeys": {
                 "objectKey": "modifier_a04213395735c45e",
-                "sourceKey": "modifier_6c8693e7e019fe90"
+                "sourceKey": "modifier_294ffea171878150"
               },
               "name": "PUBLIC"
             }
@@ -737,20 +929,26 @@
         }
       },
       {
-        "type": "statement",
+        "kind": "statement",
         "statement": {
           "kind": "switch",
           "sourceKeys": {
-            "objectKey": "switchStatement_08d4c7ecb473dbcf",
-            "sourceKey": "switchStatement_809404043e466dd9"
+            "objectKey": "switchStatement_a7b1f696dc54f8c5",
+            "sourceKey": "switchStatement_5cd6a013e436a3e6"
           },
           "variant": {
-            "kind": "whenVariant",
+            "kind": "switchVariant",
             "sourceKeys": {
-              "objectKey": "dotExpression_0386a7be49497350",
-              "sourceKey": "dotExpression_e96f65a84f075e8f"
+              "objectKey": "dotExpression_e37eed7ba0381c39",
+              "sourceKey": "dotExpression_5a9619c716c32715"
             },
             "variant": {
+              "kind": "memberAccess",
+              "sourceKeys": {
+                "objectKey": "dotExpression_e37eed7ba0381c39",
+                "sourceKey": "dotExpression_5a9619c716c32715"
+              },
+              "type": "object",
               "object": "Trigger",
               "operator": ".",
               "member": "operationType"
@@ -762,7 +960,7 @@
                 "kind": "switchCondition",
                 "sourceKeys": {
                   "objectKey": "whenValue_8aa1a633c2d14391",
-                  "sourceKey": "whenValue_ed36a69f373ed2ef"
+                  "sourceKey": "whenValue_6268ab985e32ec4a"
                 },
                 "condition": [
                   {
@@ -783,10 +981,14 @@
                 {
                   "kind": "expression",
                   "sourceKeys": {
-                    "objectKey": "expressionStatement_1fb95cee552cd2f1",
-                    "sourceKey": "expressionStatement_5290daa26c6591d5"
+                    "objectKey": "expressionStatement_2d07a799cedf4ef4",
+                    "sourceKey": "expressionStatement_e530c4c789b097ff"
                   },
                   "value": {
+                    "sourceKeys": {
+                      "objectKey": "postOpExpression_71d5e6f988e9b3f7",
+                      "sourceKey": "postOpExpression_c439d46a713de6ad"
+                    },
                     "variant": "invocationCount",
                     "operator": "++",
                     "operatorLocation": "back"
@@ -799,7 +1001,7 @@
                 "kind": "switchCondition",
                 "sourceKeys": {
                   "objectKey": "whenValue_1f6ca8e1e73f27f7",
-                  "sourceKey": "whenValue_15523ace2cae6d41"
+                  "sourceKey": "whenValue_cdd85cca6f8222c1"
                 },
                 "condition": [
                   {
@@ -814,10 +1016,14 @@
                 {
                   "kind": "expression",
                   "sourceKeys": {
-                    "objectKey": "expressionStatement_1e96c7fc1adda877",
-                    "sourceKey": "expressionStatement_8fc1ddf13fb32a6e"
+                    "objectKey": "expressionStatement_57df2c69f70e1c39",
+                    "sourceKey": "expressionStatement_e50277690d865365"
                   },
                   "value": {
+                    "sourceKeys": {
+                      "objectKey": "postOpExpression_850becb7453cfeb4",
+                      "sourceKey": "postOpExpression_1e7f562d840ec0cf"
+                    },
                     "variant": "invocationCount",
                     "operator": "--",
                     "operatorLocation": "back"
@@ -830,7 +1036,7 @@
                 "kind": "switchCondition",
                 "sourceKeys": {
                   "objectKey": "whenValue_32cb709adcb7919f",
-                  "sourceKey": "whenValue_102ddcf2d77c454a"
+                  "sourceKey": "whenValue_23f2573d778a51e9"
                 },
                 "condition": "else"
               },
@@ -838,13 +1044,21 @@
                 {
                   "kind": "expression",
                   "sourceKeys": {
-                    "objectKey": "expressionStatement_8b7d4ec0bf73ee0e",
-                    "sourceKey": "expressionStatement_e467cc9bd9df1392"
+                    "objectKey": "expressionStatement_e6c033868df5e0f5",
+                    "sourceKey": "expressionStatement_d1dcf56713c6c9cc"
                   },
                   "value": {
+                    "sourceKeys": {
+                      "objectKey": "assignExpression_23088fde61dba2c5",
+                      "sourceKey": "assignExpression_d00136ba6bd8bd5e"
+                    },
                     "left": "invocationCount",
                     "operator": "+=",
                     "right": {
+                      "sourceKeys": {
+                        "objectKey": "literal_c0d97fe34037a338",
+                        "sourceKey": "literal_160e4a18712c4943"
+                      },
                       "value": "0",
                       "valueType": "integer"
                     }
@@ -857,29 +1071,45 @@
         "modifier": {}
       },
       {
-        "type": "statement",
+        "kind": "statement",
         "statement": {
           "kind": "if",
           "sourceKeys": {
-            "objectKey": "ifStatement_d3af86438dbe228f",
-            "sourceKey": "ifStatement_2a30a203e27b151b"
+            "objectKey": "ifStatement_c91ce1eecfb96585",
+            "sourceKey": "ifStatement_6f25dd1ae0323660"
           },
           "conditionBlock": [
             {
               "condition": {
                 "kind": "ifCondition",
                 "sourceKeys": {
-                  "objectKey": "parExpression_da59c98d67fd287f",
-                  "sourceKey": "parExpression_33317616ca9ae273"
+                  "objectKey": "parExpression_63501e0a73f0a4dd",
+                  "sourceKey": "parExpression_e6b676f1bb0b9671"
                 },
                 "condition": {
+                  "sourceKeys": {
+                    "objectKey": "logAndExpression_e003264eb1107c41",
+                    "sourceKey": "logAndExpression_faec87bead6401a8"
+                  },
                   "left": {
+                    "kind": "memberAccess",
+                    "sourceKeys": {
+                      "objectKey": "dotExpression_e69ad3612606c1ea",
+                      "sourceKey": "dotExpression_b5c4b61e597b1422"
+                    },
+                    "type": "object",
                     "object": "Trigger",
                     "operator": ".",
                     "member": "isBefore"
                   },
                   "operator": "&&",
                   "right": {
+                    "kind": "memberAccess",
+                    "sourceKeys": {
+                      "objectKey": "dotExpression_49025812e308bb15",
+                      "sourceKey": "dotExpression_9fa24f4c9586ff58"
+                    },
+                    "type": "object",
                     "object": "Trigger",
                     "operator": ".",
                     "member": "isInsert"
@@ -890,26 +1120,32 @@
                 {
                   "kind": "for",
                   "sourceKeys": {
-                    "objectKey": "forStatement_2b97ae1daadc6d61",
-                    "sourceKey": "forStatement_3dd9e5c3653f94d3"
+                    "objectKey": "forStatement_3e4569a17ee9f932",
+                    "sourceKey": "forStatement_b9dcb770ba8b4c47"
                   },
                   "condition": {
                     "kind": "forCondition",
                     "sourceKeys": {
-                      "objectKey": "forControl_97179282f8221e58",
-                      "sourceKey": "forControl_31d96199cf3bf328"
+                      "objectKey": "forControl_38e52f6b66743beb",
+                      "sourceKey": "forControl_c2c6078fc5e999f6"
                     },
                     "initializer": "account",
                     "initializeType": {
                       "kind": "type",
                       "sourceKeys": {
-                        "objectKey": "typeRef_16c0945431044f5d",
-                        "sourceKey": "typeRef_cdb47b930ceaf888"
+                        "objectKey": "typeRef_f6180c936ec69d2a",
+                        "sourceKey": "typeRef_7812b12993739553"
                       },
                       "type": "custom",
                       "customType": "Account"
                     },
                     "baseObject": {
+                      "kind": "memberAccess",
+                      "sourceKeys": {
+                        "objectKey": "dotExpression_2708e278520178f9",
+                        "sourceKey": "dotExpression_4a6362ac96802cff"
+                      },
+                      "type": "object",
                       "object": "Trigger",
                       "operator": ".",
                       "member": "new"
@@ -919,23 +1155,35 @@
                     {
                       "kind": "if",
                       "sourceKeys": {
-                        "objectKey": "ifStatement_cdc92be88345c1e6",
-                        "sourceKey": "ifStatement_369ff0dc0245f19c"
+                        "objectKey": "ifStatement_a97327e10c4d0268",
+                        "sourceKey": "ifStatement_b119a14ca77708e1"
                       },
                       "conditionBlock": [
                         {
                           "condition": {
                             "kind": "ifCondition",
                             "sourceKeys": {
-                              "objectKey": "parExpression_5c671620698b6b95",
-                              "sourceKey": "parExpression_039c17762e3be56c"
+                              "objectKey": "parExpression_44f9c1732e382904",
+                              "sourceKey": "parExpression_b837619d0c2ae64e"
                             },
                             "condition": {
+                              "kind": "memberAccess",
+                              "sourceKeys": {
+                                "objectKey": "dotExpression_aa073fd77da895e7",
+                                "sourceKey": "dotExpression_65b4a40b89576dd4"
+                              },
+                              "type": "method",
                               "object": "String",
                               "operator": ".",
                               "member": "isBlank",
                               "memberArg": [
                                 {
+                                  "kind": "memberAccess",
+                                  "sourceKeys": {
+                                    "objectKey": "dotExpression_5f8c22402655fe83",
+                                    "sourceKey": "dotExpression_178c17d49f0de0f5"
+                                  },
+                                  "type": "object",
                                   "object": "account",
                                   "operator": ".",
                                   "member": "Name"
@@ -947,17 +1195,31 @@
                             {
                               "kind": "expression",
                               "sourceKeys": {
-                                "objectKey": "expressionStatement_ba1409d3710514b4",
-                                "sourceKey": "expressionStatement_e30d12030acceb2e"
+                                "objectKey": "expressionStatement_c6da2a6999d9d5af",
+                                "sourceKey": "expressionStatement_d90df11c6242e691"
                               },
                               "value": {
+                                "sourceKeys": {
+                                  "objectKey": "assignExpression_310bb11aeb25d041",
+                                  "sourceKey": "assignExpression_3c87fbcb6eb25b50"
+                                },
                                 "left": {
+                                  "kind": "memberAccess",
+                                  "sourceKeys": {
+                                    "objectKey": "dotExpression_5f8c22402655fe83",
+                                    "sourceKey": "dotExpression_7abb332ead83c5da"
+                                  },
+                                  "type": "object",
                                   "object": "account",
                                   "operator": ".",
                                   "member": "Name"
                                 },
                                 "operator": "=",
                                 "right": {
+                                  "sourceKeys": {
+                                    "objectKey": "literal_53fa84598817b14c",
+                                    "sourceKey": "literal_c4c5eeb97f19a3a6"
+                                  },
                                   "value": "'Default Account'",
                                   "valueType": "string"
                                 }
@@ -970,17 +1232,31 @@
                     {
                       "kind": "expression",
                       "sourceKeys": {
-                        "objectKey": "expressionStatement_e675fb3d7caaeade",
-                        "sourceKey": "expressionStatement_7778b9b1083da38d"
+                        "objectKey": "expressionStatement_973deab688c73572",
+                        "sourceKey": "expressionStatement_24a2b369738d3396"
                       },
                       "value": {
+                        "sourceKeys": {
+                          "objectKey": "assignExpression_c2c34b4067c463ec",
+                          "sourceKey": "assignExpression_4b1a17c21646f29f"
+                        },
                         "left": {
+                          "kind": "memberAccess",
+                          "sourceKeys": {
+                            "objectKey": "dotExpression_0a6060e61aad4392",
+                            "sourceKey": "dotExpression_29f14b9b478d143d"
+                          },
+                          "type": "object",
                           "object": "account",
                           "operator": ".",
                           "member": "Description"
                         },
                         "operator": "=",
                         "right": {
+                          "sourceKeys": {
+                            "objectKey": "literal_a62bc882a4f91bbc",
+                            "sourceKey": "literal_6869fe0bbfce600b"
+                          },
                           "value": "'Created by trigger'",
                           "valueType": "string"
                         }
@@ -995,29 +1271,45 @@
         "modifier": {}
       },
       {
-        "type": "statement",
+        "kind": "statement",
         "statement": {
           "kind": "if",
           "sourceKeys": {
-            "objectKey": "ifStatement_b17495c314a2e9ff",
-            "sourceKey": "ifStatement_3e947c3619f44976"
+            "objectKey": "ifStatement_15be037661fbd437",
+            "sourceKey": "ifStatement_f6a9f1bbc21e9747"
           },
           "conditionBlock": [
             {
               "condition": {
                 "kind": "ifCondition",
                 "sourceKeys": {
-                  "objectKey": "parExpression_f17fd3fb116b5d02",
-                  "sourceKey": "parExpression_91d70a8d5c886254"
+                  "objectKey": "parExpression_b147b6c6db63bf9d",
+                  "sourceKey": "parExpression_139eeb6742747548"
                 },
                 "condition": {
+                  "sourceKeys": {
+                    "objectKey": "logAndExpression_867ba9cef142d35b",
+                    "sourceKey": "logAndExpression_ecc179c529e43abe"
+                  },
                   "left": {
+                    "kind": "memberAccess",
+                    "sourceKeys": {
+                      "objectKey": "dotExpression_e69ad3612606c1ea",
+                      "sourceKey": "dotExpression_2b95c314afba5fa3"
+                    },
+                    "type": "object",
                     "object": "Trigger",
                     "operator": ".",
                     "member": "isBefore"
                   },
                   "operator": "&&",
                   "right": {
+                    "kind": "memberAccess",
+                    "sourceKeys": {
+                      "objectKey": "dotExpression_9be32e6b1c825b94",
+                      "sourceKey": "dotExpression_8bf7e886485f98f6"
+                    },
+                    "type": "object",
                     "object": "Trigger",
                     "operator": ".",
                     "member": "isUpdate"
@@ -1028,26 +1320,32 @@
                 {
                   "kind": "for",
                   "sourceKeys": {
-                    "objectKey": "forStatement_f31ba885bd12065d",
-                    "sourceKey": "forStatement_84178396b1966a1a"
+                    "objectKey": "forStatement_53308b3d61bd8305",
+                    "sourceKey": "forStatement_13118dcba6778ade"
                   },
                   "condition": {
                     "kind": "forCondition",
                     "sourceKeys": {
-                      "objectKey": "forControl_97179282f8221e58",
-                      "sourceKey": "forControl_90520d86a427128c"
+                      "objectKey": "forControl_38e52f6b66743beb",
+                      "sourceKey": "forControl_0efb513868fa407f"
                     },
                     "initializer": "account",
                     "initializeType": {
                       "kind": "type",
                       "sourceKeys": {
-                        "objectKey": "typeRef_16c0945431044f5d",
-                        "sourceKey": "typeRef_7dc86b5d0ca0f57a"
+                        "objectKey": "typeRef_f6180c936ec69d2a",
+                        "sourceKey": "typeRef_4142fa38ad02f68f"
                       },
                       "type": "custom",
                       "customType": "Account"
                     },
                     "baseObject": {
+                      "kind": "memberAccess",
+                      "sourceKeys": {
+                        "objectKey": "dotExpression_2708e278520178f9",
+                        "sourceKey": "dotExpression_27c4080d67ff1c33"
+                      },
+                      "type": "object",
                       "object": "Trigger",
                       "operator": ".",
                       "member": "new"
@@ -1057,15 +1355,31 @@
                     {
                       "kind": "localVariable",
                       "sourceKeys": {
-                        "objectKey": "localVariableDeclarationStatement_83464544313bf3c7",
-                        "sourceKey": "localVariableDeclarationStatement_41eaa483e8015bfe"
+                        "objectKey": "localVariableDeclarationStatement_7daba55e99145f98",
+                        "sourceKey": "localVariableDeclarationStatement_5cfd59dedade35f8"
                       },
                       "variable": {
                         "variants": [
                           {
+                            "sourceKeys": {
+                              "objectKey": "variableDeclarator_28959610a5365edd",
+                              "sourceKey": "variableDeclarator_c151d016e233329c"
+                            },
                             "name": "oldAccount",
                             "init": {
+                              "kind": "memberAccess",
+                              "sourceKeys": {
+                                "objectKey": "dotExpression_595267e3ba58a9dd",
+                                "sourceKey": "dotExpression_66d426368d4ba73a"
+                              },
+                              "type": "method",
                               "object": {
+                                "kind": "memberAccess",
+                                "sourceKeys": {
+                                  "objectKey": "dotExpression_35d496173d0b4be9",
+                                  "sourceKey": "dotExpression_a4cd6af68945690f"
+                                },
+                                "type": "object",
                                 "object": "Trigger",
                                 "operator": ".",
                                 "member": "oldMap"
@@ -1074,6 +1388,12 @@
                               "member": "get",
                               "memberArg": [
                                 {
+                                  "kind": "memberAccess",
+                                  "sourceKeys": {
+                                    "objectKey": "dotExpression_6b73b79c02cc497d",
+                                    "sourceKey": "dotExpression_4e9342881aa8d949"
+                                  },
+                                  "type": "object",
                                   "object": "account",
                                   "operator": ".",
                                   "member": "Id"
@@ -1085,8 +1405,8 @@
                         "variantsType": {
                           "kind": "type",
                           "sourceKeys": {
-                            "objectKey": "typeRef_16c0945431044f5d",
-                            "sourceKey": "typeRef_1254a7cb77805dfe"
+                            "objectKey": "typeRef_f6180c936ec69d2a",
+                            "sourceKey": "typeRef_fa04abf1294766a1"
                           },
                           "type": "custom",
                           "customType": "Account"
@@ -1097,25 +1417,41 @@
                     {
                       "kind": "if",
                       "sourceKeys": {
-                        "objectKey": "ifStatement_cd13dd8accf67012",
-                        "sourceKey": "ifStatement_627ec9876a05d4ba"
+                        "objectKey": "ifStatement_f143a03e65061835",
+                        "sourceKey": "ifStatement_3b69560479524c08"
                       },
                       "conditionBlock": [
                         {
                           "condition": {
                             "kind": "ifCondition",
                             "sourceKeys": {
-                              "objectKey": "parExpression_5f40d773e04bc120",
-                              "sourceKey": "parExpression_93f37adac9ef06bb"
+                              "objectKey": "parExpression_69bcfc3b58beb086",
+                              "sourceKey": "parExpression_644c51c053d5d995"
                             },
                             "condition": {
+                              "sourceKeys": {
+                                "objectKey": "equalityExpression_ba83b05ac81e6217",
+                                "sourceKey": "equalityExpression_ddbb4111aced9d03"
+                              },
                               "left": {
+                                "kind": "memberAccess",
+                                "sourceKeys": {
+                                  "objectKey": "dotExpression_5f8c22402655fe83",
+                                  "sourceKey": "dotExpression_f14b694d028bacd5"
+                                },
+                                "type": "object",
                                 "object": "account",
                                 "operator": ".",
                                 "member": "Name"
                               },
                               "operator": "!=",
                               "right": {
+                                "kind": "memberAccess",
+                                "sourceKeys": {
+                                  "objectKey": "dotExpression_ea5e86de0075d45b",
+                                  "sourceKey": "dotExpression_7cfc1a113f92b056"
+                                },
+                                "type": "object",
                                 "object": "oldAccount",
                                 "operator": ".",
                                 "member": "Name"
@@ -1126,17 +1462,31 @@
                             {
                               "kind": "expression",
                               "sourceKeys": {
-                                "objectKey": "expressionStatement_8c4b2356992ab266",
-                                "sourceKey": "expressionStatement_b85a3c6dd12b0401"
+                                "objectKey": "expressionStatement_8652b0a7473d68ce",
+                                "sourceKey": "expressionStatement_cabf0672c60eda8f"
                               },
                               "value": {
+                                "sourceKeys": {
+                                  "objectKey": "assignExpression_8e0b2d37bd6dd407",
+                                  "sourceKey": "assignExpression_e5c53d7f5d94fb77"
+                                },
                                 "left": {
+                                  "kind": "memberAccess",
+                                  "sourceKeys": {
+                                    "objectKey": "dotExpression_0a6060e61aad4392",
+                                    "sourceKey": "dotExpression_96644e1c38387061"
+                                  },
+                                  "type": "object",
                                   "object": "account",
                                   "operator": ".",
                                   "member": "Description"
                                 },
                                 "operator": "=",
                                 "right": {
+                                  "sourceKeys": {
+                                    "objectKey": "literal_e8c5e010962639b4",
+                                    "sourceKey": "literal_97bf22adc59db6c9"
+                                  },
                                   "value": "'Name changed'",
                                   "valueType": "string"
                                 }
@@ -1149,25 +1499,39 @@
                     {
                       "kind": "if",
                       "sourceKeys": {
-                        "objectKey": "ifStatement_aae8ab67e2d2a8c2",
-                        "sourceKey": "ifStatement_8f325ee3efa6d9b0"
+                        "objectKey": "ifStatement_8ae014bec9601e11",
+                        "sourceKey": "ifStatement_e1129ad1574ae210"
                       },
                       "conditionBlock": [
                         {
                           "condition": {
                             "kind": "ifCondition",
                             "sourceKeys": {
-                              "objectKey": "parExpression_db6a6e911a9628c9",
-                              "sourceKey": "parExpression_c7fd2e44204c73f6"
+                              "objectKey": "parExpression_a2f02e6be15cd74f",
+                              "sourceKey": "parExpression_0e23337565f5db55"
                             },
                             "condition": {
+                              "sourceKeys": {
+                                "objectKey": "cmpExpression_3c05dbc905946c8a",
+                                "sourceKey": "cmpExpression_c5ee84edbc00ad9c"
+                              },
                               "left": {
+                                "kind": "memberAccess",
+                                "sourceKeys": {
+                                  "objectKey": "dotExpression_3667e8bf3b3f5c9b",
+                                  "sourceKey": "dotExpression_92fb4994aded5238"
+                                },
+                                "type": "object",
                                 "object": "account",
                                 "operator": ".",
                                 "member": "AnnualRevenue"
                               },
                               "operator": "<",
                               "right": {
+                                "sourceKeys": {
+                                  "objectKey": "literal_c0d97fe34037a338",
+                                  "sourceKey": "literal_87dec616bdf8a20c"
+                                },
                                 "value": "0",
                                 "valueType": "integer"
                               }
@@ -1177,15 +1541,25 @@
                             {
                               "kind": "expression",
                               "sourceKeys": {
-                                "objectKey": "expressionStatement_b87a4e87ece683c3",
-                                "sourceKey": "expressionStatement_4ccbeb00d4baa815"
+                                "objectKey": "expressionStatement_615b0ed27cf327ea",
+                                "sourceKey": "expressionStatement_750daceac4cb3223"
                               },
                               "value": {
+                                "kind": "memberAccess",
+                                "sourceKeys": {
+                                  "objectKey": "dotExpression_ec4c0dcf8aa9fa6b",
+                                  "sourceKey": "dotExpression_37c3a1e4be09f61a"
+                                },
+                                "type": "method",
                                 "object": "account",
                                 "operator": ".",
                                 "member": "addError",
                                 "memberArg": [
                                   {
+                                    "sourceKeys": {
+                                      "objectKey": "literal_c7f901e900b0e16a",
+                                      "sourceKey": "literal_01f4da62cf5ee03c"
+                                    },
                                     "value": "'AnnualRevenue must be positive'",
                                     "valueType": "string"
                                   }
@@ -1205,29 +1579,45 @@
         "modifier": {}
       },
       {
-        "type": "statement",
+        "kind": "statement",
         "statement": {
           "kind": "if",
           "sourceKeys": {
-            "objectKey": "ifStatement_57768b93d665a953",
-            "sourceKey": "ifStatement_a246ccaf623c4fc6"
+            "objectKey": "ifStatement_175f8431bf58ac52",
+            "sourceKey": "ifStatement_5c46ab92f1373baa"
           },
           "conditionBlock": [
             {
               "condition": {
                 "kind": "ifCondition",
                 "sourceKeys": {
-                  "objectKey": "parExpression_381cd08385571215",
-                  "sourceKey": "parExpression_2525209318108e83"
+                  "objectKey": "parExpression_0bca1f8e3b45d650",
+                  "sourceKey": "parExpression_db91f0f92b792c33"
                 },
                 "condition": {
+                  "sourceKeys": {
+                    "objectKey": "logAndExpression_658f4e765bb42468",
+                    "sourceKey": "logAndExpression_1573260a2c2370f0"
+                  },
                   "left": {
+                    "kind": "memberAccess",
+                    "sourceKeys": {
+                      "objectKey": "dotExpression_e69ad3612606c1ea",
+                      "sourceKey": "dotExpression_10cc1cce0172dd09"
+                    },
+                    "type": "object",
                     "object": "Trigger",
                     "operator": ".",
                     "member": "isBefore"
                   },
                   "operator": "&&",
                   "right": {
+                    "kind": "memberAccess",
+                    "sourceKeys": {
+                      "objectKey": "dotExpression_17218d3ec9cb6edd",
+                      "sourceKey": "dotExpression_c05ee219d959594a"
+                    },
+                    "type": "object",
                     "object": "Trigger",
                     "operator": ".",
                     "member": "isDelete"
@@ -1238,26 +1628,32 @@
                 {
                   "kind": "for",
                   "sourceKeys": {
-                    "objectKey": "forStatement_fc4ed2af615dda2f",
-                    "sourceKey": "forStatement_92e30e24646b7bb1"
+                    "objectKey": "forStatement_99181cd9b5f9541a",
+                    "sourceKey": "forStatement_e8409efbd69fb1e4"
                   },
                   "condition": {
                     "kind": "forCondition",
                     "sourceKeys": {
-                      "objectKey": "forControl_352574c40b842621",
-                      "sourceKey": "forControl_adc747df6c29a58a"
+                      "objectKey": "forControl_225422f9f1123f9f",
+                      "sourceKey": "forControl_22c846305007351e"
                     },
                     "initializer": "account",
                     "initializeType": {
                       "kind": "type",
                       "sourceKeys": {
-                        "objectKey": "typeRef_16c0945431044f5d",
-                        "sourceKey": "typeRef_d3babc4326bc7168"
+                        "objectKey": "typeRef_f6180c936ec69d2a",
+                        "sourceKey": "typeRef_02608cc2676f67e7"
                       },
                       "type": "custom",
                       "customType": "Account"
                     },
                     "baseObject": {
+                      "kind": "memberAccess",
+                      "sourceKeys": {
+                        "objectKey": "dotExpression_b2b7eac04e184f61",
+                        "sourceKey": "dotExpression_8a80e51e9579a916"
+                      },
+                      "type": "object",
                       "object": "Trigger",
                       "operator": ".",
                       "member": "old"
@@ -1267,21 +1663,41 @@
                     {
                       "kind": "expression",
                       "sourceKeys": {
-                        "objectKey": "expressionStatement_0011bbb991416421",
-                        "sourceKey": "expressionStatement_7fc43cecbc50d138"
+                        "objectKey": "expressionStatement_552863a65c972181",
+                        "sourceKey": "expressionStatement_13e4ee5414ece79c"
                       },
                       "value": {
+                        "kind": "memberAccess",
+                        "sourceKeys": {
+                          "objectKey": "dotExpression_c4fadfbbd069120d",
+                          "sourceKey": "dotExpression_e159dd0b5c570b01"
+                        },
+                        "type": "method",
                         "object": "System",
                         "operator": ".",
                         "member": "debug",
                         "memberArg": [
                           {
+                            "sourceKeys": {
+                              "objectKey": "arth2Expression_c71ac05ff76c28e0",
+                              "sourceKey": "arth2Expression_b8925c18316e95f3"
+                            },
                             "left": {
+                              "sourceKeys": {
+                                "objectKey": "literal_96b6bff081a0c19a",
+                                "sourceKey": "literal_cd0c513f94cc163e"
+                              },
                               "value": "'Deleting: '",
                               "valueType": "string"
                             },
                             "operator": "+",
                             "right": {
+                              "kind": "memberAccess",
+                              "sourceKeys": {
+                                "objectKey": "dotExpression_5f8c22402655fe83",
+                                "sourceKey": "dotExpression_79b95067c254aa07"
+                              },
+                              "type": "object",
                               "object": "account",
                               "operator": ".",
                               "member": "Name"
@@ -1299,29 +1715,45 @@
         "modifier": {}
       },
       {
-        "type": "statement",
+        "kind": "statement",
         "statement": {
           "kind": "if",
           "sourceKeys": {
-            "objectKey": "ifStatement_dacb8e98ee84ba09",
-            "sourceKey": "ifStatement_b30ebc2e72ede331"
+            "objectKey": "ifStatement_5e6b517139fbd0b3",
+            "sourceKey": "ifStatement_6a9925af573dd857"
           },
           "conditionBlock": [
             {
               "condition": {
                 "kind": "ifCondition",
                 "sourceKeys": {
-                  "objectKey": "parExpression_a3e44d55ce0dd4e9",
-                  "sourceKey": "parExpression_5038210c1f43498b"
+                  "objectKey": "parExpression_54ef618d68b14318",
+                  "sourceKey": "parExpression_6e26e92aa8d76737"
                 },
                 "condition": {
+                  "sourceKeys": {
+                    "objectKey": "logAndExpression_df72ec134c3a9fad",
+                    "sourceKey": "logAndExpression_9b54b9258045e2ca"
+                  },
                   "left": {
+                    "kind": "memberAccess",
+                    "sourceKeys": {
+                      "objectKey": "dotExpression_2a328865aefdd5bd",
+                      "sourceKey": "dotExpression_c3c535ecec6ba972"
+                    },
+                    "type": "object",
                     "object": "Trigger",
                     "operator": ".",
                     "member": "isAfter"
                   },
                   "operator": "&&",
                   "right": {
+                    "kind": "memberAccess",
+                    "sourceKeys": {
+                      "objectKey": "dotExpression_49025812e308bb15",
+                      "sourceKey": "dotExpression_a97841d9e20ea5c4"
+                    },
+                    "type": "object",
                     "object": "Trigger",
                     "operator": ".",
                     "member": "isInsert"
@@ -1332,14 +1764,22 @@
                 {
                   "kind": "localVariable",
                   "sourceKeys": {
-                    "objectKey": "localVariableDeclarationStatement_74b0dd8886d3d39f",
-                    "sourceKey": "localVariableDeclarationStatement_07ddd06e5e11da3f"
+                    "objectKey": "localVariableDeclarationStatement_388af3aa562dd202",
+                    "sourceKey": "localVariableDeclarationStatement_e1c93ef38f11621b"
                   },
                   "variable": {
                     "variants": [
                       {
+                        "sourceKeys": {
+                          "objectKey": "variableDeclarator_bff776b62d95cdc4",
+                          "sourceKey": "variableDeclarator_6211aae0508e9e27"
+                        },
                         "name": "contacts",
                         "init": {
+                          "sourceKeys": {
+                            "objectKey": "newExpression_738c05d7072778d3",
+                            "sourceKey": "newExpression_020cb5ef4b2f41f6"
+                          },
                           "collection": [
                             "List"
                           ],
@@ -1347,23 +1787,24 @@
                             {
                               "kind": "type",
                               "sourceKeys": {
-                                "objectKey": "typeRef_b5837cead0b16ac8",
-                                "sourceKey": "typeRef_2846649f5d7257c7"
+                                "objectKey": "typeRef_fadd6d0c05fbfb71",
+                                "sourceKey": "typeRef_a0c4ac788b3b8f0b"
                               },
                               "type": "custom",
                               "customType": "Contact"
                             }
-                          ]
+                          ],
+                          "initType": "class"
                         }
                       }
                     ],
                     "variantsType": {
                       "kind": "type",
                       "sourceKeys": {
-                        "objectKey": "typeRef_20d637d3397e2cf4",
-                        "sourceKey": "typeRef_2d05e02b4f639172"
+                        "objectKey": "typeRef_eba68eb56e4606c3",
+                        "sourceKey": "typeRef_1855314cf93e5b44"
                       },
-                      "collectionType": "list",
+                      "type": "list",
                       "elementType": {
                         "type": "custom",
                         "customType": "Contact"
@@ -1375,26 +1816,32 @@
                 {
                   "kind": "for",
                   "sourceKeys": {
-                    "objectKey": "forStatement_af2e5532409481ae",
-                    "sourceKey": "forStatement_ae1b5acd3011d522"
+                    "objectKey": "forStatement_188434173ffc0847",
+                    "sourceKey": "forStatement_fcb0d530e04213a8"
                   },
                   "condition": {
                     "kind": "forCondition",
                     "sourceKeys": {
-                      "objectKey": "forControl_97179282f8221e58",
-                      "sourceKey": "forControl_33144eccd28a5284"
+                      "objectKey": "forControl_38e52f6b66743beb",
+                      "sourceKey": "forControl_a629981ac243e662"
                     },
                     "initializer": "account",
                     "initializeType": {
                       "kind": "type",
                       "sourceKeys": {
-                        "objectKey": "typeRef_16c0945431044f5d",
-                        "sourceKey": "typeRef_bf2a233e516fd7fb"
+                        "objectKey": "typeRef_f6180c936ec69d2a",
+                        "sourceKey": "typeRef_48d3c6c6877d6aed"
                       },
                       "type": "custom",
                       "customType": "Account"
                     },
                     "baseObject": {
+                      "kind": "memberAccess",
+                      "sourceKeys": {
+                        "objectKey": "dotExpression_2708e278520178f9",
+                        "sourceKey": "dotExpression_f1fe6bc550625057"
+                      },
+                      "type": "object",
                       "object": "Trigger",
                       "operator": ".",
                       "member": "new"
@@ -1404,32 +1851,63 @@
                     {
                       "kind": "expression",
                       "sourceKeys": {
-                        "objectKey": "expressionStatement_687fd76e297c5932",
-                        "sourceKey": "expressionStatement_92465727c1add60d"
+                        "objectKey": "expressionStatement_f9d0ce5047b528af",
+                        "sourceKey": "expressionStatement_8737ee4ec13075e1"
                       },
                       "value": {
+                        "kind": "memberAccess",
+                        "sourceKeys": {
+                          "objectKey": "dotExpression_0a37d233da39e8ee",
+                          "sourceKey": "dotExpression_9fedfaaec756f13f"
+                        },
+                        "type": "method",
                         "object": "contacts",
                         "operator": ".",
                         "member": "add",
                         "memberArg": [
                           {
+                            "sourceKeys": {
+                              "objectKey": "newExpression_bbcdc77c684bb97e",
+                              "sourceKey": "newExpression_f81203b53f6b0eff"
+                            },
                             "collection": [
                               "Contact"
                             ],
+                            "initType": "class",
                             "arg": [
                               {
+                                "sourceKeys": {
+                                  "objectKey": "assignExpression_06b2f8f9c2476b52",
+                                  "sourceKey": "assignExpression_cc561a675ef3cbc3"
+                                },
                                 "left": "LastName",
                                 "operator": "=",
                                 "right": {
+                                  "kind": "memberAccess",
+                                  "sourceKeys": {
+                                    "objectKey": "dotExpression_5f8c22402655fe83",
+                                    "sourceKey": "dotExpression_ca5d665b7de238cf"
+                                  },
+                                  "type": "object",
                                   "object": "account",
                                   "operator": ".",
                                   "member": "Name"
                                 }
                               },
                               {
+                                "sourceKeys": {
+                                  "objectKey": "assignExpression_36ffb8fca2bbace4",
+                                  "sourceKey": "assignExpression_2c67d8e933cefee5"
+                                },
                                 "left": "AccountId",
                                 "operator": "=",
                                 "right": {
+                                  "kind": "memberAccess",
+                                  "sourceKeys": {
+                                    "objectKey": "dotExpression_6b73b79c02cc497d",
+                                    "sourceKey": "dotExpression_dbd0945179024ade"
+                                  },
+                                  "type": "object",
                                   "object": "account",
                                   "operator": ".",
                                   "member": "Id"
@@ -1445,19 +1923,29 @@
                 {
                   "kind": "if",
                   "sourceKeys": {
-                    "objectKey": "ifStatement_de5124d11137d8ee",
-                    "sourceKey": "ifStatement_f89838382c6443f6"
+                    "objectKey": "ifStatement_9d67a52f1deaae23",
+                    "sourceKey": "ifStatement_f872d46a02abcc4b"
                   },
                   "conditionBlock": [
                     {
                       "condition": {
                         "kind": "ifCondition",
                         "sourceKeys": {
-                          "objectKey": "parExpression_c90f61046ccc002c",
-                          "sourceKey": "parExpression_067457b3b3c21560"
+                          "objectKey": "parExpression_89b68ec15cd5caa3",
+                          "sourceKey": "parExpression_d924103b59057f5c"
                         },
                         "condition": {
+                          "sourceKeys": {
+                            "objectKey": "negExpression_da8c3752c89e2fdb",
+                            "sourceKey": "negExpression_fff83533f1465b04"
+                          },
                           "variant": {
+                            "kind": "memberAccess",
+                            "sourceKeys": {
+                              "objectKey": "dotExpression_0d52920ab545258b",
+                              "sourceKey": "dotExpression_15b5526bb694434d"
+                            },
+                            "type": "method",
                             "object": "contacts",
                             "operator": ".",
                             "member": "isEmpty"
@@ -1470,8 +1958,8 @@
                         {
                           "kind": "insert",
                           "sourceKeys": {
-                            "objectKey": "insertStatement_1b79ac72d4f4f7b3",
-                            "sourceKey": "insertStatement_f253a299ab961e8f"
+                            "objectKey": "insertStatement_e9ed31167a42e51a",
+                            "sourceKey": "insertStatement_87d761fb634b3fa0"
                           },
                           "field": "contacts",
                           "accessLevel": "USER"
@@ -1487,29 +1975,45 @@
         "modifier": {}
       },
       {
-        "type": "statement",
+        "kind": "statement",
         "statement": {
           "kind": "if",
           "sourceKeys": {
-            "objectKey": "ifStatement_dbfa839301c2e62d",
-            "sourceKey": "ifStatement_0d1368bee1b9ed18"
+            "objectKey": "ifStatement_77edf81c0577c61a",
+            "sourceKey": "ifStatement_3e98bbac82a49f27"
           },
           "conditionBlock": [
             {
               "condition": {
                 "kind": "ifCondition",
                 "sourceKeys": {
-                  "objectKey": "parExpression_40cb21d89bd70f65",
-                  "sourceKey": "parExpression_60ecf77e29add360"
+                  "objectKey": "parExpression_41ffc3f8db275099",
+                  "sourceKey": "parExpression_619b4446abfd68b9"
                 },
                 "condition": {
+                  "sourceKeys": {
+                    "objectKey": "logAndExpression_5dfc95333f271a8d",
+                    "sourceKey": "logAndExpression_1a076da14c11ddbc"
+                  },
                   "left": {
+                    "kind": "memberAccess",
+                    "sourceKeys": {
+                      "objectKey": "dotExpression_2a328865aefdd5bd",
+                      "sourceKey": "dotExpression_2d610277073a7058"
+                    },
+                    "type": "object",
                     "object": "Trigger",
                     "operator": ".",
                     "member": "isAfter"
                   },
                   "operator": "&&",
                   "right": {
+                    "kind": "memberAccess",
+                    "sourceKeys": {
+                      "objectKey": "dotExpression_9be32e6b1c825b94",
+                      "sourceKey": "dotExpression_c12fc86c568bfab3"
+                    },
+                    "type": "object",
                     "object": "Trigger",
                     "operator": ".",
                     "member": "isUpdate"
@@ -1520,14 +2024,22 @@
                 {
                   "kind": "localVariable",
                   "sourceKeys": {
-                    "objectKey": "localVariableDeclarationStatement_14e51778898af045",
-                    "sourceKey": "localVariableDeclarationStatement_56d69de4fe65fca1"
+                    "objectKey": "localVariableDeclarationStatement_c0fba365ba1902e7",
+                    "sourceKey": "localVariableDeclarationStatement_e7459d77974ca83e"
                   },
                   "variable": {
                     "variants": [
                       {
+                        "sourceKeys": {
+                          "objectKey": "variableDeclarator_f13c9aef1f0790c8",
+                          "sourceKey": "variableDeclarator_1cc2bd1c2466e306"
+                        },
                         "name": "accountIds",
                         "init": {
+                          "sourceKeys": {
+                            "objectKey": "newExpression_5509b67b622b1608",
+                            "sourceKey": "newExpression_a9da560563719b97"
+                          },
                           "collection": [
                             "Set"
                           ],
@@ -1535,23 +2047,24 @@
                             {
                               "kind": "type",
                               "sourceKeys": {
-                                "objectKey": "typeRef_3d04cbf9478b92e2",
-                                "sourceKey": "typeRef_a2738eb5db1dd152"
+                                "objectKey": "typeRef_7825a4723f3a3334",
+                                "sourceKey": "typeRef_fd6afbe85cacecb3"
                               },
                               "type": "primitive",
                               "primitiveType": "Id"
                             }
-                          ]
+                          ],
+                          "initType": "class"
                         }
                       }
                     ],
                     "variantsType": {
                       "kind": "type",
                       "sourceKeys": {
-                        "objectKey": "typeRef_24f17573a601e5e9",
-                        "sourceKey": "typeRef_7d416eb0d08c4504"
+                        "objectKey": "typeRef_f7e09b396fc9b418",
+                        "sourceKey": "typeRef_6acf1420efcc4d05"
                       },
-                      "collectionType": "set",
+                      "type": "set",
                       "elementType": {
                         "type": "primitive",
                         "primitiveType": "Id"
@@ -1563,16 +2076,34 @@
                 {
                   "kind": "expression",
                   "sourceKeys": {
-                    "objectKey": "expressionStatement_8978b84a5f220117",
-                    "sourceKey": "expressionStatement_b33ae0450913b47c"
+                    "objectKey": "expressionStatement_1f1a749e5c98a384",
+                    "sourceKey": "expressionStatement_1c19e596d3804e1d"
                   },
                   "value": {
+                    "kind": "memberAccess",
+                    "sourceKeys": {
+                      "objectKey": "dotExpression_4b068e70ee377922",
+                      "sourceKey": "dotExpression_0f1a0158f70568f0"
+                    },
+                    "type": "method",
                     "object": "accountIds",
                     "operator": ".",
                     "member": "addAll",
                     "memberArg": [
                       {
+                        "kind": "memberAccess",
+                        "sourceKeys": {
+                          "objectKey": "dotExpression_fbbdcf1faf6d21f3",
+                          "sourceKey": "dotExpression_dc4f73381eeaa613"
+                        },
+                        "type": "method",
                         "object": {
+                          "kind": "memberAccess",
+                          "sourceKeys": {
+                            "objectKey": "dotExpression_8b578fb1fcaab4f4",
+                            "sourceKey": "dotExpression_e429237ed1e42fa7"
+                          },
+                          "type": "object",
                           "object": "Trigger",
                           "operator": ".",
                           "member": "newMap"
@@ -1586,26 +2117,30 @@
                 {
                   "kind": "localVariable",
                   "sourceKeys": {
-                    "objectKey": "localVariableDeclarationStatement_6564a5c54681495a",
-                    "sourceKey": "localVariableDeclarationStatement_cc2faf88a014fd37"
+                    "objectKey": "localVariableDeclarationStatement_7e3b1b59bf7a9768",
+                    "sourceKey": "localVariableDeclarationStatement_849c39f38658d221"
                   },
                   "variable": {
                     "variants": [
                       {
+                        "sourceKeys": {
+                          "objectKey": "variableDeclarator_71deeab208ec6cd8",
+                          "sourceKey": "variableDeclarator_d03ad01c9315013a"
+                        },
                         "name": "accounts",
                         "init": {
                           "kind": "soql",
                           "sourceKeys": {
-                            "objectKey": "query_a66a262c2f0d73cb",
-                            "sourceKey": "query_15a2baac9bd1ce4a"
+                            "objectKey": "query_4d832754aab28c99",
+                            "sourceKey": "query_d3a6a0fc3aa42448"
                           },
                           "select": {
                             "field": [
                               {
                                 "kind": "selectEntry",
                                 "sourceKeys": {
-                                  "objectKey": "selectEntry_1a6e1da553674376",
-                                  "sourceKey": "selectEntry_b8999b5f7fbd24d0"
+                                  "objectKey": "selectEntry_886c79ff3fc8c1d3",
+                                  "sourceKey": "selectEntry_17f566d8480d4798"
                                 },
                                 "type": "field",
                                 "field": [
@@ -1615,8 +2150,8 @@
                               {
                                 "kind": "selectEntry",
                                 "sourceKeys": {
-                                  "objectKey": "selectEntry_15970c8b542d5d3d",
-                                  "sourceKey": "selectEntry_1fb0ed8eaf1f2741"
+                                  "objectKey": "selectEntry_f4d214b37ba005bc",
+                                  "sourceKey": "selectEntry_4a7deb91e7d1409e"
                                 },
                                 "type": "field",
                                 "field": [
@@ -1626,29 +2161,27 @@
                               {
                                 "kind": "selectEntry",
                                 "sourceKeys": {
-                                  "objectKey": "selectEntry_13f8d70dedbca0b9",
-                                  "sourceKey": "selectEntry_eb9de3b8347d4d07"
+                                  "objectKey": "selectEntry_b725a95d010bbaa1",
+                                  "sourceKey": "selectEntry_c15d751b78821f76"
                                 },
                                 "type": "field",
                                 "field": [
                                   "Industry"
                                 ]
-                              }
-                            ],
-                            "subQuery": [
+                              },
                               {
                                 "kind": "subQuery",
                                 "sourceKeys": {
-                                  "objectKey": "subQuery_1eecf3c6da20ea5a",
-                                  "sourceKey": "subQuery_47b839e95b0b493a"
+                                  "objectKey": "subQuery_7d835a139dc6b744",
+                                  "sourceKey": "subQuery_7d7b85a74c749126"
                                 },
                                 "select": {
                                   "field": [
                                     {
                                       "kind": "selectEntry",
                                       "sourceKeys": {
-                                        "objectKey": "subFieldEntry_a31eb73652f5f2ec",
-                                        "sourceKey": "subFieldEntry_b0e626919da87cbc"
+                                        "objectKey": "subFieldEntry_96f6b309c6c61ccb",
+                                        "sourceKey": "subFieldEntry_60631999dc61d2cd"
                                       },
                                       "type": "field",
                                       "field": [
@@ -1658,8 +2191,8 @@
                                     {
                                       "kind": "selectEntry",
                                       "sourceKeys": {
-                                        "objectKey": "subFieldEntry_bb003060f5665c3e",
-                                        "sourceKey": "subFieldEntry_0bba647c6f132633"
+                                        "objectKey": "subFieldEntry_c15b977ffd6f269e",
+                                        "sourceKey": "subFieldEntry_4b78ac8246a284fd"
                                       },
                                       "type": "field",
                                       "field": [
@@ -1669,8 +2202,8 @@
                                     {
                                       "kind": "selectEntry",
                                       "sourceKeys": {
-                                        "objectKey": "subFieldEntry_97c3fa0ab8de64a4",
-                                        "sourceKey": "subFieldEntry_97af576d062f3a3b"
+                                        "objectKey": "subFieldEntry_d4a81a373fb26a99",
+                                        "sourceKey": "subFieldEntry_d0116590b07c04e2"
                                       },
                                       "type": "field",
                                       "field": [
@@ -1684,8 +2217,8 @@
                                     {
                                       "kind": "fromField",
                                       "sourceKeys": {
-                                        "objectKey": "fromName_5ed7c7042062a255",
-                                        "sourceKey": "fromName_d962013c1cc4b983"
+                                        "objectKey": "fromName_74f55303fc70d93e",
+                                        "sourceKey": "fromName_f75768e356409067"
                                       },
                                       "field": [
                                         "Contacts"
@@ -1701,8 +2234,8 @@
                               {
                                 "kind": "fromField",
                                 "sourceKeys": {
-                                  "objectKey": "fromName_4fac8444b015aa9c",
-                                  "sourceKey": "fromName_15b85eae24f056f2"
+                                  "objectKey": "fromName_719fa387d3fd8410",
+                                  "sourceKey": "fromName_05b9b0fc6f794e4a"
                                 },
                                 "field": [
                                   "Account"
@@ -1716,8 +2249,8 @@
                                 {
                                   "kind": "singleCondition",
                                   "sourceKeys": {
-                                    "objectKey": "fieldExpression_f54f696ae7f1e0a5",
-                                    "sourceKey": "fieldExpression_d4f53aa337a6a4ac"
+                                    "objectKey": "fieldExpression_e6ce068c712e159a",
+                                    "sourceKey": "fieldExpression_f3d96f045844d92a"
                                   },
                                   "field": {
                                     "type": "field",
@@ -1740,10 +2273,10 @@
                     "variantsType": {
                       "kind": "type",
                       "sourceKeys": {
-                        "objectKey": "typeRef_e7a6126512547d3d",
-                        "sourceKey": "typeRef_8007408171cb2017"
+                        "objectKey": "typeRef_ea7c57f43a96c57c",
+                        "sourceKey": "typeRef_561a1b412b1b52c1"
                       },
-                      "collectionType": "list",
+                      "type": "list",
                       "elementType": {
                         "type": "custom",
                         "customType": "Account"
@@ -1755,14 +2288,22 @@
                 {
                   "kind": "localVariable",
                   "sourceKeys": {
-                    "objectKey": "localVariableDeclarationStatement_e9ad9e3012383e32",
-                    "sourceKey": "localVariableDeclarationStatement_266d273fd2daef7b"
+                    "objectKey": "localVariableDeclarationStatement_5c70919bcb7b71bc",
+                    "sourceKey": "localVariableDeclarationStatement_bc736bfc80034411"
                   },
                   "variable": {
                     "variants": [
                       {
+                        "sourceKeys": {
+                          "objectKey": "variableDeclarator_14b655dc3d784458",
+                          "sourceKey": "variableDeclarator_f735c840179ccb19"
+                        },
                         "name": "toUpdate",
                         "init": {
+                          "sourceKeys": {
+                            "objectKey": "newExpression_738c05d7072778d3",
+                            "sourceKey": "newExpression_34a66d965f6424f6"
+                          },
                           "collection": [
                             "List"
                           ],
@@ -1770,23 +2311,24 @@
                             {
                               "kind": "type",
                               "sourceKeys": {
-                                "objectKey": "typeRef_b5837cead0b16ac8",
-                                "sourceKey": "typeRef_7220103afed8596b"
+                                "objectKey": "typeRef_fadd6d0c05fbfb71",
+                                "sourceKey": "typeRef_66d040ce64b9c947"
                               },
                               "type": "custom",
                               "customType": "Contact"
                             }
-                          ]
+                          ],
+                          "initType": "class"
                         }
                       }
                     ],
                     "variantsType": {
                       "kind": "type",
                       "sourceKeys": {
-                        "objectKey": "typeRef_20d637d3397e2cf4",
-                        "sourceKey": "typeRef_660a788d4f0b9634"
+                        "objectKey": "typeRef_eba68eb56e4606c3",
+                        "sourceKey": "typeRef_bf5261724b06bda3"
                       },
-                      "collectionType": "list",
+                      "type": "list",
                       "elementType": {
                         "type": "custom",
                         "customType": "Contact"
@@ -1798,21 +2340,21 @@
                 {
                   "kind": "for",
                   "sourceKeys": {
-                    "objectKey": "forStatement_cb411f5a141d5868",
-                    "sourceKey": "forStatement_8a704a1503cb10ba"
+                    "objectKey": "forStatement_2c7d22907802d77b",
+                    "sourceKey": "forStatement_45a7dd80c371e677"
                   },
                   "condition": {
                     "kind": "forCondition",
                     "sourceKeys": {
-                      "objectKey": "forControl_b2f6c0931b0479f2",
-                      "sourceKey": "forControl_ee3d14ea1667de3e"
+                      "objectKey": "forControl_058676e0c42eb7c4",
+                      "sourceKey": "forControl_069c23c7d9851edf"
                     },
                     "initializer": "account",
                     "initializeType": {
                       "kind": "type",
                       "sourceKeys": {
-                        "objectKey": "typeRef_16c0945431044f5d",
-                        "sourceKey": "typeRef_51d7d63239a936ab"
+                        "objectKey": "typeRef_f6180c936ec69d2a",
+                        "sourceKey": "typeRef_db8225644a88576a"
                       },
                       "type": "custom",
                       "customType": "Account"
@@ -1823,26 +2365,32 @@
                     {
                       "kind": "for",
                       "sourceKeys": {
-                        "objectKey": "forStatement_7193cfa5e01f5d43",
-                        "sourceKey": "forStatement_2dc17d2bb56300a2"
+                        "objectKey": "forStatement_ff5293f8579dbab3",
+                        "sourceKey": "forStatement_8eee8840abdaf6b2"
                       },
                       "condition": {
                         "kind": "forCondition",
                         "sourceKeys": {
-                          "objectKey": "forControl_35923210e589efd0",
-                          "sourceKey": "forControl_029f4d2e93b8fd78"
+                          "objectKey": "forControl_492cbc44a43046e0",
+                          "sourceKey": "forControl_b1def1fbc93e9653"
                         },
                         "initializer": "contact",
                         "initializeType": {
                           "kind": "type",
                           "sourceKeys": {
-                            "objectKey": "typeRef_b5837cead0b16ac8",
-                            "sourceKey": "typeRef_f31346cce218ab1e"
+                            "objectKey": "typeRef_fadd6d0c05fbfb71",
+                            "sourceKey": "typeRef_e4c21000eca94e64"
                           },
                           "type": "custom",
                           "customType": "Contact"
                         },
                         "baseObject": {
+                          "kind": "memberAccess",
+                          "sourceKeys": {
+                            "objectKey": "dotExpression_a8648cf86ebec140",
+                            "sourceKey": "dotExpression_3c32cfafa205cdf6"
+                          },
+                          "type": "object",
                           "object": "account",
                           "operator": ".",
                           "member": "Contacts"
@@ -1852,17 +2400,33 @@
                         {
                           "kind": "expression",
                           "sourceKeys": {
-                            "objectKey": "expressionStatement_2eb27b7b9a08ca5c",
-                            "sourceKey": "expressionStatement_5f09a9d6998f7bbb"
+                            "objectKey": "expressionStatement_15d3e8ad8ed37868",
+                            "sourceKey": "expressionStatement_fc4cde0339eb5b9c"
                           },
                           "value": {
+                            "sourceKeys": {
+                              "objectKey": "assignExpression_0edbccc7e5e46cca",
+                              "sourceKey": "assignExpression_2147ce809e7ca6d2"
+                            },
                             "left": {
+                              "kind": "memberAccess",
+                              "sourceKeys": {
+                                "objectKey": "dotExpression_e7c240ec751d7812",
+                                "sourceKey": "dotExpression_4026f02f573e6ac2"
+                              },
+                              "type": "object",
                               "object": "contact",
                               "operator": ".",
                               "member": "Description"
                             },
                             "operator": "=",
                             "right": {
+                              "kind": "memberAccess",
+                              "sourceKeys": {
+                                "objectKey": "dotExpression_5f8c22402655fe83",
+                                "sourceKey": "dotExpression_b7f89952e58cbd31"
+                              },
+                              "type": "object",
                               "object": "account",
                               "operator": ".",
                               "member": "Name"
@@ -1872,10 +2436,16 @@
                         {
                           "kind": "expression",
                           "sourceKeys": {
-                            "objectKey": "expressionStatement_5141a93b5de12b48",
-                            "sourceKey": "expressionStatement_9582ff0c9dc1901d"
+                            "objectKey": "expressionStatement_1a03b727e039f372",
+                            "sourceKey": "expressionStatement_920f4c4d45889cfe"
                           },
                           "value": {
+                            "kind": "memberAccess",
+                            "sourceKeys": {
+                              "objectKey": "dotExpression_41d5079165ad5b5d",
+                              "sourceKey": "dotExpression_4bc4c87cbbe6f47f"
+                            },
+                            "type": "method",
                             "object": "toUpdate",
                             "operator": ".",
                             "member": "add",
@@ -1891,8 +2461,8 @@
                 {
                   "kind": "update",
                   "sourceKeys": {
-                    "objectKey": "updateStatement_de650e075021e94f",
-                    "sourceKey": "updateStatement_3f9362cbb8333d2a"
+                    "objectKey": "updateStatement_ad7bdbbc04e26d23",
+                    "sourceKey": "updateStatement_7cba576bf9854c5c"
                   },
                   "field": "toUpdate"
                 }
@@ -1903,29 +2473,45 @@
         "modifier": {}
       },
       {
-        "type": "statement",
+        "kind": "statement",
         "statement": {
           "kind": "if",
           "sourceKeys": {
-            "objectKey": "ifStatement_4ce0cbb2c387ae34",
-            "sourceKey": "ifStatement_3d66706bb9c9926d"
+            "objectKey": "ifStatement_dbe835af535a2028",
+            "sourceKey": "ifStatement_7d5e5019d3a2c253"
           },
           "conditionBlock": [
             {
               "condition": {
                 "kind": "ifCondition",
                 "sourceKeys": {
-                  "objectKey": "parExpression_9945d8b3e734a789",
-                  "sourceKey": "parExpression_8a04253c428a3fcb"
+                  "objectKey": "parExpression_95a91bbcf28b08bf",
+                  "sourceKey": "parExpression_ab7d130369f886bf"
                 },
                 "condition": {
+                  "sourceKeys": {
+                    "objectKey": "logAndExpression_fa79c120c3ae8152",
+                    "sourceKey": "logAndExpression_e63fd21daa22c947"
+                  },
                   "left": {
+                    "kind": "memberAccess",
+                    "sourceKeys": {
+                      "objectKey": "dotExpression_2a328865aefdd5bd",
+                      "sourceKey": "dotExpression_31acfccce5c24dfa"
+                    },
+                    "type": "object",
                     "object": "Trigger",
                     "operator": ".",
                     "member": "isAfter"
                   },
                   "operator": "&&",
                   "right": {
+                    "kind": "memberAccess",
+                    "sourceKeys": {
+                      "objectKey": "dotExpression_17218d3ec9cb6edd",
+                      "sourceKey": "dotExpression_da3ca02d113263b8"
+                    },
+                    "type": "object",
                     "object": "Trigger",
                     "operator": ".",
                     "member": "isDelete"
@@ -1936,26 +2522,30 @@
                 {
                   "kind": "localVariable",
                   "sourceKeys": {
-                    "objectKey": "localVariableDeclarationStatement_f0d36d4995cedfce",
-                    "sourceKey": "localVariableDeclarationStatement_820ccc2232727311"
+                    "objectKey": "localVariableDeclarationStatement_3301dbd8b9d1605e",
+                    "sourceKey": "localVariableDeclarationStatement_84ab9dc60d53a088"
                   },
                   "variable": {
                     "variants": [
                       {
+                        "sourceKeys": {
+                          "objectKey": "variableDeclarator_7f1e6e30917336a0",
+                          "sourceKey": "variableDeclarator_37ab7886391f9e22"
+                        },
                         "name": "tasks",
                         "init": {
                           "kind": "soql",
                           "sourceKeys": {
-                            "objectKey": "query_0dce18924f920e19",
-                            "sourceKey": "query_2043c1f67860eef9"
+                            "objectKey": "query_56225651eed4a71f",
+                            "sourceKey": "query_3a851be7212bebd3"
                           },
                           "select": {
                             "field": [
                               {
                                 "kind": "selectEntry",
                                 "sourceKeys": {
-                                  "objectKey": "selectEntry_1a6e1da553674376",
-                                  "sourceKey": "selectEntry_e8a43a5a25629feb"
+                                  "objectKey": "selectEntry_886c79ff3fc8c1d3",
+                                  "sourceKey": "selectEntry_8eef5745cb70bd0b"
                                 },
                                 "type": "field",
                                 "field": [
@@ -1969,8 +2559,8 @@
                               {
                                 "kind": "fromField",
                                 "sourceKeys": {
-                                  "objectKey": "fromName_af54090379795252",
-                                  "sourceKey": "fromName_f4bbad7cd0500ee3"
+                                  "objectKey": "fromName_3f31d49aa7276cd8",
+                                  "sourceKey": "fromName_aa8f155509cfb03d"
                                 },
                                 "field": [
                                   "Task"
@@ -1984,8 +2574,8 @@
                                 {
                                   "kind": "singleCondition",
                                   "sourceKeys": {
-                                    "objectKey": "fieldExpression_5744b2c607c15e05",
-                                    "sourceKey": "fieldExpression_61a9cca7eb9c77b9"
+                                    "objectKey": "fieldExpression_36ccb93e07ba1181",
+                                    "sourceKey": "fieldExpression_607ab38f9d1ca911"
                                   },
                                   "field": {
                                     "type": "field",
@@ -1997,7 +2587,19 @@
                                   "value": {
                                     "type": "bind",
                                     "value": {
+                                      "kind": "memberAccess",
+                                      "sourceKeys": {
+                                        "objectKey": "dotExpression_874a891f1f074e9f",
+                                        "sourceKey": "dotExpression_227e33c27e8bb647"
+                                      },
+                                      "type": "method",
                                       "object": {
+                                        "kind": "memberAccess",
+                                        "sourceKeys": {
+                                          "objectKey": "dotExpression_35d496173d0b4be9",
+                                          "sourceKey": "dotExpression_d82140708ff2ee61"
+                                        },
+                                        "type": "object",
                                         "object": "Trigger",
                                         "operator": ".",
                                         "member": "oldMap"
@@ -2014,7 +2616,7 @@
                             "kind": "allRowsClause",
                             "sourceKeys": {
                               "objectKey": "allRowsClause_fe858f1bdc8b714c",
-                              "sourceKey": "allRowsClause_6d7c1839a704a174"
+                              "sourceKey": "allRowsClause_974d409120e84799"
                             },
                             "value": "ALL ROWS"
                           }
@@ -2024,10 +2626,10 @@
                     "variantsType": {
                       "kind": "type",
                       "sourceKeys": {
-                        "objectKey": "typeRef_9d3e7fc6f7468e5b",
-                        "sourceKey": "typeRef_db3bc72a8937cef6"
+                        "objectKey": "typeRef_b73a24664f39b031",
+                        "sourceKey": "typeRef_0e1ac7fd817e5013"
                       },
-                      "collectionType": "list",
+                      "type": "list",
                       "elementType": {
                         "type": "custom",
                         "customType": "Task"
@@ -2039,34 +2641,40 @@
                 {
                   "kind": "delete",
                   "sourceKeys": {
-                    "objectKey": "deleteStatement_6ce3ac392825ce8d",
-                    "sourceKey": "deleteStatement_67a833c0c641b12b"
+                    "objectKey": "deleteStatement_2f7345d336958af9",
+                    "sourceKey": "deleteStatement_c234ef6beb0c44d7"
                   },
                   "field": "tasks"
                 },
                 {
                   "kind": "for",
                   "sourceKeys": {
-                    "objectKey": "forStatement_9a9b78724ded9b9b",
-                    "sourceKey": "forStatement_92ac454fa824dd5e"
+                    "objectKey": "forStatement_9793fd066547e8bc",
+                    "sourceKey": "forStatement_e9de65e0c7869952"
                   },
                   "condition": {
                     "kind": "forCondition",
                     "sourceKeys": {
-                      "objectKey": "forControl_352574c40b842621",
-                      "sourceKey": "forControl_6b784d0989a1d6a4"
+                      "objectKey": "forControl_225422f9f1123f9f",
+                      "sourceKey": "forControl_43d92b81b4c83a3e"
                     },
                     "initializer": "account",
                     "initializeType": {
                       "kind": "type",
                       "sourceKeys": {
-                        "objectKey": "typeRef_16c0945431044f5d",
-                        "sourceKey": "typeRef_e2c93af76c7a29fc"
+                        "objectKey": "typeRef_f6180c936ec69d2a",
+                        "sourceKey": "typeRef_8cc81fb11f4b1dae"
                       },
                       "type": "custom",
                       "customType": "Account"
                     },
                     "baseObject": {
+                      "kind": "memberAccess",
+                      "sourceKeys": {
+                        "objectKey": "dotExpression_b2b7eac04e184f61",
+                        "sourceKey": "dotExpression_236d3e28055ed6c5"
+                      },
+                      "type": "object",
                       "object": "Trigger",
                       "operator": ".",
                       "member": "old"
@@ -2076,21 +2684,41 @@
                     {
                       "kind": "expression",
                       "sourceKeys": {
-                        "objectKey": "expressionStatement_7def96cb86bcebde",
-                        "sourceKey": "expressionStatement_abd1b48344b8cc8b"
+                        "objectKey": "expressionStatement_423e05cd20f911b6",
+                        "sourceKey": "expressionStatement_549ab34e4bb6f57b"
                       },
                       "value": {
+                        "kind": "memberAccess",
+                        "sourceKeys": {
+                          "objectKey": "dotExpression_e036d9df067b61b1",
+                          "sourceKey": "dotExpression_44c819a6411744dc"
+                        },
+                        "type": "method",
                         "object": "System",
                         "operator": ".",
                         "member": "debug",
                         "memberArg": [
                           {
+                            "sourceKeys": {
+                              "objectKey": "arth2Expression_f4a9bfd01301e2e4",
+                              "sourceKey": "arth2Expression_2f09204e8e705904"
+                            },
                             "left": {
+                              "sourceKeys": {
+                                "objectKey": "literal_06ec293d4c2f410f",
+                                "sourceKey": "literal_b818ad9de95974e6"
+                              },
                               "value": "'Deleted: '",
                               "valueType": "string"
                             },
                             "operator": "+",
                             "right": {
+                              "kind": "memberAccess",
+                              "sourceKeys": {
+                                "objectKey": "dotExpression_6b73b79c02cc497d",
+                                "sourceKey": "dotExpression_09e7620de99e1ae6"
+                              },
+                              "type": "object",
                               "object": "account",
                               "operator": ".",
                               "member": "Id"
@@ -2108,29 +2736,45 @@
         "modifier": {}
       },
       {
-        "type": "statement",
+        "kind": "statement",
         "statement": {
           "kind": "if",
           "sourceKeys": {
-            "objectKey": "ifStatement_0957922e43282f07",
-            "sourceKey": "ifStatement_4f70f1ac4ac880f4"
+            "objectKey": "ifStatement_47f31c6e1cdb2645",
+            "sourceKey": "ifStatement_1369abe2967da1bc"
           },
           "conditionBlock": [
             {
               "condition": {
                 "kind": "ifCondition",
                 "sourceKeys": {
-                  "objectKey": "parExpression_745d101b543551e5",
-                  "sourceKey": "parExpression_20a45f59ec2f3c2b"
+                  "objectKey": "parExpression_bd46c367f82dcf49",
+                  "sourceKey": "parExpression_07fc86ed2b6bd231"
                 },
                 "condition": {
+                  "sourceKeys": {
+                    "objectKey": "logAndExpression_02c4f9471292f83e",
+                    "sourceKey": "logAndExpression_832ddf864cc2996a"
+                  },
                   "left": {
+                    "kind": "memberAccess",
+                    "sourceKeys": {
+                      "objectKey": "dotExpression_2a328865aefdd5bd",
+                      "sourceKey": "dotExpression_985612eaa5f858ac"
+                    },
+                    "type": "object",
                     "object": "Trigger",
                     "operator": ".",
                     "member": "isAfter"
                   },
                   "operator": "&&",
                   "right": {
+                    "kind": "memberAccess",
+                    "sourceKeys": {
+                      "objectKey": "dotExpression_dd15bc4a1f17f6f6",
+                      "sourceKey": "dotExpression_be3f26cee6162ae2"
+                    },
+                    "type": "object",
                     "object": "Trigger",
                     "operator": ".",
                     "member": "isUndelete"
@@ -2141,8 +2785,8 @@
                 {
                   "kind": "try",
                   "sourceKeys": {
-                    "objectKey": "tryStatement_18a2f478b8157943",
-                    "sourceKey": "tryStatement_4608709fb2945393"
+                    "objectKey": "tryStatement_7003881e83700cfc",
+                    "sourceKey": "tryStatement_55e9c53f988713ea"
                   },
                   "block": [
                     {
@@ -2151,26 +2795,32 @@
                         {
                           "kind": "for",
                           "sourceKeys": {
-                            "objectKey": "forStatement_f94e86fbbf228c9e",
-                            "sourceKey": "forStatement_e87f3dd3e332cd26"
+                            "objectKey": "forStatement_06f625b004cfe2c8",
+                            "sourceKey": "forStatement_cb0b9d6439a64ac5"
                           },
                           "condition": {
                             "kind": "forCondition",
                             "sourceKeys": {
-                              "objectKey": "forControl_97179282f8221e58",
-                              "sourceKey": "forControl_9f5d983a45ae1d78"
+                              "objectKey": "forControl_38e52f6b66743beb",
+                              "sourceKey": "forControl_f3c5f736eca3ee5e"
                             },
                             "initializer": "account",
                             "initializeType": {
                               "kind": "type",
                               "sourceKeys": {
-                                "objectKey": "typeRef_16c0945431044f5d",
-                                "sourceKey": "typeRef_52ca1cdd075e00d3"
+                                "objectKey": "typeRef_f6180c936ec69d2a",
+                                "sourceKey": "typeRef_c0305c6dd1ef5a67"
                               },
                               "type": "custom",
                               "customType": "Account"
                             },
                             "baseObject": {
+                              "kind": "memberAccess",
+                              "sourceKeys": {
+                                "objectKey": "dotExpression_2708e278520178f9",
+                                "sourceKey": "dotExpression_0b5ae08e629badb7"
+                              },
+                              "type": "object",
                               "object": "Trigger",
                               "operator": ".",
                               "member": "new"
@@ -2180,19 +2830,39 @@
                             {
                               "kind": "expression",
                               "sourceKeys": {
-                                "objectKey": "expressionStatement_11d669e487eb6034",
-                                "sourceKey": "expressionStatement_b107389a7ff6981a"
+                                "objectKey": "expressionStatement_78f7da7340af7e85",
+                                "sourceKey": "expressionStatement_d5eb64f6598a7954"
                               },
                               "value": {
+                                "kind": "memberAccess",
+                                "sourceKeys": {
+                                  "objectKey": "methodCallExpression_f193c5f9dbdce42a",
+                                  "sourceKey": "methodCallExpression_01465682425dda04"
+                                },
+                                "type": "method",
                                 "member": "log",
                                 "memberArg": [
                                   {
+                                    "sourceKeys": {
+                                      "objectKey": "arth2Expression_8f7b70333c71ec11",
+                                      "sourceKey": "arth2Expression_945b634041316a59"
+                                    },
                                     "left": {
+                                      "sourceKeys": {
+                                        "objectKey": "literal_96c783b5260796cd",
+                                        "sourceKey": "literal_96766188b37c267e"
+                                      },
                                       "value": "'Restored: '",
                                       "valueType": "string"
                                     },
                                     "operator": "+",
                                     "right": {
+                                      "kind": "memberAccess",
+                                      "sourceKeys": {
+                                        "objectKey": "dotExpression_6b73b79c02cc497d",
+                                        "sourceKey": "dotExpression_a1989304d640e232"
+                                      },
+                                      "type": "object",
                                       "object": "account",
                                       "operator": ".",
                                       "member": "Id"
@@ -2211,16 +2881,16 @@
                         "kind": "catchCondition",
                         "sourceKeys": {
                           "base": {
-                            "objectKey": "catchClause_d18616b0bc9c1332",
-                            "sourceKey": "catchClause_09a95f60f1cb2f04"
+                            "objectKey": "catchClause_88cff7cc4de4bf04",
+                            "sourceKey": "catchClause_99ea89fb374a4848"
                           },
                           "exception": {
                             "objectKey": "id_b6ffa7df1c4da983",
-                            "sourceKey": "id_f197f985216c37f9"
+                            "sourceKey": "id_89d9df7ec414f0e5"
                           },
                           "exceptionType": {
                             "objectKey": "qualifiedName_cab76848af5ff734",
-                            "sourceKey": "qualifiedName_6fbba2658719029f"
+                            "sourceKey": "qualifiedName_6e6c8318e8291b94"
                           }
                         },
                         "exception": "e",
@@ -2233,15 +2903,27 @@
                         {
                           "kind": "expression",
                           "sourceKeys": {
-                            "objectKey": "expressionStatement_0b611757aa6ac3b6",
-                            "sourceKey": "expressionStatement_1d8e3c260526a7a5"
+                            "objectKey": "expressionStatement_f04ebaa6ead87b94",
+                            "sourceKey": "expressionStatement_024dacf8e537fef2"
                           },
                           "value": {
+                            "kind": "memberAccess",
+                            "sourceKeys": {
+                              "objectKey": "dotExpression_c09c7aa004b5b9f9",
+                              "sourceKey": "dotExpression_782bd02ddc262340"
+                            },
+                            "type": "method",
                             "object": "System",
                             "operator": ".",
                             "member": "debug",
                             "memberArg": [
                               {
+                                "kind": "memberAccess",
+                                "sourceKeys": {
+                                  "objectKey": "dotExpression_c64ef02a8f29fc2f",
+                                  "sourceKey": "dotExpression_b4b6a73d2232ea09"
+                                },
+                                "type": "method",
                                 "object": "e",
                                 "operator": ".",
                                 "member": "getMessage"

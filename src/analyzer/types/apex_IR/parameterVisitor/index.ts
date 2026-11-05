@@ -32,4 +32,3 @@ export class ParameterVisitor extends ApexCommonVisitor<ParameterTypeClass<strin
         return SoqlFieldsParameterTypeClass.create(ctx);
     }
 }
-

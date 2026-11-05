@@ -42,4 +42,3 @@ export const isSignedIntegerType = (
 ): target is SignedIntegerTypeClass => {
     return target instanceof SignedIntegerTypeClass;
 };
-

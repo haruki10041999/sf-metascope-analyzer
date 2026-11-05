@@ -3,12 +3,7 @@ import { UpdateListContext } from '@apexdevtools/apex-parser';
 import { ListTypeClass, ListVisitor } from '.';
 
 import { UpdateTypeTypeClass, ClauseVisitor, isUpdateTypeType } from '../clauseVisitor';
-import {
-    ApexErrorTypeClass,
-    ApexCommonTypeClass,
-    isApexValidClass,
-    isApexValidClassList,
-} from '../commonVisitor';
+import { ApexErrorTypeClass, ApexCommonTypeClass, visitNode } from '../commonVisitor';
 
 export class UpdateListTypeClass extends ListTypeClass<'updateList', UpdateTypeTypeClass> {
     private constructor(value: (UpdateTypeTypeClass | ApexErrorTypeClass)[]) {
@@ -21,16 +16,13 @@ export class UpdateListTypeClass extends ListTypeClass<'updateList', UpdateTypeT
         }
 
         const value: (UpdateTypeTypeClass | ApexErrorTypeClass)[] = [
-            isApexValidClass(
-                new ClauseVisitor().visit(ctx.updateType()),
-                isUpdateTypeType,
-                'updateType',
-            ),
+            visitNode(new ClauseVisitor(), ctx.updateType(), isUpdateTypeType, 'updateType'),
         ];
 
         if (ctx.updateList()) {
-            const nested = isApexValidClass(
-                new ListVisitor().visit(ctx.updateList()),
+            const nested = visitNode(
+                new ListVisitor(),
+                ctx.updateList(),
                 isUpdateListType,
                 'updateList',
             );
@@ -51,4 +43,3 @@ export const isUpdateListType = (
 ): target is UpdateListTypeClass => {
     return target instanceof UpdateListTypeClass;
 };
-

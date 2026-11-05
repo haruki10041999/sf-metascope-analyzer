@@ -1,13 +1,46 @@
 import { isContinueStatement, type ContinueStatement } from '@babel/types';
-import { EvaluatePair, LwcCommonTypeClass, makeEvaluatePair } from '../commonVisitor';
+import {
+    EvaluatePair,
+    LwcCommonTypeClass,
+    LwcErrorTypeClass,
+    lazyPairs,
+    makeEvaluatePair,
+    visitOptionalNode,
+} from '../commonVisitor';
+import { identifierTypePair, type IdentifierTypeClass } from './identifier';
+
+const continueStatementLabelPairs = lazyPairs(() => [identifierTypePair] as const);
+
+export type ContinueStatementFields = {
+    label: IdentifierTypeClass | LwcErrorTypeClass | null;
+};
 
 export class ContinueStatementTypeClass extends LwcCommonTypeClass<'continueStatement'> {
-    private constructor(originalSource: string) {
-        super('continueStatement', originalSource);
+    private readonly value: ContinueStatementFields;
+
+    private constructor(value: ContinueStatementFields) {
+        super('continueStatement');
+        this.value = value;
     }
 
     static create(target: ContinueStatement, originalSource: string): ContinueStatementTypeClass {
-        throw new Error('ContinueStatementTypeClass.create is not implemented: ' + target.type);
+        return new ContinueStatementTypeClass({
+            label: visitOptionalNode(
+                target.label,
+                originalSource,
+                continueStatementLabelPairs(),
+                'ContinueStatement.label',
+            ),
+        });
+    }
+
+    /** すべてのフィールド (Babel の value フィールドの getter getValue() と区別する。getChildNodes もこれから作る) */
+    override getFields(): ContinueStatementFields {
+        return this.value;
+    }
+
+    getLabel(): ContinueStatementFields['label'] {
+        return this.value.label;
     }
 }
 

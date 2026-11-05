@@ -7,7 +7,7 @@ import {
     ExpressionVisitor,
     isBasedExpressionType,
 } from '../expressionVisitor';
-import { ApexErrorTypeClass, ApexCommonTypeClass, isApexValidClassList } from '../commonVisitor';
+import { ApexErrorTypeClass, ApexCommonTypeClass, visitNodeList } from '../commonVisitor';
 
 export class ArrayInitializerTypeClass extends VariableListTypeClass<
     'arrayInitializer',
@@ -19,9 +19,9 @@ export class ArrayInitializerTypeClass extends VariableListTypeClass<
 
     public static create(ctx: ArrayInitializerContext) {
         return new ArrayInitializerTypeClass(
-            isApexValidClassList(
+            visitNodeList(
+                new ExpressionVisitor(),
                 ctx.expression_list(),
-                (ctx) => new ExpressionVisitor().visit(ctx),
                 isBasedExpressionType,
                 'expression',
             ),
@@ -34,4 +34,3 @@ export const isArrayInitializerType = (
 ): target is ArrayInitializerTypeClass => {
     return target instanceof ArrayInitializerTypeClass;
 };
-

@@ -3,7 +3,7 @@ import { MethodCallExpressionContext } from '@apexdevtools/apex-parser';
 import { ExpressionTypeClass } from '../expressionVisitor';
 
 import { MethodCallTypeClass, CallVisitor, isMethodCallType } from '../callVisitor';
-import { ApexErrorTypeClass, ApexCommonTypeClass, isApexValidClass } from '../commonVisitor';
+import { ApexErrorTypeClass, ApexCommonTypeClass, visitNode } from '../commonVisitor';
 
 export class MethodCallExpressionTypeClass extends ExpressionTypeClass<
     'methodCallExpression',
@@ -19,7 +19,7 @@ export class MethodCallExpressionTypeClass extends ExpressionTypeClass<
         }
 
         return new MethodCallExpressionTypeClass(
-            isApexValidClass(new CallVisitor().visit(ctx.methodCall()), isMethodCallType, 'value'),
+            visitNode(new CallVisitor(), ctx.methodCall(), isMethodCallType, 'value'),
         );
     }
 }
@@ -29,4 +29,3 @@ export const isMethodCallExpressionType = (
 ): target is MethodCallExpressionTypeClass => {
     return target instanceof MethodCallExpressionTypeClass;
 };
-

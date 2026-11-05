@@ -2,12 +2,12 @@ import { isTSVoidKeyword, type TSVoidKeyword } from '@babel/types';
 import { EvaluatePair, LwcCommonTypeClass, makeEvaluatePair } from '../commonVisitor';
 
 export class TSVoidKeywordTypeClass extends LwcCommonTypeClass<'tSVoidKeyword'> {
-    private constructor(originalSource: string) {
-        super('tSVoidKeyword', originalSource);
+    private constructor() {
+        super('tSVoidKeyword');
     }
 
-    static create(target: TSVoidKeyword, originalSource: string): TSVoidKeywordTypeClass {
-        throw new Error('TSVoidKeywordTypeClass.create is not implemented: ' + target.type);
+    static create(_target: TSVoidKeyword, _originalSource: string): TSVoidKeywordTypeClass {
+        return new TSVoidKeywordTypeClass();
     }
 }
 

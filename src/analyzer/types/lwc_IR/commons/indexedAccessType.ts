@@ -1,13 +1,54 @@
 import { isIndexedAccessType, type IndexedAccessType } from '@babel/types';
-import { EvaluatePair, LwcCommonTypeClass, makeEvaluatePair } from '../commonVisitor';
+import {
+    EvaluatePair,
+    LwcCommonTypeClass,
+    LwcErrorTypeClass,
+    makeEvaluatePair,
+    visitNode,
+} from '../commonVisitor';
+import { flowTypeVisitorEvaluatePairs, type FlowTypeTypeClass } from '../flowTypeVisitor';
+
+export type IndexedAccessTypeFields = {
+    objectType: FlowTypeTypeClass | LwcErrorTypeClass;
+    indexType: FlowTypeTypeClass | LwcErrorTypeClass;
+};
 
 export class IndexedAccessTypeTypeClass extends LwcCommonTypeClass<'indexedAccessType'> {
-    private constructor(originalSource: string) {
-        super('indexedAccessType', originalSource);
+    private readonly value: IndexedAccessTypeFields;
+
+    private constructor(value: IndexedAccessTypeFields) {
+        super('indexedAccessType');
+        this.value = value;
     }
 
     static create(target: IndexedAccessType, originalSource: string): IndexedAccessTypeTypeClass {
-        throw new Error('IndexedAccessTypeTypeClass.create is not implemented: ' + target.type);
+        return new IndexedAccessTypeTypeClass({
+            objectType: visitNode(
+                target.objectType,
+                originalSource,
+                flowTypeVisitorEvaluatePairs(),
+                'FlowTypeVisitor',
+            ),
+            indexType: visitNode(
+                target.indexType,
+                originalSource,
+                flowTypeVisitorEvaluatePairs(),
+                'FlowTypeVisitor',
+            ),
+        });
+    }
+
+    /** すべてのフィールド (Babel の value フィールドの getter getValue() と区別する。getChildNodes もこれから作る) */
+    override getFields(): IndexedAccessTypeFields {
+        return this.value;
+    }
+
+    getObjectType(): IndexedAccessTypeFields['objectType'] {
+        return this.value.objectType;
+    }
+
+    getIndexType(): IndexedAccessTypeFields['indexType'] {
+        return this.value.indexType;
     }
 }
 

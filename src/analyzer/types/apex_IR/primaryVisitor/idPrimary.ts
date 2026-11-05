@@ -4,7 +4,7 @@ import { NormalIdTypeClass, IdVisitor, isNormalIdType } from '../idVisitor';
 
 import { PrimaryTypeClass } from '.';
 
-import { ApexCommonTypeClass, ApexErrorTypeClass, isApexValidClass } from '../commonVisitor';
+import { ApexCommonTypeClass, ApexErrorTypeClass, visitNode } from '../commonVisitor';
 
 export class IdPrimaryTypeClass extends PrimaryTypeClass<'idPrimary', NormalIdTypeClass> {
     private constructor(value: NormalIdTypeClass | ApexErrorTypeClass) {
@@ -16,9 +16,7 @@ export class IdPrimaryTypeClass extends PrimaryTypeClass<'idPrimary', NormalIdTy
             throw new Error('値が異常です。IdPrimaryContext: ' + ctx.getText());
         }
 
-        return new IdPrimaryTypeClass(
-            isApexValidClass(new IdVisitor().visit(ctx.id()), isNormalIdType, 'id'),
-        );
+        return new IdPrimaryTypeClass(visitNode(new IdVisitor(), ctx.id(), isNormalIdType, 'id'));
     }
 }
 
@@ -27,4 +25,3 @@ export const isIdPrimaryType = (
 ): target is IdPrimaryTypeClass => {
     return target instanceof IdPrimaryTypeClass;
 };
-

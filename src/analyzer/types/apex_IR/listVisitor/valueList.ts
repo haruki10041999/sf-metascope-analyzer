@@ -3,7 +3,7 @@ import { ValueListContext } from '@apexdevtools/apex-parser';
 import { ListTypeClass } from '../listVisitor';
 
 import { NormalValueTypeClass, ValueVisitor, isNormalValueType } from '../valueVisitor';
-import { ApexErrorTypeClass, ApexCommonTypeClass, isApexValidClassList } from '../commonVisitor';
+import { ApexErrorTypeClass, ApexCommonTypeClass, visitNodeList } from '../commonVisitor';
 
 export class ValueListTypeClass extends ListTypeClass<'valueList', NormalValueTypeClass> {
     private constructor(value: (NormalValueTypeClass | ApexErrorTypeClass)[]) {
@@ -16,12 +16,7 @@ export class ValueListTypeClass extends ListTypeClass<'valueList', NormalValueTy
         }
 
         return new ValueListTypeClass(
-            isApexValidClassList(
-                ctx.value_list(),
-                (ctx) => new ValueVisitor().visit(ctx),
-                isNormalValueType,
-                'value',
-            ),
+            visitNodeList(new ValueVisitor(), ctx.value_list(), isNormalValueType, 'value'),
         );
     }
 }
@@ -31,4 +26,3 @@ export const isValueListType = (
 ): target is ValueListTypeClass => {
     return target instanceof ValueListTypeClass;
 };
-

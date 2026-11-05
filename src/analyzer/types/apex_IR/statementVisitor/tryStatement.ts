@@ -13,8 +13,9 @@ import { CatchClauseTypeClass, ClauseVisitor, isCatchClauseType } from '../claus
 import {
     ApexErrorTypeClass,
     ApexCommonTypeClass,
-    isApexValidClass,
-    isApexValidClassList,
+    visitNodeList,
+    visitNode,
+    visitOptionalNode,
 } from '../commonVisitor';
 
 export class TryStatementTypeClass extends StatementTypeClass<
@@ -40,20 +41,19 @@ export class TryStatementTypeClass extends StatementTypeClass<
         }
 
         return new TryStatementTypeClass(
-            isApexValidClass(new BlockVisitor().visit(ctx.block()), isNormalBlockType, 'block'),
-            isApexValidClassList(
+            visitNode(new BlockVisitor(), ctx.block(), isNormalBlockType, 'block'),
+            visitNodeList(
+                new ClauseVisitor(),
                 ctx.catchClause_list() || [],
-                (ctx) => new ClauseVisitor().visit(ctx),
                 isCatchClauseType,
                 'catchClause',
             ),
-            ctx.finallyBlock()
-                ? isApexValidClass(
-                      new BlockVisitor().visit(ctx.finallyBlock()),
-                      isFinallyBlockType,
-                      'finallyBlock',
-                  )
-                : null,
+            visitOptionalNode(
+                new BlockVisitor(),
+                ctx.finallyBlock(),
+                isFinallyBlockType,
+                'finallyBlock',
+            ),
         );
     }
 
@@ -71,4 +71,3 @@ export const isTryStatementType = (
 ): target is TryStatementTypeClass => {
     return target instanceof TryStatementTypeClass;
 };
-

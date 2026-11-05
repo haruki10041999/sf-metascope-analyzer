@@ -3,11 +3,7 @@ import type { ApexParser, ApexParserRuleContext } from '@apexdevtools/apex-parse
 import { parse } from '../apex_IR/helpers';
 import { UnitVisitor } from '../../src/analyzer/types/apex_IR/unitVisitor';
 import {
-    assignMultiClass,
-    makeAnonymousUnitAssignRule,
-    makeCompilationUnitAssignRule,
-    makeErrorAssignRule,
-    makeTriggerUnitAssignRule,
+    convertApexUnit,
 } from '../../src/analyzer/types/apex/converter';
 import { makeConvertType, regenerateSourceObjects } from '../../src/analyzer/types/apex/commons';
 import { JsonType } from '../../src/analyzer/types/commons';
@@ -28,12 +24,7 @@ export const toCommonType = (
     rule: (parser: ApexParser) => ApexParserRuleContext,
 ) => {
     const unit = new UnitVisitor().visit(parse(source, rule));
-    return assignMultiClass(unit, [
-        makeCompilationUnitAssignRule,
-        makeTriggerUnitAssignRule,
-        makeAnonymousUnitAssignRule,
-        makeErrorAssignRule,
-    ]);
+    return convertApexUnit(unit);
 };
 
 /**

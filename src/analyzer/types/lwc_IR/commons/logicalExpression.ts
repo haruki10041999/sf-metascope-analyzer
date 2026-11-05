@@ -1,13 +1,60 @@
 import { isLogicalExpression, type LogicalExpression } from '@babel/types';
-import { EvaluatePair, LwcCommonTypeClass, makeEvaluatePair } from '../commonVisitor';
+import {
+    EvaluatePair,
+    LwcCommonTypeClass,
+    LwcErrorTypeClass,
+    makeEvaluatePair,
+    visitNode,
+} from '../commonVisitor';
+import { expressionVisitorEvaluatePairs, type ExpressionTypeClass } from '../expressionVisitor';
+
+export type LogicalExpressionFields = {
+    operator: LogicalExpression['operator'];
+    left: ExpressionTypeClass | LwcErrorTypeClass;
+    right: ExpressionTypeClass | LwcErrorTypeClass;
+};
 
 export class LogicalExpressionTypeClass extends LwcCommonTypeClass<'logicalExpression'> {
-    private constructor(originalSource: string) {
-        super('logicalExpression', originalSource);
+    private readonly value: LogicalExpressionFields;
+
+    private constructor(value: LogicalExpressionFields) {
+        super('logicalExpression');
+        this.value = value;
     }
 
     static create(target: LogicalExpression, originalSource: string): LogicalExpressionTypeClass {
-        throw new Error('LogicalExpressionTypeClass.create is not implemented: ' + target.type);
+        return new LogicalExpressionTypeClass({
+            operator: target.operator,
+            left: visitNode(
+                target.left,
+                originalSource,
+                expressionVisitorEvaluatePairs(),
+                'ExpressionVisitor',
+            ),
+            right: visitNode(
+                target.right,
+                originalSource,
+                expressionVisitorEvaluatePairs(),
+                'ExpressionVisitor',
+            ),
+        });
+    }
+
+    /** すべてのフィールド (Babel の value フィールドの getter getValue() と区別する。getChildNodes もこれから作る) */
+    override getFields(): LogicalExpressionFields {
+        return this.value;
+    }
+
+    getOperator(): LogicalExpressionFields['operator'] {
+        return this.value.operator;
+    }
+
+    getLeft(): LogicalExpressionFields['left'] {
+        return this.value.left;
+    }
+
+    getRight(): LogicalExpressionFields['right'] {
+        return this.value.right;
     }
 }
 

@@ -88,7 +88,9 @@ export type QueryAllTypeClass =
     | QueryTypeClass<string, unknown>
     | SoqlQueryTypeClass<string, unknown>;
 
-export const isQueryTypeAll = (target: ApexCommonTypeClass<string>): target is QueryAllTypeClass => {
+export const isQueryTypeAll = (
+    target: ApexCommonTypeClass<string>,
+): target is QueryAllTypeClass => {
     return (
         target instanceof QueryValueTypeClass ||
         target instanceof QueryTypeClass ||

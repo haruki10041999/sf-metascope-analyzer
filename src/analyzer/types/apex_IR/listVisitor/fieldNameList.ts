@@ -3,7 +3,7 @@ import { FieldNameListContext } from '@apexdevtools/apex-parser';
 import { ListTypeClass } from '.';
 
 import { FieldNameTypeClass, NameVisitor, isFieldNameType } from '../nameVisitor';
-import { ApexErrorTypeClass, ApexCommonTypeClass, isApexValidClassList } from '../commonVisitor';
+import { ApexErrorTypeClass, ApexCommonTypeClass, visitNodeList } from '../commonVisitor';
 
 export class FieldNameListTypeClass extends ListTypeClass<'fieldNameList', FieldNameTypeClass> {
     private constructor(value: (FieldNameTypeClass | ApexErrorTypeClass)[]) {
@@ -16,12 +16,7 @@ export class FieldNameListTypeClass extends ListTypeClass<'fieldNameList', Field
         }
 
         return new FieldNameListTypeClass(
-            isApexValidClassList(
-                ctx.fieldName_list(),
-                (ctx) => new NameVisitor().visit(ctx),
-                isFieldNameType,
-                'fieldName',
-            ),
+            visitNodeList(new NameVisitor(), ctx.fieldName_list(), isFieldNameType, 'fieldName'),
         );
     }
 }
@@ -31,4 +26,3 @@ export const isFieldNameListType = (
 ): target is FieldNameListTypeClass => {
     return target instanceof FieldNameListTypeClass;
 };
-

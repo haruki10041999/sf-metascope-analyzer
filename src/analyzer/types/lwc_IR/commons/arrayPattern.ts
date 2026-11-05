@@ -1,18 +1,91 @@
-import { isArrayPattern, ArrayPattern } from '@babel/types';
-import { EvaluatePair, LwcCommonTypeClass, makeEvaluatePair } from '../commonVisitor';
-import { PatternLikeTypeClass } from '../patternLike';
-import { DecoratorTypeClass } from './decorator';
+import { isArrayPattern, type ArrayPattern } from '@babel/types';
+import {
+    EvaluatePair,
+    LwcCommonTypeClass,
+    LwcErrorTypeClass,
+    lazyPairs,
+    makeEvaluatePair,
+    visitNodeList,
+    visitNullableNodeList,
+    visitOptionalNode,
+} from '../commonVisitor';
+import {
+    typeAnnotationTypePair,
+    type TypeAnnotationTypeClass,
+} from '../flowVisitor/typeAnnotation';
+import { patternLikeVisitorEvaluatePairs, type PatternLikeTypeClass } from '../patternLikeVisitor';
+import {
+    tSTypeAnnotationTypePair,
+    type TSTypeAnnotationTypeClass,
+} from '../typeScriptVisitor/tSTypeAnnotation';
+import { decoratorTypePair, type DecoratorTypeClass } from './decorator';
+
+const arrayPatternTypeAnnotationPairs = lazyPairs(
+    () => [typeAnnotationTypePair, tSTypeAnnotationTypePair] as const,
+);
+const arrayPatternDecoratorsPairs = lazyPairs(() => [decoratorTypePair] as const);
+
+export type ArrayPatternFields = {
+    typeAnnotation: TypeAnnotationTypeClass | TSTypeAnnotationTypeClass | LwcErrorTypeClass | null;
+    optional: NonNullable<ArrayPattern['optional']> | null;
+    decorators: (DecoratorTypeClass | LwcErrorTypeClass)[] | null;
+    elements: (PatternLikeTypeClass | LwcErrorTypeClass | null)[];
+};
 
 export class ArrayPatternTypeClass extends LwcCommonTypeClass<'arrayPattern'> {
-    private value: (null | PatternLikeTypeClass)[];
-    private decorator: DecoratorTypeClass[];
+    private readonly value: ArrayPatternFields;
 
-    private constructor(originalSource: string) {
-        super('arrayPattern', originalSource);
+    private constructor(value: ArrayPatternFields) {
+        super('arrayPattern');
+        this.value = value;
     }
 
     static create(target: ArrayPattern, originalSource: string): ArrayPatternTypeClass {
-        throw new Error('ArrayPatternTypeClass.create is not implemented: ' + target.type);
+        return new ArrayPatternTypeClass({
+            typeAnnotation: visitOptionalNode(
+                target.typeAnnotation,
+                originalSource,
+                arrayPatternTypeAnnotationPairs(),
+                'ArrayPattern.typeAnnotation',
+            ),
+            optional: target.optional ?? null,
+            decorators:
+                target.decorators == null
+                    ? null
+                    : visitNodeList(
+                          target.decorators,
+                          originalSource,
+                          arrayPatternDecoratorsPairs(),
+                          'ArrayPattern.decorators',
+                      ),
+            elements: visitNullableNodeList(
+                target.elements,
+                originalSource,
+                patternLikeVisitorEvaluatePairs(),
+                'PatternLikeVisitor',
+            ),
+        });
+    }
+
+    /** すべてのフィールド (Babel の value フィールドの getter getValue() と区別する。getChildNodes もこれから作る) */
+    override getFields(): ArrayPatternFields {
+        return this.value;
+    }
+
+    getTypeAnnotation(): ArrayPatternFields['typeAnnotation'] {
+        return this.value.typeAnnotation;
+    }
+
+    getOptional(): ArrayPatternFields['optional'] {
+        return this.value.optional;
+    }
+
+    getDecorators(): ArrayPatternFields['decorators'] {
+        return this.value.decorators;
+    }
+
+    getElements(): ArrayPatternFields['elements'] {
+        return this.value.elements;
     }
 }
 

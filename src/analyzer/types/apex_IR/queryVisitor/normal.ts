@@ -32,7 +32,12 @@ import {
     isOffsetClauseType,
     isAllRowsClauseType,
 } from '../clauseVisitor';
-import { ApexCommonTypeClass, ApexErrorTypeClass, isApexValidClass } from '../commonVisitor';
+import {
+    ApexCommonTypeClass,
+    ApexErrorTypeClass,
+    visitNode,
+    visitOptionalNode,
+} from '../commonVisitor';
 
 export class NormalQueryTypeClass extends SoqlQueryTypeClass<'query', SelectListTypeClass> {
     private usingScope: UsingScopeTypeClass | ApexErrorTypeClass | null = null;
@@ -69,87 +74,61 @@ export class NormalQueryTypeClass extends SoqlQueryTypeClass<'query', SelectList
         }
 
         return new NormalQueryTypeClass(
-            isApexValidClass(
-                new ListVisitor().visit(ctx.selectList()),
-                isSelectListType,
-                'selectList',
-            ),
-            isApexValidClass(
-                new ListVisitor().visit(ctx.fromNameList()),
-                isFromNameListType,
-                'fromNameList',
-            ),
+            visitNode(new ListVisitor(), ctx.selectList(), isSelectListType, 'selectList'),
+            visitNode(new ListVisitor(), ctx.fromNameList(), isFromNameListType, 'fromNameList'),
             // forClauses は文法上常に生成されるため、FOR が無ければ null にする
             ctx.forClauses() && ctx.forClauses().FOR_list().length > 0
-                ? isApexValidClass(
-                      new ClauseVisitor().visit(ctx.forClauses()),
-                      isForClausesType,
-                      'forClauses',
-                  )
+                ? visitNode(new ClauseVisitor(), ctx.forClauses(), isForClausesType, 'forClauses')
                 : null,
-            ctx.usingScope()
-                ? isApexValidClass(
-                      new ClauseVisitor().visit(ctx.usingScope()),
-                      isUsingScopeType,
-                      'usingScope',
-                  )
-                : null,
-            ctx.whereClause()
-                ? isApexValidClass(
-                      new ClauseVisitor().visit(ctx.whereClause()),
-                      isWhereClauseType,
-                      'whereClause',
-                  )
-                : null,
-            ctx.withClause()
-                ? isApexValidClass(
-                      new ClauseVisitor().visit(ctx.withClause()),
-                      isWithClauseType,
-                      'withClause',
-                  )
-                : null,
-            ctx.groupByClause()
-                ? isApexValidClass(
-                      new ClauseVisitor().visit(ctx.groupByClause()),
-                      isGroupByClauseType,
-                      'groupByClause',
-                  )
-                : null,
-            ctx.orderByClause()
-                ? isApexValidClass(
-                      new ClauseVisitor().visit(ctx.orderByClause()),
-                      isOrderByClauseType,
-                      'orderByClause',
-                  )
-                : null,
-            ctx.limitClause()
-                ? isApexValidClass(
-                      new ClauseVisitor().visit(ctx.limitClause()),
-                      isLimitClauseType,
-                      'limitClause',
-                  )
-                : null,
-            ctx.offsetClause()
-                ? isApexValidClass(
-                      new ClauseVisitor().visit(ctx.offsetClause()),
-                      isOffsetClauseType,
-                      'offsetClause',
-                  )
-                : null,
-            ctx.allRowsClause()
-                ? isApexValidClass(
-                      new ClauseVisitor().visit(ctx.allRowsClause()),
-                      isAllRowsClauseType,
-                      'allRowsClause',
-                  )
-                : null,
-            ctx.updateList()
-                ? isApexValidClass(
-                      new ListVisitor().visit(ctx.updateList()),
-                      isUpdateListType,
-                      'updateList',
-                  )
-                : null,
+            visitOptionalNode(
+                new ClauseVisitor(),
+                ctx.usingScope(),
+                isUsingScopeType,
+                'usingScope',
+            ),
+            visitOptionalNode(
+                new ClauseVisitor(),
+                ctx.whereClause(),
+                isWhereClauseType,
+                'whereClause',
+            ),
+            visitOptionalNode(
+                new ClauseVisitor(),
+                ctx.withClause(),
+                isWithClauseType,
+                'withClause',
+            ),
+            visitOptionalNode(
+                new ClauseVisitor(),
+                ctx.groupByClause(),
+                isGroupByClauseType,
+                'groupByClause',
+            ),
+            visitOptionalNode(
+                new ClauseVisitor(),
+                ctx.orderByClause(),
+                isOrderByClauseType,
+                'orderByClause',
+            ),
+            visitOptionalNode(
+                new ClauseVisitor(),
+                ctx.limitClause(),
+                isLimitClauseType,
+                'limitClause',
+            ),
+            visitOptionalNode(
+                new ClauseVisitor(),
+                ctx.offsetClause(),
+                isOffsetClauseType,
+                'offsetClause',
+            ),
+            visitOptionalNode(
+                new ClauseVisitor(),
+                ctx.allRowsClause(),
+                isAllRowsClauseType,
+                'allRowsClause',
+            ),
+            visitOptionalNode(new ListVisitor(), ctx.updateList(), isUpdateListType, 'updateList'),
         );
     }
 
@@ -179,4 +158,3 @@ export const isNormalQueryType = (
 ): target is NormalQueryTypeClass => {
     return target instanceof NormalQueryTypeClass;
 };
-

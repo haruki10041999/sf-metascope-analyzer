@@ -3,7 +3,7 @@ import { ForUpdateContext } from '@apexdevtools/apex-parser';
 import { ControlTypeClass } from './index';
 
 import { ExpressionListTypeClass, ListVisitor, isExpressionListType } from '../listVisitor';
-import { ApexErrorTypeClass, ApexCommonTypeClass, isApexValidClass } from '../commonVisitor';
+import { ApexErrorTypeClass, ApexCommonTypeClass, visitNode } from '../commonVisitor';
 
 export class ForUpdateTypeClass extends ControlTypeClass<'forUpdate', ExpressionListTypeClass> {
     private constructor(value: ExpressionListTypeClass | ApexErrorTypeClass) {
@@ -16,8 +16,9 @@ export class ForUpdateTypeClass extends ControlTypeClass<'forUpdate', Expression
         }
 
         return new ForUpdateTypeClass(
-            isApexValidClass(
-                new ListVisitor().visit(ctx.expressionList()),
+            visitNode(
+                new ListVisitor(),
+                ctx.expressionList(),
                 isExpressionListType,
                 'expressionList',
             ),

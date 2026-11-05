@@ -26,7 +26,7 @@ types/lwc（kind / sourceKeys 付き JSON）→ バンドル（フォルダ）�
 - 各ライブラリが返す parse の結果（ノードの種類・属性・位置の表し方）は [lwc-library-attributes.md](./lwc-library-attributes.md)（サンプルのバンドルと、実行のスクリプト `docs/examples/lwc/run-library-parse.ts`）。
 - **コメントは今回は対象外**にする（JSDoc も読まない。Babel は `attachComment: false` で、ノードにコメントを付けない）。
 - **parse はバンドル（`lwc/<名前>/` のフォルダ）ごと**に行い、解析結果・保存・Diff もバンドルを単位にする（4 章。オブジェクトのフォルダ単位と同じ）。
-- TS の AST は JS の AST に型のノード（`TSTypeAnnotation` など）を足したものなので、中間表現（`ModuleIR`）を作る処理を 1 つにし、TS のときだけ型の情報を足す（3.1）。
+- TS の AST は JS の AST に型のノード（`TSTypeAnnotation` など）を足したものなので、中間表現（`lwc_IR`）と JSON を作る処理を 1 つにし、TS のときだけ型の情報を足す（3.1）。
 - TypeScript Compiler API は使わない（package.json の `typescript` 7.0.2 は Go 版で Compiler API を持たない）。そのため、型の推論（型注釈のない項目の型、戻り値の推論）は行わない（3.1.4）。
 
 ### 1.1 確認済みのこと（実装前に試した結果）
@@ -51,8 +51,8 @@ types/lwc（kind / sourceKeys 付き JSON）→ バンドル（フォルダ）�
 
 | 層             | 置き場所                            | 内容                                                                                                                   |
 | -------------- | ----------------------------------- | ---------------------------------------------------------------------------------------------------------------------- |
-| 中間表現（IR） | `src/analyzer/types/lwc_IR/`        | ライブラリの AST から作る、言語ごとの正規化した木（3 章）。Apex の `apex_IR` に当たる                                  |
-| converter      | `src/analyzer/types/lwc/converter/` | IR から JSON を作る材料にし、ソース位置を登録する。Apex の `apex/converter` に当たる                                   |
+| 中間表現（IR） | `src/analyzer/types/lwc_IR/`        | ライブラリの AST から作る木（3 章）。Apex の `apex_IR` に当たる                                                        |
+| converter      | `src/analyzer/types/lwc/converter/` | IR → CommonType（JSON を作る材料）。Apex の `apex/converter` に当たる                                                  |
 | JSON の型      | `src/analyzer/types/lwc/`           | kind ごとの `*Json` と `make*Json`                                                                                     |
 | parser         | `src/analyzer/parser/Lwc/`          | `LwcParser`。バンドルのフォルダを読み、ファイルごとに①②③を実行して `LwcBundleStructureType` にまとめる。保存・読み込み |
 | 検証           | `src/analyzer/parser/Lwc/validate/` | LWC Compiler の呼び出しと、診断 → resolvedError                                                                        |
@@ -92,9 +92,11 @@ type ErrorLwcBundleStructureType = { ...; dataType: 'error'; result: { base: Err
 
 type LwcResolvedError = {
     sourceKeys: ConvertKeys;
-    phase: 'syntax' | 'lwc';          // ① 構文エラーか、② LWC の仕様違反か
-    code: string;                     // 'JS_SYNTAX' / 'TS_SYNTAX' / 'HTML_SYNTAX' / 'CSS_SYNTAX' / 'XML_SYNTAX' / LWC のコード ('LWC1102' など)
+    phase: 'syntax' | 'lwc' | 'analyzer'; // ① 構文エラーか、② LWC の仕様違反か、IR を作れなかった (このアナライザの未対応・例外。3.1.7)
+    code: string;                     // 'JS_SYNTAX' / 'TS_SYNTAX' / 'HTML_SYNTAX' / 'CSS_SYNTAX' / 'XML_SYNTAX' / LWC のコード ('LWC1102' など) / 'TS_UNSUPPORTED' / IR の ErrorCode
     level: 'error' | 'warning';
+    contextType: string;              // 詳しい種類 (Babel の reasonCode、空白にできない構文の名前、IR を作れなかったノードの type など)
+    context: string;                  // エラーの位置のソース
     errorMessage: string;
     filePath: string;                 // バンドルのフォルダの親からの相対パス（hello/hello.js）
     start: SourcePosition;
@@ -142,20 +144,37 @@ const BABEL_OPTIONS = {
 - 位置は Babel の `start` / `end` / `loc` をそのまま使う（2.2）。
 - `@babel/parser` 8 は ESM のみ（このリポジトリは ESM なので問題ない）。LWC Compiler の中の Babel（7.29）とは別のものを使う。
 
-#### 3.1.2 中間表現（`lwc_IR/module.ts`、`lwc_IR/fromBabel.ts`）
+#### 3.1.2 中間表現と converter（Apex と同じ流れ。実装済み）
 
-Babel の AST はノードが多く、`loc` / `extra` なども持つので、解析に使うものだけを `SourceSpan` 付きで取り出す。JS と TS で 1 つの変換（`fromBabel.ts`）にし、TS のノードがあれば型の情報を足す（JS の AST には型のノードがないので、同じ処理で JS は型なしになる）。
+**Apex と同じく、IR → converter → JSON の流れにする**（`ModuleIR` のような解析用の中間層は作らない。解析に使うものを取り出す処理は、Apex の `make*Json` と同じく JSON の層に置く）。
 
-| IR         | 取り出す内容                                                                                                                                                                                                                                           | TS で足すもの                                                                                                  |
-| ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------- |
-| `ModuleIR` | `imports`、`exports`、`defaultClass`（`export default class`）、モジュール直下の関数・変数の名前                                                                                                                                                       | `typeDeclarations`（`interface` / `type` / `enum` の宣言。3.1.4）                                              |
-| `ImportIR` | `source`（`lwc` / `@salesforce/apex/<クラス>.<メソッド>` / `@salesforce/schema/<オブジェクト>.<項目>` / `@salesforce/label/...` / `c/<名前>` / `lightning/<名前>` / 相対パスなど）、`specifiers`（default / named / namespace、`local` と `imported`） | `typeOnly`（`importKind: 'type'`。実行時には残らないので依存関係の解析で区別する）                             |
-| `ClassIR`  | `name`、`superClass`（`LightningElement` / `NavigationMixin(LightningElement)` など、式を文字列にしたもの）、`members`                                                                                                                                 | `implements`、`typeParameters`                                                                                 |
-| `MemberIR` | 種類（property / method / getter / setter）、`name`、`static`、`decorators`（`name` と引数の式）、`initializer`（式の文字列）、メソッドの `params` と `body` の参照                                                                                    | `type`（型注釈。3.1.4）、`optional` / `definite`、`accessibility` / `readonly`、メソッドの引数の型と戻り値の型 |
-| `CallIR`   | メソッドの中の呼び出しのうち、解析に使うもの: `this.dispatchEvent(new CustomEvent(名前, 設定))`、import した Apex のメソッドの呼び出し、`this[NavigationMixin.Navigate](...)`、`this.template.querySelector(...)` / `this.refs.*`                      | `CustomEvent<T>` の型引数（`detail` の型）                                                                     |
+| 段                                   | Apex                                                                                                                                  | LWC（JS / TS）                                                                                                                                                                                                                                                            |
+| ------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1. IR                                | `types/apex_IR/`（`UnitVisitor`）                                                                                                     | `types/lwc_IR/`（`StandardizedVisitor` の `File`）                                                                                                                                                                                                                        |
+| 2. converter（IR → CommonType）      | `types/apex/converter/`（`convertApexUnit`。IR のフィールドをそのまま写す 1 つの変換。名前の違うところだけ `APEX_CONVERT_OVERRIDES`） | `types/lwc/converter/`（`convertLwcFile`。1 つの変換。出力の型 `LwcXxxType` は生成した `nodes.ts`）                                                                                                                                                                       |
+| 3. objectKey / sourceKey・ソース位置 | `makeConvertType`（`types/apex/commons`）。JSON の前に、ノードの `sourceInfo` を sourceKey と SourceJson に分ける                     | **JSON を作る段階で分ける**（`LwcJsonContext.keysOf`）。converter の出力は `sourceInfo` を持ったままで、JSON の層はソースの文字列を `sourceInfo` から読む。キーの作り方は `makeConvertType` と同じ（`sourceInfo` に `filePath` があるので、sourceKey はファイルごとに別） |
+| 4. JSON（CommonType → `*Json`）      | `types/apex/*.ts`（`makeCompilationUnitJson` など）                                                                                   | `types/lwc/*.ts`（`makeLwcModuleJson` など。3.1.6）                                                                                                                                                                                                                       |
+| 5. JSON に残ったソース位置だけにする | `regenerateSourceObjects`                                                                                                             | 不要（`keysOf` を呼んだノード = JSON で使ったノードの位置だけが登録される）                                                                                                                                                                                               |
 
-- 式は、名前の参照（`this.foo`、`a.b.c`）と、リテラル・オブジェクトリテラル（`@wire` の設定、`CustomEvent` の `detail` / `bubbles` / `composed`）だけを構造にし、それ以外は元の文字列（`text`）と位置を持つ。TS の `x as T` / `x!` / `<T>x` は、中の式（`x`）を見る。
-- 走査は、必要なノードだけを再帰的にたどる。AST の型は `@babel/types` の型（`import type`）を使い、たどる部分を 1 つのファイルにまとめる。
+**IR（`types/lwc_IR/`）**: Babel のノード 1 種類につき 1 つのクラス（`ClassMethodTypeClass` など。JS / TS / Flow / JSX のすべてのノードと、非推奨の別名）。`@babel/types` の `NODE_FIELDS` から生成する。Apex の IR との対応:
+
+| 項目                     | Apex（`apex_IR`）                                                | LWC（`lwc_IR`）                                                                                                                          |
+| ------------------------ | ---------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
+| 置き場所                 | `<分類>Visitor/`（`statementVisitor/` など）                     | `<alias>Visitor/`（`expressionVisitor/` など。Babel の alias ごと）。複数の alias に入るノードは `commons/`                              |
+| 公開                     | `export * from './statementVisitor'`                             | `export * as expressionVisitor from './expressionVisitor'`（同じクラスを複数の alias から再 export するため、名前空間で分ける）          |
+| ノードの振り分け         | Visitor の `visitXxx`（ANTLR）                                   | `evaluatePair`（判定とクラスの組）の一覧。一覧は `lazyPairs` で初めて使うときに作る（循環 import のため）                                |
+| 子の読み方               | `visitNode` / `visitOptionalNode` / `visitNodeList`              | 同じ名前の `visitNode` / `visitOptionalNode` / `visitNodeList`（と、配列の穴を許す `visitNullableNodeList`）                             |
+| 子の型の確認             | `isApexValidClass`。型が違えば `TYPE_MISMATCH`                   | 許す型の pair だけで振り分ける。違えば `UNSUPPORTED_CONTEXT`（**`TYPE_MISMATCH` は出ない**）                                             |
+| フィールド               | private の `value` と個別のフィールド、`getValue()` / `getXxx()` | private の `value`（Babel のフィールドの組）、`getFields()` と、Babel のフィールド名の `getXxx()`（`value` フィールドなら `getValue()`） |
+| 子のノード               | `getChildNodes()`、`collectErrorTypeClasses()`                   | 同じ                                                                                                                                     |
+| span                     | `ApexCommonVisitor.visit` で付ける                               | `visitWithPairs` で付ける                                                                                                                |
+| `create` の引数          | `create(ctx)`                                                    | `create(target, originalSource)`（Babel のノードは `getText()` を持たないため）                                                          |
+| エラーのリスナー         | `parser/Apex/errorListener.ts` の `ApexCommonErrorListener`      | `parser/Lwc/errorListener.ts` の `LwcCommonErrorListener`                                                                                |
+| resolvedError の `phase` | `syntax` / `analyzer`                                            | `syntax` / `lwc` / `analyzer`                                                                                                            |
+
+- 子のノードは TypeClass か `LwcErrorTypeClass`（型の合わないノード・例外。3.1.7）、省略できるフィールドは `null`。
+- converter の CommonType は `{ type, sourceInfo, ...Babel のフィールド }`（`type` は IR の type の名前。`classMethod`、`tSTypeReference` など）。
+- JSON の層は、Babel のノードの形のまま必要な部分をたどる。式は、名前の参照（`this.foo`）・リテラル・オブジェクトリテラル（`@wire` の設定、`CustomEvent` の設定）だけを構造にし、それ以外は元の文字列（ソース位置から引く）にする。TS の `x as T` / `x!` / `<T>x` は、中の式（`x`）を見る。
 
 #### 3.1.3 ② 仕様の検証
 
@@ -189,7 +208,7 @@ TypeScript Compiler API（TypeChecker）は使わず、**Babel の AST にある
 | `tuple`                  | `TSTupleType`                                                   | `[string, number]`                             |
 | `other`                  | 上以外（条件型・マップ型など）                                  | `text` だけを持つ                              |
 
-型の宣言（`ModuleIR.typeDeclarations`）は、`interface`（`TSInterfaceDeclaration`。`extends` と `body` の `members`）、`type`（`TSTypeAliasDeclaration`。右辺の `TypeIR`）、`enum`（`TSEnumDeclaration`。メンバーの名前。検証は未対応として報告する。3.2）を、`exported` の有無とともに持つ。
+型の宣言（`lwcModule` の `typeDeclarations`）は、`interface`（`TSInterfaceDeclaration`。`extends` と `body` の `members`）、`type`（`TSTypeAliasDeclaration`。右辺の `TypeIR`）、`enum`（`TSEnumDeclaration`。メンバーの名前。検証は未対応として報告する。3.2）を、`exported` の有無とともに持つ。
 
 #### 3.1.5 型の名前の解決（TS。バンドルをまたぐ）
 
@@ -202,22 +221,83 @@ TypeScript Compiler API（TypeChecker）は使わず、**Babel の AST にある
 - 結果は `typeRef`（`{ module: 'c/utils', name: 'Row' }`）にする。同じバンドルの中のモジュール（相対パスの import）の型は、バンドルの parse のときに解決して JSON に入れる。ほかのバンドル（`c/<名前>`）の型は、全バンドルの parse（ワーカーで並列にできる）のあとに解決し（`processor/Lwc/typeReferences.ts`）、保存する JSON には入れず解析の結果として持つ（ほかのバンドルが変わると変わるため）。
 - 再エクスポート（`export { Row } from './types'`）は 1 段だけたどる。
 
-#### 3.1.6 ③ JSON（`types/lwc/module.ts`）
+#### 3.1.6 ③ JSON（`types/lwc/`。実装済み）
 
-| kind                 | 型                                                                      | 持つもの                                                                                                                                                                                                                                                                                                                                           |
-| -------------------- | ----------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `lwcModule`          | `LwcModuleJson`                                                         | `fileType: 'js' \| 'ts'`、`imports`、`component`（default export のクラス）、`otherExports`、TS は `typeDeclarations`                                                                                                                                                                                                                              |
-| `lwcImport`          | `LwcImportJson`                                                         | `source`、`category`（`lwc` / `apex` / `schema` / `label` / `customPermission` / `resourceUrl` / `contentAssetUrl` / `messageChannel` / `user` / `component`（`c/*`）/ `lightning` / `relative` / `other`）、`specifiers`、`category` に応じた分解（apex: `className` / `methodName`、schema: `objectApiName` / `fieldApiName`）、TS は `typeOnly` |
-| `lwcComponent`       | `LwcComponentJson`（`StructureJsonType`。`sourceKeys: { base, name }`） | `name`、`superClass`、`mixins`、`properties`、`methods`、`wires`、`events`、TS は `implements`                                                                                                                                                                                                                                                     |
-| `lwcProperty`        | `LwcPropertyJson`（`StructureJsonType`。`{ base, name }`）              | `name`、`decorator`（`api` / `track` / なし）、`static`、`accessor`（getter / setter の組）、`initializer`、TS は `type`・`optional`・`accessibility`・`readonly`                                                                                                                                                                                  |
-| `lwcMethod`          | `LwcMethodJson`（`StructureJsonType`。`{ base, name }`）                | `name`、`decorator`（`api`）、`params`（TS は型付き）、`returnType`（TS）、`async`、`calls`（Apex の呼び出し・ナビゲーションなど）                                                                                                                                                                                                                 |
-| `lwcWire`            | `LwcWireJson`                                                           | `adapter`（import との対応: `apex` のメソッドか、`lightning/uiRecordApi` の `getRecord` など）、`config`（キー → 値。`'$recordId'` は `reactive: 'recordId'` にする）、`target`（property / method の名前）                                                                                                                                        |
-| `lwcEvent`           | `LwcEventJson`                                                          | `name`、`bubbles`、`composed`、`detail`（式の文字列）、`detailType`（TS の `CustomEvent<T>` の `T`）、`dispatchedIn`（メソッド名）                                                                                                                                                                                                                 |
-| `lwcTypeDeclaration` | `LwcTypeDeclarationJson`（TS。`StructureJsonType`。`{ base, name }`）   | `name`、`declarationType`（`interface` / `type` / `enum`）、`exported`、`members` / `type`                                                                                                                                                                                                                                                         |
+Apex の JSON（`types/apex/`）と同じ書き方にする。入力は converter の型（`LwcXxxType`。`sourceInfo` を持ったまま。`types/lwc/converter/nodes.ts` は生成スクリプトで作る）で、フィールドを型付きで読む。境界ノードは `convertLwcValue`（Apex の `convertValue` と同じ検査）、sourceKeys は `LwcJsonContext.keysOf`（ノードの `sourceInfo` を sourceKeys と sourceObject に分ける）、ソースの文字列は `LwcJsonContext.textOf`（`sourceInfo.context`）で作る。
 
-- 名前を持つ宣言（コンポーネント・プロパティ・メソッド・型の宣言）は、Apex の宣言と同じく `StructureJsonType`（`sourceKeys: { base, name }`）にする。`base` はノード全体、`name` は名前のノード（Babel の `key` / `id`）の位置から作る。
-- 型は `{ text, type: TypeIR }`（`TypeIR` は JSON の値としてそのまま持つ。kind は持たない）。
-- 順序: `properties` / `methods` はソースの順。Diff では名前で対応付ける（D）。
+| kind                 | 型（Apex で当たるもの）                              | 持つもの                                                                                                                                                                                                                               |
+| -------------------- | ---------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| （モジュール）       | `LwcModuleJson`（unit。kind・sourceKeys を持たない） | `fileType: 'js'                                                                                                                                                                                                                        | 'ts'`、`imports`、`component`（default export のクラス）、`otherExports`、`declarations`（直下の変数・関数・クラス。export しないものも含む）、TS は `typeDeclarations`、`errors`（直下の IR を作れなかった文） |
+| `lwcImport`          | `LwcImportJson`（LWC だけ）                          | `source`、`category`、`specifiers`（`lwcImportSpecifier`: `specifierType` / `local` / `imported` / `typeOnly`）、`typeOnly`、`category` に応じた `apex` / `schema` / `component`                                                       |
+| `lwcComponent`       | `LwcComponentJson`（class）                          | `name`、`extend`（継承元）、`mixins`、`implement`（TS）、`block`（メンバー。ソースの順で、IR を作れなかったメンバーはその位置に `ErrorJson`）                                                                                          |
+| `lwcField`           | `LwcFieldJson`（field）                              | `name`、`variantType`（TS の型）、`init`（初期値の式の文字列）、`references`（初期値の中の import）、`optional`、`modifier`                                                                                                            |
+| `lwcProperty`        | `LwcPropertyJson`（property）                        | getter / setter。`name`、`variantType`、`isGetter` / `getterContent`、`isSetter` / `setterContent`（中身は `modifier`・`body`・`calls`・`events`）。同じ名前の getter と setter は 1 つにする                                          |
+| `lwcMethod`          | `LwcMethodJson`（method）                            | `name`、`returnType`、`param`、`async`、`modifier`、`body`、`calls`、`events`                                                                                                                                                          |
+| `lwcConstructor`     | `LwcConstructorJson`（constructor）                  | `param`、`modifier`、`calls`、`events`                                                                                                                                                                                                 |
+| `lwcParameter`       | `LwcParameterJson`（parameter）                      | `variant`（名前。分割代入は式の文字列）、`variantType`、`optional`、`modifier`                                                                                                                                                         |
+| （修飾子）           | `LwcModifiersJson`（ModifiersJson）                  | `access`（public / private / protected）、`declaration`（static / readonly / abstract / override / declare）、`decorator`                                                                                                              |
+| `lwcDecorator`       | `LwcDecoratorJson`（annotation）                     | `name`（api / track / wire など）、`arg`、`@wire` は `wire`（`adapter`、`adapterSource`、Apex なら `apex`、`config`）                                                                                                                  |
+| `lwcCall`            | `LwcCallJson`（LWC だけ）                            | `callType`（`apex` / `navigate` / `querySelector` / `refs` / `dispatchEvent` / `innerHTML`）、`target`、`apex`、`arg`（引数の式の文字列）、`references`（引数の中の import）                                                           |
+| `lwcWireConfig`      | `LwcWireConfigJson`（LWC だけ）                      | `@wire` の設定の 1 項目。`key`、`value`（式の文字列）、`reactive`（`'$recordId'` → `recordId`）、`references`（値の中の import。`fields: [NAME_FIELD]` の項目など）                                                                    |
+| `lwcBody`            | `LwcBodyJson`（LWC だけ）                            | メソッド・getter / setter・関数の本体。`statements`（直下の文の数）。中身は sourceObject が持ち、本体が変わると objectKey が変わる（Diff で本体の変更が見える）                                                                        |
+| `lwcDeclaration`     | `LwcDeclarationJson`（LWC だけ）                     | モジュールの直下の宣言（StructureJsonType）。`name`、`declarationType`（`variable` / `function` / `class`）、`exported`、変数は `variableKind`・`init`・`references`、関数は `param`・`returnType`・`async`・`body`・`calls`・`events` |
+| `lwcEvent`           | `LwcEventJson`（LWC だけ）                           | `new CustomEvent` の `name`、`bubbles`、`composed`、`detail`、`detailType`（TS の `CustomEvent<T>` の `T`）                                                                                                                            |
+| `lwcType`            | `LwcTypeJson`（TypeJson）                            | `text` と、中身（`type`: `primitive` / `custom`（`generic`）/ `array` / `union` / `intersection` / `literal` / `object` / `function` / `tuple` / `other`）。型引数・要素型はキーのない中身                                             |
+| `lwcTypeDeclaration` | `LwcTypeDeclarationJson`（TS だけ）                  | `name`、`declarationType`（`interface` / `type` / `enum`）、`exported`、`extend`・`members` / `variantType` / `enumMembers`                                                                                                            |
+
+- 名前を持つ宣言（コンポーネント・`lwcField` / `lwcProperty` / `lwcMethod` / `lwcConstructor`・型の宣言）は、Apex の宣言と同じく `StructureJsonType`（`sourceKeys: { base, name }`）。`name` は `string | ErrorJson`。
+- 境界ノード（Apex の `convertValue` と同じ）: 宣言（コンポーネント・メソッド・getter / setter）はノード自身だけを検査し（`exclude: 'children'`）、子（名前・引数・型・デコレーター）は子の変換関数が `ErrorJson` にする。`lwcField`・`lwcImport`・`lwcTypeDeclaration`・`lwcType`・`lwcParameter`・`lwcDecorator` は部分木全体を検査する（Apex の field と同じ）。メソッドの本体は IR を作れなかったノードを飛ばして読む。
+- 真偽の項目（`typeOnly`・`optional`・`isGetter` など）は、Apex の `isGetter` と同じく常に持つ。
+- 順序: `block` はソースの順。Diff では名前で対応付ける（D）。
+- バンドル（2.4）の `base` は `{ name, namespace, modules: { fileName, main, module }[], skippedFiles }`。いまは JS / TS のモジュールだけ。回復できない構文エラーのモジュールは、その構文エラーのキーで `ErrorJson` にする。
+
+#### 3.1.7 parser・仕様の検証・エラーの集約（実装）
+
+1 つの JS / TS ファイルを、次の順で読む（`LwcParser.parseScript`）。
+
+```text
+ソース (LF にそろえる)
+  │ ① parseScript: Babel (errorRecovery: true)
+  ├─ 例外 (回復できない構文エラー) ─→ syntax 1 件。IR は作らない (ファイルは error)
+  ▼
+AST + ast.errors (回復した構文エラー) ─→ syntax
+  │ StandardizedVisitor
+  ▼
+ノードの IR (File) ─→ IR の中の LwcErrorTypeClass ─→ analyzer (構文エラーの位置に重なるものは除く)
+  │ ② validateScript: 構文エラーがないときだけ
+  │    TS: eraseTypes (同じ AST を使う) ─→ 空白にできない構文は TS_UNSUPPORTED (検証しない)
+  │    transformSync (@lwc/compiler) ─→ 例外 (違反の 1 件目) / warnings ─→ lwc
+  ▼
+LwcCommonErrorListener ─→ LwcResolvedError[] (sourceKeys・filePath 付き)
+```
+
+| 部品                      | 置き場所                            | 内容                                                                                                                                                       |
+| ------------------------- | ----------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `parseScript`             | `parser/Lwc/script.ts`              | 拡張子から言語（`js` / `ts`）を決め、3.1.1 の設定で parse する。例外の構文エラーは捕まえて返す（Babel の例外以外は投げ直す）                               |
+| `eraseTypes`              | `parser/Lwc/validate/eraseTypes.ts` | 3.2。検証スクリプトから移した。parse 済みの AST（`tokens: true`）を渡せば parse し直さない                                                                 |
+| `validateScript`          | `parser/Lwc/validate/javascript.ts` | `transformSync` を呼び、違反を `LwcDiagnostic`（`code` / `level` / `message` / 文字位置）にそろえる。生成コードは使わない                                  |
+| `LwcCommonErrorListener`  | `parser/Lwc/errorListener.ts`       | 3 つの出どころのエラーを受け取り、`phase` を付けて集める。`getResolvedErrors(filePath)` で `LwcResolvedError[]` にする                                     |
+| `LwcParser.parseScript`   | `parser/Lwc/parser.ts`              | 上の流れをつなぐ。結果は `{ filePath, language, ir, resolvedError }`（`ir` は回復できない構文エラーのとき `null`）                                         |
+| `LwcParser.selectScripts` | `parser/Lwc/parser.ts`              | バンドルのフォルダから読む JS / TS を選ぶ（4.2: `.ts` を優先し、同じ名前の `.js` は `skippedFiles` にする。`__tests__/`・`*.test.*`・`*.d.ts` は読まない） |
+
+エラーの出どころと resolvedError:
+
+| 出どころ                         | `phase`    | `code`                                   | `contextType`                           | 位置                                                               |
+| -------------------------------- | ---------- | ---------------------------------------- | --------------------------------------- | ------------------------------------------------------------------ |
+| Babel の例外・`ast.errors`       | `syntax`   | `JS_SYNTAX` / `TS_SYNTAX`                | `reasonCode`（`MissingSemicolon` など） | `loc`（開始位置だけなので、その 1 文字を範囲にする。Apex と同じ）  |
+| IR の `LwcErrorTypeClass`        | `analyzer` | `UNSUPPORTED_CONTEXT` / `EXCEPTION` など | ノードの `type`                         | ノードの span                                                      |
+| `eraseTypes` の `unsupported`    | `lwc`      | `TS_UNSUPPORTED`                         | 構文（`enum` など）                     | ノードの範囲                                                       |
+| `transformSync` の例外・warnings | `lwc`      | `LWC` + 数値（`LWC1093`）                | `LWC` + 数値                            | `location.start` + `length`（なければ `line` / `column`、`index`） |
+
+決めたこと（確認した LWC Compiler 9.5.1 の動作から）:
+
+- **リスナーは `parser/Lwc` に置く**（Apex は `apex_IR/commonVisitor.ts`）。Babel・IR・LWC Compiler の 3 つから受け取るため、IR の層には置かない。`lwc_IR/commonVisitor.ts` の `LwcCommonErrorListener` はこちらへ移した。
+- **IR のエラーも resolvedError に出す**（`phase: 'analyzer'`）。Apex では IR のエラーは JSON の中にしか残らず、アナライザの未対応を一覧できなかった。ただし、回復した構文エラーで型の合わないノードになったもの（`1 = 2` の `1`）は、同じ位置の構文エラーで報告済みなので除く（span が構文エラーの位置を含むもの）。
+- **構文エラーがあるファイルは LWC の検証をしない**。LWC Compiler の中の Babel は errorRecovery なしなので、同じ構文エラーを `LWC1007` として報告し直すだけになる。
+- **LWC の違反は 1 件しか報告できない**。`transformSync` は最初の違反で例外を投げる（`@api @track` が 2 つあっても 1 件）。
+- LWC の位置: `location` は `{ line（1 始まり）, column（0 始まり）, start（文字位置、UTF-16）, length }`。日本語・絵文字の後ろでも `start` は正しい。構文エラー（`LWC1007`）だけ `start` の代わりに `index` を持つ。
+- LWC のメッセージの先頭の `SyntaxError: <絶対パス>: ` は除く（実行環境に依存するため）。`level` は `Fatal` / `Error` → `error`、`Warning` / `Log` → `warning`。
+- `transformSync` に渡すファイル名は、バンドルの中の相対パス（TS は拡張子を `.js` にする）。`name` はバンドル名、`namespace` は `c`。
 
 ### 3.2 TS の型を空白にする（検証用）
 
@@ -342,7 +422,7 @@ Babel の TS の AST（3.1.1 と同じ parse の結果）とトークンをた�
 
 - LWC のコンポーネントはバンドルが単位（JS の `@api` と HTML の参照・CSS・js-meta.xml の公開設定がそろって 1 つのコンポーネント）なので、解析・Diff・保存もバンドルを単位にする。
 - `id` はバンドル名（`hello`）。保存名は `lwc_<バンドル名>`（`lwc_hello.msgpack`。Apex の `apex_` / `apexMeta_`、翻訳の `objectTranslation_` と同じく接頭辞で分ける）。
-- Diff はバンドル名で対応付け、中身はファイルの種類ごとに比べる（`modules` / `templates` / `stylesheets` はファイル名で対応付ける D、`meta` は 1 つ）。バンドル単位の差分は、オブジェクト・翻訳と共通の `makeXmlUnitDiffs`（[processor/Metadata/diff/unit.ts](../src/analyzer/processor/Metadata/diff/unit.ts)。XML に限らないので `processor/commons/diff/` へ移す）で作る。
+- Diff はバンドル名で対応付け、中身はファイルの種類ごとに比べる（`modules` / `templates` / `stylesheets` はファイル名で対応付ける D、`meta` は 1 つ）。バンドル単位の差分は、オブジェクト・翻訳と共通の `makeIdUnitDiffs`（[processor/commons/diff/unit.ts](../src/analyzer/processor/commons/diff/unit.ts)）で作る。JS / TS の Diff の方針は [lwc-diff-policy.md](./lwc-diff-policy.md)。
 - 1 ファイルの parse・検証は、バンドルの中でファイルごとに行う（言語ごとの parser・検証は 3 章のまま）。
 
 ### 4.2 読むファイル・読まないファイル
@@ -371,19 +451,23 @@ src/analyzer/
 │   │   ├── source.ts           位置の変換部品を追加（2.2。fromBabelLocation など）
 │   │   └── sourceJson.ts       makeXmlJson / XmlSourceRegistry を一般化（2.3）
 │   ├── lwc_IR/
-│   │   ├── module.ts           ModuleIR / TypeIR などの型（JS / TS で共通）
-│   │   ├── fromBabel.ts        Babel の AST（JS / TS）→ ModuleIR
+│   │   ├── commonVisitor.ts    TypeClass の基底・visit の部品（実装済み）
+│   │   ├── <alias>Visitor/ commons/  Babel のノードごとの IR（実装済み。3.1.2）
 │   │   ├── template.ts         TemplateIR などの型
 │   │   └── fromParse5.ts       parse5 の木 → TemplateIR
 │   └── lwc/
-│       ├── converter/          IR / postcss の AST → JSON の材料、ソース位置の登録
-│       ├── module.ts  template.ts  stylesheet.ts  meta.ts
+│       ├── converter/          IR → CommonType（JS / TS は実装済み。3.1.2）
+│       ├── commons.ts          JSON の層の部品（実装済み）
+│       ├── module.ts  import.ts  component.ts  typeDeclaration.ts  type.ts  bundle.ts（実装済み。3.1.6）
+│       ├── template.ts  stylesheet.ts  meta.ts
 │       └── index.ts
 ├── parser/Lwc/
-│   ├── parser.ts               LwcParser（searchLwcBundles / parseLwcBundle / save / read）
+│   ├── parser.ts               LwcParser（parseScript / convertScript / parseLwcBundle / saveLwcBundle / readLwcMsgPack は実装済み。searchLwcBundles）
+│   ├── script.ts               Babel の parse（JS / TS。実装済み。3.1.7）
+│   ├── errorListener.ts        LwcCommonErrorListener（実装済み。3.1.7）
 │   └── validate/
-│       ├── eraseTypes.ts       TS の型を空白にする（3.2。検証スクリプトの eraseTypes を移す）
-│       ├── javascript.ts       @lwc/compiler の呼び出し（JS / TS）
+│       ├── eraseTypes.ts       TS の型を空白にする（実装済み。3.2）
+│       ├── javascript.ts       @lwc/compiler の呼び出し（JS / TS。実装済み）
 │       ├── template.ts         @lwc/template-compiler の呼び出し
 │       └── stylesheet.ts       @lwc/style-compiler の呼び出し
 ├── processor/Lwc/
@@ -407,7 +491,7 @@ src/analyzer/
 1. 共通部品（2.2 の位置の変換、2.3 の一般化、`makeXmlUnitDiffs` の共通化）と、`LwcBundleStructureType` / resolvedError の型
 2. XML（3.5）: 既存の部品だけで作れるので最初に作り、parser・保存・ワーカーの骨組みを固める
 3. CSS（3.4）: IR なしで作れる
-4. JS / TS（3.1）: Babel の IR（JS / TS で共通）と、`lwcModule` の JSON。TS の型を空白にする処理（3.2）は、検証スクリプトの `eraseTypes` を移してテストを足す。続けて型の名前の解決（3.1.5）
+4. JS / TS（3.1）: Babel の IR（JS / TS で共通）と、`lwcModule` の JSON。TS の型を空白にする処理（3.2）は、検証スクリプトの `eraseTypes` を移してテストを足す。続けて型の名前の解決（3.1.5）。**型の名前の解決（3.1.5）以外は実装済み**
 5. HTML（3.3）: parse5 の IR と、テンプレートの JSON
 6. バンドルの解析と Diff（[report-components-plan.md](./report-components-plan.md) の LWC のコンポーネント）、画面モック（[lwc-snapshot-plan.md](./lwc-snapshot-plan.md)）
 

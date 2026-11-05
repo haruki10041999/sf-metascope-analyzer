@@ -1,16 +1,46 @@
 import { isTSNonNullExpression, type TSNonNullExpression } from '@babel/types';
-import { EvaluatePair, LwcCommonTypeClass, makeEvaluatePair } from '../commonVisitor';
+import {
+    EvaluatePair,
+    LwcCommonTypeClass,
+    LwcErrorTypeClass,
+    makeEvaluatePair,
+    visitNode,
+} from '../commonVisitor';
+import { expressionVisitorEvaluatePairs, type ExpressionTypeClass } from '../expressionVisitor';
+
+export type TSNonNullExpressionFields = {
+    expression: ExpressionTypeClass | LwcErrorTypeClass;
+};
 
 export class TSNonNullExpressionTypeClass extends LwcCommonTypeClass<'tSNonNullExpression'> {
-    private constructor(originalSource: string) {
-        super('tSNonNullExpression', originalSource);
+    private readonly value: TSNonNullExpressionFields;
+
+    private constructor(value: TSNonNullExpressionFields) {
+        super('tSNonNullExpression');
+        this.value = value;
     }
 
     static create(
         target: TSNonNullExpression,
         originalSource: string,
     ): TSNonNullExpressionTypeClass {
-        throw new Error('TSNonNullExpressionTypeClass.create is not implemented: ' + target.type);
+        return new TSNonNullExpressionTypeClass({
+            expression: visitNode(
+                target.expression,
+                originalSource,
+                expressionVisitorEvaluatePairs(),
+                'ExpressionVisitor',
+            ),
+        });
+    }
+
+    /** すべてのフィールド (Babel の value フィールドの getter getValue() と区別する。getChildNodes もこれから作る) */
+    override getFields(): TSNonNullExpressionFields {
+        return this.value;
+    }
+
+    getExpression(): TSNonNullExpressionFields['expression'] {
+        return this.value.expression;
     }
 }
 

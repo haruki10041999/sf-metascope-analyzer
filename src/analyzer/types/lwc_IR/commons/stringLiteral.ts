@@ -1,13 +1,31 @@
 import { isStringLiteral, type StringLiteral } from '@babel/types';
 import { EvaluatePair, LwcCommonTypeClass, makeEvaluatePair } from '../commonVisitor';
 
+export type StringLiteralFields = {
+    value: StringLiteral['value'];
+};
+
 export class StringLiteralTypeClass extends LwcCommonTypeClass<'stringLiteral'> {
-    private constructor(originalSource: string) {
-        super('stringLiteral', originalSource);
+    private readonly value: StringLiteralFields;
+
+    private constructor(value: StringLiteralFields) {
+        super('stringLiteral');
+        this.value = value;
     }
 
     static create(target: StringLiteral, originalSource: string): StringLiteralTypeClass {
-        throw new Error('StringLiteralTypeClass.create is not implemented: ' + target.type);
+        return new StringLiteralTypeClass({
+            value: target.value,
+        });
+    }
+
+    /** すべてのフィールド (Babel の value フィールドの getter getValue() と区別する。getChildNodes もこれから作る) */
+    override getFields(): StringLiteralFields {
+        return this.value;
+    }
+
+    getValue(): StringLiteralFields['value'] {
+        return this.value.value;
     }
 }
 

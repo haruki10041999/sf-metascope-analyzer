@@ -6,8 +6,8 @@ import { FieldSpecTypeClass, QueryVisitor, isFieldSpecType } from '../queryVisit
 import {
     ApexErrorTypeClass,
     ApexCommonTypeClass,
-    isApexValidClass,
-    isApexValidClassList,
+    visitNodeList,
+    visitNode,
 } from '../commonVisitor';
 
 export class FieldSpecListTypeClass extends ListTypeClass<'fieldSpecList', FieldSpecTypeClass> {
@@ -21,17 +21,13 @@ export class FieldSpecListTypeClass extends ListTypeClass<'fieldSpecList', Field
         }
 
         const value: (FieldSpecTypeClass | ApexErrorTypeClass)[] = [
-            isApexValidClass(
-                new QueryVisitor().visit(ctx.fieldSpec()),
-                isFieldSpecType,
-                'fieldSpec',
-            ),
+            visitNode(new QueryVisitor(), ctx.fieldSpec(), isFieldSpecType, 'fieldSpec'),
         ];
 
         if (ctx.fieldSpecList_list() && ctx.fieldSpecList_list().length > 0) {
-            const nested = isApexValidClassList(
+            const nested = visitNodeList(
+                new ListVisitor(),
                 ctx.fieldSpecList_list(),
-                (ctx) => new ListVisitor().visit(ctx),
                 isFieldSpecListType,
                 'fieldSpecList',
             );
@@ -54,4 +50,3 @@ export const isFieldSpecListType = (
 ): target is FieldSpecListTypeClass => {
     return target instanceof FieldSpecListTypeClass;
 };
-

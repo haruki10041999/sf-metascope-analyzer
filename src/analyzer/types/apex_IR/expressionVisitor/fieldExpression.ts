@@ -11,7 +11,7 @@ import {
     isSoqlFunctionType,
     isComparisonOperatorType,
 } from '../queryVisitor';
-import { ApexErrorTypeClass, ApexCommonTypeClass, isApexValidClass } from '../commonVisitor';
+import { ApexErrorTypeClass, ApexCommonTypeClass, visitNode } from '../commonVisitor';
 
 export class FieldExpressionTypeClass extends DoubleOperatorExpressionTypeClass<
     'fieldExpression',
@@ -38,22 +38,20 @@ export class FieldExpressionTypeClass extends DoubleOperatorExpressionTypeClass<
 
         return new FieldExpressionTypeClass(
             ctx.fieldName()
-                ? isApexValidClass(
-                      new NameVisitor().visit(ctx.fieldName()!),
-                      isFieldNameType,
-                      'fieldName',
-                  )
-                : isApexValidClass(
-                      new QueryVisitor().visit(ctx.soqlFunction()!),
+                ? visitNode(new NameVisitor(), ctx.fieldName()!, isFieldNameType, 'fieldName')
+                : visitNode(
+                      new QueryVisitor(),
+                      ctx.soqlFunction()!,
                       isSoqlFunctionType,
                       'soqlFunction',
                   ),
-            isApexValidClass(
-                new QueryVisitor().visit(ctx.comparisonOperator()),
+            visitNode(
+                new QueryVisitor(),
+                ctx.comparisonOperator(),
                 isComparisonOperatorType,
                 'comparisonOperator',
             ),
-            isApexValidClass(new ValueVisitor().visit(ctx.value()), isNormalValueType, 'value'),
+            visitNode(new ValueVisitor(), ctx.value(), isNormalValueType, 'value'),
         );
     }
 }
@@ -63,4 +61,3 @@ export const isFieldExpressionType = (
 ): target is FieldExpressionTypeClass => {
     return target instanceof FieldExpressionTypeClass;
 };
-

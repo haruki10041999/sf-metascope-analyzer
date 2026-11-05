@@ -1,0 +1,39 @@
+{
+  "filePath": "docs/examples/apex-diff/before/AccountTrigger.trigger-meta.xml",
+  "resolvedError": [],
+  "dataType": "apexTriggerMeta",
+  "result": {
+    "id": "AccountTrigger.trigger-meta.xml",
+    "base": {
+      "kind": "apexTriggerMeta",
+      "sourceKeys": {
+        "objectKey": "apexTriggerMeta_78ac91e3764ec732",
+        "sourceKey": "apexTriggerMeta_256307ca654f236b"
+      },
+      "apiVersion": "59.0",
+      "status": "Active"
+    },
+    "sourceObject": [
+      {
+        "objectKey": "apexTriggerMeta_78ac91e3764ec732",
+        "context": "<ApexTrigger xmlns=\"http://soap.sforce.com/2006/04/metadata\">\n    <apiVersion>59.0</apiVersion>\n    <status>Active</status>\n</ApexTrigger>",
+        "source": [
+          {
+            "sourceKey": "apexTriggerMeta_256307ca654f236b",
+            "filePath": "AccountTrigger.trigger-meta.xml",
+            "start": {
+              "offset": 39,
+              "line": 2,
+              "column": 0
+            },
+            "end": {
+              "offset": 177,
+              "line": 5,
+              "column": 14
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

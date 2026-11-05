@@ -2,12 +2,12 @@ import { isInferredPredicate, type InferredPredicate } from '@babel/types';
 import { EvaluatePair, LwcCommonTypeClass, makeEvaluatePair } from '../commonVisitor';
 
 export class InferredPredicateTypeClass extends LwcCommonTypeClass<'inferredPredicate'> {
-    private constructor(originalSource: string) {
-        super('inferredPredicate', originalSource);
+    private constructor() {
+        super('inferredPredicate');
     }
 
-    static create(target: InferredPredicate, originalSource: string): InferredPredicateTypeClass {
-        throw new Error('InferredPredicateTypeClass.create is not implemented: ' + target.type);
+    static create(_target: InferredPredicate, _originalSource: string): InferredPredicateTypeClass {
+        return new InferredPredicateTypeClass();
     }
 }
 

@@ -23,4 +23,3 @@ export const isBreakStatementType = (
 ): target is BreakStatementTypeClass => {
     return target instanceof BreakStatementTypeClass;
 };
-

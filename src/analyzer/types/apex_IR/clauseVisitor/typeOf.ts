@@ -13,8 +13,9 @@ import { FieldNameTypeClass, NameVisitor, isFieldNameType } from '../nameVisitor
 import {
     ApexErrorTypeClass,
     ApexCommonTypeClass,
-    isApexValidClass,
-    isApexValidClassList,
+    visitNodeList,
+    visitNode,
+    visitOptionalNode,
 } from '../commonVisitor';
 
 export class TypeOfTypeClass extends ClauseTypeClass<'typeOf', FieldNameTypeClass> {
@@ -37,24 +38,19 @@ export class TypeOfTypeClass extends ClauseTypeClass<'typeOf', FieldNameTypeClas
         }
 
         return new TypeOfTypeClass(
-            isApexValidClass(
-                new NameVisitor().visit(ctx.fieldName()),
-                isFieldNameType,
-                'fieldName',
-            ),
-            isApexValidClassList(
+            visitNode(new NameVisitor(), ctx.fieldName(), isFieldNameType, 'fieldName'),
+            visitNodeList(
+                new ClauseVisitor(),
                 ctx.whenClause_list(),
-                (ctx) => new ClauseVisitor().visit(ctx),
                 isWhenClauseType,
                 'whenClause',
             ),
-            ctx.elseClause()
-                ? isApexValidClass(
-                      new ClauseVisitor().visit(ctx.elseClause()),
-                      isElseClauseType,
-                      'elseClause',
-                  )
-                : null,
+            visitOptionalNode(
+                new ClauseVisitor(),
+                ctx.elseClause(),
+                isElseClauseType,
+                'elseClause',
+            ),
         );
     }
 
@@ -70,4 +66,3 @@ export class TypeOfTypeClass extends ClauseTypeClass<'typeOf', FieldNameTypeClas
 export const isTypeOfType = (target: ApexCommonTypeClass<string>): target is TypeOfTypeClass => {
     return target instanceof TypeOfTypeClass;
 };
-

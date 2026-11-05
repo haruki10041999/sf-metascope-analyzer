@@ -1,13 +1,37 @@
 import { isRegExpLiteral, type RegExpLiteral } from '@babel/types';
 import { EvaluatePair, LwcCommonTypeClass, makeEvaluatePair } from '../commonVisitor';
 
+export type RegExpLiteralFields = {
+    pattern: RegExpLiteral['pattern'];
+    flags: RegExpLiteral['flags'];
+};
+
 export class RegExpLiteralTypeClass extends LwcCommonTypeClass<'regExpLiteral'> {
-    private constructor(originalSource: string) {
-        super('regExpLiteral', originalSource);
+    private readonly value: RegExpLiteralFields;
+
+    private constructor(value: RegExpLiteralFields) {
+        super('regExpLiteral');
+        this.value = value;
     }
 
     static create(target: RegExpLiteral, originalSource: string): RegExpLiteralTypeClass {
-        throw new Error('RegExpLiteralTypeClass.create is not implemented: ' + target.type);
+        return new RegExpLiteralTypeClass({
+            pattern: target.pattern,
+            flags: target.flags,
+        });
+    }
+
+    /** すべてのフィールド (Babel の value フィールドの getter getValue() と区別する。getChildNodes もこれから作る) */
+    override getFields(): RegExpLiteralFields {
+        return this.value;
+    }
+
+    getPattern(): RegExpLiteralFields['pattern'] {
+        return this.value.pattern;
+    }
+
+    getFlags(): RegExpLiteralFields['flags'] {
+        return this.value.flags;
     }
 }
 

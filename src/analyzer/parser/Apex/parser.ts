@@ -2,14 +2,9 @@ import fs from 'node:fs/promises';
 import path from 'path';
 
 import {
-    assignMultiClass,
-    makeCompilationUnitAssignRule,
-    makeTriggerUnitAssignRule,
-    makeAnonymousUnitAssignRule,
+    convertApexUnit,
     ErrorType,
-    makeErrorAssignRule,
     UnitVisitor,
-    ApexCommonErrorListener,
     makeCompilationUnitJson,
     CompilationUnitJson,
     makeTriggerUnitJson,
@@ -36,6 +31,9 @@ import {
 } from '../../types';
 
 import { ApexParserFactory } from '@apexdevtools/apex-parser';
+
+import { collectErrorTypeClasses } from '../../types/apex_IR/commonVisitor';
+import { ApexCommonErrorListener, type ApexResolvedErrorEntry } from './errorListener';
 
 import {
     SaveDataInfo,
@@ -181,18 +179,14 @@ export class ApexParser {
                   : parser.compilationUnit();
         const unitTypeClass = new UnitVisitor().visit(unitContext);
 
-        // 構文エラーは解析後にしか集まらないため、ここで取得する
-        const unResolvedError = errorListener.getErrors();
+        // 構文エラーは解析中に集まる。そのあとで IR を作れなかったもの (analyzer) を渡す
+        // (構文エラーの位置に重なるものはリスナーが除く。LWC の LwcParser.parseScript と同じ)
+        collectErrorTypeClasses(unitTypeClass).forEach((error) =>
+            errorListener.analyzerError(error),
+        );
+        const resolvedErrors: ApexResolvedErrorEntry[] = errorListener.getResolvedErrors();
 
-        const resolvedErrors: ({ sourceKeys: ConvertKeys } & ApexResolvedError & SourceSpan)[] =
-            unResolvedError.map((error) => toApexResolvedError(error));
-
-        const unitConvertType = assignMultiClass(unitTypeClass, [
-            makeCompilationUnitAssignRule,
-            makeTriggerUnitAssignRule,
-            makeAnonymousUnitAssignRule,
-            makeErrorAssignRule,
-        ]);
+        const unitConvertType = convertApexUnit(unitTypeClass);
 
         if (unitConvertType.type === 'error') {
             return {
@@ -286,4 +280,3 @@ export class ApexParser {
         >(baseDir, id, 'Apex');
     }
 }
-

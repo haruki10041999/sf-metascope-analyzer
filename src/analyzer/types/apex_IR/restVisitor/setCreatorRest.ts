@@ -7,7 +7,7 @@ import {
     ExpressionVisitor,
     isBasedExpressionType,
 } from '../expressionVisitor';
-import { ApexErrorTypeClass, ApexCommonTypeClass, isApexValidClassList } from '../commonVisitor';
+import { ApexErrorTypeClass, ApexCommonTypeClass, visitNodeList } from '../commonVisitor';
 
 export class SetCreatorRestTypeClass extends RestListTypeClass<
     'setCreatorRest',
@@ -23,9 +23,9 @@ export class SetCreatorRestTypeClass extends RestListTypeClass<
         }
 
         return new SetCreatorRestTypeClass(
-            isApexValidClassList(
+            visitNodeList(
+                new ExpressionVisitor(),
                 ctx.expression_list(),
-                (ctx) => new ExpressionVisitor().visit(ctx),
                 isBasedExpressionType,
                 'expression',
             ),
@@ -38,4 +38,3 @@ export const isSetCreatorRestType = (
 ): target is SetCreatorRestTypeClass => {
     return target instanceof SetCreatorRestTypeClass;
 };
-

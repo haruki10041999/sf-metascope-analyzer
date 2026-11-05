@@ -2,12 +2,12 @@ import { isVoidPattern, type VoidPattern } from '@babel/types';
 import { EvaluatePair, LwcCommonTypeClass, makeEvaluatePair } from '../commonVisitor';
 
 export class VoidPatternTypeClass extends LwcCommonTypeClass<'voidPattern'> {
-    private constructor(originalSource: string) {
-        super('voidPattern', originalSource);
+    private constructor() {
+        super('voidPattern');
     }
 
-    static create(target: VoidPattern, originalSource: string): VoidPatternTypeClass {
-        throw new Error('VoidPatternTypeClass.create is not implemented: ' + target.type);
+    static create(_target: VoidPattern, _originalSource: string): VoidPatternTypeClass {
+        return new VoidPatternTypeClass();
     }
 }
 

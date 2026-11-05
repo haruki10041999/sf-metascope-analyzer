@@ -1,0 +1,39 @@
+{
+  "filePath": "docs/examples/apex-diff/before/OldHelper.cls-meta.xml",
+  "resolvedError": [],
+  "dataType": "apexClassMeta",
+  "result": {
+    "id": "OldHelper.cls-meta.xml",
+    "base": {
+      "kind": "apexClassMeta",
+      "sourceKeys": {
+        "objectKey": "apexClassMeta_8060a893b36039f6",
+        "sourceKey": "apexClassMeta_d56a9e6a2e70d71c"
+      },
+      "apiVersion": "58.0",
+      "status": "Active"
+    },
+    "sourceObject": [
+      {
+        "objectKey": "apexClassMeta_8060a893b36039f6",
+        "context": "<ApexClass xmlns=\"http://soap.sforce.com/2006/04/metadata\">\n    <apiVersion>58.0</apiVersion>\n    <status>Active</status>\n</ApexClass>",
+        "source": [
+          {
+            "sourceKey": "apexClassMeta_d56a9e6a2e70d71c",
+            "filePath": "OldHelper.cls-meta.xml",
+            "start": {
+              "offset": 39,
+              "line": 2,
+              "column": 0
+            },
+            "end": {
+              "offset": 173,
+              "line": 5,
+              "column": 12
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

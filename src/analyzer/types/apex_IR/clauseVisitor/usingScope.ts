@@ -3,7 +3,7 @@ import { UsingScopeContext } from '@apexdevtools/apex-parser';
 import { ClauseTypeClass } from '.';
 
 import { SoqlIdTypeClass, IdVisitor, isSoqlIdType } from '../idVisitor';
-import { ApexErrorTypeClass, ApexCommonTypeClass, isApexValidClass } from '../commonVisitor';
+import { ApexErrorTypeClass, ApexCommonTypeClass, visitNode } from '../commonVisitor';
 
 export class UsingScopeTypeClass extends ClauseTypeClass<'usingScope', SoqlIdTypeClass> {
     private constructor(value: SoqlIdTypeClass | ApexErrorTypeClass) {
@@ -16,7 +16,7 @@ export class UsingScopeTypeClass extends ClauseTypeClass<'usingScope', SoqlIdTyp
         }
 
         return new UsingScopeTypeClass(
-            isApexValidClass(new IdVisitor().visit(ctx.soqlId()), isSoqlIdType, 'soqlId'),
+            visitNode(new IdVisitor(), ctx.soqlId(), isSoqlIdType, 'soqlId'),
         );
     }
 }
@@ -26,4 +26,3 @@ export const isUsingScopeType = (
 ): target is UsingScopeTypeClass => {
     return target instanceof UsingScopeTypeClass;
 };
-

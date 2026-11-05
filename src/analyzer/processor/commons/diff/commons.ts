@@ -71,7 +71,10 @@ export const getValueKey = (value: unknown): string => {
         return `[${value.map(getValueKey).join(',')}]`;
     }
     if (isRecord(value)) {
-        const entries = Object.keys(value).sort((a, b) =>
+        // kind を持たない値 (Apex の式・変数など) の sourceKeys は位置なので、値の比較には使わない
+        const entries = Object.keys(value)
+            .filter((key) => key !== 'sourceKeys')
+            .sort((a, b) =>
             a === b ? 0 : a === 'type' ? -1 : b === 'type' ? 1 : a.localeCompare(b),
         );
         return `{${entries

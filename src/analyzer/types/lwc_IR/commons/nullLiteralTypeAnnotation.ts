@@ -2,17 +2,15 @@ import { isNullLiteralTypeAnnotation, type NullLiteralTypeAnnotation } from '@ba
 import { EvaluatePair, LwcCommonTypeClass, makeEvaluatePair } from '../commonVisitor';
 
 export class NullLiteralTypeAnnotationTypeClass extends LwcCommonTypeClass<'nullLiteralTypeAnnotation'> {
-    private constructor(originalSource: string) {
-        super('nullLiteralTypeAnnotation', originalSource);
+    private constructor() {
+        super('nullLiteralTypeAnnotation');
     }
 
     static create(
-        target: NullLiteralTypeAnnotation,
-        originalSource: string,
+        _target: NullLiteralTypeAnnotation,
+        _originalSource: string,
     ): NullLiteralTypeAnnotationTypeClass {
-        throw new Error(
-            'NullLiteralTypeAnnotationTypeClass.create is not implemented: ' + target.type,
-        );
+        return new NullLiteralTypeAnnotationTypeClass();
     }
 }
 

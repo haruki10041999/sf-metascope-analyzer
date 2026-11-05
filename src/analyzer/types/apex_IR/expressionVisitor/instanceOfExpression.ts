@@ -8,7 +8,7 @@ import {
 } from '.';
 
 import { TypeRefTypeClass, TypeVisitor, isTypeRefType } from '../typeVisitor';
-import { ApexErrorTypeClass, ApexCommonTypeClass, isApexValidClass } from '../commonVisitor';
+import { ApexErrorTypeClass, ApexCommonTypeClass, visitNode } from '../commonVisitor';
 
 export class InstanceOfExpressionTypeClass extends DoubleStringOperatorExpressionTypeClass<
     'instanceOfExpression',
@@ -29,12 +29,13 @@ export class InstanceOfExpressionTypeClass extends DoubleStringOperatorExpressio
         }
 
         return new InstanceOfExpressionTypeClass(
-            isApexValidClass(
-                new ExpressionVisitor().visit(ctx.expression()),
+            visitNode(
+                new ExpressionVisitor(),
+                ctx.expression(),
                 isBasedExpressionType,
                 'expression',
             ),
-            isApexValidClass(new TypeVisitor().visit(ctx.typeRef()), isTypeRefType, 'typeRef'),
+            visitNode(new TypeVisitor(), ctx.typeRef(), isTypeRefType, 'typeRef'),
         );
     }
 }
@@ -44,4 +45,3 @@ export const isInstanceOfExpressionType = (
 ): target is InstanceOfExpressionTypeClass => {
     return target instanceof InstanceOfExpressionTypeClass;
 };
-

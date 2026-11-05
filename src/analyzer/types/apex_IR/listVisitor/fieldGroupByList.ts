@@ -3,7 +3,7 @@ import { FieldGroupByListContext } from '@apexdevtools/apex-parser';
 import { ListTypeClass } from '.';
 
 import { FieldGroupByTypeClass, ClauseVisitor, isFieldGroupByType } from '../clauseVisitor';
-import { ApexErrorTypeClass, ApexCommonTypeClass, isApexValidClassList } from '../commonVisitor';
+import { ApexErrorTypeClass, ApexCommonTypeClass, visitNodeList } from '../commonVisitor';
 
 export class FieldGroupByListTypeClass extends ListTypeClass<
     'fieldGroupByList',
@@ -19,9 +19,9 @@ export class FieldGroupByListTypeClass extends ListTypeClass<
         }
 
         return new FieldGroupByListTypeClass(
-            isApexValidClassList(
+            visitNodeList(
+                new ClauseVisitor(),
                 ctx.fieldGroupBy_list(),
-                (ctx) => new ClauseVisitor().visit(ctx),
                 isFieldGroupByType,
                 'fieldGroupBy',
             ),
@@ -34,4 +34,3 @@ export const isFieldGroupByListType = (
 ): target is FieldGroupByListTypeClass => {
     return target instanceof FieldGroupByListTypeClass;
 };
-

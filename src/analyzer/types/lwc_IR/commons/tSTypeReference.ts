@@ -1,13 +1,67 @@
 import { isTSTypeReference, type TSTypeReference } from '@babel/types';
-import { EvaluatePair, LwcCommonTypeClass, makeEvaluatePair } from '../commonVisitor';
+import {
+    EvaluatePair,
+    LwcCommonTypeClass,
+    LwcErrorTypeClass,
+    lazyPairs,
+    makeEvaluatePair,
+    visitNode,
+    visitOptionalNode,
+} from '../commonVisitor';
+import {
+    tSEntityNameVisitorEvaluatePairs,
+    type TSEntityNameTypeClass,
+} from '../tsEntityNameVisitor';
+import {
+    tSTypeParameterInstantiationTypePair,
+    type TSTypeParameterInstantiationTypeClass,
+} from '../typeScriptVisitor/tSTypeParameterInstantiation';
+
+const tSTypeReferenceTypeArgumentsPairs = lazyPairs(
+    () => [tSTypeParameterInstantiationTypePair] as const,
+);
+
+export type TSTypeReferenceFields = {
+    typeName: TSEntityNameTypeClass | LwcErrorTypeClass;
+    typeArguments: TSTypeParameterInstantiationTypeClass | LwcErrorTypeClass | null;
+};
 
 export class TSTypeReferenceTypeClass extends LwcCommonTypeClass<'tSTypeReference'> {
-    private constructor(originalSource: string) {
-        super('tSTypeReference', originalSource);
+    private readonly value: TSTypeReferenceFields;
+
+    private constructor(value: TSTypeReferenceFields) {
+        super('tSTypeReference');
+        this.value = value;
     }
 
     static create(target: TSTypeReference, originalSource: string): TSTypeReferenceTypeClass {
-        throw new Error('TSTypeReferenceTypeClass.create is not implemented: ' + target.type);
+        return new TSTypeReferenceTypeClass({
+            typeName: visitNode(
+                target.typeName,
+                originalSource,
+                tSEntityNameVisitorEvaluatePairs(),
+                'TSEntityNameVisitor',
+            ),
+            typeArguments: visitOptionalNode(
+                target.typeArguments,
+                originalSource,
+                tSTypeReferenceTypeArgumentsPairs(),
+                'TSTypeReference.typeArguments',
+            ),
+        });
+    }
+
+    /** すべてのフィールド (Babel の value フィールドの getter getValue() と区別する。getChildNodes もこれから作る) */
+    override getFields(): TSTypeReferenceFields {
+        return this.value;
+    }
+
+    getTypeName(): TSTypeReferenceFields['typeName'] {
+        return this.value.typeName;
+    }
+
+    getTypeArguments(): TSTypeReferenceFields['typeArguments'] {
+        return this.value.typeArguments;
     }
 }
 

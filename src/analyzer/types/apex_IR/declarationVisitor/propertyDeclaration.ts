@@ -8,8 +8,8 @@ import { TypeRefTypeClass, TypeVisitor, isTypeRefType } from '../typeVisitor';
 import {
     ApexErrorTypeClass,
     ApexCommonTypeClass,
-    isApexValidClass,
-    isApexValidClassList,
+    visitNodeList,
+    visitNode,
 } from '../commonVisitor';
 
 export class PropertyDeclarationTypeClass extends DeclarationTypeClass<
@@ -34,11 +34,11 @@ export class PropertyDeclarationTypeClass extends DeclarationTypeClass<
         }
 
         return new PropertyDeclarationTypeClass(
-            isApexValidClass(new IdVisitor().visit(ctx.id()), isNormalIdType, 'id'),
-            isApexValidClass(new TypeVisitor().visit(ctx.typeRef()), isTypeRefType, 'typeRef'),
-            isApexValidClassList(
+            visitNode(new IdVisitor(), ctx.id(), isNormalIdType, 'id'),
+            visitNode(new TypeVisitor(), ctx.typeRef(), isTypeRefType, 'typeRef'),
+            visitNodeList(
+                new BlockVisitor(),
                 ctx.propertyBlock_list(),
-                (ctx) => new BlockVisitor().visit(ctx),
                 isPropertyBlockType,
                 'propertyBlock',
             ),

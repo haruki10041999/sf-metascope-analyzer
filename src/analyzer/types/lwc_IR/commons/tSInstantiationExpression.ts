@@ -1,18 +1,67 @@
 import { isTSInstantiationExpression, type TSInstantiationExpression } from '@babel/types';
-import { EvaluatePair, LwcCommonTypeClass, makeEvaluatePair } from '../commonVisitor';
+import {
+    EvaluatePair,
+    LwcCommonTypeClass,
+    LwcErrorTypeClass,
+    lazyPairs,
+    makeEvaluatePair,
+    visitNode,
+    visitOptionalNode,
+} from '../commonVisitor';
+import { expressionVisitorEvaluatePairs, type ExpressionTypeClass } from '../expressionVisitor';
+import {
+    tSTypeParameterInstantiationTypePair,
+    type TSTypeParameterInstantiationTypeClass,
+} from '../typeScriptVisitor/tSTypeParameterInstantiation';
+
+const tSInstantiationExpressionTypeArgumentsPairs = lazyPairs(
+    () => [tSTypeParameterInstantiationTypePair] as const,
+);
+
+export type TSInstantiationExpressionFields = {
+    expression: ExpressionTypeClass | LwcErrorTypeClass;
+    typeArguments: TSTypeParameterInstantiationTypeClass | LwcErrorTypeClass | null;
+};
 
 export class TSInstantiationExpressionTypeClass extends LwcCommonTypeClass<'tSInstantiationExpression'> {
-    private constructor(originalSource: string) {
-        super('tSInstantiationExpression', originalSource);
+    private readonly value: TSInstantiationExpressionFields;
+
+    private constructor(value: TSInstantiationExpressionFields) {
+        super('tSInstantiationExpression');
+        this.value = value;
     }
 
     static create(
         target: TSInstantiationExpression,
         originalSource: string,
     ): TSInstantiationExpressionTypeClass {
-        throw new Error(
-            'TSInstantiationExpressionTypeClass.create is not implemented: ' + target.type,
-        );
+        return new TSInstantiationExpressionTypeClass({
+            expression: visitNode(
+                target.expression,
+                originalSource,
+                expressionVisitorEvaluatePairs(),
+                'ExpressionVisitor',
+            ),
+            typeArguments: visitOptionalNode(
+                target.typeArguments,
+                originalSource,
+                tSInstantiationExpressionTypeArgumentsPairs(),
+                'TSInstantiationExpression.typeArguments',
+            ),
+        });
+    }
+
+    /** すべてのフィールド (Babel の value フィールドの getter getValue() と区別する。getChildNodes もこれから作る) */
+    override getFields(): TSInstantiationExpressionFields {
+        return this.value;
+    }
+
+    getExpression(): TSInstantiationExpressionFields['expression'] {
+        return this.value.expression;
+    }
+
+    getTypeArguments(): TSInstantiationExpressionFields['typeArguments'] {
+        return this.value.typeArguments;
     }
 }
 

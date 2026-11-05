@@ -12,7 +12,12 @@ import {
     isSubQueryType,
     isSoqlFunctionType,
 } from '../queryVisitor';
-import { ApexErrorTypeClass, ApexCommonTypeClass, isApexValidClass } from '../commonVisitor';
+import {
+    ApexErrorTypeClass,
+    ApexCommonTypeClass,
+    visitNode,
+    visitOptionalNode,
+} from '../commonVisitor';
 
 type SubFieldEntryTypeClassType =
     FieldNameTypeClass | SoqlFunctionTypeClass | SubQueryTypeClass | TypeOfTypeClass;
@@ -38,37 +43,24 @@ export class SubFieldEntryTypeClass extends EntryTypeClass<
 
         let value: SubFieldEntryTypeClassType | ApexErrorTypeClass;
         if (ctx.fieldName()) {
-            value = isApexValidClass(
-                new NameVisitor().visit(ctx.fieldName()),
-                isFieldNameType,
-                'fieldName',
-            );
+            value = visitNode(new NameVisitor(), ctx.fieldName(), isFieldNameType, 'fieldName');
         } else if (ctx.soqlFunction()) {
-            value = isApexValidClass(
-                new QueryVisitor().visit(ctx.soqlFunction()),
+            value = visitNode(
+                new QueryVisitor(),
+                ctx.soqlFunction(),
                 isSoqlFunctionType,
                 'soqlFunction',
             );
         } else if (ctx.subQuery()) {
-            value = isApexValidClass(
-                new QueryVisitor().visit(ctx.subQuery()),
-                isSubQueryType,
-                'subQuery',
-            );
+            value = visitNode(new QueryVisitor(), ctx.subQuery(), isSubQueryType, 'subQuery');
         } else {
-            value = isApexValidClass(
-                new ClauseVisitor().visit(ctx.typeOf()),
-                isTypeOfType,
-                'typeOf',
-            );
+            value = visitNode(new ClauseVisitor(), ctx.typeOf(), isTypeOfType, 'typeOf');
         }
 
         // 文法上 soqlId は常に別名
         return new SubFieldEntryTypeClass(
             value,
-            ctx.soqlId()
-                ? isApexValidClass(new IdVisitor().visit(ctx.soqlId()), isSoqlIdType, 'soqlId')
-                : null,
+            visitOptionalNode(new IdVisitor(), ctx.soqlId(), isSoqlIdType, 'soqlId'),
         );
     }
 
@@ -82,4 +74,3 @@ export const isSubFieldEntryType = (
 ): target is SubFieldEntryTypeClass => {
     return target instanceof SubFieldEntryTypeClass;
 };
-

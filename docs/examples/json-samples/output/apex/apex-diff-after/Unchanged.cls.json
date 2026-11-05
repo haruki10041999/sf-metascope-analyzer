@@ -1,0 +1,229 @@
+{
+  "filePath": "docs/examples/apex-diff/after/Unchanged.cls",
+  "resolvedError": [],
+  "dataType": "cls",
+  "result": {
+    "id": "Unchanged.cls",
+    "base": {
+      "kind": "class",
+      "sourceKeys": {
+        "base": {
+          "objectKey": "classDeclaration_e78e6de6f8354460",
+          "sourceKey": "classDeclaration_fd596ab2d2aa4bcb"
+        },
+        "name": {
+          "objectKey": "id_d1ee7f25ff6ff2be",
+          "sourceKey": "id_b816335a807db02d"
+        }
+      },
+      "name": "Unchanged",
+      "block": [
+        {
+          "kind": "field",
+          "sourceKeys": {
+            "objectKey": "fieldDeclaration_454c797a1953a616",
+            "sourceKey": "fieldDeclaration_d82dc9c25f426c7a"
+          },
+          "variants": [
+            {
+              "sourceKeys": {
+                "objectKey": "variableDeclarator_87a8a4394d2a28f9",
+                "sourceKey": "variableDeclarator_531e11a4d8ea531f"
+              },
+              "name": "value",
+              "init": {
+                "sourceKeys": {
+                  "objectKey": "literal_fb5627d59521b262",
+                  "sourceKey": "literal_e9738ba07842f0dc"
+                },
+                "value": "1",
+                "valueType": "integer"
+              }
+            }
+          ],
+          "variantType": {
+            "kind": "type",
+            "sourceKeys": {
+              "objectKey": "typeRef_1a870c360196e41a",
+              "sourceKey": "typeRef_e52c1631c8a697d0"
+            },
+            "type": "primitive",
+            "primitiveType": "Integer"
+          },
+          "modifier": {
+            "access": [
+              {
+                "kind": "modifier",
+                "sourceKeys": {
+                  "objectKey": "modifier_a04213395735c45e",
+                  "sourceKey": "modifier_5343e7bf7a995428"
+                },
+                "name": "PUBLIC"
+              }
+            ]
+          }
+        }
+      ],
+      "modifier": {
+        "access": [
+          {
+            "kind": "modifier",
+            "sourceKeys": {
+              "objectKey": "modifier_a04213395735c45e",
+              "sourceKey": "modifier_a17627683ff63af1"
+            },
+            "name": "PUBLIC"
+          }
+        ]
+      }
+    },
+    "sourceObject": [
+      {
+        "objectKey": "classDeclaration_e78e6de6f8354460",
+        "context": "class Unchanged {\n\n    public Integer value = 1;\n}",
+        "source": [
+          {
+            "sourceKey": "classDeclaration_fd596ab2d2aa4bcb",
+            "start": {
+              "offset": 9,
+              "line": 3,
+              "column": 7
+            },
+            "end": {
+              "offset": 59,
+              "line": 6,
+              "column": 1
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "id_d1ee7f25ff6ff2be",
+        "context": "Unchanged",
+        "source": [
+          {
+            "sourceKey": "id_b816335a807db02d",
+            "start": {
+              "offset": 15,
+              "line": 3,
+              "column": 13
+            },
+            "end": {
+              "offset": 24,
+              "line": 3,
+              "column": 22
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "fieldDeclaration_454c797a1953a616",
+        "context": "Integer value = 1;",
+        "source": [
+          {
+            "sourceKey": "fieldDeclaration_d82dc9c25f426c7a",
+            "start": {
+              "offset": 39,
+              "line": 5,
+              "column": 11
+            },
+            "end": {
+              "offset": 57,
+              "line": 5,
+              "column": 29
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "variableDeclarator_87a8a4394d2a28f9",
+        "context": "value = 1",
+        "source": [
+          {
+            "sourceKey": "variableDeclarator_531e11a4d8ea531f",
+            "start": {
+              "offset": 47,
+              "line": 5,
+              "column": 19
+            },
+            "end": {
+              "offset": 56,
+              "line": 5,
+              "column": 28
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "literal_fb5627d59521b262",
+        "context": "1",
+        "source": [
+          {
+            "sourceKey": "literal_e9738ba07842f0dc",
+            "start": {
+              "offset": 55,
+              "line": 5,
+              "column": 27
+            },
+            "end": {
+              "offset": 56,
+              "line": 5,
+              "column": 28
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "typeRef_1a870c360196e41a",
+        "context": "Integer",
+        "source": [
+          {
+            "sourceKey": "typeRef_e52c1631c8a697d0",
+            "start": {
+              "offset": 39,
+              "line": 5,
+              "column": 11
+            },
+            "end": {
+              "offset": 46,
+              "line": 5,
+              "column": 18
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "modifier_a04213395735c45e",
+        "context": "public",
+        "source": [
+          {
+            "sourceKey": "modifier_5343e7bf7a995428",
+            "start": {
+              "offset": 32,
+              "line": 5,
+              "column": 4
+            },
+            "end": {
+              "offset": 38,
+              "line": 5,
+              "column": 10
+            }
+          },
+          {
+            "sourceKey": "modifier_a17627683ff63af1",
+            "start": {
+              "offset": 2,
+              "line": 3,
+              "column": 0
+            },
+            "end": {
+              "offset": 8,
+              "line": 3,
+              "column": 6
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

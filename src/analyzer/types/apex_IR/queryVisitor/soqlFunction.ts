@@ -18,8 +18,8 @@ import { LocationValueTypeClass, ValueVisitor, isLocationValueType } from '../va
 import {
     ApexErrorTypeClass,
     ApexCommonTypeClass,
-    isApexValidClass,
-    isApexValidClassList,
+    visitNodeList,
+    visitNode,
 } from '../commonVisitor';
 
 type NormalSoqlFunctionType =
@@ -155,11 +155,7 @@ export class SoqlFunctionTypeClass extends QueryValueTypeClass<
                 value = 'CONVERT_CURRENCY';
             }
 
-            param = isApexValidClass(
-                new NameVisitor().visit(ctx.fieldName()),
-                isFieldNameType,
-                'fieldName',
-            );
+            param = visitNode(new NameVisitor(), ctx.fieldName(), isFieldNameType, 'fieldName');
         } else if (isDateFunctionType(ctx)) {
             if (ctx.CALENDAR_MONTH()) {
                 value = 'CALENDAR_MONTH';
@@ -189,8 +185,9 @@ export class SoqlFunctionTypeClass extends QueryValueTypeClass<
                 value = 'WEEK_IN_YEAR';
             }
 
-            param = isApexValidClass(
-                new NameVisitor().visit(ctx.dateFieldName()),
+            param = visitNode(
+                new NameVisitor(),
+                ctx.dateFieldName(),
                 isDateFieldNameType,
                 'dateFieldName',
             );
@@ -199,24 +196,17 @@ export class SoqlFunctionTypeClass extends QueryValueTypeClass<
 
             // `COUNT()` は引数なし、`COUNT(field)` は fieldName
             if (ctx.fieldName()) {
-                param = isApexValidClass(
-                    new NameVisitor().visit(ctx.fieldName()),
-                    isFieldNameType,
-                    'fieldName',
-                );
+                param = visitNode(new NameVisitor(), ctx.fieldName(), isFieldNameType, 'fieldName');
             }
         } else if (isFormatFunctionType(ctx)) {
             value = 'FORMAT';
 
             if (ctx.fieldName()) {
-                param = isApexValidClass(
-                    new NameVisitor().visit(ctx.fieldName()),
-                    isFieldNameType,
-                    'fieldName',
-                );
+                param = visitNode(new NameVisitor(), ctx.fieldName(), isFieldNameType, 'fieldName');
             } else if (ctx.soqlFunction()) {
-                param = isApexValidClass(
-                    new QueryVisitor().visit(ctx.soqlFunction()),
+                param = visitNode(
+                    new QueryVisitor(),
+                    ctx.soqlFunction(),
                     isSoqlFunctionType,
                     'soqlFunction',
                 );
@@ -224,8 +214,9 @@ export class SoqlFunctionTypeClass extends QueryValueTypeClass<
         } else if (isFieldsFunctionType(ctx)) {
             value = 'FIELDS';
 
-            param = isApexValidClass(
-                new ParameterVisitor().visit(ctx.soqlFieldsParameter()),
+            param = visitNode(
+                new ParameterVisitor(),
+                ctx.soqlFieldsParameter(),
                 isSoqlFieldsParameterType,
                 'soqlFieldsParameter',
             );
@@ -235,9 +226,9 @@ export class SoqlFunctionTypeClass extends QueryValueTypeClass<
             const distanceParam: (LocationValueTypeClass | ApexErrorTypeClass | string)[] = [];
 
             distanceParam.push(
-                ...isApexValidClassList(
+                ...visitNodeList(
+                    new ValueVisitor(),
                     ctx.locationValue_list() || [],
-                    (ctx) => new ValueVisitor().visit(ctx),
                     isLocationValueType,
                     'locationValue',
                 ),
@@ -264,4 +255,3 @@ export const isSoqlFunctionType = (
 ): target is SoqlFunctionTypeClass => {
     return target instanceof SoqlFunctionTypeClass;
 };
-

@@ -110,7 +110,12 @@ export type SoslWithJson =
           value: (DataCategorySelectionJson | ErrorJson)[] | ErrorJson;
       }
     | {
-          mode: 'SNIPPET' | 'SPELL_CORRECTION';
+          // WITH SNIPPET (target_length = n)。文法上のオプションは target_length だけ
+          mode: 'SNIPPET';
+          targetLength?: string;
+      }
+    | {
+          mode: 'SPELL_CORRECTION';
           value?: string;
       }
     | {
@@ -151,7 +156,12 @@ export const makeSoslWithJson = (
             mode: 'DATA_CATEGORY',
             value: makeDataCategorySelectionListJson(target.content),
         };
-    } else if (target.value === 'SNIPPET' || target.value === 'SPELL_CORRECTION') {
+    } else if (target.value === 'SNIPPET') {
+        return {
+            mode: target.value,
+            ...(target.content ? { targetLength: target.content } : {}),
+        };
+    } else if (target.value === 'SPELL_CORRECTION') {
         return {
             mode: target.value,
             ...(target.content ? { value: target.content } : {}),

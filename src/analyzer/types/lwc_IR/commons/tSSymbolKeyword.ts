@@ -2,12 +2,12 @@ import { isTSSymbolKeyword, type TSSymbolKeyword } from '@babel/types';
 import { EvaluatePair, LwcCommonTypeClass, makeEvaluatePair } from '../commonVisitor';
 
 export class TSSymbolKeywordTypeClass extends LwcCommonTypeClass<'tSSymbolKeyword'> {
-    private constructor(originalSource: string) {
-        super('tSSymbolKeyword', originalSource);
+    private constructor() {
+        super('tSSymbolKeyword');
     }
 
-    static create(target: TSSymbolKeyword, originalSource: string): TSSymbolKeywordTypeClass {
-        throw new Error('TSSymbolKeywordTypeClass.create is not implemented: ' + target.type);
+    static create(_target: TSSymbolKeyword, _originalSource: string): TSSymbolKeywordTypeClass {
+        return new TSSymbolKeywordTypeClass();
     }
 }
 

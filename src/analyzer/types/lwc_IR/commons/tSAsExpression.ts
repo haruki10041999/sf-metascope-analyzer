@@ -1,13 +1,55 @@
 import { isTSAsExpression, type TSAsExpression } from '@babel/types';
-import { EvaluatePair, LwcCommonTypeClass, makeEvaluatePair } from '../commonVisitor';
+import {
+    EvaluatePair,
+    LwcCommonTypeClass,
+    LwcErrorTypeClass,
+    makeEvaluatePair,
+    visitNode,
+} from '../commonVisitor';
+import { expressionVisitorEvaluatePairs, type ExpressionTypeClass } from '../expressionVisitor';
+import { tSTypeVisitorEvaluatePairs, type TSTypeTypeClass } from '../tsTypeVisitor';
+
+export type TSAsExpressionFields = {
+    expression: ExpressionTypeClass | LwcErrorTypeClass;
+    typeAnnotation: TSTypeTypeClass | LwcErrorTypeClass;
+};
 
 export class TSAsExpressionTypeClass extends LwcCommonTypeClass<'tSAsExpression'> {
-    private constructor(originalSource: string) {
-        super('tSAsExpression', originalSource);
+    private readonly value: TSAsExpressionFields;
+
+    private constructor(value: TSAsExpressionFields) {
+        super('tSAsExpression');
+        this.value = value;
     }
 
     static create(target: TSAsExpression, originalSource: string): TSAsExpressionTypeClass {
-        throw new Error('TSAsExpressionTypeClass.create is not implemented: ' + target.type);
+        return new TSAsExpressionTypeClass({
+            expression: visitNode(
+                target.expression,
+                originalSource,
+                expressionVisitorEvaluatePairs(),
+                'ExpressionVisitor',
+            ),
+            typeAnnotation: visitNode(
+                target.typeAnnotation,
+                originalSource,
+                tSTypeVisitorEvaluatePairs(),
+                'TSTypeVisitor',
+            ),
+        });
+    }
+
+    /** すべてのフィールド (Babel の value フィールドの getter getValue() と区別する。getChildNodes もこれから作る) */
+    override getFields(): TSAsExpressionFields {
+        return this.value;
+    }
+
+    getExpression(): TSAsExpressionFields['expression'] {
+        return this.value.expression;
+    }
+
+    getTypeAnnotation(): TSAsExpressionFields['typeAnnotation'] {
+        return this.value.typeAnnotation;
     }
 }
 

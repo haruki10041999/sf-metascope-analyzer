@@ -1,18 +1,34 @@
 import { isNumberLiteralTypeAnnotation, type NumberLiteralTypeAnnotation } from '@babel/types';
 import { EvaluatePair, LwcCommonTypeClass, makeEvaluatePair } from '../commonVisitor';
 
+export type NumberLiteralTypeAnnotationFields = {
+    value: NumberLiteralTypeAnnotation['value'];
+};
+
 export class NumberLiteralTypeAnnotationTypeClass extends LwcCommonTypeClass<'numberLiteralTypeAnnotation'> {
-    private constructor(originalSource: string) {
-        super('numberLiteralTypeAnnotation', originalSource);
+    private readonly value: NumberLiteralTypeAnnotationFields;
+
+    private constructor(value: NumberLiteralTypeAnnotationFields) {
+        super('numberLiteralTypeAnnotation');
+        this.value = value;
     }
 
     static create(
         target: NumberLiteralTypeAnnotation,
         originalSource: string,
     ): NumberLiteralTypeAnnotationTypeClass {
-        throw new Error(
-            'NumberLiteralTypeAnnotationTypeClass.create is not implemented: ' + target.type,
-        );
+        return new NumberLiteralTypeAnnotationTypeClass({
+            value: target.value,
+        });
+    }
+
+    /** すべてのフィールド (Babel の value フィールドの getter getValue() と区別する。getChildNodes もこれから作る) */
+    override getFields(): NumberLiteralTypeAnnotationFields {
+        return this.value;
+    }
+
+    getValue(): NumberLiteralTypeAnnotationFields['value'] {
+        return this.value.value;
     }
 }
 

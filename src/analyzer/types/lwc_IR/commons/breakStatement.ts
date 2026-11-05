@@ -1,13 +1,46 @@
 import { isBreakStatement, type BreakStatement } from '@babel/types';
-import { EvaluatePair, LwcCommonTypeClass, makeEvaluatePair } from '../commonVisitor';
+import {
+    EvaluatePair,
+    LwcCommonTypeClass,
+    LwcErrorTypeClass,
+    lazyPairs,
+    makeEvaluatePair,
+    visitOptionalNode,
+} from '../commonVisitor';
+import { identifierTypePair, type IdentifierTypeClass } from './identifier';
+
+const breakStatementLabelPairs = lazyPairs(() => [identifierTypePair] as const);
+
+export type BreakStatementFields = {
+    label: IdentifierTypeClass | LwcErrorTypeClass | null;
+};
 
 export class BreakStatementTypeClass extends LwcCommonTypeClass<'breakStatement'> {
-    private constructor(originalSource: string) {
-        super('breakStatement', originalSource);
+    private readonly value: BreakStatementFields;
+
+    private constructor(value: BreakStatementFields) {
+        super('breakStatement');
+        this.value = value;
     }
 
     static create(target: BreakStatement, originalSource: string): BreakStatementTypeClass {
-        throw new Error('BreakStatementTypeClass.create is not implemented: ' + target.type);
+        return new BreakStatementTypeClass({
+            label: visitOptionalNode(
+                target.label,
+                originalSource,
+                breakStatementLabelPairs(),
+                'BreakStatement.label',
+            ),
+        });
+    }
+
+    /** すべてのフィールド (Babel の value フィールドの getter getValue() と区別する。getChildNodes もこれから作る) */
+    override getFields(): BreakStatementFields {
+        return this.value;
+    }
+
+    getLabel(): BreakStatementFields['label'] {
+        return this.value.label;
     }
 }
 

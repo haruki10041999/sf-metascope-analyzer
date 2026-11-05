@@ -1,16 +1,46 @@
 import { isUnionTypeAnnotation, type UnionTypeAnnotation } from '@babel/types';
-import { EvaluatePair, LwcCommonTypeClass, makeEvaluatePair } from '../commonVisitor';
+import {
+    EvaluatePair,
+    LwcCommonTypeClass,
+    LwcErrorTypeClass,
+    makeEvaluatePair,
+    visitNodeList,
+} from '../commonVisitor';
+import { flowTypeVisitorEvaluatePairs, type FlowTypeTypeClass } from '../flowTypeVisitor';
+
+export type UnionTypeAnnotationFields = {
+    types: (FlowTypeTypeClass | LwcErrorTypeClass)[];
+};
 
 export class UnionTypeAnnotationTypeClass extends LwcCommonTypeClass<'unionTypeAnnotation'> {
-    private constructor(originalSource: string) {
-        super('unionTypeAnnotation', originalSource);
+    private readonly value: UnionTypeAnnotationFields;
+
+    private constructor(value: UnionTypeAnnotationFields) {
+        super('unionTypeAnnotation');
+        this.value = value;
     }
 
     static create(
         target: UnionTypeAnnotation,
         originalSource: string,
     ): UnionTypeAnnotationTypeClass {
-        throw new Error('UnionTypeAnnotationTypeClass.create is not implemented: ' + target.type);
+        return new UnionTypeAnnotationTypeClass({
+            types: visitNodeList(
+                target.types,
+                originalSource,
+                flowTypeVisitorEvaluatePairs(),
+                'FlowTypeVisitor',
+            ),
+        });
+    }
+
+    /** すべてのフィールド (Babel の value フィールドの getter getValue() と区別する。getChildNodes もこれから作る) */
+    override getFields(): UnionTypeAnnotationFields {
+        return this.value;
+    }
+
+    getTypes(): UnionTypeAnnotationFields['types'] {
+        return this.value.types;
     }
 }
 

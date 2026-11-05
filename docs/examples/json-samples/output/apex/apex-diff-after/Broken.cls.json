@@ -1,0 +1,299 @@
+{
+  "filePath": "docs/examples/apex-diff/after/Broken.cls",
+  "resolvedError": [
+    {
+      "sourceKeys": {
+        "objectKey": "error_51d27deeaf512fab",
+        "sourceKey": "error_44050172693e5500"
+      },
+      "phase": "syntax",
+      "code": "UNRESOLVED",
+      "contextType": "unknown",
+      "context": ";",
+      "errorMessage": "extraneous input ';' expecting {'after', 'before', 'get', 'inherited', 'instanceof', 'new', 'null', 'set', 'sharing', 'super', 'switch', 'this', 'transient', 'trigger', 'void', 'when', 'with', 'without', 'list', 'map', 'system', 'user', 'select', 'count', 'from', 'as', 'using', 'scope', 'where', 'order', 'by', 'limit', 'and', 'or', 'not', 'avg', 'count_distinct', 'min', 'max', 'sum', 'typeof', 'end', 'then', 'like', 'in', 'includes', 'excludes', 'asc', 'desc', 'nulls', 'first', 'last', 'group', 'all', 'rows', 'view', 'having', 'rollup', 'tolabel', 'offset', 'data', 'category', 'at', 'above', 'below', 'above_or_below', 'security_enforced', 'system_mode', 'user_mode', 'reference', 'cube', 'format', 'tracking', 'viewstat', 'custom', 'standard', 'distance', 'geolocation', 'grouping', 'convertcurrency', 'formula', 'calendar_month', 'calendar_quarter', 'calendar_year', 'day_in_month', 'day_in_week', 'day_in_year', 'day_only', 'fiscal_month', 'fiscal_quarter', 'fiscal_year', 'hour_in_day', 'week_in_month', 'week_in_year', 'converttimezone', 'yesterday', 'today', 'tomorrow', 'last_week', 'this_week', 'next_week', 'last_month', 'this_month', 'next_month', 'last_90_days', 'next_90_days', 'last_n_days', 'next_n_days', 'n_days_ago', 'next_n_weeks', 'last_n_weeks', 'n_weeks_ago', 'next_n_months', 'last_n_months', 'n_months_ago', 'this_quarter', 'last_quarter', 'next_quarter', 'next_n_quarters', 'last_n_quarters', 'n_quarters_ago', 'this_year', 'last_year', 'next_year', 'next_n_years', 'last_n_years', 'n_years_ago', 'this_fiscal_quarter', 'last_fiscal_quarter', 'next_fiscal_quarter', 'next_n_fiscal_quarters', 'last_n_fiscal_quarters', 'n_fiscal_quarters_ago', 'this_fiscal_year', 'last_fiscal_year', 'next_fiscal_year', 'next_n_fiscal_years', 'last_n_fiscal_years', 'n_fiscal_years_ago', IntegralCurrencyLiteral, 'find', 'email', 'name', 'phone', 'sidebar', 'fields', 'metadata', 'pricebookid', 'network', 'snippet', 'target_length', 'division', 'returning', 'listview', 'highlight', 'spell_correction', FindLiteral, IntegerLiteral, LongLiteral, NumberLiteral, BooleanLiteral, MultilineStringLiteral, StringLiteral, '(', '[', '!', '~', '++', '--', '+', '-', Identifier}",
+      "start": {
+        "offset": 66,
+        "line": 3,
+        "column": 20
+      },
+      "end": {
+        "offset": 67,
+        "line": 3,
+        "column": 21
+      }
+    },
+    {
+      "sourceKeys": {
+        "objectKey": "error_b66a16252c4976de",
+        "sourceKey": "error_2c0162cc63802eaf"
+      },
+      "phase": "syntax",
+      "code": "UNRESOLVED",
+      "contextType": "unknown",
+      "context": ")",
+      "errorMessage": "mismatched input ')' expecting {'after', 'before', 'get', 'inherited', 'instanceof', 'new', 'null', 'set', 'sharing', 'super', 'switch', 'this', 'transient', 'trigger', 'void', 'when', 'with', 'without', 'list', 'map', 'system', 'user', 'select', 'count', 'from', 'as', 'using', 'scope', 'where', 'order', 'by', 'limit', 'and', 'or', 'not', 'avg', 'count_distinct', 'min', 'max', 'sum', 'typeof', 'end', 'then', 'like', 'in', 'includes', 'excludes', 'asc', 'desc', 'nulls', 'first', 'last', 'group', 'all', 'rows', 'view', 'having', 'rollup', 'tolabel', 'offset', 'data', 'category', 'at', 'above', 'below', 'above_or_below', 'security_enforced', 'system_mode', 'user_mode', 'reference', 'cube', 'format', 'tracking', 'viewstat', 'custom', 'standard', 'distance', 'geolocation', 'grouping', 'convertcurrency', 'formula', 'calendar_month', 'calendar_quarter', 'calendar_year', 'day_in_month', 'day_in_week', 'day_in_year', 'day_only', 'fiscal_month', 'fiscal_quarter', 'fiscal_year', 'hour_in_day', 'week_in_month', 'week_in_year', 'converttimezone', 'yesterday', 'today', 'tomorrow', 'last_week', 'this_week', 'next_week', 'last_month', 'this_month', 'next_month', 'last_90_days', 'next_90_days', 'last_n_days', 'next_n_days', 'n_days_ago', 'next_n_weeks', 'last_n_weeks', 'n_weeks_ago', 'next_n_months', 'last_n_months', 'n_months_ago', 'this_quarter', 'last_quarter', 'next_quarter', 'next_n_quarters', 'last_n_quarters', 'n_quarters_ago', 'this_year', 'last_year', 'next_year', 'next_n_years', 'last_n_years', 'n_years_ago', 'this_fiscal_quarter', 'last_fiscal_quarter', 'next_fiscal_quarter', 'next_n_fiscal_quarters', 'last_n_fiscal_quarters', 'n_fiscal_quarters_ago', 'this_fiscal_year', 'last_fiscal_year', 'next_fiscal_year', 'next_n_fiscal_years', 'last_n_fiscal_years', 'n_fiscal_years_ago', IntegralCurrencyLiteral, 'find', 'email', 'name', 'phone', 'sidebar', 'fields', 'metadata', 'pricebookid', 'network', 'snippet', 'target_length', 'division', 'returning', 'listview', 'highlight', 'spell_correction', FindLiteral, IntegerLiteral, LongLiteral, NumberLiteral, BooleanLiteral, MultilineStringLiteral, StringLiteral, '(', '[', '!', '~', '++', '--', '+', '-', Identifier}",
+      "start": {
+        "offset": 83,
+        "line": 4,
+        "column": 15
+      },
+      "end": {
+        "offset": 84,
+        "line": 4,
+        "column": 16
+      }
+    }
+  ],
+  "dataType": "cls",
+  "result": {
+    "id": "Broken.cls",
+    "base": {
+      "kind": "class",
+      "sourceKeys": {
+        "base": {
+          "objectKey": "classDeclaration_6277dfd88690ad3f",
+          "sourceKey": "classDeclaration_316ccc84364cdbc4"
+        },
+        "name": {
+          "objectKey": "id_b37259d059092602",
+          "sourceKey": "id_c2b0d451f4f1b4cc"
+        }
+      },
+      "name": "Broken",
+      "block": [
+        {
+          "kind": "method",
+          "sourceKeys": {
+            "base": {
+              "objectKey": "methodDeclaration_46961846746fd755",
+              "sourceKey": "methodDeclaration_c53faf02d9d77339"
+            },
+            "name": {
+              "objectKey": "id_173f4a982cfa79db",
+              "sourceKey": "id_1b3fefd9f203fcb6"
+            }
+          },
+          "name": "run",
+          "returnType": "void",
+          "block": [
+            {
+              "kind": "error",
+              "sourceKeys": {
+                "objectKey": "localVariableDeclarationStatement_38f9de9d850f6e75",
+                "sourceKey": "localVariableDeclarationStatement_d25e8760c6200a2d"
+              },
+              "kindType": "localVariable"
+            },
+            {
+              "kind": "expression",
+              "sourceKeys": {
+                "objectKey": "expressionStatement_6ed1f6aa0c97c626",
+                "sourceKey": "expressionStatement_d89d2ba3e73ebfbd"
+              },
+              "value": {
+                "kind": "memberAccess",
+                "sourceKeys": {
+                  "objectKey": "methodCallExpression_069fe4c03ea6ad3a",
+                  "sourceKey": "methodCallExpression_7556b14cde0fb501"
+                },
+                "type": "method",
+                "member": "b"
+              }
+            }
+          ],
+          "modifier": {
+            "access": [
+              {
+                "kind": "modifier",
+                "sourceKeys": {
+                  "objectKey": "modifier_a04213395735c45e",
+                  "sourceKey": "modifier_dddead3737a66fc7"
+                },
+                "name": "PUBLIC"
+              }
+            ]
+          }
+        }
+      ],
+      "modifier": {
+        "access": [
+          {
+            "kind": "modifier",
+            "sourceKeys": {
+              "objectKey": "modifier_a04213395735c45e",
+              "sourceKey": "modifier_83442bd3f55cf1b2"
+            },
+            "name": "PUBLIC"
+          }
+        ]
+      }
+    },
+    "sourceObject": [
+      {
+        "objectKey": "classDeclaration_6277dfd88690ad3f",
+        "context": "class Broken {\n    public void run() {\n        Integer x = ;\n        foo(1, );\n        b();\n    }\n}",
+        "source": [
+          {
+            "sourceKey": "classDeclaration_316ccc84364cdbc4",
+            "start": {
+              "offset": 7,
+              "line": 1,
+              "column": 7
+            },
+            "end": {
+              "offset": 106,
+              "line": 7,
+              "column": 1
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "id_b37259d059092602",
+        "context": "Broken",
+        "source": [
+          {
+            "sourceKey": "id_c2b0d451f4f1b4cc",
+            "start": {
+              "offset": 13,
+              "line": 1,
+              "column": 13
+            },
+            "end": {
+              "offset": 19,
+              "line": 1,
+              "column": 19
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "methodDeclaration_46961846746fd755",
+        "context": "void run() {\n        Integer x = ;\n        foo(1, );\n        b();\n    }",
+        "source": [
+          {
+            "sourceKey": "methodDeclaration_c53faf02d9d77339",
+            "start": {
+              "offset": 33,
+              "line": 2,
+              "column": 11
+            },
+            "end": {
+              "offset": 104,
+              "line": 6,
+              "column": 5
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "id_173f4a982cfa79db",
+        "context": "run",
+        "source": [
+          {
+            "sourceKey": "id_1b3fefd9f203fcb6",
+            "start": {
+              "offset": 38,
+              "line": 2,
+              "column": 16
+            },
+            "end": {
+              "offset": 41,
+              "line": 2,
+              "column": 19
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "localVariableDeclarationStatement_38f9de9d850f6e75",
+        "context": "Integer x = ;\n        foo(1, );",
+        "source": [
+          {
+            "sourceKey": "localVariableDeclarationStatement_d25e8760c6200a2d",
+            "start": {
+              "offset": 54,
+              "line": 3,
+              "column": 8
+            },
+            "end": {
+              "offset": 85,
+              "line": 4,
+              "column": 17
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "expressionStatement_6ed1f6aa0c97c626",
+        "context": "b();",
+        "source": [
+          {
+            "sourceKey": "expressionStatement_d89d2ba3e73ebfbd",
+            "start": {
+              "offset": 94,
+              "line": 5,
+              "column": 8
+            },
+            "end": {
+              "offset": 98,
+              "line": 5,
+              "column": 12
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "methodCallExpression_069fe4c03ea6ad3a",
+        "context": "b()",
+        "source": [
+          {
+            "sourceKey": "methodCallExpression_7556b14cde0fb501",
+            "start": {
+              "offset": 94,
+              "line": 5,
+              "column": 8
+            },
+            "end": {
+              "offset": 97,
+              "line": 5,
+              "column": 11
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "modifier_a04213395735c45e",
+        "context": "public",
+        "source": [
+          {
+            "sourceKey": "modifier_dddead3737a66fc7",
+            "start": {
+              "offset": 26,
+              "line": 2,
+              "column": 4
+            },
+            "end": {
+              "offset": 32,
+              "line": 2,
+              "column": 10
+            }
+          },
+          {
+            "sourceKey": "modifier_83442bd3f55cf1b2",
+            "start": {
+              "offset": 0,
+              "line": 1,
+              "column": 0
+            },
+            "end": {
+              "offset": 6,
+              "line": 1,
+              "column": 6
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

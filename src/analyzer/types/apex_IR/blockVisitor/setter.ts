@@ -2,7 +2,7 @@ import { SetterContext } from '@apexdevtools/apex-parser';
 
 import { NormalBlockTypeClass, BlockTypeClass, BlockVisitor, isNormalBlockType } from '.';
 
-import { ApexErrorTypeClass, ApexCommonTypeClass, isApexValidClass } from '../commonVisitor';
+import { ApexErrorTypeClass, ApexCommonTypeClass, visitOptionalNode } from '../commonVisitor';
 
 export class SetterTypeClass extends BlockTypeClass<'setter', NormalBlockTypeClass | null> {
     private constructor(value: NormalBlockTypeClass | ApexErrorTypeClass | null) {
@@ -15,13 +15,7 @@ export class SetterTypeClass extends BlockTypeClass<'setter', NormalBlockTypeCla
         }
 
         return new SetterTypeClass(
-            ctx.block()
-                ? isApexValidClass(
-                      new BlockVisitor().visit(ctx.block()),
-                      isNormalBlockType,
-                      'block',
-                  )
-                : null,
+            visitOptionalNode(new BlockVisitor(), ctx.block(), isNormalBlockType, 'block'),
         );
     }
 }

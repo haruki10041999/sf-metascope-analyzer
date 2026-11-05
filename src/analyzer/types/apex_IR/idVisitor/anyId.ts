@@ -17,4 +17,3 @@ export class AnyIdTypeClass extends IdValueTypeClass<'anyId', string> {
 export const isAnyIdType = (target: ApexCommonTypeClass<string>): target is AnyIdTypeClass => {
     return target instanceof AnyIdTypeClass;
 };
-

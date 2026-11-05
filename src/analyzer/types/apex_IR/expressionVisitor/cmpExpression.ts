@@ -7,7 +7,7 @@ import {
     isBasedExpressionType,
 } from '.';
 
-import { ApexErrorTypeClass, ApexCommonTypeClass, isApexValidClass } from '../commonVisitor';
+import { ApexErrorTypeClass, ApexCommonTypeClass, visitNode } from '../commonVisitor';
 
 export class CmpExpressionTypeClass extends DoubleStringOperatorExpressionTypeClass<
     'cmpExpression',
@@ -29,13 +29,15 @@ export class CmpExpressionTypeClass extends DoubleStringOperatorExpressionTypeCl
         }
 
         return new CmpExpressionTypeClass(
-            isApexValidClass(
-                new ExpressionVisitor().visit(ctx.expression(0)),
+            visitNode(
+                new ExpressionVisitor(),
+                ctx.expression(0),
                 isBasedExpressionType,
                 'expression',
             ),
-            isApexValidClass(
-                new ExpressionVisitor().visit(ctx.expression(1)),
+            visitNode(
+                new ExpressionVisitor(),
+                ctx.expression(1),
                 isBasedExpressionType,
                 'expression',
             ),
@@ -50,4 +52,3 @@ export const isCmpExpressionType = (
 ): target is CmpExpressionTypeClass => {
     return target instanceof CmpExpressionTypeClass;
 };
-

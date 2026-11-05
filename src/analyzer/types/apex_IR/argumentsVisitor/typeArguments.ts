@@ -4,7 +4,7 @@ import { ArgumentsTypeClass } from '.';
 
 import { TypeListTypeClass, ListVisitor, isTypeListType } from '../listVisitor';
 
-import { ApexErrorTypeClass, ApexCommonTypeClass, isApexValidClass } from '../commonVisitor';
+import { ApexErrorTypeClass, ApexCommonTypeClass, visitNode } from '../commonVisitor';
 
 export class TypeArgumentsTypeClass extends ArgumentsTypeClass<'typeArguments', TypeListTypeClass> {
     private constructor(value: TypeListTypeClass | ApexErrorTypeClass | null) {
@@ -18,11 +18,7 @@ export class TypeArgumentsTypeClass extends ArgumentsTypeClass<'typeArguments', 
 
         let value: TypeListTypeClass | ApexErrorTypeClass | null = null;
         if (ctx.typeList()) {
-            value = isApexValidClass(
-                new ListVisitor().visit(ctx.typeList()),
-                isTypeListType,
-                'typeList',
-            );
+            value = visitNode(new ListVisitor(), ctx.typeList(), isTypeListType, 'typeList');
         }
 
         return new TypeArgumentsTypeClass(value);

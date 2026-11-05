@@ -8,8 +8,8 @@ import { TypeRefTypeClass, TypeVisitor, isTypeRefType } from '../typeVisitor';
 import {
     ApexErrorTypeClass,
     ApexCommonTypeClass,
-    isApexValidClass,
-    isApexValidClassList,
+    visitNodeList,
+    visitNode,
 } from '../commonVisitor';
 
 export class FormalParameterTypeClass extends ParameterTypeClass<
@@ -35,11 +35,11 @@ export class FormalParameterTypeClass extends ParameterTypeClass<
         }
 
         return new FormalParameterTypeClass(
-            isApexValidClass(new IdVisitor().visit(ctx.id()), isNormalIdType, 'id'),
-            isApexValidClass(new TypeVisitor().visit(ctx.typeRef()), isTypeRefType, 'typeRef'),
-            isApexValidClassList(
+            visitNode(new IdVisitor(), ctx.id(), isNormalIdType, 'id'),
+            visitNode(new TypeVisitor(), ctx.typeRef(), isTypeRefType, 'typeRef'),
+            visitNodeList(
+                new ModifierVisitor(),
                 ctx.modifier_list() || [],
-                (ctx) => new ModifierVisitor().visit(ctx),
                 isNormalModifierType,
                 'modifier',
             ),

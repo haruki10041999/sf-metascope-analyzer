@@ -7,7 +7,7 @@ import {
     ExpressionVisitor,
     isBasedExpressionType,
 } from '../expressionVisitor';
-import { ApexErrorTypeClass, ApexCommonTypeClass, isApexValidClass } from '../commonVisitor';
+import { ApexErrorTypeClass, ApexCommonTypeClass, visitOptionalNode } from '../commonVisitor';
 
 export class ReturnStatementTypeClass extends StatementTypeClass<
     'returnStatement',
@@ -20,13 +20,12 @@ export class ReturnStatementTypeClass extends StatementTypeClass<
     static create(ctx: ReturnStatementContext): ReturnStatementTypeClass {
         // void メソッドの `return;` は式を持たない
         return new ReturnStatementTypeClass(
-            ctx.expression()
-                ? isApexValidClass(
-                      new ExpressionVisitor().visit(ctx.expression()),
-                      isBasedExpressionType,
-                      'expression',
-                  )
-                : null,
+            visitOptionalNode(
+                new ExpressionVisitor(),
+                ctx.expression(),
+                isBasedExpressionType,
+                'expression',
+            ),
         );
     }
 }
@@ -36,4 +35,3 @@ export const isReturnStatementType = (
 ): target is ReturnStatementTypeClass => {
     return target instanceof ReturnStatementTypeClass;
 };
-

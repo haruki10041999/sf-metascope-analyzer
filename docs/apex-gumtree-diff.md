@@ -268,16 +268,17 @@ Top-down は O(n²)（n はノード数）、Bottom-up は候補の絞り込み�
 
 ### 7.1 GumTree 本体
 
-| 項目                                                                                                               | 場所                                                                                   |
-| ------------------------------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------- |
-| JSON → `GumTreeNode` の変換（3 章・4 章）。`getExpressionLabel` を含む                                             | [diff/gumtree/tree.ts](../src/analyzer/processor/Apex/diff/gumtree/tree.ts)            |
-| Top-down / Bottom-up / Recovery（2 章）                                                                            | [diff/gumtree/matcher.ts](../src/analyzer/processor/Apex/diff/gumtree/matcher.ts)      |
-| mapping → `GumTreeDiff` の変換（5 章）                                                                             | [diff/gumtree/diff.ts](../src/analyzer/processor/Apex/diff/gumtree/diff.ts)            |
-| 内部配列対応付け `makeGumTreeBlockDiff`。公開文 API `makeStatementDiff` / `makeBlockDiff` は型付き構造 Diff を返す | [diff/statement.ts](../src/analyzer/processor/Apex/diff/statement.ts)                  |
-| 単一式の公開 API `makeExpressionDiff`（型付き構造 Diff）                                                           | [diff/expression.ts](../src/analyzer/processor/Apex/diff/expression.ts)                |
-| GumTree の内部対応付け結果型                                                                                       | [diff/gumtree/diff.ts](../src/analyzer/processor/Apex/diff/gumtree/diff.ts)            |
-| `Match` への `similar` / `recovery` の追加                                                                         | [processor/commons/diff/commons.ts](../src/analyzer/processor/commons/diff/commons.ts) |
-| テスト                                                                                                             | test/processor/gumtree-diff.test.ts                                                    |
+| 項目                                                                                                               | 場所                                                                                         |
+| ------------------------------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------- |
+| JSON → `GumTreeNode` の変換（3 章・4 章）。言語に依らない部分 `makeGumTreeBuilder` / `GumTreeLanguage`             | [commons/diff/gumtree/tree.ts](../src/analyzer/processor/commons/diff/gumtree/tree.ts)       |
+| Apex のラベルの付け方 `APEX_GUMTREE_LANGUAGE`・`makeBlockTree`。`getExpressionLabel` を含む                        | [diff/gumtree/tree.ts](../src/analyzer/processor/Apex/diff/gumtree/tree.ts)                  |
+| Top-down / Bottom-up / Recovery（2 章）                                                                            | [commons/diff/gumtree/matcher.ts](../src/analyzer/processor/commons/diff/gumtree/matcher.ts) |
+| mapping → `GumTreeDiff` の変換（5 章）                                                                             | [commons/diff/gumtree/diff.ts](../src/analyzer/processor/commons/diff/gumtree/diff.ts)       |
+| 内部配列対応付け `makeGumTreeBlockDiff`。公開文 API `makeStatementDiff` / `makeBlockDiff` は型付き構造 Diff を返す | [diff/statement.ts](../src/analyzer/processor/Apex/diff/statement.ts)                        |
+| 単一式の公開 API `makeExpressionDiff`（型付き構造 Diff）                                                           | [diff/expression.ts](../src/analyzer/processor/Apex/diff/expression.ts)                      |
+| GumTree の内部対応付け結果型                                                                                       | [commons/diff/gumtree/diff.ts](../src/analyzer/processor/commons/diff/gumtree/diff.ts)       |
+| `Match` への `similar` / `recovery` の追加                                                                         | [processor/commons/diff/commons.ts](../src/analyzer/processor/commons/diff/commons.ts)       |
+| テスト                                                                                                             | test/processor/gumtree-diff.test.ts                                                          |
 
 テストは実際の Apex のソースを変換した JSON で行う（test/converter/helpers.ts の `toJson`）。観点:
 

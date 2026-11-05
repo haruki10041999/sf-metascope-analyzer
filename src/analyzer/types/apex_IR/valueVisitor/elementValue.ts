@@ -3,7 +3,7 @@ import { ElementValueContext } from '@apexdevtools/apex-parser';
 import { ValueTypeClass } from '.';
 
 import { NormalLiteralTypeClass, LiteralVisitor, isNormalLiteralType } from '../literalVisitor';
-import { ApexErrorTypeClass, ApexCommonTypeClass, isApexValidClass } from '../commonVisitor';
+import { ApexErrorTypeClass, ApexCommonTypeClass, visitNode } from '../commonVisitor';
 
 export class ElementValueTypeClass extends ValueTypeClass<'elementValue', NormalLiteralTypeClass> {
     private constructor(value: NormalLiteralTypeClass | ApexErrorTypeClass) {
@@ -16,11 +16,7 @@ export class ElementValueTypeClass extends ValueTypeClass<'elementValue', Normal
         }
 
         return new ElementValueTypeClass(
-            isApexValidClass(
-                new LiteralVisitor().visit(ctx.literal()),
-                isNormalLiteralType,
-                'literal',
-            ),
+            visitNode(new LiteralVisitor(), ctx.literal(), isNormalLiteralType, 'literal'),
         );
     }
 }

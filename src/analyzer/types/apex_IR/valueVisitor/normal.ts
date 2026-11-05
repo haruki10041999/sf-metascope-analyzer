@@ -16,7 +16,7 @@ import {
     isSubQueryType,
 } from '../queryVisitor';
 import { SignedNumberTypeClass, LiteralVisitor, isSignedNumberType } from '../literalVisitor';
-import { ApexErrorTypeClass, ApexCommonTypeClass, isApexValidClass } from '../commonVisitor';
+import { ApexErrorTypeClass, ApexCommonTypeClass, visitNode } from '../commonVisitor';
 
 type ValueTypeClassValue =
     | string
@@ -79,8 +79,9 @@ export class NormalValueTypeClass extends ValueTypeClass<'value', ValueTypeClass
             value = ctx.BooleanLiteral().getText();
             valueType = 'boolean';
         } else if (ctx.signedNumber()) {
-            value = isApexValidClass(
-                new LiteralVisitor().visit(ctx.signedNumber()),
+            value = visitNode(
+                new LiteralVisitor(),
+                ctx.signedNumber(),
                 isSignedNumberType,
                 'signedNumber',
             );
@@ -101,8 +102,9 @@ export class NormalValueTypeClass extends ValueTypeClass<'value', ValueTypeClass
             value = ctx.DateTimeLiteral().getText();
             valueType = 'dateTime';
         } else if (ctx.dateFormula()) {
-            value = isApexValidClass(
-                new QueryVisitor().visit(ctx.dateFormula()),
+            value = visitNode(
+                new QueryVisitor(),
+                ctx.dateFormula(),
                 isDateFormulaType,
                 'dateFormula',
             );
@@ -114,22 +116,15 @@ export class NormalValueTypeClass extends ValueTypeClass<'value', ValueTypeClass
             value = ctx.IntegerLiteral().getText();
             valueType = 'integer';
         } else if (ctx.subQuery()) {
-            value = isApexValidClass(
-                new QueryVisitor().visit(ctx.subQuery()),
-                isSubQueryType,
-                'subQuery',
-            );
+            value = visitNode(new QueryVisitor(), ctx.subQuery(), isSubQueryType, 'subQuery');
             valueType = 'subQuery';
         } else if (ctx.valueList()) {
-            value = isApexValidClass(
-                new ListVisitor().visit(ctx.valueList()),
-                isValueListType,
-                'valueList',
-            );
+            value = visitNode(new ListVisitor(), ctx.valueList(), isValueListType, 'valueList');
             valueType = 'list';
         } else {
-            value = isApexValidClass(
-                new ExpressionVisitor().visit(ctx.boundExpression()),
+            value = visitNode(
+                new ExpressionVisitor(),
+                ctx.boundExpression(),
                 isBoundExpressionType,
                 'boundExpression',
             );
@@ -149,4 +144,3 @@ export const isNormalValueType = (
 ): target is NormalValueTypeClass => {
     return target instanceof NormalValueTypeClass;
 };
-

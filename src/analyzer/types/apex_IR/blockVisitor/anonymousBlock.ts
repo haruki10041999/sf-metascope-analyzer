@@ -7,7 +7,7 @@ import {
     MemberVisitor,
     isAnonymousBlockMemberType,
 } from '../memberVisitor';
-import { ApexErrorTypeClass, ApexCommonTypeClass, isApexValidClassList } from '../commonVisitor';
+import { ApexErrorTypeClass, ApexCommonTypeClass, visitNodeList } from '../commonVisitor';
 
 export class AnonymousBlockTypeClass extends BlockListTypeClass<
     'anonymousBlock',
@@ -19,9 +19,9 @@ export class AnonymousBlockTypeClass extends BlockListTypeClass<
 
     static create(ctx: AnonymousBlockContext): AnonymousBlockTypeClass {
         return new AnonymousBlockTypeClass(
-            isApexValidClassList(
+            visitNodeList(
+                new MemberVisitor(),
                 ctx.anonymousBlockMember_list(),
-                (ctx) => new MemberVisitor().visit(ctx),
                 isAnonymousBlockMemberType,
                 'anonymousBlock',
             ),
@@ -34,4 +34,3 @@ export const isAnonymousBlockType = (
 ): target is AnonymousBlockTypeClass => {
     return target instanceof AnonymousBlockTypeClass;
 };
-

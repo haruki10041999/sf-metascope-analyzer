@@ -7,8 +7,8 @@ import { SoqlFunctionTypeClass, QueryVisitor, isSoqlFunctionType } from '../quer
 import {
     ApexErrorTypeClass,
     ApexCommonTypeClass,
-    isApexValidClass,
-    isApexValidClassList,
+    visitNodeList,
+    visitNode,
 } from '../commonVisitor';
 
 type SoslFieldFunction = 'TOLABEL' | 'CONVERT_CURRENCY' | 'FORMAT';
@@ -63,9 +63,10 @@ export class FieldListTypeClass extends ListTypeClass<'fieldList', SoslFieldType
 
         const head =
             ctx.soslId_list().length > 0
-                ? isApexValidClass(new IdVisitor().visit(ctx.soslId(0)), isSoslIdType, 'soslId')
-                : isApexValidClass(
-                      new QueryVisitor().visit(ctx.soqlFunction()),
+                ? visitNode(new IdVisitor(), ctx.soslId(0), isSoslIdType, 'soslId')
+                : visitNode(
+                      new QueryVisitor(),
+                      ctx.soqlFunction(),
                       isSoqlFunctionType,
                       'soqlFunction',
                   );
@@ -82,9 +83,9 @@ export class FieldListTypeClass extends ListTypeClass<'fieldList', SoslFieldType
             SoslFieldTypeClass.create(head, func),
         ];
 
-        isApexValidClassList(
+        visitNodeList(
+            new ListVisitor(),
             ctx.fieldList_list(),
-            (ctx) => new ListVisitor().visit(ctx),
             isFieldListType,
             'fieldList',
         ).forEach((nested) => {

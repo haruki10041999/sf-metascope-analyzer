@@ -60,4 +60,3 @@ export class QueryVisitor extends ApexCommonVisitor<QueryAllTypeClass> {
         return SoqlFunctionTypeClass.create(ctx);
     }
 }
-

@@ -7,7 +7,7 @@ import {
     isBasedExpressionType,
 } from '.';
 
-import { ApexErrorTypeClass, ApexCommonTypeClass, isApexValidClass } from '../commonVisitor';
+import { ApexErrorTypeClass, ApexCommonTypeClass, visitNode } from '../commonVisitor';
 
 export class BitAndExpressionTypeClass extends DoubleStringOperatorExpressionTypeClass<
     'bitAndExpression',
@@ -28,13 +28,15 @@ export class BitAndExpressionTypeClass extends DoubleStringOperatorExpressionTyp
         }
 
         return new BitAndExpressionTypeClass(
-            isApexValidClass(
-                new ExpressionVisitor().visit(ctx.expression(0)),
+            visitNode(
+                new ExpressionVisitor(),
+                ctx.expression(0),
                 isBasedExpressionType,
                 'expression',
             ),
-            isApexValidClass(
-                new ExpressionVisitor().visit(ctx.expression(1)),
+            visitNode(
+                new ExpressionVisitor(),
+                ctx.expression(1),
                 isBasedExpressionType,
                 'expression',
             ),
@@ -47,4 +49,3 @@ export const isBitAndExpressionType = (
 ): target is BitAndExpressionTypeClass => {
     return target instanceof BitAndExpressionTypeClass;
 };
-

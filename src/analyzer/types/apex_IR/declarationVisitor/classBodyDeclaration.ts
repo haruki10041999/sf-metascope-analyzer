@@ -12,8 +12,8 @@ import { NormalModifierTypeClass, ModifierVisitor, isNormalModifierType } from '
 import {
     ApexCommonTypeClass,
     ApexErrorTypeClass,
-    isApexValidClass,
-    isApexValidClassList,
+    visitNodeList,
+    visitNode,
 } from '../commonVisitor';
 
 export class ClassBodyDeclarationTypeClass extends DeclarationTypeClass<
@@ -41,25 +41,22 @@ export class ClassBodyDeclarationTypeClass extends DeclarationTypeClass<
         let value: MemberDeclarationTypeClass | NormalBlockTypeClass | ApexErrorTypeClass | null =
             null;
         if (ctx.memberDeclaration()) {
-            value = isApexValidClass(
-                new DeclarationVisitor().visit(ctx.memberDeclaration()),
+            value = visitNode(
+                new DeclarationVisitor(),
+                ctx.memberDeclaration(),
                 isMemberDeclarationType,
                 'memberDeclaration',
             );
         } else if (ctx.block()) {
-            value = isApexValidClass(
-                new BlockVisitor().visit(ctx.block()),
-                isNormalBlockType,
-                'block',
-            );
+            value = visitNode(new BlockVisitor(), ctx.block(), isNormalBlockType, 'block');
         }
 
         // 単独の `;` は文法上許される空宣言なので value は null
         return new ClassBodyDeclarationTypeClass(
             value,
-            isApexValidClassList(
+            visitNodeList(
+                new ModifierVisitor(),
                 ctx.modifier_list(),
-                (ctx) => new ModifierVisitor().visit(ctx),
                 isNormalModifierType,
                 'modifier',
             ),

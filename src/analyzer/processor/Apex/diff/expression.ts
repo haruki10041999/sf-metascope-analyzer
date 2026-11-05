@@ -44,7 +44,12 @@ import { TypeJsonDiff, makeTypeDiff } from './type';
 import { LiteralPrimaryJsonDiff, PrimaryJsonDiff, makePrimaryDiff } from './primary';
 import { SoqlJsonDiff } from './query/soql';
 import { SoslJsonDiff } from './query/sosl';
-import { TypedListDiff, TypedObjectDiff, makeTypedListDiff } from '../../commons/diff/list';
+import {
+    TypedListDiff,
+    TypedObjectDiff,
+    makeTypedListDiff,
+    makeTypedObjectDiff,
+} from '../../commons/diff/list';
 
 export type ExpressionJson = BaseExpressionJson | ErrorJson;
 export type ExpressionListDiff = TypedListDiff<
@@ -226,15 +231,6 @@ export type BaseExpressionJsonDiff<T extends ExpressionJson = ExpressionJson> =
                                         : never)
     | ReplacementDiff<ExpressionJson>;
 
-const makePlainDiff = <T extends object, Fields>(
-    before: T,
-    after: T,
-    fields: (before: T, after: T) => Fields,
-): TypedObjectDiff<T, Fields> =>
-    getValueKey(before) === getValueKey(after)
-        ? { status: 'unchanged', value: before }
-        : { status: 'changed', fields: fields(before, after) };
-
 export const makeExpressionListDiff = (
     before: (BaseExpressionJson | ErrorJson)[],
     after: (BaseExpressionJson | ErrorJson)[],
@@ -299,7 +295,7 @@ export const makeInstanceNameDiff = (
     before: InstanceNameJson,
     after: InstanceNameJson,
 ): InstanceNameJsonDiff =>
-    makePlainDiff(before, after, (b, a) => ({
+    makeTypedObjectDiff(before, after, (b, a) => ({
         collection: makeStringListDiff(b.collection, a.collection),
         generic: makeOptionalDiff(b.generic, a.generic, (x, y) =>
             makeTypedValueListDiff(x, y, makeTypeJsonValueDiff),
@@ -330,7 +326,7 @@ export const makeArrayInitInstanceDiff = (
     after: ArrayInitInstanceJson,
     sources?: Sources,
 ): ArrayInitInstanceJsonDiff =>
-    makePlainDiff(before, after, (b, a) => ({
+    makeTypedObjectDiff(before, after, (b, a) => ({
         init: makeOptionalDiff(b.init, a.init, (x, y) => makeExpressionListDiff(x, y, sources)),
         size: makeOptionalExpressionDiff(b.size, a.size, sources),
     })) as unknown as ArrayInitInstanceJsonDiff;
@@ -340,7 +336,7 @@ export const makeClassInitInstanceDiff = (
     after: ClassInitInstanceJson,
     sources?: Sources,
 ): ClassInitInstanceJsonDiff =>
-    makePlainDiff(before, after, (b, a) => ({
+    makeTypedObjectDiff(before, after, (b, a) => ({
         arg: makeOptionalDiff(b.arg, a.arg, (x, y) => makeExpressionListDiff(x, y, sources)),
     })) as unknown as ClassInitInstanceJsonDiff;
 
@@ -349,7 +345,7 @@ export const makeMapInitEntryDiff = (
     after: MapInitEntryJson,
     sources?: Sources,
 ): MapInitEntryDiff =>
-    makePlainDiff(before, after, (b, a) => ({
+    makeTypedObjectDiff(before, after, (b, a) => ({
         key: makeExpressionValueDiff(b.key, a.key, sources),
         value: makeExpressionValueDiff(b.value, a.value, sources),
     })) as unknown as MapInitEntryDiff;
@@ -372,7 +368,7 @@ export const makeMapInitInstanceDiff = (
     after: MapInitInstanceJson,
     sources?: Sources,
 ): MapInitInstanceJsonDiff =>
-    makePlainDiff(before, after, (b, a) => ({
+    makeTypedObjectDiff(before, after, (b, a) => ({
         init: makeOptionalDiff(b.init, a.init, (x, y) => makeMapInitListDiff(x, y, sources)),
     })) as unknown as MapInitInstanceJsonDiff;
 
@@ -380,7 +376,7 @@ export const makeNoInitInstanceDiff = (
     before: NoInitInstanceJson,
     after: NoInitInstanceJson,
 ): NoInitInstanceJsonDiff =>
-    makePlainDiff(before, after, (b, a) => ({
+    makeTypedObjectDiff(before, after, (b, a) => ({
         value: makeValueDiff(b.value, a.value),
     })) as unknown as NoInitInstanceJsonDiff;
 
@@ -389,7 +385,7 @@ export const makeSetInitInstanceDiff = (
     after: SetInitInstanceJson,
     sources?: Sources,
 ): SetInitInstanceJsonDiff =>
-    makePlainDiff(before, after, (b, a) => ({
+    makeTypedObjectDiff(before, after, (b, a) => ({
         init: makeOptionalDiff(b.init, a.init, (x, y) => makeExpressionListDiff(x, y, sources)),
     })) as unknown as SetInitInstanceJsonDiff;
 
@@ -398,10 +394,10 @@ export const makeInitInstanceDiff = (
     after: InitInstanceJson,
     sources?: Sources,
 ): InitInstanceJsonDiff => {
-    if (before.kind !== after.kind) {
+    if (before.initType !== after.initType) {
         return makeReplacementDiff(before, after) as unknown as InitInstanceJsonDiff;
     }
-    switch (before.kind) {
+    switch (before.initType) {
         case 'array':
             return makeArrayInitInstanceDiff(before, after as ArrayInitInstanceJson, sources);
         case 'class':
@@ -422,17 +418,17 @@ export const makeNewInstanceDiff = (
 ): NewInstanceJsonDiff => {
     const beforeInit = getInitInstance(before);
     const afterInit = getInitInstance(after);
-    if (beforeInit.kind !== afterInit.kind) {
+    if (beforeInit.initType !== afterInit.initType) {
         return makeReplacementDiff(before, after) as NewInstanceJsonDiff;
     }
-    return makePlainDiff(before, after, (b, a) => {
+    return makeTypedObjectDiff(before, after, (b, a) => {
         const fields: Record<string, unknown> = {
             collection: makeStringListDiff(b.collection, a.collection),
             generic: makeOptionalDiff(b.generic, a.generic, (x, y) =>
                 makeTypedValueListDiff(x, y, makeTypeJsonValueDiff),
             ),
         };
-        switch (beforeInit.kind) {
+        switch (beforeInit.initType) {
             case 'array':
                 fields.init = makeOptionalDiff(
                     (b as ArrayInitInstanceJson).init,
@@ -485,13 +481,13 @@ const getInitInstance = (value: NewInstanceJson): InitInstanceJson => {
 };
 
 export const makeCastDiff = (before: CastJson, after: CastJson, sources?: Sources): CastJsonDiff =>
-    makePlainDiff(before, after, (b, a) => ({
+    makeTypedObjectDiff(before, after, (b, a) => ({
         target: makeExpressionValueDiff(b.target, a.target, sources),
         convertType: makeTypeJsonValueDiff(b.convertType, a.convertType),
     })) as unknown as CastJsonDiff;
 
 export const makeSubDiff = (before: SubJson, after: SubJson, sources?: Sources): SubJsonDiff =>
-    makePlainDiff(before, after, (b, a) => ({
+    makeTypedObjectDiff(before, after, (b, a) => ({
         value: makeExpressionValueDiff(b.value, a.value, sources),
     })) as unknown as SubJsonDiff;
 
@@ -500,7 +496,7 @@ export const makeArrayDiff = (
     after: ArrayJson,
     sources?: Sources,
 ): ArrayJsonDiff =>
-    makePlainDiff(before, after, (b, a) => ({
+    makeTypedObjectDiff(before, after, (b, a) => ({
         variant: makeExpressionValueDiff(b.variant, a.variant, sources),
         index: makeExpressionValueDiff(b.index, a.index, sources),
     })) as unknown as ArrayJsonDiff;
@@ -510,7 +506,7 @@ export const makeFormulaDiff = (
     after: FormulaJson,
     sources?: Sources,
 ): FormulaJsonDiff =>
-    makePlainDiff(before, after, (b, a) => ({
+    makeTypedObjectDiff(before, after, (b, a) => ({
         left: makeExpressionValueDiff(b.left, a.left, sources),
         operator: makeValueDiff(b.operator, a.operator),
         right: makeExpressionValueDiff(b.right, a.right, sources),
@@ -521,7 +517,7 @@ export const makeInstanceofDiff = (
     after: InstanceofJson,
     sources?: Sources,
 ): InstanceofJsonDiff =>
-    makePlainDiff(before, after, (b, a) => ({
+    makeTypedObjectDiff(before, after, (b, a) => ({
         target: makeExpressionValueDiff(b.target, a.target, sources),
         type: makeTypeJsonValueDiff(b.type, a.type),
     })) as unknown as InstanceofJsonDiff;
@@ -531,7 +527,7 @@ export const makeUnaryDiff = (
     after: UnaryJson,
     sources?: Sources,
 ): UnaryJsonDiff =>
-    makePlainDiff(before, after, (b, a) => ({
+    makeTypedObjectDiff(before, after, (b, a) => ({
         variant: makeExpressionValueDiff(b.variant, a.variant, sources),
         operator: makeValueDiff(b.operator, a.operator),
         operatorLocation: makeValueDiff(b.operatorLocation, a.operatorLocation),
@@ -542,7 +538,7 @@ export const makeTernaryDiff = (
     after: TernaryJson,
     sources?: Sources,
 ): TernaryJsonDiff =>
-    makePlainDiff(before, after, (b, a) => ({
+    makeTypedObjectDiff(before, after, (b, a) => ({
         condition: makeExpressionValueDiff(b.condition, a.condition, sources),
         trueValue: makeExpressionValueDiff(b.trueValue, a.trueValue, sources),
         falseValue: makeExpressionValueDiff(b.falseValue, a.falseValue, sources),
@@ -564,7 +560,7 @@ export const makeExpressionValueDiff = (
     if (isExpressionNode(after) && after.kind === 'error') {
         return makeReplacementDiff<ExpressionJson>(before, after);
     }
-    // NewInstanceJson は初期化部分の kind ('array' / 'map' など) を持つが、sourceKeys を持たない JSON ノードではない
+    // kind を持たない式 (NewInstanceJson の初期化部分は initType) は、sourceKeys を持っていても JSON ノードではない
     if (isExpressionNode(before) && isExpressionNode(after)) {
         if (before.kind !== after.kind) return makeReplacementDiff<ExpressionJson>(before, after);
         if (before.kind === 'memberAccess' && after.kind === 'memberAccess') {
@@ -635,11 +631,12 @@ export const makeExpressionValueDiff = (
 /** kind と sourceKeys を持つ式 (memberAccess / type / soql / sosl / error) */
 const isExpressionNode = (
     value: BaseExpressionJson | ErrorJson,
-): value is Extract<BaseExpressionJson | ErrorJson, { sourceKeys: unknown }> =>
+): value is Extract<BaseExpressionJson | ErrorJson, { kind: string; sourceKeys: unknown }> =>
     typeof value === 'object' && value !== null && 'kind' in value && 'sourceKeys' in value;
 
+/** kind を持たない式 (new / cast / formula など)。位置の sourceKeys は持つが、JSON ノードではない */
 const isPlainExpression = (value: unknown): value is Record<string, any> =>
-    typeof value === 'object' && value !== null && !('sourceKeys' in value);
+    typeof value === 'object' && value !== null && !('kind' in value && 'sourceKeys' in value);
 
 const makeTypedValueListDiff = <T, D>(
     before: T[],

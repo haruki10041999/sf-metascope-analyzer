@@ -4,7 +4,7 @@ import { ClauseTypeClass } from '.';
 
 import { FieldNameTypeClass, NameVisitor, isFieldNameType } from '../nameVisitor';
 import { FieldNameListTypeClass, ListVisitor, isFieldNameListType } from '../listVisitor';
-import { ApexErrorTypeClass, ApexCommonTypeClass, isApexValidClass } from '../commonVisitor';
+import { ApexErrorTypeClass, ApexCommonTypeClass, visitNode } from '../commonVisitor';
 
 export class WhenClauseTypeClass extends ClauseTypeClass<'whenClause', FieldNameTypeClass> {
     private field: FieldNameListTypeClass | ApexErrorTypeClass;
@@ -23,16 +23,8 @@ export class WhenClauseTypeClass extends ClauseTypeClass<'whenClause', FieldName
         }
 
         return new WhenClauseTypeClass(
-            isApexValidClass(
-                new NameVisitor().visit(ctx.fieldName()),
-                isFieldNameType,
-                'fieldName',
-            ),
-            isApexValidClass(
-                new ListVisitor().visit(ctx.fieldNameList()),
-                isFieldNameListType,
-                'fieldNameList',
-            ),
+            visitNode(new NameVisitor(), ctx.fieldName(), isFieldNameType, 'fieldName'),
+            visitNode(new ListVisitor(), ctx.fieldNameList(), isFieldNameListType, 'fieldNameList'),
         );
     }
 
@@ -46,4 +38,3 @@ export const isWhenClauseType = (
 ): target is WhenClauseTypeClass => {
     return target instanceof WhenClauseTypeClass;
 };
-

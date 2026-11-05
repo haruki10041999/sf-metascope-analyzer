@@ -3,7 +3,7 @@ import { ElseClauseContext } from '@apexdevtools/apex-parser';
 import { ClauseTypeClass } from '.';
 
 import { FieldNameListTypeClass, ListVisitor, isFieldNameListType } from '../listVisitor';
-import { ApexErrorTypeClass, ApexCommonTypeClass, isApexValidClass } from '../commonVisitor';
+import { ApexErrorTypeClass, ApexCommonTypeClass, visitNode } from '../commonVisitor';
 
 export class ElseClauseTypeClass extends ClauseTypeClass<'elseClause', FieldNameListTypeClass> {
     private constructor(value: FieldNameListTypeClass | ApexErrorTypeClass) {
@@ -16,11 +16,7 @@ export class ElseClauseTypeClass extends ClauseTypeClass<'elseClause', FieldName
         }
 
         return new ElseClauseTypeClass(
-            isApexValidClass(
-                new ListVisitor().visit(ctx.fieldNameList()),
-                isFieldNameListType,
-                'fieldNameList',
-            ),
+            visitNode(new ListVisitor(), ctx.fieldNameList(), isFieldNameListType, 'fieldNameList'),
         );
     }
 }
@@ -30,4 +26,3 @@ export const isElseClauseType = (
 ): target is ElseClauseTypeClass => {
     return target instanceof ElseClauseTypeClass;
 };
-

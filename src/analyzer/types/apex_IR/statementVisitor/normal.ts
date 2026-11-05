@@ -44,7 +44,7 @@ import {
 } from '.';
 
 import { NormalBlockTypeClass, BlockVisitor, isNormalBlockType } from '../blockVisitor';
-import { ApexErrorTypeClass, ApexCommonTypeClass, isApexValidClass } from '../commonVisitor';
+import { ApexErrorTypeClass, ApexCommonTypeClass, visitNode } from '../commonVisitor';
 
 type NormalStatementTypeClassType =
     | NormalBlockTypeClass
@@ -105,122 +105,137 @@ export class NormalStatementTypeClass extends StatementTypeClass<
         let value: NormalStatementTypeClassType | ApexErrorTypeClass;
 
         if (ctx.block()) {
-            value = isApexValidClass(
-                new BlockVisitor().visit(ctx.block()),
-                isNormalBlockType,
-                'block',
-            );
+            value = visitNode(new BlockVisitor(), ctx.block(), isNormalBlockType, 'block');
         } else if (ctx.ifStatement()) {
-            value = isApexValidClass(
-                new StatementVisitor().visit(ctx.ifStatement()),
+            value = visitNode(
+                new StatementVisitor(),
+                ctx.ifStatement(),
                 isIfStatementType,
                 'ifStatement',
             );
         } else if (ctx.switchStatement()) {
-            value = isApexValidClass(
-                new StatementVisitor().visit(ctx.switchStatement()),
+            value = visitNode(
+                new StatementVisitor(),
+                ctx.switchStatement(),
                 isSwitchStatementType,
                 'switchStatement',
             );
         } else if (ctx.forStatement()) {
-            value = isApexValidClass(
-                new StatementVisitor().visit(ctx.forStatement()),
+            value = visitNode(
+                new StatementVisitor(),
+                ctx.forStatement(),
                 isForStatementType,
                 'forStatement',
             );
         } else if (ctx.whileStatement()) {
-            value = isApexValidClass(
-                new StatementVisitor().visit(ctx.whileStatement()),
+            value = visitNode(
+                new StatementVisitor(),
+                ctx.whileStatement(),
                 isWhileStatementType,
                 'whileStatement',
             );
         } else if (ctx.doWhileStatement()) {
-            value = isApexValidClass(
-                new StatementVisitor().visit(ctx.doWhileStatement()),
+            value = visitNode(
+                new StatementVisitor(),
+                ctx.doWhileStatement(),
                 isDoWhileStatementType,
                 'doWhileStatement',
             );
         } else if (ctx.tryStatement()) {
-            value = isApexValidClass(
-                new StatementVisitor().visit(ctx.tryStatement()),
+            value = visitNode(
+                new StatementVisitor(),
+                ctx.tryStatement(),
                 isTryStatementType,
                 'tryStatement',
             );
         } else if (ctx.returnStatement()) {
-            value = isApexValidClass(
-                new StatementVisitor().visit(ctx.returnStatement()),
+            value = visitNode(
+                new StatementVisitor(),
+                ctx.returnStatement(),
                 isReturnStatementType,
                 'returnStatement',
             );
         } else if (ctx.throwStatement()) {
-            value = isApexValidClass(
-                new StatementVisitor().visit(ctx.throwStatement()),
+            value = visitNode(
+                new StatementVisitor(),
+                ctx.throwStatement(),
                 isThrowStatementType,
                 'throwStatement',
             );
         } else if (ctx.breakStatement()) {
-            value = isApexValidClass(
-                new StatementVisitor().visit(ctx.breakStatement()),
+            value = visitNode(
+                new StatementVisitor(),
+                ctx.breakStatement(),
                 isBreakStatementType,
                 'breakStatement',
             );
         } else if (ctx.continueStatement()) {
-            value = isApexValidClass(
-                new StatementVisitor().visit(ctx.continueStatement()),
+            value = visitNode(
+                new StatementVisitor(),
+                ctx.continueStatement(),
                 isContinueStatementType,
                 'continueStatement',
             );
         } else if (ctx.insertStatement()) {
-            value = isApexValidClass(
-                new StatementVisitor().visit(ctx.insertStatement()),
+            value = visitNode(
+                new StatementVisitor(),
+                ctx.insertStatement(),
                 isInsertStatementType,
                 'insertStatement',
             );
         } else if (ctx.updateStatement()) {
-            value = isApexValidClass(
-                new StatementVisitor().visit(ctx.updateStatement()),
+            value = visitNode(
+                new StatementVisitor(),
+                ctx.updateStatement(),
                 isUpdateStatementType,
                 'updateStatement',
             );
         } else if (ctx.deleteStatement()) {
-            value = isApexValidClass(
-                new StatementVisitor().visit(ctx.deleteStatement()),
+            value = visitNode(
+                new StatementVisitor(),
+                ctx.deleteStatement(),
                 isDeleteStatementType,
                 'deleteStatement',
             );
         } else if (ctx.undeleteStatement()) {
-            value = isApexValidClass(
-                new StatementVisitor().visit(ctx.undeleteStatement()),
+            value = visitNode(
+                new StatementVisitor(),
+                ctx.undeleteStatement(),
                 isUndeleteStatementType,
                 'undeleteStatement',
             );
         } else if (ctx.upsertStatement()) {
-            value = isApexValidClass(
-                new StatementVisitor().visit(ctx.upsertStatement()),
+            value = visitNode(
+                new StatementVisitor(),
+                ctx.upsertStatement(),
                 isUpsertStatementType,
                 'upsertStatement',
             );
         } else if (ctx.mergeStatement()) {
-            value = isApexValidClass(
-                new StatementVisitor().visit(ctx.mergeStatement()),
+            value = visitNode(
+                new StatementVisitor(),
+                ctx.mergeStatement(),
                 isMergeStatementType,
                 'mergeStatement',
             );
         } else if (ctx.runAsStatement()) {
-            value = isApexValidClass(
-                new StatementVisitor().visit(ctx.runAsStatement()),
+            value = visitNode(
+                new StatementVisitor(),
+                ctx.runAsStatement(),
                 isRunAsStatementType,
                 'runAsStatement',
             );
         } else if (ctx.localVariableDeclarationStatement()) {
-            value = isApexValidClass(
-                new StatementVisitor().visit(ctx.localVariableDeclarationStatement()),
+            value = visitNode(
+                new StatementVisitor(),
+                ctx.localVariableDeclarationStatement(),
                 isLocalVariableDeclarationStatementType,
                 'localVariableDeclarationStatement',
             );
         } else {
-            value = isApexValidClass(
-                new StatementVisitor().visit(ctx.expressionStatement()),
+            value = visitNode(
+                new StatementVisitor(),
+                ctx.expressionStatement(),
                 isExpressionStatementType,
                 'expressionStatement',
             );
@@ -235,4 +250,3 @@ export const isNormalStatementType = (
 ): target is NormalStatementTypeClass => {
     return target instanceof NormalStatementTypeClass;
 };
-

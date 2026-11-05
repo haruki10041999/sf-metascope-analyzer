@@ -1,13 +1,43 @@
 import { isStaticBlock, type StaticBlock } from '@babel/types';
-import { EvaluatePair, LwcCommonTypeClass, makeEvaluatePair } from '../commonVisitor';
+import {
+    EvaluatePair,
+    LwcCommonTypeClass,
+    LwcErrorTypeClass,
+    makeEvaluatePair,
+    visitNodeList,
+} from '../commonVisitor';
+import { statementVisitorEvaluatePairs, type StatementTypeClass } from '../statementVisitor';
+
+export type StaticBlockFields = {
+    body: (StatementTypeClass | LwcErrorTypeClass)[];
+};
 
 export class StaticBlockTypeClass extends LwcCommonTypeClass<'staticBlock'> {
-    private constructor(originalSource: string) {
-        super('staticBlock', originalSource);
+    private readonly value: StaticBlockFields;
+
+    private constructor(value: StaticBlockFields) {
+        super('staticBlock');
+        this.value = value;
     }
 
     static create(target: StaticBlock, originalSource: string): StaticBlockTypeClass {
-        throw new Error('StaticBlockTypeClass.create is not implemented: ' + target.type);
+        return new StaticBlockTypeClass({
+            body: visitNodeList(
+                target.body,
+                originalSource,
+                statementVisitorEvaluatePairs(),
+                'StatementVisitor',
+            ),
+        });
+    }
+
+    /** すべてのフィールド (Babel の value フィールドの getter getValue() と区別する。getChildNodes もこれから作る) */
+    override getFields(): StaticBlockFields {
+        return this.value;
+    }
+
+    getBody(): StaticBlockFields['body'] {
+        return this.value.body;
     }
 }
 

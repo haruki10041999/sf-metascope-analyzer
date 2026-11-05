@@ -1,18 +1,46 @@
 import { isNullableTypeAnnotation, type NullableTypeAnnotation } from '@babel/types';
-import { EvaluatePair, LwcCommonTypeClass, makeEvaluatePair } from '../commonVisitor';
+import {
+    EvaluatePair,
+    LwcCommonTypeClass,
+    LwcErrorTypeClass,
+    makeEvaluatePair,
+    visitNode,
+} from '../commonVisitor';
+import { flowTypeVisitorEvaluatePairs, type FlowTypeTypeClass } from '../flowTypeVisitor';
+
+export type NullableTypeAnnotationFields = {
+    typeAnnotation: FlowTypeTypeClass | LwcErrorTypeClass;
+};
 
 export class NullableTypeAnnotationTypeClass extends LwcCommonTypeClass<'nullableTypeAnnotation'> {
-    private constructor(originalSource: string) {
-        super('nullableTypeAnnotation', originalSource);
+    private readonly value: NullableTypeAnnotationFields;
+
+    private constructor(value: NullableTypeAnnotationFields) {
+        super('nullableTypeAnnotation');
+        this.value = value;
     }
 
     static create(
         target: NullableTypeAnnotation,
         originalSource: string,
     ): NullableTypeAnnotationTypeClass {
-        throw new Error(
-            'NullableTypeAnnotationTypeClass.create is not implemented: ' + target.type,
-        );
+        return new NullableTypeAnnotationTypeClass({
+            typeAnnotation: visitNode(
+                target.typeAnnotation,
+                originalSource,
+                flowTypeVisitorEvaluatePairs(),
+                'FlowTypeVisitor',
+            ),
+        });
+    }
+
+    /** すべてのフィールド (Babel の value フィールドの getter getValue() と区別する。getChildNodes もこれから作る) */
+    override getFields(): NullableTypeAnnotationFields {
+        return this.value;
+    }
+
+    getTypeAnnotation(): NullableTypeAnnotationFields['typeAnnotation'] {
+        return this.value.typeAnnotation;
     }
 }
 

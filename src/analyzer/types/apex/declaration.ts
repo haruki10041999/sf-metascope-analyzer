@@ -74,7 +74,9 @@ const makeTypeListJson = (
     return target.value.map((t) => makeTypeJson(t));
 };
 
+/** 変数 (1 つの宣言に複数あるので kind を持たない値)。使われていない変数などの位置のために sourceKeys を持つ */
 export type VariantJson = {
+    sourceKeys: ConvertKeys;
     name: string | ErrorJson;
     init?: BaseExpressionJson | ErrorJson;
 };
@@ -91,6 +93,7 @@ const makeVariantsJson = (
             return makeErrorJson(v, ERROR_KIND);
         }
         return {
+            sourceKeys: { objectKey: v.objectKey, sourceKey: v.sourceKey },
             name: makeNameJson(v.value),
             ...(v.init ? { init: makeExpressionJsonConvert(v.init) } : {}),
         };

@@ -1,16 +1,47 @@
 import { isSpreadProperty, type Node, type SpreadProperty } from '@babel/types';
-import { EvaluatePair, LwcCommonTypeClass, makeEvaluatePair } from '../commonVisitor';
+import {
+    EvaluatePair,
+    LwcCommonTypeClass,
+    LwcErrorTypeClass,
+    makeEvaluatePair,
+    visitNode,
+} from '../commonVisitor';
+import { expressionVisitorEvaluatePairs, type ExpressionTypeClass } from '../expressionVisitor';
 
+// 非推奨の別名。Babel 8 の parse は作らず SpreadElement を使う。isSpreadProperty は型の判定 (target is ...) にならないので包む
 const isSpreadPropertyNode = (target: Node | null | undefined): target is SpreadProperty =>
     isSpreadProperty(target);
 
+export type SpreadPropertyFields = {
+    argument: ExpressionTypeClass | LwcErrorTypeClass;
+};
+
 export class SpreadPropertyTypeClass extends LwcCommonTypeClass<'spreadProperty'> {
-    private constructor(originalSource: string) {
-        super('spreadProperty', originalSource);
+    private readonly value: SpreadPropertyFields;
+
+    private constructor(value: SpreadPropertyFields) {
+        super('spreadProperty');
+        this.value = value;
     }
 
     static create(target: SpreadProperty, originalSource: string): SpreadPropertyTypeClass {
-        throw new Error('SpreadPropertyTypeClass.create is not implemented: ' + target.type);
+        return new SpreadPropertyTypeClass({
+            argument: visitNode(
+                target.argument,
+                originalSource,
+                expressionVisitorEvaluatePairs(),
+                'ExpressionVisitor',
+            ),
+        });
+    }
+
+    /** すべてのフィールド (Babel の value フィールドの getter getValue() と区別する。getChildNodes もこれから作る) */
+    override getFields(): SpreadPropertyFields {
+        return this.value;
+    }
+
+    getArgument(): SpreadPropertyFields['argument'] {
+        return this.value.argument;
     }
 }
 

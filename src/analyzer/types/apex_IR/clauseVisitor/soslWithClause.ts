@@ -10,7 +10,7 @@ import {
     isFilteringExpressionType,
 } from '../expressionVisitor';
 import { NetworkListTypeClass, ListVisitor, isNetworkListType } from '../listVisitor';
-import { ApexErrorTypeClass, ApexCommonTypeClass, isApexValidClass } from '../commonVisitor';
+import { ApexErrorTypeClass, ApexCommonTypeClass, visitNode } from '../commonVisitor';
 
 type SoslWithClauseValueType =
     | 'DIVISION'
@@ -67,15 +67,17 @@ export class SoslWithClauseTypeClass extends ClauseValueTypeClass<
                 ? ctx.StringLiteral().getText()
                 : ctx.MultilineStringLiteral()
                   ? ctx.MultilineStringLiteral().getText()
-                  : isApexValidClass(
-                        new ExpressionVisitor().visit(ctx.boundExpression()),
+                  : visitNode(
+                        new ExpressionVisitor(),
+                        ctx.boundExpression(),
                         isBoundExpressionType,
                         'boundExpression',
                     );
         } else if (ctx.DATA() && ctx.CATEGORY()) {
             value = 'DATA_CATEGORY';
-            content = isApexValidClass(
-                new ExpressionVisitor().visit(ctx.filteringExpression()),
+            content = visitNode(
+                new ExpressionVisitor(),
+                ctx.filteringExpression(),
                 isFilteringExpressionType,
                 'filteringExpression',
             );
@@ -90,11 +92,7 @@ export class SoslWithClauseTypeClass extends ClauseValueTypeClass<
             value = 'NETWORK';
             // `NETWORK IN (...)` と `NETWORK = '...'` の 2 形式がある
             content = ctx.networkList()
-                ? isApexValidClass(
-                      new ListVisitor().visit(ctx.networkList()),
-                      isNetworkListType,
-                      'networkList',
-                  )
+                ? visitNode(new ListVisitor(), ctx.networkList(), isNetworkListType, 'networkList')
                 : ctx.StringLiteral().getText();
         } else if (ctx.METADATA()) {
             value = 'METADATA';
@@ -120,4 +118,3 @@ export const isSoslWithClauseType = (
 ): target is SoslWithClauseTypeClass => {
     return target instanceof SoslWithClauseTypeClass;
 };
-

@@ -4,7 +4,11 @@ export class CallTypeClass<TName extends string, T, Tparam> extends ApexCommonTy
     private value: T | ApexErrorTypeClass;
     private param: Tparam | ApexErrorTypeClass | null;
 
-    constructor(type: TName, value: T | ApexErrorTypeClass, param: Tparam | ApexErrorTypeClass | null) {
+    constructor(
+        type: TName,
+        value: T | ApexErrorTypeClass,
+        param: Tparam | ApexErrorTypeClass | null,
+    ) {
         super(type);
         this.value = value;
         this.param = param;

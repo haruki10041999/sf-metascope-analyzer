@@ -2,12 +2,15 @@ import { isThisTypeAnnotation, type ThisTypeAnnotation } from '@babel/types';
 import { EvaluatePair, LwcCommonTypeClass, makeEvaluatePair } from '../commonVisitor';
 
 export class ThisTypeAnnotationTypeClass extends LwcCommonTypeClass<'thisTypeAnnotation'> {
-    private constructor(originalSource: string) {
-        super('thisTypeAnnotation', originalSource);
+    private constructor() {
+        super('thisTypeAnnotation');
     }
 
-    static create(target: ThisTypeAnnotation, originalSource: string): ThisTypeAnnotationTypeClass {
-        throw new Error('ThisTypeAnnotationTypeClass.create is not implemented: ' + target.type);
+    static create(
+        _target: ThisTypeAnnotation,
+        _originalSource: string,
+    ): ThisTypeAnnotationTypeClass {
+        return new ThisTypeAnnotationTypeClass();
     }
 }
 

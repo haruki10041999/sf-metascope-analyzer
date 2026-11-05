@@ -21,7 +21,7 @@ import {
 
 /** 保存するデータ。outputPath に data を書く (書き込みは writeSaveDataInfo) */
 /** 保存するデータの種類 (保存先・保存名を分ける) */
-export type SaveDataType = 'Apex' | 'Object' | 'ObjectTranslation';
+export type SaveDataType = 'Apex' | 'Object' | 'ObjectTranslation' | 'Lwc';
 
 export type SaveDataInfo = {
     type: SaveDataType;
@@ -118,7 +118,11 @@ export const readXmlFile = async (
     }
 };
 
+/** syntax: 構文エラー (リスナー) / analyzer: IR を作れなかった (このアナライザの未対応・例外)。LWC の LwcErrorPhase と同じ */
+export type ApexErrorPhase = 'syntax' | 'analyzer';
+
 export type ApexResolvedError = {
+    phase: ApexErrorPhase;
     code: string;
     contextType: string;
     context: string;
@@ -127,8 +131,10 @@ export type ApexResolvedError = {
 
 export const toApexResolvedError = (
     target: ApexErrorTypeClass,
+    phase: ApexErrorPhase = 'syntax',
 ): { sourceKeys: ConvertKeys } & ApexResolvedError & SourceSpan => {
     const resolvedErrorType: ApexResolvedError = {
+        phase,
         code: target.getCode(),
         contextType: target.getContextType(),
         context: target.getContext(),
@@ -170,4 +176,3 @@ export const toXmlResolvedError = (problem: XmlReadProblem): XmlResolvedError =>
     start: problem.position,
     end: problem.position,
 });
-

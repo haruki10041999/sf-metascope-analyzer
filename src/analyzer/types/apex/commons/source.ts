@@ -63,6 +63,12 @@ export const findSourceInfo = (
     throw new Error('sourceInfo cannot be found');
 };
 
+const isConvertKeys = (value: unknown): value is ConvertKeys =>
+    typeof value === 'object' &&
+    value !== null &&
+    typeof (value as ConvertKeys).objectKey === 'string' &&
+    typeof (value as ConvertKeys).sourceKey === 'string';
+
 const _gatherSourceKeys = (target: unknown, allKeys: Record<string, string[]>): void => {
     if (Array.isArray(target)) {
         for (const item of target) {
@@ -85,6 +91,9 @@ const _gatherSourceKeys = (target: unknown, allKeys: Record<string, string[]>): 
         Object.values(target.sourceKeys).forEach((value) => {
             (Array.isArray(value) ? value : [value]).forEach(addKeys);
         });
+    } else if (isConvertKeys((target as { sourceKeys?: unknown }).sourceKeys)) {
+        // kind を持たない値 (式・変数) の位置
+        addKeys((target as { sourceKeys: ConvertKeys }).sourceKeys);
     }
 
     // sourceKeys 自体は登録済みのため、それ以外のプロパティだけを1回ずつ辿る

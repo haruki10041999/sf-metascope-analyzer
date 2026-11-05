@@ -22,4 +22,3 @@ export const isVoidPrimaryType = (
 ): target is VoidPrimaryTypeClass => {
     return target instanceof VoidPrimaryTypeClass;
 };
-

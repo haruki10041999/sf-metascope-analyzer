@@ -1,18 +1,52 @@
 import { isExportNamespaceSpecifier, type ExportNamespaceSpecifier } from '@babel/types';
-import { EvaluatePair, LwcCommonTypeClass, makeEvaluatePair } from '../commonVisitor';
+import {
+    EvaluatePair,
+    LwcCommonTypeClass,
+    LwcErrorTypeClass,
+    lazyPairs,
+    makeEvaluatePair,
+    visitNode,
+} from '../commonVisitor';
+import { identifierTypePair, type IdentifierTypeClass } from './identifier';
+import { stringLiteralTypePair, type StringLiteralTypeClass } from './stringLiteral';
+
+const exportNamespaceSpecifierExportedPairs = lazyPairs(
+    () => [identifierTypePair, stringLiteralTypePair] as const,
+);
+
+export type ExportNamespaceSpecifierFields = {
+    exported: IdentifierTypeClass | StringLiteralTypeClass | LwcErrorTypeClass;
+};
 
 export class ExportNamespaceSpecifierTypeClass extends LwcCommonTypeClass<'exportNamespaceSpecifier'> {
-    private constructor(originalSource: string) {
-        super('exportNamespaceSpecifier', originalSource);
+    private readonly value: ExportNamespaceSpecifierFields;
+
+    private constructor(value: ExportNamespaceSpecifierFields) {
+        super('exportNamespaceSpecifier');
+        this.value = value;
     }
 
     static create(
         target: ExportNamespaceSpecifier,
         originalSource: string,
     ): ExportNamespaceSpecifierTypeClass {
-        throw new Error(
-            'ExportNamespaceSpecifierTypeClass.create is not implemented: ' + target.type,
-        );
+        return new ExportNamespaceSpecifierTypeClass({
+            exported: visitNode(
+                target.exported,
+                originalSource,
+                exportNamespaceSpecifierExportedPairs(),
+                'ExportNamespaceSpecifier.exported',
+            ),
+        });
+    }
+
+    /** すべてのフィールド (Babel の value フィールドの getter getValue() と区別する。getChildNodes もこれから作る) */
+    override getFields(): ExportNamespaceSpecifierFields {
+        return this.value;
+    }
+
+    getExported(): ExportNamespaceSpecifierFields['exported'] {
+        return this.value.exported;
     }
 }
 

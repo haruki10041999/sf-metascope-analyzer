@@ -1,18 +1,49 @@
 import { isImportDefaultSpecifier, type ImportDefaultSpecifier } from '@babel/types';
-import { EvaluatePair, LwcCommonTypeClass, makeEvaluatePair } from '../commonVisitor';
+import {
+    EvaluatePair,
+    LwcCommonTypeClass,
+    LwcErrorTypeClass,
+    lazyPairs,
+    makeEvaluatePair,
+    visitNode,
+} from '../commonVisitor';
+import { identifierTypePair, type IdentifierTypeClass } from './identifier';
+
+const importDefaultSpecifierLocalPairs = lazyPairs(() => [identifierTypePair] as const);
+
+export type ImportDefaultSpecifierFields = {
+    local: IdentifierTypeClass | LwcErrorTypeClass;
+};
 
 export class ImportDefaultSpecifierTypeClass extends LwcCommonTypeClass<'importDefaultSpecifier'> {
-    private constructor(originalSource: string) {
-        super('importDefaultSpecifier', originalSource);
+    private readonly value: ImportDefaultSpecifierFields;
+
+    private constructor(value: ImportDefaultSpecifierFields) {
+        super('importDefaultSpecifier');
+        this.value = value;
     }
 
     static create(
         target: ImportDefaultSpecifier,
         originalSource: string,
     ): ImportDefaultSpecifierTypeClass {
-        throw new Error(
-            'ImportDefaultSpecifierTypeClass.create is not implemented: ' + target.type,
-        );
+        return new ImportDefaultSpecifierTypeClass({
+            local: visitNode(
+                target.local,
+                originalSource,
+                importDefaultSpecifierLocalPairs(),
+                'ImportDefaultSpecifier.local',
+            ),
+        });
+    }
+
+    /** すべてのフィールド (Babel の value フィールドの getter getValue() と区別する。getChildNodes もこれから作る) */
+    override getFields(): ImportDefaultSpecifierFields {
+        return this.value;
+    }
+
+    getLocal(): ImportDefaultSpecifierFields['local'] {
+        return this.value.local;
     }
 }
 

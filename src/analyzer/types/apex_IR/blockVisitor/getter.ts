@@ -2,7 +2,7 @@ import { GetterContext } from '@apexdevtools/apex-parser';
 
 import { NormalBlockTypeClass, BlockTypeClass, BlockVisitor, isNormalBlockType } from '.';
 
-import { ApexErrorTypeClass, ApexCommonTypeClass, isApexValidClass } from '../commonVisitor';
+import { ApexErrorTypeClass, ApexCommonTypeClass, visitOptionalNode } from '../commonVisitor';
 
 export class GetterTypeClass extends BlockTypeClass<'getter', NormalBlockTypeClass | null> {
     private constructor(value: NormalBlockTypeClass | ApexErrorTypeClass | null) {
@@ -15,13 +15,7 @@ export class GetterTypeClass extends BlockTypeClass<'getter', NormalBlockTypeCla
         }
 
         return new GetterTypeClass(
-            ctx.block()
-                ? isApexValidClass(
-                      new BlockVisitor().visit(ctx.block()),
-                      isNormalBlockType,
-                      'block',
-                  )
-                : null,
+            visitOptionalNode(new BlockVisitor(), ctx.block(), isNormalBlockType, 'block'),
         );
     }
 }

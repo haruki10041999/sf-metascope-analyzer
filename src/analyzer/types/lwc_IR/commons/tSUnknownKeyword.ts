@@ -2,12 +2,12 @@ import { isTSUnknownKeyword, type TSUnknownKeyword } from '@babel/types';
 import { EvaluatePair, LwcCommonTypeClass, makeEvaluatePair } from '../commonVisitor';
 
 export class TSUnknownKeywordTypeClass extends LwcCommonTypeClass<'tSUnknownKeyword'> {
-    private constructor(originalSource: string) {
-        super('tSUnknownKeyword', originalSource);
+    private constructor() {
+        super('tSUnknownKeyword');
     }
 
-    static create(target: TSUnknownKeyword, originalSource: string): TSUnknownKeywordTypeClass {
-        throw new Error('TSUnknownKeywordTypeClass.create is not implemented: ' + target.type);
+    static create(_target: TSUnknownKeyword, _originalSource: string): TSUnknownKeywordTypeClass {
+        return new TSUnknownKeywordTypeClass();
     }
 }
 

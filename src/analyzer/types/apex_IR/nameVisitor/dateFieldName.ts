@@ -2,7 +2,7 @@ import { DateFieldNameContext } from '@apexdevtools/apex-parser';
 
 import { NameTypeClass, NameVisitor, FieldNameTypeClass, isFieldNameType } from '.';
 
-import { ApexErrorTypeClass, ApexCommonTypeClass, isApexValidClass } from '../commonVisitor';
+import { ApexErrorTypeClass, ApexCommonTypeClass, visitNode } from '../commonVisitor';
 
 export class DateFieldNameTypeClass extends NameTypeClass<'dateFieldName', FieldNameTypeClass> {
     private isConvertTimeZone: boolean;
@@ -20,11 +20,7 @@ export class DateFieldNameTypeClass extends NameTypeClass<'dateFieldName', Field
         }
 
         return new DateFieldNameTypeClass(
-            isApexValidClass(
-                new NameVisitor().visit(ctx.fieldName()),
-                isFieldNameType,
-                'fieldName',
-            ),
+            visitNode(new NameVisitor(), ctx.fieldName(), isFieldNameType, 'fieldName'),
             ctx.CONVERT_TIMEZONE() !== null,
         );
     }

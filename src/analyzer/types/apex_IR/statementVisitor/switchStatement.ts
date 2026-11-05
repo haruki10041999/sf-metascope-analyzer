@@ -11,8 +11,8 @@ import {
 import {
     ApexErrorTypeClass,
     ApexCommonTypeClass,
-    isApexValidClass,
-    isApexValidClassList,
+    visitNodeList,
+    visitNode,
 } from '../commonVisitor';
 
 export class SwitchStatementTypeClass extends StatementTypeClass<
@@ -35,14 +35,15 @@ export class SwitchStatementTypeClass extends StatementTypeClass<
         }
 
         return new SwitchStatementTypeClass(
-            isApexValidClass(
-                new ExpressionVisitor().visit(ctx.expression()),
+            visitNode(
+                new ExpressionVisitor(),
+                ctx.expression(),
                 isBasedExpressionType,
                 'expression',
             ),
-            isApexValidClassList(
+            visitNodeList(
+                new ControlVisitor(),
                 ctx.whenControl_list(),
-                (ctx) => new ControlVisitor().visit(ctx),
                 isWhenControlType,
                 'whenControl_list',
             ),
@@ -59,4 +60,3 @@ export const isSwitchStatementType = (
 ): target is SwitchStatementTypeClass => {
     return target instanceof SwitchStatementTypeClass;
 };
-

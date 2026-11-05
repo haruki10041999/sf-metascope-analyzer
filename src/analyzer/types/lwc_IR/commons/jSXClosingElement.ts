@@ -1,13 +1,60 @@
 import { isJSXClosingElement, type JSXClosingElement } from '@babel/types';
-import { EvaluatePair, LwcCommonTypeClass, makeEvaluatePair } from '../commonVisitor';
+import {
+    EvaluatePair,
+    LwcCommonTypeClass,
+    LwcErrorTypeClass,
+    lazyPairs,
+    makeEvaluatePair,
+    visitNode,
+} from '../commonVisitor';
+import { jSXIdentifierTypePair, type JSXIdentifierTypeClass } from '../jsxVisitor/jSXIdentifier';
+import {
+    jSXMemberExpressionTypePair,
+    type JSXMemberExpressionTypeClass,
+} from '../jsxVisitor/jSXMemberExpression';
+import {
+    jSXNamespacedNameTypePair,
+    type JSXNamespacedNameTypeClass,
+} from '../jsxVisitor/jSXNamespacedName';
+
+const jSXClosingElementNamePairs = lazyPairs(
+    () => [jSXIdentifierTypePair, jSXMemberExpressionTypePair, jSXNamespacedNameTypePair] as const,
+);
+
+export type JSXClosingElementFields = {
+    name:
+        | JSXIdentifierTypeClass
+        | JSXMemberExpressionTypeClass
+        | JSXNamespacedNameTypeClass
+        | LwcErrorTypeClass;
+};
 
 export class JSXClosingElementTypeClass extends LwcCommonTypeClass<'jSXClosingElement'> {
-    private constructor(originalSource: string) {
-        super('jSXClosingElement', originalSource);
+    private readonly value: JSXClosingElementFields;
+
+    private constructor(value: JSXClosingElementFields) {
+        super('jSXClosingElement');
+        this.value = value;
     }
 
     static create(target: JSXClosingElement, originalSource: string): JSXClosingElementTypeClass {
-        throw new Error('JSXClosingElementTypeClass.create is not implemented: ' + target.type);
+        return new JSXClosingElementTypeClass({
+            name: visitNode(
+                target.name,
+                originalSource,
+                jSXClosingElementNamePairs(),
+                'JSXClosingElement.name',
+            ),
+        });
+    }
+
+    /** すべてのフィールド (Babel の value フィールドの getter getValue() と区別する。getChildNodes もこれから作る) */
+    override getFields(): JSXClosingElementFields {
+        return this.value;
+    }
+
+    getName(): JSXClosingElementFields['name'] {
+        return this.value.name;
     }
 }
 

@@ -3,7 +3,7 @@ import { DateFormulaContext } from '@apexdevtools/apex-parser';
 import { QueryValueTypeClass } from '../queryVisitor';
 
 import { SignedIntegerTypeClass, LiteralVisitor, isSignedIntegerType } from '../literalVisitor';
-import { ApexErrorTypeClass, ApexCommonTypeClass, isApexValidClass } from '../commonVisitor';
+import { ApexErrorTypeClass, ApexCommonTypeClass, visitNode } from '../commonVisitor';
 
 type DateFormulaFunctionType =
     | 'YESTERDAY'
@@ -177,8 +177,9 @@ export class DateFormulaTypeClass extends QueryValueTypeClass<'dateFormula', Dat
                 value = 'NEXT_FISCAL_YEAR';
             }
         } else {
-            param = isApexValidClass(
-                new LiteralVisitor().visit(ctx.signedInteger()),
+            param = visitNode(
+                new LiteralVisitor(),
+                ctx.signedInteger(),
                 isSignedIntegerType,
                 'signedInteger',
             );
@@ -241,4 +242,3 @@ export const isDateFormulaType = (
 ): target is DateFormulaTypeClass => {
     return target instanceof DateFormulaTypeClass;
 };
-

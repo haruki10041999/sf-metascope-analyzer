@@ -7,7 +7,7 @@ import {
     DeclarationVisitor,
     isInterfaceMethodDeclarationType,
 } from '../declarationVisitor';
-import { ApexErrorTypeClass, ApexCommonTypeClass, isApexValidClassList } from '../commonVisitor';
+import { ApexErrorTypeClass, ApexCommonTypeClass, visitNodeList } from '../commonVisitor';
 
 export class InterfaceBodyTypeClass extends BodyTypeClass<
     'interfaceBody',
@@ -19,9 +19,9 @@ export class InterfaceBodyTypeClass extends BodyTypeClass<
 
     static create(ctx: InterfaceBodyContext): InterfaceBodyTypeClass {
         return new InterfaceBodyTypeClass(
-            isApexValidClassList(
+            visitNodeList(
+                new DeclarationVisitor(),
                 ctx.interfaceMethodDeclaration_list(),
-                (ctx) => new DeclarationVisitor().visit(ctx),
                 isInterfaceMethodDeclarationType,
                 'interfaceMethodDeclaration',
             ),

@@ -4,7 +4,7 @@ import type { SourcePosition, SourceSpan } from '../commons/source';
 
 // Babel の Position は SourcePosition と同じ基準 (line は 1 始まり、column / index は 0 始まり、
 // loc.end は範囲の次の文字) なので、index を offset に移すだけでよい。Position 自体は export されていない
-const toSourcePosition = (position: SourceLocation['start']): SourcePosition => ({
+export const toSourcePosition = (position: SourceLocation['start']): SourcePosition => ({
     offset: position.index,
     line: position.line,
     column: position.column,
@@ -25,16 +25,10 @@ export const getSourceSpan = (ctx: Node, source: string): SourceSpan | null => {
 
 export class LwcCommonTypeClass<TName extends string> {
     private type: TName;
-    private originalSource: string;
     private span: SourceSpan | null = null;
 
-    constructor(type: TName, originalSource: string) {
+    constructor(type: TName) {
         this.type = type;
-        this.originalSource = originalSource;
-    }
-
-    getOriginalSource(): string {
-        return this.originalSource;
     }
 
     getType(): TName {
@@ -48,7 +42,25 @@ export class LwcCommonTypeClass<TName extends string> {
     setSpan(span: SourceSpan | null): void {
         this.span = span;
     }
+
+    /** すべてのフィールド (Babel のフィールド名 → 値)。フィールドを持つクラスが上書きする */
+    getFields(): Readonly<Record<string, unknown>> {
+        return {};
+    }
+
+    /** 子のノード (フィールドの TypeClass と LwcErrorTypeClass。Apex の getChildNodes と同じ) */
+    getChildNodes(): LwcCommonTypeClass<string>[] {
+        return childrenOf(this.getFields());
+    }
 }
+
+/** フィールドの値から、子のノードだけを取り出す (配列は平らにし、null・文字列などは除く) */
+export const childrenOf = (fields: Record<string, unknown>): LwcCommonTypeClass<string>[] =>
+    Object.values(fields)
+        .flat()
+        .filter(
+            (value): value is LwcCommonTypeClass<string> => value instanceof LwcCommonTypeClass,
+        );
 
 export type ErrorCode =
     'NULL_CHILD' | 'UNSUPPORTED_CONTEXT' | 'TYPE_MISMATCH' | 'EXCEPTION' | 'UNRESOLVED';
@@ -60,13 +72,12 @@ export class LwcErrorTypeClass extends LwcCommonTypeClass<'AnalyzerError'> {
     private errorMessage: string = '';
 
     private constructor(
-        originalSource: string,
         code: ErrorCode,
         contextType: string,
         context: string,
         errorMessage: string,
     ) {
-        super('AnalyzerError', originalSource);
+        super('AnalyzerError');
         this.code = code;
         this.contextType = contextType;
         this.context = context;
@@ -74,13 +85,12 @@ export class LwcErrorTypeClass extends LwcCommonTypeClass<'AnalyzerError'> {
     }
 
     static create(
-        originalSource: string,
         code: ErrorCode,
         contextType: string,
         context: string,
         errorMessage: string,
     ): LwcErrorTypeClass {
-        return new LwcErrorTypeClass(originalSource, code, contextType, context, errorMessage);
+        return new LwcErrorTypeClass(code, contextType, context, errorMessage);
     }
 
     getCode(): ErrorCode {
@@ -124,11 +134,17 @@ export const makeEvaluatePair = <
         if (!isNode(target)) {
             throw new Error(`想定していた Babel ノード型と違います: ${target.type}`);
         }
+        // span は visitWithPairs が付ける (Apex の ApexCommonVisitor.visit と同じく 1 か所)
         return instance(target, originalSource);
     },
 });
 
-type EvaluatePairInstance<TPair> = TPair extends {
+export type AnyEvaluatePair = {
+    isNode: (target: Node | null | undefined) => boolean;
+    instance: (target: Node, originalSource: string) => LwcCommonTypeClass<string>;
+};
+
+export type EvaluatePairInstance<TPair> = TPair extends {
     instance: (
         target: Node,
         originalSource: string,
@@ -137,117 +153,138 @@ type EvaluatePairInstance<TPair> = TPair extends {
     ? TResult
     : never;
 
-export abstract class LwcCommonVisitor<
-    TEvaluatePair extends {
-        isNode: (target: Node | null | undefined) => boolean;
-        instance: (target: Node, originalSource: string) => LwcCommonTypeClass<string>;
-    },
-> {
-    abstract evaluatePair: readonly TEvaluatePair[];
+/**
+ * pair の一覧を、初めて使うときに作る。
+ * ノードのクラスと alias の Visitor は互いに import し合う (循環する) ため、
+ * モジュールの読み込み時に配列を作ると、まだ初期化されていない pair を参照してしまう
+ */
+export const lazyPairs = <const TPairs extends readonly AnyEvaluatePair[]>(
+    make: () => TPairs,
+): (() => TPairs) => {
+    let pairs: TPairs | undefined;
+    return () => (pairs ??= make());
+};
+
+/**
+ * ノードを、合う pair で TypeClass にする。合う pair がない・例外になったときは LwcErrorTypeClass を返す。
+ * errorRecovery: true の Babel は、型に合わないノード (代入の左辺の NumericLiteral など) を返すことがあり、
+ * そのときは UNSUPPORTED_CONTEXT になる (構文エラー自体は ast.errors に別に入る)
+ */
+export const visitWithPairs = <TPair extends AnyEvaluatePair>(
+    ctx: Node | null | undefined,
+    originalSource: string,
+    pairs: readonly TPair[],
+    visitorName: string,
+): EvaluatePairInstance<TPair> | LwcErrorTypeClass => {
+    if (!ctx) {
+        return LwcErrorTypeClass.create(
+            'NULL_CHILD',
+            'null',
+            '',
+            `${visitorName} に子要素がありません`,
+        );
+    }
+
+    const span = getSourceSpan(ctx, originalSource);
+    const context = span?.context ?? '';
+
+    let result: LwcCommonTypeClass<string> | LwcErrorTypeClass | undefined;
+
+    try {
+        for (const pair of pairs) {
+            if (pair.isNode(ctx)) {
+                result = pair.instance(ctx, originalSource);
+                break;
+            }
+        }
+        if (!result) {
+            result = LwcErrorTypeClass.create(
+                'UNSUPPORTED_CONTEXT',
+                ctx.type,
+                context,
+                `${visitorName} は ${ctx.type} に対応していません`,
+            );
+        }
+    } catch (error) {
+        result = LwcErrorTypeClass.create(
+            'EXCEPTION',
+            ctx.type,
+            context,
+            error instanceof Error ? error.message : String(error),
+        );
+    }
+
+    result.setSpan(span);
+
+    return result as EvaluatePairInstance<TPair> | LwcErrorTypeClass;
+};
+
+/** 必須の子ノード。実行時に null なら NULL_CHILD */
+export const visitNode = <TPair extends AnyEvaluatePair>(
+    ctx: Node | null | undefined,
+    originalSource: string,
+    pairs: readonly TPair[],
+    visitorName: string,
+): EvaluatePairInstance<TPair> | LwcErrorTypeClass =>
+    visitWithPairs(ctx, originalSource, pairs, visitorName);
+
+/** 省略できる子ノード。ないのは正常なので null のまま返す */
+export const visitOptionalNode = <TPair extends AnyEvaluatePair>(
+    ctx: Node | null | undefined,
+    originalSource: string,
+    pairs: readonly TPair[],
+    visitorName: string,
+): EvaluatePairInstance<TPair> | LwcErrorTypeClass | null =>
+    ctx == null ? null : visitWithPairs(ctx, originalSource, pairs, visitorName);
+
+/** 子ノードの配列。要素が null なら NULL_CHILD */
+export const visitNodeList = <TPair extends AnyEvaluatePair>(
+    ctxs: readonly (Node | null | undefined)[],
+    originalSource: string,
+    pairs: readonly TPair[],
+    visitorName: string,
+): (EvaluatePairInstance<TPair> | LwcErrorTypeClass)[] =>
+    ctxs.map((ctx) => visitWithPairs(ctx, originalSource, pairs, visitorName));
+
+/** 要素に null を許す子ノードの配列 (配列の穴 [a, , b] など)。null はそのまま残す */
+export const visitNullableNodeList = <TPair extends AnyEvaluatePair>(
+    ctxs: readonly (Node | null | undefined)[],
+    originalSource: string,
+    pairs: readonly TPair[],
+    visitorName: string,
+): (EvaluatePairInstance<TPair> | LwcErrorTypeClass | null)[] =>
+    ctxs.map((ctx) =>
+        ctx == null ? null : visitWithPairs(ctx, originalSource, pairs, visitorName),
+    );
+
+export abstract class LwcCommonVisitor<TEvaluatePair extends AnyEvaluatePair> {
+    abstract readonly evaluatePair: readonly TEvaluatePair[];
 
     visit(
         ctx: Node | null | undefined,
         originalSource: string,
     ): EvaluatePairInstance<TEvaluatePair> | LwcErrorTypeClass {
-        if (!ctx) {
-            return LwcErrorTypeClass.create(
-                originalSource,
-                'NULL_CHILD',
-                'null',
-                '',
-                `${this.constructor.name} に子要素がありません`,
-            );
-        }
-
-        const span = getSourceSpan(ctx, originalSource);
-        const context = span?.context ?? '';
-
-        let result: LwcCommonTypeClass<string> | LwcErrorTypeClass | undefined;
-
-        try {
-            for (const pair of this.evaluatePair) {
-                if (pair.isNode(ctx)) {
-                    result = pair.instance(ctx, originalSource);
-                    break;
-                }
-            }
-            if (!result) {
-                result = LwcErrorTypeClass.create(
-                    originalSource,
-                    'UNSUPPORTED_CONTEXT',
-                    ctx.type,
-                    context,
-                    `${this.constructor.name} は ${ctx.type} に対応していません`,
-                );
-            }
-        } catch (error) {
-            result = LwcErrorTypeClass.create(
-                originalSource,
-                'EXCEPTION',
-                ctx.type,
-                context,
-                error instanceof Error ? error.message : String(error),
-            );
-        }
-
-        result.setSpan(span);
-
-        return result as EvaluatePairInstance<TEvaluatePair> | LwcErrorTypeClass;
+        return visitWithPairs(ctx, originalSource, this.evaluatePair, this.constructor.name);
     }
 }
 
-/** Babel の構文エラー (ast.errors の要素、または parse が throw したもの) */
-type BabelSyntaxError = Error & {
-    code: string;
-    reasonCode: string;
-    loc: SourceLocation['start'];
-    pos: number;
+/** IR の中の LwcErrorTypeClass を、ソースの順に集める (構文エラー・LWC の違反のリスナーは parser/Lwc/errorListener.ts) */
+export const collectErrorTypeClasses = (root: LwcCommonTypeClass<string>): LwcErrorTypeClass[] => {
+    const errors: LwcErrorTypeClass[] = [];
+    const walk = (
+        node: LwcCommonTypeClass<string>,
+        parent: LwcCommonTypeClass<string> | null,
+    ): void => {
+        if (node instanceof LwcErrorTypeClass) {
+            // NULL_CHILD は子がないので位置を持たない。親の位置にする
+            if (!node.getSpan() && parent) {
+                node.setSpan(parent.getSpan());
+            }
+            errors.push(node);
+            return;
+        }
+        node.getChildNodes().forEach((child) => walk(child, node));
+    };
+    walk(root, null);
+    return errors;
 };
-
-export const isBabelSyntaxError = (error: unknown): error is BabelSyntaxError =>
-    error instanceof SyntaxError && 'reasonCode' in error && 'loc' in error;
-
-// Babel にはリスナーがないため、回復できたエラー (ast.errors) と throw されたエラーを受け取って集める
-export class LwcCommonErrorListener {
-    private originalSource: string;
-    private errorTypeClass: LwcErrorTypeClass[] = [];
-
-    constructor(source: string) {
-        this.originalSource = source;
-    }
-
-    babelSyntaxError(error: BabelSyntaxError): void {
-        // loc は開始位置だけ。Apex と同じく、エラー位置の 1 文字を範囲にする (行末・EOF なら空)
-        const start = toSourcePosition(error.loc);
-        const sourceCode = this.originalSource.charAt(start.offset);
-        const hasCharacter = sourceCode !== '' && sourceCode !== '\n';
-
-        const end: SourcePosition = {
-            offset: start.offset + (hasCharacter ? 1 : 0),
-            line: start.line,
-            column: start.column + (hasCharacter ? 1 : 0),
-        };
-
-        // message の末尾の " (行:列)" は span と重なるので除く
-        const message = error.message.replace(/ \(\d+:\d+\)$/, '');
-        const errorTypeClass = LwcErrorTypeClass.create(
-            this.originalSource,
-            'UNRESOLVED',
-            error.reasonCode,
-            sourceCode,
-            message,
-        );
-
-        errorTypeClass.setSpan({
-            context: sourceCode,
-            start,
-            end,
-        });
-
-        this.errorTypeClass.push(errorTypeClass);
-    }
-
-    getErrors(): LwcErrorTypeClass[] {
-        return this.errorTypeClass;
-    }
-}

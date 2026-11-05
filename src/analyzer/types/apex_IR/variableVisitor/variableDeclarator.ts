@@ -8,7 +8,12 @@ import {
     ExpressionVisitor,
     isBasedExpressionType,
 } from '../expressionVisitor';
-import { ApexErrorTypeClass, ApexCommonTypeClass, isApexValidClass } from '../commonVisitor';
+import {
+    ApexErrorTypeClass,
+    ApexCommonTypeClass,
+    visitNode,
+    visitOptionalNode,
+} from '../commonVisitor';
 
 export class VariableDeclaratorTypeClass extends VariableTypeClass<
     'variableDeclarator',
@@ -30,15 +35,14 @@ export class VariableDeclaratorTypeClass extends VariableTypeClass<
         }
 
         return new VariableDeclaratorTypeClass(
-            isApexValidClass(new IdVisitor().visit(ctx.id()), isNormalIdType, 'id'),
+            visitNode(new IdVisitor(), ctx.id(), isNormalIdType, 'id'),
             // 初期化子は任意（`String name;`）
-            ctx.expression()
-                ? isApexValidClass(
-                      new ExpressionVisitor().visit(ctx.expression()),
-                      isBasedExpressionType,
-                      'expression',
-                  )
-                : null,
+            visitOptionalNode(
+                new ExpressionVisitor(),
+                ctx.expression(),
+                isBasedExpressionType,
+                'expression',
+            ),
         );
     }
 

@@ -8,7 +8,7 @@ import {
     VariableVisitor,
     isVariableDeclaratorsType,
 } from '../variableVisitor';
-import { ApexErrorTypeClass, ApexCommonTypeClass, isApexValidClass } from '../commonVisitor';
+import { ApexErrorTypeClass, ApexCommonTypeClass, visitNode } from '../commonVisitor';
 
 export class FieldDeclarationTypeClass extends DeclarationTypeClass<
     'fieldDeclaration',
@@ -30,12 +30,13 @@ export class FieldDeclarationTypeClass extends DeclarationTypeClass<
         }
 
         return new FieldDeclarationTypeClass(
-            isApexValidClass(
-                new VariableVisitor().visit(ctx.variableDeclarators()),
+            visitNode(
+                new VariableVisitor(),
+                ctx.variableDeclarators(),
                 isVariableDeclaratorsType,
                 'variableDeclarators',
             ),
-            isApexValidClass(new TypeVisitor().visit(ctx.typeRef()), isTypeRefType, 'typeRef'),
+            visitNode(new TypeVisitor(), ctx.typeRef(), isTypeRefType, 'typeRef'),
         );
     }
 

@@ -44,4 +44,3 @@ export const isTriggerCaseType = (
 ): target is TriggerCaseTypeClass => {
     return target instanceof TriggerCaseTypeClass;
 };
-

@@ -23,4 +23,3 @@ export const isAllRowsClauseType = (
 ): target is AllRowsClauseTypeClass => {
     return target instanceof AllRowsClauseTypeClass;
 };
-

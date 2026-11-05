@@ -1,13 +1,43 @@
 import { isTSModuleBlock, type TSModuleBlock } from '@babel/types';
-import { EvaluatePair, LwcCommonTypeClass, makeEvaluatePair } from '../commonVisitor';
+import {
+    EvaluatePair,
+    LwcCommonTypeClass,
+    LwcErrorTypeClass,
+    makeEvaluatePair,
+    visitNodeList,
+} from '../commonVisitor';
+import { statementVisitorEvaluatePairs, type StatementTypeClass } from '../statementVisitor';
+
+export type TSModuleBlockFields = {
+    body: (StatementTypeClass | LwcErrorTypeClass)[];
+};
 
 export class TSModuleBlockTypeClass extends LwcCommonTypeClass<'tSModuleBlock'> {
-    private constructor(originalSource: string) {
-        super('tSModuleBlock', originalSource);
+    private readonly value: TSModuleBlockFields;
+
+    private constructor(value: TSModuleBlockFields) {
+        super('tSModuleBlock');
+        this.value = value;
     }
 
     static create(target: TSModuleBlock, originalSource: string): TSModuleBlockTypeClass {
-        throw new Error('TSModuleBlockTypeClass.create is not implemented: ' + target.type);
+        return new TSModuleBlockTypeClass({
+            body: visitNodeList(
+                target.body,
+                originalSource,
+                statementVisitorEvaluatePairs(),
+                'StatementVisitor',
+            ),
+        });
+    }
+
+    /** すべてのフィールド (Babel の value フィールドの getter getValue() と区別する。getChildNodes もこれから作る) */
+    override getFields(): TSModuleBlockFields {
+        return this.value;
+    }
+
+    getBody(): TSModuleBlockFields['body'] {
+        return this.value.body;
     }
 }
 

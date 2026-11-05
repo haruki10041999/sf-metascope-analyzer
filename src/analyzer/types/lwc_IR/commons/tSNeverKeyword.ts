@@ -2,12 +2,12 @@ import { isTSNeverKeyword, type TSNeverKeyword } from '@babel/types';
 import { EvaluatePair, LwcCommonTypeClass, makeEvaluatePair } from '../commonVisitor';
 
 export class TSNeverKeywordTypeClass extends LwcCommonTypeClass<'tSNeverKeyword'> {
-    private constructor(originalSource: string) {
-        super('tSNeverKeyword', originalSource);
+    private constructor() {
+        super('tSNeverKeyword');
     }
 
-    static create(target: TSNeverKeyword, originalSource: string): TSNeverKeywordTypeClass {
-        throw new Error('TSNeverKeywordTypeClass.create is not implemented: ' + target.type);
+    static create(_target: TSNeverKeyword, _originalSource: string): TSNeverKeywordTypeClass {
+        return new TSNeverKeywordTypeClass();
     }
 }
 

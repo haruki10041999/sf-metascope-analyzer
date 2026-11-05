@@ -7,7 +7,7 @@ import {
     isBasedExpressionType,
 } from '.';
 
-import { ApexCommonTypeClass, ApexErrorTypeClass, isApexValidClass } from '../commonVisitor';
+import { ApexCommonTypeClass, ApexErrorTypeClass, visitNode } from '../commonVisitor';
 
 export class BoundExpressionTypeClass extends ExpressionTypeClass<
     'boundExpression',
@@ -23,8 +23,9 @@ export class BoundExpressionTypeClass extends ExpressionTypeClass<
         }
 
         return new BoundExpressionTypeClass(
-            isApexValidClass(
-                new ExpressionVisitor().visit(ctx.expression()),
+            visitNode(
+                new ExpressionVisitor(),
+                ctx.expression(),
                 isBasedExpressionType,
                 'expression',
             ),

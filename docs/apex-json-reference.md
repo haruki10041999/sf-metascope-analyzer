@@ -101,7 +101,7 @@ type ClassBlock =
 | `enumConstant` | `EnumConstantJson`     | `name: string`                                                            | enum の定数。                                                                  |
 | `notSet`       | `NotSetBlockJson`      | なし                                                                      | クラス本文の要素のうち、メンバー（宣言・初期化ブロック）を持たない位置を表す。 |
 
-`VariantJson` は `{ name: string | Err; init?: Expr | Err }` です。
+`VariantJson` は `{ sourceKeys; name: string | Err; init?: Expr | Err }` です。`kind` を持たない値ですが、使われていない変数などの位置を指せるよう `sourceKeys`（宣言子の位置）を持ちます。
 
 ### 3.2 ユニット・修飾子・パラメーター・型
 
@@ -219,7 +219,12 @@ type ClassBlock =
 | -------------------------------------------------- | ---------------------------------------------- | ----------------------------------------------------------- | ------------------------------------------------------------------------ |
 | `initializer`                                      | `InitializerBlockJson`                         | [declaration.ts](../src/analyzer/types/apex/declaration.ts) | クラスの初期化ブロック。`block`, `modifier`, `isStatic` を持つ。         |
 | `statement`                                        | `MemberStatementJson`                          | [unit.ts](../src/analyzer/types/apex/unit.ts)               | anonymous / trigger のブロック直下の文。`statement`, `modifier` を持つ。 |
-| `array` / `class` / `map` / `no` / `list \|\| set` | `InitInstanceJson`（`NewInstanceJson` の一部） | [expression.ts](../src/analyzer/types/apex/expression.ts)   | `new` 式の初期化部分の形式。                                             |
+
+`new` 式の初期化部分の形式（`array` / `class` / `map` / `no` / `list || set`）は、`kind` ではなく `initType` に持ちます（`kind` は JSON ノードの印なので使いません）。
+
+`kind` を持たない式（リテラル `LiteralPrimaryJson`・`new` の `NewInstanceJson`・`CastJson`・`SubJson`・`ArrayJson`・`FormulaJson`・`InstanceofJson`・`UnaryJson`・`TernaryJson`）と `VariantJson` は、findings の位置（ハードコードされた ID など）を式の単位で指せるよう `sourceKeys` を持ちます。`kind` を持たないので JSON ノード（Diff の対象のノード）ではなく、Diff の値の比較では `sourceKeys` を無視します（位置だけの変更は差分にならない）。名前（識別子）の式は文字列のままで、位置を持ちません。sourceObject の `context` は元のソースの切り出し（空白・改行を残す）です。
+
+SOSL の `WITH SNIPPET (target_length = n)` は `{ mode: 'SNIPPET', targetLength?: string }` です（`SPELL_CORRECTION` は `value`）。
 
 ユニット（`AnonymousUnitJson` / `TriggerUnitJson` / `CompilationUnitJson`）は `kind` ではなく `fileType`（`anonymous` / `trigger` / `cls`）で区別します。`CompilationUnitJson` は `class` / `interface` / `enum` の StructureJsonType に `fileType` と `modifier` を加えた形です。
 

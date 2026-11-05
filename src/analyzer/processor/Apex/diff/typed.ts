@@ -8,7 +8,7 @@ import {
     makeSingleItem,
     makeUnchangedItem,
 } from '../../commons/diff/list';
-import { GumTreeDiff } from './gumtree/diff';
+import { GumTreeDiff } from '../../commons/diff/gumtree';
 
 type DiffNode = JsonNode | ErrorJson;
 type DiffObject = Record<string, unknown>;

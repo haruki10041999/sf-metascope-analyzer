@@ -2,3 +2,4 @@
 export * from './commons';
 export * from './Metadata';
 export * from './Apex/diff';
+export * from './Lwc';

@@ -4,7 +4,7 @@ import { ControlTypeClass } from '.';
 
 import { WhenValueTypeClass, ValueVisitor, isWhenValueType } from '../valueVisitor';
 import { NormalBlockTypeClass, BlockVisitor, isNormalBlockType } from '../blockVisitor';
-import { ApexErrorTypeClass, ApexCommonTypeClass, isApexValidClass } from '../commonVisitor';
+import { ApexErrorTypeClass, ApexCommonTypeClass, visitNode } from '../commonVisitor';
 
 export class WhenControlTypeClass extends ControlTypeClass<'whenControl', WhenValueTypeClass> {
     private block: NormalBlockTypeClass | ApexErrorTypeClass;
@@ -22,12 +22,8 @@ export class WhenControlTypeClass extends ControlTypeClass<'whenControl', WhenVa
         }
 
         return new WhenControlTypeClass(
-            isApexValidClass(
-                new ValueVisitor().visit(ctx.whenValue()),
-                isWhenValueType,
-                'whenValue',
-            ),
-            isApexValidClass(new BlockVisitor().visit(ctx.block()), isNormalBlockType, 'block'),
+            visitNode(new ValueVisitor(), ctx.whenValue(), isWhenValueType, 'whenValue'),
+            visitNode(new BlockVisitor(), ctx.block(), isNormalBlockType, 'block'),
         );
     }
 

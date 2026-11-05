@@ -2,7 +2,7 @@ import { FinallyBlockContext } from '@apexdevtools/apex-parser';
 
 import { NormalBlockTypeClass, BlockTypeClass, BlockVisitor, isNormalBlockType } from '.';
 
-import { ApexErrorTypeClass, ApexCommonTypeClass, isApexValidClass } from '../commonVisitor';
+import { ApexErrorTypeClass, ApexCommonTypeClass, visitNode } from '../commonVisitor';
 
 export class FinallyBlockTypeClass extends BlockTypeClass<'finallyBlock', NormalBlockTypeClass> {
     private constructor(value: NormalBlockTypeClass | ApexErrorTypeClass) {
@@ -15,7 +15,7 @@ export class FinallyBlockTypeClass extends BlockTypeClass<'finallyBlock', Normal
         }
 
         return new FinallyBlockTypeClass(
-            isApexValidClass(new BlockVisitor().visit(ctx.block()), isNormalBlockType, 'block'),
+            visitNode(new BlockVisitor(), ctx.block(), isNormalBlockType, 'block'),
         );
     }
 }

@@ -62,4 +62,3 @@ export const isNormalLiteralType = (
 ): target is NormalLiteralTypeClass => {
     return target instanceof NormalLiteralTypeClass;
 };
-

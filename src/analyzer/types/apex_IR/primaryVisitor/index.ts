@@ -91,4 +91,3 @@ export class PrimaryVisitor extends ApexCommonVisitor<PrimaryTypeClass<string, u
         return SoslPrimaryTypeClass.create(ctx);
     }
 }
-

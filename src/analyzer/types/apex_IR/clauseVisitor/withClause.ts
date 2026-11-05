@@ -9,7 +9,7 @@ import {
     isFilteringExpressionType,
     isLogicalExpressionType,
 } from '../expressionVisitor';
-import { ApexErrorTypeClass, ApexCommonTypeClass, isApexValidClass } from '../commonVisitor';
+import { ApexErrorTypeClass, ApexCommonTypeClass, visitNode } from '../commonVisitor';
 
 type WithClauseType =
     | 'SYSTEM_MODE'
@@ -51,8 +51,9 @@ export class WithClauseTypeClass extends ClauseTypeClass<'withClause', WithClaus
         } else if (ctx.DATA() && ctx.CATEGORY()) {
             value = 'DATA_CATEGORY';
         } else {
-            value = isApexValidClass(
-                new ExpressionVisitor().visit(ctx.logicalExpression()),
+            value = visitNode(
+                new ExpressionVisitor(),
+                ctx.logicalExpression(),
                 isLogicalExpressionType,
                 'logicalExpression',
             );
@@ -61,8 +62,9 @@ export class WithClauseTypeClass extends ClauseTypeClass<'withClause', WithClaus
         return new WithClauseTypeClass(
             value,
             ctx.DATA() && ctx.CATEGORY()
-                ? isApexValidClass(
-                      new ExpressionVisitor().visit(ctx.filteringExpression()),
+                ? visitNode(
+                      new ExpressionVisitor(),
+                      ctx.filteringExpression(),
                       isFilteringExpressionType,
                       'filteringExpression',
                   )
@@ -80,4 +82,3 @@ export const isWithClauseType = (
 ): target is WithClauseTypeClass => {
     return target instanceof WithClauseTypeClass;
 };
-

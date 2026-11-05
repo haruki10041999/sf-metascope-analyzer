@@ -1,13 +1,69 @@
 import { isExportSpecifier, type ExportSpecifier } from '@babel/types';
-import { EvaluatePair, LwcCommonTypeClass, makeEvaluatePair } from '../commonVisitor';
+import {
+    EvaluatePair,
+    LwcCommonTypeClass,
+    LwcErrorTypeClass,
+    lazyPairs,
+    makeEvaluatePair,
+    visitNode,
+} from '../commonVisitor';
+import { identifierTypePair, type IdentifierTypeClass } from './identifier';
+import { stringLiteralTypePair, type StringLiteralTypeClass } from './stringLiteral';
+
+const exportSpecifierLocalPairs = lazyPairs(
+    () => [identifierTypePair, stringLiteralTypePair] as const,
+);
+const exportSpecifierExportedPairs = lazyPairs(
+    () => [identifierTypePair, stringLiteralTypePair] as const,
+);
+
+export type ExportSpecifierFields = {
+    local: IdentifierTypeClass | StringLiteralTypeClass | LwcErrorTypeClass;
+    exported: IdentifierTypeClass | StringLiteralTypeClass | LwcErrorTypeClass;
+    exportKind: NonNullable<ExportSpecifier['exportKind']> | null;
+};
 
 export class ExportSpecifierTypeClass extends LwcCommonTypeClass<'exportSpecifier'> {
-    private constructor(originalSource: string) {
-        super('exportSpecifier', originalSource);
+    private readonly value: ExportSpecifierFields;
+
+    private constructor(value: ExportSpecifierFields) {
+        super('exportSpecifier');
+        this.value = value;
     }
 
     static create(target: ExportSpecifier, originalSource: string): ExportSpecifierTypeClass {
-        throw new Error('ExportSpecifierTypeClass.create is not implemented: ' + target.type);
+        return new ExportSpecifierTypeClass({
+            local: visitNode(
+                target.local,
+                originalSource,
+                exportSpecifierLocalPairs(),
+                'ExportSpecifier.local',
+            ),
+            exported: visitNode(
+                target.exported,
+                originalSource,
+                exportSpecifierExportedPairs(),
+                'ExportSpecifier.exported',
+            ),
+            exportKind: target.exportKind ?? null,
+        });
+    }
+
+    /** すべてのフィールド (Babel の value フィールドの getter getValue() と区別する。getChildNodes もこれから作る) */
+    override getFields(): ExportSpecifierFields {
+        return this.value;
+    }
+
+    getLocal(): ExportSpecifierFields['local'] {
+        return this.value.local;
+    }
+
+    getExported(): ExportSpecifierFields['exported'] {
+        return this.value.exported;
+    }
+
+    getExportKind(): ExportSpecifierFields['exportKind'] {
+        return this.value.exportKind;
     }
 }
 

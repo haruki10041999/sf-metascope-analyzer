@@ -1,13 +1,43 @@
 import { isTSUnionType, type TSUnionType } from '@babel/types';
-import { EvaluatePair, LwcCommonTypeClass, makeEvaluatePair } from '../commonVisitor';
+import {
+    EvaluatePair,
+    LwcCommonTypeClass,
+    LwcErrorTypeClass,
+    makeEvaluatePair,
+    visitNodeList,
+} from '../commonVisitor';
+import { tSTypeVisitorEvaluatePairs, type TSTypeTypeClass } from '../tsTypeVisitor';
+
+export type TSUnionTypeFields = {
+    types: (TSTypeTypeClass | LwcErrorTypeClass)[];
+};
 
 export class TSUnionTypeTypeClass extends LwcCommonTypeClass<'tSUnionType'> {
-    private constructor(originalSource: string) {
-        super('tSUnionType', originalSource);
+    private readonly value: TSUnionTypeFields;
+
+    private constructor(value: TSUnionTypeFields) {
+        super('tSUnionType');
+        this.value = value;
     }
 
     static create(target: TSUnionType, originalSource: string): TSUnionTypeTypeClass {
-        throw new Error('TSUnionTypeTypeClass.create is not implemented: ' + target.type);
+        return new TSUnionTypeTypeClass({
+            types: visitNodeList(
+                target.types,
+                originalSource,
+                tSTypeVisitorEvaluatePairs(),
+                'TSTypeVisitor',
+            ),
+        });
+    }
+
+    /** すべてのフィールド (Babel の value フィールドの getter getValue() と区別する。getChildNodes もこれから作る) */
+    override getFields(): TSUnionTypeFields {
+        return this.value;
+    }
+
+    getTypes(): TSUnionTypeFields['types'] {
+        return this.value.types;
     }
 }
 

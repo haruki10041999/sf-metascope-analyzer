@@ -1,16 +1,67 @@
 import { isTSInterfaceHeritage, type TSInterfaceHeritage } from '@babel/types';
-import { EvaluatePair, LwcCommonTypeClass, makeEvaluatePair } from '../commonVisitor';
+import {
+    EvaluatePair,
+    LwcCommonTypeClass,
+    LwcErrorTypeClass,
+    lazyPairs,
+    makeEvaluatePair,
+    visitNode,
+    visitOptionalNode,
+} from '../commonVisitor';
+import { expressionVisitorEvaluatePairs, type ExpressionTypeClass } from '../expressionVisitor';
+import {
+    tSTypeParameterInstantiationTypePair,
+    type TSTypeParameterInstantiationTypeClass,
+} from '../typeScriptVisitor/tSTypeParameterInstantiation';
+
+const tSInterfaceHeritageTypeArgumentsPairs = lazyPairs(
+    () => [tSTypeParameterInstantiationTypePair] as const,
+);
+
+export type TSInterfaceHeritageFields = {
+    expression: ExpressionTypeClass | LwcErrorTypeClass;
+    typeArguments: TSTypeParameterInstantiationTypeClass | LwcErrorTypeClass | null;
+};
 
 export class TSInterfaceHeritageTypeClass extends LwcCommonTypeClass<'tSInterfaceHeritage'> {
-    private constructor(originalSource: string) {
-        super('tSInterfaceHeritage', originalSource);
+    private readonly value: TSInterfaceHeritageFields;
+
+    private constructor(value: TSInterfaceHeritageFields) {
+        super('tSInterfaceHeritage');
+        this.value = value;
     }
 
     static create(
         target: TSInterfaceHeritage,
         originalSource: string,
     ): TSInterfaceHeritageTypeClass {
-        throw new Error('TSInterfaceHeritageTypeClass.create is not implemented: ' + target.type);
+        return new TSInterfaceHeritageTypeClass({
+            expression: visitNode(
+                target.expression,
+                originalSource,
+                expressionVisitorEvaluatePairs(),
+                'ExpressionVisitor',
+            ),
+            typeArguments: visitOptionalNode(
+                target.typeArguments,
+                originalSource,
+                tSInterfaceHeritageTypeArgumentsPairs(),
+                'TSInterfaceHeritage.typeArguments',
+            ),
+        });
+    }
+
+    /** すべてのフィールド (Babel の value フィールドの getter getValue() と区別する。getChildNodes もこれから作る) */
+    override getFields(): TSInterfaceHeritageFields {
+        return this.value;
+    }
+
+    getExpression(): TSInterfaceHeritageFields['expression'] {
+        return this.value.expression;
+    }
+
+    getTypeArguments(): TSInterfaceHeritageFields['typeArguments'] {
+        return this.value.typeArguments;
     }
 }
 

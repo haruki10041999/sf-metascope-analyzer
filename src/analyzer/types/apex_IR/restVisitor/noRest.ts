@@ -17,4 +17,3 @@ export class NoRestTypeClass extends RestValueTypeClass<'noRest', string> {
 export const isNoRestType = (target: ApexCommonTypeClass<string>): target is NoRestTypeClass => {
     return target instanceof NoRestTypeClass;
 };
-

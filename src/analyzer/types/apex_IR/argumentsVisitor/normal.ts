@@ -4,7 +4,7 @@ import { ArgumentsTypeClass } from '.';
 
 import { ExpressionListTypeClass, ListVisitor, isExpressionListType } from '../listVisitor';
 
-import { ApexErrorTypeClass, ApexCommonTypeClass, isApexValidClass } from '../commonVisitor';
+import { ApexErrorTypeClass, ApexCommonTypeClass, visitNode } from '../commonVisitor';
 
 export class NormalArgumentsTypeClass extends ArgumentsTypeClass<
     'arguments',
@@ -22,8 +22,9 @@ export class NormalArgumentsTypeClass extends ArgumentsTypeClass<
         let value: ExpressionListTypeClass | ApexErrorTypeClass | null = null;
 
         if (ctx.expressionList()) {
-            value = isApexValidClass(
-                new ListVisitor().visit(ctx.expressionList()),
+            value = visitNode(
+                new ListVisitor(),
+                ctx.expressionList(),
                 isExpressionListType,
                 'expressionList',
             );

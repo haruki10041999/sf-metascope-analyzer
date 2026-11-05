@@ -5,7 +5,12 @@ import { NameTypeClass } from '.';
 import { TypeArgumentsTypeClass, ArgumentsVisitor, isTypeArgumentsType } from '../argumentsVisitor';
 import { NormalIdTypeClass, IdVisitor, isNormalIdType } from '../idVisitor';
 
-import { ApexErrorTypeClass, ApexCommonTypeClass, isApexValidClass } from '../commonVisitor';
+import {
+    ApexErrorTypeClass,
+    ApexCommonTypeClass,
+    visitNode,
+    visitOptionalNode,
+} from '../commonVisitor';
 
 export class TypeNameTypeClass extends NameTypeClass<
     'typeName',
@@ -30,17 +35,16 @@ export class TypeNameTypeClass extends NameTypeClass<
         if (ctx.LIST() || ctx.SET() || ctx.MAP()) {
             value = ctx.LIST() ? 'list' : ctx.SET() ? 'set' : 'map';
         } else {
-            value = isApexValidClass(new IdVisitor().visit(ctx.id()), isNormalIdType, 'id');
+            value = visitNode(new IdVisitor(), ctx.id(), isNormalIdType, 'id');
         }
 
         // 型引数は `List` 単体やユーザー定義型では省略される
-        const generic = ctx.typeArguments()
-            ? isApexValidClass(
-                  new ArgumentsVisitor().visit(ctx.typeArguments()),
-                  isTypeArgumentsType,
-                  'typeArguments',
-              )
-            : null;
+        const generic = visitOptionalNode(
+            new ArgumentsVisitor(),
+            ctx.typeArguments(),
+            isTypeArgumentsType,
+            'typeArguments',
+        );
 
         return new TypeNameTypeClass(value, generic);
     }

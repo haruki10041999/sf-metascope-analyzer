@@ -2,12 +2,15 @@ import { isVoidTypeAnnotation, type VoidTypeAnnotation } from '@babel/types';
 import { EvaluatePair, LwcCommonTypeClass, makeEvaluatePair } from '../commonVisitor';
 
 export class VoidTypeAnnotationTypeClass extends LwcCommonTypeClass<'voidTypeAnnotation'> {
-    private constructor(originalSource: string) {
-        super('voidTypeAnnotation', originalSource);
+    private constructor() {
+        super('voidTypeAnnotation');
     }
 
-    static create(target: VoidTypeAnnotation, originalSource: string): VoidTypeAnnotationTypeClass {
-        throw new Error('VoidTypeAnnotationTypeClass.create is not implemented: ' + target.type);
+    static create(
+        _target: VoidTypeAnnotation,
+        _originalSource: string,
+    ): VoidTypeAnnotationTypeClass {
+        return new VoidTypeAnnotationTypeClass();
     }
 }
 

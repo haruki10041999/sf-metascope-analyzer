@@ -1,13 +1,43 @@
 import { isThrowStatement, type ThrowStatement } from '@babel/types';
-import { EvaluatePair, LwcCommonTypeClass, makeEvaluatePair } from '../commonVisitor';
+import {
+    EvaluatePair,
+    LwcCommonTypeClass,
+    LwcErrorTypeClass,
+    makeEvaluatePair,
+    visitNode,
+} from '../commonVisitor';
+import { expressionVisitorEvaluatePairs, type ExpressionTypeClass } from '../expressionVisitor';
+
+export type ThrowStatementFields = {
+    argument: ExpressionTypeClass | LwcErrorTypeClass;
+};
 
 export class ThrowStatementTypeClass extends LwcCommonTypeClass<'throwStatement'> {
-    private constructor(originalSource: string) {
-        super('throwStatement', originalSource);
+    private readonly value: ThrowStatementFields;
+
+    private constructor(value: ThrowStatementFields) {
+        super('throwStatement');
+        this.value = value;
     }
 
     static create(target: ThrowStatement, originalSource: string): ThrowStatementTypeClass {
-        throw new Error('ThrowStatementTypeClass.create is not implemented: ' + target.type);
+        return new ThrowStatementTypeClass({
+            argument: visitNode(
+                target.argument,
+                originalSource,
+                expressionVisitorEvaluatePairs(),
+                'ExpressionVisitor',
+            ),
+        });
+    }
+
+    /** すべてのフィールド (Babel の value フィールドの getter getValue() と区別する。getChildNodes もこれから作る) */
+    override getFields(): ThrowStatementFields {
+        return this.value;
+    }
+
+    getArgument(): ThrowStatementFields['argument'] {
+        return this.value.argument;
     }
 }
 

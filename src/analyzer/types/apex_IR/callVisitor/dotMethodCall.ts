@@ -4,7 +4,12 @@ import { CallTypeClass } from '.';
 
 import { AnyIdTypeClass, IdVisitor, isAnyIdType } from '../idVisitor';
 import { ExpressionListTypeClass, ListVisitor, isExpressionListType } from '../listVisitor';
-import { ApexErrorTypeClass, ApexCommonTypeClass, isApexValidClass } from '../commonVisitor';
+import {
+    ApexErrorTypeClass,
+    ApexCommonTypeClass,
+    visitNode,
+    visitOptionalNode,
+} from '../commonVisitor';
 
 export class DotMethodCallTypeClass extends CallTypeClass<
     'dotMethodCall',
@@ -24,14 +29,13 @@ export class DotMethodCallTypeClass extends CallTypeClass<
         }
 
         return new DotMethodCallTypeClass(
-            isApexValidClass(new IdVisitor().visit(ctx.anyId()), isAnyIdType, 'anyId'),
-            ctx.expressionList()
-                ? isApexValidClass(
-                      new ListVisitor().visit(ctx.expressionList()),
-                      isExpressionListType,
-                      'expressionList',
-                  )
-                : null,
+            visitNode(new IdVisitor(), ctx.anyId(), isAnyIdType, 'anyId'),
+            visitOptionalNode(
+                new ListVisitor(),
+                ctx.expressionList(),
+                isExpressionListType,
+                'expressionList',
+            ),
         );
     }
 }
@@ -41,4 +45,3 @@ export const isDotMethodCallType = (
 ): target is DotMethodCallTypeClass => {
     return target instanceof DotMethodCallTypeClass;
 };
-

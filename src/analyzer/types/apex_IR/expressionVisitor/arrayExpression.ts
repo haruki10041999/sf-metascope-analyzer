@@ -7,7 +7,7 @@ import {
     isBasedExpressionType,
 } from '.';
 
-import { ApexCommonTypeClass, ApexErrorTypeClass, isApexValidClass } from '../commonVisitor';
+import { ApexCommonTypeClass, ApexErrorTypeClass, visitNode } from '../commonVisitor';
 
 export class ArrayExpressionTypeClass extends ExpressionTypeClass<
     'arrayExpression',
@@ -29,13 +29,15 @@ export class ArrayExpressionTypeClass extends ExpressionTypeClass<
         }
 
         return new ArrayExpressionTypeClass(
-            isApexValidClass(
-                new ExpressionVisitor().visit(ctx.expression(0)),
+            visitNode(
+                new ExpressionVisitor(),
+                ctx.expression(0),
                 isBasedExpressionType,
                 'expression',
             ),
-            isApexValidClass(
-                new ExpressionVisitor().visit(ctx.expression(1)),
+            visitNode(
+                new ExpressionVisitor(),
+                ctx.expression(1),
                 isBasedExpressionType,
                 'expression',
             ),
@@ -52,4 +54,3 @@ export const isArrayExpressionType = (
 ): target is ArrayExpressionTypeClass => {
     return target instanceof ArrayExpressionTypeClass;
 };
-

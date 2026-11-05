@@ -4,7 +4,12 @@ import { PairTypeClass } from '.';
 
 import { AnyIdTypeClass, IdVisitor, isAnyIdType } from '../idVisitor';
 import { TypeListTypeClass, ListVisitor, isTypeListType } from '../listVisitor';
-import { ApexErrorTypeClass, ApexCommonTypeClass, isApexValidClass } from '../commonVisitor';
+import {
+    ApexErrorTypeClass,
+    ApexCommonTypeClass,
+    visitNode,
+    visitOptionalNode,
+} from '../commonVisitor';
 
 export class IdCreatedNamePairTypeClass extends PairTypeClass<
     'idCreatedNamePair',
@@ -24,15 +29,9 @@ export class IdCreatedNamePairTypeClass extends PairTypeClass<
         }
 
         return new IdCreatedNamePairTypeClass(
-            isApexValidClass(new IdVisitor().visit(ctx.anyId()), isAnyIdType, 'anyId'),
+            visitNode(new IdVisitor(), ctx.anyId(), isAnyIdType, 'anyId'),
             // 型引数 `<...>` は任意（`new Account()`）
-            ctx.typeList()
-                ? isApexValidClass(
-                      new ListVisitor().visit(ctx.typeList()),
-                      isTypeListType,
-                      'typeList',
-                  )
-                : null,
+            visitOptionalNode(new ListVisitor(), ctx.typeList(), isTypeListType, 'typeList'),
         );
     }
 }

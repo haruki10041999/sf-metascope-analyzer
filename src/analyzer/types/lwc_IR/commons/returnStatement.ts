@@ -1,13 +1,43 @@
 import { isReturnStatement, type ReturnStatement } from '@babel/types';
-import { EvaluatePair, LwcCommonTypeClass, makeEvaluatePair } from '../commonVisitor';
+import {
+    EvaluatePair,
+    LwcCommonTypeClass,
+    LwcErrorTypeClass,
+    makeEvaluatePair,
+    visitOptionalNode,
+} from '../commonVisitor';
+import { expressionVisitorEvaluatePairs, type ExpressionTypeClass } from '../expressionVisitor';
+
+export type ReturnStatementFields = {
+    argument: ExpressionTypeClass | LwcErrorTypeClass | null;
+};
 
 export class ReturnStatementTypeClass extends LwcCommonTypeClass<'returnStatement'> {
-    private constructor(originalSource: string) {
-        super('returnStatement', originalSource);
+    private readonly value: ReturnStatementFields;
+
+    private constructor(value: ReturnStatementFields) {
+        super('returnStatement');
+        this.value = value;
     }
 
     static create(target: ReturnStatement, originalSource: string): ReturnStatementTypeClass {
-        throw new Error('ReturnStatementTypeClass.create is not implemented: ' + target.type);
+        return new ReturnStatementTypeClass({
+            argument: visitOptionalNode(
+                target.argument,
+                originalSource,
+                expressionVisitorEvaluatePairs(),
+                'ExpressionVisitor',
+            ),
+        });
+    }
+
+    /** すべてのフィールド (Babel の value フィールドの getter getValue() と区別する。getChildNodes もこれから作る) */
+    override getFields(): ReturnStatementFields {
+        return this.value;
+    }
+
+    getArgument(): ReturnStatementFields['argument'] {
+        return this.value.argument;
     }
 }
 

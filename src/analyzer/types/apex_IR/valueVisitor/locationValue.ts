@@ -11,8 +11,8 @@ import {
 import {
     ApexErrorTypeClass,
     ApexCommonTypeClass,
-    isApexValidClass,
-    isApexValidClassList,
+    visitNodeList,
+    visitNode,
 } from '../commonVisitor';
 
 type LocationValueValue =
@@ -36,21 +36,18 @@ export class LocationValueTypeClass extends ValueTypeClass<'locationValue', Loca
 
         let value: LocationValueValue | ApexErrorTypeClass;
         if (ctx.GEOLOCATION()) {
-            value = isApexValidClassList(
+            value = visitNodeList(
+                new ValueVisitor(),
                 ctx.coordinateValue_list(),
-                (ctx) => new ValueVisitor().visit(ctx),
                 isCoordinateValueType,
                 'coordinateValue',
             );
         } else {
             value = ctx.fieldName()
-                ? isApexValidClass(
-                      new NameVisitor().visit(ctx.fieldName()),
-                      isFieldNameType,
-                      'fieldName',
-                  )
-                : isApexValidClass(
-                      new ExpressionVisitor().visit(ctx.boundExpression()),
+                ? visitNode(new NameVisitor(), ctx.fieldName(), isFieldNameType, 'fieldName')
+                : visitNode(
+                      new ExpressionVisitor(),
+                      ctx.boundExpression(),
                       isBoundExpressionType,
                       'boundExpression',
                   );
@@ -65,4 +62,3 @@ export const isLocationValueType = (
 ): target is LocationValueTypeClass => {
     return target instanceof LocationValueTypeClass;
 };
-

@@ -7,7 +7,7 @@ import {
     isVariableDeclaratorType,
 } from '.';
 
-import { ApexErrorTypeClass, ApexCommonTypeClass, isApexValidClassList } from '../commonVisitor';
+import { ApexErrorTypeClass, ApexCommonTypeClass, visitNodeList } from '../commonVisitor';
 
 export class VariableDeclaratorsTypeClass extends VariableListTypeClass<
     'variableDeclarators',
@@ -23,9 +23,9 @@ export class VariableDeclaratorsTypeClass extends VariableListTypeClass<
         }
 
         return new VariableDeclaratorsTypeClass(
-            isApexValidClassList(
+            visitNodeList(
+                new VariableVisitor(),
                 ctx.variableDeclarator_list(),
-                (ctx) => new VariableVisitor().visit(ctx),
                 isVariableDeclaratorType,
                 'variableDeclarator',
             ),

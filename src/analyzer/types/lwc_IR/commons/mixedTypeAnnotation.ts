@@ -2,15 +2,15 @@ import { isMixedTypeAnnotation, type MixedTypeAnnotation } from '@babel/types';
 import { EvaluatePair, LwcCommonTypeClass, makeEvaluatePair } from '../commonVisitor';
 
 export class MixedTypeAnnotationTypeClass extends LwcCommonTypeClass<'mixedTypeAnnotation'> {
-    private constructor(originalSource: string) {
-        super('mixedTypeAnnotation', originalSource);
+    private constructor() {
+        super('mixedTypeAnnotation');
     }
 
     static create(
-        target: MixedTypeAnnotation,
-        originalSource: string,
+        _target: MixedTypeAnnotation,
+        _originalSource: string,
     ): MixedTypeAnnotationTypeClass {
-        throw new Error('MixedTypeAnnotationTypeClass.create is not implemented: ' + target.type);
+        return new MixedTypeAnnotationTypeClass();
     }
 }
 

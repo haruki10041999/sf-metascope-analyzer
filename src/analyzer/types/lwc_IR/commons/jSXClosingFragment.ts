@@ -2,12 +2,15 @@ import { isJSXClosingFragment, type JSXClosingFragment } from '@babel/types';
 import { EvaluatePair, LwcCommonTypeClass, makeEvaluatePair } from '../commonVisitor';
 
 export class JSXClosingFragmentTypeClass extends LwcCommonTypeClass<'jSXClosingFragment'> {
-    private constructor(originalSource: string) {
-        super('jSXClosingFragment', originalSource);
+    private constructor() {
+        super('jSXClosingFragment');
     }
 
-    static create(target: JSXClosingFragment, originalSource: string): JSXClosingFragmentTypeClass {
-        throw new Error('JSXClosingFragmentTypeClass.create is not implemented: ' + target.type);
+    static create(
+        _target: JSXClosingFragment,
+        _originalSource: string,
+    ): JSXClosingFragmentTypeClass {
+        return new JSXClosingFragmentTypeClass();
     }
 }
 

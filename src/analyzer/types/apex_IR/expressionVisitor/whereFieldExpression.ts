@@ -13,7 +13,7 @@ import {
     isComparisonOperatorType,
 } from '../queryVisitor';
 import { NormalValueTypeClass, ValueVisitor, isNormalValueType } from '../valueVisitor';
-import { ApexErrorTypeClass, ApexCommonTypeClass, isApexValidClass } from '../commonVisitor';
+import { ApexErrorTypeClass, ApexCommonTypeClass, visitNode } from '../commonVisitor';
 
 export class WhereFieldExpressionTypeClass extends DoubleOperatorExpressionTypeClass<
     'whereFieldExpression',
@@ -35,8 +35,9 @@ export class WhereFieldExpressionTypeClass extends DoubleOperatorExpressionTypeC
         const fieldExpression = ctx.fieldExpression();
         if (fieldExpression) {
             return new WhereFieldExpressionTypeClass(
-                isApexValidClass(
-                    new ExpressionVisitor().visit(fieldExpression),
+                visitNode(
+                    new ExpressionVisitor(),
+                    fieldExpression,
                     isFieldExpressionType,
                     'fieldExpression',
                 ),
@@ -51,12 +52,13 @@ export class WhereFieldExpressionTypeClass extends DoubleOperatorExpressionTypeC
 
         return new WhereFieldExpressionTypeClass(
             ctx.FORMULA().getText() + '(' + ctx.StringLiteral().getText() + ')',
-            isApexValidClass(
-                new QueryVisitor().visit(ctx.comparisonOperator()),
+            visitNode(
+                new QueryVisitor(),
+                ctx.comparisonOperator(),
                 isComparisonOperatorType,
                 'comparisonOperator',
             ),
-            isApexValidClass(new ValueVisitor().visit(ctx.value()), isNormalValueType, 'value'),
+            visitNode(new ValueVisitor(), ctx.value(), isNormalValueType, 'value'),
         );
     }
 }
@@ -66,4 +68,3 @@ export const isWhereFieldExpressionType = (
 ): target is WhereFieldExpressionTypeClass => {
     return target instanceof WhereFieldExpressionTypeClass;
 };
-

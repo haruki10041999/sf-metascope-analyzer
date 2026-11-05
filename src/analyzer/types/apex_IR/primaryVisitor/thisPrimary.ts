@@ -22,4 +22,3 @@ export const isThisPrimaryType = (
 ): target is ThisPrimaryTypeClass => {
     return target instanceof ThisPrimaryTypeClass;
 };
-

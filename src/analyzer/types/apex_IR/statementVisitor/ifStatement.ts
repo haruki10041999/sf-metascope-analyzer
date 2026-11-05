@@ -12,7 +12,7 @@ import {
     ExpressionVisitor,
     isParExpressionType,
 } from '../expressionVisitor';
-import { ApexErrorTypeClass, ApexCommonTypeClass, isApexValidClass } from '../commonVisitor';
+import { ApexErrorTypeClass, ApexCommonTypeClass, visitNode } from '../commonVisitor';
 
 type IfStatementTypeClassType = {
     value: ParExpressionTypeClass | 'else' | ApexErrorTypeClass;
@@ -36,16 +36,18 @@ export class IfStatementTypeClass extends StatementTypeClass<
 
         let currentCtx: IfStatementContext | undefined = ctx;
         while (currentCtx) {
-            const currentCondition = isApexValidClass(
-                new ExpressionVisitor().visit(currentCtx.parExpression()),
+            const currentCondition = visitNode(
+                new ExpressionVisitor(),
+                currentCtx.parExpression(),
                 isParExpressionType,
                 'parExpression',
             );
 
             const statements: StatementContext[] = currentCtx.statement_list();
 
-            const currentStatement = isApexValidClass(
-                new StatementVisitor().visit(statements.at(0)!),
+            const currentStatement = visitNode(
+                new StatementVisitor(),
+                statements.at(0)!,
                 isNormalStatementType,
                 'statement',
             );
@@ -71,8 +73,9 @@ export class IfStatementTypeClass extends StatementTypeClass<
                 continue;
             }
 
-            const elseStatement = isApexValidClass(
-                new StatementVisitor().visit(elseStatementCtx),
+            const elseStatement = visitNode(
+                new StatementVisitor(),
+                elseStatementCtx,
                 isNormalStatementType,
                 'statement',
             );
@@ -93,4 +96,3 @@ export const isIfStatementType = (
 ): target is IfStatementTypeClass => {
     return target instanceof IfStatementTypeClass;
 };
-

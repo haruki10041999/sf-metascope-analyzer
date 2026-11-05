@@ -22,4 +22,3 @@ export const isSuperPrimaryType = (
 ): target is SuperPrimaryTypeClass => {
     return target instanceof SuperPrimaryTypeClass;
 };
-

@@ -1,7 +1,7 @@
 import typia from 'typia';
 
 import { ConvertType, ConvertWithError, isErrorNode } from './commons';
-import { ErrorJson, makeErrorJson } from '../commons';
+import { ConvertKeys, ErrorJson, makeErrorJson } from '../commons';
 
 import {
     BasePrimaryType,
@@ -32,7 +32,9 @@ const makeStringPrimary = (
     return target.value.value;
 };
 
+/** リテラル。kind を持たない値だが、findings (ハードコードされた ID など) の位置のために sourceKeys を持つ */
 export type LiteralPrimaryJson = {
+    sourceKeys: ConvertKeys;
     value: string;
     valueType: 'integer' | 'long' | 'number' | 'string' | 'longText' | 'boolean' | 'null';
 };
@@ -44,6 +46,7 @@ const makeLiteralPrimary = (
         return makeErrorJson(target.value, ERROR_KIND);
     }
     return {
+        sourceKeys: { objectKey: target.value.objectKey, sourceKey: target.value.sourceKey },
         value: target.value.value,
         valueType: target.value.valueType,
     };

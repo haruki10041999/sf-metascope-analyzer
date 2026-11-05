@@ -1,13 +1,49 @@
 import { isTSInferType, type TSInferType } from '@babel/types';
-import { EvaluatePair, LwcCommonTypeClass, makeEvaluatePair } from '../commonVisitor';
+import {
+    EvaluatePair,
+    LwcCommonTypeClass,
+    LwcErrorTypeClass,
+    lazyPairs,
+    makeEvaluatePair,
+    visitNode,
+} from '../commonVisitor';
+import {
+    tSTypeParameterTypePair,
+    type TSTypeParameterTypeClass,
+} from '../typeScriptVisitor/tSTypeParameter';
+
+const tSInferTypeTypeParameterPairs = lazyPairs(() => [tSTypeParameterTypePair] as const);
+
+export type TSInferTypeFields = {
+    typeParameter: TSTypeParameterTypeClass | LwcErrorTypeClass;
+};
 
 export class TSInferTypeTypeClass extends LwcCommonTypeClass<'tSInferType'> {
-    private constructor(originalSource: string) {
-        super('tSInferType', originalSource);
+    private readonly value: TSInferTypeFields;
+
+    private constructor(value: TSInferTypeFields) {
+        super('tSInferType');
+        this.value = value;
     }
 
     static create(target: TSInferType, originalSource: string): TSInferTypeTypeClass {
-        throw new Error('TSInferTypeTypeClass.create is not implemented: ' + target.type);
+        return new TSInferTypeTypeClass({
+            typeParameter: visitNode(
+                target.typeParameter,
+                originalSource,
+                tSInferTypeTypeParameterPairs(),
+                'TSInferType.typeParameter',
+            ),
+        });
+    }
+
+    /** すべてのフィールド (Babel の value フィールドの getter getValue() と区別する。getChildNodes もこれから作る) */
+    override getFields(): TSInferTypeFields {
+        return this.value;
+    }
+
+    getTypeParameter(): TSInferTypeFields['typeParameter'] {
+        return this.value.typeParameter;
     }
 }
 

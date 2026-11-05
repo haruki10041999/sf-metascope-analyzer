@@ -18,4 +18,3 @@ export const isNormalPrimaryType = (
 ): target is NormalPrimaryTypeClass => {
     return target instanceof NormalPrimaryTypeClass;
 };
-

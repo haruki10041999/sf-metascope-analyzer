@@ -1,0 +1,3312 @@
+[
+  {
+    "id": "accountList",
+    "status": "changed",
+    "filePath": {
+      "before": "before/accountList",
+      "after": "after/accountList"
+    },
+    "dataType": "lwcBundle",
+    "resolvedError": [],
+    "content": {
+      "status": "changed",
+      "fields": {
+        "name": {
+          "status": "unchanged",
+          "value": "accountList"
+        },
+        "namespace": {
+          "status": "unchanged",
+          "value": "c"
+        },
+        "modules": [
+          {
+            "status": "changed",
+            "fields": {
+              "fileName": {
+                "status": "unchanged",
+                "value": "accountList.ts"
+              },
+              "main": {
+                "status": "unchanged",
+                "value": true
+              },
+              "module": {
+                "status": "changed",
+                "fields": {
+                  "fileType": {
+                    "status": "unchanged",
+                    "value": "ts"
+                  },
+                  "imports": [
+                    {
+                      "kind": "lwcImport",
+                      "sourceKeys": {
+                        "objectKey": "importDeclaration_c905794272dabafb",
+                        "sourceKey": "importDeclaration_9cab7ea7028a8b5e"
+                      },
+                      "status": "unchanged",
+                      "value": {
+                        "source": "lwc",
+                        "category": "lwc",
+                        "specifiers": [
+                          {
+                            "kind": "lwcImportSpecifier",
+                            "sourceKeys": {
+                              "objectKey": "importSpecifier_cfa9b55daa09bb3a",
+                              "sourceKey": "importSpecifier_c6b9af04a810ef0d"
+                            },
+                            "specifierType": "named",
+                            "local": "LightningElement",
+                            "imported": "LightningElement",
+                            "typeOnly": false
+                          },
+                          {
+                            "kind": "lwcImportSpecifier",
+                            "sourceKeys": {
+                              "objectKey": "importSpecifier_0b0d904086d94cfc",
+                              "sourceKey": "importSpecifier_29df2e7aa3c1183a"
+                            },
+                            "specifierType": "named",
+                            "local": "api",
+                            "imported": "api",
+                            "typeOnly": false
+                          },
+                          {
+                            "kind": "lwcImportSpecifier",
+                            "sourceKeys": {
+                              "objectKey": "importSpecifier_c3a730528cd5eda4",
+                              "sourceKey": "importSpecifier_9dfd38d8b37121e9"
+                            },
+                            "specifierType": "named",
+                            "local": "wire",
+                            "imported": "wire",
+                            "typeOnly": false
+                          },
+                          {
+                            "kind": "lwcImportSpecifier",
+                            "sourceKeys": {
+                              "objectKey": "importSpecifier_5d2c36b5f9af2c7e",
+                              "sourceKey": "importSpecifier_c8ab00a8b48ab47e"
+                            },
+                            "specifierType": "named",
+                            "local": "track",
+                            "imported": "track",
+                            "typeOnly": false
+                          }
+                        ],
+                        "typeOnly": false
+                      },
+                      "index": {
+                        "before": 0,
+                        "after": 0
+                      }
+                    },
+                    {
+                      "kind": "lwcImport",
+                      "sourceKeys": {
+                        "objectKey": "importDeclaration_4eb593fd82e84799",
+                        "sourceKey": "importDeclaration_a75bcddeee427fe3"
+                      },
+                      "status": "unchanged",
+                      "value": {
+                        "source": "lightning/navigation",
+                        "category": "lightning",
+                        "specifiers": [
+                          {
+                            "kind": "lwcImportSpecifier",
+                            "sourceKeys": {
+                              "objectKey": "importSpecifier_bd38fc7fda36703b",
+                              "sourceKey": "importSpecifier_4115c155de928ac9"
+                            },
+                            "specifierType": "named",
+                            "local": "NavigationMixin",
+                            "imported": "NavigationMixin",
+                            "typeOnly": false
+                          }
+                        ],
+                        "typeOnly": false
+                      },
+                      "index": {
+                        "before": 1,
+                        "after": 1
+                      }
+                    },
+                    {
+                      "kind": "lwcImport",
+                      "sourceKeys": {
+                        "objectKey": "importDeclaration_2ad48e32527220cc",
+                        "sourceKey": "importDeclaration_6e27186283a0068b"
+                      },
+                      "status": "unchanged",
+                      "value": {
+                        "source": "lightning/uiRecordApi",
+                        "category": "lightning",
+                        "specifiers": [
+                          {
+                            "kind": "lwcImportSpecifier",
+                            "sourceKeys": {
+                              "objectKey": "importSpecifier_00c9a827344785f5",
+                              "sourceKey": "importSpecifier_10c428793393a14c"
+                            },
+                            "specifierType": "named",
+                            "local": "getRecord",
+                            "imported": "getRecord",
+                            "typeOnly": false
+                          },
+                          {
+                            "kind": "lwcImportSpecifier",
+                            "sourceKeys": {
+                              "objectKey": "importSpecifier_bbaebd839c721d0b",
+                              "sourceKey": "importSpecifier_9b290533f562d83d"
+                            },
+                            "specifierType": "named",
+                            "local": "getFieldValue",
+                            "imported": "getFieldValue",
+                            "typeOnly": false
+                          }
+                        ],
+                        "typeOnly": false
+                      },
+                      "index": {
+                        "before": 2,
+                        "after": 2
+                      }
+                    },
+                    {
+                      "kind": "lwcImport",
+                      "sourceKeys": {
+                        "objectKey": "importDeclaration_7bad5f50835a339f",
+                        "sourceKey": "importDeclaration_046fd5bcc7df17f9"
+                      },
+                      "status": "unchanged",
+                      "value": {
+                        "source": "lightning/platformShowToastEvent",
+                        "category": "lightning",
+                        "specifiers": [
+                          {
+                            "kind": "lwcImportSpecifier",
+                            "sourceKeys": {
+                              "objectKey": "importSpecifier_54a4e7252fe23e40",
+                              "sourceKey": "importSpecifier_3c62e62be517b6e6"
+                            },
+                            "specifierType": "named",
+                            "local": "ShowToastEvent",
+                            "imported": "ShowToastEvent",
+                            "typeOnly": false
+                          }
+                        ],
+                        "typeOnly": false
+                      },
+                      "index": {
+                        "before": 3,
+                        "after": 3
+                      }
+                    },
+                    {
+                      "kind": "lwcImport",
+                      "sourceKeys": {
+                        "objectKey": "importDeclaration_44380b10f652f2f6",
+                        "sourceKey": "importDeclaration_d781cd921c1c17f0"
+                      },
+                      "status": "unchanged",
+                      "value": {
+                        "source": "@salesforce/apex/AccountController.getAccounts",
+                        "category": "apex",
+                        "specifiers": [
+                          {
+                            "kind": "lwcImportSpecifier",
+                            "sourceKeys": {
+                              "objectKey": "importDefaultSpecifier_0f2b4b20503e2140",
+                              "sourceKey": "importDefaultSpecifier_44f89d5098312a91"
+                            },
+                            "specifierType": "default",
+                            "local": "getAccounts",
+                            "typeOnly": false
+                          }
+                        ],
+                        "typeOnly": false,
+                        "apex": {
+                          "className": "AccountController",
+                          "methodName": "getAccounts"
+                        }
+                      },
+                      "index": {
+                        "before": 4,
+                        "after": 4
+                      }
+                    },
+                    {
+                      "kind": "lwcImport",
+                      "sourceKeys": {
+                        "objectKey": "importDeclaration_d523763d71073e89",
+                        "sourceKey": "importDeclaration_24209d230cb6c575"
+                      },
+                      "status": "unchanged",
+                      "value": {
+                        "source": "@salesforce/apex/AccountController.deleteAccount",
+                        "category": "apex",
+                        "specifiers": [
+                          {
+                            "kind": "lwcImportSpecifier",
+                            "sourceKeys": {
+                              "objectKey": "importDefaultSpecifier_441be34a7e927fc0",
+                              "sourceKey": "importDefaultSpecifier_f6a5830d6b3cf01a"
+                            },
+                            "specifierType": "default",
+                            "local": "deleteAccount",
+                            "typeOnly": false
+                          }
+                        ],
+                        "typeOnly": false,
+                        "apex": {
+                          "className": "AccountController",
+                          "methodName": "deleteAccount"
+                        }
+                      },
+                      "index": {
+                        "before": 5,
+                        "after": 5
+                      }
+                    },
+                    {
+                      "kind": "lwcImport",
+                      "sourceKeys": {
+                        "objectKey": "importDeclaration_e15f34b6a823990e",
+                        "sourceKey": {
+                          "before": "importDeclaration_254a788c6422381f",
+                          "after": "importDeclaration_578da51f3db9b9b2"
+                        }
+                      },
+                      "status": "unchanged",
+                      "value": {
+                        "source": "@salesforce/schema/Account.Name",
+                        "category": "schema",
+                        "specifiers": [
+                          {
+                            "kind": "lwcImportSpecifier",
+                            "sourceKeys": {
+                              "objectKey": "importDefaultSpecifier_74a823f13d47e94c",
+                              "sourceKey": "importDefaultSpecifier_a3641502e7276f6f"
+                            },
+                            "specifierType": "default",
+                            "local": "NAME_FIELD",
+                            "typeOnly": false
+                          }
+                        ],
+                        "typeOnly": false,
+                        "schema": {
+                          "objectApiName": "Account",
+                          "fieldApiName": "Name"
+                        }
+                      },
+                      "index": {
+                        "before": 6,
+                        "after": 7
+                      }
+                    },
+                    {
+                      "kind": "lwcImport",
+                      "sourceKeys": {
+                        "objectKey": "importDeclaration_a2e35eae9d850aba",
+                        "sourceKey": {
+                          "before": "importDeclaration_35a5f0d05ecc79ae",
+                          "after": "importDeclaration_209df94513ddf674"
+                        }
+                      },
+                      "status": "unchanged",
+                      "value": {
+                        "source": "@salesforce/schema/Account.Industry",
+                        "category": "schema",
+                        "specifiers": [
+                          {
+                            "kind": "lwcImportSpecifier",
+                            "sourceKeys": {
+                              "objectKey": "importDefaultSpecifier_4209945e6e11c879",
+                              "sourceKey": "importDefaultSpecifier_6dda45426286517b"
+                            },
+                            "specifierType": "default",
+                            "local": "INDUSTRY_FIELD",
+                            "typeOnly": false
+                          }
+                        ],
+                        "typeOnly": false,
+                        "schema": {
+                          "objectApiName": "Account",
+                          "fieldApiName": "Industry"
+                        }
+                      },
+                      "index": {
+                        "before": 7,
+                        "after": 8
+                      }
+                    },
+                    {
+                      "kind": "lwcImport",
+                      "sourceKeys": {
+                        "objectKey": "importDeclaration_8ea5e9577805cead",
+                        "sourceKey": "importDeclaration_55b8e78a081bfe6d"
+                      },
+                      "status": "removed",
+                      "index": 8,
+                      "value": {
+                        "source": "@salesforce/label/c.AccountListTitle",
+                        "category": "label",
+                        "specifiers": [
+                          {
+                            "kind": "lwcImportSpecifier",
+                            "sourceKeys": {
+                              "objectKey": "importDefaultSpecifier_6da287e958b78c08",
+                              "sourceKey": "importDefaultSpecifier_6c588c142e83c517"
+                            },
+                            "specifierType": "default",
+                            "local": "TITLE_LABEL",
+                            "typeOnly": false
+                          }
+                        ],
+                        "typeOnly": false
+                      }
+                    },
+                    {
+                      "kind": "lwcImport",
+                      "sourceKeys": {
+                        "objectKey": "importDeclaration_a31772246a8e8687",
+                        "sourceKey": {
+                          "before": "importDeclaration_a19b3d8a83198150",
+                          "after": "importDeclaration_844c3ee15e5b2df6"
+                        }
+                      },
+                      "status": "unchanged",
+                      "value": {
+                        "source": "c/utils",
+                        "category": "component",
+                        "specifiers": [
+                          {
+                            "kind": "lwcImportSpecifier",
+                            "sourceKeys": {
+                              "objectKey": "importSpecifier_ffd6724373451ae4",
+                              "sourceKey": "importSpecifier_6d38b39390ad5813"
+                            },
+                            "specifierType": "named",
+                            "local": "Row",
+                            "imported": "Row",
+                            "typeOnly": false
+                          },
+                          {
+                            "kind": "lwcImportSpecifier",
+                            "sourceKeys": {
+                              "objectKey": "importSpecifier_c78b1ff5dd35954e",
+                              "sourceKey": "importSpecifier_b12000cb405338a7"
+                            },
+                            "specifierType": "named",
+                            "local": "SortDirection",
+                            "imported": "SortDirection",
+                            "typeOnly": false
+                          }
+                        ],
+                        "typeOnly": true,
+                        "component": "c/utils"
+                      },
+                      "index": {
+                        "before": 9,
+                        "after": 9
+                      }
+                    },
+                    {
+                      "kind": "lwcImport",
+                      "sourceKeys": {
+                        "objectKey": "importDeclaration_dccb7ab1a22b458b",
+                        "sourceKey": {
+                          "before": "importDeclaration_a65bee89ab8d7dc4",
+                          "after": "importDeclaration_58e375a1ed2f21af"
+                        }
+                      },
+                      "status": "unchanged",
+                      "value": {
+                        "source": "c/utils",
+                        "category": "component",
+                        "specifiers": [
+                          {
+                            "kind": "lwcImportSpecifier",
+                            "sourceKeys": {
+                              "objectKey": "importSpecifier_57f8f99676f647b3",
+                              "sourceKey": "importSpecifier_d9261309782a52f8"
+                            },
+                            "specifierType": "named",
+                            "local": "formatAmount",
+                            "imported": "formatAmount",
+                            "typeOnly": false
+                          },
+                          {
+                            "kind": "lwcImportSpecifier",
+                            "sourceKeys": {
+                              "objectKey": "importSpecifier_24c1d12d62354ccb",
+                              "sourceKey": "importSpecifier_3119a4310c247673"
+                            },
+                            "specifierType": "named",
+                            "local": "toRows",
+                            "imported": "toRows",
+                            "typeOnly": false
+                          }
+                        ],
+                        "typeOnly": false,
+                        "component": "c/utils"
+                      },
+                      "index": {
+                        "before": 10,
+                        "after": 10
+                      }
+                    },
+                    {
+                      "kind": "lwcImport",
+                      "sourceKeys": {
+                        "objectKey": "importDeclaration_58b39072ab97dae8",
+                        "sourceKey": "importDeclaration_c3df5f88b240998c"
+                      },
+                      "status": "added",
+                      "index": 6,
+                      "value": {
+                        "source": "@salesforce/apex/AccountController.updateAccount",
+                        "category": "apex",
+                        "specifiers": [
+                          {
+                            "kind": "lwcImportSpecifier",
+                            "sourceKeys": {
+                              "objectKey": "importDefaultSpecifier_6cb39c811824c413",
+                              "sourceKey": "importDefaultSpecifier_b922d6fe56c5222f"
+                            },
+                            "specifierType": "default",
+                            "local": "updateAccount",
+                            "typeOnly": false
+                          }
+                        ],
+                        "typeOnly": false,
+                        "apex": {
+                          "className": "AccountController",
+                          "methodName": "updateAccount"
+                        }
+                      }
+                    }
+                  ],
+                  "component": {
+                    "kind": "lwcComponent",
+                    "sourceKeys": {
+                      "base": {
+                        "objectKey": {
+                          "before": "classDeclaration_0d405ed68d593428",
+                          "after": "classDeclaration_dad663e5c02a14d7"
+                        },
+                        "sourceKey": {
+                          "before": "classDeclaration_1b88ebdeba85e7bf",
+                          "after": "classDeclaration_84127b32a0388399"
+                        }
+                      },
+                      "name": {
+                        "objectKey": "identifier_bc02386aae00e8c4",
+                        "sourceKey": {
+                          "before": "identifier_0f05a51dad6034e6",
+                          "after": "identifier_ef7d50aea314d278"
+                        }
+                      }
+                    },
+                    "status": "changed",
+                    "match": "slot",
+                    "fields": {
+                      "name": {
+                        "status": "unchanged",
+                        "value": "AccountList"
+                      },
+                      "extend": {
+                        "status": "unchanged",
+                        "value": "LightningElement"
+                      },
+                      "mixins": [
+                        {
+                          "status": "unchanged",
+                          "match": "identical",
+                          "index": {
+                            "before": 0,
+                            "after": 0
+                          },
+                          "value": "NavigationMixin"
+                        }
+                      ],
+                      "block": [
+                        {
+                          "kind": "lwcField",
+                          "sourceKeys": {
+                            "base": {
+                              "objectKey": "classProperty_8bc008611d354fb8",
+                              "sourceKey": {
+                                "before": "classProperty_7babf383cd456954",
+                                "after": "classProperty_0d4dce3927019940"
+                              }
+                            },
+                            "name": {
+                              "objectKey": "identifier_c25976542b0871f8",
+                              "sourceKey": {
+                                "before": "identifier_baa00bc0a83ef5c3",
+                                "after": "identifier_e8c525f2444a7565"
+                              }
+                            }
+                          },
+                          "status": "unchanged",
+                          "value": {
+                            "name": "recordId",
+                            "variantType": {
+                              "kind": "lwcType",
+                              "sourceKeys": {
+                                "objectKey": "tSStringKeyword_7d896e6512bf9cb2",
+                                "sourceKey": "tSStringKeyword_7d9cabe564e6fd29"
+                              },
+                              "text": "string",
+                              "type": "primitive",
+                              "primitiveType": "string"
+                            },
+                            "references": [],
+                            "optional": false,
+                            "modifier": {
+                              "decorator": [
+                                {
+                                  "kind": "lwcDecorator",
+                                  "sourceKeys": {
+                                    "objectKey": "decorator_1332fed18f380344",
+                                    "sourceKey": "decorator_457e12cbfff85d4b"
+                                  },
+                                  "name": "api",
+                                  "arg": []
+                                }
+                              ]
+                            }
+                          },
+                          "index": {
+                            "before": 0,
+                            "after": 0
+                          }
+                        },
+                        {
+                          "kind": "lwcField",
+                          "sourceKeys": {
+                            "base": {
+                              "objectKey": {
+                                "before": "classProperty_36dc7291f5cd6641",
+                                "after": "classProperty_f75063910ad82a16"
+                              },
+                              "sourceKey": {
+                                "before": "classProperty_7bfe14896e643ae1",
+                                "after": "classProperty_312475f071fb75b3"
+                              }
+                            },
+                            "name": {
+                              "objectKey": "identifier_6959baee2e2e9bec",
+                              "sourceKey": {
+                                "before": "identifier_640d089065a54529",
+                                "after": "identifier_f753d35d6ca0257a"
+                              }
+                            }
+                          },
+                          "status": "changed",
+                          "match": "key",
+                          "fields": {
+                            "name": {
+                              "status": "unchanged",
+                              "value": "title"
+                            },
+                            "variantType": {
+                              "kind": "lwcType",
+                              "sourceKeys": {
+                                "objectKey": "tSStringKeyword_7d896e6512bf9cb2",
+                                "sourceKey": {
+                                  "before": "tSStringKeyword_8bb12cb54a56626e",
+                                  "after": "tSStringKeyword_009d50a56a98739c"
+                                }
+                              },
+                              "status": "unchanged",
+                              "value": {
+                                "text": "string",
+                                "type": "primitive",
+                                "primitiveType": "string"
+                              }
+                            },
+                            "init": {
+                              "status": "changed",
+                              "before": "TITLE_LABEL",
+                              "after": "'Accounts'"
+                            },
+                            "references": [
+                              {
+                                "status": "removed",
+                                "index": 0,
+                                "value": {
+                                  "local": "TITLE_LABEL",
+                                  "source": "@salesforce/label/c.AccountListTitle"
+                                }
+                              }
+                            ],
+                            "optional": {
+                              "status": "unchanged",
+                              "value": false
+                            },
+                            "modifier": {
+                              "status": "unchanged",
+                              "value": {
+                                "decorator": [
+                                  {
+                                    "kind": "lwcDecorator",
+                                    "sourceKeys": {
+                                      "objectKey": "decorator_1332fed18f380344",
+                                      "sourceKey": "decorator_2f1ffdbe62cdcc95"
+                                    },
+                                    "name": "api",
+                                    "arg": []
+                                  }
+                                ]
+                              }
+                            }
+                          },
+                          "index": {
+                            "before": 1,
+                            "after": 1
+                          }
+                        },
+                        {
+                          "kind": "lwcField",
+                          "sourceKeys": {
+                            "base": {
+                              "objectKey": {
+                                "before": "classProperty_851795d4e25310f4",
+                                "after": "classProperty_d0b9a6c2203d2470"
+                              },
+                              "sourceKey": {
+                                "before": "classProperty_69fe8708b6d01920",
+                                "after": "classProperty_5d7817073cdda01b"
+                              }
+                            },
+                            "name": {
+                              "objectKey": "identifier_f7e9bc61c36919c9",
+                              "sourceKey": {
+                                "before": "identifier_f01370d7e71bb984",
+                                "after": "identifier_76341da7138c767c"
+                              }
+                            }
+                          },
+                          "status": "changed",
+                          "match": "key",
+                          "fields": {
+                            "name": {
+                              "status": "unchanged",
+                              "value": "maxRows"
+                            },
+                            "variantType": {
+                              "kind": "lwcType",
+                              "sourceKeys": {
+                                "objectKey": "tSNumberKeyword_850ba0354605a53c",
+                                "sourceKey": {
+                                  "before": "tSNumberKeyword_26efd2063c86f5ad",
+                                  "after": "tSNumberKeyword_50abf237a9c9d900"
+                                }
+                              },
+                              "status": "unchanged",
+                              "value": {
+                                "text": "number",
+                                "type": "primitive",
+                                "primitiveType": "number"
+                              }
+                            },
+                            "init": {
+                              "status": "changed",
+                              "before": "10",
+                              "after": "20"
+                            },
+                            "references": [],
+                            "optional": {
+                              "status": "unchanged",
+                              "value": true
+                            },
+                            "modifier": {
+                              "status": "unchanged",
+                              "value": {
+                                "decorator": [
+                                  {
+                                    "kind": "lwcDecorator",
+                                    "sourceKeys": {
+                                      "objectKey": "decorator_1332fed18f380344",
+                                      "sourceKey": "decorator_e9f3f85263a29dc9"
+                                    },
+                                    "name": "api",
+                                    "arg": []
+                                  }
+                                ]
+                              }
+                            }
+                          },
+                          "index": {
+                            "before": 2,
+                            "after": 2
+                          }
+                        },
+                        {
+                          "kind": "lwcField",
+                          "sourceKeys": {
+                            "base": {
+                              "objectKey": "classProperty_3f5b39a3301a0723",
+                              "sourceKey": {
+                                "before": "classProperty_4c025c15aeb3d8a2",
+                                "after": "classProperty_6763a76d9b54a5e1"
+                              }
+                            },
+                            "name": {
+                              "objectKey": "identifier_c57a19db53d52a15",
+                              "sourceKey": {
+                                "before": "identifier_d24cf7c625e28ef4",
+                                "after": "identifier_0dbe5eae24f1f0ad"
+                              }
+                            }
+                          },
+                          "status": "unchanged",
+                          "value": {
+                            "name": "rows",
+                            "variantType": {
+                              "kind": "lwcType",
+                              "sourceKeys": {
+                                "objectKey": "tSArrayType_51482b37f75b8a92",
+                                "sourceKey": "tSArrayType_0905ab119abb3b57"
+                              },
+                              "text": "Row[]",
+                              "type": "array",
+                              "elementType": {
+                                "type": "custom",
+                                "customType": "Row"
+                              }
+                            },
+                            "init": "[]",
+                            "references": [],
+                            "optional": false,
+                            "modifier": {
+                              "access": "private",
+                              "decorator": [
+                                {
+                                  "kind": "lwcDecorator",
+                                  "sourceKeys": {
+                                    "objectKey": "decorator_81ed15e86f6c2163",
+                                    "sourceKey": "decorator_69475e7ecd6c900d"
+                                  },
+                                  "name": "track",
+                                  "arg": []
+                                }
+                              ]
+                            }
+                          },
+                          "index": {
+                            "before": 3,
+                            "after": 4
+                          }
+                        },
+                        {
+                          "kind": "lwcField",
+                          "sourceKeys": {
+                            "base": {
+                              "objectKey": "classProperty_88268f9d0abbdf4a",
+                              "sourceKey": {
+                                "before": "classProperty_9f7cb0af99cb3699",
+                                "after": "classProperty_c283f47cfc6f867b"
+                              }
+                            },
+                            "name": {
+                              "objectKey": "identifier_183b14067ce6bd55",
+                              "sourceKey": {
+                                "before": "identifier_c11979984e895f7c",
+                                "after": "identifier_77c3a30e9f544074"
+                              }
+                            }
+                          },
+                          "status": "unchanged",
+                          "value": {
+                            "name": "viewMode",
+                            "variantType": {
+                              "kind": "lwcType",
+                              "sourceKeys": {
+                                "objectKey": "tSTypeReference_b2eca0b80c2bc205",
+                                "sourceKey": "tSTypeReference_afcb48ed43c82461"
+                              },
+                              "text": "ViewMode",
+                              "type": "custom",
+                              "customType": "ViewMode"
+                            },
+                            "init": "'table'",
+                            "references": [],
+                            "optional": false,
+                            "modifier": {}
+                          },
+                          "index": {
+                            "before": 4,
+                            "after": 5
+                          }
+                        },
+                        {
+                          "kind": "lwcField",
+                          "sourceKeys": {
+                            "base": {
+                              "objectKey": "classProperty_045d6f47961ca364",
+                              "sourceKey": {
+                                "before": "classProperty_d56dc0505e9998a1",
+                                "after": "classProperty_6ef0b39b28a1f8ae"
+                              }
+                            },
+                            "name": {
+                              "objectKey": "identifier_8d2542f86e72bd21",
+                              "sourceKey": {
+                                "before": "identifier_6c2f8a54af7fa504",
+                                "after": "identifier_bcc04a621c9af623"
+                              }
+                            }
+                          },
+                          "status": "unchanged",
+                          "value": {
+                            "name": "sortDirection",
+                            "variantType": {
+                              "kind": "lwcType",
+                              "sourceKeys": {
+                                "objectKey": "tSTypeReference_3527267b946837c5",
+                                "sourceKey": "tSTypeReference_30156c432eb4da18"
+                              },
+                              "text": "SortDirection",
+                              "type": "custom",
+                              "customType": "SortDirection"
+                            },
+                            "init": "'asc'",
+                            "references": [],
+                            "optional": false,
+                            "modifier": {}
+                          },
+                          "index": {
+                            "before": 5,
+                            "after": 6
+                          }
+                        },
+                        {
+                          "kind": "lwcField",
+                          "sourceKeys": {
+                            "base": {
+                              "objectKey": "classProperty_82ecca0fde61789a",
+                              "sourceKey": {
+                                "before": "classProperty_e0aab8011c9a0556",
+                                "after": "classProperty_cd8ed06ae2247d7a"
+                              }
+                            },
+                            "name": {
+                              "objectKey": "identifier_753f3b3680a247ae",
+                              "sourceKey": {
+                                "before": "identifier_8c54156f2f005eaf",
+                                "after": "identifier_b46806c5637d7655"
+                              }
+                            }
+                          },
+                          "status": "unchanged",
+                          "value": {
+                            "name": "error",
+                            "variantType": {
+                              "kind": "lwcType",
+                              "sourceKeys": {
+                                "objectKey": "tSUnknownKeyword_6ef5499dc7a933b0",
+                                "sourceKey": "tSUnknownKeyword_ff591b5a65606d51"
+                              },
+                              "text": "unknown",
+                              "type": "primitive",
+                              "primitiveType": "unknown"
+                            },
+                            "references": [],
+                            "optional": true,
+                            "modifier": {}
+                          },
+                          "index": {
+                            "before": 6,
+                            "after": 7
+                          }
+                        },
+                        {
+                          "kind": "lwcField",
+                          "sourceKeys": {
+                            "base": {
+                              "objectKey": "classProperty_d8931c9b9114fd2d",
+                              "sourceKey": {
+                                "before": "classProperty_10063de14df57ff6",
+                                "after": "classProperty_7cf29448ee18f335"
+                              }
+                            },
+                            "name": {
+                              "objectKey": "identifier_2175c9e1fa7d36c5",
+                              "sourceKey": {
+                                "before": "identifier_f8703eaddac3e2c5",
+                                "after": "identifier_054760d421128b5f"
+                              }
+                            }
+                          },
+                          "status": "unchanged",
+                          "value": {
+                            "name": "record",
+                            "variantType": {
+                              "kind": "lwcType",
+                              "sourceKeys": {
+                                "objectKey": "tSTypeLiteral_fe26f03d190f2f2d",
+                                "sourceKey": "tSTypeLiteral_c1a8b009b016d48f"
+                              },
+                              "text": "{ data?: unknown; error?: unknown }",
+                              "type": "object",
+                              "members": [
+                                {
+                                  "name": "data",
+                                  "memberType": {
+                                    "type": "primitive",
+                                    "primitiveType": "unknown"
+                                  },
+                                  "optional": true,
+                                  "method": false
+                                },
+                                {
+                                  "name": "error",
+                                  "memberType": {
+                                    "type": "primitive",
+                                    "primitiveType": "unknown"
+                                  },
+                                  "optional": true,
+                                  "method": false
+                                }
+                              ]
+                            },
+                            "references": [],
+                            "optional": true,
+                            "modifier": {
+                              "decorator": [
+                                {
+                                  "kind": "lwcDecorator",
+                                  "sourceKeys": {
+                                    "objectKey": "decorator_a8cdf769dc86a7fd",
+                                    "sourceKey": "decorator_c71b493fb7379cf8"
+                                  },
+                                  "name": "wire",
+                                  "arg": [
+                                    "getRecord",
+                                    "{ recordId: '$recordId', fields: [NAME_FIELD, INDUSTRY_FIELD] }"
+                                  ],
+                                  "wire": {
+                                    "adapter": "getRecord",
+                                    "adapterSource": "lightning/uiRecordApi",
+                                    "config": [
+                                      {
+                                        "kind": "lwcWireConfig",
+                                        "sourceKeys": {
+                                          "objectKey": "objectProperty_0961b5c8793ede5c",
+                                          "sourceKey": "objectProperty_7b84b983b6d8426c"
+                                        },
+                                        "key": "recordId",
+                                        "value": "'$recordId'",
+                                        "reactive": "recordId",
+                                        "references": []
+                                      },
+                                      {
+                                        "kind": "lwcWireConfig",
+                                        "sourceKeys": {
+                                          "objectKey": "objectProperty_3adec6502d95e8cc",
+                                          "sourceKey": "objectProperty_a8cf6bf4516cf16a"
+                                        },
+                                        "key": "fields",
+                                        "value": "[NAME_FIELD, INDUSTRY_FIELD]",
+                                        "references": [
+                                          {
+                                            "local": "NAME_FIELD",
+                                            "source": "@salesforce/schema/Account.Name",
+                                            "schema": {
+                                              "objectApiName": "Account",
+                                              "fieldApiName": "Name"
+                                            }
+                                          },
+                                          {
+                                            "local": "INDUSTRY_FIELD",
+                                            "source": "@salesforce/schema/Account.Industry",
+                                            "schema": {
+                                              "objectApiName": "Account",
+                                              "fieldApiName": "Industry"
+                                            }
+                                          }
+                                        ]
+                                      }
+                                    ]
+                                  }
+                                }
+                              ]
+                            }
+                          },
+                          "index": {
+                            "before": 7,
+                            "after": 8
+                          }
+                        },
+                        {
+                          "kind": "lwcMethod",
+                          "sourceKeys": {
+                            "base": {
+                              "objectKey": {
+                                "before": "classMethod_26ee998264af3211",
+                                "after": "classMethod_3b7e0faabd716a43"
+                              },
+                              "sourceKey": {
+                                "before": "classMethod_ecec37429e40dd9f",
+                                "after": "classMethod_1993675e69f81ee1"
+                              }
+                            },
+                            "name": {
+                              "objectKey": "identifier_98ef39e63a105fe2",
+                              "sourceKey": {
+                                "before": "identifier_c11ccc7bcde09928",
+                                "after": "identifier_019bae116b5d6e78"
+                              }
+                            }
+                          },
+                          "status": "changed",
+                          "match": "key",
+                          "fields": {
+                            "name": {
+                              "status": "unchanged",
+                              "value": "wiredAccounts"
+                            },
+                            "returnType": {
+                              "kind": "lwcType",
+                              "sourceKeys": {
+                                "objectKey": "tSVoidKeyword_9a0d7732e44e61dc",
+                                "sourceKey": {
+                                  "before": "tSVoidKeyword_f2bb777c8035db7c",
+                                  "after": "tSVoidKeyword_6229335022b14608"
+                                }
+                              },
+                              "status": "unchanged",
+                              "value": {
+                                "text": "void",
+                                "type": "primitive",
+                                "primitiveType": "void"
+                              }
+                            },
+                            "param": [
+                              {
+                                "kind": "lwcParameter",
+                                "sourceKeys": {
+                                  "objectKey": "objectPattern_ea429b926e75fa59",
+                                  "sourceKey": {
+                                    "before": "objectPattern_7a20b5d55f9450fe",
+                                    "after": "objectPattern_70e9469760ffc338"
+                                  }
+                                },
+                                "status": "unchanged",
+                                "value": {
+                                  "variant": "{ data, error }",
+                                  "variantType": {
+                                    "kind": "lwcType",
+                                    "sourceKeys": {
+                                      "objectKey": "tSTypeLiteral_35438df85ed785f7",
+                                      "sourceKey": "tSTypeLiteral_590e18f68d07eac3"
+                                    },
+                                    "text": "{ data?: unknown[]; error?: unknown }",
+                                    "type": "object",
+                                    "members": [
+                                      {
+                                        "name": "data",
+                                        "memberType": {
+                                          "type": "array",
+                                          "elementType": {
+                                            "type": "primitive",
+                                            "primitiveType": "unknown"
+                                          }
+                                        },
+                                        "optional": true,
+                                        "method": false
+                                      },
+                                      {
+                                        "name": "error",
+                                        "memberType": {
+                                          "type": "primitive",
+                                          "primitiveType": "unknown"
+                                        },
+                                        "optional": true,
+                                        "method": false
+                                      }
+                                    ]
+                                  },
+                                  "optional": false,
+                                  "modifier": {}
+                                },
+                                "index": {
+                                  "before": 0,
+                                  "after": 0
+                                }
+                              }
+                            ],
+                            "async": {
+                              "status": "unchanged",
+                              "value": false
+                            },
+                            "modifier": {
+                              "status": "changed",
+                              "fields": {
+                                "decorator": [
+                                  {
+                                    "kind": "lwcDecorator",
+                                    "sourceKeys": {
+                                      "objectKey": {
+                                        "before": "decorator_92b375181592eaeb",
+                                        "after": "decorator_f1704328931aeba8"
+                                      },
+                                      "sourceKey": {
+                                        "before": "decorator_f6141c3d85b93ddf",
+                                        "after": "decorator_0c234309a553de0d"
+                                      }
+                                    },
+                                    "status": "changed",
+                                    "match": "key",
+                                    "fields": {
+                                      "name": {
+                                        "status": "unchanged",
+                                        "value": "wire"
+                                      },
+                                      "arg": [
+                                        {
+                                          "status": "unchanged",
+                                          "match": "identical",
+                                          "index": {
+                                            "before": 0,
+                                            "after": 0
+                                          },
+                                          "value": "getAccounts"
+                                        },
+                                        {
+                                          "status": "changed",
+                                          "before": "{ parentId: '$recordId', limitSize: '$maxRows' }",
+                                          "after": "{ parentId: '$recordId', limitSize: '$maxRows', industry: '$industry' }",
+                                          "match": "slot",
+                                          "index": {
+                                            "before": 1,
+                                            "after": 1
+                                          }
+                                        }
+                                      ],
+                                      "wire": {
+                                        "status": "changed",
+                                        "fields": {
+                                          "adapter": {
+                                            "status": "unchanged",
+                                            "value": "getAccounts"
+                                          },
+                                          "adapterSource": {
+                                            "status": "unchanged",
+                                            "value": "@salesforce/apex/AccountController.getAccounts"
+                                          },
+                                          "apex": {
+                                            "status": "unchanged",
+                                            "value": {
+                                              "className": "AccountController",
+                                              "methodName": "getAccounts"
+                                            }
+                                          },
+                                          "config": [
+                                            {
+                                              "kind": "lwcWireConfig",
+                                              "sourceKeys": {
+                                                "objectKey": "objectProperty_c7df3e09da4c3457",
+                                                "sourceKey": {
+                                                  "before": "objectProperty_2a9f280cf320c61b",
+                                                  "after": "objectProperty_6dcedd3a6af058fc"
+                                                }
+                                              },
+                                              "status": "unchanged",
+                                              "value": {
+                                                "key": "parentId",
+                                                "value": "'$recordId'",
+                                                "reactive": "recordId",
+                                                "references": []
+                                              },
+                                              "index": {
+                                                "before": 0,
+                                                "after": 0
+                                              }
+                                            },
+                                            {
+                                              "kind": "lwcWireConfig",
+                                              "sourceKeys": {
+                                                "objectKey": "objectProperty_849725ff656de002",
+                                                "sourceKey": {
+                                                  "before": "objectProperty_be83ec7fad1d7955",
+                                                  "after": "objectProperty_3d8caa1e461a8a9c"
+                                                }
+                                              },
+                                              "status": "unchanged",
+                                              "value": {
+                                                "key": "limitSize",
+                                                "value": "'$maxRows'",
+                                                "reactive": "maxRows",
+                                                "references": []
+                                              },
+                                              "index": {
+                                                "before": 1,
+                                                "after": 1
+                                              }
+                                            },
+                                            {
+                                              "kind": "lwcWireConfig",
+                                              "sourceKeys": {
+                                                "objectKey": "objectProperty_a7290f0da3d22df6",
+                                                "sourceKey": "objectProperty_95db67a7ffaddac4"
+                                              },
+                                              "status": "added",
+                                              "index": 2,
+                                              "value": {
+                                                "key": "industry",
+                                                "value": "'$industry'",
+                                                "reactive": "industry",
+                                                "references": []
+                                              }
+                                            }
+                                          ]
+                                        }
+                                      }
+                                    },
+                                    "index": {
+                                      "before": 0,
+                                      "after": 0
+                                    }
+                                  }
+                                ]
+                              }
+                            },
+                            "body": {
+                              "kind": "lwcBody",
+                              "sourceKeys": {
+                                "objectKey": "blockStatement_7ffea8f6f0374ff8",
+                                "sourceKey": {
+                                  "before": "blockStatement_1969904d08cd05b3",
+                                  "after": "blockStatement_5c86aa91e00a2029"
+                                }
+                              },
+                              "status": "unchanged",
+                              "value": {
+                                "statements": 1
+                              }
+                            },
+                            "calls": [],
+                            "events": []
+                          },
+                          "index": {
+                            "before": 8,
+                            "after": 9
+                          }
+                        },
+                        {
+                          "kind": "lwcProperty",
+                          "sourceKeys": {
+                            "base": {
+                              "objectKey": "classMethod_fab49647e116a81d",
+                              "sourceKey": {
+                                "before": "classMethod_479cee5afabe0faf",
+                                "after": "classMethod_0da21e7220006a52"
+                              }
+                            },
+                            "name": {
+                              "objectKey": "identifier_041c845bdc45a768",
+                              "sourceKey": {
+                                "before": "identifier_ce0f7b8611016ef6",
+                                "after": "identifier_ae0fa29388527d84"
+                              }
+                            }
+                          },
+                          "status": "unchanged",
+                          "value": {
+                            "name": "parentName",
+                            "isGetter": true,
+                            "isSetter": false,
+                            "getterContent": {
+                              "modifier": {},
+                              "body": {
+                                "kind": "lwcBody",
+                                "sourceKeys": {
+                                  "objectKey": "blockStatement_5232b0b305dcd0e5",
+                                  "sourceKey": "blockStatement_ec85b620ec921684"
+                                },
+                                "statements": 1
+                              },
+                              "calls": [],
+                              "events": []
+                            },
+                            "variantType": {
+                              "kind": "lwcType",
+                              "sourceKeys": {
+                                "objectKey": "tSUnionType_c2cd75e44e283843",
+                                "sourceKey": "tSUnionType_5b3f8c5d05a694b6"
+                              },
+                              "text": "string | undefined",
+                              "type": "union",
+                              "types": [
+                                {
+                                  "type": "primitive",
+                                  "primitiveType": "string"
+                                },
+                                {
+                                  "type": "primitive",
+                                  "primitiveType": "undefined"
+                                }
+                              ]
+                            }
+                          },
+                          "index": {
+                            "before": 9,
+                            "after": 10
+                          }
+                        },
+                        {
+                          "kind": "lwcProperty",
+                          "sourceKeys": {
+                            "base": {
+                              "objectKey": "classMethod_4ff2d554476e8b8b",
+                              "sourceKey": {
+                                "before": "classMethod_bc9a8b170baf3169",
+                                "after": "classMethod_355cbb7cc1b00f61"
+                              }
+                            },
+                            "name": {
+                              "objectKey": "identifier_62df8877c804e6ea",
+                              "sourceKey": {
+                                "before": "identifier_70192b278f13597c",
+                                "after": "identifier_ee155a715e003ccd"
+                              }
+                            }
+                          },
+                          "status": "unchanged",
+                          "value": {
+                            "name": "hasRows",
+                            "isGetter": true,
+                            "isSetter": false,
+                            "getterContent": {
+                              "modifier": {},
+                              "body": {
+                                "kind": "lwcBody",
+                                "sourceKeys": {
+                                  "objectKey": "blockStatement_af72ce98bc5373bf",
+                                  "sourceKey": "blockStatement_50d5df7bab5fa834"
+                                },
+                                "statements": 1
+                              },
+                              "calls": [],
+                              "events": []
+                            },
+                            "variantType": {
+                              "kind": "lwcType",
+                              "sourceKeys": {
+                                "objectKey": "tSBooleanKeyword_b0b50aed2fda45e2",
+                                "sourceKey": "tSBooleanKeyword_231f0380abdccc81"
+                              },
+                              "text": "boolean",
+                              "type": "primitive",
+                              "primitiveType": "boolean"
+                            }
+                          },
+                          "index": {
+                            "before": 10,
+                            "after": 11
+                          }
+                        },
+                        {
+                          "kind": "lwcProperty",
+                          "sourceKeys": {
+                            "base": {
+                              "objectKey": "classMethod_f386d185cc085e74",
+                              "sourceKey": "classMethod_01df545461941aca"
+                            },
+                            "name": {
+                              "objectKey": "identifier_86c6c2a31356b643",
+                              "sourceKey": "identifier_752b80e80b4ee082"
+                            }
+                          },
+                          "status": "removed",
+                          "index": 11,
+                          "value": {
+                            "name": "isTable",
+                            "isGetter": true,
+                            "isSetter": false,
+                            "getterContent": {
+                              "modifier": {},
+                              "body": {
+                                "kind": "lwcBody",
+                                "sourceKeys": {
+                                  "objectKey": "blockStatement_de8d6eb4cfdfbaf4",
+                                  "sourceKey": "blockStatement_fea1883a68adcd47"
+                                },
+                                "statements": 1
+                              },
+                              "calls": [],
+                              "events": []
+                            },
+                            "variantType": {
+                              "kind": "lwcType",
+                              "sourceKeys": {
+                                "objectKey": "tSBooleanKeyword_b0b50aed2fda45e2",
+                                "sourceKey": "tSBooleanKeyword_86409398c417b8fc"
+                              },
+                              "text": "boolean",
+                              "type": "primitive",
+                              "primitiveType": "boolean"
+                            }
+                          }
+                        },
+                        {
+                          "kind": "lwcProperty",
+                          "sourceKeys": {
+                            "base": {
+                              "objectKey": "classMethod_d4044b58e4730529",
+                              "sourceKey": {
+                                "before": "classMethod_7083c0c438061a22",
+                                "after": "classMethod_851681e39db8d0cb"
+                              }
+                            },
+                            "name": {
+                              "objectKey": "identifier_9658acbe2c933352",
+                              "sourceKey": {
+                                "before": "identifier_c8d0258e75f08848",
+                                "after": "identifier_b337936731d6075b"
+                              }
+                            }
+                          },
+                          "status": "unchanged",
+                          "value": {
+                            "name": "totalAmount",
+                            "isGetter": true,
+                            "isSetter": false,
+                            "getterContent": {
+                              "modifier": {},
+                              "body": {
+                                "kind": "lwcBody",
+                                "sourceKeys": {
+                                  "objectKey": "blockStatement_78b34076a7b37206",
+                                  "sourceKey": "blockStatement_90ba12b954e1e2a1"
+                                },
+                                "statements": 1
+                              },
+                              "calls": [],
+                              "events": []
+                            },
+                            "variantType": {
+                              "kind": "lwcType",
+                              "sourceKeys": {
+                                "objectKey": "tSStringKeyword_7d896e6512bf9cb2",
+                                "sourceKey": "tSStringKeyword_fc59e203a5f05c8d"
+                              },
+                              "text": "string",
+                              "type": "primitive",
+                              "primitiveType": "string"
+                            }
+                          },
+                          "index": {
+                            "before": 12,
+                            "after": 12
+                          }
+                        },
+                        {
+                          "kind": "lwcMethod",
+                          "sourceKeys": {
+                            "base": {
+                              "objectKey": {
+                                "before": "classMethod_9b249ce280638465",
+                                "after": "classMethod_9092bd6e9a0884e2"
+                              },
+                              "sourceKey": {
+                                "before": "classMethod_333213d638092b5b",
+                                "after": "classMethod_4fa8d763eca18666"
+                              }
+                            },
+                            "name": {
+                              "objectKey": "identifier_e7b883b07c6d5e9f",
+                              "sourceKey": {
+                                "before": "identifier_1e6764f88d7a8481",
+                                "after": "identifier_871c1786449c490b"
+                              }
+                            }
+                          },
+                          "status": "changed",
+                          "match": "key",
+                          "fields": {
+                            "name": {
+                              "status": "unchanged",
+                              "value": "handleSelect"
+                            },
+                            "returnType": {
+                              "kind": "lwcType",
+                              "sourceKeys": {
+                                "objectKey": "tSVoidKeyword_9a0d7732e44e61dc",
+                                "sourceKey": {
+                                  "before": "tSVoidKeyword_f69d0b22cf19887c",
+                                  "after": "tSVoidKeyword_3bc8f9d72a85dcec"
+                                }
+                              },
+                              "status": "unchanged",
+                              "value": {
+                                "text": "void",
+                                "type": "primitive",
+                                "primitiveType": "void"
+                              }
+                            },
+                            "param": [
+                              {
+                                "kind": "lwcParameter",
+                                "sourceKeys": {
+                                  "objectKey": "identifier_83ad370dbbd5cde0",
+                                  "sourceKey": {
+                                    "before": "identifier_ae48df479338bde3",
+                                    "after": "identifier_0d9c66eb81db72c0"
+                                  }
+                                },
+                                "status": "unchanged",
+                                "value": {
+                                  "variant": "event",
+                                  "variantType": {
+                                    "kind": "lwcType",
+                                    "sourceKeys": {
+                                      "objectKey": "tSTypeReference_58ad074b3fa9af94",
+                                      "sourceKey": "tSTypeReference_4dd086aeefe98300"
+                                    },
+                                    "text": "CustomEvent<SelectDetail>",
+                                    "type": "custom",
+                                    "customType": "CustomEvent",
+                                    "generic": [
+                                      {
+                                        "type": "custom",
+                                        "customType": "SelectDetail"
+                                      }
+                                    ]
+                                  },
+                                  "optional": false,
+                                  "modifier": {}
+                                },
+                                "index": {
+                                  "before": 0,
+                                  "after": 0
+                                }
+                              }
+                            ],
+                            "async": {
+                              "status": "unchanged",
+                              "value": false
+                            },
+                            "modifier": {
+                              "status": "unchanged",
+                              "value": {}
+                            },
+                            "body": {
+                              "kind": "lwcBody",
+                              "sourceKeys": {
+                                "objectKey": {
+                                  "before": "blockStatement_7ab7812a7065fa65",
+                                  "after": "blockStatement_6479ee3825be128b"
+                                },
+                                "sourceKey": {
+                                  "before": "blockStatement_c576c77db1d41939",
+                                  "after": "blockStatement_9912093983b8f1d4"
+                                }
+                              },
+                              "status": "changed",
+                              "match": "slot",
+                              "fields": {
+                                "statements": {
+                                  "status": "unchanged",
+                                  "value": 3
+                                }
+                              }
+                            },
+                            "calls": [
+                              {
+                                "kind": "lwcCall",
+                                "sourceKeys": {
+                                  "objectKey": {
+                                    "before": "callExpression_026b7ba7ba337f59",
+                                    "after": "callExpression_14de8e0772c2aa0a"
+                                  },
+                                  "sourceKey": {
+                                    "before": "callExpression_846cbab09347e409",
+                                    "after": "callExpression_840be0afd13a9572"
+                                  }
+                                },
+                                "status": "changed",
+                                "match": "nearest",
+                                "fields": {
+                                  "callType": {
+                                    "status": "unchanged",
+                                    "value": "dispatchEvent"
+                                  },
+                                  "target": {
+                                    "status": "unchanged",
+                                    "value": "CustomEvent"
+                                  },
+                                  "arg": [
+                                    {
+                                      "status": "changed",
+                                      "before": "new CustomEvent<SelectDetail>('accountselect', {\n                detail: { recordId, index },\n                bubbles: true,\n                composed: false,\n            })",
+                                      "after": "new CustomEvent<SelectDetail>('accountselect', {\n                detail: { recordId, index },\n                bubbles: true,\n                composed: true,\n            })",
+                                      "match": "slot",
+                                      "index": {
+                                        "before": 0,
+                                        "after": 0
+                                      }
+                                    }
+                                  ],
+                                  "references": []
+                                },
+                                "index": {
+                                  "before": 0,
+                                  "after": 0
+                                }
+                              },
+                              {
+                                "kind": "lwcCall",
+                                "sourceKeys": {
+                                  "objectKey": "callExpression_29c5e8ac51c13fbc",
+                                  "sourceKey": {
+                                    "before": "callExpression_539c2432d454af88",
+                                    "after": "callExpression_7c14c83e4999d159"
+                                  }
+                                },
+                                "status": "unchanged",
+                                "value": {
+                                  "callType": "navigate",
+                                  "target": "Navigate",
+                                  "arg": [
+                                    "{\n            type: 'standard__recordPage',\n            attributes: { recordId, actionName: 'view' },\n        }"
+                                  ],
+                                  "references": []
+                                },
+                                "index": {
+                                  "before": 1,
+                                  "after": 1
+                                }
+                              }
+                            ],
+                            "events": [
+                              {
+                                "kind": "lwcEvent",
+                                "sourceKeys": {
+                                  "objectKey": {
+                                    "before": "newExpression_7eeabe7d7f96625e",
+                                    "after": "newExpression_190edaaed847a306"
+                                  },
+                                  "sourceKey": {
+                                    "before": "newExpression_d0659dd3ad94b41c",
+                                    "after": "newExpression_f0df6707e74cc31f"
+                                  }
+                                },
+                                "status": "changed",
+                                "match": "nearest",
+                                "fields": {
+                                  "name": {
+                                    "status": "unchanged",
+                                    "value": "accountselect"
+                                  },
+                                  "bubbles": {
+                                    "status": "unchanged",
+                                    "value": true
+                                  },
+                                  "composed": {
+                                    "status": "changed",
+                                    "before": false,
+                                    "after": true
+                                  },
+                                  "detail": {
+                                    "status": "unchanged",
+                                    "value": "{ recordId, index }"
+                                  },
+                                  "detailType": {
+                                    "kind": "lwcType",
+                                    "sourceKeys": {
+                                      "objectKey": "tSTypeReference_8f8721286f8f83cc",
+                                      "sourceKey": {
+                                        "before": "tSTypeReference_d8b7fc206c8cbd24",
+                                        "after": "tSTypeReference_2928c5798e0f3f3c"
+                                      }
+                                    },
+                                    "status": "unchanged",
+                                    "value": {
+                                      "text": "SelectDetail",
+                                      "type": "custom",
+                                      "customType": "SelectDetail"
+                                    }
+                                  }
+                                },
+                                "index": {
+                                  "before": 0,
+                                  "after": 0
+                                }
+                              }
+                            ]
+                          },
+                          "index": {
+                            "before": 13,
+                            "after": 13
+                          }
+                        },
+                        {
+                          "kind": "lwcMethod",
+                          "sourceKeys": {
+                            "base": {
+                              "objectKey": "classMethod_0c2d6dc435c189eb",
+                              "sourceKey": {
+                                "before": "classMethod_c44dd8c5f3a611d3",
+                                "after": "classMethod_87f6eb606cee999e"
+                              }
+                            },
+                            "name": {
+                              "objectKey": "identifier_f0d9f597ffa134ed",
+                              "sourceKey": {
+                                "before": "identifier_8be33cb54ff7c3f1",
+                                "after": "identifier_7d81b66b90f0f69e"
+                              }
+                            }
+                          },
+                          "status": "unchanged",
+                          "value": {
+                            "name": "handleDelete",
+                            "returnType": {
+                              "kind": "lwcType",
+                              "sourceKeys": {
+                                "objectKey": "tSTypeReference_994d4d505ba9003c",
+                                "sourceKey": "tSTypeReference_4e93a7c77b7000fd"
+                              },
+                              "text": "Promise<void>",
+                              "type": "custom",
+                              "customType": "Promise",
+                              "generic": [
+                                {
+                                  "type": "primitive",
+                                  "primitiveType": "void"
+                                }
+                              ]
+                            },
+                            "param": [
+                              {
+                                "kind": "lwcParameter",
+                                "sourceKeys": {
+                                  "objectKey": "identifier_933921ca96dfc021",
+                                  "sourceKey": "identifier_a3fa79f137bdd075"
+                                },
+                                "variant": "event",
+                                "variantType": {
+                                  "kind": "lwcType",
+                                  "sourceKeys": {
+                                    "objectKey": "tSTypeReference_3182fbb5c3689fdf",
+                                    "sourceKey": "tSTypeReference_846e196d9e61343e"
+                                  },
+                                  "text": "Event",
+                                  "type": "custom",
+                                  "customType": "Event"
+                                },
+                                "optional": false,
+                                "modifier": {}
+                              }
+                            ],
+                            "async": true,
+                            "modifier": {},
+                            "body": {
+                              "kind": "lwcBody",
+                              "sourceKeys": {
+                                "objectKey": "blockStatement_f70fee0b73c4ced5",
+                                "sourceKey": "blockStatement_586a51e450448bd8"
+                              },
+                              "statements": 2
+                            },
+                            "calls": [
+                              {
+                                "kind": "lwcCall",
+                                "sourceKeys": {
+                                  "objectKey": "callExpression_c90607f4bce5c01a",
+                                  "sourceKey": "callExpression_6cf8a4887e60e6aa"
+                                },
+                                "callType": "apex",
+                                "target": "deleteAccount",
+                                "apex": {
+                                  "className": "AccountController",
+                                  "methodName": "deleteAccount"
+                                },
+                                "arg": [
+                                  "{ recordId }"
+                                ],
+                                "references": []
+                              },
+                              {
+                                "kind": "lwcCall",
+                                "sourceKeys": {
+                                  "objectKey": "callExpression_68e96ab125e5a14b",
+                                  "sourceKey": "callExpression_ac063b9596f5421a"
+                                },
+                                "callType": "dispatchEvent",
+                                "target": "ShowToastEvent",
+                                "arg": [
+                                  "new ShowToastEvent({ title: '削除しました', variant: 'success' })"
+                                ],
+                                "references": [
+                                  {
+                                    "local": "ShowToastEvent",
+                                    "source": "lightning/platformShowToastEvent"
+                                  }
+                                ]
+                              }
+                            ],
+                            "events": []
+                          },
+                          "index": {
+                            "before": 14,
+                            "after": 14
+                          }
+                        },
+                        {
+                          "kind": "lwcMethod",
+                          "sourceKeys": {
+                            "base": {
+                              "objectKey": "classMethod_30455f6a9ffe15f9",
+                              "sourceKey": {
+                                "before": "classMethod_4137dab19b323081",
+                                "after": "classMethod_7eb2e86167ba049b"
+                              }
+                            },
+                            "name": {
+                              "objectKey": "identifier_8bd96d10ae4ec5c1",
+                              "sourceKey": {
+                                "before": "identifier_2cbc4c0481c809dd",
+                                "after": "identifier_858c113bca9a67d4"
+                              }
+                            }
+                          },
+                          "status": "unchanged",
+                          "value": {
+                            "name": "refresh",
+                            "returnType": {
+                              "kind": "lwcType",
+                              "sourceKeys": {
+                                "objectKey": "tSVoidKeyword_9a0d7732e44e61dc",
+                                "sourceKey": "tSVoidKeyword_84acadbbd1021bc2"
+                              },
+                              "text": "void",
+                              "type": "primitive",
+                              "primitiveType": "void"
+                            },
+                            "param": [],
+                            "async": false,
+                            "modifier": {
+                              "decorator": [
+                                {
+                                  "kind": "lwcDecorator",
+                                  "sourceKeys": {
+                                    "objectKey": "decorator_1332fed18f380344",
+                                    "sourceKey": "decorator_60d85cc96a3af770"
+                                  },
+                                  "name": "api",
+                                  "arg": []
+                                }
+                              ]
+                            },
+                            "body": {
+                              "kind": "lwcBody",
+                              "sourceKeys": {
+                                "objectKey": "blockStatement_03ade2918044706a",
+                                "sourceKey": "blockStatement_d46c51215b3f9118"
+                              },
+                              "statements": 1
+                            },
+                            "calls": [
+                              {
+                                "kind": "lwcCall",
+                                "sourceKeys": {
+                                  "objectKey": "memberExpression_77f7d92d75a81a5f",
+                                  "sourceKey": "memberExpression_69442137298e047b"
+                                },
+                                "callType": "refs",
+                                "target": "table",
+                                "arg": [],
+                                "references": []
+                              }
+                            ],
+                            "events": []
+                          },
+                          "index": {
+                            "before": 15,
+                            "after": 16
+                          }
+                        },
+                        {
+                          "kind": "lwcField",
+                          "sourceKeys": {
+                            "base": {
+                              "objectKey": "classProperty_b6b9816fc609812e",
+                              "sourceKey": "classProperty_3206fbd3c562e104"
+                            },
+                            "name": {
+                              "objectKey": "identifier_a4d2c1c6dc8df929",
+                              "sourceKey": "identifier_de6535f72a79e9c1"
+                            }
+                          },
+                          "status": "added",
+                          "index": 3,
+                          "value": {
+                            "name": "industry",
+                            "variantType": {
+                              "kind": "lwcType",
+                              "sourceKeys": {
+                                "objectKey": "tSStringKeyword_7d896e6512bf9cb2",
+                                "sourceKey": "tSStringKeyword_19ebac3982193535"
+                              },
+                              "text": "string",
+                              "type": "primitive",
+                              "primitiveType": "string"
+                            },
+                            "references": [],
+                            "optional": true,
+                            "modifier": {
+                              "decorator": [
+                                {
+                                  "kind": "lwcDecorator",
+                                  "sourceKeys": {
+                                    "objectKey": "decorator_1332fed18f380344",
+                                    "sourceKey": "decorator_4ac20f322ebbbc68"
+                                  },
+                                  "name": "api",
+                                  "arg": []
+                                }
+                              ]
+                            }
+                          }
+                        },
+                        {
+                          "kind": "lwcMethod",
+                          "sourceKeys": {
+                            "base": {
+                              "objectKey": "classMethod_37d83fc5ea6f1dcd",
+                              "sourceKey": "classMethod_34db651bad924303"
+                            },
+                            "name": {
+                              "objectKey": "identifier_996086c23bfb5431",
+                              "sourceKey": "identifier_835541ba2e5d53b7"
+                            }
+                          },
+                          "status": "added",
+                          "index": 15,
+                          "value": {
+                            "name": "handleSave",
+                            "returnType": {
+                              "kind": "lwcType",
+                              "sourceKeys": {
+                                "objectKey": "tSTypeReference_994d4d505ba9003c",
+                                "sourceKey": "tSTypeReference_50015fdc0fd89150"
+                              },
+                              "text": "Promise<void>",
+                              "type": "custom",
+                              "customType": "Promise",
+                              "generic": [
+                                {
+                                  "type": "primitive",
+                                  "primitiveType": "void"
+                                }
+                              ]
+                            },
+                            "param": [
+                              {
+                                "kind": "lwcParameter",
+                                "sourceKeys": {
+                                  "objectKey": "identifier_6db501e42ff31057",
+                                  "sourceKey": "identifier_29172ef8861beb24"
+                                },
+                                "variant": "event",
+                                "variantType": {
+                                  "kind": "lwcType",
+                                  "sourceKeys": {
+                                    "objectKey": "tSTypeReference_905bf863bc97610a",
+                                    "sourceKey": "tSTypeReference_64ebd1c80265a9c2"
+                                  },
+                                  "text": "CustomEvent<Row>",
+                                  "type": "custom",
+                                  "customType": "CustomEvent",
+                                  "generic": [
+                                    {
+                                      "type": "custom",
+                                      "customType": "Row"
+                                    }
+                                  ]
+                                },
+                                "optional": false,
+                                "modifier": {}
+                              }
+                            ],
+                            "async": true,
+                            "modifier": {},
+                            "body": {
+                              "kind": "lwcBody",
+                              "sourceKeys": {
+                                "objectKey": "blockStatement_8ecc4cce099d6268",
+                                "sourceKey": "blockStatement_108f7d9650d4cd8c"
+                              },
+                              "statements": 2
+                            },
+                            "calls": [
+                              {
+                                "kind": "lwcCall",
+                                "sourceKeys": {
+                                  "objectKey": "callExpression_7d201cb0d20bf8f8",
+                                  "sourceKey": "callExpression_8fe8482d7998d6c7"
+                                },
+                                "callType": "apex",
+                                "target": "updateAccount",
+                                "apex": {
+                                  "className": "AccountController",
+                                  "methodName": "updateAccount"
+                                },
+                                "arg": [
+                                  "{ row: event.detail }"
+                                ],
+                                "references": []
+                              },
+                              {
+                                "kind": "lwcCall",
+                                "sourceKeys": {
+                                  "objectKey": "callExpression_4ee07132b6fa7cf8",
+                                  "sourceKey": "callExpression_a1d8034449fb2c70"
+                                },
+                                "callType": "dispatchEvent",
+                                "target": "CustomEvent",
+                                "arg": [
+                                  "new CustomEvent('accountsaved', { detail: event.detail.id })"
+                                ],
+                                "references": []
+                              }
+                            ],
+                            "events": [
+                              {
+                                "kind": "lwcEvent",
+                                "sourceKeys": {
+                                  "objectKey": "newExpression_b3e8217e517cffb0",
+                                  "sourceKey": "newExpression_0ed0b189eb1d529b"
+                                },
+                                "name": "accountsaved",
+                                "detail": "event.detail.id"
+                              }
+                            ]
+                          }
+                        }
+                      ]
+                    }
+                  },
+                  "otherExports": [],
+                  "declarations": [],
+                  "typeDeclarations": [
+                    {
+                      "kind": "lwcTypeDeclaration",
+                      "sourceKeys": {
+                        "base": {
+                          "objectKey": "tSTypeAliasDeclaration_6a463d284da2357d",
+                          "sourceKey": {
+                            "before": "tSTypeAliasDeclaration_d5612c24ca44af6d",
+                            "after": "tSTypeAliasDeclaration_da92b4eb786dc407"
+                          }
+                        },
+                        "name": {
+                          "objectKey": "identifier_0d52af9f96a0034d",
+                          "sourceKey": {
+                            "before": "identifier_ef6aa56a87abaa47",
+                            "after": "identifier_e15f030ec4c4e29a"
+                          }
+                        }
+                      },
+                      "status": "unchanged",
+                      "value": {
+                        "name": "ViewMode",
+                        "exported": false,
+                        "declarationType": "type",
+                        "variantType": {
+                          "kind": "lwcType",
+                          "sourceKeys": {
+                            "objectKey": "tSUnionType_a74255f84fd8829e",
+                            "sourceKey": "tSUnionType_35aafa5d6b4a8226"
+                          },
+                          "text": "'table' | 'tile'",
+                          "type": "union",
+                          "types": [
+                            {
+                              "type": "literal",
+                              "value": "'table'"
+                            },
+                            {
+                              "type": "literal",
+                              "value": "'tile'"
+                            }
+                          ]
+                        }
+                      },
+                      "index": {
+                        "before": 0,
+                        "after": 0
+                      }
+                    },
+                    {
+                      "kind": "lwcTypeDeclaration",
+                      "sourceKeys": {
+                        "base": {
+                          "objectKey": "tSInterfaceDeclaration_7601e68511a06e7f",
+                          "sourceKey": {
+                            "before": "tSInterfaceDeclaration_3e138c0d3e27fc71",
+                            "after": "tSInterfaceDeclaration_5abacf05ee8a1a95"
+                          }
+                        },
+                        "name": {
+                          "objectKey": "identifier_ac07586f3a1d14b3",
+                          "sourceKey": {
+                            "before": "identifier_0c5ec6f7a622efb1",
+                            "after": "identifier_daaeffd83cddee45"
+                          }
+                        }
+                      },
+                      "status": "unchanged",
+                      "value": {
+                        "name": "SelectDetail",
+                        "exported": false,
+                        "declarationType": "interface",
+                        "members": [
+                          {
+                            "name": "recordId",
+                            "memberType": {
+                              "type": "primitive",
+                              "primitiveType": "string"
+                            },
+                            "optional": false,
+                            "method": false
+                          },
+                          {
+                            "name": "index",
+                            "memberType": {
+                              "type": "primitive",
+                              "primitiveType": "number"
+                            },
+                            "optional": false,
+                            "method": false
+                          }
+                        ]
+                      },
+                      "index": {
+                        "before": 1,
+                        "after": 1
+                      }
+                    }
+                  ],
+                  "errors": []
+                }
+              }
+            },
+            "match": "key",
+            "index": {
+              "before": 0,
+              "after": 0
+            }
+          }
+        ],
+        "skippedFiles": []
+      }
+    }
+  },
+  {
+    "id": "accountRow",
+    "status": "unchanged",
+    "filePath": {
+      "before": "before/accountRow",
+      "after": "after/accountRow"
+    },
+    "dataType": "lwcBundle",
+    "resolvedError": [],
+    "content": {
+      "status": "unchanged",
+      "value": {
+        "name": "accountRow",
+        "namespace": "c",
+        "modules": [
+          {
+            "fileName": "accountRow.ts",
+            "main": true,
+            "module": {
+              "fileType": "ts",
+              "imports": [
+                {
+                  "kind": "lwcImport",
+                  "sourceKeys": {
+                    "objectKey": "importDeclaration_e6e5c6a589927fdf",
+                    "sourceKey": "importDeclaration_4227e61daccd303d"
+                  },
+                  "source": "lwc",
+                  "category": "lwc",
+                  "specifiers": [
+                    {
+                      "kind": "lwcImportSpecifier",
+                      "sourceKeys": {
+                        "objectKey": "importSpecifier_cfa9b55daa09bb3a",
+                        "sourceKey": "importSpecifier_ea83f97f2bfb2d0f"
+                      },
+                      "specifierType": "named",
+                      "local": "LightningElement",
+                      "imported": "LightningElement",
+                      "typeOnly": false
+                    },
+                    {
+                      "kind": "lwcImportSpecifier",
+                      "sourceKeys": {
+                        "objectKey": "importSpecifier_0b0d904086d94cfc",
+                        "sourceKey": "importSpecifier_d418e57ac2169b91"
+                      },
+                      "specifierType": "named",
+                      "local": "api",
+                      "imported": "api",
+                      "typeOnly": false
+                    }
+                  ],
+                  "typeOnly": false
+                },
+                {
+                  "kind": "lwcImport",
+                  "sourceKeys": {
+                    "objectKey": "importDeclaration_b509b5108e377914",
+                    "sourceKey": "importDeclaration_2ac5193362839a87"
+                  },
+                  "source": "c/utils",
+                  "category": "component",
+                  "specifiers": [
+                    {
+                      "kind": "lwcImportSpecifier",
+                      "sourceKeys": {
+                        "objectKey": "importSpecifier_57f8f99676f647b3",
+                        "sourceKey": "importSpecifier_4f8a2a7fb5965936"
+                      },
+                      "specifierType": "named",
+                      "local": "formatAmount",
+                      "imported": "formatAmount",
+                      "typeOnly": false
+                    }
+                  ],
+                  "typeOnly": false,
+                  "component": "c/utils"
+                }
+              ],
+              "component": {
+                "kind": "lwcComponent",
+                "sourceKeys": {
+                  "base": {
+                    "objectKey": "classDeclaration_00a9f39587855383",
+                    "sourceKey": "classDeclaration_708d48e56a9247e0"
+                  },
+                  "name": {
+                    "objectKey": "identifier_cffe0c346a2f7e60",
+                    "sourceKey": "identifier_5cc18900adc0c4ed"
+                  }
+                },
+                "name": "AccountRow",
+                "extend": "LightningElement",
+                "mixins": [],
+                "block": [
+                  {
+                    "kind": "lwcField",
+                    "sourceKeys": {
+                      "base": {
+                        "objectKey": "classProperty_8bc008611d354fb8",
+                        "sourceKey": "classProperty_8467314cc28e0ab2"
+                      },
+                      "name": {
+                        "objectKey": "identifier_c25976542b0871f8",
+                        "sourceKey": "identifier_162661872606055d"
+                      }
+                    },
+                    "name": "recordId",
+                    "variantType": {
+                      "kind": "lwcType",
+                      "sourceKeys": {
+                        "objectKey": "tSStringKeyword_7d896e6512bf9cb2",
+                        "sourceKey": "tSStringKeyword_466faa2ace4db0d3"
+                      },
+                      "text": "string",
+                      "type": "primitive",
+                      "primitiveType": "string"
+                    },
+                    "references": [],
+                    "optional": false,
+                    "modifier": {
+                      "decorator": [
+                        {
+                          "kind": "lwcDecorator",
+                          "sourceKeys": {
+                            "objectKey": "decorator_1332fed18f380344",
+                            "sourceKey": "decorator_cbae0e017b91ddec"
+                          },
+                          "name": "api",
+                          "arg": []
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "kind": "lwcField",
+                    "sourceKeys": {
+                      "base": {
+                        "objectKey": "classProperty_2b7282184d04a642",
+                        "sourceKey": "classProperty_40d61b52593fa7d3"
+                      },
+                      "name": {
+                        "objectKey": "identifier_794b5ff81fdd3d0b",
+                        "sourceKey": "identifier_fc72ff2e72f14069"
+                      }
+                    },
+                    "name": "name",
+                    "variantType": {
+                      "kind": "lwcType",
+                      "sourceKeys": {
+                        "objectKey": "tSStringKeyword_7d896e6512bf9cb2",
+                        "sourceKey": "tSStringKeyword_e7b637aac420a4a5"
+                      },
+                      "text": "string",
+                      "type": "primitive",
+                      "primitiveType": "string"
+                    },
+                    "init": "''",
+                    "references": [],
+                    "optional": false,
+                    "modifier": {
+                      "decorator": [
+                        {
+                          "kind": "lwcDecorator",
+                          "sourceKeys": {
+                            "objectKey": "decorator_1332fed18f380344",
+                            "sourceKey": "decorator_b1ef85a1a2ad63a8"
+                          },
+                          "name": "api",
+                          "arg": []
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "kind": "lwcField",
+                    "sourceKeys": {
+                      "base": {
+                        "objectKey": "classProperty_1c32685475aafaf3",
+                        "sourceKey": "classProperty_86b2df10ce902a26"
+                      },
+                      "name": {
+                        "objectKey": "identifier_7cada69a1cb7248a",
+                        "sourceKey": "identifier_c7fb7798e746462d"
+                      }
+                    },
+                    "name": "amount",
+                    "variantType": {
+                      "kind": "lwcType",
+                      "sourceKeys": {
+                        "objectKey": "tSNumberKeyword_850ba0354605a53c",
+                        "sourceKey": "tSNumberKeyword_579064a0403c6288"
+                      },
+                      "text": "number",
+                      "type": "primitive",
+                      "primitiveType": "number"
+                    },
+                    "references": [],
+                    "optional": true,
+                    "modifier": {
+                      "decorator": [
+                        {
+                          "kind": "lwcDecorator",
+                          "sourceKeys": {
+                            "objectKey": "decorator_1332fed18f380344",
+                            "sourceKey": "decorator_9b9b6048eb6ceee9"
+                          },
+                          "name": "api",
+                          "arg": []
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "kind": "lwcProperty",
+                    "sourceKeys": {
+                      "base": {
+                        "objectKey": "classMethod_4fc1a6d22ebc9323",
+                        "sourceKey": "classMethod_2daccc555f6b74b9"
+                      },
+                      "name": {
+                        "objectKey": "identifier_af6b343ccd97d574",
+                        "sourceKey": "identifier_8e91b0ab16e7a03c"
+                      }
+                    },
+                    "name": "formattedAmount",
+                    "isGetter": true,
+                    "isSetter": false,
+                    "getterContent": {
+                      "modifier": {},
+                      "body": {
+                        "kind": "lwcBody",
+                        "sourceKeys": {
+                          "objectKey": "blockStatement_a41d45160824d19c",
+                          "sourceKey": "blockStatement_92eda454d3325ed5"
+                        },
+                        "statements": 1
+                      },
+                      "calls": [],
+                      "events": []
+                    },
+                    "variantType": {
+                      "kind": "lwcType",
+                      "sourceKeys": {
+                        "objectKey": "tSStringKeyword_7d896e6512bf9cb2",
+                        "sourceKey": "tSStringKeyword_0a75a8439baa2b61"
+                      },
+                      "text": "string",
+                      "type": "primitive",
+                      "primitiveType": "string"
+                    }
+                  },
+                  {
+                    "kind": "lwcMethod",
+                    "sourceKeys": {
+                      "base": {
+                        "objectKey": "classMethod_9a38d9519a125f26",
+                        "sourceKey": "classMethod_c84d7d5323911274"
+                      },
+                      "name": {
+                        "objectKey": "identifier_dcde58226c3bac1f",
+                        "sourceKey": "identifier_be0278750f5d3c25"
+                      }
+                    },
+                    "name": "handleClick",
+                    "returnType": {
+                      "kind": "lwcType",
+                      "sourceKeys": {
+                        "objectKey": "tSVoidKeyword_9a0d7732e44e61dc",
+                        "sourceKey": "tSVoidKeyword_4d7de40c6a5c7e36"
+                      },
+                      "text": "void",
+                      "type": "primitive",
+                      "primitiveType": "void"
+                    },
+                    "param": [],
+                    "async": false,
+                    "modifier": {},
+                    "body": {
+                      "kind": "lwcBody",
+                      "sourceKeys": {
+                        "objectKey": "blockStatement_c5960df13e40c533",
+                        "sourceKey": "blockStatement_619e2b3b9b06ca99"
+                      },
+                      "statements": 1
+                    },
+                    "calls": [
+                      {
+                        "kind": "lwcCall",
+                        "sourceKeys": {
+                          "objectKey": "callExpression_5b1f20fa19eed058",
+                          "sourceKey": "callExpression_1a4ee75931a883b5"
+                        },
+                        "callType": "dispatchEvent",
+                        "target": "CustomEvent",
+                        "arg": [
+                          "new CustomEvent('select', { detail: { recordId: this.recordId } })"
+                        ],
+                        "references": []
+                      }
+                    ],
+                    "events": [
+                      {
+                        "kind": "lwcEvent",
+                        "sourceKeys": {
+                          "objectKey": "newExpression_8a4045b9037aca43",
+                          "sourceKey": "newExpression_eb4fdb97b55510fd"
+                        },
+                        "name": "select",
+                        "detail": "{ recordId: this.recordId }"
+                      }
+                    ]
+                  }
+                ]
+              },
+              "otherExports": [],
+              "declarations": [],
+              "typeDeclarations": [],
+              "errors": []
+            }
+          }
+        ],
+        "skippedFiles": []
+      }
+    }
+  },
+  {
+    "id": "broken",
+    "status": "unchanged",
+    "filePath": {
+      "before": "before/broken",
+      "after": "after/broken"
+    },
+    "dataType": "lwcBundle",
+    "resolvedError": [
+      {
+        "status": "unchanged",
+        "match": "identical",
+        "index": {
+          "before": 0,
+          "after": 0
+        },
+        "value": {
+          "sourceKeys": {
+            "objectKey": "error_ff8d73c0531523e7",
+            "sourceKey": "error_40e44dbeb28b6379"
+          },
+          "phase": "lwc",
+          "code": "LWC1093",
+          "level": "error",
+          "contextType": "LWC1093",
+          "errorMessage": "@api method or property cannot be used with @track",
+          "context": "@api",
+          "start": {
+            "offset": 112,
+            "line": 4,
+            "column": 4
+          },
+          "end": {
+            "offset": 116,
+            "line": 4,
+            "column": 8
+          },
+          "filePath": "broken/broken.ts"
+        }
+      }
+    ],
+    "content": {
+      "status": "unchanged",
+      "value": {
+        "name": "broken",
+        "namespace": "c",
+        "modules": [
+          {
+            "fileName": "broken.ts",
+            "main": true,
+            "module": {
+              "fileType": "ts",
+              "imports": [
+                {
+                  "kind": "lwcImport",
+                  "sourceKeys": {
+                    "objectKey": "importDeclaration_de898917de382c78",
+                    "sourceKey": "importDeclaration_1fed2c593684ea24"
+                  },
+                  "source": "lwc",
+                  "category": "lwc",
+                  "specifiers": [
+                    {
+                      "kind": "lwcImportSpecifier",
+                      "sourceKeys": {
+                        "objectKey": "importSpecifier_cfa9b55daa09bb3a",
+                        "sourceKey": "importSpecifier_3d5a19413b2aa336"
+                      },
+                      "specifierType": "named",
+                      "local": "LightningElement",
+                      "imported": "LightningElement",
+                      "typeOnly": false
+                    },
+                    {
+                      "kind": "lwcImportSpecifier",
+                      "sourceKeys": {
+                        "objectKey": "importSpecifier_0b0d904086d94cfc",
+                        "sourceKey": "importSpecifier_e9eba784067951c9"
+                      },
+                      "specifierType": "named",
+                      "local": "api",
+                      "imported": "api",
+                      "typeOnly": false
+                    },
+                    {
+                      "kind": "lwcImportSpecifier",
+                      "sourceKeys": {
+                        "objectKey": "importSpecifier_5d2c36b5f9af2c7e",
+                        "sourceKey": "importSpecifier_0c7329e473ff337a"
+                      },
+                      "specifierType": "named",
+                      "local": "track",
+                      "imported": "track",
+                      "typeOnly": false
+                    }
+                  ],
+                  "typeOnly": false
+                }
+              ],
+              "component": {
+                "kind": "lwcComponent",
+                "sourceKeys": {
+                  "base": {
+                    "objectKey": "classDeclaration_faee3e27b8dd7c04",
+                    "sourceKey": "classDeclaration_a03e602956c9d56d"
+                  },
+                  "name": {
+                    "objectKey": "identifier_b3091273d93d49ea",
+                    "sourceKey": "identifier_b79a23af7140afca"
+                  }
+                },
+                "name": "Broken",
+                "extend": "LightningElement",
+                "mixins": [],
+                "block": [
+                  {
+                    "kind": "lwcField",
+                    "sourceKeys": {
+                      "base": {
+                        "objectKey": "classProperty_a229db5fadcd8d24",
+                        "sourceKey": "classProperty_ee0277806011b964"
+                      },
+                      "name": {
+                        "objectKey": "identifier_d2114d204cdd1232",
+                        "sourceKey": "identifier_379a701265ffe98b"
+                      }
+                    },
+                    "name": "value",
+                    "variantType": {
+                      "kind": "lwcType",
+                      "sourceKeys": {
+                        "objectKey": "tSStringKeyword_7d896e6512bf9cb2",
+                        "sourceKey": "tSStringKeyword_27be31612b5d8b6f"
+                      },
+                      "text": "string",
+                      "type": "primitive",
+                      "primitiveType": "string"
+                    },
+                    "init": "''",
+                    "references": [],
+                    "optional": false,
+                    "modifier": {
+                      "decorator": [
+                        {
+                          "kind": "lwcDecorator",
+                          "sourceKeys": {
+                            "objectKey": "decorator_1332fed18f380344",
+                            "sourceKey": "decorator_4c884ed06765a036"
+                          },
+                          "name": "api",
+                          "arg": []
+                        },
+                        {
+                          "kind": "lwcDecorator",
+                          "sourceKeys": {
+                            "objectKey": "decorator_81ed15e86f6c2163",
+                            "sourceKey": "decorator_ff669d8b308916b6"
+                          },
+                          "name": "track",
+                          "arg": []
+                        }
+                      ]
+                    }
+                  }
+                ]
+              },
+              "otherExports": [],
+              "declarations": [],
+              "typeDeclarations": [],
+              "errors": []
+            }
+          }
+        ],
+        "skippedFiles": []
+      }
+    }
+  },
+  {
+    "id": "newBanner",
+    "status": "added",
+    "filePath": {
+      "after": "after/newBanner"
+    },
+    "dataType": {
+      "after": "lwcBundle"
+    },
+    "resolvedError": []
+  },
+  {
+    "id": "oldBanner",
+    "status": "removed",
+    "filePath": {
+      "before": "before/oldBanner"
+    },
+    "dataType": {
+      "before": "lwcBundle"
+    },
+    "resolvedError": []
+  },
+  {
+    "id": "utils",
+    "status": "changed",
+    "filePath": {
+      "before": "before/utils",
+      "after": "after/utils"
+    },
+    "dataType": "lwcBundle",
+    "resolvedError": [
+      {
+        "status": "added",
+        "index": 0,
+        "value": {
+          "sourceKeys": {
+            "objectKey": "error_b4d411a683d7a7f2",
+            "sourceKey": "error_2c5834585cc50657"
+          },
+          "phase": "lwc",
+          "code": "TS_UNSUPPORTED",
+          "level": "error",
+          "contextType": "enum",
+          "errorMessage": "enum は型を空白にできないため、LWC の検証をしていません",
+          "context": "enum ViewKind {\n    Table,\n    Tile,\n}",
+          "start": {
+            "offset": 165,
+            "line": 10,
+            "column": 7
+          },
+          "end": {
+            "offset": 203,
+            "line": 13,
+            "column": 1
+          },
+          "filePath": "utils/utils.ts"
+        }
+      }
+    ],
+    "content": {
+      "status": "changed",
+      "fields": {
+        "name": {
+          "status": "unchanged",
+          "value": "utils"
+        },
+        "namespace": {
+          "status": "unchanged",
+          "value": "c"
+        },
+        "modules": [
+          {
+            "status": "changed",
+            "fields": {
+              "fileName": {
+                "status": "unchanged",
+                "value": "utils.ts"
+              },
+              "main": {
+                "status": "unchanged",
+                "value": true
+              },
+              "module": {
+                "status": "changed",
+                "fields": {
+                  "fileType": {
+                    "status": "unchanged",
+                    "value": "ts"
+                  },
+                  "imports": [],
+                  "otherExports": [
+                    {
+                      "status": "unchanged",
+                      "match": "identical",
+                      "index": {
+                        "before": 0,
+                        "after": 0
+                      },
+                      "value": "formatAmount"
+                    },
+                    {
+                      "status": "unchanged",
+                      "match": "identical",
+                      "index": {
+                        "before": 1,
+                        "after": 1
+                      },
+                      "value": "toRows"
+                    }
+                  ],
+                  "declarations": [
+                    {
+                      "kind": "lwcDeclaration",
+                      "sourceKeys": {
+                        "base": {
+                          "objectKey": "variableDeclarator_f65688039df0f49d",
+                          "sourceKey": {
+                            "before": "variableDeclarator_6aac85db4c6007ff",
+                            "after": "variableDeclarator_16aa2915d8ab2816"
+                          }
+                        },
+                        "name": {
+                          "objectKey": "identifier_8a9c1da14f1ed521",
+                          "sourceKey": {
+                            "before": "identifier_482c3bacf70d3222",
+                            "after": "identifier_6292a2379f14c028"
+                          }
+                        }
+                      },
+                      "status": "unchanged",
+                      "value": {
+                        "name": "formatter",
+                        "declarationType": "variable",
+                        "exported": false,
+                        "variableKind": "const",
+                        "init": "new Intl.NumberFormat('ja-JP', { style: 'currency', currency: 'JPY' })",
+                        "references": [],
+                        "calls": [],
+                        "events": []
+                      },
+                      "index": {
+                        "before": 0,
+                        "after": 0
+                      }
+                    },
+                    {
+                      "kind": "lwcDeclaration",
+                      "sourceKeys": {
+                        "base": {
+                          "objectKey": "variableDeclarator_8a489a81e20fee35",
+                          "sourceKey": {
+                            "before": "variableDeclarator_bef3791e426b0c63",
+                            "after": "variableDeclarator_3d05eb6f9b3bb55f"
+                          }
+                        },
+                        "name": {
+                          "objectKey": "identifier_49afe1afd36a4078",
+                          "sourceKey": {
+                            "before": "identifier_0fa040a60969d570",
+                            "after": "identifier_1b168443823e4402"
+                          }
+                        }
+                      },
+                      "status": "unchanged",
+                      "value": {
+                        "name": "formatAmount",
+                        "declarationType": "function",
+                        "exported": true,
+                        "variableKind": "const",
+                        "init": "(value: number): string => formatter.format(value)",
+                        "references": [],
+                        "param": [
+                          {
+                            "kind": "lwcParameter",
+                            "sourceKeys": {
+                              "objectKey": "identifier_9f32480a85ee8cbc",
+                              "sourceKey": "identifier_7e62148bbc1242a4"
+                            },
+                            "variant": "value",
+                            "variantType": {
+                              "kind": "lwcType",
+                              "sourceKeys": {
+                                "objectKey": "tSNumberKeyword_850ba0354605a53c",
+                                "sourceKey": "tSNumberKeyword_08b904dd7cec6830"
+                              },
+                              "text": "number",
+                              "type": "primitive",
+                              "primitiveType": "number"
+                            },
+                            "optional": false,
+                            "modifier": {}
+                          }
+                        ],
+                        "returnType": {
+                          "kind": "lwcType",
+                          "sourceKeys": {
+                            "objectKey": "tSStringKeyword_7d896e6512bf9cb2",
+                            "sourceKey": "tSStringKeyword_bc09120f0cf4f075"
+                          },
+                          "text": "string",
+                          "type": "primitive",
+                          "primitiveType": "string"
+                        },
+                        "async": false,
+                        "calls": [],
+                        "events": []
+                      },
+                      "index": {
+                        "before": 1,
+                        "after": 1
+                      }
+                    },
+                    {
+                      "kind": "lwcDeclaration",
+                      "sourceKeys": {
+                        "base": {
+                          "objectKey": {
+                            "before": "functionDeclaration_eb3de573e12cf112",
+                            "after": "functionDeclaration_69561563bfe28126"
+                          },
+                          "sourceKey": {
+                            "before": "functionDeclaration_e282287da472c05c",
+                            "after": "functionDeclaration_0a79353f1fa514e6"
+                          }
+                        },
+                        "name": {
+                          "objectKey": "identifier_925385912fc381e3",
+                          "sourceKey": {
+                            "before": "identifier_d67de407701abb38",
+                            "after": "identifier_d55f733ebcaa304a"
+                          }
+                        }
+                      },
+                      "status": "changed",
+                      "match": "key",
+                      "fields": {
+                        "name": {
+                          "status": "unchanged",
+                          "value": "toRows"
+                        },
+                        "declarationType": {
+                          "status": "unchanged",
+                          "value": "function"
+                        },
+                        "exported": {
+                          "status": "unchanged",
+                          "value": true
+                        },
+                        "references": [],
+                        "param": [
+                          {
+                            "kind": "lwcParameter",
+                            "sourceKeys": {
+                              "objectKey": "identifier_20f9ab4dba687de5",
+                              "sourceKey": {
+                                "before": "identifier_9f1c8dafbdba0c5a",
+                                "after": "identifier_0838790aa54880ae"
+                              }
+                            },
+                            "status": "unchanged",
+                            "value": {
+                              "variant": "records",
+                              "variantType": {
+                                "kind": "lwcType",
+                                "sourceKeys": {
+                                  "objectKey": "tSArrayType_ce4850b36acab81e",
+                                  "sourceKey": "tSArrayType_63b47a652f23eea8"
+                                },
+                                "text": "unknown[]",
+                                "type": "array",
+                                "elementType": {
+                                  "type": "primitive",
+                                  "primitiveType": "unknown"
+                                }
+                              },
+                              "optional": false,
+                              "modifier": {}
+                            },
+                            "index": {
+                              "before": 0,
+                              "after": 0
+                            }
+                          },
+                          {
+                            "kind": "lwcParameter",
+                            "sourceKeys": {
+                              "objectKey": "assignmentPattern_1e1f4463250baed3",
+                              "sourceKey": "assignmentPattern_10e0b0ff204b53ae"
+                            },
+                            "status": "added",
+                            "index": 1,
+                            "value": {
+                              "variant": "limit",
+                              "variantType": {
+                                "kind": "lwcType",
+                                "sourceKeys": {
+                                  "objectKey": "tSNumberKeyword_850ba0354605a53c",
+                                  "sourceKey": "tSNumberKeyword_c11b27c79e517021"
+                                },
+                                "text": "number",
+                                "type": "primitive",
+                                "primitiveType": "number"
+                              },
+                              "optional": true,
+                              "modifier": {}
+                            }
+                          }
+                        ],
+                        "returnType": {
+                          "kind": "lwcType",
+                          "sourceKeys": {
+                            "objectKey": "tSArrayType_51482b37f75b8a92",
+                            "sourceKey": {
+                              "before": "tSArrayType_2dff81cc0b3b1ab0",
+                              "after": "tSArrayType_44ba7b2e873405e0"
+                            }
+                          },
+                          "status": "unchanged",
+                          "value": {
+                            "text": "Row[]",
+                            "type": "array",
+                            "elementType": {
+                              "type": "custom",
+                              "customType": "Row"
+                            }
+                          }
+                        },
+                        "async": {
+                          "status": "unchanged",
+                          "value": false
+                        },
+                        "body": {
+                          "kind": "lwcBody",
+                          "sourceKeys": {
+                            "objectKey": {
+                              "before": "blockStatement_d3992862670e7739",
+                              "after": "blockStatement_da2fb7941e8e7d70"
+                            },
+                            "sourceKey": {
+                              "before": "blockStatement_d303f4a8065ded5a",
+                              "after": "blockStatement_fe728561035f64fa"
+                            }
+                          },
+                          "status": "changed",
+                          "match": "slot",
+                          "fields": {
+                            "statements": {
+                              "status": "unchanged",
+                              "value": 1
+                            }
+                          }
+                        },
+                        "calls": [],
+                        "events": []
+                      },
+                      "index": {
+                        "before": 2,
+                        "after": 2
+                      }
+                    }
+                  ],
+                  "typeDeclarations": [
+                    {
+                      "kind": "lwcTypeDeclaration",
+                      "sourceKeys": {
+                        "base": {
+                          "objectKey": {
+                            "before": "tSTypeAliasDeclaration_a0bacadd1d053a14",
+                            "after": "tSTypeAliasDeclaration_2b4f152ebc3427f5"
+                          },
+                          "sourceKey": {
+                            "before": "tSTypeAliasDeclaration_d57db630c4317e3c",
+                            "after": "tSTypeAliasDeclaration_8085b692e1e57ed2"
+                          }
+                        },
+                        "name": {
+                          "objectKey": "identifier_80e2c43dd1afd3e4",
+                          "sourceKey": "identifier_7285102c40b1ebdb"
+                        }
+                      },
+                      "status": "changed",
+                      "match": "key",
+                      "fields": {
+                        "name": {
+                          "status": "unchanged",
+                          "value": "SortDirection"
+                        },
+                        "declarationType": {
+                          "status": "unchanged",
+                          "value": "type"
+                        },
+                        "exported": {
+                          "status": "unchanged",
+                          "value": true
+                        },
+                        "variantType": {
+                          "kind": "lwcType",
+                          "sourceKeys": {
+                            "objectKey": {
+                              "before": "tSUnionType_0b0d62301e34967b",
+                              "after": "tSUnionType_9be97062dffc884f"
+                            },
+                            "sourceKey": {
+                              "before": "tSUnionType_3b543bc82d404c6c",
+                              "after": "tSUnionType_e1a5e179314f5b8b"
+                            }
+                          },
+                          "status": "changed",
+                          "before": {
+                            "text": "'asc' | 'desc'",
+                            "type": "union",
+                            "types": [
+                              {
+                                "type": "literal",
+                                "value": "'asc'"
+                              },
+                              {
+                                "type": "literal",
+                                "value": "'desc'"
+                              }
+                            ]
+                          },
+                          "after": {
+                            "text": "'asc' | 'desc' | 'none'",
+                            "type": "union",
+                            "types": [
+                              {
+                                "type": "literal",
+                                "value": "'asc'"
+                              },
+                              {
+                                "type": "literal",
+                                "value": "'desc'"
+                              },
+                              {
+                                "type": "literal",
+                                "value": "'none'"
+                              }
+                            ]
+                          }
+                        }
+                      },
+                      "index": {
+                        "before": 0,
+                        "after": 0
+                      }
+                    },
+                    {
+                      "kind": "lwcTypeDeclaration",
+                      "sourceKeys": {
+                        "base": {
+                          "objectKey": {
+                            "before": "tSInterfaceDeclaration_b8ac15cba2822eaa",
+                            "after": "tSInterfaceDeclaration_b7a41c12eae7cdd7"
+                          },
+                          "sourceKey": {
+                            "before": "tSInterfaceDeclaration_94fce7719c5fb9c7",
+                            "after": "tSInterfaceDeclaration_99e56e61201c064d"
+                          }
+                        },
+                        "name": {
+                          "objectKey": "identifier_2c0d40586af0a136",
+                          "sourceKey": {
+                            "before": "identifier_a19f7ed74b7676a6",
+                            "after": "identifier_76677c85a714b38a"
+                          }
+                        }
+                      },
+                      "status": "changed",
+                      "match": "key",
+                      "fields": {
+                        "name": {
+                          "status": "unchanged",
+                          "value": "Row"
+                        },
+                        "declarationType": {
+                          "status": "unchanged",
+                          "value": "interface"
+                        },
+                        "exported": {
+                          "status": "unchanged",
+                          "value": true
+                        },
+                        "members": [
+                          {
+                            "status": "unchanged",
+                            "match": "identical",
+                            "index": {
+                              "before": 0,
+                              "after": 0
+                            },
+                            "value": {
+                              "name": "id",
+                              "memberType": {
+                                "type": "primitive",
+                                "primitiveType": "string"
+                              },
+                              "optional": false,
+                              "method": false
+                            }
+                          },
+                          {
+                            "status": "unchanged",
+                            "match": "identical",
+                            "index": {
+                              "before": 1,
+                              "after": 1
+                            },
+                            "value": {
+                              "name": "name",
+                              "memberType": {
+                                "type": "primitive",
+                                "primitiveType": "string"
+                              },
+                              "optional": false,
+                              "method": false
+                            }
+                          },
+                          {
+                            "status": "unchanged",
+                            "match": "identical",
+                            "index": {
+                              "before": 2,
+                              "after": 2
+                            },
+                            "value": {
+                              "name": "amount",
+                              "memberType": {
+                                "type": "primitive",
+                                "primitiveType": "number"
+                              },
+                              "optional": true,
+                              "method": false
+                            }
+                          },
+                          {
+                            "status": "added",
+                            "index": 3,
+                            "value": {
+                              "name": "industry",
+                              "memberType": {
+                                "type": "primitive",
+                                "primitiveType": "string"
+                              },
+                              "optional": true,
+                              "method": false
+                            }
+                          }
+                        ]
+                      },
+                      "index": {
+                        "before": 1,
+                        "after": 1
+                      }
+                    },
+                    {
+                      "kind": "lwcTypeDeclaration",
+                      "sourceKeys": {
+                        "base": {
+                          "objectKey": "tSEnumDeclaration_99b1a3130da3455b",
+                          "sourceKey": "tSEnumDeclaration_6ed577bebdbf13b3"
+                        },
+                        "name": {
+                          "objectKey": "identifier_a5a4dd4ebc76edec",
+                          "sourceKey": "identifier_dea04ef78f32a5c8"
+                        }
+                      },
+                      "status": "added",
+                      "index": 2,
+                      "value": {
+                        "name": "ViewKind",
+                        "exported": true,
+                        "declarationType": "enum",
+                        "enumMembers": [
+                          "Table",
+                          "Tile"
+                        ]
+                      }
+                    }
+                  ],
+                  "errors": []
+                }
+              }
+            },
+            "match": "key",
+            "index": {
+              "before": 0,
+              "after": 0
+            }
+          }
+        ],
+        "skippedFiles": []
+      }
+    }
+  }
+]

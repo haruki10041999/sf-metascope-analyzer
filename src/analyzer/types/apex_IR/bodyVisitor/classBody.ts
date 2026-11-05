@@ -7,7 +7,7 @@ import {
     DeclarationVisitor,
     isClassBodyDeclarationType,
 } from '../declarationVisitor';
-import { ApexErrorTypeClass, ApexCommonTypeClass, isApexValidClassList } from '../commonVisitor';
+import { ApexErrorTypeClass, ApexCommonTypeClass, visitNodeList } from '../commonVisitor';
 
 export class ClassBodyTypeClass extends BodyTypeClass<'classBody', ClassBodyDeclarationTypeClass> {
     private constructor(value: (ClassBodyDeclarationTypeClass | ApexErrorTypeClass)[]) {
@@ -16,9 +16,9 @@ export class ClassBodyTypeClass extends BodyTypeClass<'classBody', ClassBodyDecl
 
     static create(ctx: ClassBodyContext): ClassBodyTypeClass {
         return new ClassBodyTypeClass(
-            isApexValidClassList(
+            visitNodeList(
+                new DeclarationVisitor(),
                 ctx.classBodyDeclaration_list(),
-                (ctx) => new DeclarationVisitor().visit(ctx),
                 isClassBodyDeclarationType,
                 'classBodyDeclaration',
             ),

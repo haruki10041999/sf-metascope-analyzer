@@ -1,13 +1,31 @@
 import { isBooleanLiteral, type BooleanLiteral } from '@babel/types';
 import { EvaluatePair, LwcCommonTypeClass, makeEvaluatePair } from '../commonVisitor';
 
+export type BooleanLiteralFields = {
+    value: BooleanLiteral['value'];
+};
+
 export class BooleanLiteralTypeClass extends LwcCommonTypeClass<'booleanLiteral'> {
-    private constructor(originalSource: string) {
-        super('booleanLiteral', originalSource);
+    private readonly value: BooleanLiteralFields;
+
+    private constructor(value: BooleanLiteralFields) {
+        super('booleanLiteral');
+        this.value = value;
     }
 
     static create(target: BooleanLiteral, originalSource: string): BooleanLiteralTypeClass {
-        throw new Error('BooleanLiteralTypeClass.create is not implemented: ' + target.type);
+        return new BooleanLiteralTypeClass({
+            value: target.value,
+        });
+    }
+
+    /** すべてのフィールド (Babel の value フィールドの getter getValue() と区別する。getChildNodes もこれから作る) */
+    override getFields(): BooleanLiteralFields {
+        return this.value;
+    }
+
+    getValue(): BooleanLiteralFields['value'] {
+        return this.value.value;
     }
 }
 

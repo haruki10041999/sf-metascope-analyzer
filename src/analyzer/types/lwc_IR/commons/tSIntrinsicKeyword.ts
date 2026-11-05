@@ -2,12 +2,15 @@ import { isTSIntrinsicKeyword, type TSIntrinsicKeyword } from '@babel/types';
 import { EvaluatePair, LwcCommonTypeClass, makeEvaluatePair } from '../commonVisitor';
 
 export class TSIntrinsicKeywordTypeClass extends LwcCommonTypeClass<'tSIntrinsicKeyword'> {
-    private constructor(originalSource: string) {
-        super('tSIntrinsicKeyword', originalSource);
+    private constructor() {
+        super('tSIntrinsicKeyword');
     }
 
-    static create(target: TSIntrinsicKeyword, originalSource: string): TSIntrinsicKeywordTypeClass {
-        throw new Error('TSIntrinsicKeywordTypeClass.create is not implemented: ' + target.type);
+    static create(
+        _target: TSIntrinsicKeyword,
+        _originalSource: string,
+    ): TSIntrinsicKeywordTypeClass {
+        return new TSIntrinsicKeywordTypeClass();
     }
 }
 

@@ -16,8 +16,8 @@ import { NormalModifierTypeClass, ModifierVisitor, isNormalModifierType } from '
 import {
     ApexErrorTypeClass,
     ApexCommonTypeClass,
-    isApexValidClass,
-    isApexValidClassList,
+    visitNodeList,
+    visitNode,
 } from '../commonVisitor';
 
 export class TriggerBlockMemberTypeClass extends MemberTypeClass<
@@ -38,19 +38,21 @@ export class TriggerBlockMemberTypeClass extends MemberTypeClass<
 
         return new TriggerBlockMemberTypeClass(
             ctx.triggerMemberDeclaration()
-                ? isApexValidClass(
-                      new DeclarationVisitor().visit(ctx.triggerMemberDeclaration()),
+                ? visitNode(
+                      new DeclarationVisitor(),
+                      ctx.triggerMemberDeclaration(),
                       isTriggerMemberDeclarationType,
                       'triggerMemberDeclaration',
                   )
-                : isApexValidClass(
-                      new StatementVisitor().visit(ctx.statement()),
+                : visitNode(
+                      new StatementVisitor(),
+                      ctx.statement(),
                       isNormalStatementType,
                       'statement',
                   ),
-            isApexValidClassList(
+            visitNodeList(
+                new ModifierVisitor(),
                 ctx.modifier_list(),
-                (ctx) => new ModifierVisitor().visit(ctx),
                 isNormalModifierType,
                 'modifier',
             ),
@@ -63,4 +65,3 @@ export const isTriggerBlockMemberType = (
 ): target is TriggerBlockMemberTypeClass => {
     return target instanceof TriggerBlockMemberTypeClass;
 };
-

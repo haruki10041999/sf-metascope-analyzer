@@ -7,7 +7,7 @@ import {
     SingleOperatorExpressionTypeClass,
 } from '.';
 
-import { ApexErrorTypeClass, ApexCommonTypeClass, isApexValidClass } from '../commonVisitor';
+import { ApexErrorTypeClass, ApexCommonTypeClass, visitNode } from '../commonVisitor';
 
 export class NegExpressionTypeClass extends SingleOperatorExpressionTypeClass<
     'negExpression',
@@ -24,8 +24,9 @@ export class NegExpressionTypeClass extends SingleOperatorExpressionTypeClass<
         }
 
         return new NegExpressionTypeClass(
-            isApexValidClass(
-                new ExpressionVisitor().visit(ctx.expression()),
+            visitNode(
+                new ExpressionVisitor(),
+                ctx.expression(),
                 isBasedExpressionType,
                 'expression',
             ),
@@ -39,4 +40,3 @@ export const isNegExpressionType = (
 ): target is NegExpressionTypeClass => {
     return target instanceof NegExpressionTypeClass;
 };
-

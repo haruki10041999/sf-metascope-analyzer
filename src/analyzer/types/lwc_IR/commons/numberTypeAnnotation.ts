@@ -2,15 +2,15 @@ import { isNumberTypeAnnotation, type NumberTypeAnnotation } from '@babel/types'
 import { EvaluatePair, LwcCommonTypeClass, makeEvaluatePair } from '../commonVisitor';
 
 export class NumberTypeAnnotationTypeClass extends LwcCommonTypeClass<'numberTypeAnnotation'> {
-    private constructor(originalSource: string) {
-        super('numberTypeAnnotation', originalSource);
+    private constructor() {
+        super('numberTypeAnnotation');
     }
 
     static create(
-        target: NumberTypeAnnotation,
-        originalSource: string,
+        _target: NumberTypeAnnotation,
+        _originalSource: string,
     ): NumberTypeAnnotationTypeClass {
-        throw new Error('NumberTypeAnnotationTypeClass.create is not implemented: ' + target.type);
+        return new NumberTypeAnnotationTypeClass();
     }
 }
 

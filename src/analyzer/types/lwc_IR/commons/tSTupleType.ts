@@ -1,13 +1,43 @@
 import { isTSTupleType, type TSTupleType } from '@babel/types';
-import { EvaluatePair, LwcCommonTypeClass, makeEvaluatePair } from '../commonVisitor';
+import {
+    EvaluatePair,
+    LwcCommonTypeClass,
+    LwcErrorTypeClass,
+    makeEvaluatePair,
+    visitNodeList,
+} from '../commonVisitor';
+import { tSTypeVisitorEvaluatePairs, type TSTypeTypeClass } from '../tsTypeVisitor';
+
+export type TSTupleTypeFields = {
+    elementTypes: (TSTypeTypeClass | LwcErrorTypeClass)[];
+};
 
 export class TSTupleTypeTypeClass extends LwcCommonTypeClass<'tSTupleType'> {
-    private constructor(originalSource: string) {
-        super('tSTupleType', originalSource);
+    private readonly value: TSTupleTypeFields;
+
+    private constructor(value: TSTupleTypeFields) {
+        super('tSTupleType');
+        this.value = value;
     }
 
     static create(target: TSTupleType, originalSource: string): TSTupleTypeTypeClass {
-        throw new Error('TSTupleTypeTypeClass.create is not implemented: ' + target.type);
+        return new TSTupleTypeTypeClass({
+            elementTypes: visitNodeList(
+                target.elementTypes,
+                originalSource,
+                tSTypeVisitorEvaluatePairs(),
+                'TSTypeVisitor',
+            ),
+        });
+    }
+
+    /** すべてのフィールド (Babel の value フィールドの getter getValue() と区別する。getChildNodes もこれから作る) */
+    override getFields(): TSTupleTypeFields {
+        return this.value;
+    }
+
+    getElementTypes(): TSTupleTypeFields['elementTypes'] {
+        return this.value.elementTypes;
     }
 }
 

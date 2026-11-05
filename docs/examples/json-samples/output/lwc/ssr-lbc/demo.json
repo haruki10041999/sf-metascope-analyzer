@@ -1,0 +1,445 @@
+{
+  "filePath": "docs/examples/lwc/ssr-lbc/modules/c/demo",
+  "resolvedError": [],
+  "dataType": "lwcBundle",
+  "result": {
+    "id": "demo",
+    "base": {
+      "name": "demo",
+      "namespace": "c",
+      "modules": [
+        {
+          "fileName": "demo.js",
+          "main": true,
+          "module": {
+            "fileType": "js",
+            "imports": [
+              {
+                "kind": "lwcImport",
+                "sourceKeys": {
+                  "objectKey": "importDeclaration_ab950e948129c918",
+                  "sourceKey": "importDeclaration_e0948734f056db46"
+                },
+                "source": "lwc",
+                "category": "lwc",
+                "specifiers": [
+                  {
+                    "kind": "lwcImportSpecifier",
+                    "sourceKeys": {
+                      "objectKey": "importSpecifier_f65dea2f17d74260",
+                      "sourceKey": "importSpecifier_3a9f6a7b3afc411c"
+                    },
+                    "specifierType": "named",
+                    "local": "LightningElement",
+                    "imported": "LightningElement",
+                    "typeOnly": false
+                  },
+                  {
+                    "kind": "lwcImportSpecifier",
+                    "sourceKeys": {
+                      "objectKey": "importSpecifier_c927ff2649d93619",
+                      "sourceKey": "importSpecifier_622c13aaa37a5caf"
+                    },
+                    "specifierType": "named",
+                    "local": "api",
+                    "imported": "api",
+                    "typeOnly": false
+                  }
+                ],
+                "typeOnly": false
+              }
+            ],
+            "component": {
+              "kind": "lwcComponent",
+              "sourceKeys": {
+                "base": {
+                  "objectKey": "classDeclaration_b44542251da1236b",
+                  "sourceKey": "classDeclaration_c6891b2bf275cf54"
+                },
+                "name": {
+                  "objectKey": "identifier_2d4da76ca8fa6d17",
+                  "sourceKey": "identifier_f033e0333886dd0c"
+                }
+              },
+              "name": "Demo",
+              "extend": "LightningElement",
+              "mixins": [],
+              "block": [
+                {
+                  "kind": "lwcField",
+                  "sourceKeys": {
+                    "base": {
+                      "objectKey": "classProperty_9e96cb2436da3085",
+                      "sourceKey": "classProperty_e83fae29941ce5f0"
+                    },
+                    "name": {
+                      "objectKey": "identifier_6959baee2e2e9bec",
+                      "sourceKey": "identifier_f56574bbe5b01a61"
+                    }
+                  },
+                  "name": "title",
+                  "init": "'取引先'",
+                  "references": [],
+                  "optional": false,
+                  "modifier": {
+                    "decorator": [
+                      {
+                        "kind": "lwcDecorator",
+                        "sourceKeys": {
+                          "objectKey": "decorator_1332fed18f380344",
+                          "sourceKey": "decorator_1c2c4169e0b0475d"
+                        },
+                        "name": "api",
+                        "arg": []
+                      }
+                    ]
+                  }
+                },
+                {
+                  "kind": "lwcField",
+                  "sourceKeys": {
+                    "base": {
+                      "objectKey": "classProperty_a3c6ca9c5aabeb90",
+                      "sourceKey": "classProperty_5819bcb458b040fc"
+                    },
+                    "name": {
+                      "objectKey": "identifier_d33f57059b1cc5b9",
+                      "sourceKey": "identifier_383eff295d541ad4"
+                    }
+                  },
+                  "name": "columns",
+                  "init": "[\n        { label: '名前', fieldName: 'Name' },\n        { label: '売上', fieldName: 'Amount', type: 'currency' },\n    ]",
+                  "references": [],
+                  "optional": false,
+                  "modifier": {}
+                },
+                {
+                  "kind": "lwcField",
+                  "sourceKeys": {
+                    "base": {
+                      "objectKey": "classProperty_87229959e733ee4a",
+                      "sourceKey": "classProperty_a00578510424d7a5"
+                    },
+                    "name": {
+                      "objectKey": "identifier_c57a19db53d52a15",
+                      "sourceKey": "identifier_a47b5bdd960c5317"
+                    }
+                  },
+                  "name": "rows",
+                  "init": "[\n        { Id: '1', Name: 'Acme', Amount: 1200 },\n        { Id: '2', Name: '日本商事', Amount: 3400 },\n    ]",
+                  "references": [],
+                  "optional": false,
+                  "modifier": {}
+                },
+                {
+                  "kind": "lwcField",
+                  "sourceKeys": {
+                    "base": {
+                      "objectKey": "classProperty_41715d861849b1a1",
+                      "sourceKey": "classProperty_6c2239c22670c30e"
+                    },
+                    "name": {
+                      "objectKey": "identifier_7d26ee9226bb284b",
+                      "sourceKey": "identifier_f8ac084559ace725"
+                    }
+                  },
+                  "name": "options",
+                  "init": "[\n        { label: '有効', value: 'active' },\n        { label: '無効', value: 'inactive' },\n    ]",
+                  "references": [],
+                  "optional": false,
+                  "modifier": {}
+                }
+              ]
+            },
+            "otherExports": [],
+            "declarations": [],
+            "errors": []
+          }
+        }
+      ],
+      "skippedFiles": []
+    },
+    "sourceObject": [
+      {
+        "objectKey": "importDeclaration_ab950e948129c918",
+        "context": "import { LightningElement, api } from 'lwc';",
+        "source": [
+          {
+            "sourceKey": "importDeclaration_e0948734f056db46",
+            "start": {
+              "offset": 0,
+              "line": 1,
+              "column": 0
+            },
+            "end": {
+              "offset": 44,
+              "line": 1,
+              "column": 44
+            },
+            "filePath": "demo/demo.js"
+          }
+        ]
+      },
+      {
+        "objectKey": "importSpecifier_f65dea2f17d74260",
+        "context": "LightningElement",
+        "source": [
+          {
+            "sourceKey": "importSpecifier_3a9f6a7b3afc411c",
+            "start": {
+              "offset": 9,
+              "line": 1,
+              "column": 9
+            },
+            "end": {
+              "offset": 25,
+              "line": 1,
+              "column": 25
+            },
+            "filePath": "demo/demo.js"
+          }
+        ]
+      },
+      {
+        "objectKey": "importSpecifier_c927ff2649d93619",
+        "context": "api",
+        "source": [
+          {
+            "sourceKey": "importSpecifier_622c13aaa37a5caf",
+            "start": {
+              "offset": 27,
+              "line": 1,
+              "column": 27
+            },
+            "end": {
+              "offset": 30,
+              "line": 1,
+              "column": 30
+            },
+            "filePath": "demo/demo.js"
+          }
+        ]
+      },
+      {
+        "objectKey": "classDeclaration_b44542251da1236b",
+        "context": "class Demo extends LightningElement {\n    @api title = '取引先';\n    columns = [\n        { label: '名前', fieldName: 'Name' },\n        { label: '売上', fieldName: 'Amount', type: 'currency' },\n    ];\n    rows = [\n        { Id: '1', Name: 'Acme', Amount: 1200 },\n        { Id: '2', Name: '日本商事', Amount: 3400 },\n    ];\n    options = [\n        { label: '有効', value: 'active' },\n        { label: '無効', value: 'inactive' },\n    ];\n}",
+        "source": [
+          {
+            "sourceKey": "classDeclaration_c6891b2bf275cf54",
+            "start": {
+              "offset": 60,
+              "line": 2,
+              "column": 15
+            },
+            "end": {
+              "offset": 481,
+              "line": 16,
+              "column": 1
+            },
+            "filePath": "demo/demo.js"
+          }
+        ]
+      },
+      {
+        "objectKey": "identifier_2d4da76ca8fa6d17",
+        "context": "Demo",
+        "source": [
+          {
+            "sourceKey": "identifier_f033e0333886dd0c",
+            "start": {
+              "offset": 66,
+              "line": 2,
+              "column": 21
+            },
+            "end": {
+              "offset": 70,
+              "line": 2,
+              "column": 25
+            },
+            "filePath": "demo/demo.js"
+          }
+        ]
+      },
+      {
+        "objectKey": "classProperty_9e96cb2436da3085",
+        "context": "@api title = '取引先';",
+        "source": [
+          {
+            "sourceKey": "classProperty_e83fae29941ce5f0",
+            "start": {
+              "offset": 102,
+              "line": 3,
+              "column": 4
+            },
+            "end": {
+              "offset": 121,
+              "line": 3,
+              "column": 23
+            },
+            "filePath": "demo/demo.js"
+          }
+        ]
+      },
+      {
+        "objectKey": "identifier_6959baee2e2e9bec",
+        "context": "title",
+        "source": [
+          {
+            "sourceKey": "identifier_f56574bbe5b01a61",
+            "start": {
+              "offset": 107,
+              "line": 3,
+              "column": 9
+            },
+            "end": {
+              "offset": 112,
+              "line": 3,
+              "column": 14
+            },
+            "filePath": "demo/demo.js"
+          }
+        ]
+      },
+      {
+        "objectKey": "decorator_1332fed18f380344",
+        "context": "@api",
+        "source": [
+          {
+            "sourceKey": "decorator_1c2c4169e0b0475d",
+            "start": {
+              "offset": 102,
+              "line": 3,
+              "column": 4
+            },
+            "end": {
+              "offset": 106,
+              "line": 3,
+              "column": 8
+            },
+            "filePath": "demo/demo.js"
+          }
+        ]
+      },
+      {
+        "objectKey": "classProperty_a3c6ca9c5aabeb90",
+        "context": "columns = [\n        { label: '名前', fieldName: 'Name' },\n        { label: '売上', fieldName: 'Amount', type: 'currency' },\n    ];",
+        "source": [
+          {
+            "sourceKey": "classProperty_5819bcb458b040fc",
+            "start": {
+              "offset": 126,
+              "line": 4,
+              "column": 4
+            },
+            "end": {
+              "offset": 252,
+              "line": 7,
+              "column": 6
+            },
+            "filePath": "demo/demo.js"
+          }
+        ]
+      },
+      {
+        "objectKey": "identifier_d33f57059b1cc5b9",
+        "context": "columns",
+        "source": [
+          {
+            "sourceKey": "identifier_383eff295d541ad4",
+            "start": {
+              "offset": 126,
+              "line": 4,
+              "column": 4
+            },
+            "end": {
+              "offset": 133,
+              "line": 4,
+              "column": 11
+            },
+            "filePath": "demo/demo.js"
+          }
+        ]
+      },
+      {
+        "objectKey": "classProperty_87229959e733ee4a",
+        "context": "rows = [\n        { Id: '1', Name: 'Acme', Amount: 1200 },\n        { Id: '2', Name: '日本商事', Amount: 3400 },\n    ];",
+        "source": [
+          {
+            "sourceKey": "classProperty_a00578510424d7a5",
+            "start": {
+              "offset": 257,
+              "line": 8,
+              "column": 4
+            },
+            "end": {
+              "offset": 370,
+              "line": 11,
+              "column": 6
+            },
+            "filePath": "demo/demo.js"
+          }
+        ]
+      },
+      {
+        "objectKey": "identifier_c57a19db53d52a15",
+        "context": "rows",
+        "source": [
+          {
+            "sourceKey": "identifier_a47b5bdd960c5317",
+            "start": {
+              "offset": 257,
+              "line": 8,
+              "column": 4
+            },
+            "end": {
+              "offset": 261,
+              "line": 8,
+              "column": 8
+            },
+            "filePath": "demo/demo.js"
+          }
+        ]
+      },
+      {
+        "objectKey": "classProperty_41715d861849b1a1",
+        "context": "options = [\n        { label: '有効', value: 'active' },\n        { label: '無効', value: 'inactive' },\n    ];",
+        "source": [
+          {
+            "sourceKey": "classProperty_6c2239c22670c30e",
+            "start": {
+              "offset": 375,
+              "line": 12,
+              "column": 4
+            },
+            "end": {
+              "offset": 479,
+              "line": 15,
+              "column": 6
+            },
+            "filePath": "demo/demo.js"
+          }
+        ]
+      },
+      {
+        "objectKey": "identifier_7d26ee9226bb284b",
+        "context": "options",
+        "source": [
+          {
+            "sourceKey": "identifier_f8ac084559ace725",
+            "start": {
+              "offset": 375,
+              "line": 12,
+              "column": 4
+            },
+            "end": {
+              "offset": 382,
+              "line": 12,
+              "column": 11
+            },
+            "filePath": "demo/demo.js"
+          }
+        ]
+      }
+    ]
+  }
+}

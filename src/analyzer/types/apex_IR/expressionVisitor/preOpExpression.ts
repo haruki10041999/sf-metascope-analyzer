@@ -7,7 +7,7 @@ import {
     SingleOperatorExpressionTypeClass,
 } from '.';
 
-import { ApexErrorTypeClass, ApexCommonTypeClass, isApexValidClass } from '../commonVisitor';
+import { ApexErrorTypeClass, ApexCommonTypeClass, visitNode } from '../commonVisitor';
 
 export class PreOpExpressionTypeClass extends SingleOperatorExpressionTypeClass<
     'preOpExpression',
@@ -39,8 +39,9 @@ export class PreOpExpressionTypeClass extends SingleOperatorExpressionTypeClass<
         }
 
         return new PreOpExpressionTypeClass(
-            isApexValidClass(
-                new ExpressionVisitor().visit(ctx.expression()),
+            visitNode(
+                new ExpressionVisitor(),
+                ctx.expression(),
                 isBasedExpressionType,
                 'expression',
             ),
@@ -54,4 +55,3 @@ export const isPreOpExpressionType = (
 ): target is PreOpExpressionTypeClass => {
     return target instanceof PreOpExpressionTypeClass;
 };
-

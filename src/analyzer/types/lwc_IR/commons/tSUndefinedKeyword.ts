@@ -2,12 +2,15 @@ import { isTSUndefinedKeyword, type TSUndefinedKeyword } from '@babel/types';
 import { EvaluatePair, LwcCommonTypeClass, makeEvaluatePair } from '../commonVisitor';
 
 export class TSUndefinedKeywordTypeClass extends LwcCommonTypeClass<'tSUndefinedKeyword'> {
-    private constructor(originalSource: string) {
-        super('tSUndefinedKeyword', originalSource);
+    private constructor() {
+        super('tSUndefinedKeyword');
     }
 
-    static create(target: TSUndefinedKeyword, originalSource: string): TSUndefinedKeywordTypeClass {
-        throw new Error('TSUndefinedKeywordTypeClass.create is not implemented: ' + target.type);
+    static create(
+        _target: TSUndefinedKeyword,
+        _originalSource: string,
+    ): TSUndefinedKeywordTypeClass {
+        return new TSUndefinedKeywordTypeClass();
     }
 }
 

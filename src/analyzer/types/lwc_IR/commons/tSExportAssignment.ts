@@ -1,13 +1,43 @@
 import { isTSExportAssignment, type TSExportAssignment } from '@babel/types';
-import { EvaluatePair, LwcCommonTypeClass, makeEvaluatePair } from '../commonVisitor';
+import {
+    EvaluatePair,
+    LwcCommonTypeClass,
+    LwcErrorTypeClass,
+    makeEvaluatePair,
+    visitNode,
+} from '../commonVisitor';
+import { expressionVisitorEvaluatePairs, type ExpressionTypeClass } from '../expressionVisitor';
+
+export type TSExportAssignmentFields = {
+    expression: ExpressionTypeClass | LwcErrorTypeClass;
+};
 
 export class TSExportAssignmentTypeClass extends LwcCommonTypeClass<'tSExportAssignment'> {
-    private constructor(originalSource: string) {
-        super('tSExportAssignment', originalSource);
+    private readonly value: TSExportAssignmentFields;
+
+    private constructor(value: TSExportAssignmentFields) {
+        super('tSExportAssignment');
+        this.value = value;
     }
 
     static create(target: TSExportAssignment, originalSource: string): TSExportAssignmentTypeClass {
-        throw new Error('TSExportAssignmentTypeClass.create is not implemented: ' + target.type);
+        return new TSExportAssignmentTypeClass({
+            expression: visitNode(
+                target.expression,
+                originalSource,
+                expressionVisitorEvaluatePairs(),
+                'ExpressionVisitor',
+            ),
+        });
+    }
+
+    /** すべてのフィールド (Babel の value フィールドの getter getValue() と区別する。getChildNodes もこれから作る) */
+    override getFields(): TSExportAssignmentFields {
+        return this.value;
+    }
+
+    getExpression(): TSExportAssignmentFields['expression'] {
+        return this.value.expression;
     }
 }
 

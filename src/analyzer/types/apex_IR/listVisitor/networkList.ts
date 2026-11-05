@@ -2,7 +2,7 @@ import { NetworkListContext } from '@apexdevtools/apex-parser';
 
 import { ListTypeClass, ListVisitor } from '.';
 
-import { ApexErrorTypeClass, ApexCommonTypeClass, isApexValidClass } from '../commonVisitor';
+import { ApexErrorTypeClass, ApexCommonTypeClass, visitNode } from '../commonVisitor';
 
 export class NetworkListTypeClass extends ListTypeClass<'networkList', string> {
     private constructor(value: (string | ApexErrorTypeClass)[]) {
@@ -23,8 +23,9 @@ export class NetworkListTypeClass extends ListTypeClass<'networkList', string> {
         }
 
         if (ctx.networkList()) {
-            const nested = isApexValidClass(
-                new ListVisitor().visit(ctx.networkList()),
+            const nested = visitNode(
+                new ListVisitor(),
+                ctx.networkList(),
                 isNetworkListType,
                 'networkList',
             );
@@ -45,4 +46,3 @@ export const isNetworkListType = (
 ): target is NetworkListTypeClass => {
     return target instanceof NetworkListTypeClass;
 };
-

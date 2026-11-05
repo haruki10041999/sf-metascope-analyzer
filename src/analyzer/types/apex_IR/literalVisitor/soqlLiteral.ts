@@ -3,7 +3,7 @@ import { SoqlLiteralContext } from '@apexdevtools/apex-parser';
 import { LiteralTypeClass } from '.';
 
 import { NormalQueryTypeClass, QueryVisitor, isNormalQueryType } from '../queryVisitor';
-import { ApexErrorTypeClass, ApexCommonTypeClass, isApexValidClass } from '../commonVisitor';
+import { ApexErrorTypeClass, ApexCommonTypeClass, visitNode } from '../commonVisitor';
 
 export class SoqlLiteralTypeClass extends LiteralTypeClass<'soqlLiteral', NormalQueryTypeClass> {
     private constructor(value: NormalQueryTypeClass | ApexErrorTypeClass) {
@@ -12,7 +12,7 @@ export class SoqlLiteralTypeClass extends LiteralTypeClass<'soqlLiteral', Normal
 
     static create(ctx: SoqlLiteralContext): SoqlLiteralTypeClass {
         return new SoqlLiteralTypeClass(
-            isApexValidClass(new QueryVisitor().visit(ctx.query()), isNormalQueryType, 'query'),
+            visitNode(new QueryVisitor(), ctx.query(), isNormalQueryType, 'query'),
         );
     }
 }
@@ -22,4 +22,3 @@ export const isSoqlLiteralType = (
 ): target is SoqlLiteralTypeClass => {
     return target instanceof SoqlLiteralTypeClass;
 };
-

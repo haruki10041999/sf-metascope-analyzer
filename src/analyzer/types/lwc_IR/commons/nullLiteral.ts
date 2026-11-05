@@ -2,12 +2,12 @@ import { isNullLiteral, type NullLiteral } from '@babel/types';
 import { EvaluatePair, LwcCommonTypeClass, makeEvaluatePair } from '../commonVisitor';
 
 export class NullLiteralTypeClass extends LwcCommonTypeClass<'nullLiteral'> {
-    private constructor(originalSource: string) {
-        super('nullLiteral', originalSource);
+    private constructor() {
+        super('nullLiteral');
     }
 
-    static create(target: NullLiteral, originalSource: string): NullLiteralTypeClass {
-        throw new Error('NullLiteralTypeClass.create is not implemented: ' + target.type);
+    static create(_target: NullLiteral, _originalSource: string): NullLiteralTypeClass {
+        return new NullLiteralTypeClass();
     }
 }
 

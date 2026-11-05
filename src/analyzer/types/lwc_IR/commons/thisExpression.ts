@@ -2,12 +2,12 @@ import { isThisExpression, type ThisExpression } from '@babel/types';
 import { EvaluatePair, LwcCommonTypeClass, makeEvaluatePair } from '../commonVisitor';
 
 export class ThisExpressionTypeClass extends LwcCommonTypeClass<'thisExpression'> {
-    private constructor(originalSource: string) {
-        super('thisExpression', originalSource);
+    private constructor() {
+        super('thisExpression');
     }
 
-    static create(target: ThisExpression, originalSource: string): ThisExpressionTypeClass {
-        throw new Error('ThisExpressionTypeClass.create is not implemented: ' + target.type);
+    static create(_target: ThisExpression, _originalSource: string): ThisExpressionTypeClass {
+        return new ThisExpressionTypeClass();
     }
 }
 

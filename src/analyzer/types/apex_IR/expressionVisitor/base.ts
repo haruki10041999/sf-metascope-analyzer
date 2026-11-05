@@ -26,7 +26,10 @@ export class ExpressionTypeClass<TName extends string, T> extends ApexCommonType
     }
 }
 
-export class ExpressionListBaseTypeClass<TName extends string, T> extends ApexCommonTypeClass<TName> {
+export class ExpressionListBaseTypeClass<
+    TName extends string,
+    T,
+> extends ApexCommonTypeClass<TName> {
     private value: (T | ApexErrorTypeClass)[];
 
     constructor(type: TName, value: (T | ApexErrorTypeClass)[]) {

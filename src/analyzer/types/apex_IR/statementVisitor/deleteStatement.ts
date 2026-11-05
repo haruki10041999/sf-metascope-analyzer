@@ -12,7 +12,12 @@ import {
     ExpressionVisitor,
     isBasedExpressionType,
 } from '../expressionVisitor';
-import { ApexErrorTypeClass, ApexCommonTypeClass, isApexValidClass } from '../commonVisitor';
+import {
+    ApexErrorTypeClass,
+    ApexCommonTypeClass,
+    visitNode,
+    visitOptionalNode,
+} from '../commonVisitor';
 
 export class DeleteStatementTypeClass extends DmlStatementTypeClass<
     'deleteStatement',
@@ -31,18 +36,18 @@ export class DeleteStatementTypeClass extends DmlStatementTypeClass<
         }
 
         return new DeleteStatementTypeClass(
-            isApexValidClass(
-                new ExpressionVisitor().visit(ctx.expression()),
+            visitNode(
+                new ExpressionVisitor(),
+                ctx.expression(),
                 isBasedExpressionType,
                 'expression',
             ),
-            ctx.accessLevel()
-                ? isApexValidClass(
-                      new StatementVisitor().visit(ctx.accessLevel()),
-                      isAccessLevelType,
-                      'accessLevel',
-                  )
-                : null,
+            visitOptionalNode(
+                new StatementVisitor(),
+                ctx.accessLevel(),
+                isAccessLevelType,
+                'accessLevel',
+            ),
         );
     }
 }
@@ -52,4 +57,3 @@ export const isDeleteStatementType = (
 ): target is DeleteStatementTypeClass => {
     return target instanceof DeleteStatementTypeClass;
 };
-

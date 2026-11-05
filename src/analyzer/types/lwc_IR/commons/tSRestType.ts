@@ -1,13 +1,43 @@
 import { isTSRestType, type TSRestType } from '@babel/types';
-import { EvaluatePair, LwcCommonTypeClass, makeEvaluatePair } from '../commonVisitor';
+import {
+    EvaluatePair,
+    LwcCommonTypeClass,
+    LwcErrorTypeClass,
+    makeEvaluatePair,
+    visitNode,
+} from '../commonVisitor';
+import { tSTypeVisitorEvaluatePairs, type TSTypeTypeClass } from '../tsTypeVisitor';
+
+export type TSRestTypeFields = {
+    typeAnnotation: TSTypeTypeClass | LwcErrorTypeClass;
+};
 
 export class TSRestTypeTypeClass extends LwcCommonTypeClass<'tSRestType'> {
-    private constructor(originalSource: string) {
-        super('tSRestType', originalSource);
+    private readonly value: TSRestTypeFields;
+
+    private constructor(value: TSRestTypeFields) {
+        super('tSRestType');
+        this.value = value;
     }
 
     static create(target: TSRestType, originalSource: string): TSRestTypeTypeClass {
-        throw new Error('TSRestTypeTypeClass.create is not implemented: ' + target.type);
+        return new TSRestTypeTypeClass({
+            typeAnnotation: visitNode(
+                target.typeAnnotation,
+                originalSource,
+                tSTypeVisitorEvaluatePairs(),
+                'TSTypeVisitor',
+            ),
+        });
+    }
+
+    /** すべてのフィールド (Babel の value フィールドの getter getValue() と区別する。getChildNodes もこれから作る) */
+    override getFields(): TSRestTypeFields {
+        return this.value;
+    }
+
+    getTypeAnnotation(): TSRestTypeFields['typeAnnotation'] {
+        return this.value.typeAnnotation;
     }
 }
 

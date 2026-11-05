@@ -1,13 +1,59 @@
 import { isEnumNumberMember, type EnumNumberMember } from '@babel/types';
-import { EvaluatePair, LwcCommonTypeClass, makeEvaluatePair } from '../commonVisitor';
+import {
+    EvaluatePair,
+    LwcCommonTypeClass,
+    LwcErrorTypeClass,
+    lazyPairs,
+    makeEvaluatePair,
+    visitNode,
+} from '../commonVisitor';
+import { identifierTypePair, type IdentifierTypeClass } from './identifier';
+import { numericLiteralTypePair, type NumericLiteralTypeClass } from './numericLiteral';
+
+const enumNumberMemberIdPairs = lazyPairs(() => [identifierTypePair] as const);
+const enumNumberMemberInitPairs = lazyPairs(() => [numericLiteralTypePair] as const);
+
+export type EnumNumberMemberFields = {
+    id: IdentifierTypeClass | LwcErrorTypeClass;
+    init: NumericLiteralTypeClass | LwcErrorTypeClass;
+};
 
 export class EnumNumberMemberTypeClass extends LwcCommonTypeClass<'enumNumberMember'> {
-    private constructor(originalSource: string) {
-        super('enumNumberMember', originalSource);
+    private readonly value: EnumNumberMemberFields;
+
+    private constructor(value: EnumNumberMemberFields) {
+        super('enumNumberMember');
+        this.value = value;
     }
 
     static create(target: EnumNumberMember, originalSource: string): EnumNumberMemberTypeClass {
-        throw new Error('EnumNumberMemberTypeClass.create is not implemented: ' + target.type);
+        return new EnumNumberMemberTypeClass({
+            id: visitNode(
+                target.id,
+                originalSource,
+                enumNumberMemberIdPairs(),
+                'EnumNumberMember.id',
+            ),
+            init: visitNode(
+                target.init,
+                originalSource,
+                enumNumberMemberInitPairs(),
+                'EnumNumberMember.init',
+            ),
+        });
+    }
+
+    /** すべてのフィールド (Babel の value フィールドの getter getValue() と区別する。getChildNodes もこれから作る) */
+    override getFields(): EnumNumberMemberFields {
+        return this.value;
+    }
+
+    getId(): EnumNumberMemberFields['id'] {
+        return this.value.id;
+    }
+
+    getInit(): EnumNumberMemberFields['init'] {
+        return this.value.init;
     }
 }
 

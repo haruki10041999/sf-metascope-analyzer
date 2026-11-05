@@ -16,8 +16,8 @@ import { NormalModifierTypeClass, ModifierVisitor, isNormalModifierType } from '
 import {
     ApexErrorTypeClass,
     ApexCommonTypeClass,
-    isApexValidClass,
-    isApexValidClassList,
+    visitNodeList,
+    visitNode,
 } from '../commonVisitor';
 
 export class AnonymousBlockMemberTypeClass extends MemberTypeClass<
@@ -38,19 +38,21 @@ export class AnonymousBlockMemberTypeClass extends MemberTypeClass<
 
         return new AnonymousBlockMemberTypeClass(
             ctx.anonymousMemberDeclaration()
-                ? isApexValidClass(
-                      new DeclarationVisitor().visit(ctx.anonymousMemberDeclaration()),
+                ? visitNode(
+                      new DeclarationVisitor(),
+                      ctx.anonymousMemberDeclaration(),
                       isAnonymousMemberDeclarationType,
                       'anonymousMemberDeclaration',
                   )
-                : isApexValidClass(
-                      new StatementVisitor().visit(ctx.statement()),
+                : visitNode(
+                      new StatementVisitor(),
+                      ctx.statement(),
                       isNormalStatementType,
                       'statement',
                   ),
-            isApexValidClassList(
+            visitNodeList(
+                new ModifierVisitor(),
                 ctx.modifier_list(),
-                (ctx) => new ModifierVisitor().visit(ctx),
                 isNormalModifierType,
                 'modifier',
             ),
@@ -63,4 +65,3 @@ export const isAnonymousBlockMemberType = (
 ): target is AnonymousBlockMemberTypeClass => {
     return target instanceof AnonymousBlockMemberTypeClass;
 };
-

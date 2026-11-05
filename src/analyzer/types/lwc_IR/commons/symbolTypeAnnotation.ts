@@ -2,15 +2,15 @@ import { isSymbolTypeAnnotation, type SymbolTypeAnnotation } from '@babel/types'
 import { EvaluatePair, LwcCommonTypeClass, makeEvaluatePair } from '../commonVisitor';
 
 export class SymbolTypeAnnotationTypeClass extends LwcCommonTypeClass<'symbolTypeAnnotation'> {
-    private constructor(originalSource: string) {
-        super('symbolTypeAnnotation', originalSource);
+    private constructor() {
+        super('symbolTypeAnnotation');
     }
 
     static create(
-        target: SymbolTypeAnnotation,
-        originalSource: string,
+        _target: SymbolTypeAnnotation,
+        _originalSource: string,
     ): SymbolTypeAnnotationTypeClass {
-        throw new Error('SymbolTypeAnnotationTypeClass.create is not implemented: ' + target.type);
+        return new SymbolTypeAnnotationTypeClass();
     }
 }
 

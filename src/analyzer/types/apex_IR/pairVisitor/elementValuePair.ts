@@ -4,7 +4,7 @@ import { PairTypeClass } from '.';
 
 import { NormalIdTypeClass, IdVisitor, isNormalIdType } from '../idVisitor';
 import { ElementValueTypeClass, ValueVisitor, isElementValueType } from '../valueVisitor';
-import { ApexErrorTypeClass, ApexCommonTypeClass, isApexValidClass } from '../commonVisitor';
+import { ApexErrorTypeClass, ApexCommonTypeClass, visitNode } from '../commonVisitor';
 
 export class ElementValuePairTypeClass extends PairTypeClass<
     'elementValuePair',
@@ -24,12 +24,8 @@ export class ElementValuePairTypeClass extends PairTypeClass<
         }
 
         return new ElementValuePairTypeClass(
-            isApexValidClass(new IdVisitor().visit(ctx.id()), isNormalIdType, 'id'),
-            isApexValidClass(
-                new ValueVisitor().visit(ctx.elementValue()),
-                isElementValueType,
-                'elementValue',
-            ),
+            visitNode(new IdVisitor(), ctx.id(), isNormalIdType, 'id'),
+            visitNode(new ValueVisitor(), ctx.elementValue(), isElementValueType, 'elementValue'),
         );
     }
 }

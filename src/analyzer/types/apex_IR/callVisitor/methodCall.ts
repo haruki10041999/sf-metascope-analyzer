@@ -4,7 +4,7 @@ import { CallTypeClass } from '.';
 
 import { NormalIdTypeClass, IdVisitor, isNormalIdType } from '../idVisitor';
 import { ExpressionListTypeClass, ListVisitor, isExpressionListType } from '../listVisitor';
-import { ApexErrorTypeClass, ApexCommonTypeClass, isApexValidClass } from '../commonVisitor';
+import { ApexErrorTypeClass, ApexCommonTypeClass, visitOptionalNode } from '../commonVisitor';
 
 export class MethodCallTypeClass extends CallTypeClass<
     'methodCall',
@@ -29,16 +29,13 @@ export class MethodCallTypeClass extends CallTypeClass<
         }
 
         return new MethodCallTypeClass(
-            ctx.id()
-                ? isApexValidClass(new IdVisitor().visit(ctx.id()), isNormalIdType, 'id')
-                : null,
-            ctx.expressionList()
-                ? isApexValidClass(
-                      new ListVisitor().visit(ctx.expressionList()),
-                      isExpressionListType,
-                      'expressionList',
-                  )
-                : null,
+            visitOptionalNode(new IdVisitor(), ctx.id(), isNormalIdType, 'id'),
+            visitOptionalNode(
+                new ListVisitor(),
+                ctx.expressionList(),
+                isExpressionListType,
+                'expressionList',
+            ),
             ctx.THIS() ? 'this' : ctx.SUPER() ? 'super' : null,
         );
     }
@@ -53,4 +50,3 @@ export const isMethodCallType = (
 ): target is MethodCallTypeClass => {
     return target instanceof MethodCallTypeClass;
 };
-

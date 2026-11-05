@@ -4,7 +4,7 @@ import { NameListTypeClass } from '../nameVisitor';
 
 import { SoqlIdTypeClass, isSoqlIdType, IdVisitor } from '../idVisitor';
 
-import { ApexErrorTypeClass, ApexCommonTypeClass, isApexValidClassList } from '../commonVisitor';
+import { ApexErrorTypeClass, ApexCommonTypeClass, visitNodeList } from '../commonVisitor';
 
 export class DataCategoryNameTypeClass extends NameListTypeClass<
     'dataCategoryName',
@@ -20,12 +20,7 @@ export class DataCategoryNameTypeClass extends NameListTypeClass<
         }
 
         return new DataCategoryNameTypeClass(
-            isApexValidClassList(
-                ctx.soqlId_list(),
-                (ctx) => new IdVisitor().visit(ctx),
-                isSoqlIdType,
-                'soqlId',
-            ),
+            visitNodeList(new IdVisitor(), ctx.soqlId_list(), isSoqlIdType, 'soqlId'),
         );
     }
 }

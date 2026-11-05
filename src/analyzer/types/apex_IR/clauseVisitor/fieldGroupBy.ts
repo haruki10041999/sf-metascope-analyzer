@@ -4,7 +4,7 @@ import { ClauseTypeClass } from '.';
 
 import { SoqlFunctionTypeClass, QueryVisitor, isSoqlFunctionType } from '../queryVisitor';
 import { FieldNameTypeClass, NameVisitor, isFieldNameType } from '../nameVisitor';
-import { ApexErrorTypeClass, ApexCommonTypeClass, isApexValidClass } from '../commonVisitor';
+import { ApexErrorTypeClass, ApexCommonTypeClass, visitNode } from '../commonVisitor';
 
 export class FieldGroupByTypeClass extends ClauseTypeClass<
     'fieldGroupBy',
@@ -21,13 +21,10 @@ export class FieldGroupByTypeClass extends ClauseTypeClass<
 
         return new FieldGroupByTypeClass(
             ctx.fieldName()
-                ? isApexValidClass(
-                      new NameVisitor().visit(ctx.fieldName()),
-                      isFieldNameType,
-                      'fieldName',
-                  )
-                : isApexValidClass(
-                      new QueryVisitor().visit(ctx.soqlFunction()),
+                ? visitNode(new NameVisitor(), ctx.fieldName(), isFieldNameType, 'fieldName')
+                : visitNode(
+                      new QueryVisitor(),
+                      ctx.soqlFunction(),
                       isSoqlFunctionType,
                       'soqlFunction',
                   ),
@@ -40,4 +37,3 @@ export const isFieldGroupByType = (
 ): target is FieldGroupByTypeClass => {
     return target instanceof FieldGroupByTypeClass;
 };
-

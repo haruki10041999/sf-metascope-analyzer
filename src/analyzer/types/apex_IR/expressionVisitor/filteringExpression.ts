@@ -7,7 +7,7 @@ import {
     ClauseVisitor,
     isDataCategorySelectionType,
 } from '../clauseVisitor';
-import { ApexErrorTypeClass, ApexCommonTypeClass, isApexValidClassList } from '../commonVisitor';
+import { ApexErrorTypeClass, ApexCommonTypeClass, visitNodeList } from '../commonVisitor';
 
 export class FilteringExpressionTypeClass extends ExpressionListBaseTypeClass<
     'filteringExpression',
@@ -27,9 +27,9 @@ export class FilteringExpressionTypeClass extends ExpressionListBaseTypeClass<
         }
 
         return new FilteringExpressionTypeClass(
-            isApexValidClassList(
+            visitNodeList(
+                new ClauseVisitor(),
                 ctx.dataCategorySelection_list(),
-                (ctx) => new ClauseVisitor().visit(ctx),
                 isDataCategorySelectionType,
                 'dataCategorySelection',
             ),
@@ -42,4 +42,3 @@ export const isFilteringExpressionType = (
 ): target is FilteringExpressionTypeClass => {
     return target instanceof FilteringExpressionTypeClass;
 };
-

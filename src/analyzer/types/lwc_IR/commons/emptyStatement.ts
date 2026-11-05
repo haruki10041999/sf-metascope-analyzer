@@ -2,12 +2,12 @@ import { isEmptyStatement, type EmptyStatement } from '@babel/types';
 import { EvaluatePair, LwcCommonTypeClass, makeEvaluatePair } from '../commonVisitor';
 
 export class EmptyStatementTypeClass extends LwcCommonTypeClass<'emptyStatement'> {
-    private constructor(originalSource: string) {
-        super('emptyStatement', originalSource);
+    private constructor() {
+        super('emptyStatement');
     }
 
-    static create(target: EmptyStatement, originalSource: string): EmptyStatementTypeClass {
-        throw new Error('EmptyStatementTypeClass.create is not implemented: ' + target.type);
+    static create(_target: EmptyStatement, _originalSource: string): EmptyStatementTypeClass {
+        return new EmptyStatementTypeClass();
     }
 }
 

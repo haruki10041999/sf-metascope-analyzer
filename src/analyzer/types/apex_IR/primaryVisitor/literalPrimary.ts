@@ -3,7 +3,7 @@ import { LiteralPrimaryContext } from '@apexdevtools/apex-parser';
 import { PrimaryTypeClass } from '.';
 
 import { NormalLiteralTypeClass, LiteralVisitor, isNormalLiteralType } from '../literalVisitor';
-import { ApexCommonTypeClass, ApexErrorTypeClass, isApexValidClass } from '../commonVisitor';
+import { ApexCommonTypeClass, ApexErrorTypeClass, visitNode } from '../commonVisitor';
 
 export class LiteralPrimaryTypeClass extends PrimaryTypeClass<
     'literalPrimary',
@@ -19,11 +19,7 @@ export class LiteralPrimaryTypeClass extends PrimaryTypeClass<
         }
 
         return new LiteralPrimaryTypeClass(
-            isApexValidClass(
-                new LiteralVisitor().visit(ctx.literal()),
-                isNormalLiteralType,
-                'literal',
-            ),
+            visitNode(new LiteralVisitor(), ctx.literal(), isNormalLiteralType, 'literal'),
         );
     }
 }
@@ -33,4 +29,3 @@ export const isLiteralPrimaryType = (
 ): target is LiteralPrimaryTypeClass => {
     return target instanceof LiteralPrimaryTypeClass;
 };
-

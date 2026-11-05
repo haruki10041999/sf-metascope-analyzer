@@ -2,12 +2,12 @@ import { isTSNumberKeyword, type TSNumberKeyword } from '@babel/types';
 import { EvaluatePair, LwcCommonTypeClass, makeEvaluatePair } from '../commonVisitor';
 
 export class TSNumberKeywordTypeClass extends LwcCommonTypeClass<'tSNumberKeyword'> {
-    private constructor(originalSource: string) {
-        super('tSNumberKeyword', originalSource);
+    private constructor() {
+        super('tSNumberKeyword');
     }
 
-    static create(target: TSNumberKeyword, originalSource: string): TSNumberKeywordTypeClass {
-        throw new Error('TSNumberKeywordTypeClass.create is not implemented: ' + target.type);
+    static create(_target: TSNumberKeyword, _originalSource: string): TSNumberKeywordTypeClass {
+        return new TSNumberKeywordTypeClass();
     }
 }
 

@@ -40,4 +40,3 @@ export class UnitVisitor extends ApexCommonVisitor<UnitAllTypeClass> {
         return TriggerCaseTypeClass.create(ctx);
     }
 }
-

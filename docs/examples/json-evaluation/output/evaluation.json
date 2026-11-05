@@ -1,0 +1,1362 @@
+{
+  "apex": {
+    "files": [
+      {
+        "file": "docs/examples/apex-ir/ParserTest.cls",
+        "errorJson": 0,
+        "identifiers": 301,
+        "structured": 286,
+        "inText": 0,
+        "missing": [
+          "inherited",
+          "L",
+          "LAST_N_DAYS",
+          "T00",
+          "Z",
+          "THEN",
+          "END",
+          "convertCurrency",
+          "GEOLOCATION",
+          "USING",
+          "SCOPE",
+          "DATA",
+          "CATEGORY",
+          "LISTVIEW",
+          "target_length"
+        ]
+      },
+      {
+        "file": "docs/examples/apex-ir/ParserEnum.cls",
+        "errorJson": 0,
+        "identifiers": 5,
+        "structured": 5,
+        "inText": 0,
+        "missing": []
+      },
+      {
+        "file": "docs/examples/apex-ir/ParserInterface.cls",
+        "errorJson": 0,
+        "identifiers": 18,
+        "structured": 18,
+        "inText": 0,
+        "missing": []
+      },
+      {
+        "file": "docs/examples/apex-ir/ParserTrigger.trigger",
+        "errorJson": 0,
+        "identifiers": 59,
+        "structured": 58,
+        "inText": 0,
+        "missing": [
+          "user"
+        ]
+      },
+      {
+        "file": "docs/examples/apex-ir/parser.apex",
+        "errorJson": 0,
+        "identifiers": 108,
+        "structured": 105,
+        "inText": 0,
+        "missing": [
+          "L",
+          "user",
+          "convertCurrency"
+        ]
+      },
+      {
+        "file": "docs/examples/apex-diff/after/AccountService.cls",
+        "errorJson": 0,
+        "identifiers": 100,
+        "structured": 94,
+        "inText": 0,
+        "missing": [
+          "user",
+          "FIELDS",
+          "USING",
+          "SCOPE",
+          "DATA",
+          "CATEGORY"
+        ]
+      },
+      {
+        "file": "docs/examples/apex-diff/after/AccountTrigger.trigger",
+        "errorJson": 0,
+        "identifiers": 7,
+        "structured": 7,
+        "inText": 0,
+        "missing": []
+      },
+      {
+        "file": "docs/examples/apex-diff/after/Level.cls",
+        "errorJson": 0,
+        "identifiers": 4,
+        "structured": 4,
+        "inText": 0,
+        "missing": []
+      },
+      {
+        "file": "docs/examples/apex-diff/after/NewHelper.cls",
+        "errorJson": 0,
+        "identifiers": 2,
+        "structured": 2,
+        "inText": 0,
+        "missing": []
+      },
+      {
+        "file": "docs/examples/apex-diff/after/Shape.cls",
+        "errorJson": 0,
+        "identifiers": 2,
+        "structured": 2,
+        "inText": 0,
+        "missing": []
+      },
+      {
+        "file": "docs/examples/apex-diff/after/Unchanged.cls",
+        "errorJson": 0,
+        "identifiers": 2,
+        "structured": 2,
+        "inText": 0,
+        "missing": []
+      },
+      {
+        "file": "docs/examples/apex-diff/after/script.apex",
+        "errorJson": 0,
+        "identifiers": 7,
+        "structured": 7,
+        "inText": 0,
+        "missing": []
+      },
+      {
+        "file": "docs/examples/apex-diff/after/Broken.cls",
+        "errorJson": 1,
+        "identifiers": 5,
+        "structured": 3,
+        "inText": 0,
+        "missing": [
+          "x",
+          "foo"
+        ]
+      }
+    ],
+    "coverage": {
+      "identifiers": 620,
+      "structured": 593,
+      "inText": 0,
+      "missing": 27
+    },
+    "kinds": {
+      "type": 331,
+      "memberAccess": 215,
+      "expression": 160,
+      "modifier": 142,
+      "selectEntry": 107,
+      "localVariable": 97,
+      "field": 68,
+      "parameter": 53,
+      "method": 52,
+      "fromField": 50,
+      "soql": 46,
+      "singleCondition": 46,
+      "return": 35,
+      "ifCondition": 29,
+      "if": 26,
+      "switchCondition": 20,
+      "for": 19,
+      "forCondition": 19,
+      "enumConstant": 19,
+      "soslField": 18,
+      "limitClause": 15,
+      "class": 13,
+      "interfaceMethod": 12,
+      "orderField": 9,
+      "triggerCase": 9,
+      "sosl": 8,
+      "annotation": 7,
+      "switch": 7,
+      "switchVariant": 7,
+      "enum": 7,
+      "property": 6,
+      "constructor": 6,
+      "catchCondition": 6,
+      "insert": 6,
+      "groupBy": 6,
+      "categoryCondition": 6,
+      "forClause": 6,
+      "interface": 6,
+      "break": 5,
+      "try": 5,
+      "upsert": 5,
+      "continue": 4,
+      "update": 4,
+      "delete": 4,
+      "merge": 4,
+      "runAs": 4,
+      "runAsCondition": 4,
+      "offsetClause": 4,
+      "subQuery": 4,
+      "while": 3,
+      "whileCondition": 3,
+      "doWhile": 3,
+      "doWhileCondition": 3,
+      "throw": 3,
+      "undelete": 3,
+      "allRowsClause": 3,
+      "updateClause": 3,
+      "notSet": 2,
+      "usingScopeClause": 2,
+      "error": 1
+    },
+    "fields": {
+      "(annotation の中の値)": {
+        "key": "string",
+        "value": "string",
+        "valueType": "string"
+      },
+      "(class の中の値)": {
+        "block": "json[]",
+        "modifier": "object",
+        "isStatic": "boolean",
+        "access": "json[]",
+        "declaration": "json[]",
+        "sharing": "json[]",
+        "testAnnotation": "json[]",
+        "restAnnotation": "json[]"
+      },
+      "(constructor の中の値)": {
+        "access": "json[]"
+      },
+      "(doWhileCondition の中の値)": {
+        "left": "string",
+        "operator": "string",
+        "right": "object",
+        "value": "string",
+        "valueType": "string"
+      },
+      "(enum の中の値)": {
+        "access": "json[]"
+      },
+      "(expression の中の値)": {
+        "left": "json | object | string",
+        "operator": "string",
+        "right": "json | object | string",
+        "value": "object | string",
+        "valueType": "string",
+        "collection": "string[]",
+        "generic": "json[]",
+        "initType": "string",
+        "variant": "string",
+        "index": "object",
+        "operatorLocation": "string",
+        "parentheses": "string"
+      },
+      "(field の中の値)": {
+        "name": "string",
+        "init": "json | object | object[]",
+        "value": "object | string",
+        "valueType": "string",
+        "access": "json[]",
+        "declaration": "json[]",
+        "other": "json[]",
+        "collection": "string[]",
+        "generic": "json[]",
+        "initType": "string",
+        "key": "object",
+        "size": "object",
+        "arg": "object[]",
+        "left": "object | string",
+        "operator": "string",
+        "right": "json | object | string",
+        "condition": "string",
+        "trueValue": "object",
+        "falseValue": "object",
+        "parentheses": "string",
+        "variant": "object",
+        "operatorLocation": "string",
+        "target": "string",
+        "convertType": "json"
+      },
+      "(forCondition の中の値)": {
+        "variants": "object[]",
+        "variantsType": "json",
+        "modifier": "object",
+        "name": "string",
+        "init": "object",
+        "value": "string",
+        "valueType": "string",
+        "left": "string",
+        "operator": "string",
+        "right": "object | string",
+        "variant": "string",
+        "operatorLocation": "string"
+      },
+      "(groupBy の中の値)": {
+        "type": "string",
+        "field": "string[]",
+        "condition": "json[]",
+        "func": "string",
+        "arg": "object",
+        "name": "string[]",
+        "isConvertTimeZone": "boolean"
+      },
+      "(if の中の値)": {
+        "condition": "json | string",
+        "block": "json | json[]"
+      },
+      "(ifCondition の中の値)": {
+        "left": "json | string",
+        "operator": "string",
+        "right": "json | object | string",
+        "value": "string",
+        "valueType": "string",
+        "variant": "json",
+        "operatorLocation": "string",
+        "target": "string",
+        "type": "json"
+      },
+      "(interface の中の値)": {
+        "access": "json[]"
+      },
+      "(interfaceMethod の中の値)": {},
+      "(localVariable の中の値)": {
+        "variants": "object[]",
+        "variantsType": "json",
+        "modifier": "object",
+        "name": "string",
+        "init": "json | object | object[] | string",
+        "value": "object | string",
+        "valueType": "string",
+        "collection": "string[]",
+        "generic": "json[]",
+        "initType": "string",
+        "size": "object",
+        "key": "object",
+        "arg": "object[]",
+        "left": "object | string",
+        "operator": "string",
+        "right": "object | string",
+        "variant": "object | string",
+        "index": "object",
+        "condition": "string",
+        "trueValue": "string",
+        "falseValue": "string",
+        "target": "string",
+        "convertType": "json",
+        "type": "json",
+        "operatorLocation": "string",
+        "parentheses": "string"
+      },
+      "(memberAccess の中の値)": {
+        "value": "object | string",
+        "valueType": "string",
+        "parentheses": "string",
+        "target": "string",
+        "convertType": "json",
+        "left": "json | object | string",
+        "operator": "string",
+        "right": "json | object | string",
+        "collection": "string[]",
+        "initType": "string",
+        "arg": "object[]",
+        "generic": "json[]",
+        "init": "object[]"
+      },
+      "(method の中の値)": {
+        "access": "json[]",
+        "declaration": "json[]",
+        "lwcAnnotation": "json[]",
+        "flowAnnotation": "json[]",
+        "webService": "json[]",
+        "compatibilityAnnotation": "json[]",
+        "test": "json[]",
+        "testAnnotation": "json[]",
+        "asyncAnnotation": "json[]"
+      },
+      "(orderField の中の値)": {
+        "field": "object | string | string[]",
+        "target": "object",
+        "unit": "string",
+        "type": "string"
+      },
+      "(parameter の中の値)": {},
+      "(property の中の値)": {
+        "modifier": "object",
+        "access": "json[]",
+        "block": "json[]"
+      },
+      "(return の中の値)": {
+        "condition": "object",
+        "trueValue": "object",
+        "falseValue": "string",
+        "left": "object | string",
+        "operator": "string",
+        "right": "object | string",
+        "value": "string",
+        "valueType": "string"
+      },
+      "(root の中の値)": {
+        "name": "string",
+        "object": "string",
+        "case": "json[]",
+        "block": "object[]",
+        "statement": "json",
+        "modifier": "object"
+      },
+      "(runAsCondition の中の値)": {
+        "collection": "string[]",
+        "initType": "string",
+        "arg": "object[]",
+        "value": "string",
+        "valueType": "string",
+        "left": "string",
+        "operator": "string",
+        "right": "json"
+      },
+      "(selectEntry の中の値)": {
+        "object": "string | string[]",
+        "field": "object[]",
+        "name": "string[]",
+        "isConvertTimeZone": "boolean",
+        "func": "string",
+        "arg": "string[]"
+      },
+      "(singleCondition の中の値)": {
+        "type": "string",
+        "field": "object | string[]",
+        "value": "json | object | object[] | string",
+        "valueType": "string",
+        "operator": "string",
+        "collection": "string[]",
+        "generic": "json[]",
+        "initType": "string",
+        "func": "string",
+        "arg": "object | string | string[]",
+        "argType": "string",
+        "target": "object",
+        "unit": "string",
+        "latitude": "object",
+        "longitude": "object"
+      },
+      "(soql の中の値)": {
+        "field": "json[]",
+        "condition": "json[] | object | object[]",
+        "orderBy": "json[]",
+        "operator": "string",
+        "mode": "string",
+        "selection": "json[]"
+      },
+      "(sosl の中の値)": {
+        "object": "string[]",
+        "field": "json[]",
+        "where": "object",
+        "orderBy": "json[]",
+        "limit": "json",
+        "condition": "json[]",
+        "listView": "string[]",
+        "offset": "json",
+        "mode": "string",
+        "value": "json[] | object | string | string[]",
+        "type": "string",
+        "targetLength": "string"
+      },
+      "(subQuery の中の値)": {
+        "field": "json[]",
+        "condition": "json[] | object",
+        "orderBy": "json[]"
+      },
+      "(switch の中の値)": {
+        "condition": "json",
+        "block": "json[]"
+      },
+      "(switchCondition の中の値)": {
+        "value": "string | string[]",
+        "valueType": "json | string",
+        "operator": "string"
+      },
+      "(throw の中の値)": {
+        "collection": "string[]",
+        "initType": "string",
+        "arg": "object[]",
+        "value": "string",
+        "valueType": "string"
+      },
+      "(try の中の値)": {
+        "condition": "string",
+        "block": "json[]",
+        "catchCondition": "json"
+      },
+      "(type の中の値)": {
+        "type": "string",
+        "primitiveType": "string",
+        "customType": "string | string[]",
+        "elementType": "object",
+        "keyType": "object",
+        "valueType": "object"
+      },
+      "(undelete の中の値)": {
+        "collection": "string[]",
+        "initType": "string"
+      },
+      "(upsert の中の値)": {
+        "collection": "string[]",
+        "initType": "string",
+        "arg": "object[]",
+        "left": "string",
+        "operator": "string",
+        "right": "string"
+      },
+      "(whileCondition の中の値)": {
+        "left": "string",
+        "operator": "string",
+        "right": "json | object",
+        "value": "string",
+        "valueType": "string"
+      },
+      "allRowsClause": {
+        "value": "string"
+      },
+      "annotation": {
+        "name": "string",
+        "arg": "object[]"
+      },
+      "break": {
+        "value": "string"
+      },
+      "catchCondition": {
+        "exception": "string",
+        "exceptionType": "string[]",
+        "modifier": "json[]"
+      },
+      "categoryCondition": {
+        "group": "string",
+        "selector": "string",
+        "category": "string[]"
+      },
+      "class": {
+        "name": "string",
+        "block": "json[] | object[]",
+        "extend": "json",
+        "implement": "json[]",
+        "modifier": "object"
+      },
+      "constructor": {
+        "name": "string[]",
+        "block": "json[]",
+        "modifier": "object",
+        "param": "json[]"
+      },
+      "continue": {
+        "value": "string"
+      },
+      "delete": {
+        "field": "json | string"
+      },
+      "doWhile": {
+        "condition": "json",
+        "body": "json[]"
+      },
+      "doWhileCondition": {
+        "condition": "object"
+      },
+      "enum": {
+        "name": "string",
+        "members": "json[]",
+        "modifier": "object"
+      },
+      "enumConstant": {
+        "name": "string"
+      },
+      "expression": {
+        "value": "json | object"
+      },
+      "field": {
+        "variants": "object[]",
+        "variantType": "json",
+        "modifier": "object"
+      },
+      "for": {
+        "condition": "json",
+        "block": "json[]"
+      },
+      "forClause": {
+        "value": "string[]"
+      },
+      "forCondition": {
+        "initializer": "object | object[] | string",
+        "condition": "object",
+        "update": "object[]",
+        "initializeType": "json",
+        "baseObject": "json | string"
+      },
+      "fromField": {
+        "field": "string[]",
+        "alias": "string"
+      },
+      "groupBy": {
+        "field": "object[]",
+        "having": "object",
+        "mode": "string"
+      },
+      "if": {
+        "conditionBlock": "object[]"
+      },
+      "ifCondition": {
+        "condition": "json | object"
+      },
+      "insert": {
+        "field": "string",
+        "accessLevel": "string"
+      },
+      "interface": {
+        "name": "string",
+        "block": "json[]",
+        "modifier": "object",
+        "extend": "json[]"
+      },
+      "interfaceMethod": {
+        "name": "string",
+        "returnType": "json | string",
+        "modifier": "object",
+        "param": "json[]"
+      },
+      "limitClause": {
+        "type": "string",
+        "value": "string"
+      },
+      "localVariable": {
+        "variable": "object"
+      },
+      "memberAccess": {
+        "type": "string",
+        "member": "string",
+        "memberArg": "json[] | object[] | string[]",
+        "object": "json | object | string",
+        "operator": "string"
+      },
+      "merge": {
+        "field": "string[]",
+        "accessLevel": "string"
+      },
+      "method": {
+        "name": "string",
+        "returnType": "json | string",
+        "param": "json[]",
+        "block": "json[]",
+        "modifier": "object"
+      },
+      "modifier": {
+        "name": "string"
+      },
+      "notSet": {},
+      "offsetClause": {
+        "type": "string",
+        "value": "string"
+      },
+      "orderField": {
+        "type": "string",
+        "field": "string[]",
+        "direction": "string",
+        "nulls": "string",
+        "func": "string",
+        "arg": "object | string[]"
+      },
+      "parameter": {
+        "variant": "string",
+        "variantType": "json",
+        "modifier": "object"
+      },
+      "property": {
+        "name": "string",
+        "variantType": "json",
+        "isGetter": "boolean",
+        "getterContent": "object",
+        "isSetter": "boolean",
+        "setterContent": "object",
+        "modifier": "object"
+      },
+      "return": {
+        "field": "json | object | string"
+      },
+      "runAs": {
+        "condition": "json",
+        "block": "json[]"
+      },
+      "runAsCondition": {
+        "field": "object[] | string[]"
+      },
+      "selectEntry": {
+        "type": "string",
+        "field": "string[]",
+        "block": "object[]",
+        "func": "string",
+        "arg": "object | string | string[]",
+        "alias": "string"
+      },
+      "singleCondition": {
+        "field": "object",
+        "operator": "string",
+        "value": "object"
+      },
+      "soql": {
+        "select": "object",
+        "from": "object",
+        "limit": "json",
+        "where": "object",
+        "orderBy": "object",
+        "offset": "json",
+        "groupBy": "json",
+        "usingScope": "json",
+        "with": "object",
+        "allRows": "json",
+        "for": "json",
+        "updateList": "json"
+      },
+      "sosl": {
+        "find": "string",
+        "group": "string",
+        "fieldSpec": "object[]",
+        "with": "object[]",
+        "limit": "json",
+        "update": "json"
+      },
+      "soslField": {
+        "field": "string[]"
+      },
+      "subQuery": {
+        "select": "object",
+        "from": "object",
+        "where": "object",
+        "orderBy": "object",
+        "limit": "json"
+      },
+      "switch": {
+        "variant": "json",
+        "block": "object[]"
+      },
+      "switchCondition": {
+        "condition": "object | object[] | string"
+      },
+      "switchVariant": {
+        "variant": "json | string"
+      },
+      "throw": {
+        "value": "object"
+      },
+      "triggerCase": {
+        "actionType": "string",
+        "timing": "string"
+      },
+      "try": {
+        "block": "object[]"
+      },
+      "type": {
+        "type": "string",
+        "primitiveType": "string",
+        "elementType": "object",
+        "customType": "string | string[]",
+        "keyType": "object",
+        "valueType": "object",
+        "dimension": "number"
+      },
+      "undelete": {
+        "field": "object | string"
+      },
+      "update": {
+        "field": "string",
+        "accessLevel": "string"
+      },
+      "updateClause": {
+        "value": "string[]"
+      },
+      "upsert": {
+        "field": "object | string",
+        "key": "string[]",
+        "accessLevel": "string"
+      },
+      "usingScopeClause": {
+        "value": "string"
+      },
+      "while": {
+        "condition": "json",
+        "body": "json[]"
+      },
+      "whileCondition": {
+        "condition": "object"
+      }
+    },
+    "siblingDuplicates": {
+      "arrays": 117,
+      "duplicated": 0,
+      "kinds": []
+    },
+    "identity": {
+      "class": {
+        "total": 13,
+        "named": 13
+      },
+      "enum": {
+        "total": 7,
+        "named": 7
+      },
+      "interface": {
+        "total": 6,
+        "named": 6
+      },
+      "field": {
+        "total": 68,
+        "named": 0
+      },
+      "notSet": {
+        "total": 2,
+        "named": 0
+      },
+      "property": {
+        "total": 6,
+        "named": 6
+      },
+      "constructor": {
+        "total": 6,
+        "named": 0
+      },
+      "method": {
+        "total": 52,
+        "named": 52
+      },
+      "modifier": {
+        "total": 142,
+        "named": 142
+      },
+      "type": {
+        "total": 46,
+        "named": 0
+      },
+      "expression": {
+        "total": 129,
+        "named": 0
+      },
+      "return": {
+        "total": 34,
+        "named": 0
+      },
+      "parameter": {
+        "total": 53,
+        "named": 53
+      },
+      "annotation": {
+        "total": 7,
+        "named": 7
+      },
+      "localVariable": {
+        "total": 97,
+        "named": 0
+      },
+      "selectEntry": {
+        "total": 107,
+        "named": 0
+      },
+      "fromField": {
+        "total": 50,
+        "named": 0
+      },
+      "if": {
+        "total": 16,
+        "named": 0
+      },
+      "for": {
+        "total": 15,
+        "named": 0
+      },
+      "while": {
+        "total": 2,
+        "named": 0
+      },
+      "doWhile": {
+        "total": 2,
+        "named": 0
+      },
+      "continue": {
+        "total": 4,
+        "named": 0
+      },
+      "break": {
+        "total": 5,
+        "named": 0
+      },
+      "memberAccess": {
+        "total": 38,
+        "named": 0
+      },
+      "switch": {
+        "total": 5,
+        "named": 0
+      },
+      "try": {
+        "total": 4,
+        "named": 0
+      },
+      "throw": {
+        "total": 3,
+        "named": 0
+      },
+      "insert": {
+        "total": 4,
+        "named": 0
+      },
+      "update": {
+        "total": 3,
+        "named": 0
+      },
+      "upsert": {
+        "total": 4,
+        "named": 0
+      },
+      "delete": {
+        "total": 3,
+        "named": 0
+      },
+      "undelete": {
+        "total": 2,
+        "named": 0
+      },
+      "merge": {
+        "total": 3,
+        "named": 0
+      },
+      "runAs": {
+        "total": 3,
+        "named": 0
+      },
+      "singleCondition": {
+        "total": 46,
+        "named": 0
+      },
+      "orderField": {
+        "total": 9,
+        "named": 0
+      },
+      "subQuery": {
+        "total": 3,
+        "named": 0
+      },
+      "categoryCondition": {
+        "total": 6,
+        "named": 0
+      },
+      "soslField": {
+        "total": 18,
+        "named": 0
+      },
+      "enumConstant": {
+        "total": 19,
+        "named": 19
+      },
+      "interfaceMethod": {
+        "total": 12,
+        "named": 12
+      },
+      "triggerCase": {
+        "total": 9,
+        "named": 0
+      }
+    }
+  },
+  "lwc": {
+    "bundles": [
+      {
+        "bundle": "docs/examples/lwc/bundles/force-app/main/default/lwc/accountList",
+        "errorJson": 0,
+        "resolvedError": 0,
+        "identifiers": 63,
+        "structured": 48,
+        "inText": 6,
+        "missing": [
+          "length",
+          "reduce",
+          "sum",
+          "row",
+          "amount",
+          "target",
+          "HTMLElement",
+          "dataset",
+          "focus"
+        ]
+      },
+      {
+        "bundle": "docs/examples/lwc/bundles/force-app/main/default/lwc/accountRow",
+        "errorJson": 0,
+        "resolvedError": 0,
+        "identifiers": 12,
+        "structured": 11,
+        "inText": 1,
+        "missing": []
+      },
+      {
+        "bundle": "docs/examples/lwc/bundles/force-app/main/default/lwc/utils",
+        "errorJson": 0,
+        "resolvedError": 0,
+        "identifiers": 15,
+        "structured": 10,
+        "inText": 4,
+        "missing": [
+          "record"
+        ]
+      },
+      {
+        "bundle": "docs/examples/lwc/bundles/force-app/main/default/lwc/broken",
+        "errorJson": 0,
+        "resolvedError": 1,
+        "identifiers": 5,
+        "structured": 5,
+        "inText": 0,
+        "missing": []
+      },
+      {
+        "bundle": "docs/examples/lwc/ssr-snapshot/modules/c/hello",
+        "errorJson": 0,
+        "resolvedError": 0,
+        "identifiers": 12,
+        "structured": 10,
+        "inText": 0,
+        "missing": [
+          "length",
+          "data"
+        ]
+      },
+      {
+        "bundle": "docs/examples/lwc/ssr-snapshot/modules/c/child",
+        "errorJson": 0,
+        "resolvedError": 0,
+        "identifiers": 4,
+        "structured": 4,
+        "inText": 0,
+        "missing": []
+      },
+      {
+        "bundle": "docs/examples/lwc/ssr-lbc/modules/c/demo",
+        "errorJson": 0,
+        "resolvedError": 0,
+        "identifiers": 11,
+        "structured": 6,
+        "inText": 5,
+        "missing": []
+      }
+    ],
+    "coverage": {
+      "identifiers": 122,
+      "structured": 94,
+      "inText": 16,
+      "missing": 12
+    },
+    "kinds": {
+      "lwcType": 32,
+      "lwcImportSpecifier": 31,
+      "lwcField": 20,
+      "lwcImport": 18,
+      "lwcDecorator": 17,
+      "lwcBody": 14,
+      "lwcProperty": 7,
+      "lwcComponent": 6,
+      "lwcMethod": 6,
+      "lwcCall": 6,
+      "lwcWireConfig": 5,
+      "lwcParameter": 5,
+      "lwcTypeDeclaration": 4,
+      "lwcDeclaration": 3,
+      "lwcEvent": 2
+    },
+    "fields": {
+      "(lwcCall の中の値)": {
+        "className": "string",
+        "methodName": "string",
+        "local": "string",
+        "source": "string"
+      },
+      "(lwcDecorator の中の値)": {
+        "adapter": "string",
+        "adapterSource": "string",
+        "config": "json[]",
+        "apex": "object",
+        "className": "string",
+        "methodName": "string"
+      },
+      "(lwcField の中の値)": {
+        "decorator": "json[]",
+        "local": "string",
+        "source": "string",
+        "access": "string"
+      },
+      "(lwcImport の中の値)": {
+        "className": "string",
+        "methodName": "string",
+        "objectApiName": "string",
+        "fieldApiName": "string"
+      },
+      "(lwcMethod の中の値)": {
+        "decorator": "json[]"
+      },
+      "(lwcParameter の中の値)": {},
+      "(lwcProperty の中の値)": {
+        "modifier": "object",
+        "body": "json",
+        "calls": "[]",
+        "events": "[]"
+      },
+      "(lwcType の中の値)": {
+        "type": "string",
+        "customType": "string",
+        "name": "string",
+        "memberType": "object",
+        "optional": "boolean",
+        "method": "boolean",
+        "primitiveType": "string",
+        "elementType": "object",
+        "value": "string"
+      },
+      "(lwcTypeDeclaration の中の値)": {
+        "name": "string",
+        "memberType": "object",
+        "optional": "boolean",
+        "method": "boolean",
+        "type": "string",
+        "primitiveType": "string"
+      },
+      "(lwcWireConfig の中の値)": {
+        "local": "string",
+        "source": "string",
+        "schema": "object",
+        "objectApiName": "string",
+        "fieldApiName": "string"
+      },
+      "(root の中の値)": {
+        "name": "string",
+        "namespace": "string",
+        "modules": "object[]",
+        "skippedFiles": "[]",
+        "fileName": "string",
+        "main": "boolean",
+        "module": "object",
+        "fileType": "string",
+        "imports": "json[]",
+        "component": "json",
+        "otherExports": "string[]",
+        "declarations": "json[]",
+        "typeDeclarations": "json[]",
+        "errors": "[]"
+      },
+      "lwcBody": {
+        "statements": "number"
+      },
+      "lwcCall": {
+        "callType": "string",
+        "target": "string",
+        "arg": "string[]",
+        "references": "object[]",
+        "apex": "object"
+      },
+      "lwcComponent": {
+        "name": "string",
+        "extend": "string",
+        "mixins": "string[]",
+        "block": "json[]"
+      },
+      "lwcDeclaration": {
+        "name": "string",
+        "declarationType": "string",
+        "exported": "boolean",
+        "variableKind": "string",
+        "init": "string",
+        "references": "[]",
+        "calls": "[]",
+        "events": "[]",
+        "param": "json[]",
+        "returnType": "json",
+        "async": "boolean",
+        "body": "json"
+      },
+      "lwcDecorator": {
+        "name": "string",
+        "arg": "string[]",
+        "wire": "object"
+      },
+      "lwcEvent": {
+        "name": "string",
+        "detail": "string",
+        "bubbles": "boolean",
+        "composed": "boolean",
+        "detailType": "json"
+      },
+      "lwcField": {
+        "name": "string",
+        "variantType": "json",
+        "references": "object[]",
+        "optional": "boolean",
+        "modifier": "object",
+        "init": "string"
+      },
+      "lwcImport": {
+        "source": "string",
+        "category": "string",
+        "specifiers": "json[]",
+        "typeOnly": "boolean",
+        "apex": "object",
+        "schema": "object",
+        "component": "string"
+      },
+      "lwcImportSpecifier": {
+        "specifierType": "string",
+        "local": "string",
+        "imported": "string",
+        "typeOnly": "boolean"
+      },
+      "lwcMethod": {
+        "name": "string",
+        "returnType": "json",
+        "param": "json[]",
+        "async": "boolean",
+        "modifier": "object",
+        "body": "json",
+        "calls": "json[]",
+        "events": "json[]"
+      },
+      "lwcParameter": {
+        "variant": "string",
+        "variantType": "json",
+        "optional": "boolean",
+        "modifier": "object"
+      },
+      "lwcProperty": {
+        "name": "string",
+        "isGetter": "boolean",
+        "isSetter": "boolean",
+        "getterContent": "object",
+        "variantType": "json"
+      },
+      "lwcType": {
+        "text": "string",
+        "type": "string",
+        "primitiveType": "string",
+        "elementType": "object",
+        "customType": "string",
+        "members": "object[]",
+        "types": "object[]",
+        "generic": "object[]"
+      },
+      "lwcTypeDeclaration": {
+        "name": "string",
+        "exported": "boolean",
+        "declarationType": "string",
+        "variantType": "json",
+        "members": "object[]"
+      },
+      "lwcWireConfig": {
+        "key": "string",
+        "value": "string",
+        "reactive": "string",
+        "references": "object[]"
+      }
+    },
+    "siblingDuplicates": {
+      "arrays": 24,
+      "duplicated": 0,
+      "kinds": []
+    },
+    "identity": {
+      "lwcImport": {
+        "total": 18,
+        "named": 18
+      },
+      "lwcImportSpecifier": {
+        "total": 31,
+        "named": 31
+      },
+      "lwcField": {
+        "total": 20,
+        "named": 20
+      },
+      "lwcMethod": {
+        "total": 6,
+        "named": 6
+      },
+      "lwcProperty": {
+        "total": 7,
+        "named": 7
+      },
+      "lwcDecorator": {
+        "total": 17,
+        "named": 17
+      },
+      "lwcWireConfig": {
+        "total": 5,
+        "named": 0
+      },
+      "lwcParameter": {
+        "total": 5,
+        "named": 5
+      },
+      "lwcCall": {
+        "total": 6,
+        "named": 0
+      },
+      "lwcEvent": {
+        "total": 2,
+        "named": 2
+      },
+      "lwcTypeDeclaration": {
+        "total": 4,
+        "named": 4
+      },
+      "lwcDeclaration": {
+        "total": 3,
+        "named": 3
+      }
+    }
+  },
+  "edits": {
+    "apex": {
+      "positionOnly": {
+        "nodes": 263,
+        "objectKeyChanged": 0,
+        "objectKeyChangedKinds": [],
+        "sourceKeyChanged": 263
+      },
+      "literal": {
+        "nodes": 263,
+        "objectKeyChanged": 5,
+        "objectKeyChangedKinds": [
+          "class",
+          "method",
+          "localVariable",
+          "soql",
+          "limitClause"
+        ],
+        "sourceKeyChanged": 0
+      }
+    },
+    "lwc": {
+      "positionOnly": {
+        "nodes": 96,
+        "objectKeyChanged": 0,
+        "objectKeyChangedKinds": [],
+        "sourceKeyChanged": 96
+      },
+      "literal": {
+        "nodes": 96,
+        "objectKeyChanged": 2,
+        "objectKeyChangedKinds": [
+          "lwcComponent",
+          "lwcField"
+        ],
+        "sourceKeyChanged": 0
+      },
+      "methodBody": {
+        "nodes": 96,
+        "objectKeyChanged": 3,
+        "objectKeyChangedKinds": [
+          "lwcComponent",
+          "lwcProperty",
+          "lwcBody"
+        ],
+        "sourceKeyChanged": 0
+      }
+    }
+  }
+}

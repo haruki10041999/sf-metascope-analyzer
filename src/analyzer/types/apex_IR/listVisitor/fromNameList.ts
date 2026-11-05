@@ -8,7 +8,8 @@ import {
     ApexErrorTypeClass,
     ApexCommonTypeClass,
     getSourceSpan,
-    isApexValidClass,
+    visitNode,
+    visitOptionalNode,
 } from '../commonVisitor';
 
 // FROM 句の 1 オブジェクト（`Account a` の Account と a の組）
@@ -27,8 +28,8 @@ export class FromNameTypeClass extends ApexCommonTypeClass<'fromName'> {
 
     static create(fieldName: FieldNameContext, alias: SoqlIdContext | null): FromNameTypeClass {
         const fromName = new FromNameTypeClass(
-            isApexValidClass(new NameVisitor().visit(fieldName), isFieldNameType, 'fieldName'),
-            alias ? isApexValidClass(new IdVisitor().visit(alias), isSoqlIdType, 'soqlId') : null,
+            visitNode(new NameVisitor(), fieldName, isFieldNameType, 'fieldName'),
+            visitOptionalNode(new IdVisitor(), alias, isSoqlIdType, 'soqlId'),
         );
         const start = getSourceSpan(fieldName);
         const end = alias ? getSourceSpan(alias) : start;
@@ -86,4 +87,3 @@ export const isFromNameListType = (
 ): target is FromNameListTypeClass => {
     return target instanceof FromNameListTypeClass;
 };
-

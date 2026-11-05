@@ -26,4 +26,3 @@ export const isUpdateTypeType = (
 ): target is UpdateTypeTypeClass => {
     return target instanceof UpdateTypeTypeClass;
 };
-

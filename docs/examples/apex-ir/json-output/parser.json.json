@@ -8,34 +8,34 @@
         "kind": "class",
         "sourceKeys": {
           "base": {
-            "objectKey": "classDeclaration_a4eeb0dcd4b17774",
-            "sourceKey": "classDeclaration_e9343ff1e51fbb33"
+            "objectKey": "classDeclaration_5bfd6aa5fc81bbba",
+            "sourceKey": "classDeclaration_6c356084d9f20dce"
           },
           "name": {
             "objectKey": "id_864fa38ec27a8a29",
-            "sourceKey": "id_39c27fdb2a8c3100"
+            "sourceKey": "id_b9ba804bdd3a05da"
           }
         },
         "name": "AnonymousHelper",
-        "method": [
+        "block": [
           {
             "kind": "method",
             "sourceKeys": {
               "base": {
-                "objectKey": "methodDeclaration_f3a6779a6dd102eb",
-                "sourceKey": "methodDeclaration_a241bdc8822f9fc0"
+                "objectKey": "methodDeclaration_4e30d8c1ab87a3ab",
+                "sourceKey": "methodDeclaration_a0b50e12cc4b2b5b"
               },
               "name": {
                 "objectKey": "id_cfabefa05d45295c",
-                "sourceKey": "id_8ed685b7a27eb230"
+                "sourceKey": "id_456036b3f9df0563"
               }
             },
             "name": "greet",
             "returnType": {
               "kind": "type",
               "sourceKeys": {
-                "objectKey": "typeRef_a13e3e8b5328228b",
-                "sourceKey": "typeRef_d3baf57916464862"
+                "objectKey": "typeRef_0f82fcb626301929",
+                "sourceKey": "typeRef_a3cb3d3996eada07"
               },
               "type": "primitive",
               "primitiveType": "String"
@@ -44,15 +44,15 @@
               {
                 "kind": "parameter",
                 "sourceKeys": {
-                  "objectKey": "formalParameter_f413b3307ad085a4",
-                  "sourceKey": "formalParameter_989cdbc4d90dee3b"
+                  "objectKey": "formalParameter_809f0ed7cb4d7c9e",
+                  "sourceKey": "formalParameter_1ebf2404205e155d"
                 },
                 "variant": "name",
                 "variantType": {
                   "kind": "type",
                   "sourceKeys": {
-                    "objectKey": "typeRef_a13e3e8b5328228b",
-                    "sourceKey": "typeRef_740a7363a4510ed8"
+                    "objectKey": "typeRef_0f82fcb626301929",
+                    "sourceKey": "typeRef_3b21ee0923de3bdd"
                   },
                   "type": "primitive",
                   "primitiveType": "String"
@@ -64,11 +64,19 @@
               {
                 "kind": "return",
                 "sourceKeys": {
-                  "objectKey": "returnStatement_7f1b237d262167c2",
-                  "sourceKey": "returnStatement_095a0ccd5780c9af"
+                  "objectKey": "returnStatement_86125bd25559c5a6",
+                  "sourceKey": "returnStatement_0c6b1372da7fdde3"
                 },
                 "field": {
+                  "sourceKeys": {
+                    "objectKey": "arth2Expression_ab161fe8a4f927b8",
+                    "sourceKey": "arth2Expression_58b06505d5bca9c7"
+                  },
                   "left": {
+                    "sourceKeys": {
+                      "objectKey": "literal_20146ec1d2abb4e7",
+                      "sourceKey": "literal_00208e965ec3a40e"
+                    },
                     "value": "'Hello '",
                     "valueType": "string"
                   },
@@ -83,7 +91,7 @@
                   "kind": "modifier",
                   "sourceKeys": {
                     "objectKey": "modifier_a04213395735c45e",
-                    "sourceKey": "modifier_f5c78832ff84db8e"
+                    "sourceKey": "modifier_f168086583cbd5f5"
                   },
                   "name": "PUBLIC"
                 }
@@ -97,7 +105,7 @@
               "kind": "modifier",
               "sourceKeys": {
                 "objectKey": "modifier_a04213395735c45e",
-                "sourceKey": "modifier_af2408a3cfa2394b"
+                "sourceKey": "modifier_8300207497e881c7"
               },
               "name": "PUBLIC"
             }
@@ -108,12 +116,12 @@
         "kind": "interface",
         "sourceKeys": {
           "base": {
-            "objectKey": "interfaceDeclaration_d826ad267a0c438a",
-            "sourceKey": "interfaceDeclaration_34c077e0139064ae"
+            "objectKey": "interfaceDeclaration_2bbf207da38a2675",
+            "sourceKey": "interfaceDeclaration_2509e270576b19ee"
           },
           "name": {
             "objectKey": "id_daac0cc042f60a91",
-            "sourceKey": "id_c0548210e6615d0e"
+            "sourceKey": "id_5ea0aca03104cf86"
           }
         },
         "name": "AnonymousHandler",
@@ -122,12 +130,12 @@
             "kind": "interfaceMethod",
             "sourceKeys": {
               "base": {
-                "objectKey": "interfaceMethodDeclaration_df3e8c29cfa05d26",
-                "sourceKey": "interfaceMethodDeclaration_c52222c2c86b0ac5"
+                "objectKey": "interfaceMethodDeclaration_20cebbf8452aadb6",
+                "sourceKey": "interfaceMethodDeclaration_3cdafc8656087c54"
               },
               "name": {
                 "objectKey": "id_7b9ae991e1ae993a",
-                "sourceKey": "id_ec30706fd5957387"
+                "sourceKey": "id_100599c5d8aa0a82"
               }
             },
             "name": "handle",
@@ -136,15 +144,15 @@
               {
                 "kind": "parameter",
                 "sourceKeys": {
-                  "objectKey": "formalParameter_e2ea168c8e1118cb",
-                  "sourceKey": "formalParameter_b0dc06aad05c7b7e"
+                  "objectKey": "formalParameter_ef4fe5d02382241d",
+                  "sourceKey": "formalParameter_0ba8db69e6976980"
                 },
                 "variant": "value",
                 "variantType": {
                   "kind": "type",
                   "sourceKeys": {
-                    "objectKey": "typeRef_a13e3e8b5328228b",
-                    "sourceKey": "typeRef_051f68a975c5f162"
+                    "objectKey": "typeRef_0f82fcb626301929",
+                    "sourceKey": "typeRef_a879a124cf911c5a"
                   },
                   "type": "primitive",
                   "primitiveType": "String"
@@ -161,7 +169,7 @@
               "kind": "modifier",
               "sourceKeys": {
                 "objectKey": "modifier_a04213395735c45e",
-                "sourceKey": "modifier_f7b3f1adf956aac8"
+                "sourceKey": "modifier_8dd3809ed833472e"
               },
               "name": "PUBLIC"
             }
@@ -172,12 +180,12 @@
         "kind": "enum",
         "sourceKeys": {
           "base": {
-            "objectKey": "enumDeclaration_d0c42242f42c226e",
-            "sourceKey": "enumDeclaration_98988d7af957754d"
+            "objectKey": "enumDeclaration_201f235cfeed8aff",
+            "sourceKey": "enumDeclaration_2e4037931ad599b6"
           },
           "name": {
             "objectKey": "id_0032c9c86e5f7b59",
-            "sourceKey": "id_5aba413e3e470781"
+            "sourceKey": "id_c35ddda2026895b7"
           }
         },
         "name": "AnonymousStatus",
@@ -186,7 +194,7 @@
             "kind": "enumConstant",
             "sourceKeys": {
               "objectKey": "id_f69715dde9509341",
-              "sourceKey": "id_5130215a4cf550e9"
+              "sourceKey": "id_39f1c3e0c04552ee"
             },
             "name": "OPEN"
           },
@@ -194,7 +202,7 @@
             "kind": "enumConstant",
             "sourceKeys": {
               "objectKey": "id_e08eb42eace7ce34",
-              "sourceKey": "id_f78fe174424c43eb"
+              "sourceKey": "id_bdaf2ac4b7e05e18"
             },
             "name": "CLOSED"
           }
@@ -205,7 +213,7 @@
               "kind": "modifier",
               "sourceKeys": {
                 "objectKey": "modifier_a04213395735c45e",
-                "sourceKey": "modifier_931c9401fafa5dd7"
+                "sourceKey": "modifier_d32b3fdf224e4db8"
               },
               "name": "PUBLIC"
             }
@@ -216,20 +224,20 @@
         "kind": "method",
         "sourceKeys": {
           "base": {
-            "objectKey": "methodDeclaration_68bd239be7a840c8",
-            "sourceKey": "methodDeclaration_0de726a50a41cf66"
+            "objectKey": "methodDeclaration_ceb5c00b41ec754c",
+            "sourceKey": "methodDeclaration_0a658ebe655492d4"
           },
           "name": {
             "objectKey": "id_98ba8f2e70732a73",
-            "sourceKey": "id_f16d3a76e0ae3e6c"
+            "sourceKey": "id_0bc6c75759a16adf"
           }
         },
         "name": "describe",
         "returnType": {
           "kind": "type",
           "sourceKeys": {
-            "objectKey": "typeRef_a13e3e8b5328228b",
-            "sourceKey": "typeRef_1263a65b1adf82af"
+            "objectKey": "typeRef_0f82fcb626301929",
+            "sourceKey": "typeRef_6832bfcc6aa29e7c"
           },
           "type": "primitive",
           "primitiveType": "String"
@@ -238,15 +246,15 @@
           {
             "kind": "parameter",
             "sourceKeys": {
-              "objectKey": "formalParameter_53b65feff8ae2e37",
-              "sourceKey": "formalParameter_4940b69724e2d3a5"
+              "objectKey": "formalParameter_c0586193451b96f1",
+              "sourceKey": "formalParameter_4d34e21d8a5b9db8"
             },
             "variant": "value",
             "variantType": {
               "kind": "type",
               "sourceKeys": {
-                "objectKey": "typeRef_fe788c46cbe43aa9",
-                "sourceKey": "typeRef_e155145f3513d5f8"
+                "objectKey": "typeRef_04a5744e2efd5dfb",
+                "sourceKey": "typeRef_df484ab2125f1338"
               },
               "type": "primitive",
               "primitiveType": "Object"
@@ -258,10 +266,16 @@
           {
             "kind": "return",
             "sourceKeys": {
-              "objectKey": "returnStatement_b246b066d8c17fc2",
-              "sourceKey": "returnStatement_ccdd358a9b0db73e"
+              "objectKey": "returnStatement_b03dad0243418b49",
+              "sourceKey": "returnStatement_57fcbe98dc79c225"
             },
             "field": {
+              "kind": "memberAccess",
+              "sourceKeys": {
+                "objectKey": "dotExpression_ac3c5108687c1ad1",
+                "sourceKey": "dotExpression_7d8339071bd72240"
+              },
+              "type": "method",
               "object": "String",
               "operator": ".",
               "member": "valueOf",
@@ -277,7 +291,7 @@
               "kind": "modifier",
               "sourceKeys": {
                 "objectKey": "modifier_355af635756cc383",
-                "sourceKey": "modifier_d32da6a0f74c161b"
+                "sourceKey": "modifier_2aef60b073ecc4dc"
               },
               "name": "STATIC"
             }
@@ -288,20 +302,20 @@
         "kind": "method",
         "sourceKeys": {
           "base": {
-            "objectKey": "methodDeclaration_0d2d47cea49ceb7e",
-            "sourceKey": "methodDeclaration_f12e86fbc246e51c"
+            "objectKey": "methodDeclaration_aea29e917b7b2315",
+            "sourceKey": "methodDeclaration_91faf190e98cab9e"
           },
           "name": {
             "objectKey": "id_fb3b3cb0a268ddbd",
-            "sourceKey": "id_afafb1fa039d05cd"
+            "sourceKey": "id_6550e2a623a7ffe4"
           }
         },
         "name": "square",
         "returnType": {
           "kind": "type",
           "sourceKeys": {
-            "objectKey": "typeRef_55792e748cf1fa8f",
-            "sourceKey": "typeRef_83acdb55b44055d7"
+            "objectKey": "typeRef_1a870c360196e41a",
+            "sourceKey": "typeRef_02291aad7674f67b"
           },
           "type": "primitive",
           "primitiveType": "Integer"
@@ -310,15 +324,15 @@
           {
             "kind": "parameter",
             "sourceKeys": {
-              "objectKey": "formalParameter_2b77a126ce8cec2b",
-              "sourceKey": "formalParameter_fc3fea70f86c68f0"
+              "objectKey": "formalParameter_fb04fb7ccc9ca6cd",
+              "sourceKey": "formalParameter_fda461f6a7e7a1ec"
             },
             "variant": "value",
             "variantType": {
               "kind": "type",
               "sourceKeys": {
-                "objectKey": "typeRef_55792e748cf1fa8f",
-                "sourceKey": "typeRef_3707917b57f6323e"
+                "objectKey": "typeRef_1a870c360196e41a",
+                "sourceKey": "typeRef_8fd5c380f15f3a7a"
               },
               "type": "primitive",
               "primitiveType": "Integer"
@@ -330,10 +344,14 @@
           {
             "kind": "return",
             "sourceKeys": {
-              "objectKey": "returnStatement_dc10595d2e4485df",
-              "sourceKey": "returnStatement_1150e528d1fa1528"
+              "objectKey": "returnStatement_58f0c6bf80b6418f",
+              "sourceKey": "returnStatement_59448fd07587c07a"
             },
             "field": {
+              "sourceKeys": {
+                "objectKey": "arth1Expression_fdba52b17be32d07",
+                "sourceKey": "arth1Expression_d8ce9fcf3a825bce"
+              },
               "left": "value",
               "operator": "*",
               "right": "value"
@@ -346,7 +364,7 @@
               "kind": "modifier",
               "sourceKeys": {
                 "objectKey": "modifier_0cc039a77999b188",
-                "sourceKey": "modifier_795e96ee4f63e867"
+                "sourceKey": "modifier_5231f63263e38432"
               },
               "name": "PRIVATE"
             }
@@ -356,19 +374,23 @@
       {
         "kind": "field",
         "sourceKeys": {
-          "objectKey": "fieldDeclaration_3476d0eb770255b5",
-          "sourceKey": "fieldDeclaration_9663ebfb8a306dff"
+          "objectKey": "fieldDeclaration_76ee91f9c0420e7f",
+          "sourceKey": "fieldDeclaration_e157f4874dbe3eea"
         },
         "variants": [
           {
+            "sourceKeys": {
+              "objectKey": "variableDeclarator_dcd7ad7d23ed8213",
+              "sourceKey": "variableDeclarator_d25100afbf686abc"
+            },
             "name": "accountId"
           }
         ],
         "variantType": {
           "kind": "type",
           "sourceKeys": {
-            "objectKey": "typeRef_3d04cbf9478b92e2",
-            "sourceKey": "typeRef_cf2ed38b8cb77acc"
+            "objectKey": "typeRef_7825a4723f3a3334",
+            "sourceKey": "typeRef_94c6167d21016813"
           },
           "type": "primitive",
           "primitiveType": "Id"
@@ -378,13 +400,21 @@
       {
         "kind": "field",
         "sourceKeys": {
-          "objectKey": "fieldDeclaration_cc7567e8d9b0e0a9",
-          "sourceKey": "fieldDeclaration_1326248617c46c7f"
+          "objectKey": "fieldDeclaration_57279eb0e28bec04",
+          "sourceKey": "fieldDeclaration_61aa08e3171a4076"
         },
         "variants": [
           {
+            "sourceKeys": {
+              "objectKey": "variableDeclarator_ceaf85d86d4eac33",
+              "sourceKey": "variableDeclarator_1a52e8112ea751e8"
+            },
             "name": "name",
             "init": {
+              "sourceKeys": {
+                "objectKey": "literal_8b31648a5d2e432a",
+                "sourceKey": "literal_7b25000a852189dd"
+              },
               "value": "'Test'",
               "valueType": "string"
             }
@@ -393,8 +423,8 @@
         "variantType": {
           "kind": "type",
           "sourceKeys": {
-            "objectKey": "typeRef_a13e3e8b5328228b",
-            "sourceKey": "typeRef_786dcc8ffd43cabd"
+            "objectKey": "typeRef_0f82fcb626301929",
+            "sourceKey": "typeRef_b34942abe87508fa"
           },
           "type": "primitive",
           "primitiveType": "String"
@@ -404,33 +434,53 @@
       {
         "kind": "field",
         "sourceKeys": {
-          "objectKey": "fieldDeclaration_8c95d8c5cf7b3e05",
-          "sourceKey": "fieldDeclaration_27e78fa6dd226b69"
+          "objectKey": "fieldDeclaration_bfd735fbd4eb1e9c",
+          "sourceKey": "fieldDeclaration_60ade0d0f7c4cc4a"
         },
         "variants": [
           {
+            "sourceKeys": {
+              "objectKey": "variableDeclarator_6b8853dd688031d3",
+              "sourceKey": "variableDeclarator_19a06c5a13d2e9d5"
+            },
             "name": "count",
             "init": {
+              "sourceKeys": {
+                "objectKey": "literal_c0d97fe34037a338",
+                "sourceKey": "literal_f28be2391c35ecf4"
+              },
               "value": "0",
               "valueType": "integer"
             }
           },
           {
+            "sourceKeys": {
+              "objectKey": "variableDeclarator_c33259d932ac6eca",
+              "sourceKey": "variableDeclarator_bff5ec435c16a4d1"
+            },
             "name": "total",
             "init": {
+              "sourceKeys": {
+                "objectKey": "literal_1e0f71bd1af6c752",
+                "sourceKey": "literal_fcefa420f9a0e234"
+              },
               "value": "10",
               "valueType": "integer"
             }
           },
           {
+            "sourceKeys": {
+              "objectKey": "variableDeclarator_36a1fae5dd12e423",
+              "sourceKey": "variableDeclarator_a270ee80b21e99c5"
+            },
             "name": "missing"
           }
         ],
         "variantType": {
           "kind": "type",
           "sourceKeys": {
-            "objectKey": "typeRef_55792e748cf1fa8f",
-            "sourceKey": "typeRef_500376326ed37a7b"
+            "objectKey": "typeRef_1a870c360196e41a",
+            "sourceKey": "typeRef_63cbd67989fd2404"
           },
           "type": "primitive",
           "primitiveType": "Integer"
@@ -440,13 +490,21 @@
       {
         "kind": "field",
         "sourceKeys": {
-          "objectKey": "fieldDeclaration_5684c5dc1e47d6c4",
-          "sourceKey": "fieldDeclaration_c56597be8b778ccf"
+          "objectKey": "fieldDeclaration_fcfa399685be557b",
+          "sourceKey": "fieldDeclaration_955d1a2a111137ab"
         },
         "variants": [
           {
+            "sourceKeys": {
+              "objectKey": "variableDeclarator_d471afa639be7ce5",
+              "sourceKey": "variableDeclarator_67681bc33d5a620d"
+            },
             "name": "longValue",
             "init": {
+              "sourceKeys": {
+                "objectKey": "literal_f7ba0f8aadca065f",
+                "sourceKey": "literal_5f3babf152972f94"
+              },
               "value": "100L",
               "valueType": "long"
             }
@@ -455,8 +513,8 @@
         "variantType": {
           "kind": "type",
           "sourceKeys": {
-            "objectKey": "typeRef_ddb0ca3bbbbae41a",
-            "sourceKey": "typeRef_7d6148a528bebd71"
+            "objectKey": "typeRef_a07a41faf990dabb",
+            "sourceKey": "typeRef_6e7db5051b217e54"
           },
           "type": "primitive",
           "primitiveType": "Long"
@@ -466,13 +524,21 @@
       {
         "kind": "field",
         "sourceKeys": {
-          "objectKey": "fieldDeclaration_2f8b344d018f614e",
-          "sourceKey": "fieldDeclaration_26ec0b41b3eae0b8"
+          "objectKey": "fieldDeclaration_01027346f3643445",
+          "sourceKey": "fieldDeclaration_18a4d52c3e2da7a3"
         },
         "variants": [
           {
+            "sourceKeys": {
+              "objectKey": "variableDeclarator_ff3775c925c0e9fd",
+              "sourceKey": "variableDeclarator_852d6e9443c56336"
+            },
             "name": "doubleValue",
             "init": {
+              "sourceKeys": {
+                "objectKey": "literal_72880cd439197bea",
+                "sourceKey": "literal_b8250f313df37e3e"
+              },
               "value": "10.5",
               "valueType": "number"
             }
@@ -481,8 +547,8 @@
         "variantType": {
           "kind": "type",
           "sourceKeys": {
-            "objectKey": "typeRef_5f719f07d6249f14",
-            "sourceKey": "typeRef_29da8701afe13e91"
+            "objectKey": "typeRef_4261c1204bfd2187",
+            "sourceKey": "typeRef_2d056c93813a3912"
           },
           "type": "primitive",
           "primitiveType": "Double"
@@ -492,13 +558,21 @@
       {
         "kind": "field",
         "sourceKeys": {
-          "objectKey": "fieldDeclaration_a4f38ebabcb3a3c0",
-          "sourceKey": "fieldDeclaration_3d6b3bad64f8e2ef"
+          "objectKey": "fieldDeclaration_c0ebb7914005d14b",
+          "sourceKey": "fieldDeclaration_1395628dcbd89eb8"
         },
         "variants": [
           {
+            "sourceKeys": {
+              "objectKey": "variableDeclarator_dace7ea122f0fc8b",
+              "sourceKey": "variableDeclarator_d6abd055b85e35f9"
+            },
             "name": "decimalValue",
             "init": {
+              "sourceKeys": {
+                "objectKey": "literal_df1a3f8fe74bac81",
+                "sourceKey": "literal_143e4a9307581af6"
+              },
               "value": "100.25",
               "valueType": "number"
             }
@@ -507,8 +581,8 @@
         "variantType": {
           "kind": "type",
           "sourceKeys": {
-            "objectKey": "typeRef_c2c82deed6d7148e",
-            "sourceKey": "typeRef_63e365e059477724"
+            "objectKey": "typeRef_a51d4b1dbf7db086",
+            "sourceKey": "typeRef_e10204163dc1be67"
           },
           "type": "primitive",
           "primitiveType": "Decimal"
@@ -518,13 +592,21 @@
       {
         "kind": "field",
         "sourceKeys": {
-          "objectKey": "fieldDeclaration_6974e5a523aaf7c4",
-          "sourceKey": "fieldDeclaration_684ea50200de049e"
+          "objectKey": "fieldDeclaration_b0f0974538d8103f",
+          "sourceKey": "fieldDeclaration_ef343aaeb2f1c86c"
         },
         "variants": [
           {
+            "sourceKeys": {
+              "objectKey": "variableDeclarator_fef5c3e552eca3b2",
+              "sourceKey": "variableDeclarator_c07b04a0375cf9f8"
+            },
             "name": "enabled",
             "init": {
+              "sourceKeys": {
+                "objectKey": "literal_cbe19404fa775e83",
+                "sourceKey": "literal_255b55dc16d97930"
+              },
               "value": "true",
               "valueType": "boolean"
             }
@@ -533,8 +615,8 @@
         "variantType": {
           "kind": "type",
           "sourceKeys": {
-            "objectKey": "typeRef_460b83c9a2978f02",
-            "sourceKey": "typeRef_974646cbd57ece6d"
+            "objectKey": "typeRef_11833fa784196eb7",
+            "sourceKey": "typeRef_85ac6b64ac7d10ae"
           },
           "type": "primitive",
           "primitiveType": "Boolean"
@@ -544,13 +626,23 @@
       {
         "kind": "field",
         "sourceKeys": {
-          "objectKey": "fieldDeclaration_db5120e8fe58288e",
-          "sourceKey": "fieldDeclaration_f8ae5b800a6fe188"
+          "objectKey": "fieldDeclaration_86d4a273478d338a",
+          "sourceKey": "fieldDeclaration_5dad3bd252a694c1"
         },
         "variants": [
           {
+            "sourceKeys": {
+              "objectKey": "variableDeclarator_741126ec505c3a9f",
+              "sourceKey": "variableDeclarator_69e3855aa281579e"
+            },
             "name": "today",
             "init": {
+              "kind": "memberAccess",
+              "sourceKeys": {
+                "objectKey": "dotExpression_fbc04f289b005ff2",
+                "sourceKey": "dotExpression_2abdf786d9badd53"
+              },
+              "type": "method",
               "object": "Date",
               "operator": ".",
               "member": "today"
@@ -560,8 +652,8 @@
         "variantType": {
           "kind": "type",
           "sourceKeys": {
-            "objectKey": "typeRef_81586b217f663e9c",
-            "sourceKey": "typeRef_096f29d0d1969f3c"
+            "objectKey": "typeRef_54ff31c7f31fcaec",
+            "sourceKey": "typeRef_bd930370b8321428"
           },
           "type": "primitive",
           "primitiveType": "Date"
@@ -571,13 +663,23 @@
       {
         "kind": "field",
         "sourceKeys": {
-          "objectKey": "fieldDeclaration_75575076309a96ce",
-          "sourceKey": "fieldDeclaration_7b434d086ff78bc8"
+          "objectKey": "fieldDeclaration_0579faa036689e77",
+          "sourceKey": "fieldDeclaration_8a76544e0efd9c22"
         },
         "variants": [
           {
+            "sourceKeys": {
+              "objectKey": "variableDeclarator_30c368200818f8a9",
+              "sourceKey": "variableDeclarator_ab9f9ac2d2375451"
+            },
             "name": "now",
             "init": {
+              "kind": "memberAccess",
+              "sourceKeys": {
+                "objectKey": "dotExpression_5a5f88eeb183d857",
+                "sourceKey": "dotExpression_59ab4cd20ff9e4b7"
+              },
+              "type": "method",
               "object": "Datetime",
               "operator": ".",
               "member": "now"
@@ -587,8 +689,8 @@
         "variantType": {
           "kind": "type",
           "sourceKeys": {
-            "objectKey": "typeRef_6b9953bd2bdf2ef7",
-            "sourceKey": "typeRef_02d2ffa8f05ee990"
+            "objectKey": "typeRef_ad2480faf7b25c1a",
+            "sourceKey": "typeRef_c131e3d0428a22f3"
           },
           "type": "primitive",
           "primitiveType": "Datetime"
@@ -598,30 +700,56 @@
       {
         "kind": "field",
         "sourceKeys": {
-          "objectKey": "fieldDeclaration_42785b1891a52ff7",
-          "sourceKey": "fieldDeclaration_760355d34b783a42"
+          "objectKey": "fieldDeclaration_2696b1c4efa52abd",
+          "sourceKey": "fieldDeclaration_bc04f2d8197e4696"
         },
         "variants": [
           {
+            "sourceKeys": {
+              "objectKey": "variableDeclarator_91c229e4f1d6f966",
+              "sourceKey": "variableDeclarator_df29f221b63d0491"
+            },
             "name": "timeValue",
             "init": {
+              "kind": "memberAccess",
+              "sourceKeys": {
+                "objectKey": "dotExpression_e69be042d24f83c7",
+                "sourceKey": "dotExpression_4ac1de3b1de83926"
+              },
+              "type": "method",
               "object": "Time",
               "operator": ".",
               "member": "newInstance",
               "memberArg": [
                 {
+                  "sourceKeys": {
+                    "objectKey": "literal_3a096ae0a02e639b",
+                    "sourceKey": "literal_bce53c71b57620d7"
+                  },
                   "value": "12",
                   "valueType": "integer"
                 },
                 {
+                  "sourceKeys": {
+                    "objectKey": "literal_b8b3a8d832b7c0ee",
+                    "sourceKey": "literal_d4ad6ef41153cdda"
+                  },
                   "value": "30",
                   "valueType": "integer"
                 },
                 {
+                  "sourceKeys": {
+                    "objectKey": "literal_c0d97fe34037a338",
+                    "sourceKey": "literal_2c122e0092038287"
+                  },
                   "value": "0",
                   "valueType": "integer"
                 },
                 {
+                  "sourceKeys": {
+                    "objectKey": "literal_c0d97fe34037a338",
+                    "sourceKey": "literal_39566c693ea4f24a"
+                  },
                   "value": "0",
                   "valueType": "integer"
                 }
@@ -632,8 +760,8 @@
         "variantType": {
           "kind": "type",
           "sourceKeys": {
-            "objectKey": "typeRef_fe0e675fed3fa8d3",
-            "sourceKey": "typeRef_0bf4d273fb356343"
+            "objectKey": "typeRef_332d90372c01d7ff",
+            "sourceKey": "typeRef_578490f41facf123"
           },
           "type": "primitive",
           "primitiveType": "Time"
@@ -643,13 +771,21 @@
       {
         "kind": "field",
         "sourceKeys": {
-          "objectKey": "fieldDeclaration_83e37e5cd0b72888",
-          "sourceKey": "fieldDeclaration_19c6e6aa706b62ac"
+          "objectKey": "fieldDeclaration_131257b771860a9a",
+          "sourceKey": "fieldDeclaration_f66762d3533ffdb4"
         },
         "variants": [
           {
+            "sourceKeys": {
+              "objectKey": "variableDeclarator_0c5e21816e56437d",
+              "sourceKey": "variableDeclarator_0f3d0d658db23b24"
+            },
             "name": "CONSTANT",
             "init": {
+              "sourceKeys": {
+                "objectKey": "literal_5c6f1c2fbc667e2e",
+                "sourceKey": "literal_ff81db7d1b7893c9"
+              },
               "value": "'constant'",
               "valueType": "string"
             }
@@ -658,8 +794,8 @@
         "variantType": {
           "kind": "type",
           "sourceKeys": {
-            "objectKey": "typeRef_a13e3e8b5328228b",
-            "sourceKey": "typeRef_10335b785f33d981"
+            "objectKey": "typeRef_0f82fcb626301929",
+            "sourceKey": "typeRef_93fd69cc4bf13219"
           },
           "type": "primitive",
           "primitiveType": "String"
@@ -670,7 +806,7 @@
               "kind": "modifier",
               "sourceKeys": {
                 "objectKey": "modifier_9d4bf2c8006d61ce",
-                "sourceKey": "modifier_bb38520a9bbfab8a"
+                "sourceKey": "modifier_362014a554d67299"
               },
               "name": "FINAL"
             }
@@ -680,13 +816,21 @@
       {
         "kind": "field",
         "sourceKeys": {
-          "objectKey": "fieldDeclaration_d9da757200ded448",
-          "sourceKey": "fieldDeclaration_bfc859e1cd5d0f5d"
+          "objectKey": "fieldDeclaration_17c3b82eec1a0920",
+          "sourceKey": "fieldDeclaration_aba036aa8cd2c90c"
         },
         "variants": [
           {
+            "sourceKeys": {
+              "objectKey": "variableDeclarator_54c3223f8616736c",
+              "sourceKey": "variableDeclarator_f23b80be35624803"
+            },
             "name": "names",
             "init": {
+              "sourceKeys": {
+                "objectKey": "newExpression_053926a694b0741e",
+                "sourceKey": "newExpression_a59a0ee6e45384fa"
+              },
               "collection": [
                 "List"
               ],
@@ -694,23 +838,24 @@
                 {
                   "kind": "type",
                   "sourceKeys": {
-                    "objectKey": "typeRef_a13e3e8b5328228b",
-                    "sourceKey": "typeRef_db57abaee7ba69f3"
+                    "objectKey": "typeRef_0f82fcb626301929",
+                    "sourceKey": "typeRef_b320fa3b353e2b9e"
                   },
                   "type": "primitive",
                   "primitiveType": "String"
                 }
-              ]
+              ],
+              "initType": "class"
             }
           }
         ],
         "variantType": {
           "kind": "type",
           "sourceKeys": {
-            "objectKey": "typeRef_843eae388397d1fc",
-            "sourceKey": "typeRef_b45cfa7eb1bb8e96"
+            "objectKey": "typeRef_4ae5c77abccbea32",
+            "sourceKey": "typeRef_6aa049b36fc1a51c"
           },
-          "collectionType": "list",
+          "type": "list",
           "elementType": {
             "type": "primitive",
             "primitiveType": "String"
@@ -721,13 +866,21 @@
       {
         "kind": "field",
         "sourceKeys": {
-          "objectKey": "fieldDeclaration_f451b3177fa4fae3",
-          "sourceKey": "fieldDeclaration_7683e6066c837f18"
+          "objectKey": "fieldDeclaration_a28a9d044c214670",
+          "sourceKey": "fieldDeclaration_792298620f68d0b9"
         },
         "variants": [
           {
+            "sourceKeys": {
+              "objectKey": "variableDeclarator_db0b79dce99e28df",
+              "sourceKey": "variableDeclarator_a38076ec0c198831"
+            },
             "name": "ids",
             "init": {
+              "sourceKeys": {
+                "objectKey": "newExpression_5509b67b622b1608",
+                "sourceKey": "newExpression_422e19af2871f754"
+              },
               "collection": [
                 "Set"
               ],
@@ -735,23 +888,24 @@
                 {
                   "kind": "type",
                   "sourceKeys": {
-                    "objectKey": "typeRef_3d04cbf9478b92e2",
-                    "sourceKey": "typeRef_de06545f8990a8c4"
+                    "objectKey": "typeRef_7825a4723f3a3334",
+                    "sourceKey": "typeRef_ddb168ff81ce7b45"
                   },
                   "type": "primitive",
                   "primitiveType": "Id"
                 }
-              ]
+              ],
+              "initType": "class"
             }
           }
         ],
         "variantType": {
           "kind": "type",
           "sourceKeys": {
-            "objectKey": "typeRef_24f17573a601e5e9",
-            "sourceKey": "typeRef_e15a6a89e8c9576b"
+            "objectKey": "typeRef_f7e09b396fc9b418",
+            "sourceKey": "typeRef_39e64c069d21ea6b"
           },
-          "collectionType": "set",
+          "type": "set",
           "elementType": {
             "type": "primitive",
             "primitiveType": "Id"
@@ -762,13 +916,21 @@
       {
         "kind": "field",
         "sourceKeys": {
-          "objectKey": "fieldDeclaration_ee57f4c67ec92244",
-          "sourceKey": "fieldDeclaration_820007805511a7d2"
+          "objectKey": "fieldDeclaration_134e13139233e632",
+          "sourceKey": "fieldDeclaration_a159f89c395a2c56"
         },
         "variants": [
           {
+            "sourceKeys": {
+              "objectKey": "variableDeclarator_740af6a392162b1b",
+              "sourceKey": "variableDeclarator_bc6c1c6d909650d8"
+            },
             "name": "accounts",
             "init": {
+              "sourceKeys": {
+                "objectKey": "newExpression_95592cb5beed99ba",
+                "sourceKey": "newExpression_d90674e3d20589fa"
+              },
               "collection": [
                 "Map"
               ],
@@ -776,8 +938,8 @@
                 {
                   "kind": "type",
                   "sourceKeys": {
-                    "objectKey": "typeRef_3d04cbf9478b92e2",
-                    "sourceKey": "typeRef_774f52c46df05c4e"
+                    "objectKey": "typeRef_7825a4723f3a3334",
+                    "sourceKey": "typeRef_4d058da2b61eae98"
                   },
                   "type": "primitive",
                   "primitiveType": "Id"
@@ -785,23 +947,24 @@
                 {
                   "kind": "type",
                   "sourceKeys": {
-                    "objectKey": "typeRef_16c0945431044f5d",
-                    "sourceKey": "typeRef_2e4dff8dbd889745"
+                    "objectKey": "typeRef_f6180c936ec69d2a",
+                    "sourceKey": "typeRef_02ac178560c5e41c"
                   },
                   "type": "custom",
                   "customType": "Account"
                 }
-              ]
+              ],
+              "initType": "class"
             }
           }
         ],
         "variantType": {
           "kind": "type",
           "sourceKeys": {
-            "objectKey": "typeRef_93bf71bd2805da14",
-            "sourceKey": "typeRef_669020d4d2ef6a53"
+            "objectKey": "typeRef_eca06a0f85eec61c",
+            "sourceKey": "typeRef_23e9d60c719a661e"
           },
-          "collectionType": "map",
+          "type": "map",
           "keyType": {
             "type": "primitive",
             "primitiveType": "Id"
@@ -816,13 +979,21 @@
       {
         "kind": "field",
         "sourceKeys": {
-          "objectKey": "fieldDeclaration_45615aee0ff79fec",
-          "sourceKey": "fieldDeclaration_1cd95141f330a260"
+          "objectKey": "fieldDeclaration_41f951039deb8d98",
+          "sourceKey": "fieldDeclaration_8e62606063955675"
         },
         "variants": [
           {
+            "sourceKeys": {
+              "objectKey": "variableDeclarator_08e07e2d4a8bf685",
+              "sourceKey": "variableDeclarator_1d15ccae11b38a1f"
+            },
             "name": "scores",
             "init": {
+              "sourceKeys": {
+                "objectKey": "newExpression_b583c78c5cced573",
+                "sourceKey": "newExpression_0dc04a5ebe516aa0"
+              },
               "collection": [
                 "Map"
               ],
@@ -830,8 +1001,8 @@
                 {
                   "kind": "type",
                   "sourceKeys": {
-                    "objectKey": "typeRef_a13e3e8b5328228b",
-                    "sourceKey": "typeRef_7771606838227092"
+                    "objectKey": "typeRef_0f82fcb626301929",
+                    "sourceKey": "typeRef_5b801bcc549ba51a"
                   },
                   "type": "primitive",
                   "primitiveType": "String"
@@ -839,30 +1010,47 @@
                 {
                   "kind": "type",
                   "sourceKeys": {
-                    "objectKey": "typeRef_55792e748cf1fa8f",
-                    "sourceKey": "typeRef_a4d8e7615b174ca9"
+                    "objectKey": "typeRef_1a870c360196e41a",
+                    "sourceKey": "typeRef_d5a2caf8f5f100f6"
                   },
                   "type": "primitive",
                   "primitiveType": "Integer"
                 }
               ],
+              "initType": "map",
               "init": [
                 {
                   "key": {
+                    "sourceKeys": {
+                      "objectKey": "literal_be9bfc7686bc9fb4",
+                      "sourceKey": "literal_ce44fbe0eb79044f"
+                    },
                     "value": "'a'",
                     "valueType": "string"
                   },
                   "value": {
+                    "sourceKeys": {
+                      "objectKey": "literal_fb5627d59521b262",
+                      "sourceKey": "literal_404227cd9ed9dca4"
+                    },
                     "value": "1",
                     "valueType": "integer"
                   }
                 },
                 {
                   "key": {
+                    "sourceKeys": {
+                      "objectKey": "literal_0969634265b64bbd",
+                      "sourceKey": "literal_0544bf769e7f47da"
+                    },
                     "value": "'b'",
                     "valueType": "string"
                   },
                   "value": {
+                    "sourceKeys": {
+                      "objectKey": "literal_a49b7b7e3b02d933",
+                      "sourceKey": "literal_d3f68738ff5d828f"
+                    },
                     "value": "2",
                     "valueType": "integer"
                   }
@@ -874,10 +1062,10 @@
         "variantType": {
           "kind": "type",
           "sourceKeys": {
-            "objectKey": "typeRef_9ed236f896157cdf",
-            "sourceKey": "typeRef_45789906ef322496"
+            "objectKey": "typeRef_fb00a6c46e94342b",
+            "sourceKey": "typeRef_9a5a1717e910fa6c"
           },
-          "collectionType": "map",
+          "type": "map",
           "keyType": {
             "type": "primitive",
             "primitiveType": "String"
@@ -892,13 +1080,21 @@
       {
         "kind": "field",
         "sourceKeys": {
-          "objectKey": "fieldDeclaration_bd05d435c9f525c4",
-          "sourceKey": "fieldDeclaration_0ccb1bd386d75de0"
+          "objectKey": "fieldDeclaration_7e26c0cb5fafae42",
+          "sourceKey": "fieldDeclaration_5868a8c8b0e8989c"
         },
         "variants": [
           {
+            "sourceKeys": {
+              "objectKey": "variableDeclarator_03805cd042753aea",
+              "sourceKey": "variableDeclarator_9a4be6d351c5fb8c"
+            },
             "name": "tags",
             "init": {
+              "sourceKeys": {
+                "objectKey": "newExpression_b68588bbcc65934f",
+                "sourceKey": "newExpression_d783478c9c0120b7"
+              },
               "collection": [
                 "Set"
               ],
@@ -906,19 +1102,28 @@
                 {
                   "kind": "type",
                   "sourceKeys": {
-                    "objectKey": "typeRef_a13e3e8b5328228b",
-                    "sourceKey": "typeRef_21d32e4163d41d95"
+                    "objectKey": "typeRef_0f82fcb626301929",
+                    "sourceKey": "typeRef_27c796339b19d098"
                   },
                   "type": "primitive",
                   "primitiveType": "String"
                 }
               ],
+              "initType": "list || set",
               "init": [
                 {
+                  "sourceKeys": {
+                    "objectKey": "literal_67a4f7ad599fd7d3",
+                    "sourceKey": "literal_52e4527523f37bc9"
+                  },
                   "value": "'x'",
                   "valueType": "string"
                 },
                 {
+                  "sourceKeys": {
+                    "objectKey": "literal_e999afced0b52089",
+                    "sourceKey": "literal_a68b76bb3af29106"
+                  },
                   "value": "'y'",
                   "valueType": "string"
                 }
@@ -929,10 +1134,10 @@
         "variantType": {
           "kind": "type",
           "sourceKeys": {
-            "objectKey": "typeRef_5b8a738cb43a33b1",
-            "sourceKey": "typeRef_a7e797a69c1efad7"
+            "objectKey": "typeRef_6351616dfd14f492",
+            "sourceKey": "typeRef_201742c37ee15334"
           },
-          "collectionType": "set",
+          "type": "set",
           "elementType": {
             "type": "primitive",
             "primitiveType": "String"
@@ -943,13 +1148,21 @@
       {
         "kind": "field",
         "sourceKeys": {
-          "objectKey": "fieldDeclaration_3849541610765e22",
-          "sourceKey": "fieldDeclaration_6df3e36efa61e7e2"
+          "objectKey": "fieldDeclaration_e4d5c2405447ada6",
+          "sourceKey": "fieldDeclaration_29afde863c1365b7"
         },
         "variants": [
           {
+            "sourceKeys": {
+              "objectKey": "variableDeclarator_1159caa38f6d4bf4",
+              "sourceKey": "variableDeclarator_f53ac9f2ec48869c"
+            },
             "name": "emptyTags",
             "init": {
+              "sourceKeys": {
+                "objectKey": "newExpression_d82916a4dd39ba84",
+                "sourceKey": "newExpression_97265b449e960a6a"
+              },
               "collection": [
                 "Set"
               ],
@@ -957,13 +1170,14 @@
                 {
                   "kind": "type",
                   "sourceKeys": {
-                    "objectKey": "typeRef_a13e3e8b5328228b",
-                    "sourceKey": "typeRef_5130c05ed1e8ef3a"
+                    "objectKey": "typeRef_0f82fcb626301929",
+                    "sourceKey": "typeRef_8b2a11074b4e10b1"
                   },
                   "type": "primitive",
                   "primitiveType": "String"
                 }
               ],
+              "initType": "no",
               "value": "{}"
             }
           }
@@ -971,10 +1185,10 @@
         "variantType": {
           "kind": "type",
           "sourceKeys": {
-            "objectKey": "typeRef_5b8a738cb43a33b1",
-            "sourceKey": "typeRef_27c4a562bf9be222"
+            "objectKey": "typeRef_6351616dfd14f492",
+            "sourceKey": "typeRef_7b7b866b18e4cc8e"
           },
-          "collectionType": "set",
+          "type": "set",
           "elementType": {
             "type": "primitive",
             "primitiveType": "String"
@@ -985,26 +1199,47 @@
       {
         "kind": "field",
         "sourceKeys": {
-          "objectKey": "fieldDeclaration_5d65afd0e4d647e0",
-          "sourceKey": "fieldDeclaration_6eaedadb4aed0907"
+          "objectKey": "fieldDeclaration_6b1d77483b5144a6",
+          "sourceKey": "fieldDeclaration_e5e2cccaa0213272"
         },
         "variants": [
           {
+            "sourceKeys": {
+              "objectKey": "variableDeclarator_c441a93eb45145b8",
+              "sourceKey": "variableDeclarator_621fd4ab12cc773a"
+            },
             "name": "numbers",
             "init": {
+              "sourceKeys": {
+                "objectKey": "newExpression_4786cfba49022f1b",
+                "sourceKey": "newExpression_4507ba4db79cda8d"
+              },
               "collection": [
                 "Integer"
               ],
+              "initType": "array",
               "init": [
                 {
+                  "sourceKeys": {
+                    "objectKey": "literal_fb5627d59521b262",
+                    "sourceKey": "literal_3c9d7d0cef1713a9"
+                  },
                   "value": "1",
                   "valueType": "integer"
                 },
                 {
+                  "sourceKeys": {
+                    "objectKey": "literal_a49b7b7e3b02d933",
+                    "sourceKey": "literal_dcd30e56b95ba8f5"
+                  },
                   "value": "2",
                   "valueType": "integer"
                 },
                 {
+                  "sourceKeys": {
+                    "objectKey": "literal_72b29e97af94190f",
+                    "sourceKey": "literal_b97c60e45f957ff7"
+                  },
                   "value": "3",
                   "valueType": "integer"
                 }
@@ -1015,10 +1250,10 @@
         "variantType": {
           "kind": "type",
           "sourceKeys": {
-            "objectKey": "typeRef_ba204a653fba1923",
-            "sourceKey": "typeRef_8bd906247ffa7fb0"
+            "objectKey": "typeRef_141b92a8aad5e3ca",
+            "sourceKey": "typeRef_e0cf342f5c2fc9d8"
           },
-          "collectionType": "array",
+          "type": "array",
           "elementType": {
             "type": "primitive",
             "primitiveType": "Integer"
@@ -1030,17 +1265,30 @@
       {
         "kind": "field",
         "sourceKeys": {
-          "objectKey": "fieldDeclaration_064a960627defda2",
-          "sourceKey": "fieldDeclaration_2942eb4b6d3b147f"
+          "objectKey": "fieldDeclaration_72c439521bbbb662",
+          "sourceKey": "fieldDeclaration_ab4f9e0d189467da"
         },
         "variants": [
           {
+            "sourceKeys": {
+              "objectKey": "variableDeclarator_5b14783804b179c7",
+              "sourceKey": "variableDeclarator_eabfbbab61d24bc2"
+            },
             "name": "sized",
             "init": {
+              "sourceKeys": {
+                "objectKey": "newExpression_06b0af374f34d177",
+                "sourceKey": "newExpression_db8c5d41dfc4de27"
+              },
               "collection": [
                 "String"
               ],
+              "initType": "array",
               "size": {
+                "sourceKeys": {
+                  "objectKey": "literal_fda491d352df2d3b",
+                  "sourceKey": "literal_913db8745275e20d"
+                },
                 "value": "5",
                 "valueType": "integer"
               }
@@ -1050,10 +1298,10 @@
         "variantType": {
           "kind": "type",
           "sourceKeys": {
-            "objectKey": "typeRef_57fca91a2d5026cf",
-            "sourceKey": "typeRef_7a5b62fb97f3b2d5"
+            "objectKey": "typeRef_424143b7a659dcfa",
+            "sourceKey": "typeRef_234cdee0a38bc40d"
           },
-          "collectionType": "array",
+          "type": "array",
           "elementType": {
             "type": "primitive",
             "primitiveType": "String"
@@ -1063,19 +1311,29 @@
         "modifier": {}
       },
       {
-        "type": "statement",
+        "kind": "statement",
         "statement": {
           "kind": "expression",
           "sourceKeys": {
-            "objectKey": "expressionStatement_be1dff8f20350626",
-            "sourceKey": "expressionStatement_e58652ef199a9675"
+            "objectKey": "expressionStatement_3a1b7ecf0b670ed2",
+            "sourceKey": "expressionStatement_e2376d95b81285a6"
           },
           "value": {
+            "kind": "memberAccess",
+            "sourceKeys": {
+              "objectKey": "dotExpression_4c7260adb70de642",
+              "sourceKey": "dotExpression_c6d401c82fa414ad"
+            },
+            "type": "method",
             "object": "names",
             "operator": ".",
             "member": "add",
             "memberArg": [
               {
+                "sourceKeys": {
+                  "objectKey": "literal_e29e21287e7589b9",
+                  "sourceKey": "literal_9548bdeb842544e2"
+                },
                 "value": "'Alice'",
                 "valueType": "string"
               }
@@ -1085,19 +1343,29 @@
         "modifier": {}
       },
       {
-        "type": "statement",
+        "kind": "statement",
         "statement": {
           "kind": "expression",
           "sourceKeys": {
-            "objectKey": "expressionStatement_89ce9ef0f2062140",
-            "sourceKey": "expressionStatement_ced2ac7b6979f197"
+            "objectKey": "expressionStatement_05c5415007e739c5",
+            "sourceKey": "expressionStatement_5b91403321174fb3"
           },
           "value": {
+            "kind": "memberAccess",
+            "sourceKeys": {
+              "objectKey": "dotExpression_7c499a43a62c94ce",
+              "sourceKey": "dotExpression_c4d52fd08ec4af21"
+            },
+            "type": "method",
             "object": "names",
             "operator": ".",
             "member": "addAll",
             "memberArg": [
               {
+                "sourceKeys": {
+                  "objectKey": "newExpression_da8a1d88a80aeb02",
+                  "sourceKey": "newExpression_d418548aa11ac572"
+                },
                 "collection": [
                   "List"
                 ],
@@ -1105,19 +1373,28 @@
                   {
                     "kind": "type",
                     "sourceKeys": {
-                      "objectKey": "typeRef_a13e3e8b5328228b",
-                      "sourceKey": "typeRef_cc1064ae63f78064"
+                      "objectKey": "typeRef_0f82fcb626301929",
+                      "sourceKey": "typeRef_3d1a0640f8b016ca"
                     },
                     "type": "primitive",
                     "primitiveType": "String"
                   }
                 ],
+                "initType": "list || set",
                 "init": [
                   {
+                    "sourceKeys": {
+                      "objectKey": "literal_d70a0080da4b46cb",
+                      "sourceKey": "literal_b5ababd2f11a64ed"
+                    },
                     "value": "'Charlie'",
                     "valueType": "string"
                   },
                   {
+                    "sourceKeys": {
+                      "objectKey": "literal_225b9bfdabe7e1aa",
+                      "sourceKey": "literal_9c5a5bf6edecf24e"
+                    },
                     "value": "'David'",
                     "valueType": "string"
                   }
@@ -1129,23 +1406,39 @@
         "modifier": {}
       },
       {
-        "type": "statement",
+        "kind": "statement",
         "statement": {
           "kind": "expression",
           "sourceKeys": {
-            "objectKey": "expressionStatement_44f4f5db71bc90ff",
-            "sourceKey": "expressionStatement_ec1c5a0cab17821c"
+            "objectKey": "expressionStatement_a7c972c9e6148ebe",
+            "sourceKey": "expressionStatement_6e01b7df25e45bd8"
           },
           "value": {
+            "sourceKeys": {
+              "objectKey": "assignExpression_cc554881633f4330",
+              "sourceKey": "assignExpression_2816e0c42c7fe4f9"
+            },
             "left": {
+              "sourceKeys": {
+                "objectKey": "arrayExpression_ae49d97ba5799e8f",
+                "sourceKey": "arrayExpression_f8158bf1ceb1ab5d"
+              },
               "variant": "names",
               "index": {
+                "sourceKeys": {
+                  "objectKey": "literal_c0d97fe34037a338",
+                  "sourceKey": "literal_0428e585edd85e67"
+                },
                 "value": "0",
                 "valueType": "integer"
               }
             },
             "operator": "=",
             "right": {
+              "sourceKeys": {
+                "objectKey": "literal_9d4d06e72ab7f3c0",
+                "sourceKey": "literal_ddf23d3e2366736c"
+              },
               "value": "'Bob'",
               "valueType": "string"
             }
@@ -1154,19 +1447,31 @@
         "modifier": {}
       },
       {
-        "type": "statement",
+        "kind": "statement",
         "statement": {
           "kind": "expression",
           "sourceKeys": {
-            "objectKey": "expressionStatement_1e66aadb609b1c60",
-            "sourceKey": "expressionStatement_18eb6b522947c1fd"
+            "objectKey": "expressionStatement_ab4bc7b972892589",
+            "sourceKey": "expressionStatement_ea1b34508e5a4024"
           },
           "value": {
+            "kind": "memberAccess",
+            "sourceKeys": {
+              "objectKey": "dotExpression_2c9ebae48bbe5cff",
+              "sourceKey": "dotExpression_fc5f798682acb82d"
+            },
+            "type": "method",
             "object": "System",
             "operator": ".",
             "member": "debug",
             "memberArg": [
               {
+                "kind": "memberAccess",
+                "sourceKeys": {
+                  "objectKey": "dotExpression_269a206c23e01328",
+                  "sourceKey": "dotExpression_7c5fa4e841423190"
+                },
+                "type": "method",
                 "object": "names",
                 "operator": ".",
                 "member": "size"
@@ -1177,19 +1482,31 @@
         "modifier": {}
       },
       {
-        "type": "statement",
+        "kind": "statement",
         "statement": {
           "kind": "expression",
           "sourceKeys": {
-            "objectKey": "expressionStatement_f7fe34f8ea52c59f",
-            "sourceKey": "expressionStatement_a33e8f5b78166347"
+            "objectKey": "expressionStatement_cea10e04105165f5",
+            "sourceKey": "expressionStatement_87a0eaee554e59cb"
           },
           "value": {
+            "kind": "memberAccess",
+            "sourceKeys": {
+              "objectKey": "dotExpression_ee79e0c8bafe03f1",
+              "sourceKey": "dotExpression_e97878614321af49"
+            },
+            "type": "method",
             "object": "System",
             "operator": ".",
             "member": "debug",
             "memberArg": [
               {
+                "kind": "memberAccess",
+                "sourceKeys": {
+                  "objectKey": "dotExpression_07e5c0ec503dd491",
+                  "sourceKey": "dotExpression_430d5b9f6547ffac"
+                },
+                "type": "method",
                 "object": "names",
                 "operator": ".",
                 "member": "isEmpty"
@@ -1200,24 +1517,40 @@
         "modifier": {}
       },
       {
-        "type": "statement",
+        "kind": "statement",
         "statement": {
           "kind": "expression",
           "sourceKeys": {
-            "objectKey": "expressionStatement_814070bbe7abdfba",
-            "sourceKey": "expressionStatement_613bee15756a3857"
+            "objectKey": "expressionStatement_c53b6dfb59cbe633",
+            "sourceKey": "expressionStatement_947ad3efc5f9f57f"
           },
           "value": {
+            "kind": "memberAccess",
+            "sourceKeys": {
+              "objectKey": "dotExpression_22391d20349253c2",
+              "sourceKey": "dotExpression_e1d7b68e3b5ad1fe"
+            },
+            "type": "method",
             "object": "System",
             "operator": ".",
             "member": "debug",
             "memberArg": [
               {
+                "kind": "memberAccess",
+                "sourceKeys": {
+                  "objectKey": "dotExpression_3f7125146802c16d",
+                  "sourceKey": "dotExpression_2d0b4481bf87247e"
+                },
+                "type": "method",
                 "object": "names",
                 "operator": ".",
                 "member": "contains",
                 "memberArg": [
                   {
+                    "sourceKeys": {
+                      "objectKey": "literal_e29e21287e7589b9",
+                      "sourceKey": "literal_8196ba588df2bc7c"
+                    },
                     "value": "'Alice'",
                     "valueType": "string"
                   }
@@ -1229,25 +1562,45 @@
         "modifier": {}
       },
       {
-        "type": "statement",
+        "kind": "statement",
         "statement": {
           "kind": "expression",
           "sourceKeys": {
-            "objectKey": "expressionStatement_1eadc1e46e993290",
-            "sourceKey": "expressionStatement_9ff5d9c8f9b5e2dc"
+            "objectKey": "expressionStatement_cbf5d3452fe0b47d",
+            "sourceKey": "expressionStatement_2d95c2a20622e329"
           },
           "value": {
+            "kind": "memberAccess",
+            "sourceKeys": {
+              "objectKey": "dotExpression_67dcfeef5d7571b5",
+              "sourceKey": "dotExpression_e79fdaf592ee8759"
+            },
+            "type": "method",
             "object": "System",
             "operator": ".",
             "member": "debug",
             "memberArg": [
               {
+                "sourceKeys": {
+                  "objectKey": "coalExpression_30e1bbd73677594b",
+                  "sourceKey": "coalExpression_fd20d37437887e0f"
+                },
                 "left": {
+                  "kind": "memberAccess",
+                  "sourceKeys": {
+                    "objectKey": "dotExpression_51e079393aa50bdb",
+                    "sourceKey": "dotExpression_595f501adff3fc51"
+                  },
+                  "type": "method",
                   "object": "scores",
                   "operator": ".",
                   "member": "get",
                   "memberArg": [
                     {
+                      "sourceKeys": {
+                        "objectKey": "literal_be9bfc7686bc9fb4",
+                        "sourceKey": "literal_fc0d418e957f830a"
+                      },
                       "value": "'a'",
                       "valueType": "string"
                     }
@@ -1255,6 +1608,10 @@
                 },
                 "operator": "??",
                 "right": {
+                  "sourceKeys": {
+                    "objectKey": "literal_c0d97fe34037a338",
+                    "sourceKey": "literal_b9ccaf96821ffb5b"
+                  },
                   "value": "0",
                   "valueType": "integer"
                 }
@@ -1267,21 +1624,38 @@
       {
         "kind": "field",
         "sourceKeys": {
-          "objectKey": "fieldDeclaration_7799c50d92caf2ad",
-          "sourceKey": "fieldDeclaration_59175bb4933955e2"
+          "objectKey": "fieldDeclaration_c0d0de88c1862a60",
+          "sourceKey": "fieldDeclaration_12a6157d9a93f4b2"
         },
         "variants": [
           {
+            "sourceKeys": {
+              "objectKey": "variableDeclarator_d7db5574ee9ed575",
+              "sourceKey": "variableDeclarator_3c1d10a17e9e363a"
+            },
             "name": "account",
             "init": {
+              "sourceKeys": {
+                "objectKey": "newExpression_f381f07503a8d3ce",
+                "sourceKey": "newExpression_abe8673287ec120f"
+              },
               "collection": [
                 "Account"
               ],
+              "initType": "class",
               "arg": [
                 {
+                  "sourceKeys": {
+                    "objectKey": "assignExpression_ba47323fc373ea9f",
+                    "sourceKey": "assignExpression_02e7bd0f10668a0d"
+                  },
                   "left": "Name",
                   "operator": "=",
                   "right": {
+                    "sourceKeys": {
+                      "objectKey": "literal_b9cfa94244f476b3",
+                      "sourceKey": "literal_fe8611ff87c9097d"
+                    },
                     "value": "'Anonymous Account'",
                     "valueType": "string"
                   }
@@ -1293,8 +1667,8 @@
         "variantType": {
           "kind": "type",
           "sourceKeys": {
-            "objectKey": "typeRef_16c0945431044f5d",
-            "sourceKey": "typeRef_996a0adad9715ac6"
+            "objectKey": "typeRef_f6180c936ec69d2a",
+            "sourceKey": "typeRef_67e4db8b2301e2a4"
           },
           "type": "custom",
           "customType": "Account"
@@ -1302,29 +1676,39 @@
         "modifier": {}
       },
       {
-        "type": "statement",
+        "kind": "statement",
         "statement": {
           "kind": "insert",
           "sourceKeys": {
-            "objectKey": "insertStatement_da1cb4b6a136a293",
-            "sourceKey": "insertStatement_2e59b7cf567dddd5"
+            "objectKey": "insertStatement_f2daf7bde388efeb",
+            "sourceKey": "insertStatement_3a5acab27be1899e"
           },
           "field": "account"
         },
         "modifier": {}
       },
       {
-        "type": "statement",
+        "kind": "statement",
         "statement": {
           "kind": "expression",
           "sourceKeys": {
-            "objectKey": "expressionStatement_3305fe253261ffc6",
-            "sourceKey": "expressionStatement_5df3ddbd6eb07e3c"
+            "objectKey": "expressionStatement_6a36334a0201de38",
+            "sourceKey": "expressionStatement_87fef8d190435ade"
           },
           "value": {
+            "sourceKeys": {
+              "objectKey": "assignExpression_a75c22f07884e240",
+              "sourceKey": "assignExpression_2cb9c3e3f6eab1fe"
+            },
             "left": "accountId",
             "operator": "=",
             "right": {
+              "kind": "memberAccess",
+              "sourceKeys": {
+                "objectKey": "dotExpression_6b73b79c02cc497d",
+                "sourceKey": "dotExpression_2bf63221b44ce22d"
+              },
+              "type": "object",
               "object": "account",
               "operator": ".",
               "member": "Id"
@@ -1334,19 +1718,31 @@
         "modifier": {}
       },
       {
-        "type": "statement",
+        "kind": "statement",
         "statement": {
           "kind": "expression",
           "sourceKeys": {
-            "objectKey": "expressionStatement_afb6f77fdfcc0003",
-            "sourceKey": "expressionStatement_1a4bd3a541fb78d8"
+            "objectKey": "expressionStatement_c5248930a0acc5a0",
+            "sourceKey": "expressionStatement_4faba6ccfc8efa03"
           },
           "value": {
+            "kind": "memberAccess",
+            "sourceKeys": {
+              "objectKey": "dotExpression_628ed0d81506c24b",
+              "sourceKey": "dotExpression_730c70263f87fc20"
+            },
+            "type": "method",
             "object": "accounts",
             "operator": ".",
             "member": "put",
             "memberArg": [
               {
+                "kind": "memberAccess",
+                "sourceKeys": {
+                  "objectKey": "dotExpression_6b73b79c02cc497d",
+                  "sourceKey": "dotExpression_e2bfd68e45c0346d"
+                },
+                "type": "object",
                 "object": "account",
                 "operator": ".",
                 "member": "Id"
@@ -1360,18 +1756,34 @@
       {
         "kind": "field",
         "sourceKeys": {
-          "objectKey": "fieldDeclaration_d69a2cdf75250ae5",
-          "sourceKey": "fieldDeclaration_7daf42bbad8b67cc"
+          "objectKey": "fieldDeclaration_f0790ab4522bbe84",
+          "sourceKey": "fieldDeclaration_9419be40d17b0d59"
         },
         "variants": [
           {
+            "sourceKeys": {
+              "objectKey": "variableDeclarator_4e23bd0a66e97909",
+              "sourceKey": "variableDeclarator_094f3c814aa14503"
+            },
             "name": "retrieved",
             "init": {
+              "kind": "memberAccess",
+              "sourceKeys": {
+                "objectKey": "dotExpression_bda16b513efa26a5",
+                "sourceKey": "dotExpression_1cd5dda809d6cfe2"
+              },
+              "type": "method",
               "object": "accounts",
               "operator": ".",
               "member": "get",
               "memberArg": [
                 {
+                  "kind": "memberAccess",
+                  "sourceKeys": {
+                    "objectKey": "dotExpression_6b73b79c02cc497d",
+                    "sourceKey": "dotExpression_65267ad0b68b42a8"
+                  },
+                  "type": "object",
                   "object": "account",
                   "operator": ".",
                   "member": "Id"
@@ -1383,8 +1795,8 @@
         "variantType": {
           "kind": "type",
           "sourceKeys": {
-            "objectKey": "typeRef_16c0945431044f5d",
-            "sourceKey": "typeRef_a46f94d630a27ec8"
+            "objectKey": "typeRef_f6180c936ec69d2a",
+            "sourceKey": "typeRef_95ef8f3ae960dd2c"
           },
           "type": "custom",
           "customType": "Account"
@@ -1392,19 +1804,31 @@
         "modifier": {}
       },
       {
-        "type": "statement",
+        "kind": "statement",
         "statement": {
           "kind": "expression",
           "sourceKeys": {
-            "objectKey": "expressionStatement_0ac7196a9381a643",
-            "sourceKey": "expressionStatement_6d640c70bbb97a67"
+            "objectKey": "expressionStatement_9fc2e81f1655c9fc",
+            "sourceKey": "expressionStatement_e653009f562e7709"
           },
           "value": {
+            "kind": "memberAccess",
+            "sourceKeys": {
+              "objectKey": "dotExpression_a757a1a74a7ffb9e",
+              "sourceKey": "dotExpression_a733846440bfc7b5"
+            },
+            "type": "method",
             "object": "System",
             "operator": ".",
             "member": "debug",
             "memberArg": [
               {
+                "kind": "memberAccess",
+                "sourceKeys": {
+                  "objectKey": "dotExpression_d01da5d719071d7d",
+                  "sourceKey": "dotExpression_5948cb306d07d522"
+                },
+                "type": "object",
                 "object": "retrieved",
                 "operator": "?.",
                 "member": "Name"
@@ -1415,21 +1839,35 @@
         "modifier": {}
       },
       {
-        "type": "statement",
+        "kind": "statement",
         "statement": {
           "kind": "expression",
           "sourceKeys": {
-            "objectKey": "expressionStatement_a55e58b2b8dcd7df",
-            "sourceKey": "expressionStatement_b025544bcbc7efd2"
+            "objectKey": "expressionStatement_47c7b24856bf6725",
+            "sourceKey": "expressionStatement_054174d819ff2da7"
           },
           "value": {
+            "sourceKeys": {
+              "objectKey": "assignExpression_fbd93689df9dcacb",
+              "sourceKey": "assignExpression_519253f7ccb06ec4"
+            },
             "left": {
+              "kind": "memberAccess",
+              "sourceKeys": {
+                "objectKey": "dotExpression_5f8c22402655fe83",
+                "sourceKey": "dotExpression_4d8437dc9a598f98"
+              },
+              "type": "object",
               "object": "account",
               "operator": ".",
               "member": "Name"
             },
             "operator": "=",
             "right": {
+              "sourceKeys": {
+                "objectKey": "literal_415e8095174096a1",
+                "sourceKey": "literal_8be268d45c3cc822"
+              },
               "value": "'Updated'",
               "valueType": "string"
             }
@@ -1438,12 +1876,12 @@
         "modifier": {}
       },
       {
-        "type": "statement",
+        "kind": "statement",
         "statement": {
           "kind": "update",
           "sourceKeys": {
-            "objectKey": "updateStatement_3ce7f7b4f40762d6",
-            "sourceKey": "updateStatement_05b5ae917decf458"
+            "objectKey": "updateStatement_7474cbd282509e34",
+            "sourceKey": "updateStatement_fa801693b291fc40"
           },
           "field": "account",
           "accessLevel": "USER"
@@ -1451,12 +1889,12 @@
         "modifier": {}
       },
       {
-        "type": "statement",
+        "kind": "statement",
         "statement": {
           "kind": "upsert",
           "sourceKeys": {
-            "objectKey": "upsertStatement_94fc5312e6928214",
-            "sourceKey": "upsertStatement_46fcc788127ae42c"
+            "objectKey": "upsertStatement_7095ec1571487e1f",
+            "sourceKey": "upsertStatement_d392e256522d0ce4"
           },
           "field": "account",
           "key": [
@@ -1469,21 +1907,38 @@
       {
         "kind": "field",
         "sourceKeys": {
-          "objectKey": "fieldDeclaration_ac4a51798bf6aca2",
-          "sourceKey": "fieldDeclaration_fd8e330f401ebe6f"
+          "objectKey": "fieldDeclaration_37960ef118fd4594",
+          "sourceKey": "fieldDeclaration_fa0b53b1b3980e1b"
         },
         "variants": [
           {
+            "sourceKeys": {
+              "objectKey": "variableDeclarator_b6c36428538e4d82",
+              "sourceKey": "variableDeclarator_9081ceb54dbf5552"
+            },
             "name": "duplicate",
             "init": {
+              "sourceKeys": {
+                "objectKey": "newExpression_cba4653db13c3cf6",
+                "sourceKey": "newExpression_e2750a024a0bbdf1"
+              },
               "collection": [
                 "Account"
               ],
+              "initType": "class",
               "arg": [
                 {
+                  "sourceKeys": {
+                    "objectKey": "assignExpression_3ec83ab91c92bd55",
+                    "sourceKey": "assignExpression_33f7851ea2262279"
+                  },
                   "left": "Name",
                   "operator": "=",
                   "right": {
+                    "sourceKeys": {
+                      "objectKey": "literal_535ce0c1d13c1e78",
+                      "sourceKey": "literal_2f25faaacc251273"
+                    },
                     "value": "'Duplicate'",
                     "valueType": "string"
                   }
@@ -1495,8 +1950,8 @@
         "variantType": {
           "kind": "type",
           "sourceKeys": {
-            "objectKey": "typeRef_16c0945431044f5d",
-            "sourceKey": "typeRef_3be1f6377c9c058a"
+            "objectKey": "typeRef_f6180c936ec69d2a",
+            "sourceKey": "typeRef_fd7af164e19d392a"
           },
           "type": "custom",
           "customType": "Account"
@@ -1504,24 +1959,24 @@
         "modifier": {}
       },
       {
-        "type": "statement",
+        "kind": "statement",
         "statement": {
           "kind": "insert",
           "sourceKeys": {
-            "objectKey": "insertStatement_99859021031b1e40",
-            "sourceKey": "insertStatement_0861605609e632bd"
+            "objectKey": "insertStatement_8456c8b2f2b33630",
+            "sourceKey": "insertStatement_62fd5264be06c38f"
           },
           "field": "duplicate"
         },
         "modifier": {}
       },
       {
-        "type": "statement",
+        "kind": "statement",
         "statement": {
           "kind": "merge",
           "sourceKeys": {
-            "objectKey": "mergeStatement_865a56f0944d49eb",
-            "sourceKey": "mergeStatement_329ba988f87669a7"
+            "objectKey": "mergeStatement_ce606ed0a4ba47d4",
+            "sourceKey": "mergeStatement_f479440759e724e9"
           },
           "field": [
             "account",
@@ -1532,24 +1987,24 @@
         "modifier": {}
       },
       {
-        "type": "statement",
+        "kind": "statement",
         "statement": {
           "kind": "delete",
           "sourceKeys": {
-            "objectKey": "deleteStatement_2f0b28444f8f6e67",
-            "sourceKey": "deleteStatement_72620d8a73a2892c"
+            "objectKey": "deleteStatement_153cad423ea1e4fb",
+            "sourceKey": "deleteStatement_b3084d7047d400dc"
           },
           "field": "account"
         },
         "modifier": {}
       },
       {
-        "type": "statement",
+        "kind": "statement",
         "statement": {
           "kind": "undelete",
           "sourceKeys": {
-            "objectKey": "undeleteStatement_1dbd74b59af981f1",
-            "sourceKey": "undeleteStatement_80746af25c8a6006"
+            "objectKey": "undeleteStatement_c44936f74477fa97",
+            "sourceKey": "undeleteStatement_cf0ed871f24e4b34"
           },
           "field": "account"
         },
@@ -1558,13 +2013,21 @@
       {
         "kind": "field",
         "sourceKeys": {
-          "objectKey": "fieldDeclaration_51d514fba8391aee",
-          "sourceKey": "fieldDeclaration_39f2371426bb8313"
+          "objectKey": "fieldDeclaration_c4bb2c15cf2d16ae",
+          "sourceKey": "fieldDeclaration_0d9a9cfe25ed4605"
         },
         "variants": [
           {
+            "sourceKeys": {
+              "objectKey": "variableDeclarator_51b2d13cd1dc2b94",
+              "sourceKey": "variableDeclarator_0283a646bc8b16b0"
+            },
             "name": "dmlAccounts",
             "init": {
+              "sourceKeys": {
+                "objectKey": "newExpression_18f6f51319a733e7",
+                "sourceKey": "newExpression_5ad2931b6378fc7e"
+              },
               "collection": [
                 "List"
               ],
@@ -1572,23 +2035,37 @@
                 {
                   "kind": "type",
                   "sourceKeys": {
-                    "objectKey": "typeRef_16c0945431044f5d",
-                    "sourceKey": "typeRef_ec6bbb767365d80f"
+                    "objectKey": "typeRef_f6180c936ec69d2a",
+                    "sourceKey": "typeRef_2f48c97c12e1f422"
                   },
                   "type": "custom",
                   "customType": "Account"
                 }
               ],
+              "initType": "list || set",
               "init": [
                 {
+                  "sourceKeys": {
+                    "objectKey": "newExpression_a81c6d596872e81e",
+                    "sourceKey": "newExpression_b7b3aaecc42185dc"
+                  },
                   "collection": [
                     "Account"
                   ],
+                  "initType": "class",
                   "arg": [
                     {
+                      "sourceKeys": {
+                        "objectKey": "assignExpression_2519ced426556814",
+                        "sourceKey": "assignExpression_ec09dc8317311f75"
+                      },
                       "left": "Name",
                       "operator": "=",
                       "right": {
+                        "sourceKeys": {
+                          "objectKey": "literal_f3b4ae6c519fa2da",
+                          "sourceKey": "literal_5ffe31c392808a08"
+                        },
                         "value": "'A'",
                         "valueType": "string"
                       }
@@ -1596,14 +2073,27 @@
                   ]
                 },
                 {
+                  "sourceKeys": {
+                    "objectKey": "newExpression_30aaae0e6182d0f3",
+                    "sourceKey": "newExpression_8b34acfdc75ab8e2"
+                  },
                   "collection": [
                     "Account"
                   ],
+                  "initType": "class",
                   "arg": [
                     {
+                      "sourceKeys": {
+                        "objectKey": "assignExpression_6e8d6d7a2b22283d",
+                        "sourceKey": "assignExpression_a7cec9c8209fb6f9"
+                      },
                       "left": "Name",
                       "operator": "=",
                       "right": {
+                        "sourceKeys": {
+                          "objectKey": "literal_4966e3d65d0fc52c",
+                          "sourceKey": "literal_291ac517e43261d8"
+                        },
                         "value": "'B'",
                         "valueType": "string"
                       }
@@ -1611,14 +2101,27 @@
                   ]
                 },
                 {
+                  "sourceKeys": {
+                    "objectKey": "newExpression_9ca995fc52e7fdab",
+                    "sourceKey": "newExpression_6525c3a6da02c616"
+                  },
                   "collection": [
                     "Account"
                   ],
+                  "initType": "class",
                   "arg": [
                     {
+                      "sourceKeys": {
+                        "objectKey": "assignExpression_27e0d36167ea099e",
+                        "sourceKey": "assignExpression_51b22d6493631953"
+                      },
                       "left": "Name",
                       "operator": "=",
                       "right": {
+                        "sourceKeys": {
+                          "objectKey": "literal_5898f1ed1d4224d8",
+                          "sourceKey": "literal_aa97d565c22e2bbb"
+                        },
                         "value": "'C'",
                         "valueType": "string"
                       }
@@ -1632,10 +2135,10 @@
         "variantType": {
           "kind": "type",
           "sourceKeys": {
-            "objectKey": "typeRef_e7a6126512547d3d",
-            "sourceKey": "typeRef_4ee6dd589baed80c"
+            "objectKey": "typeRef_ea7c57f43a96c57c",
+            "sourceKey": "typeRef_49c08bf40ba16ade"
           },
-          "collectionType": "list",
+          "type": "list",
           "elementType": {
             "type": "custom",
             "customType": "Account"
@@ -1646,19 +2149,33 @@
       {
         "kind": "field",
         "sourceKeys": {
-          "objectKey": "fieldDeclaration_73435d216897d2ec",
-          "sourceKey": "fieldDeclaration_72add890badcf51e"
+          "objectKey": "fieldDeclaration_61841a78858e24c4",
+          "sourceKey": "fieldDeclaration_c4242c1d5edd4b59"
         },
         "variants": [
           {
+            "sourceKeys": {
+              "objectKey": "variableDeclarator_d6abb1e1ea82d8d4",
+              "sourceKey": "variableDeclarator_ac0ab796d16c85b9"
+            },
             "name": "saveResults",
             "init": {
+              "kind": "memberAccess",
+              "sourceKeys": {
+                "objectKey": "dotExpression_392d62df29737aa4",
+                "sourceKey": "dotExpression_dae0ec3333d9d7a3"
+              },
+              "type": "method",
               "object": "Database",
               "operator": ".",
               "member": "insert",
               "memberArg": [
                 "dmlAccounts",
                 {
+                  "sourceKeys": {
+                    "objectKey": "literal_9130712023e1e4f6",
+                    "sourceKey": "literal_d14d209ca42596bb"
+                  },
                   "value": "false",
                   "valueType": "boolean"
                 }
@@ -1669,10 +2186,10 @@
         "variantType": {
           "kind": "type",
           "sourceKeys": {
-            "objectKey": "typeRef_7affe60958b3ee29",
-            "sourceKey": "typeRef_1abab7eeed0854ca"
+            "objectKey": "typeRef_0d8805787c5bc262",
+            "sourceKey": "typeRef_f5e3d5cd5d9982e5"
           },
-          "collectionType": "array",
+          "type": "array",
           "elementType": {
             "type": "custom",
             "customType": [
@@ -1687,25 +2204,29 @@
       {
         "kind": "field",
         "sourceKeys": {
-          "objectKey": "fieldDeclaration_c7cc3b8df7129e8d",
-          "sourceKey": "fieldDeclaration_be439332e56b0109"
+          "objectKey": "fieldDeclaration_530b76b1841f7140",
+          "sourceKey": "fieldDeclaration_54642bd0adcc0db2"
         },
         "variants": [
           {
+            "sourceKeys": {
+              "objectKey": "variableDeclarator_bdb64292165feb1c",
+              "sourceKey": "variableDeclarator_0d9febc94b2b0db0"
+            },
             "name": "accountList",
             "init": {
               "kind": "soql",
               "sourceKeys": {
-                "objectKey": "query_15f0c49ef4fd4d30",
-                "sourceKey": "query_ca904254da3ffe9c"
+                "objectKey": "query_41660422e95bd8f5",
+                "sourceKey": "query_a08e281998243367"
               },
               "select": {
                 "field": [
                   {
                     "kind": "selectEntry",
                     "sourceKeys": {
-                      "objectKey": "selectEntry_1a6e1da553674376",
-                      "sourceKey": "selectEntry_f29372a1201db21e"
+                      "objectKey": "selectEntry_886c79ff3fc8c1d3",
+                      "sourceKey": "selectEntry_5970e4e9c316bb32"
                     },
                     "type": "field",
                     "field": [
@@ -1715,8 +2236,8 @@
                   {
                     "kind": "selectEntry",
                     "sourceKeys": {
-                      "objectKey": "selectEntry_15970c8b542d5d3d",
-                      "sourceKey": "selectEntry_a200a0befc990a1c"
+                      "objectKey": "selectEntry_f4d214b37ba005bc",
+                      "sourceKey": "selectEntry_a145a82042b8371c"
                     },
                     "type": "field",
                     "field": [
@@ -1726,8 +2247,8 @@
                   {
                     "kind": "selectEntry",
                     "sourceKeys": {
-                      "objectKey": "selectEntry_13f8d70dedbca0b9",
-                      "sourceKey": "selectEntry_8cf519917d54bd31"
+                      "objectKey": "selectEntry_b725a95d010bbaa1",
+                      "sourceKey": "selectEntry_ebcb247d17860d38"
                     },
                     "type": "field",
                     "field": [
@@ -1737,8 +2258,8 @@
                   {
                     "kind": "selectEntry",
                     "sourceKeys": {
-                      "objectKey": "selectEntry_70f6a09cac863599",
-                      "sourceKey": "selectEntry_801e98dc3c07c34f"
+                      "objectKey": "selectEntry_f4f58ecda7542340",
+                      "sourceKey": "selectEntry_0684fdda3bf26a7b"
                     },
                     "type": "field",
                     "field": [
@@ -1752,8 +2273,8 @@
                   {
                     "kind": "fromField",
                     "sourceKeys": {
-                      "objectKey": "fromName_4fac8444b015aa9c",
-                      "sourceKey": "fromName_19411e09907b361f"
+                      "objectKey": "fromName_719fa387d3fd8410",
+                      "sourceKey": "fromName_1cdc90d8e605deb4"
                     },
                     "field": [
                       "Account"
@@ -1767,8 +2288,8 @@
                     {
                       "kind": "singleCondition",
                       "sourceKeys": {
-                        "objectKey": "fieldExpression_7281317792e02ec0",
-                        "sourceKey": "fieldExpression_b7c63d7a256b72d4"
+                        "objectKey": "fieldExpression_ce7ad6caa64f39a5",
+                        "sourceKey": "fieldExpression_95a2b3bf53c44856"
                       },
                       "field": {
                         "type": "field",
@@ -1791,10 +2312,10 @@
         "variantType": {
           "kind": "type",
           "sourceKeys": {
-            "objectKey": "typeRef_e7a6126512547d3d",
-            "sourceKey": "typeRef_e663a991e88b116f"
+            "objectKey": "typeRef_ea7c57f43a96c57c",
+            "sourceKey": "typeRef_d25334f8faca0fcb"
           },
-          "collectionType": "list",
+          "type": "list",
           "elementType": {
             "type": "custom",
             "customType": "Account"
@@ -1805,25 +2326,29 @@
       {
         "kind": "field",
         "sourceKeys": {
-          "objectKey": "fieldDeclaration_a51dd723bf02ad34",
-          "sourceKey": "fieldDeclaration_67040469c2557fc4"
+          "objectKey": "fieldDeclaration_c3263770b661be63",
+          "sourceKey": "fieldDeclaration_a9f32c3be539d414"
         },
         "variants": [
           {
+            "sourceKeys": {
+              "objectKey": "variableDeclarator_c3fa7c0d40e64736",
+              "sourceKey": "variableDeclarator_954afd2037e7d80a"
+            },
             "name": "contactList",
             "init": {
               "kind": "soql",
               "sourceKeys": {
-                "objectKey": "query_4fe0f38b102c57ee",
-                "sourceKey": "query_be834465a9328b44"
+                "objectKey": "query_bf40a8e261ab0bb1",
+                "sourceKey": "query_2b03cab8d176db3b"
               },
               "select": {
                 "field": [
                   {
                     "kind": "selectEntry",
                     "sourceKeys": {
-                      "objectKey": "selectEntry_1a6e1da553674376",
-                      "sourceKey": "selectEntry_3cc7f52a451a9c34"
+                      "objectKey": "selectEntry_886c79ff3fc8c1d3",
+                      "sourceKey": "selectEntry_8fdac2ceab482426"
                     },
                     "type": "field",
                     "field": [
@@ -1833,8 +2358,8 @@
                   {
                     "kind": "selectEntry",
                     "sourceKeys": {
-                      "objectKey": "selectEntry_15970c8b542d5d3d",
-                      "sourceKey": "selectEntry_670b9c151f449582"
+                      "objectKey": "selectEntry_f4d214b37ba005bc",
+                      "sourceKey": "selectEntry_7ad6317de4d787f1"
                     },
                     "type": "field",
                     "field": [
@@ -1844,8 +2369,8 @@
                   {
                     "kind": "selectEntry",
                     "sourceKeys": {
-                      "objectKey": "selectEntry_347de239fa566131",
-                      "sourceKey": "selectEntry_09253bcb6e139f26"
+                      "objectKey": "selectEntry_eae8dbb755e3ae0d",
+                      "sourceKey": "selectEntry_b48768df362a0bbb"
                     },
                     "type": "field",
                     "field": [
@@ -1860,8 +2385,8 @@
                   {
                     "kind": "fromField",
                     "sourceKeys": {
-                      "objectKey": "fromName_2467eacdc44540ed",
-                      "sourceKey": "fromName_2e075fd1ee361c51"
+                      "objectKey": "fromName_483a9763c5a85f4a",
+                      "sourceKey": "fromName_346ae01b4ef56f5c"
                     },
                     "field": [
                       "Contact"
@@ -1875,8 +2400,8 @@
                     {
                       "kind": "singleCondition",
                       "sourceKeys": {
-                        "objectKey": "fieldExpression_b284a40ef65ea24e",
-                        "sourceKey": "fieldExpression_597ef0c972f0341f"
+                        "objectKey": "fieldExpression_084e36d14b93a04c",
+                        "sourceKey": "fieldExpression_1502322841670c43"
                       },
                       "field": {
                         "type": "field",
@@ -1899,10 +2424,10 @@
         "variantType": {
           "kind": "type",
           "sourceKeys": {
-            "objectKey": "typeRef_20d637d3397e2cf4",
-            "sourceKey": "typeRef_f4fa6a9577bbf7f2"
+            "objectKey": "typeRef_eba68eb56e4606c3",
+            "sourceKey": "typeRef_20ae63946d456a83"
           },
-          "collectionType": "list",
+          "type": "list",
           "elementType": {
             "type": "custom",
             "customType": "Contact"
@@ -1913,38 +2438,40 @@
       {
         "kind": "field",
         "sourceKeys": {
-          "objectKey": "fieldDeclaration_63c3974114af7b7b",
-          "sourceKey": "fieldDeclaration_c7d6a40289f863d0"
+          "objectKey": "fieldDeclaration_ed0d9758410cc05c",
+          "sourceKey": "fieldDeclaration_b8330ece23ad9866"
         },
         "variants": [
           {
+            "sourceKeys": {
+              "objectKey": "variableDeclarator_26b35ac93d263576",
+              "sourceKey": "variableDeclarator_b8fef57d22db820b"
+            },
             "name": "results",
             "init": {
               "kind": "soql",
               "sourceKeys": {
-                "objectKey": "query_d02170db15539c9c",
-                "sourceKey": "query_44302086f8062285"
+                "objectKey": "query_b3221e0acbdb4057",
+                "sourceKey": "query_935a48b689fc38b0"
               },
               "select": {
                 "field": [
                   {
                     "kind": "selectEntry",
                     "sourceKeys": {
-                      "objectKey": "selectEntry_13f8d70dedbca0b9",
-                      "sourceKey": "selectEntry_ff3169ac1b0fdac4"
+                      "objectKey": "selectEntry_b725a95d010bbaa1",
+                      "sourceKey": "selectEntry_9e2b67662a07349f"
                     },
                     "type": "field",
                     "field": [
                       "Industry"
                     ]
-                  }
-                ],
-                "soqlFunction": [
+                  },
                   {
                     "kind": "selectEntry",
                     "sourceKeys": {
-                      "objectKey": "selectEntry_76ea797a785c2584",
-                      "sourceKey": "selectEntry_4e2e80ebf9e630eb"
+                      "objectKey": "selectEntry_d04fb327a9820930",
+                      "sourceKey": "selectEntry_cb4c459b181817d1"
                     },
                     "type": "soqlFunction",
                     "func": "COUNT",
@@ -1955,8 +2482,8 @@
                   {
                     "kind": "selectEntry",
                     "sourceKeys": {
-                      "objectKey": "selectEntry_1e5227ed2b1b944c",
-                      "sourceKey": "selectEntry_b400fec2a0528617"
+                      "objectKey": "selectEntry_edc7c9324bd3f09e",
+                      "sourceKey": "selectEntry_958b4ca7a5e856eb"
                     },
                     "type": "soqlFunction",
                     "func": "AVG",
@@ -1971,8 +2498,8 @@
                   {
                     "kind": "fromField",
                     "sourceKeys": {
-                      "objectKey": "fromName_4fac8444b015aa9c",
-                      "sourceKey": "fromName_c083b8b17308aa37"
+                      "objectKey": "fromName_719fa387d3fd8410",
+                      "sourceKey": "fromName_75cbd0d07f4da096"
                     },
                     "field": [
                       "Account"
@@ -1983,8 +2510,8 @@
               "groupBy": {
                 "kind": "groupBy",
                 "sourceKeys": {
-                  "objectKey": "groupByClause_7081212a20c3c92b",
-                  "sourceKey": "groupByClause_1c25a2d97a6825fe"
+                  "objectKey": "groupByClause_6afcd4a164ef0a4f",
+                  "sourceKey": "groupByClause_1ad33e942e9f6028"
                 },
                 "field": [
                   {
@@ -1999,8 +2526,8 @@
                     {
                       "kind": "singleCondition",
                       "sourceKeys": {
-                        "objectKey": "fieldExpression_519ada0169c21b93",
-                        "sourceKey": "fieldExpression_0c97fab8e74c9a74"
+                        "objectKey": "fieldExpression_2491fdad9181e79c",
+                        "sourceKey": "fieldExpression_eee8cd703d6d88ba"
                       },
                       "field": {
                         "type": "soqlFunction",
@@ -2025,10 +2552,10 @@
         "variantType": {
           "kind": "type",
           "sourceKeys": {
-            "objectKey": "typeRef_d4859d84ad35ffe2",
-            "sourceKey": "typeRef_e891ca910b24eaa6"
+            "objectKey": "typeRef_30ece54da0cb42ab",
+            "sourceKey": "typeRef_2709e3ebefcec0be"
           },
-          "collectionType": "list",
+          "type": "list",
           "elementType": {
             "type": "custom",
             "customType": "AggregateResult"
@@ -2039,38 +2566,40 @@
       {
         "kind": "field",
         "sourceKeys": {
-          "objectKey": "fieldDeclaration_0e6a988b1f68e229",
-          "sourceKey": "fieldDeclaration_1901f32a1839a4d1"
+          "objectKey": "fieldDeclaration_218b80d3203feab0",
+          "sourceKey": "fieldDeclaration_2ae8a7a1fec9a936"
         },
         "variants": [
           {
+            "sourceKeys": {
+              "objectKey": "variableDeclarator_51f32f6a33dab747",
+              "sourceKey": "variableDeclarator_9fe2f523e0f2d97e"
+            },
             "name": "functionAccounts",
             "init": {
               "kind": "soql",
               "sourceKeys": {
-                "objectKey": "query_21efce8f93f42246",
-                "sourceKey": "query_6011eb504265bd87"
+                "objectKey": "query_3f7784079ab27069",
+                "sourceKey": "query_99aaf4f61a853315"
               },
               "select": {
                 "field": [
                   {
                     "kind": "selectEntry",
                     "sourceKeys": {
-                      "objectKey": "selectEntry_1a6e1da553674376",
-                      "sourceKey": "selectEntry_e23836ca1c85e5e8"
+                      "objectKey": "selectEntry_886c79ff3fc8c1d3",
+                      "sourceKey": "selectEntry_c64a772607364cf4"
                     },
                     "type": "field",
                     "field": [
                       "Id"
                     ]
-                  }
-                ],
-                "soqlFunction": [
+                  },
                   {
                     "kind": "selectEntry",
                     "sourceKeys": {
-                      "objectKey": "selectEntry_f0b8a0bb7ec4d6fc",
-                      "sourceKey": "selectEntry_b14bfc08bc6b091b"
+                      "objectKey": "selectEntry_3b6bb95e129899d0",
+                      "sourceKey": "selectEntry_51399f1d42612c27"
                     },
                     "type": "soqlFunction",
                     "func": "TOLABEL",
@@ -2081,8 +2610,8 @@
                   {
                     "kind": "selectEntry",
                     "sourceKeys": {
-                      "objectKey": "selectEntry_c80a2045e2aa82f7",
-                      "sourceKey": "selectEntry_2c21ca539745e6f1"
+                      "objectKey": "selectEntry_ea6d23bb2f7dabb9",
+                      "sourceKey": "selectEntry_aba74567d1218381"
                     },
                     "type": "soqlFunction",
                     "func": "FORMAT",
@@ -2093,8 +2622,8 @@
                   {
                     "kind": "selectEntry",
                     "sourceKeys": {
-                      "objectKey": "selectEntry_ece7f2bb63b696e8",
-                      "sourceKey": "selectEntry_9a2f438352e3010f"
+                      "objectKey": "selectEntry_fa0f5cec64160f52",
+                      "sourceKey": "selectEntry_81e738b8e248dbc5"
                     },
                     "type": "soqlFunction",
                     "func": "CONVERT_CURRENCY",
@@ -2109,8 +2638,8 @@
                   {
                     "kind": "fromField",
                     "sourceKeys": {
-                      "objectKey": "fromName_4fac8444b015aa9c",
-                      "sourceKey": "fromName_278788f787af58be"
+                      "objectKey": "fromName_719fa387d3fd8410",
+                      "sourceKey": "fromName_a349dfd543728d40"
                     },
                     "field": [
                       "Account"
@@ -2124,10 +2653,10 @@
         "variantType": {
           "kind": "type",
           "sourceKeys": {
-            "objectKey": "typeRef_e7a6126512547d3d",
-            "sourceKey": "typeRef_5f9c2a56a199cbde"
+            "objectKey": "typeRef_ea7c57f43a96c57c",
+            "sourceKey": "typeRef_74e9101a5a839fb0"
           },
-          "collectionType": "list",
+          "type": "list",
           "elementType": {
             "type": "custom",
             "customType": "Account"
@@ -2138,25 +2667,29 @@
       {
         "kind": "field",
         "sourceKeys": {
-          "objectKey": "fieldDeclaration_4a66662fa8e3e7fc",
-          "sourceKey": "fieldDeclaration_a95ca568aeb311d9"
+          "objectKey": "fieldDeclaration_c8184c49a491e630",
+          "sourceKey": "fieldDeclaration_a1be31aeb15219a4"
         },
         "variants": [
           {
+            "sourceKeys": {
+              "objectKey": "variableDeclarator_7ef9ad4f7e0387d3",
+              "sourceKey": "variableDeclarator_c2ecfda73bc5dad1"
+            },
             "name": "allFields",
             "init": {
               "kind": "soql",
               "sourceKeys": {
-                "objectKey": "query_889bfcd50b10edfd",
-                "sourceKey": "query_43a90412e6458b08"
+                "objectKey": "query_e66a1a577508c9d3",
+                "sourceKey": "query_7bfbf589b56667ed"
               },
               "select": {
-                "soqlFunction": [
+                "field": [
                   {
                     "kind": "selectEntry",
                     "sourceKeys": {
-                      "objectKey": "selectEntry_991a4daf54d4311d",
-                      "sourceKey": "selectEntry_e9899bc36af62309"
+                      "objectKey": "selectEntry_c4733632e234d30f",
+                      "sourceKey": "selectEntry_4a81e275a77b1e9e"
                     },
                     "type": "soqlFunction",
                     "func": "FIELDS",
@@ -2169,8 +2702,8 @@
                   {
                     "kind": "fromField",
                     "sourceKeys": {
-                      "objectKey": "fromName_4fac8444b015aa9c",
-                      "sourceKey": "fromName_7b514fa7b0bde32a"
+                      "objectKey": "fromName_719fa387d3fd8410",
+                      "sourceKey": "fromName_2faff611c819d750"
                     },
                     "field": [
                       "Account"
@@ -2182,7 +2715,7 @@
                 "kind": "limitClause",
                 "sourceKeys": {
                   "objectKey": "limitClause_9dcc41a7ac9dc8ba",
-                  "sourceKey": "limitClause_54b946e42adf1f2c"
+                  "sourceKey": "limitClause_f0b3d13bd703f0f2"
                 },
                 "type": "literal",
                 "value": "200"
@@ -2193,10 +2726,10 @@
         "variantType": {
           "kind": "type",
           "sourceKeys": {
-            "objectKey": "typeRef_e7a6126512547d3d",
-            "sourceKey": "typeRef_d55e9d476f6cf922"
+            "objectKey": "typeRef_ea7c57f43a96c57c",
+            "sourceKey": "typeRef_336c189267637c63"
           },
-          "collectionType": "list",
+          "type": "list",
           "elementType": {
             "type": "custom",
             "customType": "Account"
@@ -2207,25 +2740,29 @@
       {
         "kind": "field",
         "sourceKeys": {
-          "objectKey": "fieldDeclaration_a6471d18d9316d1c",
-          "sourceKey": "fieldDeclaration_9b3dc0a6e36c4224"
+          "objectKey": "fieldDeclaration_720d30e8c68cdc82",
+          "sourceKey": "fieldDeclaration_a6db5caf181293f9"
         },
         "variants": [
           {
+            "sourceKeys": {
+              "objectKey": "variableDeclarator_99224351db51795c",
+              "sourceKey": "variableDeclarator_9d7ffca814fc60ef"
+            },
             "name": "lockedAccounts",
             "init": {
               "kind": "soql",
               "sourceKeys": {
-                "objectKey": "query_df76de01b36a3740",
-                "sourceKey": "query_20ffb7799019ebfd"
+                "objectKey": "query_ed914ead29c873d3",
+                "sourceKey": "query_7b7b06d8acd17a1c"
               },
               "select": {
                 "field": [
                   {
                     "kind": "selectEntry",
                     "sourceKeys": {
-                      "objectKey": "selectEntry_1a6e1da553674376",
-                      "sourceKey": "selectEntry_efac75534007a467"
+                      "objectKey": "selectEntry_886c79ff3fc8c1d3",
+                      "sourceKey": "selectEntry_b141732c6ba26bd3"
                     },
                     "type": "field",
                     "field": [
@@ -2235,8 +2772,8 @@
                   {
                     "kind": "selectEntry",
                     "sourceKeys": {
-                      "objectKey": "selectEntry_15970c8b542d5d3d",
-                      "sourceKey": "selectEntry_b7b97986723c2064"
+                      "objectKey": "selectEntry_f4d214b37ba005bc",
+                      "sourceKey": "selectEntry_4bb750f6e562319d"
                     },
                     "type": "field",
                     "field": [
@@ -2250,8 +2787,8 @@
                   {
                     "kind": "fromField",
                     "sourceKeys": {
-                      "objectKey": "fromName_4fac8444b015aa9c",
-                      "sourceKey": "fromName_0ba60a9444ac0e75"
+                      "objectKey": "fromName_719fa387d3fd8410",
+                      "sourceKey": "fromName_3313cc85502ff8fe"
                     },
                     "field": [
                       "Account"
@@ -2265,8 +2802,8 @@
                     {
                       "kind": "singleCondition",
                       "sourceKeys": {
-                        "objectKey": "fieldExpression_7281317792e02ec0",
-                        "sourceKey": "fieldExpression_e20d8de5200d990b"
+                        "objectKey": "fieldExpression_ce7ad6caa64f39a5",
+                        "sourceKey": "fieldExpression_b1bdf86e84b25fae"
                       },
                       "field": {
                         "type": "field",
@@ -2287,7 +2824,7 @@
                 "kind": "forClause",
                 "sourceKeys": {
                   "objectKey": "forClauses_343d7d1e767caaa9",
-                  "sourceKey": "forClauses_1db2e904e02e5056"
+                  "sourceKey": "forClauses_a32153a039d47073"
                 },
                 "value": [
                   "UPDATE"
@@ -2299,10 +2836,10 @@
         "variantType": {
           "kind": "type",
           "sourceKeys": {
-            "objectKey": "typeRef_e7a6126512547d3d",
-            "sourceKey": "typeRef_b045270b8849303d"
+            "objectKey": "typeRef_ea7c57f43a96c57c",
+            "sourceKey": "typeRef_e9a006c97a7e508a"
           },
-          "collectionType": "list",
+          "type": "list",
           "elementType": {
             "type": "custom",
             "customType": "Account"
@@ -2313,25 +2850,29 @@
       {
         "kind": "field",
         "sourceKeys": {
-          "objectKey": "fieldDeclaration_93bdae487e455e25",
-          "sourceKey": "fieldDeclaration_c90d145b9cad137e"
+          "objectKey": "fieldDeclaration_ff4b2b979f6f7725",
+          "sourceKey": "fieldDeclaration_aebd98c147f64d10"
         },
         "variants": [
           {
+            "sourceKeys": {
+              "objectKey": "variableDeclarator_a9d1148a8ccf2353",
+              "sourceKey": "variableDeclarator_8b7d2bfbe8b27c2d"
+            },
             "name": "userModeAccounts",
             "init": {
               "kind": "soql",
               "sourceKeys": {
-                "objectKey": "query_2b05ceeee3076f5c",
-                "sourceKey": "query_3faddf2a9a660d34"
+                "objectKey": "query_73d782e63f577c6a",
+                "sourceKey": "query_b4085acf07868757"
               },
               "select": {
                 "field": [
                   {
                     "kind": "selectEntry",
                     "sourceKeys": {
-                      "objectKey": "selectEntry_1a6e1da553674376",
-                      "sourceKey": "selectEntry_8c8bfa059d57f407"
+                      "objectKey": "selectEntry_886c79ff3fc8c1d3",
+                      "sourceKey": "selectEntry_a25d07c541e27aaa"
                     },
                     "type": "field",
                     "field": [
@@ -2341,8 +2882,8 @@
                   {
                     "kind": "selectEntry",
                     "sourceKeys": {
-                      "objectKey": "selectEntry_15970c8b542d5d3d",
-                      "sourceKey": "selectEntry_952e0d648d1fef82"
+                      "objectKey": "selectEntry_f4d214b37ba005bc",
+                      "sourceKey": "selectEntry_6ce2a8cb34c2d6c3"
                     },
                     "type": "field",
                     "field": [
@@ -2356,8 +2897,8 @@
                   {
                     "kind": "fromField",
                     "sourceKeys": {
-                      "objectKey": "fromName_4fac8444b015aa9c",
-                      "sourceKey": "fromName_df2abc710469d988"
+                      "objectKey": "fromName_719fa387d3fd8410",
+                      "sourceKey": "fromName_dbc7a421c69a92fe"
                     },
                     "field": [
                       "Account"
@@ -2374,10 +2915,10 @@
         "variantType": {
           "kind": "type",
           "sourceKeys": {
-            "objectKey": "typeRef_e7a6126512547d3d",
-            "sourceKey": "typeRef_de5d9d8bcdddc28f"
+            "objectKey": "typeRef_ea7c57f43a96c57c",
+            "sourceKey": "typeRef_ba0d02515ba290b5"
           },
-          "collectionType": "list",
+          "type": "list",
           "elementType": {
             "type": "custom",
             "customType": "Account"
@@ -2388,25 +2929,29 @@
       {
         "kind": "field",
         "sourceKeys": {
-          "objectKey": "fieldDeclaration_59157fe34974b6d0",
-          "sourceKey": "fieldDeclaration_73c184b347bfe9d5"
+          "objectKey": "fieldDeclaration_390d9cbbcdeb3586",
+          "sourceKey": "fieldDeclaration_6c8e47efdd379fb3"
         },
         "variants": [
           {
+            "sourceKeys": {
+              "objectKey": "variableDeclarator_ad95ba18cd7ce963",
+              "sourceKey": "variableDeclarator_82911a18729ba759"
+            },
             "name": "accountCount",
             "init": {
               "kind": "soql",
               "sourceKeys": {
-                "objectKey": "query_4610f31b6cf2e487",
-                "sourceKey": "query_da24ace0ac821a19"
+                "objectKey": "query_1dc34db5c6f7658b",
+                "sourceKey": "query_b5838f6b29386f35"
               },
               "select": {
-                "soqlFunction": [
+                "field": [
                   {
                     "kind": "selectEntry",
                     "sourceKeys": {
-                      "objectKey": "selectEntry_9d6a9b4ed53d6323",
-                      "sourceKey": "selectEntry_660a68f44b4b9188"
+                      "objectKey": "selectEntry_9d82713e1df32bfb",
+                      "sourceKey": "selectEntry_4246c48146034f21"
                     },
                     "type": "soqlFunction",
                     "func": "COUNT"
@@ -2418,8 +2963,8 @@
                   {
                     "kind": "fromField",
                     "sourceKeys": {
-                      "objectKey": "fromName_4fac8444b015aa9c",
-                      "sourceKey": "fromName_0a1b55b48bdcfab0"
+                      "objectKey": "fromName_719fa387d3fd8410",
+                      "sourceKey": "fromName_238c413242706609"
                     },
                     "field": [
                       "Account"
@@ -2433,8 +2978,8 @@
                     {
                       "kind": "singleCondition",
                       "sourceKeys": {
-                        "objectKey": "fieldExpression_816fb9f2079a2c70",
-                        "sourceKey": "fieldExpression_8dae4b80664cc746"
+                        "objectKey": "fieldExpression_e759ddc163106d4e",
+                        "sourceKey": "fieldExpression_5e0b29a076f18cdb"
                       },
                       "field": {
                         "type": "field",
@@ -2457,8 +3002,8 @@
         "variantType": {
           "kind": "type",
           "sourceKeys": {
-            "objectKey": "typeRef_55792e748cf1fa8f",
-            "sourceKey": "typeRef_55eba8ae36a4fcfc"
+            "objectKey": "typeRef_1a870c360196e41a",
+            "sourceKey": "typeRef_d109f5387eea57f2"
           },
           "type": "primitive",
           "primitiveType": "Integer"
@@ -2468,17 +3013,21 @@
       {
         "kind": "field",
         "sourceKeys": {
-          "objectKey": "fieldDeclaration_6db08251aa69291f",
-          "sourceKey": "fieldDeclaration_5d50e6d51222860d"
+          "objectKey": "fieldDeclaration_a4010af0cb88988d",
+          "sourceKey": "fieldDeclaration_3d857b90f8fc1fb7"
         },
         "variants": [
           {
+            "sourceKeys": {
+              "objectKey": "variableDeclarator_1ca5107d737875a4",
+              "sourceKey": "variableDeclarator_b3d6aacd52dc88be"
+            },
             "name": "searchResults",
             "init": {
               "kind": "sosl",
               "sourceKeys": {
-                "objectKey": "soslLiteral_e6de2d823cdbb656",
-                "sourceKey": "soslLiteral_d31bd8d90aee1a4e"
+                "objectKey": "soslLiteral_7f9ef2035d25652f",
+                "sourceKey": "soslLiteral_744eec50a9aebcfc"
               },
               "find": "test",
               "group": "ALL",
@@ -2491,8 +3040,8 @@
                     {
                       "kind": "soslField",
                       "sourceKeys": {
-                        "objectKey": "soslField_6d4f02c13e54e42c",
-                        "sourceKey": "soslField_0dd2a1f62493809c"
+                        "objectKey": "soslField_ee13854abe9d8af8",
+                        "sourceKey": "soslField_921303f4eb267c21"
                       },
                       "field": [
                         "Id"
@@ -2501,8 +3050,8 @@
                     {
                       "kind": "soslField",
                       "sourceKeys": {
-                        "objectKey": "soslField_2bd85c052046a873",
-                        "sourceKey": "soslField_ba8afccd2060dbe7"
+                        "objectKey": "soslField_7d1798024d7b9bc9",
+                        "sourceKey": "soslField_b01498ed47c6896c"
                       },
                       "field": [
                         "Name"
@@ -2518,8 +3067,8 @@
                     {
                       "kind": "soslField",
                       "sourceKeys": {
-                        "objectKey": "soslField_6d4f02c13e54e42c",
-                        "sourceKey": "soslField_245a26495010a156"
+                        "objectKey": "soslField_ee13854abe9d8af8",
+                        "sourceKey": "soslField_1a854804fb6f67f7"
                       },
                       "field": [
                         "Id"
@@ -2528,8 +3077,8 @@
                     {
                       "kind": "soslField",
                       "sourceKeys": {
-                        "objectKey": "soslField_2bd85c052046a873",
-                        "sourceKey": "soslField_a5d35da74918e34a"
+                        "objectKey": "soslField_7d1798024d7b9bc9",
+                        "sourceKey": "soslField_58db6f1e91d0d189"
                       },
                       "field": [
                         "Name"
@@ -2544,12 +3093,12 @@
         "variantType": {
           "kind": "type",
           "sourceKeys": {
-            "objectKey": "typeRef_49785ed86a31240b",
-            "sourceKey": "typeRef_ec67613e52a48ed0"
+            "objectKey": "typeRef_841d2ae604d6e77f",
+            "sourceKey": "typeRef_c1df148741a8c97f"
           },
-          "collectionType": "list",
+          "type": "list",
           "elementType": {
-            "collectionType": "list",
+            "type": "list",
             "elementType": {
               "type": "custom",
               "customType": "SObject"
@@ -2559,25 +3108,33 @@
         "modifier": {}
       },
       {
-        "type": "statement",
+        "kind": "statement",
         "statement": {
           "kind": "if",
           "sourceKeys": {
-            "objectKey": "ifStatement_1c94a1b803755e08",
-            "sourceKey": "ifStatement_5815b0aa9a2fa82a"
+            "objectKey": "ifStatement_26464745dfb46c48",
+            "sourceKey": "ifStatement_95f15b34976ae721"
           },
           "conditionBlock": [
             {
               "condition": {
                 "kind": "ifCondition",
                 "sourceKeys": {
-                  "objectKey": "parExpression_a8fca219ad4f36f8",
-                  "sourceKey": "parExpression_b249440734596a92"
+                  "objectKey": "parExpression_a772abd549ade1c4",
+                  "sourceKey": "parExpression_ba4f93c14ba6b2b9"
                 },
                 "condition": {
+                  "sourceKeys": {
+                    "objectKey": "equalityExpression_fed42e5302f27d3e",
+                    "sourceKey": "equalityExpression_8b8ebd735112bdc4"
+                  },
                   "left": "count",
                   "operator": "==",
                   "right": {
+                    "sourceKeys": {
+                      "objectKey": "literal_c0d97fe34037a338",
+                      "sourceKey": "literal_93e27aafc48574a2"
+                    },
                     "value": "0",
                     "valueType": "integer"
                   }
@@ -2587,15 +3144,25 @@
                 {
                   "kind": "expression",
                   "sourceKeys": {
-                    "objectKey": "expressionStatement_295adad080c743e9",
-                    "sourceKey": "expressionStatement_1d516da55e35944b"
+                    "objectKey": "expressionStatement_e8d95699236cf014",
+                    "sourceKey": "expressionStatement_7373187b0e09d58f"
                   },
                   "value": {
+                    "kind": "memberAccess",
+                    "sourceKeys": {
+                      "objectKey": "dotExpression_df7b5d66f85b6dc5",
+                      "sourceKey": "dotExpression_d0971fe9b7ab175d"
+                    },
+                    "type": "method",
                     "object": "System",
                     "operator": ".",
                     "member": "debug",
                     "memberArg": [
                       {
+                        "sourceKeys": {
+                          "objectKey": "literal_5da4b35279848628",
+                          "sourceKey": "literal_ffe27a3050e2272e"
+                        },
                         "value": "'zero'",
                         "valueType": "string"
                       }
@@ -2608,13 +3175,21 @@
               "condition": {
                 "kind": "ifCondition",
                 "sourceKeys": {
-                  "objectKey": "parExpression_0ad82384b96de22b",
-                  "sourceKey": "parExpression_f1a59db8101801bb"
+                  "objectKey": "parExpression_f504453bbfd82469",
+                  "sourceKey": "parExpression_50c8d545e9133e26"
                 },
                 "condition": {
+                  "sourceKeys": {
+                    "objectKey": "cmpExpression_c3174abdcc64ac54",
+                    "sourceKey": "cmpExpression_7846b584d5bb979a"
+                  },
                   "left": "count",
                   "operator": ">",
                   "right": {
+                    "sourceKeys": {
+                      "objectKey": "literal_c0d97fe34037a338",
+                      "sourceKey": "literal_3f3715d51d09d7f9"
+                    },
                     "value": "0",
                     "valueType": "integer"
                   }
@@ -2624,15 +3199,25 @@
                 {
                   "kind": "expression",
                   "sourceKeys": {
-                    "objectKey": "expressionStatement_7e23164b66829b09",
-                    "sourceKey": "expressionStatement_ed6d818bac93c170"
+                    "objectKey": "expressionStatement_610b1cc0da9659bb",
+                    "sourceKey": "expressionStatement_8fb9099275cc7903"
                   },
                   "value": {
+                    "kind": "memberAccess",
+                    "sourceKeys": {
+                      "objectKey": "dotExpression_c7f28c6291f0db5c",
+                      "sourceKey": "dotExpression_981e324ea47dc0e7"
+                    },
+                    "type": "method",
                     "object": "System",
                     "operator": ".",
                     "member": "debug",
                     "memberArg": [
                       {
+                        "sourceKeys": {
+                          "objectKey": "literal_8ac228a82b8e856f",
+                          "sourceKey": "literal_86cf6ba7c96996e7"
+                        },
                         "value": "'positive'",
                         "valueType": "string"
                       }
@@ -2647,15 +3232,25 @@
                 {
                   "kind": "expression",
                   "sourceKeys": {
-                    "objectKey": "expressionStatement_cc1a8866b3993279",
-                    "sourceKey": "expressionStatement_38f4d15500d779cf"
+                    "objectKey": "expressionStatement_e465dfa4e6519d8b",
+                    "sourceKey": "expressionStatement_646335b0ad2f7d5c"
                   },
                   "value": {
+                    "kind": "memberAccess",
+                    "sourceKeys": {
+                      "objectKey": "dotExpression_edb858749ac43113",
+                      "sourceKey": "dotExpression_c12211f77ba31dbc"
+                    },
+                    "type": "method",
                     "object": "System",
                     "operator": ".",
                     "member": "debug",
                     "memberArg": [
                       {
+                        "sourceKeys": {
+                          "objectKey": "literal_3e16030c22158ef0",
+                          "sourceKey": "literal_26a90f11ef4b2f31"
+                        },
                         "value": "'negative'",
                         "valueType": "string"
                       }
@@ -2669,24 +3264,32 @@
         "modifier": {}
       },
       {
-        "type": "statement",
+        "kind": "statement",
         "statement": {
           "kind": "for",
           "sourceKeys": {
-            "objectKey": "forStatement_190a931527f11eb6",
-            "sourceKey": "forStatement_7627765ce15a1d63"
+            "objectKey": "forStatement_2daf1aa76ade871d",
+            "sourceKey": "forStatement_1acd59ef8d184af7"
           },
           "condition": {
             "kind": "forCondition",
             "sourceKeys": {
-              "objectKey": "forControl_ac364439e63cece2",
-              "sourceKey": "forControl_49e9ea3f7029a936"
+              "objectKey": "forControl_e52d6754ce8c57c1",
+              "sourceKey": "forControl_04ffe17c03a97581"
             },
             "initializer": {
               "variants": [
                 {
+                  "sourceKeys": {
+                    "objectKey": "variableDeclarator_3fc4096fa2d716e9",
+                    "sourceKey": "variableDeclarator_aabd480c4051e8d8"
+                  },
                   "name": "i",
                   "init": {
+                    "sourceKeys": {
+                      "objectKey": "literal_c0d97fe34037a338",
+                      "sourceKey": "literal_11827b0a74bc79eb"
+                    },
                     "value": "0",
                     "valueType": "integer"
                   }
@@ -2695,8 +3298,8 @@
               "variantsType": {
                 "kind": "type",
                 "sourceKeys": {
-                  "objectKey": "typeRef_55792e748cf1fa8f",
-                  "sourceKey": "typeRef_8b374c9390f46ee5"
+                  "objectKey": "typeRef_1a870c360196e41a",
+                  "sourceKey": "typeRef_b754582eddd91672"
                 },
                 "type": "primitive",
                 "primitiveType": "Integer"
@@ -2704,15 +3307,27 @@
               "modifier": {}
             },
             "condition": {
+              "sourceKeys": {
+                "objectKey": "cmpExpression_6677ad8162d2c657",
+                "sourceKey": "cmpExpression_d7208d14bc0d7649"
+              },
               "left": "i",
               "operator": "<",
               "right": {
+                "sourceKeys": {
+                  "objectKey": "literal_1e0f71bd1af6c752",
+                  "sourceKey": "literal_bcc6ba89831812cb"
+                },
                 "value": "10",
                 "valueType": "integer"
               }
             },
             "update": [
               {
+                "sourceKeys": {
+                  "objectKey": "postOpExpression_359e60494c970434",
+                  "sourceKey": "postOpExpression_2bf5f3734d21aba3"
+                },
                 "variant": "i",
                 "operator": "++",
                 "operatorLocation": "back"
@@ -2723,25 +3338,39 @@
             {
               "kind": "if",
               "sourceKeys": {
-                "objectKey": "ifStatement_3b41a772da4a98be",
-                "sourceKey": "ifStatement_45d91cc79d240c46"
+                "objectKey": "ifStatement_7b470254b17094cf",
+                "sourceKey": "ifStatement_40822b2b47b4e0fa"
               },
               "conditionBlock": [
                 {
                   "condition": {
                     "kind": "ifCondition",
                     "sourceKeys": {
-                      "objectKey": "parExpression_e1e37e23d2d449c5",
-                      "sourceKey": "parExpression_a5af4d2385d28dc1"
+                      "objectKey": "parExpression_5c33ec370d15a9c6",
+                      "sourceKey": "parExpression_10abde26a42b6a27"
                     },
                     "condition": {
+                      "sourceKeys": {
+                        "objectKey": "equalityExpression_fb1764959d780a8d",
+                        "sourceKey": "equalityExpression_c63de71f162f987c"
+                      },
                       "left": {
+                        "kind": "memberAccess",
+                        "sourceKeys": {
+                          "objectKey": "dotExpression_3e674acfe0dd6916",
+                          "sourceKey": "dotExpression_7f09f915ae6e81a3"
+                        },
+                        "type": "method",
                         "object": "Math",
                         "operator": ".",
                         "member": "mod",
                         "memberArg": [
                           "i",
                           {
+                            "sourceKeys": {
+                              "objectKey": "literal_a49b7b7e3b02d933",
+                              "sourceKey": "literal_2373455eb83d1b3e"
+                            },
                             "value": "2",
                             "valueType": "integer"
                           }
@@ -2749,6 +3378,10 @@
                       },
                       "operator": "==",
                       "right": {
+                        "sourceKeys": {
+                          "objectKey": "literal_c0d97fe34037a338",
+                          "sourceKey": "literal_978fe3f90660dc99"
+                        },
                         "value": "0",
                         "valueType": "integer"
                       }
@@ -2759,7 +3392,7 @@
                       "kind": "continue",
                       "sourceKeys": {
                         "objectKey": "continueStatement_75e54317e0e4a15e",
-                        "sourceKey": "continueStatement_3f4001ae4d03f554"
+                        "sourceKey": "continueStatement_b5c5ccd24ee420ee"
                       },
                       "value": "continue"
                     }
@@ -2770,21 +3403,29 @@
             {
               "kind": "if",
               "sourceKeys": {
-                "objectKey": "ifStatement_c4b670bc0c7cac2a",
-                "sourceKey": "ifStatement_7420fe641f47b2e6"
+                "objectKey": "ifStatement_f888cd9395fa185a",
+                "sourceKey": "ifStatement_d4e9b824d2b49ef4"
               },
               "conditionBlock": [
                 {
                   "condition": {
                     "kind": "ifCondition",
                     "sourceKeys": {
-                      "objectKey": "parExpression_1b4e818016fb3774",
-                      "sourceKey": "parExpression_c47da07810743cb1"
+                      "objectKey": "parExpression_d5111ffc916e4291",
+                      "sourceKey": "parExpression_da35a413c5e45410"
                     },
                     "condition": {
+                      "sourceKeys": {
+                        "objectKey": "equalityExpression_fe67d9803fa8a5e1",
+                        "sourceKey": "equalityExpression_a0842a9afce9e796"
+                      },
                       "left": "i",
                       "operator": "==",
                       "right": {
+                        "sourceKeys": {
+                          "objectKey": "literal_abdce50579ac5dda",
+                          "sourceKey": "literal_5ecd486454998c38"
+                        },
                         "value": "7",
                         "valueType": "integer"
                       }
@@ -2795,7 +3436,7 @@
                       "kind": "break",
                       "sourceKeys": {
                         "objectKey": "breakStatement_791d9ef866afdfd1",
-                        "sourceKey": "breakStatement_4d2ea991a2f7db66"
+                        "sourceKey": "breakStatement_c230d7349af0b3c4"
                       },
                       "value": "break"
                     }
@@ -2806,10 +3447,16 @@
             {
               "kind": "expression",
               "sourceKeys": {
-                "objectKey": "expressionStatement_becb439efecc4e84",
-                "sourceKey": "expressionStatement_e96159175c26dbb6"
+                "objectKey": "expressionStatement_65b5582345e377f3",
+                "sourceKey": "expressionStatement_c16a509ae9606312"
               },
               "value": {
+                "kind": "memberAccess",
+                "sourceKeys": {
+                  "objectKey": "dotExpression_b1e0006fdde29ac8",
+                  "sourceKey": "dotExpression_c62cb085a441e5c3"
+                },
+                "type": "method",
                 "object": "System",
                 "operator": ".",
                 "member": "debug",
@@ -2823,25 +3470,25 @@
         "modifier": {}
       },
       {
-        "type": "statement",
+        "kind": "statement",
         "statement": {
           "kind": "for",
           "sourceKeys": {
-            "objectKey": "forStatement_225d1b687261872c",
-            "sourceKey": "forStatement_9c61c0b8d9aacee6"
+            "objectKey": "forStatement_d2a7cb90e36d153a",
+            "sourceKey": "forStatement_ec8253f90cb2e3a3"
           },
           "condition": {
             "kind": "forCondition",
             "sourceKeys": {
-              "objectKey": "forControl_943c0725556cdc45",
-              "sourceKey": "forControl_44d365e39f86eb79"
+              "objectKey": "forControl_9130360c7c4ffd97",
+              "sourceKey": "forControl_455849afd92596cb"
             },
             "initializer": "item",
             "initializeType": {
               "kind": "type",
               "sourceKeys": {
-                "objectKey": "typeRef_16c0945431044f5d",
-                "sourceKey": "typeRef_77d70dda95953091"
+                "objectKey": "typeRef_f6180c936ec69d2a",
+                "sourceKey": "typeRef_fe0aa9637ae601f1"
               },
               "type": "custom",
               "customType": "Account"
@@ -2852,15 +3499,27 @@
             {
               "kind": "expression",
               "sourceKeys": {
-                "objectKey": "expressionStatement_e7c7fe7c8ed7adf4",
-                "sourceKey": "expressionStatement_19ac7d11581b666b"
+                "objectKey": "expressionStatement_1f22d60741ccf737",
+                "sourceKey": "expressionStatement_4feb1279477f867d"
               },
               "value": {
+                "kind": "memberAccess",
+                "sourceKeys": {
+                  "objectKey": "dotExpression_7bd001445c41b4f2",
+                  "sourceKey": "dotExpression_eb6ae51793b4ad5b"
+                },
+                "type": "method",
                 "object": "System",
                 "operator": ".",
                 "member": "debug",
                 "memberArg": [
                   {
+                    "kind": "memberAccess",
+                    "sourceKeys": {
+                      "objectKey": "dotExpression_980aa98c86672ba6",
+                      "sourceKey": "dotExpression_82917f23919fd077"
+                    },
+                    "type": "object",
                     "object": "item",
                     "operator": ".",
                     "member": "Name"
@@ -2873,25 +3532,25 @@
         "modifier": {}
       },
       {
-        "type": "statement",
+        "kind": "statement",
         "statement": {
           "kind": "for",
           "sourceKeys": {
-            "objectKey": "forStatement_d25f7140213848aa",
-            "sourceKey": "forStatement_738821742b870f48"
+            "objectKey": "forStatement_fc2a7d9af593058c",
+            "sourceKey": "forStatement_05fbec14c9650af3"
           },
           "condition": {
             "kind": "forCondition",
             "sourceKeys": {
-              "objectKey": "forControl_a9acd7fa2ce7b7fb",
-              "sourceKey": "forControl_88198845677f2df0"
+              "objectKey": "forControl_b25117343982dbff",
+              "sourceKey": "forControl_fb53ad82cc25f939"
             },
             "initializer": "item",
             "initializeType": {
               "kind": "type",
               "sourceKeys": {
-                "objectKey": "typeRef_16c0945431044f5d",
-                "sourceKey": "typeRef_9563e1dcf4fad7e1"
+                "objectKey": "typeRef_f6180c936ec69d2a",
+                "sourceKey": "typeRef_e36913c38469c1de"
               },
               "type": "custom",
               "customType": "Account"
@@ -2899,16 +3558,16 @@
             "baseObject": {
               "kind": "soql",
               "sourceKeys": {
-                "objectKey": "query_cdbd1b9dd1f717a0",
-                "sourceKey": "query_978720b3241df5b1"
+                "objectKey": "query_7eb5df7deaa222ab",
+                "sourceKey": "query_67563fc3979e33a0"
               },
               "select": {
                 "field": [
                   {
                     "kind": "selectEntry",
                     "sourceKeys": {
-                      "objectKey": "selectEntry_1a6e1da553674376",
-                      "sourceKey": "selectEntry_dd2d255d2794d27b"
+                      "objectKey": "selectEntry_886c79ff3fc8c1d3",
+                      "sourceKey": "selectEntry_453ac463178c1043"
                     },
                     "type": "field",
                     "field": [
@@ -2922,8 +3581,8 @@
                   {
                     "kind": "fromField",
                     "sourceKeys": {
-                      "objectKey": "fromName_4fac8444b015aa9c",
-                      "sourceKey": "fromName_897483a2f9164222"
+                      "objectKey": "fromName_719fa387d3fd8410",
+                      "sourceKey": "fromName_4c865bab0fa760b0"
                     },
                     "field": [
                       "Account"
@@ -2935,7 +3594,7 @@
                 "kind": "limitClause",
                 "sourceKeys": {
                   "objectKey": "limitClause_dc7511f3dc287beb",
-                  "sourceKey": "limitClause_28c51bab46b06d2a"
+                  "sourceKey": "limitClause_2fa91b874d71a813"
                 },
                 "type": "literal",
                 "value": "5"
@@ -2946,15 +3605,27 @@
             {
               "kind": "expression",
               "sourceKeys": {
-                "objectKey": "expressionStatement_c3683a4b7a81a96e",
-                "sourceKey": "expressionStatement_623ac540efd2ced9"
+                "objectKey": "expressionStatement_ba0da62c1acc3b67",
+                "sourceKey": "expressionStatement_b4ff7d7c1c187085"
               },
               "value": {
+                "kind": "memberAccess",
+                "sourceKeys": {
+                  "objectKey": "dotExpression_a6bc93da8726b0fe",
+                  "sourceKey": "dotExpression_b73bafcae18fbc26"
+                },
+                "type": "method",
                 "object": "System",
                 "operator": ".",
                 "member": "debug",
                 "memberArg": [
                   {
+                    "kind": "memberAccess",
+                    "sourceKeys": {
+                      "objectKey": "dotExpression_fa66cbfb699cc2ab",
+                      "sourceKey": "dotExpression_2ba83f4b453df99f"
+                    },
+                    "type": "object",
                     "object": "item",
                     "operator": ".",
                     "member": "Id"
@@ -2969,13 +3640,21 @@
       {
         "kind": "field",
         "sourceKeys": {
-          "objectKey": "fieldDeclaration_6b9f37bee84c0daf",
-          "sourceKey": "fieldDeclaration_bd2bc5e28010cfa5"
+          "objectKey": "fieldDeclaration_a86bc12ddcb76993",
+          "sourceKey": "fieldDeclaration_a6b43a7a8feb1824"
         },
         "variants": [
           {
+            "sourceKeys": {
+              "objectKey": "variableDeclarator_620f21ead680cc1b",
+              "sourceKey": "variableDeclarator_58273f26a3f59bad"
+            },
             "name": "index",
             "init": {
+              "sourceKeys": {
+                "objectKey": "literal_c0d97fe34037a338",
+                "sourceKey": "literal_2bac9e983cfe7b00"
+              },
               "value": "0",
               "valueType": "integer"
             }
@@ -2984,8 +3663,8 @@
         "variantType": {
           "kind": "type",
           "sourceKeys": {
-            "objectKey": "typeRef_55792e748cf1fa8f",
-            "sourceKey": "typeRef_a81eb0e3cd389ed0"
+            "objectKey": "typeRef_1a870c360196e41a",
+            "sourceKey": "typeRef_80541f821fbde963"
           },
           "type": "primitive",
           "primitiveType": "Integer"
@@ -2993,23 +3672,31 @@
         "modifier": {}
       },
       {
-        "type": "statement",
+        "kind": "statement",
         "statement": {
           "kind": "while",
           "sourceKeys": {
-            "objectKey": "whileStatement_1d2c778cf51f7aec",
-            "sourceKey": "whileStatement_9e993022f3f65b84"
+            "objectKey": "whileStatement_7c1d4f885db763b9",
+            "sourceKey": "whileStatement_19251be678612a12"
           },
           "condition": {
             "kind": "whileCondition",
             "sourceKeys": {
-              "objectKey": "parExpression_d40d90b40027513e",
-              "sourceKey": "parExpression_f907aeaf6711e343"
+              "objectKey": "parExpression_196e6c59b0967a8a",
+              "sourceKey": "parExpression_f1a3ed8ef5c4674a"
             },
             "condition": {
+              "sourceKeys": {
+                "objectKey": "cmpExpression_1ed8e2809239ba44",
+                "sourceKey": "cmpExpression_b5fc79b4d2d527a9"
+              },
               "left": "index",
               "operator": "<",
               "right": {
+                "sourceKeys": {
+                  "objectKey": "literal_fda491d352df2d3b",
+                  "sourceKey": "literal_911efd6d54a9d167"
+                },
                 "value": "5",
                 "valueType": "integer"
               }
@@ -3019,10 +3706,14 @@
             {
               "kind": "expression",
               "sourceKeys": {
-                "objectKey": "expressionStatement_2d13df4af1941570",
-                "sourceKey": "expressionStatement_a0e04d1b2bccb05e"
+                "objectKey": "expressionStatement_f7a39996575a34e8",
+                "sourceKey": "expressionStatement_022a25acc691a70d"
               },
               "value": {
+                "sourceKeys": {
+                  "objectKey": "postOpExpression_6c97138eb81ce2be",
+                  "sourceKey": "postOpExpression_9f17cc24bfa33213"
+                },
                 "variant": "index",
                 "operator": "++",
                 "operatorLocation": "back"
@@ -3035,13 +3726,21 @@
       {
         "kind": "field",
         "sourceKeys": {
-          "objectKey": "fieldDeclaration_da93be1db22baea9",
-          "sourceKey": "fieldDeclaration_1e99d1c66fc3e689"
+          "objectKey": "fieldDeclaration_be1372ee9334f3f0",
+          "sourceKey": "fieldDeclaration_f2d0afc42de9d071"
         },
         "variants": [
           {
+            "sourceKeys": {
+              "objectKey": "variableDeclarator_e9b28b7dbe2c97b3",
+              "sourceKey": "variableDeclarator_f72d19da28b4fee1"
+            },
             "name": "retry",
             "init": {
+              "sourceKeys": {
+                "objectKey": "literal_c0d97fe34037a338",
+                "sourceKey": "literal_67891505fb00bed3"
+              },
               "value": "0",
               "valueType": "integer"
             }
@@ -3050,8 +3749,8 @@
         "variantType": {
           "kind": "type",
           "sourceKeys": {
-            "objectKey": "typeRef_55792e748cf1fa8f",
-            "sourceKey": "typeRef_5dba05704e8b2e71"
+            "objectKey": "typeRef_1a870c360196e41a",
+            "sourceKey": "typeRef_e7a6803584142ffe"
           },
           "type": "primitive",
           "primitiveType": "Integer"
@@ -3059,23 +3758,31 @@
         "modifier": {}
       },
       {
-        "type": "statement",
+        "kind": "statement",
         "statement": {
           "kind": "doWhile",
           "sourceKeys": {
-            "objectKey": "doWhileStatement_da270c8bab0f6ffa",
-            "sourceKey": "doWhileStatement_dd190b1c772f476e"
+            "objectKey": "doWhileStatement_6e38df291ddbf5c7",
+            "sourceKey": "doWhileStatement_0a90f9fd7c36024f"
           },
           "condition": {
             "kind": "doWhileCondition",
             "sourceKeys": {
-              "objectKey": "parExpression_3503914ba201c47a",
-              "sourceKey": "parExpression_c019ccbd3c47259b"
+              "objectKey": "parExpression_c95104bae4bda877",
+              "sourceKey": "parExpression_6fb569170021f936"
             },
             "condition": {
+              "sourceKeys": {
+                "objectKey": "cmpExpression_4f551ad33bc9d2f4",
+                "sourceKey": "cmpExpression_cda5678b08cba44f"
+              },
               "left": "retry",
               "operator": "<",
               "right": {
+                "sourceKeys": {
+                  "objectKey": "literal_72b29e97af94190f",
+                  "sourceKey": "literal_6263d6b40984730a"
+                },
                 "value": "3",
                 "valueType": "integer"
               }
@@ -3085,13 +3792,21 @@
             {
               "kind": "expression",
               "sourceKeys": {
-                "objectKey": "expressionStatement_c06b1a613ab08421",
-                "sourceKey": "expressionStatement_820196efe144c1f8"
+                "objectKey": "expressionStatement_6ab06ebb609b909b",
+                "sourceKey": "expressionStatement_dd88a97125f836f3"
               },
               "value": {
+                "sourceKeys": {
+                  "objectKey": "assignExpression_38c04f6cabe39d55",
+                  "sourceKey": "assignExpression_87f1d2ec82c70325"
+                },
                 "left": "retry",
                 "operator": "+=",
                 "right": {
+                  "sourceKeys": {
+                    "objectKey": "literal_fb5627d59521b262",
+                    "sourceKey": "literal_4788ef7bf694b175"
+                  },
                   "value": "1",
                   "valueType": "integer"
                 }
@@ -3104,13 +3819,21 @@
       {
         "kind": "field",
         "sourceKeys": {
-          "objectKey": "fieldDeclaration_549d16e1ce530190",
-          "sourceKey": "fieldDeclaration_aa22d848b00e6ea1"
+          "objectKey": "fieldDeclaration_0d8d1bcf1e737f70",
+          "sourceKey": "fieldDeclaration_f429c98ee3098de6"
         },
         "variants": [
           {
+            "sourceKeys": {
+              "objectKey": "variableDeclarator_54acd27a36eace5a",
+              "sourceKey": "variableDeclarator_fd48b27307156d53"
+            },
             "name": "status",
             "init": {
+              "sourceKeys": {
+                "objectKey": "literal_07769d77335033f4",
+                "sourceKey": "literal_47cbecdb5649b36f"
+              },
               "value": "'NEW'",
               "valueType": "string"
             }
@@ -3119,8 +3842,8 @@
         "variantType": {
           "kind": "type",
           "sourceKeys": {
-            "objectKey": "typeRef_a13e3e8b5328228b",
-            "sourceKey": "typeRef_64a8c94830e363ad"
+            "objectKey": "typeRef_0f82fcb626301929",
+            "sourceKey": "typeRef_84f521e250f0c183"
           },
           "type": "primitive",
           "primitiveType": "String"
@@ -3128,18 +3851,18 @@
         "modifier": {}
       },
       {
-        "type": "statement",
+        "kind": "statement",
         "statement": {
           "kind": "switch",
           "sourceKeys": {
-            "objectKey": "switchStatement_5bd378130ada3eb2",
-            "sourceKey": "switchStatement_affb0d62d7db39b8"
+            "objectKey": "switchStatement_22cf9d2930649e4c",
+            "sourceKey": "switchStatement_ac309275e7914de4"
           },
           "variant": {
-            "kind": "whenVariant",
+            "kind": "switchVariant",
             "sourceKeys": {
               "objectKey": "primaryExpression_bc934281607a38d8",
-              "sourceKey": "primaryExpression_b1d4b6742528856f"
+              "sourceKey": "primaryExpression_b883a3e553e41277"
             },
             "variant": "status"
           },
@@ -3149,7 +3872,7 @@
                 "kind": "switchCondition",
                 "sourceKeys": {
                   "objectKey": "whenValue_9e0b4ec1c688fbf9",
-                  "sourceKey": "whenValue_5e264e3ada7a8c8e"
+                  "sourceKey": "whenValue_a958754c2c99e56c"
                 },
                 "condition": [
                   {
@@ -3162,15 +3885,25 @@
                 {
                   "kind": "expression",
                   "sourceKeys": {
-                    "objectKey": "expressionStatement_76714789c65302cb",
-                    "sourceKey": "expressionStatement_7344426e0b92a413"
+                    "objectKey": "expressionStatement_f4b09c65923009c8",
+                    "sourceKey": "expressionStatement_6bcd2f0b74a9897b"
                   },
                   "value": {
+                    "kind": "memberAccess",
+                    "sourceKeys": {
+                      "objectKey": "dotExpression_4287652bc81ab8c6",
+                      "sourceKey": "dotExpression_816379643783a3e0"
+                    },
+                    "type": "method",
                     "object": "System",
                     "operator": ".",
                     "member": "debug",
                     "memberArg": [
                       {
+                        "sourceKeys": {
+                          "objectKey": "literal_a791d1c6c150b4dc",
+                          "sourceKey": "literal_5835cb4f561055ab"
+                        },
                         "value": "'new'",
                         "valueType": "string"
                       }
@@ -3184,7 +3917,7 @@
                 "kind": "switchCondition",
                 "sourceKeys": {
                   "objectKey": "whenValue_026aeb101fa4570d",
-                  "sourceKey": "whenValue_f4d8efa152c4c1e8"
+                  "sourceKey": "whenValue_4ded2ba752c77bcd"
                 },
                 "condition": [
                   {
@@ -3201,15 +3934,25 @@
                 {
                   "kind": "expression",
                   "sourceKeys": {
-                    "objectKey": "expressionStatement_cab621678332e3e8",
-                    "sourceKey": "expressionStatement_d30178aaa40bc52a"
+                    "objectKey": "expressionStatement_f59f6fbe50cdec07",
+                    "sourceKey": "expressionStatement_77eb6c2257206696"
                   },
                   "value": {
+                    "kind": "memberAccess",
+                    "sourceKeys": {
+                      "objectKey": "dotExpression_92e82daf106c2418",
+                      "sourceKey": "dotExpression_8cba22b40cbce90a"
+                    },
+                    "type": "method",
                     "object": "System",
                     "operator": ".",
                     "member": "debug",
                     "memberArg": [
                       {
+                        "sourceKeys": {
+                          "objectKey": "literal_55332f58dc990d3b",
+                          "sourceKey": "literal_175938b9bb73d78c"
+                        },
                         "value": "'processing'",
                         "valueType": "string"
                       }
@@ -3223,7 +3966,7 @@
                 "kind": "switchCondition",
                 "sourceKeys": {
                   "objectKey": "whenValue_32cb709adcb7919f",
-                  "sourceKey": "whenValue_20d1e8e42c8346b1"
+                  "sourceKey": "whenValue_3c657c4d60a8a54c"
                 },
                 "condition": "else"
               },
@@ -3231,15 +3974,25 @@
                 {
                   "kind": "expression",
                   "sourceKeys": {
-                    "objectKey": "expressionStatement_0427e29ea069ea2f",
-                    "sourceKey": "expressionStatement_a09e1e62eda73cc8"
+                    "objectKey": "expressionStatement_531d17885b691986",
+                    "sourceKey": "expressionStatement_d4ecfaac5c22dda4"
                   },
                   "value": {
+                    "kind": "memberAccess",
+                    "sourceKeys": {
+                      "objectKey": "dotExpression_46f362663233d6d3",
+                      "sourceKey": "dotExpression_f9867a5a0c1a6865"
+                    },
+                    "type": "method",
                     "object": "System",
                     "operator": ".",
                     "member": "debug",
                     "memberArg": [
                       {
+                        "sourceKeys": {
+                          "objectKey": "literal_f5da3c5cb2de8cf2",
+                          "sourceKey": "literal_9061ee0cc27799dd"
+                        },
                         "value": "'unknown'",
                         "valueType": "string"
                       }
@@ -3255,19 +4008,35 @@
       {
         "kind": "field",
         "sourceKeys": {
-          "objectKey": "fieldDeclaration_22051eeff1258a1d",
-          "sourceKey": "fieldDeclaration_63060b8009700d6f"
+          "objectKey": "fieldDeclaration_9f28b0dc39db773b",
+          "sourceKey": "fieldDeclaration_d342c0180e2d520e"
         },
         "variants": [
           {
+            "sourceKeys": {
+              "objectKey": "variableDeclarator_5f6300152b5f84fc",
+              "sourceKey": "variableDeclarator_2bd50d62ec97a3a5"
+            },
             "name": "result",
             "init": {
+              "sourceKeys": {
+                "objectKey": "condExpression_f29cd6567deb7144",
+                "sourceKey": "condExpression_7004c568ec79ac83"
+              },
               "condition": "enabled",
               "trueValue": {
+                "sourceKeys": {
+                  "objectKey": "literal_761e46ecbe621ae1",
+                  "sourceKey": "literal_ab860140b3d107c9"
+                },
                 "value": "'enabled'",
                 "valueType": "string"
               },
               "falseValue": {
+                "sourceKeys": {
+                  "objectKey": "literal_d5444754cf1b7eaf",
+                  "sourceKey": "literal_c9400c55ef304cc7"
+                },
                 "value": "'disabled'",
                 "valueType": "string"
               }
@@ -3277,8 +4046,8 @@
         "variantType": {
           "kind": "type",
           "sourceKeys": {
-            "objectKey": "typeRef_a13e3e8b5328228b",
-            "sourceKey": "typeRef_66d5befd01f8d493"
+            "objectKey": "typeRef_0f82fcb626301929",
+            "sourceKey": "typeRef_ea071f0aeecf04f1"
           },
           "type": "primitive",
           "primitiveType": "String"
@@ -3286,12 +4055,12 @@
         "modifier": {}
       },
       {
-        "type": "statement",
+        "kind": "statement",
         "statement": {
           "kind": "try",
           "sourceKeys": {
-            "objectKey": "tryStatement_3996d05b2c529c5e",
-            "sourceKey": "tryStatement_d5753461ae216bce"
+            "objectKey": "tryStatement_59a65777c06f9666",
+            "sourceKey": "tryStatement_1b8466f9eb638856"
           },
           "block": [
             {
@@ -3300,26 +4069,30 @@
                 {
                   "kind": "localVariable",
                   "sourceKeys": {
-                    "objectKey": "localVariableDeclarationStatement_a1a04f2e421e8c5f",
-                    "sourceKey": "localVariableDeclarationStatement_ff149641b704e85f"
+                    "objectKey": "localVariableDeclarationStatement_c0ad369ca7945684",
+                    "sourceKey": "localVariableDeclarationStatement_0951f2120341e5c1"
                   },
                   "variable": {
                     "variants": [
                       {
+                        "sourceKeys": {
+                          "objectKey": "variableDeclarator_42681f0d73bafab1",
+                          "sourceKey": "variableDeclarator_0ab4ce7fcf2f9a4d"
+                        },
                         "name": "a",
                         "init": {
                           "kind": "soql",
                           "sourceKeys": {
-                            "objectKey": "query_e463e3fb44f7dc1c",
-                            "sourceKey": "query_c9c56c3d27e1f8a0"
+                            "objectKey": "query_07c3831e2bd352a3",
+                            "sourceKey": "query_9eeee7c5c3157fa3"
                           },
                           "select": {
                             "field": [
                               {
                                 "kind": "selectEntry",
                                 "sourceKeys": {
-                                  "objectKey": "selectEntry_1a6e1da553674376",
-                                  "sourceKey": "selectEntry_37f353c5c78e8db1"
+                                  "objectKey": "selectEntry_886c79ff3fc8c1d3",
+                                  "sourceKey": "selectEntry_819c75e6855072f3"
                                 },
                                 "type": "field",
                                 "field": [
@@ -3329,8 +4102,8 @@
                               {
                                 "kind": "selectEntry",
                                 "sourceKeys": {
-                                  "objectKey": "selectEntry_15970c8b542d5d3d",
-                                  "sourceKey": "selectEntry_a2cc9d16eae8d00e"
+                                  "objectKey": "selectEntry_f4d214b37ba005bc",
+                                  "sourceKey": "selectEntry_d868cfd8916b73ab"
                                 },
                                 "type": "field",
                                 "field": [
@@ -3344,8 +4117,8 @@
                               {
                                 "kind": "fromField",
                                 "sourceKeys": {
-                                  "objectKey": "fromName_4fac8444b015aa9c",
-                                  "sourceKey": "fromName_2d5ce71c3ea24cd8"
+                                  "objectKey": "fromName_719fa387d3fd8410",
+                                  "sourceKey": "fromName_db90ff0572f01433"
                                 },
                                 "field": [
                                   "Account"
@@ -3359,8 +4132,8 @@
                                 {
                                   "kind": "singleCondition",
                                   "sourceKeys": {
-                                    "objectKey": "fieldExpression_7281317792e02ec0",
-                                    "sourceKey": "fieldExpression_34d2e650b611e43b"
+                                    "objectKey": "fieldExpression_ce7ad6caa64f39a5",
+                                    "sourceKey": "fieldExpression_0e759491391fb904"
                                   },
                                   "field": {
                                     "type": "field",
@@ -3381,7 +4154,7 @@
                             "kind": "limitClause",
                             "sourceKeys": {
                               "objectKey": "limitClause_3cb84ad52ab953ba",
-                              "sourceKey": "limitClause_6fc3792e3cb444d3"
+                              "sourceKey": "limitClause_81b3c8a076b1b937"
                             },
                             "type": "literal",
                             "value": "1"
@@ -3392,8 +4165,8 @@
                     "variantsType": {
                       "kind": "type",
                       "sourceKeys": {
-                        "objectKey": "typeRef_16c0945431044f5d",
-                        "sourceKey": "typeRef_2d6215a9bc321e13"
+                        "objectKey": "typeRef_f6180c936ec69d2a",
+                        "sourceKey": "typeRef_dd0d2b3fbe0f9c7f"
                       },
                       "type": "custom",
                       "customType": "Account"
@@ -3404,10 +4177,16 @@
                 {
                   "kind": "expression",
                   "sourceKeys": {
-                    "objectKey": "expressionStatement_5a0318d05b9c60ff",
-                    "sourceKey": "expressionStatement_7ef3d204035e44c3"
+                    "objectKey": "expressionStatement_62506df039ffae94",
+                    "sourceKey": "expressionStatement_9a0866686a138570"
                   },
                   "value": {
+                    "kind": "memberAccess",
+                    "sourceKeys": {
+                      "objectKey": "dotExpression_a8955a82f99860bd",
+                      "sourceKey": "dotExpression_11841a8cceeee719"
+                    },
+                    "type": "method",
                     "object": "System",
                     "operator": ".",
                     "member": "debug",
@@ -3419,21 +4198,29 @@
                 {
                   "kind": "if",
                   "sourceKeys": {
-                    "objectKey": "ifStatement_d1fbb75b583e48b9",
-                    "sourceKey": "ifStatement_558ef46cb29714af"
+                    "objectKey": "ifStatement_349cb20f017779f7",
+                    "sourceKey": "ifStatement_6edbfc63ac08105b"
                   },
                   "conditionBlock": [
                     {
                       "condition": {
                         "kind": "ifCondition",
                         "sourceKeys": {
-                          "objectKey": "parExpression_1ddfea262634414b",
-                          "sourceKey": "parExpression_b4b76f48763445da"
+                          "objectKey": "parExpression_e49b08298f4b5aeb",
+                          "sourceKey": "parExpression_fb5c628dd39d7ebc"
                         },
                         "condition": {
+                          "sourceKeys": {
+                            "objectKey": "equalityExpression_5113ac42d31dfb81",
+                            "sourceKey": "equalityExpression_baeda3dfb499f20a"
+                          },
                           "left": "a",
                           "operator": "==",
                           "right": {
+                            "sourceKeys": {
+                              "objectKey": "literal_729c9b2812f6e1a0",
+                              "sourceKey": "literal_8a5d12a46af7c8c3"
+                            },
                             "value": "null",
                             "valueType": "null"
                           }
@@ -3443,15 +4230,24 @@
                         {
                           "kind": "throw",
                           "sourceKeys": {
-                            "objectKey": "throwStatement_5c58d42df95e84e9",
-                            "sourceKey": "throwStatement_2db29d78b90e14b1"
+                            "objectKey": "throwStatement_eb295b36c5a1b54a",
+                            "sourceKey": "throwStatement_8793354886f45cef"
                           },
                           "value": {
+                            "sourceKeys": {
+                              "objectKey": "newExpression_636b159e71952208",
+                              "sourceKey": "newExpression_f9a55eb09f92f8b4"
+                            },
                             "collection": [
                               "QueryException"
                             ],
+                            "initType": "class",
                             "arg": [
                               {
+                                "sourceKeys": {
+                                  "objectKey": "literal_4e42d26e9dfc4c96",
+                                  "sourceKey": "literal_ac87db2af9742382"
+                                },
                                 "value": "'not found'",
                                 "valueType": "string"
                               }
@@ -3470,16 +4266,16 @@
                 "kind": "catchCondition",
                 "sourceKeys": {
                   "base": {
-                    "objectKey": "catchClause_d644a2a66af53052",
-                    "sourceKey": "catchClause_3d07f82fe6fd94fc"
+                    "objectKey": "catchClause_f2cecf23c478a7a1",
+                    "sourceKey": "catchClause_4801f35b461b9c37"
                   },
                   "exception": {
                     "objectKey": "id_b6ffa7df1c4da983",
-                    "sourceKey": "id_f434437d2d3e721e"
+                    "sourceKey": "id_6c9d2147be246977"
                   },
                   "exceptionType": {
                     "objectKey": "qualifiedName_52f8413bd04980e6",
-                    "sourceKey": "qualifiedName_81f2ede3e90ad4e4"
+                    "sourceKey": "qualifiedName_52f15b41c3c45a3d"
                   }
                 },
                 "exception": "e",
@@ -3492,15 +4288,27 @@
                 {
                   "kind": "expression",
                   "sourceKeys": {
-                    "objectKey": "expressionStatement_0b611757aa6ac3b6",
-                    "sourceKey": "expressionStatement_f40a3a719d8cdc5d"
+                    "objectKey": "expressionStatement_f04ebaa6ead87b94",
+                    "sourceKey": "expressionStatement_747463e10c994785"
                   },
                   "value": {
+                    "kind": "memberAccess",
+                    "sourceKeys": {
+                      "objectKey": "dotExpression_c09c7aa004b5b9f9",
+                      "sourceKey": "dotExpression_c266827762310d86"
+                    },
+                    "type": "method",
                     "object": "System",
                     "operator": ".",
                     "member": "debug",
                     "memberArg": [
                       {
+                        "kind": "memberAccess",
+                        "sourceKeys": {
+                          "objectKey": "dotExpression_c64ef02a8f29fc2f",
+                          "sourceKey": "dotExpression_2ee2a3ddfce41f16"
+                        },
+                        "type": "method",
                         "object": "e",
                         "operator": ".",
                         "member": "getMessage"
@@ -3516,16 +4324,16 @@
                 "kind": "catchCondition",
                 "sourceKeys": {
                   "base": {
-                    "objectKey": "catchClause_d18616b0bc9c1332",
-                    "sourceKey": "catchClause_c03950d6aff7f7f9"
+                    "objectKey": "catchClause_88cff7cc4de4bf04",
+                    "sourceKey": "catchClause_f58592462c7c3b29"
                   },
                   "exception": {
                     "objectKey": "id_b6ffa7df1c4da983",
-                    "sourceKey": "id_53efc97acc24262d"
+                    "sourceKey": "id_12a8230f980160f4"
                   },
                   "exceptionType": {
                     "objectKey": "qualifiedName_cab76848af5ff734",
-                    "sourceKey": "qualifiedName_42f5673599b90165"
+                    "sourceKey": "qualifiedName_4266b915304193e8"
                   }
                 },
                 "exception": "e",
@@ -3538,15 +4346,27 @@
                 {
                   "kind": "expression",
                   "sourceKeys": {
-                    "objectKey": "expressionStatement_0b611757aa6ac3b6",
-                    "sourceKey": "expressionStatement_87ac4360ed1f3931"
+                    "objectKey": "expressionStatement_f04ebaa6ead87b94",
+                    "sourceKey": "expressionStatement_38a6ab5c9d96a5de"
                   },
                   "value": {
+                    "kind": "memberAccess",
+                    "sourceKeys": {
+                      "objectKey": "dotExpression_c09c7aa004b5b9f9",
+                      "sourceKey": "dotExpression_72deafb740c83072"
+                    },
+                    "type": "method",
                     "object": "System",
                     "operator": ".",
                     "member": "debug",
                     "memberArg": [
                       {
+                        "kind": "memberAccess",
+                        "sourceKeys": {
+                          "objectKey": "dotExpression_c64ef02a8f29fc2f",
+                          "sourceKey": "dotExpression_7ff9d7becc3e3d30"
+                        },
+                        "type": "method",
                         "object": "e",
                         "operator": ".",
                         "member": "getMessage"
@@ -3562,15 +4382,25 @@
                 {
                   "kind": "expression",
                   "sourceKeys": {
-                    "objectKey": "expressionStatement_70e10bbb1215b564",
-                    "sourceKey": "expressionStatement_378d67e5e8e41f1e"
+                    "objectKey": "expressionStatement_5ee06f72534d8aaf",
+                    "sourceKey": "expressionStatement_a6b3f89a01cf9394"
                   },
                   "value": {
+                    "kind": "memberAccess",
+                    "sourceKeys": {
+                      "objectKey": "dotExpression_d39892be1def120b",
+                      "sourceKey": "dotExpression_43bdd3e8427920d1"
+                    },
+                    "type": "method",
                     "object": "System",
                     "operator": ".",
                     "member": "debug",
                     "memberArg": [
                       {
+                        "sourceKeys": {
+                          "objectKey": "literal_6848b9760c2df717",
+                          "sourceKey": "literal_14b751670e070e24"
+                        },
                         "value": "'finished'",
                         "valueType": "string"
                       }
@@ -3586,14 +4416,28 @@
       {
         "kind": "field",
         "sourceKeys": {
-          "objectKey": "fieldDeclaration_11c82875480f07a3",
-          "sourceKey": "fieldDeclaration_18482c162aeb91cc"
+          "objectKey": "fieldDeclaration_c217fca2666e0eaf",
+          "sourceKey": "fieldDeclaration_8cacc86b1ad6b7d3"
         },
         "variants": [
           {
+            "sourceKeys": {
+              "objectKey": "variableDeclarator_5685bf9afb7e23b9",
+              "sourceKey": "variableDeclarator_45fc21e6bdb0a38a"
+            },
             "name": "upper",
             "init": {
+              "kind": "memberAccess",
+              "sourceKeys": {
+                "objectKey": "dotExpression_2c83829acf1c4a23",
+                "sourceKey": "dotExpression_d18046717f60441a"
+              },
+              "type": "method",
               "object": {
+                "sourceKeys": {
+                  "objectKey": "literal_5b9dbe2e29a0e00e",
+                  "sourceKey": "literal_72272beffffbe724"
+                },
                 "value": "'hello'",
                 "valueType": "string"
               },
@@ -3605,8 +4449,8 @@
         "variantType": {
           "kind": "type",
           "sourceKeys": {
-            "objectKey": "typeRef_a13e3e8b5328228b",
-            "sourceKey": "typeRef_ef2af368e9d01dea"
+            "objectKey": "typeRef_0f82fcb626301929",
+            "sourceKey": "typeRef_15a99ab891396087"
           },
           "type": "primitive",
           "primitiveType": "String"
@@ -3616,14 +4460,28 @@
       {
         "kind": "field",
         "sourceKeys": {
-          "objectKey": "fieldDeclaration_d648fa649825eddc",
-          "sourceKey": "fieldDeclaration_9a90c6aa0f4f4c18"
+          "objectKey": "fieldDeclaration_0df6b153e4b8d5f2",
+          "sourceKey": "fieldDeclaration_0c64e807100052cf"
         },
         "variants": [
           {
+            "sourceKeys": {
+              "objectKey": "variableDeclarator_4ff4e29f89d3f9d9",
+              "sourceKey": "variableDeclarator_1f20c30c8f9680f2"
+            },
             "name": "stringLength",
             "init": {
+              "kind": "memberAccess",
+              "sourceKeys": {
+                "objectKey": "dotExpression_6e76bdc43597970d",
+                "sourceKey": "dotExpression_fa0bc0080e1434cc"
+              },
+              "type": "method",
               "object": {
+                "sourceKeys": {
+                  "objectKey": "literal_5b9dbe2e29a0e00e",
+                  "sourceKey": "literal_28eff7a850bd2347"
+                },
                 "value": "'hello'",
                 "valueType": "string"
               },
@@ -3635,8 +4493,8 @@
         "variantType": {
           "kind": "type",
           "sourceKeys": {
-            "objectKey": "typeRef_55792e748cf1fa8f",
-            "sourceKey": "typeRef_3db60643f346d7d8"
+            "objectKey": "typeRef_1a870c360196e41a",
+            "sourceKey": "typeRef_3644b8328db77d82"
           },
           "type": "primitive",
           "primitiveType": "Integer"
@@ -3646,18 +4504,32 @@
       {
         "kind": "field",
         "sourceKeys": {
-          "objectKey": "fieldDeclaration_f529fa3a8d02b31a",
-          "sourceKey": "fieldDeclaration_865006e4ee77d395"
+          "objectKey": "fieldDeclaration_69bcc02b210010dc",
+          "sourceKey": "fieldDeclaration_d529cb7f24c2f07a"
         },
         "variants": [
           {
+            "sourceKeys": {
+              "objectKey": "variableDeclarator_8bc6cc093c2b2f54",
+              "sourceKey": "variableDeclarator_f94303438375aa38"
+            },
             "name": "converted",
             "init": {
+              "kind": "memberAccess",
+              "sourceKeys": {
+                "objectKey": "dotExpression_51bc7b08c959e4aa",
+                "sourceKey": "dotExpression_0fd5be8ae9c04987"
+              },
+              "type": "method",
               "object": "String",
               "operator": ".",
               "member": "valueOf",
               "memberArg": [
                 {
+                  "sourceKeys": {
+                    "objectKey": "literal_fb3fd332eb892e25",
+                    "sourceKey": "literal_997420ed240953d6"
+                  },
                   "value": "123",
                   "valueType": "integer"
                 }
@@ -3668,8 +4540,8 @@
         "variantType": {
           "kind": "type",
           "sourceKeys": {
-            "objectKey": "typeRef_a13e3e8b5328228b",
-            "sourceKey": "typeRef_46cb92346a37c54d"
+            "objectKey": "typeRef_0f82fcb626301929",
+            "sourceKey": "typeRef_d18593b362b89ddb"
           },
           "type": "primitive",
           "primitiveType": "String"
@@ -3679,16 +4551,36 @@
       {
         "kind": "field",
         "sourceKeys": {
-          "objectKey": "fieldDeclaration_1659a1afdd3fd28e",
-          "sourceKey": "fieldDeclaration_03684f0b9d13871a"
+          "objectKey": "fieldDeclaration_03bef0fc32489b32",
+          "sourceKey": "fieldDeclaration_39be596b7baa25e5"
         },
         "variants": [
           {
+            "sourceKeys": {
+              "objectKey": "variableDeclarator_3971bba23fc5d984",
+              "sourceKey": "variableDeclarator_3e41dea47759cc64"
+            },
             "name": "arithmetic",
             "init": {
+              "sourceKeys": {
+                "objectKey": "arth2Expression_6c953d7f94e5689e",
+                "sourceKey": "arth2Expression_42ce98632df2d4cd"
+              },
               "left": {
+                "sourceKeys": {
+                  "objectKey": "arth1Expression_39220accb7d0fa65",
+                  "sourceKey": "arth1Expression_4434d5e799f776ed"
+                },
                 "left": {
+                  "sourceKeys": {
+                    "objectKey": "subExpression_131ffb4a3034e38d",
+                    "sourceKey": "subExpression_748dc8dfadc8bf18"
+                  },
                   "value": {
+                    "sourceKeys": {
+                      "objectKey": "arth2Expression_2071849560a47df5",
+                      "sourceKey": "arth2Expression_0e3e4d52bddb67aa"
+                    },
                     "left": "count",
                     "operator": "+",
                     "right": "total"
@@ -3697,15 +4589,27 @@
                 },
                 "operator": "*",
                 "right": {
+                  "sourceKeys": {
+                    "objectKey": "literal_a49b7b7e3b02d933",
+                    "sourceKey": "literal_7349af75da59c739"
+                  },
                   "value": "2",
                   "valueType": "integer"
                 }
               },
               "operator": "-",
               "right": {
+                "sourceKeys": {
+                  "objectKey": "arth1Expression_49e52f040a21e071",
+                  "sourceKey": "arth1Expression_5b3343a32b992df8"
+                },
                 "left": "total",
                 "operator": "/",
                 "right": {
+                  "sourceKeys": {
+                    "objectKey": "literal_a49b7b7e3b02d933",
+                    "sourceKey": "literal_ffd50fd06a148b01"
+                  },
                   "value": "2",
                   "valueType": "integer"
                 }
@@ -3716,8 +4620,8 @@
         "variantType": {
           "kind": "type",
           "sourceKeys": {
-            "objectKey": "typeRef_55792e748cf1fa8f",
-            "sourceKey": "typeRef_1b075d0bcf13dd2b"
+            "objectKey": "typeRef_1a870c360196e41a",
+            "sourceKey": "typeRef_6d392598569226f1"
           },
           "type": "primitive",
           "primitiveType": "Integer"
@@ -3727,15 +4631,31 @@
       {
         "kind": "field",
         "sourceKeys": {
-          "objectKey": "fieldDeclaration_63a028414005370c",
-          "sourceKey": "fieldDeclaration_6a2eb4e7c1f4665a"
+          "objectKey": "fieldDeclaration_401f182cbe1329aa",
+          "sourceKey": "fieldDeclaration_f7340b0bc17b694d"
         },
         "variants": [
           {
+            "sourceKeys": {
+              "objectKey": "variableDeclarator_00475d7026f22d1c",
+              "sourceKey": "variableDeclarator_811fa3f325ebadb7"
+            },
             "name": "bits",
             "init": {
+              "sourceKeys": {
+                "objectKey": "bitOrExpression_76e085c45214cc3a",
+                "sourceKey": "bitOrExpression_755c836637f5ec75"
+              },
               "left": {
+                "sourceKeys": {
+                  "objectKey": "subExpression_9bd52745dc705236",
+                  "sourceKey": "subExpression_76ea46c164c0cbb9"
+                },
                 "value": {
+                  "sourceKeys": {
+                    "objectKey": "bitAndExpression_8ab56fb6b6624691",
+                    "sourceKey": "bitAndExpression_9b5b20e7855013d4"
+                  },
                   "left": "count",
                   "operator": "&",
                   "right": "total"
@@ -3744,8 +4664,20 @@
               },
               "operator": "|",
               "right": {
+                "sourceKeys": {
+                  "objectKey": "bitExpression_75e3b3de09e3c155",
+                  "sourceKey": "bitExpression_fc39c3d80f12c21b"
+                },
                 "left": {
+                  "sourceKeys": {
+                    "objectKey": "subExpression_7b80e33d24997951",
+                    "sourceKey": "subExpression_26b7e5ad4a8203fe"
+                  },
                   "value": {
+                    "sourceKeys": {
+                      "objectKey": "bitNotExpression_04615338f90f6ed8",
+                      "sourceKey": "bitNotExpression_e093582a64e44874"
+                    },
                     "left": "count",
                     "operator": "^",
                     "right": "total"
@@ -3754,6 +4686,10 @@
                 },
                 "operator": "<<",
                 "right": {
+                  "sourceKeys": {
+                    "objectKey": "literal_fb5627d59521b262",
+                    "sourceKey": "literal_12e5b8bb492c04c5"
+                  },
                   "value": "1",
                   "valueType": "integer"
                 }
@@ -3764,8 +4700,8 @@
         "variantType": {
           "kind": "type",
           "sourceKeys": {
-            "objectKey": "typeRef_55792e748cf1fa8f",
-            "sourceKey": "typeRef_77db6387583f5180"
+            "objectKey": "typeRef_1a870c360196e41a",
+            "sourceKey": "typeRef_e7bf9faa2bfdea08"
           },
           "type": "primitive",
           "primitiveType": "Integer"
@@ -3775,21 +4711,45 @@
       {
         "kind": "field",
         "sourceKeys": {
-          "objectKey": "fieldDeclaration_8604072801f1ab82",
-          "sourceKey": "fieldDeclaration_01baff06dc2c8038"
+          "objectKey": "fieldDeclaration_d91a4f83bab9aae7",
+          "sourceKey": "fieldDeclaration_292bfce5a6c2359d"
         },
         "variants": [
           {
+            "sourceKeys": {
+              "objectKey": "variableDeclarator_867df13a6517188d",
+              "sourceKey": "variableDeclarator_ffadd3c6fd21924c"
+            },
             "name": "complexCondition",
             "init": {
+              "sourceKeys": {
+                "objectKey": "logAndExpression_ca53421764576fbe",
+                "sourceKey": "logAndExpression_e7b570234ca94b45"
+              },
               "left": {
+                "sourceKeys": {
+                  "objectKey": "logAndExpression_a4ff9a962cb0838c",
+                  "sourceKey": "logAndExpression_8d9f8a8ab04f542c"
+                },
                 "left": {
+                  "sourceKeys": {
+                    "objectKey": "logAndExpression_bb57d212bdbd520e",
+                    "sourceKey": "logAndExpression_cbbacdf09d057e3c"
+                  },
                   "left": "enabled",
                   "operator": "&&",
                   "right": {
+                    "sourceKeys": {
+                      "objectKey": "cmpExpression_4713ff880dd628a9",
+                      "sourceKey": "cmpExpression_03c2e0f2f97ef514"
+                    },
                     "left": "count",
                     "operator": ">=",
                     "right": {
+                      "sourceKeys": {
+                        "objectKey": "literal_c0d97fe34037a338",
+                        "sourceKey": "literal_5da307fa58cde2bb"
+                      },
                       "value": "0",
                       "valueType": "integer"
                     }
@@ -3797,22 +4757,48 @@
                 },
                 "operator": "&&",
                 "right": {
+                  "sourceKeys": {
+                    "objectKey": "subExpression_7e82a265fe60d8b2",
+                    "sourceKey": "subExpression_280f107e5d31f9f7"
+                  },
                   "value": {
+                    "sourceKeys": {
+                      "objectKey": "logOrExpression_38cdc3a4a9be21f1",
+                      "sourceKey": "logOrExpression_cfb44df8c4f7bbf0"
+                    },
                     "left": {
+                      "sourceKeys": {
+                        "objectKey": "equalityExpression_ffec72c9d02602a3",
+                        "sourceKey": "equalityExpression_6edb71757e2f447c"
+                      },
                       "left": "name",
                       "operator": "==",
                       "right": {
+                        "sourceKeys": {
+                          "objectKey": "literal_8b31648a5d2e432a",
+                          "sourceKey": "literal_224a069f2b5eeb43"
+                        },
                         "value": "'Test'",
                         "valueType": "string"
                       }
                     },
                     "operator": "||",
                     "right": {
+                      "kind": "memberAccess",
+                      "sourceKeys": {
+                        "objectKey": "dotExpression_fee4d16b1bb9a70a",
+                        "sourceKey": "dotExpression_9f3ed7d62a9d96c9"
+                      },
+                      "type": "method",
                       "object": "name",
                       "operator": ".",
                       "member": "startsWith",
                       "memberArg": [
                         {
+                          "sourceKeys": {
+                            "objectKey": "literal_f3b4ae6c519fa2da",
+                            "sourceKey": "literal_91d90817c7fcbff0"
+                          },
                           "value": "'A'",
                           "valueType": "string"
                         }
@@ -3824,11 +4810,27 @@
               },
               "operator": "&&",
               "right": {
+                "sourceKeys": {
+                  "objectKey": "negExpression_f04378499f52cc63",
+                  "sourceKey": "negExpression_3c297839e3e3c7b9"
+                },
                 "variant": {
+                  "sourceKeys": {
+                    "objectKey": "subExpression_85de4070d1e101ea",
+                    "sourceKey": "subExpression_caf5b8845eccd0af"
+                  },
                   "value": {
+                    "sourceKeys": {
+                      "objectKey": "equalityExpression_c7f6cb7af53a9b1f",
+                      "sourceKey": "equalityExpression_52bcf5d6ac49c0ad"
+                    },
                     "left": "count",
                     "operator": "!=",
                     "right": {
+                      "sourceKeys": {
+                        "objectKey": "literal_c0d97fe34037a338",
+                        "sourceKey": "literal_5112ca8b09d92440"
+                      },
                       "value": "0",
                       "valueType": "integer"
                     }
@@ -3844,8 +4846,8 @@
         "variantType": {
           "kind": "type",
           "sourceKeys": {
-            "objectKey": "typeRef_460b83c9a2978f02",
-            "sourceKey": "typeRef_973b25c008ec08e1"
+            "objectKey": "typeRef_11833fa784196eb7",
+            "sourceKey": "typeRef_e05a9ffd8bd9baa9"
           },
           "type": "primitive",
           "primitiveType": "Boolean"
@@ -3855,21 +4857,38 @@
       {
         "kind": "field",
         "sourceKeys": {
-          "objectKey": "fieldDeclaration_f0d7bc758c1e94bb",
-          "sourceKey": "fieldDeclaration_d9c052ece8d01459"
+          "objectKey": "fieldDeclaration_2dfaf05ddc75999d",
+          "sourceKey": "fieldDeclaration_f13eb65c026d0398"
         },
         "variants": [
           {
+            "sourceKeys": {
+              "objectKey": "variableDeclarator_950368f65d03133e",
+              "sourceKey": "variableDeclarator_e23a79d7b1bd44b2"
+            },
             "name": "objectValue",
             "init": {
+              "sourceKeys": {
+                "objectKey": "newExpression_d06f928281179988",
+                "sourceKey": "newExpression_895961717eaed459"
+              },
               "collection": [
                 "Account"
               ],
+              "initType": "class",
               "arg": [
                 {
+                  "sourceKeys": {
+                    "objectKey": "assignExpression_ce37bf94afaf3be5",
+                    "sourceKey": "assignExpression_79af7a3dfa3fc062"
+                  },
                   "left": "Name",
                   "operator": "=",
                   "right": {
+                    "sourceKeys": {
+                      "objectKey": "literal_42e3a3f4c69ddeab",
+                      "sourceKey": "literal_45e74384b5e24bb8"
+                    },
                     "value": "'Cast Test'",
                     "valueType": "string"
                   }
@@ -3881,8 +4900,8 @@
         "variantType": {
           "kind": "type",
           "sourceKeys": {
-            "objectKey": "typeRef_24cd68d67f5694b3",
-            "sourceKey": "typeRef_f8e2593ab41f70cc"
+            "objectKey": "typeRef_d60c229da128597e",
+            "sourceKey": "typeRef_7c02470b41b8a309"
           },
           "type": "custom",
           "customType": "SObject"
@@ -3892,19 +4911,27 @@
       {
         "kind": "field",
         "sourceKeys": {
-          "objectKey": "fieldDeclaration_5d69d8979536c8ab",
-          "sourceKey": "fieldDeclaration_2977fbf8089dbb56"
+          "objectKey": "fieldDeclaration_a6cab26c36e367b0",
+          "sourceKey": "fieldDeclaration_e5749225536307a4"
         },
         "variants": [
           {
+            "sourceKeys": {
+              "objectKey": "variableDeclarator_a0d8198aa26249e6",
+              "sourceKey": "variableDeclarator_653397d2359aa6b0"
+            },
             "name": "castedAccount",
             "init": {
+              "sourceKeys": {
+                "objectKey": "castExpression_d8caefbccf2a43c9",
+                "sourceKey": "castExpression_530f122796478fe8"
+              },
               "target": "objectValue",
               "convertType": {
                 "kind": "type",
                 "sourceKeys": {
-                  "objectKey": "typeRef_16c0945431044f5d",
-                  "sourceKey": "typeRef_b4e361e6ff2b7807"
+                  "objectKey": "typeRef_f6180c936ec69d2a",
+                  "sourceKey": "typeRef_fd41340dd2b7b97a"
                 },
                 "type": "custom",
                 "customType": "Account"
@@ -3915,8 +4942,8 @@
         "variantType": {
           "kind": "type",
           "sourceKeys": {
-            "objectKey": "typeRef_16c0945431044f5d",
-            "sourceKey": "typeRef_60073d546752330e"
+            "objectKey": "typeRef_f6180c936ec69d2a",
+            "sourceKey": "typeRef_8bf62a51ed9e8a32"
           },
           "type": "custom",
           "customType": "Account"
@@ -3924,29 +4951,33 @@
         "modifier": {}
       },
       {
-        "type": "statement",
+        "kind": "statement",
         "statement": {
           "kind": "if",
           "sourceKeys": {
-            "objectKey": "ifStatement_7e2064d5c0ddf2d9",
-            "sourceKey": "ifStatement_2889021312aede64"
+            "objectKey": "ifStatement_bc1fa22732497041",
+            "sourceKey": "ifStatement_b2b5f5e230614571"
           },
           "conditionBlock": [
             {
               "condition": {
                 "kind": "ifCondition",
                 "sourceKeys": {
-                  "objectKey": "parExpression_fdd63ba192689063",
-                  "sourceKey": "parExpression_5809f7ed1e52f0b7"
+                  "objectKey": "parExpression_5a89cab6550450b6",
+                  "sourceKey": "parExpression_8c43740cec437e01"
                 },
                 "condition": {
+                  "sourceKeys": {
+                    "objectKey": "instanceOfExpression_697d416759aec069",
+                    "sourceKey": "instanceOfExpression_50635d3df92a86c0"
+                  },
                   "target": "objectValue",
                   "operator": "instanceof",
                   "type": {
                     "kind": "type",
                     "sourceKeys": {
-                      "objectKey": "typeRef_16c0945431044f5d",
-                      "sourceKey": "typeRef_0af818ab7d998b16"
+                      "objectKey": "typeRef_f6180c936ec69d2a",
+                      "sourceKey": "typeRef_c11df118e2a73160"
                     },
                     "type": "custom",
                     "customType": "Account"
@@ -3957,20 +4988,28 @@
                 {
                   "kind": "localVariable",
                   "sourceKeys": {
-                    "objectKey": "localVariableDeclarationStatement_c60dbcb1b77b8f22",
-                    "sourceKey": "localVariableDeclarationStatement_331cabdf5667a021"
+                    "objectKey": "localVariableDeclarationStatement_49b73fecc008164a",
+                    "sourceKey": "localVariableDeclarationStatement_1451a88b998bd299"
                   },
                   "variable": {
                     "variants": [
                       {
+                        "sourceKeys": {
+                          "objectKey": "variableDeclarator_44f9915b09a9f75c",
+                          "sourceKey": "variableDeclarator_586de1a5292cabe8"
+                        },
                         "name": "accountValue",
                         "init": {
+                          "sourceKeys": {
+                            "objectKey": "castExpression_d8caefbccf2a43c9",
+                            "sourceKey": "castExpression_92ce0211ff745c0e"
+                          },
                           "target": "objectValue",
                           "convertType": {
                             "kind": "type",
                             "sourceKeys": {
-                              "objectKey": "typeRef_16c0945431044f5d",
-                              "sourceKey": "typeRef_ec66cce0b8384e0c"
+                              "objectKey": "typeRef_f6180c936ec69d2a",
+                              "sourceKey": "typeRef_813fd9e063695fd1"
                             },
                             "type": "custom",
                             "customType": "Account"
@@ -3981,8 +5020,8 @@
                     "variantsType": {
                       "kind": "type",
                       "sourceKeys": {
-                        "objectKey": "typeRef_16c0945431044f5d",
-                        "sourceKey": "typeRef_50d633afc81303bd"
+                        "objectKey": "typeRef_f6180c936ec69d2a",
+                        "sourceKey": "typeRef_0e38bdc4dcc94729"
                       },
                       "type": "custom",
                       "customType": "Account"
@@ -3993,15 +5032,27 @@
                 {
                   "kind": "expression",
                   "sourceKeys": {
-                    "objectKey": "expressionStatement_56995c81be943a3f",
-                    "sourceKey": "expressionStatement_9a2e0b7bfe89a0b4"
+                    "objectKey": "expressionStatement_1f8ad9878ab9ee47",
+                    "sourceKey": "expressionStatement_c645db0e8220249d"
                   },
                   "value": {
+                    "kind": "memberAccess",
+                    "sourceKeys": {
+                      "objectKey": "dotExpression_a800d9bc0fde4925",
+                      "sourceKey": "dotExpression_a5143b8ce2cafcd4"
+                    },
+                    "type": "method",
                     "object": "System",
                     "operator": ".",
                     "member": "debug",
                     "memberArg": [
                       {
+                        "kind": "memberAccess",
+                        "sourceKeys": {
+                          "objectKey": "dotExpression_02f85cb9942c6622",
+                          "sourceKey": "dotExpression_a835b2fd5f4de4b3"
+                        },
+                        "type": "object",
                         "object": "accountValue",
                         "operator": ".",
                         "member": "Name"
@@ -4018,17 +5069,21 @@
       {
         "kind": "field",
         "sourceKeys": {
-          "objectKey": "fieldDeclaration_e9b6e35a728a63d6",
-          "sourceKey": "fieldDeclaration_cd68c64693a38101"
+          "objectKey": "fieldDeclaration_f76ed22b9c525f13",
+          "sourceKey": "fieldDeclaration_073ae1ad5d3c8de9"
         },
         "variants": [
           {
+            "sourceKeys": {
+              "objectKey": "variableDeclarator_0c9e2ae5cc4bcab5",
+              "sourceKey": "variableDeclarator_491d5c1be1fc2253"
+            },
             "name": "accountType",
             "init": {
               "kind": "type",
               "sourceKeys": {
-                "objectKey": "typeRef_16c0945431044f5d",
-                "sourceKey": "typeRef_7213925cb475d658"
+                "objectKey": "typeRef_f6180c936ec69d2a",
+                "sourceKey": "typeRef_760470d30ec48871"
               },
               "type": "custom",
               "customType": "Account"
@@ -4038,8 +5093,8 @@
         "variantType": {
           "kind": "type",
           "sourceKeys": {
-            "objectKey": "typeRef_bfc5e83d690d0d6c",
-            "sourceKey": "typeRef_2b229916f3c21561"
+            "objectKey": "typeRef_e755d593ec3af002",
+            "sourceKey": "typeRef_9114d1e13e64d9c7"
           },
           "type": "custom",
           "customType": [
@@ -4050,29 +5105,44 @@
         "modifier": {}
       },
       {
-        "type": "statement",
+        "kind": "statement",
         "statement": {
           "kind": "runAs",
           "sourceKeys": {
-            "objectKey": "runAsStatement_e6fc788c00b7972b",
-            "sourceKey": "runAsStatement_5da6efbce1b3d3b7"
+            "objectKey": "runAsStatement_2ab25137e1769481",
+            "sourceKey": "runAsStatement_6ec3eb8d314f7e46"
           },
           "condition": {
             "kind": "runAsCondition",
             "sourceKeys": {
-              "objectKey": "expressionList_98fd01f6452bd645",
-              "sourceKey": "expressionList_de09095b7df445ca"
+              "objectKey": "expressionList_f1fe1e4d0b478556",
+              "sourceKey": "expressionList_792ea9c0446a6ce1"
             },
             "field": [
               {
+                "sourceKeys": {
+                  "objectKey": "newExpression_d168603307fbc5c4",
+                  "sourceKey": "newExpression_792ea9c0446a6ce1"
+                },
                 "collection": [
                   "User"
                 ],
+                "initType": "class",
                 "arg": [
                   {
+                    "sourceKeys": {
+                      "objectKey": "assignExpression_7138f3c1f6f9539f",
+                      "sourceKey": "assignExpression_f06e751e0464591f"
+                    },
                     "left": "Id",
                     "operator": "=",
                     "right": {
+                      "kind": "memberAccess",
+                      "sourceKeys": {
+                        "objectKey": "dotExpression_64ae93f108799741",
+                        "sourceKey": "dotExpression_bb16654a2e4b01cd"
+                      },
+                      "type": "method",
                       "object": "UserInfo",
                       "operator": ".",
                       "member": "getUserId"
@@ -4086,15 +5156,25 @@
             {
               "kind": "expression",
               "sourceKeys": {
-                "objectKey": "expressionStatement_3e8c8df0bab13be1",
-                "sourceKey": "expressionStatement_dca7a71e8653b4d3"
+                "objectKey": "expressionStatement_7ef1a3a738dfa2ff",
+                "sourceKey": "expressionStatement_834fcdd4a3d95edd"
               },
               "value": {
+                "kind": "memberAccess",
+                "sourceKeys": {
+                  "objectKey": "dotExpression_bc8da826905a5a2f",
+                  "sourceKey": "dotExpression_252b77c690ac24a6"
+                },
+                "type": "method",
                 "object": "System",
                 "operator": ".",
                 "member": "debug",
                 "memberArg": [
                   {
+                    "sourceKeys": {
+                      "objectKey": "literal_dc58c3c3c227458a",
+                      "sourceKey": "literal_6088f4988203855a"
+                    },
                     "value": "'run as'",
                     "valueType": "string"
                   }
@@ -4106,23 +5186,39 @@
         "modifier": {}
       },
       {
-        "type": "statement",
+        "kind": "statement",
         "statement": {
           "kind": "expression",
           "sourceKeys": {
-            "objectKey": "expressionStatement_5a483bc0b0a700e4",
-            "sourceKey": "expressionStatement_393c02a570f9bbaf"
+            "objectKey": "expressionStatement_fa5062ea27f0a11f",
+            "sourceKey": "expressionStatement_e823364ee94e6c4f"
           },
           "value": {
+            "kind": "memberAccess",
+            "sourceKeys": {
+              "objectKey": "dotExpression_b479926c740e2bb1",
+              "sourceKey": "dotExpression_ff95660575736458"
+            },
+            "type": "method",
             "object": "System",
             "operator": ".",
             "member": "assertEquals",
             "memberArg": [
               {
+                "sourceKeys": {
+                  "objectKey": "literal_72b29e97af94190f",
+                  "sourceKey": "literal_efd530da0e69d160"
+                },
                 "value": "3",
                 "valueType": "integer"
               },
               {
+                "kind": "memberAccess",
+                "sourceKeys": {
+                  "objectKey": "dotExpression_8a4c9a45957762f4",
+                  "sourceKey": "dotExpression_c9f766e52214072a"
+                },
+                "type": "method",
                 "object": "dmlAccounts",
                 "operator": ".",
                 "member": "size"
@@ -4133,14 +5229,20 @@
         "modifier": {}
       },
       {
-        "type": "statement",
+        "kind": "statement",
         "statement": {
           "kind": "expression",
           "sourceKeys": {
-            "objectKey": "expressionStatement_e83125fe182448df",
-            "sourceKey": "expressionStatement_81fc84bf3829662d"
+            "objectKey": "expressionStatement_6308a647d3d84fd9",
+            "sourceKey": "expressionStatement_52df23e716c44220"
           },
           "value": {
+            "kind": "memberAccess",
+            "sourceKeys": {
+              "objectKey": "dotExpression_e9525f88a316f8b7",
+              "sourceKey": "dotExpression_dac3501570ffdb78"
+            },
+            "type": "method",
             "object": "System",
             "operator": ".",
             "member": "assert",
@@ -4152,20 +5254,30 @@
         "modifier": {}
       },
       {
-        "type": "statement",
+        "kind": "statement",
         "statement": {
           "kind": "expression",
           "sourceKeys": {
-            "objectKey": "expressionStatement_59adbc5241db966f",
-            "sourceKey": "expressionStatement_94dff9531f315941"
+            "objectKey": "expressionStatement_847b9d700c776dd4",
+            "sourceKey": "expressionStatement_cf49153db1ba5f56"
           },
           "value": {
+            "kind": "memberAccess",
+            "sourceKeys": {
+              "objectKey": "dotExpression_e3b4ced20b10f7be",
+              "sourceKey": "dotExpression_edef0b3a578bf7b8"
+            },
+            "type": "method",
             "object": "Assert",
             "operator": ".",
             "member": "isTrue",
             "memberArg": [
               "enabled",
               {
+                "sourceKeys": {
+                  "objectKey": "literal_c78a6f29dfd81e6e",
+                  "sourceKey": "literal_ca844924df4c6280"
+                },
                 "value": "'should be enabled'",
                 "valueType": "string"
               }

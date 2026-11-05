@@ -4,7 +4,7 @@ import { StatementTypeClass } from '../statementVisitor';
 
 import { NormalBlockTypeClass, BlockVisitor, isNormalBlockType } from '../blockVisitor';
 import { ExpressionListTypeClass, ListVisitor, isExpressionListType } from '../listVisitor';
-import { ApexErrorTypeClass, ApexCommonTypeClass, isApexValidClass } from '../commonVisitor';
+import { ApexErrorTypeClass, ApexCommonTypeClass, visitNode } from '../commonVisitor';
 
 export class RunAsStatementTypeClass extends StatementTypeClass<
     'runAsStatement',
@@ -26,12 +26,13 @@ export class RunAsStatementTypeClass extends StatementTypeClass<
         }
 
         return new RunAsStatementTypeClass(
-            isApexValidClass(
-                new ListVisitor().visit(ctx.expressionList()),
+            visitNode(
+                new ListVisitor(),
+                ctx.expressionList(),
                 isExpressionListType,
                 'expressionList',
             ),
-            isApexValidClass(new BlockVisitor().visit(ctx.block()), isNormalBlockType, 'block'),
+            visitNode(new BlockVisitor(), ctx.block(), isNormalBlockType, 'block'),
         );
     }
 
@@ -45,4 +46,3 @@ export const isRunAsStatementType = (
 ): target is RunAsStatementTypeClass => {
     return target instanceof RunAsStatementTypeClass;
 };
-

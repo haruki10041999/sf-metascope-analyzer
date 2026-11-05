@@ -1,13 +1,31 @@
 import { isNumericLiteral, type NumericLiteral } from '@babel/types';
 import { EvaluatePair, LwcCommonTypeClass, makeEvaluatePair } from '../commonVisitor';
 
+export type NumericLiteralFields = {
+    value: NumericLiteral['value'];
+};
+
 export class NumericLiteralTypeClass extends LwcCommonTypeClass<'numericLiteral'> {
-    private constructor(originalSource: string) {
-        super('numericLiteral', originalSource);
+    private readonly value: NumericLiteralFields;
+
+    private constructor(value: NumericLiteralFields) {
+        super('numericLiteral');
+        this.value = value;
     }
 
     static create(target: NumericLiteral, originalSource: string): NumericLiteralTypeClass {
-        throw new Error('NumericLiteralTypeClass.create is not implemented: ' + target.type);
+        return new NumericLiteralTypeClass({
+            value: target.value,
+        });
+    }
+
+    /** すべてのフィールド (Babel の value フィールドの getter getValue() と区別する。getChildNodes もこれから作る) */
+    override getFields(): NumericLiteralFields {
+        return this.value;
+    }
+
+    getValue(): NumericLiteralFields['value'] {
+        return this.value.value;
     }
 }
 

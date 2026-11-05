@@ -3,7 +3,7 @@ import { SoslLiteralAltContext } from '@apexdevtools/apex-parser';
 import { LiteralValueTypeClass } from '.';
 
 import { SoslClausesTypeClass, ClauseVisitor, isSoslClausesType } from '../clauseVisitor';
-import { ApexErrorTypeClass, ApexCommonTypeClass, isApexValidClass } from '../commonVisitor';
+import { ApexErrorTypeClass, ApexCommonTypeClass, visitNode } from '../commonVisitor';
 
 export class SoslLiteralAltTypeClass extends LiteralValueTypeClass<'soslLiteralAlt', string> {
     private soslClauses: SoslClausesTypeClass | ApexErrorTypeClass;
@@ -20,11 +20,7 @@ export class SoslLiteralAltTypeClass extends LiteralValueTypeClass<'soslLiteralA
 
         return new SoslLiteralAltTypeClass(
             ctx.FindLiteralAlt().getText(),
-            isApexValidClass(
-                new ClauseVisitor().visit(ctx.soslClauses()),
-                isSoslClausesType,
-                'soslClauses',
-            ),
+            visitNode(new ClauseVisitor(), ctx.soslClauses(), isSoslClausesType, 'soslClauses'),
         );
     }
 
@@ -38,4 +34,3 @@ export const isSoslLiteralAltType = (
 ): target is SoslLiteralAltTypeClass => {
     return target instanceof SoslLiteralAltTypeClass;
 };
-

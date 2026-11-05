@@ -1,4 +1,4 @@
-import type { SourcePosition } from './source';
+import { makePositionOf, type SourcePosition } from './source';
 
 // メタデータの XML (*-meta.xml) を、要素ごとのソース位置付きの木にする。
 // Apex の IR (apex_IR) に当たる層。fast-xml-parser は位置を返さないため、sourceKey を作れるよう自前で読む。
@@ -43,24 +43,6 @@ const decodeEntities = (text: string): string =>
         if (entity.startsWith('#')) return String.fromCodePoint(parseInt(entity.slice(1), 10));
         return ENTITIES[entity] ?? whole;
     });
-
-/** offset から行・列を引くため、各行の先頭の offset を持つ */
-const makePositionOf = (source: string) => {
-    const lineStarts = [0];
-    for (let i = 0; i < source.length; i++) {
-        if (source[i] === '\n') lineStarts.push(i + 1);
-    }
-    return (offset: number): SourcePosition => {
-        let low = 0;
-        let high = lineStarts.length - 1;
-        while (low < high) {
-            const middle = (low + high + 1) >> 1;
-            if (lineStarts[middle]! <= offset) low = middle;
-            else high = middle - 1;
-        }
-        return { offset, line: low + 1, column: offset - lineStarts[low]! };
-    };
-};
 
 const NAME = /[A-Za-z_:][-A-Za-z0-9_:.]*/y;
 const ATTRIBUTE = /\s*([A-Za-z_:][-A-Za-z0-9_:.]*)\s*=\s*("([^"]*)"|'([^']*)')/y;

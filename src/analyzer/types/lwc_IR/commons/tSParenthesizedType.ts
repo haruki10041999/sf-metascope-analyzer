@@ -1,16 +1,46 @@
 import { isTSParenthesizedType, type TSParenthesizedType } from '@babel/types';
-import { EvaluatePair, LwcCommonTypeClass, makeEvaluatePair } from '../commonVisitor';
+import {
+    EvaluatePair,
+    LwcCommonTypeClass,
+    LwcErrorTypeClass,
+    makeEvaluatePair,
+    visitNode,
+} from '../commonVisitor';
+import { tSTypeVisitorEvaluatePairs, type TSTypeTypeClass } from '../tsTypeVisitor';
+
+export type TSParenthesizedTypeFields = {
+    typeAnnotation: TSTypeTypeClass | LwcErrorTypeClass;
+};
 
 export class TSParenthesizedTypeTypeClass extends LwcCommonTypeClass<'tSParenthesizedType'> {
-    private constructor(originalSource: string) {
-        super('tSParenthesizedType', originalSource);
+    private readonly value: TSParenthesizedTypeFields;
+
+    private constructor(value: TSParenthesizedTypeFields) {
+        super('tSParenthesizedType');
+        this.value = value;
     }
 
     static create(
         target: TSParenthesizedType,
         originalSource: string,
     ): TSParenthesizedTypeTypeClass {
-        throw new Error('TSParenthesizedTypeTypeClass.create is not implemented: ' + target.type);
+        return new TSParenthesizedTypeTypeClass({
+            typeAnnotation: visitNode(
+                target.typeAnnotation,
+                originalSource,
+                tSTypeVisitorEvaluatePairs(),
+                'TSTypeVisitor',
+            ),
+        });
+    }
+
+    /** すべてのフィールド (Babel の value フィールドの getter getValue() と区別する。getChildNodes もこれから作る) */
+    override getFields(): TSParenthesizedTypeFields {
+        return this.value;
+    }
+
+    getTypeAnnotation(): TSParenthesizedTypeFields['typeAnnotation'] {
+        return this.value.typeAnnotation;
     }
 }
 

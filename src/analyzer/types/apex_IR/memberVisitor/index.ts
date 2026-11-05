@@ -25,4 +25,3 @@ export class MemberVisitor extends ApexCommonVisitor<MemberTypeClass<string, unk
         return TriggerBlockMemberTypeClass.create(ctx);
     }
 }
-

@@ -1,0 +1,445 @@
+{
+  "filePath": "docs/examples/apex-diff/before/Broken.cls",
+  "resolvedError": [],
+  "dataType": "cls",
+  "result": {
+    "id": "Broken.cls",
+    "base": {
+      "kind": "class",
+      "sourceKeys": {
+        "base": {
+          "objectKey": "classDeclaration_2d7b37be9bed8fdb",
+          "sourceKey": "classDeclaration_0df738ebc741e30f"
+        },
+        "name": {
+          "objectKey": "id_b37259d059092602",
+          "sourceKey": "id_c2b0d451f4f1b4cc"
+        }
+      },
+      "name": "Broken",
+      "block": [
+        {
+          "kind": "method",
+          "sourceKeys": {
+            "base": {
+              "objectKey": "methodDeclaration_111bfffda23514cb",
+              "sourceKey": "methodDeclaration_d9f189ff780405f7"
+            },
+            "name": {
+              "objectKey": "id_173f4a982cfa79db",
+              "sourceKey": "id_1b3fefd9f203fcb6"
+            }
+          },
+          "name": "run",
+          "returnType": "void",
+          "block": [
+            {
+              "kind": "localVariable",
+              "sourceKeys": {
+                "objectKey": "localVariableDeclarationStatement_453f9d7e6aeb910b",
+                "sourceKey": "localVariableDeclarationStatement_81f60030919d4c95"
+              },
+              "variable": {
+                "variants": [
+                  {
+                    "sourceKeys": {
+                      "objectKey": "variableDeclarator_05d7d1b2e7f94aa0",
+                      "sourceKey": "variableDeclarator_d7fe7f2596f243f2"
+                    },
+                    "name": "x",
+                    "init": {
+                      "sourceKeys": {
+                        "objectKey": "literal_fb5627d59521b262",
+                        "sourceKey": "literal_6117bc2c2177949e"
+                      },
+                      "value": "1",
+                      "valueType": "integer"
+                    }
+                  }
+                ],
+                "variantsType": {
+                  "kind": "type",
+                  "sourceKeys": {
+                    "objectKey": "typeRef_1a870c360196e41a",
+                    "sourceKey": "typeRef_5ecfc55f879d7042"
+                  },
+                  "type": "primitive",
+                  "primitiveType": "Integer"
+                },
+                "modifier": {}
+              }
+            },
+            {
+              "kind": "expression",
+              "sourceKeys": {
+                "objectKey": "expressionStatement_316512145b7e8949",
+                "sourceKey": "expressionStatement_7159c653a44f13a7"
+              },
+              "value": {
+                "kind": "memberAccess",
+                "sourceKeys": {
+                  "objectKey": "methodCallExpression_e1c1b08a21c2ed4b",
+                  "sourceKey": "methodCallExpression_c3c6111492ccbe1b"
+                },
+                "type": "method",
+                "member": "foo",
+                "memberArg": [
+                  {
+                    "sourceKeys": {
+                      "objectKey": "literal_fb5627d59521b262",
+                      "sourceKey": "literal_16e61aaddc3f9f0a"
+                    },
+                    "value": "1",
+                    "valueType": "integer"
+                  },
+                  {
+                    "sourceKeys": {
+                      "objectKey": "literal_a49b7b7e3b02d933",
+                      "sourceKey": "literal_46e319673da0c5de"
+                    },
+                    "value": "2",
+                    "valueType": "integer"
+                  }
+                ]
+              }
+            },
+            {
+              "kind": "expression",
+              "sourceKeys": {
+                "objectKey": "expressionStatement_6ed1f6aa0c97c626",
+                "sourceKey": "expressionStatement_a4b22f94548572e7"
+              },
+              "value": {
+                "kind": "memberAccess",
+                "sourceKeys": {
+                  "objectKey": "methodCallExpression_069fe4c03ea6ad3a",
+                  "sourceKey": "methodCallExpression_7aaef92be0da9feb"
+                },
+                "type": "method",
+                "member": "b"
+              }
+            }
+          ],
+          "modifier": {
+            "access": [
+              {
+                "kind": "modifier",
+                "sourceKeys": {
+                  "objectKey": "modifier_a04213395735c45e",
+                  "sourceKey": "modifier_dddead3737a66fc7"
+                },
+                "name": "PUBLIC"
+              }
+            ]
+          }
+        }
+      ],
+      "modifier": {
+        "access": [
+          {
+            "kind": "modifier",
+            "sourceKeys": {
+              "objectKey": "modifier_a04213395735c45e",
+              "sourceKey": "modifier_83442bd3f55cf1b2"
+            },
+            "name": "PUBLIC"
+          }
+        ]
+      }
+    },
+    "sourceObject": [
+      {
+        "objectKey": "classDeclaration_2d7b37be9bed8fdb",
+        "context": "class Broken {\n    public void run() {\n        Integer x = 1;\n        foo(1, 2);\n        b();\n    }\n}",
+        "source": [
+          {
+            "sourceKey": "classDeclaration_0df738ebc741e30f",
+            "start": {
+              "offset": 7,
+              "line": 1,
+              "column": 7
+            },
+            "end": {
+              "offset": 108,
+              "line": 7,
+              "column": 1
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "id_b37259d059092602",
+        "context": "Broken",
+        "source": [
+          {
+            "sourceKey": "id_c2b0d451f4f1b4cc",
+            "start": {
+              "offset": 13,
+              "line": 1,
+              "column": 13
+            },
+            "end": {
+              "offset": 19,
+              "line": 1,
+              "column": 19
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "methodDeclaration_111bfffda23514cb",
+        "context": "void run() {\n        Integer x = 1;\n        foo(1, 2);\n        b();\n    }",
+        "source": [
+          {
+            "sourceKey": "methodDeclaration_d9f189ff780405f7",
+            "start": {
+              "offset": 33,
+              "line": 2,
+              "column": 11
+            },
+            "end": {
+              "offset": 106,
+              "line": 6,
+              "column": 5
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "id_173f4a982cfa79db",
+        "context": "run",
+        "source": [
+          {
+            "sourceKey": "id_1b3fefd9f203fcb6",
+            "start": {
+              "offset": 38,
+              "line": 2,
+              "column": 16
+            },
+            "end": {
+              "offset": 41,
+              "line": 2,
+              "column": 19
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "localVariableDeclarationStatement_453f9d7e6aeb910b",
+        "context": "Integer x = 1;",
+        "source": [
+          {
+            "sourceKey": "localVariableDeclarationStatement_81f60030919d4c95",
+            "start": {
+              "offset": 54,
+              "line": 3,
+              "column": 8
+            },
+            "end": {
+              "offset": 68,
+              "line": 3,
+              "column": 22
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "variableDeclarator_05d7d1b2e7f94aa0",
+        "context": "x = 1",
+        "source": [
+          {
+            "sourceKey": "variableDeclarator_d7fe7f2596f243f2",
+            "start": {
+              "offset": 62,
+              "line": 3,
+              "column": 16
+            },
+            "end": {
+              "offset": 67,
+              "line": 3,
+              "column": 21
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "literal_fb5627d59521b262",
+        "context": "1",
+        "source": [
+          {
+            "sourceKey": "literal_6117bc2c2177949e",
+            "start": {
+              "offset": 66,
+              "line": 3,
+              "column": 20
+            },
+            "end": {
+              "offset": 67,
+              "line": 3,
+              "column": 21
+            }
+          },
+          {
+            "sourceKey": "literal_16e61aaddc3f9f0a",
+            "start": {
+              "offset": 81,
+              "line": 4,
+              "column": 12
+            },
+            "end": {
+              "offset": 82,
+              "line": 4,
+              "column": 13
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "typeRef_1a870c360196e41a",
+        "context": "Integer",
+        "source": [
+          {
+            "sourceKey": "typeRef_5ecfc55f879d7042",
+            "start": {
+              "offset": 54,
+              "line": 3,
+              "column": 8
+            },
+            "end": {
+              "offset": 61,
+              "line": 3,
+              "column": 15
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "expressionStatement_316512145b7e8949",
+        "context": "foo(1, 2);",
+        "source": [
+          {
+            "sourceKey": "expressionStatement_7159c653a44f13a7",
+            "start": {
+              "offset": 77,
+              "line": 4,
+              "column": 8
+            },
+            "end": {
+              "offset": 87,
+              "line": 4,
+              "column": 18
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "methodCallExpression_e1c1b08a21c2ed4b",
+        "context": "foo(1, 2)",
+        "source": [
+          {
+            "sourceKey": "methodCallExpression_c3c6111492ccbe1b",
+            "start": {
+              "offset": 77,
+              "line": 4,
+              "column": 8
+            },
+            "end": {
+              "offset": 86,
+              "line": 4,
+              "column": 17
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "literal_a49b7b7e3b02d933",
+        "context": "2",
+        "source": [
+          {
+            "sourceKey": "literal_46e319673da0c5de",
+            "start": {
+              "offset": 84,
+              "line": 4,
+              "column": 15
+            },
+            "end": {
+              "offset": 85,
+              "line": 4,
+              "column": 16
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "expressionStatement_6ed1f6aa0c97c626",
+        "context": "b();",
+        "source": [
+          {
+            "sourceKey": "expressionStatement_a4b22f94548572e7",
+            "start": {
+              "offset": 96,
+              "line": 5,
+              "column": 8
+            },
+            "end": {
+              "offset": 100,
+              "line": 5,
+              "column": 12
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "methodCallExpression_069fe4c03ea6ad3a",
+        "context": "b()",
+        "source": [
+          {
+            "sourceKey": "methodCallExpression_7aaef92be0da9feb",
+            "start": {
+              "offset": 96,
+              "line": 5,
+              "column": 8
+            },
+            "end": {
+              "offset": 99,
+              "line": 5,
+              "column": 11
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "modifier_a04213395735c45e",
+        "context": "public",
+        "source": [
+          {
+            "sourceKey": "modifier_dddead3737a66fc7",
+            "start": {
+              "offset": 26,
+              "line": 2,
+              "column": 4
+            },
+            "end": {
+              "offset": 32,
+              "line": 2,
+              "column": 10
+            }
+          },
+          {
+            "sourceKey": "modifier_83442bd3f55cf1b2",
+            "start": {
+              "offset": 0,
+              "line": 1,
+              "column": 0
+            },
+            "end": {
+              "offset": 6,
+              "line": 1,
+              "column": 6
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

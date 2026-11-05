@@ -3,7 +3,7 @@ import { SoslPrimaryContext } from '@apexdevtools/apex-parser';
 import { PrimaryTypeClass } from '.';
 
 import { SoslLiteralTypeClass, LiteralVisitor, isSoslLiteralType } from '../literalVisitor';
-import { ApexErrorTypeClass, ApexCommonTypeClass, isApexValidClass } from '../commonVisitor';
+import { ApexErrorTypeClass, ApexCommonTypeClass, visitNode } from '../commonVisitor';
 
 export class SoslPrimaryTypeClass extends PrimaryTypeClass<'soslPrimary', SoslLiteralTypeClass> {
     private constructor(value: SoslLiteralTypeClass | ApexErrorTypeClass) {
@@ -16,11 +16,7 @@ export class SoslPrimaryTypeClass extends PrimaryTypeClass<'soslPrimary', SoslLi
         }
 
         return new SoslPrimaryTypeClass(
-            isApexValidClass(
-                new LiteralVisitor().visit(ctx.soslLiteral()),
-                isSoslLiteralType,
-                'soslLiteral',
-            ),
+            visitNode(new LiteralVisitor(), ctx.soslLiteral(), isSoslLiteralType, 'soslLiteral'),
         );
     }
 }
@@ -30,4 +26,3 @@ export const isSoslPrimaryType = (
 ): target is SoslPrimaryTypeClass => {
     return target instanceof SoslPrimaryTypeClass;
 };
-

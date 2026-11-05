@@ -1,13 +1,52 @@
 import { isObjectExpression, type ObjectExpression } from '@babel/types';
-import { EvaluatePair, LwcCommonTypeClass, makeEvaluatePair } from '../commonVisitor';
+import {
+    EvaluatePair,
+    LwcCommonTypeClass,
+    LwcErrorTypeClass,
+    lazyPairs,
+    makeEvaluatePair,
+    visitNodeList,
+} from '../commonVisitor';
+import { objectMethodTypePair, type ObjectMethodTypeClass } from './objectMethod';
+import { objectPropertyTypePair, type ObjectPropertyTypeClass } from './objectProperty';
+import { spreadElementTypePair, type SpreadElementTypeClass } from './spreadElement';
+
+const objectExpressionPropertiesPairs = lazyPairs(
+    () => [objectMethodTypePair, objectPropertyTypePair, spreadElementTypePair] as const,
+);
+
+export type ObjectExpressionFields = {
+    properties: (
+        ObjectMethodTypeClass | ObjectPropertyTypeClass | SpreadElementTypeClass | LwcErrorTypeClass
+    )[];
+};
 
 export class ObjectExpressionTypeClass extends LwcCommonTypeClass<'objectExpression'> {
-    private constructor(originalSource: string) {
-        super('objectExpression', originalSource);
+    private readonly value: ObjectExpressionFields;
+
+    private constructor(value: ObjectExpressionFields) {
+        super('objectExpression');
+        this.value = value;
     }
 
     static create(target: ObjectExpression, originalSource: string): ObjectExpressionTypeClass {
-        throw new Error('ObjectExpressionTypeClass.create is not implemented: ' + target.type);
+        return new ObjectExpressionTypeClass({
+            properties: visitNodeList(
+                target.properties,
+                originalSource,
+                objectExpressionPropertiesPairs(),
+                'ObjectExpression.properties',
+            ),
+        });
+    }
+
+    /** すべてのフィールド (Babel の value フィールドの getter getValue() と区別する。getChildNodes もこれから作る) */
+    override getFields(): ObjectExpressionFields {
+        return this.value;
+    }
+
+    getProperties(): ObjectExpressionFields['properties'] {
+        return this.value.properties;
     }
 }
 

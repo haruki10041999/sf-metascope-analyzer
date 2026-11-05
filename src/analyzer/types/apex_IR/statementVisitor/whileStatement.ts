@@ -12,7 +12,7 @@ import {
     ExpressionVisitor,
     isParExpressionType,
 } from '../expressionVisitor';
-import { ApexErrorTypeClass, ApexCommonTypeClass, isApexValidClass } from '../commonVisitor';
+import { ApexErrorTypeClass, ApexCommonTypeClass, visitNode } from '../commonVisitor';
 
 export class WhileStatementTypeClass extends StatementTypeClass<
     'whileStatement',
@@ -34,16 +34,13 @@ export class WhileStatementTypeClass extends StatementTypeClass<
         }
 
         return new WhileStatementTypeClass(
-            isApexValidClass(
-                new ExpressionVisitor().visit(ctx.parExpression()),
+            visitNode(
+                new ExpressionVisitor(),
+                ctx.parExpression(),
                 isParExpressionType,
                 'parExpression',
             ),
-            isApexValidClass(
-                new StatementVisitor().visit(ctx.statement()),
-                isNormalStatementType,
-                'statement',
-            ),
+            visitNode(new StatementVisitor(), ctx.statement(), isNormalStatementType, 'statement'),
         );
     }
 
@@ -57,4 +54,3 @@ export const isWhileStatementType = (
 ): target is WhileStatementTypeClass => {
     return target instanceof WhileStatementTypeClass;
 };
-

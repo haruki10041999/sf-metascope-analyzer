@@ -9,7 +9,7 @@ import {
 
 import { AnyIdTypeClass, IdVisitor, isAnyIdType } from '../idVisitor';
 import { DotMethodCallTypeClass, CallVisitor, isDotMethodCallType } from '../callVisitor';
-import { ApexErrorTypeClass, ApexCommonTypeClass, isApexValidClass } from '../commonVisitor';
+import { ApexErrorTypeClass, ApexCommonTypeClass, visitNode } from '../commonVisitor';
 
 export class DotExpressionTypeClass extends DoubleStringOperatorExpressionTypeClass<
     'dotExpression',
@@ -35,15 +35,17 @@ export class DotExpressionTypeClass extends DoubleStringOperatorExpressionTypeCl
         }
 
         return new DotExpressionTypeClass(
-            isApexValidClass(
-                new ExpressionVisitor().visit(ctx.expression()),
+            visitNode(
+                new ExpressionVisitor(),
+                ctx.expression(),
                 isBasedExpressionType,
                 'expression',
             ),
             ctx.anyId()
-                ? isApexValidClass(new IdVisitor().visit(ctx.anyId()), isAnyIdType, 'anyId')
-                : isApexValidClass(
-                      new CallVisitor().visit(ctx.dotMethodCall()),
+                ? visitNode(new IdVisitor(), ctx.anyId(), isAnyIdType, 'anyId')
+                : visitNode(
+                      new CallVisitor(),
+                      ctx.dotMethodCall(),
                       isDotMethodCallType,
                       'dotMethodCall',
                   ),
@@ -57,4 +59,3 @@ export const isDotExpressionType = (
 ): target is DotExpressionTypeClass => {
     return target instanceof DotExpressionTypeClass;
 };
-

@@ -191,18 +191,18 @@ export const makeInstanceNameJson = (
 };
 
 export type ArrayInitInstanceJson = {
-    kind: 'array';
+    initType: 'array';
     init?: (BaseExpressionJson | ErrorJson)[];
     size?: BaseExpressionJson | ErrorJson;
 };
 
 export type ClassInitInstanceJson = {
-    kind: 'class';
+    initType: 'class';
     arg?: (BaseExpressionJson | ErrorJson)[];
 };
 
 export type MapInitInstanceJson = {
-    kind: 'map';
+    initType: 'map';
     init?: (
         | {
               key: BaseExpressionJson | ErrorJson;
@@ -213,12 +213,12 @@ export type MapInitInstanceJson = {
 };
 
 export type NoInitInstanceJson = {
-    kind: 'no';
+    initType: 'no';
     value: string;
 };
 
 export type SetInitInstanceJson = {
-    kind: 'list || set';
+    initType: 'list || set';
     init?: (BaseExpressionJson | ErrorJson)[];
 };
 
@@ -247,7 +247,7 @@ export const makeInitInstanceJson = (
             return makeErrorJson(target.value, ERROR_KIND);
         }
         return {
-            kind: 'array',
+            initType: 'array',
             ...(target.value
                 ? {
                       init: target.value.value.map((v) => makeExpressionJsonConvert(v)),
@@ -260,13 +260,13 @@ export const makeInitInstanceJson = (
             return makeErrorJson(target.value, ERROR_KIND);
         }
         if (!target.value.value) {
-            return { kind: 'class' };
+            return { initType: 'class' };
         }
         const arg = makeExpressionListJson(target.value.value);
-        return Array.isArray(arg) ? { kind: 'class', arg: arg } : arg;
+        return Array.isArray(arg) ? { initType: 'class', arg: arg } : arg;
     } else if (target.type === 'mapCreatorRest') {
         return {
-            kind: 'map',
+            initType: 'map',
             ...(target.value.length > 0
                 ? {
                       init: target.value.map((v) => {
@@ -283,12 +283,12 @@ export const makeInitInstanceJson = (
         };
     } else if (target.type === 'noRest') {
         return {
-            kind: 'no',
+            initType: 'no',
             value: target.value,
         };
     } else {
         return {
-            kind: 'list || set',
+            initType: 'list || set',
             ...(target.value
                 ? {
                       init: target.value.map((v) => makeExpressionJsonConvert(v)),
@@ -298,7 +298,17 @@ export const makeInitInstanceJson = (
     }
 };
 
-export type NewInstanceJson = InstanceNameJson & InitInstanceJson;
+/**
+ * kind を持たない式の位置。kind を持たないので JSON ノード (Diff の対象のノード) ではないが、
+ * findings の位置 (ハードコードされた ID など) を式の単位で指せるように持つ。Diff の値の比較では無視する
+ */
+export type ExpressionValueKeys = { sourceKeys: ConvertKeys };
+
+const valueKeysOf = (target: ConvertKeys): ExpressionValueKeys => ({
+    sourceKeys: { objectKey: target.objectKey, sourceKey: target.sourceKey },
+});
+
+export type NewInstanceJson = InstanceNameJson & InitInstanceJson & ExpressionValueKeys;
 
 const makeNewInstanceJson = (
     target: ConvertWithError<NewExpressionType>,
@@ -319,12 +329,13 @@ const makeNewInstanceJson = (
     }
 
     return {
+        ...valueKeysOf(target),
         ...instanceName,
         ...initInstance,
     };
 };
 
-export type CastJson = {
+export type CastJson = ExpressionValueKeys & {
     target: BaseExpressionJson | ErrorJson;
     convertType: TypeJson | ErrorJson;
 };
@@ -332,36 +343,39 @@ export type CastJson = {
 const makeCastJson = (target: ConvertWithError<CastExpressionType>): CastJson => {
     const typeJson = makeTypeJson(target.valueType);
     return {
+        ...valueKeysOf(target),
         target: makeExpressionJsonConvert(target.value),
         convertType: typeJson,
     };
 };
 
-export type SubJson = {
+export type SubJson = ExpressionValueKeys & {
     value: BaseExpressionJson | ErrorJson;
     parentheses: '()';
 };
 
 const makeSubJson = (target: ConvertWithError<SubExpressionType>): SubJson => {
     return {
+        ...valueKeysOf(target),
         value: makeExpressionJsonConvert(target.value),
         parentheses: '()',
     };
 };
 
-export type ArrayJson = {
+export type ArrayJson = ExpressionValueKeys & {
     variant: BaseExpressionJson | ErrorJson;
     index: BaseExpressionJson | ErrorJson;
 };
 
 const makeArrayJson = (target: ConvertWithError<ArrayExpressionType>): ArrayJson => {
     return {
+        ...valueKeysOf(target),
         variant: makeExpressionJsonConvert(target.value),
         index: makeExpressionJsonConvert(target.index),
     };
 };
 
-export type FormulaJson = {
+export type FormulaJson = ExpressionValueKeys & {
     left: BaseExpressionJson | ErrorJson;
     operator:
         | '*'
@@ -412,13 +426,14 @@ type FormulaExpressionType =
 
 const makeFormulaJson = (target: ConvertWithError<FormulaExpressionType>): FormulaJson => {
     return {
+        ...valueKeysOf(target),
         left: makeExpressionJsonConvert(target.left),
         operator: target.operator,
         right: makeExpressionJsonConvert(target.right),
     };
 };
 
-export type InstanceofJson = {
+export type InstanceofJson = ExpressionValueKeys & {
     target: BaseExpressionJson | ErrorJson;
     operator: 'instanceof';
     type: TypeJson | ErrorJson;
@@ -428,13 +443,14 @@ const makeInstanceofJson = (target: ConvertWithError<InstanceOfExpressionType>):
     const typeJson = makeTypeJson(target.right);
 
     return {
+        ...valueKeysOf(target),
         target: makeExpressionJsonConvert(target.left),
         operator: target.operator,
         type: typeJson,
     };
 };
 
-export type UnaryJson = {
+export type UnaryJson = ExpressionValueKeys & {
     variant: BaseExpressionJson | ErrorJson;
 } & {
     operator: '~' | '!' | '++' | '--' | '+' | '-';
@@ -445,13 +461,14 @@ type UnaryExpressionType = PreOpExpressionType | PostOpExpressionType | NegExpre
 
 const makeUnaryJson = (target: ConvertWithError<UnaryExpressionType>): UnaryJson => {
     return {
+        ...valueKeysOf(target),
         variant: makeExpressionJsonConvert(target.value),
         operator: target.operator,
         operatorLocation: target.type === 'postOpExpression' ? 'back' : 'front',
     };
 };
 
-export type TernaryJson = {
+export type TernaryJson = ExpressionValueKeys & {
     condition: BaseExpressionJson | ErrorJson;
     trueValue: BaseExpressionJson | ErrorJson;
     falseValue: BaseExpressionJson | ErrorJson;
@@ -459,6 +476,7 @@ export type TernaryJson = {
 
 const makeTernaryJson = (target: ConvertWithError<CondExpressionType>): TernaryJson => {
     return {
+        ...valueKeysOf(target),
         condition: makeExpressionJsonConvert(target.condition),
         trueValue: makeExpressionJsonConvert(target.trueValue),
         falseValue: makeExpressionJsonConvert(target.falseValue),
@@ -516,4 +534,3 @@ export const makeExpressionJsonConvert = (
         return makeFormulaJson(target);
     }
 };
-

@@ -1,13 +1,43 @@
 import { isDeclaredPredicate, type DeclaredPredicate } from '@babel/types';
-import { EvaluatePair, LwcCommonTypeClass, makeEvaluatePair } from '../commonVisitor';
+import {
+    EvaluatePair,
+    LwcCommonTypeClass,
+    LwcErrorTypeClass,
+    makeEvaluatePair,
+    visitNode,
+} from '../commonVisitor';
+import { expressionVisitorEvaluatePairs, type ExpressionTypeClass } from '../expressionVisitor';
+
+export type DeclaredPredicateFields = {
+    value: ExpressionTypeClass | LwcErrorTypeClass;
+};
 
 export class DeclaredPredicateTypeClass extends LwcCommonTypeClass<'declaredPredicate'> {
-    private constructor(originalSource: string) {
-        super('declaredPredicate', originalSource);
+    private readonly value: DeclaredPredicateFields;
+
+    private constructor(value: DeclaredPredicateFields) {
+        super('declaredPredicate');
+        this.value = value;
     }
 
     static create(target: DeclaredPredicate, originalSource: string): DeclaredPredicateTypeClass {
-        throw new Error('DeclaredPredicateTypeClass.create is not implemented: ' + target.type);
+        return new DeclaredPredicateTypeClass({
+            value: visitNode(
+                target.value,
+                originalSource,
+                expressionVisitorEvaluatePairs(),
+                'ExpressionVisitor',
+            ),
+        });
+    }
+
+    /** すべてのフィールド (Babel の value フィールドの getter getValue() と区別する。getChildNodes もこれから作る) */
+    override getFields(): DeclaredPredicateFields {
+        return this.value;
+    }
+
+    getValue(): DeclaredPredicateFields['value'] {
+        return this.value.value;
     }
 }
 

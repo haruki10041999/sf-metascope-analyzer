@@ -7,21 +7,15 @@
  */
 import { ApexParser, ApexParserFactory, ApexParserRuleContext } from '@apexdevtools/apex-parser';
 
-import {
-    ApexCommonErrorListener,
-    ApexErrorTypeClass,
-} from '../../../src/analyzer/types/apex_IR/commonVisitor';
+import { ApexErrorTypeClass } from '../../../src/analyzer/types/apex_IR/commonVisitor';
+import { ApexCommonErrorListener } from '../../../src/analyzer/parser/Apex/errorListener';
 import { UnitVisitor } from '../../../src/analyzer/types/apex_IR/unitVisitor';
 import {
     JsonType,
-    assignMultiClass,
-    makeAnonymousUnitAssignRule,
+    convertApexUnit,
     makeAnonymousUnitJson,
-    makeCompilationUnitAssignRule,
     makeCompilationUnitJson,
     makeConvertType,
-    makeErrorAssignRule,
-    makeTriggerUnitAssignRule,
     makeTriggerUnitJson,
     regenerateSourceObjects,
 } from '../../../src/analyzer/types/apex';
@@ -68,12 +62,7 @@ export const toSyntaxErrorJson = (errors: ApexErrorTypeClass[]) =>
 
 /** IR → CommonType */
 export const toCommonType = (unit: unknown) =>
-    assignMultiClass(unit, [
-        makeCompilationUnitAssignRule,
-        makeTriggerUnitAssignRule,
-        makeAnonymousUnitAssignRule,
-        makeErrorAssignRule,
-    ]);
+    convertApexUnit(unit);
 
 /** CommonType → JSON と、JSON に残ったキーだけの SourceJson[] */
 export const toJsonOutput = async (commonType: { type: string }) => {
@@ -93,4 +82,3 @@ export const toJsonOutput = async (commonType: { type: string }) => {
         sourceObjects: regenerateSourceObjects(sourceObjects, json as JsonType<string>),
     };
 };
-

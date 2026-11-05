@@ -27,6 +27,8 @@ export class BlockListTypeClass<TName extends string, T> extends ApexCommonTypeC
 export type BlockAllTypeClass =
     BlockTypeClass<string, unknown> | BlockListTypeClass<string, unknown>;
 
-export const isBlockTypeAll = (target: ApexCommonTypeClass<string>): target is BlockAllTypeClass => {
+export const isBlockTypeAll = (
+    target: ApexCommonTypeClass<string>,
+): target is BlockAllTypeClass => {
     return target instanceof BlockTypeClass || target instanceof BlockListTypeClass;
 };

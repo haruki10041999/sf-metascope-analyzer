@@ -5,8 +5,8 @@ import { IdListTypeClass, NormalIdTypeClass, IdVisitor, isNormalIdType } from '.
 import {
     ApexCommonTypeClass,
     ApexErrorTypeClass,
-    isApexValidClass,
-    isApexValidClassList,
+    visitNodeList,
+    visitNode,
 } from '../commonVisitor';
 
 export class SoslIdTypeClass extends IdListTypeClass<'soslId', NormalIdTypeClass> {
@@ -20,12 +20,12 @@ export class SoslIdTypeClass extends IdListTypeClass<'soslId', NormalIdTypeClass
         }
 
         const value: (NormalIdTypeClass | ApexErrorTypeClass)[] = [];
-        value.push(isApexValidClass(new IdVisitor().visit(ctx.id()), isNormalIdType, 'id'));
+        value.push(visitNode(new IdVisitor(), ctx.id(), isNormalIdType, 'id'));
 
         if (ctx.soslId_list() && ctx.soslId_list().length > 0) {
-            const idTypeClassList = isApexValidClassList(
+            const idTypeClassList = visitNodeList(
+                new IdVisitor(),
                 ctx.soslId_list(),
-                (ctx) => new IdVisitor().visit(ctx),
                 isSoslIdType,
                 'soslId',
             );

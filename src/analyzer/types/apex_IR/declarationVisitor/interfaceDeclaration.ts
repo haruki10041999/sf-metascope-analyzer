@@ -5,7 +5,12 @@ import { DeclarationTypeClass } from '.';
 import { NormalIdTypeClass, IdVisitor, isNormalIdType } from '../idVisitor';
 import { InterfaceBodyTypeClass, BodyVisitor, isInterfaceBodyType } from '../bodyVisitor';
 import { TypeListTypeClass, ListVisitor, isTypeListType } from '../listVisitor';
-import { ApexErrorTypeClass, ApexCommonTypeClass, isApexValidClass } from '../commonVisitor';
+import {
+    ApexErrorTypeClass,
+    ApexCommonTypeClass,
+    visitNode,
+    visitOptionalNode,
+} from '../commonVisitor';
 
 export class InterfaceDeclarationTypeClass extends DeclarationTypeClass<
     'interfaceDeclaration',
@@ -29,19 +34,10 @@ export class InterfaceDeclarationTypeClass extends DeclarationTypeClass<
         }
 
         return new InterfaceDeclarationTypeClass(
-            isApexValidClass(new IdVisitor().visit(ctx.id()), isNormalIdType, 'id'),
-            isApexValidClass(
-                new BodyVisitor().visit(ctx.interfaceBody()),
-                isInterfaceBodyType,
-                'body',
-            ),
-            ctx.EXTENDS() && ctx.typeList()
-                ? isApexValidClass(
-                      new ListVisitor().visit(ctx.typeList()),
-                      isTypeListType,
-                      'extend',
-                  )
-                : null,
+            visitNode(new IdVisitor(), ctx.id(), isNormalIdType, 'id'),
+            visitNode(new BodyVisitor(), ctx.interfaceBody(), isInterfaceBodyType, 'body'),
+            ctx.EXTENDS() &&
+                visitOptionalNode(new ListVisitor(), ctx.typeList(), isTypeListType, 'extend'),
         );
     }
 

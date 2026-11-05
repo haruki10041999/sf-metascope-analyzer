@@ -21,4 +21,3 @@ export class CallVisitor extends ApexCommonVisitor<CallTypeClass<string, unknown
         return DotMethodCallTypeClass.create(ctx);
     }
 }
-

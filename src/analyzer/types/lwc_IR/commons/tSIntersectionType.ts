@@ -1,13 +1,43 @@
 import { isTSIntersectionType, type TSIntersectionType } from '@babel/types';
-import { EvaluatePair, LwcCommonTypeClass, makeEvaluatePair } from '../commonVisitor';
+import {
+    EvaluatePair,
+    LwcCommonTypeClass,
+    LwcErrorTypeClass,
+    makeEvaluatePair,
+    visitNodeList,
+} from '../commonVisitor';
+import { tSTypeVisitorEvaluatePairs, type TSTypeTypeClass } from '../tsTypeVisitor';
+
+export type TSIntersectionTypeFields = {
+    types: (TSTypeTypeClass | LwcErrorTypeClass)[];
+};
 
 export class TSIntersectionTypeTypeClass extends LwcCommonTypeClass<'tSIntersectionType'> {
-    private constructor(originalSource: string) {
-        super('tSIntersectionType', originalSource);
+    private readonly value: TSIntersectionTypeFields;
+
+    private constructor(value: TSIntersectionTypeFields) {
+        super('tSIntersectionType');
+        this.value = value;
     }
 
     static create(target: TSIntersectionType, originalSource: string): TSIntersectionTypeTypeClass {
-        throw new Error('TSIntersectionTypeTypeClass.create is not implemented: ' + target.type);
+        return new TSIntersectionTypeTypeClass({
+            types: visitNodeList(
+                target.types,
+                originalSource,
+                tSTypeVisitorEvaluatePairs(),
+                'TSTypeVisitor',
+            ),
+        });
+    }
+
+    /** すべてのフィールド (Babel の value フィールドの getter getValue() と区別する。getChildNodes もこれから作る) */
+    override getFields(): TSIntersectionTypeFields {
+        return this.value;
+    }
+
+    getTypes(): TSIntersectionTypeFields['types'] {
+        return this.value.types;
     }
 }
 

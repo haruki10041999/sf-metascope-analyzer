@@ -7,7 +7,7 @@ import {
     isBasedExpressionType,
 } from '.';
 
-import { ApexErrorTypeClass, ApexCommonTypeClass, isApexValidClass } from '../commonVisitor';
+import { ApexErrorTypeClass, ApexCommonTypeClass, visitNode } from '../commonVisitor';
 
 export class CondExpressionTypeClass extends ConditionExpressionTypeClass<
     'condExpression',
@@ -29,18 +29,21 @@ export class CondExpressionTypeClass extends ConditionExpressionTypeClass<
         }
 
         return new CondExpressionTypeClass(
-            isApexValidClass(
-                new ExpressionVisitor().visit(ctx.expression(0)),
+            visitNode(
+                new ExpressionVisitor(),
+                ctx.expression(0),
                 isBasedExpressionType,
                 'expression',
             ),
-            isApexValidClass(
-                new ExpressionVisitor().visit(ctx.expression(1)),
+            visitNode(
+                new ExpressionVisitor(),
+                ctx.expression(1),
                 isBasedExpressionType,
                 'expression',
             ),
-            isApexValidClass(
-                new ExpressionVisitor().visit(ctx.expression(2)),
+            visitNode(
+                new ExpressionVisitor(),
+                ctx.expression(2),
                 isBasedExpressionType,
                 'expression',
             ),
@@ -53,4 +56,3 @@ export const isCondExpressionType = (
 ): target is CondExpressionTypeClass => {
     return target instanceof CondExpressionTypeClass;
 };
-

@@ -8,7 +8,7 @@ import {
     isBoundExpressionType,
 } from '../expressionVisitor';
 import { SoslClausesTypeClass, ClauseVisitor, isSoslClausesType } from '../clauseVisitor';
-import { ApexErrorTypeClass, ApexCommonTypeClass, isApexValidClass } from '../commonVisitor';
+import { ApexErrorTypeClass, ApexCommonTypeClass, visitNode } from '../commonVisitor';
 
 export class SoslLiteralTypeClass extends LiteralTypeClass<
     'soslLiteral',
@@ -32,16 +32,13 @@ export class SoslLiteralTypeClass extends LiteralTypeClass<
         return new SoslLiteralTypeClass(
             ctx.FindLiteral()
                 ? ctx.FindLiteral().getText()
-                : isApexValidClass(
-                      new ExpressionVisitor().visit(ctx.boundExpression()),
+                : visitNode(
+                      new ExpressionVisitor(),
+                      ctx.boundExpression(),
                       isBoundExpressionType,
                       'boundExpression',
                   ),
-            isApexValidClass(
-                new ClauseVisitor().visit(ctx.soslClauses()),
-                isSoslClausesType,
-                'soslClauses',
-            ),
+            visitNode(new ClauseVisitor(), ctx.soslClauses(), isSoslClausesType, 'soslClauses'),
         );
     }
 
@@ -55,4 +52,3 @@ export const isSoslLiteralType = (
 ): target is SoslLiteralTypeClass => {
     return target instanceof SoslLiteralTypeClass;
 };
-

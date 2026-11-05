@@ -1,13 +1,43 @@
 import { isTSOptionalType, type TSOptionalType } from '@babel/types';
-import { EvaluatePair, LwcCommonTypeClass, makeEvaluatePair } from '../commonVisitor';
+import {
+    EvaluatePair,
+    LwcCommonTypeClass,
+    LwcErrorTypeClass,
+    makeEvaluatePair,
+    visitNode,
+} from '../commonVisitor';
+import { tSTypeVisitorEvaluatePairs, type TSTypeTypeClass } from '../tsTypeVisitor';
+
+export type TSOptionalTypeFields = {
+    typeAnnotation: TSTypeTypeClass | LwcErrorTypeClass;
+};
 
 export class TSOptionalTypeTypeClass extends LwcCommonTypeClass<'tSOptionalType'> {
-    private constructor(originalSource: string) {
-        super('tSOptionalType', originalSource);
+    private readonly value: TSOptionalTypeFields;
+
+    private constructor(value: TSOptionalTypeFields) {
+        super('tSOptionalType');
+        this.value = value;
     }
 
     static create(target: TSOptionalType, originalSource: string): TSOptionalTypeTypeClass {
-        throw new Error('TSOptionalTypeTypeClass.create is not implemented: ' + target.type);
+        return new TSOptionalTypeTypeClass({
+            typeAnnotation: visitNode(
+                target.typeAnnotation,
+                originalSource,
+                tSTypeVisitorEvaluatePairs(),
+                'TSTypeVisitor',
+            ),
+        });
+    }
+
+    /** すべてのフィールド (Babel の value フィールドの getter getValue() と区別する。getChildNodes もこれから作る) */
+    override getFields(): TSOptionalTypeFields {
+        return this.value;
+    }
+
+    getTypeAnnotation(): TSOptionalTypeFields['typeAnnotation'] {
+        return this.value.typeAnnotation;
     }
 }
 

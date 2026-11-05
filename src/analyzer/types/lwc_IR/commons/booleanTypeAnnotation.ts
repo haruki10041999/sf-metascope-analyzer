@@ -2,15 +2,15 @@ import { isBooleanTypeAnnotation, type BooleanTypeAnnotation } from '@babel/type
 import { EvaluatePair, LwcCommonTypeClass, makeEvaluatePair } from '../commonVisitor';
 
 export class BooleanTypeAnnotationTypeClass extends LwcCommonTypeClass<'booleanTypeAnnotation'> {
-    private constructor(originalSource: string) {
-        super('booleanTypeAnnotation', originalSource);
+    private constructor() {
+        super('booleanTypeAnnotation');
     }
 
     static create(
-        target: BooleanTypeAnnotation,
-        originalSource: string,
+        _target: BooleanTypeAnnotation,
+        _originalSource: string,
     ): BooleanTypeAnnotationTypeClass {
-        throw new Error('BooleanTypeAnnotationTypeClass.create is not implemented: ' + target.type);
+        return new BooleanTypeAnnotationTypeClass();
     }
 }
 

@@ -9,8 +9,8 @@ import { NormalModifierTypeClass, ModifierVisitor, isNormalModifierType } from '
 import {
     ApexCommonTypeClass,
     ApexErrorTypeClass,
-    isApexValidClass,
-    isApexValidClassList,
+    visitNodeList,
+    visitNode,
 } from '../commonVisitor';
 
 export class CatchClauseTypeClass extends ClauseTypeClass<'catchClause', NormalIdTypeClass> {
@@ -36,16 +36,12 @@ export class CatchClauseTypeClass extends ClauseTypeClass<'catchClause', NormalI
         }
 
         return new CatchClauseTypeClass(
-            isApexValidClass(new IdVisitor().visit(ctx.id()), isNormalIdType, 'id'),
-            isApexValidClass(
-                new NameVisitor().visit(ctx.qualifiedName()),
-                isQualifiedNameType,
-                'qualifiedName',
-            ),
-            isApexValidClass(new BlockVisitor().visit(ctx.block()), isNormalBlockType, 'block'),
-            isApexValidClassList(
+            visitNode(new IdVisitor(), ctx.id(), isNormalIdType, 'id'),
+            visitNode(new NameVisitor(), ctx.qualifiedName(), isQualifiedNameType, 'qualifiedName'),
+            visitNode(new BlockVisitor(), ctx.block(), isNormalBlockType, 'block'),
+            visitNodeList(
+                new ModifierVisitor(),
                 ctx.modifier_list() || [],
-                (ctx) => new ModifierVisitor().visit(ctx),
                 isNormalModifierType,
                 'modifier',
             ),

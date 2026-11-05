@@ -13,7 +13,7 @@ import {
     isArrayInitializerType,
 } from '../variableVisitor';
 
-import { ApexErrorTypeClass, ApexCommonTypeClass, isApexValidClass } from '../commonVisitor';
+import { ApexErrorTypeClass, ApexCommonTypeClass, visitOptionalNode } from '../commonVisitor';
 
 export class ArrayCreatorRestTypeClass extends RestTypeClass<
     'arrayCreatorRest',
@@ -33,21 +33,19 @@ export class ArrayCreatorRestTypeClass extends RestTypeClass<
             throw new Error('値が異常です。ArrayCreatorRestContext: ' + ctx.getText());
         }
 
-        const value = ctx.arrayInitializer()
-            ? isApexValidClass(
-                  new VariableVisitor().visit(ctx.arrayInitializer()),
-                  isArrayInitializerType,
-                  'arrayInitializer',
-              )
-            : null;
+        const value = visitOptionalNode(
+            new VariableVisitor(),
+            ctx.arrayInitializer(),
+            isArrayInitializerType,
+            'arrayInitializer',
+        );
 
-        const size = ctx.expression()
-            ? isApexValidClass(
-                  new ExpressionVisitor().visit(ctx.expression()),
-                  isBasedExpressionType,
-                  'expression',
-              )
-            : null;
+        const size = visitOptionalNode(
+            new ExpressionVisitor(),
+            ctx.expression(),
+            isBasedExpressionType,
+            'expression',
+        );
 
         return new ArrayCreatorRestTypeClass(value, size);
     }
@@ -62,4 +60,3 @@ export const isArrayCreatorRestType = (
 ): target is ArrayCreatorRestTypeClass => {
     return target instanceof ArrayCreatorRestTypeClass;
 };
-

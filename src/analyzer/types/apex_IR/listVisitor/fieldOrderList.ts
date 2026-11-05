@@ -3,7 +3,7 @@ import { FieldOrderListContext } from '@apexdevtools/apex-parser';
 import { ListTypeClass } from '.';
 
 import { FieldOrderTypeClass, ClauseVisitor, isFieldOrderType } from '../clauseVisitor';
-import { ApexErrorTypeClass, ApexCommonTypeClass, isApexValidClassList } from '../commonVisitor';
+import { ApexErrorTypeClass, ApexCommonTypeClass, visitNodeList } from '../commonVisitor';
 
 export class FieldOrderListTypeClass extends ListTypeClass<'fieldOrderList', FieldOrderTypeClass> {
     private constructor(value: (FieldOrderTypeClass | ApexErrorTypeClass)[]) {
@@ -16,9 +16,9 @@ export class FieldOrderListTypeClass extends ListTypeClass<'fieldOrderList', Fie
         }
 
         return new FieldOrderListTypeClass(
-            isApexValidClassList(
+            visitNodeList(
+                new ClauseVisitor(),
                 ctx.fieldOrder_list(),
-                (ctx) => new ClauseVisitor().visit(ctx),
                 isFieldOrderType,
                 'fieldOrder',
             ),
@@ -31,4 +31,3 @@ export const isFieldOrderListType = (
 ): target is FieldOrderListTypeClass => {
     return target instanceof FieldOrderListTypeClass;
 };
-

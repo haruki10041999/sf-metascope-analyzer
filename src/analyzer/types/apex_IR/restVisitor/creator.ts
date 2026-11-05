@@ -12,7 +12,7 @@ import {
 } from '.';
 
 import { CreatedNameTypeClass, NameVisitor, isCreatedNameType } from '../nameVisitor';
-import { ErrorTypeClass, ApexCommonTypeClass, isApexValidClass } from '../commonVisitor';
+import { ErrorTypeClass, ApexCommonTypeClass, visitNode } from '../commonVisitor';
 
 export class CreatorTypeClass extends RestTypeClass<'creator', CreatedNameTypeClass> {
     private content: RestAllTypeClass | ErrorTypeClass;
@@ -37,40 +37,41 @@ export class CreatorTypeClass extends RestTypeClass<'creator', CreatedNameTypeCl
             throw new Error('値が異常です。CreatorContext: ' + ctx.getText());
         }
 
-        const value = isApexValidClass(
-            new NameVisitor().visit(ctx.createdName()),
+        const value = visitNode(
+            new NameVisitor(),
+            ctx.createdName(),
             isCreatedNameType,
             'createdName',
         );
 
         let content: RestAllTypeClass | ErrorTypeClass;
         if (ctx.noRest()) {
-            content = isApexValidClass(
-                new RestVisitor().visit(ctx.noRest()),
-                isNoRestType,
-                'noRest',
-            );
+            content = visitNode(new RestVisitor(), ctx.noRest(), isNoRestType, 'noRest');
         } else if (ctx.classCreatorRest()) {
-            content = isApexValidClass(
-                new RestVisitor().visit(ctx.classCreatorRest()),
+            content = visitNode(
+                new RestVisitor(),
+                ctx.classCreatorRest(),
                 isClassCreatorRestType,
                 'classCreatorRest',
             );
         } else if (ctx.arrayCreatorRest()) {
-            content = isApexValidClass(
-                new RestVisitor().visit(ctx.arrayCreatorRest()),
+            content = visitNode(
+                new RestVisitor(),
+                ctx.arrayCreatorRest(),
                 isArrayCreatorRestType,
                 'arrayCreatorRest',
             );
         } else if (ctx.mapCreatorRest()) {
-            content = isApexValidClass(
-                new RestVisitor().visit(ctx.mapCreatorRest()),
+            content = visitNode(
+                new RestVisitor(),
+                ctx.mapCreatorRest(),
                 isMapCreatorRestType,
                 'mapCreatorRest',
             );
         } else {
-            content = isApexValidClass(
-                new RestVisitor().visit(ctx.setCreatorRest()),
+            content = visitNode(
+                new RestVisitor(),
+                ctx.setCreatorRest(),
                 isSetCreatorRestType,
                 'setCreatorRest',
             );
@@ -87,4 +88,3 @@ export class CreatorTypeClass extends RestTypeClass<'creator', CreatedNameTypeCl
 export const isCreatorType = (target: ApexCommonTypeClass<string>): target is CreatorTypeClass => {
     return target instanceof CreatorTypeClass;
 };
-

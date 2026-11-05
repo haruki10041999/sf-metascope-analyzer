@@ -7,6 +7,7 @@ import {
     Pairing,
     getNodeKeys,
     getNodePairKeys,
+    getValueKey,
     toContent,
 } from './commons';
 
@@ -26,6 +27,16 @@ export type TypedObjectDiff<T extends object, Fields> =
     | { status: 'unchanged'; value: T }
     | { status: 'changed'; fields: Fields }
     | { status: 'changed'; before: T; after: T };
+
+/** kind / sourceKeys を持たない object の差分。値が同じなら unchanged、違えば fields でプロパティごとに比べる */
+export const makeTypedObjectDiff = <T extends object, Fields>(
+    before: T,
+    after: T,
+    fields: (before: T, after: T) => Fields,
+): TypedObjectDiff<T, Fields> =>
+    getValueKey(before) === getValueKey(after)
+        ? { status: 'unchanged', value: before }
+        : { status: 'changed', fields: fields(before, after) };
 
 /**
  * 配列の要素の差分。要素が JSON ノードなら kind / sourceKeys を中身 (value / fields) から分けて持つ。

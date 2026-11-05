@@ -23,4 +23,3 @@ export const isSoqlPrimaryType = (
 ): target is SoqlPrimaryTypeClass => {
     return target instanceof SoqlPrimaryTypeClass;
 };
-

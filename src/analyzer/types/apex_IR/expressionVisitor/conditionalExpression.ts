@@ -9,7 +9,7 @@ import {
     isFieldExpressionType,
 } from '.';
 
-import { ApexCommonTypeClass, ApexErrorTypeClass, isApexValidClass } from '../commonVisitor';
+import { ApexCommonTypeClass, ApexErrorTypeClass, visitNode } from '../commonVisitor';
 
 export class ConditionalExpressionTypeClass extends ExpressionTypeClass<
     'conditionalExpression',
@@ -28,13 +28,15 @@ export class ConditionalExpressionTypeClass extends ExpressionTypeClass<
 
         return new ConditionalExpressionTypeClass(
             ctx.logicalExpression()
-                ? isApexValidClass(
-                      new ExpressionVisitor().visit(ctx.logicalExpression()),
+                ? visitNode(
+                      new ExpressionVisitor(),
+                      ctx.logicalExpression(),
                       isLogicalExpressionType,
                       'logicalExpression',
                   )
-                : isApexValidClass(
-                      new ExpressionVisitor().visit(ctx.fieldExpression()),
+                : visitNode(
+                      new ExpressionVisitor(),
+                      ctx.fieldExpression(),
                       isFieldExpressionType,
                       'fieldExpression',
                   ),
@@ -47,4 +49,3 @@ export const isConditionalExpressionType = (
 ): target is ConditionalExpressionTypeClass => {
     return target instanceof ConditionalExpressionTypeClass;
 };
-

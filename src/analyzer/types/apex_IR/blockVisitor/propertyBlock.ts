@@ -14,7 +14,7 @@ import {
     ApexErrorTypeClass,
     ApexCommonTypeClass,
     isApexValidClass,
-    isApexValidClassList,
+    visitNodeList,
 } from '../commonVisitor';
 
 export class PropertyBlockTypeClass extends BlockTypeClass<
@@ -43,9 +43,9 @@ export class PropertyBlockTypeClass extends BlockTypeClass<
                 ctx.getter() ? isGetterType : isSetterType,
                 'value',
             ),
-            isApexValidClassList(
+            visitNodeList(
+                new ModifierVisitor(),
                 ctx.modifier_list(),
-                (modifierCtx) => new ModifierVisitor().visit(modifierCtx),
                 isNormalModifierType,
                 'modifier',
             ),

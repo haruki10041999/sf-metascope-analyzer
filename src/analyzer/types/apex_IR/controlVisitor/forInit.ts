@@ -8,7 +8,7 @@ import {
     isLocalVariableDeclarationType,
 } from '../declarationVisitor';
 import { ExpressionListTypeClass, ListVisitor, isExpressionListType } from '../listVisitor';
-import { ApexErrorTypeClass, ApexCommonTypeClass, isApexValidClass } from '../commonVisitor';
+import { ApexErrorTypeClass, ApexCommonTypeClass, visitNode } from '../commonVisitor';
 
 export class ForInitTypeClass extends ControlTypeClass<
     'forInit',
@@ -27,13 +27,15 @@ export class ForInitTypeClass extends ControlTypeClass<
 
         return new ForInitTypeClass(
             ctx.localVariableDeclaration()
-                ? isApexValidClass(
-                      new DeclarationVisitor().visit(ctx.localVariableDeclaration()),
+                ? visitNode(
+                      new DeclarationVisitor(),
+                      ctx.localVariableDeclaration(),
                       isLocalVariableDeclarationType,
                       'localVariableDeclaration',
                   )
-                : isApexValidClass(
-                      new ListVisitor().visit(ctx.expressionList()),
+                : visitNode(
+                      new ListVisitor(),
+                      ctx.expressionList(),
                       isExpressionListType,
                       'expressionList',
                   ),

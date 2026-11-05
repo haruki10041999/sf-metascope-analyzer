@@ -8,7 +8,7 @@ import {
     isBasedExpressionType,
 } from '../expressionVisitor';
 
-import { ApexErrorTypeClass, ApexCommonTypeClass, isApexValidClassList } from '../commonVisitor';
+import { ApexErrorTypeClass, ApexCommonTypeClass, visitNodeList } from '../commonVisitor';
 
 export class ExpressionListTypeClass extends ListTypeClass<
     'expressionList',
@@ -24,9 +24,9 @@ export class ExpressionListTypeClass extends ListTypeClass<
         }
 
         return new ExpressionListTypeClass(
-            isApexValidClassList(
+            visitNodeList(
+                new ExpressionVisitor(),
                 ctx.expression_list(),
-                (ctx) => new ExpressionVisitor().visit(ctx),
                 isBasedExpressionType,
                 'expression',
             ),

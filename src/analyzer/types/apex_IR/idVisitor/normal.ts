@@ -19,4 +19,3 @@ export const isNormalIdType = (
 ): target is NormalIdTypeClass => {
     return target instanceof NormalIdTypeClass;
 };
-

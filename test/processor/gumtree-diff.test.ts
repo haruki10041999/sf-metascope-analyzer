@@ -7,8 +7,7 @@ import {
     BaseExpressionJsonDiff,
     makeExpressionDiff,
 } from '../../src/analyzer/processor/Apex/diff/expression';
-import { GumTreeDiff } from '../../src/analyzer/processor/Apex/diff/gumtree/diff';
-import { matchTrees } from '../../src/analyzer/processor/Apex/diff/gumtree/matcher';
+import { GumTreeDiff, matchTrees } from '../../src/analyzer/processor/commons/diff/gumtree';
 import { makeBlockTree } from '../../src/analyzer/processor/Apex/diff/gumtree/tree';
 import {
     StatementJsonDiff,

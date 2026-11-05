@@ -2,12 +2,12 @@ import { isAnyTypeAnnotation, type AnyTypeAnnotation } from '@babel/types';
 import { EvaluatePair, LwcCommonTypeClass, makeEvaluatePair } from '../commonVisitor';
 
 export class AnyTypeAnnotationTypeClass extends LwcCommonTypeClass<'anyTypeAnnotation'> {
-    private constructor(originalSource: string) {
-        super('anyTypeAnnotation', originalSource);
+    private constructor() {
+        super('anyTypeAnnotation');
     }
 
-    static create(target: AnyTypeAnnotation, originalSource: string): AnyTypeAnnotationTypeClass {
-        return new AnyTypeAnnotationTypeClass(originalSource);
+    static create(_target: AnyTypeAnnotation, _originalSource: string): AnyTypeAnnotationTypeClass {
+        return new AnyTypeAnnotationTypeClass();
     }
 }
 

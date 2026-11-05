@@ -3,7 +3,7 @@ import { EnumConstantsContext } from '@apexdevtools/apex-parser';
 import { DeclarationListTypeClass } from '.';
 
 import { NormalIdTypeClass, IdVisitor, isNormalIdType } from '../idVisitor';
-import { ApexErrorTypeClass, ApexCommonTypeClass, isApexValidClassList } from '../commonVisitor';
+import { ApexErrorTypeClass, ApexCommonTypeClass, visitNodeList } from '../commonVisitor';
 
 export class EnumConstantsTypeClass extends DeclarationListTypeClass<
     'enumConstants',
@@ -19,12 +19,7 @@ export class EnumConstantsTypeClass extends DeclarationListTypeClass<
         }
 
         return new EnumConstantsTypeClass(
-            isApexValidClassList(
-                ctx.id_list(),
-                (ctx) => new IdVisitor().visit(ctx),
-                isNormalIdType,
-                'id',
-            ),
+            visitNodeList(new IdVisitor(), ctx.id_list(), isNormalIdType, 'id'),
         );
     }
 }

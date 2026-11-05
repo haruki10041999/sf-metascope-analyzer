@@ -2,12 +2,7 @@ import { ModifierContext } from '@apexdevtools/apex-parser';
 
 import { AnnotationTypeClass, ModifierTypeClass, ModifierVisitor, isAnnotationType } from '.';
 
-import {
-    ApexCommonTypeClass,
-    ApexErrorTypeClass,
-    isErrorType,
-    isApexValidClass,
-} from '../commonVisitor';
+import { ApexCommonTypeClass, ApexErrorTypeClass, isErrorType, visitNode } from '../commonVisitor';
 
 type NormalModifierValueType =
     | 'GLOBAL'
@@ -89,8 +84,9 @@ export class NormalModifierTypeClass extends ModifierTypeClass<
         } else if (ctx.INHERITED() && ctx.SHARING()) {
             value = 'INHERITED_SHARING';
         } else {
-            value = isApexValidClass(
-                new ModifierVisitor().visit(ctx.annotation()),
+            value = visitNode(
+                new ModifierVisitor(),
+                ctx.annotation(),
                 isAnnotationType,
                 'annotation',
             );
@@ -105,4 +101,3 @@ export const isNormalModifierType = (
 ): target is NormalModifierTypeClass => {
     return target instanceof NormalModifierTypeClass;
 };
-

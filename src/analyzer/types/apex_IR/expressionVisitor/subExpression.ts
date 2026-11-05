@@ -7,7 +7,7 @@ import {
     isBasedExpressionType,
 } from '.';
 
-import { ApexCommonTypeClass, ApexErrorTypeClass, isApexValidClass } from '../commonVisitor';
+import { ApexCommonTypeClass, ApexErrorTypeClass, visitNode } from '../commonVisitor';
 
 export class SubExpressionTypeClass extends ExpressionTypeClass<
     'subExpression',
@@ -23,8 +23,9 @@ export class SubExpressionTypeClass extends ExpressionTypeClass<
         }
 
         return new SubExpressionTypeClass(
-            isApexValidClass(
-                new ExpressionVisitor().visit(ctx.expression()),
+            visitNode(
+                new ExpressionVisitor(),
+                ctx.expression(),
                 isBasedExpressionType,
                 'expression',
             ),
@@ -37,4 +38,3 @@ export const isSubExpressionType = (
 ): target is SubExpressionTypeClass => {
     return target instanceof SubExpressionTypeClass;
 };
-

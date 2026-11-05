@@ -22,7 +22,12 @@ import {
     isOrderByClauseType,
     isLimitClauseType,
 } from '../clauseVisitor';
-import { ApexErrorTypeClass, ApexCommonTypeClass, isApexValidClass } from '../commonVisitor';
+import {
+    ApexErrorTypeClass,
+    ApexCommonTypeClass,
+    visitNode,
+    visitOptionalNode,
+} from '../commonVisitor';
 
 export class SubQueryTypeClass extends SoqlQueryTypeClass<'subQuery', SubFieldListTypeClass> {
     private constructor(
@@ -52,52 +57,31 @@ export class SubQueryTypeClass extends SoqlQueryTypeClass<'subQuery', SubFieldLi
         }
 
         return new SubQueryTypeClass(
-            isApexValidClass(
-                new ListVisitor().visit(ctx.subFieldList()),
-                isSubFieldListType,
-                'subFieldList',
-            ),
-            isApexValidClass(
-                new ListVisitor().visit(ctx.fromNameList()),
-                isFromNameListType,
-                'fromNameList',
-            ),
+            visitNode(new ListVisitor(), ctx.subFieldList(), isSubFieldListType, 'subFieldList'),
+            visitNode(new ListVisitor(), ctx.fromNameList(), isFromNameListType, 'fromNameList'),
             // forClauses は文法上常に生成されるため、FOR が無ければ null にする
             ctx.forClauses() && ctx.forClauses().FOR_list().length > 0
-                ? isApexValidClass(
-                      new ClauseVisitor().visit(ctx.forClauses()),
-                      isForClausesType,
-                      'forClauses',
-                  )
+                ? visitNode(new ClauseVisitor(), ctx.forClauses(), isForClausesType, 'forClauses')
                 : null,
-            ctx.whereClause()
-                ? isApexValidClass(
-                      new ClauseVisitor().visit(ctx.whereClause()),
-                      isWhereClauseType,
-                      'whereClause',
-                  )
-                : null,
-            ctx.orderByClause()
-                ? isApexValidClass(
-                      new ClauseVisitor().visit(ctx.orderByClause()),
-                      isOrderByClauseType,
-                      'orderByClause',
-                  )
-                : null,
-            ctx.limitClause()
-                ? isApexValidClass(
-                      new ClauseVisitor().visit(ctx.limitClause()),
-                      isLimitClauseType,
-                      'limitClause',
-                  )
-                : null,
-            ctx.updateList()
-                ? isApexValidClass(
-                      new ListVisitor().visit(ctx.updateList()),
-                      isUpdateListType,
-                      'updateList',
-                  )
-                : null,
+            visitOptionalNode(
+                new ClauseVisitor(),
+                ctx.whereClause(),
+                isWhereClauseType,
+                'whereClause',
+            ),
+            visitOptionalNode(
+                new ClauseVisitor(),
+                ctx.orderByClause(),
+                isOrderByClauseType,
+                'orderByClause',
+            ),
+            visitOptionalNode(
+                new ClauseVisitor(),
+                ctx.limitClause(),
+                isLimitClauseType,
+                'limitClause',
+            ),
+            visitOptionalNode(new ListVisitor(), ctx.updateList(), isUpdateListType, 'updateList'),
         );
     }
 }
@@ -107,4 +91,3 @@ export const isSubQueryType = (
 ): target is SubQueryTypeClass => {
     return target instanceof SubQueryTypeClass;
 };
-

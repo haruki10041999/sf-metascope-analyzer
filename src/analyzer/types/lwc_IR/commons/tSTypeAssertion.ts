@@ -1,13 +1,55 @@
 import { isTSTypeAssertion, type TSTypeAssertion } from '@babel/types';
-import { EvaluatePair, LwcCommonTypeClass, makeEvaluatePair } from '../commonVisitor';
+import {
+    EvaluatePair,
+    LwcCommonTypeClass,
+    LwcErrorTypeClass,
+    makeEvaluatePair,
+    visitNode,
+} from '../commonVisitor';
+import { expressionVisitorEvaluatePairs, type ExpressionTypeClass } from '../expressionVisitor';
+import { tSTypeVisitorEvaluatePairs, type TSTypeTypeClass } from '../tsTypeVisitor';
+
+export type TSTypeAssertionFields = {
+    typeAnnotation: TSTypeTypeClass | LwcErrorTypeClass;
+    expression: ExpressionTypeClass | LwcErrorTypeClass;
+};
 
 export class TSTypeAssertionTypeClass extends LwcCommonTypeClass<'tSTypeAssertion'> {
-    private constructor(originalSource: string) {
-        super('tSTypeAssertion', originalSource);
+    private readonly value: TSTypeAssertionFields;
+
+    private constructor(value: TSTypeAssertionFields) {
+        super('tSTypeAssertion');
+        this.value = value;
     }
 
     static create(target: TSTypeAssertion, originalSource: string): TSTypeAssertionTypeClass {
-        throw new Error('TSTypeAssertionTypeClass.create is not implemented: ' + target.type);
+        return new TSTypeAssertionTypeClass({
+            typeAnnotation: visitNode(
+                target.typeAnnotation,
+                originalSource,
+                tSTypeVisitorEvaluatePairs(),
+                'TSTypeVisitor',
+            ),
+            expression: visitNode(
+                target.expression,
+                originalSource,
+                expressionVisitorEvaluatePairs(),
+                'ExpressionVisitor',
+            ),
+        });
+    }
+
+    /** すべてのフィールド (Babel の value フィールドの getter getValue() と区別する。getChildNodes もこれから作る) */
+    override getFields(): TSTypeAssertionFields {
+        return this.value;
+    }
+
+    getTypeAnnotation(): TSTypeAssertionFields['typeAnnotation'] {
+        return this.value.typeAnnotation;
+    }
+
+    getExpression(): TSTypeAssertionFields['expression'] {
+        return this.value.expression;
     }
 }
 

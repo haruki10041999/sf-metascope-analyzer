@@ -1,13 +1,46 @@
 import { isTSTypeLiteral, type TSTypeLiteral } from '@babel/types';
-import { EvaluatePair, LwcCommonTypeClass, makeEvaluatePair } from '../commonVisitor';
+import {
+    EvaluatePair,
+    LwcCommonTypeClass,
+    LwcErrorTypeClass,
+    makeEvaluatePair,
+    visitNodeList,
+} from '../commonVisitor';
+import {
+    tSTypeElementVisitorEvaluatePairs,
+    type TSTypeElementTypeClass,
+} from '../tsTypeElementVisitor';
+
+export type TSTypeLiteralFields = {
+    members: (TSTypeElementTypeClass | LwcErrorTypeClass)[];
+};
 
 export class TSTypeLiteralTypeClass extends LwcCommonTypeClass<'tSTypeLiteral'> {
-    private constructor(originalSource: string) {
-        super('tSTypeLiteral', originalSource);
+    private readonly value: TSTypeLiteralFields;
+
+    private constructor(value: TSTypeLiteralFields) {
+        super('tSTypeLiteral');
+        this.value = value;
     }
 
     static create(target: TSTypeLiteral, originalSource: string): TSTypeLiteralTypeClass {
-        throw new Error('TSTypeLiteralTypeClass.create is not implemented: ' + target.type);
+        return new TSTypeLiteralTypeClass({
+            members: visitNodeList(
+                target.members,
+                originalSource,
+                tSTypeElementVisitorEvaluatePairs(),
+                'TSTypeElementVisitor',
+            ),
+        });
+    }
+
+    /** すべてのフィールド (Babel の value フィールドの getter getValue() と区別する。getChildNodes もこれから作る) */
+    override getFields(): TSTypeLiteralFields {
+        return this.value;
+    }
+
+    getMembers(): TSTypeLiteralFields['members'] {
+        return this.value.members;
     }
 }
 

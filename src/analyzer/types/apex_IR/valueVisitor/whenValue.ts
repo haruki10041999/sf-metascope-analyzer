@@ -8,8 +8,8 @@ import { TypeRefTypeClass, TypeVisitor, isTypeRefType } from '../typeVisitor';
 import {
     ApexErrorTypeClass,
     ApexCommonTypeClass,
-    isApexValidClass,
-    isApexValidClassList,
+    visitNodeList,
+    visitNode,
 } from '../commonVisitor';
 
 type WhenValueValueType =
@@ -37,19 +37,15 @@ export class WhenValueTypeClass extends ValueTypeClass<'whenValue', WhenValueVal
         if (ctx.ELSE()) {
             value = 'else';
         } else if (ctx.whenLiteral_list().length > 0) {
-            value = isApexValidClassList(
+            value = visitNodeList(
+                new LiteralVisitor(),
                 ctx.whenLiteral_list(),
-                (ctx) => new LiteralVisitor().visit(ctx),
                 isWhenLiteralType,
                 'whenLiteral',
             );
         } else {
-            value = isApexValidClass(new IdVisitor().visit(ctx.id()), isNormalIdType, 'id');
-            valueType = isApexValidClass(
-                new TypeVisitor().visit(ctx.typeRef()),
-                isTypeRefType,
-                'typeRef',
-            );
+            value = visitNode(new IdVisitor(), ctx.id(), isNormalIdType, 'id');
+            valueType = visitNode(new TypeVisitor(), ctx.typeRef(), isTypeRefType, 'typeRef');
         }
 
         return new WhenValueTypeClass(value, valueType);

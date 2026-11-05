@@ -1,16 +1,16 @@
-import { isArgumentPlaceholder, ArgumentPlaceholder } from '@babel/types';
+import { isArgumentPlaceholder, type ArgumentPlaceholder } from '@babel/types';
 import { EvaluatePair, LwcCommonTypeClass, makeEvaluatePair } from '../commonVisitor';
 
 export class ArgumentPlaceholderTypeClass extends LwcCommonTypeClass<'argumentPlaceholder'> {
-    private constructor(originalSource: string) {
-        super('argumentPlaceholder', originalSource);
+    private constructor() {
+        super('argumentPlaceholder');
     }
 
     static create(
-        target: ArgumentPlaceholder,
-        originalSource: string,
+        _target: ArgumentPlaceholder,
+        _originalSource: string,
     ): ArgumentPlaceholderTypeClass {
-        return new ArgumentPlaceholderTypeClass(originalSource);
+        return new ArgumentPlaceholderTypeClass();
     }
 }
 

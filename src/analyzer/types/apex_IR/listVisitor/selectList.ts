@@ -3,7 +3,7 @@ import { SelectListContext } from '@apexdevtools/apex-parser';
 import { ListTypeClass } from '../listVisitor';
 
 import { SelectEntryTypeClass, EntryVisitor, isSelectEntryType } from '../entryVisitor';
-import { ApexErrorTypeClass, ApexCommonTypeClass, isApexValidClassList } from '../commonVisitor';
+import { ApexErrorTypeClass, ApexCommonTypeClass, visitNodeList } from '../commonVisitor';
 
 export class SelectListTypeClass extends ListTypeClass<'selectList', SelectEntryTypeClass> {
     private constructor(list: (SelectEntryTypeClass | ApexErrorTypeClass)[]) {
@@ -16,9 +16,9 @@ export class SelectListTypeClass extends ListTypeClass<'selectList', SelectEntry
         }
 
         return new SelectListTypeClass(
-            isApexValidClassList(
+            visitNodeList(
+                new EntryVisitor(),
                 ctx.selectEntry_list(),
-                (ctx) => new EntryVisitor().visit(ctx),
                 isSelectEntryType,
                 'selectEntry',
             ),
@@ -31,4 +31,3 @@ export const isSelectListType = (
 ): target is SelectListTypeClass => {
     return target instanceof SelectListTypeClass;
 };
-

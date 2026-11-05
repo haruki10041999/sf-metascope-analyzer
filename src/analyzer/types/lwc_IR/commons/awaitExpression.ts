@@ -1,13 +1,43 @@
 import { isAwaitExpression, type AwaitExpression } from '@babel/types';
-import { EvaluatePair, LwcCommonTypeClass, makeEvaluatePair } from '../commonVisitor';
+import {
+    EvaluatePair,
+    LwcCommonTypeClass,
+    LwcErrorTypeClass,
+    makeEvaluatePair,
+    visitNode,
+} from '../commonVisitor';
+import { expressionVisitorEvaluatePairs, type ExpressionTypeClass } from '../expressionVisitor';
+
+export type AwaitExpressionFields = {
+    argument: ExpressionTypeClass | LwcErrorTypeClass;
+};
 
 export class AwaitExpressionTypeClass extends LwcCommonTypeClass<'awaitExpression'> {
-    private constructor(originalSource: string) {
-        super('awaitExpression', originalSource);
+    private readonly value: AwaitExpressionFields;
+
+    private constructor(value: AwaitExpressionFields) {
+        super('awaitExpression');
+        this.value = value;
     }
 
     static create(target: AwaitExpression, originalSource: string): AwaitExpressionTypeClass {
-        throw new Error('AwaitExpressionTypeClass.create is not implemented: ' + target.type);
+        return new AwaitExpressionTypeClass({
+            argument: visitNode(
+                target.argument,
+                originalSource,
+                expressionVisitorEvaluatePairs(),
+                'ExpressionVisitor',
+            ),
+        });
+    }
+
+    /** すべてのフィールド (Babel の value フィールドの getter getValue() と区別する。getChildNodes もこれから作る) */
+    override getFields(): AwaitExpressionFields {
+        return this.value;
+    }
+
+    getArgument(): AwaitExpressionFields['argument'] {
+        return this.value.argument;
     }
 }
 

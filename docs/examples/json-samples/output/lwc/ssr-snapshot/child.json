@@ -1,0 +1,270 @@
+{
+  "filePath": "docs/examples/lwc/ssr-snapshot/modules/c/child",
+  "resolvedError": [],
+  "dataType": "lwcBundle",
+  "result": {
+    "id": "child",
+    "base": {
+      "name": "child",
+      "namespace": "c",
+      "modules": [
+        {
+          "fileName": "child.js",
+          "main": true,
+          "module": {
+            "fileType": "js",
+            "imports": [
+              {
+                "kind": "lwcImport",
+                "sourceKeys": {
+                  "objectKey": "importDeclaration_ab950e948129c918",
+                  "sourceKey": "importDeclaration_4be4d5b7ed3fd547"
+                },
+                "source": "lwc",
+                "category": "lwc",
+                "specifiers": [
+                  {
+                    "kind": "lwcImportSpecifier",
+                    "sourceKeys": {
+                      "objectKey": "importSpecifier_f65dea2f17d74260",
+                      "sourceKey": "importSpecifier_3e8e2d9bc8e264c9"
+                    },
+                    "specifierType": "named",
+                    "local": "LightningElement",
+                    "imported": "LightningElement",
+                    "typeOnly": false
+                  },
+                  {
+                    "kind": "lwcImportSpecifier",
+                    "sourceKeys": {
+                      "objectKey": "importSpecifier_c927ff2649d93619",
+                      "sourceKey": "importSpecifier_33a059b614510999"
+                    },
+                    "specifierType": "named",
+                    "local": "api",
+                    "imported": "api",
+                    "typeOnly": false
+                  }
+                ],
+                "typeOnly": false
+              }
+            ],
+            "component": {
+              "kind": "lwcComponent",
+              "sourceKeys": {
+                "base": {
+                  "objectKey": "classDeclaration_d24928b6db0b3ed3",
+                  "sourceKey": "classDeclaration_d928c2be3fd3829a"
+                },
+                "name": {
+                  "objectKey": "identifier_4983f9e4980831a1",
+                  "sourceKey": "identifier_6b41040a5e56d117"
+                }
+              },
+              "name": "Child",
+              "extend": "LightningElement",
+              "mixins": [],
+              "block": [
+                {
+                  "kind": "lwcField",
+                  "sourceKeys": {
+                    "base": {
+                      "objectKey": "classProperty_ad49d699e602430c",
+                      "sourceKey": "classProperty_cea936fbb55b6c8c"
+                    },
+                    "name": {
+                      "objectKey": "identifier_794b5ff81fdd3d0b",
+                      "sourceKey": "identifier_e83956e969eb2bd7"
+                    }
+                  },
+                  "name": "name",
+                  "references": [],
+                  "optional": false,
+                  "modifier": {
+                    "decorator": [
+                      {
+                        "kind": "lwcDecorator",
+                        "sourceKeys": {
+                          "objectKey": "decorator_1332fed18f380344",
+                          "sourceKey": "decorator_ef41f762c1d9494c"
+                        },
+                        "name": "api",
+                        "arg": []
+                      }
+                    ]
+                  }
+                }
+              ]
+            },
+            "otherExports": [],
+            "declarations": [],
+            "errors": []
+          }
+        }
+      ],
+      "skippedFiles": []
+    },
+    "sourceObject": [
+      {
+        "objectKey": "importDeclaration_ab950e948129c918",
+        "context": "import { LightningElement, api } from 'lwc';",
+        "source": [
+          {
+            "sourceKey": "importDeclaration_4be4d5b7ed3fd547",
+            "start": {
+              "offset": 0,
+              "line": 1,
+              "column": 0
+            },
+            "end": {
+              "offset": 44,
+              "line": 1,
+              "column": 44
+            },
+            "filePath": "child/child.js"
+          }
+        ]
+      },
+      {
+        "objectKey": "importSpecifier_f65dea2f17d74260",
+        "context": "LightningElement",
+        "source": [
+          {
+            "sourceKey": "importSpecifier_3e8e2d9bc8e264c9",
+            "start": {
+              "offset": 9,
+              "line": 1,
+              "column": 9
+            },
+            "end": {
+              "offset": 25,
+              "line": 1,
+              "column": 25
+            },
+            "filePath": "child/child.js"
+          }
+        ]
+      },
+      {
+        "objectKey": "importSpecifier_c927ff2649d93619",
+        "context": "api",
+        "source": [
+          {
+            "sourceKey": "importSpecifier_33a059b614510999",
+            "start": {
+              "offset": 27,
+              "line": 1,
+              "column": 27
+            },
+            "end": {
+              "offset": 30,
+              "line": 1,
+              "column": 30
+            },
+            "filePath": "child/child.js"
+          }
+        ]
+      },
+      {
+        "objectKey": "classDeclaration_d24928b6db0b3ed3",
+        "context": "class Child extends LightningElement { @api name; }",
+        "source": [
+          {
+            "sourceKey": "classDeclaration_d928c2be3fd3829a",
+            "start": {
+              "offset": 60,
+              "line": 2,
+              "column": 15
+            },
+            "end": {
+              "offset": 111,
+              "line": 2,
+              "column": 66
+            },
+            "filePath": "child/child.js"
+          }
+        ]
+      },
+      {
+        "objectKey": "identifier_4983f9e4980831a1",
+        "context": "Child",
+        "source": [
+          {
+            "sourceKey": "identifier_6b41040a5e56d117",
+            "start": {
+              "offset": 66,
+              "line": 2,
+              "column": 21
+            },
+            "end": {
+              "offset": 71,
+              "line": 2,
+              "column": 26
+            },
+            "filePath": "child/child.js"
+          }
+        ]
+      },
+      {
+        "objectKey": "classProperty_ad49d699e602430c",
+        "context": "@api name;",
+        "source": [
+          {
+            "sourceKey": "classProperty_cea936fbb55b6c8c",
+            "start": {
+              "offset": 99,
+              "line": 2,
+              "column": 54
+            },
+            "end": {
+              "offset": 109,
+              "line": 2,
+              "column": 64
+            },
+            "filePath": "child/child.js"
+          }
+        ]
+      },
+      {
+        "objectKey": "identifier_794b5ff81fdd3d0b",
+        "context": "name",
+        "source": [
+          {
+            "sourceKey": "identifier_e83956e969eb2bd7",
+            "start": {
+              "offset": 104,
+              "line": 2,
+              "column": 59
+            },
+            "end": {
+              "offset": 108,
+              "line": 2,
+              "column": 63
+            },
+            "filePath": "child/child.js"
+          }
+        ]
+      },
+      {
+        "objectKey": "decorator_1332fed18f380344",
+        "context": "@api",
+        "source": [
+          {
+            "sourceKey": "decorator_ef41f762c1d9494c",
+            "start": {
+              "offset": 99,
+              "line": 2,
+              "column": 54
+            },
+            "end": {
+              "offset": 103,
+              "line": 2,
+              "column": 58
+            },
+            "filePath": "child/child.js"
+          }
+        ]
+      }
+    ]
+  }
+}

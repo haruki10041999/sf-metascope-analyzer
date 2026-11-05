@@ -8,7 +8,7 @@ import {
     ExpressionVisitor,
     isParExpressionType,
 } from '../expressionVisitor';
-import { ApexErrorTypeClass, ApexCommonTypeClass, isApexValidClass } from '../commonVisitor';
+import { ApexErrorTypeClass, ApexCommonTypeClass, visitNode } from '../commonVisitor';
 
 export class DoWhileStatementTypeClass extends StatementTypeClass<
     'doWhileStatement',
@@ -30,12 +30,13 @@ export class DoWhileStatementTypeClass extends StatementTypeClass<
         }
 
         return new DoWhileStatementTypeClass(
-            isApexValidClass(
-                new ExpressionVisitor().visit(ctx.parExpression()),
+            visitNode(
+                new ExpressionVisitor(),
+                ctx.parExpression(),
                 isParExpressionType,
                 'parExpression',
             ),
-            isApexValidClass(new BlockVisitor().visit(ctx.block()), isNormalBlockType, 'block'),
+            visitNode(new BlockVisitor(), ctx.block(), isNormalBlockType, 'block'),
         );
     }
 
@@ -49,4 +50,3 @@ export const isDoWhileStatementType = (
 ): target is DoWhileStatementTypeClass => {
     return target instanceof DoWhileStatementTypeClass;
 };
-

@@ -1,47 +1,5 @@
+import { isCommonType, CommonType, ValueRuleValue } from './commons';
 import {
-    ComparisonOperatorTypeClass,
-    DateFormulaTypeClass,
-    ApexErrorTypeClass,
-    FieldSpecTypeClass,
-    LocationValueTypeClass,
-    NormalQueryTypeClass,
-    SearchGroupTypeClass,
-    SoqlFunctionTypeClass,
-    SubQueryTypeClass,
-    isComparisonOperatorType as isComparisonOperatorTypeClass,
-    isDateFormulaType as isDateFormulaTypeClass,
-    isErrorType,
-    isFieldSpecType as isFieldSpecTypeClass,
-    isLocationValueType,
-    isNormalQueryType,
-    isSearchGroupType as isSearchGroupTypeClass,
-    isSoqlFunctionType as isSoqlFunctionTypeClass,
-    isSubQueryType as isSubQueryTypeClass,
-} from '../../apex_IR';
-import {
-    isCommonType,
-    ErrorType,
-    CommonType,
-    AssignForValueRule,
-    ValueRuleValue,
-    isTargetTypeClass,
-    assignMultiClass,
-    makeLimitedStringAssignRule,
-    makeErrorAssignRule,
-    makeNullAssignRule,
-    makeSourceInfo,
-    makeStringAssignRule,
-} from './commons';
-import {
-    makeAllRowsClauseAssignRule,
-    makeForClausesAssignRule,
-    makeGroupByClauseAssignRule,
-    makeLimitClauseAssignRule,
-    makeOffsetClauseAssignRule,
-    makeOrderByClauseAssignRule,
-    makeUsingScopeAssignRule,
-    makeWhereClauseAssignRule,
-    makeWithClauseAssignRule,
     AllRowsClauseType,
     ForClausesType,
     GroupByClauseType,
@@ -52,15 +10,9 @@ import {
     WhereClauseType,
     WithClauseType,
 } from './clause';
-import { makeLogicalExpressionAssignRule, LogicalExpressionType } from './expression';
-import { makeSoslIdAssignRule, SoslIdType } from './id';
+import { LogicalExpressionType } from './expression';
+import { SoslIdType } from './id';
 import {
-    makeFieldListAssignRule,
-    makeFieldOrderListAssignRule,
-    makeFromNameListAssignRule,
-    makeSelectListAssignRule,
-    makeSubFieldListAssignRule,
-    makeUpdateListAssignRule,
     FieldListType,
     FieldOrderListType,
     FromNameListType,
@@ -68,15 +20,10 @@ import {
     SubFieldListType,
     UpdateListType,
 } from './list';
-import { makeSignedIntegerAssignRule, SignedIntegerType } from './literal';
-import {
-    makeDateFieldNameAssignRule,
-    makeFieldNameAssignRule,
-    DateFieldNameType,
-    FieldNameType,
-} from './name';
-import { makeSoqlFieldsParameterAssignRule, SoqlFieldsParameterType } from './parameter';
-import { makeLocationValueAssignRule, LocationValueType } from './value';
+import { SignedIntegerType } from './literal';
+import { DateFieldNameType, FieldNameType } from './name';
+import { SoqlFieldsParameterType } from './parameter';
+import { LocationValueType } from './value';
 
 export type ComparisonOperatorType = CommonType<'comparisonOperator'> & {
     value:
@@ -96,20 +43,6 @@ export type ComparisonOperatorType = CommonType<'comparisonOperator'> & {
 
 export const isComparisonOperatorType = (value: unknown): value is ComparisonOperatorType => {
     return isCommonType(value) && value.type === 'comparisonOperator';
-};
-
-export const makeComparisonOperatorAssignRule: AssignForValueRule<
-    ComparisonOperatorTypeClass,
-    ComparisonOperatorType
-> = {
-    isValid: (target: unknown) => isTargetTypeClass(target, isComparisonOperatorTypeClass),
-    construct: (queryTypeClass: ComparisonOperatorTypeClass) => {
-        return {
-            type: queryTypeClass.getType(),
-            sourceInfo: makeSourceInfo(queryTypeClass),
-            value: queryTypeClass.getValue(),
-        };
-    },
 };
 
 export type DateFormulaType = CommonType<'dateFormula'> &
@@ -171,57 +104,6 @@ export const isDateFormulaType = (value: unknown): value is DateFormulaType => {
     return isCommonType(value) && value.type === 'dateFormula';
 };
 
-export const makeDateFormulaAssignRule: AssignForValueRule<DateFormulaTypeClass, DateFormulaType> =
-    {
-        isValid: (target: unknown) => isTargetTypeClass(target, isDateFormulaTypeClass),
-        construct: (queryTypeClass: DateFormulaTypeClass) => {
-            const value = queryTypeClass.getValue();
-
-            if (
-                value === 'YESTERDAY' ||
-                value === 'TODAY' ||
-                value === 'TOMORROW' ||
-                value === 'LAST_WEEK' ||
-                value === 'THIS_WEEK' ||
-                value === 'NEXT_WEEK' ||
-                value === 'LAST_MONTH' ||
-                value === 'THIS_MONTH' ||
-                value === 'NEXT_MONTH' ||
-                value === 'LAST_90_DAYS' ||
-                value === 'NEXT_90_DAYS' ||
-                value === 'THIS_QUARTER' ||
-                value === 'LAST_QUARTER' ||
-                value === 'NEXT_QUARTER' ||
-                value === 'THIS_YEAR' ||
-                value === 'LAST_YEAR' ||
-                value === 'NEXT_YEAR' ||
-                value === 'THIS_FISCAL_QUARTER' ||
-                value === 'LAST_FISCAL_QUARTER' ||
-                value === 'NEXT_FISCAL_QUARTER' ||
-                value === 'THIS_FISCAL_YEAR' ||
-                value === 'LAST_FISCAL_YEAR' ||
-                value === 'NEXT_FISCAL_YEAR'
-            ) {
-                return {
-                    type: queryTypeClass.getType(),
-                    sourceInfo: makeSourceInfo(queryTypeClass),
-                    value,
-                };
-            } else {
-                const param = assignMultiClass(queryTypeClass.getParam(), [
-                    makeSignedIntegerAssignRule,
-                    makeErrorAssignRule,
-                ]);
-                return {
-                    type: queryTypeClass.getType(),
-                    sourceInfo: makeSourceInfo(queryTypeClass),
-                    value,
-                    param,
-                };
-            }
-        },
-    };
-
 export type FieldSpecType = CommonType<'fieldSpec'> & {
     value: ValueRuleValue<SoslIdType>;
     fieldList: ValueRuleValue<FieldListType | null>;
@@ -234,57 +116,6 @@ export type FieldSpecType = CommonType<'fieldSpec'> & {
 
 export const isFieldSpecType = (value: unknown): value is FieldSpecType => {
     return isCommonType(value) && value.type === 'fieldSpec';
-};
-
-export const makeFieldSpecAssignRule: AssignForValueRule<FieldSpecTypeClass, FieldSpecType> = {
-    isValid: (target: unknown) => isTargetTypeClass(target, isFieldSpecTypeClass),
-    construct: (queryTypeClass: FieldSpecTypeClass) => {
-        const value = assignMultiClass(queryTypeClass.getValue(), [
-            makeSoslIdAssignRule,
-            makeErrorAssignRule,
-        ]);
-        const fieldList = assignMultiClass(queryTypeClass.getFieldList(), [
-            makeFieldListAssignRule,
-            makeErrorAssignRule,
-            makeNullAssignRule,
-        ]);
-        const where = assignMultiClass(queryTypeClass.getWhere(), [
-            makeLogicalExpressionAssignRule,
-            makeErrorAssignRule,
-            makeNullAssignRule,
-        ]);
-        const listView = assignMultiClass(queryTypeClass.getListView(), [
-            makeSoslIdAssignRule,
-            makeErrorAssignRule,
-            makeNullAssignRule,
-        ]);
-        const orderBy = assignMultiClass(queryTypeClass.getOrderBy(), [
-            makeFieldOrderListAssignRule,
-            makeErrorAssignRule,
-            makeNullAssignRule,
-        ]);
-        const limitClause = assignMultiClass(queryTypeClass.getLimitClause(), [
-            makeLimitClauseAssignRule,
-            makeErrorAssignRule,
-            makeNullAssignRule,
-        ]);
-        const offsetClause = assignMultiClass(queryTypeClass.getOffsetClause(), [
-            makeOffsetClauseAssignRule,
-            makeErrorAssignRule,
-            makeNullAssignRule,
-        ]);
-        return {
-            type: queryTypeClass.getType(),
-            sourceInfo: makeSourceInfo(queryTypeClass),
-            value,
-            fieldList,
-            where,
-            listView,
-            orderBy,
-            limitClause,
-            offsetClause,
-        };
-    },
 };
 
 export type QueryType = CommonType<'query'> & {
@@ -306,87 +137,6 @@ export const isQueryType = (value: unknown): value is QueryType => {
     return isCommonType(value) && value.type === 'query';
 };
 
-export const makeQueryAssignRule: AssignForValueRule<NormalQueryTypeClass, QueryType> = {
-    isValid: (target: unknown) => isTargetTypeClass(target, isNormalQueryType),
-    construct: (queryTypeClass: NormalQueryTypeClass) => {
-        const value = assignMultiClass(queryTypeClass.getValue(), [
-            makeSelectListAssignRule,
-            makeErrorAssignRule,
-        ]);
-        const from = assignMultiClass(queryTypeClass.getFrom(), [
-            makeFromNameListAssignRule,
-            makeErrorAssignRule,
-        ]);
-        const whereClause = assignMultiClass(queryTypeClass.getWhereClause(), [
-            makeWhereClauseAssignRule,
-            makeErrorAssignRule,
-            makeNullAssignRule,
-        ]);
-        const orderByClause = assignMultiClass(queryTypeClass.getOrderByClause(), [
-            makeOrderByClauseAssignRule,
-            makeErrorAssignRule,
-            makeNullAssignRule,
-        ]);
-        const forClause = assignMultiClass(queryTypeClass.getForClause(), [
-            makeForClausesAssignRule,
-            makeErrorAssignRule,
-            makeNullAssignRule,
-        ]);
-        const limitClause = assignMultiClass(queryTypeClass.getLimitClause(), [
-            makeLimitClauseAssignRule,
-            makeErrorAssignRule,
-            makeNullAssignRule,
-        ]);
-        const offsetClause = assignMultiClass(queryTypeClass.getOffsetClause(), [
-            makeOffsetClauseAssignRule,
-            makeErrorAssignRule,
-            makeNullAssignRule,
-        ]);
-        const allRowsClause = assignMultiClass(queryTypeClass.getAllRowsClause(), [
-            makeAllRowsClauseAssignRule,
-            makeErrorAssignRule,
-            makeNullAssignRule,
-        ]);
-        const usingScope = assignMultiClass(queryTypeClass.getUsingScope(), [
-            makeUsingScopeAssignRule,
-            makeErrorAssignRule,
-            makeNullAssignRule,
-        ]);
-        const groupByClause = assignMultiClass(queryTypeClass.getGroupByClause(), [
-            makeGroupByClauseAssignRule,
-            makeErrorAssignRule,
-            makeNullAssignRule,
-        ]);
-        const updateList = assignMultiClass(queryTypeClass.getUpdateList(), [
-            makeUpdateListAssignRule,
-            makeErrorAssignRule,
-            makeNullAssignRule,
-        ]);
-        const withClause = assignMultiClass(queryTypeClass.getWithClause(), [
-            makeWithClauseAssignRule,
-            makeErrorAssignRule,
-            makeNullAssignRule,
-        ]);
-
-        return {
-            type: queryTypeClass.getType(),
-            sourceInfo: makeSourceInfo(queryTypeClass),
-            value,
-            from,
-            forClause,
-            usingScope,
-            whereClause,
-            withClause,
-            groupByClause,
-            orderByClause,
-            limitClause,
-            offsetClause,
-            allRowsClause,
-            updateList,
-        };
-    },
-};
-
 export type SearchGroupType = CommonType<'searchGroup'> & {
     value: 'ALL' | 'EMAIL' | 'NAME' | 'PHONE' | 'SIDEBAR';
 };
@@ -394,18 +144,6 @@ export type SearchGroupType = CommonType<'searchGroup'> & {
 export const isSearchGroupType = (value: unknown): value is SearchGroupType => {
     return isCommonType(value) && value.type === 'searchGroup';
 };
-
-export const makeSearchGroupAssignRule: AssignForValueRule<SearchGroupTypeClass, SearchGroupType> =
-    {
-        isValid: (target: unknown) => isTargetTypeClass(target, isSearchGroupTypeClass),
-        construct: (queryTypeClass: SearchGroupTypeClass) => {
-            return {
-                type: queryTypeClass.getType(),
-                sourceInfo: makeSourceInfo(queryTypeClass),
-                value: queryTypeClass.getValue(),
-            };
-        },
-    };
 
 export type SoqlFunctionType = CommonType<'soqlFunction'> &
     (
@@ -460,134 +198,6 @@ export const isSoqlFunctionType = (value: unknown): value is SoqlFunctionType =>
     return isCommonType(value) && value.type === 'soqlFunction';
 };
 
-export const makeSoqlFunctionAssignRule: AssignForValueRule<
-    SoqlFunctionTypeClass,
-    SoqlFunctionType
-> = {
-    isValid: (target: unknown) => isTargetTypeClass(target, isSoqlFunctionTypeClass),
-    construct: (queryTypeClass: SoqlFunctionTypeClass) => {
-        const value = queryTypeClass.getValue();
-
-        if (
-            value === 'AVG' ||
-            value === 'COUNT_DISTINCT' ||
-            value === 'MIN' ||
-            value === 'MAX' ||
-            value === 'SUM' ||
-            value === 'TOLABEL' ||
-            value === 'GROUPING' ||
-            value === 'CONVERT_CURRENCY'
-        ) {
-            const param = assignMultiClass(queryTypeClass.getParam(), [
-                makeFieldNameAssignRule,
-                makeErrorAssignRule,
-            ]);
-
-            return {
-                type: queryTypeClass.getType(),
-                sourceInfo: makeSourceInfo(queryTypeClass),
-                value,
-                param,
-            };
-        } else if (
-            value === 'CALENDAR_MONTH' ||
-            value === 'CALENDAR_QUARTER' ||
-            value === 'CALENDAR_YEAR' ||
-            value === 'DAY_IN_MONTH' ||
-            value === 'DAY_IN_WEEK' ||
-            value === 'DAY_IN_YEAR' ||
-            value === 'DAY_ONLY' ||
-            value === 'FISCAL_MONTH' ||
-            value === 'FISCAL_QUARTER' ||
-            value === 'FISCAL_YEAR' ||
-            value === 'HOUR_IN_DAY' ||
-            value === 'WEEK_IN_MONTH' ||
-            value === 'WEEK_IN_YEAR'
-        ) {
-            const param = assignMultiClass(queryTypeClass.getParam(), [
-                makeDateFieldNameAssignRule,
-                makeErrorAssignRule,
-            ]);
-
-            return {
-                type: queryTypeClass.getType(),
-                sourceInfo: makeSourceInfo(queryTypeClass),
-                value,
-                param,
-            };
-        } else if (value === 'COUNT') {
-            const param = assignMultiClass(queryTypeClass.getParam(), [
-                makeFieldNameAssignRule,
-                makeErrorAssignRule,
-                makeNullAssignRule,
-            ]);
-            return {
-                type: queryTypeClass.getType(),
-                sourceInfo: makeSourceInfo(queryTypeClass),
-                value,
-                param,
-            };
-        } else if (value === 'FIELDS') {
-            const param = assignMultiClass(queryTypeClass.getParam(), [
-                makeSoqlFieldsParameterAssignRule,
-                makeErrorAssignRule,
-            ]);
-            return {
-                type: queryTypeClass.getType(),
-                sourceInfo: makeSourceInfo(queryTypeClass),
-                value,
-                param,
-            };
-        } else if (value === 'FORMAT') {
-            const param = assignMultiClass(queryTypeClass.getParam(), [
-                makeFieldNameAssignRule,
-                makeSoqlFunctionAssignRule,
-                makeErrorAssignRule,
-            ]);
-
-            return {
-                type: queryTypeClass.getType(),
-                sourceInfo: makeSourceInfo(queryTypeClass),
-                value,
-                param,
-            };
-        } else {
-            const param = assignMultiClass(queryTypeClass.getParam(), [
-                {
-                    isValid: (
-                        target: unknown,
-                    ): target is (LocationValueTypeClass | ApexErrorTypeClass | string)[] =>
-                        Array.isArray(target) &&
-                        target.every(
-                            (t) =>
-                                isTargetTypeClass(t, isLocationValueType) ||
-                                typeof t === 'string' ||
-                                isTargetTypeClass(t, isErrorType),
-                        ),
-                    construct: (
-                        values: (LocationValueTypeClass | ApexErrorTypeClass | string)[],
-                    ) => {
-                        return values.map((v) =>
-                            assignMultiClass(v, [
-                                makeStringAssignRule,
-                                makeLocationValueAssignRule,
-                                makeErrorAssignRule,
-                            ]),
-                        );
-                    },
-                },
-            ]);
-
-            return {
-                type: queryTypeClass.getType(),
-                sourceInfo: makeSourceInfo(queryTypeClass),
-                value,
-                param,
-            };
-        }
-    },
-};
-
 export type SubQueryType = CommonType<'subQuery'> & {
     value: ValueRuleValue<SubFieldListType>;
     from: ValueRuleValue<FromNameListType>;
@@ -601,55 +211,3 @@ export type SubQueryType = CommonType<'subQuery'> & {
 export const isSubQueryType = (value: unknown): value is SubQueryType => {
     return isCommonType(value) && value.type === 'subQuery';
 };
-
-export const makeSubQueryAssignRule: AssignForValueRule<SubQueryTypeClass, SubQueryType> = {
-    isValid: (target: unknown) => isTargetTypeClass(target, isSubQueryTypeClass),
-    construct: (queryTypeClass: SubQueryTypeClass) => {
-        const value = assignMultiClass(queryTypeClass.getValue(), [
-            makeSubFieldListAssignRule,
-            makeErrorAssignRule,
-        ]);
-        const from = assignMultiClass(queryTypeClass.getFrom(), [
-            makeFromNameListAssignRule,
-            makeErrorAssignRule,
-        ]);
-        const whereClause = assignMultiClass(queryTypeClass.getWhereClause(), [
-            makeWhereClauseAssignRule,
-            makeErrorAssignRule,
-            makeNullAssignRule,
-        ]);
-        const orderByClause = assignMultiClass(queryTypeClass.getOrderByClause(), [
-            makeOrderByClauseAssignRule,
-            makeErrorAssignRule,
-            makeNullAssignRule,
-        ]);
-        const forClause = assignMultiClass(queryTypeClass.getForClause(), [
-            makeForClausesAssignRule,
-            makeErrorAssignRule,
-            makeNullAssignRule,
-        ]);
-        const limitClause = assignMultiClass(queryTypeClass.getLimitClause(), [
-            makeLimitClauseAssignRule,
-            makeErrorAssignRule,
-            makeNullAssignRule,
-        ]);
-        const updateList = assignMultiClass(queryTypeClass.getUpdateList(), [
-            makeUpdateListAssignRule,
-            makeErrorAssignRule,
-            makeNullAssignRule,
-        ]);
-
-        return {
-            type: queryTypeClass.getType(),
-            sourceInfo: makeSourceInfo(queryTypeClass),
-            value,
-            from,
-            forClause,
-            whereClause,
-            orderByClause,
-            limitClause,
-            updateList,
-        };
-    },
-};
-

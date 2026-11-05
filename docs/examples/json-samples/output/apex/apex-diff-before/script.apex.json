@@ -1,0 +1,941 @@
+{
+  "filePath": "docs/examples/apex-diff/before/script.apex",
+  "resolvedError": [],
+  "dataType": "anonymous",
+  "result": {
+    "id": "script.apex",
+    "base": {
+      "block": [
+        {
+          "kind": "field",
+          "sourceKeys": {
+            "objectKey": "fieldDeclaration_a59fb5456fe1b2bc",
+            "sourceKey": "fieldDeclaration_982a66ea025d8c59"
+          },
+          "variants": [
+            {
+              "sourceKeys": {
+                "objectKey": "variableDeclarator_e07a0e3ed0d1fce9",
+                "sourceKey": "variableDeclarator_1be6f2283811f45f"
+              },
+              "name": "limitSize",
+              "init": {
+                "sourceKeys": {
+                  "objectKey": "literal_1e0f71bd1af6c752",
+                  "sourceKey": "literal_5d0928ba12c543f2"
+                },
+                "value": "10",
+                "valueType": "integer"
+              }
+            }
+          ],
+          "variantType": {
+            "kind": "type",
+            "sourceKeys": {
+              "objectKey": "typeRef_1a870c360196e41a",
+              "sourceKey": "typeRef_01511f3fe2baf675"
+            },
+            "type": "primitive",
+            "primitiveType": "Integer"
+          },
+          "modifier": {}
+        },
+        {
+          "kind": "method",
+          "sourceKeys": {
+            "base": {
+              "objectKey": "methodDeclaration_bc29f76da47ddb5f",
+              "sourceKey": "methodDeclaration_3529e0eb91a91d8b"
+            },
+            "name": {
+              "objectKey": "id_352aaf5556fb2f59",
+              "sourceKey": "id_df587874345c4af2"
+            }
+          },
+          "name": "helper",
+          "returnType": "void",
+          "param": [
+            {
+              "kind": "parameter",
+              "sourceKeys": {
+                "objectKey": "formalParameter_a31f28fc3417f058",
+                "sourceKey": "formalParameter_5bf8ec752b28bf53"
+              },
+              "variant": "n",
+              "variantType": {
+                "kind": "type",
+                "sourceKeys": {
+                  "objectKey": "typeRef_1a870c360196e41a",
+                  "sourceKey": "typeRef_712f99fdee7d39d0"
+                },
+                "type": "primitive",
+                "primitiveType": "Integer"
+              },
+              "modifier": {}
+            }
+          ],
+          "block": [
+            {
+              "kind": "expression",
+              "sourceKeys": {
+                "objectKey": "expressionStatement_6bf875f5bae79bb4",
+                "sourceKey": "expressionStatement_50312aabad08ccaf"
+              },
+              "value": {
+                "kind": "memberAccess",
+                "sourceKeys": {
+                  "objectKey": "dotExpression_f2e26c8fb3e2a209",
+                  "sourceKey": "dotExpression_7a523894d3687f5b"
+                },
+                "type": "method",
+                "object": "System",
+                "operator": ".",
+                "member": "debug",
+                "memberArg": [
+                  "n"
+                ]
+              }
+            }
+          ],
+          "modifier": {}
+        },
+        {
+          "kind": "statement",
+          "statement": {
+            "kind": "for",
+            "sourceKeys": {
+              "objectKey": "forStatement_ae6c7fd924687036",
+              "sourceKey": "forStatement_67152a3be9a87f7f"
+            },
+            "condition": {
+              "kind": "forCondition",
+              "sourceKeys": {
+                "objectKey": "forControl_5389d919eb96df9e",
+                "sourceKey": "forControl_4d806dbe70a3ecc7"
+              },
+              "initializer": {
+                "variants": [
+                  {
+                    "sourceKeys": {
+                      "objectKey": "variableDeclarator_883f35246563c6f8",
+                      "sourceKey": "variableDeclarator_cd82e2b2f121bf2d"
+                    },
+                    "name": "k",
+                    "init": {
+                      "sourceKeys": {
+                        "objectKey": "literal_c0d97fe34037a338",
+                        "sourceKey": "literal_311f7cd7bb83d0d9"
+                      },
+                      "value": "0",
+                      "valueType": "integer"
+                    }
+                  }
+                ],
+                "variantsType": {
+                  "kind": "type",
+                  "sourceKeys": {
+                    "objectKey": "typeRef_1a870c360196e41a",
+                    "sourceKey": "typeRef_4e56ccfb37cca535"
+                  },
+                  "type": "primitive",
+                  "primitiveType": "Integer"
+                },
+                "modifier": {}
+              },
+              "condition": {
+                "sourceKeys": {
+                  "objectKey": "cmpExpression_ae3a027967ef1b23",
+                  "sourceKey": "cmpExpression_f99156bebb315970"
+                },
+                "left": "k",
+                "operator": "<",
+                "right": {
+                  "sourceKeys": {
+                    "objectKey": "literal_72b29e97af94190f",
+                    "sourceKey": "literal_f454c945341290b4"
+                  },
+                  "value": "3",
+                  "valueType": "integer"
+                }
+              },
+              "update": [
+                {
+                  "sourceKeys": {
+                    "objectKey": "postOpExpression_3c359679c111fb4b",
+                    "sourceKey": "postOpExpression_168c226f0aebd668"
+                  },
+                  "variant": "k",
+                  "operator": "++",
+                  "operatorLocation": "back"
+                }
+              ]
+            },
+            "block": [
+              {
+                "kind": "if",
+                "sourceKeys": {
+                  "objectKey": "ifStatement_f5b78462c717c809",
+                  "sourceKey": "ifStatement_47bdc15d04533bf2"
+                },
+                "conditionBlock": [
+                  {
+                    "condition": {
+                      "kind": "ifCondition",
+                      "sourceKeys": {
+                        "objectKey": "parExpression_6259982105dcf8a4",
+                        "sourceKey": "parExpression_7ad624108a1b4485"
+                      },
+                      "condition": {
+                        "sourceKeys": {
+                          "objectKey": "equalityExpression_acc58ef265eafc58",
+                          "sourceKey": "equalityExpression_2e323533f764f3a5"
+                        },
+                        "left": "k",
+                        "operator": "==",
+                        "right": {
+                          "sourceKeys": {
+                            "objectKey": "literal_fb5627d59521b262",
+                            "sourceKey": "literal_510435a1109ae73c"
+                          },
+                          "value": "1",
+                          "valueType": "integer"
+                        }
+                      }
+                    },
+                    "block": [
+                      {
+                        "kind": "continue",
+                        "sourceKeys": {
+                          "objectKey": "continueStatement_75e54317e0e4a15e",
+                          "sourceKey": "continueStatement_cbb5f518db033425"
+                        },
+                        "value": "continue"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "kind": "if",
+                "sourceKeys": {
+                  "objectKey": "ifStatement_634e6bfc167e3c2c",
+                  "sourceKey": "ifStatement_e35c82b0b2675f26"
+                },
+                "conditionBlock": [
+                  {
+                    "condition": {
+                      "kind": "ifCondition",
+                      "sourceKeys": {
+                        "objectKey": "parExpression_70ff9d7e820a3a00",
+                        "sourceKey": "parExpression_a26623a27df2f3d6"
+                      },
+                      "condition": {
+                        "sourceKeys": {
+                          "objectKey": "equalityExpression_dd43140614826746",
+                          "sourceKey": "equalityExpression_6ef8ad76d02fc347"
+                        },
+                        "left": "k",
+                        "operator": "==",
+                        "right": {
+                          "sourceKeys": {
+                            "objectKey": "literal_a49b7b7e3b02d933",
+                            "sourceKey": "literal_a1490d515c686926"
+                          },
+                          "value": "2",
+                          "valueType": "integer"
+                        }
+                      }
+                    },
+                    "block": [
+                      {
+                        "kind": "break",
+                        "sourceKeys": {
+                          "objectKey": "breakStatement_791d9ef866afdfd1",
+                          "sourceKey": "breakStatement_14e839eab2b87563"
+                        },
+                        "value": "break"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          "modifier": {}
+        },
+        {
+          "kind": "statement",
+          "statement": {
+            "kind": "expression",
+            "sourceKeys": {
+              "objectKey": "expressionStatement_2ca2826dad470ae2",
+              "sourceKey": "expressionStatement_f73012e066a707a1"
+            },
+            "value": {
+              "kind": "memberAccess",
+              "sourceKeys": {
+                "objectKey": "methodCallExpression_308d5925e3d4a431",
+                "sourceKey": "methodCallExpression_a552401fde737fe5"
+              },
+              "type": "method",
+              "member": "helper",
+              "memberArg": [
+                "limitSize"
+              ]
+            }
+          },
+          "modifier": {}
+        },
+        {
+          "kind": "statement",
+          "statement": {
+            "kind": "expression",
+            "sourceKeys": {
+              "objectKey": "expressionStatement_cc836d68cfce2fd3",
+              "sourceKey": "expressionStatement_0e8d77e0f338f96c"
+            },
+            "value": {
+              "kind": "memberAccess",
+              "sourceKeys": {
+                "objectKey": "dotExpression_c05042caae093e4f",
+                "sourceKey": "dotExpression_fc86a8f953d14ef6"
+              },
+              "type": "method",
+              "object": "System",
+              "operator": ".",
+              "member": "debug",
+              "memberArg": [
+                {
+                  "sourceKeys": {
+                    "objectKey": "literal_ab7e545bc0eedd34",
+                    "sourceKey": "literal_45d481d7c2e0b1ed"
+                  },
+                  "value": "'end'",
+                  "valueType": "string"
+                }
+              ]
+            }
+          },
+          "modifier": {}
+        }
+      ]
+    },
+    "sourceObject": [
+      {
+        "objectKey": "fieldDeclaration_a59fb5456fe1b2bc",
+        "context": "Integer limitSize = 10;",
+        "source": [
+          {
+            "sourceKey": "fieldDeclaration_982a66ea025d8c59",
+            "start": {
+              "offset": 0,
+              "line": 1,
+              "column": 0
+            },
+            "end": {
+              "offset": 23,
+              "line": 1,
+              "column": 23
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "variableDeclarator_e07a0e3ed0d1fce9",
+        "context": "limitSize = 10",
+        "source": [
+          {
+            "sourceKey": "variableDeclarator_1be6f2283811f45f",
+            "start": {
+              "offset": 8,
+              "line": 1,
+              "column": 8
+            },
+            "end": {
+              "offset": 22,
+              "line": 1,
+              "column": 22
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "literal_1e0f71bd1af6c752",
+        "context": "10",
+        "source": [
+          {
+            "sourceKey": "literal_5d0928ba12c543f2",
+            "start": {
+              "offset": 20,
+              "line": 1,
+              "column": 20
+            },
+            "end": {
+              "offset": 22,
+              "line": 1,
+              "column": 22
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "typeRef_1a870c360196e41a",
+        "context": "Integer",
+        "source": [
+          {
+            "sourceKey": "typeRef_01511f3fe2baf675",
+            "start": {
+              "offset": 0,
+              "line": 1,
+              "column": 0
+            },
+            "end": {
+              "offset": 7,
+              "line": 1,
+              "column": 7
+            }
+          },
+          {
+            "sourceKey": "typeRef_712f99fdee7d39d0",
+            "start": {
+              "offset": 37,
+              "line": 3,
+              "column": 12
+            },
+            "end": {
+              "offset": 44,
+              "line": 3,
+              "column": 19
+            }
+          },
+          {
+            "sourceKey": "typeRef_4e56ccfb37cca535",
+            "start": {
+              "offset": 79,
+              "line": 7,
+              "column": 5
+            },
+            "end": {
+              "offset": 86,
+              "line": 7,
+              "column": 12
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "methodDeclaration_bc29f76da47ddb5f",
+        "context": "void helper(Integer n) {\n    System.debug(n);\n}",
+        "source": [
+          {
+            "sourceKey": "methodDeclaration_3529e0eb91a91d8b",
+            "start": {
+              "offset": 25,
+              "line": 3,
+              "column": 0
+            },
+            "end": {
+              "offset": 72,
+              "line": 5,
+              "column": 1
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "id_352aaf5556fb2f59",
+        "context": "helper",
+        "source": [
+          {
+            "sourceKey": "id_df587874345c4af2",
+            "start": {
+              "offset": 30,
+              "line": 3,
+              "column": 5
+            },
+            "end": {
+              "offset": 36,
+              "line": 3,
+              "column": 11
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "formalParameter_a31f28fc3417f058",
+        "context": "Integer n",
+        "source": [
+          {
+            "sourceKey": "formalParameter_5bf8ec752b28bf53",
+            "start": {
+              "offset": 37,
+              "line": 3,
+              "column": 12
+            },
+            "end": {
+              "offset": 46,
+              "line": 3,
+              "column": 21
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "expressionStatement_6bf875f5bae79bb4",
+        "context": "System.debug(n);",
+        "source": [
+          {
+            "sourceKey": "expressionStatement_50312aabad08ccaf",
+            "start": {
+              "offset": 54,
+              "line": 4,
+              "column": 4
+            },
+            "end": {
+              "offset": 70,
+              "line": 4,
+              "column": 20
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "dotExpression_f2e26c8fb3e2a209",
+        "context": "System.debug(n)",
+        "source": [
+          {
+            "sourceKey": "dotExpression_7a523894d3687f5b",
+            "start": {
+              "offset": 54,
+              "line": 4,
+              "column": 4
+            },
+            "end": {
+              "offset": 69,
+              "line": 4,
+              "column": 19
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "forStatement_ae6c7fd924687036",
+        "context": "for (Integer k = 0; k < 3; k++) {\n    if (k == 1) {\n        continue;\n    }\n    if (k == 2) {\n        break;\n    }\n}",
+        "source": [
+          {
+            "sourceKey": "forStatement_67152a3be9a87f7f",
+            "start": {
+              "offset": 74,
+              "line": 7,
+              "column": 0
+            },
+            "end": {
+              "offset": 190,
+              "line": 14,
+              "column": 1
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "forControl_5389d919eb96df9e",
+        "context": "Integer k = 0; k < 3; k++",
+        "source": [
+          {
+            "sourceKey": "forControl_4d806dbe70a3ecc7",
+            "start": {
+              "offset": 79,
+              "line": 7,
+              "column": 5
+            },
+            "end": {
+              "offset": 104,
+              "line": 7,
+              "column": 30
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "variableDeclarator_883f35246563c6f8",
+        "context": "k = 0",
+        "source": [
+          {
+            "sourceKey": "variableDeclarator_cd82e2b2f121bf2d",
+            "start": {
+              "offset": 87,
+              "line": 7,
+              "column": 13
+            },
+            "end": {
+              "offset": 92,
+              "line": 7,
+              "column": 18
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "literal_c0d97fe34037a338",
+        "context": "0",
+        "source": [
+          {
+            "sourceKey": "literal_311f7cd7bb83d0d9",
+            "start": {
+              "offset": 91,
+              "line": 7,
+              "column": 17
+            },
+            "end": {
+              "offset": 92,
+              "line": 7,
+              "column": 18
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "cmpExpression_ae3a027967ef1b23",
+        "context": "k < 3",
+        "source": [
+          {
+            "sourceKey": "cmpExpression_f99156bebb315970",
+            "start": {
+              "offset": 94,
+              "line": 7,
+              "column": 20
+            },
+            "end": {
+              "offset": 99,
+              "line": 7,
+              "column": 25
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "literal_72b29e97af94190f",
+        "context": "3",
+        "source": [
+          {
+            "sourceKey": "literal_f454c945341290b4",
+            "start": {
+              "offset": 98,
+              "line": 7,
+              "column": 24
+            },
+            "end": {
+              "offset": 99,
+              "line": 7,
+              "column": 25
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "postOpExpression_3c359679c111fb4b",
+        "context": "k++",
+        "source": [
+          {
+            "sourceKey": "postOpExpression_168c226f0aebd668",
+            "start": {
+              "offset": 101,
+              "line": 7,
+              "column": 27
+            },
+            "end": {
+              "offset": 104,
+              "line": 7,
+              "column": 30
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "ifStatement_f5b78462c717c809",
+        "context": "if (k == 1) {\n        continue;\n    }",
+        "source": [
+          {
+            "sourceKey": "ifStatement_47bdc15d04533bf2",
+            "start": {
+              "offset": 112,
+              "line": 8,
+              "column": 4
+            },
+            "end": {
+              "offset": 149,
+              "line": 10,
+              "column": 5
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "parExpression_6259982105dcf8a4",
+        "context": "(k == 1)",
+        "source": [
+          {
+            "sourceKey": "parExpression_7ad624108a1b4485",
+            "start": {
+              "offset": 115,
+              "line": 8,
+              "column": 7
+            },
+            "end": {
+              "offset": 123,
+              "line": 8,
+              "column": 15
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "equalityExpression_acc58ef265eafc58",
+        "context": "k == 1",
+        "source": [
+          {
+            "sourceKey": "equalityExpression_2e323533f764f3a5",
+            "start": {
+              "offset": 116,
+              "line": 8,
+              "column": 8
+            },
+            "end": {
+              "offset": 122,
+              "line": 8,
+              "column": 14
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "literal_fb5627d59521b262",
+        "context": "1",
+        "source": [
+          {
+            "sourceKey": "literal_510435a1109ae73c",
+            "start": {
+              "offset": 121,
+              "line": 8,
+              "column": 13
+            },
+            "end": {
+              "offset": 122,
+              "line": 8,
+              "column": 14
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "continueStatement_75e54317e0e4a15e",
+        "context": "continue;",
+        "source": [
+          {
+            "sourceKey": "continueStatement_cbb5f518db033425",
+            "start": {
+              "offset": 134,
+              "line": 9,
+              "column": 8
+            },
+            "end": {
+              "offset": 143,
+              "line": 9,
+              "column": 17
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "ifStatement_634e6bfc167e3c2c",
+        "context": "if (k == 2) {\n        break;\n    }",
+        "source": [
+          {
+            "sourceKey": "ifStatement_e35c82b0b2675f26",
+            "start": {
+              "offset": 154,
+              "line": 11,
+              "column": 4
+            },
+            "end": {
+              "offset": 188,
+              "line": 13,
+              "column": 5
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "parExpression_70ff9d7e820a3a00",
+        "context": "(k == 2)",
+        "source": [
+          {
+            "sourceKey": "parExpression_a26623a27df2f3d6",
+            "start": {
+              "offset": 157,
+              "line": 11,
+              "column": 7
+            },
+            "end": {
+              "offset": 165,
+              "line": 11,
+              "column": 15
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "equalityExpression_dd43140614826746",
+        "context": "k == 2",
+        "source": [
+          {
+            "sourceKey": "equalityExpression_6ef8ad76d02fc347",
+            "start": {
+              "offset": 158,
+              "line": 11,
+              "column": 8
+            },
+            "end": {
+              "offset": 164,
+              "line": 11,
+              "column": 14
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "literal_a49b7b7e3b02d933",
+        "context": "2",
+        "source": [
+          {
+            "sourceKey": "literal_a1490d515c686926",
+            "start": {
+              "offset": 163,
+              "line": 11,
+              "column": 13
+            },
+            "end": {
+              "offset": 164,
+              "line": 11,
+              "column": 14
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "breakStatement_791d9ef866afdfd1",
+        "context": "break;",
+        "source": [
+          {
+            "sourceKey": "breakStatement_14e839eab2b87563",
+            "start": {
+              "offset": 176,
+              "line": 12,
+              "column": 8
+            },
+            "end": {
+              "offset": 182,
+              "line": 12,
+              "column": 14
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "expressionStatement_2ca2826dad470ae2",
+        "context": "helper(limitSize);",
+        "source": [
+          {
+            "sourceKey": "expressionStatement_f73012e066a707a1",
+            "start": {
+              "offset": 191,
+              "line": 15,
+              "column": 0
+            },
+            "end": {
+              "offset": 209,
+              "line": 15,
+              "column": 18
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "methodCallExpression_308d5925e3d4a431",
+        "context": "helper(limitSize)",
+        "source": [
+          {
+            "sourceKey": "methodCallExpression_a552401fde737fe5",
+            "start": {
+              "offset": 191,
+              "line": 15,
+              "column": 0
+            },
+            "end": {
+              "offset": 208,
+              "line": 15,
+              "column": 17
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "expressionStatement_cc836d68cfce2fd3",
+        "context": "System.debug('end');",
+        "source": [
+          {
+            "sourceKey": "expressionStatement_0e8d77e0f338f96c",
+            "start": {
+              "offset": 210,
+              "line": 16,
+              "column": 0
+            },
+            "end": {
+              "offset": 230,
+              "line": 16,
+              "column": 20
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "dotExpression_c05042caae093e4f",
+        "context": "System.debug('end')",
+        "source": [
+          {
+            "sourceKey": "dotExpression_fc86a8f953d14ef6",
+            "start": {
+              "offset": 210,
+              "line": 16,
+              "column": 0
+            },
+            "end": {
+              "offset": 229,
+              "line": 16,
+              "column": 19
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "literal_ab7e545bc0eedd34",
+        "context": "'end'",
+        "source": [
+          {
+            "sourceKey": "literal_45d481d7c2e0b1ed",
+            "start": {
+              "offset": 223,
+              "line": 16,
+              "column": 13
+            },
+            "end": {
+              "offset": 228,
+              "line": 16,
+              "column": 18
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

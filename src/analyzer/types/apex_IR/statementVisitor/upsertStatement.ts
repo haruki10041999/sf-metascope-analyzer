@@ -13,7 +13,12 @@ import {
     ExpressionVisitor,
     isBasedExpressionType,
 } from '../expressionVisitor';
-import { ApexErrorTypeClass, ApexCommonTypeClass, isApexValidClass } from '../commonVisitor';
+import {
+    ApexErrorTypeClass,
+    ApexCommonTypeClass,
+    visitNode,
+    visitOptionalNode,
+} from '../commonVisitor';
 
 export class UpsertStatementTypeClass extends DmlStatementTypeClass<
     'upsertStatement',
@@ -35,25 +40,24 @@ export class UpsertStatementTypeClass extends DmlStatementTypeClass<
         }
 
         return new UpsertStatementTypeClass(
-            isApexValidClass(
-                new ExpressionVisitor().visit(ctx.expression()),
+            visitNode(
+                new ExpressionVisitor(),
+                ctx.expression(),
                 isBasedExpressionType,
                 'expression',
             ),
-            ctx.qualifiedName()
-                ? isApexValidClass(
-                      new NameVisitor().visit(ctx.qualifiedName()),
-                      isQualifiedNameType,
-                      'qualifiedName',
-                  )
-                : null,
-            ctx.accessLevel()
-                ? isApexValidClass(
-                      new StatementVisitor().visit(ctx.accessLevel()),
-                      isAccessLevelType,
-                      'accessLevel',
-                  )
-                : null,
+            visitOptionalNode(
+                new NameVisitor(),
+                ctx.qualifiedName(),
+                isQualifiedNameType,
+                'qualifiedName',
+            ),
+            visitOptionalNode(
+                new StatementVisitor(),
+                ctx.accessLevel(),
+                isAccessLevelType,
+                'accessLevel',
+            ),
         );
     }
 
@@ -67,4 +71,3 @@ export const isUpsertStatementType = (
 ): target is UpsertStatementTypeClass => {
     return target instanceof UpsertStatementTypeClass;
 };
-

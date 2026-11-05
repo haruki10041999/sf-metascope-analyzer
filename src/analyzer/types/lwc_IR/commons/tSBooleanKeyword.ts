@@ -2,12 +2,12 @@ import { isTSBooleanKeyword, type TSBooleanKeyword } from '@babel/types';
 import { EvaluatePair, LwcCommonTypeClass, makeEvaluatePair } from '../commonVisitor';
 
 export class TSBooleanKeywordTypeClass extends LwcCommonTypeClass<'tSBooleanKeyword'> {
-    private constructor(originalSource: string) {
-        super('tSBooleanKeyword', originalSource);
+    private constructor() {
+        super('tSBooleanKeyword');
     }
 
-    static create(target: TSBooleanKeyword, originalSource: string): TSBooleanKeywordTypeClass {
-        throw new Error('TSBooleanKeywordTypeClass.create is not implemented: ' + target.type);
+    static create(_target: TSBooleanKeyword, _originalSource: string): TSBooleanKeywordTypeClass {
+        return new TSBooleanKeywordTypeClass();
     }
 }
 

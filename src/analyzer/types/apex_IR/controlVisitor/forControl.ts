@@ -16,7 +16,12 @@ import {
     ExpressionVisitor,
     isBasedExpressionType,
 } from '../expressionVisitor';
-import { ApexErrorTypeClass, ApexCommonTypeClass, isApexValidClass } from '../commonVisitor';
+import {
+    ApexErrorTypeClass,
+    ApexCommonTypeClass,
+    visitNode,
+    visitOptionalNode,
+} from '../commonVisitor';
 
 export class ForControlTypeClass extends ControlTypeClass<
     'forControl',
@@ -41,14 +46,16 @@ export class ForControlTypeClass extends ControlTypeClass<
             EnhancedForControlTypeClass | BasedExpressionTypeClass | ApexErrorTypeClass | null =
             null;
         if (ctx.enhancedForControl()) {
-            value = isApexValidClass(
-                new ControlVisitor().visit(ctx.enhancedForControl()),
+            value = visitNode(
+                new ControlVisitor(),
+                ctx.enhancedForControl(),
                 isEnhancedForControlType,
                 'enhancedForControl',
             );
         } else if (ctx.expression()) {
-            value = isApexValidClass(
-                new ExpressionVisitor().visit(ctx.expression()),
+            value = visitNode(
+                new ExpressionVisitor(),
+                ctx.expression(),
                 isBasedExpressionType,
                 'expression',
             );
@@ -56,20 +63,8 @@ export class ForControlTypeClass extends ControlTypeClass<
 
         return new ForControlTypeClass(
             value,
-            ctx.forInit()
-                ? isApexValidClass(
-                      new ControlVisitor().visit(ctx.forInit()),
-                      isForInitType,
-                      'forInit',
-                  )
-                : null,
-            ctx.forUpdate()
-                ? isApexValidClass(
-                      new ControlVisitor().visit(ctx.forUpdate()),
-                      isForUpdateType,
-                      'forUpdate',
-                  )
-                : null,
+            visitOptionalNode(new ControlVisitor(), ctx.forInit(), isForInitType, 'forInit'),
+            visitOptionalNode(new ControlVisitor(), ctx.forUpdate(), isForUpdateType, 'forUpdate'),
         );
     }
 

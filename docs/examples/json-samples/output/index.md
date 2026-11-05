@@ -1,0 +1,55 @@
+# サンプルコードの JSON
+
+`npx ttsx --noCheck docs/examples/json-samples/generate.ts` で生成。
+ノード数は kind を持つ JSON ノード (JsonType / StructureJsonType / ErrorJson) の数。
+
+| グループ | サンプル | dataType | ノード数 | resolvedError |
+| --- | --- | --- | ---: | ---: |
+| apex/apex-ir | [ParserEnum.cls](apex/apex-ir/ParserEnum.cls.json) | cls | 6 | 0 |
+| apex/apex-ir | [ParserInterface.cls](apex/apex-ir/ParserInterface.cls.json) | cls | 23 | 0 |
+| apex/apex-ir | [ParserTest.cls](apex/apex-ir/ParserTest.cls.json) | cls | 854 | 0 |
+| apex/apex-ir | [ParserTrigger.trigger](apex/apex-ir/ParserTrigger.trigger.json) | trigger | 253 | 0 |
+| apex/apex-ir | [parser.apex](apex/apex-ir/parser.apex.json) | anonymous | 358 | 0 |
+| apex/apex-diff-before | [AccountService.cls](apex/apex-diff-before/AccountService.cls.json) | cls | 252 | 0 |
+| apex/apex-diff-before | [AccountService.cls-meta.xml](apex/apex-diff-before/AccountService.cls-meta.xml.json) | apexClassMeta | 1 | 0 |
+| apex/apex-diff-before | [AccountTrigger.trigger](apex/apex-diff-before/AccountTrigger.trigger.json) | trigger | 12 | 0 |
+| apex/apex-diff-before | [AccountTrigger.trigger-meta.xml](apex/apex-diff-before/AccountTrigger.trigger-meta.xml.json) | apexTriggerMeta | 1 | 0 |
+| apex/apex-diff-before | [Broken.cls](apex/apex-diff-before/Broken.cls.json) | cls | 10 | 0 |
+| apex/apex-diff-before | [Broken.cls-meta.xml](apex/apex-diff-before/Broken.cls-meta.xml.json) | apexClassMeta | 1 | 0 |
+| apex/apex-diff-before | [Level.cls](apex/apex-diff-before/Level.cls.json) | cls | 4 | 0 |
+| apex/apex-diff-before | [OldHelper.cls](apex/apex-diff-before/OldHelper.cls.json) | cls | 5 | 0 |
+| apex/apex-diff-before | [OldHelper.cls-meta.xml](apex/apex-diff-before/OldHelper.cls-meta.xml.json) | apexClassMeta | 1 | 0 |
+| apex/apex-diff-before | [Shape.cls](apex/apex-diff-before/Shape.cls.json) | cls | 4 | 0 |
+| apex/apex-diff-before | [Unchanged.cls](apex/apex-diff-before/Unchanged.cls.json) | cls | 5 | 0 |
+| apex/apex-diff-before | [Unchanged.cls-meta.xml](apex/apex-diff-before/Unchanged.cls-meta.xml.json) | apexClassMeta | 1 | 0 |
+| apex/apex-diff-before | [script.apex](apex/apex-diff-before/script.apex.json) | anonymous | 23 | 0 |
+| apex/apex-diff-after | [AccountService.cls](apex/apex-diff-after/AccountService.cls.json) | cls | 265 | 0 |
+| apex/apex-diff-after | [AccountService.cls-meta.xml](apex/apex-diff-after/AccountService.cls-meta.xml.json) | apexClassMeta | 1 | 0 |
+| apex/apex-diff-after | [AccountTrigger.trigger](apex/apex-diff-after/AccountTrigger.trigger.json) | trigger | 16 | 0 |
+| apex/apex-diff-after | [AccountTrigger.trigger-meta.xml](apex/apex-diff-after/AccountTrigger.trigger-meta.xml.json) | apexTriggerMeta | 1 | 0 |
+| apex/apex-diff-after | [Broken.cls](apex/apex-diff-after/Broken.cls.json) | cls | 7 | 2 |
+| apex/apex-diff-after | [Broken.cls-meta.xml](apex/apex-diff-after/Broken.cls-meta.xml.json) | error | 1 | 1 |
+| apex/apex-diff-after | [Level.cls](apex/apex-diff-after/Level.cls.json) | cls | 5 | 0 |
+| apex/apex-diff-after | [NewHelper.cls](apex/apex-diff-after/NewHelper.cls.json) | cls | 5 | 0 |
+| apex/apex-diff-after | [NewHelper.cls-meta.xml](apex/apex-diff-after/NewHelper.cls-meta.xml.json) | apexClassMeta | 1 | 0 |
+| apex/apex-diff-after | [Shape.cls](apex/apex-diff-after/Shape.cls.json) | cls | 7 | 0 |
+| apex/apex-diff-after | [Unchanged.cls](apex/apex-diff-after/Unchanged.cls.json) | cls | 5 | 0 |
+| apex/apex-diff-after | [Unchanged.cls-meta.xml](apex/apex-diff-after/Unchanged.cls-meta.xml.json) | apexClassMeta | 1 | 0 |
+| apex/apex-diff-after | [script.apex](apex/apex-diff-after/script.apex.json) | anonymous | 28 | 0 |
+| lwc/bundles | [accountList](lwc/bundles/accountList.json) | lwcBundle | 96 | 0 |
+| lwc/bundles | [accountRow](lwc/bundles/accountRow.json) | lwcBundle | 23 | 0 |
+| lwc/bundles | [broken](lwc/bundles/broken.json) | lwcBundle | 9 | 1 |
+| lwc/bundles | [utils](lwc/bundles/utils.json) | lwcBundle | 13 | 0 |
+| lwc/lwc-diff-before | [accountList](lwc/lwc-diff-before/accountList.json) | lwcBundle | 96 | 0 |
+| lwc/lwc-diff-before | [accountRow](lwc/lwc-diff-before/accountRow.json) | lwcBundle | 23 | 0 |
+| lwc/lwc-diff-before | [broken](lwc/lwc-diff-before/broken.json) | lwcBundle | 9 | 1 |
+| lwc/lwc-diff-before | [oldBanner](lwc/lwc-diff-before/oldBanner.json) | lwcBundle | 6 | 0 |
+| lwc/lwc-diff-before | [utils](lwc/lwc-diff-before/utils.json) | lwcBundle | 13 | 0 |
+| lwc/lwc-diff-after | [accountList](lwc/lwc-diff-after/accountList.json) | lwcBundle | 105 | 0 |
+| lwc/lwc-diff-after | [accountRow](lwc/lwc-diff-after/accountRow.json) | lwcBundle | 23 | 0 |
+| lwc/lwc-diff-after | [broken](lwc/lwc-diff-after/broken.json) | lwcBundle | 9 | 1 |
+| lwc/lwc-diff-after | [newBanner](lwc/lwc-diff-after/newBanner.json) | lwcBundle | 14 | 0 |
+| lwc/lwc-diff-after | [utils](lwc/lwc-diff-after/utils.json) | lwcBundle | 16 | 1 |
+| lwc/ssr-snapshot | [child](lwc/ssr-snapshot/child.json) | lwcBundle | 6 | 0 |
+| lwc/ssr-snapshot | [hello](lwc/ssr-snapshot/hello.json) | lwcBundle | 20 | 0 |
+| lwc/ssr-lbc | [demo](lwc/ssr-lbc/demo.json) | lwcBundle | 9 | 0 |

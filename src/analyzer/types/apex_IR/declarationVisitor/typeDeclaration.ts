@@ -15,8 +15,8 @@ import { NormalModifierTypeClass, ModifierVisitor, isNormalModifierType } from '
 import {
     ApexErrorTypeClass,
     ApexCommonTypeClass,
-    isApexValidClass,
-    isApexValidClassList,
+    visitNodeList,
+    visitNode,
 } from '../commonVisitor';
 
 export type TypeDeclarationClassType =
@@ -42,20 +42,23 @@ export class TypeDeclarationTypeClass extends DeclarationTypeClass<
 
         let value: TypeDeclarationClassType | ApexErrorTypeClass;
         if (ctx.classDeclaration()) {
-            value = isApexValidClass(
-                new DeclarationVisitor().visit(ctx.classDeclaration()),
+            value = visitNode(
+                new DeclarationVisitor(),
+                ctx.classDeclaration(),
                 isClassDeclarationType,
                 'classDeclaration',
             );
         } else if (ctx.enumDeclaration()) {
-            value = isApexValidClass(
-                new DeclarationVisitor().visit(ctx.enumDeclaration()),
+            value = visitNode(
+                new DeclarationVisitor(),
+                ctx.enumDeclaration(),
                 isEnumDeclarationType,
                 'enumDeclaration',
             );
         } else {
-            value = isApexValidClass(
-                new DeclarationVisitor().visit(ctx.interfaceDeclaration()),
+            value = visitNode(
+                new DeclarationVisitor(),
+                ctx.interfaceDeclaration(),
                 isInterfaceDeclarationType,
                 'interfaceDeclaration',
             );
@@ -63,9 +66,9 @@ export class TypeDeclarationTypeClass extends DeclarationTypeClass<
 
         return new TypeDeclarationTypeClass(
             value,
-            isApexValidClassList(
+            visitNodeList(
+                new ModifierVisitor(),
                 ctx.modifier_list(),
-                (ctx) => new ModifierVisitor().visit(ctx),
                 isNormalModifierType,
                 'modifier',
             ),
@@ -82,4 +85,3 @@ export const isTypeDeclarationType = (
 ): target is TypeDeclarationTypeClass => {
     return target instanceof TypeDeclarationTypeClass;
 };
-

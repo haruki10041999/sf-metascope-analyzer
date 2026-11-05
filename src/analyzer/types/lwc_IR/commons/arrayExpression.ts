@@ -1,43 +1,49 @@
-import { isArrayExpression, isExpression, ArrayExpression } from '@babel/types';
+import { isArrayExpression, type ArrayExpression } from '@babel/types';
 import {
     EvaluatePair,
     LwcCommonTypeClass,
     LwcErrorTypeClass,
+    lazyPairs,
     makeEvaluatePair,
+    visitNullableNodeList,
 } from '../commonVisitor';
-import { ExpressionTypeClass, ExpressionVisitor } from '../expression';
-import { SpreadElementTypeClass } from './spreadElement';
+import { expressionVisitorEvaluatePairs, type ExpressionTypeClass } from '../expressionVisitor';
+import { spreadElementTypePair, type SpreadElementTypeClass } from './spreadElement';
+
+const arrayExpressionElementsPairs = lazyPairs(
+    () => [...expressionVisitorEvaluatePairs(), spreadElementTypePair] as const,
+);
+
+export type ArrayExpressionFields = {
+    elements: (ExpressionTypeClass | SpreadElementTypeClass | LwcErrorTypeClass | null)[];
+};
 
 export class ArrayExpressionTypeClass extends LwcCommonTypeClass<'arrayExpression'> {
-    private value: (null | ExpressionTypeClass | SpreadElementTypeClass | LwcErrorTypeClass)[];
+    private readonly value: ArrayExpressionFields;
 
-    private constructor(
-        value: (null | ExpressionTypeClass | SpreadElementTypeClass | LwcErrorTypeClass)[],
-        originalSource: string,
-    ) {
-        super('arrayExpression', originalSource);
+    private constructor(value: ArrayExpressionFields) {
+        super('arrayExpression');
         this.value = value;
     }
 
     static create(target: ArrayExpression, originalSource: string): ArrayExpressionTypeClass {
-        return new ArrayExpressionTypeClass(
-            target.elements.map((value) => {
-                if (value) {
-                    if (isExpression(value)) {
-                        return new ExpressionVisitor().visit(value, originalSource);
-                    } else {
-                        return SpreadElementTypeClass.create(value, originalSource);
-                    }
-                } else {
-                    return null;
-                }
-            }),
-            originalSource,
-        );
+        return new ArrayExpressionTypeClass({
+            elements: visitNullableNodeList(
+                target.elements,
+                originalSource,
+                arrayExpressionElementsPairs(),
+                'ArrayExpression.elements',
+            ),
+        });
     }
 
-    getValue(): (null | ExpressionTypeClass | SpreadElementTypeClass | LwcErrorTypeClass)[] {
+    /** すべてのフィールド (Babel の value フィールドの getter getValue() と区別する。getChildNodes もこれから作る) */
+    override getFields(): ArrayExpressionFields {
         return this.value;
+    }
+
+    getElements(): ArrayExpressionFields['elements'] {
+        return this.value.elements;
     }
 }
 

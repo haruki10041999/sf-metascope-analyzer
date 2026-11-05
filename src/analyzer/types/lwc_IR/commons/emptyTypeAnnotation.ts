@@ -2,15 +2,15 @@ import { isEmptyTypeAnnotation, type EmptyTypeAnnotation } from '@babel/types';
 import { EvaluatePair, LwcCommonTypeClass, makeEvaluatePair } from '../commonVisitor';
 
 export class EmptyTypeAnnotationTypeClass extends LwcCommonTypeClass<'emptyTypeAnnotation'> {
-    private constructor(originalSource: string) {
-        super('emptyTypeAnnotation', originalSource);
+    private constructor() {
+        super('emptyTypeAnnotation');
     }
 
     static create(
-        target: EmptyTypeAnnotation,
-        originalSource: string,
+        _target: EmptyTypeAnnotation,
+        _originalSource: string,
     ): EmptyTypeAnnotationTypeClass {
-        throw new Error('EmptyTypeAnnotationTypeClass.create is not implemented: ' + target.type);
+        return new EmptyTypeAnnotationTypeClass();
     }
 }
 

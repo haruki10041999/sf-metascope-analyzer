@@ -26,4 +26,3 @@ export const isContinueStatementType = (
 ): target is ContinueStatementTypeClass => {
     return target instanceof ContinueStatementTypeClass;
 };
-
