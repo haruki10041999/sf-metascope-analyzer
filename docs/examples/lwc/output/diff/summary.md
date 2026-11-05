@@ -1,6 +1,6 @@
 # LWC Diff の結果 (before → after)
 
-`npx ttsx --noCheck docs/examples/lwc-diff/run-diff.ts` で生成。unchanged 以外の差分だけを並べる。
+`npx ttsx --noCheck docs/examples/lwc/scripts/run-diff.ts` で生成。unchanged 以外の差分だけを並べる。
 
 ## accountList (changed)
 
