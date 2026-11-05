@@ -1,9 +1,9 @@
-// LWC の converter: lwc_IR (TypeClass) → CommonType (docs/lwc-parse-plan.md 3.1.2・3.1.6)。
+// LWC の converter: lwc_IR (TypeClass) → CommonType (docs/lwc-implementation.md)。
 // Apex の types/apex/converter と同じ層。CommonType は { type, sourceInfo, ...フィールド } の素のオブジェクトで、
 // このあと makeConvertType (types/apex/commons) が objectKey / sourceKey を付ける。
 // lwc_IR はクラスの形がそろっている (getFields) ので、Apex のノードごとの assign rule の代わりに 1 つの変換で書く
 import { LwcCommonTypeClass, LwcErrorTypeClass, type ErrorCode } from '../../lwc_IR/commonVisitor';
-import type { CommonType, SourceInfo } from '../../apex/converter/commons';
+import type { CommonType, SourceInfo } from '../../commons/converter';
 import type { FileTypeClass } from '../../lwc_IR/standardizedVisitor/file';
 
 import type { LwcFileType } from './nodes';

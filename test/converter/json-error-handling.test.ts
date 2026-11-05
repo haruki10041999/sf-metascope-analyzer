@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
 
 import { makeConvertType, regenerateSourceObjects } from '../../src/analyzer/types/apex/commons';
-import { extractFindSearchTerm } from '../../src/analyzer/types/apex/converter/literal';
+import { extractFindSearchTerm } from '../../src/analyzer/types/apex/converter/generic';
 import { makeExpressionJsonConvert } from '../../src/analyzer/types/apex/expression';
 import { makeSoqlFunctionJson } from '../../src/analyzer/types/apex/query/soqlFunction';
 import { makeStatementJson } from '../../src/analyzer/types/apex/statement';
@@ -12,11 +12,20 @@ import { sourceInfo } from './helpers';
 
 let offset = 0;
 const si = () => sourceInfo(offset++);
-const error = () => ({ type: 'error', sourceInfo: si(), errorCode: 'EXCEPTION', contextType: 'test' });
+const error = () => ({
+    type: 'error',
+    sourceInfo: si(),
+    errorCode: 'EXCEPTION',
+    contextType: 'test',
+});
 const expression = (value: string) => ({ type: 'expression', sourceInfo: si(), value });
 const id = (value: string) => ({ type: 'id', sourceInfo: si(), value });
 const statement = (value: unknown) => ({ type: 'statement', sourceInfo: si(), value });
-const block = (...statements: unknown[]) => ({ type: 'block', sourceInfo: si(), value: statements });
+const block = (...statements: unknown[]) => ({
+    type: 'block',
+    sourceInfo: si(),
+    value: statements,
+});
 
 // テスト用に CommonType を組み立てて変換する（型は converter 側の定義に任せる）
 const convert = async (node: unknown) => (await makeConvertType(node as never)).result as never;
@@ -47,7 +56,11 @@ describe('JSON 生成のエラー処理', () => {
                 sourceInfo: si(),
                 value: id('foo'),
                 reference: null,
-                param: { type: 'expressionList', sourceInfo: si(), value: [expression('a'), error()] },
+                param: {
+                    type: 'expressionList',
+                    sourceInfo: si(),
+                    value: [expression('a'), error()],
+                },
             },
         });
 
@@ -72,7 +85,11 @@ describe('JSON 生成のエラー処理', () => {
                 sourceInfo: si(),
                 value: [
                     {
-                        condition: { type: 'parExpression', sourceInfo: si(), value: expression('flag') },
+                        condition: {
+                            type: 'parExpression',
+                            sourceInfo: si(),
+                            value: expression('flag'),
+                        },
                         block: statement(error()),
                     },
                 ],
@@ -97,7 +114,11 @@ describe('JSON 生成のエラー処理', () => {
                         type: 'catchClause',
                         sourceInfo: si(),
                         value: id('e'),
-                        valueType: { type: 'qualifiedName', sourceInfo: si(), value: [id('Exception')] },
+                        valueType: {
+                            type: 'qualifiedName',
+                            sourceInfo: si(),
+                            value: [id('Exception')],
+                        },
                         modifier: [],
                         block: block(statement(error())),
                     },
@@ -121,7 +142,13 @@ describe('JSON 生成のエラー処理', () => {
             statement({
                 type: 'forStatement',
                 sourceInfo: si(),
-                value: { type: 'forControl', sourceInfo: si(), value: expression('i'), init: null, update: null },
+                value: {
+                    type: 'forControl',
+                    sourceInfo: si(),
+                    value: expression('i'),
+                    init: null,
+                    update: null,
+                },
                 block: statement(block()),
             }),
         );
@@ -169,7 +196,11 @@ describe('SourceJson の再生成', () => {
     it('深い入れ子でも各ノードを 1 回だけ辿る', () => {
         let node: any = { kind: 'leaf', sourceKeys: { objectKey: 'o0', sourceKey: 's0' } };
         for (let i = 1; i <= 40; i++) {
-            node = { kind: 'n', sourceKeys: { objectKey: `o${i}`, sourceKey: `s${i}` }, child: node };
+            node = {
+                kind: 'n',
+                sourceKeys: { objectKey: `o${i}`, sourceKey: `s${i}` },
+                child: node,
+            };
         }
         const sources = [{ objectKey: 'o0', context: 'x', source: [{ sourceKey: 's0' } as never] }];
 
@@ -190,7 +221,11 @@ describe('SourceJson の再生成', () => {
         };
         const sources = [
             { objectKey: 'base', context: 'x', source: [{ sourceKey: 'b' } as never] },
-            { objectKey: 'type', context: 'x', source: [{ sourceKey: 't1' } as never, { sourceKey: 't2' } as never] },
+            {
+                objectKey: 'type',
+                context: 'x',
+                source: [{ sourceKey: 't1' } as never, { sourceKey: 't2' } as never],
+            },
         ];
 
         const result = regenerateSourceObjects(sources, json);

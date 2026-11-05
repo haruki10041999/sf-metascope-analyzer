@@ -13,7 +13,7 @@ const examples: [string, (p: ApexParser) => ApexParserRuleContext][] = [
 ];
 
 const load = (file: string) =>
-    readFile(new URL(`../../docs/examples/apex-ir/${file}`, import.meta.url), 'utf8');
+    readFile(new URL(`../../docs/examples/apex/samples/syntax/${file}`, import.meta.url), 'utf8');
 
 const convert = async (index: number) => {
     const [file, rule] = examples[index]!;
@@ -41,7 +41,7 @@ const countValues = (target: unknown, skip: Set<string>, out = new Map<string, n
     return out;
 };
 
-describe('JSON 出力 / docs/examples/apex-ir', () => {
+describe('JSON 出力 / docs/examples/apex/samples/syntax', () => {
     for (const [index, [file]] of examples.entries()) {
         it(`${file}: エラーノードなしで変換でき、CommonType の値を欠落させない`, async () => {
             const { commonType, json } = await convert(index);
@@ -62,9 +62,7 @@ describe('JSON 出力 / docs/examples/apex-ir', () => {
                 sourceObjects.flatMap((o) => o.source.map((s) => `${o.objectKey}/${s.sourceKey}`)),
             );
             const keys = find(json, (n) => n.sourceKeys !== undefined).flatMap((n) =>
-                'objectKey' in n.sourceKeys
-                    ? [n.sourceKeys]
-                    : Object.values(n.sourceKeys).flat(),
+                'objectKey' in n.sourceKeys ? [n.sourceKeys] : Object.values(n.sourceKeys).flat(),
             );
             assert.ok(keys.length > 0);
             keys.forEach((k: any) => assert.ok(registered.has(`${k.objectKey}/${k.sourceKey}`)));
@@ -99,7 +97,18 @@ describe('JSON 出力 / docs/examples/apex-ir', () => {
 
     it('複合文・SOQL / SOSL は境界ノードになる', async () => {
         const { json } = await convert(0);
-        for (const kind of ['if', 'for', 'while', 'doWhile', 'switch', 'try', 'runAs', 'soql', 'sosl', 'subQuery']) {
+        for (const kind of [
+            'if',
+            'for',
+            'while',
+            'doWhile',
+            'switch',
+            'try',
+            'runAs',
+            'soql',
+            'sosl',
+            'subQuery',
+        ]) {
             assert.ok(find(json, (n) => n.kind === kind && n.sourceKeys).length > 0, kind);
         }
     });

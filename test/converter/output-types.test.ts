@@ -21,14 +21,6 @@ const sourceInfo = {
     end: { offset: 7, line: 1, column: 7 },
 };
 
-const exportsByName: Record<string, unknown> = converter;
-
-/** IR の type ('ifStatement') → 出力の判定関数 (isIfStatementType) */
-const predicateOf = (type: string) => {
-    const predicate = exportsByName[`is${type[0]!.toUpperCase()}${type.slice(1)}Type`];
-    return typeof predicate === 'function' ? (predicate as (value: unknown) => boolean) : null;
-};
-
 /** 部分木の IR のノードを、type ごとに 1 つ集める */
 const collectNodes = (root: unknown) => {
     const nodes = new Map<string, ApexCommonTypeClass>();
@@ -48,18 +40,10 @@ const convertSource = (source: string) => {
 };
 
 describe('converter output types', () => {
-    it('判定関数は type のリテラルと sourceInfo の有無で判定する', () => {
-        assert.equal(converter.isIdType({ type: 'id', sourceInfo, value: 'Account' }), true);
-        assert.equal(converter.isIdType({ type: 'id', value: 'Account' }), false);
-        assert.equal(converter.isIdType({ sourceInfo, value: 'Account' }), false);
-        assert.equal(converter.isIdType({ type: 'soqlId', sourceInfo, value: 'Account' }), false);
-        assert.equal(converter.isErrorType({ type: 'error', sourceInfo }), true);
-    });
-
     it('IR のクラスから converter の出力を作る (IR のフィールドをそのまま写す)', () => {
         const id = new IdVisitor().visit(parse('Account', (parser) => parser.id()));
         const output = converter.convertApexTypeClass(id);
-        assert.equal(converter.isIdType(output), true);
+        assert.equal(output.type, 'id');
         assert.equal((output as { value: unknown }).value, 'Account');
         assert.deepEqual(output.sourceInfo, sourceInfo);
     });
@@ -120,9 +104,9 @@ describe('converter output types', () => {
     ] as const;
 
     for (const [file, kind] of examples) {
-        it(`${file}: IR の各ノードの変換結果が出力の判定関数を通る`, async () => {
+        it(`${file}: IR の各ノードの変換結果が type と sourceInfo を持ち、エラーを含まない`, async () => {
             const source = await readFile(
-                new URL(`../../docs/examples/apex-ir/${file}`, import.meta.url),
+                new URL(`../../docs/examples/apex/samples/syntax/${file}`, import.meta.url),
                 'utf8',
             );
             const context = parse(source, (parser) => {
@@ -134,15 +118,10 @@ describe('converter output types', () => {
 
             let checked = 0;
             for (const [type, node] of nodes) {
-                const predicate = predicateOf(type);
-                if (!predicate) continue;
                 const output = converter.convertApexTypeClass(node);
-                assert.equal(predicate(output), true, `${file}: ${type}`);
                 assert.ok(isRecord(output));
-                assert.equal(output.type, type);
+                assert.equal(output.type, type, `${file}: ${type}`);
                 assert.ok(isRecord(output.sourceInfo), type);
-                assert.equal(predicate({ ...output, type: null }), false, type);
-                assert.equal(predicate({ ...output, sourceInfo: null }), false, type);
                 assert.deepEqual(
                     find(output, (n) => n.type === 'error'),
                     [],

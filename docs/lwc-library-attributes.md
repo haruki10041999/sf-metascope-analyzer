@@ -1,9 +1,9 @@
 # LWC のライブラリの parse 結果と属性
 
-LWC のバンドルの各ファイルを、[lwc-parse-plan.md](./lwc-parse-plan.md) で決めたライブラリでそのまま parse し、返ってくる形（ノードの種類と属性）をまとめたもの。IR / JSON（`types/lwc`）に変換する前の、元になる情報の一覧として使う。
+LWC のバンドルの各ファイルを、[lwc-implementation.md](./lwc-implementation.md) のライブラリでそのまま parse し、返ってくる形（ノードの種類と属性）をまとめたもの。IR / JSON（`types/lwc`）に変換する前の、元になる情報の一覧として使う。
 
-- サンプル: [docs/examples/lwc/bundles/](./examples/lwc/bundles/force-app/main/default/lwc/)（JS は TS で書いた）
-- 実行: `npx ttsx --noCheck docs/examples/lwc/run-library-parse.ts`
+- サンプル: [docs/examples/lwc/samples/bundles/](./examples/lwc/samples/bundles/force-app/main/default/lwc/)（JS は TS で書いた）
+- 実行: `npx ttsx --noCheck docs/examples/lwc/scripts/run-library-parse.ts`（`--raw` でライブラリの木をそのまま出す）
 - 出力: [docs/examples/lwc/library-output/](./examples/lwc/library-output/)`<バンドル>/<ファイル>.<ライブラリ>.json`
 - 全属性の一覧（自動生成）: [library-output/attributes.md](./examples/lwc/library-output/attributes.md)。サンプルに出てきたノードの種類ごとに、キー・値の型・件数・例を並べている。この文書は、その中から解析に使うものを選んで説明する
 
@@ -16,7 +16,7 @@ LWC のバンドルの各ファイルを、[lwc-parse-plan.md](./lwc-parse-plan.
 | `utils`       | `.ts` / `.js-meta.xml`                    | 共有のモジュール（テンプレートなし。`export type` / `export interface` / `export const` / `export function`）                                                                                                                                                                                                                                                                                                                                                                                                                                     |
 | `broken`      | 4 種類                                    | LWC の仕様違反: `@api` と `@track` の併用（LWC1093）、`if:true` と `lwc:if` の併用（LWC1166）、大文字のイベント名（LWC1055）、`:root`（style-compiler のエラー）                                                                                                                                                                                                                                                                                                                                                                                  |
 
-実行の結果（[run-library-parse.ts](./examples/lwc/run-library-parse.ts) の出力）:
+実行の結果（[run-library-parse.ts](./examples/lwc/scripts/run-library-parse.ts) の出力）:
 
 | ファイル        | 結果                                                                                                                  |
 | --------------- | --------------------------------------------------------------------------------------------------------------------- |
@@ -35,7 +35,7 @@ LWC のバンドルの各ファイルを、[lwc-parse-plan.md](./lwc-parse-plan.
 | postcss                | `source.start` / `source.end`（`line` / `column` / `offset`）                    | 1 始まり | **1 始まり** | 0 始まり           | **最後の文字**（`end.offset` は最後の文字の次） |
 | parseXml（自前）       | `start` / `end`（`offset` / `line` / `column`）                                  | 1 始まり | 0 始まり     | 0 始まり           | 次の文字                                        |
 
-- Apex の `SourcePosition`（行は 1 始まり、列は 0 始まり）と同じなのは Babel と parseXml。parse5・template-compiler・postcss は列を 1 引いてそろえる（lwc-parse-plan.md 2.2）。
+- Apex の `SourcePosition`（行は 1 始まり、列は 0 始まり）と同じなのは Babel と parseXml。parse5・template-compiler・postcss は列を 1 引いてそろえる。
 - postcss の `end.column` は最後の文字の位置（`    display: block;` の `decl` は `start.column: 5`、`end.column: 19`（`;` の列）、`end.offset` は `;` の次）。`end.offset` だけが次の文字の位置。
 - template-compiler の式の中のノード（`Identifier` / `MemberExpression`）の `start` / `end` は、**`{…}` の中での位置**（`{title}` の `title` は `start: 1`）。ファイルの中の位置は、ノードによって `location` があるときだけ分かる（属性の値・テキストのトップの式には付く。`row.id` の `row` には付かない）。
 - template-compiler の `location` は、同じオブジェクトが親子で共有される（`Property` と、その値の式など）。JSON にするときに循環とみなさないよう、祖先だけを見る（run-library-parse.ts の `toJson`）。
@@ -88,7 +88,7 @@ LWC のバンドルの各ファイルを、[lwc-parse-plan.md](./lwc-parse-plan.
 | `TSAsExpression` / `TSNonNullExpression` / `TSSatisfiesExpression`                                                            | `expression`、`typeAnnotation`                                                                    | `x as string`、`dataset.id!`                            |
 | `TSTypeParameterInstantiation`                                                                                                | `params`                                                                                          | `new CustomEvent<SelectDetail>(…)` の `<SelectDetail>`  |
 
-- 型の参照（`TSTypeReference`）の名前は、`import type` / `interface` / `type` の宣言と名前で突き合わせて解決する（lwc-parse-plan.md 3.1 の `typeRef`）。
+- 型の参照（`TSTypeReference`）の名前は、`import type` / `interface` / `type` の宣言と名前で突き合わせて解決する（未実装。[lwc-implementation.md](./lwc-implementation.md) 7 章）。
 - Babel 8 では、型の引数は `typeArguments`（Babel 7 の `typeParameters` から名前が変わった）。宣言の型の引数（`<T>`）は `typeParameters`（`TSTypeParameterDeclaration`）のまま。
 
 ### 3.4 LWC の検証（@lwc/compiler の `transformSync`）
@@ -188,7 +188,7 @@ LWC のテンプレートとして解釈した木（IR）と、診断（`warning
 
 ## 7. 解析の単位で見たときの対応
 
-バンドル（lwc-parse-plan.md 4.1）の中で、ファイルをまたいで突き合わせるもの:
+バンドルの中で、ファイルをまたいで突き合わせるもの:
 
 | JS / TS（Babel）                                   | HTML（template-compiler）                                    | js-meta.xml          | CSS                        |
 | -------------------------------------------------- | ------------------------------------------------------------ | -------------------- | -------------------------- |

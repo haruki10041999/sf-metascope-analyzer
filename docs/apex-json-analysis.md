@@ -294,7 +294,7 @@ type ApexNodeDiff = ClassDiff | … | SoslFieldDiff | ErrorDiff;
 2. `GumTreeDiff` → kind ごとの型に変換する `toTypedDiff` を作る。`role` で `fields` に振り分け、配列のプロパティは 6.4 の分類どおりに並べる。
 3. `BlockDiff` を `StatementDiff[]` に、field の `init` を `ExpressionDiff` に差し替える。宣言側の呼び出しは変えない。
 4. `triggerCase` / `notSet` / `error` / `annotation` の Diff を、6.4 の型に揃える。
-5. テスト: [docs/examples/apex-diff/](./examples/apex-diff/README.md) のサンプルの全 Diff を `typia.is<ApexNodeDiff>` で検査し、実行時の値が型どおりであることを確かめる（[test/processor/diff-samples.test.ts](../test/processor/diff-samples.test.ts) に追加）。
+5. テスト: [docs/examples/apex/](./examples/apex/README.md) のサンプルの全 Diff を `typia.is<ApexNodeDiff>` で検査し、実行時の値が型どおりであることを確かめる（[test/processor/diff-samples.test.ts](../test/processor/diff-samples.test.ts) に追加）。
 
 ### 6.6 解析との関係
 

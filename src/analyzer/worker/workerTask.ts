@@ -4,24 +4,29 @@ import {
     ObjectTranslationParseResult,
     ObjectTranslationParser,
 } from '../parser';
-import { ApexParser, ApexParseResult, ApexMetaParseResult } from '../parser/Apex/parser';
+import { ApexParser } from '../parser/Apex/parser';
+import type { ApexUnitParseResult } from '../parser/Apex/unit';
+import { LwcParser, type LwcBundleParseResult } from '../parser/Lwc/parser';
 import { writeSaveDataInfo } from '../parser/commons';
 
-/** 本番用の保存ファイルの拡張子 (ApexParser.saveApexFile / MetadataParser.saveObjectFile が <id>.msgpack で保存する) */
+/** 本番用の保存ファイルの拡張子 (ApexParser.saveApexUnit / MetadataParser.saveObjectFile / LwcParser.saveLwcBundle が <id>.msgpack で保存する) */
 export const savedFileExtension = '.msgpack';
 
 /**
- * タスクの対象。Apex はファイル (.cls / .trigger / .apex / -meta.xml)、Object はオブジェクトのフォルダ、
- * ObjectTranslation は翻訳のフォルダ (<オブジェクト>-<言語>)
+ * タスクの対象。Apex は単位 (クラス・トリガー・匿名 Apex。単位のどれかのファイルのパス)、Object はオブジェクトのフォルダ、
+ * ObjectTranslation は翻訳のフォルダ (<オブジェクト>-<言語>)、Lwc はバンドルのフォルダ (lwc/<名前>/)。
+ * どれも 1 単位 (Apex のクラスはソースと -meta.xml、LWC はフォルダ) = 1 件 = 1 つの保存ファイル
  */
-export type WorkerTaskType = 'Apex' | 'Object' | 'ObjectTranslation';
+export type WorkerTaskType = 'Apex' | 'Object' | 'ObjectTranslation' | 'Lwc';
 
 /** 対象ごとの解析結果 */
 export type WorkerParseResult<K extends WorkerTaskType = WorkerTaskType> = K extends 'Apex'
-    ? ApexParseResult | ApexMetaParseResult
+    ? ApexUnitParseResult
     : K extends 'Object'
       ? ObjectParseResult
-      : ObjectTranslationParseResult;
+      : K extends 'ObjectTranslation'
+        ? ObjectTranslationParseResult
+        : LwcBundleParseResult;
 
 /**
  * スレッドとインラインの両方で実行するタスク。worker_threads で受け渡すため plain object にする。
@@ -55,9 +60,9 @@ const toSummary = (parsed: WorkerParseResult): SaveSummary => ({
 /** 対象ごとの解析・保存・読み込み */
 const handlers = {
     Apex: {
-        parse: (filePath: string) => ApexParser.parseApexFile(filePath),
+        parse: (filePath: string) => ApexParser.parseApexUnit(filePath),
         save: (outDir: string, parsed: WorkerParseResult) =>
-            ApexParser.saveApexFile(outDir, parsed as WorkerParseResult<'Apex'>),
+            ApexParser.saveApexUnit(outDir, parsed as WorkerParseResult<'Apex'>),
         load: (outDir: string, id: string) => ApexParser.readApexMsgPack(outDir, id),
     },
     Object: {
@@ -75,6 +80,12 @@ const handlers = {
             ),
         load: (outDir: string, id: string) =>
             ObjectTranslationParser.readObjectTranslationMsgPack(outDir, id),
+    },
+    Lwc: {
+        parse: (bundleDir: string) => LwcParser.parseLwcBundle(bundleDir),
+        save: (outDir: string, parsed: WorkerParseResult) =>
+            LwcParser.saveLwcBundle(outDir, parsed as WorkerParseResult<'Lwc'>),
+        load: (outDir: string, id: string) => LwcParser.readLwcMsgPack(outDir, id),
     },
 } satisfies Record<
     WorkerTaskType,

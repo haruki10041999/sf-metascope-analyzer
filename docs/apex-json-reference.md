@@ -2,7 +2,7 @@
 
 この文書は [src/analyzer/types/apex/](../src/analyzer/types/apex/) で定義される、`kind` と `sourceKeys` を持つ JSON 型（`JsonType` / `StructureJsonType`）と、変換エラーを表す `ErrorJson` の全種類をまとめたものです。
 
-- statement 関連の詳細は [apex-statement-json-reference.md](./apex-statement-json-reference.md)、型同士の参照関係は [apex-json-types-graph.md](./apex-json-types-graph.md) を参照してください。
+- 解析の単位（クラス・トリガー・匿名 Apex。ソースと -meta.xml をまとめた `ApexUnitParseResult`）は [apex-implementation.md](./apex-implementation.md) を参照してください。
 - 表中の `Expr` は `BaseExpressionJson`、`Stmt` は `StatementJson`、`Err` は `ErrorJson`、`Keys` は `ConvertKeys` の略です。`?` は省略可能なプロパティです。
 - 各ノードには、表に記載したフィールドのほかに `kind` と `sourceKeys` があります。
 
@@ -143,7 +143,7 @@ type ClassBlock =
 
 ### 3.4 文（statement）
 
-定義: [statement.ts](../src/analyzer/types/apex/statement.ts)。詳細は [apex-statement-json-reference.md](./apex-statement-json-reference.md) を参照してください。
+定義: [statement.ts](../src/analyzer/types/apex/statement.ts)。
 
 #### トップレベル文（`StatementJson` の要素、19種）
 
@@ -215,10 +215,10 @@ type ClassBlock =
 
 以下は `kind` を持ちますが `sourceKeys` を持たないため、JsonType ではありません。
 
-| kind                                               | 型                                             | 定義                                                        | 説明                                                                     |
-| -------------------------------------------------- | ---------------------------------------------- | ----------------------------------------------------------- | ------------------------------------------------------------------------ |
-| `initializer`                                      | `InitializerBlockJson`                         | [declaration.ts](../src/analyzer/types/apex/declaration.ts) | クラスの初期化ブロック。`block`, `modifier`, `isStatic` を持つ。         |
-| `statement`                                        | `MemberStatementJson`                          | [unit.ts](../src/analyzer/types/apex/unit.ts)               | anonymous / trigger のブロック直下の文。`statement`, `modifier` を持つ。 |
+| kind          | 型                     | 定義                                                        | 説明                                                                     |
+| ------------- | ---------------------- | ----------------------------------------------------------- | ------------------------------------------------------------------------ |
+| `initializer` | `InitializerBlockJson` | [declaration.ts](../src/analyzer/types/apex/declaration.ts) | クラスの初期化ブロック。`block`, `modifier`, `isStatic` を持つ。         |
+| `statement`   | `MemberStatementJson`  | [unit.ts](../src/analyzer/types/apex/unit.ts)               | anonymous / trigger のブロック直下の文。`statement`, `modifier` を持つ。 |
 
 `new` 式の初期化部分の形式（`array` / `class` / `map` / `no` / `list || set`）は、`kind` ではなく `initType` に持ちます（`kind` は JSON ノードの印なので使いません）。
 

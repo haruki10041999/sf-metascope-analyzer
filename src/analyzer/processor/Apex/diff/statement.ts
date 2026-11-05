@@ -54,12 +54,11 @@ import {
     pairAsSet,
     pairByKey,
 } from '../../commons/diff/commons';
-import { SourceDistance, findNodeSourceInfo, getSourceDistance } from '../../commons/source';
 import {
     DiffNodeValue,
     GumTreeDiff,
-    GumTreeNode,
     makeGumTreeDiff,
+    makeSourceDistance,
     matchTrees,
 } from '../../commons/diff/gumtree';
 import { makeBlockTree } from './gumtree/tree';
@@ -469,22 +468,6 @@ export const makeOpaqueBlockDiff = (
     });
 };
 
-const makeNodeDistance = (sources: Sources) => {
-    return (before: GumTreeNode, after: GumTreeNode): SourceDistance | undefined => {
-        if (!before.source || !after.source) {
-            return undefined;
-        }
-        try {
-            return getSourceDistance(
-                findNodeSourceInfo(sources.before, before.source),
-                findNodeSourceInfo(sources.after, after.source),
-            );
-        } catch {
-            return undefined;
-        }
-    };
-};
-
 /** GumTree による文・式の並びの差分 */
 export const makeGumTreeBlockDiff = (
     before: unknown[],
@@ -496,7 +479,7 @@ export const makeGumTreeBlockDiff = (
     const mappings = matchTrees(
         rootBefore,
         rootAfter,
-        sources ? { distance: makeNodeDistance(sources) } : {},
+        sources ? { distance: makeSourceDistance(sources) } : {},
     );
     return makeGumTreeDiff<DiffNodeValue>(rootBefore, rootAfter, mappings);
 };

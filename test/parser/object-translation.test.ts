@@ -15,7 +15,9 @@ import { writeSaveDataInfo } from '../../src/analyzer/parser/commons';
 /** docs/examples/metadata の翻訳のサンプルを、本番と同じ流れ (ObjectTranslationParser) で読む */
 
 const translationsDir = (side: 'before' | 'after') =>
-    path.resolve(`docs/examples/metadata/${side}/force-app/main/default/objectTranslations`);
+    path.resolve(
+        `docs/examples/metadata/samples/${side}/force-app/main/default/objectTranslations`,
+    );
 
 let tmp: string;
 before(async () => {
@@ -47,7 +49,7 @@ describe('ObjectTranslationParser', () => {
 
     it('finds translation folders under objectTranslations', async () => {
         const directories = await ObjectTranslationParser.searchObjectTranslationDirectories(
-            path.resolve('docs/examples/metadata/after'),
+            path.resolve('docs/examples/metadata/samples/after'),
         );
         assert.deepEqual(
             directories.map((d) => path.basename(d)),
@@ -168,7 +170,9 @@ describe('ObjectTranslationParser', () => {
         const outDir = path.join(tmp, 'saved');
         const translation = await parse('Invoice__c-ja');
         const object = await MetadataParser.parseObject(
-            path.resolve('docs/examples/metadata/after/force-app/main/default/objects/Invoice__c'),
+            path.resolve(
+                'docs/examples/metadata/samples/after/force-app/main/default/objects/Invoice__c',
+            ),
         );
         await writeSaveDataInfo([
             ...ObjectTranslationParser.saveObjectTranslationFile(outDir, translation),

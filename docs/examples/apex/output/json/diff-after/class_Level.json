@@ -1,0 +1,184 @@
+{
+  "filePath": "docs/examples/apex/samples/diff/after/Level.cls",
+  "resolvedError": [],
+  "dataType": "apexUnit",
+  "result": {
+    "id": "class_Level",
+    "base": {
+      "name": "Level",
+      "unitType": "class",
+      "source": {
+        "fileName": "Level.cls",
+        "fileType": "cls",
+        "content": {
+          "kind": "enum",
+          "sourceKeys": {
+            "base": {
+              "objectKey": "enumDeclaration_97350b2f62bd3799",
+              "sourceKey": "enumDeclaration_c435a86df91b037e"
+            },
+            "name": {
+              "objectKey": "id_aab591c86602230e",
+              "sourceKey": "id_1cb6d4a8529624af"
+            }
+          },
+          "name": "Level",
+          "members": [
+            {
+              "kind": "enumConstant",
+              "sourceKeys": {
+                "objectKey": "id_e899e12faada9520",
+                "sourceKey": "id_1bd0f82349e1ee39"
+              },
+              "name": "LOW"
+            },
+            {
+              "kind": "enumConstant",
+              "sourceKeys": {
+                "objectKey": "id_275d10ae79ecda31",
+                "sourceKey": "id_a77070c63cbfe512"
+              },
+              "name": "MEDIUM"
+            },
+            {
+              "kind": "enumConstant",
+              "sourceKeys": {
+                "objectKey": "id_e07d5cdb0ca1bbb7",
+                "sourceKey": "id_e3632bbe2c7b9731"
+              },
+              "name": "HIGH"
+            }
+          ],
+          "modifier": {
+            "access": [
+              {
+                "kind": "modifier",
+                "sourceKeys": {
+                  "objectKey": "modifier_a04213395735c45e",
+                  "sourceKey": "modifier_83442bd3f55cf1b2"
+                },
+                "name": "PUBLIC"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "sourceObject": [
+      {
+        "objectKey": "enumDeclaration_97350b2f62bd3799",
+        "context": "enum Level {\n    LOW,\n    MEDIUM,\n    HIGH\n}",
+        "source": [
+          {
+            "sourceKey": "enumDeclaration_c435a86df91b037e",
+            "start": {
+              "offset": 7,
+              "line": 1,
+              "column": 7
+            },
+            "end": {
+              "offset": 51,
+              "line": 5,
+              "column": 1
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "id_aab591c86602230e",
+        "context": "Level",
+        "source": [
+          {
+            "sourceKey": "id_1cb6d4a8529624af",
+            "start": {
+              "offset": 12,
+              "line": 1,
+              "column": 12
+            },
+            "end": {
+              "offset": 17,
+              "line": 1,
+              "column": 17
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "id_e899e12faada9520",
+        "context": "LOW",
+        "source": [
+          {
+            "sourceKey": "id_1bd0f82349e1ee39",
+            "start": {
+              "offset": 24,
+              "line": 2,
+              "column": 4
+            },
+            "end": {
+              "offset": 27,
+              "line": 2,
+              "column": 7
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "id_275d10ae79ecda31",
+        "context": "MEDIUM",
+        "source": [
+          {
+            "sourceKey": "id_a77070c63cbfe512",
+            "start": {
+              "offset": 33,
+              "line": 3,
+              "column": 4
+            },
+            "end": {
+              "offset": 39,
+              "line": 3,
+              "column": 10
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "id_e07d5cdb0ca1bbb7",
+        "context": "HIGH",
+        "source": [
+          {
+            "sourceKey": "id_e3632bbe2c7b9731",
+            "start": {
+              "offset": 45,
+              "line": 4,
+              "column": 4
+            },
+            "end": {
+              "offset": 49,
+              "line": 4,
+              "column": 8
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "modifier_a04213395735c45e",
+        "context": "public",
+        "source": [
+          {
+            "sourceKey": "modifier_83442bd3f55cf1b2",
+            "start": {
+              "offset": 0,
+              "line": 1,
+              "column": 0
+            },
+            "end": {
+              "offset": 6,
+              "line": 1,
+              "column": 6
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

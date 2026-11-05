@@ -2,7 +2,7 @@
 
 [src/analyzer/types/apex/](../src/analyzer/types/apex/) の `kind` / `sourceKeys` を持つ JSON（[apex-json-reference.md](./apex-json-reference.md) の全種類）について、変更前（`before`）と変更後（`after`）の差分をどう取るかの方針をまとめる。
 
-- 文の並び `(StatementJson | ErrorJson)[]` の差分は [apex-statement-diff.md](./apex-statement-diff.md) に従う。この文書はそれ以外の型と、全体で揃えるルールを扱う。
+- 文の並び `(StatementJson | ErrorJson)[]` の対応付けは [apex-gumtree-diff.md](./apex-gumtree-diff.md)（GumTree）、宣言は [apex-declaration-diff.md](./apex-declaration-diff.md)。この文書は全体で揃えるルールと型ごとの分類を扱う。全体の構成は [apex-implementation.md](./apex-implementation.md)。
 - 実装は [src/analyzer/processor/Apex/diff/](../src/analyzer/processor/Apex/diff/) に置く。
 
 ## 1. 前提
@@ -161,14 +161,14 @@ type ListItemDiff<K extends string, T, D> =
 | `class`（Structure）             | A（ユニット直下）/ D（メンバー、キー: 名前）    | `name`: 値 / `extend`: A / `implement`: **B** / `block`: **D**（6.2） / `modifier`: **B**                                                                                    |
 | `interface`（Structure）         | A / D（キー: 名前）                             | `name`: 値 / `extend`: **B** / `block`: **D**（キー: 名前 + パラメータ型の並び） / `modifier`: B                                                                             |
 | `interfaceMethod`（Structure）   | D（キー: 名前 + パラメータ型の並び）            | `name`: 値 / `returnType`: A（`'void'` を含む） / `param`: **C** / `modifier`: B                                                                                             |
-| `method`（Structure）            | D（キー: 名前 + パラメータ型の並び）            | `name`: 値 / `returnType`: A / `param`: **C** / `block`: 文の Diff（apex-statement-diff.md） / `modifier`: B                                                                 |
+| `method`（Structure）            | D（キー: 名前 + パラメータ型の並び）            | `name`: 値 / `returnType`: A / `param`: **C** / `block`: 文の Diff（apex-gumtree-diff.md） / `modifier`: B                                                                 |
 | `constructor`（Structure）       | D（キー: パラメータ型の並び）                   | `name`: 値（修飾名の配列を丸ごと） / `param`: **C** / `block`: 文の Diff / `modifier`: B                                                                                     |
 | `property`（Structure）          | D（キー: 名前）                                 | `name`: 値 / `variantType`: A / `isGetter` / `isSetter`: 値 / `getterContent` / `setterContent`: A（中の `block` は文の Diff、`modifier` は B） / `error`: B / `modifier`: B |
 | `enum`（Structure）              | D（キー: 名前）                                 | `name`: 値 / `members`: **C**（`ordinal()` が並び順で決まるため） / `modifier`: B                                                                                            |
 | `enumConstant`                   | C の要素                                        | `name`: 値                                                                                                                                                                   |
 | `field`                          | D（キー: 変数名の並び）                         | `variantType`: A / `variants`: D（キー: 変数名。`init` は A） / `modifier`: B                                                                                                |
 | `notSet`                         | `objectKey` のみ                                | なし                                                                                                                                                                         |
-| `initializer`（sourceKeys なし） | C（クラス本文の中の初期化ブロックだけを並べる） | `isStatic`: 値 / `block`: 文の Diff / `modifier`: B。キーは子の `objectKey` の並びから作る（apex-statement-diff.md 4.1 と同じ）                                              |
+| `initializer`（sourceKeys なし） | C（クラス本文の中の初期化ブロックだけを並べる） | `isStatic`: 値 / `block`: 文の Diff / `modifier`: B。キーは子の `objectKey` の並びから作る（apex-gumtree-diff.md 4.1 と同じ）                                              |
 
 - メソッド・コンストラクタのキーに使うパラメータ型は、`TypeContentJson` を文字列化したもの（`variant` の名前は含めない）。オーバーロードを区別するため。
 - 名前やシグネチャが変わったものは `removed` + `added` にする（リネームの推定は未決事項）。
@@ -290,7 +290,7 @@ Query-level Diff の初版は、SELECT 項目を B、FROM / ORDER BY / GROUP BY 
 
 ## 8. 未決事項
 
-- `moved` を独立した status にするか（C のみ）。apex-statement-diff.md の未決事項と同時に決める。
+- `moved` を独立した status にするか（C のみ）。apex-gumtree-diff.md の未決事項と同時に決める。
 - 距離のしきい値と、使う指標（`range` → `center` → `start` → `end` の順で比べる今の `compareSourceDistance` でよいか）。
 - D でリネームを推定するか（同じ kind の `removed` / `added` を、本体の `objectKey` の一致や距離で組にし `match: 'nearest'` にする）。
 - GumTree の対応付けだけでは説明しきれない配列の意味を追加で識別する必要があるか。

@@ -1,4 +1,4 @@
-// LWC の JS / TS の構文解析 (docs/lwc-parse-plan.md 3.1.1・3.1.7)
+// LWC の JS / TS の構文解析 (docs/lwc-implementation.md)
 import path from 'node:path';
 
 import { parse, type ParseResult, type ParserOptions } from '@babel/parser';

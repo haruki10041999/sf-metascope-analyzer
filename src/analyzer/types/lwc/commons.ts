@@ -1,10 +1,9 @@
 // LWC の JSON 生成層で共通の部品 (Apex の types/apex/commons に当たる)。
 // 入力は converter の出力 (LwcXxxType。sourceInfo を持ったまま)。ソースの文字列は sourceInfo から読み、
 // JSON を作る段階で sourceInfo を sourceKeys と sourceObject に分ける (Apex は makeConvertType で先に分ける)
-import { sortKeys } from '../apex/commons/convert';
-import type { ErrorType } from '../apex/converter/commons';
+import type { ErrorType } from '../commons/converter';
 import { makeErrorJson, type ConvertKeys, type ErrorJson } from '../commons/json';
-import { hash, isRecord } from '../commons/utils';
+import { hash, isRecord, sortKeys } from '../commons/utils';
 
 import type { LwcAnyNodeType, LwcSourceInfo } from './converter';
 import type { LwcSourceJson } from './bundle';

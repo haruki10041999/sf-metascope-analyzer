@@ -14,7 +14,7 @@ import { XmlSyntaxError, parseXml } from '../../src/analyzer/types/commons/xml';
 import { findXmlSourceInfo } from '../../src/analyzer/types/commons/xmlJson';
 import type { CustomFieldJson } from '../../src/analyzer/types/metadata/field';
 
-const sample = path.resolve('docs/examples/metadata');
+const sample = path.resolve('docs/examples/metadata/samples');
 const objectsOf = (side: string) =>
     path.join(sample, side, 'force-app', 'main', 'default', 'objects');
 

@@ -30,7 +30,10 @@ describe('makeModifiersJson', () => {
                 name: 'PUBLIC',
             },
         ]);
-        assert.deepEqual(result.declaration?.map((m) => m.name), ['STATIC']);
+        assert.deepEqual(
+            result.declaration?.map((m) => m.name),
+            ['STATIC'],
+        );
     });
 
     it('どの分類にも当たらない修飾子を捨てずに other に入れる', async () => {
@@ -39,7 +42,10 @@ describe('makeModifiersJson', () => {
 
         const result = makeModifiersJson([unknown, transient]);
 
-        assert.deepEqual(result.other?.map((m) => m.name), ['UNKNOWN_MODIFIER', 'TRANSIENT']);
+        assert.deepEqual(
+            result.other?.map((m) => m.name),
+            ['UNKNOWN_MODIFIER', 'TRANSIENT'],
+        );
     });
 
     it('エラーノードの修飾子は error に入る', async () => {

@@ -1,4 +1,4 @@
-import { SourceInfo } from '../converter';
+import { SourceInfo } from '../../commons/converter';
 
 import { ConvertKeys, JsonType, isJsonType, isStructureJsonType } from '../../commons/json';
 

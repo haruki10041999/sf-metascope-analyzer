@@ -1,3 +1,0 @@
-{
-  "code": "function stylesheet(token, useActualHostSelector, useNativeDirPseudoclass) {\n  var shadowSelector = token ? (\"[\" + token + \"]\") : \"\";\n  var hostSelector = token ? (\"[\" + token + \"-host]\") : \"\";\n  var suffixToken = token ? (\"-\" + token) : \"\";\n  return \".amount\" + shadowSelector + \" {margin-left: 0.25rem;}\";\n  /*LWC compiler v9.5.1*/\n}\nexport default [stylesheet];"
-}

@@ -1,12 +1,13 @@
 // Apex の converter: apex_IR (TypeClass) → CommonType。LWC の convertLwcTypeClass と同じく 1 つの変換で書く。
 // 出力は IR のフィールドをそのまま写したもの ({ type, sourceInfo, ...フィールド })。
 // IR のフィールド名と CommonType の名前が違うところ・出力しないところだけを、APEX_CONVERT_OVERRIDES に書く。
-// 出力の型 (XxxType) は、このディレクトリの各ファイルにある
+// 出力の型 (XxxType) は nodes.ts にまとめてある
 import { ApexCommonTypeClass, ApexErrorTypeClass } from '../../apex_IR/commonVisitor';
 
-import { makeErrorType, makeSourceInfo, type CommonType, type ErrorType } from './commons';
-import { extractFindSearchTerm } from './literal';
-import type { AnonymousUnitType, CompilationUnitType, TriggerUnitType } from './unit';
+import type { CommonType, ErrorType } from '../../commons/converter';
+
+import { makeErrorType, makeSourceInfo } from './commons';
+import type { AnonymousUnitType, CompilationUnitType, TriggerUnitType } from './nodes';
 
 type ConvertOverride = {
     /** IR のフィールド名 → CommonType の名前 */
@@ -15,6 +16,15 @@ type ConvertOverride = {
     dropIfNull?: readonly string[];
     /** 出力を直す (rename / dropIfNull のあとに呼ぶ) */
     adjust?: (output: Record<string, unknown>) => void;
+};
+
+// FindLiteral（[FIND '...'）/ FindLiteralAlt（[FIND {...}）のトークンから検索語だけを取り出す。
+// 形式が想定外のときはトークンの文字列をそのまま返す
+const FIND_LITERAL_PATTERN = /^\[\s*FIND\s*(?:'((?:\\.|[^\\'])*)'|\{((?:\\.|[^\\}])*)\})\s*$/i;
+
+export const extractFindSearchTerm = (token: string): string => {
+    const match = token.match(FIND_LITERAL_PATTERN);
+    return match ? (match[1] ?? match[2] ?? token) : token;
 };
 
 /** SOSL の FIND '...' / FIND {...} のトークンから検索語だけにする */

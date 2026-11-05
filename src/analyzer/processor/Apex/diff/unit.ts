@@ -1,218 +1,108 @@
-import { ApexFileStructureType, ApexMetaParseResult, ApexParseResult } from '../../../parser';
+import type {
+    ApexMetaFileJson,
+    ApexSourceJson,
+    ApexUnitJson,
+    ApexUnitParseResult,
+} from '../../../parser/Apex';
 
-/** 比べるファイル 1 つの解析結果。Apex のソース (.cls / .trigger / .apex) とメタデータ (-meta.xml) */
-export type ApexUnitParseResult = ApexParseResult | ApexMetaParseResult;
+import { Sources, ValueDiff, makeValueDiff } from '../../commons/diff/commons';
+import { TypedObjectDiff, makeTypedObjectDiff } from '../../commons/diff/list';
+import { PresentDiff, makePresentDiff, presentEntry } from '../../commons/diff/present';
+import { IdUnitDiff, makeIdUnitDiffs } from '../../commons/diff/unit';
+import { UnitContentDiff, makeUnitContentDiff } from './unitBody';
 
-/** 構文エラー・読めなかった XML (ソースと -meta.xml で形が少し違う) */
-type ResolvedError = ApexUnitParseResult['resolvedError'][number];
-import { CompilationUnitJson } from '../../../types';
-import {
-    CompilationUnitJsonDiff,
-    UnitContentDiff,
-    makeTypeDeclarationDiff,
-    makeUnitContentDiff,
-} from './unitBody';
-import { hasChange } from '../../commons/diff/change';
+// Apex の単位 (クラス・トリガー・匿名 Apex) の差分。LWC のバンドル・オブジェクトと同じく、id (class_<名前> など) で
+// 対応付ける (processor/commons/diff/unit.ts)。中身はソースと -meta.xml に分けて比べる
 
-export type UnitDiffAttribute<T> = {
-    before: T;
-    after: T;
+/**
+ * ソースの差分。どちらも読めて種類 (cls / trigger / anonymous) が同じなら中身の差分 (makeUnitContentDiff)、
+ * そうでなければ (読めなかった・種類が変わった) 値ごと
+ */
+export type ApexSourceDiff =
+    | TypedObjectDiff<
+          ApexSourceJson,
+          {
+              fileName: ValueDiff<string>;
+              fileType: ValueDiff<ApexSourceJson['fileType']>;
+              content: UnitContentDiff;
+          }
+      >
+    | ValueDiff<ApexSourceJson>;
+
+const makeSourceDiff = (
+    before: ApexSourceJson,
+    after: ApexSourceJson,
+    sources: Sources,
+): ApexSourceDiff => {
+    if (before.fileType === 'error' || before.fileType !== after.fileType) {
+        return makeValueDiff(before, after);
+    }
+    const fileType = before.fileType;
+    return makeTypedObjectDiff(before, after, (b, a) => ({
+        fileName: makeValueDiff(b.fileName, a.fileName),
+        fileType: makeValueDiff(b.fileType, a.fileType),
+        content: makeUnitContentDiff(
+            fileType,
+            { base: b.content, sourceObject: sources.before },
+            { base: a.content, sourceObject: sources.after },
+        )!,
+    }));
 };
 
-export type UnitDiffAttributeArray<T> = {
-    common: T[];
-    before: T[];
-    after: T[];
-};
+/** -meta.xml の差分。どちらも読めて種類が同じなら中身の差分、そうでなければ値ごと */
+export type ApexMetaFileDiff = TypedObjectDiff<
+    ApexMetaFileJson,
+    {
+        fileName: ValueDiff<string>;
+        meta: UnitContentDiff | ValueDiff<ApexMetaFileJson['meta']>;
+    }
+>;
 
-export type UnitDiff =
-    | {
-          status: 'added' | 'removed';
-          filePath: ApexUnitParseResult['filePath'];
-          dataType: ApexUnitParseResult['dataType'];
-          resolvedError: ResolvedError[];
-          target: ApexUnitParseResult['result'];
-      }
-    | {
-          status: 'unchanged';
-          filePath: ApexUnitParseResult['filePath'];
-          dataType: ApexUnitParseResult['dataType'];
-          resolvedError: ResolvedError[];
-          target: UnitDiffAttribute<ApexUnitParseResult['result']>;
-          // ファイルの中身の差分 (dataType が同じで、どちらもエラーでないとき)
-          content?: UnitContentDiff;
-      }
-    | {
-          status: 'changed';
-          filePath: ApexUnitParseResult['filePath'];
-          dataType:
-              ApexUnitParseResult['dataType'] | UnitDiffAttribute<ApexUnitParseResult['dataType']>;
-          resolvedError: ResolvedError[] | UnitDiffAttributeArray<ResolvedError>;
-          target: UnitDiffAttribute<ApexUnitParseResult['result']>;
-          content?: UnitContentDiff;
-      };
+const makeMetaFileDiff = (before: ApexMetaFileJson, after: ApexMetaFileJson): ApexMetaFileDiff =>
+    makeTypedObjectDiff(before, after, (b, a) => ({
+        fileName: makeValueDiff(b.fileName, a.fileName),
+        meta:
+            b.meta.kind !== 'error' && b.meta.kind === a.meta.kind
+                ? makeUnitContentDiff(b.meta.kind, { base: b.meta }, { base: a.meta })!
+                : makeValueDiff(b.meta, a.meta),
+    }));
 
-export type ClsFileDiff = (
-    | {
-          status: 'unchanged';
-          kind: ApexFileStructureType<CompilationUnitJson>['result']['base']['kind'];
-          target: UnitDiffAttribute<ApexFileStructureType<CompilationUnitJson>['result']>;
-      }
-    | {
-          status: 'changed';
-          kind: UnitDiffAttribute<
-              ApexFileStructureType<CompilationUnitJson>['result']['base']['kind']
-          >;
-          target: UnitDiffAttribute<ApexFileStructureType<CompilationUnitJson>['result']>;
-      }
-) & {
-    // 型宣言 (class / interface / enum) の中身の差分
-    content: CompilationUnitJsonDiff;
-};
+export type ApexUnitJsonDiff = TypedObjectDiff<
+    ApexUnitJson,
+    {
+        name: ValueDiff<string>;
+        unitType: ValueDiff<ApexUnitJson['unitType']>;
+        /** 片方にしかなければ added / removed (ソースだけ・-meta.xml だけの単位もある) */
+        source?: PresentDiff<ApexSourceJson, ApexSourceDiff>;
+        meta?: PresentDiff<ApexMetaFileJson, ApexMetaFileDiff>;
+    }
+>;
 
-const makeResolvedErrorDiff = (
-    before: ResolvedError[],
-    after: ResolvedError[],
-): UnitDiffAttributeArray<ResolvedError> => {
-    const common: ResolvedError[] = [];
-    const _before: ResolvedError[] = [];
-    const _after: ResolvedError[] = [...after];
+export const makeApexUnitJsonDiff = (
+    before: ApexUnitJson,
+    after: ApexUnitJson,
+    sources: Sources,
+): ApexUnitJsonDiff =>
+    makeTypedObjectDiff(before, after, (b, a) => ({
+        name: makeValueDiff(b.name, a.name),
+        unitType: makeValueDiff(b.unitType, a.unitType),
+        ...presentEntry(
+            'source',
+            makePresentDiff(b.source, a.source, (x, y) => makeSourceDiff(x, y, sources)),
+        ),
+        ...presentEntry('meta', makePresentDiff(b.meta, a.meta, makeMetaFileDiff)),
+    }));
 
-    before.forEach((b) => {
-        const objectKey = b.sourceKeys.objectKey;
-        const index = _after.findIndex((a) => a.sourceKeys.objectKey === objectKey);
+/** 単位 1 つの差分。id (class_<名前> / trigger_<名前> / anonymous_<名前>) で対応付ける */
+export type ApexUnitDiff = IdUnitDiff<ApexUnitParseResult, ApexUnitJsonDiff>;
 
-        if (index === -1) {
-            _before.push(b);
-        } else {
-            common.push(b);
-            _after.splice(index, 1);
-        }
-    });
-
-    return {
-        common: common,
-        before: _before,
-        after: _after,
-    };
-};
-
-export const makeUnitDiffs = (
+/** 単位の解析結果の一覧同士の差分。LWC の makeLwcBundleDiffs・メタデータの makeXmlUnitDiffs と同じ makeIdUnitDiffs を使う */
+export const makeApexUnitDiffs = (
     before: ApexUnitParseResult[],
     after: ApexUnitParseResult[],
-): UnitDiff[] => {
-    const unitDiff: UnitDiff[] = [];
-
-    const _after = [...after];
-
-    before.forEach((b) => {
-        const { dataType, filePath, resolvedError, result } = b;
-        const filePathIndex = _after.findIndex((a) => a.filePath === filePath);
-
-        if (filePathIndex === -1) {
-            unitDiff.push({
-                status: 'removed',
-                filePath: filePath,
-                dataType: dataType,
-                resolvedError: resolvedError,
-                target: result,
-            });
-        } else {
-            const {
-                dataType: afterDataType,
-                filePath: _,
-                resolvedError: afterResolvedError,
-                result: afterResult,
-            } = _after.at(filePathIndex)!;
-
-            const target: UnitDiffAttribute<ApexUnitParseResult['result']> = {
-                before: result,
-                after: afterResult,
-            };
-
-            const isSameDataType = dataType === afterDataType;
-            const resolvedErrorDiff = makeResolvedErrorDiff(resolvedError, afterResolvedError);
-            const content =
-                isSameDataType && dataType !== 'error'
-                    ? makeUnitContentDiff(dataType, result, afterResult)
-                    : undefined;
-
-            if (
-                isSameDataType &&
-                resolvedErrorDiff.before.length === 0 &&
-                resolvedErrorDiff.after.length === 0 &&
-                !hasChange(content)
-            ) {
-                unitDiff.push({
-                    status: 'unchanged',
-                    filePath: filePath,
-                    dataType: dataType,
-                    resolvedError: resolvedErrorDiff.common,
-                    target: target,
-                    ...(content ? { content } : {}),
-                });
-            } else {
-                unitDiff.push({
-                    status: 'changed',
-                    filePath: filePath,
-                    dataType: isSameDataType
-                        ? b.dataType
-                        : { before: dataType, after: afterDataType },
-                    resolvedError:
-                        resolvedErrorDiff.before.length === 0 &&
-                        resolvedErrorDiff.after.length === 0
-                            ? resolvedErrorDiff.common
-                            : resolvedErrorDiff,
-                    target: target,
-                    ...(content ? { content } : {}),
-                });
-            }
-
-            _after.splice(filePathIndex, 1);
-        }
+): ApexUnitDiff[] =>
+    makeIdUnitDiffs<ApexUnitParseResult, ApexUnitJsonDiff>(before, after, {
+        dataType: 'apexUnit',
+        make: (b, a, sources) =>
+            makeApexUnitJsonDiff(b as ApexUnitJson, a as ApexUnitJson, sources),
     });
-
-    _after.forEach((a) => {
-        const { dataType, filePath, resolvedError, result } = a;
-        unitDiff.push({
-            status: 'added',
-            filePath: filePath,
-            dataType: dataType,
-            resolvedError: resolvedError,
-            target: result,
-        });
-    });
-
-    return unitDiff;
-};
-
-export const makeClsFileDiff = (
-    target: UnitDiffAttribute<ApexFileStructureType<CompilationUnitJson>['result']>[],
-): ClsFileDiff[] => {
-    const clsFileDiff: ClsFileDiff[] = [];
-
-    target.forEach((t) => {
-        const content = makeTypeDeclarationDiff(t.before.base, t.after.base, {
-            before: t.before.sourceObject,
-            after: t.after.sourceObject,
-        });
-
-        if (t.before.base.kind === t.after.base.kind) {
-            clsFileDiff.push({
-                status: 'unchanged',
-                kind: t.before.base.kind,
-                target: t,
-                content,
-            });
-        } else {
-            clsFileDiff.push({
-                status: 'changed',
-                kind: { before: t.before.base.kind, after: t.after.base.kind },
-                target: t,
-                content,
-            });
-        }
-    });
-
-    return clsFileDiff;
-};

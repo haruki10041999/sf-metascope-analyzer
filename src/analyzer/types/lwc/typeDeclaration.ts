@@ -1,4 +1,4 @@
-// TS の型の宣言 (interface / type / enum) の JSON (docs/lwc-parse-plan.md 3.1.4・3.1.6 の lwcTypeDeclaration)。
+// TS の型の宣言 (interface / type / enum) の JSON (docs/lwc-json-reference.md)。
 // 名前を持つ宣言なので、Apex の宣言と同じく StructureJsonType (sourceKeys: { base, name })。
 // 型の宣言は部分木全体を検査する (Apex の field と同じ)
 import {

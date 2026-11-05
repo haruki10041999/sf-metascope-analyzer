@@ -1,8 +1,0 @@
-{
-  "error": {
-    "message": "broken.css:1:1: Invalid usage of unsupported selector \":root\". This selector is only supported in non-scoped CSS where the `disableSyntheticShadowSupport` flag is set to true.",
-    "line": 1,
-    "column": 1,
-    "reason": "Invalid usage of unsupported selector \":root\". This selector is only supported in non-scoped CSS where the `disableSyntheticShadowSupport` flag is set to true."
-  }
-}

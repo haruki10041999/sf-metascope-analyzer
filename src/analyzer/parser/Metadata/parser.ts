@@ -21,7 +21,16 @@ import {
     readXmlFile,
     toXmlResolvedError,
 } from '../commons';
+import { APEX_UNIT_PREFIXES } from '../Apex/unit';
+import { LWC_SAVE_PREFIX } from '../Lwc/parser';
 import { OBJECT_TRANSLATION_SAVE_PREFIX } from './objectTranslation';
+
+/** 同じ保存先に置くほかの種類の保存名の接頭辞 (オブジェクトは API 名のまま保存するので、これら以外がオブジェクト) */
+const OTHER_SAVE_PREFIXES = [
+    OBJECT_TRANSLATION_SAVE_PREFIX,
+    ...Object.values(APEX_UNIT_PREFIXES),
+    LWC_SAVE_PREFIX,
+];
 
 /** オブジェクト 1 つ (フォルダ単位) の解析結果。Apex の ApexFileStructureType と同じ形 */
 export type ObjectFileStructureType = {
@@ -166,11 +175,11 @@ export class MetadataParser {
         const names = await fs.readdir(baseDir).catch(() => [] as string[]);
         return Promise.all(
             names
-                // 同じフォルダに保存した翻訳 (objectTranslation_) は除く
+                // 同じフォルダに保存したほかの種類 (翻訳・Apex・LWC) は除く
                 .filter(
                     (name) =>
                         name.endsWith('.msgpack') &&
-                        !name.startsWith(OBJECT_TRANSLATION_SAVE_PREFIX),
+                        !OTHER_SAVE_PREFIXES.some((prefix) => name.startsWith(prefix)),
                 )
                 .sort()
                 .map((name) =>

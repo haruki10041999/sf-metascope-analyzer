@@ -1,0 +1,646 @@
+{
+  "filePath": "docs/examples/lwc/samples/diff/before/utils",
+  "resolvedError": [],
+  "dataType": "lwcBundle",
+  "result": {
+    "id": "utils",
+    "base": {
+      "name": "utils",
+      "namespace": "c",
+      "modules": [
+        {
+          "fileName": "utils.ts",
+          "main": true,
+          "module": {
+            "fileType": "ts",
+            "imports": [],
+            "otherExports": [
+              "formatAmount",
+              "toRows"
+            ],
+            "declarations": [
+              {
+                "kind": "lwcDeclaration",
+                "sourceKeys": {
+                  "base": {
+                    "objectKey": "variableDeclarator_f65688039df0f49d",
+                    "sourceKey": "variableDeclarator_6aac85db4c6007ff"
+                  },
+                  "name": {
+                    "objectKey": "identifier_8a9c1da14f1ed521",
+                    "sourceKey": "identifier_482c3bacf70d3222"
+                  }
+                },
+                "name": "formatter",
+                "declarationType": "variable",
+                "exported": false,
+                "variableKind": "const",
+                "init": "new Intl.NumberFormat('ja-JP', { style: 'currency', currency: 'JPY' })",
+                "references": [],
+                "calls": [],
+                "events": []
+              },
+              {
+                "kind": "lwcDeclaration",
+                "sourceKeys": {
+                  "base": {
+                    "objectKey": "variableDeclarator_8a489a81e20fee35",
+                    "sourceKey": "variableDeclarator_bef3791e426b0c63"
+                  },
+                  "name": {
+                    "objectKey": "identifier_49afe1afd36a4078",
+                    "sourceKey": "identifier_0fa040a60969d570"
+                  }
+                },
+                "name": "formatAmount",
+                "declarationType": "function",
+                "exported": true,
+                "variableKind": "const",
+                "init": "(value: number): string => formatter.format(value)",
+                "references": [],
+                "param": [
+                  {
+                    "kind": "lwcParameter",
+                    "sourceKeys": {
+                      "objectKey": "identifier_9f32480a85ee8cbc",
+                      "sourceKey": "identifier_7e62148bbc1242a4"
+                    },
+                    "variant": "value",
+                    "variantType": {
+                      "kind": "lwcType",
+                      "sourceKeys": {
+                        "objectKey": "tSNumberKeyword_850ba0354605a53c",
+                        "sourceKey": "tSNumberKeyword_08b904dd7cec6830"
+                      },
+                      "text": "number",
+                      "type": "primitive",
+                      "primitiveType": "number"
+                    },
+                    "optional": false,
+                    "modifier": {}
+                  }
+                ],
+                "returnType": {
+                  "kind": "lwcType",
+                  "sourceKeys": {
+                    "objectKey": "tSStringKeyword_7d896e6512bf9cb2",
+                    "sourceKey": "tSStringKeyword_bc09120f0cf4f075"
+                  },
+                  "text": "string",
+                  "type": "primitive",
+                  "primitiveType": "string"
+                },
+                "async": false,
+                "calls": [],
+                "events": []
+              },
+              {
+                "kind": "lwcDeclaration",
+                "sourceKeys": {
+                  "base": {
+                    "objectKey": "functionDeclaration_eb3de573e12cf112",
+                    "sourceKey": "functionDeclaration_e282287da472c05c"
+                  },
+                  "name": {
+                    "objectKey": "identifier_925385912fc381e3",
+                    "sourceKey": "identifier_d67de407701abb38"
+                  }
+                },
+                "name": "toRows",
+                "declarationType": "function",
+                "exported": true,
+                "references": [],
+                "param": [
+                  {
+                    "kind": "lwcParameter",
+                    "sourceKeys": {
+                      "objectKey": "identifier_20f9ab4dba687de5",
+                      "sourceKey": "identifier_9f1c8dafbdba0c5a"
+                    },
+                    "variant": "records",
+                    "variantType": {
+                      "kind": "lwcType",
+                      "sourceKeys": {
+                        "objectKey": "tSArrayType_ce4850b36acab81e",
+                        "sourceKey": "tSArrayType_63b47a652f23eea8"
+                      },
+                      "text": "unknown[]",
+                      "type": "array",
+                      "elementType": {
+                        "type": "primitive",
+                        "primitiveType": "unknown"
+                      }
+                    },
+                    "optional": false,
+                    "modifier": {}
+                  }
+                ],
+                "returnType": {
+                  "kind": "lwcType",
+                  "sourceKeys": {
+                    "objectKey": "tSArrayType_51482b37f75b8a92",
+                    "sourceKey": "tSArrayType_2dff81cc0b3b1ab0"
+                  },
+                  "text": "Row[]",
+                  "type": "array",
+                  "elementType": {
+                    "type": "custom",
+                    "customType": "Row"
+                  }
+                },
+                "async": false,
+                "body": {
+                  "kind": "lwcBody",
+                  "sourceKeys": {
+                    "objectKey": "blockStatement_d3992862670e7739",
+                    "sourceKey": "blockStatement_d303f4a8065ded5a"
+                  },
+                  "statements": 1
+                },
+                "calls": [],
+                "events": []
+              }
+            ],
+            "typeDeclarations": [
+              {
+                "kind": "lwcTypeDeclaration",
+                "sourceKeys": {
+                  "base": {
+                    "objectKey": "tSTypeAliasDeclaration_a0bacadd1d053a14",
+                    "sourceKey": "tSTypeAliasDeclaration_d57db630c4317e3c"
+                  },
+                  "name": {
+                    "objectKey": "identifier_80e2c43dd1afd3e4",
+                    "sourceKey": "identifier_7285102c40b1ebdb"
+                  }
+                },
+                "name": "SortDirection",
+                "exported": true,
+                "declarationType": "type",
+                "variantType": {
+                  "kind": "lwcType",
+                  "sourceKeys": {
+                    "objectKey": "tSUnionType_0b0d62301e34967b",
+                    "sourceKey": "tSUnionType_3b543bc82d404c6c"
+                  },
+                  "text": "'asc' | 'desc'",
+                  "type": "union",
+                  "types": [
+                    {
+                      "type": "literal",
+                      "value": "'asc'"
+                    },
+                    {
+                      "type": "literal",
+                      "value": "'desc'"
+                    }
+                  ]
+                }
+              },
+              {
+                "kind": "lwcTypeDeclaration",
+                "sourceKeys": {
+                  "base": {
+                    "objectKey": "tSInterfaceDeclaration_b8ac15cba2822eaa",
+                    "sourceKey": "tSInterfaceDeclaration_94fce7719c5fb9c7"
+                  },
+                  "name": {
+                    "objectKey": "identifier_2c0d40586af0a136",
+                    "sourceKey": "identifier_a19f7ed74b7676a6"
+                  }
+                },
+                "name": "Row",
+                "exported": true,
+                "declarationType": "interface",
+                "members": [
+                  {
+                    "name": "id",
+                    "memberType": {
+                      "type": "primitive",
+                      "primitiveType": "string"
+                    },
+                    "optional": false,
+                    "method": false
+                  },
+                  {
+                    "name": "name",
+                    "memberType": {
+                      "type": "primitive",
+                      "primitiveType": "string"
+                    },
+                    "optional": false,
+                    "method": false
+                  },
+                  {
+                    "name": "amount",
+                    "memberType": {
+                      "type": "primitive",
+                      "primitiveType": "number"
+                    },
+                    "optional": true,
+                    "method": false
+                  }
+                ]
+              }
+            ],
+            "errors": []
+          }
+        }
+      ],
+      "templates": [],
+      "stylesheets": [],
+      "meta": {
+        "kind": "lwcBundleMeta",
+        "sourceKeys": {
+          "objectKey": "lwcBundleMeta_750374b0d2d703f7",
+          "sourceKey": "lwcBundleMeta_6eae05829f126570"
+        },
+        "apiVersion": "61.0",
+        "isExposed": false
+      },
+      "skippedFiles": []
+    },
+    "sourceObject": [
+      {
+        "objectKey": "tSTypeAliasDeclaration_a0bacadd1d053a14",
+        "context": "type SortDirection = 'asc' | 'desc';",
+        "source": [
+          {
+            "sourceKey": "tSTypeAliasDeclaration_d57db630c4317e3c",
+            "start": {
+              "offset": 7,
+              "line": 1,
+              "column": 7
+            },
+            "end": {
+              "offset": 43,
+              "line": 1,
+              "column": 43
+            },
+            "filePath": "utils/utils.ts"
+          }
+        ]
+      },
+      {
+        "objectKey": "identifier_80e2c43dd1afd3e4",
+        "context": "SortDirection",
+        "source": [
+          {
+            "sourceKey": "identifier_7285102c40b1ebdb",
+            "start": {
+              "offset": 12,
+              "line": 1,
+              "column": 12
+            },
+            "end": {
+              "offset": 25,
+              "line": 1,
+              "column": 25
+            },
+            "filePath": "utils/utils.ts"
+          }
+        ]
+      },
+      {
+        "objectKey": "tSUnionType_0b0d62301e34967b",
+        "context": "'asc' | 'desc'",
+        "source": [
+          {
+            "sourceKey": "tSUnionType_3b543bc82d404c6c",
+            "start": {
+              "offset": 28,
+              "line": 1,
+              "column": 28
+            },
+            "end": {
+              "offset": 42,
+              "line": 1,
+              "column": 42
+            },
+            "filePath": "utils/utils.ts"
+          }
+        ]
+      },
+      {
+        "objectKey": "tSInterfaceDeclaration_b8ac15cba2822eaa",
+        "context": "interface Row {\n    id: string;\n    name: string;\n    amount?: number;\n}",
+        "source": [
+          {
+            "sourceKey": "tSInterfaceDeclaration_94fce7719c5fb9c7",
+            "start": {
+              "offset": 52,
+              "line": 3,
+              "column": 7
+            },
+            "end": {
+              "offset": 124,
+              "line": 7,
+              "column": 1
+            },
+            "filePath": "utils/utils.ts"
+          }
+        ]
+      },
+      {
+        "objectKey": "identifier_2c0d40586af0a136",
+        "context": "Row",
+        "source": [
+          {
+            "sourceKey": "identifier_a19f7ed74b7676a6",
+            "start": {
+              "offset": 62,
+              "line": 3,
+              "column": 17
+            },
+            "end": {
+              "offset": 65,
+              "line": 3,
+              "column": 20
+            },
+            "filePath": "utils/utils.ts"
+          }
+        ]
+      },
+      {
+        "objectKey": "variableDeclarator_f65688039df0f49d",
+        "context": "formatter = new Intl.NumberFormat('ja-JP', { style: 'currency', currency: 'JPY' })",
+        "source": [
+          {
+            "sourceKey": "variableDeclarator_6aac85db4c6007ff",
+            "start": {
+              "offset": 132,
+              "line": 9,
+              "column": 6
+            },
+            "end": {
+              "offset": 214,
+              "line": 9,
+              "column": 88
+            },
+            "filePath": "utils/utils.ts"
+          }
+        ]
+      },
+      {
+        "objectKey": "identifier_8a9c1da14f1ed521",
+        "context": "formatter",
+        "source": [
+          {
+            "sourceKey": "identifier_482c3bacf70d3222",
+            "start": {
+              "offset": 132,
+              "line": 9,
+              "column": 6
+            },
+            "end": {
+              "offset": 141,
+              "line": 9,
+              "column": 15
+            },
+            "filePath": "utils/utils.ts"
+          }
+        ]
+      },
+      {
+        "objectKey": "variableDeclarator_8a489a81e20fee35",
+        "context": "formatAmount = (value: number): string => formatter.format(value)",
+        "source": [
+          {
+            "sourceKey": "variableDeclarator_bef3791e426b0c63",
+            "start": {
+              "offset": 230,
+              "line": 11,
+              "column": 13
+            },
+            "end": {
+              "offset": 295,
+              "line": 11,
+              "column": 78
+            },
+            "filePath": "utils/utils.ts"
+          }
+        ]
+      },
+      {
+        "objectKey": "identifier_49afe1afd36a4078",
+        "context": "formatAmount",
+        "source": [
+          {
+            "sourceKey": "identifier_0fa040a60969d570",
+            "start": {
+              "offset": 230,
+              "line": 11,
+              "column": 13
+            },
+            "end": {
+              "offset": 242,
+              "line": 11,
+              "column": 25
+            },
+            "filePath": "utils/utils.ts"
+          }
+        ]
+      },
+      {
+        "objectKey": "identifier_9f32480a85ee8cbc",
+        "context": "value: number",
+        "source": [
+          {
+            "sourceKey": "identifier_7e62148bbc1242a4",
+            "start": {
+              "offset": 246,
+              "line": 11,
+              "column": 29
+            },
+            "end": {
+              "offset": 259,
+              "line": 11,
+              "column": 42
+            },
+            "filePath": "utils/utils.ts"
+          }
+        ]
+      },
+      {
+        "objectKey": "tSNumberKeyword_850ba0354605a53c",
+        "context": "number",
+        "source": [
+          {
+            "sourceKey": "tSNumberKeyword_08b904dd7cec6830",
+            "start": {
+              "offset": 253,
+              "line": 11,
+              "column": 36
+            },
+            "end": {
+              "offset": 259,
+              "line": 11,
+              "column": 42
+            },
+            "filePath": "utils/utils.ts"
+          }
+        ]
+      },
+      {
+        "objectKey": "tSStringKeyword_7d896e6512bf9cb2",
+        "context": "string",
+        "source": [
+          {
+            "sourceKey": "tSStringKeyword_bc09120f0cf4f075",
+            "start": {
+              "offset": 262,
+              "line": 11,
+              "column": 45
+            },
+            "end": {
+              "offset": 268,
+              "line": 11,
+              "column": 51
+            },
+            "filePath": "utils/utils.ts"
+          }
+        ]
+      },
+      {
+        "objectKey": "functionDeclaration_eb3de573e12cf112",
+        "context": "function toRows(records: unknown[]): Row[] {\n    return records.map((record) => record as Row);\n}",
+        "source": [
+          {
+            "sourceKey": "functionDeclaration_e282287da472c05c",
+            "start": {
+              "offset": 305,
+              "line": 13,
+              "column": 7
+            },
+            "end": {
+              "offset": 402,
+              "line": 15,
+              "column": 1
+            },
+            "filePath": "utils/utils.ts"
+          }
+        ]
+      },
+      {
+        "objectKey": "identifier_925385912fc381e3",
+        "context": "toRows",
+        "source": [
+          {
+            "sourceKey": "identifier_d67de407701abb38",
+            "start": {
+              "offset": 314,
+              "line": 13,
+              "column": 16
+            },
+            "end": {
+              "offset": 320,
+              "line": 13,
+              "column": 22
+            },
+            "filePath": "utils/utils.ts"
+          }
+        ]
+      },
+      {
+        "objectKey": "identifier_20f9ab4dba687de5",
+        "context": "records: unknown[]",
+        "source": [
+          {
+            "sourceKey": "identifier_9f1c8dafbdba0c5a",
+            "start": {
+              "offset": 321,
+              "line": 13,
+              "column": 23
+            },
+            "end": {
+              "offset": 339,
+              "line": 13,
+              "column": 41
+            },
+            "filePath": "utils/utils.ts"
+          }
+        ]
+      },
+      {
+        "objectKey": "tSArrayType_ce4850b36acab81e",
+        "context": "unknown[]",
+        "source": [
+          {
+            "sourceKey": "tSArrayType_63b47a652f23eea8",
+            "start": {
+              "offset": 330,
+              "line": 13,
+              "column": 32
+            },
+            "end": {
+              "offset": 339,
+              "line": 13,
+              "column": 41
+            },
+            "filePath": "utils/utils.ts"
+          }
+        ]
+      },
+      {
+        "objectKey": "tSArrayType_51482b37f75b8a92",
+        "context": "Row[]",
+        "source": [
+          {
+            "sourceKey": "tSArrayType_2dff81cc0b3b1ab0",
+            "start": {
+              "offset": 342,
+              "line": 13,
+              "column": 44
+            },
+            "end": {
+              "offset": 347,
+              "line": 13,
+              "column": 49
+            },
+            "filePath": "utils/utils.ts"
+          }
+        ]
+      },
+      {
+        "objectKey": "blockStatement_d3992862670e7739",
+        "context": "{\n    return records.map((record) => record as Row);\n}",
+        "source": [
+          {
+            "sourceKey": "blockStatement_d303f4a8065ded5a",
+            "start": {
+              "offset": 348,
+              "line": 13,
+              "column": 50
+            },
+            "end": {
+              "offset": 402,
+              "line": 15,
+              "column": 1
+            },
+            "filePath": "utils/utils.ts"
+          }
+        ]
+      },
+      {
+        "objectKey": "lwcBundleMeta_750374b0d2d703f7",
+        "context": "<LightningComponentBundle xmlns=\"http://soap.sforce.com/2006/04/metadata\">\n    <apiVersion>61.0</apiVersion>\n    <isExposed>false</isExposed>\n</LightningComponentBundle>",
+        "source": [
+          {
+            "sourceKey": "lwcBundleMeta_6eae05829f126570",
+            "filePath": "utils/utils.js-meta.xml",
+            "start": {
+              "offset": 39,
+              "line": 2,
+              "column": 0
+            },
+            "end": {
+              "offset": 208,
+              "line": 5,
+              "column": 27
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

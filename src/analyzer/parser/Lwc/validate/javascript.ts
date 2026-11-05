@@ -1,4 +1,4 @@
-// LWC Compiler による JS / TS の仕様の検証 (docs/lwc-parse-plan.md 3.1.3・3.1.7)
+// LWC Compiler による JS / TS の仕様の検証 (docs/lwc-implementation.md)
 import { transformSync } from '@lwc/compiler';
 import type { File } from '@babel/types';
 

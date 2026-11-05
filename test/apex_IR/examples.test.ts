@@ -20,9 +20,9 @@ const examples: [string, (p: ApexParser) => ApexParserRuleContext][] = [
 ];
 
 const load = (file: string) =>
-    readFile(new URL(`../../docs/examples/apex-ir/${file}`, import.meta.url), 'utf8');
+    readFile(new URL(`../../docs/examples/apex/samples/syntax/${file}`, import.meta.url), 'utf8');
 
-describe('docs/examples/apex-ir', () => {
+describe('docs/examples/apex/samples/syntax', () => {
     for (const [file, rule] of examples) {
         it(`${file} を構文エラー・IR エラーなしで変換できる`, async () => {
             const result = new unit.UnitVisitor().visit(parse(await load(file), rule));

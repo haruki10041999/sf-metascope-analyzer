@@ -1,3 +1,4 @@
+import type { ConvertErrorCode } from '../commons/converter';
 import type { Node, SourceLocation } from '@babel/types';
 
 import type { SourcePosition, SourceSpan } from '../commons/source';
@@ -62,8 +63,8 @@ export const childrenOf = (fields: Record<string, unknown>): LwcCommonTypeClass<
             (value): value is LwcCommonTypeClass<string> => value instanceof LwcCommonTypeClass,
         );
 
-export type ErrorCode =
-    'NULL_CHILD' | 'UNSUPPORTED_CONTEXT' | 'TYPE_MISMATCH' | 'EXCEPTION' | 'UNRESOLVED';
+/** IR を作れなかった理由。converter の ErrorType と共通 (types/commons/converter.ts) */
+export type ErrorCode = ConvertErrorCode;
 
 export class LwcErrorTypeClass extends LwcCommonTypeClass<'AnalyzerError'> {
     private code: ErrorCode;

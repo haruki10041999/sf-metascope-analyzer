@@ -2,7 +2,10 @@ import type { LwcBundleParseResult } from '../../../parser/Lwc/parser';
 import type {
     ErrorJson,
     LwcBundleJson,
+    LwcBundleMetaJson,
     LwcBundleModuleJson,
+    LwcBundleStylesheetJson,
+    LwcBundleTemplateJson,
     LwcModuleJson,
     LwcSkippedFileJson,
 } from '../../../types';
@@ -22,9 +25,17 @@ import {
     makeTypedListDiff,
     makeTypedObjectDiff,
 } from '../../commons/diff/list';
-import { makeUnorderedValuesDiff } from '../../commons/diff/present';
+import {
+    PresentDiff,
+    makePresentDiff,
+    makeUnorderedValuesDiff,
+    presentEntry,
+} from '../../commons/diff/present';
 import { IdUnitDiff, makeIdUnitDiffs } from '../../commons/diff/unit';
+import { LwcBundleMetaJsonDiff, makeLwcBundleMetaDiff } from './meta';
 import { LwcModuleJsonDiff, makeLwcModuleDiff } from './module';
+import { LwcStylesheetJsonDiff, makeLwcStylesheetDiff } from './stylesheet';
+import { LwcTemplateJsonDiff, makeLwcTemplateDiff } from './template';
 
 // LWC のバンドル (フォルダ) の差分。方針: docs/lwc-diff-policy.md
 // バンドルの対応付け (id = バンドル名) はメタデータのフォルダと同じ processor/commons/diff/unit.ts
@@ -54,6 +65,42 @@ export type LwcBundleModuleDiff = TypedObjectDiff<
     }
 >;
 
+export type LwcBundleTemplateDiff = TypedObjectDiff<
+    LwcBundleTemplateJson,
+    {
+        fileName: ValueDiff<string>;
+        main: ValueDiff<boolean>;
+        template: LwcTemplateJsonDiff;
+    }
+>;
+
+export type LwcBundleStylesheetDiff = TypedObjectDiff<
+    LwcBundleStylesheetJson,
+    {
+        fileName: ValueDiff<string>;
+        scoped: ValueDiff<boolean>;
+        stylesheet: LwcStylesheetJsonDiff;
+    }
+>;
+
+/** バンドルの中のファイルの配列 (modules / templates / stylesheets) は、ファイル名で対応付ける (D) */
+const makeFilesDiff = <F extends { fileName: string }, D>(
+    before: F[],
+    after: F[],
+    makeDiff: (before: F, after: F) => D,
+): TypedListDiff<F, D> =>
+    makeTypedListDiff(
+        before,
+        after,
+        pairByKey(
+            before.map((f) => f.fileName),
+            after.map((f) => f.fileName),
+            before.map(getValueKey),
+            after.map(getValueKey),
+        ),
+        makeDiff,
+    );
+
 export type LwcBundleJsonDiff = TypedObjectDiff<
     LwcBundleJson,
     {
@@ -61,6 +108,12 @@ export type LwcBundleJsonDiff = TypedObjectDiff<
         namespace: ValueDiff<string>;
         /** D. キー対応 (ファイル名) */
         modules: TypedListDiff<LwcBundleModuleJson, LwcBundleModuleDiff>;
+        /** D. キー対応 (ファイル名) */
+        templates: TypedListDiff<LwcBundleTemplateJson, LwcBundleTemplateDiff>;
+        /** D. キー対応 (ファイル名) */
+        stylesheets: TypedListDiff<LwcBundleStylesheetJson, LwcBundleStylesheetDiff>;
+        /** A. スロット (js-meta.xml。どちらにもなければ持たない) */
+        meta?: PresentDiff<LwcBundleMetaJson | ErrorJson, LwcBundleMetaJsonDiff>;
         /** B. 集合 */
         skippedFiles: TypedListDiff<LwcSkippedFileJson, never>;
     }
@@ -74,21 +127,32 @@ export const makeLwcBundleDiff = (
     makeTypedObjectDiff(before, after, (b, a) => ({
         name: makeValueDiff(b.name, a.name),
         namespace: makeValueDiff(b.namespace, a.namespace),
-        modules: makeTypedListDiff(
-            b.modules,
-            a.modules,
-            pairByKey(
-                b.modules.map((m) => m.fileName),
-                a.modules.map((m) => m.fileName),
-                b.modules.map(getValueKey),
-                a.modules.map(getValueKey),
-            ),
-            (x, y) =>
-                makeTypedObjectDiff(x, y, (bm, am) => ({
-                    fileName: makeValueDiff(bm.fileName, am.fileName),
-                    main: makeValueDiff(bm.main, am.main),
-                    module: makeModuleContentDiff(bm.module, am.module, sources),
-                })),
+        modules: makeFilesDiff(b.modules, a.modules, (x, y) =>
+            makeTypedObjectDiff(x, y, (bm, am) => ({
+                fileName: makeValueDiff(bm.fileName, am.fileName),
+                main: makeValueDiff(bm.main, am.main),
+                module: makeModuleContentDiff(bm.module, am.module, sources),
+            })),
+        ),
+        // ルートの <template> がないテンプレート・構文エラーで読めなかった CSS は ErrorJson。makeNodeDiff が値ごとの比較にする。
+        // HTML・CSS を読む前に保存した解析結果は templates / stylesheets を持たないので、空とみなす
+        templates: makeFilesDiff(b.templates ?? [], a.templates ?? [], (x, y) =>
+            makeTypedObjectDiff(x, y, (bt, at) => ({
+                fileName: makeValueDiff(bt.fileName, at.fileName),
+                main: makeValueDiff(bt.main, at.main),
+                template: makeLwcTemplateDiff(bt.template, at.template, sources),
+            })),
+        ),
+        stylesheets: makeFilesDiff(b.stylesheets ?? [], a.stylesheets ?? [], (x, y) =>
+            makeTypedObjectDiff(x, y, (bs, as) => ({
+                fileName: makeValueDiff(bs.fileName, as.fileName),
+                scoped: makeValueDiff(bs.scoped, as.scoped),
+                stylesheet: makeLwcStylesheetDiff(bs.stylesheet, as.stylesheet, sources),
+            })),
+        ),
+        ...presentEntry(
+            'meta',
+            makePresentDiff(b.meta, a.meta, (x, y) => makeLwcBundleMetaDiff(x, y, sources)),
         ),
         skippedFiles: makeUnorderedValuesDiff(b.skippedFiles, a.skippedFiles),
     }));

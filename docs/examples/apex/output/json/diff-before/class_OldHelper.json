@@ -1,0 +1,243 @@
+{
+  "filePath": "docs/examples/apex/samples/diff/before/OldHelper.cls",
+  "resolvedError": [],
+  "dataType": "apexUnit",
+  "result": {
+    "id": "class_OldHelper",
+    "base": {
+      "name": "OldHelper",
+      "unitType": "class",
+      "source": {
+        "fileName": "OldHelper.cls",
+        "fileType": "cls",
+        "content": {
+          "kind": "class",
+          "sourceKeys": {
+            "base": {
+              "objectKey": "classDeclaration_e303a56f7711a767",
+              "sourceKey": "classDeclaration_7f477543a4289086"
+            },
+            "name": {
+              "objectKey": "id_36620cf3a079bf59",
+              "sourceKey": "id_59cbe78500ebaf44"
+            }
+          },
+          "name": "OldHelper",
+          "block": [
+            {
+              "kind": "method",
+              "sourceKeys": {
+                "base": {
+                  "objectKey": "methodDeclaration_9d0a020011424162",
+                  "sourceKey": "methodDeclaration_27764ef519ccd4c7"
+                },
+                "name": {
+                  "objectKey": "id_173f4a982cfa79db",
+                  "sourceKey": "id_7d9b155d573f121f"
+                }
+              },
+              "name": "run",
+              "returnType": "void",
+              "block": [],
+              "modifier": {
+                "access": [
+                  {
+                    "kind": "modifier",
+                    "sourceKeys": {
+                      "objectKey": "modifier_a04213395735c45e",
+                      "sourceKey": "modifier_60b41f70bbefad77"
+                    },
+                    "name": "PUBLIC"
+                  }
+                ],
+                "declaration": [
+                  {
+                    "kind": "modifier",
+                    "sourceKeys": {
+                      "objectKey": "modifier_355af635756cc383",
+                      "sourceKey": "modifier_7f4a014187c1b3da"
+                    },
+                    "name": "STATIC"
+                  }
+                ]
+              }
+            }
+          ],
+          "modifier": {
+            "access": [
+              {
+                "kind": "modifier",
+                "sourceKeys": {
+                  "objectKey": "modifier_a04213395735c45e",
+                  "sourceKey": "modifier_83442bd3f55cf1b2"
+                },
+                "name": "PUBLIC"
+              }
+            ]
+          }
+        }
+      },
+      "meta": {
+        "fileName": "OldHelper.cls-meta.xml",
+        "meta": {
+          "kind": "apexClassMeta",
+          "sourceKeys": {
+            "objectKey": "apexClassMeta_8060a893b36039f6",
+            "sourceKey": "apexClassMeta_d56a9e6a2e70d71c"
+          },
+          "apiVersion": "58.0",
+          "status": "Active"
+        }
+      }
+    },
+    "sourceObject": [
+      {
+        "objectKey": "classDeclaration_e303a56f7711a767",
+        "context": "class OldHelper {\n    public static void run() {}\n}",
+        "source": [
+          {
+            "sourceKey": "classDeclaration_7f477543a4289086",
+            "start": {
+              "offset": 7,
+              "line": 1,
+              "column": 7
+            },
+            "end": {
+              "offset": 58,
+              "line": 3,
+              "column": 1
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "id_36620cf3a079bf59",
+        "context": "OldHelper",
+        "source": [
+          {
+            "sourceKey": "id_59cbe78500ebaf44",
+            "start": {
+              "offset": 13,
+              "line": 1,
+              "column": 13
+            },
+            "end": {
+              "offset": 22,
+              "line": 1,
+              "column": 22
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "methodDeclaration_9d0a020011424162",
+        "context": "void run() {}",
+        "source": [
+          {
+            "sourceKey": "methodDeclaration_27764ef519ccd4c7",
+            "start": {
+              "offset": 43,
+              "line": 2,
+              "column": 18
+            },
+            "end": {
+              "offset": 56,
+              "line": 2,
+              "column": 31
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "id_173f4a982cfa79db",
+        "context": "run",
+        "source": [
+          {
+            "sourceKey": "id_7d9b155d573f121f",
+            "start": {
+              "offset": 48,
+              "line": 2,
+              "column": 23
+            },
+            "end": {
+              "offset": 51,
+              "line": 2,
+              "column": 26
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "modifier_a04213395735c45e",
+        "context": "public",
+        "source": [
+          {
+            "sourceKey": "modifier_60b41f70bbefad77",
+            "start": {
+              "offset": 29,
+              "line": 2,
+              "column": 4
+            },
+            "end": {
+              "offset": 35,
+              "line": 2,
+              "column": 10
+            }
+          },
+          {
+            "sourceKey": "modifier_83442bd3f55cf1b2",
+            "start": {
+              "offset": 0,
+              "line": 1,
+              "column": 0
+            },
+            "end": {
+              "offset": 6,
+              "line": 1,
+              "column": 6
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "modifier_355af635756cc383",
+        "context": "static",
+        "source": [
+          {
+            "sourceKey": "modifier_7f4a014187c1b3da",
+            "start": {
+              "offset": 36,
+              "line": 2,
+              "column": 11
+            },
+            "end": {
+              "offset": 42,
+              "line": 2,
+              "column": 17
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "apexClassMeta_8060a893b36039f6",
+        "context": "<ApexClass xmlns=\"http://soap.sforce.com/2006/04/metadata\">\n    <apiVersion>58.0</apiVersion>\n    <status>Active</status>\n</ApexClass>",
+        "source": [
+          {
+            "sourceKey": "apexClassMeta_d56a9e6a2e70d71c",
+            "filePath": "OldHelper.cls-meta.xml",
+            "start": {
+              "offset": 39,
+              "line": 2,
+              "column": 0
+            },
+            "end": {
+              "offset": 173,
+              "line": 5,
+              "column": 12
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -202,8 +202,8 @@ await processor.save(); // 今の結果を次の基準にする
 [examples/metadata/](./examples/metadata/README.md) に sfdx 形式の before / after（7 オブジェクト）を置いている。サンプルの中身と期待する差分は README を参照。
 
 ```sh
-npx ttsx --noCheck docs/examples/metadata/run-parse.ts   # parse-output/: JSON と要約
-npx ttsx --noCheck docs/examples/metadata/run-diff.ts    # diff-output/: 差分・summary・coverage・viewer 用データ
+npx ttsx --noCheck docs/examples/metadata/scripts/run-parse.ts   # output/json/: JSON と要約
+npx ttsx --noCheck docs/examples/metadata/scripts/run-diff.ts    # output/diff/: 差分・summary・coverage・viewer 用データ
 ```
 
 | テスト                               | 内容                                                                                                                                                               |

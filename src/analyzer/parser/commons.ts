@@ -101,8 +101,10 @@ export const readXmlFile = async (
     absolutePath: string,
     filePath: string,
     name: string,
-): Promise<ParsedXmlFile> => {
-    const source = await readSource(absolutePath);
+): Promise<ParsedXmlFile> => parseXmlSource(filePath, await readSource(absolutePath), name);
+
+/** 読み込み済みのソースを XML として読む (readXmlFile のファイルを読まない版。LWC のバンドルはフォルダごとに読むので使う) */
+export const parseXmlSource = (filePath: string, source: string, name: string): ParsedXmlFile => {
     try {
         return { filePath, source, name, root: parseXml(source) };
     } catch (error) {

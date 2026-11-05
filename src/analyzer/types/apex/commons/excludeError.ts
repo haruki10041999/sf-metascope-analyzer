@@ -1,6 +1,6 @@
 import typia from 'typia';
 
-import { CommonType, ErrorType } from '../converter';
+import { CommonType, ErrorType } from '../../commons/converter';
 
 import { Convert } from './convert';
 import { isRecord } from '../../commons/utils';

@@ -1,3 +1,4 @@
+import type { ConvertErrorCode } from '../commons/converter';
 import { ApexParserBaseVisitor, ApexParserRuleContext } from '@apexdevtools/apex-parser';
 
 import type { SourceSpan } from '../commons/source';
@@ -47,8 +48,8 @@ export class ApexCommonTypeClass<TName extends string> {
     }
 }
 
-export type ErrorCode =
-    'NULL_CHILD' | 'UNSUPPORTED_CONTEXT' | 'TYPE_MISMATCH' | 'EXCEPTION' | 'UNRESOLVED';
+/** IR を作れなかった理由。converter の ErrorType と共通 (types/commons/converter.ts) */
+export type ErrorCode = ConvertErrorCode;
 
 export class ApexErrorTypeClass extends ApexCommonTypeClass<'AnalyzerError'> {
     private code: ErrorCode;

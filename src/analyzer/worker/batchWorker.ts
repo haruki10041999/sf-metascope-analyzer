@@ -55,7 +55,7 @@ export abstract class BatchWorker<K extends WorkerTaskType> {
                 : undefined;
     }
 
-    /** 1 件 (Apex はファイル、Object・ObjectTranslation はフォルダ) を解析して保存する */
+    /** 1 件 (Apex は単位のどれかのファイル、Object・ObjectTranslation・Lwc はフォルダ) を解析して保存する */
     parseAndSave(filePath: string): Promise<SaveSummary> {
         return this.run({
             command: 'parseAndSave',

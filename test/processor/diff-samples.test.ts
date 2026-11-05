@@ -1,10 +1,10 @@
 import assert from 'node:assert/strict';
 import { before, describe, it } from 'node:test';
 
-import { ALL_KINDS, countDiffKinds, runDiff } from '../../docs/examples/apex-diff/run-diff';
+import { ALL_KINDS, countDiffKinds, runDiff } from '../../docs/examples/apex/scripts/run-diff';
 
 /**
- * docs/examples/apex-diff の before / after を本番と同じ流れで変換して比べ、
+ * docs/examples/apex/samples/diff の before / after を本番と同じ流れで変換して比べ、
  * README.md に書いた期待どおりの差分になるかを確かめる。
  */
 
@@ -27,42 +27,44 @@ const collect = (diff: unknown, out: Node[] = []): Node[] => {
     return out;
 };
 
-describe('diff samples (docs/examples/apex-diff)', () => {
+describe('diff samples (docs/examples/apex/samples/diff)', () => {
     let diffs: Diffs;
-    const fileDiff = (file: string) => {
-        const diff = diffs.find((d) => d.filePath === file);
-        assert.ok(diff, file);
+    const unitDiff = (id: string) => {
+        const diff = diffs.find((d) => d.id === id);
+        assert.ok(diff, id);
         return diff;
     };
-    const contentNodes = (file: string) => {
-        const diff = fileDiff(file);
-        assert.ok('content' in diff && diff.content, file);
-        return collect(diff.content);
+    /** 単位のソースの中身の差分 (makeUnitContentDiff の結果) を { content } の形で返す */
+    const fileDiff = (id: string): Node => {
+        const content = (unitDiff(id).content as Node | undefined)?.fields?.source?.fields?.content;
+        assert.ok(content, id);
+        return { content };
     };
+    const contentNodes = (id: string) => collect(fileDiff(id).content);
 
     before(async () => {
         ({ diffs } = await runDiff());
     });
 
-    it('matches files by name and reports the file status', () => {
-        assert.deepEqual(Object.fromEntries(diffs.map((d) => [d.filePath, d.status])), {
-            'AccountService.cls': 'changed',
-            'AccountTrigger.trigger': 'changed',
-            'Broken.cls': 'changed',
-            'Level.cls': 'changed',
-            'OldHelper.cls': 'removed',
-            'Shape.cls': 'changed',
-            'Unchanged.cls': 'unchanged',
-            'script.apex': 'changed',
-            'NewHelper.cls': 'added',
-            // クラス・トリガーのメタデータ (中身は test/parser/apex-meta.test.ts で確かめる)
-            'AccountService.cls-meta.xml': 'changed',
-            'AccountTrigger.trigger-meta.xml': 'changed',
-            'Broken.cls-meta.xml': 'changed',
-            'OldHelper.cls-meta.xml': 'removed',
-            'Unchanged.cls-meta.xml': 'unchanged',
-            'NewHelper.cls-meta.xml': 'added',
-        });
+    it('単位 (クラス・トリガーはソースと -meta.xml を 1 つ、匿名 Apex は 1 ファイル) を id で対応付ける', () => {
+        assert.deepEqual(
+            diffs.map((d) => {
+                const fields = (d.content as Node | undefined)?.fields;
+                return [d.id, d.status, fields?.source?.status, fields?.meta?.status];
+            }),
+            [
+                ['anonymous_script', 'changed', 'changed', undefined],
+                // ソースと -meta.xml の両方が変わったクラス (メタデータの中身は test/parser/apex-meta.test.ts で確かめる)
+                ['class_AccountService', 'changed', 'changed', 'changed'],
+                ['class_Broken', 'changed', 'changed', 'changed'],
+                ['class_Level', 'changed', 'changed', undefined],
+                ['class_NewHelper', 'added', undefined, undefined],
+                ['class_OldHelper', 'removed', undefined, undefined],
+                ['class_Shape', 'changed', 'changed', undefined],
+                ['class_Unchanged', 'unchanged', undefined, undefined],
+                ['trigger_AccountTrigger', 'changed', 'changed', 'changed'],
+            ],
+        );
     });
 
     it('reports every JsonType / StructureJsonType kind as a diff node', () => {
@@ -75,7 +77,7 @@ describe('diff samples (docs/examples/apex-diff)', () => {
     });
 
     it('class: members by key, modifiers outside the objectKey', () => {
-        const diff = fileDiff('AccountService.cls');
+        const diff = fileDiff('class_AccountService');
         assert.ok('content' in diff && diff.content && 'fields' in diff.content);
         const members = (diff.content.fields as Node).block as Node[];
 
@@ -107,7 +109,7 @@ describe('diff samples (docs/examples/apex-diff)', () => {
     });
 
     it('annotation: arguments are compared by key', () => {
-        const annotations = contentNodes('AccountService.cls').filter(
+        const annotations = contentNodes('class_AccountService').filter(
             (n) => n.kind === 'annotation' && n.status === 'changed',
         );
         assert.deepEqual(
@@ -120,21 +122,21 @@ describe('diff samples (docs/examples/apex-diff)', () => {
     });
 
     it('field: the initial value is diffed as an expression tree', () => {
-        const literal = contentNodes('AccountService.cls').find(
+        const literal = contentNodes('class_AccountService').find(
             (n) => n.before === '100' && n.after === '200',
         );
         assert.deepEqual(literal, { status: 'changed', before: '100', after: '200' });
     });
 
     it('statement: a statement moved from finally into catch is reported once as moved', () => {
-        const nodes = contentNodes('AccountService.cls');
+        const nodes = contentNodes('class_AccountService');
         const moved = nodes.find((n) => n.status === 'moved' && n.kind === 'expression');
         assert.equal(moved?.from.parent, 'block');
         assert.ok(nodes.some((n) => n.status === 'removed' && n.value?.condition === 'finally'));
     });
 
     it('soql: reordered SELECT fields are not a diff, changed clauses are', () => {
-        const nodes = contentNodes('AccountService.cls');
+        const nodes = contentNodes('class_AccountService');
         const syncSelect = nodes.filter((n) => n.kind === 'selectEntry' && n.status === 'changed');
         // SELECT Id, Name → SELECT Name, Id は差分にならない。ALL ROWS の Id → Name は集合要素の削除・追加。
         assert.equal(syncSelect.length, 0);
@@ -160,7 +162,7 @@ describe('diff samples (docs/examples/apex-diff)', () => {
     });
 
     it('trigger: cases as a set, condition expressions retain their typed shape', () => {
-        const nodes = contentNodes('AccountTrigger.trigger');
+        const nodes = contentNodes('trigger_AccountTrigger');
         assert.deepEqual(
             nodes.filter((n) => n.kind === 'triggerCase').map((n) => n.status),
             ['removed', 'unchanged', 'added'],
@@ -175,7 +177,7 @@ describe('diff samples (docs/examples/apex-diff)', () => {
     });
 
     it('anonymous: declarations and statements are diffed separately', () => {
-        const diff = fileDiff('script.apex');
+        const diff = fileDiff('anonymous_script');
         assert.ok('content' in diff && diff.content && 'block' in diff.content);
         const block = diff.content.block;
         assert.ok('member' in block);
@@ -193,26 +195,31 @@ describe('diff samples (docs/examples/apex-diff)', () => {
     });
 
     it('error: a broken statement becomes an error node, and the syntax errors are reported', () => {
-        const diff = fileDiff('Broken.cls');
-        assert.ok(!Array.isArray(diff.resolvedError) && diff.status === 'changed');
-        assert.equal(diff.resolvedError.after.length, 2);
+        // 単位の resolvedError は、ソースの構文エラーと -meta.xml を読めなかったものをまとめて持つ (B. 集合)
+        const diff = unitDiff('class_Broken');
+        assert.deepEqual(
+            diff.resolvedError
+                .filter((e) => e.status === 'added')
+                .map((e) => (e as Node).value.filePath),
+            ['Broken.cls', 'Broken.cls', 'Broken.cls-meta.xml'],
+        );
         assert.ok(
-            contentNodes('Broken.cls').some((n) => n.status === 'added' && n.kind === 'error'),
+            contentNodes('class_Broken').some((n) => n.status === 'added' && n.kind === 'error'),
         );
     });
 
     it('cls: a kind change replaces the whole declaration, position-only changes are unchanged', () => {
-        const shape = fileDiff('Shape.cls');
+        const shape = fileDiff('class_Shape');
         assert.ok('content' in shape && shape.content);
         assert.deepEqual((shape.content as Node).kind, { before: 'interface', after: 'class' });
 
-        const unchanged = fileDiff('Unchanged.cls');
-        assert.ok('content' in unchanged && unchanged.content);
+        const unchanged = unitDiff('class_Unchanged');
+        assert.equal(unchanged.status, 'unchanged');
         assert.equal((unchanged.content as Node).status, 'unchanged');
     });
 
     it('enum: constants are diffed as a sequence', () => {
-        const added = contentNodes('Level.cls').filter((n) => n.status === 'added');
+        const added = contentNodes('class_Level').filter((n) => n.status === 'added');
         assert.deepEqual(
             added.map((n) => [n.kind, n.index, n.value.name]),
             [['enumConstant', 1, 'MEDIUM']],

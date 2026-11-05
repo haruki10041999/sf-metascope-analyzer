@@ -59,6 +59,15 @@ export type GumTreeLanguage = {
         key: string,
         value: unknown,
     ) => { label: string; role: string; items: unknown[] } | undefined;
+    /**
+     * プロパティを子にせず、ノードの値 (values) として比べるときの値。1 つのプロパティを複数の値に展開してもよい
+     * (LWC のテンプレートの要素の属性は、属性名ごとの値にする)。undefined ならこれまでどおり (値・子に分ける)
+     */
+    fieldValues?: (
+        owner: string,
+        key: string,
+        value: unknown,
+    ) => Record<string, DiffFieldValue> | undefined;
 };
 
 const isPrimitive = (value: unknown): value is DiffPrimitive =>
@@ -118,6 +127,11 @@ export const makeGumTreeBuilder = (language: GumTreeLanguage) => {
 
         Object.entries(value).forEach(([key, v]) => {
             if (key === 'kind' || key === 'sourceKeys' || v === undefined) {
+                return;
+            }
+            const fields = language.fieldValues?.(label, key, v);
+            if (fields !== undefined) {
+                Object.assign(values, fields);
                 return;
             }
             const group = language.groupProperty?.(key, v);

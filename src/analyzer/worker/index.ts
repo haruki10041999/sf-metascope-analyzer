@@ -4,3 +4,4 @@ export * from './batchWorker';
 export * from './apexWorker';
 export * from './objectWorker';
 export * from './objectTranslationWorker';
+export * from './lwcWorker';

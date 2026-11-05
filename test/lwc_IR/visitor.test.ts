@@ -16,7 +16,7 @@ import { isClassMethodType } from '../../src/analyzer/types/lwc_IR/commons/class
 type Plugins = NonNullable<ParserOptions['plugins']>;
 const DECORATORS: Plugins = ['decorators'];
 
-// lwc-parse-plan.md 3.1.1 の設定 (plugins だけ差し替える)
+// docs/lwc-implementation.md の Babel の設定 (plugins だけ差し替える)
 const parseLwc = (source: string, plugins: Plugins) => {
     const ast = parse(source, { ...makeBabelOptions('js'), plugins });
     return { ast, ir: new StandardizedVisitor().visit(ast, source) };
@@ -33,7 +33,7 @@ const collect = (root: LwcCommonTypeClass<string>) => {
     return { errors: collectErrorTypeClasses(root), nodes };
 };
 
-const BUNDLES = 'docs/examples/lwc/bundles/force-app/main/default/lwc';
+const BUNDLES = 'docs/examples/lwc/samples/bundles/force-app/main/default/lwc';
 
 describe('lwc_IR', () => {
     for (const file of [

@@ -1,92 +1,40 @@
 import type { SourcePosition } from './source';
-import { ConvertKeys, ErrorJson, JsonType } from './json';
-import { hash, isRecord } from './utils';
+import { ErrorJson, JsonType } from './json';
+import {
+    SourceFile,
+    SpanSourceInfo,
+    SpanSourceJson,
+    SpanSourceRegistry,
+    findSpanSourceInfo,
+    makeSpanErrorJson,
+    makeSpanJson,
+} from './spanJson';
 
 import { XmlElement, childOf, childrenOf } from './xml';
 
 // 方針: docs/metadata-json-reference.md
-// kind / sourceKeys の付け方は Apex (types/apex/commons/convert.ts) と同じ。
-// - objectKey: `${kind}_${hash(内容)}`。内容は sourceKeys を除いたもの (子の内容を含む)。位置が変わっても変わらない
-// - sourceKey: `${kind}_${hash(ファイルと開始・終了位置)}`。位置が変わると変わる
+// kind / sourceKeys の付け方・ソース位置の登録は、HTML / CSS と共通の spanJson.ts (位置の範囲から JSON を作る部品)。
+// XML の名前 (XmlFile / XmlSourceRegistry など) は、その別名として残す
 
 /** ソース位置。1 つのオブジェクトは複数のファイルからなるので、Apex の SourceInfo にファイルのパスを足す */
-export type XmlSourceInfo = {
-    context: string;
-    filePath: string;
-    start: SourcePosition;
-    end: SourcePosition;
-};
+export type XmlSourceInfo = SpanSourceInfo;
 
 /** Apex の SourceJson と同じ形 (source の要素に filePath を足したもの) */
-export type XmlSourceJson = {
-    objectKey: string;
-    context: string;
-    source: ({ sourceKey: string } & Omit<XmlSourceInfo, 'context'>)[];
-};
+export type XmlSourceJson = SpanSourceJson;
 
 /** 読み込み中の 1 ファイル。filePath はオブジェクトのフォルダの親からの相対パス (区切りは /) */
-export type XmlFile = {
-    filePath: string;
-    source: string;
-};
+export type XmlFile = SourceFile;
 
 /** 1 つのオブジェクトを読む間に集めるソース位置 */
-export class XmlSourceRegistry {
-    private readonly sourceObjects = new Map<string, XmlSourceJson>();
+export const XmlSourceRegistry = SpanSourceRegistry;
+export type XmlSourceRegistry = SpanSourceRegistry;
 
-    register(keys: ConvertKeys, info: XmlSourceInfo): void {
-        const { context, ...content } = info;
-        const sourceObject = this.sourceObjects.get(keys.objectKey);
-        if (!sourceObject) {
-            this.sourceObjects.set(keys.objectKey, {
-                objectKey: keys.objectKey,
-                context,
-                source: [{ sourceKey: keys.sourceKey, ...content }],
-            });
-        } else if (!sourceObject.source.some((s) => s.sourceKey === keys.sourceKey)) {
-            sourceObject.source.push({ sourceKey: keys.sourceKey, ...content });
-        }
-    }
-
-    toSourceObjects(): XmlSourceJson[] {
-        return [...this.sourceObjects.values()];
-    }
-}
-
-export const findXmlSourceInfo = (
-    sourceObject: XmlSourceJson[],
-    keys: ConvertKeys,
-): XmlSourceInfo => {
-    const object = sourceObject.find((o) => o.objectKey === keys.objectKey);
-    const source = object?.source.find((s) => s.sourceKey === keys.sourceKey);
-    if (!object || !source) {
-        throw new Error('sourceInfo cannot be found');
-    }
-    const { sourceKey: _sourceKey, ...content } = source;
-    return { context: object.context, ...content };
-};
-
-/** objectKey の計算用に、子孫の sourceKeys を除く */
-const stripSourceKeys = (value: unknown): unknown => {
-    if (Array.isArray(value)) {
-        return value.map(stripSourceKeys);
-    }
-    if (isRecord(value)) {
-        return Object.fromEntries(
-            Object.entries(value)
-                .filter(([key]) => key !== 'sourceKeys')
-                .map(([key, child]) => [key, stripSourceKeys(child)]),
-        );
-    }
-    return value;
-};
-
-/** 要素がない (object-meta.xml がないなど) ときの位置。ファイルの先頭 */
-const FILE_START: SourcePosition = { offset: 0, line: 1, column: 0 };
+export const findXmlSourceInfo = findSpanSourceInfo;
 
 /**
  * kind / sourceKeys を付けた JSON を作り、ソース位置を登録する。
- * element が undefined のときは、ファイルの先頭を位置にする
+ * element が undefined のときは、ファイルの先頭を位置にする。
+ * objectKey は書いた順のまま hash する (保存済みのメタデータのキーを変えないため。spanJson.ts の SpanJsonOptions)
  */
 export const makeXmlJson = <T extends JsonType<string>>(
     kind: T['kind'],
@@ -94,21 +42,7 @@ export const makeXmlJson = <T extends JsonType<string>>(
     element: XmlElement | undefined,
     file: XmlFile,
     registry: XmlSourceRegistry,
-): T => {
-    const start = element?.start ?? FILE_START;
-    const end = element?.end ?? FILE_START;
-    const sourceKeys: ConvertKeys = {
-        objectKey: `${kind}_${hash(stripSourceKeys(properties))}`,
-        sourceKey: `${kind}_${hash({ filePath: file.filePath, start, end })}`,
-    };
-    registry.register(sourceKeys, {
-        context: file.source.slice(start.offset, end.offset),
-        filePath: file.filePath,
-        start,
-        end,
-    });
-    return { kind, sourceKeys, ...properties } as unknown as T;
-};
+): T => makeSpanJson<T>(kind, properties, element, file, registry, { sortKeys: false });
 
 /** 読めなかったファイル・要素の ErrorJson。kindType は何として読もうとしたか (field など) */
 export const makeXmlErrorJson = (
@@ -117,19 +51,7 @@ export const makeXmlErrorJson = (
     position: SourcePosition,
     file: XmlFile,
     registry: XmlSourceRegistry,
-): ErrorJson => {
-    const sourceKeys: ConvertKeys = {
-        objectKey: `error_${hash({ kindType, message })}`,
-        sourceKey: `error_${hash({ filePath: file.filePath, position })}`,
-    };
-    registry.register(sourceKeys, {
-        context: file.source,
-        filePath: file.filePath,
-        start: position,
-        end: position,
-    });
-    return { kind: 'error', sourceKeys, kindType };
-};
+): ErrorJson => makeSpanErrorJson(kindType, message, position, file, registry);
 
 // ---------------------------------------------------------------------------
 // 子要素の値を読む

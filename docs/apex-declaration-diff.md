@@ -43,7 +43,7 @@
 
 対応:
 
-- 判定キーは `isStatic` + 修飾子の `objectKey` + 文の `objectKey` の並びから作る（apex-statement-diff.md 4.1 の、ブロックのキーの作り方と同じ）。
+- 判定キーは `isStatic` + 修飾子の `objectKey` + 文の `objectKey` の並びから作る（文の並びのキーと同じく、`objectKey` の並びで作る）。
 - 対応付けは `pairAsSequence` を直接使う（C）。gap 内の組は距離なしで位置順（`match: 'slot'`）にする。
 - 出力は `sourceKeys` を持たない専用の型 `InitializerBlockJsonDiff` にする。index は「クラス本文の中の index」で持つ（初期化ブロックだけを数えた index ではない）。
 

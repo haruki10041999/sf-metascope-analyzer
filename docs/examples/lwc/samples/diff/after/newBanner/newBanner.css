@@ -1,0 +1,7 @@
+:host {
+    display: inline-block;
+}
+
+.message {
+    color: var(--slds-g-color-on-surface-1);
+}

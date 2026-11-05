@@ -84,4 +84,3 @@ export const makeStructureJson = <
         ...properties,
     } as StructureJsonType<TKind, { base: ConvertKeys } & TRecord> & TProperties;
 };
-

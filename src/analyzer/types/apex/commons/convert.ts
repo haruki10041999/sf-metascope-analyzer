@@ -1,9 +1,9 @@
 import typia from 'typia';
 
-import { CommonType, isCommonType } from '../converter';
+import { CommonType, isCommonType } from '../../commons/converter';
 
 import { SourceJson, SourceRegistration, makeSourceObjects } from './source';
-import { hash, isRecord } from '../../commons/utils';
+import { hash, isRecord, sortKeys } from '../../commons/utils';
 import { ConvertKeys } from '../../commons/json';
 
 type ConvertNode<T> =
@@ -26,21 +26,6 @@ export const isSpecifyConvert = <TName extends string>(
     types: readonly TName[],
 ): target is Convert<CommonType<TName>> => {
     return isConvert(target) && types.includes(target.type as TName);
-};
-
-/** オブジェクトのキーを (入れ子も) 名前の順に並べ替えたもの。配列の順序はそのまま */
-export const sortKeys = (value: unknown): unknown => {
-    if (Array.isArray(value)) {
-        return value.map(sortKeys);
-    }
-    if (!isRecord(value)) {
-        return value;
-    }
-    return Object.fromEntries(
-        Object.keys(value)
-            .sort()
-            .map((key) => [key, sortKeys(value[key])]),
-    );
 };
 
 /**

@@ -63,9 +63,7 @@ describe('restVisitor / arrayCreatorRest', () => {
     });
 
     it('"[]{1, 2}" は value に arrayInitializer、size に null を持つ', () => {
-        const result = new rest.RestVisitor().visit(
-            parse('[]{1, 2}', (p) => p.arrayCreatorRest()),
-        );
+        const result = new rest.RestVisitor().visit(parse('[]{1, 2}', (p) => p.arrayCreatorRest()));
         assert.ok(rest.isArrayCreatorRestType(result), result.getType());
         assert.equal(result.getValue()?.getType(), 'arrayInitializer');
         assert.equal(result.getSize(), null);

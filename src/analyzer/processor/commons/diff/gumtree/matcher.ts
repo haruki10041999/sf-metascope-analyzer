@@ -1,6 +1,11 @@
-import { SourceDistance, compareSourceDistance } from '../../source';
+import {
+    SourceDistance,
+    compareSourceDistance,
+    findNodeSourceInfo,
+    getSourceDistance,
+} from '../../source';
 
-import { Match, lcs } from '../commons';
+import { Match, Sources, lcs } from '../commons';
 import { GumTreeNode, descendants, postOrder, preOrder } from './tree';
 
 // 方針: docs/apex-gumtree-diff.md 2 章
@@ -14,6 +19,23 @@ export type MatchOptions = {
     distance?:
         ((before: GumTreeNode, after: GumTreeNode) => SourceDistance | undefined) | undefined;
 };
+
+/** ソース位置の距離 (MatchOptions の distance)。Apex・LWC で共通。位置が見つからなければ undefined */
+export const makeSourceDistance =
+    (sources: Sources) =>
+    (before: GumTreeNode, after: GumTreeNode): SourceDistance | undefined => {
+        if (!before.source || !after.source) {
+            return undefined;
+        }
+        try {
+            return getSourceDistance(
+                findNodeSourceInfo(sources.before, before.source),
+                findNodeSourceInfo(sources.after, after.source),
+            );
+        } catch {
+            return undefined;
+        }
+    };
 
 export const DEFAULT_MIN_HEIGHT = 2;
 export const DEFAULT_MIN_DICE = 0.5;

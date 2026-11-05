@@ -5,8 +5,8 @@ import path from 'node:path';
 import { after, before, describe, it } from 'node:test';
 
 import { MetadataProcessor } from '../../src/analyzer/processor/Metadata/metadata';
-import { runDiff } from '../../docs/examples/metadata/run-diff';
-import { countDiffKinds, ALL_KINDS } from '../../docs/examples/metadata/run-diff';
+import { runDiff } from '../../docs/examples/metadata/scripts/run-diff';
+import { countDiffKinds, ALL_KINDS } from '../../docs/examples/metadata/scripts/run-diff';
 
 /** docs/examples/metadata の翻訳のサンプルの Diff と網羅。README.md の期待どおりかを確かめる */
 
@@ -153,7 +153,9 @@ describe('MetadataProcessor with object translations', () => {
     it('saves translations separately and diffs the repository against them', async () => {
         const repository = path.join(root, 'repo');
         const saveRoot = path.join(root, 'save');
-        await cp(path.resolve('docs/examples/metadata/before'), repository, { recursive: true });
+        await cp(path.resolve('docs/examples/metadata/samples/before'), repository, {
+            recursive: true,
+        });
 
         const processor = await MetadataProcessor.create(saveRoot, repository);
         await processor.save();
@@ -163,7 +165,9 @@ describe('MetadataProcessor with object translations', () => {
         );
 
         await rm(repository, { recursive: true, force: true });
-        await cp(path.resolve('docs/examples/metadata/after'), repository, { recursive: true });
+        await cp(path.resolve('docs/examples/metadata/samples/after'), repository, {
+            recursive: true,
+        });
         await processor.reset();
         assert.deepEqual(
             processor.getObjectTranslationUnitDiffs().map((d) => [d.id, d.status]),

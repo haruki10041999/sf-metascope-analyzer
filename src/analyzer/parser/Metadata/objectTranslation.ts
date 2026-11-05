@@ -53,7 +53,7 @@ export type ObjectTranslationParseResult =
 
 /**
  * 保存名の接頭辞。オブジェクト (<API 名>.msgpack) と同じフォルダに保存しても分けられるようにする
- * (Apex のソースとメタデータの apex_ / apexMeta_ と同じ)
+ * (Apex の単位の class_ / trigger_ / anonymous_ と同じ)
  */
 export const OBJECT_TRANSLATION_SAVE_PREFIX = 'objectTranslation_';
 

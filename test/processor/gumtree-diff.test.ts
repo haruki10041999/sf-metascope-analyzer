@@ -326,7 +326,10 @@ describe('unit diff', () => {
 
 describe('gumtree diff on the example file', () => {
     const load = () =>
-        readFile(new URL('../../docs/examples/apex-ir/ParserTest.cls', import.meta.url), 'utf8');
+        readFile(
+            new URL('../../docs/examples/apex/samples/syntax/ParserTest.cls', import.meta.url),
+            'utf8',
+        );
 
     it('reports nothing but unchanged when only the position changes', async () => {
         const source = await load();

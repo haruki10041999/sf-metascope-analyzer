@@ -3,7 +3,7 @@
 メソッド本体などの文の並び（`(StatementJson | ErrorJson)[]`）について、GumTree で要素を対応付け、順序変更や移動を抽出する方針。GumTree 自体のノード差分は内部情報であり、公開 API は JSON プロパティに対応した型付き Diff を返す。対象は [src/analyzer/types/apex/](../src/analyzer/types/apex/) の JsonType / StructureJsonType（[apex-json-reference.md](./apex-json-reference.md)）。
 
 - 宣言（class / method など）の対応付けは今までどおり [apex-declaration-diff.md](./apex-declaration-diff.md) の D（キー対応）で行う。GumTree を使うのは、対応付いた宣言の**本体の中**だけ。
-- [apex-statement-diff.md](./apex-statement-diff.md) の LCS + gap の方針は、この文書で置き換える。`objectKey` の性質（同じなら子孫まで同じ）は、そのまま前提として使う。
+- 以前の LCS + gap の方針（apex-statement-diff.md。削除済み）は、この文書で置き換えた。`objectKey` の性質（同じなら子孫まで同じ）は、そのまま前提として使う。
 - status / `match` の語彙は [apex-json-diff-policy.md](./apex-json-diff-policy.md) に合わせ、足りないものだけ追加する（5 章）。
 
 ## 1. GumTree を使う理由
@@ -282,12 +282,12 @@ Top-down は O(n²)（n はノード数）、Bottom-up は候補の絞り込み�
 
 テストは実際の Apex のソースを変換した JSON で行う（test/converter/helpers.ts の `toJson`）。観点:
 
-- 位置だけが変わったものは `unchanged`（docs/examples/apex-ir/ParserTest.cls 全体でも確認）
+- 位置だけが変わったものは `unchanged`（docs/examples/apex/samples/syntax/ParserTest.cls 全体でも確認）
 - 追加・削除・並べ替え（`moved`）・別のブロックへの移動（`moved` と `from`。移動元に `removed` を出さない）
 - 値の変化（`fields`）、Bottom-up による対応（`similar`）、SELECT 項目の並べ替えを `moved` にしない
 - ParserTest.cls の全メソッドで、文を逆順にしても `added` / `removed` が出ない
 
-動作検証: [examples/apex-diff/](./examples/apex-diff/README.md) の before / after のサンプルを本番と同じ流れで変換して比べる（`run-diff.ts`）。すべての kind が差分のノードとして現れることを、テスト test/processor/diff-samples.test.ts で確かめる。
+動作検証: [examples/apex/](./examples/apex/README.md) の before / after のサンプルを本番と同じ流れで変換して比べる（`run-diff.ts`）。すべての kind が差分のノードとして現れることを、テスト test/processor/diff-samples.test.ts で確かめる。
 
 ### 7.2 JsonType / StructureJsonType ごとの対応状況
 
@@ -305,14 +305,14 @@ Top-down は O(n²)（n はノード数）、Bottom-up は候補の絞り込み�
 
 ### 7.3 JsonType ではないもの・接続
 
-| 項目                                                                      | 状態                                                                                                                                                                                             |
-| ------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `initializer`（sourceKeys なし）                                          | 済（クラス本文の C）。本体は GumTree                                                                                                                                                             |
-| 匿名 Apex / トリガーの本文（`BlockMemberJson[]`）                         | 済（[diff/unitBody.ts](../src/analyzer/processor/Apex/diff/unitBody.ts) の `makeBlockMembersDiff`）。宣言と ErrorJson は `makeClassBodyDiff`、`kind: 'statement'` の要素（修飾子ごと）は GumTree |
-| 匿名 Apex / トリガーのユニット                                            | 済（`makeAnonymousUnitDiff` / `makeTriggerUnitDiff`）。`makeUnitDiffs` から呼ぶ                                                                                                                  |
-| field の初期値                                                            | 済。`makeExpressionDiff` で構造比較し、変数の判定キーには木の hash を使う（式の JSON は中に位置を含むため）                                                                                      |
-| [unit.ts](../src/analyzer/processor/Apex/diff/unit.ts) の `makeUnitDiffs` | 済。dataType が同じでエラーでないファイルに `content`（`makeUnitContentDiff`）を付ける。中身に変化があれば、ファイルの status も `changed` にする                                                |
-| `CompilationUnitJson`（`class` / `interface` / `enum` + `modifier`）      | 済（`makeTypeDeclarationDiff`）。[unit.ts](../src/analyzer/processor/Apex/diff/unit.ts) の `makeClsFileDiff` の結果に `content` として入れる                                                     |
+| 項目                                                                          | 状態                                                                                                                                                                                                        |
+| ----------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `initializer`（sourceKeys なし）                                              | 済（クラス本文の C）。本体は GumTree                                                                                                                                                                        |
+| 匿名 Apex / トリガーの本文（`BlockMemberJson[]`）                             | 済（[diff/unitBody.ts](../src/analyzer/processor/Apex/diff/unitBody.ts) の `makeBlockMembersDiff`）。宣言と ErrorJson は `makeClassBodyDiff`、`kind: 'statement'` の要素（修飾子ごと）は GumTree            |
+| 匿名 Apex / トリガーのユニット                                                | 済（`makeAnonymousUnitDiff` / `makeTriggerUnitDiff`）。単位の差分 `makeApexUnitDiffs` から呼ぶ                                                                                                              |
+| field の初期値                                                                | 済。`makeExpressionDiff` で構造比較し、変数の判定キーには木の hash を使う（式の JSON は中に位置を含むため）                                                                                                 |
+| [unit.ts](../src/analyzer/processor/Apex/diff/unit.ts) の `makeApexUnitDiffs` | 済。単位（クラス・トリガーはソースと -meta.xml、匿名 Apex は 1 ファイル）を id で対応付け（`makeIdUnitDiffs`）、ソース・-meta.xml の種類が同じでエラーでなければ中身の差分（`makeUnitContentDiff`）を付ける |
+| `CompilationUnitJson`（`class` / `interface` / `enum` + `modifier`）          | 済（`makeTypeDeclarationDiff`）。[unit.ts](../src/analyzer/processor/Apex/diff/unit.ts) の `makeClsFileDiff` の結果に `content` として入れる                                                                |
 
 ## 8. 未決事項
 

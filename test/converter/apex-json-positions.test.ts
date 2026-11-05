@@ -1,25 +1,19 @@
 import assert from 'node:assert/strict';
-import fs from 'node:fs/promises';
-import os from 'node:os';
-import path from 'node:path';
 import { describe, it } from 'node:test';
 
-import { ApexParser, type ApexParseResult } from '../../src/analyzer/parser/Apex';
-import { makeUnitDiffs } from '../../src/analyzer/processor/Apex/diff/unit';
+import { parseApexUnitFiles, type ApexUnitParseResult } from '../../src/analyzer/parser/Apex';
+import { makeApexUnitDiffs } from '../../src/analyzer/processor/Apex/diff/unit';
 
 import { find } from './helpers';
 
-const parseSource = async (source: string, fileName = 'A.cls'): Promise<ApexParseResult> => {
-    const dir = await fs.mkdtemp(path.join(os.tmpdir(), 'apex-json-'));
-    const file = path.join(dir, fileName);
-    await fs.writeFile(file, source);
-    try {
-        // Diff はファイルのパスで対応付けるので、一時フォルダに依らないパスにする
-        return { ...(await ApexParser.parseApexClass(file)), filePath: fileName };
-    } finally {
-        await fs.rm(dir, { recursive: true, force: true });
-    }
-};
+/** クラス A の単位 (ソースだけ) を解析する。単位の解析はファイルを読まない (parser/Apex/unit.ts) */
+const parseSource = (source: string): Promise<ApexUnitParseResult> =>
+    parseApexUnitFiles({
+        unitType: 'class',
+        name: 'A',
+        filePath: 'A.cls',
+        source: { fileName: 'A.cls', source },
+    });
 
 const SOURCE = `public class A {
     private Integer first = 1, second = 2;
@@ -35,8 +29,8 @@ const SOURCE = `public class A {
 `;
 
 /** sourceObject に、その objectKey / sourceKey の位置があるか */
-const hasSource = (result: ApexParseResult, keys: { objectKey: string; sourceKey: string }) =>
-    (result.result.sourceObject ?? []).some(
+const hasSource = (result: ApexUnitParseResult, keys: { objectKey: string; sourceKey: string }) =>
+    result.result.sourceObject.some(
         (o) =>
             o.objectKey === keys.objectKey && o.source.some((s) => s.sourceKey === keys.sourceKey),
     );
@@ -76,10 +70,9 @@ describe('Apex の JSON: kind のない式・変数の位置', () => {
         const before = await parseSource(SOURCE);
         const after = await parseSource(`// header\n\n${SOURCE}`);
         const statuses = new Set<string>();
-        find(
-            makeUnitDiffs([before] as never, [after] as never),
-            (n) => typeof n.status === 'string',
-        ).forEach((n) => statuses.add(n.status));
+        find(makeApexUnitDiffs([before], [after]), (n) => typeof n.status === 'string').forEach(
+            (n) => statuses.add(n.status),
+        );
         assert.deepEqual([...statuses], ['unchanged']);
     });
 
@@ -88,17 +81,18 @@ describe('Apex の JSON: kind のない式・変数の位置', () => {
         const after = await parseSource(
             SOURCE.replace("'001000000000001AAA'", "'001000000000002AAA'"),
         );
-        const changed = find(
-            makeUnitDiffs([before] as never, [after] as never),
-            (n) => n.status === 'changed',
-        );
+        // 単位・ソースの入れ物の changed は除き、ソースの中身の差分の中で数える
+        const [diff] = makeApexUnitDiffs([before], [after]);
+        const content = (diff!.content as { fields: { source: { fields: { content: unknown } } } })
+            .fields.source.fields.content;
+        const changed = find(content, (n) => n.status === 'changed');
         assert.ok(changed.length > 0);
         assert.ok(changed.length < 10, `changed: ${changed.length}`);
     });
 
     it('sourceObject の context は元のソース (空白・改行を残す)', async () => {
         const result = await parseSource(SOURCE);
-        const contexts = (result.result.sourceObject ?? []).map((o) => o.context);
+        const contexts = result.result.sourceObject.map((o) => o.context);
         assert.ok(contexts.includes('first + second'));
         // メソッドの範囲は修飾子 (public) の後ろから
         assert.ok(contexts.some((c) => c.startsWith('void run() {\n')));

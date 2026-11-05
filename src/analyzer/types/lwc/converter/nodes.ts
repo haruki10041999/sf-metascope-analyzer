@@ -94,7 +94,7 @@ import type {
     YieldExpression,
 } from '@babel/types';
 
-import type { CommonType, ValueRuleValue } from '../../apex/converter/commons';
+import type { CommonType, ValueRuleValue } from '../../commons/converter';
 import type { LwcSourceInfo } from './commons';
 
 /** ノードの CommonType (sourceInfo はファイルのパスも持つ) */

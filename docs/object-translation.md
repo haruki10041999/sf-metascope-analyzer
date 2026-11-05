@@ -116,8 +116,8 @@
 [examples/metadata/](./examples/metadata/README.md) の before / after に `objectTranslations` を置いている。
 
 ```sh
-npx ttsx --noCheck docs/examples/metadata/run-parse.ts   # parse-output/<side>/objectTranslations/ に JSON
-npx ttsx --noCheck docs/examples/metadata/run-diff.ts    # diff-output/translation-diff.json、translation-coverage.md
+npx ttsx --noCheck docs/examples/metadata/scripts/run-parse.ts   # output/json/<side>/objectTranslations/ に JSON
+npx ttsx --noCheck docs/examples/metadata/scripts/run-diff.ts    # output/diff/translation-diff.json、translation-coverage.md
 ```
 
 | テスト                                    | 内容                                                                                                                                                            |

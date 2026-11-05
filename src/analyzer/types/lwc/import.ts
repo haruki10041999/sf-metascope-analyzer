@@ -1,4 +1,4 @@
-// import の JSON (docs/lwc-parse-plan.md 3.1.6 の lwcImport)。LWC だけのもの
+// import の JSON (docs/lwc-json-reference.md)。LWC だけのもの
 import { makeJsonType, type ErrorJson, type JsonType } from '../commons/json';
 
 import { nameOf, type LwcJsonContext, convertLwcValue } from './commons';

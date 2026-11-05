@@ -31,6 +31,7 @@
         "@lwc/compiler": "^9.5.1",
         "@lwc/engine-server": "^9.5.1",
         "@lwc/rollup-plugin": "^9.5.1",
+        "@lwc/shared": "^9.5.1",
         "@lwc/style-compiler": "^9.5.1",
         "@lwc/template-compiler": "^9.4.3",
         "@modelcontextprotocol/sdk": "^1.30.0",

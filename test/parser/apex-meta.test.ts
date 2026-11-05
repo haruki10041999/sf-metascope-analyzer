@@ -2,101 +2,108 @@ import assert from 'node:assert/strict';
 import path from 'node:path';
 import { before, describe, it } from 'node:test';
 
-import { runDiff } from '../../docs/examples/apex-diff/run-diff';
-import { ApexMetaFileStructureType, ApexParser } from '../../src/analyzer/parser/Apex/parser';
+import { runDiff } from '../../docs/examples/apex/scripts/run-diff';
+import { ApexParser, type ApexUnitParseResult } from '../../src/analyzer/parser/Apex';
+import type { ApexMetaJson } from '../../src/analyzer/types';
 
-/** docs/examples/apex-diff のクラス・トリガーのメタデータ (-meta.xml) の parse と Diff */
+/**
+ * docs/examples/apex/samples/diff のクラス・トリガーのメタデータ (-meta.xml)。
+ * クラス・トリガーは、ソースと -meta.xml を 1 つの単位として読む (parser/Apex/unit.ts)
+ */
 
-const sample = path.resolve('docs/examples/apex-diff');
-const parseMeta = (side: string, name: string) =>
-    ApexParser.parseApexMeta(path.join(sample, side, name));
+const sample = path.resolve('docs/examples/apex/samples/diff');
+const parseUnit = (side: string, file: string) =>
+    ApexParser.parseApexUnit(path.join(sample, side, file));
+const metaOf = (unit: ApexUnitParseResult) => unit.result.base.meta!.meta as ApexMetaJson;
 
 type Node = Record<string, any>;
 
-describe('ApexParser.parseApexMeta', () => {
-    it('reads the class / trigger metadata into JSON with kind / sourceKeys', async () => {
-        const cls = (await parseMeta(
-            'after',
-            'AccountService.cls-meta.xml',
-        )) as ApexMetaFileStructureType;
-        assert.equal(cls.dataType, 'apexClassMeta');
-        assert.equal(cls.result.id, 'AccountService.cls-meta.xml');
-        const { kind, sourceKeys, ...body } = cls.result.base;
+describe('Apex の単位とメタデータ (-meta.xml)', () => {
+    it('ソースと -meta.xml を 1 つの単位にし、id は class_<名前> / trigger_<名前>', async () => {
+        // どちらのファイルを渡しても同じ単位になる
+        const fromSource = await parseUnit('after', 'AccountService.cls');
+        const fromMeta = await parseUnit('after', 'AccountService.cls-meta.xml');
+        assert.deepEqual(fromMeta, fromSource);
+
+        assert.equal(fromSource.dataType, 'apexUnit');
+        assert.equal(fromSource.result.id, 'class_AccountService');
+        assert.equal(path.basename(fromSource.filePath), 'AccountService.cls');
+        const base = fromSource.result.base;
+        assert.deepEqual(
+            [
+                base.name,
+                base.unitType,
+                base.source?.fileName,
+                base.source?.fileType,
+                base.meta?.fileName,
+            ],
+            ['AccountService', 'class', 'AccountService.cls', 'cls', 'AccountService.cls-meta.xml'],
+        );
+
+        const { kind, sourceKeys, ...body } = metaOf(fromSource);
         assert.equal(kind, 'apexClassMeta');
         assert.match(sourceKeys.objectKey, /^apexClassMeta_[0-9a-f]{16}$/);
         // apiVersion は 61.0 のまま (数値にしない)。packageVersions は要素がないので持たない
         assert.deepEqual(body, { apiVersion: '61.0', status: 'Active' });
 
-        const trigger = (await parseMeta(
-            'after',
-            'AccountTrigger.trigger-meta.xml',
-        )) as ApexMetaFileStructureType;
-        assert.equal(trigger.result.base.kind, 'apexTriggerMeta');
-        assert.deepEqual(trigger.result.base.packageVersions, [
+        const trigger = await parseUnit('after', 'AccountTrigger.trigger');
+        assert.equal(trigger.result.id, 'trigger_AccountTrigger');
+        assert.equal(metaOf(trigger).kind, 'apexTriggerMeta');
+        assert.deepEqual(metaOf(trigger).packageVersions, [
             { namespace: 'acme', majorNumber: 1, minorNumber: 4 },
         ]);
     });
 
-    it('turns a broken file into an error result', async () => {
-        const broken = await parseMeta('after', 'Broken.cls-meta.xml');
-        assert.equal(broken.dataType, 'error');
+    it('読めない -meta.xml は ErrorJson にし、単位の resolvedError に filePath 付きで入れる', async () => {
+        const broken = await parseUnit('after', 'Broken.cls');
+        assert.equal(broken.result.base.meta?.meta.kind, 'error');
         assert.deepEqual(
-            broken.resolvedError.map((e) => [e.code, e.filePath, e.start.line]),
-            [['XML_SYNTAX', 'Broken.cls-meta.xml', 4]],
+            broken.resolvedError
+                .filter((e) => e.filePath === 'Broken.cls-meta.xml')
+                .map((e) => [e.code, e.start.line]),
+            [['XML_SYNTAX', 4]],
         );
     });
 
-    it('is found by searchApexFiles and dispatched by parseApexFile', async () => {
-        const files = (await ApexParser.searchApexFiles(path.join(sample, 'after')))
-            .map((file) => path.basename(file))
-            .sort();
-        assert.ok(
-            files.includes('AccountService.cls') && files.includes('AccountService.cls-meta.xml'),
+    it('匿名 Apex は 1 ファイルで 1 つの単位 (anonymous_<名前>)。searchApexUnits はフォルダごとに単位にまとめる', async () => {
+        const units = (await ApexParser.searchApexUnits(path.join(sample, 'after'))).map((file) =>
+            path.basename(file),
         );
-        const withoutMeta = await ApexParser.searchApexFiles(path.join(sample, 'after'), {
-            includeMeta: false,
-        });
-        assert.ok(withoutMeta.every((file) => !file.endsWith('-meta.xml')));
-
-        const parsed = await ApexParser.parseApexFile(
-            path.join(sample, 'after', 'Unchanged.cls-meta.xml'),
-        );
-        assert.equal(parsed.dataType, 'apexClassMeta');
+        // クラス・トリガーはソースのパス (-meta.xml は同じ単位なので出ない)
+        assert.deepEqual(units, [
+            'script.apex',
+            'AccountService.cls',
+            'Broken.cls',
+            'Level.cls',
+            'NewHelper.cls',
+            'Shape.cls',
+            'Unchanged.cls',
+            'AccountTrigger.trigger',
+        ]);
+        const script = await parseUnit('after', 'script.apex');
+        assert.equal(script.result.id, 'anonymous_script');
+        assert.equal(script.result.base.meta, undefined);
     });
 });
 
-describe('Apex metadata diff (makeUnitDiffs)', () => {
+describe('Apex のメタデータの Diff (makeApexUnitDiffs)', () => {
     let diffs: Awaited<ReturnType<typeof runDiff>>['diffs'];
     before(async () => {
         ({ diffs } = await runDiff());
     });
-    const fileDiff = (name: string) => diffs.find((d) => d.filePath === name)! as Node;
+    /** 単位の -meta.xml の中身の差分 */
+    const metaDiff = (id: string) =>
+        (diffs.find((d) => d.id === id)!.content as Node).fields.meta.fields.meta as Node;
 
-    it('pairs metadata files by path like the source files', () => {
-        assert.deepEqual(
-            diffs
-                .filter((d) => d.filePath.endsWith('-meta.xml'))
-                .map((d) => [d.filePath, d.status]),
-            [
-                ['AccountService.cls-meta.xml', 'changed'],
-                ['AccountTrigger.trigger-meta.xml', 'changed'],
-                ['Broken.cls-meta.xml', 'changed'],
-                ['OldHelper.cls-meta.xml', 'removed'],
-                ['Unchanged.cls-meta.xml', 'unchanged'],
-                ['NewHelper.cls-meta.xml', 'added'],
-            ],
-        );
-    });
-
-    it('diffs the values, and reports one-sided values as added / removed', () => {
-        const cls = fileDiff('AccountService.cls-meta.xml').content;
+    it('値ごとに比べ、片方にしかない値は added / removed', () => {
+        const cls = metaDiff('class_AccountService');
         assert.equal(cls.kind, 'apexClassMeta');
         assert.deepEqual(cls.fields, {
             apiVersion: { status: 'changed', before: '59.0', after: '61.0' },
             status: { status: 'unchanged', value: 'Active' },
         });
 
-        const trigger = fileDiff('AccountTrigger.trigger-meta.xml').content;
+        const trigger = metaDiff('trigger_AccountTrigger');
         assert.deepEqual(trigger.fields.status, {
             status: 'changed',
             before: 'Active',
@@ -106,5 +113,12 @@ describe('Apex metadata diff (makeUnitDiffs)', () => {
             status: 'added',
             value: [{ namespace: 'acme', majorNumber: 1, minorNumber: 4 }],
         });
+    });
+
+    it('読めなくなった -meta.xml は値ごとの変更', () => {
+        const broken = metaDiff('class_Broken');
+        assert.equal(broken.status, 'changed');
+        // JSON ノードの kind は中身から分けて持つ (ほかの値ごとの差分と同じ)
+        assert.deepEqual(broken.kind, { before: 'apexClassMeta', after: 'error' });
     });
 });

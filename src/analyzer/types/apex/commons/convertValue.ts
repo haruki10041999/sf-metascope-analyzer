@@ -1,4 +1,4 @@
-import { CommonType } from '../converter';
+import { CommonType } from '../../commons/converter';
 
 import { Convert } from './convert';
 import { ConvertExcludeError, ConvertType, convertExcludeError } from './excludeError';

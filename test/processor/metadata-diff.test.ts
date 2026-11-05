@@ -4,7 +4,7 @@ import os from 'node:os';
 import path from 'node:path';
 import { after, before, describe, it } from 'node:test';
 
-import { ALL_KINDS, countDiffKinds, runDiff } from '../../docs/examples/metadata/run-diff';
+import { ALL_KINDS, countDiffKinds, runDiff } from '../../docs/examples/metadata/scripts/run-diff';
 import { MetadataProcessor } from '../../src/analyzer/processor/Metadata/metadata';
 
 /**
@@ -235,7 +235,14 @@ describe('MetadataProcessor', () => {
         const objects = path.join(repository, 'force-app', 'main', 'default', 'objects');
         const saveRoot = path.join(tmp, 'saved');
         const sample = (side: string) =>
-            path.join('docs/examples/metadata', side, 'force-app', 'main', 'default', 'objects');
+            path.join(
+                'docs/examples/metadata/samples',
+                side,
+                'force-app',
+                'main',
+                'default',
+                'objects',
+            );
 
         await cp(sample('before'), objects, { recursive: true });
         const processor = await MetadataProcessor.create(saveRoot, repository);

@@ -15,7 +15,7 @@ import type {
     LwcPropertyJson,
 } from '../../src/analyzer/types/lwc';
 
-const BUNDLES = 'docs/examples/lwc/bundles/force-app/main/default/lwc';
+const BUNDLES = 'docs/examples/lwc/samples/bundles/force-app/main/default/lwc';
 
 const parseBundle = async (name: string): Promise<LwcBundleStructureType> => {
     const result = await LwcParser.parseLwcBundle(`${BUNDLES}/${name}`);
@@ -354,10 +354,22 @@ export default class Hello extends LightningElement {
         walk(bundle.result.base);
         assert.deepEqual(missing, []);
         assert.ok(bundle.result.sourceObject.every((o) => !o.objectKey.startsWith('file_')));
+        // 位置はバンドルのどれかのファイルのもの (JS / HTML / CSS)。ルート (lwcTemplate / lwcStylesheet) は空の範囲。ファイル全体を context に持つものはない
+        const files = [
+            'accountList/accountList.ts',
+            'accountList/accountList.html',
+            'accountList/accountList.css',
+            'accountList/accountList.js-meta.xml',
+        ];
         assert.ok(
             bundle.result.sourceObject.every((o) =>
-                o.source.every((s) => s.filePath === 'accountList/accountList.ts'),
+                o.source.every((s) => files.includes(s.filePath)),
             ),
+        );
+        assert.ok(
+            bundle.result.sourceObject
+                .filter((o) => /^(lwcStylesheet|lwcTemplate)_/.test(o.objectKey))
+                .every((o) => o.context === ''),
         );
     });
 

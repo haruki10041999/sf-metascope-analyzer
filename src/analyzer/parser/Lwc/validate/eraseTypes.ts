@@ -1,5 +1,5 @@
-// TS の型を空白にする処理 (docs/lwc-parse-plan.md 3.2)。
-// 検証は docs/examples/lwc/verify-erase-types.ts、使用例は docs/examples/lwc/run-library-parse.ts
+// TS の型を空白にする処理 (docs/lwc-implementation.md)。
+// 検証は docs/examples/lwc/scripts/verify-erase-types.ts、使用例は docs/examples/lwc/scripts/run-library-parse.ts
 import { parse as babelParse } from '@babel/parser';
 import type { File } from '@babel/types';
 

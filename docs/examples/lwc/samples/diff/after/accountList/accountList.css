@@ -1,0 +1,26 @@
+:host {
+    display: block;
+    --account-list-gap: 0.75rem;
+}
+
+.parent,
+.total,
+.summary {
+    font-weight: bold;
+    color: var(--lwc-colorTextDefault, #181818);
+}
+
+.tile {
+    padding: var(--account-list-gap);
+    border-bottom: 1px solid var(--slds-g-color-border-base-1, #c9c9c9);
+}
+
+.tile:hover {
+    background: var(--slds-g-color-surface-container-2, #f3f3f3);
+}
+
+@media (max-width: 600px) {
+    .tile {
+        padding: 0;
+    }
+}

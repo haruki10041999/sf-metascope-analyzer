@@ -2,9 +2,7 @@ import type { ApexParser, ApexParserRuleContext } from '@apexdevtools/apex-parse
 
 import { parse } from '../apex_IR/helpers';
 import { UnitVisitor } from '../../src/analyzer/types/apex_IR/unitVisitor';
-import {
-    convertApexUnit,
-} from '../../src/analyzer/types/apex/converter';
+import { convertApexUnit } from '../../src/analyzer/types/apex/converter';
 import { makeConvertType, regenerateSourceObjects } from '../../src/analyzer/types/apex/commons';
 import { JsonType } from '../../src/analyzer/types/commons';
 import {
