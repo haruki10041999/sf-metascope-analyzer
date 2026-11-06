@@ -1,4 +1,4 @@
-// 同じバンドルの中の突き合わせ (docs/lwc-template-stylesheet-plan.md 6.6.4)。
+// 同じバンドルの中の突き合わせ (docs/lwc-implementation.md)。
 // template-compiler はテンプレートだけを見るので、テンプレートの式・ハンドラー・lwc:ref が JS のメンバーと合っているか、
 // lwc:component を使ってよいか (js-meta.xml の capabilities) は、JSON がそろったところでここで見る。
 // 誤検出がありうる (継承・mixin のメンバーは JSON にない) ので、すべて phase bundle・level warning

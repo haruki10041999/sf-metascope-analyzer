@@ -9,7 +9,9 @@ import {
     XmlReadProblem,
     readXmlRoot,
     makeXmlJson,
+    nonEmptyEntry,
     readProperties,
+    readTexts,
 } from '../commons/xmlJson';
 import { CompactLayoutJson, makeCompactLayoutJson } from './compactLayout';
 import { CustomFieldJson, makeCustomFieldJson } from './field';
@@ -18,6 +20,12 @@ import { ListViewJson, makeListViewJson } from './listView';
 import { RecordTypeJson, makeRecordTypeJson } from './recordType';
 import { ValidationRuleJson, makeValidationRuleJson } from './validationRule';
 import { WebLinkJson, makeWebLinkJson } from './webLink';
+import {
+    BusinessProcessJson,
+    SharingReasonJson,
+    makeBusinessProcessJson,
+    makeSharingReasonJson,
+} from './businessProcess';
 import { XmlElement, childOf, childrenOf } from '../commons/xml';
 
 /** API 名の接尾辞から決まるオブジェクトの種類 */
@@ -51,6 +59,35 @@ export const OBJECT_SCHEMA = {
     enableStreamingApi: 'boolean',
 } as const;
 
+/** 検索レイアウト (`<searchLayouts>`)。どれも項目・ボタンの API 名の並び (表示順) */
+export const SEARCH_LAYOUT_LISTS = [
+    'customTabListAdditionalFields',
+    'excludedStandardButtons',
+    'listViewButtons',
+    'lookupDialogsAdditionalFields',
+    'lookupFilterFields',
+    'lookupPhoneDialogsAdditionalFields',
+    'massQuickActions',
+    'searchFilterFields',
+    'searchResultsAdditionalFields',
+    'searchResultsCustomButtons',
+] as const;
+
+export type SearchLayoutsJson = Partial<Record<(typeof SEARCH_LAYOUT_LISTS)[number], string[]>>;
+
+export const OBJECT_ACTION_OVERRIDE_SCHEMA = {
+    actionName: 'string',
+    comment: 'string',
+    content: 'string',
+    formFactor: 'string',
+    skipRecordTypeSelect: 'boolean',
+    type: 'string',
+} as const;
+
+/** 標準のボタン・アクションの上書き (`<actionOverrides>`。キーは actionName + formFactor) */
+export type ObjectActionOverrideJson = JsonType<'objectActionOverride'> &
+    PropertiesOf<typeof OBJECT_ACTION_OVERRIDE_SCHEMA>;
+
 /** 名前項目 (`<nameField>`)。type は Text か AutoNumber */
 export type NameFieldJson = { label?: string; type?: string; displayFormat?: string };
 
@@ -70,6 +107,12 @@ export type CustomObjectJson = JsonType<'object'> & {
     fieldSets?: (FieldSetJson | ErrorJson)[];
     compactLayouts?: (CompactLayoutJson | ErrorJson)[];
     webLinks?: (WebLinkJson | ErrorJson)[];
+    businessProcesses?: (BusinessProcessJson | ErrorJson)[];
+    sharingReasons?: (SharingReasonJson | ErrorJson)[];
+    /** object-meta.xml の中の検索レイアウト */
+    searchLayouts?: SearchLayoutsJson;
+    /** object-meta.xml の中のアクションの上書き */
+    actionOverrides?: ObjectActionOverrideJson[];
 } & PropertiesOf<typeof OBJECT_SCHEMA>;
 
 type MemberMaker = (
@@ -140,6 +183,22 @@ export const OBJECT_MEMBERS = {
         element: 'webLinks',
         make: makeWebLinkJson,
     },
+    businessProcesses: {
+        kind: 'businessProcess',
+        folder: 'businessProcesses',
+        suffix: '.businessProcess-meta.xml',
+        root: 'BusinessProcess',
+        element: 'businessProcesses',
+        make: makeBusinessProcessJson,
+    },
+    sharingReasons: {
+        kind: 'sharingReason',
+        folder: 'sharingReasons',
+        suffix: '.sharingReason-meta.xml',
+        root: 'SharingReason',
+        element: 'sharingReasons',
+        make: makeSharingReasonJson,
+    },
 } as const satisfies Record<
     string,
     {
@@ -161,6 +220,21 @@ export type ObjectSource = {
     /** <名前>.object-meta.xml (標準オブジェクトなどで、ないこともある) */
     objectFile?: ParsedXmlFile;
     members: Record<ObjectMemberKey, ParsedXmlFile[]>;
+};
+
+/** 検索レイアウト。要素がなければ持たない (保存済みのオブジェクトの objectKey を変えないため) */
+const searchLayoutsEntry = (
+    objectElement: XmlElement | undefined,
+): { searchLayouts?: SearchLayoutsJson } => {
+    const element = objectElement ? childOf(objectElement, 'searchLayouts') : undefined;
+    if (!element) return {};
+    const layouts = Object.fromEntries(
+        SEARCH_LAYOUT_LISTS.flatMap((name) => {
+            const values = readTexts(element, name);
+            return values.length ? [[name, values]] : [];
+        }),
+    );
+    return Object.keys(layouts).length ? { searchLayouts: layouts } : {};
 };
 
 /** オブジェクトのフォルダから読んだファイルを、CustomObjectJson にする */
@@ -220,6 +294,20 @@ export const makeCustomObjectJson = (
                   }
                 : {}),
             ...members,
+            ...searchLayoutsEntry(objectElement),
+            ...nonEmptyEntry(
+                'actionOverrides',
+                (objectElement ? childrenOf(objectElement, 'actionOverrides') : []).map(
+                    (override) =>
+                        makeXmlJson<ObjectActionOverrideJson>(
+                            'objectActionOverride',
+                            readProperties(override, OBJECT_ACTION_OVERRIDE_SCHEMA),
+                            override,
+                            objectFile,
+                            registry,
+                        ),
+                ),
+            ),
         },
         objectElement,
         objectFile,

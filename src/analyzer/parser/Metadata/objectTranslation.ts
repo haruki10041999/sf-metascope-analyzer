@@ -5,6 +5,7 @@ import {
     CustomObjectTranslationJson,
     ErrorJson,
     FIELD_TRANSLATION_SUFFIX,
+    SourceText,
     OBJECT_TRANSLATION_SUFFIX,
     XmlSourceJson,
     XmlSourceRegistry,
@@ -15,8 +16,9 @@ import {
     XmlResolvedError,
     makeJsonSaveData,
     makeMsgPackSaveData,
+    parseXmlSource,
     readMsgPack,
-    readXmlFile,
+    readSource,
     toXmlResolvedError,
 } from '../commons';
 
@@ -111,19 +113,55 @@ export class ObjectTranslationParser {
         const name = path.basename(directory);
         const relative = (p: string) => toPosix(path.join(name, p));
 
+        const files: SourceText[] = [];
         const objectPath = path.join(directory, `${name}${OBJECT_TRANSLATION_SUFFIX}`);
-        const objectFile = (await fs.stat(objectPath).catch(() => undefined))
-            ? await readXmlFile(objectPath, relative(`${name}${OBJECT_TRANSLATION_SUFFIX}`), name)
-            : undefined;
-        const fieldFiles = await Promise.all(
-            (await listFieldFiles(directory)).map(({ absolute, relative: p }) =>
-                readXmlFile(
-                    absolute,
-                    relative(p),
-                    path.basename(p).slice(0, -FIELD_TRANSLATION_SUFFIX.length),
-                ),
-            ),
+        if (await fs.stat(objectPath).catch(() => undefined)) {
+            files.push({
+                fileName: `${name}${OBJECT_TRANSLATION_SUFFIX}`,
+                filePath: relative(`${name}${OBJECT_TRANSLATION_SUFFIX}`),
+                source: await readSource(objectPath),
+            });
+        }
+        for (const { absolute, relative: p } of await listFieldFiles(directory)) {
+            files.push({
+                fileName: path.basename(p),
+                filePath: relative(p),
+                source: await readSource(absolute),
+            });
+        }
+        return {
+            ...ObjectTranslationParser.parseObjectTranslationSource(name, files),
+            filePath: directory,
+        };
+    }
+
+    /**
+     * 読み込み済みのファイルから翻訳を解析する (ファイルを読まない入口。git の before 側などに使う)。
+     * name は <オブジェクト>-<言語>。files の filePath は <name>/<name>.objectTranslation-meta.xml と、
+     * <name>/<項目>.fieldTranslation-meta.xml (fields/ の下でもよい)。結果の filePath は name
+     */
+    static parseObjectTranslationSource(
+        name: string,
+        files: SourceText[],
+    ): ObjectTranslationParseResult {
+        const directory = name;
+        const lf = (source: string) => source.replace(/\r\n?/g, '\n');
+        const objectText = files.find(
+            (file) => file.filePath === `${name}/${name}${OBJECT_TRANSLATION_SUFFIX}`,
         );
+        const objectFile = objectText
+            ? parseXmlSource(objectText.filePath, lf(objectText.source), name)
+            : undefined;
+        const fieldFiles = files
+            .filter((file) => file.fileName.endsWith(FIELD_TRANSLATION_SUFFIX))
+            .sort((a, b) => a.filePath.localeCompare(b.filePath))
+            .map((file) =>
+                parseXmlSource(
+                    file.filePath,
+                    lf(file.source),
+                    file.fileName.slice(0, -FIELD_TRANSLATION_SUFFIX.length),
+                ),
+            );
 
         const registry = new XmlSourceRegistry();
         const { translation, problems } = makeCustomObjectTranslationJson(

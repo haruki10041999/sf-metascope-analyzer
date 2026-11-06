@@ -58,6 +58,7 @@ describe('metadata diff samples (docs/examples/metadata)', () => {
                 ['Invoice__c', 'changed'],
                 ['Invoice_Line__c', 'changed'],
                 ['Legacy_Item__c', 'removed'],
+                ['Opportunity', 'changed'],
                 ['Payment__c', 'added'],
             ],
         );
@@ -265,6 +266,7 @@ describe('MetadataProcessor', () => {
                 ['Invoice__c', 'changed'],
                 ['Invoice_Line__c', 'changed'],
                 ['Legacy_Item__c', 'removed'],
+                ['Opportunity', 'changed'],
                 ['Payment__c', 'added'],
             ],
         );

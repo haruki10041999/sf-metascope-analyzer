@@ -1,0 +1,40 @@
+{
+  "filePath": "customPermissions/View_Invoice.customPermission-meta.xml",
+  "resolvedError": [],
+  "dataType": "customPermission",
+  "result": {
+    "id": "customPermission_View_Invoice",
+    "base": {
+      "kind": "customPermission",
+      "sourceKeys": {
+        "objectKey": "customPermission_31daa2765c1d6cbf",
+        "sourceKey": "customPermission_10675fb393031cca"
+      },
+      "fullName": "View_Invoice",
+      "label": "View Invoice",
+      "isLicensed": false
+    },
+    "sourceObject": [
+      {
+        "objectKey": "customPermission_31daa2765c1d6cbf",
+        "context": "<CustomPermission xmlns=\"http://soap.sforce.com/2006/04/metadata\">\n    <isLicensed>false</isLicensed>\n    <label>View Invoice</label>\n</CustomPermission>",
+        "source": [
+          {
+            "sourceKey": "customPermission_10675fb393031cca",
+            "filePath": "customPermissions/View_Invoice.customPermission-meta.xml",
+            "start": {
+              "offset": 39,
+              "line": 2,
+              "column": 0
+            },
+            "end": {
+              "offset": 192,
+              "line": 5,
+              "column": 19
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

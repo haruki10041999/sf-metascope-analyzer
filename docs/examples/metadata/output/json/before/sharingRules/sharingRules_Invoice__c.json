@@ -1,0 +1,119 @@
+{
+  "filePath": "sharingRules/Invoice__c.sharingRules-meta.xml",
+  "resolvedError": [],
+  "dataType": "sharingRules",
+  "result": {
+    "id": "sharingRules_Invoice__c",
+    "base": {
+      "kind": "sharingRules",
+      "sourceKeys": {
+        "objectKey": "sharingRules_b8c9affebe56d941",
+        "sourceKey": "sharingRules_171d2d36e712dc32"
+      },
+      "fullName": "Invoice__c",
+      "sharingCriteriaRules": [
+        {
+          "kind": "sharingCriteriaRule",
+          "sourceKeys": {
+            "objectKey": "sharingCriteriaRule_3dc1fed87e84c6da",
+            "sourceKey": "sharingCriteriaRule_0153393cdf4a4266"
+          },
+          "fullName": "Large_Invoices",
+          "label": "Large Invoices",
+          "accessLevel": "Read",
+          "includeRecordsOwnedByAll": true,
+          "sharedTo": {
+            "role": "Sales_Manager"
+          },
+          "criteriaItems": [
+            {
+              "field": "Amount__c",
+              "operation": "greaterThan",
+              "value": "10000"
+            }
+          ]
+        }
+      ],
+      "sharingOwnerRules": [
+        {
+          "kind": "sharingOwnerRule",
+          "sourceKeys": {
+            "objectKey": "sharingOwnerRule_ece9fe48a6f9cb8a",
+            "sourceKey": "sharingOwnerRule_0a35bb31c1d5f826"
+          },
+          "fullName": "Sales_Team",
+          "label": "Sales Team",
+          "accessLevel": "Read",
+          "sharedTo": {
+            "group": "Finance"
+          },
+          "sharedFrom": {
+            "role": "Sales_Manager"
+          }
+        }
+      ]
+    },
+    "sourceObject": [
+      {
+        "objectKey": "sharingCriteriaRule_3dc1fed87e84c6da",
+        "context": "<sharingCriteriaRules>\n        <fullName>Large_Invoices</fullName>\n        <accessLevel>Read</accessLevel>\n        <label>Large Invoices</label>\n        <sharedTo>\n            <role>Sales_Manager</role>\n        </sharedTo>\n        <criteriaItems>\n            <field>Amount__c</field>\n            <operation>greaterThan</operation>\n            <value>10000</value>\n        </criteriaItems>\n        <includeRecordsOwnedByAll>true</includeRecordsOwnedByAll>\n    </sharingCriteriaRules>",
+        "source": [
+          {
+            "sourceKey": "sharingCriteriaRule_0153393cdf4a4266",
+            "filePath": "sharingRules/Invoice__c.sharingRules-meta.xml",
+            "start": {
+              "offset": 106,
+              "line": 3,
+              "column": 4
+            },
+            "end": {
+              "offset": 588,
+              "line": 16,
+              "column": 27
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "sharingOwnerRule_ece9fe48a6f9cb8a",
+        "context": "<sharingOwnerRules>\n        <fullName>Sales_Team</fullName>\n        <accessLevel>Read</accessLevel>\n        <label>Sales Team</label>\n        <sharedTo>\n            <group>Finance</group>\n        </sharedTo>\n        <sharedFrom>\n            <role>Sales_Manager</role>\n        </sharedFrom>\n    </sharingOwnerRules>",
+        "source": [
+          {
+            "sourceKey": "sharingOwnerRule_0a35bb31c1d5f826",
+            "filePath": "sharingRules/Invoice__c.sharingRules-meta.xml",
+            "start": {
+              "offset": 593,
+              "line": 17,
+              "column": 4
+            },
+            "end": {
+              "offset": 907,
+              "line": 27,
+              "column": 24
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "sharingRules_b8c9affebe56d941",
+        "context": "<SharingRules xmlns=\"http://soap.sforce.com/2006/04/metadata\">\n    <sharingCriteriaRules>\n        <fullName>Large_Invoices</fullName>\n        <accessLevel>Read</accessLevel>\n        <label>Large Invoices</label>\n        <sharedTo>\n            <role>Sales_Manager</role>\n        </sharedTo>\n        <criteriaItems>\n            <field>Amount__c</field>\n            <operation>greaterThan</operation>\n            <value>10000</value>\n        </criteriaItems>\n        <includeRecordsOwnedByAll>true</includeRecordsOwnedByAll>\n    </sharingCriteriaRules>\n    <sharingOwnerRules>\n        <fullName>Sales_Team</fullName>\n        <accessLevel>Read</accessLevel>\n        <label>Sales Team</label>\n        <sharedTo>\n            <group>Finance</group>\n        </sharedTo>\n        <sharedFrom>\n            <role>Sales_Manager</role>\n        </sharedFrom>\n    </sharingOwnerRules>\n</SharingRules>",
+        "source": [
+          {
+            "sourceKey": "sharingRules_171d2d36e712dc32",
+            "filePath": "sharingRules/Invoice__c.sharingRules-meta.xml",
+            "start": {
+              "offset": 39,
+              "line": 2,
+              "column": 0
+            },
+            "end": {
+              "offset": 923,
+              "line": 28,
+              "column": 15
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

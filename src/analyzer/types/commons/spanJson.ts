@@ -3,7 +3,7 @@ import { ConvertKeys, ErrorJson, JsonType } from './json';
 import { hash, isRecord, sortKeys } from './utils';
 
 // 位置の範囲 (start / end) を持つ木から、kind / sourceKeys 付きの JSON を直接作る部品。
-// 中間表現を作らない言語 (XML のメタデータ・LWC の HTML / CSS) で共通。方針: docs/lwc-template-stylesheet-plan.md 4 章
+// 中間表現を作らない言語 (XML のメタデータ・LWC の HTML / CSS) で共通。方針: docs/lwc-implementation.md
 // キーの作り方は Apex / LWC の JS と同じ:
 // - objectKey: `${kind}_${hash(内容)}`。内容は sourceKeys を除いたもの (子の内容を含む)。位置が変わっても変わらない
 // - sourceKey: `${kind}_${hash(ファイルと開始・終了位置)}`。位置が変わると変わる

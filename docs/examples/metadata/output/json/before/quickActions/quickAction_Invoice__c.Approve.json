@@ -1,0 +1,85 @@
+{
+  "filePath": "quickActions/Invoice__c.Approve.quickAction-meta.xml",
+  "resolvedError": [],
+  "dataType": "quickAction",
+  "result": {
+    "id": "quickAction_Invoice__c.Approve",
+    "base": {
+      "kind": "quickAction",
+      "sourceKeys": {
+        "objectKey": "quickAction_aff11bee39f1af02",
+        "sourceKey": "quickAction_3a55183d855a0edc"
+      },
+      "fullName": "Invoice__c.Approve",
+      "label": "Approve",
+      "type": "Update",
+      "optionsCreateFeedItem": true,
+      "quickActionLayout": {
+        "layoutSectionStyle": "TwoColumnsLeftToRight",
+        "quickActionLayoutColumns": [
+          {
+            "quickActionLayoutItems": {
+              "emptySpace": false,
+              "field": "Amount__c",
+              "uiBehavior": "Readonly"
+            }
+          },
+          ""
+        ]
+      },
+      "fieldOverrides": [
+        {
+          "kind": "quickActionFieldOverride",
+          "sourceKeys": {
+            "objectKey": "quickActionFieldOverride_50d37c693cc3a304",
+            "sourceKey": "quickActionFieldOverride_dcc083d7915440ef"
+          },
+          "field": "Status__c",
+          "literalValue": "Paid"
+        }
+      ]
+    },
+    "sourceObject": [
+      {
+        "objectKey": "quickActionFieldOverride_50d37c693cc3a304",
+        "context": "<fieldOverrides>\n        <field>Status__c</field>\n        <literalValue>Paid</literalValue>\n    </fieldOverrides>",
+        "source": [
+          {
+            "sourceKey": "quickActionFieldOverride_dcc083d7915440ef",
+            "filePath": "quickActions/Invoice__c.Approve.quickAction-meta.xml",
+            "start": {
+              "offset": 105,
+              "line": 3,
+              "column": 4
+            },
+            "end": {
+              "offset": 218,
+              "line": 6,
+              "column": 21
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "quickAction_aff11bee39f1af02",
+        "context": "<QuickAction xmlns=\"http://soap.sforce.com/2006/04/metadata\">\n    <fieldOverrides>\n        <field>Status__c</field>\n        <literalValue>Paid</literalValue>\n    </fieldOverrides>\n    <label>Approve</label>\n    <optionsCreateFeedItem>true</optionsCreateFeedItem>\n    <quickActionLayout>\n        <layoutSectionStyle>TwoColumnsLeftToRight</layoutSectionStyle>\n        <quickActionLayoutColumns>\n            <quickActionLayoutItems>\n                <emptySpace>false</emptySpace>\n                <field>Amount__c</field>\n                <uiBehavior>Readonly</uiBehavior>\n            </quickActionLayoutItems>\n        </quickActionLayoutColumns>\n        <quickActionLayoutColumns/>\n    </quickActionLayout>\n    <type>Update</type>\n</QuickAction>",
+        "source": [
+          {
+            "sourceKey": "quickAction_3a55183d855a0edc",
+            "filePath": "quickActions/Invoice__c.Approve.quickAction-meta.xml",
+            "start": {
+              "offset": 39,
+              "line": 2,
+              "column": 0
+            },
+            "end": {
+              "offset": 780,
+              "line": 21,
+              "column": 14
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

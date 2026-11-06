@@ -1,0 +1,8 @@
+<apex:page standardController="Invoice__c" extensions="InvoicePrintExt" renderAs="advanced_pdf">
+    <c:invoiceHeader invoice="{!Invoice__c}"/>
+    <apex:outputField value="{!Invoice__c.Amount__c}"/>
+    <apex:pageBlockTable value="{!lines}" var="line">
+        <apex:column value="{!line.Quantity__c}"/>
+    </apex:pageBlockTable>
+    <p>{!$Label.AccountListTitle}</p>
+</apex:page>

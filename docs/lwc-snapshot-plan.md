@@ -2,9 +2,9 @@
 
 レポートに、LWC のコンポーネントがどう見えるかを、静的な画面モック（snapshot）として表示できるかを検討した。結論は **作成できる**。方式を 2 つに分け、段階的に作る案にする。
 
-| 方式                    | 内容                                                                               | 見た目の正確さ                          | 実行するもの                                | 確認                                                                                        |
-| ----------------------- | ---------------------------------------------------------------------------------- | --------------------------------------- | ------------------------------------------- | ------------------------------------------------------------------------------------------- |
-| **A. ワイヤーフレーム** | parse したテンプレート（`TemplateIR`）から、要素の配置を枠で描く                   | 低（構造だけ）                          | なし（JSON を描くだけ）                     | parse の方針（[lwc-parse-plan.md](./lwc-parse-plan.md) 3.3）から作れる                      |
+| 方式                    | 内容                                                                               | 見た目の正確さ                          | 実行するもの                                | 確認                                                                                                        |
+| ----------------------- | ---------------------------------------------------------------------------------- | --------------------------------------- | ------------------------------------------- | ----------------------------------------------------------------------------------------------------------- |
+| **A. ワイヤーフレーム** | parse したテンプレート（`LwcTemplateJson`）から、要素の配置を枠で描く              | 低（構造だけ）                          | なし（JSON を描くだけ）                     | parse の方針（[lwc-json-reference.md](./lwc-json-reference.md) 3 章）から作れる                             |
 | **B. SSR の snapshot**  | **`@lwc/engine-server`**（9.5.1。決定）でコンポーネントを実際に描画し、HTML にする | 高（実際のテンプレート・CSS・条件分岐） | リポジトリのコンポーネントの JS（ビルド時） | **試作で描画を確認した**（[docs/examples/lwc/scripts/ssr-snapshot/](./examples/lwc/scripts/ssr-snapshot/)） |
 
 ## 1. 方式 B: SSR の snapshot（試作の結果）
@@ -36,7 +36,7 @@ renderComponent('c-hello', Hello, props)  →  HTML（Declarative Shadow DOM）
 
 ## 2. `lightning-base-components`（npm）を使えるか（調査の結果）
 
-`lightning-*` の部品を自前のスタブにする代わりに、Salesforce が npm で配布している [`lightning-base-components`](https://www.npmjs.com/package/lightning-base-components) を `@lwc/engine-server` で描画できるかを試した（[docs/examples/lwc/ssr-lbc/](./examples/lwc/ssr-lbc/)。採用が決まるまで本体の依存関係には入れないので、このフォルダで `npm install` → `npm run snapshot`）。
+`lightning-*` の部品を自前のスタブにする代わりに、Salesforce が npm で配布している [`lightning-base-components`](https://www.npmjs.com/package/lightning-base-components) を `@lwc/engine-server` で描画できるかを試した（[docs/examples/lwc/ssr-lbc/](./examples/lwc/scripts/ssr-lbc/)。採用が決まるまで本体の依存関係には入れないので、このフォルダで `npm install` → `npm run snapshot`）。
 
 **結論: SSR で描画できる**。本物の `lightning-*` のマークアップ（SLDS のクラス付き）になり、見た目が実際の画面に近くなる。ただし、ライセンスの確認と、出力のサイズ・一部の値が出ないことへの対応が要る。
 
@@ -93,7 +93,7 @@ renderComponent('c-hello', Hello, props)  →  HTML（Declarative Shadow DOM）
 | **`@salesforce/*` の import**  | `apex`: モックの wire adapter（`@wire`）と、Promise を返す関数（命令的な呼び出し）の両方として使えるもの。`schema`: `{ objectApiName, fieldApiName }` の定数。`label`: ラベルの値（なければキー）。`user/Id`・`resourceUrl` など: 固定の値                                                                                                                                                                                 |
 | **`lightning/*` のモジュール** | `lightning/uiRecordApi`（`getRecord` などのモックの wire adapter）、`lightning/navigation`（何もしない `NavigationMixin`）、`lightning/platformShowToastEvent` など                                                                                                                                                                                                                                                        |
 | **モックのデータ**             | snapshot ごとの「状態」（`@api` の値と、wire adapter が返す値）。レポートの仕様（skill）で指定する（5 章）                                                                                                                                                                                                                                                                                                                 |
-| **TS**                         | 型を空白にした JS（[lwc-implementation.md](./lwc-implementation.md) 4 章）をビルドに渡す（rollup のプラグインで置き換える）                                                                                                                                                                                                                                                                                                         |
+| **TS**                         | 型を空白にした JS（[lwc-implementation.md](./lwc-implementation.md) 4 章）をビルドに渡す（rollup のプラグインで置き換える）                                                                                                                                                                                                                                                                                                |
 | **SLDS の CSS**                | `lightning-base-components` の部品は、自分の Shadow DOM の中に SLDS のスタイルを持つ（2.2）。自前のスタブと、コンポーネント自身のテンプレートの SLDS のクラス（`slds-m-top_small` など）のために、`@salesforce-ux/design-system` の CSS もレポートに入れる。Shadow DOM の中にはページの CSS が届かないので、自前のスタブは light DOM（`static renderMode = 'light'`）にするか、スタブの CSS に必要な SLDS のクラスを入れる |
 | **実行の隔離**                 | リポジトリのコンポーネントの JS を実行する（`connectedCallback`、getter など）。ワーカースレッド（`node:vm` の別コンテキスト）で実行し、時間の上限を付ける。ネットワーク・ファイルへのアクセスはさせない                                                                                                                                                                                                                   |
 | **出力のサイズ**               | `lightning-base-components` を使うとスタイルが部品の数だけ繰り返される（2.2）。HTML を書き出すときに、同じ `<style>` を 1 つにまとめ（`<style data-lwc-style="n">` の置き場所にする）、表示するページ（`iframe`）の小さなスクリプトで、各 Shadow DOM に `adoptedStyleSheets` として共有のスタイルシートを付ける。スクリプトを使わない場合は、レポートの圧縮（gzip）に任せる                                                |

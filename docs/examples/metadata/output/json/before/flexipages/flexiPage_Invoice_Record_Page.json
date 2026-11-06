@@ -1,0 +1,308 @@
+{
+  "filePath": "flexipages/Invoice_Record_Page.flexipage-meta.xml",
+  "resolvedError": [],
+  "dataType": "flexiPage",
+  "result": {
+    "id": "flexiPage_Invoice_Record_Page",
+    "base": {
+      "kind": "flexiPage",
+      "sourceKeys": {
+        "objectKey": "flexiPage_ec9c6456ae95fea1",
+        "sourceKey": "flexiPage_56bcf1bae0533cfb"
+      },
+      "name": "Invoice_Record_Page",
+      "masterLabel": "Invoice Record Page",
+      "type": "RecordPage",
+      "sobjectType": "Invoice__c",
+      "template": "flexipage:recordHomeTemplateDesktop",
+      "templateProperties": {
+        "enablePageActionConfig": "false"
+      },
+      "regions": [
+        {
+          "kind": "flexiPageRegion",
+          "sourceKeys": {
+            "objectKey": "flexiPageRegion_c3ce2f675dc2ced2",
+            "sourceKey": "flexiPageRegion_bd226d7d3a7cb509"
+          },
+          "name": "header",
+          "regionType": "Region",
+          "items": [
+            "force_highlightsPanel",
+            "pathAssistant"
+          ]
+        },
+        {
+          "kind": "flexiPageRegion",
+          "sourceKeys": {
+            "objectKey": "flexiPageRegion_f083a7cbad853717",
+            "sourceKey": "flexiPageRegion_0de96db216ca5244"
+          },
+          "name": "main",
+          "regionType": "Region",
+          "items": [
+            "RecordAmountField",
+            "c_accountList"
+          ]
+        },
+        {
+          "kind": "flexiPageRegion",
+          "sourceKeys": {
+            "objectKey": "flexiPageRegion_08b4d51067cd392d",
+            "sourceKey": "flexiPageRegion_2eeb502646ab9986"
+          },
+          "name": "sidebar",
+          "regionType": "Region",
+          "items": [
+            "force_relatedListContainer"
+          ]
+        }
+      ],
+      "components": [
+        {
+          "kind": "flexiPageComponent",
+          "sourceKeys": {
+            "objectKey": "flexiPageComponent_9204e26f9059f131",
+            "sourceKey": "flexiPageComponent_e4908711351ddf69"
+          },
+          "identifier": "force_highlightsPanel",
+          "componentName": "force:highlightsPanel",
+          "region": "header",
+          "properties": {
+            "collapsed": "false"
+          }
+        },
+        {
+          "kind": "flexiPageComponent",
+          "sourceKeys": {
+            "objectKey": "flexiPageComponent_9ef6ed311ced9340",
+            "sourceKey": "flexiPageComponent_92e21942a4972a54"
+          },
+          "identifier": "pathAssistant",
+          "componentName": "runtime_sales_pathassistant:pathAssistant",
+          "region": "header"
+        },
+        {
+          "kind": "flexiPageComponent",
+          "sourceKeys": {
+            "objectKey": "flexiPageComponent_86a7136aa12c2c97",
+            "sourceKey": "flexiPageComponent_55d00a57c17c0052"
+          },
+          "identifier": "c_accountList",
+          "componentName": "c:accountList",
+          "region": "main",
+          "properties": {
+            "title": "取引先"
+          }
+        },
+        {
+          "kind": "flexiPageComponent",
+          "sourceKeys": {
+            "objectKey": "flexiPageComponent_5701b5172ab9d231",
+            "sourceKey": "flexiPageComponent_26a6a10f147bf44c"
+          },
+          "identifier": "force_relatedListContainer",
+          "componentName": "force:relatedListContainer",
+          "region": "sidebar"
+        }
+      ],
+      "fields": [
+        {
+          "kind": "flexiPageField",
+          "sourceKeys": {
+            "objectKey": "flexiPageField_3badceb23152f968",
+            "sourceKey": "flexiPageField_5c61138ba5aaab6c"
+          },
+          "identifier": "RecordAmountField",
+          "fieldItem": "Record.Amount__c",
+          "region": "main",
+          "properties": {
+            "uiBehavior": "none"
+          }
+        }
+      ]
+    },
+    "sourceObject": [
+      {
+        "objectKey": "flexiPageComponent_9204e26f9059f131",
+        "context": "<componentInstance>\n                <componentInstanceProperties>\n                    <name>collapsed</name>\n                    <value>false</value>\n                </componentInstanceProperties>\n                <componentName>force:highlightsPanel</componentName>\n                <identifier>force_highlightsPanel</identifier>\n            </componentInstance>",
+        "source": [
+          {
+            "sourceKey": "flexiPageComponent_e4908711351ddf69",
+            "filePath": "flexipages/Invoice_Record_Page.flexipage-meta.xml",
+            "start": {
+              "offset": 158,
+              "line": 5,
+              "column": 12
+            },
+            "end": {
+              "offset": 519,
+              "line": 12,
+              "column": 32
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "flexiPageComponent_9ef6ed311ced9340",
+        "context": "<componentInstance>\n                <componentName>runtime_sales_pathassistant:pathAssistant</componentName>\n                <identifier>pathAssistant</identifier>\n            </componentInstance>",
+        "source": [
+          {
+            "sourceKey": "flexiPageComponent_92e21942a4972a54",
+            "filePath": "flexipages/Invoice_Record_Page.flexipage-meta.xml",
+            "start": {
+              "offset": 581,
+              "line": 15,
+              "column": 12
+            },
+            "end": {
+              "offset": 777,
+              "line": 18,
+              "column": 32
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "flexiPageField_3badceb23152f968",
+        "context": "<fieldInstance>\n                <fieldInstanceProperties>\n                    <name>uiBehavior</name>\n                    <value>none</value>\n                </fieldInstanceProperties>\n                <fieldItem>Record.Amount__c</fieldItem>\n                <identifier>RecordAmountField</identifier>\n            </fieldInstance>",
+        "source": [
+          {
+            "sourceKey": "flexiPageField_5c61138ba5aaab6c",
+            "filePath": "flexipages/Invoice_Record_Page.flexipage-meta.xml",
+            "start": {
+              "offset": 942,
+              "line": 25,
+              "column": 12
+            },
+            "end": {
+              "offset": 1270,
+              "line": 32,
+              "column": 28
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "flexiPageComponent_86a7136aa12c2c97",
+        "context": "<componentInstance>\n                <componentInstanceProperties>\n                    <name>title</name>\n                    <value>取引先</value>\n                </componentInstanceProperties>\n                <componentName>c:accountList</componentName>\n                <identifier>c_accountList</identifier>\n            </componentInstance>",
+        "source": [
+          {
+            "sourceKey": "flexiPageComponent_55d00a57c17c0052",
+            "filePath": "flexipages/Invoice_Record_Page.flexipage-meta.xml",
+            "start": {
+              "offset": 1332,
+              "line": 35,
+              "column": 12
+            },
+            "end": {
+              "offset": 1671,
+              "line": 42,
+              "column": 32
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "flexiPageComponent_5701b5172ab9d231",
+        "context": "<componentInstance>\n                <componentName>force:relatedListContainer</componentName>\n                <identifier>force_relatedListContainer</identifier>\n            </componentInstance>",
+        "source": [
+          {
+            "sourceKey": "flexiPageComponent_26a6a10f147bf44c",
+            "filePath": "flexipages/Invoice_Record_Page.flexipage-meta.xml",
+            "start": {
+              "offset": 1834,
+              "line": 49,
+              "column": 12
+            },
+            "end": {
+              "offset": 2028,
+              "line": 52,
+              "column": 32
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "flexiPageRegion_c3ce2f675dc2ced2",
+        "context": "<flexiPageRegions>\n        <itemInstances>\n            <componentInstance>\n                <componentInstanceProperties>\n                    <name>collapsed</name>\n                    <value>false</value>\n                </componentInstanceProperties>\n                <componentName>force:highlightsPanel</componentName>\n                <identifier>force_highlightsPanel</identifier>\n            </componentInstance>\n        </itemInstances>\n        <itemInstances>\n            <componentInstance>\n                <componentName>runtime_sales_pathassistant:pathAssistant</componentName>\n                <identifier>pathAssistant</identifier>\n            </componentInstance>\n        </itemInstances>\n        <name>header</name>\n        <type>Region</type>\n    </flexiPageRegions>",
+        "source": [
+          {
+            "sourceKey": "flexiPageRegion_bd226d7d3a7cb509",
+            "filePath": "flexipages/Invoice_Record_Page.flexipage-meta.xml",
+            "start": {
+              "offset": 103,
+              "line": 3,
+              "column": 4
+            },
+            "end": {
+              "offset": 882,
+              "line": 22,
+              "column": 23
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "flexiPageRegion_f083a7cbad853717",
+        "context": "<flexiPageRegions>\n        <itemInstances>\n            <fieldInstance>\n                <fieldInstanceProperties>\n                    <name>uiBehavior</name>\n                    <value>none</value>\n                </fieldInstanceProperties>\n                <fieldItem>Record.Amount__c</fieldItem>\n                <identifier>RecordAmountField</identifier>\n            </fieldInstance>\n        </itemInstances>\n        <itemInstances>\n            <componentInstance>\n                <componentInstanceProperties>\n                    <name>title</name>\n                    <value>取引先</value>\n                </componentInstanceProperties>\n                <componentName>c:accountList</componentName>\n                <identifier>c_accountList</identifier>\n            </componentInstance>\n        </itemInstances>\n        <name>main</name>\n        <type>Region</type>\n    </flexiPageRegions>",
+        "source": [
+          {
+            "sourceKey": "flexiPageRegion_0de96db216ca5244",
+            "filePath": "flexipages/Invoice_Record_Page.flexipage-meta.xml",
+            "start": {
+              "offset": 887,
+              "line": 23,
+              "column": 4
+            },
+            "end": {
+              "offset": 1774,
+              "line": 46,
+              "column": 23
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "flexiPageRegion_08b4d51067cd392d",
+        "context": "<flexiPageRegions>\n        <itemInstances>\n            <componentInstance>\n                <componentName>force:relatedListContainer</componentName>\n                <identifier>force_relatedListContainer</identifier>\n            </componentInstance>\n        </itemInstances>\n        <name>sidebar</name>\n        <type>Region</type>\n    </flexiPageRegions>",
+        "source": [
+          {
+            "sourceKey": "flexiPageRegion_2eeb502646ab9986",
+            "filePath": "flexipages/Invoice_Record_Page.flexipage-meta.xml",
+            "start": {
+              "offset": 1779,
+              "line": 47,
+              "column": 4
+            },
+            "end": {
+              "offset": 2134,
+              "line": 56,
+              "column": 23
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "flexiPage_ec9c6456ae95fea1",
+        "context": "<FlexiPage xmlns=\"http://soap.sforce.com/2006/04/metadata\">\n    <flexiPageRegions>\n        <itemInstances>\n            <componentInstance>\n                <componentInstanceProperties>\n                    <name>collapsed</name>\n                    <value>false</value>\n                </componentInstanceProperties>\n                <componentName>force:highlightsPanel</componentName>\n                <identifier>force_highlightsPanel</identifier>\n            </componentInstance>\n        </itemInstances>\n        <itemInstances>\n            <componentInstance>\n                <componentName>runtime_sales_pathassistant:pathAssistant</componentName>\n                <identifier>pathAssistant</identifier>\n            </componentInstance>\n        </itemInstances>\n        <name>header</name>\n        <type>Region</type>\n    </flexiPageRegions>\n    <flexiPageRegions>\n        <itemInstances>\n            <fieldInstance>\n                <fieldInstanceProperties>\n                    <name>uiBehavior</name>\n                    <value>none</value>\n                </fieldInstanceProperties>\n                <fieldItem>Record.Amount__c</fieldItem>\n                <identifier>RecordAmountField</identifier>\n            </fieldInstance>\n        </itemInstances>\n        <itemInstances>\n            <componentInstance>\n                <componentInstanceProperties>\n                    <name>title</name>\n                    <value>取引先</value>\n                </componentInstanceProperties>\n                <componentName>c:accountList</componentName>\n                <identifier>c_accountList</identifier>\n            </componentInstance>\n        </itemInstances>\n        <name>main</name>\n        <type>Region</type>\n    </flexiPageRegions>\n    <flexiPageRegions>\n        <itemInstances>\n            <componentInstance>\n                <componentName>force:relatedListContainer</componentName>\n                <identifier>force_relatedListContainer</identifier>\n            </componentInstance>\n        </itemInstances>\n        <name>sidebar</name>\n        <type>Region</type>\n    </flexiPageRegions>\n    <masterLabel>Invoice Record Page</masterLabel>\n    <sobjectType>Invoice__c</sobjectType>\n    <template>\n        <name>flexipage:recordHomeTemplateDesktop</name>\n        <properties>\n            <name>enablePageActionConfig</name>\n            <value>false</value>\n        </properties>\n    </template>\n    <type>RecordPage</type>\n</FlexiPage>",
+        "source": [
+          {
+            "sourceKey": "flexiPage_56bcf1bae0533cfb",
+            "filePath": "flexipages/Invoice_Record_Page.flexipage-meta.xml",
+            "start": {
+              "offset": 39,
+              "line": 2,
+              "column": 0
+            },
+            "end": {
+              "offset": 2480,
+              "line": 67,
+              "column": 12
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

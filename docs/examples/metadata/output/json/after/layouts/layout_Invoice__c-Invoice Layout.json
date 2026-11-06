@@ -1,0 +1,556 @@
+{
+  "filePath": "layouts/Invoice__c-Invoice Layout.layout-meta.xml",
+  "resolvedError": [],
+  "dataType": "layout",
+  "result": {
+    "id": "layout_Invoice__c-Invoice Layout",
+    "base": {
+      "kind": "layout",
+      "sourceKeys": {
+        "objectKey": "layout_73abc97f9fb96cf5",
+        "sourceKey": "layout_763f18f990a9e8cd"
+      },
+      "name": "Invoice__c-Invoice Layout",
+      "objectApiName": "Invoice__c",
+      "showEmailCheckbox": false,
+      "showHighlightsPanel": false,
+      "showInteractionLogPanel": false,
+      "showRunAssignmentRulesCheckbox": false,
+      "showSubmitAndAttachButton": false,
+      "sections": [
+        {
+          "kind": "layoutSection",
+          "sourceKeys": {
+            "objectKey": "layoutSection_6589400f90d57ae7",
+            "sourceKey": "layoutSection_756f27e71187d81d"
+          },
+          "label": "Information",
+          "style": "TwoColumnsTopToBottom",
+          "customLabel": false,
+          "detailHeading": true,
+          "editHeading": true,
+          "columns": 2
+        },
+        {
+          "kind": "layoutSection",
+          "sourceKeys": {
+            "objectKey": "layoutSection_07bcbcb2071ca82d",
+            "sourceKey": "layoutSection_2d4f535d73198cf8"
+          },
+          "label": "Approval",
+          "style": "TwoColumnsLeftToRight",
+          "customLabel": false,
+          "detailHeading": true,
+          "editHeading": true,
+          "columns": 2
+        },
+        {
+          "kind": "layoutSection",
+          "sourceKeys": {
+            "objectKey": "layoutSection_317febe4a4ae70af",
+            "sourceKey": "layoutSection_8dd9102dd51a8feb"
+          },
+          "label": "System Information",
+          "style": "TwoColumnsTopToBottom",
+          "customLabel": false,
+          "detailHeading": true,
+          "editHeading": true,
+          "columns": 2
+        }
+      ],
+      "items": [
+        {
+          "kind": "layoutItem",
+          "sourceKeys": {
+            "objectKey": "layoutItem_30470c7ca250075d",
+            "sourceKey": "layoutItem_717f5de239aa6d95"
+          },
+          "field": "Name",
+          "behavior": "Required",
+          "position": {
+            "section": "Information",
+            "column": 1,
+            "row": 1
+          }
+        },
+        {
+          "kind": "layoutItem",
+          "sourceKeys": {
+            "objectKey": "layoutItem_7c5e5ca6c2e11fcb",
+            "sourceKey": "layoutItem_c64a22fce315e942"
+          },
+          "field": "Amount__c",
+          "behavior": "Required",
+          "position": {
+            "section": "Information",
+            "column": 1,
+            "row": 2
+          }
+        },
+        {
+          "kind": "layoutItem",
+          "sourceKeys": {
+            "objectKey": "layoutItem_fdd99157056e8e23",
+            "sourceKey": "layoutItem_d972cdd437684cb9"
+          },
+          "field": "Due_Date__c",
+          "behavior": "Edit",
+          "position": {
+            "section": "Information",
+            "column": 2,
+            "row": 1
+          }
+        },
+        {
+          "kind": "layoutItem",
+          "sourceKeys": {
+            "objectKey": "layoutItem_214ab84d4ea5642f",
+            "sourceKey": "layoutItem_1bd0762af1664587"
+          },
+          "emptySpace": true,
+          "position": {
+            "section": "Information",
+            "column": 2,
+            "row": 2
+          }
+        },
+        {
+          "kind": "layoutItem",
+          "sourceKeys": {
+            "objectKey": "layoutItem_08a37b1aa47cf32b",
+            "sourceKey": "layoutItem_84fe1a3f0bca9fe7"
+          },
+          "field": "Status__c",
+          "behavior": "Readonly",
+          "position": {
+            "section": "Approval",
+            "column": 1,
+            "row": 1
+          }
+        },
+        {
+          "kind": "layoutItem",
+          "sourceKeys": {
+            "objectKey": "layoutItem_4c0e02cca22aa628",
+            "sourceKey": "layoutItem_16480b0fe7eaf566"
+          },
+          "field": "Approved__c",
+          "behavior": "Edit",
+          "position": {
+            "section": "Approval",
+            "column": 2,
+            "row": 1
+          }
+        },
+        {
+          "kind": "layoutItem",
+          "sourceKeys": {
+            "objectKey": "layoutItem_44d3c5e8a3427442",
+            "sourceKey": "layoutItem_f662558aa431287b"
+          },
+          "field": "CreatedById",
+          "behavior": "Readonly",
+          "position": {
+            "section": "System Information",
+            "column": 1,
+            "row": 1
+          }
+        },
+        {
+          "kind": "layoutItem",
+          "sourceKeys": {
+            "objectKey": "layoutItem_24cd9513d5a91e4f",
+            "sourceKey": "layoutItem_bafc3654e76219b8"
+          },
+          "field": "LastModifiedById",
+          "behavior": "Readonly",
+          "position": {
+            "section": "System Information",
+            "column": 2,
+            "row": 1
+          }
+        }
+      ],
+      "relatedLists": [
+        {
+          "kind": "layoutRelatedList",
+          "sourceKeys": {
+            "objectKey": "layoutRelatedList_6301b8ece5a1223c",
+            "sourceKey": "layoutRelatedList_212fb1221eb8890d"
+          },
+          "relatedList": "Invoice_Line__c.Invoice__c",
+          "sortField": "Quantity__c",
+          "sortOrder": "Desc",
+          "fields": [
+            "NAME",
+            "Quantity__c",
+            "Product__c"
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "kind": "layoutAction",
+          "sourceKeys": {
+            "objectKey": "layoutAction_9ca6f81534071c83",
+            "sourceKey": "layoutAction_cc43a1b8eb80b4dd"
+          },
+          "actionName": "Edit",
+          "actionType": "StandardButton",
+          "sortOrder": 0,
+          "context": "Record"
+        },
+        {
+          "kind": "layoutAction",
+          "sourceKeys": {
+            "objectKey": "layoutAction_b06ed22296fff5b5",
+            "sourceKey": "layoutAction_01b91ac478dd7020"
+          },
+          "actionName": "Delete",
+          "actionType": "StandardButton",
+          "sortOrder": 2,
+          "context": "Record"
+        },
+        {
+          "kind": "layoutAction",
+          "sourceKeys": {
+            "objectKey": "layoutAction_363e8148a5b368b0",
+            "sourceKey": "layoutAction_ed7817e72b63043c"
+          },
+          "actionName": "Invoice__c.Approve",
+          "actionType": "QuickAction",
+          "sortOrder": 1,
+          "context": "Record"
+        }
+      ],
+      "excludeButtons": [
+        "Submit"
+      ],
+      "skippedElements": [
+        "summaryLayout"
+      ]
+    },
+    "sourceObject": [
+      {
+        "objectKey": "layoutSection_6589400f90d57ae7",
+        "context": "<layoutSections>\n        <customLabel>false</customLabel>\n        <detailHeading>true</detailHeading>\n        <editHeading>true</editHeading>\n        <label>Information</label>\n        <layoutColumns>\n            <layoutItems>\n                <behavior>Required</behavior>\n                <field>Name</field>\n            </layoutItems>\n            <layoutItems>\n                <behavior>Required</behavior>\n                <field>Amount__c</field>\n            </layoutItems>\n        </layoutColumns>\n        <layoutColumns>\n            <layoutItems>\n                <behavior>Edit</behavior>\n                <field>Due_Date__c</field>\n            </layoutItems>\n            <layoutItems>\n                <emptySpace>true</emptySpace>\n            </layoutItems>\n        </layoutColumns>\n        <style>TwoColumnsTopToBottom</style>\n    </layoutSections>",
+        "source": [
+          {
+            "sourceKey": "layoutSection_756f27e71187d81d",
+            "filePath": "layouts/Invoice__c-Invoice Layout.layout-meta.xml",
+            "start": {
+              "offset": 144,
+              "line": 4,
+              "column": 4
+            },
+            "end": {
+              "offset": 997,
+              "line": 29,
+              "column": 21
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "layoutSection_07bcbcb2071ca82d",
+        "context": "<layoutSections>\n        <customLabel>false</customLabel>\n        <detailHeading>true</detailHeading>\n        <editHeading>true</editHeading>\n        <label>Approval</label>\n        <layoutColumns>\n            <layoutItems>\n                <behavior>Readonly</behavior>\n                <field>Status__c</field>\n            </layoutItems>\n        </layoutColumns>\n        <layoutColumns>\n            <layoutItems>\n                <behavior>Edit</behavior>\n                <field>Approved__c</field>\n            </layoutItems>\n        </layoutColumns>\n        <style>TwoColumnsLeftToRight</style>\n    </layoutSections>",
+        "source": [
+          {
+            "sourceKey": "layoutSection_2d4f535d73198cf8",
+            "filePath": "layouts/Invoice__c-Invoice Layout.layout-meta.xml",
+            "start": {
+              "offset": 1002,
+              "line": 30,
+              "column": 4
+            },
+            "end": {
+              "offset": 1618,
+              "line": 48,
+              "column": 21
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "layoutSection_317febe4a4ae70af",
+        "context": "<layoutSections>\n        <customLabel>false</customLabel>\n        <detailHeading>true</detailHeading>\n        <editHeading>true</editHeading>\n        <label>System Information</label>\n        <layoutColumns>\n            <layoutItems>\n                <behavior>Readonly</behavior>\n                <field>CreatedById</field>\n            </layoutItems>\n        </layoutColumns>\n        <layoutColumns>\n            <layoutItems>\n                <behavior>Readonly</behavior>\n                <field>LastModifiedById</field>\n            </layoutItems>\n        </layoutColumns>\n        <style>TwoColumnsTopToBottom</style>\n    </layoutSections>",
+        "source": [
+          {
+            "sourceKey": "layoutSection_8dd9102dd51a8feb",
+            "filePath": "layouts/Invoice__c-Invoice Layout.layout-meta.xml",
+            "start": {
+              "offset": 1623,
+              "line": 49,
+              "column": 4
+            },
+            "end": {
+              "offset": 2260,
+              "line": 67,
+              "column": 21
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "layoutItem_30470c7ca250075d",
+        "context": "<layoutItems>\n                <behavior>Required</behavior>\n                <field>Name</field>\n            </layoutItems>",
+        "source": [
+          {
+            "sourceKey": "layoutItem_717f5de239aa6d95",
+            "filePath": "layouts/Invoice__c-Invoice Layout.layout-meta.xml",
+            "start": {
+              "offset": 357,
+              "line": 10,
+              "column": 12
+            },
+            "end": {
+              "offset": 479,
+              "line": 13,
+              "column": 26
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "layoutItem_7c5e5ca6c2e11fcb",
+        "context": "<layoutItems>\n                <behavior>Required</behavior>\n                <field>Amount__c</field>\n            </layoutItems>",
+        "source": [
+          {
+            "sourceKey": "layoutItem_c64a22fce315e942",
+            "filePath": "layouts/Invoice__c-Invoice Layout.layout-meta.xml",
+            "start": {
+              "offset": 492,
+              "line": 14,
+              "column": 12
+            },
+            "end": {
+              "offset": 619,
+              "line": 17,
+              "column": 26
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "layoutItem_fdd99157056e8e23",
+        "context": "<layoutItems>\n                <behavior>Edit</behavior>\n                <field>Due_Date__c</field>\n            </layoutItems>",
+        "source": [
+          {
+            "sourceKey": "layoutItem_d972cdd437684cb9",
+            "filePath": "layouts/Invoice__c-Invoice Layout.layout-meta.xml",
+            "start": {
+              "offset": 681,
+              "line": 20,
+              "column": 12
+            },
+            "end": {
+              "offset": 806,
+              "line": 23,
+              "column": 26
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "layoutItem_214ab84d4ea5642f",
+        "context": "<layoutItems>\n                <emptySpace>true</emptySpace>\n            </layoutItems>",
+        "source": [
+          {
+            "sourceKey": "layoutItem_1bd0762af1664587",
+            "filePath": "layouts/Invoice__c-Invoice Layout.layout-meta.xml",
+            "start": {
+              "offset": 819,
+              "line": 24,
+              "column": 12
+            },
+            "end": {
+              "offset": 905,
+              "line": 26,
+              "column": 26
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "layoutItem_08a37b1aa47cf32b",
+        "context": "<layoutItems>\n                <behavior>Readonly</behavior>\n                <field>Status__c</field>\n            </layoutItems>",
+        "source": [
+          {
+            "sourceKey": "layoutItem_84fe1a3f0bca9fe7",
+            "filePath": "layouts/Invoice__c-Invoice Layout.layout-meta.xml",
+            "start": {
+              "offset": 1212,
+              "line": 36,
+              "column": 12
+            },
+            "end": {
+              "offset": 1339,
+              "line": 39,
+              "column": 26
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "layoutItem_4c0e02cca22aa628",
+        "context": "<layoutItems>\n                <behavior>Edit</behavior>\n                <field>Approved__c</field>\n            </layoutItems>",
+        "source": [
+          {
+            "sourceKey": "layoutItem_16480b0fe7eaf566",
+            "filePath": "layouts/Invoice__c-Invoice Layout.layout-meta.xml",
+            "start": {
+              "offset": 1401,
+              "line": 42,
+              "column": 12
+            },
+            "end": {
+              "offset": 1526,
+              "line": 45,
+              "column": 26
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "layoutItem_44d3c5e8a3427442",
+        "context": "<layoutItems>\n                <behavior>Readonly</behavior>\n                <field>CreatedById</field>\n            </layoutItems>",
+        "source": [
+          {
+            "sourceKey": "layoutItem_f662558aa431287b",
+            "filePath": "layouts/Invoice__c-Invoice Layout.layout-meta.xml",
+            "start": {
+              "offset": 1843,
+              "line": 55,
+              "column": 12
+            },
+            "end": {
+              "offset": 1972,
+              "line": 58,
+              "column": 26
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "layoutItem_24cd9513d5a91e4f",
+        "context": "<layoutItems>\n                <behavior>Readonly</behavior>\n                <field>LastModifiedById</field>\n            </layoutItems>",
+        "source": [
+          {
+            "sourceKey": "layoutItem_bafc3654e76219b8",
+            "filePath": "layouts/Invoice__c-Invoice Layout.layout-meta.xml",
+            "start": {
+              "offset": 2034,
+              "line": 61,
+              "column": 12
+            },
+            "end": {
+              "offset": 2168,
+              "line": 64,
+              "column": 26
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "layoutRelatedList_6301b8ece5a1223c",
+        "context": "<relatedLists>\n        <fields>NAME</fields>\n        <fields>Quantity__c</fields>\n        <fields>Product__c</fields>\n        <relatedList>Invoice_Line__c.Invoice__c</relatedList>\n        <sortField>Quantity__c</sortField>\n        <sortOrder>Desc</sortOrder>\n    </relatedLists>",
+        "source": [
+          {
+            "sourceKey": "layoutRelatedList_212fb1221eb8890d",
+            "filePath": "layouts/Invoice__c-Invoice Layout.layout-meta.xml",
+            "start": {
+              "offset": 2983,
+              "line": 86,
+              "column": 4
+            },
+            "end": {
+              "offset": 3261,
+              "line": 93,
+              "column": 19
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "layoutAction_9ca6f81534071c83",
+        "context": "<platformActionListItems>\n            <actionName>Edit</actionName>\n            <actionType>StandardButton</actionType>\n            <sortOrder>0</sortOrder>\n        </platformActionListItems>",
+        "source": [
+          {
+            "sourceKey": "layoutAction_cc43a1b8eb80b4dd",
+            "filePath": "layouts/Invoice__c-Invoice Layout.layout-meta.xml",
+            "start": {
+              "offset": 2348,
+              "line": 70,
+              "column": 8
+            },
+            "end": {
+              "offset": 2539,
+              "line": 74,
+              "column": 34
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "layoutAction_b06ed22296fff5b5",
+        "context": "<platformActionListItems>\n            <actionName>Delete</actionName>\n            <actionType>StandardButton</actionType>\n            <sortOrder>2</sortOrder>\n        </platformActionListItems>",
+        "source": [
+          {
+            "sourceKey": "layoutAction_01b91ac478dd7020",
+            "filePath": "layouts/Invoice__c-Invoice Layout.layout-meta.xml",
+            "start": {
+              "offset": 2548,
+              "line": 75,
+              "column": 8
+            },
+            "end": {
+              "offset": 2741,
+              "line": 79,
+              "column": 34
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "layoutAction_363e8148a5b368b0",
+        "context": "<platformActionListItems>\n            <actionName>Invoice__c.Approve</actionName>\n            <actionType>QuickAction</actionType>\n            <sortOrder>1</sortOrder>\n        </platformActionListItems>",
+        "source": [
+          {
+            "sourceKey": "layoutAction_ed7817e72b63043c",
+            "filePath": "layouts/Invoice__c-Invoice Layout.layout-meta.xml",
+            "start": {
+              "offset": 2750,
+              "line": 80,
+              "column": 8
+            },
+            "end": {
+              "offset": 2952,
+              "line": 84,
+              "column": 34
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "layout_73abc97f9fb96cf5",
+        "context": "<Layout xmlns=\"http://soap.sforce.com/2006/04/metadata\">\n    <excludeButtons>Submit</excludeButtons>\n    <layoutSections>\n        <customLabel>false</customLabel>\n        <detailHeading>true</detailHeading>\n        <editHeading>true</editHeading>\n        <label>Information</label>\n        <layoutColumns>\n            <layoutItems>\n                <behavior>Required</behavior>\n                <field>Name</field>\n            </layoutItems>\n            <layoutItems>\n                <behavior>Required</behavior>\n                <field>Amount__c</field>\n            </layoutItems>\n        </layoutColumns>\n        <layoutColumns>\n            <layoutItems>\n                <behavior>Edit</behavior>\n                <field>Due_Date__c</field>\n            </layoutItems>\n            <layoutItems>\n                <emptySpace>true</emptySpace>\n            </layoutItems>\n        </layoutColumns>\n        <style>TwoColumnsTopToBottom</style>\n    </layoutSections>\n    <layoutSections>\n        <customLabel>false</customLabel>\n        <detailHeading>true</detailHeading>\n        <editHeading>true</editHeading>\n        <label>Approval</label>\n        <layoutColumns>\n            <layoutItems>\n                <behavior>Readonly</behavior>\n                <field>Status__c</field>\n            </layoutItems>\n        </layoutColumns>\n        <layoutColumns>\n            <layoutItems>\n                <behavior>Edit</behavior>\n                <field>Approved__c</field>\n            </layoutItems>\n        </layoutColumns>\n        <style>TwoColumnsLeftToRight</style>\n    </layoutSections>\n    <layoutSections>\n        <customLabel>false</customLabel>\n        <detailHeading>true</detailHeading>\n        <editHeading>true</editHeading>\n        <label>System Information</label>\n        <layoutColumns>\n            <layoutItems>\n                <behavior>Readonly</behavior>\n                <field>CreatedById</field>\n            </layoutItems>\n        </layoutColumns>\n        <layoutColumns>\n            <layoutItems>\n                <behavior>Readonly</behavior>\n                <field>LastModifiedById</field>\n            </layoutItems>\n        </layoutColumns>\n        <style>TwoColumnsTopToBottom</style>\n    </layoutSections>\n    <platformActionList>\n        <actionListContext>Record</actionListContext>\n        <platformActionListItems>\n            <actionName>Edit</actionName>\n            <actionType>StandardButton</actionType>\n            <sortOrder>0</sortOrder>\n        </platformActionListItems>\n        <platformActionListItems>\n            <actionName>Delete</actionName>\n            <actionType>StandardButton</actionType>\n            <sortOrder>2</sortOrder>\n        </platformActionListItems>\n        <platformActionListItems>\n            <actionName>Invoice__c.Approve</actionName>\n            <actionType>QuickAction</actionType>\n            <sortOrder>1</sortOrder>\n        </platformActionListItems>\n    </platformActionList>\n    <relatedLists>\n        <fields>NAME</fields>\n        <fields>Quantity__c</fields>\n        <fields>Product__c</fields>\n        <relatedList>Invoice_Line__c.Invoice__c</relatedList>\n        <sortField>Quantity__c</sortField>\n        <sortOrder>Desc</sortOrder>\n    </relatedLists>\n    <showEmailCheckbox>false</showEmailCheckbox>\n    <showHighlightsPanel>false</showHighlightsPanel>\n    <showInteractionLogPanel>false</showInteractionLogPanel>\n    <showRunAssignmentRulesCheckbox>false</showRunAssignmentRulesCheckbox>\n    <showSubmitAndAttachButton>false</showSubmitAndAttachButton>\n    <summaryLayout>\n        <masterLabel>00h000000000000</masterLabel>\n        <sizeX>4</sizeX>\n        <sizeY>0</sizeY>\n        <summaryLayoutStyle>Default</summaryLayoutStyle>\n    </summaryLayout>\n</Layout>",
+        "source": [
+          {
+            "sourceKey": "layout_763f18f990a9e8cd",
+            "filePath": "layouts/Invoice__c-Invoice Layout.layout-meta.xml",
+            "start": {
+              "offset": 39,
+              "line": 2,
+              "column": 0
+            },
+            "end": {
+              "offset": 3773,
+              "line": 105,
+              "column": 9
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

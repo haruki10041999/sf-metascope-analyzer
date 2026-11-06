@@ -1,4 +1,4 @@
-// 基本コンポーネント (lightning-*) のカタログ (docs/lwc-template-stylesheet-plan.md 6.5.3)。
+// 基本コンポーネント (lightning-*) のカタログ (docs/lwc-json-reference.md)。
 // 基本コンポーネントのソースはリポジトリにないので、解析に要る情報だけを手で持つ。
 // npm の lightning-base-components からは作らない (alpha の版しかない・利用規約・レコードフォーム系が含まれない)。
 // 各部品の @api の全部は持たない (プロパティ名の書き間違いの検出が要るようになったら足す)

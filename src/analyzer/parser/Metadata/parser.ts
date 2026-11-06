@@ -8,6 +8,7 @@ import {
     OBJECT_SUFFIX,
     ObjectMemberKey,
     ParsedXmlFile,
+    SourceText,
     XmlSourceJson,
     XmlSourceRegistry,
     makeCustomObjectJson,
@@ -17,19 +18,22 @@ import {
     XmlResolvedError,
     makeJsonSaveData,
     makeMsgPackSaveData,
+    parseXmlSource,
     readMsgPack,
-    readXmlFile,
+    readSource,
     toXmlResolvedError,
 } from '../commons';
 import { APEX_UNIT_PREFIXES } from '../Apex/unit';
 import { LWC_SAVE_PREFIX } from '../Lwc/parser';
 import { OBJECT_TRANSLATION_SAVE_PREFIX } from './objectTranslation';
+import { METADATA_FOLDER_SAVE_PREFIXES } from './folders';
 
 /** 同じ保存先に置くほかの種類の保存名の接頭辞 (オブジェクトは API 名のまま保存するので、これら以外がオブジェクト) */
 const OTHER_SAVE_PREFIXES = [
     OBJECT_TRANSLATION_SAVE_PREFIX,
     ...Object.values(APEX_UNIT_PREFIXES),
     LWC_SAVE_PREFIX,
+    ...METADATA_FOLDER_SAVE_PREFIXES,
 ];
 
 /** オブジェクト 1 つ (フォルダ単位) の解析結果。Apex の ApexFileStructureType と同じ形 */
@@ -94,14 +98,18 @@ export class MetadataParser {
     /** オブジェクトのフォルダ (objects/<API 名>/) を読み、CustomObjectJson にする */
     static async parseObject(objectDir: string): Promise<ObjectParseResult> {
         const apiName = path.basename(objectDir);
-        const relative = (...parts: string[]) => toPosix(path.join(apiName, ...parts));
+        const files: SourceText[] = [];
+        const add = async (absolute: string, ...parts: string[]) =>
+            files.push({
+                fileName: parts[parts.length - 1]!,
+                filePath: toPosix(path.join(apiName, ...parts)),
+                source: await readSource(absolute),
+            });
 
         const objectPath = path.join(objectDir, `${apiName}${OBJECT_SUFFIX}`);
-        const objectFile = (await fs.stat(objectPath).catch(() => undefined))
-            ? await readXmlFile(objectPath, relative(`${apiName}${OBJECT_SUFFIX}`), apiName)
-            : undefined;
-
-        const members = {} as Record<ObjectMemberKey, ParsedXmlFile[]>;
+        if (await fs.stat(objectPath).catch(() => undefined)) {
+            await add(objectPath, `${apiName}${OBJECT_SUFFIX}`);
+        }
         for (const key of Object.keys(OBJECT_MEMBERS) as ObjectMemberKey[]) {
             const { folder, suffix } = OBJECT_MEMBERS[key];
             const folderPath = path.join(objectDir, folder);
@@ -110,15 +118,42 @@ export class MetadataParser {
                       .filter((fileName) => fileName.endsWith(suffix))
                       .sort()
                 : [];
-            members[key] = await Promise.all(
-                names.map((fileName) =>
-                    readXmlFile(
-                        path.join(folderPath, fileName),
-                        relative(folder, fileName),
-                        fileName.slice(0, -suffix.length),
+            for (const fileName of names)
+                await add(path.join(folderPath, fileName), folder, fileName);
+        }
+        return { ...MetadataParser.parseObjectSource(apiName, files), filePath: objectDir };
+    }
+
+    /**
+     * 読み込み済みのファイルからオブジェクトを解析する (ファイルを読まない入口。git の before 側などに使う)。
+     * files の filePath は <API 名>/<API 名>.object-meta.xml、<API 名>/<子のフォルダ>/<名前><接尾辞> の相対パス。
+     * 結果の filePath は API 名
+     */
+    static parseObjectSource(apiName: string, files: SourceText[]): ObjectParseResult {
+        const lf = (source: string) => source.replace(/\r\n?/g, '\n');
+        const objectText = files.find(
+            (file) => file.filePath === `${apiName}/${apiName}${OBJECT_SUFFIX}`,
+        );
+        const objectFile = objectText
+            ? parseXmlSource(objectText.filePath, lf(objectText.source), apiName)
+            : undefined;
+        const members = {} as Record<ObjectMemberKey, ParsedXmlFile[]>;
+        for (const key of Object.keys(OBJECT_MEMBERS) as ObjectMemberKey[]) {
+            const { folder, suffix } = OBJECT_MEMBERS[key];
+            members[key] = files
+                .filter(
+                    (file) =>
+                        file.filePath.startsWith(`${apiName}/${folder}/`) &&
+                        file.filePath.endsWith(suffix),
+                )
+                .sort((a, b) => a.filePath.localeCompare(b.filePath))
+                .map((file) =>
+                    parseXmlSource(
+                        file.filePath,
+                        lf(file.source),
+                        file.fileName.slice(0, -suffix.length),
                     ),
-                ),
-            );
+                );
         }
 
         const registry = new XmlSourceRegistry();
@@ -130,7 +165,7 @@ export class MetadataParser {
         const objectProblem = problems.find((problem) => problem.kindType === 'object');
         if (objectProblem) {
             return {
-                filePath: objectDir,
+                filePath: apiName,
                 resolvedError,
                 dataType: 'error',
                 result: {
@@ -140,9 +175,8 @@ export class MetadataParser {
                 },
             };
         }
-
         return {
-            filePath: objectDir,
+            filePath: apiName,
             resolvedError,
             dataType: 'object',
             result: { id: apiName, base: object, sourceObject: registry.toSourceObjects() },
@@ -175,7 +209,7 @@ export class MetadataParser {
         const names = await fs.readdir(baseDir).catch(() => [] as string[]);
         return Promise.all(
             names
-                // 同じフォルダに保存したほかの種類 (翻訳・Apex・LWC) は除く
+                // 同じフォルダに保存したほかの種類 (翻訳・Apex・LWC・フォルダ単位のメタデータ) は除く
                 .filter(
                     (name) =>
                         name.endsWith('.msgpack') &&

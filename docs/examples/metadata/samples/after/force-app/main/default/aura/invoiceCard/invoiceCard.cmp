@@ -1,0 +1,11 @@
+<aura:component controller="InvoiceController" implements="flexipage:availableForRecordHome,force:hasRecordId" access="global">
+    <aura:attribute name="recordId" type="Id"/>
+    <aura:attribute name="invoice" type="Invoice__c" default="{}"/>
+    <aura:attribute name="showLines" type="Boolean" default="false"/>
+    <aura:registerEvent name="invoiceSelected" type="c:invoiceSelectedEvent"/>
+    <aura:method name="refresh" action="{!c.doInit}" access="public"/>
+    <lightning:card title="{!v.invoice.Name}">
+        <c:accountList recordId="{!v.recordId}"/>
+        <lightning:button label="{!$Label.c.AccountListTitle}" onclick="{!c.handleClick}"/>
+    </lightning:card>
+</aura:component>

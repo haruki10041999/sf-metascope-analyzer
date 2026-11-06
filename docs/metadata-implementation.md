@@ -213,6 +213,8 @@ npx ttsx --noCheck docs/examples/metadata/scripts/run-diff.ts    # output/diff/:
 
 ## 9. 未対応・既知の問題
 
+オブジェクト以外のメタデータ（Flow・権限・画面など）と、種類をまたぐ残りの解析は [metadata-roadmap.md](./metadata-roadmap.md)。
+
 - **レポート HTML にデータが入らない（既存の不具合）**: `htmlBuilder` は Vite の `define` に `__METASCOPE_METADATA_DEFINE__` を渡すが、`main.tsx` は `window.__METASCOPE_METADATA_DEFINE__` を読み、`index.html` は `__METASCOPE_METADATA_PLACEHOLDER__` を使っていて、名前が食い違っている。ビルドは通るが表示されるデータが空になる。
 - 読むのは 7 種類の子だけ。ビジネスプロセス、検索レイアウト、共有の理由、項目の参照の絞り込み条件（`lookupFilter`）などは読まない（読まない子要素は無視する）。
 - 名前が変わったもの（項目のリネームなど）は `removed` + `added` になる（リネームの推定はしない。Apex と同じ）。

@@ -1,0 +1,103 @@
+[
+  {
+    "status": "unchanged",
+    "filePath": "permissionsetgroups/Invoice_Team.permissionsetgroup-meta.xml",
+    "group": "Invoice_Team",
+    "category": "object",
+    "target": "Invoice__c",
+    "before": "CRE-",
+    "after": "CRE-"
+  },
+  {
+    "status": "added",
+    "filePath": "permissionsetgroups/Invoice_Team.permissionsetgroup-meta.xml",
+    "group": "Invoice_Team",
+    "category": "object",
+    "target": "Payment__c",
+    "after": "CRE-"
+  },
+  {
+    "status": "added",
+    "filePath": "permissionsetgroups/Invoice_Team.permissionsetgroup-meta.xml",
+    "group": "Invoice_Team",
+    "category": "object",
+    "target": "Receipt__c",
+    "after": "-R--"
+  },
+  {
+    "status": "changed",
+    "filePath": "permissionsetgroups/Invoice_Team.permissionsetgroup-meta.xml",
+    "group": "Invoice_Team",
+    "category": "field",
+    "target": "Invoice__c.Amount__c",
+    "before": "R-",
+    "after": "RE"
+  },
+  {
+    "status": "added",
+    "filePath": "permissionsetgroups/Invoice_Team.permissionsetgroup-meta.xml",
+    "group": "Invoice_Team",
+    "category": "field",
+    "target": "Invoice__c.Approved__c",
+    "after": "R-"
+  },
+  {
+    "status": "added",
+    "filePath": "permissionsetgroups/Invoice_Team.permissionsetgroup-meta.xml",
+    "group": "Invoice_Team",
+    "category": "field",
+    "target": "Invoice__c.Missing__c",
+    "after": "R-"
+  },
+  {
+    "status": "unchanged",
+    "filePath": "permissionsetgroups/Invoice_Team.permissionsetgroup-meta.xml",
+    "group": "Invoice_Team",
+    "category": "apexClass",
+    "target": "AccountService",
+    "before": true,
+    "after": true
+  },
+  {
+    "status": "added",
+    "filePath": "permissionsetgroups/Invoice_Team.permissionsetgroup-meta.xml",
+    "group": "Invoice_Team",
+    "category": "apexClass",
+    "target": "NewHelper",
+    "after": true
+  },
+  {
+    "status": "added",
+    "filePath": "permissionsetgroups/Invoice_Team.permissionsetgroup-meta.xml",
+    "group": "Invoice_Team",
+    "category": "apexClass",
+    "target": "PaymentService",
+    "after": true
+  },
+  {
+    "status": "unchanged",
+    "filePath": "permissionsetgroups/Invoice_Team.permissionsetgroup-meta.xml",
+    "group": "Invoice_Team",
+    "category": "customPermission",
+    "target": "Approve_Invoice",
+    "before": true,
+    "after": true
+  },
+  {
+    "status": "unchanged",
+    "filePath": "permissionsetgroups/Invoice_Team.permissionsetgroup-meta.xml",
+    "group": "Invoice_Team",
+    "category": "userPermission",
+    "target": "ApiEnabled",
+    "before": true,
+    "after": true
+  },
+  {
+    "status": "removed",
+    "filePath": "permissionsetgroups/Invoice_Team.permissionsetgroup-meta.xml",
+    "group": "Invoice_Team",
+    "category": "field",
+    "target": "Invoice__c.Status__c",
+    "before": "RE"
+  }
+]

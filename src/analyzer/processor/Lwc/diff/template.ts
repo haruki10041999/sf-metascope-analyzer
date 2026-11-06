@@ -25,7 +25,7 @@ import {
 } from '../../commons/diff/gumtree';
 import { PresentDiff, makePresentDiff, presentEntry } from '../../commons/diff/present';
 
-// LWC のテンプレート (HTML) の差分。方針: docs/lwc-template-stylesheet-plan.md 6.3
+// LWC のテンプレート (HTML) の差分。方針: docs/lwc-diff-policy.md 3 章
 // 要素の木は、Apex の文の並びと同じ GumTree で対応付ける (lwc:if で囲む・外す、div で包むと深さが変わるため)。
 // 言語ごとの違い (ラベルの付け方など) だけを LWC_TEMPLATE_GUMTREE_LANGUAGE に書く
 

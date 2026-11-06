@@ -12,7 +12,7 @@ import {
     type XmlSourceRegistry,
 } from '../commons/xmlJson';
 
-// LWC のバンドルの設定 (<名前>.js-meta.xml)。方針: docs/lwc-parse-plan.md 3.5
+// LWC のバンドルの設定 (<名前>.js-meta.xml)。方針: docs/lwc-json-reference.md
 // Apex の -meta.xml (types/apex/meta.ts) と同じく、XML の要素名をプロパティ名にし、ファイルにないものは持たない。
 // targetConfig の property は値を属性に持つので、属性名をプロパティ名にする
 

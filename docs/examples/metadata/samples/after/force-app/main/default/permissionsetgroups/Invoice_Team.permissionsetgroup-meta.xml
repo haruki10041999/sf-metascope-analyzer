@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<PermissionSetGroup xmlns="http://soap.sforce.com/2006/04/metadata">
+    <description>請求書の担当</description>
+    <hasActivationRequired>false</hasActivationRequired>
+    <label>Invoice Team</label>
+    <mutingPermissionSets>Invoice_Team_Muted</mutingPermissionSets>
+    <permissionSets>Invoice_Manager</permissionSets>
+    <permissionSets>Payment_Clerk</permissionSets>
+    <permissionSets>Invoice_Viewer</permissionSets>
+    <status>Updated</status>
+</PermissionSetGroup>

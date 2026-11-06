@@ -1,0 +1,206 @@
+{
+  "filePath": "permissionsets/Payment_Clerk.permissionset-meta.xml",
+  "resolvedError": [],
+  "dataType": "permissionSet",
+  "result": {
+    "id": "permissionSet_Payment_Clerk",
+    "base": {
+      "kind": "permissionSet",
+      "sourceKeys": {
+        "objectKey": "permissionSet_dd3a595e9c73a854",
+        "sourceKey": "permissionSet_02f916d6d4992d22"
+      },
+      "name": "Payment_Clerk",
+      "label": "Payment Clerk",
+      "classAccesses": [
+        {
+          "kind": "classAccess",
+          "sourceKeys": {
+            "objectKey": "classAccess_02cb20c07a614a8e",
+            "sourceKey": "classAccess_4e3e921febc7217b"
+          },
+          "apexClass": "PaymentService",
+          "enabled": true
+        }
+      ],
+      "fieldPermissions": [
+        {
+          "kind": "fieldPermission",
+          "sourceKeys": {
+            "objectKey": "fieldPermission_b73cebb1562adc62",
+            "sourceKey": "fieldPermission_3ffa05cb4278ca16"
+          },
+          "field": "Invoice__c.Amount__c",
+          "readable": true,
+          "editable": false
+        }
+      ],
+      "objectPermissions": [
+        {
+          "kind": "objectPermission",
+          "sourceKeys": {
+            "objectKey": "objectPermission_ab00743a2ceb0b58",
+            "sourceKey": "objectPermission_2059fde0a3955277"
+          },
+          "object": "Invoice__c",
+          "allowCreate": false,
+          "allowRead": true,
+          "allowEdit": false,
+          "allowDelete": false,
+          "viewAllRecords": false,
+          "modifyAllRecords": false
+        },
+        {
+          "kind": "objectPermission",
+          "sourceKeys": {
+            "objectKey": "objectPermission_550f3e3837060de8",
+            "sourceKey": "objectPermission_4880850c7700b8d9"
+          },
+          "object": "Payment__c",
+          "allowCreate": true,
+          "allowRead": true,
+          "allowEdit": true,
+          "allowDelete": false,
+          "viewAllRecords": false,
+          "modifyAllRecords": false
+        },
+        {
+          "kind": "objectPermission",
+          "sourceKeys": {
+            "objectKey": "objectPermission_938f20afa0216043",
+            "sourceKey": "objectPermission_023909c270126261"
+          },
+          "object": "Receipt__c",
+          "allowCreate": false,
+          "allowRead": true,
+          "allowEdit": false,
+          "allowDelete": false,
+          "viewAllRecords": false,
+          "modifyAllRecords": false
+        }
+      ]
+    },
+    "sourceObject": [
+      {
+        "objectKey": "classAccess_02cb20c07a614a8e",
+        "context": "<classAccesses>\n        <apexClass>PaymentService</apexClass>\n        <enabled>true</enabled>\n    </classAccesses>",
+        "source": [
+          {
+            "sourceKey": "classAccess_4e3e921febc7217b",
+            "filePath": "permissionsets/Payment_Clerk.permissionset-meta.xml",
+            "start": {
+              "offset": 107,
+              "line": 3,
+              "column": 4
+            },
+            "end": {
+              "offset": 221,
+              "line": 6,
+              "column": 20
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "fieldPermission_b73cebb1562adc62",
+        "context": "<fieldPermissions>\n        <editable>false</editable>\n        <field>Invoice__c.Amount__c</field>\n        <readable>true</readable>\n    </fieldPermissions>",
+        "source": [
+          {
+            "sourceKey": "fieldPermission_3ffa05cb4278ca16",
+            "filePath": "permissionsets/Payment_Clerk.permissionset-meta.xml",
+            "start": {
+              "offset": 226,
+              "line": 7,
+              "column": 4
+            },
+            "end": {
+              "offset": 381,
+              "line": 11,
+              "column": 23
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "objectPermission_ab00743a2ceb0b58",
+        "context": "<objectPermissions>\n        <allowCreate>false</allowCreate>\n        <allowDelete>false</allowDelete>\n        <allowEdit>false</allowEdit>\n        <allowRead>true</allowRead>\n        <modifyAllRecords>false</modifyAllRecords>\n        <object>Invoice__c</object>\n        <viewAllRecords>false</viewAllRecords>\n    </objectPermissions>",
+        "source": [
+          {
+            "sourceKey": "objectPermission_2059fde0a3955277",
+            "filePath": "permissionsets/Payment_Clerk.permissionset-meta.xml",
+            "start": {
+              "offset": 419,
+              "line": 13,
+              "column": 4
+            },
+            "end": {
+              "offset": 752,
+              "line": 21,
+              "column": 24
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "objectPermission_550f3e3837060de8",
+        "context": "<objectPermissions>\n        <allowCreate>true</allowCreate>\n        <allowDelete>false</allowDelete>\n        <allowEdit>true</allowEdit>\n        <allowRead>true</allowRead>\n        <modifyAllRecords>false</modifyAllRecords>\n        <object>Payment__c</object>\n        <viewAllRecords>false</viewAllRecords>\n    </objectPermissions>",
+        "source": [
+          {
+            "sourceKey": "objectPermission_4880850c7700b8d9",
+            "filePath": "permissionsets/Payment_Clerk.permissionset-meta.xml",
+            "start": {
+              "offset": 757,
+              "line": 22,
+              "column": 4
+            },
+            "end": {
+              "offset": 1088,
+              "line": 30,
+              "column": 24
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "objectPermission_938f20afa0216043",
+        "context": "<objectPermissions>\n        <allowCreate>false</allowCreate>\n        <allowDelete>false</allowDelete>\n        <allowEdit>false</allowEdit>\n        <allowRead>true</allowRead>\n        <modifyAllRecords>false</modifyAllRecords>\n        <object>Receipt__c</object>\n        <viewAllRecords>false</viewAllRecords>\n    </objectPermissions>",
+        "source": [
+          {
+            "sourceKey": "objectPermission_023909c270126261",
+            "filePath": "permissionsets/Payment_Clerk.permissionset-meta.xml",
+            "start": {
+              "offset": 1093,
+              "line": 31,
+              "column": 4
+            },
+            "end": {
+              "offset": 1426,
+              "line": 39,
+              "column": 24
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "permissionSet_dd3a595e9c73a854",
+        "context": "<PermissionSet xmlns=\"http://soap.sforce.com/2006/04/metadata\">\n    <classAccesses>\n        <apexClass>PaymentService</apexClass>\n        <enabled>true</enabled>\n    </classAccesses>\n    <fieldPermissions>\n        <editable>false</editable>\n        <field>Invoice__c.Amount__c</field>\n        <readable>true</readable>\n    </fieldPermissions>\n    <label>Payment Clerk</label>\n    <objectPermissions>\n        <allowCreate>false</allowCreate>\n        <allowDelete>false</allowDelete>\n        <allowEdit>false</allowEdit>\n        <allowRead>true</allowRead>\n        <modifyAllRecords>false</modifyAllRecords>\n        <object>Invoice__c</object>\n        <viewAllRecords>false</viewAllRecords>\n    </objectPermissions>\n    <objectPermissions>\n        <allowCreate>true</allowCreate>\n        <allowDelete>false</allowDelete>\n        <allowEdit>true</allowEdit>\n        <allowRead>true</allowRead>\n        <modifyAllRecords>false</modifyAllRecords>\n        <object>Payment__c</object>\n        <viewAllRecords>false</viewAllRecords>\n    </objectPermissions>\n    <objectPermissions>\n        <allowCreate>false</allowCreate>\n        <allowDelete>false</allowDelete>\n        <allowEdit>false</allowEdit>\n        <allowRead>true</allowRead>\n        <modifyAllRecords>false</modifyAllRecords>\n        <object>Receipt__c</object>\n        <viewAllRecords>false</viewAllRecords>\n    </objectPermissions>\n</PermissionSet>",
+        "source": [
+          {
+            "sourceKey": "permissionSet_02f916d6d4992d22",
+            "filePath": "permissionsets/Payment_Clerk.permissionset-meta.xml",
+            "start": {
+              "offset": 39,
+              "line": 2,
+              "column": 0
+            },
+            "end": {
+              "offset": 1443,
+              "line": 40,
+              "column": 16
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

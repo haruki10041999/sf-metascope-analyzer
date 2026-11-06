@@ -1,0 +1,108 @@
+{
+  "filePath": "components/invoiceHeader.component-meta.xml",
+  "resolvedError": [],
+  "dataType": "apexComponent",
+  "result": {
+    "id": "apexComponent_invoiceHeader",
+    "base": {
+      "kind": "apexComponent",
+      "sourceKeys": {
+        "objectKey": "apexComponent_bc2a26bdb66db742",
+        "sourceKey": "apexComponent_7bee9d595f513d33"
+      },
+      "fullName": "invoiceHeader",
+      "apiVersion": "61.0",
+      "label": "invoiceHeader",
+      "markup": {
+        "kind": "visualforceMarkup",
+        "sourceKeys": {
+          "objectKey": "visualforceMarkup_44dfade3a05c5eec",
+          "sourceKey": "visualforceMarkup_c4faf857d1b95589"
+        },
+        "root": "apex:component",
+        "attributes": {},
+        "components": [],
+        "expressions": [
+          "invoice.Name"
+        ],
+        "componentAttributes": [
+          {
+            "kind": "visualforceAttribute",
+            "sourceKeys": {
+              "objectKey": "visualforceAttribute_3418d71da19d1500",
+              "sourceKey": "visualforceAttribute_c7d73937c04b49aa"
+            },
+            "name": "invoice",
+            "attributes": {
+              "type": "Invoice__c",
+              "required": "true",
+              "description": "請求書"
+            }
+          }
+        ]
+      }
+    },
+    "sourceObject": [
+      {
+        "objectKey": "visualforceAttribute_3418d71da19d1500",
+        "context": "<apex:attribute name=\"invoice\" type=\"Invoice__c\" required=\"true\" description=\"請求書\"/>",
+        "source": [
+          {
+            "sourceKey": "visualforceAttribute_c7d73937c04b49aa",
+            "filePath": "components/invoiceHeader.component",
+            "start": {
+              "offset": 21,
+              "line": 2,
+              "column": 4
+            },
+            "end": {
+              "offset": 105,
+              "line": 2,
+              "column": 88
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "visualforceMarkup_44dfade3a05c5eec",
+        "context": "<apex:component>\n    <apex:attribute name=\"invoice\" type=\"Invoice__c\" required=\"true\" description=\"請求書\"/>\n    <h1>{!invoice.Name}</h1>\n</apex:component>",
+        "source": [
+          {
+            "sourceKey": "visualforceMarkup_c4faf857d1b95589",
+            "filePath": "components/invoiceHeader.component",
+            "start": {
+              "offset": 0,
+              "line": 1,
+              "column": 0
+            },
+            "end": {
+              "offset": 152,
+              "line": 4,
+              "column": 17
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "apexComponent_bc2a26bdb66db742",
+        "context": "<ApexComponent xmlns=\"http://soap.sforce.com/2006/04/metadata\">\n    <apiVersion>61.0</apiVersion>\n    <label>invoiceHeader</label>\n</ApexComponent>",
+        "source": [
+          {
+            "sourceKey": "apexComponent_7bee9d595f513d33",
+            "filePath": "components/invoiceHeader.component-meta.xml",
+            "start": {
+              "offset": 39,
+              "line": 2,
+              "column": 0
+            },
+            "end": {
+              "offset": 186,
+              "line": 5,
+              "column": 16
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

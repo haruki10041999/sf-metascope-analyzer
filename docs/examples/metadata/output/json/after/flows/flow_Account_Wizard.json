@@ -1,0 +1,364 @@
+{
+  "filePath": "flows/Account_Wizard.flow-meta.xml",
+  "resolvedError": [],
+  "dataType": "flow",
+  "result": {
+    "id": "flow_Account_Wizard",
+    "base": {
+      "kind": "flow",
+      "sourceKeys": {
+        "objectKey": "flow_0b0a1ab3bb581695",
+        "sourceKey": "flow_533601b48e7551a1"
+      },
+      "name": "Account_Wizard",
+      "label": "Account Wizard",
+      "apiVersion": "62.0",
+      "processType": "Flow",
+      "status": "Active",
+      "start": {
+        "kind": "flowStart",
+        "sourceKeys": {
+          "objectKey": "flowStart_44136fa355b3678a",
+          "sourceKey": "flowStart_7e61405aaa7a65aa"
+        }
+      },
+      "elements": [
+        {
+          "kind": "flowRecordLookup",
+          "sourceKeys": {
+            "objectKey": "flowRecordLookup_9b7dd3866a1b6372",
+            "sourceKey": "flowRecordLookup_7d3e549c22554faf"
+          },
+          "name": "Get_Account",
+          "label": "Get Account",
+          "properties": {
+            "assignNullValuesIfNoRecordsFound": false,
+            "filterLogic": "and",
+            "filters": [
+              {
+                "field": "Tier__c",
+                "operator": "EqualTo",
+                "value": {
+                  "type": "stringValue",
+                  "value": "Gold"
+                }
+              }
+            ],
+            "getFirstRecordOnly": true,
+            "object": "Account",
+            "queriedFields": [
+              "Name",
+              "Unknown__c"
+            ],
+            "storeOutputAutomatically": [
+              true
+            ]
+          },
+          "references": [
+            {
+              "refType": "object",
+              "value": "Account"
+            },
+            {
+              "refType": "field",
+              "value": "Account.Tier__c"
+            },
+            {
+              "refType": "field",
+              "value": "Account.Name"
+            },
+            {
+              "refType": "field",
+              "value": "Account.Unknown__c"
+            }
+          ]
+        },
+        {
+          "kind": "flowScreen",
+          "sourceKeys": {
+            "objectKey": "flowScreen_89d74b343922c9ad",
+            "sourceKey": "flowScreen_da78defa1b5d2b8a"
+          },
+          "name": "Welcome",
+          "label": "Welcome",
+          "properties": {
+            "allowBack": true,
+            "allowFinish": true,
+            "allowPause": false,
+            "showFooter": true,
+            "showHeader": true
+          },
+          "fields": [
+            {
+              "kind": "flowScreenField",
+              "sourceKeys": {
+                "objectKey": "flowScreenField_e902bc49f286b771",
+                "sourceKey": "flowScreenField_0f0d7172f0fd8d72"
+              },
+              "name": "Intro",
+              "fieldType": "DisplayText",
+              "properties": {
+                "fieldText": "<p>{!$Label.AccountListTitle}</p>"
+              }
+            },
+            {
+              "kind": "flowScreenField",
+              "sourceKeys": {
+                "objectKey": "flowScreenField_a2acc9feae2238a4",
+                "sourceKey": "flowScreenField_760cc507d450af4b"
+              },
+              "name": "Accounts",
+              "fieldType": "ComponentInstance",
+              "extensionName": "c:accountList",
+              "properties": {
+                "inputParameters": [
+                  {
+                    "name": "title",
+                    "value": {
+                      "type": "stringValue",
+                      "value": "Gold accounts"
+                    }
+                  }
+                ],
+                "inputsOnNextNavToAssocScrn": "UseStoredValues",
+                "isRequired": true,
+                "storeOutputAutomatically": [
+                  true
+                ]
+              }
+            },
+            {
+              "kind": "flowScreenField",
+              "sourceKeys": {
+                "objectKey": "flowScreenField_d3679abee5df78d1",
+                "sourceKey": "flowScreenField_3aad5dce0a36a03a"
+              },
+              "name": "Chart",
+              "fieldType": "ComponentInstance",
+              "extensionName": "c:missingChart",
+              "properties": {
+                "isRequired": false
+              }
+            }
+          ],
+          "references": [
+            {
+              "refType": "lwc",
+              "value": "accountList"
+            },
+            {
+              "refType": "lwc",
+              "value": "missingChart"
+            },
+            {
+              "refType": "label",
+              "value": "AccountListTitle"
+            }
+          ]
+        },
+        {
+          "kind": "flowSubflow",
+          "sourceKeys": {
+            "objectKey": "flowSubflow_13e4b9c982e0656a",
+            "sourceKey": "flowSubflow_2661cc0ec003e395"
+          },
+          "name": "Call_Status",
+          "label": "Call Status",
+          "properties": {
+            "flowName": "Invoice_Status_Update"
+          },
+          "references": [
+            {
+              "refType": "flow",
+              "value": "Invoice_Status_Update"
+            }
+          ]
+        }
+      ],
+      "edges": [
+        {
+          "from": "$start",
+          "to": "Get_Account",
+          "edgeType": "connector"
+        },
+        {
+          "from": "Get_Account",
+          "to": "Welcome",
+          "edgeType": "connector"
+        },
+        {
+          "from": "Get_Account",
+          "to": "Welcome",
+          "edgeType": "faultConnector"
+        },
+        {
+          "from": "Welcome",
+          "to": "Call_Status",
+          "edgeType": "connector"
+        }
+      ]
+    },
+    "sourceObject": [
+      {
+        "objectKey": "flowRecordLookup_9b7dd3866a1b6372",
+        "context": "<recordLookups>\n        <name>Get_Account</name>\n        <label>Get Account</label>\n        <locationX>176</locationX>\n        <locationY>134</locationY>\n        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>\n        <connector>\n            <targetReference>Welcome</targetReference>\n        </connector>\n        <faultConnector>\n            <targetReference>Welcome</targetReference>\n        </faultConnector>\n        <filterLogic>and</filterLogic>\n        <filters>\n            <field>Tier__c</field>\n            <operator>EqualTo</operator>\n            <value>\n                <stringValue>Gold</stringValue>\n            </value>\n        </filters>\n        <getFirstRecordOnly>true</getFirstRecordOnly>\n        <object>Account</object>\n        <queriedFields>Name</queriedFields>\n        <queriedFields>Unknown__c</queriedFields>\n        <storeOutputAutomatically>true</storeOutputAutomatically>\n    </recordLookups>",
+        "source": [
+          {
+            "sourceKey": "flowRecordLookup_7d3e549c22554faf",
+            "filePath": "flows/Account_Wizard.flow-meta.xml",
+            "start": {
+              "offset": 565,
+              "line": 18,
+              "column": 4
+            },
+            "end": {
+              "offset": 1512,
+              "line": 43,
+              "column": 20
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "flowScreenField_e902bc49f286b771",
+        "context": "<fields>\n            <name>Intro</name>\n            <fieldText>&lt;p&gt;{!$Label.AccountListTitle}&lt;/p&gt;</fieldText>\n            <fieldType>DisplayText</fieldType>\n        </fields>",
+        "source": [
+          {
+            "sourceKey": "flowScreenField_0f0d7172f0fd8d72",
+            "filePath": "flows/Account_Wizard.flow-meta.xml",
+            "start": {
+              "offset": 1880,
+              "line": 55,
+              "column": 8
+            },
+            "end": {
+              "offset": 2065,
+              "line": 59,
+              "column": 17
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "flowScreenField_a2acc9feae2238a4",
+        "context": "<fields>\n            <name>Accounts</name>\n            <extensionName>c:accountList</extensionName>\n            <fieldType>ComponentInstance</fieldType>\n            <inputParameters>\n                <name>title</name>\n                <value>\n                    <stringValue>Gold accounts</stringValue>\n                </value>\n            </inputParameters>\n            <inputsOnNextNavToAssocScrn>UseStoredValues</inputsOnNextNavToAssocScrn>\n            <isRequired>true</isRequired>\n            <storeOutputAutomatically>true</storeOutputAutomatically>\n        </fields>",
+        "source": [
+          {
+            "sourceKey": "flowScreenField_760cc507d450af4b",
+            "filePath": "flows/Account_Wizard.flow-meta.xml",
+            "start": {
+              "offset": 2074,
+              "line": 60,
+              "column": 8
+            },
+            "end": {
+              "offset": 2647,
+              "line": 73,
+              "column": 17
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "flowScreenField_d3679abee5df78d1",
+        "context": "<fields>\n            <name>Chart</name>\n            <extensionName>c:missingChart</extensionName>\n            <fieldType>ComponentInstance</fieldType>\n            <isRequired>false</isRequired>\n        </fields>",
+        "source": [
+          {
+            "sourceKey": "flowScreenField_3aad5dce0a36a03a",
+            "filePath": "flows/Account_Wizard.flow-meta.xml",
+            "start": {
+              "offset": 2656,
+              "line": 74,
+              "column": 8
+            },
+            "end": {
+              "offset": 2867,
+              "line": 79,
+              "column": 17
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "flowScreen_89d74b343922c9ad",
+        "context": "<screens>\n        <name>Welcome</name>\n        <label>Welcome</label>\n        <locationX>176</locationX>\n        <locationY>242</locationY>\n        <allowBack>true</allowBack>\n        <allowFinish>true</allowFinish>\n        <allowPause>false</allowPause>\n        <connector>\n            <targetReference>Call_Status</targetReference>\n        </connector>\n        <fields>\n            <name>Intro</name>\n            <fieldText>&lt;p&gt;{!$Label.AccountListTitle}&lt;/p&gt;</fieldText>\n            <fieldType>DisplayText</fieldType>\n        </fields>\n        <fields>\n            <name>Accounts</name>\n            <extensionName>c:accountList</extensionName>\n            <fieldType>ComponentInstance</fieldType>\n            <inputParameters>\n                <name>title</name>\n                <value>\n                    <stringValue>Gold accounts</stringValue>\n                </value>\n            </inputParameters>\n            <inputsOnNextNavToAssocScrn>UseStoredValues</inputsOnNextNavToAssocScrn>\n            <isRequired>true</isRequired>\n            <storeOutputAutomatically>true</storeOutputAutomatically>\n        </fields>\n        <fields>\n            <name>Chart</name>\n            <extensionName>c:missingChart</extensionName>\n            <fieldType>ComponentInstance</fieldType>\n            <isRequired>false</isRequired>\n        </fields>\n        <showFooter>true</showFooter>\n        <showHeader>true</showHeader>\n    </screens>",
+        "source": [
+          {
+            "sourceKey": "flowScreen_da78defa1b5d2b8a",
+            "filePath": "flows/Account_Wizard.flow-meta.xml",
+            "start": {
+              "offset": 1517,
+              "line": 44,
+              "column": 4
+            },
+            "end": {
+              "offset": 2958,
+              "line": 82,
+              "column": 14
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "flowSubflow_13e4b9c982e0656a",
+        "context": "<subflows>\n        <name>Call_Status</name>\n        <label>Call Status</label>\n        <locationX>176</locationX>\n        <locationY>350</locationY>\n        <flowName>Invoice_Status_Update</flowName>\n    </subflows>",
+        "source": [
+          {
+            "sourceKey": "flowSubflow_2661cc0ec003e395",
+            "filePath": "flows/Account_Wizard.flow-meta.xml",
+            "start": {
+              "offset": 3183,
+              "line": 91,
+              "column": 4
+            },
+            "end": {
+              "offset": 3398,
+              "line": 97,
+              "column": 15
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "flowStart_44136fa355b3678a",
+        "context": "<start>\n        <locationX>50</locationX>\n        <locationY>0</locationY>\n        <connector>\n            <targetReference>Get_Account</targetReference>\n        </connector>\n    </start>",
+        "source": [
+          {
+            "sourceKey": "flowStart_7e61405aaa7a65aa",
+            "filePath": "flows/Account_Wizard.flow-meta.xml",
+            "start": {
+              "offset": 2963,
+              "line": 83,
+              "column": 4
+            },
+            "end": {
+              "offset": 3150,
+              "line": 89,
+              "column": 12
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "flow_0b0a1ab3bb581695",
+        "context": "<Flow xmlns=\"http://soap.sforce.com/2006/04/metadata\">\n    <apiVersion>62.0</apiVersion>\n    <label>Account Wizard</label>\n    <processMetadataValues>\n        <name>BuilderType</name>\n        <value>\n            <stringValue>LightningFlowBuilder</stringValue>\n        </value>\n    </processMetadataValues>\n    <processMetadataValues>\n        <name>CanvasMode</name>\n        <value>\n            <stringValue>AUTO_LAYOUT_CANVAS</stringValue>\n        </value>\n    </processMetadataValues>\n    <processType>Flow</processType>\n    <recordLookups>\n        <name>Get_Account</name>\n        <label>Get Account</label>\n        <locationX>176</locationX>\n        <locationY>134</locationY>\n        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>\n        <connector>\n            <targetReference>Welcome</targetReference>\n        </connector>\n        <faultConnector>\n            <targetReference>Welcome</targetReference>\n        </faultConnector>\n        <filterLogic>and</filterLogic>\n        <filters>\n            <field>Tier__c</field>\n            <operator>EqualTo</operator>\n            <value>\n                <stringValue>Gold</stringValue>\n            </value>\n        </filters>\n        <getFirstRecordOnly>true</getFirstRecordOnly>\n        <object>Account</object>\n        <queriedFields>Name</queriedFields>\n        <queriedFields>Unknown__c</queriedFields>\n        <storeOutputAutomatically>true</storeOutputAutomatically>\n    </recordLookups>\n    <screens>\n        <name>Welcome</name>\n        <label>Welcome</label>\n        <locationX>176</locationX>\n        <locationY>242</locationY>\n        <allowBack>true</allowBack>\n        <allowFinish>true</allowFinish>\n        <allowPause>false</allowPause>\n        <connector>\n            <targetReference>Call_Status</targetReference>\n        </connector>\n        <fields>\n            <name>Intro</name>\n            <fieldText>&lt;p&gt;{!$Label.AccountListTitle}&lt;/p&gt;</fieldText>\n            <fieldType>DisplayText</fieldType>\n        </fields>\n        <fields>\n            <name>Accounts</name>\n            <extensionName>c:accountList</extensionName>\n            <fieldType>ComponentInstance</fieldType>\n            <inputParameters>\n                <name>title</name>\n                <value>\n                    <stringValue>Gold accounts</stringValue>\n                </value>\n            </inputParameters>\n            <inputsOnNextNavToAssocScrn>UseStoredValues</inputsOnNextNavToAssocScrn>\n            <isRequired>true</isRequired>\n            <storeOutputAutomatically>true</storeOutputAutomatically>\n        </fields>\n        <fields>\n            <name>Chart</name>\n            <extensionName>c:missingChart</extensionName>\n            <fieldType>ComponentInstance</fieldType>\n            <isRequired>false</isRequired>\n        </fields>\n        <showFooter>true</showFooter>\n        <showHeader>true</showHeader>\n    </screens>\n    <start>\n        <locationX>50</locationX>\n        <locationY>0</locationY>\n        <connector>\n            <targetReference>Get_Account</targetReference>\n        </connector>\n    </start>\n    <status>Active</status>\n    <subflows>\n        <name>Call_Status</name>\n        <label>Call Status</label>\n        <locationX>176</locationX>\n        <locationY>350</locationY>\n        <flowName>Invoice_Status_Update</flowName>\n    </subflows>\n</Flow>",
+        "source": [
+          {
+            "sourceKey": "flow_533601b48e7551a1",
+            "filePath": "flows/Account_Wizard.flow-meta.xml",
+            "start": {
+              "offset": 39,
+              "line": 2,
+              "column": 0
+            },
+            "end": {
+              "offset": 3406,
+              "line": 98,
+              "column": 7
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

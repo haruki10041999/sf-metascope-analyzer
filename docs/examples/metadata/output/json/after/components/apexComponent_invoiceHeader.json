@@ -1,0 +1,141 @@
+{
+  "filePath": "components/invoiceHeader.component-meta.xml",
+  "resolvedError": [],
+  "dataType": "apexComponent",
+  "result": {
+    "id": "apexComponent_invoiceHeader",
+    "base": {
+      "kind": "apexComponent",
+      "sourceKeys": {
+        "objectKey": "apexComponent_1bdc92bd2d7ed9cb",
+        "sourceKey": "apexComponent_7bee9d595f513d33"
+      },
+      "fullName": "invoiceHeader",
+      "apiVersion": "61.0",
+      "label": "invoiceHeader",
+      "markup": {
+        "kind": "visualforceMarkup",
+        "sourceKeys": {
+          "objectKey": "visualforceMarkup_9a8397268a628eb4",
+          "sourceKey": "visualforceMarkup_5366150031c2b534"
+        },
+        "root": "apex:component",
+        "attributes": {},
+        "components": [],
+        "expressions": [
+          "invoice.Name"
+        ],
+        "componentAttributes": [
+          {
+            "kind": "visualforceAttribute",
+            "sourceKeys": {
+              "objectKey": "visualforceAttribute_8fec406fefde0595",
+              "sourceKey": "visualforceAttribute_7be0cb7da79f0f4b"
+            },
+            "name": "invoice",
+            "attributes": {
+              "type": "Invoice__c",
+              "required": "true",
+              "description": "表示する請求書"
+            }
+          },
+          {
+            "kind": "visualforceAttribute",
+            "sourceKeys": {
+              "objectKey": "visualforceAttribute_07a90eea119c2409",
+              "sourceKey": "visualforceAttribute_e3b761145bc81b30"
+            },
+            "name": "showLogo",
+            "attributes": {
+              "type": "Boolean",
+              "default": "true",
+              "description": "ロゴを出すか"
+            }
+          }
+        ]
+      }
+    },
+    "sourceObject": [
+      {
+        "objectKey": "visualforceAttribute_8fec406fefde0595",
+        "context": "<apex:attribute name=\"invoice\" type=\"Invoice__c\" required=\"true\" description=\"表示する請求書\"/>",
+        "source": [
+          {
+            "sourceKey": "visualforceAttribute_7be0cb7da79f0f4b",
+            "filePath": "components/invoiceHeader.component",
+            "start": {
+              "offset": 21,
+              "line": 2,
+              "column": 4
+            },
+            "end": {
+              "offset": 109,
+              "line": 2,
+              "column": 92
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "visualforceAttribute_07a90eea119c2409",
+        "context": "<apex:attribute name=\"showLogo\" type=\"Boolean\" default=\"true\" description=\"ロゴを出すか\"/>",
+        "source": [
+          {
+            "sourceKey": "visualforceAttribute_e3b761145bc81b30",
+            "filePath": "components/invoiceHeader.component",
+            "start": {
+              "offset": 114,
+              "line": 3,
+              "column": 4
+            },
+            "end": {
+              "offset": 198,
+              "line": 3,
+              "column": 88
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "visualforceMarkup_9a8397268a628eb4",
+        "context": "<apex:component>\n    <apex:attribute name=\"invoice\" type=\"Invoice__c\" required=\"true\" description=\"表示する請求書\"/>\n    <apex:attribute name=\"showLogo\" type=\"Boolean\" default=\"true\" description=\"ロゴを出すか\"/>\n    <h1>{!invoice.Name}</h1>\n</apex:component>",
+        "source": [
+          {
+            "sourceKey": "visualforceMarkup_5366150031c2b534",
+            "filePath": "components/invoiceHeader.component",
+            "start": {
+              "offset": 0,
+              "line": 1,
+              "column": 0
+            },
+            "end": {
+              "offset": 245,
+              "line": 5,
+              "column": 17
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "apexComponent_1bdc92bd2d7ed9cb",
+        "context": "<ApexComponent xmlns=\"http://soap.sforce.com/2006/04/metadata\">\n    <apiVersion>61.0</apiVersion>\n    <label>invoiceHeader</label>\n</ApexComponent>",
+        "source": [
+          {
+            "sourceKey": "apexComponent_7bee9d595f513d33",
+            "filePath": "components/invoiceHeader.component-meta.xml",
+            "start": {
+              "offset": 39,
+              "line": 2,
+              "column": 0
+            },
+            "end": {
+              "offset": 186,
+              "line": 5,
+              "column": 16
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

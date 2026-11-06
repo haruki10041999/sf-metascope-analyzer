@@ -1,0 +1,3 @@
+{!Invoice__c.Account__c} 様
+
+請求書 {!Invoice__c.Name} を送付しました。

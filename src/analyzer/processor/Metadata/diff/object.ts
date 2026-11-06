@@ -38,6 +38,22 @@ import { ListViewJsonDiff, makeListViewDiff } from './listView';
 import { RecordTypeJsonDiff, makeRecordTypeDiff } from './recordType';
 import { ValidationRuleJsonDiff, makeValidationRuleDiff } from './validationRule';
 import { WebLinkJsonDiff, makeWebLinkDiff } from './webLink';
+import {
+    BusinessProcessJsonDiff,
+    SharingReasonJsonDiff,
+    makeBusinessProcessDiff,
+    makeSharingReasonDiff,
+} from './businessProcess';
+import {
+    BusinessProcessJson,
+    OBJECT_ACTION_OVERRIDE_SCHEMA,
+    ObjectActionOverrideJson,
+    SEARCH_LAYOUT_LISTS,
+    SearchLayoutsJson,
+    SharingReasonJson,
+} from '../../../types';
+import { TypedListDiff } from '../../commons/diff/list';
+import { makeOrderedNamesDiff } from '../../commons/diff/present';
 
 /** 子の配列の差分。フォルダにも object-meta.xml の中にもない側は added / removed (配列ごと) */
 type MembersDiff<K extends string, T extends JsonNode, D> = PresentDiff<
@@ -64,6 +80,31 @@ export type CustomObjectJsonDiff = NodeDiff<
         fieldSets?: MembersDiff<'fieldSet', FieldSetJson, FieldSetJsonDiff>;
         compactLayouts?: MembersDiff<'compactLayout', CompactLayoutJson, CompactLayoutJsonDiff>;
         webLinks?: MembersDiff<'webLink', WebLinkJson, WebLinkJsonDiff>;
+        businessProcesses?: MembersDiff<
+            'businessProcess',
+            BusinessProcessJson,
+            BusinessProcessJsonDiff
+        >;
+        sharingReasons?: MembersDiff<'sharingReason', SharingReasonJson, SharingReasonJsonDiff>;
+        /** 一覧ごとに C. 書いた順 (表示順) */
+        searchLayouts?: PresentDiff<
+            SearchLayoutsJson,
+            Partial<
+                Record<
+                    (typeof SEARCH_LAYOUT_LISTS)[number],
+                    PresentDiff<string[], TypedListDiff<string, ValueDiff<string>>>
+                >
+            >
+        >;
+        /** D. キーは actionName + formFactor */
+        actionOverrides?: PresentDiff<
+            ObjectActionOverrideJson[],
+            ListItemDiff<
+                'objectActionOverride',
+                ObjectActionOverrideJson,
+                ObjectActionOverrideJsonDiff
+            >[]
+        >;
     } & PropertiesDiff<typeof OBJECT_SCHEMA>
 >;
 
@@ -162,4 +203,59 @@ export const makeCustomObjectDiff = (
             'webLinks',
             makeMembersDiff('webLink', b.webLinks, a.webLinks, makeWebLinkDiff, byName, sources),
         ),
+        ...presentEntry(
+            'businessProcesses',
+            makeMembersDiff(
+                'businessProcess',
+                b.businessProcesses,
+                a.businessProcesses,
+                makeBusinessProcessDiff,
+                byName,
+                sources,
+            ),
+        ),
+        ...presentEntry(
+            'sharingReasons',
+            makeMembersDiff(
+                'sharingReason',
+                b.sharingReasons,
+                a.sharingReasons,
+                makeSharingReasonDiff,
+                byName,
+                sources,
+            ),
+        ),
+        ...presentEntry(
+            'searchLayouts',
+            makePresentDiff(b.searchLayouts, a.searchLayouts, (bs, as) =>
+                Object.fromEntries(
+                    SEARCH_LAYOUT_LISTS.flatMap((name) => {
+                        const diff = makePresentDiff(bs[name], as[name], makeOrderedNamesDiff);
+                        return diff === undefined ? [] : [[name, diff]];
+                    }),
+                ),
+            ),
+        ),
+        ...presentEntry(
+            'actionOverrides',
+            makePresentDiff(b.actionOverrides, a.actionOverrides, (bo, ao) =>
+                makeKeyedDiff(
+                    'objectActionOverride',
+                    bo,
+                    ao,
+                    (x, y, m) =>
+                        makeNodeDiff('objectActionOverride', x, y, m, (p, q) =>
+                            makePropertiesDiff(OBJECT_ACTION_OVERRIDE_SCHEMA, p, q),
+                        ),
+                    (override) => `${override.actionName ?? ''}:${override.formFactor ?? ''}`,
+                    sources,
+                ),
+            ),
+        ),
     }));
+
+export type ObjectActionOverrideJsonDiff = NodeDiff<
+    'objectActionOverride',
+    ObjectActionOverrideJson,
+    PropertiesDiff<typeof OBJECT_ACTION_OVERRIDE_SCHEMA>
+>;

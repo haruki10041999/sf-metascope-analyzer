@@ -2,8 +2,8 @@ import { readdir } from 'node:fs/promises';
 import path from 'path';
 
 import {
-    SaveSummary,
     WorkerParseResult,
+    WorkerSaveResult,
     WorkerTask,
     WorkerTaskResult,
     WorkerTaskType,
@@ -35,7 +35,7 @@ export type BatchResult<TInput, TResult> =
 const threadEntry = new URL(`./workerThread${path.extname(import.meta.url)}`, import.meta.url);
 
 /**
- * 解析・保存・読み込みを、メインスレッドか worker_threads のプールで行う共通部分 (Apex / Object / LWC で共通)。
+ * 解析・保存・読み込みを、メインスレッドか worker_threads のプールで行う共通部分 (Apex / Object / LWC / フォルダ単位のメタデータで共通)。
  * 保存・読み込みは本番用 (msgpack) に限定する。スレッドを使った場合は、使い終わったら close() を呼ぶこと。
  */
 export abstract class BatchWorker<K extends WorkerTaskType> {
@@ -55,8 +55,11 @@ export abstract class BatchWorker<K extends WorkerTaskType> {
                 : undefined;
     }
 
-    /** 1 件 (Apex は単位のどれかのファイル、Object・ObjectTranslation・Lwc はフォルダ) を解析して保存する */
-    parseAndSave(filePath: string): Promise<SaveSummary> {
+    /**
+     * 1 タスク (Apex は単位のどれかのファイル、Object・ObjectTranslation・Lwc・MetadataFolder はフォルダ) を解析して保存する。
+     * MetadataFolder はフォルダの中のファイルごとの要約を返す
+     */
+    parseAndSave(filePath: string): Promise<WorkerSaveResult<K>> {
         return this.run({
             command: 'parseAndSave',
             type: this.type,
@@ -81,7 +84,13 @@ export abstract class BatchWorker<K extends WorkerTaskType> {
         return entries
             .filter((entry) => entry.isFile() && entry.name.endsWith(savedFileExtension))
             .map((entry) => entry.name.slice(0, -savedFileExtension.length))
+            .filter((id) => this.acceptsSavedId(id))
             .sort();
+    }
+
+    /** loadAll で読む保存名か (同じ保存先にほかの種類を置くときに絞り込む) */
+    protected acceptsSavedId(_id: string): boolean {
+        return true;
     }
 
     async close(): Promise<void> {

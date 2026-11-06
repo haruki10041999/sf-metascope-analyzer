@@ -1,0 +1,91 @@
+{
+  "filePath": "Opportunity",
+  "resolvedError": [],
+  "dataType": "object",
+  "result": {
+    "id": "Opportunity",
+    "base": {
+      "kind": "object",
+      "sourceKeys": {
+        "objectKey": "object_4592924aaffdad8b",
+        "sourceKey": "object_64bf5e9bd583ac0d"
+      },
+      "apiName": "Opportunity",
+      "objectType": "standard",
+      "sharingModel": "Private",
+      "enableHistory": true,
+      "businessProcesses": [
+        {
+          "kind": "businessProcess",
+          "sourceKeys": {
+            "objectKey": "businessProcess_56378bf125ae64e9",
+            "sourceKey": "businessProcess_2d8e14da6ab7cc07"
+          },
+          "fullName": "Standard_Sales",
+          "description": "標準の営業プロセス (交渉を含む)",
+          "isActive": true,
+          "values": [
+            {
+              "fullName": "Prospecting",
+              "default": true
+            },
+            {
+              "fullName": "Qualification",
+              "default": false
+            },
+            {
+              "fullName": "Negotiation/Review",
+              "default": false
+            },
+            {
+              "fullName": "Closed Won",
+              "default": false
+            }
+          ]
+        }
+      ]
+    },
+    "sourceObject": [
+      {
+        "objectKey": "businessProcess_56378bf125ae64e9",
+        "context": "<BusinessProcess xmlns=\"http://soap.sforce.com/2006/04/metadata\">\n    <fullName>Standard_Sales</fullName>\n    <description>標準の営業プロセス (交渉を含む)</description>\n    <isActive>true</isActive>\n    <values>\n        <fullName>Prospecting</fullName>\n        <default>true</default>\n    </values>\n    <values>\n        <fullName>Qualification</fullName>\n        <default>false</default>\n    </values>\n    <values>\n        <fullName>Negotiation/Review</fullName>\n        <default>false</default>\n    </values>\n    <values>\n        <fullName>Closed Won</fullName>\n        <default>false</default>\n    </values>\n</BusinessProcess>",
+        "source": [
+          {
+            "sourceKey": "businessProcess_2d8e14da6ab7cc07",
+            "filePath": "Opportunity/businessProcesses/Standard_Sales.businessProcess-meta.xml",
+            "start": {
+              "offset": 39,
+              "line": 2,
+              "column": 0
+            },
+            "end": {
+              "offset": 653,
+              "line": 22,
+              "column": 18
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "object_4592924aaffdad8b",
+        "context": "<CustomObject xmlns=\"http://soap.sforce.com/2006/04/metadata\">\n    <enableHistory>true</enableHistory>\n    <sharingModel>Private</sharingModel>\n</CustomObject>",
+        "source": [
+          {
+            "sourceKey": "object_64bf5e9bd583ac0d",
+            "filePath": "Opportunity/Opportunity.object-meta.xml",
+            "start": {
+              "offset": 39,
+              "line": 2,
+              "column": 0
+            },
+            "end": {
+              "offset": 198,
+              "line": 5,
+              "column": 15
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

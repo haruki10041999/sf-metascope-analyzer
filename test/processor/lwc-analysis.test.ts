@@ -11,7 +11,7 @@ import {
 } from '../../src/analyzer/processor/Lwc/analysis';
 import type { ObjectInfo } from '../../src/analyzer/processor/Metadata/analysis';
 
-// バンドルをまたぐ解析 (docs/lwc-template-stylesheet-plan.md 6.5.5)
+// バンドルをまたぐ解析 (docs/lwc-implementation.md)
 
 const BUNDLES: Record<string, Record<string, string>> = {
     child: {

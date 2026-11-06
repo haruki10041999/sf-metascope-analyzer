@@ -5,6 +5,7 @@ import {
     PICKLIST_VALUE_SCHEMA,
     PicklistValueJson,
     ValueSetJson,
+    LookupFilterJson,
 } from '../../../types';
 
 import {
@@ -96,6 +97,8 @@ export type CustomFieldJsonDiff = NodeDiff<
     {
         apiName: ValueDiff<string>;
         valueSet?: PresentDiff<ValueSetJson, ValueSetJsonDiff>;
+        /** 絞り込み条件は値として比べる (条件の行は番号で組み合わせるので、まとめて 1 つの値) */
+        lookupFilter?: PresentDiff<LookupFilterJson, ValueDiff<LookupFilterJson>>;
     } & PropertiesDiff<typeof FIELD_SCHEMA>
 >;
 
@@ -108,6 +111,10 @@ export const makeCustomFieldDiff = (
     makeNodeDiff('field', before, after, match, (b, a) => ({
         apiName: makeValueDiff(b.apiName, a.apiName),
         ...makePropertiesDiff(FIELD_SCHEMA, b, a),
+        ...presentEntry(
+            'lookupFilter',
+            makePresentDiff(b.lookupFilter, a.lookupFilter, makeValueDiff),
+        ),
         ...presentEntry(
             'valueSet',
             makePresentDiff(b.valueSet, a.valueSet, (bv, av) => makeValueSetDiff(bv, av, sources)),

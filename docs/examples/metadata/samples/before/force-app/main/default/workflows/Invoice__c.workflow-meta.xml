@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Workflow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <alerts>
+        <fullName>Notify_Owner</fullName>
+        <description>Notify Owner</description>
+        <protected>false</protected>
+        <recipients>
+            <type>owner</type>
+        </recipients>
+        <senderType>CurrentUser</senderType>
+        <template>Invoice_Templates/Invoice_Sent</template>
+    </alerts>
+    <fieldUpdates>
+        <fullName>Set_Overdue</fullName>
+        <field>Status__c</field>
+        <literalValue>Sent</literalValue>
+        <name>Set Overdue</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+    </fieldUpdates>
+    <rules>
+        <fullName>Mark_Overdue</fullName>
+        <actions>
+            <name>Set_Overdue</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>true</active>
+        <criteriaItems>
+            <field>Invoice__c.Is_Overdue__c</field>
+            <operation>equals</operation>
+            <value>True</value>
+        </criteriaItems>
+        <triggerType>onAllChanges</triggerType>
+    </rules>
+</Workflow>

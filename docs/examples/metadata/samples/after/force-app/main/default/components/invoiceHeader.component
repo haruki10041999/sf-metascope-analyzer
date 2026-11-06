@@ -1,0 +1,5 @@
+<apex:component>
+    <apex:attribute name="invoice" type="Invoice__c" required="true" description="表示する請求書"/>
+    <apex:attribute name="showLogo" type="Boolean" default="true" description="ロゴを出すか"/>
+    <h1>{!invoice.Name}</h1>
+</apex:component>

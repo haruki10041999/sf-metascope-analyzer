@@ -28,7 +28,7 @@ import {
     presentEntry,
 } from '../../commons/diff/present';
 
-// LWC の CSS の差分。方針: docs/lwc-template-stylesheet-plan.md 5.3
+// LWC の CSS の差分。方針: docs/lwc-diff-policy.md 3 章
 // 木が浅いので GumTree は使わず、メタデータと同じく分類表だけで書く
 
 /** 宣言は prop で対応付ける (D)。同じ規則に同じ prop が複数ある (フォールバック) ときは出現順を足す (color#2) */

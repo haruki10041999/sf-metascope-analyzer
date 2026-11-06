@@ -1,0 +1,746 @@
+[
+  {
+    "refType": "apexClass",
+    "target": "InvoiceController",
+    "usedBy": [
+      {
+        "from": "aura_invoiceCard",
+        "via": "controller",
+        "filePath": "aura/invoiceCard",
+        "sourceKeys": {
+          "objectKey": "auraBundle_4651d651d52e5642",
+          "sourceKey": "auraBundle_e4e8002a84c6c7e8"
+        }
+      }
+    ],
+    "problem": "UNKNOWN_APEX_CLASS",
+    "status": "unchanged"
+  },
+  {
+    "refType": "apexClass",
+    "target": "InvoicePrintExt",
+    "usedBy": [
+      {
+        "from": "apexPage_InvoicePrint",
+        "via": "markup.extensions",
+        "filePath": "pages/InvoicePrint.page-meta.xml",
+        "sourceKeys": {
+          "objectKey": "visualforceMarkup_b0020e3f602b5522",
+          "sourceKey": "visualforceMarkup_a4462fc44c960e86"
+        }
+      }
+    ],
+    "problem": "UNKNOWN_APEX_CLASS",
+    "status": "unchanged"
+  },
+  {
+    "refType": "aura",
+    "target": "invoiceSelectedEvent",
+    "usedBy": [
+      {
+        "from": "aura_invoiceCard",
+        "via": "registerEvents",
+        "filePath": "aura/invoiceCard",
+        "sourceKeys": {
+          "objectKey": "auraRegisterEvent_4b6a1b3266c64687",
+          "sourceKey": "auraRegisterEvent_2adfe1c3e55a764e"
+        }
+      }
+    ],
+    "problem": "UNKNOWN_AURA",
+    "status": "unchanged"
+  },
+  {
+    "refType": "customApplication",
+    "target": "Invoice_App",
+    "usedBy": [
+      {
+        "from": "profile_Sales",
+        "via": "applicationVisibilities",
+        "filePath": "profiles/Sales.profile-meta.xml",
+        "sourceKeys": {
+          "objectKey": "applicationVisibility_80ee7c87e883293c",
+          "sourceKey": "applicationVisibility_c35fe4e0d3dbbc87"
+        }
+      },
+      {
+        "from": "translations_ja",
+        "via": "customApplications",
+        "filePath": "translations/ja.translation-meta.xml",
+        "sourceKeys": {
+          "objectKey": "applicationTranslation_8d25bb24afc5d11d",
+          "sourceKey": "applicationTranslation_14a47bdf21885f14"
+        }
+      }
+    ],
+    "status": "unchanged"
+  },
+  {
+    "refType": "customLabel",
+    "target": "AccountListTitle",
+    "usedBy": [
+      {
+        "from": "apexPage_InvoicePrint",
+        "via": "markup.expressions",
+        "filePath": "pages/InvoicePrint.page-meta.xml",
+        "sourceKeys": {
+          "objectKey": "visualforceMarkup_b0020e3f602b5522",
+          "sourceKey": "visualforceMarkup_a4462fc44c960e86"
+        }
+      },
+      {
+        "from": "aura_invoiceCard",
+        "via": "expressions",
+        "filePath": "aura/invoiceCard",
+        "sourceKeys": {
+          "objectKey": "auraBundle_4651d651d52e5642",
+          "sourceKey": "auraBundle_e4e8002a84c6c7e8"
+        }
+      },
+      {
+        "from": "translations_ja",
+        "via": "customLabels",
+        "filePath": "translations/ja.translation-meta.xml",
+        "sourceKeys": {
+          "objectKey": "labelTranslation_5375639bdcac62d1",
+          "sourceKey": "labelTranslation_f88bbd4b54502c82"
+        }
+      }
+    ],
+    "status": "unchanged"
+  },
+  {
+    "refType": "customLabel",
+    "target": "Invoice_Approved",
+    "usedBy": [
+      {
+        "from": "translations_ja",
+        "via": "customLabels",
+        "filePath": "translations/ja.translation-meta.xml",
+        "sourceKeys": {
+          "objectKey": "labelTranslation_492f594dd6c2c4d7",
+          "sourceKey": "labelTranslation_80d0a84b3e21433e"
+        }
+      }
+    ],
+    "status": "added"
+  },
+  {
+    "refType": "customPermission",
+    "target": "Approve_Invoice",
+    "usedBy": [
+      {
+        "from": "permissionSet_Invoice_Manager",
+        "via": "customPermissions",
+        "filePath": "permissionsets/Invoice_Manager.permissionset-meta.xml",
+        "sourceKeys": {
+          "objectKey": "customPermissionAccess_27e11322ee9a9932",
+          "sourceKey": "customPermissionAccess_8e213eb50556113d"
+        }
+      }
+    ],
+    "status": "unchanged"
+  },
+  {
+    "refType": "customPermission",
+    "target": "View_Invoice",
+    "usedBy": [
+      {
+        "from": "customPermission_Approve_Invoice",
+        "via": "requiredPermission",
+        "filePath": "customPermissions/Approve_Invoice.customPermission-meta.xml",
+        "sourceKeys": {
+          "objectKey": "requiredPermission_bdedecd7e56f11dd",
+          "sourceKey": "requiredPermission_ff3b4cbee7adf154"
+        }
+      }
+    ],
+    "status": "added"
+  },
+  {
+    "refType": "customTab",
+    "target": "Account_List",
+    "usedBy": [
+      {
+        "from": "customApplication_Invoice_App",
+        "via": "tabs",
+        "filePath": "applications/Invoice_App.app-meta.xml",
+        "sourceKeys": {
+          "objectKey": "customApplication_46cf47e19b954737",
+          "sourceKey": "customApplication_517e7431e5d6260e"
+        }
+      }
+    ],
+    "status": "added"
+  },
+  {
+    "refType": "customTab",
+    "target": "Invoice__c",
+    "usedBy": [
+      {
+        "from": "permissionSet_Invoice_Manager",
+        "via": "tabSettings",
+        "filePath": "permissionsets/Invoice_Manager.permissionset-meta.xml",
+        "sourceKeys": {
+          "objectKey": "tabSetting_a5e96d7b322c0141",
+          "sourceKey": "tabSetting_303bd0fba88ae35a"
+        }
+      },
+      {
+        "from": "profile_Sales",
+        "via": "tabSettings",
+        "filePath": "profiles/Sales.profile-meta.xml",
+        "sourceKeys": {
+          "objectKey": "tabVisibility_c0e48d164a0d2bc3",
+          "sourceKey": "tabVisibility_90e57b04518f11ba"
+        }
+      },
+      {
+        "from": "customApplication_Invoice_App",
+        "via": "tabs",
+        "filePath": "applications/Invoice_App.app-meta.xml",
+        "sourceKeys": {
+          "objectKey": "customApplication_46cf47e19b954737",
+          "sourceKey": "customApplication_517e7431e5d6260e"
+        }
+      },
+      {
+        "from": "translations_ja",
+        "via": "customTabs",
+        "filePath": "translations/ja.translation-meta.xml",
+        "sourceKeys": {
+          "objectKey": "tabTranslation_4844ed45c5971a6e",
+          "sourceKey": "tabTranslation_0989b48ff2440019"
+        }
+      }
+    ],
+    "status": "unchanged"
+  },
+  {
+    "refType": "field",
+    "target": "App_Setting__mdt.Value__c",
+    "usedBy": [
+      {
+        "from": "customMetadata_App_Setting.Default",
+        "via": "values.field",
+        "filePath": "customMetadata/App_Setting.Default.md-meta.xml",
+        "sourceKeys": {
+          "objectKey": "customMetadataValue_7ef62da16cdbe00e",
+          "sourceKey": "customMetadataValue_fea6f94f69dd8937"
+        }
+      },
+      {
+        "from": "customMetadata_App_Setting.Sandbox",
+        "via": "values.field",
+        "filePath": "customMetadata/App_Setting.Sandbox.md-meta.xml",
+        "sourceKeys": {
+          "objectKey": "customMetadataValue_4889143b62381973",
+          "sourceKey": "customMetadataValue_02d8e3cf603837c8"
+        }
+      }
+    ],
+    "status": "changed"
+  },
+  {
+    "refType": "field",
+    "target": "Invoice__c.Account__c",
+    "usedBy": [
+      {
+        "from": "emailTemplate_Invoice_Templates.Invoice_Sent",
+        "via": "body",
+        "filePath": "email/Invoice_Templates/Invoice_Sent.email-meta.xml",
+        "sourceKeys": {
+          "objectKey": "emailTemplate_f1b73238ce47fd4a",
+          "sourceKey": "emailTemplate_9ffc47d0e0c6fca5"
+        }
+      }
+    ],
+    "status": "unchanged"
+  },
+  {
+    "refType": "field",
+    "target": "Invoice__c.Amount__c",
+    "usedBy": [
+      {
+        "from": "quickAction_Invoice__c.Approve",
+        "via": "quickActionLayout",
+        "filePath": "quickActions/Invoice__c.Approve.quickAction-meta.xml",
+        "sourceKeys": {
+          "objectKey": "quickAction_488c91ba34e89c31",
+          "sourceKey": "quickAction_9d6c625c85502f1d"
+        }
+      },
+      {
+        "from": "sharingRules_Invoice__c",
+        "via": "sharingCriteriaRules.criteriaItems",
+        "filePath": "sharingRules/Invoice__c.sharingRules-meta.xml",
+        "sourceKeys": {
+          "objectKey": "sharingCriteriaRule_44d2046d33cfca92",
+          "sourceKey": "sharingCriteriaRule_0153393cdf4a4266"
+        }
+      },
+      {
+        "from": "sharingRules_Invoice__c",
+        "via": "sharingCriteriaRules.criteriaItems",
+        "filePath": "sharingRules/Invoice__c.sharingRules-meta.xml",
+        "sourceKeys": {
+          "objectKey": "sharingCriteriaRule_463cddb3e054da83",
+          "sourceKey": "sharingCriteriaRule_83d322fd43604732"
+        }
+      },
+      {
+        "from": "apexPage_InvoicePrint",
+        "via": "markup.expressions",
+        "filePath": "pages/InvoicePrint.page-meta.xml",
+        "sourceKeys": {
+          "objectKey": "visualforceMarkup_b0020e3f602b5522",
+          "sourceKey": "visualforceMarkup_a4462fc44c960e86"
+        }
+      },
+      {
+        "from": "emailTemplate_Invoice_Templates.Invoice_Sent",
+        "via": "body",
+        "filePath": "email/Invoice_Templates/Invoice_Sent.email-meta.xml",
+        "sourceKeys": {
+          "objectKey": "emailTemplate_f1b73238ce47fd4a",
+          "sourceKey": "emailTemplate_9ffc47d0e0c6fca5"
+        }
+      },
+      {
+        "from": "report_Invoice_Reports.Open_Invoices",
+        "via": "columns",
+        "filePath": "reports/Invoice_Reports/Open_Invoices.report-meta.xml",
+        "sourceKeys": {
+          "objectKey": "reportColumn_62fd78e3ff8b348c",
+          "sourceKey": "reportColumn_da4a7551ba714f6a"
+        }
+      },
+      {
+        "from": "approvalProcess_Invoice__c.Large_Invoice_Approval",
+        "via": "entryCriteria",
+        "filePath": "approvalProcesses/Invoice__c.Large_Invoice_Approval.approvalProcess-meta.xml",
+        "sourceKeys": {
+          "objectKey": "approvalProcess_a854833d3aaf406b",
+          "sourceKey": "approvalProcess_797f4ded05aef36f"
+        }
+      }
+    ],
+    "status": "changed"
+  },
+  {
+    "refType": "field",
+    "target": "Invoice__c.Approved__c",
+    "usedBy": [
+      {
+        "from": "quickAction_Invoice__c.Approve",
+        "via": "quickActionLayout",
+        "filePath": "quickActions/Invoice__c.Approve.quickAction-meta.xml",
+        "sourceKeys": {
+          "objectKey": "quickAction_488c91ba34e89c31",
+          "sourceKey": "quickAction_9d6c625c85502f1d"
+        }
+      }
+    ],
+    "status": "added"
+  },
+  {
+    "refType": "field",
+    "target": "Invoice__c.Is_Overdue__c",
+    "usedBy": [
+      {
+        "from": "workflow_Invoice__c",
+        "via": "rules.criteriaItems",
+        "filePath": "workflows/Invoice__c.workflow-meta.xml",
+        "sourceKeys": {
+          "objectKey": "workflowRule_2f1545b36d5dc11f",
+          "sourceKey": "workflowRule_5afd9b74c1d936d6"
+        }
+      }
+    ],
+    "status": "unchanged"
+  },
+  {
+    "refType": "field",
+    "target": "Invoice__c.Name",
+    "usedBy": [
+      {
+        "from": "emailTemplate_Invoice_Templates.Invoice_Sent",
+        "via": "body",
+        "filePath": "email/Invoice_Templates/Invoice_Sent.email-meta.xml",
+        "sourceKeys": {
+          "objectKey": "emailTemplate_f1b73238ce47fd4a",
+          "sourceKey": "emailTemplate_9ffc47d0e0c6fca5"
+        }
+      },
+      {
+        "from": "emailTemplate_Invoice_Templates.Invoice_Sent",
+        "via": "body",
+        "filePath": "email/Invoice_Templates/Invoice_Sent.email-meta.xml",
+        "sourceKeys": {
+          "objectKey": "emailTemplate_f1b73238ce47fd4a",
+          "sourceKey": "emailTemplate_9ffc47d0e0c6fca5"
+        }
+      }
+    ],
+    "status": "changed"
+  },
+  {
+    "refType": "field",
+    "target": "Invoice__c.Status__c",
+    "usedBy": [
+      {
+        "from": "quickAction_Invoice__c.Approve",
+        "via": "fieldOverrides.field",
+        "filePath": "quickActions/Invoice__c.Approve.quickAction-meta.xml",
+        "sourceKeys": {
+          "objectKey": "quickActionFieldOverride_259ab9c4f9b0e2f4",
+          "sourceKey": "quickActionFieldOverride_68f221af854cd2de"
+        }
+      },
+      {
+        "from": "report_Invoice_Reports.Open_Invoices",
+        "via": "columns",
+        "filePath": "reports/Invoice_Reports/Open_Invoices.report-meta.xml",
+        "sourceKeys": {
+          "objectKey": "reportColumn_234e70d24a87fef4",
+          "sourceKey": "reportColumn_6a5a28de2876cbc9"
+        }
+      },
+      {
+        "from": "workflow_Invoice__c",
+        "via": "fieldUpdates.field",
+        "filePath": "workflows/Invoice__c.workflow-meta.xml",
+        "sourceKeys": {
+          "objectKey": "workflowFieldUpdate_61cc1659d5daf744",
+          "sourceKey": "workflowFieldUpdate_0f19cb350ff2abbb"
+        }
+      }
+    ],
+    "status": "changed"
+  },
+  {
+    "refType": "flexiPage",
+    "target": "Invoice_Record_Page_V2",
+    "usedBy": [
+      {
+        "from": "customApplication_Invoice_App",
+        "via": "actionOverrides.content",
+        "filePath": "applications/Invoice_App.app-meta.xml",
+        "sourceKeys": {
+          "objectKey": "appActionOverride_e6aacd2873bccdd5",
+          "sourceKey": "appActionOverride_14c30017cff80fe0"
+        }
+      }
+    ],
+    "problem": "UNKNOWN_FLEXI_PAGE",
+    "status": "added"
+  },
+  {
+    "refType": "group",
+    "target": "Finance",
+    "usedBy": [
+      {
+        "from": "queue_Invoice_Queue",
+        "via": "queueMembers",
+        "filePath": "queues/Invoice_Queue.queue-meta.xml",
+        "sourceKeys": {
+          "objectKey": "queue_e18ea811cb255a4b",
+          "sourceKey": "queue_781f86699eb79965"
+        }
+      }
+    ],
+    "status": "changed"
+  },
+  {
+    "refType": "lwc",
+    "target": "accountList",
+    "usedBy": [
+      {
+        "from": "customTab_Account_List",
+        "via": "lwcComponent",
+        "filePath": "tabs/Account_List.tab-meta.xml",
+        "sourceKeys": {
+          "objectKey": "customTab_ce0a31a7b24dc108",
+          "sourceKey": "customTab_841f25750c64b7c2"
+        }
+      },
+      {
+        "from": "aura_invoiceCard",
+        "via": "components",
+        "filePath": "aura/invoiceCard",
+        "sourceKeys": {
+          "objectKey": "auraBundle_4651d651d52e5642",
+          "sourceKey": "auraBundle_e4e8002a84c6c7e8"
+        }
+      }
+    ],
+    "status": "changed"
+  },
+  {
+    "refType": "object",
+    "target": "App_Setting__mdt",
+    "usedBy": [
+      {
+        "from": "customMetadata_App_Setting.Default",
+        "via": "fullName",
+        "filePath": "customMetadata/App_Setting.Default.md-meta.xml",
+        "sourceKeys": {
+          "objectKey": "customMetadataRecord_9941b642a67bfc92",
+          "sourceKey": "customMetadataRecord_f4373c3f93c75f7a"
+        }
+      },
+      {
+        "from": "customMetadata_App_Setting.Sandbox",
+        "via": "fullName",
+        "filePath": "customMetadata/App_Setting.Sandbox.md-meta.xml",
+        "sourceKeys": {
+          "objectKey": "customMetadataRecord_302bab8cf0826a10",
+          "sourceKey": "customMetadataRecord_621f8f21df6ae86b"
+        }
+      }
+    ],
+    "status": "changed"
+  },
+  {
+    "refType": "object",
+    "target": "Invoice__c",
+    "usedBy": [
+      {
+        "from": "customTab_Invoice__c",
+        "via": "customObject",
+        "filePath": "tabs/Invoice__c.tab-meta.xml",
+        "sourceKeys": {
+          "objectKey": "customTab_ce5e277ceb6f63e2",
+          "sourceKey": "customTab_3721339e951f992d"
+        }
+      },
+      {
+        "from": "customApplication_Invoice_App",
+        "via": "actionOverrides.pageOrSobjectType",
+        "filePath": "applications/Invoice_App.app-meta.xml",
+        "sourceKeys": {
+          "objectKey": "appActionOverride_e6aacd2873bccdd5",
+          "sourceKey": "appActionOverride_14c30017cff80fe0"
+        }
+      },
+      {
+        "from": "quickAction_Invoice__c.Approve",
+        "via": "targetObject",
+        "filePath": "quickActions/Invoice__c.Approve.quickAction-meta.xml",
+        "sourceKeys": {
+          "objectKey": "quickAction_488c91ba34e89c31",
+          "sourceKey": "quickAction_9d6c625c85502f1d"
+        }
+      },
+      {
+        "from": "sharingRules_Invoice__c",
+        "via": "fullName",
+        "filePath": "sharingRules/Invoice__c.sharingRules-meta.xml",
+        "sourceKeys": {
+          "objectKey": "sharingRules_c77ab8f6b35c1616",
+          "sourceKey": "sharingRules_8bbc491c64d0528d"
+        }
+      },
+      {
+        "from": "apexPage_InvoicePrint",
+        "via": "markup.standardController",
+        "filePath": "pages/InvoicePrint.page-meta.xml",
+        "sourceKeys": {
+          "objectKey": "visualforceMarkup_b0020e3f602b5522",
+          "sourceKey": "visualforceMarkup_a4462fc44c960e86"
+        }
+      },
+      {
+        "from": "report_Invoice_Reports.Open_Invoices",
+        "via": "reportType",
+        "filePath": "reports/Invoice_Reports/Open_Invoices.report-meta.xml",
+        "sourceKeys": {
+          "objectKey": "report_9a31918763738a26",
+          "sourceKey": "report_b979aed23009d2e9"
+        }
+      },
+      {
+        "from": "workflow_Invoice__c",
+        "via": "fullName",
+        "filePath": "workflows/Invoice__c.workflow-meta.xml",
+        "sourceKeys": {
+          "objectKey": "workflow_bc45a1d200620cce",
+          "sourceKey": "workflow_696f800a6edd8253"
+        }
+      },
+      {
+        "from": "approvalProcess_Invoice__c.Large_Invoice_Approval",
+        "via": "fullName",
+        "filePath": "approvalProcesses/Invoice__c.Large_Invoice_Approval.approvalProcess-meta.xml",
+        "sourceKeys": {
+          "objectKey": "approvalProcess_a854833d3aaf406b",
+          "sourceKey": "approvalProcess_797f4ded05aef36f"
+        }
+      },
+      {
+        "from": "queue_Invoice_Queue",
+        "via": "queueSobject",
+        "filePath": "queues/Invoice_Queue.queue-meta.xml",
+        "sourceKeys": {
+          "objectKey": "queueSobject_bdea1fb295cf5ffa",
+          "sourceKey": "queueSobject_fb23c3213562ec67"
+        }
+      }
+    ],
+    "status": "unchanged"
+  },
+  {
+    "refType": "object",
+    "target": "Payment__c",
+    "usedBy": [
+      {
+        "from": "queue_Invoice_Queue",
+        "via": "queueSobject",
+        "filePath": "queues/Invoice_Queue.queue-meta.xml",
+        "sourceKeys": {
+          "objectKey": "queueSobject_86af9b2a3c801fee",
+          "sourceKey": "queueSobject_b4dda947dde94dfd"
+        }
+      }
+    ],
+    "status": "added"
+  },
+  {
+    "refType": "report",
+    "target": "Invoice_Reports/Open_Invoices",
+    "usedBy": [
+      {
+        "from": "dashboard_Invoice_Dashboards.Invoice_Overview",
+        "via": "leftSection.report",
+        "filePath": "dashboards/Invoice_Dashboards/Invoice_Overview.dashboard-meta.xml",
+        "sourceKeys": {
+          "objectKey": "dashboard_5fbc2d31b51d510c",
+          "sourceKey": "dashboard_4585bec515607e0d"
+        }
+      }
+    ],
+    "status": "unchanged"
+  },
+  {
+    "refType": "role",
+    "target": "CEO",
+    "usedBy": [
+      {
+        "from": "role_Sales_Manager",
+        "via": "parentRole",
+        "filePath": "roles/Sales_Manager.role-meta.xml",
+        "sourceKeys": {
+          "objectKey": "role_fa0a4cb073b9f764",
+          "sourceKey": "role_81175e88a0dc70a1"
+        }
+      }
+    ],
+    "problem": "UNKNOWN_ROLE",
+    "status": "added"
+  },
+  {
+    "refType": "role",
+    "target": "Sales_Manager",
+    "usedBy": [
+      {
+        "from": "sharingRules_Invoice__c",
+        "via": "sharingCriteriaRules.sharedTo",
+        "filePath": "sharingRules/Invoice__c.sharingRules-meta.xml",
+        "sourceKeys": {
+          "objectKey": "sharingCriteriaRule_44d2046d33cfca92",
+          "sourceKey": "sharingCriteriaRule_0153393cdf4a4266"
+        }
+      },
+      {
+        "from": "sharingRules_Invoice__c",
+        "via": "sharingCriteriaRules.sharedTo",
+        "filePath": "sharingRules/Invoice__c.sharingRules-meta.xml",
+        "sourceKeys": {
+          "objectKey": "sharingCriteriaRule_463cddb3e054da83",
+          "sourceKey": "sharingCriteriaRule_83d322fd43604732"
+        }
+      }
+    ],
+    "status": "changed"
+  },
+  {
+    "refType": "visualforceComponent",
+    "target": "invoiceHeader",
+    "usedBy": [
+      {
+        "from": "apexPage_InvoicePrint",
+        "via": "markup.components",
+        "filePath": "pages/InvoicePrint.page-meta.xml",
+        "sourceKeys": {
+          "objectKey": "visualforceMarkup_b0020e3f602b5522",
+          "sourceKey": "visualforceMarkup_a4462fc44c960e86"
+        }
+      }
+    ],
+    "status": "unchanged"
+  },
+  {
+    "refType": "customLabel",
+    "target": "BannerMessage",
+    "usedBy": [
+      {
+        "from": "translations_ja",
+        "via": "customLabels",
+        "filePath": "translations/ja.translation-meta.xml",
+        "sourceKeys": {
+          "objectKey": "labelTranslation_4e0823fa74c3d785",
+          "sourceKey": "labelTranslation_f23929f4bd69efa4"
+        }
+      }
+    ],
+    "status": "removed"
+  },
+  {
+    "refType": "emailTemplate",
+    "target": "Invoice_Templates/Invoice_Sent",
+    "usedBy": [
+      {
+        "from": "workflow_Invoice__c",
+        "via": "alerts.template",
+        "filePath": "workflows/Invoice__c.workflow-meta.xml",
+        "sourceKeys": {
+          "objectKey": "workflowAlert_66ef8ae0464775af",
+          "sourceKey": "workflowAlert_9d2bf8c75c4b7932"
+        }
+      }
+    ],
+    "status": "removed"
+  },
+  {
+    "refType": "field",
+    "target": "Invoice__c.Due_Date__c",
+    "usedBy": [
+      {
+        "from": "report_Invoice_Reports.Open_Invoices",
+        "via": "columns",
+        "filePath": "reports/Invoice_Reports/Open_Invoices.report-meta.xml",
+        "sourceKeys": {
+          "objectKey": "reportColumn_1bc96c00bd34cfdd",
+          "sourceKey": "reportColumn_ac8910ba96c594fb"
+        }
+      }
+    ],
+    "status": "removed"
+  },
+  {
+    "refType": "flexiPage",
+    "target": "Invoice_Record_Page",
+    "usedBy": [
+      {
+        "from": "customApplication_Invoice_App",
+        "via": "actionOverrides.content",
+        "filePath": "applications/Invoice_App.app-meta.xml",
+        "sourceKeys": {
+          "objectKey": "appActionOverride_ef997c64177685ab",
+          "sourceKey": "appActionOverride_fe118d800a5d06fc"
+        }
+      }
+    ],
+    "status": "removed"
+  }
+]

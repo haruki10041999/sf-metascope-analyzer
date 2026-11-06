@@ -1,4 +1,4 @@
-// LWC の CSS (.css) の parse と検証 (docs/lwc-template-stylesheet-plan.md 5 章)。
+// LWC の CSS (.css) の parse と検証 (docs/lwc-implementation.md)。
 // ① postcss で構文解析 → JSON (中間表現は作らない) → ② @lwc/style-compiler で LWC の仕様を検証、の順
 import path from 'node:path';
 

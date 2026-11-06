@@ -100,3 +100,18 @@ export const makeUnorderedValuesDiff = <T>(before: T[], after: T[]): TypedListDi
         pairAsSet(before.map(getValueKey), after.map(getValueKey)),
         () => undefined as never,
     );
+
+/**
+ * C. 名前の順序付き列 (項目名・identifier の表示順など)。同じ名前同士だけを組にし (違う名前を値の変更にしない)、
+ * 順序の変化は moved、増減は added / removed
+ */
+export const makeOrderedNamesDiff = (
+    before: string[],
+    after: string[],
+): TypedListDiff<string, ValueDiff<string>> =>
+    makeTypedListDiff(
+        before,
+        after,
+        pairAsSequence(before.map(getValueKey), after.map(getValueKey), { canPair: () => false }),
+        makeValueDiff,
+    );

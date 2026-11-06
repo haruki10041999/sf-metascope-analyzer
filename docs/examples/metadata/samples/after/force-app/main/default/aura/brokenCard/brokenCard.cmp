@@ -1,0 +1,3 @@
+<aura:component>
+    <lightning:card title="broken">
+</aura:component>

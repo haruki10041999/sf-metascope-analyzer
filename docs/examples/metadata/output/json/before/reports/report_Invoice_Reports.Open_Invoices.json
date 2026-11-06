@@ -1,0 +1,143 @@
+{
+  "filePath": "reports/Invoice_Reports/Open_Invoices.report-meta.xml",
+  "resolvedError": [],
+  "dataType": "report",
+  "result": {
+    "id": "report_Invoice_Reports.Open_Invoices",
+    "base": {
+      "kind": "report",
+      "sourceKeys": {
+        "objectKey": "report_e80984dcf2367d25",
+        "sourceKey": "report_5203ed8c3818d56b"
+      },
+      "fullName": "Invoice_Reports/Open_Invoices",
+      "name": "Open Invoices",
+      "format": "Tabular",
+      "reportType": "CustomEntity$Invoice__c",
+      "scope": "organization",
+      "showDetails": true,
+      "filter": {
+        "criteriaItems": {
+          "column": "Invoice__c.Status__c",
+          "isUnlocked": true,
+          "operator": "notEqual",
+          "value": "Paid"
+        }
+      },
+      "params": [
+        {
+          "name": "co",
+          "value": "1"
+        }
+      ],
+      "columns": [
+        {
+          "kind": "reportColumn",
+          "sourceKeys": {
+            "objectKey": "reportColumn_d289fc792e5efb52",
+            "sourceKey": "reportColumn_b0adceba4b6f2dc5"
+          },
+          "field": "CUST_NAME"
+        },
+        {
+          "kind": "reportColumn",
+          "sourceKeys": {
+            "objectKey": "reportColumn_1bc96c00bd34cfdd",
+            "sourceKey": "reportColumn_ac8910ba96c594fb"
+          },
+          "field": "Invoice__c.Due_Date__c"
+        },
+        {
+          "kind": "reportColumn",
+          "sourceKeys": {
+            "objectKey": "reportColumn_62fd78e3ff8b348c",
+            "sourceKey": "reportColumn_d0f88667ab1a9ae9"
+          },
+          "field": "Invoice__c.Amount__c"
+        }
+      ]
+    },
+    "sourceObject": [
+      {
+        "objectKey": "reportColumn_d289fc792e5efb52",
+        "context": "<columns>\n        <field>CUST_NAME</field>\n    </columns>",
+        "source": [
+          {
+            "sourceKey": "reportColumn_b0adceba4b6f2dc5",
+            "filePath": "reports/Invoice_Reports/Open_Invoices.report-meta.xml",
+            "start": {
+              "offset": 100,
+              "line": 3,
+              "column": 4
+            },
+            "end": {
+              "offset": 157,
+              "line": 5,
+              "column": 14
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "reportColumn_1bc96c00bd34cfdd",
+        "context": "<columns>\n        <field>Invoice__c.Due_Date__c</field>\n    </columns>",
+        "source": [
+          {
+            "sourceKey": "reportColumn_ac8910ba96c594fb",
+            "filePath": "reports/Invoice_Reports/Open_Invoices.report-meta.xml",
+            "start": {
+              "offset": 162,
+              "line": 6,
+              "column": 4
+            },
+            "end": {
+              "offset": 232,
+              "line": 8,
+              "column": 14
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "reportColumn_62fd78e3ff8b348c",
+        "context": "<columns>\n        <field>Invoice__c.Amount__c</field>\n    </columns>",
+        "source": [
+          {
+            "sourceKey": "reportColumn_d0f88667ab1a9ae9",
+            "filePath": "reports/Invoice_Reports/Open_Invoices.report-meta.xml",
+            "start": {
+              "offset": 237,
+              "line": 9,
+              "column": 4
+            },
+            "end": {
+              "offset": 305,
+              "line": 11,
+              "column": 14
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "report_e80984dcf2367d25",
+        "context": "<Report xmlns=\"http://soap.sforce.com/2006/04/metadata\">\n    <columns>\n        <field>CUST_NAME</field>\n    </columns>\n    <columns>\n        <field>Invoice__c.Due_Date__c</field>\n    </columns>\n    <columns>\n        <field>Invoice__c.Amount__c</field>\n    </columns>\n    <filter>\n        <criteriaItems>\n            <column>Invoice__c.Status__c</column>\n            <isUnlocked>true</isUnlocked>\n            <operator>notEqual</operator>\n            <value>Paid</value>\n        </criteriaItems>\n    </filter>\n    <format>Tabular</format>\n    <name>Open Invoices</name>\n    <params>\n        <name>co</name>\n        <value>1</value>\n    </params>\n    <reportType>CustomEntity$Invoice__c</reportType>\n    <scope>organization</scope>\n    <showDetails>true</showDetails>\n</Report>",
+        "source": [
+          {
+            "sourceKey": "report_5203ed8c3818d56b",
+            "filePath": "reports/Invoice_Reports/Open_Invoices.report-meta.xml",
+            "start": {
+              "offset": 39,
+              "line": 2,
+              "column": 0
+            },
+            "end": {
+              "offset": 814,
+              "line": 29,
+              "column": 9
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

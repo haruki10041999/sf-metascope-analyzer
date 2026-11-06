@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<SharingRules xmlns="http://soap.sforce.com/2006/04/metadata">
+    <sharingCriteriaRules>
+        <fullName>Large_Invoices</fullName>
+        <accessLevel>Read</accessLevel>
+        <label>Large Invoices</label>
+        <sharedTo>
+            <role>Sales_Manager</role>
+        </sharedTo>
+        <criteriaItems>
+            <field>Amount__c</field>
+            <operation>greaterThan</operation>
+            <value>10000</value>
+        </criteriaItems>
+        <includeRecordsOwnedByAll>true</includeRecordsOwnedByAll>
+    </sharingCriteriaRules>
+    <sharingOwnerRules>
+        <fullName>Sales_Team</fullName>
+        <accessLevel>Read</accessLevel>
+        <label>Sales Team</label>
+        <sharedTo>
+            <group>Finance</group>
+        </sharedTo>
+        <sharedFrom>
+            <role>Sales_Manager</role>
+        </sharedFrom>
+    </sharingOwnerRules>
+</SharingRules>

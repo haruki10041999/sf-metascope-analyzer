@@ -1,4 +1,4 @@
-// LWC の JS / TS のモジュールの parse と JSON への変換 (docs/lwc-parse-plan.md 3.1)。
+// LWC の JS / TS のモジュールの parse と JSON への変換 (docs/lwc-implementation.md)。
 // Apex の parseApexSource (parser/Apex/source.ts) と同じ流れ: ソース → lwc_IR → converter (CommonType。sourceInfo を持つ) →
 // JSON (sourceInfo を sourceKeys / sourceObject に分ける)
 import path from 'node:path';

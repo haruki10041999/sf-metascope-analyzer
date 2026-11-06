@@ -159,3 +159,37 @@ export const readXmlRoot = (
     }
     return file.root;
 };
+
+// ---------------------------------------------------------------------------
+// フォルダ単位のメタデータ (権限・ラベル・Flow・画面)。方針: docs/metadata-a-plan.md 2.2 章
+// ---------------------------------------------------------------------------
+
+/**
+ * kind / sourceKeys を付けた JSON を作り、ソース位置を登録する (新しい種類のメタデータ用)。
+ * キーの作り方は Apex・LWC と同じ (objectKey はキーの順序に依らない形。配列は書いた順のまま)
+ */
+export const makeMetadataJson = <T extends JsonType<string>>(
+    kind: T['kind'],
+    properties: Omit<T, 'kind' | 'sourceKeys'>,
+    element: XmlElement | undefined,
+    file: XmlFile,
+    registry: XmlSourceRegistry,
+): T => makeSpanJson<T>(kind, properties, element, file, registry);
+
+/** element の子要素のうち、known にない要素の名前 (最初に出た順、重複なし)。スキーマにない要素 (skippedElements) を残すため */
+export const unknownChildNames = (element: XmlElement, known: Iterable<string>): string[] => {
+    const knownNames = new Set(known);
+    return [
+        ...new Set(
+            element.children.map((child) => child.name).filter((name) => !knownNames.has(name)),
+        ),
+    ];
+};
+
+/** 単位のファイルと一緒に読むファイル (Visualforce の .page、メールの .email、Aura のバンドルの中のファイルなど) */
+export type SourceText = {
+    fileName: string;
+    /** 結果とソース位置に残すパス (<フォルダ>/<ファイル名>) */
+    filePath: string;
+    source: string;
+};

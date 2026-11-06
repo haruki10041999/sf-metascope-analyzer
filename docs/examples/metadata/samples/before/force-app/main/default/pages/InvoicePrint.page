@@ -1,0 +1,5 @@
+<apex:page standardController="Invoice__c" extensions="InvoicePrintExt" renderAs="pdf">
+    <c:invoiceHeader invoice="{!Invoice__c}"/>
+    <apex:outputField value="{!Invoice__c.Amount__c}"/>
+    <p>{!$Label.AccountListTitle}</p>
+</apex:page>

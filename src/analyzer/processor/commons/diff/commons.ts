@@ -75,8 +75,8 @@ export const getValueKey = (value: unknown): string => {
         const entries = Object.keys(value)
             .filter((key) => key !== 'sourceKeys')
             .sort((a, b) =>
-            a === b ? 0 : a === 'type' ? -1 : b === 'type' ? 1 : a.localeCompare(b),
-        );
+                a === b ? 0 : a === 'type' ? -1 : b === 'type' ? 1 : a.localeCompare(b),
+            );
         return `{${entries
             .map((key) => `${quoteKeyString(key)}:${getValueKey(value[key])}`)
             .join(',')}}`;

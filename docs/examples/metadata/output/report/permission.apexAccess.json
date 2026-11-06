@@ -1,0 +1,46 @@
+[
+  {
+    "status": "unchanged",
+    "filePath": "permissionsets/Invoice_Manager.permissionset-meta.xml",
+    "holder": {
+      "type": "permissionSet",
+      "name": "Invoice_Manager"
+    },
+    "accessType": "apexClass",
+    "name": "AccountService",
+    "enabled": true
+  },
+  {
+    "status": "added",
+    "filePath": "permissionsets/Invoice_Manager.permissionset-meta.xml",
+    "holder": {
+      "type": "permissionSet",
+      "name": "Invoice_Manager"
+    },
+    "accessType": "apexClass",
+    "name": "NewHelper",
+    "enabled": true
+  },
+  {
+    "status": "added",
+    "filePath": "permissionsets/Payment_Clerk.permissionset-meta.xml",
+    "holder": {
+      "type": "permissionSet",
+      "name": "Payment_Clerk"
+    },
+    "accessType": "apexClass",
+    "name": "PaymentService",
+    "enabled": true
+  },
+  {
+    "status": "unchanged",
+    "filePath": "profiles/Sales.profile-meta.xml",
+    "holder": {
+      "type": "profile",
+      "name": "Sales"
+    },
+    "accessType": "apexClass",
+    "name": "AccountService",
+    "enabled": true
+  }
+]

@@ -1,0 +1,553 @@
+{
+  "filePath": "profiles/Sales.profile-meta.xml",
+  "resolvedError": [],
+  "dataType": "profile",
+  "result": {
+    "id": "profile_Sales",
+    "base": {
+      "kind": "profile",
+      "sourceKeys": {
+        "objectKey": "profile_83f96e399c072298",
+        "sourceKey": "profile_914c46f7cfa923ce"
+      },
+      "name": "Sales",
+      "custom": true,
+      "description": "営業担当",
+      "userLicense": "Salesforce",
+      "applicationVisibilities": [
+        {
+          "kind": "applicationVisibility",
+          "sourceKeys": {
+            "objectKey": "applicationVisibility_80ee7c87e883293c",
+            "sourceKey": "applicationVisibility_c35fe4e0d3dbbc87"
+          },
+          "application": "Invoice_App",
+          "default": true,
+          "visible": true
+        }
+      ],
+      "classAccesses": [
+        {
+          "kind": "classAccess",
+          "sourceKeys": {
+            "objectKey": "classAccess_e418c3ab2d446925",
+            "sourceKey": "classAccess_3d9d9e8b0b8fbc6a"
+          },
+          "apexClass": "AccountService",
+          "enabled": true
+        }
+      ],
+      "fieldPermissions": [
+        {
+          "kind": "fieldPermission",
+          "sourceKeys": {
+            "objectKey": "fieldPermission_3e77986e29146513",
+            "sourceKey": "fieldPermission_170a44efd4a442b4"
+          },
+          "field": "Account.Tier__c",
+          "readable": true,
+          "editable": false
+        },
+        {
+          "kind": "fieldPermission",
+          "sourceKeys": {
+            "objectKey": "fieldPermission_e25f606edca89323",
+            "sourceKey": "fieldPermission_b14a403b1f8fea76"
+          },
+          "field": "Invoice__c.Status__c",
+          "readable": true,
+          "editable": false
+        }
+      ],
+      "objectPermissions": [
+        {
+          "kind": "objectPermission",
+          "sourceKeys": {
+            "objectKey": "objectPermission_e540e1a46cbfd694",
+            "sourceKey": "objectPermission_1fa195f9dce754ed"
+          },
+          "object": "Account",
+          "allowCreate": true,
+          "allowRead": true,
+          "allowEdit": true,
+          "allowDelete": false,
+          "viewAllRecords": false,
+          "modifyAllRecords": false
+        },
+        {
+          "kind": "objectPermission",
+          "sourceKeys": {
+            "objectKey": "objectPermission_ab00743a2ceb0b58",
+            "sourceKey": "objectPermission_4c442829e74cdc5a"
+          },
+          "object": "Invoice__c",
+          "allowCreate": false,
+          "allowRead": true,
+          "allowEdit": false,
+          "allowDelete": false,
+          "viewAllRecords": false,
+          "modifyAllRecords": false
+        }
+      ],
+      "userPermissions": [
+        {
+          "kind": "userPermission",
+          "sourceKeys": {
+            "objectKey": "userPermission_71d47d725591d358",
+            "sourceKey": "userPermission_e43111d9fd0eb0c5"
+          },
+          "name": "ApiEnabled",
+          "enabled": true
+        },
+        {
+          "kind": "userPermission",
+          "sourceKeys": {
+            "objectKey": "userPermission_6fb8bd16816614a4",
+            "sourceKey": "userPermission_d9b7d2ba3325cd2d"
+          },
+          "name": "ViewSetup",
+          "enabled": false
+        }
+      ],
+      "tabVisibilities": [
+        {
+          "kind": "tabVisibility",
+          "sourceKeys": {
+            "objectKey": "tabVisibility_5fd7883c9496c415",
+            "sourceKey": "tabVisibility_da08104519c0df75"
+          },
+          "tab": "Invoice__c",
+          "visibility": "DefaultOff"
+        }
+      ],
+      "layoutAssignments": [
+        {
+          "kind": "layoutAssignment",
+          "sourceKeys": {
+            "objectKey": "layoutAssignment_d379569b3a594792",
+            "sourceKey": "layoutAssignment_0f954fe3a765b950"
+          },
+          "layout": "Account-Account Layout"
+        },
+        {
+          "kind": "layoutAssignment",
+          "sourceKeys": {
+            "objectKey": "layoutAssignment_5337685612ad6f4a",
+            "sourceKey": "layoutAssignment_09ba7cf71fae5eee"
+          },
+          "layout": "Invoice__c-Invoice Layout",
+          "recordType": "Invoice__c.Standard"
+        }
+      ],
+      "loginIpRanges": [
+        {
+          "kind": "loginIpRange",
+          "sourceKeys": {
+            "objectKey": "loginIpRange_e0c760b535297a31",
+            "sourceKey": "loginIpRange_25af862e589ad037"
+          },
+          "startAddress": "10.0.0.0",
+          "endAddress": "10.0.0.255",
+          "description": "本社"
+        }
+      ],
+      "loginFlows": [
+        {
+          "kind": "loginFlow",
+          "sourceKeys": {
+            "objectKey": "loginFlow_f3491eb9292079b8",
+            "sourceKey": "loginFlow_95cb1010aaaf337a"
+          },
+          "flow": "Login_Check",
+          "flowType": "UI",
+          "friendlyName": "Login Check",
+          "uiLoginFlowType": "VisualWorkflow",
+          "useLightningRuntime": false
+        }
+      ],
+      "profileActionOverrides": [
+        {
+          "kind": "profileActionOverride",
+          "sourceKeys": {
+            "objectKey": "profileActionOverride_50fe50b61ce4475e",
+            "sourceKey": "profileActionOverride_fa7a47412f68d436"
+          },
+          "actionName": "View",
+          "content": "Invoice_Record_Page",
+          "formFactor": "Large",
+          "pageOrSobjectType": "Invoice__c",
+          "type": "Flexipage"
+        }
+      ],
+      "categoryGroupVisibilities": [
+        {
+          "kind": "categoryGroupVisibility",
+          "sourceKeys": {
+            "objectKey": "categoryGroupVisibility_317575c6e29ea824",
+            "sourceKey": "categoryGroupVisibility_4336bf2970c70005"
+          },
+          "dataCategoryGroup": "Support",
+          "visibility": "CUSTOM",
+          "dataCategories": [
+            "FAQ",
+            "Invoice"
+          ]
+        }
+      ],
+      "loginHours": {
+        "kind": "loginHours",
+        "sourceKeys": {
+          "objectKey": "loginHours_640a3f71c9e52498",
+          "sourceKey": "loginHours_234e6daca2be3f17"
+        },
+        "mondayStart": 480,
+        "mondayEnd": 1080
+      },
+      "skippedElements": [
+        "futureSetting"
+      ]
+    },
+    "sourceObject": [
+      {
+        "objectKey": "applicationVisibility_80ee7c87e883293c",
+        "context": "<applicationVisibilities>\n        <application>Invoice_App</application>\n        <default>true</default>\n        <visible>true</visible>\n    </applicationVisibilities>",
+        "source": [
+          {
+            "sourceKey": "applicationVisibility_c35fe4e0d3dbbc87",
+            "filePath": "profiles/Sales.profile-meta.xml",
+            "start": {
+              "offset": 101,
+              "line": 3,
+              "column": 4
+            },
+            "end": {
+              "offset": 268,
+              "line": 7,
+              "column": 30
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "classAccess_e418c3ab2d446925",
+        "context": "<classAccesses>\n        <apexClass>AccountService</apexClass>\n        <enabled>true</enabled>\n    </classAccesses>",
+        "source": [
+          {
+            "sourceKey": "classAccess_3d9d9e8b0b8fbc6a",
+            "filePath": "profiles/Sales.profile-meta.xml",
+            "start": {
+              "offset": 527,
+              "line": 14,
+              "column": 4
+            },
+            "end": {
+              "offset": 641,
+              "line": 17,
+              "column": 20
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "fieldPermission_3e77986e29146513",
+        "context": "<fieldPermissions>\n        <editable>false</editable>\n        <field>Account.Tier__c</field>\n        <readable>true</readable>\n    </fieldPermissions>",
+        "source": [
+          {
+            "sourceKey": "fieldPermission_170a44efd4a442b4",
+            "filePath": "profiles/Sales.profile-meta.xml",
+            "start": {
+              "offset": 708,
+              "line": 20,
+              "column": 4
+            },
+            "end": {
+              "offset": 858,
+              "line": 24,
+              "column": 23
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "fieldPermission_e25f606edca89323",
+        "context": "<fieldPermissions>\n        <editable>false</editable>\n        <field>Invoice__c.Status__c</field>\n        <readable>true</readable>\n    </fieldPermissions>",
+        "source": [
+          {
+            "sourceKey": "fieldPermission_b14a403b1f8fea76",
+            "filePath": "profiles/Sales.profile-meta.xml",
+            "start": {
+              "offset": 863,
+              "line": 25,
+              "column": 4
+            },
+            "end": {
+              "offset": 1018,
+              "line": 29,
+              "column": 23
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "objectPermission_e540e1a46cbfd694",
+        "context": "<objectPermissions>\n        <allowCreate>true</allowCreate>\n        <allowDelete>false</allowDelete>\n        <allowEdit>true</allowEdit>\n        <allowRead>true</allowRead>\n        <modifyAllRecords>false</modifyAllRecords>\n        <object>Account</object>\n        <viewAllRecords>false</viewAllRecords>\n    </objectPermissions>",
+        "source": [
+          {
+            "sourceKey": "objectPermission_1fa195f9dce754ed",
+            "filePath": "profiles/Sales.profile-meta.xml",
+            "start": {
+              "offset": 1816,
+              "line": 53,
+              "column": 4
+            },
+            "end": {
+              "offset": 2144,
+              "line": 61,
+              "column": 24
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "objectPermission_ab00743a2ceb0b58",
+        "context": "<objectPermissions>\n        <allowCreate>false</allowCreate>\n        <allowDelete>false</allowDelete>\n        <allowEdit>false</allowEdit>\n        <allowRead>true</allowRead>\n        <modifyAllRecords>false</modifyAllRecords>\n        <object>Invoice__c</object>\n        <viewAllRecords>false</viewAllRecords>\n    </objectPermissions>",
+        "source": [
+          {
+            "sourceKey": "objectPermission_4c442829e74cdc5a",
+            "filePath": "profiles/Sales.profile-meta.xml",
+            "start": {
+              "offset": 2149,
+              "line": 62,
+              "column": 4
+            },
+            "end": {
+              "offset": 2482,
+              "line": 70,
+              "column": 24
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "userPermission_71d47d725591d358",
+        "context": "<userPermissions>\n        <enabled>true</enabled>\n        <name>ApiEnabled</name>\n    </userPermissions>",
+        "source": [
+          {
+            "sourceKey": "userPermission_e43111d9fd0eb0c5",
+            "filePath": "profiles/Sales.profile-meta.xml",
+            "start": {
+              "offset": 2920,
+              "line": 83,
+              "column": 4
+            },
+            "end": {
+              "offset": 3024,
+              "line": 86,
+              "column": 22
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "userPermission_6fb8bd16816614a4",
+        "context": "<userPermissions>\n        <enabled>false</enabled>\n        <name>ViewSetup</name>\n    </userPermissions>",
+        "source": [
+          {
+            "sourceKey": "userPermission_d9b7d2ba3325cd2d",
+            "filePath": "profiles/Sales.profile-meta.xml",
+            "start": {
+              "offset": 3029,
+              "line": 87,
+              "column": 4
+            },
+            "end": {
+              "offset": 3133,
+              "line": 90,
+              "column": 22
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "tabVisibility_5fd7883c9496c415",
+        "context": "<tabVisibilities>\n        <tab>Invoice__c</tab>\n        <visibility>DefaultOff</visibility>\n    </tabVisibilities>",
+        "source": [
+          {
+            "sourceKey": "tabVisibility_da08104519c0df75",
+            "filePath": "profiles/Sales.profile-meta.xml",
+            "start": {
+              "offset": 2759,
+              "line": 78,
+              "column": 4
+            },
+            "end": {
+              "offset": 2873,
+              "line": 81,
+              "column": 22
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "layoutAssignment_d379569b3a594792",
+        "context": "<layoutAssignments>\n        <layout>Account-Account Layout</layout>\n    </layoutAssignments>",
+        "source": [
+          {
+            "sourceKey": "layoutAssignment_0f954fe3a765b950",
+            "filePath": "profiles/Sales.profile-meta.xml",
+            "start": {
+              "offset": 1023,
+              "line": 30,
+              "column": 4
+            },
+            "end": {
+              "offset": 1115,
+              "line": 32,
+              "column": 24
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "layoutAssignment_5337685612ad6f4a",
+        "context": "<layoutAssignments>\n        <layout>Invoice__c-Invoice Layout</layout>\n        <recordType>Invoice__c.Standard</recordType>\n    </layoutAssignments>",
+        "source": [
+          {
+            "sourceKey": "layoutAssignment_09ba7cf71fae5eee",
+            "filePath": "profiles/Sales.profile-meta.xml",
+            "start": {
+              "offset": 1120,
+              "line": 33,
+              "column": 4
+            },
+            "end": {
+              "offset": 1268,
+              "line": 36,
+              "column": 24
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "loginIpRange_e0c760b535297a31",
+        "context": "<loginIpRanges>\n        <description>本社</description>\n        <endAddress>10.0.0.255</endAddress>\n        <startAddress>10.0.0.0</startAddress>\n    </loginIpRanges>",
+        "source": [
+          {
+            "sourceKey": "loginIpRange_25af862e589ad037",
+            "filePath": "profiles/Sales.profile-meta.xml",
+            "start": {
+              "offset": 1647,
+              "line": 48,
+              "column": 4
+            },
+            "end": {
+              "offset": 1811,
+              "line": 52,
+              "column": 20
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "loginFlow_f3491eb9292079b8",
+        "context": "<loginFlows>\n        <flow>Login_Check</flow>\n        <flowType>UI</flowType>\n        <friendlyName>Login Check</friendlyName>\n        <uiLoginFlowType>VisualWorkflow</uiLoginFlowType>\n        <useLightningRuntime>false</useLightningRuntime>\n    </loginFlows>",
+        "source": [
+          {
+            "sourceKey": "loginFlow_95cb1010aaaf337a",
+            "filePath": "profiles/Sales.profile-meta.xml",
+            "start": {
+              "offset": 1273,
+              "line": 37,
+              "column": 4
+            },
+            "end": {
+              "offset": 1532,
+              "line": 43,
+              "column": 17
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "profileActionOverride_50fe50b61ce4475e",
+        "context": "<profileActionOverrides>\n        <actionName>View</actionName>\n        <content>Invoice_Record_Page</content>\n        <formFactor>Large</formFactor>\n        <pageOrSobjectType>Invoice__c</pageOrSobjectType>\n        <type>Flexipage</type>\n    </profileActionOverrides>",
+        "source": [
+          {
+            "sourceKey": "profileActionOverride_fa7a47412f68d436",
+            "filePath": "profiles/Sales.profile-meta.xml",
+            "start": {
+              "offset": 2487,
+              "line": 71,
+              "column": 4
+            },
+            "end": {
+              "offset": 2754,
+              "line": 77,
+              "column": 29
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "categoryGroupVisibility_317575c6e29ea824",
+        "context": "<categoryGroupVisibilities>\n        <dataCategories>FAQ</dataCategories>\n        <dataCategories>Invoice</dataCategories>\n        <dataCategoryGroup>Support</dataCategoryGroup>\n        <visibility>CUSTOM</visibility>\n    </categoryGroupVisibilities>",
+        "source": [
+          {
+            "sourceKey": "categoryGroupVisibility_4336bf2970c70005",
+            "filePath": "profiles/Sales.profile-meta.xml",
+            "start": {
+              "offset": 273,
+              "line": 8,
+              "column": 4
+            },
+            "end": {
+              "offset": 522,
+              "line": 13,
+              "column": 32
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "loginHours_640a3f71c9e52498",
+        "context": "<loginHours>\n        <mondayEnd>1080</mondayEnd>\n        <mondayStart>480</mondayStart>\n    </loginHours>",
+        "source": [
+          {
+            "sourceKey": "loginHours_234e6daca2be3f17",
+            "filePath": "profiles/Sales.profile-meta.xml",
+            "start": {
+              "offset": 1537,
+              "line": 44,
+              "column": 4
+            },
+            "end": {
+              "offset": 1642,
+              "line": 47,
+              "column": 17
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "profile_83f96e399c072298",
+        "context": "<Profile xmlns=\"http://soap.sforce.com/2006/04/metadata\">\n    <applicationVisibilities>\n        <application>Invoice_App</application>\n        <default>true</default>\n        <visible>true</visible>\n    </applicationVisibilities>\n    <categoryGroupVisibilities>\n        <dataCategories>FAQ</dataCategories>\n        <dataCategories>Invoice</dataCategories>\n        <dataCategoryGroup>Support</dataCategoryGroup>\n        <visibility>CUSTOM</visibility>\n    </categoryGroupVisibilities>\n    <classAccesses>\n        <apexClass>AccountService</apexClass>\n        <enabled>true</enabled>\n    </classAccesses>\n    <custom>true</custom>\n    <description>営業担当</description>\n    <fieldPermissions>\n        <editable>false</editable>\n        <field>Account.Tier__c</field>\n        <readable>true</readable>\n    </fieldPermissions>\n    <fieldPermissions>\n        <editable>false</editable>\n        <field>Invoice__c.Status__c</field>\n        <readable>true</readable>\n    </fieldPermissions>\n    <layoutAssignments>\n        <layout>Account-Account Layout</layout>\n    </layoutAssignments>\n    <layoutAssignments>\n        <layout>Invoice__c-Invoice Layout</layout>\n        <recordType>Invoice__c.Standard</recordType>\n    </layoutAssignments>\n    <loginFlows>\n        <flow>Login_Check</flow>\n        <flowType>UI</flowType>\n        <friendlyName>Login Check</friendlyName>\n        <uiLoginFlowType>VisualWorkflow</uiLoginFlowType>\n        <useLightningRuntime>false</useLightningRuntime>\n    </loginFlows>\n    <loginHours>\n        <mondayEnd>1080</mondayEnd>\n        <mondayStart>480</mondayStart>\n    </loginHours>\n    <loginIpRanges>\n        <description>本社</description>\n        <endAddress>10.0.0.255</endAddress>\n        <startAddress>10.0.0.0</startAddress>\n    </loginIpRanges>\n    <objectPermissions>\n        <allowCreate>true</allowCreate>\n        <allowDelete>false</allowDelete>\n        <allowEdit>true</allowEdit>\n        <allowRead>true</allowRead>\n        <modifyAllRecords>false</modifyAllRecords>\n        <object>Account</object>\n        <viewAllRecords>false</viewAllRecords>\n    </objectPermissions>\n    <objectPermissions>\n        <allowCreate>false</allowCreate>\n        <allowDelete>false</allowDelete>\n        <allowEdit>false</allowEdit>\n        <allowRead>true</allowRead>\n        <modifyAllRecords>false</modifyAllRecords>\n        <object>Invoice__c</object>\n        <viewAllRecords>false</viewAllRecords>\n    </objectPermissions>\n    <profileActionOverrides>\n        <actionName>View</actionName>\n        <content>Invoice_Record_Page</content>\n        <formFactor>Large</formFactor>\n        <pageOrSobjectType>Invoice__c</pageOrSobjectType>\n        <type>Flexipage</type>\n    </profileActionOverrides>\n    <tabVisibilities>\n        <tab>Invoice__c</tab>\n        <visibility>DefaultOff</visibility>\n    </tabVisibilities>\n    <userLicense>Salesforce</userLicense>\n    <userPermissions>\n        <enabled>true</enabled>\n        <name>ApiEnabled</name>\n    </userPermissions>\n    <userPermissions>\n        <enabled>false</enabled>\n        <name>ViewSetup</name>\n    </userPermissions>\n    <futureSetting>\n        <enabled>true</enabled>\n    </futureSetting>\n</Profile>",
+        "source": [
+          {
+            "sourceKey": "profile_914c46f7cfa923ce",
+            "filePath": "profiles/Sales.profile-meta.xml",
+            "start": {
+              "offset": 39,
+              "line": 2,
+              "column": 0
+            },
+            "end": {
+              "offset": 3217,
+              "line": 94,
+              "column": 10
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

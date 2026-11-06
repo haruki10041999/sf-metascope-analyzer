@@ -1,19 +1,21 @@
-# Diff の動作検証サンプル
+# Apex のサンプル
 
-`before/` と `after/` の同じ名前のファイルを、本番と同じ流れ（`ApexParser.parseApexFile`。ソースは `parseApexClass`、クラス・トリガーのメタデータ `-meta.xml` は `parseApexMeta`）で JSON にして、`makeUnitDiffs` で比べる。
+実装の全体は [apex-implementation.md](../../apex-implementation.md)。クラス・トリガーはソースと `-meta.xml` を 1 つの単位（`class_<名前>` / `trigger_<名前>`）、匿名 Apex は 1 ファイルを 1 つの単位（`anonymous_<名前>`）として読む。
+
+| フォルダ                                 | 内容                                                                                                                                   |
+| ---------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
+| [samples/syntax/](./samples/syntax/)     | 構文をひととおり含むサンプル（クラス・enum・interface・トリガー・匿名 Apex、構文エラーの `broken.apex`）。IR・converter のテストが使う |
+| [samples/diff/](./samples/diff/)         | Diff の動作検証用の `before/` と `after/`（下の表）                                                                                    |
+| [scripts/](./scripts/)                   | `generate-json.ts`（全サンプルの JSON）、`run-diff.ts`（before → after の Diff）                                                       |
+| [output/json/](./output/json/index.md)   | 単位ごとの JSON（`ApexUnitParseResult`）                                                                                               |
+| [output/diff/](./output/diff/summary.md) | `summary.md`（unchanged 以外の差分をソースの行付きで）、`coverage.md`（kind ごとの出現数）、`unit-diff.json`                           |
 
 ```sh
-npx ttsx --noCheck docs/examples/apex-diff/run-diff.ts
+npx ttsx --noCheck docs/examples/apex/scripts/generate-json.ts
+npx ttsx --noCheck docs/examples/apex/scripts/run-diff.ts
 ```
 
-| 出力                                                 | 内容                                                                       |
-| ---------------------------------------------------- | -------------------------------------------------------------------------- |
-| [diff-output/summary.md](./diff-output/summary.md)   | unchanged 以外の差分を、ソースの行と文字列付きで木の形に並べたもの         |
-| [diff-output/coverage.md](./diff-output/coverage.md) | JsonType / StructureJsonType の kind ごとの、JSON と差分のノードへの出現数 |
-| diff-output/unit-diff.json                           | `makeUnitDiffs` の結果（`target` は大きいので除く）                        |
-| [evaluation.md](./evaluation.md)                     | 生成差分の評価、方針との照合、テスト結果                                   |
-
-期待どおりかどうかは、テスト [test/processor/diff-samples.test.ts](../../../test/processor/diff-samples.test.ts) で確かめる。サンプルは、すべての kind が差分のノードとして 1 回以上現れるように書いている（テストでも確認する）。
+期待どおりかどうかは、テスト [test/processor/diff-samples.test.ts](../../../test/processor/diff-samples.test.ts)・[test/parser/apex-meta.test.ts](../../../test/parser/apex-meta.test.ts) で確かめる。サンプルは、すべての kind が差分のノードとして 1 回以上現れるように書いている（テストでも確認する）。
 
 ## サンプルと期待する差分
 
@@ -31,10 +33,10 @@ npx ttsx --noCheck docs/examples/apex-diff/run-diff.ts
 | `Broken.cls`                                        | 構文エラーの発生                                          | 構文エラー 2 件の発生。`Integer x = ;` はエラーのノード（`error:localVariable`）の added                                                                                          |
 | `Level.cls`                                         | enum 定数の追加                                           | `MEDIUM` の added（順序付き列）                                                                                                                                                   |
 | `Shape.cls`                                         | interface → abstract class                                | kind が変わるので宣言を丸ごと changed                                                                                                                                             |
-| `Unchanged.cls`                                     | 空行の追加だけ                                            | ファイルも中身も unchanged                                                                                                                                                        |
-| `OldHelper.cls` / `NewHelper.cls`                   | before / after の片方だけにある                           | ファイルの removed / added                                                                                                                                                        |
+| `Unchanged.cls`                                     | 空行の追加だけ                                            | 単位も中身も unchanged                                                                                                                                                            |
+| `OldHelper.cls` / `NewHelper.cls`                   | before / after の片方だけにある                           | 単位（`class_OldHelper` / `class_NewHelper`）の removed / added（ソースと -meta.xml をまとめて）                                                                                  |
 | `AccountService.cls-meta.xml`                       | API バージョン 59.0 → 61.0                                | `apexClassMeta` の `apiVersion` の changed                                                                                                                                        |
 | `AccountTrigger.trigger-meta.xml`                   | 無効化と管理パッケージの追加                              | `apexTriggerMeta` の `status`（Active → Inactive）の changed、`packageVersions` の added                                                                                          |
-| `Broken.cls-meta.xml`                               | 閉じタグの書き間違い                                      | ファイルの dataType が error に変わり、resolvedError（`XML_SYNTAX`）が増える                                                                                                      |
+| `Broken.cls-meta.xml`                               | 閉じタグの書き間違い                                      | 単位の `meta.meta` が `ErrorJson` に変わり（値ごとの changed）、resolvedError（`XML_SYNTAX`）が増える                                                                             |
 | `Unchanged.cls-meta.xml`                            | 変更なし                                                  | unchanged                                                                                                                                                                         |
-| `OldHelper.cls-meta.xml` / `NewHelper.cls-meta.xml` | before / after の片方だけにある                           | ファイルの removed / added                                                                                                                                                        |
+| `OldHelper.cls-meta.xml` / `NewHelper.cls-meta.xml` | before / after の片方だけにある                           | 単位（`class_OldHelper` / `class_NewHelper`）の removed / added（ソースと -meta.xml をまとめて）                                                                                  |

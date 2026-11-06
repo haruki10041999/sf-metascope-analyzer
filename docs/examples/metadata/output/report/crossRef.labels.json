@@ -1,0 +1,56 @@
+[
+  {
+    "status": "changed",
+    "sourceKeys": {
+      "objectKey": "customLabel_671353415cb730e9",
+      "sourceKey": "customLabel_3bce9d6933bcf041"
+    },
+    "name": "AccountListTitle",
+    "value": "取引先の一覧",
+    "usages": [
+      {
+        "origin": "lwc",
+        "unit": "lwc_accountList"
+      },
+      {
+        "origin": "flow",
+        "unit": "flow_Account_Wizard"
+      }
+    ]
+  },
+  {
+    "status": "changed",
+    "sourceKeys": {
+      "objectKey": "customLabel_9ad2ce615250dc11",
+      "sourceKey": "customLabel_cc7fbfe7d6c6de67"
+    },
+    "name": "Invoice_Overdue",
+    "value": "支払期限を過ぎています",
+    "usages": [
+      {
+        "origin": "flow",
+        "unit": "flow_Invoice_Status_Update"
+      }
+    ]
+  },
+  {
+    "status": "added",
+    "sourceKeys": {
+      "objectKey": "customLabel_ec07e26e192ce19e",
+      "sourceKey": "customLabel_463d8edf82418099"
+    },
+    "name": "Invoice_Approved",
+    "value": "承認しました",
+    "usages": []
+  },
+  {
+    "status": "removed",
+    "sourceKeys": {
+      "objectKey": "customLabel_cb4221f0503f2e6b",
+      "sourceKey": "customLabel_f6f9b118b5dff23e"
+    },
+    "name": "BannerMessage",
+    "value": "お知らせ",
+    "usages": []
+  }
+]

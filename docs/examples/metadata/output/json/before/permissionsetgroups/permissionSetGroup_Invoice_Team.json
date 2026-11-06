@@ -1,0 +1,49 @@
+{
+  "filePath": "permissionsetgroups/Invoice_Team.permissionsetgroup-meta.xml",
+  "resolvedError": [],
+  "dataType": "permissionSetGroup",
+  "result": {
+    "id": "permissionSetGroup_Invoice_Team",
+    "base": {
+      "kind": "permissionSetGroup",
+      "sourceKeys": {
+        "objectKey": "permissionSetGroup_2f10140361271d81",
+        "sourceKey": "permissionSetGroup_c01d1cb3c5876b73"
+      },
+      "name": "Invoice_Team",
+      "label": "Invoice Team",
+      "description": "請求書の担当",
+      "status": "Updated",
+      "hasActivationRequired": false,
+      "permissionSets": [
+        "Invoice_Manager",
+        "Invoice_Viewer"
+      ],
+      "mutingPermissionSets": [
+        "Invoice_Team_Muted"
+      ]
+    },
+    "sourceObject": [
+      {
+        "objectKey": "permissionSetGroup_2f10140361271d81",
+        "context": "<PermissionSetGroup xmlns=\"http://soap.sforce.com/2006/04/metadata\">\n    <description>請求書の担当</description>\n    <hasActivationRequired>false</hasActivationRequired>\n    <label>Invoice Team</label>\n    <mutingPermissionSets>Invoice_Team_Muted</mutingPermissionSets>\n    <permissionSets>Invoice_Manager</permissionSets>\n    <permissionSets>Invoice_Viewer</permissionSets>\n    <status>Updated</status>\n</PermissionSetGroup>",
+        "source": [
+          {
+            "sourceKey": "permissionSetGroup_c01d1cb3c5876b73",
+            "filePath": "permissionsetgroups/Invoice_Team.permissionsetgroup-meta.xml",
+            "start": {
+              "offset": 39,
+              "line": 2,
+              "column": 0
+            },
+            "end": {
+              "offset": 458,
+              "line": 10,
+              "column": 21
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

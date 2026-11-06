@@ -41,6 +41,7 @@
 - **changed** object Invoice__c (key) — Invoice__c/Invoice__c.object-meta.xml L2
   - **changed** field Account__c (key) — Invoice__c/fields/Account__c.field-meta.xml L2
     - **changed** deleteConstraint: "SetNull" → "Restrict"
+    - **changed** lookupFilter: {"active":true,"errorMessage":"有効な取引先を選んでください","isOptional":false,"filterItems":… → {"active":true,"errorMessage":"有効な取引先 (Gold 以上) を選んでください","isOptional":false,"fi…
   - **changed** field Amount__c (key) — Invoice__c/fields/Amount__c.field-meta.xml L2
     - **added** inlineHelpText: "税込みの金額"
     - **changed** precision: 18 → 16
@@ -62,6 +63,11 @@
     - **moved** displayedFields (identical)
   - **changed** webLink Send_Invoice (key) — Invoice__c/webLinks/Send_Invoice.webLink-meta.xml L2
     - **changed** url: "/apex/SendInvoice?id={!Invoice__c.Id}" → "/lightning/cmp/c__sendInvoice?c__id={!Invoice__c.Id}"
+  - **changed** sharingReason Approver__c (key) — Invoice__c/sharingReasons/Approver__c.sharingReason-meta.xml L2
+    - **changed** label: "Approver" → "Invoice Approver"
+  - **removed** customTabListAdditionalFields: "Due_Date__c"
+  - **added** customTabListAdditionalFields: "Status__c"
+  - **added** searchResultsAdditionalFields: "Amount__c"
 
 ## Invoice_Line__c
 
@@ -74,6 +80,15 @@
 ## Legacy_Item__c
 
 - オブジェクト: **removed**（dataType: {"before":"object"}）
+
+## Opportunity
+
+- オブジェクト: **changed**（dataType: "object"）
+
+- **changed** object Opportunity (key) — Opportunity/Opportunity.object-meta.xml L2
+  - **changed** businessProcess Standard_Sales (key) — Opportunity/businessProcesses/Standard_Sales.businessProcess-meta.xml L2
+    - **changed** description: "標準の営業プロセス" → "標準の営業プロセス (交渉を含む)"
+    - **added** values Negotiation/Review: {"fullName":"Negotiation/Review","default":false}
 
 ## Payment__c
 

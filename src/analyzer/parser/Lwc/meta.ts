@@ -1,4 +1,4 @@
-// LWC のバンドルの設定 (<名前>.js-meta.xml) の読み込み (docs/lwc-parse-plan.md 3.5)。
+// LWC のバンドルの設定 (<名前>.js-meta.xml) の読み込み (docs/lwc-implementation.md)。
 // XML の読み取り・JSON の作り方は、Apex の -meta.xml・オブジェクトと同じ部品を使う
 import {
     XmlSourceRegistry,

@@ -66,9 +66,32 @@ export const FIELD_SCHEMA = {
     trackFeedHistory: 'boolean',
 } as const;
 
+/** 参照項目の絞り込み条件 (`<lookupFilter>`) */
+export const LOOKUP_FILTER_SCHEMA = {
+    active: 'boolean',
+    booleanFilter: 'string',
+    description: 'string',
+    errorMessage: 'string',
+    infoMessage: 'string',
+    isOptional: 'boolean',
+} as const;
+
+export type LookupFilterItem = {
+    field: string;
+    operation?: string;
+    value?: string;
+    valueField?: string;
+};
+
+export type LookupFilterJson = PropertiesOf<typeof LOOKUP_FILTER_SCHEMA> & {
+    /** 条件の行 (書いた順。booleanFilter の番号が順序に依る) */
+    filterItems: LookupFilterItem[];
+};
+
 export type CustomFieldJson = JsonType<'field'> & {
     apiName: string;
     valueSet?: ValueSetJson;
+    lookupFilter?: LookupFilterJson;
 } & PropertiesOf<typeof FIELD_SCHEMA>;
 
 export const makePicklistValueJson = (
@@ -124,12 +147,29 @@ export const makeCustomFieldJson = (
     registry: XmlSourceRegistry,
 ): CustomFieldJson => {
     const valueSet = childOf(element, 'valueSet');
+    const lookupFilter = childOf(element, 'lookupFilter');
     return makeXmlJson<CustomFieldJson>(
         'field',
         {
             apiName: readText(element, 'fullName') ?? apiName,
             ...readProperties(element, FIELD_SCHEMA),
             ...(valueSet ? { valueSet: makeValueSetJson(valueSet, file, registry) } : {}),
+            // 要素がないときは持たない (保存済みのオブジェクトの objectKey を変えないため)
+            ...(lookupFilter
+                ? {
+                      lookupFilter: {
+                          ...readProperties(lookupFilter, LOOKUP_FILTER_SCHEMA),
+                          filterItems: childrenOf(lookupFilter, 'filterItems').map((item) => ({
+                              field: readText(item, 'field') ?? '',
+                              ...readProperties(item, {
+                                  operation: 'string',
+                                  value: 'string',
+                                  valueField: 'string',
+                              }),
+                          })),
+                      },
+                  }
+                : {}),
         },
         element,
         file,

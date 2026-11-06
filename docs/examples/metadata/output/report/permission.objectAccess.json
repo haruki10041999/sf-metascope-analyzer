@@ -1,0 +1,167 @@
+{
+  "columns": [
+    {
+      "type": "permissionSet",
+      "name": "Invoice_Manager"
+    },
+    {
+      "type": "permissionSet",
+      "name": "Invoice_Viewer"
+    },
+    {
+      "type": "permissionSet",
+      "name": "Payment_Clerk"
+    },
+    {
+      "type": "profile",
+      "name": "Sales"
+    }
+  ],
+  "rows": [
+    "Account",
+    "Invoice__c",
+    "Payment__c",
+    "Receipt__c"
+  ],
+  "cells": {
+    "Account": {
+      "profile:Sales": {
+        "filePath": "profiles/Sales.profile-meta.xml",
+        "before": {
+          "allowCreate": true,
+          "allowRead": true,
+          "allowEdit": true,
+          "allowDelete": false,
+          "viewAllRecords": false,
+          "modifyAllRecords": false,
+          "viewAllFields": false
+        },
+        "after": {
+          "allowCreate": true,
+          "allowRead": true,
+          "allowEdit": true,
+          "allowDelete": false,
+          "viewAllRecords": false,
+          "modifyAllRecords": false,
+          "viewAllFields": false
+        },
+        "status": "unchanged"
+      }
+    },
+    "Invoice__c": {
+      "permissionSet:Invoice_Manager": {
+        "filePath": "permissionsets/Invoice_Manager.permissionset-meta.xml",
+        "before": {
+          "allowCreate": true,
+          "allowRead": true,
+          "allowEdit": true,
+          "allowDelete": true,
+          "viewAllRecords": false,
+          "modifyAllRecords": false,
+          "viewAllFields": false
+        },
+        "after": {
+          "allowCreate": true,
+          "allowRead": true,
+          "allowEdit": true,
+          "allowDelete": true,
+          "viewAllRecords": true,
+          "modifyAllRecords": true,
+          "viewAllFields": false
+        },
+        "status": "changed"
+      },
+      "permissionSet:Invoice_Viewer": {
+        "filePath": "permissionsets/Invoice_Viewer.permissionset-meta.xml",
+        "before": {
+          "allowCreate": false,
+          "allowRead": true,
+          "allowEdit": false,
+          "allowDelete": false,
+          "viewAllRecords": false,
+          "modifyAllRecords": false,
+          "viewAllFields": false
+        },
+        "status": "removed"
+      },
+      "profile:Sales": {
+        "filePath": "profiles/Sales.profile-meta.xml",
+        "before": {
+          "allowCreate": false,
+          "allowRead": true,
+          "allowEdit": false,
+          "allowDelete": false,
+          "viewAllRecords": false,
+          "modifyAllRecords": false,
+          "viewAllFields": false
+        },
+        "after": {
+          "allowCreate": false,
+          "allowRead": true,
+          "allowEdit": true,
+          "allowDelete": false,
+          "viewAllRecords": false,
+          "modifyAllRecords": false,
+          "viewAllFields": false
+        },
+        "status": "changed"
+      },
+      "permissionSet:Payment_Clerk": {
+        "filePath": "permissionsets/Payment_Clerk.permissionset-meta.xml",
+        "after": {
+          "allowCreate": false,
+          "allowRead": true,
+          "allowEdit": false,
+          "allowDelete": false,
+          "viewAllRecords": false,
+          "modifyAllRecords": false,
+          "viewAllFields": false
+        },
+        "status": "added"
+      }
+    },
+    "Payment__c": {
+      "permissionSet:Invoice_Manager": {
+        "filePath": "permissionsets/Invoice_Manager.permissionset-meta.xml",
+        "after": {
+          "allowCreate": false,
+          "allowRead": false,
+          "allowEdit": true,
+          "allowDelete": false,
+          "viewAllRecords": false,
+          "modifyAllRecords": false,
+          "viewAllFields": false
+        },
+        "status": "added"
+      },
+      "permissionSet:Payment_Clerk": {
+        "filePath": "permissionsets/Payment_Clerk.permissionset-meta.xml",
+        "after": {
+          "allowCreate": true,
+          "allowRead": true,
+          "allowEdit": true,
+          "allowDelete": false,
+          "viewAllRecords": false,
+          "modifyAllRecords": false,
+          "viewAllFields": false
+        },
+        "status": "added"
+      }
+    },
+    "Receipt__c": {
+      "permissionSet:Payment_Clerk": {
+        "filePath": "permissionsets/Payment_Clerk.permissionset-meta.xml",
+        "after": {
+          "allowCreate": false,
+          "allowRead": true,
+          "allowEdit": false,
+          "allowDelete": false,
+          "viewAllRecords": false,
+          "modifyAllRecords": false,
+          "viewAllFields": false
+        },
+        "status": "added"
+      }
+    }
+  }
+}

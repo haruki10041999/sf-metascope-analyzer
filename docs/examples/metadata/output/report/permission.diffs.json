@@ -1,0 +1,674 @@
+[
+  {
+    "status": "changed",
+    "filePath": "permissionsets/Invoice_Manager.permissionset-meta.xml",
+    "sourceKeys": {
+      "objectKey": "permissionSet_c63b3dd9be5e8b8b",
+      "sourceKey": "permissionSet_66c65958a93475fc"
+    },
+    "holder": {
+      "type": "permissionSet",
+      "name": "Invoice_Manager"
+    },
+    "category": "settings",
+    "target": "",
+    "changes": [
+      {
+        "name": "description",
+        "before": "請求書を管理する",
+        "after": "請求書を管理・承認する"
+      }
+    ]
+  },
+  {
+    "status": "added",
+    "filePath": "permissionsets/Invoice_Manager.permissionset-meta.xml",
+    "sourceKeys": {
+      "objectKey": "classAccess_7f23a5503647ae62",
+      "sourceKey": "classAccess_a5757912708f2557"
+    },
+    "holder": {
+      "type": "permissionSet",
+      "name": "Invoice_Manager"
+    },
+    "category": "classAccesses",
+    "target": "NewHelper",
+    "changes": [
+      {
+        "name": "apexClass",
+        "after": "NewHelper"
+      },
+      {
+        "name": "enabled",
+        "after": true
+      }
+    ]
+  },
+  {
+    "status": "changed",
+    "filePath": "permissionsets/Invoice_Manager.permissionset-meta.xml",
+    "sourceKeys": {
+      "objectKey": "fieldPermission_aaa100381ce7d463",
+      "sourceKey": "fieldPermission_b654c9c9429748a1"
+    },
+    "holder": {
+      "type": "permissionSet",
+      "name": "Invoice_Manager"
+    },
+    "category": "fieldPermissions",
+    "target": "Invoice__c.Amount__c",
+    "changes": [
+      {
+        "name": "editable",
+        "before": false,
+        "after": true
+      }
+    ]
+  },
+  {
+    "status": "added",
+    "filePath": "permissionsets/Invoice_Manager.permissionset-meta.xml",
+    "sourceKeys": {
+      "objectKey": "fieldPermission_b17d02b8f2e293b6",
+      "sourceKey": "fieldPermission_e3b8dd9a1c70e02e"
+    },
+    "holder": {
+      "type": "permissionSet",
+      "name": "Invoice_Manager"
+    },
+    "category": "fieldPermissions",
+    "target": "Invoice__c.Approved__c",
+    "changes": [
+      {
+        "name": "field",
+        "after": "Invoice__c.Approved__c"
+      },
+      {
+        "name": "readable",
+        "after": true
+      },
+      {
+        "name": "editable",
+        "after": true
+      }
+    ]
+  },
+  {
+    "status": "added",
+    "filePath": "permissionsets/Invoice_Manager.permissionset-meta.xml",
+    "sourceKeys": {
+      "objectKey": "fieldPermission_25a2eabf84d5a698",
+      "sourceKey": "fieldPermission_7a4e2c75d3aeb07a"
+    },
+    "holder": {
+      "type": "permissionSet",
+      "name": "Invoice_Manager"
+    },
+    "category": "fieldPermissions",
+    "target": "Invoice__c.Missing__c",
+    "changes": [
+      {
+        "name": "field",
+        "after": "Invoice__c.Missing__c"
+      },
+      {
+        "name": "readable",
+        "after": true
+      },
+      {
+        "name": "editable",
+        "after": false
+      }
+    ]
+  },
+  {
+    "status": "removed",
+    "filePath": "permissionsets/Invoice_Manager.permissionset-meta.xml",
+    "sourceKeys": {
+      "objectKey": "fieldPermission_7c00fe3e4f8005f4",
+      "sourceKey": "fieldPermission_83bfe206bd236c09"
+    },
+    "holder": {
+      "type": "permissionSet",
+      "name": "Invoice_Manager"
+    },
+    "category": "fieldPermissions",
+    "target": "Invoice__c.Status__c",
+    "changes": [
+      {
+        "name": "field",
+        "before": "Invoice__c.Status__c"
+      },
+      {
+        "name": "readable",
+        "before": true
+      },
+      {
+        "name": "editable",
+        "before": true
+      }
+    ]
+  },
+  {
+    "status": "changed",
+    "filePath": "permissionsets/Invoice_Manager.permissionset-meta.xml",
+    "sourceKeys": {
+      "objectKey": "objectPermission_248af890aac730b8",
+      "sourceKey": "objectPermission_3268943b95374199"
+    },
+    "holder": {
+      "type": "permissionSet",
+      "name": "Invoice_Manager"
+    },
+    "category": "objectPermissions",
+    "target": "Invoice__c",
+    "changes": [
+      {
+        "name": "viewAllRecords",
+        "before": false,
+        "after": true
+      },
+      {
+        "name": "modifyAllRecords",
+        "before": false,
+        "after": true
+      }
+    ]
+  },
+  {
+    "status": "added",
+    "filePath": "permissionsets/Invoice_Manager.permissionset-meta.xml",
+    "sourceKeys": {
+      "objectKey": "objectPermission_55784922962ae9d2",
+      "sourceKey": "objectPermission_b8f7b5ded3d9ab4d"
+    },
+    "holder": {
+      "type": "permissionSet",
+      "name": "Invoice_Manager"
+    },
+    "category": "objectPermissions",
+    "target": "Payment__c",
+    "changes": [
+      {
+        "name": "object",
+        "after": "Payment__c"
+      },
+      {
+        "name": "allowCreate",
+        "after": false
+      },
+      {
+        "name": "allowRead",
+        "after": false
+      },
+      {
+        "name": "allowEdit",
+        "after": true
+      },
+      {
+        "name": "allowDelete",
+        "after": false
+      },
+      {
+        "name": "viewAllRecords",
+        "after": false
+      },
+      {
+        "name": "modifyAllRecords",
+        "after": false
+      }
+    ]
+  },
+  {
+    "status": "changed",
+    "filePath": "permissionsets/Invoice_Manager.permissionset-meta.xml",
+    "sourceKeys": {
+      "objectKey": "recordTypeVisibility_29a6facabc64db34",
+      "sourceKey": "recordTypeVisibility_28922c73b72d3563"
+    },
+    "holder": {
+      "type": "permissionSet",
+      "name": "Invoice_Manager"
+    },
+    "category": "recordTypeVisibilities",
+    "target": "Invoice__c.Standard",
+    "changes": [
+      {
+        "name": "default",
+        "before": false,
+        "after": true
+      }
+    ]
+  },
+  {
+    "status": "added",
+    "filePath": "permissionsets/Invoice_Manager.permissionset-meta.xml",
+    "sourceKeys": {
+      "objectKey": "userPermission_59cc70777c966e65",
+      "sourceKey": "userPermission_970cc408087788ec"
+    },
+    "holder": {
+      "type": "permissionSet",
+      "name": "Invoice_Manager"
+    },
+    "category": "userPermissions",
+    "target": "ModifyAllData",
+    "changes": [
+      {
+        "name": "name",
+        "after": "ModifyAllData"
+      },
+      {
+        "name": "enabled",
+        "after": true
+      }
+    ]
+  },
+  {
+    "status": "added",
+    "filePath": "permissionsets/Payment_Clerk.permissionset-meta.xml",
+    "sourceKeys": {
+      "objectKey": "permissionSet_dd3a595e9c73a854",
+      "sourceKey": "permissionSet_02f916d6d4992d22"
+    },
+    "holder": {
+      "type": "permissionSet",
+      "name": "Payment_Clerk"
+    },
+    "category": "unit",
+    "target": "",
+    "changes": []
+  },
+  {
+    "status": "removed",
+    "filePath": "permissionsets/Invoice_Viewer.permissionset-meta.xml",
+    "sourceKeys": {
+      "objectKey": "permissionSet_44df74550694e293",
+      "sourceKey": "permissionSet_6c0634ef2e3d9eb6"
+    },
+    "holder": {
+      "type": "permissionSet",
+      "name": "Invoice_Viewer"
+    },
+    "category": "unit",
+    "target": "",
+    "changes": []
+  },
+  {
+    "status": "added",
+    "filePath": "mutingpermissionsets/Invoice_Team_Muted.mutingpermissionset-meta.xml",
+    "sourceKeys": {
+      "objectKey": "fieldPermission_6c1a53216036c5cd",
+      "sourceKey": "fieldPermission_99d5034a91fd483a"
+    },
+    "holder": {
+      "type": "mutingPermissionSet",
+      "name": "Invoice_Team_Muted"
+    },
+    "category": "fieldPermissions",
+    "target": "Invoice__c.Approved__c",
+    "changes": [
+      {
+        "name": "field",
+        "after": "Invoice__c.Approved__c"
+      },
+      {
+        "name": "readable",
+        "after": false
+      },
+      {
+        "name": "editable",
+        "after": true
+      }
+    ]
+  },
+  {
+    "status": "changed",
+    "filePath": "mutingpermissionsets/Invoice_Team_Muted.mutingpermissionset-meta.xml",
+    "sourceKeys": {
+      "objectKey": "objectPermission_b0f1e6c05e1c1721",
+      "sourceKey": "objectPermission_f6c0b17cded170d2"
+    },
+    "holder": {
+      "type": "mutingPermissionSet",
+      "name": "Invoice_Team_Muted"
+    },
+    "category": "objectPermissions",
+    "target": "Invoice__c",
+    "changes": [
+      {
+        "name": "viewAllRecords",
+        "before": false,
+        "after": true
+      },
+      {
+        "name": "modifyAllRecords",
+        "before": false,
+        "after": true
+      }
+    ]
+  },
+  {
+    "status": "added",
+    "filePath": "mutingpermissionsets/Invoice_Team_Muted.mutingpermissionset-meta.xml",
+    "sourceKeys": {
+      "objectKey": "userPermission_59cc70777c966e65",
+      "sourceKey": "userPermission_a663e2397977f29e"
+    },
+    "holder": {
+      "type": "mutingPermissionSet",
+      "name": "Invoice_Team_Muted"
+    },
+    "category": "userPermissions",
+    "target": "ModifyAllData",
+    "changes": [
+      {
+        "name": "name",
+        "after": "ModifyAllData"
+      },
+      {
+        "name": "enabled",
+        "after": true
+      }
+    ]
+  },
+  {
+    "status": "changed",
+    "filePath": "profiles/Sales.profile-meta.xml",
+    "sourceKeys": {
+      "objectKey": "profile_aa995c352c049dca",
+      "sourceKey": "profile_7e45bb132eea17be"
+    },
+    "holder": {
+      "type": "profile",
+      "name": "Sales"
+    },
+    "category": "settings",
+    "target": "",
+    "changes": [
+      {
+        "name": "loginHours",
+        "before": {
+          "kind": "loginHours",
+          "sourceKeys": {
+            "objectKey": "loginHours_640a3f71c9e52498",
+            "sourceKey": "loginHours_234e6daca2be3f17"
+          },
+          "mondayStart": 480,
+          "mondayEnd": 1080
+        },
+        "after": {
+          "kind": "loginHours",
+          "sourceKeys": {
+            "objectKey": "loginHours_afc41b9b865e6d0c",
+            "sourceKey": "loginHours_3253aa37e6daeb0f"
+          },
+          "mondayStart": 480,
+          "mondayEnd": 1200
+        }
+      }
+    ]
+  },
+  {
+    "status": "changed",
+    "filePath": "profiles/Sales.profile-meta.xml",
+    "sourceKeys": {
+      "objectKey": "fieldPermission_d9faa032db9ea76e",
+      "sourceKey": "fieldPermission_3d5cad74fdaea5ec"
+    },
+    "holder": {
+      "type": "profile",
+      "name": "Sales"
+    },
+    "category": "fieldPermissions",
+    "target": "Account.Tier__c",
+    "changes": [
+      {
+        "name": "editable",
+        "before": false,
+        "after": true
+      }
+    ]
+  },
+  {
+    "status": "changed",
+    "filePath": "profiles/Sales.profile-meta.xml",
+    "sourceKeys": {
+      "objectKey": "fieldPermission_8f813990a36b0899",
+      "sourceKey": "fieldPermission_e99e3342cd85c0bc"
+    },
+    "holder": {
+      "type": "profile",
+      "name": "Sales"
+    },
+    "category": "fieldPermissions",
+    "target": "Invoice__c.Status__c",
+    "changes": [
+      {
+        "name": "readable",
+        "before": true,
+        "after": false
+      },
+      {
+        "name": "editable",
+        "before": false,
+        "after": true
+      }
+    ]
+  },
+  {
+    "status": "changed",
+    "filePath": "profiles/Sales.profile-meta.xml",
+    "sourceKeys": {
+      "objectKey": "objectPermission_b4ee98627615aa0a",
+      "sourceKey": "objectPermission_ae7f5f7145fe728a"
+    },
+    "holder": {
+      "type": "profile",
+      "name": "Sales"
+    },
+    "category": "objectPermissions",
+    "target": "Invoice__c",
+    "changes": [
+      {
+        "name": "allowEdit",
+        "before": false,
+        "after": true
+      }
+    ]
+  },
+  {
+    "status": "changed",
+    "filePath": "profiles/Sales.profile-meta.xml",
+    "sourceKeys": {
+      "objectKey": "userPermission_82d47dd746f97527",
+      "sourceKey": "userPermission_72a87f341c776ac6"
+    },
+    "holder": {
+      "type": "profile",
+      "name": "Sales"
+    },
+    "category": "userPermissions",
+    "target": "ViewSetup",
+    "changes": [
+      {
+        "name": "enabled",
+        "before": false,
+        "after": true
+      }
+    ]
+  },
+  {
+    "status": "changed",
+    "filePath": "profiles/Sales.profile-meta.xml",
+    "sourceKeys": {
+      "objectKey": "tabVisibility_c0e48d164a0d2bc3",
+      "sourceKey": "tabVisibility_90e57b04518f11ba"
+    },
+    "holder": {
+      "type": "profile",
+      "name": "Sales"
+    },
+    "category": "tabVisibilities",
+    "target": "Invoice__c",
+    "changes": [
+      {
+        "name": "visibility",
+        "before": "DefaultOff",
+        "after": "DefaultOn"
+      }
+    ]
+  },
+  {
+    "status": "added",
+    "filePath": "profiles/Sales.profile-meta.xml",
+    "sourceKeys": {
+      "objectKey": "layoutAssignment_9bd20196e2fe46ae",
+      "sourceKey": "layoutAssignment_14b32ce4a99430f5"
+    },
+    "holder": {
+      "type": "profile",
+      "name": "Sales"
+    },
+    "category": "layoutAssignments",
+    "target": "Invoice__c-Invoice Detail|Invoice__c.Standard",
+    "changes": [
+      {
+        "name": "layout",
+        "after": "Invoice__c-Invoice Detail"
+      },
+      {
+        "name": "recordType",
+        "after": "Invoice__c.Standard"
+      }
+    ]
+  },
+  {
+    "status": "removed",
+    "filePath": "profiles/Sales.profile-meta.xml",
+    "sourceKeys": {
+      "objectKey": "layoutAssignment_5337685612ad6f4a",
+      "sourceKey": "layoutAssignment_09ba7cf71fae5eee"
+    },
+    "holder": {
+      "type": "profile",
+      "name": "Sales"
+    },
+    "category": "layoutAssignments",
+    "target": "Invoice__c-Invoice Layout|Invoice__c.Standard",
+    "changes": [
+      {
+        "name": "layout",
+        "before": "Invoice__c-Invoice Layout"
+      },
+      {
+        "name": "recordType",
+        "before": "Invoice__c.Standard"
+      }
+    ]
+  },
+  {
+    "status": "added",
+    "filePath": "profiles/Sales.profile-meta.xml",
+    "sourceKeys": {
+      "objectKey": "loginIpRange_3eed0834b567201b",
+      "sourceKey": "loginIpRange_d158d7194fd3b5fe"
+    },
+    "holder": {
+      "type": "profile",
+      "name": "Sales"
+    },
+    "category": "loginIpRanges",
+    "target": "10.1.0.0|10.1.0.255",
+    "changes": [
+      {
+        "name": "startAddress",
+        "after": "10.1.0.0"
+      },
+      {
+        "name": "endAddress",
+        "after": "10.1.0.255"
+      },
+      {
+        "name": "description",
+        "after": "支社"
+      }
+    ]
+  },
+  {
+    "status": "changed",
+    "filePath": "profiles/Sales.profile-meta.xml",
+    "sourceKeys": {
+      "objectKey": "loginFlow_c79b77657c881c44",
+      "sourceKey": "loginFlow_c2a35eeaace313c0"
+    },
+    "holder": {
+      "type": "profile",
+      "name": "Sales"
+    },
+    "category": "loginFlows",
+    "target": "Login_Check|",
+    "changes": [
+      {
+        "name": "useLightningRuntime",
+        "before": false,
+        "after": true
+      }
+    ]
+  },
+  {
+    "status": "changed",
+    "filePath": "profiles/Sales.profile-meta.xml",
+    "sourceKeys": {
+      "objectKey": "categoryGroupVisibility_64bf5c085216196d",
+      "sourceKey": "categoryGroupVisibility_17024ceb174d2cb1"
+    },
+    "holder": {
+      "type": "profile",
+      "name": "Sales"
+    },
+    "category": "categoryGroupVisibilities",
+    "target": "Support",
+    "changes": [
+      {
+        "name": "dataCategories",
+        "before": [
+          "FAQ",
+          "Invoice"
+        ],
+        "after": [
+          "Billing",
+          "Invoice"
+        ]
+      }
+    ]
+  },
+  {
+    "status": "changed",
+    "filePath": "permissionsetgroups/Invoice_Team.permissionsetgroup-meta.xml",
+    "sourceKeys": {
+      "objectKey": "permissionSetGroup_977542f490e5eb01",
+      "sourceKey": "permissionSetGroup_ca71a1ddc6196f2a"
+    },
+    "holder": {
+      "type": "permissionSetGroup",
+      "name": "Invoice_Team"
+    },
+    "category": "settings",
+    "target": "",
+    "changes": [
+      {
+        "name": "permissionSets",
+        "before": [
+          "Invoice_Manager",
+          "Invoice_Viewer"
+        ],
+        "after": [
+          "Invoice_Manager",
+          "Payment_Clerk",
+          "Invoice_Viewer"
+        ]
+      }
+    ]
+  }
+]

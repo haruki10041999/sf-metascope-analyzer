@@ -1,0 +1,152 @@
+[
+  {
+    "status": "changed",
+    "filePath": "flows/Account_Wizard.flow-meta.xml",
+    "sourceKeys": {
+      "objectKey": "flow_0b0a1ab3bb581695",
+      "sourceKey": "flow_533601b48e7551a1"
+    },
+    "flow": "Account_Wizard",
+    "element": "",
+    "kind": "flow",
+    "changedProperties": [
+      "status"
+    ]
+  },
+  {
+    "status": "added",
+    "filePath": "flows/Account_Wizard.flow-meta.xml",
+    "sourceKeys": {
+      "objectKey": "flowRecordLookup_9b7dd3866a1b6372",
+      "sourceKey": "flowRecordLookup_7d3e549c22554faf"
+    },
+    "flow": "Account_Wizard",
+    "element": "Get_Account",
+    "kind": "flowRecordLookup",
+    "changedProperties": []
+  },
+  {
+    "status": "changed",
+    "filePath": "flows/Account_Wizard.flow-meta.xml",
+    "sourceKeys": {
+      "objectKey": "flowScreen_89d74b343922c9ad",
+      "sourceKey": "flowScreen_da78defa1b5d2b8a"
+    },
+    "flow": "Account_Wizard",
+    "element": "Welcome",
+    "kind": "flowScreen",
+    "changedProperties": [
+      "fields",
+      "references"
+    ]
+  },
+  {
+    "status": "added",
+    "filePath": "flows/Account_Wizard.flow-meta.xml",
+    "sourceKeys": {
+      "objectKey": "flowSubflow_13e4b9c982e0656a",
+      "sourceKey": "flowSubflow_2661cc0ec003e395"
+    },
+    "flow": "Account_Wizard",
+    "element": "Call_Status",
+    "kind": "flowSubflow",
+    "changedProperties": []
+  },
+  {
+    "status": "changed",
+    "filePath": "flows/Invoice_Status_Update.flow-meta.xml",
+    "sourceKeys": {
+      "objectKey": "flow_4d5288426dd7b67d",
+      "sourceKey": "flow_67ff9e0fb530fcd2"
+    },
+    "flow": "Invoice_Status_Update",
+    "element": "",
+    "kind": "flow",
+    "changedProperties": [
+      "triggerOrder"
+    ]
+  },
+  {
+    "status": "changed",
+    "filePath": "flows/Invoice_Status_Update.flow-meta.xml",
+    "sourceKeys": {
+      "objectKey": "flowStart_d67f8dc88e3044ff",
+      "sourceKey": "flowStart_23ca7b8c2b7966ae"
+    },
+    "flow": "Invoice_Status_Update",
+    "element": "$start",
+    "kind": "flowStart",
+    "changedProperties": [
+      "recordTriggerType",
+      "properties"
+    ]
+  },
+  {
+    "status": "added",
+    "filePath": "flows/Invoice_Status_Update.flow-meta.xml",
+    "sourceKeys": {
+      "objectKey": "flowAssignment_f241ed170a0ae999",
+      "sourceKey": "flowAssignment_2efea0209227521c"
+    },
+    "flow": "Invoice_Status_Update",
+    "element": "Orphan",
+    "kind": "flowAssignment",
+    "changedProperties": []
+  },
+  {
+    "status": "changed",
+    "filePath": "flows/Invoice_Status_Update.flow-meta.xml",
+    "sourceKeys": {
+      "objectKey": "flowDecision_d3316a123dd88079",
+      "sourceKey": "flowDecision_35893f95df1da895"
+    },
+    "flow": "Invoice_Status_Update",
+    "element": "Check_Amount",
+    "kind": "flowDecision",
+    "changedProperties": [
+      "rules"
+    ]
+  },
+  {
+    "status": "changed",
+    "filePath": "flows/Invoice_Status_Update.flow-meta.xml",
+    "sourceKeys": {
+      "objectKey": "flowRecordUpdate_b6199bc8f077d22c",
+      "sourceKey": "flowRecordUpdate_2c9c1b9588731b16"
+    },
+    "flow": "Invoice_Status_Update",
+    "element": "Set_Status",
+    "kind": "flowRecordUpdate",
+    "changedProperties": [
+      "properties"
+    ]
+  },
+  {
+    "status": "changed",
+    "filePath": "flows/Invoice_Status_Update.flow-meta.xml",
+    "sourceKeys": {
+      "objectKey": "flowFormula_823f529e8f159691",
+      "sourceKey": "flowFormula_43a53d8ae2e9fbf5"
+    },
+    "flow": "Invoice_Status_Update",
+    "element": "IsLarge",
+    "kind": "flowFormula",
+    "changedProperties": [
+      "properties"
+    ]
+  },
+  {
+    "status": "changed",
+    "filePath": "flows/Invoice_Status_Update.flow-meta.xml",
+    "sourceKeys": {
+      "objectKey": "flowVariable_0939288bae478f4a",
+      "sourceKey": "flowVariable_2f86669cb40bb866"
+    },
+    "flow": "Invoice_Status_Update",
+    "element": "errorMessage",
+    "kind": "flowVariable",
+    "changedProperties": [
+      "properties"
+    ]
+  }
+]

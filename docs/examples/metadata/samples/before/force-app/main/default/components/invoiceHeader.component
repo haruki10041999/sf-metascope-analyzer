@@ -1,0 +1,4 @@
+<apex:component>
+    <apex:attribute name="invoice" type="Invoice__c" required="true" description="請求書"/>
+    <h1>{!invoice.Name}</h1>
+</apex:component>

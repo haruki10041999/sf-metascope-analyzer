@@ -468,6 +468,65 @@
       "status": "removed"
     },
     {
+      "apiName": "Opportunity",
+      "objectType": "standard",
+      "fields": [
+        {
+          "apiName": "Id",
+          "origin": "implicit",
+          "valueType": "Id",
+          "status": "unchanged"
+        },
+        {
+          "apiName": "Name",
+          "origin": "implicit",
+          "valueType": "String",
+          "status": "unchanged"
+        },
+        {
+          "apiName": "CreatedDate",
+          "origin": "implicit",
+          "valueType": "DateTime",
+          "status": "unchanged"
+        },
+        {
+          "apiName": "CreatedById",
+          "origin": "implicit",
+          "valueType": "Reference",
+          "referenceTo": "User",
+          "relationType": "Lookup",
+          "status": "unchanged"
+        },
+        {
+          "apiName": "LastModifiedDate",
+          "origin": "implicit",
+          "valueType": "DateTime",
+          "status": "unchanged"
+        },
+        {
+          "apiName": "LastModifiedById",
+          "origin": "implicit",
+          "valueType": "Reference",
+          "referenceTo": "User",
+          "relationType": "Lookup",
+          "status": "unchanged"
+        },
+        {
+          "apiName": "SystemModstamp",
+          "origin": "implicit",
+          "valueType": "DateTime",
+          "status": "unchanged"
+        },
+        {
+          "apiName": "IsDeleted",
+          "origin": "implicit",
+          "valueType": "Boolean",
+          "status": "unchanged"
+        }
+      ],
+      "status": "changed"
+    },
+    {
       "apiName": "Payment__c",
       "objectType": "custom",
       "label": "Payment",
@@ -635,6 +694,20 @@
       "parentObjectApiName": "Invoice__c",
       "parentFieldApiName": "Account__c",
       "childObjectApiName": "Account",
+      "type": "Lookup",
+      "status": "unchanged"
+    },
+    {
+      "parentObjectApiName": "Opportunity",
+      "parentFieldApiName": "CreatedById",
+      "childObjectApiName": "User",
+      "type": "Lookup",
+      "status": "unchanged"
+    },
+    {
+      "parentObjectApiName": "Opportunity",
+      "parentFieldApiName": "LastModifiedById",
+      "childObjectApiName": "User",
       "type": "Lookup",
       "status": "unchanged"
     },

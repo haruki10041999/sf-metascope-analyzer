@@ -1,0 +1,119 @@
+{
+  "filePath": "workflows/Invoice__c.workflow-meta.xml",
+  "resolvedError": [],
+  "dataType": "workflow",
+  "result": {
+    "id": "workflow_Invoice__c",
+    "base": {
+      "kind": "workflow",
+      "sourceKeys": {
+        "objectKey": "workflow_bc45a1d200620cce",
+        "sourceKey": "workflow_696f800a6edd8253"
+      },
+      "fullName": "Invoice__c",
+      "fieldUpdates": [
+        {
+          "kind": "workflowFieldUpdate",
+          "sourceKeys": {
+            "objectKey": "workflowFieldUpdate_61cc1659d5daf744",
+            "sourceKey": "workflowFieldUpdate_0f19cb350ff2abbb"
+          },
+          "fullName": "Set_Overdue",
+          "name": "Set Overdue",
+          "field": "Status__c",
+          "literalValue": "Overdue",
+          "operation": "Literal",
+          "notifyAssignee": false,
+          "protected": false
+        }
+      ],
+      "rules": [
+        {
+          "kind": "workflowRule",
+          "sourceKeys": {
+            "objectKey": "workflowRule_2f1545b36d5dc11f",
+            "sourceKey": "workflowRule_5afd9b74c1d936d6"
+          },
+          "fullName": "Mark_Overdue",
+          "active": false,
+          "triggerType": "onAllChanges",
+          "actions": [
+            {
+              "name": "Set_Overdue",
+              "type": "FieldUpdate"
+            }
+          ],
+          "criteriaItems": [
+            {
+              "field": "Invoice__c.Is_Overdue__c",
+              "operation": "equals",
+              "value": "True"
+            }
+          ]
+        }
+      ]
+    },
+    "sourceObject": [
+      {
+        "objectKey": "workflowFieldUpdate_61cc1659d5daf744",
+        "context": "<fieldUpdates>\n        <fullName>Set_Overdue</fullName>\n        <field>Status__c</field>\n        <literalValue>Overdue</literalValue>\n        <name>Set Overdue</name>\n        <notifyAssignee>false</notifyAssignee>\n        <operation>Literal</operation>\n        <protected>false</protected>\n    </fieldUpdates>",
+        "source": [
+          {
+            "sourceKey": "workflowFieldUpdate_0f19cb350ff2abbb",
+            "filePath": "workflows/Invoice__c.workflow-meta.xml",
+            "start": {
+              "offset": 102,
+              "line": 3,
+              "column": 4
+            },
+            "end": {
+              "offset": 411,
+              "line": 11,
+              "column": 19
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "workflowRule_2f1545b36d5dc11f",
+        "context": "<rules>\n        <fullName>Mark_Overdue</fullName>\n        <actions>\n            <name>Set_Overdue</name>\n            <type>FieldUpdate</type>\n        </actions>\n        <active>false</active>\n        <criteriaItems>\n            <field>Invoice__c.Is_Overdue__c</field>\n            <operation>equals</operation>\n            <value>True</value>\n        </criteriaItems>\n        <triggerType>onAllChanges</triggerType>\n    </rules>",
+        "source": [
+          {
+            "sourceKey": "workflowRule_5afd9b74c1d936d6",
+            "filePath": "workflows/Invoice__c.workflow-meta.xml",
+            "start": {
+              "offset": 416,
+              "line": 12,
+              "column": 4
+            },
+            "end": {
+              "offset": 843,
+              "line": 25,
+              "column": 12
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "workflow_bc45a1d200620cce",
+        "context": "<Workflow xmlns=\"http://soap.sforce.com/2006/04/metadata\">\n    <fieldUpdates>\n        <fullName>Set_Overdue</fullName>\n        <field>Status__c</field>\n        <literalValue>Overdue</literalValue>\n        <name>Set Overdue</name>\n        <notifyAssignee>false</notifyAssignee>\n        <operation>Literal</operation>\n        <protected>false</protected>\n    </fieldUpdates>\n    <rules>\n        <fullName>Mark_Overdue</fullName>\n        <actions>\n            <name>Set_Overdue</name>\n            <type>FieldUpdate</type>\n        </actions>\n        <active>false</active>\n        <criteriaItems>\n            <field>Invoice__c.Is_Overdue__c</field>\n            <operation>equals</operation>\n            <value>True</value>\n        </criteriaItems>\n        <triggerType>onAllChanges</triggerType>\n    </rules>\n</Workflow>",
+        "source": [
+          {
+            "sourceKey": "workflow_696f800a6edd8253",
+            "filePath": "workflows/Invoice__c.workflow-meta.xml",
+            "start": {
+              "offset": 39,
+              "line": 2,
+              "column": 0
+            },
+            "end": {
+              "offset": 855,
+              "line": 26,
+              "column": 11
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

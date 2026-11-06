@@ -1,0 +1,158 @@
+{
+  "filePath": "workflows/Invoice__c.workflow-meta.xml",
+  "resolvedError": [],
+  "dataType": "workflow",
+  "result": {
+    "id": "workflow_Invoice__c",
+    "base": {
+      "kind": "workflow",
+      "sourceKeys": {
+        "objectKey": "workflow_4fd2698182e4081e",
+        "sourceKey": "workflow_67623a94717a9082"
+      },
+      "fullName": "Invoice__c",
+      "alerts": [
+        {
+          "kind": "workflowAlert",
+          "sourceKeys": {
+            "objectKey": "workflowAlert_66ef8ae0464775af",
+            "sourceKey": "workflowAlert_9d2bf8c75c4b7932"
+          },
+          "fullName": "Notify_Owner",
+          "description": "Notify Owner",
+          "protected": false,
+          "senderType": "CurrentUser",
+          "template": "Invoice_Templates/Invoice_Sent",
+          "recipients": [
+            {
+              "type": "owner"
+            }
+          ]
+        }
+      ],
+      "fieldUpdates": [
+        {
+          "kind": "workflowFieldUpdate",
+          "sourceKeys": {
+            "objectKey": "workflowFieldUpdate_fa63985d0b85b560",
+            "sourceKey": "workflowFieldUpdate_f2e034722eb79d4c"
+          },
+          "fullName": "Set_Overdue",
+          "name": "Set Overdue",
+          "field": "Status__c",
+          "literalValue": "Sent",
+          "operation": "Literal",
+          "notifyAssignee": false,
+          "protected": false
+        }
+      ],
+      "rules": [
+        {
+          "kind": "workflowRule",
+          "sourceKeys": {
+            "objectKey": "workflowRule_6166383baec7abb2",
+            "sourceKey": "workflowRule_646a9b3209791e5b"
+          },
+          "fullName": "Mark_Overdue",
+          "active": true,
+          "triggerType": "onAllChanges",
+          "actions": [
+            {
+              "name": "Set_Overdue",
+              "type": "FieldUpdate"
+            }
+          ],
+          "criteriaItems": [
+            {
+              "field": "Invoice__c.Is_Overdue__c",
+              "operation": "equals",
+              "value": "True"
+            }
+          ]
+        }
+      ]
+    },
+    "sourceObject": [
+      {
+        "objectKey": "workflowAlert_66ef8ae0464775af",
+        "context": "<alerts>\n        <fullName>Notify_Owner</fullName>\n        <description>Notify Owner</description>\n        <protected>false</protected>\n        <recipients>\n            <type>owner</type>\n        </recipients>\n        <senderType>CurrentUser</senderType>\n        <template>Invoice_Templates/Invoice_Sent</template>\n    </alerts>",
+        "source": [
+          {
+            "sourceKey": "workflowAlert_9d2bf8c75c4b7932",
+            "filePath": "workflows/Invoice__c.workflow-meta.xml",
+            "start": {
+              "offset": 102,
+              "line": 3,
+              "column": 4
+            },
+            "end": {
+              "offset": 430,
+              "line": 12,
+              "column": 13
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "workflowFieldUpdate_fa63985d0b85b560",
+        "context": "<fieldUpdates>\n        <fullName>Set_Overdue</fullName>\n        <field>Status__c</field>\n        <literalValue>Sent</literalValue>\n        <name>Set Overdue</name>\n        <notifyAssignee>false</notifyAssignee>\n        <operation>Literal</operation>\n        <protected>false</protected>\n    </fieldUpdates>",
+        "source": [
+          {
+            "sourceKey": "workflowFieldUpdate_f2e034722eb79d4c",
+            "filePath": "workflows/Invoice__c.workflow-meta.xml",
+            "start": {
+              "offset": 435,
+              "line": 13,
+              "column": 4
+            },
+            "end": {
+              "offset": 741,
+              "line": 21,
+              "column": 19
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "workflowRule_6166383baec7abb2",
+        "context": "<rules>\n        <fullName>Mark_Overdue</fullName>\n        <actions>\n            <name>Set_Overdue</name>\n            <type>FieldUpdate</type>\n        </actions>\n        <active>true</active>\n        <criteriaItems>\n            <field>Invoice__c.Is_Overdue__c</field>\n            <operation>equals</operation>\n            <value>True</value>\n        </criteriaItems>\n        <triggerType>onAllChanges</triggerType>\n    </rules>",
+        "source": [
+          {
+            "sourceKey": "workflowRule_646a9b3209791e5b",
+            "filePath": "workflows/Invoice__c.workflow-meta.xml",
+            "start": {
+              "offset": 746,
+              "line": 22,
+              "column": 4
+            },
+            "end": {
+              "offset": 1172,
+              "line": 35,
+              "column": 12
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "workflow_4fd2698182e4081e",
+        "context": "<Workflow xmlns=\"http://soap.sforce.com/2006/04/metadata\">\n    <alerts>\n        <fullName>Notify_Owner</fullName>\n        <description>Notify Owner</description>\n        <protected>false</protected>\n        <recipients>\n            <type>owner</type>\n        </recipients>\n        <senderType>CurrentUser</senderType>\n        <template>Invoice_Templates/Invoice_Sent</template>\n    </alerts>\n    <fieldUpdates>\n        <fullName>Set_Overdue</fullName>\n        <field>Status__c</field>\n        <literalValue>Sent</literalValue>\n        <name>Set Overdue</name>\n        <notifyAssignee>false</notifyAssignee>\n        <operation>Literal</operation>\n        <protected>false</protected>\n    </fieldUpdates>\n    <rules>\n        <fullName>Mark_Overdue</fullName>\n        <actions>\n            <name>Set_Overdue</name>\n            <type>FieldUpdate</type>\n        </actions>\n        <active>true</active>\n        <criteriaItems>\n            <field>Invoice__c.Is_Overdue__c</field>\n            <operation>equals</operation>\n            <value>True</value>\n        </criteriaItems>\n        <triggerType>onAllChanges</triggerType>\n    </rules>\n</Workflow>",
+        "source": [
+          {
+            "sourceKey": "workflow_67623a94717a9082",
+            "filePath": "workflows/Invoice__c.workflow-meta.xml",
+            "start": {
+              "offset": 39,
+              "line": 2,
+              "column": 0
+            },
+            "end": {
+              "offset": 1184,
+              "line": 36,
+              "column": 11
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

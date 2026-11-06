@@ -25,12 +25,12 @@ LwcBundleParseResult (1 バンドル = 1 解析結果 = 1 保存ファイル lwc
    └─ analysis: analyzeLwcBundles  (processor/Lwc/analysis.ts。バンドルをまたぐ)
 ```
 
-| ファイル       | 構文解析                                                 | 仕様の検証                                               | 中間表現                      |
-| -------------- | -------------------------------------------------------- | -------------------------------------------------------- | ----------------------------- |
-| `.js` / `.ts`  | `@babel/parser`（`errorRecovery`、TS は `typescript`）    | `@lwc/compiler` の `transformSync`（TS は型を空白にして） | `lwc_IR`（Babel のノードごと） |
-| `.html`        | `parse5` の `parseFragment`                              | `@lwc/template-compiler` の `parse`                      | なし（parse5 の木から直接）   |
-| `.css`         | `postcss` の `parse`                                     | `@lwc/style-compiler` の `transform`                     | なし（postcss の木から直接）  |
-| `.js-meta.xml` | 自前の `parseXml`                                        | なし（ルート要素の確認だけ）                             | なし（`XmlElement`）          |
+| ファイル       | 構文解析                                               | 仕様の検証                                                | 中間表現                       |
+| -------------- | ------------------------------------------------------ | --------------------------------------------------------- | ------------------------------ |
+| `.js` / `.ts`  | `@babel/parser`（`errorRecovery`、TS は `typescript`） | `@lwc/compiler` の `transformSync`（TS は型を空白にして） | `lwc_IR`（Babel のノードごと） |
+| `.html`        | `parse5` の `parseFragment`                            | `@lwc/template-compiler` の `parse`                       | なし（parse5 の木から直接）    |
+| `.css`         | `postcss` の `parse`                                   | `@lwc/style-compiler` の `transform`                      | なし（postcss の木から直接）   |
+| `.js-meta.xml` | 自前の `parseXml`                                      | なし（ルート要素の確認だけ）                              | なし（`XmlElement`）           |
 
 - **JS / TS は Babel**（SWC と比べて、情報の欠けがない・位置が Apex の `SourcePosition` と同じ形・LWC Compiler と同じ parser）。TypeScript Compiler API は使わないので、型の推論はしない（型注釈だけを使う）。
 - **HTML・CSS は中間表現を作らない**（XML のメタデータと同じ方式）。parse5・postcss の木はノードの種類が少なく、LWC の意味は属性名などで決まるため、種類ごとのクラスを作る利点がない。共通部品 `makeSpanJson`（[types/commons/spanJson.ts](../src/analyzer/types/commons/spanJson.ts)）で位置の範囲から JSON を作る。
@@ -44,12 +44,12 @@ LwcBundleParseResult (1 バンドル = 1 解析結果 = 1 保存ファイル lwc
 
 ### 2.2 読むファイル（[parser/Lwc/folder.ts](../src/analyzer/parser/Lwc/folder.ts)）
 
-| 種類         | ファイル                                                                  |
-| ------------ | ------------------------------------------------------------------------- |
-| `module`     | `.js` / `.ts`（メインと共有のモジュール）                                 |
-| `template`   | `.html`（`<名前>.html` と、`render()` で切り替えるほかのテンプレート）    |
-| `stylesheet` | `.css`（`*.scoped.css` を含む）                                           |
-| `meta`       | `<名前>.js-meta.xml`                                                      |
+| 種類         | ファイル                                                               |
+| ------------ | ---------------------------------------------------------------------- |
+| `module`     | `.js` / `.ts`（メインと共有のモジュール）                              |
+| `template`   | `.html`（`<名前>.html` と、`render()` で切り替えるほかのテンプレート） |
+| `stylesheet` | `.css`（`*.scoped.css` を含む）                                        |
+| `meta`       | `<名前>.js-meta.xml`                                                   |
 
 - 同じ名前の `.ts` と `.js` があれば `.ts` を読む（`.js` は `.ts` から生成したものとみなす）。
 - 読まなかったものはすべて `skippedFiles` に理由付きで残す: `compiled from <名前>.ts` / `test file`（`*.test.js`）/ `type declaration`（`*.d.ts`）/ `folder`（`__tests__/` など）/ `not the bundle metadata` / `not analyzed`（`.svg`・`.md` など）。
@@ -79,27 +79,27 @@ src/analyzer/
 
 JS / TS の流れは Apex と同じ（IR → converter → JSON）。違いは、ソース位置を JSON を作る段階で分けること（`LwcJsonContext.keysOf`。converter の出力は `sourceInfo` を持ったまま）。
 
-| 段                      | Apex                                       | LWC（JS / TS）                                         |
-| ----------------------- | ------------------------------------------ | ------------------------------------------------------ |
-| IR                      | `types/apex_IR/`（`UnitVisitor`）          | `types/lwc_IR/`（`visitWithPairs`）                    |
-| converter               | `types/apex/converter/`（`convertApexUnit`） | `types/lwc/converter/`（`convertLwcFile`）           |
-| sourceKeys・位置        | `makeConvertType`（JSON の前）             | `LwcJsonContext.keysOf`（JSON を作る段階）            |
-| JSON                    | `types/apex/*.ts`                          | `types/lwc/*.ts`                                       |
-| リスナー                | `parser/Apex/errorListener.ts`             | `parser/Lwc/errorListener.ts`                          |
+| 段               | Apex                                         | LWC（JS / TS）                             |
+| ---------------- | -------------------------------------------- | ------------------------------------------ |
+| IR               | `types/apex_IR/`（`UnitVisitor`）            | `types/lwc_IR/`（`visitWithPairs`）        |
+| converter        | `types/apex/converter/`（`convertApexUnit`） | `types/lwc/converter/`（`convertLwcFile`） |
+| sourceKeys・位置 | `makeConvertType`（JSON の前）               | `LwcJsonContext.keysOf`（JSON を作る段階） |
+| JSON             | `types/apex/*.ts`                            | `types/lwc/*.ts`                           |
+| リスナー         | `parser/Apex/errorListener.ts`               | `parser/Lwc/errorListener.ts`              |
 
 ## 4. 検証と resolvedError
 
-| 出どころ                                 | `phase`    | `code`                                         | 備考                                                                                                       |
-| ---------------------------------------- | ---------- | ---------------------------------------------- | ---------------------------------------------------------------------------------------------------------- |
-| Babel の例外・回復した構文エラー         | `syntax`   | `JS_SYNTAX` / `TS_SYNTAX`                      | 回復できない構文エラーはモジュールを `ErrorJson` にする                                                    |
-| IR を作れなかったノード                  | `analyzer` | `UNSUPPORTED_CONTEXT` / `EXCEPTION` など       | 構文エラーの位置に重なるものは除く                                                                         |
-| TS の空白にできない構文                  | `lwc`      | `TS_UNSUPPORTED`                               | `enum`・`namespace`・パラメーター プロパティ・`import = require` など。そのファイルは LWC の検証をしない   |
-| `@lwc/compiler`                          | `lwc`      | `LWC<番号>`                                    | 構文エラーのあるファイルは検証しない（同じ構文エラーを LWC1007 にするだけなので）。違反は 1 件しか出ない  |
-| `@lwc/template-compiler`                 | `syntax` / `lwc` | `LWC<番号>`                              | HTML の構文エラー（LWC1058・1075・1078・1079）は `syntax`。例外を投げずにすべての違反を返す。Log は入れない |
-| postcss                                  | `syntax`   | `CSS_SYNTAX`                                   | スタイルシートを `ErrorJson` にする                                                                        |
-| `@lwc/style-compiler`                    | `lwc`      | `LWC_CSS`                                      | `experimentalErrorRecoveryMode` ですべての違反を取る（番号はない）                                        |
-| js-meta.xml                              | `syntax`   | `XML_SYNTAX` / `UNEXPECTED_ROOT`               | `meta` を `ErrorJson` にする                                                                               |
-| バンドルの中の突き合わせ（5 章）         | `bundle`   | `TEMPLATE_UNKNOWN_*` など                      | すべて `warning`                                                                                           |
+| 出どころ                         | `phase`          | `code`                                   | 備考                                                                                                        |
+| -------------------------------- | ---------------- | ---------------------------------------- | ----------------------------------------------------------------------------------------------------------- |
+| Babel の例外・回復した構文エラー | `syntax`         | `JS_SYNTAX` / `TS_SYNTAX`                | 回復できない構文エラーはモジュールを `ErrorJson` にする                                                     |
+| IR を作れなかったノード          | `analyzer`       | `UNSUPPORTED_CONTEXT` / `EXCEPTION` など | 構文エラーの位置に重なるものは除く                                                                          |
+| TS の空白にできない構文          | `lwc`            | `TS_UNSUPPORTED`                         | `enum`・`namespace`・パラメーター プロパティ・`import = require` など。そのファイルは LWC の検証をしない    |
+| `@lwc/compiler`                  | `lwc`            | `LWC<番号>`                              | 構文エラーのあるファイルは検証しない（同じ構文エラーを LWC1007 にするだけなので）。違反は 1 件しか出ない    |
+| `@lwc/template-compiler`         | `syntax` / `lwc` | `LWC<番号>`                              | HTML の構文エラー（LWC1058・1075・1078・1079）は `syntax`。例外を投げずにすべての違反を返す。Log は入れない |
+| postcss                          | `syntax`         | `CSS_SYNTAX`                             | スタイルシートを `ErrorJson` にする                                                                         |
+| `@lwc/style-compiler`            | `lwc`            | `LWC_CSS`                                | `experimentalErrorRecoveryMode` ですべての違反を取る（番号はない）                                          |
+| js-meta.xml                      | `syntax`         | `XML_SYNTAX` / `UNEXPECTED_ROOT`         | `meta` を `ErrorJson` にする                                                                                |
+| バンドルの中の突き合わせ（5 章） | `bundle`         | `TEMPLATE_UNKNOWN_*` など                | すべて `warning`                                                                                            |
 
 - **TS の検証**: `@lwc/compiler` は TS を受け付けないので、型の部分だけを空白に置き換えた JS（改行を残すので位置は元の TS と同じ）を検証する（[validate/eraseTypes.ts](../src/analyzer/parser/Lwc/validate/eraseTypes.ts)。検証スクリプトは [verify-erase-types.ts](./examples/lwc/scripts/verify-erase-types.ts)）。`ts.transpileModule` はデコレーターを書き換えるので使わない。
 - **template-compiler の設定**: `enableDynamicComponents` / `enableLwcOn` は `true`（`lwc:component`・`lwc:on` を違反にしない。使ってよいかはこちらで見る）。`apiVersion` は js-meta.xml の値を渡す。parse5 の `onParseError` は使わない（template-compiler が同じ構文エラーを LWC1058 で返すため）。
@@ -109,12 +109,12 @@ JS / TS の流れは Apex と同じ（IR → converter → JSON）。違いは�
 
 ### 5.1 同じバンドルの中（`resolvedError`。[validate/bundle.ts](../src/analyzer/parser/Lwc/validate/bundle.ts)）
 
-| code                         | 条件                                                                                 |
-| ---------------------------- | ------------------------------------------------------------------------------------ |
-| `TEMPLATE_UNKNOWN_MEMBER`    | テンプレートの式（`local: false`）の先頭の名前が、JS のメンバーにない                 |
-| `TEMPLATE_UNKNOWN_HANDLER`   | イベントハンドラーが JS のメンバーにない                                             |
-| `TEMPLATE_UNKNOWN_REF`       | JS の `this.refs.<名前>` が、どのテンプレートの `lwc:ref` にもない                    |
-| `TEMPLATE_DYNAMIC_DISABLED`  | `<lwc:component>` を使うのに、js-meta.xml の capabilities に `lightning__dynamicComponent` がない |
+| code                        | 条件                                                                                              |
+| --------------------------- | ------------------------------------------------------------------------------------------------- |
+| `TEMPLATE_UNKNOWN_MEMBER`   | テンプレートの式（`local: false`）の先頭の名前が、JS のメンバーにない                             |
+| `TEMPLATE_UNKNOWN_HANDLER`  | イベントハンドラーが JS のメンバーにない                                                          |
+| `TEMPLATE_UNKNOWN_REF`      | JS の `this.refs.<名前>` が、どのテンプレートの `lwc:ref` にもない                                |
+| `TEMPLATE_DYNAMIC_DISABLED` | `<lwc:component>` を使うのに、js-meta.xml の capabilities に `lightning__dynamicComponent` がない |
 
 - 継承・mixin のメンバーは JSON にないので、`LightningElement` 以外を継承している・未知の mixin を使うときは、メンバーの確認をしない。
 - テンプレートが複数あるときは、すべてをメインのモジュールと突き合わせる。
@@ -123,22 +123,22 @@ JS / TS の流れは Apex と同じ（IR → converter → JSON）。違いは�
 
 `analyzeLwcBundles(bundles, objects?)` はバンドルごとに `LwcBundleAnalysis` を返す。ほかのバンドルの変更で結果が変わるので、`resolvedError` にはしない。
 
-| 結果                    | 内容                                                                                                                                     |
-| ----------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
-| `component`             | ほかのバンドルから見える情報（`@api` のプロパティ、発行するイベント、`<slot>` の名前）                                                   |
-| `findings`              | 子コンポーネントの `@api`・イベント・slot にないもの、ないバンドル、カタログにない `lightning-*`、メタデータにないオブジェクト・項目 |
+| 結果                     | 内容                                                                                                                                  |
+| ------------------------ | ------------------------------------------------------------------------------------------------------------------------------------- |
+| `component`              | ほかのバンドルから見える情報（`@api` のプロパティ、発行するイベント、`<slot>` の名前）                                                |
+| `findings`               | 子コンポーネントの `@api`・イベント・slot にないもの、ないバンドル、カタログにない `lightning-*`、メタデータにないオブジェクト・項目  |
 | 使っているコンポーネント | `localComponents` / `lightningComponents` / `dataAccessComponents`（データを読み書きする部品）/ `packageComponents`（ほかの名前空間） |
-| `metadataDependencies`  | メタデータへの参照（テンプレートの `metadataRefs` と JS の `@salesforce/schema` の import）。式は schema の import から解決する         |
+| `metadataDependencies`   | メタデータへの参照（テンプレートの `metadataRefs` と JS の `@salesforce/schema` の import）。式は schema の import から解決する       |
 
 - 子の `@api` にないプロパティでも、HTML の標準のプロパティ（`id` / `title` / `tabIndex` / `aria*` など）は出さない。
 - メタデータの解析結果（`ObjectInfo[]`）を渡したときだけオブジェクト・項目を突き合わせる。標準オブジェクト・標準項目はリポジトリにファイルがないのが普通なので確かめず、カスタムのもの（`__c` など）とカスタムオブジェクトの項目だけを確かめる。
 
 ## 6. サンプルとテスト
 
-| 内容                                   | 場所                                                                                                                      |
-| -------------------------------------- | ------------------------------------------------------------------------------------------------------------------------- |
-| サンプル・生成スクリプト・出力         | [examples/lwc/](./examples/lwc/)（[examples/README.md](./examples/README.md)）                                             |
-| テスト                                 | `test/parser/lwc-parser.test.ts`・`lwc-bundle-validate.test.ts`、`test/converter/lwc-*.test.ts`、`test/processor/lwc-diff.test.ts`・`lwc-analysis.test.ts`、`test/lwc_IR/` |
+| 内容                           | 場所                                                                                                                                                                       |
+| ------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| サンプル・生成スクリプト・出力 | [examples/lwc/](./examples/lwc/)（[examples/README.md](./examples/README.md)）                                                                                             |
+| テスト                         | `test/parser/lwc-parser.test.ts`・`lwc-bundle-validate.test.ts`、`test/converter/lwc-*.test.ts`、`test/processor/lwc-diff.test.ts`・`lwc-analysis.test.ts`、`test/lwc_IR/` |
 
 ## 7. 未実装
 

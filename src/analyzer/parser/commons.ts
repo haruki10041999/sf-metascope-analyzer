@@ -21,7 +21,7 @@ import {
 
 /** 保存するデータ。outputPath に data を書く (書き込みは writeSaveDataInfo) */
 /** 保存するデータの種類 (保存先・保存名を分ける) */
-export type SaveDataType = 'Apex' | 'Object' | 'ObjectTranslation' | 'Lwc';
+export type SaveDataType = 'Apex' | 'Object' | 'ObjectTranslation' | 'Lwc' | 'Metadata';
 
 export type SaveDataInfo = {
     type: SaveDataType;

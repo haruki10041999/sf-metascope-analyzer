@@ -4,8 +4,8 @@ LWC のバンドルの各ファイルを、[lwc-implementation.md](./lwc-impleme
 
 - サンプル: [docs/examples/lwc/samples/bundles/](./examples/lwc/samples/bundles/force-app/main/default/lwc/)（JS は TS で書いた）
 - 実行: `npx ttsx --noCheck docs/examples/lwc/scripts/run-library-parse.ts`（`--raw` でライブラリの木をそのまま出す）
-- 出力: [docs/examples/lwc/library-output/](./examples/lwc/library-output/)`<バンドル>/<ファイル>.<ライブラリ>.json`
-- 全属性の一覧（自動生成）: [library-output/attributes.md](./examples/lwc/library-output/attributes.md)。サンプルに出てきたノードの種類ごとに、キー・値の型・件数・例を並べている。この文書は、その中から解析に使うものを選んで説明する
+- 出力: `--raw` のときだけ `docs/examples/lwc/output/library/<バンドル>/<ファイル>.<ライブラリ>.json`（大きいのでコミットしない）
+- 全属性の一覧（自動生成）: [output/library/attributes.md](./examples/lwc/output/library/attributes.md)。サンプルに出てきたノードの種類ごとに、キー・値の型・件数・例を並べている。この文書は、その中から解析に使うものを選んで説明する
 
 ## 1. サンプル
 
@@ -42,7 +42,7 @@ LWC のバンドルの各ファイルを、[lwc-implementation.md](./lwc-impleme
 
 ## 3. JS / TS（@babel/parser）
 
-設定は [eraseTypes.ts](./examples/lwc/eraseTypes.ts) の `BABEL_TS_OPTIONS`（`typescript` と `decorators` のプラグイン、`tokens: true`、`createParenthesizedExpressions: true`）に、`errorRecovery: true` と `attachComment: false` を足したもの。JS のときは `typescript` を外す。
+設定は [eraseTypes.ts](../src/analyzer/parser/Lwc/validate/eraseTypes.ts) の `BABEL_TS_OPTIONS`（`typescript` と `decorators` のプラグイン、`tokens: true`、`createParenthesizedExpressions: true`）に、`errorRecovery: true` と `attachComment: false` を足したもの。JS のときは `typescript` を外す。
 
 ### 3.1 すべてのノードに共通
 
@@ -52,7 +52,7 @@ LWC のバンドルの各ファイルを、[lwc-implementation.md](./lwc-impleme
 | `start` / `end` / `loc` | 位置（2 章）。`loc.identifierName` は `Identifier` の名前（`loc` を持つノードすべてにキーがあるが、値は `Identifier` だけ）                               |
 | `extra`                 | 元の書き方。`raw`（`'lwc'`）/ `rawValue`、`parenthesized`、`trailingComma`（最後のカンマの位置）、`topLevelAwait`（Program）                              |
 
-ファイルの全体は `File`（`errors`: `errorRecovery` で回復した構文エラー、`program`、`comments`: 今回は使わない）→ `Program`（`sourceType`、`body`、`directives`）。トークン（`tokens`）は `type.label`（`,` / `name` / `@` など）と位置を持つ。`?` / `!` / `private` など、ノードの位置からは分からない記号・修飾子の位置を取るのに使う（lwc-parse-plan.md 3.2）。
+ファイルの全体は `File`（`errors`: `errorRecovery` で回復した構文エラー、`program`、`comments`: 今回は使わない）→ `Program`（`sourceType`、`body`、`directives`）。トークン（`tokens`）は `type.label`（`,` / `name` / `@` など）と位置を持つ。`?` / `!` / `private` など、ノードの位置からは分からない記号・修飾子の位置を取るのに使う（lwc-implementation.md 4 章）。
 
 ### 3.2 LWC の解析に使うノード
 
@@ -140,7 +140,7 @@ LWC のテンプレートとして解釈した木（IR）と、診断（`warning
 
 診断（`warnings`）は `code`（`1166`）、`message`（`LWC1166: …`）、`level`（`@lwc/errors` の `DiagnosticLevel`。`0` Fatal / `1` Error / `2` Warning / `3` Log。サンプルの 2 件は `1`）、`location`（`line` / `column` / `start` / `length`）、`url`。**Error でも例外にはならず、`warnings` に入る**（`root` も返る）。
 
-- テンプレートの参照（`Property` / `Text` / `IfBlock` の `condition`、`EventListener` の `handler` の式の先頭の名前）を JS のクラスのメンバーと突き合わせると、存在しないプロパティ・ハンドラーを見つけられる（lwc-parse-plan.md の bundle.ts）。`ForEach` の `item` / `index`、`ForOf` の `iterator` はその中だけの名前なので除く。
+- テンプレートの参照（`Property` / `Text` / `IfBlock` の `condition`、`EventListener` の `handler` の式の先頭の名前）を JS のクラスのメンバーと突き合わせると、存在しないプロパティ・ハンドラーを見つけられる（lwc-implementation.md 5 章で実装済み）。`ForEach` の `item` / `index`、`ForOf` の `iterator` はその中だけの名前なので除く。
 - 子コンポーネントの `Property` の `name` は、子の JS の `@api` と突き合わせる（`c-account-row` の `recordId` / `name` / `amount`）。`EventListener` の `name` は、子が `dispatchEvent` する名前（`select`）と突き合わせる。
 
 ## 5. CSS

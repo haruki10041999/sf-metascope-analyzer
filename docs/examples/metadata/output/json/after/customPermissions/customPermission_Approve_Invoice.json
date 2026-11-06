@@ -1,0 +1,72 @@
+{
+  "filePath": "customPermissions/Approve_Invoice.customPermission-meta.xml",
+  "resolvedError": [],
+  "dataType": "customPermission",
+  "result": {
+    "id": "customPermission_Approve_Invoice",
+    "base": {
+      "kind": "customPermission",
+      "sourceKeys": {
+        "objectKey": "customPermission_2bcf2a2d47723560",
+        "sourceKey": "customPermission_1697a4037188010d"
+      },
+      "fullName": "Approve_Invoice",
+      "label": "Approve Invoice",
+      "description": "請求書を承認できる",
+      "isLicensed": false,
+      "requiredPermission": [
+        {
+          "kind": "requiredPermission",
+          "sourceKeys": {
+            "objectKey": "requiredPermission_bdedecd7e56f11dd",
+            "sourceKey": "requiredPermission_ff3b4cbee7adf154"
+          },
+          "customPermission": "View_Invoice",
+          "dependency": true
+        }
+      ]
+    },
+    "sourceObject": [
+      {
+        "objectKey": "requiredPermission_bdedecd7e56f11dd",
+        "context": "<requiredPermission>\n        <customPermission>View_Invoice</customPermission>\n        <dependency>true</dependency>\n    </requiredPermission>",
+        "source": [
+          {
+            "sourceKey": "requiredPermission_ff3b4cbee7adf154",
+            "filePath": "customPermissions/Approve_Invoice.customPermission-meta.xml",
+            "start": {
+              "offset": 221,
+              "line": 6,
+              "column": 4
+            },
+            "end": {
+              "offset": 363,
+              "line": 9,
+              "column": 25
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "customPermission_2bcf2a2d47723560",
+        "context": "<CustomPermission xmlns=\"http://soap.sforce.com/2006/04/metadata\">\n    <description>請求書を承認できる</description>\n    <isLicensed>false</isLicensed>\n    <label>Approve Invoice</label>\n    <requiredPermission>\n        <customPermission>View_Invoice</customPermission>\n        <dependency>true</dependency>\n    </requiredPermission>\n</CustomPermission>",
+        "source": [
+          {
+            "sourceKey": "customPermission_1697a4037188010d",
+            "filePath": "customPermissions/Approve_Invoice.customPermission-meta.xml",
+            "start": {
+              "offset": 39,
+              "line": 2,
+              "column": 0
+            },
+            "end": {
+              "offset": 383,
+              "line": 10,
+              "column": 19
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

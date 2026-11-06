@@ -10,7 +10,7 @@ import {
 } from '../commons/spanJson';
 
 // LWC の CSS (.css) の JSON。中間表現は作らず、postcss の木から直接作る (XML と同じ方式)。
-// 方針: docs/lwc-template-stylesheet-plan.md 5 章
+// 方針: docs/lwc-json-reference.md
 
 /**
  * 宣言 1 つ。規則の中で prop で決まる値なので kind を持たない (メタデータの値と同じ扱い)。

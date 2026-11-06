@@ -17,7 +17,7 @@ import {
 
 import type { ObjectInfo } from '../Metadata/analysis';
 
-// LWC のバンドルをまたぐ解析 (docs/lwc-template-stylesheet-plan.md 6.5.5・6.6.5)。
+// LWC のバンドルをまたぐ解析 (docs/lwc-implementation.md)。
 // 子コンポーネントの @api・イベント・slot、lightning-* のカタログ、メタデータ (オブジェクト・項目) への参照を突き合わせる。
 // ほかのバンドルの変更で結果が変わるので、resolvedError (バンドルごとの差分に出る) にはせず、解析の結果として返す。
 // メタデータの解析 (processor/Metadata/analysis.ts) と同じく、1 つの時点の JSON だけを入力にする

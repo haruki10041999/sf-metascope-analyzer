@@ -1,0 +1,474 @@
+[
+  {
+    "source": "permission",
+    "unit": "permissionSet:Invoice_Manager",
+    "code": "UNKNOWN_FIELD",
+    "severity": "warning",
+    "target": "Invoice__c.Missing__c",
+    "message": "項目 Invoice__c.Missing__c がメタデータにない",
+    "filePath": "permissionsets/Invoice_Manager.permissionset-meta.xml",
+    "sourceKeys": {
+      "objectKey": "fieldPermission_25a2eabf84d5a698",
+      "sourceKey": "fieldPermission_7a4e2c75d3aeb07a"
+    },
+    "status": "added"
+  },
+  {
+    "source": "permission",
+    "unit": "permissionSet:Invoice_Manager",
+    "code": "OBJECT_PERMISSION_DEPENDENCY",
+    "severity": "error",
+    "target": "Payment__c",
+    "message": "Payment__c の allowEdit には allowRead が要る",
+    "filePath": "permissionsets/Invoice_Manager.permissionset-meta.xml",
+    "sourceKeys": {
+      "objectKey": "objectPermission_55784922962ae9d2",
+      "sourceKey": "objectPermission_b8f7b5ded3d9ab4d"
+    },
+    "status": "added"
+  },
+  {
+    "source": "permission",
+    "unit": "permissionSet:Invoice_Manager",
+    "code": "POWERFUL_USER_PERMISSION",
+    "severity": "info",
+    "target": "ApiEnabled",
+    "message": "強い権限 ApiEnabled を与える",
+    "filePath": "permissionsets/Invoice_Manager.permissionset-meta.xml",
+    "sourceKeys": {
+      "objectKey": "userPermission_71d47d725591d358",
+      "sourceKey": "userPermission_5f23d88982946349"
+    },
+    "status": "unchanged"
+  },
+  {
+    "source": "permission",
+    "unit": "permissionSet:Invoice_Manager",
+    "code": "POWERFUL_USER_PERMISSION",
+    "severity": "info",
+    "target": "ModifyAllData",
+    "message": "強い権限 ModifyAllData を与える",
+    "filePath": "permissionsets/Invoice_Manager.permissionset-meta.xml",
+    "sourceKeys": {
+      "objectKey": "userPermission_59cc70777c966e65",
+      "sourceKey": "userPermission_970cc408087788ec"
+    },
+    "status": "added"
+  },
+  {
+    "source": "permission",
+    "unit": "permissionSet:Payment_Clerk",
+    "code": "UNKNOWN_OBJECT",
+    "severity": "warning",
+    "target": "Receipt__c",
+    "message": "オブジェクト Receipt__c がメタデータにない",
+    "filePath": "permissionsets/Payment_Clerk.permissionset-meta.xml",
+    "sourceKeys": {
+      "objectKey": "objectPermission_938f20afa0216043",
+      "sourceKey": "objectPermission_023909c270126261"
+    },
+    "status": "added"
+  },
+  {
+    "source": "permission",
+    "unit": "permissionSet:Payment_Clerk",
+    "code": "UNKNOWN_APEX_CLASS",
+    "severity": "warning",
+    "target": "PaymentService",
+    "message": "Apex クラス PaymentService がリポジトリにない",
+    "filePath": "permissionsets/Payment_Clerk.permissionset-meta.xml",
+    "sourceKeys": {
+      "objectKey": "classAccess_02cb20c07a614a8e",
+      "sourceKey": "classAccess_4e3e921febc7217b"
+    },
+    "status": "added"
+  },
+  {
+    "source": "permission",
+    "unit": "profile:Sales",
+    "code": "UNKNOWN_FLOW",
+    "severity": "warning",
+    "target": "Login_Check",
+    "message": "Flow Login_Check がリポジトリにない",
+    "filePath": "profiles/Sales.profile-meta.xml",
+    "sourceKeys": {
+      "objectKey": "loginFlow_c79b77657c881c44",
+      "sourceKey": "loginFlow_c2a35eeaace313c0"
+    },
+    "status": "unchanged"
+  },
+  {
+    "source": "permission",
+    "unit": "profile:Sales",
+    "code": "FIELD_EDIT_WITHOUT_READ",
+    "severity": "error",
+    "target": "Invoice__c.Status__c",
+    "message": "Invoice__c.Status__c は編集できるが参照できない",
+    "filePath": "profiles/Sales.profile-meta.xml",
+    "sourceKeys": {
+      "objectKey": "fieldPermission_8f813990a36b0899",
+      "sourceKey": "fieldPermission_e99e3342cd85c0bc"
+    },
+    "status": "added"
+  },
+  {
+    "source": "permission",
+    "unit": "profile:Sales",
+    "code": "POWERFUL_USER_PERMISSION",
+    "severity": "info",
+    "target": "ApiEnabled",
+    "message": "強い権限 ApiEnabled を与える",
+    "filePath": "profiles/Sales.profile-meta.xml",
+    "sourceKeys": {
+      "objectKey": "userPermission_71d47d725591d358",
+      "sourceKey": "userPermission_7dc4eaa92ffc2ba0"
+    },
+    "status": "unchanged"
+  },
+  {
+    "source": "permission",
+    "unit": "profile:Sales",
+    "code": "POWERFUL_USER_PERMISSION",
+    "severity": "info",
+    "target": "ViewSetup",
+    "message": "強い権限 ViewSetup を与える",
+    "filePath": "profiles/Sales.profile-meta.xml",
+    "sourceKeys": {
+      "objectKey": "userPermission_82d47dd746f97527",
+      "sourceKey": "userPermission_72a87f341c776ac6"
+    },
+    "status": "added"
+  },
+  {
+    "source": "permission",
+    "unit": "permissionSetGroup:Invoice_Team",
+    "code": "UNKNOWN_PERMISSION_SET",
+    "severity": "warning",
+    "target": "Invoice_Viewer",
+    "message": "権限セット Invoice_Viewer がリポジトリにない",
+    "filePath": "permissionsetgroups/Invoice_Team.permissionsetgroup-meta.xml",
+    "sourceKeys": {
+      "objectKey": "permissionSetGroup_977542f490e5eb01",
+      "sourceKey": "permissionSetGroup_ca71a1ddc6196f2a"
+    },
+    "status": "added"
+  },
+  {
+    "source": "label",
+    "unit": "customLabels_CustomLabels",
+    "code": "UNUSED_CUSTOM_LABEL",
+    "severity": "info",
+    "target": "Invoice_Approved",
+    "message": "カスタム表示ラベル Invoice_Approved はリポジトリの中で使われていない",
+    "sourceKeys": {
+      "objectKey": "customLabel_ec07e26e192ce19e",
+      "sourceKey": "customLabel_463d8edf82418099"
+    },
+    "status": "added"
+  },
+  {
+    "source": "flow",
+    "unit": "Account_Wizard",
+    "code": "NO_FAULT_PATH",
+    "severity": "info",
+    "target": "Call_Status",
+    "message": "要素 Call_Status に失敗時の経路 (faultConnector) がない",
+    "filePath": "flows/Account_Wizard.flow-meta.xml",
+    "sourceKeys": {
+      "objectKey": "flowSubflow_13e4b9c982e0656a",
+      "sourceKey": "flowSubflow_2661cc0ec003e395"
+    },
+    "status": "added"
+  },
+  {
+    "source": "flow",
+    "unit": "Account_Wizard",
+    "code": "UNKNOWN_FIELD",
+    "severity": "warning",
+    "target": "Account.Unknown__c",
+    "message": "項目 Account.Unknown__c がメタデータにない",
+    "filePath": "flows/Account_Wizard.flow-meta.xml",
+    "sourceKeys": {
+      "objectKey": "flowRecordLookup_9b7dd3866a1b6372",
+      "sourceKey": "flowRecordLookup_7d3e549c22554faf"
+    },
+    "status": "added"
+  },
+  {
+    "source": "flow",
+    "unit": "Account_Wizard",
+    "code": "LWC_NOT_FLOW_SCREEN",
+    "severity": "warning",
+    "target": "accountList",
+    "message": "LWC accountList の targets に lightning__FlowScreen がない",
+    "filePath": "flows/Account_Wizard.flow-meta.xml",
+    "sourceKeys": {
+      "objectKey": "flowScreen_89d74b343922c9ad",
+      "sourceKey": "flowScreen_da78defa1b5d2b8a"
+    },
+    "status": "unchanged"
+  },
+  {
+    "source": "flow",
+    "unit": "Account_Wizard",
+    "code": "UNKNOWN_LWC",
+    "severity": "warning",
+    "target": "missingChart",
+    "message": "LWC missingChart がリポジトリにない",
+    "filePath": "flows/Account_Wizard.flow-meta.xml",
+    "sourceKeys": {
+      "objectKey": "flowScreen_89d74b343922c9ad",
+      "sourceKey": "flowScreen_da78defa1b5d2b8a"
+    },
+    "status": "added"
+  },
+  {
+    "source": "flow",
+    "unit": "Invoice_Status_Update",
+    "code": "UNREACHABLE_ELEMENT",
+    "severity": "warning",
+    "target": "Orphan",
+    "message": "要素 Orphan は起動からたどれない",
+    "filePath": "flows/Invoice_Status_Update.flow-meta.xml",
+    "sourceKeys": {
+      "objectKey": "flowAssignment_f241ed170a0ae999",
+      "sourceKey": "flowAssignment_2efea0209227521c"
+    },
+    "status": "added"
+  },
+  {
+    "source": "flow",
+    "unit": "Invoice_Status_Update",
+    "code": "APEX_NOT_INVOCABLE",
+    "severity": "warning",
+    "target": "AccountService",
+    "message": "Apex クラス AccountService に @InvocableMethod がない",
+    "filePath": "flows/Invoice_Status_Update.flow-meta.xml",
+    "sourceKeys": {
+      "objectKey": "flowActionCall_6106dc47e2b6b402",
+      "sourceKey": "flowActionCall_59a1e74900519d38"
+    },
+    "status": "unchanged"
+  },
+  {
+    "source": "flow",
+    "unit": "Invoice_Status_Update",
+    "code": "UNKNOWN_FLOW_ELEMENT",
+    "severity": "error",
+    "target": "Unknown_Var",
+    "message": "要素・資源 Unknown_Var が Flow の中にない",
+    "filePath": "flows/Invoice_Status_Update.flow-meta.xml",
+    "sourceKeys": {
+      "objectKey": "flowAssignment_f241ed170a0ae999",
+      "sourceKey": "flowAssignment_2efea0209227521c"
+    },
+    "status": "added"
+  },
+  {
+    "source": "layout",
+    "unit": "Account-Account Layout",
+    "code": "UNKNOWN_FIELD",
+    "severity": "warning",
+    "target": "Account.Missing__c",
+    "message": "項目 Account.Missing__c がメタデータにない",
+    "filePath": "layouts/Account-Account Layout.layout-meta.xml",
+    "sourceKeys": {
+      "objectKey": "layoutItem_302e9fb7ab4081bb",
+      "sourceKey": "layoutItem_c766fc743282482a"
+    },
+    "status": "added"
+  },
+  {
+    "source": "layout",
+    "unit": "Invoice__c-Invoice Detail",
+    "code": "REQUIRED_FIELD_READONLY",
+    "severity": "warning",
+    "target": "Invoice__c.Amount__c",
+    "message": "必須の項目 Invoice__c.Amount__c がレイアウト Invoice__c-Invoice Detail で参照のみ",
+    "filePath": "layouts/Invoice__c-Invoice Detail.layout-meta.xml",
+    "sourceKeys": {
+      "objectKey": "layoutItem_c2da30ac705dfd51",
+      "sourceKey": "layoutItem_df850b793be876d2"
+    },
+    "status": "added"
+  },
+  {
+    "source": "layout",
+    "unit": "",
+    "code": "FIELD_NOT_ON_LAYOUT",
+    "severity": "info",
+    "target": "Invoice__c.Account__c",
+    "message": "項目 Invoice__c.Account__c はどのレイアウトにもない",
+    "sourceKeys": {
+      "objectKey": "field_0c58fd3d9777982d",
+      "sourceKey": "field_6c3612f03a822541"
+    },
+    "status": "unchanged"
+  },
+  {
+    "source": "layout",
+    "unit": "",
+    "code": "FIELD_NOT_ON_LAYOUT",
+    "severity": "info",
+    "target": "Invoice__c.Is_Overdue__c",
+    "message": "項目 Invoice__c.Is_Overdue__c はどのレイアウトにもない",
+    "sourceKeys": {
+      "objectKey": "field_a7205ebd964bc5c5",
+      "sourceKey": "field_be03fe263f3af0d1"
+    },
+    "status": "unchanged"
+  },
+  {
+    "source": "flexiPage",
+    "unit": "Invoice_Record_Page",
+    "code": "UNKNOWN_LWC_PROPERTY",
+    "severity": "warning",
+    "target": "accountList.pageSize",
+    "message": "LWC accountList の targetConfigs (lightning__RecordPage) にプロパティ pageSize がない",
+    "filePath": "flexipages/Invoice_Record_Page.flexipage-meta.xml",
+    "sourceKeys": {
+      "objectKey": "flexiPageComponent_940f1642a10f092c",
+      "sourceKey": "flexiPageComponent_da3384e401ebd3d3"
+    },
+    "status": "added"
+  },
+  {
+    "source": "flexiPage",
+    "unit": "Invoice_Record_Page",
+    "code": "LWC_NOT_EXPOSED",
+    "severity": "warning",
+    "target": "accountRow",
+    "message": "LWC accountRow は isExposed でない",
+    "filePath": "flexipages/Invoice_Record_Page.flexipage-meta.xml",
+    "sourceKeys": {
+      "objectKey": "flexiPageComponent_7ccd912d91566b74",
+      "sourceKey": "flexiPageComponent_9cbd43b1ddda972e"
+    },
+    "status": "added"
+  },
+  {
+    "source": "flexiPage",
+    "unit": "Invoice_Record_Page",
+    "code": "LWC_TARGET_MISMATCH",
+    "severity": "warning",
+    "target": "accountRow",
+    "message": "LWC accountRow の targets に lightning__RecordPage がない",
+    "filePath": "flexipages/Invoice_Record_Page.flexipage-meta.xml",
+    "sourceKeys": {
+      "objectKey": "flexiPageComponent_7ccd912d91566b74",
+      "sourceKey": "flexiPageComponent_9cbd43b1ddda972e"
+    },
+    "status": "added"
+  },
+  {
+    "source": "flexiPage",
+    "unit": "Invoice_Record_Page",
+    "code": "UNKNOWN_FIELD",
+    "severity": "warning",
+    "target": "Invoice__c.Missing__c",
+    "message": "項目 Invoice__c.Missing__c がメタデータにない",
+    "filePath": "flexipages/Invoice_Record_Page.flexipage-meta.xml",
+    "sourceKeys": {
+      "objectKey": "flexiPageField_bb1439dba9136747",
+      "sourceKey": "flexiPageField_760854506638aa36"
+    },
+    "status": "added"
+  },
+  {
+    "source": "reference",
+    "unit": "customApplication_Invoice_App",
+    "code": "UNKNOWN_FLEXI_PAGE",
+    "severity": "warning",
+    "target": "Invoice_Record_Page_V2",
+    "message": "flexiPage Invoice_Record_Page_V2 がリポジトリにない",
+    "filePath": "applications/Invoice_App.app-meta.xml",
+    "sourceKeys": {
+      "objectKey": "appActionOverride_e6aacd2873bccdd5",
+      "sourceKey": "appActionOverride_14c30017cff80fe0"
+    },
+    "status": "added"
+  },
+  {
+    "source": "reference",
+    "unit": "apexPage_InvoicePrint",
+    "code": "UNKNOWN_APEX_CLASS",
+    "severity": "warning",
+    "target": "InvoicePrintExt",
+    "message": "apexClass InvoicePrintExt がリポジトリにない",
+    "filePath": "pages/InvoicePrint.page-meta.xml",
+    "sourceKeys": {
+      "objectKey": "visualforceMarkup_b0020e3f602b5522",
+      "sourceKey": "visualforceMarkup_a4462fc44c960e86"
+    },
+    "status": "unchanged"
+  },
+  {
+    "source": "reference",
+    "unit": "aura_invoiceCard",
+    "code": "UNKNOWN_APEX_CLASS",
+    "severity": "warning",
+    "target": "InvoiceController",
+    "message": "apexClass InvoiceController がリポジトリにない",
+    "filePath": "aura/invoiceCard",
+    "sourceKeys": {
+      "objectKey": "auraBundle_4651d651d52e5642",
+      "sourceKey": "auraBundle_e4e8002a84c6c7e8"
+    },
+    "status": "unchanged"
+  },
+  {
+    "source": "reference",
+    "unit": "aura_invoiceCard",
+    "code": "UNKNOWN_AURA",
+    "severity": "warning",
+    "target": "invoiceSelectedEvent",
+    "message": "aura invoiceSelectedEvent がリポジトリにない",
+    "filePath": "aura/invoiceCard",
+    "sourceKeys": {
+      "objectKey": "auraRegisterEvent_4b6a1b3266c64687",
+      "sourceKey": "auraRegisterEvent_2adfe1c3e55a764e"
+    },
+    "status": "unchanged"
+  },
+  {
+    "source": "reference",
+    "unit": "role_Sales_Manager",
+    "code": "UNKNOWN_ROLE",
+    "severity": "warning",
+    "target": "CEO",
+    "message": "role CEO がリポジトリにない",
+    "filePath": "roles/Sales_Manager.role-meta.xml",
+    "sourceKeys": {
+      "objectKey": "role_fa0a4cb073b9f764",
+      "sourceKey": "role_81175e88a0dc70a1"
+    },
+    "status": "added"
+  },
+  {
+    "source": "label",
+    "unit": "customLabels_CustomLabels",
+    "code": "UNUSED_CUSTOM_LABEL",
+    "severity": "info",
+    "target": "BannerMessage",
+    "message": "カスタム表示ラベル BannerMessage はリポジトリの中で使われていない",
+    "sourceKeys": {
+      "objectKey": "customLabel_cb4221f0503f2e6b",
+      "sourceKey": "customLabel_f6f9b118b5dff23e"
+    },
+    "status": "removed"
+  },
+  {
+    "source": "flow",
+    "unit": "Invoice_Status_Update",
+    "code": "NO_FAULT_PATH",
+    "severity": "info",
+    "target": "Set_Status",
+    "message": "要素 Set_Status に失敗時の経路 (faultConnector) がない",
+    "filePath": "flows/Invoice_Status_Update.flow-meta.xml",
+    "sourceKeys": {
+      "objectKey": "flowRecordUpdate_ab48407b027500d4",
+      "sourceKey": "flowRecordUpdate_17e74dc0f1788968"
+    },
+    "status": "removed"
+  }
+]

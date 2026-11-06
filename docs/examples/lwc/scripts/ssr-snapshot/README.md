@@ -1,6 +1,6 @@
 # LWC の SSR の snapshot の試作
 
-`@lwc/engine-server` でコンポーネント（`modules/c/hello`）を HTML にする試作。方針は [lwc-snapshot-plan.md](../../../lwc-snapshot-plan.md)。
+`@lwc/engine-server` でコンポーネント（`modules/c/hello`）を HTML にする試作。方針は [lwc-snapshot-plan.md](../../../../lwc-snapshot-plan.md)。
 
 ```sh
 # リポジトリのルートで

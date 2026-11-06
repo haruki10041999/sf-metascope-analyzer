@@ -1,0 +1,40 @@
+{
+  "filePath": "staticresources/logo.resource-meta.xml",
+  "resolvedError": [],
+  "dataType": "staticResource",
+  "result": {
+    "id": "staticResource_logo",
+    "base": {
+      "kind": "staticResource",
+      "sourceKeys": {
+        "objectKey": "staticResource_0821ce06b1317b1e",
+        "sourceKey": "staticResource_c7d35038628fb145"
+      },
+      "fullName": "logo",
+      "cacheControl": "Private",
+      "contentType": "image/png"
+    },
+    "sourceObject": [
+      {
+        "objectKey": "staticResource_0821ce06b1317b1e",
+        "context": "<StaticResource xmlns=\"http://soap.sforce.com/2006/04/metadata\">\n    <cacheControl>Private</cacheControl>\n    <contentType>image/png</contentType>\n</StaticResource>",
+        "source": [
+          {
+            "sourceKey": "staticResource_c7d35038628fb145",
+            "filePath": "staticresources/logo.resource-meta.xml",
+            "start": {
+              "offset": 39,
+              "line": 2,
+              "column": 0
+            },
+            "end": {
+              "offset": 203,
+              "line": 5,
+              "column": 17
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

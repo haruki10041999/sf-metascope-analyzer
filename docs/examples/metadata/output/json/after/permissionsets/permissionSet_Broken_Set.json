@@ -1,0 +1,60 @@
+{
+  "filePath": "permissionsets/Broken_Set.permissionset-meta.xml",
+  "resolvedError": [
+    {
+      "sourceKeys": {
+        "objectKey": "error_b3b4ab8144e611e5",
+        "sourceKey": "error_28066d4b39f63361"
+      },
+      "code": "XML_SYNTAX",
+      "contextType": "permissionSet",
+      "context": "</PermissionSet>",
+      "errorMessage": "</objectPermissions> expected but </PermissionSet> found",
+      "filePath": "permissionsets/Broken_Set.permissionset-meta.xml",
+      "start": {
+        "offset": 204,
+        "line": 6,
+        "column": 15
+      },
+      "end": {
+        "offset": 204,
+        "line": 6,
+        "column": 15
+      }
+    }
+  ],
+  "dataType": "error",
+  "result": {
+    "id": "permissionSet_Broken_Set",
+    "base": {
+      "kind": "error",
+      "sourceKeys": {
+        "objectKey": "error_b3b4ab8144e611e5",
+        "sourceKey": "error_28066d4b39f63361"
+      },
+      "kindType": "permissionSet"
+    },
+    "sourceObject": [
+      {
+        "objectKey": "error_b3b4ab8144e611e5",
+        "context": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<PermissionSet xmlns=\"http://soap.sforce.com/2006/04/metadata\">\n    <label>Broken</label>\n    <objectPermissions>\n        <object>Invoice__c</object>\n</PermissionSet>\n",
+        "source": [
+          {
+            "sourceKey": "error_28066d4b39f63361",
+            "filePath": "permissionsets/Broken_Set.permissionset-meta.xml",
+            "start": {
+              "offset": 204,
+              "line": 6,
+              "column": 15
+            },
+            "end": {
+              "offset": 204,
+              "line": 6,
+              "column": 15
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

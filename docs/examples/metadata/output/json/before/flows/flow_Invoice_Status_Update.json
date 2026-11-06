@@ -1,0 +1,438 @@
+{
+  "filePath": "flows/Invoice_Status_Update.flow-meta.xml",
+  "resolvedError": [],
+  "dataType": "flow",
+  "result": {
+    "id": "flow_Invoice_Status_Update",
+    "base": {
+      "kind": "flow",
+      "sourceKeys": {
+        "objectKey": "flow_caa69166e1902ae7",
+        "sourceKey": "flow_b551f8c510b80190"
+      },
+      "name": "Invoice_Status_Update",
+      "label": "Invoice Status Update",
+      "apiVersion": "62.0",
+      "processType": "AutoLaunchedFlow",
+      "status": "Active",
+      "description": "請求書の金額で状態を変える",
+      "interviewLabel": "Invoice Status Update {!$Flow.CurrentDateTime}",
+      "triggerOrder": 10,
+      "environments": "Default",
+      "start": {
+        "kind": "flowStart",
+        "sourceKeys": {
+          "objectKey": "flowStart_6b2f7a99120e0346",
+          "sourceKey": "flowStart_eb46c3982e1b5824"
+        },
+        "object": "Invoice__c",
+        "triggerType": "RecordAfterSave",
+        "recordTriggerType": "Update",
+        "properties": {
+          "filterLogic": "and",
+          "filters": [
+            {
+              "field": "Amount__c",
+              "operator": "GreaterThan",
+              "value": {
+                "type": "numberValue",
+                "value": "0.0"
+              }
+            }
+          ]
+        },
+        "references": [
+          {
+            "refType": "object",
+            "value": "Invoice__c"
+          },
+          {
+            "refType": "field",
+            "value": "Invoice__c.Amount__c"
+          }
+        ]
+      },
+      "elements": [
+        {
+          "kind": "flowActionCall",
+          "sourceKeys": {
+            "objectKey": "flowActionCall_6106dc47e2b6b402",
+            "sourceKey": "flowActionCall_9d730a3d8182e972"
+          },
+          "name": "Notify",
+          "label": "Notify",
+          "properties": {
+            "actionName": "AccountService",
+            "actionType": "apex",
+            "inputParameters": [
+              {
+                "name": "invoiceId",
+                "value": {
+                  "type": "elementReference",
+                  "value": "$Record.Id"
+                }
+              }
+            ]
+          },
+          "references": [
+            {
+              "refType": "apexClass",
+              "value": "AccountService"
+            },
+            {
+              "refType": "field",
+              "value": "Invoice__c.Id"
+            }
+          ]
+        },
+        {
+          "kind": "flowAssignment",
+          "sourceKeys": {
+            "objectKey": "flowAssignment_801c0b1b2d95b570",
+            "sourceKey": "flowAssignment_8863260c8fabcdfc"
+          },
+          "name": "Log_Error",
+          "label": "Log Error",
+          "properties": {
+            "assignmentItems": [
+              {
+                "assignToReference": "errorMessage",
+                "operator": "Assign",
+                "value": {
+                  "type": "stringValue",
+                  "value": "{!$Label.Invoice_Overdue}: {!$Flow.FaultMessage}"
+                }
+              }
+            ]
+          },
+          "references": [
+            {
+              "refType": "element",
+              "value": "errorMessage"
+            },
+            {
+              "refType": "label",
+              "value": "Invoice_Overdue"
+            },
+            {
+              "refType": "global",
+              "value": "$Flow.FaultMessage"
+            }
+          ]
+        },
+        {
+          "kind": "flowDecision",
+          "sourceKeys": {
+            "objectKey": "flowDecision_d2ec73d9c8dbd28c",
+            "sourceKey": "flowDecision_3fdeaaa53292cdff"
+          },
+          "name": "Check_Amount",
+          "label": "Check Amount",
+          "properties": {
+            "defaultConnectorLabel": "Small"
+          },
+          "rules": [
+            {
+              "kind": "flowRule",
+              "sourceKeys": {
+                "objectKey": "flowRule_a06ec475b90579ac",
+                "sourceKey": "flowRule_042802ca98f3d044"
+              },
+              "name": "Large",
+              "label": "Large",
+              "properties": {
+                "conditionLogic": "and",
+                "conditions": [
+                  {
+                    "leftValueReference": "$Record.Amount__c",
+                    "operator": "GreaterThan",
+                    "rightValue": {
+                      "type": "numberValue",
+                      "value": "10000.0"
+                    }
+                  }
+                ]
+              }
+            }
+          ],
+          "references": [
+            {
+              "refType": "field",
+              "value": "Invoice__c.Amount__c"
+            }
+          ]
+        },
+        {
+          "kind": "flowRecordUpdate",
+          "sourceKeys": {
+            "objectKey": "flowRecordUpdate_ab48407b027500d4",
+            "sourceKey": "flowRecordUpdate_17e74dc0f1788968"
+          },
+          "name": "Set_Status",
+          "label": "Set Status",
+          "properties": {
+            "inputAssignments": [
+              {
+                "field": "Status__c",
+                "value": {
+                  "type": "stringValue",
+                  "value": "Review"
+                }
+              }
+            ],
+            "inputReference": "$Record"
+          },
+          "references": [
+            {
+              "refType": "global",
+              "value": "$Record"
+            }
+          ]
+        }
+      ],
+      "resources": [
+        {
+          "kind": "flowFormula",
+          "sourceKeys": {
+            "objectKey": "flowFormula_6a54dcfdfe24abcd",
+            "sourceKey": "flowFormula_66a526992e87a569"
+          },
+          "name": "IsLarge",
+          "properties": {
+            "dataType": "Boolean",
+            "expression": "{!$Record.Amount__c} > 10000"
+          },
+          "references": [
+            {
+              "refType": "field",
+              "value": "Invoice__c.Amount__c"
+            }
+          ]
+        },
+        {
+          "kind": "flowVariable",
+          "sourceKeys": {
+            "objectKey": "flowVariable_0ffa512dba2911b9",
+            "sourceKey": "flowVariable_f400ef797136751e"
+          },
+          "name": "errorMessage",
+          "properties": {
+            "dataType": "String",
+            "isCollection": false,
+            "isInput": false,
+            "isOutput": false
+          }
+        }
+      ],
+      "edges": [
+        {
+          "from": "$start",
+          "to": "Check_Amount",
+          "edgeType": "connector"
+        },
+        {
+          "from": "Notify",
+          "to": "Set_Status",
+          "edgeType": "connector"
+        },
+        {
+          "from": "Notify",
+          "to": "Log_Error",
+          "edgeType": "faultConnector"
+        },
+        {
+          "from": "Check_Amount",
+          "to": "Notify",
+          "edgeType": "defaultConnector"
+        },
+        {
+          "from": "Check_Amount",
+          "to": "Set_Status",
+          "edgeType": "rules[Large].connector"
+        }
+      ]
+    },
+    "sourceObject": [
+      {
+        "objectKey": "flowActionCall_6106dc47e2b6b402",
+        "context": "<actionCalls>\n        <name>Notify</name>\n        <label>Notify</label>\n        <locationX>176</locationX>\n        <locationY>494</locationY>\n        <actionName>AccountService</actionName>\n        <actionType>apex</actionType>\n        <connector>\n            <targetReference>Set_Status</targetReference>\n        </connector>\n        <faultConnector>\n            <targetReference>Log_Error</targetReference>\n        </faultConnector>\n        <inputParameters>\n            <name>invoiceId</name>\n            <value>\n                <elementReference>$Record.Id</elementReference>\n            </value>\n        </inputParameters>\n    </actionCalls>",
+        "source": [
+          {
+            "sourceKey": "flowActionCall_9d730a3d8182e972",
+            "filePath": "flows/Invoice_Status_Update.flow-meta.xml",
+            "start": {
+              "offset": 98,
+              "line": 3,
+              "column": 4
+            },
+            "end": {
+              "offset": 744,
+              "line": 22,
+              "column": 18
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "flowAssignment_801c0b1b2d95b570",
+        "context": "<assignments>\n        <name>Log_Error</name>\n        <label>Log Error</label>\n        <locationX>440</locationX>\n        <locationY>494</locationY>\n        <assignmentItems>\n            <assignToReference>errorMessage</assignToReference>\n            <operator>Assign</operator>\n            <value>\n                <stringValue>{!$Label.Invoice_Overdue}: {!$Flow.FaultMessage}</stringValue>\n            </value>\n        </assignmentItems>\n    </assignments>",
+        "source": [
+          {
+            "sourceKey": "flowAssignment_8863260c8fabcdfc",
+            "filePath": "flows/Invoice_Status_Update.flow-meta.xml",
+            "start": {
+              "offset": 783,
+              "line": 24,
+              "column": 4
+            },
+            "end": {
+              "offset": 1239,
+              "line": 36,
+              "column": 18
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "flowRule_a06ec475b90579ac",
+        "context": "<rules>\n            <name>Large</name>\n            <conditionLogic>and</conditionLogic>\n            <conditions>\n                <leftValueReference>$Record.Amount__c</leftValueReference>\n                <operator>GreaterThan</operator>\n                <rightValue>\n                    <numberValue>10000.0</numberValue>\n                </rightValue>\n            </conditions>\n            <connector>\n                <targetReference>Set_Status</targetReference>\n            </connector>\n            <label>Large</label>\n        </rules>",
+        "source": [
+          {
+            "sourceKey": "flowRule_042802ca98f3d044",
+            "filePath": "flows/Invoice_Status_Update.flow-meta.xml",
+            "start": {
+              "offset": 1574,
+              "line": 46,
+              "column": 8
+            },
+            "end": {
+              "offset": 2111,
+              "line": 60,
+              "column": 16
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "flowDecision_d2ec73d9c8dbd28c",
+        "context": "<decisions>\n        <name>Check_Amount</name>\n        <label>Check Amount</label>\n        <locationX>308</locationX>\n        <locationY>278</locationY>\n        <defaultConnector>\n            <targetReference>Notify</targetReference>\n        </defaultConnector>\n        <defaultConnectorLabel>Small</defaultConnectorLabel>\n        <rules>\n            <name>Large</name>\n            <conditionLogic>and</conditionLogic>\n            <conditions>\n                <leftValueReference>$Record.Amount__c</leftValueReference>\n                <operator>GreaterThan</operator>\n                <rightValue>\n                    <numberValue>10000.0</numberValue>\n                </rightValue>\n            </conditions>\n            <connector>\n                <targetReference>Set_Status</targetReference>\n            </connector>\n            <label>Large</label>\n        </rules>\n    </decisions>",
+        "source": [
+          {
+            "sourceKey": "flowDecision_3fdeaaa53292cdff",
+            "filePath": "flows/Invoice_Status_Update.flow-meta.xml",
+            "start": {
+              "offset": 1244,
+              "line": 37,
+              "column": 4
+            },
+            "end": {
+              "offset": 2128,
+              "line": 61,
+              "column": 16
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "flowRecordUpdate_ab48407b027500d4",
+        "context": "<recordUpdates>\n        <name>Set_Status</name>\n        <label>Set Status</label>\n        <locationX>176</locationX>\n        <locationY>386</locationY>\n        <inputAssignments>\n            <field>Status__c</field>\n            <value>\n                <stringValue>Review</stringValue>\n            </value>\n        </inputAssignments>\n        <inputReference>$Record</inputReference>\n    </recordUpdates>",
+        "source": [
+          {
+            "sourceKey": "flowRecordUpdate_17e74dc0f1788968",
+            "filePath": "flows/Invoice_Status_Update.flow-meta.xml",
+            "start": {
+              "offset": 2917,
+              "line": 84,
+              "column": 4
+            },
+            "end": {
+              "offset": 3321,
+              "line": 96,
+              "column": 20
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "flowFormula_6a54dcfdfe24abcd",
+        "context": "<formulas>\n        <name>IsLarge</name>\n        <dataType>Boolean</dataType>\n        <expression>{!$Record.Amount__c} &gt; 10000</expression>\n    </formulas>",
+        "source": [
+          {
+            "sourceKey": "flowFormula_66a526992e87a569",
+            "filePath": "flows/Invoice_Status_Update.flow-meta.xml",
+            "start": {
+              "offset": 2219,
+              "line": 64,
+              "column": 4
+            },
+            "end": {
+              "offset": 2376,
+              "line": 68,
+              "column": 15
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "flowVariable_0ffa512dba2911b9",
+        "context": "<variables>\n        <name>errorMessage</name>\n        <dataType>String</dataType>\n        <isCollection>false</isCollection>\n        <isInput>false</isInput>\n        <isOutput>false</isOutput>\n    </variables>",
+        "source": [
+          {
+            "sourceKey": "flowVariable_f400ef797136751e",
+            "filePath": "flows/Invoice_Status_Update.flow-meta.xml",
+            "start": {
+              "offset": 3971,
+              "line": 117,
+              "column": 4
+            },
+            "end": {
+              "offset": 4180,
+              "line": 123,
+              "column": 16
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "flowStart_6b2f7a99120e0346",
+        "context": "<start>\n        <locationX>182</locationX>\n        <locationY>0</locationY>\n        <connector>\n            <targetReference>Check_Amount</targetReference>\n        </connector>\n        <filterLogic>and</filterLogic>\n        <filters>\n            <field>Amount__c</field>\n            <operator>GreaterThan</operator>\n            <value>\n                <numberValue>0.0</numberValue>\n            </value>\n        </filters>\n        <object>Invoice__c</object>\n        <recordTriggerType>Update</recordTriggerType>\n        <triggerType>RecordAfterSave</triggerType>\n    </start>",
+        "source": [
+          {
+            "sourceKey": "flowStart_eb46c3982e1b5824",
+            "filePath": "flows/Invoice_Status_Update.flow-meta.xml",
+            "start": {
+              "offset": 3326,
+              "line": 97,
+              "column": 4
+            },
+            "end": {
+              "offset": 3902,
+              "line": 114,
+              "column": 12
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "flow_caa69166e1902ae7",
+        "context": "<Flow xmlns=\"http://soap.sforce.com/2006/04/metadata\">\n    <actionCalls>\n        <name>Notify</name>\n        <label>Notify</label>\n        <locationX>176</locationX>\n        <locationY>494</locationY>\n        <actionName>AccountService</actionName>\n        <actionType>apex</actionType>\n        <connector>\n            <targetReference>Set_Status</targetReference>\n        </connector>\n        <faultConnector>\n            <targetReference>Log_Error</targetReference>\n        </faultConnector>\n        <inputParameters>\n            <name>invoiceId</name>\n            <value>\n                <elementReference>$Record.Id</elementReference>\n            </value>\n        </inputParameters>\n    </actionCalls>\n    <apiVersion>62.0</apiVersion>\n    <assignments>\n        <name>Log_Error</name>\n        <label>Log Error</label>\n        <locationX>440</locationX>\n        <locationY>494</locationY>\n        <assignmentItems>\n            <assignToReference>errorMessage</assignToReference>\n            <operator>Assign</operator>\n            <value>\n                <stringValue>{!$Label.Invoice_Overdue}: {!$Flow.FaultMessage}</stringValue>\n            </value>\n        </assignmentItems>\n    </assignments>\n    <decisions>\n        <name>Check_Amount</name>\n        <label>Check Amount</label>\n        <locationX>308</locationX>\n        <locationY>278</locationY>\n        <defaultConnector>\n            <targetReference>Notify</targetReference>\n        </defaultConnector>\n        <defaultConnectorLabel>Small</defaultConnectorLabel>\n        <rules>\n            <name>Large</name>\n            <conditionLogic>and</conditionLogic>\n            <conditions>\n                <leftValueReference>$Record.Amount__c</leftValueReference>\n                <operator>GreaterThan</operator>\n                <rightValue>\n                    <numberValue>10000.0</numberValue>\n                </rightValue>\n            </conditions>\n            <connector>\n                <targetReference>Set_Status</targetReference>\n            </connector>\n            <label>Large</label>\n        </rules>\n    </decisions>\n    <description>請求書の金額で状態を変える</description>\n    <environments>Default</environments>\n    <formulas>\n        <name>IsLarge</name>\n        <dataType>Boolean</dataType>\n        <expression>{!$Record.Amount__c} &gt; 10000</expression>\n    </formulas>\n    <interviewLabel>Invoice Status Update {!$Flow.CurrentDateTime}</interviewLabel>\n    <label>Invoice Status Update</label>\n    <processMetadataValues>\n        <name>BuilderType</name>\n        <value>\n            <stringValue>LightningFlowBuilder</stringValue>\n        </value>\n    </processMetadataValues>\n    <processMetadataValues>\n        <name>CanvasMode</name>\n        <value>\n            <stringValue>AUTO_LAYOUT_CANVAS</stringValue>\n        </value>\n    </processMetadataValues>\n    <processType>AutoLaunchedFlow</processType>\n    <recordUpdates>\n        <name>Set_Status</name>\n        <label>Set Status</label>\n        <locationX>176</locationX>\n        <locationY>386</locationY>\n        <inputAssignments>\n            <field>Status__c</field>\n            <value>\n                <stringValue>Review</stringValue>\n            </value>\n        </inputAssignments>\n        <inputReference>$Record</inputReference>\n    </recordUpdates>\n    <start>\n        <locationX>182</locationX>\n        <locationY>0</locationY>\n        <connector>\n            <targetReference>Check_Amount</targetReference>\n        </connector>\n        <filterLogic>and</filterLogic>\n        <filters>\n            <field>Amount__c</field>\n            <operator>GreaterThan</operator>\n            <value>\n                <numberValue>0.0</numberValue>\n            </value>\n        </filters>\n        <object>Invoice__c</object>\n        <recordTriggerType>Update</recordTriggerType>\n        <triggerType>RecordAfterSave</triggerType>\n    </start>\n    <status>Active</status>\n    <triggerOrder>10</triggerOrder>\n    <variables>\n        <name>errorMessage</name>\n        <dataType>String</dataType>\n        <isCollection>false</isCollection>\n        <isInput>false</isInput>\n        <isOutput>false</isOutput>\n    </variables>\n</Flow>",
+        "source": [
+          {
+            "sourceKey": "flow_b551f8c510b80190",
+            "filePath": "flows/Invoice_Status_Update.flow-meta.xml",
+            "start": {
+              "offset": 39,
+              "line": 2,
+              "column": 0
+            },
+            "end": {
+              "offset": 4188,
+              "line": 124,
+              "column": 7
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

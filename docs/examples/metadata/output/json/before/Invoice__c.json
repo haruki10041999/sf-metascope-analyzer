@@ -7,8 +7,8 @@
     "base": {
       "kind": "object",
       "sourceKeys": {
-        "objectKey": "object_b9ddf9e66c0f6296",
-        "sourceKey": "object_0ee90c06256c23de"
+        "objectKey": "object_f821892e49ca0ac5",
+        "sourceKey": "object_b7cef1fa547990bc"
       },
       "apiName": "Invoice__c",
       "objectType": "custom",
@@ -28,8 +28,8 @@
         {
           "kind": "field",
           "sourceKeys": {
-            "objectKey": "field_ad25dea8e6fc703d",
-            "sourceKey": "field_f6c460a9da6db203"
+            "objectKey": "field_b79f18854bac7f37",
+            "sourceKey": "field_cb1005ef0d6f6d19"
           },
           "apiName": "Account__c",
           "label": "Account",
@@ -38,7 +38,19 @@
           "referenceTo": "Account",
           "relationshipName": "Invoices",
           "relationshipLabel": "Invoices",
-          "deleteConstraint": "SetNull"
+          "deleteConstraint": "SetNull",
+          "lookupFilter": {
+            "active": true,
+            "errorMessage": "有効な取引先を選んでください",
+            "isOptional": false,
+            "filterItems": [
+              {
+                "field": "Account.Tier__c",
+                "operation": "equals",
+                "value": "Gold"
+              }
+            ]
+          }
         },
         {
           "kind": "field",
@@ -218,15 +230,50 @@
           "protected": false,
           "url": "/apex/SendInvoice?id={!Invoice__c.Id}"
         }
+      ],
+      "sharingReasons": [
+        {
+          "kind": "sharingReason",
+          "sourceKeys": {
+            "objectKey": "sharingReason_d432ade31e342a94",
+            "sourceKey": "sharingReason_e1b973df98b5d51a"
+          },
+          "fullName": "Approver__c",
+          "label": "Approver"
+        }
+      ],
+      "searchLayouts": {
+        "customTabListAdditionalFields": [
+          "Amount__c",
+          "Due_Date__c"
+        ],
+        "searchResultsAdditionalFields": [
+          "Account__c"
+        ]
+      },
+      "actionOverrides": [
+        {
+          "kind": "objectActionOverride",
+          "sourceKeys": {
+            "objectKey": "objectActionOverride_2c2033e8cb07fc9d",
+            "sourceKey": "objectActionOverride_f1c4d984d7b0ad1a"
+          },
+          "actionName": "View",
+          "comment": "Invoice record page",
+          "content": "Invoice_Record_Page",
+          "formFactor": "Large",
+          "skipRecordTypeSelect": false,
+          "type": "Flexipage"
+        }
       ]
     },
     "sourceObject": [
       {
-        "objectKey": "field_ad25dea8e6fc703d",
-        "context": "<CustomField xmlns=\"http://soap.sforce.com/2006/04/metadata\">\n    <fullName>Account__c</fullName>\n    <deleteConstraint>SetNull</deleteConstraint>\n    <label>Account</label>\n    <referenceTo>Account</referenceTo>\n    <relationshipLabel>Invoices</relationshipLabel>\n    <relationshipName>Invoices</relationshipName>\n    <required>false</required>\n    <type>Lookup</type>\n</CustomField>",
+        "objectKey": "field_b79f18854bac7f37",
+        "context": "<CustomField xmlns=\"http://soap.sforce.com/2006/04/metadata\">\n    <fullName>Account__c</fullName>\n    <deleteConstraint>SetNull</deleteConstraint>\n    <label>Account</label>\n    <lookupFilter>\n        <active>true</active>\n        <errorMessage>有効な取引先を選んでください</errorMessage>\n        <filterItems>\n            <field>Account.Tier__c</field>\n            <operation>equals</operation>\n            <value>Gold</value>\n        </filterItems>\n        <isOptional>false</isOptional>\n    </lookupFilter>\n    <referenceTo>Account</referenceTo>\n    <relationshipLabel>Invoices</relationshipLabel>\n    <relationshipName>Invoices</relationshipName>\n    <required>false</required>\n    <type>Lookup</type>\n</CustomField>",
         "source": [
           {
-            "sourceKey": "field_f6c460a9da6db203",
+            "sourceKey": "field_cb1005ef0d6f6d19",
             "filePath": "Invoice__c/fields/Account__c.field-meta.xml",
             "start": {
               "offset": 39,
@@ -234,8 +281,8 @@
               "column": 0
             },
             "end": {
-              "offset": 423,
-              "line": 11,
+              "offset": 745,
+              "line": 21,
               "column": 14
             }
           }
@@ -502,11 +549,51 @@
         ]
       },
       {
-        "objectKey": "object_b9ddf9e66c0f6296",
-        "context": "<CustomObject xmlns=\"http://soap.sforce.com/2006/04/metadata\">\n    <deploymentStatus>Deployed</deploymentStatus>\n    <description>請求書</description>\n    <enableActivities>true</enableActivities>\n    <enableReports>true</enableReports>\n    <label>Invoice</label>\n    <nameField>\n        <displayFormat>INV-{0000}</displayFormat>\n        <label>Invoice Number</label>\n        <type>AutoNumber</type>\n    </nameField>\n    <pluralLabel>Invoices</pluralLabel>\n    <sharingModel>ReadWrite</sharingModel>\n</CustomObject>",
+        "objectKey": "sharingReason_d432ade31e342a94",
+        "context": "<SharingReason xmlns=\"http://soap.sforce.com/2006/04/metadata\">\n    <fullName>Approver__c</fullName>\n    <label>Approver</label>\n</SharingReason>",
         "source": [
           {
-            "sourceKey": "object_0ee90c06256c23de",
+            "sourceKey": "sharingReason_e1b973df98b5d51a",
+            "filePath": "Invoice__c/sharingReasons/Approver__c.sharingReason-meta.xml",
+            "start": {
+              "offset": 39,
+              "line": 2,
+              "column": 0
+            },
+            "end": {
+              "offset": 184,
+              "line": 5,
+              "column": 16
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "objectActionOverride_2c2033e8cb07fc9d",
+        "context": "<actionOverrides>\n        <actionName>View</actionName>\n        <comment>Invoice record page</comment>\n        <content>Invoice_Record_Page</content>\n        <formFactor>Large</formFactor>\n        <skipRecordTypeSelect>false</skipRecordTypeSelect>\n        <type>Flexipage</type>\n    </actionOverrides>",
+        "source": [
+          {
+            "sourceKey": "objectActionOverride_f1c4d984d7b0ad1a",
+            "filePath": "Invoice__c/Invoice__c.object-meta.xml",
+            "start": {
+              "offset": 106,
+              "line": 3,
+              "column": 4
+            },
+            "end": {
+              "offset": 407,
+              "line": 10,
+              "column": 22
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "object_f821892e49ca0ac5",
+        "context": "<CustomObject xmlns=\"http://soap.sforce.com/2006/04/metadata\">\n    <actionOverrides>\n        <actionName>View</actionName>\n        <comment>Invoice record page</comment>\n        <content>Invoice_Record_Page</content>\n        <formFactor>Large</formFactor>\n        <skipRecordTypeSelect>false</skipRecordTypeSelect>\n        <type>Flexipage</type>\n    </actionOverrides>\n    <deploymentStatus>Deployed</deploymentStatus>\n    <description>請求書</description>\n    <enableActivities>true</enableActivities>\n    <enableReports>true</enableReports>\n    <label>Invoice</label>\n    <nameField>\n        <displayFormat>INV-{0000}</displayFormat>\n        <label>Invoice Number</label>\n        <type>AutoNumber</type>\n    </nameField>\n    <pluralLabel>Invoices</pluralLabel>\n    <searchLayouts>\n        <customTabListAdditionalFields>Amount__c</customTabListAdditionalFields>\n        <customTabListAdditionalFields>Due_Date__c</customTabListAdditionalFields>\n        <searchResultsAdditionalFields>Account__c</searchResultsAdditionalFields>\n    </searchLayouts>\n    <sharingModel>ReadWrite</sharingModel>\n</CustomObject>",
+        "source": [
+          {
+            "sourceKey": "object_b7cef1fa547990bc",
             "filePath": "Invoice__c/Invoice__c.object-meta.xml",
             "start": {
               "offset": 39,
@@ -514,8 +601,8 @@
               "column": 0
             },
             "end": {
-              "offset": 551,
-              "line": 15,
+              "offset": 1144,
+              "line": 28,
               "column": 15
             }
           }

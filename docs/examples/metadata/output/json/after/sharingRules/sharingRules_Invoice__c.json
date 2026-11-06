@@ -1,0 +1,122 @@
+{
+  "filePath": "sharingRules/Invoice__c.sharingRules-meta.xml",
+  "resolvedError": [],
+  "dataType": "sharingRules",
+  "result": {
+    "id": "sharingRules_Invoice__c",
+    "base": {
+      "kind": "sharingRules",
+      "sourceKeys": {
+        "objectKey": "sharingRules_c77ab8f6b35c1616",
+        "sourceKey": "sharingRules_8bbc491c64d0528d"
+      },
+      "fullName": "Invoice__c",
+      "sharingCriteriaRules": [
+        {
+          "kind": "sharingCriteriaRule",
+          "sourceKeys": {
+            "objectKey": "sharingCriteriaRule_44d2046d33cfca92",
+            "sourceKey": "sharingCriteriaRule_0153393cdf4a4266"
+          },
+          "fullName": "Large_Invoices",
+          "label": "Large Invoices",
+          "accessLevel": "Edit",
+          "includeRecordsOwnedByAll": true,
+          "sharedTo": {
+            "role": "Sales_Manager"
+          },
+          "criteriaItems": [
+            {
+              "field": "Amount__c",
+              "operation": "greaterThan",
+              "value": "50000"
+            }
+          ]
+        },
+        {
+          "kind": "sharingCriteriaRule",
+          "sourceKeys": {
+            "objectKey": "sharingCriteriaRule_463cddb3e054da83",
+            "sourceKey": "sharingCriteriaRule_83d322fd43604732"
+          },
+          "fullName": "Small_Invoices",
+          "label": "Small Invoices",
+          "accessLevel": "Read",
+          "includeRecordsOwnedByAll": true,
+          "sharedTo": {
+            "role": "Sales_Manager"
+          },
+          "criteriaItems": [
+            {
+              "field": "Amount__c",
+              "operation": "lessThan",
+              "value": "1000"
+            }
+          ]
+        }
+      ]
+    },
+    "sourceObject": [
+      {
+        "objectKey": "sharingCriteriaRule_44d2046d33cfca92",
+        "context": "<sharingCriteriaRules>\n        <fullName>Large_Invoices</fullName>\n        <accessLevel>Edit</accessLevel>\n        <label>Large Invoices</label>\n        <sharedTo>\n            <role>Sales_Manager</role>\n        </sharedTo>\n        <criteriaItems>\n            <field>Amount__c</field>\n            <operation>greaterThan</operation>\n            <value>50000</value>\n        </criteriaItems>\n        <includeRecordsOwnedByAll>true</includeRecordsOwnedByAll>\n    </sharingCriteriaRules>",
+        "source": [
+          {
+            "sourceKey": "sharingCriteriaRule_0153393cdf4a4266",
+            "filePath": "sharingRules/Invoice__c.sharingRules-meta.xml",
+            "start": {
+              "offset": 106,
+              "line": 3,
+              "column": 4
+            },
+            "end": {
+              "offset": 588,
+              "line": 16,
+              "column": 27
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "sharingCriteriaRule_463cddb3e054da83",
+        "context": "<sharingCriteriaRules>\n        <fullName>Small_Invoices</fullName>\n        <accessLevel>Read</accessLevel>\n        <label>Small Invoices</label>\n        <sharedTo>\n            <role>Sales_Manager</role>\n        </sharedTo>\n        <criteriaItems>\n            <field>Amount__c</field>\n            <operation>lessThan</operation>\n            <value>1000</value>\n        </criteriaItems>\n        <includeRecordsOwnedByAll>true</includeRecordsOwnedByAll>\n    </sharingCriteriaRules>",
+        "source": [
+          {
+            "sourceKey": "sharingCriteriaRule_83d322fd43604732",
+            "filePath": "sharingRules/Invoice__c.sharingRules-meta.xml",
+            "start": {
+              "offset": 593,
+              "line": 17,
+              "column": 4
+            },
+            "end": {
+              "offset": 1071,
+              "line": 30,
+              "column": 27
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "sharingRules_c77ab8f6b35c1616",
+        "context": "<SharingRules xmlns=\"http://soap.sforce.com/2006/04/metadata\">\n    <sharingCriteriaRules>\n        <fullName>Large_Invoices</fullName>\n        <accessLevel>Edit</accessLevel>\n        <label>Large Invoices</label>\n        <sharedTo>\n            <role>Sales_Manager</role>\n        </sharedTo>\n        <criteriaItems>\n            <field>Amount__c</field>\n            <operation>greaterThan</operation>\n            <value>50000</value>\n        </criteriaItems>\n        <includeRecordsOwnedByAll>true</includeRecordsOwnedByAll>\n    </sharingCriteriaRules>\n    <sharingCriteriaRules>\n        <fullName>Small_Invoices</fullName>\n        <accessLevel>Read</accessLevel>\n        <label>Small Invoices</label>\n        <sharedTo>\n            <role>Sales_Manager</role>\n        </sharedTo>\n        <criteriaItems>\n            <field>Amount__c</field>\n            <operation>lessThan</operation>\n            <value>1000</value>\n        </criteriaItems>\n        <includeRecordsOwnedByAll>true</includeRecordsOwnedByAll>\n    </sharingCriteriaRules>\n</SharingRules>",
+        "source": [
+          {
+            "sourceKey": "sharingRules_8bbc491c64d0528d",
+            "filePath": "sharingRules/Invoice__c.sharingRules-meta.xml",
+            "start": {
+              "offset": 39,
+              "line": 2,
+              "column": 0
+            },
+            "end": {
+              "offset": 1087,
+              "line": 31,
+              "column": 15
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

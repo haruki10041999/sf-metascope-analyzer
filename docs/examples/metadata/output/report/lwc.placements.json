@@ -1,0 +1,25 @@
+[
+  {
+    "status": "changed",
+    "filePath": "flexipages/Invoice_Record_Page.flexipage-meta.xml",
+    "lwc": "accountList",
+    "flexiPage": "Invoice_Record_Page",
+    "pageType": "RecordPage",
+    "sobjectType": "Invoice__c",
+    "region": "sidebar",
+    "properties": [
+      "title",
+      "pageSize"
+    ]
+  },
+  {
+    "status": "added",
+    "filePath": "flexipages/Invoice_Record_Page.flexipage-meta.xml",
+    "lwc": "accountRow",
+    "flexiPage": "Invoice_Record_Page",
+    "pageType": "RecordPage",
+    "sobjectType": "Invoice__c",
+    "region": "sidebar",
+    "properties": []
+  }
+]

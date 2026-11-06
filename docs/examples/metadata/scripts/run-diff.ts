@@ -48,6 +48,9 @@ export const ALL_KINDS = [
     'fieldSet',
     'compactLayout',
     'webLink',
+    'businessProcess',
+    'sharingReason',
+    'objectActionOverride',
     // オブジェクトの翻訳
     'objectTranslation',
     'fieldTranslation',

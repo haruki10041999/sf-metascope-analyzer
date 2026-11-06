@@ -1,6 +1,6 @@
-# 共通部品（Apex / Metadata / LWC）
+# 共通部品（Apex / LWC / メタデータ）
 
-Apex・オブジェクト（Metadata）で使っている型と関数のうち、言語やメタデータの種類に依らないものを `commons` にまとめた。これから実装する LWC も、同じ部品の上に作る。
+Apex・LWC・オブジェクト（メタデータ）で使っている型と関数のうち、言語やメタデータの種類に依らないものを `commons` にまとめた。
 
 ## 1. 置き場所
 
@@ -57,42 +57,12 @@ GumTree の本体（木の作り方・対応付け・差分への変換）は `p
 | `WorkerTask`（`command` × `type`）、`WorkerTaskResult`、`runWorkerTask` | 解析・保存・読み込みのタスク。`type`（`'Apex'` / `'Object'`）で parser を切り替える。worker_threads でも同じタスクを動かす                                            |
 | `BatchWorker`                                                           | プール・一括処理・保存済み ID の一覧などの共通部分。`ApexWorker`・`ObjectWorker`・`ObjectTranslationWorker`・`LwcWorker` はこれを継承し、`parseAndSaveAll` だけを持つ |
 
-## 3. Apex の -meta.xml
+## 3. 新しい種類を足すとき
 
-クラス・トリガーのメタデータ（`<名前>.cls-meta.xml` / `<名前>.trigger-meta.xml`）も、共通部品で解析と差分ができる。
+[metadata-roadmap.md](./metadata-roadmap.md) の未対応のメタデータ（Flow・権限など）を足すときの手順。LWC・オブジェクトの翻訳もこの手順で作った。
 
-| 層     | 場所                                                                                                                           | 内容                                                                                                                                                                                                                                                                    |
-| ------ | ------------------------------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 型     | [types/apex/meta.ts](../src/analyzer/types/apex/meta.ts)                                                                       | `ApexClassMetaJson`（kind `apexClassMeta`、ルート `ApexClass`）、`ApexTriggerMetaJson`（kind `apexTriggerMeta`、ルート `ApexTrigger`）。`apiVersion`（`61.0` のような値なので文字列のまま）、`status`、`packageVersions`（`{ namespace, majorNumber, minorNumber }[]`） |
-| parser | `ApexParser.parseApexUnit` / `parseApexUnits`、`searchApexUnits`（フォルダごとに、ソースと -meta.xml を 1 つの単位にまとめる） | 解析結果は `ApexUnitParseResult`（単位 = クラス・トリガー・匿名 Apex。`result.base` の `source` / `meta` にそれぞれの JSON）。読めない -meta.xml は `meta.meta` が `ErrorJson`                                                                                          |
-| diff   | [processor/Apex/diff/meta.ts](../src/analyzer/processor/Apex/diff/meta.ts)                                                     | `ApexClassMetaJsonDiff` / `ApexTriggerMetaJsonDiff`。値は `PropertiesDiff`、`packageVersions` は namespace で対応付ける（D）                                                                                                                                            |
-| 単位   | `makeApexUnitDiffs`                                                                                                            | 単位の id（`class_<名前>` など）で対応付け（`makeIdUnitDiffs`）、`content.fields.meta` に上の差分を入れる                                                                                                                                                               |
-
-サンプルは [examples/apex/](./examples/apex/README.md) に -meta.xml を足した（API バージョンの変更、トリガーの無効化とパッケージの追加、XML の構文エラー、追加・削除）。テストは test/parser/apex-meta.test.ts。
-
-- -meta.xml の `<status>` は、差分の `status`（unchanged / changed …）と同じ名前になる。差分の木をたどるときは、`status` が差分の語彙のときだけ差分のノードとみなし、ノードの `value`（元の JSON）には入らないこと。
-
-## 4. LWC を足すとき
-
-1. **型**: `types/lwc/` に kind ごとの `*Json` を作る。`js-meta.xml`（`LightningComponentBundle`）は `xmlJson.ts` の `readXmlRoot` / `readProperties` / `makeXmlJson` で作れる。JS / HTML は別の解析器になるが、出力は `JsonType`（`kind` / `sourceKeys`）にそろえる。
-2. **parser**: `parser/LWC/` に `LwcParser` を作る。ファイルの読み込みは `readSource` / `readXmlFile`、保存は `makeMsgPackSaveData` / `readMsgPack` を使う。解析結果は FileStructureType と同じ形（`filePath`、`resolvedError`、`dataType`、`result.{ id, base, sourceObject }`）にする。
-3. **diff**: `processor/LWC/diff/` に `*JsonDiff` を作る。部品は `processor/commons/diff/` のもの（`makeNodeDiff`・`makeKeyedDiff`・`makePresentDiff` など）を使う。
-4. **worker**: `WorkerTaskType` に `'Lwc'` を足し、`workerTask.ts` の `handlers` に解析・保存・読み込みを足して、`BatchWorker<'Lwc'>` を継承した `LwcWorker` を作る（実装済み）。
-
-## 5. 名前の変更（この整理で変えたもの）
-
-| 以前                                                                                                                                                                                     | 今                                                                                                                                                   |
-| ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `types/apex/commons/json.ts`・`utils.ts`                                                                                                                                                 | `types/commons/json.ts`・`utils.ts`                                                                                                                  |
-| `types/metadata/xml.ts`                                                                                                                                                                  | `types/commons/xml.ts`                                                                                                                               |
-| `types/metadata/commons.ts`（`makeMetadataJson`、`MetadataSourceRegistry`、`MetadataSourceJson`、`MetadataFile`、`findMetadataSourceInfo`、`ParsedMetadataFile`、`MetadataReadProblem`） | `types/commons/xmlJson.ts`（`makeXmlJson`、`XmlSourceRegistry`、`XmlSourceJson`、`XmlFile`、`findXmlSourceInfo`、`ParsedXmlFile`、`XmlReadProblem`） |
-| `MetadataResolvedError`                                                                                                                                                                  | `XmlResolvedError`（`parser/commons.ts`）                                                                                                            |
-| `processor/Apex/diff/commons.ts`                                                                                                                                                         | `processor/commons/diff/commons.ts`                                                                                                                  |
-| `processor/Apex/diff/typed.ts` の GumTree に依存しない部分、`gumtree/diff.ts` の `MovedFrom`                                                                                             | `processor/commons/diff/list.ts`                                                                                                                     |
-| `processor/Metadata/diff/commons.ts`                                                                                                                                                     | `processor/commons/diff/present.ts`                                                                                                                  |
-| `processor/Apex/diff/unitBody.ts` の `hasChange`                                                                                                                                         | `processor/commons/diff/change.ts`                                                                                                                   |
-| `processor/Apex/commons.ts` の `makeConvertKeys`・`findSourceInfo`・距離の関数                                                                                                           | `processor/commons/source.ts`（`findSourceInfo` は `findNodeSourceInfo` に改名。`types/apex` の同名の別関数と区別するため）                          |
-| `apex_IR` の `SourcePosition` / `SourceSpan`                                                                                                                                             | `types/commons/source.ts`                                                                                                                            |
-| `types/apex/converter/commons.ts` の `SourceInfo`・`CommonType`・`isCommonType`・`ErrorType`・`ValueRuleValue`                                                                           | `types/commons/converter.ts`（Apex だけの `makeSourceInfo`・`makeErrorType` は元の場所に残す）                                                       |
-| `worker/apexTask.ts`（`ApexTask`、`runApexTask`）、`apexThread.ts`                                                                                                                       | `worker/workerTask.ts`（`WorkerTask`、`runWorkerTask`）、`workerThread.ts`、`batchWorker.ts`、`objectWorker.ts`                                      |
-| `query/clauses.ts`（再エクスポートだけのファイル）                                                                                                                                       | 削除                                                                                                                                                 |
+1. **型**（`types/<種類>/`）: kind ごとの `*Json` と `make*Json`。XML は `xmlJson.ts` の `readXmlRoot` / `readProperties` / `makeXmlJson` で作る（中間表現は作らない）。XML 以外で位置の範囲を持つ木（HTML・CSS など）は `spanJson.ts` の `makeSpanJson`。出力は `JsonType` / `StructureJsonType`（`kind` / `sourceKeys`）にそろえる。
+2. **parser**（`parser/<種類>/`）: Apex・LWC と同じく、フォルダの読み込み（`folder.ts`）と、読んだ中身の解析（ファイルシステムに触らない）を分け、入口のクラスは「探す・読む・保存・保存済みの読み込み」だけを持つ。解析結果は `{ filePath, resolvedError, dataType, result: { id, base, sourceObject } }`。1 単位 = 1 解析結果 = 1 保存ファイル（`makeMsgPackSaveData` / `readMsgPack`。保存名は種類の接頭辞を付ける）。
+3. **diff**（`processor/<種類>/diff/`）: 単位は `makeIdUnitDiffs`、中は `processor/commons/diff/` の部品（`makeNodeDiff`・`makeKeyedDiff`・`makePresentDiff` など）。木の対応付けが要るときは `GumTreeLanguage` を書く。
+4. **worker**: `WorkerTaskType`・`SaveDataType` に種類を足し、`workerTask.ts` の `handlers` に解析・保存・読み込みを足して、`BatchWorker` を継承した worker を作る。保存名の接頭辞は、オブジェクトの `readSavedObjects` が除く一覧にも足す。
+5. **サンプル**: `docs/examples/<種類>/`（`samples/`・`scripts/`・`output/`）と、Diff のテスト。

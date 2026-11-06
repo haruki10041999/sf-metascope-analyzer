@@ -1,0 +1,74 @@
+{
+  "filePath": "customMetadata/App_Setting.Default.md-meta.xml",
+  "resolvedError": [],
+  "dataType": "customMetadata",
+  "result": {
+    "id": "customMetadata_App_Setting.Default",
+    "base": {
+      "kind": "customMetadataRecord",
+      "sourceKeys": {
+        "objectKey": "customMetadataRecord_8fb73fed79b5cead",
+        "sourceKey": "customMetadataRecord_f4373c3f93c75f7a"
+      },
+      "fullName": "App_Setting.Default",
+      "label": "Default",
+      "protected": false,
+      "values": [
+        {
+          "kind": "customMetadataValue",
+          "sourceKeys": {
+            "objectKey": "customMetadataValue_6029a3e765d31064",
+            "sourceKey": "customMetadataValue_fea6f94f69dd8937"
+          },
+          "field": "Value__c",
+          "value": {
+            "#text": "100",
+            "@xsi:type": "xsd:string"
+          }
+        }
+      ]
+    },
+    "sourceObject": [
+      {
+        "objectKey": "customMetadataValue_6029a3e765d31064",
+        "context": "<values>\n        <field>Value__c</field>\n        <value xsi:type=\"xsd:string\">100</value>\n    </values>",
+        "source": [
+          {
+            "sourceKey": "customMetadataValue_fea6f94f69dd8937",
+            "filePath": "customMetadata/App_Setting.Default.md-meta.xml",
+            "start": {
+              "offset": 267,
+              "line": 5,
+              "column": 4
+            },
+            "end": {
+              "offset": 370,
+              "line": 8,
+              "column": 13
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "customMetadataRecord_8fb73fed79b5cead",
+        "context": "<CustomMetadata xmlns=\"http://soap.sforce.com/2006/04/metadata\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\">\n    <label>Default</label>\n    <protected>false</protected>\n    <values>\n        <field>Value__c</field>\n        <value xsi:type=\"xsd:string\">100</value>\n    </values>\n</CustomMetadata>",
+        "source": [
+          {
+            "sourceKey": "customMetadataRecord_f4373c3f93c75f7a",
+            "filePath": "customMetadata/App_Setting.Default.md-meta.xml",
+            "start": {
+              "offset": 39,
+              "line": 2,
+              "column": 0
+            },
+            "end": {
+              "offset": 388,
+              "line": 9,
+              "column": 17
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

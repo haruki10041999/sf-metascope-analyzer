@@ -1,0 +1,267 @@
+{
+  "filePath": "aura/invoiceCard",
+  "resolvedError": [],
+  "dataType": "aura",
+  "result": {
+    "id": "aura_invoiceCard",
+    "base": {
+      "kind": "auraBundle",
+      "sourceKeys": {
+        "objectKey": "auraBundle_4651d651d52e5642",
+        "sourceKey": "auraBundle_e4e8002a84c6c7e8"
+      },
+      "name": "invoiceCard",
+      "bundleType": "cmp",
+      "rootAttributes": {
+        "controller": "InvoiceController",
+        "implements": "flexipage:availableForRecordHome,force:hasRecordId",
+        "access": "global"
+      },
+      "attributes": [
+        {
+          "kind": "auraAttribute",
+          "sourceKeys": {
+            "objectKey": "auraAttribute_60282972ac696b44",
+            "sourceKey": "auraAttribute_06c3e7ff109b84f6"
+          },
+          "name": "recordId",
+          "attributes": {
+            "type": "Id"
+          }
+        },
+        {
+          "kind": "auraAttribute",
+          "sourceKeys": {
+            "objectKey": "auraAttribute_0773ba65964d5fdb",
+            "sourceKey": "auraAttribute_26b7e4c64fa39815"
+          },
+          "name": "invoice",
+          "attributes": {
+            "type": "Invoice__c",
+            "default": "{}"
+          }
+        },
+        {
+          "kind": "auraAttribute",
+          "sourceKeys": {
+            "objectKey": "auraAttribute_0a5f51d62c1a827b",
+            "sourceKey": "auraAttribute_2950887106bf2165"
+          },
+          "name": "showLines",
+          "attributes": {
+            "type": "Boolean",
+            "default": "false"
+          }
+        }
+      ],
+      "registerEvents": [
+        {
+          "kind": "auraRegisterEvent",
+          "sourceKeys": {
+            "objectKey": "auraRegisterEvent_4b6a1b3266c64687",
+            "sourceKey": "auraRegisterEvent_2adfe1c3e55a764e"
+          },
+          "name": "invoiceSelected",
+          "attributes": {
+            "type": "c:invoiceSelectedEvent"
+          }
+        }
+      ],
+      "methods": [
+        {
+          "kind": "auraMethod",
+          "sourceKeys": {
+            "objectKey": "auraMethod_140b5332c8b4874c",
+            "sourceKey": "auraMethod_516554e960f4967a"
+          },
+          "name": "refresh",
+          "attributes": {
+            "action": "{!c.doInit}",
+            "access": "public"
+          }
+        }
+      ],
+      "components": [
+        "c:accountList",
+        "lightning:button",
+        "lightning:card"
+      ],
+      "expressions": [
+        "$Label.c.AccountListTitle",
+        "c.doInit",
+        "c.handleClick",
+        "v.invoice.Name",
+        "v.recordId"
+      ],
+      "javascript": {
+        "controller": [
+          "doInit",
+          "handleClick",
+          "toggleLines"
+        ],
+        "helper": [
+          "load"
+        ]
+      },
+      "files": [
+        "invoiceCard.cmp",
+        "invoiceCard.cmp-meta.xml",
+        "invoiceCard.css",
+        "invoiceCardController.js",
+        "invoiceCardHelper.js"
+      ],
+      "meta": {
+        "kind": "auraDefinitionBundle",
+        "sourceKeys": {
+          "objectKey": "auraDefinitionBundle_ee233c743116d42d",
+          "sourceKey": "auraDefinitionBundle_724393452e1c5697"
+        },
+        "fullName": "invoiceCard",
+        "apiVersion": "61.0",
+        "description": "請求書のカード"
+      }
+    },
+    "sourceObject": [
+      {
+        "objectKey": "auraDefinitionBundle_ee233c743116d42d",
+        "context": "<AuraDefinitionBundle xmlns=\"http://soap.sforce.com/2006/04/metadata\">\n    <apiVersion>61.0</apiVersion>\n    <description>請求書のカード</description>\n</AuraDefinitionBundle>",
+        "source": [
+          {
+            "sourceKey": "auraDefinitionBundle_724393452e1c5697",
+            "filePath": "aura/invoiceCard/invoiceCard.cmp-meta.xml",
+            "start": {
+              "offset": 39,
+              "line": 2,
+              "column": 0
+            },
+            "end": {
+              "offset": 206,
+              "line": 5,
+              "column": 23
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "auraAttribute_60282972ac696b44",
+        "context": "<aura:attribute name=\"recordId\" type=\"Id\"/>",
+        "source": [
+          {
+            "sourceKey": "auraAttribute_06c3e7ff109b84f6",
+            "filePath": "aura/invoiceCard/invoiceCard.cmp",
+            "start": {
+              "offset": 132,
+              "line": 2,
+              "column": 4
+            },
+            "end": {
+              "offset": 175,
+              "line": 2,
+              "column": 47
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "auraAttribute_0773ba65964d5fdb",
+        "context": "<aura:attribute name=\"invoice\" type=\"Invoice__c\" default=\"{}\"/>",
+        "source": [
+          {
+            "sourceKey": "auraAttribute_26b7e4c64fa39815",
+            "filePath": "aura/invoiceCard/invoiceCard.cmp",
+            "start": {
+              "offset": 180,
+              "line": 3,
+              "column": 4
+            },
+            "end": {
+              "offset": 243,
+              "line": 3,
+              "column": 67
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "auraAttribute_0a5f51d62c1a827b",
+        "context": "<aura:attribute name=\"showLines\" type=\"Boolean\" default=\"false\"/>",
+        "source": [
+          {
+            "sourceKey": "auraAttribute_2950887106bf2165",
+            "filePath": "aura/invoiceCard/invoiceCard.cmp",
+            "start": {
+              "offset": 248,
+              "line": 4,
+              "column": 4
+            },
+            "end": {
+              "offset": 313,
+              "line": 4,
+              "column": 69
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "auraRegisterEvent_4b6a1b3266c64687",
+        "context": "<aura:registerEvent name=\"invoiceSelected\" type=\"c:invoiceSelectedEvent\"/>",
+        "source": [
+          {
+            "sourceKey": "auraRegisterEvent_2adfe1c3e55a764e",
+            "filePath": "aura/invoiceCard/invoiceCard.cmp",
+            "start": {
+              "offset": 318,
+              "line": 5,
+              "column": 4
+            },
+            "end": {
+              "offset": 392,
+              "line": 5,
+              "column": 78
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "auraMethod_140b5332c8b4874c",
+        "context": "<aura:method name=\"refresh\" action=\"{!c.doInit}\" access=\"public\"/>",
+        "source": [
+          {
+            "sourceKey": "auraMethod_516554e960f4967a",
+            "filePath": "aura/invoiceCard/invoiceCard.cmp",
+            "start": {
+              "offset": 397,
+              "line": 6,
+              "column": 4
+            },
+            "end": {
+              "offset": 463,
+              "line": 6,
+              "column": 70
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "auraBundle_4651d651d52e5642",
+        "context": "<aura:component controller=\"InvoiceController\" implements=\"flexipage:availableForRecordHome,force:hasRecordId\" access=\"global\">\n    <aura:attribute name=\"recordId\" type=\"Id\"/>\n    <aura:attribute name=\"invoice\" type=\"Invoice__c\" default=\"{}\"/>\n    <aura:attribute name=\"showLines\" type=\"Boolean\" default=\"false\"/>\n    <aura:registerEvent name=\"invoiceSelected\" type=\"c:invoiceSelectedEvent\"/>\n    <aura:method name=\"refresh\" action=\"{!c.doInit}\" access=\"public\"/>\n    <lightning:card title=\"{!v.invoice.Name}\">\n        <c:accountList recordId=\"{!v.recordId}\"/>\n        <lightning:button label=\"{!$Label.c.AccountListTitle}\" onclick=\"{!c.handleClick}\"/>\n    </lightning:card>\n</aura:component>",
+        "source": [
+          {
+            "sourceKey": "auraBundle_e4e8002a84c6c7e8",
+            "filePath": "aura/invoiceCard/invoiceCard.cmp",
+            "start": {
+              "offset": 0,
+              "line": 1,
+              "column": 0
+            },
+            "end": {
+              "offset": 692,
+              "line": 11,
+              "column": 17
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

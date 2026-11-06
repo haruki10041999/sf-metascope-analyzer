@@ -1,4 +1,4 @@
-// LWC のバンドル 1 つの解析 (docs/lwc-parse-plan.md 2.4・4.1)。
+// LWC のバンドル 1 つの解析 (docs/lwc-implementation.md)。
 // 入力は folder.ts で読んだフォルダの中身だけで、ファイルシステムには触らない。
 // JS / TS (module.ts)・js-meta.xml (meta.ts)・HTML (template.ts)・CSS (stylesheet.ts) を読み、
 // 最後に同じバンドルの中の突き合わせ (validate/bundle.ts) をする
@@ -148,7 +148,7 @@ export const parseLwcBundleFolder = (
         ...(metaResult ? { meta: metaResult.meta } : {}),
         skippedFiles: folder.skippedFiles,
     };
-    // 同じバンドルの中の突き合わせ (テンプレートの式・ハンドラー・lwc:ref と JS。docs/lwc-template-stylesheet-plan.md 6.6.4)
+    // 同じバンドルの中の突き合わせ (テンプレートの式・ハンドラー・lwc:ref と JS。docs/lwc-implementation.md)
     resolvedError.push(...validateBundle(base, sourceObject));
 
     return {

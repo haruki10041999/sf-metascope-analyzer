@@ -5,7 +5,7 @@ import { describe, it } from 'node:test';
 import { LwcParser, apiVersionOf, parseBundleMeta } from '../../src/analyzer/parser/Lwc';
 import type { LwcBundleMetaJson } from '../../src/analyzer/types';
 
-// LWC の js-meta.xml の JSON (docs/lwc-parse-plan.md 3.5)。parseBundleMeta はソースを受け取る (フォルダの読み込みは folder.ts)
+// LWC の js-meta.xml の JSON (docs/lwc-json-reference.md)。parseBundleMeta はソースを受け取る (フォルダの読み込みは folder.ts)
 
 const BUNDLES = 'docs/examples/lwc/samples/bundles/force-app/main/default/lwc';
 

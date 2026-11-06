@@ -1,0 +1,205 @@
+[
+  {
+    "flow": "Account_Wizard",
+    "nodes": [
+      {
+        "id": "$start",
+        "kind": "flowStart",
+        "filePath": "flows/Account_Wizard.flow-meta.xml"
+      },
+      {
+        "status": "added",
+        "filePath": "flows/Account_Wizard.flow-meta.xml",
+        "sourceKeys": {
+          "objectKey": "flowRecordLookup_9b7dd3866a1b6372",
+          "sourceKey": "flowRecordLookup_7d3e549c22554faf"
+        },
+        "id": "Get_Account",
+        "kind": "flowRecordLookup",
+        "label": "Get Account"
+      },
+      {
+        "status": "changed",
+        "filePath": "flows/Account_Wizard.flow-meta.xml",
+        "sourceKeys": {
+          "objectKey": "flowScreen_89d74b343922c9ad",
+          "sourceKey": "flowScreen_da78defa1b5d2b8a"
+        },
+        "id": "Welcome",
+        "kind": "flowScreen",
+        "label": "Welcome"
+      },
+      {
+        "status": "added",
+        "filePath": "flows/Account_Wizard.flow-meta.xml",
+        "sourceKeys": {
+          "objectKey": "flowSubflow_13e4b9c982e0656a",
+          "sourceKey": "flowSubflow_2661cc0ec003e395"
+        },
+        "id": "Call_Status",
+        "kind": "flowSubflow",
+        "label": "Call Status"
+      }
+    ],
+    "edges": [
+      {
+        "status": "added",
+        "filePath": "flows/Account_Wizard.flow-meta.xml",
+        "from": "$start",
+        "to": "Get_Account",
+        "edgeType": "connector"
+      },
+      {
+        "status": "added",
+        "filePath": "flows/Account_Wizard.flow-meta.xml",
+        "from": "Get_Account",
+        "to": "Welcome",
+        "edgeType": "connector"
+      },
+      {
+        "status": "added",
+        "filePath": "flows/Account_Wizard.flow-meta.xml",
+        "from": "Get_Account",
+        "to": "Welcome",
+        "edgeType": "faultConnector"
+      },
+      {
+        "status": "added",
+        "filePath": "flows/Account_Wizard.flow-meta.xml",
+        "from": "Welcome",
+        "to": "Call_Status",
+        "edgeType": "connector"
+      },
+      {
+        "status": "removed",
+        "filePath": "flows/Account_Wizard.flow-meta.xml",
+        "from": "$start",
+        "to": "Welcome",
+        "edgeType": "connector"
+      }
+    ]
+  },
+  {
+    "flow": "Invoice_Status_Update",
+    "nodes": [
+      {
+        "id": "$start",
+        "kind": "flowStart",
+        "filePath": "flows/Invoice_Status_Update.flow-meta.xml"
+      },
+      {
+        "status": "unchanged",
+        "filePath": "flows/Invoice_Status_Update.flow-meta.xml",
+        "sourceKeys": {
+          "objectKey": "flowActionCall_6106dc47e2b6b402",
+          "sourceKey": "flowActionCall_59a1e74900519d38"
+        },
+        "id": "Notify",
+        "kind": "flowActionCall",
+        "label": "Notify"
+      },
+      {
+        "status": "unchanged",
+        "filePath": "flows/Invoice_Status_Update.flow-meta.xml",
+        "sourceKeys": {
+          "objectKey": "flowAssignment_801c0b1b2d95b570",
+          "sourceKey": "flowAssignment_5fb7c1145e8dc2a4"
+        },
+        "id": "Log_Error",
+        "kind": "flowAssignment",
+        "label": "Log Error"
+      },
+      {
+        "status": "added",
+        "filePath": "flows/Invoice_Status_Update.flow-meta.xml",
+        "sourceKeys": {
+          "objectKey": "flowAssignment_f241ed170a0ae999",
+          "sourceKey": "flowAssignment_2efea0209227521c"
+        },
+        "id": "Orphan",
+        "kind": "flowAssignment",
+        "label": "Orphan"
+      },
+      {
+        "status": "changed",
+        "filePath": "flows/Invoice_Status_Update.flow-meta.xml",
+        "sourceKeys": {
+          "objectKey": "flowDecision_d3316a123dd88079",
+          "sourceKey": "flowDecision_35893f95df1da895"
+        },
+        "id": "Check_Amount",
+        "kind": "flowDecision",
+        "label": "Check Amount"
+      },
+      {
+        "status": "changed",
+        "filePath": "flows/Invoice_Status_Update.flow-meta.xml",
+        "sourceKeys": {
+          "objectKey": "flowRecordUpdate_b6199bc8f077d22c",
+          "sourceKey": "flowRecordUpdate_2c9c1b9588731b16"
+        },
+        "id": "Set_Status",
+        "kind": "flowRecordUpdate",
+        "label": "Set Status"
+      }
+    ],
+    "edges": [
+      {
+        "status": "unchanged",
+        "filePath": "flows/Invoice_Status_Update.flow-meta.xml",
+        "from": "$start",
+        "to": "Check_Amount",
+        "edgeType": "connector"
+      },
+      {
+        "status": "added",
+        "filePath": "flows/Invoice_Status_Update.flow-meta.xml",
+        "from": "Notify",
+        "to": "Log_Error",
+        "edgeType": "connector"
+      },
+      {
+        "status": "unchanged",
+        "filePath": "flows/Invoice_Status_Update.flow-meta.xml",
+        "from": "Notify",
+        "to": "Log_Error",
+        "edgeType": "faultConnector"
+      },
+      {
+        "status": "unchanged",
+        "filePath": "flows/Invoice_Status_Update.flow-meta.xml",
+        "from": "Check_Amount",
+        "to": "Notify",
+        "edgeType": "defaultConnector"
+      },
+      {
+        "status": "added",
+        "filePath": "flows/Invoice_Status_Update.flow-meta.xml",
+        "from": "Check_Amount",
+        "to": "Notify",
+        "edgeType": "rules[Medium].connector"
+      },
+      {
+        "status": "unchanged",
+        "filePath": "flows/Invoice_Status_Update.flow-meta.xml",
+        "from": "Check_Amount",
+        "to": "Set_Status",
+        "edgeType": "rules[Large].connector"
+      },
+      {
+        "status": "added",
+        "filePath": "flows/Invoice_Status_Update.flow-meta.xml",
+        "from": "Set_Status",
+        "to": "Log_Error",
+        "edgeType": "faultConnector"
+      },
+      {
+        "status": "removed",
+        "filePath": "flows/Invoice_Status_Update.flow-meta.xml",
+        "from": "Notify",
+        "to": "Set_Status",
+        "edgeType": "connector"
+      }
+    ]
+  }
+]

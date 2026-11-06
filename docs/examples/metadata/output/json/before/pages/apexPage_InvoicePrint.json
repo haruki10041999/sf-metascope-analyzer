@@ -1,0 +1,82 @@
+{
+  "filePath": "pages/InvoicePrint.page-meta.xml",
+  "resolvedError": [],
+  "dataType": "apexPage",
+  "result": {
+    "id": "apexPage_InvoicePrint",
+    "base": {
+      "kind": "apexPage",
+      "sourceKeys": {
+        "objectKey": "apexPage_c76f454c98633113",
+        "sourceKey": "apexPage_69568e92420dff25"
+      },
+      "fullName": "InvoicePrint",
+      "apiVersion": "61.0",
+      "label": "InvoicePrint",
+      "markup": {
+        "kind": "visualforceMarkup",
+        "sourceKeys": {
+          "objectKey": "visualforceMarkup_b35b51556d645f20",
+          "sourceKey": "visualforceMarkup_45bc1856c875cd83"
+        },
+        "root": "apex:page",
+        "attributes": {
+          "standardController": "Invoice__c",
+          "extensions": "InvoicePrintExt",
+          "renderAs": "pdf"
+        },
+        "components": [
+          "apex:outputField",
+          "c:invoiceHeader"
+        ],
+        "expressions": [
+          "$Label.AccountListTitle",
+          "Invoice__c",
+          "Invoice__c.Amount__c"
+        ]
+      }
+    },
+    "sourceObject": [
+      {
+        "objectKey": "visualforceMarkup_b35b51556d645f20",
+        "context": "<apex:page standardController=\"Invoice__c\" extensions=\"InvoicePrintExt\" renderAs=\"pdf\">\n    <c:invoiceHeader invoice=\"{!Invoice__c}\"/>\n    <apex:outputField value=\"{!Invoice__c.Amount__c}\"/>\n    <p>{!$Label.AccountListTitle}</p>\n</apex:page>",
+        "source": [
+          {
+            "sourceKey": "visualforceMarkup_45bc1856c875cd83",
+            "filePath": "pages/InvoicePrint.page",
+            "start": {
+              "offset": 0,
+              "line": 1,
+              "column": 0
+            },
+            "end": {
+              "offset": 241,
+              "line": 5,
+              "column": 12
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "apexPage_c76f454c98633113",
+        "context": "<ApexPage xmlns=\"http://soap.sforce.com/2006/04/metadata\">\n    <apiVersion>61.0</apiVersion>\n    <label>InvoicePrint</label>\n</ApexPage>",
+        "source": [
+          {
+            "sourceKey": "apexPage_69568e92420dff25",
+            "filePath": "pages/InvoicePrint.page-meta.xml",
+            "start": {
+              "offset": 39,
+              "line": 2,
+              "column": 0
+            },
+            "end": {
+              "offset": 175,
+              "line": 5,
+              "column": 11
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

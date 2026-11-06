@@ -1,0 +1,132 @@
+{
+  "filePath": "globalValueSets/Invoice_Status.globalValueSet-meta.xml",
+  "resolvedError": [],
+  "dataType": "globalValueSet",
+  "result": {
+    "id": "globalValueSet_Invoice_Status",
+    "base": {
+      "kind": "globalValueSet",
+      "sourceKeys": {
+        "objectKey": "globalValueSet_ef37ba559342c8ee",
+        "sourceKey": "globalValueSet_155ef71b99b2bf45"
+      },
+      "fullName": "Invoice_Status",
+      "masterLabel": "Invoice Status",
+      "sorted": false,
+      "customValue": [
+        {
+          "kind": "globalValue",
+          "sourceKeys": {
+            "objectKey": "globalValue_7f3c3c8bb9f40692",
+            "sourceKey": "globalValue_c6f04e4002234f4b"
+          },
+          "fullName": "Draft",
+          "label": "Draft",
+          "default": true
+        },
+        {
+          "kind": "globalValue",
+          "sourceKeys": {
+            "objectKey": "globalValue_dea9a53136321feb",
+            "sourceKey": "globalValue_3791eca08ded9465"
+          },
+          "fullName": "Sent",
+          "label": "Sent",
+          "default": false
+        },
+        {
+          "kind": "globalValue",
+          "sourceKeys": {
+            "objectKey": "globalValue_7b331c676d91d6de",
+            "sourceKey": "globalValue_73628c209dc7b8e0"
+          },
+          "fullName": "Paid",
+          "label": "Paid",
+          "default": false
+        }
+      ]
+    },
+    "sourceObject": [
+      {
+        "objectKey": "globalValue_7f3c3c8bb9f40692",
+        "context": "<customValue>\n        <fullName>Draft</fullName>\n        <default>true</default>\n        <label>Draft</label>\n    </customValue>",
+        "source": [
+          {
+            "sourceKey": "globalValue_c6f04e4002234f4b",
+            "filePath": "globalValueSets/Invoice_Status.globalValueSet-meta.xml",
+            "start": {
+              "offset": 108,
+              "line": 3,
+              "column": 4
+            },
+            "end": {
+              "offset": 236,
+              "line": 7,
+              "column": 18
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "globalValue_dea9a53136321feb",
+        "context": "<customValue>\n        <fullName>Sent</fullName>\n        <default>false</default>\n        <label>Sent</label>\n    </customValue>",
+        "source": [
+          {
+            "sourceKey": "globalValue_3791eca08ded9465",
+            "filePath": "globalValueSets/Invoice_Status.globalValueSet-meta.xml",
+            "start": {
+              "offset": 241,
+              "line": 8,
+              "column": 4
+            },
+            "end": {
+              "offset": 368,
+              "line": 12,
+              "column": 18
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "globalValue_7b331c676d91d6de",
+        "context": "<customValue>\n        <fullName>Paid</fullName>\n        <default>false</default>\n        <label>Paid</label>\n    </customValue>",
+        "source": [
+          {
+            "sourceKey": "globalValue_73628c209dc7b8e0",
+            "filePath": "globalValueSets/Invoice_Status.globalValueSet-meta.xml",
+            "start": {
+              "offset": 373,
+              "line": 13,
+              "column": 4
+            },
+            "end": {
+              "offset": 500,
+              "line": 17,
+              "column": 18
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "globalValueSet_ef37ba559342c8ee",
+        "context": "<GlobalValueSet xmlns=\"http://soap.sforce.com/2006/04/metadata\">\n    <customValue>\n        <fullName>Draft</fullName>\n        <default>true</default>\n        <label>Draft</label>\n    </customValue>\n    <customValue>\n        <fullName>Sent</fullName>\n        <default>false</default>\n        <label>Sent</label>\n    </customValue>\n    <customValue>\n        <fullName>Paid</fullName>\n        <default>false</default>\n        <label>Paid</label>\n    </customValue>\n    <masterLabel>Invoice Status</masterLabel>\n    <sorted>false</sorted>\n</GlobalValueSet>",
+        "source": [
+          {
+            "sourceKey": "globalValueSet_155ef71b99b2bf45",
+            "filePath": "globalValueSets/Invoice_Status.globalValueSet-meta.xml",
+            "start": {
+              "offset": 39,
+              "line": 2,
+              "column": 0
+            },
+            "end": {
+              "offset": 591,
+              "line": 20,
+              "column": 17
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

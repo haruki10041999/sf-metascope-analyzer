@@ -1,4 +1,4 @@
-// LWC のテンプレート (.html) の parse と検証 (docs/lwc-template-stylesheet-plan.md 6.1・6.6)。
+// LWC のテンプレート (.html) の parse と検証 (docs/lwc-implementation.md)。
 // ① parse5 で構文解析 → JSON (中間表現は作らない)、② @lwc/template-compiler で LWC のテンプレートとして検証。
 // HTML の構文エラーも template-compiler が LWC1058 などで返すので、parse5 の onParseError は使わない (6.6.1)
 import { parse } from '@lwc/template-compiler';

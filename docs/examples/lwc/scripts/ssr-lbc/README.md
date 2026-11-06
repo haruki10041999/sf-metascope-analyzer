@@ -1,6 +1,6 @@
 # lightning-base-components の SSR の試作
 
-`lightning-base-components`（npm）の部品を使ったコンポーネント（`modules/c/demo`）を、`@lwc/engine-server` で HTML にする。結果と注意点は [lwc-snapshot-plan.md](../../../lwc-snapshot-plan.md) 2 章。
+`lightning-base-components`（npm）の部品を使ったコンポーネント（`modules/c/demo`）を、`@lwc/engine-server` で HTML にする。結果と注意点は [lwc-snapshot-plan.md](../../../../lwc-snapshot-plan.md) 2 章。
 
 `lightning-base-components` の採用（ライセンスの確認を含む）が決まるまで本体の依存関係に入れないので、このフォルダで依存関係を入れて実行する。
 

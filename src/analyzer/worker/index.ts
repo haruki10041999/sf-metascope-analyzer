@@ -5,3 +5,4 @@ export * from './apexWorker';
 export * from './objectWorker';
 export * from './objectTranslationWorker';
 export * from './lwcWorker';
+export * from './metadataFolderWorker';

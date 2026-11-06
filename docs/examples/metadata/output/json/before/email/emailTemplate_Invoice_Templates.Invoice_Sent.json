@@ -1,0 +1,46 @@
+{
+  "filePath": "email/Invoice_Templates/Invoice_Sent.email-meta.xml",
+  "resolvedError": [],
+  "dataType": "emailTemplate",
+  "result": {
+    "id": "emailTemplate_Invoice_Templates.Invoice_Sent",
+    "base": {
+      "kind": "emailTemplate",
+      "sourceKeys": {
+        "objectKey": "emailTemplate_9fd2a3697b002851",
+        "sourceKey": "emailTemplate_4161a5375c481016"
+      },
+      "fullName": "Invoice_Templates/Invoice_Sent",
+      "name": "Invoice Sent",
+      "subject": "請求書の送付",
+      "type": "text",
+      "style": "none",
+      "uiType": "Aloha",
+      "encodingKey": "UTF-8",
+      "available": true,
+      "body": "{!Invoice__c.Account__c} 様\n\n請求書 {!Invoice__c.Name} を送付しました。\n"
+    },
+    "sourceObject": [
+      {
+        "objectKey": "emailTemplate_9fd2a3697b002851",
+        "context": "<EmailTemplate xmlns=\"http://soap.sforce.com/2006/04/metadata\">\n    <available>true</available>\n    <encodingKey>UTF-8</encodingKey>\n    <name>Invoice Sent</name>\n    <style>none</style>\n    <subject>請求書の送付</subject>\n    <type>text</type>\n    <uiType>Aloha</uiType>\n</EmailTemplate>",
+        "source": [
+          {
+            "sourceKey": "emailTemplate_4161a5375c481016",
+            "filePath": "email/Invoice_Templates/Invoice_Sent.email-meta.xml",
+            "start": {
+              "offset": 39,
+              "line": 2,
+              "column": 0
+            },
+            "end": {
+              "offset": 321,
+              "line": 10,
+              "column": 16
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

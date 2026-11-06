@@ -1,0 +1,74 @@
+{
+  "filePath": "customMetadata/App_Setting.Sandbox.md-meta.xml",
+  "resolvedError": [],
+  "dataType": "customMetadata",
+  "result": {
+    "id": "customMetadata_App_Setting.Sandbox",
+    "base": {
+      "kind": "customMetadataRecord",
+      "sourceKeys": {
+        "objectKey": "customMetadataRecord_302bab8cf0826a10",
+        "sourceKey": "customMetadataRecord_621f8f21df6ae86b"
+      },
+      "fullName": "App_Setting.Sandbox",
+      "label": "Sandbox",
+      "protected": false,
+      "values": [
+        {
+          "kind": "customMetadataValue",
+          "sourceKeys": {
+            "objectKey": "customMetadataValue_4889143b62381973",
+            "sourceKey": "customMetadataValue_02d8e3cf603837c8"
+          },
+          "field": "Value__c",
+          "value": {
+            "#text": "",
+            "@xsi:nil": "true"
+          }
+        }
+      ]
+    },
+    "sourceObject": [
+      {
+        "objectKey": "customMetadataValue_4889143b62381973",
+        "context": "<values>\n        <field>Value__c</field>\n        <value xsi:nil=\"true\"/>\n    </values>",
+        "source": [
+          {
+            "sourceKey": "customMetadataValue_02d8e3cf603837c8",
+            "filePath": "customMetadata/App_Setting.Sandbox.md-meta.xml",
+            "start": {
+              "offset": 222,
+              "line": 5,
+              "column": 4
+            },
+            "end": {
+              "offset": 308,
+              "line": 8,
+              "column": 13
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "customMetadataRecord_302bab8cf0826a10",
+        "context": "<CustomMetadata xmlns=\"http://soap.sforce.com/2006/04/metadata\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">\n    <label>Sandbox</label>\n    <protected>false</protected>\n    <values>\n        <field>Value__c</field>\n        <value xsi:nil=\"true\"/>\n    </values>\n</CustomMetadata>",
+        "source": [
+          {
+            "sourceKey": "customMetadataRecord_621f8f21df6ae86b",
+            "filePath": "customMetadata/App_Setting.Sandbox.md-meta.xml",
+            "start": {
+              "offset": 39,
+              "line": 2,
+              "column": 0
+            },
+            "end": {
+              "offset": 326,
+              "line": 9,
+              "column": 17
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

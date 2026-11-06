@@ -30,7 +30,7 @@ GumTree の木を作る処理のうち、言語ごとに違うのは「ノード
 
 `makeGumTreeBuilder(language)` が `makeBlockTree` を返し、対応付け（`matchTrees`）と差分への変換（`makeGumTreeDiff`）は言語に依らない。
 
-**LWC の JS / TS では、いまは GumTree を使わない。** GumTree は「文の並び（block）の中で、文の移動・入れ子の変化を対応付ける」ためのもので、Apex ではメソッドの本体に使っている。LWC の JSON は本体を文の木にせず、解析に要る情報（呼び出し `lwcCall`・イベント `lwcEvent`・文の数 `lwcBody`）だけを持つ（[json-type-evaluation.md](./json-type-evaluation.md)）ので、比べる木がない。テンプレート（HTML）の要素の木は、`LWC_TEMPLATE_GUMTREE_LANGUAGE` を書いて同じ GumTree を使っている（3.4）。本体の文を JSON にするときも、`GumTreeLanguage` を 1 つ書けば使える。
+**LWC の JS / TS では、いまは GumTree を使わない。** GumTree は「文の並び（block）の中で、文の移動・入れ子の変化を対応付ける」ためのもので、Apex ではメソッドの本体に使っている。LWC の JSON は本体を文の木にせず、解析に要る情報（呼び出し `lwcCall`・イベント `lwcEvent`・文の数 `lwcBody`）だけを持つので、比べる木がない。テンプレート（HTML）の要素の木は、`LWC_TEMPLATE_GUMTREE_LANGUAGE` を書いて同じ GumTree を使っている（3.4）。本体の文を JSON にするときも、`GumTreeLanguage` を 1 つ書けば使える。
 
 ### 1.2 単位の差分の共通化
 
@@ -52,12 +52,15 @@ Apex も単位（クラス・トリガーはソースと -meta.xml、匿名 Apex
 
 ## 2. ファイル
 
-| ファイル                                                                           | 主なもの                                                                                                                      |
-| ---------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
-| [processor/Lwc/diff/bundle.ts](../src/analyzer/processor/Lwc/diff/bundle.ts)       | `makeLwcBundleDiffs`（入口）、`makeLwcBundleDiff`、`LwcBundleUnitDiff`                                                        |
-| [processor/Lwc/diff/module.ts](../src/analyzer/processor/Lwc/diff/module.ts)       | `makeLwcModuleDiff`（import・モジュールの直下の宣言・interface / type / enum）                                                |
-| [processor/Lwc/diff/component.ts](../src/analyzer/processor/Lwc/diff/component.ts) | `makeLwcComponentDiff`（クラスとメンバー）、`makeLwcModifiersDiff`（修飾子・デコレーター・`@wire`）、`makeLwcBodyContentDiff` |
-| [test/processor/lwc-diff.test.ts](../test/processor/lwc-diff.test.ts)              | サンプル（`docs/examples/lwc/samples/diff`）での確認                                                                                  |
+| ファイル                                                                             | 主なもの                                                                                                                      |
+| ------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------- |
+| [processor/Lwc/diff/bundle.ts](../src/analyzer/processor/Lwc/diff/bundle.ts)         | `makeLwcBundleDiffs`（入口）、`makeLwcBundleDiff`、`LwcBundleUnitDiff`                                                        |
+| [processor/Lwc/diff/module.ts](../src/analyzer/processor/Lwc/diff/module.ts)         | `makeLwcModuleDiff`（import・モジュールの直下の宣言・interface / type / enum）                                                |
+| [processor/Lwc/diff/component.ts](../src/analyzer/processor/Lwc/diff/component.ts)   | `makeLwcComponentDiff`（クラスとメンバー）、`makeLwcModifiersDiff`（修飾子・デコレーター・`@wire`）、`makeLwcBodyContentDiff` |
+| [processor/Lwc/diff/template.ts](../src/analyzer/processor/Lwc/diff/template.ts)     | `makeLwcTemplateDiff`、`LWC_TEMPLATE_GUMTREE_LANGUAGE`（HTML）                                                                |
+| [processor/Lwc/diff/stylesheet.ts](../src/analyzer/processor/Lwc/diff/stylesheet.ts) | `makeLwcStylesheetDiff`（CSS）                                                                                                |
+| [processor/Lwc/diff/meta.ts](../src/analyzer/processor/Lwc/diff/meta.ts)             | `makeLwcBundleMetaDiff`（js-meta.xml）                                                                                        |
+| [test/processor/lwc-diff.test.ts](../test/processor/lwc-diff.test.ts)                | サンプル（`docs/examples/lwc/samples/diff`）での確認                                                                          |
 
 ## 3. 分類
 
@@ -98,44 +101,66 @@ Apex も単位（クラス・トリガーはソースと -meta.xml、匿名 Apex
 | フィールド・宣言・`lwcCall`・`lwcWireConfig` | `references`  | B    | 使っている import（`local` で決まる）                                   |
 | 型（`lwcType`）                              | —             | 値   | Apex の型と同じく葉。書かれた型の文字列ごと比べる                       |
 
-### 3.3 CSS
+### 3.3 CSS（[diff/stylesheet.ts](../src/analyzer/processor/Lwc/diff/stylesheet.ts)）
 
-バンドルの `stylesheets` はファイル名で D。中身（`lwcStylesheet`）の分類は（規則は C、宣言は `prop` で D、セレクターは B）。
+木が浅いので GumTree は使わない。
 
-### 3.4 HTML
+| 対象            | プロパティ     | 分類 | 識別キー・備考                                                                                                         |
+| --------------- | -------------- | ---- | ---------------------------------------------------------------------------------------------------------------------- |
+| バンドル        | `stylesheets`  | D    | ファイル名                                                                                                             |
+| `lwcStylesheet` | `rules`        | C    | 並び順が優先順位に効く。内容の違う規則は「セレクターが 1 つでも共通」（at 規則は「名前が同じ」）なら変更として組にする |
+|                 | `imports`      | C    | 読み込む順                                                                                                             |
+| `cssRule`       | `selectors`    | B    |                                                                                                                        |
+|                 | `declarations` | D    | `prop`。同じ `prop` が複数ある（フォールバック）ときは `prop#2` のように出現順を足す                                   |
+| `cssAtRule`     | `rules`        | C    | `lwcStylesheet` の `rules` と同じ                                                                                      |
 
-バンドルの `templates` はファイル名で D。中身（`lwcTemplate`）の要素の木は GumTree（`LWC_TEMPLATE_GUMTREE_LANGUAGE`）で対応付け、属性・ディレクティブ・イベントは要素の `fields` として属性名ごとに比べる。**LWC で GumTree を使うのはテンプレートだけ**（JS は本体を文の木にしていないため。1.1 章）。
+セレクターを足した規則（`.a, .b` → `.a, .b, .c`）は削除・追加ではなく `selectors` への追加、`@media` の条件の変更は `params` の変更になる。
+
+### 3.4 HTML（[diff/template.ts](../src/analyzer/processor/Lwc/diff/template.ts)）
+
+バンドルの `templates` はファイル名で D。要素の木は GumTree で対応付ける。`<template lwc:if>` で囲む・外す、`<div>` で包むといった変更で要素の深さが変わるため（順序付き列だと、深さが変わった要素はすべて削除と追加になる）。出力は GumTree の差分（`GumTreeDiff`。`label` / `status` / `sourceKeys` / `index`、変わったノードは `fields` と `children`）をそのまま使う。
+
+| `LWC_TEMPLATE_GUMTREE_LANGUAGE` | 設定                                                                                                                                                                                     |
+| ------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `nodeLabel`                     | `lwcElement` は `element:<tag>`（違うタグ同士は対応付けない）、`lwcForEach` は `lwcForEach:<iteratorType>`、ほかは kind                                                                  |
+| `isBlockRole`                   | `children`（要素の並び）                                                                                                                                                                 |
+| `leafValues`                    | `lwcText` は葉（`text` で比べる）                                                                                                                                                        |
+| `fieldValues`                   | 要素の `attributes` / `directives` / `events` / `metadataRefs` は名前ごとの値（`label` / `lwc:ref` / `onclick` / `ref:field-name`）。分岐の条件・繰り返しの対象・`component` は 1 つの値 |
+
+- **属性は木のノードにせず、要素の値（`fields`）にする。** 属性をノードにすると、`slot="actions"` や空の `directives` のような小さな同形のノードがほかの要素の側にもあり、要素の対応付けがそちらに引っ張られる。値にすると、属性の違いは要素の `fields` に属性名ごとに出る（属性名で対応付ける D と同じ）。属性 1 つの位置は、JSON の `lwcAttribute` の sourceKeys で引ける。
+- 例: 「更新」ボタンの文言を変える → `fields.label` が `更新` → `再読み込み`。`<p>` を `<template lwc:if>` で囲む → 追加した `lwcIf` の中に `<p>` が `moved`。
+
+### 3.5 js-meta.xml（[diff/meta.ts](../src/analyzer/processor/Lwc/diff/meta.ts)）
+
+メタデータ（[metadata-diff-policy.md](./metadata-diff-policy.md)）と同じ書き方。バンドルの `meta` は A（どちらにもなければ持たない）。値は `makePropertiesDiff`、`targets` / `capabilities` / `objects` / `supportedFormFactors` は B、`targetConfigs` は D（`targets` を並べ替えてつないだもの）、`properties` は D（`name`）。
 
 ## 4. 判断の補足
 
 - **メンバーの種類が変わったとき**（フィールド → getter など）は、同じ名前なので対応付くが、kind が違うので `makeNodeDiff` が中身を比べずに値を丸ごと `before` / `after` に入れる（Apex で宣言の種類が変わったときと同じ）。
 - **`lwcBody` は、本体の文字列が変われば文の数（`statements`）が同じでも `changed`** になる（objectKey が本体の内容から作られるため）。`fields.statements` が `unchanged` の `changed` は「文の数は同じで中身が変わった」と読む。本体の中の解析に要る変化は `calls` / `events` に出る。
 - **kind を持たない入れ物**（バンドル、モジュール、`@wire`、修飾子、getter / setter の中身）は `TypedObjectDiff`（値が同じなら `unchanged`、違えばプロパティごとの `fields`）。Apex の kind を持たない式（`new` など）と同じ形。
-- **`resolvedError`**（LWC Compiler・Babel の診断）は、単位の差分（`makeIdUnitDiffs`）で B. 集合として比べる。JSON の中の `ErrorJson` は、各配列で「識別キーを持たないもの」として B. 集合で比べる。
+- **`resolvedError`**（すべてのファイルの診断とバンドルの中の突き合わせ）は、単位の差分（`makeIdUnitDiffs`）で B. 集合として比べる。JSON の中の `ErrorJson` は、各配列で「識別キーを持たないもの」として B. 集合で比べる。
 - **JS の本体の文の対応付け（GumTree）はしない**（1.1 章）。
 
 ## 5. サンプル
 
-| 内容                          | 場所                                                                                      | 実行                                                        |
-| ----------------------------- | ----------------------------------------------------------------------------------------- | ----------------------------------------------------------- |
-| LWC の Diff                   | [examples/lwc/](./examples/lwc/)（`samples/diff/before` → `after`、結果は `output/diff/`） | `npx ttsx --noCheck docs/examples/lwc/scripts/run-diff.ts`     |
-| すべてのサンプルコードの JSON | [examples/json-samples/output/](./examples/json-samples/output/)（一覧は `index.md`）     | `npx ttsx --noCheck docs/examples/json-samples/generate.ts` |
+[examples/lwc/](./examples/lwc/)（`samples/diff/before` → `after`、結果は `output/diff/`。実行は `npx ttsx --noCheck docs/examples/lwc/scripts/run-diff.ts`）。変更点と、出る差分:
 
-`lwc-diff` の変更点と、出る差分:
-
-| バンドル                  | 変更                                                             | 差分                                                                                                                                         |
-| ------------------------- | ---------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
-| `accountList`             | ラベルの import を削除し Apex の import を追加                   | `imports`: removed / added（D）                                                                                                              |
-|                           | `title` の初期値をラベル → 文字列、`maxRows` の初期値 10 → 20    | `block[title].init`・`references`、`block[maxRows].init`                                                                                     |
-|                           | `@wire(getAccounts)` の設定に `industry: '$industry'` を追加     | `decorator[wire].wire.config[industry]`: added（D）、`arg[1]`: changed                                                                       |
-|                           | getter `isTable` を削除、`@api industry`・`handleSave` を追加    | `block`: removed / added                                                                                                                     |
-|                           | イベント `accountselect` の `composed` を false → true           | `block[handleSelect].events[0].composed`: changed（C）                                                                                       |
-| `utils`                   | type の右辺・interface のメンバー・関数の引数を追加、enum を追加 | `typeDeclarations[SortDirection].variantType`、`[Row].members[industry]`: added、`declarations[toRows].param[1]`: added、`[ViewKind]`: added |
-|                           | enum は LWC Compiler が扱えない                                  | `resolvedError`: added（`TS_UNSUPPORTED`）                                                                                                   |
-| `oldBanner` / `newBanner` | バンドルの削除・追加（JS のバンドル）                            | 単位ごと removed / added                                                                                                                     |
-| `accountRow` / `broken`   | 変更なし（`broken` は LWC の仕様違反を含む）                     | unchanged                                                                                                                                    |
+| バンドル                  | 変更                                                                                     | 差分                                                                                                                                         |
+| ------------------------- | ---------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
+| `accountList`（JS）       | ラベルの import を削除し Apex の import を追加                                           | `imports`: removed / added（D）                                                                                                              |
+|                           | `title` の初期値をラベル → 文字列、`maxRows` の初期値 10 → 20                            | `block[title].init`・`references`、`block[maxRows].init`                                                                                     |
+|                           | `@wire(getAccounts)` の設定に `industry: '$industry'` を追加                             | `decorator[wire].wire.config[industry]`: added（D）、`arg[1]`: changed                                                                       |
+|                           | getter `isTable` を削除、`@api industry`・`handleSave` を追加                            | `block`: removed / added。HTML はまだ `isTable` を使うので `resolvedError` に `TEMPLATE_UNKNOWN_MEMBER`                                      |
+|                           | イベント `accountselect` の `composed` を false → true                                   | `block[handleSelect].events[0].composed`: changed（C）                                                                                       |
+| `accountList`（HTML）     | ボタンの文言・属性の変更とボタンの追加、`<p>` を `lwc:if` で囲む、文言の変更、要素の削除 | 3.4 の例                                                                                                                                     |
+| `accountList`（CSS）      | カスタムプロパティの値、セレクターの追加、規則の追加、`@media` の条件                    | 3.3 の例                                                                                                                                     |
+| `accountList`（js-meta）  | `apiVersion`、`targets` の追加、`property` の変更・追加、`capabilities` の追加           | `meta` の値・`targets`・`targetConfigs[0].properties`・`capabilities`                                                                        |
+| `utils`                   | type の右辺・interface のメンバー・関数の引数を追加、enum を追加                         | `typeDeclarations[SortDirection].variantType`、`[Row].members[industry]`: added、`declarations[toRows].param[1]`: added、`[ViewKind]`: added |
+|                           | enum は LWC Compiler が扱えない                                                          | `resolvedError`: added（`TS_UNSUPPORTED`）                                                                                                   |
+| `oldBanner` / `newBanner` | バンドルの削除・追加                                                                     | 単位ごと removed / added                                                                                                                     |
+| `accountRow` / `broken`   | 変更なし（`broken` は LWC の仕様違反を含む）                                             | unchanged                                                                                                                                    |
 
 ## 6. 今後
 
-- テンプレート（HTML）・CSS・js-meta.xml を JSON にしたら、バンドルの差分に `templates` / `stylesheets`（ファイル名で D）・`meta`（A）を足す（[lwc-parse-plan.md](./lwc-parse-plan.md) 4.1 章）。テンプレートの要素の木は、`GumTreeLanguage` を書いて GumTree で比べる。
-- 本体の文を JSON にする場合も、`GumTreeLanguage` を書けば Apex と同じ文の対応付けを使える。
+- JS の本体の文を JSON にする場合も、`GumTreeLanguage` を書けば Apex と同じ文の対応付けを使える。

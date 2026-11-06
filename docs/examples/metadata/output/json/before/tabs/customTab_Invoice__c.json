@@ -1,0 +1,40 @@
+{
+  "filePath": "tabs/Invoice__c.tab-meta.xml",
+  "resolvedError": [],
+  "dataType": "customTab",
+  "result": {
+    "id": "customTab_Invoice__c",
+    "base": {
+      "kind": "customTab",
+      "sourceKeys": {
+        "objectKey": "customTab_d6e231fbffb74546",
+        "sourceKey": "customTab_7d72804e278d65ac"
+      },
+      "fullName": "Invoice__c",
+      "customObject": true,
+      "motif": "Custom13: Box"
+    },
+    "sourceObject": [
+      {
+        "objectKey": "customTab_d6e231fbffb74546",
+        "context": "<CustomTab xmlns=\"http://soap.sforce.com/2006/04/metadata\">\n    <customObject>true</customObject>\n    <motif>Custom13: Box</motif>\n</CustomTab>",
+        "source": [
+          {
+            "sourceKey": "customTab_7d72804e278d65ac",
+            "filePath": "tabs/Invoice__c.tab-meta.xml",
+            "start": {
+              "offset": 39,
+              "line": 2,
+              "column": 0
+            },
+            "end": {
+              "offset": 182,
+              "line": 5,
+              "column": 12
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

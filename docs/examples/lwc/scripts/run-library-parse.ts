@@ -267,6 +267,7 @@ const parseMeta = (bundle: string, file: string, source: string) => {
 };
 
 fs.rmSync(OUT, { recursive: true, force: true });
+fs.mkdirSync(OUT, { recursive: true });
 for (const bundle of fs.readdirSync(ROOT).sort()) {
     for (const file of fs.readdirSync(path.join(ROOT, bundle)).sort()) {
         const source = fs

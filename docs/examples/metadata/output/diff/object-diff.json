@@ -452,10 +452,13 @@
       "kind": "object",
       "sourceKeys": {
         "objectKey": {
-          "before": "object_b9ddf9e66c0f6296",
-          "after": "object_27445cec161da543"
+          "before": "object_f821892e49ca0ac5",
+          "after": "object_e999b5f4b05f3e4e"
         },
-        "sourceKey": "object_0ee90c06256c23de"
+        "sourceKey": {
+          "before": "object_b7cef1fa547990bc",
+          "after": "object_f6c2bf7f8e39ece3"
+        }
       },
       "status": "changed",
       "match": "key",
@@ -509,12 +512,12 @@
             "kind": "field",
             "sourceKeys": {
               "objectKey": {
-                "before": "field_ad25dea8e6fc703d",
-                "after": "field_3e3d19384d814250"
+                "before": "field_b79f18854bac7f37",
+                "after": "field_0c58fd3d9777982d"
               },
               "sourceKey": {
-                "before": "field_f6c460a9da6db203",
-                "after": "field_255896ec20246a16"
+                "before": "field_cb1005ef0d6f6d19",
+                "after": "field_6c3612f03a822541"
               }
             },
             "status": "changed",
@@ -552,6 +555,33 @@
                 "status": "changed",
                 "before": "SetNull",
                 "after": "Restrict"
+              },
+              "lookupFilter": {
+                "status": "changed",
+                "before": {
+                  "active": true,
+                  "errorMessage": "有効な取引先を選んでください",
+                  "isOptional": false,
+                  "filterItems": [
+                    {
+                      "field": "Account.Tier__c",
+                      "operation": "equals",
+                      "value": "Gold"
+                    }
+                  ]
+                },
+                "after": {
+                  "active": true,
+                  "errorMessage": "有効な取引先 (Gold 以上) を選んでください",
+                  "isOptional": false,
+                  "filterItems": [
+                    {
+                      "field": "Account.Tier__c",
+                      "operation": "notEqual",
+                      "value": "Bronze"
+                    }
+                  ]
+                }
               }
             },
             "index": {
@@ -1065,6 +1095,99 @@
               "after": 0
             }
           }
+        ],
+        "sharingReasons": [
+          {
+            "kind": "sharingReason",
+            "sourceKeys": {
+              "objectKey": {
+                "before": "sharingReason_d432ade31e342a94",
+                "after": "sharingReason_49dcfb6851276169"
+              },
+              "sourceKey": {
+                "before": "sharingReason_e1b973df98b5d51a",
+                "after": "sharingReason_82a3f5d384e83b51"
+              }
+            },
+            "status": "changed",
+            "match": "key",
+            "fields": {
+              "fullName": {
+                "status": "unchanged",
+                "value": "Approver__c"
+              },
+              "label": {
+                "status": "changed",
+                "before": "Approver",
+                "after": "Invoice Approver"
+              }
+            },
+            "index": {
+              "before": 0,
+              "after": 0
+            }
+          }
+        ],
+        "searchLayouts": {
+          "customTabListAdditionalFields": [
+            {
+              "status": "unchanged",
+              "match": "identical",
+              "index": {
+                "before": 0,
+                "after": 0
+              },
+              "value": "Amount__c"
+            },
+            {
+              "status": "removed",
+              "index": 1,
+              "value": "Due_Date__c"
+            },
+            {
+              "status": "added",
+              "index": 1,
+              "value": "Status__c"
+            }
+          ],
+          "searchResultsAdditionalFields": [
+            {
+              "status": "unchanged",
+              "match": "identical",
+              "index": {
+                "before": 0,
+                "after": 0
+              },
+              "value": "Account__c"
+            },
+            {
+              "status": "added",
+              "index": 1,
+              "value": "Amount__c"
+            }
+          ]
+        },
+        "actionOverrides": [
+          {
+            "kind": "objectActionOverride",
+            "sourceKeys": {
+              "objectKey": "objectActionOverride_2c2033e8cb07fc9d",
+              "sourceKey": "objectActionOverride_f1c4d984d7b0ad1a"
+            },
+            "status": "unchanged",
+            "value": {
+              "actionName": "View",
+              "comment": "Invoice record page",
+              "content": "Invoice_Record_Page",
+              "formFactor": "Large",
+              "skipRecordTypeSelect": false,
+              "type": "Flexipage"
+            },
+            "index": {
+              "before": 0,
+              "after": 0
+            }
+          }
         ]
       }
     }
@@ -1214,6 +1337,125 @@
       "before": "object"
     },
     "resolvedError": []
+  },
+  {
+    "id": "Opportunity",
+    "status": "changed",
+    "filePath": "Opportunity",
+    "dataType": "object",
+    "resolvedError": [],
+    "content": {
+      "kind": "object",
+      "sourceKeys": {
+        "objectKey": {
+          "before": "object_69e61e2f6d8ddb69",
+          "after": "object_4592924aaffdad8b"
+        },
+        "sourceKey": "object_64bf5e9bd583ac0d"
+      },
+      "status": "changed",
+      "match": "key",
+      "fields": {
+        "apiName": {
+          "status": "unchanged",
+          "value": "Opportunity"
+        },
+        "objectType": {
+          "status": "unchanged",
+          "value": "standard"
+        },
+        "sharingModel": {
+          "status": "unchanged",
+          "value": "Private"
+        },
+        "enableHistory": {
+          "status": "unchanged",
+          "value": true
+        },
+        "businessProcesses": [
+          {
+            "kind": "businessProcess",
+            "sourceKeys": {
+              "objectKey": {
+                "before": "businessProcess_3f33702e9ea90649",
+                "after": "businessProcess_56378bf125ae64e9"
+              },
+              "sourceKey": {
+                "before": "businessProcess_7c8a9f1f54539254",
+                "after": "businessProcess_2d8e14da6ab7cc07"
+              }
+            },
+            "status": "changed",
+            "match": "key",
+            "fields": {
+              "fullName": {
+                "status": "unchanged",
+                "value": "Standard_Sales"
+              },
+              "description": {
+                "status": "changed",
+                "before": "標準の営業プロセス",
+                "after": "標準の営業プロセス (交渉を含む)"
+              },
+              "isActive": {
+                "status": "unchanged",
+                "value": true
+              },
+              "values": [
+                {
+                  "status": "unchanged",
+                  "match": "identical",
+                  "index": {
+                    "before": 0,
+                    "after": 0
+                  },
+                  "value": {
+                    "fullName": "Prospecting",
+                    "default": true
+                  }
+                },
+                {
+                  "status": "unchanged",
+                  "match": "identical",
+                  "index": {
+                    "before": 1,
+                    "after": 1
+                  },
+                  "value": {
+                    "fullName": "Qualification",
+                    "default": false
+                  }
+                },
+                {
+                  "status": "unchanged",
+                  "match": "identical",
+                  "index": {
+                    "before": 2,
+                    "after": 3
+                  },
+                  "value": {
+                    "fullName": "Closed Won",
+                    "default": false
+                  }
+                },
+                {
+                  "status": "added",
+                  "index": 2,
+                  "value": {
+                    "fullName": "Negotiation/Review",
+                    "default": false
+                  }
+                }
+              ]
+            },
+            "index": {
+              "before": 0,
+              "after": 0
+            }
+          }
+        ]
+      }
+    }
   },
   {
     "id": "Payment__c",

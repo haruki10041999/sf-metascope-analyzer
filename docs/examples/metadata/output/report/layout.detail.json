@@ -1,0 +1,330 @@
+[
+  {
+    "status": "changed",
+    "filePath": "layouts/Account-Account Layout.layout-meta.xml",
+    "sourceKeys": {
+      "objectKey": "layout_023ee5fcea89da4d",
+      "sourceKey": "layout_d6c06ffe74734e29"
+    },
+    "name": "Account-Account Layout",
+    "objectApiName": "Account",
+    "sections": [
+      {
+        "status": "unchanged",
+        "filePath": "layouts/Account-Account Layout.layout-meta.xml",
+        "sourceKeys": {
+          "objectKey": "layoutSection_668dff70e1b6ab7b",
+          "sourceKey": "layoutSection_680f62bd8955c9bf"
+        },
+        "label": "Account Information",
+        "columns": 2,
+        "items": [
+          {
+            "status": "unchanged",
+            "filePath": "layouts/Account-Account Layout.layout-meta.xml",
+            "sourceKeys": {
+              "objectKey": "layoutItem_1c40921a47fb9cb9",
+              "sourceKey": "layoutItem_fa8cc7705a906dc7"
+            },
+            "field": "Name",
+            "behavior": "Required",
+            "column": 1,
+            "row": 1
+          },
+          {
+            "status": "unchanged",
+            "filePath": "layouts/Account-Account Layout.layout-meta.xml",
+            "sourceKeys": {
+              "objectKey": "layoutItem_0ba32fdb39c4b91d",
+              "sourceKey": "layoutItem_1a137f6447a22922"
+            },
+            "field": "Tier__c",
+            "behavior": "Edit",
+            "column": 2,
+            "row": 1
+          },
+          {
+            "status": "added",
+            "filePath": "layouts/Account-Account Layout.layout-meta.xml",
+            "sourceKeys": {
+              "objectKey": "layoutItem_302e9fb7ab4081bb",
+              "sourceKey": "layoutItem_c766fc743282482a"
+            },
+            "field": "Missing__c",
+            "behavior": "Edit",
+            "column": 2,
+            "row": 2
+          }
+        ]
+      }
+    ],
+    "relatedLists": [],
+    "actions": []
+  },
+  {
+    "status": "added",
+    "filePath": "layouts/Invoice__c-Invoice Detail.layout-meta.xml",
+    "sourceKeys": {
+      "objectKey": "layout_72d9ac01e8ccc2a5",
+      "sourceKey": "layout_f4546ffd1e758237"
+    },
+    "name": "Invoice__c-Invoice Detail",
+    "objectApiName": "Invoice__c",
+    "sections": [
+      {
+        "status": "added",
+        "filePath": "layouts/Invoice__c-Invoice Detail.layout-meta.xml",
+        "sourceKeys": {
+          "objectKey": "layoutSection_d4dad438145cb14d",
+          "sourceKey": "layoutSection_25807482d36b92d0"
+        },
+        "label": "Information",
+        "columns": 1,
+        "items": [
+          {
+            "status": "added",
+            "filePath": "layouts/Invoice__c-Invoice Detail.layout-meta.xml",
+            "sourceKeys": {
+              "objectKey": "layoutItem_30470c7ca250075d",
+              "sourceKey": "layoutItem_da72c9a26be86b55"
+            },
+            "field": "Name",
+            "behavior": "Required",
+            "column": 1,
+            "row": 1
+          },
+          {
+            "status": "added",
+            "filePath": "layouts/Invoice__c-Invoice Detail.layout-meta.xml",
+            "sourceKeys": {
+              "objectKey": "layoutItem_c2da30ac705dfd51",
+              "sourceKey": "layoutItem_df850b793be876d2"
+            },
+            "field": "Amount__c",
+            "behavior": "Readonly",
+            "column": 1,
+            "row": 2
+          }
+        ]
+      }
+    ],
+    "relatedLists": [],
+    "actions": []
+  },
+  {
+    "status": "changed",
+    "filePath": "layouts/Invoice__c-Invoice Layout.layout-meta.xml",
+    "sourceKeys": {
+      "objectKey": "layout_73abc97f9fb96cf5",
+      "sourceKey": "layout_763f18f990a9e8cd"
+    },
+    "name": "Invoice__c-Invoice Layout",
+    "objectApiName": "Invoice__c",
+    "sections": [
+      {
+        "status": "unchanged",
+        "filePath": "layouts/Invoice__c-Invoice Layout.layout-meta.xml",
+        "sourceKeys": {
+          "objectKey": "layoutSection_6589400f90d57ae7",
+          "sourceKey": "layoutSection_756f27e71187d81d"
+        },
+        "label": "Information",
+        "columns": 2,
+        "items": [
+          {
+            "status": "unchanged",
+            "filePath": "layouts/Invoice__c-Invoice Layout.layout-meta.xml",
+            "sourceKeys": {
+              "objectKey": "layoutItem_30470c7ca250075d",
+              "sourceKey": "layoutItem_717f5de239aa6d95"
+            },
+            "field": "Name",
+            "behavior": "Required",
+            "column": 1,
+            "row": 1
+          },
+          {
+            "status": "changed",
+            "filePath": "layouts/Invoice__c-Invoice Layout.layout-meta.xml",
+            "sourceKeys": {
+              "objectKey": "layoutItem_7c5e5ca6c2e11fcb",
+              "sourceKey": "layoutItem_c64a22fce315e942"
+            },
+            "field": "Amount__c",
+            "behavior": "Required",
+            "column": 1,
+            "row": 2
+          },
+          {
+            "status": "removed",
+            "filePath": "layouts/Invoice__c-Invoice Layout.layout-meta.xml",
+            "sourceKeys": {
+              "objectKey": "layoutItem_57f0d9e57b9a8328",
+              "sourceKey": "layoutItem_a8949e9d7f044eff"
+            },
+            "field": "Note__c",
+            "behavior": "Edit",
+            "column": 1,
+            "row": 3
+          },
+          {
+            "status": "changed",
+            "filePath": "layouts/Invoice__c-Invoice Layout.layout-meta.xml",
+            "sourceKeys": {
+              "objectKey": "layoutItem_fdd99157056e8e23",
+              "sourceKey": "layoutItem_d972cdd437684cb9"
+            },
+            "field": "Due_Date__c",
+            "behavior": "Edit",
+            "column": 2,
+            "row": 1,
+            "movedFrom": {
+              "section": "Information",
+              "column": 2,
+              "row": 2
+            }
+          },
+          {
+            "status": "added",
+            "filePath": "layouts/Invoice__c-Invoice Layout.layout-meta.xml",
+            "sourceKeys": {
+              "objectKey": "layoutItem_214ab84d4ea5642f",
+              "sourceKey": "layoutItem_1bd0762af1664587"
+            },
+            "other": "(空白)",
+            "column": 2,
+            "row": 2
+          }
+        ]
+      },
+      {
+        "status": "added",
+        "filePath": "layouts/Invoice__c-Invoice Layout.layout-meta.xml",
+        "sourceKeys": {
+          "objectKey": "layoutSection_07bcbcb2071ca82d",
+          "sourceKey": "layoutSection_2d4f535d73198cf8"
+        },
+        "label": "Approval",
+        "columns": 2,
+        "items": [
+          {
+            "status": "changed",
+            "filePath": "layouts/Invoice__c-Invoice Layout.layout-meta.xml",
+            "sourceKeys": {
+              "objectKey": "layoutItem_08a37b1aa47cf32b",
+              "sourceKey": "layoutItem_84fe1a3f0bca9fe7"
+            },
+            "field": "Status__c",
+            "behavior": "Readonly",
+            "column": 1,
+            "row": 1,
+            "movedFrom": {
+              "section": "Information",
+              "column": 2,
+              "row": 1
+            }
+          },
+          {
+            "status": "added",
+            "filePath": "layouts/Invoice__c-Invoice Layout.layout-meta.xml",
+            "sourceKeys": {
+              "objectKey": "layoutItem_4c0e02cca22aa628",
+              "sourceKey": "layoutItem_16480b0fe7eaf566"
+            },
+            "field": "Approved__c",
+            "behavior": "Edit",
+            "column": 2,
+            "row": 1
+          }
+        ]
+      },
+      {
+        "status": "unchanged",
+        "filePath": "layouts/Invoice__c-Invoice Layout.layout-meta.xml",
+        "sourceKeys": {
+          "objectKey": "layoutSection_317febe4a4ae70af",
+          "sourceKey": "layoutSection_8dd9102dd51a8feb"
+        },
+        "label": "System Information",
+        "columns": 2,
+        "items": [
+          {
+            "status": "unchanged",
+            "filePath": "layouts/Invoice__c-Invoice Layout.layout-meta.xml",
+            "sourceKeys": {
+              "objectKey": "layoutItem_44d3c5e8a3427442",
+              "sourceKey": "layoutItem_f662558aa431287b"
+            },
+            "field": "CreatedById",
+            "behavior": "Readonly",
+            "column": 1,
+            "row": 1
+          },
+          {
+            "status": "unchanged",
+            "filePath": "layouts/Invoice__c-Invoice Layout.layout-meta.xml",
+            "sourceKeys": {
+              "objectKey": "layoutItem_24cd9513d5a91e4f",
+              "sourceKey": "layoutItem_bafc3654e76219b8"
+            },
+            "field": "LastModifiedById",
+            "behavior": "Readonly",
+            "column": 2,
+            "row": 1
+          }
+        ]
+      }
+    ],
+    "relatedLists": [
+      {
+        "status": "changed",
+        "filePath": "layouts/Invoice__c-Invoice Layout.layout-meta.xml",
+        "sourceKeys": {
+          "objectKey": "layoutRelatedList_6301b8ece5a1223c",
+          "sourceKey": "layoutRelatedList_212fb1221eb8890d"
+        },
+        "relatedList": "Invoice_Line__c.Invoice__c",
+        "fields": [
+          "NAME",
+          "Quantity__c",
+          "Product__c"
+        ]
+      }
+    ],
+    "actions": [
+      {
+        "status": "unchanged",
+        "filePath": "layouts/Invoice__c-Invoice Layout.layout-meta.xml",
+        "sourceKeys": {
+          "objectKey": "layoutAction_9ca6f81534071c83",
+          "sourceKey": "layoutAction_cc43a1b8eb80b4dd"
+        },
+        "actionName": "Edit",
+        "actionType": "StandardButton",
+        "sortOrder": 0
+      },
+      {
+        "status": "changed",
+        "filePath": "layouts/Invoice__c-Invoice Layout.layout-meta.xml",
+        "sourceKeys": {
+          "objectKey": "layoutAction_b06ed22296fff5b5",
+          "sourceKey": "layoutAction_01b91ac478dd7020"
+        },
+        "actionName": "Delete",
+        "actionType": "StandardButton",
+        "sortOrder": 2
+      },
+      {
+        "status": "added",
+        "filePath": "layouts/Invoice__c-Invoice Layout.layout-meta.xml",
+        "sourceKeys": {
+          "objectKey": "layoutAction_363e8148a5b368b0",
+          "sourceKey": "layoutAction_ed7817e72b63043c"
+        },
+        "actionName": "Invoice__c.Approve",
+        "actionType": "QuickAction",
+        "sortOrder": 1
+      }
+    ]
+  }
+]

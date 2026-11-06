@@ -1,0 +1,115 @@
+{
+  "columns": [
+    {
+      "type": "permissionSet",
+      "name": "Invoice_Manager"
+    },
+    {
+      "type": "permissionSet",
+      "name": "Invoice_Viewer"
+    },
+    {
+      "type": "permissionSet",
+      "name": "Payment_Clerk"
+    },
+    {
+      "type": "profile",
+      "name": "Sales"
+    }
+  ],
+  "rows": [
+    "Account.Tier__c",
+    "Invoice__c.Amount__c",
+    "Invoice__c.Approved__c",
+    "Invoice__c.Missing__c",
+    "Invoice__c.Status__c"
+  ],
+  "cells": {
+    "Account.Tier__c": {
+      "profile:Sales": {
+        "filePath": "profiles/Sales.profile-meta.xml",
+        "before": {
+          "readable": true,
+          "editable": false
+        },
+        "after": {
+          "readable": true,
+          "editable": true
+        },
+        "status": "changed"
+      }
+    },
+    "Invoice__c.Amount__c": {
+      "permissionSet:Invoice_Manager": {
+        "filePath": "permissionsets/Invoice_Manager.permissionset-meta.xml",
+        "before": {
+          "readable": true,
+          "editable": false
+        },
+        "after": {
+          "readable": true,
+          "editable": true
+        },
+        "status": "changed"
+      },
+      "permissionSet:Invoice_Viewer": {
+        "filePath": "permissionsets/Invoice_Viewer.permissionset-meta.xml",
+        "before": {
+          "readable": true,
+          "editable": false
+        },
+        "status": "removed"
+      },
+      "permissionSet:Payment_Clerk": {
+        "filePath": "permissionsets/Payment_Clerk.permissionset-meta.xml",
+        "after": {
+          "readable": true,
+          "editable": false
+        },
+        "status": "added"
+      }
+    },
+    "Invoice__c.Approved__c": {
+      "permissionSet:Invoice_Manager": {
+        "filePath": "permissionsets/Invoice_Manager.permissionset-meta.xml",
+        "after": {
+          "readable": true,
+          "editable": true
+        },
+        "status": "added"
+      }
+    },
+    "Invoice__c.Missing__c": {
+      "permissionSet:Invoice_Manager": {
+        "filePath": "permissionsets/Invoice_Manager.permissionset-meta.xml",
+        "after": {
+          "readable": true,
+          "editable": false
+        },
+        "status": "added"
+      }
+    },
+    "Invoice__c.Status__c": {
+      "permissionSet:Invoice_Manager": {
+        "filePath": "permissionsets/Invoice_Manager.permissionset-meta.xml",
+        "before": {
+          "readable": true,
+          "editable": true
+        },
+        "status": "removed"
+      },
+      "profile:Sales": {
+        "filePath": "profiles/Sales.profile-meta.xml",
+        "before": {
+          "readable": true,
+          "editable": false
+        },
+        "after": {
+          "readable": false,
+          "editable": true
+        },
+        "status": "changed"
+      }
+    }
+  }
+}

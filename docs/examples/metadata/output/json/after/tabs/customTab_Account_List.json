@@ -1,0 +1,41 @@
+{
+  "filePath": "tabs/Account_List.tab-meta.xml",
+  "resolvedError": [],
+  "dataType": "customTab",
+  "result": {
+    "id": "customTab_Account_List",
+    "base": {
+      "kind": "customTab",
+      "sourceKeys": {
+        "objectKey": "customTab_ce0a31a7b24dc108",
+        "sourceKey": "customTab_841f25750c64b7c2"
+      },
+      "fullName": "Account_List",
+      "label": "Account List",
+      "motif": "Custom1: Heart",
+      "lwcComponent": "accountList"
+    },
+    "sourceObject": [
+      {
+        "objectKey": "customTab_ce0a31a7b24dc108",
+        "context": "<CustomTab xmlns=\"http://soap.sforce.com/2006/04/metadata\">\n    <label>Account List</label>\n    <lwcComponent>accountList</lwcComponent>\n    <motif>Custom1: Heart</motif>\n</CustomTab>",
+        "source": [
+          {
+            "sourceKey": "customTab_841f25750c64b7c2",
+            "filePath": "tabs/Account_List.tab-meta.xml",
+            "start": {
+              "offset": 39,
+              "line": 2,
+              "column": 0
+            },
+            "end": {
+              "offset": 222,
+              "line": 6,
+              "column": 12
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

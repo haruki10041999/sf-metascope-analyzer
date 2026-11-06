@@ -1,4 +1,4 @@
-// LWC のバンドルのフォルダの読み込み (docs/lwc-parse-plan.md 4.1・4.2)。
+// LWC のバンドルのフォルダの読み込み (docs/lwc-implementation.md)。
 // 1 バンドル = 1 つの解析の単位なので、フォルダを 1 回だけ読み、ファイルを種類ごとに分けて中身も読む。
 // 解析 (bundle.ts) はここで読んだものだけを入力にし、ファイルシステムには触らない
 import fs from 'node:fs/promises';

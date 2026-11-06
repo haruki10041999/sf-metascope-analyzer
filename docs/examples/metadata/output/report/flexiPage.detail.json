@@ -1,0 +1,151 @@
+[
+  {
+    "status": "changed",
+    "filePath": "flexipages/Invoice_Record_Page.flexipage-meta.xml",
+    "sourceKeys": {
+      "objectKey": "flexiPage_d8ea489b72934ba1",
+      "sourceKey": "flexiPage_04e4d43b0076e809"
+    },
+    "name": "Invoice_Record_Page",
+    "label": "Invoice Record Page",
+    "pageType": "RecordPage",
+    "sobjectType": "Invoice__c",
+    "template": "flexipage:recordHomeTemplateDesktop",
+    "regions": [
+      {
+        "status": "changed",
+        "filePath": "flexipages/Invoice_Record_Page.flexipage-meta.xml",
+        "sourceKeys": {
+          "objectKey": "flexiPageRegion_c1438e9e44a9eace",
+          "sourceKey": "flexiPageRegion_bd226d7d3a7cb509"
+        },
+        "name": "header",
+        "items": [
+          {
+            "status": "unchanged",
+            "filePath": "flexipages/Invoice_Record_Page.flexipage-meta.xml",
+            "sourceKeys": {
+              "objectKey": "flexiPageComponent_9ef6ed311ced9340",
+              "sourceKey": "flexiPageComponent_a13480970dc6782b"
+            },
+            "identifier": "pathAssistant",
+            "itemType": "component",
+            "name": "runtime_sales_pathassistant:pathAssistant",
+            "properties": {},
+            "hasVisibilityRule": false
+          },
+          {
+            "status": "unchanged",
+            "filePath": "flexipages/Invoice_Record_Page.flexipage-meta.xml",
+            "sourceKeys": {
+              "objectKey": "flexiPageComponent_9204e26f9059f131",
+              "sourceKey": "flexiPageComponent_4d0abf1bc86d3fb6"
+            },
+            "identifier": "force_highlightsPanel",
+            "itemType": "component",
+            "name": "force:highlightsPanel",
+            "properties": {
+              "collapsed": "false"
+            },
+            "hasVisibilityRule": false
+          }
+        ]
+      },
+      {
+        "status": "changed",
+        "filePath": "flexipages/Invoice_Record_Page.flexipage-meta.xml",
+        "sourceKeys": {
+          "objectKey": "flexiPageRegion_d271bd5a9d0929dd",
+          "sourceKey": "flexiPageRegion_ff77b50f91d6f63b"
+        },
+        "name": "main",
+        "items": [
+          {
+            "status": "unchanged",
+            "filePath": "flexipages/Invoice_Record_Page.flexipage-meta.xml",
+            "sourceKeys": {
+              "objectKey": "flexiPageField_3badceb23152f968",
+              "sourceKey": "flexiPageField_5c61138ba5aaab6c"
+            },
+            "identifier": "RecordAmountField",
+            "itemType": "field",
+            "name": "Record.Amount__c",
+            "properties": {
+              "uiBehavior": "none"
+            },
+            "hasVisibilityRule": false
+          },
+          {
+            "status": "added",
+            "filePath": "flexipages/Invoice_Record_Page.flexipage-meta.xml",
+            "sourceKeys": {
+              "objectKey": "flexiPageField_bb1439dba9136747",
+              "sourceKey": "flexiPageField_760854506638aa36"
+            },
+            "identifier": "RecordMissingField",
+            "itemType": "field",
+            "name": "Record.Missing__c",
+            "properties": {
+              "uiBehavior": "none"
+            },
+            "hasVisibilityRule": false
+          }
+        ]
+      },
+      {
+        "status": "changed",
+        "filePath": "flexipages/Invoice_Record_Page.flexipage-meta.xml",
+        "sourceKeys": {
+          "objectKey": "flexiPageRegion_7bc871c60843a2e1",
+          "sourceKey": "flexiPageRegion_c688fe254f0bbf74"
+        },
+        "name": "sidebar",
+        "items": [
+          {
+            "status": "changed",
+            "filePath": "flexipages/Invoice_Record_Page.flexipage-meta.xml",
+            "sourceKeys": {
+              "objectKey": "flexiPageComponent_940f1642a10f092c",
+              "sourceKey": "flexiPageComponent_da3384e401ebd3d3"
+            },
+            "identifier": "c_accountList",
+            "itemType": "component",
+            "name": "c:accountList",
+            "properties": {
+              "title": "関連する取引先",
+              "pageSize": "5"
+            },
+            "hasVisibilityRule": true,
+            "movedFrom": "main"
+          },
+          {
+            "status": "added",
+            "filePath": "flexipages/Invoice_Record_Page.flexipage-meta.xml",
+            "sourceKeys": {
+              "objectKey": "flexiPageComponent_7ccd912d91566b74",
+              "sourceKey": "flexiPageComponent_9cbd43b1ddda972e"
+            },
+            "identifier": "c_accountRow",
+            "itemType": "component",
+            "name": "c:accountRow",
+            "properties": {},
+            "hasVisibilityRule": false
+          },
+          {
+            "status": "unchanged",
+            "filePath": "flexipages/Invoice_Record_Page.flexipage-meta.xml",
+            "sourceKeys": {
+              "objectKey": "flexiPageComponent_5701b5172ab9d231",
+              "sourceKey": "flexiPageComponent_b139ea68d83d73bc"
+            },
+            "identifier": "force_relatedListContainer",
+            "itemType": "component",
+            "name": "force:relatedListContainer",
+            "properties": {},
+            "hasVisibilityRule": false
+          }
+        ]
+      }
+    ]
+  }
+]

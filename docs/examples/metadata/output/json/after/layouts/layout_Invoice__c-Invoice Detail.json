@@ -1,0 +1,144 @@
+{
+  "filePath": "layouts/Invoice__c-Invoice Detail.layout-meta.xml",
+  "resolvedError": [],
+  "dataType": "layout",
+  "result": {
+    "id": "layout_Invoice__c-Invoice Detail",
+    "base": {
+      "kind": "layout",
+      "sourceKeys": {
+        "objectKey": "layout_72d9ac01e8ccc2a5",
+        "sourceKey": "layout_f4546ffd1e758237"
+      },
+      "name": "Invoice__c-Invoice Detail",
+      "objectApiName": "Invoice__c",
+      "sections": [
+        {
+          "kind": "layoutSection",
+          "sourceKeys": {
+            "objectKey": "layoutSection_d4dad438145cb14d",
+            "sourceKey": "layoutSection_25807482d36b92d0"
+          },
+          "label": "Information",
+          "style": "OneColumn",
+          "customLabel": false,
+          "detailHeading": true,
+          "editHeading": true,
+          "columns": 1
+        }
+      ],
+      "items": [
+        {
+          "kind": "layoutItem",
+          "sourceKeys": {
+            "objectKey": "layoutItem_30470c7ca250075d",
+            "sourceKey": "layoutItem_da72c9a26be86b55"
+          },
+          "field": "Name",
+          "behavior": "Required",
+          "position": {
+            "section": "Information",
+            "column": 1,
+            "row": 1
+          }
+        },
+        {
+          "kind": "layoutItem",
+          "sourceKeys": {
+            "objectKey": "layoutItem_c2da30ac705dfd51",
+            "sourceKey": "layoutItem_df850b793be876d2"
+          },
+          "field": "Amount__c",
+          "behavior": "Readonly",
+          "position": {
+            "section": "Information",
+            "column": 1,
+            "row": 2
+          }
+        }
+      ]
+    },
+    "sourceObject": [
+      {
+        "objectKey": "layoutSection_d4dad438145cb14d",
+        "context": "<layoutSections>\n        <customLabel>false</customLabel>\n        <detailHeading>true</detailHeading>\n        <editHeading>true</editHeading>\n        <label>Information</label>\n        <layoutColumns>\n            <layoutItems>\n                <behavior>Required</behavior>\n                <field>Name</field>\n            </layoutItems>\n            <layoutItems>\n                <behavior>Readonly</behavior>\n                <field>Amount__c</field>\n            </layoutItems>\n        </layoutColumns>\n        <style>OneColumn</style>\n    </layoutSections>",
+        "source": [
+          {
+            "sourceKey": "layoutSection_25807482d36b92d0",
+            "filePath": "layouts/Invoice__c-Invoice Detail.layout-meta.xml",
+            "start": {
+              "offset": 100,
+              "line": 3,
+              "column": 4
+            },
+            "end": {
+              "offset": 655,
+              "line": 19,
+              "column": 21
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "layoutItem_30470c7ca250075d",
+        "context": "<layoutItems>\n                <behavior>Required</behavior>\n                <field>Name</field>\n            </layoutItems>",
+        "source": [
+          {
+            "sourceKey": "layoutItem_da72c9a26be86b55",
+            "filePath": "layouts/Invoice__c-Invoice Detail.layout-meta.xml",
+            "start": {
+              "offset": 313,
+              "line": 9,
+              "column": 12
+            },
+            "end": {
+              "offset": 435,
+              "line": 12,
+              "column": 26
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "layoutItem_c2da30ac705dfd51",
+        "context": "<layoutItems>\n                <behavior>Readonly</behavior>\n                <field>Amount__c</field>\n            </layoutItems>",
+        "source": [
+          {
+            "sourceKey": "layoutItem_df850b793be876d2",
+            "filePath": "layouts/Invoice__c-Invoice Detail.layout-meta.xml",
+            "start": {
+              "offset": 448,
+              "line": 13,
+              "column": 12
+            },
+            "end": {
+              "offset": 575,
+              "line": 16,
+              "column": 26
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "layout_72d9ac01e8ccc2a5",
+        "context": "<Layout xmlns=\"http://soap.sforce.com/2006/04/metadata\">\n    <layoutSections>\n        <customLabel>false</customLabel>\n        <detailHeading>true</detailHeading>\n        <editHeading>true</editHeading>\n        <label>Information</label>\n        <layoutColumns>\n            <layoutItems>\n                <behavior>Required</behavior>\n                <field>Name</field>\n            </layoutItems>\n            <layoutItems>\n                <behavior>Readonly</behavior>\n                <field>Amount__c</field>\n            </layoutItems>\n        </layoutColumns>\n        <style>OneColumn</style>\n    </layoutSections>\n</Layout>",
+        "source": [
+          {
+            "sourceKey": "layout_f4546ffd1e758237",
+            "filePath": "layouts/Invoice__c-Invoice Detail.layout-meta.xml",
+            "start": {
+              "offset": 39,
+              "line": 2,
+              "column": 0
+            },
+            "end": {
+              "offset": 665,
+              "line": 20,
+              "column": 9
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -5,3 +5,4 @@ export * from './source';
 export * from './utils';
 export * from './xml';
 export * from './xmlJson';
+export * from './valueTree';

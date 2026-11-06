@@ -1,0 +1,75 @@
+{
+  "filePath": "queues/Invoice_Queue.queue-meta.xml",
+  "resolvedError": [],
+  "dataType": "queue",
+  "result": {
+    "id": "queue_Invoice_Queue",
+    "base": {
+      "kind": "queue",
+      "sourceKeys": {
+        "objectKey": "queue_b2b9076997371155",
+        "sourceKey": "queue_3511391886aa20d1"
+      },
+      "fullName": "Invoice_Queue",
+      "name": "Invoice Queue",
+      "doesSendEmailToMembers": false,
+      "queueMembers": {
+        "publicGroups": {
+          "publicGroup": "Finance"
+        }
+      },
+      "queueSobject": [
+        {
+          "kind": "queueSobject",
+          "sourceKeys": {
+            "objectKey": "queueSobject_bdea1fb295cf5ffa",
+            "sourceKey": "queueSobject_fb23c3213562ec67"
+          },
+          "sobjectType": "Invoice__c"
+        }
+      ]
+    },
+    "sourceObject": [
+      {
+        "objectKey": "queueSobject_bdea1fb295cf5ffa",
+        "context": "<queueSobject>\n        <sobjectType>Invoice__c</sobjectType>\n    </queueSobject>",
+        "source": [
+          {
+            "sourceKey": "queueSobject_fb23c3213562ec67",
+            "filePath": "queues/Invoice_Queue.queue-meta.xml",
+            "start": {
+              "offset": 322,
+              "line": 10,
+              "column": 4
+            },
+            "end": {
+              "offset": 402,
+              "line": 12,
+              "column": 19
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "queue_b2b9076997371155",
+        "context": "<Queue xmlns=\"http://soap.sforce.com/2006/04/metadata\">\n    <doesSendEmailToMembers>false</doesSendEmailToMembers>\n    <name>Invoice Queue</name>\n    <queueMembers>\n        <publicGroups>\n            <publicGroup>Finance</publicGroup>\n        </publicGroups>\n    </queueMembers>\n    <queueSobject>\n        <sobjectType>Invoice__c</sobjectType>\n    </queueSobject>\n</Queue>",
+        "source": [
+          {
+            "sourceKey": "queue_3511391886aa20d1",
+            "filePath": "queues/Invoice_Queue.queue-meta.xml",
+            "start": {
+              "offset": 39,
+              "line": 2,
+              "column": 0
+            },
+            "end": {
+              "offset": 411,
+              "line": 13,
+              "column": 8
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,92 @@
+{
+  "filePath": "approvalProcesses/Invoice__c.Large_Invoice_Approval.approvalProcess-meta.xml",
+  "resolvedError": [],
+  "dataType": "approvalProcess",
+  "result": {
+    "id": "approvalProcess_Invoice__c.Large_Invoice_Approval",
+    "base": {
+      "kind": "approvalProcess",
+      "sourceKeys": {
+        "objectKey": "approvalProcess_f0f6b5d7f2196bc6",
+        "sourceKey": "approvalProcess_5dd0a99afe11363d"
+      },
+      "fullName": "Invoice__c.Large_Invoice_Approval",
+      "label": "Large Invoice Approval",
+      "active": true,
+      "allowRecall": false,
+      "recordEditability": "AdminOnly",
+      "showApprovalHistory": true,
+      "allowedSubmitters": [
+        {
+          "type": "owner"
+        }
+      ],
+      "entryCriteria": {
+        "criteriaItems": {
+          "field": "Invoice__c.Amount__c",
+          "operation": "greaterThan",
+          "value": "10000"
+        }
+      },
+      "approvalStep": [
+        {
+          "kind": "approvalStep",
+          "sourceKeys": {
+            "objectKey": "approvalStep_e32b3431c5a52a55",
+            "sourceKey": "approvalStep_7a098d24f77d604e"
+          },
+          "name": "Manager",
+          "label": "Manager",
+          "allowDelegate": false,
+          "assignedApprover": {
+            "approver": {
+              "type": "userHierarchyField"
+            }
+          }
+        }
+      ]
+    },
+    "sourceObject": [
+      {
+        "objectKey": "approvalStep_e32b3431c5a52a55",
+        "context": "<approvalStep>\n        <allowDelegate>false</allowDelegate>\n        <assignedApprover>\n            <approver>\n                <type>userHierarchyField</type>\n            </approver>\n        </assignedApprover>\n        <label>Manager</label>\n        <name>Manager</name>\n    </approvalStep>",
+        "source": [
+          {
+            "sourceKey": "approvalStep_7a098d24f77d604e",
+            "filePath": "approvalProcesses/Invoice__c.Large_Invoice_Approval.approvalProcess-meta.xml",
+            "start": {
+              "offset": 248,
+              "line": 8,
+              "column": 4
+            },
+            "end": {
+              "offset": 537,
+              "line": 17,
+              "column": 19
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "approvalProcess_f0f6b5d7f2196bc6",
+        "context": "<ApprovalProcess xmlns=\"http://soap.sforce.com/2006/04/metadata\">\n    <active>true</active>\n    <allowRecall>false</allowRecall>\n    <allowedSubmitters>\n        <type>owner</type>\n    </allowedSubmitters>\n    <approvalStep>\n        <allowDelegate>false</allowDelegate>\n        <assignedApprover>\n            <approver>\n                <type>userHierarchyField</type>\n            </approver>\n        </assignedApprover>\n        <label>Manager</label>\n        <name>Manager</name>\n    </approvalStep>\n    <entryCriteria>\n        <criteriaItems>\n            <field>Invoice__c.Amount__c</field>\n            <operation>greaterThan</operation>\n            <value>10000</value>\n        </criteriaItems>\n    </entryCriteria>\n    <label>Large Invoice Approval</label>\n    <recordEditability>AdminOnly</recordEditability>\n    <showApprovalHistory>true</showApprovalHistory>\n</ApprovalProcess>",
+        "source": [
+          {
+            "sourceKey": "approvalProcess_5dd0a99afe11363d",
+            "filePath": "approvalProcesses/Invoice__c.Large_Invoice_Approval.approvalProcess-meta.xml",
+            "start": {
+              "offset": 39,
+              "line": 2,
+              "column": 0
+            },
+            "end": {
+              "offset": 921,
+              "line": 28,
+              "column": 18
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

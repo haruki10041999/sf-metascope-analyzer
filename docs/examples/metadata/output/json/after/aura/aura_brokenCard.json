@@ -1,0 +1,60 @@
+{
+  "filePath": "aura/brokenCard",
+  "resolvedError": [
+    {
+      "sourceKeys": {
+        "objectKey": "error_2b6f7d2eaad029cf",
+        "sourceKey": "error_05b30c86cb7d4b23"
+      },
+      "code": "XML_SYNTAX",
+      "contextType": "auraBundle",
+      "context": "</aura:component>",
+      "errorMessage": "</lightning:card> expected but </aura:component> found",
+      "filePath": "aura/brokenCard/brokenCard.cmp",
+      "start": {
+        "offset": 69,
+        "line": 3,
+        "column": 16
+      },
+      "end": {
+        "offset": 69,
+        "line": 3,
+        "column": 16
+      }
+    }
+  ],
+  "dataType": "error",
+  "result": {
+    "id": "aura_brokenCard",
+    "base": {
+      "kind": "error",
+      "sourceKeys": {
+        "objectKey": "error_2b6f7d2eaad029cf",
+        "sourceKey": "error_05b30c86cb7d4b23"
+      },
+      "kindType": "auraBundle"
+    },
+    "sourceObject": [
+      {
+        "objectKey": "error_2b6f7d2eaad029cf",
+        "context": "<aura:component>\n    <lightning:card title=\"broken\">\n</aura:component>\n",
+        "source": [
+          {
+            "sourceKey": "error_05b30c86cb7d4b23",
+            "filePath": "aura/brokenCard/brokenCard.cmp",
+            "start": {
+              "offset": 69,
+              "line": 3,
+              "column": 16
+            },
+            "end": {
+              "offset": 69,
+              "line": 3,
+              "column": 16
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

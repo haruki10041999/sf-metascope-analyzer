@@ -71,13 +71,14 @@ describe('ObjectWorker', () => {
                 ['Broken__c', 2],
                 ['Invoice_Line__c', 0],
                 ['Invoice__c', 0],
+                ['Opportunity', 0],
                 ['Payment__c', 0],
             ],
         );
 
         const invoice = await worker.load('Invoice__c');
         assert.equal(invoice.dataType, 'object');
-        assert.equal((await worker.loadAll()).length, 6);
+        assert.equal((await worker.loadAll()).length, 7);
     });
 
     it('runs a single task by command and type', async () => {

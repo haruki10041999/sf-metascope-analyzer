@@ -4,7 +4,7 @@
 
 | kind | JSON | 差分 |
 | --- | --- | --- |
-| `object` | 12 | 5 |
+| `object` | 14 | 6 |
 | `field` | 26 | 12 |
 | `picklistValue` | 13 | 8 |
 | `validationRule` | 4 | 2 |
@@ -14,6 +14,9 @@
 | `fieldSet` | 2 | 1 |
 | `compactLayout` | 2 | 1 |
 | `webLink` | 2 | 1 |
+| `businessProcess` | 2 | 1 |
+| `sharingReason` | 2 | 1 |
+| `objectActionOverride` | 2 | 1 |
 | `objectTranslation` | 8 | 3 |
 | `fieldTranslation` | 14 | 6 |
 | `picklistValueTranslation` | 8 | 3 |

@@ -3,6 +3,16 @@
     <fullName>Account__c</fullName>
     <deleteConstraint>SetNull</deleteConstraint>
     <label>Account</label>
+    <lookupFilter>
+        <active>true</active>
+        <errorMessage>有効な取引先を選んでください</errorMessage>
+        <filterItems>
+            <field>Account.Tier__c</field>
+            <operation>equals</operation>
+            <value>Gold</value>
+        </filterItems>
+        <isOptional>false</isOptional>
+    </lookupFilter>
     <referenceTo>Account</referenceTo>
     <relationshipLabel>Invoices</relationshipLabel>
     <relationshipName>Invoices</relationshipName>

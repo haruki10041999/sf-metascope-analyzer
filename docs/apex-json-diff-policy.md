@@ -161,14 +161,14 @@ type ListItemDiff<K extends string, T, D> =
 | `class`（Structure）             | A（ユニット直下）/ D（メンバー、キー: 名前）    | `name`: 値 / `extend`: A / `implement`: **B** / `block`: **D**（6.2） / `modifier`: **B**                                                                                    |
 | `interface`（Structure）         | A / D（キー: 名前）                             | `name`: 値 / `extend`: **B** / `block`: **D**（キー: 名前 + パラメータ型の並び） / `modifier`: B                                                                             |
 | `interfaceMethod`（Structure）   | D（キー: 名前 + パラメータ型の並び）            | `name`: 値 / `returnType`: A（`'void'` を含む） / `param`: **C** / `modifier`: B                                                                                             |
-| `method`（Structure）            | D（キー: 名前 + パラメータ型の並び）            | `name`: 値 / `returnType`: A / `param`: **C** / `block`: 文の Diff（apex-gumtree-diff.md） / `modifier`: B                                                                 |
+| `method`（Structure）            | D（キー: 名前 + パラメータ型の並び）            | `name`: 値 / `returnType`: A / `param`: **C** / `block`: 文の Diff（apex-gumtree-diff.md） / `modifier`: B                                                                   |
 | `constructor`（Structure）       | D（キー: パラメータ型の並び）                   | `name`: 値（修飾名の配列を丸ごと） / `param`: **C** / `block`: 文の Diff / `modifier`: B                                                                                     |
 | `property`（Structure）          | D（キー: 名前）                                 | `name`: 値 / `variantType`: A / `isGetter` / `isSetter`: 値 / `getterContent` / `setterContent`: A（中の `block` は文の Diff、`modifier` は B） / `error`: B / `modifier`: B |
 | `enum`（Structure）              | D（キー: 名前）                                 | `name`: 値 / `members`: **C**（`ordinal()` が並び順で決まるため） / `modifier`: B                                                                                            |
 | `enumConstant`                   | C の要素                                        | `name`: 値                                                                                                                                                                   |
 | `field`                          | D（キー: 変数名の並び）                         | `variantType`: A / `variants`: D（キー: 変数名。`init` は A） / `modifier`: B                                                                                                |
 | `notSet`                         | `objectKey` のみ                                | なし                                                                                                                                                                         |
-| `initializer`（sourceKeys なし） | C（クラス本文の中の初期化ブロックだけを並べる） | `isStatic`: 値 / `block`: 文の Diff / `modifier`: B。キーは子の `objectKey` の並びから作る（apex-gumtree-diff.md 4.1 と同じ）                                              |
+| `initializer`（sourceKeys なし） | C（クラス本文の中の初期化ブロックだけを並べる） | `isStatic`: 値 / `block`: 文の Diff / `modifier`: B。キーは子の `objectKey` の並びから作る（apex-gumtree-diff.md 4.1 と同じ）                                                |
 
 - メソッド・コンストラクタのキーに使うパラメータ型は、`TypeContentJson` を文字列化したもの（`variant` の名前は含めない）。オーバーロードを区別するため。
 - 名前やシグネチャが変わったものは `removed` + `added` にする（リネームの推定は未決事項）。

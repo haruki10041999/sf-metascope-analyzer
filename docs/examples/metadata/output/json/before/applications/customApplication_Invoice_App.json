@@ -1,0 +1,84 @@
+{
+  "filePath": "applications/Invoice_App.app-meta.xml",
+  "resolvedError": [],
+  "dataType": "customApplication",
+  "result": {
+    "id": "customApplication_Invoice_App",
+    "base": {
+      "kind": "customApplication",
+      "sourceKeys": {
+        "objectKey": "customApplication_9dc83c2fc710ffe3",
+        "sourceKey": "customApplication_ba10e314cf57ad97"
+      },
+      "fullName": "Invoice_App",
+      "label": "Invoice App",
+      "navType": "Standard",
+      "uiType": "Lightning",
+      "tabs": [
+        "standard-Account",
+        "Invoice__c"
+      ],
+      "formFactors": [
+        "Large"
+      ],
+      "actionOverrides": [
+        {
+          "kind": "appActionOverride",
+          "sourceKeys": {
+            "objectKey": "appActionOverride_ef997c64177685ab",
+            "sourceKey": "appActionOverride_fe118d800a5d06fc"
+          },
+          "actionName": "View",
+          "comment": "Action override created by Lightning App Builder during activation.",
+          "content": "Invoice_Record_Page",
+          "formFactor": "Large",
+          "pageOrSobjectType": "Invoice__c",
+          "skipRecordTypeSelect": false,
+          "type": "Flexipage"
+        }
+      ]
+    },
+    "sourceObject": [
+      {
+        "objectKey": "appActionOverride_ef997c64177685ab",
+        "context": "<actionOverrides>\n        <actionName>View</actionName>\n        <comment>Action override created by Lightning App Builder during activation.</comment>\n        <content>Invoice_Record_Page</content>\n        <formFactor>Large</formFactor>\n        <skipRecordTypeSelect>false</skipRecordTypeSelect>\n        <type>Flexipage</type>\n        <pageOrSobjectType>Invoice__c</pageOrSobjectType>\n    </actionOverrides>",
+        "source": [
+          {
+            "sourceKey": "appActionOverride_fe118d800a5d06fc",
+            "filePath": "applications/Invoice_App.app-meta.xml",
+            "start": {
+              "offset": 111,
+              "line": 3,
+              "column": 4
+            },
+            "end": {
+              "offset": 518,
+              "line": 11,
+              "column": 22
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "customApplication_9dc83c2fc710ffe3",
+        "context": "<CustomApplication xmlns=\"http://soap.sforce.com/2006/04/metadata\">\n    <actionOverrides>\n        <actionName>View</actionName>\n        <comment>Action override created by Lightning App Builder during activation.</comment>\n        <content>Invoice_Record_Page</content>\n        <formFactor>Large</formFactor>\n        <skipRecordTypeSelect>false</skipRecordTypeSelect>\n        <type>Flexipage</type>\n        <pageOrSobjectType>Invoice__c</pageOrSobjectType>\n    </actionOverrides>\n    <formFactors>Large</formFactors>\n    <label>Invoice App</label>\n    <navType>Standard</navType>\n    <tabs>standard-Account</tabs>\n    <tabs>Invoice__c</tabs>\n    <uiType>Lightning</uiType>\n</CustomApplication>",
+        "source": [
+          {
+            "sourceKey": "customApplication_ba10e314cf57ad97",
+            "filePath": "applications/Invoice_App.app-meta.xml",
+            "start": {
+              "offset": 39,
+              "line": 2,
+              "column": 0
+            },
+            "end": {
+              "offset": 732,
+              "line": 18,
+              "column": 20
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

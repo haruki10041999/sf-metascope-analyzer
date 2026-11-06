@@ -12,7 +12,7 @@ import type {
     LwcTextJson,
 } from '../../src/analyzer/types';
 
-// LWC のテンプレート (HTML) の JSON と検証 (docs/lwc-template-stylesheet-plan.md 6 章)
+// LWC のテンプレート (HTML) の JSON と検証 (docs/lwc-json-reference.md)
 
 const BUNDLES = 'docs/examples/lwc/samples/bundles/force-app/main/default/lwc';
 

@@ -1,0 +1,64 @@
+[
+  {
+    "object": "Account",
+    "flows": [],
+    "triggers": [
+      {
+        "status": "changed",
+        "name": "AccountTrigger",
+        "events": [
+          "after update",
+          "before delete"
+        ],
+        "triggerStatus": "Inactive"
+      }
+    ],
+    "validationRules": [
+      {
+        "status": "added",
+        "sourceKeys": {
+          "objectKey": "validationRule_07648dd08d700d0c",
+          "sourceKey": "validationRule_71df2abd615a8158"
+        },
+        "name": "Name_Required",
+        "active": true,
+        "errorMessage": "Name is required."
+      }
+    ]
+  },
+  {
+    "object": "Invoice__c",
+    "flows": [
+      {
+        "status": "changed",
+        "name": "Invoice_Status_Update",
+        "triggerType": "RecordAfterSave",
+        "recordTriggerType": "CreateAndUpdate",
+        "triggerOrder": 20
+      }
+    ],
+    "triggers": [],
+    "validationRules": [
+      {
+        "status": "changed",
+        "sourceKeys": {
+          "objectKey": "validationRule_fdedab7cc3824cbd",
+          "sourceKey": "validationRule_0a64b99c273a2cb0"
+        },
+        "name": "Amount_Positive",
+        "active": true,
+        "errorMessage": "Amount must be greater than zero."
+      },
+      {
+        "status": "added",
+        "sourceKeys": {
+          "objectKey": "validationRule_fce4409b2b112a60",
+          "sourceKey": "validationRule_94b3926734de10df"
+        },
+        "name": "Due_Date_Required",
+        "active": false,
+        "errorMessage": "Due date is required."
+      }
+    ]
+  }
+]

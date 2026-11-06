@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomLabels xmlns="http://soap.sforce.com/2006/04/metadata">
+    <labels>
+        <fullName>AccountListTitle</fullName>
+        <categories>account,lwc,list</categories>
+        <language>ja</language>
+        <protected>false</protected>
+        <shortDescription>AccountListTitle</shortDescription>
+        <value>取引先の一覧</value>
+    </labels>
+    <labels>
+        <fullName>Invoice_Overdue</fullName>
+        <language>ja</language>
+        <protected>false</protected>
+        <shortDescription>Invoice_Overdue</shortDescription>
+        <value>支払期限を過ぎています</value>
+    </labels>
+    <labels>
+        <fullName>Invoice_Approved</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Approved message</shortDescription>
+        <value>承認しました</value>
+    </labels>
+</CustomLabels>

@@ -1,0 +1,131 @@
+{
+  "filePath": "standardValueSets/Industry.standardValueSet-meta.xml",
+  "resolvedError": [],
+  "dataType": "standardValueSet",
+  "result": {
+    "id": "standardValueSet_Industry",
+    "base": {
+      "kind": "standardValueSet",
+      "sourceKeys": {
+        "objectKey": "standardValueSet_36786ff2a69b9202",
+        "sourceKey": "standardValueSet_10a7cf536aff17a5"
+      },
+      "fullName": "Industry",
+      "sorted": false,
+      "standardValue": [
+        {
+          "kind": "standardValue",
+          "sourceKeys": {
+            "objectKey": "standardValue_77966e98cf72eb75",
+            "sourceKey": "standardValue_2dd5ec9cf157002e"
+          },
+          "fullName": "Agriculture",
+          "label": "Agriculture",
+          "default": false
+        },
+        {
+          "kind": "standardValue",
+          "sourceKeys": {
+            "objectKey": "standardValue_fe5773883e1d0fc0",
+            "sourceKey": "standardValue_47a2653f622957ea"
+          },
+          "fullName": "Banking",
+          "label": "Banking",
+          "default": true
+        },
+        {
+          "kind": "standardValue",
+          "sourceKeys": {
+            "objectKey": "standardValue_f4ed20577d2c00d0",
+            "sourceKey": "standardValue_121a87785a770dd9"
+          },
+          "fullName": "Technology",
+          "label": "Technology",
+          "default": false
+        }
+      ]
+    },
+    "sourceObject": [
+      {
+        "objectKey": "standardValue_77966e98cf72eb75",
+        "context": "<standardValue>\n        <fullName>Agriculture</fullName>\n        <default>false</default>\n        <label>Agriculture</label>\n    </standardValue>",
+        "source": [
+          {
+            "sourceKey": "standardValue_2dd5ec9cf157002e",
+            "filePath": "standardValueSets/Industry.standardValueSet-meta.xml",
+            "start": {
+              "offset": 137,
+              "line": 4,
+              "column": 4
+            },
+            "end": {
+              "offset": 282,
+              "line": 8,
+              "column": 20
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "standardValue_fe5773883e1d0fc0",
+        "context": "<standardValue>\n        <fullName>Banking</fullName>\n        <default>true</default>\n        <label>Banking</label>\n    </standardValue>",
+        "source": [
+          {
+            "sourceKey": "standardValue_47a2653f622957ea",
+            "filePath": "standardValueSets/Industry.standardValueSet-meta.xml",
+            "start": {
+              "offset": 287,
+              "line": 9,
+              "column": 4
+            },
+            "end": {
+              "offset": 423,
+              "line": 13,
+              "column": 20
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "standardValue_f4ed20577d2c00d0",
+        "context": "<standardValue>\n        <fullName>Technology</fullName>\n        <default>false</default>\n        <label>Technology</label>\n    </standardValue>",
+        "source": [
+          {
+            "sourceKey": "standardValue_121a87785a770dd9",
+            "filePath": "standardValueSets/Industry.standardValueSet-meta.xml",
+            "start": {
+              "offset": 428,
+              "line": 14,
+              "column": 4
+            },
+            "end": {
+              "offset": 571,
+              "line": 18,
+              "column": 20
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "standardValueSet_36786ff2a69b9202",
+        "context": "<StandardValueSet xmlns=\"http://soap.sforce.com/2006/04/metadata\">\n    <sorted>false</sorted>\n    <standardValue>\n        <fullName>Agriculture</fullName>\n        <default>false</default>\n        <label>Agriculture</label>\n    </standardValue>\n    <standardValue>\n        <fullName>Banking</fullName>\n        <default>true</default>\n        <label>Banking</label>\n    </standardValue>\n    <standardValue>\n        <fullName>Technology</fullName>\n        <default>false</default>\n        <label>Technology</label>\n    </standardValue>\n</StandardValueSet>",
+        "source": [
+          {
+            "sourceKey": "standardValueSet_10a7cf536aff17a5",
+            "filePath": "standardValueSets/Industry.standardValueSet-meta.xml",
+            "start": {
+              "offset": 39,
+              "line": 2,
+              "column": 0
+            },
+            "end": {
+              "offset": 591,
+              "line": 19,
+              "column": 19
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

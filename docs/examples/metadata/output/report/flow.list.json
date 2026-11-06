@@ -1,0 +1,31 @@
+[
+  {
+    "status": "changed",
+    "filePath": "flows/Account_Wizard.flow-meta.xml",
+    "sourceKeys": {
+      "objectKey": "flow_0b0a1ab3bb581695",
+      "sourceKey": "flow_533601b48e7551a1"
+    },
+    "name": "Account_Wizard",
+    "label": "Account Wizard",
+    "processType": "Flow",
+    "flowStatus": "Active",
+    "elementCount": 3
+  },
+  {
+    "status": "changed",
+    "filePath": "flows/Invoice_Status_Update.flow-meta.xml",
+    "sourceKeys": {
+      "objectKey": "flow_4d5288426dd7b67d",
+      "sourceKey": "flow_67ff9e0fb530fcd2"
+    },
+    "name": "Invoice_Status_Update",
+    "label": "Invoice Status Update",
+    "processType": "AutoLaunchedFlow",
+    "triggerType": "RecordAfterSave",
+    "recordTriggerType": "CreateAndUpdate",
+    "object": "Invoice__c",
+    "flowStatus": "Active",
+    "elementCount": 5
+  }
+]

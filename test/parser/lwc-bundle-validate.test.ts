@@ -6,7 +6,7 @@ import { describe, it } from 'node:test';
 
 import { LwcParser } from '../../src/analyzer/parser/Lwc';
 
-// 同じバンドルの中の突き合わせ (docs/lwc-template-stylesheet-plan.md 6.6.4)
+// 同じバンドルの中の突き合わせ (docs/lwc-implementation.md)
 
 const META = (capabilities = '') => `<?xml version="1.0" encoding="UTF-8"?>
 <LightningComponentBundle xmlns="http://soap.sforce.com/2006/04/metadata">

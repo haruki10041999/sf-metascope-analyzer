@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Translations xmlns="http://soap.sforce.com/2006/04/metadata">
+    <customApplications>
+        <label>請求書アプリ</label>
+        <name>Invoice_App</name>
+    </customApplications>
+    <customLabels>
+        <label>取引先の一覧</label>
+        <name>AccountListTitle</name>
+    </customLabels>
+    <customLabels>
+        <label>承認しました</label>
+        <name>Invoice_Approved</name>
+    </customLabels>
+    <customTabs>
+        <label>請求書</label>
+        <name>Invoice__c</name>
+    </customTabs>
+</Translations>

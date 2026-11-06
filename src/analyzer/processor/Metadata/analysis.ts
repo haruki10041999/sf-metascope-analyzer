@@ -23,6 +23,8 @@ export type ObjectFieldInfo = {
     /** Salesforce の項目の型 (メタデータの type)。implicit の項目は持たない */
     fieldType?: string;
     label?: string;
+    /** 項目自体が必須 (required、または主従関係)。必須のときだけ持つ */
+    required?: true;
     reference?: { objectApiName: string; relationType: RelationType; relationshipName?: string };
     /** 元の field の sourceKeys (implicit の項目は持たない) */
     sourceKeys?: ConvertKeys;
@@ -109,6 +111,9 @@ const toFieldInfo = (field: CustomFieldJson): ObjectFieldInfo => {
         valueType: getFieldValueType(field),
         ...(field.type !== undefined ? { fieldType: field.type } : {}),
         ...(field.label !== undefined ? { label: field.label } : {}),
+        ...(field.required === true || field.type === 'MasterDetail'
+            ? { required: true as const }
+            : {}),
         ...(relationType && field.referenceTo
             ? {
                   reference: {
