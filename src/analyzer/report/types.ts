@@ -33,7 +33,7 @@ export type MetadataSnapshot = {
     flows?: FlowParseResult[];
     layouts?: LayoutParseResult[];
     flexiPages?: FlexiPageParseResult[];
-    /** 優先度 B・C のメタデータ (種類をまとめて。docs/metadata-b-c-plan.md) */
+    /** 優先度 B・C のメタデータ (種類をまとめて。docs/metadata-implementation.md) 10 章 */
     others?: MetadataFileParseResult[];
     objects?: ObjectParseResult[];
     apex?: ApexUnitParseResult[];

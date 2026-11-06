@@ -5,7 +5,7 @@ import type { ObjectInfo } from './analysis';
 import { walkJsonNodes } from './labelAnalysis';
 
 // フォルダ単位のメタデータ (権限・ラベル・Flow・画面) の解析で共通の、ほかのメタデータへの参照の確かめ方。
-// 方針: docs/metadata-a-plan.md 2.3 章 (種類をまたぐ突き合わせは保存する JSON に入れず、解析で行う)。
+// 方針: docs/metadata-implementation.md 10 章 (種類をまたぐ突き合わせは保存する JSON に入れず、解析で行う)。
 // リポジトリにあるはずのもの (カスタムのオブジェクト・項目など) だけを確かめ、標準のものは「ない」と言わない (LWC の解析と同じ)
 
 /** 突き合わせに使う、リポジトリの解析結果。渡したものだけを確かめる */

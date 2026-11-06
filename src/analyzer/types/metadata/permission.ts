@@ -15,7 +15,7 @@ import {
     type XmlSourceRegistry,
 } from '../commons/xmlJson';
 
-// 権限 (PermissionSet / MutingPermissionSet / Profile / PermissionSetGroup) の JSON。方針: docs/metadata-a-plan.md 3・4 章
+// 権限 (PermissionSet / MutingPermissionSet / Profile / PermissionSetGroup) の JSON。方針: docs/metadata-implementation.md 10 章
 // 権限の 1 行 (objectPermissions など) は、要素名 → kind・値のスキーマ・キーの表 (行の表) で読む。
 // 値は XML の要素名をプロパティ名にし、ファイルにないものは持たない。子の並びは XML の順のまま
 

@@ -28,7 +28,7 @@ import type {
     ReportInput,
 } from './types';
 
-// 権限の provider (permission.*)。方針: docs/report-components-plan.md 2.5 章、docs/metadata-a-plan.md 3・4 章
+// 権限の provider (permission.*)。方針: docs/report-components-plan.md 2.5 章、docs/metadata-implementation.md 10 章
 
 type HolderType = PermissionHolderRef['type'];
 

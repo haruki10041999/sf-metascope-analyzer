@@ -29,6 +29,7 @@ import {
     PropertiesDiff,
     makePresentDiff,
     makePropertiesDiff,
+    makeUnorderedValuesDiff,
     presentEntry,
 } from '../../commons/diff/present';
 import { CompactLayoutJsonDiff, makeCompactLayoutDiff } from './compactLayout';
@@ -105,6 +106,8 @@ export type CustomObjectJsonDiff = NodeDiff<
                 ObjectActionOverrideJsonDiff
             >[]
         >;
+        /** 集合 (読んでいない要素の名前) */
+        skippedElements?: PresentDiff<string[], TypedListDiff<string, never>>;
     } & PropertiesDiff<typeof OBJECT_SCHEMA>
 >;
 
@@ -251,6 +254,10 @@ export const makeCustomObjectDiff = (
                     sources,
                 ),
             ),
+        ),
+        ...presentEntry(
+            'skippedElements',
+            makePresentDiff(b.skippedElements, a.skippedElements, makeUnorderedValuesDiff),
         ),
     }));
 

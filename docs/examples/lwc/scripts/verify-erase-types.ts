@@ -164,7 +164,8 @@ for (const c of CASES) {
     try {
         babelParse(code, {
             sourceType: 'module',
-            plugins: [['decorators', { decoratorsBeforeExport: true }]],
+            // decoratorsBeforeExport は Babel の型の宣言にない旧オプション
+            plugins: [['decorators', { decoratorsBeforeExport: true }] as never],
         });
         check(`${c.name}: JavaScript として parse`, true);
     } catch (e) {
@@ -193,7 +194,7 @@ for (const c of CASES) {
                     actual.code === expected.code &&
                     actual.line === expected.line &&
                     actual.column === expected.column,
-                `${JSON.stringify(actual)} ${String(e.message).split('\n')[0].slice(0, 160)}`,
+                `${JSON.stringify(actual)} ${(String(e.message).split('\n')[0] ?? '').slice(0, 160)}`,
             );
         }
     }

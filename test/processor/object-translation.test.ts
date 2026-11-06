@@ -153,7 +153,7 @@ describe('MetadataProcessor with object translations', () => {
     it('saves translations separately and diffs the repository against them', async () => {
         const repository = path.join(root, 'repo');
         const saveRoot = path.join(root, 'save');
-        await cp(path.resolve('docs/examples/metadata/samples/before'), repository, {
+        await cp(path.resolve('docs/examples/repository/before'), repository, {
             recursive: true,
         });
 
@@ -165,7 +165,7 @@ describe('MetadataProcessor with object translations', () => {
         );
 
         await rm(repository, { recursive: true, force: true });
-        await cp(path.resolve('docs/examples/metadata/samples/after'), repository, {
+        await cp(path.resolve('docs/examples/repository/after'), repository, {
             recursive: true,
         });
         await processor.reset();

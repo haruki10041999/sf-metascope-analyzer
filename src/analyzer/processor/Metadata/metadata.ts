@@ -7,6 +7,8 @@ import {
     ObjectTranslationParseResult,
     ObjectTranslationParser,
     SaveDataInfo,
+    hasCurrentSavedData,
+    isObjectSaveId,
 } from '../../parser';
 
 import {
@@ -116,10 +118,9 @@ export class MetadataProcessor {
         );
     }
 
-    /** 前回の解析結果を保存しているか */
+    /** 前回の解析結果 (今の版のオブジェクト) を保存しているか。版が古ければ保存していないとみなす */
     async hasSavedObjects(): Promise<boolean> {
-        const names = await fs.readdir(this.savedDir).catch(() => [] as string[]);
-        return names.some((name) => name.endsWith('.msgpack'));
+        return hasCurrentSavedData(this.savedDir, isObjectSaveId);
     }
 
     /**

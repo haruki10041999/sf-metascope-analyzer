@@ -10,7 +10,7 @@ import {
     type LwcResolvedError,
 } from '../../src/analyzer/parser/Lwc';
 
-const BUNDLES = 'docs/examples/lwc/samples/bundles/force-app/main/default/lwc';
+const BUNDLES = 'docs/examples/repository/before/force-app/main/default/lwc';
 
 /** バンドルのフォルダを読み (folder.ts)、JS / TS のモジュールだけを parse する */
 const parseBundleScripts = async (bundleDir: string) => {

@@ -6,3 +6,4 @@ export * from './objectWorker';
 export * from './objectTranslationWorker';
 export * from './lwcWorker';
 export * from './metadataFolderWorker';
+export * from './unitWorker';

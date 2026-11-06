@@ -1,4 +1,4 @@
-import { LwcParser } from '../parser/Lwc/parser';
+import { LwcParser, isLwcSaveId } from '../parser/Lwc/parser';
 import { BatchResult, BatchWorker, WorkerOptions } from './batchWorker';
 import { SaveSummary } from './workerTask';
 
@@ -18,5 +18,10 @@ export class LwcWorker extends BatchWorker<'Lwc'> {
     async parseAndSaveAll(rootDir: string): Promise<BatchResult<string, SaveSummary>[]> {
         const directories = await LwcParser.searchBundleDirectories(rootDir);
         return this.batch(directories, (directory) => this.parseAndSave(directory));
+    }
+
+    /** LWC の保存名 (lwc_) だけを読む (ほかの種類と同じ保存先でもよい) */
+    protected override acceptsSavedId(id: string): boolean {
+        return isLwcSaveId(id);
     }
 }

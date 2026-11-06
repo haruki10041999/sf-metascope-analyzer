@@ -1,7 +1,7 @@
 import { before, describe, it } from 'node:test';
 import assert from 'node:assert/strict';
 
-import { collectErrors, formatErrors, parse } from './helpers';
+import { collectErrors, formatErrors, parse, asNode } from './helpers';
 
 type TypeModule = typeof import('../../src/analyzer/types/apex_IR/typeVisitor');
 type RestModule = typeof import('../../src/analyzer/types/apex_IR/restVisitor');
@@ -14,15 +14,15 @@ before(async () => {
 });
 
 const visitTypeRef = (source: string) => {
-    const result = new typeV.TypeVisitor().visit(parse(source, (p) => p.typeRef()));
+    const result = asNode(new typeV.TypeVisitor().visit(parse(source, (p) => p.typeRef())));
     assert.ok(typeV.isTypeRefType(result), result.getType());
     return result;
 };
 
+/** 配列の次元。配列でない型は dimension を持たない (null) ので 0 とする */
 const dimensionOf = (source: string) => {
     const dimension = visitTypeRef(source).getDimension();
-    assert.ok(dimension, `${source} の dimension が null`);
-    return dimension.getValue();
+    return dimension && 'getValue' in dimension ? ((dimension.getValue() as number | null) ?? 0) : 0;
 };
 
 describe('typeVisitor / typeRef', () => {
@@ -56,14 +56,18 @@ describe('typeVisitor / typeRef', () => {
 
 describe('restVisitor / arrayCreatorRest', () => {
     it('"[5]" は size に式、value に null を持つ', () => {
-        const result = new rest.RestVisitor().visit(parse('[5]', (p) => p.arrayCreatorRest()));
+        const result = asNode(
+            new rest.RestVisitor().visit(parse('[5]', (p) => p.arrayCreatorRest())),
+        );
         assert.ok(rest.isArrayCreatorRestType(result), result.getType());
         assert.equal(result.getValue(), null);
         assert.ok(result.getSize(), 'size が null');
     });
 
     it('"[]{1, 2}" は value に arrayInitializer、size に null を持つ', () => {
-        const result = new rest.RestVisitor().visit(parse('[]{1, 2}', (p) => p.arrayCreatorRest()));
+        const result = asNode(
+            new rest.RestVisitor().visit(parse('[]{1, 2}', (p) => p.arrayCreatorRest())),
+        );
         assert.ok(rest.isArrayCreatorRestType(result), result.getType());
         assert.equal(result.getValue()?.getType(), 'arrayInitializer');
         assert.equal(result.getSize(), null);

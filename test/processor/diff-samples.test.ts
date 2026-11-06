@@ -4,7 +4,7 @@ import { before, describe, it } from 'node:test';
 import { ALL_KINDS, countDiffKinds, runDiff } from '../../docs/examples/apex/scripts/run-diff';
 
 /**
- * docs/examples/apex/samples/diff の before / after を本番と同じ流れで変換して比べ、
+ * docs/examples/repository の before / after を本番と同じ流れで変換して比べ、
  * README.md に書いた期待どおりの差分になるかを確かめる。
  */
 
@@ -27,7 +27,7 @@ const collect = (diff: unknown, out: Node[] = []): Node[] => {
     return out;
 };
 
-describe('diff samples (docs/examples/apex/samples/diff)', () => {
+describe('diff samples (docs/examples/repository)', () => {
     let diffs: Diffs;
     const unitDiff = (id: string) => {
         const diff = diffs.find((d) => d.id === id);
@@ -53,6 +53,9 @@ describe('diff samples (docs/examples/apex/samples/diff)', () => {
                 return [d.id, d.status, fields?.source?.status, fields?.meta?.status];
             }),
             [
+                // Apex の構文のサンプル (Parser*・parser.apex・broken.apex) は before / after の両方にあり、変わらない
+                ['anonymous_broken', 'unchanged', undefined, undefined],
+                ['anonymous_parser', 'unchanged', undefined, undefined],
                 ['anonymous_script', 'changed', 'changed', undefined],
                 // ソースと -meta.xml の両方が変わったクラス (メタデータの中身は test/parser/apex-meta.test.ts で確かめる)
                 ['class_AccountService', 'changed', 'changed', 'changed'],
@@ -60,9 +63,13 @@ describe('diff samples (docs/examples/apex/samples/diff)', () => {
                 ['class_Level', 'changed', 'changed', undefined],
                 ['class_NewHelper', 'added', undefined, undefined],
                 ['class_OldHelper', 'removed', undefined, undefined],
+                ['class_ParserEnum', 'unchanged', undefined, undefined],
+                ['class_ParserInterface', 'unchanged', undefined, undefined],
+                ['class_ParserTest', 'unchanged', undefined, undefined],
                 ['class_Shape', 'changed', 'changed', undefined],
                 ['class_Unchanged', 'unchanged', undefined, undefined],
                 ['trigger_AccountTrigger', 'changed', 'changed', 'changed'],
+                ['trigger_ParserTrigger', 'unchanged', undefined, undefined],
             ],
         );
     });
@@ -182,14 +189,14 @@ describe('diff samples (docs/examples/apex/samples/diff)', () => {
         const block = diff.content.block;
         assert.ok('member' in block);
         assert.deepEqual(
-            block.member.map((m) => [m.kind, m.status]),
+            block.member.map((m: { kind: string; status: string }) => [m.kind, m.status]),
             [
                 ['field', 'changed'],
                 ['method', 'changed'],
             ],
         );
         assert.deepEqual(
-            block.statement.map((s) => s.status),
+            block.statement.map((s: { status: string }) => s.status),
             ['moved', 'changed', 'unchanged'],
         );
     });

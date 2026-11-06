@@ -1,8 +1,8 @@
 /**
- * オブジェクトの parse の動作検証。samples/before と after の force-app/main/default/objects を本番と同じ流れ
+ * オブジェクトの parse の動作検証。repository/before と after の force-app/main/default/objects を本番と同じ流れ
  * (MetadataParser.parseObjects) で JSON にし、output/json/ に出力する。
  *
- * - output/json/<before|after>/<API 名>.json: ObjectFileStructureType (MetadataParser.saveObjectFileForDevelopper と同じ形)
+ * - output/json/<before|after>/<API 名>.json: ObjectFileStructureType (MetadataParser.saveObjectFileForDeveloper と同じ形)
  * - output/json/<before|after>/objectTranslations/<オブジェクト>-<言語>.json: オブジェクトの翻訳 (ObjectTranslationParser)
  * - output/json/summary.md:                 オブジェクトごとの子の件数、読めなかったファイル、解析 (analysis) の結果
  *
@@ -10,6 +10,8 @@
  */
 import { mkdir, rm, writeFile } from 'node:fs/promises';
 import path from 'node:path';
+
+import { SIDES, sourceOf } from '../../paths';
 import { fileURLToPath } from 'node:url';
 
 import { MetadataParser, ObjectParseResult } from '../../../../src/analyzer/parser/Metadata/parser';
@@ -29,13 +31,12 @@ import { OBJECT_MEMBERS, ObjectMemberKey } from '../../../../src/analyzer/types/
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const outputDirectory = path.resolve(here, '../output/json');
-const samples = path.resolve(here, '../samples');
 
-export const SIDES = ['before', 'after'] as const;
+export { SIDES };
 
 /** before / after のオブジェクトを読む。filePath は実行環境に依らないよう objects からの相対パスにする */
 export const parseSide = async (side: (typeof SIDES)[number]): Promise<ObjectParseResult[]> => {
-    const objectsDir = path.join(samples, side, 'force-app', 'main', 'default', 'objects');
+    const objectsDir = sourceOf(side, 'objects');
     const results = await MetadataParser.parseObjects(objectsDir);
     return results.map((result) => ({
         ...result,
@@ -47,14 +48,7 @@ export const parseSide = async (side: (typeof SIDES)[number]): Promise<ObjectPar
 export const parseTranslationSide = async (
     side: (typeof SIDES)[number],
 ): Promise<ObjectTranslationParseResult[]> => {
-    const translationsDir = path.join(
-        samples,
-        side,
-        'force-app',
-        'main',
-        'default',
-        'objectTranslations',
-    );
+    const translationsDir = sourceOf(side, 'objectTranslations');
     const results = await ObjectTranslationParser.parseObjectTranslations(translationsDir);
     return results.map((result) => ({
         ...result,
@@ -139,7 +133,7 @@ const main = async () => {
         const directory = path.join(outputDirectory, side);
         await mkdir(directory, { recursive: true });
         for (const result of results) {
-            for (const { outputPath, data } of MetadataParser.saveObjectFileForDevelopper(
+            for (const { outputPath, data } of MetadataParser.saveObjectFileForDeveloper(
                 directory,
                 result,
             )) {
@@ -156,7 +150,7 @@ const main = async () => {
             for (const {
                 outputPath,
                 data,
-            } of ObjectTranslationParser.saveObjectTranslationFileForDevelopper(
+            } of ObjectTranslationParser.saveObjectTranslationFileForDeveloper(
                 translationDirectory,
                 result,
             )) {

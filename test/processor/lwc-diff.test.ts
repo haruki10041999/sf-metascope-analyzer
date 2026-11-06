@@ -5,8 +5,8 @@ import { runDiff } from '../../docs/examples/lwc/scripts/run-diff';
 import { makeLwcBundleDiffs } from '../../src/analyzer/processor/Lwc/diff/bundle';
 
 /**
- * docs/examples/lwc/samples/diff の before / after を本番と同じ流れ (LwcParser.parseLwcBundle) で読んで比べ、
- * docs/lwc-diff-policy.md の分類どおりの差分になるかを確かめる。
+ * docs/examples/repository の lwc の before / after を本番と同じ流れ (LwcParser.parseLwcBundle) で読んで比べ、
+ * docs/lwc-implementation.md の分類どおりの差分になるかを確かめる。
  */
 
 type Node = Record<string, any>;
@@ -27,7 +27,7 @@ const byName = (list: Node[], name: string, key = 'name'): Node | undefined =>
         return v === name || v?.value === name || v?.after === name;
     });
 
-describe('LWC diff samples (docs/examples/lwc/samples/diff)', () => {
+describe('LWC diff samples (docs/examples/repository の lwc)', () => {
     before(async () => {
         result = await runDiff();
     });

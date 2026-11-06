@@ -57,12 +57,13 @@
 - 保存は msgpack で、保存名に接頭辞 `objectTranslation_` を付ける（`objectTranslation_Invoice__c-ja.msgpack`）。オブジェクト（`<API 名>.msgpack`）と同じフォルダに置いても分けられ、`MetadataParser.readSavedObjects` は翻訳の保存データを読まない。
 - `MetadataProcessor` は、オブジェクトを `<保存先>/objects/`、翻訳を `<保存先>/objectTranslations/` に分けて保存する。
 
-| メソッド（`ObjectTranslationParser`）                                                        | 内容                                                                        |
-| -------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------- |
-| `searchObjectTranslationDirectories(rootDir)`                                                | 翻訳のフォルダの一覧（`objectTranslations` そのものを渡すと直下だけを見る） |
-| `parseObjectTranslation(directory)` / `parseObjectTranslations(rootDir)`                     | 翻訳を読む                                                                  |
-| `saveObjectTranslationFile` / `readObjectTranslationMsgPack` / `readSavedObjectTranslations` | msgpack での保存と読み込み（読み込みの id は保存名でもフォルダ名でもよい）  |
-| `saveObjectTranslationFileForDevelopper`                                                     | 確認用の JSON                                                               |
+| メソッド（`ObjectTranslationParser`）                                                        | 内容                                                                                                                           |
+| -------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
+| `searchObjectTranslationDirectories(rootDir)`                                                | 翻訳のフォルダの一覧（`objectTranslations` そのものを渡すと直下だけを見る）                                                    |
+| `parseObjectTranslation(directory)` / `parseObjectTranslations(rootDir)`                     | 翻訳を読む                                                                                                                     |
+| `parseObjectTranslationSource(name, files)`                                                  | 読み込み済みのファイル（`<オブジェクト>-<言語>/...` の相対パスと中身）から読む（ファイルを読まない入口。git の before 側など） |
+| `saveObjectTranslationFile` / `readObjectTranslationMsgPack` / `readSavedObjectTranslations` | msgpack での保存と読み込み（読み込みの id は保存名でもフォルダ名でもよい）                                                     |
+| `saveObjectTranslationFileForDeveloper`                                                     | 確認用の JSON                                                                                                                  |
 
 ## 3. Diff
 
@@ -74,7 +75,7 @@
 | `picklistValueTranslation` | `PicklistValueTranslationJsonDiff` | `masterLabel`                                                   |
 | 名前で識別する翻訳         | `TranslationMemberJsonDiff`        | `name`（レイアウトは `layout`、セクションは `section`）         |
 
-- 両方にない値・子の配列は出さない。片方にだけあるものは `added` / `removed`（[metadata-diff-policy.md](./metadata-diff-policy.md) と同じ）。
+- 両方にない値・子の配列は出さない。片方にだけあるものは `added` / `removed`（[metadata-implementation.md](./metadata-implementation.md) と同じ）。
 - ファイル単位の差分は、オブジェクトと共通の `makeXmlUnitDiffs`（`XmlUnitDiff`）で作る。
 
 ## 4. 解析（オブジェクトとの突き合わせ）

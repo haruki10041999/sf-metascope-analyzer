@@ -25,7 +25,7 @@ import {
     presentEntry,
 } from '../../commons/diff/present';
 
-// クラス・トリガーのメタデータ (-meta.xml) の差分。方針は docs/metadata-diff-policy.md と同じ
+// クラス・トリガーのメタデータ (-meta.xml) の差分。方針は docs/metadata-implementation.md と同じ
 // (両方にない値は出さず、片方にだけある値は added / removed)
 
 type ApexMetaFields = {

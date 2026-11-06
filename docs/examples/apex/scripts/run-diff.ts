@@ -6,10 +6,12 @@
  * - output/diff/summary.md:     unchanged 以外の差分を、ソースの文字列付きで木の形に並べたもの
  * - output/diff/coverage.md:    JsonType / StructureJsonType の kind ごとの、JSON・差分への出現数
  *
- * 実行: npx ttsx --noCheck docs/examples/apex/scripts/run-diff.ts (samples/diff/before → after、出力は output/diff/)
+ * 実行: npx ttsx --noCheck docs/examples/apex/scripts/run-diff.ts (repository/before → after、出力は output/diff/)
  */
 import { mkdir, writeFile } from 'node:fs/promises';
 import path from 'node:path';
+
+import { repositoryOf } from '../../paths';
 import { fileURLToPath } from 'node:url';
 
 import { ApexParser } from '../../../../src/analyzer/parser/Apex/parser';
@@ -24,9 +26,8 @@ type Keys = { objectKey: string; sourceKey: string };
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const outputDirectory = path.resolve(here, '../output/diff');
-const samples = path.resolve(here, '../samples/diff');
 
-/** JsonType / StructureJsonType の kind の一覧 (docs/apex-json-reference.md) */
+/** JsonType / StructureJsonType の kind の一覧 (docs/apex-implementation.md) */
 export const ALL_KINDS = {
     宣言: [
         'class',
@@ -335,8 +336,8 @@ export const countDiffKinds = (diff: unknown, counts: Map<string, number>) => {
 // ---------------------------------------------------------------------------
 
 export const runDiff = async () => {
-    const before = await parseDirectory(path.join(samples, 'before'));
-    const after = await parseDirectory(path.join(samples, 'after'));
+    const before = await parseDirectory(repositoryOf('before'));
+    const after = await parseDirectory(repositoryOf('after'));
     const diffs = makeApexUnitDiffs(before, after);
     return { before, after, diffs };
 };

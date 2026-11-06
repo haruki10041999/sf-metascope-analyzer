@@ -1,4 +1,4 @@
-import { MetadataParser } from '../parser/Metadata/parser';
+import { MetadataParser, isObjectSaveId } from '../parser/Metadata/parser';
 import { BatchResult, BatchWorker, WorkerOptions } from './batchWorker';
 import { SaveSummary } from './workerTask';
 
@@ -17,5 +17,10 @@ export class ObjectWorker extends BatchWorker<'Object'> {
     async parseAndSaveAll(rootDir: string): Promise<BatchResult<string, SaveSummary>[]> {
         const directories = await MetadataParser.searchObjectDirectories(rootDir);
         return this.batch(directories, (directory) => this.parseAndSave(directory));
+    }
+
+    /** オブジェクトの保存名 (object_) だけを読む (ほかの種類と同じ保存先でもよい) */
+    protected override acceptsSavedId(id: string): boolean {
+        return isObjectSaveId(id);
     }
 }

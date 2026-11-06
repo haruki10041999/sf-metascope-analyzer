@@ -13,7 +13,7 @@ import {
 import { childrenOf } from '../commons/xml';
 
 // Apex のクラス・トリガーのメタデータ (<名前>.cls-meta.xml / <名前>.trigger-meta.xml)。
-// 方針: docs/metadata-json-reference.md と同じ (XML の要素名をプロパティ名にし、ファイルにないものは持たない)
+// 方針: docs/metadata-implementation.md と同じ (XML の要素名をプロパティ名にし、ファイルにないものは持たない)
 
 export const APEX_META_SCHEMA = {
     /** API バージョン。61.0 のような値なので文字列のまま持つ (数値にすると 61 になる) */

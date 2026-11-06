@@ -17,8 +17,8 @@ import {
 } from './commons';
 import { TypedListDiff, makeTypedListDiff } from './list';
 
-// 方針: docs/metadata-diff-policy.md
-// 分類 (A〜D)、status、match、出力の型は Apex と同じ (docs/apex-json-diff-policy.md)。共通部品も Apex のものを使う。
+// 方針: docs/metadata-implementation.md
+// 分類 (A〜D)、status、match、出力の型は Apex と同じ (docs/apex-implementation.md)。共通部品も Apex のものを使う。
 
 /** 配列の要素。JSON ノードなら kind / sourceKeys を中身 (value) から分ける */
 export type SplitItem<E> = E extends JsonNode

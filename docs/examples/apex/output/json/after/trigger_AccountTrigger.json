@@ -1,0 +1,535 @@
+{
+  "filePath": "docs/examples/repository/after/force-app/main/default/triggers/AccountTrigger.trigger",
+  "resolvedError": [],
+  "dataType": "apexUnit",
+  "result": {
+    "id": "trigger_AccountTrigger",
+    "base": {
+      "name": "AccountTrigger",
+      "unitType": "trigger",
+      "source": {
+        "fileName": "AccountTrigger.trigger",
+        "fileType": "trigger",
+        "content": {
+          "name": "AccountTrigger",
+          "object": "Account",
+          "case": [
+            {
+              "kind": "triggerCase",
+              "sourceKeys": {
+                "objectKey": "triggerCase_cb2041e3455b1769",
+                "sourceKey": "triggerCase_6fe4932b78ab0c35"
+              },
+              "actionType": "UPDATE",
+              "timing": "AFTER"
+            },
+            {
+              "kind": "triggerCase",
+              "sourceKeys": {
+                "objectKey": "triggerCase_cf0b947cbae51616",
+                "sourceKey": "triggerCase_2f0ef5e720b0bbf0"
+              },
+              "actionType": "DELETE",
+              "timing": "BEFORE"
+            }
+          ],
+          "block": [
+            {
+              "kind": "statement",
+              "statement": {
+                "kind": "expression",
+                "sourceKeys": {
+                  "objectKey": "expressionStatement_db79d2f2628b1e61",
+                  "sourceKey": "expressionStatement_7d4eb5070b6ed059"
+                },
+                "value": {
+                  "kind": "memberAccess",
+                  "sourceKeys": {
+                    "objectKey": "dotExpression_b9247f17cc7f1471",
+                    "sourceKey": "dotExpression_719b565a6e3e2095"
+                  },
+                  "type": "method",
+                  "object": "System",
+                  "operator": ".",
+                  "member": "debug",
+                  "memberArg": [
+                    {
+                      "sourceKeys": {
+                        "objectKey": "literal_4efff1cbfc2264f6",
+                        "sourceKey": "literal_e4c82366bb92cb77"
+                      },
+                      "value": "'start'",
+                      "valueType": "string"
+                    }
+                  ]
+                }
+              },
+              "modifier": {}
+            },
+            {
+              "kind": "statement",
+              "statement": {
+                "kind": "if",
+                "sourceKeys": {
+                  "objectKey": "ifStatement_fdd4315924225fd2",
+                  "sourceKey": "ifStatement_ea438df8199d9e70"
+                },
+                "conditionBlock": [
+                  {
+                    "condition": {
+                      "kind": "ifCondition",
+                      "sourceKeys": {
+                        "objectKey": "parExpression_63501e0a73f0a4dd",
+                        "sourceKey": "parExpression_e11322543000636b"
+                      },
+                      "condition": {
+                        "sourceKeys": {
+                          "objectKey": "logAndExpression_e003264eb1107c41",
+                          "sourceKey": "logAndExpression_5d911a593d42cc79"
+                        },
+                        "left": {
+                          "kind": "memberAccess",
+                          "sourceKeys": {
+                            "objectKey": "dotExpression_e69ad3612606c1ea",
+                            "sourceKey": "dotExpression_ac4b4c70ea4b0632"
+                          },
+                          "type": "object",
+                          "object": "Trigger",
+                          "operator": ".",
+                          "member": "isBefore"
+                        },
+                        "operator": "&&",
+                        "right": {
+                          "kind": "memberAccess",
+                          "sourceKeys": {
+                            "objectKey": "dotExpression_49025812e308bb15",
+                            "sourceKey": "dotExpression_afe85f41a887edc8"
+                          },
+                          "type": "object",
+                          "object": "Trigger",
+                          "operator": ".",
+                          "member": "isInsert"
+                        }
+                      }
+                    },
+                    "block": [
+                      {
+                        "kind": "expression",
+                        "sourceKeys": {
+                          "objectKey": "expressionStatement_e999ad169ab956c5",
+                          "sourceKey": "expressionStatement_0b4fc2aea0f147f4"
+                        },
+                        "value": {
+                          "kind": "memberAccess",
+                          "sourceKeys": {
+                            "objectKey": "dotExpression_90d1ee920af54431",
+                            "sourceKey": "dotExpression_e6cbed62f5f4844d"
+                          },
+                          "type": "method",
+                          "object": "AccountService",
+                          "operator": ".",
+                          "member": "validate",
+                          "memberArg": [
+                            {
+                              "kind": "memberAccess",
+                              "sourceKeys": {
+                                "objectKey": "dotExpression_2708e278520178f9",
+                                "sourceKey": "dotExpression_1c0b7019bd77b5bd"
+                              },
+                              "type": "object",
+                              "object": "Trigger",
+                              "operator": ".",
+                              "member": "new"
+                            }
+                          ]
+                        }
+                      }
+                    ]
+                  }
+                ]
+              },
+              "modifier": {}
+            },
+            {
+              "kind": "statement",
+              "statement": {
+                "kind": "expression",
+                "sourceKeys": {
+                  "objectKey": "expressionStatement_77b80b2e36b3b3c3",
+                  "sourceKey": "expressionStatement_77599d607507595c"
+                },
+                "value": {
+                  "kind": "memberAccess",
+                  "sourceKeys": {
+                    "objectKey": "dotExpression_a3400e7b69006d22",
+                    "sourceKey": "dotExpression_7a73adf1635a5d74"
+                  },
+                  "type": "method",
+                  "object": "System",
+                  "operator": ".",
+                  "member": "debug",
+                  "memberArg": [
+                    {
+                      "sourceKeys": {
+                        "objectKey": "literal_cf3910e8d4812945",
+                        "sourceKey": "literal_1ca5ad4da5ea861f"
+                      },
+                      "value": "'done'",
+                      "valueType": "string"
+                    }
+                  ]
+                }
+              },
+              "modifier": {}
+            }
+          ]
+        }
+      },
+      "meta": {
+        "fileName": "AccountTrigger.trigger-meta.xml",
+        "meta": {
+          "kind": "apexTriggerMeta",
+          "sourceKeys": {
+            "objectKey": "apexTriggerMeta_1954cf24d5e14fb2",
+            "sourceKey": "apexTriggerMeta_9805a176e7b37cde"
+          },
+          "apiVersion": "59.0",
+          "status": "Inactive",
+          "packageVersions": [
+            {
+              "namespace": "acme",
+              "majorNumber": 1,
+              "minorNumber": 4
+            }
+          ]
+        }
+      }
+    },
+    "sourceObject": [
+      {
+        "objectKey": "triggerCase_cb2041e3455b1769",
+        "context": "after update",
+        "source": [
+          {
+            "sourceKey": "triggerCase_6fe4932b78ab0c35",
+            "start": {
+              "offset": 35,
+              "line": 1,
+              "column": 35
+            },
+            "end": {
+              "offset": 47,
+              "line": 1,
+              "column": 47
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "triggerCase_cf0b947cbae51616",
+        "context": "before delete",
+        "source": [
+          {
+            "sourceKey": "triggerCase_2f0ef5e720b0bbf0",
+            "start": {
+              "offset": 49,
+              "line": 1,
+              "column": 49
+            },
+            "end": {
+              "offset": 62,
+              "line": 1,
+              "column": 62
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "expressionStatement_db79d2f2628b1e61",
+        "context": "System.debug('start');",
+        "source": [
+          {
+            "sourceKey": "expressionStatement_7d4eb5070b6ed059",
+            "start": {
+              "offset": 70,
+              "line": 2,
+              "column": 4
+            },
+            "end": {
+              "offset": 92,
+              "line": 2,
+              "column": 26
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "dotExpression_b9247f17cc7f1471",
+        "context": "System.debug('start')",
+        "source": [
+          {
+            "sourceKey": "dotExpression_719b565a6e3e2095",
+            "start": {
+              "offset": 70,
+              "line": 2,
+              "column": 4
+            },
+            "end": {
+              "offset": 91,
+              "line": 2,
+              "column": 25
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "literal_4efff1cbfc2264f6",
+        "context": "'start'",
+        "source": [
+          {
+            "sourceKey": "literal_e4c82366bb92cb77",
+            "start": {
+              "offset": 83,
+              "line": 2,
+              "column": 17
+            },
+            "end": {
+              "offset": 90,
+              "line": 2,
+              "column": 24
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "ifStatement_fdd4315924225fd2",
+        "context": "if (Trigger.isBefore && Trigger.isInsert) {\n        AccountService.validate(Trigger.new);\n    }",
+        "source": [
+          {
+            "sourceKey": "ifStatement_ea438df8199d9e70",
+            "start": {
+              "offset": 97,
+              "line": 3,
+              "column": 4
+            },
+            "end": {
+              "offset": 192,
+              "line": 5,
+              "column": 5
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "parExpression_63501e0a73f0a4dd",
+        "context": "(Trigger.isBefore && Trigger.isInsert)",
+        "source": [
+          {
+            "sourceKey": "parExpression_e11322543000636b",
+            "start": {
+              "offset": 100,
+              "line": 3,
+              "column": 7
+            },
+            "end": {
+              "offset": 138,
+              "line": 3,
+              "column": 45
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "logAndExpression_e003264eb1107c41",
+        "context": "Trigger.isBefore && Trigger.isInsert",
+        "source": [
+          {
+            "sourceKey": "logAndExpression_5d911a593d42cc79",
+            "start": {
+              "offset": 101,
+              "line": 3,
+              "column": 8
+            },
+            "end": {
+              "offset": 137,
+              "line": 3,
+              "column": 44
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "dotExpression_e69ad3612606c1ea",
+        "context": "Trigger.isBefore",
+        "source": [
+          {
+            "sourceKey": "dotExpression_ac4b4c70ea4b0632",
+            "start": {
+              "offset": 101,
+              "line": 3,
+              "column": 8
+            },
+            "end": {
+              "offset": 117,
+              "line": 3,
+              "column": 24
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "dotExpression_49025812e308bb15",
+        "context": "Trigger.isInsert",
+        "source": [
+          {
+            "sourceKey": "dotExpression_afe85f41a887edc8",
+            "start": {
+              "offset": 121,
+              "line": 3,
+              "column": 28
+            },
+            "end": {
+              "offset": 137,
+              "line": 3,
+              "column": 44
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "expressionStatement_e999ad169ab956c5",
+        "context": "AccountService.validate(Trigger.new);",
+        "source": [
+          {
+            "sourceKey": "expressionStatement_0b4fc2aea0f147f4",
+            "start": {
+              "offset": 149,
+              "line": 4,
+              "column": 8
+            },
+            "end": {
+              "offset": 186,
+              "line": 4,
+              "column": 45
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "dotExpression_90d1ee920af54431",
+        "context": "AccountService.validate(Trigger.new)",
+        "source": [
+          {
+            "sourceKey": "dotExpression_e6cbed62f5f4844d",
+            "start": {
+              "offset": 149,
+              "line": 4,
+              "column": 8
+            },
+            "end": {
+              "offset": 185,
+              "line": 4,
+              "column": 44
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "dotExpression_2708e278520178f9",
+        "context": "Trigger.new",
+        "source": [
+          {
+            "sourceKey": "dotExpression_1c0b7019bd77b5bd",
+            "start": {
+              "offset": 173,
+              "line": 4,
+              "column": 32
+            },
+            "end": {
+              "offset": 184,
+              "line": 4,
+              "column": 43
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "expressionStatement_77b80b2e36b3b3c3",
+        "context": "System.debug('done');",
+        "source": [
+          {
+            "sourceKey": "expressionStatement_77599d607507595c",
+            "start": {
+              "offset": 197,
+              "line": 6,
+              "column": 4
+            },
+            "end": {
+              "offset": 218,
+              "line": 6,
+              "column": 25
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "dotExpression_a3400e7b69006d22",
+        "context": "System.debug('done')",
+        "source": [
+          {
+            "sourceKey": "dotExpression_7a73adf1635a5d74",
+            "start": {
+              "offset": 197,
+              "line": 6,
+              "column": 4
+            },
+            "end": {
+              "offset": 217,
+              "line": 6,
+              "column": 24
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "literal_cf3910e8d4812945",
+        "context": "'done'",
+        "source": [
+          {
+            "sourceKey": "literal_1ca5ad4da5ea861f",
+            "start": {
+              "offset": 210,
+              "line": 6,
+              "column": 17
+            },
+            "end": {
+              "offset": 216,
+              "line": 6,
+              "column": 23
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "apexTriggerMeta_1954cf24d5e14fb2",
+        "context": "<ApexTrigger xmlns=\"http://soap.sforce.com/2006/04/metadata\">\n    <apiVersion>59.0</apiVersion>\n    <packageVersions>\n        <majorNumber>1</majorNumber>\n        <minorNumber>4</minorNumber>\n        <namespace>acme</namespace>\n    </packageVersions>\n    <status>Inactive</status>\n</ApexTrigger>",
+        "source": [
+          {
+            "sourceKey": "apexTriggerMeta_9805a176e7b37cde",
+            "filePath": "AccountTrigger.trigger-meta.xml",
+            "start": {
+              "offset": 39,
+              "line": 2,
+              "column": 0
+            },
+            "end": {
+              "offset": 334,
+              "line": 10,
+              "column": 14
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

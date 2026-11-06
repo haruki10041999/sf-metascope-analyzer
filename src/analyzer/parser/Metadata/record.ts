@@ -8,15 +8,16 @@ import {
     makeRecordJson,
     type RecordMetadataType,
 } from '../../types';
+import type { DecomposedSpec } from './decomposed';
 import { MetadataFolderParser } from './folder';
 import type { ParseResultOf } from './permission';
 
-// 優先度 B・C のメタデータの parser。方針: docs/metadata-b-c-plan.md
+// 優先度 B・C のメタデータの parser。方針: docs/metadata-implementation.md 10 章
 
 /** XML 1 ファイルの種類のフォルダ・接尾辞 (JSON の作り方は types/metadata/recordTypes.ts の表) */
 const RECORD_FOLDERS: Record<
     RecordMetadataType,
-    { folder: string; suffix: string; layout?: 'nested' }
+    { folder: string; suffix: string; layout?: 'nested'; decomposed?: DecomposedSpec }
 > = {
     customMetadata: { folder: 'customMetadata', suffix: '.md-meta.xml' },
     customTab: { folder: 'tabs', suffix: '.tab-meta.xml' },
@@ -25,14 +26,44 @@ const RECORD_FOLDERS: Record<
     standardValueSet: { folder: 'standardValueSets', suffix: '.standardValueSet-meta.xml' },
     customPermission: { folder: 'customPermissions', suffix: '.customPermission-meta.xml' },
     quickAction: { folder: 'quickActions', suffix: '.quickAction-meta.xml' },
-    sharingRules: { folder: 'sharingRules', suffix: '.sharingRules-meta.xml' },
+    sharingRules: {
+        folder: 'sharingRules',
+        suffix: '.sharingRules-meta.xml',
+        // decomposeSharingRulesBeta: sharingRules/<オブジェクト>/<ルール>.sharing<種類>Rule-meta.xml
+        decomposed: {
+            unit: 'folder',
+            root: 'SharingRules',
+            children: {
+                '.sharingCriteriaRule-meta.xml': 'sharingCriteriaRules',
+                '.sharingOwnerRule-meta.xml': 'sharingOwnerRules',
+                '.sharingGuestRule-meta.xml': 'sharingGuestRules',
+                '.sharingTerritoryRule-meta.xml': 'sharingTerritoryRules',
+            },
+        },
+    },
     staticResource: { folder: 'staticresources', suffix: '.resource-meta.xml' },
     report: { folder: 'reports', suffix: '.report-meta.xml', layout: 'nested' },
     dashboard: { folder: 'dashboards', suffix: '.dashboard-meta.xml', layout: 'nested' },
     translations: { folder: 'translations', suffix: '.translation-meta.xml' },
     namedCredential: { folder: 'namedCredentials', suffix: '.namedCredential-meta.xml' },
     remoteSiteSetting: { folder: 'remoteSiteSettings', suffix: '.remoteSite-meta.xml' },
-    workflow: { folder: 'workflows', suffix: '.workflow-meta.xml' },
+    workflow: {
+        folder: 'workflows',
+        suffix: '.workflow-meta.xml',
+        // decomposeWorkflowBeta: workflows/<オブジェクト>/<名前>.workflow<種類>-meta.xml
+        decomposed: {
+            unit: 'folder',
+            root: 'Workflow',
+            children: {
+                '.workflowAlert-meta.xml': 'alerts',
+                '.workflowFieldUpdate-meta.xml': 'fieldUpdates',
+                '.workflowKnowledgePublish-meta.xml': 'knowledgePublishes',
+                '.workflowOutboundMessage-meta.xml': 'outboundMessages',
+                '.workflowRule-meta.xml': 'rules',
+                '.workflowTask-meta.xml': 'tasks',
+            },
+        },
+    },
     approvalProcess: { folder: 'approvalProcesses', suffix: '.approvalProcess-meta.xml' },
     queue: { folder: 'queues', suffix: '.queue-meta.xml' },
     group: { folder: 'groups', suffix: '.group-meta.xml' },

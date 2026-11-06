@@ -18,7 +18,7 @@ import {
     makeReferenceChecker,
 } from './references';
 
-// 権限の解析。方針: docs/metadata-a-plan.md 3.3 章
+// 権限の解析。方針: docs/metadata-implementation.md 10 章
 // 権限の表 (誰が何をできるか)、権限セットグループの実際の権限 (含む権限セットの和 − ミュート)、参照先の確認、矛盾、強い権限。
 // ファイルに書いてある行だけを扱い、書いていない権限を「なし」とは扱わない (SFDX の Profile は一部だけを持つことが多いため)
 

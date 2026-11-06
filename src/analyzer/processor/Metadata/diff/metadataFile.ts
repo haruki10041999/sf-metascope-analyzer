@@ -138,7 +138,7 @@ export const makeFlexiPageUnitDiffs = makeUnitDiffs<
 >('flexiPage', makeFlexiPageDiff);
 
 // ---------------------------------------------------------------------------
-// 優先度 B・C (docs/metadata-b-c-plan.md)
+// 優先度 B・C (docs/metadata-implementation.md) 10 章
 // ---------------------------------------------------------------------------
 
 /** 表 (recordTypes.ts) の種類の単位の差分 */

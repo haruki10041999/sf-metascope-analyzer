@@ -78,7 +78,7 @@ import {
     makeUnchangedItem,
 } from '../../commons/diff/list';
 
-// 方針: docs/apex-declaration-diff.md
+// 方針: docs/apex-implementation.md
 
 // ---------------------------------------------------------------------------
 // 識別キー

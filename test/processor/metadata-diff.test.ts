@@ -236,14 +236,7 @@ describe('MetadataProcessor', () => {
         const objects = path.join(repository, 'force-app', 'main', 'default', 'objects');
         const saveRoot = path.join(tmp, 'saved');
         const sample = (side: string) =>
-            path.join(
-                'docs/examples/metadata/samples',
-                side,
-                'force-app',
-                'main',
-                'default',
-                'objects',
-            );
+            path.join('docs/examples/repository', side, 'force-app', 'main', 'default', 'objects');
 
         await cp(sample('before'), objects, { recursive: true });
         const processor = await MetadataProcessor.create(saveRoot, repository);

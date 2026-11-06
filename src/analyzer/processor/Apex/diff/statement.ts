@@ -392,7 +392,7 @@ type StatementDiffByKind = {
 };
 
 /**
- * 入力の文の型に対応する差分の型 (docs/apex-json-diff-policy.md 6.5)。
+ * 入力の文の型に対応する差分の型 (docs/apex-implementation.md 6.5)。
  * 入れ子のブロック (文の配列) は BlockDiff。省略時は文 1 件 (配列以外) の差分の union
  */
 export type StatementJsonDiff<T extends Statement = Exclude<Statement, unknown[]>> =

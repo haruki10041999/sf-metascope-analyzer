@@ -155,6 +155,19 @@
   },
   {
     "source": "label",
+    "unit": "lwc_newBanner",
+    "code": "UNKNOWN_CUSTOM_LABEL",
+    "severity": "warning",
+    "target": "BannerMessage",
+    "message": "カスタム表示ラベル BannerMessage がリポジトリにない",
+    "sourceKeys": {
+      "objectKey": "importDeclaration_488735bacb8ab5b8",
+      "sourceKey": "importDeclaration_e988dfac11d6694e"
+    },
+    "status": "added"
+  },
+  {
+    "source": "label",
     "unit": "customLabels_CustomLabels",
     "code": "UNUSED_CUSTOM_LABEL",
     "severity": "info",

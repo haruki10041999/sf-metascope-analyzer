@@ -1,5 +1,5 @@
 /**
- * オブジェクトの Diff の動作検証。samples/before と after のオブジェクトを本番と同じ流れ (MetadataParser.parseObjects) で読み、
+ * オブジェクトの Diff の動作検証。repository/before と after のオブジェクトを本番と同じ流れ (MetadataParser.parseObjects) で読み、
  * makeObjectUnitDiffs で比べた結果を output/diff/ に出力する。
  *
  * - output/diff/object-diff.json: makeObjectUnitDiffs の結果
@@ -36,7 +36,7 @@ import { parseSide, parseTranslationSide } from './run-parse';
 const here = path.dirname(fileURLToPath(import.meta.url));
 const outputDirectory = path.resolve(here, '../output/diff');
 
-/** JsonType の kind の一覧 (docs/metadata-json-reference.md) */
+/** JsonType の kind の一覧 (docs/metadata-implementation.md) */
 export const ALL_KINDS = [
     'object',
     'field',

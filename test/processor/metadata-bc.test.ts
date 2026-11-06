@@ -37,10 +37,10 @@ import type {
     ReportJson,
 } from '../../src/analyzer/types';
 
-// 優先度 B・C のメタデータ (docs/metadata-b-c-plan.md)。サンプルは docs/examples/metadata/samples
+// 優先度 B・C のメタデータ (docs/metadata-implementation.md) 10 章。サンプルは docs/examples/repository
 
 const root = (side: 'before' | 'after') =>
-    path.resolve('docs/examples/metadata/samples', side, 'force-app/main/default');
+    path.resolve('docs/examples/repository', side, 'force-app/main/default');
 
 const NS = 'xmlns="http://soap.sforce.com/2006/04/metadata"';
 
@@ -305,11 +305,9 @@ describe('種類をまたぐ参照 (analyzeMetadataReferences)', () => {
         const analysis = analyzeMetadataReferences({
             metadata: await all(),
             objects: await MetadataParser.parseObjects(path.join(root('after'), 'objects')),
-            apex: await ApexParser.parseApexUnits(
-                path.resolve('docs/examples/apex/samples/diff/after'),
-            ),
+            apex: await ApexParser.parseApexUnits(path.resolve('docs/examples/repository/after')),
             lwc: await LwcParser.parseLwcBundles(
-                path.resolve('docs/examples/lwc/samples/bundles/force-app/main/default/lwc'),
+                path.resolve('docs/examples/repository/after/force-app/main/default/lwc'),
             ),
         });
         assert.deepEqual(

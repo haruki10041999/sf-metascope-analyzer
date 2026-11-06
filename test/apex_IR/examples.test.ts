@@ -1,10 +1,11 @@
 import { readFile } from 'node:fs/promises';
+import { apexSampleOf } from '../../docs/examples/paths';
 import { before, describe, it } from 'node:test';
 import assert from 'node:assert/strict';
 
 import type { ApexParser, ApexParserRuleContext } from '@apexdevtools/apex-parser';
 
-import { collectErrors, collectTypes, formatErrors, parse } from './helpers';
+import { collectErrors, collectTypes, formatErrors, parse, asNode } from './helpers';
 
 type UnitModule = typeof import('../../src/analyzer/types/apex_IR/unitVisitor');
 let unit: UnitModule;
@@ -19,13 +20,12 @@ const examples: [string, (p: ApexParser) => ApexParserRuleContext][] = [
     ['parser.apex', (p) => p.anonymousUnit()],
 ];
 
-const load = (file: string) =>
-    readFile(new URL(`../../docs/examples/apex/samples/syntax/${file}`, import.meta.url), 'utf8');
+const load = (file: string) => readFile(apexSampleOf('after', file), 'utf8');
 
-describe('docs/examples/apex/samples/syntax', () => {
+describe('docs/examples/repository (Apex の構文のサンプル)', () => {
     for (const [file, rule] of examples) {
         it(`${file} を構文エラー・IR エラーなしで変換できる`, async () => {
-            const result = new unit.UnitVisitor().visit(parse(await load(file), rule));
+            const result = asNode(new unit.UnitVisitor().visit(parse(await load(file), rule)));
             const errors = collectErrors(result);
             assert.equal(errors.length, 0, formatErrors(errors));
         });
@@ -34,7 +34,7 @@ describe('docs/examples/apex/samples/syntax', () => {
     it('3 ファイル合計で IR の主要ノード種別をすべて含む', async () => {
         const types = new Set<string>();
         for (const [file, rule] of examples) {
-            const result = new unit.UnitVisitor().visit(parse(await load(file), rule));
+            const result = asNode(new unit.UnitVisitor().visit(parse(await load(file), rule)));
             collectTypes(result).forEach((t) => types.add(t));
         }
 

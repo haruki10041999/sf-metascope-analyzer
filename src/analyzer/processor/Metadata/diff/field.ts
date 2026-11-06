@@ -23,8 +23,10 @@ import {
     PropertiesDiff,
     makePresentDiff,
     makePropertiesDiff,
+    makeUnorderedValuesDiff,
     presentEntry,
 } from '../../commons/diff/present';
+import { TypedListDiff } from '../../commons/diff/list';
 
 export type PicklistValueJsonDiff = NodeDiff<
     'picklistValue',
@@ -99,6 +101,8 @@ export type CustomFieldJsonDiff = NodeDiff<
         valueSet?: PresentDiff<ValueSetJson, ValueSetJsonDiff>;
         /** 絞り込み条件は値として比べる (条件の行は番号で組み合わせるので、まとめて 1 つの値) */
         lookupFilter?: PresentDiff<LookupFilterJson, ValueDiff<LookupFilterJson>>;
+        /** 集合 (読んでいない要素の名前) */
+        skippedElements?: PresentDiff<string[], TypedListDiff<string, never>>;
     } & PropertiesDiff<typeof FIELD_SCHEMA>
 >;
 
@@ -118,5 +122,9 @@ export const makeCustomFieldDiff = (
         ...presentEntry(
             'valueSet',
             makePresentDiff(b.valueSet, a.valueSet, (bv, av) => makeValueSetDiff(bv, av, sources)),
+        ),
+        ...presentEntry(
+            'skippedElements',
+            makePresentDiff(b.skippedElements, a.skippedElements, makeUnorderedValuesDiff),
         ),
     }));

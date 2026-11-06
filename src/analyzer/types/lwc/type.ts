@@ -1,4 +1,4 @@
-// TS の型注釈の JSON (docs/lwc-json-reference.md)。Apex の types/apex/type.ts と同じ形:
+// TS の型注釈の JSON (docs/lwc-implementation.md)。Apex の types/apex/type.ts と同じ形:
 // 境界ノード (LwcTypeJson) は最上位の型だけで、型引数・要素型はキーのない中身 (LwcTypeContentJson) で持つ
 import { isErrorNode } from '../apex/commons';
 import { type ErrorJson, type JsonType } from '../commons/json';

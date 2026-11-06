@@ -11,6 +11,7 @@ import {
     makeXmlJson,
     nonEmptyEntry,
     readProperties,
+    unknownChildNames,
     readTexts,
 } from '../commons/xmlJson';
 import { CompactLayoutJson, makeCompactLayoutJson } from './compactLayout';
@@ -113,6 +114,8 @@ export type CustomObjectJson = JsonType<'object'> & {
     searchLayouts?: SearchLayoutsJson;
     /** object-meta.xml の中のアクションの上書き */
     actionOverrides?: ObjectActionOverrideJson[];
+    /** object-meta.xml の要素のうち、読んでいないものの名前 (最初に出た順) */
+    skippedElements?: string[];
 } & PropertiesOf<typeof OBJECT_SCHEMA>;
 
 type MemberMaker = (
@@ -222,6 +225,16 @@ export type ObjectSource = {
     members: Record<ObjectMemberKey, ParsedXmlFile[]>;
 };
 
+/** object-meta.xml の要素のうち読むもの (これ以外は skippedElements に残す) */
+const OBJECT_KNOWN_ELEMENTS = [
+    'fullName',
+    ...Object.keys(OBJECT_SCHEMA),
+    'nameField',
+    'searchLayouts',
+    'actionOverrides',
+    ...Object.values(OBJECT_MEMBERS).map((member) => member.element),
+];
+
 /** 検索レイアウト。要素がなければ持たない (保存済みのオブジェクトの objectKey を変えないため) */
 const searchLayoutsEntry = (
     objectElement: XmlElement | undefined,
@@ -307,6 +320,10 @@ export const makeCustomObjectJson = (
                             registry,
                         ),
                 ),
+            ),
+            ...nonEmptyEntry(
+                'skippedElements',
+                objectElement ? unknownChildNames(objectElement, OBJECT_KNOWN_ELEMENTS) : [],
             ),
         },
         objectElement,

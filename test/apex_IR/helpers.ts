@@ -49,3 +49,10 @@ export const formatErrors = (errors: ApexErrorTypeClass[]): string =>
     errors
         .map((e) => `${e.getContextType()}: ${e.getParseErrorMessage()} (${e.getContext()})`)
         .join('\n');
+
+/**
+ * visitor の visit の結果を、IR のノード (ApexCommonTypeClass<string>) として扱う。
+ * visit の戻り値の型のままだと、判定関数 (isXxxType) での絞り込みが never になるため
+ */
+export const asNode = (node: unknown): ApexCommonTypeClass<string> =>
+    node as ApexCommonTypeClass<string>;

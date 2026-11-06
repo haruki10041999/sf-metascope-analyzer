@@ -1,4 +1,7 @@
-import { ObjectTranslationParser } from '../parser/Metadata/objectTranslation';
+import {
+    ObjectTranslationParser,
+    isObjectTranslationSaveId,
+} from '../parser/Metadata/objectTranslation';
 import { BatchResult, BatchWorker, WorkerOptions } from './batchWorker';
 import { SaveSummary } from './workerTask';
 
@@ -18,5 +21,10 @@ export class ObjectTranslationWorker extends BatchWorker<'ObjectTranslation'> {
         const directories =
             await ObjectTranslationParser.searchObjectTranslationDirectories(rootDir);
         return this.batch(directories, (directory) => this.parseAndSave(directory));
+    }
+
+    /** 翻訳の保存名 (objectTranslation_) だけを読む (ほかの種類と同じ保存先でもよい) */
+    protected override acceptsSavedId(id: string): boolean {
+        return isObjectTranslationSaveId(id);
     }
 }

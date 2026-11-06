@@ -5,7 +5,13 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
 
-import { makeJsonSaveData, makeMsgPackSaveData, readMsgPack, type SaveDataInfo } from '../commons';
+import {
+    makeJsonSaveData,
+    makeMsgPackSaveData,
+    readMsgPack,
+    readSavedMsgPacks,
+    type SaveDataInfo,
+} from '../commons';
 
 import {
     makeErrorBundleResult,
@@ -24,6 +30,9 @@ export type {
 
 /** 保存名の接頭辞 (Apex の class_ / trigger_ / anonymous_、翻訳の objectTranslation_ と同じく、同じ保存先で種類を分ける) */
 export const LWC_SAVE_PREFIX = 'lwc_';
+
+/** LWC の保存名 (lwc_<バンドル名>) か */
+export const isLwcSaveId = (id: string): boolean => id.startsWith(LWC_SAVE_PREFIX);
 
 const LWC_FOLDER = 'lwc';
 
@@ -98,7 +107,7 @@ export class LwcParser {
     }
 
     // 開発者でのデータ確認用
-    static saveLwcBundleForDevelopper(
+    static saveLwcBundleForDeveloper(
         baseDir: string,
         target: LwcBundleParseResult,
     ): SaveDataInfo[] {
@@ -112,14 +121,6 @@ export class LwcParser {
 
     /** baseDir に保存したすべてのバンドルを読む (lwc_ で始まるものだけ)。baseDir がなければ空 */
     static async readSavedBundles(baseDir: string): Promise<LwcBundleParseResult[]> {
-        const names = await fs.readdir(baseDir).catch(() => [] as string[]);
-        return Promise.all(
-            names
-                .filter((name) => name.startsWith(LWC_SAVE_PREFIX) && name.endsWith('.msgpack'))
-                .sort()
-                .map((name) =>
-                    LwcParser.readLwcMsgPack(baseDir, name.slice(0, -'.msgpack'.length)),
-                ),
-        );
+        return readSavedMsgPacks(baseDir, isLwcSaveId, (id) => LwcParser.readLwcMsgPack(baseDir, id));
     }
 }

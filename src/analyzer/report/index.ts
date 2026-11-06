@@ -25,6 +25,7 @@ export * from './permission';
 export * from './flow';
 export * from './page';
 export * from './crossRef';
+export * from './mask';
 
 export const REPORT_PROVIDERS = {
     'permission.diffs': (input: ReportInput) => getPermissionDiffs(input),

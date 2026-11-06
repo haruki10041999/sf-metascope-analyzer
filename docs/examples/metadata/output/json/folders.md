@@ -118,7 +118,7 @@
 
 | オブジェクト | レコードトリガーフロー | Apex トリガー | 入力規則 |
 | --- | --- | --- | --- |
-| Account | - | AccountTrigger (before insert, after update, Active) | - |
+| Account | - | AccountTrigger (before insert, after update, Active)<br>ParserTrigger (before insert, before update, before delete, after insert, after update, after delete, after undelete) | - |
 | Invoice__c | Invoice_Status_Update (RecordAfterSave Update, 順 10) | - | Amount_Positive |
 
 ### 種類をまたぐ参照 (analyzeMetadataReferences)
@@ -231,12 +231,13 @@
 
 | ラベル | 値 | 使っているところ |
 | --- | --- | --- |
-| AccountListTitle | 取引先の一覧 | lwc:lwc_accountList, flow:flow_Account_Wizard |
+| AccountListTitle | 取引先の一覧 | flow:flow_Account_Wizard |
 | Invoice_Overdue | 支払期限を過ぎています | flow:flow_Invoice_Status_Update |
 | Invoice_Approved | 承認しました | - |
 
 | 重要度 | code | 対象 | 内容 |
 | --- | --- | --- | --- |
+| warning | UNKNOWN_CUSTOM_LABEL | BannerMessage | カスタム表示ラベル BannerMessage がリポジトリにない |
 | info | UNUSED_CUSTOM_LABEL | Invoice_Approved | カスタム表示ラベル Invoice_Approved はリポジトリの中で使われていない |
 
 ### Flow (analyzeFlows)
@@ -298,7 +299,7 @@
 
 | オブジェクト | レコードトリガーフロー | Apex トリガー | 入力規則 |
 | --- | --- | --- | --- |
-| Account | - | AccountTrigger (after update, before delete, Inactive) | Name_Required |
+| Account | - | AccountTrigger (after update, before delete, Inactive)<br>ParserTrigger (before insert, before update, before delete, after insert, after update, after delete, after undelete) | Name_Required |
 | Invoice__c | Invoice_Status_Update (RecordAfterSave CreateAndUpdate, 順 20) | - | Amount_Positive<br>Due_Date_Required (無効) |
 
 ### 種類をまたぐ参照 (analyzeMetadataReferences)

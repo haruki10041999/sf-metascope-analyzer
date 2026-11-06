@@ -5,7 +5,7 @@ import { GumTreeLanguage, makeGumTreeBuilder } from '../../../commons/diff/gumtr
 import { getTypeKey } from '../type';
 
 // Apex の GumTree の木の作り方 (ラベルの付け方など)。木の作り方そのものは commons/diff/gumtree/tree.ts で共通
-// 方針: docs/apex-gumtree-diff.md 3 章・4 章
+// 方針: docs/apex-implementation.md・4 章
 
 /** 実ノードのラベル。同じ kind で形が大きく違うものは形も含める */
 const getNodeLabel = (node: JsonNode): string => {
@@ -56,7 +56,7 @@ const getElementLabel = (owner: string, role: string, value: Record<string, unkn
     return undefined;
 };
 
-/** 子の順序が意味を持たない並び (apex-json-diff-policy.md の B) */
+/** 子の順序が意味を持たない並び (apex-implementation.md の B) */
 const UNORDERED_LABELS = [
     /\.modifier$/,
     /^modifiers$/,

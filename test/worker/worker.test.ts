@@ -27,21 +27,27 @@ describe('ApexWorker', () => {
         const outDir = path.join(tmp, 'apex');
         const worker = new ApexWorker({ outDir, concurrency: 2 });
         const results = await worker.parseAndSaveAll(
-            path.resolve('docs/examples/apex/samples/diff/after'),
+            path.resolve('docs/examples/repository/after'),
         );
         assert.ok(results.every((r) => r.ok));
 
         // 保存名は class_ / trigger_ / anonymous_ を付けた単位の id (ApexParser.saveApexUnit)
         const ids = await worker.listSavedIds();
         assert.deepEqual(ids, [
+            'anonymous_broken',
+            'anonymous_parser',
             'anonymous_script',
             'class_AccountService',
             'class_Broken',
             'class_Level',
             'class_NewHelper',
+            'class_ParserEnum',
+            'class_ParserInterface',
+            'class_ParserTest',
             'class_Shape',
             'class_Unchanged',
             'trigger_AccountTrigger',
+            'trigger_ParserTrigger',
         ]);
 
         const unit = await worker.load('class_AccountService');
@@ -59,7 +65,7 @@ describe('ObjectWorker', () => {
         const outDir = path.join(tmp, 'objects');
         const worker = new ObjectWorker({ outDir });
         const objects = path.resolve(
-            'docs/examples/metadata/samples/after/force-app/main/default/objects',
+            'docs/examples/repository/after/force-app/main/default/objects',
         );
         const results = await worker.parseAndSaveAll(objects);
         assert.ok(results.every((r) => r.ok));
@@ -86,7 +92,7 @@ describe('ObjectWorker', () => {
             command: 'parse',
             type: 'Object',
             filePath: path.resolve(
-                'docs/examples/metadata/samples/after/force-app/main/default/objects/Payment__c',
+                'docs/examples/repository/after/force-app/main/default/objects/Payment__c',
             ),
         });
         assert.equal(parsed.result.id, 'Payment__c');
@@ -99,7 +105,7 @@ describe('ObjectTranslationWorker', () => {
         const worker = new ObjectTranslationWorker({ outDir });
         const results = await worker.parseAndSaveAll(
             path.resolve(
-                'docs/examples/metadata/samples/after/force-app/main/default/objectTranslations',
+                'docs/examples/repository/after/force-app/main/default/objectTranslations',
             ),
         );
         assert.deepEqual(
@@ -124,7 +130,7 @@ describe('LwcWorker', () => {
         const worker = new LwcWorker({ outDir, concurrency: 2 });
         // lwc フォルダの上を渡すと、lwc/<名前>/ のフォルダを探す
         const results = await worker.parseAndSaveAll(
-            path.resolve('docs/examples/lwc/samples/bundles/force-app'),
+            path.resolve('docs/examples/repository/before/force-app'),
         );
         assert.ok(results.every((r) => r.ok));
         assert.deepEqual(
@@ -133,13 +139,20 @@ describe('LwcWorker', () => {
                 ['accountList', 'lwcBundle'],
                 ['accountRow', 'lwcBundle'],
                 ['broken', 'lwcBundle'],
+                ['oldBanner', 'lwcBundle'],
                 ['utils', 'lwcBundle'],
             ],
         );
 
         // 保存名は lwc_<バンドル名> (LwcParser.saveLwcBundle)。1 バンドル = 1 ファイル
         const ids = await worker.listSavedIds();
-        assert.deepEqual(ids, ['lwc_accountList', 'lwc_accountRow', 'lwc_broken', 'lwc_utils']);
+        assert.deepEqual(ids, [
+            'lwc_accountList',
+            'lwc_accountRow',
+            'lwc_broken',
+            'lwc_oldBanner',
+            'lwc_utils',
+        ]);
 
         const loaded = await worker.load('lwc_accountList');
         assert.equal(loaded.dataType, 'lwcBundle');
@@ -162,7 +175,7 @@ describe('LwcWorker', () => {
             command: 'parse',
             type: 'Lwc',
             filePath: path.resolve(
-                'docs/examples/lwc/samples/bundles/force-app/main/default/lwc/accountRow',
+                'docs/examples/repository/before/force-app/main/default/lwc/accountRow',
             ),
         });
         assert.equal(parsed.result.id, 'accountRow');

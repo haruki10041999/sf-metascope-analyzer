@@ -7,7 +7,7 @@ export type MetadataFolderWorkerOptions = WorkerOptions;
 /**
  * フォルダ単位のメタデータ (permissionsets/・profiles/ など) の解析・保存・読み込みをまとめるクラス。
  * 1 タスク = 種類のフォルダ 1 つ (中のファイルをまとめて読む)。保存はファイルごと (<outDir>/<種類>_<名前>.msgpack)。
- * 種類はフォルダ名・保存名の接頭辞で決める (parser/Metadata/folders.ts)。方針: docs/metadata-a-plan.md 2.1 章
+ * 種類はフォルダ名・保存名の接頭辞で決める (parser/Metadata/folders.ts)。方針: docs/metadata-implementation.md 10 章
  */
 export class MetadataFolderWorker extends BatchWorker<'MetadataFolder'> {
     constructor(options: MetadataFolderWorkerOptions) {

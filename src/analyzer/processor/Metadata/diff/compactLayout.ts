@@ -10,7 +10,7 @@ import {
 import { TypedListDiff } from '../../commons/diff/list';
 import {
     PresentDiff,
-    makeOrderedValuesDiff,
+    makeOrderedNamesDiff,
     makePresentDiff,
     presentEntry,
 } from '../../commons/diff/present';
@@ -34,5 +34,5 @@ export const makeCompactLayoutDiff = (
     makeNodeDiff('compactLayout', before, after, match, (b, a) => ({
         fullName: makeValueDiff(b.fullName, a.fullName),
         ...presentEntry('label', makePresentDiff(b.label, a.label, makeValueDiff)),
-        ...presentEntry('fields', makePresentDiff(b.fields, a.fields, makeOrderedValuesDiff)),
+        ...presentEntry('fields', makePresentDiff(b.fields, a.fields, makeOrderedNamesDiff)),
     }));

@@ -14,6 +14,11 @@ export type XmlElement = {
     start: SourcePosition;
     /** 終了タグの `>` の次 */
     end: SourcePosition;
+    /**
+     * 要素を読んだファイル。分解された形式 (decomposed) を 1 つの単位に組み立てたときだけ持つ
+     * (位置を、組み立てたファイルではなく元のファイルで登録するため)
+     */
+    file?: { filePath: string; source: string };
 };
 
 export class XmlSyntaxError extends Error {

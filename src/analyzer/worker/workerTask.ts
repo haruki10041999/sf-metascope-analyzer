@@ -12,15 +12,12 @@ import type { ApexUnitParseResult } from '../parser/Apex/unit';
 import { LwcParser, type LwcBundleParseResult } from '../parser/Lwc/parser';
 import { writeSaveDataInfo } from '../parser/commons';
 
-/** 本番用の保存ファイルの拡張子 (ApexParser.saveApexUnit / MetadataParser.saveObjectFile / LwcParser.saveLwcBundle が <id>.msgpack で保存する) */
-export const savedFileExtension = '.msgpack';
-
 /**
  * タスクの対象。Apex は単位 (クラス・トリガー・匿名 Apex。単位のどれかのファイルのパス)、Object はオブジェクトのフォルダ、
  * ObjectTranslation は翻訳のフォルダ (<オブジェクト>-<言語>)、Lwc はバンドルのフォルダ (lwc/<名前>/)。
  * どれも 1 単位 (Apex のクラスはソースと -meta.xml、LWC はフォルダ) = 1 件 = 1 つの保存ファイル。
  * MetadataFolder は種類のフォルダ (permissionsets/ など。種類はフォルダ名で決める) で、中のファイルごとに
- * 1 件 = 1 つの保存ファイル (docs/metadata-a-plan.md 2.1 章)
+ * 1 件 = 1 つの保存ファイル (docs/metadata-implementation.md 10 章)
  */
 export type WorkerTaskType = 'Apex' | 'Object' | 'ObjectTranslation' | 'Lwc' | 'MetadataFolder';
 

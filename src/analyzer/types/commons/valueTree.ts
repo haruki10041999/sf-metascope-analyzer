@@ -18,12 +18,17 @@ export type ValueTreeProperties = Record<string, ValueTree>;
 export type ValueTreeOptions = {
     /** 1 つしかなくても配列にする要素名 */
     lists?: ReadonlySet<string>;
-    /** 読まない要素名 (どの深さでも) */
-    skip?: ReadonlySet<string>;
+    /** 読まない要素 (どの深さでも)。要素名の一覧か、要素名で決める関数 (Flow の接続・位置など) */
+    skip?: ReadonlySet<string> | ((name: string) => boolean);
+    /** 値の要素の名前 (既定は VALUE_TYPES。Flow は apexValue なども足す) */
+    valueTypes?: ReadonlySet<string>;
 };
 
+const isSkipped = (options: ValueTreeOptions, name: string): boolean =>
+    typeof options.skip === 'function' ? options.skip(name) : (options.skip?.has(name) ?? false);
+
 /** 値の要素 (<value><stringValue>…</stringValue></value> の stringValue など) */
-const VALUE_TYPES = new Set([
+export const VALUE_TYPES: ReadonlySet<string> = new Set([
     'booleanValue',
     'dateTimeValue',
     'dateValue',
@@ -53,7 +58,7 @@ export const toValueTree = (element: XmlElement, options: ValueTreeOptions = {})
     const [only] = element.children;
     if (
         element.children.length === 1 &&
-        VALUE_TYPES.has(only!.name) &&
+        (options.valueTypes ?? VALUE_TYPES).has(only!.name) &&
         only!.children.length === 0 &&
         !attributes.length
     ) {
@@ -73,7 +78,7 @@ export const toValueTreeProperties = (
 ): ValueTreeProperties => {
     const groups = new Map<string, XmlElement[]>();
     for (const child of element.children) {
-        if (exclude.has(child.name) || options.skip?.has(child.name)) continue;
+        if (exclude.has(child.name) || isSkipped(options, child.name)) continue;
         groups.set(child.name, [...(groups.get(child.name) ?? []), child]);
     }
     return Object.fromEntries(

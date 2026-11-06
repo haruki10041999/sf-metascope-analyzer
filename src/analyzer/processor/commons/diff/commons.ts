@@ -10,7 +10,7 @@ import {
 } from '../source';
 import { isRecord } from '../../../types/commons/utils';
 
-// 方針: docs/apex-json-diff-policy.md
+// 方針: docs/apex-implementation.md
 
 export type JsonNode =
     JsonType<string> | StructureJsonType<string, Record<string, ConvertKeys | ConvertKeys[]>>;

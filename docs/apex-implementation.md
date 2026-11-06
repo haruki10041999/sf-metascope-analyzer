@@ -2,8 +2,8 @@
 
 Apex（クラス・トリガー・匿名 Apex と、クラス・トリガーの `-meta.xml`）を読み、JSON にし、前回との差分を取る実装の全体像。
 
-- JSON の型: [apex-json-reference.md](./apex-json-reference.md)
-- Diff: 全体の方針 [apex-json-diff-policy.md](./apex-json-diff-policy.md)、宣言 [apex-declaration-diff.md](./apex-declaration-diff.md)、文・ブロック（GumTree）[apex-gumtree-diff.md](./apex-gumtree-diff.md)
+- JSON の型: [apex-implementation.md](./apex-implementation.md)
+- Diff: 全体の方針 [apex-implementation.md](./apex-implementation.md)、宣言 [apex-implementation.md](./apex-implementation.md)、文・ブロック（GumTree）[apex-implementation.md](./apex-implementation.md)
 - 解析（計画）: [apex-json-analysis.md](./apex-json-analysis.md)
 
 ## 1. 処理の流れ
@@ -72,7 +72,7 @@ src/analyzer/
 | ソース（`content.fields.source`）  | 種類が同じでどちらも読めれば `makeUnitContentDiff`（宣言・文・式・SOQL の型付きの差分）。そうでなければ値ごと |
 | -meta.xml（`content.fields.meta`） | 種類が同じでどちらも読めれば値ごとの差分（`apiVersion`・`status`・`packageVersions`）。そうでなければ値ごと   |
 
-宣言は名前で対応付け（D）、文の並びは GumTree で対応付けて移動を見つける。分類（A. スロット / B. 集合 / C. 順序付き列 / D. キー対応）・`status`・`match` は [apex-json-diff-policy.md](./apex-json-diff-policy.md)。
+宣言は名前で対応付け（D）、文の並びは GumTree で対応付けて移動を見つける。分類（A. スロット / B. 集合 / C. 順序付き列 / D. キー対応）・`status`・`match` は [apex-implementation.md](./apex-implementation.md)。
 
 ## 5. サンプルとテスト
 

@@ -1,4 +1,5 @@
 import { readFile } from 'node:fs/promises';
+import { apexSampleOf } from '../../docs/examples/paths';
 import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
 
@@ -12,8 +13,7 @@ const examples: [string, (p: ApexParser) => ApexParserRuleContext][] = [
     ['parser.apex', unitRules.anonymous],
 ];
 
-const load = (file: string) =>
-    readFile(new URL(`../../docs/examples/apex/samples/syntax/${file}`, import.meta.url), 'utf8');
+const load = (file: string) => readFile(apexSampleOf('after', file), 'utf8');
 
 const convert = async (index: number) => {
     const [file, rule] = examples[index]!;
@@ -41,7 +41,7 @@ const countValues = (target: unknown, skip: Set<string>, out = new Map<string, n
     return out;
 };
 
-describe('JSON 出力 / docs/examples/apex/samples/syntax', () => {
+describe('JSON 出力 / docs/examples/repository (Apex の構文のサンプル)', () => {
     for (const [index, [file]] of examples.entries()) {
         it(`${file}: エラーノードなしで変換でき、CommonType の値を欠落させない`, async () => {
             const { commonType, json } = await convert(index);
@@ -88,10 +88,16 @@ describe('JSON 出力 / docs/examples/apex/samples/syntax', () => {
         assert.ok(find(json, (n) => n.kind === 'enumConstant').length > 0);
     });
 
-    it('クラスのコンストラクタは constructors に入り、constructor プロパティを使わない', async () => {
+    it('クラスのコンストラクタはメンバーの並び (block) に入り、constructor プロパティを使わない', async () => {
         const { json } = await convert(0);
         const classes = find(json, (n) => n.kind === 'class');
-        assert.ok(classes.some((c) => Array.isArray(c.constructors)));
+        assert.ok(
+            classes.some(
+                (c) =>
+                    Array.isArray(c.block) &&
+                    (c.block as { kind?: string }[]).some((m) => m.kind === 'constructor'),
+            ),
+        );
         classes.forEach((c) => assert.equal(Object.hasOwn(c, 'constructor'), false));
     });
 
@@ -115,7 +121,7 @@ describe('JSON 出力 / docs/examples/apex/samples/syntax', () => {
 
     it('内側の型（ジェネリクス・要素型）はキーを持たない', async () => {
         const { json } = await convert(0);
-        const collections = find(json, (n) => n.kind === 'type' && n.collectionType === 'map');
+        const collections = find(json, (n) => n.kind === 'type' && n.type === 'map');
         assert.ok(collections.length > 0);
         collections.forEach((t) => {
             assert.equal(t.keyType.kind, undefined);

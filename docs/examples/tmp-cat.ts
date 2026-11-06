@@ -1,0 +1,11 @@
+import { GitTree } from '../../src/analyzer/unit/sourceTree';
+const tree = new GitTree(process.cwd(), 'HEAD');
+const files = await tree.listFiles();
+console.log('files', files.length);
+const t = Date.now();
+const a = await tree.readFile('package.json');
+console.log('read', a?.length, Date.now() - t);
+const many = await Promise.all(files.slice(0, 50).map((f) => tree.readFile(f)));
+console.log('many', many.filter(Boolean).length, Date.now() - t);
+console.log('missing', await tree.readFile('nope.txt'));
+tree.close();

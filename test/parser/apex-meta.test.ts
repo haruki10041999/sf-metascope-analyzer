@@ -1,5 +1,7 @@
 import assert from 'node:assert/strict';
 import path from 'node:path';
+
+import { apexSampleOf, type Side } from '../../docs/examples/paths';
 import { before, describe, it } from 'node:test';
 
 import { runDiff } from '../../docs/examples/apex/scripts/run-diff';
@@ -7,13 +9,13 @@ import { ApexParser, type ApexUnitParseResult } from '../../src/analyzer/parser/
 import type { ApexMetaJson } from '../../src/analyzer/types';
 
 /**
- * docs/examples/apex/samples/diff のクラス・トリガーのメタデータ (-meta.xml)。
+ * docs/examples/repository のクラス・トリガーのメタデータ (-meta.xml)。
  * クラス・トリガーは、ソースと -meta.xml を 1 つの単位として読む (parser/Apex/unit.ts)
  */
 
-const sample = path.resolve('docs/examples/apex/samples/diff');
+const sample = path.resolve('docs/examples/repository');
 const parseUnit = (side: string, file: string) =>
-    ApexParser.parseApexUnit(path.join(sample, side, file));
+    ApexParser.parseApexUnit(apexSampleOf(side as Side, file));
 const metaOf = (unit: ApexUnitParseResult) => unit.result.base.meta!.meta as ApexMetaJson;
 
 type Node = Record<string, any>;
@@ -71,14 +73,20 @@ describe('Apex の単位とメタデータ (-meta.xml)', () => {
         );
         // クラス・トリガーはソースのパス (-meta.xml は同じ単位なので出ない)
         assert.deepEqual(units, [
+            'broken.apex',
+            'parser.apex',
             'script.apex',
             'AccountService.cls',
             'Broken.cls',
             'Level.cls',
             'NewHelper.cls',
+            'ParserEnum.cls',
+            'ParserInterface.cls',
+            'ParserTest.cls',
             'Shape.cls',
             'Unchanged.cls',
             'AccountTrigger.trigger',
+            'ParserTrigger.trigger',
         ]);
         const script = await parseUnit('after', 'script.apex');
         assert.equal(script.result.id, 'anonymous_script');

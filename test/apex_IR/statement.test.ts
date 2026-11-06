@@ -1,7 +1,7 @@
 import { before, describe, it } from 'node:test';
 import assert from 'node:assert/strict';
 
-import { collectErrors, formatErrors, parse } from './helpers';
+import { collectErrors, formatErrors, parse, asNode } from './helpers';
 
 type StatementModule = typeof import('../../src/analyzer/types/apex_IR/statementVisitor');
 type ValueModule = typeof import('../../src/analyzer/types/apex_IR/valueVisitor');
@@ -14,7 +14,7 @@ before(async () => {
 });
 
 const visitStatement = (source: string) => {
-    const result = new stmt.StatementVisitor().visit(parse(source, (p) => p.statement()));
+    const result = asNode(new stmt.StatementVisitor().visit(parse(source, (p) => p.statement())));
     assert.ok(stmt.isNormalStatementType(result), result.getType());
     return result;
 };
@@ -60,20 +60,22 @@ describe('statementVisitor', () => {
 describe('valueVisitor / whenValue', () => {
     it('when リテラルの符号はソース順に保持される', async () => {
         const literal = await import('../../src/analyzer/types/apex_IR/literalVisitor');
-        const result = new literal.LiteralVisitor().visit(parse('-1', (p) => p.whenLiteral()));
+        const result = asNode(
+            new literal.LiteralVisitor().visit(parse('-1', (p) => p.whenLiteral())),
+        );
         assert.ok(literal.isWhenLiteralType(result), result.getType());
         assert.equal(result.getValue(), '1');
         assert.equal(result.getOperator(), '-');
     });
 
     it('"else" → value が else', () => {
-        const result = new value.ValueVisitor().visit(parse('else', (p) => p.whenValue()));
+        const result = asNode(new value.ValueVisitor().visit(parse('else', (p) => p.whenValue())));
         assert.ok(value.isWhenValueType(result), result.getType());
         assert.equal(result.getValue(), 'else');
     });
 
     it('"1, 2" → whenLiteral が 2 件', () => {
-        const result = new value.ValueVisitor().visit(parse('1, 2', (p) => p.whenValue()));
+        const result = asNode(new value.ValueVisitor().visit(parse('1, 2', (p) => p.whenValue())));
         assert.ok(value.isWhenValueType(result), result.getType());
         const literals = result.getValue();
         assert.ok(Array.isArray(literals));
@@ -81,7 +83,9 @@ describe('valueVisitor / whenValue', () => {
     });
 
     it('"Account a" → value が id、valueType が typeRef', () => {
-        const result = new value.ValueVisitor().visit(parse('Account a', (p) => p.whenValue()));
+        const result = asNode(
+            new value.ValueVisitor().visit(parse('Account a', (p) => p.whenValue())),
+        );
         assert.ok(value.isWhenValueType(result), result.getType());
         assert.equal(result.getValueType()?.getType(), 'typeRef');
     });

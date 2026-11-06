@@ -192,7 +192,7 @@ export type TernaryJsonDiff = TypedObjectDiff<
     }
 >;
 /**
- * 入力の式の型に対応する差分の型 (docs/apex-json-diff-policy.md 6.4)。
+ * 入力の式の型に対応する差分の型 (docs/apex-implementation.md 6.4)。
  * 形が変わった (kind や式の種類が違う) ときは、kind / sourceKeys を分けて値を丸ごと持つ ReplacementDiff になる
  */
 export type BaseExpressionJsonDiff<T extends ExpressionJson = ExpressionJson> =
@@ -646,7 +646,7 @@ const makeTypedValueListDiff = <T, D>(
 
 /**
  * 式 1 つの差分。配列 (引数など) は順序付き列 (C) として位置で対応付ける。
- * GumTree は文の並び (makeBlockDiff) の対応付けにだけ使う (docs/apex-json-diff-policy.md 6.4)
+ * GumTree は文の並び (makeBlockDiff) の対応付けにだけ使う (docs/apex-implementation.md 6.4)
  */
 export const makeExpressionDiff = <Before extends ExpressionJson, After extends ExpressionJson>(
     before: Before,

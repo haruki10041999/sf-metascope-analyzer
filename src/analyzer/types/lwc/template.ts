@@ -18,7 +18,7 @@ import {
 } from '../commons/spanJson';
 
 // LWC のテンプレート (.html) の JSON。中間表現は作らず、parse5 の木から直接作る (XML と同じ方式)。
-// 方針: docs/lwc-json-reference.md
+// 方針: docs/lwc-implementation.md
 // - 要素・テキスト・属性・ディレクティブ・イベントハンドラーは JsonType (属性ごとの位置を持つ)
 // - lwc:if / lwc:elseif / lwc:else (と if:true / if:false) は分岐の並び lwcIf、for:each / iterator:* は lwcForEach の
 //   意味のブロックにする (template-compiler の IfBlock / ForEach と同じ考え方)。ディレクティブを付けた要素は、
@@ -75,7 +75,7 @@ export type LwcTextJson = JsonType<'lwcText'> & {
     expressions: LwcExpressionJson[];
 };
 
-/** タグ名から分かる、参照するコンポーネント (docs/lwc-json-reference.md) */
+/** タグ名から分かる、参照するコンポーネント (docs/lwc-implementation.md) */
 export type LwcComponentRefJson = {
     namespace: string;
     /** camelCase (c-account-row → accountRow) */

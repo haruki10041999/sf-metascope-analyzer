@@ -2,7 +2,7 @@ import { hash } from '../../../../types';
 
 import { JsonNode, getObjectKey, getValueKey } from '../commons';
 
-// GumTree の木 (Apex・LWC で共通)。方針: docs/apex-gumtree-diff.md 3 章・4 章、docs/lwc-diff-policy.md
+// GumTree の木 (Apex・LWC で共通)。方針: docs/apex-implementation.md・4 章、docs/lwc-implementation.md
 // 言語ごとに違うのはラベルの付け方などだけなので、それを GumTreeLanguage として渡す (Apex は processor/Apex/diff/gumtree/tree.ts)
 
 /** GumTree が比べる木のノード。JsonType / StructureJsonType は実ノード、それ以外は仮想ノード */

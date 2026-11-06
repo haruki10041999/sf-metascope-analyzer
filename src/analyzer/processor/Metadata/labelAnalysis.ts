@@ -4,7 +4,7 @@ import type { LwcBundleParseResult } from '../../parser/Lwc/parser';
 import type { ConvertKeys, CustomLabelsJson } from '../../types';
 import type { MetadataFinding } from './references';
 
-// カスタム表示ラベルの解析。方針: docs/metadata-a-plan.md 5 章
+// カスタム表示ラベルの解析。方針: docs/metadata-implementation.md 10 章
 // ラベルの使用箇所 (LWC の @salesforce/label/c.<名前>、Apex の System.Label.<名前> / Label.<名前>、Flow の $Label.<名前>)、
 // 使われていないラベル、ないラベルへの参照
 

@@ -5,9 +5,9 @@ import { describe, it } from 'node:test';
 import { LwcParser, parseStylesheet } from '../../src/analyzer/parser/Lwc';
 import type { CssAtRuleJson, CssRuleJson, LwcStylesheetJson } from '../../src/analyzer/types';
 
-// LWC の CSS の JSON と検証 (docs/lwc-json-reference.md)
+// LWC の CSS の JSON と検証 (docs/lwc-implementation.md)
 
-const BUNDLES = 'docs/examples/lwc/samples/bundles/force-app/main/default/lwc';
+const BUNDLES = 'docs/examples/repository/before/force-app/main/default/lwc';
 
 const parse = (source: string, filePath = 'x/x.css') => parseStylesheet(filePath, source);
 const stylesheetOf = (source: string) => parse(source).stylesheet as LwcStylesheetJson;

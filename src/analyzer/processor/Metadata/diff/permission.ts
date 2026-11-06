@@ -38,7 +38,7 @@ import {
     presentEntry,
 } from '../../commons/diff/present';
 
-// 権限の差分。方針: docs/metadata-a-plan.md 3.2 章
+// 権限の差分。方針: docs/metadata-implementation.md 10 章
 // ルートの値は makePropertiesDiff、行は要素名ごとにキー (行の表の key) で D。行の値は makePropertiesDiff。
 // 繰り返す値 (lists) とスキーマにない要素の名前 (skippedElements) は B. 集合
 

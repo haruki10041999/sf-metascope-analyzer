@@ -15,7 +15,7 @@ import {
     type XmlSourceRegistry,
 } from '../commons/xmlJson';
 
-// ページレイアウト (layouts/<オブジェクト>-<名前>.layout-meta.xml) の JSON。方針: docs/metadata-a-plan.md 7 章
+// ページレイアウト (layouts/<オブジェクト>-<名前>.layout-meta.xml) の JSON。方針: docs/metadata-implementation.md 10 章
 // セクション・列を入れ子にせず、項目は位置 (セクション・列・行) 付きの平らな並びにする
 // (項目を別のセクションに動かしたとき、削除 + 追加ではなく位置の変更として出すため)
 

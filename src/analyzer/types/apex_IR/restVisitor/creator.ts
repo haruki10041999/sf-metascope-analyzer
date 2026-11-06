@@ -12,14 +12,14 @@ import {
 } from '.';
 
 import { CreatedNameTypeClass, NameVisitor, isCreatedNameType } from '../nameVisitor';
-import { ErrorTypeClass, ApexCommonTypeClass, visitNode } from '../commonVisitor';
+import { ApexErrorTypeClass, ApexCommonTypeClass, visitNode } from '../commonVisitor';
 
 export class CreatorTypeClass extends RestTypeClass<'creator', CreatedNameTypeClass> {
-    private content: RestAllTypeClass | ErrorTypeClass;
+    private content: RestAllTypeClass | ApexErrorTypeClass;
 
     private constructor(
-        value: CreatedNameTypeClass | ErrorTypeClass,
-        content: RestAllTypeClass | ErrorTypeClass,
+        value: CreatedNameTypeClass | ApexErrorTypeClass,
+        content: RestAllTypeClass | ApexErrorTypeClass,
     ) {
         super('creator', value);
         this.content = content;
@@ -44,7 +44,7 @@ export class CreatorTypeClass extends RestTypeClass<'creator', CreatedNameTypeCl
             'createdName',
         );
 
-        let content: RestAllTypeClass | ErrorTypeClass;
+        let content: RestAllTypeClass | ApexErrorTypeClass;
         if (ctx.noRest()) {
             content = visitNode(new RestVisitor(), ctx.noRest(), isNoRestType, 'noRest');
         } else if (ctx.classCreatorRest()) {
@@ -80,7 +80,7 @@ export class CreatorTypeClass extends RestTypeClass<'creator', CreatedNameTypeCl
         return new CreatorTypeClass(value, content);
     }
 
-    getContent(): RestAllTypeClass | ErrorTypeClass {
+    getContent(): RestAllTypeClass | ApexErrorTypeClass {
         return this.content;
     }
 }

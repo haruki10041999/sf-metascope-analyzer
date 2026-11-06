@@ -11,6 +11,7 @@ import { TypedListDiff } from '../../commons/diff/list';
 import {
     PresentDiff,
     PropertiesDiff,
+    makeOrderedNamesDiff,
     makeOrderedValuesDiff,
     makePresentDiff,
     makePropertiesDiff,
@@ -41,6 +42,6 @@ export const makeListViewDiff = (
     makeNodeDiff('listView', before, after, match, (b, a) => ({
         fullName: makeValueDiff(b.fullName, a.fullName),
         ...makePropertiesDiff(LIST_VIEW_SCHEMA, b, a),
-        ...presentEntry('columns', makePresentDiff(b.columns, a.columns, makeOrderedValuesDiff)),
+        ...presentEntry('columns', makePresentDiff(b.columns, a.columns, makeOrderedNamesDiff)),
         ...presentEntry('filters', makePresentDiff(b.filters, a.filters, makeOrderedValuesDiff)),
     }));

@@ -1,12 +1,6 @@
-# オブジェクト（Metadata）の実装まとめ
+# メタデータの実装まとめ
 
-Salesforce のオブジェクトのメタデータ（`force-app/main/default/objects/<API 名>/` の `*-meta.xml`）を読み、解析し、前回との差分を取る実装の全体像をまとめる。Apex と同じ流れ（読み取り → `kind` / `sourceKeys` 付き JSON → 解析 → Diff）で作っている。
-
-詳しい方針は次の 2 つにある。この文書は、どこに何があり、どうつながっているかの案内にする。
-
-- JSON の型・parse・解析: [metadata-json-reference.md](./metadata-json-reference.md)
-- オブジェクトの翻訳（objectTranslation）: [object-translation.md](./object-translation.md)（解析結果・保存はオブジェクトと分ける）
-- Diff の方針: [metadata-diff-policy.md](./metadata-diff-policy.md)（分類・status・出力の形は [apex-json-diff-policy.md](./apex-json-diff-policy.md) と同じ）
+Salesforce のメタデータ（Apex・LWC 以外）を読み、解析し、前回との差分を取る実装の案内。Apex と同じ流れ（読み取り → `kind` / `sourceKeys` 付き JSON → 解析 → Diff）で作っている。1〜9 章はオブジェクト、10 章はそのほかの種類（権限・ラベル・Flow・画面・タブ・Visualforce・Aura など）。オブジェクトの翻訳は [object-translation.md](./object-translation.md)、共通の部品は [commons.md](./commons.md)。
 
 ## 1. 処理の流れ
 
@@ -48,19 +42,21 @@ MetadataProcessor → MCP の analyze_objects → viewer（レポート HTML）
 
 ### 3.1 読む範囲
 
-1 つのオブジェクト（フォルダ）を `CustomObjectJson` 1 つにまとめる。子は 7 種類。
+1 つのオブジェクト（フォルダ）を `CustomObjectJson` 1 つにまとめる。フォルダの子は 9 種類。
 
-| 子の配列          | フォルダ / 接尾辞                           | ルート要素       | kind                                            |
-| ----------------- | ------------------------------------------- | ---------------- | ----------------------------------------------- |
-| `fields`          | `fields/*.field-meta.xml`                   | `CustomField`    | `field`（選択リスト値は `picklistValue`）       |
-| `validationRules` | `validationRules/*.validationRule-meta.xml` | `ValidationRule` | `validationRule`                                |
-| `recordTypes`     | `recordTypes/*.recordType-meta.xml`         | `RecordType`     | `recordType`（使える値は `recordTypePicklist`） |
-| `listViews`       | `listViews/*.listView-meta.xml`             | `ListView`       | `listView`                                      |
-| `fieldSets`       | `fieldSets/*.fieldSet-meta.xml`             | `FieldSet`       | `fieldSet`                                      |
-| `compactLayouts`  | `compactLayouts/*.compactLayout-meta.xml`   | `CompactLayout`  | `compactLayout`                                 |
-| `webLinks`        | `webLinks/*.webLink-meta.xml`               | `WebLink`        | `webLink`                                       |
+| 子の配列            | フォルダ / 接尾辞                              | ルート要素        | kind                                            |
+| ------------------- | ---------------------------------------------- | ----------------- | ----------------------------------------------- |
+| `fields`            | `fields/*.field-meta.xml`                      | `CustomField`     | `field`（選択リスト値は `picklistValue`）       |
+| `validationRules`   | `validationRules/*.validationRule-meta.xml`    | `ValidationRule`  | `validationRule`                                |
+| `recordTypes`       | `recordTypes/*.recordType-meta.xml`            | `RecordType`      | `recordType`（使える値は `recordTypePicklist`） |
+| `listViews`         | `listViews/*.listView-meta.xml`                | `ListView`        | `listView`                                      |
+| `fieldSets`         | `fieldSets/*.fieldSet-meta.xml`                | `FieldSet`        | `fieldSet`                                      |
+| `compactLayouts`    | `compactLayouts/*.compactLayout-meta.xml`      | `CompactLayout`   | `compactLayout`                                 |
+| `webLinks`          | `webLinks/*.webLink-meta.xml`                  | `WebLink`         | `webLink`                                       |
+| `businessProcesses` | `businessProcesses/*.businessProcess-meta.xml` | `BusinessProcess` | `businessProcess`（使える値 `values` は集合）   |
+| `sharingReasons`    | `sharingReasons/*.sharingReason-meta.xml`      | `SharingReason`   | `sharingReason`                                 |
 
-- `<API 名>.object-meta.xml`（`CustomObject`）から、オブジェクト自身の値（`label`、`sharingModel` など）と `nameField` を読む。ないとき（標準オブジェクトなど）は、子のファイルだけから作る。
+- `<API 名>.object-meta.xml`（`CustomObject`）から、オブジェクト自身の値（`label`、`sharingModel` など）、`nameField`、検索レイアウト（`searchLayouts`。項目・ボタンの並び）、アクションの上書き（`actionOverrides`。kind `objectActionOverride`）を読む。項目は参照項目の絞り込み条件（`lookupFilter`）も読む。新しく足したこれらは要素があるときだけ持つ（保存済みのオブジェクトの objectKey を変えないため）。ないとき（標準オブジェクトなど）は、子のファイルだけから作る。
 - メタデータ API の形式（`<CustomObject>` の中に `<fields>` などを書く）も読む。子の並びは、object-meta.xml の中のもののあとに、ファイル名の順。
 - プロパティ名は XML の要素名と同じ。真偽値・数値は `boolean` / `number` にする。フォルダにもファイルにもないもの（値の要素、子のフォルダ、空のリスト）はプロパティごと持たない。
 - 種類を増やすときは、`types/metadata/` に型と `make*Json` を足し、`OBJECT_MEMBERS` に 1 行足す（parser は表を見てフォルダを読む）。
@@ -85,13 +81,14 @@ MetadataProcessor → MCP の analyze_objects → viewer（レポート HTML）
 
 ### 3.4 主な API（`MetadataParser`）
 
-| メソッド                                                    | 内容                                                                                                         |
-| ----------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------ |
-| `parseObject(objectDir)`                                    | フォルダ 1 つを読む                                                                                          |
-| `parseObjects(rootDir)`                                     | `objects` フォルダ（またはその上）の下のすべてのオブジェクトを読む。`objects` そのものを渡すと直下だけを見る |
-| `searchObjectDirectories(rootDir)`                          | オブジェクトのフォルダの一覧                                                                                 |
-| `saveObjectFile` / `readObjectMsgPack` / `readSavedObjects` | msgpack（Apex と同じ設定）での保存と読み込み                                                                 |
-| `saveObjectFileForDevelopper`                               | 確認用の JSON                                                                                                |
+| メソッド                                                    | 内容                                                                                                                                          |
+| ----------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
+| `parseObject(objectDir)`                                    | フォルダ 1 つを読む                                                                                                                           |
+| `parseObjectSource(apiName, files)`                         | 読み込み済みのファイル（`<API 名>/...` の相対パスと中身）から読む（ファイルを読まない入口。git の before 側など）。`parseObject` もこれを使う |
+| `parseObjects(rootDir)`                                     | `objects` フォルダ（またはその上）の下のすべてのオブジェクトを読む。`objects` そのものを渡すと直下だけを見る                                  |
+| `searchObjectDirectories(rootDir)`                          | オブジェクトのフォルダの一覧                                                                                                                  |
+| `saveObjectFile` / `readObjectMsgPack` / `readSavedObjects` | msgpack（Apex と同じ設定）での保存と読み込み                                                                                                  |
+| `saveObjectFileForDeveloper`                               | 確認用の JSON                                                                                                                                 |
 
 ```ts
 const result = await MetadataParser.parseObject('force-app/main/default/objects/Invoice__c');
@@ -119,14 +116,16 @@ if (result.dataType === 'object') {
 
 ### 5.2 kind ごと
 
-| kind                                                                                                  | Diff の型                    | 対応付け                                                              |
-| ----------------------------------------------------------------------------------------------------- | ---------------------------- | --------------------------------------------------------------------- |
-| `object`                                                                                              | `CustomObjectJsonDiff`       | 子の 7 種類はどれも名前で対応付ける（D）。読めなかった要素は集合（B） |
-| `field`                                                                                               | `CustomFieldJsonDiff`        | `apiName`                                                             |
-| `picklistValue`                                                                                       | `PicklistValueJsonDiff`      | `fullName`（並び順の変化は報告しない）                                |
-| `validationRule` / `recordType` / `listView` / `fieldSet` / `compactLayout` / `webLink`               | `*JsonDiff`                  | `fullName`                                                            |
-| `recordTypePicklist`                                                                                  | `RecordTypePicklistJsonDiff` | `picklist`（中の `values` は集合 B）                                  |
-| リストビューの `columns` / `filters`、項目セットの `displayedFields`、コンパクトレイアウトの `fields` | `TypedListDiff`              | 並び順に意味があるので順序付き列（C）。並べ替えは `moved`             |
+| kind                                                                                                  | Diff の型                                           | 対応付け                                                                                                                                                                                                  |
+| ----------------------------------------------------------------------------------------------------- | --------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `object`                                                                                              | `CustomObjectJsonDiff`                              | 子の 9 種類はどれも名前で対応付ける（D）。読めなかった要素は集合（B）。検索レイアウトは一覧ごとに名前の順序付き列（C。同じ名前同士だけを組にする）、アクションの上書きは `actionName` + `formFactor`（D） |
+| `field`                                                                                               | `CustomFieldJsonDiff`                               | `apiName`                                                                                                                                                                                                 |
+| `picklistValue`                                                                                       | `PicklistValueJsonDiff`                             | `fullName`（並び順の変化は報告しない）                                                                                                                                                                    |
+| `validationRule` / `recordType` / `listView` / `fieldSet` / `compactLayout` / `webLink`               | `*JsonDiff`                                         | `fullName`                                                                                                                                                                                                |
+| `businessProcess` / `sharingReason`                                                                   | `BusinessProcessJsonDiff` / `SharingReasonJsonDiff` | `fullName`（ビジネスプロセスの `values` は集合 B）                                                                                                                                                        |
+| 項目の `lookupFilter`                                                                                 | `CustomFieldJsonDiff` の `lookupFilter`             | 値として比べる（条件の行は `booleanFilter` の番号で組み合わせるので、まとめて 1 つの値）                                                                                                                  |
+| `recordTypePicklist`                                                                                  | `RecordTypePicklistJsonDiff`                        | `picklist`（中の `values` は集合 B）                                                                                                                                                                      |
+| リストビューの `columns` / `filters`、項目セットの `displayedFields`、コンパクトレイアウトの `fields` | `TypedListDiff`                                     | 並び順に意味があるので順序付き列（C）。並べ替えは `moved`                                                                                                                                                 |
 
 - 両方にない値・子の配列は差分に出さない。片方にだけあるものは `added` / `removed`（子の配列はフォルダごと、配列ごとに `added` / `removed`。要素は `{ kind, sourceKeys, value }`）。値の差分はスキーマから作る `PropertiesDiff`、任意項目は `PresentDiff` / `makePresentDiff`（[processor/commons/diff/present.ts](../src/analyzer/processor/commons/diff/present.ts)）。
 - 共通部品（`NodeDiff`、`makeKeyedDiff`、`makeTypedListDiff`、`makeSourceKeysDiff` など）は Apex のもの（`processor/Apex/diff/`）を使う。出力の形も Apex と同じ。
@@ -199,7 +198,7 @@ await processor.save(); // 今の結果を次の基準にする
 
 ## 8. 動作検証とテスト
 
-[examples/metadata/](./examples/metadata/README.md) に sfdx 形式の before / after（7 オブジェクト）を置いている。サンプルの中身と期待する差分は README を参照。
+サンプルのリポジトリ（[examples/](./examples/README.md) の `repository/{before,after}`）の `objects/` を使う。サンプルの中身と期待する差分は [examples/metadata/README.md](./examples/metadata/README.md)。
 
 ```sh
 npx ttsx --noCheck docs/examples/metadata/scripts/run-parse.ts   # output/json/: JSON と要約
@@ -213,10 +212,57 @@ npx ttsx --noCheck docs/examples/metadata/scripts/run-diff.ts    # output/diff/:
 
 ## 9. 未対応・既知の問題
 
-オブジェクト以外のメタデータ（Flow・権限・画面など）と、種類をまたぐ残りの解析は [metadata-roadmap.md](./metadata-roadmap.md)。
+今後の対応は [analysis-plan.md](./analysis-plan.md) と [todo.md](./todo.md)。
 
 - **レポート HTML にデータが入らない（既存の不具合）**: `htmlBuilder` は Vite の `define` に `__METASCOPE_METADATA_DEFINE__` を渡すが、`main.tsx` は `window.__METASCOPE_METADATA_DEFINE__` を読み、`index.html` は `__METASCOPE_METADATA_PLACEHOLDER__` を使っていて、名前が食い違っている。ビルドは通るが表示されるデータが空になる。
-- 読むのは 7 種類の子だけ。ビジネスプロセス、検索レイアウト、共有の理由、項目の参照の絞り込み条件（`lookupFilter`）などは読まない（読まない子要素は無視する）。
+- 読むのは 3.1 の表の子と値だけで、表にない子要素は無視する（`skippedElements` は持たない。保存済みのオブジェクトの objectKey を変えないため）。
 - 名前が変わったもの（項目のリネームなど）は `removed` + `added` になる（リネームの推定はしない。Apex と同じ）。
 - 選択リスト値の並び順の変化は報告しない（名前で対応付けるため）。
 - 暗黙の標準項目は固定の一覧で、オブジェクトごとの違い（`OwnerId` の有無など）は見ていない。
+
+## 10. そのほかの種類（フォルダ単位のメタデータ）
+
+### 10.1 対象
+
+| 分類                 | 種類（`dataType`・保存名の接頭辞）                                                                                                                                                                                                                                                                    | フォルダ                                                                                                                                                     |
+| -------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| 権限                 | `permissionSet`・`mutingPermissionSet`・`profile`・`permissionSetGroup`                                                                                                                                                                                                                               | `permissionsets/`・`mutingpermissionsets/`・`profiles/`・`permissionsetgroups/`                                                                              |
+| ラベル・自動化・画面 | `customLabels`・`flow`・`layout`・`flexiPage`                                                                                                                                                                                                                                                         | `labels/`・`flows/`・`layouts/`・`flexipages/`                                                                                                               |
+| そのほか（表で読む） | `customMetadata`・`customTab`・`customApplication`・`globalValueSet`・`standardValueSet`・`customPermission`・`quickAction`・`sharingRules`・`staticResource`・`report`・`dashboard`・`translations`・`namedCredential`・`remoteSiteSetting`・`workflow`・`approvalProcess`・`queue`・`group`・`role` | `customMetadata/`・`tabs/`・`applications/` など（`parser/Metadata/record.ts` の `RECORD_FOLDERS`）。レポート・ダッシュボードは `<フォルダ>/<サブフォルダ>/` |
+| 本体を伴う・バンドル | `apexPage`・`apexComponent`（Visualforce）・`emailTemplate`・`aura`                                                                                                                                                                                                                                   | `pages/`・`components/`・`email/<サブフォルダ>/`・`aura/<名前>/`                                                                                             |
+
+### 10.2 読み方（[parser/Metadata/folder.ts](../src/analyzer/parser/Metadata/folder.ts)）
+
+- **読み込みはフォルダ単位、結果・保存はファイル単位**（Aura はバンドル単位）。保存名は `<種類>_<名前>`（入れ子のフォルダは `/` を `.` にする）。
+- 種類ごとの違いは設定（`MetadataFolderSpec`）だけ。`layout`（`file` / `nested` / `bundle`）、一緒に読むファイル（`companions`。Visualforce の `.page`、メールの `.email`）、JSON の作り方（`make`）。一覧は [parser/Metadata/folders.ts](../src/analyzer/parser/Metadata/folders.ts) の `METADATA_FOLDER_PARSERS`（型は「どの種類も入る型」。種類ごとの型の共用体にすると TS2590 になる）。
+- 文字列から読む入口は `parseSource(filePath, source, { extras, name })`。worker は `MetadataFolderWorker`（1 タスク = 種類のフォルダ）。
+- キーの作り方は Apex・LWC と同じ（`makeMetadataJson`。objectKey は `sortKeys` してから hash）。表にない要素は `skippedElements` に名前を残す。
+
+### 10.3 JSON
+
+| 種類                                                                                              | JSON の作り方                                                                                                                                                                                                                                                                   |
+| ------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 権限（[types/metadata/permission.ts](../src/analyzer/types/metadata/permission.ts)）              | 権限の行（`objectPermissions` など）は、要素名 → kind・値のスキーマ・キーの表（`PERMISSION_SET_ROWS` / `PROFILE_ROWS`）で読む。Profile はすべての要素を読む。権限セットグループは含む権限セット・ミュート権限セットの名前の集合                                                 |
+| ラベル                                                                                            | ファイル 1 つが単位、ラベルは子（キー `fullName`）                                                                                                                                                                                                                              |
+| Flow                                                                                              | 要素・資源は名前をキーにする JSON ノード（中身は値の木 `properties`）。接続は要素の外の `edges`（`{ from, to, edgeType }`）。画面上の位置（`locationX` / `locationY`）と Flow Builder の設定は読まない。使っている項目・Apex・サブフロー・LWC・ラベルを `references` に取り出す |
+| Layout                                                                                            | 項目はセクションの入れ子にせず、位置（`{ section, column, row }`）付きの平らな並び                                                                                                                                                                                              |
+| FlexiPage                                                                                         | リージョン・部品・項目を平らに持ち、部品・項目は置かれているリージョンの名前（`region`）を持つ。リージョンは中の identifier の表示順（`items`）を持つ                                                                                                                           |
+| そのほか（[types/metadata/recordTypes.ts](../src/analyzer/types/metadata/recordTypes.ts)）        | 種類ごとの表（`RecordSpec`: 値の要素 `schema`・繰り返す値 `lists`・入れ子の構造 `trees`（値の木）・名前で対応付ける子 `children`）から JSON と型（`RecordJson<typeof 表>`）を作る。ファイルの名前は `fullName`                                                                  |
+| Visualforce・メール・Aura（[types/metadata/markup.ts](../src/analyzer/types/metadata/markup.ts)） | `-meta.xml` は表で読み、本体は構造だけ（ルートの属性・使っている部品・宣言・差し込み `expressions`）。メールは本文をそのまま持つ。Aura はバンドルの中のファイル・JS の関数の名前も持つ                                                                                          |
+
+### 10.4 Diff
+
+単位は `makeIdUnitDiffs`（id で対応付け）。種類ごとの単位の差分は [processor/Metadata/diff/metadataFile.ts](../src/analyzer/processor/Metadata/diff/metadataFile.ts) の `make<種類>UnitDiffs`、一覧は `METADATA_UNIT_DIFFS`。中は名前で対応付ける（D）。並び順に意味があるもの（Flow の決定の結果・Layout のセクション・FlexiPage のリージョンの中の並び）は順序付き列（C）、名前の並びは同じ名前同士だけを組にする（`makeOrderedNamesDiff`）。表の種類は表から差分を作る（`makeRecordDiff`）。
+
+### 10.5 解析（[processor/Metadata/](../src/analyzer/processor/Metadata/)）
+
+| 解析                                   | 内容                                                                                                                                                                           |
+| -------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `analyzePermissions`                   | 権限の表、権限セットグループの実際の権限（含む権限セットの和 − ミュート）、参照先の確認、デプロイで弾かれる矛盾、強い権限                                                      |
+| `analyzeCustomLabels`                  | ラベルの使用箇所（LWC・Apex・Flow）、使われていないラベル、ないラベルへの参照                                                                                                  |
+| `analyzeFlows`                         | Flow の一覧・図・オブジェクトごとの自動化、到達できない要素、失敗時の経路のない処理、参照先（`@InvocableMethod` を含む）                                                       |
+| `analyzeLayouts` / `analyzeFlexiPages` | 項目の確認、項目の必須とレイアウトの食い違い、LWC の公開・target・`targetConfigs` のプロパティ、LWC の配置先                                                                   |
+| `analyzeAutomation`                    | オブジェクトごとの自動化（レコードトリガーフロー・Apex トリガー・入力規則）                                                                                                    |
+| `analyzeMetadataReferences`            | 種類をまたぐ参照の取り出しと突き合わせ（タブ・アプリ・Visualforce・Aura・共有ルール・ワークフローなど）と逆引き。参照先の種類の解析結果が 1 つもなければ、その種類は確かめない |
+
+レポートに渡すデータは [src/analyzer/report/](../src/analyzer/report/)（`REPORT_PROVIDERS`）。サンプルの動作は `docs/examples/metadata/scripts/run-folders.ts`、テストは `test/processor/metadata-folders.test.ts`・`metadata-bc.test.ts`・`report-providers.test.ts`。

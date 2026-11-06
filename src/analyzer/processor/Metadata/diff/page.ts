@@ -34,20 +34,19 @@ import {
     PresentDiff,
     PropertiesDiff,
     makeOrderedNamesDiff,
-    makeOrderedValuesDiff,
     makePresentDiff,
     makePropertiesDiff,
     makeUnorderedValuesDiff,
     presentEntry,
 } from '../../commons/diff/present';
 
-// 画面 (ページレイアウト・Lightning ページ) の差分。方針: docs/metadata-a-plan.md 7.2・8.2 章
+// 画面 (ページレイアウト・Lightning ページ) の差分。方針: docs/metadata-implementation.md 10 章
 
 type Values = PresentDiff<string[], TypedListDiff<string, ValueDiff<string>>>;
 type ValueSet = PresentDiff<string[], TypedListDiff<string, never>>;
 
 const orderedEntry = <K extends string>(key: K, before?: string[], after?: string[]) =>
-    presentEntry(key, makePresentDiff(before, after, makeOrderedValuesDiff));
+    presentEntry(key, makePresentDiff(before, after, makeOrderedNamesDiff));
 const setEntry = <K extends string>(key: K, before?: string[], after?: string[]) =>
     presentEntry(key, makePresentDiff(before, after, makeUnorderedValuesDiff));
 const optionalEntry = <K extends string, T>(key: K, before?: T, after?: T) =>

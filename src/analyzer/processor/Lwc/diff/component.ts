@@ -38,8 +38,8 @@ import {
     presentEntry,
 } from '../../commons/diff/present';
 
-// LWC のコンポーネント (default export のクラス) の差分。方針: docs/lwc-diff-policy.md
-// 分類 (A. スロット / B. 集合 / C. 順序付き列 / D. キー対応) と出力の形は Apex と同じ (docs/apex-json-diff-policy.md)。
+// LWC のコンポーネント (default export のクラス) の差分。方針: docs/lwc-implementation.md
+// 分類 (A. スロット / B. 集合 / C. 順序付き列 / D. キー対応) と出力の形は Apex と同じ (docs/apex-implementation.md)。
 // 部品はすべて processor/commons/diff のもの
 
 /** 値 (型・文字列・真偽値) の任意項目。両方になければプロパティごと持たない */

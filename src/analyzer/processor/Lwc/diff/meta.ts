@@ -25,7 +25,7 @@ import {
     presentEntry,
 } from '../../commons/diff/present';
 
-// LWC のバンドルの設定 (js-meta.xml) の差分。メタデータ (docs/metadata-diff-policy.md) と同じ書き方:
+// LWC のバンドルの設定 (js-meta.xml) の差分。メタデータ (docs/metadata-implementation.md) と同じ書き方:
 // 値はスキーマごとの差分、値の並び (targets など) は B. 集合、子 (targetConfig・property) は D. キー対応
 
 type ValuesDiff = PresentDiff<string[], TypedListDiff<string, never>>;

@@ -6,7 +6,7 @@ import type { ConvertKeys, ValueTree } from '../../types';
 import { analyzeObject } from './analysis';
 import { isCustomName, makeReferenceChecker, type MetadataFinding } from './references';
 
-// 種類をまたぐ参照の取り出しと突き合わせ (優先度 B・C と、優先度 A の解析で確かめていない参照)。方針: docs/metadata-b-c-plan.md 6 章
+// 種類をまたぐ参照の取り出しと突き合わせ (優先度 B・C と、優先度 A の解析で確かめていない参照)。方針: docs/metadata-implementation.md 10 章
 // - 参照は解析結果の JSON から取り出す (parse の順番には依らない。すべてを読んだあとに突き合わせる)
 // - 参照先の種類の解析結果が 1 つもなければ、その種類は確かめない (リポジトリにないのか、読んでいないのか分からないため)
 // - 名前空間付き (ns__Name) の名前・標準のもの (standard-Account など) は確かめない
@@ -514,22 +514,22 @@ const toCode = (refType: string) =>
     `UNKNOWN_${refType.replace(/([a-z])([A-Z])/g, '$1_$2').toUpperCase()}`;
 
 /** 種類をまたぐ参照の取り出しと突き合わせ */
+/** フォルダ単位のメタデータの単位 1 つの参照 (依存関係のグラフも使う) */
+export const extractMetadataReferences = (result: MetadataFileParseResult): MetadataReference[] => {
+    if (result.dataType === 'error') return [];
+    const extract = EXTRACTORS[result.dataType];
+    if (!extract) return [];
+    return extract(result.result.base as Json).map((r) => ({
+        fromType: result.dataType,
+        from: result.result.id,
+        filePath: result.filePath,
+        ...r,
+    }));
+};
+
 export const analyzeMetadataReferences = (inputs: ReferenceInputs): ReferenceAnalysis => {
     const metadata = (inputs.metadata ?? []).filter((r) => r.dataType !== 'error');
-    const references: MetadataReference[] = [];
-
-    for (const result of metadata) {
-        const extract = EXTRACTORS[result.dataType];
-        if (!extract) continue;
-        extract(result.result.base as Json).forEach((r) =>
-            references.push({
-                fromType: result.dataType,
-                from: result.result.id,
-                filePath: result.filePath,
-                ...r,
-            }),
-        );
-    }
+    const references: MetadataReference[] = metadata.flatMap(extractMetadataReferences);
     // オブジェクトの項目が使うグローバル値セット
     for (const object of inputs.objects ?? []) {
         if (object.dataType !== 'object') continue;

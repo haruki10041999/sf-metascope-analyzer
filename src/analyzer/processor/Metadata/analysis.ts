@@ -6,7 +6,7 @@ import {
     isErrorJson,
 } from '../../types';
 
-// 方針: docs/metadata-json-reference.md 4 章
+// 方針: docs/metadata-implementation.md
 // 1 つの時点の CustomObjectJson から情報を取り出す。Diff には依存しない (Apex の analysis と同じ分け方)。
 
 /** 項目の値の型。Salesforce の項目の型 (Checkbox / Currency など) を、扱う値の種類にまとめたもの */

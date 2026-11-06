@@ -33,7 +33,7 @@ const collect = (root: LwcCommonTypeClass<string>) => {
     return { errors: collectErrorTypeClasses(root), nodes };
 };
 
-const BUNDLES = 'docs/examples/lwc/samples/bundles/force-app/main/default/lwc';
+const BUNDLES = 'docs/examples/repository/before/force-app/main/default/lwc';
 
 describe('lwc_IR', () => {
     for (const file of [
@@ -52,7 +52,7 @@ describe('lwc_IR', () => {
 
     it('Flow の構文を IR エラーなしで変換できる', () => {
         const source = `type T = { a: number, b?: ?string };\nopaque type O = string;\nfunction f<X>(x: X): T | null { return (null: any); }\ndeclare function g(x: number): void;\nenum E { A, B }`;
-        const { ir } = parseLwc(source, [['flow', { all: true, enums: true }]]);
+        const { ir } = parseLwc(source, [['flow', { all: true, enums: true } as never]]);
         assert.deepEqual(collect(ir).errors, []);
     });
 

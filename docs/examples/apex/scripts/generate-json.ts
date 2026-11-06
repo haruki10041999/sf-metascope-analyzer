@@ -9,21 +9,21 @@
  */
 import { mkdir, rm, writeFile } from 'node:fs/promises';
 import path from 'node:path';
+
+import { repositoryOf } from '../../paths';
 import { fileURLToPath } from 'node:url';
 
 import { ApexParser } from '../../../../src/analyzer/parser/Apex/parser';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const root = path.resolve(here, '../../../..');
-const samples = path.resolve(here, '../samples');
 const outputDirectory = path.resolve(here, '../output/json');
 const rel = (p: string) => path.relative(root, p).replace(/\\/g, '/');
 
-/** グループ名 → サンプルのフォルダ */
+/** グループ名 → サンプルのリポジトリ (Apex の構文のサンプルは両方にある) */
 const GROUPS: Record<string, string> = {
-    syntax: 'syntax',
-    'diff-before': 'diff/before',
-    'diff-after': 'diff/after',
+    before: repositoryOf('before'),
+    after: repositoryOf('after'),
 };
 
 /** kind を持つ JSON ノードの数 */
@@ -42,7 +42,7 @@ const countNodes = (value: unknown): number => {
 const rows: string[] = [];
 await rm(outputDirectory, { recursive: true, force: true });
 for (const [group, directory] of Object.entries(GROUPS)) {
-    for (const result of await ApexParser.parseApexUnits(path.join(samples, directory))) {
+    for (const result of await ApexParser.parseApexUnits(directory)) {
         const id = result.result.id;
         const file = path.join(outputDirectory, group, `${id}.json`);
         await mkdir(path.dirname(file), { recursive: true });

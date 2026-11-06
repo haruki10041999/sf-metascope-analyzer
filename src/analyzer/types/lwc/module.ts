@@ -1,4 +1,4 @@
-// JS / TS のモジュールの JSON (docs/lwc-json-reference.md)。Apex の types/apex/unit.ts に当たる。
+// JS / TS のモジュールの JSON (docs/lwc-implementation.md)。Apex の types/apex/unit.ts に当たる。
 // Apex の unit と同じく、モジュールは境界ノードにせず kind / sourceKeys を持たない (ファイルごとに保存する単位のため)。
 // 直下の IR を作れなかったノードは、その位置 (errors) に ErrorJson として残す
 import { isErrorNode } from '../apex/commons';

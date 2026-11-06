@@ -18,6 +18,7 @@ import {
     makeMsgPackSaveData,
     parseXmlSource,
     readMsgPack,
+    readSavedMsgPacks,
     readSource,
     toXmlResolvedError,
 } from '../commons';
@@ -58,6 +59,10 @@ export type ObjectTranslationParseResult =
  * (Apex の単位の class_ / trigger_ / anonymous_ と同じ)
  */
 export const OBJECT_TRANSLATION_SAVE_PREFIX = 'objectTranslation_';
+
+/** 翻訳の保存名 (objectTranslation_<オブジェクト>-<言語>) か */
+export const isObjectTranslationSaveId = (id: string): boolean =>
+    id.startsWith(OBJECT_TRANSLATION_SAVE_PREFIX);
 
 const toPosix = (p: string) => p.split(path.sep).join('/');
 
@@ -216,7 +221,7 @@ export class ObjectTranslationParser {
     }
 
     // 開発者でのデータ確認用
-    static saveObjectTranslationFileForDevelopper(
+    static saveObjectTranslationFileForDeveloper(
         baseDir: string,
         target: ObjectTranslationParseResult,
     ): SaveDataInfo[] {
@@ -238,21 +243,8 @@ export class ObjectTranslationParser {
     static async readSavedObjectTranslations(
         baseDir: string,
     ): Promise<ObjectTranslationParseResult[]> {
-        const names = await fs.readdir(baseDir).catch(() => [] as string[]);
-        return Promise.all(
-            names
-                .filter(
-                    (name) =>
-                        name.startsWith(OBJECT_TRANSLATION_SAVE_PREFIX) &&
-                        name.endsWith('.msgpack'),
-                )
-                .sort()
-                .map((name) =>
-                    ObjectTranslationParser.readObjectTranslationMsgPack(
-                        baseDir,
-                        name.slice(0, -'.msgpack'.length),
-                    ),
-                ),
+        return readSavedMsgPacks(baseDir, isObjectTranslationSaveId, (id) =>
+            ObjectTranslationParser.readObjectTranslationMsgPack(baseDir, id),
         );
     }
 }

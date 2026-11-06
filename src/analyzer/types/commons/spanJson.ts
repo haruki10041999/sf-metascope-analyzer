@@ -74,17 +74,10 @@ export const stripSourceKeys = (value: unknown): unknown => {
 /** ファイルの先頭 (要素がないときの位置) */
 export const FILE_START: SourcePosition = { offset: 0, line: 1, column: 0 };
 
-export type SpanJsonOptions = {
-    /**
-     * objectKey をキーの順序に依らない形 (sortKeys してから hash) で作るか。既定は true (Apex / LWC の JS と同じ)。
-     * XML のメタデータは保存済みのキーを変えないため false (書いた順のまま hash する)
-     */
-    sortKeys?: boolean;
-};
-
 /**
  * kind / sourceKeys を付けた JSON を作り、ソース位置を登録する。
- * span が undefined のときは、ファイルの先頭を位置にする
+ * span が undefined のときは、ファイルの先頭を位置にする。
+ * objectKey はキーの順序に依らない形 (sortKeys してから hash。配列は書いた順のまま) で、Apex・LWC・メタデータで同じ
  */
 export const makeSpanJson = <T extends JsonType<string>>(
     kind: T['kind'],
@@ -92,13 +85,12 @@ export const makeSpanJson = <T extends JsonType<string>>(
     span: Span | undefined,
     file: SourceFile,
     registry: SpanSourceRegistry,
-    options: SpanJsonOptions = {},
 ): T => {
     const start = span?.start ?? FILE_START;
     const end = span?.end ?? FILE_START;
     const content = stripSourceKeys(properties);
     const sourceKeys: ConvertKeys = {
-        objectKey: `${kind}_${hash(options.sortKeys === false ? content : sortKeys(content))}`,
+        objectKey: `${kind}_${hash(sortKeys(content))}`,
         sourceKey: `${kind}_${hash({ filePath: file.filePath, start, end })}`,
     };
     registry.register(sourceKeys, {

@@ -2,9 +2,9 @@
 
 Lightning Web Components のバンドル（`force-app/main/default/lwc/<名前>/`）を読み、JSON にし、検証・解析し、前回との差分を取る実装の全体像。Apex・オブジェクトと同じ流れ（構文解析 → `kind` / `sourceKeys` 付き JSON → 解析 → Diff）で作っている。
 
-- JSON の型: [lwc-json-reference.md](./lwc-json-reference.md)
-- Diff の方針: [lwc-diff-policy.md](./lwc-diff-policy.md)
-- ライブラリが返す parse の結果（JSON にする前の形）: [lwc-library-attributes.md](./lwc-library-attributes.md)
+- JSON の型: [lwc-implementation.md](./lwc-implementation.md)
+- Diff の方針: [lwc-implementation.md](./lwc-implementation.md)
+- ライブラリが返す parse の結果（JSON にする前の形）: [lwc-implementation.md](./lwc-implementation.md)
 - 画面モック（未実装の計画）: [lwc-snapshot-plan.md](./lwc-snapshot-plan.md)
 
 ## 1. 処理の流れ
@@ -59,7 +59,7 @@ LwcBundleParseResult (1 バンドル = 1 解析結果 = 1 保存ファイル lwc
 ```text
 src/analyzer/
 ├── types/lwc_IR/               Babel のノードごとの IR (JS / TS / Flow / JSX のすべてのノード。@babel/types から生成)
-├── types/lwc/                  converter (IR → CommonType) と JSON の型 (lwc-json-reference.md)
+├── types/lwc/                  converter (IR → CommonType) と JSON の型 (lwc-implementation.md)
 ├── parser/Lwc/
 │   ├── parser.ts               LwcParser: searchBundleDirectories / parseLwcBundle / parseLwcBundles /
 │   │                           saveLwcBundle / readLwcMsgPack / readSavedBundles

@@ -1,7 +1,7 @@
 import { before, describe, it } from 'node:test';
 import assert from 'node:assert/strict';
 
-import { collectErrors, formatErrors, parse } from './helpers';
+import { collectErrors, formatErrors, parse, asNode } from './helpers';
 
 type UnitModule = typeof import('../../src/analyzer/types/apex_IR/unitVisitor');
 let unit: UnitModule;
@@ -11,7 +11,7 @@ before(async () => {
 });
 
 const visitClass = (source: string) => {
-    const result = new unit.UnitVisitor().visit(parse(source, (p) => p.compilationUnit()));
+    const result = asNode(new unit.UnitVisitor().visit(parse(source, (p) => p.compilationUnit())));
     assert.ok(unit.isCompilationUnitType(result), result.getType());
     return result;
 };
@@ -58,12 +58,14 @@ describe('unitVisitor / declarationVisitor', () => {
     });
 
     it('空の匿名 Apex / 空のトリガー本体をエラーなしで変換できる', () => {
-        const anonymous = new unit.UnitVisitor().visit(parse('', (p) => p.anonymousUnit()));
+        const anonymous = asNode(new unit.UnitVisitor().visit(parse('', (p) => p.anonymousUnit())));
         assert.ok(unit.isAnonymousUnitType(anonymous), anonymous.getType());
         assertNoErrors(anonymous);
 
-        const trigger = new unit.UnitVisitor().visit(
-            parse('trigger T on Account (before insert) { }', (p) => p.triggerUnit()),
+        const trigger = asNode(
+            new unit.UnitVisitor().visit(
+                parse('trigger T on Account (before insert) { }', (p) => p.triggerUnit()),
+            ),
         );
         assert.ok(unit.isTriggerUnitType(trigger), trigger.getType());
         assertNoErrors(trigger);
@@ -71,15 +73,18 @@ describe('unitVisitor / declarationVisitor', () => {
 
     it('inherited sharing は INHERITED_SHARING になる', async () => {
         const modifier = await import('../../src/analyzer/types/apex_IR/modifierVisitor');
-        const result = new modifier.ModifierVisitor().visit(
-            parse('inherited sharing', (p) => p.modifier()),
+        const result = asNode(
+            new modifier.ModifierVisitor().visit(parse('inherited sharing', (p) => p.modifier())),
         );
-        assert.equal(result.getValue(), 'INHERITED_SHARING');
+        assert.equal(
+            (result as unknown as { getValue: () => unknown }).getValue(),
+            'INHERITED_SHARING',
+        );
     });
 
     it('匿名 Apex を変換できる', () => {
         const ctx = parse("System.debug('x');", (p) => p.anonymousUnit());
-        const result = new unit.UnitVisitor().visit(ctx);
+        const result = asNode(new unit.UnitVisitor().visit(ctx));
         assert.ok(unit.isAnonymousUnitType(result), result.getType());
         assertNoErrors(result);
     });
@@ -89,7 +94,7 @@ describe('unitVisitor / declarationVisitor', () => {
             'trigger AccTrigger on Account (before insert, after update) { System.debug(1); }',
             (p) => p.triggerUnit(),
         );
-        const result = new unit.UnitVisitor().visit(ctx);
+        const result = asNode(new unit.UnitVisitor().visit(ctx));
         assert.ok(unit.isTriggerUnitType(result), result.getType());
         assertNoErrors(result);
     });

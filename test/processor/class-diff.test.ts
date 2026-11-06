@@ -89,7 +89,11 @@ const field = (objectKey: string, names: string[], init?: string): FieldDeclarat
     kind: 'field',
     sourceKeys: keys(objectKey),
     variantType: primitive(`${objectKey}-type`, 'Integer'),
-    variants: names.map((name) => ({ name, ...(init ? { init } : {}) })),
+    variants: names.map((name) => ({
+        sourceKeys: keys(`${objectKey}-${name}`),
+        name,
+        ...(init ? { init } : {}),
+    })),
 });
 
 const initializer = (block: StatementJson[], isStatic = false): InitializerBlockJson => ({
@@ -227,7 +231,7 @@ describe('member diff', () => {
         assert.ok(diff.status === 'changed' && 'fields' in diff);
         assert.ok(Array.isArray(diff.fields.block));
         assert.deepEqual(
-            diff.fields.block.map((d) => d.status),
+            diff.fields.block.map((d) => ('status' in d ? d.status : undefined)),
             ['unchanged', 'changed'],
         );
     });

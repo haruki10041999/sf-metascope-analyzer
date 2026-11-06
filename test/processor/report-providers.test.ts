@@ -27,10 +27,10 @@ import {
     type ReportInput,
 } from '../../src/analyzer/report';
 
-// レポートの data provider (docs/report-components-plan.md 3.2 章)。サンプルは docs/examples/metadata/samples
+// レポートの data provider (docs/report-components-plan.md 3.2 章)。サンプルは docs/examples/repository
 
 const root = (side: 'before' | 'after') =>
-    path.resolve('docs/examples/metadata/samples', side, 'force-app/main/default');
+    path.resolve('docs/examples/repository', side, 'force-app/main/default');
 
 const snapshot = async (side: 'before' | 'after'): Promise<MetadataSnapshot> => ({
     permissionSets: await PermissionSetParser.parseAll(root(side)),
@@ -42,9 +42,9 @@ const snapshot = async (side: 'before' | 'after'): Promise<MetadataSnapshot> => 
     layouts: await LayoutParser.parseAll(root(side)),
     flexiPages: await FlexiPageParser.parseAll(root(side)),
     objects: await MetadataParser.parseObjects(path.join(root(side), 'objects')),
-    apex: await ApexParser.parseApexUnits(path.resolve('docs/examples/apex/samples/diff', side)),
+    apex: await ApexParser.parseApexUnits(path.resolve('docs/examples/repository', side)),
     lwc: await LwcParser.parseLwcBundles(
-        path.resolve('docs/examples/lwc/samples/bundles/force-app/main/default/lwc'),
+        path.resolve('docs/examples/repository', side, 'force-app/main/default/lwc'),
     ),
 });
 

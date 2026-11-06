@@ -12,9 +12,9 @@ import type {
     LwcTextJson,
 } from '../../src/analyzer/types';
 
-// LWC のテンプレート (HTML) の JSON と検証 (docs/lwc-json-reference.md)
+// LWC のテンプレート (HTML) の JSON と検証 (docs/lwc-implementation.md)
 
-const BUNDLES = 'docs/examples/lwc/samples/bundles/force-app/main/default/lwc';
+const BUNDLES = 'docs/examples/repository/before/force-app/main/default/lwc';
 
 const templateOf = (source: string) =>
     parseTemplate('x/x.html', `<template>${source}</template>`).template as LwcTemplateJson;

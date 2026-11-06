@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import { apexSampleOf } from '../../docs/examples/paths';
 import { readFile } from 'node:fs/promises';
 import { describe, it } from 'node:test';
 
@@ -23,8 +24,8 @@ const sourceInfo = {
 
 /** 部分木の IR のノードを、type ごとに 1 つ集める */
 const collectNodes = (root: unknown) => {
-    const nodes = new Map<string, ApexCommonTypeClass>();
-    const visit = (value: ApexCommonTypeClass) => {
+    const nodes = new Map<string, ApexCommonTypeClass<string>>();
+    const visit = (value: ApexCommonTypeClass<string>) => {
         if (!(value instanceof ApexErrorTypeClass) && !nodes.has(value.getType())) {
             nodes.set(value.getType(), value);
         }
@@ -44,7 +45,7 @@ describe('converter output types', () => {
         const id = new IdVisitor().visit(parse('Account', (parser) => parser.id()));
         const output = converter.convertApexTypeClass(id);
         assert.equal(output.type, 'id');
-        assert.equal((output as { value: unknown }).value, 'Account');
+        assert.equal((output as unknown as { value: unknown }).value, 'Account');
         assert.deepEqual(output.sourceInfo, sourceInfo);
     });
 
@@ -85,7 +86,10 @@ describe('converter output types', () => {
         const alt = new LiteralVisitor().visit(
             parse('[FIND {Acme} RETURNING Account]', (parser) => parser.soslLiteralAlt()),
         );
-        const altOutput = converter.convertApexTypeClass(alt) as { type: string; value: unknown };
+        const altOutput = converter.convertApexTypeClass(alt) as unknown as {
+            type: string;
+            value: unknown;
+        };
         assert.equal(altOutput.type, 'soslLiteralAlt');
         assert.equal(altOutput.value, 'Acme');
     });
@@ -105,10 +109,7 @@ describe('converter output types', () => {
 
     for (const [file, kind] of examples) {
         it(`${file}: IR の各ノードの変換結果が type と sourceInfo を持ち、エラーを含まない`, async () => {
-            const source = await readFile(
-                new URL(`../../docs/examples/apex/samples/syntax/${file}`, import.meta.url),
-                'utf8',
-            );
+            const source = await readFile(apexSampleOf('after', file), 'utf8');
             const context = parse(source, (parser) => {
                 if (kind === 'compilation') return parser.compilationUnit();
                 if (kind === 'trigger') return parser.triggerUnit();

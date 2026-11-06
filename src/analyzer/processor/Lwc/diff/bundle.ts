@@ -37,7 +37,7 @@ import { LwcModuleJsonDiff, makeLwcModuleDiff } from './module';
 import { LwcStylesheetJsonDiff, makeLwcStylesheetDiff } from './stylesheet';
 import { LwcTemplateJsonDiff, makeLwcTemplateDiff } from './template';
 
-// LWC のバンドル (フォルダ) の差分。方針: docs/lwc-diff-policy.md
+// LWC のバンドル (フォルダ) の差分。方針: docs/lwc-implementation.md
 // バンドルの対応付け (id = バンドル名) はメタデータのフォルダと同じ processor/commons/diff/unit.ts
 
 /** モジュールの中身。どちらも読めたらモジュールの差分、どちらも読めなかったら ErrorJson 同士、片方だけなら値ごと */

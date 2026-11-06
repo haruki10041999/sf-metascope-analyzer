@@ -2,7 +2,7 @@ import { makeFlexiPageJson, makeLayoutJson } from '../../types';
 import { MetadataFolderParser } from './folder';
 import type { ParseResultOf } from './permission';
 
-// 画面 (ページレイアウト・Lightning ページ) の parser。方針: docs/metadata-a-plan.md 7・8 章
+// 画面 (ページレイアウト・Lightning ページ) の parser。方針: docs/metadata-implementation.md 10 章
 
 export const LayoutParser = new MetadataFolderParser({
     type: 'layout',

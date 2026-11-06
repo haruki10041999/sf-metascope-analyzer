@@ -9,10 +9,6 @@
     "value": "取引先の一覧",
     "usages": [
       {
-        "origin": "lwc",
-        "unit": "lwc_accountList"
-      },
-      {
         "origin": "flow",
         "unit": "flow_Account_Wizard"
       }

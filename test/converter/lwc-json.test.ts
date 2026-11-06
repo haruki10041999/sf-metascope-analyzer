@@ -15,7 +15,7 @@ import type {
     LwcPropertyJson,
 } from '../../src/analyzer/types/lwc';
 
-const BUNDLES = 'docs/examples/lwc/samples/bundles/force-app/main/default/lwc';
+const BUNDLES = 'docs/examples/repository/before/force-app/main/default/lwc';
 
 const parseBundle = async (name: string): Promise<LwcBundleStructureType> => {
     const result = await LwcParser.parseLwcBundle(`${BUNDLES}/${name}`);

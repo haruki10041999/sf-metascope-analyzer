@@ -20,7 +20,7 @@ import {
     presentEntry,
 } from '../../commons/diff/present';
 
-// カスタム表示ラベルの差分。方針: docs/metadata-a-plan.md 5 章。ラベルは fullName で D、categories は B
+// カスタム表示ラベルの差分。方針: docs/metadata-implementation.md 10 章。ラベルは fullName で D、categories は B
 
 export type CustomLabelJsonDiff = NodeDiff<
     'customLabel',

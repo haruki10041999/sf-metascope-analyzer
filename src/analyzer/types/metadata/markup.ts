@@ -20,9 +20,9 @@ import {
     type AuraDefinitionBundleJson,
 } from './recordTypes';
 
-// 本体のファイルを伴う種類 (Visualforce・メールテンプレート) と、バンドルの種類 (Aura)。方針: docs/metadata-b-c-plan.md
+// 本体のファイルを伴う種類 (Visualforce・メールテンプレート) と、バンドルの種類 (Aura)。方針: docs/metadata-implementation.md 10 章
 // -meta.xml は種類の表 (recordTypes.ts) で読み、本体のマークアップは構造 (ルートの属性・使っている部品・宣言) だけを JSON にする。
-// 中の差し込み ({!...}) などの参照は、参照の対応 (docs/metadata-roadmap.md) でまとめて扱う
+// 中の差し込み ({!...}) などの参照は、参照の対応 (docs/analysis-plan.md) でまとめて扱う
 
 /** 本体のマークアップを XML として読む。読めなければ problems に理由を足し、ErrorJson */
 const parseMarkup = (

@@ -1,4 +1,4 @@
-// バンドル (lwc/<名前>/ のフォルダ) の JSON (docs/lwc-json-reference.md)。
+// バンドル (lwc/<名前>/ のフォルダ) の JSON (docs/lwc-implementation.md)。
 // JS / TS のモジュール・HTML のテンプレート・CSS・js-meta.xml (meta)
 import type { SourceJson } from '../apex/commons';
 import type { ErrorJson } from '../commons/json';

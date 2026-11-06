@@ -1,7 +1,7 @@
 import { before, describe, it } from 'node:test';
 import assert from 'node:assert/strict';
 
-import { collectErrors, formatErrors, parse } from './helpers';
+import { collectErrors, formatErrors, parse, asNode } from './helpers';
 
 type ExpressionModule = typeof import('../../src/analyzer/types/apex_IR/expressionVisitor');
 let expr: ExpressionModule;
@@ -11,7 +11,7 @@ before(async () => {
 });
 
 const visitExpression = (source: string) =>
-    new expr.ExpressionVisitor().visit(parse(source, (p) => p.expression()));
+    asNode(new expr.ExpressionVisitor().visit(parse(source, (p) => p.expression())));
 
 const assertNoErrors = (node: unknown) => {
     const errors = collectErrors(node);
@@ -92,13 +92,13 @@ describe('expressionVisitor', () => {
     describe('SOQL 式', () => {
         it('boundExpression ":x" を変換できる', () => {
             const ctx = parse(':x', (p) => p.boundExpression());
-            const result = new expr.ExpressionVisitor().visit(ctx);
+            const result = asNode(new expr.ExpressionVisitor().visit(ctx));
             assert.ok(expr.isBoundExpressionType(result), result.getType());
         });
 
         it('whereConditionalExpression は conditionalExpression と別の type 名を持つ', () => {
             const ctx = parse("Name = 'x'", (p) => p.whereConditionalExpression());
-            const result = new expr.ExpressionVisitor().visit(ctx);
+            const result = asNode(new expr.ExpressionVisitor().visit(ctx));
             assert.ok(expr.isWhereConditionalExpressionType(result), result.getType());
             assert.equal(result.getType(), 'whereConditionalExpression');
         });

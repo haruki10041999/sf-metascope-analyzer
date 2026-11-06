@@ -62,7 +62,7 @@ const OBJECTS: ObjectInfo[] = [
     {
         apiName: 'Invoice__c',
         objectType: 'custom',
-        fields: [{ apiName: 'Amount__c', origin: 'metadata', valueType: 'number' }],
+        fields: [{ apiName: 'Amount__c', origin: 'metadata', valueType: 'Double' }],
         sourceKeys: { objectKey: 'o', sourceKey: 's' },
     },
 ];

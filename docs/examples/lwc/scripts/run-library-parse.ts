@@ -1,6 +1,6 @@
 /**
- * LWC のサンプルのバンドル (samples/bundles/) を、各ライブラリでそのまま parse して結果を出す (docs/lwc-implementation.md)。
- * IR / JSON に変換する前の、ライブラリが返す形を確かめるためのもの。属性の説明は docs/lwc-library-attributes.md。
+ * LWC のサンプルのバンドル (repository/before の lwc) を、各ライブラリでそのまま parse して結果を出す (docs/lwc-implementation.md)。
+ * IR / JSON に変換する前の、ライブラリが返す形を確かめるためのもの。属性の説明は docs/lwc-implementation.md。
  *
  * | ファイル     | 構文 (①)                 | LWC の検証 (②)                                     |
  * | ------------ | ------------------------ | -------------------------------------------------- |
@@ -24,13 +24,14 @@ import * as styleCompiler from '@lwc/style-compiler';
 import { parseFragment } from 'parse5';
 import postcss from 'postcss';
 import { parseXml } from '../../../../src/analyzer/types/commons/xml';
+import { sourceOf } from '../../paths';
 import {
     BABEL_TS_OPTIONS,
     eraseTypes,
 } from '../../../../src/analyzer/parser/Lwc/validate/eraseTypes';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
-const ROOT = path.resolve(here, '../samples/bundles/force-app/main/default/lwc');
+const ROOT = sourceOf('before', 'lwc');
 const OUT = path.resolve(here, '../output/library');
 /** --raw のときだけ、ライブラリが返した木をそのまま <バンドル>/<ファイル>.<ライブラリ>.json に出す (大きいのでコミットしない) */
 const RAW = process.argv.includes('--raw');
@@ -132,7 +133,7 @@ const writeCatalog = () => {
         '# LWC のライブラリの parse 結果の属性 (自動生成)',
         '',
         '`run-library-parse.ts` が bundles/ のサンプルから集めたもの。ノードの種類ごとに、出てきたキー・値の型・例 (最初に出た値) を並べる。',
-        '`件数` はそのキーを持っていたノードの数 (ノードの数より少なければ、ないこともあるキー)。説明は [docs/lwc-library-attributes.md](../../../../lwc-library-attributes.md)。',
+        '`件数` はそのキーを持っていたノードの数 (ノードの数より少なければ、ないこともあるキー)。説明は [docs/lwc-implementation.md](../../../../lwc-implementation.md)。',
         '',
     ];
     for (const [library, nodes] of catalog) {
@@ -171,8 +172,8 @@ const parseScript = (bundle: string, file: string, source: string) => {
     const ast = babelParse(source, {
         ...BABEL_TS_OPTIONS,
         plugins: isTs
-            ? [...BABEL_TS_OPTIONS.plugins]
-            : [['decorators', { decoratorsBeforeExport: true }]],
+            ? ([...BABEL_TS_OPTIONS.plugins] as never[])
+            : [['decorators', { decoratorsBeforeExport: true }] as never],
         errorRecovery: true,
         attachComment: false,
     });

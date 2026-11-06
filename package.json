@@ -11,6 +11,7 @@
         "mcp": "ttsx --noCheck src/mcp/server.ts",
         "mcp:node": "node dist/node/mcp/server.js",
         "test": "ttsx --noCheck test/run.ts",
+        "typecheck": "tsc --noEmit -p . && tsc -p tsconfig.test.json",
         "format": "prettier --write .",
         "format:check": "prettier --check ."
     },

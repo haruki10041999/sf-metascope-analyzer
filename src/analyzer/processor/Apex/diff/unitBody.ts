@@ -38,7 +38,7 @@ import {
 } from './meta';
 import { BlockDiff, makeBlockDiff } from './statement';
 
-// 方針: docs/apex-declaration-diff.md 6 章、docs/apex-gumtree-diff.md 7.3
+// 方針: docs/apex-implementation.md、docs/apex-implementation.md 7.3
 
 // ---------------------------------------------------------------------------
 // cls: 型宣言 (class / interface / enum)

@@ -1,4 +1,4 @@
-import { readdir } from 'node:fs/promises';
+import { listSavedIds } from '../parser/commons';
 import path from 'path';
 
 import {
@@ -8,7 +8,6 @@ import {
     WorkerTaskResult,
     WorkerTaskType,
     runWorkerTask,
-    savedFileExtension,
 } from './workerTask';
 import { WorkerPool, defaultConcurrency, mapWithConcurrency } from './workerPool';
 
@@ -80,12 +79,7 @@ export abstract class BatchWorker<K extends WorkerTaskType> {
 
     /** outDir 配下の保存済みの id (= <id>.msgpack のファイル名から拡張子を除いたもの) */
     async listSavedIds(): Promise<string[]> {
-        const entries = await readdir(this.outDir, { withFileTypes: true }).catch(() => []);
-        return entries
-            .filter((entry) => entry.isFile() && entry.name.endsWith(savedFileExtension))
-            .map((entry) => entry.name.slice(0, -savedFileExtension.length))
-            .filter((id) => this.acceptsSavedId(id))
-            .sort();
+        return listSavedIds(this.outDir, (id) => this.acceptsSavedId(id));
     }
 
     /** loadAll で読む保存名か (同じ保存先にほかの種類を置くときに絞り込む) */

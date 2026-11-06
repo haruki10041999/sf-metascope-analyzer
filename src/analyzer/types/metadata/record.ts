@@ -16,7 +16,7 @@ import {
 } from '../commons/xmlJson';
 import { toValueTree, type ValueTree } from '../commons/valueTree';
 
-// 優先度 B・C の XML の種類の JSON の作り方。方針: docs/metadata-b-c-plan.md
+// 優先度 B・C の XML の種類の JSON の作り方。方針: docs/metadata-implementation.md 10 章
 // 種類ごとの表 (RecordSpec) から JSON を作り、型も表から導く (RecordJson<typeof 表>)。
 // - schema: 値の要素 (XML の要素名をプロパティ名にし、型をそろえる。ファイルにないものは持たない)
 // - lists: 繰り返す値の要素 (文字列の並び)

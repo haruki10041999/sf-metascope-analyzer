@@ -5,12 +5,21 @@
 // フォルダの読み込みは folder.ts、単位の解析は unit.ts (ファイルシステムに触らない)
 import fs from 'node:fs/promises';
 
-import { makeJsonSaveData, makeMsgPackSaveData, readMsgPack, type SaveDataInfo } from '../commons';
+import {
+    makeJsonSaveData,
+    makeMsgPackSaveData,
+    readMsgPack,
+    readSavedMsgPacks,
+    type SaveDataInfo,
+} from '../commons';
 
 import { getApexUnitPath, locateApexUnit, readApexUnit, searchApexUnits } from './folder';
 import { APEX_UNIT_PREFIXES, parseApexUnitFiles, type ApexUnitParseResult } from './unit';
 
-const SAVED_EXTENSION = '.msgpack';
+
+/** Apex の保存名 (class_ / trigger_ / anonymous_ で始まる) か */
+export const isApexSaveId = (id: string): boolean =>
+    Object.values(APEX_UNIT_PREFIXES).some((prefix) => id.startsWith(prefix));
 
 export class ApexParser {
     /**
@@ -43,7 +52,7 @@ export class ApexParser {
     }
 
     // 開発者でのデータ確認用
-    static saveApexUnitForDevelopper(baseDir: string, target: ApexUnitParseResult): SaveDataInfo[] {
+    static saveApexUnitForDeveloper(baseDir: string, target: ApexUnitParseResult): SaveDataInfo[] {
         return [makeJsonSaveData('Apex', baseDir, target.result.id, target)];
     }
 
@@ -54,19 +63,8 @@ export class ApexParser {
 
     /** baseDir に保存したすべての単位を読む (class_ / trigger_ / anonymous_ で始まるもの)。baseDir がなければ空 */
     static async readSavedApexUnits(baseDir: string): Promise<ApexUnitParseResult[]> {
-        const prefixes = Object.values(APEX_UNIT_PREFIXES);
-        const names = await fs.readdir(baseDir).catch(() => [] as string[]);
-        return Promise.all(
-            names
-                .filter(
-                    (name) =>
-                        prefixes.some((prefix) => name.startsWith(prefix)) &&
-                        name.endsWith(SAVED_EXTENSION),
-                )
-                .sort()
-                .map((name) =>
-                    ApexParser.readApexMsgPack(baseDir, name.slice(0, -SAVED_EXTENSION.length)),
-                ),
+        return readSavedMsgPacks(baseDir, isApexSaveId, (id) =>
+            ApexParser.readApexMsgPack(baseDir, id),
         );
     }
 }

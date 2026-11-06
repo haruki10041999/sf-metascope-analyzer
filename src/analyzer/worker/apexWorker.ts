@@ -1,4 +1,4 @@
-import { ApexParser } from '../parser/Apex/parser';
+import { ApexParser, isApexSaveId } from '../parser/Apex/parser';
 import { BatchResult, BatchWorker, WorkerOptions } from './batchWorker';
 import { SaveSummary } from './workerTask';
 
@@ -7,7 +7,7 @@ export type ApexWorkerOptions = WorkerOptions;
 /**
  * Apex の解析・保存・読み込みをまとめるクラス。保存・読み込みは本番用 (msgpack) に限定する。
  * 1 単位 (クラスはソースと -meta.xml、トリガーも同じ、匿名 Apex は 1 ファイル) = 1 件 = 1 つの保存ファイル
- * (<outDir>/class_<名前>.msgpack など)。開発者用の JSON 出力は、ApexParser.saveApexUnitForDevelopper を直接呼ぶスクリプトで行う。
+ * (<outDir>/class_<名前>.msgpack など)。開発者用の JSON 出力は、ApexParser.saveApexUnitForDeveloper を直接呼ぶスクリプトで行う。
  * useThreads が true の場合は worker_threads のプールで並列に処理する。
  * スレッドを使った場合は、使い終わったら close() を呼ぶこと。
  */
@@ -20,5 +20,10 @@ export class ApexWorker extends BatchWorker<'Apex'> {
     async parseAndSaveAll(srcDir: string): Promise<BatchResult<string, SaveSummary>[]> {
         const units = await ApexParser.searchApexUnits(srcDir);
         return this.batch(units, (filePath) => this.parseAndSave(filePath));
+    }
+
+    /** Apex の保存名 (class_ / trigger_ / anonymous_) だけを読む (ほかの種類と同じ保存先でもよい) */
+    protected override acceptsSavedId(id: string): boolean {
+        return isApexSaveId(id);
     }
 }

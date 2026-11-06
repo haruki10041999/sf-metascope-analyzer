@@ -34,6 +34,33 @@ export type SaveDataInfo = {
 // records を使うので msgpackr 以外の MessagePack 実装では読めない点に注意。
 const packr = new Packr({ useRecords: true });
 
+/**
+ * 保存データの版。JSON の形・キーの作り方・保存名を変えたら 1 つ上げる。
+ * 版の違う保存データは読まない (読む側は「保存データなし」として扱い、解析し直して保存し直す)。
+ * 1: 版なし (〜 2026/11/05)
+ * 2: 版を入れた。オブジェクトの保存名を object_<API 名> にした。メタデータの JSON のキーを並べ替えて作る
+ */
+export const SAVE_FORMAT_VERSION = 2;
+
+/** 保存ファイルの中身。data を版と一緒に包む */
+type SavedEnvelope = { formatVersion: number; data: unknown };
+
+/** 版の違う (古い) 保存データを読んだ */
+export class SavedDataVersionError extends Error {
+    constructor(
+        readonly inputFile: string,
+        readonly formatVersion: number | undefined,
+    ) {
+        super(
+            `Saved data version mismatch: ${inputFile} (saved: ${formatVersion ?? 'none'}, current: ${SAVE_FORMAT_VERSION})`,
+        );
+        this.name = 'SavedDataVersionError';
+    }
+}
+
+/** 本番の保存ファイルの拡張子 */
+export const SAVED_EXTENSION = '.msgpack';
+
 /** 末尾が '/' でないと相対 URL が親ディレクトリ基準で解決されるため、必ず付ける */
 const toDirectoryUrl = (baseDir: string) => pathToFileURL(path.join(baseDir, path.sep));
 
@@ -46,7 +73,7 @@ export const makeMsgPackSaveData = (
 ): SaveDataInfo => ({
     type,
     outputPath: new URL(`./${id}.msgpack`, toDirectoryUrl(baseDir)),
-    data: packr.pack(data),
+    data: packr.pack({ formatVersion: SAVE_FORMAT_VERSION, data } satisfies SavedEnvelope),
 });
 
 /** 開発者でのデータ確認用: data を <baseDir>/<id>.json に保存するデータ */
@@ -61,13 +88,70 @@ export const makeJsonSaveData = (
     data: `${JSON.stringify(data, null, 2)}\n`,
 });
 
-/** makeMsgPackSaveData で保存した <baseDir>/<id>.msgpack を読み込む。label はエラーメッセージ用 */
+/**
+ * makeMsgPackSaveData で保存した <baseDir>/<id>.msgpack を読み込む。label はエラーメッセージ用。
+ * 版が今と違えば SavedDataVersionError
+ */
 export const readMsgPack = async <T>(baseDir: string, id: string, label: string): Promise<T> => {
-    const inputFile = path.join(baseDir, `${id}.msgpack`);
+    const inputFile = path.join(baseDir, `${id}${SAVED_EXTENSION}`);
     const content = await fs.readFile(inputFile).catch(() => {
         throw new Error(`Saved ${label} file not found: ${inputFile}`);
     });
-    return packr.unpack(content) as T;
+    const saved = packr.unpack(content) as Partial<SavedEnvelope> | null;
+    const formatVersion =
+        saved && typeof saved === 'object' && typeof saved.formatVersion === 'number'
+            ? saved.formatVersion
+            : undefined;
+    if (formatVersion !== SAVE_FORMAT_VERSION) throw new SavedDataVersionError(inputFile, formatVersion);
+    return saved!.data as T;
+};
+
+/**
+ * baseDir に保存した <id>.msgpack のうち accepts が受け付ける id をすべて読む (id の順)。
+ * baseDir がなければ空。版の違う保存データが 1 つでもあれば、保存データなしとして空を返す
+ * (一部だけ読むと、残りが「追加」に見えるため)
+ */
+export const readSavedMsgPacks = async <T>(
+    baseDir: string,
+    accepts: (id: string) => boolean,
+    read: (id: string) => Promise<T>,
+): Promise<T[]> => {
+    const ids = await listSavedIds(baseDir, accepts);
+    try {
+        return await Promise.all(ids.map(read));
+    } catch (e) {
+        if (e instanceof SavedDataVersionError) return [];
+        throw e;
+    }
+};
+
+/** baseDir に保存した <id>.msgpack の id のうち、accepts が受け付けるもの (id の順)。baseDir がなければ空 */
+export const listSavedIds = async (
+    baseDir: string,
+    accepts: (id: string) => boolean = () => true,
+): Promise<string[]> => {
+    const names = await fs.readdir(baseDir).catch(() => [] as string[]);
+    return names
+        .filter((name) => name.endsWith(SAVED_EXTENSION))
+        .map((name) => name.slice(0, -SAVED_EXTENSION.length))
+        .filter(accepts)
+        .sort();
+};
+
+/** baseDir の保存データが今の版か。保存データがなければ false */
+export const hasCurrentSavedData = async (
+    baseDir: string,
+    accepts: (id: string) => boolean = () => true,
+): Promise<boolean> => {
+    const [first] = await listSavedIds(baseDir, accepts);
+    if (first === undefined) return false;
+    return readMsgPack(baseDir, first, 'saved data').then(
+        () => true,
+        (e) => {
+            if (e instanceof SavedDataVersionError) return false;
+            throw e;
+        },
+    );
 };
 
 /** 保存処理が作ったデータをそのまま書き込む (バイナリ・文字列以外は整形した JSON にする) */

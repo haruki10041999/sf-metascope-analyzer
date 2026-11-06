@@ -1,9 +1,9 @@
 /**
  * フォルダ単位のメタデータ (権限・ラベル・Flow・画面) の parse・Diff・解析の動作検証。
- * samples/before と after の force-app/main/default を本番と同じ流れ (MetadataFolderParser.parseAll) で読み、output/ に出力する。
- * 方針: docs/metadata-a-plan.md
+ * repository/before と after の force-app/main/default を本番と同じ流れ (MetadataFolderParser.parseAll) で読み、output/ に出力する。
+ * 方針: docs/metadata-implementation.md 10 章
  *
- * - output/json/<before|after>/<フォルダ>/<種類>_<名前>.json: 解析結果 (MetadataFolderParser.saveForDevelopper と同じ形)
+ * - output/json/<before|after>/<フォルダ>/<種類>_<名前>.json: 解析結果 (MetadataFolderParser.saveForDeveloper と同じ形)
  * - output/json/folders.md:   ファイルごとの dataType・行の件数・読めなかった要素、解析 (analysis) の結果
  * - output/diff/folder-diff.json: 種類ごとの make*UnitDiffs の結果
  * - output/diff/folders.md:   unchanged 以外の差分の一覧と、kind ごとの JSON・差分への出現数
@@ -41,17 +41,16 @@ import {
     analyzeSnapshotReferences,
     type MetadataSnapshot,
 } from '../../../../src/analyzer/report';
-import { SIDES } from './run-parse';
+import { SIDES, repositoryOf, sourceOf } from '../../paths';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
-const samples = path.resolve(here, '../samples');
 const jsonDirectory = path.resolve(here, '../output/json');
 const diffDirectory = path.resolve(here, '../output/diff');
 const reportDirectory = path.resolve(here, '../output/report');
 
 type Side = (typeof SIDES)[number];
 
-const sourceRoot = (side: Side) => path.join(samples, side, 'force-app', 'main', 'default');
+const sourceRoot = (side: Side) => sourceOf(side);
 
 /** 解析結果の filePath を、実行環境に依らない default からの相対パスにする */
 const relative = <R extends MetadataFileParseResult>(side: Side, results: R[]): R[] =>
@@ -79,17 +78,13 @@ const parseSide = async (side: Side): Promise<Parsed> =>
     );
 
 /** 解析に使うリポジトリの解析結果 (オブジェクトと、Apex のサンプルのクラス名) */
-const lwcSamples = () =>
-    LwcParser.parseLwcBundles(
-        path.resolve(here, '../../lwc/samples/bundles/force-app/main/default/lwc'),
-    );
+const lwcSamples = (side: Side) => LwcParser.parseLwcBundles(sourceOf(side, 'lwc'));
 
 const namesOf = (parsed: Parsed, type: string) =>
     (parsed[type] ?? []).map((r) => r.result.id.slice(type.length + 1));
 
-/** Apex は Apex のサンプル (docs/examples/apex/samples/diff/<side>) を使う */
-const apexSamples = (side: Side) =>
-    ApexParser.parseApexUnits(path.resolve(here, `../../apex/samples/diff/${side}`));
+/** Apex (classes・triggers・scripts/apex) */
+const apexSamples = (side: Side) => ApexParser.parseApexUnits(repositoryOf(side));
 
 const objectSamples = (side: Side) =>
     MetadataParser.parseObjects(path.join(sourceRoot(side), 'objects'));
@@ -104,7 +99,7 @@ const contextOf = async (side: Side, parsed: Parsed): Promise<MetadataContext> =
             : [],
     );
     return {
-        ...lwcContextOf(await lwcSamples()),
+        ...lwcContextOf(await lwcSamples(side)),
         flows: namesOf(parsed, 'flow'),
         layouts: namesOf(parsed, 'layout'),
         flexiPages: namesOf(parsed, 'flexiPage'),
@@ -216,10 +211,10 @@ const summarizePermissions = (parsed: Parsed, context: MetadataContext): string[
     return lines;
 };
 
-/** ラベルの使用箇所は、LWC のサンプル (docs/examples/lwc/samples/bundles) から取る */
-const summarizeLabels = async (parsed: Parsed): Promise<string[]> => {
+/** ラベルの使用箇所 (LWC・Flow) */
+const summarizeLabels = async (side: Side, parsed: Parsed): Promise<string[]> => {
     const analysis = analyzeCustomLabels(parsed.customLabels as never, {
-        lwc: await lwcSamples(),
+        lwc: await lwcSamples(side),
         usages: getFlowLabelUsages(parsed.flow as never),
     });
     const lines = [
@@ -341,7 +336,7 @@ const summarizeReferences = async (side: Side, parsed: Parsed): Promise<string[]
         others: othersOf(parsed),
         objects: await objectSamples(side),
         apex: await apexSamples(side),
-        lwc: await lwcSamples(),
+        lwc: await lwcSamples(side),
     });
     const lines = [
         '### 種類をまたぐ参照 (analyzeMetadataReferences)',
@@ -397,7 +392,7 @@ const main = async () => {
             await rm(directory, { recursive: true, force: true });
             await mkdir(directory, { recursive: true });
             for (const result of parsed[parser.spec.type]!) {
-                for (const { outputPath, data } of parser.saveForDevelopper(
+                for (const { outputPath, data } of parser.saveForDeveloper(
                     directory,
                     result as never,
                 )) {
@@ -408,7 +403,7 @@ const main = async () => {
         summary.push(...summarizeFiles(side, parsed));
         const context = await contextOf(side, parsed);
         summary.push(...summarizePermissions(parsed, context));
-        summary.push(...(await summarizeLabels(parsed)));
+        summary.push(...(await summarizeLabels(side, parsed)));
         summary.push(...summarizeFlows(parsed, context));
         summary.push(...summarizePages(parsed, context));
         summary.push(...(await summarizeAutomation(side, parsed)));
@@ -488,7 +483,7 @@ const main = async () => {
         others: othersOf(parsed),
         objects: await objectSamples(side),
         apex: await apexSamples(side),
-        lwc: await lwcSamples(),
+        lwc: await lwcSamples(side),
     });
     const input = {
         before: await snapshot('before', before),

@@ -45,7 +45,7 @@ import {
 } from '../../commons/diff/present';
 import { NameValuesDiff, makeNameValuesDiff } from './page';
 
-// 優先度 B・C の差分。方針: docs/metadata-b-c-plan.md 2.3 章
+// 優先度 B・C の差分。方針: docs/metadata-implementation.md 10 章
 // 種類の表 (RecordSpec) から作る。値は 1 つずつ (makePropertiesDiff)、繰り返す値は書いた順 (C)、
 // 入れ子の構造 (値の木) は 'one' なら値、'many' なら書いた順 (C)、子はキーで D (キーがなければ集合)
 

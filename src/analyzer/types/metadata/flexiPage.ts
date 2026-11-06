@@ -14,7 +14,7 @@ import {
     type XmlSourceRegistry,
 } from '../commons/xmlJson';
 
-// Lightning ページ (flexipages/<名前>.flexipage-meta.xml) の JSON。方針: docs/metadata-a-plan.md 8 章
+// Lightning ページ (flexipages/<名前>.flexipage-meta.xml) の JSON。方針: docs/metadata-implementation.md 10 章
 // リージョン・部品・項目は平らな並びにし、部品・項目は置かれているリージョンの名前 (region) を持つ
 // (リージョンをまたいで動かしたとき、削除 + 追加ではなく region の変更として出すため)。
 // タブなどの部品の中 (Facet のリージョン) の入れ子は、表示のときに組み立てる

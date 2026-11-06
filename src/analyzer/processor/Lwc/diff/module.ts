@@ -46,7 +46,7 @@ import {
     makeOptionalValueDiff,
 } from './component';
 
-// LWC のモジュール (1 つの JS / TS) の差分。方針: docs/lwc-diff-policy.md
+// LWC のモジュール (1 つの JS / TS) の差分。方針: docs/lwc-implementation.md
 
 type OptionalValueDiff<T> = PresentDiff<T, ValueDiff<T>>;
 

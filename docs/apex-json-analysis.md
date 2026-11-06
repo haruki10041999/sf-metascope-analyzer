@@ -1,11 +1,11 @@
 # Apex JSON の解析と、kind ごとの Diff 型の方針
 
-[src/analyzer/types/apex/](../src/analyzer/types/apex/) の JsonType / StructureJsonType（[apex-json-reference.md](./apex-json-reference.md) の全種類）について、次の 2 つをまとめる。
+[src/analyzer/types/apex/](../src/analyzer/types/apex/) の JsonType / StructureJsonType（[apex-implementation.md](./apex-implementation.md) の全種類）について、次の 2 つをまとめる。
 
 1. **解析**（2〜5 章）: Diff とは別に、1 つの時点の JSON から情報を取り出すコード。kind ごとに何を取り出すか。
 2. **kind ごとの Diff 型**（6 章）: 今は文・式・SOQL / SOSL の差分が汎用の `GumTreeDiff` になっている。これを kind ごとの型にする。
 
-Diff の方針は [apex-json-diff-policy.md](./apex-json-diff-policy.md)、[apex-declaration-diff.md](./apex-declaration-diff.md)、[apex-gumtree-diff.md](./apex-gumtree-diff.md) を参照。
+Diff の方針は [apex-implementation.md](./apex-implementation.md)、[apex-implementation.md](./apex-implementation.md)、[apex-implementation.md](./apex-implementation.md) を参照。
 
 ## 1. 置き場所と全体の構成
 
@@ -233,13 +233,13 @@ type KindDiff<T extends JsonNode> = NodeDiff<T['kind'], T, FieldsOf<T>> & {
 };
 ```
 
-- `T | ErrorJson` のプロパティは、`NodeDiff` の「値を丸ごと before / after に持つ」形（apex-json-diff-policy.md 3.2）で表す。
-- 親をまたいで移動したノード（GumTree の `moved`）は、移動先の `fields` の中に `status: 'moved'` と `from` を持たせて出す。移動元には出さない（apex-gumtree-diff.md 5.3 と同じ）。
+- `T | ErrorJson` のプロパティは、`NodeDiff` の「値を丸ごと before / after に持つ」形（apex-implementation.md 3.2）で表す。
+- 親をまたいで移動したノード（GumTree の `moved`）は、移動先の `fields` の中に `status: 'moved'` と `from` を持たせて出す。移動元には出さない（apex-implementation.md 5.3 と同じ）。
 - 再帰する型（`StatementJson` の中の `StatementJson`）は、TypeScript の型の深さの上限に当たらないよう、文の型は `interface` で切る（[declaration.ts](../src/analyzer/processor/Apex/diff/declaration.ts) の `ClassFields` と同じやり方）。
 
 ### 6.4 kind ごとの Diff 型の一覧
 
-型名は JSON の型名の `Json` を `Diff` に置き換えたものにする。配列のプロパティの分類（B / C / D）は apex-json-diff-policy.md 6 章に従う。
+型名は JSON の型名の `Json` を `Diff` に置き換えたものにする。配列のプロパティの分類（B / C / D）は apex-implementation.mdに従う。
 
 | kind                                                     | JSON の型                                                       | Diff の型（案）                                                     | 配列のプロパティと分類                                                | 状態                                                          |
 | -------------------------------------------------------- | --------------------------------------------------------------- | ------------------------------------------------------------------- | --------------------------------------------------------------------- | ------------------------------------------------------------- |
@@ -308,4 +308,4 @@ type ApexNodeDiff = ClassDiff | … | SoslFieldDiff | ErrorDiff;
 - 標準クラス（`System` / `Database` / `Schema` など）の一覧を持つか。持たないと、標準クラスの呼び出しが「未解決」として残る。
 - findings のルールの持ち方（コードに書くか、設定ファイルにするか）と、既存の静的解析ツール（PMD など）との役割分担。
 - `DiffOf` で作った型が深くなりすぎる場合（式の入れ子）に、どこで `GumTreeDiff` のままにするか。
-- 解析結果の保存先と形式（ROADMAP.md 7 章の解析結果の保存に合わせる）。
+- 解析結果の保存先と形式（[todo.md](./todo.md) の保存データの版に合わせる）。

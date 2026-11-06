@@ -1,15 +1,17 @@
 /**
- * LWC の Diff の動作検証。samples/diff/before と after のバンドル (同じフォルダ名同士) を本番と同じ流れ
+ * LWC の Diff の動作検証。repository/before と after の lwc のバンドル (同じフォルダ名同士) を本番と同じ流れ
  * (LwcParser.parseLwcBundle) で JSON にし、makeLwcBundleDiffs で比べた結果を output/diff/ に出力する。
  *
  * - output/diff/bundle-diff.json: makeLwcBundleDiffs の結果
  * - output/diff/summary.md:       unchanged 以外の差分を、JSON のパス付きで並べたもの
  *
  * 実行: npx ttsx --noCheck docs/examples/lwc/scripts/run-diff.ts
- * 方針: docs/lwc-diff-policy.md
+ * 方針: docs/lwc-implementation.md
  */
 import { mkdir, readdir, writeFile } from 'node:fs/promises';
 import path from 'node:path';
+
+import { REPOSITORY, sourceOf } from '../../paths';
 import { fileURLToPath } from 'node:url';
 
 import { LwcParser } from '../../../../src/analyzer/parser/Lwc/parser';
@@ -17,7 +19,7 @@ import { makeLwcBundleDiffs } from '../../../../src/analyzer/processor/Lwc/diff/
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const outputDirectory = path.resolve(here, '../output/diff');
-const samples = path.resolve(here, '../samples/diff');
+const samples = REPOSITORY;
 
 /** フォルダの中のバンドル (サブフォルダ) をすべて読む */
 export const parseBundles = async (directory: string) => {
@@ -107,10 +109,10 @@ const itemName = (item: Record<string, unknown>): string | undefined => {
     return undefined;
 };
 
-/** samples/diff/before と after を読んで比べる (テストからも使う) */
+/** repository/before と after の lwc を読んで比べる (テストからも使う) */
 export const runDiff = async () => {
-    const before = await parseBundles(path.join(samples, 'before'));
-    const after = await parseBundles(path.join(samples, 'after'));
+    const before = await parseBundles(sourceOf('before', 'lwc'));
+    const after = await parseBundles(sourceOf('after', 'lwc'));
     return { before, after, diffs: makeLwcBundleDiffs(before, after) };
 };
 

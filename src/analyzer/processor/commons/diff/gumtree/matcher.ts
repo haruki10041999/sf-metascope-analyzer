@@ -8,7 +8,7 @@ import {
 import { Match, Sources, lcs } from '../commons';
 import { GumTreeNode, descendants, postOrder, preOrder } from './tree';
 
-// 方針: docs/apex-gumtree-diff.md 2 章
+// 方針: docs/apex-implementation.md
 
 export type MatchOptions = {
     /** Top-down で対応付ける部分木の最小の高さ */

@@ -2,13 +2,12 @@
 
 実装の全体は [apex-implementation.md](../../apex-implementation.md)。クラス・トリガーはソースと `-meta.xml` を 1 つの単位（`class_<名前>` / `trigger_<名前>`）、匿名 Apex は 1 ファイルを 1 つの単位（`anonymous_<名前>`）として読む。
 
-| フォルダ                                 | 内容                                                                                                                                   |
-| ---------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
-| [samples/syntax/](./samples/syntax/)     | 構文をひととおり含むサンプル（クラス・enum・interface・トリガー・匿名 Apex、構文エラーの `broken.apex`）。IR・converter のテストが使う |
-| [samples/diff/](./samples/diff/)         | Diff の動作検証用の `before/` と `after/`（下の表）                                                                                    |
-| [scripts/](./scripts/)                   | `generate-json.ts`（全サンプルの JSON）、`run-diff.ts`（before → after の Diff）                                                       |
-| [output/json/](./output/json/index.md)   | 単位ごとの JSON（`ApexUnitParseResult`）                                                                                               |
-| [output/diff/](./output/diff/summary.md) | `summary.md`（unchanged 以外の差分をソースの行付きで）、`coverage.md`（kind ごとの出現数）、`unit-diff.json`                           |
+| フォルダ                                                                   | 内容                                                                                                                                                                                                                         |
+| -------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [../repository/](../README.md) の `classes/`・`triggers/`・`scripts/apex/` | 構文をひととおり含むサンプル（`Parser*.cls`・`ParserTrigger.trigger`・`parser.apex`、構文エラーの `broken.apex`。before / after で同じ中身。IR・converter のテストが使う）と、Diff 用のクラス・トリガー・匿名 Apex（下の表） |
+| [scripts/](./scripts/)                                                     | `generate-json.ts`（全サンプルの JSON）、`run-diff.ts`（before → after の Diff）                                                                                                                                             |
+| [output/json/](./output/json/index.md)                                     | 単位ごとの JSON（`ApexUnitParseResult`）                                                                                                                                                                                     |
+| [output/diff/](./output/diff/summary.md)                                   | `summary.md`（unchanged 以外の差分をソースの行付きで）、`coverage.md`（kind ごとの出現数）、`unit-diff.json`                                                                                                                 |
 
 ```sh
 npx ttsx --noCheck docs/examples/apex/scripts/generate-json.ts

@@ -1,4 +1,4 @@
-// LWC のバンドル・モジュール・コンポーネントの差分 (docs/lwc-diff-policy.md)
+// LWC のバンドル・モジュール・コンポーネントの差分 (docs/lwc-implementation.md)
 export * from './component';
 export * from './module';
 export * from './stylesheet';

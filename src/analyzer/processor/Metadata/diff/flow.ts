@@ -35,7 +35,7 @@ import {
     presentEntry,
 } from '../../commons/diff/present';
 
-// Flow の差分。方針: docs/metadata-a-plan.md 6.2 章
+// Flow の差分。方針: docs/metadata-implementation.md 10 章
 // 要素・資源は name で D、接続 (edges) は B、決定の結果 (rules) は C (name で組にする)、
 // 値の木 (properties) は値ごと (配列は書いた順の C)、references は B
 

@@ -5,7 +5,7 @@ import type { ConvertKeys, ValidationRuleJson } from '../../types';
 import { analyzeFlows, type ObjectAutomation } from './flowAnalysis';
 import { getApexTriggers, type ApexTriggerInfo } from './references';
 
-// オブジェクトごとの自動化 (レコードトリガーフロー・Apex トリガー・入力規則)。方針: docs/metadata-a-plan.md 6.3 章
+// オブジェクトごとの自動化 (レコードトリガーフロー・Apex トリガー・入力規則)。方針: docs/metadata-implementation.md 10 章
 // レコードを保存したときに動くものを、オブジェクトごとに一覧にする (レポートの TriggerOrderTable のもと)
 
 export type ValidationRuleInfo = {

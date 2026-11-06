@@ -3,8 +3,8 @@
     "id": "accountList",
     "status": "changed",
     "filePath": {
-      "before": "before/accountList",
-      "after": "after/accountList"
+      "before": "before/force-app/main/default/lwc/accountList",
+      "after": "after/force-app/main/default/lwc/accountList"
     },
     "dataType": "lwcBundle",
     "resolvedError": [
@@ -4334,8 +4334,8 @@
     "id": "accountRow",
     "status": "unchanged",
     "filePath": {
-      "before": "before/accountRow",
-      "after": "after/accountRow"
+      "before": "before/force-app/main/default/lwc/accountRow",
+      "after": "after/force-app/main/default/lwc/accountRow"
     },
     "dataType": "lwcBundle",
     "resolvedError": [],
@@ -4829,8 +4829,8 @@
     "id": "broken",
     "status": "unchanged",
     "filePath": {
-      "before": "before/broken",
-      "after": "after/broken"
+      "before": "before/force-app/main/default/lwc/broken",
+      "after": "after/force-app/main/default/lwc/broken"
     },
     "dataType": "lwcBundle",
     "resolvedError": [
@@ -5281,7 +5281,7 @@
     "id": "newBanner",
     "status": "added",
     "filePath": {
-      "after": "after/newBanner"
+      "after": "after/force-app/main/default/lwc/newBanner"
     },
     "dataType": {
       "after": "lwcBundle"
@@ -5292,7 +5292,7 @@
     "id": "oldBanner",
     "status": "removed",
     "filePath": {
-      "before": "before/oldBanner"
+      "before": "before/force-app/main/default/lwc/oldBanner"
     },
     "dataType": {
       "before": "lwcBundle"
@@ -5303,8 +5303,8 @@
     "id": "utils",
     "status": "changed",
     "filePath": {
-      "before": "before/utils",
-      "after": "after/utils"
+      "before": "before/force-app/main/default/lwc/utils",
+      "after": "after/force-app/main/default/lwc/utils"
     },
     "dataType": "lwcBundle",
     "resolvedError": [

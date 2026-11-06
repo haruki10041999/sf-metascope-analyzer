@@ -9,21 +9,21 @@
  */
 import { mkdir, readdir, rm, writeFile } from 'node:fs/promises';
 import path from 'node:path';
+
+import { sourceOf } from '../../paths';
 import { fileURLToPath } from 'node:url';
 
 import { LwcParser } from '../../../../src/analyzer/parser/Lwc/parser';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const root = path.resolve(here, '../../../..');
-const samples = path.resolve(here, '../samples');
 const outputDirectory = path.resolve(here, '../output/json');
 const rel = (p: string) => path.relative(root, p).replace(/\\/g, '/');
 
 /** グループ名 → バンドルの親フォルダ (直下のフォルダがバンドル) */
 const GROUPS: Record<string, string> = {
-    bundles: 'bundles/force-app/main/default/lwc',
-    'diff-before': 'diff/before',
-    'diff-after': 'diff/after',
+    before: sourceOf('before', 'lwc'),
+    after: sourceOf('after', 'lwc'),
 };
 
 /** kind を持つ JSON ノードの数 */
@@ -42,12 +42,12 @@ const countNodes = (value: unknown): number => {
 const rows: string[] = [];
 await rm(outputDirectory, { recursive: true, force: true });
 for (const [group, directory] of Object.entries(GROUPS)) {
-    const entries = await readdir(path.join(samples, directory), { withFileTypes: true });
+    const entries = await readdir(directory, { withFileTypes: true });
     for (const name of entries
         .filter((e) => e.isDirectory())
         .map((e) => e.name)
         .sort()) {
-        const result = await LwcParser.parseLwcBundle(path.join(samples, directory, name));
+        const result = await LwcParser.parseLwcBundle(path.join(directory, name));
         const file = path.join(outputDirectory, group, `${name}.json`);
         await mkdir(path.dirname(file), { recursive: true });
         // 出力をマシンに依存させないため、パスはリポジトリからの相対にする

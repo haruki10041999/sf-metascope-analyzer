@@ -11,6 +11,19 @@
           "before delete"
         ],
         "triggerStatus": "Inactive"
+      },
+      {
+        "status": "unchanged",
+        "name": "ParserTrigger",
+        "events": [
+          "before insert",
+          "before update",
+          "before delete",
+          "after insert",
+          "after update",
+          "after delete",
+          "after undelete"
+        ]
       }
     ],
     "validationRules": [

@@ -11,7 +11,7 @@ import {
     toContent,
 } from './commons';
 
-// 方針: docs/apex-json-diff-policy.md 5 章 (配列の要素の差分を 1 段にする形)。Apex / メタデータ / LWC で共通
+// 方針: docs/apex-implementation.md (配列の要素の差分を 1 段にする形)。Apex / メタデータ / LWC で共通
 
 /** 移動元。移動したノードは移動先に 1 回だけ出し、移動元をここに持つ (GumTree で対応付けた文の並びで使う) */
 export type MovedFrom = {

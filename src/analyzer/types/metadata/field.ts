@@ -7,6 +7,7 @@ import {
     makeXmlJson,
     nonEmptyEntry,
     readProperties,
+    unknownChildNames,
     readText,
 } from '../commons/xmlJson';
 import { XmlElement, childOf, childrenOf } from '../commons/xml';
@@ -92,6 +93,8 @@ export type CustomFieldJson = JsonType<'field'> & {
     apiName: string;
     valueSet?: ValueSetJson;
     lookupFilter?: LookupFilterJson;
+    /** 読んでいない要素の名前 (最初に出た順) */
+    skippedElements?: string[];
 } & PropertiesOf<typeof FIELD_SCHEMA>;
 
 export const makePicklistValueJson = (
@@ -140,6 +143,9 @@ const makeValueSetJson = (
  * 項目。element は `<CustomField>` (sfdx の fields/*.field-meta.xml) か、
  * `<CustomObject>` の中の `<fields>` (メタデータ API の形式)。apiName は fullName がなければファイル名から
  */
+/** 項目の要素のうち読むもの (これ以外は skippedElements に残す) */
+const FIELD_KNOWN_ELEMENTS = ['fullName', ...Object.keys(FIELD_SCHEMA), 'valueSet', 'lookupFilter'];
+
 export const makeCustomFieldJson = (
     element: XmlElement,
     apiName: string,
@@ -170,6 +176,7 @@ export const makeCustomFieldJson = (
                       },
                   }
                 : {}),
+            ...nonEmptyEntry('skippedElements', unknownChildNames(element, FIELD_KNOWN_ELEMENTS)),
         },
         element,
         file,

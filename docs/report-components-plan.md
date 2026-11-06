@@ -5,7 +5,7 @@
 - skill はレポートの **フォーマット（レポート仕様）** を書く。CRM の画面定義のように、どのセクションにどのコンポーネントを置き、どのデータを渡すかを並べる。
 - AI が考えるのは、文章（要約・リスクの説明・レビューの指摘）と、どのデータを見せるかの選択だけにする。数値・一覧・図はすべて解析の結果をそのまま使い、AI には書かせない。
 
-この文書は計画であり、まだ実装していないものを含む。状態は各表の「状態」列に書く。解析木（JSON）をまだ作れていないメタデータは [metadata-roadmap.md](./metadata-roadmap.md)。
+この文書は計画であり、まだ実装していないものを含む。状態は各表の「状態」列に書く。解析木（JSON）をまだ作れていないメタデータは [analysis-plan.md](./analysis-plan.md)。
 
 ## 1. 全体の形
 
@@ -69,7 +69,7 @@ MCP ツール ── get_data(provider, params) ──▶ 解析（data provider
 
 ## 2. コンポーネントの一覧
 
-優先度: **A** = 最初に作る、**B** = 次に作る、**C** = 後で作る。状態の「既存」は `src/viewer/metadata/` にあるもの。コンポーネントはまだどれも未実装なので、「データ」列に元の解析の状態を書く（済（provider）= コンポーネントに渡すデータの provider まで実装済み、済 = 解析・Diff は実装済み、未 = 解析が未実装、木なし = 解析木（JSON）も未。[metadata-roadmap.md](./metadata-roadmap.md)）。
+優先度: **A** = 最初に作る、**B** = 次に作る、**C** = 後で作る。状態の「既存」は `src/viewer/metadata/` にあるもの。コンポーネントはまだどれも未実装なので、「データ」列に元の解析の状態を書く（済（provider）= コンポーネントに渡すデータの provider まで実装済み、済 = 解析・Diff は実装済み、未 = 解析が未実装、木なし = 解析木（JSON）も未。[analysis-plan.md](./analysis-plan.md)）。
 
 ### 2.1 汎用
 
@@ -195,7 +195,7 @@ provider は権限・Flow・画面・ラベル・指摘の一覧（`src/analyzer
 | `lwc.diffs` / `lwc.publicApiChanges`                                                                                | `makeLwcBundleDiffs`（と `analyzeLwcBundles` の親子関係）                                                              | 済                                                                                                    |
 | `lwc.findings` / `lwc.componentTree` / `lwc.fieldUsage` / `lwc.apexCalls`                                           | `resolvedError`、`analyzeLwcBundles`（`findings`・`localComponents`・`metadataDependencies`）、import と `@wire`       | 済（Apex の戻り値の型は未）                                                                           |
 | `lwc.wireframe` / `lwc.snapshot`                                                                                    | テンプレートの JSON、SSR（[lwc-snapshot-plan.md](./lwc-snapshot-plan.md)）                                             | 一部                                                                                                  |
-| `permission.*`                                                                                                      | Profile・PermissionSet・PermissionSetGroup の解析木と、権限の計算（[metadata-roadmap.md](./metadata-roadmap.md)）      | 済（`src/analyzer/report/permission.ts`）                                                             |
+| `permission.*`                                                                                                      | Profile・PermissionSet・PermissionSetGroup の解析木と、権限の計算（[analysis-plan.md](./analysis-plan.md)）            | 済（`src/analyzer/report/permission.ts`）                                                             |
 | `flow.*` / `automation.byObject`                                                                                    | Flow の解析木と参照の取り出し                                                                                          | 済（`src/analyzer/report/flow.ts`）                                                                   |
 | `layout.detail` / `flexiPage.detail` / `lwc.placements` / `app.navigation`                                          | Layout・FlexiPage・CustomTab・CustomApplication の解析木                                                               | 済（`src/analyzer/report/page.ts`。`app.navigation` は未）                                            |
 | `crossRef.fieldUsage` / `crossRef.labels`                                                                           | 各種類の項目・ラベルの参照（Apex の SOQL / DML、LWC の `metadataDependencies`、Flow、レイアウト、数式）                | `crossRef.labels` は済（`src/analyzer/report/crossRef.ts`）。`crossRef.fieldUsage` は一部（LWC のみ） |
@@ -232,12 +232,12 @@ provider は次の規則で作る。
 2. **土台**: レポート仕様の型・スキーマ・検証、provider の仕組み、汎用コンポーネント（優先度 A）、`build_report` / `get_report_data` / `list_report_components`。
 3. **解析済みのものから表示する**: オブジェクト（既存の ER 図を移し、`ObjectDetail`・`FieldDiffTable`）、翻訳（`TranslationCoverageTable`）、Apex の Diff（`ApexDiffView`）、LWC（`LwcComponentList`・`LwcComponentDetail`・`LwcDiffView`・`LwcFindingsList`、続けて `ComponentTree`・`LwcFieldUsageTable`）。
 4. **Apex の解析**: 宣言・SOQL / DML（[apex-json-analysis.md](./apex-json-analysis.md)）と、`ClassOutline`・`SoqlDmlTable`。続けて `crossRef.fieldUsage`（Apex・LWC）。
-5. **権限**: 解析木（[metadata-roadmap.md](./metadata-roadmap.md) 4 章の 1）と、`PermissionDiffTable`・`ObjectAccessMatrix`・`FieldAccessMatrix`。
+5. **権限**: 解析木（[analysis-plan.md](./analysis-plan.md)の 1）と、`PermissionDiffTable`・`ObjectAccessMatrix`・`FieldAccessMatrix`。
 6. **Flow**: 解析木と、`FlowList`・`FlowDiagram`・`FlowDiffView`。`automation.byObject` で Apex トリガー・入力規則とまとめる。
 7. **画面**: Layout・FlexiPage の解析木と、`LayoutView`・`FlexiPageView`・`ComponentPlacement`。
 8. **残り**: 呼び出し関係・依存・メトリクス・ルール違反・数式の解析・影響範囲（種類をまたぐもの）。
 
-各段階で、[docs/examples/](./examples/README.md) のサンプルから実際にレポートを作り、skill の仕様の例も一緒に置く。新しい種類を足すときは、サンプルも `docs/examples/<種類>/`（`samples/`・`scripts/`・`output/`）に置く。
+各段階で、[docs/examples/](./examples/README.md) のサンプルから実際にレポートを作り、skill の仕様の例も一緒に置く。新しい種類を足すときは、サンプルをサンプルのリポジトリ（`docs/examples/repository/`）に置く。
 
 ## 5. 決めること
 

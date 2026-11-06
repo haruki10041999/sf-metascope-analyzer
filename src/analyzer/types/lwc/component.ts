@@ -1,4 +1,4 @@
-// コンポーネント (default export のクラス) の JSON (docs/lwc-json-reference.md)。
+// コンポーネント (default export のクラス) の JSON (docs/lwc-implementation.md)。
 // Apex の types/apex/declaration.ts の class と同じ形にする:
 // - 名前を持つ宣言 (コンポーネント・メンバー) は StructureJsonType (sourceKeys: { base, name })、name は string | ErrorJson
 // - メンバーはソースの順に block に入れ、IR を作れなかったメンバーはその位置に ErrorJson

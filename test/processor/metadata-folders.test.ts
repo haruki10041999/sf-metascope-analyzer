@@ -45,10 +45,10 @@ import type {
     ProfileJson,
 } from '../../src/analyzer/types';
 
-// フォルダ単位のメタデータ (権限・ラベル・Flow・画面)。方針: docs/metadata-a-plan.md
-// サンプルは docs/examples/metadata/samples (run-folders.ts と同じもの)
+// フォルダ単位のメタデータ (権限・ラベル・Flow・画面)。方針: docs/metadata-implementation.md 10 章
+// サンプルは docs/examples/repository (run-folders.ts と同じもの)
 
-const SAMPLES = path.resolve('docs/examples/metadata/samples');
+const SAMPLES = path.resolve('docs/examples/repository');
 const root = (side: 'before' | 'after') => path.join(SAMPLES, side, 'force-app/main/default');
 
 const base = <J>(results: MetadataFileParseResult[], id: string) =>
@@ -513,7 +513,7 @@ describe('MetadataFolderWorker', () => {
 });
 
 describe('残りの解析 (必須とレイアウト・自動化・Apex アクション・部品の並び順)', () => {
-    const APEX = path.resolve('docs/examples/apex/samples/diff/after');
+    const APEX = path.resolve('docs/examples/repository/after');
 
     it('項目の必須とレイアウトの behavior の食い違い', () => {
         const layout = LayoutParser.parseSource(
@@ -551,18 +551,23 @@ describe('残りの解析 (必須とレイアウト・自動化・Apex アクシ
 
     it('Apex のトリガー・@InvocableMethod を取り出し、Flow の Apex アクションを確かめる', async () => {
         const units = await ApexParser.parseApexUnits(APEX);
-        assert.deepEqual(getApexTriggers(units), [
-            {
-                name: 'AccountTrigger',
-                object: 'Account',
-                events: ['after update', 'before delete'],
-                status: 'Inactive',
-                unit: 'trigger_AccountTrigger',
-            },
-        ]);
+        // ParserTrigger は Apex の構文のサンプル (すべてのイベント)
+        assert.deepEqual(
+            getApexTriggers(units).filter((t) => t.name === 'AccountTrigger'),
+            [
+                {
+                    name: 'AccountTrigger',
+                    object: 'Account',
+                    events: ['after update', 'before delete'],
+                    status: 'Inactive',
+                    unit: 'trigger_AccountTrigger',
+                },
+            ],
+        );
         const context = apexContextOf(units);
         assert.ok(context.apexClasses!.includes('AccountService'));
-        assert.deepEqual(context.invocableApexClasses, []);
+        // 構文のサンプル ParserTest は @InvocableMethod を持つ (AccountService は持たない)
+        assert.deepEqual(context.invocableApexClasses, ['ParserTest']);
         const flows = analyzeFlows((await FlowParser.parseAll(root('after'))) as never, context);
         assert.deepEqual(
             flows.findings.filter((f) => f.code === 'APEX_NOT_INVOCABLE').map((f) => f.target),
@@ -584,7 +589,7 @@ describe('残りの解析 (必須とレイアウト・自動化・Apex アクシ
                 a.validationRules.map((r) => `${r.name}:${r.active}`),
             ]),
             [
-                ['Account', [], ['AccountTrigger'], ['Name_Required:true']],
+                ['Account', [], ['AccountTrigger', 'ParserTrigger'], ['Name_Required:true']],
                 [
                     'Invoice__c',
                     ['Invoice_Status_Update'],

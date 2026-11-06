@@ -13,7 +13,7 @@ import {
     type XmlSourceRegistry,
 } from '../commons/xmlJson';
 
-// カスタム表示ラベル (labels/CustomLabels.labels-meta.xml) の JSON。方針: docs/metadata-a-plan.md 5 章
+// カスタム表示ラベル (labels/CustomLabels.labels-meta.xml) の JSON。方針: docs/metadata-implementation.md 10 章
 // 単位はファイル 1 つ。ラベルは子 (キー: fullName)
 
 export const CUSTOM_LABEL_SCHEMA = {

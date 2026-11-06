@@ -68,41 +68,41 @@ const classify = (
     return { reason: 'not analyzed' };
 };
 
+/** バンドルのフォルダの中身 1 つ (直下のファイル・フォルダ)。ファイルは中身 (改行は LF) を持つ */
+export type LwcBundleEntry =
+    | { name: string; isDirectory: true }
+    | { name: string; isDirectory: false; source: string };
+
 /**
- * バンドルのフォルダを読む。直下のファイルだけを見て、フォルダ (__tests__/ など) は skippedFiles にする。
- * フォルダが読めなければ例外
+ * バンドルのフォルダの中身から LwcBundleFolder を作る (ファイルを読まない。git のある時点の中身にも使う)。
+ * フォルダ (__tests__/ など) は skippedFiles にする
  */
-export const readLwcBundleFolder = async (bundleDir: string): Promise<LwcBundleFolder> => {
-    const name = path.basename(bundleDir);
-    const entries = (await fs.readdir(bundleDir, { withFileTypes: true })).sort((a, b) =>
-        a.name.localeCompare(b.name),
-    );
+export const makeLwcBundleFolder = (
+    name: string,
+    bundleDir: string,
+    entries: readonly LwcBundleEntry[],
+): LwcBundleFolder => {
+    const sorted = [...entries].sort((a, b) => a.name.localeCompare(b.name));
     const tsStems = new Set(
-        entries
-            .filter((e) => e.isFile() && path.extname(e.name).toLowerCase() === '.ts')
+        sorted
+            .filter((e) => !e.isDirectory && path.extname(e.name).toLowerCase() === '.ts')
             .map((e) => e.name.slice(0, -3)),
     );
 
     const files: LwcBundleFile[] = [];
     const skippedFiles: LwcSkippedFile[] = [];
-    for (const entry of entries) {
+    for (const entry of sorted) {
         const filePath = `${name}/${entry.name}`;
-        if (entry.isDirectory()) {
+        if (entry.isDirectory) {
             skippedFiles.push({ filePath: `${filePath}/`, reason: 'folder' });
             continue;
         }
-        if (!entry.isFile()) continue;
         const fileType = classify(entry.name, name, tsStems);
         if (typeof fileType === 'object') {
             skippedFiles.push({ filePath, reason: fileType.reason });
             continue;
         }
-        files.push({
-            fileType,
-            fileName: entry.name,
-            filePath,
-            source: await readSource(path.join(bundleDir, entry.name)),
-        });
+        files.push({ fileType, fileName: entry.name, filePath, source: entry.source });
     }
 
     files.sort(
@@ -111,4 +111,23 @@ export const readLwcBundleFolder = async (bundleDir: string): Promise<LwcBundleF
             a.fileName.localeCompare(b.fileName),
     );
     return { name, bundleDir, files, skippedFiles };
+};
+
+/**
+ * バンドルのフォルダを読む。直下のファイルだけを見て、フォルダ (__tests__/ など) は skippedFiles にする。
+ * フォルダが読めなければ例外
+ */
+export const readLwcBundleFolder = async (bundleDir: string): Promise<LwcBundleFolder> => {
+    const dirents = await fs.readdir(bundleDir, { withFileTypes: true });
+    const entries: LwcBundleEntry[] = [];
+    for (const entry of dirents) {
+        if (entry.isDirectory()) entries.push({ name: entry.name, isDirectory: true });
+        else if (entry.isFile())
+            entries.push({
+                name: entry.name,
+                isDirectory: false,
+                source: await readSource(path.join(bundleDir, entry.name)),
+            });
+    }
+    return makeLwcBundleFolder(path.basename(bundleDir), bundleDir, entries);
 };

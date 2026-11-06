@@ -8,7 +8,7 @@ import {
     makeReferenceChecker,
 } from './references';
 
-// Flow の解析。方針: docs/metadata-a-plan.md 6.3 章
+// Flow の解析。方針: docs/metadata-implementation.md 10 章
 // Flow の一覧、オブジェクトごとの自動化、図 (要素と接続)、到達できない要素・失敗時の経路のない処理、参照先の確認
 
 export type FlowInfo = {

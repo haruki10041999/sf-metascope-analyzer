@@ -1,5 +1,6 @@
 import type { ErrorJson, JsonType } from '../commons/json';
 import { childOf, childrenOf, type XmlElement } from '../commons/xml';
+import { type ValueTreeOptions, toValueTree, toValueTreeProperties } from '../commons/valueTree';
 import {
     makeMetadataJson,
     nonEmptyEntry,
@@ -14,7 +15,7 @@ import {
     type XmlSourceRegistry,
 } from '../commons/xmlJson';
 
-// Flow (flows/<名前>.flow-meta.xml) の JSON。方針: docs/metadata-a-plan.md 6 章
+// Flow (flows/<名前>.flow-meta.xml) の JSON。方針: docs/metadata-implementation.md 10 章
 // - 要素 (actionCalls など)・資源 (variables など) は name をキーに持つ JSON ノード。中身は要素の種類ごとに形が違い多いので、
 //   XML の要素名をプロパティ名にした値の木 (properties) にする
 // - 接続 (connector / defaultConnector / faultConnector など) は要素の外 (ルートの edges) に出す
@@ -227,38 +228,19 @@ export const FLOW_START = '$start';
 // 値の木
 // ---------------------------------------------------------------------------
 
-const scalar = (text: string): string | boolean =>
-    text === 'true' ? true : text === 'false' ? false : text;
-
-/** 子要素を値の木にする。skip にある子要素・接続・位置は持たない */
-const toProperties = (element: XmlElement, skip: Set<string> = new Set()): FlowProperties => {
-    const groups = new Map<string, XmlElement[]>();
-    for (const child of element.children) {
-        if (skip.has(child.name) || isConnector(child.name) || POSITION_NAMES.has(child.name)) {
-            continue;
-        }
-        groups.set(child.name, [...(groups.get(child.name) ?? []), child]);
-    }
-    return Object.fromEntries(
-        [...groups].map(([name, items]) => [
-            name,
-            items.length > 1 || LIST_NAMES.has(name) ? items.map(toValue) : toValue(items[0]!),
-        ]),
-    );
+/** Flow の値の木の決まり: 接続 (要素の外の edges に出す) と画面上の位置は読まない */
+const FLOW_VALUE_TREE: ValueTreeOptions = {
+    lists: LIST_NAMES,
+    skip: (name) => isConnector(name) || POSITION_NAMES.has(name),
+    valueTypes: VALUE_TYPES,
 };
 
-const toValue = (element: XmlElement): FlowValue => {
-    if (element.children.length === 0) return scalar(element.text);
-    const [only] = element.children;
-    if (
-        element.children.length === 1 &&
-        VALUE_TYPES.has(only!.name) &&
-        only!.children.length === 0
-    ) {
-        return { type: only!.name, value: only!.text };
-    }
-    return toProperties(element);
-};
+/** 子要素を値の木にする (共通の値の木。types/commons/valueTree.ts)。skip にある子要素・接続・位置は持たない */
+const toProperties = (element: XmlElement, skip: ReadonlySet<string> = new Set()): FlowProperties =>
+    toValueTreeProperties(element, FLOW_VALUE_TREE, skip) as FlowProperties;
+
+const toValue = (element: XmlElement): FlowValue =>
+    toValueTree(element, FLOW_VALUE_TREE) as FlowValue;
 
 const propertiesEntry = (properties: FlowProperties) =>
     Object.keys(properties).length ? { properties } : {};

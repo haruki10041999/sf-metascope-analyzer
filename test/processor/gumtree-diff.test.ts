@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import { apexSampleOf } from '../../docs/examples/paths';
 import { readFile } from 'node:fs/promises';
 import { describe, it } from 'node:test';
 
@@ -13,9 +14,10 @@ import {
     StatementJsonDiff,
     makeBlockDiff,
     makeGumTreeBlockDiff,
-    StatementReplacementDiff,
     makeStatementDiff,
+    type StatementValue,
 } from '../../src/analyzer/processor/Apex/diff/statement';
+import type { ReplacementDiff } from '../../src/analyzer/processor/commons/diff/commons';
 import {
     makeAnonymousUnitDiff,
     makeTriggerUnitDiff,
@@ -191,7 +193,10 @@ describe('gumtree block diff', () => {
     it('uses GumTree to pair block entries and returns typed list diffs', () => {
         assert.deepEqual(makeBlockDiff([], []), []);
         assert.deepEqual(
-            makeBlockDiff(['a();'], ['a();', 'b();']).map(({ status, index }) => [status, index]),
+            makeBlockDiff(['a();'], ['a();', 'b();']).map((d) => [
+                'status' in d ? d.status : undefined,
+                d.index,
+            ]),
             [
                 ['unchanged', { before: 0, after: 0 }],
                 ['added', 1],
@@ -240,7 +245,7 @@ describe('expression and statement diff entry points', () => {
             field: 'Account',
             key: ['ExternalId__c', 'Namespace__c'],
         };
-        const diff: StatementJsonDiff<UpsertStatementJson> | StatementReplacementDiff =
+        const diff: StatementJsonDiff<UpsertStatementJson> | ReplacementDiff<StatementValue> =
             makeStatementDiff(before, after);
         const keyList = 'kind' in diff && 'fields' in diff ? diff.fields.key : undefined;
 
@@ -275,11 +280,11 @@ describe('unit diff', () => {
         const diff = makeAnonymousUnitDiff(before, after);
         assert.ok('member' in diff.block);
         assert.deepEqual(
-            diff.block.member.map((d) => [d.kind, d.status]),
+            diff.block.member.map((d) => [d.kind, 'status' in d ? d.status : undefined]),
             [['method', 'changed']],
         );
         assert.deepEqual(
-            diff.block.statement.map((d) => d.status),
+            diff.block.statement.map((d) => ('status' in d ? d.status : undefined)),
             ['unchanged', 'moved'],
         );
     });
@@ -325,11 +330,7 @@ describe('unit diff', () => {
 });
 
 describe('gumtree diff on the example file', () => {
-    const load = () =>
-        readFile(
-            new URL('../../docs/examples/apex/samples/syntax/ParserTest.cls', import.meta.url),
-            'utf8',
-        );
+    const load = () => readFile(apexSampleOf('after', 'ParserTest.cls'), 'utf8');
 
     it('reports nothing but unchanged when only the position changes', async () => {
         const source = await load();

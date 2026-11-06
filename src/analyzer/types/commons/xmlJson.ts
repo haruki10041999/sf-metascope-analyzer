@@ -12,7 +12,7 @@ import {
 
 import { XmlElement, childOf, childrenOf } from './xml';
 
-// 方針: docs/metadata-json-reference.md
+// 方針: docs/metadata-implementation.md
 // kind / sourceKeys の付け方・ソース位置の登録は、HTML / CSS と共通の spanJson.ts (位置の範囲から JSON を作る部品)。
 // XML の名前 (XmlFile / XmlSourceRegistry など) は、その別名として残す
 
@@ -34,7 +34,7 @@ export const findXmlSourceInfo = findSpanSourceInfo;
 /**
  * kind / sourceKeys を付けた JSON を作り、ソース位置を登録する。
  * element が undefined のときは、ファイルの先頭を位置にする。
- * objectKey は書いた順のまま hash する (保存済みのメタデータのキーを変えないため。spanJson.ts の SpanJsonOptions)
+ * キーの作り方は Apex・LWC と同じ (objectKey はキーの順序に依らない形。配列は書いた順のまま)
  */
 export const makeXmlJson = <T extends JsonType<string>>(
     kind: T['kind'],
@@ -42,7 +42,7 @@ export const makeXmlJson = <T extends JsonType<string>>(
     element: XmlElement | undefined,
     file: XmlFile,
     registry: XmlSourceRegistry,
-): T => makeSpanJson<T>(kind, properties, element, file, registry, { sortKeys: false });
+): T => makeSpanJson<T>(kind, properties, element, element?.file ?? file, registry);
 
 /** 読めなかったファイル・要素の ErrorJson。kindType は何として読もうとしたか (field など) */
 export const makeXmlErrorJson = (
@@ -161,20 +161,11 @@ export const readXmlRoot = (
 };
 
 // ---------------------------------------------------------------------------
-// フォルダ単位のメタデータ (権限・ラベル・Flow・画面)。方針: docs/metadata-a-plan.md 2.2 章
+// フォルダ単位のメタデータ (権限・ラベル・Flow・画面)。方針: docs/metadata-implementation.md 10 章
 // ---------------------------------------------------------------------------
 
-/**
- * kind / sourceKeys を付けた JSON を作り、ソース位置を登録する (新しい種類のメタデータ用)。
- * キーの作り方は Apex・LWC と同じ (objectKey はキーの順序に依らない形。配列は書いた順のまま)
- */
-export const makeMetadataJson = <T extends JsonType<string>>(
-    kind: T['kind'],
-    properties: Omit<T, 'kind' | 'sourceKeys'>,
-    element: XmlElement | undefined,
-    file: XmlFile,
-    registry: XmlSourceRegistry,
-): T => makeSpanJson<T>(kind, properties, element, file, registry);
+/** makeXmlJson と同じ (保存データの版 2 から、オブジェクト・翻訳もキーを並べ替えて作る) */
+export const makeMetadataJson = makeXmlJson;
 
 /** element の子要素のうち、known にない要素の名前 (最初に出た順、重複なし)。スキーマにない要素 (skippedElements) を残すため */
 export const unknownChildNames = (element: XmlElement, known: Iterable<string>): string[] => {

@@ -1,6 +1,6 @@
 import type { RecordChildJson, RecordJson, RecordSpec } from './record';
 
-// 優先度 B・C の XML の種類の表と型。方針: docs/metadata-b-c-plan.md
+// 優先度 B・C の XML の種類の表と型。方針: docs/metadata-implementation.md 10 章
 // 表にない要素は skippedElements に残る (読んでいない要素が分かるように)。足すときは表に 1 行足す
 
 // ---------------------------------------------------------------------------

@@ -14,7 +14,7 @@ import { XmlSyntaxError, parseXml } from '../../src/analyzer/types/commons/xml';
 import { findXmlSourceInfo } from '../../src/analyzer/types/commons/xmlJson';
 import type { CustomFieldJson } from '../../src/analyzer/types/metadata/field';
 
-const sample = path.resolve('docs/examples/metadata/samples');
+const sample = path.resolve('docs/examples/repository');
 const objectsOf = (side: string) =>
     path.join(sample, side, 'force-app', 'main', 'default', 'objects');
 
@@ -24,7 +24,7 @@ const parseAfter = async (name: string) =>
     )) as ObjectFileStructureType;
 
 const fieldOf = (result: ObjectFileStructureType, apiName: string) =>
-    result.result.base.fields.find(
+    result.result.base.fields!.find(
         (field) => field.kind === 'field' && field.apiName === apiName,
     ) as CustomFieldJson;
 
@@ -82,7 +82,7 @@ describe('MetadataParser.parseObject', () => {
                 object.recordTypes,
                 object.fieldSets,
                 object.webLinks,
-            ].map((members) => members.map((member) => member.kind)),
+            ].map((members) => (members ?? []).map((member) => member.kind)),
             [
                 ['field', 'field', 'field', 'field', 'field', 'field'],
                 ['validationRule', 'validationRule'],
@@ -151,7 +151,7 @@ describe('MetadataParser.parseObject', () => {
     it('reads fields written inside object-meta.xml (metadata API format)', async () => {
         const result = await parseAfter('Payment__c');
         assert.deepEqual(
-            result.result.base.fields.map(
+            result.result.base.fields!.map(
                 (field) => field.kind === 'field' && [field.apiName, field.type],
             ),
             [
@@ -165,7 +165,7 @@ describe('MetadataParser.parseObject', () => {
         const result = await parseAfter('Broken__c');
         assert.equal(result.dataType, 'object');
         assert.deepEqual(
-            result.result.base.fields.map((field) => [
+            result.result.base.fields!.map((field) => [
                 field.kind,
                 field.kind === 'error' && field.kindType,
             ]),

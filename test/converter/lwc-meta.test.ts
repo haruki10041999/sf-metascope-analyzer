@@ -5,9 +5,9 @@ import { describe, it } from 'node:test';
 import { LwcParser, apiVersionOf, parseBundleMeta } from '../../src/analyzer/parser/Lwc';
 import type { LwcBundleMetaJson } from '../../src/analyzer/types';
 
-// LWC の js-meta.xml の JSON (docs/lwc-json-reference.md)。parseBundleMeta はソースを受け取る (フォルダの読み込みは folder.ts)
+// LWC の js-meta.xml の JSON (docs/lwc-implementation.md)。parseBundleMeta はソースを受け取る (フォルダの読み込みは folder.ts)
 
-const BUNDLES = 'docs/examples/lwc/samples/bundles/force-app/main/default/lwc';
+const BUNDLES = 'docs/examples/repository/before/force-app/main/default/lwc';
 
 describe('LWC の js-meta.xml', () => {
     it('値・targets・targetConfigs (property は属性)・objects・supportedFormFactors を JSON にする', async () => {

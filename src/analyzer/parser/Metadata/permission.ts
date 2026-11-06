@@ -6,12 +6,15 @@ import {
 } from '../../types';
 import { MetadataFolderParser, type MetadataFileParseResult } from './folder';
 
-// 権限の parser。方針: docs/metadata-a-plan.md 3・4 章
+// 権限の parser。方針: docs/metadata-implementation.md 10 章
 
 export const PermissionSetParser = new MetadataFolderParser({
     type: 'permissionSet',
     folder: 'permissionsets',
     suffix: '.permissionset-meta.xml',
+    // decomposePermissionSetBeta2: permissionsets/<名前>/ の下に <名前>.permissionset-meta.xml と、
+    // objectSettings/<オブジェクト>.objectSettings-meta.xml・<名前>.<種類>-meta.xml (ルートは PermissionSet)
+    decomposed: { unit: 'folder', root: 'PermissionSet', children: { '-meta.xml': undefined } },
     make: makePermissionSetJson,
 });
 

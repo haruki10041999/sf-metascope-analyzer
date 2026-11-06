@@ -10,7 +10,7 @@ import {
     isApexValidClassList,
     ApexCommonTypeClass,
 } from '../../src/analyzer/types/apex_IR/commonVisitor';
-import { parse } from './helpers';
+import { parse, asNode } from './helpers';
 
 describe('commonVisitor', () => {
     it('ApexErrorTypeClass は AnalyzerError 型でコードとコンテキスト情報を保持する', () => {
@@ -25,12 +25,12 @@ describe('commonVisitor', () => {
 
     it('isApexValidClass は ApexErrorTypeClass をそのまま通す', () => {
         const error = ApexErrorTypeClass.create('EXCEPTION', 'FooContext', 'foo', 'message');
-        const never = (t: ApexCommonTypeClass): t is ApexErrorTypeClass => false;
+        const never = (t: ApexCommonTypeClass<string>): t is ApexErrorTypeClass => false;
         assert.equal(isApexValidClass(error, never, 'foo'), error);
     });
 
     it('isApexValidClass は想定外の型を TYPE_MISMATCH の ApexErrorTypeClass に置き換える', () => {
-        const never = (t: ApexCommonTypeClass): t is ApexErrorTypeClass => false;
+        const never = (t: ApexCommonTypeClass<string>): t is ApexErrorTypeClass => false;
         const result = isApexValidClass(new ApexCommonTypeClass('bar'), never, 'foo');
         assert.ok(isErrorType(result));
         assert.equal(result.getCode(), 'TYPE_MISMATCH');
@@ -38,7 +38,7 @@ describe('commonVisitor', () => {
     });
 
     it('isApexValidClassList は空配列で [] を返す', () => {
-        const never = (t: ApexCommonTypeClass): t is ApexErrorTypeClass => false;
+        const never = (t: ApexCommonTypeClass<string>): t is ApexErrorTypeClass => false;
         assert.deepEqual(
             isApexValidClassList(
                 [] as ApexParserRuleContext[],
@@ -60,8 +60,8 @@ describe('commonVisitor', () => {
 
     it('visit で生成したノードにソース位置（span）が付く', async () => {
         const expr = await import('../../src/analyzer/types/apex_IR/expressionVisitor');
-        const result = new expr.ExpressionVisitor().visit(
-            parse('a +\n  bb', (p) => p.expression()),
+        const result = asNode(
+            new expr.ExpressionVisitor().visit(parse('a +\n  bb', (p) => p.expression())),
         );
         // context は元のソースの切り出し (空白・改行を残す)
         assert.deepEqual(result.getSpan(), {

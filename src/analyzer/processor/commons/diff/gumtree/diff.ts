@@ -12,7 +12,7 @@ import { MovedFrom } from '../list';
 import { Mappings } from './matcher';
 import { DiffFieldValue, DiffNodeValue, GumTreeNode, preOrder } from './tree';
 
-// 方針: docs/apex-gumtree-diff.md 5 章
+// 方針: docs/apex-implementation.md
 
 export type GumTreeFieldDiff<T extends DiffFieldValue = DiffFieldValue> = OptionalDiff<
     T,

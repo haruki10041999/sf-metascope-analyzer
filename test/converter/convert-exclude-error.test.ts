@@ -41,16 +41,19 @@ describe('converted error exclusion', () => {
             );
         };
 
-        assertNodeHasSource(converted.result);
-        assert.ok(Array.isArray(converted.result.child));
-        converted.result.child.forEach(assertNodeHasSource);
+        // makeConvertType は入力の形 (child) をそのまま写すので、child を持つ形として読む
+        const result = converted.result as typeof converted.result & { child: unknown[] };
+        assertNodeHasSource(result);
+        assert.ok(Array.isArray(result.child));
+        result.child.forEach(assertNodeHasSource);
 
-        const excluded = convertExcludeError(converted.result);
+        const excluded = convertExcludeError(result);
         assert.equal(excluded.errorInfos.length, 1);
-        assert.equal(excluded.errorInfos[0], converted.result.child[1]);
-        assert.ok(isRecord(excluded.value));
-        assert.ok(Array.isArray(excluded.value.child));
-        assert.equal(excluded.value.child.length, 1);
-        assertNodeHasSource(excluded.value.child[0]);
+        assert.equal(excluded.errorInfos[0], result.child[1]);
+        const value = excluded.value as unknown;
+        assert.ok(isRecord(value));
+        assert.ok(Array.isArray(value.child));
+        assert.equal(value.child.length, 1);
+        assertNodeHasSource(value.child[0]);
     });
 });

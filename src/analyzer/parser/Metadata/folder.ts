@@ -17,11 +17,13 @@ import {
     makeMsgPackSaveData,
     parseXmlSource,
     readMsgPack,
+    readSavedMsgPacks,
     readSource,
     toXmlResolvedError,
 } from '../commons';
+import type { DecomposedSpec } from './decomposed';
 
-// フォルダ単位のメタデータ (権限・ラベル・Flow・画面) の parser の共通部分。方針: docs/metadata-a-plan.md 2.1 章
+// フォルダ単位のメタデータ (権限・ラベル・Flow・画面) の parser の共通部分。方針: docs/metadata-implementation.md 10 章
 // 読み込みはフォルダ単位 (permissionsets/ など。中のファイルをまとめて読む)、結果・保存はファイル単位
 // (1 ファイル = 1 単位 = 1 解析結果 = 1 保存ファイル)。種類ごとの違いは MetadataFolderSpec (JSON の作り方) だけ
 
@@ -42,6 +44,8 @@ export type MetadataFolderSpec<T extends string, J extends JsonType<string>> = {
     companions?: readonly string[];
     /** bundle: メインのファイルの拡張子の候補 (<バンドル名>.<拡張子>。cmp など)。ほかのファイルは extras */
     bundleMain?: readonly string[];
+    /** 分解された形式 (decomposed) でも置けるもの。組み立て方 (decomposed.ts) */
+    decomposed?: DecomposedSpec;
     /** 読み込んだ XML を JSON にする。読めない・ルート要素が違うときは ErrorJson (理由は problems) */
     make: (
         file: ParsedXmlFile,
@@ -254,9 +258,22 @@ export class MetadataFolderParser<T extends string, J extends JsonType<string>> 
         const name =
             options.name ??
             (this.matches(fileName) ? fileName.slice(0, -this.spec.suffix.length) : fileName);
+        const file = parseXmlSource(filePath, source.replace(/\r\n?/g, '\n'), name);
+        return this.parseXmlFile(filePath, file, { ...options, name });
+    }
+
+    /**
+     * XML として読み込み済みのファイルを解析する (分解された形式を組み立てたものなど)。
+     * filePath は結果に残すパス
+     */
+    parseXmlFile(
+        filePath: string,
+        file: ParsedXmlFile,
+        options: ParseSourceOptions = {},
+    ): MetadataFileParseResult<T, J> {
+        const name = options.name ?? file.name;
         // 入れ子のフォルダの名前 (<サブフォルダ>/<名前>) は、保存名に / を使わないよう . にする
         const id = `${this.prefix}${name.split('/').join('.')}`;
-        const file = parseXmlSource(filePath, source.replace(/\r\n?/g, '\n'), name);
         const registry = new XmlSourceRegistry();
         const problems: XmlReadProblem[] = [];
         const extras = (options.extras ?? []).map((extra) => ({
@@ -288,7 +305,7 @@ export class MetadataFolderParser<T extends string, J extends JsonType<string>> 
     }
 
     // 開発者でのデータ確認用: <baseDir>/<種類>_<名前>.json
-    saveForDevelopper(baseDir: string, target: MetadataFileParseResult<T, J>): SaveDataInfo[] {
+    saveForDeveloper(baseDir: string, target: MetadataFileParseResult<T, J>): SaveDataInfo[] {
         return [makeJsonSaveData('Metadata', baseDir, target.result.id, target)];
     }
 
@@ -300,12 +317,10 @@ export class MetadataFolderParser<T extends string, J extends JsonType<string>> 
 
     /** baseDir に保存したこの種類のものをすべて読む。baseDir がなければ空 */
     async readSaved(baseDir: string): Promise<MetadataFileParseResult<T, J>[]> {
-        const names = await fs.readdir(baseDir).catch(() => [] as string[]);
-        return Promise.all(
-            names
-                .filter((name) => name.startsWith(this.prefix) && name.endsWith('.msgpack'))
-                .sort()
-                .map((name) => this.read(baseDir, name.slice(0, -'.msgpack'.length))),
+        return readSavedMsgPacks(
+            baseDir,
+            (id) => id.startsWith(this.prefix),
+            (id) => this.read(baseDir, id),
         );
     }
 }
