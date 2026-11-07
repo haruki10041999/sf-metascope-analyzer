@@ -2643,7 +2643,7 @@
       "meta": {
         "kind": "lwcBundleMeta",
         "sourceKeys": {
-          "objectKey": "lwcBundleMeta_918978ba5a7b79f3",
+          "objectKey": "lwcBundleMeta_71d13672962d4cc2",
           "sourceKey": "lwcBundleMeta_bacefca7e032e599"
         },
         "apiVersion": "62.0",
@@ -2659,7 +2659,7 @@
           {
             "kind": "lwcTargetConfig",
             "sourceKeys": {
-              "objectKey": "lwcTargetConfig_5d55aabc5b969a14",
+              "objectKey": "lwcTargetConfig_4276d464d80a932a",
               "sourceKey": "lwcTargetConfig_cedb27e41c143452"
             },
             "targets": [
@@ -2669,7 +2669,7 @@
               {
                 "kind": "lwcTargetProperty",
                 "sourceKeys": {
-                  "objectKey": "lwcTargetProperty_6d84ada609e55314",
+                  "objectKey": "lwcTargetProperty_a112770e3572e826",
                   "sourceKey": "lwcTargetProperty_9d04aaccd6d96c89"
                 },
                 "name": "title",
@@ -2680,7 +2680,7 @@
               {
                 "kind": "lwcTargetProperty",
                 "sourceKeys": {
-                  "objectKey": "lwcTargetProperty_570695c0c7da6b44",
+                  "objectKey": "lwcTargetProperty_31b7d810f2c6404b",
                   "sourceKey": "lwcTargetProperty_0a00693522b8280d"
                 },
                 "name": "maxRows",
@@ -2693,7 +2693,7 @@
               {
                 "kind": "lwcTargetProperty",
                 "sourceKeys": {
-                  "objectKey": "lwcTargetProperty_82aa0cd97a64676d",
+                  "objectKey": "lwcTargetProperty_997b7ddf49de41ad",
                   "sourceKey": "lwcTargetProperty_8effdd9e94d084b3"
                 },
                 "name": "industry",
@@ -2712,7 +2712,7 @@
           {
             "kind": "lwcTargetConfig",
             "sourceKeys": {
-              "objectKey": "lwcTargetConfig_59a18e30dffe4b21",
+              "objectKey": "lwcTargetConfig_b5056365f48556ae",
               "sourceKey": "lwcTargetConfig_93fe3e06ab48e415"
             },
             "targets": [
@@ -2722,7 +2722,7 @@
               {
                 "kind": "lwcTargetProperty",
                 "sourceKeys": {
-                  "objectKey": "lwcTargetProperty_8f775855e154ccf0",
+                  "objectKey": "lwcTargetProperty_d10e524f064ab86f",
                   "sourceKey": "lwcTargetProperty_5e019f5b2721ef42"
                 },
                 "name": "title",
@@ -5180,7 +5180,7 @@
         ]
       },
       {
-        "objectKey": "lwcTargetProperty_6d84ada609e55314",
+        "objectKey": "lwcTargetProperty_a112770e3572e826",
         "context": "<property name=\"title\" type=\"String\" label=\"タイトル\" default=\"取引先一覧\"/>",
         "source": [
           {
@@ -5200,7 +5200,7 @@
         ]
       },
       {
-        "objectKey": "lwcTargetProperty_570695c0c7da6b44",
+        "objectKey": "lwcTargetProperty_31b7d810f2c6404b",
         "context": "<property name=\"maxRows\" type=\"Integer\" label=\"最大件数\" default=\"20\" min=\"1\" max=\"100\"/>",
         "source": [
           {
@@ -5220,7 +5220,7 @@
         ]
       },
       {
-        "objectKey": "lwcTargetProperty_82aa0cd97a64676d",
+        "objectKey": "lwcTargetProperty_997b7ddf49de41ad",
         "context": "<property name=\"industry\" type=\"String\" label=\"業種\"/>",
         "source": [
           {
@@ -5240,7 +5240,7 @@
         ]
       },
       {
-        "objectKey": "lwcTargetConfig_5d55aabc5b969a14",
+        "objectKey": "lwcTargetConfig_4276d464d80a932a",
         "context": "<targetConfig targets=\"lightning__RecordPage\">\n            <property name=\"title\" type=\"String\" label=\"タイトル\" default=\"取引先一覧\"/>\n            <property name=\"maxRows\" type=\"Integer\" label=\"最大件数\" default=\"20\" min=\"1\" max=\"100\"/>\n            <property name=\"industry\" type=\"String\" label=\"業種\"/>\n            <objects>\n                <object>Account</object>\n            </objects>\n            <supportedFormFactors>\n                <supportedFormFactor type=\"Large\"/>\n                <supportedFormFactor type=\"Small\"/>\n            </supportedFormFactors>\n        </targetConfig>",
         "source": [
           {
@@ -5260,7 +5260,7 @@
         ]
       },
       {
-        "objectKey": "lwcTargetProperty_8f775855e154ccf0",
+        "objectKey": "lwcTargetProperty_d10e524f064ab86f",
         "context": "<property name=\"title\" type=\"String\" label=\"タイトル\"/>",
         "source": [
           {
@@ -5280,7 +5280,7 @@
         ]
       },
       {
-        "objectKey": "lwcTargetConfig_59a18e30dffe4b21",
+        "objectKey": "lwcTargetConfig_b5056365f48556ae",
         "context": "<targetConfig targets=\"lightning__AppPage\">\n            <property name=\"title\" type=\"String\" label=\"タイトル\"/>\n        </targetConfig>",
         "source": [
           {
@@ -5300,7 +5300,7 @@
         ]
       },
       {
-        "objectKey": "lwcBundleMeta_918978ba5a7b79f3",
+        "objectKey": "lwcBundleMeta_71d13672962d4cc2",
         "context": "<LightningComponentBundle xmlns=\"http://soap.sforce.com/2006/04/metadata\">\n    <apiVersion>62.0</apiVersion>\n    <isExposed>true</isExposed>\n    <masterLabel>取引先一覧</masterLabel>\n    <description>親レコードに紐づく取引先の一覧</description>\n    <targets>\n        <target>lightning__RecordPage</target>\n        <target>lightning__AppPage</target>\n        <target>lightning__HomePage</target>\n    </targets>\n    <targetConfigs>\n        <targetConfig targets=\"lightning__RecordPage\">\n            <property name=\"title\" type=\"String\" label=\"タイトル\" default=\"取引先一覧\"/>\n            <property name=\"maxRows\" type=\"Integer\" label=\"最大件数\" default=\"20\" min=\"1\" max=\"100\"/>\n            <property name=\"industry\" type=\"String\" label=\"業種\"/>\n            <objects>\n                <object>Account</object>\n            </objects>\n            <supportedFormFactors>\n                <supportedFormFactor type=\"Large\"/>\n                <supportedFormFactor type=\"Small\"/>\n            </supportedFormFactors>\n        </targetConfig>\n        <targetConfig targets=\"lightning__AppPage\">\n            <property name=\"title\" type=\"String\" label=\"タイトル\"/>\n        </targetConfig>\n    </targetConfigs>\n    <capabilities>\n        <capability>lightning__dynamicComponent</capability>\n    </capabilities>\n</LightningComponentBundle>",
         "source": [
           {
