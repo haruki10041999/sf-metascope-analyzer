@@ -1,0 +1,21 @@
+import { ExpressionContext } from '@apexdevtools/apex-parser';
+
+import { ExpressionValueTypeClass } from '.';
+
+import { ApexCommonTypeClass } from '../commonVisitor';
+
+export class NormalExpressionTypeClass extends ExpressionValueTypeClass<'expression', string> {
+    private constructor(value: string) {
+        super('expression', value);
+    }
+
+    static create(ctx: ExpressionContext): NormalExpressionTypeClass {
+        return new NormalExpressionTypeClass(ctx.getText());
+    }
+}
+
+export const isNormalExpressionType = (
+    target: ApexCommonTypeClass<string>,
+): target is NormalExpressionTypeClass => {
+    return target instanceof NormalExpressionTypeClass;
+};

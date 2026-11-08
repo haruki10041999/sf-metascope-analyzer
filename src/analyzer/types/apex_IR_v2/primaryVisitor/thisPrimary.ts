@@ -1,0 +1,24 @@
+import { ThisPrimaryContext } from '@apexdevtools/apex-parser';
+
+import { PrimaryValueTypeClass } from '.';
+import { ApexCommonTypeClass } from '../commonVisitor';
+
+export class ThisPrimaryTypeClass extends PrimaryValueTypeClass<'thisPrimary', string> {
+    private constructor(value: string) {
+        super('thisPrimary', value);
+    }
+
+    static create(ctx: ThisPrimaryContext): ThisPrimaryTypeClass {
+        if (!ctx.THIS()) {
+            throw new Error('値が異常です。ThisPrimaryContext: ' + ctx.getText());
+        }
+
+        return new ThisPrimaryTypeClass(ctx.THIS().getText());
+    }
+}
+
+export const isThisPrimaryType = (
+    target: ApexCommonTypeClass<string>,
+): target is ThisPrimaryTypeClass => {
+    return target instanceof ThisPrimaryTypeClass;
+};

@@ -1,0 +1,40 @@
+import { BoundExpressionContext } from '@apexdevtools/apex-parser';
+
+import {
+    ExpressionTypeClass,
+    BasedExpressionTypeClass,
+    ExpressionVisitor,
+    isBasedExpressionType,
+} from '.';
+
+import { ApexCommonTypeClass, ApexErrorTypeClass, visitNode } from '../commonVisitor';
+
+export class BoundExpressionTypeClass extends ExpressionTypeClass<
+    'boundExpression',
+    BasedExpressionTypeClass
+> {
+    private constructor(value: BasedExpressionTypeClass | ApexErrorTypeClass) {
+        super('boundExpression', value);
+    }
+
+    static create(ctx: BoundExpressionContext): BoundExpressionTypeClass {
+        if (!ctx.expression() || !ctx.COLON()) {
+            throw new Error('値が異常です。BoundExpressionContext: ' + ctx.getText());
+        }
+
+        return new BoundExpressionTypeClass(
+            visitNode(
+                new ExpressionVisitor(),
+                ctx.expression(),
+                isBasedExpressionType,
+                'expression',
+            ),
+        );
+    }
+}
+
+export const isBoundExpressionType = (
+    target: ApexCommonTypeClass<string>,
+): target is BoundExpressionTypeClass => {
+    return target instanceof BoundExpressionTypeClass;
+};

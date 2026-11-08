@@ -1,0 +1,52 @@
+import { MethodCallContext } from '@apexdevtools/apex-parser';
+
+import { CallTypeClass } from '.';
+
+import { NormalIdTypeClass, IdVisitor, isNormalIdType } from '../idVisitor';
+import { ExpressionListTypeClass, ListVisitor, isExpressionListType } from '../listVisitor';
+import { ApexErrorTypeClass, ApexCommonTypeClass, visitOptionalNode } from '../commonVisitor';
+
+export class MethodCallTypeClass extends CallTypeClass<
+    'methodCall',
+    NormalIdTypeClass | null,
+    ExpressionListTypeClass
+> {
+    private reference: 'this' | 'super' | null = null;
+
+    private constructor(
+        value: NormalIdTypeClass | ApexErrorTypeClass | null,
+        param: ExpressionListTypeClass | ApexErrorTypeClass | null,
+        reference: 'this' | 'super' | null,
+    ) {
+        super('methodCall', value, param);
+        this.reference = reference;
+    }
+
+    // `this(...)` / `super(...)` のコンストラクタ呼び出しは id を持たない
+    static create(ctx: MethodCallContext): MethodCallTypeClass {
+        if (!ctx.id() && !ctx.THIS() && !ctx.SUPER()) {
+            throw new Error('値が異常です。MethodCallContext: ' + ctx.getText());
+        }
+
+        return new MethodCallTypeClass(
+            visitOptionalNode(new IdVisitor(), ctx.id(), isNormalIdType, 'id'),
+            visitOptionalNode(
+                new ListVisitor(),
+                ctx.expressionList(),
+                isExpressionListType,
+                'expressionList',
+            ),
+            ctx.THIS() ? 'this' : ctx.SUPER() ? 'super' : null,
+        );
+    }
+
+    getReference(): 'this' | 'super' | null {
+        return this.reference;
+    }
+}
+
+export const isMethodCallType = (
+    target: ApexCommonTypeClass<string>,
+): target is MethodCallTypeClass => {
+    return target instanceof MethodCallTypeClass;
+};

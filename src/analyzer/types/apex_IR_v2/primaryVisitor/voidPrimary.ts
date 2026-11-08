@@ -1,0 +1,24 @@
+import { VoidPrimaryContext } from '@apexdevtools/apex-parser';
+
+import { PrimaryValueTypeClass } from '.';
+import { ApexCommonTypeClass } from '../commonVisitor';
+
+export class VoidPrimaryTypeClass extends PrimaryValueTypeClass<'voidPrimary', string> {
+    private constructor(value: string) {
+        super('voidPrimary', value);
+    }
+
+    static create(ctx: VoidPrimaryContext): VoidPrimaryTypeClass {
+        if (!ctx.VOID() || !ctx.CLASS()) {
+            throw new Error('値が異常です。VoidPrimaryContext: ' + ctx.getText());
+        }
+
+        return new VoidPrimaryTypeClass(ctx.VOID().getText() + '.' + ctx.CLASS().getText());
+    }
+}
+
+export const isVoidPrimaryType = (
+    target: ApexCommonTypeClass<string>,
+): target is VoidPrimaryTypeClass => {
+    return target instanceof VoidPrimaryTypeClass;
+};

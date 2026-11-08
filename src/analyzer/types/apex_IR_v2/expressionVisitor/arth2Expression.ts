@@ -1,0 +1,57 @@
+import { Arth2ExpressionContext } from '@apexdevtools/apex-parser';
+
+import {
+    DoubleStringOperatorExpressionTypeClass,
+    BasedExpressionTypeClass,
+    ExpressionVisitor,
+    isBasedExpressionType,
+} from '.';
+
+import { ApexErrorTypeClass, ApexCommonTypeClass, visitNode } from '../commonVisitor';
+
+export class Arth2ExpressionTypeClass extends DoubleStringOperatorExpressionTypeClass<
+    'arth2Expression',
+    BasedExpressionTypeClass,
+    '+' | '-',
+    BasedExpressionTypeClass
+> {
+    private constructor(
+        left: BasedExpressionTypeClass | ApexErrorTypeClass,
+        right: BasedExpressionTypeClass | ApexErrorTypeClass,
+        operator: '+' | '-',
+    ) {
+        super('arth2Expression', left, right, operator);
+    }
+
+    static create(ctx: Arth2ExpressionContext): Arth2ExpressionTypeClass {
+        if (
+            !ctx.expression_list() ||
+            ctx.expression_list().length !== 2 ||
+            (!ctx.ADD() && !ctx.SUB())
+        ) {
+            throw new Error('値が異常です。Arth2ExpressionContext: ' + ctx.getText());
+        }
+
+        return new Arth2ExpressionTypeClass(
+            visitNode(
+                new ExpressionVisitor(),
+                ctx.expression(0),
+                isBasedExpressionType,
+                'expression',
+            ),
+            visitNode(
+                new ExpressionVisitor(),
+                ctx.expression(1),
+                isBasedExpressionType,
+                'expression',
+            ),
+            ctx.ADD() ? '+' : '-',
+        );
+    }
+}
+
+export const isArth2ExpressionType = (
+    target: ApexCommonTypeClass<string>,
+): target is Arth2ExpressionTypeClass => {
+    return target instanceof Arth2ExpressionTypeClass;
+};

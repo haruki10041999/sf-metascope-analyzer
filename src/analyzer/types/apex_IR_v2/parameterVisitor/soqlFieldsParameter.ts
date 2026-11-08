@@ -1,0 +1,32 @@
+import { SoqlFieldsParameterContext } from '@apexdevtools/apex-parser';
+
+import { ParameterValueTypeClass } from '.';
+
+import { ApexCommonTypeClass, ApexErrorTypeClass } from '../commonVisitor';
+
+type SoqlFieldsParameterValueType = 'ALL' | 'CUSTOM' | 'STANDARD';
+
+export class SoqlFieldsParameterTypeClass extends ParameterValueTypeClass<
+    'soqlFieldsParameter',
+    SoqlFieldsParameterValueType
+> {
+    private constructor(value: SoqlFieldsParameterValueType) {
+        super('soqlFieldsParameter', value);
+    }
+
+    static create(ctx: SoqlFieldsParameterContext): SoqlFieldsParameterTypeClass {
+        if (!ctx.ALL() && !ctx.CUSTOM() && !ctx.STANDARD()) {
+            throw new Error('値が異常です。SoqlFieldsParameterContext: ' + ctx.getText());
+        }
+
+        return new SoqlFieldsParameterTypeClass(
+            ctx.ALL() ? 'ALL' : ctx.CUSTOM() ? 'CUSTOM' : 'STANDARD',
+        );
+    }
+}
+
+export const isSoqlFieldsParameterType = (
+    target: ApexCommonTypeClass<string>,
+): target is SoqlFieldsParameterTypeClass => {
+    return target instanceof SoqlFieldsParameterTypeClass;
+};
