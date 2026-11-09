@@ -1,43 +1,43 @@
+import { type FieldsOf, type TypeField } from '../../commons/ir';
+import { type SourceSpan } from '../../commons/source';
 import { isTSExportAssignment, type TSExportAssignment } from '@babel/types';
 import {
     EvaluatePair,
     LwcCommonTypeClass,
-    LwcErrorTypeClass,
     makeEvaluatePair,
     visitNode,
+    getSourceSpan,
 } from '../commonVisitor';
 import { expressionVisitorEvaluatePairs, type ExpressionTypeClass } from '../expressionVisitor';
 
-export type TSExportAssignmentFields = {
-    expression: ExpressionTypeClass | LwcErrorTypeClass;
+export type TSExportAssignmentFields = TypeField<'tSExportAssignment'> & {
+    expression: ExpressionTypeClass;
 };
 
-export class TSExportAssignmentTypeClass extends LwcCommonTypeClass<'tSExportAssignment'> {
-    private readonly value: TSExportAssignmentFields;
-
-    private constructor(value: TSExportAssignmentFields) {
-        super('tSExportAssignment');
-        this.value = value;
+export class TSExportAssignmentTypeClass extends LwcCommonTypeClass<
+    'tSExportAssignment',
+    TSExportAssignmentFields
+> {
+    private constructor(value: FieldsOf<TSExportAssignmentFields>, sourceSpan: SourceSpan) {
+        super('tSExportAssignment', value, sourceSpan);
     }
 
     static create(target: TSExportAssignment, originalSource: string): TSExportAssignmentTypeClass {
-        return new TSExportAssignmentTypeClass({
-            expression: visitNode(
-                target.expression,
-                originalSource,
-                expressionVisitorEvaluatePairs(),
-                'ExpressionVisitor',
-            ),
-        });
-    }
-
-    /** すべてのフィールド (Babel の value フィールドの getter getValue() と区別する。getChildNodes もこれから作る) */
-    override getFields(): TSExportAssignmentFields {
-        return this.value;
+        return new TSExportAssignmentTypeClass(
+            {
+                expression: visitNode(
+                    target.expression,
+                    originalSource,
+                    expressionVisitorEvaluatePairs(),
+                    'ExpressionVisitor',
+                ),
+            },
+            getSourceSpan(target, originalSource),
+        );
     }
 
     getExpression(): TSExportAssignmentFields['expression'] {
-        return this.value.expression;
+        return this.getFields().expression;
     }
 }
 
@@ -49,5 +49,5 @@ export const tSExportAssignmentTypePair: EvaluatePair<
 );
 
 export const isTSExportAssignmentType = (
-    target: LwcCommonTypeClass<string>,
+    target: LwcCommonTypeClass<string, TypeField<string>>,
 ): target is TSExportAssignmentTypeClass => target instanceof TSExportAssignmentTypeClass;

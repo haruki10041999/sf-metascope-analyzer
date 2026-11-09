@@ -1,180 +1,124 @@
+import { type FieldsOf, type TypeField } from '../../commons/ir';
+import { type SourceSpan } from '../../commons/source';
 import { isClassExpression, type ClassExpression } from '@babel/types';
 import {
     EvaluatePair,
     LwcCommonTypeClass,
-    LwcErrorTypeClass,
     lazyPairs,
     makeEvaluatePair,
-    visitNode,
     visitNodeList,
     visitOptionalNode,
+    getSourceSpan,
 } from '../commonVisitor';
-import { expressionVisitorEvaluatePairs, type ExpressionTypeClass } from '../expressionVisitor';
 import {
     classImplementsTypePair,
     type ClassImplementsTypeClass,
 } from '../flowVisitor/classImplements';
-import {
-    interfaceExtendsTypePair,
-    type InterfaceExtendsTypeClass,
-} from '../flowVisitor/interfaceExtends';
+import { InterfaceExtendsTypeClass } from '../flowVisitor/interfaceExtends';
 import {
     typeParameterDeclarationTypePair,
     type TypeParameterDeclarationTypeClass,
 } from '../flowVisitor/typeParameterDeclaration';
-import {
-    typeParameterInstantiationTypePair,
-    type TypeParameterInstantiationTypeClass,
-} from '../flowVisitor/typeParameterInstantiation';
-import { classBodyTypePair, type ClassBodyTypeClass } from '../standardizedVisitor/classBody';
+import { ClassBodyTypeClass } from '../standardizedVisitor/classBody';
 import {
     tSTypeParameterDeclarationTypePair,
     type TSTypeParameterDeclarationTypeClass,
 } from '../typeScriptVisitor/tSTypeParameterDeclaration';
-import {
-    tSTypeParameterInstantiationTypePair,
-    type TSTypeParameterInstantiationTypeClass,
-} from '../typeScriptVisitor/tSTypeParameterInstantiation';
-import { decoratorTypePair, type DecoratorTypeClass } from './decorator';
-import { identifierTypePair, type IdentifierTypeClass } from './identifier';
+import { DecoratorTypeClass } from './decorator';
+import { createClassHeritage, type ClassHeritage } from './classDeclaration';
+import { IdentifierTypeClass } from './identifier';
 import { tSClassImplementsTypePair, type TSClassImplementsTypeClass } from './tSClassImplements';
 
-const classExpressionIdPairs = lazyPairs(() => [identifierTypePair] as const);
 const classExpressionTypeParametersPairs = lazyPairs(
     () => [typeParameterDeclarationTypePair, tSTypeParameterDeclarationTypePair] as const,
-);
-const classExpressionBodyPairs = lazyPairs(() => [classBodyTypePair] as const);
-const classExpressionSuperTypeArgumentsPairs = lazyPairs(
-    () => [typeParameterInstantiationTypePair, tSTypeParameterInstantiationTypePair] as const,
 );
 const classExpressionImplementsPairs = lazyPairs(
     () => [tSClassImplementsTypePair, classImplementsTypePair] as const,
 );
-const classExpressionDecoratorsPairs = lazyPairs(() => [decoratorTypePair] as const);
-const classExpressionMixinsPairs = lazyPairs(() => [interfaceExtendsTypePair] as const);
 
-export type ClassExpressionFields = {
-    id: IdentifierTypeClass | LwcErrorTypeClass | null;
-    typeParameters:
-        | TypeParameterDeclarationTypeClass
-        | TSTypeParameterDeclarationTypeClass
-        | LwcErrorTypeClass
-        | null;
-    body: ClassBodyTypeClass | LwcErrorTypeClass;
-    superClass: ExpressionTypeClass | LwcErrorTypeClass | null;
-    superTypeArguments:
-        | TypeParameterInstantiationTypeClass
-        | TSTypeParameterInstantiationTypeClass
-        | LwcErrorTypeClass
-        | null;
-    implements:
-        (TSClassImplementsTypeClass | ClassImplementsTypeClass | LwcErrorTypeClass)[] | null;
-    decorators: (DecoratorTypeClass | LwcErrorTypeClass)[] | null;
-    mixins: InterfaceExtendsTypeClass | LwcErrorTypeClass | null;
+export type ClassExpressionFields = TypeField<'classExpression'> & {
+    id: IdentifierTypeClass | null;
+    typeParameters: TypeParameterDeclarationTypeClass | TSTypeParameterDeclarationTypeClass | null;
+    body: ClassBodyTypeClass;
+    heritage: ClassHeritage | null;
+    implements: (TSClassImplementsTypeClass | ClassImplementsTypeClass)[] | null;
+    decorators: DecoratorTypeClass[] | null;
+    mixins: InterfaceExtendsTypeClass | null;
 };
 
-export class ClassExpressionTypeClass extends LwcCommonTypeClass<'classExpression'> {
-    private readonly value: ClassExpressionFields;
-
-    private constructor(value: ClassExpressionFields) {
-        super('classExpression');
-        this.value = value;
+export class ClassExpressionTypeClass extends LwcCommonTypeClass<
+    'classExpression',
+    ClassExpressionFields
+> {
+    private constructor(value: FieldsOf<ClassExpressionFields>, sourceSpan: SourceSpan) {
+        super('classExpression', value, sourceSpan);
     }
 
     static create(target: ClassExpression, originalSource: string): ClassExpressionTypeClass {
-        return new ClassExpressionTypeClass({
-            id: visitOptionalNode(
-                target.id,
-                originalSource,
-                classExpressionIdPairs(),
-                'ClassExpression.id',
-            ),
-            typeParameters: visitOptionalNode(
-                target.typeParameters,
-                originalSource,
-                classExpressionTypeParametersPairs(),
-                'ClassExpression.typeParameters',
-            ),
-            body: visitNode(
-                target.body,
-                originalSource,
-                classExpressionBodyPairs(),
-                'ClassExpression.body',
-            ),
-            superClass: visitOptionalNode(
-                target.superClass,
-                originalSource,
-                expressionVisitorEvaluatePairs(),
-                'ExpressionVisitor',
-            ),
-            superTypeArguments: visitOptionalNode(
-                target.superTypeArguments,
-                originalSource,
-                classExpressionSuperTypeArgumentsPairs(),
-                'ClassExpression.superTypeArguments',
-            ),
-            implements:
-                target.implements == null
-                    ? null
-                    : visitNodeList(
-                          target.implements,
-                          originalSource,
-                          classExpressionImplementsPairs(),
-                          'ClassExpression.implements',
-                      ),
-            decorators:
-                target.decorators == null
-                    ? null
-                    : visitNodeList(
-                          target.decorators,
-                          originalSource,
-                          classExpressionDecoratorsPairs(),
-                          'ClassExpression.decorators',
-                      ),
-            mixins: visitOptionalNode(
-                target.mixins,
-                originalSource,
-                classExpressionMixinsPairs(),
-                'ClassExpression.mixins',
-            ),
-        });
-    }
-
-    /** すべてのフィールド (Babel の value フィールドの getter getValue() と区別する。getChildNodes もこれから作る) */
-    override getFields(): ClassExpressionFields {
-        return this.value;
+        return new ClassExpressionTypeClass(
+            {
+                id:
+                    target.id == null
+                        ? null
+                        : IdentifierTypeClass.create(target.id, originalSource),
+                typeParameters: visitOptionalNode(
+                    target.typeParameters,
+                    originalSource,
+                    classExpressionTypeParametersPairs(),
+                    'ClassExpression.typeParameters',
+                ),
+                body: ClassBodyTypeClass.create(target.body, originalSource),
+                heritage: createClassHeritage(target, originalSource),
+                implements:
+                    target.implements == null
+                        ? null
+                        : visitNodeList(
+                              target.implements,
+                              originalSource,
+                              classExpressionImplementsPairs(),
+                              'ClassExpression.implements',
+                          ),
+                decorators:
+                    target.decorators == null
+                        ? null
+                        : target.decorators.map((child) =>
+                              DecoratorTypeClass.create(child, originalSource),
+                          ),
+                mixins:
+                    target.mixins == null
+                        ? null
+                        : InterfaceExtendsTypeClass.create(target.mixins, originalSource),
+            },
+            getSourceSpan(target, originalSource),
+        );
     }
 
     getId(): ClassExpressionFields['id'] {
-        return this.value.id;
+        return this.getFields().id;
     }
 
     getTypeParameters(): ClassExpressionFields['typeParameters'] {
-        return this.value.typeParameters;
+        return this.getFields().typeParameters;
     }
 
     getBody(): ClassExpressionFields['body'] {
-        return this.value.body;
+        return this.getFields().body;
     }
 
-    getSuperClass(): ClassExpressionFields['superClass'] {
-        return this.value.superClass;
-    }
-
-    getSuperTypeArguments(): ClassExpressionFields['superTypeArguments'] {
-        return this.value.superTypeArguments;
+    getHeritage(): ClassExpressionFields['heritage'] {
+        return this.getFields().heritage;
     }
 
     getImplements(): ClassExpressionFields['implements'] {
-        return this.value.implements;
+        return this.getFields().implements;
     }
 
     getDecorators(): ClassExpressionFields['decorators'] {
-        return this.value.decorators;
+        return this.getFields().decorators;
     }
 
     getMixins(): ClassExpressionFields['mixins'] {
-        return this.value.mixins;
+        return this.getFields().mixins;
     }
 }
 
@@ -184,5 +128,5 @@ export const classExpressionTypePair: EvaluatePair<ClassExpression, ClassExpress
     );
 
 export const isClassExpressionType = (
-    target: LwcCommonTypeClass<string>,
+    target: LwcCommonTypeClass<string, TypeField<string>>,
 ): target is ClassExpressionTypeClass => target instanceof ClassExpressionTypeClass;

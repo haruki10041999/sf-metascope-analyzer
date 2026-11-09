@@ -1,43 +1,40 @@
+import { type FieldsOf, type TypeField } from '../../commons/ir';
+import { type SourceSpan } from '../../commons/source';
 import { isTSArrayType, type TSArrayType } from '@babel/types';
 import {
     EvaluatePair,
     LwcCommonTypeClass,
-    LwcErrorTypeClass,
     makeEvaluatePair,
     visitNode,
+    getSourceSpan,
 } from '../commonVisitor';
 import { tSTypeVisitorEvaluatePairs, type TSTypeTypeClass } from '../tsTypeVisitor';
 
-export type TSArrayTypeFields = {
-    elementType: TSTypeTypeClass | LwcErrorTypeClass;
+export type TSArrayTypeFields = TypeField<'tSArrayType'> & {
+    elementType: TSTypeTypeClass;
 };
 
-export class TSArrayTypeTypeClass extends LwcCommonTypeClass<'tSArrayType'> {
-    private readonly value: TSArrayTypeFields;
-
-    private constructor(value: TSArrayTypeFields) {
-        super('tSArrayType');
-        this.value = value;
+export class TSArrayTypeTypeClass extends LwcCommonTypeClass<'tSArrayType', TSArrayTypeFields> {
+    private constructor(value: FieldsOf<TSArrayTypeFields>, sourceSpan: SourceSpan) {
+        super('tSArrayType', value, sourceSpan);
     }
 
     static create(target: TSArrayType, originalSource: string): TSArrayTypeTypeClass {
-        return new TSArrayTypeTypeClass({
-            elementType: visitNode(
-                target.elementType,
-                originalSource,
-                tSTypeVisitorEvaluatePairs(),
-                'TSTypeVisitor',
-            ),
-        });
-    }
-
-    /** すべてのフィールド (Babel の value フィールドの getter getValue() と区別する。getChildNodes もこれから作る) */
-    override getFields(): TSArrayTypeFields {
-        return this.value;
+        return new TSArrayTypeTypeClass(
+            {
+                elementType: visitNode(
+                    target.elementType,
+                    originalSource,
+                    tSTypeVisitorEvaluatePairs(),
+                    'TSTypeVisitor',
+                ),
+            },
+            getSourceSpan(target, originalSource),
+        );
     }
 
     getElementType(): TSArrayTypeFields['elementType'] {
-        return this.value.elementType;
+        return this.getFields().elementType;
     }
 }
 
@@ -47,5 +44,5 @@ export const tSArrayTypeTypePair: EvaluatePair<TSArrayType, TSArrayTypeTypeClass
     );
 
 export const isTSArrayTypeType = (
-    target: LwcCommonTypeClass<string>,
+    target: LwcCommonTypeClass<string, TypeField<string>>,
 ): target is TSArrayTypeTypeClass => target instanceof TSArrayTypeTypeClass;

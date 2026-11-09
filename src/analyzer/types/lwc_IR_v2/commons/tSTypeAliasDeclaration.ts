@@ -1,86 +1,72 @@
+import { type FieldsOf, type TypeField } from '../../commons/ir';
+import { type SourceSpan } from '../../commons/source';
 import { isTSTypeAliasDeclaration, type TSTypeAliasDeclaration } from '@babel/types';
 import {
     EvaluatePair,
     LwcCommonTypeClass,
-    LwcErrorTypeClass,
-    lazyPairs,
     makeEvaluatePair,
     visitNode,
-    visitOptionalNode,
+    getSourceSpan,
 } from '../commonVisitor';
 import { tSTypeVisitorEvaluatePairs, type TSTypeTypeClass } from '../tsTypeVisitor';
-import {
-    tSTypeParameterDeclarationTypePair,
-    type TSTypeParameterDeclarationTypeClass,
-} from '../typeScriptVisitor/tSTypeParameterDeclaration';
-import { identifierTypePair, type IdentifierTypeClass } from './identifier';
+import { TSTypeParameterDeclarationTypeClass } from '../typeScriptVisitor/tSTypeParameterDeclaration';
+import { IdentifierTypeClass } from './identifier';
 
-const tSTypeAliasDeclarationIdPairs = lazyPairs(() => [identifierTypePair] as const);
-const tSTypeAliasDeclarationTypeParametersPairs = lazyPairs(
-    () => [tSTypeParameterDeclarationTypePair] as const,
-);
-
-export type TSTypeAliasDeclarationFields = {
-    declare: NonNullable<TSTypeAliasDeclaration['declare']> | null;
-    id: IdentifierTypeClass | LwcErrorTypeClass;
-    typeParameters: TSTypeParameterDeclarationTypeClass | LwcErrorTypeClass | null;
-    typeAnnotation: TSTypeTypeClass | LwcErrorTypeClass;
+export type TSTypeAliasDeclarationFields = TypeField<'tSTypeAliasDeclaration'> & {
+    declare: boolean;
+    id: IdentifierTypeClass;
+    typeParameters: TSTypeParameterDeclarationTypeClass | null;
+    typeAnnotation: TSTypeTypeClass;
 };
 
-export class TSTypeAliasDeclarationTypeClass extends LwcCommonTypeClass<'tSTypeAliasDeclaration'> {
-    private readonly value: TSTypeAliasDeclarationFields;
-
-    private constructor(value: TSTypeAliasDeclarationFields) {
-        super('tSTypeAliasDeclaration');
-        this.value = value;
+export class TSTypeAliasDeclarationTypeClass extends LwcCommonTypeClass<
+    'tSTypeAliasDeclaration',
+    TSTypeAliasDeclarationFields
+> {
+    private constructor(value: FieldsOf<TSTypeAliasDeclarationFields>, sourceSpan: SourceSpan) {
+        super('tSTypeAliasDeclaration', value, sourceSpan);
     }
 
     static create(
         target: TSTypeAliasDeclaration,
         originalSource: string,
     ): TSTypeAliasDeclarationTypeClass {
-        return new TSTypeAliasDeclarationTypeClass({
-            declare: target.declare ?? null,
-            id: visitNode(
-                target.id,
-                originalSource,
-                tSTypeAliasDeclarationIdPairs(),
-                'TSTypeAliasDeclaration.id',
-            ),
-            typeParameters: visitOptionalNode(
-                target.typeParameters,
-                originalSource,
-                tSTypeAliasDeclarationTypeParametersPairs(),
-                'TSTypeAliasDeclaration.typeParameters',
-            ),
-            typeAnnotation: visitNode(
-                target.typeAnnotation,
-                originalSource,
-                tSTypeVisitorEvaluatePairs(),
-                'TSTypeVisitor',
-            ),
-        });
-    }
-
-    /** すべてのフィールド (Babel の value フィールドの getter getValue() と区別する。getChildNodes もこれから作る) */
-    override getFields(): TSTypeAliasDeclarationFields {
-        return this.value;
+        return new TSTypeAliasDeclarationTypeClass(
+            {
+                declare: target.declare ?? false,
+                id: IdentifierTypeClass.create(target.id, originalSource),
+                typeParameters:
+                    target.typeParameters == null
+                        ? null
+                        : TSTypeParameterDeclarationTypeClass.create(
+                              target.typeParameters,
+                              originalSource,
+                          ),
+                typeAnnotation: visitNode(
+                    target.typeAnnotation,
+                    originalSource,
+                    tSTypeVisitorEvaluatePairs(),
+                    'TSTypeVisitor',
+                ),
+            },
+            getSourceSpan(target, originalSource),
+        );
     }
 
     getDeclare(): TSTypeAliasDeclarationFields['declare'] {
-        return this.value.declare;
+        return this.getFields().declare;
     }
 
     getId(): TSTypeAliasDeclarationFields['id'] {
-        return this.value.id;
+        return this.getFields().id;
     }
 
     getTypeParameters(): TSTypeAliasDeclarationFields['typeParameters'] {
-        return this.value.typeParameters;
+        return this.getFields().typeParameters;
     }
 
     getTypeAnnotation(): TSTypeAliasDeclarationFields['typeAnnotation'] {
-        return this.value.typeAnnotation;
+        return this.getFields().typeAnnotation;
     }
 }
 
@@ -92,5 +78,5 @@ export const tSTypeAliasDeclarationTypePair: EvaluatePair<
 );
 
 export const isTSTypeAliasDeclarationType = (
-    target: LwcCommonTypeClass<string>,
+    target: LwcCommonTypeClass<string, TypeField<string>>,
 ): target is TSTypeAliasDeclarationTypeClass => target instanceof TSTypeAliasDeclarationTypeClass;

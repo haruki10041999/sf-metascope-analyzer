@@ -1,3 +1,4 @@
+import { type TypeField } from '../../commons/ir';
 import { LwcCommonTypeClass, LwcCommonVisitor, lazyPairs } from '../commonVisitor';
 import { UnaryExpressionTypeClass, unaryExpressionTypePair } from '../commons/unaryExpression';
 import { SpreadElementTypeClass, spreadElementTypePair } from '../commons/spreadElement';
@@ -28,7 +29,7 @@ export class UnaryLikeVisitor extends LwcCommonVisitor<
 export type UnaryLikeTypeClass = UnaryExpressionTypeClass | SpreadElementTypeClass;
 
 export const isUnaryLikeType = (
-    target: LwcCommonTypeClass<string>,
+    target: LwcCommonTypeClass<string, TypeField<string>>,
 ): target is UnaryLikeTypeClass => {
     return target instanceof UnaryExpressionTypeClass || target instanceof SpreadElementTypeClass;
 };

@@ -2,13 +2,12 @@ import { AnonymousUnitContext } from '@apexdevtools/apex-parser';
 
 import { AnonymousBlockTypeClass } from '../blockVisitor';
 import {
-    ApexErrorTypeClass,
     ApexCommonTypeClass,
-    visitNode,
+    createNode,
     getSourceSpan,
     isSpicifyApexCommonTypeClass,
 } from '../commonVisitor';
-import { TypeField } from '../../commons/ir';
+import { type FieldsOf, TypeField } from '../../commons/ir';
 import { SourceSpan } from '../../commons';
 
 export type AnonymousUnitType = TypeField<'anonymousUnit'> & {
@@ -19,20 +18,28 @@ export class AnonymousUnitTypeClass extends ApexCommonTypeClass<
     'anonymousUnit',
     AnonymousUnitType
 > {
-    private constructor(block: AnonymousBlockTypeClass, sourceSpan: SourceSpan) {
-        super('anonymousUnit', { block: block }, sourceSpan);
+    private constructor(fields: FieldsOf<AnonymousUnitType>, sourceSpan: SourceSpan) {
+        super('anonymousUnit', fields, sourceSpan);
     }
 
     static create(ctx: AnonymousUnitContext): AnonymousUnitTypeClass {
         return new AnonymousUnitTypeClass(
-            AnonymousBlockTypeClass.create(ctx.anonymousBlock()),
+            {
+                block: createNode(
+                    ctx.anonymousBlock(),
+                    (c) => AnonymousBlockTypeClass.create(c),
+                    'anonymousBlock',
+                ),
+            },
             getSourceSpan(ctx),
         );
+    }
+
+    getBlock(): AnonymousUnitType['block'] {
+        return this.getFields().block;
     }
 }
 
 export const isAnonymousUnitType = (
     target: ApexCommonTypeClass<string, TypeField<string>>,
-): target is AnonymousUnitTypeClass => {
-    return isSpicifyApexCommonTypeClass('anonymousUnit', target);
-};
+): target is AnonymousUnitTypeClass => isSpicifyApexCommonTypeClass('anonymousUnit', target);

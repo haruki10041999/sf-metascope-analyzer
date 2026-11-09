@@ -1,9 +1,9 @@
 import typia from 'typia';
 
-import { convertValue, ConvertType } from '../commons';
-import { ErrorJson, JsonType, makeJsonType } from '../../commons';
+import { JsonType } from '../../commons';
+import type { AllRowsClauseTypeClass } from '../../apex_IR_v2';
 
-import { AllRowsClauseType } from '../converter';
+import { makeNodeJson } from '../commons/node';
 
 export type AllRowsJson = JsonType<'allRowsClause'> & {
     value: string;
@@ -11,16 +11,9 @@ export type AllRowsJson = JsonType<'allRowsClause'> & {
 
 export const isAllRowsJson = typia.createIs<AllRowsJson>();
 
-export const makeAllRowsJson = (
-    target: ConvertType<AllRowsClauseType>,
-): AllRowsJson | ErrorJson => {
-    return convertValue<'allRowsClause', AllRowsClauseType, AllRowsJson>(
-        target,
-        'allRowsClause',
-        (target, targetRecords) => {
-            return makeJsonType('allRowsClause', targetRecords.base, {
-                value: target.value,
-            });
-        },
-    );
+// v2 の value は常に 'ALL ROWS' (ソースの大文字・小文字にかかわらずそろえる)
+export const makeAllRowsJson = (target: AllRowsClauseTypeClass): AllRowsJson => {
+    return makeNodeJson<AllRowsJson>('allRowsClause', target, {
+        value: target.getFields().value,
+    });
 };

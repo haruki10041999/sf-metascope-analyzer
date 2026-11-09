@@ -5,6 +5,8 @@ import { fileURLToPath, pathToFileURL } from 'node:url';
 
 import { Packr } from 'msgpackr';
 
+import type { IrErrorLike } from '../types/commons/ir';
+
 import {
     ConvertKeys,
     ParsedXmlFile,
@@ -39,8 +41,9 @@ const packr = new Packr({ useRecords: true });
  * 版の違う保存データは読まない (読む側は「保存データなし」として扱い、解析し直して保存し直す)。
  * 1: 版なし (〜 2026/11/05)
  * 2: 版を入れた。オブジェクトの保存名を object_<API 名> にした。メタデータの JSON のキーを並べ替えて作る
+ * 3: Apex を IR v2 から作る。キーの値が変わった (docs/ir-v2-integration.md)
  */
-export const SAVE_FORMAT_VERSION = 2;
+export const SAVE_FORMAT_VERSION = 3;
 
 /** 保存ファイルの中身。data を版と一緒に包む */
 type SavedEnvelope = { formatVersion: number; data: unknown };
@@ -102,7 +105,8 @@ export const readMsgPack = async <T>(baseDir: string, id: string, label: string)
         saved && typeof saved === 'object' && typeof saved.formatVersion === 'number'
             ? saved.formatVersion
             : undefined;
-    if (formatVersion !== SAVE_FORMAT_VERSION) throw new SavedDataVersionError(inputFile, formatVersion);
+    if (formatVersion !== SAVE_FORMAT_VERSION)
+        throw new SavedDataVersionError(inputFile, formatVersion);
     return saved!.data as T;
 };
 
@@ -216,7 +220,7 @@ export type ApexResolvedError = {
 };
 
 export const toApexResolvedError = (
-    target: ApexErrorTypeClass,
+    target: IrErrorLike,
     phase: ApexErrorPhase = 'syntax',
 ): { sourceKeys: ConvertKeys } & ApexResolvedError & SourceSpan => {
     const resolvedErrorType: ApexResolvedError = {

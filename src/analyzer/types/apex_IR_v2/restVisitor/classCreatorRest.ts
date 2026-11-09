@@ -1,35 +1,45 @@
 import { ClassCreatorRestContext } from '@apexdevtools/apex-parser';
 
-import { RestTypeClass } from '.';
-
+import { ArgumentsTypeClass } from '../argumentsVisitor';
 import {
-    NormalArgumentsTypeClass,
-    ArgumentsVisitor,
-    isNormalArgumentsType,
-} from '../argumentsVisitor';
-import { ApexErrorTypeClass, ApexCommonTypeClass, visitNode } from '../commonVisitor';
+    ApexCommonTypeClass,
+    createNode,
+    getSourceSpan,
+    isSpicifyApexCommonTypeClass,
+} from '../commonVisitor';
+import { type FieldsOf, TypeField } from '../../commons/ir';
+import { SourceSpan } from '../../commons';
 
-export class ClassCreatorRestTypeClass extends RestTypeClass<
+export type ClassCreatorRestType = TypeField<'classCreatorRest'> & {
+    value: ArgumentsTypeClass;
+};
+
+export class ClassCreatorRestTypeClass extends ApexCommonTypeClass<
     'classCreatorRest',
-    NormalArgumentsTypeClass
+    ClassCreatorRestType
 > {
-    private constructor(value: NormalArgumentsTypeClass | ApexErrorTypeClass) {
-        super('classCreatorRest', value);
+    private constructor(fields: FieldsOf<ClassCreatorRestType>, sourceSpan: SourceSpan) {
+        super('classCreatorRest', fields, sourceSpan);
     }
 
     static create(ctx: ClassCreatorRestContext): ClassCreatorRestTypeClass {
-        if (!ctx.arguments()) {
-            throw new Error('値が異常です。ClassCreatorRestContext: ' + ctx.getText());
-        }
-
         return new ClassCreatorRestTypeClass(
-            visitNode(new ArgumentsVisitor(), ctx.arguments(), isNormalArgumentsType, 'arguments'),
+            {
+                value: createNode(
+                    ctx.arguments(),
+                    (c) => ArgumentsTypeClass.create(c),
+                    'arguments',
+                ),
+            },
+            getSourceSpan(ctx),
         );
+    }
+
+    getValue(): ClassCreatorRestType['value'] {
+        return this.getFields().value;
     }
 }
 
 export const isClassCreatorRestType = (
-    target: ApexCommonTypeClass<string>,
-): target is ClassCreatorRestTypeClass => {
-    return target instanceof ClassCreatorRestTypeClass;
-};
+    target: ApexCommonTypeClass<string, TypeField<string>>,
+): target is ClassCreatorRestTypeClass => isSpicifyApexCommonTypeClass('classCreatorRest', target);

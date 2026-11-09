@@ -1,3 +1,4 @@
+import { type TypeField } from '../../commons/ir';
 import { LwcCommonTypeClass, LwcCommonVisitor, lazyPairs } from '../commonVisitor';
 import { IdentifierTypeClass, identifierTypePair } from '../commons/identifier';
 import { MemberExpressionTypeClass, memberExpressionTypePair } from '../commons/memberExpression';
@@ -111,7 +112,7 @@ export type PatternLikeTypeClass =
     | TSNonNullExpressionTypeClass;
 
 export const isPatternLikeType = (
-    target: LwcCommonTypeClass<string>,
+    target: LwcCommonTypeClass<string, TypeField<string>>,
 ): target is PatternLikeTypeClass => {
     return (
         target instanceof IdentifierTypeClass ||

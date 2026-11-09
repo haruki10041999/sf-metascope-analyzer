@@ -1,10 +1,9 @@
 import typia from 'typia';
 
-import { ConvertType, ConvertWithError, convertValue } from '../commons';
-import { ErrorJson, JsonType, makeJsonType } from '../../commons';
+import { ErrorJson, JsonType } from '../../commons';
+import type { QueryTypeClass } from '../../apex_IR_v2';
 
-import { QueryType } from '../converter';
-
+import { makeNodeJson } from '../commons/node';
 import { SelectJson, makeSelectJson } from './select';
 import { FromJson, makeFromJson } from './from';
 import { WhereJson, makeWhereJson } from './where';
@@ -18,7 +17,7 @@ import { OffsetJson, makeOffsetJson } from './offset';
 import { AllRowsJson, makeAllRowsJson } from './allRows';
 import { UpdateListJson, makeUpdateListJson } from './updateList';
 
-// クエリ全体の位置を持つ境界ノード。句は子の変換関数（境界ノード・非境界の入れ物）がエラーを処理する
+// クエリ全体の位置を持つノード。句の `| ErrorJson` は v1 の木の中のエラーの名残 (v2 では出てこない)
 export type SoqlJson = JsonType<'soql'> & {
     select: SelectJson | ErrorJson;
     from: FromJson | ErrorJson;
@@ -36,26 +35,20 @@ export type SoqlJson = JsonType<'soql'> & {
 
 export const isSoqlJson = typia.createIs<SoqlJson>();
 
-export const makeSoqlJson = (target: ConvertType<QueryType>): SoqlJson | ErrorJson => {
-    return convertValue<'query', QueryType, SoqlJson>(
-        target,
-        'soql',
-        (query: ConvertWithError<QueryType>, targetRecords) => {
-            return makeJsonType('soql', targetRecords.base, {
-                select: makeSelectJson(query.value),
-                from: makeFromJson(query.from),
-                ...(query.whereClause ? { where: makeWhereJson(query.whereClause) } : {}),
-                ...(query.forClause ? { for: makeForJson(query.forClause) } : {}),
-                ...(query.usingScope ? { usingScope: makeUsingScopeJson(query.usingScope) } : {}),
-                ...(query.withClause ? { with: makeWithJson(query.withClause) } : {}),
-                ...(query.groupByClause ? { groupBy: makeGroupByJson(query.groupByClause) } : {}),
-                ...(query.orderByClause ? { orderBy: makeOrderByJson(query.orderByClause) } : {}),
-                ...(query.limitClause ? { limit: makeLimitJson(query.limitClause) } : {}),
-                ...(query.offsetClause ? { offset: makeOffsetJson(query.offsetClause) } : {}),
-                ...(query.allRowsClause ? { allRows: makeAllRowsJson(query.allRowsClause) } : {}),
-                ...(query.updateList ? { updateList: makeUpdateListJson(query.updateList) } : {}),
-            });
-        },
-        { exclude: 'children' },
-    );
+export const makeSoqlJson = (target: QueryTypeClass): SoqlJson => {
+    const query = target.getFields();
+    return makeNodeJson<SoqlJson>('soql', target, {
+        select: makeSelectJson(query.value),
+        from: makeFromJson(query.from),
+        ...(query.whereClause ? { where: makeWhereJson(query.whereClause) } : {}),
+        ...(query.forClause ? { for: makeForJson(query.forClause) } : {}),
+        ...(query.usingScope ? { usingScope: makeUsingScopeJson(query.usingScope) } : {}),
+        ...(query.withClause ? { with: makeWithJson(query.withClause) } : {}),
+        ...(query.groupByClause ? { groupBy: makeGroupByJson(query.groupByClause) } : {}),
+        ...(query.orderByClause ? { orderBy: makeOrderByJson(query.orderByClause) } : {}),
+        ...(query.limitClause ? { limit: makeLimitJson(query.limitClause) } : {}),
+        ...(query.offsetClause ? { offset: makeOffsetJson(query.offsetClause) } : {}),
+        ...(query.allRowsClause ? { allRows: makeAllRowsJson(query.allRowsClause) } : {}),
+        ...(query.updateList ? { updateList: makeUpdateListJson(query.updateList) } : {}),
+    });
 };

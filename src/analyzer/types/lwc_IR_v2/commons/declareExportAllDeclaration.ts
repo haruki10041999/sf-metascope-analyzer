@@ -1,77 +1,61 @@
+import { type FieldsOf, type TypeField } from '../../commons/ir';
+import { type SourceSpan } from '../../commons/source';
 import { isDeclareExportAllDeclaration, type DeclareExportAllDeclaration } from '@babel/types';
 import {
     EvaluatePair,
     LwcCommonTypeClass,
-    LwcErrorTypeClass,
-    lazyPairs,
     makeEvaluatePair,
-    visitNode,
-    visitNodeList,
+    getSourceSpan,
 } from '../commonVisitor';
-import {
-    importAttributeTypePair,
-    type ImportAttributeTypeClass,
-} from '../standardizedVisitor/importAttribute';
-import { stringLiteralTypePair, type StringLiteralTypeClass } from './stringLiteral';
+import { ImportAttributeTypeClass } from '../standardizedVisitor/importAttribute';
+import { StringLiteralTypeClass } from './stringLiteral';
 
-const declareExportAllDeclarationSourcePairs = lazyPairs(() => [stringLiteralTypePair] as const);
-const declareExportAllDeclarationAttributesPairs = lazyPairs(
-    () => [importAttributeTypePair] as const,
-);
-
-export type DeclareExportAllDeclarationFields = {
-    source: StringLiteralTypeClass | LwcErrorTypeClass;
-    exportKind: NonNullable<DeclareExportAllDeclaration['exportKind']> | null;
-    attributes: (ImportAttributeTypeClass | LwcErrorTypeClass)[] | null;
+export type DeclareExportAllDeclarationFields = TypeField<'declareExportAllDeclaration'> & {
+    source: StringLiteralTypeClass;
+    exportKind: NonNullable<DeclareExportAllDeclaration['exportKind']>;
+    attributes: ImportAttributeTypeClass[] | null;
 };
 
-export class DeclareExportAllDeclarationTypeClass extends LwcCommonTypeClass<'declareExportAllDeclaration'> {
-    private readonly value: DeclareExportAllDeclarationFields;
-
-    private constructor(value: DeclareExportAllDeclarationFields) {
-        super('declareExportAllDeclaration');
-        this.value = value;
+export class DeclareExportAllDeclarationTypeClass extends LwcCommonTypeClass<
+    'declareExportAllDeclaration',
+    DeclareExportAllDeclarationFields
+> {
+    private constructor(
+        value: FieldsOf<DeclareExportAllDeclarationFields>,
+        sourceSpan: SourceSpan,
+    ) {
+        super('declareExportAllDeclaration', value, sourceSpan);
     }
 
     static create(
         target: DeclareExportAllDeclaration,
         originalSource: string,
     ): DeclareExportAllDeclarationTypeClass {
-        return new DeclareExportAllDeclarationTypeClass({
-            source: visitNode(
-                target.source,
-                originalSource,
-                declareExportAllDeclarationSourcePairs(),
-                'DeclareExportAllDeclaration.source',
-            ),
-            exportKind: target.exportKind ?? null,
-            attributes:
-                target.attributes == null
-                    ? null
-                    : visitNodeList(
-                          target.attributes,
-                          originalSource,
-                          declareExportAllDeclarationAttributesPairs(),
-                          'DeclareExportAllDeclaration.attributes',
-                      ),
-        });
-    }
-
-    /** すべてのフィールド (Babel の value フィールドの getter getValue() と区別する。getChildNodes もこれから作る) */
-    override getFields(): DeclareExportAllDeclarationFields {
-        return this.value;
+        return new DeclareExportAllDeclarationTypeClass(
+            {
+                source: StringLiteralTypeClass.create(target.source, originalSource),
+                exportKind: target.exportKind ?? 'value',
+                attributes:
+                    target.attributes == null
+                        ? null
+                        : target.attributes.map((child) =>
+                              ImportAttributeTypeClass.create(child, originalSource),
+                          ),
+            },
+            getSourceSpan(target, originalSource),
+        );
     }
 
     getSource(): DeclareExportAllDeclarationFields['source'] {
-        return this.value.source;
+        return this.getFields().source;
     }
 
     getExportKind(): DeclareExportAllDeclarationFields['exportKind'] {
-        return this.value.exportKind;
+        return this.getFields().exportKind;
     }
 
     getAttributes(): DeclareExportAllDeclarationFields['attributes'] {
-        return this.value.attributes;
+        return this.getFields().attributes;
     }
 }
 
@@ -83,6 +67,6 @@ export const declareExportAllDeclarationTypePair: EvaluatePair<
 );
 
 export const isDeclareExportAllDeclarationType = (
-    target: LwcCommonTypeClass<string>,
+    target: LwcCommonTypeClass<string, TypeField<string>>,
 ): target is DeclareExportAllDeclarationTypeClass =>
     target instanceof DeclareExportAllDeclarationTypeClass;

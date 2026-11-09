@@ -1,14 +1,14 @@
 import { VariableDeclaratorsContext } from '@apexdevtools/apex-parser';
 
+import { VariableDeclaratorTypeClass } from './variableDeclarator';
+
 import {
-    ApexErrorTypeClass,
     ApexCommonTypeClass,
-    visitNodeList,
+    createNodeList,
     getSourceSpan,
     isSpicifyApexCommonTypeClass,
 } from '../commonVisitor';
-import { VariableDeclaratorTypeClass } from '../../apex_IR/variableVisitor';
-import { TypeField } from '../../commons/ir';
+import { type FieldsOf, TypeField } from '../../commons/ir';
 import { SourceSpan } from '../../commons';
 
 export type VariableDeclaratorsType = TypeField<'variableDeclarators'> & {
@@ -19,13 +19,19 @@ export class VariableDeclaratorsTypeClass extends ApexCommonTypeClass<
     'variableDeclarators',
     VariableDeclaratorsType
 > {
-    private constructor(element: VariableDeclaratorTypeClass[], sourceSpan: SourceSpan) {
-        super('variableDeclarators', { element: element }, sourceSpan);
+    private constructor(fields: FieldsOf<VariableDeclaratorsType>, sourceSpan: SourceSpan) {
+        super('variableDeclarators', fields, sourceSpan);
     }
 
-    static create(ctx: VariableDeclaratorsContext) {
+    static create(ctx: VariableDeclaratorsContext): VariableDeclaratorsTypeClass {
         return new VariableDeclaratorsTypeClass(
-            ctx.variableDeclarator_list().map((v) => VariableDeclaratorTypeClass.create(v)),
+            {
+                element: createNodeList(
+                    ctx.variableDeclarator_list(),
+                    (c) => VariableDeclaratorTypeClass.create(c),
+                    'variableDeclarator',
+                ),
+            },
             getSourceSpan(ctx),
         );
     }

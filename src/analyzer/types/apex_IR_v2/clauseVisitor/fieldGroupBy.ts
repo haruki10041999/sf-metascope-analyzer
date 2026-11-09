@@ -1,39 +1,58 @@
 import { FieldGroupByContext } from '@apexdevtools/apex-parser';
 
-import { ClauseTypeClass } from '.';
+import { SoqlFunctionTypeClass } from '../queryVisitor';
+import { FieldNameTypeClass } from '../nameVisitor';
+import {
+    ApexCommonTypeClass,
+    createNode,
+    getSourceSpan,
+    isSpicifyApexCommonTypeClass,
+} from '../commonVisitor';
+import { type FieldsOf, TypeField } from '../../commons/ir';
+import { SourceSpan } from '../../commons';
 
-import { SoqlFunctionTypeClass, QueryVisitor, isSoqlFunctionType } from '../queryVisitor';
-import { FieldNameTypeClass, NameVisitor, isFieldNameType } from '../nameVisitor';
-import { ApexErrorTypeClass, ApexCommonTypeClass, visitNode } from '../commonVisitor';
+export type FieldGroupByType = TypeField<'fieldGroupBy'> & {
+    value: FieldNameTypeClass | SoqlFunctionTypeClass;
+};
 
-export class FieldGroupByTypeClass extends ClauseTypeClass<
-    'fieldGroupBy',
-    FieldNameTypeClass | SoqlFunctionTypeClass
-> {
-    private constructor(value: FieldNameTypeClass | SoqlFunctionTypeClass | ApexErrorTypeClass) {
-        super('fieldGroupBy', value);
+export class FieldGroupByTypeClass extends ApexCommonTypeClass<'fieldGroupBy', FieldGroupByType> {
+    private constructor(fields: FieldsOf<FieldGroupByType>, sourceSpan: SourceSpan) {
+        super('fieldGroupBy', fields, sourceSpan);
     }
 
     static create(ctx: FieldGroupByContext): FieldGroupByTypeClass {
-        if (!ctx.fieldName() && !ctx.soqlFunction()) {
-            throw new Error('値が異常です。FieldGroupByContext:' + ctx.getText());
+        if (ctx.fieldName()) {
+            return new FieldGroupByTypeClass(
+                {
+                    value: createNode(
+                        ctx.fieldName(),
+                        (c) => FieldNameTypeClass.create(c),
+                        'fieldName',
+                    ),
+                },
+                getSourceSpan(ctx),
+            );
+        } else {
+            return new FieldGroupByTypeClass(
+                {
+                    value: createNode(
+                        ctx.soqlFunction(),
+                        (c) => SoqlFunctionTypeClass.create(c),
+                        'soqlFunction',
+                    ),
+                },
+                getSourceSpan(ctx),
+            );
         }
+    }
 
-        return new FieldGroupByTypeClass(
-            ctx.fieldName()
-                ? visitNode(new NameVisitor(), ctx.fieldName(), isFieldNameType, 'fieldName')
-                : visitNode(
-                      new QueryVisitor(),
-                      ctx.soqlFunction(),
-                      isSoqlFunctionType,
-                      'soqlFunction',
-                  ),
-        );
+    getValue(): FieldGroupByType['value'] {
+        return this.getFields().value;
     }
 }
 
 export const isFieldGroupByType = (
-    target: ApexCommonTypeClass<string>,
+    target: ApexCommonTypeClass<string, TypeField<string>>,
 ): target is FieldGroupByTypeClass => {
-    return target instanceof FieldGroupByTypeClass;
+    return isSpicifyApexCommonTypeClass('fieldGroupBy', target);
 };

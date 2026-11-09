@@ -1,13 +1,25 @@
+import { type TypeField } from '../../commons/ir';
+import { type SourceSpan } from '../../commons/source';
 import { isTSUnknownKeyword, type TSUnknownKeyword } from '@babel/types';
-import { EvaluatePair, LwcCommonTypeClass, makeEvaluatePair } from '../commonVisitor';
+import {
+    EvaluatePair,
+    LwcCommonTypeClass,
+    makeEvaluatePair,
+    getSourceSpan,
+} from '../commonVisitor';
 
-export class TSUnknownKeywordTypeClass extends LwcCommonTypeClass<'tSUnknownKeyword'> {
-    private constructor() {
-        super('tSUnknownKeyword');
+export type TSUnknownKeywordFields = TypeField<'tSUnknownKeyword'>;
+
+export class TSUnknownKeywordTypeClass extends LwcCommonTypeClass<
+    'tSUnknownKeyword',
+    TSUnknownKeywordFields
+> {
+    private constructor(sourceSpan: SourceSpan) {
+        super('tSUnknownKeyword', {}, sourceSpan);
     }
 
-    static create(_target: TSUnknownKeyword, _originalSource: string): TSUnknownKeywordTypeClass {
-        return new TSUnknownKeywordTypeClass();
+    static create(target: TSUnknownKeyword, originalSource: string): TSUnknownKeywordTypeClass {
+        return new TSUnknownKeywordTypeClass(getSourceSpan(target, originalSource));
     }
 }
 
@@ -17,5 +29,5 @@ export const tSUnknownKeywordTypePair: EvaluatePair<TSUnknownKeyword, TSUnknownK
     );
 
 export const isTSUnknownKeywordType = (
-    target: LwcCommonTypeClass<string>,
+    target: LwcCommonTypeClass<string, TypeField<string>>,
 ): target is TSUnknownKeywordTypeClass => target instanceof TSUnknownKeywordTypeClass;

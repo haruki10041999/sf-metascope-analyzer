@@ -1,16 +1,28 @@
+import { type TypeField } from '../../commons/ir';
+import { type SourceSpan } from '../../commons/source';
 import { isSymbolTypeAnnotation, type SymbolTypeAnnotation } from '@babel/types';
-import { EvaluatePair, LwcCommonTypeClass, makeEvaluatePair } from '../commonVisitor';
+import {
+    EvaluatePair,
+    LwcCommonTypeClass,
+    makeEvaluatePair,
+    getSourceSpan,
+} from '../commonVisitor';
 
-export class SymbolTypeAnnotationTypeClass extends LwcCommonTypeClass<'symbolTypeAnnotation'> {
-    private constructor() {
-        super('symbolTypeAnnotation');
+export type SymbolTypeAnnotationFields = TypeField<'symbolTypeAnnotation'>;
+
+export class SymbolTypeAnnotationTypeClass extends LwcCommonTypeClass<
+    'symbolTypeAnnotation',
+    SymbolTypeAnnotationFields
+> {
+    private constructor(sourceSpan: SourceSpan) {
+        super('symbolTypeAnnotation', {}, sourceSpan);
     }
 
     static create(
-        _target: SymbolTypeAnnotation,
-        _originalSource: string,
+        target: SymbolTypeAnnotation,
+        originalSource: string,
     ): SymbolTypeAnnotationTypeClass {
-        return new SymbolTypeAnnotationTypeClass();
+        return new SymbolTypeAnnotationTypeClass(getSourceSpan(target, originalSource));
     }
 }
 
@@ -22,5 +34,5 @@ export const symbolTypeAnnotationTypePair: EvaluatePair<
 );
 
 export const isSymbolTypeAnnotationType = (
-    target: LwcCommonTypeClass<string>,
+    target: LwcCommonTypeClass<string, TypeField<string>>,
 ): target is SymbolTypeAnnotationTypeClass => target instanceof SymbolTypeAnnotationTypeClass;

@@ -1,3 +1,4 @@
+import { type TypeField } from '../../commons/ir';
 import { LwcCommonTypeClass, LwcCommonVisitor, lazyPairs } from '../commonVisitor';
 import { JSXAttributeTypeClass, jSXAttributeTypePair } from '../commons/jSXAttribute';
 import {
@@ -144,7 +145,9 @@ export type JSXTypeClass =
     | JSXOpeningFragmentTypeClass
     | JSXClosingFragmentTypeClass;
 
-export const isJSXType = (target: LwcCommonTypeClass<string>): target is JSXTypeClass => {
+export const isJSXType = (
+    target: LwcCommonTypeClass<string, TypeField<string>>,
+): target is JSXTypeClass => {
     return (
         target instanceof JSXAttributeTypeClass ||
         target instanceof JSXClosingElementTypeClass ||

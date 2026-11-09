@@ -1,0 +1,103 @@
+{
+  "source": {
+    "fileName": "Level.cls",
+    "fileType": "cls",
+    "content": {
+      "kind": "enum",
+      "sourceKeys": {
+        "base": {},
+        "name": {}
+      },
+      "name": "Level",
+      "members": [
+        {
+          "kind": "enumConstant",
+          "sourceKeys": {},
+          "name": "LOW"
+        },
+        {
+          "kind": "enumConstant",
+          "sourceKeys": {},
+          "name": "HIGH"
+        }
+      ],
+      "modifier": {
+        "access": [
+          {
+            "kind": "modifier",
+            "sourceKeys": {},
+            "name": "PUBLIC"
+          }
+        ]
+      }
+    }
+  },
+  "sourceObject": [
+    {
+      "context": "HIGH",
+      "start": {
+        "offset": 33,
+        "line": 3,
+        "column": 4
+      },
+      "end": {
+        "offset": 37,
+        "line": 3,
+        "column": 8
+      }
+    },
+    {
+      "context": "LOW",
+      "start": {
+        "offset": 24,
+        "line": 2,
+        "column": 4
+      },
+      "end": {
+        "offset": 27,
+        "line": 2,
+        "column": 7
+      }
+    },
+    {
+      "context": "Level",
+      "start": {
+        "offset": 12,
+        "line": 1,
+        "column": 12
+      },
+      "end": {
+        "offset": 17,
+        "line": 1,
+        "column": 17
+      }
+    },
+    {
+      "context": "enum Level {\n    LOW,\n    HIGH\n}",
+      "start": {
+        "offset": 7,
+        "line": 1,
+        "column": 7
+      },
+      "end": {
+        "offset": 39,
+        "line": 4,
+        "column": 1
+      }
+    },
+    {
+      "context": "public",
+      "start": {
+        "offset": 0,
+        "line": 1,
+        "column": 0
+      },
+      "end": {
+        "offset": 6,
+        "line": 1,
+        "column": 6
+      }
+    }
+  ],
+  "resolvedError": []
+}

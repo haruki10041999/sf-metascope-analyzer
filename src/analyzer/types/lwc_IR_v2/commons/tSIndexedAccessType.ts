@@ -1,57 +1,57 @@
+import { type FieldsOf, type TypeField } from '../../commons/ir';
+import { type SourceSpan } from '../../commons/source';
 import { isTSIndexedAccessType, type TSIndexedAccessType } from '@babel/types';
 import {
     EvaluatePair,
     LwcCommonTypeClass,
-    LwcErrorTypeClass,
     makeEvaluatePair,
     visitNode,
+    getSourceSpan,
 } from '../commonVisitor';
 import { tSTypeVisitorEvaluatePairs, type TSTypeTypeClass } from '../tsTypeVisitor';
 
-export type TSIndexedAccessTypeFields = {
-    objectType: TSTypeTypeClass | LwcErrorTypeClass;
-    indexType: TSTypeTypeClass | LwcErrorTypeClass;
+export type TSIndexedAccessTypeFields = TypeField<'tSIndexedAccessType'> & {
+    objectType: TSTypeTypeClass;
+    indexType: TSTypeTypeClass;
 };
 
-export class TSIndexedAccessTypeTypeClass extends LwcCommonTypeClass<'tSIndexedAccessType'> {
-    private readonly value: TSIndexedAccessTypeFields;
-
-    private constructor(value: TSIndexedAccessTypeFields) {
-        super('tSIndexedAccessType');
-        this.value = value;
+export class TSIndexedAccessTypeTypeClass extends LwcCommonTypeClass<
+    'tSIndexedAccessType',
+    TSIndexedAccessTypeFields
+> {
+    private constructor(value: FieldsOf<TSIndexedAccessTypeFields>, sourceSpan: SourceSpan) {
+        super('tSIndexedAccessType', value, sourceSpan);
     }
 
     static create(
         target: TSIndexedAccessType,
         originalSource: string,
     ): TSIndexedAccessTypeTypeClass {
-        return new TSIndexedAccessTypeTypeClass({
-            objectType: visitNode(
-                target.objectType,
-                originalSource,
-                tSTypeVisitorEvaluatePairs(),
-                'TSTypeVisitor',
-            ),
-            indexType: visitNode(
-                target.indexType,
-                originalSource,
-                tSTypeVisitorEvaluatePairs(),
-                'TSTypeVisitor',
-            ),
-        });
-    }
-
-    /** すべてのフィールド (Babel の value フィールドの getter getValue() と区別する。getChildNodes もこれから作る) */
-    override getFields(): TSIndexedAccessTypeFields {
-        return this.value;
+        return new TSIndexedAccessTypeTypeClass(
+            {
+                objectType: visitNode(
+                    target.objectType,
+                    originalSource,
+                    tSTypeVisitorEvaluatePairs(),
+                    'TSTypeVisitor',
+                ),
+                indexType: visitNode(
+                    target.indexType,
+                    originalSource,
+                    tSTypeVisitorEvaluatePairs(),
+                    'TSTypeVisitor',
+                ),
+            },
+            getSourceSpan(target, originalSource),
+        );
     }
 
     getObjectType(): TSIndexedAccessTypeFields['objectType'] {
-        return this.value.objectType;
+        return this.getFields().objectType;
     }
 
     getIndexType(): TSIndexedAccessTypeFields['indexType'] {
-        return this.value.indexType;
+        return this.getFields().indexType;
     }
 }
 
@@ -63,5 +63,5 @@ export const tSIndexedAccessTypeTypePair: EvaluatePair<
 );
 
 export const isTSIndexedAccessTypeType = (
-    target: LwcCommonTypeClass<string>,
+    target: LwcCommonTypeClass<string, TypeField<string>>,
 ): target is TSIndexedAccessTypeTypeClass => target instanceof TSIndexedAccessTypeTypeClass;

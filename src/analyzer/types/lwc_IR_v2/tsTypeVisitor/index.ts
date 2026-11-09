@@ -1,3 +1,4 @@
+import { type TypeField } from '../../commons/ir';
 import { LwcCommonTypeClass, LwcCommonVisitor, lazyPairs } from '../commonVisitor';
 import { TSAnyKeywordTypeClass, tSAnyKeywordTypePair } from '../commons/tSAnyKeyword';
 import { TSBooleanKeywordTypeClass, tSBooleanKeywordTypePair } from '../commons/tSBooleanKeyword';
@@ -61,14 +62,6 @@ import {
     tSTemplateLiteralTypeTypePair,
 } from '../commons/tSTemplateLiteralType';
 import { TSLiteralTypeTypeClass, tSLiteralTypeTypePair } from '../commons/tSLiteralType';
-import {
-    TSClassImplementsTypeClass,
-    tSClassImplementsTypePair,
-} from '../commons/tSClassImplements';
-import {
-    TSInterfaceHeritageTypeClass,
-    tSInterfaceHeritageTypePair,
-} from '../commons/tSInterfaceHeritage';
 import { TSImportTypeTypeClass, tSImportTypeTypePair } from '../commons/tSImportType';
 
 export {
@@ -254,6 +247,13 @@ export {
     isTSImportTypeType,
 } from '../commons/tSImportType';
 
+/**
+ * 型の位置 (型注釈・型引数・制約・union の要素など) に書ける型。
+ * 決まった位置にしか出てこない型は含めない (下の別の pair・型を使う)。
+ * - TSTypePredicate: 関数の戻り値の型注釈だけ (TSReturnTypeTypeClass)
+ * - TSOptionalType・TSRestType・TSNamedTupleMember: タプルの要素だけ (TSTupleElementTypeClass)
+ * - TSClassImplements・TSInterfaceHeritage: implements・extends だけ (それぞれのノードの pair を使う)
+ */
 export const tSTypeVisitorEvaluatePairs = lazyPairs(
     () =>
         [
@@ -274,14 +274,10 @@ export const tSTypeVisitorEvaluatePairs = lazyPairs(
             tSFunctionTypeTypePair,
             tSConstructorTypeTypePair,
             tSTypeReferenceTypePair,
-            tSTypePredicateTypePair,
             tSTypeQueryTypePair,
             tSTypeLiteralTypePair,
             tSArrayTypeTypePair,
             tSTupleTypeTypePair,
-            tSOptionalTypeTypePair,
-            tSRestTypeTypePair,
-            tSNamedTupleMemberTypePair,
             tSUnionTypeTypePair,
             tSIntersectionTypeTypePair,
             tSConditionalTypeTypePair,
@@ -292,8 +288,6 @@ export const tSTypeVisitorEvaluatePairs = lazyPairs(
             tSMappedTypeTypePair,
             tSTemplateLiteralTypeTypePair,
             tSLiteralTypeTypePair,
-            tSClassImplementsTypePair,
-            tSInterfaceHeritageTypePair,
             tSImportTypeTypePair,
         ] as const,
 );
@@ -324,14 +318,10 @@ export type TSTypeTypeClass =
     | TSFunctionTypeTypeClass
     | TSConstructorTypeTypeClass
     | TSTypeReferenceTypeClass
-    | TSTypePredicateTypeClass
     | TSTypeQueryTypeClass
     | TSTypeLiteralTypeClass
     | TSArrayTypeTypeClass
     | TSTupleTypeTypeClass
-    | TSOptionalTypeTypeClass
-    | TSRestTypeTypeClass
-    | TSNamedTupleMemberTypeClass
     | TSUnionTypeTypeClass
     | TSIntersectionTypeTypeClass
     | TSConditionalTypeTypeClass
@@ -342,11 +332,11 @@ export type TSTypeTypeClass =
     | TSMappedTypeTypeClass
     | TSTemplateLiteralTypeTypeClass
     | TSLiteralTypeTypeClass
-    | TSClassImplementsTypeClass
-    | TSInterfaceHeritageTypeClass
     | TSImportTypeTypeClass;
 
-export const isTSTypeType = (target: LwcCommonTypeClass<string>): target is TSTypeTypeClass => {
+export const isTSTypeType = (
+    target: LwcCommonTypeClass<string, TypeField<string>>,
+): target is TSTypeTypeClass => {
     return (
         target instanceof TSAnyKeywordTypeClass ||
         target instanceof TSBooleanKeywordTypeClass ||
@@ -365,14 +355,10 @@ export const isTSTypeType = (target: LwcCommonTypeClass<string>): target is TSTy
         target instanceof TSFunctionTypeTypeClass ||
         target instanceof TSConstructorTypeTypeClass ||
         target instanceof TSTypeReferenceTypeClass ||
-        target instanceof TSTypePredicateTypeClass ||
         target instanceof TSTypeQueryTypeClass ||
         target instanceof TSTypeLiteralTypeClass ||
         target instanceof TSArrayTypeTypeClass ||
         target instanceof TSTupleTypeTypeClass ||
-        target instanceof TSOptionalTypeTypeClass ||
-        target instanceof TSRestTypeTypeClass ||
-        target instanceof TSNamedTupleMemberTypeClass ||
         target instanceof TSUnionTypeTypeClass ||
         target instanceof TSIntersectionTypeTypeClass ||
         target instanceof TSConditionalTypeTypeClass ||
@@ -383,8 +369,40 @@ export const isTSTypeType = (target: LwcCommonTypeClass<string>): target is TSTy
         target instanceof TSMappedTypeTypeClass ||
         target instanceof TSTemplateLiteralTypeTypeClass ||
         target instanceof TSLiteralTypeTypeClass ||
-        target instanceof TSClassImplementsTypeClass ||
-        target instanceof TSInterfaceHeritageTypeClass ||
         target instanceof TSImportTypeTypeClass
     );
 };
+
+/** 戻り値の型注釈に書ける型 (`(x): x is T`・`asserts x` を含む) */
+export const tSReturnTypeVisitorEvaluatePairs = lazyPairs(
+    () => [...tSTypeVisitorEvaluatePairs(), tSTypePredicateTypePair] as const,
+);
+
+export type TSReturnTypeTypeClass = TSTypeTypeClass | TSTypePredicateTypeClass;
+
+export const isTSReturnTypeType = (
+    target: LwcCommonTypeClass<string, TypeField<string>>,
+): target is TSReturnTypeTypeClass =>
+    isTSTypeType(target) || target instanceof TSTypePredicateTypeClass;
+
+/** タプルの要素に書ける型 (`[a?: T, ...rest: U[]]` の `a?: T`・`...rest: U[]` など) */
+export const tSTupleElementVisitorEvaluatePairs = lazyPairs(
+    () =>
+        [
+            ...tSTypeVisitorEvaluatePairs(),
+            tSOptionalTypeTypePair,
+            tSRestTypeTypePair,
+            tSNamedTupleMemberTypePair,
+        ] as const,
+);
+
+export type TSTupleElementTypeClass =
+    TSTypeTypeClass | TSOptionalTypeTypeClass | TSRestTypeTypeClass | TSNamedTupleMemberTypeClass;
+
+export const isTSTupleElementType = (
+    target: LwcCommonTypeClass<string, TypeField<string>>,
+): target is TSTupleElementTypeClass =>
+    isTSTypeType(target) ||
+    target instanceof TSOptionalTypeTypeClass ||
+    target instanceof TSRestTypeTypeClass ||
+    target instanceof TSNamedTupleMemberTypeClass;

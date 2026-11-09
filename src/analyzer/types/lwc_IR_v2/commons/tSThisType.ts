@@ -1,13 +1,22 @@
+import { type TypeField } from '../../commons/ir';
+import { type SourceSpan } from '../../commons/source';
 import { isTSThisType, type TSThisType } from '@babel/types';
-import { EvaluatePair, LwcCommonTypeClass, makeEvaluatePair } from '../commonVisitor';
+import {
+    EvaluatePair,
+    LwcCommonTypeClass,
+    makeEvaluatePair,
+    getSourceSpan,
+} from '../commonVisitor';
 
-export class TSThisTypeTypeClass extends LwcCommonTypeClass<'tSThisType'> {
-    private constructor() {
-        super('tSThisType');
+export type TSThisTypeFields = TypeField<'tSThisType'>;
+
+export class TSThisTypeTypeClass extends LwcCommonTypeClass<'tSThisType', TSThisTypeFields> {
+    private constructor(sourceSpan: SourceSpan) {
+        super('tSThisType', {}, sourceSpan);
     }
 
-    static create(_target: TSThisType, _originalSource: string): TSThisTypeTypeClass {
-        return new TSThisTypeTypeClass();
+    static create(target: TSThisType, originalSource: string): TSThisTypeTypeClass {
+        return new TSThisTypeTypeClass(getSourceSpan(target, originalSource));
     }
 }
 
@@ -17,5 +26,5 @@ export const tSThisTypeTypePair: EvaluatePair<TSThisType, TSThisTypeTypeClass> =
 );
 
 export const isTSThisTypeType = (
-    target: LwcCommonTypeClass<string>,
+    target: LwcCommonTypeClass<string, TypeField<string>>,
 ): target is TSThisTypeTypeClass => target instanceof TSThisTypeTypeClass;

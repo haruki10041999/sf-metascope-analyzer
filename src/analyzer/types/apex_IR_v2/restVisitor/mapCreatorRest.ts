@@ -1,35 +1,45 @@
 import { MapCreatorRestContext } from '@apexdevtools/apex-parser';
 
-import { RestListTypeClass } from '.';
+import { MapCreatorRestPairTypeClass } from '../pairVisitor';
+import {
+    ApexCommonTypeClass,
+    createNodeList,
+    getSourceSpan,
+    isSpicifyApexCommonTypeClass,
+} from '../commonVisitor';
+import { type FieldsOf, TypeField } from '../../commons/ir';
+import { SourceSpan } from '../../commons';
 
-import { MapCreatorRestPairTypeClass, PairVisitor, isMapCreatorRestPairType } from '../pairVisitor';
-import { ApexErrorTypeClass, ApexCommonTypeClass, visitNodeList } from '../commonVisitor';
-export class MapCreatorRestTypeClass extends RestListTypeClass<
+export type MapCreatorRestType = TypeField<'mapCreatorRest'> & {
+    value: MapCreatorRestPairTypeClass[];
+};
+
+export class MapCreatorRestTypeClass extends ApexCommonTypeClass<
     'mapCreatorRest',
-    MapCreatorRestPairTypeClass
+    MapCreatorRestType
 > {
-    private constructor(value: (MapCreatorRestPairTypeClass | ApexErrorTypeClass)[]) {
-        super('mapCreatorRest', value);
+    private constructor(fields: FieldsOf<MapCreatorRestType>, sourceSpan: SourceSpan) {
+        super('mapCreatorRest', fields, sourceSpan);
     }
 
     static create(ctx: MapCreatorRestContext): MapCreatorRestTypeClass {
-        if (!ctx.mapCreatorRestPair_list() || ctx.mapCreatorRestPair_list().length === 0) {
-            throw new Error('値が異常です。MapCreatorRestContext: ' + ctx.getText());
-        }
-
         return new MapCreatorRestTypeClass(
-            visitNodeList(
-                new PairVisitor(),
-                ctx.mapCreatorRestPair_list(),
-                isMapCreatorRestPairType,
-                'mapCreatorRestPair',
-            ),
+            {
+                value: createNodeList(
+                    ctx.mapCreatorRestPair_list(),
+                    (c) => MapCreatorRestPairTypeClass.create(c),
+                    'mapCreatorRestPair',
+                ),
+            },
+            getSourceSpan(ctx),
         );
+    }
+
+    getValue(): MapCreatorRestType['value'] {
+        return this.getFields().value;
     }
 }
 
 export const isMapCreatorRestType = (
-    target: ApexCommonTypeClass<string>,
-): target is MapCreatorRestTypeClass => {
-    return target instanceof MapCreatorRestTypeClass;
-};
+    target: ApexCommonTypeClass<string, TypeField<string>>,
+): target is MapCreatorRestTypeClass => isSpicifyApexCommonTypeClass('mapCreatorRest', target);

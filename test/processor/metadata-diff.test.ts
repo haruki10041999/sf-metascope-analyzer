@@ -5,7 +5,7 @@ import path from 'node:path';
 import { after, before, describe, it } from 'node:test';
 
 import { ALL_KINDS, countDiffKinds, runDiff } from '../../docs/examples/metadata/scripts/run-diff';
-import { MetadataProcessor } from '../../src/analyzer/processor/Metadata/metadata';
+import { RepositoryProcessor } from '../../src/analyzer/unit/processor';
 
 /**
  * docs/examples/metadata の before / after を本番と同じ流れで読んで比べ、
@@ -239,10 +239,10 @@ describe('MetadataProcessor', () => {
             path.join('docs/examples/repository', side, 'force-app', 'main', 'default', 'objects');
 
         await cp(sample('before'), objects, { recursive: true });
-        const processor = await MetadataProcessor.create(saveRoot, repository);
-        assert.equal(await processor.hasSavedObjects(), false);
+        const processor = await RepositoryProcessor.create(saveRoot, repository);
+        assert.equal(await processor.hasSaved(), false);
         await processor.save();
-        assert.equal(await processor.hasSavedObjects(), true);
+        assert.equal(await processor.hasSaved(), true);
         assert.ok(processor.getObjectUnitDiffs().every((d) => d.status === 'unchanged'));
 
         await rm(objects, { recursive: true });

@@ -1,43 +1,55 @@
 import { TypeRefContext } from '@apexdevtools/apex-parser';
 
-import { TypeNameTypeClass, NameVisitor, isTypeNameType } from '../nameVisitor';
+import { ArraySubscriptsTypeClass } from './arraySubscripts';
+import { TypeNameTypeClass } from '../nameVisitor';
 import {
-    ApexErrorTypeClass,
     ApexCommonTypeClass,
-    visitNodeList,
-    visitNode,
+    createNode,
+    createNodeList,
     getSourceSpan,
     isSpicifyApexCommonTypeClass,
 } from '../commonVisitor';
-import { ArraySubscriptsTypeClass } from '../../apex_IR/typeVisitor';
-import { TypeField } from '../../commons/ir';
+import { type FieldsOf, TypeField } from '../../commons/ir';
 import { SourceSpan } from '../../commons';
 
 export type TypeRefType = TypeField<'typeRef'> & {
+    /** `a.b.C` の各部分 */
     element: TypeNameTypeClass[];
     dimention: ArraySubscriptsTypeClass;
 };
 
 export class TypeRefTypeClass extends ApexCommonTypeClass<'typeRef', TypeRefType> {
-    private constructor(
-        element: TypeNameTypeClass[],
-        dimention: ArraySubscriptsTypeClass,
-        sourceSpan: SourceSpan,
-    ) {
-        super('typeRef', { element: element, dimention: dimention }, sourceSpan);
+    private constructor(fields: FieldsOf<TypeRefType>, sourceSpan: SourceSpan) {
+        super('typeRef', fields, sourceSpan);
     }
 
     static create(ctx: TypeRefContext): TypeRefTypeClass {
         return new TypeRefTypeClass(
-            ctx.typeName_list().map((t) => TypeNameTypeClass.create(t)),
-            ArraySubscriptsTypeClass.create(ctx.arraySubscripts()),
+            {
+                element: createNodeList(
+                    ctx.typeName_list(),
+                    (c) => TypeNameTypeClass.create(c),
+                    'typeName',
+                ),
+                dimention: createNode(
+                    ctx.arraySubscripts(),
+                    (c) => ArraySubscriptsTypeClass.create(c),
+                    'arraySubscripts',
+                ),
+            },
             getSourceSpan(ctx),
         );
+    }
+
+    getElement(): TypeRefType['element'] {
+        return this.getFields().element;
+    }
+
+    getDimention(): TypeRefType['dimention'] {
+        return this.getFields().dimention;
     }
 }
 
 export const isTypeRefType = (
     target: ApexCommonTypeClass<string, TypeField<string>>,
-): target is TypeRefTypeClass => {
-    return isSpicifyApexCommonTypeClass('typeRef', target);
-};
+): target is TypeRefTypeClass => isSpicifyApexCommonTypeClass('typeRef', target);

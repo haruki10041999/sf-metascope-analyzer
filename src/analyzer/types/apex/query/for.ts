@@ -1,23 +1,17 @@
 import typia from 'typia';
 
-import { convertValue, ConvertType } from '../commons';
-import { ErrorJson, JsonType, makeJsonType } from '../../commons';
+import { JsonType } from '../../commons';
+import type { ForClausesTypeClass } from '../../apex_IR_v2';
 
-import { ForClausesType } from '../converter';
+import { makeNodeJson } from '../commons/node';
 
 export type ForJson = JsonType<'forClause'> & {
     value: string[];
 };
 export const isForJson = typia.createIs<ForJson>();
 
-export const makeForJson = (target: ConvertType<ForClausesType>): ForJson | ErrorJson => {
-    return convertValue<'forClauses', ForClausesType, ForJson>(
-        target,
-        'forClause',
-        (target, targetRecords) => {
-            return makeJsonType('forClause', targetRecords.base, {
-                value: target.value,
-            });
-        },
-    );
+export const makeForJson = (target: ForClausesTypeClass): ForJson => {
+    return makeNodeJson<ForJson>('forClause', target, {
+        value: [...target.getFields().value],
+    });
 };

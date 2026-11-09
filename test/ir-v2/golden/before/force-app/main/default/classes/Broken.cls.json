@@ -1,0 +1,312 @@
+{
+  "source": {
+    "fileName": "Broken.cls",
+    "fileType": "cls",
+    "content": {
+      "kind": "class",
+      "sourceKeys": {
+        "base": {},
+        "name": {}
+      },
+      "name": "Broken",
+      "block": [
+        {
+          "kind": "method",
+          "sourceKeys": {
+            "base": {},
+            "name": {}
+          },
+          "name": "run",
+          "returnType": "void",
+          "block": [
+            {
+              "kind": "localVariable",
+              "sourceKeys": {},
+              "variable": {
+                "variants": [
+                  {
+                    "sourceKeys": {},
+                    "name": "x",
+                    "init": {
+                      "sourceKeys": {},
+                      "value": "1",
+                      "valueType": "integer"
+                    }
+                  }
+                ],
+                "variantsType": {
+                  "kind": "type",
+                  "sourceKeys": {},
+                  "type": "primitive",
+                  "primitiveType": "Integer"
+                },
+                "modifier": {}
+              }
+            },
+            {
+              "kind": "expression",
+              "sourceKeys": {},
+              "value": {
+                "kind": "memberAccess",
+                "sourceKeys": {},
+                "type": "method",
+                "member": "foo",
+                "memberArg": [
+                  {
+                    "sourceKeys": {},
+                    "value": "1",
+                    "valueType": "integer"
+                  },
+                  {
+                    "sourceKeys": {},
+                    "value": "2",
+                    "valueType": "integer"
+                  }
+                ]
+              }
+            },
+            {
+              "kind": "expression",
+              "sourceKeys": {},
+              "value": {
+                "kind": "memberAccess",
+                "sourceKeys": {},
+                "type": "method",
+                "member": "b"
+              }
+            }
+          ],
+          "modifier": {
+            "access": [
+              {
+                "kind": "modifier",
+                "sourceKeys": {},
+                "name": "PUBLIC"
+              }
+            ]
+          }
+        }
+      ],
+      "modifier": {
+        "access": [
+          {
+            "kind": "modifier",
+            "sourceKeys": {},
+            "name": "PUBLIC"
+          }
+        ]
+      }
+    }
+  },
+  "sourceObject": [
+    {
+      "context": "1",
+      "start": {
+        "offset": 66,
+        "line": 3,
+        "column": 20
+      },
+      "end": {
+        "offset": 67,
+        "line": 3,
+        "column": 21
+      }
+    },
+    {
+      "context": "1",
+      "start": {
+        "offset": 81,
+        "line": 4,
+        "column": 12
+      },
+      "end": {
+        "offset": 82,
+        "line": 4,
+        "column": 13
+      }
+    },
+    {
+      "context": "2",
+      "start": {
+        "offset": 84,
+        "line": 4,
+        "column": 15
+      },
+      "end": {
+        "offset": 85,
+        "line": 4,
+        "column": 16
+      }
+    },
+    {
+      "context": "Broken",
+      "start": {
+        "offset": 13,
+        "line": 1,
+        "column": 13
+      },
+      "end": {
+        "offset": 19,
+        "line": 1,
+        "column": 19
+      }
+    },
+    {
+      "context": "Integer x = 1;",
+      "start": {
+        "offset": 54,
+        "line": 3,
+        "column": 8
+      },
+      "end": {
+        "offset": 68,
+        "line": 3,
+        "column": 22
+      }
+    },
+    {
+      "context": "Integer",
+      "start": {
+        "offset": 54,
+        "line": 3,
+        "column": 8
+      },
+      "end": {
+        "offset": 61,
+        "line": 3,
+        "column": 15
+      }
+    },
+    {
+      "context": "b()",
+      "start": {
+        "offset": 96,
+        "line": 5,
+        "column": 8
+      },
+      "end": {
+        "offset": 99,
+        "line": 5,
+        "column": 11
+      }
+    },
+    {
+      "context": "b();",
+      "start": {
+        "offset": 96,
+        "line": 5,
+        "column": 8
+      },
+      "end": {
+        "offset": 100,
+        "line": 5,
+        "column": 12
+      }
+    },
+    {
+      "context": "class Broken {\n    public void run() {\n        Integer x = 1;\n        foo(1, 2);\n        b();\n    }\n}",
+      "start": {
+        "offset": 7,
+        "line": 1,
+        "column": 7
+      },
+      "end": {
+        "offset": 108,
+        "line": 7,
+        "column": 1
+      }
+    },
+    {
+      "context": "foo(1, 2)",
+      "start": {
+        "offset": 77,
+        "line": 4,
+        "column": 8
+      },
+      "end": {
+        "offset": 86,
+        "line": 4,
+        "column": 17
+      }
+    },
+    {
+      "context": "foo(1, 2);",
+      "start": {
+        "offset": 77,
+        "line": 4,
+        "column": 8
+      },
+      "end": {
+        "offset": 87,
+        "line": 4,
+        "column": 18
+      }
+    },
+    {
+      "context": "public",
+      "start": {
+        "offset": 0,
+        "line": 1,
+        "column": 0
+      },
+      "end": {
+        "offset": 6,
+        "line": 1,
+        "column": 6
+      }
+    },
+    {
+      "context": "public",
+      "start": {
+        "offset": 26,
+        "line": 2,
+        "column": 4
+      },
+      "end": {
+        "offset": 32,
+        "line": 2,
+        "column": 10
+      }
+    },
+    {
+      "context": "run",
+      "start": {
+        "offset": 38,
+        "line": 2,
+        "column": 16
+      },
+      "end": {
+        "offset": 41,
+        "line": 2,
+        "column": 19
+      }
+    },
+    {
+      "context": "void run() {\n        Integer x = 1;\n        foo(1, 2);\n        b();\n    }",
+      "start": {
+        "offset": 33,
+        "line": 2,
+        "column": 11
+      },
+      "end": {
+        "offset": 106,
+        "line": 6,
+        "column": 5
+      }
+    },
+    {
+      "context": "x = 1",
+      "start": {
+        "offset": 62,
+        "line": 3,
+        "column": 16
+      },
+      "end": {
+        "offset": 67,
+        "line": 3,
+        "column": 21
+      }
+    }
+  ],
+  "resolvedError": []
+}

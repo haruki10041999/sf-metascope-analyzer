@@ -1,34 +1,39 @@
+import { type FieldsOf, type TypeField } from '../../commons/ir';
+import { type SourceSpan } from '../../commons/source';
 import { isV8IntrinsicIdentifier, type V8IntrinsicIdentifier } from '@babel/types';
-import { EvaluatePair, LwcCommonTypeClass, makeEvaluatePair } from '../commonVisitor';
+import {
+    EvaluatePair,
+    LwcCommonTypeClass,
+    makeEvaluatePair,
+    getSourceSpan,
+} from '../commonVisitor';
 
-export type V8IntrinsicIdentifierFields = {
+export type V8IntrinsicIdentifierFields = TypeField<'v8IntrinsicIdentifier'> & {
     name: V8IntrinsicIdentifier['name'];
 };
 
-export class V8IntrinsicIdentifierTypeClass extends LwcCommonTypeClass<'v8IntrinsicIdentifier'> {
-    private readonly value: V8IntrinsicIdentifierFields;
-
-    private constructor(value: V8IntrinsicIdentifierFields) {
-        super('v8IntrinsicIdentifier');
-        this.value = value;
+export class V8IntrinsicIdentifierTypeClass extends LwcCommonTypeClass<
+    'v8IntrinsicIdentifier',
+    V8IntrinsicIdentifierFields
+> {
+    private constructor(value: FieldsOf<V8IntrinsicIdentifierFields>, sourceSpan: SourceSpan) {
+        super('v8IntrinsicIdentifier', value, sourceSpan);
     }
 
     static create(
         target: V8IntrinsicIdentifier,
         originalSource: string,
     ): V8IntrinsicIdentifierTypeClass {
-        return new V8IntrinsicIdentifierTypeClass({
-            name: target.name,
-        });
-    }
-
-    /** すべてのフィールド (Babel の value フィールドの getter getValue() と区別する。getChildNodes もこれから作る) */
-    override getFields(): V8IntrinsicIdentifierFields {
-        return this.value;
+        return new V8IntrinsicIdentifierTypeClass(
+            {
+                name: target.name,
+            },
+            getSourceSpan(target, originalSource),
+        );
     }
 
     getName(): V8IntrinsicIdentifierFields['name'] {
-        return this.value.name;
+        return this.getFields().name;
     }
 }
 
@@ -40,5 +45,5 @@ export const v8IntrinsicIdentifierTypePair: EvaluatePair<
 );
 
 export const isV8IntrinsicIdentifierType = (
-    target: LwcCommonTypeClass<string>,
+    target: LwcCommonTypeClass<string, TypeField<string>>,
 ): target is V8IntrinsicIdentifierTypeClass => target instanceof V8IntrinsicIdentifierTypeClass;

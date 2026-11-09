@@ -1,3 +1,7 @@
+import { shareDependencyGraph } from '../unit/dependencies';
+import type { Repository } from '../unit/repository';
+import type { UnitParseResult } from '../unit/unitType';
+
 // 機密になりうる値を伏せる。レポート・MCP で解析結果を外に出すとき (AI に渡すときなど) に使う。
 // 解析・Diff・保存は伏せない (伏せると差分が分からなくなる)。方針: docs/analysis-plan.md 5.7
 
@@ -60,3 +64,50 @@ export const maskSensitive = <T>(dataType: string, json: T): T => {
  */
 export const isSensitiveDataType = (dataType: string): boolean =>
     SENSITIVE_PROPERTIES[dataType] !== undefined;
+
+// ---------------------------------------------------------------------------
+// リポジトリ (解析結果) を伏せる
+// ---------------------------------------------------------------------------
+
+/** ソース位置の文字列 (sourceObject・resolvedError の context) を伏せる */
+const maskContexts = (value: unknown): unknown => {
+    if (Array.isArray(value)) return value.map(maskContexts);
+    if (value === null || typeof value !== 'object') return value;
+    return Object.fromEntries(
+        Object.entries(value).map(([key, child]) => [
+            key,
+            key === 'context' && typeof child === 'string' ? MASKED : maskContexts(child),
+        ]),
+    );
+};
+
+/**
+ * 解析結果 1 つを伏せたもの (元は変えない)。type は単位の種類 (読めなかった結果も、種類で伏せる)。
+ * 伏せる種類なら、JSON の値 (maskSensitive) と、ソースの文字列 (sourceObject・resolvedError の context) を伏せる
+ */
+export const maskUnitResult = <R extends UnitParseResult>(type: string, result: R): R => {
+    if (!isSensitiveDataType(type)) return result;
+    return {
+        ...result,
+        resolvedError: maskContexts(result.resolvedError) as R['resolvedError'],
+        result: {
+            ...result.result,
+            base: maskSensitive(type, result.result.base),
+            sourceObject: maskContexts(result.result.sourceObject) as R['result']['sourceObject'],
+        },
+    };
+};
+
+const maskedRepositories = new WeakMap<Repository, Repository>();
+
+/** 伏せる値を伏せたリポジトリ (同じリポジトリには、作ったものを使い回す) */
+export const maskRepository = (repository: Repository): Repository => {
+    let masked = maskedRepositories.get(repository);
+    if (!masked) {
+        masked = repository.map(maskUnitResult);
+        maskedRepositories.set(repository, masked);
+        // 依存関係のグラフは、伏せる前のものを使う (メールの本文の項目の参照などを失わないため)
+        shareDependencyGraph(masked, repository);
+    }
+    return masked;
+};

@@ -1,57 +1,83 @@
 import { LocationValueContext } from '@apexdevtools/apex-parser';
 
-import { FieldNameTypeClass, NameVisitor, isFieldNameType } from '../nameVisitor';
+import { CoordinateValueTypeClass } from './coordinateValue';
+
+import { FieldNameTypeClass } from '../nameVisitor';
+import { BoundExpressionTypeClass } from '../expressionVisitor';
 import {
-    BoundExpressionTypeClass,
-    ExpressionVisitor,
-    isBoundExpressionType,
-} from '../expressionVisitor';
-import {
-    ApexErrorTypeClass,
     ApexCommonTypeClass,
-    visitNodeList,
-    visitNode,
+    createNode,
     getSourceSpan,
     isSpicifyApexCommonTypeClass,
 } from '../commonVisitor';
-import { TypeField } from '../../commons/ir';
+import { type FieldsOf, TypeField } from '../../commons/ir';
 import { SourceSpan } from '../../commons';
-import { CoordinateValueTypeClass } from './coordinateValue';
 
-export type LocationValueType = TypeField<'locationValue'> & {
-    value: FieldNameTypeClass | BoundExpressionTypeClass | CoordinateValueTypeClass[];
-};
+/** 項目名・バインド変数、または GEOLOCATION(緯度, 経度) */
+export type LocationValueType = TypeField<'locationValue'> &
+    (
+        | { kind: 'field'; value: FieldNameTypeClass }
+        | { kind: 'bind'; value: BoundExpressionTypeClass }
+        | {
+              kind: 'geolocation';
+              latitude: CoordinateValueTypeClass;
+              longitude: CoordinateValueTypeClass;
+          }
+    );
 
 export class LocationValueTypeClass extends ApexCommonTypeClass<
     'locationValue',
     LocationValueType
 > {
-    private constructor(
-        value: FieldNameTypeClass | BoundExpressionTypeClass | CoordinateValueTypeClass[],
-        sourceSpan: SourceSpan,
-    ) {
-        super('locationValue', { value: value }, sourceSpan);
+    private constructor(fields: FieldsOf<LocationValueType>, sourceSpan: SourceSpan) {
+        super('locationValue', fields, sourceSpan);
     }
 
     static create(ctx: LocationValueContext): LocationValueTypeClass {
+        return new LocationValueTypeClass(
+            LocationValueTypeClass.createFields(ctx),
+            getSourceSpan(ctx),
+        );
+    }
+
+    private static createFields(ctx: LocationValueContext): FieldsOf<LocationValueType> {
         if (ctx.GEOLOCATION()) {
-            return new LocationValueTypeClass(
-                ctx.coordinateValue_list().map((c) => CoordinateValueTypeClass.create(c)),
-                getSourceSpan(ctx),
-            );
-        } else {
-            if (ctx.fieldName()) {
-                return new LocationValueTypeClass(
-                    FieldNameTypeClass.create(ctx.fieldName()),
-                    getSourceSpan(ctx),
-                );
-            } else {
-                return new LocationValueTypeClass(
-                    BoundExpressionTypeClass.create(ctx.boundExpression()),
-                    getSourceSpan(ctx),
-                );
-            }
+            const coordinates = ctx.coordinateValue_list();
+            return {
+                kind: 'geolocation',
+                latitude: createNode(
+                    coordinates[0],
+                    (c) => CoordinateValueTypeClass.create(c),
+                    'coordinateValue',
+                ),
+                longitude: createNode(
+                    coordinates[1],
+                    (c) => CoordinateValueTypeClass.create(c),
+                    'coordinateValue',
+                ),
+            };
+        } else if (ctx.fieldName()) {
+            return {
+                kind: 'field',
+                value: createNode(
+                    ctx.fieldName(),
+                    (c) => FieldNameTypeClass.create(c),
+                    'fieldName',
+                ),
+            };
         }
+        return {
+            kind: 'bind',
+            value: createNode(
+                ctx.boundExpression(),
+                (c) => BoundExpressionTypeClass.create(c),
+                'boundExpression',
+            ),
+        };
+    }
+
+    getKind(): LocationValueType['kind'] {
+        return this.getFields().kind;
     }
 }
 

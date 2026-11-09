@@ -1,49 +1,42 @@
+import { type FieldsOf, type TypeField } from '../../commons/ir';
+import { type SourceSpan } from '../../commons/source';
 import { isTSTypeParameterDeclaration, type TSTypeParameterDeclaration } from '@babel/types';
 import {
     EvaluatePair,
     LwcCommonTypeClass,
-    LwcErrorTypeClass,
-    lazyPairs,
     makeEvaluatePair,
-    visitNodeList,
+    getSourceSpan,
 } from '../commonVisitor';
-import { tSTypeParameterTypePair, type TSTypeParameterTypeClass } from './tSTypeParameter';
+import { TSTypeParameterTypeClass } from './tSTypeParameter';
 
-const tSTypeParameterDeclarationParamsPairs = lazyPairs(() => [tSTypeParameterTypePair] as const);
-
-export type TSTypeParameterDeclarationFields = {
-    params: (TSTypeParameterTypeClass | LwcErrorTypeClass)[];
+export type TSTypeParameterDeclarationFields = TypeField<'tSTypeParameterDeclaration'> & {
+    params: TSTypeParameterTypeClass[];
 };
 
-export class TSTypeParameterDeclarationTypeClass extends LwcCommonTypeClass<'tSTypeParameterDeclaration'> {
-    private readonly value: TSTypeParameterDeclarationFields;
-
-    private constructor(value: TSTypeParameterDeclarationFields) {
-        super('tSTypeParameterDeclaration');
-        this.value = value;
+export class TSTypeParameterDeclarationTypeClass extends LwcCommonTypeClass<
+    'tSTypeParameterDeclaration',
+    TSTypeParameterDeclarationFields
+> {
+    private constructor(value: FieldsOf<TSTypeParameterDeclarationFields>, sourceSpan: SourceSpan) {
+        super('tSTypeParameterDeclaration', value, sourceSpan);
     }
 
     static create(
         target: TSTypeParameterDeclaration,
         originalSource: string,
     ): TSTypeParameterDeclarationTypeClass {
-        return new TSTypeParameterDeclarationTypeClass({
-            params: visitNodeList(
-                target.params,
-                originalSource,
-                tSTypeParameterDeclarationParamsPairs(),
-                'TSTypeParameterDeclaration.params',
-            ),
-        });
-    }
-
-    /** すべてのフィールド (Babel の value フィールドの getter getValue() と区別する。getChildNodes もこれから作る) */
-    override getFields(): TSTypeParameterDeclarationFields {
-        return this.value;
+        return new TSTypeParameterDeclarationTypeClass(
+            {
+                params: target.params.map((child) =>
+                    TSTypeParameterTypeClass.create(child, originalSource),
+                ),
+            },
+            getSourceSpan(target, originalSource),
+        );
     }
 
     getParams(): TSTypeParameterDeclarationFields['params'] {
-        return this.value.params;
+        return this.getFields().params;
     }
 }
 
@@ -55,6 +48,6 @@ export const tSTypeParameterDeclarationTypePair: EvaluatePair<
 );
 
 export const isTSTypeParameterDeclarationType = (
-    target: LwcCommonTypeClass<string>,
+    target: LwcCommonTypeClass<string, TypeField<string>>,
 ): target is TSTypeParameterDeclarationTypeClass =>
     target instanceof TSTypeParameterDeclarationTypeClass;

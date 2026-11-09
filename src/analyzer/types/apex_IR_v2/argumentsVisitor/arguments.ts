@@ -1,34 +1,36 @@
 import { ArgumentsContext } from '@apexdevtools/apex-parser';
 
-import { TypeField } from '../../commons/ir';
+import { ExpressionListTypeClass } from '../listVisitor';
 import {
-    ApexErrorTypeClass,
     ApexCommonTypeClass,
-    visitNode,
+    createOptionalNode,
     getSourceSpan,
     isSpicifyApexCommonTypeClass,
 } from '../commonVisitor';
-import { ExpressionListTypeClass } from '../listVisitor';
+import { type FieldsOf, TypeField } from '../../commons/ir';
 import { SourceSpan } from '../../commons';
 
 export type ArgumentsType = TypeField<'arguments'> & {
+    /** 引数なし `()` のときは null */
     elements: ExpressionListTypeClass | null;
 };
 
 export class ArgumentsTypeClass extends ApexCommonTypeClass<'arguments', ArgumentsType> {
-    private constructor(elements: ExpressionListTypeClass | null, sourceSpan: SourceSpan) {
-        super('arguments', { elements: elements }, sourceSpan);
+    private constructor(fields: FieldsOf<ArgumentsType>, sourceSpan: SourceSpan) {
+        super('arguments', fields, sourceSpan);
     }
 
     static create(ctx: ArgumentsContext): ArgumentsTypeClass {
-        if (ctx.expressionList()) {
-            return new ArgumentsTypeClass(
-                ExpressionListTypeClass.create(ctx.expressionList()),
-                getSourceSpan(ctx),
-            );
-        } else {
-            return new ArgumentsTypeClass(null, getSourceSpan(ctx));
-        }
+        return new ArgumentsTypeClass(
+            {
+                elements: createOptionalNode(
+                    ctx.expressionList(),
+                    (c) => ExpressionListTypeClass.create(c),
+                    'expressionList',
+                ),
+            },
+            getSourceSpan(ctx),
+        );
     }
 
     getElements(): ArgumentsType['elements'] {
@@ -38,6 +40,4 @@ export class ArgumentsTypeClass extends ApexCommonTypeClass<'arguments', Argumen
 
 export const isArgumentsType = (
     target: ApexCommonTypeClass<string, TypeField<string>>,
-): target is ArgumentsTypeClass => {
-    return isSpicifyApexCommonTypeClass('aruguments', target);
-};
+): target is ArgumentsTypeClass => isSpicifyApexCommonTypeClass('arguments', target);

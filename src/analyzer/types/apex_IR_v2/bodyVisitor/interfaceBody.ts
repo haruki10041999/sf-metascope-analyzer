@@ -1,18 +1,13 @@
 import { InterfaceBodyContext } from '@apexdevtools/apex-parser';
 
+import { InterfaceMethodDeclarationTypeClass } from '../declarationVisitor';
 import {
-    InterfaceMethodDeclarationTypeClass,
-    DeclarationVisitor,
-    isInterfaceMethodDeclarationType,
-} from '../declarationVisitor';
-import {
-    ApexErrorTypeClass,
     ApexCommonTypeClass,
-    visitNodeList,
+    createNodeList,
     getSourceSpan,
     isSpicifyApexCommonTypeClass,
 } from '../commonVisitor';
-import { TypeField } from '../../commons/ir';
+import { type FieldsOf, TypeField } from '../../commons/ir';
 import { SourceSpan } from '../../commons';
 
 export type InterfaceBodyType = TypeField<'interfaceBody'> & {
@@ -23,25 +18,28 @@ export class InterfaceBodyTypeClass extends ApexCommonTypeClass<
     'interfaceBody',
     InterfaceBodyType
 > {
-    private constructor(
-        declaration: InterfaceMethodDeclarationTypeClass[],
-        sourceSpan: SourceSpan,
-    ) {
-        super('interfaceBody', { declaration: declaration }, sourceSpan);
+    private constructor(fields: FieldsOf<InterfaceBodyType>, sourceSpan: SourceSpan) {
+        super('interfaceBody', fields, sourceSpan);
     }
 
     static create(ctx: InterfaceBodyContext): InterfaceBodyTypeClass {
         return new InterfaceBodyTypeClass(
-            ctx
-                .interfaceMethodDeclaration_list()
-                .map((d) => InterfaceMethodDeclarationTypeClass.create(d)),
+            {
+                declaration: createNodeList(
+                    ctx.interfaceMethodDeclaration_list(),
+                    (c) => InterfaceMethodDeclarationTypeClass.create(c),
+                    'interfaceMethodDeclaration',
+                ),
+            },
             getSourceSpan(ctx),
         );
+    }
+
+    getDeclaration(): InterfaceBodyType['declaration'] {
+        return this.getFields().declaration;
     }
 }
 
 export const isInterfaceBodyType = (
     target: ApexCommonTypeClass<string, TypeField<string>>,
-): target is InterfaceBodyTypeClass => {
-    return isSpicifyApexCommonTypeClass('interfaceBody', target);
-};
+): target is InterfaceBodyTypeClass => isSpicifyApexCommonTypeClass('interfaceBody', target);

@@ -110,12 +110,17 @@ export class GitTree implements SourceTree {
 
     async readFile(filePath: string): Promise<string | undefined> {
         const fullPath = this.base ? `${this.base}/${filePath}` : filePath;
-        this.reader ??= new CatFileReader(this.gitRoot);
+        if (!this.reader) {
+            const reader = new CatFileReader(this.gitRoot, () => {
+                if (this.reader === reader) this.reader = undefined;
+            });
+            this.reader = reader;
+        }
         const content = await this.reader.read(`${this.revision}:${fullPath}`);
         return content?.toString('utf8').replace(/\r\n?/g, '\n');
     }
 
-    /** git cat-file のプロセスを終える (読み終わったら呼ぶ。呼ばなくても、プロセスの終了で終わる) */
+    /** git cat-file のプロセスを終える (しばらく読まなければ自分で終わるので、呼ばなくてもよい) */
     close(): void {
         this.reader?.close();
         this.reader = undefined;
@@ -136,21 +141,32 @@ class CatFileReader {
         reject: (error: Error) => void;
     }[] = [];
 
-    constructor(cwd: string) {
+    /** 読み込みがなくなってから、プロセスを終えるまでの時間 (ミリ秒) */
+    private static readonly IDLE_MS = 200;
+    private idleTimer: NodeJS.Timeout | undefined;
+    private closed = false;
+
+    constructor(
+        cwd: string,
+        private readonly onClose: () => void,
+    ) {
         this.process = spawn('git', ['cat-file', '--batch'], { cwd });
         this.process.stdout.on('data', (chunk: Buffer) => {
             this.buffer = Buffer.concat([this.buffer, chunk]);
             this.drain();
+            if (this.queue.length === 0) this.scheduleClose();
         });
         this.process.on('error', (error) => this.failAll(error));
-        this.process.on('close', () => this.failAll(new Error('git cat-file exited')));
-        // 終わるのを待たない (読み込みが終われば、親のプロセスの終了を止めない)
-        this.process.unref();
-        (this.process.stdout as unknown as { unref?: () => void }).unref?.();
-        (this.process.stdin as unknown as { unref?: () => void }).unref?.();
+        this.process.on('close', () => {
+            this.closed = true;
+            this.onClose();
+            this.failAll(new Error('git cat-file exited'));
+        });
     }
 
     read(object: string): Promise<Buffer | undefined> {
+        if (this.closed) return Promise.reject(new Error('git cat-file closed'));
+        clearTimeout(this.idleTimer);
         return new Promise((resolve, reject) => {
             this.queue.push({ resolve, reject });
             this.process.stdin.write(`${object}\n`);
@@ -158,7 +174,18 @@ class CatFileReader {
     }
 
     close(): void {
+        clearTimeout(this.idleTimer);
+        if (this.closed) return;
+        this.closed = true;
+        this.onClose();
         this.process.stdin.end();
+    }
+
+    /** しばらく読み込みがなければ終える (プロセスが残ると、親のプロセスが終わらず、フォルダも消せないため) */
+    private scheduleClose(): void {
+        clearTimeout(this.idleTimer);
+        this.idleTimer = setTimeout(() => this.close(), CatFileReader.IDLE_MS);
+        this.idleTimer.unref();
     }
 
     /** たまった出力から、答えを順に取り出す */

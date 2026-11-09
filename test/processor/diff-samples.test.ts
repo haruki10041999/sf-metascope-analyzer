@@ -201,7 +201,7 @@ describe('diff samples (docs/examples/repository)', () => {
         );
     });
 
-    it('error: a broken statement becomes an error node, and the syntax errors are reported', () => {
+    it('error: broken parts drop out of the tree (no error nodes), and the syntax errors are reported', () => {
         // 単位の resolvedError は、ソースの構文エラーと -meta.xml を読めなかったものをまとめて持つ (B. 集合)
         const diff = unitDiff('class_Broken');
         assert.deepEqual(
@@ -210,9 +210,11 @@ describe('diff samples (docs/examples/repository)', () => {
                 .map((e) => (e as Node).value.filePath),
             ['Broken.cls', 'Broken.cls', 'Broken.cls-meta.xml'],
         );
-        assert.ok(
-            contentNodes('class_Broken').some((n) => n.status === 'added' && n.kind === 'error'),
-        );
+        // IR v2 は壊れた部分を木に残さない (docs/ir-v2-integration.md 2 章)。エラーの JSON は出ず、
+        // ANTLR が回復した文 (Integer x = ; と次の行がつながったもの) が変更として出る
+        const nodes = contentNodes('class_Broken');
+        assert.ok(!nodes.some((n) => n.kind === 'error'));
+        assert.ok(nodes.some((n) => n.status === 'changed' && n.kind === 'localVariable'));
     });
 
     it('cls: a kind change replaces the whole declaration, position-only changes are unchanged', () => {

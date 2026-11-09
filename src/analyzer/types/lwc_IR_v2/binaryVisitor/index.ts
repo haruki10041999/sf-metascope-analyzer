@@ -1,3 +1,4 @@
+import { type TypeField } from '../../commons/ir';
 import { LwcCommonTypeClass, LwcCommonVisitor, lazyPairs } from '../commonVisitor';
 import { BinaryExpressionTypeClass, binaryExpressionTypePair } from '../commons/binaryExpression';
 import {
@@ -30,7 +31,9 @@ export class BinaryVisitor extends LwcCommonVisitor<
 
 export type BinaryTypeClass = BinaryExpressionTypeClass | LogicalExpressionTypeClass;
 
-export const isBinaryType = (target: LwcCommonTypeClass<string>): target is BinaryTypeClass => {
+export const isBinaryType = (
+    target: LwcCommonTypeClass<string, TypeField<string>>,
+): target is BinaryTypeClass => {
     return (
         target instanceof BinaryExpressionTypeClass || target instanceof LogicalExpressionTypeClass
     );

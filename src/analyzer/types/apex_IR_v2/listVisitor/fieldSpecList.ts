@@ -1,52 +1,54 @@
 import { FieldSpecListContext } from '@apexdevtools/apex-parser';
 
-import { ListTypeClass, ListVisitor } from '.';
-
-import { FieldSpecTypeClass, QueryVisitor, isFieldSpecType } from '../queryVisitor';
+import { FieldSpecTypeClass } from '../queryVisitor';
 import {
-    ApexErrorTypeClass,
     ApexCommonTypeClass,
-    visitNodeList,
-    visitNode,
+    createNode,
+    getSourceSpan,
+    isSpicifyApexCommonTypeClass,
 } from '../commonVisitor';
+import { type FieldsOf, TypeField } from '../../commons/ir';
+import { SourceSpan } from '../../commons';
 
-export class FieldSpecListTypeClass extends ListTypeClass<'fieldSpecList', FieldSpecTypeClass> {
-    private constructor(value: (FieldSpecTypeClass | ApexErrorTypeClass)[]) {
-        super('fieldSpecList', value);
+export type FieldSpecListType = TypeField<'fieldSpecList'> & {
+    value: FieldSpecTypeClass[];
+};
+
+export class FieldSpecListTypeClass extends ApexCommonTypeClass<
+    'fieldSpecList',
+    FieldSpecListType
+> {
+    private constructor(fields: FieldsOf<FieldSpecListType>, sourceSpan: SourceSpan) {
+        super('fieldSpecList', fields, sourceSpan);
     }
 
     static create(ctx: FieldSpecListContext): FieldSpecListTypeClass {
-        if (!ctx.fieldSpec()) {
-            throw new Error('値が異常です。FieldSpecListContext: ' + ctx.getText());
-        }
-
-        const value: (FieldSpecTypeClass | ApexErrorTypeClass)[] = [
-            visitNode(new QueryVisitor(), ctx.fieldSpec(), isFieldSpecType, 'fieldSpec'),
+        const value: FieldSpecListType['value'] = [
+            createNode(ctx.fieldSpec(), (c) => FieldSpecTypeClass.create(c), 'fieldSpec'),
         ];
 
-        if (ctx.fieldSpecList_list() && ctx.fieldSpecList_list().length > 0) {
-            const nested = visitNodeList(
-                new ListVisitor(),
-                ctx.fieldSpecList_list(),
-                isFieldSpecListType,
+        // 入れ子の fieldSpecList は平坦化する
+        ctx.fieldSpecList_list().forEach((nestedCtx) => {
+            const nested = createNode(
+                nestedCtx,
+                (c) => FieldSpecListTypeClass.create(c),
                 'fieldSpecList',
             );
+            if (isFieldSpecListType(nested)) {
+                value.push(...nested.getValue());
+            } else {
+                value.push(nested);
+            }
+        });
 
-            nested.forEach((nest) => {
-                if (isFieldSpecListType(nest)) {
-                    value.push(...nest.getValue());
-                } else {
-                    value.push(nest);
-                }
-            });
-        }
+        return new FieldSpecListTypeClass({ value }, getSourceSpan(ctx));
+    }
 
-        return new FieldSpecListTypeClass(value);
+    getValue(): FieldSpecListType['value'] {
+        return this.getFields().value;
     }
 }
 
 export const isFieldSpecListType = (
-    target: ApexCommonTypeClass<string>,
-): target is FieldSpecListTypeClass => {
-    return target instanceof FieldSpecListTypeClass;
-};
+    target: ApexCommonTypeClass<string, TypeField<string>>,
+): target is FieldSpecListTypeClass => isSpicifyApexCommonTypeClass('fieldSpecList', target);

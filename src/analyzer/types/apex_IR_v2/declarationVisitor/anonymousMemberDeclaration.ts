@@ -1,25 +1,22 @@
 import { AnonymousMemberDeclarationContext } from '@apexdevtools/apex-parser';
 
+import { MethodDeclarationTypeClass } from './methodDeclaration';
+import { InterfaceDeclarationTypeClass } from './interfaceDeclaration';
+import { ClassDeclarationTypeClass } from './classDeclaration';
+import { EnumDeclarationTypeClass } from './enumDeclaration';
+import { PropertyDeclarationTypeClass } from './propertyDeclaration';
+import { FieldDeclarationTypeClass } from './fieldDeclaration';
+
 import {
-    MethodDeclarationTypeClass,
-    InterfaceDeclarationTypeClass,
-    ClassDeclarationTypeClass,
-    EnumDeclarationTypeClass,
-    PropertyDeclarationTypeClass,
-    FieldDeclarationTypeClass,
-    DeclarationTypeClass,
-    DeclarationVisitor,
-    isMethodDeclarationType,
-    isInterfaceDeclarationType,
-    isClassDeclarationType,
-    isEnumDeclarationType,
-    isPropertyDeclarationType,
-    isFieldDeclarationType,
-} from '.';
+    ApexCommonTypeClass,
+    createNode,
+    getSourceSpan,
+    isSpicifyApexCommonTypeClass,
+} from '../commonVisitor';
+import { type FieldsOf, TypeField } from '../../commons/ir';
+import { SourceSpan } from '../../commons';
 
-import { ApexErrorTypeClass, ApexCommonTypeClass, visitNode } from '../commonVisitor';
-
-type AnonymousMemberDeclarationTypeClassType =
+export type AnonymousMemberDeclarationClassType =
     | MethodDeclarationTypeClass
     | InterfaceDeclarationTypeClass
     | ClassDeclarationTypeClass
@@ -27,77 +24,68 @@ type AnonymousMemberDeclarationTypeClassType =
     | PropertyDeclarationTypeClass
     | FieldDeclarationTypeClass;
 
-export class AnonymousMemberDeclarationTypeClass extends DeclarationTypeClass<
+export type AnonymousMemberDeclarationType = TypeField<'anonymousMemberDeclaration'> & {
+    declaration: AnonymousMemberDeclarationClassType;
+};
+
+export class AnonymousMemberDeclarationTypeClass extends ApexCommonTypeClass<
     'anonymousMemberDeclaration',
-    AnonymousMemberDeclarationTypeClassType
+    AnonymousMemberDeclarationType
 > {
-    private constructor(value: AnonymousMemberDeclarationTypeClassType | ApexErrorTypeClass) {
-        super('anonymousMemberDeclaration', value);
+    private constructor(fields: FieldsOf<AnonymousMemberDeclarationType>, sourceSpan: SourceSpan) {
+        super('anonymousMemberDeclaration', fields, sourceSpan);
     }
 
     static create(ctx: AnonymousMemberDeclarationContext): AnonymousMemberDeclarationTypeClass {
-        if (
-            !ctx.methodDeclaration() &&
-            !ctx.interfaceDeclaration() &&
-            !ctx.classDeclaration() &&
-            !ctx.enumDeclaration() &&
-            !ctx.propertyDeclaration() &&
-            !ctx.fieldDeclaration()
-        ) {
-            throw new Error('値が異常です。AnonymousMemberDeclarationContext: ' + ctx.getText());
-        }
-
-        let value: AnonymousMemberDeclarationTypeClassType | ApexErrorTypeClass;
+        let declaration: AnonymousMemberDeclarationType['declaration'];
         if (ctx.methodDeclaration()) {
-            value = visitNode(
-                new DeclarationVisitor(),
+            declaration = createNode(
                 ctx.methodDeclaration(),
-                isMethodDeclarationType,
-                'MethodDeclaration',
+                (c) => MethodDeclarationTypeClass.create(c),
+                'methodDeclaration',
             );
         } else if (ctx.interfaceDeclaration()) {
-            value = visitNode(
-                new DeclarationVisitor(),
+            declaration = createNode(
                 ctx.interfaceDeclaration(),
-                isInterfaceDeclarationType,
-                'InterfaceDeclaration',
+                (c) => InterfaceDeclarationTypeClass.create(c),
+                'interfaceDeclaration',
             );
         } else if (ctx.classDeclaration()) {
-            value = visitNode(
-                new DeclarationVisitor(),
+            declaration = createNode(
                 ctx.classDeclaration(),
-                isClassDeclarationType,
-                'ClassDeclaration',
+                (c) => ClassDeclarationTypeClass.create(c),
+                'classDeclaration',
             );
         } else if (ctx.enumDeclaration()) {
-            value = visitNode(
-                new DeclarationVisitor(),
+            declaration = createNode(
                 ctx.enumDeclaration(),
-                isEnumDeclarationType,
-                'EnumDeclaration',
+                (c) => EnumDeclarationTypeClass.create(c),
+                'enumDeclaration',
             );
         } else if (ctx.propertyDeclaration()) {
-            value = visitNode(
-                new DeclarationVisitor(),
+            declaration = createNode(
                 ctx.propertyDeclaration(),
-                isPropertyDeclarationType,
-                'PropertyDeclaration',
+                (c) => PropertyDeclarationTypeClass.create(c),
+                'propertyDeclaration',
             );
         } else {
-            value = visitNode(
-                new DeclarationVisitor(),
+            declaration = createNode(
                 ctx.fieldDeclaration(),
-                isFieldDeclarationType,
-                'FieldDeclaration',
+                (c) => FieldDeclarationTypeClass.create(c),
+                'fieldDeclaration',
             );
         }
 
-        return new AnonymousMemberDeclarationTypeClass(value);
+        return new AnonymousMemberDeclarationTypeClass({ declaration }, getSourceSpan(ctx));
+    }
+
+    getDeclaration(): AnonymousMemberDeclarationType['declaration'] {
+        return this.getFields().declaration;
     }
 }
 
 export const isAnonymousMemberDeclarationType = (
-    target: ApexCommonTypeClass<string>,
+    target: ApexCommonTypeClass<string, TypeField<string>>,
 ): target is AnonymousMemberDeclarationTypeClass => {
-    return target instanceof AnonymousMemberDeclarationTypeClass;
+    return isSpicifyApexCommonTypeClass('anonymousMemberDeclaration', target);
 };

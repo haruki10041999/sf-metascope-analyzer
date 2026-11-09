@@ -1,16 +1,12 @@
 import typia from 'typia';
 
-import {
-    Convert,
-    isConvert,
-    convertExcludeError,
-    ConvertExcludeError,
-    ConvertType,
-    convertValue,
-} from '../commons';
-import { ErrorJson, isErrorJson, JsonType, makeJsonType } from '../../commons';
-
-import { TypeOfType, FieldNameType, WhenClauseType, ElseClauseType } from '../converter';
+import type {
+    ElseClauseTypeClass,
+    FieldNameListTypeClass,
+    FieldNameTypeClass,
+    TypeOfTypeClass,
+    WhenClauseTypeClass,
+} from '../../apex_IR_v2';
 
 export type TypeOfBlockJson =
     | {
@@ -23,21 +19,24 @@ export type TypeOfBlockJson =
       };
 export const isTypeOfBlockJson = typia.createIs<TypeOfBlockJson>();
 
-const makeWhenJson = (target: ConvertExcludeError<WhenClauseType>): TypeOfBlockJson => {
-    const object = target.value.value.map((v) => v.value.value);
-    const field = target.field.value.map((v) => v.value.map((v) => v.value.value));
+const makeFieldNameJson = (target: FieldNameTypeClass): string[] =>
+    target.getFields().value.map((v) => v.getFields().value.getFields().value);
 
+const makeFieldNameListJson = (target: FieldNameListTypeClass): string[][] =>
+    target.getFields().value.map((v) => makeFieldNameJson(v));
+
+const makeWhenJson = (target: WhenClauseTypeClass): TypeOfBlockJson => {
+    const { value, field } = target.getFields();
     return {
-        object: object,
-        field: field,
+        object: makeFieldNameJson(value),
+        field: makeFieldNameListJson(field),
     };
 };
 
-const makeElseJson = (target: ConvertExcludeError<ElseClauseType>): TypeOfBlockJson => {
-    const value = target.value.value.map((v) => v.value.map((v) => v.value.value));
+const makeElseJson = (target: ElseClauseTypeClass): TypeOfBlockJson => {
     return {
         object: 'else',
-        field: value,
+        field: makeFieldNameListJson(target.getFields().value),
     };
 };
 
@@ -48,13 +47,14 @@ export type TypeOfJson = {
 };
 export const isTypeOfJson = typia.createIs<TypeOfJson>();
 
-export const makeTypeOfJson = (target: ConvertExcludeError<TypeOfType>): TypeOfJson => {
+export const makeTypeOfJson = (target: TypeOfTypeClass): TypeOfJson => {
+    const { value, whenClause, elseClause } = target.getFields();
     return {
         type: 'typeOf',
-        field: target.value.value.map((v) => v.value.value),
+        field: makeFieldNameJson(value),
         block: [
-            ...target.whenClause.map((v) => makeWhenJson(v)),
-            ...(target.elseClause ? [makeElseJson(target.elseClause)] : []),
+            ...whenClause.map((v) => makeWhenJson(v)),
+            ...(elseClause ? [makeElseJson(elseClause)] : []),
         ],
     };
 };

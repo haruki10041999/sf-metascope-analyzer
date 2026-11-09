@@ -1,69 +1,54 @@
+import { type FieldsOf, type TypeField } from '../../commons/ir';
+import { type SourceSpan } from '../../commons/source';
 import { isCatchClause, type CatchClause } from '@babel/types';
 import {
     EvaluatePair,
     LwcCommonTypeClass,
-    LwcErrorTypeClass,
     lazyPairs,
     makeEvaluatePair,
-    visitNode,
     visitOptionalNode,
+    getSourceSpan,
 } from '../commonVisitor';
 import { arrayPatternTypePair, type ArrayPatternTypeClass } from './arrayPattern';
-import { blockStatementTypePair, type BlockStatementTypeClass } from './blockStatement';
+import { BlockStatementTypeClass } from './blockStatement';
 import { identifierTypePair, type IdentifierTypeClass } from './identifier';
 import { objectPatternTypePair, type ObjectPatternTypeClass } from './objectPattern';
 
 const catchClauseParamPairs = lazyPairs(
     () => [identifierTypePair, arrayPatternTypePair, objectPatternTypePair] as const,
 );
-const catchClauseBodyPairs = lazyPairs(() => [blockStatementTypePair] as const);
 
-export type CatchClauseFields = {
-    param:
-        | IdentifierTypeClass
-        | ArrayPatternTypeClass
-        | ObjectPatternTypeClass
-        | LwcErrorTypeClass
-        | null;
-    body: BlockStatementTypeClass | LwcErrorTypeClass;
+export type CatchClauseFields = TypeField<'catchClause'> & {
+    param: IdentifierTypeClass | ArrayPatternTypeClass | ObjectPatternTypeClass | null;
+    body: BlockStatementTypeClass;
 };
 
-export class CatchClauseTypeClass extends LwcCommonTypeClass<'catchClause'> {
-    private readonly value: CatchClauseFields;
-
-    private constructor(value: CatchClauseFields) {
-        super('catchClause');
-        this.value = value;
+export class CatchClauseTypeClass extends LwcCommonTypeClass<'catchClause', CatchClauseFields> {
+    private constructor(value: FieldsOf<CatchClauseFields>, sourceSpan: SourceSpan) {
+        super('catchClause', value, sourceSpan);
     }
 
     static create(target: CatchClause, originalSource: string): CatchClauseTypeClass {
-        return new CatchClauseTypeClass({
-            param: visitOptionalNode(
-                target.param,
-                originalSource,
-                catchClauseParamPairs(),
-                'CatchClause.param',
-            ),
-            body: visitNode(
-                target.body,
-                originalSource,
-                catchClauseBodyPairs(),
-                'CatchClause.body',
-            ),
-        });
-    }
-
-    /** すべてのフィールド (Babel の value フィールドの getter getValue() と区別する。getChildNodes もこれから作る) */
-    override getFields(): CatchClauseFields {
-        return this.value;
+        return new CatchClauseTypeClass(
+            {
+                param: visitOptionalNode(
+                    target.param,
+                    originalSource,
+                    catchClauseParamPairs(),
+                    'CatchClause.param',
+                ),
+                body: BlockStatementTypeClass.create(target.body, originalSource),
+            },
+            getSourceSpan(target, originalSource),
+        );
     }
 
     getParam(): CatchClauseFields['param'] {
-        return this.value.param;
+        return this.getFields().param;
     }
 
     getBody(): CatchClauseFields['body'] {
-        return this.value.body;
+        return this.getFields().body;
     }
 }
 
@@ -73,5 +58,5 @@ export const catchClauseTypePair: EvaluatePair<CatchClause, CatchClauseTypeClass
     );
 
 export const isCatchClauseType = (
-    target: LwcCommonTypeClass<string>,
+    target: LwcCommonTypeClass<string, TypeField<string>>,
 ): target is CatchClauseTypeClass => target instanceof CatchClauseTypeClass;

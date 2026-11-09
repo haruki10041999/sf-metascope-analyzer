@@ -1,101 +1,69 @@
+import { type FieldsOf, type TypeField } from '../../commons/ir';
+import { type SourceSpan } from '../../commons/source';
 import { isDeclareInterface, type DeclareInterface } from '@babel/types';
 import {
     EvaluatePair,
     LwcCommonTypeClass,
-    LwcErrorTypeClass,
-    lazyPairs,
     makeEvaluatePair,
-    visitNode,
-    visitNodeList,
-    visitOptionalNode,
+    getSourceSpan,
 } from '../commonVisitor';
-import {
-    interfaceExtendsTypePair,
-    type InterfaceExtendsTypeClass,
-} from '../flowVisitor/interfaceExtends';
-import {
-    typeParameterDeclarationTypePair,
-    type TypeParameterDeclarationTypeClass,
-} from '../flowVisitor/typeParameterDeclaration';
-import { identifierTypePair, type IdentifierTypeClass } from './identifier';
-import {
-    objectTypeAnnotationTypePair,
-    type ObjectTypeAnnotationTypeClass,
-} from './objectTypeAnnotation';
+import { InterfaceExtendsTypeClass } from '../flowVisitor/interfaceExtends';
+import { TypeParameterDeclarationTypeClass } from '../flowVisitor/typeParameterDeclaration';
+import { IdentifierTypeClass } from './identifier';
+import { ObjectTypeAnnotationTypeClass } from './objectTypeAnnotation';
 
-const declareInterfaceIdPairs = lazyPairs(() => [identifierTypePair] as const);
-const declareInterfaceTypeParametersPairs = lazyPairs(
-    () => [typeParameterDeclarationTypePair] as const,
-);
-const declareInterfaceExtendsPairs = lazyPairs(() => [interfaceExtendsTypePair] as const);
-const declareInterfaceBodyPairs = lazyPairs(() => [objectTypeAnnotationTypePair] as const);
-
-export type DeclareInterfaceFields = {
-    id: IdentifierTypeClass | LwcErrorTypeClass;
-    typeParameters: TypeParameterDeclarationTypeClass | LwcErrorTypeClass | null;
-    extends: (InterfaceExtendsTypeClass | LwcErrorTypeClass)[] | null;
-    body: ObjectTypeAnnotationTypeClass | LwcErrorTypeClass;
+export type DeclareInterfaceFields = TypeField<'declareInterface'> & {
+    id: IdentifierTypeClass;
+    typeParameters: TypeParameterDeclarationTypeClass | null;
+    extends: InterfaceExtendsTypeClass[] | null;
+    body: ObjectTypeAnnotationTypeClass;
 };
 
-export class DeclareInterfaceTypeClass extends LwcCommonTypeClass<'declareInterface'> {
-    private readonly value: DeclareInterfaceFields;
-
-    private constructor(value: DeclareInterfaceFields) {
-        super('declareInterface');
-        this.value = value;
+export class DeclareInterfaceTypeClass extends LwcCommonTypeClass<
+    'declareInterface',
+    DeclareInterfaceFields
+> {
+    private constructor(value: FieldsOf<DeclareInterfaceFields>, sourceSpan: SourceSpan) {
+        super('declareInterface', value, sourceSpan);
     }
 
     static create(target: DeclareInterface, originalSource: string): DeclareInterfaceTypeClass {
-        return new DeclareInterfaceTypeClass({
-            id: visitNode(
-                target.id,
-                originalSource,
-                declareInterfaceIdPairs(),
-                'DeclareInterface.id',
-            ),
-            typeParameters: visitOptionalNode(
-                target.typeParameters,
-                originalSource,
-                declareInterfaceTypeParametersPairs(),
-                'DeclareInterface.typeParameters',
-            ),
-            extends:
-                target.extends == null
-                    ? null
-                    : visitNodeList(
-                          target.extends,
-                          originalSource,
-                          declareInterfaceExtendsPairs(),
-                          'DeclareInterface.extends',
-                      ),
-            body: visitNode(
-                target.body,
-                originalSource,
-                declareInterfaceBodyPairs(),
-                'DeclareInterface.body',
-            ),
-        });
-    }
-
-    /** すべてのフィールド (Babel の value フィールドの getter getValue() と区別する。getChildNodes もこれから作る) */
-    override getFields(): DeclareInterfaceFields {
-        return this.value;
+        return new DeclareInterfaceTypeClass(
+            {
+                id: IdentifierTypeClass.create(target.id, originalSource),
+                typeParameters:
+                    target.typeParameters == null
+                        ? null
+                        : TypeParameterDeclarationTypeClass.create(
+                              target.typeParameters,
+                              originalSource,
+                          ),
+                extends:
+                    target.extends == null
+                        ? null
+                        : target.extends.map((child) =>
+                              InterfaceExtendsTypeClass.create(child, originalSource),
+                          ),
+                body: ObjectTypeAnnotationTypeClass.create(target.body, originalSource),
+            },
+            getSourceSpan(target, originalSource),
+        );
     }
 
     getId(): DeclareInterfaceFields['id'] {
-        return this.value.id;
+        return this.getFields().id;
     }
 
     getTypeParameters(): DeclareInterfaceFields['typeParameters'] {
-        return this.value.typeParameters;
+        return this.getFields().typeParameters;
     }
 
     getExtends(): DeclareInterfaceFields['extends'] {
-        return this.value.extends;
+        return this.getFields().extends;
     }
 
     getBody(): DeclareInterfaceFields['body'] {
-        return this.value.body;
+        return this.getFields().body;
     }
 }
 
@@ -105,5 +73,5 @@ export const declareInterfaceTypePair: EvaluatePair<DeclareInterface, DeclareInt
     );
 
 export const isDeclareInterfaceType = (
-    target: LwcCommonTypeClass<string>,
+    target: LwcCommonTypeClass<string, TypeField<string>>,
 ): target is DeclareInterfaceTypeClass => target instanceof DeclareInterfaceTypeClass;

@@ -1,33 +1,22 @@
 import { ValueContext } from '@apexdevtools/apex-parser';
 
+import { BoundExpressionTypeClass } from '../expressionVisitor';
+import { ValueListTypeClass } from '../listVisitor';
+import { DateFormulaTypeClass, SubQueryTypeClass } from '../queryVisitor';
+import { SignedNumberTypeClass } from '../literalVisitor';
 import {
-    BoundExpressionTypeClass,
-    ExpressionVisitor,
-    isBoundExpressionType,
-} from '../expressionVisitor';
-import { ValueListTypeClass, ListVisitor, isValueListType } from '../listVisitor';
-import {
-    DateFormulaTypeClass,
-    SubQueryTypeClass,
-    QueryVisitor,
-    isDateFormulaType,
-    isSubQueryType,
-} from '../queryVisitor';
-import { SignedNumberTypeClass, LiteralVisitor, isSignedNumberType } from '../literalVisitor';
-import {
-    ApexErrorTypeClass,
     ApexCommonTypeClass,
-    visitNode,
+    createNode,
     getSourceSpan,
     isSpicifyApexCommonTypeClass,
 } from '../commonVisitor';
-import { TypeField } from '../../commons/ir';
+import { type FieldsOf, TypeField } from '../../commons/ir';
 import { SourceSpan } from '../../commons';
 
 export type ValueType = TypeField<'value'> &
     (
         | {
-              valueType:
+              kind:
                   | 'null'
                   | 'boolean'
                   | 'string'
@@ -40,112 +29,102 @@ export type ValueType = TypeField<'value'> &
               value: string;
           }
         | {
-              valueType: 'number';
+              kind: 'number';
               value: SignedNumberTypeClass;
           }
         | {
-              valueType: 'dateFormula';
+              kind: 'dateFormula';
               value: DateFormulaTypeClass;
           }
         | {
-              valueType: 'subQuery';
+              kind: 'subQuery';
               value: SubQueryTypeClass;
           }
         | {
-              valueType: 'list';
+              kind: 'list';
               value: ValueListTypeClass;
           }
         | {
-              valueType: 'bind';
+              kind: 'bind';
               value: BoundExpressionTypeClass;
           }
     );
 
 export class ValueTypeClass extends ApexCommonTypeClass<'value', ValueType> {
-    private constructor(valueType: Omit<ValueType, 'type'>, sourceSpan: SourceSpan) {
-        super('value', valueType, sourceSpan);
+    private constructor(fields: FieldsOf<ValueType>, sourceSpan: SourceSpan) {
+        super('value', fields, sourceSpan);
     }
 
     static create(ctx: ValueContext): ValueTypeClass {
-        let value: Omit<ValueType, 'type'>;
-
-        if (ctx.NULL()) {
-            value = {
-                valueType: 'null',
-                value: 'null',
-            };
-        } else if (ctx.BooleanLiteral()) {
-            value = {
-                valueType: 'boolean',
-                value: ctx.BooleanLiteral().getText(),
-            };
-        } else if (ctx.signedNumber()) {
-            value = {
-                valueType: 'number',
-                value: SignedNumberTypeClass.create(ctx.signedNumber()),
-            };
-        } else if (ctx.StringLiteral()) {
-            value = {
-                valueType: 'string',
-                value: ctx.StringLiteral().getText(),
-            };
-        } else if (ctx.MultilineStringLiteral()) {
-            value = {
-                valueType: 'longText',
-                value: ctx.MultilineStringLiteral().getText(),
-            };
-        } else if (ctx.DateLiteral()) {
-            value = {
-                valueType: 'date',
-                value: ctx.DateLiteral().getText(),
-            };
-        } else if (ctx.TimeLiteral()) {
-            value = {
-                valueType: 'time',
-                value: ctx.TimeLiteral().getText(),
-            };
-        } else if (ctx.DateTimeLiteral()) {
-            value = {
-                valueType: 'dateTime',
-                value: ctx.DateTimeLiteral().getText(),
-            };
-        } else if (ctx.dateFormula()) {
-            value = {
-                valueType: 'dateFormula',
-                value: DateFormulaTypeClass.create(ctx.dateFormula()),
-            };
-        } else if (ctx.IntegralCurrencyLiteral()) {
-            value = {
-                valueType: 'currency',
-                value: ctx.IntegralCurrencyLiteral().getText(),
-            };
-        } else if (ctx.IntegerLiteral()) {
-            value = {
-                valueType: 'integer',
-                value: ctx.IntegerLiteral().getText(),
-            };
-        } else if (ctx.subQuery()) {
-            value = {
-                valueType: 'subQuery',
-                value: SubQueryTypeClass.create(ctx.subQuery()),
-            };
-        } else if (ctx.valueList()) {
-            value = {
-                valueType: 'list',
-                value: ValueListTypeClass.create(ctx.valueList()),
-            };
-        } else {
-            value = {
-                valueType: 'bind',
-                value: BoundExpressionTypeClass.create(ctx.boundExpression()),
-            };
-        }
-
-        return new ValueTypeClass(value, getSourceSpan(ctx));
+        return new ValueTypeClass(ValueTypeClass.createValue(ctx), getSourceSpan(ctx));
     }
 
-    getValueType(): ValueType['valueType'] {
-        return this.getFields().valueType;
+    /** value の選択肢のうち、ある子 (トークン) だけを読む */
+    private static createValue(ctx: ValueContext): FieldsOf<ValueType> {
+        if (ctx.NULL()) {
+            return { kind: 'null', value: 'null' };
+        } else if (ctx.BooleanLiteral()) {
+            return { kind: 'boolean', value: ctx.BooleanLiteral().getText() };
+        } else if (ctx.signedNumber()) {
+            return {
+                kind: 'number',
+                value: createNode(
+                    ctx.signedNumber(),
+                    (c) => SignedNumberTypeClass.create(c),
+                    'signedNumber',
+                ),
+            };
+        } else if (ctx.StringLiteral()) {
+            return { kind: 'string', value: ctx.StringLiteral().getText() };
+        } else if (ctx.MultilineStringLiteral()) {
+            return { kind: 'longText', value: ctx.MultilineStringLiteral().getText() };
+        } else if (ctx.DateLiteral()) {
+            return { kind: 'date', value: ctx.DateLiteral().getText() };
+        } else if (ctx.TimeLiteral()) {
+            return { kind: 'time', value: ctx.TimeLiteral().getText() };
+        } else if (ctx.DateTimeLiteral()) {
+            return { kind: 'dateTime', value: ctx.DateTimeLiteral().getText() };
+        } else if (ctx.dateFormula()) {
+            return {
+                kind: 'dateFormula',
+                value: createNode(
+                    ctx.dateFormula(),
+                    (c) => DateFormulaTypeClass.create(c),
+                    'dateFormula',
+                ),
+            };
+        } else if (ctx.IntegralCurrencyLiteral()) {
+            return { kind: 'currency', value: ctx.IntegralCurrencyLiteral().getText() };
+        } else if (ctx.IntegerLiteral()) {
+            return { kind: 'integer', value: ctx.IntegerLiteral().getText() };
+        } else if (ctx.subQuery()) {
+            return {
+                kind: 'subQuery',
+                value: createNode(ctx.subQuery(), (c) => SubQueryTypeClass.create(c), 'subQuery'),
+            };
+        } else if (ctx.valueList()) {
+            return {
+                kind: 'list',
+                value: createNode(
+                    ctx.valueList(),
+                    (c) => ValueListTypeClass.create(c),
+                    'valueList',
+                ),
+            };
+        }
+        // どの子もなければ (構文エラーの回復) boundExpression も null になり NULL_CHILD になる
+        return {
+            kind: 'bind',
+            value: createNode(
+                ctx.boundExpression(),
+                (c) => BoundExpressionTypeClass.create(c),
+                'boundExpression',
+            ),
+        };
+    }
+
+    getKind(): ValueType['kind'] {
+        return this.getFields().kind;
     }
 
     getValue(): ValueType['value'] {

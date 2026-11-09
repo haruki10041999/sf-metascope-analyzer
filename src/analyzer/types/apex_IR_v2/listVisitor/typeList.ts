@@ -1,29 +1,42 @@
 import { TypeListContext } from '@apexdevtools/apex-parser';
 
-import { ListTypeClass } from '.';
+import { TypeRefTypeClass } from '../typeVisitor';
+import {
+    ApexCommonTypeClass,
+    createNodeList,
+    getSourceSpan,
+    isSpicifyApexCommonTypeClass,
+} from '../commonVisitor';
+import { type FieldsOf, TypeField } from '../../commons/ir';
+import { SourceSpan } from '../../commons';
 
-import { TypeRefTypeClass, TypeVisitor, isTypeRefType } from '../typeVisitor';
+export type TypeListType = TypeField<'typeList'> & {
+    value: TypeRefTypeClass[];
+};
 
-import { ApexErrorTypeClass, ApexCommonTypeClass, visitNodeList } from '../commonVisitor';
-
-export class TypeListTypeClass extends ListTypeClass<'typeList', TypeRefTypeClass> {
-    private constructor(value: (TypeRefTypeClass | ApexErrorTypeClass)[]) {
-        super('typeList', value);
+export class TypeListTypeClass extends ApexCommonTypeClass<'typeList', TypeListType> {
+    private constructor(fields: FieldsOf<TypeListType>, sourceSpan: SourceSpan) {
+        super('typeList', fields, sourceSpan);
     }
 
     static create(ctx: TypeListContext): TypeListTypeClass {
-        if (!ctx.typeRef_list() || ctx.typeRef_list().length === 0) {
-            throw new Error('値が異常です。TypeListContext: ' + ctx.getText());
-        }
-
         return new TypeListTypeClass(
-            visitNodeList(new TypeVisitor(), ctx.typeRef_list(), isTypeRefType, 'typeRef'),
+            {
+                value: createNodeList(
+                    ctx.typeRef_list(),
+                    (c) => TypeRefTypeClass.create(c),
+                    'typeRef',
+                ),
+            },
+            getSourceSpan(ctx),
         );
+    }
+
+    getValue(): TypeListType['value'] {
+        return this.getFields().value;
     }
 }
 
 export const isTypeListType = (
-    target: ApexCommonTypeClass<string>,
-): target is TypeListTypeClass => {
-    return target instanceof TypeListTypeClass;
-};
+    target: ApexCommonTypeClass<string, TypeField<string>>,
+): target is TypeListTypeClass => isSpicifyApexCommonTypeClass('typeList', target);

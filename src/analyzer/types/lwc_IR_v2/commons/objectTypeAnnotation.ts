@@ -1,21 +1,17 @@
+import { type FieldsOf, type TypeField } from '../../commons/ir';
+import { type SourceSpan } from '../../commons/source';
 import { isObjectTypeAnnotation, type ObjectTypeAnnotation } from '@babel/types';
 import {
     EvaluatePair,
     LwcCommonTypeClass,
-    LwcErrorTypeClass,
     lazyPairs,
     makeEvaluatePair,
     visitNodeList,
+    getSourceSpan,
 } from '../commonVisitor';
-import {
-    objectTypeCallPropertyTypePair,
-    type ObjectTypeCallPropertyTypeClass,
-} from './objectTypeCallProperty';
-import { objectTypeIndexerTypePair, type ObjectTypeIndexerTypeClass } from './objectTypeIndexer';
-import {
-    objectTypeInternalSlotTypePair,
-    type ObjectTypeInternalSlotTypeClass,
-} from './objectTypeInternalSlot';
+import { ObjectTypeCallPropertyTypeClass } from './objectTypeCallProperty';
+import { ObjectTypeIndexerTypeClass } from './objectTypeIndexer';
+import { ObjectTypeInternalSlotTypeClass } from './objectTypeInternalSlot';
 import { objectTypePropertyTypePair, type ObjectTypePropertyTypeClass } from './objectTypeProperty';
 import {
     objectTypeSpreadPropertyTypePair,
@@ -25,94 +21,69 @@ import {
 const objectTypeAnnotationPropertiesPairs = lazyPairs(
     () => [objectTypePropertyTypePair, objectTypeSpreadPropertyTypePair] as const,
 );
-const objectTypeAnnotationIndexersPairs = lazyPairs(() => [objectTypeIndexerTypePair] as const);
-const objectTypeAnnotationCallPropertiesPairs = lazyPairs(
-    () => [objectTypeCallPropertyTypePair] as const,
-);
-const objectTypeAnnotationInternalSlotsPairs = lazyPairs(
-    () => [objectTypeInternalSlotTypePair] as const,
-);
 
-export type ObjectTypeAnnotationFields = {
-    properties: (
-        ObjectTypePropertyTypeClass | ObjectTypeSpreadPropertyTypeClass | LwcErrorTypeClass
-    )[];
-    indexers: (ObjectTypeIndexerTypeClass | LwcErrorTypeClass)[];
-    callProperties: (ObjectTypeCallPropertyTypeClass | LwcErrorTypeClass)[];
-    internalSlots: (ObjectTypeInternalSlotTypeClass | LwcErrorTypeClass)[];
-    exact: ObjectTypeAnnotation['exact'];
-    inexact: NonNullable<ObjectTypeAnnotation['inexact']> | null;
+export type ObjectTypeAnnotationFields = TypeField<'objectTypeAnnotation'> & {
+    properties: (ObjectTypePropertyTypeClass | ObjectTypeSpreadPropertyTypeClass)[];
+    indexers: ObjectTypeIndexerTypeClass[];
+    callProperties: ObjectTypeCallPropertyTypeClass[];
+    internalSlots: ObjectTypeInternalSlotTypeClass[];
+    /** `{| |}` は exact、`{ ... }` は inexact、どちらでもないものは default */
+    exactness: 'exact' | 'inexact' | 'default';
 };
 
-export class ObjectTypeAnnotationTypeClass extends LwcCommonTypeClass<'objectTypeAnnotation'> {
-    private readonly value: ObjectTypeAnnotationFields;
-
-    private constructor(value: ObjectTypeAnnotationFields) {
-        super('objectTypeAnnotation');
-        this.value = value;
+export class ObjectTypeAnnotationTypeClass extends LwcCommonTypeClass<
+    'objectTypeAnnotation',
+    ObjectTypeAnnotationFields
+> {
+    private constructor(value: FieldsOf<ObjectTypeAnnotationFields>, sourceSpan: SourceSpan) {
+        super('objectTypeAnnotation', value, sourceSpan);
     }
 
     static create(
         target: ObjectTypeAnnotation,
         originalSource: string,
     ): ObjectTypeAnnotationTypeClass {
-        return new ObjectTypeAnnotationTypeClass({
-            properties: visitNodeList(
-                target.properties,
-                originalSource,
-                objectTypeAnnotationPropertiesPairs(),
-                'ObjectTypeAnnotation.properties',
-            ),
-            indexers: visitNodeList(
-                target.indexers,
-                originalSource,
-                objectTypeAnnotationIndexersPairs(),
-                'ObjectTypeAnnotation.indexers',
-            ),
-            callProperties: visitNodeList(
-                target.callProperties,
-                originalSource,
-                objectTypeAnnotationCallPropertiesPairs(),
-                'ObjectTypeAnnotation.callProperties',
-            ),
-            internalSlots: visitNodeList(
-                target.internalSlots,
-                originalSource,
-                objectTypeAnnotationInternalSlotsPairs(),
-                'ObjectTypeAnnotation.internalSlots',
-            ),
-            exact: target.exact,
-            inexact: target.inexact ?? null,
-        });
-    }
-
-    /** すべてのフィールド (Babel の value フィールドの getter getValue() と区別する。getChildNodes もこれから作る) */
-    override getFields(): ObjectTypeAnnotationFields {
-        return this.value;
+        return new ObjectTypeAnnotationTypeClass(
+            {
+                properties: visitNodeList(
+                    target.properties,
+                    originalSource,
+                    objectTypeAnnotationPropertiesPairs(),
+                    'ObjectTypeAnnotation.properties',
+                ),
+                indexers: target.indexers.map((child) =>
+                    ObjectTypeIndexerTypeClass.create(child, originalSource),
+                ),
+                callProperties: target.callProperties.map((child) =>
+                    ObjectTypeCallPropertyTypeClass.create(child, originalSource),
+                ),
+                internalSlots: target.internalSlots.map((child) =>
+                    ObjectTypeInternalSlotTypeClass.create(child, originalSource),
+                ),
+                exactness: target.exact ? 'exact' : target.inexact ? 'inexact' : 'default',
+            },
+            getSourceSpan(target, originalSource),
+        );
     }
 
     getProperties(): ObjectTypeAnnotationFields['properties'] {
-        return this.value.properties;
+        return this.getFields().properties;
     }
 
     getIndexers(): ObjectTypeAnnotationFields['indexers'] {
-        return this.value.indexers;
+        return this.getFields().indexers;
     }
 
     getCallProperties(): ObjectTypeAnnotationFields['callProperties'] {
-        return this.value.callProperties;
+        return this.getFields().callProperties;
     }
 
     getInternalSlots(): ObjectTypeAnnotationFields['internalSlots'] {
-        return this.value.internalSlots;
+        return this.getFields().internalSlots;
     }
 
-    getExact(): ObjectTypeAnnotationFields['exact'] {
-        return this.value.exact;
-    }
-
-    getInexact(): ObjectTypeAnnotationFields['inexact'] {
-        return this.value.inexact;
+    getExactness(): ObjectTypeAnnotationFields['exactness'] {
+        return this.getFields().exactness;
     }
 }
 
@@ -124,5 +95,5 @@ export const objectTypeAnnotationTypePair: EvaluatePair<
 );
 
 export const isObjectTypeAnnotationType = (
-    target: LwcCommonTypeClass<string>,
+    target: LwcCommonTypeClass<string, TypeField<string>>,
 ): target is ObjectTypeAnnotationTypeClass => target instanceof ObjectTypeAnnotationTypeClass;

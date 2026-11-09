@@ -1,43 +1,40 @@
+import { type FieldsOf, type TypeField } from '../../commons/ir';
+import { type SourceSpan } from '../../commons/source';
 import { isTSUnionType, type TSUnionType } from '@babel/types';
 import {
     EvaluatePair,
     LwcCommonTypeClass,
-    LwcErrorTypeClass,
     makeEvaluatePair,
     visitNodeList,
+    getSourceSpan,
 } from '../commonVisitor';
 import { tSTypeVisitorEvaluatePairs, type TSTypeTypeClass } from '../tsTypeVisitor';
 
-export type TSUnionTypeFields = {
-    types: (TSTypeTypeClass | LwcErrorTypeClass)[];
+export type TSUnionTypeFields = TypeField<'tSUnionType'> & {
+    types: TSTypeTypeClass[];
 };
 
-export class TSUnionTypeTypeClass extends LwcCommonTypeClass<'tSUnionType'> {
-    private readonly value: TSUnionTypeFields;
-
-    private constructor(value: TSUnionTypeFields) {
-        super('tSUnionType');
-        this.value = value;
+export class TSUnionTypeTypeClass extends LwcCommonTypeClass<'tSUnionType', TSUnionTypeFields> {
+    private constructor(value: FieldsOf<TSUnionTypeFields>, sourceSpan: SourceSpan) {
+        super('tSUnionType', value, sourceSpan);
     }
 
     static create(target: TSUnionType, originalSource: string): TSUnionTypeTypeClass {
-        return new TSUnionTypeTypeClass({
-            types: visitNodeList(
-                target.types,
-                originalSource,
-                tSTypeVisitorEvaluatePairs(),
-                'TSTypeVisitor',
-            ),
-        });
-    }
-
-    /** すべてのフィールド (Babel の value フィールドの getter getValue() と区別する。getChildNodes もこれから作る) */
-    override getFields(): TSUnionTypeFields {
-        return this.value;
+        return new TSUnionTypeTypeClass(
+            {
+                types: visitNodeList(
+                    target.types,
+                    originalSource,
+                    tSTypeVisitorEvaluatePairs(),
+                    'TSTypeVisitor',
+                ),
+            },
+            getSourceSpan(target, originalSource),
+        );
     }
 
     getTypes(): TSUnionTypeFields['types'] {
-        return this.value.types;
+        return this.getFields().types;
     }
 }
 
@@ -47,5 +44,5 @@ export const tSUnionTypeTypePair: EvaluatePair<TSUnionType, TSUnionTypeTypeClass
     );
 
 export const isTSUnionTypeType = (
-    target: LwcCommonTypeClass<string>,
+    target: LwcCommonTypeClass<string, TypeField<string>>,
 ): target is TSUnionTypeTypeClass => target instanceof TSUnionTypeTypeClass;

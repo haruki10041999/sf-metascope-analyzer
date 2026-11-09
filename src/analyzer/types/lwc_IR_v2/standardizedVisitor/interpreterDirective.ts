@@ -1,34 +1,39 @@
+import { type FieldsOf, type TypeField } from '../../commons/ir';
+import { type SourceSpan } from '../../commons/source';
 import { isInterpreterDirective, type InterpreterDirective } from '@babel/types';
-import { EvaluatePair, LwcCommonTypeClass, makeEvaluatePair } from '../commonVisitor';
+import {
+    EvaluatePair,
+    LwcCommonTypeClass,
+    makeEvaluatePair,
+    getSourceSpan,
+} from '../commonVisitor';
 
-export type InterpreterDirectiveFields = {
+export type InterpreterDirectiveFields = TypeField<'interpreterDirective'> & {
     value: InterpreterDirective['value'];
 };
 
-export class InterpreterDirectiveTypeClass extends LwcCommonTypeClass<'interpreterDirective'> {
-    private readonly value: InterpreterDirectiveFields;
-
-    private constructor(value: InterpreterDirectiveFields) {
-        super('interpreterDirective');
-        this.value = value;
+export class InterpreterDirectiveTypeClass extends LwcCommonTypeClass<
+    'interpreterDirective',
+    InterpreterDirectiveFields
+> {
+    private constructor(value: FieldsOf<InterpreterDirectiveFields>, sourceSpan: SourceSpan) {
+        super('interpreterDirective', value, sourceSpan);
     }
 
     static create(
         target: InterpreterDirective,
         originalSource: string,
     ): InterpreterDirectiveTypeClass {
-        return new InterpreterDirectiveTypeClass({
-            value: target.value,
-        });
-    }
-
-    /** すべてのフィールド (Babel の value フィールドの getter getValue() と区別する。getChildNodes もこれから作る) */
-    override getFields(): InterpreterDirectiveFields {
-        return this.value;
+        return new InterpreterDirectiveTypeClass(
+            {
+                value: target.value,
+            },
+            getSourceSpan(target, originalSource),
+        );
     }
 
     getValue(): InterpreterDirectiveFields['value'] {
-        return this.value.value;
+        return this.getFields().value;
     }
 }
 
@@ -40,5 +45,5 @@ export const interpreterDirectiveTypePair: EvaluatePair<
 );
 
 export const isInterpreterDirectiveType = (
-    target: LwcCommonTypeClass<string>,
+    target: LwcCommonTypeClass<string, TypeField<string>>,
 ): target is InterpreterDirectiveTypeClass => target instanceof InterpreterDirectiveTypeClass;

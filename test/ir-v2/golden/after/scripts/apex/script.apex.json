@@ -1,0 +1,792 @@
+{
+  "source": {
+    "fileName": "script.apex",
+    "fileType": "anonymous",
+    "content": {
+      "block": [
+        {
+          "kind": "field",
+          "sourceKeys": {},
+          "variants": [
+            {
+              "sourceKeys": {},
+              "name": "limitSize",
+              "init": {
+                "sourceKeys": {},
+                "value": "20",
+                "valueType": "integer"
+              }
+            }
+          ],
+          "variantType": {
+            "kind": "type",
+            "sourceKeys": {},
+            "type": "primitive",
+            "primitiveType": "Integer"
+          },
+          "modifier": {}
+        },
+        {
+          "kind": "method",
+          "sourceKeys": {
+            "base": {},
+            "name": {}
+          },
+          "name": "helper",
+          "returnType": "void",
+          "param": [
+            {
+              "kind": "parameter",
+              "sourceKeys": {},
+              "variant": "n",
+              "variantType": {
+                "kind": "type",
+                "sourceKeys": {},
+                "type": "primitive",
+                "primitiveType": "Integer"
+              },
+              "modifier": {}
+            }
+          ],
+          "block": [
+            {
+              "kind": "expression",
+              "sourceKeys": {},
+              "value": {
+                "kind": "memberAccess",
+                "sourceKeys": {},
+                "type": "method",
+                "object": "System",
+                "operator": ".",
+                "member": "debug",
+                "memberArg": [
+                  {
+                    "kind": "memberAccess",
+                    "sourceKeys": {},
+                    "type": "object",
+                    "object": "LoggingLevel",
+                    "operator": ".",
+                    "member": "WARN"
+                  },
+                  "n"
+                ]
+              }
+            }
+          ],
+          "modifier": {}
+        },
+        {
+          "kind": "statement",
+          "statement": {
+            "kind": "expression",
+            "sourceKeys": {},
+            "value": {
+              "kind": "memberAccess",
+              "sourceKeys": {},
+              "type": "method",
+              "object": "System",
+              "operator": ".",
+              "member": "debug",
+              "memberArg": [
+                {
+                  "sourceKeys": {},
+                  "value": "'end'",
+                  "valueType": "string"
+                }
+              ]
+            }
+          },
+          "modifier": {}
+        },
+        {
+          "kind": "statement",
+          "statement": {
+            "kind": "for",
+            "sourceKeys": {},
+            "condition": {
+              "kind": "forCondition",
+              "sourceKeys": {},
+              "initializer": {
+                "variants": [
+                  {
+                    "sourceKeys": {},
+                    "name": "k",
+                    "init": {
+                      "sourceKeys": {},
+                      "value": "0",
+                      "valueType": "integer"
+                    }
+                  }
+                ],
+                "variantsType": {
+                  "kind": "type",
+                  "sourceKeys": {},
+                  "type": "primitive",
+                  "primitiveType": "Integer"
+                },
+                "modifier": {}
+              },
+              "condition": {
+                "sourceKeys": {},
+                "left": "k",
+                "operator": "<",
+                "right": {
+                  "sourceKeys": {},
+                  "value": "5",
+                  "valueType": "integer"
+                }
+              },
+              "update": [
+                {
+                  "sourceKeys": {},
+                  "variant": "k",
+                  "operator": "++",
+                  "operatorLocation": "back"
+                }
+              ]
+            },
+            "block": [
+              {
+                "kind": "if",
+                "sourceKeys": {},
+                "conditionBlock": [
+                  {
+                    "condition": {
+                      "kind": "ifCondition",
+                      "sourceKeys": {},
+                      "condition": {
+                        "sourceKeys": {},
+                        "left": "k",
+                        "operator": "==",
+                        "right": {
+                          "sourceKeys": {},
+                          "value": "1",
+                          "valueType": "integer"
+                        }
+                      }
+                    },
+                    "block": [
+                      {
+                        "kind": "expression",
+                        "sourceKeys": {},
+                        "value": {
+                          "kind": "memberAccess",
+                          "sourceKeys": {},
+                          "type": "method",
+                          "object": "System",
+                          "operator": ".",
+                          "member": "debug",
+                          "memberArg": [
+                            {
+                              "sourceKeys": {},
+                              "value": "'skip'",
+                              "valueType": "string"
+                            }
+                          ]
+                        }
+                      },
+                      {
+                        "kind": "continue",
+                        "sourceKeys": {},
+                        "value": "continue"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "kind": "if",
+                "sourceKeys": {},
+                "conditionBlock": [
+                  {
+                    "condition": {
+                      "kind": "ifCondition",
+                      "sourceKeys": {},
+                      "condition": {
+                        "sourceKeys": {},
+                        "left": "k",
+                        "operator": ">=",
+                        "right": {
+                          "sourceKeys": {},
+                          "value": "2",
+                          "valueType": "integer"
+                        }
+                      }
+                    },
+                    "block": [
+                      {
+                        "kind": "expression",
+                        "sourceKeys": {},
+                        "value": {
+                          "kind": "memberAccess",
+                          "sourceKeys": {},
+                          "type": "method",
+                          "object": "System",
+                          "operator": ".",
+                          "member": "debug",
+                          "memberArg": [
+                            {
+                              "sourceKeys": {},
+                              "value": "'stop'",
+                              "valueType": "string"
+                            }
+                          ]
+                        }
+                      },
+                      {
+                        "kind": "break",
+                        "sourceKeys": {},
+                        "value": "break"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          "modifier": {}
+        },
+        {
+          "kind": "statement",
+          "statement": {
+            "kind": "expression",
+            "sourceKeys": {},
+            "value": {
+              "kind": "memberAccess",
+              "sourceKeys": {},
+              "type": "method",
+              "member": "helper",
+              "memberArg": [
+                "limitSize"
+              ]
+            }
+          },
+          "modifier": {}
+        }
+      ]
+    }
+  },
+  "sourceObject": [
+    {
+      "context": "'end'",
+      "start": {
+        "offset": 106,
+        "line": 7,
+        "column": 13
+      },
+      "end": {
+        "offset": 111,
+        "line": 7,
+        "column": 18
+      }
+    },
+    {
+      "context": "'skip'",
+      "start": {
+        "offset": 187,
+        "line": 10,
+        "column": 21
+      },
+      "end": {
+        "offset": 193,
+        "line": 10,
+        "column": 27
+      }
+    },
+    {
+      "context": "'stop'",
+      "start": {
+        "offset": 259,
+        "line": 14,
+        "column": 21
+      },
+      "end": {
+        "offset": 265,
+        "line": 14,
+        "column": 27
+      }
+    },
+    {
+      "context": "(k == 1)",
+      "start": {
+        "offset": 155,
+        "line": 9,
+        "column": 7
+      },
+      "end": {
+        "offset": 163,
+        "line": 9,
+        "column": 15
+      }
+    },
+    {
+      "context": "(k >= 2)",
+      "start": {
+        "offset": 227,
+        "line": 13,
+        "column": 7
+      },
+      "end": {
+        "offset": 235,
+        "line": 13,
+        "column": 15
+      }
+    },
+    {
+      "context": "0",
+      "start": {
+        "offset": 131,
+        "line": 8,
+        "column": 17
+      },
+      "end": {
+        "offset": 132,
+        "line": 8,
+        "column": 18
+      }
+    },
+    {
+      "context": "1",
+      "start": {
+        "offset": 161,
+        "line": 9,
+        "column": 13
+      },
+      "end": {
+        "offset": 162,
+        "line": 9,
+        "column": 14
+      }
+    },
+    {
+      "context": "2",
+      "start": {
+        "offset": 233,
+        "line": 13,
+        "column": 13
+      },
+      "end": {
+        "offset": 234,
+        "line": 13,
+        "column": 14
+      }
+    },
+    {
+      "context": "20",
+      "start": {
+        "offset": 20,
+        "line": 1,
+        "column": 20
+      },
+      "end": {
+        "offset": 22,
+        "line": 1,
+        "column": 22
+      }
+    },
+    {
+      "context": "5",
+      "start": {
+        "offset": 138,
+        "line": 8,
+        "column": 24
+      },
+      "end": {
+        "offset": 139,
+        "line": 8,
+        "column": 25
+      }
+    },
+    {
+      "context": "Integer k = 0; k < 5; k++",
+      "start": {
+        "offset": 119,
+        "line": 8,
+        "column": 5
+      },
+      "end": {
+        "offset": 144,
+        "line": 8,
+        "column": 30
+      }
+    },
+    {
+      "context": "Integer limitSize = 20;",
+      "start": {
+        "offset": 0,
+        "line": 1,
+        "column": 0
+      },
+      "end": {
+        "offset": 23,
+        "line": 1,
+        "column": 23
+      }
+    },
+    {
+      "context": "Integer n",
+      "start": {
+        "offset": 37,
+        "line": 3,
+        "column": 12
+      },
+      "end": {
+        "offset": 46,
+        "line": 3,
+        "column": 21
+      }
+    },
+    {
+      "context": "Integer",
+      "start": {
+        "offset": 0,
+        "line": 1,
+        "column": 0
+      },
+      "end": {
+        "offset": 7,
+        "line": 1,
+        "column": 7
+      }
+    },
+    {
+      "context": "Integer",
+      "start": {
+        "offset": 119,
+        "line": 8,
+        "column": 5
+      },
+      "end": {
+        "offset": 126,
+        "line": 8,
+        "column": 12
+      }
+    },
+    {
+      "context": "Integer",
+      "start": {
+        "offset": 37,
+        "line": 3,
+        "column": 12
+      },
+      "end": {
+        "offset": 44,
+        "line": 3,
+        "column": 19
+      }
+    },
+    {
+      "context": "LoggingLevel.WARN",
+      "start": {
+        "offset": 67,
+        "line": 4,
+        "column": 17
+      },
+      "end": {
+        "offset": 84,
+        "line": 4,
+        "column": 34
+      }
+    },
+    {
+      "context": "System.debug('end')",
+      "start": {
+        "offset": 93,
+        "line": 7,
+        "column": 0
+      },
+      "end": {
+        "offset": 112,
+        "line": 7,
+        "column": 19
+      }
+    },
+    {
+      "context": "System.debug('end');",
+      "start": {
+        "offset": 93,
+        "line": 7,
+        "column": 0
+      },
+      "end": {
+        "offset": 113,
+        "line": 7,
+        "column": 20
+      }
+    },
+    {
+      "context": "System.debug('skip')",
+      "start": {
+        "offset": 174,
+        "line": 10,
+        "column": 8
+      },
+      "end": {
+        "offset": 194,
+        "line": 10,
+        "column": 28
+      }
+    },
+    {
+      "context": "System.debug('skip');",
+      "start": {
+        "offset": 174,
+        "line": 10,
+        "column": 8
+      },
+      "end": {
+        "offset": 195,
+        "line": 10,
+        "column": 29
+      }
+    },
+    {
+      "context": "System.debug('stop')",
+      "start": {
+        "offset": 246,
+        "line": 14,
+        "column": 8
+      },
+      "end": {
+        "offset": 266,
+        "line": 14,
+        "column": 28
+      }
+    },
+    {
+      "context": "System.debug('stop');",
+      "start": {
+        "offset": 246,
+        "line": 14,
+        "column": 8
+      },
+      "end": {
+        "offset": 267,
+        "line": 14,
+        "column": 29
+      }
+    },
+    {
+      "context": "System.debug(LoggingLevel.WARN, n)",
+      "start": {
+        "offset": 54,
+        "line": 4,
+        "column": 4
+      },
+      "end": {
+        "offset": 88,
+        "line": 4,
+        "column": 38
+      }
+    },
+    {
+      "context": "System.debug(LoggingLevel.WARN, n);",
+      "start": {
+        "offset": 54,
+        "line": 4,
+        "column": 4
+      },
+      "end": {
+        "offset": 89,
+        "line": 4,
+        "column": 39
+      }
+    },
+    {
+      "context": "break;",
+      "start": {
+        "offset": 276,
+        "line": 15,
+        "column": 8
+      },
+      "end": {
+        "offset": 282,
+        "line": 15,
+        "column": 14
+      }
+    },
+    {
+      "context": "continue;",
+      "start": {
+        "offset": 204,
+        "line": 11,
+        "column": 8
+      },
+      "end": {
+        "offset": 213,
+        "line": 11,
+        "column": 17
+      }
+    },
+    {
+      "context": "for (Integer k = 0; k < 5; k++) {\n    if (k == 1) {\n        System.debug('skip');\n        continue;\n    }\n    if (k >= 2) {\n        System.debug('stop');\n        break;\n    }\n}",
+      "start": {
+        "offset": 114,
+        "line": 8,
+        "column": 0
+      },
+      "end": {
+        "offset": 290,
+        "line": 17,
+        "column": 1
+      }
+    },
+    {
+      "context": "helper",
+      "start": {
+        "offset": 30,
+        "line": 3,
+        "column": 5
+      },
+      "end": {
+        "offset": 36,
+        "line": 3,
+        "column": 11
+      }
+    },
+    {
+      "context": "helper(limitSize)",
+      "start": {
+        "offset": 291,
+        "line": 18,
+        "column": 0
+      },
+      "end": {
+        "offset": 308,
+        "line": 18,
+        "column": 17
+      }
+    },
+    {
+      "context": "helper(limitSize);",
+      "start": {
+        "offset": 291,
+        "line": 18,
+        "column": 0
+      },
+      "end": {
+        "offset": 309,
+        "line": 18,
+        "column": 18
+      }
+    },
+    {
+      "context": "if (k == 1) {\n        System.debug('skip');\n        continue;\n    }",
+      "start": {
+        "offset": 152,
+        "line": 9,
+        "column": 4
+      },
+      "end": {
+        "offset": 219,
+        "line": 12,
+        "column": 5
+      }
+    },
+    {
+      "context": "if (k >= 2) {\n        System.debug('stop');\n        break;\n    }",
+      "start": {
+        "offset": 224,
+        "line": 13,
+        "column": 4
+      },
+      "end": {
+        "offset": 288,
+        "line": 16,
+        "column": 5
+      }
+    },
+    {
+      "context": "k < 5",
+      "start": {
+        "offset": 134,
+        "line": 8,
+        "column": 20
+      },
+      "end": {
+        "offset": 139,
+        "line": 8,
+        "column": 25
+      }
+    },
+    {
+      "context": "k = 0",
+      "start": {
+        "offset": 127,
+        "line": 8,
+        "column": 13
+      },
+      "end": {
+        "offset": 132,
+        "line": 8,
+        "column": 18
+      }
+    },
+    {
+      "context": "k == 1",
+      "start": {
+        "offset": 156,
+        "line": 9,
+        "column": 8
+      },
+      "end": {
+        "offset": 162,
+        "line": 9,
+        "column": 14
+      }
+    },
+    {
+      "context": "k >= 2",
+      "start": {
+        "offset": 228,
+        "line": 13,
+        "column": 8
+      },
+      "end": {
+        "offset": 234,
+        "line": 13,
+        "column": 14
+      }
+    },
+    {
+      "context": "k++",
+      "start": {
+        "offset": 141,
+        "line": 8,
+        "column": 27
+      },
+      "end": {
+        "offset": 144,
+        "line": 8,
+        "column": 30
+      }
+    },
+    {
+      "context": "limitSize = 20",
+      "start": {
+        "offset": 8,
+        "line": 1,
+        "column": 8
+      },
+      "end": {
+        "offset": 22,
+        "line": 1,
+        "column": 22
+      }
+    },
+    {
+      "context": "void helper(Integer n) {\n    System.debug(LoggingLevel.WARN, n);\n}",
+      "start": {
+        "offset": 25,
+        "line": 3,
+        "column": 0
+      },
+      "end": {
+        "offset": 91,
+        "line": 5,
+        "column": 1
+      }
+    }
+  ],
+  "resolvedError": []
+}

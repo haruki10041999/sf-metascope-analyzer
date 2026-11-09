@@ -1,0 +1,162 @@
+{
+  "source": {
+    "fileName": "Unchanged.cls",
+    "fileType": "cls",
+    "content": {
+      "kind": "class",
+      "sourceKeys": {
+        "base": {},
+        "name": {}
+      },
+      "name": "Unchanged",
+      "block": [
+        {
+          "kind": "field",
+          "sourceKeys": {},
+          "variants": [
+            {
+              "sourceKeys": {},
+              "name": "value",
+              "init": {
+                "sourceKeys": {},
+                "value": "1",
+                "valueType": "integer"
+              }
+            }
+          ],
+          "variantType": {
+            "kind": "type",
+            "sourceKeys": {},
+            "type": "primitive",
+            "primitiveType": "Integer"
+          },
+          "modifier": {
+            "access": [
+              {
+                "kind": "modifier",
+                "sourceKeys": {},
+                "name": "PUBLIC"
+              }
+            ]
+          }
+        }
+      ],
+      "modifier": {
+        "access": [
+          {
+            "kind": "modifier",
+            "sourceKeys": {},
+            "name": "PUBLIC"
+          }
+        ]
+      }
+    }
+  },
+  "sourceObject": [
+    {
+      "context": "1",
+      "start": {
+        "offset": 55,
+        "line": 5,
+        "column": 27
+      },
+      "end": {
+        "offset": 56,
+        "line": 5,
+        "column": 28
+      }
+    },
+    {
+      "context": "Integer value = 1;",
+      "start": {
+        "offset": 39,
+        "line": 5,
+        "column": 11
+      },
+      "end": {
+        "offset": 57,
+        "line": 5,
+        "column": 29
+      }
+    },
+    {
+      "context": "Integer",
+      "start": {
+        "offset": 39,
+        "line": 5,
+        "column": 11
+      },
+      "end": {
+        "offset": 46,
+        "line": 5,
+        "column": 18
+      }
+    },
+    {
+      "context": "Unchanged",
+      "start": {
+        "offset": 15,
+        "line": 3,
+        "column": 13
+      },
+      "end": {
+        "offset": 24,
+        "line": 3,
+        "column": 22
+      }
+    },
+    {
+      "context": "class Unchanged {\n\n    public Integer value = 1;\n}",
+      "start": {
+        "offset": 9,
+        "line": 3,
+        "column": 7
+      },
+      "end": {
+        "offset": 59,
+        "line": 6,
+        "column": 1
+      }
+    },
+    {
+      "context": "public",
+      "start": {
+        "offset": 2,
+        "line": 3,
+        "column": 0
+      },
+      "end": {
+        "offset": 8,
+        "line": 3,
+        "column": 6
+      }
+    },
+    {
+      "context": "public",
+      "start": {
+        "offset": 32,
+        "line": 5,
+        "column": 4
+      },
+      "end": {
+        "offset": 38,
+        "line": 5,
+        "column": 10
+      }
+    },
+    {
+      "context": "value = 1",
+      "start": {
+        "offset": 47,
+        "line": 5,
+        "column": 19
+      },
+      "end": {
+        "offset": 56,
+        "line": 5,
+        "column": 28
+      }
+    }
+  ],
+  "resolvedError": []
+}

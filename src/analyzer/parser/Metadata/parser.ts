@@ -129,7 +129,10 @@ export class MetadataParser {
     static parseObjectSource(apiName: string, files: SourceText[]): ObjectParseResult {
         const lf = (source: string) => source.replace(/\r\n?/g, '\n');
         const objectText = files.find(
-            (file) => file.filePath === `${apiName}/${apiName}${OBJECT_SUFFIX}`,
+            (file) =>
+                file.filePath === `${apiName}/${apiName}${OBJECT_SUFFIX}` ||
+                // メタデータ API の形式 (objects/<API 名>.object。項目などは中に書く)
+                file.filePath === `${apiName}.object`,
         );
         const objectFile = objectText
             ? parseXmlSource(objectText.filePath, lf(objectText.source), apiName)

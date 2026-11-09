@@ -1,16 +1,27 @@
+import { type FieldsOf, type TypeField } from '../../commons/ir';
+import { type SourceSpan } from '../../commons/source';
 import { isTSDeclareMethod, type TSDeclareMethod } from '@babel/types';
 import {
     EvaluatePair,
     LwcCommonTypeClass,
-    LwcErrorTypeClass,
     lazyPairs,
     makeEvaluatePair,
-    visitNode,
     visitNodeList,
-    visitOptionalNode,
+    getSourceSpan,
 } from '../commonVisitor';
-import { privateNameTypePair, type PrivateNameTypeClass } from '../commons/privateName';
-import { expressionVisitorEvaluatePairs, type ExpressionTypeClass } from '../expressionVisitor';
+import {
+    createGetterParams,
+    createMemberKey,
+    createSetterParams,
+    rejectChild,
+    setterParamPairs,
+    staticMemberKeyOrPrivateNamePairs,
+    type GetterParams,
+    type MemberKey,
+    type SetterParams,
+    type StaticMemberKeyTypeClass,
+} from '../commons/memberKey';
+import { type PrivateNameTypeClass } from '../commons/privateName';
 import {
     functionParameterVisitorEvaluatePairs,
     type FunctionParameterTypeClass,
@@ -19,146 +30,188 @@ import {
     tSParameterPropertyTypePair,
     type TSParameterPropertyTypeClass,
 } from './tSParameterProperty';
-import { tSTypeAnnotationTypePair, type TSTypeAnnotationTypeClass } from './tSTypeAnnotation';
-import {
-    tSTypeParameterDeclarationTypePair,
-    type TSTypeParameterDeclarationTypeClass,
-} from './tSTypeParameterDeclaration';
+import { TSTypeAnnotationTypeClass } from './tSTypeAnnotation';
+import { TSTypeParameterDeclarationTypeClass } from './tSTypeParameterDeclaration';
 
-const tSDeclareMethodParamsPairs = lazyPairs(
+const tSDeclareMethodConstructorParamsPairs = lazyPairs(
     () => [...functionParameterVisitorEvaluatePairs(), tSParameterPropertyTypePair] as const,
 );
-const tSDeclareMethodKeyPairs = lazyPairs(
-    () => [...expressionVisitorEvaluatePairs(), privateNameTypePair] as const,
-);
-const tSDeclareMethodReturnTypePairs = lazyPairs(() => [tSTypeAnnotationTypePair] as const);
-const tSDeclareMethodTypeParametersPairs = lazyPairs(
-    () => [tSTypeParameterDeclarationTypePair] as const,
-);
 
-export type TSDeclareMethodFields = {
-    params: (FunctionParameterTypeClass | TSParameterPropertyTypeClass | LwcErrorTypeClass)[];
-    generator: TSDeclareMethod['generator'];
-    async: TSDeclareMethod['async'];
-    abstract: NonNullable<TSDeclareMethod['abstract']> | null;
-    accessibility: NonNullable<TSDeclareMethod['accessibility']> | null;
+/** constructor 以外 (method・get・set) が持つ修飾子 */
+type TSDeclareMethodModifiers = {
     static: TSDeclareMethod['static'];
-    override: NonNullable<TSDeclareMethod['override']> | null;
-    computed: TSDeclareMethod['computed'];
-    optional: NonNullable<TSDeclareMethod['optional']> | null;
-    key: ExpressionTypeClass | PrivateNameTypeClass | LwcErrorTypeClass;
-    kind: TSDeclareMethod['kind'];
-    access: NonNullable<TSDeclareMethod['access']> | null;
-    returnType: TSTypeAnnotationTypeClass | LwcErrorTypeClass | null;
-    typeParameters: TSTypeParameterDeclarationTypeClass | LwcErrorTypeClass | null;
+    abstract: boolean;
+    override: boolean;
+    optional: boolean;
 };
 
-export class TSDeclareMethodTypeClass extends LwcCommonTypeClass<'tSDeclareMethod'> {
-    private readonly value: TSDeclareMethodFields;
+/**
+ * Babel 8 の TSDeclareMethodComputed | TSDeclareMethodNonComputed と、kind ごとの決まり。
+ * - constructor: static・generator・async・returnType・typeParameters を持たない。TSParameterProperty はここだけ
+ * - get: params は 0 個 (this パラメータは可)。generator・async・typeParameters を持たない
+ * - set: params はちょうど 1 個 (rest は不可)。generator・async・returnType・typeParameters を持たない
+ * 旧い access は accessibility と重なるので持たない
+ */
+export type TSDeclareMethodFields = TypeField<'tSDeclareMethod'> &
+    MemberKey<StaticMemberKeyTypeClass | PrivateNameTypeClass> & {
+        accessibility: NonNullable<TSDeclareMethod['accessibility']> | null;
+    } & (
+        | {
+              kind: 'constructor';
+              params: (FunctionParameterTypeClass | TSParameterPropertyTypeClass)[];
+          }
+        | ({
+              kind: 'method';
+              generator: TSDeclareMethod['generator'];
+              async: TSDeclareMethod['async'];
+              params: FunctionParameterTypeClass[];
+              returnType: TSTypeAnnotationTypeClass | null;
+              typeParameters: TSTypeParameterDeclarationTypeClass | null;
+          } & TSDeclareMethodModifiers)
+        | ({
+              kind: 'get';
+              params: GetterParams;
+              returnType: TSTypeAnnotationTypeClass | null;
+          } & TSDeclareMethodModifiers)
+        | ({ kind: 'set'; params: SetterParams } & TSDeclareMethodModifiers)
+    );
 
-    private constructor(value: TSDeclareMethodFields) {
-        super('tSDeclareMethod');
-        this.value = value;
+export class TSDeclareMethodTypeClass extends LwcCommonTypeClass<
+    'tSDeclareMethod',
+    TSDeclareMethodFields
+> {
+    private constructor(value: FieldsOf<TSDeclareMethodFields>, sourceSpan: SourceSpan) {
+        super('tSDeclareMethod', value, sourceSpan);
     }
 
     static create(target: TSDeclareMethod, originalSource: string): TSDeclareMethodTypeClass {
-        return new TSDeclareMethodTypeClass({
-            params: visitNodeList(
-                target.params,
+        const common = {
+            ...createMemberKey(
+                target,
                 originalSource,
-                tSDeclareMethodParamsPairs(),
-                'TSDeclareMethod.params',
+                staticMemberKeyOrPrivateNamePairs(),
+                'TSDeclareMethod',
             ),
-            generator: target.generator,
-            async: target.async,
-            abstract: target.abstract ?? null,
             accessibility: target.accessibility ?? null,
-            static: target.static,
-            override: target.override ?? null,
-            computed: target.computed,
-            optional: target.optional ?? null,
-            key: visitNode(
-                target.key,
-                originalSource,
-                tSDeclareMethodKeyPairs(),
-                'TSDeclareMethod.key',
-            ),
-            kind: target.kind,
-            access: target.access ?? null,
-            returnType: visitOptionalNode(
-                target.returnType,
-                originalSource,
-                tSDeclareMethodReturnTypePairs(),
-                'TSDeclareMethod.returnType',
-            ),
-            typeParameters: visitOptionalNode(
+        };
+        const span = getSourceSpan(target, originalSource);
+        const returnType = (): TSTypeAnnotationTypeClass | null =>
+            target.returnType == null
+                ? null
+                : TSTypeAnnotationTypeClass.create(target.returnType, originalSource);
+
+        if (target.kind !== 'method') {
+            rejectChild(
+                target,
                 target.typeParameters,
                 originalSource,
-                tSDeclareMethodTypeParametersPairs(),
-                'TSDeclareMethod.typeParameters',
-            ),
-        });
-    }
+                `${target.kind} は型パラメータを持てません`,
+            );
+        }
+        if (target.kind === 'constructor' || target.kind === 'set') {
+            rejectChild(
+                target,
+                target.returnType,
+                originalSource,
+                `${target.kind} は戻り値の型を持てません`,
+            );
+        }
 
-    /** すべてのフィールド (Babel の value フィールドの getter getValue() と区別する。getChildNodes もこれから作る) */
-    override getFields(): TSDeclareMethodFields {
-        return this.value;
+        if (target.kind === 'constructor') {
+            return new TSDeclareMethodTypeClass(
+                {
+                    ...common,
+                    kind: 'constructor',
+                    params: visitNodeList(
+                        target.params,
+                        originalSource,
+                        tSDeclareMethodConstructorParamsPairs(),
+                        'TSDeclareMethod.params',
+                    ),
+                },
+                span,
+            );
+        }
+
+        const modifiers: TSDeclareMethodModifiers = {
+            static: target.static,
+            abstract: target.abstract ?? false,
+            override: target.override ?? false,
+            optional: target.optional ?? false,
+        };
+        switch (target.kind) {
+            case 'method':
+                return new TSDeclareMethodTypeClass(
+                    {
+                        ...common,
+                        ...modifiers,
+                        kind: 'method',
+                        generator: target.generator,
+                        async: target.async,
+                        params: visitNodeList(
+                            target.params,
+                            originalSource,
+                            functionParameterVisitorEvaluatePairs(),
+                            'TSDeclareMethod.params',
+                        ),
+                        returnType: returnType(),
+                        typeParameters:
+                            target.typeParameters == null
+                                ? null
+                                : TSTypeParameterDeclarationTypeClass.create(
+                                      target.typeParameters,
+                                      originalSource,
+                                  ),
+                    },
+                    span,
+                );
+            case 'get':
+                return new TSDeclareMethodTypeClass(
+                    {
+                        ...common,
+                        ...modifiers,
+                        kind: 'get',
+                        params: createGetterParams(target, originalSource, 'TSDeclareMethod'),
+                        returnType: returnType(),
+                    },
+                    span,
+                );
+            case 'set':
+                return new TSDeclareMethodTypeClass(
+                    {
+                        ...common,
+                        ...modifiers,
+                        kind: 'set',
+                        params: createSetterParams(
+                            target,
+                            originalSource,
+                            setterParamPairs(),
+                            'TSDeclareMethod',
+                        ),
+                    },
+                    span,
+                );
+        }
     }
 
     getParams(): TSDeclareMethodFields['params'] {
-        return this.value.params;
-    }
-
-    getGenerator(): TSDeclareMethodFields['generator'] {
-        return this.value.generator;
-    }
-
-    getAsync(): TSDeclareMethodFields['async'] {
-        return this.value.async;
-    }
-
-    getAbstract(): TSDeclareMethodFields['abstract'] {
-        return this.value.abstract;
+        return this.getFields().params;
     }
 
     getAccessibility(): TSDeclareMethodFields['accessibility'] {
-        return this.value.accessibility;
-    }
-
-    getStatic(): TSDeclareMethodFields['static'] {
-        return this.value.static;
-    }
-
-    getOverride(): TSDeclareMethodFields['override'] {
-        return this.value.override;
+        return this.getFields().accessibility;
     }
 
     getComputed(): TSDeclareMethodFields['computed'] {
-        return this.value.computed;
-    }
-
-    getOptional(): TSDeclareMethodFields['optional'] {
-        return this.value.optional;
+        return this.getFields().computed;
     }
 
     getKey(): TSDeclareMethodFields['key'] {
-        return this.value.key;
+        return this.getFields().key;
     }
 
     getKind(): TSDeclareMethodFields['kind'] {
-        return this.value.kind;
-    }
-
-    getAccess(): TSDeclareMethodFields['access'] {
-        return this.value.access;
-    }
-
-    getReturnType(): TSDeclareMethodFields['returnType'] {
-        return this.value.returnType;
-    }
-
-    getTypeParameters(): TSDeclareMethodFields['typeParameters'] {
-        return this.value.typeParameters;
+        return this.getFields().kind;
     }
 }
 
@@ -168,5 +221,5 @@ export const tSDeclareMethodTypePair: EvaluatePair<TSDeclareMethod, TSDeclareMet
     );
 
 export const isTSDeclareMethodType = (
-    target: LwcCommonTypeClass<string>,
+    target: LwcCommonTypeClass<string, TypeField<string>>,
 ): target is TSDeclareMethodTypeClass => target instanceof TSDeclareMethodTypeClass;

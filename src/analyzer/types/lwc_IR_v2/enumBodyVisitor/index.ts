@@ -1,3 +1,4 @@
+import { type TypeField } from '../../commons/ir';
 import { LwcCommonTypeClass, LwcCommonVisitor, lazyPairs } from '../commonVisitor';
 import { EnumBooleanBodyTypeClass, enumBooleanBodyTypePair } from '../commons/enumBooleanBody';
 import { EnumNumberBodyTypeClass, enumNumberBodyTypePair } from '../commons/enumNumberBody';
@@ -49,7 +50,9 @@ export type EnumBodyTypeClass =
     | EnumStringBodyTypeClass
     | EnumSymbolBodyTypeClass;
 
-export const isEnumBodyType = (target: LwcCommonTypeClass<string>): target is EnumBodyTypeClass => {
+export const isEnumBodyType = (
+    target: LwcCommonTypeClass<string, TypeField<string>>,
+): target is EnumBodyTypeClass => {
     return (
         target instanceof EnumBooleanBodyTypeClass ||
         target instanceof EnumNumberBodyTypeClass ||

@@ -1,71 +1,56 @@
+import { type FieldsOf, type TypeField } from '../../commons/ir';
+import { type SourceSpan } from '../../commons/source';
 import { isTSEnumDeclaration, type TSEnumDeclaration } from '@babel/types';
 import {
     EvaluatePair,
     LwcCommonTypeClass,
-    LwcErrorTypeClass,
-    lazyPairs,
     makeEvaluatePair,
-    visitNode,
+    getSourceSpan,
 } from '../commonVisitor';
-import { tSEnumBodyTypePair, type TSEnumBodyTypeClass } from '../typeScriptVisitor/tSEnumBody';
-import { identifierTypePair, type IdentifierTypeClass } from './identifier';
+import { TSEnumBodyTypeClass } from '../typeScriptVisitor/tSEnumBody';
+import { IdentifierTypeClass } from './identifier';
 
-const tSEnumDeclarationIdPairs = lazyPairs(() => [identifierTypePair] as const);
-const tSEnumDeclarationBodyPairs = lazyPairs(() => [tSEnumBodyTypePair] as const);
-
-export type TSEnumDeclarationFields = {
-    declare: NonNullable<TSEnumDeclaration['declare']> | null;
-    const: NonNullable<TSEnumDeclaration['const']> | null;
-    id: IdentifierTypeClass | LwcErrorTypeClass;
-    body: TSEnumBodyTypeClass | LwcErrorTypeClass;
+export type TSEnumDeclarationFields = TypeField<'tSEnumDeclaration'> & {
+    declare: boolean;
+    const: boolean;
+    id: IdentifierTypeClass;
+    body: TSEnumBodyTypeClass;
 };
 
-export class TSEnumDeclarationTypeClass extends LwcCommonTypeClass<'tSEnumDeclaration'> {
-    private readonly value: TSEnumDeclarationFields;
-
-    private constructor(value: TSEnumDeclarationFields) {
-        super('tSEnumDeclaration');
-        this.value = value;
+export class TSEnumDeclarationTypeClass extends LwcCommonTypeClass<
+    'tSEnumDeclaration',
+    TSEnumDeclarationFields
+> {
+    private constructor(value: FieldsOf<TSEnumDeclarationFields>, sourceSpan: SourceSpan) {
+        super('tSEnumDeclaration', value, sourceSpan);
     }
 
     static create(target: TSEnumDeclaration, originalSource: string): TSEnumDeclarationTypeClass {
-        return new TSEnumDeclarationTypeClass({
-            declare: target.declare ?? null,
-            const: target.const ?? null,
-            id: visitNode(
-                target.id,
-                originalSource,
-                tSEnumDeclarationIdPairs(),
-                'TSEnumDeclaration.id',
-            ),
-            body: visitNode(
-                target.body,
-                originalSource,
-                tSEnumDeclarationBodyPairs(),
-                'TSEnumDeclaration.body',
-            ),
-        });
-    }
-
-    /** すべてのフィールド (Babel の value フィールドの getter getValue() と区別する。getChildNodes もこれから作る) */
-    override getFields(): TSEnumDeclarationFields {
-        return this.value;
+        return new TSEnumDeclarationTypeClass(
+            {
+                declare: target.declare ?? false,
+                const: target.const ?? false,
+                id: IdentifierTypeClass.create(target.id, originalSource),
+                body: TSEnumBodyTypeClass.create(target.body, originalSource),
+            },
+            getSourceSpan(target, originalSource),
+        );
     }
 
     getDeclare(): TSEnumDeclarationFields['declare'] {
-        return this.value.declare;
+        return this.getFields().declare;
     }
 
     getConst(): TSEnumDeclarationFields['const'] {
-        return this.value.const;
+        return this.getFields().const;
     }
 
     getId(): TSEnumDeclarationFields['id'] {
-        return this.value.id;
+        return this.getFields().id;
     }
 
     getBody(): TSEnumDeclarationFields['body'] {
-        return this.value.body;
+        return this.getFields().body;
     }
 }
 
@@ -77,5 +62,5 @@ export const tSEnumDeclarationTypePair: EvaluatePair<
 );
 
 export const isTSEnumDeclarationType = (
-    target: LwcCommonTypeClass<string>,
+    target: LwcCommonTypeClass<string, TypeField<string>>,
 ): target is TSEnumDeclarationTypeClass => target instanceof TSEnumDeclarationTypeClass;

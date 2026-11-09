@@ -1,46 +1,36 @@
+import { type FieldsOf, type TypeField } from '../../commons/ir';
+import { type SourceSpan } from '../../commons/source';
 import { isTSEnumBody, type TSEnumBody } from '@babel/types';
 import {
     EvaluatePair,
     LwcCommonTypeClass,
-    LwcErrorTypeClass,
-    lazyPairs,
     makeEvaluatePair,
-    visitNodeList,
+    getSourceSpan,
 } from '../commonVisitor';
-import { tSEnumMemberTypePair, type TSEnumMemberTypeClass } from './tSEnumMember';
+import { TSEnumMemberTypeClass } from './tSEnumMember';
 
-const tSEnumBodyMembersPairs = lazyPairs(() => [tSEnumMemberTypePair] as const);
-
-export type TSEnumBodyFields = {
-    members: (TSEnumMemberTypeClass | LwcErrorTypeClass)[];
+export type TSEnumBodyFields = TypeField<'tSEnumBody'> & {
+    members: TSEnumMemberTypeClass[];
 };
 
-export class TSEnumBodyTypeClass extends LwcCommonTypeClass<'tSEnumBody'> {
-    private readonly value: TSEnumBodyFields;
-
-    private constructor(value: TSEnumBodyFields) {
-        super('tSEnumBody');
-        this.value = value;
+export class TSEnumBodyTypeClass extends LwcCommonTypeClass<'tSEnumBody', TSEnumBodyFields> {
+    private constructor(value: FieldsOf<TSEnumBodyFields>, sourceSpan: SourceSpan) {
+        super('tSEnumBody', value, sourceSpan);
     }
 
     static create(target: TSEnumBody, originalSource: string): TSEnumBodyTypeClass {
-        return new TSEnumBodyTypeClass({
-            members: visitNodeList(
-                target.members,
-                originalSource,
-                tSEnumBodyMembersPairs(),
-                'TSEnumBody.members',
-            ),
-        });
-    }
-
-    /** すべてのフィールド (Babel の value フィールドの getter getValue() と区別する。getChildNodes もこれから作る) */
-    override getFields(): TSEnumBodyFields {
-        return this.value;
+        return new TSEnumBodyTypeClass(
+            {
+                members: target.members.map((child) =>
+                    TSEnumMemberTypeClass.create(child, originalSource),
+                ),
+            },
+            getSourceSpan(target, originalSource),
+        );
     }
 
     getMembers(): TSEnumBodyFields['members'] {
-        return this.value.members;
+        return this.getFields().members;
     }
 }
 
@@ -50,5 +40,5 @@ export const tSEnumBodyTypePair: EvaluatePair<TSEnumBody, TSEnumBodyTypeClass> =
 );
 
 export const isTSEnumBodyType = (
-    target: LwcCommonTypeClass<string>,
+    target: LwcCommonTypeClass<string, TypeField<string>>,
 ): target is TSEnumBodyTypeClass => target instanceof TSEnumBodyTypeClass;

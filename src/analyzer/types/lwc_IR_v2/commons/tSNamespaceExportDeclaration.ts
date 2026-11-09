@@ -1,49 +1,43 @@
+import { type FieldsOf, type TypeField } from '../../commons/ir';
+import { type SourceSpan } from '../../commons/source';
 import { isTSNamespaceExportDeclaration, type TSNamespaceExportDeclaration } from '@babel/types';
 import {
     EvaluatePair,
     LwcCommonTypeClass,
-    LwcErrorTypeClass,
-    lazyPairs,
     makeEvaluatePair,
-    visitNode,
+    getSourceSpan,
 } from '../commonVisitor';
-import { identifierTypePair, type IdentifierTypeClass } from './identifier';
+import { IdentifierTypeClass } from './identifier';
 
-const tSNamespaceExportDeclarationIdPairs = lazyPairs(() => [identifierTypePair] as const);
-
-export type TSNamespaceExportDeclarationFields = {
-    id: IdentifierTypeClass | LwcErrorTypeClass;
+export type TSNamespaceExportDeclarationFields = TypeField<'tSNamespaceExportDeclaration'> & {
+    id: IdentifierTypeClass;
 };
 
-export class TSNamespaceExportDeclarationTypeClass extends LwcCommonTypeClass<'tSNamespaceExportDeclaration'> {
-    private readonly value: TSNamespaceExportDeclarationFields;
-
-    private constructor(value: TSNamespaceExportDeclarationFields) {
-        super('tSNamespaceExportDeclaration');
-        this.value = value;
+export class TSNamespaceExportDeclarationTypeClass extends LwcCommonTypeClass<
+    'tSNamespaceExportDeclaration',
+    TSNamespaceExportDeclarationFields
+> {
+    private constructor(
+        value: FieldsOf<TSNamespaceExportDeclarationFields>,
+        sourceSpan: SourceSpan,
+    ) {
+        super('tSNamespaceExportDeclaration', value, sourceSpan);
     }
 
     static create(
         target: TSNamespaceExportDeclaration,
         originalSource: string,
     ): TSNamespaceExportDeclarationTypeClass {
-        return new TSNamespaceExportDeclarationTypeClass({
-            id: visitNode(
-                target.id,
-                originalSource,
-                tSNamespaceExportDeclarationIdPairs(),
-                'TSNamespaceExportDeclaration.id',
-            ),
-        });
-    }
-
-    /** すべてのフィールド (Babel の value フィールドの getter getValue() と区別する。getChildNodes もこれから作る) */
-    override getFields(): TSNamespaceExportDeclarationFields {
-        return this.value;
+        return new TSNamespaceExportDeclarationTypeClass(
+            {
+                id: IdentifierTypeClass.create(target.id, originalSource),
+            },
+            getSourceSpan(target, originalSource),
+        );
     }
 
     getId(): TSNamespaceExportDeclarationFields['id'] {
-        return this.value.id;
+        return this.getFields().id;
     }
 }
 
@@ -55,6 +49,6 @@ export const tSNamespaceExportDeclarationTypePair: EvaluatePair<
 );
 
 export const isTSNamespaceExportDeclarationType = (
-    target: LwcCommonTypeClass<string>,
+    target: LwcCommonTypeClass<string, TypeField<string>>,
 ): target is TSNamespaceExportDeclarationTypeClass =>
     target instanceof TSNamespaceExportDeclarationTypeClass;

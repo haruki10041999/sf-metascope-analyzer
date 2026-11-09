@@ -1,11 +1,13 @@
+import { type FieldsOf, type TypeField } from '../../commons/ir';
+import { type SourceSpan } from '../../commons/source';
 import { isJSXExpressionContainer, type JSXExpressionContainer } from '@babel/types';
 import {
     EvaluatePair,
     LwcCommonTypeClass,
-    LwcErrorTypeClass,
     lazyPairs,
     makeEvaluatePair,
     visitNode,
+    getSourceSpan,
 } from '../commonVisitor';
 import { expressionVisitorEvaluatePairs, type ExpressionTypeClass } from '../expressionVisitor';
 import {
@@ -17,39 +19,37 @@ const jSXExpressionContainerExpressionPairs = lazyPairs(
     () => [...expressionVisitorEvaluatePairs(), jSXEmptyExpressionTypePair] as const,
 );
 
-export type JSXExpressionContainerFields = {
-    expression: ExpressionTypeClass | JSXEmptyExpressionTypeClass | LwcErrorTypeClass;
+export type JSXExpressionContainerFields = TypeField<'jSXExpressionContainer'> & {
+    expression: ExpressionTypeClass | JSXEmptyExpressionTypeClass;
 };
 
-export class JSXExpressionContainerTypeClass extends LwcCommonTypeClass<'jSXExpressionContainer'> {
-    private readonly value: JSXExpressionContainerFields;
-
-    private constructor(value: JSXExpressionContainerFields) {
-        super('jSXExpressionContainer');
-        this.value = value;
+export class JSXExpressionContainerTypeClass extends LwcCommonTypeClass<
+    'jSXExpressionContainer',
+    JSXExpressionContainerFields
+> {
+    private constructor(value: FieldsOf<JSXExpressionContainerFields>, sourceSpan: SourceSpan) {
+        super('jSXExpressionContainer', value, sourceSpan);
     }
 
     static create(
         target: JSXExpressionContainer,
         originalSource: string,
     ): JSXExpressionContainerTypeClass {
-        return new JSXExpressionContainerTypeClass({
-            expression: visitNode(
-                target.expression,
-                originalSource,
-                jSXExpressionContainerExpressionPairs(),
-                'JSXExpressionContainer.expression',
-            ),
-        });
-    }
-
-    /** すべてのフィールド (Babel の value フィールドの getter getValue() と区別する。getChildNodes もこれから作る) */
-    override getFields(): JSXExpressionContainerFields {
-        return this.value;
+        return new JSXExpressionContainerTypeClass(
+            {
+                expression: visitNode(
+                    target.expression,
+                    originalSource,
+                    jSXExpressionContainerExpressionPairs(),
+                    'JSXExpressionContainer.expression',
+                ),
+            },
+            getSourceSpan(target, originalSource),
+        );
     }
 
     getExpression(): JSXExpressionContainerFields['expression'] {
-        return this.value.expression;
+        return this.getFields().expression;
     }
 }
 
@@ -61,5 +61,5 @@ export const jSXExpressionContainerTypePair: EvaluatePair<
 );
 
 export const isJSXExpressionContainerType = (
-    target: LwcCommonTypeClass<string>,
+    target: LwcCommonTypeClass<string, TypeField<string>>,
 ): target is JSXExpressionContainerTypeClass => target instanceof JSXExpressionContainerTypeClass;

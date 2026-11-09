@@ -1,13 +1,25 @@
+import { type TypeField } from '../../commons/ir';
+import { type SourceSpan } from '../../commons/source';
 import { isDebuggerStatement, type DebuggerStatement } from '@babel/types';
-import { EvaluatePair, LwcCommonTypeClass, makeEvaluatePair } from '../commonVisitor';
+import {
+    EvaluatePair,
+    LwcCommonTypeClass,
+    makeEvaluatePair,
+    getSourceSpan,
+} from '../commonVisitor';
 
-export class DebuggerStatementTypeClass extends LwcCommonTypeClass<'debuggerStatement'> {
-    private constructor() {
-        super('debuggerStatement');
+export type DebuggerStatementFields = TypeField<'debuggerStatement'>;
+
+export class DebuggerStatementTypeClass extends LwcCommonTypeClass<
+    'debuggerStatement',
+    DebuggerStatementFields
+> {
+    private constructor(sourceSpan: SourceSpan) {
+        super('debuggerStatement', {}, sourceSpan);
     }
 
-    static create(_target: DebuggerStatement, _originalSource: string): DebuggerStatementTypeClass {
-        return new DebuggerStatementTypeClass();
+    static create(target: DebuggerStatement, originalSource: string): DebuggerStatementTypeClass {
+        return new DebuggerStatementTypeClass(getSourceSpan(target, originalSource));
     }
 }
 
@@ -19,5 +31,5 @@ export const debuggerStatementTypePair: EvaluatePair<
 );
 
 export const isDebuggerStatementType = (
-    target: LwcCommonTypeClass<string>,
+    target: LwcCommonTypeClass<string, TypeField<string>>,
 ): target is DebuggerStatementTypeClass => target instanceof DebuggerStatementTypeClass;

@@ -1,12 +1,20 @@
 import { AllRowsClauseContext } from '@apexdevtools/apex-parser';
 
-import { ClauseValueTypeClass } from '.';
+import { ApexCommonTypeClass, getSourceSpan, isSpicifyApexCommonTypeClass } from '../commonVisitor';
+import { type FieldsOf, TypeField } from '../../commons/ir';
+import { SourceSpan } from '../../commons';
 
-import { ApexErrorTypeClass, ApexCommonTypeClass } from '../commonVisitor';
+export type AllRowsClauseType = TypeField<'allRowsClause'> & {
+    /** 常に ALL ROWS (ソースの大文字・小文字にかかわらずそろえる) */
+    value: 'ALL ROWS';
+};
 
-export class AllRowsClauseTypeClass extends ClauseValueTypeClass<'allRowsClause', string> {
-    private constructor(value: string) {
-        super('allRowsClause', value);
+export class AllRowsClauseTypeClass extends ApexCommonTypeClass<
+    'allRowsClause',
+    AllRowsClauseType
+> {
+    private constructor(fields: FieldsOf<AllRowsClauseType>, sourceSpan: SourceSpan) {
+        super('allRowsClause', fields, sourceSpan);
     }
 
     static create(ctx: AllRowsClauseContext): AllRowsClauseTypeClass {
@@ -14,12 +22,16 @@ export class AllRowsClauseTypeClass extends ClauseValueTypeClass<'allRowsClause'
             throw new Error('値が異常です。AllRowsClauseContext: ' + ctx.getText());
         }
 
-        return new AllRowsClauseTypeClass(ctx.ALL().getText() + ' ' + ctx.ROWS().getText());
+        return new AllRowsClauseTypeClass({ value: 'ALL ROWS' }, getSourceSpan(ctx));
+    }
+
+    getValue(): AllRowsClauseType['value'] {
+        return this.getFields().value;
     }
 }
 
 export const isAllRowsClauseType = (
-    target: ApexCommonTypeClass<string>,
+    target: ApexCommonTypeClass<string, TypeField<string>>,
 ): target is AllRowsClauseTypeClass => {
-    return target instanceof AllRowsClauseTypeClass;
+    return isSpicifyApexCommonTypeClass('allRowsClause', target);
 };

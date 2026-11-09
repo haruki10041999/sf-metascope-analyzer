@@ -1,42 +1,56 @@
 import { NegExpressionContext } from '@apexdevtools/apex-parser';
 
+import { BasedExpressionTypeClass, ExpressionVisitor, isBasedExpressionType } from '.';
+
 import {
-    BasedExpressionTypeClass,
-    ExpressionVisitor,
-    isBasedExpressionType,
-    SingleOperatorExpressionTypeClass,
-} from '.';
+    ApexCommonTypeClass,
+    getSourceSpan,
+    isSpicifyApexCommonTypeClass,
+    visitNode,
+} from '../commonVisitor';
+import { type FieldsOf, SourceSpan, TypeField } from '../../commons/ir';
 
-import { ApexErrorTypeClass, ApexCommonTypeClass, visitNode } from '../commonVisitor';
+export type NegExpressionType = TypeField<'negExpression'> & {
+    operator: '~' | '!';
+    value: BasedExpressionTypeClass;
+};
 
-export class NegExpressionTypeClass extends SingleOperatorExpressionTypeClass<
+export class NegExpressionTypeClass extends ApexCommonTypeClass<
     'negExpression',
-    BasedExpressionTypeClass,
-    '~' | '!'
+    NegExpressionType
 > {
-    private constructor(value: BasedExpressionTypeClass | ApexErrorTypeClass, operator: '~' | '!') {
-        super('negExpression', value, operator);
+    private constructor(fields: FieldsOf<NegExpressionType>, sourceSpan: SourceSpan) {
+        super('negExpression', fields, sourceSpan);
     }
 
     static create(ctx: NegExpressionContext): NegExpressionTypeClass {
-        if (!ctx.expression() || (!ctx.TILDE() && !ctx.BANG())) {
+        if (!ctx.TILDE() && !ctx.BANG()) {
             throw new Error('値が異常です。NegExpressionContext: ' + ctx.getText());
         }
 
         return new NegExpressionTypeClass(
-            visitNode(
-                new ExpressionVisitor(),
-                ctx.expression(),
-                isBasedExpressionType,
-                'expression',
-            ),
-            ctx.TILDE() ? '~' : '!',
+            {
+                operator: ctx.TILDE() ? '~' : '!',
+                value: visitNode(
+                    new ExpressionVisitor(),
+                    ctx.expression(),
+                    isBasedExpressionType,
+                    'expression',
+                ),
+            },
+            getSourceSpan(ctx),
         );
+    }
+
+    getValue(): NegExpressionType['value'] {
+        return this.getFields().value;
+    }
+
+    getOperator(): NegExpressionType['operator'] {
+        return this.getFields().operator;
     }
 }
 
 export const isNegExpressionType = (
-    target: ApexCommonTypeClass<string>,
-): target is NegExpressionTypeClass => {
-    return target instanceof NegExpressionTypeClass;
-};
+    target: ApexCommonTypeClass<string, TypeField<string>>,
+): target is NegExpressionTypeClass => isSpicifyApexCommonTypeClass('negExpression', target);

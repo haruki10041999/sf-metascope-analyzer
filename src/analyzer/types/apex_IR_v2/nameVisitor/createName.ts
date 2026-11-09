@@ -1,36 +1,42 @@
 import { CreatedNameContext } from '@apexdevtools/apex-parser';
 
-import { NameListTypeClass } from '.';
+import { IdCreatedNamePairTypeClass } from '../pairVisitor';
+import {
+    ApexCommonTypeClass,
+    createNodeList,
+    getSourceSpan,
+    isSpicifyApexCommonTypeClass,
+} from '../commonVisitor';
+import { type FieldsOf, TypeField } from '../../commons/ir';
+import { SourceSpan } from '../../commons';
 
-import { IdCreatedNamePairTypeClass, PairVisitor, isIdCreatedNamePairType } from '../pairVisitor';
-import { ApexErrorTypeClass, ApexCommonTypeClass, visitNodeList } from '../commonVisitor';
+export type CreatedNameType = TypeField<'createdName'> & {
+    value: IdCreatedNamePairTypeClass[];
+};
 
-export class CreatedNameTypeClass extends NameListTypeClass<
-    'createdName',
-    IdCreatedNamePairTypeClass
-> {
-    private constructor(value: (IdCreatedNamePairTypeClass | ApexErrorTypeClass)[]) {
-        super('createdName', value);
+export class CreatedNameTypeClass extends ApexCommonTypeClass<'createdName', CreatedNameType> {
+    private constructor(fields: FieldsOf<CreatedNameType>, sourceSpan: SourceSpan) {
+        super('createdName', fields, sourceSpan);
     }
 
     static create(ctx: CreatedNameContext): CreatedNameTypeClass {
-        if (!ctx.idCreatedNamePair_list()) {
-            throw new Error('値が異常です。CreatedNameContext: ' + ctx.getText());
-        }
-
         return new CreatedNameTypeClass(
-            visitNodeList(
-                new PairVisitor(),
-                ctx.idCreatedNamePair_list(),
-                isIdCreatedNamePairType,
-                'idCreatedNamePair',
-            ),
+            {
+                value: createNodeList(
+                    ctx.idCreatedNamePair_list(),
+                    (c) => IdCreatedNamePairTypeClass.create(c),
+                    'idCreatedNamePair',
+                ),
+            },
+            getSourceSpan(ctx),
         );
+    }
+
+    getValue(): CreatedNameType['value'] {
+        return this.getFields().value;
     }
 }
 
 export const isCreatedNameType = (
-    target: ApexCommonTypeClass<string>,
-): target is CreatedNameTypeClass => {
-    return target instanceof CreatedNameTypeClass;
-};
+    target: ApexCommonTypeClass<string, TypeField<string>>,
+): target is CreatedNameTypeClass => isSpicifyApexCommonTypeClass('createdName', target);

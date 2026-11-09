@@ -6,19 +6,19 @@ import {
     isBasedExpressionType,
 } from '../expressionVisitor';
 import {
-    ApexErrorTypeClass,
     ApexCommonTypeClass,
-    visitNode,
+    createNode,
     visitOptionalNode,
     getSourceSpan,
     isSpicifyApexCommonTypeClass,
 } from '../commonVisitor';
 import { IdTypeClass } from '../idVisitor';
-import { TypeField } from '../../commons/ir';
+import { type FieldsOf, TypeField } from '../../commons/ir';
 import { SourceSpan } from '../../commons';
 
 export type VariableDeclaratorType = TypeField<'variableDeclarator'> & {
     variant: IdTypeClass;
+    /** 初期化子は任意 (`String name;`) */
     init: BasedExpressionTypeClass | null;
 };
 
@@ -26,24 +26,23 @@ export class VariableDeclaratorTypeClass extends ApexCommonTypeClass<
     'variableDeclarator',
     VariableDeclaratorType
 > {
-    private constructor(
-        variant: IdTypeClass,
-        init: BasedExpressionTypeClass | null,
-        sourceSpan: SourceSpan,
-    ) {
-        super('variableDeclarator', { variant: variant, init: init }, sourceSpan);
+    private constructor(fields: FieldsOf<VariableDeclaratorType>, sourceSpan: SourceSpan) {
+        super('variableDeclarator', fields, sourceSpan);
     }
 
-    static create(ctx: VariableDeclaratorContext) {
-        const variant = IdTypeClass.create(ctx.id());
-
-        if (ctx.expression()) {
-            return new VariableDeclaratorTypeClass(
-                variant,
-                new ExpressionVisitor().visit(ctx.expression()),
-                getSourceSpan(ctx),
-            );
-        }
+    static create(ctx: VariableDeclaratorContext): VariableDeclaratorTypeClass {
+        return new VariableDeclaratorTypeClass(
+            {
+                variant: createNode(ctx.id(), (c) => IdTypeClass.create(c), 'id'),
+                init: visitOptionalNode(
+                    new ExpressionVisitor(),
+                    ctx.expression(),
+                    isBasedExpressionType,
+                    'expression',
+                ),
+            },
+            getSourceSpan(ctx),
+        );
     }
 
     getVariant(): VariableDeclaratorType['variant'] {

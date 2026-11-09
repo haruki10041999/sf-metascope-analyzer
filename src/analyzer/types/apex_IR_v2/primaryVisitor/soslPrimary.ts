@@ -1,28 +1,41 @@
 import { SoslPrimaryContext } from '@apexdevtools/apex-parser';
 
-import { PrimaryTypeClass } from '.';
+import { SoslLiteralTypeClass } from '../literalVisitor';
+import {
+    ApexCommonTypeClass,
+    createNode,
+    getSourceSpan,
+    isSpicifyApexCommonTypeClass,
+} from '../commonVisitor';
+import { type FieldsOf, SourceSpan, TypeField } from '../../commons/ir';
 
-import { SoslLiteralTypeClass, LiteralVisitor, isSoslLiteralType } from '../literalVisitor';
-import { ApexErrorTypeClass, ApexCommonTypeClass, visitNode } from '../commonVisitor';
+export type SoslPrimaryType = TypeField<'soslPrimary'> & {
+    value: SoslLiteralTypeClass;
+};
 
-export class SoslPrimaryTypeClass extends PrimaryTypeClass<'soslPrimary', SoslLiteralTypeClass> {
-    private constructor(value: SoslLiteralTypeClass | ApexErrorTypeClass) {
-        super('soslPrimary', value);
+export class SoslPrimaryTypeClass extends ApexCommonTypeClass<'soslPrimary', SoslPrimaryType> {
+    private constructor(fields: FieldsOf<SoslPrimaryType>, sourceSpan: SourceSpan) {
+        super('soslPrimary', fields, sourceSpan);
     }
 
     static create(ctx: SoslPrimaryContext): SoslPrimaryTypeClass {
-        if (!ctx.soslLiteral()) {
-            throw new Error('値が異常です。SoslPrimaryContext: ' + ctx.getText());
-        }
-
         return new SoslPrimaryTypeClass(
-            visitNode(new LiteralVisitor(), ctx.soslLiteral(), isSoslLiteralType, 'soslLiteral'),
+            {
+                value: createNode(
+                    ctx.soslLiteral(),
+                    (c) => SoslLiteralTypeClass.create(c),
+                    'soslLiteral',
+                ),
+            },
+            getSourceSpan(ctx),
         );
+    }
+
+    getValue(): SoslPrimaryType['value'] {
+        return this.getFields().value;
     }
 }
 
 export const isSoslPrimaryType = (
-    target: ApexCommonTypeClass<string>,
-): target is SoslPrimaryTypeClass => {
-    return target instanceof SoslPrimaryTypeClass;
-};
+    target: ApexCommonTypeClass<string, TypeField<string>>,
+): target is SoslPrimaryTypeClass => isSpicifyApexCommonTypeClass('soslPrimary', target);

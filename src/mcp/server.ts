@@ -4,7 +4,10 @@ import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
 import { z } from 'zod';
 
-import { MetadataProcessor } from '../analyzer/processor/Metadata/metadata';
+import { RepositoryProcessor } from '../analyzer/unit/processor';
+
+import { registerDependencyTools } from './dependencyTools';
+import { registerReportTools } from './reportTools';
 
 import type { BuildReportOptions } from '../builder/htmlBuilder';
 import { buildReportHtml } from '../builder/htmlBuilder';
@@ -12,7 +15,7 @@ import { buildReportHtml } from '../builder/htmlBuilder';
 const repositoryRoot = path.resolve(process.cwd());
 
 type MetadataContext = {
-    metadata: MetadataProcessor;
+    metadata: RepositoryProcessor;
 };
 
 type AppContext = {
@@ -25,10 +28,10 @@ const createMetadataContext = async (
     repositoryRoot: string,
     saveRoot: string,
 ): Promise<MetadataContext> => {
-    const metadataProcessor = await MetadataProcessor.create(saveRoot, repositoryRoot);
+    const metadataProcessor = await RepositoryProcessor.create(saveRoot, repositoryRoot);
 
     // 前回の解析結果がなければ、今の状態を基準として保存する
-    if (!(await metadataProcessor.hasSavedObjects())) {
+    if (!(await metadataProcessor.hasSaved())) {
         await metadataProcessor.save();
     }
 
@@ -162,6 +165,9 @@ const createServer = (context: AppContext): McpServer => {
             }
         },
     );
+
+    registerDependencyTools(server, context.repogitoryRoot);
+    registerReportTools(server, context.metadataContext.metadata);
 
     return server;
 };

@@ -1,29 +1,21 @@
+import { type FieldsOf, type TypeField } from '../../commons/ir';
+import { type SourceSpan } from '../../commons/source';
 import { isTSConstructorType, type TSConstructorType } from '@babel/types';
 import {
     EvaluatePair,
     LwcCommonTypeClass,
-    LwcErrorTypeClass,
     lazyPairs,
     makeEvaluatePair,
     visitNodeList,
-    visitOptionalNode,
+    getSourceSpan,
 } from '../commonVisitor';
-import {
-    tSTypeAnnotationTypePair,
-    type TSTypeAnnotationTypeClass,
-} from '../typeScriptVisitor/tSTypeAnnotation';
-import {
-    tSTypeParameterDeclarationTypePair,
-    type TSTypeParameterDeclarationTypeClass,
-} from '../typeScriptVisitor/tSTypeParameterDeclaration';
+import { TSTypeAnnotationTypeClass } from '../typeScriptVisitor/tSTypeAnnotation';
+import { TSTypeParameterDeclarationTypeClass } from '../typeScriptVisitor/tSTypeParameterDeclaration';
 import { arrayPatternTypePair, type ArrayPatternTypeClass } from './arrayPattern';
 import { identifierTypePair, type IdentifierTypeClass } from './identifier';
 import { objectPatternTypePair, type ObjectPatternTypeClass } from './objectPattern';
 import { restElementTypePair, type RestElementTypeClass } from './restElement';
 
-const tSConstructorTypeTypeParametersPairs = lazyPairs(
-    () => [tSTypeParameterDeclarationTypePair] as const,
-);
 const tSConstructorTypeParamsPairs = lazyPairs(
     () =>
         [
@@ -33,72 +25,64 @@ const tSConstructorTypeParamsPairs = lazyPairs(
             restElementTypePair,
         ] as const,
 );
-const tSConstructorTypeReturnTypePairs = lazyPairs(() => [tSTypeAnnotationTypePair] as const);
 
-export type TSConstructorTypeFields = {
-    typeParameters: TSTypeParameterDeclarationTypeClass | LwcErrorTypeClass | null;
+export type TSConstructorTypeFields = TypeField<'tSConstructorType'> & {
+    typeParameters: TSTypeParameterDeclarationTypeClass | null;
     params: (
-        | ArrayPatternTypeClass
-        | IdentifierTypeClass
-        | ObjectPatternTypeClass
-        | RestElementTypeClass
-        | LwcErrorTypeClass
+        ArrayPatternTypeClass | IdentifierTypeClass | ObjectPatternTypeClass | RestElementTypeClass
     )[];
-    returnType: TSTypeAnnotationTypeClass | LwcErrorTypeClass | null;
-    abstract: NonNullable<TSConstructorType['abstract']> | null;
+    returnType: TSTypeAnnotationTypeClass | null;
+    abstract: boolean;
 };
 
-export class TSConstructorTypeTypeClass extends LwcCommonTypeClass<'tSConstructorType'> {
-    private readonly value: TSConstructorTypeFields;
-
-    private constructor(value: TSConstructorTypeFields) {
-        super('tSConstructorType');
-        this.value = value;
+export class TSConstructorTypeTypeClass extends LwcCommonTypeClass<
+    'tSConstructorType',
+    TSConstructorTypeFields
+> {
+    private constructor(value: FieldsOf<TSConstructorTypeFields>, sourceSpan: SourceSpan) {
+        super('tSConstructorType', value, sourceSpan);
     }
 
     static create(target: TSConstructorType, originalSource: string): TSConstructorTypeTypeClass {
-        return new TSConstructorTypeTypeClass({
-            typeParameters: visitOptionalNode(
-                target.typeParameters,
-                originalSource,
-                tSConstructorTypeTypeParametersPairs(),
-                'TSConstructorType.typeParameters',
-            ),
-            params: visitNodeList(
-                target.params,
-                originalSource,
-                tSConstructorTypeParamsPairs(),
-                'TSConstructorType.params',
-            ),
-            returnType: visitOptionalNode(
-                target.returnType,
-                originalSource,
-                tSConstructorTypeReturnTypePairs(),
-                'TSConstructorType.returnType',
-            ),
-            abstract: target.abstract ?? null,
-        });
-    }
-
-    /** すべてのフィールド (Babel の value フィールドの getter getValue() と区別する。getChildNodes もこれから作る) */
-    override getFields(): TSConstructorTypeFields {
-        return this.value;
+        return new TSConstructorTypeTypeClass(
+            {
+                typeParameters:
+                    target.typeParameters == null
+                        ? null
+                        : TSTypeParameterDeclarationTypeClass.create(
+                              target.typeParameters,
+                              originalSource,
+                          ),
+                params: visitNodeList(
+                    target.params,
+                    originalSource,
+                    tSConstructorTypeParamsPairs(),
+                    'TSConstructorType.params',
+                ),
+                returnType:
+                    target.returnType == null
+                        ? null
+                        : TSTypeAnnotationTypeClass.create(target.returnType, originalSource),
+                abstract: target.abstract ?? false,
+            },
+            getSourceSpan(target, originalSource),
+        );
     }
 
     getTypeParameters(): TSConstructorTypeFields['typeParameters'] {
-        return this.value.typeParameters;
+        return this.getFields().typeParameters;
     }
 
     getParams(): TSConstructorTypeFields['params'] {
-        return this.value.params;
+        return this.getFields().params;
     }
 
     getReturnType(): TSConstructorTypeFields['returnType'] {
-        return this.value.returnType;
+        return this.getFields().returnType;
     }
 
     getAbstract(): TSConstructorTypeFields['abstract'] {
-        return this.value.abstract;
+        return this.getFields().abstract;
     }
 }
 
@@ -110,5 +94,5 @@ export const tSConstructorTypeTypePair: EvaluatePair<
 );
 
 export const isTSConstructorTypeType = (
-    target: LwcCommonTypeClass<string>,
+    target: LwcCommonTypeClass<string, TypeField<string>>,
 ): target is TSConstructorTypeTypeClass => target instanceof TSConstructorTypeTypeClass;

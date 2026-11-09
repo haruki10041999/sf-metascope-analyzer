@@ -1,54 +1,75 @@
 import { CmpExpressionContext } from '@apexdevtools/apex-parser';
 
+import { BasedExpressionTypeClass, ExpressionVisitor, isBasedExpressionType } from '.';
+
 import {
-    DoubleStringOperatorExpressionTypeClass,
-    BasedExpressionTypeClass,
-    ExpressionVisitor,
-    isBasedExpressionType,
-} from '.';
+    ApexCommonTypeClass,
+    getSourceSpan,
+    isSpicifyApexCommonTypeClass,
+    visitNode,
+} from '../commonVisitor';
+import { type FieldsOf, SourceSpan, TypeField } from '../../commons/ir';
 
-import { ApexErrorTypeClass, ApexCommonTypeClass, visitNode } from '../commonVisitor';
+export type CmpExpressionType = TypeField<'cmpExpression'> & {
+    left: BasedExpressionTypeClass;
+    operator: '<' | '>' | '<=' | '>=';
+    right: BasedExpressionTypeClass;
+};
 
-export class CmpExpressionTypeClass extends DoubleStringOperatorExpressionTypeClass<
+export class CmpExpressionTypeClass extends ApexCommonTypeClass<
     'cmpExpression',
-    BasedExpressionTypeClass,
-    string,
-    BasedExpressionTypeClass
+    CmpExpressionType
 > {
-    private constructor(
-        left: BasedExpressionTypeClass | ApexErrorTypeClass,
-        right: BasedExpressionTypeClass | ApexErrorTypeClass,
-        operator: string,
-    ) {
-        super('cmpExpression', left, right, operator);
+    private constructor(fields: FieldsOf<CmpExpressionType>, sourceSpan: SourceSpan) {
+        super('cmpExpression', fields, sourceSpan);
     }
 
     static create(ctx: CmpExpressionContext): CmpExpressionTypeClass {
-        if (ctx.expression_list().length !== 2 || (!ctx.GT() && !ctx.LT())) {
+        if (!ctx.GT() && !ctx.LT()) {
             throw new Error('値が異常です。CmpExpressionContext: ' + ctx.getText());
         }
 
+        // `<=` / `>=` は LT/GT と ASSIGN の 2 トークンで表現される
+        let operator: CmpExpressionType['operator'];
+        if (ctx.GT()) {
+            operator = ctx.ASSIGN() ? '>=' : '>';
+        } else {
+            operator = ctx.ASSIGN() ? '<=' : '<';
+        }
+
         return new CmpExpressionTypeClass(
-            visitNode(
-                new ExpressionVisitor(),
-                ctx.expression(0),
-                isBasedExpressionType,
-                'expression',
-            ),
-            visitNode(
-                new ExpressionVisitor(),
-                ctx.expression(1),
-                isBasedExpressionType,
-                'expression',
-            ),
-            // `<=` / `>=` は LT/GT と ASSIGN の 2 トークンで表現される
-            (ctx.GT() ? '>' : '<') + (ctx.ASSIGN() ? '=' : ''),
+            {
+                left: visitNode(
+                    new ExpressionVisitor(),
+                    ctx.expression(0),
+                    isBasedExpressionType,
+                    'expression',
+                ),
+                operator: operator,
+                right: visitNode(
+                    new ExpressionVisitor(),
+                    ctx.expression(1),
+                    isBasedExpressionType,
+                    'expression',
+                ),
+            },
+            getSourceSpan(ctx),
         );
+    }
+
+    getLeft(): CmpExpressionType['left'] {
+        return this.getFields().left;
+    }
+
+    getOperator(): CmpExpressionType['operator'] {
+        return this.getFields().operator;
+    }
+
+    getRight(): CmpExpressionType['right'] {
+        return this.getFields().right;
     }
 }
 
 export const isCmpExpressionType = (
-    target: ApexCommonTypeClass<string>,
-): target is CmpExpressionTypeClass => {
-    return target instanceof CmpExpressionTypeClass;
-};
+    target: ApexCommonTypeClass<string, TypeField<string>>,
+): target is CmpExpressionTypeClass => isSpicifyApexCommonTypeClass('cmpExpression', target);

@@ -1,3 +1,4 @@
+import { type TypeField } from '../../commons/ir';
 import { LwcCommonTypeClass, LwcCommonVisitor, lazyPairs } from '../commonVisitor';
 import {
     TSCallSignatureDeclarationTypeClass,
@@ -70,7 +71,7 @@ export type TSTypeElementTypeClass =
     | TSIndexSignatureTypeClass;
 
 export const isTSTypeElementType = (
-    target: LwcCommonTypeClass<string>,
+    target: LwcCommonTypeClass<string, TypeField<string>>,
 ): target is TSTypeElementTypeClass => {
     return (
         target instanceof TSCallSignatureDeclarationTypeClass ||

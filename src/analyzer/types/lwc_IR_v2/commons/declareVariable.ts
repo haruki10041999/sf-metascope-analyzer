@@ -1,46 +1,37 @@
+import { type FieldsOf, type TypeField } from '../../commons/ir';
+import { type SourceSpan } from '../../commons/source';
 import { isDeclareVariable, type DeclareVariable } from '@babel/types';
 import {
     EvaluatePair,
     LwcCommonTypeClass,
-    LwcErrorTypeClass,
-    lazyPairs,
     makeEvaluatePair,
-    visitNode,
+    getSourceSpan,
 } from '../commonVisitor';
-import { identifierTypePair, type IdentifierTypeClass } from './identifier';
+import { IdentifierTypeClass } from './identifier';
 
-const declareVariableIdPairs = lazyPairs(() => [identifierTypePair] as const);
-
-export type DeclareVariableFields = {
-    id: IdentifierTypeClass | LwcErrorTypeClass;
+export type DeclareVariableFields = TypeField<'declareVariable'> & {
+    id: IdentifierTypeClass;
 };
 
-export class DeclareVariableTypeClass extends LwcCommonTypeClass<'declareVariable'> {
-    private readonly value: DeclareVariableFields;
-
-    private constructor(value: DeclareVariableFields) {
-        super('declareVariable');
-        this.value = value;
+export class DeclareVariableTypeClass extends LwcCommonTypeClass<
+    'declareVariable',
+    DeclareVariableFields
+> {
+    private constructor(value: FieldsOf<DeclareVariableFields>, sourceSpan: SourceSpan) {
+        super('declareVariable', value, sourceSpan);
     }
 
     static create(target: DeclareVariable, originalSource: string): DeclareVariableTypeClass {
-        return new DeclareVariableTypeClass({
-            id: visitNode(
-                target.id,
-                originalSource,
-                declareVariableIdPairs(),
-                'DeclareVariable.id',
-            ),
-        });
-    }
-
-    /** すべてのフィールド (Babel の value フィールドの getter getValue() と区別する。getChildNodes もこれから作る) */
-    override getFields(): DeclareVariableFields {
-        return this.value;
+        return new DeclareVariableTypeClass(
+            {
+                id: IdentifierTypeClass.create(target.id, originalSource),
+            },
+            getSourceSpan(target, originalSource),
+        );
     }
 
     getId(): DeclareVariableFields['id'] {
-        return this.value.id;
+        return this.getFields().id;
     }
 }
 
@@ -50,5 +41,5 @@ export const declareVariableTypePair: EvaluatePair<DeclareVariable, DeclareVaria
     );
 
 export const isDeclareVariableType = (
-    target: LwcCommonTypeClass<string>,
+    target: LwcCommonTypeClass<string, TypeField<string>>,
 ): target is DeclareVariableTypeClass => target instanceof DeclareVariableTypeClass;

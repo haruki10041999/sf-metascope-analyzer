@@ -1,138 +1,122 @@
+import { type FieldsOf, type TypeField } from '../../commons/ir';
+import { type SourceSpan } from '../../commons/source';
 import { isClassPrivateProperty, type ClassPrivateProperty } from '@babel/types';
 import {
     EvaluatePair,
     LwcCommonTypeClass,
-    LwcErrorTypeClass,
-    lazyPairs,
     makeEvaluatePair,
     visitNode,
-    visitNodeList,
-    visitOptionalNode,
+    getSourceSpan,
 } from '../commonVisitor';
-import { expressionVisitorEvaluatePairs, type ExpressionTypeClass } from '../expressionVisitor';
+import { expressionVisitorEvaluatePairs } from '../expressionVisitor';
 import {
-    typeAnnotationTypePair,
-    type TypeAnnotationTypeClass,
-} from '../flowVisitor/typeAnnotation';
-import { varianceTypePair, type VarianceTypeClass } from '../flowVisitor/variance';
-import {
-    tSTypeAnnotationTypePair,
-    type TSTypeAnnotationTypeClass,
-} from '../typeScriptVisitor/tSTypeAnnotation';
-import { decoratorTypePair, type DecoratorTypeClass } from './decorator';
-import { privateNameTypePair, type PrivateNameTypeClass } from './privateName';
+    createClassMemberAnnotation,
+    type ClassMemberAnnotation,
+    type ClassPropertyInit,
+} from './classProperty';
+import { DecoratorTypeClass } from './decorator';
+import { failUnsupported } from './memberKey';
+import { PrivateNameTypeClass } from './privateName';
 
-const classPrivatePropertyKeyPairs = lazyPairs(() => [privateNameTypePair] as const);
-const classPrivatePropertyTypeAnnotationPairs = lazyPairs(
-    () => [typeAnnotationTypePair, tSTypeAnnotationTypePair] as const,
-);
-const classPrivatePropertyDecoratorsPairs = lazyPairs(() => [decoratorTypePair] as const);
-const classPrivatePropertyVariancePairs = lazyPairs(() => [varianceTypePair] as const);
+/** `#x` の初期化。declare・abstract は付けられないので、ClassPropertyInit の value・none (abstract なし)・definite だけ */
+export type ClassPrivatePropertyInit =
+    | Extract<ClassPropertyInit, { kind: 'value' | 'definite' }>
+    | { kind: 'none'; optional: boolean };
 
-export type ClassPrivatePropertyFields = {
-    key: PrivateNameTypeClass | LwcErrorTypeClass;
-    value: ExpressionTypeClass | LwcErrorTypeClass | null;
-    typeAnnotation: TypeAnnotationTypeClass | TSTypeAnnotationTypeClass | LwcErrorTypeClass | null;
-    decorators: (DecoratorTypeClass | LwcErrorTypeClass)[] | null;
-    static: ClassPrivateProperty['static'];
-    readonly: NonNullable<ClassPrivateProperty['readonly']> | null;
-    optional: NonNullable<ClassPrivateProperty['optional']> | null;
-    definite: NonNullable<ClassPrivateProperty['definite']> | null;
-    variance: VarianceTypeClass | LwcErrorTypeClass | null;
+/** `#x` の TS の修飾子 (アクセス修飾子は付けられない) */
+export type ClassPrivatePropertyTsModifiers = {
+    readonly: boolean;
 };
 
-export class ClassPrivatePropertyTypeClass extends LwcCommonTypeClass<'classPrivateProperty'> {
-    private readonly value: ClassPrivatePropertyFields;
+export type ClassPrivatePropertyFields = TypeField<'classPrivateProperty'> & {
+    key: PrivateNameTypeClass;
+    static: ClassPrivateProperty['static'];
+    decorators: DecoratorTypeClass[];
+    init: ClassPrivatePropertyInit;
+    annotation: ClassMemberAnnotation<ClassPrivatePropertyTsModifiers>;
+};
 
-    private constructor(value: ClassPrivatePropertyFields) {
-        super('classPrivateProperty');
-        this.value = value;
+const createClassPrivatePropertyInit = (
+    target: ClassPrivateProperty,
+    originalSource: string,
+): ClassPrivatePropertyInit => {
+    const optional = target.optional ?? false;
+    if (target.definite) {
+        if (target.value != null || optional) {
+            return failUnsupported(
+                target,
+                originalSource,
+                'ClassPrivateProperty: definite に value・optional は付けられません',
+            );
+        }
+        return { kind: 'definite' };
+    }
+    if (target.value != null) {
+        return {
+            kind: 'value',
+            value: visitNode(
+                target.value,
+                originalSource,
+                expressionVisitorEvaluatePairs(),
+                'ClassPrivateProperty.value',
+            ),
+            optional,
+        };
+    }
+    return { kind: 'none', optional };
+};
+
+export class ClassPrivatePropertyTypeClass extends LwcCommonTypeClass<
+    'classPrivateProperty',
+    ClassPrivatePropertyFields
+> {
+    private constructor(value: FieldsOf<ClassPrivatePropertyFields>, sourceSpan: SourceSpan) {
+        super('classPrivateProperty', value, sourceSpan);
     }
 
     static create(
         target: ClassPrivateProperty,
         originalSource: string,
     ): ClassPrivatePropertyTypeClass {
-        return new ClassPrivatePropertyTypeClass({
-            key: visitNode(
-                target.key,
-                originalSource,
-                classPrivatePropertyKeyPairs(),
-                'ClassPrivateProperty.key',
-            ),
-            value: visitOptionalNode(
-                target.value,
-                originalSource,
-                expressionVisitorEvaluatePairs(),
-                'ExpressionVisitor',
-            ),
-            typeAnnotation: visitOptionalNode(
-                target.typeAnnotation,
-                originalSource,
-                classPrivatePropertyTypeAnnotationPairs(),
-                'ClassPrivateProperty.typeAnnotation',
-            ),
-            decorators:
-                target.decorators == null
-                    ? null
-                    : visitNodeList(
-                          target.decorators,
-                          originalSource,
-                          classPrivatePropertyDecoratorsPairs(),
-                          'ClassPrivateProperty.decorators',
-                      ),
-            static: target.static,
-            readonly: target.readonly ?? null,
-            optional: target.optional ?? null,
-            definite: target.definite ?? null,
-            variance: visitOptionalNode(
-                target.variance,
-                originalSource,
-                classPrivatePropertyVariancePairs(),
-                'ClassPrivateProperty.variance',
-            ),
-        });
-    }
-
-    /** すべてのフィールド (Babel の value フィールドの getter getValue() と区別する。getChildNodes もこれから作る) */
-    override getFields(): ClassPrivatePropertyFields {
-        return this.value;
+        const readonly = target.readonly ?? false;
+        return new ClassPrivatePropertyTypeClass(
+            {
+                key: PrivateNameTypeClass.create(target.key, originalSource),
+                static: target.static,
+                decorators: (target.decorators ?? []).map((child) =>
+                    DecoratorTypeClass.create(child, originalSource),
+                ),
+                init: createClassPrivatePropertyInit(target, originalSource),
+                annotation: createClassMemberAnnotation(
+                    target,
+                    originalSource,
+                    'ClassPrivateProperty',
+                    { readonly },
+                    readonly || Boolean(target.definite) || Boolean(target.optional),
+                ),
+            },
+            getSourceSpan(target, originalSource),
+        );
     }
 
     getKey(): ClassPrivatePropertyFields['key'] {
-        return this.value.key;
-    }
-
-    getValue(): ClassPrivatePropertyFields['value'] {
-        return this.value.value;
-    }
-
-    getTypeAnnotation(): ClassPrivatePropertyFields['typeAnnotation'] {
-        return this.value.typeAnnotation;
-    }
-
-    getDecorators(): ClassPrivatePropertyFields['decorators'] {
-        return this.value.decorators;
+        return this.getFields().key;
     }
 
     getStatic(): ClassPrivatePropertyFields['static'] {
-        return this.value.static;
+        return this.getFields().static;
     }
 
-    getReadonly(): ClassPrivatePropertyFields['readonly'] {
-        return this.value.readonly;
+    getDecorators(): ClassPrivatePropertyFields['decorators'] {
+        return this.getFields().decorators;
     }
 
-    getOptional(): ClassPrivatePropertyFields['optional'] {
-        return this.value.optional;
+    getInit(): ClassPrivatePropertyFields['init'] {
+        return this.getFields().init;
     }
 
-    getDefinite(): ClassPrivatePropertyFields['definite'] {
-        return this.value.definite;
-    }
-
-    getVariance(): ClassPrivatePropertyFields['variance'] {
-        return this.value.variance;
+    getAnnotation(): ClassPrivatePropertyFields['annotation'] {
+        return this.getFields().annotation;
     }
 }
 
@@ -144,5 +128,5 @@ export const classPrivatePropertyTypePair: EvaluatePair<
 );
 
 export const isClassPrivatePropertyType = (
-    target: LwcCommonTypeClass<string>,
+    target: LwcCommonTypeClass<string, TypeField<string>>,
 ): target is ClassPrivatePropertyTypeClass => target instanceof ClassPrivatePropertyTypeClass;

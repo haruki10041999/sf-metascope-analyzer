@@ -1,57 +1,67 @@
 import { Arth1ExpressionContext } from '@apexdevtools/apex-parser';
 
+import { BasedExpressionTypeClass, ExpressionVisitor, isBasedExpressionType } from '.';
+
 import {
-    DoubleStringOperatorExpressionTypeClass,
-    BasedExpressionTypeClass,
-    ExpressionVisitor,
-    isBasedExpressionType,
-} from '.';
+    ApexCommonTypeClass,
+    getSourceSpan,
+    isSpicifyApexCommonTypeClass,
+    visitNode,
+} from '../commonVisitor';
+import { type FieldsOf, SourceSpan, TypeField } from '../../commons/ir';
 
-import { ApexErrorTypeClass, ApexCommonTypeClass, visitNode } from '../commonVisitor';
+export type Arth1ExpressionType = TypeField<'arth1Expression'> & {
+    left: BasedExpressionTypeClass;
+    operator: '*' | '/';
+    right: BasedExpressionTypeClass;
+};
 
-export class Arth1ExpressionTypeClass extends DoubleStringOperatorExpressionTypeClass<
+export class Arth1ExpressionTypeClass extends ApexCommonTypeClass<
     'arth1Expression',
-    BasedExpressionTypeClass,
-    '*' | '/',
-    BasedExpressionTypeClass
+    Arth1ExpressionType
 > {
-    private constructor(
-        left: BasedExpressionTypeClass | ApexErrorTypeClass,
-        right: BasedExpressionTypeClass | ApexErrorTypeClass,
-        operator: '*' | '/',
-    ) {
-        super('arth1Expression', left, right, operator);
+    private constructor(fields: FieldsOf<Arth1ExpressionType>, sourceSpan: SourceSpan) {
+        super('arth1Expression', fields, sourceSpan);
     }
 
     static create(ctx: Arth1ExpressionContext): Arth1ExpressionTypeClass {
-        if (
-            !ctx.expression_list() ||
-            ctx.expression_list().length !== 2 ||
-            (!ctx.MUL() && !ctx.DIV())
-        ) {
+        if (!ctx.MUL() && !ctx.DIV()) {
             throw new Error('値が異常です。Arth1ExpressionContext: ' + ctx.getText());
         }
 
         return new Arth1ExpressionTypeClass(
-            visitNode(
-                new ExpressionVisitor(),
-                ctx.expression(0),
-                isBasedExpressionType,
-                'expression',
-            ),
-            visitNode(
-                new ExpressionVisitor(),
-                ctx.expression(1),
-                isBasedExpressionType,
-                'expression',
-            ),
-            ctx.MUL() ? '*' : '/',
+            {
+                left: visitNode(
+                    new ExpressionVisitor(),
+                    ctx.expression(0),
+                    isBasedExpressionType,
+                    'expression',
+                ),
+                operator: ctx.MUL() ? '*' : '/',
+                right: visitNode(
+                    new ExpressionVisitor(),
+                    ctx.expression(1),
+                    isBasedExpressionType,
+                    'expression',
+                ),
+            },
+            getSourceSpan(ctx),
         );
+    }
+
+    getLeft(): Arth1ExpressionType['left'] {
+        return this.getFields().left;
+    }
+
+    getOperator(): Arth1ExpressionType['operator'] {
+        return this.getFields().operator;
+    }
+
+    getRight(): Arth1ExpressionType['right'] {
+        return this.getFields().right;
     }
 }
 
 export const isArth1ExpressionType = (
-    target: ApexCommonTypeClass<string>,
-): target is Arth1ExpressionTypeClass => {
-    return target instanceof Arth1ExpressionTypeClass;
-};
+    target: ApexCommonTypeClass<string, TypeField<string>>,
+): target is Arth1ExpressionTypeClass => isSpicifyApexCommonTypeClass('arth1Expression', target);

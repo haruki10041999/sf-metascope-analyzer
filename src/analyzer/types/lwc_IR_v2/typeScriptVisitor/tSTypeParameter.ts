@@ -1,88 +1,83 @@
+import { type FieldsOf, type TypeField } from '../../commons/ir';
+import { type SourceSpan } from '../../commons/source';
 import { isTSTypeParameter, type TSTypeParameter } from '@babel/types';
 import {
     EvaluatePair,
     LwcCommonTypeClass,
-    LwcErrorTypeClass,
-    lazyPairs,
     makeEvaluatePair,
-    visitNode,
     visitOptionalNode,
+    getSourceSpan,
 } from '../commonVisitor';
-import { identifierTypePair, type IdentifierTypeClass } from '../commons/identifier';
+import { IdentifierTypeClass } from '../commons/identifier';
 import { tSTypeVisitorEvaluatePairs, type TSTypeTypeClass } from '../tsTypeVisitor';
 
-const tSTypeParameterNamePairs = lazyPairs(() => [identifierTypePair] as const);
+/** 型引数の変性の注釈 (`in T`・`out T`・`in out T`) */
+export type TSTypeParameterVariance = 'none' | 'in' | 'out' | 'inout';
 
-export type TSTypeParameterFields = {
-    name: IdentifierTypeClass | LwcErrorTypeClass;
-    in: NonNullable<TSTypeParameter['in']> | null;
-    out: NonNullable<TSTypeParameter['out']> | null;
-    const: NonNullable<TSTypeParameter['const']> | null;
-    constraint: TSTypeTypeClass | LwcErrorTypeClass | null;
-    default: TSTypeTypeClass | LwcErrorTypeClass | null;
+export type TSTypeParameterFields = TypeField<'tSTypeParameter'> & {
+    name: IdentifierTypeClass;
+    variance: TSTypeParameterVariance;
+    const: boolean;
+    constraint: TSTypeTypeClass | null;
+    default: TSTypeTypeClass | null;
 };
 
-export class TSTypeParameterTypeClass extends LwcCommonTypeClass<'tSTypeParameter'> {
-    private readonly value: TSTypeParameterFields;
+const toVariance = (isIn: boolean, isOut: boolean): TSTypeParameterVariance => {
+    if (isIn) {
+        return isOut ? 'inout' : 'in';
+    }
+    return isOut ? 'out' : 'none';
+};
 
-    private constructor(value: TSTypeParameterFields) {
-        super('tSTypeParameter');
-        this.value = value;
+export class TSTypeParameterTypeClass extends LwcCommonTypeClass<
+    'tSTypeParameter',
+    TSTypeParameterFields
+> {
+    private constructor(value: FieldsOf<TSTypeParameterFields>, sourceSpan: SourceSpan) {
+        super('tSTypeParameter', value, sourceSpan);
     }
 
     static create(target: TSTypeParameter, originalSource: string): TSTypeParameterTypeClass {
-        return new TSTypeParameterTypeClass({
-            name: visitNode(
-                target.name,
-                originalSource,
-                tSTypeParameterNamePairs(),
-                'TSTypeParameter.name',
-            ),
-            in: target.in ?? null,
-            out: target.out ?? null,
-            const: target.const ?? null,
-            constraint: visitOptionalNode(
-                target.constraint,
-                originalSource,
-                tSTypeVisitorEvaluatePairs(),
-                'TSTypeVisitor',
-            ),
-            default: visitOptionalNode(
-                target.default,
-                originalSource,
-                tSTypeVisitorEvaluatePairs(),
-                'TSTypeVisitor',
-            ),
-        });
-    }
-
-    /** すべてのフィールド (Babel の value フィールドの getter getValue() と区別する。getChildNodes もこれから作る) */
-    override getFields(): TSTypeParameterFields {
-        return this.value;
+        return new TSTypeParameterTypeClass(
+            {
+                name: IdentifierTypeClass.create(target.name, originalSource),
+                variance: toVariance(target.in ?? false, target.out ?? false),
+                const: target.const ?? false,
+                constraint: visitOptionalNode(
+                    target.constraint,
+                    originalSource,
+                    tSTypeVisitorEvaluatePairs(),
+                    'TSTypeVisitor',
+                ),
+                default: visitOptionalNode(
+                    target.default,
+                    originalSource,
+                    tSTypeVisitorEvaluatePairs(),
+                    'TSTypeVisitor',
+                ),
+            },
+            getSourceSpan(target, originalSource),
+        );
     }
 
     getName(): TSTypeParameterFields['name'] {
-        return this.value.name;
+        return this.getFields().name;
     }
 
-    getIn(): TSTypeParameterFields['in'] {
-        return this.value.in;
-    }
-
-    getOut(): TSTypeParameterFields['out'] {
-        return this.value.out;
+    getVariance(): TSTypeParameterFields['variance'] {
+        return this.getFields().variance;
     }
 
     getConst(): TSTypeParameterFields['const'] {
-        return this.value.const;
+        return this.getFields().const;
     }
 
     getConstraint(): TSTypeParameterFields['constraint'] {
-        return this.value.constraint;
+        return this.getFields().constraint;
     }
 
     getDefault(): TSTypeParameterFields['default'] {
-        return this.value.default;
+        return this.getFields().default;
     }
 }
 
@@ -92,5 +87,5 @@ export const tSTypeParameterTypePair: EvaluatePair<TSTypeParameter, TSTypeParame
     );
 
 export const isTSTypeParameterType = (
-    target: LwcCommonTypeClass<string>,
+    target: LwcCommonTypeClass<string, TypeField<string>>,
 ): target is TSTypeParameterTypeClass => target instanceof TSTypeParameterTypeClass;

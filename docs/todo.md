@@ -6,23 +6,27 @@
 
 ## 1. 道具・品質（高）
 
-- [ ] テストとサンプルのスクリプトを型チェックに入れる（`tsconfig.test.json`。今の `tsconfig.json` は `src` だけを見ている）
-- [ ] 型チェックで出るテストのエラーを直す（`test/apex_IR/*`・`test/converter/output-types.test.ts`・`convert-exclude-error.test.ts`・`lwc_IR/visitor.test.ts`・`parser/metadata-parse.test.ts` など。古い API の型のまま）
-- [ ] `src/analyzer/types/apex_IR/restVisitor/creator.ts` の型エラー（`ErrorTypeClass` が `commonVisitor` にない）
-- [ ] 以前から失敗しているテスト 6 件を直す（Apex の `locationValue`・`typeRef`・JSON 出力（構文のサンプル）。期待値が古いのか実装の不具合なのかを分ける）
+- [x] テストとサンプルのスクリプトを型チェックに入れる（`tsconfig.test.json`。今の `tsconfig.json` は `src` だけを見ている）
+- [x] 型チェックで出るテストのエラーを直す（`test/apex_IR/*`・`test/converter/output-types.test.ts`・`convert-exclude-error.test.ts`・`lwc_IR/visitor.test.ts`・`parser/metadata-parse.test.ts` など。古い API の型のまま）
+- [x] `src/analyzer/types/apex_IR/restVisitor/creator.ts` の型エラー（`ErrorTypeClass` が `commonVisitor` にない）
+- [x] 以前から失敗しているテスト 6 件を直す（Apex の `locationValue`・`typeRef`・JSON 出力（構文のサンプル）。期待値が古いのか実装の不具合なのかを分ける）
 - [ ] 改行コードを決める（`.gitattributes`）。Prettier の `endOfLine: crlf` と、リポジトリのファイル（多くが LF）が合わず、整形のたびに改行コードだけの差分が出る
-- [ ] LWC の検証スクリプトの型エラー（`docs/examples/lwc/scripts/run-library-parse.ts`・`verify-erase-types.ts`。Babel のプラグインの型）
+- [x] LWC の検証スクリプトの型エラー（`docs/examples/lwc/scripts/run-library-parse.ts`・`verify-erase-types.ts`。Babel のプラグインの型）
 - [ ] CI（型チェック・テスト・Prettier の確認）
 
 ## 2. 解析（高〜中。詳しくは [analysis-plan.md](./analysis-plan.md)）
 
-- [ ] 単位の種類（`UnitType`）と `Repository` で、parser・worker・Diff・解析の流れを 1 つにする（analysis-plan 2 章）
-- [ ] 保存データの版。オブジェクト・翻訳のキー（書いた順の objectKey）と保存名（接頭辞なし）をそろえる（analysis-plan 1.1・1.2・5.2）
-- [ ] 定義・参照の取り出しを全種類で同じ形にし、依存関係のグラフを作る（依存先・被依存・影響・依存の差分・ない参照・使われていないもの・循環。analysis-plan 3 章）
-- [ ] Apex の参照（SOQL / SOSL / DML の対象・呼び出し・型）。[apex-json-analysis.md](./apex-json-analysis.md)
-- [ ] 数式の参照の取り出し（数式項目・入力規則・既定値・ワークフロー・Flow・レポート）
-- [ ] git の範囲からの before / after（変わった単位だけ parse。名前の変更は git の rename で対応付ける）
-- [ ] SFDX の分解された形式（`decompose*`: 権限セット・ラベル・ワークフロー・共有ルールなど）、メタデータ API の形式、複数のパッケージディレクトリ・`.forceignore`
+- [ ] IR v2 の型の見直し（ありえない組み合わせを書ける型を判別 union などにする。[ir-v2-types.md](./ir-v2-types.md)。先に 3 章の決めることと 4 章の不具合）
+- [ ] IR v2（`apex_IR_v2`・`lwc_IR_v2`）を parser につないで、v1 と置き換える（[ir-v2-integration.md](./ir-v2-integration.md)。Apex は済み、LWC と v1 の削除が残り）
+
+- [x] 単位の種類（`UnitType`）と `Repository` で、parser・worker・Diff・解析の流れを 1 つにする（analysis-plan 2 章）
+- [x] 保存データの版。オブジェクト・翻訳のキー（書いた順の objectKey）と保存名（接頭辞なし）をそろえる（analysis-plan 1.1・1.2・5.2）
+- [x] 定義・参照の取り出しを全種類で同じ形にし、依存関係のグラフを作る（依存先・被依存・影響・依存の差分・ない参照・使われていないもの・循環。analysis-plan 3 章）
+- [x] Apex の参照（SOQL / SOSL / DML の対象・呼び出し・型）。[apex-json-analysis.md](./apex-json-analysis.md)
+- [x] 数式の参照の取り出し（数式項目・入力規則・既定値・ワークフロー・Flow・レポート）
+- [x] git の範囲からの before / after（変わった単位だけ parse。名前の変更は git の rename で対応付ける）
+- [x] SFDX の分解された形式（`decompose*`: 権限セット・ラベル・ワークフロー・共有ルール）、複数のパッケージディレクトリ・`.forceignore`
+- [x] メタデータ API の形式（`.workflow` など）
 - [ ] 名前の変更の推定（項目・メソッドなど、ファイルの中の要素）
 - [ ] 大きいリポジトリ（変わった単位だけ parse、保存済みの解析結果の使い回し、Profile の大きさの確認）
 
@@ -38,8 +42,8 @@
 ## 4. MCP サーバー（中）
 
 - [ ] ツールを置き換える: `list_report_components`・`get_report_data`・`build_report`（今の `save_objects`・`analyze_objects` はオブジェクトだけ）
-- [ ] 依存関係の問い合わせ（「この項目を使っているもの」「この変更の影響」）
-- [ ] AI に渡すときに伏せる値（指定ログイン情報の URL・ユーザー名、カスタムメタデータのレコードの値など）
+- [x] 依存関係の問い合わせ（「この項目を使っているもの」「この変更の影響」）
+- [x] AI に渡すときに伏せる値（指定ログイン情報の URL・ユーザー名、カスタムメタデータのレコードの値など）
 
 ## 5. ドキュメント（中）
 
@@ -51,7 +55,7 @@
 
 - [ ] 実際の組織に近いリポジトリ（公開されているサンプルアプリなど）で、読めない要素・`skippedElements`・指摘の誤検出を洗い出す
 - [ ] 分解された形式・メタデータ API の形式のサンプル
-- [ ] 依存関係の期待値のテスト（サンプルのすべての種類をまたぐもの）
+- [x] 依存関係の期待値のテスト（サンプルのすべての種類をまたぐもの）
 
 ## 7. ビルド・配布（低）
 

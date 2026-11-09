@@ -1,31 +1,41 @@
 import { EnumConstantsContext } from '@apexdevtools/apex-parser';
 
-import { DeclarationListTypeClass } from '.';
+import { IdTypeClass } from '../idVisitor';
+import {
+    ApexCommonTypeClass,
+    createNodeList,
+    getSourceSpan,
+    isSpicifyApexCommonTypeClass,
+} from '../commonVisitor';
+import { type FieldsOf, TypeField } from '../../commons/ir';
+import { SourceSpan } from '../../commons';
 
-import { NormalIdTypeClass, IdVisitor, isNormalIdType } from '../idVisitor';
-import { ApexErrorTypeClass, ApexCommonTypeClass, visitNodeList } from '../commonVisitor';
+export type EnumConstantsType = TypeField<'enumConstants'> & {
+    constants: IdTypeClass[];
+};
 
-export class EnumConstantsTypeClass extends DeclarationListTypeClass<
+export class EnumConstantsTypeClass extends ApexCommonTypeClass<
     'enumConstants',
-    NormalIdTypeClass
+    EnumConstantsType
 > {
-    private constructor(value: (NormalIdTypeClass | ApexErrorTypeClass)[]) {
-        super('enumConstants', value);
+    private constructor(fields: FieldsOf<EnumConstantsType>, sourceSpan: SourceSpan) {
+        super('enumConstants', fields, sourceSpan);
     }
 
     static create(ctx: EnumConstantsContext): EnumConstantsTypeClass {
-        if (!ctx.id_list() || ctx.id_list().length === 0) {
-            throw new Error('値が異常です。EnumConstantsContext: ' + ctx.getText());
-        }
-
         return new EnumConstantsTypeClass(
-            visitNodeList(new IdVisitor(), ctx.id_list(), isNormalIdType, 'id'),
+            { constants: createNodeList(ctx.id_list(), (c) => IdTypeClass.create(c), 'id') },
+            getSourceSpan(ctx),
         );
+    }
+
+    getConstants(): EnumConstantsType['constants'] {
+        return this.getFields().constants;
     }
 }
 
 export const isEnumConstantsType = (
-    target: ApexCommonTypeClass<string>,
+    target: ApexCommonTypeClass<string, TypeField<string>>,
 ): target is EnumConstantsTypeClass => {
-    return target instanceof EnumConstantsTypeClass;
+    return isSpicifyApexCommonTypeClass('enumConstants', target);
 };

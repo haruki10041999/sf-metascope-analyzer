@@ -1,72 +1,68 @@
+import { type FieldsOf, type TypeField } from '../../commons/ir';
+import { type SourceSpan } from '../../commons/source';
 import { isTryStatement, type TryStatement } from '@babel/types';
 import {
     EvaluatePair,
     LwcCommonTypeClass,
-    LwcErrorTypeClass,
-    lazyPairs,
     makeEvaluatePair,
-    visitNode,
-    visitOptionalNode,
+    getSourceSpan,
 } from '../commonVisitor';
-import { blockStatementTypePair, type BlockStatementTypeClass } from './blockStatement';
-import { catchClauseTypePair, type CatchClauseTypeClass } from './catchClause';
+import { failIrBuild } from '../buildFailure';
+import { BlockStatementTypeClass } from './blockStatement';
+import { CatchClauseTypeClass } from './catchClause';
 
-const tryStatementBlockPairs = lazyPairs(() => [blockStatementTypePair] as const);
-const tryStatementHandlerPairs = lazyPairs(() => [catchClauseTypePair] as const);
-const tryStatementFinalizerPairs = lazyPairs(() => [blockStatementTypePair] as const);
+/** catch と finally の少なくとも一方が要る */
+export type TryStatementFields = TypeField<'tryStatement'> & {
+    block: BlockStatementTypeClass;
+} & (
+        | { handler: CatchClauseTypeClass; finalizer: BlockStatementTypeClass | null }
+        | { handler: null; finalizer: BlockStatementTypeClass }
+    );
 
-export type TryStatementFields = {
-    block: BlockStatementTypeClass | LwcErrorTypeClass;
-    handler: CatchClauseTypeClass | LwcErrorTypeClass | null;
-    finalizer: BlockStatementTypeClass | LwcErrorTypeClass | null;
-};
-
-export class TryStatementTypeClass extends LwcCommonTypeClass<'tryStatement'> {
-    private readonly value: TryStatementFields;
-
-    private constructor(value: TryStatementFields) {
-        super('tryStatement');
-        this.value = value;
+export class TryStatementTypeClass extends LwcCommonTypeClass<'tryStatement', TryStatementFields> {
+    private constructor(value: FieldsOf<TryStatementFields>, sourceSpan: SourceSpan) {
+        super('tryStatement', value, sourceSpan);
     }
 
     static create(target: TryStatement, originalSource: string): TryStatementTypeClass {
-        return new TryStatementTypeClass({
-            block: visitNode(
-                target.block,
-                originalSource,
-                tryStatementBlockPairs(),
-                'TryStatement.block',
-            ),
-            handler: visitOptionalNode(
-                target.handler,
-                originalSource,
-                tryStatementHandlerPairs(),
-                'TryStatement.handler',
-            ),
-            finalizer: visitOptionalNode(
-                target.finalizer,
-                originalSource,
-                tryStatementFinalizerPairs(),
-                'TryStatement.finalizer',
-            ),
-        });
-    }
-
-    /** すべてのフィールド (Babel の value フィールドの getter getValue() と区別する。getChildNodes もこれから作る) */
-    override getFields(): TryStatementFields {
-        return this.value;
+        const block = BlockStatementTypeClass.create(target.block, originalSource);
+        const finalizer =
+            target.finalizer == null
+                ? null
+                : BlockStatementTypeClass.create(target.finalizer, originalSource);
+        return new TryStatementTypeClass(
+            target.handler != null
+                ? {
+                      block,
+                      handler: CatchClauseTypeClass.create(target.handler, originalSource),
+                      finalizer,
+                  }
+                : {
+                      block,
+                      handler: null,
+                      finalizer:
+                          finalizer ??
+                          failIrBuild(
+                              'TYPE_MISMATCH',
+                              target,
+                              originalSource,
+                              'try には catch か finally が要ります',
+                          ),
+                  },
+            getSourceSpan(target, originalSource),
+        );
     }
 
     getBlock(): TryStatementFields['block'] {
-        return this.value.block;
+        return this.getFields().block;
     }
 
     getHandler(): TryStatementFields['handler'] {
-        return this.value.handler;
+        return this.getFields().handler;
     }
 
     getFinalizer(): TryStatementFields['finalizer'] {
-        return this.value.finalizer;
+        return this.getFields().finalizer;
     }
 }
 
@@ -76,5 +72,5 @@ export const tryStatementTypePair: EvaluatePair<TryStatement, TryStatementTypeCl
     );
 
 export const isTryStatementType = (
-    target: LwcCommonTypeClass<string>,
+    target: LwcCommonTypeClass<string, TypeField<string>>,
 ): target is TryStatementTypeClass => target instanceof TryStatementTypeClass;

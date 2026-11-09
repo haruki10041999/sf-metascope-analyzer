@@ -1,9 +1,9 @@
 import typia from 'typia';
 
-import { convertValue, ConvertType } from '../commons';
-import { ErrorJson, JsonType, makeJsonType } from '../../commons';
+import { ErrorJson, JsonType } from '../../commons';
+import type { LimitClauseTypeClass } from '../../apex_IR_v2';
 
-import { LimitClauseType } from '../converter';
+import { makeNodeJson } from '../commons/node';
 import { BaseExpressionJson, makeExpressionJsonConvert } from '../expression';
 
 export type LimitJson = JsonType<'limitClause'> &
@@ -20,23 +20,19 @@ export type LimitJson = JsonType<'limitClause'> &
 
 export const isLimitJson = typia.createIs<LimitJson>();
 
-export const makeLimitJson = (target: ConvertType<LimitClauseType>): LimitJson | ErrorJson => {
-    return convertValue<'limitClause', LimitClauseType, LimitJson>(
-        target,
-        'limitClause',
-        (target, targetRecords) => {
-            if (typeof target.value === 'string') {
-                return makeJsonType('limitClause', targetRecords.base, {
-                    type: 'literal',
-                    value: target.value,
-                });
-            } else {
-                const expressionJson = makeExpressionJsonConvert(target.value.value);
-                return makeJsonType('limitClause', targetRecords.base, {
-                    type: 'bind',
-                    value: expressionJson,
-                });
-            }
-        },
-    );
+export const makeLimitJson = (target: LimitClauseTypeClass): LimitJson => {
+    const value = target.getFields().value;
+    switch (value.kind) {
+        case 'literal':
+            return makeNodeJson<LimitJson>('limitClause', target, {
+                type: 'literal',
+                value: value.value,
+            });
+        case 'bind':
+            // バインド式 (:var) は中の式を出す
+            return makeNodeJson<LimitJson>('limitClause', target, {
+                type: 'bind',
+                value: makeExpressionJsonConvert(value.value.getFields().value),
+            });
+    }
 };

@@ -1,49 +1,40 @@
+import { type FieldsOf, type TypeField } from '../../commons/ir';
+import { type SourceSpan } from '../../commons/source';
 import { isEnumDefaultedMember, type EnumDefaultedMember } from '@babel/types';
 import {
     EvaluatePair,
     LwcCommonTypeClass,
-    LwcErrorTypeClass,
-    lazyPairs,
     makeEvaluatePair,
-    visitNode,
+    getSourceSpan,
 } from '../commonVisitor';
-import { identifierTypePair, type IdentifierTypeClass } from './identifier';
+import { IdentifierTypeClass } from './identifier';
 
-const enumDefaultedMemberIdPairs = lazyPairs(() => [identifierTypePair] as const);
-
-export type EnumDefaultedMemberFields = {
-    id: IdentifierTypeClass | LwcErrorTypeClass;
+export type EnumDefaultedMemberFields = TypeField<'enumDefaultedMember'> & {
+    id: IdentifierTypeClass;
 };
 
-export class EnumDefaultedMemberTypeClass extends LwcCommonTypeClass<'enumDefaultedMember'> {
-    private readonly value: EnumDefaultedMemberFields;
-
-    private constructor(value: EnumDefaultedMemberFields) {
-        super('enumDefaultedMember');
-        this.value = value;
+export class EnumDefaultedMemberTypeClass extends LwcCommonTypeClass<
+    'enumDefaultedMember',
+    EnumDefaultedMemberFields
+> {
+    private constructor(value: FieldsOf<EnumDefaultedMemberFields>, sourceSpan: SourceSpan) {
+        super('enumDefaultedMember', value, sourceSpan);
     }
 
     static create(
         target: EnumDefaultedMember,
         originalSource: string,
     ): EnumDefaultedMemberTypeClass {
-        return new EnumDefaultedMemberTypeClass({
-            id: visitNode(
-                target.id,
-                originalSource,
-                enumDefaultedMemberIdPairs(),
-                'EnumDefaultedMember.id',
-            ),
-        });
-    }
-
-    /** すべてのフィールド (Babel の value フィールドの getter getValue() と区別する。getChildNodes もこれから作る) */
-    override getFields(): EnumDefaultedMemberFields {
-        return this.value;
+        return new EnumDefaultedMemberTypeClass(
+            {
+                id: IdentifierTypeClass.create(target.id, originalSource),
+            },
+            getSourceSpan(target, originalSource),
+        );
     }
 
     getId(): EnumDefaultedMemberFields['id'] {
-        return this.value.id;
+        return this.getFields().id;
     }
 }
 
@@ -55,5 +46,5 @@ export const enumDefaultedMemberTypePair: EvaluatePair<
 );
 
 export const isEnumDefaultedMemberType = (
-    target: LwcCommonTypeClass<string>,
+    target: LwcCommonTypeClass<string, TypeField<string>>,
 ): target is EnumDefaultedMemberTypeClass => target instanceof EnumDefaultedMemberTypeClass;

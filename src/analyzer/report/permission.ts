@@ -25,7 +25,7 @@ import type {
     MetadataSnapshot,
     PermissionDiffRow,
     PermissionHolderRef,
-    ReportInput,
+    SnapshotInput,
 } from './types';
 
 // 権限の provider (permission.*)。方針: docs/report-components-plan.md 2.5 章、docs/metadata-implementation.md 10 章
@@ -78,7 +78,7 @@ type Holder = { id: string; filePath: string; json: JsonType<string> & Record<st
  * permission.diffs: 権限セット・ミュート権限セット・Profile・権限セットグループの変更。
  * 権限の行はキー (行の表) で対応付け、変わった値を changes に持つ。before を渡さなければ、すべての行を status なしで返す
  */
-export const getPermissionDiffs = (input: ReportInput): PermissionDiffRow[] => {
+export const getPermissionDiffs = (input: SnapshotInput): PermissionDiffRow[] => {
     const hasBefore = input.before !== undefined;
     return HOLDERS.flatMap(({ type, results, rows, schema }) => {
         const holders = compareKeyed<Holder>(
@@ -168,7 +168,7 @@ const refKey = (ref: PermissionHolderRef) => `${ref.type}:${ref.name}`;
 
 /** Matrix の組み立て。onlyChanged なら、変わったセルのある行だけにする */
 const makeMatrix = <V>(
-    input: ReportInput,
+    input: SnapshotInput,
     cellsOf: (
         holder: PermissionAnalysis['holders'][number],
     ) => { row: string; value: V; sourceKeys?: never }[],
@@ -231,7 +231,7 @@ export type MatrixOptions = {
 
 /** permission.objectAccess: 権限セット・Profile × オブジェクトの CRUD (ミュート権限セットは列にしない) */
 export const getObjectAccessMatrix = (
-    input: ReportInput,
+    input: SnapshotInput,
     options: MatrixOptions = {},
 ): Matrix<AccessFlags> =>
     makeMatrix(
@@ -242,7 +242,7 @@ export const getObjectAccessMatrix = (
 
 /** permission.fieldAccess: 権限セット・Profile × 項目の参照・編集 */
 export const getFieldAccessMatrix = (
-    input: ReportInput,
+    input: SnapshotInput,
     options: MatrixOptions = {},
 ): Matrix<Omit<FieldAccess, 'field'>> =>
     makeMatrix(
@@ -256,7 +256,7 @@ export const getFieldAccessMatrix = (
     );
 
 /** permission.apexAccess: Apex クラス・Visualforce ページの実行権限 */
-export const getApexAccess = (input: ReportInput): ApexAccessRow[] => {
+export const getApexAccess = (input: SnapshotInput): ApexAccessRow[] => {
     const rowsOf = (analysis: PermissionAnalysis | undefined) =>
         (analysis?.holders ?? [])
             .filter((h) => h.type !== 'mutingPermissionSet')
@@ -301,7 +301,7 @@ const effectiveEntries = (table: PermissionTable): [string, string, string | boo
 ];
 
 /** permission.effective: 権限セットグループ (ミュートを含む) を合わせた、実際に与える権限 */
-export const getEffectivePermissions = (input: ReportInput): EffectivePermissionRow[] => {
+export const getEffectivePermissions = (input: SnapshotInput): EffectivePermissionRow[] => {
     const before = analyze(input.before);
     const after = analyze(input.after)!;
     const entriesOf = (analysis: PermissionAnalysis | undefined) =>

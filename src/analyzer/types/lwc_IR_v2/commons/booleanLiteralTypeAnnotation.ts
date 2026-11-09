@@ -1,34 +1,42 @@
+import { type FieldsOf, type TypeField } from '../../commons/ir';
+import { type SourceSpan } from '../../commons/source';
 import { isBooleanLiteralTypeAnnotation, type BooleanLiteralTypeAnnotation } from '@babel/types';
-import { EvaluatePair, LwcCommonTypeClass, makeEvaluatePair } from '../commonVisitor';
+import {
+    EvaluatePair,
+    LwcCommonTypeClass,
+    makeEvaluatePair,
+    getSourceSpan,
+} from '../commonVisitor';
 
-export type BooleanLiteralTypeAnnotationFields = {
+export type BooleanLiteralTypeAnnotationFields = TypeField<'booleanLiteralTypeAnnotation'> & {
     value: BooleanLiteralTypeAnnotation['value'];
 };
 
-export class BooleanLiteralTypeAnnotationTypeClass extends LwcCommonTypeClass<'booleanLiteralTypeAnnotation'> {
-    private readonly value: BooleanLiteralTypeAnnotationFields;
-
-    private constructor(value: BooleanLiteralTypeAnnotationFields) {
-        super('booleanLiteralTypeAnnotation');
-        this.value = value;
+export class BooleanLiteralTypeAnnotationTypeClass extends LwcCommonTypeClass<
+    'booleanLiteralTypeAnnotation',
+    BooleanLiteralTypeAnnotationFields
+> {
+    private constructor(
+        value: FieldsOf<BooleanLiteralTypeAnnotationFields>,
+        sourceSpan: SourceSpan,
+    ) {
+        super('booleanLiteralTypeAnnotation', value, sourceSpan);
     }
 
     static create(
         target: BooleanLiteralTypeAnnotation,
         originalSource: string,
     ): BooleanLiteralTypeAnnotationTypeClass {
-        return new BooleanLiteralTypeAnnotationTypeClass({
-            value: target.value,
-        });
-    }
-
-    /** すべてのフィールド (Babel の value フィールドの getter getValue() と区別する。getChildNodes もこれから作る) */
-    override getFields(): BooleanLiteralTypeAnnotationFields {
-        return this.value;
+        return new BooleanLiteralTypeAnnotationTypeClass(
+            {
+                value: target.value,
+            },
+            getSourceSpan(target, originalSource),
+        );
     }
 
     getValue(): BooleanLiteralTypeAnnotationFields['value'] {
-        return this.value.value;
+        return this.getFields().value;
     }
 }
 
@@ -40,6 +48,6 @@ export const booleanLiteralTypeAnnotationTypePair: EvaluatePair<
 );
 
 export const isBooleanLiteralTypeAnnotationType = (
-    target: LwcCommonTypeClass<string>,
+    target: LwcCommonTypeClass<string, TypeField<string>>,
 ): target is BooleanLiteralTypeAnnotationTypeClass =>
     target instanceof BooleanLiteralTypeAnnotationTypeClass;

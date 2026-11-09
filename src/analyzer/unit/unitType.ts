@@ -198,14 +198,29 @@ const lwcUnitType: UnitType<LwcBundleParseResult> = {
 // オブジェクト・翻訳
 // ---------------------------------------------------------------------------
 
+const OBJECT_MDAPI_SUFFIX = '.object';
+
 const objectUnitType: UnitType<ObjectParseResult> = {
     type: 'object',
     prefix: OBJECT_SAVE_PREFIX,
-    locate: (filePath) => locateFolderUnit(filePath, 'objects'),
+    locate: (filePath) => {
+        // メタデータ API の形式: objects/<API 名>.object (1 ファイルの中に項目などを書く)
+        const parts = filePath.split('/');
+        if (parts[parts.length - 2] === 'objects' && filePath.endsWith(OBJECT_MDAPI_SUFFIX)) {
+            return filePath;
+        }
+        return locateFolderUnit(filePath, 'objects');
+    },
     exists: () => true,
-    filesOf: filesUnder,
+    filesOf: (location, files) =>
+        location.endsWith(OBJECT_MDAPI_SUFFIX)
+            ? files.filter((file) => file === location)
+            : filesUnder(location, files),
     parseUnit: (location, files) => ({
-        ...MetadataParser.parseObjectSource(baseOf(location), relativeTo(location, files)),
+        ...MetadataParser.parseObjectSource(
+            baseOf(location).replace(/.object$/, ''),
+            relativeTo(location, files),
+        ),
         filePath: location,
     }),
     name: (result) => result.result.id,
@@ -249,12 +264,26 @@ export const metadataFolderUnitType = (
 ): UnitType<MetadataFileParseResult> => {
     const { type, folder, suffix, layout = 'file', companions = [], bundleMain = [] } = parser.spec;
     const depth = layout === 'nested' ? 2 : 1;
+    /**
+     * メタデータ API の形式 (src/workflows/X.workflow など) の接尾辞。sfdx の接尾辞から -meta.xml を除いたもの。
+     * 中身 (ルート要素) は sfdx の形式と同じ
+     */
+    const mdapiSuffix = suffix.replace(/-meta.xml$/, '');
+    const isMdapi = (fileName: string) =>
+        mdapiSuffix !== suffix && fileName.endsWith(mdapiSuffix) && !fileName.endsWith(suffix);
+    /** 単位のファイル名から、名前 (接尾辞を除いたもの) */
+    const baseNameOf = (fileName: string) =>
+        fileName.slice(0, -(isMdapi(fileName) ? mdapiSuffix : suffix).length);
 
-    /** file・nested: ファイル名 → 単位のファイル名 (companions は単位のファイル名にする) */
+    /**
+     * file・nested: ファイル名 → 単位のファイル名 (companions は単位のファイル名にする)。
+     * メタデータ API の形式のファイルは、そのファイルが単位
+     */
     const mainFileName = (fileName: string): string | undefined => {
         if (fileName.endsWith(suffix)) return fileName;
         const companion = companions.find((c) => fileName.endsWith(c));
-        return companion ? `${fileName.slice(0, -companion.length)}${suffix}` : undefined;
+        if (companion) return `${fileName.slice(0, -companion.length)}${suffix}`;
+        return isMdapi(fileName) ? fileName : undefined;
     };
 
     /**
@@ -275,7 +304,10 @@ export const metadataFolderUnitType = (
         return [...parts.slice(0, -1), decomposed.name ?? type].join('/');
     };
     const isDecomposed = (location: string) =>
-        decomposed !== undefined && layout !== 'bundle' && !location.endsWith(suffix);
+        decomposed !== undefined &&
+        layout !== 'bundle' &&
+        !location.endsWith(suffix) &&
+        !isMdapi(baseOf(location));
 
     /** 分解された形式の単位を組み立てて解析する */
     const parseDecomposed = (location: string, files: SourceText[]) => {
@@ -313,7 +345,11 @@ export const metadataFolderUnitType = (
             return main ? [...parts.slice(0, -1), main].join('/') : locateDecomposed(filePath);
         },
         exists: (location, files) =>
-            layout === 'bundle' || isDecomposed(location) || files.has(location),
+            layout === 'bundle' ||
+            isDecomposed(location) ||
+            // メタデータ API の形式のファイルは、同じ名前の sfdx のファイル (-meta.xml) があれば、その付属のファイル
+            (files.has(location) &&
+                !(isMdapi(baseOf(location)) && files.has(`${location}-meta.xml`))),
         filesOf: (location, files) => {
             if (isDecomposed(location)) {
                 if (decomposed!.unit === 'folder') {
@@ -335,7 +371,7 @@ export const metadataFolderUnitType = (
                         !file.slice(location.length + 1).includes('/'),
                 );
             }
-            const base = location.slice(0, -suffix.length);
+            const base = `${parentOf(location)}/${baseNameOf(baseOf(location))}`;
             return files.filter(
                 (file) => file === location || companions.some((c) => file === `${base}${c}`),
             );
@@ -367,7 +403,7 @@ export const metadataFolderUnitType = (
             }
             const fileName = baseOf(location);
             const mainFile = relative.find((file) => file.fileName === fileName);
-            const base = fileName.slice(0, -suffix.length);
+            const base = baseNameOf(fileName);
             const group = layout === 'nested' ? baseOf(parentOf(location)) : undefined;
             const relativeFolder = group ? `${folder}/${group}` : folder;
             const result = parser.parseSource(

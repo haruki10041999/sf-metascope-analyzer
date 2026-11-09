@@ -1,31 +1,45 @@
 import { MethodCallExpressionContext } from '@apexdevtools/apex-parser';
 
-import { ExpressionTypeClass } from '.';
+import { MethodCallTypeClass } from '../callVisitor';
+import {
+    ApexCommonTypeClass,
+    createNode,
+    getSourceSpan,
+    isSpicifyApexCommonTypeClass,
+} from '../commonVisitor';
+import { type FieldsOf, SourceSpan, TypeField } from '../../commons/ir';
 
-import { MethodCallTypeClass, CallVisitor, isMethodCallType } from '../callVisitor';
-import { ApexErrorTypeClass, ApexCommonTypeClass, visitNode } from '../commonVisitor';
+export type MethodCallExpressionType = TypeField<'methodCallExpression'> & {
+    value: MethodCallTypeClass;
+};
 
-export class MethodCallExpressionTypeClass extends ExpressionTypeClass<
+export class MethodCallExpressionTypeClass extends ApexCommonTypeClass<
     'methodCallExpression',
-    MethodCallTypeClass
+    MethodCallExpressionType
 > {
-    private constructor(value: MethodCallTypeClass | ApexErrorTypeClass) {
-        super('methodCallExpression', value);
+    private constructor(fields: FieldsOf<MethodCallExpressionType>, sourceSpan: SourceSpan) {
+        super('methodCallExpression', fields, sourceSpan);
     }
 
     static create(ctx: MethodCallExpressionContext): MethodCallExpressionTypeClass {
-        if (!ctx.methodCall()) {
-            throw new Error('値が異常です。MethodCallExpressionContext: ' + ctx.getText());
-        }
-
         return new MethodCallExpressionTypeClass(
-            visitNode(new CallVisitor(), ctx.methodCall(), isMethodCallType, 'value'),
+            {
+                value: createNode(
+                    ctx.methodCall(),
+                    (c) => MethodCallTypeClass.create(c),
+                    'methodCall',
+                ),
+            },
+            getSourceSpan(ctx),
         );
+    }
+
+    getValue(): MethodCallExpressionType['value'] {
+        return this.getFields().value;
     }
 }
 
 export const isMethodCallExpressionType = (
-    target: ApexCommonTypeClass<string>,
-): target is MethodCallExpressionTypeClass => {
-    return target instanceof MethodCallExpressionTypeClass;
-};
+    target: ApexCommonTypeClass<string, TypeField<string>>,
+): target is MethodCallExpressionTypeClass =>
+    isSpicifyApexCommonTypeClass('methodCallExpression', target);

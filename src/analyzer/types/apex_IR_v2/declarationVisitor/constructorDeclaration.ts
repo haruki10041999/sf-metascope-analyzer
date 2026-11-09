@@ -1,66 +1,65 @@
 import { ConstructorDeclarationContext } from '@apexdevtools/apex-parser';
 
-import { DeclarationTypeClass } from '.';
-
-import { NormalBlockTypeClass, BlockVisitor, isNormalBlockType } from '../blockVisitor';
-import { QualifiedNameTypeClass, NameVisitor, isQualifiedNameType } from '../nameVisitor';
+import { BlockTypeClass } from '../blockVisitor';
+import { QualifiedNameTypeClass } from '../nameVisitor';
+import { FormalParametersTypeClass } from '../parameterVisitor';
 import {
-    FormalParametersTypeClass,
-    ParameterVisitor,
-    isFormalParametersType,
-} from '../parameterVisitor';
-import {
-    ApexErrorTypeClass,
     ApexCommonTypeClass,
-    visitNode,
-    visitOptionalNode,
+    createNode,
+    getSourceSpan,
+    isSpicifyApexCommonTypeClass,
 } from '../commonVisitor';
+import { type FieldsOf, TypeField } from '../../commons/ir';
+import { SourceSpan } from '../../commons';
 
-export class ConstructorDeclarationTypeClass extends DeclarationTypeClass<
+export type ConstructorDeclarationType = TypeField<'constructorDeclaration'> & {
+    name: QualifiedNameTypeClass;
+    parameters: FormalParametersTypeClass;
+    block: BlockTypeClass;
+};
+
+export class ConstructorDeclarationTypeClass extends ApexCommonTypeClass<
     'constructorDeclaration',
-    QualifiedNameTypeClass
+    ConstructorDeclarationType
 > {
-    private param: FormalParametersTypeClass | ApexErrorTypeClass | null = null;
-    private block: NormalBlockTypeClass | ApexErrorTypeClass;
-
-    private constructor(
-        value: QualifiedNameTypeClass | ApexErrorTypeClass,
-        param: FormalParametersTypeClass | ApexErrorTypeClass | null,
-        block: NormalBlockTypeClass | ApexErrorTypeClass,
-    ) {
-        super('constructorDeclaration', value);
-        this.param = param;
-        this.block = block;
+    private constructor(fields: FieldsOf<ConstructorDeclarationType>, sourceSpan: SourceSpan) {
+        super('constructorDeclaration', fields, sourceSpan);
     }
 
     static create(ctx: ConstructorDeclarationContext): ConstructorDeclarationTypeClass {
-        if (!ctx.qualifiedName() || !ctx.block()) {
-            throw new Error('値が異常です。ConstructorDeclarationContext: ' + ctx.getText());
-        }
-
         return new ConstructorDeclarationTypeClass(
-            visitNode(new NameVisitor(), ctx.qualifiedName(), isQualifiedNameType, 'qualifiedName'),
-            visitOptionalNode(
-                new ParameterVisitor(),
-                ctx.formalParameters(),
-                isFormalParametersType,
-                'formalParameters',
-            ),
-            visitNode(new BlockVisitor(), ctx.block(), isNormalBlockType, 'block'),
+            {
+                name: createNode(
+                    ctx.qualifiedName(),
+                    (c) => QualifiedNameTypeClass.create(c),
+                    'qualifiedName',
+                ),
+                parameters: createNode(
+                    ctx.formalParameters(),
+                    (c) => FormalParametersTypeClass.create(c),
+                    'formalParameters',
+                ),
+                block: createNode(ctx.block(), (c) => BlockTypeClass.create(c), 'block'),
+            },
+            getSourceSpan(ctx),
         );
     }
 
-    getParam(): FormalParametersTypeClass | ApexErrorTypeClass | null {
-        return this.param;
+    getName(): ConstructorDeclarationType['name'] {
+        return this.getFields().name;
     }
 
-    getBlock(): NormalBlockTypeClass | ApexErrorTypeClass {
-        return this.block;
+    getParameters(): ConstructorDeclarationType['parameters'] {
+        return this.getFields().parameters;
+    }
+
+    getBlock(): ConstructorDeclarationType['block'] {
+        return this.getFields().block;
     }
 }
 
 export const isConstructorDeclarationType = (
-    target: ApexCommonTypeClass<string>,
+    target: ApexCommonTypeClass<string, TypeField<string>>,
 ): target is ConstructorDeclarationTypeClass => {
-    return target instanceof ConstructorDeclarationTypeClass;
+    return isSpicifyApexCommonTypeClass('constructorDeclaration', target);
 };

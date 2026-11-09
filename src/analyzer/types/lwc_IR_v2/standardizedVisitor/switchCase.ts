@@ -1,56 +1,53 @@
+import { type FieldsOf, type TypeField } from '../../commons/ir';
+import { type SourceSpan } from '../../commons/source';
 import { isSwitchCase, type SwitchCase } from '@babel/types';
 import {
     EvaluatePair,
     LwcCommonTypeClass,
-    LwcErrorTypeClass,
     makeEvaluatePair,
     visitNodeList,
     visitOptionalNode,
+    getSourceSpan,
 } from '../commonVisitor';
 import { expressionVisitorEvaluatePairs, type ExpressionTypeClass } from '../expressionVisitor';
 import { statementVisitorEvaluatePairs, type StatementTypeClass } from '../statementVisitor';
 
-export type SwitchCaseFields = {
-    test: ExpressionTypeClass | LwcErrorTypeClass | null;
-    consequent: (StatementTypeClass | LwcErrorTypeClass)[];
+export type SwitchCaseFields = TypeField<'switchCase'> & {
+    test: ExpressionTypeClass | null;
+    consequent: StatementTypeClass[];
 };
 
-export class SwitchCaseTypeClass extends LwcCommonTypeClass<'switchCase'> {
-    private readonly value: SwitchCaseFields;
-
-    private constructor(value: SwitchCaseFields) {
-        super('switchCase');
-        this.value = value;
+export class SwitchCaseTypeClass extends LwcCommonTypeClass<'switchCase', SwitchCaseFields> {
+    private constructor(value: FieldsOf<SwitchCaseFields>, sourceSpan: SourceSpan) {
+        super('switchCase', value, sourceSpan);
     }
 
     static create(target: SwitchCase, originalSource: string): SwitchCaseTypeClass {
-        return new SwitchCaseTypeClass({
-            test: visitOptionalNode(
-                target.test,
-                originalSource,
-                expressionVisitorEvaluatePairs(),
-                'ExpressionVisitor',
-            ),
-            consequent: visitNodeList(
-                target.consequent,
-                originalSource,
-                statementVisitorEvaluatePairs(),
-                'StatementVisitor',
-            ),
-        });
-    }
-
-    /** すべてのフィールド (Babel の value フィールドの getter getValue() と区別する。getChildNodes もこれから作る) */
-    override getFields(): SwitchCaseFields {
-        return this.value;
+        return new SwitchCaseTypeClass(
+            {
+                test: visitOptionalNode(
+                    target.test,
+                    originalSource,
+                    expressionVisitorEvaluatePairs(),
+                    'ExpressionVisitor',
+                ),
+                consequent: visitNodeList(
+                    target.consequent,
+                    originalSource,
+                    statementVisitorEvaluatePairs(),
+                    'StatementVisitor',
+                ),
+            },
+            getSourceSpan(target, originalSource),
+        );
     }
 
     getTest(): SwitchCaseFields['test'] {
-        return this.value.test;
+        return this.getFields().test;
     }
 
     getConsequent(): SwitchCaseFields['consequent'] {
-        return this.value.consequent;
+        return this.getFields().consequent;
     }
 }
 
@@ -60,5 +57,5 @@ export const switchCaseTypePair: EvaluatePair<SwitchCase, SwitchCaseTypeClass> =
 );
 
 export const isSwitchCaseType = (
-    target: LwcCommonTypeClass<string>,
+    target: LwcCommonTypeClass<string, TypeField<string>>,
 ): target is SwitchCaseTypeClass => target instanceof SwitchCaseTypeClass;

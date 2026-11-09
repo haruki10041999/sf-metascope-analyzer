@@ -1,13 +1,14 @@
-import { convertValue, ConvertType, ConvertWithError, isErrorNode } from '../commons';
-import { ErrorJson, JsonType, makeJsonType, makeErrorJson } from '../../commons';
+import { ErrorJson, JsonType } from '../../commons';
+import type {
+    FieldSpecTypeClass,
+    SoslClausesTypeClass,
+    SoslFieldTypeClass,
+    SoslIdTypeClass,
+    SoslLiteralAltTypeClass,
+    SoslLiteralTypeClass,
+} from '../../apex_IR_v2';
 
-import {
-    FieldSpecType,
-    SoslFieldType,
-    SoslIdType,
-    SoslLiteralType,
-    SoslLiteralAltType,
-} from '../converter';
+import { makeNodeJson } from '../commons/node';
 import { SoqlFunctionJson, makeSoqlFunctionJson } from './soqlFunction';
 import { FieldOrderJson } from './orderBy';
 import { LogicalConditionJson, makeLogicalConditionJson } from './commons';
@@ -18,36 +19,35 @@ import { BaseExpressionJson, makeExpressionJsonConvert } from '../expression';
 import { SoslWithJson, makeSoslWithJson } from './with';
 import { UpdateListJson, makeUpdateListJson } from './updateList';
 
-const ERROR_KIND = 'sosl';
+// FindLiteral（[FIND '...'）/ FindLiteralAlt（[FIND {...}）のトークンから検索語だけを取り出す。
+// 形式が想定外のときはトークンの文字列をそのまま返す (v1 の converter の extractFindSearchTerm と同じ)。
+// converter (generic.ts) が同じ名前を export しているあいだは、types/apex の export * とぶつかるので export しない
+const FIND_LITERAL_PATTERN = /^\[\s*FIND\s*(?:'((?:\\.|[^\\'])*)'|\{((?:\\.|[^\\}])*)\})\s*$/i;
+
+const extractFindSearchTerm = (token: string): string => {
+    const match = token.match(FIND_LITERAL_PATTERN);
+    return match ? (match[1] ?? match[2] ?? token) : token;
+};
 
 export type SoslFieldJson = JsonType<'soslField'> & {
     field: string[] | SoqlFunctionJson;
     func?: 'TOLABEL' | 'CONVERT_CURRENCY' | 'FORMAT';
 };
 
-const makeSoslFieldJson = (target: ConvertType<SoslFieldType>): SoslFieldJson | ErrorJson => {
-    return convertValue<'soslField', SoslFieldType, SoslFieldJson>(
-        target,
-        'soslField',
-        (target, targetRecords) => {
-            const field =
-                target.value.type === 'soslId'
-                    ? target.value.value.map((v) => v.value)
-                    : makeSoqlFunctionJson(target.value);
+const makeSoslIdJson = (target: SoslIdTypeClass): string[] => {
+    return target.getFields().value.map((v) => v.getFields().value);
+};
 
-            if (Array.isArray(field)) {
-                return makeJsonType('soslField', targetRecords.base, {
-                    field: field,
-                    ...(target.func ? { func: target.func } : {}),
-                });
-            } else {
-                return makeJsonType('soslField', targetRecords.base, {
-                    field: field,
-                    ...(target.func ? { func: target.func } : {}),
-                });
-            }
-        },
-    );
+// 関数のあとの別名 (TOLABEL(x) alias など) は、v1 と同じく JSON に出さない
+const makeSoslFieldJson = (target: SoslFieldTypeClass): SoslFieldJson => {
+    const fields = target.getFields();
+    const value = fields.value;
+    const field = value.kind === 'soslId' ? makeSoslIdJson(value) : makeSoqlFunctionJson(value);
+
+    return makeNodeJson<SoslFieldJson>('soslField', target, {
+        field: field,
+        ...(fields.kind !== 'field' ? { func: fields.kind } : {}),
+    });
 };
 
 export type FieldSpecJson = {
@@ -60,44 +60,28 @@ export type FieldSpecJson = {
     offset?: OffsetJson | ErrorJson;
 };
 
-const makeSoslIdJson = (target: ConvertType<SoslIdType>): (string | ErrorJson)[] | ErrorJson => {
-    if (isErrorNode(target)) {
-        return makeErrorJson(target, ERROR_KIND);
+const makeFieldSpecJson = (target: FieldSpecTypeClass): FieldSpecJson => {
+    const { value, spec } = target.getFields();
+    // 括弧の部分 (spec) がなければ、object だけを持つ
+    if (!spec) {
+        return { object: makeSoslIdJson(value) };
     }
-    return target.value.map((v) => (isErrorNode(v) ? makeErrorJson(v, ERROR_KIND) : v.value));
-};
-
-const makeFieldSpecJson = (target: ConvertType<FieldSpecType>): FieldSpecJson | ErrorJson => {
-    if (isErrorNode(target)) {
-        return makeErrorJson(target, ERROR_KIND);
-    }
-
-    const fieldList = target.fieldList;
-    const orderBy = target.orderBy;
     return {
-        object: makeSoslIdJson(target.value),
-        ...(fieldList
+        object: makeSoslIdJson(value),
+        field: spec.fieldList.getFields().value.map((f) => makeSoslFieldJson(f)),
+        ...(spec.where ? { where: makeLogicalConditionJson(spec.where) } : {}),
+        ...(spec.orderBy
             ? {
-                  field: isErrorNode(fieldList)
-                      ? makeErrorJson(fieldList, ERROR_KIND)
-                      : fieldList.value.map((f) => makeSoslFieldJson(f)),
+                  orderBy: spec.orderBy.getFields().value.map((v) => makeFieldOrderJson(v)),
               }
             : {}),
-        ...(target.where ? { where: makeLogicalConditionJson(target.where) } : {}),
-        ...(orderBy
-            ? {
-                  orderBy: isErrorNode(orderBy)
-                      ? makeErrorJson(orderBy, ERROR_KIND)
-                      : orderBy.value.map((v) => makeFieldOrderJson(v)),
-              }
-            : {}),
-        ...(target.listView ? { listView: makeSoslIdJson(target.listView) } : {}),
-        ...(target.limitClause ? { limit: makeLimitJson(target.limitClause) } : {}),
-        ...(target.offsetClause ? { offset: makeOffsetJson(target.offsetClause) } : {}),
+        ...(spec.listView ? { listView: makeSoslIdJson(spec.listView) } : {}),
+        ...(spec.limitClause ? { limit: makeLimitJson(spec.limitClause) } : {}),
+        ...(spec.offsetClause ? { offset: makeOffsetJson(spec.offsetClause) } : {}),
     };
 };
 
-// SOSL 全体の位置を持つ境界ノード。句は子の変換関数がエラーを処理する
+// SOSL 全体の位置を持つノード。`| ErrorJson` は v1 の木の中のエラーの名残 (v2 では出てこない)
 export type SoslJson = JsonType<'sosl'> & {
     find: string | BaseExpressionJson | ErrorJson;
     group?: 'ALL' | 'EMAIL' | 'NAME' | 'PHONE' | 'SIDEBAR';
@@ -107,65 +91,48 @@ export type SoslJson = JsonType<'sosl'> & {
     update?: UpdateListJson | ErrorJson;
 };
 
-export const makeSoslJson = (
-    target: ConvertType<SoslLiteralType | SoslLiteralAltType>,
-): SoslJson | ErrorJson => {
-    return convertValue<
-        'soslLiteral' | 'soslLiteralAlt',
-        SoslLiteralType | SoslLiteralAltType,
-        SoslJson | ErrorJson
-    >(
-        target,
-        'sosl',
-        (sosl: ConvertWithError<SoslLiteralType | SoslLiteralAltType>, targetRecords) => {
-            const content = makeSoslContentJson(sosl);
-            return 'kind' in content ? content : makeJsonType('sosl', targetRecords.base, content);
-        },
-        { exclude: 'children' },
-    );
-};
-
-const makeSoslContentJson = (
-    target: ConvertWithError<SoslLiteralType | SoslLiteralAltType>,
-): Omit<SoslJson, 'kind' | 'sourceKeys'> | ErrorJson => {
-    const clauses = target.soslClauses;
-    if (isErrorNode(clauses)) {
-        return makeErrorJson(clauses, ERROR_KIND);
-    }
-
-    // 検索語は converter で FIND リテラルから取り出し済み
-    const value = target.value;
+// soslPrimary から来るのは soslLiteral だけ (soslLiteralAlt は v1 と同じく、文法にはあるが今は通らない)
+export const makeSoslJson = (target: SoslLiteralTypeClass | SoslLiteralAltTypeClass): SoslJson => {
     let find: string | BaseExpressionJson | ErrorJson;
-    if (typeof value === 'string') {
-        find = value;
-    } else if (isErrorNode(value)) {
-        find = makeErrorJson(value, ERROR_KIND);
-    } else {
-        find = makeExpressionJsonConvert(value.value);
+    let clauses: SoslClausesTypeClass;
+    switch (target.kind) {
+        case 'soslLiteral': {
+            const { search, soslClauses } = target.getFields();
+            // 検索語は FIND リテラルのトークンから取り出す。バインド式 (:var) は中の式を出す
+            find =
+                search.kind === 'literal'
+                    ? extractFindSearchTerm(search.text)
+                    : makeExpressionJsonConvert(search.expr.getFields().value);
+            clauses = soslClauses;
+            break;
+        }
+        case 'soslLiteralAlt': {
+            const { value, soslClauses } = target.getFields();
+            find = extractFindSearchTerm(value);
+            clauses = soslClauses;
+            break;
+        }
     }
 
-    const group = clauses.value;
-    const fieldSpecList = clauses.fieldSpecList;
-    return {
+    const { value: group, fieldSpecList, withList, limitClause, updateList } = clauses.getFields();
+    return makeNodeJson<SoslJson>('sosl', target, {
         find: find,
-        ...(group && !isErrorNode(group) ? { group: group.value } : {}),
+        ...(group ? { group: group.getFields().value } : {}),
         ...(fieldSpecList
             ? {
-                  fieldSpec: isErrorNode(fieldSpecList)
-                      ? makeErrorJson(fieldSpecList, ERROR_KIND)
-                      : fieldSpecList.value.map((item) => makeFieldSpecJson(item)),
+                  fieldSpec: fieldSpecList.getFields().value.map((item) => makeFieldSpecJson(item)),
               }
             : {}),
-        ...(clauses.withList
+        ...(withList
             ? {
-                  with: clauses.withList.map((item) => makeSoslWithJson(item)),
+                  with: withList.map((item) => makeSoslWithJson(item)),
               }
             : {}),
-        ...(clauses.limitClause ? { limit: makeLimitJson(clauses.limitClause) } : {}),
-        ...(clauses.updateList
+        ...(limitClause ? { limit: makeLimitJson(limitClause) } : {}),
+        ...(updateList
             ? {
-                  update: makeUpdateListJson(clauses.updateList),
+                  update: makeUpdateListJson(updateList),
               }
             : {}),
-    };
+    });
 };

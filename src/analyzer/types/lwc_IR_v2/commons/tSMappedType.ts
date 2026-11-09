@@ -1,88 +1,96 @@
+import { type FieldsOf, type TypeField } from '../../commons/ir';
+import { type SourceSpan } from '../../commons/source';
 import { isTSMappedType, type TSMappedType } from '@babel/types';
 import {
     EvaluatePair,
     LwcCommonTypeClass,
-    LwcErrorTypeClass,
-    lazyPairs,
     makeEvaluatePair,
     visitNode,
     visitOptionalNode,
+    getSourceSpan,
 } from '../commonVisitor';
 import { tSTypeVisitorEvaluatePairs, type TSTypeTypeClass } from '../tsTypeVisitor';
-import { identifierTypePair, type IdentifierTypeClass } from './identifier';
+import { IdentifierTypeClass } from './identifier';
 
-const tSMappedTypeKeyPairs = lazyPairs(() => [identifierTypePair] as const);
+/** マップ型の修飾子 (readonly・?) の付け方。true (修飾子だけ) は '+' と同じなので '+' にそろえる */
+export type TSMappedTypeModifier = '+' | '-' | null;
 
-export type TSMappedTypeFields = {
-    key: IdentifierTypeClass | LwcErrorTypeClass;
-    constraint: TSTypeTypeClass | LwcErrorTypeClass;
-    readonly: NonNullable<TSMappedType['readonly']> | null;
-    optional: NonNullable<TSMappedType['optional']> | null;
-    typeAnnotation: TSTypeTypeClass | LwcErrorTypeClass | null;
-    nameType: TSTypeTypeClass | LwcErrorTypeClass | null;
+const toMappedTypeModifier = (
+    modifier: TSMappedType['readonly'] | TSMappedType['optional'],
+): TSMappedTypeModifier => {
+    if (modifier === true || modifier === '+') {
+        return '+';
+    }
+    return modifier === '-' ? '-' : null;
 };
 
-export class TSMappedTypeTypeClass extends LwcCommonTypeClass<'tSMappedType'> {
-    private readonly value: TSMappedTypeFields;
+export type TSMappedTypeFields = TypeField<'tSMappedType'> & {
+    key: IdentifierTypeClass;
+    constraint: TSTypeTypeClass;
+    /** `readonly`・`+readonly` は '+'、`-readonly` は '-'、なしは null */
+    readonly: TSMappedTypeModifier;
+    /** `?`・`+?` は '+'、`-?` は '-'、なしは null */
+    optional: TSMappedTypeModifier;
+    typeAnnotation: TSTypeTypeClass | null;
+    nameType: TSTypeTypeClass | null;
+};
 
-    private constructor(value: TSMappedTypeFields) {
-        super('tSMappedType');
-        this.value = value;
+export class TSMappedTypeTypeClass extends LwcCommonTypeClass<'tSMappedType', TSMappedTypeFields> {
+    private constructor(value: FieldsOf<TSMappedTypeFields>, sourceSpan: SourceSpan) {
+        super('tSMappedType', value, sourceSpan);
     }
 
     static create(target: TSMappedType, originalSource: string): TSMappedTypeTypeClass {
-        return new TSMappedTypeTypeClass({
-            key: visitNode(target.key, originalSource, tSMappedTypeKeyPairs(), 'TSMappedType.key'),
-            constraint: visitNode(
-                target.constraint,
-                originalSource,
-                tSTypeVisitorEvaluatePairs(),
-                'TSTypeVisitor',
-            ),
-            readonly: target.readonly ?? null,
-            optional: target.optional ?? null,
-            typeAnnotation: visitOptionalNode(
-                target.typeAnnotation,
-                originalSource,
-                tSTypeVisitorEvaluatePairs(),
-                'TSTypeVisitor',
-            ),
-            nameType: visitOptionalNode(
-                target.nameType,
-                originalSource,
-                tSTypeVisitorEvaluatePairs(),
-                'TSTypeVisitor',
-            ),
-        });
-    }
-
-    /** すべてのフィールド (Babel の value フィールドの getter getValue() と区別する。getChildNodes もこれから作る) */
-    override getFields(): TSMappedTypeFields {
-        return this.value;
+        return new TSMappedTypeTypeClass(
+            {
+                key: IdentifierTypeClass.create(target.key, originalSource),
+                constraint: visitNode(
+                    target.constraint,
+                    originalSource,
+                    tSTypeVisitorEvaluatePairs(),
+                    'TSTypeVisitor',
+                ),
+                readonly: toMappedTypeModifier(target.readonly),
+                optional: toMappedTypeModifier(target.optional),
+                typeAnnotation: visitOptionalNode(
+                    target.typeAnnotation,
+                    originalSource,
+                    tSTypeVisitorEvaluatePairs(),
+                    'TSTypeVisitor',
+                ),
+                nameType: visitOptionalNode(
+                    target.nameType,
+                    originalSource,
+                    tSTypeVisitorEvaluatePairs(),
+                    'TSTypeVisitor',
+                ),
+            },
+            getSourceSpan(target, originalSource),
+        );
     }
 
     getKey(): TSMappedTypeFields['key'] {
-        return this.value.key;
+        return this.getFields().key;
     }
 
     getConstraint(): TSMappedTypeFields['constraint'] {
-        return this.value.constraint;
+        return this.getFields().constraint;
     }
 
     getReadonly(): TSMappedTypeFields['readonly'] {
-        return this.value.readonly;
+        return this.getFields().readonly;
     }
 
     getOptional(): TSMappedTypeFields['optional'] {
-        return this.value.optional;
+        return this.getFields().optional;
     }
 
     getTypeAnnotation(): TSMappedTypeFields['typeAnnotation'] {
-        return this.value.typeAnnotation;
+        return this.getFields().typeAnnotation;
     }
 
     getNameType(): TSMappedTypeFields['nameType'] {
-        return this.value.nameType;
+        return this.getFields().nameType;
     }
 }
 
@@ -92,5 +100,5 @@ export const tSMappedTypeTypePair: EvaluatePair<TSMappedType, TSMappedTypeTypeCl
     );
 
 export const isTSMappedTypeType = (
-    target: LwcCommonTypeClass<string>,
+    target: LwcCommonTypeClass<string, TypeField<string>>,
 ): target is TSMappedTypeTypeClass => target instanceof TSMappedTypeTypeClass;

@@ -1,13 +1,25 @@
+import { type TypeField } from '../../commons/ir';
+import { type SourceSpan } from '../../commons/source';
 import { isThisExpression, type ThisExpression } from '@babel/types';
-import { EvaluatePair, LwcCommonTypeClass, makeEvaluatePair } from '../commonVisitor';
+import {
+    EvaluatePair,
+    LwcCommonTypeClass,
+    makeEvaluatePair,
+    getSourceSpan,
+} from '../commonVisitor';
 
-export class ThisExpressionTypeClass extends LwcCommonTypeClass<'thisExpression'> {
-    private constructor() {
-        super('thisExpression');
+export type ThisExpressionFields = TypeField<'thisExpression'>;
+
+export class ThisExpressionTypeClass extends LwcCommonTypeClass<
+    'thisExpression',
+    ThisExpressionFields
+> {
+    private constructor(sourceSpan: SourceSpan) {
+        super('thisExpression', {}, sourceSpan);
     }
 
-    static create(_target: ThisExpression, _originalSource: string): ThisExpressionTypeClass {
-        return new ThisExpressionTypeClass();
+    static create(target: ThisExpression, originalSource: string): ThisExpressionTypeClass {
+        return new ThisExpressionTypeClass(getSourceSpan(target, originalSource));
     }
 }
 
@@ -17,5 +29,5 @@ export const thisExpressionTypePair: EvaluatePair<ThisExpression, ThisExpression
     );
 
 export const isThisExpressionType = (
-    target: LwcCommonTypeClass<string>,
+    target: LwcCommonTypeClass<string, TypeField<string>>,
 ): target is ThisExpressionTypeClass => target instanceof ThisExpressionTypeClass;

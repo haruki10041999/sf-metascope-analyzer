@@ -1,64 +1,48 @@
 import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
 
-import { makeModifiersJson } from '../../src/analyzer/types/apex/modifier';
-import { makeConvertType } from '../../src/analyzer/types/apex/commons';
-import { ModifierType } from '../../src/analyzer/types/apex/converter';
+import { find, toJson, unitRules } from './helpers';
 
-import { sourceInfo } from './helpers';
+// 修飾子の JSON (makeModifiersJson)。IR v2 の木から作る (docs/ir-v2-integration.md)
 
-const modifier = async (value: string, offset: number) =>
-    (
-        await makeConvertType<ModifierType>({
-            type: 'modifier',
-            sourceInfo: sourceInfo(offset),
-            value: value as ModifierType['value'],
-        } as ModifierType)
-    ).result;
+/** クラスの最初のメンバーの修飾子の JSON */
+const memberModifier = async (member: string) => {
+    const { json } = await toJson(`public class A {\n    ${member}\n}`, unitRules.cls);
+    const [declaration] = find(json, (n) => n.kind === 'field' || n.kind === 'method');
+    assert.ok(declaration, member);
+    return { json, modifier: declaration.modifier };
+};
 
 describe('makeModifiersJson', () => {
     it('分類ごとにまとめ、各修飾子が自分の sourceKeys を持つ', async () => {
-        const access = await modifier('PUBLIC', 0);
-        const declaration = await modifier('STATIC', 1);
+        const { modifier } = await memberModifier('public static void run() {}');
 
-        const result = makeModifiersJson([access, declaration]);
-
-        assert.deepEqual(result.access, [
-            {
-                kind: 'modifier',
-                sourceKeys: { objectKey: access.objectKey, sourceKey: access.sourceKey },
-                name: 'PUBLIC',
-            },
-        ]);
         assert.deepEqual(
-            result.declaration?.map((m) => m.name),
+            modifier.access.map((m: { kind: string; name: string }) => [m.kind, m.name]),
+            [['modifier', 'PUBLIC']],
+        );
+        assert.deepEqual(
+            modifier.declaration.map((m: { name: string }) => m.name),
             ['STATIC'],
         );
+        const [access] = modifier.access;
+        const [declaration] = modifier.declaration;
+        assert.ok(access.sourceKeys.objectKey.startsWith('modifier_'));
+        assert.notEqual(access.sourceKeys.sourceKey, declaration.sourceKeys.sourceKey);
     });
 
-    it('どの分類にも当たらない修飾子を捨てずに other に入れる', async () => {
-        const unknown = await modifier('UNKNOWN_MODIFIER', 0);
-        const transient = await modifier('TRANSIENT', 1);
-
-        const result = makeModifiersJson([unknown, transient]);
+    it('アクセス・宣言のどちらでもない修飾子を other に入れる', async () => {
+        const { modifier } = await memberModifier('transient Integer x;');
 
         assert.deepEqual(
-            result.other?.map((m) => m.name),
-            ['UNKNOWN_MODIFIER', 'TRANSIENT'],
+            modifier.other.map((m: { name: string }) => m.name),
+            ['TRANSIENT'],
         );
     });
 
-    it('エラーノードの修飾子は error に入る', async () => {
-        const { result: error } = await makeConvertType({
-            type: 'error',
-            sourceInfo: sourceInfo(0),
-            errorCode: 'EXCEPTION',
-            contextType: 'modifier',
-        } as never);
+    it('IR v2 の木から作るので、error の分類は出ない', async () => {
+        const { modifier } = await memberModifier('public static void run() {}');
 
-        const result = makeModifiersJson([error as never]);
-
-        assert.equal(result.error?.length, 1);
-        assert.equal(result.error?.[0]?.kind, 'error');
+        assert.equal(Object.hasOwn(modifier, 'error'), false);
     });
 });

@@ -1,27 +1,35 @@
 import { IdPrimaryContext } from '@apexdevtools/apex-parser';
 
-import { NormalIdTypeClass, IdVisitor, isNormalIdType } from '../idVisitor';
+import { IdTypeClass } from '../idVisitor';
+import {
+    ApexCommonTypeClass,
+    createNode,
+    getSourceSpan,
+    isSpicifyApexCommonTypeClass,
+} from '../commonVisitor';
+import { type FieldsOf, SourceSpan, TypeField } from '../../commons/ir';
 
-import { PrimaryTypeClass } from '.';
+export type IdPrimaryType = TypeField<'idPrimary'> & {
+    value: IdTypeClass;
+};
 
-import { ApexCommonTypeClass, ApexErrorTypeClass, visitNode } from '../commonVisitor';
-
-export class IdPrimaryTypeClass extends PrimaryTypeClass<'idPrimary', NormalIdTypeClass> {
-    private constructor(value: NormalIdTypeClass | ApexErrorTypeClass) {
-        super('idPrimary', value);
+export class IdPrimaryTypeClass extends ApexCommonTypeClass<'idPrimary', IdPrimaryType> {
+    private constructor(fields: FieldsOf<IdPrimaryType>, sourceSpan: SourceSpan) {
+        super('idPrimary', fields, sourceSpan);
     }
 
     static create(ctx: IdPrimaryContext): IdPrimaryTypeClass {
-        if (!ctx.id()) {
-            throw new Error('値が異常です。IdPrimaryContext: ' + ctx.getText());
-        }
+        return new IdPrimaryTypeClass(
+            { value: createNode(ctx.id(), (c) => IdTypeClass.create(c), 'id') },
+            getSourceSpan(ctx),
+        );
+    }
 
-        return new IdPrimaryTypeClass(visitNode(new IdVisitor(), ctx.id(), isNormalIdType, 'id'));
+    getValue(): IdPrimaryType['value'] {
+        return this.getFields().value;
     }
 }
 
 export const isIdPrimaryType = (
-    target: ApexCommonTypeClass<string>,
-): target is IdPrimaryTypeClass => {
-    return target instanceof IdPrimaryTypeClass;
-};
+    target: ApexCommonTypeClass<string, TypeField<string>>,
+): target is IdPrimaryTypeClass => isSpicifyApexCommonTypeClass('idPrimary', target);

@@ -1,44 +1,56 @@
 import { ForStatementContext } from '@apexdevtools/apex-parser';
 
+import { StatementTypeClass } from './statement';
+
+import { ForControlTypeClass } from '../controlVisitor';
 import {
-    NormalStatementTypeClass,
-    StatementTypeClass,
-    StatementVisitor,
-    isNormalStatementType,
-} from '.';
+    ApexCommonTypeClass,
+    createNode,
+    getSourceSpan,
+    isSpicifyApexCommonTypeClass,
+} from '../commonVisitor';
+import { type FieldsOf, TypeField } from '../../commons/ir';
+import { SourceSpan } from '../../commons';
 
-import { ForControlTypeClass, ControlVisitor, isForControlType } from '../controlVisitor';
-import { ApexErrorTypeClass, ApexCommonTypeClass, visitNode } from '../commonVisitor';
+export type ForStatementType = TypeField<'forStatement'> & {
+    value: ForControlTypeClass;
+    block: StatementTypeClass;
+};
 
-export class ForStatementTypeClass extends StatementTypeClass<'forStatement', ForControlTypeClass> {
-    private block: NormalStatementTypeClass | ApexErrorTypeClass;
-
-    private constructor(
-        value: ForControlTypeClass | ApexErrorTypeClass,
-        block: NormalStatementTypeClass | ApexErrorTypeClass,
-    ) {
-        super('forStatement', value);
-        this.block = block;
+export class ForStatementTypeClass extends ApexCommonTypeClass<'forStatement', ForStatementType> {
+    private constructor(fields: FieldsOf<ForStatementType>, sourceSpan: SourceSpan) {
+        super('forStatement', fields, sourceSpan);
     }
 
     static create(ctx: ForStatementContext): ForStatementTypeClass {
-        if (!ctx.forControl() || !ctx.statement()) {
-            throw new Error('値が異常です。ForStatementContext: ' + ctx.getText());
-        }
-
         return new ForStatementTypeClass(
-            visitNode(new ControlVisitor(), ctx.forControl(), isForControlType, 'forControl'),
-            visitNode(new StatementVisitor(), ctx.statement(), isNormalStatementType, 'statement'),
+            {
+                value: createNode(
+                    ctx.forControl(),
+                    (c) => ForControlTypeClass.create(c),
+                    'forControl',
+                ),
+                block: createNode(
+                    ctx.statement(),
+                    (c) => StatementTypeClass.create(c),
+                    'statement',
+                ),
+            },
+            getSourceSpan(ctx),
         );
     }
 
-    getBlock(): NormalStatementTypeClass | ApexErrorTypeClass {
-        return this.block;
+    getValue(): ForStatementType['value'] {
+        return this.getFields().value;
+    }
+
+    getBlock(): ForStatementType['block'] {
+        return this.getFields().block;
     }
 }
 
 export const isForStatementType = (
-    target: ApexCommonTypeClass<string>,
+    target: ApexCommonTypeClass<string, TypeField<string>>,
 ): target is ForStatementTypeClass => {
-    return target instanceof ForStatementTypeClass;
+    return isSpicifyApexCommonTypeClass('forStatement', target);
 };

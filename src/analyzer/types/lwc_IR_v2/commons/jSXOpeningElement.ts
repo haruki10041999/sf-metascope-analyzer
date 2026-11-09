@@ -1,13 +1,15 @@
+import { type FieldsOf, type TypeField } from '../../commons/ir';
+import { type SourceSpan } from '../../commons/source';
 import { isJSXOpeningElement, type JSXOpeningElement } from '@babel/types';
 import {
     EvaluatePair,
     LwcCommonTypeClass,
-    LwcErrorTypeClass,
     lazyPairs,
     makeEvaluatePair,
     visitNode,
     visitNodeList,
     visitOptionalNode,
+    getSourceSpan,
 } from '../commonVisitor';
 import {
     typeParameterInstantiationTypePair,
@@ -42,72 +44,63 @@ const jSXOpeningElementTypeArgumentsPairs = lazyPairs(
     () => [typeParameterInstantiationTypePair, tSTypeParameterInstantiationTypePair] as const,
 );
 
-export type JSXOpeningElementFields = {
-    name:
-        | JSXIdentifierTypeClass
-        | JSXMemberExpressionTypeClass
-        | JSXNamespacedNameTypeClass
-        | LwcErrorTypeClass;
+export type JSXOpeningElementFields = TypeField<'jSXOpeningElement'> & {
+    name: JSXIdentifierTypeClass | JSXMemberExpressionTypeClass | JSXNamespacedNameTypeClass;
     selfClosing: JSXOpeningElement['selfClosing'];
-    attributes: (JSXAttributeTypeClass | JSXSpreadAttributeTypeClass | LwcErrorTypeClass)[];
+    attributes: (JSXAttributeTypeClass | JSXSpreadAttributeTypeClass)[];
     typeArguments:
-        | TypeParameterInstantiationTypeClass
-        | TSTypeParameterInstantiationTypeClass
-        | LwcErrorTypeClass
-        | null;
+        TypeParameterInstantiationTypeClass | TSTypeParameterInstantiationTypeClass | null;
 };
 
-export class JSXOpeningElementTypeClass extends LwcCommonTypeClass<'jSXOpeningElement'> {
-    private readonly value: JSXOpeningElementFields;
-
-    private constructor(value: JSXOpeningElementFields) {
-        super('jSXOpeningElement');
-        this.value = value;
+export class JSXOpeningElementTypeClass extends LwcCommonTypeClass<
+    'jSXOpeningElement',
+    JSXOpeningElementFields
+> {
+    private constructor(value: FieldsOf<JSXOpeningElementFields>, sourceSpan: SourceSpan) {
+        super('jSXOpeningElement', value, sourceSpan);
     }
 
     static create(target: JSXOpeningElement, originalSource: string): JSXOpeningElementTypeClass {
-        return new JSXOpeningElementTypeClass({
-            name: visitNode(
-                target.name,
-                originalSource,
-                jSXOpeningElementNamePairs(),
-                'JSXOpeningElement.name',
-            ),
-            selfClosing: target.selfClosing,
-            attributes: visitNodeList(
-                target.attributes,
-                originalSource,
-                jSXOpeningElementAttributesPairs(),
-                'JSXOpeningElement.attributes',
-            ),
-            typeArguments: visitOptionalNode(
-                target.typeArguments,
-                originalSource,
-                jSXOpeningElementTypeArgumentsPairs(),
-                'JSXOpeningElement.typeArguments',
-            ),
-        });
-    }
-
-    /** すべてのフィールド (Babel の value フィールドの getter getValue() と区別する。getChildNodes もこれから作る) */
-    override getFields(): JSXOpeningElementFields {
-        return this.value;
+        return new JSXOpeningElementTypeClass(
+            {
+                name: visitNode(
+                    target.name,
+                    originalSource,
+                    jSXOpeningElementNamePairs(),
+                    'JSXOpeningElement.name',
+                ),
+                selfClosing: target.selfClosing,
+                attributes: visitNodeList(
+                    target.attributes,
+                    originalSource,
+                    jSXOpeningElementAttributesPairs(),
+                    'JSXOpeningElement.attributes',
+                ),
+                typeArguments: visitOptionalNode(
+                    target.typeArguments,
+                    originalSource,
+                    jSXOpeningElementTypeArgumentsPairs(),
+                    'JSXOpeningElement.typeArguments',
+                ),
+            },
+            getSourceSpan(target, originalSource),
+        );
     }
 
     getName(): JSXOpeningElementFields['name'] {
-        return this.value.name;
+        return this.getFields().name;
     }
 
     getSelfClosing(): JSXOpeningElementFields['selfClosing'] {
-        return this.value.selfClosing;
+        return this.getFields().selfClosing;
     }
 
     getAttributes(): JSXOpeningElementFields['attributes'] {
-        return this.value.attributes;
+        return this.getFields().attributes;
     }
 
     getTypeArguments(): JSXOpeningElementFields['typeArguments'] {
-        return this.value.typeArguments;
+        return this.getFields().typeArguments;
     }
 }
 
@@ -119,5 +112,5 @@ export const jSXOpeningElementTypePair: EvaluatePair<
 );
 
 export const isJSXOpeningElementType = (
-    target: LwcCommonTypeClass<string>,
+    target: LwcCommonTypeClass<string, TypeField<string>>,
 ): target is JSXOpeningElementTypeClass => target instanceof JSXOpeningElementTypeClass;

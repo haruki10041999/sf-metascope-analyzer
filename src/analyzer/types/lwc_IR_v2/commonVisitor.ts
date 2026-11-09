@@ -2,10 +2,13 @@ import type { Node, SourceLocation } from '@babel/types';
 
 import {
     CommonTypeClass,
-    ErrorCode,
-    TypeField,
-    ErrorField,
-    ErrorOutputFuncsution,
+    type FieldsOf,
+    type ErrorCode,
+    IrBuildError,
+    IrError,
+    type TypeField,
+    collectIrErrors,
+    recoverIrBuild,
 } from '../commons/ir';
 import type { SourcePosition, SourceSpan } from '../commons/source';
 
@@ -40,7 +43,7 @@ export class LwcCommonTypeClass<
 > extends CommonTypeClass<TName, TField> {
     constructor(
         type: TName,
-        properties: Omit<TField, 'type'> = {} as Omit<TField, 'type'>,
+        properties: FieldsOf<TField> = {} as FieldsOf<TField>,
         sourceSpan: SourceSpan,
     ) {
         super(type, properties, sourceSpan);
@@ -54,56 +57,6 @@ export class LwcCommonTypeClass<
     }
 }
 
-export class LwcErrorTypeClass
-    extends LwcCommonTypeClass<'analyzerError', ErrorField>
-    implements ErrorOutputFuncsution
-{
-    private constructor(
-        code: ErrorCode,
-        contextType: string,
-        context: string,
-        errorMessage: string,
-        sourceSpan: SourceSpan,
-    ) {
-        super(
-            'analyzerError',
-            {
-                code: code,
-                contextType: contextType,
-                context: context,
-                errorMessage: errorMessage,
-            },
-            sourceSpan,
-        );
-    }
-
-    static create(
-        code: ErrorCode,
-        contextType: string,
-        context: string,
-        errorMessage: string,
-        sourceSpan: SourceSpan,
-    ): LwcErrorTypeClass {
-        return new LwcErrorTypeClass(code, contextType, context, errorMessage, sourceSpan);
-    }
-
-    getCode() {
-        return this.getFields().code;
-    }
-
-    getContextType() {
-        return this.getFields().contextType;
-    }
-
-    getContext() {
-        return this.getFields().context;
-    }
-
-    getParseErrorMessage() {
-        return this.getFields().errorMessage;
-    }
-}
-
 export const isSpicifyLwcCommonTypeClass = <
     TName extends string,
     TField extends TypeField<TName>,
@@ -113,12 +66,6 @@ export const isSpicifyLwcCommonTypeClass = <
     target: LwcCommonTypeClass<TName, TField>,
 ): target is TLwcCommonTypeClass => {
     return target instanceof LwcCommonTypeClass && target.getType() === type;
-};
-
-export const isLwcErrorTypeClass = (
-    target: LwcCommonTypeClass<string, TypeField<string>>,
-): target is LwcErrorTypeClass => {
-    return isSpicifyLwcCommonTypeClass('analyzerError', target);
 };
 
 export type EvaluatePair<
@@ -175,97 +122,100 @@ export const lazyPairs = <const TPairs extends readonly AnyEvaluatePair[]>(
     return () => (pairs ??= make());
 };
 
+/** IR を作れなかったことを、区切りまで伝える */
+const fail = (
+    code: ErrorCode,
+    contextType: string,
+    ctx: Node | null | undefined,
+    originalSource: string,
+    message: string,
+): never => {
+    const span = getSourceSpan(ctx, originalSource);
+    throw new IrBuildError(new IrError(code, contextType, span.context, message, span));
+};
+
 /**
- * ノードを、合う pair で TypeClass にする。合う pair がない・例外になったときは LwcErrorTypeClass を返す。
- * errorRecovery: true の Babel は、型に合わないノード (代入の左辺の NumericLiteral など) を返すことがあり、
- * そのときは UNSUPPORTED_CONTEXT になる (構文エラー自体は ast.errors に別に入る)
+ * ノードを、合う pair で TypeClass にする (別名 (Expression など) の振り分け)。
+ * ノードがない (NULL_CHILD)・合う pair がない (UNSUPPORTED_CONTEXT) ときは IrBuildError を投げ、
+ * 区切り (省略できる子・配列の要素・モジュール) まで伝える。解析木にエラーのノードは残さない。
+ * ノード単位で例外は捕まえない (docs/ir-v2.md 4 章。errorRecovery の AST は型どおりで、
+ * 壊したサンプルでもエラーのノードは出なかった。万一の例外はモジュールの変換 (buildLwcIr) で捕まえる)
  */
 export const visitWithPairs = <TPair extends AnyEvaluatePair>(
     ctx: Node | null | undefined,
     originalSource: string,
     pairs: readonly TPair[],
     visitorName: string,
-): EvaluatePairInstance<TPair> | LwcErrorTypeClass => {
+): EvaluatePairInstance<TPair> => {
     if (!ctx) {
-        return LwcErrorTypeClass.create(
+        return fail(
             'NULL_CHILD',
             'null',
-            '',
+            ctx,
+            originalSource,
             `${visitorName} に子要素がありません`,
-            getSourceSpan(ctx, originalSource),
         );
     }
-
-    const span = getSourceSpan(ctx, originalSource);
-    const context = span?.context ?? '';
-
-    let result: LwcCommonTypeClass<string, TypeField<string>> | LwcErrorTypeClass | undefined;
-
-    try {
-        for (const pair of pairs) {
-            if (pair.isNode(ctx)) {
-                result = pair.instance(ctx, originalSource);
-                break;
-            }
-        }
-        if (!result) {
-            result = LwcErrorTypeClass.create(
-                'UNSUPPORTED_CONTEXT',
-                ctx.type,
-                context,
-                `${visitorName} は ${ctx.type} に対応していません`,
-                span,
-            );
-        }
-    } catch (error) {
-        result = LwcErrorTypeClass.create(
-            'EXCEPTION',
+    const pair = pairs.find((candidate) => candidate.isNode(ctx));
+    if (!pair) {
+        return fail(
+            'UNSUPPORTED_CONTEXT',
             ctx.type,
-            context,
-            error instanceof Error ? error.message : String(error),
-            span,
+            ctx,
+            originalSource,
+            `${visitorName} は ${ctx.type} に対応していません`,
         );
     }
-
-    return result as EvaluatePairInstance<TPair> | LwcErrorTypeClass;
+    return pair.instance(ctx, originalSource) as EvaluatePairInstance<TPair>;
 };
 
-/** 必須の子ノード。実行時に null なら NULL_CHILD */
+/** 必須の子ノード。作れなければ IrBuildError */
 export const visitNode = <TPair extends AnyEvaluatePair>(
     ctx: Node | null | undefined,
     originalSource: string,
     pairs: readonly TPair[],
     visitorName: string,
-): EvaluatePairInstance<TPair> | LwcErrorTypeClass =>
-    visitWithPairs(ctx, originalSource, pairs, visitorName);
+): EvaluatePairInstance<TPair> => visitWithPairs(ctx, originalSource, pairs, visitorName);
 
-/** 省略できる子ノード。ないのは正常なので null のまま返す */
+/** 省略できる子ノード (区切り)。ないのは正常なので null。作れなければ IrError を集めて null */
 export const visitOptionalNode = <TPair extends AnyEvaluatePair>(
     ctx: Node | null | undefined,
     originalSource: string,
     pairs: readonly TPair[],
     visitorName: string,
-): EvaluatePairInstance<TPair> | LwcErrorTypeClass | null =>
-    ctx == null ? null : visitWithPairs(ctx, originalSource, pairs, visitorName);
+): EvaluatePairInstance<TPair> | null =>
+    ctx == null
+        ? null
+        : recoverIrBuild(() => visitWithPairs(ctx, originalSource, pairs, visitorName), null);
 
-/** 子ノードの配列。要素が null なら NULL_CHILD */
+/** 子ノードの配列 (区切り)。作れなかった要素は IrError を集めて除く */
 export const visitNodeList = <TPair extends AnyEvaluatePair>(
     ctxs: readonly (Node | null | undefined)[],
     originalSource: string,
     pairs: readonly TPair[],
     visitorName: string,
-): (EvaluatePairInstance<TPair> | LwcErrorTypeClass)[] =>
-    ctxs.map((ctx) => visitWithPairs(ctx, originalSource, pairs, visitorName));
+): EvaluatePairInstance<TPair>[] =>
+    ctxs.flatMap((ctx) =>
+        recoverIrBuild(
+            () => [visitWithPairs(ctx, originalSource, pairs, visitorName)],
+            [] as EvaluatePairInstance<TPair>[],
+        ),
+    );
 
-/** 要素に null を許す子ノードの配列 (配列の穴 [a, , b] など)。null はそのまま残す */
+/**
+ * 要素に null を許す子ノードの配列 (配列の穴 [a, , b] など。区切り)。null はそのまま残す。
+ * 作れなかった要素も、位置を変えないよう null にする (IrError は集める)
+ */
 export const visitNullableNodeList = <TPair extends AnyEvaluatePair>(
     ctxs: readonly (Node | null | undefined)[],
     originalSource: string,
     pairs: readonly TPair[],
     visitorName: string,
-): (EvaluatePairInstance<TPair> | LwcErrorTypeClass | null)[] =>
+): (EvaluatePairInstance<TPair> | null)[] =>
     ctxs.map((ctx) =>
-        ctx == null ? null : visitWithPairs(ctx, originalSource, pairs, visitorName),
+        ctx == null
+            ? null
+            : recoverIrBuild(() => visitWithPairs(ctx, originalSource, pairs, visitorName), null),
     );
 
 export abstract class LwcCommonVisitor<TEvaluatePair extends AnyEvaluatePair> {
@@ -274,26 +224,19 @@ export abstract class LwcCommonVisitor<TEvaluatePair extends AnyEvaluatePair> {
     visit(
         ctx: Node | null | undefined,
         originalSource: string,
-    ): EvaluatePairInstance<TEvaluatePair> | LwcErrorTypeClass {
+    ): EvaluatePairInstance<TEvaluatePair> {
         return visitWithPairs(ctx, originalSource, this.evaluatePair, this.constructor.name);
     }
 }
 
-/** IR の中の LwcErrorTypeClass を、ソースの順に集める (構文エラー・LWC の違反のリスナーは parser/Lwc/errorListener.ts) */
-export const collectErrorTypeClasses = (
-    root: LwcCommonTypeClass<string, TypeField<string>>,
-): LwcErrorTypeClass[] => {
-    const errors: LwcErrorTypeClass[] = [];
-    const walk = (
-        node: LwcCommonTypeClass<string, TypeField<string>>,
-        parent: LwcCommonTypeClass<string, TypeField<string>> | null,
-    ): void => {
-        if (node instanceof LwcErrorTypeClass) {
-            errors.push(node);
-            return;
-        }
-        node.getChildNodes().forEach((child) => walk(child, node));
-    };
-    walk(root, null);
-    return errors;
-};
+/**
+ * モジュール (ファイル) の IR を作り、作れなかったところ (IrError) を集める (リスナーが resolvedError にする)。
+ * モジュールそのものを作れなかったときは result が null
+ */
+export const buildLwcIr = <TPair extends AnyEvaluatePair>(
+    ast: Node,
+    originalSource: string,
+    pairs: readonly TPair[],
+    visitorName: string,
+): { result: EvaluatePairInstance<TPair> | null; errors: IrError[] } =>
+    collectIrErrors(() => visitWithPairs(ast, originalSource, pairs, visitorName));

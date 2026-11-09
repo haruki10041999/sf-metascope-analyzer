@@ -1,0 +1,343 @@
+{
+  "source": {
+    "fileName": "AccountTrigger.trigger",
+    "fileType": "trigger",
+    "content": {
+      "name": "AccountTrigger",
+      "object": "Account",
+      "case": [
+        {
+          "kind": "triggerCase",
+          "sourceKeys": {},
+          "actionType": "UPDATE",
+          "timing": "AFTER"
+        },
+        {
+          "kind": "triggerCase",
+          "sourceKeys": {},
+          "actionType": "DELETE",
+          "timing": "BEFORE"
+        }
+      ],
+      "block": [
+        {
+          "kind": "statement",
+          "statement": {
+            "kind": "expression",
+            "sourceKeys": {},
+            "value": {
+              "kind": "memberAccess",
+              "sourceKeys": {},
+              "type": "method",
+              "object": "System",
+              "operator": ".",
+              "member": "debug",
+              "memberArg": [
+                {
+                  "sourceKeys": {},
+                  "value": "'start'",
+                  "valueType": "string"
+                }
+              ]
+            }
+          },
+          "modifier": {}
+        },
+        {
+          "kind": "statement",
+          "statement": {
+            "kind": "if",
+            "sourceKeys": {},
+            "conditionBlock": [
+              {
+                "condition": {
+                  "kind": "ifCondition",
+                  "sourceKeys": {},
+                  "condition": {
+                    "sourceKeys": {},
+                    "left": {
+                      "kind": "memberAccess",
+                      "sourceKeys": {},
+                      "type": "object",
+                      "object": "Trigger",
+                      "operator": ".",
+                      "member": "isBefore"
+                    },
+                    "operator": "&&",
+                    "right": {
+                      "kind": "memberAccess",
+                      "sourceKeys": {},
+                      "type": "object",
+                      "object": "Trigger",
+                      "operator": ".",
+                      "member": "isInsert"
+                    }
+                  }
+                },
+                "block": [
+                  {
+                    "kind": "expression",
+                    "sourceKeys": {},
+                    "value": {
+                      "kind": "memberAccess",
+                      "sourceKeys": {},
+                      "type": "method",
+                      "object": "AccountService",
+                      "operator": ".",
+                      "member": "validate",
+                      "memberArg": [
+                        {
+                          "kind": "memberAccess",
+                          "sourceKeys": {},
+                          "type": "object",
+                          "object": "Trigger",
+                          "operator": ".",
+                          "member": "new"
+                        }
+                      ]
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          "modifier": {}
+        },
+        {
+          "kind": "statement",
+          "statement": {
+            "kind": "expression",
+            "sourceKeys": {},
+            "value": {
+              "kind": "memberAccess",
+              "sourceKeys": {},
+              "type": "method",
+              "object": "System",
+              "operator": ".",
+              "member": "debug",
+              "memberArg": [
+                {
+                  "sourceKeys": {},
+                  "value": "'done'",
+                  "valueType": "string"
+                }
+              ]
+            }
+          },
+          "modifier": {}
+        }
+      ]
+    }
+  },
+  "sourceObject": [
+    {
+      "context": "'done'",
+      "start": {
+        "offset": 210,
+        "line": 6,
+        "column": 17
+      },
+      "end": {
+        "offset": 216,
+        "line": 6,
+        "column": 23
+      }
+    },
+    {
+      "context": "'start'",
+      "start": {
+        "offset": 83,
+        "line": 2,
+        "column": 17
+      },
+      "end": {
+        "offset": 90,
+        "line": 2,
+        "column": 24
+      }
+    },
+    {
+      "context": "(Trigger.isBefore && Trigger.isInsert)",
+      "start": {
+        "offset": 100,
+        "line": 3,
+        "column": 7
+      },
+      "end": {
+        "offset": 138,
+        "line": 3,
+        "column": 45
+      }
+    },
+    {
+      "context": "AccountService.validate(Trigger.new)",
+      "start": {
+        "offset": 149,
+        "line": 4,
+        "column": 8
+      },
+      "end": {
+        "offset": 185,
+        "line": 4,
+        "column": 44
+      }
+    },
+    {
+      "context": "AccountService.validate(Trigger.new);",
+      "start": {
+        "offset": 149,
+        "line": 4,
+        "column": 8
+      },
+      "end": {
+        "offset": 186,
+        "line": 4,
+        "column": 45
+      }
+    },
+    {
+      "context": "System.debug('done')",
+      "start": {
+        "offset": 197,
+        "line": 6,
+        "column": 4
+      },
+      "end": {
+        "offset": 217,
+        "line": 6,
+        "column": 24
+      }
+    },
+    {
+      "context": "System.debug('done');",
+      "start": {
+        "offset": 197,
+        "line": 6,
+        "column": 4
+      },
+      "end": {
+        "offset": 218,
+        "line": 6,
+        "column": 25
+      }
+    },
+    {
+      "context": "System.debug('start')",
+      "start": {
+        "offset": 70,
+        "line": 2,
+        "column": 4
+      },
+      "end": {
+        "offset": 91,
+        "line": 2,
+        "column": 25
+      }
+    },
+    {
+      "context": "System.debug('start');",
+      "start": {
+        "offset": 70,
+        "line": 2,
+        "column": 4
+      },
+      "end": {
+        "offset": 92,
+        "line": 2,
+        "column": 26
+      }
+    },
+    {
+      "context": "Trigger.isBefore && Trigger.isInsert",
+      "start": {
+        "offset": 101,
+        "line": 3,
+        "column": 8
+      },
+      "end": {
+        "offset": 137,
+        "line": 3,
+        "column": 44
+      }
+    },
+    {
+      "context": "Trigger.isBefore",
+      "start": {
+        "offset": 101,
+        "line": 3,
+        "column": 8
+      },
+      "end": {
+        "offset": 117,
+        "line": 3,
+        "column": 24
+      }
+    },
+    {
+      "context": "Trigger.isInsert",
+      "start": {
+        "offset": 121,
+        "line": 3,
+        "column": 28
+      },
+      "end": {
+        "offset": 137,
+        "line": 3,
+        "column": 44
+      }
+    },
+    {
+      "context": "Trigger.new",
+      "start": {
+        "offset": 173,
+        "line": 4,
+        "column": 32
+      },
+      "end": {
+        "offset": 184,
+        "line": 4,
+        "column": 43
+      }
+    },
+    {
+      "context": "after update",
+      "start": {
+        "offset": 35,
+        "line": 1,
+        "column": 35
+      },
+      "end": {
+        "offset": 47,
+        "line": 1,
+        "column": 47
+      }
+    },
+    {
+      "context": "before delete",
+      "start": {
+        "offset": 49,
+        "line": 1,
+        "column": 49
+      },
+      "end": {
+        "offset": 62,
+        "line": 1,
+        "column": 62
+      }
+    },
+    {
+      "context": "if (Trigger.isBefore && Trigger.isInsert) {\n        AccountService.validate(Trigger.new);\n    }",
+      "start": {
+        "offset": 97,
+        "line": 3,
+        "column": 4
+      },
+      "end": {
+        "offset": 192,
+        "line": 5,
+        "column": 5
+      }
+    }
+  ],
+  "resolvedError": []
+}

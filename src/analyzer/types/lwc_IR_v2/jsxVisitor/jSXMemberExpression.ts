@@ -1,63 +1,57 @@
+import { type FieldsOf, type TypeField } from '../../commons/ir';
+import { type SourceSpan } from '../../commons/source';
 import { isJSXMemberExpression, type JSXMemberExpression } from '@babel/types';
 import {
     EvaluatePair,
     LwcCommonTypeClass,
-    LwcErrorTypeClass,
     lazyPairs,
     makeEvaluatePair,
     visitNode,
+    getSourceSpan,
 } from '../commonVisitor';
-import { jSXIdentifierTypePair, type JSXIdentifierTypeClass } from './jSXIdentifier';
+import { jSXIdentifierTypePair, JSXIdentifierTypeClass } from './jSXIdentifier';
 
 const jSXMemberExpressionObjectPairs = lazyPairs(
     () => [jSXMemberExpressionTypePair, jSXIdentifierTypePair] as const,
 );
-const jSXMemberExpressionPropertyPairs = lazyPairs(() => [jSXIdentifierTypePair] as const);
 
-export type JSXMemberExpressionFields = {
-    object: JSXMemberExpressionTypeClass | JSXIdentifierTypeClass | LwcErrorTypeClass;
-    property: JSXIdentifierTypeClass | LwcErrorTypeClass;
+export type JSXMemberExpressionFields = TypeField<'jSXMemberExpression'> & {
+    object: JSXMemberExpressionTypeClass | JSXIdentifierTypeClass;
+    property: JSXIdentifierTypeClass;
 };
 
-export class JSXMemberExpressionTypeClass extends LwcCommonTypeClass<'jSXMemberExpression'> {
-    private readonly value: JSXMemberExpressionFields;
-
-    private constructor(value: JSXMemberExpressionFields) {
-        super('jSXMemberExpression');
-        this.value = value;
+export class JSXMemberExpressionTypeClass extends LwcCommonTypeClass<
+    'jSXMemberExpression',
+    JSXMemberExpressionFields
+> {
+    private constructor(value: FieldsOf<JSXMemberExpressionFields>, sourceSpan: SourceSpan) {
+        super('jSXMemberExpression', value, sourceSpan);
     }
 
     static create(
         target: JSXMemberExpression,
         originalSource: string,
     ): JSXMemberExpressionTypeClass {
-        return new JSXMemberExpressionTypeClass({
-            object: visitNode(
-                target.object,
-                originalSource,
-                jSXMemberExpressionObjectPairs(),
-                'JSXMemberExpression.object',
-            ),
-            property: visitNode(
-                target.property,
-                originalSource,
-                jSXMemberExpressionPropertyPairs(),
-                'JSXMemberExpression.property',
-            ),
-        });
-    }
-
-    /** すべてのフィールド (Babel の value フィールドの getter getValue() と区別する。getChildNodes もこれから作る) */
-    override getFields(): JSXMemberExpressionFields {
-        return this.value;
+        return new JSXMemberExpressionTypeClass(
+            {
+                object: visitNode(
+                    target.object,
+                    originalSource,
+                    jSXMemberExpressionObjectPairs(),
+                    'JSXMemberExpression.object',
+                ),
+                property: JSXIdentifierTypeClass.create(target.property, originalSource),
+            },
+            getSourceSpan(target, originalSource),
+        );
     }
 
     getObject(): JSXMemberExpressionFields['object'] {
-        return this.value.object;
+        return this.getFields().object;
     }
 
     getProperty(): JSXMemberExpressionFields['property'] {
-        return this.value.property;
+        return this.getFields().property;
     }
 }
 
@@ -69,5 +63,5 @@ export const jSXMemberExpressionTypePair: EvaluatePair<
 );
 
 export const isJSXMemberExpressionType = (
-    target: LwcCommonTypeClass<string>,
+    target: LwcCommonTypeClass<string, TypeField<string>>,
 ): target is JSXMemberExpressionTypeClass => target instanceof JSXMemberExpressionTypeClass;

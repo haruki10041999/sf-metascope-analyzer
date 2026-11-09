@@ -1,3 +1,4 @@
+import { type TypeField } from '../../commons/ir';
 import { LwcCommonTypeClass, LwcCommonVisitor, lazyPairs } from '../commonVisitor';
 import {
     ExportAllDeclarationTypeClass,
@@ -62,7 +63,7 @@ export type ImportOrExportDeclarationTypeClass =
     | ImportDeclarationTypeClass;
 
 export const isImportOrExportDeclarationType = (
-    target: LwcCommonTypeClass<string>,
+    target: LwcCommonTypeClass<string, TypeField<string>>,
 ): target is ImportOrExportDeclarationTypeClass => {
     return (
         target instanceof ExportAllDeclarationTypeClass ||

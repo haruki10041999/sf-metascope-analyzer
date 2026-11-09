@@ -1,49 +1,42 @@
+import { type FieldsOf, type TypeField } from '../../commons/ir';
+import { type SourceSpan } from '../../commons/source';
 import { isTypeParameterDeclaration, type TypeParameterDeclaration } from '@babel/types';
 import {
     EvaluatePair,
     LwcCommonTypeClass,
-    LwcErrorTypeClass,
-    lazyPairs,
     makeEvaluatePair,
-    visitNodeList,
+    getSourceSpan,
 } from '../commonVisitor';
-import { typeParameterTypePair, type TypeParameterTypeClass } from './typeParameter';
+import { TypeParameterTypeClass } from './typeParameter';
 
-const typeParameterDeclarationParamsPairs = lazyPairs(() => [typeParameterTypePair] as const);
-
-export type TypeParameterDeclarationFields = {
-    params: (TypeParameterTypeClass | LwcErrorTypeClass)[];
+export type TypeParameterDeclarationFields = TypeField<'typeParameterDeclaration'> & {
+    params: TypeParameterTypeClass[];
 };
 
-export class TypeParameterDeclarationTypeClass extends LwcCommonTypeClass<'typeParameterDeclaration'> {
-    private readonly value: TypeParameterDeclarationFields;
-
-    private constructor(value: TypeParameterDeclarationFields) {
-        super('typeParameterDeclaration');
-        this.value = value;
+export class TypeParameterDeclarationTypeClass extends LwcCommonTypeClass<
+    'typeParameterDeclaration',
+    TypeParameterDeclarationFields
+> {
+    private constructor(value: FieldsOf<TypeParameterDeclarationFields>, sourceSpan: SourceSpan) {
+        super('typeParameterDeclaration', value, sourceSpan);
     }
 
     static create(
         target: TypeParameterDeclaration,
         originalSource: string,
     ): TypeParameterDeclarationTypeClass {
-        return new TypeParameterDeclarationTypeClass({
-            params: visitNodeList(
-                target.params,
-                originalSource,
-                typeParameterDeclarationParamsPairs(),
-                'TypeParameterDeclaration.params',
-            ),
-        });
-    }
-
-    /** すべてのフィールド (Babel の value フィールドの getter getValue() と区別する。getChildNodes もこれから作る) */
-    override getFields(): TypeParameterDeclarationFields {
-        return this.value;
+        return new TypeParameterDeclarationTypeClass(
+            {
+                params: target.params.map((child) =>
+                    TypeParameterTypeClass.create(child, originalSource),
+                ),
+            },
+            getSourceSpan(target, originalSource),
+        );
     }
 
     getParams(): TypeParameterDeclarationFields['params'] {
-        return this.value.params;
+        return this.getFields().params;
     }
 }
 
@@ -55,6 +48,6 @@ export const typeParameterDeclarationTypePair: EvaluatePair<
 );
 
 export const isTypeParameterDeclarationType = (
-    target: LwcCommonTypeClass<string>,
+    target: LwcCommonTypeClass<string, TypeField<string>>,
 ): target is TypeParameterDeclarationTypeClass =>
     target instanceof TypeParameterDeclarationTypeClass;

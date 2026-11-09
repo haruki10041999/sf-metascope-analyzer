@@ -1,90 +1,117 @@
+import { type FieldsOf, type TypeField } from '../../commons/ir';
+import { type SourceSpan } from '../../commons/source';
 import { isTSParameterProperty, type TSParameterProperty } from '@babel/types';
 import {
     EvaluatePair,
     LwcCommonTypeClass,
-    LwcErrorTypeClass,
     lazyPairs,
     makeEvaluatePair,
     visitNode,
-    visitNodeList,
+    getSourceSpan,
 } from '../commonVisitor';
+import { failIrBuild } from '../buildFailure';
 import {
     assignmentPatternTypePair,
     type AssignmentPatternTypeClass,
 } from '../commons/assignmentPattern';
-import { decoratorTypePair, type DecoratorTypeClass } from '../commons/decorator';
+import { DecoratorTypeClass } from '../commons/decorator';
 import { identifierTypePair, type IdentifierTypeClass } from '../commons/identifier';
 
 const tSParameterPropertyParameterPairs = lazyPairs(
     () => [identifierTypePair, assignmentPatternTypePair] as const,
 );
-const tSParameterPropertyDecoratorsPairs = lazyPairs(() => [decoratorTypePair] as const);
 
-export type TSParameterPropertyFields = {
-    accessibility: NonNullable<TSParameterProperty['accessibility']> | null;
-    readonly: NonNullable<TSParameterProperty['readonly']> | null;
-    parameter: IdentifierTypeClass | AssignmentPatternTypeClass | LwcErrorTypeClass;
-    override: NonNullable<TSParameterProperty['override']> | null;
-    decorators: (DecoratorTypeClass | LwcErrorTypeClass)[] | null;
+/**
+ * パラメータプロパティ (`constructor(private x)`) は、修飾子が少なくとも 1 つ付いた引数。
+ * accessibility がある・readonly が付く・override が付く、のどれか
+ */
+type TSParameterPropertyModifierFields =
+    | {
+          accessibility: NonNullable<TSParameterProperty['accessibility']>;
+          readonly: boolean;
+          override: boolean;
+      }
+    | { accessibility: null; readonly: true; override: boolean }
+    | { accessibility: null; readonly: false; override: true };
+
+export type TSParameterPropertyFields = TypeField<'tSParameterProperty'> & {
+    parameter: IdentifierTypeClass | AssignmentPatternTypeClass;
+    decorators: DecoratorTypeClass[] | null;
+} & TSParameterPropertyModifierFields;
+
+const createModifierFields = (
+    target: TSParameterProperty,
+    originalSource: string,
+): TSParameterPropertyModifierFields => {
+    const readonly = target.readonly ?? false;
+    const override = target.override ?? false;
+    if (target.accessibility != null) {
+        return { accessibility: target.accessibility, readonly, override };
+    }
+    if (readonly) {
+        return { accessibility: null, readonly: true, override };
+    }
+    if (override) {
+        return { accessibility: null, readonly: false, override: true };
+    }
+    return failIrBuild(
+        'TYPE_MISMATCH',
+        target,
+        originalSource,
+        'パラメータプロパティには accessibility・readonly・override のどれかが要ります',
+    );
 };
 
-export class TSParameterPropertyTypeClass extends LwcCommonTypeClass<'tSParameterProperty'> {
-    private readonly value: TSParameterPropertyFields;
-
-    private constructor(value: TSParameterPropertyFields) {
-        super('tSParameterProperty');
-        this.value = value;
+export class TSParameterPropertyTypeClass extends LwcCommonTypeClass<
+    'tSParameterProperty',
+    TSParameterPropertyFields
+> {
+    private constructor(value: FieldsOf<TSParameterPropertyFields>, sourceSpan: SourceSpan) {
+        super('tSParameterProperty', value, sourceSpan);
     }
 
     static create(
         target: TSParameterProperty,
         originalSource: string,
     ): TSParameterPropertyTypeClass {
-        return new TSParameterPropertyTypeClass({
-            accessibility: target.accessibility ?? null,
-            readonly: target.readonly ?? null,
-            parameter: visitNode(
-                target.parameter,
-                originalSource,
-                tSParameterPropertyParameterPairs(),
-                'TSParameterProperty.parameter',
-            ),
-            override: target.override ?? null,
-            decorators:
-                target.decorators == null
-                    ? null
-                    : visitNodeList(
-                          target.decorators,
-                          originalSource,
-                          tSParameterPropertyDecoratorsPairs(),
-                          'TSParameterProperty.decorators',
-                      ),
-        });
-    }
-
-    /** すべてのフィールド (Babel の value フィールドの getter getValue() と区別する。getChildNodes もこれから作る) */
-    override getFields(): TSParameterPropertyFields {
-        return this.value;
+        return new TSParameterPropertyTypeClass(
+            {
+                ...createModifierFields(target, originalSource),
+                parameter: visitNode(
+                    target.parameter,
+                    originalSource,
+                    tSParameterPropertyParameterPairs(),
+                    'TSParameterProperty.parameter',
+                ),
+                decorators:
+                    target.decorators == null
+                        ? null
+                        : target.decorators.map((child) =>
+                              DecoratorTypeClass.create(child, originalSource),
+                          ),
+            },
+            getSourceSpan(target, originalSource),
+        );
     }
 
     getAccessibility(): TSParameterPropertyFields['accessibility'] {
-        return this.value.accessibility;
+        return this.getFields().accessibility;
     }
 
     getReadonly(): TSParameterPropertyFields['readonly'] {
-        return this.value.readonly;
+        return this.getFields().readonly;
     }
 
     getParameter(): TSParameterPropertyFields['parameter'] {
-        return this.value.parameter;
+        return this.getFields().parameter;
     }
 
     getOverride(): TSParameterPropertyFields['override'] {
-        return this.value.override;
+        return this.getFields().override;
     }
 
     getDecorators(): TSParameterPropertyFields['decorators'] {
-        return this.value.decorators;
+        return this.getFields().decorators;
     }
 }
 
@@ -96,5 +123,5 @@ export const tSParameterPropertyTypePair: EvaluatePair<
 );
 
 export const isTSParameterPropertyType = (
-    target: LwcCommonTypeClass<string>,
+    target: LwcCommonTypeClass<string, TypeField<string>>,
 ): target is TSParameterPropertyTypeClass => target instanceof TSParameterPropertyTypeClass;

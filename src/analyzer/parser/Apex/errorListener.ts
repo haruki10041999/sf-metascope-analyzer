@@ -8,6 +8,7 @@ import {
     type SourcePosition,
     type SourceSpan,
 } from '../../types';
+import type { IrErrorLike } from '../../types/commons/ir';
 import { toApexResolvedError, type ApexErrorPhase, type ApexResolvedError } from '../commons';
 
 export type ApexResolvedErrorEntry = { sourceKeys: ConvertKeys } & ApexResolvedError & SourceSpan;
@@ -16,7 +17,7 @@ export class ApexCommonErrorListener extends ApexErrorListener {
     private originalSource: string;
     private sourceLines: string[];
     private lineOffsets: number[] = [];
-    private errors: { phase: ApexErrorPhase; error: ApexErrorTypeClass }[] = [];
+    private errors: { phase: ApexErrorPhase; error: IrErrorLike }[] = [];
 
     constructor(source: string) {
         super();
@@ -72,11 +73,11 @@ export class ApexCommonErrorListener extends ApexErrorListener {
     }
 
     /**
-     * IR の ApexErrorTypeClass (collectErrorTypeClasses で集めたもの)。
+     * IR を作れなかったところ (v1 は collectErrorTypeClasses で集めた ApexErrorTypeClass、v2 は buildApexIr の IrError)。
      * 構文エラーの位置を含むもの (エラー回復で中身のない Context になったもの) は、構文エラーとして報告済みなので除く。
      * 先に構文解析を終えておく (構文エラーは解析中に集まる)
      */
-    analyzerError(error: ApexErrorTypeClass): void {
+    analyzerError(error: IrErrorLike): void {
         const span = error.getSpan();
         if (!span) {
             return;
@@ -95,8 +96,18 @@ export class ApexCommonErrorListener extends ApexErrorListener {
     }
 
     /** 構文エラー (と analyzerError で受け取ったもの) の ApexErrorTypeClass */
-    getErrors(): ApexErrorTypeClass[] {
+    getErrors(): IrErrorLike[] {
         return this.errors.map(({ error }) => error);
+    }
+
+    /**
+     * IR v2 (buildApexIr・buildLwcIr) で IR を作れなかったところ。解析木には残らず、ここで resolvedError にする。
+     * 構文エラーがあれば、IR のエラーはその結果 (壊したソースで、構文エラーなしで IR のエラーだけ出たものは 0 件) なので
+     * 出さず、構文エラーだけを出す。構文エラーがなければ、IR の足りないところなので出す (docs/ir-v2.md 4 章)
+     */
+    irErrors(errors: readonly IrErrorLike[]): void {
+        if (this.hasSyntaxError()) return;
+        errors.forEach((error) => this.analyzerError(error));
     }
 
     hasSyntaxError(): boolean {

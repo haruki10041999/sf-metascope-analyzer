@@ -1,11 +1,16 @@
 import { ThisPrimaryContext } from '@apexdevtools/apex-parser';
 
-import { PrimaryValueTypeClass } from '.';
-import { ApexCommonTypeClass } from '../commonVisitor';
+import { ApexCommonTypeClass, getSourceSpan, isSpicifyApexCommonTypeClass } from '../commonVisitor';
+import { type FieldsOf, SourceSpan, TypeField } from '../../commons/ir';
 
-export class ThisPrimaryTypeClass extends PrimaryValueTypeClass<'thisPrimary', string> {
-    private constructor(value: string) {
-        super('thisPrimary', value);
+export type ThisPrimaryType = TypeField<'thisPrimary'> & {
+    /** 常に 'this' (Apex は大文字・小文字を区別しないので、ソースの書き方によらず小文字にそろえる) */
+    value: 'this';
+};
+
+export class ThisPrimaryTypeClass extends ApexCommonTypeClass<'thisPrimary', ThisPrimaryType> {
+    private constructor(fields: FieldsOf<ThisPrimaryType>, sourceSpan: SourceSpan) {
+        super('thisPrimary', fields, sourceSpan);
     }
 
     static create(ctx: ThisPrimaryContext): ThisPrimaryTypeClass {
@@ -13,12 +18,14 @@ export class ThisPrimaryTypeClass extends PrimaryValueTypeClass<'thisPrimary', s
             throw new Error('値が異常です。ThisPrimaryContext: ' + ctx.getText());
         }
 
-        return new ThisPrimaryTypeClass(ctx.THIS().getText());
+        return new ThisPrimaryTypeClass({ value: 'this' }, getSourceSpan(ctx));
+    }
+
+    getValue(): ThisPrimaryType['value'] {
+        return this.getFields().value;
     }
 }
 
 export const isThisPrimaryType = (
-    target: ApexCommonTypeClass<string>,
-): target is ThisPrimaryTypeClass => {
-    return target instanceof ThisPrimaryTypeClass;
-};
+    target: ApexCommonTypeClass<string, TypeField<string>>,
+): target is ThisPrimaryTypeClass => isSpicifyApexCommonTypeClass('thisPrimary', target);

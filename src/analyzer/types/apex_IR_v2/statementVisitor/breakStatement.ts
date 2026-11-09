@@ -1,7 +1,7 @@
 import { BreakStatementContext } from '@apexdevtools/apex-parser';
 
 import { ApexCommonTypeClass, getSourceSpan, isSpicifyApexCommonTypeClass } from '../commonVisitor';
-import { TypeField } from '../../commons/ir';
+import { type FieldsOf, TypeField } from '../../commons/ir';
 import { SourceSpan } from '../../commons';
 
 export type BreakStatementType = TypeField<'breakStatement'> & {
@@ -12,12 +12,16 @@ export class BreakStatementTypeClass extends ApexCommonTypeClass<
     'breakStatement',
     BreakStatementType
 > {
-    private constructor(value: 'break', sourceSpan: SourceSpan) {
-        super('breakStatement', { value: value }, sourceSpan);
+    private constructor(fields: FieldsOf<BreakStatementType>, sourceSpan: SourceSpan) {
+        super('breakStatement', fields, sourceSpan);
     }
 
-    static create(ctx: BreakStatementContext) {
-        return new BreakStatementTypeClass('break', getSourceSpan(ctx));
+    static create(ctx: BreakStatementContext): BreakStatementTypeClass {
+        return new BreakStatementTypeClass({ value: 'break' }, getSourceSpan(ctx));
+    }
+
+    getValue(): BreakStatementType['value'] {
+        return this.getFields().value;
     }
 }
 

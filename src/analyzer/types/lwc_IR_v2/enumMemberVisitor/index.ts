@@ -1,3 +1,4 @@
+import { type TypeField } from '../../commons/ir';
 import { LwcCommonTypeClass, LwcCommonVisitor, lazyPairs } from '../commonVisitor';
 import {
     EnumBooleanMemberTypeClass,
@@ -56,7 +57,7 @@ export type EnumMemberTypeClass =
     | EnumDefaultedMemberTypeClass;
 
 export const isEnumMemberType = (
-    target: LwcCommonTypeClass<string>,
+    target: LwcCommonTypeClass<string, TypeField<string>>,
 ): target is EnumMemberTypeClass => {
     return (
         target instanceof EnumBooleanMemberTypeClass ||

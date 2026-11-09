@@ -1,3 +1,4 @@
+import { type TypeField } from '../../commons/ir';
 import { LwcCommonTypeClass, LwcCommonVisitor, lazyPairs } from '../commonVisitor';
 import {
     AssignmentPatternTypeClass,
@@ -52,7 +53,9 @@ export type PatternTypeClass =
     | ObjectPatternTypeClass
     | VoidPatternTypeClass;
 
-export const isPatternType = (target: LwcCommonTypeClass<string>): target is PatternTypeClass => {
+export const isPatternType = (
+    target: LwcCommonTypeClass<string, TypeField<string>>,
+): target is PatternTypeClass => {
     return (
         target instanceof AssignmentPatternTypeClass ||
         target instanceof ArrayPatternTypeClass ||

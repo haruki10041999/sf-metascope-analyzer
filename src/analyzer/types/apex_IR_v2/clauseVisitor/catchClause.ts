@@ -1,68 +1,70 @@
 import { CatchClauseContext } from '@apexdevtools/apex-parser';
 
-import { ClauseTypeClass } from '.';
-
-import { NormalIdTypeClass, IdVisitor, isNormalIdType } from '../idVisitor';
-import { NormalBlockTypeClass, BlockVisitor, isNormalBlockType } from '../blockVisitor';
-import { QualifiedNameTypeClass, NameVisitor, isQualifiedNameType } from '../nameVisitor';
-import { NormalModifierTypeClass, ModifierVisitor, isNormalModifierType } from '../modifierVisitor';
+import { IdTypeClass } from '../idVisitor';
+import { BlockTypeClass } from '../blockVisitor';
+import { QualifiedNameTypeClass } from '../nameVisitor';
+import { ModifierTypeClass } from '../modifierVisitor';
 import {
     ApexCommonTypeClass,
-    ApexErrorTypeClass,
-    visitNodeList,
-    visitNode,
+    createNode,
+    createNodeList,
+    getSourceSpan,
+    isSpicifyApexCommonTypeClass,
 } from '../commonVisitor';
+import { type FieldsOf, TypeField } from '../../commons/ir';
+import { SourceSpan } from '../../commons';
 
-export class CatchClauseTypeClass extends ClauseTypeClass<'catchClause', NormalIdTypeClass> {
-    private valueType: QualifiedNameTypeClass | ApexErrorTypeClass;
-    private block: NormalBlockTypeClass | ApexErrorTypeClass;
-    private modifier: (NormalModifierTypeClass | ApexErrorTypeClass)[];
+export type CatchClauseType = TypeField<'catchClause'> & {
+    value: IdTypeClass;
+    valueType: QualifiedNameTypeClass;
+    block: BlockTypeClass;
+    modifier: ModifierTypeClass[];
+};
 
-    private constructor(
-        value: NormalIdTypeClass | ApexErrorTypeClass,
-        valueType: QualifiedNameTypeClass | ApexErrorTypeClass,
-        block: NormalBlockTypeClass | ApexErrorTypeClass,
-        modifier: (NormalModifierTypeClass | ApexErrorTypeClass)[],
-    ) {
-        super('catchClause', value);
-        this.valueType = valueType;
-        this.block = block;
-        this.modifier = modifier;
+export class CatchClauseTypeClass extends ApexCommonTypeClass<'catchClause', CatchClauseType> {
+    private constructor(fields: FieldsOf<CatchClauseType>, sourceSpan: SourceSpan) {
+        super('catchClause', fields, sourceSpan);
     }
 
     static create(ctx: CatchClauseContext): CatchClauseTypeClass {
-        if (!ctx.qualifiedName() || !ctx.id() || !ctx.block()) {
-            throw new Error('値が異常です。CatchClauseContext: ' + ctx.getText());
-        }
-
         return new CatchClauseTypeClass(
-            visitNode(new IdVisitor(), ctx.id(), isNormalIdType, 'id'),
-            visitNode(new NameVisitor(), ctx.qualifiedName(), isQualifiedNameType, 'qualifiedName'),
-            visitNode(new BlockVisitor(), ctx.block(), isNormalBlockType, 'block'),
-            visitNodeList(
-                new ModifierVisitor(),
-                ctx.modifier_list() || [],
-                isNormalModifierType,
-                'modifier',
-            ),
+            {
+                value: createNode(ctx.id(), (c) => IdTypeClass.create(c), 'id'),
+                valueType: createNode(
+                    ctx.qualifiedName(),
+                    (c) => QualifiedNameTypeClass.create(c),
+                    'qualifiedName',
+                ),
+                block: createNode(ctx.block(), (c) => BlockTypeClass.create(c), 'block'),
+                modifier: createNodeList(
+                    ctx.modifier_list(),
+                    (c) => ModifierTypeClass.create(c),
+                    'modifier',
+                ),
+            },
+            getSourceSpan(ctx),
         );
     }
 
-    getValueType(): QualifiedNameTypeClass | ApexErrorTypeClass {
-        return this.valueType;
+    getValue(): CatchClauseType['value'] {
+        return this.getFields().value;
     }
 
-    getBlock(): NormalBlockTypeClass | ApexErrorTypeClass {
-        return this.block;
+    getValueType(): CatchClauseType['valueType'] {
+        return this.getFields().valueType;
     }
 
-    getModifier(): (NormalModifierTypeClass | ApexErrorTypeClass)[] {
-        return this.modifier;
+    getBlock(): CatchClauseType['block'] {
+        return this.getFields().block;
+    }
+
+    getModifier(): CatchClauseType['modifier'] {
+        return this.getFields().modifier;
     }
 }
 
 export const isCatchClauseType = (
-    target: ApexCommonTypeClass<string>,
+    target: ApexCommonTypeClass<string, TypeField<string>>,
 ): target is CatchClauseTypeClass => {
-    return target instanceof CatchClauseTypeClass;
+    return isSpicifyApexCommonTypeClass('catchClause', target);
 };

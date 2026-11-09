@@ -1,127 +1,96 @@
 import { FieldSpecContext } from '@apexdevtools/apex-parser';
 
-import { QueryTypeClass } from '.';
-
-import { SoslIdTypeClass, IdVisitor, isSoslIdType } from '../idVisitor';
-import {
-    FieldListTypeClass,
-    FieldOrderListTypeClass,
-    ListVisitor,
-    isFieldListType,
-    isFieldOrderListType,
-} from '../listVisitor';
-import {
-    LogicalExpressionTypeClass,
-    ExpressionVisitor,
-    isLogicalExpressionType,
-} from '../expressionVisitor';
-import {
-    LimitClauseTypeClass,
-    OffsetClauseTypeClass,
-    ClauseVisitor,
-    isLimitClauseType,
-    isOffsetClauseType,
-} from '../clauseVisitor';
+import { SoslIdTypeClass } from '../idVisitor';
+import { FieldListTypeClass, FieldOrderListTypeClass } from '../listVisitor';
+import { LogicalExpressionTypeClass } from '../expressionVisitor';
+import { LimitClauseTypeClass, OffsetClauseTypeClass } from '../clauseVisitor';
 import {
     ApexCommonTypeClass,
-    ApexErrorTypeClass,
-    visitNode,
-    visitOptionalNode,
+    createNode,
+    createOptionalNode,
+    getSourceSpan,
+    isSpicifyApexCommonTypeClass,
 } from '../commonVisitor';
+import { type FieldsOf, TypeField } from '../../commons/ir';
+import { SourceSpan } from '../../commons';
 
-// value はオブジェクト名 (soslId[0])
-export class FieldSpecTypeClass extends QueryTypeClass<'fieldSpec', SoslIdTypeClass> {
-    private fieldList: FieldListTypeClass | ApexErrorTypeClass | null;
-    private where: LogicalExpressionTypeClass | ApexErrorTypeClass | null;
-    private listView: SoslIdTypeClass | ApexErrorTypeClass | null;
-    private orderBy: FieldOrderListTypeClass | ApexErrorTypeClass | null;
-    private limitClause: LimitClauseTypeClass | ApexErrorTypeClass | null;
-    private offsetClause: OffsetClauseTypeClass | ApexErrorTypeClass | null;
+/** `obj(fieldList WHERE ... USING LISTVIEW = ... ORDER BY ... LIMIT ... OFFSET ...)` の括弧の中 */
+export type FieldSpecDetail = {
+    fieldList: FieldListTypeClass;
+    where: LogicalExpressionTypeClass | null;
+    listView: SoslIdTypeClass | null;
+    orderBy: FieldOrderListTypeClass | null;
+    limitClause: LimitClauseTypeClass | null;
+    offsetClause: OffsetClauseTypeClass | null;
+};
 
-    private constructor(
-        value: SoslIdTypeClass | ApexErrorTypeClass,
-        fieldList: FieldListTypeClass | ApexErrorTypeClass | null,
-        where: LogicalExpressionTypeClass | ApexErrorTypeClass | null,
-        listView: SoslIdTypeClass | ApexErrorTypeClass | null,
-        orderBy: FieldOrderListTypeClass | ApexErrorTypeClass | null,
-        limitClause: LimitClauseTypeClass | ApexErrorTypeClass | null,
-        offsetClause: OffsetClauseTypeClass | ApexErrorTypeClass | null,
-    ) {
-        super('fieldSpec', value);
-        this.fieldList = fieldList;
-        this.where = where;
-        this.listView = listView;
-        this.orderBy = orderBy;
-        this.limitClause = limitClause;
-        this.offsetClause = offsetClause;
+// value はオブジェクト名 (soslId[0])。where 以降は括弧 (fieldList) があるときだけ書ける
+export type FieldSpecType = TypeField<'fieldSpec'> & {
+    value: SoslIdTypeClass;
+    /** 括弧の部分。`RETURNING Account` のように括弧がなければ null */
+    spec: FieldSpecDetail | null;
+};
+
+export class FieldSpecTypeClass extends ApexCommonTypeClass<'fieldSpec', FieldSpecType> {
+    private constructor(fields: FieldsOf<FieldSpecType>, sourceSpan: SourceSpan) {
+        super('fieldSpec', fields, sourceSpan);
     }
 
     static create(ctx: FieldSpecContext): FieldSpecTypeClass {
-        if (!ctx.soslId_list() || ctx.soslId_list().length === 0) {
-            throw new Error('値が異常です。FieldSpecContext: ' + ctx.getText());
-        }
-
-        // soslId[1] は USING LISTVIEW = xxx のビュー名
-        const listViewCtx = ctx.LISTVIEW() ? ctx.soslId(1) : null;
-
         return new FieldSpecTypeClass(
-            visitNode(new IdVisitor(), ctx.soslId(0), isSoslIdType, 'soslId'),
-            visitOptionalNode(new ListVisitor(), ctx.fieldList(), isFieldListType, 'fieldList'),
-            visitOptionalNode(
-                new ExpressionVisitor(),
-                ctx.logicalExpression(),
-                isLogicalExpressionType,
-                'logicalExpression',
-            ),
-            visitOptionalNode(new IdVisitor(), listViewCtx, isSoslIdType, 'soslId'),
-            visitOptionalNode(
-                new ListVisitor(),
-                ctx.fieldOrderList(),
-                isFieldOrderListType,
-                'fieldOrderList',
-            ),
-            visitOptionalNode(
-                new ClauseVisitor(),
-                ctx.limitClause(),
-                isLimitClauseType,
-                'limitClause',
-            ),
-            visitOptionalNode(
-                new ClauseVisitor(),
-                ctx.offsetClause(),
-                isOffsetClauseType,
-                'offsetClause',
-            ),
+            {
+                value: createNode(ctx.soslId(0), (c) => SoslIdTypeClass.create(c), 'soslId'),
+                spec: ctx.fieldList() ? FieldSpecTypeClass.createDetail(ctx) : null,
+            },
+            getSourceSpan(ctx),
         );
     }
 
-    getFieldList(): FieldListTypeClass | ApexErrorTypeClass | null {
-        return this.fieldList;
+    private static createDetail(ctx: FieldSpecContext): FieldSpecDetail {
+        // soslId[1] は USING LISTVIEW = xxx のビュー名
+        const listViewCtx = ctx.LISTVIEW() ? ctx.soslId(1) : null;
+
+        return {
+            fieldList: createNode(
+                ctx.fieldList(),
+                (c) => FieldListTypeClass.create(c),
+                'fieldList',
+            ),
+            where: createOptionalNode(
+                ctx.logicalExpression(),
+                (c) => LogicalExpressionTypeClass.create(c),
+                'logicalExpression',
+            ),
+            listView: createOptionalNode(listViewCtx, (c) => SoslIdTypeClass.create(c), 'soslId'),
+            orderBy: createOptionalNode(
+                ctx.fieldOrderList(),
+                (c) => FieldOrderListTypeClass.create(c),
+                'fieldOrderList',
+            ),
+            limitClause: createOptionalNode(
+                ctx.limitClause(),
+                (c) => LimitClauseTypeClass.create(c),
+                'limitClause',
+            ),
+            offsetClause: createOptionalNode(
+                ctx.offsetClause(),
+                (c) => OffsetClauseTypeClass.create(c),
+                'offsetClause',
+            ),
+        };
     }
 
-    getWhere(): LogicalExpressionTypeClass | ApexErrorTypeClass | null {
-        return this.where;
+    getValue(): FieldSpecType['value'] {
+        return this.getFields().value;
     }
 
-    getListView(): SoslIdTypeClass | ApexErrorTypeClass | null {
-        return this.listView;
-    }
-
-    getOrderBy(): FieldOrderListTypeClass | ApexErrorTypeClass | null {
-        return this.orderBy;
-    }
-
-    getLimitClause(): LimitClauseTypeClass | ApexErrorTypeClass | null {
-        return this.limitClause;
-    }
-
-    getOffsetClause(): OffsetClauseTypeClass | ApexErrorTypeClass | null {
-        return this.offsetClause;
+    getSpec(): FieldSpecType['spec'] {
+        return this.getFields().spec;
     }
 }
 
 export const isFieldSpecType = (
-    target: ApexCommonTypeClass<string>,
+    target: ApexCommonTypeClass<string, TypeField<string>>,
 ): target is FieldSpecTypeClass => {
-    return target instanceof FieldSpecTypeClass;
+    return isSpicifyApexCommonTypeClass('fieldSpec', target);
 };

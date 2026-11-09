@@ -1,64 +1,56 @@
+import { type FieldsOf, type TypeField } from '../../commons/ir';
+import { type SourceSpan } from '../../commons/source';
 import { isTSNamedTupleMember, type TSNamedTupleMember } from '@babel/types';
 import {
     EvaluatePair,
     LwcCommonTypeClass,
-    LwcErrorTypeClass,
-    lazyPairs,
     makeEvaluatePair,
     visitNode,
+    getSourceSpan,
 } from '../commonVisitor';
 import { tSTypeVisitorEvaluatePairs, type TSTypeTypeClass } from '../tsTypeVisitor';
-import { identifierTypePair, type IdentifierTypeClass } from './identifier';
+import { IdentifierTypeClass } from './identifier';
 
-const tSNamedTupleMemberLabelPairs = lazyPairs(() => [identifierTypePair] as const);
-
-export type TSNamedTupleMemberFields = {
-    label: IdentifierTypeClass | LwcErrorTypeClass;
+export type TSNamedTupleMemberFields = TypeField<'tSNamedTupleMember'> & {
+    label: IdentifierTypeClass;
     optional: TSNamedTupleMember['optional'];
-    elementType: TSTypeTypeClass | LwcErrorTypeClass;
+    elementType: TSTypeTypeClass;
 };
 
-export class TSNamedTupleMemberTypeClass extends LwcCommonTypeClass<'tSNamedTupleMember'> {
-    private readonly value: TSNamedTupleMemberFields;
-
-    private constructor(value: TSNamedTupleMemberFields) {
-        super('tSNamedTupleMember');
-        this.value = value;
+export class TSNamedTupleMemberTypeClass extends LwcCommonTypeClass<
+    'tSNamedTupleMember',
+    TSNamedTupleMemberFields
+> {
+    private constructor(value: FieldsOf<TSNamedTupleMemberFields>, sourceSpan: SourceSpan) {
+        super('tSNamedTupleMember', value, sourceSpan);
     }
 
     static create(target: TSNamedTupleMember, originalSource: string): TSNamedTupleMemberTypeClass {
-        return new TSNamedTupleMemberTypeClass({
-            label: visitNode(
-                target.label,
-                originalSource,
-                tSNamedTupleMemberLabelPairs(),
-                'TSNamedTupleMember.label',
-            ),
-            optional: target.optional,
-            elementType: visitNode(
-                target.elementType,
-                originalSource,
-                tSTypeVisitorEvaluatePairs(),
-                'TSTypeVisitor',
-            ),
-        });
-    }
-
-    /** すべてのフィールド (Babel の value フィールドの getter getValue() と区別する。getChildNodes もこれから作る) */
-    override getFields(): TSNamedTupleMemberFields {
-        return this.value;
+        return new TSNamedTupleMemberTypeClass(
+            {
+                label: IdentifierTypeClass.create(target.label, originalSource),
+                optional: target.optional,
+                elementType: visitNode(
+                    target.elementType,
+                    originalSource,
+                    tSTypeVisitorEvaluatePairs(),
+                    'TSTypeVisitor',
+                ),
+            },
+            getSourceSpan(target, originalSource),
+        );
     }
 
     getLabel(): TSNamedTupleMemberFields['label'] {
-        return this.value.label;
+        return this.getFields().label;
     }
 
     getOptional(): TSNamedTupleMemberFields['optional'] {
-        return this.value.optional;
+        return this.getFields().optional;
     }
 
     getElementType(): TSNamedTupleMemberFields['elementType'] {
-        return this.value.elementType;
+        return this.getFields().elementType;
     }
 }
 
@@ -70,5 +62,5 @@ export const tSNamedTupleMemberTypePair: EvaluatePair<
 );
 
 export const isTSNamedTupleMemberType = (
-    target: LwcCommonTypeClass<string>,
+    target: LwcCommonTypeClass<string, TypeField<string>>,
 ): target is TSNamedTupleMemberTypeClass => target instanceof TSNamedTupleMemberTypeClass;

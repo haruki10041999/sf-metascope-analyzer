@@ -1,63 +1,63 @@
+import { type FieldsOf, type TypeField } from '../../commons/ir';
+import { type SourceSpan } from '../../commons/source';
 import { isOptionalIndexedAccessType, type OptionalIndexedAccessType } from '@babel/types';
 import {
     EvaluatePair,
     LwcCommonTypeClass,
-    LwcErrorTypeClass,
     makeEvaluatePair,
     visitNode,
+    getSourceSpan,
 } from '../commonVisitor';
 import { flowTypeVisitorEvaluatePairs, type FlowTypeTypeClass } from '../flowTypeVisitor';
 
-export type OptionalIndexedAccessTypeFields = {
-    objectType: FlowTypeTypeClass | LwcErrorTypeClass;
-    indexType: FlowTypeTypeClass | LwcErrorTypeClass;
+export type OptionalIndexedAccessTypeFields = TypeField<'optionalIndexedAccessType'> & {
+    objectType: FlowTypeTypeClass;
+    indexType: FlowTypeTypeClass;
     optional: OptionalIndexedAccessType['optional'];
 };
 
-export class OptionalIndexedAccessTypeTypeClass extends LwcCommonTypeClass<'optionalIndexedAccessType'> {
-    private readonly value: OptionalIndexedAccessTypeFields;
-
-    private constructor(value: OptionalIndexedAccessTypeFields) {
-        super('optionalIndexedAccessType');
-        this.value = value;
+export class OptionalIndexedAccessTypeTypeClass extends LwcCommonTypeClass<
+    'optionalIndexedAccessType',
+    OptionalIndexedAccessTypeFields
+> {
+    private constructor(value: FieldsOf<OptionalIndexedAccessTypeFields>, sourceSpan: SourceSpan) {
+        super('optionalIndexedAccessType', value, sourceSpan);
     }
 
     static create(
         target: OptionalIndexedAccessType,
         originalSource: string,
     ): OptionalIndexedAccessTypeTypeClass {
-        return new OptionalIndexedAccessTypeTypeClass({
-            objectType: visitNode(
-                target.objectType,
-                originalSource,
-                flowTypeVisitorEvaluatePairs(),
-                'FlowTypeVisitor',
-            ),
-            indexType: visitNode(
-                target.indexType,
-                originalSource,
-                flowTypeVisitorEvaluatePairs(),
-                'FlowTypeVisitor',
-            ),
-            optional: target.optional,
-        });
-    }
-
-    /** すべてのフィールド (Babel の value フィールドの getter getValue() と区別する。getChildNodes もこれから作る) */
-    override getFields(): OptionalIndexedAccessTypeFields {
-        return this.value;
+        return new OptionalIndexedAccessTypeTypeClass(
+            {
+                objectType: visitNode(
+                    target.objectType,
+                    originalSource,
+                    flowTypeVisitorEvaluatePairs(),
+                    'FlowTypeVisitor',
+                ),
+                indexType: visitNode(
+                    target.indexType,
+                    originalSource,
+                    flowTypeVisitorEvaluatePairs(),
+                    'FlowTypeVisitor',
+                ),
+                optional: target.optional,
+            },
+            getSourceSpan(target, originalSource),
+        );
     }
 
     getObjectType(): OptionalIndexedAccessTypeFields['objectType'] {
-        return this.value.objectType;
+        return this.getFields().objectType;
     }
 
     getIndexType(): OptionalIndexedAccessTypeFields['indexType'] {
-        return this.value.indexType;
+        return this.getFields().indexType;
     }
 
     getOptional(): OptionalIndexedAccessTypeFields['optional'] {
-        return this.value.optional;
+        return this.getFields().optional;
     }
 }
 
@@ -69,6 +69,6 @@ export const optionalIndexedAccessTypeTypePair: EvaluatePair<
 );
 
 export const isOptionalIndexedAccessTypeType = (
-    target: LwcCommonTypeClass<string>,
+    target: LwcCommonTypeClass<string, TypeField<string>>,
 ): target is OptionalIndexedAccessTypeTypeClass =>
     target instanceof OptionalIndexedAccessTypeTypeClass;

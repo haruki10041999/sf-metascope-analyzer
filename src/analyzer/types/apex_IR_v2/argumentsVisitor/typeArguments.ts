@@ -1,35 +1,39 @@
 import { TypeArgumentsContext } from '@apexdevtools/apex-parser';
 
 import { TypeListTypeClass } from '../listVisitor';
-
 import {
-    ApexErrorTypeClass,
     ApexCommonTypeClass,
-    isSpicifyApexCommonTypeClass,
+    createNode,
     getSourceSpan,
+    isSpicifyApexCommonTypeClass,
 } from '../commonVisitor';
-import { TypeField } from '../../commons/ir';
+import { type FieldsOf, TypeField } from '../../commons/ir';
 import { SourceSpan } from '../../commons';
 
 export type TypeArgumentsType = TypeField<'typeArguments'> & {
-    elements: TypeListTypeClass | null;
+    /** 文法上 `<typeList>` の typeList は必須 */
+    elements: TypeListTypeClass;
 };
 
 export class TypeArgumentsTypeClass extends ApexCommonTypeClass<
     'typeArguments',
     TypeArgumentsType
 > {
-    private constructor(elements: TypeListTypeClass | null, sourceSpan: SourceSpan) {
-        super('typeArguments', { elements: elements }, sourceSpan);
+    private constructor(fields: FieldsOf<TypeArgumentsType>, sourceSpan: SourceSpan) {
+        super('typeArguments', fields, sourceSpan);
     }
 
     static create(ctx: TypeArgumentsContext): TypeArgumentsTypeClass {
-        let elements: TypeListTypeClass | null = null;
-        if (ctx.typeList()) {
-            elements = TypeListTypeClass.create(ctx.typeList());
-        }
-
-        return new TypeArgumentsTypeClass(elements, getSourceSpan(ctx));
+        return new TypeArgumentsTypeClass(
+            {
+                elements: createNode(
+                    ctx.typeList(),
+                    (c) => TypeListTypeClass.create(c),
+                    'typeList',
+                ),
+            },
+            getSourceSpan(ctx),
+        );
     }
 
     getElements(): TypeArgumentsType['elements'] {
@@ -39,6 +43,4 @@ export class TypeArgumentsTypeClass extends ApexCommonTypeClass<
 
 export const isTypeArgumentsType = (
     target: ApexCommonTypeClass<string, TypeField<string>>,
-): target is TypeArgumentsTypeClass => {
-    return isSpicifyApexCommonTypeClass('typeArguments', target);
-};
+): target is TypeArgumentsTypeClass => isSpicifyApexCommonTypeClass('typeArguments', target);

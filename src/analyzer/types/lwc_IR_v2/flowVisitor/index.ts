@@ -1,3 +1,4 @@
+import { type TypeField } from '../../commons/ir';
 import { LwcCommonTypeClass, LwcCommonVisitor, lazyPairs } from '../commonVisitor';
 import {
     AnyTypeAnnotationTypeClass,
@@ -668,7 +669,9 @@ export type FlowTypeClass =
     | IndexedAccessTypeTypeClass
     | OptionalIndexedAccessTypeTypeClass;
 
-export const isFlowType = (target: LwcCommonTypeClass<string>): target is FlowTypeClass => {
+export const isFlowType = (
+    target: LwcCommonTypeClass<string, TypeField<string>>,
+): target is FlowTypeClass => {
     return (
         target instanceof AnyTypeAnnotationTypeClass ||
         target instanceof ArrayTypeAnnotationTypeClass ||

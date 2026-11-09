@@ -1,73 +1,76 @@
 import { UpsertStatementContext } from '@apexdevtools/apex-parser';
 
-import {
-    AccessLevelTypeClass,
-    DmlStatementTypeClass,
-    StatementVisitor,
-    isAccessLevelType,
-} from '.';
+import { AccessLevelTypeClass } from './accessLevel';
 
-import { QualifiedNameTypeClass, NameVisitor, isQualifiedNameType } from '../nameVisitor';
+import { QualifiedNameTypeClass } from '../nameVisitor';
 import {
     BasedExpressionTypeClass,
     ExpressionVisitor,
     isBasedExpressionType,
 } from '../expressionVisitor';
 import {
-    ApexErrorTypeClass,
     ApexCommonTypeClass,
+    createOptionalNode,
+    getSourceSpan,
+    isSpicifyApexCommonTypeClass,
     visitNode,
-    visitOptionalNode,
 } from '../commonVisitor';
+import { type FieldsOf, TypeField } from '../../commons/ir';
+import { SourceSpan } from '../../commons';
 
-export class UpsertStatementTypeClass extends DmlStatementTypeClass<
+export type UpsertStatementType = TypeField<'upsertStatement'> & {
+    value: BasedExpressionTypeClass;
+    key: QualifiedNameTypeClass | null;
+    accessLevel: AccessLevelTypeClass | null;
+};
+
+export class UpsertStatementTypeClass extends ApexCommonTypeClass<
     'upsertStatement',
-    BasedExpressionTypeClass
+    UpsertStatementType
 > {
-    private key: QualifiedNameTypeClass | ApexErrorTypeClass | null = null;
-    private constructor(
-        value: BasedExpressionTypeClass | ApexErrorTypeClass,
-        key: QualifiedNameTypeClass | ApexErrorTypeClass | null,
-        accessLevel: AccessLevelTypeClass | ApexErrorTypeClass | null,
-    ) {
-        super('upsertStatement', value, accessLevel);
-        this.key = key;
+    private constructor(fields: FieldsOf<UpsertStatementType>, sourceSpan: SourceSpan) {
+        super('upsertStatement', fields, sourceSpan);
     }
 
     static create(ctx: UpsertStatementContext): UpsertStatementTypeClass {
-        if (!ctx.expression()) {
-            throw new Error('値が異常です。UpsertStatementContext: ' + ctx.getText());
-        }
-
         return new UpsertStatementTypeClass(
-            visitNode(
-                new ExpressionVisitor(),
-                ctx.expression(),
-                isBasedExpressionType,
-                'expression',
-            ),
-            visitOptionalNode(
-                new NameVisitor(),
-                ctx.qualifiedName(),
-                isQualifiedNameType,
-                'qualifiedName',
-            ),
-            visitOptionalNode(
-                new StatementVisitor(),
-                ctx.accessLevel(),
-                isAccessLevelType,
-                'accessLevel',
-            ),
+            {
+                value: visitNode(
+                    new ExpressionVisitor(),
+                    ctx.expression(),
+                    isBasedExpressionType,
+                    'expression',
+                ),
+                key: createOptionalNode(
+                    ctx.qualifiedName(),
+                    (c) => QualifiedNameTypeClass.create(c),
+                    'qualifiedName',
+                ),
+                accessLevel: createOptionalNode(
+                    ctx.accessLevel(),
+                    (c) => AccessLevelTypeClass.create(c),
+                    'accessLevel',
+                ),
+            },
+            getSourceSpan(ctx),
         );
     }
 
-    getKey(): QualifiedNameTypeClass | ApexErrorTypeClass | null {
-        return this.key;
+    getValue(): UpsertStatementType['value'] {
+        return this.getFields().value;
+    }
+
+    getKey(): UpsertStatementType['key'] {
+        return this.getFields().key;
+    }
+
+    getAccessLevel(): UpsertStatementType['accessLevel'] {
+        return this.getFields().accessLevel;
     }
 }
 
 export const isUpsertStatementType = (
-    target: ApexCommonTypeClass<string>,
+    target: ApexCommonTypeClass<string, TypeField<string>>,
 ): target is UpsertStatementTypeClass => {
-    return target instanceof UpsertStatementTypeClass;
+    return isSpicifyApexCommonTypeClass('upsertStatement', target);
 };

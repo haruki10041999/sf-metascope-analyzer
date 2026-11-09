@@ -1,57 +1,57 @@
 import { EnumDeclarationContext } from '@apexdevtools/apex-parser';
 
-import {
-    EnumConstantsTypeClass,
-    DeclarationTypeClass,
-    DeclarationVisitor,
-    isEnumConstantsType,
-} from '.';
+import { EnumConstantsTypeClass } from './enumConstants';
 
-import { NormalIdTypeClass, IdVisitor, isNormalIdType } from '../idVisitor';
+import { IdTypeClass } from '../idVisitor';
 import {
-    ApexErrorTypeClass,
     ApexCommonTypeClass,
-    visitNode,
-    visitOptionalNode,
+    createNode,
+    createOptionalNode,
+    getSourceSpan,
+    isSpicifyApexCommonTypeClass,
 } from '../commonVisitor';
+import { type FieldsOf, TypeField } from '../../commons/ir';
+import { SourceSpan } from '../../commons';
 
-export class EnumDeclarationTypeClass extends DeclarationTypeClass<
+export type EnumDeclarationType = TypeField<'enumDeclaration'> & {
+    name: IdTypeClass;
+    /** `enum E {}` のように定数がなければ null */
+    constants: EnumConstantsTypeClass | null;
+};
+
+export class EnumDeclarationTypeClass extends ApexCommonTypeClass<
     'enumDeclaration',
-    NormalIdTypeClass
+    EnumDeclarationType
 > {
-    private constant: EnumConstantsTypeClass | ApexErrorTypeClass | null = null;
-
-    private constructor(
-        value: NormalIdTypeClass | ApexErrorTypeClass,
-        constant: EnumConstantsTypeClass | ApexErrorTypeClass | null,
-    ) {
-        super('enumDeclaration', value);
-        this.constant = constant;
+    private constructor(fields: FieldsOf<EnumDeclarationType>, sourceSpan: SourceSpan) {
+        super('enumDeclaration', fields, sourceSpan);
     }
 
     static create(ctx: EnumDeclarationContext): EnumDeclarationTypeClass {
-        if (!ctx.id()) {
-            throw new Error('値が異常です。EnumDeclarationContext: ' + ctx.getText());
-        }
-
         return new EnumDeclarationTypeClass(
-            visitNode(new IdVisitor(), ctx.id(), isNormalIdType, 'id'),
-            visitOptionalNode(
-                new DeclarationVisitor(),
-                ctx.enumConstants(),
-                isEnumConstantsType,
-                'enumConstants',
-            ),
+            {
+                name: createNode(ctx.id(), (c) => IdTypeClass.create(c), 'id'),
+                constants: createOptionalNode(
+                    ctx.enumConstants(),
+                    (c) => EnumConstantsTypeClass.create(c),
+                    'enumConstants',
+                ),
+            },
+            getSourceSpan(ctx),
         );
     }
 
-    getConstant(): EnumConstantsTypeClass | ApexErrorTypeClass | null {
-        return this.constant;
+    getName(): EnumDeclarationType['name'] {
+        return this.getFields().name;
+    }
+
+    getConstants(): EnumDeclarationType['constants'] {
+        return this.getFields().constants;
     }
 }
 
 export const isEnumDeclarationType = (
-    target: ApexCommonTypeClass<string>,
+    target: ApexCommonTypeClass<string, TypeField<string>>,
 ): target is EnumDeclarationTypeClass => {
-    return target instanceof EnumDeclarationTypeClass;
+    return isSpicifyApexCommonTypeClass('enumDeclaration', target);
 };

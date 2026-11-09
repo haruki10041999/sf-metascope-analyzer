@@ -1,4 +1,4 @@
-export { isNormalBlockType, BlockTypeClass, type BlockType } from './block';
+export { isBlockType, BlockTypeClass, type BlockType } from './block';
 export { isFinallyBlockType, FinallyBlockTypeClass, type FinallyBlockType } from './finallyBlock';
 export {
     isPropertyBlockType,

@@ -4,7 +4,7 @@ import os from 'node:os';
 import path from 'node:path';
 import { after, before, describe, it } from 'node:test';
 
-import { MetadataProcessor } from '../../src/analyzer/processor/Metadata/metadata';
+import { RepositoryProcessor } from '../../src/analyzer/unit/processor';
 import { runDiff } from '../../docs/examples/metadata/scripts/run-diff';
 import { countDiffKinds, ALL_KINDS } from '../../docs/examples/metadata/scripts/run-diff';
 
@@ -157,7 +157,7 @@ describe('MetadataProcessor with object translations', () => {
             recursive: true,
         });
 
-        const processor = await MetadataProcessor.create(saveRoot, repository);
+        const processor = await RepositoryProcessor.create(saveRoot, repository);
         await processor.save();
         assert.deepEqual(
             processor.getObjectTranslationUnitDiffs().map((d) => d.status),

@@ -1,49 +1,62 @@
+import { type FieldsOf, type TypeField } from '../../commons/ir';
+import { type SourceSpan } from '../../commons/source';
 import { isYieldExpression, type YieldExpression } from '@babel/types';
 import {
     EvaluatePair,
     LwcCommonTypeClass,
-    LwcErrorTypeClass,
     makeEvaluatePair,
+    visitNode,
     visitOptionalNode,
+    getSourceSpan,
 } from '../commonVisitor';
 import { expressionVisitorEvaluatePairs, type ExpressionTypeClass } from '../expressionVisitor';
 
-export type YieldExpressionFields = {
-    delegate: YieldExpression['delegate'];
-    argument: ExpressionTypeClass | LwcErrorTypeClass | null;
-};
+/** `yield*` (delegate) は引数が要る */
+export type YieldExpressionFields = TypeField<'yieldExpression'> &
+    (
+        | { delegate: true; argument: ExpressionTypeClass }
+        | { delegate: false; argument: ExpressionTypeClass | null }
+    );
 
-export class YieldExpressionTypeClass extends LwcCommonTypeClass<'yieldExpression'> {
-    private readonly value: YieldExpressionFields;
-
-    private constructor(value: YieldExpressionFields) {
-        super('yieldExpression');
-        this.value = value;
+export class YieldExpressionTypeClass extends LwcCommonTypeClass<
+    'yieldExpression',
+    YieldExpressionFields
+> {
+    private constructor(value: FieldsOf<YieldExpressionFields>, sourceSpan: SourceSpan) {
+        super('yieldExpression', value, sourceSpan);
     }
 
     static create(target: YieldExpression, originalSource: string): YieldExpressionTypeClass {
-        return new YieldExpressionTypeClass({
-            delegate: target.delegate,
-            argument: visitOptionalNode(
-                target.argument,
-                originalSource,
-                expressionVisitorEvaluatePairs(),
-                'ExpressionVisitor',
-            ),
-        });
-    }
-
-    /** すべてのフィールド (Babel の value フィールドの getter getValue() と区別する。getChildNodes もこれから作る) */
-    override getFields(): YieldExpressionFields {
-        return this.value;
+        return new YieldExpressionTypeClass(
+            target.delegate
+                ? {
+                      delegate: true,
+                      argument: visitNode(
+                          target.argument,
+                          originalSource,
+                          expressionVisitorEvaluatePairs(),
+                          'ExpressionVisitor',
+                      ),
+                  }
+                : {
+                      delegate: false,
+                      argument: visitOptionalNode(
+                          target.argument,
+                          originalSource,
+                          expressionVisitorEvaluatePairs(),
+                          'ExpressionVisitor',
+                      ),
+                  },
+            getSourceSpan(target, originalSource),
+        );
     }
 
     getDelegate(): YieldExpressionFields['delegate'] {
-        return this.value.delegate;
+        return this.getFields().delegate;
     }
 
     getArgument(): YieldExpressionFields['argument'] {
-        return this.value.argument;
+        return this.getFields().argument;
     }
 }
 
@@ -53,5 +66,5 @@ export const yieldExpressionTypePair: EvaluatePair<YieldExpression, YieldExpress
     );
 
 export const isYieldExpressionType = (
-    target: LwcCommonTypeClass<string>,
+    target: LwcCommonTypeClass<string, TypeField<string>>,
 ): target is YieldExpressionTypeClass => target instanceof YieldExpressionTypeClass;

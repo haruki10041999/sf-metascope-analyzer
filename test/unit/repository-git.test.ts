@@ -45,7 +45,8 @@ describe('Repository with git', () => {
         git('commit', '-q', '-m', 'after');
     });
     after(async () => {
-        await rm(repo, { recursive: true, force: true });
+        // git cat-file が終わるまで、Windows ではフォルダを消せないことがあるので待って消し直す
+        await rm(repo, { recursive: true, force: true, maxRetries: 20, retryDelay: 100 });
     });
 
     it('reads a commit the same way as the working tree', async () => {

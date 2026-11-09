@@ -1,55 +1,55 @@
+import { type FieldsOf, type TypeField } from '../../commons/ir';
+import { type SourceSpan } from '../../commons/source';
 import { isWithStatement, type WithStatement } from '@babel/types';
 import {
     EvaluatePair,
     LwcCommonTypeClass,
-    LwcErrorTypeClass,
     makeEvaluatePair,
     visitNode,
+    getSourceSpan,
 } from '../commonVisitor';
 import { expressionVisitorEvaluatePairs, type ExpressionTypeClass } from '../expressionVisitor';
 import { statementVisitorEvaluatePairs, type StatementTypeClass } from '../statementVisitor';
 
-export type WithStatementFields = {
-    object: ExpressionTypeClass | LwcErrorTypeClass;
-    body: StatementTypeClass | LwcErrorTypeClass;
+export type WithStatementFields = TypeField<'withStatement'> & {
+    object: ExpressionTypeClass;
+    body: StatementTypeClass;
 };
 
-export class WithStatementTypeClass extends LwcCommonTypeClass<'withStatement'> {
-    private readonly value: WithStatementFields;
-
-    private constructor(value: WithStatementFields) {
-        super('withStatement');
-        this.value = value;
+export class WithStatementTypeClass extends LwcCommonTypeClass<
+    'withStatement',
+    WithStatementFields
+> {
+    private constructor(value: FieldsOf<WithStatementFields>, sourceSpan: SourceSpan) {
+        super('withStatement', value, sourceSpan);
     }
 
     static create(target: WithStatement, originalSource: string): WithStatementTypeClass {
-        return new WithStatementTypeClass({
-            object: visitNode(
-                target.object,
-                originalSource,
-                expressionVisitorEvaluatePairs(),
-                'ExpressionVisitor',
-            ),
-            body: visitNode(
-                target.body,
-                originalSource,
-                statementVisitorEvaluatePairs(),
-                'StatementVisitor',
-            ),
-        });
-    }
-
-    /** すべてのフィールド (Babel の value フィールドの getter getValue() と区別する。getChildNodes もこれから作る) */
-    override getFields(): WithStatementFields {
-        return this.value;
+        return new WithStatementTypeClass(
+            {
+                object: visitNode(
+                    target.object,
+                    originalSource,
+                    expressionVisitorEvaluatePairs(),
+                    'ExpressionVisitor',
+                ),
+                body: visitNode(
+                    target.body,
+                    originalSource,
+                    statementVisitorEvaluatePairs(),
+                    'StatementVisitor',
+                ),
+            },
+            getSourceSpan(target, originalSource),
+        );
     }
 
     getObject(): WithStatementFields['object'] {
-        return this.value.object;
+        return this.getFields().object;
     }
 
     getBody(): WithStatementFields['body'] {
-        return this.value.body;
+        return this.getFields().body;
     }
 }
 
@@ -59,5 +59,5 @@ export const withStatementTypePair: EvaluatePair<WithStatement, WithStatementTyp
     );
 
 export const isWithStatementType = (
-    target: LwcCommonTypeClass<string>,
+    target: LwcCommonTypeClass<string, TypeField<string>>,
 ): target is WithStatementTypeClass => target instanceof WithStatementTypeClass;

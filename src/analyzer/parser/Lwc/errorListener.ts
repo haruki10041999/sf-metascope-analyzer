@@ -8,7 +8,7 @@ import {
     type SourcePosition,
     type XmlReadProblem,
 } from '../../types/commons';
-import { LwcErrorTypeClass } from '../../types/lwc_IR/commonVisitor';
+import type { IrErrorLike } from '../../types/commons/ir';
 
 import type { BabelSyntaxError, ScriptLanguage } from './script';
 import type { LwcDiagnostic } from './validate/javascript';
@@ -153,10 +153,10 @@ export class LwcCommonErrorListener {
     }
 
     /**
-     * IR の LwcErrorTypeClass。構文エラーの位置を含むもの (回復した構文エラーで型の合わないノードになったもの。
+     * IR を作れなかったところ (v1 は LwcErrorTypeClass、v2 は buildLwcIr の IrError)。構文エラーの位置を含むもの (回復した構文エラーで型の合わないノードになったもの。
      * 1 = 2 の 1 など) は、構文エラーとして報告済みなので除く。先に構文エラーを渡しておく
      */
-    analyzerError(error: LwcErrorTypeClass): void {
+    analyzerError(error: IrErrorLike): void {
         const span = error.getSpan();
         const start = span?.start.offset ?? 0;
         const end = span?.end.offset ?? start;
@@ -177,6 +177,16 @@ export class LwcCommonErrorListener {
             errorMessage: error.getParseErrorMessage(),
             ...this.spanOf(start, end),
         });
+    }
+
+    /**
+     * IR v2 (buildApexIr・buildLwcIr) で IR を作れなかったところ。解析木には残らず、ここで resolvedError にする。
+     * 構文エラーがあれば、IR のエラーはその結果 (壊したソースで、構文エラーなしで IR のエラーだけ出たものは 0 件) なので
+     * 出さず、構文エラーだけを出す。構文エラーがなければ、IR の足りないところなので出す (docs/ir-v2.md 4 章)
+     */
+    irErrors(errors: readonly IrErrorLike[]): void {
+        if (this.hasSyntaxError()) return;
+        errors.forEach((error) => this.analyzerError(error));
     }
 
     hasSyntaxError(): boolean {

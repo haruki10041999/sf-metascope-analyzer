@@ -1,78 +1,54 @@
 import typia from 'typia';
 
-import { ConvertType, ConvertWithError, convertValue, isErrorNode } from './commons';
-import {
-    ConvertKeys,
-    ErrorJson,
-    JsonType,
-    StructureJsonType,
-    makeErrorJson,
-    makeJsonType,
-    makeStructureJson,
-} from '../commons';
+import { ConvertKeys, ErrorJson, JsonType, StructureJsonType, makeStructureJson } from '../commons';
 
-import {
-    AnonymousMemberDeclarationType,
-    LocalVariableDeclarationType,
-    MethodDeclarationType,
-    InterfaceDeclarationType,
-    InterfaceMethodDeclarationType,
-    ClassDeclarationType,
-    MemberDeclarationType,
-    EnumDeclarationType,
-    PropertyDeclarationType,
-    FieldDeclarationType,
-    ConstructorDeclarationType,
-    FormalParametersType,
-    IdType,
-    TriggerMemberDeclarationType,
-    TypeListType,
-    VariableDeclaratorsType,
-} from './converter';
+import type {
+    AnonymousMemberDeclarationTypeClass,
+    ClassDeclarationTypeClass,
+    ConstructorDeclarationTypeClass,
+    EnumDeclarationTypeClass,
+    FieldDeclarationTypeClass,
+    FormalParametersTypeClass,
+    IdTypeClass,
+    InterfaceDeclarationTypeClass,
+    InterfaceMethodDeclarationTypeClass,
+    LocalVariableDeclarationTypeClass,
+    MemberDeclarationTypeClass,
+    MethodDeclarationTypeClass,
+    PropertyDeclarationTypeClass,
+    TriggerMemberDeclarationTypeClass,
+    TypeListTypeClass,
+    TypeRefTypeClass,
+    VariableDeclaratorsTypeClass,
+} from '../apex_IR_v2';
+
+import { keysOf, makeNodeJson, structureKeysOf } from './commons/node';
 import { BaseExpressionJson, makeExpressionJsonConvert } from './expression';
 import { TypeJson, makeTypeJson } from './type';
 import { ModifiersJson, makeModifiersJson } from './modifier';
 import { ParameterJson, makeParameterJson } from './param';
 import { StatementJson, makeBlockJson } from './statement';
 
-const ERROR_KIND = 'declaration';
-
 /**
- * 宣言は境界ノード。field は初期値まで含めて部分木全体を検査し、
- * それ以外（本体を持つ宣言）はノード自身だけを検査する。本体・引数・型は子の変換関数がエラーを処理する。
- * StructureJsonType の sourceKeys には、宣言全体（base）と名前（name）の位置を持つ。
+ * 本体を持つ宣言は StructureJsonType。sourceKeys には、宣言全体 (base) と名前 (name) の位置を持つ。
+ * v2 の木にはエラーのノードがないので、v1 のような部分木のエラーの検査はしない
  */
-const DECLARATION_OPTIONS = { exclude: 'children', record: { name: 'value' } } as const;
+type DeclarationKeys = { name: ConvertKeys };
 
-const makeNameJson = (target: ConvertType<IdType>): string | ErrorJson => {
-    return isErrorNode(target) ? makeErrorJson(target, ERROR_KIND) : target.value;
+const makeNameJson = (target: IdTypeClass): string => target.getFields().value;
+
+// 引数がなければ (`()`) null
+const makeParametersJson = (target: FormalParametersTypeClass): ParameterJson[] | null => {
+    const list = target.getFields().parameterList;
+    return list ? list.getFields().value.map((p) => makeParameterJson(p)) : null;
 };
 
-const makeParametersJson = (
-    target: ConvertType<FormalParametersType>,
-): (ParameterJson | ErrorJson)[] | ErrorJson | null => {
-    if (isErrorNode(target)) {
-        return makeErrorJson(target, ERROR_KIND);
-    }
+const makeTypeListJson = (target: TypeListTypeClass): TypeJson[] =>
+    target.getFields().value.map((t) => makeTypeJson(t));
 
-    const list = target.value;
-    if (!list) {
-        return null;
-    }
-    if (isErrorNode(list)) {
-        return makeErrorJson(list, ERROR_KIND);
-    }
-    return list.value.map((p) => makeParameterJson(p));
-};
-
-const makeTypeListJson = (
-    target: ConvertType<TypeListType>,
-): (TypeJson | ErrorJson)[] | ErrorJson => {
-    if (isErrorNode(target)) {
-        return makeErrorJson(target, ERROR_KIND);
-    }
-    return target.value.map((t) => makeTypeJson(t));
-};
+// 戻り値の型。void は文字列のまま
+const makeReturnTypeJson = (target: TypeRefTypeClass | 'void'): 'void' | TypeJson =>
+    target === 'void' ? target : makeTypeJson(target);
 
 /** 変数 (1 つの宣言に複数あるので kind を持たない値)。使われていない変数などの位置のために sourceKeys を持つ */
 export type VariantJson = {
@@ -81,26 +57,17 @@ export type VariantJson = {
     init?: BaseExpressionJson | ErrorJson;
 };
 
-const makeVariantsJson = (
-    target: ConvertType<VariableDeclaratorsType>,
-): (VariantJson | ErrorJson)[] | ErrorJson => {
-    if (isErrorNode(target)) {
-        return makeErrorJson(target, ERROR_KIND);
-    }
-
-    return target.value.map((v) => {
-        if (isErrorNode(v)) {
-            return makeErrorJson(v, ERROR_KIND);
-        }
+const makeVariantsJson = (target: VariableDeclaratorsTypeClass): VariantJson[] =>
+    target.getFields().element.map((v) => {
+        const { variant, init } = v.getFields();
         return {
-            sourceKeys: { objectKey: v.objectKey, sourceKey: v.sourceKey },
-            name: makeNameJson(v.value),
-            ...(v.init ? { init: makeExpressionJsonConvert(v.init) } : {}),
+            sourceKeys: keysOf(v),
+            name: makeNameJson(variant),
+            ...(init ? { init: makeExpressionJsonConvert(init) } : {}),
         };
     });
-};
 
-export type MethodDeclarationJson = StructureJsonType<'method', { name: ConvertKeys }> & {
+export type MethodDeclarationJson = StructureJsonType<'method', DeclarationKeys> & {
     name: string | ErrorJson;
     returnType: 'void' | TypeJson | ErrorJson;
     param?: (ParameterJson | ErrorJson)[] | ErrorJson;
@@ -110,31 +77,20 @@ export type MethodDeclarationJson = StructureJsonType<'method', { name: ConvertK
 export const isMethodDeclarationJson = typia.createIs<MethodDeclarationJson>();
 
 export const makeMethodDeclarationJson = (
-    target: ConvertType<MethodDeclarationType>,
-): MethodDeclarationJson | ErrorJson => {
-    return convertValue<
-        'methodDeclaration',
-        MethodDeclarationType,
-        MethodDeclarationJson,
-        { name: ConvertKeys }
-    >(
-        target,
-        'method',
-        (method: ConvertWithError<MethodDeclarationType>, targetRecords) => {
-            const param = method.param ? makeParametersJson(method.param) : null;
-            return makeStructureJson('method', targetRecords, {
-                name: makeNameJson(method.value),
-                returnType:
-                    method.valueType === 'void' ? method.valueType : makeTypeJson(method.valueType),
-                ...(param ? { param: param } : {}),
-                ...(method.block ? { block: makeBlockJson(method.block) } : {}),
-            });
-        },
-        DECLARATION_OPTIONS,
-    );
+    target: MethodDeclarationTypeClass,
+): MethodDeclarationJson => {
+    const { name, returnType, parameters, block } = target.getFields();
+    const param = makeParametersJson(parameters);
+    return makeStructureJson('method', structureKeysOf<DeclarationKeys>(target, { name }), {
+        name: makeNameJson(name),
+        returnType: makeReturnTypeJson(returnType),
+        ...(param ? { param: param } : {}),
+        // abstract メソッドは本体を持たない
+        ...(block ? { block: makeBlockJson(block) } : {}),
+    });
 };
 
-export type InterfaceMethodJson = StructureJsonType<'interfaceMethod', { name: ConvertKeys }> & {
+export type InterfaceMethodJson = StructureJsonType<'interfaceMethod', DeclarationKeys> & {
     name: string | ErrorJson;
     returnType: 'void' | TypeJson | ErrorJson;
     param?: (ParameterJson | ErrorJson)[] | ErrorJson;
@@ -142,31 +98,23 @@ export type InterfaceMethodJson = StructureJsonType<'interfaceMethod', { name: C
 };
 
 const makeInterfaceMethodJson = (
-    target: ConvertType<InterfaceMethodDeclarationType>,
-): InterfaceMethodJson | ErrorJson => {
-    return convertValue<
-        'interfaceMethodDeclaration',
-        InterfaceMethodDeclarationType,
-        InterfaceMethodJson,
-        { name: ConvertKeys }
-    >(
-        target,
+    target: InterfaceMethodDeclarationTypeClass,
+): InterfaceMethodJson => {
+    const { name, returnType, parameters, modifiers } = target.getFields();
+    const param = makeParametersJson(parameters);
+    return makeStructureJson(
         'interfaceMethod',
-        (method: ConvertWithError<InterfaceMethodDeclarationType>, targetRecords) => {
-            const param = method.param ? makeParametersJson(method.param) : null;
-            return makeStructureJson('interfaceMethod', targetRecords, {
-                name: makeNameJson(method.value),
-                returnType:
-                    method.valueType === 'void' ? method.valueType : makeTypeJson(method.valueType),
-                ...(param ? { param: param } : {}),
-                modifier: makeModifiersJson(method.modifier),
-            });
+        structureKeysOf<DeclarationKeys>(target, { name }),
+        {
+            name: makeNameJson(name),
+            returnType: makeReturnTypeJson(returnType),
+            ...(param ? { param: param } : {}),
+            modifier: makeModifiersJson(modifiers),
         },
-        DECLARATION_OPTIONS,
     );
 };
 
-export type InterfaceDeclarationJson = StructureJsonType<'interface', { name: ConvertKeys }> & {
+export type InterfaceDeclarationJson = StructureJsonType<'interface', DeclarationKeys> & {
     name: string | ErrorJson;
     block?: (InterfaceMethodJson | ErrorJson)[] | ErrorJson;
     extend?: (TypeJson | ErrorJson)[] | ErrorJson;
@@ -175,28 +123,14 @@ export type InterfaceDeclarationJson = StructureJsonType<'interface', { name: Co
 export const isInterfaceDeclarationJson = typia.createIs<InterfaceDeclarationJson>();
 
 export const makeInterfaceDeclarationJson = (
-    target: ConvertType<InterfaceDeclarationType>,
-): InterfaceDeclarationJson | ErrorJson => {
-    return convertValue<
-        'interfaceDeclaration',
-        InterfaceDeclarationType,
-        InterfaceDeclarationJson,
-        { name: ConvertKeys }
-    >(
-        target,
-        'interface',
-        (declaration: ConvertWithError<InterfaceDeclarationType>, targetRecords) => {
-            const body = declaration.body;
-            return makeStructureJson('interface', targetRecords, {
-                name: makeNameJson(declaration.value),
-                block: isErrorNode(body)
-                    ? makeErrorJson(body, ERROR_KIND)
-                    : body.value.map((b) => makeInterfaceMethodJson(b)),
-                ...(declaration.extend ? { extend: makeTypeListJson(declaration.extend) } : {}),
-            });
-        },
-        DECLARATION_OPTIONS,
-    );
+    target: InterfaceDeclarationTypeClass,
+): InterfaceDeclarationJson => {
+    const { name, extend, body } = target.getFields();
+    return makeStructureJson('interface', structureKeysOf<DeclarationKeys>(target, { name }), {
+        name: makeNameJson(name),
+        block: body.getFields().declaration.map((b) => makeInterfaceMethodJson(b)),
+        ...(extend ? { extend: makeTypeListJson(extend) } : {}),
+    });
 };
 
 export type InitializerBlockJson = {
@@ -208,20 +142,21 @@ export type InitializerBlockJson = {
 
 export type NotSetBlockJson = JsonType<'notSet'>;
 
-export type ClassDeclarationJson = StructureJsonType<'class', { name: ConvertKeys }> & {
+type ClassBlockJson =
+    | InitializerBlockJson
+    | (FieldDeclarationJson & { modifier: ModifiersJson })
+    | (PropertyDeclarationJson & { modifier: ModifiersJson })
+    | (EnumDeclarationJson & { modifier: ModifiersJson })
+    | (MethodDeclarationJson & { modifier: ModifiersJson })
+    | (InterfaceDeclarationJson & { modifier: ModifiersJson })
+    | (ConstructorDeclarationJson & { modifier: ModifiersJson })
+    | (ClassDeclarationJson & { modifier: ModifiersJson })
+    | NotSetBlockJson
+    | ErrorJson;
+
+export type ClassDeclarationJson = StructureJsonType<'class', DeclarationKeys> & {
     name: string | ErrorJson;
-    block: (
-        | InitializerBlockJson
-        | (FieldDeclarationJson & { modifier: ModifiersJson })
-        | (PropertyDeclarationJson & { modifier: ModifiersJson })
-        | (EnumDeclarationJson & { modifier: ModifiersJson })
-        | (MethodDeclarationJson & { modifier: ModifiersJson })
-        | (InterfaceDeclarationJson & { modifier: ModifiersJson })
-        | (ConstructorDeclarationJson & { modifier: ModifiersJson })
-        | (ClassDeclarationJson & { modifier: ModifiersJson })
-        | NotSetBlockJson
-        | ErrorJson
-    )[];
+    block: ClassBlockJson[];
     extend?: TypeJson | ErrorJson;
     implement?: (TypeJson | ErrorJson)[] | ErrorJson;
 };
@@ -229,137 +164,62 @@ export type ClassDeclarationJson = StructureJsonType<'class', { name: ConvertKey
 export const isClassDeclarationJson = typia.createIs<ClassDeclarationJson>();
 
 export const makeClassDeclarationJson = (
-    target: ConvertType<ClassDeclarationType>,
-): ClassDeclarationJson | ErrorJson => {
-    return convertValue<
-        'classDeclaration',
-        ClassDeclarationType,
-        ClassDeclarationJson,
-        { name: ConvertKeys }
-    >(
-        target,
-        'class',
-        (declaration: ConvertWithError<ClassDeclarationType>, targetRecords) => {
-            const block: (
-                | InitializerBlockJson
-                | (FieldDeclarationJson & { modifier: ModifiersJson })
-                | (PropertyDeclarationJson & { modifier: ModifiersJson })
-                | (EnumDeclarationJson & { modifier: ModifiersJson })
-                | (MethodDeclarationJson & { modifier: ModifiersJson })
-                | (InterfaceDeclarationJson & { modifier: ModifiersJson })
-                | (ConstructorDeclarationJson & { modifier: ModifiersJson })
-                | (ClassDeclarationJson & { modifier: ModifiersJson })
-                | JsonType<'notSet'>
-                | ErrorJson
-            )[] = [];
-            const body = declaration.body;
-            if (isErrorNode(body)) {
-                block.push(makeErrorJson(body, ERROR_KIND));
-            } else {
-                body.value.forEach((b) => {
-                    if (isErrorNode(b)) {
-                        block.push(makeErrorJson(b, ERROR_KIND));
-                        return;
-                    }
-
-                    const member = b.value;
-                    if (!member) {
-                        block.push(
-                            makeJsonType(
-                                'notSet',
-                                {
-                                    objectKey: b.objectKey,
-                                    sourceKey: b.sourceKey,
-                                },
-                                {},
-                            ),
-                        );
-                        return;
-                    }
-                    if (isErrorNode(member)) {
-                        block.push(makeErrorJson(member, ERROR_KIND));
-                        return;
-                    }
-
-                    const modifier = makeModifiersJson(b.modifier);
-                    if (member.type === 'block') {
-                        block.push({
-                            kind: 'initializer',
-                            block: makeBlockJson(member),
-                            modifier: modifier,
-                            isStatic: b.isStatic,
-                        });
-                        return;
-                    }
-
-                    const declaration = makeMemberDeclarationJson(member);
-                    if (declaration.kind === 'error') {
-                        block.push(declaration);
-                    } else {
-                        block.push({ ...declaration, modifier: modifier });
-                    }
-                });
-            }
-            return makeStructureJson('class', targetRecords, {
-                name: makeNameJson(declaration.value),
-                block: block,
-                ...(declaration.extend ? { extend: makeTypeJson(declaration.extend) } : {}),
-                ...(declaration.implement
-                    ? { implement: makeTypeListJson(declaration.implement) }
-                    : {}),
-            });
-        },
-        DECLARATION_OPTIONS,
-    );
+    target: ClassDeclarationTypeClass,
+): ClassDeclarationJson => {
+    const { name, extend, implement, body } = target.getFields();
+    const block = body.getFields().declaration.map((b): ClassBlockJson => {
+        const member = b.getFields();
+        switch (member.kind) {
+            // 単独の `;` (文法上許される空の宣言)。キーは classBodyDeclaration のもの
+            case 'empty':
+                return makeNodeJson<NotSetBlockJson>('notSet', b);
+            // 初期化ブロック (`static? { ... }`)。文法上、修飾子は付かないので空の ModifiersJson にする (v1 と同じ)
+            case 'initializer':
+                return {
+                    kind: 'initializer',
+                    block: makeBlockJson(member.block),
+                    modifier: makeModifiersJson([]),
+                    isStatic: member.isStatic,
+                };
+            case 'member':
+                return {
+                    ...makeMemberDeclarationJson(member.declaration),
+                    modifier: makeModifiersJson(member.modifiers),
+                };
+        }
+    });
+    return makeStructureJson('class', structureKeysOf<DeclarationKeys>(target, { name }), {
+        name: makeNameJson(name),
+        block: block,
+        ...(extend ? { extend: makeTypeJson(extend) } : {}),
+        ...(implement ? { implement: makeTypeListJson(implement) } : {}),
+    });
 };
 
 export type EnumConstantJson = JsonType<'enumConstant'> & {
     name: string;
 };
 
-const makeEnumConstantJson = (target: ConvertType<IdType>): EnumConstantJson | ErrorJson => {
-    return convertValue<'id', IdType, EnumConstantJson>(
-        target,
-        'enumConstant',
-        (target, targetRecords) => {
-            return makeJsonType('enumConstant', targetRecords.base, { name: target.value });
-        },
-    );
-};
+// キーは定数の id のもの
+const makeEnumConstantJson = (target: IdTypeClass): EnumConstantJson =>
+    makeNodeJson<EnumConstantJson>('enumConstant', target, { name: makeNameJson(target) });
 
-export type EnumDeclarationJson = StructureJsonType<'enum', { name: ConvertKeys }> & {
+export type EnumDeclarationJson = StructureJsonType<'enum', DeclarationKeys> & {
     name: string | ErrorJson;
     members?: (EnumConstantJson | ErrorJson)[] | ErrorJson;
 };
 
 export const isEnumDeclarationJson = typia.createIs<EnumDeclarationJson>();
 
-export const makeEnumDeclarationJson = (
-    target: ConvertType<EnumDeclarationType>,
-): EnumDeclarationJson | ErrorJson => {
-    return convertValue<
-        'enumDeclaration',
-        EnumDeclarationType,
-        EnumDeclarationJson,
-        { name: ConvertKeys }
-    >(
-        target,
-        'enum',
-        (declaration: ConvertWithError<EnumDeclarationType>, targetRecords) => {
-            const constant = declaration.constant;
-            return makeStructureJson('enum', targetRecords, {
-                name: makeNameJson(declaration.value),
-                ...(constant
-                    ? {
-                          members: isErrorNode(constant)
-                              ? makeErrorJson(constant, ERROR_KIND)
-                              : constant.value.map((m) => makeEnumConstantJson(m)),
-                      }
-                    : {}),
-            });
-        },
-        DECLARATION_OPTIONS,
-    );
+export const makeEnumDeclarationJson = (target: EnumDeclarationTypeClass): EnumDeclarationJson => {
+    const { name, constants } = target.getFields();
+    return makeStructureJson('enum', structureKeysOf<DeclarationKeys>(target, { name }), {
+        name: makeNameJson(name),
+        // `enum E {}` のように定数がなければ members を持たない
+        ...(constants
+            ? { members: constants.getFields().constants.map((m) => makeEnumConstantJson(m)) }
+            : {}),
+    });
 };
 
 export type AccessorContentJson = {
@@ -367,73 +227,53 @@ export type AccessorContentJson = {
     modifier: ModifiersJson;
 };
 
-export type PropertyDeclarationJson = StructureJsonType<'property', { name: ConvertKeys }> & {
+export type PropertyDeclarationJson = StructureJsonType<'property', DeclarationKeys> & {
     name: string | ErrorJson;
     variantType: TypeJson | ErrorJson;
     isGetter: boolean;
     getterContent?: AccessorContentJson;
     isSetter: boolean;
     setterContent?: AccessorContentJson;
-    // 取り出せなかった getter / setter
+    // 取り出せなかった getter / setter (v2 の木にはエラーのノードがないので、今は出てこない)
     error?: ErrorJson[];
 };
 
 export const isPropertyDeclarationJson = typia.createIs<PropertyDeclarationJson>();
 
 export const makePropertyDeclarationJson = (
-    target: ConvertType<PropertyDeclarationType>,
-): PropertyDeclarationJson | ErrorJson => {
-    return convertValue<
-        'propertyDeclaration',
-        PropertyDeclarationType,
-        PropertyDeclarationJson,
-        { name: ConvertKeys }
-    >(
-        target,
-        'property',
-        (declaration: ConvertWithError<PropertyDeclarationType>, targetRecords) => {
-            let getterContent: AccessorContentJson | undefined = undefined;
-            let setterContent: AccessorContentJson | undefined = undefined;
-            const errors: ErrorJson[] = [];
+    target: PropertyDeclarationTypeClass,
+): PropertyDeclarationJson => {
+    const { name, valueType, blocks } = target.getFields();
+    let getterContent: AccessorContentJson | undefined = undefined;
+    let setterContent: AccessorContentJson | undefined = undefined;
 
-            declaration.block.forEach((b) => {
-                if (isErrorNode(b)) {
-                    errors.push(makeErrorJson(b, ERROR_KIND));
-                    return;
-                }
+    // getter・setter が文法上重なって書かれたときは、あとのものにする (v1 と同じ)
+    blocks.forEach((b) => {
+        const { block: accessor, modifiers } = b.getFields();
+        // `get;`・`set;` (自動プロパティ) は本体を持たない
+        const accessorBlock = accessor.getFields().block;
+        const content: AccessorContentJson = {
+            ...(accessorBlock ? { block: makeBlockJson(accessorBlock) } : {}),
+            modifier: makeModifiersJson(modifiers),
+        };
+        if (accessor.kind === 'getter') {
+            getterContent = content;
+        } else {
+            setterContent = content;
+        }
+    });
 
-                const accessor = b.value;
-                if (isErrorNode(accessor)) {
-                    errors.push(makeErrorJson(accessor, ERROR_KIND));
-                    return;
-                }
-
-                const content: AccessorContentJson = {
-                    ...(accessor.block ? { block: makeBlockJson(accessor.block) } : {}),
-                    modifier: makeModifiersJson(b.modifier),
-                };
-                if (accessor.type === 'getter') {
-                    getterContent = content;
-                } else {
-                    setterContent = content;
-                }
-            });
-
-            return makeStructureJson('property', targetRecords, {
-                name: makeNameJson(declaration.value),
-                variantType: makeTypeJson(declaration.valueType),
-                isGetter: getterContent !== undefined,
-                ...(getterContent ? { getterContent: getterContent } : {}),
-                isSetter: setterContent !== undefined,
-                ...(setterContent ? { setterContent: setterContent } : {}),
-                ...(errors.length ? { error: errors } : {}),
-            });
-        },
-        DECLARATION_OPTIONS,
-    );
+    return makeStructureJson('property', structureKeysOf<DeclarationKeys>(target, { name }), {
+        name: makeNameJson(name),
+        variantType: makeTypeJson(valueType),
+        isGetter: getterContent !== undefined,
+        ...(getterContent ? { getterContent: getterContent } : {}),
+        isSetter: setterContent !== undefined,
+        ...(setterContent ? { setterContent: setterContent } : {}),
+    });
 };
 
-// field は初期値まで含めて部分木全体を検査する（ローカル変数の文と同じ扱い）
+// field は本体を持たないので StructureJsonType にしない (ローカル変数の文と同じ扱い)
 export type FieldDeclarationJson = JsonType<'field'> & {
     variants: (VariantJson | ErrorJson)[] | ErrorJson;
     variantType: TypeJson | ErrorJson;
@@ -442,21 +282,16 @@ export type FieldDeclarationJson = JsonType<'field'> & {
 export const isFieldDeclarationJson = typia.createIs<FieldDeclarationJson>();
 
 export const makeFieldDeclarationJson = (
-    target: ConvertType<FieldDeclarationType>,
-): FieldDeclarationJson | ErrorJson => {
-    return convertValue<'fieldDeclaration', FieldDeclarationType, FieldDeclarationJson>(
-        target,
-        'field',
-        (declaration, targetRecords) => {
-            return makeJsonType('field', targetRecords.base, {
-                variants: makeVariantsJson(declaration.value),
-                variantType: makeTypeJson(declaration.valueType),
-            });
-        },
-    );
+    target: FieldDeclarationTypeClass,
+): FieldDeclarationJson => {
+    const { declarators, valueType } = target.getFields();
+    return makeNodeJson<FieldDeclarationJson>('field', target, {
+        variants: makeVariantsJson(declarators),
+        variantType: makeTypeJson(valueType),
+    });
 };
 
-export type ConstructorDeclarationJson = StructureJsonType<'constructor', { name: ConvertKeys }> & {
+export type ConstructorDeclarationJson = StructureJsonType<'constructor', DeclarationKeys> & {
     name: (string | ErrorJson)[] | ErrorJson;
     param?: (ParameterJson | ErrorJson)[] | ErrorJson;
     block: (StatementJson | ErrorJson)[];
@@ -465,29 +300,16 @@ export type ConstructorDeclarationJson = StructureJsonType<'constructor', { name
 export const isConstructorDeclarationJson = typia.createIs<ConstructorDeclarationJson>();
 
 export const makeConstructorDeclarationJson = (
-    target: ConvertType<ConstructorDeclarationType>,
-): ConstructorDeclarationJson | ErrorJson => {
-    return convertValue<
-        'constructorDeclaration',
-        ConstructorDeclarationType,
-        ConstructorDeclarationJson,
-        { name: ConvertKeys }
-    >(
-        target,
-        'constructor',
-        (declaration: ConvertWithError<ConstructorDeclarationType>, targetRecords) => {
-            const name = declaration.value;
-            const param = declaration.param ? makeParametersJson(declaration.param) : null;
-            return makeStructureJson('constructor', targetRecords, {
-                name: isErrorNode(name)
-                    ? makeErrorJson(name, ERROR_KIND)
-                    : name.value.map((v) => makeNameJson(v)),
-                ...(param ? { param: param } : {}),
-                block: makeBlockJson(declaration.block),
-            });
-        },
-        DECLARATION_OPTIONS,
-    );
+    target: ConstructorDeclarationTypeClass,
+): ConstructorDeclarationJson => {
+    const { name, parameters, block } = target.getFields();
+    const param = makeParametersJson(parameters);
+    // name の位置は、修飾された名前 (qualifiedName) 全体のもの
+    return makeStructureJson('constructor', structureKeysOf<DeclarationKeys>(target, { name }), {
+        name: name.getFields().value.map((v) => makeNameJson(v)),
+        ...(param ? { param: param } : {}),
+        block: makeBlockJson(block),
+    });
 };
 
 export type LocalVariableDeclarationJson = {
@@ -499,12 +321,13 @@ export type LocalVariableDeclarationJson = {
 export const isLocalVariableDeclarationJson = typia.createIs<LocalVariableDeclarationJson>();
 
 export const makeLocalVariableDeclarationJson = (
-    target: ConvertWithError<LocalVariableDeclarationType>,
+    target: LocalVariableDeclarationTypeClass,
 ): LocalVariableDeclarationJson => {
+    const { declarators, valueType, modifiers } = target.getFields();
     return {
-        variants: makeVariantsJson(target.value),
-        variantsType: makeTypeJson(target.valueType),
-        modifier: makeModifiersJson(target.modifier),
+        variants: makeVariantsJson(declarators),
+        variantsType: makeTypeJson(valueType),
+        modifier: makeModifiersJson(modifiers),
     };
 };
 
@@ -517,29 +340,28 @@ export type MemberDeclarationJson =
     | FieldDeclarationJson
     | ConstructorDeclarationJson;
 
+// memberDeclaration・anonymousMemberDeclaration・triggerMemberDeclaration は包むだけのノードなので、中の宣言を JSON にする
 export const makeMemberDeclarationJson = (
-    target: ConvertWithError<
-        MemberDeclarationType | AnonymousMemberDeclarationType | TriggerMemberDeclarationType
-    >,
-): MemberDeclarationJson | ErrorJson => {
-    const declaration = target.value;
-    if (isErrorNode(declaration)) {
-        return makeErrorJson(declaration, ERROR_KIND);
-    }
-
-    if (declaration.type === 'methodDeclaration') {
-        return makeMethodDeclarationJson(declaration);
-    } else if (declaration.type === 'interfaceDeclaration') {
-        return makeInterfaceDeclarationJson(declaration);
-    } else if (declaration.type === 'classDeclaration') {
-        return makeClassDeclarationJson(declaration);
-    } else if (declaration.type === 'enumDeclaration') {
-        return makeEnumDeclarationJson(declaration);
-    } else if (declaration.type === 'propertyDeclaration') {
-        return makePropertyDeclarationJson(declaration);
-    } else if (declaration.type === 'fieldDeclaration') {
-        return makeFieldDeclarationJson(declaration);
-    } else {
-        return makeConstructorDeclarationJson(declaration);
+    target:
+        | MemberDeclarationTypeClass
+        | AnonymousMemberDeclarationTypeClass
+        | TriggerMemberDeclarationTypeClass,
+): MemberDeclarationJson => {
+    const declaration = target.getFields().declaration;
+    switch (declaration.kind) {
+        case 'methodDeclaration':
+            return makeMethodDeclarationJson(declaration);
+        case 'interfaceDeclaration':
+            return makeInterfaceDeclarationJson(declaration);
+        case 'classDeclaration':
+            return makeClassDeclarationJson(declaration);
+        case 'enumDeclaration':
+            return makeEnumDeclarationJson(declaration);
+        case 'propertyDeclaration':
+            return makePropertyDeclarationJson(declaration);
+        case 'fieldDeclaration':
+            return makeFieldDeclarationJson(declaration);
+        case 'constructorDeclaration':
+            return makeConstructorDeclarationJson(declaration);
     }
 };

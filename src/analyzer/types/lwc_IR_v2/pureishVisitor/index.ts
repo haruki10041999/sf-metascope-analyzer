@@ -1,3 +1,4 @@
+import { type TypeField } from '../../commons/ir';
 import { LwcCommonTypeClass, LwcCommonVisitor, lazyPairs } from '../commonVisitor';
 import {
     FunctionDeclarationTypeClass,
@@ -98,7 +99,9 @@ export type PureishTypeClass =
     | ArrowFunctionExpressionTypeClass
     | BigIntLiteralTypeClass;
 
-export const isPureishType = (target: LwcCommonTypeClass<string>): target is PureishTypeClass => {
+export const isPureishType = (
+    target: LwcCommonTypeClass<string, TypeField<string>>,
+): target is PureishTypeClass => {
     return (
         target instanceof FunctionDeclarationTypeClass ||
         target instanceof FunctionExpressionTypeClass ||

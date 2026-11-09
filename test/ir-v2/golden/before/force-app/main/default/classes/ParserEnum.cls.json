@@ -1,0 +1,139 @@
+{
+  "source": {
+    "fileName": "ParserEnum.cls",
+    "fileType": "cls",
+    "content": {
+      "kind": "enum",
+      "sourceKeys": {
+        "base": {},
+        "name": {}
+      },
+      "name": "ParserEnum",
+      "members": [
+        {
+          "kind": "enumConstant",
+          "sourceKeys": {},
+          "name": "DRAFT"
+        },
+        {
+          "kind": "enumConstant",
+          "sourceKeys": {},
+          "name": "SUBMITTED"
+        },
+        {
+          "kind": "enumConstant",
+          "sourceKeys": {},
+          "name": "APPROVED"
+        },
+        {
+          "kind": "enumConstant",
+          "sourceKeys": {},
+          "name": "REJECTED"
+        }
+      ],
+      "modifier": {
+        "access": [
+          {
+            "kind": "modifier",
+            "sourceKeys": {},
+            "name": "PUBLIC"
+          }
+        ]
+      }
+    }
+  },
+  "sourceObject": [
+    {
+      "context": "APPROVED",
+      "start": {
+        "offset": 98,
+        "line": 5,
+        "column": 4
+      },
+      "end": {
+        "offset": 106,
+        "line": 5,
+        "column": 12
+      }
+    },
+    {
+      "context": "DRAFT",
+      "start": {
+        "offset": 72,
+        "line": 3,
+        "column": 4
+      },
+      "end": {
+        "offset": 77,
+        "line": 3,
+        "column": 9
+      }
+    },
+    {
+      "context": "ParserEnum",
+      "start": {
+        "offset": 55,
+        "line": 2,
+        "column": 12
+      },
+      "end": {
+        "offset": 65,
+        "line": 2,
+        "column": 22
+      }
+    },
+    {
+      "context": "REJECTED",
+      "start": {
+        "offset": 112,
+        "line": 6,
+        "column": 4
+      },
+      "end": {
+        "offset": 120,
+        "line": 6,
+        "column": 12
+      }
+    },
+    {
+      "context": "SUBMITTED",
+      "start": {
+        "offset": 83,
+        "line": 4,
+        "column": 4
+      },
+      "end": {
+        "offset": 92,
+        "line": 4,
+        "column": 13
+      }
+    },
+    {
+      "context": "enum ParserEnum {\n    DRAFT,\n    SUBMITTED,\n    APPROVED,\n    REJECTED\n}",
+      "start": {
+        "offset": 50,
+        "line": 2,
+        "column": 7
+      },
+      "end": {
+        "offset": 122,
+        "line": 7,
+        "column": 1
+      }
+    },
+    {
+      "context": "public",
+      "start": {
+        "offset": 43,
+        "line": 2,
+        "column": 0
+      },
+      "end": {
+        "offset": 49,
+        "line": 2,
+        "column": 6
+      }
+    }
+  ],
+  "resolvedError": []
+}

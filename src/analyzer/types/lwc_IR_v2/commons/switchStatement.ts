@@ -1,59 +1,52 @@
+import { type FieldsOf, type TypeField } from '../../commons/ir';
+import { type SourceSpan } from '../../commons/source';
 import { isSwitchStatement, type SwitchStatement } from '@babel/types';
 import {
     EvaluatePair,
     LwcCommonTypeClass,
-    LwcErrorTypeClass,
-    lazyPairs,
     makeEvaluatePair,
     visitNode,
-    visitNodeList,
+    getSourceSpan,
 } from '../commonVisitor';
 import { expressionVisitorEvaluatePairs, type ExpressionTypeClass } from '../expressionVisitor';
-import { switchCaseTypePair, type SwitchCaseTypeClass } from '../standardizedVisitor/switchCase';
+import { SwitchCaseTypeClass } from '../standardizedVisitor/switchCase';
 
-const switchStatementCasesPairs = lazyPairs(() => [switchCaseTypePair] as const);
-
-export type SwitchStatementFields = {
-    discriminant: ExpressionTypeClass | LwcErrorTypeClass;
-    cases: (SwitchCaseTypeClass | LwcErrorTypeClass)[];
+export type SwitchStatementFields = TypeField<'switchStatement'> & {
+    discriminant: ExpressionTypeClass;
+    cases: SwitchCaseTypeClass[];
 };
 
-export class SwitchStatementTypeClass extends LwcCommonTypeClass<'switchStatement'> {
-    private readonly value: SwitchStatementFields;
-
-    private constructor(value: SwitchStatementFields) {
-        super('switchStatement');
-        this.value = value;
+export class SwitchStatementTypeClass extends LwcCommonTypeClass<
+    'switchStatement',
+    SwitchStatementFields
+> {
+    private constructor(value: FieldsOf<SwitchStatementFields>, sourceSpan: SourceSpan) {
+        super('switchStatement', value, sourceSpan);
     }
 
     static create(target: SwitchStatement, originalSource: string): SwitchStatementTypeClass {
-        return new SwitchStatementTypeClass({
-            discriminant: visitNode(
-                target.discriminant,
-                originalSource,
-                expressionVisitorEvaluatePairs(),
-                'ExpressionVisitor',
-            ),
-            cases: visitNodeList(
-                target.cases,
-                originalSource,
-                switchStatementCasesPairs(),
-                'SwitchStatement.cases',
-            ),
-        });
-    }
-
-    /** すべてのフィールド (Babel の value フィールドの getter getValue() と区別する。getChildNodes もこれから作る) */
-    override getFields(): SwitchStatementFields {
-        return this.value;
+        return new SwitchStatementTypeClass(
+            {
+                discriminant: visitNode(
+                    target.discriminant,
+                    originalSource,
+                    expressionVisitorEvaluatePairs(),
+                    'ExpressionVisitor',
+                ),
+                cases: target.cases.map((child) =>
+                    SwitchCaseTypeClass.create(child, originalSource),
+                ),
+            },
+            getSourceSpan(target, originalSource),
+        );
     }
 
     getDiscriminant(): SwitchStatementFields['discriminant'] {
-        return this.value.discriminant;
+        return this.getFields().discriminant;
     }
 
     getCases(): SwitchStatementFields['cases'] {
-        return this.value.cases;
+        return this.getFields().cases;
     }
 }
 
@@ -63,5 +56,5 @@ export const switchStatementTypePair: EvaluatePair<SwitchStatement, SwitchStatem
     );
 
 export const isSwitchStatementType = (
-    target: LwcCommonTypeClass<string>,
+    target: LwcCommonTypeClass<string, TypeField<string>>,
 ): target is SwitchStatementTypeClass => target instanceof SwitchStatementTypeClass;

@@ -1,18 +1,13 @@
 import { CompilationUnitContext } from '@apexdevtools/apex-parser';
 
+import { TypeDeclarationTypeClass } from '../declarationVisitor';
 import {
-    TypeDeclarationTypeClass,
-    DeclarationVisitor,
-    isTypeDeclarationType,
-} from '../declarationVisitor';
-import {
-    ApexErrorTypeClass,
     ApexCommonTypeClass,
-    visitNode,
+    createNode,
     getSourceSpan,
     isSpicifyApexCommonTypeClass,
 } from '../commonVisitor';
-import { TypeField } from '../../commons/ir';
+import { type FieldsOf, TypeField } from '../../commons/ir';
 import { SourceSpan } from '../../commons';
 
 export type CompilationUnitType = TypeField<'compilationUnit'> & {
@@ -23,20 +18,28 @@ export class CompilationUnitTypeClass extends ApexCommonTypeClass<
     'compilationUnit',
     CompilationUnitType
 > {
-    private constructor(declaration: TypeDeclarationTypeClass, sourceSpan: SourceSpan) {
-        super('compilationUnit', { declaration: declaration }, sourceSpan);
+    private constructor(fields: FieldsOf<CompilationUnitType>, sourceSpan: SourceSpan) {
+        super('compilationUnit', fields, sourceSpan);
     }
 
     static create(ctx: CompilationUnitContext): CompilationUnitTypeClass {
         return new CompilationUnitTypeClass(
-            TypeDeclarationTypeClass.create(ctx.typeDeclaration()),
+            {
+                declaration: createNode(
+                    ctx.typeDeclaration(),
+                    (c) => TypeDeclarationTypeClass.create(c),
+                    'typeDeclaration',
+                ),
+            },
             getSourceSpan(ctx),
         );
+    }
+
+    getDeclaration(): CompilationUnitType['declaration'] {
+        return this.getFields().declaration;
     }
 }
 
 export const isCompilationUnitType = (
     target: ApexCommonTypeClass<string, TypeField<string>>,
-): target is CompilationUnitTypeClass => {
-    return isSpicifyApexCommonTypeClass('compilationUnit', target);
-};
+): target is CompilationUnitTypeClass => isSpicifyApexCommonTypeClass('compilationUnit', target);

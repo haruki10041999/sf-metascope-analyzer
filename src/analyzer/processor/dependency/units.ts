@@ -452,6 +452,25 @@ const A_TYPE_REFERENCES: Partial<Record<string, (json: Json, name: string) => Un
               )
             : [];
     },
+    permissionSetGroup: (json) => {
+        const keys = keysOf(json);
+        const names = (key: string) =>
+            Array.isArray(json[key])
+                ? (json[key] as unknown[]).filter((v) => typeof v === 'string')
+                : [];
+        return [
+            ...names('permissionSets').map((name) =>
+                reference('permissionSet', name as string, 'uses', 'permissionSets', {
+                    statement: keys,
+                }),
+            ),
+            ...names('mutingPermissionSets').map((name) =>
+                reference('mutingPermissionSet', name as string, 'uses', 'mutingPermissionSets', {
+                    statement: keys,
+                }),
+            ),
+        ];
+    },
     flexiPage: (json) => {
         const object = str(json.sobjectType);
         return [
@@ -575,8 +594,16 @@ export const getUnitDependencies = (type: string, result: unknown): UnitDependen
     switch (type) {
         case 'apexClass':
         case 'apexTrigger':
-        case 'anonymousApex':
             return getApexDependencies(result as ApexUnitParseResult);
+        case 'anonymousApex': {
+            // 匿名 Apex は、スクリプトそのものを単位のノードにする (中で宣言したクラスはメンバー)
+            const unit = result as ApexUnitParseResult;
+            const { definitions, references } = getApexDependencies(unit);
+            return {
+                definitions: [{ defType: 'anonymousApex', name: unit.result.id }, ...definitions],
+                references,
+            };
+        }
         case 'lwc':
             return getLwcDependencies(result as LwcBundleParseResult);
         case 'object':

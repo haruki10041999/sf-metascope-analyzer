@@ -37,7 +37,6 @@ import {
     makePermissionSetUnitDiffs,
     makeProfileUnitDiffs,
 } from '../../src/analyzer/processor/Metadata';
-import { MetadataFolderWorker } from '../../src/analyzer/worker';
 import type {
     FlowJson,
     LayoutJson,
@@ -480,35 +479,6 @@ describe('画面', () => {
                 'LWC_TARGET_MISMATCH:accountRow',
             ],
         );
-    });
-});
-
-describe('MetadataFolderWorker', () => {
-    let tmp: string;
-    before(async () => {
-        tmp = await mkdtemp(path.join(os.tmpdir(), 'metadata-folder-'));
-    });
-    after(async () => {
-        await rm(tmp, { recursive: true, force: true });
-    });
-
-    it('1 タスク = 種類のフォルダ。保存・読み込みはファイルごと', async () => {
-        const worker = new MetadataFolderWorker({ outDir: tmp, concurrency: 2 });
-        const results = await worker.parseAndSaveAll(root('after'));
-        assert.ok(results.every((r) => r.ok));
-        // サンプルにはすべての種類のフォルダがある (オブジェクト・翻訳・LWC などのフォルダは対象外)
-        assert.deepEqual(
-            results.map((r) => path.basename(r.input)).sort(),
-            METADATA_FOLDER_PARSERS.map((parser) => parser.spec.folder).sort(),
-        );
-        // 保存はファイル (単位) ごと
-        const saved = results.flatMap((r) => (r.ok ? r.result : []));
-        const ids = await worker.listSavedIds();
-        assert.deepEqual(ids, saved.map((summary) => summary.id).sort());
-        const loaded = await worker.load('flow_Account_Wizard');
-        assert.equal(loaded.dataType, 'flow');
-        assert.equal((await worker.loadAll()).length, ids.length);
-        await worker.close();
     });
 });
 

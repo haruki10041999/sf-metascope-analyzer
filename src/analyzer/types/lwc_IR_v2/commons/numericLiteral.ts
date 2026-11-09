@@ -1,31 +1,36 @@
+import { type FieldsOf, type TypeField } from '../../commons/ir';
+import { type SourceSpan } from '../../commons/source';
 import { isNumericLiteral, type NumericLiteral } from '@babel/types';
-import { EvaluatePair, LwcCommonTypeClass, makeEvaluatePair } from '../commonVisitor';
+import {
+    EvaluatePair,
+    LwcCommonTypeClass,
+    makeEvaluatePair,
+    getSourceSpan,
+} from '../commonVisitor';
 
-export type NumericLiteralFields = {
+export type NumericLiteralFields = TypeField<'numericLiteral'> & {
     value: NumericLiteral['value'];
 };
 
-export class NumericLiteralTypeClass extends LwcCommonTypeClass<'numericLiteral'> {
-    private readonly value: NumericLiteralFields;
-
-    private constructor(value: NumericLiteralFields) {
-        super('numericLiteral');
-        this.value = value;
+export class NumericLiteralTypeClass extends LwcCommonTypeClass<
+    'numericLiteral',
+    NumericLiteralFields
+> {
+    private constructor(value: FieldsOf<NumericLiteralFields>, sourceSpan: SourceSpan) {
+        super('numericLiteral', value, sourceSpan);
     }
 
     static create(target: NumericLiteral, originalSource: string): NumericLiteralTypeClass {
-        return new NumericLiteralTypeClass({
-            value: target.value,
-        });
-    }
-
-    /** すべてのフィールド (Babel の value フィールドの getter getValue() と区別する。getChildNodes もこれから作る) */
-    override getFields(): NumericLiteralFields {
-        return this.value;
+        return new NumericLiteralTypeClass(
+            {
+                value: target.value,
+            },
+            getSourceSpan(target, originalSource),
+        );
     }
 
     getValue(): NumericLiteralFields['value'] {
-        return this.value.value;
+        return this.getFields().value;
     }
 }
 
@@ -35,5 +40,5 @@ export const numericLiteralTypePair: EvaluatePair<NumericLiteral, NumericLiteral
     );
 
 export const isNumericLiteralType = (
-    target: LwcCommonTypeClass<string>,
+    target: LwcCommonTypeClass<string, TypeField<string>>,
 ): target is NumericLiteralTypeClass => target instanceof NumericLiteralTypeClass;

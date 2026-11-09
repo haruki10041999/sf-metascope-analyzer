@@ -6,13 +6,12 @@ import {
     isBasedExpressionType,
 } from '../expressionVisitor';
 import {
-    ApexErrorTypeClass,
     ApexCommonTypeClass,
     visitNodeList,
     getSourceSpan,
     isSpicifyApexCommonTypeClass,
 } from '../commonVisitor';
-import { TypeField } from '../../commons/ir';
+import { type FieldsOf, TypeField } from '../../commons/ir';
 import { SourceSpan } from '../../commons';
 
 export type ArrayInitializerType = TypeField<'arrayInitializer'> & {
@@ -23,13 +22,20 @@ export class ArrayInitializerTypeClass extends ApexCommonTypeClass<
     'arrayInitializer',
     ArrayInitializerType
 > {
-    private constructor(element: BasedExpressionTypeClass[], sourceSpan: SourceSpan) {
-        super('arrayInitializer', { element: element }, sourceSpan);
+    private constructor(fields: FieldsOf<ArrayInitializerType>, sourceSpan: SourceSpan) {
+        super('arrayInitializer', fields, sourceSpan);
     }
 
-    public static create(ctx: ArrayInitializerContext) {
+    static create(ctx: ArrayInitializerContext): ArrayInitializerTypeClass {
         return new ArrayInitializerTypeClass(
-            ctx.expression_list().map((e) => new ExpressionVisitor().visit(e)),
+            {
+                element: visitNodeList(
+                    new ExpressionVisitor(),
+                    ctx.expression_list(),
+                    isBasedExpressionType,
+                    'expression',
+                ),
+            },
             getSourceSpan(ctx),
         );
     }

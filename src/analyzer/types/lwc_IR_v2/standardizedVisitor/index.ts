@@ -1,3 +1,4 @@
+import { type TypeField } from '../../commons/ir';
 import { LwcCommonTypeClass, LwcCommonVisitor, lazyPairs } from '../commonVisitor';
 import { ArrayExpressionTypeClass, arrayExpressionTypePair } from '../commons/arrayExpression';
 import {
@@ -768,7 +769,7 @@ export type StandardizedTypeClass =
     | ImportAttributeTypeClass;
 
 export const isStandardizedType = (
-    target: LwcCommonTypeClass<string>,
+    target: LwcCommonTypeClass<string, TypeField<string>>,
 ): target is StandardizedTypeClass => {
     return (
         target instanceof ArrayExpressionTypeClass ||

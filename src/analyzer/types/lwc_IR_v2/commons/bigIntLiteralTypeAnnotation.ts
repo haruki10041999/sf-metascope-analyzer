@@ -1,34 +1,42 @@
+import { type FieldsOf, type TypeField } from '../../commons/ir';
+import { type SourceSpan } from '../../commons/source';
 import { isBigIntLiteralTypeAnnotation, type BigIntLiteralTypeAnnotation } from '@babel/types';
-import { EvaluatePair, LwcCommonTypeClass, makeEvaluatePair } from '../commonVisitor';
+import {
+    EvaluatePair,
+    LwcCommonTypeClass,
+    makeEvaluatePair,
+    getSourceSpan,
+} from '../commonVisitor';
 
-export type BigIntLiteralTypeAnnotationFields = {
+export type BigIntLiteralTypeAnnotationFields = TypeField<'bigIntLiteralTypeAnnotation'> & {
     value: BigIntLiteralTypeAnnotation['value'];
 };
 
-export class BigIntLiteralTypeAnnotationTypeClass extends LwcCommonTypeClass<'bigIntLiteralTypeAnnotation'> {
-    private readonly value: BigIntLiteralTypeAnnotationFields;
-
-    private constructor(value: BigIntLiteralTypeAnnotationFields) {
-        super('bigIntLiteralTypeAnnotation');
-        this.value = value;
+export class BigIntLiteralTypeAnnotationTypeClass extends LwcCommonTypeClass<
+    'bigIntLiteralTypeAnnotation',
+    BigIntLiteralTypeAnnotationFields
+> {
+    private constructor(
+        value: FieldsOf<BigIntLiteralTypeAnnotationFields>,
+        sourceSpan: SourceSpan,
+    ) {
+        super('bigIntLiteralTypeAnnotation', value, sourceSpan);
     }
 
     static create(
         target: BigIntLiteralTypeAnnotation,
         originalSource: string,
     ): BigIntLiteralTypeAnnotationTypeClass {
-        return new BigIntLiteralTypeAnnotationTypeClass({
-            value: target.value,
-        });
-    }
-
-    /** すべてのフィールド (Babel の value フィールドの getter getValue() と区別する。getChildNodes もこれから作る) */
-    override getFields(): BigIntLiteralTypeAnnotationFields {
-        return this.value;
+        return new BigIntLiteralTypeAnnotationTypeClass(
+            {
+                value: target.value,
+            },
+            getSourceSpan(target, originalSource),
+        );
     }
 
     getValue(): BigIntLiteralTypeAnnotationFields['value'] {
-        return this.value.value;
+        return this.getFields().value;
     }
 }
 
@@ -40,6 +48,6 @@ export const bigIntLiteralTypeAnnotationTypePair: EvaluatePair<
 );
 
 export const isBigIntLiteralTypeAnnotationType = (
-    target: LwcCommonTypeClass<string>,
+    target: LwcCommonTypeClass<string, TypeField<string>>,
 ): target is BigIntLiteralTypeAnnotationTypeClass =>
     target instanceof BigIntLiteralTypeAnnotationTypeClass;

@@ -13,7 +13,7 @@ import type {
     LayoutDetail,
     LwcPlacementRow,
     MetadataSnapshot,
-    ReportInput,
+    SnapshotInput,
 } from './types';
 
 // 画面の provider (layout.detail / flexiPage.detail / lwc.placements)。方針: docs/report-components-plan.md 2.7 章
@@ -35,7 +35,7 @@ const sameIgnoring =
     };
 
 /** layout.detail: ページレイアウトのセクションと項目・関連リスト・ボタン (names を渡すとそのレイアウトだけ) */
-export const getLayoutDetails = (input: ReportInput, names?: string[]): LayoutDetail[] => {
+export const getLayoutDetails = (input: SnapshotInput, names?: string[]): LayoutDetail[] => {
     const hasBefore = input.before !== undefined;
     return compareKeyed(layoutsOf(input.before), layoutsOf(input.after), (l) => l.id, hasBefore)
         .filter((c) => !names || names.includes((c.after ?? c.before)!.json.name))
@@ -159,7 +159,7 @@ const pageItems = (page: FlexiPageJson | undefined): PageItem[] => [
 ];
 
 /** flexiPage.detail: Lightning ページのリージョンと部品・項目 (リージョンの中は表示順) */
-export const getFlexiPageDetails = (input: ReportInput, names?: string[]): FlexiPageDetail[] => {
+export const getFlexiPageDetails = (input: SnapshotInput, names?: string[]): FlexiPageDetail[] => {
     const hasBefore = input.before !== undefined;
     return compareKeyed(pagesOf(input.before), pagesOf(input.after), (p) => p.id, hasBefore)
         .filter((c) => !names || names.includes((c.after ?? c.before)!.json.name))
@@ -231,7 +231,7 @@ export const getFlexiPageDetails = (input: ReportInput, names?: string[]): Flexi
 };
 
 /** lwc.placements: LWC を置いている Lightning ページ (before を渡すと、置いた・外した・変えたが status に出る) */
-export const getLwcPlacements = (input: ReportInput, lwc?: string[]): LwcPlacementRow[] => {
+export const getLwcPlacements = (input: SnapshotInput, lwc?: string[]): LwcPlacementRow[] => {
     const placementsOf = (snapshot: MetadataSnapshot) =>
         analyzeFlexiPages(snapshot.flexiPages ?? [], contextOf(snapshot)).placements;
     const filePaths = new Map(

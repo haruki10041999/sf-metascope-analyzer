@@ -1,31 +1,26 @@
 import typia from 'typia';
 
-import { convertValue, ConvertType, isErrorNode } from '../commons';
-import { ErrorJson, JsonType, makeJsonType, makeErrorJson } from '../../commons';
+import { ErrorJson, JsonType } from '../../commons';
+import type { FromNameListTypeClass, FromNameTypeClass } from '../../apex_IR_v2';
 
-import { FromNameType, FromNameListType } from '../converter';
+import { makeNodeJson } from '../commons/node';
 
 type FromFieldJson = JsonType<'fromField'> & {
     field: string[];
     alias?: string;
 };
 
-const makeFromFieldJson = (target: ConvertType<FromNameType>): FromFieldJson | ErrorJson => {
-    return convertValue<'fromName', FromNameType, FromFieldJson>(
-        target,
-        'fromField',
-        (target, targetRecords) => {
-            const fromFieldJson: FromFieldJson = makeJsonType('fromField', targetRecords.base, {
-                field: target.value.value.map((item) => item.value.value),
-            });
+const makeFromFieldJson = (target: FromNameTypeClass): FromFieldJson => {
+    const { value, alias } = target.getFields();
+    const fromFieldJson = makeNodeJson<FromFieldJson>('fromField', target, {
+        field: value.getFields().value.map((item) => item.getFields().value.getFields().value),
+    });
 
-            if (target.alias) {
-                fromFieldJson.alias = target.alias.value.value;
-            }
+    if (alias) {
+        fromFieldJson.alias = alias.getFields().value.getFields().value;
+    }
 
-            return fromFieldJson;
-        },
-    );
+    return fromFieldJson;
 };
 
 export type FromJson = {
@@ -33,12 +28,8 @@ export type FromJson = {
 };
 export const isFromJson = typia.createIs<FromJson>();
 
-export const makeFromJson = (target: ConvertType<FromNameListType>): FromJson | ErrorJson => {
-    if (isErrorNode(target)) {
-        return makeErrorJson(target, 'from');
-    }
-
+export const makeFromJson = (target: FromNameListTypeClass): FromJson => {
     return {
-        field: target.value.map((v) => makeFromFieldJson(v)),
+        field: target.getFields().value.map((v) => makeFromFieldJson(v)),
     };
 };

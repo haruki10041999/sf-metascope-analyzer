@@ -4,15 +4,14 @@ import os from 'node:os';
 import path from 'node:path';
 import { after, before, describe, it } from 'node:test';
 
-import {
-    ApexWorker,
-    LwcWorker,
-    ObjectTranslationWorker,
-    ObjectWorker,
-    runWorkerTask,
-} from '../../src/analyzer/worker';
+import { METADATA_FOLDER_PARSERS } from '../../src/analyzer/parser/Metadata/folders';
+import { findUnitType } from '../../src/analyzer/unit';
+import { UnitWorker, runUnitTask } from '../../src/analyzer/worker';
 
-/** ApexWorker / ObjectWorker / LwcWorker (メインスレッドで処理) で、サンプルを解析・保存・読み込みする */
+/** UnitWorker (メインスレッドで処理) で、サンプルの単位を種類ごとに解析・保存・読み込みする */
+
+const repository = (side: 'before' | 'after') =>
+    path.resolve('docs/examples/repository', side);
 
 let tmp: string;
 before(async () => {
@@ -22,17 +21,17 @@ after(async () => {
     await rm(tmp, { recursive: true, force: true });
 });
 
-describe('ApexWorker', () => {
+const typesOf = (...names: string[]) => names.map((name) => findUnitType(name)!);
+
+describe('UnitWorker: Apex', () => {
     it('1 単位 (クラス・トリガーはソースと -meta.xml、匿名 Apex は 1 ファイル) を 1 件として解析・保存し、読み込める', async () => {
-        const outDir = path.join(tmp, 'apex');
-        const worker = new ApexWorker({ outDir, concurrency: 2 });
-        const results = await worker.parseAndSaveAll(
-            path.resolve('docs/examples/repository/after'),
-        );
+        const worker = new UnitWorker({ outDir: path.join(tmp, 'apex'), concurrency: 2 });
+        const types = typesOf('apexClass', 'apexTrigger', 'anonymousApex');
+        const results = await worker.parseAndSaveAll(repository('after'), types);
         assert.ok(results.every((r) => r.ok));
 
-        // 保存名は class_ / trigger_ / anonymous_ を付けた単位の id (ApexParser.saveApexUnit)
-        const ids = await worker.listSavedIds();
+        // 保存名は class_ / trigger_ / anonymous_ を付けた単位の id
+        const ids = await worker.listSavedIds(types);
         assert.deepEqual(ids, [
             'anonymous_broken',
             'anonymous_parser',
@@ -50,27 +49,29 @@ describe('ApexWorker', () => {
             'trigger_ParserTrigger',
         ]);
 
-        const unit = await worker.load('class_AccountService');
+        const unit = (await worker.load('class_AccountService')) as unknown as {
+            dataType: string;
+            result: { base: { source?: { fileType: string }; meta?: { meta: { kind: string } } } };
+        };
         assert.equal(unit.dataType, 'apexUnit');
         assert.equal(unit.result.base.source?.fileType, 'cls');
         assert.equal(unit.result.base.meta?.meta.kind, 'apexClassMeta');
-        const loaded = await worker.loadAll();
-        assert.equal(loaded.length, ids.length);
+        const loaded = await worker.loadAll(repository('after'), types);
+        assert.equal(
+            types.reduce((n, t) => n + loaded.get(t.type).length, 0),
+            ids.length,
+        );
         await worker.close();
     });
 });
 
-describe('ObjectWorker', () => {
-    it('parses and saves object folders, then loads them back', async () => {
-        const outDir = path.join(tmp, 'objects');
-        const worker = new ObjectWorker({ outDir });
-        const objects = path.resolve(
-            'docs/examples/repository/after/force-app/main/default/objects',
-        );
-        const results = await worker.parseAndSaveAll(objects);
-        assert.ok(results.every((r) => r.ok));
+describe('UnitWorker: オブジェクト・翻訳', () => {
+    it('オブジェクトのフォルダを解析・保存し、読み込める', async () => {
+        const worker = new UnitWorker({ outDir: path.join(tmp, 'objects') });
+        const types = typesOf('object');
+        const results = await worker.parseAndSaveAll(repository('after'), types);
         assert.deepEqual(
-            results.flatMap((r) => (r.ok ? [[r.result.id, r.result.syntaxErrorCount]] : [])),
+            results.flatMap((r) => (r.ok ? [[r.result.id, r.result.errorCount]] : [])),
             [
                 ['Account', 0],
                 ['App_Setting__mdt', 0],
@@ -81,35 +82,18 @@ describe('ObjectWorker', () => {
                 ['Payment__c', 0],
             ],
         );
-
-        const invoice = await worker.load('Invoice__c');
+        assert.ok((await worker.listSavedIds(types)).every((id) => id.startsWith('object_')));
+        const invoice = await worker.load('object_Invoice__c');
         assert.equal(invoice.dataType, 'object');
-        assert.equal((await worker.loadAll()).length, 7);
+        assert.equal((await worker.loadAll(repository('after'), types)).get('object').length, 7);
     });
 
-    it('runs a single task by command and type', async () => {
-        const parsed = await runWorkerTask({
-            command: 'parse',
-            type: 'Object',
-            filePath: path.resolve(
-                'docs/examples/repository/after/force-app/main/default/objects/Payment__c',
-            ),
-        });
-        assert.equal(parsed.result.id, 'Payment__c');
-    });
-});
-
-describe('ObjectTranslationWorker', () => {
-    it('parses and saves translation folders with a prefix, then loads them back', async () => {
-        const outDir = path.join(tmp, 'objectTranslations');
-        const worker = new ObjectTranslationWorker({ outDir });
-        const results = await worker.parseAndSaveAll(
-            path.resolve(
-                'docs/examples/repository/after/force-app/main/default/objectTranslations',
-            ),
-        );
+    it('翻訳は objectTranslation_ を付けて保存する', async () => {
+        const worker = new UnitWorker({ outDir: path.join(tmp, 'objectTranslations') });
+        const types = typesOf('objectTranslation');
+        const results = await worker.parseAndSaveAll(repository('after'), types);
         assert.deepEqual(
-            results.flatMap((r) => (r.ok ? [[r.result.id, r.result.syntaxErrorCount]] : [])),
+            results.flatMap((r) => (r.ok ? [[r.result.id, r.result.errorCount]] : [])),
             [
                 ['Account-ja', 0],
                 ['Broken__c-ja', 1],
@@ -117,21 +101,29 @@ describe('ObjectTranslationWorker', () => {
                 ['Invoice__c-ja', 0],
             ],
         );
-        assert.ok((await worker.listSavedIds()).every((id) => id.startsWith('objectTranslation_')));
-        const loaded = await worker.load('Invoice__c-ja');
+        assert.ok(
+            (await worker.listSavedIds(types)).every((id) => id.startsWith('objectTranslation_')),
+        );
+        const loaded = await worker.load('objectTranslation_Invoice__c-ja');
         assert.equal(loaded.dataType, 'objectTranslation');
-        assert.equal((await worker.loadAll()).length, 4);
+    });
+
+    it('runUnitTask で 1 単位を解析できる', async () => {
+        const parsed = await runUnitTask({
+            command: 'parse',
+            unitType: 'object',
+            root: repository('after'),
+            location: 'force-app/main/default/objects/Payment__c',
+        });
+        assert.equal(parsed.result.id, 'Payment__c');
     });
 });
 
-describe('LwcWorker', () => {
+describe('UnitWorker: LWC', () => {
     it('1 バンドル (フォルダ) を 1 件として解析・保存し、読み込める', async () => {
-        const outDir = path.join(tmp, 'lwc');
-        const worker = new LwcWorker({ outDir, concurrency: 2 });
-        // lwc フォルダの上を渡すと、lwc/<名前>/ のフォルダを探す
-        const results = await worker.parseAndSaveAll(
-            path.resolve('docs/examples/repository/before/force-app'),
-        );
+        const worker = new UnitWorker({ outDir: path.join(tmp, 'lwc'), concurrency: 2 });
+        const types = typesOf('lwc');
+        const results = await worker.parseAndSaveAll(repository('before'), types);
         assert.ok(results.every((r) => r.ok));
         assert.deepEqual(
             results.map((r) => (r.ok ? [r.result.id, r.result.dataType] : [])),
@@ -143,41 +135,54 @@ describe('LwcWorker', () => {
                 ['utils', 'lwcBundle'],
             ],
         );
-
-        // 保存名は lwc_<バンドル名> (LwcParser.saveLwcBundle)。1 バンドル = 1 ファイル
-        const ids = await worker.listSavedIds();
-        assert.deepEqual(ids, [
+        // 保存名は lwc_<バンドル名>。1 バンドル = 1 ファイル
+        assert.deepEqual(await worker.listSavedIds(types), [
             'lwc_accountList',
             'lwc_accountRow',
             'lwc_broken',
             'lwc_oldBanner',
             'lwc_utils',
         ]);
-
-        const loaded = await worker.load('lwc_accountList');
+        const loaded = (await worker.load('lwc_accountList')) as unknown as {
+            dataType: string;
+            result: {
+                base: {
+                    modules: unknown[];
+                    templates: unknown[];
+                    stylesheets: unknown[];
+                    meta?: { kind: string };
+                };
+            };
+        };
         assert.equal(loaded.dataType, 'lwcBundle');
-        if (loaded.dataType === 'lwcBundle') {
-            assert.deepEqual(
-                [
-                    loaded.result.base.modules.length,
-                    loaded.result.base.templates.length,
-                    loaded.result.base.stylesheets.length,
-                    loaded.result.base.meta?.kind,
-                ],
-                [1, 1, 1, 'lwcBundleMeta'],
-            );
-        }
+        assert.deepEqual(
+            [
+                loaded.result.base.modules.length,
+                loaded.result.base.templates.length,
+                loaded.result.base.stylesheets.length,
+                loaded.result.base.meta?.kind,
+            ],
+            [1, 1, 1, 'lwcBundleMeta'],
+        );
         await worker.close();
     });
+});
 
-    it('runWorkerTask でも Lwc を扱える', async () => {
-        const parsed = await runWorkerTask({
-            command: 'parse',
-            type: 'Lwc',
-            filePath: path.resolve(
-                'docs/examples/repository/before/force-app/main/default/lwc/accountRow',
-            ),
-        });
-        assert.equal(parsed.result.id, 'accountRow');
+describe('UnitWorker: フォルダ単位のメタデータ', () => {
+    it('保存・読み込みはファイル (単位) ごと。すべての種類のフォルダを読む', async () => {
+        const worker = new UnitWorker({ outDir: path.join(tmp, 'folders'), concurrency: 2 });
+        const types = METADATA_FOLDER_PARSERS.map((parser) => findUnitType(parser.spec.type)!);
+        const results = await worker.parseAndSaveAll(repository('after'), types);
+        assert.ok(results.every((r) => r.ok));
+        // サンプルにはすべての種類がある
+        assert.deepEqual(
+            [...new Set(results.flatMap((r) => (r.ok ? [r.result.unitType] : [])))].sort(),
+            types.map((t) => t.type).sort(),
+        );
+        const ids = await worker.listSavedIds(types);
+        assert.deepEqual(ids, results.flatMap((r) => (r.ok ? [r.result.saveId] : [])).sort());
+        const loaded = await worker.load('flow_Account_Wizard');
+        assert.equal(loaded.dataType, 'flow');
+        await worker.close();
     });
 });

@@ -9,7 +9,7 @@ import type {
     FlowListRow,
     FlowReferenceRow,
     MetadataSnapshot,
-    ReportInput,
+    SnapshotInput,
 } from './types';
 
 // Flow・自動化の provider (flow.* / automation.byObject)。方針: docs/report-components-plan.md 2.6 章
@@ -19,7 +19,7 @@ type FlowNode = { id: string; filePath: string; json: FlowJson };
 const flowsOf = (snapshot: MetadataSnapshot | undefined) =>
     snapshot ? readable<FlowJson>(snapshot.flows, 'flow') : undefined;
 
-const compareFlows = (input: ReportInput) =>
+const compareFlows = (input: SnapshotInput) =>
     compareKeyed<FlowNode>(
         flowsOf(input.before),
         flowsOf(input.after),
@@ -28,7 +28,7 @@ const compareFlows = (input: ReportInput) =>
     );
 
 /** flow.list: Flow の一覧 */
-export const getFlowList = (input: ReportInput): FlowListRow[] =>
+export const getFlowList = (input: SnapshotInput): FlowListRow[] =>
     compareFlows(input).map((compared) => {
         const { json, filePath } = (compared.after ?? compared.before)!;
         return {
@@ -51,7 +51,7 @@ export const getFlowList = (input: ReportInput): FlowListRow[] =>
 const edgeKey = (edge: FlowEdge) => `${edge.from}->${edge.to}:${edge.edgeType}`;
 
 /** flow.diagram: 要素と接続の図 (before と after を合わせ、差分の色分けに status を持つ) */
-export const getFlowDiagrams = (input: ReportInput, flows?: string[]): FlowDiagram[] =>
+export const getFlowDiagrams = (input: SnapshotInput, flows?: string[]): FlowDiagram[] =>
     compareFlows(input)
         .filter(
             (compared) => !flows || flows.includes((compared.after ?? compared.before)!.json.name),
@@ -101,7 +101,7 @@ export const getFlowDiagrams = (input: ReportInput, flows?: string[]): FlowDiagr
         });
 
 /** flow.diffs: 要素・資源・起動・Flow の設定値の変更 (before を渡したときだけ意味がある。unchanged は出さない) */
-export const getFlowDiffs = (input: ReportInput): FlowDiffRow[] =>
+export const getFlowDiffs = (input: SnapshotInput): FlowDiffRow[] =>
     compareFlows(input).flatMap((compared): FlowDiffRow[] => {
         const flow = (compared.after ?? compared.before)!;
         const name = flow.json.name;
@@ -175,7 +175,7 @@ export const getFlowDiffs = (input: ReportInput): FlowDiffRow[] =>
     });
 
 /** flow.references: 参照する項目・Apex・サブフロー・LWC・ラベル (after の時点)。参照先がなければ problem に指摘の code */
-export const getFlowReferences = (input: ReportInput): FlowReferenceRow[] => {
+export const getFlowReferences = (input: SnapshotInput): FlowReferenceRow[] => {
     const analysis = analyzeFlows(input.after.flows ?? [], contextOf(input.after));
     const problems = new Map(
         analysis.findings.map((f) => [`${f.flow}:${f.target}:${f.sourceKeys?.sourceKey}`, f.code]),
@@ -208,7 +208,7 @@ export const getFlowReferences = (input: ReportInput): FlowReferenceRow[] => {
 };
 
 /** automation.byObject: オブジェクトごとの自動化 (レコードトリガーフロー・Apex トリガー・入力規則) */
-export const getAutomationByObject = (input: ReportInput): AutomationRow[] => {
+export const getAutomationByObject = (input: SnapshotInput): AutomationRow[] => {
     const summarize = (snapshot: MetadataSnapshot) =>
         analyzeAutomation({
             ...(snapshot.flows ? { flows: snapshot.flows } : {}),

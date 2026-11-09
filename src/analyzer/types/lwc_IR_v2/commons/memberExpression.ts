@@ -1,70 +1,127 @@
-import { isMemberExpression, type MemberExpression } from '@babel/types';
+import { type FieldsOf, type TypeField } from '../../commons/ir';
+import { type SourceSpan } from '../../commons/source';
+import { isMemberExpression, isSuper, type MemberExpression } from '@babel/types';
 import {
     EvaluatePair,
     LwcCommonTypeClass,
-    LwcErrorTypeClass,
     lazyPairs,
     makeEvaluatePair,
     visitNode,
+    getSourceSpan,
 } from '../commonVisitor';
 import { expressionVisitorEvaluatePairs, type ExpressionTypeClass } from '../expressionVisitor';
 import { superTypePair, type SuperTypeClass } from '../standardizedVisitor/super';
+import { identifierTypePair, type IdentifierTypeClass } from './identifier';
 import { privateNameTypePair, type PrivateNameTypeClass } from './privateName';
 
-const memberExpressionObjectPairs = lazyPairs(
+const memberExpressionComputedObjectPairs = lazyPairs(
     () => [...expressionVisitorEvaluatePairs(), superTypePair] as const,
 );
-const memberExpressionPropertyPairs = lazyPairs(
-    () => [...expressionVisitorEvaluatePairs(), privateNameTypePair] as const,
+const memberExpressionSuperPairs = lazyPairs(() => [superTypePair] as const);
+const memberExpressionIdentifierPairs = lazyPairs(() => [identifierTypePair] as const);
+const memberExpressionStaticPropertyPairs = lazyPairs(
+    () => [identifierTypePair, privateNameTypePair] as const,
 );
 
-export type MemberExpressionFields = {
-    object: ExpressionTypeClass | SuperTypeClass | LwcErrorTypeClass;
-    property: ExpressionTypeClass | PrivateNameTypeClass | LwcErrorTypeClass;
-    computed: MemberExpression['computed'];
-};
+/**
+ * Babel 8 の MemberExpressionComputed | MemberExpressionNonComputed。
+ * computed: false の property は Identifier・PrivateName。`super.#x` は書けないので、object が Super なら Identifier だけ
+ */
+export type MemberExpressionFields = TypeField<'memberExpression'> &
+    (
+        | {
+              computed: false;
+              object: ExpressionTypeClass;
+              property: IdentifierTypeClass | PrivateNameTypeClass;
+          }
+        | { computed: false; object: SuperTypeClass; property: IdentifierTypeClass }
+        | {
+              computed: true;
+              object: ExpressionTypeClass | SuperTypeClass;
+              property: ExpressionTypeClass;
+          }
+    );
 
-export class MemberExpressionTypeClass extends LwcCommonTypeClass<'memberExpression'> {
-    private readonly value: MemberExpressionFields;
-
-    private constructor(value: MemberExpressionFields) {
-        super('memberExpression');
-        this.value = value;
+export class MemberExpressionTypeClass extends LwcCommonTypeClass<
+    'memberExpression',
+    MemberExpressionFields
+> {
+    private constructor(value: FieldsOf<MemberExpressionFields>, sourceSpan: SourceSpan) {
+        super('memberExpression', value, sourceSpan);
     }
 
     static create(target: MemberExpression, originalSource: string): MemberExpressionTypeClass {
-        return new MemberExpressionTypeClass({
-            object: visitNode(
-                target.object,
-                originalSource,
-                memberExpressionObjectPairs(),
-                'MemberExpression.object',
-            ),
-            property: visitNode(
-                target.property,
-                originalSource,
-                memberExpressionPropertyPairs(),
-                'MemberExpression.property',
-            ),
-            computed: target.computed,
-        });
-    }
-
-    /** すべてのフィールド (Babel の value フィールドの getter getValue() と区別する。getChildNodes もこれから作る) */
-    override getFields(): MemberExpressionFields {
-        return this.value;
+        const span = getSourceSpan(target, originalSource);
+        if (target.computed) {
+            return new MemberExpressionTypeClass(
+                {
+                    computed: true,
+                    object: visitNode(
+                        target.object,
+                        originalSource,
+                        memberExpressionComputedObjectPairs(),
+                        'MemberExpression.object',
+                    ),
+                    property: visitNode(
+                        target.property,
+                        originalSource,
+                        expressionVisitorEvaluatePairs(),
+                        'MemberExpression.property',
+                    ),
+                },
+                span,
+            );
+        }
+        if (isSuper(target.object)) {
+            return new MemberExpressionTypeClass(
+                {
+                    computed: false,
+                    object: visitNode(
+                        target.object,
+                        originalSource,
+                        memberExpressionSuperPairs(),
+                        'MemberExpression.object',
+                    ),
+                    property: visitNode(
+                        target.property,
+                        originalSource,
+                        memberExpressionIdentifierPairs(),
+                        'MemberExpression.property',
+                    ),
+                },
+                span,
+            );
+        }
+        return new MemberExpressionTypeClass(
+            {
+                computed: false,
+                object: visitNode(
+                    target.object,
+                    originalSource,
+                    expressionVisitorEvaluatePairs(),
+                    'MemberExpression.object',
+                ),
+                property: visitNode(
+                    target.property,
+                    originalSource,
+                    memberExpressionStaticPropertyPairs(),
+                    'MemberExpression.property',
+                ),
+            },
+            span,
+        );
     }
 
     getObject(): MemberExpressionFields['object'] {
-        return this.value.object;
+        return this.getFields().object;
     }
 
     getProperty(): MemberExpressionFields['property'] {
-        return this.value.property;
+        return this.getFields().property;
     }
 
     getComputed(): MemberExpressionFields['computed'] {
-        return this.value.computed;
+        return this.getFields().computed;
     }
 }
 
@@ -74,5 +131,5 @@ export const memberExpressionTypePair: EvaluatePair<MemberExpression, MemberExpr
     );
 
 export const isMemberExpressionType = (
-    target: LwcCommonTypeClass<string>,
+    target: LwcCommonTypeClass<string, TypeField<string>>,
 ): target is MemberExpressionTypeClass => target instanceof MemberExpressionTypeClass;

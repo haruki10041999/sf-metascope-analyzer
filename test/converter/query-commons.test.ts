@@ -1,48 +1,45 @@
 import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
 
-import { makeConvertType } from '../../src/analyzer/types/apex/commons';
-import { LogicalExpressionType } from '../../src/analyzer/types/apex/converter';
-import {
-    isLogicalConditionJson,
-    makeLogicalConditionJson,
-} from '../../src/analyzer/types/apex/query/commons';
+import { isLogicalConditionJson } from '../../src/analyzer/types/apex/query/commons';
 
-const sourceInfo = {
-    context: 'query.apex',
-    start: { offset: 0, line: 1, column: 0 },
-    end: { offset: 1, line: 1, column: 1 },
+import { find, toJson, unitRules } from './helpers';
+
+// WHERE の論理条件 (makeLogicalConditionJson)。IR v2 の木から作る (docs/ir-v2-integration.md)
+
+const whereOf = async (where: string) => {
+    const { json, irErrors } = await toJson(
+        `List<Account> a = [SELECT Id FROM Account WHERE ${where}];`,
+        unitRules.anonymous,
+    );
+    assert.deepEqual(irErrors, []);
+    const [soql] = find(json, (n) => n.kind === 'soql');
+    assert.ok(soql);
+    return soql.where;
 };
 
 describe('makeLogicalConditionJson', () => {
-    for (const operator of ['AND', 'OR', 'NOT', null] as const) {
+    const cases = [
+        ['AND', "Name = 'x' AND Id = null", 2],
+        ['OR', "Name = 'x' OR Id = null", 2],
+        ['NOT', "NOT Name = 'x'", 1],
+        [null, "Name = 'x'", 1],
+    ] as const;
+
+    for (const [operator, where, count] of cases) {
         it(`preserves ${operator} and omits a null operator`, async () => {
-            const { result } = await makeConvertType<LogicalExpressionType>({
-                type: 'logicalExpression',
-                sourceInfo,
-                operator,
-                value: [
-                    {
-                        type: 'conditionalExpression',
-                        sourceInfo,
-                        value: {
-                            type: 'logicalExpression',
-                            sourceInfo,
-                            operator: null,
-                            value: [],
-                        },
-                    },
-                ],
-            });
+            const json = await whereOf(where);
+            const [logical] = find(json, (n) => isLogicalConditionJson(n));
+            assert.ok(logical, where);
 
-            const json = makeLogicalConditionJson(result);
-
-            // 論理条件は非境界ノード（キーを持たない）。単一条件だけが境界ノード
-            assert.ok(isLogicalConditionJson(json));
-            assert.equal(Object.hasOwn(json, 'operator'), operator !== null);
-            assert.equal(json.operator, operator ?? undefined);
-            assert.deepEqual(json.condition, [{ condition: [] }]);
-            assert.equal(Object.hasOwn(json, 'sourceKeys'), false);
+            // 論理条件は非境界ノード (キーを持たない)。単一条件だけが境界ノード
+            assert.equal(Object.hasOwn(logical, 'operator'), operator !== null);
+            assert.equal(logical.operator, operator ?? undefined);
+            assert.equal(logical.condition.length, count);
+            assert.ok(
+                logical.condition.every((c: { kind: string }) => c.kind === 'singleCondition'),
+            );
+            assert.equal(Object.hasOwn(logical, 'sourceKeys'), false);
         });
     }
 });

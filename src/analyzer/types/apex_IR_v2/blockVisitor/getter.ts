@@ -1,35 +1,35 @@
 import { GetterContext } from '@apexdevtools/apex-parser';
 
-import { NormalBlockTypeClass } from '.';
+import { BlockTypeClass } from './block';
 
 import {
-    ApexErrorTypeClass,
     ApexCommonTypeClass,
-    visitOptionalNode,
+    createOptionalNode,
     getSourceSpan,
     isSpicifyApexCommonTypeClass,
 } from '../commonVisitor';
-import { TypeField } from '../../commons/ir';
+import { type FieldsOf, TypeField } from '../../commons/ir';
 import { SourceSpan } from '../../commons';
 
 export type GetterType = TypeField<'getter'> & {
-    block: NormalBlockTypeClass | null;
+    /** `get;` (自動プロパティ) は本体を持たない */
+    block: BlockTypeClass | null;
 };
 
 export class GetterTypeClass extends ApexCommonTypeClass<'getter', GetterType> {
-    private constructor(block: NormalBlockTypeClass | null, sourceSpan: SourceSpan) {
-        super('getter', { block: block }, sourceSpan);
+    private constructor(fields: FieldsOf<GetterType>, sourceSpan: SourceSpan) {
+        super('getter', fields, sourceSpan);
     }
 
     static create(ctx: GetterContext): GetterTypeClass {
-        if (ctx.block) {
-            return new GetterTypeClass(
-                NormalBlockTypeClass.create(ctx.block()),
-                getSourceSpan(ctx),
-            );
-        } else {
-            return new GetterTypeClass(null, getSourceSpan(ctx));
-        }
+        return new GetterTypeClass(
+            { block: createOptionalNode(ctx.block(), (c) => BlockTypeClass.create(c), 'block') },
+            getSourceSpan(ctx),
+        );
+    }
+
+    getBlock(): GetterType['block'] {
+        return this.getFields().block;
     }
 }
 

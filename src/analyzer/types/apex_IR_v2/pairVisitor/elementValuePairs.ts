@@ -1,40 +1,46 @@
 import { ElementValuePairsContext } from '@apexdevtools/apex-parser';
 
+import { ElementValuePairTypeClass } from './elementValuePair';
 import {
-    PairListTypeClass,
-    ElementValuePairTypeClass,
-    PairVisitor,
-    isElementValuePairType,
-} from '.';
+    ApexCommonTypeClass,
+    createNodeList,
+    getSourceSpan,
+    isSpicifyApexCommonTypeClass,
+} from '../commonVisitor';
+import { type FieldsOf, TypeField } from '../../commons/ir';
+import { SourceSpan } from '../../commons';
 
-import { ApexErrorTypeClass, ApexCommonTypeClass, visitNodeList } from '../commonVisitor';
+export type ElementValuePairsType = TypeField<'elementValuePairs'> & {
+    value: ElementValuePairTypeClass[];
+};
 
-export class ElementValuePairsTypeClass extends PairListTypeClass<
+export class ElementValuePairsTypeClass extends ApexCommonTypeClass<
     'elementValuePairs',
-    ElementValuePairTypeClass
+    ElementValuePairsType
 > {
-    private constructor(value: (ElementValuePairTypeClass | ApexErrorTypeClass)[]) {
-        super('elementValuePairs', value);
+    private constructor(fields: FieldsOf<ElementValuePairsType>, sourceSpan: SourceSpan) {
+        super('elementValuePairs', fields, sourceSpan);
     }
 
     static create(ctx: ElementValuePairsContext): ElementValuePairsTypeClass {
-        if (!ctx.elementValuePair_list() || ctx.elementValuePair_list().length === 0) {
-            throw new Error('値が異常です。ElementValuePairsContext: ' + ctx.getText());
-        }
-
         return new ElementValuePairsTypeClass(
-            visitNodeList(
-                new PairVisitor(),
-                ctx.elementValuePair_list(),
-                isElementValuePairType,
-                'elementValuePair',
-            ),
+            {
+                value: createNodeList(
+                    ctx.elementValuePair_list(),
+                    (c) => ElementValuePairTypeClass.create(c),
+                    'elementValuePair',
+                ),
+            },
+            getSourceSpan(ctx),
         );
+    }
+
+    getValue(): ElementValuePairsType['value'] {
+        return this.getFields().value;
     }
 }
 
 export const isElementValuePairsType = (
-    target: ApexCommonTypeClass<string>,
-): target is ElementValuePairsTypeClass => {
-    return target instanceof ElementValuePairsTypeClass;
-};
+    target: ApexCommonTypeClass<string, TypeField<string>>,
+): target is ElementValuePairsTypeClass =>
+    isSpicifyApexCommonTypeClass('elementValuePairs', target);

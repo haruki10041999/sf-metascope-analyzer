@@ -1,80 +1,136 @@
-import { isTSModuleDeclaration, type TSModuleDeclaration } from '@babel/types';
+import { type FieldsOf, type TypeField } from '../../commons/ir';
+import { type SourceSpan } from '../../commons/source';
+import {
+    isIdentifier,
+    isStringLiteral,
+    isTSModuleDeclaration,
+    type TSModuleDeclaration,
+} from '@babel/types';
+import { failIrBuild } from '../buildFailure';
 import {
     EvaluatePair,
     LwcCommonTypeClass,
-    LwcErrorTypeClass,
-    lazyPairs,
     makeEvaluatePair,
     visitNode,
+    getSourceSpan,
 } from '../commonVisitor';
 import {
     tSEntityNameVisitorEvaluatePairs,
     type TSEntityNameTypeClass,
 } from '../tsEntityNameVisitor';
-import { stringLiteralTypePair, type StringLiteralTypeClass } from './stringLiteral';
-import { tSModuleBlockTypePair, type TSModuleBlockTypeClass } from './tSModuleBlock';
+import { IdentifierTypeClass } from './identifier';
+import { StringLiteralTypeClass } from './stringLiteral';
+import { TSModuleBlockTypeClass } from './tSModuleBlock';
 
-const tSModuleDeclarationIdPairs = lazyPairs(
-    () => [...tSEntityNameVisitorEvaluatePairs(), stringLiteralTypePair] as const,
-);
-const tSModuleDeclarationBodyPairs = lazyPairs(() => [tSModuleBlockTypePair] as const);
+/**
+ * kind ごとに id・body の型が決まる。
+ * - global: `declare global { ... }` (id は global という識別子)
+ * - module: `declare module 'x' { ... }`。本体のない `declare module 'x';` も書ける (body が null)
+ * - namespace: `namespace A.B { ... }`
+ */
+type TSModuleDeclarationKindFields =
+    | { kind: 'global'; id: IdentifierTypeClass; body: TSModuleBlockTypeClass }
+    | { kind: 'module'; id: StringLiteralTypeClass; body: TSModuleBlockTypeClass | null }
+    | { kind: 'namespace'; id: TSEntityNameTypeClass; body: TSModuleBlockTypeClass };
 
-export type TSModuleDeclarationFields = {
-    kind: TSModuleDeclaration['kind'];
-    declare: NonNullable<TSModuleDeclaration['declare']> | null;
-    id: TSEntityNameTypeClass | StringLiteralTypeClass | LwcErrorTypeClass;
-    body: TSModuleBlockTypeClass | LwcErrorTypeClass;
+export type TSModuleDeclarationFields = TypeField<'tSModuleDeclaration'> & {
+    declare: boolean;
+} & TSModuleDeclarationKindFields;
+
+const createKindFields = (
+    target: TSModuleDeclaration,
+    originalSource: string,
+): TSModuleDeclarationKindFields => {
+    // Babel の型では body は必須だが、本体のない `declare module 'x';` では body がない
+    const body = (target.body as TSModuleDeclaration['body'] | null | undefined) ?? null;
+    const block = body == null ? null : TSModuleBlockTypeClass.create(body, originalSource);
+    const requireBlock = (): TSModuleBlockTypeClass =>
+        block ??
+        failIrBuild(
+            'TYPE_MISMATCH',
+            target,
+            originalSource,
+            `${target.kind} の宣言には本体が要ります`,
+        );
+
+    switch (target.kind) {
+        case 'global':
+            return isIdentifier(target.id)
+                ? {
+                      kind: 'global',
+                      id: IdentifierTypeClass.create(target.id, originalSource),
+                      body: requireBlock(),
+                  }
+                : failIrBuild('TYPE_MISMATCH', target, originalSource, 'global の id は識別子です');
+        case 'module':
+            return isStringLiteral(target.id)
+                ? {
+                      kind: 'module',
+                      id: StringLiteralTypeClass.create(target.id, originalSource),
+                      body: block,
+                  }
+                : failIrBuild(
+                      'TYPE_MISMATCH',
+                      target,
+                      originalSource,
+                      'declare module の名前は文字列です',
+                  );
+        case 'namespace':
+            return isStringLiteral(target.id)
+                ? failIrBuild(
+                      'TYPE_MISMATCH',
+                      target,
+                      originalSource,
+                      'namespace の名前は識別子です',
+                  )
+                : {
+                      kind: 'namespace',
+                      id: visitNode(
+                          target.id,
+                          originalSource,
+                          tSEntityNameVisitorEvaluatePairs(),
+                          'TSEntityNameVisitor',
+                      ),
+                      body: requireBlock(),
+                  };
+    }
 };
 
-export class TSModuleDeclarationTypeClass extends LwcCommonTypeClass<'tSModuleDeclaration'> {
-    private readonly value: TSModuleDeclarationFields;
-
-    private constructor(value: TSModuleDeclarationFields) {
-        super('tSModuleDeclaration');
-        this.value = value;
+export class TSModuleDeclarationTypeClass extends LwcCommonTypeClass<
+    'tSModuleDeclaration',
+    TSModuleDeclarationFields
+> {
+    private constructor(value: FieldsOf<TSModuleDeclarationFields>, sourceSpan: SourceSpan) {
+        super('tSModuleDeclaration', value, sourceSpan);
     }
 
     static create(
         target: TSModuleDeclaration,
         originalSource: string,
     ): TSModuleDeclarationTypeClass {
-        return new TSModuleDeclarationTypeClass({
-            kind: target.kind,
-            declare: target.declare ?? null,
-            id: visitNode(
-                target.id,
-                originalSource,
-                tSModuleDeclarationIdPairs(),
-                'TSModuleDeclaration.id',
-            ),
-            body: visitNode(
-                target.body,
-                originalSource,
-                tSModuleDeclarationBodyPairs(),
-                'TSModuleDeclaration.body',
-            ),
-        });
-    }
-
-    /** すべてのフィールド (Babel の value フィールドの getter getValue() と区別する。getChildNodes もこれから作る) */
-    override getFields(): TSModuleDeclarationFields {
-        return this.value;
+        return new TSModuleDeclarationTypeClass(
+            {
+                declare: target.declare ?? false,
+                ...createKindFields(target, originalSource),
+            },
+            getSourceSpan(target, originalSource),
+        );
     }
 
     getKind(): TSModuleDeclarationFields['kind'] {
-        return this.value.kind;
+        return this.getFields().kind;
     }
 
     getDeclare(): TSModuleDeclarationFields['declare'] {
-        return this.value.declare;
+        return this.getFields().declare;
     }
 
     getId(): TSModuleDeclarationFields['id'] {
-        return this.value.id;
+        return this.getFields().id;
     }
 
     getBody(): TSModuleDeclarationFields['body'] {
-        return this.value.body;
+        return this.getFields().body;
     }
 }
 
@@ -86,5 +142,5 @@ export const tSModuleDeclarationTypePair: EvaluatePair<
 );
 
 export const isTSModuleDeclarationType = (
-    target: LwcCommonTypeClass<string>,
+    target: LwcCommonTypeClass<string, TypeField<string>>,
 ): target is TSModuleDeclarationTypeClass => target instanceof TSModuleDeclarationTypeClass;

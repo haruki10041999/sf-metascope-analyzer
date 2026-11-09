@@ -1,43 +1,43 @@
+import { type FieldsOf, type TypeField } from '../../commons/ir';
+import { type SourceSpan } from '../../commons/source';
 import { isThrowStatement, type ThrowStatement } from '@babel/types';
 import {
     EvaluatePair,
     LwcCommonTypeClass,
-    LwcErrorTypeClass,
     makeEvaluatePair,
     visitNode,
+    getSourceSpan,
 } from '../commonVisitor';
 import { expressionVisitorEvaluatePairs, type ExpressionTypeClass } from '../expressionVisitor';
 
-export type ThrowStatementFields = {
-    argument: ExpressionTypeClass | LwcErrorTypeClass;
+export type ThrowStatementFields = TypeField<'throwStatement'> & {
+    argument: ExpressionTypeClass;
 };
 
-export class ThrowStatementTypeClass extends LwcCommonTypeClass<'throwStatement'> {
-    private readonly value: ThrowStatementFields;
-
-    private constructor(value: ThrowStatementFields) {
-        super('throwStatement');
-        this.value = value;
+export class ThrowStatementTypeClass extends LwcCommonTypeClass<
+    'throwStatement',
+    ThrowStatementFields
+> {
+    private constructor(value: FieldsOf<ThrowStatementFields>, sourceSpan: SourceSpan) {
+        super('throwStatement', value, sourceSpan);
     }
 
     static create(target: ThrowStatement, originalSource: string): ThrowStatementTypeClass {
-        return new ThrowStatementTypeClass({
-            argument: visitNode(
-                target.argument,
-                originalSource,
-                expressionVisitorEvaluatePairs(),
-                'ExpressionVisitor',
-            ),
-        });
-    }
-
-    /** すべてのフィールド (Babel の value フィールドの getter getValue() と区別する。getChildNodes もこれから作る) */
-    override getFields(): ThrowStatementFields {
-        return this.value;
+        return new ThrowStatementTypeClass(
+            {
+                argument: visitNode(
+                    target.argument,
+                    originalSource,
+                    expressionVisitorEvaluatePairs(),
+                    'ExpressionVisitor',
+                ),
+            },
+            getSourceSpan(target, originalSource),
+        );
     }
 
     getArgument(): ThrowStatementFields['argument'] {
-        return this.value.argument;
+        return this.getFields().argument;
     }
 }
 
@@ -47,5 +47,5 @@ export const throwStatementTypePair: EvaluatePair<ThrowStatement, ThrowStatement
     );
 
 export const isThrowStatementType = (
-    target: LwcCommonTypeClass<string>,
+    target: LwcCommonTypeClass<string, TypeField<string>>,
 ): target is ThrowStatementTypeClass => target instanceof ThrowStatementTypeClass;

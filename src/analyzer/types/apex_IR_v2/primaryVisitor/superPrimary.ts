@@ -1,11 +1,16 @@
 import { SuperPrimaryContext } from '@apexdevtools/apex-parser';
 
-import { PrimaryValueTypeClass } from '.';
-import { ApexCommonTypeClass } from '../commonVisitor';
+import { ApexCommonTypeClass, getSourceSpan, isSpicifyApexCommonTypeClass } from '../commonVisitor';
+import { type FieldsOf, SourceSpan, TypeField } from '../../commons/ir';
 
-export class SuperPrimaryTypeClass extends PrimaryValueTypeClass<'superPrimary', string> {
-    private constructor(value: string) {
-        super('superPrimary', value);
+export type SuperPrimaryType = TypeField<'superPrimary'> & {
+    /** 常に 'super' (Apex は大文字・小文字を区別しないので、ソースの書き方によらず小文字にそろえる) */
+    value: 'super';
+};
+
+export class SuperPrimaryTypeClass extends ApexCommonTypeClass<'superPrimary', SuperPrimaryType> {
+    private constructor(fields: FieldsOf<SuperPrimaryType>, sourceSpan: SourceSpan) {
+        super('superPrimary', fields, sourceSpan);
     }
 
     static create(ctx: SuperPrimaryContext): SuperPrimaryTypeClass {
@@ -13,12 +18,14 @@ export class SuperPrimaryTypeClass extends PrimaryValueTypeClass<'superPrimary',
             throw new Error('値が異常です。SuperPrimaryContext: ' + ctx.getText());
         }
 
-        return new SuperPrimaryTypeClass(ctx.SUPER().getText());
+        return new SuperPrimaryTypeClass({ value: 'super' }, getSourceSpan(ctx));
+    }
+
+    getValue(): SuperPrimaryType['value'] {
+        return this.getFields().value;
     }
 }
 
 export const isSuperPrimaryType = (
-    target: ApexCommonTypeClass<string>,
-): target is SuperPrimaryTypeClass => {
-    return target instanceof SuperPrimaryTypeClass;
-};
+    target: ApexCommonTypeClass<string, TypeField<string>>,
+): target is SuperPrimaryTypeClass => isSpicifyApexCommonTypeClass('superPrimary', target);

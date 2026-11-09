@@ -1,34 +1,20 @@
 import { SoqlFunctionContext } from '@apexdevtools/apex-parser';
 
-import { QueryValueTypeClass, QueryVisitor } from '.';
-
+import { DateFieldNameTypeClass, FieldNameTypeClass } from '../nameVisitor';
+import { SoqlFieldsParameterTypeClass } from '../parameterVisitor';
+import { LocationValueTypeClass } from '../valueVisitor';
 import {
-    DateFieldNameTypeClass,
-    FieldNameTypeClass,
-    NameVisitor,
-    isDateFieldNameType,
-    isFieldNameType,
-} from '../nameVisitor';
-import {
-    SoqlFieldsParameterTypeClass,
-    ParameterVisitor,
-    isSoqlFieldsParameterType,
-} from '../parameterVisitor';
-import { LocationValueTypeClass, ValueVisitor, isLocationValueType } from '../valueVisitor';
-import {
-    ApexErrorTypeClass,
     ApexCommonTypeClass,
-    visitNodeList,
-    visitNode,
+    createNode,
+    getSourceSpan,
+    isSpicifyApexCommonTypeClass,
 } from '../commonVisitor';
+import { type FieldsOf, TypeField } from '../../commons/ir';
+import { SourceSpan } from '../../commons';
 
-type NormalSoqlFunctionType =
+export type NormalSoqlFunctionType =
     'AVG' | 'COUNT_DISTINCT' | 'MIN' | 'MAX' | 'SUM' | 'TOLABEL' | 'GROUPING' | 'CONVERT_CURRENCY';
-type CountFunctionType = 'COUNT';
-type FormatFunctionType = 'FORMAT';
-type FieldsFunctionType = 'FIELDS';
-type DistanceFunctionType = 'DISTANCE';
-type DateFunctionType =
+export type DateFunctionType =
     | 'CALENDAR_MONTH'
     | 'CALENDAR_QUARTER'
     | 'CALENDAR_YEAR'
@@ -43,215 +29,160 @@ type DateFunctionType =
     | 'WEEK_IN_MONTH'
     | 'WEEK_IN_YEAR';
 
-const isNormalFunctionType = (ctx: SoqlFunctionContext): boolean => {
-    return Boolean(
-        ctx.AVG() ||
-        ctx.COUNT_DISTINCT() ||
-        ctx.MIN() ||
-        ctx.MAX() ||
-        ctx.SUM() ||
-        ctx.TOLABEL() ||
-        ctx.GROUPING() ||
-        ctx.CONVERT_CURRENCY(),
+/** 関数ごとに引数の形が決まる (判別 union) */
+export type SoqlFunctionType = TypeField<'soqlFunction'> &
+    (
+        | { kind: NormalSoqlFunctionType; param: FieldNameTypeClass }
+        | { kind: DateFunctionType; param: DateFieldNameTypeClass }
+        /** `COUNT()` は引数なし (null)、`COUNT(field)` は fieldName */
+        | { kind: 'COUNT'; param: FieldNameTypeClass | null }
+        | { kind: 'FORMAT'; param: FieldNameTypeClass | SoqlFunctionTypeClass }
+        | { kind: 'FIELDS'; param: SoqlFieldsParameterTypeClass }
+        | {
+              kind: 'DISTANCE';
+              /** DISTANCE(from, to, 'unit')。unit は文字列リテラル (引用符つき) */
+              param: { from: LocationValueTypeClass; to: LocationValueTypeClass; unit: string };
+          }
     );
+
+const getNormalFunction = (ctx: SoqlFunctionContext): NormalSoqlFunctionType | null => {
+    if (ctx.AVG()) return 'AVG';
+    if (ctx.COUNT_DISTINCT()) return 'COUNT_DISTINCT';
+    if (ctx.MIN()) return 'MIN';
+    if (ctx.MAX()) return 'MAX';
+    if (ctx.SUM()) return 'SUM';
+    if (ctx.TOLABEL()) return 'TOLABEL';
+    if (ctx.GROUPING()) return 'GROUPING';
+    if (ctx.CONVERT_CURRENCY()) return 'CONVERT_CURRENCY';
+    return null;
 };
 
-const isFormatFunctionType = (ctx: SoqlFunctionContext): boolean => {
-    return Boolean(ctx.FORMAT());
+const getDateFunction = (ctx: SoqlFunctionContext): DateFunctionType | null => {
+    if (ctx.CALENDAR_MONTH()) return 'CALENDAR_MONTH';
+    if (ctx.CALENDAR_QUARTER()) return 'CALENDAR_QUARTER';
+    if (ctx.CALENDAR_YEAR()) return 'CALENDAR_YEAR';
+    if (ctx.DAY_IN_MONTH()) return 'DAY_IN_MONTH';
+    if (ctx.DAY_IN_WEEK()) return 'DAY_IN_WEEK';
+    if (ctx.DAY_IN_YEAR()) return 'DAY_IN_YEAR';
+    if (ctx.DAY_ONLY()) return 'DAY_ONLY';
+    if (ctx.FISCAL_MONTH()) return 'FISCAL_MONTH';
+    if (ctx.FISCAL_QUARTER()) return 'FISCAL_QUARTER';
+    if (ctx.FISCAL_YEAR()) return 'FISCAL_YEAR';
+    if (ctx.HOUR_IN_DAY()) return 'HOUR_IN_DAY';
+    if (ctx.WEEK_IN_MONTH()) return 'WEEK_IN_MONTH';
+    if (ctx.WEEK_IN_YEAR()) return 'WEEK_IN_YEAR';
+    return null;
 };
 
-const isCountFunctionType = (ctx: SoqlFunctionContext): boolean => {
-    return Boolean(ctx.COUNT());
-};
-
-const isFieldsFunctionType = (ctx: SoqlFunctionContext): boolean => {
-    return Boolean(ctx.FIELDS());
-};
-
-const isDistanceFunctionType = (ctx: SoqlFunctionContext): boolean => {
-    return Boolean(ctx.DISTANCE());
-};
-
-const isDateFunctionType = (ctx: SoqlFunctionContext): boolean => {
-    return Boolean(
-        ctx.CALENDAR_MONTH() ||
-        ctx.CALENDAR_QUARTER() ||
-        ctx.CALENDAR_YEAR() ||
-        ctx.DAY_IN_MONTH() ||
-        ctx.DAY_IN_WEEK() ||
-        ctx.DAY_IN_YEAR() ||
-        ctx.DAY_ONLY() ||
-        ctx.FISCAL_MONTH() ||
-        ctx.FISCAL_QUARTER() ||
-        ctx.FISCAL_YEAR() ||
-        ctx.HOUR_IN_DAY() ||
-        ctx.WEEK_IN_MONTH() ||
-        ctx.WEEK_IN_YEAR(),
-    );
-};
-
-type SoqlFunctionValueType =
-    | NormalSoqlFunctionType
-    | CountFunctionType
-    | FormatFunctionType
-    | FieldsFunctionType
-    | DistanceFunctionType
-    | DateFunctionType;
-
-type SoqlParameterType =
-    | FieldNameTypeClass
-    | DateFieldNameTypeClass
-    | SoqlFieldsParameterTypeClass
-    | (LocationValueTypeClass | ApexErrorTypeClass | string)[]
-    | SoqlFunctionTypeClass;
-
-export class SoqlFunctionTypeClass extends QueryValueTypeClass<
-    'soqlFunction',
-    SoqlFunctionValueType
-> {
-    private param: SoqlParameterType | ApexErrorTypeClass | null = null;
-
-    private constructor(
-        value: SoqlFunctionValueType,
-        param: SoqlParameterType | ApexErrorTypeClass | null,
-    ) {
-        super('soqlFunction', value);
-        this.param = param;
+export class SoqlFunctionTypeClass extends ApexCommonTypeClass<'soqlFunction', SoqlFunctionType> {
+    private constructor(fields: FieldsOf<SoqlFunctionType>, sourceSpan: SourceSpan) {
+        super('soqlFunction', fields, sourceSpan);
     }
 
     static create(ctx: SoqlFunctionContext): SoqlFunctionTypeClass {
-        if (
-            (!isNormalFunctionType(ctx) || !ctx.fieldName()) &&
-            (!isFormatFunctionType(ctx) || (!ctx.fieldName() && !ctx.soqlFunction())) &&
-            !isCountFunctionType(ctx) &&
-            (!isFieldsFunctionType(ctx) || !ctx.soqlFieldsParameter()) &&
-            (!isDistanceFunctionType(ctx) ||
-                ctx.locationValue_list().length != 2 ||
-                (!ctx.StringLiteral() && !ctx.MultilineStringLiteral())) &&
-            (!isDateFunctionType(ctx) || !ctx.dateFieldName())
-        ) {
-            throw new Error('値が異常です。SoqlFunctionContext: ' + ctx.getText());
-        }
-
-        let value: SoqlFunctionValueType | ApexErrorTypeClass;
-        let param: SoqlParameterType | ApexErrorTypeClass | null = null;
-
-        if (isNormalFunctionType(ctx)) {
-            if (ctx.AVG()) {
-                value = 'AVG';
-            } else if (ctx.COUNT_DISTINCT()) {
-                value = 'COUNT_DISTINCT';
-            } else if (ctx.MIN()) {
-                value = 'MIN';
-            } else if (ctx.MAX()) {
-                value = 'MAX';
-            } else if (ctx.SUM()) {
-                value = 'SUM';
-            } else if (ctx.TOLABEL()) {
-                value = 'TOLABEL';
-            } else if (ctx.GROUPING()) {
-                value = 'GROUPING';
-            } else {
-                value = 'CONVERT_CURRENCY';
-            }
-
-            param = visitNode(new NameVisitor(), ctx.fieldName(), isFieldNameType, 'fieldName');
-        } else if (isDateFunctionType(ctx)) {
-            if (ctx.CALENDAR_MONTH()) {
-                value = 'CALENDAR_MONTH';
-            } else if (ctx.CALENDAR_QUARTER()) {
-                value = 'CALENDAR_QUARTER';
-            } else if (ctx.CALENDAR_YEAR()) {
-                value = 'CALENDAR_YEAR';
-            } else if (ctx.DAY_IN_MONTH()) {
-                value = 'DAY_IN_MONTH';
-            } else if (ctx.DAY_IN_WEEK()) {
-                value = 'DAY_IN_WEEK';
-            } else if (ctx.DAY_IN_YEAR()) {
-                value = 'DAY_IN_YEAR';
-            } else if (ctx.DAY_ONLY()) {
-                value = 'DAY_ONLY';
-            } else if (ctx.FISCAL_MONTH()) {
-                value = 'FISCAL_MONTH';
-            } else if (ctx.FISCAL_QUARTER()) {
-                value = 'FISCAL_QUARTER';
-            } else if (ctx.FISCAL_YEAR()) {
-                value = 'FISCAL_YEAR';
-            } else if (ctx.HOUR_IN_DAY()) {
-                value = 'HOUR_IN_DAY';
-            } else if (ctx.WEEK_IN_MONTH()) {
-                value = 'WEEK_IN_MONTH';
-            } else {
-                value = 'WEEK_IN_YEAR';
-            }
-
-            param = visitNode(
-                new NameVisitor(),
-                ctx.dateFieldName(),
-                isDateFieldNameType,
-                'dateFieldName',
-            );
-        } else if (isCountFunctionType(ctx)) {
-            value = 'COUNT';
-
-            // `COUNT()` は引数なし、`COUNT(field)` は fieldName
-            if (ctx.fieldName()) {
-                param = visitNode(new NameVisitor(), ctx.fieldName(), isFieldNameType, 'fieldName');
-            }
-        } else if (isFormatFunctionType(ctx)) {
-            value = 'FORMAT';
-
-            if (ctx.fieldName()) {
-                param = visitNode(new NameVisitor(), ctx.fieldName(), isFieldNameType, 'fieldName');
-            } else if (ctx.soqlFunction()) {
-                param = visitNode(
-                    new QueryVisitor(),
-                    ctx.soqlFunction(),
-                    isSoqlFunctionType,
-                    'soqlFunction',
-                );
-            }
-        } else if (isFieldsFunctionType(ctx)) {
-            value = 'FIELDS';
-
-            param = visitNode(
-                new ParameterVisitor(),
-                ctx.soqlFieldsParameter(),
-                isSoqlFieldsParameterType,
-                'soqlFieldsParameter',
-            );
-        } else {
-            value = 'DISTANCE';
-
-            const distanceParam: (LocationValueTypeClass | ApexErrorTypeClass | string)[] = [];
-
-            distanceParam.push(
-                ...visitNodeList(
-                    new ValueVisitor(),
-                    ctx.locationValue_list() || [],
-                    isLocationValueType,
-                    'locationValue',
-                ),
-            );
-
-            if (ctx.StringLiteral()) {
-                distanceParam.push(ctx.StringLiteral().getText());
-            } else if (ctx.MultilineStringLiteral()) {
-                distanceParam.push(ctx.MultilineStringLiteral().getText());
-            }
-            param = distanceParam;
-        }
-
-        return new SoqlFunctionTypeClass(value, param);
+        return new SoqlFunctionTypeClass(
+            SoqlFunctionTypeClass.createFields(ctx),
+            getSourceSpan(ctx),
+        );
     }
 
-    getParam(): SoqlParameterType | ApexErrorTypeClass | null {
-        return this.param;
+    private static createFields(ctx: SoqlFunctionContext): FieldsOf<SoqlFunctionType> {
+        const normal = getNormalFunction(ctx);
+        if (normal) {
+            return {
+                kind: normal,
+                param: createNode(
+                    ctx.fieldName(),
+                    (c) => FieldNameTypeClass.create(c),
+                    'fieldName',
+                ),
+            };
+        }
+
+        const date = getDateFunction(ctx);
+        if (date) {
+            return {
+                kind: date,
+                param: createNode(
+                    ctx.dateFieldName(),
+                    (c) => DateFieldNameTypeClass.create(c),
+                    'dateFieldName',
+                ),
+            };
+        }
+
+        if (ctx.COUNT()) {
+            // `COUNT()` は引数なし、`COUNT(field)` は fieldName
+            return {
+                kind: 'COUNT',
+                param: ctx.fieldName()
+                    ? createNode(ctx.fieldName(), (c) => FieldNameTypeClass.create(c), 'fieldName')
+                    : null,
+            };
+        }
+
+        if (ctx.FORMAT()) {
+            return {
+                kind: 'FORMAT',
+                param: ctx.soqlFunction()
+                    ? createNode(
+                          ctx.soqlFunction(),
+                          (c) => SoqlFunctionTypeClass.create(c),
+                          'soqlFunction',
+                      )
+                    : createNode(ctx.fieldName(), (c) => FieldNameTypeClass.create(c), 'fieldName'),
+            };
+        }
+
+        if (ctx.FIELDS()) {
+            return {
+                kind: 'FIELDS',
+                param: createNode(
+                    ctx.soqlFieldsParameter(),
+                    (c) => SoqlFieldsParameterTypeClass.create(c),
+                    'soqlFieldsParameter',
+                ),
+            };
+        }
+
+        if (ctx.DISTANCE()) {
+            const unit = ctx.StringLiteral() ?? ctx.MultilineStringLiteral();
+            if (!unit) {
+                throw new Error('値が異常です。SoqlFunctionContext: ' + ctx.getText());
+            }
+            const locations = ctx.locationValue_list();
+            return {
+                kind: 'DISTANCE',
+                param: {
+                    from: createNode(
+                        locations[0],
+                        (c) => LocationValueTypeClass.create(c),
+                        'locationValue',
+                    ),
+                    to: createNode(
+                        locations[1],
+                        (c) => LocationValueTypeClass.create(c),
+                        'locationValue',
+                    ),
+                    unit: unit.getText(),
+                },
+            };
+        }
+
+        throw new Error('値が異常です。SoqlFunctionContext: ' + ctx.getText());
+    }
+
+    getKind(): SoqlFunctionType['kind'] {
+        return this.getFields().kind;
+    }
+
+    getParam(): SoqlFunctionType['param'] {
+        return this.getFields().param;
     }
 }
 
 export const isSoqlFunctionType = (
-    target: ApexCommonTypeClass<string>,
+    target: ApexCommonTypeClass<string, TypeField<string>>,
 ): target is SoqlFunctionTypeClass => {
-    return target instanceof SoqlFunctionTypeClass;
+    return isSpicifyApexCommonTypeClass('soqlFunction', target);
 };

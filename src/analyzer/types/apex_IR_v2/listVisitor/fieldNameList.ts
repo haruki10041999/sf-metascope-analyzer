@@ -1,28 +1,45 @@
 import { FieldNameListContext } from '@apexdevtools/apex-parser';
 
-import { ListTypeClass } from '.';
+import { FieldNameTypeClass } from '../nameVisitor';
+import {
+    ApexCommonTypeClass,
+    createNodeList,
+    getSourceSpan,
+    isSpicifyApexCommonTypeClass,
+} from '../commonVisitor';
+import { type FieldsOf, TypeField } from '../../commons/ir';
+import { SourceSpan } from '../../commons';
 
-import { FieldNameTypeClass, NameVisitor, isFieldNameType } from '../nameVisitor';
-import { ApexErrorTypeClass, ApexCommonTypeClass, visitNodeList } from '../commonVisitor';
+export type FieldNameListType = TypeField<'fieldNameList'> & {
+    value: FieldNameTypeClass[];
+};
 
-export class FieldNameListTypeClass extends ListTypeClass<'fieldNameList', FieldNameTypeClass> {
-    private constructor(value: (FieldNameTypeClass | ApexErrorTypeClass)[]) {
-        super('fieldNameList', value);
+export class FieldNameListTypeClass extends ApexCommonTypeClass<
+    'fieldNameList',
+    FieldNameListType
+> {
+    private constructor(fields: FieldsOf<FieldNameListType>, sourceSpan: SourceSpan) {
+        super('fieldNameList', fields, sourceSpan);
     }
 
-    static create(ctx: FieldNameListContext) {
-        if (!ctx.fieldName_list() || ctx.fieldName_list().length === 0) {
-            throw new Error('値が異常です。FieldNameListContext: ' + ctx.getText());
-        }
-
+    static create(ctx: FieldNameListContext): FieldNameListTypeClass {
         return new FieldNameListTypeClass(
-            visitNodeList(new NameVisitor(), ctx.fieldName_list(), isFieldNameType, 'fieldName'),
+            {
+                value: createNodeList(
+                    ctx.fieldName_list(),
+                    (c) => FieldNameTypeClass.create(c),
+                    'fieldName',
+                ),
+            },
+            getSourceSpan(ctx),
         );
+    }
+
+    getValue(): FieldNameListType['value'] {
+        return this.getFields().value;
     }
 }
 
 export const isFieldNameListType = (
-    target: ApexCommonTypeClass<string>,
-): target is FieldNameListTypeClass => {
-    return target instanceof FieldNameListTypeClass;
-};
+    target: ApexCommonTypeClass<string, TypeField<string>>,
+): target is FieldNameListTypeClass => isSpicifyApexCommonTypeClass('fieldNameList', target);

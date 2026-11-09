@@ -1,24 +1,28 @@
 // Apex のソース (.cls / .trigger / .apex) 1 つの解析。ファイルシステムには触らない (読み込みは folder.ts)。
-// 流れ: ANTLR (リスナーで構文エラーを集める) → apex_IR → converter (CommonType) → JSON
+// 流れ: ANTLR (リスナーで構文エラーを集める) → apex_IR_v2 (作れなかったところはリスナーの resolvedError へ) → JSON
+// (docs/ir-v2-integration.md)
 import { ApexParserFactory } from '@apexdevtools/apex-parser';
 
 import {
     AnonymousUnitJson,
     CompilationUnitJson,
     ErrorJson,
-    ErrorType,
     SourceJson,
     TriggerUnitJson,
-    UnitVisitor,
-    convertApexUnit,
-    isErrorJson,
     makeAnonymousUnitJson,
     makeCompilationUnitJson,
-    makeConvertType,
+    makeErrorJson,
     makeTriggerUnitJson,
     regenerateSourceObjects,
 } from '../../types';
-import { collectErrorTypeClasses } from '../../types/apex_IR/commonVisitor';
+import { buildApexIr } from '../../types/apex_IR_v2/commonVisitor';
+import {
+    AnonymousUnitTypeClass,
+    CompilationUnitTypeClass,
+    TriggerUnitTypeClass,
+} from '../../types/apex_IR_v2/unitVisitor';
+import { collectSourceObjects } from '../../types/commons/ir';
+import { hash } from '../../types/commons/utils';
 
 import { ApexCommonErrorListener, type ApexResolvedErrorEntry } from './errorListener';
 
@@ -36,7 +40,7 @@ export type ApexSourceJson =
           /** fileType を除いた CompilationUnitJson / TriggerUnitJson / AnonymousUnitJson */
           content: Omit<UnitJson, 'fileType'>;
       }
-    | { fileName: string; fileType: 'error'; content: ErrorType | ErrorJson };
+    | { fileName: string; fileType: 'error'; content: ErrorJson };
 
 /** ソースの構文エラー・IR を作れなかったところ。単位の中で区別できるよう filePath (ファイル名) を持つ */
 export type ApexSourceResolvedError = ApexResolvedErrorEntry & { filePath: string };
@@ -70,46 +74,53 @@ export const parseApexSource = async (
     }
     const errorListener = new ApexCommonErrorListener(source);
     const { parser } = ApexParserFactory.createLexerAndParser(source, errorListener);
-    const unitContext =
-        fileType === 'trigger'
-            ? parser.triggerUnit()
-            : fileType === 'anonymous'
-              ? parser.anonymousUnit()
-              : parser.compilationUnit();
-    const unitTypeClass = new UnitVisitor().visit(unitContext);
 
-    // 構文エラーは解析中に集まる。そのあとで IR を作れなかったもの (analyzer) を渡す
-    // (構文エラーの位置に重なるものはリスナーが除く。LWC の parseLwcModule (parser/Lwc/module.ts) と同じ)
-    collectErrorTypeClasses(unitTypeClass).forEach((error) => errorListener.analyzerError(error));
+    // 構文エラーは解析中に集まる。そのあとで IR を作れなかったところ (IrError) を渡す
+    // (構文エラーがあるファイルでは、リスナーは構文エラーだけを出す。LWC の parseLwcModule と同じ)
+    const built =
+        fileType === 'trigger'
+            ? buildApexIr(
+                  parser.triggerUnit(),
+                  (c) => TriggerUnitTypeClass.create(c),
+                  'triggerUnit',
+              )
+            : fileType === 'anonymous'
+              ? buildApexIr(
+                    parser.anonymousUnit(),
+                    (c) => AnonymousUnitTypeClass.create(c),
+                    'anonymousUnit',
+                )
+              : buildApexIr(
+                    parser.compilationUnit(),
+                    (c) => CompilationUnitTypeClass.create(c),
+                    'compilationUnit',
+                );
+    errorListener.irErrors(built.errors);
     const resolvedError = errorListener
         .getResolvedErrors()
         .map((error) => ({ ...error, filePath: fileName }));
 
-    const unitConvertType = convertApexUnit(unitTypeClass);
-    if (unitConvertType.type === 'error') {
+    // unit を作れなかった (ファイル全体が読めない) ときは、最初のエラーのキーで ErrorJson にする
+    const unitNode = built.result;
+    if (!unitNode) {
+        const keys = resolvedError[0]?.sourceKeys ?? {
+            objectKey: `error_${hash(fileName)}`,
+            sourceKey: `error_${hash(fileName)}`,
+        };
         return {
-            source: { fileName, fileType: 'error', content: unitConvertType },
+            source: { fileName, fileType: 'error', content: makeErrorJson(keys, 'unit') },
             sourceObject: [],
             resolvedError,
         };
     }
 
-    const { result, sourceObjects } = await makeConvertType(unitConvertType);
-    const unit: UnitJson | ErrorJson =
-        result.type === 'compilationUnit'
-            ? makeCompilationUnitJson(result)
-            : result.type === 'anonymousUnit'
-              ? makeAnonymousUnitJson(result)
-              : makeTriggerUnitJson(result);
-    const sourceObject = regenerateSourceObjects(sourceObjects, unit);
-
-    if (isErrorJson(unit)) {
-        return {
-            source: { fileName, fileType: 'error', content: unit },
-            sourceObject,
-            resolvedError,
-        };
-    }
+    const unit: UnitJson =
+        unitNode.kind === 'compilationUnit'
+            ? makeCompilationUnitJson(unitNode)
+            : unitNode.kind === 'anonymousUnit'
+              ? makeAnonymousUnitJson(unitNode)
+              : makeTriggerUnitJson(unitNode);
+    const sourceObject = regenerateSourceObjects(collectSourceObjects(unitNode), unit);
     const { fileType: _fileType, ...content } = unit;
     return { source: { fileName, fileType, content }, sourceObject, resolvedError };
 };

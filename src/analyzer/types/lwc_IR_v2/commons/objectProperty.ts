@@ -1,93 +1,129 @@
+import { type FieldsOf, type TypeField } from '../../commons/ir';
+import { type SourceSpan } from '../../commons/source';
 import { isObjectProperty, type ObjectProperty } from '@babel/types';
 import {
     EvaluatePair,
     LwcCommonTypeClass,
-    LwcErrorTypeClass,
     lazyPairs,
     makeEvaluatePair,
     visitNode,
-    visitNodeList,
+    getSourceSpan,
 } from '../commonVisitor';
 import { expressionVisitorEvaluatePairs, type ExpressionTypeClass } from '../expressionVisitor';
 import { patternLikeVisitorEvaluatePairs, type PatternLikeTypeClass } from '../patternLikeVisitor';
-import { decoratorTypePair, type DecoratorTypeClass } from './decorator';
-import { privateNameTypePair, type PrivateNameTypeClass } from './privateName';
+import { assignmentPatternTypePair, type AssignmentPatternTypeClass } from './assignmentPattern';
+import { identifierTypePair, type IdentifierTypeClass } from './identifier';
+import {
+    createMemberKey,
+    failUnsupported,
+    staticMemberKeyOrPrivateNamePairs,
+    type MemberKey,
+    type StaticMemberKeyTypeClass,
+} from './memberKey';
+import { type PrivateNameTypeClass } from './privateName';
 
-const objectPropertyKeyPairs = lazyPairs(
-    () => [...expressionVisitorEvaluatePairs(), privateNameTypePair] as const,
-);
 const objectPropertyValuePairs = lazyPairs(
     () => [...expressionVisitorEvaluatePairs(), ...patternLikeVisitorEvaluatePairs()] as const,
 );
-const objectPropertyDecoratorsPairs = lazyPairs(() => [decoratorTypePair] as const);
+const objectPropertyShorthandKeyPairs = lazyPairs(() => [identifierTypePair] as const);
+const objectPropertyShorthandValuePairs = lazyPairs(
+    () => [identifierTypePair, assignmentPatternTypePair] as const,
+);
 
-export type ObjectPropertyFields = {
-    computed: ObjectProperty['computed'];
-    key: ExpressionTypeClass | PrivateNameTypeClass | LwcErrorTypeClass;
-    value: ExpressionTypeClass | PatternLikeTypeClass | LwcErrorTypeClass;
-    shorthand: ObjectProperty['shorthand'];
-    decorators: (DecoratorTypeClass | LwcErrorTypeClass)[] | null;
-};
+/**
+ * Babel 8 の ObjectPropertyComputed | ObjectPropertyNonComputed に、shorthand の決まりを足したもの。
+ * - shorthand: false: key は computed で見分ける (computed: false の key に PrivateName も入るのは Babel 8 の型のとおり)
+ * - shorthand: true (`{ a }`・分割代入の `{ a = 1 }`): computed ではなく、key は Identifier、value は同じ名前の
+ *   Identifier か、それを左辺に持つ AssignmentPattern
+ * オブジェクトリテラルでは書けないので decorators は持たない。
+ * ObjectExpression と ObjectPattern で同じ型を使う (どちらの文脈かは親のノードで分かる)
+ */
+export type ObjectPropertyFields = TypeField<'objectProperty'> &
+    (
+        | (MemberKey<StaticMemberKeyTypeClass | PrivateNameTypeClass> & {
+              shorthand: false;
+              value: ExpressionTypeClass | PatternLikeTypeClass;
+          })
+        | {
+              shorthand: true;
+              computed: false;
+              key: IdentifierTypeClass;
+              value: IdentifierTypeClass | AssignmentPatternTypeClass;
+          }
+    );
 
-export class ObjectPropertyTypeClass extends LwcCommonTypeClass<'objectProperty'> {
-    private readonly value: ObjectPropertyFields;
-
-    private constructor(value: ObjectPropertyFields) {
-        super('objectProperty');
-        this.value = value;
+export class ObjectPropertyTypeClass extends LwcCommonTypeClass<
+    'objectProperty',
+    ObjectPropertyFields
+> {
+    private constructor(value: FieldsOf<ObjectPropertyFields>, sourceSpan: SourceSpan) {
+        super('objectProperty', value, sourceSpan);
     }
 
     static create(target: ObjectProperty, originalSource: string): ObjectPropertyTypeClass {
-        return new ObjectPropertyTypeClass({
-            computed: target.computed,
-            key: visitNode(
-                target.key,
-                originalSource,
-                objectPropertyKeyPairs(),
-                'ObjectProperty.key',
-            ),
-            value: visitNode(
-                target.value,
-                originalSource,
-                objectPropertyValuePairs(),
-                'ObjectProperty.value',
-            ),
-            shorthand: target.shorthand,
-            decorators:
-                target.decorators == null
-                    ? null
-                    : visitNodeList(
-                          target.decorators,
-                          originalSource,
-                          objectPropertyDecoratorsPairs(),
-                          'ObjectProperty.decorators',
-                      ),
-        });
-    }
-
-    /** すべてのフィールド (Babel の value フィールドの getter getValue() と区別する。getChildNodes もこれから作る) */
-    override getFields(): ObjectPropertyFields {
-        return this.value;
+        const span = getSourceSpan(target, originalSource);
+        if (target.shorthand) {
+            if (target.computed) {
+                return failUnsupported(
+                    target,
+                    originalSource,
+                    'ObjectProperty: shorthand は computed にできません',
+                );
+            }
+            return new ObjectPropertyTypeClass(
+                {
+                    shorthand: true,
+                    computed: false,
+                    key: visitNode(
+                        target.key,
+                        originalSource,
+                        objectPropertyShorthandKeyPairs(),
+                        'ObjectProperty.key',
+                    ),
+                    value: visitNode(
+                        target.value,
+                        originalSource,
+                        objectPropertyShorthandValuePairs(),
+                        'ObjectProperty.value',
+                    ),
+                },
+                span,
+            );
+        }
+        return new ObjectPropertyTypeClass(
+            {
+                ...createMemberKey(
+                    target,
+                    originalSource,
+                    staticMemberKeyOrPrivateNamePairs(),
+                    'ObjectProperty',
+                ),
+                shorthand: false,
+                value: visitNode(
+                    target.value,
+                    originalSource,
+                    objectPropertyValuePairs(),
+                    'ObjectProperty.value',
+                ),
+            },
+            span,
+        );
     }
 
     getComputed(): ObjectPropertyFields['computed'] {
-        return this.value.computed;
+        return this.getFields().computed;
     }
 
     getKey(): ObjectPropertyFields['key'] {
-        return this.value.key;
+        return this.getFields().key;
     }
 
     getValue(): ObjectPropertyFields['value'] {
-        return this.value.value;
+        return this.getFields().value;
     }
 
     getShorthand(): ObjectPropertyFields['shorthand'] {
-        return this.value.shorthand;
-    }
-
-    getDecorators(): ObjectPropertyFields['decorators'] {
-        return this.value.decorators;
+        return this.getFields().shorthand;
     }
 }
 
@@ -97,5 +133,5 @@ export const objectPropertyTypePair: EvaluatePair<ObjectProperty, ObjectProperty
     );
 
 export const isObjectPropertyType = (
-    target: LwcCommonTypeClass<string>,
+    target: LwcCommonTypeClass<string, TypeField<string>>,
 ): target is ObjectPropertyTypeClass => target instanceof ObjectPropertyTypeClass;

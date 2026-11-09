@@ -1,0 +1,121 @@
+{
+  "source": {
+    "fileName": "Shape.cls",
+    "fileType": "cls",
+    "content": {
+      "kind": "interface",
+      "sourceKeys": {
+        "base": {},
+        "name": {}
+      },
+      "name": "Shape",
+      "block": [
+        {
+          "kind": "interfaceMethod",
+          "sourceKeys": {
+            "base": {},
+            "name": {}
+          },
+          "name": "area",
+          "returnType": {
+            "kind": "type",
+            "sourceKeys": {},
+            "type": "primitive",
+            "primitiveType": "Decimal"
+          },
+          "modifier": {}
+        }
+      ],
+      "modifier": {
+        "access": [
+          {
+            "kind": "modifier",
+            "sourceKeys": {},
+            "name": "PUBLIC"
+          }
+        ]
+      }
+    }
+  },
+  "sourceObject": [
+    {
+      "context": "Decimal area();",
+      "start": {
+        "offset": 29,
+        "line": 2,
+        "column": 4
+      },
+      "end": {
+        "offset": 44,
+        "line": 2,
+        "column": 19
+      }
+    },
+    {
+      "context": "Decimal",
+      "start": {
+        "offset": 29,
+        "line": 2,
+        "column": 4
+      },
+      "end": {
+        "offset": 36,
+        "line": 2,
+        "column": 11
+      }
+    },
+    {
+      "context": "Shape",
+      "start": {
+        "offset": 17,
+        "line": 1,
+        "column": 17
+      },
+      "end": {
+        "offset": 22,
+        "line": 1,
+        "column": 22
+      }
+    },
+    {
+      "context": "area",
+      "start": {
+        "offset": 37,
+        "line": 2,
+        "column": 12
+      },
+      "end": {
+        "offset": 41,
+        "line": 2,
+        "column": 16
+      }
+    },
+    {
+      "context": "interface Shape {\n    Decimal area();\n}",
+      "start": {
+        "offset": 7,
+        "line": 1,
+        "column": 7
+      },
+      "end": {
+        "offset": 46,
+        "line": 3,
+        "column": 1
+      }
+    },
+    {
+      "context": "public",
+      "start": {
+        "offset": 0,
+        "line": 1,
+        "column": 0
+      },
+      "end": {
+        "offset": 6,
+        "line": 1,
+        "column": 6
+      }
+    }
+  ],
+  "resolvedError": []
+}

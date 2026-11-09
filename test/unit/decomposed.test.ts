@@ -152,7 +152,7 @@ describe('decomposed source format (分解された形式)', () => {
             findUnitType('permissionSet')!,
         ]);
         const [permissionSet] = repository.get('permissionSet');
-        const sourceObject = permissionSet!.result.sourceObject as {
+        const sourceObject = permissionSet!.result.sourceObject as unknown as {
             sourceKeys: { sourceKey: string };
             source: { filePath: string; start: { line: number } };
         }[];

@@ -1,90 +1,86 @@
 import { CreatorContext } from '@apexdevtools/apex-parser';
 
+import { NoRestTypeClass } from './noRest';
+import { ClassCreatorRestTypeClass } from './classCreatorRest';
+import { ArrayCreatorRestTypeClass } from './arrayCreatorRest';
+import { MapCreatorRestTypeClass } from './mapCreatorRest';
+import { SetCreatorRestTypeClass } from './setCreatorRest';
+import { CreatedNameTypeClass } from '../nameVisitor';
 import {
-    RestAllTypeClass,
-    RestTypeClass,
-    RestVisitor,
-    isArrayCreatorRestType,
-    isClassCreatorRestType,
-    isMapCreatorRestType,
-    isNoRestType,
-    isSetCreatorRestType,
-} from '.';
+    ApexCommonTypeClass,
+    createNode,
+    getSourceSpan,
+    isSpicifyApexCommonTypeClass,
+} from '../commonVisitor';
+import { type FieldsOf, TypeField } from '../../commons/ir';
+import { SourceSpan } from '../../commons';
 
-import { CreatedNameTypeClass, NameVisitor, isCreatedNameType } from '../nameVisitor';
-import { ApexErrorTypeClass, ApexCommonTypeClass, visitNode } from '../commonVisitor';
+/** creator の後半 (`()`・`[n]`・`{k => v}`・`{a, b}`・`{}`) */
+export type CreatorRestTypeClass =
+    | NoRestTypeClass
+    | ClassCreatorRestTypeClass
+    | ArrayCreatorRestTypeClass
+    | MapCreatorRestTypeClass
+    | SetCreatorRestTypeClass;
 
-export class CreatorTypeClass extends RestTypeClass<'creator', CreatedNameTypeClass> {
-    private content: RestAllTypeClass | ApexErrorTypeClass;
+export type CreatorType = TypeField<'creator'> & {
+    value: CreatedNameTypeClass;
+    content: CreatorRestTypeClass;
+};
 
-    private constructor(
-        value: CreatedNameTypeClass | ApexErrorTypeClass,
-        content: RestAllTypeClass | ApexErrorTypeClass,
-    ) {
-        super('creator', value);
-        this.content = content;
+export class CreatorTypeClass extends ApexCommonTypeClass<'creator', CreatorType> {
+    private constructor(fields: FieldsOf<CreatorType>, sourceSpan: SourceSpan) {
+        super('creator', fields, sourceSpan);
     }
 
     static create(ctx: CreatorContext): CreatorTypeClass {
-        if (
-            !ctx.createdName() ||
-            (!ctx.noRest() &&
-                !ctx.classCreatorRest() &&
-                !ctx.arrayCreatorRest() &&
-                !ctx.mapCreatorRest() &&
-                !ctx.setCreatorRest())
-        ) {
-            throw new Error('値が異常です。CreatorContext: ' + ctx.getText());
-        }
-
-        const value = visitNode(
-            new NameVisitor(),
+        const value = createNode(
             ctx.createdName(),
-            isCreatedNameType,
+            (c) => CreatedNameTypeClass.create(c),
             'createdName',
         );
 
-        let content: RestAllTypeClass | ApexErrorTypeClass;
+        let content: CreatorType['content'];
         if (ctx.noRest()) {
-            content = visitNode(new RestVisitor(), ctx.noRest(), isNoRestType, 'noRest');
+            content = createNode(ctx.noRest(), (c) => NoRestTypeClass.create(c), 'noRest');
         } else if (ctx.classCreatorRest()) {
-            content = visitNode(
-                new RestVisitor(),
+            content = createNode(
                 ctx.classCreatorRest(),
-                isClassCreatorRestType,
+                (c) => ClassCreatorRestTypeClass.create(c),
                 'classCreatorRest',
             );
         } else if (ctx.arrayCreatorRest()) {
-            content = visitNode(
-                new RestVisitor(),
+            content = createNode(
                 ctx.arrayCreatorRest(),
-                isArrayCreatorRestType,
+                (c) => ArrayCreatorRestTypeClass.create(c),
                 'arrayCreatorRest',
             );
         } else if (ctx.mapCreatorRest()) {
-            content = visitNode(
-                new RestVisitor(),
+            content = createNode(
                 ctx.mapCreatorRest(),
-                isMapCreatorRestType,
+                (c) => MapCreatorRestTypeClass.create(c),
                 'mapCreatorRest',
             );
         } else {
-            content = visitNode(
-                new RestVisitor(),
+            content = createNode(
                 ctx.setCreatorRest(),
-                isSetCreatorRestType,
+                (c) => SetCreatorRestTypeClass.create(c),
                 'setCreatorRest',
             );
         }
 
-        return new CreatorTypeClass(value, content);
+        return new CreatorTypeClass({ value, content }, getSourceSpan(ctx));
     }
 
-    getContent(): RestAllTypeClass | ApexErrorTypeClass {
-        return this.content;
+    getValue(): CreatorType['value'] {
+        return this.getFields().value;
+    }
+
+    getContent(): CreatorType['content'] {
+        return this.getFields().content;
     }
 }
 
-export const isCreatorType = (target: ApexCommonTypeClass<string>): target is CreatorTypeClass => {
-    return target instanceof CreatorTypeClass;
-};
+export const isCreatorType = (
+    target: ApexCommonTypeClass<string, TypeField<string>>,
+): target is CreatorTypeClass => isSpicifyApexCommonTypeClass('creator', target);

@@ -1,3 +1,4 @@
+import { type TypeField } from '../../commons/ir';
 import { LwcCommonTypeClass, LwcCommonVisitor, lazyPairs } from '../commonVisitor';
 import { StringLiteralTypeClass, stringLiteralTypePair } from '../commons/stringLiteral';
 import { NumericLiteralTypeClass, numericLiteralTypePair } from '../commons/numericLiteral';
@@ -145,7 +146,7 @@ export type ImmutableTypeClass =
     | JSXClosingFragmentTypeClass;
 
 export const isImmutableType = (
-    target: LwcCommonTypeClass<string>,
+    target: LwcCommonTypeClass<string, TypeField<string>>,
 ): target is ImmutableTypeClass => {
     return (
         target instanceof StringLiteralTypeClass ||

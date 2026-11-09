@@ -1,64 +1,49 @@
-import { ConvertType, ConvertWithError, isErrorNode } from './commons';
-import {
-    ErrorJson,
-    isErrorJson,
-    makeErrorJson,
-    JsonType,
-    makeJsonType,
-    ConvertKeys,
-} from '../commons';
+import { ErrorJson, JsonType, ConvertKeys } from '../commons';
+import type {
+    ArrayExpressionTypeClass,
+    Arth1ExpressionTypeClass,
+    Arth2ExpressionTypeClass,
+    AssignExpressionTypeClass,
+    BasedExpressionTypeClass,
+    BitAndExpressionTypeClass,
+    BitExpressionTypeClass,
+    BitNotExpressionTypeClass,
+    BitOrExpressionTypeClass,
+    CastExpressionTypeClass,
+    CmpExpressionTypeClass,
+    CoalExpressionTypeClass,
+    CondExpressionTypeClass,
+    CreatedNameTypeClass,
+    CreatorRestTypeClass,
+    DotExpressionTypeClass,
+    EqualityExpressionTypeClass,
+    ExpressionListTypeClass,
+    ExpressionTypeClass,
+    InstanceOfExpressionTypeClass,
+    LogAndExpressionTypeClass,
+    LogOrExpressionTypeClass,
+    MethodCallExpressionTypeClass,
+    NegExpressionTypeClass,
+    NewExpressionTypeClass,
+    PostOpExpressionTypeClass,
+    PreOpExpressionTypeClass,
+    SubExpressionTypeClass,
+} from '../apex_IR_v2';
 
-import {
-    ArrayCreatorRestType,
-    ArrayExpressionType,
-    Arth1ExpressionType,
-    Arth2ExpressionType,
-    AssignExpressionType,
-    BaseExpressionType,
-    BitAndExpressionType,
-    BitExpressionType,
-    BitNotExpressionType,
-    BitOrExpressionType,
-    CastExpressionType,
-    ClassCreatorRestType,
-    CmpExpressionType,
-    CoalExpressionType,
-    CreatedNameType,
-    DotExpressionType,
-    EqualityExpressionType,
-    ExpressionListType,
-    ExpressionType,
-    LogAndExpressionType,
-    LogOrExpressionType,
-    MapCreatorRestType,
-    MethodCallExpressionType,
-    NewExpressionType,
-    NegExpressionType,
-    NoRestType,
-    PostOpExpressionType,
-    PreOpExpressionType,
-    SetCreatorRestType,
-    SubExpressionType,
-    InstanceOfExpressionType,
-    CondExpressionType,
-} from './converter';
+import { keysOf, makeNodeJson } from './commons/node';
 import { makeTypeJson, TypeJson } from './type';
 import { PrimaryJson, makePrimaryJson } from './primary';
 
-const ERROR_KIND = 'expression';
-
-const makeExpressionJson = (target: ConvertWithError<ExpressionType>): string => {
-    return target.value;
+/**
+ * ラベルのない式 (ExpressionContext そのもの)。ANTLR の回復でしかできず、ふだんは作られない。
+ * v1 と同じく、テキストをそのまま返す
+ */
+const makeExpressionJson = (target: ExpressionTypeClass): string => {
+    return target.getFields().value;
 };
 
-const makeExpressionListJson = (
-    target: ConvertType<ExpressionListType>,
-): (BaseExpressionJson | ErrorJson)[] | ErrorJson => {
-    if (isErrorNode(target)) {
-        return makeErrorJson(target, ERROR_KIND);
-    }
-
-    return target.value.map((v) => makeExpressionJsonConvert(v));
+const makeExpressionListJson = (target: ExpressionListTypeClass): BaseExpressionJson[] => {
+    return target.getFields().value.map((v) => makeExpressionJsonConvert(v));
 };
 
 export type DotMethodCallJson = JsonType<'memberAccess'> & {
@@ -69,42 +54,30 @@ export type DotMethodCallJson = JsonType<'memberAccess'> & {
     memberArg?: (BaseExpressionJson | ErrorJson)[] | ErrorJson;
 };
 
-const makeDotMethodCallJson = (
-    target: ConvertWithError<DotExpressionType>,
-): DotMethodCallJson | ErrorJson => {
-    const object = makeExpressionJsonConvert(target.left);
-    const operator = target.operator;
-    const right = target.right;
+const makeDotMethodCallJson = (target: DotExpressionTypeClass): DotMethodCallJson => {
+    const { left, operator, right } = target.getFields();
+    const object = makeExpressionJsonConvert(left);
 
-    if (isErrorNode(right)) {
-        return makeErrorJson(right, ERROR_KIND);
+    // right はフィールド名 (anyId) かメソッド呼び出し (dotMethodCall)
+    switch (right.kind) {
+        case 'anyId':
+            return makeNodeJson<DotMethodCallJson>('memberAccess', target, {
+                type: 'object',
+                object: object,
+                operator: operator,
+                member: right.getFields().value,
+            });
+        case 'dotMethodCall': {
+            const { value, param } = right.getFields();
+            return makeNodeJson<DotMethodCallJson>('memberAccess', target, {
+                type: 'method',
+                object: object,
+                operator: operator,
+                member: value.getFields().value,
+                ...(param ? { memberArg: makeExpressionListJson(param) } : {}),
+            });
+        }
     }
-
-    const targetRecords: ConvertKeys = {
-        objectKey: target.objectKey,
-        sourceKey: target.sourceKey,
-    };
-
-    if (right.type === 'anyId') {
-        return makeJsonType('memberAccess', targetRecords, {
-            type: 'object',
-            object: object,
-            operator: operator,
-            member: right.value,
-        });
-    }
-
-    if (isErrorNode(right.value)) {
-        return makeErrorJson(right.value, ERROR_KIND);
-    }
-
-    return makeJsonType('memberAccess', targetRecords, {
-        type: 'method',
-        object: object,
-        operator: operator,
-        member: right.value.value,
-        ...(right.param ? { memberArg: makeExpressionListJson(right.param) } : {}),
-    });
 };
 
 export type MethodCallJson = JsonType<'memberAccess'> & {
@@ -114,38 +87,19 @@ export type MethodCallJson = JsonType<'memberAccess'> & {
     ref?: 'this' | 'super';
 };
 
-const makeMethodCallJson = (
-    target: ConvertWithError<MethodCallExpressionType>,
-): MethodCallJson | ErrorJson => {
-    const methodCall = target.value;
-    if (isErrorNode(methodCall)) {
-        return makeErrorJson(methodCall, ERROR_KIND);
-    }
-
+const makeMethodCallJson = (target: MethodCallExpressionTypeClass): MethodCallJson => {
+    const methodCall = target.getFields().value.getFields();
     const memberArg = methodCall.param ? makeExpressionListJson(methodCall.param) : null;
 
-    const targetRecords: ConvertKeys = {
-        objectKey: target.objectKey,
-        sourceKey: target.sourceKey,
-    };
+    // this(...) / super(...) は member に 'this' / 'super' を入れる (v1 と同じく ref は持たない。
+    // v1 でも、メソッド名がある呼び出しの ref はいつも null だったので出なかった)
+    const member =
+        methodCall.kind === 'method' ? methodCall.value.getFields().value : methodCall.kind;
 
-    if (typeof methodCall.value === 'string') {
-        return makeJsonType('memberAccess', targetRecords, {
-            type: 'method',
-            member: methodCall.value,
-            ...(memberArg ? { memberArg: memberArg } : {}),
-        });
-    }
-
-    if (isErrorNode(methodCall.value)) {
-        return makeErrorJson(methodCall.value, ERROR_KIND);
-    }
-
-    return makeJsonType('memberAccess', targetRecords, {
+    return makeNodeJson<MethodCallJson>('memberAccess', target, {
         type: 'method',
-        member: methodCall.value.value,
+        member: member,
         ...(memberArg ? { memberArg: memberArg } : {}),
-        ...('reference' in methodCall && methodCall.reference ? { ref: methodCall.reference } : {}),
     });
 };
 
@@ -154,35 +108,19 @@ export type InstanceNameJson = {
     generic?: (TypeJson | ErrorJson)[];
 };
 
-export const makeInstanceNameJson = (
-    target: ConvertType<CreatedNameType>,
-): InstanceNameJson | ErrorJson => {
-    if (isErrorNode(target)) {
-        return makeErrorJson(target, ERROR_KIND);
-    }
+export const makeInstanceNameJson = (target: CreatedNameTypeClass): InstanceNameJson => {
+    const pairs = target.getFields().value;
+    const collection = pairs.map((pair) => pair.getFields().left.getFields().value);
 
-    const collection: string[] = [];
-    for (const pair of target.value) {
-        if (isErrorNode(pair)) {
-            return makeErrorJson(pair, ERROR_KIND);
-        }
-        if (isErrorNode(pair.left)) {
-            return makeErrorJson(pair.left, ERROR_KIND);
-        }
-        collection.push(pair.left.value);
-    }
-
-    const lastPair = target.value.at(-1);
-    const generic = lastPair && !isErrorNode(lastPair) ? lastPair.right : null;
-    if (generic && isErrorNode(generic)) {
-        return makeErrorJson(generic, ERROR_KIND);
-    }
+    // 型引数は最後の名前のものだけを見る
+    const generic = pairs.at(-1)?.getFields().right ?? null;
+    const genericTypes = generic ? generic.getFields().value : [];
 
     return {
         collection: collection,
-        ...(generic && generic.value.length > 0
+        ...(genericTypes.length > 0
             ? {
-                  generic: generic.value.map((v) => {
+                  generic: genericTypes.map((v) => {
                       return makeTypeJson(v);
                   }),
               }
@@ -229,72 +167,60 @@ export type InitInstanceJson =
     | NoInitInstanceJson
     | SetInitInstanceJson;
 
-export const makeInitInstanceJson = (
-    target: ConvertType<
-        | ArrayCreatorRestType
-        | ClassCreatorRestType
-        | MapCreatorRestType
-        | NoRestType
-        | SetCreatorRestType
-    >,
-): InitInstanceJson | ErrorJson => {
-    if (isErrorNode(target)) {
-        return makeErrorJson(target, ERROR_KIND);
-    }
-
-    if (target.type === 'arrayCreatorRest') {
-        if (target.value && isErrorNode(target.value)) {
-            return makeErrorJson(target.value, ERROR_KIND);
+export const makeInitInstanceJson = (target: CreatorRestTypeClass): InitInstanceJson => {
+    switch (target.kind) {
+        case 'arrayCreatorRest': {
+            const rest = target.getFields();
+            // `new X[n]` は size、`new X[]{ ... }` は init。`new X[]` (初期化子なし) はどちらも持たない
+            if (rest.kind === 'sized') {
+                return { initType: 'array', size: makeExpressionJsonConvert(rest.size) };
+            }
+            return {
+                initType: 'array',
+                ...(rest.initializer
+                    ? {
+                          init: rest.initializer
+                              .getFields()
+                              .element.map((v) => makeExpressionJsonConvert(v)),
+                      }
+                    : {}),
+            };
         }
-        return {
-            initType: 'array',
-            ...(target.value
-                ? {
-                      init: target.value.value.map((v) => makeExpressionJsonConvert(v)),
-                  }
-                : {}),
-            ...(target.size ? { size: makeExpressionJsonConvert(target.size) } : {}),
-        };
-    } else if (target.type === 'classCreatorRest') {
-        if (isErrorNode(target.value)) {
-            return makeErrorJson(target.value, ERROR_KIND);
+        case 'classCreatorRest': {
+            const elements = target.getFields().value.getFields().elements;
+            if (!elements) {
+                return { initType: 'class' };
+            }
+            return { initType: 'class', arg: makeExpressionListJson(elements) };
         }
-        if (!target.value.value) {
-            return { initType: 'class' };
+        case 'mapCreatorRest': {
+            const pairs = target.getFields().value;
+            return {
+                initType: 'map',
+                ...(pairs.length > 0
+                    ? {
+                          init: pairs.map((v) => {
+                              const { left, right } = v.getFields();
+                              return {
+                                  key: makeExpressionJsonConvert(left),
+                                  value: makeExpressionJsonConvert(right),
+                              };
+                          }),
+                      }
+                    : {}),
+            };
         }
-        const arg = makeExpressionListJson(target.value.value);
-        return Array.isArray(arg) ? { initType: 'class', arg: arg } : arg;
-    } else if (target.type === 'mapCreatorRest') {
-        return {
-            initType: 'map',
-            ...(target.value.length > 0
-                ? {
-                      init: target.value.map((v) => {
-                          if (isErrorNode(v)) {
-                              return makeErrorJson(v, ERROR_KIND);
-                          }
-                          return {
-                              key: makeExpressionJsonConvert(v.left),
-                              value: makeExpressionJsonConvert(v.right),
-                          };
-                      }),
-                  }
-                : {}),
-        };
-    } else if (target.type === 'noRest') {
-        return {
-            initType: 'no',
-            value: target.value,
-        };
-    } else {
-        return {
-            initType: 'list || set',
-            ...(target.value
-                ? {
-                      init: target.value.map((v) => makeExpressionJsonConvert(v)),
-                  }
-                : {}),
-        };
+        case 'noRest':
+            return {
+                initType: 'no',
+                value: target.getFields().value,
+            };
+        case 'setCreatorRest':
+            // v1 と同じく、要素が 0 個でも init (空の配列) を持つ
+            return {
+                initType: 'list || set',
+                init: target.getFields().value.map((v) => makeExpressionJsonConvert(v)),
+            };
     }
 };
 
@@ -304,34 +230,18 @@ export const makeInitInstanceJson = (
  */
 export type ExpressionValueKeys = { sourceKeys: ConvertKeys };
 
-const valueKeysOf = (target: ConvertKeys): ExpressionValueKeys => ({
-    sourceKeys: { objectKey: target.objectKey, sourceKey: target.sourceKey },
+const valueKeysOf = (target: BasedExpressionTypeClass): ExpressionValueKeys => ({
+    sourceKeys: keysOf(target),
 });
 
 export type NewInstanceJson = InstanceNameJson & InitInstanceJson & ExpressionValueKeys;
 
-const makeNewInstanceJson = (
-    target: ConvertWithError<NewExpressionType>,
-): NewInstanceJson | ErrorJson => {
-    const creator = target.value;
-    if (isErrorNode(creator)) {
-        return makeErrorJson(creator, ERROR_KIND);
-    }
-
-    const instanceName = makeInstanceNameJson(creator.value);
-    if (isErrorJson(instanceName)) {
-        return instanceName;
-    }
-
-    const initInstance = makeInitInstanceJson(creator.rest);
-    if (isErrorJson(initInstance)) {
-        return initInstance;
-    }
-
+const makeNewInstanceJson = (target: NewExpressionTypeClass): NewInstanceJson => {
+    const creator = target.getFields().value.getFields();
     return {
         ...valueKeysOf(target),
-        ...instanceName,
-        ...initInstance,
+        ...makeInstanceNameJson(creator.value),
+        ...makeInitInstanceJson(creator.content),
     };
 };
 
@@ -340,11 +250,12 @@ export type CastJson = ExpressionValueKeys & {
     convertType: TypeJson | ErrorJson;
 };
 
-const makeCastJson = (target: ConvertWithError<CastExpressionType>): CastJson => {
-    const typeJson = makeTypeJson(target.valueType);
+const makeCastJson = (target: CastExpressionTypeClass): CastJson => {
+    const { value, valueType } = target.getFields();
+    const typeJson = makeTypeJson(valueType);
     return {
         ...valueKeysOf(target),
-        target: makeExpressionJsonConvert(target.value),
+        target: makeExpressionJsonConvert(value),
         convertType: typeJson,
     };
 };
@@ -354,10 +265,10 @@ export type SubJson = ExpressionValueKeys & {
     parentheses: '()';
 };
 
-const makeSubJson = (target: ConvertWithError<SubExpressionType>): SubJson => {
+const makeSubJson = (target: SubExpressionTypeClass): SubJson => {
     return {
         ...valueKeysOf(target),
-        value: makeExpressionJsonConvert(target.value),
+        value: makeExpressionJsonConvert(target.getFields().value),
         parentheses: '()',
     };
 };
@@ -367,11 +278,12 @@ export type ArrayJson = ExpressionValueKeys & {
     index: BaseExpressionJson | ErrorJson;
 };
 
-const makeArrayJson = (target: ConvertWithError<ArrayExpressionType>): ArrayJson => {
+const makeArrayJson = (target: ArrayExpressionTypeClass): ArrayJson => {
+    const { value, index } = target.getFields();
     return {
         ...valueKeysOf(target),
-        variant: makeExpressionJsonConvert(target.value),
-        index: makeExpressionJsonConvert(target.index),
+        variant: makeExpressionJsonConvert(value),
+        index: makeExpressionJsonConvert(index),
     };
 };
 
@@ -410,26 +322,28 @@ export type FormulaJson = ExpressionValueKeys & {
     right: BaseExpressionJson | ErrorJson;
 };
 
-type FormulaExpressionType =
-    | Arth1ExpressionType
-    | Arth2ExpressionType
-    | AssignExpressionType
-    | BitAndExpressionType
-    | BitExpressionType
-    | BitNotExpressionType
-    | BitOrExpressionType
-    | CmpExpressionType
-    | CoalExpressionType
-    | EqualityExpressionType
-    | LogAndExpressionType
-    | LogOrExpressionType;
+// bitNotExpression は名前と違い XOR (`^`) の二項の式
+type FormulaExpressionTypeClass =
+    | Arth1ExpressionTypeClass
+    | Arth2ExpressionTypeClass
+    | AssignExpressionTypeClass
+    | BitAndExpressionTypeClass
+    | BitExpressionTypeClass
+    | BitNotExpressionTypeClass
+    | BitOrExpressionTypeClass
+    | CmpExpressionTypeClass
+    | CoalExpressionTypeClass
+    | EqualityExpressionTypeClass
+    | LogAndExpressionTypeClass
+    | LogOrExpressionTypeClass;
 
-const makeFormulaJson = (target: ConvertWithError<FormulaExpressionType>): FormulaJson => {
+const makeFormulaJson = (target: FormulaExpressionTypeClass): FormulaJson => {
+    const { left, operator, right } = target.getFields();
     return {
         ...valueKeysOf(target),
-        left: makeExpressionJsonConvert(target.left),
-        operator: target.operator,
-        right: makeExpressionJsonConvert(target.right),
+        left: makeExpressionJsonConvert(left),
+        operator: operator,
+        right: makeExpressionJsonConvert(right),
     };
 };
 
@@ -439,13 +353,14 @@ export type InstanceofJson = ExpressionValueKeys & {
     type: TypeJson | ErrorJson;
 };
 
-const makeInstanceofJson = (target: ConvertWithError<InstanceOfExpressionType>): InstanceofJson => {
-    const typeJson = makeTypeJson(target.right);
+const makeInstanceofJson = (target: InstanceOfExpressionTypeClass): InstanceofJson => {
+    const { left, operator, right } = target.getFields();
+    const typeJson = makeTypeJson(right);
 
     return {
         ...valueKeysOf(target),
-        target: makeExpressionJsonConvert(target.left),
-        operator: target.operator,
+        target: makeExpressionJsonConvert(left),
+        operator: operator,
         type: typeJson,
     };
 };
@@ -457,14 +372,16 @@ export type UnaryJson = ExpressionValueKeys & {
     operatorLocation: 'front' | 'back';
 };
 
-type UnaryExpressionType = PreOpExpressionType | PostOpExpressionType | NegExpressionType;
+type UnaryExpressionTypeClass =
+    PreOpExpressionTypeClass | PostOpExpressionTypeClass | NegExpressionTypeClass;
 
-const makeUnaryJson = (target: ConvertWithError<UnaryExpressionType>): UnaryJson => {
+const makeUnaryJson = (target: UnaryExpressionTypeClass): UnaryJson => {
+    const { value, operator } = target.getFields();
     return {
         ...valueKeysOf(target),
-        variant: makeExpressionJsonConvert(target.value),
-        operator: target.operator,
-        operatorLocation: target.type === 'postOpExpression' ? 'back' : 'front',
+        variant: makeExpressionJsonConvert(value),
+        operator: operator,
+        operatorLocation: target.kind === 'postOpExpression' ? 'back' : 'front',
     };
 };
 
@@ -474,12 +391,13 @@ export type TernaryJson = ExpressionValueKeys & {
     falseValue: BaseExpressionJson | ErrorJson;
 };
 
-const makeTernaryJson = (target: ConvertWithError<CondExpressionType>): TernaryJson => {
+const makeTernaryJson = (target: CondExpressionTypeClass): TernaryJson => {
+    const { condition, trueValue, falseValue } = target.getFields();
     return {
         ...valueKeysOf(target),
-        condition: makeExpressionJsonConvert(target.condition),
-        trueValue: makeExpressionJsonConvert(target.trueValue),
-        falseValue: makeExpressionJsonConvert(target.falseValue),
+        condition: makeExpressionJsonConvert(condition),
+        trueValue: makeExpressionJsonConvert(trueValue),
+        falseValue: makeExpressionJsonConvert(falseValue),
     };
 };
 
@@ -497,40 +415,44 @@ export type BaseExpressionJson =
     | UnaryJson
     | TernaryJson;
 
-export const makeExpressionJsonConvert = (
-    target: ConvertType<BaseExpressionType>,
-): BaseExpressionJson | ErrorJson => {
-    if (isErrorNode(target)) {
-        return makeErrorJson(target, ERROR_KIND);
-    }
-
-    if (target.type === 'expression') {
-        return makeExpressionJson(target);
-    } else if (target.type === 'primaryExpression') {
-        return makePrimaryJson(target.value);
-    } else if (target.type === 'dotExpression') {
-        return makeDotMethodCallJson(target);
-    } else if (target.type === 'methodCallExpression') {
-        return makeMethodCallJson(target);
-    } else if (target.type === 'newExpression') {
-        return makeNewInstanceJson(target);
-    } else if (target.type === 'castExpression') {
-        return makeCastJson(target);
-    } else if (target.type === 'subExpression') {
-        return makeSubJson(target);
-    } else if (target.type === 'arrayExpression') {
-        return makeArrayJson(target);
-    } else if (target.type === 'instanceOfExpression') {
-        return makeInstanceofJson(target);
-    } else if (target.type === 'condExpression') {
-        return makeTernaryJson(target);
-    } else if (
-        target.type === 'preOpExpression' ||
-        target.type === 'postOpExpression' ||
-        target.type === 'negExpression'
-    ) {
-        return makeUnaryJson(target);
-    } else {
-        return makeFormulaJson(target);
+export const makeExpressionJsonConvert = (target: BasedExpressionTypeClass): BaseExpressionJson => {
+    switch (target.kind) {
+        case 'expression':
+            return makeExpressionJson(target);
+        case 'primaryExpression':
+            return makePrimaryJson(target.getFields().value);
+        case 'dotExpression':
+            return makeDotMethodCallJson(target);
+        case 'methodCallExpression':
+            return makeMethodCallJson(target);
+        case 'newExpression':
+            return makeNewInstanceJson(target);
+        case 'castExpression':
+            return makeCastJson(target);
+        case 'subExpression':
+            return makeSubJson(target);
+        case 'arrayExpression':
+            return makeArrayJson(target);
+        case 'instanceOfExpression':
+            return makeInstanceofJson(target);
+        case 'condExpression':
+            return makeTernaryJson(target);
+        case 'preOpExpression':
+        case 'postOpExpression':
+        case 'negExpression':
+            return makeUnaryJson(target);
+        case 'arth1Expression':
+        case 'arth2Expression':
+        case 'assignExpression':
+        case 'bitAndExpression':
+        case 'bitExpression':
+        case 'bitNotExpression':
+        case 'bitOrExpression':
+        case 'cmpExpression':
+        case 'coalExpression':
+        case 'equalityExpression':
+        case 'logAndExpression':
+        case 'logOrExpression':
+            return makeFormulaJson(target);
     }
 };

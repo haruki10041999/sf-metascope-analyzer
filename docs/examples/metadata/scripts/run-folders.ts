@@ -36,11 +36,8 @@ import {
     METADATA_UNIT_DIFFS,
     type MetadataContext,
 } from '../../../../src/analyzer/processor/Metadata';
-import {
-    REPORT_PROVIDERS,
-    analyzeSnapshotReferences,
-    type MetadataSnapshot,
-} from '../../../../src/analyzer/report';
+import { REPORT_PROVIDERS, getReferenceUsages } from '../../../../src/analyzer/report';
+import { Repository, WorkingTree, dependencyGraphOf } from '../../../../src/analyzer/unit';
 import { SIDES, repositoryOf, sourceOf } from '../../paths';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
@@ -323,34 +320,34 @@ const A_TYPES = new Set([
 const othersOf = (parsed: Parsed) =>
     Object.entries(parsed).flatMap(([type, results]) => (A_TYPES.has(type) ? [] : results));
 
-const summarizeReferences = async (side: Side, parsed: Parsed): Promise<string[]> => {
-    const analysis = analyzeSnapshotReferences({
-        permissionSets: parsed.permissionSet as never,
-        mutingPermissionSets: parsed.mutingPermissionSet as never,
-        profiles: parsed.profile as never,
-        permissionSetGroups: parsed.permissionSetGroup as never,
-        customLabels: parsed.customLabels as never,
-        flows: parsed.flow as never,
-        layouts: parsed.layout as never,
-        flexiPages: parsed.flexiPage as never,
-        others: othersOf(parsed),
-        objects: await objectSamples(side),
-        apex: await apexSamples(side),
-        lwc: await lwcSamples(side),
-    });
+/** サンプルのリポジトリ (side ごとに 1 回だけ読む) */
+const repositories = new Map<Side, Promise<Repository>>();
+const repositoryFor = (side: Side) => {
+    if (!repositories.has(side)) {
+        repositories.set(side, Repository.load(new WorkingTree(repositoryOf(side))));
+    }
+    return repositories.get(side)!;
+};
+
+const summarizeReferences = async (side: Side, _parsed: Parsed): Promise<string[]> => {
+    const repository = await repositoryFor(side);
+    const usages = getReferenceUsages({ after: repository });
+    const graph = dependencyGraphOf(repository);
     const lines = [
-        '### 種類をまたぐ参照 (analyzeMetadataReferences)',
+        '### 種類をまたぐ参照 (依存関係のグラフ)',
         '',
-        `参照 ${analysis.references.length} 件。参照先ごとの参照元:`,
+        `参照 ${graph.edges.length} 件。参照先ごとの参照元 (標準のもの・自分の単位の中の参照は除く):`,
         '',
         '| 参照先 | 参照元 |',
         '| --- | --- |',
     ];
-    Object.entries(analysis.usedBy)
-        .sort(([a], [b]) => a.localeCompare(b))
-        .forEach(([target, from]) => lines.push(`| ${target} | ${from.join(', ')} |`));
+    usages.forEach((row) =>
+        lines.push(
+            `| ${row.refType}:${row.target} | ${[...new Set(row.usedBy.map((u) => u.from))].join(', ')} |`,
+        ),
+    );
     lines.push('', '| code | 参照元 | 対象 |', '| --- | --- | --- |');
-    analysis.findings.forEach((f) => lines.push(`| ${f.code} | ${f.from} | ${f.target} |`));
+    graph.findings.forEach((f) => lines.push(`| ${f.code} | ${f.from} | ${f.target} |`));
     lines.push('');
     return lines;
 };
@@ -471,24 +468,7 @@ const main = async () => {
     await writeFile(path.join(diffDirectory, 'folders.md'), `${lines.join('\n')}\n`, 'utf8');
 
     // レポートの data provider (before → after)
-    const snapshot = async (side: Side, parsed: Parsed): Promise<MetadataSnapshot> => ({
-        permissionSets: parsed.permissionSet as never,
-        mutingPermissionSets: parsed.mutingPermissionSet as never,
-        profiles: parsed.profile as never,
-        permissionSetGroups: parsed.permissionSetGroup as never,
-        customLabels: parsed.customLabels as never,
-        flows: parsed.flow as never,
-        layouts: parsed.layout as never,
-        flexiPages: parsed.flexiPage as never,
-        others: othersOf(parsed),
-        objects: await objectSamples(side),
-        apex: await apexSamples(side),
-        lwc: await lwcSamples(side),
-    });
-    const input = {
-        before: await snapshot('before', before),
-        after: await snapshot('after', after),
-    };
+    const input = { before: await repositoryFor('before'), after: await repositoryFor('after') };
     await rm(reportDirectory, { recursive: true, force: true });
     await mkdir(reportDirectory, { recursive: true });
     for (const [name, provider] of Object.entries(REPORT_PROVIDERS)) {

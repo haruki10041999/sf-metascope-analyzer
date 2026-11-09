@@ -1,67 +1,59 @@
+import { type FieldsOf, type TypeField } from '../../commons/ir';
+import { type SourceSpan } from '../../commons/source';
 import { isTSTypeReference, type TSTypeReference } from '@babel/types';
 import {
     EvaluatePair,
     LwcCommonTypeClass,
-    LwcErrorTypeClass,
-    lazyPairs,
     makeEvaluatePair,
     visitNode,
-    visitOptionalNode,
+    getSourceSpan,
 } from '../commonVisitor';
 import {
     tSEntityNameVisitorEvaluatePairs,
     type TSEntityNameTypeClass,
 } from '../tsEntityNameVisitor';
-import {
-    tSTypeParameterInstantiationTypePair,
-    type TSTypeParameterInstantiationTypeClass,
-} from '../typeScriptVisitor/tSTypeParameterInstantiation';
+import { TSTypeParameterInstantiationTypeClass } from '../typeScriptVisitor/tSTypeParameterInstantiation';
 
-const tSTypeReferenceTypeArgumentsPairs = lazyPairs(
-    () => [tSTypeParameterInstantiationTypePair] as const,
-);
-
-export type TSTypeReferenceFields = {
-    typeName: TSEntityNameTypeClass | LwcErrorTypeClass;
-    typeArguments: TSTypeParameterInstantiationTypeClass | LwcErrorTypeClass | null;
+export type TSTypeReferenceFields = TypeField<'tSTypeReference'> & {
+    typeName: TSEntityNameTypeClass;
+    typeArguments: TSTypeParameterInstantiationTypeClass | null;
 };
 
-export class TSTypeReferenceTypeClass extends LwcCommonTypeClass<'tSTypeReference'> {
-    private readonly value: TSTypeReferenceFields;
-
-    private constructor(value: TSTypeReferenceFields) {
-        super('tSTypeReference');
-        this.value = value;
+export class TSTypeReferenceTypeClass extends LwcCommonTypeClass<
+    'tSTypeReference',
+    TSTypeReferenceFields
+> {
+    private constructor(value: FieldsOf<TSTypeReferenceFields>, sourceSpan: SourceSpan) {
+        super('tSTypeReference', value, sourceSpan);
     }
 
     static create(target: TSTypeReference, originalSource: string): TSTypeReferenceTypeClass {
-        return new TSTypeReferenceTypeClass({
-            typeName: visitNode(
-                target.typeName,
-                originalSource,
-                tSEntityNameVisitorEvaluatePairs(),
-                'TSEntityNameVisitor',
-            ),
-            typeArguments: visitOptionalNode(
-                target.typeArguments,
-                originalSource,
-                tSTypeReferenceTypeArgumentsPairs(),
-                'TSTypeReference.typeArguments',
-            ),
-        });
-    }
-
-    /** すべてのフィールド (Babel の value フィールドの getter getValue() と区別する。getChildNodes もこれから作る) */
-    override getFields(): TSTypeReferenceFields {
-        return this.value;
+        return new TSTypeReferenceTypeClass(
+            {
+                typeName: visitNode(
+                    target.typeName,
+                    originalSource,
+                    tSEntityNameVisitorEvaluatePairs(),
+                    'TSEntityNameVisitor',
+                ),
+                typeArguments:
+                    target.typeArguments == null
+                        ? null
+                        : TSTypeParameterInstantiationTypeClass.create(
+                              target.typeArguments,
+                              originalSource,
+                          ),
+            },
+            getSourceSpan(target, originalSource),
+        );
     }
 
     getTypeName(): TSTypeReferenceFields['typeName'] {
-        return this.value.typeName;
+        return this.getFields().typeName;
     }
 
     getTypeArguments(): TSTypeReferenceFields['typeArguments'] {
-        return this.value.typeArguments;
+        return this.getFields().typeArguments;
     }
 }
 
@@ -71,5 +63,5 @@ export const tSTypeReferenceTypePair: EvaluatePair<TSTypeReference, TSTypeRefere
     );
 
 export const isTSTypeReferenceType = (
-    target: LwcCommonTypeClass<string>,
+    target: LwcCommonTypeClass<string, TypeField<string>>,
 ): target is TSTypeReferenceTypeClass => target instanceof TSTypeReferenceTypeClass;

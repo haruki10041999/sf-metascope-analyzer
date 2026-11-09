@@ -1,61 +1,61 @@
+import { type FieldsOf, type TypeField } from '../../commons/ir';
+import { type SourceSpan } from '../../commons/source';
 import { isImportExpression, type ImportExpression } from '@babel/types';
 import {
     EvaluatePair,
     LwcCommonTypeClass,
-    LwcErrorTypeClass,
     makeEvaluatePair,
     visitNode,
     visitOptionalNode,
+    getSourceSpan,
 } from '../commonVisitor';
 import { expressionVisitorEvaluatePairs, type ExpressionTypeClass } from '../expressionVisitor';
 
-export type ImportExpressionFields = {
+export type ImportExpressionFields = TypeField<'importExpression'> & {
     phase: NonNullable<ImportExpression['phase']> | null;
-    source: ExpressionTypeClass | LwcErrorTypeClass;
-    options: ExpressionTypeClass | LwcErrorTypeClass | null;
+    source: ExpressionTypeClass;
+    options: ExpressionTypeClass | null;
 };
 
-export class ImportExpressionTypeClass extends LwcCommonTypeClass<'importExpression'> {
-    private readonly value: ImportExpressionFields;
-
-    private constructor(value: ImportExpressionFields) {
-        super('importExpression');
-        this.value = value;
+export class ImportExpressionTypeClass extends LwcCommonTypeClass<
+    'importExpression',
+    ImportExpressionFields
+> {
+    private constructor(value: FieldsOf<ImportExpressionFields>, sourceSpan: SourceSpan) {
+        super('importExpression', value, sourceSpan);
     }
 
     static create(target: ImportExpression, originalSource: string): ImportExpressionTypeClass {
-        return new ImportExpressionTypeClass({
-            phase: target.phase ?? null,
-            source: visitNode(
-                target.source,
-                originalSource,
-                expressionVisitorEvaluatePairs(),
-                'ExpressionVisitor',
-            ),
-            options: visitOptionalNode(
-                target.options,
-                originalSource,
-                expressionVisitorEvaluatePairs(),
-                'ExpressionVisitor',
-            ),
-        });
-    }
-
-    /** すべてのフィールド (Babel の value フィールドの getter getValue() と区別する。getChildNodes もこれから作る) */
-    override getFields(): ImportExpressionFields {
-        return this.value;
+        return new ImportExpressionTypeClass(
+            {
+                phase: target.phase ?? null,
+                source: visitNode(
+                    target.source,
+                    originalSource,
+                    expressionVisitorEvaluatePairs(),
+                    'ExpressionVisitor',
+                ),
+                options: visitOptionalNode(
+                    target.options,
+                    originalSource,
+                    expressionVisitorEvaluatePairs(),
+                    'ExpressionVisitor',
+                ),
+            },
+            getSourceSpan(target, originalSource),
+        );
     }
 
     getPhase(): ImportExpressionFields['phase'] {
-        return this.value.phase;
+        return this.getFields().phase;
     }
 
     getSource(): ImportExpressionFields['source'] {
-        return this.value.source;
+        return this.getFields().source;
     }
 
     getOptions(): ImportExpressionFields['options'] {
-        return this.value.options;
+        return this.getFields().options;
     }
 }
 
@@ -65,5 +65,5 @@ export const importExpressionTypePair: EvaluatePair<ImportExpression, ImportExpr
     );
 
 export const isImportExpressionType = (
-    target: LwcCommonTypeClass<string>,
+    target: LwcCommonTypeClass<string, TypeField<string>>,
 ): target is ImportExpressionTypeClass => target instanceof ImportExpressionTypeClass;

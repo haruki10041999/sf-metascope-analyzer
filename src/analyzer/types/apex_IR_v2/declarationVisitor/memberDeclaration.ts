@@ -1,27 +1,23 @@
 import { MemberDeclarationContext } from '@apexdevtools/apex-parser';
 
+import { MethodDeclarationTypeClass } from './methodDeclaration';
+import { ConstructorDeclarationTypeClass } from './constructorDeclaration';
+import { InterfaceDeclarationTypeClass } from './interfaceDeclaration';
+import { ClassDeclarationTypeClass } from './classDeclaration';
+import { EnumDeclarationTypeClass } from './enumDeclaration';
+import { PropertyDeclarationTypeClass } from './propertyDeclaration';
+import { FieldDeclarationTypeClass } from './fieldDeclaration';
+
 import {
-    MethodDeclarationTypeClass,
-    ConstructorDeclarationTypeClass,
-    InterfaceDeclarationTypeClass,
-    ClassDeclarationTypeClass,
-    EnumDeclarationTypeClass,
-    PropertyDeclarationTypeClass,
-    FieldDeclarationTypeClass,
-    DeclarationTypeClass,
-    DeclarationVisitor,
-    isMethodDeclarationType,
-    isConstructorDeclarationType,
-    isInterfaceDeclarationType,
-    isClassDeclarationType,
-    isEnumDeclarationType,
-    isPropertyDeclarationType,
-    isFieldDeclarationType,
-} from '.';
+    ApexCommonTypeClass,
+    createNode,
+    getSourceSpan,
+    isSpicifyApexCommonTypeClass,
+} from '../commonVisitor';
+import { type FieldsOf, TypeField } from '../../commons/ir';
+import { SourceSpan } from '../../commons';
 
-import { ApexErrorTypeClass, ApexCommonTypeClass, visitNode } from '../commonVisitor';
-
-type MemberDeclarationTypeClassType =
+export type MemberDeclarationClassType =
     | MethodDeclarationTypeClass
     | ConstructorDeclarationTypeClass
     | InterfaceDeclarationTypeClass
@@ -30,85 +26,74 @@ type MemberDeclarationTypeClassType =
     | PropertyDeclarationTypeClass
     | FieldDeclarationTypeClass;
 
-export class MemberDeclarationTypeClass extends DeclarationTypeClass<
+export type MemberDeclarationType = TypeField<'memberDeclaration'> & {
+    declaration: MemberDeclarationClassType;
+};
+
+export class MemberDeclarationTypeClass extends ApexCommonTypeClass<
     'memberDeclaration',
-    MemberDeclarationTypeClassType
+    MemberDeclarationType
 > {
-    private constructor(value: MemberDeclarationTypeClassType | ApexErrorTypeClass) {
-        super('memberDeclaration', value);
+    private constructor(fields: FieldsOf<MemberDeclarationType>, sourceSpan: SourceSpan) {
+        super('memberDeclaration', fields, sourceSpan);
     }
 
     static create(ctx: MemberDeclarationContext): MemberDeclarationTypeClass {
-        if (
-            !ctx.methodDeclaration() &&
-            !ctx.constructorDeclaration() &&
-            !ctx.interfaceDeclaration() &&
-            !ctx.classDeclaration() &&
-            !ctx.enumDeclaration() &&
-            !ctx.propertyDeclaration() &&
-            !ctx.fieldDeclaration()
-        ) {
-            throw new Error('値が異常です。MemberDeclarationContext: ' + ctx.getText());
-        }
-
-        let value: MemberDeclarationTypeClassType | ApexErrorTypeClass;
+        let declaration: MemberDeclarationType['declaration'];
         if (ctx.methodDeclaration()) {
-            value = visitNode(
-                new DeclarationVisitor(),
+            declaration = createNode(
                 ctx.methodDeclaration(),
-                isMethodDeclarationType,
-                'MethodDeclaration',
+                (c) => MethodDeclarationTypeClass.create(c),
+                'methodDeclaration',
             );
         } else if (ctx.constructorDeclaration()) {
-            value = visitNode(
-                new DeclarationVisitor(),
+            declaration = createNode(
                 ctx.constructorDeclaration(),
-                isConstructorDeclarationType,
-                'ConstructorDeclaration',
+                (c) => ConstructorDeclarationTypeClass.create(c),
+                'constructorDeclaration',
             );
         } else if (ctx.interfaceDeclaration()) {
-            value = visitNode(
-                new DeclarationVisitor(),
+            declaration = createNode(
                 ctx.interfaceDeclaration(),
-                isInterfaceDeclarationType,
-                'InterfaceDeclaration',
+                (c) => InterfaceDeclarationTypeClass.create(c),
+                'interfaceDeclaration',
             );
         } else if (ctx.classDeclaration()) {
-            value = visitNode(
-                new DeclarationVisitor(),
+            declaration = createNode(
                 ctx.classDeclaration(),
-                isClassDeclarationType,
-                'ClassDeclaration',
+                (c) => ClassDeclarationTypeClass.create(c),
+                'classDeclaration',
             );
         } else if (ctx.enumDeclaration()) {
-            value = visitNode(
-                new DeclarationVisitor(),
+            declaration = createNode(
                 ctx.enumDeclaration(),
-                isEnumDeclarationType,
-                'EnumDeclaration',
+                (c) => EnumDeclarationTypeClass.create(c),
+                'enumDeclaration',
             );
         } else if (ctx.propertyDeclaration()) {
-            value = visitNode(
-                new DeclarationVisitor(),
+            declaration = createNode(
                 ctx.propertyDeclaration(),
-                isPropertyDeclarationType,
-                'PropertyDeclaration',
+                (c) => PropertyDeclarationTypeClass.create(c),
+                'propertyDeclaration',
             );
         } else {
-            value = visitNode(
-                new DeclarationVisitor(),
+            declaration = createNode(
                 ctx.fieldDeclaration(),
-                isFieldDeclarationType,
-                'FieldDeclaration',
+                (c) => FieldDeclarationTypeClass.create(c),
+                'fieldDeclaration',
             );
         }
 
-        return new MemberDeclarationTypeClass(value);
+        return new MemberDeclarationTypeClass({ declaration }, getSourceSpan(ctx));
+    }
+
+    getDeclaration(): MemberDeclarationType['declaration'] {
+        return this.getFields().declaration;
     }
 }
 
 export const isMemberDeclarationType = (
-    target: ApexCommonTypeClass<string>,
+    target: ApexCommonTypeClass<string, TypeField<string>>,
 ): target is MemberDeclarationTypeClass => {
-    return target instanceof MemberDeclarationTypeClass;
+    return isSpicifyApexCommonTypeClass('memberDeclaration', target);
 };

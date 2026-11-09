@@ -1,40 +1,52 @@
 import { ThrowStatementContext } from '@apexdevtools/apex-parser';
 
-import { StatementTypeClass } from '.';
-
 import {
     BasedExpressionTypeClass,
     ExpressionVisitor,
     isBasedExpressionType,
 } from '../expressionVisitor';
-import { ApexErrorTypeClass, ApexCommonTypeClass, visitNode } from '../commonVisitor';
+import {
+    ApexCommonTypeClass,
+    getSourceSpan,
+    isSpicifyApexCommonTypeClass,
+    visitNode,
+} from '../commonVisitor';
+import { type FieldsOf, TypeField } from '../../commons/ir';
+import { SourceSpan } from '../../commons';
 
-export class ThrowStatementTypeClass extends StatementTypeClass<
+export type ThrowStatementType = TypeField<'throwStatement'> & {
+    value: BasedExpressionTypeClass;
+};
+
+export class ThrowStatementTypeClass extends ApexCommonTypeClass<
     'throwStatement',
-    BasedExpressionTypeClass
+    ThrowStatementType
 > {
-    private constructor(value: BasedExpressionTypeClass | ApexErrorTypeClass) {
-        super('throwStatement', value);
+    private constructor(fields: FieldsOf<ThrowStatementType>, sourceSpan: SourceSpan) {
+        super('throwStatement', fields, sourceSpan);
     }
 
     static create(ctx: ThrowStatementContext): ThrowStatementTypeClass {
-        if (!ctx.expression()) {
-            throw new Error('値が異常です。ThrowStatementContext: ' + ctx.getText());
-        }
-
         return new ThrowStatementTypeClass(
-            visitNode(
-                new ExpressionVisitor(),
-                ctx.expression(),
-                isBasedExpressionType,
-                'expression',
-            ),
+            {
+                value: visitNode(
+                    new ExpressionVisitor(),
+                    ctx.expression(),
+                    isBasedExpressionType,
+                    'expression',
+                ),
+            },
+            getSourceSpan(ctx),
         );
+    }
+
+    getValue(): ThrowStatementType['value'] {
+        return this.getFields().value;
     }
 }
 
 export const isThrowStatementType = (
-    target: ApexCommonTypeClass<string>,
+    target: ApexCommonTypeClass<string, TypeField<string>>,
 ): target is ThrowStatementTypeClass => {
-    return target instanceof ThrowStatementTypeClass;
+    return isSpicifyApexCommonTypeClass('throwStatement', target);
 };

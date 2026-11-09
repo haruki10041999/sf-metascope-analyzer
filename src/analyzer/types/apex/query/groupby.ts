@@ -1,21 +1,20 @@
 import typia from 'typia';
 
-import { ConvertExcludeError, convertValue, ConvertType } from '../commons';
-import { ErrorJson, JsonType, makeJsonType } from '../../commons';
+import { ErrorJson, JsonType } from '../../commons';
+import type { FieldGroupByTypeClass, GroupByClauseTypeClass } from '../../apex_IR_v2';
 
-import { GroupByClauseType, FieldGroupByType } from '../converter';
-
+import { makeNodeJson } from '../commons/node';
 import { LogicalConditionJson, makeLogicalConditionJson } from './commons';
 import { FieldJson, makeFieldJson } from './select';
 import { SoqlFunctionJson, makeSoqlFunctionJson } from './soqlFunction';
 
-const makeGroupByFieldJson: (
-    target: ConvertExcludeError<FieldGroupByType>,
-) => FieldJson | SoqlFunctionJson = (target) => {
-    if (target.value.type === 'fieldName') {
-        return makeFieldJson(target.value);
-    } else {
-        return makeSoqlFunctionJson(target.value);
+const makeGroupByFieldJson = (target: FieldGroupByTypeClass): FieldJson | SoqlFunctionJson => {
+    const value = target.getFields().value;
+    switch (value.kind) {
+        case 'fieldName':
+            return makeFieldJson(value);
+        case 'soqlFunction':
+            return makeSoqlFunctionJson(value);
     }
 };
 
@@ -27,18 +26,11 @@ export type GroupByJson = JsonType<'groupBy'> & {
 
 export const isGroupByJson = typia.createIs<GroupByJson>();
 
-export const makeGroupByJson = (
-    target: ConvertType<GroupByClauseType>,
-): GroupByJson | ErrorJson => {
-    return convertValue<'groupByClause', GroupByClauseType, GroupByJson>(
-        target,
-        'groupBy',
-        (target, targetRecords) => {
-            return makeJsonType('groupBy', targetRecords.base, {
-                field: target.value.value.map((v) => makeGroupByFieldJson(v)),
-                ...(target.mode ? { mode: target.mode } : {}),
-                ...(target.having ? { having: makeLogicalConditionJson(target.having) } : {}),
-            });
-        },
-    );
+export const makeGroupByJson = (target: GroupByClauseTypeClass): GroupByJson => {
+    const { value, mode, having } = target.getFields();
+    return makeNodeJson<GroupByJson>('groupBy', target, {
+        field: value.getFields().value.map((v) => makeGroupByFieldJson(v)),
+        ...(mode ? { mode: mode } : {}),
+        ...(having ? { having: makeLogicalConditionJson(having) } : {}),
+    });
 };

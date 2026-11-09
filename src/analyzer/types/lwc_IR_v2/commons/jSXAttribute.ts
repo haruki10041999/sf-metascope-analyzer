@@ -1,12 +1,14 @@
+import { type FieldsOf, type TypeField } from '../../commons/ir';
+import { type SourceSpan } from '../../commons/source';
 import { isJSXAttribute, type JSXAttribute } from '@babel/types';
 import {
     EvaluatePair,
     LwcCommonTypeClass,
-    LwcErrorTypeClass,
     lazyPairs,
     makeEvaluatePair,
     visitNode,
     visitOptionalNode,
+    getSourceSpan,
 } from '../commonVisitor';
 import { jSXIdentifierTypePair, type JSXIdentifierTypeClass } from '../jsxVisitor/jSXIdentifier';
 import {
@@ -34,53 +36,47 @@ const jSXAttributeValuePairs = lazyPairs(
         ] as const,
 );
 
-export type JSXAttributeFields = {
-    name: JSXIdentifierTypeClass | JSXNamespacedNameTypeClass | LwcErrorTypeClass;
+export type JSXAttributeFields = TypeField<'jSXAttribute'> & {
+    name: JSXIdentifierTypeClass | JSXNamespacedNameTypeClass;
     value:
         | JSXElementTypeClass
         | JSXFragmentTypeClass
         | StringLiteralTypeClass
         | JSXExpressionContainerTypeClass
-        | LwcErrorTypeClass
         | null;
 };
 
-export class JSXAttributeTypeClass extends LwcCommonTypeClass<'jSXAttribute'> {
-    private readonly value: JSXAttributeFields;
-
-    private constructor(value: JSXAttributeFields) {
-        super('jSXAttribute');
-        this.value = value;
+export class JSXAttributeTypeClass extends LwcCommonTypeClass<'jSXAttribute', JSXAttributeFields> {
+    private constructor(value: FieldsOf<JSXAttributeFields>, sourceSpan: SourceSpan) {
+        super('jSXAttribute', value, sourceSpan);
     }
 
     static create(target: JSXAttribute, originalSource: string): JSXAttributeTypeClass {
-        return new JSXAttributeTypeClass({
-            name: visitNode(
-                target.name,
-                originalSource,
-                jSXAttributeNamePairs(),
-                'JSXAttribute.name',
-            ),
-            value: visitOptionalNode(
-                target.value,
-                originalSource,
-                jSXAttributeValuePairs(),
-                'JSXAttribute.value',
-            ),
-        });
-    }
-
-    /** すべてのフィールド (Babel の value フィールドの getter getValue() と区別する。getChildNodes もこれから作る) */
-    override getFields(): JSXAttributeFields {
-        return this.value;
+        return new JSXAttributeTypeClass(
+            {
+                name: visitNode(
+                    target.name,
+                    originalSource,
+                    jSXAttributeNamePairs(),
+                    'JSXAttribute.name',
+                ),
+                value: visitOptionalNode(
+                    target.value,
+                    originalSource,
+                    jSXAttributeValuePairs(),
+                    'JSXAttribute.value',
+                ),
+            },
+            getSourceSpan(target, originalSource),
+        );
     }
 
     getName(): JSXAttributeFields['name'] {
-        return this.value.name;
+        return this.getFields().name;
     }
 
     getValue(): JSXAttributeFields['value'] {
-        return this.value.value;
+        return this.getFields().value;
     }
 }
 
@@ -90,5 +86,5 @@ export const jSXAttributeTypePair: EvaluatePair<JSXAttribute, JSXAttributeTypeCl
     );
 
 export const isJSXAttributeType = (
-    target: LwcCommonTypeClass<string>,
+    target: LwcCommonTypeClass<string, TypeField<string>>,
 ): target is JSXAttributeTypeClass => target instanceof JSXAttributeTypeClass;

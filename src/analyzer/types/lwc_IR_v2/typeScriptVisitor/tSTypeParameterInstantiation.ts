@@ -1,46 +1,49 @@
+import { type FieldsOf, type TypeField } from '../../commons/ir';
+import { type SourceSpan } from '../../commons/source';
 import { isTSTypeParameterInstantiation, type TSTypeParameterInstantiation } from '@babel/types';
 import {
     EvaluatePair,
     LwcCommonTypeClass,
-    LwcErrorTypeClass,
     makeEvaluatePair,
     visitNodeList,
+    getSourceSpan,
 } from '../commonVisitor';
 import { tSTypeVisitorEvaluatePairs, type TSTypeTypeClass } from '../tsTypeVisitor';
 
-export type TSTypeParameterInstantiationFields = {
-    params: (TSTypeTypeClass | LwcErrorTypeClass)[];
+export type TSTypeParameterInstantiationFields = TypeField<'tSTypeParameterInstantiation'> & {
+    params: TSTypeTypeClass[];
 };
 
-export class TSTypeParameterInstantiationTypeClass extends LwcCommonTypeClass<'tSTypeParameterInstantiation'> {
-    private readonly value: TSTypeParameterInstantiationFields;
-
-    private constructor(value: TSTypeParameterInstantiationFields) {
-        super('tSTypeParameterInstantiation');
-        this.value = value;
+export class TSTypeParameterInstantiationTypeClass extends LwcCommonTypeClass<
+    'tSTypeParameterInstantiation',
+    TSTypeParameterInstantiationFields
+> {
+    private constructor(
+        value: FieldsOf<TSTypeParameterInstantiationFields>,
+        sourceSpan: SourceSpan,
+    ) {
+        super('tSTypeParameterInstantiation', value, sourceSpan);
     }
 
     static create(
         target: TSTypeParameterInstantiation,
         originalSource: string,
     ): TSTypeParameterInstantiationTypeClass {
-        return new TSTypeParameterInstantiationTypeClass({
-            params: visitNodeList(
-                target.params,
-                originalSource,
-                tSTypeVisitorEvaluatePairs(),
-                'TSTypeVisitor',
-            ),
-        });
-    }
-
-    /** すべてのフィールド (Babel の value フィールドの getter getValue() と区別する。getChildNodes もこれから作る) */
-    override getFields(): TSTypeParameterInstantiationFields {
-        return this.value;
+        return new TSTypeParameterInstantiationTypeClass(
+            {
+                params: visitNodeList(
+                    target.params,
+                    originalSource,
+                    tSTypeVisitorEvaluatePairs(),
+                    'TSTypeVisitor',
+                ),
+            },
+            getSourceSpan(target, originalSource),
+        );
     }
 
     getParams(): TSTypeParameterInstantiationFields['params'] {
-        return this.value.params;
+        return this.getFields().params;
     }
 }
 
@@ -52,6 +55,6 @@ export const tSTypeParameterInstantiationTypePair: EvaluatePair<
 );
 
 export const isTSTypeParameterInstantiationType = (
-    target: LwcCommonTypeClass<string>,
+    target: LwcCommonTypeClass<string, TypeField<string>>,
 ): target is TSTypeParameterInstantiationTypeClass =>
     target instanceof TSTypeParameterInstantiationTypeClass;

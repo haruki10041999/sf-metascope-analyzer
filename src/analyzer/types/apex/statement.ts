@@ -1,63 +1,53 @@
 import typia from 'typia';
 
-import {
-    ConvertExcludeError,
-    ConvertType,
-    ConvertWithError,
-    convertValue,
-    isErrorNode,
-} from './commons';
-import {
-    ErrorJson,
-    JsonType,
-    makeJsonType,
-    StructureJsonType,
-    makeStructureJson,
-    makeErrorJson,
-    ConvertKeys,
-    isJsonType,
-    isStructureJsonType,
-} from '../commons';
+import { ErrorJson, JsonType, StructureJsonType, makeStructureJson, ConvertKeys } from '../commons';
+import type {
+    AccessLevelTypeClass,
+    BasedExpressionTypeClass,
+    BlockTypeClass,
+    BreakStatementTypeClass,
+    CatchClauseTypeClass,
+    ContinueStatementTypeClass,
+    DeleteStatementTypeClass,
+    DoWhileStatementTypeClass,
+    ExpressionListTypeClass,
+    ExpressionStatementTypeClass,
+    ForControlTypeClass,
+    ForStatementTypeClass,
+    IfStatementTypeClass,
+    InsertStatementTypeClass,
+    LocalVariableDeclarationStatementTypeClass,
+    MergeStatementTypeClass,
+    ParExpressionTypeClass,
+    ReturnStatementTypeClass,
+    RunAsStatementTypeClass,
+    StatementTypeClass,
+    SwitchStatementTypeClass,
+    ThrowStatementTypeClass,
+    TryStatementTypeClass,
+    UndeleteStatementTypeClass,
+    UpdateStatementTypeClass,
+    UpsertStatementTypeClass,
+    WhenLiteralTypeClass,
+    WhenValueTypeClass,
+    WhileStatementTypeClass,
+} from '../apex_IR_v2';
 
-import {
-    AccessLevelType,
-    BlockType,
-    BreakStatementType,
-    ContinueStatementType,
-    DeleteStatementType,
-    DoWhileStatementType,
-    ParExpressionType,
-    ExpressionStatementType,
-    ForControlType,
-    ForStatementType,
-    IfStatementType,
-    InsertStatementType,
-    LocalVariableDeclarationStatementType,
-    MergeStatementType,
-    ReturnStatementType,
-    ExpressionListType,
-    RunAsStatementType,
-    StatementType,
-    BaseExpressionType,
-    WhenValueType,
-    SwitchStatementType,
-    ThrowStatementType,
-    CatchClauseType,
-    TryStatementType,
-    UndeleteStatementType,
-    UpdateStatementType,
-    UpsertStatementType,
-    WhileStatementType,
-} from './converter';
+import { keysOf, makeNodeJson, structureKeysOf } from './commons/node';
 import { BaseExpressionJson, makeExpressionJsonConvert } from './expression';
 import { TypeJson, makeTypeJson } from './type';
 import { LocalVariableDeclarationJson, makeLocalVariableDeclarationJson } from './declaration';
 import { makeModifierJson, ModifierJson, AnnotationJson } from './modifier';
 
-const ERROR_KIND = 'statement';
+const makeAccessLevelJson = (target: AccessLevelTypeClass): 'SYSTEM' | 'USER' => {
+    return target.getFields().level;
+};
 
-const makeAccessLevelJson = (target: ConvertExcludeError<AccessLevelType>): 'SYSTEM' | 'USER' => {
-    return target.value;
+// accessLevel はあるときだけ持つ
+const accessLevelOf = (
+    accessLevel: AccessLevelTypeClass | null,
+): { accessLevel?: 'SYSTEM' | 'USER' } => {
+    return accessLevel ? { accessLevel: makeAccessLevelJson(accessLevel) } : {};
 };
 
 export type BreakStatementJson = JsonType<'break'> & {
@@ -65,18 +55,10 @@ export type BreakStatementJson = JsonType<'break'> & {
 };
 export const isBreakStatementJson = typia.createIs<BreakStatementJson>();
 
-export const makeBreakStatementJson = (
-    target: ConvertType<BreakStatementType>,
-): BreakStatementJson | ErrorJson => {
-    return convertValue<'breakStatement', BreakStatementType, BreakStatementJson>(
-        target,
-        'break',
-        (target, targetRecords) => {
-            return makeJsonType('break', targetRecords.base, {
-                value: target.value,
-            });
-        },
-    );
+export const makeBreakStatementJson = (target: BreakStatementTypeClass): BreakStatementJson => {
+    return makeNodeJson<BreakStatementJson>('break', target, {
+        value: target.getFields().value,
+    });
 };
 
 export type ContinueStatementJson = JsonType<'continue'> & {
@@ -85,17 +67,11 @@ export type ContinueStatementJson = JsonType<'continue'> & {
 export const isContinueStatementJson = typia.createIs<ContinueStatementJson>();
 
 export const makeContinueStatementJson = (
-    target: ConvertType<ContinueStatementType>,
-): ContinueStatementJson | ErrorJson => {
-    return convertValue<'continueStatement', ContinueStatementType, ContinueStatementJson>(
-        target,
-        'continue',
-        (target, targetRecords) => {
-            return makeJsonType('continue', targetRecords.base, {
-                value: target.value,
-            });
-        },
-    );
+    target: ContinueStatementTypeClass,
+): ContinueStatementJson => {
+    return makeNodeJson<ContinueStatementJson>('continue', target, {
+        value: target.getFields().value,
+    });
 };
 
 export type DeleteStatementJson = JsonType<'delete'> & {
@@ -104,21 +80,12 @@ export type DeleteStatementJson = JsonType<'delete'> & {
 };
 export const isDeleteStatementJson = typia.createIs<DeleteStatementJson>();
 
-export const makeDeleteStatementJson = (
-    target: ConvertType<DeleteStatementType>,
-): DeleteStatementJson | ErrorJson => {
-    return convertValue<'deleteStatement', DeleteStatementType, DeleteStatementJson>(
-        target,
-        'delete',
-        (target, targetRecords) => {
-            return makeJsonType('delete', targetRecords.base, {
-                field: makeExpressionJsonConvert(target.value),
-                ...(target.accessLevel
-                    ? { accessLevel: makeAccessLevelJson(target.accessLevel) }
-                    : {}),
-            });
-        },
-    );
+export const makeDeleteStatementJson = (target: DeleteStatementTypeClass): DeleteStatementJson => {
+    const { value, accessLevel } = target.getFields();
+    return makeNodeJson<DeleteStatementJson>('delete', target, {
+        field: makeExpressionJsonConvert(value),
+        ...accessLevelOf(accessLevel),
+    });
 };
 
 export type DoWhileConditionJson = JsonType<'doWhileCondition'> & {
@@ -126,41 +93,25 @@ export type DoWhileConditionJson = JsonType<'doWhileCondition'> & {
 };
 export const isDoWhileConditionJson = typia.createIs<DoWhileConditionJson>();
 
-const makeDoWhileConditionJson = (
-    target: ConvertType<ParExpressionType>,
-): DoWhileConditionJson | ErrorJson => {
-    return convertValue<'parExpression', ParExpressionType, DoWhileConditionJson>(
-        target,
-        'doWhileCondition',
-        (target, targetRecords) => {
-            return makeJsonType('doWhileCondition', targetRecords.base, {
-                condition: makeExpressionJsonConvert(target.value),
-            });
-        },
-    );
+const makeDoWhileConditionJson = (target: ParExpressionTypeClass): DoWhileConditionJson => {
+    return makeNodeJson<DoWhileConditionJson>('doWhileCondition', target, {
+        condition: makeExpressionJsonConvert(target.getFields().value),
+    });
 };
 
-// 複合文は文全体の位置を持つ境界ノード。条件・本体は子の変換関数がエラーを処理するため、検査はノード自身だけ
+// 複合文は文全体の位置を持つ境界ノード
 export type DoWhileStatementJson = JsonType<'doWhile'> & {
     condition: DoWhileConditionJson | ErrorJson;
     body: (StatementJson | ErrorJson)[];
 };
 export const isDoWhileStatementJson = typia.createIs<DoWhileStatementJson>();
 
-const makeDoWhileStatementJson = (
-    target: ConvertType<DoWhileStatementType>,
-): DoWhileStatementJson | ErrorJson => {
-    return convertValue<'doWhileStatement', DoWhileStatementType, DoWhileStatementJson>(
-        target,
-        'doWhile',
-        (statement: ConvertWithError<DoWhileStatementType>, targetRecords) => {
-            return makeJsonType('doWhile', targetRecords.base, {
-                condition: makeDoWhileConditionJson(statement.value),
-                body: makeBlockJson(statement.block),
-            });
-        },
-        { exclude: 'children' },
-    );
+const makeDoWhileStatementJson = (target: DoWhileStatementTypeClass): DoWhileStatementJson => {
+    const { value, block } = target.getFields();
+    return makeNodeJson<DoWhileStatementJson>('doWhile', target, {
+        condition: makeDoWhileConditionJson(value),
+        body: makeBlockJson(block),
+    });
 };
 
 export type ExpressionStatementJson = JsonType<'expression'> & {
@@ -170,17 +121,11 @@ export type ExpressionStatementJson = JsonType<'expression'> & {
 export const isExpressionStatementJson = typia.createIs<ExpressionStatementJson>();
 
 const makeExpressionStatementJson = (
-    target: ConvertType<ExpressionStatementType>,
-): ExpressionStatementJson | ErrorJson => {
-    return convertValue<'expressionStatement', ExpressionStatementType, ExpressionStatementJson>(
-        target,
-        'expression',
-        (target, targetRecords) => {
-            return makeJsonType('expression', targetRecords.base, {
-                value: makeExpressionJsonConvert(target.value),
-            });
-        },
-    );
+    target: ExpressionStatementTypeClass,
+): ExpressionStatementJson => {
+    return makeNodeJson<ExpressionStatementJson>('expression', target, {
+        value: makeExpressionJsonConvert(target.getFields().value),
+    });
 };
 
 export type ForConditionJson = JsonType<'forCondition'> &
@@ -199,39 +144,38 @@ export type ForConditionJson = JsonType<'forCondition'> &
 
 export const isForConditionJson = typia.createIs<ForConditionJson>();
 
-const makeForConditionJson = (
-    target: ConvertType<ForControlType>,
-): ForConditionJson | ErrorJson => {
-    return convertValue<'forControl', ForControlType, ForConditionJson>(
-        target,
-        'forCondition',
-        (target, targetRecords) => {
-            const condition = target.value;
-            if (condition && condition.type === 'enhancedForControl') {
-                return makeJsonType('forCondition', targetRecords.base, {
-                    initializer: condition.value.value,
-                    initializeType: makeTypeJson(condition.valueType),
-                    baseObject: makeExpressionJsonConvert(condition.fromVariant),
-                });
-            }
+const makeForConditionJson = (target: ForControlTypeClass): ForConditionJson => {
+    const control = target.getFields();
+    if (control.kind === 'enhanced') {
+        const { value, valueType, fromVariant } = control.control.getFields();
+        return makeNodeJson<ForConditionJson>('forCondition', target, {
+            initializer: value.getFields().value,
+            initializeType: makeTypeJson(valueType),
+            baseObject: makeExpressionJsonConvert(fromVariant),
+        });
+    }
 
-            // for (;;) の init / 条件 / update はそれぞれ省略されうる
-            const init = target.init;
-            const initializer = init
-                ? init.value.type === 'localVariableDeclaration'
-                    ? makeLocalVariableDeclarationJson(init.value)
-                    : init.value.value.map((v) => makeExpressionJsonConvert(v))
-                : null;
+    // for (;;) の init / 条件 / update はそれぞれ省略されうる
+    const { init, condition, update } = control;
+    const initValue = init?.getFields().value;
+    const initializer = initValue
+        ? initValue.kind === 'localVariableDeclaration'
+            ? makeLocalVariableDeclarationJson(initValue)
+            : initValue.getFields().value.map((v) => makeExpressionJsonConvert(v))
+        : null;
 
-            return makeJsonType('forCondition', targetRecords.base, {
-                ...(initializer ? { initializer: initializer } : {}),
-                ...(condition ? { condition: makeExpressionJsonConvert(condition) } : {}),
-                ...(target.update
-                    ? { update: target.update.value.value.map(makeExpressionJsonConvert) }
-                    : {}),
-            });
-        },
-    );
+    return makeNodeJson<ForConditionJson>('forCondition', target, {
+        ...(initializer ? { initializer: initializer } : {}),
+        ...(condition ? { condition: makeExpressionJsonConvert(condition) } : {}),
+        ...(update
+            ? {
+                  update: update
+                      .getFields()
+                      .value.getFields()
+                      .value.map((v) => makeExpressionJsonConvert(v)),
+              }
+            : {}),
+    });
 };
 
 export type ForStatementJson = JsonType<'for'> & {
@@ -241,20 +185,12 @@ export type ForStatementJson = JsonType<'for'> & {
 
 export const isForStatementJson = typia.createIs<ForStatementJson>();
 
-const makeForStatementJson = (
-    target: ConvertType<ForStatementType>,
-): ForStatementJson | ErrorJson => {
-    return convertValue<'forStatement', ForStatementType, ForStatementJson>(
-        target,
-        'for',
-        (statement: ConvertWithError<ForStatementType>, targetRecords) => {
-            return makeJsonType('for', targetRecords.base, {
-                condition: makeForConditionJson(statement.value),
-                block: makeStatementJson(statement.block),
-            });
-        },
-        { exclude: 'children' },
-    );
+const makeForStatementJson = (target: ForStatementTypeClass): ForStatementJson => {
+    const { value, block } = target.getFields();
+    return makeNodeJson<ForStatementJson>('for', target, {
+        condition: makeForConditionJson(value),
+        block: makeStatementJson(block),
+    });
 };
 
 export type IfConditionJson = JsonType<'ifCondition'> & {
@@ -262,18 +198,10 @@ export type IfConditionJson = JsonType<'ifCondition'> & {
 };
 export const isIfConditionJson = typia.createIs<IfConditionJson>();
 
-const makeIfConditionJson = (
-    target: ConvertType<ParExpressionType>,
-): IfConditionJson | ErrorJson => {
-    return convertValue<'parExpression', ParExpressionType, IfConditionJson>(
-        target,
-        'ifCondition',
-        (target, targetRecords) => {
-            return makeJsonType('ifCondition', targetRecords.base, {
-                condition: makeExpressionJsonConvert(target.value),
-            });
-        },
-    );
+const makeIfConditionJson = (target: ParExpressionTypeClass): IfConditionJson => {
+    return makeNodeJson<IfConditionJson>('ifCondition', target, {
+        condition: makeExpressionJsonConvert(target.getFields().value),
+    });
 };
 
 export type IfStatementJson = JsonType<'if'> & {
@@ -287,26 +215,20 @@ export type IfStatementJson = JsonType<'if'> & {
 
 export const isIfStatementJson = typia.createIs<IfStatementJson>();
 
-const makeIfStatementJson = (target: ConvertType<IfStatementType>): IfStatementJson | ErrorJson => {
-    return convertValue<'ifStatement', IfStatementType, IfStatementJson>(
-        target,
-        'if',
-        (statement: ConvertWithError<IfStatementType>, targetRecords) => {
-            const blocks = statement.value;
-            return makeJsonType('if', targetRecords.base, {
-                conditionBlock: !Array.isArray(blocks)
-                    ? makeErrorJson(blocks, ERROR_KIND)
-                    : blocks.map((block) => ({
-                          condition:
-                              typeof block.condition === 'string'
-                                  ? block.condition
-                                  : makeIfConditionJson(block.condition),
-                          block: makeStatementJson(block.block),
-                      })),
-            });
-        },
-        { exclude: 'children' },
-    );
+const makeIfStatementJson = (target: IfStatementTypeClass): IfStatementJson => {
+    const { branches, elseBlock } = target.getFields();
+    // if・else if の分岐のあとに、else があれば condition: 'else' として最後に置く
+    const conditionBlock: {
+        condition: 'else' | IfConditionJson;
+        block: StatementJson;
+    }[] = branches.map((branch) => ({
+        condition: makeIfConditionJson(branch.condition),
+        block: makeStatementJson(branch.block),
+    }));
+    if (elseBlock) {
+        conditionBlock.push({ condition: 'else', block: makeStatementJson(elseBlock) });
+    }
+    return makeNodeJson<IfStatementJson>('if', target, { conditionBlock });
 };
 
 export type InsertStatementJson = JsonType<'insert'> & {
@@ -315,21 +237,12 @@ export type InsertStatementJson = JsonType<'insert'> & {
 };
 export const isInsertStatementJson = typia.createIs<InsertStatementJson>();
 
-export const makeInsertStatementJson = (
-    target: ConvertType<InsertStatementType>,
-): InsertStatementJson | ErrorJson => {
-    return convertValue<'insertStatement', InsertStatementType, InsertStatementJson>(
-        target,
-        'insert',
-        (target, targetRecords) => {
-            return makeJsonType('insert', targetRecords.base, {
-                field: makeExpressionJsonConvert(target.value),
-                ...(target.accessLevel
-                    ? { accessLevel: makeAccessLevelJson(target.accessLevel) }
-                    : {}),
-            });
-        },
-    );
+export const makeInsertStatementJson = (target: InsertStatementTypeClass): InsertStatementJson => {
+    const { value, accessLevel } = target.getFields();
+    return makeNodeJson<InsertStatementJson>('insert', target, {
+        field: makeExpressionJsonConvert(value),
+        ...accessLevelOf(accessLevel),
+    });
 };
 
 export type LocalVariableStatementJson = JsonType<'localVariable'> & {
@@ -338,16 +251,10 @@ export type LocalVariableStatementJson = JsonType<'localVariable'> & {
 export const isLocalVariableStatementJson = typia.createIs<LocalVariableStatementJson>();
 
 export const makeLocalVariableStatementJson = (
-    target: ConvertType<LocalVariableDeclarationStatementType>,
-): LocalVariableStatementJson | ErrorJson => {
-    return convertValue<
-        'localVariableDeclarationStatement',
-        LocalVariableDeclarationStatementType,
-        LocalVariableStatementJson
-    >(target, 'localVariable', (target, targetRecords) => {
-        return makeJsonType('localVariable', targetRecords.base, {
-            variable: makeLocalVariableDeclarationJson(target.value),
-        });
+    target: LocalVariableDeclarationStatementTypeClass,
+): LocalVariableStatementJson => {
+    return makeNodeJson<LocalVariableStatementJson>('localVariable', target, {
+        variable: makeLocalVariableDeclarationJson(target.getFields().value),
     });
 };
 
@@ -357,21 +264,13 @@ export type MergeStatementJson = JsonType<'merge'> & {
 };
 export const isMergeStatementJson = typia.createIs<MergeStatementJson>();
 
-export const makeMergeStatementJson = (
-    target: ConvertType<MergeStatementType>,
-): MergeStatementJson | ErrorJson => {
-    return convertValue<'mergeStatement', MergeStatementType, MergeStatementJson>(
-        target,
-        'merge',
-        (target, targetRecords) => {
-            return makeJsonType('merge', targetRecords.base, {
-                field: target.value.map((v) => makeExpressionJsonConvert(v)),
-                ...(target.accessLevel
-                    ? { accessLevel: makeAccessLevelJson(target.accessLevel) }
-                    : {}),
-            });
-        },
-    );
+export const makeMergeStatementJson = (target: MergeStatementTypeClass): MergeStatementJson => {
+    const { master, merged, accessLevel } = target.getFields();
+    // field は [統合先, 統合元] の順
+    return makeNodeJson<MergeStatementJson>('merge', target, {
+        field: [makeExpressionJsonConvert(master), makeExpressionJsonConvert(merged)],
+        ...accessLevelOf(accessLevel),
+    });
 };
 
 export type ReturnStatementJson = JsonType<'return'> & {
@@ -379,18 +278,11 @@ export type ReturnStatementJson = JsonType<'return'> & {
 };
 export const isReturnStatementJson = typia.createIs<ReturnStatementJson>();
 
-export const makeReturnStatementJson = (
-    target: ConvertType<ReturnStatementType>,
-): ReturnStatementJson | ErrorJson => {
-    return convertValue<'returnStatement', ReturnStatementType, ReturnStatementJson>(
-        target,
-        'return',
-        (target, targetRecords) => {
-            return makeJsonType('return', targetRecords.base, {
-                ...(target.value ? { field: makeExpressionJsonConvert(target.value) } : {}),
-            });
-        },
-    );
+export const makeReturnStatementJson = (target: ReturnStatementTypeClass): ReturnStatementJson => {
+    const { value } = target.getFields();
+    return makeNodeJson<ReturnStatementJson>('return', target, {
+        ...(value ? { field: makeExpressionJsonConvert(value) } : {}),
+    });
 };
 
 export type RunAsConditionJson = JsonType<'runAsCondition'> & {
@@ -399,17 +291,16 @@ export type RunAsConditionJson = JsonType<'runAsCondition'> & {
 export const isRunAsConditionJson = typia.createIs<RunAsConditionJson>();
 
 const makeRunAsConditionJson = (
-    target: ConvertType<ExpressionListType>,
-): RunAsConditionJson | ErrorJson => {
-    return convertValue<'expressionList', ExpressionListType, RunAsConditionJson>(
-        target,
-        'runAsCondition',
-        (target, targetRecords) => {
-            return makeJsonType('runAsCondition', targetRecords.base, {
-                field: target.value.map((v) => makeExpressionJsonConvert(v)),
-            });
-        },
-    );
+    target: ExpressionListTypeClass | null,
+    statement: RunAsStatementTypeClass,
+): RunAsConditionJson => {
+    // `System.runAs()` (引数なし) は v2 では value が null。キーは runAs 文のものを使い、field は空にする
+    if (!target) {
+        return makeNodeJson<RunAsConditionJson>('runAsCondition', statement, { field: [] });
+    }
+    return makeNodeJson<RunAsConditionJson>('runAsCondition', target, {
+        field: target.getFields().value.map((v) => makeExpressionJsonConvert(v)),
+    });
 };
 
 export type RunAsStatementJson = JsonType<'runAs'> & {
@@ -419,20 +310,12 @@ export type RunAsStatementJson = JsonType<'runAs'> & {
 
 export const isRunAsStatementJson = typia.createIs<RunAsStatementJson>();
 
-export const makeRunAsStatementJson = (
-    target: ConvertType<RunAsStatementType>,
-): RunAsStatementJson | ErrorJson => {
-    return convertValue<'runAsStatement', RunAsStatementType, RunAsStatementJson>(
-        target,
-        'runAs',
-        (statement: ConvertWithError<RunAsStatementType>, targetRecords) => {
-            return makeJsonType('runAs', targetRecords.base, {
-                condition: makeRunAsConditionJson(statement.value),
-                block: makeBlockJson(statement.block),
-            });
-        },
-        { exclude: 'children' },
-    );
+export const makeRunAsStatementJson = (target: RunAsStatementTypeClass): RunAsStatementJson => {
+    const { value, block } = target.getFields();
+    return makeNodeJson<RunAsStatementJson>('runAs', target, {
+        condition: makeRunAsConditionJson(value, target),
+        block: makeBlockJson(block),
+    });
 };
 
 export type WhenVariantJson = JsonType<'switchVariant'> & {
@@ -441,41 +324,10 @@ export type WhenVariantJson = JsonType<'switchVariant'> & {
 
 export const isWhenVariantJson = typia.createIs<WhenVariantJson>();
 
-export const makeWhenVariantJson = (
-    target: ConvertType<BaseExpressionType>,
-): WhenVariantJson | ErrorJson => {
-    return convertValue<
-        | 'expression'
-        | 'primaryExpression'
-        | 'dotExpression'
-        | 'methodCallExpression'
-        | 'newExpression'
-        | 'castExpression'
-        | 'subExpression'
-        | 'arrayExpression'
-        | 'arth1Expression'
-        | 'arth2Expression'
-        | 'assignExpression'
-        | 'bitAndExpression'
-        | 'bitExpression'
-        | 'bitOrExpression'
-        | 'bitNotExpression'
-        | 'cmpExpression'
-        | 'coalExpression'
-        | 'condExpression'
-        | 'equalityExpression'
-        | 'instanceOfExpression'
-        | 'logAndExpression'
-        | 'logOrExpression'
-        | 'negExpression'
-        | 'postOpExpression'
-        | 'preOpExpression',
-        BaseExpressionType,
-        WhenVariantJson
-    >(target, 'whenVariant', (target, targetRecords) => {
-        return makeJsonType('switchVariant', targetRecords.base, {
-            variant: makeExpressionJsonConvert(target),
-        });
+// switch の対象の式。キーは式のノード自身のもの
+export const makeWhenVariantJson = (target: BasedExpressionTypeClass): WhenVariantJson => {
+    return makeNodeJson<WhenVariantJson>('switchVariant', target, {
+        variant: makeExpressionJsonConvert(target),
     });
 };
 
@@ -500,45 +352,55 @@ export type WhenConditionJson = JsonType<'switchCondition'> & {
         | { value: string; valueType: TypeJson | ErrorJson };
 };
 
-export const makeWhenConditionJson = (
-    target: ConvertType<WhenValueType>,
-): WhenConditionJson | ErrorJson => {
-    return convertValue<'whenValue', WhenValueType, WhenConditionJson>(
-        target,
-        'switchCondition',
-        (target, targetRecords) => {
-            if ('valueType' in target) {
-                return makeJsonType('switchCondition', targetRecords.base, {
-                    condition: {
-                        value: target.value.value,
-                        valueType: makeTypeJson(target.valueType),
-                    },
-                });
-            } else if (typeof target.value === 'string') {
-                return makeJsonType('switchCondition', targetRecords.base, { condition: 'else' });
-            }
-            return makeJsonType('switchCondition', targetRecords.base, {
-                condition: target.value.map((v) => {
-                    if (v.valueType === 'id') {
-                        return {
-                            value: v.value.value.map((part) => part.value),
-                            valueType: v.valueType,
-                        };
-                    } else if (v.valueType === 'integer' || v.valueType === 'long') {
-                        return {
-                            value: v.value,
-                            valueType: v.valueType,
-                            ...(v.operator ? { operator: v.operator } : {}),
-                        };
-                    }
-                    return {
-                        value: v.value,
-                        valueType: v.valueType,
-                    };
-                }),
+const makeWhenLiteralJson = (
+    target: WhenLiteralTypeClass,
+): Exclude<
+    WhenConditionJson['condition'],
+    'else' | { valueType: TypeJson | ErrorJson }
+>[number] => {
+    const literal = target.getFields();
+    switch (literal.kind) {
+        case 'id':
+            return {
+                value: literal.value.getFields().value.map((part) => part.getFields().value),
+                valueType: literal.kind,
+            };
+        case 'integer':
+        case 'long':
+            // 符号は並んだ順につないだ文字列にする (符号がなければ持たない)
+            return {
+                value: literal.value,
+                valueType: literal.kind,
+                ...(literal.signs.length > 0 ? { operator: literal.signs.join('') } : {}),
+            };
+        case 'string':
+        case 'longText':
+            return { value: literal.value, valueType: literal.kind };
+        case 'null':
+            // キーワードは大文字・小文字を区別しないので、'null' にそろえる (docs/ir-v2-integration.md 4 章)
+            return { value: 'null', valueType: literal.kind };
+    }
+};
+
+export const makeWhenConditionJson = (target: WhenValueTypeClass): WhenConditionJson => {
+    const when = target.getFields();
+    switch (when.kind) {
+        case 'type':
+            return makeNodeJson<WhenConditionJson>('switchCondition', target, {
+                condition: {
+                    value: when.variable.getFields().value,
+                    valueType: makeTypeJson(when.typeRef),
+                },
             });
-        },
-    );
+        case 'else':
+            return makeNodeJson<WhenConditionJson>('switchCondition', target, {
+                condition: 'else',
+            });
+        case 'literals':
+            return makeNodeJson<WhenConditionJson>('switchCondition', target, {
+                condition: when.values.map(makeWhenLiteralJson),
+            });
+    }
 };
 
 export type SwitchStatementJson = JsonType<'switch'> & {
@@ -554,28 +416,18 @@ export type SwitchStatementJson = JsonType<'switch'> & {
 
 export const isSwitchStatementJson = typia.createIs<SwitchStatementJson>();
 
-const makeSwitchStatementJson = (
-    target: ConvertType<SwitchStatementType>,
-): SwitchStatementJson | ErrorJson => {
-    return convertValue<'switchStatement', SwitchStatementType, SwitchStatementJson>(
-        target,
-        'switch',
-        (statement: ConvertWithError<SwitchStatementType>, targetRecords) => {
-            return makeJsonType('switch', targetRecords.base, {
-                variant: makeWhenVariantJson(statement.value),
-                block: statement.block.map((b) => {
-                    if (isErrorNode(b)) {
-                        return makeErrorJson(b, ERROR_KIND);
-                    }
-                    return {
-                        condition: makeWhenConditionJson(b.value),
-                        block: makeBlockJson(b.block),
-                    };
-                }),
-            });
-        },
-        { exclude: 'children' },
-    );
+const makeSwitchStatementJson = (target: SwitchStatementTypeClass): SwitchStatementJson => {
+    const { value, blocks } = target.getFields();
+    return makeNodeJson<SwitchStatementJson>('switch', target, {
+        variant: makeWhenVariantJson(value),
+        block: blocks.map((b) => {
+            const when = b.getFields();
+            return {
+                condition: makeWhenConditionJson(when.value),
+                block: makeBlockJson(when.block),
+            };
+        }),
+    });
 };
 
 export type ThrowStatementJson = JsonType<'throw'> & {
@@ -584,18 +436,10 @@ export type ThrowStatementJson = JsonType<'throw'> & {
 
 export const isThrowStatementJson = typia.createIs<ThrowStatementJson>();
 
-export const makeThrowStatementJson = (
-    target: ConvertType<ThrowStatementType>,
-): ThrowStatementJson | ErrorJson => {
-    return convertValue<'throwStatement', ThrowStatementType, ThrowStatementJson>(
-        target,
-        'throw',
-        (target, targetRecords) => {
-            return makeJsonType('throw', targetRecords.base, {
-                value: makeExpressionJsonConvert(target.value),
-            });
-        },
-    );
+export const makeThrowStatementJson = (target: ThrowStatementTypeClass): ThrowStatementJson => {
+    return makeNodeJson<ThrowStatementJson>('throw', target, {
+        value: makeExpressionJsonConvert(target.getFields().value),
+    });
 };
 
 export type CatchConditionJson = StructureJsonType<
@@ -612,31 +456,19 @@ export type CatchConditionJson = StructureJsonType<
 
 export const isCatchConditionJson = typia.createIs<CatchConditionJson>();
 
-const makeCatchConditionJson = (
-    target: ConvertType<CatchClauseType>,
-): CatchConditionJson | ErrorJson => {
-    return convertValue<
-        'catchClause',
-        CatchClauseType,
-        CatchConditionJson,
-        {
-            exception: ConvertKeys;
-            exceptionType: ConvertKeys;
-        }
-    >(
-        target,
+// catch 本体の文は makeTryBlocksJson 側で処理する
+const makeCatchConditionJson = (target: CatchClauseTypeClass): CatchConditionJson => {
+    const { value, valueType, modifier } = target.getFields();
+    return makeStructureJson(
         'catchCondition',
-        (target, targetRecords) => {
-            return makeStructureJson('catchCondition', targetRecords, {
-                exception: target.value.value,
-                exceptionType: target.valueType.value.map((v) => v.value),
-                modifier: target.modifier.map((m) => makeModifierJson(m)),
-            });
-        },
+        structureKeysOf<{ exception: ConvertKeys; exceptionType: ConvertKeys }>(target, {
+            exception: value,
+            exceptionType: valueType,
+        }),
         {
-            // catch 本体の文は makeTryStatementJson 側で処理するため、検査範囲から外す
-            exclude: ['block'],
-            record: { exception: 'value', exceptionType: 'valueType' },
+            exception: value.getFields().value,
+            exceptionType: valueType.getFields().value.map((v) => v.getFields().value),
+            modifier: modifier.map((m) => makeModifierJson(m)),
         },
     );
 };
@@ -662,66 +494,36 @@ export type TryStatementJson = JsonType<'try'> & {
 
 export const isTryStatementJson = typia.createIs<TryStatementJson>();
 
-const makeTryBlocksJson = (
-    target: ConvertWithError<TryStatementType>,
-): TryStatementJson['block'] => {
-    const tryBlock: { condition: 'try'; block: (StatementJson | ErrorJson)[] } = {
+const makeTryBlocksJson = (target: TryStatementTypeClass): TryStatementJson['block'] => {
+    const { block, catchClauses, finallyBlock } = target.getFields();
+    const tryBlock: { condition: 'try'; block: StatementJson[] } = {
         condition: 'try',
-        block: makeBlockJson(target.block),
+        block: makeBlockJson(block),
     };
-    const catchBlocks = target.catchBlock.map(
+    const catchBlocks = catchClauses.map(
         (
-            b,
-        ):
-            | {
-                  condition: 'catch';
-                  catchCondition: CatchConditionJson | ErrorJson;
-                  block: (StatementJson | ErrorJson)[];
-              }
-            | ErrorJson => {
-            if (isErrorNode(b)) {
-                return makeErrorJson(b, ERROR_KIND);
-            }
-            return {
-                condition: 'catch',
-                catchCondition: makeCatchConditionJson(b),
-                block: makeBlockJson(b.block),
-            };
-        },
+            b: CatchClauseTypeClass,
+        ): {
+            condition: 'catch';
+            catchCondition: CatchConditionJson;
+            block: StatementJson[];
+        } => ({
+            condition: 'catch',
+            catchCondition: makeCatchConditionJson(b),
+            block: makeBlockJson(b.getFields().block),
+        }),
     );
-
-    const finally_ = target.finallyBlock;
-    const finallyBlock:
-        | {
-              condition: 'finally';
-              block: (StatementJson | ErrorJson)[];
-          }
-        | ErrorJson
-        | null = finally_
-        ? isErrorNode(finally_)
-            ? makeErrorJson(finally_, ERROR_KIND)
-            : {
-                  condition: 'finally',
-                  block: makeBlockJson(finally_.block),
-              }
+    const finallyJson: { condition: 'finally'; block: StatementJson[] } | null = finallyBlock
+        ? { condition: 'finally', block: makeBlockJson(finallyBlock.getFields().block) }
         : null;
 
-    return [tryBlock, ...catchBlocks, ...(finallyBlock ? [finallyBlock] : [])];
+    return [tryBlock, ...catchBlocks, ...(finallyJson ? [finallyJson] : [])];
 };
 
-const makeTryStatementJson = (
-    target: ConvertType<TryStatementType>,
-): TryStatementJson | ErrorJson => {
-    return convertValue<'tryStatement', TryStatementType, TryStatementJson>(
-        target,
-        'try',
-        (statement, targetRecords) => {
-            return makeJsonType('try', targetRecords.base, {
-                block: makeTryBlocksJson(statement),
-            });
-        },
-        { exclude: 'children' },
-    );
+const makeTryStatementJson = (target: TryStatementTypeClass): TryStatementJson => {
+    return makeNodeJson<TryStatementJson>('try', target, {
+        block: makeTryBlocksJson(target),
+    });
 };
 
 export type UndeleteStatementJson = JsonType<'undelete'> & {
@@ -731,20 +533,13 @@ export type UndeleteStatementJson = JsonType<'undelete'> & {
 export const isUndeleteStatementJson = typia.createIs<UndeleteStatementJson>();
 
 export const makeUndeleteStatementJson = (
-    target: ConvertType<UndeleteStatementType>,
-): UndeleteStatementJson | ErrorJson => {
-    return convertValue<'undeleteStatement', UndeleteStatementType, UndeleteStatementJson>(
-        target,
-        'undelete',
-        (target, targetRecords) => {
-            return makeJsonType('undelete', targetRecords.base, {
-                field: makeExpressionJsonConvert(target.value),
-                ...(target.accessLevel
-                    ? { accessLevel: makeAccessLevelJson(target.accessLevel) }
-                    : {}),
-            });
-        },
-    );
+    target: UndeleteStatementTypeClass,
+): UndeleteStatementJson => {
+    const { value, accessLevel } = target.getFields();
+    return makeNodeJson<UndeleteStatementJson>('undelete', target, {
+        field: makeExpressionJsonConvert(value),
+        ...accessLevelOf(accessLevel),
+    });
 };
 
 export type UpdateStatementJson = JsonType<'update'> & {
@@ -753,21 +548,12 @@ export type UpdateStatementJson = JsonType<'update'> & {
 };
 export const isUpdateStatementJson = typia.createIs<UpdateStatementJson>();
 
-export const makeUpdateStatementJson = (
-    target: ConvertType<UpdateStatementType>,
-): UpdateStatementJson | ErrorJson => {
-    return convertValue<'updateStatement', UpdateStatementType, UpdateStatementJson>(
-        target,
-        'update',
-        (target, targetRecords) => {
-            return makeJsonType('update', targetRecords.base, {
-                field: makeExpressionJsonConvert(target.value),
-                ...(target.accessLevel
-                    ? { accessLevel: makeAccessLevelJson(target.accessLevel) }
-                    : {}),
-            });
-        },
-    );
+export const makeUpdateStatementJson = (target: UpdateStatementTypeClass): UpdateStatementJson => {
+    const { value, accessLevel } = target.getFields();
+    return makeNodeJson<UpdateStatementJson>('update', target, {
+        field: makeExpressionJsonConvert(value),
+        ...accessLevelOf(accessLevel),
+    });
 };
 
 export type UpsertStatementJson = JsonType<'upsert'> & {
@@ -777,22 +563,13 @@ export type UpsertStatementJson = JsonType<'upsert'> & {
 };
 export const isUpsertStatementJson = typia.createIs<UpsertStatementJson>();
 
-export const makeUpsertStatementJson = (
-    target: ConvertType<UpsertStatementType>,
-): UpsertStatementJson | ErrorJson => {
-    return convertValue<'upsertStatement', UpsertStatementType, UpsertStatementJson>(
-        target,
-        'upsert',
-        (target, targetRecords) => {
-            return makeJsonType('upsert', targetRecords.base, {
-                field: makeExpressionJsonConvert(target.value),
-                ...(target.accessLevel
-                    ? { accessLevel: makeAccessLevelJson(target.accessLevel) }
-                    : {}),
-                ...(target.key ? { key: target.key.value.map((v) => v.value) } : {}),
-            });
-        },
-    );
+export const makeUpsertStatementJson = (target: UpsertStatementTypeClass): UpsertStatementJson => {
+    const { value, accessLevel, key } = target.getFields();
+    return makeNodeJson<UpsertStatementJson>('upsert', target, {
+        field: makeExpressionJsonConvert(value),
+        ...accessLevelOf(accessLevel),
+        ...(key ? { key: key.getFields().value.map((v) => v.getFields().value) } : {}),
+    });
 };
 
 export type WhileConditionJson = JsonType<'whileCondition'> & {
@@ -800,18 +577,10 @@ export type WhileConditionJson = JsonType<'whileCondition'> & {
 };
 export const isWhileConditionJson = typia.createIs<WhileConditionJson>();
 
-const makeWhileConditionJson = (
-    target: ConvertType<ParExpressionType>,
-): WhileConditionJson | ErrorJson => {
-    return convertValue<'parExpression', ParExpressionType, WhileConditionJson>(
-        target,
-        'whileCondition',
-        (target, targetRecords) => {
-            return makeJsonType('whileCondition', targetRecords.base, {
-                condition: makeExpressionJsonConvert(target.value),
-            });
-        },
-    );
+const makeWhileConditionJson = (target: ParExpressionTypeClass): WhileConditionJson => {
+    return makeNodeJson<WhileConditionJson>('whileCondition', target, {
+        condition: makeExpressionJsonConvert(target.getFields().value),
+    });
 };
 
 export type WhileStatementJson = JsonType<'while'> & {
@@ -820,20 +589,12 @@ export type WhileStatementJson = JsonType<'while'> & {
 };
 export const isWhileStatementJson = typia.createIs<WhileStatementJson>();
 
-const makeWhileStatementJson = (
-    target: ConvertType<WhileStatementType>,
-): WhileStatementJson | ErrorJson => {
-    return convertValue<'whileStatement', WhileStatementType, WhileStatementJson>(
-        target,
-        'while',
-        (statement: ConvertWithError<WhileStatementType>, targetRecords) => {
-            return makeJsonType('while', targetRecords.base, {
-                condition: makeWhileConditionJson(statement.value),
-                body: makeStatementJson(statement.block),
-            });
-        },
-        { exclude: 'children' },
-    );
+const makeWhileStatementJson = (target: WhileStatementTypeClass): WhileStatementJson => {
+    const { value, block } = target.getFields();
+    return makeNodeJson<WhileStatementJson>('while', target, {
+        condition: makeWhileConditionJson(value),
+        body: makeStatementJson(block),
+    });
 };
 
 export type StatementJson =
@@ -858,66 +619,53 @@ export type StatementJson =
     | UpsertStatementJson
     | WhileStatementJson;
 
-export const makeStatementJson = (
-    target: ConvertType<StatementType>,
-): StatementJson | ErrorJson => {
-    if (isErrorNode(target)) {
-        return makeErrorJson(target, ERROR_KIND);
-    }
-
-    const statement = target.value;
-    if (isErrorNode(statement)) {
-        return makeErrorJson(statement, ERROR_KIND);
-    }
-
-    if (statement.type === 'breakStatement') {
-        return makeBreakStatementJson(statement);
-    } else if (statement.type === 'continueStatement') {
-        return makeContinueStatementJson(statement);
-    } else if (statement.type === 'deleteStatement') {
-        return makeDeleteStatementJson(statement);
-    } else if (statement.type === 'doWhileStatement') {
-        return makeDoWhileStatementJson(statement);
-    } else if (statement.type === 'expressionStatement') {
-        return makeExpressionStatementJson(statement);
-    } else if (statement.type === 'forStatement') {
-        return makeForStatementJson(statement);
-    } else if (statement.type === 'ifStatement') {
-        return makeIfStatementJson(statement);
-    } else if (statement.type === 'insertStatement') {
-        return makeInsertStatementJson(statement);
-    } else if (statement.type === 'localVariableDeclarationStatement') {
-        return makeLocalVariableStatementJson(statement);
-    } else if (statement.type === 'mergeStatement') {
-        return makeMergeStatementJson(statement);
-    } else if (statement.type === 'returnStatement') {
-        return makeReturnStatementJson(statement);
-    } else if (statement.type === 'runAsStatement') {
-        return makeRunAsStatementJson(statement);
-    } else if (statement.type === 'switchStatement') {
-        return makeSwitchStatementJson(statement);
-    } else if (statement.type === 'throwStatement') {
-        return makeThrowStatementJson(statement);
-    } else if (statement.type === 'tryStatement') {
-        return makeTryStatementJson(statement);
-    } else if (statement.type === 'undeleteStatement') {
-        return makeUndeleteStatementJson(statement);
-    } else if (statement.type === 'updateStatement') {
-        return makeUpdateStatementJson(statement);
-    } else if (statement.type === 'upsertStatement') {
-        return makeUpsertStatementJson(statement);
-    } else if (statement.type === 'whileStatement') {
-        return makeWhileStatementJson(statement);
-    } else {
-        return statement.value.map((v) => makeStatementJson(v));
+// statement は中の文だけを JSON にする (statement 自身のキーは使わない)。ブロックは文の配列になる
+export const makeStatementJson = (target: StatementTypeClass): StatementJson => {
+    const statement = target.getFields().statement;
+    switch (statement.kind) {
+        case 'breakStatement':
+            return makeBreakStatementJson(statement);
+        case 'continueStatement':
+            return makeContinueStatementJson(statement);
+        case 'deleteStatement':
+            return makeDeleteStatementJson(statement);
+        case 'doWhileStatement':
+            return makeDoWhileStatementJson(statement);
+        case 'expressionStatement':
+            return makeExpressionStatementJson(statement);
+        case 'forStatement':
+            return makeForStatementJson(statement);
+        case 'ifStatement':
+            return makeIfStatementJson(statement);
+        case 'insertStatement':
+            return makeInsertStatementJson(statement);
+        case 'localVariableDeclarationStatement':
+            return makeLocalVariableStatementJson(statement);
+        case 'mergeStatement':
+            return makeMergeStatementJson(statement);
+        case 'returnStatement':
+            return makeReturnStatementJson(statement);
+        case 'runAsStatement':
+            return makeRunAsStatementJson(statement);
+        case 'switchStatement':
+            return makeSwitchStatementJson(statement);
+        case 'throwStatement':
+            return makeThrowStatementJson(statement);
+        case 'tryStatement':
+            return makeTryStatementJson(statement);
+        case 'undeleteStatement':
+            return makeUndeleteStatementJson(statement);
+        case 'updateStatement':
+            return makeUpdateStatementJson(statement);
+        case 'upsertStatement':
+            return makeUpsertStatementJson(statement);
+        case 'whileStatement':
+            return makeWhileStatementJson(statement);
+        case 'block':
+            return makeBlockJson(statement);
     }
 };
 
-// ブロック自体がエラーノードの場合は、その位置に ErrorJson を1件置く
-export const makeBlockJson = (target: ConvertType<BlockType>): (StatementJson | ErrorJson)[] => {
-    if (isErrorNode(target)) {
-        return [makeErrorJson(target, ERROR_KIND)];
-    }
-
-    return target.value.map((s) => makeStatementJson(s));
+export const makeBlockJson = (target: BlockTypeClass): StatementJson[] => {
+    return target.getFields().block.map((s) => makeStatementJson(s));
 };

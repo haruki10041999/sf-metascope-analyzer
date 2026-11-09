@@ -1,72 +1,52 @@
+import { type FieldsOf, type TypeField } from '../../commons/ir';
+import { type SourceSpan } from '../../commons/source';
 import { isInterfaceTypeAnnotation, type InterfaceTypeAnnotation } from '@babel/types';
 import {
     EvaluatePair,
     LwcCommonTypeClass,
-    LwcErrorTypeClass,
-    lazyPairs,
     makeEvaluatePair,
-    visitNode,
-    visitNodeList,
+    getSourceSpan,
 } from '../commonVisitor';
-import {
-    interfaceExtendsTypePair,
-    type InterfaceExtendsTypeClass,
-} from '../flowVisitor/interfaceExtends';
-import {
-    objectTypeAnnotationTypePair,
-    type ObjectTypeAnnotationTypeClass,
-} from './objectTypeAnnotation';
+import { InterfaceExtendsTypeClass } from '../flowVisitor/interfaceExtends';
+import { ObjectTypeAnnotationTypeClass } from './objectTypeAnnotation';
 
-const interfaceTypeAnnotationExtendsPairs = lazyPairs(() => [interfaceExtendsTypePair] as const);
-const interfaceTypeAnnotationBodyPairs = lazyPairs(() => [objectTypeAnnotationTypePair] as const);
-
-export type InterfaceTypeAnnotationFields = {
-    extends: (InterfaceExtendsTypeClass | LwcErrorTypeClass)[] | null;
-    body: ObjectTypeAnnotationTypeClass | LwcErrorTypeClass;
+export type InterfaceTypeAnnotationFields = TypeField<'interfaceTypeAnnotation'> & {
+    extends: InterfaceExtendsTypeClass[] | null;
+    body: ObjectTypeAnnotationTypeClass;
 };
 
-export class InterfaceTypeAnnotationTypeClass extends LwcCommonTypeClass<'interfaceTypeAnnotation'> {
-    private readonly value: InterfaceTypeAnnotationFields;
-
-    private constructor(value: InterfaceTypeAnnotationFields) {
-        super('interfaceTypeAnnotation');
-        this.value = value;
+export class InterfaceTypeAnnotationTypeClass extends LwcCommonTypeClass<
+    'interfaceTypeAnnotation',
+    InterfaceTypeAnnotationFields
+> {
+    private constructor(value: FieldsOf<InterfaceTypeAnnotationFields>, sourceSpan: SourceSpan) {
+        super('interfaceTypeAnnotation', value, sourceSpan);
     }
 
     static create(
         target: InterfaceTypeAnnotation,
         originalSource: string,
     ): InterfaceTypeAnnotationTypeClass {
-        return new InterfaceTypeAnnotationTypeClass({
-            extends:
-                target.extends == null
-                    ? null
-                    : visitNodeList(
-                          target.extends,
-                          originalSource,
-                          interfaceTypeAnnotationExtendsPairs(),
-                          'InterfaceTypeAnnotation.extends',
-                      ),
-            body: visitNode(
-                target.body,
-                originalSource,
-                interfaceTypeAnnotationBodyPairs(),
-                'InterfaceTypeAnnotation.body',
-            ),
-        });
-    }
-
-    /** すべてのフィールド (Babel の value フィールドの getter getValue() と区別する。getChildNodes もこれから作る) */
-    override getFields(): InterfaceTypeAnnotationFields {
-        return this.value;
+        return new InterfaceTypeAnnotationTypeClass(
+            {
+                extends:
+                    target.extends == null
+                        ? null
+                        : target.extends.map((child) =>
+                              InterfaceExtendsTypeClass.create(child, originalSource),
+                          ),
+                body: ObjectTypeAnnotationTypeClass.create(target.body, originalSource),
+            },
+            getSourceSpan(target, originalSource),
+        );
     }
 
     getExtends(): InterfaceTypeAnnotationFields['extends'] {
-        return this.value.extends;
+        return this.getFields().extends;
     }
 
     getBody(): InterfaceTypeAnnotationFields['body'] {
-        return this.value.body;
+        return this.getFields().body;
     }
 }
 
@@ -78,5 +58,5 @@ export const interfaceTypeAnnotationTypePair: EvaluatePair<
 );
 
 export const isInterfaceTypeAnnotationType = (
-    target: LwcCommonTypeClass<string>,
+    target: LwcCommonTypeClass<string, TypeField<string>>,
 ): target is InterfaceTypeAnnotationTypeClass => target instanceof InterfaceTypeAnnotationTypeClass;

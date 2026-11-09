@@ -1,46 +1,37 @@
+import { type FieldsOf, type TypeField } from '../../commons/ir';
+import { type SourceSpan } from '../../commons/source';
 import { isModuleExpression, type ModuleExpression } from '@babel/types';
 import {
     EvaluatePair,
     LwcCommonTypeClass,
-    LwcErrorTypeClass,
-    lazyPairs,
     makeEvaluatePair,
-    visitNode,
+    getSourceSpan,
 } from '../commonVisitor';
-import { programTypePair, type ProgramTypeClass } from '../commons/program';
+import { ProgramTypeClass } from '../commons/program';
 
-const moduleExpressionBodyPairs = lazyPairs(() => [programTypePair] as const);
-
-export type ModuleExpressionFields = {
-    body: ProgramTypeClass | LwcErrorTypeClass;
+export type ModuleExpressionFields = TypeField<'moduleExpression'> & {
+    body: ProgramTypeClass;
 };
 
-export class ModuleExpressionTypeClass extends LwcCommonTypeClass<'moduleExpression'> {
-    private readonly value: ModuleExpressionFields;
-
-    private constructor(value: ModuleExpressionFields) {
-        super('moduleExpression');
-        this.value = value;
+export class ModuleExpressionTypeClass extends LwcCommonTypeClass<
+    'moduleExpression',
+    ModuleExpressionFields
+> {
+    private constructor(value: FieldsOf<ModuleExpressionFields>, sourceSpan: SourceSpan) {
+        super('moduleExpression', value, sourceSpan);
     }
 
     static create(target: ModuleExpression, originalSource: string): ModuleExpressionTypeClass {
-        return new ModuleExpressionTypeClass({
-            body: visitNode(
-                target.body,
-                originalSource,
-                moduleExpressionBodyPairs(),
-                'ModuleExpression.body',
-            ),
-        });
-    }
-
-    /** すべてのフィールド (Babel の value フィールドの getter getValue() と区別する。getChildNodes もこれから作る) */
-    override getFields(): ModuleExpressionFields {
-        return this.value;
+        return new ModuleExpressionTypeClass(
+            {
+                body: ProgramTypeClass.create(target.body, originalSource),
+            },
+            getSourceSpan(target, originalSource),
+        );
     }
 
     getBody(): ModuleExpressionFields['body'] {
-        return this.value.body;
+        return this.getFields().body;
     }
 }
 
@@ -50,5 +41,5 @@ export const moduleExpressionTypePair: EvaluatePair<ModuleExpression, ModuleExpr
     );
 
 export const isModuleExpressionType = (
-    target: LwcCommonTypeClass<string>,
+    target: LwcCommonTypeClass<string, TypeField<string>>,
 ): target is ModuleExpressionTypeClass => target instanceof ModuleExpressionTypeClass;

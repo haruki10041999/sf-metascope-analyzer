@@ -1,36 +1,41 @@
 import { SoslIdContext } from '@apexdevtools/apex-parser';
 
+import { IdTypeClass } from './id';
 import {
     ApexCommonTypeClass,
-    ApexErrorTypeClass,
-    visitNodeList,
-    visitNode,
+    createNode,
     getSourceSpan,
     isSpicifyApexCommonTypeClass,
 } from '../commonVisitor';
-import { TypeField } from '../../commons/ir';
-import { IdTypeClass } from './id';
+import { type FieldsOf, TypeField } from '../../commons/ir';
 import { SourceSpan } from '../../commons';
 
 export type SoslIdType = TypeField<'soslId'> & {
+    /** `a.b.c` を平坦化した id の並び */
     value: IdTypeClass[];
 };
 
 export class SoslIdTypeClass extends ApexCommonTypeClass<'soslId', SoslIdType> {
-    private constructor(value: IdTypeClass[], sourceSpan: SourceSpan) {
-        super('soslId', { value: value }, sourceSpan);
+    private constructor(fields: FieldsOf<SoslIdType>, sourceSpan: SourceSpan) {
+        super('soslId', fields, sourceSpan);
     }
 
     static create(ctx: SoslIdContext): SoslIdTypeClass {
-        const value: IdTypeClass[] = [IdTypeClass.create(ctx.id())];
+        const value: SoslIdType['value'] = [
+            createNode(ctx.id(), (c) => IdTypeClass.create(c), 'id'),
+        ];
 
-        if (ctx.soslId_list() && ctx.soslId_list().length > 0) {
-            ctx.soslId_list().forEach((s) => {
-                value.push(...SoslIdTypeClass.create(s).getValue());
-            });
-        }
+        // 入れ子の soslId は平坦化する
+        ctx.soslId_list().forEach((nestedCtx) => {
+            const nested = createNode(nestedCtx, (c) => SoslIdTypeClass.create(c), 'soslId');
+            if (isSoslIdType(nested)) {
+                value.push(...nested.getValue());
+            } else {
+                value.push(nested);
+            }
+        });
 
-        return new SoslIdTypeClass(value, getSourceSpan(ctx));
+        return new SoslIdTypeClass({ value }, getSourceSpan(ctx));
     }
 
     getValue(): SoslIdType['value'] {
@@ -40,6 +45,4 @@ export class SoslIdTypeClass extends ApexCommonTypeClass<'soslId', SoslIdType> {
 
 export const isSoslIdType = (
     target: ApexCommonTypeClass<string, TypeField<string>>,
-): target is SoslIdTypeClass => {
-    return isSpicifyApexCommonTypeClass('soslId', target);
-};
+): target is SoslIdTypeClass => isSpicifyApexCommonTypeClass('soslId', target);

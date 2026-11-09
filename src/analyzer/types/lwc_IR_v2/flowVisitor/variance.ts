@@ -1,31 +1,33 @@
+import { type FieldsOf, type TypeField } from '../../commons/ir';
+import { type SourceSpan } from '../../commons/source';
 import { isVariance, type Variance } from '@babel/types';
-import { EvaluatePair, LwcCommonTypeClass, makeEvaluatePair } from '../commonVisitor';
+import {
+    EvaluatePair,
+    LwcCommonTypeClass,
+    makeEvaluatePair,
+    getSourceSpan,
+} from '../commonVisitor';
 
-export type VarianceFields = {
+export type VarianceFields = TypeField<'variance'> & {
     kind: Variance['kind'];
 };
 
-export class VarianceTypeClass extends LwcCommonTypeClass<'variance'> {
-    private readonly value: VarianceFields;
-
-    private constructor(value: VarianceFields) {
-        super('variance');
-        this.value = value;
+export class VarianceTypeClass extends LwcCommonTypeClass<'variance', VarianceFields> {
+    private constructor(value: FieldsOf<VarianceFields>, sourceSpan: SourceSpan) {
+        super('variance', value, sourceSpan);
     }
 
     static create(target: Variance, originalSource: string): VarianceTypeClass {
-        return new VarianceTypeClass({
-            kind: target.kind,
-        });
-    }
-
-    /** すべてのフィールド (Babel の value フィールドの getter getValue() と区別する。getChildNodes もこれから作る) */
-    override getFields(): VarianceFields {
-        return this.value;
+        return new VarianceTypeClass(
+            {
+                kind: target.kind,
+            },
+            getSourceSpan(target, originalSource),
+        );
     }
 
     getKind(): VarianceFields['kind'] {
-        return this.value.kind;
+        return this.getFields().kind;
     }
 }
 
@@ -34,5 +36,6 @@ export const varianceTypePair: EvaluatePair<Variance, VarianceTypeClass> = makeE
     (target, originalSource) => VarianceTypeClass.create(target, originalSource),
 );
 
-export const isVarianceType = (target: LwcCommonTypeClass<string>): target is VarianceTypeClass =>
-    target instanceof VarianceTypeClass;
+export const isVarianceType = (
+    target: LwcCommonTypeClass<string, TypeField<string>>,
+): target is VarianceTypeClass => target instanceof VarianceTypeClass;

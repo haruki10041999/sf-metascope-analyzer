@@ -1,63 +1,57 @@
+import { type FieldsOf, type TypeField } from '../../commons/ir';
+import { type SourceSpan } from '../../commons/source';
 import { isQualifiedTypeIdentifier, type QualifiedTypeIdentifier } from '@babel/types';
 import {
     EvaluatePair,
     LwcCommonTypeClass,
-    LwcErrorTypeClass,
     lazyPairs,
     makeEvaluatePair,
     visitNode,
+    getSourceSpan,
 } from '../commonVisitor';
-import { identifierTypePair, type IdentifierTypeClass } from '../commons/identifier';
+import { identifierTypePair, IdentifierTypeClass } from '../commons/identifier';
 
-const qualifiedTypeIdentifierIdPairs = lazyPairs(() => [identifierTypePair] as const);
 const qualifiedTypeIdentifierQualificationPairs = lazyPairs(
     () => [identifierTypePair, qualifiedTypeIdentifierTypePair] as const,
 );
 
-export type QualifiedTypeIdentifierFields = {
-    id: IdentifierTypeClass | LwcErrorTypeClass;
-    qualification: IdentifierTypeClass | QualifiedTypeIdentifierTypeClass | LwcErrorTypeClass;
+export type QualifiedTypeIdentifierFields = TypeField<'qualifiedTypeIdentifier'> & {
+    id: IdentifierTypeClass;
+    qualification: IdentifierTypeClass | QualifiedTypeIdentifierTypeClass;
 };
 
-export class QualifiedTypeIdentifierTypeClass extends LwcCommonTypeClass<'qualifiedTypeIdentifier'> {
-    private readonly value: QualifiedTypeIdentifierFields;
-
-    private constructor(value: QualifiedTypeIdentifierFields) {
-        super('qualifiedTypeIdentifier');
-        this.value = value;
+export class QualifiedTypeIdentifierTypeClass extends LwcCommonTypeClass<
+    'qualifiedTypeIdentifier',
+    QualifiedTypeIdentifierFields
+> {
+    private constructor(value: FieldsOf<QualifiedTypeIdentifierFields>, sourceSpan: SourceSpan) {
+        super('qualifiedTypeIdentifier', value, sourceSpan);
     }
 
     static create(
         target: QualifiedTypeIdentifier,
         originalSource: string,
     ): QualifiedTypeIdentifierTypeClass {
-        return new QualifiedTypeIdentifierTypeClass({
-            id: visitNode(
-                target.id,
-                originalSource,
-                qualifiedTypeIdentifierIdPairs(),
-                'QualifiedTypeIdentifier.id',
-            ),
-            qualification: visitNode(
-                target.qualification,
-                originalSource,
-                qualifiedTypeIdentifierQualificationPairs(),
-                'QualifiedTypeIdentifier.qualification',
-            ),
-        });
-    }
-
-    /** すべてのフィールド (Babel の value フィールドの getter getValue() と区別する。getChildNodes もこれから作る) */
-    override getFields(): QualifiedTypeIdentifierFields {
-        return this.value;
+        return new QualifiedTypeIdentifierTypeClass(
+            {
+                id: IdentifierTypeClass.create(target.id, originalSource),
+                qualification: visitNode(
+                    target.qualification,
+                    originalSource,
+                    qualifiedTypeIdentifierQualificationPairs(),
+                    'QualifiedTypeIdentifier.qualification',
+                ),
+            },
+            getSourceSpan(target, originalSource),
+        );
     }
 
     getId(): QualifiedTypeIdentifierFields['id'] {
-        return this.value.id;
+        return this.getFields().id;
     }
 
     getQualification(): QualifiedTypeIdentifierFields['qualification'] {
-        return this.value.qualification;
+        return this.getFields().qualification;
     }
 }
 
@@ -69,5 +63,5 @@ export const qualifiedTypeIdentifierTypePair: EvaluatePair<
 );
 
 export const isQualifiedTypeIdentifierType = (
-    target: LwcCommonTypeClass<string>,
+    target: LwcCommonTypeClass<string, TypeField<string>>,
 ): target is QualifiedTypeIdentifierTypeClass => target instanceof QualifiedTypeIdentifierTypeClass;

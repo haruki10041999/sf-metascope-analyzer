@@ -1,3 +1,4 @@
+import { type TypeField } from '../../commons/ir';
 import { LwcCommonTypeClass, LwcCommonVisitor, lazyPairs } from '../commonVisitor';
 import { DeclareClassTypeClass, declareClassTypePair } from '../commons/declareClass';
 import { DeclareFunctionTypeClass, declareFunctionTypePair } from '../commons/declareFunction';
@@ -129,7 +130,7 @@ export type FlowDeclarationTypeClass =
     | TypeAliasTypeClass;
 
 export const isFlowDeclarationType = (
-    target: LwcCommonTypeClass<string>,
+    target: LwcCommonTypeClass<string, TypeField<string>>,
 ): target is FlowDeclarationTypeClass => {
     return (
         target instanceof DeclareClassTypeClass ||

@@ -1,33 +1,42 @@
 import { SelectListContext } from '@apexdevtools/apex-parser';
 
-import { ListTypeClass } from '.';
+import { SelectEntryTypeClass } from '../entryVisitor';
+import {
+    ApexCommonTypeClass,
+    createNodeList,
+    getSourceSpan,
+    isSpicifyApexCommonTypeClass,
+} from '../commonVisitor';
+import { type FieldsOf, TypeField } from '../../commons/ir';
+import { SourceSpan } from '../../commons';
 
-import { SelectEntryTypeClass, EntryVisitor, isSelectEntryType } from '../entryVisitor';
-import { ApexErrorTypeClass, ApexCommonTypeClass, visitNodeList } from '../commonVisitor';
+export type SelectListType = TypeField<'selectList'> & {
+    value: SelectEntryTypeClass[];
+};
 
-export class SelectListTypeClass extends ListTypeClass<'selectList', SelectEntryTypeClass> {
-    private constructor(list: (SelectEntryTypeClass | ApexErrorTypeClass)[]) {
-        super('selectList', list);
+export class SelectListTypeClass extends ApexCommonTypeClass<'selectList', SelectListType> {
+    private constructor(fields: FieldsOf<SelectListType>, sourceSpan: SourceSpan) {
+        super('selectList', fields, sourceSpan);
     }
 
     static create(ctx: SelectListContext): SelectListTypeClass {
-        if (!ctx.selectEntry_list() || ctx.selectEntry_list().length === 0) {
-            throw new Error('値が異常です。SelectListContext: ' + ctx.getText());
-        }
-
         return new SelectListTypeClass(
-            visitNodeList(
-                new EntryVisitor(),
-                ctx.selectEntry_list(),
-                isSelectEntryType,
-                'selectEntry',
-            ),
+            {
+                value: createNodeList(
+                    ctx.selectEntry_list(),
+                    (c) => SelectEntryTypeClass.create(c),
+                    'selectEntry',
+                ),
+            },
+            getSourceSpan(ctx),
         );
+    }
+
+    getValue(): SelectListType['value'] {
+        return this.getFields().value;
     }
 }
 
 export const isSelectListType = (
-    target: ApexCommonTypeClass<string>,
-): target is SelectListTypeClass => {
-    return target instanceof SelectListTypeClass;
-};
+    target: ApexCommonTypeClass<string, TypeField<string>>,
+): target is SelectListTypeClass => isSpicifyApexCommonTypeClass('selectList', target);

@@ -1,0 +1,2731 @@
+{
+  "module": {
+    "fileType": "ts",
+    "imports": [
+      {
+        "kind": "lwcImport",
+        "sourceKeys": {},
+        "source": "lwc",
+        "category": "lwc",
+        "specifiers": [
+          {
+            "kind": "lwcImportSpecifier",
+            "sourceKeys": {},
+            "specifierType": "named",
+            "local": "LightningElement",
+            "imported": "LightningElement",
+            "typeOnly": false
+          },
+          {
+            "kind": "lwcImportSpecifier",
+            "sourceKeys": {},
+            "specifierType": "named",
+            "local": "api",
+            "imported": "api",
+            "typeOnly": false
+          },
+          {
+            "kind": "lwcImportSpecifier",
+            "sourceKeys": {},
+            "specifierType": "named",
+            "local": "wire",
+            "imported": "wire",
+            "typeOnly": false
+          },
+          {
+            "kind": "lwcImportSpecifier",
+            "sourceKeys": {},
+            "specifierType": "named",
+            "local": "track",
+            "imported": "track",
+            "typeOnly": false
+          }
+        ],
+        "typeOnly": false
+      },
+      {
+        "kind": "lwcImport",
+        "sourceKeys": {},
+        "source": "lightning/navigation",
+        "category": "lightning",
+        "specifiers": [
+          {
+            "kind": "lwcImportSpecifier",
+            "sourceKeys": {},
+            "specifierType": "named",
+            "local": "NavigationMixin",
+            "imported": "NavigationMixin",
+            "typeOnly": false
+          }
+        ],
+        "typeOnly": false
+      },
+      {
+        "kind": "lwcImport",
+        "sourceKeys": {},
+        "source": "lightning/uiRecordApi",
+        "category": "lightning",
+        "specifiers": [
+          {
+            "kind": "lwcImportSpecifier",
+            "sourceKeys": {},
+            "specifierType": "named",
+            "local": "getRecord",
+            "imported": "getRecord",
+            "typeOnly": false
+          },
+          {
+            "kind": "lwcImportSpecifier",
+            "sourceKeys": {},
+            "specifierType": "named",
+            "local": "getFieldValue",
+            "imported": "getFieldValue",
+            "typeOnly": false
+          }
+        ],
+        "typeOnly": false
+      },
+      {
+        "kind": "lwcImport",
+        "sourceKeys": {},
+        "source": "lightning/platformShowToastEvent",
+        "category": "lightning",
+        "specifiers": [
+          {
+            "kind": "lwcImportSpecifier",
+            "sourceKeys": {},
+            "specifierType": "named",
+            "local": "ShowToastEvent",
+            "imported": "ShowToastEvent",
+            "typeOnly": false
+          }
+        ],
+        "typeOnly": false
+      },
+      {
+        "kind": "lwcImport",
+        "sourceKeys": {},
+        "source": "@salesforce/apex/AccountController.getAccounts",
+        "category": "apex",
+        "specifiers": [
+          {
+            "kind": "lwcImportSpecifier",
+            "sourceKeys": {},
+            "specifierType": "default",
+            "local": "getAccounts",
+            "typeOnly": false
+          }
+        ],
+        "typeOnly": false,
+        "apex": {
+          "className": "AccountController",
+          "methodName": "getAccounts"
+        }
+      },
+      {
+        "kind": "lwcImport",
+        "sourceKeys": {},
+        "source": "@salesforce/apex/AccountController.deleteAccount",
+        "category": "apex",
+        "specifiers": [
+          {
+            "kind": "lwcImportSpecifier",
+            "sourceKeys": {},
+            "specifierType": "default",
+            "local": "deleteAccount",
+            "typeOnly": false
+          }
+        ],
+        "typeOnly": false,
+        "apex": {
+          "className": "AccountController",
+          "methodName": "deleteAccount"
+        }
+      },
+      {
+        "kind": "lwcImport",
+        "sourceKeys": {},
+        "source": "@salesforce/apex/AccountController.updateAccount",
+        "category": "apex",
+        "specifiers": [
+          {
+            "kind": "lwcImportSpecifier",
+            "sourceKeys": {},
+            "specifierType": "default",
+            "local": "updateAccount",
+            "typeOnly": false
+          }
+        ],
+        "typeOnly": false,
+        "apex": {
+          "className": "AccountController",
+          "methodName": "updateAccount"
+        }
+      },
+      {
+        "kind": "lwcImport",
+        "sourceKeys": {},
+        "source": "@salesforce/schema/Account.Name",
+        "category": "schema",
+        "specifiers": [
+          {
+            "kind": "lwcImportSpecifier",
+            "sourceKeys": {},
+            "specifierType": "default",
+            "local": "NAME_FIELD",
+            "typeOnly": false
+          }
+        ],
+        "typeOnly": false,
+        "schema": {
+          "objectApiName": "Account",
+          "fieldApiName": "Name"
+        }
+      },
+      {
+        "kind": "lwcImport",
+        "sourceKeys": {},
+        "source": "@salesforce/schema/Account.Industry",
+        "category": "schema",
+        "specifiers": [
+          {
+            "kind": "lwcImportSpecifier",
+            "sourceKeys": {},
+            "specifierType": "default",
+            "local": "INDUSTRY_FIELD",
+            "typeOnly": false
+          }
+        ],
+        "typeOnly": false,
+        "schema": {
+          "objectApiName": "Account",
+          "fieldApiName": "Industry"
+        }
+      },
+      {
+        "kind": "lwcImport",
+        "sourceKeys": {},
+        "source": "c/utils",
+        "category": "component",
+        "specifiers": [
+          {
+            "kind": "lwcImportSpecifier",
+            "sourceKeys": {},
+            "specifierType": "named",
+            "local": "Row",
+            "imported": "Row",
+            "typeOnly": false
+          },
+          {
+            "kind": "lwcImportSpecifier",
+            "sourceKeys": {},
+            "specifierType": "named",
+            "local": "SortDirection",
+            "imported": "SortDirection",
+            "typeOnly": false
+          }
+        ],
+        "typeOnly": true,
+        "component": "c/utils"
+      },
+      {
+        "kind": "lwcImport",
+        "sourceKeys": {},
+        "source": "c/utils",
+        "category": "component",
+        "specifiers": [
+          {
+            "kind": "lwcImportSpecifier",
+            "sourceKeys": {},
+            "specifierType": "named",
+            "local": "formatAmount",
+            "imported": "formatAmount",
+            "typeOnly": false
+          },
+          {
+            "kind": "lwcImportSpecifier",
+            "sourceKeys": {},
+            "specifierType": "named",
+            "local": "toRows",
+            "imported": "toRows",
+            "typeOnly": false
+          }
+        ],
+        "typeOnly": false,
+        "component": "c/utils"
+      }
+    ],
+    "component": {
+      "kind": "lwcComponent",
+      "sourceKeys": {
+        "base": {},
+        "name": {}
+      },
+      "name": "AccountList",
+      "extend": "LightningElement",
+      "mixins": [
+        "NavigationMixin"
+      ],
+      "block": [
+        {
+          "kind": "lwcField",
+          "sourceKeys": {
+            "base": {},
+            "name": {}
+          },
+          "name": "recordId",
+          "variantType": {
+            "kind": "lwcType",
+            "sourceKeys": {},
+            "text": "string",
+            "type": "primitive",
+            "primitiveType": "string"
+          },
+          "references": [],
+          "optional": false,
+          "modifier": {
+            "decorator": [
+              {
+                "kind": "lwcDecorator",
+                "sourceKeys": {},
+                "name": "api",
+                "arg": []
+              }
+            ]
+          }
+        },
+        {
+          "kind": "lwcField",
+          "sourceKeys": {
+            "base": {},
+            "name": {}
+          },
+          "name": "title",
+          "variantType": {
+            "kind": "lwcType",
+            "sourceKeys": {},
+            "text": "string",
+            "type": "primitive",
+            "primitiveType": "string"
+          },
+          "init": "'Accounts'",
+          "references": [],
+          "optional": false,
+          "modifier": {
+            "decorator": [
+              {
+                "kind": "lwcDecorator",
+                "sourceKeys": {},
+                "name": "api",
+                "arg": []
+              }
+            ]
+          }
+        },
+        {
+          "kind": "lwcField",
+          "sourceKeys": {
+            "base": {},
+            "name": {}
+          },
+          "name": "maxRows",
+          "variantType": {
+            "kind": "lwcType",
+            "sourceKeys": {},
+            "text": "number",
+            "type": "primitive",
+            "primitiveType": "number"
+          },
+          "init": "20",
+          "references": [],
+          "optional": true,
+          "modifier": {
+            "decorator": [
+              {
+                "kind": "lwcDecorator",
+                "sourceKeys": {},
+                "name": "api",
+                "arg": []
+              }
+            ]
+          }
+        },
+        {
+          "kind": "lwcField",
+          "sourceKeys": {
+            "base": {},
+            "name": {}
+          },
+          "name": "industry",
+          "variantType": {
+            "kind": "lwcType",
+            "sourceKeys": {},
+            "text": "string",
+            "type": "primitive",
+            "primitiveType": "string"
+          },
+          "references": [],
+          "optional": true,
+          "modifier": {
+            "decorator": [
+              {
+                "kind": "lwcDecorator",
+                "sourceKeys": {},
+                "name": "api",
+                "arg": []
+              }
+            ]
+          }
+        },
+        {
+          "kind": "lwcField",
+          "sourceKeys": {
+            "base": {},
+            "name": {}
+          },
+          "name": "rows",
+          "variantType": {
+            "kind": "lwcType",
+            "sourceKeys": {},
+            "text": "Row[]",
+            "type": "array",
+            "elementType": {
+              "type": "custom",
+              "customType": "Row"
+            }
+          },
+          "init": "[]",
+          "references": [],
+          "optional": false,
+          "modifier": {
+            "access": "private",
+            "decorator": [
+              {
+                "kind": "lwcDecorator",
+                "sourceKeys": {},
+                "name": "track",
+                "arg": []
+              }
+            ]
+          }
+        },
+        {
+          "kind": "lwcField",
+          "sourceKeys": {
+            "base": {},
+            "name": {}
+          },
+          "name": "viewMode",
+          "variantType": {
+            "kind": "lwcType",
+            "sourceKeys": {},
+            "text": "ViewMode",
+            "type": "custom",
+            "customType": "ViewMode"
+          },
+          "init": "'table'",
+          "references": [],
+          "optional": false,
+          "modifier": {}
+        },
+        {
+          "kind": "lwcField",
+          "sourceKeys": {
+            "base": {},
+            "name": {}
+          },
+          "name": "sortDirection",
+          "variantType": {
+            "kind": "lwcType",
+            "sourceKeys": {},
+            "text": "SortDirection",
+            "type": "custom",
+            "customType": "SortDirection"
+          },
+          "init": "'asc'",
+          "references": [],
+          "optional": false,
+          "modifier": {}
+        },
+        {
+          "kind": "lwcField",
+          "sourceKeys": {
+            "base": {},
+            "name": {}
+          },
+          "name": "error",
+          "variantType": {
+            "kind": "lwcType",
+            "sourceKeys": {},
+            "text": "unknown",
+            "type": "primitive",
+            "primitiveType": "unknown"
+          },
+          "references": [],
+          "optional": true,
+          "modifier": {}
+        },
+        {
+          "kind": "lwcField",
+          "sourceKeys": {
+            "base": {},
+            "name": {}
+          },
+          "name": "record",
+          "variantType": {
+            "kind": "lwcType",
+            "sourceKeys": {},
+            "text": "{ data?: unknown; error?: unknown }",
+            "type": "object",
+            "members": [
+              {
+                "name": "data",
+                "memberType": {
+                  "type": "primitive",
+                  "primitiveType": "unknown"
+                },
+                "optional": true,
+                "method": false
+              },
+              {
+                "name": "error",
+                "memberType": {
+                  "type": "primitive",
+                  "primitiveType": "unknown"
+                },
+                "optional": true,
+                "method": false
+              }
+            ]
+          },
+          "references": [],
+          "optional": true,
+          "modifier": {
+            "decorator": [
+              {
+                "kind": "lwcDecorator",
+                "sourceKeys": {},
+                "name": "wire",
+                "arg": [
+                  "getRecord",
+                  "{ recordId: '$recordId', fields: [NAME_FIELD, INDUSTRY_FIELD] }"
+                ],
+                "wire": {
+                  "adapter": "getRecord",
+                  "adapterSource": "lightning/uiRecordApi",
+                  "config": [
+                    {
+                      "kind": "lwcWireConfig",
+                      "sourceKeys": {},
+                      "key": "recordId",
+                      "value": "'$recordId'",
+                      "reactive": "recordId",
+                      "references": []
+                    },
+                    {
+                      "kind": "lwcWireConfig",
+                      "sourceKeys": {},
+                      "key": "fields",
+                      "value": "[NAME_FIELD, INDUSTRY_FIELD]",
+                      "references": [
+                        {
+                          "local": "NAME_FIELD",
+                          "source": "@salesforce/schema/Account.Name",
+                          "schema": {
+                            "objectApiName": "Account",
+                            "fieldApiName": "Name"
+                          }
+                        },
+                        {
+                          "local": "INDUSTRY_FIELD",
+                          "source": "@salesforce/schema/Account.Industry",
+                          "schema": {
+                            "objectApiName": "Account",
+                            "fieldApiName": "Industry"
+                          }
+                        }
+                      ]
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "kind": "lwcMethod",
+          "sourceKeys": {
+            "base": {},
+            "name": {}
+          },
+          "name": "wiredAccounts",
+          "returnType": {
+            "kind": "lwcType",
+            "sourceKeys": {},
+            "text": "void",
+            "type": "primitive",
+            "primitiveType": "void"
+          },
+          "param": [
+            {
+              "kind": "lwcParameter",
+              "sourceKeys": {},
+              "variant": "{ data, error }",
+              "variantType": {
+                "kind": "lwcType",
+                "sourceKeys": {},
+                "text": "{ data?: unknown[]; error?: unknown }",
+                "type": "object",
+                "members": [
+                  {
+                    "name": "data",
+                    "memberType": {
+                      "type": "array",
+                      "elementType": {
+                        "type": "primitive",
+                        "primitiveType": "unknown"
+                      }
+                    },
+                    "optional": true,
+                    "method": false
+                  },
+                  {
+                    "name": "error",
+                    "memberType": {
+                      "type": "primitive",
+                      "primitiveType": "unknown"
+                    },
+                    "optional": true,
+                    "method": false
+                  }
+                ]
+              },
+              "optional": false,
+              "modifier": {}
+            }
+          ],
+          "async": false,
+          "modifier": {
+            "decorator": [
+              {
+                "kind": "lwcDecorator",
+                "sourceKeys": {},
+                "name": "wire",
+                "arg": [
+                  "getAccounts",
+                  "{ parentId: '$recordId', limitSize: '$maxRows', industry: '$industry' }"
+                ],
+                "wire": {
+                  "adapter": "getAccounts",
+                  "adapterSource": "@salesforce/apex/AccountController.getAccounts",
+                  "apex": {
+                    "className": "AccountController",
+                    "methodName": "getAccounts"
+                  },
+                  "config": [
+                    {
+                      "kind": "lwcWireConfig",
+                      "sourceKeys": {},
+                      "key": "parentId",
+                      "value": "'$recordId'",
+                      "reactive": "recordId",
+                      "references": []
+                    },
+                    {
+                      "kind": "lwcWireConfig",
+                      "sourceKeys": {},
+                      "key": "limitSize",
+                      "value": "'$maxRows'",
+                      "reactive": "maxRows",
+                      "references": []
+                    },
+                    {
+                      "kind": "lwcWireConfig",
+                      "sourceKeys": {},
+                      "key": "industry",
+                      "value": "'$industry'",
+                      "reactive": "industry",
+                      "references": []
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          "body": {
+            "kind": "lwcBody",
+            "sourceKeys": {},
+            "statements": 1
+          },
+          "calls": [],
+          "events": []
+        },
+        {
+          "kind": "lwcProperty",
+          "sourceKeys": {
+            "base": {},
+            "name": {}
+          },
+          "name": "parentName",
+          "isGetter": true,
+          "isSetter": false,
+          "getterContent": {
+            "modifier": {},
+            "body": {
+              "kind": "lwcBody",
+              "sourceKeys": {},
+              "statements": 1
+            },
+            "calls": [],
+            "events": []
+          },
+          "variantType": {
+            "kind": "lwcType",
+            "sourceKeys": {},
+            "text": "string | undefined",
+            "type": "union",
+            "types": [
+              {
+                "type": "primitive",
+                "primitiveType": "string"
+              },
+              {
+                "type": "primitive",
+                "primitiveType": "undefined"
+              }
+            ]
+          }
+        },
+        {
+          "kind": "lwcProperty",
+          "sourceKeys": {
+            "base": {},
+            "name": {}
+          },
+          "name": "hasRows",
+          "isGetter": true,
+          "isSetter": false,
+          "getterContent": {
+            "modifier": {},
+            "body": {
+              "kind": "lwcBody",
+              "sourceKeys": {},
+              "statements": 1
+            },
+            "calls": [],
+            "events": []
+          },
+          "variantType": {
+            "kind": "lwcType",
+            "sourceKeys": {},
+            "text": "boolean",
+            "type": "primitive",
+            "primitiveType": "boolean"
+          }
+        },
+        {
+          "kind": "lwcProperty",
+          "sourceKeys": {
+            "base": {},
+            "name": {}
+          },
+          "name": "totalAmount",
+          "isGetter": true,
+          "isSetter": false,
+          "getterContent": {
+            "modifier": {},
+            "body": {
+              "kind": "lwcBody",
+              "sourceKeys": {},
+              "statements": 1
+            },
+            "calls": [],
+            "events": []
+          },
+          "variantType": {
+            "kind": "lwcType",
+            "sourceKeys": {},
+            "text": "string",
+            "type": "primitive",
+            "primitiveType": "string"
+          }
+        },
+        {
+          "kind": "lwcMethod",
+          "sourceKeys": {
+            "base": {},
+            "name": {}
+          },
+          "name": "handleSelect",
+          "returnType": {
+            "kind": "lwcType",
+            "sourceKeys": {},
+            "text": "void",
+            "type": "primitive",
+            "primitiveType": "void"
+          },
+          "param": [
+            {
+              "kind": "lwcParameter",
+              "sourceKeys": {},
+              "variant": "event",
+              "variantType": {
+                "kind": "lwcType",
+                "sourceKeys": {},
+                "text": "CustomEvent<SelectDetail>",
+                "type": "custom",
+                "customType": "CustomEvent",
+                "generic": [
+                  {
+                    "type": "custom",
+                    "customType": "SelectDetail"
+                  }
+                ]
+              },
+              "optional": false,
+              "modifier": {}
+            }
+          ],
+          "async": false,
+          "modifier": {},
+          "body": {
+            "kind": "lwcBody",
+            "sourceKeys": {},
+            "statements": 3
+          },
+          "calls": [
+            {
+              "kind": "lwcCall",
+              "sourceKeys": {},
+              "callType": "dispatchEvent",
+              "target": "CustomEvent",
+              "arg": [
+                "new CustomEvent<SelectDetail>('accountselect', {\n                detail: { recordId, index },\n                bubbles: true,\n                composed: true,\n            })"
+              ],
+              "references": []
+            },
+            {
+              "kind": "lwcCall",
+              "sourceKeys": {},
+              "callType": "navigate",
+              "target": "Navigate",
+              "arg": [
+                "{\n            type: 'standard__recordPage',\n            attributes: { recordId, actionName: 'view' },\n        }"
+              ],
+              "references": []
+            }
+          ],
+          "events": [
+            {
+              "kind": "lwcEvent",
+              "sourceKeys": {},
+              "name": "accountselect",
+              "detail": "{ recordId, index }",
+              "bubbles": true,
+              "composed": true,
+              "detailType": {
+                "kind": "lwcType",
+                "sourceKeys": {},
+                "text": "SelectDetail",
+                "type": "custom",
+                "customType": "SelectDetail"
+              }
+            }
+          ]
+        },
+        {
+          "kind": "lwcMethod",
+          "sourceKeys": {
+            "base": {},
+            "name": {}
+          },
+          "name": "handleDelete",
+          "returnType": {
+            "kind": "lwcType",
+            "sourceKeys": {},
+            "text": "Promise<void>",
+            "type": "custom",
+            "customType": "Promise",
+            "generic": [
+              {
+                "type": "primitive",
+                "primitiveType": "void"
+              }
+            ]
+          },
+          "param": [
+            {
+              "kind": "lwcParameter",
+              "sourceKeys": {},
+              "variant": "event",
+              "variantType": {
+                "kind": "lwcType",
+                "sourceKeys": {},
+                "text": "Event",
+                "type": "custom",
+                "customType": "Event"
+              },
+              "optional": false,
+              "modifier": {}
+            }
+          ],
+          "async": true,
+          "modifier": {},
+          "body": {
+            "kind": "lwcBody",
+            "sourceKeys": {},
+            "statements": 2
+          },
+          "calls": [
+            {
+              "kind": "lwcCall",
+              "sourceKeys": {},
+              "callType": "apex",
+              "target": "deleteAccount",
+              "apex": {
+                "className": "AccountController",
+                "methodName": "deleteAccount"
+              },
+              "arg": [
+                "{ recordId }"
+              ],
+              "references": []
+            },
+            {
+              "kind": "lwcCall",
+              "sourceKeys": {},
+              "callType": "dispatchEvent",
+              "target": "ShowToastEvent",
+              "arg": [
+                "new ShowToastEvent({ title: '削除しました', variant: 'success' })"
+              ],
+              "references": [
+                {
+                  "local": "ShowToastEvent",
+                  "source": "lightning/platformShowToastEvent"
+                }
+              ]
+            }
+          ],
+          "events": []
+        },
+        {
+          "kind": "lwcMethod",
+          "sourceKeys": {
+            "base": {},
+            "name": {}
+          },
+          "name": "handleSave",
+          "returnType": {
+            "kind": "lwcType",
+            "sourceKeys": {},
+            "text": "Promise<void>",
+            "type": "custom",
+            "customType": "Promise",
+            "generic": [
+              {
+                "type": "primitive",
+                "primitiveType": "void"
+              }
+            ]
+          },
+          "param": [
+            {
+              "kind": "lwcParameter",
+              "sourceKeys": {},
+              "variant": "event",
+              "variantType": {
+                "kind": "lwcType",
+                "sourceKeys": {},
+                "text": "CustomEvent<Row>",
+                "type": "custom",
+                "customType": "CustomEvent",
+                "generic": [
+                  {
+                    "type": "custom",
+                    "customType": "Row"
+                  }
+                ]
+              },
+              "optional": false,
+              "modifier": {}
+            }
+          ],
+          "async": true,
+          "modifier": {},
+          "body": {
+            "kind": "lwcBody",
+            "sourceKeys": {},
+            "statements": 2
+          },
+          "calls": [
+            {
+              "kind": "lwcCall",
+              "sourceKeys": {},
+              "callType": "apex",
+              "target": "updateAccount",
+              "apex": {
+                "className": "AccountController",
+                "methodName": "updateAccount"
+              },
+              "arg": [
+                "{ row: event.detail }"
+              ],
+              "references": []
+            },
+            {
+              "kind": "lwcCall",
+              "sourceKeys": {},
+              "callType": "dispatchEvent",
+              "target": "CustomEvent",
+              "arg": [
+                "new CustomEvent('accountsaved', { detail: event.detail.id })"
+              ],
+              "references": []
+            }
+          ],
+          "events": [
+            {
+              "kind": "lwcEvent",
+              "sourceKeys": {},
+              "name": "accountsaved",
+              "detail": "event.detail.id"
+            }
+          ]
+        },
+        {
+          "kind": "lwcMethod",
+          "sourceKeys": {
+            "base": {},
+            "name": {}
+          },
+          "name": "refresh",
+          "returnType": {
+            "kind": "lwcType",
+            "sourceKeys": {},
+            "text": "void",
+            "type": "primitive",
+            "primitiveType": "void"
+          },
+          "param": [],
+          "async": false,
+          "modifier": {
+            "decorator": [
+              {
+                "kind": "lwcDecorator",
+                "sourceKeys": {},
+                "name": "api",
+                "arg": []
+              }
+            ]
+          },
+          "body": {
+            "kind": "lwcBody",
+            "sourceKeys": {},
+            "statements": 1
+          },
+          "calls": [
+            {
+              "kind": "lwcCall",
+              "sourceKeys": {},
+              "callType": "refs",
+              "target": "table",
+              "arg": [],
+              "references": []
+            }
+          ],
+          "events": []
+        }
+      ]
+    },
+    "otherExports": [],
+    "declarations": [],
+    "typeDeclarations": [
+      {
+        "kind": "lwcTypeDeclaration",
+        "sourceKeys": {
+          "base": {},
+          "name": {}
+        },
+        "name": "ViewMode",
+        "exported": false,
+        "declarationType": "type",
+        "variantType": {
+          "kind": "lwcType",
+          "sourceKeys": {},
+          "text": "'table' | 'tile'",
+          "type": "union",
+          "types": [
+            {
+              "type": "literal",
+              "value": "'table'"
+            },
+            {
+              "type": "literal",
+              "value": "'tile'"
+            }
+          ]
+        }
+      },
+      {
+        "kind": "lwcTypeDeclaration",
+        "sourceKeys": {
+          "base": {},
+          "name": {}
+        },
+        "name": "SelectDetail",
+        "exported": false,
+        "declarationType": "interface",
+        "members": [
+          {
+            "name": "recordId",
+            "memberType": {
+              "type": "primitive",
+              "primitiveType": "string"
+            },
+            "optional": false,
+            "method": false
+          },
+          {
+            "name": "index",
+            "memberType": {
+              "type": "primitive",
+              "primitiveType": "number"
+            },
+            "optional": false,
+            "method": false
+          }
+        ]
+      }
+    ],
+    "errors": []
+  },
+  "sourceObject": [
+    {
+      "context": "'table' | 'tile'",
+      "start": {
+        "offset": 717,
+        "line": 13,
+        "column": 16
+      },
+      "end": {
+        "offset": 733,
+        "line": 13,
+        "column": 32
+      }
+    },
+    {
+      "context": "@api industry?: string;",
+      "start": {
+        "offset": 983,
+        "line": 24,
+        "column": 4
+      },
+      "end": {
+        "offset": 1006,
+        "line": 24,
+        "column": 27
+      }
+    },
+    {
+      "context": "@api maxRows?: number = 20;",
+      "start": {
+        "offset": 951,
+        "line": 23,
+        "column": 4
+      },
+      "end": {
+        "offset": 978,
+        "line": 23,
+        "column": 31
+      }
+    },
+    {
+      "context": "@api recordId!: string;",
+      "start": {
+        "offset": 886,
+        "line": 21,
+        "column": 4
+      },
+      "end": {
+        "offset": 909,
+        "line": 21,
+        "column": 27
+      }
+    },
+    {
+      "context": "@api title: string = 'Accounts';",
+      "start": {
+        "offset": 914,
+        "line": 22,
+        "column": 4
+      },
+      "end": {
+        "offset": 946,
+        "line": 22,
+        "column": 36
+      }
+    },
+    {
+      "context": "@api",
+      "start": {
+        "offset": 2986,
+        "line": 84,
+        "column": 4
+      },
+      "end": {
+        "offset": 2990,
+        "line": 84,
+        "column": 8
+      }
+    },
+    {
+      "context": "@api",
+      "start": {
+        "offset": 886,
+        "line": 21,
+        "column": 4
+      },
+      "end": {
+        "offset": 890,
+        "line": 21,
+        "column": 8
+      }
+    },
+    {
+      "context": "@api",
+      "start": {
+        "offset": 914,
+        "line": 22,
+        "column": 4
+      },
+      "end": {
+        "offset": 918,
+        "line": 22,
+        "column": 8
+      }
+    },
+    {
+      "context": "@api",
+      "start": {
+        "offset": 951,
+        "line": 23,
+        "column": 4
+      },
+      "end": {
+        "offset": 955,
+        "line": 23,
+        "column": 8
+      }
+    },
+    {
+      "context": "@api",
+      "start": {
+        "offset": 983,
+        "line": 24,
+        "column": 4
+      },
+      "end": {
+        "offset": 987,
+        "line": 24,
+        "column": 8
+      }
+    },
+    {
+      "context": "@api\n    refresh(): void {\n        this.refs.table?.focus();\n    }",
+      "start": {
+        "offset": 2986,
+        "line": 84,
+        "column": 4
+      },
+      "end": {
+        "offset": 3052,
+        "line": 87,
+        "column": 5
+      }
+    },
+    {
+      "context": "@track private rows: Row[] = [];",
+      "start": {
+        "offset": 1011,
+        "line": 25,
+        "column": 4
+      },
+      "end": {
+        "offset": 1043,
+        "line": 25,
+        "column": 36
+      }
+    },
+    {
+      "context": "@track",
+      "start": {
+        "offset": 1011,
+        "line": 25,
+        "column": 4
+      },
+      "end": {
+        "offset": 1017,
+        "line": 25,
+        "column": 10
+      }
+    },
+    {
+      "context": "@wire(getAccounts, { parentId: '$recordId', limitSize: '$maxRows', industry: '$industry' })",
+      "start": {
+        "offset": 1283,
+        "line": 33,
+        "column": 4
+      },
+      "end": {
+        "offset": 1374,
+        "line": 33,
+        "column": 95
+      }
+    },
+    {
+      "context": "@wire(getAccounts, { parentId: '$recordId', limitSize: '$maxRows', industry: '$industry' })\n    wiredAccounts({ data, error }: { data?: unknown[]; error?: unknown }): void {\n        if (data) {\n            this.rows = toRows(data);\n        } else if (error) {\n            this.error = error;\n        }\n    }",
+      "start": {
+        "offset": 1283,
+        "line": 33,
+        "column": 4
+      },
+      "end": {
+        "offset": 1590,
+        "line": 40,
+        "column": 5
+      }
+    },
+    {
+      "context": "@wire(getRecord, { recordId: '$recordId', fields: [NAME_FIELD, INDUSTRY_FIELD] })",
+      "start": {
+        "offset": 1146,
+        "line": 30,
+        "column": 4
+      },
+      "end": {
+        "offset": 1227,
+        "line": 30,
+        "column": 85
+      }
+    },
+    {
+      "context": "@wire(getRecord, { recordId: '$recordId', fields: [NAME_FIELD, INDUSTRY_FIELD] })\n    record?: { data?: unknown; error?: unknown };",
+      "start": {
+        "offset": 1146,
+        "line": 30,
+        "column": 4
+      },
+      "end": {
+        "offset": 1277,
+        "line": 31,
+        "column": 49
+      }
+    },
+    {
+      "context": "AccountList",
+      "start": {
+        "offset": 826,
+        "line": 20,
+        "column": 21
+      },
+      "end": {
+        "offset": 837,
+        "line": 20,
+        "column": 32
+      }
+    },
+    {
+      "context": "CustomEvent<Row>",
+      "start": {
+        "offset": 2798,
+        "line": 79,
+        "column": 28
+      },
+      "end": {
+        "offset": 2814,
+        "line": 79,
+        "column": 44
+      }
+    },
+    {
+      "context": "CustomEvent<SelectDetail>",
+      "start": {
+        "offset": 1950,
+        "line": 54,
+        "column": 24
+      },
+      "end": {
+        "offset": 1975,
+        "line": 54,
+        "column": 49
+      }
+    },
+    {
+      "context": "Event",
+      "start": {
+        "offset": 2449,
+        "line": 69,
+        "column": 30
+      },
+      "end": {
+        "offset": 2454,
+        "line": 69,
+        "column": 35
+      }
+    },
+    {
+      "context": "INDUSTRY_FIELD",
+      "start": {
+        "offset": 542,
+        "line": 9,
+        "column": 7
+      },
+      "end": {
+        "offset": 556,
+        "line": 9,
+        "column": 21
+      }
+    },
+    {
+      "context": "LightningElement",
+      "start": {
+        "offset": 9,
+        "line": 1,
+        "column": 9
+      },
+      "end": {
+        "offset": 25,
+        "line": 1,
+        "column": 25
+      }
+    },
+    {
+      "context": "NAME_FIELD",
+      "start": {
+        "offset": 484,
+        "line": 8,
+        "column": 7
+      },
+      "end": {
+        "offset": 494,
+        "line": 8,
+        "column": 17
+      }
+    },
+    {
+      "context": "NavigationMixin",
+      "start": {
+        "offset": 67,
+        "line": 2,
+        "column": 9
+      },
+      "end": {
+        "offset": 82,
+        "line": 2,
+        "column": 24
+      }
+    },
+    {
+      "context": "Promise<void>",
+      "start": {
+        "offset": 2457,
+        "line": 69,
+        "column": 38
+      },
+      "end": {
+        "offset": 2470,
+        "line": 69,
+        "column": 51
+      }
+    },
+    {
+      "context": "Promise<void>",
+      "start": {
+        "offset": 2817,
+        "line": 79,
+        "column": 47
+      },
+      "end": {
+        "offset": 2830,
+        "line": 79,
+        "column": 60
+      }
+    },
+    {
+      "context": "Row",
+      "start": {
+        "offset": 615,
+        "line": 10,
+        "column": 14
+      },
+      "end": {
+        "offset": 618,
+        "line": 10,
+        "column": 17
+      }
+    },
+    {
+      "context": "Row[]",
+      "start": {
+        "offset": 1032,
+        "line": 25,
+        "column": 25
+      },
+      "end": {
+        "offset": 1037,
+        "line": 25,
+        "column": 30
+      }
+    },
+    {
+      "context": "SelectDetail",
+      "start": {
+        "offset": 2091,
+        "line": 57,
+        "column": 28
+      },
+      "end": {
+        "offset": 2103,
+        "line": 57,
+        "column": 40
+      }
+    },
+    {
+      "context": "SelectDetail",
+      "start": {
+        "offset": 746,
+        "line": 15,
+        "column": 10
+      },
+      "end": {
+        "offset": 758,
+        "line": 15,
+        "column": 22
+      }
+    },
+    {
+      "context": "ShowToastEvent",
+      "start": {
+        "offset": 189,
+        "line": 4,
+        "column": 9
+      },
+      "end": {
+        "offset": 203,
+        "line": 4,
+        "column": 23
+      }
+    },
+    {
+      "context": "SortDirection",
+      "start": {
+        "offset": 1097,
+        "line": 27,
+        "column": 19
+      },
+      "end": {
+        "offset": 1110,
+        "line": 27,
+        "column": 32
+      }
+    },
+    {
+      "context": "SortDirection",
+      "start": {
+        "offset": 620,
+        "line": 10,
+        "column": 19
+      },
+      "end": {
+        "offset": 633,
+        "line": 10,
+        "column": 32
+      }
+    },
+    {
+      "context": "ViewMode",
+      "start": {
+        "offset": 1058,
+        "line": 26,
+        "column": 14
+      },
+      "end": {
+        "offset": 1066,
+        "line": 26,
+        "column": 22
+      }
+    },
+    {
+      "context": "ViewMode",
+      "start": {
+        "offset": 706,
+        "line": 13,
+        "column": 5
+      },
+      "end": {
+        "offset": 714,
+        "line": 13,
+        "column": 13
+      }
+    },
+    {
+      "context": "api",
+      "start": {
+        "offset": 27,
+        "line": 1,
+        "column": 27
+      },
+      "end": {
+        "offset": 30,
+        "line": 1,
+        "column": 30
+      }
+    },
+    {
+      "context": "async handleDelete(event: Event): Promise<void> {\n        const recordId = (event.target as HTMLElement).dataset.id!;\n        try {\n            await deleteAccount({ recordId });\n            this.dispatchEvent(new ShowToastEvent({ title: '削除しました', variant: 'success' }));\n        } catch (error) {\n            this.error = error;\n        }\n    }",
+      "start": {
+        "offset": 2423,
+        "line": 69,
+        "column": 4
+      },
+      "end": {
+        "offset": 2768,
+        "line": 77,
+        "column": 5
+      }
+    },
+    {
+      "context": "async handleSave(event: CustomEvent<Row>): Promise<void> {\n        await updateAccount({ row: event.detail });\n        this.dispatchEvent(new CustomEvent('accountsaved', { detail: event.detail.id }));\n    }",
+      "start": {
+        "offset": 2774,
+        "line": 79,
+        "column": 4
+      },
+      "end": {
+        "offset": 2980,
+        "line": 82,
+        "column": 5
+      }
+    },
+    {
+      "context": "boolean",
+      "start": {
+        "offset": 1744,
+        "line": 46,
+        "column": 19
+      },
+      "end": {
+        "offset": 1751,
+        "line": 46,
+        "column": 26
+      }
+    },
+    {
+      "context": "class AccountList extends NavigationMixin(LightningElement) {\n    @api recordId!: string;\n    @api title: string = 'Accounts';\n    @api maxRows?: number = 20;\n    @api industry?: string;\n    @track private rows: Row[] = [];\n    viewMode: ViewMode = 'table';\n    sortDirection: SortDirection = 'asc';\n    error?: unknown;\n\n    @wire(getRecord, { recordId: '$recordId', fields: [NAME_FIELD, INDUSTRY_FIELD] })\n    record?: { data?: unknown; error?: unknown };\n\n    @wire(getAccounts, { parentId: '$recordId', limitSize: '$maxRows', industry: '$industry' })\n    wiredAccounts({ data, error }: { data?: unknown[]; error?: unknown }): void {\n        if (data) {\n            this.rows = toRows(data);\n        } else if (error) {\n            this.error = error;\n        }\n    }\n\n    get parentName(): string | undefined {\n        return getFieldValue(this.record?.data, NAME_FIELD) as string | undefined;\n    }\n\n    get hasRows(): boolean {\n        return this.rows.length > 0;\n    }\n\n    get totalAmount(): string {\n        return formatAmount(this.rows.reduce((sum, row) => sum + (row.amount ?? 0), 0));\n    }\n\n    handleSelect(event: CustomEvent<SelectDetail>): void {\n        const { recordId, index } = event.detail;\n        this.dispatchEvent(\n            new CustomEvent<SelectDetail>('accountselect', {\n                detail: { recordId, index },\n                bubbles: true,\n                composed: true,\n            }),\n        );\n        this[NavigationMixin.Navigate]({\n            type: 'standard__recordPage',\n            attributes: { recordId, actionName: 'view' },\n        });\n    }\n\n    async handleDelete(event: Event): Promise<void> {\n        const recordId = (event.target as HTMLElement).dataset.id!;\n        try {\n            await deleteAccount({ recordId });\n            this.dispatchEvent(new ShowToastEvent({ title: '削除しました', variant: 'success' }));\n        } catch (error) {\n            this.error = error;\n        }\n    }\n\n    async handleSave(event: CustomEvent<Row>): Promise<void> {\n        await updateAccount({ row: event.detail });\n        this.dispatchEvent(new CustomEvent('accountsaved', { detail: event.detail.id }));\n    }\n\n    @api\n    refresh(): void {\n        this.refs.table?.focus();\n    }\n}",
+      "start": {
+        "offset": 820,
+        "line": 20,
+        "column": 15
+      },
+      "end": {
+        "offset": 3054,
+        "line": 88,
+        "column": 1
+      }
+    },
+    {
+      "context": "deleteAccount",
+      "start": {
+        "offset": 328,
+        "line": 6,
+        "column": 7
+      },
+      "end": {
+        "offset": 341,
+        "line": 6,
+        "column": 20
+      }
+    },
+    {
+      "context": "deleteAccount({ recordId })",
+      "start": {
+        "offset": 2573,
+        "line": 72,
+        "column": 18
+      },
+      "end": {
+        "offset": 2600,
+        "line": 72,
+        "column": 45
+      }
+    },
+    {
+      "context": "error",
+      "start": {
+        "offset": 1124,
+        "line": 28,
+        "column": 4
+      },
+      "end": {
+        "offset": 1129,
+        "line": 28,
+        "column": 9
+      }
+    },
+    {
+      "context": "error?: unknown;",
+      "start": {
+        "offset": 1124,
+        "line": 28,
+        "column": 4
+      },
+      "end": {
+        "offset": 1140,
+        "line": 28,
+        "column": 20
+      }
+    },
+    {
+      "context": "event: CustomEvent<Row>",
+      "start": {
+        "offset": 2791,
+        "line": 79,
+        "column": 21
+      },
+      "end": {
+        "offset": 2814,
+        "line": 79,
+        "column": 44
+      }
+    },
+    {
+      "context": "event: CustomEvent<SelectDetail>",
+      "start": {
+        "offset": 1943,
+        "line": 54,
+        "column": 17
+      },
+      "end": {
+        "offset": 1975,
+        "line": 54,
+        "column": 49
+      }
+    },
+    {
+      "context": "event: Event",
+      "start": {
+        "offset": 2442,
+        "line": 69,
+        "column": 23
+      },
+      "end": {
+        "offset": 2454,
+        "line": 69,
+        "column": 35
+      }
+    },
+    {
+      "context": "fields: [NAME_FIELD, INDUSTRY_FIELD]",
+      "start": {
+        "offset": 1188,
+        "line": 30,
+        "column": 46
+      },
+      "end": {
+        "offset": 1224,
+        "line": 30,
+        "column": 82
+      }
+    },
+    {
+      "context": "formatAmount",
+      "start": {
+        "offset": 661,
+        "line": 11,
+        "column": 9
+      },
+      "end": {
+        "offset": 673,
+        "line": 11,
+        "column": 21
+      }
+    },
+    {
+      "context": "get hasRows(): boolean {\n        return this.rows.length > 0;\n    }",
+      "start": {
+        "offset": 1729,
+        "line": 46,
+        "column": 4
+      },
+      "end": {
+        "offset": 1796,
+        "line": 48,
+        "column": 5
+      }
+    },
+    {
+      "context": "get parentName(): string | undefined {\n        return getFieldValue(this.record?.data, NAME_FIELD) as string | undefined;\n    }",
+      "start": {
+        "offset": 1596,
+        "line": 42,
+        "column": 4
+      },
+      "end": {
+        "offset": 1723,
+        "line": 44,
+        "column": 5
+      }
+    },
+    {
+      "context": "get totalAmount(): string {\n        return formatAmount(this.rows.reduce((sum, row) => sum + (row.amount ?? 0), 0));\n    }",
+      "start": {
+        "offset": 1802,
+        "line": 50,
+        "column": 4
+      },
+      "end": {
+        "offset": 1924,
+        "line": 52,
+        "column": 5
+      }
+    },
+    {
+      "context": "getAccounts",
+      "start": {
+        "offset": 254,
+        "line": 5,
+        "column": 7
+      },
+      "end": {
+        "offset": 265,
+        "line": 5,
+        "column": 18
+      }
+    },
+    {
+      "context": "getFieldValue",
+      "start": {
+        "offset": 134,
+        "line": 3,
+        "column": 20
+      },
+      "end": {
+        "offset": 147,
+        "line": 3,
+        "column": 33
+      }
+    },
+    {
+      "context": "getRecord",
+      "start": {
+        "offset": 123,
+        "line": 3,
+        "column": 9
+      },
+      "end": {
+        "offset": 132,
+        "line": 3,
+        "column": 18
+      }
+    },
+    {
+      "context": "handleDelete",
+      "start": {
+        "offset": 2429,
+        "line": 69,
+        "column": 10
+      },
+      "end": {
+        "offset": 2441,
+        "line": 69,
+        "column": 22
+      }
+    },
+    {
+      "context": "handleSave",
+      "start": {
+        "offset": 2780,
+        "line": 79,
+        "column": 10
+      },
+      "end": {
+        "offset": 2790,
+        "line": 79,
+        "column": 20
+      }
+    },
+    {
+      "context": "handleSelect",
+      "start": {
+        "offset": 1930,
+        "line": 54,
+        "column": 4
+      },
+      "end": {
+        "offset": 1942,
+        "line": 54,
+        "column": 16
+      }
+    },
+    {
+      "context": "handleSelect(event: CustomEvent<SelectDetail>): void {\n        const { recordId, index } = event.detail;\n        this.dispatchEvent(\n            new CustomEvent<SelectDetail>('accountselect', {\n                detail: { recordId, index },\n                bubbles: true,\n                composed: true,\n            }),\n        );\n        this[NavigationMixin.Navigate]({\n            type: 'standard__recordPage',\n            attributes: { recordId, actionName: 'view' },\n        });\n    }",
+      "start": {
+        "offset": 1930,
+        "line": 54,
+        "column": 4
+      },
+      "end": {
+        "offset": 2417,
+        "line": 67,
+        "column": 5
+      }
+    },
+    {
+      "context": "hasRows",
+      "start": {
+        "offset": 1733,
+        "line": 46,
+        "column": 8
+      },
+      "end": {
+        "offset": 1740,
+        "line": 46,
+        "column": 15
+      }
+    },
+    {
+      "context": "import INDUSTRY_FIELD from '@salesforce/schema/Account.Industry';",
+      "start": {
+        "offset": 535,
+        "line": 9,
+        "column": 0
+      },
+      "end": {
+        "offset": 600,
+        "line": 9,
+        "column": 65
+      }
+    },
+    {
+      "context": "import NAME_FIELD from '@salesforce/schema/Account.Name';",
+      "start": {
+        "offset": 477,
+        "line": 8,
+        "column": 0
+      },
+      "end": {
+        "offset": 534,
+        "line": 8,
+        "column": 57
+      }
+    },
+    {
+      "context": "import deleteAccount from '@salesforce/apex/AccountController.deleteAccount';",
+      "start": {
+        "offset": 321,
+        "line": 6,
+        "column": 0
+      },
+      "end": {
+        "offset": 398,
+        "line": 6,
+        "column": 77
+      }
+    },
+    {
+      "context": "import getAccounts from '@salesforce/apex/AccountController.getAccounts';",
+      "start": {
+        "offset": 247,
+        "line": 5,
+        "column": 0
+      },
+      "end": {
+        "offset": 320,
+        "line": 5,
+        "column": 73
+      }
+    },
+    {
+      "context": "import type { Row, SortDirection } from 'c/utils';",
+      "start": {
+        "offset": 601,
+        "line": 10,
+        "column": 0
+      },
+      "end": {
+        "offset": 651,
+        "line": 10,
+        "column": 50
+      }
+    },
+    {
+      "context": "import updateAccount from '@salesforce/apex/AccountController.updateAccount';",
+      "start": {
+        "offset": 399,
+        "line": 7,
+        "column": 0
+      },
+      "end": {
+        "offset": 476,
+        "line": 7,
+        "column": 77
+      }
+    },
+    {
+      "context": "import { LightningElement, api, wire, track } from 'lwc';",
+      "start": {
+        "offset": 0,
+        "line": 1,
+        "column": 0
+      },
+      "end": {
+        "offset": 57,
+        "line": 1,
+        "column": 57
+      }
+    },
+    {
+      "context": "import { NavigationMixin } from 'lightning/navigation';",
+      "start": {
+        "offset": 58,
+        "line": 2,
+        "column": 0
+      },
+      "end": {
+        "offset": 113,
+        "line": 2,
+        "column": 55
+      }
+    },
+    {
+      "context": "import { ShowToastEvent } from 'lightning/platformShowToastEvent';",
+      "start": {
+        "offset": 180,
+        "line": 4,
+        "column": 0
+      },
+      "end": {
+        "offset": 246,
+        "line": 4,
+        "column": 66
+      }
+    },
+    {
+      "context": "import { formatAmount, toRows } from 'c/utils';",
+      "start": {
+        "offset": 652,
+        "line": 11,
+        "column": 0
+      },
+      "end": {
+        "offset": 699,
+        "line": 11,
+        "column": 47
+      }
+    },
+    {
+      "context": "import { getRecord, getFieldValue } from 'lightning/uiRecordApi';",
+      "start": {
+        "offset": 114,
+        "line": 3,
+        "column": 0
+      },
+      "end": {
+        "offset": 179,
+        "line": 3,
+        "column": 65
+      }
+    },
+    {
+      "context": "industry",
+      "start": {
+        "offset": 988,
+        "line": 24,
+        "column": 9
+      },
+      "end": {
+        "offset": 996,
+        "line": 24,
+        "column": 17
+      }
+    },
+    {
+      "context": "industry: '$industry'",
+      "start": {
+        "offset": 1350,
+        "line": 33,
+        "column": 71
+      },
+      "end": {
+        "offset": 1371,
+        "line": 33,
+        "column": 92
+      }
+    },
+    {
+      "context": "interface SelectDetail {\n    recordId: string;\n    index: number;\n}",
+      "start": {
+        "offset": 736,
+        "line": 15,
+        "column": 0
+      },
+      "end": {
+        "offset": 803,
+        "line": 18,
+        "column": 1
+      }
+    },
+    {
+      "context": "limitSize: '$maxRows'",
+      "start": {
+        "offset": 1327,
+        "line": 33,
+        "column": 48
+      },
+      "end": {
+        "offset": 1348,
+        "line": 33,
+        "column": 69
+      }
+    },
+    {
+      "context": "maxRows",
+      "start": {
+        "offset": 956,
+        "line": 23,
+        "column": 9
+      },
+      "end": {
+        "offset": 963,
+        "line": 23,
+        "column": 16
+      }
+    },
+    {
+      "context": "new CustomEvent('accountsaved', { detail: event.detail.id })",
+      "start": {
+        "offset": 2912,
+        "line": 81,
+        "column": 27
+      },
+      "end": {
+        "offset": 2972,
+        "line": 81,
+        "column": 87
+      }
+    },
+    {
+      "context": "new CustomEvent<SelectDetail>('accountselect', {\n                detail: { recordId, index },\n                bubbles: true,\n                composed: true,\n            })",
+      "start": {
+        "offset": 2075,
+        "line": 57,
+        "column": 12
+      },
+      "end": {
+        "offset": 2246,
+        "line": 61,
+        "column": 14
+      }
+    },
+    {
+      "context": "number",
+      "start": {
+        "offset": 966,
+        "line": 23,
+        "column": 19
+      },
+      "end": {
+        "offset": 972,
+        "line": 23,
+        "column": 25
+      }
+    },
+    {
+      "context": "parentId: '$recordId'",
+      "start": {
+        "offset": 1304,
+        "line": 33,
+        "column": 25
+      },
+      "end": {
+        "offset": 1325,
+        "line": 33,
+        "column": 46
+      }
+    },
+    {
+      "context": "parentName",
+      "start": {
+        "offset": 1600,
+        "line": 42,
+        "column": 8
+      },
+      "end": {
+        "offset": 1610,
+        "line": 42,
+        "column": 18
+      }
+    },
+    {
+      "context": "record",
+      "start": {
+        "offset": 1232,
+        "line": 31,
+        "column": 4
+      },
+      "end": {
+        "offset": 1238,
+        "line": 31,
+        "column": 10
+      }
+    },
+    {
+      "context": "recordId",
+      "start": {
+        "offset": 891,
+        "line": 21,
+        "column": 9
+      },
+      "end": {
+        "offset": 899,
+        "line": 21,
+        "column": 17
+      }
+    },
+    {
+      "context": "recordId: '$recordId'",
+      "start": {
+        "offset": 1165,
+        "line": 30,
+        "column": 23
+      },
+      "end": {
+        "offset": 1186,
+        "line": 30,
+        "column": 44
+      }
+    },
+    {
+      "context": "refresh",
+      "start": {
+        "offset": 2995,
+        "line": 85,
+        "column": 4
+      },
+      "end": {
+        "offset": 3002,
+        "line": 85,
+        "column": 11
+      }
+    },
+    {
+      "context": "rows",
+      "start": {
+        "offset": 1026,
+        "line": 25,
+        "column": 19
+      },
+      "end": {
+        "offset": 1030,
+        "line": 25,
+        "column": 23
+      }
+    },
+    {
+      "context": "sortDirection",
+      "start": {
+        "offset": 1082,
+        "line": 27,
+        "column": 4
+      },
+      "end": {
+        "offset": 1095,
+        "line": 27,
+        "column": 17
+      }
+    },
+    {
+      "context": "sortDirection: SortDirection = 'asc';",
+      "start": {
+        "offset": 1082,
+        "line": 27,
+        "column": 4
+      },
+      "end": {
+        "offset": 1119,
+        "line": 27,
+        "column": 41
+      }
+    },
+    {
+      "context": "string | undefined",
+      "start": {
+        "offset": 1614,
+        "line": 42,
+        "column": 22
+      },
+      "end": {
+        "offset": 1632,
+        "line": 42,
+        "column": 40
+      }
+    },
+    {
+      "context": "string",
+      "start": {
+        "offset": 1821,
+        "line": 50,
+        "column": 23
+      },
+      "end": {
+        "offset": 1827,
+        "line": 50,
+        "column": 29
+      }
+    },
+    {
+      "context": "string",
+      "start": {
+        "offset": 902,
+        "line": 21,
+        "column": 20
+      },
+      "end": {
+        "offset": 908,
+        "line": 21,
+        "column": 26
+      }
+    },
+    {
+      "context": "string",
+      "start": {
+        "offset": 926,
+        "line": 22,
+        "column": 16
+      },
+      "end": {
+        "offset": 932,
+        "line": 22,
+        "column": 22
+      }
+    },
+    {
+      "context": "string",
+      "start": {
+        "offset": 999,
+        "line": 24,
+        "column": 20
+      },
+      "end": {
+        "offset": 1005,
+        "line": 24,
+        "column": 26
+      }
+    },
+    {
+      "context": "this.dispatchEvent(\n            new CustomEvent<SelectDetail>('accountselect', {\n                detail: { recordId, index },\n                bubbles: true,\n                composed: true,\n            }),\n        )",
+      "start": {
+        "offset": 2043,
+        "line": 56,
+        "column": 8
+      },
+      "end": {
+        "offset": 2257,
+        "line": 62,
+        "column": 9
+      }
+    },
+    {
+      "context": "this.dispatchEvent(new CustomEvent('accountsaved', { detail: event.detail.id }))",
+      "start": {
+        "offset": 2893,
+        "line": 81,
+        "column": 8
+      },
+      "end": {
+        "offset": 2973,
+        "line": 81,
+        "column": 88
+      }
+    },
+    {
+      "context": "this.dispatchEvent(new ShowToastEvent({ title: '削除しました', variant: 'success' }))",
+      "start": {
+        "offset": 2614,
+        "line": 73,
+        "column": 12
+      },
+      "end": {
+        "offset": 2693,
+        "line": 73,
+        "column": 91
+      }
+    },
+    {
+      "context": "this.refs.table",
+      "start": {
+        "offset": 3021,
+        "line": 86,
+        "column": 8
+      },
+      "end": {
+        "offset": 3036,
+        "line": 86,
+        "column": 23
+      }
+    },
+    {
+      "context": "this[NavigationMixin.Navigate]({\n            type: 'standard__recordPage',\n            attributes: { recordId, actionName: 'view' },\n        })",
+      "start": {
+        "offset": 2267,
+        "line": 63,
+        "column": 8
+      },
+      "end": {
+        "offset": 2410,
+        "line": 66,
+        "column": 10
+      }
+    },
+    {
+      "context": "title",
+      "start": {
+        "offset": 919,
+        "line": 22,
+        "column": 9
+      },
+      "end": {
+        "offset": 924,
+        "line": 22,
+        "column": 14
+      }
+    },
+    {
+      "context": "toRows",
+      "start": {
+        "offset": 675,
+        "line": 11,
+        "column": 23
+      },
+      "end": {
+        "offset": 681,
+        "line": 11,
+        "column": 29
+      }
+    },
+    {
+      "context": "totalAmount",
+      "start": {
+        "offset": 1806,
+        "line": 50,
+        "column": 8
+      },
+      "end": {
+        "offset": 1817,
+        "line": 50,
+        "column": 19
+      }
+    },
+    {
+      "context": "track",
+      "start": {
+        "offset": 38,
+        "line": 1,
+        "column": 38
+      },
+      "end": {
+        "offset": 43,
+        "line": 1,
+        "column": 43
+      }
+    },
+    {
+      "context": "type ViewMode = 'table' | 'tile';",
+      "start": {
+        "offset": 701,
+        "line": 13,
+        "column": 0
+      },
+      "end": {
+        "offset": 734,
+        "line": 13,
+        "column": 33
+      }
+    },
+    {
+      "context": "unknown",
+      "start": {
+        "offset": 1132,
+        "line": 28,
+        "column": 12
+      },
+      "end": {
+        "offset": 1139,
+        "line": 28,
+        "column": 19
+      }
+    },
+    {
+      "context": "updateAccount",
+      "start": {
+        "offset": 406,
+        "line": 7,
+        "column": 7
+      },
+      "end": {
+        "offset": 419,
+        "line": 7,
+        "column": 20
+      }
+    },
+    {
+      "context": "updateAccount({ row: event.detail })",
+      "start": {
+        "offset": 2847,
+        "line": 80,
+        "column": 14
+      },
+      "end": {
+        "offset": 2883,
+        "line": 80,
+        "column": 50
+      }
+    },
+    {
+      "context": "viewMode",
+      "start": {
+        "offset": 1048,
+        "line": 26,
+        "column": 4
+      },
+      "end": {
+        "offset": 1056,
+        "line": 26,
+        "column": 12
+      }
+    },
+    {
+      "context": "viewMode: ViewMode = 'table';",
+      "start": {
+        "offset": 1048,
+        "line": 26,
+        "column": 4
+      },
+      "end": {
+        "offset": 1077,
+        "line": 26,
+        "column": 33
+      }
+    },
+    {
+      "context": "void",
+      "start": {
+        "offset": 1450,
+        "line": 34,
+        "column": 75
+      },
+      "end": {
+        "offset": 1454,
+        "line": 34,
+        "column": 79
+      }
+    },
+    {
+      "context": "void",
+      "start": {
+        "offset": 1978,
+        "line": 54,
+        "column": 52
+      },
+      "end": {
+        "offset": 1982,
+        "line": 54,
+        "column": 56
+      }
+    },
+    {
+      "context": "void",
+      "start": {
+        "offset": 3006,
+        "line": 85,
+        "column": 15
+      },
+      "end": {
+        "offset": 3010,
+        "line": 85,
+        "column": 19
+      }
+    },
+    {
+      "context": "wire",
+      "start": {
+        "offset": 32,
+        "line": 1,
+        "column": 32
+      },
+      "end": {
+        "offset": 36,
+        "line": 1,
+        "column": 36
+      }
+    },
+    {
+      "context": "wiredAccounts",
+      "start": {
+        "offset": 1379,
+        "line": 34,
+        "column": 4
+      },
+      "end": {
+        "offset": 1392,
+        "line": 34,
+        "column": 17
+      }
+    },
+    {
+      "context": "{ data, error }: { data?: unknown[]; error?: unknown }",
+      "start": {
+        "offset": 1393,
+        "line": 34,
+        "column": 18
+      },
+      "end": {
+        "offset": 1447,
+        "line": 34,
+        "column": 72
+      }
+    },
+    {
+      "context": "{ data?: unknown; error?: unknown }",
+      "start": {
+        "offset": 1241,
+        "line": 31,
+        "column": 13
+      },
+      "end": {
+        "offset": 1276,
+        "line": 31,
+        "column": 48
+      }
+    },
+    {
+      "context": "{ data?: unknown[]; error?: unknown }",
+      "start": {
+        "offset": 1410,
+        "line": 34,
+        "column": 35
+      },
+      "end": {
+        "offset": 1447,
+        "line": 34,
+        "column": 72
+      }
+    },
+    {
+      "context": "{\n        await updateAccount({ row: event.detail });\n        this.dispatchEvent(new CustomEvent('accountsaved', { detail: event.detail.id }));\n    }",
+      "start": {
+        "offset": 2831,
+        "line": 79,
+        "column": 61
+      },
+      "end": {
+        "offset": 2980,
+        "line": 82,
+        "column": 5
+      }
+    },
+    {
+      "context": "{\n        const recordId = (event.target as HTMLElement).dataset.id!;\n        try {\n            await deleteAccount({ recordId });\n            this.dispatchEvent(new ShowToastEvent({ title: '削除しました', variant: 'success' }));\n        } catch (error) {\n            this.error = error;\n        }\n    }",
+      "start": {
+        "offset": 2471,
+        "line": 69,
+        "column": 52
+      },
+      "end": {
+        "offset": 2768,
+        "line": 77,
+        "column": 5
+      }
+    },
+    {
+      "context": "{\n        const { recordId, index } = event.detail;\n        this.dispatchEvent(\n            new CustomEvent<SelectDetail>('accountselect', {\n                detail: { recordId, index },\n                bubbles: true,\n                composed: true,\n            }),\n        );\n        this[NavigationMixin.Navigate]({\n            type: 'standard__recordPage',\n            attributes: { recordId, actionName: 'view' },\n        });\n    }",
+      "start": {
+        "offset": 1983,
+        "line": 54,
+        "column": 57
+      },
+      "end": {
+        "offset": 2417,
+        "line": 67,
+        "column": 5
+      }
+    },
+    {
+      "context": "{\n        if (data) {\n            this.rows = toRows(data);\n        } else if (error) {\n            this.error = error;\n        }\n    }",
+      "start": {
+        "offset": 1455,
+        "line": 34,
+        "column": 80
+      },
+      "end": {
+        "offset": 1590,
+        "line": 40,
+        "column": 5
+      }
+    },
+    {
+      "context": "{\n        return formatAmount(this.rows.reduce((sum, row) => sum + (row.amount ?? 0), 0));\n    }",
+      "start": {
+        "offset": 1828,
+        "line": 50,
+        "column": 30
+      },
+      "end": {
+        "offset": 1924,
+        "line": 52,
+        "column": 5
+      }
+    },
+    {
+      "context": "{\n        return getFieldValue(this.record?.data, NAME_FIELD) as string | undefined;\n    }",
+      "start": {
+        "offset": 1633,
+        "line": 42,
+        "column": 41
+      },
+      "end": {
+        "offset": 1723,
+        "line": 44,
+        "column": 5
+      }
+    },
+    {
+      "context": "{\n        return this.rows.length > 0;\n    }",
+      "start": {
+        "offset": 1752,
+        "line": 46,
+        "column": 27
+      },
+      "end": {
+        "offset": 1796,
+        "line": 48,
+        "column": 5
+      }
+    },
+    {
+      "context": "{\n        this.refs.table?.focus();\n    }",
+      "start": {
+        "offset": 3011,
+        "line": 85,
+        "column": 20
+      },
+      "end": {
+        "offset": 3052,
+        "line": 87,
+        "column": 5
+      }
+    }
+  ],
+  "resolvedError": []
+}

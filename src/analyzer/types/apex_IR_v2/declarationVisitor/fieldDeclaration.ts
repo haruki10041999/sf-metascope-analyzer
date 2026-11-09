@@ -1,52 +1,54 @@
 import { FieldDeclarationContext } from '@apexdevtools/apex-parser';
 
-import { DeclarationTypeClass } from '.';
-
-import { TypeRefTypeClass, TypeVisitor, isTypeRefType } from '../typeVisitor';
+import { TypeRefTypeClass } from '../typeVisitor';
+import { VariableDeclaratorsTypeClass } from '../variableVisitor';
 import {
-    VariableDeclaratorsTypeClass,
-    VariableVisitor,
-    isVariableDeclaratorsType,
-} from '../variableVisitor';
-import { ApexErrorTypeClass, ApexCommonTypeClass, visitNode } from '../commonVisitor';
+    ApexCommonTypeClass,
+    createNode,
+    getSourceSpan,
+    isSpicifyApexCommonTypeClass,
+} from '../commonVisitor';
+import { type FieldsOf, TypeField } from '../../commons/ir';
+import { SourceSpan } from '../../commons';
 
-export class FieldDeclarationTypeClass extends DeclarationTypeClass<
+export type FieldDeclarationType = TypeField<'fieldDeclaration'> & {
+    valueType: TypeRefTypeClass;
+    declarators: VariableDeclaratorsTypeClass;
+};
+
+export class FieldDeclarationTypeClass extends ApexCommonTypeClass<
     'fieldDeclaration',
-    VariableDeclaratorsTypeClass
+    FieldDeclarationType
 > {
-    private valueType: TypeRefTypeClass | ApexErrorTypeClass;
-
-    private constructor(
-        value: VariableDeclaratorsTypeClass | ApexErrorTypeClass,
-        valueType: TypeRefTypeClass | ApexErrorTypeClass,
-    ) {
-        super('fieldDeclaration', value);
-        this.valueType = valueType;
+    private constructor(fields: FieldsOf<FieldDeclarationType>, sourceSpan: SourceSpan) {
+        super('fieldDeclaration', fields, sourceSpan);
     }
 
     static create(ctx: FieldDeclarationContext): FieldDeclarationTypeClass {
-        if (!ctx.typeRef() || !ctx.variableDeclarators()) {
-            throw new Error('値が異常です。FieldDeclarationContext: ' + ctx.getText());
-        }
-
         return new FieldDeclarationTypeClass(
-            visitNode(
-                new VariableVisitor(),
-                ctx.variableDeclarators(),
-                isVariableDeclaratorsType,
-                'variableDeclarators',
-            ),
-            visitNode(new TypeVisitor(), ctx.typeRef(), isTypeRefType, 'typeRef'),
+            {
+                valueType: createNode(ctx.typeRef(), (c) => TypeRefTypeClass.create(c), 'typeRef'),
+                declarators: createNode(
+                    ctx.variableDeclarators(),
+                    (c) => VariableDeclaratorsTypeClass.create(c),
+                    'variableDeclarators',
+                ),
+            },
+            getSourceSpan(ctx),
         );
     }
 
-    getValueType(): TypeRefTypeClass | ApexErrorTypeClass {
-        return this.valueType;
+    getValueType(): FieldDeclarationType['valueType'] {
+        return this.getFields().valueType;
+    }
+
+    getDeclarators(): FieldDeclarationType['declarators'] {
+        return this.getFields().declarators;
     }
 }
 
 export const isFieldDeclarationType = (
-    target: ApexCommonTypeClass<string>,
+    target: ApexCommonTypeClass<string, TypeField<string>>,
 ): target is FieldDeclarationTypeClass => {
-    return target instanceof FieldDeclarationTypeClass;
+    return isSpicifyApexCommonTypeClass('fieldDeclaration', target);
 };

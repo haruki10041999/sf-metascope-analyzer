@@ -1,9 +1,9 @@
 import typia from 'typia';
 
-import { convertValue, ConvertType } from '../commons';
-import { ErrorJson, JsonType, makeJsonType } from '../../commons';
+import { JsonType } from '../../commons';
+import type { UpdateListTypeClass } from '../../apex_IR_v2';
 
-import { UpdateListType, UpdateTypeType } from '../converter';
+import { makeNodeJson } from '../commons/node';
 
 export type UpdateListJson = JsonType<'updateClause'> & {
     value: ('TRACKING' | 'VIEWSTAT')[];
@@ -11,16 +11,8 @@ export type UpdateListJson = JsonType<'updateClause'> & {
 
 export const isUpdateListJson = typia.createIs<UpdateListJson>();
 
-export const makeUpdateListJson = (
-    target: ConvertType<UpdateListType>,
-): UpdateListJson | ErrorJson => {
-    return convertValue<'updateList', UpdateListType, UpdateListJson>(
-        target,
-        'updateClause',
-        (target, targetRecords) => {
-            return makeJsonType('updateClause', targetRecords.base, {
-                value: target.value.map((v) => v.value),
-            });
-        },
-    );
+export const makeUpdateListJson = (target: UpdateListTypeClass): UpdateListJson => {
+    return makeNodeJson<UpdateListJson>('updateClause', target, {
+        value: target.getFields().value.map((v) => v.getFields().value),
+    });
 };

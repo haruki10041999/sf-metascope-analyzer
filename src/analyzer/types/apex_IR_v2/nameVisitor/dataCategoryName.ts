@@ -1,32 +1,45 @@
 import { DataCategoryNameContext } from '@apexdevtools/apex-parser';
 
-import { NameListTypeClass } from '.';
+import { SoqlIdTypeClass } from '../idVisitor';
+import {
+    ApexCommonTypeClass,
+    createNodeList,
+    getSourceSpan,
+    isSpicifyApexCommonTypeClass,
+} from '../commonVisitor';
+import { type FieldsOf, TypeField } from '../../commons/ir';
+import { SourceSpan } from '../../commons';
 
-import { SoqlIdTypeClass, isSoqlIdType, IdVisitor } from '../idVisitor';
+export type DataCategoryNameType = TypeField<'dataCategoryName'> & {
+    value: SoqlIdTypeClass[];
+};
 
-import { ApexErrorTypeClass, ApexCommonTypeClass, visitNodeList } from '../commonVisitor';
-
-export class DataCategoryNameTypeClass extends NameListTypeClass<
+export class DataCategoryNameTypeClass extends ApexCommonTypeClass<
     'dataCategoryName',
-    SoqlIdTypeClass
+    DataCategoryNameType
 > {
-    private constructor(value: (SoqlIdTypeClass | ApexErrorTypeClass)[]) {
-        super('dataCategoryName', value);
+    private constructor(fields: FieldsOf<DataCategoryNameType>, sourceSpan: SourceSpan) {
+        super('dataCategoryName', fields, sourceSpan);
     }
 
     static create(ctx: DataCategoryNameContext): DataCategoryNameTypeClass {
-        if (!ctx.soqlId_list() || ctx.soqlId_list().length === 0) {
-            throw new Error('値が異常です。DataCategoryNameContext: ' + ctx.getText());
-        }
-
         return new DataCategoryNameTypeClass(
-            visitNodeList(new IdVisitor(), ctx.soqlId_list(), isSoqlIdType, 'soqlId'),
+            {
+                value: createNodeList(
+                    ctx.soqlId_list(),
+                    (c) => SoqlIdTypeClass.create(c),
+                    'soqlId',
+                ),
+            },
+            getSourceSpan(ctx),
         );
+    }
+
+    getValue(): DataCategoryNameType['value'] {
+        return this.getFields().value;
     }
 }
 
 export const isDataCategoryNameType = (
-    target: ApexCommonTypeClass<string>,
-): target is DataCategoryNameTypeClass => {
-    return target instanceof DataCategoryNameTypeClass;
-};
+    target: ApexCommonTypeClass<string, TypeField<string>>,
+): target is DataCategoryNameTypeClass => isSpicifyApexCommonTypeClass('dataCategoryName', target);

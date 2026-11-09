@@ -1,3 +1,4 @@
+import { type TypeField } from '../../commons/ir';
 import { LwcCommonTypeClass, LwcCommonVisitor, lazyPairs } from '../commonVisitor';
 import {
     ExpressionStatementTypeClass,
@@ -49,7 +50,7 @@ export type ExpressionWrapperTypeClass =
     ExpressionStatementTypeClass | ParenthesizedExpressionTypeClass | TypeCastExpressionTypeClass;
 
 export const isExpressionWrapperType = (
-    target: LwcCommonTypeClass<string>,
+    target: LwcCommonTypeClass<string, TypeField<string>>,
 ): target is ExpressionWrapperTypeClass => {
     return (
         target instanceof ExpressionStatementTypeClass ||

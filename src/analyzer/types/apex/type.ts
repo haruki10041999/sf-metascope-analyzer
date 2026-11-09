@@ -1,9 +1,9 @@
 import typia from 'typia';
 
-import { ConvertExcludeError, ConvertType, convertValue } from './commons';
-import { ErrorJson, JsonType, makeJsonType } from '../commons';
+import { JsonType } from '../commons';
+import type { TypeNameTypeClass, TypeRefTypeClass } from '../apex_IR_v2';
 
-import { TypeRefType } from './converter';
+import { makeNodeJson } from './commons/node';
 
 const isPrimitiveType = (type: string): boolean => {
     return [
@@ -98,55 +98,59 @@ export type TypeJson =
     PrimitiveTypeJson | CustomTypeJson | ArrayTypeJson | ListTypeJson | SetTypeJson | MapTypeJson;
 export const isTypeJson = typia.createIs<TypeJson>();
 
-// 境界ノードの検査を通った後に呼ぶため、エラーノードは含まれない
-const makeTypeContentJson = (target: ConvertExcludeError<TypeRefType>): TypeContentJson => {
-    const collection = target.value;
-    const dimension = target.dimension.value;
+// 型の名前 (`a.b.C` の各部分)。List・Set・Map は小文字の 'list'・'set'・'map'
+const nameOf = (item: TypeNameTypeClass): string => {
+    const fields = item.getFields();
+    return fields.kind === 'collection' ? fields.collection : fields.name.getFields().value;
+};
 
+// 型引数 (`<A, B>` の各型)。型引数がなければ null
+const genericOf = (item: TypeNameTypeClass | undefined): readonly TypeRefTypeClass[] | null =>
+    item?.getFields().generic?.getFields().elements.getFields().value ?? null;
+
+// dimension は配列の次元 (`[]` の数)。配列でなければ null
+const makeTypeContentJsonOf = (
+    elements: readonly TypeNameTypeClass[],
+    dimension: number | null,
+): TypeContentJson => {
     if (dimension) {
         return {
             type: 'array',
-            elementType: makeTypeContentJson({
-                ...target,
-                dimension: { ...target.dimension, value: null },
-            }),
+            elementType: makeTypeContentJsonOf(elements, null),
             dimension: dimension,
         };
     }
 
-    const nameOf = (item: (typeof collection)[number]) =>
-        typeof item.value === 'string' ? item.value : item.value.value;
-
-    if (collection.length !== 1) {
-        const generic = collection.at(-1)?.generic?.value?.value;
+    if (elements.length !== 1) {
+        const generic = genericOf(elements.at(-1));
         return {
             type: 'custom',
-            customType: collection.map(nameOf),
+            customType: elements.map(nameOf),
             ...(generic && generic.length > 0
                 ? { generic: generic.map((item) => makeTypeContentJson(item)) }
                 : {}),
         };
     }
 
-    const collectionItem = collection.at(0)!;
-    const collectionName = nameOf(collectionItem);
-    const generic = collectionItem.generic?.value?.value ?? null;
+    const element = elements.at(0)!;
+    const elementName = nameOf(element);
+    const generic = genericOf(element);
 
-    if (isPrimitiveType(collectionName) && !collectionItem.generic) {
+    if (isPrimitiveType(elementName) && !element.getFields().generic) {
         return {
             type: 'primitive',
-            primitiveType: collectionName,
+            primitiveType: elementName,
         };
     }
 
-    if ((isListType(collectionName) || isSetType(collectionName)) && generic?.length === 1) {
+    if ((isListType(elementName) || isSetType(elementName)) && generic?.length === 1) {
         return {
-            type: isListType(collectionName) ? 'list' : 'set',
+            type: isListType(elementName) ? 'list' : 'set',
             elementType: makeTypeContentJson(generic[0]!),
         };
     }
 
-    if (isMapType(collectionName) && generic?.length === 2) {
+    if (isMapType(elementName) && generic?.length === 2) {
         return {
             type: 'map',
             keyType: makeTypeContentJson(generic[0]!),
@@ -156,19 +160,17 @@ const makeTypeContentJson = (target: ConvertExcludeError<TypeRefType>): TypeCont
 
     return {
         type: 'custom',
-        customType: collectionName,
+        customType: elementName,
         ...(generic && generic.length > 0
             ? { generic: generic.map((item) => makeTypeContentJson(item)) }
             : {}),
     };
 };
 
-export const makeTypeJson = (target: ConvertType<TypeRefType>): TypeJson | ErrorJson => {
-    return convertValue<'typeRef', TypeRefType, TypeJson>(
-        target,
-        'type',
-        (target, targetRecords) => {
-            return makeJsonType('type', targetRecords.base, makeTypeContentJson(target));
-        },
-    );
+const makeTypeContentJson = (target: TypeRefTypeClass): TypeContentJson => {
+    const { element, dimention } = target.getFields();
+    return makeTypeContentJsonOf(element, dimention.getFields().dimention);
 };
+
+export const makeTypeJson = (target: TypeRefTypeClass): TypeJson =>
+    makeNodeJson<TypeJson>('type', target, makeTypeContentJson(target));

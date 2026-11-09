@@ -1,3 +1,4 @@
+import { type TypeField } from '../../commons/ir';
 import { LwcCommonTypeClass, LwcCommonVisitor, lazyPairs } from '../commonVisitor';
 import { ObjectMethodTypeClass, objectMethodTypePair } from '../commons/objectMethod';
 import { ClassMethodTypeClass, classMethodTypePair } from '../commons/classMethod';
@@ -37,7 +38,9 @@ export class MethodVisitor extends LwcCommonVisitor<
 export type MethodTypeClass =
     ObjectMethodTypeClass | ClassMethodTypeClass | ClassPrivateMethodTypeClass;
 
-export const isMethodType = (target: LwcCommonTypeClass<string>): target is MethodTypeClass => {
+export const isMethodType = (
+    target: LwcCommonTypeClass<string, TypeField<string>>,
+): target is MethodTypeClass => {
     return (
         target instanceof ObjectMethodTypeClass ||
         target instanceof ClassMethodTypeClass ||

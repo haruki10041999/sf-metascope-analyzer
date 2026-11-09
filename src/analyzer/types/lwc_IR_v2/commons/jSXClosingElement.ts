@@ -1,11 +1,13 @@
+import { type FieldsOf, type TypeField } from '../../commons/ir';
+import { type SourceSpan } from '../../commons/source';
 import { isJSXClosingElement, type JSXClosingElement } from '@babel/types';
 import {
     EvaluatePair,
     LwcCommonTypeClass,
-    LwcErrorTypeClass,
     lazyPairs,
     makeEvaluatePair,
     visitNode,
+    getSourceSpan,
 } from '../commonVisitor';
 import { jSXIdentifierTypePair, type JSXIdentifierTypeClass } from '../jsxVisitor/jSXIdentifier';
 import {
@@ -21,40 +23,34 @@ const jSXClosingElementNamePairs = lazyPairs(
     () => [jSXIdentifierTypePair, jSXMemberExpressionTypePair, jSXNamespacedNameTypePair] as const,
 );
 
-export type JSXClosingElementFields = {
-    name:
-        | JSXIdentifierTypeClass
-        | JSXMemberExpressionTypeClass
-        | JSXNamespacedNameTypeClass
-        | LwcErrorTypeClass;
+export type JSXClosingElementFields = TypeField<'jSXClosingElement'> & {
+    name: JSXIdentifierTypeClass | JSXMemberExpressionTypeClass | JSXNamespacedNameTypeClass;
 };
 
-export class JSXClosingElementTypeClass extends LwcCommonTypeClass<'jSXClosingElement'> {
-    private readonly value: JSXClosingElementFields;
-
-    private constructor(value: JSXClosingElementFields) {
-        super('jSXClosingElement');
-        this.value = value;
+export class JSXClosingElementTypeClass extends LwcCommonTypeClass<
+    'jSXClosingElement',
+    JSXClosingElementFields
+> {
+    private constructor(value: FieldsOf<JSXClosingElementFields>, sourceSpan: SourceSpan) {
+        super('jSXClosingElement', value, sourceSpan);
     }
 
     static create(target: JSXClosingElement, originalSource: string): JSXClosingElementTypeClass {
-        return new JSXClosingElementTypeClass({
-            name: visitNode(
-                target.name,
-                originalSource,
-                jSXClosingElementNamePairs(),
-                'JSXClosingElement.name',
-            ),
-        });
-    }
-
-    /** すべてのフィールド (Babel の value フィールドの getter getValue() と区別する。getChildNodes もこれから作る) */
-    override getFields(): JSXClosingElementFields {
-        return this.value;
+        return new JSXClosingElementTypeClass(
+            {
+                name: visitNode(
+                    target.name,
+                    originalSource,
+                    jSXClosingElementNamePairs(),
+                    'JSXClosingElement.name',
+                ),
+            },
+            getSourceSpan(target, originalSource),
+        );
     }
 
     getName(): JSXClosingElementFields['name'] {
-        return this.value.name;
+        return this.getFields().name;
     }
 }
 
@@ -66,5 +62,5 @@ export const jSXClosingElementTypePair: EvaluatePair<
 );
 
 export const isJSXClosingElementType = (
-    target: LwcCommonTypeClass<string>,
+    target: LwcCommonTypeClass<string, TypeField<string>>,
 ): target is JSXClosingElementTypeClass => target instanceof JSXClosingElementTypeClass;

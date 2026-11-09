@@ -1,61 +1,55 @@
+import { type FieldsOf, type TypeField } from '../../commons/ir';
+import { type SourceSpan } from '../../commons/source';
 import { isImportAttribute, type ImportAttribute } from '@babel/types';
 import {
     EvaluatePair,
     LwcCommonTypeClass,
-    LwcErrorTypeClass,
     lazyPairs,
     makeEvaluatePair,
     visitNode,
+    getSourceSpan,
 } from '../commonVisitor';
 import { identifierTypePair, type IdentifierTypeClass } from '../commons/identifier';
-import { stringLiteralTypePair, type StringLiteralTypeClass } from '../commons/stringLiteral';
+import { stringLiteralTypePair, StringLiteralTypeClass } from '../commons/stringLiteral';
 
 const importAttributeKeyPairs = lazyPairs(
     () => [identifierTypePair, stringLiteralTypePair] as const,
 );
-const importAttributeValuePairs = lazyPairs(() => [stringLiteralTypePair] as const);
 
-export type ImportAttributeFields = {
-    key: IdentifierTypeClass | StringLiteralTypeClass | LwcErrorTypeClass;
-    value: StringLiteralTypeClass | LwcErrorTypeClass;
+export type ImportAttributeFields = TypeField<'importAttribute'> & {
+    key: IdentifierTypeClass | StringLiteralTypeClass;
+    value: StringLiteralTypeClass;
 };
 
-export class ImportAttributeTypeClass extends LwcCommonTypeClass<'importAttribute'> {
-    private readonly value: ImportAttributeFields;
-
-    private constructor(value: ImportAttributeFields) {
-        super('importAttribute');
-        this.value = value;
+export class ImportAttributeTypeClass extends LwcCommonTypeClass<
+    'importAttribute',
+    ImportAttributeFields
+> {
+    private constructor(value: FieldsOf<ImportAttributeFields>, sourceSpan: SourceSpan) {
+        super('importAttribute', value, sourceSpan);
     }
 
     static create(target: ImportAttribute, originalSource: string): ImportAttributeTypeClass {
-        return new ImportAttributeTypeClass({
-            key: visitNode(
-                target.key,
-                originalSource,
-                importAttributeKeyPairs(),
-                'ImportAttribute.key',
-            ),
-            value: visitNode(
-                target.value,
-                originalSource,
-                importAttributeValuePairs(),
-                'ImportAttribute.value',
-            ),
-        });
-    }
-
-    /** すべてのフィールド (Babel の value フィールドの getter getValue() と区別する。getChildNodes もこれから作る) */
-    override getFields(): ImportAttributeFields {
-        return this.value;
+        return new ImportAttributeTypeClass(
+            {
+                key: visitNode(
+                    target.key,
+                    originalSource,
+                    importAttributeKeyPairs(),
+                    'ImportAttribute.key',
+                ),
+                value: StringLiteralTypeClass.create(target.value, originalSource),
+            },
+            getSourceSpan(target, originalSource),
+        );
     }
 
     getKey(): ImportAttributeFields['key'] {
-        return this.value.key;
+        return this.getFields().key;
     }
 
     getValue(): ImportAttributeFields['value'] {
-        return this.value.value;
+        return this.getFields().value;
     }
 }
 
@@ -65,5 +59,5 @@ export const importAttributeTypePair: EvaluatePair<ImportAttribute, ImportAttrib
     );
 
 export const isImportAttributeType = (
-    target: LwcCommonTypeClass<string>,
+    target: LwcCommonTypeClass<string, TypeField<string>>,
 ): target is ImportAttributeTypeClass => target instanceof ImportAttributeTypeClass;

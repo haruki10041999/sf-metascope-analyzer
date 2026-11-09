@@ -1,23 +1,20 @@
 import typia from 'typia';
 
-import { ConvertExcludeError } from '../commons';
-import { ConvertKeys, ErrorJson, makeErrorJson } from '../../commons';
-
-import {
-    FieldNameType,
-    DateFieldNameType,
-    SoqlFieldsParameterType,
-    CoordinateValueType,
-    LocationValueType,
+import { ErrorJson } from '../../commons';
+import type {
+    CoordinateValueTypeClass,
+    DateFieldNameTypeClass,
+    FieldNameTypeClass,
+    LocationValueTypeClass,
+    SoqlFieldsParameterTypeClass,
     SoqlFunctionType,
-} from '../converter';
+    SoqlFunctionTypeClass,
+} from '../../apex_IR_v2';
 
 import { BaseExpressionJson, makeExpressionJsonConvert } from '../expression';
 
-const ERROR_KIND = 'soqlFunction';
-
-const makeFieldNameJson = (target: ConvertExcludeError<FieldNameType>): string[] => {
-    return target.value.map((v) => v.value.value);
+const makeFieldNameJson = (target: FieldNameTypeClass): string[] => {
+    return target.getFields().value.map((v) => v.getFields().value.getFields().value);
 };
 
 export type DateFieldNameJson = {
@@ -25,22 +22,19 @@ export type DateFieldNameJson = {
     isConvertTimeZone: boolean;
 };
 export const isDateFieldNameJson = typia.createIs<DateFieldNameJson>();
-const makeDateFieldNameJson = (
-    target: ConvertExcludeError<DateFieldNameType>,
-): DateFieldNameJson => {
-    const name = makeFieldNameJson(target.value);
-    const isConvertTimeZone = target.isConvertTimeZone;
+const makeDateFieldNameJson = (target: DateFieldNameTypeClass): DateFieldNameJson => {
+    const { value, isConvertTimeZone } = target.getFields();
 
     return {
-        name: name,
+        name: makeFieldNameJson(value),
         isConvertTimeZone: isConvertTimeZone,
     };
 };
 
 const makeSoqlFieldParameterJson = (
-    target: ConvertExcludeError<SoqlFieldsParameterType>,
+    target: SoqlFieldsParameterTypeClass,
 ): 'ALL' | 'CUSTOM' | 'STANDARD' => {
-    return target.value;
+    return target.getFields().value;
 };
 
 export type CoordinateElementJson =
@@ -56,51 +50,37 @@ export type CoordinateElementJson =
       };
 
 const makeCoordinateElementParamJson = (
-    target: ConvertExcludeError<CoordinateValueType>,
+    target: CoordinateValueTypeClass,
 ): CoordinateElementJson => {
-    if (target.value.type === 'boundExpression') {
-        const expressionValue = makeExpressionJsonConvert(target.value.value);
-        return {
-            type: 'bind',
-            value: expressionValue,
-        };
-    } else {
-        const literalValue = target.value.value;
-        const valueType = target.value.valueType;
-        const operator = target.value.operator;
+    const value = target.getFields().value;
+    switch (value.kind) {
+        case 'boundExpression':
+            // バインド式 (:var) は中の式を出す
+            return {
+                type: 'bind',
+                value: makeExpressionJsonConvert(value.getFields().value),
+            };
+        case 'signedNumber': {
+            const { value: literalValue, valueType, operator } = value.getFields();
 
-        const coordinateElementParamJson: CoordinateElementJson = {
-            type: 'literal',
-            value: literalValue,
-            valueType: valueType,
-        };
+            const coordinateElementParamJson: CoordinateElementJson = {
+                type: 'literal',
+                value: literalValue,
+                valueType: valueType,
+            };
 
-        if (operator) {
-            coordinateElementParamJson.operator = operator;
+            if (operator) {
+                coordinateElementParamJson.operator = operator;
+            }
+
+            return coordinateElementParamJson;
         }
-
-        return coordinateElementParamJson;
     }
 };
 
 export type CoordinateValueJson = {
     latitude: CoordinateElementJson;
     longitude: CoordinateElementJson;
-};
-
-const makeCoordinateParamValueJson = (
-    target: ConvertExcludeError<CoordinateValueType>[],
-    owner: ConvertKeys,
-): CoordinateValueJson | ErrorJson => {
-    const [latitude, longitude] = target;
-    if (target.length !== 2 || !latitude || !longitude) {
-        return makeErrorJson(owner, ERROR_KIND);
-    }
-
-    return {
-        latitude: makeCoordinateElementParamJson(latitude),
-        longitude: makeCoordinateElementParamJson(longitude),
-    };
 };
 
 type LocationValueElementJson =
@@ -117,26 +97,29 @@ type LocationValueElementJson =
           field: CoordinateValueJson | ErrorJson;
       };
 
-const makeLocationValueElementJson = (
-    target: ConvertExcludeError<LocationValueType>,
-): LocationValueElementJson => {
-    if (Array.isArray(target.value)) {
-        return {
-            type: 'coordinate',
-            field: makeCoordinateParamValueJson(target.value, target),
-        };
-    } else if (target.value.type === 'fieldName') {
-        const fieldValue = makeFieldNameJson(target.value);
-        return {
-            type: 'field',
-            field: fieldValue,
-        };
-    } else {
-        const expressionValue = makeExpressionJsonConvert(target.value.value);
-        return {
-            type: 'bind',
-            field: expressionValue,
-        };
+const makeLocationValueElementJson = (target: LocationValueTypeClass): LocationValueElementJson => {
+    const fields = target.getFields();
+    switch (fields.kind) {
+        case 'geolocation':
+            // GEOLOCATION(緯度, 経度)。v2 では緯度と経度が必ずそろっている
+            return {
+                type: 'coordinate',
+                field: {
+                    latitude: makeCoordinateElementParamJson(fields.latitude),
+                    longitude: makeCoordinateElementParamJson(fields.longitude),
+                },
+            };
+        case 'field':
+            return {
+                type: 'field',
+                field: makeFieldNameJson(fields.value),
+            };
+        case 'bind':
+            // バインド式 (:var) は中の式を出す
+            return {
+                type: 'bind',
+                field: makeExpressionJsonConvert(fields.value.getFields().value),
+            };
     }
 };
 
@@ -147,27 +130,14 @@ export type DistanceValueJson = {
 };
 export const isDistanceValueJson = typia.createIs<DistanceValueJson>();
 
-// DISTANCE(場所, 場所, 単位) の 3 引数。形が想定と違う場合は関数全体を ErrorJson にする
-export const makeDistanceValueJson = (
-    target: (ConvertExcludeError<LocationValueType> | string)[],
-    owner: ConvertKeys,
-): DistanceValueJson | ErrorJson => {
-    const [fieldParam, targetParam, unit] = target;
-    if (
-        target.length !== 3 ||
-        fieldParam === undefined ||
-        typeof fieldParam === 'string' ||
-        targetParam === undefined ||
-        typeof targetParam === 'string' ||
-        typeof unit !== 'string'
-    ) {
-        return makeErrorJson(owner, ERROR_KIND);
-    }
+type DistanceParam = Extract<SoqlFunctionType, { kind: 'DISTANCE' }>['param'];
 
+// DISTANCE(起点, 終点, 単位) の 3 引数。単位は文字列リテラル (引用符つき) のまま
+export const makeDistanceValueJson = (target: DistanceParam): DistanceValueJson => {
     return {
-        field: makeLocationValueElementJson(fieldParam),
-        target: makeLocationValueElementJson(targetParam),
-        unit: unit,
+        field: makeLocationValueElementJson(target.from),
+        target: makeLocationValueElementJson(target.to),
+        unit: target.unit,
     };
 };
 
@@ -221,84 +191,79 @@ export type SoqlFunctionJson = { type: 'soqlFunction' } & (
 
 export const isSoqlFunctionJson = typia.createIs<SoqlFunctionJson>();
 
-export const makeSoqlFunctionJson = (
-    target: ConvertExcludeError<SoqlFunctionType>,
-): SoqlFunctionJson => {
-    if (
-        target.value === 'AVG' ||
-        target.value === 'COUNT_DISTINCT' ||
-        target.value === 'MIN' ||
-        target.value === 'MAX' ||
-        target.value === 'SUM' ||
-        target.value === 'TOLABEL' ||
-        target.value === 'GROUPING' ||
-        target.value === 'CONVERT_CURRENCY'
-    ) {
-        return {
-            type: 'soqlFunction',
-            func: target.value,
-            arg: makeFieldNameJson(target.param),
-        };
-    } else if (
-        target.value === 'CALENDAR_MONTH' ||
-        target.value === 'CALENDAR_QUARTER' ||
-        target.value === 'CALENDAR_YEAR' ||
-        target.value === 'DAY_IN_MONTH' ||
-        target.value === 'DAY_IN_WEEK' ||
-        target.value === 'DAY_IN_YEAR' ||
-        target.value === 'DAY_ONLY' ||
-        target.value === 'FISCAL_MONTH' ||
-        target.value === 'FISCAL_QUARTER' ||
-        target.value === 'FISCAL_YEAR' ||
-        target.value === 'HOUR_IN_DAY' ||
-        target.value === 'WEEK_IN_MONTH' ||
-        target.value === 'WEEK_IN_YEAR'
-    ) {
-        return {
-            type: 'soqlFunction',
-            func: target.value,
-            arg: makeDateFieldNameJson(target.param),
-        };
-    } else if (target.value === 'COUNT') {
-        const soqlFunctionJson: SoqlFunctionJson = {
-            type: 'soqlFunction',
-            func: target.value,
-        };
-        if (target.param) {
-            soqlFunctionJson.arg = makeFieldNameJson(target.param);
-        }
-
-        return soqlFunctionJson;
-    } else if (target.value === 'FORMAT') {
-        if (target.param.type === 'fieldName') {
+export const makeSoqlFunctionJson = (target: SoqlFunctionTypeClass): SoqlFunctionJson => {
+    const fields = target.getFields();
+    switch (fields.kind) {
+        case 'AVG':
+        case 'COUNT_DISTINCT':
+        case 'MIN':
+        case 'MAX':
+        case 'SUM':
+        case 'TOLABEL':
+        case 'GROUPING':
+        case 'CONVERT_CURRENCY':
             return {
                 type: 'soqlFunction',
-                func: target.value,
-                arg: makeFieldNameJson(target.param),
+                func: fields.kind,
+                arg: makeFieldNameJson(fields.param),
             };
-        } else {
-            const paramSoqlFunction = makeSoqlFunctionJson(target.param);
-            const { type, ...content } = paramSoqlFunction;
+        case 'CALENDAR_MONTH':
+        case 'CALENDAR_QUARTER':
+        case 'CALENDAR_YEAR':
+        case 'DAY_IN_MONTH':
+        case 'DAY_IN_WEEK':
+        case 'DAY_IN_YEAR':
+        case 'DAY_ONLY':
+        case 'FISCAL_MONTH':
+        case 'FISCAL_QUARTER':
+        case 'FISCAL_YEAR':
+        case 'HOUR_IN_DAY':
+        case 'WEEK_IN_MONTH':
+        case 'WEEK_IN_YEAR':
             return {
                 type: 'soqlFunction',
-                func: target.value,
+                func: fields.kind,
+                arg: makeDateFieldNameJson(fields.param),
+            };
+        case 'COUNT': {
+            const soqlFunctionJson: SoqlFunctionJson = {
+                type: 'soqlFunction',
+                func: fields.kind,
+            };
+            if (fields.param) {
+                soqlFunctionJson.arg = makeFieldNameJson(fields.param);
+            }
+
+            return soqlFunctionJson;
+        }
+        case 'FORMAT': {
+            const param = fields.param;
+            if (param.kind === 'fieldName') {
+                return {
+                    type: 'soqlFunction',
+                    func: fields.kind,
+                    arg: makeFieldNameJson(param),
+                };
+            }
+            // FORMAT(関数) は、中の関数の type を除いたものを arg にする
+            const { type: _type, ...content } = makeSoqlFunctionJson(param);
+            return {
+                type: 'soqlFunction',
+                func: fields.kind,
                 arg: content,
             };
         }
-    } else if (target.value === 'FIELDS') {
-        return {
-            type: 'soqlFunction',
-            func: target.value,
-            arg: makeSoqlFieldParameterJson(target.param),
-        };
-    } else {
-        return {
-            type: 'soqlFunction',
-            func: target.value,
-            arg: makeDistanceValueJson(
-                target.param as (ConvertExcludeError<LocationValueType> | string)[],
-                target,
-            ),
-        };
+        case 'FIELDS':
+            return {
+                type: 'soqlFunction',
+                func: fields.kind,
+                arg: makeSoqlFieldParameterJson(fields.param),
+            };
+        case 'DISTANCE':
+            return {
+                type: 'soqlFunction',
+                func: fields.kind,
+                arg: makeDistanceValueJson(fields.param),
+            };
     }
 };

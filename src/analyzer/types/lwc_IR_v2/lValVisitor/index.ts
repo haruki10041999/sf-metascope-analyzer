@@ -1,3 +1,4 @@
+import { type TypeField } from '../../commons/ir';
 import { LwcCommonTypeClass, LwcCommonVisitor, lazyPairs } from '../commonVisitor';
 import { IdentifierTypeClass, identifierTypePair } from '../commons/identifier';
 import { MemberExpressionTypeClass, memberExpressionTypePair } from '../commons/memberExpression';
@@ -83,7 +84,9 @@ export type LValTypeClass =
     | TSTypeAssertionTypeClass
     | TSNonNullExpressionTypeClass;
 
-export const isLValType = (target: LwcCommonTypeClass<string>): target is LValTypeClass => {
+export const isLValType = (
+    target: LwcCommonTypeClass<string, TypeField<string>>,
+): target is LValTypeClass => {
     return (
         target instanceof IdentifierTypeClass ||
         target instanceof MemberExpressionTypeClass ||

@@ -1,43 +1,43 @@
+import { type FieldsOf, type TypeField } from '../../commons/ir';
+import { type SourceSpan } from '../../commons/source';
 import { isTSModuleBlock, type TSModuleBlock } from '@babel/types';
 import {
     EvaluatePair,
     LwcCommonTypeClass,
-    LwcErrorTypeClass,
     makeEvaluatePair,
     visitNodeList,
+    getSourceSpan,
 } from '../commonVisitor';
 import { statementVisitorEvaluatePairs, type StatementTypeClass } from '../statementVisitor';
 
-export type TSModuleBlockFields = {
-    body: (StatementTypeClass | LwcErrorTypeClass)[];
+export type TSModuleBlockFields = TypeField<'tSModuleBlock'> & {
+    body: StatementTypeClass[];
 };
 
-export class TSModuleBlockTypeClass extends LwcCommonTypeClass<'tSModuleBlock'> {
-    private readonly value: TSModuleBlockFields;
-
-    private constructor(value: TSModuleBlockFields) {
-        super('tSModuleBlock');
-        this.value = value;
+export class TSModuleBlockTypeClass extends LwcCommonTypeClass<
+    'tSModuleBlock',
+    TSModuleBlockFields
+> {
+    private constructor(value: FieldsOf<TSModuleBlockFields>, sourceSpan: SourceSpan) {
+        super('tSModuleBlock', value, sourceSpan);
     }
 
     static create(target: TSModuleBlock, originalSource: string): TSModuleBlockTypeClass {
-        return new TSModuleBlockTypeClass({
-            body: visitNodeList(
-                target.body,
-                originalSource,
-                statementVisitorEvaluatePairs(),
-                'StatementVisitor',
-            ),
-        });
-    }
-
-    /** すべてのフィールド (Babel の value フィールドの getter getValue() と区別する。getChildNodes もこれから作る) */
-    override getFields(): TSModuleBlockFields {
-        return this.value;
+        return new TSModuleBlockTypeClass(
+            {
+                body: visitNodeList(
+                    target.body,
+                    originalSource,
+                    statementVisitorEvaluatePairs(),
+                    'StatementVisitor',
+                ),
+            },
+            getSourceSpan(target, originalSource),
+        );
     }
 
     getBody(): TSModuleBlockFields['body'] {
-        return this.value.body;
+        return this.getFields().body;
     }
 }
 
@@ -47,5 +47,5 @@ export const tSModuleBlockTypePair: EvaluatePair<TSModuleBlock, TSModuleBlockTyp
     );
 
 export const isTSModuleBlockType = (
-    target: LwcCommonTypeClass<string>,
+    target: LwcCommonTypeClass<string, TypeField<string>>,
 ): target is TSModuleBlockTypeClass => target instanceof TSModuleBlockTypeClass;

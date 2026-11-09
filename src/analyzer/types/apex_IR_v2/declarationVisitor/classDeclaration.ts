@@ -1,68 +1,68 @@
 import { ClassDeclarationContext } from '@apexdevtools/apex-parser';
 
-import { DeclarationTypeClass } from '.';
-
-import { NormalIdTypeClass, IdVisitor, isNormalIdType } from '../idVisitor';
-import { ClassBodyTypeClass, BodyVisitor, isClassBodyType } from '../bodyVisitor';
-import { TypeListTypeClass, ListVisitor, isTypeListType } from '../listVisitor';
-import { TypeRefTypeClass, TypeVisitor, isTypeRefType } from '../typeVisitor';
+import { IdTypeClass } from '../idVisitor';
+import { ClassBodyTypeClass } from '../bodyVisitor';
+import { TypeListTypeClass } from '../listVisitor';
+import { TypeRefTypeClass } from '../typeVisitor';
 import {
-    ApexErrorTypeClass,
     ApexCommonTypeClass,
-    visitNode,
-    visitOptionalNode,
+    createNode,
+    getSourceSpan,
+    isSpicifyApexCommonTypeClass,
 } from '../commonVisitor';
+import { type FieldsOf, TypeField } from '../../commons/ir';
+import { SourceSpan } from '../../commons';
 
-export class ClassDeclarationTypeClass extends DeclarationTypeClass<
+export type ClassDeclarationType = TypeField<'classDeclaration'> & {
+    name: IdTypeClass;
+    extend: TypeRefTypeClass | null;
+    implement: TypeListTypeClass | null;
+    body: ClassBodyTypeClass;
+};
+
+export class ClassDeclarationTypeClass extends ApexCommonTypeClass<
     'classDeclaration',
-    NormalIdTypeClass
+    ClassDeclarationType
 > {
-    private body: ClassBodyTypeClass | ApexErrorTypeClass;
-    private extend: TypeRefTypeClass | ApexErrorTypeClass | null;
-    private implement: TypeListTypeClass | ApexErrorTypeClass | null;
-
-    private constructor(
-        value: NormalIdTypeClass | ApexErrorTypeClass,
-        body: ClassBodyTypeClass | ApexErrorTypeClass,
-        extend: TypeRefTypeClass | ApexErrorTypeClass | null,
-        implement: TypeListTypeClass | ApexErrorTypeClass | null,
-    ) {
-        super('classDeclaration', value);
-        this.body = body;
-        this.extend = extend;
-        this.implement = implement;
+    private constructor(fields: FieldsOf<ClassDeclarationType>, sourceSpan: SourceSpan) {
+        super('classDeclaration', fields, sourceSpan);
     }
 
     static create(ctx: ClassDeclarationContext): ClassDeclarationTypeClass {
-        if (!ctx.id() || !ctx.classBody()) {
-            throw new Error('値が異常です。ClassDeclarationContext: ' + ctx.getText());
-        }
-
         return new ClassDeclarationTypeClass(
-            visitNode(new IdVisitor(), ctx.id(), isNormalIdType, 'id'),
-            visitNode(new BodyVisitor(), ctx.classBody(), isClassBodyType, 'classBody'),
-            ctx.EXTENDS() &&
-                visitOptionalNode(new TypeVisitor(), ctx.typeRef(), isTypeRefType, 'typeRef'),
-            ctx.IMPLEMENTS() &&
-                visitOptionalNode(new ListVisitor(), ctx.typeList(), isTypeListType, 'typeList'),
+            {
+                name: createNode(ctx.id(), (c) => IdTypeClass.create(c), 'id'),
+                extend: ctx.EXTENDS()
+                    ? createNode(ctx.typeRef(), (c) => TypeRefTypeClass.create(c), 'typeRef')
+                    : null,
+                implement: ctx.IMPLEMENTS()
+                    ? createNode(ctx.typeList(), (c) => TypeListTypeClass.create(c), 'typeList')
+                    : null,
+                body: createNode(ctx.classBody(), (c) => ClassBodyTypeClass.create(c), 'classBody'),
+            },
+            getSourceSpan(ctx),
         );
     }
 
-    getBody(): ClassBodyTypeClass | ApexErrorTypeClass {
-        return this.body;
+    getName(): ClassDeclarationType['name'] {
+        return this.getFields().name;
     }
 
-    getExtend(): TypeRefTypeClass | ApexErrorTypeClass | null {
-        return this.extend;
+    getExtend(): ClassDeclarationType['extend'] {
+        return this.getFields().extend;
     }
 
-    getImplement(): TypeListTypeClass | ApexErrorTypeClass | null {
-        return this.implement;
+    getImplement(): ClassDeclarationType['implement'] {
+        return this.getFields().implement;
+    }
+
+    getBody(): ClassDeclarationType['body'] {
+        return this.getFields().body;
     }
 }
 
 export const isClassDeclarationType = (
-    target: ApexCommonTypeClass<string>,
+    target: ApexCommonTypeClass<string, TypeField<string>>,
 ): target is ClassDeclarationTypeClass => {
-    return target instanceof ClassDeclarationTypeClass;
+    return isSpicifyApexCommonTypeClass('classDeclaration', target);
 };

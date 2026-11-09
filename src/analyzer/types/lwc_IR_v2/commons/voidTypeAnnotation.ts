@@ -1,16 +1,25 @@
+import { type TypeField } from '../../commons/ir';
+import { type SourceSpan } from '../../commons/source';
 import { isVoidTypeAnnotation, type VoidTypeAnnotation } from '@babel/types';
-import { EvaluatePair, LwcCommonTypeClass, makeEvaluatePair } from '../commonVisitor';
+import {
+    EvaluatePair,
+    LwcCommonTypeClass,
+    makeEvaluatePair,
+    getSourceSpan,
+} from '../commonVisitor';
 
-export class VoidTypeAnnotationTypeClass extends LwcCommonTypeClass<'voidTypeAnnotation'> {
-    private constructor() {
-        super('voidTypeAnnotation');
+export type VoidTypeAnnotationFields = TypeField<'voidTypeAnnotation'>;
+
+export class VoidTypeAnnotationTypeClass extends LwcCommonTypeClass<
+    'voidTypeAnnotation',
+    VoidTypeAnnotationFields
+> {
+    private constructor(sourceSpan: SourceSpan) {
+        super('voidTypeAnnotation', {}, sourceSpan);
     }
 
-    static create(
-        _target: VoidTypeAnnotation,
-        _originalSource: string,
-    ): VoidTypeAnnotationTypeClass {
-        return new VoidTypeAnnotationTypeClass();
+    static create(target: VoidTypeAnnotation, originalSource: string): VoidTypeAnnotationTypeClass {
+        return new VoidTypeAnnotationTypeClass(getSourceSpan(target, originalSource));
     }
 }
 
@@ -22,5 +31,5 @@ export const voidTypeAnnotationTypePair: EvaluatePair<
 );
 
 export const isVoidTypeAnnotationType = (
-    target: LwcCommonTypeClass<string>,
+    target: LwcCommonTypeClass<string, TypeField<string>>,
 ): target is VoidTypeAnnotationTypeClass => target instanceof VoidTypeAnnotationTypeClass;

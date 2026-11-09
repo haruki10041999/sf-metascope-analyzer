@@ -1,9 +1,9 @@
 import typia from 'typia';
 
-import { convertValue, ConvertExcludeError, ConvertType } from './commons';
-import { ErrorJson, isErrorJson, JsonType, makeJsonType, ConvertKeys } from '../commons';
+import { ErrorJson, JsonType } from '../commons';
+import type { AnnotationTypeClass, ElementValueTypeClass, ModifierTypeClass } from '../apex_IR_v2';
 
-import { ModifierType, AnnotationType } from './converter';
+import { makeNodeJson } from './commons/node';
 
 export type AnnotationArgJson = {
     key?: string;
@@ -102,71 +102,51 @@ const isExecutionAnnotation = (value: string): boolean => value.toUpperCase() ==
 const isCompatibilityAnnotation = (value: string): boolean =>
     ['DEPRECATED', 'SUPPRESSWARNINGS'].includes(value.toUpperCase());
 
+const makeAnnotationArgJson = (target: ElementValueTypeClass, key?: string): AnnotationArgJson => {
+    const { value, valueType } = target.getFields().value.getFields();
+    return { ...(key !== undefined ? { key: key } : {}), value: value, valueType: valueType };
+};
+
+// アノテーションのキーは、それを持つ修飾子のノードのキーにする (v1 と同じ)
 const makeAnnotationJson = (
-    target: ConvertExcludeError<AnnotationType>,
-    targetRecords: ConvertKeys,
+    target: AnnotationTypeClass,
+    modifier: ModifierTypeClass,
 ): AnnotationJson => {
-    const name = target.value.value;
-    const annotationJson: AnnotationJson = makeJsonType('annotation', targetRecords, {
-        name: name,
+    const { name, param } = target.getFields();
+    const annotationJson = makeNodeJson<AnnotationJson>('annotation', modifier, {
+        name: name.getFields().value,
     });
 
-    const arg = target.param ? target.param : null;
-
-    if (arg) {
-        if (arg.type === 'elementValue') {
-            const literalValue = arg.value.value;
-            const literalValueType = arg.value.valueType;
-            annotationJson.arg = {
-                value: literalValue,
-                valueType: literalValueType,
-            };
-            return annotationJson;
-        } else {
-            const annotationArgs: AnnotationArgJson[] = [];
-            const pairList = arg.value;
-            pairList.forEach((pair) => {
-                const key = pair.left.value;
-                const literalValue = pair.right.value.value;
-                const valueType = pair.right.value.valueType;
-
-                annotationArgs.push({
-                    key: key,
-                    value: literalValue,
-                    valueType: valueType,
-                });
-            });
-            annotationJson.arg = annotationArgs;
-            return annotationJson;
-        }
+    if (param) {
+        annotationJson.arg =
+            param.kind === 'elementValue'
+                ? makeAnnotationArgJson(param)
+                : param
+                      .getFields()
+                      .value.map((pair) =>
+                          makeAnnotationArgJson(
+                              pair.getFields().right,
+                              pair.getFields().left.getFields().value,
+                          ),
+                      );
     }
 
     return annotationJson;
 };
 
-export const makeModifierJson = (
-    target: ConvertType<ModifierType>,
-): ModifierJson | AnnotationJson | ErrorJson => {
-    return convertValue<'modifier', ModifierType, ModifierJson | AnnotationJson>(
-        target,
-        'modifier',
-        (target, targetRecords) => {
-            const modifier = target!.value;
-            if (typeof modifier === 'string') {
-                return makeJsonType('modifier', targetRecords.base, {
-                    name: modifier,
-                });
-            } else {
-                return makeAnnotationJson(modifier, targetRecords.base);
-            }
-        },
-    );
+export const makeModifierJson = (target: ModifierTypeClass): ModifierJson | AnnotationJson => {
+    const fields = target.getFields();
+    switch (fields.kind) {
+        case 'keyword':
+            return makeNodeJson<ModifierJson>('modifier', target, { name: fields.keyword });
+        case 'annotation':
+            return makeAnnotationJson(fields.annotation, target);
+    }
 };
 
-export const makeModifiersJson = (targets: ConvertType<ModifierType>[]): ModifiersJson => {
+export const makeModifiersJson = (targets: readonly ModifierTypeClass[]): ModifiersJson => {
     const modifiers: Record<string, ModifierJson[]> = {};
     const annotations: Record<string, AnnotationJson[]> = {};
-    const errors: ErrorJson[] = [];
     const addModifier = (attribute: string, value: ModifierJson) => {
         (modifiers[attribute] ??= []).push(value);
     };
@@ -178,11 +158,6 @@ export const makeModifiersJson = (targets: ConvertType<ModifierType>[]): Modifie
         const result = makeModifierJson(target);
 
         // 判別は kind で行う（isModifierJson は name を既知の修飾子に限るため、未知の修飾子を取りこぼす）
-        if (result.kind === 'error') {
-            errors.push(result);
-            return;
-        }
-
         if (result.kind === 'modifier') {
             if (isAccessModifier(result.name)) {
                 addModifier('access', result);
@@ -226,9 +201,9 @@ export const makeModifiersJson = (targets: ConvertType<ModifierType>[]): Modifie
         }
     });
 
+    // v2 の木にはエラーのノードがないので、error は作らない (型には今は残す)
     return {
         ...modifiers,
         ...annotations,
-        ...(errors.length > 0 ? { error: errors } : {}),
     };
 };

@@ -1,3 +1,4 @@
+import { type TypeField } from '../../commons/ir';
 import { LwcCommonTypeClass, LwcCommonVisitor, lazyPairs } from '../commonVisitor';
 import { ForInStatementTypeClass, forInStatementTypePair } from '../commons/forInStatement';
 import { ForOfStatementTypeClass, forOfStatementTypePair } from '../commons/forOfStatement';
@@ -28,7 +29,7 @@ export class ForXStatementVisitor extends LwcCommonVisitor<
 export type ForXStatementTypeClass = ForInStatementTypeClass | ForOfStatementTypeClass;
 
 export const isForXStatementType = (
-    target: LwcCommonTypeClass<string>,
+    target: LwcCommonTypeClass<string, TypeField<string>>,
 ): target is ForXStatementTypeClass => {
     return target instanceof ForInStatementTypeClass || target instanceof ForOfStatementTypeClass;
 };

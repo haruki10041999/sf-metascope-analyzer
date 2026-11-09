@@ -1,46 +1,46 @@
+import { type FieldsOf, type TypeField } from '../../commons/ir';
+import { type SourceSpan } from '../../commons/source';
 import { isTupleTypeAnnotation, type TupleTypeAnnotation } from '@babel/types';
 import {
     EvaluatePair,
     LwcCommonTypeClass,
-    LwcErrorTypeClass,
     makeEvaluatePair,
     visitNodeList,
+    getSourceSpan,
 } from '../commonVisitor';
 import { flowTypeVisitorEvaluatePairs, type FlowTypeTypeClass } from '../flowTypeVisitor';
 
-export type TupleTypeAnnotationFields = {
-    types: (FlowTypeTypeClass | LwcErrorTypeClass)[];
+export type TupleTypeAnnotationFields = TypeField<'tupleTypeAnnotation'> & {
+    types: FlowTypeTypeClass[];
 };
 
-export class TupleTypeAnnotationTypeClass extends LwcCommonTypeClass<'tupleTypeAnnotation'> {
-    private readonly value: TupleTypeAnnotationFields;
-
-    private constructor(value: TupleTypeAnnotationFields) {
-        super('tupleTypeAnnotation');
-        this.value = value;
+export class TupleTypeAnnotationTypeClass extends LwcCommonTypeClass<
+    'tupleTypeAnnotation',
+    TupleTypeAnnotationFields
+> {
+    private constructor(value: FieldsOf<TupleTypeAnnotationFields>, sourceSpan: SourceSpan) {
+        super('tupleTypeAnnotation', value, sourceSpan);
     }
 
     static create(
         target: TupleTypeAnnotation,
         originalSource: string,
     ): TupleTypeAnnotationTypeClass {
-        return new TupleTypeAnnotationTypeClass({
-            types: visitNodeList(
-                target.types,
-                originalSource,
-                flowTypeVisitorEvaluatePairs(),
-                'FlowTypeVisitor',
-            ),
-        });
-    }
-
-    /** すべてのフィールド (Babel の value フィールドの getter getValue() と区別する。getChildNodes もこれから作る) */
-    override getFields(): TupleTypeAnnotationFields {
-        return this.value;
+        return new TupleTypeAnnotationTypeClass(
+            {
+                types: visitNodeList(
+                    target.types,
+                    originalSource,
+                    flowTypeVisitorEvaluatePairs(),
+                    'FlowTypeVisitor',
+                ),
+            },
+            getSourceSpan(target, originalSource),
+        );
     }
 
     getTypes(): TupleTypeAnnotationFields['types'] {
-        return this.value.types;
+        return this.getFields().types;
     }
 }
 
@@ -52,5 +52,5 @@ export const tupleTypeAnnotationTypePair: EvaluatePair<
 );
 
 export const isTupleTypeAnnotationType = (
-    target: LwcCommonTypeClass<string>,
+    target: LwcCommonTypeClass<string, TypeField<string>>,
 ): target is TupleTypeAnnotationTypeClass => target instanceof TupleTypeAnnotationTypeClass;

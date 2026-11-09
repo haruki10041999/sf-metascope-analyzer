@@ -1,51 +1,53 @@
 import { WhereConditionalExpressionContext } from '@apexdevtools/apex-parser';
 
+import { WhereLogicalExpressionTypeClass, WhereFieldExpressionTypeClass } from '.';
+
 import {
-    WhereLogicalExpressionTypeClass,
-    WhereFieldExpressionTypeClass,
-    ExpressionTypeClass,
-    ExpressionVisitor,
-    isWhereLogicalExpressionType,
-    isWhereFieldExpressionType,
-} from '.';
+    ApexCommonTypeClass,
+    createNode,
+    getSourceSpan,
+    isSpicifyApexCommonTypeClass,
+} from '../commonVisitor';
+import { type FieldsOf, SourceSpan, TypeField } from '../../commons/ir';
 
-import { ApexCommonTypeClass, ApexErrorTypeClass, visitNode } from '../commonVisitor';
+/** WHERE の条件 `( whereLogicalExpression )` か `whereFieldExpression` */
+export type WhereConditionalExpressionType = TypeField<'whereConditionalExpression'> & {
+    value: WhereLogicalExpressionTypeClass | WhereFieldExpressionTypeClass;
+};
 
-export class WhereConditionalExpressionTypeClass extends ExpressionTypeClass<
+export class WhereConditionalExpressionTypeClass extends ApexCommonTypeClass<
     'whereConditionalExpression',
-    WhereLogicalExpressionTypeClass | WhereFieldExpressionTypeClass
+    WhereConditionalExpressionType
 > {
-    private constructor(
-        value: WhereLogicalExpressionTypeClass | WhereFieldExpressionTypeClass | ApexErrorTypeClass,
-    ) {
-        super('whereConditionalExpression', value);
+    private constructor(fields: FieldsOf<WhereConditionalExpressionType>, sourceSpan: SourceSpan) {
+        super('whereConditionalExpression', fields, sourceSpan);
     }
 
     static create(ctx: WhereConditionalExpressionContext): WhereConditionalExpressionTypeClass {
-        if (!ctx.whereLogicalExpression() && !ctx.whereFieldExpression()) {
-            throw new Error('値が異常です。WhereConditionalExpressionContext: ' + ctx.getText());
-        }
-
         return new WhereConditionalExpressionTypeClass(
-            ctx.whereLogicalExpression()
-                ? visitNode(
-                      new ExpressionVisitor(),
-                      ctx.whereLogicalExpression(),
-                      isWhereLogicalExpressionType,
-                      'whereLogicalExpression',
-                  )
-                : visitNode(
-                      new ExpressionVisitor(),
-                      ctx.whereFieldExpression(),
-                      isWhereFieldExpressionType,
-                      'whereFieldExpression',
-                  ),
+            {
+                value: ctx.whereLogicalExpression()
+                    ? createNode(
+                          ctx.whereLogicalExpression(),
+                          (c) => WhereLogicalExpressionTypeClass.create(c),
+                          'whereLogicalExpression',
+                      )
+                    : createNode(
+                          ctx.whereFieldExpression(),
+                          (c) => WhereFieldExpressionTypeClass.create(c),
+                          'whereFieldExpression',
+                      ),
+            },
+            getSourceSpan(ctx),
         );
+    }
+
+    getValue(): WhereConditionalExpressionType['value'] {
+        return this.getFields().value;
     }
 }
 
 export const isWhereConditionalExpressionType = (
-    target: ApexCommonTypeClass<string>,
-): target is WhereConditionalExpressionTypeClass => {
-    return target instanceof WhereConditionalExpressionTypeClass;
-};
+    target: ApexCommonTypeClass<string, TypeField<string>>,
+): target is WhereConditionalExpressionTypeClass =>
+    isSpicifyApexCommonTypeClass('whereConditionalExpression', target);

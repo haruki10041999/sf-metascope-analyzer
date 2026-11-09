@@ -1,77 +1,69 @@
+import { type FieldsOf, type TypeField } from '../../commons/ir';
+import { type SourceSpan } from '../../commons/source';
 import { isTypeParameter, type TypeParameter } from '@babel/types';
 import {
     EvaluatePair,
     LwcCommonTypeClass,
-    LwcErrorTypeClass,
-    lazyPairs,
     makeEvaluatePair,
     visitOptionalNode,
+    getSourceSpan,
 } from '../commonVisitor';
 import { flowTypeVisitorEvaluatePairs, type FlowTypeTypeClass } from '../flowTypeVisitor';
-import { typeAnnotationTypePair, type TypeAnnotationTypeClass } from './typeAnnotation';
-import { varianceTypePair, type VarianceTypeClass } from './variance';
+import { TypeAnnotationTypeClass } from './typeAnnotation';
+import { VarianceTypeClass } from './variance';
 
-const typeParameterBoundPairs = lazyPairs(() => [typeAnnotationTypePair] as const);
-const typeParameterVariancePairs = lazyPairs(() => [varianceTypePair] as const);
-
-export type TypeParameterFields = {
+export type TypeParameterFields = TypeField<'typeParameter'> & {
     name: TypeParameter['name'];
-    bound: TypeAnnotationTypeClass | LwcErrorTypeClass | null;
-    default: FlowTypeTypeClass | LwcErrorTypeClass | null;
-    variance: VarianceTypeClass | LwcErrorTypeClass | null;
+    bound: TypeAnnotationTypeClass | null;
+    default: FlowTypeTypeClass | null;
+    variance: VarianceTypeClass | null;
 };
 
-export class TypeParameterTypeClass extends LwcCommonTypeClass<'typeParameter'> {
-    private readonly value: TypeParameterFields;
-
-    private constructor(value: TypeParameterFields) {
-        super('typeParameter');
-        this.value = value;
+export class TypeParameterTypeClass extends LwcCommonTypeClass<
+    'typeParameter',
+    TypeParameterFields
+> {
+    private constructor(value: FieldsOf<TypeParameterFields>, sourceSpan: SourceSpan) {
+        super('typeParameter', value, sourceSpan);
     }
 
     static create(target: TypeParameter, originalSource: string): TypeParameterTypeClass {
-        return new TypeParameterTypeClass({
-            name: target.name,
-            bound: visitOptionalNode(
-                target.bound,
-                originalSource,
-                typeParameterBoundPairs(),
-                'TypeParameter.bound',
-            ),
-            default: visitOptionalNode(
-                target.default,
-                originalSource,
-                flowTypeVisitorEvaluatePairs(),
-                'FlowTypeVisitor',
-            ),
-            variance: visitOptionalNode(
-                target.variance,
-                originalSource,
-                typeParameterVariancePairs(),
-                'TypeParameter.variance',
-            ),
-        });
-    }
-
-    /** すべてのフィールド (Babel の value フィールドの getter getValue() と区別する。getChildNodes もこれから作る) */
-    override getFields(): TypeParameterFields {
-        return this.value;
+        return new TypeParameterTypeClass(
+            {
+                name: target.name,
+                bound:
+                    target.bound == null
+                        ? null
+                        : TypeAnnotationTypeClass.create(target.bound, originalSource),
+                default: visitOptionalNode(
+                    target.default,
+                    originalSource,
+                    flowTypeVisitorEvaluatePairs(),
+                    'FlowTypeVisitor',
+                ),
+                variance:
+                    target.variance == null
+                        ? null
+                        : VarianceTypeClass.create(target.variance, originalSource),
+            },
+            getSourceSpan(target, originalSource),
+        );
     }
 
     getName(): TypeParameterFields['name'] {
-        return this.value.name;
+        return this.getFields().name;
     }
 
     getBound(): TypeParameterFields['bound'] {
-        return this.value.bound;
+        return this.getFields().bound;
     }
 
     getDefault(): TypeParameterFields['default'] {
-        return this.value.default;
+        return this.getFields().default;
     }
 
     getVariance(): TypeParameterFields['variance'] {
-        return this.value.variance;
+        return this.getFields().variance;
     }
 }
 
@@ -81,5 +73,5 @@ export const typeParameterTypePair: EvaluatePair<TypeParameter, TypeParameterTyp
     );
 
 export const isTypeParameterType = (
-    target: LwcCommonTypeClass<string>,
+    target: LwcCommonTypeClass<string, TypeField<string>>,
 ): target is TypeParameterTypeClass => target instanceof TypeParameterTypeClass;

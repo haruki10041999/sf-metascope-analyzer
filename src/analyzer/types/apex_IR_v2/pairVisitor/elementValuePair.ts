@@ -1,37 +1,52 @@
 import { ElementValuePairContext } from '@apexdevtools/apex-parser';
 
-import { PairTypeClass } from '.';
+import { IdTypeClass } from '../idVisitor';
+import { ElementValueTypeClass } from '../valueVisitor';
+import {
+    ApexCommonTypeClass,
+    createNode,
+    getSourceSpan,
+    isSpicifyApexCommonTypeClass,
+} from '../commonVisitor';
+import { type FieldsOf, TypeField } from '../../commons/ir';
+import { SourceSpan } from '../../commons';
 
-import { NormalIdTypeClass, IdVisitor, isNormalIdType } from '../idVisitor';
-import { ElementValueTypeClass, ValueVisitor, isElementValueType } from '../valueVisitor';
-import { ApexErrorTypeClass, ApexCommonTypeClass, visitNode } from '../commonVisitor';
+export type ElementValuePairType = TypeField<'elementValuePair'> & {
+    left: IdTypeClass;
+    right: ElementValueTypeClass;
+};
 
-export class ElementValuePairTypeClass extends PairTypeClass<
+export class ElementValuePairTypeClass extends ApexCommonTypeClass<
     'elementValuePair',
-    NormalIdTypeClass,
-    ElementValueTypeClass
+    ElementValuePairType
 > {
-    private constructor(
-        left: NormalIdTypeClass | ApexErrorTypeClass,
-        right: ElementValueTypeClass | ApexErrorTypeClass,
-    ) {
-        super('elementValuePair', left, right);
+    private constructor(fields: FieldsOf<ElementValuePairType>, sourceSpan: SourceSpan) {
+        super('elementValuePair', fields, sourceSpan);
     }
 
     static create(ctx: ElementValuePairContext): ElementValuePairTypeClass {
-        if (!ctx.id() && !ctx.elementValue()) {
-            throw new Error('値が異常です。ElementValuePairContext: ' + ctx.getText());
-        }
-
         return new ElementValuePairTypeClass(
-            visitNode(new IdVisitor(), ctx.id(), isNormalIdType, 'id'),
-            visitNode(new ValueVisitor(), ctx.elementValue(), isElementValueType, 'elementValue'),
+            {
+                left: createNode(ctx.id(), (c) => IdTypeClass.create(c), 'id'),
+                right: createNode(
+                    ctx.elementValue(),
+                    (c) => ElementValueTypeClass.create(c),
+                    'elementValue',
+                ),
+            },
+            getSourceSpan(ctx),
         );
+    }
+
+    getLeft(): ElementValuePairType['left'] {
+        return this.getFields().left;
+    }
+
+    getRight(): ElementValuePairType['right'] {
+        return this.getFields().right;
     }
 }
 
 export const isElementValuePairType = (
-    target: ApexCommonTypeClass<string>,
-): target is ElementValuePairTypeClass => {
-    return target instanceof ElementValuePairTypeClass;
-};
+    target: ApexCommonTypeClass<string, TypeField<string>>,
+): target is ElementValuePairTypeClass => isSpicifyApexCommonTypeClass('elementValuePair', target);

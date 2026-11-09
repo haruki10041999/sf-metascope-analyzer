@@ -1,16 +1,15 @@
 import typia from 'typia';
-import { ConvertType, convertValue, isErrorNode } from './commons';
-import { ErrorJson, JsonType, makeErrorJson, makeJsonType } from '../commons';
+import { ErrorJson, JsonType } from '../commons';
 
-import {
-    AnonymousBlockMemberType,
-    AnonymousUnitType,
-    CompilationUnitType,
-    IdType,
-    TriggerBlockMemberType,
-    TriggerCaseType,
-    TriggerUnitType,
-} from './converter';
+import type {
+    AnonymousBlockMemberTypeClass,
+    AnonymousUnitTypeClass,
+    CompilationUnitTypeClass,
+    TriggerBlockMemberTypeClass,
+    TriggerCaseTypeClass,
+    TriggerUnitTypeClass,
+} from '../apex_IR_v2';
+import { makeNodeJson } from './commons/node';
 import { StatementJson, makeStatementJson } from './statement';
 import {
     MemberDeclarationJson,
@@ -26,8 +25,8 @@ import {
 import { ModifiersJson, makeModifiersJson } from './modifier';
 
 // unit は境界ノードにしない（unit ごとに JSON ファイルを保存する）。
-// 直下のエラーノードは、その位置に ErrorJson として残す
-const ERROR_KIND = 'unit';
+// v2 の木にはエラーのノードがないので、unit の中に ErrorJson は出てこない (型には今は残す)。
+// ファイル全体を読めなかったとき (buildApexIr が木を返さなかったとき) は、呼び出す側 (parser/Apex/source.ts) が扱う
 
 export type MemberStatementJson = {
     kind: 'statement';
@@ -39,31 +38,23 @@ type BlockMemberJson =
     (MemberDeclarationJson & { modifier: ModifiersJson }) | MemberStatementJson | ErrorJson;
 
 const makeBlockMemberJson = (
-    target: ConvertType<AnonymousBlockMemberType | TriggerBlockMemberType>,
+    target: AnonymousBlockMemberTypeClass | TriggerBlockMemberTypeClass,
 ): BlockMemberJson => {
-    if (isErrorNode(target)) {
-        return makeErrorJson(target, ERROR_KIND);
+    const member = target.getFields();
+    switch (member.kind) {
+        // 文法上、文には修飾子が付かないので空の ModifiersJson にする (v1 と同じ)
+        case 'statement':
+            return {
+                kind: 'statement',
+                statement: makeStatementJson(member.statement),
+                modifier: makeModifiersJson([]),
+            };
+        case 'declaration':
+            return {
+                ...makeMemberDeclarationJson(member.declaration),
+                modifier: makeModifiersJson(member.modifiers),
+            };
     }
-
-    const member = target.value;
-    if (isErrorNode(member)) {
-        return makeErrorJson(member, ERROR_KIND);
-    }
-
-    const modifier = makeModifiersJson(target.modifier);
-    if (member.type === 'statement') {
-        return {
-            kind: 'statement',
-            statement: makeStatementJson(member),
-            modifier: modifier,
-        };
-    }
-
-    const declaration = makeMemberDeclarationJson(member);
-    if (declaration.kind === 'error') {
-        return declaration;
-    }
-    return { ...declaration, modifier };
 };
 
 export type AnonymousUnitJson = {
@@ -73,19 +64,13 @@ export type AnonymousUnitJson = {
 
 export const isAnonymousUnitJson = typia.createIs<AnonymousUnitJson>();
 
-export const makeAnonymousUnitJson = (
-    target: ConvertType<AnonymousUnitType>,
-): AnonymousUnitJson | ErrorJson => {
-    if (isErrorNode(target)) {
-        return makeErrorJson(target, ERROR_KIND);
-    }
-
-    const block = target.value;
+export const makeAnonymousUnitJson = (target: AnonymousUnitTypeClass): AnonymousUnitJson => {
     return {
         fileType: 'anonymous',
-        block: isErrorNode(block)
-            ? makeErrorJson(block, ERROR_KIND)
-            : block.value.map((b) => makeBlockMemberJson(b)),
+        block: target
+            .getFields()
+            .block.getFields()
+            .members.map((b) => makeBlockMemberJson(b)),
     };
 };
 
@@ -94,28 +79,12 @@ export type TriggerCaseJson = JsonType<'triggerCase'> & {
     timing: 'BEFORE' | 'AFTER';
 };
 
-const makeTriggerCaseJson = (target: ConvertType<TriggerCaseType>): TriggerCaseJson | ErrorJson => {
-    return convertValue<'triggerCase', TriggerCaseType, TriggerCaseJson>(
-        target,
-        'triggerCase',
-        (target, targetRecords) => {
-            return makeJsonType('triggerCase', targetRecords.base, {
-                actionType: target.triggerCaseType,
-                timing: target.timing,
-            });
-        },
-    );
-};
-
-// trigger 名・対象オブジェクトは構文エラーからの回復で欠けることがある
-const makeTriggerNameJson = (
-    target: ConvertType<IdType> | undefined,
-    owner: ConvertType<TriggerUnitType>,
-): string | ErrorJson => {
-    if (!target) {
-        return makeErrorJson(owner, ERROR_KIND);
-    }
-    return isErrorNode(target) ? makeErrorJson(target, ERROR_KIND) : target.value;
+const makeTriggerCaseJson = (target: TriggerCaseTypeClass): TriggerCaseJson => {
+    const { actionType, timing } = target.getFields();
+    return makeNodeJson<TriggerCaseJson>('triggerCase', target, {
+        actionType: actionType,
+        timing: timing,
+    });
 };
 
 export type TriggerUnitJson = {
@@ -128,22 +97,14 @@ export type TriggerUnitJson = {
 
 export const isTriggerUnitJson = typia.createIs<TriggerUnitJson>();
 
-export const makeTriggerUnitJson = (
-    target: ConvertType<TriggerUnitType>,
-): TriggerUnitJson | ErrorJson => {
-    if (isErrorNode(target)) {
-        return makeErrorJson(target, ERROR_KIND);
-    }
-
-    const block = target.block;
+export const makeTriggerUnitJson = (target: TriggerUnitTypeClass): TriggerUnitJson => {
+    const { name, object, triggerCase, block } = target.getFields();
     return {
         fileType: 'trigger',
-        name: makeTriggerNameJson(target.value[0], target),
-        object: makeTriggerNameJson(target.value[1], target),
-        case: target.triggerCase.map((t) => makeTriggerCaseJson(t)),
-        block: isErrorNode(block)
-            ? makeErrorJson(block, ERROR_KIND)
-            : block.value.map((b) => makeBlockMemberJson(b)),
+        name: name.getFields().value,
+        object: object.getFields().value,
+        case: triggerCase.map((t) => makeTriggerCaseJson(t)),
+        block: block.getFields().member.map((b) => makeBlockMemberJson(b)),
     };
 };
 
@@ -155,37 +116,24 @@ export type CompilationUnitJson = {
 
 export const isCompilationUnitJson = typia.createIs<CompilationUnitJson>();
 
-export const makeCompilationUnitJson = (
-    target: ConvertType<CompilationUnitType>,
-): CompilationUnitJson | ErrorJson => {
-    if (isErrorNode(target)) {
-        return makeErrorJson(target, ERROR_KIND);
+const makeTypeDeclarationContentJson = (
+    target: CompilationUnitTypeClass,
+): InterfaceDeclarationJson | ClassDeclarationJson | EnumDeclarationJson => {
+    const declaration = target.getFields().declaration.getFields().declaration;
+    switch (declaration.kind) {
+        case 'classDeclaration':
+            return makeClassDeclarationJson(declaration);
+        case 'interfaceDeclaration':
+            return makeInterfaceDeclarationJson(declaration);
+        case 'enumDeclaration':
+            return makeEnumDeclarationJson(declaration);
     }
+};
 
-    const typeDeclaration = target.value;
-    if (isErrorNode(typeDeclaration)) {
-        return makeErrorJson(typeDeclaration, ERROR_KIND);
-    }
-
-    const declaration = typeDeclaration.value;
-    if (isErrorNode(declaration)) {
-        return makeErrorJson(declaration, ERROR_KIND);
-    }
-
-    let content: InterfaceDeclarationJson | ClassDeclarationJson | EnumDeclarationJson | ErrorJson;
-    if (declaration.type === 'classDeclaration') {
-        content = makeClassDeclarationJson(declaration);
-    } else if (declaration.type === 'interfaceDeclaration') {
-        content = makeInterfaceDeclarationJson(declaration);
-    } else {
-        content = makeEnumDeclarationJson(declaration);
-    }
-    if (content.kind === 'error') {
-        return content;
-    }
+export const makeCompilationUnitJson = (target: CompilationUnitTypeClass): CompilationUnitJson => {
     return {
         fileType: 'cls',
-        ...content,
-        modifier: makeModifiersJson(typeDeclaration.modifier),
+        ...makeTypeDeclarationContentJson(target),
+        modifier: makeModifiersJson(target.getFields().declaration.getFields().modifiers),
     };
 };

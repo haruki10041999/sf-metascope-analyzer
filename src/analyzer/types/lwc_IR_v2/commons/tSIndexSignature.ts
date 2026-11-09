@@ -1,75 +1,69 @@
+import { type FieldsOf, type TypeField } from '../../commons/ir';
+import { type SourceSpan } from '../../commons/source';
 import { isTSIndexSignature, type TSIndexSignature } from '@babel/types';
 import {
     EvaluatePair,
     LwcCommonTypeClass,
-    LwcErrorTypeClass,
-    lazyPairs,
     makeEvaluatePair,
-    visitNodeList,
-    visitOptionalNode,
+    getSourceSpan,
 } from '../commonVisitor';
-import {
-    tSTypeAnnotationTypePair,
-    type TSTypeAnnotationTypeClass,
-} from '../typeScriptVisitor/tSTypeAnnotation';
-import { identifierTypePair, type IdentifierTypeClass } from './identifier';
+import { failIrBuild } from '../buildFailure';
+import { TSTypeAnnotationTypeClass } from '../typeScriptVisitor/tSTypeAnnotation';
+import { IdentifierTypeClass } from './identifier';
 
-const tSIndexSignatureParametersPairs = lazyPairs(() => [identifierTypePair] as const);
-const tSIndexSignatureTypeAnnotationPairs = lazyPairs(() => [tSTypeAnnotationTypePair] as const);
-
-export type TSIndexSignatureFields = {
-    readonly: NonNullable<TSIndexSignature['readonly']> | null;
-    static: NonNullable<TSIndexSignature['static']> | null;
-    parameters: (IdentifierTypeClass | LwcErrorTypeClass)[];
-    typeAnnotation: TSTypeAnnotationTypeClass | LwcErrorTypeClass | null;
+export type TSIndexSignatureFields = TypeField<'tSIndexSignature'> & {
+    readonly: boolean;
+    static: boolean;
+    /** 引数はちょうど 1 個 (`[key: string]`) */
+    parameter: IdentifierTypeClass;
+    typeAnnotation: TSTypeAnnotationTypeClass | null;
 };
 
-export class TSIndexSignatureTypeClass extends LwcCommonTypeClass<'tSIndexSignature'> {
-    private readonly value: TSIndexSignatureFields;
-
-    private constructor(value: TSIndexSignatureFields) {
-        super('tSIndexSignature');
-        this.value = value;
+export class TSIndexSignatureTypeClass extends LwcCommonTypeClass<
+    'tSIndexSignature',
+    TSIndexSignatureFields
+> {
+    private constructor(value: FieldsOf<TSIndexSignatureFields>, sourceSpan: SourceSpan) {
+        super('tSIndexSignature', value, sourceSpan);
     }
 
     static create(target: TSIndexSignature, originalSource: string): TSIndexSignatureTypeClass {
-        return new TSIndexSignatureTypeClass({
-            readonly: target.readonly ?? null,
-            static: target.static ?? null,
-            parameters: visitNodeList(
-                target.parameters,
-                originalSource,
-                tSIndexSignatureParametersPairs(),
-                'TSIndexSignature.parameters',
-            ),
-            typeAnnotation: visitOptionalNode(
-                target.typeAnnotation,
-                originalSource,
-                tSIndexSignatureTypeAnnotationPairs(),
-                'TSIndexSignature.typeAnnotation',
-            ),
-        });
-    }
-
-    /** すべてのフィールド (Babel の value フィールドの getter getValue() と区別する。getChildNodes もこれから作る) */
-    override getFields(): TSIndexSignatureFields {
-        return this.value;
+        return new TSIndexSignatureTypeClass(
+            {
+                readonly: target.readonly ?? false,
+                static: target.static ?? false,
+                parameter:
+                    target.parameters.length === 1 && target.parameters[0] != null
+                        ? IdentifierTypeClass.create(target.parameters[0], originalSource)
+                        : failIrBuild(
+                              'TYPE_MISMATCH',
+                              target,
+                              originalSource,
+                              'インデックスシグネチャの引数はちょうど 1 個です',
+                          ),
+                typeAnnotation:
+                    target.typeAnnotation == null
+                        ? null
+                        : TSTypeAnnotationTypeClass.create(target.typeAnnotation, originalSource),
+            },
+            getSourceSpan(target, originalSource),
+        );
     }
 
     getReadonly(): TSIndexSignatureFields['readonly'] {
-        return this.value.readonly;
+        return this.getFields().readonly;
     }
 
     getStatic(): TSIndexSignatureFields['static'] {
-        return this.value.static;
+        return this.getFields().static;
     }
 
-    getParameters(): TSIndexSignatureFields['parameters'] {
-        return this.value.parameters;
+    getParameter(): TSIndexSignatureFields['parameter'] {
+        return this.getFields().parameter;
     }
 
     getTypeAnnotation(): TSIndexSignatureFields['typeAnnotation'] {
-        return this.value.typeAnnotation;
+        return this.getFields().typeAnnotation;
     }
 }
 
@@ -79,5 +73,5 @@ export const tSIndexSignatureTypePair: EvaluatePair<TSIndexSignature, TSIndexSig
     );
 
 export const isTSIndexSignatureType = (
-    target: LwcCommonTypeClass<string>,
+    target: LwcCommonTypeClass<string, TypeField<string>>,
 ): target is TSIndexSignatureTypeClass => target instanceof TSIndexSignatureTypeClass;

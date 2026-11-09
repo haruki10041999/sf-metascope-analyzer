@@ -1,33 +1,44 @@
 import { ForUpdateContext } from '@apexdevtools/apex-parser';
 
-import { ControlTypeClass } from './index';
+import { ExpressionListTypeClass } from '../listVisitor';
+import {
+    ApexCommonTypeClass,
+    createNode,
+    getSourceSpan,
+    isSpicifyApexCommonTypeClass,
+} from '../commonVisitor';
+import { type FieldsOf, TypeField } from '../../commons/ir';
+import { SourceSpan } from '../../commons';
 
-import { ExpressionListTypeClass, ListVisitor, isExpressionListType } from '../listVisitor';
-import { ApexErrorTypeClass, ApexCommonTypeClass, visitNode } from '../commonVisitor';
+export type ForUpdateType = TypeField<'forUpdate'> & {
+    value: ExpressionListTypeClass;
+};
 
-export class ForUpdateTypeClass extends ControlTypeClass<'forUpdate', ExpressionListTypeClass> {
-    private constructor(value: ExpressionListTypeClass | ApexErrorTypeClass) {
-        super('forUpdate', value);
+export class ForUpdateTypeClass extends ApexCommonTypeClass<'forUpdate', ForUpdateType> {
+    private constructor(fields: FieldsOf<ForUpdateType>, sourceSpan: SourceSpan) {
+        super('forUpdate', fields, sourceSpan);
     }
 
     static create(ctx: ForUpdateContext): ForUpdateTypeClass {
-        if (!ctx.expressionList()) {
-            throw new Error('値が異常です。ForUpdateContext: ' + ctx.getText());
-        }
-
         return new ForUpdateTypeClass(
-            visitNode(
-                new ListVisitor(),
-                ctx.expressionList(),
-                isExpressionListType,
-                'expressionList',
-            ),
+            {
+                value: createNode(
+                    ctx.expressionList(),
+                    (c) => ExpressionListTypeClass.create(c),
+                    'expressionList',
+                ),
+            },
+            getSourceSpan(ctx),
         );
+    }
+
+    getValue(): ForUpdateType['value'] {
+        return this.getFields().value;
     }
 }
 
 export const isForUpdateType = (
-    target: ApexCommonTypeClass<string>,
+    target: ApexCommonTypeClass<string, TypeField<string>>,
 ): target is ForUpdateTypeClass => {
-    return target instanceof ForUpdateTypeClass;
+    return isSpicifyApexCommonTypeClass('forUpdate', target);
 };

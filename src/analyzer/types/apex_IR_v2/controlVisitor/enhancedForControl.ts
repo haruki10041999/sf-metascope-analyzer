@@ -1,61 +1,68 @@
 import { EnhancedForControlContext } from '@apexdevtools/apex-parser';
 
-import { ControlTypeClass } from '.';
-
-import { NormalIdTypeClass, IdVisitor, isNormalIdType } from '../idVisitor';
+import { IdTypeClass } from '../idVisitor';
 import {
     BasedExpressionTypeClass,
     ExpressionVisitor,
     isBasedExpressionType,
 } from '../expressionVisitor';
-import { TypeRefTypeClass, TypeVisitor, isTypeRefType } from '../typeVisitor';
-import { ApexErrorTypeClass, ApexCommonTypeClass, visitNode } from '../commonVisitor';
+import { TypeRefTypeClass } from '../typeVisitor';
+import {
+    ApexCommonTypeClass,
+    createNode,
+    getSourceSpan,
+    isSpicifyApexCommonTypeClass,
+    visitNode,
+} from '../commonVisitor';
+import { type FieldsOf, TypeField } from '../../commons/ir';
+import { SourceSpan } from '../../commons';
 
-export class EnhancedForControlTypeClass extends ControlTypeClass<
+/** `for (型 変数 : 式)` */
+export type EnhancedForControlType = TypeField<'enhancedForControl'> & {
+    value: IdTypeClass;
+    valueType: TypeRefTypeClass;
+    fromVariant: BasedExpressionTypeClass;
+};
+
+export class EnhancedForControlTypeClass extends ApexCommonTypeClass<
     'enhancedForControl',
-    NormalIdTypeClass
+    EnhancedForControlType
 > {
-    private valueType: TypeRefTypeClass | ApexErrorTypeClass;
-    private fromVariant: BasedExpressionTypeClass | ApexErrorTypeClass;
-
-    private constructor(
-        value: NormalIdTypeClass | ApexErrorTypeClass,
-        valueType: TypeRefTypeClass | ApexErrorTypeClass,
-        fromVariant: BasedExpressionTypeClass | ApexErrorTypeClass,
-    ) {
-        super('enhancedForControl', value);
-        this.valueType = valueType;
-        this.fromVariant = fromVariant;
+    private constructor(fields: FieldsOf<EnhancedForControlType>, sourceSpan: SourceSpan) {
+        super('enhancedForControl', fields, sourceSpan);
     }
 
     static create(ctx: EnhancedForControlContext): EnhancedForControlTypeClass {
-        if (!ctx.typeRef() || !ctx.id() || !ctx.expression()) {
-            throw new Error('値が異常です。EnhancedForControlContext: ' + ctx.getText());
-        }
-
         return new EnhancedForControlTypeClass(
-            visitNode(new IdVisitor(), ctx.id(), isNormalIdType, 'id'),
-            visitNode(new TypeVisitor(), ctx.typeRef(), isTypeRefType, 'typeRef'),
-            visitNode(
-                new ExpressionVisitor(),
-                ctx.expression(),
-                isBasedExpressionType,
-                'expression',
-            ),
+            {
+                value: createNode(ctx.id(), (c) => IdTypeClass.create(c), 'id'),
+                valueType: createNode(ctx.typeRef(), (c) => TypeRefTypeClass.create(c), 'typeRef'),
+                fromVariant: visitNode(
+                    new ExpressionVisitor(),
+                    ctx.expression(),
+                    isBasedExpressionType,
+                    'expression',
+                ),
+            },
+            getSourceSpan(ctx),
         );
     }
 
-    getValueType(): TypeRefTypeClass | ApexErrorTypeClass {
-        return this.valueType;
+    getValue(): EnhancedForControlType['value'] {
+        return this.getFields().value;
     }
 
-    getFromVariant(): BasedExpressionTypeClass | ApexErrorTypeClass {
-        return this.fromVariant;
+    getValueType(): EnhancedForControlType['valueType'] {
+        return this.getFields().valueType;
+    }
+
+    getFromVariant(): EnhancedForControlType['fromVariant'] {
+        return this.getFields().fromVariant;
     }
 }
 
 export const isEnhancedForControlType = (
-    target: ApexCommonTypeClass<string>,
+    target: ApexCommonTypeClass<string, TypeField<string>>,
 ): target is EnhancedForControlTypeClass => {
-    return target instanceof EnhancedForControlTypeClass;
+    return isSpicifyApexCommonTypeClass('enhancedForControl', target);
 };

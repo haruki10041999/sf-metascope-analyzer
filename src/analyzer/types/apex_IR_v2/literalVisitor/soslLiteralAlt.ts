@@ -1,36 +1,55 @@
 import { SoslLiteralAltContext } from '@apexdevtools/apex-parser';
 
-import { LiteralValueTypeClass } from '.';
+import { SoslClausesTypeClass } from '../clauseVisitor';
+import {
+    ApexCommonTypeClass,
+    createNode,
+    getSourceSpan,
+    isSpicifyApexCommonTypeClass,
+} from '../commonVisitor';
+import { type FieldsOf, TypeField } from '../../commons/ir';
+import { SourceSpan } from '../../commons';
 
-import { SoslClausesTypeClass, ClauseVisitor, isSoslClausesType } from '../clauseVisitor';
-import { ApexErrorTypeClass, ApexCommonTypeClass, visitNode } from '../commonVisitor';
+export type SoslLiteralAltType = TypeField<'soslLiteralAlt'> & {
+    value: string;
+    soslClauses: SoslClausesTypeClass;
+};
 
-export class SoslLiteralAltTypeClass extends LiteralValueTypeClass<'soslLiteralAlt', string> {
-    private soslClauses: SoslClausesTypeClass | ApexErrorTypeClass;
-
-    private constructor(value: string, soslClauses: SoslClausesTypeClass | ApexErrorTypeClass) {
-        super('soslLiteralAlt', value);
-        this.soslClauses = soslClauses;
+export class SoslLiteralAltTypeClass extends ApexCommonTypeClass<
+    'soslLiteralAlt',
+    SoslLiteralAltType
+> {
+    private constructor(fields: FieldsOf<SoslLiteralAltType>, sourceSpan: SourceSpan) {
+        super('soslLiteralAlt', fields, sourceSpan);
     }
 
     static create(ctx: SoslLiteralAltContext): SoslLiteralAltTypeClass {
-        if (!ctx.soslClauses() || !ctx.FindLiteralAlt()) {
+        if (!ctx.FindLiteralAlt()) {
             throw new Error('値が異常です。SoslLiteralAltContext: ' + ctx.getText());
         }
 
         return new SoslLiteralAltTypeClass(
-            ctx.FindLiteralAlt().getText(),
-            visitNode(new ClauseVisitor(), ctx.soslClauses(), isSoslClausesType, 'soslClauses'),
+            {
+                value: ctx.FindLiteralAlt().getText(),
+                soslClauses: createNode(
+                    ctx.soslClauses(),
+                    (c) => SoslClausesTypeClass.create(c),
+                    'soslClauses',
+                ),
+            },
+            getSourceSpan(ctx),
         );
     }
 
-    getSoslClauses(): SoslClausesTypeClass | ApexErrorTypeClass {
-        return this.soslClauses;
+    getValue(): SoslLiteralAltType['value'] {
+        return this.getFields().value;
+    }
+
+    getSoslClauses(): SoslLiteralAltType['soslClauses'] {
+        return this.getFields().soslClauses;
     }
 }
 
 export const isSoslLiteralAltType = (
-    target: ApexCommonTypeClass<string>,
-): target is SoslLiteralAltTypeClass => {
-    return target instanceof SoslLiteralAltTypeClass;
-};
+    target: ApexCommonTypeClass<string, TypeField<string>>,
+): target is SoslLiteralAltTypeClass => isSpicifyApexCommonTypeClass('soslLiteralAlt', target);

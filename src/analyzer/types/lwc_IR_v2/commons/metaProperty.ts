@@ -1,58 +1,44 @@
+import { type FieldsOf, type TypeField } from '../../commons/ir';
+import { type SourceSpan } from '../../commons/source';
 import { isMetaProperty, type MetaProperty } from '@babel/types';
 import {
     EvaluatePair,
     LwcCommonTypeClass,
-    LwcErrorTypeClass,
-    lazyPairs,
     makeEvaluatePair,
-    visitNode,
+    getSourceSpan,
 } from '../commonVisitor';
-import { identifierTypePair, type IdentifierTypeClass } from './identifier';
+import { failIrBuild } from '../buildFailure';
 
-const metaPropertyMetaPairs = lazyPairs(() => [identifierTypePair] as const);
-const metaPropertyPropertyPairs = lazyPairs(() => [identifierTypePair] as const);
-
-export type MetaPropertyFields = {
-    meta: IdentifierTypeClass | LwcErrorTypeClass;
-    property: IdentifierTypeClass | LwcErrorTypeClass;
+/** 書けるのは `new.target` と `import.meta` だけ */
+export type MetaPropertyFields = TypeField<'metaProperty'> & {
+    kind: 'new.target' | 'import.meta';
 };
 
-export class MetaPropertyTypeClass extends LwcCommonTypeClass<'metaProperty'> {
-    private readonly value: MetaPropertyFields;
-
-    private constructor(value: MetaPropertyFields) {
-        super('metaProperty');
-        this.value = value;
+export class MetaPropertyTypeClass extends LwcCommonTypeClass<'metaProperty', MetaPropertyFields> {
+    private constructor(value: FieldsOf<MetaPropertyFields>, sourceSpan: SourceSpan) {
+        super('metaProperty', value, sourceSpan);
     }
 
     static create(target: MetaProperty, originalSource: string): MetaPropertyTypeClass {
-        return new MetaPropertyTypeClass({
-            meta: visitNode(
-                target.meta,
-                originalSource,
-                metaPropertyMetaPairs(),
-                'MetaProperty.meta',
-            ),
-            property: visitNode(
-                target.property,
-                originalSource,
-                metaPropertyPropertyPairs(),
-                'MetaProperty.property',
-            ),
-        });
+        const kind = `${target.meta.name}.${target.property.name}`;
+        return new MetaPropertyTypeClass(
+            {
+                kind:
+                    kind === 'new.target' || kind === 'import.meta'
+                        ? kind
+                        : failIrBuild(
+                              'TYPE_MISMATCH',
+                              target,
+                              originalSource,
+                              `${kind} は MetaProperty ではありません`,
+                          ),
+            },
+            getSourceSpan(target, originalSource),
+        );
     }
 
-    /** すべてのフィールド (Babel の value フィールドの getter getValue() と区別する。getChildNodes もこれから作る) */
-    override getFields(): MetaPropertyFields {
-        return this.value;
-    }
-
-    getMeta(): MetaPropertyFields['meta'] {
-        return this.value.meta;
-    }
-
-    getProperty(): MetaPropertyFields['property'] {
-        return this.value.property;
+    getKind(): MetaPropertyFields['kind'] {
+        return this.getFields().kind;
     }
 }
 
@@ -62,5 +48,5 @@ export const metaPropertyTypePair: EvaluatePair<MetaProperty, MetaPropertyTypeCl
     );
 
 export const isMetaPropertyType = (
-    target: LwcCommonTypeClass<string>,
+    target: LwcCommonTypeClass<string, TypeField<string>>,
 ): target is MetaPropertyTypeClass => target instanceof MetaPropertyTypeClass;

@@ -1,58 +1,69 @@
 import { CondExpressionContext } from '@apexdevtools/apex-parser';
 
+import { BasedExpressionTypeClass, ExpressionVisitor, isBasedExpressionType } from '.';
+
 import {
-    ConditionExpressionTypeClass,
-    BasedExpressionTypeClass,
-    ExpressionVisitor,
-    isBasedExpressionType,
-} from '.';
+    ApexCommonTypeClass,
+    getSourceSpan,
+    isSpicifyApexCommonTypeClass,
+    visitNode,
+} from '../commonVisitor';
+import { type FieldsOf, SourceSpan, TypeField } from '../../commons/ir';
 
-import { ApexErrorTypeClass, ApexCommonTypeClass, visitNode } from '../commonVisitor';
+/** `condition ? trueValue : falseValue` */
+export type CondExpressionType = TypeField<'condExpression'> & {
+    condition: BasedExpressionTypeClass;
+    trueValue: BasedExpressionTypeClass;
+    falseValue: BasedExpressionTypeClass;
+};
 
-export class CondExpressionTypeClass extends ConditionExpressionTypeClass<
+export class CondExpressionTypeClass extends ApexCommonTypeClass<
     'condExpression',
-    BasedExpressionTypeClass,
-    BasedExpressionTypeClass,
-    BasedExpressionTypeClass
+    CondExpressionType
 > {
-    private constructor(
-        condition: BasedExpressionTypeClass | ApexErrorTypeClass,
-        trueValue: BasedExpressionTypeClass | ApexErrorTypeClass,
-        falseValue: BasedExpressionTypeClass | ApexErrorTypeClass,
-    ) {
-        super('condExpression', condition, trueValue, falseValue);
+    private constructor(fields: FieldsOf<CondExpressionType>, sourceSpan: SourceSpan) {
+        super('condExpression', fields, sourceSpan);
     }
 
     static create(ctx: CondExpressionContext): CondExpressionTypeClass {
-        if (!ctx.expression_list() || ctx.expression_list().length !== 3) {
-            throw new Error('Invalid CondExpressionContext: ' + ctx.getText());
-        }
-
         return new CondExpressionTypeClass(
-            visitNode(
-                new ExpressionVisitor(),
-                ctx.expression(0),
-                isBasedExpressionType,
-                'expression',
-            ),
-            visitNode(
-                new ExpressionVisitor(),
-                ctx.expression(1),
-                isBasedExpressionType,
-                'expression',
-            ),
-            visitNode(
-                new ExpressionVisitor(),
-                ctx.expression(2),
-                isBasedExpressionType,
-                'expression',
-            ),
+            {
+                condition: visitNode(
+                    new ExpressionVisitor(),
+                    ctx.expression(0),
+                    isBasedExpressionType,
+                    'expression',
+                ),
+                trueValue: visitNode(
+                    new ExpressionVisitor(),
+                    ctx.expression(1),
+                    isBasedExpressionType,
+                    'expression',
+                ),
+                falseValue: visitNode(
+                    new ExpressionVisitor(),
+                    ctx.expression(2),
+                    isBasedExpressionType,
+                    'expression',
+                ),
+            },
+            getSourceSpan(ctx),
         );
+    }
+
+    getCondition(): CondExpressionType['condition'] {
+        return this.getFields().condition;
+    }
+
+    getTrueValue(): CondExpressionType['trueValue'] {
+        return this.getFields().trueValue;
+    }
+
+    getFalseValue(): CondExpressionType['falseValue'] {
+        return this.getFields().falseValue;
     }
 }
 
 export const isCondExpressionType = (
-    target: ApexCommonTypeClass<string>,
-): target is CondExpressionTypeClass => {
-    return target instanceof CondExpressionTypeClass;
-};
+    target: ApexCommonTypeClass<string, TypeField<string>>,
+): target is CondExpressionTypeClass => isSpicifyApexCommonTypeClass('condExpression', target);

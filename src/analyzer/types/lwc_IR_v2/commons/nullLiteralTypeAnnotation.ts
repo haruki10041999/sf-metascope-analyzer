@@ -1,16 +1,28 @@
+import { type TypeField } from '../../commons/ir';
+import { type SourceSpan } from '../../commons/source';
 import { isNullLiteralTypeAnnotation, type NullLiteralTypeAnnotation } from '@babel/types';
-import { EvaluatePair, LwcCommonTypeClass, makeEvaluatePair } from '../commonVisitor';
+import {
+    EvaluatePair,
+    LwcCommonTypeClass,
+    makeEvaluatePair,
+    getSourceSpan,
+} from '../commonVisitor';
 
-export class NullLiteralTypeAnnotationTypeClass extends LwcCommonTypeClass<'nullLiteralTypeAnnotation'> {
-    private constructor() {
-        super('nullLiteralTypeAnnotation');
+export type NullLiteralTypeAnnotationFields = TypeField<'nullLiteralTypeAnnotation'>;
+
+export class NullLiteralTypeAnnotationTypeClass extends LwcCommonTypeClass<
+    'nullLiteralTypeAnnotation',
+    NullLiteralTypeAnnotationFields
+> {
+    private constructor(sourceSpan: SourceSpan) {
+        super('nullLiteralTypeAnnotation', {}, sourceSpan);
     }
 
     static create(
-        _target: NullLiteralTypeAnnotation,
-        _originalSource: string,
+        target: NullLiteralTypeAnnotation,
+        originalSource: string,
     ): NullLiteralTypeAnnotationTypeClass {
-        return new NullLiteralTypeAnnotationTypeClass();
+        return new NullLiteralTypeAnnotationTypeClass(getSourceSpan(target, originalSource));
     }
 }
 
@@ -22,6 +34,6 @@ export const nullLiteralTypeAnnotationTypePair: EvaluatePair<
 );
 
 export const isNullLiteralTypeAnnotationType = (
-    target: LwcCommonTypeClass<string>,
+    target: LwcCommonTypeClass<string, TypeField<string>>,
 ): target is NullLiteralTypeAnnotationTypeClass =>
     target instanceof NullLiteralTypeAnnotationTypeClass;

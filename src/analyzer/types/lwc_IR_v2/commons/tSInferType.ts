@@ -1,49 +1,37 @@
+import { type FieldsOf, type TypeField } from '../../commons/ir';
+import { type SourceSpan } from '../../commons/source';
 import { isTSInferType, type TSInferType } from '@babel/types';
 import {
     EvaluatePair,
     LwcCommonTypeClass,
-    LwcErrorTypeClass,
-    lazyPairs,
     makeEvaluatePair,
-    visitNode,
+    getSourceSpan,
 } from '../commonVisitor';
-import {
-    tSTypeParameterTypePair,
-    type TSTypeParameterTypeClass,
-} from '../typeScriptVisitor/tSTypeParameter';
+import { TSTypeParameterTypeClass } from '../typeScriptVisitor/tSTypeParameter';
 
-const tSInferTypeTypeParameterPairs = lazyPairs(() => [tSTypeParameterTypePair] as const);
-
-export type TSInferTypeFields = {
-    typeParameter: TSTypeParameterTypeClass | LwcErrorTypeClass;
+export type TSInferTypeFields = TypeField<'tSInferType'> & {
+    typeParameter: TSTypeParameterTypeClass;
 };
 
-export class TSInferTypeTypeClass extends LwcCommonTypeClass<'tSInferType'> {
-    private readonly value: TSInferTypeFields;
-
-    private constructor(value: TSInferTypeFields) {
-        super('tSInferType');
-        this.value = value;
+export class TSInferTypeTypeClass extends LwcCommonTypeClass<'tSInferType', TSInferTypeFields> {
+    private constructor(value: FieldsOf<TSInferTypeFields>, sourceSpan: SourceSpan) {
+        super('tSInferType', value, sourceSpan);
     }
 
     static create(target: TSInferType, originalSource: string): TSInferTypeTypeClass {
-        return new TSInferTypeTypeClass({
-            typeParameter: visitNode(
-                target.typeParameter,
-                originalSource,
-                tSInferTypeTypeParameterPairs(),
-                'TSInferType.typeParameter',
-            ),
-        });
-    }
-
-    /** すべてのフィールド (Babel の value フィールドの getter getValue() と区別する。getChildNodes もこれから作る) */
-    override getFields(): TSInferTypeFields {
-        return this.value;
+        return new TSInferTypeTypeClass(
+            {
+                typeParameter: TSTypeParameterTypeClass.create(
+                    target.typeParameter,
+                    originalSource,
+                ),
+            },
+            getSourceSpan(target, originalSource),
+        );
     }
 
     getTypeParameter(): TSInferTypeFields['typeParameter'] {
-        return this.value.typeParameter;
+        return this.getFields().typeParameter;
     }
 }
 
@@ -53,5 +41,5 @@ export const tSInferTypeTypePair: EvaluatePair<TSInferType, TSInferTypeTypeClass
     );
 
 export const isTSInferTypeType = (
-    target: LwcCommonTypeClass<string>,
+    target: LwcCommonTypeClass<string, TypeField<string>>,
 ): target is TSInferTypeTypeClass => target instanceof TSInferTypeTypeClass;

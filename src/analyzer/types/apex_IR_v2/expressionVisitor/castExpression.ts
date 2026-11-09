@@ -1,52 +1,55 @@
 import { CastExpressionContext } from '@apexdevtools/apex-parser';
 
+import { BasedExpressionTypeClass, ExpressionVisitor, isBasedExpressionType } from '.';
+
+import { TypeRefTypeClass } from '../typeVisitor';
 import {
-    ExpressionTypeClass,
-    BasedExpressionTypeClass,
-    ExpressionVisitor,
-    isBasedExpressionType,
-} from '.';
+    ApexCommonTypeClass,
+    createNode,
+    getSourceSpan,
+    isSpicifyApexCommonTypeClass,
+    visitNode,
+} from '../commonVisitor';
+import { type FieldsOf, SourceSpan, TypeField } from '../../commons/ir';
 
-import { TypeRefTypeClass, TypeVisitor, isTypeRefType } from '../typeVisitor';
-import { ApexErrorTypeClass, ApexCommonTypeClass, visitNode } from '../commonVisitor';
+/** `(valueType) value` */
+export type CastExpressionType = TypeField<'castExpression'> & {
+    valueType: TypeRefTypeClass;
+    value: BasedExpressionTypeClass;
+};
 
-export class CastExpressionTypeClass extends ExpressionTypeClass<
+export class CastExpressionTypeClass extends ApexCommonTypeClass<
     'castExpression',
-    BasedExpressionTypeClass
+    CastExpressionType
 > {
-    private valueType: TypeRefTypeClass | ApexErrorTypeClass;
-
-    private constructor(
-        value: BasedExpressionTypeClass | ApexErrorTypeClass,
-        valueType: TypeRefTypeClass | ApexErrorTypeClass,
-    ) {
-        super('castExpression', value);
-        this.valueType = valueType;
+    private constructor(fields: FieldsOf<CastExpressionType>, sourceSpan: SourceSpan) {
+        super('castExpression', fields, sourceSpan);
     }
 
     static create(ctx: CastExpressionContext): CastExpressionTypeClass {
-        if (!ctx.expression() || !ctx.typeRef()) {
-            throw new Error('値が異常です。CastExpressionContext: ' + ctx.getText());
-        }
-
         return new CastExpressionTypeClass(
-            visitNode(
-                new ExpressionVisitor(),
-                ctx.expression(),
-                isBasedExpressionType,
-                'expression',
-            ),
-            visitNode(new TypeVisitor(), ctx.typeRef(), isTypeRefType, 'typeRef'),
+            {
+                valueType: createNode(ctx.typeRef(), (c) => TypeRefTypeClass.create(c), 'typeRef'),
+                value: visitNode(
+                    new ExpressionVisitor(),
+                    ctx.expression(),
+                    isBasedExpressionType,
+                    'expression',
+                ),
+            },
+            getSourceSpan(ctx),
         );
     }
 
-    getValueType(): TypeRefTypeClass | ApexErrorTypeClass {
-        return this.valueType;
+    getValue(): CastExpressionType['value'] {
+        return this.getFields().value;
+    }
+
+    getValueType(): CastExpressionType['valueType'] {
+        return this.getFields().valueType;
     }
 }
 
 export const isCastExpressionType = (
-    target: ApexCommonTypeClass<string>,
-): target is CastExpressionTypeClass => {
-    return target instanceof CastExpressionTypeClass;
-};
+    target: ApexCommonTypeClass<string, TypeField<string>>,
+): target is CastExpressionTypeClass => isSpicifyApexCommonTypeClass('castExpression', target);

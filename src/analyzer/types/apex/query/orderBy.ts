@@ -1,9 +1,7 @@
-import typia from 'typia';
+import { ErrorJson, JsonType } from '../../commons';
+import type { FieldOrderTypeClass, OrderByClauseTypeClass } from '../../apex_IR_v2';
 
-import { convertValue, ConvertType, isErrorNode } from '../commons';
-import { ErrorJson, JsonType, makeJsonType, makeErrorJson } from '../../commons';
-
-import { OrderByClauseType, FieldOrderListType, FieldOrderType } from '../converter';
+import { makeNodeJson } from '../commons/node';
 import { FieldJson, makeFieldJson } from './select';
 import { SoqlFunctionJson, makeSoqlFunctionJson } from './soqlFunction';
 
@@ -13,49 +11,30 @@ export type FieldOrderJson = JsonType<'orderField'> &
         nulls?: 'FIRST' | 'LAST';
     };
 
-export const makeFieldOrderJson = (
-    target: ConvertType<FieldOrderType>,
-): FieldOrderJson | ErrorJson => {
-    return convertValue<'fieldOrder', FieldOrderType, FieldOrderJson>(
-        target,
-        'orderField',
-        (target, targetRecords) => {
-            let result: FieldJson | SoqlFunctionJson;
-            if (target.value.type === 'fieldName') {
-                result = makeFieldJson(target.value);
-            } else {
-                result = makeSoqlFunctionJson(target.value);
-            }
-            const finalResult: FieldOrderJson = makeJsonType('orderField', targetRecords.base, {
-                ...result,
-            });
+export const makeFieldOrderJson = (target: FieldOrderTypeClass): FieldOrderJson => {
+    const { value, direction, nulls } = target.getFields();
+    const result: FieldJson | SoqlFunctionJson =
+        value.kind === 'fieldName' ? makeFieldJson(value) : makeSoqlFunctionJson(value);
+    const finalResult = makeNodeJson<FieldOrderJson>('orderField', target, {
+        ...result,
+    });
 
-            if (target.direction) {
-                finalResult.direction = target.direction;
-            }
-            if (target.nulls) {
-                finalResult.nulls = target.nulls;
-            }
-            return finalResult;
-        },
-    );
+    if (direction) {
+        finalResult.direction = direction;
+    }
+    if (nulls) {
+        finalResult.nulls = nulls;
+    }
+    return finalResult;
 };
 
 export type OrderByJson = {
     orderBy: (FieldOrderJson | ErrorJson)[];
 };
 
-export const makeOrderByJson = (
-    target: ConvertType<OrderByClauseType>,
-): OrderByJson | ErrorJson => {
-    if (isErrorNode(target)) {
-        return makeErrorJson(target, 'orderBy');
-    }
-    if (isErrorNode(target.value)) {
-        return makeErrorJson(target.value, 'orderBy');
-    }
-
+export const makeOrderByJson = (target: OrderByClauseTypeClass): OrderByJson => {
+    const fieldOrderList = target.getFields().value;
     return {
-        orderBy: target.value.value.map((v) => makeFieldOrderJson(v)),
+        orderBy: fieldOrderList.getFields().value.map((v) => makeFieldOrderJson(v)),
     };
 };

@@ -1,83 +1,75 @@
 import { InterfaceMethodDeclarationContext } from '@apexdevtools/apex-parser';
 
-import { DeclarationTypeClass } from '.';
-
-import { NormalIdTypeClass, IdVisitor, isNormalIdType } from '../idVisitor';
-import { NormalModifierTypeClass, ModifierVisitor, isNormalModifierType } from '../modifierVisitor';
-import { TypeRefTypeClass, TypeVisitor, isTypeRefType } from '../typeVisitor';
+import { IdTypeClass } from '../idVisitor';
+import { ModifierTypeClass } from '../modifierVisitor';
+import { TypeRefTypeClass } from '../typeVisitor';
+import { FormalParametersTypeClass } from '../parameterVisitor';
 import {
-    FormalParametersTypeClass,
-    ParameterVisitor,
-    isFormalParametersType,
-} from '../parameterVisitor';
-import {
-    ApexErrorTypeClass,
     ApexCommonTypeClass,
-    visitNodeList,
-    visitNode,
-    visitOptionalNode,
+    createNode,
+    createNodeList,
+    getSourceSpan,
+    isSpicifyApexCommonTypeClass,
 } from '../commonVisitor';
+import { type FieldsOf, TypeField } from '../../commons/ir';
+import { SourceSpan } from '../../commons';
 
-export class InterfaceMethodDeclarationTypeClass extends DeclarationTypeClass<
+export type InterfaceMethodDeclarationType = TypeField<'interfaceMethodDeclaration'> & {
+    modifiers: ModifierTypeClass[];
+    returnType: TypeRefTypeClass | 'void';
+    name: IdTypeClass;
+    parameters: FormalParametersTypeClass;
+};
+
+export class InterfaceMethodDeclarationTypeClass extends ApexCommonTypeClass<
     'interfaceMethodDeclaration',
-    NormalIdTypeClass
+    InterfaceMethodDeclarationType
 > {
-    private valueType: TypeRefTypeClass | 'void' | ApexErrorTypeClass;
-    private param: FormalParametersTypeClass | ApexErrorTypeClass | null = null;
-    private modifier: (NormalModifierTypeClass | ApexErrorTypeClass)[] = [];
-
-    private constructor(
-        value: NormalIdTypeClass | ApexErrorTypeClass,
-        valueType: TypeRefTypeClass | 'void' | ApexErrorTypeClass,
-        param: FormalParametersTypeClass | ApexErrorTypeClass | null,
-        modifier: (NormalModifierTypeClass | ApexErrorTypeClass)[],
-    ) {
-        super('interfaceMethodDeclaration', value);
-        this.valueType = valueType;
-        this.param = param;
-        this.modifier = modifier;
+    private constructor(fields: FieldsOf<InterfaceMethodDeclarationType>, sourceSpan: SourceSpan) {
+        super('interfaceMethodDeclaration', fields, sourceSpan);
     }
 
     static create(ctx: InterfaceMethodDeclarationContext): InterfaceMethodDeclarationTypeClass {
-        if (!ctx.id() || (!ctx.VOID() && !ctx.typeRef())) {
-            throw new Error('値が異常です。InterfaceMethodDeclarationContext: ' + ctx.getText());
-        }
-
         return new InterfaceMethodDeclarationTypeClass(
-            visitNode(new IdVisitor(), ctx.id(), isNormalIdType, 'id'),
-            ctx.VOID()
-                ? 'void'
-                : visitNode(new TypeVisitor(), ctx.typeRef(), isTypeRefType, 'typeRef'),
-            visitOptionalNode(
-                new ParameterVisitor(),
-                ctx.formalParameters(),
-                isFormalParametersType,
-                'formalParameters',
-            ),
-            visitNodeList(
-                new ModifierVisitor(),
-                ctx.modifier_list(),
-                isNormalModifierType,
-                'modifier_list',
-            ),
+            {
+                modifiers: createNodeList(
+                    ctx.modifier_list(),
+                    (c) => ModifierTypeClass.create(c),
+                    'modifier',
+                ),
+                returnType: ctx.VOID()
+                    ? 'void'
+                    : createNode(ctx.typeRef(), (c) => TypeRefTypeClass.create(c), 'typeRef'),
+                name: createNode(ctx.id(), (c) => IdTypeClass.create(c), 'id'),
+                parameters: createNode(
+                    ctx.formalParameters(),
+                    (c) => FormalParametersTypeClass.create(c),
+                    'formalParameters',
+                ),
+            },
+            getSourceSpan(ctx),
         );
     }
 
-    getValueType(): TypeRefTypeClass | 'void' | ApexErrorTypeClass {
-        return this.valueType;
+    getModifiers(): InterfaceMethodDeclarationType['modifiers'] {
+        return this.getFields().modifiers;
     }
 
-    getParam(): FormalParametersTypeClass | ApexErrorTypeClass | null {
-        return this.param;
+    getReturnType(): InterfaceMethodDeclarationType['returnType'] {
+        return this.getFields().returnType;
     }
 
-    getModifier(): (NormalModifierTypeClass | ApexErrorTypeClass)[] {
-        return this.modifier;
+    getName(): InterfaceMethodDeclarationType['name'] {
+        return this.getFields().name;
+    }
+
+    getParameters(): InterfaceMethodDeclarationType['parameters'] {
+        return this.getFields().parameters;
     }
 }
 
 export const isInterfaceMethodDeclarationType = (
-    target: ApexCommonTypeClass<string>,
+    target: ApexCommonTypeClass<string, TypeField<string>>,
 ): target is InterfaceMethodDeclarationTypeClass => {
-    return target instanceof InterfaceMethodDeclarationTypeClass;
+    return isSpicifyApexCommonTypeClass('interfaceMethodDeclaration', target);
 };

@@ -5,7 +5,7 @@ import assert from 'node:assert/strict';
 
 import type { ApexParser, ApexParserRuleContext } from '@apexdevtools/apex-parser';
 
-import { find, toJson, unitRules } from './helpers';
+import { dumpIr, find, toJson, unitRules } from './helpers';
 
 const examples: [string, (p: ApexParser) => ApexParserRuleContext][] = [
     ['ParserTest.cls', unitRules.cls],
@@ -20,8 +20,15 @@ const convert = async (index: number) => {
     return toJson(await load(file), rule);
 };
 
-// CommonType のうち、ソース由来でない（変換器が付けた）値を持つキー
-const META_KEYS = new Set(['type', 'sourceInfo', 'errorCode', 'contextType', 'valueType']);
+// IR のうち、ソース由来でない (IR が付けた) 値を持つキー (type・判別の kind・値の種類)
+const META_KEYS = new Set(['type', 'kind', 'valueType']);
+
+// SOSL の FIND のトークン ([FIND '...' / [FIND {...}) は、JSON では検索語だけになる
+const searchTermOf = (value: string): string =>
+    value
+        .match(/^\[\s*FIND\s*(?:'((?:\\.|[^\\'])*)'|\{((?:\\.|[^\\}])*)\})\s*$/i)
+        ?.slice(1)
+        .find((v) => v !== undefined) ?? value;
 
 const countValues = (target: unknown, skip: Set<string>, out = new Map<string, number>()) => {
     if (Array.isArray(target)) {
@@ -30,7 +37,8 @@ const countValues = (target: unknown, skip: Set<string>, out = new Map<string, n
         for (const [key, value] of Object.entries(target)) {
             if (skip.has(key)) continue;
             if (typeof value === 'string' || typeof value === 'number') {
-                out.set(String(value), (out.get(String(value)) ?? 0) + 1);
+                const text = searchTermOf(String(value));
+                out.set(text, (out.get(text) ?? 0) + 1);
             } else {
                 countValues(value, skip, out);
             }
@@ -43,12 +51,12 @@ const countValues = (target: unknown, skip: Set<string>, out = new Map<string, n
 
 describe('JSON 出力 / docs/examples/repository (Apex の構文のサンプル)', () => {
     for (const [index, [file]] of examples.entries()) {
-        it(`${file}: エラーノードなしで変換でき、CommonType の値を欠落させない`, async () => {
-            const { commonType, json } = await convert(index);
-            assert.equal(find(commonType, (n) => n.type === 'error').length, 0);
+        it(`${file}: IR のエラーなしで変換でき、IR の値を欠落させない`, async () => {
+            const { ir, irErrors, json } = await convert(index);
+            assert.deepEqual(irErrors, []);
             assert.equal(find(json, (n) => n.kind === 'error').length, 0);
 
-            const expected = countValues(commonType, META_KEYS);
+            const expected = countValues(dumpIr(ir), META_KEYS);
             const actual = countValues(json, new Set(['sourceKeys']));
             const missing = [...expected]
                 .filter(([value, count]) => (actual.get(value) ?? 0) < count)

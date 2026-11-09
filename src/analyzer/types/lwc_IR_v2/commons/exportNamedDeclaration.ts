@@ -1,30 +1,37 @@
-import { isExportNamedDeclaration, type ExportNamedDeclaration } from '@babel/types';
+import { type FieldsOf, type TypeField } from '../../commons/ir';
+import { type SourceSpan } from '../../commons/source';
+import {
+    isExportNamedDeclaration,
+    isExportSpecifier,
+    type ExportNamedDeclaration,
+} from '@babel/types';
+import { failIrBuild } from '../buildFailure';
 import {
     EvaluatePair,
     LwcCommonTypeClass,
-    LwcErrorTypeClass,
     lazyPairs,
     makeEvaluatePair,
+    visitNode,
     visitNodeList,
-    visitOptionalNode,
+    getSourceSpan,
 } from '../commonVisitor';
 import { declarationVisitorEvaluatePairs, type DeclarationTypeClass } from '../declarationVisitor';
 import {
     exportDefaultSpecifierTypePair,
     type ExportDefaultSpecifierTypeClass,
 } from '../moduleSpecifierVisitor/exportDefaultSpecifier';
-import {
-    importAttributeTypePair,
-    type ImportAttributeTypeClass,
-} from '../standardizedVisitor/importAttribute';
+import { ImportAttributeTypeClass } from '../standardizedVisitor/importAttribute';
 import {
     exportNamespaceSpecifierTypePair,
     type ExportNamespaceSpecifierTypeClass,
 } from './exportNamespaceSpecifier';
-import { exportSpecifierTypePair, type ExportSpecifierTypeClass } from './exportSpecifier';
-import { stringLiteralTypePair, type StringLiteralTypeClass } from './stringLiteral';
+import {
+    exportSpecifierTypePair,
+    LocalExportSpecifierTypeClass,
+    type ExportSpecifierTypeClass,
+} from './exportSpecifier';
+import { StringLiteralTypeClass } from './stringLiteral';
 
-const exportNamedDeclarationAttributesPairs = lazyPairs(() => [importAttributeTypePair] as const);
 const exportNamedDeclarationSpecifiersPairs = lazyPairs(
     () =>
         [
@@ -33,88 +40,116 @@ const exportNamedDeclarationSpecifiersPairs = lazyPairs(
             exportNamespaceSpecifierTypePair,
         ] as const,
 );
-const exportNamedDeclarationSourcePairs = lazyPairs(() => [stringLiteralTypePair] as const);
 
-export type ExportNamedDeclarationFields = {
-    declaration: DeclarationTypeClass | LwcErrorTypeClass | null;
-    attributes: (ImportAttributeTypeClass | LwcErrorTypeClass)[] | null;
-    specifiers: (
-        | ExportSpecifierTypeClass
-        | ExportDefaultSpecifierTypeClass
-        | ExportNamespaceSpecifierTypeClass
-        | LwcErrorTypeClass
-    )[];
-    source: StringLiteralTypeClass | LwcErrorTypeClass | null;
-    exportKind: NonNullable<ExportNamedDeclaration['exportKind']> | null;
+/**
+ * export の形ごとに、書けるフィールドが決まる。
+ * - declaration: `export const a = 1` / `export class A {}`
+ * - local: `export { a, b as c }` (source がない。specifier の local は識別子だけ)
+ * - reexport: `export { a } from 'x'` / `export * as ns from 'x'` / `export v from 'x'`
+ */
+type ExportNamedDeclarationFormFields =
+    | { kind: 'declaration'; declaration: DeclarationTypeClass }
+    | { kind: 'local'; specifiers: LocalExportSpecifierTypeClass[] }
+    | {
+          kind: 'reexport';
+          specifiers: (
+              | ExportSpecifierTypeClass
+              | ExportDefaultSpecifierTypeClass
+              | ExportNamespaceSpecifierTypeClass
+          )[];
+          source: StringLiteralTypeClass;
+          attributes: ImportAttributeTypeClass[] | null;
+      };
+
+export type ExportNamedDeclarationFields = TypeField<'exportNamedDeclaration'> & {
+    exportKind: NonNullable<ExportNamedDeclaration['exportKind']>;
+} & ExportNamedDeclarationFormFields;
+
+const createFormFields = (
+    target: ExportNamedDeclaration,
+    originalSource: string,
+): ExportNamedDeclarationFormFields => {
+    if (target.declaration != null) {
+        if (target.specifiers.length > 0 || target.source != null) {
+            return failIrBuild(
+                'TYPE_MISMATCH',
+                target,
+                originalSource,
+                'declaration のある export に specifiers・source は書けません',
+            );
+        }
+        return {
+            kind: 'declaration',
+            declaration: visitNode(
+                target.declaration,
+                originalSource,
+                declarationVisitorEvaluatePairs(),
+                'DeclarationVisitor',
+            ),
+        };
+    }
+
+    if (target.source == null) {
+        return {
+            kind: 'local',
+            specifiers: target.specifiers.map((child) =>
+                isExportSpecifier(child)
+                    ? LocalExportSpecifierTypeClass.create(child, originalSource)
+                    : failIrBuild(
+                          'TYPE_MISMATCH',
+                          child,
+                          originalSource,
+                          'source のない export に書けるのは ExportSpecifier だけです',
+                      ),
+            ),
+        };
+    }
+
+    return {
+        kind: 'reexport',
+        specifiers: visitNodeList(
+            target.specifiers,
+            originalSource,
+            exportNamedDeclarationSpecifiersPairs(),
+            'ExportNamedDeclaration.specifiers',
+        ),
+        source: StringLiteralTypeClass.create(target.source, originalSource),
+        attributes:
+            target.attributes == null
+                ? null
+                : target.attributes.map((child) =>
+                      ImportAttributeTypeClass.create(child, originalSource),
+                  ),
+    };
 };
 
-export class ExportNamedDeclarationTypeClass extends LwcCommonTypeClass<'exportNamedDeclaration'> {
-    private readonly value: ExportNamedDeclarationFields;
-
-    private constructor(value: ExportNamedDeclarationFields) {
-        super('exportNamedDeclaration');
-        this.value = value;
+export class ExportNamedDeclarationTypeClass extends LwcCommonTypeClass<
+    'exportNamedDeclaration',
+    ExportNamedDeclarationFields
+> {
+    private constructor(value: FieldsOf<ExportNamedDeclarationFields>, sourceSpan: SourceSpan) {
+        super('exportNamedDeclaration', value, sourceSpan);
     }
 
     static create(
         target: ExportNamedDeclaration,
         originalSource: string,
     ): ExportNamedDeclarationTypeClass {
-        return new ExportNamedDeclarationTypeClass({
-            declaration: visitOptionalNode(
-                target.declaration,
-                originalSource,
-                declarationVisitorEvaluatePairs(),
-                'DeclarationVisitor',
-            ),
-            attributes:
-                target.attributes == null
-                    ? null
-                    : visitNodeList(
-                          target.attributes,
-                          originalSource,
-                          exportNamedDeclarationAttributesPairs(),
-                          'ExportNamedDeclaration.attributes',
-                      ),
-            specifiers: visitNodeList(
-                target.specifiers,
-                originalSource,
-                exportNamedDeclarationSpecifiersPairs(),
-                'ExportNamedDeclaration.specifiers',
-            ),
-            source: visitOptionalNode(
-                target.source,
-                originalSource,
-                exportNamedDeclarationSourcePairs(),
-                'ExportNamedDeclaration.source',
-            ),
-            exportKind: target.exportKind ?? null,
-        });
+        return new ExportNamedDeclarationTypeClass(
+            {
+                exportKind: target.exportKind ?? 'value',
+                ...createFormFields(target, originalSource),
+            },
+            getSourceSpan(target, originalSource),
+        );
     }
 
-    /** すべてのフィールド (Babel の value フィールドの getter getValue() と区別する。getChildNodes もこれから作る) */
-    override getFields(): ExportNamedDeclarationFields {
-        return this.value;
-    }
-
-    getDeclaration(): ExportNamedDeclarationFields['declaration'] {
-        return this.value.declaration;
-    }
-
-    getAttributes(): ExportNamedDeclarationFields['attributes'] {
-        return this.value.attributes;
-    }
-
-    getSpecifiers(): ExportNamedDeclarationFields['specifiers'] {
-        return this.value.specifiers;
-    }
-
-    getSource(): ExportNamedDeclarationFields['source'] {
-        return this.value.source;
+    getKind(): ExportNamedDeclarationFields['kind'] {
+        return this.getFields().kind;
     }
 
     getExportKind(): ExportNamedDeclarationFields['exportKind'] {
-        return this.value.exportKind;
+        return this.getFields().exportKind;
     }
 }
 
@@ -126,5 +161,5 @@ export const exportNamedDeclarationTypePair: EvaluatePair<
 );
 
 export const isExportNamedDeclarationType = (
-    target: LwcCommonTypeClass<string>,
+    target: LwcCommonTypeClass<string, TypeField<string>>,
 ): target is ExportNamedDeclarationTypeClass => target instanceof ExportNamedDeclarationTypeClass;

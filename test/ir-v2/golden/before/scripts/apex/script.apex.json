@@ -1,0 +1,655 @@
+{
+  "source": {
+    "fileName": "script.apex",
+    "fileType": "anonymous",
+    "content": {
+      "block": [
+        {
+          "kind": "field",
+          "sourceKeys": {},
+          "variants": [
+            {
+              "sourceKeys": {},
+              "name": "limitSize",
+              "init": {
+                "sourceKeys": {},
+                "value": "10",
+                "valueType": "integer"
+              }
+            }
+          ],
+          "variantType": {
+            "kind": "type",
+            "sourceKeys": {},
+            "type": "primitive",
+            "primitiveType": "Integer"
+          },
+          "modifier": {}
+        },
+        {
+          "kind": "method",
+          "sourceKeys": {
+            "base": {},
+            "name": {}
+          },
+          "name": "helper",
+          "returnType": "void",
+          "param": [
+            {
+              "kind": "parameter",
+              "sourceKeys": {},
+              "variant": "n",
+              "variantType": {
+                "kind": "type",
+                "sourceKeys": {},
+                "type": "primitive",
+                "primitiveType": "Integer"
+              },
+              "modifier": {}
+            }
+          ],
+          "block": [
+            {
+              "kind": "expression",
+              "sourceKeys": {},
+              "value": {
+                "kind": "memberAccess",
+                "sourceKeys": {},
+                "type": "method",
+                "object": "System",
+                "operator": ".",
+                "member": "debug",
+                "memberArg": [
+                  "n"
+                ]
+              }
+            }
+          ],
+          "modifier": {}
+        },
+        {
+          "kind": "statement",
+          "statement": {
+            "kind": "for",
+            "sourceKeys": {},
+            "condition": {
+              "kind": "forCondition",
+              "sourceKeys": {},
+              "initializer": {
+                "variants": [
+                  {
+                    "sourceKeys": {},
+                    "name": "k",
+                    "init": {
+                      "sourceKeys": {},
+                      "value": "0",
+                      "valueType": "integer"
+                    }
+                  }
+                ],
+                "variantsType": {
+                  "kind": "type",
+                  "sourceKeys": {},
+                  "type": "primitive",
+                  "primitiveType": "Integer"
+                },
+                "modifier": {}
+              },
+              "condition": {
+                "sourceKeys": {},
+                "left": "k",
+                "operator": "<",
+                "right": {
+                  "sourceKeys": {},
+                  "value": "3",
+                  "valueType": "integer"
+                }
+              },
+              "update": [
+                {
+                  "sourceKeys": {},
+                  "variant": "k",
+                  "operator": "++",
+                  "operatorLocation": "back"
+                }
+              ]
+            },
+            "block": [
+              {
+                "kind": "if",
+                "sourceKeys": {},
+                "conditionBlock": [
+                  {
+                    "condition": {
+                      "kind": "ifCondition",
+                      "sourceKeys": {},
+                      "condition": {
+                        "sourceKeys": {},
+                        "left": "k",
+                        "operator": "==",
+                        "right": {
+                          "sourceKeys": {},
+                          "value": "1",
+                          "valueType": "integer"
+                        }
+                      }
+                    },
+                    "block": [
+                      {
+                        "kind": "continue",
+                        "sourceKeys": {},
+                        "value": "continue"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "kind": "if",
+                "sourceKeys": {},
+                "conditionBlock": [
+                  {
+                    "condition": {
+                      "kind": "ifCondition",
+                      "sourceKeys": {},
+                      "condition": {
+                        "sourceKeys": {},
+                        "left": "k",
+                        "operator": "==",
+                        "right": {
+                          "sourceKeys": {},
+                          "value": "2",
+                          "valueType": "integer"
+                        }
+                      }
+                    },
+                    "block": [
+                      {
+                        "kind": "break",
+                        "sourceKeys": {},
+                        "value": "break"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          "modifier": {}
+        },
+        {
+          "kind": "statement",
+          "statement": {
+            "kind": "expression",
+            "sourceKeys": {},
+            "value": {
+              "kind": "memberAccess",
+              "sourceKeys": {},
+              "type": "method",
+              "member": "helper",
+              "memberArg": [
+                "limitSize"
+              ]
+            }
+          },
+          "modifier": {}
+        },
+        {
+          "kind": "statement",
+          "statement": {
+            "kind": "expression",
+            "sourceKeys": {},
+            "value": {
+              "kind": "memberAccess",
+              "sourceKeys": {},
+              "type": "method",
+              "object": "System",
+              "operator": ".",
+              "member": "debug",
+              "memberArg": [
+                {
+                  "sourceKeys": {},
+                  "value": "'end'",
+                  "valueType": "string"
+                }
+              ]
+            }
+          },
+          "modifier": {}
+        }
+      ]
+    }
+  },
+  "sourceObject": [
+    {
+      "context": "'end'",
+      "start": {
+        "offset": 223,
+        "line": 16,
+        "column": 13
+      },
+      "end": {
+        "offset": 228,
+        "line": 16,
+        "column": 18
+      }
+    },
+    {
+      "context": "(k == 1)",
+      "start": {
+        "offset": 115,
+        "line": 8,
+        "column": 7
+      },
+      "end": {
+        "offset": 123,
+        "line": 8,
+        "column": 15
+      }
+    },
+    {
+      "context": "(k == 2)",
+      "start": {
+        "offset": 157,
+        "line": 11,
+        "column": 7
+      },
+      "end": {
+        "offset": 165,
+        "line": 11,
+        "column": 15
+      }
+    },
+    {
+      "context": "0",
+      "start": {
+        "offset": 91,
+        "line": 7,
+        "column": 17
+      },
+      "end": {
+        "offset": 92,
+        "line": 7,
+        "column": 18
+      }
+    },
+    {
+      "context": "1",
+      "start": {
+        "offset": 121,
+        "line": 8,
+        "column": 13
+      },
+      "end": {
+        "offset": 122,
+        "line": 8,
+        "column": 14
+      }
+    },
+    {
+      "context": "10",
+      "start": {
+        "offset": 20,
+        "line": 1,
+        "column": 20
+      },
+      "end": {
+        "offset": 22,
+        "line": 1,
+        "column": 22
+      }
+    },
+    {
+      "context": "2",
+      "start": {
+        "offset": 163,
+        "line": 11,
+        "column": 13
+      },
+      "end": {
+        "offset": 164,
+        "line": 11,
+        "column": 14
+      }
+    },
+    {
+      "context": "3",
+      "start": {
+        "offset": 98,
+        "line": 7,
+        "column": 24
+      },
+      "end": {
+        "offset": 99,
+        "line": 7,
+        "column": 25
+      }
+    },
+    {
+      "context": "Integer k = 0; k < 3; k++",
+      "start": {
+        "offset": 79,
+        "line": 7,
+        "column": 5
+      },
+      "end": {
+        "offset": 104,
+        "line": 7,
+        "column": 30
+      }
+    },
+    {
+      "context": "Integer limitSize = 10;",
+      "start": {
+        "offset": 0,
+        "line": 1,
+        "column": 0
+      },
+      "end": {
+        "offset": 23,
+        "line": 1,
+        "column": 23
+      }
+    },
+    {
+      "context": "Integer n",
+      "start": {
+        "offset": 37,
+        "line": 3,
+        "column": 12
+      },
+      "end": {
+        "offset": 46,
+        "line": 3,
+        "column": 21
+      }
+    },
+    {
+      "context": "Integer",
+      "start": {
+        "offset": 0,
+        "line": 1,
+        "column": 0
+      },
+      "end": {
+        "offset": 7,
+        "line": 1,
+        "column": 7
+      }
+    },
+    {
+      "context": "Integer",
+      "start": {
+        "offset": 37,
+        "line": 3,
+        "column": 12
+      },
+      "end": {
+        "offset": 44,
+        "line": 3,
+        "column": 19
+      }
+    },
+    {
+      "context": "Integer",
+      "start": {
+        "offset": 79,
+        "line": 7,
+        "column": 5
+      },
+      "end": {
+        "offset": 86,
+        "line": 7,
+        "column": 12
+      }
+    },
+    {
+      "context": "System.debug('end')",
+      "start": {
+        "offset": 210,
+        "line": 16,
+        "column": 0
+      },
+      "end": {
+        "offset": 229,
+        "line": 16,
+        "column": 19
+      }
+    },
+    {
+      "context": "System.debug('end');",
+      "start": {
+        "offset": 210,
+        "line": 16,
+        "column": 0
+      },
+      "end": {
+        "offset": 230,
+        "line": 16,
+        "column": 20
+      }
+    },
+    {
+      "context": "System.debug(n)",
+      "start": {
+        "offset": 54,
+        "line": 4,
+        "column": 4
+      },
+      "end": {
+        "offset": 69,
+        "line": 4,
+        "column": 19
+      }
+    },
+    {
+      "context": "System.debug(n);",
+      "start": {
+        "offset": 54,
+        "line": 4,
+        "column": 4
+      },
+      "end": {
+        "offset": 70,
+        "line": 4,
+        "column": 20
+      }
+    },
+    {
+      "context": "break;",
+      "start": {
+        "offset": 176,
+        "line": 12,
+        "column": 8
+      },
+      "end": {
+        "offset": 182,
+        "line": 12,
+        "column": 14
+      }
+    },
+    {
+      "context": "continue;",
+      "start": {
+        "offset": 134,
+        "line": 9,
+        "column": 8
+      },
+      "end": {
+        "offset": 143,
+        "line": 9,
+        "column": 17
+      }
+    },
+    {
+      "context": "for (Integer k = 0; k < 3; k++) {\n    if (k == 1) {\n        continue;\n    }\n    if (k == 2) {\n        break;\n    }\n}",
+      "start": {
+        "offset": 74,
+        "line": 7,
+        "column": 0
+      },
+      "end": {
+        "offset": 190,
+        "line": 14,
+        "column": 1
+      }
+    },
+    {
+      "context": "helper",
+      "start": {
+        "offset": 30,
+        "line": 3,
+        "column": 5
+      },
+      "end": {
+        "offset": 36,
+        "line": 3,
+        "column": 11
+      }
+    },
+    {
+      "context": "helper(limitSize)",
+      "start": {
+        "offset": 191,
+        "line": 15,
+        "column": 0
+      },
+      "end": {
+        "offset": 208,
+        "line": 15,
+        "column": 17
+      }
+    },
+    {
+      "context": "helper(limitSize);",
+      "start": {
+        "offset": 191,
+        "line": 15,
+        "column": 0
+      },
+      "end": {
+        "offset": 209,
+        "line": 15,
+        "column": 18
+      }
+    },
+    {
+      "context": "if (k == 1) {\n        continue;\n    }",
+      "start": {
+        "offset": 112,
+        "line": 8,
+        "column": 4
+      },
+      "end": {
+        "offset": 149,
+        "line": 10,
+        "column": 5
+      }
+    },
+    {
+      "context": "if (k == 2) {\n        break;\n    }",
+      "start": {
+        "offset": 154,
+        "line": 11,
+        "column": 4
+      },
+      "end": {
+        "offset": 188,
+        "line": 13,
+        "column": 5
+      }
+    },
+    {
+      "context": "k < 3",
+      "start": {
+        "offset": 94,
+        "line": 7,
+        "column": 20
+      },
+      "end": {
+        "offset": 99,
+        "line": 7,
+        "column": 25
+      }
+    },
+    {
+      "context": "k = 0",
+      "start": {
+        "offset": 87,
+        "line": 7,
+        "column": 13
+      },
+      "end": {
+        "offset": 92,
+        "line": 7,
+        "column": 18
+      }
+    },
+    {
+      "context": "k == 1",
+      "start": {
+        "offset": 116,
+        "line": 8,
+        "column": 8
+      },
+      "end": {
+        "offset": 122,
+        "line": 8,
+        "column": 14
+      }
+    },
+    {
+      "context": "k == 2",
+      "start": {
+        "offset": 158,
+        "line": 11,
+        "column": 8
+      },
+      "end": {
+        "offset": 164,
+        "line": 11,
+        "column": 14
+      }
+    },
+    {
+      "context": "k++",
+      "start": {
+        "offset": 101,
+        "line": 7,
+        "column": 27
+      },
+      "end": {
+        "offset": 104,
+        "line": 7,
+        "column": 30
+      }
+    },
+    {
+      "context": "limitSize = 10",
+      "start": {
+        "offset": 8,
+        "line": 1,
+        "column": 8
+      },
+      "end": {
+        "offset": 22,
+        "line": 1,
+        "column": 22
+      }
+    },
+    {
+      "context": "void helper(Integer n) {\n    System.debug(n);\n}",
+      "start": {
+        "offset": 25,
+        "line": 3,
+        "column": 0
+      },
+      "end": {
+        "offset": 72,
+        "line": 5,
+        "column": 1
+      }
+    }
+  ],
+  "resolvedError": []
+}

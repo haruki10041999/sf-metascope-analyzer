@@ -1,11 +1,13 @@
+import { type FieldsOf, type TypeField } from '../../commons/ir';
+import { type SourceSpan } from '../../commons/source';
 import { isClassBody, type ClassBody } from '@babel/types';
 import {
     EvaluatePair,
     LwcCommonTypeClass,
-    LwcErrorTypeClass,
     lazyPairs,
     makeEvaluatePair,
     visitNodeList,
+    getSourceSpan,
 } from '../commonVisitor';
 import {
     classAccessorPropertyTypePair,
@@ -45,7 +47,7 @@ const classBodyBodyPairs = lazyPairs(
         ] as const,
 );
 
-export type ClassBodyFields = {
+export type ClassBodyFields = TypeField<'classBody'> & {
     body: (
         | ClassMethodTypeClass
         | ClassPrivateMethodTypeClass
@@ -55,36 +57,30 @@ export type ClassBodyFields = {
         | TSDeclareMethodTypeClass
         | TSIndexSignatureTypeClass
         | StaticBlockTypeClass
-        | LwcErrorTypeClass
     )[];
 };
 
-export class ClassBodyTypeClass extends LwcCommonTypeClass<'classBody'> {
-    private readonly value: ClassBodyFields;
-
-    private constructor(value: ClassBodyFields) {
-        super('classBody');
-        this.value = value;
+export class ClassBodyTypeClass extends LwcCommonTypeClass<'classBody', ClassBodyFields> {
+    private constructor(value: FieldsOf<ClassBodyFields>, sourceSpan: SourceSpan) {
+        super('classBody', value, sourceSpan);
     }
 
     static create(target: ClassBody, originalSource: string): ClassBodyTypeClass {
-        return new ClassBodyTypeClass({
-            body: visitNodeList(
-                target.body,
-                originalSource,
-                classBodyBodyPairs(),
-                'ClassBody.body',
-            ),
-        });
-    }
-
-    /** すべてのフィールド (Babel の value フィールドの getter getValue() と区別する。getChildNodes もこれから作る) */
-    override getFields(): ClassBodyFields {
-        return this.value;
+        return new ClassBodyTypeClass(
+            {
+                body: visitNodeList(
+                    target.body,
+                    originalSource,
+                    classBodyBodyPairs(),
+                    'ClassBody.body',
+                ),
+            },
+            getSourceSpan(target, originalSource),
+        );
     }
 
     getBody(): ClassBodyFields['body'] {
-        return this.value.body;
+        return this.getFields().body;
     }
 }
 
@@ -93,5 +89,6 @@ export const classBodyTypePair: EvaluatePair<ClassBody, ClassBodyTypeClass> = ma
     (target, originalSource) => ClassBodyTypeClass.create(target, originalSource),
 );
 
-export const isClassBodyType = (target: LwcCommonTypeClass<string>): target is ClassBodyTypeClass =>
-    target instanceof ClassBodyTypeClass;
+export const isClassBodyType = (
+    target: LwcCommonTypeClass<string, TypeField<string>>,
+): target is ClassBodyTypeClass => target instanceof ClassBodyTypeClass;

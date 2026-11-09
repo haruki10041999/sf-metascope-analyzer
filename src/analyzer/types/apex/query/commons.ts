@@ -1,17 +1,17 @@
 import typia from 'typia';
 
-import { ConvertExcludeError, convertValue, ConvertType, isErrorNode } from '../commons';
-import { ErrorJson, JsonType, makeJsonType, makeErrorJson } from '../../commons';
+import { ErrorJson, JsonType } from '../../commons';
+import type {
+    ComparisonOperatorTypeClass,
+    DateFormulaTypeClass,
+    FieldExpressionTypeClass,
+    LogicalExpressionTypeClass,
+    SignedIntegerTypeClass,
+    SignedNumberTypeClass,
+    ValueTypeClass,
+} from '../../apex_IR_v2';
 
-import {
-    ValueType,
-    SignedNumberType,
-    DateFormulaType,
-    ComparisonOperatorType,
-    FieldExpressionType,
-    LogicalExpressionType,
-} from '../converter';
-
+import { makeNodeJson } from '../commons/node';
 import { BaseExpressionJson, makeExpressionJsonConvert } from '../expression';
 import { SubQueryJson, makeSubQueryJson } from './subQuery';
 import { SoqlFunctionJson, makeSoqlFunctionJson } from './soqlFunction';
@@ -24,12 +24,11 @@ export type SignedNumberJson = {
 };
 export const isSignedNumberJson = typia.createIs<SignedNumberJson>();
 
+// signedInteger (日付の関数の N) も同じ形 (value・valueType・operator) なので、どちらも受け取る
 export const makeSignedNumberJson = (
-    target: ConvertExcludeError<SignedNumberType>,
+    target: SignedNumberTypeClass | SignedIntegerTypeClass,
 ): SignedNumberJson => {
-    const value = target.value;
-    const valueType = target.valueType;
-    const operator = target.operator;
+    const { value, valueType, operator } = target.getFields();
 
     const signedNumberJson: SignedNumberJson = {
         value: value,
@@ -99,46 +98,24 @@ export type DateFormulaJson =
       };
 export const isDateFormulaJson = typia.createIs<DateFormulaJson>();
 
-export const makeDateFormulaJson = (
-    target: ConvertExcludeError<DateFormulaType>,
-): DateFormulaJson => {
-    if (
-        target.value === 'LAST_N_DAYS_N' ||
-        target.value === 'NEXT_N_DAYS_N' ||
-        target.value === 'N_DAYS_AGO_N' ||
-        target.value === 'NEXT_N_WEEKS_N' ||
-        target.value === 'LAST_N_WEEKS_N' ||
-        target.value === 'N_WEEKS_AGO_N' ||
-        target.value === 'NEXT_N_MONTHS_N' ||
-        target.value === 'LAST_N_MONTHS_N' ||
-        target.value === 'N_MONTHS_AGO_N' ||
-        target.value === 'NEXT_N_QUARTERS_N' ||
-        target.value === 'LAST_N_QUARTERS_N' ||
-        target.value === 'N_QUARTERS_AGO_N' ||
-        target.value === 'NEXT_N_FISCAL_QUARTERS_N' ||
-        target.value === 'LAST_N_FISCAL_QUARTERS_N' ||
-        target.value === 'N_FISCAL_QUARTERS_AGO_N' ||
-        target.value === 'NEXT_N_YEARS_N' ||
-        target.value === 'LAST_N_YEARS_N' ||
-        target.value === 'N_YEARS_AGO_N' ||
-        target.value === 'NEXT_N_FISCAL_YEARS_N' ||
-        target.value === 'LAST_N_FISCAL_YEARS_N' ||
-        target.value === 'N_FISCAL_YEARS_AGO_N'
-    ) {
-        const param = target.param;
+export const makeDateFormulaJson = (target: DateFormulaTypeClass): DateFormulaJson => {
+    const fields = target.getFields();
+    // N の付く関数 (LAST_N_DAYS_N など) だけが引数 (signedInteger) を持つ
+    if ('param' in fields) {
+        const { value, valueType, operator } = fields.param.getFields();
         const dateFormulaJson: DateFormulaJson = {
-            func: target.value,
-            arg: param.value,
-            argType: param.valueType,
+            func: fields.kind,
+            arg: value,
+            argType: valueType,
         };
-        if (param.operator) {
-            dateFormulaJson.argOperator = param.operator;
+        if (operator) {
+            dateFormulaJson.argOperator = operator;
         }
 
         return dateFormulaJson;
     } else {
         return {
-            func: target.value,
+            func: fields.kind,
         };
     }
 };
@@ -169,42 +146,45 @@ export type ValueJson =
 
 export const isValueJson = typia.createIs<ValueJson>();
 
-export const makeValueJson = (target: ConvertExcludeError<ValueType>): ValueJson => {
-    if (target.valueType === 'number') {
-        return {
-            type: target.valueType,
-            ...makeSignedNumberJson(target.value),
-        };
-    } else if (target.valueType === 'dateFormula') {
-        return {
-            type: target.valueType,
-            ...makeDateFormulaJson(target.value),
-        };
-    } else if (target.valueType === 'subQuery') {
-        return {
-            type: target.valueType,
-            value: makeSubQueryJson(target.value),
-        };
-    } else if (target.valueType === 'list') {
-        return {
-            type: target.valueType,
-            value: target.value.value.map((item) => makeValueJson(item)),
-        };
-    } else if (target.valueType === 'bind') {
-        return {
-            type: target.valueType,
-            value: makeExpressionJsonConvert(target.value.value),
-        };
-    } else {
-        return {
-            type: target.valueType,
-            value: target.value,
-        };
+export const makeValueJson = (target: ValueTypeClass): ValueJson => {
+    const fields = target.getFields();
+    switch (fields.kind) {
+        case 'number':
+            return {
+                type: fields.kind,
+                ...makeSignedNumberJson(fields.value),
+            };
+        case 'dateFormula':
+            return {
+                type: fields.kind,
+                ...makeDateFormulaJson(fields.value),
+            };
+        case 'subQuery':
+            return {
+                type: fields.kind,
+                value: makeSubQueryJson(fields.value),
+            };
+        case 'list':
+            return {
+                type: fields.kind,
+                value: fields.value.getFields().value.map((item) => makeValueJson(item)),
+            };
+        case 'bind':
+            // バインド式 (:var) は中の式を出す
+            return {
+                type: fields.kind,
+                value: makeExpressionJsonConvert(fields.value.getFields().value),
+            };
+        default:
+            return {
+                type: fields.kind,
+                value: fields.value,
+            };
     }
 };
 
 export const makeComparisonOperatorJson = (
-    target: ConvertExcludeError<ComparisonOperatorType>,
+    target: ComparisonOperatorTypeClass,
 ):
     | '='
     | '!='
@@ -218,7 +198,7 @@ export const makeComparisonOperatorJson = (
     | 'NOT IN'
     | 'INCLUDES'
     | 'EXCLUDES' => {
-    return target.value;
+    return target.getFields().value;
 };
 
 export type SingleConditionJson = JsonType<'singleCondition'> & {
@@ -241,32 +221,25 @@ export type SingleConditionJson = JsonType<'singleCondition'> & {
 
 export const isSingleConditionJson = typia.createIs<SingleConditionJson>();
 
-export const makeSingleConditionJson = (
-    target: ConvertType<FieldExpressionType>,
-): SingleConditionJson | ErrorJson => {
-    return convertValue<'fieldExpression', FieldExpressionType, SingleConditionJson>(
-        target,
-        'singleCondition',
-        (target, targetRecords) => {
-            const field = target.left;
-            const operator = makeComparisonOperatorJson(target.operator);
-            const value = makeValueJson(target.right);
+export const makeSingleConditionJson = (target: FieldExpressionTypeClass): SingleConditionJson => {
+    const { left, operator, right } = target.getFields();
+    const operatorJson = makeComparisonOperatorJson(operator);
+    const value = makeValueJson(right);
 
-            if (field.type === 'fieldName') {
-                return makeJsonType('singleCondition', targetRecords.base, {
-                    field: makeFieldJson(field),
-                    operator: operator,
-                    value: value,
-                });
-            } else {
-                return makeJsonType('singleCondition', targetRecords.base, {
-                    field: makeSoqlFunctionJson(field),
-                    operator: operator,
-                    value: value,
-                });
-            }
-        },
-    );
+    switch (left.kind) {
+        case 'fieldName':
+            return makeNodeJson<SingleConditionJson>('singleCondition', target, {
+                field: makeFieldJson(left),
+                operator: operatorJson,
+                value: value,
+            });
+        case 'soqlFunction':
+            return makeNodeJson<SingleConditionJson>('singleCondition', target, {
+                field: makeSoqlFunctionJson(left),
+                operator: operatorJson,
+                value: value,
+            });
+    }
 };
 
 export type LogicalConditionJson = {
@@ -277,27 +250,25 @@ export type LogicalConditionJson = {
 export const isLogicalConditionJson = typia.createIs<LogicalConditionJson>();
 
 export const makeLogicalConditionJson = (
-    target: ConvertType<LogicalExpressionType>,
-): LogicalConditionJson | ErrorJson => {
-    if (isErrorNode(target)) {
-        return makeErrorJson(target, 'logicalCondition');
-    }
-
-    const operator = target.operator;
-    const condition: (SingleConditionJson | LogicalConditionJson | ErrorJson)[] = [];
-    target.value.forEach((v) => {
-        if (isErrorNode(v)) {
-            condition.push(makeErrorJson(v, 'logicalCondition'));
-        } else if (v.value.type === 'logicalExpression') {
-            condition.push(makeLogicalConditionJson(v.value));
-        } else {
-            // fieldExpression とエラーノードは境界ノード側で処理する
-            condition.push(makeSingleConditionJson(v.value));
-        }
-    });
+    target: LogicalExpressionTypeClass,
+): LogicalConditionJson => {
+    const fields = target.getFields();
+    // AND・OR は 2 つ以上、NOT と演算子なし (条件が 1 つだけ) は 1 つの被演算子
+    const operands = 'operands' in fields ? fields.operands : [fields.operand];
+    const condition: (SingleConditionJson | LogicalConditionJson | ErrorJson)[] = operands.map(
+        (v) => {
+            const value = v.getFields().value;
+            switch (value.kind) {
+                case 'logicalExpression':
+                    return makeLogicalConditionJson(value);
+                case 'fieldExpression':
+                    return makeSingleConditionJson(value);
+            }
+        },
+    );
 
     return {
         condition: condition,
-        ...(operator !== null ? { operator: operator } : {}),
+        ...(fields.operator !== null ? { operator: fields.operator } : {}),
     };
 };

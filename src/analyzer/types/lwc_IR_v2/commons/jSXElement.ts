@@ -1,26 +1,25 @@
+import { type FieldsOf, type TypeField } from '../../commons/ir';
+import { type SourceSpan } from '../../commons/source';
 import { isJSXElement, type JSXElement } from '@babel/types';
 import {
     EvaluatePair,
     LwcCommonTypeClass,
-    LwcErrorTypeClass,
     lazyPairs,
     makeEvaluatePair,
-    visitNode,
     visitNodeList,
-    visitOptionalNode,
+    getSourceSpan,
 } from '../commonVisitor';
-import { jSXClosingElementTypePair, type JSXClosingElementTypeClass } from './jSXClosingElement';
+import { failIrBuild } from '../buildFailure';
+import { JSXClosingElementTypeClass } from './jSXClosingElement';
 import {
     jSXExpressionContainerTypePair,
     type JSXExpressionContainerTypeClass,
 } from './jSXExpressionContainer';
 import { jSXFragmentTypePair, type JSXFragmentTypeClass } from './jSXFragment';
-import { jSXOpeningElementTypePair, type JSXOpeningElementTypeClass } from './jSXOpeningElement';
+import { JSXOpeningElementTypeClass } from './jSXOpeningElement';
 import { jSXSpreadChildTypePair, type JSXSpreadChildTypeClass } from './jSXSpreadChild';
 import { jSXTextTypePair, type JSXTextTypeClass } from './jSXText';
 
-const jSXElementOpeningElementPairs = lazyPairs(() => [jSXOpeningElementTypePair] as const);
-const jSXElementClosingElementPairs = lazyPairs(() => [jSXClosingElementTypePair] as const);
 const jSXElementChildrenPairs = lazyPairs(
     () =>
         [
@@ -32,65 +31,86 @@ const jSXElementChildrenPairs = lazyPairs(
         ] as const,
 );
 
-export type JSXElementFields = {
-    openingElement: JSXOpeningElementTypeClass | LwcErrorTypeClass;
-    closingElement: JSXClosingElementTypeClass | LwcErrorTypeClass | null;
-    children: (
-        | JSXTextTypeClass
-        | JSXExpressionContainerTypeClass
-        | JSXSpreadChildTypeClass
-        | JSXElementTypeClass
-        | JSXFragmentTypeClass
-        | LwcErrorTypeClass
-    )[];
-};
+export type JSXChildTypeClass =
+    | JSXTextTypeClass
+    | JSXExpressionContainerTypeClass
+    | JSXSpreadChildTypeClass
+    | JSXElementTypeClass
+    | JSXFragmentTypeClass;
 
-export class JSXElementTypeClass extends LwcCommonTypeClass<'jSXElement'> {
-    private readonly value: JSXElementFields;
+/** 自己終了の要素 (`<a />`) は閉じタグも子も持たない */
+export type JSXElementFields = TypeField<'jSXElement'> & {
+    openingElement: JSXOpeningElementTypeClass;
+} & (
+        | { selfClosing: true; closingElement: null; children: [] }
+        | {
+              selfClosing: false;
+              closingElement: JSXClosingElementTypeClass;
+              children: JSXChildTypeClass[];
+          }
+    );
 
-    private constructor(value: JSXElementFields) {
-        super('jSXElement');
-        this.value = value;
+export class JSXElementTypeClass extends LwcCommonTypeClass<'jSXElement', JSXElementFields> {
+    private constructor(value: FieldsOf<JSXElementFields>, sourceSpan: SourceSpan) {
+        super('jSXElement', value, sourceSpan);
     }
 
     static create(target: JSXElement, originalSource: string): JSXElementTypeClass {
-        return new JSXElementTypeClass({
-            openingElement: visitNode(
-                target.openingElement,
-                originalSource,
-                jSXElementOpeningElementPairs(),
-                'JSXElement.openingElement',
-            ),
-            closingElement: visitOptionalNode(
-                target.closingElement,
-                originalSource,
-                jSXElementClosingElementPairs(),
-                'JSXElement.closingElement',
-            ),
-            children: visitNodeList(
-                target.children,
-                originalSource,
-                jSXElementChildrenPairs(),
-                'JSXElement.children',
-            ),
-        });
-    }
-
-    /** すべてのフィールド (Babel の value フィールドの getter getValue() と区別する。getChildNodes もこれから作る) */
-    override getFields(): JSXElementFields {
-        return this.value;
+        const openingElement = JSXOpeningElementTypeClass.create(
+            target.openingElement,
+            originalSource,
+        );
+        if (target.openingElement.selfClosing) {
+            return target.closingElement == null && target.children.length === 0
+                ? new JSXElementTypeClass(
+                      { openingElement, selfClosing: true, closingElement: null, children: [] },
+                      getSourceSpan(target, originalSource),
+                  )
+                : failIrBuild(
+                      'TYPE_MISMATCH',
+                      target,
+                      originalSource,
+                      '自己終了の要素は閉じタグも子も持ちません',
+                  );
+        }
+        return new JSXElementTypeClass(
+            {
+                openingElement,
+                selfClosing: false,
+                closingElement:
+                    target.closingElement == null
+                        ? failIrBuild(
+                              'TYPE_MISMATCH',
+                              target,
+                              originalSource,
+                              '自己終了でない要素には閉じタグが要ります',
+                          )
+                        : JSXClosingElementTypeClass.create(target.closingElement, originalSource),
+                children: visitNodeList(
+                    target.children,
+                    originalSource,
+                    jSXElementChildrenPairs(),
+                    'JSXElement.children',
+                ),
+            },
+            getSourceSpan(target, originalSource),
+        );
     }
 
     getOpeningElement(): JSXElementFields['openingElement'] {
-        return this.value.openingElement;
+        return this.getFields().openingElement;
+    }
+
+    getSelfClosing(): JSXElementFields['selfClosing'] {
+        return this.getFields().selfClosing;
     }
 
     getClosingElement(): JSXElementFields['closingElement'] {
-        return this.value.closingElement;
+        return this.getFields().closingElement;
     }
 
     getChildren(): JSXElementFields['children'] {
-        return this.value.children;
+        return this.getFields().children;
     }
 }
 
@@ -100,5 +120,5 @@ export const jSXElementTypePair: EvaluatePair<JSXElement, JSXElementTypeClass> =
 );
 
 export const isJSXElementType = (
-    target: LwcCommonTypeClass<string>,
+    target: LwcCommonTypeClass<string, TypeField<string>>,
 ): target is JSXElementTypeClass => target instanceof JSXElementTypeClass;

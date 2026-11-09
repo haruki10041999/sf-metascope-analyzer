@@ -1,7 +1,7 @@
 import { AnyIdContext } from '@apexdevtools/apex-parser';
 
 import { ApexCommonTypeClass, getSourceSpan, isSpicifyApexCommonTypeClass } from '../commonVisitor';
-import { TypeField } from '../../commons/ir';
+import { type FieldsOf, TypeField } from '../../commons/ir';
 import { SourceSpan } from '../../commons';
 
 export type AnyIdType = TypeField<'anyId'> & {
@@ -9,12 +9,12 @@ export type AnyIdType = TypeField<'anyId'> & {
 };
 
 export class AnyIdTypeClass extends ApexCommonTypeClass<'anyId', AnyIdType> {
-    private constructor(value: string, sourceSpan: SourceSpan) {
-        super('anyId', { value: value }, sourceSpan);
+    private constructor(fields: FieldsOf<AnyIdType>, sourceSpan: SourceSpan) {
+        super('anyId', fields, sourceSpan);
     }
 
     static create(ctx: AnyIdContext): AnyIdTypeClass {
-        return new AnyIdTypeClass(ctx.getText(), getSourceSpan(ctx));
+        return new AnyIdTypeClass({ value: ctx.getText() }, getSourceSpan(ctx));
     }
 
     getValue(): AnyIdType['value'] {
@@ -24,6 +24,4 @@ export class AnyIdTypeClass extends ApexCommonTypeClass<'anyId', AnyIdType> {
 
 export const isAnyIdType = (
     target: ApexCommonTypeClass<string, TypeField<string>>,
-): target is AnyIdTypeClass => {
-    return isSpicifyApexCommonTypeClass('anyId', target);
-};
+): target is AnyIdTypeClass => isSpicifyApexCommonTypeClass('anyId', target);

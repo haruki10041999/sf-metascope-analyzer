@@ -1,3 +1,4 @@
+import { type TypeField } from '../../commons/ir';
 import { LwcCommonTypeClass, LwcCommonVisitor, lazyPairs } from '../commonVisitor';
 import { DoWhileStatementTypeClass, doWhileStatementTypePair } from '../commons/doWhileStatement';
 import { WhileStatementTypeClass, whileStatementTypePair } from '../commons/whileStatement';
@@ -27,6 +28,8 @@ export class WhileVisitor extends LwcCommonVisitor<
 
 export type WhileTypeClass = DoWhileStatementTypeClass | WhileStatementTypeClass;
 
-export const isWhileType = (target: LwcCommonTypeClass<string>): target is WhileTypeClass => {
+export const isWhileType = (
+    target: LwcCommonTypeClass<string, TypeField<string>>,
+): target is WhileTypeClass => {
     return target instanceof DoWhileStatementTypeClass || target instanceof WhileStatementTypeClass;
 };

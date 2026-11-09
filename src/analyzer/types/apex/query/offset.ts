@@ -1,9 +1,9 @@
 import typia from 'typia';
 
-import { convertValue, ConvertType } from '../commons';
-import { ErrorJson, JsonType, makeJsonType } from '../../commons';
+import { ErrorJson, JsonType } from '../../commons';
+import type { OffsetClauseTypeClass } from '../../apex_IR_v2';
 
-import { OffsetClauseType } from '../converter';
+import { makeNodeJson } from '../commons/node';
 import { BaseExpressionJson, makeExpressionJsonConvert } from '../expression';
 
 export type OffsetJson = JsonType<'offsetClause'> &
@@ -20,23 +20,19 @@ export type OffsetJson = JsonType<'offsetClause'> &
 
 export const isOffsetJson = typia.createIs<OffsetJson>();
 
-export const makeOffsetJson = (target: ConvertType<OffsetClauseType>): OffsetJson | ErrorJson => {
-    return convertValue<'offsetClause', OffsetClauseType, OffsetJson>(
-        target,
-        'offsetClause',
-        (target, targetRecords) => {
-            if (typeof target.value === 'string') {
-                return makeJsonType('offsetClause', targetRecords.base, {
-                    type: 'literal',
-                    value: target.value,
-                });
-            } else {
-                const expressionJson = makeExpressionJsonConvert(target.value.value);
-                return makeJsonType('offsetClause', targetRecords.base, {
-                    type: 'bind',
-                    value: expressionJson,
-                });
-            }
-        },
-    );
+export const makeOffsetJson = (target: OffsetClauseTypeClass): OffsetJson => {
+    const value = target.getFields().value;
+    switch (value.kind) {
+        case 'literal':
+            return makeNodeJson<OffsetJson>('offsetClause', target, {
+                type: 'literal',
+                value: value.value,
+            });
+        case 'bind':
+            // バインド式 (:var) は中の式を出す
+            return makeNodeJson<OffsetJson>('offsetClause', target, {
+                type: 'bind',
+                value: makeExpressionJsonConvert(value.value.getFields().value),
+            });
+    }
 };

@@ -1,36 +1,33 @@
 import { StatementContext } from '@apexdevtools/apex-parser';
 
-import {
-    IfStatementTypeClass,
-    SwitchStatementTypeClass,
-    ForStatementTypeClass,
-    WhileStatementTypeClass,
-    DoWhileStatementTypeClass,
-    TryStatementTypeClass,
-    ReturnStatementTypeClass,
-    ThrowStatementTypeClass,
-    BreakStatementTypeClass,
-    ContinueStatementTypeClass,
-    InsertStatementTypeClass,
-    UpdateStatementTypeClass,
-    DeleteStatementTypeClass,
-    UndeleteStatementTypeClass,
-    UpsertStatementTypeClass,
-    MergeStatementTypeClass,
-    RunAsStatementTypeClass,
-    LocalVariableDeclarationStatementTypeClass,
-    ExpressionStatementTypeClass,
-} from '.';
+import { IfStatementTypeClass } from './ifStatement';
+import { SwitchStatementTypeClass } from './switchStatement';
+import { ForStatementTypeClass } from './forStatement';
+import { WhileStatementTypeClass } from './whileStatement';
+import { DoWhileStatementTypeClass } from './doWhileStatement';
+import { TryStatementTypeClass } from './tryStatement';
+import { ReturnStatementTypeClass } from './returnStatement';
+import { ThrowStatementTypeClass } from './throwStatement';
+import { BreakStatementTypeClass } from './breakStatement';
+import { ContinueStatementTypeClass } from './continueStatement';
+import { InsertStatementTypeClass } from './insertStatement';
+import { UpdateStatementTypeClass } from './updateStatement';
+import { DeleteStatementTypeClass } from './deleteStatement';
+import { UndeleteStatementTypeClass } from './undeleteStatement';
+import { UpsertStatementTypeClass } from './upsertStatement';
+import { MergeStatementTypeClass } from './mergeStatement';
+import { RunAsStatementTypeClass } from './runAsStatement';
+import { LocalVariableDeclarationStatementTypeClass } from './localVariableDeclarationStatement';
+import { ExpressionStatementTypeClass } from './expressionStatement';
 
 import { BlockTypeClass } from '../blockVisitor';
 import {
-    ApexErrorTypeClass,
     ApexCommonTypeClass,
-    visitNode,
+    createNode,
     getSourceSpan,
     isSpicifyApexCommonTypeClass,
 } from '../commonVisitor';
-import { TypeField } from '../../commons/ir';
+import { type FieldsOf, TypeField } from '../../commons/ir';
 import { SourceSpan } from '../../commons';
 
 export type StatementType = TypeField<'statement'> & {
@@ -58,115 +55,144 @@ export type StatementType = TypeField<'statement'> & {
 };
 
 export class StatementTypeClass extends ApexCommonTypeClass<'statement', StatementType> {
-    private constructor(statement: StatementType['statement'], sourceSpan: SourceSpan) {
-        super('statement', { statement: statement }, sourceSpan);
+    private constructor(fields: FieldsOf<StatementType>, sourceSpan: SourceSpan) {
+        super('statement', fields, sourceSpan);
     }
 
     static create(ctx: StatementContext): StatementTypeClass {
+        return new StatementTypeClass(
+            { statement: StatementTypeClass.createStatement(ctx) },
+            getSourceSpan(ctx),
+        );
+    }
+
+    /** statement の選択肢のうち、ある子だけを作る */
+    private static createStatement(ctx: StatementContext): StatementType['statement'] {
         if (ctx.block()) {
-            return new StatementTypeClass(BlockTypeClass.create(ctx.block()), getSourceSpan(ctx));
+            return createNode(ctx.block(), (c) => BlockTypeClass.create(c), 'block');
         } else if (ctx.ifStatement()) {
-            return new StatementTypeClass(
-                IfStatementTypeClass.create(ctx.ifStatement()),
-                getSourceSpan(ctx),
+            return createNode(
+                ctx.ifStatement(),
+                (c) => IfStatementTypeClass.create(c),
+                'ifStatement',
             );
         } else if (ctx.switchStatement()) {
-            return new StatementTypeClass(
-                SwitchStatementTypeClass.create(ctx.switchStatement()),
-                getSourceSpan(ctx),
+            return createNode(
+                ctx.switchStatement(),
+                (c) => SwitchStatementTypeClass.create(c),
+                'switchStatement',
             );
         } else if (ctx.forStatement()) {
-            return new StatementTypeClass(
-                ForStatementTypeClass.create(ctx.forStatement()),
-                getSourceSpan(ctx),
+            return createNode(
+                ctx.forStatement(),
+                (c) => ForStatementTypeClass.create(c),
+                'forStatement',
             );
         } else if (ctx.whileStatement()) {
-            return new StatementTypeClass(
-                WhileStatementTypeClass.create(ctx.whileStatement()),
-                getSourceSpan(ctx),
+            return createNode(
+                ctx.whileStatement(),
+                (c) => WhileStatementTypeClass.create(c),
+                'whileStatement',
             );
         } else if (ctx.doWhileStatement()) {
-            return new StatementTypeClass(
-                DoWhileStatementTypeClass.create(ctx.doWhileStatement()),
-                getSourceSpan(ctx),
+            return createNode(
+                ctx.doWhileStatement(),
+                (c) => DoWhileStatementTypeClass.create(c),
+                'doWhileStatement',
             );
         } else if (ctx.tryStatement()) {
-            return new StatementTypeClass(
-                TryStatementTypeClass.create(ctx.tryStatement()),
-                getSourceSpan(ctx),
+            return createNode(
+                ctx.tryStatement(),
+                (c) => TryStatementTypeClass.create(c),
+                'tryStatement',
             );
         } else if (ctx.returnStatement()) {
-            return new StatementTypeClass(
-                ReturnStatementTypeClass.create(ctx.returnStatement()),
-                getSourceSpan(ctx),
+            return createNode(
+                ctx.returnStatement(),
+                (c) => ReturnStatementTypeClass.create(c),
+                'returnStatement',
             );
         } else if (ctx.throwStatement()) {
-            return new StatementTypeClass(
-                ThrowStatementTypeClass.create(ctx.throwStatement()),
-                getSourceSpan(ctx),
+            return createNode(
+                ctx.throwStatement(),
+                (c) => ThrowStatementTypeClass.create(c),
+                'throwStatement',
             );
         } else if (ctx.breakStatement()) {
-            return new StatementTypeClass(
-                BreakStatementTypeClass.create(ctx.breakStatement()),
-                getSourceSpan(ctx),
+            return createNode(
+                ctx.breakStatement(),
+                (c) => BreakStatementTypeClass.create(c),
+                'breakStatement',
             );
         } else if (ctx.continueStatement()) {
-            return new StatementTypeClass(
-                ContinueStatementTypeClass.create(ctx.continueStatement()),
-                getSourceSpan(ctx),
+            return createNode(
+                ctx.continueStatement(),
+                (c) => ContinueStatementTypeClass.create(c),
+                'continueStatement',
             );
         } else if (ctx.insertStatement()) {
-            return new StatementTypeClass(
-                InsertStatementTypeClass.create(ctx.insertStatement()),
-                getSourceSpan(ctx),
+            return createNode(
+                ctx.insertStatement(),
+                (c) => InsertStatementTypeClass.create(c),
+                'insertStatement',
             );
         } else if (ctx.updateStatement()) {
-            return new StatementTypeClass(
-                UpdateStatementTypeClass.create(ctx.updateStatement()),
-                getSourceSpan(ctx),
+            return createNode(
+                ctx.updateStatement(),
+                (c) => UpdateStatementTypeClass.create(c),
+                'updateStatement',
             );
         } else if (ctx.deleteStatement()) {
-            return new StatementTypeClass(
-                DeleteStatementTypeClass.create(ctx.deleteStatement()),
-                getSourceSpan(ctx),
+            return createNode(
+                ctx.deleteStatement(),
+                (c) => DeleteStatementTypeClass.create(c),
+                'deleteStatement',
             );
         } else if (ctx.undeleteStatement()) {
-            return new StatementTypeClass(
-                UndeleteStatementTypeClass.create(ctx.undeleteStatement()),
-                getSourceSpan(ctx),
+            return createNode(
+                ctx.undeleteStatement(),
+                (c) => UndeleteStatementTypeClass.create(c),
+                'undeleteStatement',
             );
         } else if (ctx.upsertStatement()) {
-            return new StatementTypeClass(
-                UpsertStatementTypeClass.create(ctx.upsertStatement()),
-                getSourceSpan(ctx),
+            return createNode(
+                ctx.upsertStatement(),
+                (c) => UpsertStatementTypeClass.create(c),
+                'upsertStatement',
             );
         } else if (ctx.mergeStatement()) {
-            return new StatementTypeClass(
-                MergeStatementTypeClass.create(ctx.mergeStatement()),
-                getSourceSpan(ctx),
+            return createNode(
+                ctx.mergeStatement(),
+                (c) => MergeStatementTypeClass.create(c),
+                'mergeStatement',
             );
         } else if (ctx.runAsStatement()) {
-            return new StatementTypeClass(
-                RunAsStatementTypeClass.create(ctx.runAsStatement()),
-                getSourceSpan(ctx),
+            return createNode(
+                ctx.runAsStatement(),
+                (c) => RunAsStatementTypeClass.create(c),
+                'runAsStatement',
             );
         } else if (ctx.localVariableDeclarationStatement()) {
-            return new StatementTypeClass(
-                LocalVariableDeclarationStatementTypeClass.create(
-                    ctx.localVariableDeclarationStatement(),
-                ),
-                getSourceSpan(ctx),
-            );
-        } else {
-            return new StatementTypeClass(
-                ExpressionStatementTypeClass.create(ctx.expressionStatement()),
-                getSourceSpan(ctx),
+            return createNode(
+                ctx.localVariableDeclarationStatement(),
+                (c) => LocalVariableDeclarationStatementTypeClass.create(c),
+                'localVariableDeclarationStatement',
             );
         }
+        // どの子もなければ (構文エラーの回復) expressionStatement も null になり NULL_CHILD になる
+        return createNode(
+            ctx.expressionStatement(),
+            (c) => ExpressionStatementTypeClass.create(c),
+            'expressionStatement',
+        );
+    }
+
+    getStatement(): StatementType['statement'] {
+        return this.getFields().statement;
     }
 }
 
-export const isNormalStatementType = (
+export const isStatementType = (
     target: ApexCommonTypeClass<string, TypeField<string>>,
 ): target is StatementTypeClass => {
     return isSpicifyApexCommonTypeClass('statement', target);

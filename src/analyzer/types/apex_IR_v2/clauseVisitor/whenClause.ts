@@ -1,40 +1,55 @@
 import { WhenClauseContext } from '@apexdevtools/apex-parser';
 
-import { ClauseTypeClass } from '.';
+import { FieldNameTypeClass } from '../nameVisitor';
+import { FieldNameListTypeClass } from '../listVisitor';
+import {
+    ApexCommonTypeClass,
+    createNode,
+    getSourceSpan,
+    isSpicifyApexCommonTypeClass,
+} from '../commonVisitor';
+import { type FieldsOf, TypeField } from '../../commons/ir';
+import { SourceSpan } from '../../commons';
 
-import { FieldNameTypeClass, NameVisitor, isFieldNameType } from '../nameVisitor';
-import { FieldNameListTypeClass, ListVisitor, isFieldNameListType } from '../listVisitor';
-import { ApexErrorTypeClass, ApexCommonTypeClass, visitNode } from '../commonVisitor';
+export type WhenClauseType = TypeField<'whenClause'> & {
+    value: FieldNameTypeClass;
+    field: FieldNameListTypeClass;
+};
 
-export class WhenClauseTypeClass extends ClauseTypeClass<'whenClause', FieldNameTypeClass> {
-    private field: FieldNameListTypeClass | ApexErrorTypeClass;
-
-    private constructor(
-        value: FieldNameTypeClass | ApexErrorTypeClass,
-        field: FieldNameListTypeClass | ApexErrorTypeClass,
-    ) {
-        super('whenClause', value);
-        this.field = field;
+export class WhenClauseTypeClass extends ApexCommonTypeClass<'whenClause', WhenClauseType> {
+    private constructor(fields: FieldsOf<WhenClauseType>, sourceSpan: SourceSpan) {
+        super('whenClause', fields, sourceSpan);
     }
 
     static create(ctx: WhenClauseContext): WhenClauseTypeClass {
-        if (!ctx.fieldName() || !ctx.fieldNameList()) {
-            throw new Error('値が異常です。WhenClauseContext: ' + ctx.getText());
-        }
-
         return new WhenClauseTypeClass(
-            visitNode(new NameVisitor(), ctx.fieldName(), isFieldNameType, 'fieldName'),
-            visitNode(new ListVisitor(), ctx.fieldNameList(), isFieldNameListType, 'fieldNameList'),
+            {
+                value: createNode(
+                    ctx.fieldName(),
+                    (c) => FieldNameTypeClass.create(c),
+                    'fieldName',
+                ),
+                field: createNode(
+                    ctx.fieldNameList(),
+                    (c) => FieldNameListTypeClass.create(c),
+                    'fieldNameList',
+                ),
+            },
+            getSourceSpan(ctx),
         );
     }
 
-    getField(): FieldNameListTypeClass | ApexErrorTypeClass {
-        return this.field;
+    getValue(): WhenClauseType['value'] {
+        return this.getFields().value;
+    }
+
+    getField(): WhenClauseType['field'] {
+        return this.getFields().field;
     }
 }
 
 export const isWhenClauseType = (
-    target: ApexCommonTypeClass<string>,
+    target: ApexCommonTypeClass<string, TypeField<string>>,
 ): target is WhenClauseTypeClass => {
-    return target instanceof WhenClauseTypeClass;
+    return isSpicifyApexCommonTypeClass('whenClause', target);
 };

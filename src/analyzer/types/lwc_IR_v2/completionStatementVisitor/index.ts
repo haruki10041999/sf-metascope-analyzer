@@ -1,3 +1,4 @@
+import { type TypeField } from '../../commons/ir';
 import { LwcCommonTypeClass, LwcCommonVisitor, lazyPairs } from '../commonVisitor';
 import { BreakStatementTypeClass, breakStatementTypePair } from '../commons/breakStatement';
 import {
@@ -53,7 +54,7 @@ export type CompletionStatementTypeClass =
     | ThrowStatementTypeClass;
 
 export const isCompletionStatementType = (
-    target: LwcCommonTypeClass<string>,
+    target: LwcCommonTypeClass<string, TypeField<string>>,
 ): target is CompletionStatementTypeClass => {
     return (
         target instanceof BreakStatementTypeClass ||

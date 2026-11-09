@@ -1,9 +1,14 @@
 import { DateFormulaContext } from '@apexdevtools/apex-parser';
 
-import { QueryValueTypeClass } from '.';
-
-import { SignedIntegerTypeClass, LiteralVisitor, isSignedIntegerType } from '../literalVisitor';
-import { ApexErrorTypeClass, ApexCommonTypeClass, visitNode } from '../commonVisitor';
+import { SignedIntegerTypeClass } from '../literalVisitor';
+import {
+    ApexCommonTypeClass,
+    createNode,
+    getSourceSpan,
+    isSpicifyApexCommonTypeClass,
+} from '../commonVisitor';
+import { type FieldsOf, TypeField } from '../../commons/ir';
+import { SourceSpan } from '../../commons';
 
 type DateFormulaFunctionType =
     | 'YESTERDAY'
@@ -109,15 +114,16 @@ const isDateFormulaWithFunctionType = (ctx: DateFormulaContext): boolean => {
 
 export type DateFormulaValueType = DateFormulaFunctionType | DateFormulaWithFunctionType;
 
-export class DateFormulaTypeClass extends QueryValueTypeClass<'dateFormula', DateFormulaValueType> {
-    private param: SignedIntegerTypeClass | ApexErrorTypeClass | null = null;
+/** N の付く関数 (LAST_N_DAYS:n など) だけが param (n) を持つ */
+export type DateFormulaType = TypeField<'dateFormula'> &
+    (
+        | { kind: DateFormulaFunctionType }
+        | { kind: DateFormulaWithFunctionType; param: SignedIntegerTypeClass }
+    );
 
-    private constructor(
-        value: DateFormulaValueType,
-        param: SignedIntegerTypeClass | ApexErrorTypeClass | null,
-    ) {
-        super('dateFormula', value);
-        this.param = param;
+export class DateFormulaTypeClass extends ApexCommonTypeClass<'dateFormula', DateFormulaType> {
+    private constructor(fields: FieldsOf<DateFormulaType>, sourceSpan: SourceSpan) {
+        super('dateFormula', fields, sourceSpan);
     }
 
     static create(ctx: DateFormulaContext): DateFormulaTypeClass {
@@ -125,10 +131,8 @@ export class DateFormulaTypeClass extends QueryValueTypeClass<'dateFormula', Dat
             throw new Error('値が異常です。DateFormulaContext: ' + ctx.getText());
         }
 
-        let value: DateFormulaValueType | ApexErrorTypeClass;
-        let param: SignedIntegerTypeClass | ApexErrorTypeClass | null = null;
-
         if (isDateFormulaFunctionType(ctx)) {
+            let value: DateFormulaFunctionType;
             if (ctx.YESTERDAY()) {
                 value = 'YESTERDAY';
             } else if (ctx.TODAY()) {
@@ -176,14 +180,15 @@ export class DateFormulaTypeClass extends QueryValueTypeClass<'dateFormula', Dat
             } else {
                 value = 'NEXT_FISCAL_YEAR';
             }
+            return new DateFormulaTypeClass({ kind: value }, getSourceSpan(ctx));
         } else {
-            param = visitNode(
-                new LiteralVisitor(),
+            const param = createNode(
                 ctx.signedInteger(),
-                isSignedIntegerType,
+                (c) => SignedIntegerTypeClass.create(c),
                 'signedInteger',
             );
 
+            let value: DateFormulaWithFunctionType;
             if (ctx.LAST_N_DAYS_N()) {
                 value = 'LAST_N_DAYS_N';
             } else if (ctx.NEXT_N_DAYS_N()) {
@@ -227,18 +232,17 @@ export class DateFormulaTypeClass extends QueryValueTypeClass<'dateFormula', Dat
             } else {
                 value = 'N_FISCAL_YEARS_AGO_N';
             }
+            return new DateFormulaTypeClass({ kind: value, param }, getSourceSpan(ctx));
         }
-
-        return new DateFormulaTypeClass(value, param);
     }
 
-    getParam(): SignedIntegerTypeClass | ApexErrorTypeClass | null {
-        return this.param;
+    getKind(): DateFormulaType['kind'] {
+        return this.getFields().kind;
     }
 }
 
 export const isDateFormulaType = (
-    target: ApexCommonTypeClass<string>,
+    target: ApexCommonTypeClass<string, TypeField<string>>,
 ): target is DateFormulaTypeClass => {
-    return target instanceof DateFormulaTypeClass;
+    return isSpicifyApexCommonTypeClass('dateFormula', target);
 };

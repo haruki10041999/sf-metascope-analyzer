@@ -1,71 +1,77 @@
 import { BitExpressionContext } from '@apexdevtools/apex-parser';
 
+import { BasedExpressionTypeClass, ExpressionVisitor, isBasedExpressionType } from '.';
+
 import {
-    DoubleStringOperatorExpressionTypeClass,
-    BasedExpressionTypeClass,
-    ExpressionVisitor,
-    isBasedExpressionType,
-} from '.';
+    ApexCommonTypeClass,
+    getSourceSpan,
+    isSpicifyApexCommonTypeClass,
+    visitNode,
+} from '../commonVisitor';
+import { type FieldsOf, SourceSpan, TypeField } from '../../commons/ir';
 
-import { ApexErrorTypeClass, ApexCommonTypeClass, visitNode } from '../commonVisitor';
+export type BitExpressionType = TypeField<'bitExpression'> & {
+    left: BasedExpressionTypeClass;
+    /** シフト演算子 (LT / GT のトークンを並べたもの) */
+    operator: '<<' | '>>' | '>>>';
+    right: BasedExpressionTypeClass;
+};
 
-export class BitExpressionTypeClass extends DoubleStringOperatorExpressionTypeClass<
+export class BitExpressionTypeClass extends ApexCommonTypeClass<
     'bitExpression',
-    BasedExpressionTypeClass,
-    string,
-    BasedExpressionTypeClass
+    BitExpressionType
 > {
-    private constructor(
-        left: BasedExpressionTypeClass | ApexErrorTypeClass,
-        right: BasedExpressionTypeClass | ApexErrorTypeClass,
-        operator: string,
-    ) {
-        super('bitExpression', left, right, operator);
+    private constructor(fields: FieldsOf<BitExpressionType>, sourceSpan: SourceSpan) {
+        super('bitExpression', fields, sourceSpan);
     }
 
     static create(ctx: BitExpressionContext): BitExpressionTypeClass {
-        if (
-            !ctx.expression_list() ||
-            ctx.expression_list().length !== 2 ||
-            ((!ctx.LT_list() || ctx.LT_list().length === 0) &&
-                (!ctx.GT_list() || ctx.GT_list().length === 0))
-        ) {
-            throw new Error('値が異常です。BitExpressionContext: ' + ctx.getText());
-        }
-        let operator: string;
-
-        if (ctx.LT_list() && ctx.LT_list().length > 0) {
-            operator = ctx
-                .LT_list()
-                .map((node) => node.getText())
-                .join('');
+        const lt = ctx.LT_list() ?? [];
+        const gt = ctx.GT_list() ?? [];
+        let operator: BitExpressionType['operator'];
+        if (lt.length === 2 && gt.length === 0) {
+            operator = '<<';
+        } else if (gt.length === 2 && lt.length === 0) {
+            operator = '>>';
+        } else if (gt.length === 3 && lt.length === 0) {
+            operator = '>>>';
         } else {
-            operator = ctx
-                .GT_list()
-                .map((node) => node.getText())
-                .join('');
+            throw new Error('値が異常です。BitExpressionContext: ' + ctx.getText());
         }
 
         return new BitExpressionTypeClass(
-            visitNode(
-                new ExpressionVisitor(),
-                ctx.expression(0),
-                isBasedExpressionType,
-                'expression',
-            ),
-            visitNode(
-                new ExpressionVisitor(),
-                ctx.expression(1),
-                isBasedExpressionType,
-                'expression',
-            ),
-            operator,
+            {
+                left: visitNode(
+                    new ExpressionVisitor(),
+                    ctx.expression(0),
+                    isBasedExpressionType,
+                    'expression',
+                ),
+                operator,
+                right: visitNode(
+                    new ExpressionVisitor(),
+                    ctx.expression(1),
+                    isBasedExpressionType,
+                    'expression',
+                ),
+            },
+            getSourceSpan(ctx),
         );
+    }
+
+    getLeft(): BitExpressionType['left'] {
+        return this.getFields().left;
+    }
+
+    getOperator(): BitExpressionType['operator'] {
+        return this.getFields().operator;
+    }
+
+    getRight(): BitExpressionType['right'] {
+        return this.getFields().right;
     }
 }
 
 export const isBitExpressionType = (
-    target: ApexCommonTypeClass<string>,
-): target is BitExpressionTypeClass => {
-    return target instanceof BitExpressionTypeClass;
-};
+    target: ApexCommonTypeClass<string, TypeField<string>>,
+): target is BitExpressionTypeClass => isSpicifyApexCommonTypeClass('bitExpression', target);

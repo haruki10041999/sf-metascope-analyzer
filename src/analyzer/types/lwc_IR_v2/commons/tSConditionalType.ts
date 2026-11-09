@@ -1,76 +1,76 @@
+import { type FieldsOf, type TypeField } from '../../commons/ir';
+import { type SourceSpan } from '../../commons/source';
 import { isTSConditionalType, type TSConditionalType } from '@babel/types';
 import {
     EvaluatePair,
     LwcCommonTypeClass,
-    LwcErrorTypeClass,
     makeEvaluatePair,
     visitNode,
+    getSourceSpan,
 } from '../commonVisitor';
 import { tSTypeVisitorEvaluatePairs, type TSTypeTypeClass } from '../tsTypeVisitor';
 
-export type TSConditionalTypeFields = {
-    checkType: TSTypeTypeClass | LwcErrorTypeClass;
-    extendsType: TSTypeTypeClass | LwcErrorTypeClass;
-    trueType: TSTypeTypeClass | LwcErrorTypeClass;
-    falseType: TSTypeTypeClass | LwcErrorTypeClass;
+export type TSConditionalTypeFields = TypeField<'tSConditionalType'> & {
+    checkType: TSTypeTypeClass;
+    extendsType: TSTypeTypeClass;
+    trueType: TSTypeTypeClass;
+    falseType: TSTypeTypeClass;
 };
 
-export class TSConditionalTypeTypeClass extends LwcCommonTypeClass<'tSConditionalType'> {
-    private readonly value: TSConditionalTypeFields;
-
-    private constructor(value: TSConditionalTypeFields) {
-        super('tSConditionalType');
-        this.value = value;
+export class TSConditionalTypeTypeClass extends LwcCommonTypeClass<
+    'tSConditionalType',
+    TSConditionalTypeFields
+> {
+    private constructor(value: FieldsOf<TSConditionalTypeFields>, sourceSpan: SourceSpan) {
+        super('tSConditionalType', value, sourceSpan);
     }
 
     static create(target: TSConditionalType, originalSource: string): TSConditionalTypeTypeClass {
-        return new TSConditionalTypeTypeClass({
-            checkType: visitNode(
-                target.checkType,
-                originalSource,
-                tSTypeVisitorEvaluatePairs(),
-                'TSTypeVisitor',
-            ),
-            extendsType: visitNode(
-                target.extendsType,
-                originalSource,
-                tSTypeVisitorEvaluatePairs(),
-                'TSTypeVisitor',
-            ),
-            trueType: visitNode(
-                target.trueType,
-                originalSource,
-                tSTypeVisitorEvaluatePairs(),
-                'TSTypeVisitor',
-            ),
-            falseType: visitNode(
-                target.falseType,
-                originalSource,
-                tSTypeVisitorEvaluatePairs(),
-                'TSTypeVisitor',
-            ),
-        });
-    }
-
-    /** すべてのフィールド (Babel の value フィールドの getter getValue() と区別する。getChildNodes もこれから作る) */
-    override getFields(): TSConditionalTypeFields {
-        return this.value;
+        return new TSConditionalTypeTypeClass(
+            {
+                checkType: visitNode(
+                    target.checkType,
+                    originalSource,
+                    tSTypeVisitorEvaluatePairs(),
+                    'TSTypeVisitor',
+                ),
+                extendsType: visitNode(
+                    target.extendsType,
+                    originalSource,
+                    tSTypeVisitorEvaluatePairs(),
+                    'TSTypeVisitor',
+                ),
+                trueType: visitNode(
+                    target.trueType,
+                    originalSource,
+                    tSTypeVisitorEvaluatePairs(),
+                    'TSTypeVisitor',
+                ),
+                falseType: visitNode(
+                    target.falseType,
+                    originalSource,
+                    tSTypeVisitorEvaluatePairs(),
+                    'TSTypeVisitor',
+                ),
+            },
+            getSourceSpan(target, originalSource),
+        );
     }
 
     getCheckType(): TSConditionalTypeFields['checkType'] {
-        return this.value.checkType;
+        return this.getFields().checkType;
     }
 
     getExtendsType(): TSConditionalTypeFields['extendsType'] {
-        return this.value.extendsType;
+        return this.getFields().extendsType;
     }
 
     getTrueType(): TSConditionalTypeFields['trueType'] {
-        return this.value.trueType;
+        return this.getFields().trueType;
     }
 
     getFalseType(): TSConditionalTypeFields['falseType'] {
-        return this.value.falseType;
+        return this.getFields().falseType;
     }
 }
 
@@ -82,5 +82,5 @@ export const tSConditionalTypeTypePair: EvaluatePair<
 );
 
 export const isTSConditionalTypeType = (
-    target: LwcCommonTypeClass<string>,
+    target: LwcCommonTypeClass<string, TypeField<string>>,
 ): target is TSConditionalTypeTypeClass => target instanceof TSConditionalTypeTypeClass;

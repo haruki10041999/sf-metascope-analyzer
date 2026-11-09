@@ -1,30 +1,35 @@
 import { ElementValueContext } from '@apexdevtools/apex-parser';
 
-import { NormalLiteralTypeClass, LiteralVisitor, isNormalLiteralType } from '../literalVisitor';
+import { LiteralTypeClass } from '../literalVisitor';
 import {
-    ApexErrorTypeClass,
     ApexCommonTypeClass,
-    visitNode,
+    createNode,
     getSourceSpan,
     isSpicifyApexCommonTypeClass,
 } from '../commonVisitor';
+import { type FieldsOf, TypeField } from '../../commons/ir';
 import { SourceSpan } from '../../commons';
-import { TypeField } from '../../commons/ir';
 
 export type ElementValueType = TypeField<'elementValue'> & {
-    value: NormalLiteralTypeClass;
+    value: LiteralTypeClass;
 };
 
 export class ElementValueTypeClass extends ApexCommonTypeClass<'elementValue', ElementValueType> {
-    private constructor(value: NormalLiteralTypeClass, sourceSpan: SourceSpan) {
-        super('elementValue', { value: value }, sourceSpan);
+    private constructor(fields: FieldsOf<ElementValueType>, sourceSpan: SourceSpan) {
+        super('elementValue', fields, sourceSpan);
     }
 
-    static create(ctx: ElementValueContext) {
+    static create(ctx: ElementValueContext): ElementValueTypeClass {
         return new ElementValueTypeClass(
-            NormalLiteralTypeClass.create(ctx.literal()),
+            {
+                value: createNode(ctx.literal(), (c) => LiteralTypeClass.create(c), 'literal'),
+            },
             getSourceSpan(ctx),
         );
+    }
+
+    getValue(): ElementValueType['value'] {
+        return this.getFields().value;
     }
 }
 

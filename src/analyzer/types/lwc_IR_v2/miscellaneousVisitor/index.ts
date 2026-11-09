@@ -1,3 +1,4 @@
+import { type TypeField } from '../../commons/ir';
 import { LwcCommonTypeClass, LwcCommonVisitor, lazyPairs } from '../commonVisitor';
 import { PlaceholderTypeClass, placeholderTypePair } from './placeholder';
 import {
@@ -27,7 +28,7 @@ export class MiscellaneousVisitor extends LwcCommonVisitor<
 export type MiscellaneousTypeClass = PlaceholderTypeClass | V8IntrinsicIdentifierTypeClass;
 
 export const isMiscellaneousType = (
-    target: LwcCommonTypeClass<string>,
+    target: LwcCommonTypeClass<string, TypeField<string>>,
 ): target is MiscellaneousTypeClass => {
     return (
         target instanceof PlaceholderTypeClass || target instanceof V8IntrinsicIdentifierTypeClass

@@ -1,10 +1,11 @@
 import typia from 'typia';
 
-import { ConvertType, convertValue } from './commons';
-import { ErrorJson, JsonType, makeJsonType } from '../commons';
+import { ErrorJson, JsonType } from '../commons';
+import type { FormalParameterTypeClass } from '../apex_IR_v2';
+
+import { makeNodeJson } from './commons/node';
 import { TypeJson, makeTypeJson } from './type';
 import { ModifiersJson, makeModifiersJson } from './modifier';
-import { FormalParameterType } from './converter';
 
 export type ParameterJson = JsonType<'parameter'> & {
     variant: string;
@@ -14,18 +15,11 @@ export type ParameterJson = JsonType<'parameter'> & {
 
 export const isParameterJson = typia.createIs<ParameterJson>();
 
-export const makeParameterJson = (
-    target: ConvertType<FormalParameterType>,
-): ParameterJson | ErrorJson => {
-    return convertValue<'formalParameter', FormalParameterType, ParameterJson>(
-        target,
-        'parameter',
-        (target, targetRecords) => {
-            return makeJsonType('parameter', targetRecords.base, {
-                variant: target.value.value,
-                variantType: makeTypeJson(target.valueType),
-                modifier: makeModifiersJson(target.modifier),
-            });
-        },
-    );
+export const makeParameterJson = (target: FormalParameterTypeClass): ParameterJson => {
+    const { name, valueType, modifiers } = target.getFields();
+    return makeNodeJson<ParameterJson>('parameter', target, {
+        variant: name.getFields().value,
+        variantType: makeTypeJson(valueType),
+        modifier: makeModifiersJson(modifiers),
+    });
 };

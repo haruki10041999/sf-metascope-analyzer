@@ -1,52 +1,59 @@
 import { PropertyBlockContext } from '@apexdevtools/apex-parser';
 
-import { GetterTypeClass, SetterTypeClass } from '.';
+import { GetterTypeClass } from './getter';
+import { SetterTypeClass } from './setter';
 
-import { NormalModifierTypeClass, ModifierVisitor, isNormalModifierType } from '../modifierVisitor';
+import { ModifierTypeClass } from '../modifierVisitor';
 import {
-    ApexErrorTypeClass,
     ApexCommonTypeClass,
-    isApexValidClass,
-    visitNodeList,
+    createNode,
+    createNodeList,
     getSourceSpan,
     isSpicifyApexCommonTypeClass,
 } from '../commonVisitor';
-import { TypeField } from '../../commons/ir';
+import { type FieldsOf, TypeField } from '../../commons/ir';
 import { SourceSpan } from '../../commons';
 
 export type PropertyBlockType = TypeField<'propertyBlock'> & {
     block: GetterTypeClass | SetterTypeClass;
-    modifiers: NormalModifierTypeClass[];
+    modifiers: ModifierTypeClass[];
 };
 
 export class PropertyBlockTypeClass extends ApexCommonTypeClass<
     'propertyBlock',
     PropertyBlockType
 > {
-    private constructor(
-        block: GetterTypeClass | SetterTypeClass,
-        modifiers: NormalModifierTypeClass[],
-        sourceSpan: SourceSpan,
-    ) {
-        super('propertyBlock', { block: block, modifiers: modifiers }, sourceSpan);
+    private constructor(fields: FieldsOf<PropertyBlockType>, sourceSpan: SourceSpan) {
+        super('propertyBlock', fields, sourceSpan);
     }
 
     static create(ctx: PropertyBlockContext): PropertyBlockTypeClass {
-        const modifiers = ctx.modifier_list().map((m) => NormalModifierTypeClass.create(m));
+        return new PropertyBlockTypeClass(
+            {
+                block: ctx.getter()
+                    ? createNode(ctx.getter(), (c) => GetterTypeClass.create(c), 'getter')
+                    : createNode(ctx.setter(), (c) => SetterTypeClass.create(c), 'setter'),
+                modifiers: createNodeList(
+                    ctx.modifier_list(),
+                    (c) => ModifierTypeClass.create(c),
+                    'modifier',
+                ),
+            },
+            getSourceSpan(ctx),
+        );
+    }
 
-        if (ctx.getter()) {
-            return new PropertyBlockTypeClass(
-                GetterTypeClass.create(ctx.getter()),
-                modifiers,
-                getSourceSpan(ctx),
-            );
-        } else {
-            return new PropertyBlockTypeClass(
-                SetterTypeClass.create(ctx.setter()),
-                modifiers,
-                getSourceSpan(ctx),
-            );
-        }
+    getBlock(): PropertyBlockType['block'] {
+        return this.getFields().block;
+    }
+
+    getModifiers(): PropertyBlockType['modifiers'] {
+        return this.getFields().modifiers;
+    }
+
+    /** getModifiers と同じ (v1 の名前) */
+    getModifier(): PropertyBlockType['modifiers'] {
+        return this.getModifiers();
     }
 }
 

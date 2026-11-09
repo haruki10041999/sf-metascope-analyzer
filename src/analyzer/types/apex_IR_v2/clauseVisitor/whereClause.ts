@@ -1,40 +1,44 @@
 import { WhereClauseContext } from '@apexdevtools/apex-parser';
 
-import { ClauseTypeClass } from '.';
-
+import { WhereLogicalExpressionTypeClass } from '../expressionVisitor';
 import {
-    WhereLogicalExpressionTypeClass,
-    ExpressionVisitor,
-    isWhereLogicalExpressionType,
-} from '../expressionVisitor';
-import { ApexErrorTypeClass, ApexCommonTypeClass, visitNode } from '../commonVisitor';
+    ApexCommonTypeClass,
+    createNode,
+    getSourceSpan,
+    isSpicifyApexCommonTypeClass,
+} from '../commonVisitor';
+import { type FieldsOf, TypeField } from '../../commons/ir';
+import { SourceSpan } from '../../commons';
 
-export class WhereClauseTypeClass extends ClauseTypeClass<
-    'whereClause',
-    WhereLogicalExpressionTypeClass
-> {
-    private constructor(value: WhereLogicalExpressionTypeClass | ApexErrorTypeClass) {
-        super('whereClause', value);
+export type WhereClauseType = TypeField<'whereClause'> & {
+    value: WhereLogicalExpressionTypeClass;
+};
+
+export class WhereClauseTypeClass extends ApexCommonTypeClass<'whereClause', WhereClauseType> {
+    private constructor(fields: FieldsOf<WhereClauseType>, sourceSpan: SourceSpan) {
+        super('whereClause', fields, sourceSpan);
     }
 
     static create(ctx: WhereClauseContext): WhereClauseTypeClass {
-        if (!ctx.whereLogicalExpression()) {
-            throw new Error('値が異常です。WhereClauseContext: ' + ctx.getText());
-        }
-
         return new WhereClauseTypeClass(
-            visitNode(
-                new ExpressionVisitor(),
-                ctx.whereLogicalExpression(),
-                isWhereLogicalExpressionType,
-                'whereLogicalExpression',
-            ),
+            {
+                value: createNode(
+                    ctx.whereLogicalExpression(),
+                    (c) => WhereLogicalExpressionTypeClass.create(c),
+                    'whereLogicalExpression',
+                ),
+            },
+            getSourceSpan(ctx),
         );
+    }
+
+    getValue(): WhereClauseType['value'] {
+        return this.getFields().value;
     }
 }
 
 export const isWhereClauseType = (
-    target: ApexCommonTypeClass<string>,
+    target: ApexCommonTypeClass<string, TypeField<string>>,
 ): target is WhereClauseTypeClass => {
-    return target instanceof WhereClauseTypeClass;
+    return isSpicifyApexCommonTypeClass('whereClause', target);
 };

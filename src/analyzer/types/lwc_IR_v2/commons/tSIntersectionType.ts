@@ -1,43 +1,43 @@
+import { type FieldsOf, type TypeField } from '../../commons/ir';
+import { type SourceSpan } from '../../commons/source';
 import { isTSIntersectionType, type TSIntersectionType } from '@babel/types';
 import {
     EvaluatePair,
     LwcCommonTypeClass,
-    LwcErrorTypeClass,
     makeEvaluatePair,
     visitNodeList,
+    getSourceSpan,
 } from '../commonVisitor';
 import { tSTypeVisitorEvaluatePairs, type TSTypeTypeClass } from '../tsTypeVisitor';
 
-export type TSIntersectionTypeFields = {
-    types: (TSTypeTypeClass | LwcErrorTypeClass)[];
+export type TSIntersectionTypeFields = TypeField<'tSIntersectionType'> & {
+    types: TSTypeTypeClass[];
 };
 
-export class TSIntersectionTypeTypeClass extends LwcCommonTypeClass<'tSIntersectionType'> {
-    private readonly value: TSIntersectionTypeFields;
-
-    private constructor(value: TSIntersectionTypeFields) {
-        super('tSIntersectionType');
-        this.value = value;
+export class TSIntersectionTypeTypeClass extends LwcCommonTypeClass<
+    'tSIntersectionType',
+    TSIntersectionTypeFields
+> {
+    private constructor(value: FieldsOf<TSIntersectionTypeFields>, sourceSpan: SourceSpan) {
+        super('tSIntersectionType', value, sourceSpan);
     }
 
     static create(target: TSIntersectionType, originalSource: string): TSIntersectionTypeTypeClass {
-        return new TSIntersectionTypeTypeClass({
-            types: visitNodeList(
-                target.types,
-                originalSource,
-                tSTypeVisitorEvaluatePairs(),
-                'TSTypeVisitor',
-            ),
-        });
-    }
-
-    /** すべてのフィールド (Babel の value フィールドの getter getValue() と区別する。getChildNodes もこれから作る) */
-    override getFields(): TSIntersectionTypeFields {
-        return this.value;
+        return new TSIntersectionTypeTypeClass(
+            {
+                types: visitNodeList(
+                    target.types,
+                    originalSource,
+                    tSTypeVisitorEvaluatePairs(),
+                    'TSTypeVisitor',
+                ),
+            },
+            getSourceSpan(target, originalSource),
+        );
     }
 
     getTypes(): TSIntersectionTypeFields['types'] {
-        return this.value.types;
+        return this.getFields().types;
     }
 }
 
@@ -49,5 +49,5 @@ export const tSIntersectionTypeTypePair: EvaluatePair<
 );
 
 export const isTSIntersectionTypeType = (
-    target: LwcCommonTypeClass<string>,
+    target: LwcCommonTypeClass<string, TypeField<string>>,
 ): target is TSIntersectionTypeTypeClass => target instanceof TSIntersectionTypeTypeClass;

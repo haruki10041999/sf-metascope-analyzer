@@ -1,6 +1,6 @@
 import path from 'node:path';
 
-import { writeSaveDataInfo } from '../parser/commons';
+import { listSavedIds, writeSaveDataInfo } from '../parser/commons';
 import { Repository, locateUnits, parseUnitFromTree } from '../unit/repository';
 import { WorkingTree } from '../unit/sourceTree';
 import {
@@ -11,8 +11,26 @@ import {
     findUnitTypeBySaveId,
 } from '../unit/unitType';
 
-import type { BatchResult, WorkerOptions } from './batchWorker';
 import { WorkerPool, defaultConcurrency, mapWithConcurrency, registerWorkerTask } from './workerPool';
+
+export type WorkerOptions = {
+    /** 保存先のディレクトリ (本番用の msgpack で <outDir>/<保存名>.msgpack に保存する) */
+    outDir: string;
+    /** 同時に処理する件数。省略時は CPU 数 - 1 */
+    concurrency?: number;
+    /**
+     * true にすると worker_threads のプールで並列に処理する (既定: false = メインスレッドで処理)。
+     * - ttsx 実行時はスレッドごとにプロジェクトの準備が走り 1 スレッドあたり十数秒かかるため使わない。
+     * - ビルド版 (npm run build:node → dist/node) では有効。
+     * - 読み込みはスレッド間の受け渡しの分だけ遅くなるため、スレッドは使わない。
+     */
+    useThreads?: boolean;
+};
+
+/** 一括処理の結果。1 件の失敗で全体を止めないよう、件ごとに成否を返す */
+export type BatchResult<TInput, TResult> =
+    | { input: TInput; ok: true; result: TResult }
+    | { input: TInput; ok: false; error: Error };
 
 // すべての単位の種類を 1 つで扱う worker。タスクは「単位の種類 + 単位の場所」。
 // 保存先は 1 つのフォルダで、読み込みは保存名の接頭辞で種類を選ぶ。方針: docs/analysis-plan.md 2 章
@@ -123,6 +141,20 @@ export class UnitWorker {
      */
     loadAll(root: string, types: readonly AnyUnitType[] = UNIT_TYPES): Promise<Repository> {
         return Repository.loadSaved(root, this.outDir, types);
+    }
+
+    /** 保存した単位の保存名 (types の種類だけ。名前の順) */
+    listSavedIds(types: readonly AnyUnitType[] = UNIT_TYPES): Promise<string[]> {
+        const names = new Set(types.map((t) => t.type));
+        return listSavedIds(this.outDir, (saveId) => {
+            const unitType = findUnitTypeBySaveId(saveId);
+            return unitType !== undefined && names.has(unitType.type);
+        });
+    }
+
+    /** 保存した単位を 1 つ読む */
+    load(saveId: string): Promise<UnitParseResult> {
+        return this.run({ command: 'load', outDir: this.outDir, saveId });
     }
 
     async close(): Promise<void> {

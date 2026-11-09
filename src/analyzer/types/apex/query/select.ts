@@ -1,23 +1,15 @@
 import typia from 'typia';
 
-import { Convert, ConvertType, convertValue, ConvertExcludeError, isErrorNode } from '../commons';
-import {
-    ErrorJson,
-    isErrorJson,
-    JsonType,
-    makeJsonType,
-    isSpecificJsonType,
-    makeErrorJson,
-} from '../../commons';
+import { ErrorJson, JsonType } from '../../commons';
+import type {
+    FieldNameTypeClass,
+    SelectEntryTypeClass,
+    SelectListTypeClass,
+    SubFieldEntryTypeClass,
+    SubFieldListTypeClass,
+} from '../../apex_IR_v2';
 
-import {
-    SelectListType,
-    SelectEntryType,
-    FieldNameType,
-    SubFieldListType,
-    SubFieldEntryType,
-} from '../converter';
-
+import { makeNodeJson } from '../commons/node';
 import { SoqlFunctionJson, makeSoqlFunctionJson } from './soqlFunction';
 import { TypeOfJson, makeTypeOfJson } from './typeof';
 import { SubQueryJson, makeSubQueryJson } from './subQuery';
@@ -29,10 +21,10 @@ export type FieldJson = {
 
 export const isFieldJson = typia.createIs<FieldJson>();
 
-export const makeFieldJson = (target: ConvertExcludeError<FieldNameType>): FieldJson => {
+export const makeFieldJson = (target: FieldNameTypeClass): FieldJson => {
     return {
         type: 'field',
-        field: target.value.map((v) => v.value.value),
+        field: target.getFields().value.map((v) => v.getFields().value.getFields().value),
     };
 };
 
@@ -43,41 +35,41 @@ export type SelectEntryJson = (
 };
 export const isSelectEntryJson = typia.createIs<SelectEntryJson>();
 
+type SelectEntryBodyJson = JsonType<'selectEntry'> & (FieldJson | SoqlFunctionJson | TypeOfJson);
+
 const makeSelectEntryJson = (
-    target: ConvertType<SelectEntryType | SubFieldEntryType>,
-): SelectEntryJson | ErrorJson => {
-    return convertValue<
-        'selectEntry' | 'subFieldEntry',
-        SelectEntryType | SubFieldEntryType,
-        SelectEntryJson | ErrorJson
-    >(target, 'selectEntry', (target, targetRecords) => {
-        let value: SelectEntryJson | ErrorJson;
-        if (target.value.type === 'fieldName') {
-            value = makeJsonType('selectEntry', targetRecords.base, {
-                ...makeFieldJson(target.value),
+    target: SelectEntryTypeClass | SubFieldEntryTypeClass,
+): SelectEntryJson => {
+    const fields = target.getFields();
+    const value = fields.value;
+    let result: SelectEntryJson;
+    switch (value.kind) {
+        case 'fieldName':
+            result = makeNodeJson<SelectEntryBodyJson>('selectEntry', target, {
+                ...makeFieldJson(value),
             });
-        } else if (target.value.type === 'soqlFunction') {
-            value = makeJsonType('selectEntry', targetRecords.base, {
-                ...makeSoqlFunctionJson(target.value),
+            break;
+        case 'soqlFunction':
+            result = makeNodeJson<SelectEntryBodyJson>('selectEntry', target, {
+                ...makeSoqlFunctionJson(value),
             });
-        } else if (target.value.type === 'subQuery') {
-            value = makeSubQueryJson(target.value);
-        } else {
-            value = makeJsonType('selectEntry', targetRecords.base, {
-                ...makeTypeOfJson(target.value),
+            break;
+        case 'subQuery':
+            // サブクエリは、サブクエリ自身のキーを持つ
+            result = { ...makeSubQueryJson(value) };
+            break;
+        case 'typeOf':
+            result = makeNodeJson<SelectEntryBodyJson>('selectEntry', target, {
+                ...makeTypeOfJson(value),
             });
-        }
+            break;
+    }
 
-        if (isErrorJson(value)) {
-            return value;
-        }
-
-        const result: SelectEntryJson = { ...value };
-        if (target.alias) {
-            result.alias = target.alias.value.value;
-        }
-        return result;
-    });
+    // 別名は typeOf 以外だけが持つ
+    if ('alias' in fields && fields.alias) {
+        result.alias = fields.alias.getFields().value.getFields().value;
+    }
+    return result;
 };
 
 export type SelectJson = {
@@ -86,14 +78,10 @@ export type SelectJson = {
 
 export const isSelectJson = typia.createIs<SelectJson>();
 
-export const makeSelectJson = (
-    target: ConvertType<SelectListType | SubFieldListType>,
-): SelectJson | ErrorJson => {
-    if (isErrorNode(target)) {
-        return makeErrorJson(target, 'select');
-    }
-
+export const makeSelectJson = (target: SelectListTypeClass | SubFieldListTypeClass): SelectJson => {
+    const entries: readonly (SelectEntryTypeClass | SubFieldEntryTypeClass)[] =
+        target.getFields().value;
     return {
-        field: target.value.map((v) => makeSelectEntryJson(v)),
+        field: entries.map((v) => makeSelectEntryJson(v)),
     };
 };

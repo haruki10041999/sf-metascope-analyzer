@@ -1,49 +1,49 @@
+import { type FieldsOf, type TypeField } from '../../commons/ir';
+import { type SourceSpan } from '../../commons/source';
 import { isTSTypeOperator, type TSTypeOperator } from '@babel/types';
 import {
     EvaluatePair,
     LwcCommonTypeClass,
-    LwcErrorTypeClass,
     makeEvaluatePair,
     visitNode,
+    getSourceSpan,
 } from '../commonVisitor';
 import { tSTypeVisitorEvaluatePairs, type TSTypeTypeClass } from '../tsTypeVisitor';
 
-export type TSTypeOperatorFields = {
+export type TSTypeOperatorFields = TypeField<'tSTypeOperator'> & {
     operator: TSTypeOperator['operator'];
-    typeAnnotation: TSTypeTypeClass | LwcErrorTypeClass;
+    typeAnnotation: TSTypeTypeClass;
 };
 
-export class TSTypeOperatorTypeClass extends LwcCommonTypeClass<'tSTypeOperator'> {
-    private readonly value: TSTypeOperatorFields;
-
-    private constructor(value: TSTypeOperatorFields) {
-        super('tSTypeOperator');
-        this.value = value;
+export class TSTypeOperatorTypeClass extends LwcCommonTypeClass<
+    'tSTypeOperator',
+    TSTypeOperatorFields
+> {
+    private constructor(value: FieldsOf<TSTypeOperatorFields>, sourceSpan: SourceSpan) {
+        super('tSTypeOperator', value, sourceSpan);
     }
 
     static create(target: TSTypeOperator, originalSource: string): TSTypeOperatorTypeClass {
-        return new TSTypeOperatorTypeClass({
-            operator: target.operator,
-            typeAnnotation: visitNode(
-                target.typeAnnotation,
-                originalSource,
-                tSTypeVisitorEvaluatePairs(),
-                'TSTypeVisitor',
-            ),
-        });
-    }
-
-    /** すべてのフィールド (Babel の value フィールドの getter getValue() と区別する。getChildNodes もこれから作る) */
-    override getFields(): TSTypeOperatorFields {
-        return this.value;
+        return new TSTypeOperatorTypeClass(
+            {
+                operator: target.operator,
+                typeAnnotation: visitNode(
+                    target.typeAnnotation,
+                    originalSource,
+                    tSTypeVisitorEvaluatePairs(),
+                    'TSTypeVisitor',
+                ),
+            },
+            getSourceSpan(target, originalSource),
+        );
     }
 
     getOperator(): TSTypeOperatorFields['operator'] {
-        return this.value.operator;
+        return this.getFields().operator;
     }
 
     getTypeAnnotation(): TSTypeOperatorFields['typeAnnotation'] {
-        return this.value.typeAnnotation;
+        return this.getFields().typeAnnotation;
     }
 }
 
@@ -53,5 +53,5 @@ export const tSTypeOperatorTypePair: EvaluatePair<TSTypeOperator, TSTypeOperator
     );
 
 export const isTSTypeOperatorType = (
-    target: LwcCommonTypeClass<string>,
+    target: LwcCommonTypeClass<string, TypeField<string>>,
 ): target is TSTypeOperatorTypeClass => target instanceof TSTypeOperatorTypeClass;

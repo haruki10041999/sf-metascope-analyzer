@@ -1,40 +1,47 @@
 import { SubExpressionContext } from '@apexdevtools/apex-parser';
 
+import { BasedExpressionTypeClass, ExpressionVisitor, isBasedExpressionType } from '.';
+
 import {
-    BasedExpressionTypeClass,
-    ExpressionTypeClass,
-    ExpressionVisitor,
-    isBasedExpressionType,
-} from '.';
+    ApexCommonTypeClass,
+    getSourceSpan,
+    isSpicifyApexCommonTypeClass,
+    visitNode,
+} from '../commonVisitor';
+import { type FieldsOf, SourceSpan, TypeField } from '../../commons/ir';
 
-import { ApexCommonTypeClass, ApexErrorTypeClass, visitNode } from '../commonVisitor';
+/** 括弧でくくった式 `(expression)` */
+export type SubExpressionType = TypeField<'subExpression'> & {
+    value: BasedExpressionTypeClass;
+};
 
-export class SubExpressionTypeClass extends ExpressionTypeClass<
+export class SubExpressionTypeClass extends ApexCommonTypeClass<
     'subExpression',
-    BasedExpressionTypeClass
+    SubExpressionType
 > {
-    private constructor(value: BasedExpressionTypeClass | ApexErrorTypeClass) {
-        super('subExpression', value);
+    private constructor(fields: FieldsOf<SubExpressionType>, sourceSpan: SourceSpan) {
+        super('subExpression', fields, sourceSpan);
     }
 
     static create(ctx: SubExpressionContext): SubExpressionTypeClass {
-        if (!ctx.expression()) {
-            throw new Error('値が異常です。SubExpressionContext: ' + ctx.getText());
-        }
-
         return new SubExpressionTypeClass(
-            visitNode(
-                new ExpressionVisitor(),
-                ctx.expression(),
-                isBasedExpressionType,
-                'expression',
-            ),
+            {
+                value: visitNode(
+                    new ExpressionVisitor(),
+                    ctx.expression(),
+                    isBasedExpressionType,
+                    'expression',
+                ),
+            },
+            getSourceSpan(ctx),
         );
+    }
+
+    getValue(): SubExpressionType['value'] {
+        return this.getFields().value;
     }
 }
 
 export const isSubExpressionType = (
-    target: ApexCommonTypeClass<string>,
-): target is SubExpressionTypeClass => {
-    return target instanceof SubExpressionTypeClass;
-};
+    target: ApexCommonTypeClass<string, TypeField<string>>,
+): target is SubExpressionTypeClass => isSpicifyApexCommonTypeClass('subExpression', target);

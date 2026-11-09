@@ -1,46 +1,46 @@
+import { type FieldsOf, type TypeField } from '../../commons/ir';
+import { type SourceSpan } from '../../commons/source';
 import { isObjectTypeSpreadProperty, type ObjectTypeSpreadProperty } from '@babel/types';
 import {
     EvaluatePair,
     LwcCommonTypeClass,
-    LwcErrorTypeClass,
     makeEvaluatePair,
     visitNode,
+    getSourceSpan,
 } from '../commonVisitor';
 import { flowTypeVisitorEvaluatePairs, type FlowTypeTypeClass } from '../flowTypeVisitor';
 
-export type ObjectTypeSpreadPropertyFields = {
-    argument: FlowTypeTypeClass | LwcErrorTypeClass;
+export type ObjectTypeSpreadPropertyFields = TypeField<'objectTypeSpreadProperty'> & {
+    argument: FlowTypeTypeClass;
 };
 
-export class ObjectTypeSpreadPropertyTypeClass extends LwcCommonTypeClass<'objectTypeSpreadProperty'> {
-    private readonly value: ObjectTypeSpreadPropertyFields;
-
-    private constructor(value: ObjectTypeSpreadPropertyFields) {
-        super('objectTypeSpreadProperty');
-        this.value = value;
+export class ObjectTypeSpreadPropertyTypeClass extends LwcCommonTypeClass<
+    'objectTypeSpreadProperty',
+    ObjectTypeSpreadPropertyFields
+> {
+    private constructor(value: FieldsOf<ObjectTypeSpreadPropertyFields>, sourceSpan: SourceSpan) {
+        super('objectTypeSpreadProperty', value, sourceSpan);
     }
 
     static create(
         target: ObjectTypeSpreadProperty,
         originalSource: string,
     ): ObjectTypeSpreadPropertyTypeClass {
-        return new ObjectTypeSpreadPropertyTypeClass({
-            argument: visitNode(
-                target.argument,
-                originalSource,
-                flowTypeVisitorEvaluatePairs(),
-                'FlowTypeVisitor',
-            ),
-        });
-    }
-
-    /** すべてのフィールド (Babel の value フィールドの getter getValue() と区別する。getChildNodes もこれから作る) */
-    override getFields(): ObjectTypeSpreadPropertyFields {
-        return this.value;
+        return new ObjectTypeSpreadPropertyTypeClass(
+            {
+                argument: visitNode(
+                    target.argument,
+                    originalSource,
+                    flowTypeVisitorEvaluatePairs(),
+                    'FlowTypeVisitor',
+                ),
+            },
+            getSourceSpan(target, originalSource),
+        );
     }
 
     getArgument(): ObjectTypeSpreadPropertyFields['argument'] {
-        return this.value.argument;
+        return this.getFields().argument;
     }
 }
 
@@ -52,6 +52,6 @@ export const objectTypeSpreadPropertyTypePair: EvaluatePair<
 );
 
 export const isObjectTypeSpreadPropertyType = (
-    target: LwcCommonTypeClass<string>,
+    target: LwcCommonTypeClass<string, TypeField<string>>,
 ): target is ObjectTypeSpreadPropertyTypeClass =>
     target instanceof ObjectTypeSpreadPropertyTypeClass;

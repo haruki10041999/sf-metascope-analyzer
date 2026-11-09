@@ -1,14 +1,16 @@
+import { type FieldsOf, type TypeField } from '../../commons/ir';
+import { type SourceSpan } from '../../commons/source';
 import { isFunctionDeclaration, type FunctionDeclaration } from '@babel/types';
 import {
     EvaluatePair,
     LwcCommonTypeClass,
-    LwcErrorTypeClass,
     lazyPairs,
     makeEvaluatePair,
-    visitNode,
     visitNodeList,
     visitOptionalNode,
+    getSourceSpan,
 } from '../commonVisitor';
+import { failIrBuild } from '../buildFailure';
 import {
     flowPredicateVisitorEvaluatePairs,
     type FlowPredicateTypeClass,
@@ -33,128 +35,142 @@ import {
     tSTypeParameterDeclarationTypePair,
     type TSTypeParameterDeclarationTypeClass,
 } from '../typeScriptVisitor/tSTypeParameterDeclaration';
-import { blockStatementTypePair, type BlockStatementTypeClass } from './blockStatement';
-import { identifierTypePair, type IdentifierTypeClass } from './identifier';
+import { BlockStatementTypeClass } from './blockStatement';
+import { IdentifierTypeClass } from './identifier';
 
-const functionDeclarationIdPairs = lazyPairs(() => [identifierTypePair] as const);
 const functionDeclarationReturnTypePairs = lazyPairs(
     () => [typeAnnotationTypePair, tSTypeAnnotationTypePair] as const,
 );
 const functionDeclarationTypeParametersPairs = lazyPairs(
     () => [typeParameterDeclarationTypePair, tSTypeParameterDeclarationTypePair] as const,
 );
-const functionDeclarationBodyPairs = lazyPairs(() => [blockStatementTypePair] as const);
 
-export type FunctionDeclarationFields = {
-    params: (FunctionParameterTypeClass | LwcErrorTypeClass)[];
+/**
+ * 名前のない関数の宣言を書けるのは export default だけなので、id は既定で null にしない。
+ * export default の側では FunctionDeclarationTypeClass<IdentifierTypeClass | null> を使う
+ */
+export type FunctionDeclarationFields<
+    TId extends IdentifierTypeClass | null = IdentifierTypeClass,
+> = TypeField<'functionDeclaration'> & {
+    params: FunctionParameterTypeClass[];
     generator: FunctionDeclaration['generator'];
     async: FunctionDeclaration['async'];
-    declare: NonNullable<FunctionDeclaration['declare']> | null;
-    id: IdentifierTypeClass | LwcErrorTypeClass | null;
-    returnType: TypeAnnotationTypeClass | TSTypeAnnotationTypeClass | LwcErrorTypeClass | null;
-    typeParameters:
-        | TypeParameterDeclarationTypeClass
-        | TSTypeParameterDeclarationTypeClass
-        | LwcErrorTypeClass
-        | null;
-    body: BlockStatementTypeClass | LwcErrorTypeClass;
-    predicate: FlowPredicateTypeClass | LwcErrorTypeClass | null;
+    id: TId;
+    returnType: TypeAnnotationTypeClass | TSTypeAnnotationTypeClass | null;
+    typeParameters: TypeParameterDeclarationTypeClass | TSTypeParameterDeclarationTypeClass | null;
+    body: BlockStatementTypeClass;
+    predicate: FlowPredicateTypeClass | null;
 };
 
-export class FunctionDeclarationTypeClass extends LwcCommonTypeClass<'functionDeclaration'> {
-    private readonly value: FunctionDeclarationFields;
-
-    private constructor(value: FunctionDeclarationFields) {
-        super('functionDeclaration');
-        this.value = value;
+export class FunctionDeclarationTypeClass<
+    TId extends IdentifierTypeClass | null = IdentifierTypeClass,
+> extends LwcCommonTypeClass<'functionDeclaration', FunctionDeclarationFields<TId>> {
+    private constructor(value: FieldsOf<FunctionDeclarationFields<TId>>, sourceSpan: SourceSpan) {
+        super('functionDeclaration', value, sourceSpan);
     }
 
+    /** 名前のある関数の宣言 (export default のほか)。名前がなければ IrBuildError */
     static create(
         target: FunctionDeclaration,
         originalSource: string,
     ): FunctionDeclarationTypeClass {
-        return new FunctionDeclarationTypeClass({
-            params: visitNodeList(
-                target.params,
+        if (target.id == null) {
+            return failIrBuild(
+                'TYPE_MISMATCH',
+                target,
                 originalSource,
-                functionParameterVisitorEvaluatePairs(),
-                'FunctionParameterVisitor',
-            ),
-            generator: target.generator,
-            async: target.async,
-            declare: target.declare ?? null,
-            id: visitOptionalNode(
-                target.id,
-                originalSource,
-                functionDeclarationIdPairs(),
-                'FunctionDeclaration.id',
-            ),
-            returnType: visitOptionalNode(
-                target.returnType,
-                originalSource,
-                functionDeclarationReturnTypePairs(),
-                'FunctionDeclaration.returnType',
-            ),
-            typeParameters: visitOptionalNode(
-                target.typeParameters,
-                originalSource,
-                functionDeclarationTypeParametersPairs(),
-                'FunctionDeclaration.typeParameters',
-            ),
-            body: visitNode(
-                target.body,
-                originalSource,
-                functionDeclarationBodyPairs(),
-                'FunctionDeclaration.body',
-            ),
-            predicate: visitOptionalNode(
-                target.predicate,
-                originalSource,
-                flowPredicateVisitorEvaluatePairs(),
-                'FlowPredicateVisitor',
-            ),
-        });
+                '名前のない関数の宣言は export default でしか書けません',
+            );
+        }
+        return FunctionDeclarationTypeClass.build(
+            target,
+            IdentifierTypeClass.create(target.id, originalSource),
+            originalSource,
+        );
     }
 
-    /** すべてのフィールド (Babel の value フィールドの getter getValue() と区別する。getChildNodes もこれから作る) */
-    override getFields(): FunctionDeclarationFields {
-        return this.value;
+    /** export default の関数の宣言 (名前を省略できる) */
+    static createDefaultExport(
+        target: FunctionDeclaration,
+        originalSource: string,
+    ): FunctionDeclarationTypeClass<IdentifierTypeClass | null> {
+        return FunctionDeclarationTypeClass.build(
+            target,
+            target.id == null ? null : IdentifierTypeClass.create(target.id, originalSource),
+            originalSource,
+        );
     }
 
-    getParams(): FunctionDeclarationFields['params'] {
-        return this.value.params;
+    private static build<TId extends IdentifierTypeClass | null>(
+        target: FunctionDeclaration,
+        id: TId,
+        originalSource: string,
+    ): FunctionDeclarationTypeClass<TId> {
+        return new FunctionDeclarationTypeClass<TId>(
+            {
+                params: visitNodeList(
+                    target.params,
+                    originalSource,
+                    functionParameterVisitorEvaluatePairs(),
+                    'FunctionParameterVisitor',
+                ),
+                generator: target.generator,
+                async: target.async,
+                id,
+                returnType: visitOptionalNode(
+                    target.returnType,
+                    originalSource,
+                    functionDeclarationReturnTypePairs(),
+                    'FunctionDeclaration.returnType',
+                ),
+                typeParameters: visitOptionalNode(
+                    target.typeParameters,
+                    originalSource,
+                    functionDeclarationTypeParametersPairs(),
+                    'FunctionDeclaration.typeParameters',
+                ),
+                body: BlockStatementTypeClass.create(target.body, originalSource),
+                predicate: visitOptionalNode(
+                    target.predicate,
+                    originalSource,
+                    flowPredicateVisitorEvaluatePairs(),
+                    'FlowPredicateVisitor',
+                ),
+            },
+            getSourceSpan(target, originalSource),
+        );
     }
 
-    getGenerator(): FunctionDeclarationFields['generator'] {
-        return this.value.generator;
+    getParams(): FunctionDeclarationFields<TId>['params'] {
+        return this.getFields().params;
     }
 
-    getAsync(): FunctionDeclarationFields['async'] {
-        return this.value.async;
+    getGenerator(): FunctionDeclarationFields<TId>['generator'] {
+        return this.getFields().generator;
     }
 
-    getDeclare(): FunctionDeclarationFields['declare'] {
-        return this.value.declare;
+    getAsync(): FunctionDeclarationFields<TId>['async'] {
+        return this.getFields().async;
     }
 
-    getId(): FunctionDeclarationFields['id'] {
-        return this.value.id;
+    getId(): FunctionDeclarationFields<TId>['id'] {
+        return this.getFields().id;
     }
 
-    getReturnType(): FunctionDeclarationFields['returnType'] {
-        return this.value.returnType;
+    getReturnType(): FunctionDeclarationFields<TId>['returnType'] {
+        return this.getFields().returnType;
     }
 
-    getTypeParameters(): FunctionDeclarationFields['typeParameters'] {
-        return this.value.typeParameters;
+    getTypeParameters(): FunctionDeclarationFields<TId>['typeParameters'] {
+        return this.getFields().typeParameters;
     }
 
-    getBody(): FunctionDeclarationFields['body'] {
-        return this.value.body;
+    getBody(): FunctionDeclarationFields<TId>['body'] {
+        return this.getFields().body;
     }
 
-    getPredicate(): FunctionDeclarationFields['predicate'] {
-        return this.value.predicate;
+    getPredicate(): FunctionDeclarationFields<TId>['predicate'] {
+        return this.getFields().predicate;
     }
 }
 
@@ -166,5 +182,6 @@ export const functionDeclarationTypePair: EvaluatePair<
 );
 
 export const isFunctionDeclarationType = (
-    target: LwcCommonTypeClass<string>,
-): target is FunctionDeclarationTypeClass => target instanceof FunctionDeclarationTypeClass;
+    target: LwcCommonTypeClass<string, TypeField<string>>,
+): target is FunctionDeclarationTypeClass<IdentifierTypeClass | null> =>
+    target instanceof FunctionDeclarationTypeClass;

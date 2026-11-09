@@ -1,15 +1,27 @@
-import type { ApexParser, ApexParserRuleContext } from '@apexdevtools/apex-parser';
+import {
+    ApexParserFactory,
+    type ApexParser,
+    type ApexParserRuleContext,
+} from '@apexdevtools/apex-parser';
 
-import { parse } from '../apex_IR/helpers';
-import { UnitVisitor } from '../../src/analyzer/types/apex_IR/unitVisitor';
-import { convertApexUnit } from '../../src/analyzer/types/apex/converter';
-import { makeConvertType, regenerateSourceObjects } from '../../src/analyzer/types/apex/commons';
-import { JsonType } from '../../src/analyzer/types/commons';
+import { ApexCommonErrorListener } from '../../src/analyzer/parser/Apex/errorListener';
+import { regenerateSourceObjects } from '../../src/analyzer/types/apex/commons';
 import {
     makeAnonymousUnitJson,
     makeCompilationUnitJson,
     makeTriggerUnitJson,
 } from '../../src/analyzer/types/apex/unit';
+import { buildApexIr } from '../../src/analyzer/types/apex_IR_v2/commonVisitor';
+import {
+    AnonymousUnitTypeClass,
+    CompilationUnitTypeClass,
+    TriggerUnitTypeClass,
+} from '../../src/analyzer/types/apex_IR_v2/unitVisitor';
+import {
+    CommonTypeClass,
+    collectSourceObjects,
+    type TypeField,
+} from '../../src/analyzer/types/commons/ir';
 
 export const unitRules = {
     cls: (parser: ApexParser) => parser.compilationUnit(),
@@ -17,37 +29,69 @@ export const unitRules = {
     anonymous: (parser: ApexParser) => parser.anonymousUnit(),
 };
 
-export const toCommonType = (
-    source: string,
-    rule: (parser: ApexParser) => ApexParserRuleContext,
-) => {
-    const unit = new UnitVisitor().visit(parse(source, rule));
-    return convertApexUnit(unit);
+/** IR v2 の unit を作る (本番の parseApexSource と同じ。docs/ir-v2-integration.md) */
+const buildUnit = (source: string, rule: (parser: ApexParser) => ApexParserRuleContext) => {
+    const listener = new ApexCommonErrorListener(source);
+    const { parser } = ApexParserFactory.createLexerAndParser(source, listener);
+    if (rule === unitRules.trigger) {
+        return buildApexIr(
+            parser.triggerUnit(),
+            (c) => TriggerUnitTypeClass.create(c),
+            'triggerUnit',
+        );
+    }
+    if (rule === unitRules.anonymous) {
+        return buildApexIr(
+            parser.anonymousUnit(),
+            (c) => AnonymousUnitTypeClass.create(c),
+            'anonymousUnit',
+        );
+    }
+    return buildApexIr(
+        parser.compilationUnit(),
+        (c) => CompilationUnitTypeClass.create(c),
+        'compilationUnit',
+    );
+};
+
+/** IR のノードを、フィールドの値を見るための素のオブジェクトにする ({ type, ...フィールド }) */
+export const dumpIr = (value: unknown): unknown => {
+    if (value instanceof CommonTypeClass) {
+        return dumpIr((value as CommonTypeClass<string, TypeField<string>>).getFields());
+    }
+    if (Array.isArray(value)) return value.map(dumpIr);
+    if (value === null || typeof value !== 'object') return value;
+    return Object.fromEntries(Object.entries(value).map(([key, child]) => [key, dumpIr(child)]));
 };
 
 /**
  * 本番と同じ流れで変換する。
- * CommonType → ConvertNode + SourceJson[] → JSON → JSON に残ったキーだけの SourceJson[]
+ * IR v2 → JSON → JSON に残ったキーだけの SourceJson[]
  */
 export const toJson = async (
     source: string,
     rule: (parser: ApexParser) => ApexParserRuleContext,
 ) => {
-    const commonType = toCommonType(source, rule);
-    const { result, sourceObjects } = await makeConvertType(commonType);
-    const converted = result as { type: string };
+    const built = buildUnit(source, rule);
+    const unit = built.result;
+    if (!unit) {
+        throw new Error(
+            `unit を作れませんでした: ${built.errors.map((e) => e.errorMessage).join(', ')}`,
+        );
+    }
     const json =
-        converted.type === 'compilationUnit'
-            ? makeCompilationUnitJson(converted as never)
-            : converted.type === 'triggerUnit'
-              ? makeTriggerUnitJson(converted as never)
-              : makeAnonymousUnitJson(converted as never);
-    const source_ = regenerateSourceObjects(sourceObjects, json as JsonType<string>);
+        unit.kind === 'compilationUnit'
+            ? makeCompilationUnitJson(unit)
+            : unit.kind === 'triggerUnit'
+              ? makeTriggerUnitJson(unit)
+              : makeAnonymousUnitJson(unit);
+    const allSourceObjects = collectSourceObjects(unit);
     return {
-        commonType,
+        ir: unit,
+        irErrors: built.errors,
         json: json as any,
-        sourceObjects: source_,
-        allSourceObjects: sourceObjects,
+        sourceObjects: regenerateSourceObjects(allSourceObjects, json),
+        allSourceObjects,
     };
 };
 

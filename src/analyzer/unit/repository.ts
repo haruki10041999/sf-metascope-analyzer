@@ -72,6 +72,24 @@ export class Repository {
         private readonly units: Map<string, UnitParseResult[]>,
     ) {}
 
+    /** 単位のないリポジトリ */
+    static empty(root: string): Repository {
+        return new Repository(root, new Map());
+    }
+
+    /** 解析結果を 1 つずつ変えたリポジトリ (機密の値を伏せる (report/mask.ts) など。元は変えない) */
+    map(fn: (type: string, result: UnitParseResult) => UnitParseResult): Repository {
+        return new Repository(
+            this.root,
+            new Map(
+                [...this.units].map(([type, results]) => [
+                    type,
+                    results.map((result) => fn(type, result)),
+                ]),
+            ),
+        );
+    }
+
     /** 木 (作業ツリー・git のある時点) のすべての単位を解析する */
     static async load(
         tree: SourceTree,

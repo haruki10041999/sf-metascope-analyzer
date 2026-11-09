@@ -1,61 +1,53 @@
+import { type FieldsOf, type TypeField } from '../../commons/ir';
+import { type SourceSpan } from '../../commons/source';
 import { isTSQualifiedName, type TSQualifiedName } from '@babel/types';
 import {
     EvaluatePair,
     LwcCommonTypeClass,
-    LwcErrorTypeClass,
-    lazyPairs,
     makeEvaluatePair,
     visitNode,
+    getSourceSpan,
 } from '../commonVisitor';
 import {
     tSEntityNameVisitorEvaluatePairs,
     type TSEntityNameTypeClass,
 } from '../tsEntityNameVisitor';
-import { identifierTypePair, type IdentifierTypeClass } from './identifier';
+import { IdentifierTypeClass } from './identifier';
 
-const tSQualifiedNameRightPairs = lazyPairs(() => [identifierTypePair] as const);
-
-export type TSQualifiedNameFields = {
-    left: TSEntityNameTypeClass | LwcErrorTypeClass;
-    right: IdentifierTypeClass | LwcErrorTypeClass;
+export type TSQualifiedNameFields = TypeField<'tSQualifiedName'> & {
+    left: TSEntityNameTypeClass;
+    right: IdentifierTypeClass;
 };
 
-export class TSQualifiedNameTypeClass extends LwcCommonTypeClass<'tSQualifiedName'> {
-    private readonly value: TSQualifiedNameFields;
-
-    private constructor(value: TSQualifiedNameFields) {
-        super('tSQualifiedName');
-        this.value = value;
+export class TSQualifiedNameTypeClass extends LwcCommonTypeClass<
+    'tSQualifiedName',
+    TSQualifiedNameFields
+> {
+    private constructor(value: FieldsOf<TSQualifiedNameFields>, sourceSpan: SourceSpan) {
+        super('tSQualifiedName', value, sourceSpan);
     }
 
     static create(target: TSQualifiedName, originalSource: string): TSQualifiedNameTypeClass {
-        return new TSQualifiedNameTypeClass({
-            left: visitNode(
-                target.left,
-                originalSource,
-                tSEntityNameVisitorEvaluatePairs(),
-                'TSEntityNameVisitor',
-            ),
-            right: visitNode(
-                target.right,
-                originalSource,
-                tSQualifiedNameRightPairs(),
-                'TSQualifiedName.right',
-            ),
-        });
-    }
-
-    /** すべてのフィールド (Babel の value フィールドの getter getValue() と区別する。getChildNodes もこれから作る) */
-    override getFields(): TSQualifiedNameFields {
-        return this.value;
+        return new TSQualifiedNameTypeClass(
+            {
+                left: visitNode(
+                    target.left,
+                    originalSource,
+                    tSEntityNameVisitorEvaluatePairs(),
+                    'TSEntityNameVisitor',
+                ),
+                right: IdentifierTypeClass.create(target.right, originalSource),
+            },
+            getSourceSpan(target, originalSource),
+        );
     }
 
     getLeft(): TSQualifiedNameFields['left'] {
-        return this.value.left;
+        return this.getFields().left;
     }
 
     getRight(): TSQualifiedNameFields['right'] {
-        return this.value.right;
+        return this.getFields().right;
     }
 }
 
@@ -65,5 +57,5 @@ export const tSQualifiedNameTypePair: EvaluatePair<TSQualifiedName, TSQualifiedN
     );
 
 export const isTSQualifiedNameType = (
-    target: LwcCommonTypeClass<string>,
+    target: LwcCommonTypeClass<string, TypeField<string>>,
 ): target is TSQualifiedNameTypeClass => target instanceof TSQualifiedNameTypeClass;

@@ -1,57 +1,64 @@
 import { FieldOrderContext } from '@apexdevtools/apex-parser';
 
-import { ClauseTypeClass } from '.';
+import { SoqlFunctionTypeClass } from '../queryVisitor';
+import { FieldNameTypeClass } from '../nameVisitor';
+import {
+    ApexCommonTypeClass,
+    createNode,
+    getSourceSpan,
+    isSpicifyApexCommonTypeClass,
+} from '../commonVisitor';
+import { type FieldsOf, TypeField } from '../../commons/ir';
+import { SourceSpan } from '../../commons';
 
-import { SoqlFunctionTypeClass, QueryVisitor, isSoqlFunctionType } from '../queryVisitor';
-import { FieldNameTypeClass, NameVisitor, isFieldNameType } from '../nameVisitor';
-import { ApexErrorTypeClass, ApexCommonTypeClass, visitNode } from '../commonVisitor';
+export type FieldOrderType = TypeField<'fieldOrder'> & {
+    value: FieldNameTypeClass | SoqlFunctionTypeClass;
+    direction: 'ASC' | 'DESC' | null;
+    nulls: 'FIRST' | 'LAST' | null;
+};
 
-export class FieldOrderTypeClass extends ClauseTypeClass<
-    'fieldOrder',
-    FieldNameTypeClass | SoqlFunctionTypeClass
-> {
-    private direction: 'ASC' | 'DESC' | null = null;
-    private nulls: 'FIRST' | 'LAST' | null = null;
-    private constructor(
-        value: FieldNameTypeClass | SoqlFunctionTypeClass | ApexErrorTypeClass,
-        direction: 'ASC' | 'DESC' | null,
-        nulls: 'FIRST' | 'LAST' | null,
-    ) {
-        super('fieldOrder', value);
-        this.direction = direction;
-        this.nulls = nulls;
+export class FieldOrderTypeClass extends ApexCommonTypeClass<'fieldOrder', FieldOrderType> {
+    private constructor(fields: FieldsOf<FieldOrderType>, sourceSpan: SourceSpan) {
+        super('fieldOrder', fields, sourceSpan);
     }
 
     static create(ctx: FieldOrderContext): FieldOrderTypeClass {
-        if (!ctx.fieldName() && !ctx.soqlFunction()) {
-            throw new Error('値が異常です。FieldOrderContext: ' + ctx.getText());
+        let value: FieldOrderType['value'];
+        if (ctx.fieldName()) {
+            value = createNode(ctx.fieldName(), (c) => FieldNameTypeClass.create(c), 'fieldName');
+        } else {
+            value = createNode(
+                ctx.soqlFunction(),
+                (c) => SoqlFunctionTypeClass.create(c),
+                'soqlFunction',
+            );
         }
 
         return new FieldOrderTypeClass(
-            ctx.fieldName()
-                ? visitNode(new NameVisitor(), ctx.fieldName(), isFieldNameType, 'fieldName')
-                : visitNode(
-                      new QueryVisitor(),
-                      ctx.soqlFunction(),
-                      isSoqlFunctionType,
-                      'soqlFunction',
-                  ),
-            ctx.ASC() ? 'ASC' : ctx.DESC() ? 'DESC' : null,
-            ctx.FIRST() ? 'FIRST' : ctx.LAST() ? 'LAST' : null,
+            {
+                value,
+                direction: ctx.ASC() ? 'ASC' : ctx.DESC() ? 'DESC' : null,
+                nulls: ctx.FIRST() ? 'FIRST' : ctx.LAST() ? 'LAST' : null,
+            },
+            getSourceSpan(ctx),
         );
     }
 
-    getDirection(): 'ASC' | 'DESC' | null {
-        return this.direction;
+    getValue(): FieldOrderType['value'] {
+        return this.getFields().value;
     }
 
-    getNulls(): 'FIRST' | 'LAST' | null {
-        return this.nulls;
+    getDirection(): FieldOrderType['direction'] {
+        return this.getFields().direction;
+    }
+
+    getNulls(): FieldOrderType['nulls'] {
+        return this.getFields().nulls;
     }
 }
 
 export const isFieldOrderType = (
-    target: ApexCommonTypeClass<string>,
+    target: ApexCommonTypeClass<string, TypeField<string>>,
 ): target is FieldOrderTypeClass => {
-    return target instanceof FieldOrderTypeClass;
+    return isSpicifyApexCommonTypeClass('fieldOrder', target);
 };

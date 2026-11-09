@@ -1,31 +1,36 @@
+import { type FieldsOf, type TypeField } from '../../commons/ir';
+import { type SourceSpan } from '../../commons/source';
 import { isStringLiteral, type StringLiteral } from '@babel/types';
-import { EvaluatePair, LwcCommonTypeClass, makeEvaluatePair } from '../commonVisitor';
+import {
+    EvaluatePair,
+    LwcCommonTypeClass,
+    makeEvaluatePair,
+    getSourceSpan,
+} from '../commonVisitor';
 
-export type StringLiteralFields = {
+export type StringLiteralFields = TypeField<'stringLiteral'> & {
     value: StringLiteral['value'];
 };
 
-export class StringLiteralTypeClass extends LwcCommonTypeClass<'stringLiteral'> {
-    private readonly value: StringLiteralFields;
-
-    private constructor(value: StringLiteralFields) {
-        super('stringLiteral');
-        this.value = value;
+export class StringLiteralTypeClass extends LwcCommonTypeClass<
+    'stringLiteral',
+    StringLiteralFields
+> {
+    private constructor(value: FieldsOf<StringLiteralFields>, sourceSpan: SourceSpan) {
+        super('stringLiteral', value, sourceSpan);
     }
 
     static create(target: StringLiteral, originalSource: string): StringLiteralTypeClass {
-        return new StringLiteralTypeClass({
-            value: target.value,
-        });
-    }
-
-    /** すべてのフィールド (Babel の value フィールドの getter getValue() と区別する。getChildNodes もこれから作る) */
-    override getFields(): StringLiteralFields {
-        return this.value;
+        return new StringLiteralTypeClass(
+            {
+                value: target.value,
+            },
+            getSourceSpan(target, originalSource),
+        );
     }
 
     getValue(): StringLiteralFields['value'] {
-        return this.value.value;
+        return this.getFields().value;
     }
 }
 
@@ -35,5 +40,5 @@ export const stringLiteralTypePair: EvaluatePair<StringLiteral, StringLiteralTyp
     );
 
 export const isStringLiteralType = (
-    target: LwcCommonTypeClass<string>,
+    target: LwcCommonTypeClass<string, TypeField<string>>,
 ): target is StringLiteralTypeClass => target instanceof StringLiteralTypeClass;

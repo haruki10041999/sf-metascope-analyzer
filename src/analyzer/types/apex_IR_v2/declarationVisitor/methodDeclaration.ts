@@ -1,78 +1,72 @@
 import { MethodDeclarationContext } from '@apexdevtools/apex-parser';
 
-import { DeclarationTypeClass } from '.';
-
-import { NormalIdTypeClass, IdVisitor, isNormalIdType } from '../idVisitor';
-import { NormalBlockTypeClass, BlockVisitor, isNormalBlockType } from '../blockVisitor';
-import { TypeRefTypeClass, TypeVisitor, isTypeRefType } from '../typeVisitor';
+import { IdTypeClass } from '../idVisitor';
+import { BlockTypeClass } from '../blockVisitor';
+import { TypeRefTypeClass } from '../typeVisitor';
+import { FormalParametersTypeClass } from '../parameterVisitor';
 import {
-    FormalParametersTypeClass,
-    ParameterVisitor,
-    isFormalParametersType,
-} from '../parameterVisitor';
-import {
-    ApexErrorTypeClass,
     ApexCommonTypeClass,
-    visitNode,
-    visitOptionalNode,
+    createNode,
+    createOptionalNode,
+    getSourceSpan,
+    isSpicifyApexCommonTypeClass,
 } from '../commonVisitor';
+import { type FieldsOf, TypeField } from '../../commons/ir';
+import { SourceSpan } from '../../commons';
 
-export class MethodDeclarationTypeClass extends DeclarationTypeClass<
+export type MethodDeclarationType = TypeField<'methodDeclaration'> & {
+    returnType: TypeRefTypeClass | 'void';
+    name: IdTypeClass;
+    parameters: FormalParametersTypeClass;
+    /** abstract メソッドは本体を持たない（`void run();`）ので null */
+    block: BlockTypeClass | null;
+};
+
+export class MethodDeclarationTypeClass extends ApexCommonTypeClass<
     'methodDeclaration',
-    NormalIdTypeClass
+    MethodDeclarationType
 > {
-    private valueType: TypeRefTypeClass | 'void' | ApexErrorTypeClass;
-    private param: FormalParametersTypeClass | ApexErrorTypeClass | null = null;
-    private block: NormalBlockTypeClass | ApexErrorTypeClass | null;
-
-    private constructor(
-        value: NormalIdTypeClass | ApexErrorTypeClass,
-        valueType: TypeRefTypeClass | 'void' | ApexErrorTypeClass,
-        param: FormalParametersTypeClass | ApexErrorTypeClass | null,
-        block: NormalBlockTypeClass | ApexErrorTypeClass | null,
-    ) {
-        super('methodDeclaration', value);
-        this.valueType = valueType;
-        this.param = param;
-        this.block = block;
+    private constructor(fields: FieldsOf<MethodDeclarationType>, sourceSpan: SourceSpan) {
+        super('methodDeclaration', fields, sourceSpan);
     }
 
     static create(ctx: MethodDeclarationContext): MethodDeclarationTypeClass {
-        if (!ctx.id() || (!ctx.VOID() && !ctx.typeRef())) {
-            throw new Error('値が異常です。MethodDeclarationContext: ' + ctx.getText());
-        }
-
         return new MethodDeclarationTypeClass(
-            visitNode(new IdVisitor(), ctx.id(), isNormalIdType, 'id'),
-            ctx.VOID()
-                ? 'void'
-                : visitNode(new TypeVisitor(), ctx.typeRef(), isTypeRefType, 'typeRef'),
-            visitOptionalNode(
-                new ParameterVisitor(),
-                ctx.formalParameters(),
-                isFormalParametersType,
-                'formalParameters',
-            ),
-            // abstract メソッドは本体を持たない（`void run();`）
-            visitOptionalNode(new BlockVisitor(), ctx.block(), isNormalBlockType, 'block'),
+            {
+                returnType: ctx.VOID()
+                    ? 'void'
+                    : createNode(ctx.typeRef(), (c) => TypeRefTypeClass.create(c), 'typeRef'),
+                name: createNode(ctx.id(), (c) => IdTypeClass.create(c), 'id'),
+                parameters: createNode(
+                    ctx.formalParameters(),
+                    (c) => FormalParametersTypeClass.create(c),
+                    'formalParameters',
+                ),
+                block: createOptionalNode(ctx.block(), (c) => BlockTypeClass.create(c), 'block'),
+            },
+            getSourceSpan(ctx),
         );
     }
 
-    getValueType(): TypeRefTypeClass | 'void' | ApexErrorTypeClass {
-        return this.valueType;
+    getReturnType(): MethodDeclarationType['returnType'] {
+        return this.getFields().returnType;
     }
 
-    getParam(): FormalParametersTypeClass | ApexErrorTypeClass | null {
-        return this.param;
+    getName(): MethodDeclarationType['name'] {
+        return this.getFields().name;
     }
 
-    getBlock(): NormalBlockTypeClass | ApexErrorTypeClass | null {
-        return this.block;
+    getParameters(): MethodDeclarationType['parameters'] {
+        return this.getFields().parameters;
+    }
+
+    getBlock(): MethodDeclarationType['block'] {
+        return this.getFields().block;
     }
 }
 
 export const isMethodDeclarationType = (
-    target: ApexCommonTypeClass<string>,
+    target: ApexCommonTypeClass<string, TypeField<string>>,
 ): target is MethodDeclarationTypeClass => {
-    return target instanceof MethodDeclarationTypeClass;
+    return isSpicifyApexCommonTypeClass('methodDeclaration', target);
 };

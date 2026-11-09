@@ -1,36 +1,47 @@
 import { OrderByClauseContext } from '@apexdevtools/apex-parser';
 
-import { ClauseTypeClass } from '.';
+import { FieldOrderListTypeClass } from '../listVisitor';
+import {
+    ApexCommonTypeClass,
+    createNode,
+    getSourceSpan,
+    isSpicifyApexCommonTypeClass,
+} from '../commonVisitor';
+import { type FieldsOf, TypeField } from '../../commons/ir';
+import { SourceSpan } from '../../commons';
 
-import { FieldOrderListTypeClass, ListVisitor, isFieldOrderListType } from '../listVisitor';
-import { ApexErrorTypeClass, ApexCommonTypeClass, visitNode } from '../commonVisitor';
+export type OrderByClauseType = TypeField<'orderByClause'> & {
+    value: FieldOrderListTypeClass;
+};
 
-export class OrderByClauseTypeClass extends ClauseTypeClass<
+export class OrderByClauseTypeClass extends ApexCommonTypeClass<
     'orderByClause',
-    FieldOrderListTypeClass
+    OrderByClauseType
 > {
-    private constructor(value: FieldOrderListTypeClass | ApexErrorTypeClass) {
-        super('orderByClause', value);
+    private constructor(fields: FieldsOf<OrderByClauseType>, sourceSpan: SourceSpan) {
+        super('orderByClause', fields, sourceSpan);
     }
 
     static create(ctx: OrderByClauseContext): OrderByClauseTypeClass {
-        if (!ctx.fieldOrderList()) {
-            throw new Error('値が異常です。OrderByClauseContext: ' + ctx.getText());
-        }
-
         return new OrderByClauseTypeClass(
-            visitNode(
-                new ListVisitor(),
-                ctx.fieldOrderList(),
-                isFieldOrderListType,
-                'fieldOrderList',
-            ),
+            {
+                value: createNode(
+                    ctx.fieldOrderList(),
+                    (c) => FieldOrderListTypeClass.create(c),
+                    'fieldOrderList',
+                ),
+            },
+            getSourceSpan(ctx),
         );
+    }
+
+    getValue(): OrderByClauseType['value'] {
+        return this.getFields().value;
     }
 }
 
 export const isOrderByClauseType = (
-    target: ApexCommonTypeClass<string>,
+    target: ApexCommonTypeClass<string, TypeField<string>>,
 ): target is OrderByClauseTypeClass => {
-    return target instanceof OrderByClauseTypeClass;
+    return isSpicifyApexCommonTypeClass('orderByClause', target);
 };

@@ -15,6 +15,7 @@ import type { ObjectAccess } from '../processor/Metadata/permissionAnalysis';
 import type { MetadataContext, MetadataFindingSeverity } from '../processor/Metadata/references';
 import type { ViewStatus } from '../processor/Metadata/view';
 import type { ConvertKeys } from '../types';
+import type { Repository } from '../unit/repository';
 
 // レポートの data provider の入力と出力の型。方針: docs/report-components-plan.md 3.2 章
 // - 入力は解析結果 (before / after) だけ。ファイルは読まない
@@ -42,8 +43,14 @@ export type MetadataSnapshot = {
     context?: MetadataContext;
 };
 
-/** provider の入力。before を渡すと、各行が status を持つ (差分のレポート) */
-export type ReportInput = { before?: MetadataSnapshot; after: MetadataSnapshot };
+/**
+ * provider の入力。ある時点のリポジトリ (Repository)。before を渡すと、各行が status を持つ (差分のレポート)。
+ * 種類ごとの provider は、Repository から作った MetadataSnapshot (SnapshotInput) を使う (report/snapshot.ts)
+ */
+export type ReportInput = { before?: Repository; after: Repository };
+
+/** 種類ごとの provider の入力 (ReportInput の Repository を、種類ごとの解析結果にしたもの) */
+export type SnapshotInput = { before?: MetadataSnapshot; after: MetadataSnapshot };
 
 /** 行の共通部分 */
 export type RowBase = {
