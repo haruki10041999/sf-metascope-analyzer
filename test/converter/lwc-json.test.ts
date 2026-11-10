@@ -6,13 +6,17 @@ import path from 'node:path';
 
 import { LwcParser, type LwcBundleStructureType } from '../../src/analyzer/parser/Lwc';
 import { writeSaveDataInfo } from '../../src/analyzer/parser/commons';
-import type {
-    LwcComponentJson,
-    LwcFieldJson,
-    LwcMemberJson,
-    LwcMethodJson,
-    LwcModuleJson,
-    LwcPropertyJson,
+import { analyzeLwcBodyCalls } from '../../src/analyzer/processor/Lwc/calls';
+import { lwcHeritageOf } from '../../src/analyzer/processor/Lwc/walker';
+import {
+    makeLwcImportTables,
+    type LwcBodyContentJson,
+    type LwcComponentJson,
+    type LwcFieldJson,
+    type LwcMemberJson,
+    type LwcMethodJson,
+    type LwcModuleJson,
+    type LwcPropertyJson,
 } from '../../src/analyzer/types/lwc';
 
 const BUNDLES = 'docs/examples/repository/before/force-app/main/default/lwc';
@@ -28,6 +32,10 @@ const mainModule = (bundle: LwcBundleStructureType): LwcModuleJson => {
     assert.ok(entry?.module);
     return entry.module;
 };
+
+/** 本体の呼び出しとイベント (JSON には持たず、解析で出す。processor/Lwc/calls.ts) */
+const analyze = (module: LwcModuleJson, content: LwcBodyContentJson) =>
+    analyzeLwcBodyCalls(content, makeLwcImportTables(module.imports));
 
 const componentOf = (module: LwcModuleJson): LwcComponentJson => {
     assert.ok(module.component && module.component.kind === 'lwcComponent');
@@ -78,6 +86,7 @@ describe('LWC の JSON', () => {
                 'lightning',
                 'lightning',
                 'lightning',
+                'other',
                 'apex',
                 'apex',
                 'schema',
@@ -96,7 +105,7 @@ describe('LWC の JSON', () => {
         // import type は typeOnly。specifier はソース位置を持つ
         assert.deepEqual(
             imports.map((i) => i.typeOnly),
-            [false, false, false, false, false, false, false, false, false, true, false],
+            [false, false, false, false, false, false, false, false, false, false, true, false],
         );
         assert.equal(imports[0]!.specifiers[0]!.kind, 'lwcImportSpecifier');
         assert.deepEqual(
@@ -105,11 +114,14 @@ describe('LWC の JSON', () => {
         );
     });
 
-    it('コンポーネント: extend・mixins と、block (ソースの順のメンバー)', async () => {
+    it('コンポーネント: superClass (継承元・ミックスインは解析で出す) と、block (ソースの順のメンバー)', async () => {
         const component = componentOf(mainModule(await parseBundle('accountList')));
         assert.equal(component.name, 'AccountList');
-        assert.equal(component.extend, 'LightningElement');
-        assert.deepEqual(component.mixins, ['NavigationMixin']);
+        assert.equal(component.superClass?.kind, 'jsCall');
+        assert.deepEqual(lwcHeritageOf(component.superClass), {
+            extend: 'LightningElement',
+            mixins: ['NavigationMixin'],
+        });
         assert.deepEqual(
             component.block.map((m) => `${m.kind}:${'name' in m ? m.name : ''}`),
             [
@@ -121,6 +133,7 @@ describe('LWC の JSON', () => {
                 'lwcField:sortDirection',
                 'lwcField:error',
                 'lwcField:record',
+                'lwcField:recordByName',
                 'lwcMethod:wiredAccounts',
                 'lwcProperty:parentName',
                 'lwcProperty:hasRows',
@@ -129,6 +142,9 @@ describe('LWC の JSON', () => {
                 'lwcMethod:handleSelect',
                 'lwcMethod:handleDelete',
                 'lwcMethod:refresh',
+                'lwcField:handleReload',
+                'lwcField:handleOpenList',
+                'lwcMethod:connectedCallback',
             ],
         );
     });
@@ -143,13 +159,13 @@ describe('LWC の JSON', () => {
         const rows = memberOf<LwcFieldJson>(component, 'lwcField', 'rows');
         assert.deepEqual(decoratorNames(rows), ['track']);
         assert.equal(rows.modifier.access, 'private');
-        assert.equal(rows.init, '[]');
+        assert.deepEqual(rows.init?.kind === 'jsArray' && rows.init.elements, []);
         assert.ok(rows.variantType?.kind === 'lwcType' && rows.variantType.type === 'array');
         assert.deepEqual(rows.variantType.elementType, { type: 'custom', customType: 'Row' });
 
         const maxRows = memberOf<LwcFieldJson>(component, 'lwcField', 'maxRows');
         assert.equal(maxRows.optional, true);
-        assert.equal(maxRows.init, '10');
+        assert.deepEqual(maxRows.init?.kind === 'jsNumber' && maxRows.init.value, 10);
 
         const parentName = memberOf<LwcPropertyJson>(component, 'lwcProperty', 'parentName');
         assert.equal(parentName.isGetter, true);
@@ -158,12 +174,14 @@ describe('LWC の JSON', () => {
         assert.equal(parentName.variantType.text, 'string | undefined');
     });
 
-    it('@wire の設定はデコレーターに、イベント・呼び出しはメソッドに入る', async () => {
-        const component = componentOf(mainModule(await parseBundle('accountList')));
+    it('@wire の設定はデコレーターに入り、イベント・呼び出しはメソッドの本体から解析で出す', async () => {
+        const module = mainModule(await parseBundle('accountList'));
+        const component = componentOf(module);
         const record = memberOf<LwcFieldJson>(component, 'lwcField', 'record');
         const [wire] = record.modifier.decorator ?? [];
         assert.ok(wire?.kind === 'lwcDecorator' && wire.wire);
-        assert.equal(wire.wire.adapter, 'getRecord');
+        assert.ok(wire.wire.adapter.kind === 'jsIdentifier');
+        assert.equal(wire.wire.adapter.name, 'getRecord');
         assert.equal(wire.wire.adapterSource, 'lightning/uiRecordApi');
         // 設定の項目は位置を持ち (lwcWireConfig)、値の中の import (項目) と結び付く
         assert.deepEqual(
@@ -196,39 +214,57 @@ describe('LWC の JSON', () => {
         const methods = component.block.flatMap((m) => (m.kind === 'lwcMethod' ? [m] : []));
         assert.deepEqual(
             Object.fromEntries(
-                methods.map((m) => [m.name, m.calls.map((c) => `${c.callType}:${c.target}`)]),
+                methods.map((m) => [
+                    m.name,
+                    analyze(module, m).calls.map((c) => `${c.callType}:${c.target}`),
+                ]),
             ),
             {
-                wiredAccounts: [],
+                wiredAccounts: ['module:toRows'],
                 handleSelect: ['dispatchEvent:CustomEvent', 'navigate:Navigate'],
                 handleDelete: ['apex:deleteAccount', 'dispatchEvent:ShowToastEvent'],
                 refresh: ['refs:table'],
+                connectedCallback: ['listener:resize'],
             },
         );
-        // imperative な Apex の呼び出しは引数を持つ
+        // imperative な Apex の呼び出しは引数 (式の JSON) を持つ。Apex の呼び出しは try の中
         const handleDelete = memberOf<LwcMethodJson>(component, 'lwcMethod', 'handleDelete');
-        assert.deepEqual(handleDelete.calls[0]?.arg, ['{ recordId }']);
-        // 本体は lwcBody (位置と文の数)
-        assert.equal(handleDelete.body?.kind, 'lwcBody');
-        assert.equal(handleDelete.body?.statements, 2);
-        const handleSelect = memberOf<LwcMethodJson>(component, 'lwcMethod', 'handleSelect');
+        const [deleteCall] = analyze(module, handleDelete).calls;
         assert.deepEqual(
-            handleSelect.events.map((e) => [e.name, e.bubbles, e.composed, e.detail]),
-            [['accountselect', true, false, '{ recordId, index }']],
+            deleteCall?.args.map((a) => a.kind),
+            ['jsObject'],
         );
-        assert.ok(handleSelect.events[0]?.detailType?.kind === 'lwcType');
-        assert.equal(handleSelect.events[0].detailType.text, 'SelectDetail');
+        assert.equal(deleteCall?.context.inTry, true);
+        // 本体は文の並び (段階 4)
+        assert.deepEqual(
+            handleDelete.block?.map((s) => s.kind),
+            ['jsLocalVariable', 'jsTry'],
+        );
+        const handleSelect = memberOf<LwcMethodJson>(component, 'lwcMethod', 'handleSelect');
+        const { events } = analyze(module, handleSelect);
+        assert.deepEqual(
+            events.map((e) => [e.name, e.bubbles, e.composed, e.detail?.kind]),
+            [['accountselect', true, false, 'jsObject']],
+        );
+        assert.ok(events[0]?.detailType?.kind === 'lwcType');
+        assert.equal(events[0].detailType.text, 'SelectDetail');
 
         const wired = memberOf<LwcMethodJson>(component, 'lwcMethod', 'wiredAccounts');
         assert.deepEqual(decoratorNames(wired), ['wire']);
-        // 分割代入の引数の名前は型注釈を含まない (Apex の ParameterJson と同じく variant)
+        // 分割代入の引数は名前 (variant) を持たず、パターン (pattern。型注釈は variantType) を持つ
         assert.ok(wired.param[0]?.kind === 'lwcParameter');
-        assert.equal(wired.param[0].variant, '{ data, error }');
+        assert.equal(wired.param[0].variant, undefined);
+        assert.ok(wired.param[0].pattern?.kind === 'jsObjectPattern');
+        assert.deepEqual(
+            wired.param[0].pattern.properties.map((p) => p.key),
+            ['data', 'error'],
+        );
+        assert.equal(wired.param[0].variantType?.kind, 'lwcType');
         const refresh = memberOf<LwcMethodJson>(component, 'lwcMethod', 'refresh');
         assert.deepEqual(decoratorNames(refresh), ['api']);
     });
 
-    it('本体を変えると、JSON の中身 (lwcBody の objectKey) が変わる', async () => {
+    it('本体を変えると、JSON の中身 (文の objectKey) が変わる', async () => {
         const source = (body: string) =>
             `import { LightningElement } from 'lwc';
 export default class Hello extends LightningElement {
@@ -243,29 +279,34 @@ export default class Hello extends LightningElement {
                 );
                 bodies.push(
                     memberOf<LwcPropertyJson>(component, 'lwcProperty', 'isTable').getterContent
-                        ?.body,
+                        ?.block?.[0],
                 );
             });
         }
         const [before, after] = bodies as { kind: string; sourceKeys: { objectKey: string } }[];
-        assert.equal(before?.kind, 'lwcBody');
+        assert.equal(before?.kind, 'jsReturn');
         assert.notEqual(before?.sourceKeys.objectKey, after?.sourceKeys.objectKey);
     });
 
-    it('innerHTML への代入を lwcCall にする', async () => {
+    it('innerHTML への代入を呼び出し (callType: innerHTML) にする', async () => {
         const source = `import { LightningElement } from 'lwc';
 export default class Hello extends LightningElement {
     renderedCallback() { this.template.querySelector('div').innerHTML = this.html; }
 }
 `;
         await withBundle('hello', { 'hello.js': source }, async (dir) => {
-            const component = componentOf(
-                mainModule((await LwcParser.parseLwcBundle(dir)) as LwcBundleStructureType),
+            const module = mainModule(
+                (await LwcParser.parseLwcBundle(dir)) as LwcBundleStructureType,
             );
-            const method = memberOf<LwcMethodJson>(component, 'lwcMethod', 'renderedCallback');
+            const method = memberOf<LwcMethodJson>(
+                componentOf(module),
+                'lwcMethod',
+                'renderedCallback',
+            );
+            // 代入先が名前の並びでなければ、target はプロパティの名前 (ソースの文字列は持たない)
             assert.deepEqual(
-                method.calls.map((c) => `${c.callType}:${c.target}`),
-                ["innerHTML:this.template.querySelector('div').innerHTML", "querySelector:'div'"],
+                analyze(module, method).calls.map((c) => `${c.callType}:${c.target}`),
+                ['innerHTML:innerHTML', 'querySelector:div'],
             );
         });
     });
@@ -278,13 +319,22 @@ export default class Hello extends LightningElement {
                     ? `${d.name}:${d.declarationType}:${d.exported}`
                     : d.kind,
             ),
-            ['formatter:variable:false', 'formatAmount:function:true', 'toRows:function:true'],
+            [
+                'formatter:variable:false',
+                'formatAmount:function:true',
+                'toRows:function:true',
+                // コンポーネント以外のクラスは lwcClass (段階 5)
+                'lwcClass',
+            ],
         );
         const toRows = utils.declarations.find(
             (d) => d.kind === 'lwcDeclaration' && d.name === 'toRows',
         );
         assert.ok(toRows?.kind === 'lwcDeclaration');
-        assert.equal(toRows.body?.kind, 'lwcBody');
+        assert.deepEqual(
+            toRows.block?.map((s) => s.kind),
+            ['jsReturn'],
+        );
         assert.deepEqual(
             toRows.param?.map((p) => (p.kind === 'lwcParameter' ? p.variant : p.kind)),
             ['records'],
@@ -321,7 +371,17 @@ export default class Hello extends LightningElement {
         );
         const utils = mainModule(await parseBundle('utils'));
         assert.equal(utils.component, undefined);
-        assert.deepEqual(utils.otherExports, ['formatAmount', 'toRows']);
+        assert.deepEqual(
+            utils.exports.map((e) => [e.exportType, e.exported, e.typeOnly]),
+            [
+                ['named', 'SortDirection', true],
+                ['named', 'Row', true],
+                ['named', 'formatAmount', false],
+                ['named', 'toRows', false],
+                ['named', 'RowCache', false],
+                ['named', 'format', false],
+            ],
+        );
         assert.deepEqual(
             utils.typeDeclarations?.map((t) =>
                 t.kind === 'lwcTypeDeclaration' ? `${t.name}:${t.exported}` : t.kind,
@@ -423,15 +483,16 @@ export default class Hello extends LightningElement {
         const source = `import { LightningElement, api } from 'lwc';\nexport default class Hello extends LightningElement {\n    @api a = 1;\n    b = (1 = 2);\n    run() { 1 = 3; this.refs.r; }\n}\n`;
         await withBundle('hello', { 'hello.js': source }, async (dir) => {
             const result = (await LwcParser.parseLwcBundle(dir)) as LwcBundleStructureType;
-            const component = componentOf(mainModule(result));
+            const module = mainModule(result);
+            const component = componentOf(module);
             assert.deepEqual(
-                component.block.map((m) => `${m.kind}:${m.name}`),
+                component.block.map((m) => `${m.kind}:${'name' in m ? m.name : ''}`),
                 // b = (1 = 2) は作れないので落ちる (エラーのノードにはならない)
                 ['lwcField:a', 'lwcMethod:run'],
             );
             const run = memberOf<LwcMethodJson>(component, 'lwcMethod', 'run');
             assert.deepEqual(
-                run.calls.map((c) => `${c.callType}:${c.target}`),
+                analyze(module, run).calls.map((c) => `${c.callType}:${c.target}`),
                 ['refs:r'],
             );
             // IR のエラー (1 の UNSUPPORTED_CONTEXT) は構文エラーと重なるので、resolvedError は構文エラーだけ

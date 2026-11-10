@@ -43,8 +43,10 @@ const packr = new Packr({ useRecords: true });
  * 3: Apex を IR v2 から作る。キーの値が変わった (docs/ir-integration.md)
  * 4: LWC も IR v2 から作る (キーの値が変わった)。JSON から ErrorJson をなくした (読めなかったものは resolvedError だけに出る)
  * 5: オブジェクトに customSettingsType・customSettingsVisibility を足した。メッセージチャネルなど 4 つの単位の種類を足した
+ * 6: Flow の references の種類・Aura の messageChannels・オブジェクトの eventType / publishBehavior を足した。単位の種類を 12 足した (docs/json-gaps.md 7 章)
+ * 7: LWC の JS / TS の JSON を作り直した (文・式を構造で持ち、ソースの文字列と calls / events をなくした。docs/lwc-json-types.md)
  */
-export const SAVE_FORMAT_VERSION = 5;
+export const SAVE_FORMAT_VERSION = 7;
 
 /** 保存ファイルの中身。data を版と一緒に包む */
 type SavedEnvelope = { formatVersion: number; data: unknown };

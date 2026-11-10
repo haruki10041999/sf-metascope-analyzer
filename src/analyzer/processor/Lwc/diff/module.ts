@@ -1,10 +1,16 @@
 import type {
+    LwcClassJson,
     LwcComponentJson,
     LwcDeclarationJson,
+    LwcExportJson,
     LwcImportJson,
     LwcImportSpecifierJson,
+    LwcJsExpressionJson,
+    LwcJsStatementJson,
+    LwcModuleDeclarationJson,
     LwcModuleJson,
     LwcTypeDeclarationJson,
+    LwcTypeJson,
     LwcTypeMemberJson,
 } from '../../../types';
 
@@ -36,13 +42,16 @@ import {
 import {
     LwcBodyContentDiff,
     LwcComponentJsonDiff,
+    LwcMembersDiff,
     LwcParametersDiff,
     LwcTypeDiff,
     makeLwcBodyContentDiff,
     makeLwcComponentDiff,
+    makeLwcMembersDiff,
     makeLwcParametersDiff,
     makeOptionalValueDiff,
 } from './component';
+import { LwcBlockDiff, makeLwcBlockDiff } from './gumtree/tree';
 
 // LWC のモジュール (1 つの JS / TS) の差分。方針: docs/lwc-implementation.md
 
@@ -133,11 +142,16 @@ export type LwcDeclarationJsonDiff = NodeDiff<
         declarationType: ValueDiff<LwcDeclarationJson['declarationType']>;
         exported: ValueDiff<boolean>;
         variableKind?: OptionalValueDiff<string>;
-        init?: OptionalValueDiff<string>;
-        references: TypedListDiff<LwcDeclarationJson['references'][number], never>;
+        variantType?: LwcTypeDiff;
+        /** 初期値の式は値として比べる */
+        init?: OptionalValueDiff<LwcJsExpressionJson>;
+        arrow?: OptionalValueDiff<boolean>;
         param?: PresentDiff<NonNullable<LwcDeclarationJson['param']>, LwcParametersDiff>;
         returnType?: LwcTypeDiff;
         async?: OptionalValueDiff<boolean>;
+        generator?: OptionalValueDiff<boolean>;
+        functionName?: OptionalValueDiff<string>;
+        expression?: OptionalValueDiff<LwcJsExpressionJson>;
     }
 >;
 
@@ -152,16 +166,102 @@ const makeDeclarationDiff = (
         declarationType: makeValueDiff(b.declarationType, a.declarationType),
         exported: makeValueDiff(b.exported, a.exported),
         ...presentEntry('variableKind', makeOptionalValueDiff(b.variableKind, a.variableKind)),
+        ...presentEntry('variantType', makeOptionalValueDiff(b.variantType, a.variantType)),
         ...presentEntry('init', makeOptionalValueDiff(b.init, a.init)),
-        references: makeUnorderedValuesDiff(b.references, a.references),
+        ...presentEntry('arrow', makeOptionalValueDiff(b.arrow, a.arrow)),
+        // references は本体の中身の差分 (makeLwcBodyContentDiff) に入る
         ...presentEntry(
             'param',
             makePresentDiff(b.param, a.param, (x, y) => makeLwcParametersDiff(x, y, sources)),
         ),
         ...presentEntry('returnType', makeOptionalValueDiff(b.returnType, a.returnType)),
         ...presentEntry('async', makeOptionalValueDiff(b.async, a.async)),
+        ...presentEntry('generator', makeOptionalValueDiff(b.generator, a.generator)),
+        ...presentEntry('functionName', makeOptionalValueDiff(b.functionName, a.functionName)),
+        ...presentEntry('expression', makeOptionalValueDiff(b.expression, a.expression)),
         ...makeLwcBodyContentDiff(b, a, sources),
     }));
+
+export type LwcClassJsonDiff = NodeDiff<
+    'lwcClass',
+    LwcClassJson,
+    {
+        name: ValueDiff<string>;
+        exported: ValueDiff<boolean>;
+        /** extends の式は値として比べる */
+        superClass?: OptionalValueDiff<LwcJsExpressionJson>;
+        /** B. 集合 */
+        implement?: PresentDiff<LwcTypeJson[], TypedListDiff<LwcTypeJson, never>>;
+        /** D. キー対応 (メンバー名)。コンポーネントの block と同じ */
+        block: LwcMembersDiff;
+    }
+>;
+
+const makeClassDiff = (
+    before: LwcClassJson,
+    after: LwcClassJson,
+    match: Match,
+    sources?: Sources,
+): LwcClassJsonDiff =>
+    makeNodeDiff('lwcClass', before, after, match, (b, a) => ({
+        name: makeValueDiff(b.name, a.name),
+        exported: makeValueDiff(b.exported, a.exported),
+        ...presentEntry('superClass', makeOptionalValueDiff(b.superClass, a.superClass)),
+        ...presentEntry(
+            'implement',
+            makePresentDiff(b.implement, a.implement, makeUnorderedValuesDiff),
+        ),
+        block: makeLwcMembersDiff(b.block, a.block, sources),
+    }));
+
+export type LwcModuleDeclarationJsonDiff = LwcDeclarationJsonDiff | LwcClassJsonDiff;
+
+/** 宣言 1 組の差分。同じ名前で種類が変わった (変数 → クラス) ものは、値を丸ごと before / after に入れる */
+const makeModuleDeclarationDiff = (
+    before: LwcModuleDeclarationJson,
+    after: LwcModuleDeclarationJson,
+    match: Match,
+    sources?: Sources,
+): LwcModuleDeclarationJsonDiff =>
+    before.kind === 'lwcClass'
+        ? makeClassDiff(before, after as LwcClassJson, match, sources)
+        : makeDeclarationDiff(before, after as LwcDeclarationJson, match, sources);
+
+// ---------------------------------------------------------------------------
+// export
+// ---------------------------------------------------------------------------
+
+export type LwcExportJsonDiff = NodeDiff<
+    'lwcExport',
+    LwcExportJson,
+    {
+        exportType: ValueDiff<LwcExportJson['exportType']>;
+        local?: OptionalValueDiff<string>;
+        exported?: OptionalValueDiff<string>;
+        source?: OptionalValueDiff<string>;
+        typeOnly: ValueDiff<boolean>;
+    }
+>;
+
+const makeExportDiff = (
+    before: LwcExportJson,
+    after: LwcExportJson,
+    match: Match,
+): LwcExportJsonDiff =>
+    makeNodeDiff('lwcExport', before, after, match, (b, a) => ({
+        exportType: makeValueDiff(b.exportType, a.exportType),
+        ...presentEntry('local', makeOptionalValueDiff(b.local, a.local)),
+        ...presentEntry('exported', makeOptionalValueDiff(b.exported, a.exported)),
+        ...presentEntry('source', makeOptionalValueDiff(b.source, a.source)),
+        typeOnly: makeValueDiff(b.typeOnly, a.typeOnly),
+    }));
+
+/**
+ * export の識別キー。外から見える名前 (exported) で決まる。export * from 'x' は名前がないので import 元で決める
+ * (export { a as b } の a を変えたものは、同じ b の changed になる)
+ */
+export const getLwcExportKey = (item: LwcExportJson): string =>
+    item.exported !== undefined ? `name:${item.exported}` : `all:${item.source ?? ''}`;
 
 // ---------------------------------------------------------------------------
 // interface / type / enum
@@ -229,7 +329,7 @@ const byName = (node: { name: string }): string => node.name;
 
 /**
  * モジュールは kind を持たない入れ物なので TypedObjectDiff。
- * import・宣言は名前で D. キー対応、export 名は B. 集合
+ * import・宣言・export は名前で D. キー対応、直下の文は本体と同じく GumTree
  */
 export type LwcModuleJsonDiff = TypedObjectDiff<
     LwcModuleJson,
@@ -237,12 +337,17 @@ export type LwcModuleJsonDiff = TypedObjectDiff<
         fileType: ValueDiff<LwcModuleJson['fileType']>;
         imports: ListItemDiff<'lwcImport', LwcImportJson, LwcImportJsonDiff>[];
         component?: PresentDiff<LwcComponentJson, LwcComponentJsonDiff>;
-        otherExports: TypedListDiff<string, never>;
-        declarations: ListItemDiff<'lwcDeclaration', LwcDeclarationJson, LwcDeclarationJsonDiff>[];
+        exports: ListItemDiff<'lwcExport', LwcExportJson, LwcExportJsonDiff>[];
+        declarations: ListItemDiff<
+            'lwcDeclaration',
+            LwcModuleDeclarationJson,
+            LwcModuleDeclarationJsonDiff
+        >[];
         typeDeclarations?: PresentDiff<
             LwcTypeDeclarationJson[],
             ListItemDiff<'lwcTypeDeclaration', LwcTypeDeclarationJson, LwcTypeDeclarationJsonDiff>[]
         >;
+        statements?: PresentDiff<LwcJsStatementJson[], LwcBlockDiff>;
     }
 >;
 
@@ -267,12 +372,19 @@ export const makeLwcModuleDiff = (
                 makeLwcComponentDiff(x, y, 'slot', sources),
             ),
         ),
-        otherExports: makeUnorderedValuesDiff(b.otherExports, a.otherExports),
+        exports: makeKeyedDiff(
+            'lwcExport',
+            b.exports,
+            a.exports,
+            makeExportDiff,
+            getLwcExportKey,
+            sources,
+        ),
         declarations: makeKeyedDiff(
             'lwcDeclaration',
             b.declarations,
             a.declarations,
-            (x, y, m) => makeDeclarationDiff(x, y, m, sources),
+            (x, y, m) => makeModuleDeclarationDiff(x, y, m, sources),
             byName,
             sources,
         ),
@@ -281,5 +393,9 @@ export const makeLwcModuleDiff = (
             makePresentDiff(b.typeDeclarations, a.typeDeclarations, (x, y) =>
                 makeKeyedDiff('lwcTypeDeclaration', x, y, makeTypeDeclarationDiff, byName, sources),
             ),
+        ),
+        ...presentEntry(
+            'statements',
+            makePresentDiff(b.statements, a.statements, (x, y) => makeLwcBlockDiff(x, y, sources)),
         ),
     }));

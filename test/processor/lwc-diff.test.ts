@@ -77,11 +77,13 @@ describe('LWC diff samples (docs/examples/repository の lwc)', () => {
         });
 
         const title = byName(block, 'title')!;
-        assert.deepEqual(title.fields.init, {
-            status: 'changed',
-            before: 'TITLE_LABEL',
-            after: "'Accounts'",
-        });
+        // 初期値は式 (ソースの文字列は持たない) を値として比べる
+        assert.equal(title.fields.init.status, 'changed');
+        assert.deepEqual(title.fields.init.kind, { before: 'jsIdentifier', after: 'jsString' });
+        assert.deepEqual(
+            [title.fields.init.before, title.fields.init.after],
+            [{ name: 'TITLE_LABEL' }, { value: 'Accounts' }],
+        );
         assert.deepEqual(
             title.fields.references.map((r: Node) => [r.status, r.value.local]),
             [['removed', 'TITLE_LABEL']],
@@ -104,16 +106,15 @@ describe('LWC diff samples (docs/examples/repository の lwc)', () => {
         );
     });
 
-    it('イベントは C. 順序付き列で、属性 (composed) の変化を報告する', () => {
+    it('イベントの属性 (composed) の変化は、本体の文の差分 (GumTree) に出る', () => {
+        // イベント (段階 5 までの events) は JSON に持たず解析で出すので、Diff は文の中の式の変化になる
         const block = moduleFields('accountList', 'accountList.ts').component.fields
             .block as Node[];
-        const events = byName(block, 'handleSelect')!.fields.events as Node[];
-        assert.equal(events.length, 1);
-        assert.deepEqual(events[0]!.fields.composed, {
-            status: 'changed',
-            before: false,
-            after: true,
-        });
+        const handleSelect = byName(block, 'handleSelect')!;
+        assert.equal(handleSelect.fields.events, undefined);
+        const json = JSON.stringify(handleSelect.fields.block);
+        assert.ok(json.includes('"jsBoolean"'), json);
+        assert.ok(/"before":false/.test(json) && /"after":true/.test(json), json);
     });
 
     it('宣言・型宣言は名前で対応付き、interface のメンバー・enum も比べる', () => {
@@ -134,6 +135,41 @@ describe('LWC diff samples (docs/examples/repository の lwc)', () => {
         );
         assert.equal(byName(types, 'ViewKind')!.status, 'added');
         assert.equal(byName(types, 'SortDirection')!.fields.variantType.status, 'changed');
+    });
+
+    it('本体の文は GumTree で比べ、変わった式 (呼び出しの追加) を子の差分に持つ (段階 4)', () => {
+        const fields = moduleFields('utils', 'utils.ts');
+        // return records.map(...) → return records.slice(0, limit).map(...)
+        const block = byName(fields.declarations, 'toRows')!.fields.block as Node[];
+        assert.deepEqual(
+            block.map((d) => [d.label, d.status]),
+            [['jsReturn', 'changed']],
+        );
+        const labels: string[] = [];
+        const visit = (diffs: Node[]) =>
+            diffs.forEach((d) => {
+                if (d.status !== 'unchanged') labels.push(`${d.status}:${d.label}`);
+                visit(d.children ?? []);
+            });
+        visit(block);
+        assert.ok(labels.includes('added:jsMemberAccess:method'), labels.join('\n'));
+        // 位置 (sourceKeys) は before / after の文の位置
+        assert.ok(block[0]!.sourceKeys.before && block[0]!.sourceKeys.after);
+
+        // 変わっていない本体 (formatAmount の式の本体・accountList の getter) は unchanged
+        const component = moduleFields('accountList', 'accountList.ts').component.fields
+            .block as Node[];
+        assert.equal(byName(component, 'hasRows')!.status, 'unchanged');
+        // handleSelect は composed だけが変わったので、本体の文の差分もその 1 文だけが changed
+        const handleSelect = byName(component, 'handleSelect')!.fields.block as Node[];
+        assert.deepEqual(
+            handleSelect.map((d) => [d.label, d.status]),
+            [
+                ['jsLocalVariable', 'unchanged'],
+                ['jsExpression', 'changed'],
+                ['jsExpression', 'unchanged'],
+            ],
+        );
     });
 
     it('CSS は規則を順序付き列で比べ、宣言は prop で対応付ける', () => {

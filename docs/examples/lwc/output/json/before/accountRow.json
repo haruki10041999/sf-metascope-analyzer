@@ -17,7 +17,7 @@
               {
                 "kind": "lwcImport",
                 "sourceKeys": {
-                  "objectKey": "importDeclaration_e6e5c6a589927fdf",
+                  "objectKey": "importDeclaration_bf75c24ff598e262",
                   "sourceKey": "importDeclaration_4227e61daccd303d"
                 },
                 "source": "lwc",
@@ -26,7 +26,7 @@
                   {
                     "kind": "lwcImportSpecifier",
                     "sourceKeys": {
-                      "objectKey": "importSpecifier_cfa9b55daa09bb3a",
+                      "objectKey": "importSpecifier_8f839237f9706f5b",
                       "sourceKey": "importSpecifier_ea83f97f2bfb2d0f"
                     },
                     "specifierType": "named",
@@ -37,7 +37,7 @@
                   {
                     "kind": "lwcImportSpecifier",
                     "sourceKeys": {
-                      "objectKey": "importSpecifier_0b0d904086d94cfc",
+                      "objectKey": "importSpecifier_530ce1ac695ad5c6",
                       "sourceKey": "importSpecifier_d418e57ac2169b91"
                     },
                     "specifierType": "named",
@@ -51,7 +51,7 @@
               {
                 "kind": "lwcImport",
                 "sourceKeys": {
-                  "objectKey": "importDeclaration_b509b5108e377914",
+                  "objectKey": "importDeclaration_03254812a49cddfc",
                   "sourceKey": "importDeclaration_2ac5193362839a87"
                 },
                 "source": "c/utils",
@@ -60,7 +60,7 @@
                   {
                     "kind": "lwcImportSpecifier",
                     "sourceKeys": {
-                      "objectKey": "importSpecifier_57f8f99676f647b3",
+                      "objectKey": "importSpecifier_e4b857681faa741f",
                       "sourceKey": "importSpecifier_4f8a2a7fb5965936"
                     },
                     "specifierType": "named",
@@ -77,27 +77,33 @@
               "kind": "lwcComponent",
               "sourceKeys": {
                 "base": {
-                  "objectKey": "classDeclaration_00a9f39587855383",
+                  "objectKey": "classDeclaration_21c699d2067b18b7",
                   "sourceKey": "classDeclaration_708d48e56a9247e0"
                 },
                 "name": {
-                  "objectKey": "identifier_cffe0c346a2f7e60",
+                  "objectKey": "identifier_ddf1d0960e926bec",
                   "sourceKey": "identifier_5cc18900adc0c4ed"
                 }
               },
               "name": "AccountRow",
-              "extend": "LightningElement",
-              "mixins": [],
+              "superClass": {
+                "kind": "jsIdentifier",
+                "sourceKeys": {
+                  "objectKey": "identifier_4a7a59e701040717",
+                  "sourceKey": "identifier_0724c464d2f889df"
+                },
+                "name": "LightningElement"
+              },
               "block": [
                 {
                   "kind": "lwcField",
                   "sourceKeys": {
                     "base": {
-                      "objectKey": "classProperty_8bc008611d354fb8",
+                      "objectKey": "classProperty_965403362b95bd25",
                       "sourceKey": "classProperty_8467314cc28e0ab2"
                     },
                     "name": {
-                      "objectKey": "identifier_c25976542b0871f8",
+                      "objectKey": "identifier_897ce2f14578ffd5",
                       "sourceKey": "identifier_162661872606055d"
                     }
                   },
@@ -119,7 +125,7 @@
                       {
                         "kind": "lwcDecorator",
                         "sourceKeys": {
-                          "objectKey": "decorator_1332fed18f380344",
+                          "objectKey": "decorator_4d9f350c3eae69d9",
                           "sourceKey": "decorator_cbae0e017b91ddec"
                         },
                         "name": "api",
@@ -132,11 +138,11 @@
                   "kind": "lwcField",
                   "sourceKeys": {
                     "base": {
-                      "objectKey": "classProperty_2b7282184d04a642",
+                      "objectKey": "classProperty_5991bac21dbdd748",
                       "sourceKey": "classProperty_40d61b52593fa7d3"
                     },
                     "name": {
-                      "objectKey": "identifier_794b5ff81fdd3d0b",
+                      "objectKey": "identifier_9f9fb3012fddb442",
                       "sourceKey": "identifier_fc72ff2e72f14069"
                     }
                   },
@@ -151,7 +157,14 @@
                     "type": "primitive",
                     "primitiveType": "string"
                   },
-                  "init": "''",
+                  "init": {
+                    "kind": "jsString",
+                    "sourceKeys": {
+                      "objectKey": "stringLiteral_1fb0babbdedea16e",
+                      "sourceKey": "stringLiteral_b2ca8a4a6782f9dc"
+                    },
+                    "value": ""
+                  },
                   "references": [],
                   "optional": false,
                   "modifier": {
@@ -159,7 +172,7 @@
                       {
                         "kind": "lwcDecorator",
                         "sourceKeys": {
-                          "objectKey": "decorator_1332fed18f380344",
+                          "objectKey": "decorator_4d9f350c3eae69d9",
                           "sourceKey": "decorator_b1ef85a1a2ad63a8"
                         },
                         "name": "api",
@@ -172,11 +185,11 @@
                   "kind": "lwcField",
                   "sourceKeys": {
                     "base": {
-                      "objectKey": "classProperty_1c32685475aafaf3",
+                      "objectKey": "classProperty_58a2fa7f525b0865",
                       "sourceKey": "classProperty_86b2df10ce902a26"
                     },
                     "name": {
-                      "objectKey": "identifier_7cada69a1cb7248a",
+                      "objectKey": "identifier_7e2721591e1edb8c",
                       "sourceKey": "identifier_c7fb7798e746462d"
                     }
                   },
@@ -198,7 +211,7 @@
                       {
                         "kind": "lwcDecorator",
                         "sourceKeys": {
-                          "objectKey": "decorator_1332fed18f380344",
+                          "objectKey": "decorator_4d9f350c3eae69d9",
                           "sourceKey": "decorator_9b9b6048eb6ceee9"
                         },
                         "name": "api",
@@ -211,11 +224,11 @@
                   "kind": "lwcProperty",
                   "sourceKeys": {
                     "base": {
-                      "objectKey": "classMethod_4fc1a6d22ebc9323",
+                      "objectKey": "classMethod_5ac46ff12f2187fa",
                       "sourceKey": "classMethod_2daccc555f6b74b9"
                     },
                     "name": {
-                      "objectKey": "identifier_af6b343ccd97d574",
+                      "objectKey": "identifier_f5d7097fae799cb0",
                       "sourceKey": "identifier_8e91b0ab16e7a03c"
                     }
                   },
@@ -224,16 +237,71 @@
                   "isSetter": false,
                   "getterContent": {
                     "modifier": {},
-                    "body": {
-                      "kind": "lwcBody",
-                      "sourceKeys": {
-                        "objectKey": "blockStatement_a41d45160824d19c",
-                        "sourceKey": "blockStatement_92eda454d3325ed5"
-                      },
-                      "statements": 1
-                    },
-                    "calls": [],
-                    "events": []
+                    "block": [
+                      {
+                        "kind": "jsReturn",
+                        "sourceKeys": {
+                          "objectKey": "returnStatement_6ee686a0949f0019",
+                          "sourceKey": "returnStatement_d5f51bc7de5ddfaf"
+                        },
+                        "field": {
+                          "kind": "jsCall",
+                          "sourceKeys": {
+                            "objectKey": "callExpression_e84214ef66fc3e5b",
+                            "sourceKey": "callExpression_6dedee996873b22f"
+                          },
+                          "callee": {
+                            "kind": "jsIdentifier",
+                            "sourceKeys": {
+                              "objectKey": "identifier_c23258fedf0e69e2",
+                              "sourceKey": "identifier_51b74bdd1e7fb807"
+                            },
+                            "name": "formatAmount"
+                          },
+                          "arg": [
+                            {
+                              "kind": "jsLogical",
+                              "sourceKeys": {
+                                "objectKey": "logicalExpression_01896c530df6dad3",
+                                "sourceKey": "logicalExpression_562b016be0b52d20"
+                              },
+                              "left": {
+                                "kind": "jsMemberAccess",
+                                "sourceKeys": {
+                                  "objectKey": "memberExpression_ad17cb9fb6ccb48a",
+                                  "sourceKey": "memberExpression_3f930b30e9200c9f"
+                                },
+                                "type": "object",
+                                "object": {
+                                  "kind": "jsThis",
+                                  "sourceKeys": {
+                                    "objectKey": "thisExpression_2087ea10f1caba18",
+                                    "sourceKey": "thisExpression_cbf0ecaec79d084b"
+                                  }
+                                },
+                                "operator": ".",
+                                "member": "amount"
+                              },
+                              "operator": "??",
+                              "right": {
+                                "kind": "jsNumber",
+                                "sourceKeys": {
+                                  "objectKey": "numericLiteral_1805d5adfdf5af47",
+                                  "sourceKey": "numericLiteral_3ba249f573f4ba2f"
+                                },
+                                "value": 0
+                              }
+                            }
+                          ]
+                        }
+                      }
+                    ],
+                    "references": [
+                      {
+                        "local": "formatAmount",
+                        "source": "c/utils"
+                      }
+                    ]
                   },
                   "variantType": {
                     "kind": "lwcType",
@@ -250,11 +318,11 @@
                   "kind": "lwcMethod",
                   "sourceKeys": {
                     "base": {
-                      "objectKey": "classMethod_9a38d9519a125f26",
+                      "objectKey": "classMethod_12db8ce24ece786f",
                       "sourceKey": "classMethod_c84d7d5323911274"
                     },
                     "name": {
-                      "objectKey": "identifier_dcde58226c3bac1f",
+                      "objectKey": "identifier_637ebbfbf07cd948",
                       "sourceKey": "identifier_be0278750f5d3c25"
                     }
                   },
@@ -272,47 +340,131 @@
                   "param": [],
                   "async": false,
                   "modifier": {},
-                  "body": {
-                    "kind": "lwcBody",
-                    "sourceKeys": {
-                      "objectKey": "blockStatement_c5960df13e40c533",
-                      "sourceKey": "blockStatement_619e2b3b9b06ca99"
-                    },
-                    "statements": 1
-                  },
-                  "calls": [
+                  "block": [
                     {
-                      "kind": "lwcCall",
+                      "kind": "jsExpression",
                       "sourceKeys": {
-                        "objectKey": "callExpression_5b1f20fa19eed058",
-                        "sourceKey": "callExpression_1a4ee75931a883b5"
+                        "objectKey": "expressionStatement_d0c0e4641f1c0454",
+                        "sourceKey": "expressionStatement_de059f5102fb7603"
                       },
-                      "callType": "dispatchEvent",
-                      "target": "CustomEvent",
-                      "arg": [
-                        "new CustomEvent('select', { detail: { recordId: this.recordId } })"
-                      ],
-                      "references": []
+                      "value": {
+                        "kind": "jsMemberAccess",
+                        "sourceKeys": {
+                          "objectKey": "callExpression_7161820291262655",
+                          "sourceKey": "callExpression_1a4ee75931a883b5"
+                        },
+                        "type": "method",
+                        "object": {
+                          "kind": "jsThis",
+                          "sourceKeys": {
+                            "objectKey": "thisExpression_2087ea10f1caba18",
+                            "sourceKey": "thisExpression_d4f81fe823df0e02"
+                          }
+                        },
+                        "operator": ".",
+                        "member": "dispatchEvent",
+                        "memberArg": [
+                          {
+                            "kind": "jsNew",
+                            "sourceKeys": {
+                              "objectKey": "newExpression_9d488f826545e628",
+                              "sourceKey": "newExpression_eb4fdb97b55510fd"
+                            },
+                            "callee": {
+                              "kind": "jsIdentifier",
+                              "sourceKeys": {
+                                "objectKey": "identifier_ebd1646a493fdb4f",
+                                "sourceKey": "identifier_b33f15828153b500"
+                              },
+                              "name": "CustomEvent"
+                            },
+                            "arg": [
+                              {
+                                "kind": "jsString",
+                                "sourceKeys": {
+                                  "objectKey": "stringLiteral_e94d3194a57e925e",
+                                  "sourceKey": "stringLiteral_109c7da349a6c3dc"
+                                },
+                                "value": "select"
+                              },
+                              {
+                                "kind": "jsObject",
+                                "sourceKeys": {
+                                  "objectKey": "objectExpression_2dfd4a673de074fb",
+                                  "sourceKey": "objectExpression_d259b5ad15e2012a"
+                                },
+                                "properties": [
+                                  {
+                                    "kind": "jsProperty",
+                                    "sourceKeys": {
+                                      "objectKey": "objectProperty_44ecbd146585f785",
+                                      "sourceKey": "objectProperty_8293d968ec32185d"
+                                    },
+                                    "key": "detail",
+                                    "value": {
+                                      "kind": "jsObject",
+                                      "sourceKeys": {
+                                        "objectKey": "objectExpression_0538bb24c8bff479",
+                                        "sourceKey": "objectExpression_11c46611d1a6e3b2"
+                                      },
+                                      "properties": [
+                                        {
+                                          "kind": "jsProperty",
+                                          "sourceKeys": {
+                                            "objectKey": "objectProperty_0b0d270d3972358a",
+                                            "sourceKey": "objectProperty_cd8f758bbbfc239b"
+                                          },
+                                          "key": "recordId",
+                                          "value": {
+                                            "kind": "jsMemberAccess",
+                                            "sourceKeys": {
+                                              "objectKey": "memberExpression_f7045269d0c5da3d",
+                                              "sourceKey": "memberExpression_ee941c87abcae11e"
+                                            },
+                                            "type": "object",
+                                            "object": {
+                                              "kind": "jsThis",
+                                              "sourceKeys": {
+                                                "objectKey": "thisExpression_2087ea10f1caba18",
+                                                "sourceKey": "thisExpression_6293c78cab11a092"
+                                              }
+                                            },
+                                            "operator": ".",
+                                            "member": "recordId"
+                                          },
+                                          "shorthand": false
+                                        }
+                                      ]
+                                    },
+                                    "shorthand": false
+                                  }
+                                ]
+                              }
+                            ]
+                          }
+                        ]
+                      }
                     }
                   ],
-                  "events": [
-                    {
-                      "kind": "lwcEvent",
-                      "sourceKeys": {
-                        "objectKey": "newExpression_8a4045b9037aca43",
-                        "sourceKey": "newExpression_eb4fdb97b55510fd"
-                      },
-                      "name": "select",
-                      "detail": "{ recordId: this.recordId }"
-                    }
-                  ]
+                  "references": []
                 }
               ]
             },
-            "otherExports": [],
+            "exports": [
+              {
+                "kind": "lwcExport",
+                "sourceKeys": {
+                  "objectKey": "exportDefaultDeclaration_4b2b693519740d7d",
+                  "sourceKey": "exportDefaultDeclaration_57c312fae9a811f8"
+                },
+                "exportType": "default",
+                "exported": "default",
+                "local": "AccountRow",
+                "typeOnly": false
+              }
+            ],
             "declarations": [],
-            "typeDeclarations": [],
-            "errors": []
+            "typeDeclarations": []
           }
         }
       ],
@@ -488,7 +640,7 @@
     },
     "sourceObject": [
       {
-        "objectKey": "importDeclaration_e6e5c6a589927fdf",
+        "objectKey": "importDeclaration_bf75c24ff598e262",
         "context": "import { LightningElement, api } from 'lwc';",
         "source": [
           {
@@ -508,7 +660,7 @@
         ]
       },
       {
-        "objectKey": "importSpecifier_cfa9b55daa09bb3a",
+        "objectKey": "importSpecifier_8f839237f9706f5b",
         "context": "LightningElement",
         "source": [
           {
@@ -528,7 +680,7 @@
         ]
       },
       {
-        "objectKey": "importSpecifier_0b0d904086d94cfc",
+        "objectKey": "importSpecifier_530ce1ac695ad5c6",
         "context": "api",
         "source": [
           {
@@ -548,7 +700,7 @@
         ]
       },
       {
-        "objectKey": "importDeclaration_b509b5108e377914",
+        "objectKey": "importDeclaration_03254812a49cddfc",
         "context": "import { formatAmount } from 'c/utils';",
         "source": [
           {
@@ -568,7 +720,7 @@
         ]
       },
       {
-        "objectKey": "importSpecifier_57f8f99676f647b3",
+        "objectKey": "importSpecifier_e4b857681faa741f",
         "context": "formatAmount",
         "source": [
           {
@@ -588,7 +740,27 @@
         ]
       },
       {
-        "objectKey": "classDeclaration_00a9f39587855383",
+        "objectKey": "exportDefaultDeclaration_4b2b693519740d7d",
+        "context": "export default class AccountRow extends LightningElement {\n    @api recordId!: string;\n    @api name: string = '';\n    @api amount?: number;\n\n    get formattedAmount(): string {\n        return formatAmount(this.amount ?? 0);\n    }\n\n    handleClick(): void {\n        this.dispatchEvent(new CustomEvent('select', { detail: { recordId: this.recordId } }));\n    }\n}",
+        "source": [
+          {
+            "sourceKey": "exportDefaultDeclaration_57c312fae9a811f8",
+            "start": {
+              "offset": 86,
+              "line": 4,
+              "column": 0
+            },
+            "end": {
+              "offset": 447,
+              "line": 16,
+              "column": 1
+            },
+            "filePath": "accountRow/accountRow.ts"
+          }
+        ]
+      },
+      {
+        "objectKey": "classDeclaration_21c699d2067b18b7",
         "context": "class AccountRow extends LightningElement {\n    @api recordId!: string;\n    @api name: string = '';\n    @api amount?: number;\n\n    get formattedAmount(): string {\n        return formatAmount(this.amount ?? 0);\n    }\n\n    handleClick(): void {\n        this.dispatchEvent(new CustomEvent('select', { detail: { recordId: this.recordId } }));\n    }\n}",
         "source": [
           {
@@ -608,7 +780,7 @@
         ]
       },
       {
-        "objectKey": "identifier_cffe0c346a2f7e60",
+        "objectKey": "identifier_ddf1d0960e926bec",
         "context": "AccountRow",
         "source": [
           {
@@ -628,7 +800,27 @@
         ]
       },
       {
-        "objectKey": "classProperty_8bc008611d354fb8",
+        "objectKey": "identifier_4a7a59e701040717",
+        "context": "LightningElement",
+        "source": [
+          {
+            "sourceKey": "identifier_0724c464d2f889df",
+            "start": {
+              "offset": 126,
+              "line": 4,
+              "column": 40
+            },
+            "end": {
+              "offset": 142,
+              "line": 4,
+              "column": 56
+            },
+            "filePath": "accountRow/accountRow.ts"
+          }
+        ]
+      },
+      {
+        "objectKey": "classProperty_965403362b95bd25",
         "context": "@api recordId!: string;",
         "source": [
           {
@@ -648,7 +840,7 @@
         ]
       },
       {
-        "objectKey": "identifier_c25976542b0871f8",
+        "objectKey": "identifier_897ce2f14578ffd5",
         "context": "recordId",
         "source": [
           {
@@ -716,7 +908,7 @@
         ]
       },
       {
-        "objectKey": "decorator_1332fed18f380344",
+        "objectKey": "decorator_4d9f350c3eae69d9",
         "context": "@api",
         "source": [
           {
@@ -764,7 +956,7 @@
         ]
       },
       {
-        "objectKey": "classProperty_2b7282184d04a642",
+        "objectKey": "classProperty_5991bac21dbdd748",
         "context": "@api name: string = '';",
         "source": [
           {
@@ -784,7 +976,7 @@
         ]
       },
       {
-        "objectKey": "identifier_794b5ff81fdd3d0b",
+        "objectKey": "identifier_9f9fb3012fddb442",
         "context": "name",
         "source": [
           {
@@ -804,7 +996,27 @@
         ]
       },
       {
-        "objectKey": "classProperty_1c32685475aafaf3",
+        "objectKey": "stringLiteral_1fb0babbdedea16e",
+        "context": "''",
+        "source": [
+          {
+            "sourceKey": "stringLiteral_b2ca8a4a6782f9dc",
+            "start": {
+              "offset": 197,
+              "line": 6,
+              "column": 24
+            },
+            "end": {
+              "offset": 199,
+              "line": 6,
+              "column": 26
+            },
+            "filePath": "accountRow/accountRow.ts"
+          }
+        ]
+      },
+      {
+        "objectKey": "classProperty_58a2fa7f525b0865",
         "context": "@api amount?: number;",
         "source": [
           {
@@ -824,7 +1036,7 @@
         ]
       },
       {
-        "objectKey": "identifier_7cada69a1cb7248a",
+        "objectKey": "identifier_7e2721591e1edb8c",
         "context": "amount",
         "source": [
           {
@@ -864,7 +1076,175 @@
         ]
       },
       {
-        "objectKey": "classMethod_4fc1a6d22ebc9323",
+        "objectKey": "returnStatement_6ee686a0949f0019",
+        "context": "return formatAmount(this.amount ?? 0);",
+        "source": [
+          {
+            "sourceKey": "returnStatement_d5f51bc7de5ddfaf",
+            "start": {
+              "offset": 272,
+              "line": 10,
+              "column": 8
+            },
+            "end": {
+              "offset": 310,
+              "line": 10,
+              "column": 46
+            },
+            "filePath": "accountRow/accountRow.ts"
+          }
+        ]
+      },
+      {
+        "objectKey": "callExpression_e84214ef66fc3e5b",
+        "context": "formatAmount(this.amount ?? 0)",
+        "source": [
+          {
+            "sourceKey": "callExpression_6dedee996873b22f",
+            "start": {
+              "offset": 279,
+              "line": 10,
+              "column": 15
+            },
+            "end": {
+              "offset": 309,
+              "line": 10,
+              "column": 45
+            },
+            "filePath": "accountRow/accountRow.ts"
+          }
+        ]
+      },
+      {
+        "objectKey": "identifier_c23258fedf0e69e2",
+        "context": "formatAmount",
+        "source": [
+          {
+            "sourceKey": "identifier_51b74bdd1e7fb807",
+            "start": {
+              "offset": 279,
+              "line": 10,
+              "column": 15
+            },
+            "end": {
+              "offset": 291,
+              "line": 10,
+              "column": 27
+            },
+            "filePath": "accountRow/accountRow.ts"
+          }
+        ]
+      },
+      {
+        "objectKey": "logicalExpression_01896c530df6dad3",
+        "context": "this.amount ?? 0",
+        "source": [
+          {
+            "sourceKey": "logicalExpression_562b016be0b52d20",
+            "start": {
+              "offset": 292,
+              "line": 10,
+              "column": 28
+            },
+            "end": {
+              "offset": 308,
+              "line": 10,
+              "column": 44
+            },
+            "filePath": "accountRow/accountRow.ts"
+          }
+        ]
+      },
+      {
+        "objectKey": "memberExpression_ad17cb9fb6ccb48a",
+        "context": "this.amount",
+        "source": [
+          {
+            "sourceKey": "memberExpression_3f930b30e9200c9f",
+            "start": {
+              "offset": 292,
+              "line": 10,
+              "column": 28
+            },
+            "end": {
+              "offset": 303,
+              "line": 10,
+              "column": 39
+            },
+            "filePath": "accountRow/accountRow.ts"
+          }
+        ]
+      },
+      {
+        "objectKey": "thisExpression_2087ea10f1caba18",
+        "context": "this",
+        "source": [
+          {
+            "sourceKey": "thisExpression_cbf0ecaec79d084b",
+            "start": {
+              "offset": 292,
+              "line": 10,
+              "column": 28
+            },
+            "end": {
+              "offset": 296,
+              "line": 10,
+              "column": 32
+            },
+            "filePath": "accountRow/accountRow.ts"
+          },
+          {
+            "sourceKey": "thisExpression_d4f81fe823df0e02",
+            "start": {
+              "offset": 352,
+              "line": 14,
+              "column": 8
+            },
+            "end": {
+              "offset": 356,
+              "line": 14,
+              "column": 12
+            },
+            "filePath": "accountRow/accountRow.ts"
+          },
+          {
+            "sourceKey": "thisExpression_6293c78cab11a092",
+            "start": {
+              "offset": 419,
+              "line": 14,
+              "column": 75
+            },
+            "end": {
+              "offset": 423,
+              "line": 14,
+              "column": 79
+            },
+            "filePath": "accountRow/accountRow.ts"
+          }
+        ]
+      },
+      {
+        "objectKey": "numericLiteral_1805d5adfdf5af47",
+        "context": "0",
+        "source": [
+          {
+            "sourceKey": "numericLiteral_3ba249f573f4ba2f",
+            "start": {
+              "offset": 307,
+              "line": 10,
+              "column": 43
+            },
+            "end": {
+              "offset": 308,
+              "line": 10,
+              "column": 44
+            },
+            "filePath": "accountRow/accountRow.ts"
+          }
+        ]
+      },
+      {
+        "objectKey": "classMethod_5ac46ff12f2187fa",
         "context": "get formattedAmount(): string {\n        return formatAmount(this.amount ?? 0);\n    }",
         "source": [
           {
@@ -884,7 +1264,7 @@
         ]
       },
       {
-        "objectKey": "identifier_af6b343ccd97d574",
+        "objectKey": "identifier_f5d7097fae799cb0",
         "context": "formattedAmount",
         "source": [
           {
@@ -904,27 +1284,7 @@
         ]
       },
       {
-        "objectKey": "blockStatement_a41d45160824d19c",
-        "context": "{\n        return formatAmount(this.amount ?? 0);\n    }",
-        "source": [
-          {
-            "sourceKey": "blockStatement_92eda454d3325ed5",
-            "start": {
-              "offset": 262,
-              "line": 9,
-              "column": 34
-            },
-            "end": {
-              "offset": 316,
-              "line": 11,
-              "column": 5
-            },
-            "filePath": "accountRow/accountRow.ts"
-          }
-        ]
-      },
-      {
-        "objectKey": "classMethod_9a38d9519a125f26",
+        "objectKey": "classMethod_12db8ce24ece786f",
         "context": "handleClick(): void {\n        this.dispatchEvent(new CustomEvent('select', { detail: { recordId: this.recordId } }));\n    }",
         "source": [
           {
@@ -944,7 +1304,7 @@
         ]
       },
       {
-        "objectKey": "identifier_dcde58226c3bac1f",
+        "objectKey": "identifier_637ebbfbf07cd948",
         "context": "handleClick",
         "source": [
           {
@@ -964,7 +1324,27 @@
         ]
       },
       {
-        "objectKey": "callExpression_5b1f20fa19eed058",
+        "objectKey": "expressionStatement_d0c0e4641f1c0454",
+        "context": "this.dispatchEvent(new CustomEvent('select', { detail: { recordId: this.recordId } }));",
+        "source": [
+          {
+            "sourceKey": "expressionStatement_de059f5102fb7603",
+            "start": {
+              "offset": 352,
+              "line": 14,
+              "column": 8
+            },
+            "end": {
+              "offset": 439,
+              "line": 14,
+              "column": 95
+            },
+            "filePath": "accountRow/accountRow.ts"
+          }
+        ]
+      },
+      {
+        "objectKey": "callExpression_7161820291262655",
         "context": "this.dispatchEvent(new CustomEvent('select', { detail: { recordId: this.recordId } }))",
         "source": [
           {
@@ -984,7 +1364,7 @@
         ]
       },
       {
-        "objectKey": "newExpression_8a4045b9037aca43",
+        "objectKey": "newExpression_9d488f826545e628",
         "context": "new CustomEvent('select', { detail: { recordId: this.recordId } })",
         "source": [
           {
@@ -1004,20 +1384,140 @@
         ]
       },
       {
-        "objectKey": "blockStatement_c5960df13e40c533",
-        "context": "{\n        this.dispatchEvent(new CustomEvent('select', { detail: { recordId: this.recordId } }));\n    }",
+        "objectKey": "identifier_ebd1646a493fdb4f",
+        "context": "CustomEvent",
         "source": [
           {
-            "sourceKey": "blockStatement_619e2b3b9b06ca99",
+            "sourceKey": "identifier_b33f15828153b500",
             "start": {
-              "offset": 342,
-              "line": 13,
-              "column": 24
+              "offset": 375,
+              "line": 14,
+              "column": 31
             },
             "end": {
-              "offset": 445,
-              "line": 15,
-              "column": 5
+              "offset": 386,
+              "line": 14,
+              "column": 42
+            },
+            "filePath": "accountRow/accountRow.ts"
+          }
+        ]
+      },
+      {
+        "objectKey": "stringLiteral_e94d3194a57e925e",
+        "context": "'select'",
+        "source": [
+          {
+            "sourceKey": "stringLiteral_109c7da349a6c3dc",
+            "start": {
+              "offset": 387,
+              "line": 14,
+              "column": 43
+            },
+            "end": {
+              "offset": 395,
+              "line": 14,
+              "column": 51
+            },
+            "filePath": "accountRow/accountRow.ts"
+          }
+        ]
+      },
+      {
+        "objectKey": "objectExpression_2dfd4a673de074fb",
+        "context": "{ detail: { recordId: this.recordId } }",
+        "source": [
+          {
+            "sourceKey": "objectExpression_d259b5ad15e2012a",
+            "start": {
+              "offset": 397,
+              "line": 14,
+              "column": 53
+            },
+            "end": {
+              "offset": 436,
+              "line": 14,
+              "column": 92
+            },
+            "filePath": "accountRow/accountRow.ts"
+          }
+        ]
+      },
+      {
+        "objectKey": "objectProperty_44ecbd146585f785",
+        "context": "detail: { recordId: this.recordId }",
+        "source": [
+          {
+            "sourceKey": "objectProperty_8293d968ec32185d",
+            "start": {
+              "offset": 399,
+              "line": 14,
+              "column": 55
+            },
+            "end": {
+              "offset": 434,
+              "line": 14,
+              "column": 90
+            },
+            "filePath": "accountRow/accountRow.ts"
+          }
+        ]
+      },
+      {
+        "objectKey": "objectExpression_0538bb24c8bff479",
+        "context": "{ recordId: this.recordId }",
+        "source": [
+          {
+            "sourceKey": "objectExpression_11c46611d1a6e3b2",
+            "start": {
+              "offset": 407,
+              "line": 14,
+              "column": 63
+            },
+            "end": {
+              "offset": 434,
+              "line": 14,
+              "column": 90
+            },
+            "filePath": "accountRow/accountRow.ts"
+          }
+        ]
+      },
+      {
+        "objectKey": "objectProperty_0b0d270d3972358a",
+        "context": "recordId: this.recordId",
+        "source": [
+          {
+            "sourceKey": "objectProperty_cd8f758bbbfc239b",
+            "start": {
+              "offset": 409,
+              "line": 14,
+              "column": 65
+            },
+            "end": {
+              "offset": 432,
+              "line": 14,
+              "column": 88
+            },
+            "filePath": "accountRow/accountRow.ts"
+          }
+        ]
+      },
+      {
+        "objectKey": "memberExpression_f7045269d0c5da3d",
+        "context": "this.recordId",
+        "source": [
+          {
+            "sourceKey": "memberExpression_ee941c87abcae11e",
+            "start": {
+              "offset": 419,
+              "line": 14,
+              "column": 75
+            },
+            "end": {
+              "offset": 432,
+              "line": 14,
+              "column": 88
             },
             "filePath": "accountRow/accountRow.ts"
           }

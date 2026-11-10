@@ -61,6 +61,9 @@ export const OBJECT_SCHEMA = {
     // カスタム設定 (objectType は custom のまま。この値 (List / Hierarchy) で普通のオブジェクトと区別する)
     customSettingsType: 'string',
     customSettingsVisibility: 'string',
+    // プラットフォームイベント (__e)。eventType は HighVolume / StandardVolume、publishBehavior は PublishAfterCommit / PublishImmediately
+    eventType: 'string',
+    publishBehavior: 'string',
 } as const;
 
 /** 検索レイアウト (`<searchLayouts>`)。どれも項目・ボタンの API 名の並び (表示順) */

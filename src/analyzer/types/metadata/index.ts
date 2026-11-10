@@ -15,4 +15,5 @@ export * from './flexiPage';
 export * from './record';
 export * from './recordTypes';
 export * from './markup';
+export * from './settings';
 export * from './businessProcess';

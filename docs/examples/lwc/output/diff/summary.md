@@ -13,25 +13,31 @@
 - `accountList.content.modules[accountList.ts].module.imports[@salesforce/apex/AccountController.updateAccount]` (lwcImport): **added** {"source":"@salesforce/apex/AccountController.updateAccount","category":"apex","specifiers":[{"kind":"lwcImportSpecif...
 - `accountList.content.modules[accountList.ts].module.component` (lwcComponent): **changed** match=slot
 - `accountList.content.modules[accountList.ts].module.component.block[title]` (lwcField): **changed** match=key
-- `accountList.content.modules[accountList.ts].module.component.block[title].init`: **changed** "TITLE_LABEL" → "'Accounts'"
+- `accountList.content.modules[accountList.ts].module.component.block[title].init`: **changed** {"name":"TITLE_LABEL"} → {"value":"Accounts"}
 - `accountList.content.modules[accountList.ts].module.component.block[title].references[TITLE_LABEL]`: **removed** {"local":"TITLE_LABEL","source":"@salesforce/label/c.AccountListTitle"}
 - `accountList.content.modules[accountList.ts].module.component.block[maxRows]` (lwcField): **changed** match=key
-- `accountList.content.modules[accountList.ts].module.component.block[maxRows].init`: **changed** "10" → "20"
+- `accountList.content.modules[accountList.ts].module.component.block[maxRows].init` (jsNumber): **changed** {"value":10} → {"value":20}
 - `accountList.content.modules[accountList.ts].module.component.block[wiredAccounts]` (lwcMethod): **changed** match=key
 - `accountList.content.modules[accountList.ts].module.component.block[wiredAccounts].modifier`: **changed**
 - `accountList.content.modules[accountList.ts].module.component.block[wiredAccounts].modifier.decorator[wire]` (lwcDecorator): **changed** match=key
-- `accountList.content.modules[accountList.ts].module.component.block[wiredAccounts].modifier.decorator[wire].arg[1]`: **changed** match=slot "{ parentId: '$recordId', limitSize: '$maxRows' }" → "{ parentId: '$recordId', limitSize: '$maxRows', industry: '$industry' }"
+- `accountList.content.modules[accountList.ts].module.component.block[wiredAccounts].modifier.decorator[wire].arg[1]` (jsObject): **changed** match=slot {"properties":[{"kind":"jsProperty","key":"parentId","value":{"kind":"jsString","value":"$recordId"},"shorthand":fals... → {"properties":[{"kind":"jsProperty","key":"parentId","value":{"kind":"jsString","value":"$recordId"},"shorthand":fals...
 - `accountList.content.modules[accountList.ts].module.component.block[wiredAccounts].modifier.decorator[wire].wire`: **changed**
-- `accountList.content.modules[accountList.ts].module.component.block[wiredAccounts].modifier.decorator[wire].wire.config[industry]` (lwcWireConfig): **added** {"key":"industry","value":"'$industry'","reactive":"industry","references":[]}
-- `accountList.content.modules[accountList.ts].module.component.block[isTable]` (lwcProperty): **removed** {"name":"isTable","isGetter":true,"isSetter":false,"getterContent":{"modifier":{},"body":{"kind":"lwcBody","statement...
+- `accountList.content.modules[accountList.ts].module.component.block[wiredAccounts].modifier.decorator[wire].wire.config[industry]` (lwcWireConfig): **added** {"key":"industry","value":{"kind":"jsString","value":"$industry"},"reactive":"industry","references":[]}
+- `accountList.content.modules[accountList.ts].module.component.block[isTable]` (lwcProperty): **removed** {"name":"isTable","isGetter":true,"isSetter":false,"getterContent":{"modifier":{},"block":[{"kind":"jsReturn","field"...
 - `accountList.content.modules[accountList.ts].module.component.block[handleSelect]` (lwcMethod): **changed** match=key
-- `accountList.content.modules[accountList.ts].module.component.block[handleSelect].body` (lwcBody): **changed** match=slot
-- `accountList.content.modules[accountList.ts].module.component.block[handleSelect].calls[0]` (lwcCall): **changed** match=nearest
-- `accountList.content.modules[accountList.ts].module.component.block[handleSelect].calls[0].arg[0]`: **changed** match=slot "new CustomEvent<SelectDetail>('accountselect', {\n                detail: { recordId, index },\n                bubb... → "new CustomEvent<SelectDetail>('accountselect', {\n                detail: { recordId, index },\n                bubb...
-- `accountList.content.modules[accountList.ts].module.component.block[handleSelect].events[accountselect]` (lwcEvent): **changed** match=nearest
-- `accountList.content.modules[accountList.ts].module.component.block[handleSelect].events[accountselect].composed`: **changed** false → true
+- `accountList.content.modules[accountList.ts].module.component.block[handleSelect].block[1]` (jsExpression): **changed** match=similar
+- `accountList.content.modules[accountList.ts].module.component.block[handleSelect].block[1].children[0]` (jsMemberAccess:method): **changed** match=similar
+- `accountList.content.modules[accountList.ts].module.component.block[handleSelect].block[1].children[0].children[1]` (jsMemberAccess:method.memberArg): **changed** match=similar
+- `accountList.content.modules[accountList.ts].module.component.block[handleSelect].block[1].children[0].children[1].children[0]` (jsNew): **changed** match=similar
+- `accountList.content.modules[accountList.ts].module.component.block[handleSelect].block[1].children[0].children[1].children[0].children[1]` (jsNew.arg): **changed** match=similar
+- `accountList.content.modules[accountList.ts].module.component.block[handleSelect].block[1].children[0].children[1].children[0].children[1].children[1]` (jsObject): **changed** match=similar
+- `accountList.content.modules[accountList.ts].module.component.block[handleSelect].block[1].children[0].children[1].children[0].children[1].children[1].children[0]` (jsObject.properties): **changed** match=similar
+- `accountList.content.modules[accountList.ts].module.component.block[handleSelect].block[1].children[0].children[1].children[0].children[1].children[1].children[0].children[composed]` (jsProperty): **changed** match=recovery
+- `accountList.content.modules[accountList.ts].module.component.block[handleSelect].block[1].children[0].children[1].children[0].children[1].children[1].children[0].children[composed].children[0]` (jsBoolean): **changed** match=recovery
+- `accountList.content.modules[accountList.ts].module.component.block[handleSelect].block[1].children[0].children[1].children[0].children[1].children[1].children[0].children[composed].children[0].value`: **changed** false → true
 - `accountList.content.modules[accountList.ts].module.component.block[industry]` (lwcField): **added** {"name":"industry","variantType":{"kind":"lwcType","text":"string","type":"primitive","primitiveType":"string"},"refe...
 - `accountList.content.modules[accountList.ts].module.component.block[handleSave]` (lwcMethod): **added** {"name":"handleSave","returnType":{"kind":"lwcType","text":"Promise<void>","type":"custom","customType":"Promise","ge...
+- `accountList.content.modules[accountList.ts].module.exports[AccountList]` (lwcExport): **changed** match=key
 - `accountList.content.templates[accountList.html]`: **changed** match=key
 - `accountList.content.templates[accountList.html].template` (lwcTemplate): **changed** match=slot
 - `accountList.content.templates[accountList.html].template.children[lightning-card]` (element:lightning-card): **changed** match=similar
@@ -99,9 +105,14 @@
 - `utils.content`: **changed**
 - `utils.content.modules[utils.ts]`: **changed** match=key
 - `utils.content.modules[utils.ts].module`: **changed**
+- `utils.content.modules[utils.ts].module.exports[ViewKind]` (lwcExport): **added** {"exportType":"named","local":"ViewKind","exported":"ViewKind","typeOnly":true}
 - `utils.content.modules[utils.ts].module.declarations[toRows]` (lwcDeclaration): **changed** match=key
 - `utils.content.modules[utils.ts].module.declarations[toRows].param[1]` (lwcParameter): **added** {"variant":"limit","variantType":{"kind":"lwcType","text":"number","type":"primitive","primitiveType":"number"},"opti...
-- `utils.content.modules[utils.ts].module.declarations[toRows].body` (lwcBody): **changed** match=slot
+- `utils.content.modules[utils.ts].module.declarations[toRows].block[0]` (jsReturn): **changed** match=similar
+- `utils.content.modules[utils.ts].module.declarations[toRows].block[0].children[0]` (jsMemberAccess:method): **changed** match=similar
+- `utils.content.modules[utils.ts].module.declarations[toRows].block[0].children[0].children[0]` (jsMemberAccess:method): **added** {"type":"method","object":{"kind":"jsIdentifier","name":"records"},"operator":".","member":"slice","memberArg":[{"kin...
+- `utils.content.modules[utils.ts].module.declarations[toRows].block[0].children[0].children[0].children[records]` (jsIdentifier): **moved** match=identical {"name":"records"}
+- `utils.content.modules[utils.ts].module.declarations[toRows].block[0].children[0].children[0].children[1]` (jsMemberAccess:method.memberArg): **added** [{"kind":"jsNumber","value":0},{"kind":"jsIdentifier","name":"limit"}]
 - `utils.content.modules[utils.ts].module.typeDeclarations[SortDirection]` (lwcTypeDeclaration): **changed** match=key
 - `utils.content.modules[utils.ts].module.typeDeclarations[SortDirection].variantType` (lwcType): **changed** {"text":"'asc' | 'desc'","type":"union","types":[{"type":"literal","value":"'asc'"},{"type":"literal","value":"'desc'... → {"text":"'asc' | 'desc' | 'none'","type":"union","types":[{"type":"literal","value":"'asc'"},{"type":"literal","value...
 - `utils.content.modules[utils.ts].module.typeDeclarations[Row]` (lwcTypeDeclaration): **changed** match=key

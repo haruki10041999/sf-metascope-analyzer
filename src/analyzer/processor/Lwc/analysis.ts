@@ -17,6 +17,8 @@ import {
 
 import type { ObjectInfo } from '../Metadata/analysis';
 
+import { analyzeLwcModuleCalls } from './calls';
+
 // LWC のバンドルをまたぐ解析 (docs/lwc-implementation.md)。
 // 子コンポーネントの @api・イベント・slot、lightning-* のカタログ、メタデータ (オブジェクト・項目) への参照を突き合わせる。
 // ほかのバンドルの変更で結果が変わるので、resolvedError (バンドルごとの差分に出る) にはせず、解析の結果として返す。
@@ -144,16 +146,12 @@ const templatesOf = (bundle: LwcBundleJson) =>
 export const analyzeLwcComponent = (bundle: LwcBundleJson): LwcComponentInfo => {
     const component = mainComponentOf(bundle);
     const members = component?.block ?? [];
-    const events = members.flatMap((member) => {
-        if (member.kind === 'lwcMethod' || member.kind === 'lwcConstructor') return member.events;
-        if (member.kind === 'lwcProperty') {
-            return [
-                ...(member.getterContent?.events ?? []),
-                ...(member.setterContent?.events ?? []),
-            ];
-        }
-        return [];
-    });
+    // メソッド・getter / setter・関数を初期値にしたフィールド (handleClick = () => {...}) の本体のイベント
+    // (JSON には持たず、文の JSON から解析で出す。calls.ts)
+    const main = bundle.modules.find((m) => m.main)?.module;
+    const events = (main ? analyzeLwcModuleCalls(main) : [])
+        .filter((content) => content.ownerKind === 'lwcComponent')
+        .flatMap((content) => content.events);
     const slots: string[] = [];
     templatesOf(bundle).forEach((template) =>
         walkElements(template.children, (element) => {

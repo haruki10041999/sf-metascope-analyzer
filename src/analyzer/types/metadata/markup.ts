@@ -250,6 +250,8 @@ export type AuraBundleJson = JsonType<'auraBundle'> & {
     methods?: MarkupDeclarationJson<'auraMethod'>[];
     /** aura:dependency の resource */
     dependencies?: string[];
+    /** lightning:messageChannel の type (メッセージチャネル <名前>__c。重複なし・名前の順) */
+    messageChannels?: string[];
     /** 使っている部品のタグ (aura: の宣言のタグは除く) */
     components: string[];
     /** 差し込み ({!...} の中身。重複なし・名前の順)。参照の解析で使う */
@@ -309,6 +311,13 @@ export const makeAuraBundleJson = (
     const dependencies = childrenOf(root, 'aura:dependency').flatMap((element) =>
         element.attributes.resource ? [element.attributes.resource] : [],
     );
+    const messageChannels = new Set<string>();
+    const visitChannels = (element: XmlElement) => {
+        if (element.name === 'lightning:messageChannel' && element.attributes.type)
+            messageChannels.add(element.attributes.type);
+        element.children.forEach(visitChannels);
+    };
+    visitChannels(root);
 
     return makeMetadataJson<AuraBundleJson>(
         'auraBundle',
@@ -347,6 +356,7 @@ export const makeAuraBundleJson = (
                 makeDeclarations(root, 'aura:method', 'auraMethod', byName, file, registry),
             ),
             ...nonEmptyEntry('dependencies', dependencies),
+            ...nonEmptyEntry('messageChannels', [...messageChannels].sort()),
             components: namespacedTags(root, AURA_DECLARATION_TAGS),
             ...nonEmptyEntry('expressions', expressionsOf(file.source)),
             ...(javascript && Object.keys(javascript).length ? { javascript } : {}),

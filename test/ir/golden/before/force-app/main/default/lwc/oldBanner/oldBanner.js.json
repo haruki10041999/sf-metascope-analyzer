@@ -35,8 +35,11 @@
         "name": {}
       },
       "name": "OldBanner",
-      "extend": "LightningElement",
-      "mixins": [],
+      "superClass": {
+        "kind": "jsIdentifier",
+        "sourceKeys": {},
+        "name": "LightningElement"
+      },
       "block": [
         {
           "kind": "lwcField",
@@ -45,7 +48,11 @@
             "name": {}
           },
           "name": "message",
-          "init": "''",
+          "init": {
+            "kind": "jsString",
+            "sourceKeys": {},
+            "value": ""
+          },
           "references": [],
           "optional": false,
           "modifier": {
@@ -61,10 +68,32 @@
         }
       ]
     },
-    "otherExports": [],
+    "exports": [
+      {
+        "kind": "lwcExport",
+        "sourceKeys": {},
+        "exportType": "default",
+        "exported": "default",
+        "local": "OldBanner",
+        "typeOnly": false
+      }
+    ],
     "declarations": []
   },
   "sourceObject": [
+    {
+      "context": "''",
+      "start": {
+        "offset": 123,
+        "line": 4,
+        "column": 19
+      },
+      "end": {
+        "offset": 125,
+        "line": 4,
+        "column": 21
+      }
+    },
     {
       "context": "@api message = '';",
       "start": {
@@ -89,6 +118,19 @@
         "offset": 112,
         "line": 4,
         "column": 8
+      }
+    },
+    {
+      "context": "LightningElement",
+      "start": {
+        "offset": 85,
+        "line": 3,
+        "column": 39
+      },
+      "end": {
+        "offset": 101,
+        "line": 3,
+        "column": 55
       }
     },
     {
@@ -136,6 +178,19 @@
         "offset": 61,
         "line": 3,
         "column": 15
+      },
+      "end": {
+        "offset": 128,
+        "line": 5,
+        "column": 1
+      }
+    },
+    {
+      "context": "export default class OldBanner extends LightningElement {\n    @api message = '';\n}",
+      "start": {
+        "offset": 46,
+        "line": 3,
+        "column": 0
       },
       "end": {
         "offset": 128,

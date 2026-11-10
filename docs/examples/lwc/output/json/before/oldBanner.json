@@ -17,7 +17,7 @@
               {
                 "kind": "lwcImport",
                 "sourceKeys": {
-                  "objectKey": "importDeclaration_ab950e948129c918",
+                  "objectKey": "importDeclaration_bf75c24ff598e262",
                   "sourceKey": "importDeclaration_29d67538c3db9b7d"
                 },
                 "source": "lwc",
@@ -26,7 +26,7 @@
                   {
                     "kind": "lwcImportSpecifier",
                     "sourceKeys": {
-                      "objectKey": "importSpecifier_f65dea2f17d74260",
+                      "objectKey": "importSpecifier_8f839237f9706f5b",
                       "sourceKey": "importSpecifier_5005e11a0ea186a7"
                     },
                     "specifierType": "named",
@@ -37,7 +37,7 @@
                   {
                     "kind": "lwcImportSpecifier",
                     "sourceKeys": {
-                      "objectKey": "importSpecifier_c927ff2649d93619",
+                      "objectKey": "importSpecifier_530ce1ac695ad5c6",
                       "sourceKey": "importSpecifier_d883266a4d79bb8f"
                     },
                     "specifierType": "named",
@@ -53,32 +53,45 @@
               "kind": "lwcComponent",
               "sourceKeys": {
                 "base": {
-                  "objectKey": "classDeclaration_48f7e43b837c7077",
+                  "objectKey": "classDeclaration_8cce34dffc0f6c42",
                   "sourceKey": "classDeclaration_d5e737fe7423f3c5"
                 },
                 "name": {
-                  "objectKey": "identifier_a5d747c05611dd82",
+                  "objectKey": "identifier_ee32ac8668c203d0",
                   "sourceKey": "identifier_0d8b35173d16c937"
                 }
               },
               "name": "OldBanner",
-              "extend": "LightningElement",
-              "mixins": [],
+              "superClass": {
+                "kind": "jsIdentifier",
+                "sourceKeys": {
+                  "objectKey": "identifier_4a7a59e701040717",
+                  "sourceKey": "identifier_d1d2d5545899f027"
+                },
+                "name": "LightningElement"
+              },
               "block": [
                 {
                   "kind": "lwcField",
                   "sourceKeys": {
                     "base": {
-                      "objectKey": "classProperty_c1e5bbf89ef6f609",
+                      "objectKey": "classProperty_6518cd4aca19dbc9",
                       "sourceKey": "classProperty_087ec57f8161a963"
                     },
                     "name": {
-                      "objectKey": "identifier_f3ad1e8f772fa21c",
+                      "objectKey": "identifier_2275bd58faafea4f",
                       "sourceKey": "identifier_eb0758eb08c783e6"
                     }
                   },
                   "name": "message",
-                  "init": "''",
+                  "init": {
+                    "kind": "jsString",
+                    "sourceKeys": {
+                      "objectKey": "stringLiteral_1fb0babbdedea16e",
+                      "sourceKey": "stringLiteral_0697d418ac64d07b"
+                    },
+                    "value": ""
+                  },
                   "references": [],
                   "optional": false,
                   "modifier": {
@@ -86,7 +99,7 @@
                       {
                         "kind": "lwcDecorator",
                         "sourceKeys": {
-                          "objectKey": "decorator_1332fed18f380344",
+                          "objectKey": "decorator_4d9f350c3eae69d9",
                           "sourceKey": "decorator_dad141361e5252bd"
                         },
                         "name": "api",
@@ -97,9 +110,20 @@
                 }
               ]
             },
-            "otherExports": [],
-            "declarations": [],
-            "errors": []
+            "exports": [
+              {
+                "kind": "lwcExport",
+                "sourceKeys": {
+                  "objectKey": "exportDefaultDeclaration_99903f8c45105b1b",
+                  "sourceKey": "exportDefaultDeclaration_f689124e1323fd17"
+                },
+                "exportType": "default",
+                "exported": "default",
+                "local": "OldBanner",
+                "typeOnly": false
+              }
+            ],
+            "declarations": []
           }
         }
       ],
@@ -164,7 +188,7 @@
     },
     "sourceObject": [
       {
-        "objectKey": "importDeclaration_ab950e948129c918",
+        "objectKey": "importDeclaration_bf75c24ff598e262",
         "context": "import { LightningElement, api } from 'lwc';",
         "source": [
           {
@@ -184,7 +208,7 @@
         ]
       },
       {
-        "objectKey": "importSpecifier_f65dea2f17d74260",
+        "objectKey": "importSpecifier_8f839237f9706f5b",
         "context": "LightningElement",
         "source": [
           {
@@ -204,7 +228,7 @@
         ]
       },
       {
-        "objectKey": "importSpecifier_c927ff2649d93619",
+        "objectKey": "importSpecifier_530ce1ac695ad5c6",
         "context": "api",
         "source": [
           {
@@ -224,7 +248,27 @@
         ]
       },
       {
-        "objectKey": "classDeclaration_48f7e43b837c7077",
+        "objectKey": "exportDefaultDeclaration_99903f8c45105b1b",
+        "context": "export default class OldBanner extends LightningElement {\n    @api message = '';\n}",
+        "source": [
+          {
+            "sourceKey": "exportDefaultDeclaration_f689124e1323fd17",
+            "start": {
+              "offset": 46,
+              "line": 3,
+              "column": 0
+            },
+            "end": {
+              "offset": 128,
+              "line": 5,
+              "column": 1
+            },
+            "filePath": "oldBanner/oldBanner.js"
+          }
+        ]
+      },
+      {
+        "objectKey": "classDeclaration_8cce34dffc0f6c42",
         "context": "class OldBanner extends LightningElement {\n    @api message = '';\n}",
         "source": [
           {
@@ -244,7 +288,7 @@
         ]
       },
       {
-        "objectKey": "identifier_a5d747c05611dd82",
+        "objectKey": "identifier_ee32ac8668c203d0",
         "context": "OldBanner",
         "source": [
           {
@@ -264,7 +308,27 @@
         ]
       },
       {
-        "objectKey": "classProperty_c1e5bbf89ef6f609",
+        "objectKey": "identifier_4a7a59e701040717",
+        "context": "LightningElement",
+        "source": [
+          {
+            "sourceKey": "identifier_d1d2d5545899f027",
+            "start": {
+              "offset": 85,
+              "line": 3,
+              "column": 39
+            },
+            "end": {
+              "offset": 101,
+              "line": 3,
+              "column": 55
+            },
+            "filePath": "oldBanner/oldBanner.js"
+          }
+        ]
+      },
+      {
+        "objectKey": "classProperty_6518cd4aca19dbc9",
         "context": "@api message = '';",
         "source": [
           {
@@ -284,7 +348,7 @@
         ]
       },
       {
-        "objectKey": "identifier_f3ad1e8f772fa21c",
+        "objectKey": "identifier_2275bd58faafea4f",
         "context": "message",
         "source": [
           {
@@ -304,7 +368,27 @@
         ]
       },
       {
-        "objectKey": "decorator_1332fed18f380344",
+        "objectKey": "stringLiteral_1fb0babbdedea16e",
+        "context": "''",
+        "source": [
+          {
+            "sourceKey": "stringLiteral_0697d418ac64d07b",
+            "start": {
+              "offset": 123,
+              "line": 4,
+              "column": 19
+            },
+            "end": {
+              "offset": 125,
+              "line": 4,
+              "column": 21
+            },
+            "filePath": "oldBanner/oldBanner.js"
+          }
+        ]
+      },
+      {
+        "objectKey": "decorator_4d9f350c3eae69d9",
         "context": "@api",
         "source": [
           {

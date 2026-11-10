@@ -17,7 +17,7 @@
               {
                 "kind": "lwcImport",
                 "sourceKeys": {
-                  "objectKey": "importDeclaration_ab950e948129c918",
+                  "objectKey": "importDeclaration_bf75c24ff598e262",
                   "sourceKey": "importDeclaration_c312456f9983dfc0"
                 },
                 "source": "lwc",
@@ -26,7 +26,7 @@
                   {
                     "kind": "lwcImportSpecifier",
                     "sourceKeys": {
-                      "objectKey": "importSpecifier_f65dea2f17d74260",
+                      "objectKey": "importSpecifier_8f839237f9706f5b",
                       "sourceKey": "importSpecifier_a7368ad470b8aa5e"
                     },
                     "specifierType": "named",
@@ -37,7 +37,7 @@
                   {
                     "kind": "lwcImportSpecifier",
                     "sourceKeys": {
-                      "objectKey": "importSpecifier_c927ff2649d93619",
+                      "objectKey": "importSpecifier_530ce1ac695ad5c6",
                       "sourceKey": "importSpecifier_e534c17c446b6dba"
                     },
                     "specifierType": "named",
@@ -51,7 +51,7 @@
               {
                 "kind": "lwcImport",
                 "sourceKeys": {
-                  "objectKey": "importDeclaration_488735bacb8ab5b8",
+                  "objectKey": "importDeclaration_b1d1e50d1ee13f4a",
                   "sourceKey": "importDeclaration_e988dfac11d6694e"
                 },
                 "source": "@salesforce/label/c.BannerMessage",
@@ -60,7 +60,7 @@
                   {
                     "kind": "lwcImportSpecifier",
                     "sourceKeys": {
-                      "objectKey": "importDefaultSpecifier_2be58ca7ad48054e",
+                      "objectKey": "importDefaultSpecifier_d35599300c486716",
                       "sourceKey": "importDefaultSpecifier_f0cafcd65923eae0"
                     },
                     "specifierType": "default",
@@ -75,32 +75,45 @@
               "kind": "lwcComponent",
               "sourceKeys": {
                 "base": {
-                  "objectKey": "classDeclaration_d4610b522b2f83f1",
+                  "objectKey": "classDeclaration_e1113ccff82c02a4",
                   "sourceKey": "classDeclaration_47f56572d9235b02"
                 },
                 "name": {
-                  "objectKey": "identifier_dc8f34a37aaef723",
+                  "objectKey": "identifier_a414ac58e2904a49",
                   "sourceKey": "identifier_09d04c5b144d0daf"
                 }
               },
               "name": "NewBanner",
-              "extend": "LightningElement",
-              "mixins": [],
+              "superClass": {
+                "kind": "jsIdentifier",
+                "sourceKeys": {
+                  "objectKey": "identifier_4a7a59e701040717",
+                  "sourceKey": "identifier_618d2d9050de770c"
+                },
+                "name": "LightningElement"
+              },
               "block": [
                 {
                   "kind": "lwcField",
                   "sourceKeys": {
                     "base": {
-                      "objectKey": "classProperty_2be1c23d484c79b0",
+                      "objectKey": "classProperty_ac985f16b06f64f3",
                       "sourceKey": "classProperty_bd5faa20b98a0c6e"
                     },
                     "name": {
-                      "objectKey": "identifier_f3ad1e8f772fa21c",
+                      "objectKey": "identifier_2275bd58faafea4f",
                       "sourceKey": "identifier_a994f1df1fe1a1e4"
                     }
                   },
                   "name": "message",
-                  "init": "BANNER_LABEL",
+                  "init": {
+                    "kind": "jsIdentifier",
+                    "sourceKeys": {
+                      "objectKey": "identifier_3eafacb418eaeeb5",
+                      "sourceKey": "identifier_0d81cbdc7511317c"
+                    },
+                    "name": "BANNER_LABEL"
+                  },
                   "references": [
                     {
                       "local": "BANNER_LABEL",
@@ -113,7 +126,7 @@
                       {
                         "kind": "lwcDecorator",
                         "sourceKeys": {
-                          "objectKey": "decorator_1332fed18f380344",
+                          "objectKey": "decorator_4d9f350c3eae69d9",
                           "sourceKey": "decorator_ddced6e4e7133b61"
                         },
                         "name": "api",
@@ -126,16 +139,23 @@
                   "kind": "lwcField",
                   "sourceKeys": {
                     "base": {
-                      "objectKey": "classProperty_376f6487e7c40975",
+                      "objectKey": "classProperty_6ba21748028b900b",
                       "sourceKey": "classProperty_db73c0bb072c6dba"
                     },
                     "name": {
-                      "objectKey": "identifier_777b5ed4f35ccfc7",
+                      "objectKey": "identifier_b5d6b83a430136ad",
                       "sourceKey": "identifier_fd688641b081b93e"
                     }
                   },
                   "name": "variant",
-                  "init": "'info'",
+                  "init": {
+                    "kind": "jsString",
+                    "sourceKeys": {
+                      "objectKey": "stringLiteral_20ce1c540da0e5b8",
+                      "sourceKey": "stringLiteral_0ff873d446a65436"
+                    },
+                    "value": "info"
+                  },
                   "references": [],
                   "optional": false,
                   "modifier": {
@@ -143,7 +163,7 @@
                       {
                         "kind": "lwcDecorator",
                         "sourceKeys": {
-                          "objectKey": "decorator_1332fed18f380344",
+                          "objectKey": "decorator_4d9f350c3eae69d9",
                           "sourceKey": "decorator_06e4c61a67815e65"
                         },
                         "name": "api",
@@ -156,11 +176,11 @@
                   "kind": "lwcMethod",
                   "sourceKeys": {
                     "base": {
-                      "objectKey": "classMethod_37d31e6bf4d526fe",
+                      "objectKey": "classMethod_8ee7178095fe0aa4",
                       "sourceKey": "classMethod_219bad023496963a"
                     },
                     "name": {
-                      "objectKey": "identifier_7a4b26babe51ef4d",
+                      "objectKey": "identifier_1f3547dc07cce0ad",
                       "sourceKey": "identifier_adc54b974358f654"
                     }
                   },
@@ -168,45 +188,77 @@
                   "param": [],
                   "async": false,
                   "modifier": {},
-                  "body": {
-                    "kind": "lwcBody",
-                    "sourceKeys": {
-                      "objectKey": "blockStatement_ffaf71fd0c532c3c",
-                      "sourceKey": "blockStatement_aa9e7ec3aa84e699"
-                    },
-                    "statements": 1
-                  },
-                  "calls": [
+                  "block": [
                     {
-                      "kind": "lwcCall",
+                      "kind": "jsExpression",
                       "sourceKeys": {
-                        "objectKey": "callExpression_ded08823444f138e",
-                        "sourceKey": "callExpression_b840993a2263785f"
+                        "objectKey": "expressionStatement_7eba142198e39057",
+                        "sourceKey": "expressionStatement_c572537d1c28e35b"
                       },
-                      "callType": "dispatchEvent",
-                      "target": "CustomEvent",
-                      "arg": [
-                        "new CustomEvent('close')"
-                      ],
-                      "references": []
+                      "value": {
+                        "kind": "jsMemberAccess",
+                        "sourceKeys": {
+                          "objectKey": "callExpression_743618608e451f98",
+                          "sourceKey": "callExpression_b840993a2263785f"
+                        },
+                        "type": "method",
+                        "object": {
+                          "kind": "jsThis",
+                          "sourceKeys": {
+                            "objectKey": "thisExpression_2087ea10f1caba18",
+                            "sourceKey": "thisExpression_743ba5a2a750e68d"
+                          }
+                        },
+                        "operator": ".",
+                        "member": "dispatchEvent",
+                        "memberArg": [
+                          {
+                            "kind": "jsNew",
+                            "sourceKeys": {
+                              "objectKey": "newExpression_eef1ac1afe4d383f",
+                              "sourceKey": "newExpression_ee7d1c5c07c060f8"
+                            },
+                            "callee": {
+                              "kind": "jsIdentifier",
+                              "sourceKeys": {
+                                "objectKey": "identifier_ebd1646a493fdb4f",
+                                "sourceKey": "identifier_20390be00313fcd1"
+                              },
+                              "name": "CustomEvent"
+                            },
+                            "arg": [
+                              {
+                                "kind": "jsString",
+                                "sourceKeys": {
+                                  "objectKey": "stringLiteral_e973deb896058dfc",
+                                  "sourceKey": "stringLiteral_da5d2fa53bdfaa52"
+                                },
+                                "value": "close"
+                              }
+                            ]
+                          }
+                        ]
+                      }
                     }
                   ],
-                  "events": [
-                    {
-                      "kind": "lwcEvent",
-                      "sourceKeys": {
-                        "objectKey": "newExpression_e5c8f1e2390ac360",
-                        "sourceKey": "newExpression_ee7d1c5c07c060f8"
-                      },
-                      "name": "close"
-                    }
-                  ]
+                  "references": []
                 }
               ]
             },
-            "otherExports": [],
-            "declarations": [],
-            "errors": []
+            "exports": [
+              {
+                "kind": "lwcExport",
+                "sourceKeys": {
+                  "objectKey": "exportDefaultDeclaration_aaeca97437e37e17",
+                  "sourceKey": "exportDefaultDeclaration_0a4728f39b41057c"
+                },
+                "exportType": "default",
+                "exported": "default",
+                "local": "NewBanner",
+                "typeOnly": false
+              }
+            ],
+            "declarations": []
           }
         }
       ],
@@ -328,7 +380,7 @@
     },
     "sourceObject": [
       {
-        "objectKey": "importDeclaration_ab950e948129c918",
+        "objectKey": "importDeclaration_bf75c24ff598e262",
         "context": "import { LightningElement, api } from 'lwc';",
         "source": [
           {
@@ -348,7 +400,7 @@
         ]
       },
       {
-        "objectKey": "importSpecifier_f65dea2f17d74260",
+        "objectKey": "importSpecifier_8f839237f9706f5b",
         "context": "LightningElement",
         "source": [
           {
@@ -368,7 +420,7 @@
         ]
       },
       {
-        "objectKey": "importSpecifier_c927ff2649d93619",
+        "objectKey": "importSpecifier_530ce1ac695ad5c6",
         "context": "api",
         "source": [
           {
@@ -388,7 +440,7 @@
         ]
       },
       {
-        "objectKey": "importDeclaration_488735bacb8ab5b8",
+        "objectKey": "importDeclaration_b1d1e50d1ee13f4a",
         "context": "import BANNER_LABEL from '@salesforce/label/c.BannerMessage';",
         "source": [
           {
@@ -408,7 +460,7 @@
         ]
       },
       {
-        "objectKey": "importDefaultSpecifier_2be58ca7ad48054e",
+        "objectKey": "importDefaultSpecifier_d35599300c486716",
         "context": "BANNER_LABEL",
         "source": [
           {
@@ -428,7 +480,27 @@
         ]
       },
       {
-        "objectKey": "classDeclaration_d4610b522b2f83f1",
+        "objectKey": "exportDefaultDeclaration_aaeca97437e37e17",
+        "context": "export default class NewBanner extends LightningElement {\n    @api message = BANNER_LABEL;\n    @api variant = 'info';\n\n    handleClose() {\n        this.dispatchEvent(new CustomEvent('close'));\n    }\n}",
+        "source": [
+          {
+            "sourceKey": "exportDefaultDeclaration_0a4728f39b41057c",
+            "start": {
+              "offset": 108,
+              "line": 4,
+              "column": 0
+            },
+            "end": {
+              "offset": 308,
+              "line": 11,
+              "column": 1
+            },
+            "filePath": "newBanner/newBanner.js"
+          }
+        ]
+      },
+      {
+        "objectKey": "classDeclaration_e1113ccff82c02a4",
         "context": "class NewBanner extends LightningElement {\n    @api message = BANNER_LABEL;\n    @api variant = 'info';\n\n    handleClose() {\n        this.dispatchEvent(new CustomEvent('close'));\n    }\n}",
         "source": [
           {
@@ -448,7 +520,7 @@
         ]
       },
       {
-        "objectKey": "identifier_dc8f34a37aaef723",
+        "objectKey": "identifier_a414ac58e2904a49",
         "context": "NewBanner",
         "source": [
           {
@@ -468,7 +540,27 @@
         ]
       },
       {
-        "objectKey": "classProperty_2be1c23d484c79b0",
+        "objectKey": "identifier_4a7a59e701040717",
+        "context": "LightningElement",
+        "source": [
+          {
+            "sourceKey": "identifier_618d2d9050de770c",
+            "start": {
+              "offset": 147,
+              "line": 4,
+              "column": 39
+            },
+            "end": {
+              "offset": 163,
+              "line": 4,
+              "column": 55
+            },
+            "filePath": "newBanner/newBanner.js"
+          }
+        ]
+      },
+      {
+        "objectKey": "classProperty_ac985f16b06f64f3",
         "context": "@api message = BANNER_LABEL;",
         "source": [
           {
@@ -488,7 +580,7 @@
         ]
       },
       {
-        "objectKey": "identifier_f3ad1e8f772fa21c",
+        "objectKey": "identifier_2275bd58faafea4f",
         "context": "message",
         "source": [
           {
@@ -508,7 +600,27 @@
         ]
       },
       {
-        "objectKey": "decorator_1332fed18f380344",
+        "objectKey": "identifier_3eafacb418eaeeb5",
+        "context": "BANNER_LABEL",
+        "source": [
+          {
+            "sourceKey": "identifier_0d81cbdc7511317c",
+            "start": {
+              "offset": 185,
+              "line": 5,
+              "column": 19
+            },
+            "end": {
+              "offset": 197,
+              "line": 5,
+              "column": 31
+            },
+            "filePath": "newBanner/newBanner.js"
+          }
+        ]
+      },
+      {
+        "objectKey": "decorator_4d9f350c3eae69d9",
         "context": "@api",
         "source": [
           {
@@ -542,7 +654,7 @@
         ]
       },
       {
-        "objectKey": "classProperty_376f6487e7c40975",
+        "objectKey": "classProperty_6ba21748028b900b",
         "context": "@api variant = 'info';",
         "source": [
           {
@@ -562,7 +674,7 @@
         ]
       },
       {
-        "objectKey": "identifier_777b5ed4f35ccfc7",
+        "objectKey": "identifier_b5d6b83a430136ad",
         "context": "variant",
         "source": [
           {
@@ -582,7 +694,27 @@
         ]
       },
       {
-        "objectKey": "classMethod_37d31e6bf4d526fe",
+        "objectKey": "stringLiteral_20ce1c540da0e5b8",
+        "context": "'info'",
+        "source": [
+          {
+            "sourceKey": "stringLiteral_0ff873d446a65436",
+            "start": {
+              "offset": 218,
+              "line": 6,
+              "column": 19
+            },
+            "end": {
+              "offset": 224,
+              "line": 6,
+              "column": 25
+            },
+            "filePath": "newBanner/newBanner.js"
+          }
+        ]
+      },
+      {
+        "objectKey": "classMethod_8ee7178095fe0aa4",
         "context": "handleClose() {\n        this.dispatchEvent(new CustomEvent('close'));\n    }",
         "source": [
           {
@@ -602,7 +734,7 @@
         ]
       },
       {
-        "objectKey": "identifier_7a4b26babe51ef4d",
+        "objectKey": "identifier_1f3547dc07cce0ad",
         "context": "handleClose",
         "source": [
           {
@@ -622,7 +754,27 @@
         ]
       },
       {
-        "objectKey": "callExpression_ded08823444f138e",
+        "objectKey": "expressionStatement_7eba142198e39057",
+        "context": "this.dispatchEvent(new CustomEvent('close'));",
+        "source": [
+          {
+            "sourceKey": "expressionStatement_c572537d1c28e35b",
+            "start": {
+              "offset": 255,
+              "line": 9,
+              "column": 8
+            },
+            "end": {
+              "offset": 300,
+              "line": 9,
+              "column": 53
+            },
+            "filePath": "newBanner/newBanner.js"
+          }
+        ]
+      },
+      {
+        "objectKey": "callExpression_743618608e451f98",
         "context": "this.dispatchEvent(new CustomEvent('close'))",
         "source": [
           {
@@ -642,7 +794,27 @@
         ]
       },
       {
-        "objectKey": "newExpression_e5c8f1e2390ac360",
+        "objectKey": "thisExpression_2087ea10f1caba18",
+        "context": "this",
+        "source": [
+          {
+            "sourceKey": "thisExpression_743ba5a2a750e68d",
+            "start": {
+              "offset": 255,
+              "line": 9,
+              "column": 8
+            },
+            "end": {
+              "offset": 259,
+              "line": 9,
+              "column": 12
+            },
+            "filePath": "newBanner/newBanner.js"
+          }
+        ]
+      },
+      {
+        "objectKey": "newExpression_eef1ac1afe4d383f",
         "context": "new CustomEvent('close')",
         "source": [
           {
@@ -662,20 +834,40 @@
         ]
       },
       {
-        "objectKey": "blockStatement_ffaf71fd0c532c3c",
-        "context": "{\n        this.dispatchEvent(new CustomEvent('close'));\n    }",
+        "objectKey": "identifier_ebd1646a493fdb4f",
+        "context": "CustomEvent",
         "source": [
           {
-            "sourceKey": "blockStatement_aa9e7ec3aa84e699",
+            "sourceKey": "identifier_20390be00313fcd1",
             "start": {
-              "offset": 245,
-              "line": 8,
-              "column": 18
+              "offset": 278,
+              "line": 9,
+              "column": 31
             },
             "end": {
-              "offset": 306,
-              "line": 10,
-              "column": 5
+              "offset": 289,
+              "line": 9,
+              "column": 42
+            },
+            "filePath": "newBanner/newBanner.js"
+          }
+        ]
+      },
+      {
+        "objectKey": "stringLiteral_e973deb896058dfc",
+        "context": "'close'",
+        "source": [
+          {
+            "sourceKey": "stringLiteral_da5d2fa53bdfaa52",
+            "start": {
+              "offset": 290,
+              "line": 9,
+              "column": 43
+            },
+            "end": {
+              "offset": 297,
+              "line": 9,
+              "column": 50
             },
             "filePath": "newBanner/newBanner.js"
           }

@@ -43,8 +43,11 @@
         "name": {}
       },
       "name": "Broken",
-      "extend": "LightningElement",
-      "mixins": [],
+      "superClass": {
+        "kind": "jsIdentifier",
+        "sourceKeys": {},
+        "name": "LightningElement"
+      },
       "block": [
         {
           "kind": "lwcField",
@@ -60,7 +63,11 @@
             "type": "primitive",
             "primitiveType": "string"
           },
-          "init": "''",
+          "init": {
+            "kind": "jsString",
+            "sourceKeys": {},
+            "value": ""
+          },
           "references": [],
           "optional": false,
           "modifier": {
@@ -82,11 +89,33 @@
         }
       ]
     },
-    "otherExports": [],
+    "exports": [
+      {
+        "kind": "lwcExport",
+        "sourceKeys": {},
+        "exportType": "default",
+        "exported": "default",
+        "local": "Broken",
+        "typeOnly": false
+      }
+    ],
     "declarations": [],
     "typeDeclarations": []
   },
   "sourceObject": [
+    {
+      "context": "''",
+      "start": {
+        "offset": 140,
+        "line": 4,
+        "column": 32
+      },
+      "end": {
+        "offset": 142,
+        "line": 4,
+        "column": 34
+      }
+    },
     {
       "context": "@api @track value: string = '';",
       "start": {
@@ -142,6 +171,19 @@
     {
       "context": "LightningElement",
       "start": {
+        "offset": 89,
+        "line": 3,
+        "column": 36
+      },
+      "end": {
+        "offset": 105,
+        "line": 3,
+        "column": 52
+      }
+    },
+    {
+      "context": "LightningElement",
+      "start": {
         "offset": 9,
         "line": 1,
         "column": 9
@@ -171,6 +213,19 @@
         "offset": 68,
         "line": 3,
         "column": 15
+      },
+      "end": {
+        "offset": 145,
+        "line": 5,
+        "column": 1
+      }
+    },
+    {
+      "context": "export default class Broken extends LightningElement {\n    @api @track value: string = '';\n}",
+      "start": {
+        "offset": 53,
+        "line": 3,
+        "column": 0
       },
       "end": {
         "offset": 145,

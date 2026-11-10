@@ -5,6 +5,7 @@
 | やること   | [todo.md](./todo.md)                                       | リポジトリ全体のやることリスト                                                                       |
 |            | [analysis-plan.md](./analysis-plan.md)                     | 解析部分で今後やること（共通化・処理の流れ・依存関係・git diff との役割分担）                        |
 |            | [report-components-plan.md](./report-components-plan.md)   | レポートのコンポーネントと data provider の計画                                                      |
+|            | [save-format-plan.md](./save-format-plan.md)               | 保存の仕組みの見直し（今の保存・問題・部分更新の案・推奨案と段階・決めること）                       |
 | 共通       | [commons.md](./commons.md)                                 | Apex・LWC・メタデータで共通の部品と、新しい種類を足すときの手順                                      |
 | Apex       | [apex-implementation.md](./apex-implementation.md)         | 実装の全体像（単位・構成・Diff）                                                                     |
 |            | [apex-json-analysis.md](./apex-json-analysis.md)           | JSON の解析（宣言・SOQL / DML・呼び出し）の計画                                                      |
@@ -18,4 +19,7 @@
 | メタデータ | [metadata-implementation.md](./metadata-implementation.md) | 実装の全体像（オブジェクトと、権限・Flow・画面・タブ・Visualforce・Aura などフォルダ単位の種類）     |
 |            | [object-translation.md](./object-translation.md)           | オブジェクトの翻訳                                                                                   |
 |            | [json-gaps.md](./json-gaps.md)                             | JSON・依存関係がまだ扱っていないもの（定義のない参照先・設定・単位がないメタデータ・参照の穴）の調査 |
+|            | [json-redesign-plan.md](./json-redesign-plan.md)           | Apex・メタデータ・LWC の JSON をそろえる改修方針（共通の方針・段階・決めること）                     |
+|            | [apex-json-review.md](./apex-json-review.md)               | Apex の JSON の見直しの調査（LWC と比べた形・処理・抜け・不具合）                                    |
+|            | [metadata-json-review.md](./metadata-json-review.md)       | メタデータの JSON の見直しの調査（数式・参照の取り出し・抜け）                                       |
 | サンプル   | [examples/](./examples/README.md)                          | サンプルのリポジトリ（before / after）と、種類ごとの動作確認のスクリプト・出力                       |

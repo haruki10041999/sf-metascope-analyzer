@@ -38,7 +38,12 @@ export type ReferenceTargetType =
     | 'group'
     | 'queue'
     | 'externalCredential'
-    | 'reportType';
+    | 'reportType'
+    | 'messageChannel'
+    | 'recordType'
+    | 'matchingRule'
+    | 'platformEventChannel'
+    | 'apexTrigger';
 
 /** 参照 1 つ */
 export type MetadataReference = {
@@ -303,6 +308,10 @@ const EXTRACTORS: Record<string, (json: Json) => Ref[]> = {
                     event,
                 );
             }),
+            // lightning:messageChannel の type は <名前>__c (定義の名前は __c なし)
+            ...((json.messageChannels as string[] | undefined) ?? []).flatMap((type) =>
+                ref('messageChannel', type.replace(/__c$/i, ''), 'messageChannels', json),
+            ),
             ...expressionRefs(
                 (json.expressions as string[] | undefined) ?? [],
                 'expressions',
@@ -339,6 +348,24 @@ const EXTRACTORS: Record<string, (json: Json) => Ref[]> = {
             }),
         ];
     },
+    reportType: (json) => [
+        ...ref('object', str(json.baseObject), 'baseObject', json),
+        // 列の table は基準のオブジェクトか、関係をたどったもの (Invoice__c.Lines__r)。関係の先のオブジェクトは
+        // ここでは分からないので、table がオブジェクトの名前 (. なし) の列だけを項目の参照にする
+        ...rows(json, 'sections').flatMap((section) =>
+            ((section.columns as ValueTree[] | undefined) ?? []).flatMap((column) => {
+                if (typeof column !== 'object' || column === null || Array.isArray(column))
+                    return [];
+                const { field, table } = column as Record<string, ValueTree>;
+                return typeof field === 'string' &&
+                    typeof table === 'string' &&
+                    !field.includes('.') &&
+                    !table.includes('.')
+                    ? ref('field', `${table}.${field}`, 'sections.columns', section)
+                    : [];
+            }),
+        ),
+    ],
     dashboard: (json) =>
         ['leftSection', 'middleSection', 'rightSection', 'dashboardGridLayout'].flatMap((section) =>
             valuesInTree(json[section], 'report').flatMap((report) =>
@@ -417,7 +444,116 @@ const EXTRACTORS: Record<string, (json: Json) => Ref[]> = {
                 row,
             ),
         ),
+    // ---- 単位がなかった種類 (docs/json-gaps.md 3 章) ----
+    assignmentRules: (json) => caseRuleRefs(json, 'assignmentRule'),
+    autoResponseRules: (json) => caseRuleRefs(json, 'autoResponseRule'),
+    escalationRules: (json) => caseRuleRefs(json, 'escalationRule'),
+    pathAssistant: (json) => {
+        const object = str(json.entityName);
+        const field = str(json.fieldName);
+        const recordType = str(json.recordTypeName);
+        return [
+            ...ref('object', object, 'entityName', json),
+            ...ref('field', object && field ? `${object}.${field}` : undefined, 'fieldName', json),
+            // __MASTER__ はレコードタイプなし
+            ...ref(
+                'recordType',
+                object && recordType && recordType !== '__MASTER__'
+                    ? `${object}.${recordType}`
+                    : undefined,
+                'recordTypeName',
+                json,
+            ),
+            ...rows(json, 'pathAssistantSteps').flatMap((step) =>
+                ((step.fieldNames as string[] | undefined) ?? []).flatMap((name) =>
+                    ref(
+                        'field',
+                        object ? `${object}.${name}` : undefined,
+                        'pathAssistantSteps.fieldNames',
+                        step,
+                    ),
+                ),
+            ),
+        ];
+    },
+    duplicateRule: (json) => [
+        ...ref('object', String(json.fullName).split('.')[0], 'fullName', json),
+        // 一致ルールは <オブジェクト>.<名前> (一致ルールの単位の子)
+        ...rows(json, 'duplicateRuleMatchRules').flatMap((row) => {
+            const object = str(row.matchRuleSObjectType);
+            const rule = str(row.matchingRule);
+            return [
+                ...ref('object', object, 'duplicateRuleMatchRules.matchRuleSObjectType', row),
+                ...ref(
+                    'matchingRule',
+                    object && rule ? `${object}.${rule}` : undefined,
+                    'duplicateRuleMatchRules.matchingRule',
+                    row,
+                ),
+            ];
+        }),
+    ],
+    matchingRules: (json) => {
+        const object = String(json.fullName);
+        return [
+            ...ref('object', object, 'fullName', json),
+            ...rows(json, 'matchingRules').flatMap((rule) =>
+                valuesInTree(rule.matchingRuleItems, 'fieldName').flatMap((field) =>
+                    ref('field', `${object}.${field}`, 'matchingRules.matchingRuleItems', rule),
+                ),
+            ),
+        ];
+    },
+    platformEventChannelMember: (json) => [
+        ...ref('platformEventChannel', str(json.eventChannel), 'eventChannel', json),
+        ...ref('object', eventEntityObject(str(json.selectedEntity)), 'selectedEntity', json),
+    ],
+    platformEventSubscriberConfig: (json) =>
+        ref('apexTrigger', str(json.platformEventConsumer), 'platformEventConsumer', json),
 };
+
+/**
+ * 割り当て・自動応答・エスカレーションのルール (<オブジェクト>.<種類>Rules)。
+ * ルールの行 (ruleEntry) の条件の項目、割り当て先のキュー (assignedToType が Queue)、メールテンプレート
+ */
+function caseRuleRefs(json: Json, element: string): Ref[] {
+    const object = String(json.fullName);
+    return [
+        ...ref('object', object, 'fullName', json),
+        ...rows(json, element).flatMap((rule) => {
+            const via = `${element}.ruleEntry`;
+            const queues: string[] = [];
+            const visit = (value: unknown) => {
+                if (Array.isArray(value)) value.forEach(visit);
+                else if (typeof value === 'object' && value !== null) {
+                    const record = value as Record<string, unknown>;
+                    const assignedTo = str(record.assignedTo);
+                    if (assignedTo && str(record.assignedToType)?.toLowerCase() === 'queue')
+                        queues.push(assignedTo);
+                    Object.values(record).forEach(visit);
+                }
+            };
+            visit(rule.ruleEntry);
+            return [
+                ...criteriaFieldRefs(rule.ruleEntry, via, rule, object),
+                ...queues.flatMap((queue) => ref('queue', queue, via, rule)),
+                ...['template', 'assignedToTemplate', 'notifyToTemplate'].flatMap((name) =>
+                    valuesInTree(rule.ruleEntry, name).flatMap((template) =>
+                        ref('emailTemplate', template, via, rule),
+                    ),
+                ),
+            ];
+        }),
+    ];
+}
+
+/** チャネルのメンバーの selectedEntity のオブジェクト (AccountChangeEvent → Account、Invoice__ChangeEvent → Invoice__c) */
+function eventEntityObject(entity: string | undefined): string | undefined {
+    if (!entity) return undefined;
+    if (/__ChangeEvent$/.test(entity)) return entity.replace(/__ChangeEvent$/, '__c');
+    if (/ChangeEvent$/.test(entity)) return entity.replace(/ChangeEvent$/, '');
+    return entity;
+}
 
 /** 権限セット・Profile のうち、A の解析で確かめていない参照 (カスタム権限・タブ・アプリ・Visualforce ページ) */
 function permissionRefs(json: Json): Ref[] {
@@ -521,6 +657,8 @@ const TARGET_OF_DATA_TYPE: Partial<Record<string, ReferenceTargetType>> = {
     aura: 'aura',
     externalCredential: 'externalCredential',
     reportType: 'reportType',
+    messageChannel: 'messageChannel',
+    platformEventChannel: 'platformEventChannel',
 };
 
 /** 名前空間付きの名前 (ns__Name。カスタムの接尾辞 __c などは除く) */

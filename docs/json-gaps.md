@@ -5,7 +5,7 @@
 - 対象: [unitType.ts](../src/analyzer/unit/unitType.ts) の `UNIT_TYPES`（Apex・匿名 Apex・LWC・オブジェクト・オブジェクトの翻訳と、[folders.ts](../src/analyzer/parser/Metadata/folders.ts#L49-L84) の `METADATA_FOLDER_PARSERS` の 31 種類）、JSON の型（[types/](../src/analyzer/types/)）、定義・参照（[processor/dependency/](../src/analyzer/processor/dependency/)）。
 - 2026-11-09 の作業ツリーを読んで確かめた。「確認」と書いたものは、グラフ（`buildDependencyGraph`）に小さな入力を渡して動きを確かめた。それ以外はコードを読んだ結果。確かめられなかったものは **未確認** と書く。
 - すでに計画にあるもの（[analysis-plan.md](./analysis-plan.md) 3.3・8.1、[todo.md](./todo.md)）は、そちらへのリンクだけにする。
-- **2026-11-10: 5 章の 1〜3 は対応済み**（6 章）。0〜3 章の本文は調査した時点のまま残す。
+- **2026-11-10: 5 章の 1〜6 は対応済み**（6 章・7 章）。対応しなかったものは 7.4。0〜4 章の本文は調査した時点のまま残す。
 
 ## 0. まとめ
 
@@ -179,9 +179,9 @@ JSON はすべての行を持つ（[permission.ts](../src/analyzer/types/metadat
 1. **済（2026-11-10）** 誤った指摘をなくす（小さい修正）: Aura の `c:` を `lwc` か `aura` のどちらかで探す、Flow の標準の部品を標準として扱う、`customMetadataRecord` の種類・名前を `customMetadata` に合わせる。
 2. **済（2026-11-10）** カスタム設定: `OBJECT_SCHEMA` に `customSettingsType` を足し、`objectType` か別のプロパティで区別する。Apex の `getInstance` などを設定の読み取りとして参照にする。
 3. **済（2026-11-10）** メッセージチャネル・外部ログイン情報・カスタム通知・レポートタイプの単位を、表の種類（`RecordSpec`）で足す。
-4. 文字列の引数（`Page.X`・`Type.forName`・`callout:`・`PageReference.forResource`・`Flow.Interview`）を参照にする。
-5. LWC の `js-meta.xml`・式の値の属性・子の `@api`、権限の残りの行、Flow のアクション。
-6. 組織の設定（`settings/`）と、ほかの単位がない種類。
+4. **済（2026-11-10）** 文字列の引数（`Page.X`・`Type.forName`・`callout:`・`PageReference.forResource`・`Flow.Interview`）を参照にする。
+5. **済（2026-11-10）** LWC の `js-meta.xml`・式の値の属性・子の `@api`、権限の残りの行、Flow のアクション。
+6. **済（2026-11-10、一部）** 組織の設定（`settings/`）と、ほかの単位がない種類。
 
 ## 6. 対応したこと（2026-11-10）
 
@@ -203,3 +203,45 @@ JSON はすべての行を持つ（[permission.ts](../src/analyzer/types/metadat
     - 権限の `externalCredentialPrincipalAccesses`（4.4）はまだ。
 
 ほかに見つけて直したもの: LWC の `@api` のプロパティの定義（`lwcProperty`）が、グラフに一度も作られていなかった。[units.ts](../src/analyzer/processor/dependency/units.ts) がデコレーターを `member.decorators` / `member.decorator` から探していたが、LWC の JSON では `modifier.decorator`（getter / setter は `getterContent` / `setterContent` の `modifier.decorator`）にある。そちらから探すようにした（4.2 の「子の `@api` への参照」はまだ）。
+
+## 7. 対応したこと（2026-11-10、5 章の 4〜6）
+
+保存の形が変わったので `SAVE_FORMAT_VERSION` を 6 にした。
+
+### 7.1 Apex（5 章の 4。[apex.ts](../src/analyzer/processor/dependency/apex.ts)、テストは [apex-string-refs.test.ts](../test/dependency/apex-string-refs.test.ts)）
+
+文字列はリテラルのときだけ参照にする（変数・連結・バインドは推測しない）。名前空間つきの呼び出し（パッケージのもの）は取らない。
+
+| 書き方                                                                   | 参照（種類:名前、kind、via）                              |
+| ------------------------------------------------------------------------ | --------------------------------------------------------- |
+| `Page.X`・`System.Page.X`                                                | `visualforcePage:X`（`apexPage` に解決）、`uses`、`Page`  |
+| `new PageReference('/apex/X')`                                           | `visualforcePage:X`、`uses`、`PageReference`              |
+| `PageReference.forResource('X')`、`FROM StaticResource WHERE Name = 'X'` | `staticResource:X`、`uses`                                |
+| `Type.forName('X')`                                                      | `apexType:X`（クラスがあれば `apexClass` に解決）、`uses` |
+| `'callout:X/...'`                                                        | `namedCredential:X`、`uses`、`callout`                    |
+| `new Flow.Interview.X(...)`・`Flow.Interview.createInterview('X', ...)`  | `flow:X`、`calls`（変数の型は `uses`）                    |
+| `EventBus.publish(...)`（`X__e`）                                        | `object:X__e`、**`publishes`**（新しい kind）             |
+| `Label.get('', 'X')`                                                     | `customLabel:X`、`uses`                                   |
+
+### 7.2 LWC（5 章の 5 の LWC。[units.ts](../src/analyzer/processor/dependency/units.ts) の `getLwcDependencies`、テストは [lwc-refs.test.ts](../test/dependency/lwc-refs.test.ts)）
+
+- `js-meta.xml`: `objects/object` → `object`、`datasource="apex://C"`・`type="apex://C"` → `apexClass`、`type="@salesforce/schema/X"` → `object`。
+- テンプレートの `<c-child foo={x}>`（静的な値も）→ `lwcProperty:child.foo`（`writes`）。HTML 共通の属性（`title`・`aria-*` など）は除く。子のコンポーネント自体がないときは `UNKNOWN_LWC` だけを出し、`UNKNOWN_LWC_PROPERTY` は重ねない（[graph.ts](../src/analyzer/processor/dependency/graph.ts)）。
+- `@salesforce/apexContinuation/Class.method` → `apexMethod`（`calls`）。
+- `lightning/ui*` の `@wire` の設定の文字列: `fields`・`optionalFields` → `field`（`reads`）、`fieldApiName` → `field`、`objectApiName` → `object`。
+
+### 7.3 メタデータ（5 章の 5・6 と、1〜3 で残したもの。テストは [metadata-refs.test.ts](../test/dependency/metadata-refs.test.ts)）
+
+- 権限: `customSettingAccesses`・`customMetadataTypeAccesses` → `object`、`flowAccesses` → `flow`、`externalCredentialPrincipalAccesses` → `externalCredential`、`externalDataSourceAccesses` → `externalDataSource`（どれも `grants`）。
+- Flow: `actionCalls` の `emailAlert` → `workflowAlert:<オブジェクト>.<名前>`、`quickAction`、`externalService` → `externalServiceRegistration`（定義する単位はない）。`CustomNotificationType` を `DeveloperName` で取る `recordLookups` → `customNotificationType`。条件などの `$Permission` → `customPermission`、`$Setup` → `object`・`field`、`$CustomMetadata` → `customMetadata`・`field`。ワークフローのアラートと `matchingRule` を定義にした。
+- プラットフォームイベント: オブジェクトの JSON に `eventType`・`publishBehavior` を足した。
+- レポートタイプ: `baseObject` → `object`、列（`table` が `.` を含まないもの）→ `field`。
+- Aura: `lightning:messageChannel type="X__c"` → `messageChannel:X`（JSON に `messageChannels` を足した）。
+- オブジェクトの翻訳: 定義 `objectTranslation:<id>` と、オブジェクト・項目・レコードタイプ・入力規則などへの参照（`uses`）。
+- 単位の種類を 12 足した: `assignmentRules`・`autoResponseRules`・`escalationRules`・`pathAssistant`・`duplicateRule`・`matchingRules`・`platformEventChannel`・`platformEventChannelMember`・`platformEventSubscriberConfig`・`cspTrustedSite`・`externalDataSource`（表の種類）と `settings`（`settings/<名前>.settings-meta.xml`。JSON は `{ fullName, properties }`。[settings.ts](../src/analyzer/types/metadata/settings.ts)）。
+
+### 7.4 対応しなかったもの
+
+- Apex: 動的 SOQL（[analysis-plan.md](./analysis-plan.md) で計画済み）、`Schema.getGlobalDescribe().get('X')`、`rec.get/put('Field')`、変数で渡す `FeatureManagement.checkPermission`、`.` でつないだ型の参照（`Flow.Interview.X` 以外）。
+- LWC: テンプレートの式の値の解決（`field-name={nameField}`）、`@salesforce/contentAssetUrl/`、名前空間つきの `@salesforce/label/`、`@salesforce/userPermission/`、`lightning/navigation` の行き先、`lightning/ui*` 以外のアダプターの設定。JS の式を JSON に持つ設計は [lwc-json-types.md](./lwc-json-types.md)。
+- メタデータ: Flow の `submit`（承認プロセスの名前の形が合わない）、Id を直接書いたカスタム通知、レポートタイプの関係をたどった列、重複ルールの条件の項目、設定（settings）の中の参照、権限の `emailRoutingAddressAccesses` などの定義のない行、ConnectedApp・Letterhead・Document・ContentAsset・Experience（新しい parser の設計が要る）。

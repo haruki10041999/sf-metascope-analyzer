@@ -32,11 +32,13 @@ import {
     AuraBundleJsonDiff,
     EmailTemplateJsonDiff,
     RecordJsonDiff,
+    SettingsJsonDiff,
     makeApexComponentDiff,
     makeApexPageDiff,
     makeAuraBundleDiff,
     makeEmailTemplateDiff,
     makeRecordDiff,
+    makeSettingsDiff,
 } from './record';
 import { FlexiPageJsonDiff, LayoutJsonDiff, makeFlexiPageDiff, makeLayoutDiff } from './page';
 
@@ -241,6 +243,55 @@ export const makeReportTypeUnitDiffs = recordUnitDiffs<
     Records.ReportTypeParseResult,
     typeof S.reportType
 >('reportType', S.reportType);
+export const makeAssignmentRulesUnitDiffs = recordUnitDiffs<
+    Records.AssignmentRulesParseResult,
+    typeof S.assignmentRules
+>('assignmentRules', S.assignmentRules);
+export const makeAutoResponseRulesUnitDiffs = recordUnitDiffs<
+    Records.AutoResponseRulesParseResult,
+    typeof S.autoResponseRules
+>('autoResponseRules', S.autoResponseRules);
+export const makeEscalationRulesUnitDiffs = recordUnitDiffs<
+    Records.EscalationRulesParseResult,
+    typeof S.escalationRules
+>('escalationRules', S.escalationRules);
+export const makePathAssistantUnitDiffs = recordUnitDiffs<
+    Records.PathAssistantParseResult,
+    typeof S.pathAssistant
+>('pathAssistant', S.pathAssistant);
+export const makeDuplicateRuleUnitDiffs = recordUnitDiffs<
+    Records.DuplicateRuleParseResult,
+    typeof S.duplicateRule
+>('duplicateRule', S.duplicateRule);
+export const makeMatchingRulesUnitDiffs = recordUnitDiffs<
+    Records.MatchingRulesParseResult,
+    typeof S.matchingRules
+>('matchingRules', S.matchingRules);
+export const makePlatformEventChannelUnitDiffs = recordUnitDiffs<
+    Records.PlatformEventChannelParseResult,
+    typeof S.platformEventChannel
+>('platformEventChannel', S.platformEventChannel);
+export const makePlatformEventChannelMemberUnitDiffs = recordUnitDiffs<
+    Records.PlatformEventChannelMemberParseResult,
+    typeof S.platformEventChannelMember
+>('platformEventChannelMember', S.platformEventChannelMember);
+export const makePlatformEventSubscriberConfigUnitDiffs = recordUnitDiffs<
+    Records.PlatformEventSubscriberConfigParseResult,
+    typeof S.platformEventSubscriberConfig
+>('platformEventSubscriberConfig', S.platformEventSubscriberConfig);
+export const makeCspTrustedSiteUnitDiffs = recordUnitDiffs<
+    Records.CspTrustedSiteParseResult,
+    typeof S.cspTrustedSite
+>('cspTrustedSite', S.cspTrustedSite);
+export const makeExternalDataSourceUnitDiffs = recordUnitDiffs<
+    Records.ExternalDataSourceParseResult,
+    typeof S.externalDataSource
+>('externalDataSource', S.externalDataSource);
+export const makeSettingsUnitDiffs = makeUnitDiffs<
+    Records.SettingsParseResult,
+    Parameters<typeof makeSettingsDiff>[0],
+    SettingsJsonDiff
+>('settings', makeSettingsDiff);
 
 export const makeApexPageUnitDiffs = makeUnitDiffs<
     Records.ApexPageParseResult,
@@ -306,4 +357,16 @@ export const METADATA_UNIT_DIFFS: Record<string, AnyUnitDiffs> = {
     externalCredential: makeExternalCredentialUnitDiffs,
     customNotificationType: makeCustomNotificationTypeUnitDiffs,
     reportType: makeReportTypeUnitDiffs,
+    assignmentRules: makeAssignmentRulesUnitDiffs,
+    autoResponseRules: makeAutoResponseRulesUnitDiffs,
+    escalationRules: makeEscalationRulesUnitDiffs,
+    pathAssistant: makePathAssistantUnitDiffs,
+    duplicateRule: makeDuplicateRuleUnitDiffs,
+    matchingRules: makeMatchingRulesUnitDiffs,
+    platformEventChannel: makePlatformEventChannelUnitDiffs,
+    platformEventChannelMember: makePlatformEventChannelMemberUnitDiffs,
+    platformEventSubscriberConfig: makePlatformEventSubscriberConfigUnitDiffs,
+    cspTrustedSite: makeCspTrustedSiteUnitDiffs,
+    externalDataSource: makeExternalDataSourceUnitDiffs,
+    settings: makeSettingsUnitDiffs,
 } as Record<string, unknown> as Record<string, AnyUnitDiffs>;

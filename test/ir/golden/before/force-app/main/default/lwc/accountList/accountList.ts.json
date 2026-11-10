@@ -81,6 +81,14 @@
             "local": "getFieldValue",
             "imported": "getFieldValue",
             "typeOnly": false
+          },
+          {
+            "kind": "lwcImportSpecifier",
+            "sourceKeys": {},
+            "specifierType": "named",
+            "local": "updateRecord",
+            "imported": "updateRecord",
+            "typeOnly": false
           }
         ],
         "typeOnly": false
@@ -97,6 +105,23 @@
             "specifierType": "named",
             "local": "ShowToastEvent",
             "imported": "ShowToastEvent",
+            "typeOnly": false
+          }
+        ],
+        "typeOnly": false
+      },
+      {
+        "kind": "lwcImport",
+        "sourceKeys": {},
+        "source": "@salesforce/apex",
+        "category": "other",
+        "specifiers": [
+          {
+            "kind": "lwcImportSpecifier",
+            "sourceKeys": {},
+            "specifierType": "named",
+            "local": "refreshApex",
+            "imported": "refreshApex",
             "typeOnly": false
           }
         ],
@@ -258,10 +283,22 @@
         "name": {}
       },
       "name": "AccountList",
-      "extend": "LightningElement",
-      "mixins": [
-        "NavigationMixin"
-      ],
+      "superClass": {
+        "kind": "jsCall",
+        "sourceKeys": {},
+        "callee": {
+          "kind": "jsIdentifier",
+          "sourceKeys": {},
+          "name": "NavigationMixin"
+        },
+        "arg": [
+          {
+            "kind": "jsIdentifier",
+            "sourceKeys": {},
+            "name": "LightningElement"
+          }
+        ]
+      },
       "block": [
         {
           "kind": "lwcField",
@@ -304,7 +341,11 @@
             "type": "primitive",
             "primitiveType": "string"
           },
-          "init": "TITLE_LABEL",
+          "init": {
+            "kind": "jsIdentifier",
+            "sourceKeys": {},
+            "name": "TITLE_LABEL"
+          },
           "references": [
             {
               "local": "TITLE_LABEL",
@@ -337,7 +378,11 @@
             "type": "primitive",
             "primitiveType": "number"
           },
-          "init": "10",
+          "init": {
+            "kind": "jsNumber",
+            "sourceKeys": {},
+            "value": 10
+          },
           "references": [],
           "optional": true,
           "modifier": {
@@ -368,7 +413,11 @@
               "customType": "Row"
             }
           },
-          "init": "[]",
+          "init": {
+            "kind": "jsArray",
+            "sourceKeys": {},
+            "elements": []
+          },
           "references": [],
           "optional": false,
           "modifier": {
@@ -397,7 +446,11 @@
             "type": "custom",
             "customType": "ViewMode"
           },
-          "init": "'table'",
+          "init": {
+            "kind": "jsString",
+            "sourceKeys": {},
+            "value": "table"
+          },
           "references": [],
           "optional": false,
           "modifier": {}
@@ -416,7 +469,11 @@
             "type": "custom",
             "customType": "SortDirection"
           },
-          "init": "'asc'",
+          "init": {
+            "kind": "jsString",
+            "sourceKeys": {},
+            "value": "asc"
+          },
           "references": [],
           "optional": false,
           "modifier": {}
@@ -481,18 +538,68 @@
                 "sourceKeys": {},
                 "name": "wire",
                 "arg": [
-                  "getRecord",
-                  "{ recordId: '$recordId', fields: [NAME_FIELD, INDUSTRY_FIELD] }"
+                  {
+                    "kind": "jsIdentifier",
+                    "sourceKeys": {},
+                    "name": "getRecord"
+                  },
+                  {
+                    "kind": "jsObject",
+                    "sourceKeys": {},
+                    "properties": [
+                      {
+                        "kind": "jsProperty",
+                        "sourceKeys": {},
+                        "key": "recordId",
+                        "value": {
+                          "kind": "jsString",
+                          "sourceKeys": {},
+                          "value": "$recordId"
+                        },
+                        "shorthand": false
+                      },
+                      {
+                        "kind": "jsProperty",
+                        "sourceKeys": {},
+                        "key": "fields",
+                        "value": {
+                          "kind": "jsArray",
+                          "sourceKeys": {},
+                          "elements": [
+                            {
+                              "kind": "jsIdentifier",
+                              "sourceKeys": {},
+                              "name": "NAME_FIELD"
+                            },
+                            {
+                              "kind": "jsIdentifier",
+                              "sourceKeys": {},
+                              "name": "INDUSTRY_FIELD"
+                            }
+                          ]
+                        },
+                        "shorthand": false
+                      }
+                    ]
+                  }
                 ],
                 "wire": {
-                  "adapter": "getRecord",
+                  "adapter": {
+                    "kind": "jsIdentifier",
+                    "sourceKeys": {},
+                    "name": "getRecord"
+                  },
                   "adapterSource": "lightning/uiRecordApi",
                   "config": [
                     {
                       "kind": "lwcWireConfig",
                       "sourceKeys": {},
                       "key": "recordId",
-                      "value": "'$recordId'",
+                      "value": {
+                        "kind": "jsString",
+                        "sourceKeys": {},
+                        "value": "$recordId"
+                      },
                       "reactive": "recordId",
                       "references": []
                     },
@@ -500,7 +607,22 @@
                       "kind": "lwcWireConfig",
                       "sourceKeys": {},
                       "key": "fields",
-                      "value": "[NAME_FIELD, INDUSTRY_FIELD]",
+                      "value": {
+                        "kind": "jsArray",
+                        "sourceKeys": {},
+                        "elements": [
+                          {
+                            "kind": "jsIdentifier",
+                            "sourceKeys": {},
+                            "name": "NAME_FIELD"
+                          },
+                          {
+                            "kind": "jsIdentifier",
+                            "sourceKeys": {},
+                            "name": "INDUSTRY_FIELD"
+                          }
+                        ]
+                      },
                       "references": [
                         {
                           "local": "NAME_FIELD",
@@ -527,6 +649,171 @@
           }
         },
         {
+          "kind": "lwcField",
+          "sourceKeys": {
+            "base": {},
+            "name": {}
+          },
+          "name": "recordByName",
+          "variantType": {
+            "kind": "lwcType",
+            "sourceKeys": {},
+            "text": "{ data?: unknown; error?: unknown }",
+            "type": "object",
+            "members": [
+              {
+                "name": "data",
+                "memberType": {
+                  "type": "primitive",
+                  "primitiveType": "unknown"
+                },
+                "optional": true,
+                "method": false
+              },
+              {
+                "name": "error",
+                "memberType": {
+                  "type": "primitive",
+                  "primitiveType": "unknown"
+                },
+                "optional": true,
+                "method": false
+              }
+            ]
+          },
+          "references": [],
+          "optional": true,
+          "modifier": {
+            "decorator": [
+              {
+                "kind": "lwcDecorator",
+                "sourceKeys": {},
+                "name": "wire",
+                "arg": [
+                  {
+                    "kind": "jsIdentifier",
+                    "sourceKeys": {},
+                    "name": "getRecord"
+                  },
+                  {
+                    "kind": "jsObject",
+                    "sourceKeys": {},
+                    "properties": [
+                      {
+                        "kind": "jsProperty",
+                        "sourceKeys": {},
+                        "key": "recordId",
+                        "value": {
+                          "kind": "jsString",
+                          "sourceKeys": {},
+                          "value": "$recordId"
+                        },
+                        "shorthand": false
+                      },
+                      {
+                        "kind": "jsProperty",
+                        "sourceKeys": {},
+                        "key": "fields",
+                        "value": {
+                          "kind": "jsArray",
+                          "sourceKeys": {},
+                          "elements": [
+                            {
+                              "kind": "jsString",
+                              "sourceKeys": {},
+                              "value": "Account.Name"
+                            }
+                          ]
+                        },
+                        "shorthand": false
+                      },
+                      {
+                        "kind": "jsProperty",
+                        "sourceKeys": {},
+                        "key": "optionalFields",
+                        "value": {
+                          "kind": "jsArray",
+                          "sourceKeys": {},
+                          "elements": [
+                            {
+                              "kind": "jsString",
+                              "sourceKeys": {},
+                              "value": "Account.Industry"
+                            }
+                          ]
+                        },
+                        "shorthand": false
+                      }
+                    ]
+                  }
+                ],
+                "wire": {
+                  "adapter": {
+                    "kind": "jsIdentifier",
+                    "sourceKeys": {},
+                    "name": "getRecord"
+                  },
+                  "adapterSource": "lightning/uiRecordApi",
+                  "config": [
+                    {
+                      "kind": "lwcWireConfig",
+                      "sourceKeys": {},
+                      "key": "recordId",
+                      "value": {
+                        "kind": "jsString",
+                        "sourceKeys": {},
+                        "value": "$recordId"
+                      },
+                      "reactive": "recordId",
+                      "references": []
+                    },
+                    {
+                      "kind": "lwcWireConfig",
+                      "sourceKeys": {},
+                      "key": "fields",
+                      "value": {
+                        "kind": "jsArray",
+                        "sourceKeys": {},
+                        "elements": [
+                          {
+                            "kind": "jsString",
+                            "sourceKeys": {},
+                            "value": "Account.Name"
+                          }
+                        ]
+                      },
+                      "references": [],
+                      "fieldNames": [
+                        "Account.Name"
+                      ]
+                    },
+                    {
+                      "kind": "lwcWireConfig",
+                      "sourceKeys": {},
+                      "key": "optionalFields",
+                      "value": {
+                        "kind": "jsArray",
+                        "sourceKeys": {},
+                        "elements": [
+                          {
+                            "kind": "jsString",
+                            "sourceKeys": {},
+                            "value": "Account.Industry"
+                          }
+                        ]
+                      },
+                      "references": [],
+                      "fieldNames": [
+                        "Account.Industry"
+                      ]
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
           "kind": "lwcMethod",
           "sourceKeys": {
             "base": {},
@@ -544,7 +831,34 @@
             {
               "kind": "lwcParameter",
               "sourceKeys": {},
-              "variant": "{ data, error }",
+              "pattern": {
+                "kind": "jsObjectPattern",
+                "sourceKeys": {},
+                "properties": [
+                  {
+                    "kind": "jsPatternProperty",
+                    "sourceKeys": {},
+                    "key": "data",
+                    "value": {
+                      "kind": "jsIdentifier",
+                      "sourceKeys": {},
+                      "name": "data"
+                    },
+                    "shorthand": true
+                  },
+                  {
+                    "kind": "jsPatternProperty",
+                    "sourceKeys": {},
+                    "key": "error",
+                    "value": {
+                      "kind": "jsIdentifier",
+                      "sourceKeys": {},
+                      "name": "error"
+                    },
+                    "shorthand": true
+                  }
+                ]
+              },
               "variantType": {
                 "kind": "lwcType",
                 "sourceKeys": {},
@@ -586,11 +900,46 @@
                 "sourceKeys": {},
                 "name": "wire",
                 "arg": [
-                  "getAccounts",
-                  "{ parentId: '$recordId', limitSize: '$maxRows' }"
+                  {
+                    "kind": "jsIdentifier",
+                    "sourceKeys": {},
+                    "name": "getAccounts"
+                  },
+                  {
+                    "kind": "jsObject",
+                    "sourceKeys": {},
+                    "properties": [
+                      {
+                        "kind": "jsProperty",
+                        "sourceKeys": {},
+                        "key": "parentId",
+                        "value": {
+                          "kind": "jsString",
+                          "sourceKeys": {},
+                          "value": "$recordId"
+                        },
+                        "shorthand": false
+                      },
+                      {
+                        "kind": "jsProperty",
+                        "sourceKeys": {},
+                        "key": "limitSize",
+                        "value": {
+                          "kind": "jsString",
+                          "sourceKeys": {},
+                          "value": "$maxRows"
+                        },
+                        "shorthand": false
+                      }
+                    ]
+                  }
                 ],
                 "wire": {
-                  "adapter": "getAccounts",
+                  "adapter": {
+                    "kind": "jsIdentifier",
+                    "sourceKeys": {},
+                    "name": "getAccounts"
+                  },
                   "adapterSource": "@salesforce/apex/AccountController.getAccounts",
                   "apex": {
                     "className": "AccountController",
@@ -601,7 +950,11 @@
                       "kind": "lwcWireConfig",
                       "sourceKeys": {},
                       "key": "parentId",
-                      "value": "'$recordId'",
+                      "value": {
+                        "kind": "jsString",
+                        "sourceKeys": {},
+                        "value": "$recordId"
+                      },
                       "reactive": "recordId",
                       "references": []
                     },
@@ -609,7 +962,11 @@
                       "kind": "lwcWireConfig",
                       "sourceKeys": {},
                       "key": "limitSize",
-                      "value": "'$maxRows'",
+                      "value": {
+                        "kind": "jsString",
+                        "sourceKeys": {},
+                        "value": "$maxRows"
+                      },
                       "reactive": "maxRows",
                       "references": []
                     }
@@ -618,13 +975,99 @@
               }
             ]
           },
-          "body": {
-            "kind": "lwcBody",
-            "sourceKeys": {},
-            "statements": 1
-          },
-          "calls": [],
-          "events": []
+          "block": [
+            {
+              "kind": "jsIf",
+              "sourceKeys": {},
+              "conditionBlock": [
+                {
+                  "condition": {
+                    "kind": "jsIdentifier",
+                    "sourceKeys": {},
+                    "name": "data"
+                  },
+                  "block": [
+                    {
+                      "kind": "jsExpression",
+                      "sourceKeys": {},
+                      "value": {
+                        "kind": "jsAssignment",
+                        "sourceKeys": {},
+                        "left": {
+                          "kind": "jsMemberAccess",
+                          "sourceKeys": {},
+                          "type": "object",
+                          "object": {
+                            "kind": "jsThis",
+                            "sourceKeys": {}
+                          },
+                          "operator": ".",
+                          "member": "rows"
+                        },
+                        "operator": "=",
+                        "right": {
+                          "kind": "jsCall",
+                          "sourceKeys": {},
+                          "callee": {
+                            "kind": "jsIdentifier",
+                            "sourceKeys": {},
+                            "name": "toRows"
+                          },
+                          "arg": [
+                            {
+                              "kind": "jsIdentifier",
+                              "sourceKeys": {},
+                              "name": "data"
+                            }
+                          ]
+                        }
+                      }
+                    }
+                  ]
+                },
+                {
+                  "condition": {
+                    "kind": "jsIdentifier",
+                    "sourceKeys": {},
+                    "name": "error"
+                  },
+                  "block": [
+                    {
+                      "kind": "jsExpression",
+                      "sourceKeys": {},
+                      "value": {
+                        "kind": "jsAssignment",
+                        "sourceKeys": {},
+                        "left": {
+                          "kind": "jsMemberAccess",
+                          "sourceKeys": {},
+                          "type": "object",
+                          "object": {
+                            "kind": "jsThis",
+                            "sourceKeys": {}
+                          },
+                          "operator": ".",
+                          "member": "error"
+                        },
+                        "operator": "=",
+                        "right": {
+                          "kind": "jsIdentifier",
+                          "sourceKeys": {},
+                          "name": "error"
+                        }
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ],
+          "references": [
+            {
+              "local": "toRows",
+              "source": "c/utils"
+            }
+          ]
         },
         {
           "kind": "lwcProperty",
@@ -637,13 +1080,81 @@
           "isSetter": false,
           "getterContent": {
             "modifier": {},
-            "body": {
-              "kind": "lwcBody",
-              "sourceKeys": {},
-              "statements": 1
-            },
-            "calls": [],
-            "events": []
+            "block": [
+              {
+                "kind": "jsReturn",
+                "sourceKeys": {},
+                "field": {
+                  "kind": "jsTypeCast",
+                  "sourceKeys": {},
+                  "expression": {
+                    "kind": "jsCall",
+                    "sourceKeys": {},
+                    "callee": {
+                      "kind": "jsIdentifier",
+                      "sourceKeys": {},
+                      "name": "getFieldValue"
+                    },
+                    "arg": [
+                      {
+                        "kind": "jsMemberAccess",
+                        "sourceKeys": {},
+                        "type": "object",
+                        "object": {
+                          "kind": "jsMemberAccess",
+                          "sourceKeys": {},
+                          "type": "object",
+                          "object": {
+                            "kind": "jsThis",
+                            "sourceKeys": {}
+                          },
+                          "operator": ".",
+                          "member": "record"
+                        },
+                        "operator": "?.",
+                        "member": "data"
+                      },
+                      {
+                        "kind": "jsIdentifier",
+                        "sourceKeys": {},
+                        "name": "NAME_FIELD"
+                      }
+                    ]
+                  },
+                  "operator": "as",
+                  "convertType": {
+                    "kind": "lwcType",
+                    "sourceKeys": {},
+                    "text": "string | undefined",
+                    "type": "union",
+                    "types": [
+                      {
+                        "type": "primitive",
+                        "primitiveType": "string"
+                      },
+                      {
+                        "type": "primitive",
+                        "primitiveType": "undefined"
+                      }
+                    ]
+                  }
+                }
+              }
+            ],
+            "references": [
+              {
+                "local": "getFieldValue",
+                "source": "lightning/uiRecordApi"
+              },
+              {
+                "local": "NAME_FIELD",
+                "source": "@salesforce/schema/Account.Name",
+                "schema": {
+                  "objectApiName": "Account",
+                  "fieldApiName": "Name"
+                }
+              }
+            ]
           },
           "variantType": {
             "kind": "lwcType",
@@ -673,13 +1184,41 @@
           "isSetter": false,
           "getterContent": {
             "modifier": {},
-            "body": {
-              "kind": "lwcBody",
-              "sourceKeys": {},
-              "statements": 1
-            },
-            "calls": [],
-            "events": []
+            "block": [
+              {
+                "kind": "jsReturn",
+                "sourceKeys": {},
+                "field": {
+                  "kind": "jsBinary",
+                  "sourceKeys": {},
+                  "left": {
+                    "kind": "jsMemberAccess",
+                    "sourceKeys": {},
+                    "type": "object",
+                    "object": {
+                      "kind": "jsMemberAccess",
+                      "sourceKeys": {},
+                      "type": "object",
+                      "object": {
+                        "kind": "jsThis",
+                        "sourceKeys": {}
+                      },
+                      "operator": ".",
+                      "member": "rows"
+                    },
+                    "operator": ".",
+                    "member": "length"
+                  },
+                  "operator": ">",
+                  "right": {
+                    "kind": "jsNumber",
+                    "sourceKeys": {},
+                    "value": 0
+                  }
+                }
+              }
+            ],
+            "references": []
           },
           "variantType": {
             "kind": "lwcType",
@@ -700,13 +1239,34 @@
           "isSetter": false,
           "getterContent": {
             "modifier": {},
-            "body": {
-              "kind": "lwcBody",
-              "sourceKeys": {},
-              "statements": 1
-            },
-            "calls": [],
-            "events": []
+            "block": [
+              {
+                "kind": "jsReturn",
+                "sourceKeys": {},
+                "field": {
+                  "kind": "jsBinary",
+                  "sourceKeys": {},
+                  "left": {
+                    "kind": "jsMemberAccess",
+                    "sourceKeys": {},
+                    "type": "object",
+                    "object": {
+                      "kind": "jsThis",
+                      "sourceKeys": {}
+                    },
+                    "operator": ".",
+                    "member": "viewMode"
+                  },
+                  "operator": "===",
+                  "right": {
+                    "kind": "jsString",
+                    "sourceKeys": {},
+                    "value": "table"
+                  }
+                }
+              }
+            ],
+            "references": []
           },
           "variantType": {
             "kind": "lwcType",
@@ -727,13 +1287,113 @@
           "isSetter": false,
           "getterContent": {
             "modifier": {},
-            "body": {
-              "kind": "lwcBody",
-              "sourceKeys": {},
-              "statements": 1
-            },
-            "calls": [],
-            "events": []
+            "block": [
+              {
+                "kind": "jsReturn",
+                "sourceKeys": {},
+                "field": {
+                  "kind": "jsCall",
+                  "sourceKeys": {},
+                  "callee": {
+                    "kind": "jsIdentifier",
+                    "sourceKeys": {},
+                    "name": "formatAmount"
+                  },
+                  "arg": [
+                    {
+                      "kind": "jsMemberAccess",
+                      "sourceKeys": {},
+                      "type": "method",
+                      "object": {
+                        "kind": "jsMemberAccess",
+                        "sourceKeys": {},
+                        "type": "object",
+                        "object": {
+                          "kind": "jsThis",
+                          "sourceKeys": {}
+                        },
+                        "operator": ".",
+                        "member": "rows"
+                      },
+                      "operator": ".",
+                      "member": "reduce",
+                      "memberArg": [
+                        {
+                          "kind": "jsFunction",
+                          "sourceKeys": {},
+                          "arrow": true,
+                          "async": false,
+                          "generator": false,
+                          "param": [
+                            {
+                              "kind": "lwcParameter",
+                              "sourceKeys": {},
+                              "variant": "sum",
+                              "optional": false,
+                              "modifier": {}
+                            },
+                            {
+                              "kind": "lwcParameter",
+                              "sourceKeys": {},
+                              "variant": "row",
+                              "optional": false,
+                              "modifier": {}
+                            }
+                          ],
+                          "expression": {
+                            "kind": "jsBinary",
+                            "sourceKeys": {},
+                            "left": {
+                              "kind": "jsIdentifier",
+                              "sourceKeys": {},
+                              "name": "sum"
+                            },
+                            "operator": "+",
+                            "right": {
+                              "kind": "jsParenthesized",
+                              "sourceKeys": {},
+                              "expression": {
+                                "kind": "jsLogical",
+                                "sourceKeys": {},
+                                "left": {
+                                  "kind": "jsMemberAccess",
+                                  "sourceKeys": {},
+                                  "type": "object",
+                                  "object": {
+                                    "kind": "jsIdentifier",
+                                    "sourceKeys": {},
+                                    "name": "row"
+                                  },
+                                  "operator": ".",
+                                  "member": "amount"
+                                },
+                                "operator": "??",
+                                "right": {
+                                  "kind": "jsNumber",
+                                  "sourceKeys": {},
+                                  "value": 0
+                                }
+                              }
+                            }
+                          }
+                        },
+                        {
+                          "kind": "jsNumber",
+                          "sourceKeys": {},
+                          "value": 0
+                        }
+                      ]
+                    }
+                  ]
+                }
+              }
+            ],
+            "references": [
+              {
+                "local": "formatAmount",
+                "source": "c/utils"
+              }
+            ]
           },
           "variantType": {
             "kind": "lwcType",
@@ -781,48 +1441,246 @@
           ],
           "async": false,
           "modifier": {},
-          "body": {
-            "kind": "lwcBody",
-            "sourceKeys": {},
-            "statements": 3
-          },
-          "calls": [
+          "block": [
             {
-              "kind": "lwcCall",
+              "kind": "jsLocalVariable",
               "sourceKeys": {},
-              "callType": "dispatchEvent",
-              "target": "CustomEvent",
-              "arg": [
-                "new CustomEvent<SelectDetail>('accountselect', {\n                detail: { recordId, index },\n                bubbles: true,\n                composed: false,\n            })"
-              ],
-              "references": []
+              "variableKind": "const",
+              "variants": [
+                {
+                  "kind": "jsVariant",
+                  "sourceKeys": {},
+                  "target": {
+                    "kind": "jsObjectPattern",
+                    "sourceKeys": {},
+                    "properties": [
+                      {
+                        "kind": "jsPatternProperty",
+                        "sourceKeys": {},
+                        "key": "recordId",
+                        "value": {
+                          "kind": "jsIdentifier",
+                          "sourceKeys": {},
+                          "name": "recordId"
+                        },
+                        "shorthand": true
+                      },
+                      {
+                        "kind": "jsPatternProperty",
+                        "sourceKeys": {},
+                        "key": "index",
+                        "value": {
+                          "kind": "jsIdentifier",
+                          "sourceKeys": {},
+                          "name": "index"
+                        },
+                        "shorthand": true
+                      }
+                    ]
+                  },
+                  "init": {
+                    "kind": "jsMemberAccess",
+                    "sourceKeys": {},
+                    "type": "object",
+                    "object": {
+                      "kind": "jsIdentifier",
+                      "sourceKeys": {},
+                      "name": "event"
+                    },
+                    "operator": ".",
+                    "member": "detail"
+                  }
+                }
+              ]
             },
             {
-              "kind": "lwcCall",
+              "kind": "jsExpression",
               "sourceKeys": {},
-              "callType": "navigate",
-              "target": "Navigate",
-              "arg": [
-                "{\n            type: 'standard__recordPage',\n            attributes: { recordId, actionName: 'view' },\n        }"
-              ],
-              "references": []
+              "value": {
+                "kind": "jsMemberAccess",
+                "sourceKeys": {},
+                "type": "method",
+                "object": {
+                  "kind": "jsThis",
+                  "sourceKeys": {}
+                },
+                "operator": ".",
+                "member": "dispatchEvent",
+                "memberArg": [
+                  {
+                    "kind": "jsNew",
+                    "sourceKeys": {},
+                    "callee": {
+                      "kind": "jsIdentifier",
+                      "sourceKeys": {},
+                      "name": "CustomEvent"
+                    },
+                    "arg": [
+                      {
+                        "kind": "jsString",
+                        "sourceKeys": {},
+                        "value": "accountselect"
+                      },
+                      {
+                        "kind": "jsObject",
+                        "sourceKeys": {},
+                        "properties": [
+                          {
+                            "kind": "jsProperty",
+                            "sourceKeys": {},
+                            "key": "detail",
+                            "value": {
+                              "kind": "jsObject",
+                              "sourceKeys": {},
+                              "properties": [
+                                {
+                                  "kind": "jsProperty",
+                                  "sourceKeys": {},
+                                  "key": "recordId",
+                                  "value": {
+                                    "kind": "jsIdentifier",
+                                    "sourceKeys": {},
+                                    "name": "recordId"
+                                  },
+                                  "shorthand": true
+                                },
+                                {
+                                  "kind": "jsProperty",
+                                  "sourceKeys": {},
+                                  "key": "index",
+                                  "value": {
+                                    "kind": "jsIdentifier",
+                                    "sourceKeys": {},
+                                    "name": "index"
+                                  },
+                                  "shorthand": true
+                                }
+                              ]
+                            },
+                            "shorthand": false
+                          },
+                          {
+                            "kind": "jsProperty",
+                            "sourceKeys": {},
+                            "key": "bubbles",
+                            "value": {
+                              "kind": "jsBoolean",
+                              "sourceKeys": {},
+                              "value": true
+                            },
+                            "shorthand": false
+                          },
+                          {
+                            "kind": "jsProperty",
+                            "sourceKeys": {},
+                            "key": "composed",
+                            "value": {
+                              "kind": "jsBoolean",
+                              "sourceKeys": {},
+                              "value": false
+                            },
+                            "shorthand": false
+                          }
+                        ]
+                      }
+                    ],
+                    "typeArguments": [
+                      {
+                        "kind": "lwcType",
+                        "sourceKeys": {},
+                        "text": "SelectDetail",
+                        "type": "custom",
+                        "customType": "SelectDetail"
+                      }
+                    ]
+                  }
+                ]
+              }
+            },
+            {
+              "kind": "jsExpression",
+              "sourceKeys": {},
+              "value": {
+                "kind": "jsMemberAccess",
+                "sourceKeys": {},
+                "type": "method",
+                "object": {
+                  "kind": "jsThis",
+                  "sourceKeys": {}
+                },
+                "operator": ".",
+                "computed": {
+                  "kind": "jsMemberAccess",
+                  "sourceKeys": {},
+                  "type": "object",
+                  "object": {
+                    "kind": "jsIdentifier",
+                    "sourceKeys": {},
+                    "name": "NavigationMixin"
+                  },
+                  "operator": ".",
+                  "member": "Navigate"
+                },
+                "memberArg": [
+                  {
+                    "kind": "jsObject",
+                    "sourceKeys": {},
+                    "properties": [
+                      {
+                        "kind": "jsProperty",
+                        "sourceKeys": {},
+                        "key": "type",
+                        "value": {
+                          "kind": "jsString",
+                          "sourceKeys": {},
+                          "value": "standard__recordPage"
+                        },
+                        "shorthand": false
+                      },
+                      {
+                        "kind": "jsProperty",
+                        "sourceKeys": {},
+                        "key": "attributes",
+                        "value": {
+                          "kind": "jsObject",
+                          "sourceKeys": {},
+                          "properties": [
+                            {
+                              "kind": "jsProperty",
+                              "sourceKeys": {},
+                              "key": "recordId",
+                              "value": {
+                                "kind": "jsIdentifier",
+                                "sourceKeys": {},
+                                "name": "recordId"
+                              },
+                              "shorthand": true
+                            },
+                            {
+                              "kind": "jsProperty",
+                              "sourceKeys": {},
+                              "key": "actionName",
+                              "value": {
+                                "kind": "jsString",
+                                "sourceKeys": {},
+                                "value": "view"
+                              },
+                              "shorthand": false
+                            }
+                          ]
+                        },
+                        "shorthand": false
+                      }
+                    ]
+                  }
+                ]
+              }
             }
           ],
-          "events": [
+          "references": [
             {
-              "kind": "lwcEvent",
-              "sourceKeys": {},
-              "name": "accountselect",
-              "detail": "{ recordId, index }",
-              "bubbles": true,
-              "composed": false,
-              "detailType": {
-                "kind": "lwcType",
-                "sourceKeys": {},
-                "text": "SelectDetail",
-                "type": "custom",
-                "customType": "SelectDetail"
-              }
+              "local": "NavigationMixin",
+              "source": "lightning/navigation"
             }
           ]
         },
@@ -864,43 +1722,222 @@
           ],
           "async": true,
           "modifier": {},
-          "body": {
-            "kind": "lwcBody",
-            "sourceKeys": {},
-            "statements": 2
-          },
-          "calls": [
+          "block": [
             {
-              "kind": "lwcCall",
+              "kind": "jsLocalVariable",
               "sourceKeys": {},
-              "callType": "apex",
-              "target": "deleteAccount",
-              "apex": {
-                "className": "AccountController",
-                "methodName": "deleteAccount"
-              },
-              "arg": [
-                "{ recordId }"
-              ],
-              "references": []
+              "variableKind": "const",
+              "variants": [
+                {
+                  "kind": "jsVariant",
+                  "sourceKeys": {},
+                  "target": {
+                    "kind": "jsIdentifier",
+                    "sourceKeys": {},
+                    "name": "recordId"
+                  },
+                  "init": {
+                    "kind": "jsNonNull",
+                    "sourceKeys": {},
+                    "expression": {
+                      "kind": "jsMemberAccess",
+                      "sourceKeys": {},
+                      "type": "object",
+                      "object": {
+                        "kind": "jsMemberAccess",
+                        "sourceKeys": {},
+                        "type": "object",
+                        "object": {
+                          "kind": "jsParenthesized",
+                          "sourceKeys": {},
+                          "expression": {
+                            "kind": "jsTypeCast",
+                            "sourceKeys": {},
+                            "expression": {
+                              "kind": "jsMemberAccess",
+                              "sourceKeys": {},
+                              "type": "object",
+                              "object": {
+                                "kind": "jsIdentifier",
+                                "sourceKeys": {},
+                                "name": "event"
+                              },
+                              "operator": ".",
+                              "member": "target"
+                            },
+                            "operator": "as",
+                            "convertType": {
+                              "kind": "lwcType",
+                              "sourceKeys": {},
+                              "text": "HTMLElement",
+                              "type": "custom",
+                              "customType": "HTMLElement"
+                            }
+                          }
+                        },
+                        "operator": ".",
+                        "member": "dataset"
+                      },
+                      "operator": ".",
+                      "member": "id"
+                    }
+                  }
+                }
+              ]
             },
             {
-              "kind": "lwcCall",
+              "kind": "jsTry",
               "sourceKeys": {},
-              "callType": "dispatchEvent",
-              "target": "ShowToastEvent",
-              "arg": [
-                "new ShowToastEvent({ title: '削除しました', variant: 'success' })"
-              ],
-              "references": [
+              "block": [
                 {
-                  "local": "ShowToastEvent",
-                  "source": "lightning/platformShowToastEvent"
+                  "condition": "try",
+                  "block": [
+                    {
+                      "kind": "jsExpression",
+                      "sourceKeys": {},
+                      "value": {
+                        "kind": "jsAwait",
+                        "sourceKeys": {},
+                        "argument": {
+                          "kind": "jsCall",
+                          "sourceKeys": {},
+                          "callee": {
+                            "kind": "jsIdentifier",
+                            "sourceKeys": {},
+                            "name": "deleteAccount"
+                          },
+                          "arg": [
+                            {
+                              "kind": "jsObject",
+                              "sourceKeys": {},
+                              "properties": [
+                                {
+                                  "kind": "jsProperty",
+                                  "sourceKeys": {},
+                                  "key": "recordId",
+                                  "value": {
+                                    "kind": "jsIdentifier",
+                                    "sourceKeys": {},
+                                    "name": "recordId"
+                                  },
+                                  "shorthand": true
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      }
+                    },
+                    {
+                      "kind": "jsExpression",
+                      "sourceKeys": {},
+                      "value": {
+                        "kind": "jsMemberAccess",
+                        "sourceKeys": {},
+                        "type": "method",
+                        "object": {
+                          "kind": "jsThis",
+                          "sourceKeys": {}
+                        },
+                        "operator": ".",
+                        "member": "dispatchEvent",
+                        "memberArg": [
+                          {
+                            "kind": "jsNew",
+                            "sourceKeys": {},
+                            "callee": {
+                              "kind": "jsIdentifier",
+                              "sourceKeys": {},
+                              "name": "ShowToastEvent"
+                            },
+                            "arg": [
+                              {
+                                "kind": "jsObject",
+                                "sourceKeys": {},
+                                "properties": [
+                                  {
+                                    "kind": "jsProperty",
+                                    "sourceKeys": {},
+                                    "key": "title",
+                                    "value": {
+                                      "kind": "jsString",
+                                      "sourceKeys": {},
+                                      "value": "削除しました"
+                                    },
+                                    "shorthand": false
+                                  },
+                                  {
+                                    "kind": "jsProperty",
+                                    "sourceKeys": {},
+                                    "key": "variant",
+                                    "value": {
+                                      "kind": "jsString",
+                                      "sourceKeys": {},
+                                      "value": "success"
+                                    },
+                                    "shorthand": false
+                                  }
+                                ]
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    }
+                  ]
+                },
+                {
+                  "condition": "catch",
+                  "param": {
+                    "kind": "jsIdentifier",
+                    "sourceKeys": {},
+                    "name": "error"
+                  },
+                  "block": [
+                    {
+                      "kind": "jsExpression",
+                      "sourceKeys": {},
+                      "value": {
+                        "kind": "jsAssignment",
+                        "sourceKeys": {},
+                        "left": {
+                          "kind": "jsMemberAccess",
+                          "sourceKeys": {},
+                          "type": "object",
+                          "object": {
+                            "kind": "jsThis",
+                            "sourceKeys": {}
+                          },
+                          "operator": ".",
+                          "member": "error"
+                        },
+                        "operator": "=",
+                        "right": {
+                          "kind": "jsIdentifier",
+                          "sourceKeys": {},
+                          "name": "error"
+                        }
+                      }
+                    }
+                  ]
                 }
               ]
             }
           ],
-          "events": []
+          "references": [
+            {
+              "local": "deleteAccount",
+              "source": "@salesforce/apex/AccountController.deleteAccount",
+              "apex": {
+                "className": "AccountController",
+                "methodName": "deleteAccount"
+              }
+            },
+            {
+              "local": "ShowToastEvent",
+              "source": "lightning/platformShowToastEvent"
+            }
+          ]
         },
         {
           "kind": "lwcMethod",
@@ -928,26 +1965,582 @@
               }
             ]
           },
-          "body": {
-            "kind": "lwcBody",
-            "sourceKeys": {},
-            "statements": 1
-          },
-          "calls": [
+          "block": [
             {
-              "kind": "lwcCall",
+              "kind": "jsExpression",
               "sourceKeys": {},
-              "callType": "refs",
-              "target": "table",
-              "arg": [],
-              "references": []
+              "value": {
+                "kind": "jsMemberAccess",
+                "sourceKeys": {},
+                "type": "method",
+                "object": {
+                  "kind": "jsMemberAccess",
+                  "sourceKeys": {},
+                  "type": "object",
+                  "object": {
+                    "kind": "jsMemberAccess",
+                    "sourceKeys": {},
+                    "type": "object",
+                    "object": {
+                      "kind": "jsThis",
+                      "sourceKeys": {}
+                    },
+                    "operator": ".",
+                    "member": "refs"
+                  },
+                  "operator": ".",
+                  "member": "table"
+                },
+                "operator": "?.",
+                "member": "focus",
+                "memberArg": []
+              }
             }
           ],
-          "events": []
+          "references": []
+        },
+        {
+          "kind": "lwcField",
+          "sourceKeys": {
+            "base": {},
+            "name": {}
+          },
+          "name": "handleReload",
+          "references": [
+            {
+              "local": "refreshApex",
+              "source": "@salesforce/apex"
+            },
+            {
+              "local": "updateRecord",
+              "source": "lightning/uiRecordApi"
+            }
+          ],
+          "function": {
+            "arrow": true,
+            "param": [],
+            "returnType": {
+              "kind": "lwcType",
+              "sourceKeys": {},
+              "text": "Promise<void>",
+              "type": "custom",
+              "customType": "Promise",
+              "generic": [
+                {
+                  "type": "primitive",
+                  "primitiveType": "void"
+                }
+              ]
+            },
+            "async": true,
+            "generator": false,
+            "block": [
+              {
+                "kind": "jsLocalVariable",
+                "sourceKeys": {},
+                "variableKind": "const",
+                "variants": [
+                  {
+                    "kind": "jsVariant",
+                    "sourceKeys": {},
+                    "target": {
+                      "kind": "jsIdentifier",
+                      "sourceKeys": {},
+                      "name": "row"
+                    },
+                    "init": {
+                      "kind": "jsMemberAccess",
+                      "sourceKeys": {},
+                      "type": "method",
+                      "object": {
+                        "kind": "jsMemberAccess",
+                        "sourceKeys": {},
+                        "type": "object",
+                        "object": {
+                          "kind": "jsThis",
+                          "sourceKeys": {}
+                        },
+                        "operator": ".",
+                        "member": "template"
+                      },
+                      "operator": ".",
+                      "member": "querySelector",
+                      "memberArg": [
+                        {
+                          "kind": "jsString",
+                          "sourceKeys": {},
+                          "value": "c-account-row"
+                        }
+                      ]
+                    }
+                  }
+                ]
+              },
+              {
+                "kind": "jsExpression",
+                "sourceKeys": {},
+                "value": {
+                  "kind": "jsAwait",
+                  "sourceKeys": {},
+                  "argument": {
+                    "kind": "jsCall",
+                    "sourceKeys": {},
+                    "callee": {
+                      "kind": "jsIdentifier",
+                      "sourceKeys": {},
+                      "name": "refreshApex"
+                    },
+                    "arg": [
+                      {
+                        "kind": "jsMemberAccess",
+                        "sourceKeys": {},
+                        "type": "object",
+                        "object": {
+                          "kind": "jsThis",
+                          "sourceKeys": {}
+                        },
+                        "operator": ".",
+                        "member": "record"
+                      }
+                    ]
+                  }
+                }
+              },
+              {
+                "kind": "jsExpression",
+                "sourceKeys": {},
+                "value": {
+                  "kind": "jsMemberAccess",
+                  "sourceKeys": {},
+                  "type": "method",
+                  "object": {
+                    "kind": "jsMemberAccess",
+                    "sourceKeys": {},
+                    "type": "method",
+                    "object": {
+                      "kind": "jsCall",
+                      "sourceKeys": {},
+                      "callee": {
+                        "kind": "jsIdentifier",
+                        "sourceKeys": {},
+                        "name": "updateRecord"
+                      },
+                      "arg": [
+                        {
+                          "kind": "jsObject",
+                          "sourceKeys": {},
+                          "properties": [
+                            {
+                              "kind": "jsProperty",
+                              "sourceKeys": {},
+                              "key": "fields",
+                              "value": {
+                                "kind": "jsObject",
+                                "sourceKeys": {},
+                                "properties": [
+                                  {
+                                    "kind": "jsProperty",
+                                    "sourceKeys": {},
+                                    "key": "Id",
+                                    "value": {
+                                      "kind": "jsMemberAccess",
+                                      "sourceKeys": {},
+                                      "type": "object",
+                                      "object": {
+                                        "kind": "jsThis",
+                                        "sourceKeys": {}
+                                      },
+                                      "operator": ".",
+                                      "member": "recordId"
+                                    },
+                                    "shorthand": false
+                                  }
+                                ]
+                              },
+                              "shorthand": false
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    "operator": ".",
+                    "member": "then",
+                    "memberArg": [
+                      {
+                        "kind": "jsFunction",
+                        "sourceKeys": {},
+                        "arrow": true,
+                        "async": false,
+                        "generator": false,
+                        "param": [],
+                        "block": [
+                          {
+                            "kind": "jsExpression",
+                            "sourceKeys": {},
+                            "value": {
+                              "kind": "jsMemberAccess",
+                              "sourceKeys": {},
+                              "type": "method",
+                              "object": {
+                                "kind": "jsThis",
+                                "sourceKeys": {}
+                              },
+                              "operator": ".",
+                              "member": "dispatchEvent",
+                              "memberArg": [
+                                {
+                                  "kind": "jsNew",
+                                  "sourceKeys": {},
+                                  "callee": {
+                                    "kind": "jsIdentifier",
+                                    "sourceKeys": {},
+                                    "name": "CustomEvent"
+                                  },
+                                  "arg": [
+                                    {
+                                      "kind": "jsString",
+                                      "sourceKeys": {},
+                                      "value": "reloaded"
+                                    },
+                                    {
+                                      "kind": "jsObject",
+                                      "sourceKeys": {},
+                                      "properties": [
+                                        {
+                                          "kind": "jsProperty",
+                                          "sourceKeys": {},
+                                          "key": "detail",
+                                          "value": {
+                                            "kind": "jsObject",
+                                            "sourceKeys": {},
+                                            "properties": [
+                                              {
+                                                "kind": "jsProperty",
+                                                "sourceKeys": {},
+                                                "key": "count",
+                                                "value": {
+                                                  "kind": "jsMemberAccess",
+                                                  "sourceKeys": {},
+                                                  "type": "object",
+                                                  "object": {
+                                                    "kind": "jsMemberAccess",
+                                                    "sourceKeys": {},
+                                                    "type": "object",
+                                                    "object": {
+                                                      "kind": "jsThis",
+                                                      "sourceKeys": {}
+                                                    },
+                                                    "operator": ".",
+                                                    "member": "rows"
+                                                  },
+                                                  "operator": ".",
+                                                  "member": "length"
+                                                },
+                                                "shorthand": false
+                                              },
+                                              {
+                                                "kind": "jsProperty",
+                                                "sourceKeys": {},
+                                                "key": "row",
+                                                "value": {
+                                                  "kind": "jsIdentifier",
+                                                  "sourceKeys": {},
+                                                  "name": "row"
+                                                },
+                                                "shorthand": true
+                                              }
+                                            ]
+                                          },
+                                          "shorthand": false
+                                        }
+                                      ]
+                                    }
+                                  ]
+                                }
+                              ]
+                            }
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  "operator": ".",
+                  "member": "catch",
+                  "memberArg": [
+                    {
+                      "kind": "jsFunction",
+                      "sourceKeys": {},
+                      "arrow": true,
+                      "async": false,
+                      "generator": false,
+                      "param": [
+                        {
+                          "kind": "lwcParameter",
+                          "sourceKeys": {},
+                          "variant": "error",
+                          "variantType": {
+                            "kind": "lwcType",
+                            "sourceKeys": {},
+                            "text": "unknown",
+                            "type": "primitive",
+                            "primitiveType": "unknown"
+                          },
+                          "optional": false,
+                          "modifier": {}
+                        }
+                      ],
+                      "block": [
+                        {
+                          "kind": "jsExpression",
+                          "sourceKeys": {},
+                          "value": {
+                            "kind": "jsAssignment",
+                            "sourceKeys": {},
+                            "left": {
+                              "kind": "jsMemberAccess",
+                              "sourceKeys": {},
+                              "type": "object",
+                              "object": {
+                                "kind": "jsThis",
+                                "sourceKeys": {}
+                              },
+                              "operator": ".",
+                              "member": "error"
+                            },
+                            "operator": "=",
+                            "right": {
+                              "kind": "jsIdentifier",
+                              "sourceKeys": {},
+                              "name": "error"
+                            }
+                          }
+                        }
+                      ]
+                    }
+                  ]
+                }
+              }
+            ],
+            "references": [
+              {
+                "local": "refreshApex",
+                "source": "@salesforce/apex"
+              },
+              {
+                "local": "updateRecord",
+                "source": "lightning/uiRecordApi"
+              }
+            ]
+          },
+          "optional": false,
+          "modifier": {}
+        },
+        {
+          "kind": "lwcField",
+          "sourceKeys": {
+            "base": {},
+            "name": {}
+          },
+          "name": "handleOpenList",
+          "references": [
+            {
+              "local": "NavigationMixin",
+              "source": "lightning/navigation"
+            }
+          ],
+          "function": {
+            "arrow": true,
+            "param": [],
+            "returnType": {
+              "kind": "lwcType",
+              "sourceKeys": {},
+              "text": "void",
+              "type": "primitive",
+              "primitiveType": "void"
+            },
+            "async": false,
+            "generator": false,
+            "block": [
+              {
+                "kind": "jsExpression",
+                "sourceKeys": {},
+                "value": {
+                  "kind": "jsMemberAccess",
+                  "sourceKeys": {},
+                  "type": "method",
+                  "object": {
+                    "kind": "jsThis",
+                    "sourceKeys": {}
+                  },
+                  "operator": ".",
+                  "computed": {
+                    "kind": "jsMemberAccess",
+                    "sourceKeys": {},
+                    "type": "object",
+                    "object": {
+                      "kind": "jsIdentifier",
+                      "sourceKeys": {},
+                      "name": "NavigationMixin"
+                    },
+                    "operator": ".",
+                    "member": "Navigate"
+                  },
+                  "memberArg": [
+                    {
+                      "kind": "jsObject",
+                      "sourceKeys": {},
+                      "properties": [
+                        {
+                          "kind": "jsProperty",
+                          "sourceKeys": {},
+                          "key": "type",
+                          "value": {
+                            "kind": "jsString",
+                            "sourceKeys": {},
+                            "value": "standard__objectPage"
+                          },
+                          "shorthand": false
+                        },
+                        {
+                          "kind": "jsProperty",
+                          "sourceKeys": {},
+                          "key": "attributes",
+                          "value": {
+                            "kind": "jsObject",
+                            "sourceKeys": {},
+                            "properties": [
+                              {
+                                "kind": "jsProperty",
+                                "sourceKeys": {},
+                                "key": "objectApiName",
+                                "value": {
+                                  "kind": "jsString",
+                                  "sourceKeys": {},
+                                  "value": "Account"
+                                },
+                                "shorthand": false
+                              },
+                              {
+                                "kind": "jsProperty",
+                                "sourceKeys": {},
+                                "key": "actionName",
+                                "value": {
+                                  "kind": "jsString",
+                                  "sourceKeys": {},
+                                  "value": "list"
+                                },
+                                "shorthand": false
+                              }
+                            ]
+                          },
+                          "shorthand": false
+                        },
+                        {
+                          "kind": "jsProperty",
+                          "sourceKeys": {},
+                          "key": "state",
+                          "value": {
+                            "kind": "jsObject",
+                            "sourceKeys": {},
+                            "properties": [
+                              {
+                                "kind": "jsProperty",
+                                "sourceKeys": {},
+                                "key": "filterName",
+                                "value": {
+                                  "kind": "jsString",
+                                  "sourceKeys": {},
+                                  "value": "Recent"
+                                },
+                                "shorthand": false
+                              }
+                            ]
+                          },
+                          "shorthand": false
+                        }
+                      ]
+                    }
+                  ]
+                }
+              }
+            ],
+            "references": [
+              {
+                "local": "NavigationMixin",
+                "source": "lightning/navigation"
+              }
+            ]
+          },
+          "optional": false,
+          "modifier": {}
+        },
+        {
+          "kind": "lwcMethod",
+          "sourceKeys": {
+            "base": {},
+            "name": {}
+          },
+          "name": "connectedCallback",
+          "returnType": {
+            "kind": "lwcType",
+            "sourceKeys": {},
+            "text": "void",
+            "type": "primitive",
+            "primitiveType": "void"
+          },
+          "param": [],
+          "async": false,
+          "modifier": {},
+          "block": [
+            {
+              "kind": "jsExpression",
+              "sourceKeys": {},
+              "value": {
+                "kind": "jsMemberAccess",
+                "sourceKeys": {},
+                "type": "method",
+                "object": {
+                  "kind": "jsIdentifier",
+                  "sourceKeys": {},
+                  "name": "window"
+                },
+                "operator": ".",
+                "member": "addEventListener",
+                "memberArg": [
+                  {
+                    "kind": "jsString",
+                    "sourceKeys": {},
+                    "value": "resize"
+                  },
+                  {
+                    "kind": "jsMemberAccess",
+                    "sourceKeys": {},
+                    "type": "object",
+                    "object": {
+                      "kind": "jsThis",
+                      "sourceKeys": {}
+                    },
+                    "operator": ".",
+                    "member": "handleReload"
+                  }
+                ]
+              }
+            }
+          ],
+          "references": []
         }
       ]
     },
-    "otherExports": [],
+    "exports": [
+      {
+        "kind": "lwcExport",
+        "sourceKeys": {},
+        "exportType": "default",
+        "exported": "default",
+        "local": "AccountList",
+        "typeOnly": false
+      }
+    ],
     "declarations": [],
     "typeDeclarations": [
       {
@@ -1010,105 +2603,534 @@
   },
   "sourceObject": [
     {
+      "context": "'$maxRows'",
+      "start": {
+        "offset": 1557,
+        "line": 40,
+        "column": 59
+      },
+      "end": {
+        "offset": 1567,
+        "line": 40,
+        "column": 69
+      }
+    },
+    {
+      "context": "'$recordId'",
+      "start": {
+        "offset": 1196,
+        "line": 30,
+        "column": 33
+      },
+      "end": {
+        "offset": 1207,
+        "line": 30,
+        "column": 44
+      }
+    },
+    {
+      "context": "'$recordId'",
+      "start": {
+        "offset": 1341,
+        "line": 34,
+        "column": 18
+      },
+      "end": {
+        "offset": 1352,
+        "line": 34,
+        "column": 29
+      }
+    },
+    {
+      "context": "'$recordId'",
+      "start": {
+        "offset": 1533,
+        "line": 40,
+        "column": 35
+      },
+      "end": {
+        "offset": 1544,
+        "line": 40,
+        "column": 46
+      }
+    },
+    {
+      "context": "'Account'",
+      "start": {
+        "offset": 3843,
+        "line": 113,
+        "column": 41
+      },
+      "end": {
+        "offset": 3852,
+        "line": 113,
+        "column": 50
+      }
+    },
+    {
+      "context": "'Account.Industry'",
+      "start": {
+        "offset": 1413,
+        "line": 36,
+        "column": 25
+      },
+      "end": {
+        "offset": 1431,
+        "line": 36,
+        "column": 43
+      }
+    },
+    {
+      "context": "'Account.Name'",
+      "start": {
+        "offset": 1371,
+        "line": 35,
+        "column": 17
+      },
+      "end": {
+        "offset": 1385,
+        "line": 35,
+        "column": 31
+      }
+    },
+    {
+      "context": "'Recent'",
+      "start": {
+        "offset": 3909,
+        "line": 114,
+        "column": 33
+      },
+      "end": {
+        "offset": 3917,
+        "line": 114,
+        "column": 41
+      }
+    },
+    {
+      "context": "'accountselect'",
+      "start": {
+        "offset": 2379,
+        "line": 68,
+        "column": 42
+      },
+      "end": {
+        "offset": 2394,
+        "line": 68,
+        "column": 57
+      }
+    },
+    {
+      "context": "'asc'",
+      "start": {
+        "offset": 1134,
+        "line": 27,
+        "column": 35
+      },
+      "end": {
+        "offset": 1139,
+        "line": 27,
+        "column": 40
+      }
+    },
+    {
+      "context": "'c-account-row'",
+      "start": {
+        "offset": 3278,
+        "line": 97,
+        "column": 48
+      },
+      "end": {
+        "offset": 3293,
+        "line": 97,
+        "column": 63
+      }
+    },
+    {
+      "context": "'list'",
+      "start": {
+        "offset": 3866,
+        "line": 113,
+        "column": 64
+      },
+      "end": {
+        "offset": 3872,
+        "line": 113,
+        "column": 70
+      }
+    },
+    {
+      "context": "'reloaded'",
+      "start": {
+        "offset": 3490,
+        "line": 102,
+        "column": 36
+      },
+      "end": {
+        "offset": 3500,
+        "line": 102,
+        "column": 46
+      }
+    },
+    {
+      "context": "'resize'",
+      "start": {
+        "offset": 4005,
+        "line": 119,
+        "column": 32
+      },
+      "end": {
+        "offset": 4013,
+        "line": 119,
+        "column": 40
+      }
+    },
+    {
+      "context": "'standard__objectPage'",
+      "start": {
+        "offset": 3778,
+        "line": 112,
+        "column": 18
+      },
+      "end": {
+        "offset": 3800,
+        "line": 112,
+        "column": 40
+      }
+    },
+    {
+      "context": "'standard__recordPage'",
+      "start": {
+        "offset": 2593,
+        "line": 75,
+        "column": 18
+      },
+      "end": {
+        "offset": 2615,
+        "line": 75,
+        "column": 40
+      }
+    },
+    {
+      "context": "'success'",
+      "start": {
+        "offset": 2955,
+        "line": 84,
+        "column": 78
+      },
+      "end": {
+        "offset": 2964,
+        "line": 84,
+        "column": 87
+      }
+    },
+    {
       "context": "'table' | 'tile'",
       "start": {
-        "offset": 703,
-        "line": 13,
+        "offset": 765,
+        "line": 14,
         "column": 16
       },
       "end": {
-        "offset": 719,
-        "line": 13,
+        "offset": 781,
+        "line": 14,
         "column": 32
+      }
+    },
+    {
+      "context": "'table'",
+      "start": {
+        "offset": 1090,
+        "line": 26,
+        "column": 25
+      },
+      "end": {
+        "offset": 1097,
+        "line": 26,
+        "column": 32
+      }
+    },
+    {
+      "context": "'table'",
+      "start": {
+        "offset": 2056,
+        "line": 58,
+        "column": 33
+      },
+      "end": {
+        "offset": 2063,
+        "line": 58,
+        "column": 40
+      }
+    },
+    {
+      "context": "'view'",
+      "start": {
+        "offset": 2665,
+        "line": 76,
+        "column": 48
+      },
+      "end": {
+        "offset": 2671,
+        "line": 76,
+        "column": 54
+      }
+    },
+    {
+      "context": "'削除しました'",
+      "start": {
+        "offset": 2936,
+        "line": 84,
+        "column": 59
+      },
+      "end": {
+        "offset": 2944,
+        "line": 84,
+        "column": 67
+      }
+    },
+    {
+      "context": "() => {\n                this.dispatchEvent(\n                    new CustomEvent('reloaded', { detail: { count: this.rows.length, row } }),\n                );\n            }",
+      "start": {
+        "offset": 3410,
+        "line": 100,
+        "column": 18
+      },
+      "end": {
+        "offset": 3581,
+        "line": 104,
+        "column": 13
+      }
+    },
+    {
+      "context": "(error: unknown) => {\n                this.error = error;\n            }",
+      "start": {
+        "offset": 3602,
+        "line": 105,
+        "column": 19
+      },
+      "end": {
+        "offset": 3673,
+        "line": 107,
+        "column": 13
+      }
+    },
+    {
+      "context": "(event.target as HTMLElement)",
+      "start": {
+        "offset": 2773,
+        "line": 81,
+        "column": 25
+      },
+      "end": {
+        "offset": 2802,
+        "line": 81,
+        "column": 54
+      }
+    },
+    {
+      "context": "(event.target as HTMLElement).dataset",
+      "start": {
+        "offset": 2773,
+        "line": 81,
+        "column": 25
+      },
+      "end": {
+        "offset": 2810,
+        "line": 81,
+        "column": 62
+      }
+    },
+    {
+      "context": "(event.target as HTMLElement).dataset.id!",
+      "start": {
+        "offset": 2773,
+        "line": 81,
+        "column": 25
+      },
+      "end": {
+        "offset": 2814,
+        "line": 81,
+        "column": 66
+      }
+    },
+    {
+      "context": "(event.target as HTMLElement).dataset.id",
+      "start": {
+        "offset": 2773,
+        "line": 81,
+        "column": 25
+      },
+      "end": {
+        "offset": 2813,
+        "line": 81,
+        "column": 65
+      }
+    },
+    {
+      "context": "(row.amount ?? 0)",
+      "start": {
+        "offset": 2169,
+        "line": 62,
+        "column": 65
+      },
+      "end": {
+        "offset": 2186,
+        "line": 62,
+        "column": 82
+      }
+    },
+    {
+      "context": "(sum, row) => sum + (row.amount ?? 0)",
+      "start": {
+        "offset": 2149,
+        "line": 62,
+        "column": 45
+      },
+      "end": {
+        "offset": 2186,
+        "line": 62,
+        "column": 82
+      }
+    },
+    {
+      "context": "0",
+      "start": {
+        "offset": 1984,
+        "line": 54,
+        "column": 34
+      },
+      "end": {
+        "offset": 1985,
+        "line": 54,
+        "column": 35
+      }
+    },
+    {
+      "context": "0",
+      "start": {
+        "offset": 2184,
+        "line": 62,
+        "column": 80
+      },
+      "end": {
+        "offset": 2185,
+        "line": 62,
+        "column": 81
+      }
+    },
+    {
+      "context": "0",
+      "start": {
+        "offset": 2188,
+        "line": 62,
+        "column": 84
+      },
+      "end": {
+        "offset": 2189,
+        "line": 62,
+        "column": 85
+      }
+    },
+    {
+      "context": "10",
+      "start": {
+        "offset": 1024,
+        "line": 24,
+        "column": 28
+      },
+      "end": {
+        "offset": 1026,
+        "line": 24,
+        "column": 30
       }
     },
     {
       "context": "@api maxRows?: number = 10;",
       "start": {
-        "offset": 938,
-        "line": 23,
+        "offset": 1000,
+        "line": 24,
         "column": 4
       },
       "end": {
-        "offset": 965,
-        "line": 23,
+        "offset": 1027,
+        "line": 24,
         "column": 31
       }
     },
     {
       "context": "@api recordId!: string;",
       "start": {
-        "offset": 872,
-        "line": 21,
+        "offset": 934,
+        "line": 22,
         "column": 4
       },
       "end": {
-        "offset": 895,
-        "line": 21,
+        "offset": 957,
+        "line": 22,
         "column": 27
       }
     },
     {
       "context": "@api title: string = TITLE_LABEL;",
       "start": {
-        "offset": 900,
-        "line": 22,
+        "offset": 962,
+        "line": 23,
         "column": 4
       },
       "end": {
-        "offset": 933,
-        "line": 22,
+        "offset": 995,
+        "line": 23,
         "column": 37
       }
     },
     {
       "context": "@api",
       "start": {
-        "offset": 2789,
-        "line": 82,
+        "offset": 1000,
+        "line": 24,
         "column": 4
       },
       "end": {
-        "offset": 2793,
-        "line": 82,
+        "offset": 1004,
+        "line": 24,
         "column": 8
       }
     },
     {
       "context": "@api",
       "start": {
-        "offset": 872,
-        "line": 21,
+        "offset": 3049,
+        "line": 90,
         "column": 4
       },
       "end": {
-        "offset": 876,
-        "line": 21,
+        "offset": 3053,
+        "line": 90,
         "column": 8
       }
     },
     {
       "context": "@api",
       "start": {
-        "offset": 900,
+        "offset": 934,
         "line": 22,
         "column": 4
       },
       "end": {
-        "offset": 904,
-        "line": 22,
-        "column": 8
-      }
-    },
-    {
-      "context": "@api",
-      "start": {
         "offset": 938,
+        "line": 22,
+        "column": 8
+      }
+    },
+    {
+      "context": "@api",
+      "start": {
+        "offset": 962,
         "line": 23,
         "column": 4
       },
       "end": {
-        "offset": 942,
+        "offset": 966,
         "line": 23,
         "column": 8
       }
@@ -1116,144 +3138,235 @@
     {
       "context": "@api\n    refresh(): void {\n        this.refs.table?.focus();\n    }",
       "start": {
-        "offset": 2789,
-        "line": 82,
+        "offset": 3049,
+        "line": 90,
         "column": 4
       },
       "end": {
-        "offset": 2855,
-        "line": 85,
+        "offset": 3115,
+        "line": 93,
         "column": 5
       }
     },
     {
       "context": "@track private rows: Row[] = [];",
       "start": {
-        "offset": 970,
-        "line": 24,
+        "offset": 1032,
+        "line": 25,
         "column": 4
       },
       "end": {
-        "offset": 1002,
-        "line": 24,
+        "offset": 1064,
+        "line": 25,
         "column": 36
       }
     },
     {
       "context": "@track",
       "start": {
-        "offset": 970,
-        "line": 24,
+        "offset": 1032,
+        "line": 25,
         "column": 4
       },
       "end": {
-        "offset": 976,
-        "line": 24,
+        "offset": 1038,
+        "line": 25,
         "column": 10
       }
     },
     {
       "context": "@wire(getAccounts, { parentId: '$recordId', limitSize: '$maxRows' })",
       "start": {
-        "offset": 1242,
-        "line": 32,
+        "offset": 1502,
+        "line": 40,
         "column": 4
       },
       "end": {
-        "offset": 1310,
-        "line": 32,
+        "offset": 1570,
+        "line": 40,
         "column": 72
       }
     },
     {
       "context": "@wire(getAccounts, { parentId: '$recordId', limitSize: '$maxRows' })\n    wiredAccounts({ data, error }: { data?: unknown[]; error?: unknown }): void {\n        if (data) {\n            this.rows = toRows(data);\n        } else if (error) {\n            this.error = error;\n        }\n    }",
       "start": {
-        "offset": 1242,
-        "line": 32,
+        "offset": 1502,
+        "line": 40,
         "column": 4
       },
       "end": {
-        "offset": 1526,
-        "line": 39,
+        "offset": 1786,
+        "line": 47,
         "column": 5
       }
     },
     {
       "context": "@wire(getRecord, { recordId: '$recordId', fields: [NAME_FIELD, INDUSTRY_FIELD] })",
       "start": {
-        "offset": 1105,
-        "line": 29,
+        "offset": 1167,
+        "line": 30,
         "column": 4
       },
       "end": {
-        "offset": 1186,
-        "line": 29,
+        "offset": 1248,
+        "line": 30,
         "column": 85
       }
     },
     {
       "context": "@wire(getRecord, { recordId: '$recordId', fields: [NAME_FIELD, INDUSTRY_FIELD] })\n    record?: { data?: unknown; error?: unknown };",
       "start": {
-        "offset": 1105,
-        "line": 29,
+        "offset": 1167,
+        "line": 30,
         "column": 4
       },
       "end": {
-        "offset": 1236,
-        "line": 30,
+        "offset": 1298,
+        "line": 31,
         "column": 49
+      }
+    },
+    {
+      "context": "@wire(getRecord, {\n        recordId: '$recordId',\n        fields: ['Account.Name'],\n        optionalFields: ['Account.Industry'],\n    })",
+      "start": {
+        "offset": 1304,
+        "line": 33,
+        "column": 4
+      },
+      "end": {
+        "offset": 1440,
+        "line": 37,
+        "column": 6
+      }
+    },
+    {
+      "context": "@wire(getRecord, {\n        recordId: '$recordId',\n        fields: ['Account.Name'],\n        optionalFields: ['Account.Industry'],\n    })\n    recordByName?: { data?: unknown; error?: unknown };",
+      "start": {
+        "offset": 1304,
+        "line": 33,
+        "column": 4
+      },
+      "end": {
+        "offset": 1496,
+        "line": 38,
+        "column": 55
       }
     },
     {
       "context": "AccountList",
       "start": {
-        "offset": 812,
-        "line": 20,
+        "offset": 874,
+        "line": 21,
         "column": 21
       },
       "end": {
-        "offset": 823,
-        "line": 20,
+        "offset": 885,
+        "line": 21,
         "column": 32
+      }
+    },
+    {
+      "context": "CustomEvent",
+      "start": {
+        "offset": 2353,
+        "line": 68,
+        "column": 16
+      },
+      "end": {
+        "offset": 2364,
+        "line": 68,
+        "column": 27
+      }
+    },
+    {
+      "context": "CustomEvent",
+      "start": {
+        "offset": 3478,
+        "line": 102,
+        "column": 24
+      },
+      "end": {
+        "offset": 3489,
+        "line": 102,
+        "column": 35
       }
     },
     {
       "context": "CustomEvent<SelectDetail>",
       "start": {
-        "offset": 1964,
-        "line": 57,
+        "offset": 2224,
+        "line": 65,
         "column": 24
       },
       "end": {
-        "offset": 1989,
-        "line": 57,
+        "offset": 2249,
+        "line": 65,
         "column": 49
       }
     },
     {
       "context": "Event",
       "start": {
-        "offset": 2464,
-        "line": 72,
+        "offset": 2724,
+        "line": 80,
         "column": 30
       },
       "end": {
-        "offset": 2469,
-        "line": 72,
+        "offset": 2729,
+        "line": 80,
         "column": 35
+      }
+    },
+    {
+      "context": "HTMLElement",
+      "start": {
+        "offset": 2790,
+        "line": 81,
+        "column": 42
+      },
+      "end": {
+        "offset": 2801,
+        "line": 81,
+        "column": 53
       }
     },
     {
       "context": "INDUSTRY_FIELD",
       "start": {
-        "offset": 464,
-        "line": 8,
+        "offset": 1230,
+        "line": 30,
+        "column": 67
+      },
+      "end": {
+        "offset": 1244,
+        "line": 30,
+        "column": 81
+      }
+    },
+    {
+      "context": "INDUSTRY_FIELD",
+      "start": {
+        "offset": 526,
+        "line": 9,
         "column": 7
       },
       "end": {
-        "offset": 478,
-        "line": 8,
+        "offset": 540,
+        "line": 9,
         "column": 21
+      }
+    },
+    {
+      "context": "Id: this.recordId",
+      "start": {
+        "offset": 3369,
+        "line": 99,
+        "column": 33
+      },
+      "end": {
+        "offset": 3386,
+        "line": 99,
+        "column": 50
       }
     },
     {
@@ -1270,16 +3383,81 @@
       }
     },
     {
+      "context": "LightningElement",
+      "start": {
+        "offset": 910,
+        "line": 21,
+        "column": 57
+      },
+      "end": {
+        "offset": 926,
+        "line": 21,
+        "column": 73
+      }
+    },
+    {
       "context": "NAME_FIELD",
       "start": {
-        "offset": 406,
-        "line": 7,
+        "offset": 1218,
+        "line": 30,
+        "column": 55
+      },
+      "end": {
+        "offset": 1228,
+        "line": 30,
+        "column": 65
+      }
+    },
+    {
+      "context": "NAME_FIELD",
+      "start": {
+        "offset": 1879,
+        "line": 50,
+        "column": 48
+      },
+      "end": {
+        "offset": 1889,
+        "line": 50,
+        "column": 58
+      }
+    },
+    {
+      "context": "NAME_FIELD",
+      "start": {
+        "offset": 468,
+        "line": 8,
         "column": 7
       },
       "end": {
-        "offset": 416,
-        "line": 7,
+        "offset": 478,
+        "line": 8,
         "column": 17
+      }
+    },
+    {
+      "context": "NavigationMixin",
+      "start": {
+        "offset": 2547,
+        "line": 74,
+        "column": 13
+      },
+      "end": {
+        "offset": 2562,
+        "line": 74,
+        "column": 28
+      }
+    },
+    {
+      "context": "NavigationMixin",
+      "start": {
+        "offset": 3732,
+        "line": 111,
+        "column": 13
+      },
+      "end": {
+        "offset": 3747,
+        "line": 111,
+        "column": 28
       }
     },
     {
@@ -1296,146 +3474,315 @@
       }
     },
     {
+      "context": "NavigationMixin",
+      "start": {
+        "offset": 894,
+        "line": 21,
+        "column": 41
+      },
+      "end": {
+        "offset": 909,
+        "line": 21,
+        "column": 56
+      }
+    },
+    {
+      "context": "NavigationMixin(LightningElement)",
+      "start": {
+        "offset": 894,
+        "line": 21,
+        "column": 41
+      },
+      "end": {
+        "offset": 927,
+        "line": 21,
+        "column": 74
+      }
+    },
+    {
+      "context": "NavigationMixin.Navigate",
+      "start": {
+        "offset": 2547,
+        "line": 74,
+        "column": 13
+      },
+      "end": {
+        "offset": 2571,
+        "line": 74,
+        "column": 37
+      }
+    },
+    {
+      "context": "NavigationMixin.Navigate",
+      "start": {
+        "offset": 3732,
+        "line": 111,
+        "column": 13
+      },
+      "end": {
+        "offset": 3756,
+        "line": 111,
+        "column": 37
+      }
+    },
+    {
       "context": "Promise<void>",
       "start": {
-        "offset": 2472,
-        "line": 72,
+        "offset": 2732,
+        "line": 80,
         "column": 38
       },
       "end": {
-        "offset": 2485,
-        "line": 72,
+        "offset": 2745,
+        "line": 80,
         "column": 51
+      }
+    },
+    {
+      "context": "Promise<void>",
+      "start": {
+        "offset": 3211,
+        "line": 96,
+        "column": 29
+      },
+      "end": {
+        "offset": 3224,
+        "line": 96,
+        "column": 42
       }
     },
     {
       "context": "Row",
       "start": {
-        "offset": 601,
-        "line": 10,
+        "offset": 663,
+        "line": 11,
         "column": 14
       },
       "end": {
-        "offset": 604,
-        "line": 10,
+        "offset": 666,
+        "line": 11,
         "column": 17
       }
     },
     {
       "context": "Row[]",
       "start": {
-        "offset": 991,
-        "line": 24,
+        "offset": 1053,
+        "line": 25,
         "column": 25
       },
       "end": {
-        "offset": 996,
-        "line": 24,
+        "offset": 1058,
+        "line": 25,
         "column": 30
       }
     },
     {
       "context": "SelectDetail",
       "start": {
-        "offset": 2105,
-        "line": 60,
+        "offset": 2365,
+        "line": 68,
         "column": 28
       },
       "end": {
-        "offset": 2117,
-        "line": 60,
+        "offset": 2377,
+        "line": 68,
         "column": 40
       }
     },
     {
       "context": "SelectDetail",
       "start": {
-        "offset": 732,
-        "line": 15,
+        "offset": 794,
+        "line": 16,
         "column": 10
       },
       "end": {
-        "offset": 744,
-        "line": 15,
+        "offset": 806,
+        "line": 16,
         "column": 22
       }
     },
     {
       "context": "ShowToastEvent",
       "start": {
-        "offset": 189,
+        "offset": 203,
         "line": 4,
         "column": 9
       },
       "end": {
-        "offset": 203,
+        "offset": 217,
         "line": 4,
         "column": 23
       }
     },
     {
+      "context": "ShowToastEvent",
+      "start": {
+        "offset": 2912,
+        "line": 84,
+        "column": 35
+      },
+      "end": {
+        "offset": 2926,
+        "line": 84,
+        "column": 49
+      }
+    },
+    {
       "context": "SortDirection",
       "start": {
-        "offset": 1056,
-        "line": 26,
+        "offset": 1118,
+        "line": 27,
         "column": 19
       },
       "end": {
-        "offset": 1069,
-        "line": 26,
+        "offset": 1131,
+        "line": 27,
         "column": 32
       }
     },
     {
       "context": "SortDirection",
       "start": {
-        "offset": 606,
-        "line": 10,
+        "offset": 668,
+        "line": 11,
         "column": 19
       },
       "end": {
-        "offset": 619,
-        "line": 10,
+        "offset": 681,
+        "line": 11,
         "column": 32
       }
     },
     {
       "context": "TITLE_LABEL",
       "start": {
-        "offset": 530,
-        "line": 9,
+        "offset": 592,
+        "line": 10,
         "column": 7
       },
       "end": {
-        "offset": 541,
-        "line": 9,
+        "offset": 603,
+        "line": 10,
         "column": 18
+      }
+    },
+    {
+      "context": "TITLE_LABEL",
+      "start": {
+        "offset": 983,
+        "line": 23,
+        "column": 25
+      },
+      "end": {
+        "offset": 994,
+        "line": 23,
+        "column": 36
       }
     },
     {
       "context": "ViewMode",
       "start": {
-        "offset": 1017,
-        "line": 25,
+        "offset": 1079,
+        "line": 26,
         "column": 14
       },
       "end": {
-        "offset": 1025,
-        "line": 25,
+        "offset": 1087,
+        "line": 26,
         "column": 22
       }
     },
     {
       "context": "ViewMode",
       "start": {
-        "offset": 692,
-        "line": 13,
+        "offset": 754,
+        "line": 14,
         "column": 5
       },
       "end": {
-        "offset": 700,
-        "line": 13,
+        "offset": 762,
+        "line": 14,
         "column": 13
+      }
+    },
+    {
+      "context": "['Account.Industry']",
+      "start": {
+        "offset": 1412,
+        "line": 36,
+        "column": 24
+      },
+      "end": {
+        "offset": 1432,
+        "line": 36,
+        "column": 44
+      }
+    },
+    {
+      "context": "['Account.Name']",
+      "start": {
+        "offset": 1370,
+        "line": 35,
+        "column": 16
+      },
+      "end": {
+        "offset": 1386,
+        "line": 35,
+        "column": 32
+      }
+    },
+    {
+      "context": "[NAME_FIELD, INDUSTRY_FIELD]",
+      "start": {
+        "offset": 1217,
+        "line": 30,
+        "column": 54
+      },
+      "end": {
+        "offset": 1245,
+        "line": 30,
+        "column": 82
+      }
+    },
+    {
+      "context": "[]",
+      "start": {
+        "offset": 1061,
+        "line": 25,
+        "column": 33
+      },
+      "end": {
+        "offset": 1063,
+        "line": 25,
+        "column": 35
+      }
+    },
+    {
+      "context": "actionName: 'list'",
+      "start": {
+        "offset": 3854,
+        "line": 113,
+        "column": 52
+      },
+      "end": {
+        "offset": 3872,
+        "line": 113,
+        "column": 70
+      }
+    },
+    {
+      "context": "actionName: 'view'",
+      "start": {
+        "offset": 2653,
+        "line": 76,
+        "column": 36
+      },
+      "end": {
+        "offset": 2671,
+        "line": 76,
+        "column": 54
       }
     },
     {
@@ -1454,221 +3801,767 @@
     {
       "context": "async handleDelete(event: Event): Promise<void> {\n        const recordId = (event.target as HTMLElement).dataset.id!;\n        try {\n            await deleteAccount({ recordId });\n            this.dispatchEvent(new ShowToastEvent({ title: '削除しました', variant: 'success' }));\n        } catch (error) {\n            this.error = error;\n        }\n    }",
       "start": {
-        "offset": 2438,
-        "line": 72,
+        "offset": 2698,
+        "line": 80,
         "column": 4
       },
       "end": {
-        "offset": 2783,
-        "line": 80,
+        "offset": 3043,
+        "line": 88,
         "column": 5
       }
     },
     {
+      "context": "attributes: { objectApiName: 'Account', actionName: 'list' }",
+      "start": {
+        "offset": 3814,
+        "line": 113,
+        "column": 12
+      },
+      "end": {
+        "offset": 3874,
+        "line": 113,
+        "column": 72
+      }
+    },
+    {
+      "context": "attributes: { recordId, actionName: 'view' }",
+      "start": {
+        "offset": 2629,
+        "line": 76,
+        "column": 12
+      },
+      "end": {
+        "offset": 2673,
+        "line": 76,
+        "column": 56
+      }
+    },
+    {
+      "context": "await deleteAccount({ recordId })",
+      "start": {
+        "offset": 2842,
+        "line": 83,
+        "column": 12
+      },
+      "end": {
+        "offset": 2875,
+        "line": 83,
+        "column": 45
+      }
+    },
+    {
+      "context": "await deleteAccount({ recordId });",
+      "start": {
+        "offset": 2842,
+        "line": 83,
+        "column": 12
+      },
+      "end": {
+        "offset": 2876,
+        "line": 83,
+        "column": 46
+      }
+    },
+    {
+      "context": "await refreshApex(this.record)",
+      "start": {
+        "offset": 3304,
+        "line": 98,
+        "column": 8
+      },
+      "end": {
+        "offset": 3334,
+        "line": 98,
+        "column": 38
+      }
+    },
+    {
+      "context": "await refreshApex(this.record);",
+      "start": {
+        "offset": 3304,
+        "line": 98,
+        "column": 8
+      },
+      "end": {
+        "offset": 3335,
+        "line": 98,
+        "column": 39
+      }
+    },
+    {
       "context": "boolean",
       "start": {
-        "offset": 1680,
-        "line": 45,
+        "offset": 1940,
+        "line": 53,
         "column": 19
       },
       "end": {
-        "offset": 1687,
-        "line": 45,
+        "offset": 1947,
+        "line": 53,
         "column": 26
       }
     },
     {
       "context": "boolean",
       "start": {
-        "offset": 1753,
-        "line": 49,
+        "offset": 2013,
+        "line": 57,
         "column": 19
       },
       "end": {
-        "offset": 1760,
-        "line": 49,
+        "offset": 2020,
+        "line": 57,
         "column": 26
       }
     },
     {
-      "context": "class AccountList extends NavigationMixin(LightningElement) {\n    @api recordId!: string;\n    @api title: string = TITLE_LABEL;\n    @api maxRows?: number = 10;\n    @track private rows: Row[] = [];\n    viewMode: ViewMode = 'table';\n    sortDirection: SortDirection = 'asc';\n    error?: unknown;\n\n    @wire(getRecord, { recordId: '$recordId', fields: [NAME_FIELD, INDUSTRY_FIELD] })\n    record?: { data?: unknown; error?: unknown };\n\n    @wire(getAccounts, { parentId: '$recordId', limitSize: '$maxRows' })\n    wiredAccounts({ data, error }: { data?: unknown[]; error?: unknown }): void {\n        if (data) {\n            this.rows = toRows(data);\n        } else if (error) {\n            this.error = error;\n        }\n    }\n\n    get parentName(): string | undefined {\n        return getFieldValue(this.record?.data, NAME_FIELD) as string | undefined;\n    }\n\n    get hasRows(): boolean {\n        return this.rows.length > 0;\n    }\n\n    get isTable(): boolean {\n        return this.viewMode === 'table';\n    }\n\n    get totalAmount(): string {\n        return formatAmount(this.rows.reduce((sum, row) => sum + (row.amount ?? 0), 0));\n    }\n\n    handleSelect(event: CustomEvent<SelectDetail>): void {\n        const { recordId, index } = event.detail;\n        this.dispatchEvent(\n            new CustomEvent<SelectDetail>('accountselect', {\n                detail: { recordId, index },\n                bubbles: true,\n                composed: false,\n            }),\n        );\n        this[NavigationMixin.Navigate]({\n            type: 'standard__recordPage',\n            attributes: { recordId, actionName: 'view' },\n        });\n    }\n\n    async handleDelete(event: Event): Promise<void> {\n        const recordId = (event.target as HTMLElement).dataset.id!;\n        try {\n            await deleteAccount({ recordId });\n            this.dispatchEvent(new ShowToastEvent({ title: '削除しました', variant: 'success' }));\n        } catch (error) {\n            this.error = error;\n        }\n    }\n\n    @api\n    refresh(): void {\n        this.refs.table?.focus();\n    }\n}",
+      "context": "bubbles: true",
       "start": {
-        "offset": 806,
-        "line": 20,
+        "offset": 2459,
+        "line": 70,
+        "column": 16
+      },
+      "end": {
+        "offset": 2472,
+        "line": 70,
+        "column": 29
+      }
+    },
+    {
+      "context": "class AccountList extends NavigationMixin(LightningElement) {\n    @api recordId!: string;\n    @api title: string = TITLE_LABEL;\n    @api maxRows?: number = 10;\n    @track private rows: Row[] = [];\n    viewMode: ViewMode = 'table';\n    sortDirection: SortDirection = 'asc';\n    error?: unknown;\n\n    @wire(getRecord, { recordId: '$recordId', fields: [NAME_FIELD, INDUSTRY_FIELD] })\n    record?: { data?: unknown; error?: unknown };\n\n    @wire(getRecord, {\n        recordId: '$recordId',\n        fields: ['Account.Name'],\n        optionalFields: ['Account.Industry'],\n    })\n    recordByName?: { data?: unknown; error?: unknown };\n\n    @wire(getAccounts, { parentId: '$recordId', limitSize: '$maxRows' })\n    wiredAccounts({ data, error }: { data?: unknown[]; error?: unknown }): void {\n        if (data) {\n            this.rows = toRows(data);\n        } else if (error) {\n            this.error = error;\n        }\n    }\n\n    get parentName(): string | undefined {\n        return getFieldValue(this.record?.data, NAME_FIELD) as string | undefined;\n    }\n\n    get hasRows(): boolean {\n        return this.rows.length > 0;\n    }\n\n    get isTable(): boolean {\n        return this.viewMode === 'table';\n    }\n\n    get totalAmount(): string {\n        return formatAmount(this.rows.reduce((sum, row) => sum + (row.amount ?? 0), 0));\n    }\n\n    handleSelect(event: CustomEvent<SelectDetail>): void {\n        const { recordId, index } = event.detail;\n        this.dispatchEvent(\n            new CustomEvent<SelectDetail>('accountselect', {\n                detail: { recordId, index },\n                bubbles: true,\n                composed: false,\n            }),\n        );\n        this[NavigationMixin.Navigate]({\n            type: 'standard__recordPage',\n            attributes: { recordId, actionName: 'view' },\n        });\n    }\n\n    async handleDelete(event: Event): Promise<void> {\n        const recordId = (event.target as HTMLElement).dataset.id!;\n        try {\n            await deleteAccount({ recordId });\n            this.dispatchEvent(new ShowToastEvent({ title: '削除しました', variant: 'success' }));\n        } catch (error) {\n            this.error = error;\n        }\n    }\n\n    @api\n    refresh(): void {\n        this.refs.table?.focus();\n    }\n\n    /** 関数を初期値にしたフィールド (ハンドラー)。本体の呼び出し・イベントはメソッドと同じく JSON に入る */\n    handleReload = async (): Promise<void> => {\n        const row = this.template.querySelector('c-account-row');\n        await refreshApex(this.record);\n        updateRecord({ fields: { Id: this.recordId } })\n            .then(() => {\n                this.dispatchEvent(\n                    new CustomEvent('reloaded', { detail: { count: this.rows.length, row } }),\n                );\n            })\n            .catch((error: unknown) => {\n                this.error = error;\n            });\n    };\n\n    handleOpenList = (): void => {\n        this[NavigationMixin.Navigate]({\n            type: 'standard__objectPage',\n            attributes: { objectApiName: 'Account', actionName: 'list' },\n            state: { filterName: 'Recent' },\n        });\n    };\n\n    connectedCallback(): void {\n        window.addEventListener('resize', this.handleReload);\n    }\n}",
+      "start": {
+        "offset": 868,
+        "line": 21,
         "column": 15
       },
       "end": {
-        "offset": 2857,
-        "line": 86,
+        "offset": 4042,
+        "line": 121,
         "column": 1
+      }
+    },
+    {
+      "context": "composed: false",
+      "start": {
+        "offset": 2490,
+        "line": 71,
+        "column": 16
+      },
+      "end": {
+        "offset": 2505,
+        "line": 71,
+        "column": 31
+      }
+    },
+    {
+      "context": "connectedCallback",
+      "start": {
+        "offset": 3945,
+        "line": 118,
+        "column": 4
+      },
+      "end": {
+        "offset": 3962,
+        "line": 118,
+        "column": 21
+      }
+    },
+    {
+      "context": "connectedCallback(): void {\n        window.addEventListener('resize', this.handleReload);\n    }",
+      "start": {
+        "offset": 3945,
+        "line": 118,
+        "column": 4
+      },
+      "end": {
+        "offset": 4040,
+        "line": 120,
+        "column": 5
+      }
+    },
+    {
+      "context": "const recordId = (event.target as HTMLElement).dataset.id!;",
+      "start": {
+        "offset": 2756,
+        "line": 81,
+        "column": 8
+      },
+      "end": {
+        "offset": 2815,
+        "line": 81,
+        "column": 67
+      }
+    },
+    {
+      "context": "const row = this.template.querySelector('c-account-row');",
+      "start": {
+        "offset": 3238,
+        "line": 97,
+        "column": 8
+      },
+      "end": {
+        "offset": 3295,
+        "line": 97,
+        "column": 65
+      }
+    },
+    {
+      "context": "const { recordId, index } = event.detail;",
+      "start": {
+        "offset": 2267,
+        "line": 66,
+        "column": 8
+      },
+      "end": {
+        "offset": 2308,
+        "line": 66,
+        "column": 49
+      }
+    },
+    {
+      "context": "count: this.rows.length",
+      "start": {
+        "offset": 3514,
+        "line": 102,
+        "column": 60
+      },
+      "end": {
+        "offset": 3537,
+        "line": 102,
+        "column": 83
+      }
+    },
+    {
+      "context": "data",
+      "start": {
+        "offset": 1591,
+        "line": 41,
+        "column": 20
+      },
+      "end": {
+        "offset": 1595,
+        "line": 41,
+        "column": 24
+      }
+    },
+    {
+      "context": "data",
+      "start": {
+        "offset": 1591,
+        "line": 41,
+        "column": 20
+      },
+      "end": {
+        "offset": 1595,
+        "line": 41,
+        "column": 24
+      }
+    },
+    {
+      "context": "data",
+      "start": {
+        "offset": 1665,
+        "line": 42,
+        "column": 12
+      },
+      "end": {
+        "offset": 1669,
+        "line": 42,
+        "column": 16
+      }
+    },
+    {
+      "context": "data",
+      "start": {
+        "offset": 1704,
+        "line": 43,
+        "column": 31
+      },
+      "end": {
+        "offset": 1708,
+        "line": 43,
+        "column": 35
       }
     },
     {
       "context": "deleteAccount",
       "start": {
-        "offset": 328,
-        "line": 6,
+        "offset": 2848,
+        "line": 83,
+        "column": 18
+      },
+      "end": {
+        "offset": 2861,
+        "line": 83,
+        "column": 31
+      }
+    },
+    {
+      "context": "deleteAccount",
+      "start": {
+        "offset": 390,
+        "line": 7,
         "column": 7
       },
       "end": {
-        "offset": 341,
-        "line": 6,
+        "offset": 403,
+        "line": 7,
         "column": 20
       }
     },
     {
       "context": "deleteAccount({ recordId })",
       "start": {
-        "offset": 2588,
-        "line": 75,
+        "offset": 2848,
+        "line": 83,
         "column": 18
       },
       "end": {
-        "offset": 2615,
-        "line": 75,
+        "offset": 2875,
+        "line": 83,
         "column": 45
+      }
+    },
+    {
+      "context": "detail: { count: this.rows.length, row }",
+      "start": {
+        "offset": 3504,
+        "line": 102,
+        "column": 50
+      },
+      "end": {
+        "offset": 3544,
+        "line": 102,
+        "column": 90
+      }
+    },
+    {
+      "context": "detail: { recordId, index }",
+      "start": {
+        "offset": 2414,
+        "line": 69,
+        "column": 16
+      },
+      "end": {
+        "offset": 2441,
+        "line": 69,
+        "column": 43
       }
     },
     {
       "context": "error",
       "start": {
-        "offset": 1083,
-        "line": 27,
+        "offset": 1145,
+        "line": 28,
         "column": 4
       },
       "end": {
-        "offset": 1088,
-        "line": 27,
+        "offset": 1150,
+        "line": 28,
         "column": 9
+      }
+    },
+    {
+      "context": "error",
+      "start": {
+        "offset": 1597,
+        "line": 41,
+        "column": 26
+      },
+      "end": {
+        "offset": 1602,
+        "line": 41,
+        "column": 31
+      }
+    },
+    {
+      "context": "error",
+      "start": {
+        "offset": 1597,
+        "line": 41,
+        "column": 26
+      },
+      "end": {
+        "offset": 1602,
+        "line": 41,
+        "column": 31
+      }
+    },
+    {
+      "context": "error",
+      "start": {
+        "offset": 1730,
+        "line": 44,
+        "column": 19
+      },
+      "end": {
+        "offset": 1735,
+        "line": 44,
+        "column": 24
+      }
+    },
+    {
+      "context": "error",
+      "start": {
+        "offset": 1764,
+        "line": 45,
+        "column": 25
+      },
+      "end": {
+        "offset": 1769,
+        "line": 45,
+        "column": 30
+      }
+    },
+    {
+      "context": "error",
+      "start": {
+        "offset": 2987,
+        "line": 85,
+        "column": 17
+      },
+      "end": {
+        "offset": 2992,
+        "line": 85,
+        "column": 22
+      }
+    },
+    {
+      "context": "error",
+      "start": {
+        "offset": 3021,
+        "line": 86,
+        "column": 25
+      },
+      "end": {
+        "offset": 3026,
+        "line": 86,
+        "column": 30
+      }
+    },
+    {
+      "context": "error",
+      "start": {
+        "offset": 3653,
+        "line": 106,
+        "column": 29
+      },
+      "end": {
+        "offset": 3658,
+        "line": 106,
+        "column": 34
+      }
+    },
+    {
+      "context": "error: unknown",
+      "start": {
+        "offset": 3603,
+        "line": 105,
+        "column": 20
+      },
+      "end": {
+        "offset": 3617,
+        "line": 105,
+        "column": 34
       }
     },
     {
       "context": "error?: unknown;",
       "start": {
-        "offset": 1083,
-        "line": 27,
+        "offset": 1145,
+        "line": 28,
         "column": 4
       },
       "end": {
-        "offset": 1099,
-        "line": 27,
+        "offset": 1161,
+        "line": 28,
         "column": 20
+      }
+    },
+    {
+      "context": "event",
+      "start": {
+        "offset": 2295,
+        "line": 66,
+        "column": 36
+      },
+      "end": {
+        "offset": 2300,
+        "line": 66,
+        "column": 41
+      }
+    },
+    {
+      "context": "event",
+      "start": {
+        "offset": 2774,
+        "line": 81,
+        "column": 26
+      },
+      "end": {
+        "offset": 2779,
+        "line": 81,
+        "column": 31
+      }
+    },
+    {
+      "context": "event.detail",
+      "start": {
+        "offset": 2295,
+        "line": 66,
+        "column": 36
+      },
+      "end": {
+        "offset": 2307,
+        "line": 66,
+        "column": 48
+      }
+    },
+    {
+      "context": "event.target as HTMLElement",
+      "start": {
+        "offset": 2774,
+        "line": 81,
+        "column": 26
+      },
+      "end": {
+        "offset": 2801,
+        "line": 81,
+        "column": 53
+      }
+    },
+    {
+      "context": "event.target",
+      "start": {
+        "offset": 2774,
+        "line": 81,
+        "column": 26
+      },
+      "end": {
+        "offset": 2786,
+        "line": 81,
+        "column": 38
       }
     },
     {
       "context": "event: CustomEvent<SelectDetail>",
       "start": {
-        "offset": 1957,
-        "line": 57,
+        "offset": 2217,
+        "line": 65,
         "column": 17
       },
       "end": {
-        "offset": 1989,
-        "line": 57,
+        "offset": 2249,
+        "line": 65,
         "column": 49
       }
     },
     {
       "context": "event: Event",
       "start": {
-        "offset": 2457,
-        "line": 72,
+        "offset": 2717,
+        "line": 80,
         "column": 23
       },
       "end": {
-        "offset": 2469,
-        "line": 72,
+        "offset": 2729,
+        "line": 80,
         "column": 35
+      }
+    },
+    {
+      "context": "export default class AccountList extends NavigationMixin(LightningElement) {\n    @api recordId!: string;\n    @api title: string = TITLE_LABEL;\n    @api maxRows?: number = 10;\n    @track private rows: Row[] = [];\n    viewMode: ViewMode = 'table';\n    sortDirection: SortDirection = 'asc';\n    error?: unknown;\n\n    @wire(getRecord, { recordId: '$recordId', fields: [NAME_FIELD, INDUSTRY_FIELD] })\n    record?: { data?: unknown; error?: unknown };\n\n    @wire(getRecord, {\n        recordId: '$recordId',\n        fields: ['Account.Name'],\n        optionalFields: ['Account.Industry'],\n    })\n    recordByName?: { data?: unknown; error?: unknown };\n\n    @wire(getAccounts, { parentId: '$recordId', limitSize: '$maxRows' })\n    wiredAccounts({ data, error }: { data?: unknown[]; error?: unknown }): void {\n        if (data) {\n            this.rows = toRows(data);\n        } else if (error) {\n            this.error = error;\n        }\n    }\n\n    get parentName(): string | undefined {\n        return getFieldValue(this.record?.data, NAME_FIELD) as string | undefined;\n    }\n\n    get hasRows(): boolean {\n        return this.rows.length > 0;\n    }\n\n    get isTable(): boolean {\n        return this.viewMode === 'table';\n    }\n\n    get totalAmount(): string {\n        return formatAmount(this.rows.reduce((sum, row) => sum + (row.amount ?? 0), 0));\n    }\n\n    handleSelect(event: CustomEvent<SelectDetail>): void {\n        const { recordId, index } = event.detail;\n        this.dispatchEvent(\n            new CustomEvent<SelectDetail>('accountselect', {\n                detail: { recordId, index },\n                bubbles: true,\n                composed: false,\n            }),\n        );\n        this[NavigationMixin.Navigate]({\n            type: 'standard__recordPage',\n            attributes: { recordId, actionName: 'view' },\n        });\n    }\n\n    async handleDelete(event: Event): Promise<void> {\n        const recordId = (event.target as HTMLElement).dataset.id!;\n        try {\n            await deleteAccount({ recordId });\n            this.dispatchEvent(new ShowToastEvent({ title: '削除しました', variant: 'success' }));\n        } catch (error) {\n            this.error = error;\n        }\n    }\n\n    @api\n    refresh(): void {\n        this.refs.table?.focus();\n    }\n\n    /** 関数を初期値にしたフィールド (ハンドラー)。本体の呼び出し・イベントはメソッドと同じく JSON に入る */\n    handleReload = async (): Promise<void> => {\n        const row = this.template.querySelector('c-account-row');\n        await refreshApex(this.record);\n        updateRecord({ fields: { Id: this.recordId } })\n            .then(() => {\n                this.dispatchEvent(\n                    new CustomEvent('reloaded', { detail: { count: this.rows.length, row } }),\n                );\n            })\n            .catch((error: unknown) => {\n                this.error = error;\n            });\n    };\n\n    handleOpenList = (): void => {\n        this[NavigationMixin.Navigate]({\n            type: 'standard__objectPage',\n            attributes: { objectApiName: 'Account', actionName: 'list' },\n            state: { filterName: 'Recent' },\n        });\n    };\n\n    connectedCallback(): void {\n        window.addEventListener('resize', this.handleReload);\n    }\n}",
+      "start": {
+        "offset": 853,
+        "line": 21,
+        "column": 0
+      },
+      "end": {
+        "offset": 4042,
+        "line": 121,
+        "column": 1
+      }
+    },
+    {
+      "context": "false",
+      "start": {
+        "offset": 2500,
+        "line": 71,
+        "column": 26
+      },
+      "end": {
+        "offset": 2505,
+        "line": 71,
+        "column": 31
+      }
+    },
+    {
+      "context": "fields: ['Account.Name']",
+      "start": {
+        "offset": 1362,
+        "line": 35,
+        "column": 8
+      },
+      "end": {
+        "offset": 1386,
+        "line": 35,
+        "column": 32
       }
     },
     {
       "context": "fields: [NAME_FIELD, INDUSTRY_FIELD]",
       "start": {
-        "offset": 1147,
-        "line": 29,
+        "offset": 1209,
+        "line": 30,
         "column": 46
       },
       "end": {
-        "offset": 1183,
-        "line": 29,
+        "offset": 1245,
+        "line": 30,
         "column": 82
+      }
+    },
+    {
+      "context": "fields: { Id: this.recordId }",
+      "start": {
+        "offset": 3359,
+        "line": 99,
+        "column": 23
+      },
+      "end": {
+        "offset": 3388,
+        "line": 99,
+        "column": 52
+      }
+    },
+    {
+      "context": "filterName: 'Recent'",
+      "start": {
+        "offset": 3897,
+        "line": 114,
+        "column": 21
+      },
+      "end": {
+        "offset": 3917,
+        "line": 114,
+        "column": 41
       }
     },
     {
       "context": "formatAmount",
       "start": {
-        "offset": 647,
-        "line": 11,
+        "offset": 2119,
+        "line": 62,
+        "column": 15
+      },
+      "end": {
+        "offset": 2131,
+        "line": 62,
+        "column": 27
+      }
+    },
+    {
+      "context": "formatAmount",
+      "start": {
+        "offset": 709,
+        "line": 12,
         "column": 9
       },
       "end": {
-        "offset": 659,
-        "line": 11,
+        "offset": 721,
+        "line": 12,
         "column": 21
+      }
+    },
+    {
+      "context": "formatAmount(this.rows.reduce((sum, row) => sum + (row.amount ?? 0), 0))",
+      "start": {
+        "offset": 2119,
+        "line": 62,
+        "column": 15
+      },
+      "end": {
+        "offset": 2191,
+        "line": 62,
+        "column": 87
       }
     },
     {
       "context": "get hasRows(): boolean {\n        return this.rows.length > 0;\n    }",
       "start": {
-        "offset": 1665,
-        "line": 45,
+        "offset": 1925,
+        "line": 53,
         "column": 4
       },
       "end": {
-        "offset": 1732,
-        "line": 47,
+        "offset": 1992,
+        "line": 55,
         "column": 5
       }
     },
     {
       "context": "get isTable(): boolean {\n        return this.viewMode === 'table';\n    }",
       "start": {
-        "offset": 1738,
-        "line": 49,
+        "offset": 1998,
+        "line": 57,
         "column": 4
       },
       "end": {
-        "offset": 1810,
-        "line": 51,
+        "offset": 2070,
+        "line": 59,
         "column": 5
       }
     },
     {
       "context": "get parentName(): string | undefined {\n        return getFieldValue(this.record?.data, NAME_FIELD) as string | undefined;\n    }",
       "start": {
-        "offset": 1532,
-        "line": 41,
+        "offset": 1792,
+        "line": 49,
         "column": 4
       },
       "end": {
-        "offset": 1659,
-        "line": 43,
+        "offset": 1919,
+        "line": 51,
         "column": 5
       }
     },
     {
       "context": "get totalAmount(): string {\n        return formatAmount(this.rows.reduce((sum, row) => sum + (row.amount ?? 0), 0));\n    }",
       "start": {
-        "offset": 1816,
-        "line": 53,
+        "offset": 2076,
+        "line": 61,
         "column": 4
       },
       "end": {
-        "offset": 1938,
-        "line": 55,
+        "offset": 2198,
+        "line": 63,
         "column": 5
       }
     },
     {
       "context": "getAccounts",
       "start": {
-        "offset": 254,
-        "line": 5,
+        "offset": 1508,
+        "line": 40,
+        "column": 10
+      },
+      "end": {
+        "offset": 1519,
+        "line": 40,
+        "column": 21
+      }
+    },
+    {
+      "context": "getAccounts",
+      "start": {
+        "offset": 316,
+        "line": 6,
         "column": 7
       },
       "end": {
-        "offset": 265,
-        "line": 5,
+        "offset": 327,
+        "line": 6,
         "column": 18
       }
     },
@@ -1686,6 +4579,58 @@
       }
     },
     {
+      "context": "getFieldValue",
+      "start": {
+        "offset": 1846,
+        "line": 50,
+        "column": 15
+      },
+      "end": {
+        "offset": 1859,
+        "line": 50,
+        "column": 28
+      }
+    },
+    {
+      "context": "getFieldValue(this.record?.data, NAME_FIELD) as string | undefined",
+      "start": {
+        "offset": 1846,
+        "line": 50,
+        "column": 15
+      },
+      "end": {
+        "offset": 1912,
+        "line": 50,
+        "column": 81
+      }
+    },
+    {
+      "context": "getFieldValue(this.record?.data, NAME_FIELD)",
+      "start": {
+        "offset": 1846,
+        "line": 50,
+        "column": 15
+      },
+      "end": {
+        "offset": 1890,
+        "line": 50,
+        "column": 59
+      }
+    },
+    {
+      "context": "getRecord",
+      "start": {
+        "offset": 1173,
+        "line": 30,
+        "column": 10
+      },
+      "end": {
+        "offset": 1182,
+        "line": 30,
+        "column": 19
+      }
+    },
+    {
       "context": "getRecord",
       "start": {
         "offset": 123,
@@ -1699,132 +4644,210 @@
       }
     },
     {
-      "context": "handleDelete",
+      "context": "getRecord",
       "start": {
-        "offset": 2444,
-        "line": 72,
+        "offset": 1310,
+        "line": 33,
         "column": 10
       },
       "end": {
-        "offset": 2456,
-        "line": 72,
+        "offset": 1319,
+        "line": 33,
+        "column": 19
+      }
+    },
+    {
+      "context": "handleDelete",
+      "start": {
+        "offset": 2704,
+        "line": 80,
+        "column": 10
+      },
+      "end": {
+        "offset": 2716,
+        "line": 80,
         "column": 22
+      }
+    },
+    {
+      "context": "handleOpenList = (): void => {\n        this[NavigationMixin.Navigate]({\n            type: 'standard__objectPage',\n            attributes: { objectApiName: 'Account', actionName: 'list' },\n            state: { filterName: 'Recent' },\n        });\n    };",
+      "start": {
+        "offset": 3688,
+        "line": 110,
+        "column": 4
+      },
+      "end": {
+        "offset": 3939,
+        "line": 116,
+        "column": 6
+      }
+    },
+    {
+      "context": "handleOpenList",
+      "start": {
+        "offset": 3688,
+        "line": 110,
+        "column": 4
+      },
+      "end": {
+        "offset": 3702,
+        "line": 110,
+        "column": 18
+      }
+    },
+    {
+      "context": "handleReload = async (): Promise<void> => {\n        const row = this.template.querySelector('c-account-row');\n        await refreshApex(this.record);\n        updateRecord({ fields: { Id: this.recordId } })\n            .then(() => {\n                this.dispatchEvent(\n                    new CustomEvent('reloaded', { detail: { count: this.rows.length, row } }),\n                );\n            })\n            .catch((error: unknown) => {\n                this.error = error;\n            });\n    };",
+      "start": {
+        "offset": 3186,
+        "line": 96,
+        "column": 4
+      },
+      "end": {
+        "offset": 3682,
+        "line": 108,
+        "column": 6
+      }
+    },
+    {
+      "context": "handleReload",
+      "start": {
+        "offset": 3186,
+        "line": 96,
+        "column": 4
+      },
+      "end": {
+        "offset": 3198,
+        "line": 96,
+        "column": 16
       }
     },
     {
       "context": "handleSelect",
       "start": {
-        "offset": 1944,
-        "line": 57,
+        "offset": 2204,
+        "line": 65,
         "column": 4
       },
       "end": {
-        "offset": 1956,
-        "line": 57,
+        "offset": 2216,
+        "line": 65,
         "column": 16
       }
     },
     {
       "context": "handleSelect(event: CustomEvent<SelectDetail>): void {\n        const { recordId, index } = event.detail;\n        this.dispatchEvent(\n            new CustomEvent<SelectDetail>('accountselect', {\n                detail: { recordId, index },\n                bubbles: true,\n                composed: false,\n            }),\n        );\n        this[NavigationMixin.Navigate]({\n            type: 'standard__recordPage',\n            attributes: { recordId, actionName: 'view' },\n        });\n    }",
       "start": {
-        "offset": 1944,
-        "line": 57,
+        "offset": 2204,
+        "line": 65,
         "column": 4
       },
       "end": {
-        "offset": 2432,
-        "line": 70,
+        "offset": 2692,
+        "line": 78,
         "column": 5
       }
     },
     {
       "context": "hasRows",
       "start": {
-        "offset": 1669,
-        "line": 45,
+        "offset": 1929,
+        "line": 53,
         "column": 8
       },
       "end": {
-        "offset": 1676,
-        "line": 45,
+        "offset": 1936,
+        "line": 53,
         "column": 15
+      }
+    },
+    {
+      "context": "if (data) {\n            this.rows = toRows(data);\n        } else if (error) {\n            this.error = error;\n        }",
+      "start": {
+        "offset": 1661,
+        "line": 42,
+        "column": 8
+      },
+      "end": {
+        "offset": 1780,
+        "line": 46,
+        "column": 9
       }
     },
     {
       "context": "import INDUSTRY_FIELD from '@salesforce/schema/Account.Industry';",
       "start": {
-        "offset": 457,
-        "line": 8,
+        "offset": 519,
+        "line": 9,
         "column": 0
       },
       "end": {
-        "offset": 522,
-        "line": 8,
+        "offset": 584,
+        "line": 9,
         "column": 65
       }
     },
     {
       "context": "import NAME_FIELD from '@salesforce/schema/Account.Name';",
       "start": {
-        "offset": 399,
-        "line": 7,
+        "offset": 461,
+        "line": 8,
         "column": 0
       },
       "end": {
-        "offset": 456,
-        "line": 7,
+        "offset": 518,
+        "line": 8,
         "column": 57
       }
     },
     {
       "context": "import TITLE_LABEL from '@salesforce/label/c.AccountListTitle';",
       "start": {
-        "offset": 523,
-        "line": 9,
+        "offset": 585,
+        "line": 10,
         "column": 0
       },
       "end": {
-        "offset": 586,
-        "line": 9,
+        "offset": 648,
+        "line": 10,
         "column": 63
       }
     },
     {
       "context": "import deleteAccount from '@salesforce/apex/AccountController.deleteAccount';",
       "start": {
-        "offset": 321,
-        "line": 6,
+        "offset": 383,
+        "line": 7,
         "column": 0
       },
       "end": {
-        "offset": 398,
-        "line": 6,
+        "offset": 460,
+        "line": 7,
         "column": 77
       }
     },
     {
       "context": "import getAccounts from '@salesforce/apex/AccountController.getAccounts';",
       "start": {
-        "offset": 247,
-        "line": 5,
+        "offset": 309,
+        "line": 6,
         "column": 0
       },
       "end": {
-        "offset": 320,
-        "line": 5,
+        "offset": 382,
+        "line": 6,
         "column": 73
       }
     },
     {
       "context": "import type { Row, SortDirection } from 'c/utils';",
       "start": {
-        "offset": 587,
-        "line": 10,
+        "offset": 649,
+        "line": 11,
         "column": 0
       },
       "end": {
-        "offset": 637,
-        "line": 10,
+        "offset": 699,
+        "line": 11,
         "column": 50
       }
     },
@@ -1857,12 +4880,12 @@
     {
       "context": "import { ShowToastEvent } from 'lightning/platformShowToastEvent';",
       "start": {
-        "offset": 180,
+        "offset": 194,
         "line": 4,
         "column": 0
       },
       "end": {
-        "offset": 246,
+        "offset": 260,
         "line": 4,
         "column": 66
       }
@@ -1870,364 +4893,1677 @@
     {
       "context": "import { formatAmount, toRows } from 'c/utils';",
       "start": {
-        "offset": 638,
-        "line": 11,
+        "offset": 700,
+        "line": 12,
         "column": 0
       },
       "end": {
-        "offset": 685,
-        "line": 11,
+        "offset": 747,
+        "line": 12,
         "column": 47
       }
     },
     {
-      "context": "import { getRecord, getFieldValue } from 'lightning/uiRecordApi';",
+      "context": "import { getRecord, getFieldValue, updateRecord } from 'lightning/uiRecordApi';",
       "start": {
         "offset": 114,
         "line": 3,
         "column": 0
       },
       "end": {
-        "offset": 179,
+        "offset": 193,
         "line": 3,
-        "column": 65
+        "column": 79
+      }
+    },
+    {
+      "context": "import { refreshApex } from '@salesforce/apex';",
+      "start": {
+        "offset": 261,
+        "line": 5,
+        "column": 0
+      },
+      "end": {
+        "offset": 308,
+        "line": 5,
+        "column": 47
+      }
+    },
+    {
+      "context": "index",
+      "start": {
+        "offset": 2285,
+        "line": 66,
+        "column": 26
+      },
+      "end": {
+        "offset": 2290,
+        "line": 66,
+        "column": 31
+      }
+    },
+    {
+      "context": "index",
+      "start": {
+        "offset": 2285,
+        "line": 66,
+        "column": 26
+      },
+      "end": {
+        "offset": 2290,
+        "line": 66,
+        "column": 31
+      }
+    },
+    {
+      "context": "index",
+      "start": {
+        "offset": 2434,
+        "line": 69,
+        "column": 36
+      },
+      "end": {
+        "offset": 2439,
+        "line": 69,
+        "column": 41
+      }
+    },
+    {
+      "context": "index",
+      "start": {
+        "offset": 2434,
+        "line": 69,
+        "column": 36
+      },
+      "end": {
+        "offset": 2439,
+        "line": 69,
+        "column": 41
       }
     },
     {
       "context": "interface SelectDetail {\n    recordId: string;\n    index: number;\n}",
       "start": {
-        "offset": 722,
-        "line": 15,
+        "offset": 784,
+        "line": 16,
         "column": 0
       },
       "end": {
-        "offset": 789,
-        "line": 18,
+        "offset": 851,
+        "line": 19,
         "column": 1
       }
     },
     {
       "context": "isTable",
       "start": {
-        "offset": 1742,
-        "line": 49,
+        "offset": 2002,
+        "line": 57,
         "column": 8
       },
       "end": {
-        "offset": 1749,
-        "line": 49,
+        "offset": 2009,
+        "line": 57,
         "column": 15
       }
     },
     {
       "context": "limitSize: '$maxRows'",
       "start": {
-        "offset": 1286,
-        "line": 32,
+        "offset": 1546,
+        "line": 40,
         "column": 48
       },
       "end": {
-        "offset": 1307,
-        "line": 32,
+        "offset": 1567,
+        "line": 40,
         "column": 69
       }
     },
     {
       "context": "maxRows",
       "start": {
-        "offset": 943,
-        "line": 23,
+        "offset": 1005,
+        "line": 24,
         "column": 9
       },
       "end": {
-        "offset": 950,
-        "line": 23,
+        "offset": 1012,
+        "line": 24,
         "column": 16
+      }
+    },
+    {
+      "context": "new CustomEvent('reloaded', { detail: { count: this.rows.length, row } })",
+      "start": {
+        "offset": 3474,
+        "line": 102,
+        "column": 20
+      },
+      "end": {
+        "offset": 3547,
+        "line": 102,
+        "column": 93
       }
     },
     {
       "context": "new CustomEvent<SelectDetail>('accountselect', {\n                detail: { recordId, index },\n                bubbles: true,\n                composed: false,\n            })",
       "start": {
-        "offset": 2089,
-        "line": 60,
+        "offset": 2349,
+        "line": 68,
         "column": 12
       },
       "end": {
-        "offset": 2261,
-        "line": 64,
+        "offset": 2521,
+        "line": 72,
         "column": 14
+      }
+    },
+    {
+      "context": "new ShowToastEvent({ title: '削除しました', variant: 'success' })",
+      "start": {
+        "offset": 2908,
+        "line": 84,
+        "column": 31
+      },
+      "end": {
+        "offset": 2967,
+        "line": 84,
+        "column": 90
       }
     },
     {
       "context": "number",
       "start": {
-        "offset": 953,
-        "line": 23,
+        "offset": 1015,
+        "line": 24,
         "column": 19
       },
       "end": {
-        "offset": 959,
-        "line": 23,
+        "offset": 1021,
+        "line": 24,
         "column": 25
+      }
+    },
+    {
+      "context": "objectApiName: 'Account'",
+      "start": {
+        "offset": 3828,
+        "line": 113,
+        "column": 26
+      },
+      "end": {
+        "offset": 3852,
+        "line": 113,
+        "column": 50
+      }
+    },
+    {
+      "context": "optionalFields: ['Account.Industry']",
+      "start": {
+        "offset": 1396,
+        "line": 36,
+        "column": 8
+      },
+      "end": {
+        "offset": 1432,
+        "line": 36,
+        "column": 44
       }
     },
     {
       "context": "parentId: '$recordId'",
       "start": {
-        "offset": 1263,
-        "line": 32,
+        "offset": 1523,
+        "line": 40,
         "column": 25
       },
       "end": {
-        "offset": 1284,
-        "line": 32,
+        "offset": 1544,
+        "line": 40,
         "column": 46
       }
     },
     {
       "context": "parentName",
       "start": {
-        "offset": 1536,
-        "line": 41,
+        "offset": 1796,
+        "line": 49,
         "column": 8
       },
       "end": {
-        "offset": 1546,
-        "line": 41,
+        "offset": 1806,
+        "line": 49,
         "column": 18
       }
     },
     {
       "context": "record",
       "start": {
-        "offset": 1191,
-        "line": 30,
+        "offset": 1253,
+        "line": 31,
         "column": 4
       },
       "end": {
-        "offset": 1197,
-        "line": 30,
+        "offset": 1259,
+        "line": 31,
         "column": 10
+      }
+    },
+    {
+      "context": "recordByName",
+      "start": {
+        "offset": 1445,
+        "line": 38,
+        "column": 4
+      },
+      "end": {
+        "offset": 1457,
+        "line": 38,
+        "column": 16
+      }
+    },
+    {
+      "context": "recordId = (event.target as HTMLElement).dataset.id!",
+      "start": {
+        "offset": 2762,
+        "line": 81,
+        "column": 14
+      },
+      "end": {
+        "offset": 2814,
+        "line": 81,
+        "column": 66
       }
     },
     {
       "context": "recordId",
       "start": {
-        "offset": 877,
-        "line": 21,
+        "offset": 2275,
+        "line": 66,
+        "column": 16
+      },
+      "end": {
+        "offset": 2283,
+        "line": 66,
+        "column": 24
+      }
+    },
+    {
+      "context": "recordId",
+      "start": {
+        "offset": 2275,
+        "line": 66,
+        "column": 16
+      },
+      "end": {
+        "offset": 2283,
+        "line": 66,
+        "column": 24
+      }
+    },
+    {
+      "context": "recordId",
+      "start": {
+        "offset": 2424,
+        "line": 69,
+        "column": 26
+      },
+      "end": {
+        "offset": 2432,
+        "line": 69,
+        "column": 34
+      }
+    },
+    {
+      "context": "recordId",
+      "start": {
+        "offset": 2424,
+        "line": 69,
+        "column": 26
+      },
+      "end": {
+        "offset": 2432,
+        "line": 69,
+        "column": 34
+      }
+    },
+    {
+      "context": "recordId",
+      "start": {
+        "offset": 2643,
+        "line": 76,
+        "column": 26
+      },
+      "end": {
+        "offset": 2651,
+        "line": 76,
+        "column": 34
+      }
+    },
+    {
+      "context": "recordId",
+      "start": {
+        "offset": 2643,
+        "line": 76,
+        "column": 26
+      },
+      "end": {
+        "offset": 2651,
+        "line": 76,
+        "column": 34
+      }
+    },
+    {
+      "context": "recordId",
+      "start": {
+        "offset": 2762,
+        "line": 81,
+        "column": 14
+      },
+      "end": {
+        "offset": 2770,
+        "line": 81,
+        "column": 22
+      }
+    },
+    {
+      "context": "recordId",
+      "start": {
+        "offset": 2864,
+        "line": 83,
+        "column": 34
+      },
+      "end": {
+        "offset": 2872,
+        "line": 83,
+        "column": 42
+      }
+    },
+    {
+      "context": "recordId",
+      "start": {
+        "offset": 2864,
+        "line": 83,
+        "column": 34
+      },
+      "end": {
+        "offset": 2872,
+        "line": 83,
+        "column": 42
+      }
+    },
+    {
+      "context": "recordId",
+      "start": {
+        "offset": 939,
+        "line": 22,
         "column": 9
       },
       "end": {
-        "offset": 885,
-        "line": 21,
+        "offset": 947,
+        "line": 22,
         "column": 17
       }
     },
     {
       "context": "recordId: '$recordId'",
       "start": {
-        "offset": 1124,
-        "line": 29,
+        "offset": 1186,
+        "line": 30,
         "column": 23
       },
       "end": {
-        "offset": 1145,
-        "line": 29,
+        "offset": 1207,
+        "line": 30,
         "column": 44
+      }
+    },
+    {
+      "context": "recordId: '$recordId'",
+      "start": {
+        "offset": 1331,
+        "line": 34,
+        "column": 8
+      },
+      "end": {
+        "offset": 1352,
+        "line": 34,
+        "column": 29
       }
     },
     {
       "context": "refresh",
       "start": {
-        "offset": 2798,
-        "line": 83,
+        "offset": 3058,
+        "line": 91,
         "column": 4
       },
       "end": {
-        "offset": 2805,
-        "line": 83,
+        "offset": 3065,
+        "line": 91,
         "column": 11
+      }
+    },
+    {
+      "context": "refreshApex",
+      "start": {
+        "offset": 270,
+        "line": 5,
+        "column": 9
+      },
+      "end": {
+        "offset": 281,
+        "line": 5,
+        "column": 20
+      }
+    },
+    {
+      "context": "refreshApex",
+      "start": {
+        "offset": 3310,
+        "line": 98,
+        "column": 14
+      },
+      "end": {
+        "offset": 3321,
+        "line": 98,
+        "column": 25
+      }
+    },
+    {
+      "context": "refreshApex(this.record)",
+      "start": {
+        "offset": 3310,
+        "line": 98,
+        "column": 14
+      },
+      "end": {
+        "offset": 3334,
+        "line": 98,
+        "column": 38
+      }
+    },
+    {
+      "context": "return formatAmount(this.rows.reduce((sum, row) => sum + (row.amount ?? 0), 0));",
+      "start": {
+        "offset": 2112,
+        "line": 62,
+        "column": 8
+      },
+      "end": {
+        "offset": 2192,
+        "line": 62,
+        "column": 88
+      }
+    },
+    {
+      "context": "return getFieldValue(this.record?.data, NAME_FIELD) as string | undefined;",
+      "start": {
+        "offset": 1839,
+        "line": 50,
+        "column": 8
+      },
+      "end": {
+        "offset": 1913,
+        "line": 50,
+        "column": 82
+      }
+    },
+    {
+      "context": "return this.rows.length > 0;",
+      "start": {
+        "offset": 1958,
+        "line": 54,
+        "column": 8
+      },
+      "end": {
+        "offset": 1986,
+        "line": 54,
+        "column": 36
+      }
+    },
+    {
+      "context": "return this.viewMode === 'table';",
+      "start": {
+        "offset": 2031,
+        "line": 58,
+        "column": 8
+      },
+      "end": {
+        "offset": 2064,
+        "line": 58,
+        "column": 41
+      }
+    },
+    {
+      "context": "row = this.template.querySelector('c-account-row')",
+      "start": {
+        "offset": 3244,
+        "line": 97,
+        "column": 14
+      },
+      "end": {
+        "offset": 3294,
+        "line": 97,
+        "column": 64
+      }
+    },
+    {
+      "context": "row",
+      "start": {
+        "offset": 2155,
+        "line": 62,
+        "column": 51
+      },
+      "end": {
+        "offset": 2158,
+        "line": 62,
+        "column": 54
+      }
+    },
+    {
+      "context": "row",
+      "start": {
+        "offset": 2170,
+        "line": 62,
+        "column": 66
+      },
+      "end": {
+        "offset": 2173,
+        "line": 62,
+        "column": 69
+      }
+    },
+    {
+      "context": "row",
+      "start": {
+        "offset": 3244,
+        "line": 97,
+        "column": 14
+      },
+      "end": {
+        "offset": 3247,
+        "line": 97,
+        "column": 17
+      }
+    },
+    {
+      "context": "row",
+      "start": {
+        "offset": 3539,
+        "line": 102,
+        "column": 85
+      },
+      "end": {
+        "offset": 3542,
+        "line": 102,
+        "column": 88
+      }
+    },
+    {
+      "context": "row",
+      "start": {
+        "offset": 3539,
+        "line": 102,
+        "column": 85
+      },
+      "end": {
+        "offset": 3542,
+        "line": 102,
+        "column": 88
+      }
+    },
+    {
+      "context": "row.amount ?? 0",
+      "start": {
+        "offset": 2170,
+        "line": 62,
+        "column": 66
+      },
+      "end": {
+        "offset": 2185,
+        "line": 62,
+        "column": 81
+      }
+    },
+    {
+      "context": "row.amount",
+      "start": {
+        "offset": 2170,
+        "line": 62,
+        "column": 66
+      },
+      "end": {
+        "offset": 2180,
+        "line": 62,
+        "column": 76
       }
     },
     {
       "context": "rows",
       "start": {
-        "offset": 985,
-        "line": 24,
+        "offset": 1047,
+        "line": 25,
         "column": 19
       },
       "end": {
-        "offset": 989,
-        "line": 24,
+        "offset": 1051,
+        "line": 25,
         "column": 23
       }
     },
     {
       "context": "sortDirection",
       "start": {
-        "offset": 1041,
-        "line": 26,
+        "offset": 1103,
+        "line": 27,
         "column": 4
       },
       "end": {
-        "offset": 1054,
-        "line": 26,
+        "offset": 1116,
+        "line": 27,
         "column": 17
       }
     },
     {
       "context": "sortDirection: SortDirection = 'asc';",
       "start": {
-        "offset": 1041,
-        "line": 26,
+        "offset": 1103,
+        "line": 27,
         "column": 4
       },
       "end": {
-        "offset": 1078,
-        "line": 26,
+        "offset": 1140,
+        "line": 27,
         "column": 41
+      }
+    },
+    {
+      "context": "state: { filterName: 'Recent' }",
+      "start": {
+        "offset": 3888,
+        "line": 114,
+        "column": 12
+      },
+      "end": {
+        "offset": 3919,
+        "line": 114,
+        "column": 43
       }
     },
     {
       "context": "string | undefined",
       "start": {
-        "offset": 1550,
-        "line": 41,
+        "offset": 1810,
+        "line": 49,
         "column": 22
       },
       "end": {
-        "offset": 1568,
-        "line": 41,
+        "offset": 1828,
+        "line": 49,
         "column": 40
+      }
+    },
+    {
+      "context": "string | undefined",
+      "start": {
+        "offset": 1894,
+        "line": 50,
+        "column": 63
+      },
+      "end": {
+        "offset": 1912,
+        "line": 50,
+        "column": 81
       }
     },
     {
       "context": "string",
       "start": {
-        "offset": 1835,
-        "line": 53,
+        "offset": 2095,
+        "line": 61,
         "column": 23
       },
       "end": {
-        "offset": 1841,
-        "line": 53,
+        "offset": 2101,
+        "line": 61,
         "column": 29
       }
     },
     {
       "context": "string",
       "start": {
-        "offset": 888,
-        "line": 21,
+        "offset": 950,
+        "line": 22,
         "column": 20
       },
       "end": {
-        "offset": 894,
-        "line": 21,
+        "offset": 956,
+        "line": 22,
         "column": 26
       }
     },
     {
       "context": "string",
       "start": {
-        "offset": 912,
-        "line": 22,
+        "offset": 974,
+        "line": 23,
         "column": 16
       },
       "end": {
-        "offset": 918,
-        "line": 22,
+        "offset": 980,
+        "line": 23,
         "column": 22
+      }
+    },
+    {
+      "context": "sum + (row.amount ?? 0)",
+      "start": {
+        "offset": 2163,
+        "line": 62,
+        "column": 59
+      },
+      "end": {
+        "offset": 2186,
+        "line": 62,
+        "column": 82
+      }
+    },
+    {
+      "context": "sum",
+      "start": {
+        "offset": 2150,
+        "line": 62,
+        "column": 46
+      },
+      "end": {
+        "offset": 2153,
+        "line": 62,
+        "column": 49
+      }
+    },
+    {
+      "context": "sum",
+      "start": {
+        "offset": 2163,
+        "line": 62,
+        "column": 59
+      },
+      "end": {
+        "offset": 2166,
+        "line": 62,
+        "column": 62
+      }
+    },
+    {
+      "context": "this",
+      "start": {
+        "offset": 1685,
+        "line": 43,
+        "column": 12
+      },
+      "end": {
+        "offset": 1689,
+        "line": 43,
+        "column": 16
+      }
+    },
+    {
+      "context": "this",
+      "start": {
+        "offset": 1751,
+        "line": 45,
+        "column": 12
+      },
+      "end": {
+        "offset": 1755,
+        "line": 45,
+        "column": 16
+      }
+    },
+    {
+      "context": "this",
+      "start": {
+        "offset": 1860,
+        "line": 50,
+        "column": 29
+      },
+      "end": {
+        "offset": 1864,
+        "line": 50,
+        "column": 33
+      }
+    },
+    {
+      "context": "this",
+      "start": {
+        "offset": 1965,
+        "line": 54,
+        "column": 15
+      },
+      "end": {
+        "offset": 1969,
+        "line": 54,
+        "column": 19
+      }
+    },
+    {
+      "context": "this",
+      "start": {
+        "offset": 2038,
+        "line": 58,
+        "column": 15
+      },
+      "end": {
+        "offset": 2042,
+        "line": 58,
+        "column": 19
+      }
+    },
+    {
+      "context": "this",
+      "start": {
+        "offset": 2132,
+        "line": 62,
+        "column": 28
+      },
+      "end": {
+        "offset": 2136,
+        "line": 62,
+        "column": 32
+      }
+    },
+    {
+      "context": "this",
+      "start": {
+        "offset": 2317,
+        "line": 67,
+        "column": 8
+      },
+      "end": {
+        "offset": 2321,
+        "line": 67,
+        "column": 12
+      }
+    },
+    {
+      "context": "this",
+      "start": {
+        "offset": 2542,
+        "line": 74,
+        "column": 8
+      },
+      "end": {
+        "offset": 2546,
+        "line": 74,
+        "column": 12
+      }
+    },
+    {
+      "context": "this",
+      "start": {
+        "offset": 2889,
+        "line": 84,
+        "column": 12
+      },
+      "end": {
+        "offset": 2893,
+        "line": 84,
+        "column": 16
+      }
+    },
+    {
+      "context": "this",
+      "start": {
+        "offset": 3008,
+        "line": 86,
+        "column": 12
+      },
+      "end": {
+        "offset": 3012,
+        "line": 86,
+        "column": 16
+      }
+    },
+    {
+      "context": "this",
+      "start": {
+        "offset": 3084,
+        "line": 92,
+        "column": 8
+      },
+      "end": {
+        "offset": 3088,
+        "line": 92,
+        "column": 12
+      }
+    },
+    {
+      "context": "this",
+      "start": {
+        "offset": 3250,
+        "line": 97,
+        "column": 20
+      },
+      "end": {
+        "offset": 3254,
+        "line": 97,
+        "column": 24
+      }
+    },
+    {
+      "context": "this",
+      "start": {
+        "offset": 3322,
+        "line": 98,
+        "column": 26
+      },
+      "end": {
+        "offset": 3326,
+        "line": 98,
+        "column": 30
+      }
+    },
+    {
+      "context": "this",
+      "start": {
+        "offset": 3373,
+        "line": 99,
+        "column": 37
+      },
+      "end": {
+        "offset": 3377,
+        "line": 99,
+        "column": 41
+      }
+    },
+    {
+      "context": "this",
+      "start": {
+        "offset": 3434,
+        "line": 101,
+        "column": 16
+      },
+      "end": {
+        "offset": 3438,
+        "line": 101,
+        "column": 20
+      }
+    },
+    {
+      "context": "this",
+      "start": {
+        "offset": 3521,
+        "line": 102,
+        "column": 67
+      },
+      "end": {
+        "offset": 3525,
+        "line": 102,
+        "column": 71
+      }
+    },
+    {
+      "context": "this",
+      "start": {
+        "offset": 3640,
+        "line": 106,
+        "column": 16
+      },
+      "end": {
+        "offset": 3644,
+        "line": 106,
+        "column": 20
+      }
+    },
+    {
+      "context": "this",
+      "start": {
+        "offset": 3727,
+        "line": 111,
+        "column": 8
+      },
+      "end": {
+        "offset": 3731,
+        "line": 111,
+        "column": 12
+      }
+    },
+    {
+      "context": "this",
+      "start": {
+        "offset": 4015,
+        "line": 119,
+        "column": 42
+      },
+      "end": {
+        "offset": 4019,
+        "line": 119,
+        "column": 46
+      }
+    },
+    {
+      "context": "this.dispatchEvent(\n                    new CustomEvent('reloaded', { detail: { count: this.rows.length, row } }),\n                )",
+      "start": {
+        "offset": 3434,
+        "line": 101,
+        "column": 16
+      },
+      "end": {
+        "offset": 3566,
+        "line": 103,
+        "column": 17
+      }
+    },
+    {
+      "context": "this.dispatchEvent(\n                    new CustomEvent('reloaded', { detail: { count: this.rows.length, row } }),\n                );",
+      "start": {
+        "offset": 3434,
+        "line": 101,
+        "column": 16
+      },
+      "end": {
+        "offset": 3567,
+        "line": 103,
+        "column": 18
       }
     },
     {
       "context": "this.dispatchEvent(\n            new CustomEvent<SelectDetail>('accountselect', {\n                detail: { recordId, index },\n                bubbles: true,\n                composed: false,\n            }),\n        )",
       "start": {
-        "offset": 2057,
-        "line": 59,
+        "offset": 2317,
+        "line": 67,
         "column": 8
       },
       "end": {
-        "offset": 2272,
-        "line": 65,
+        "offset": 2532,
+        "line": 73,
         "column": 9
+      }
+    },
+    {
+      "context": "this.dispatchEvent(\n            new CustomEvent<SelectDetail>('accountselect', {\n                detail: { recordId, index },\n                bubbles: true,\n                composed: false,\n            }),\n        );",
+      "start": {
+        "offset": 2317,
+        "line": 67,
+        "column": 8
+      },
+      "end": {
+        "offset": 2533,
+        "line": 73,
+        "column": 10
       }
     },
     {
       "context": "this.dispatchEvent(new ShowToastEvent({ title: '削除しました', variant: 'success' }))",
       "start": {
-        "offset": 2629,
-        "line": 76,
+        "offset": 2889,
+        "line": 84,
         "column": 12
       },
       "end": {
-        "offset": 2708,
-        "line": 76,
+        "offset": 2968,
+        "line": 84,
         "column": 91
+      }
+    },
+    {
+      "context": "this.dispatchEvent(new ShowToastEvent({ title: '削除しました', variant: 'success' }));",
+      "start": {
+        "offset": 2889,
+        "line": 84,
+        "column": 12
+      },
+      "end": {
+        "offset": 2969,
+        "line": 84,
+        "column": 92
+      }
+    },
+    {
+      "context": "this.error = error",
+      "start": {
+        "offset": 1751,
+        "line": 45,
+        "column": 12
+      },
+      "end": {
+        "offset": 1769,
+        "line": 45,
+        "column": 30
+      }
+    },
+    {
+      "context": "this.error = error",
+      "start": {
+        "offset": 3008,
+        "line": 86,
+        "column": 12
+      },
+      "end": {
+        "offset": 3026,
+        "line": 86,
+        "column": 30
+      }
+    },
+    {
+      "context": "this.error = error",
+      "start": {
+        "offset": 3640,
+        "line": 106,
+        "column": 16
+      },
+      "end": {
+        "offset": 3658,
+        "line": 106,
+        "column": 34
+      }
+    },
+    {
+      "context": "this.error = error;",
+      "start": {
+        "offset": 1751,
+        "line": 45,
+        "column": 12
+      },
+      "end": {
+        "offset": 1770,
+        "line": 45,
+        "column": 31
+      }
+    },
+    {
+      "context": "this.error = error;",
+      "start": {
+        "offset": 3008,
+        "line": 86,
+        "column": 12
+      },
+      "end": {
+        "offset": 3027,
+        "line": 86,
+        "column": 31
+      }
+    },
+    {
+      "context": "this.error = error;",
+      "start": {
+        "offset": 3640,
+        "line": 106,
+        "column": 16
+      },
+      "end": {
+        "offset": 3659,
+        "line": 106,
+        "column": 35
+      }
+    },
+    {
+      "context": "this.error",
+      "start": {
+        "offset": 1751,
+        "line": 45,
+        "column": 12
+      },
+      "end": {
+        "offset": 1761,
+        "line": 45,
+        "column": 22
+      }
+    },
+    {
+      "context": "this.error",
+      "start": {
+        "offset": 3008,
+        "line": 86,
+        "column": 12
+      },
+      "end": {
+        "offset": 3018,
+        "line": 86,
+        "column": 22
+      }
+    },
+    {
+      "context": "this.error",
+      "start": {
+        "offset": 3640,
+        "line": 106,
+        "column": 16
+      },
+      "end": {
+        "offset": 3650,
+        "line": 106,
+        "column": 26
+      }
+    },
+    {
+      "context": "this.handleReload",
+      "start": {
+        "offset": 4015,
+        "line": 119,
+        "column": 42
+      },
+      "end": {
+        "offset": 4032,
+        "line": 119,
+        "column": 59
+      }
+    },
+    {
+      "context": "this.record",
+      "start": {
+        "offset": 1860,
+        "line": 50,
+        "column": 29
+      },
+      "end": {
+        "offset": 1871,
+        "line": 50,
+        "column": 40
+      }
+    },
+    {
+      "context": "this.record",
+      "start": {
+        "offset": 3322,
+        "line": 98,
+        "column": 26
+      },
+      "end": {
+        "offset": 3333,
+        "line": 98,
+        "column": 37
+      }
+    },
+    {
+      "context": "this.record?.data",
+      "start": {
+        "offset": 1860,
+        "line": 50,
+        "column": 29
+      },
+      "end": {
+        "offset": 1877,
+        "line": 50,
+        "column": 46
+      }
+    },
+    {
+      "context": "this.recordId",
+      "start": {
+        "offset": 3373,
+        "line": 99,
+        "column": 37
+      },
+      "end": {
+        "offset": 3386,
+        "line": 99,
+        "column": 50
+      }
+    },
+    {
+      "context": "this.refs",
+      "start": {
+        "offset": 3084,
+        "line": 92,
+        "column": 8
+      },
+      "end": {
+        "offset": 3093,
+        "line": 92,
+        "column": 17
       }
     },
     {
       "context": "this.refs.table",
       "start": {
-        "offset": 2824,
-        "line": 84,
+        "offset": 3084,
+        "line": 92,
         "column": 8
       },
       "end": {
-        "offset": 2839,
-        "line": 84,
+        "offset": 3099,
+        "line": 92,
         "column": 23
+      }
+    },
+    {
+      "context": "this.refs.table?.focus()",
+      "start": {
+        "offset": 3084,
+        "line": 92,
+        "column": 8
+      },
+      "end": {
+        "offset": 3108,
+        "line": 92,
+        "column": 32
+      }
+    },
+    {
+      "context": "this.refs.table?.focus();",
+      "start": {
+        "offset": 3084,
+        "line": 92,
+        "column": 8
+      },
+      "end": {
+        "offset": 3109,
+        "line": 92,
+        "column": 33
+      }
+    },
+    {
+      "context": "this.rows = toRows(data)",
+      "start": {
+        "offset": 1685,
+        "line": 43,
+        "column": 12
+      },
+      "end": {
+        "offset": 1709,
+        "line": 43,
+        "column": 36
+      }
+    },
+    {
+      "context": "this.rows = toRows(data);",
+      "start": {
+        "offset": 1685,
+        "line": 43,
+        "column": 12
+      },
+      "end": {
+        "offset": 1710,
+        "line": 43,
+        "column": 37
+      }
+    },
+    {
+      "context": "this.rows",
+      "start": {
+        "offset": 1685,
+        "line": 43,
+        "column": 12
+      },
+      "end": {
+        "offset": 1694,
+        "line": 43,
+        "column": 21
+      }
+    },
+    {
+      "context": "this.rows",
+      "start": {
+        "offset": 1965,
+        "line": 54,
+        "column": 15
+      },
+      "end": {
+        "offset": 1974,
+        "line": 54,
+        "column": 24
+      }
+    },
+    {
+      "context": "this.rows",
+      "start": {
+        "offset": 2132,
+        "line": 62,
+        "column": 28
+      },
+      "end": {
+        "offset": 2141,
+        "line": 62,
+        "column": 37
+      }
+    },
+    {
+      "context": "this.rows",
+      "start": {
+        "offset": 3521,
+        "line": 102,
+        "column": 67
+      },
+      "end": {
+        "offset": 3530,
+        "line": 102,
+        "column": 76
+      }
+    },
+    {
+      "context": "this.rows.length > 0",
+      "start": {
+        "offset": 1965,
+        "line": 54,
+        "column": 15
+      },
+      "end": {
+        "offset": 1985,
+        "line": 54,
+        "column": 35
+      }
+    },
+    {
+      "context": "this.rows.length",
+      "start": {
+        "offset": 1965,
+        "line": 54,
+        "column": 15
+      },
+      "end": {
+        "offset": 1981,
+        "line": 54,
+        "column": 31
+      }
+    },
+    {
+      "context": "this.rows.length",
+      "start": {
+        "offset": 3521,
+        "line": 102,
+        "column": 67
+      },
+      "end": {
+        "offset": 3537,
+        "line": 102,
+        "column": 83
+      }
+    },
+    {
+      "context": "this.rows.reduce((sum, row) => sum + (row.amount ?? 0), 0)",
+      "start": {
+        "offset": 2132,
+        "line": 62,
+        "column": 28
+      },
+      "end": {
+        "offset": 2190,
+        "line": 62,
+        "column": 86
+      }
+    },
+    {
+      "context": "this.template",
+      "start": {
+        "offset": 3250,
+        "line": 97,
+        "column": 20
+      },
+      "end": {
+        "offset": 3263,
+        "line": 97,
+        "column": 33
+      }
+    },
+    {
+      "context": "this.template.querySelector('c-account-row')",
+      "start": {
+        "offset": 3250,
+        "line": 97,
+        "column": 20
+      },
+      "end": {
+        "offset": 3294,
+        "line": 97,
+        "column": 64
+      }
+    },
+    {
+      "context": "this.viewMode === 'table'",
+      "start": {
+        "offset": 2038,
+        "line": 58,
+        "column": 15
+      },
+      "end": {
+        "offset": 2063,
+        "line": 58,
+        "column": 40
+      }
+    },
+    {
+      "context": "this.viewMode",
+      "start": {
+        "offset": 2038,
+        "line": 58,
+        "column": 15
+      },
+      "end": {
+        "offset": 2051,
+        "line": 58,
+        "column": 28
+      }
+    },
+    {
+      "context": "this[NavigationMixin.Navigate]({\n            type: 'standard__objectPage',\n            attributes: { objectApiName: 'Account', actionName: 'list' },\n            state: { filterName: 'Recent' },\n        })",
+      "start": {
+        "offset": 3727,
+        "line": 111,
+        "column": 8
+      },
+      "end": {
+        "offset": 3931,
+        "line": 115,
+        "column": 10
+      }
+    },
+    {
+      "context": "this[NavigationMixin.Navigate]({\n            type: 'standard__objectPage',\n            attributes: { objectApiName: 'Account', actionName: 'list' },\n            state: { filterName: 'Recent' },\n        });",
+      "start": {
+        "offset": 3727,
+        "line": 111,
+        "column": 8
+      },
+      "end": {
+        "offset": 3932,
+        "line": 115,
+        "column": 11
       }
     },
     {
       "context": "this[NavigationMixin.Navigate]({\n            type: 'standard__recordPage',\n            attributes: { recordId, actionName: 'view' },\n        })",
       "start": {
-        "offset": 2282,
-        "line": 66,
+        "offset": 2542,
+        "line": 74,
         "column": 8
       },
       "end": {
-        "offset": 2425,
-        "line": 69,
+        "offset": 2685,
+        "line": 77,
         "column": 10
+      }
+    },
+    {
+      "context": "this[NavigationMixin.Navigate]({\n            type: 'standard__recordPage',\n            attributes: { recordId, actionName: 'view' },\n        });",
+      "start": {
+        "offset": 2542,
+        "line": 74,
+        "column": 8
+      },
+      "end": {
+        "offset": 2686,
+        "line": 77,
+        "column": 11
       }
     },
     {
       "context": "title",
       "start": {
-        "offset": 905,
-        "line": 22,
+        "offset": 967,
+        "line": 23,
         "column": 9
       },
       "end": {
-        "offset": 910,
-        "line": 22,
+        "offset": 972,
+        "line": 23,
         "column": 14
+      }
+    },
+    {
+      "context": "title: '削除しました'",
+      "start": {
+        "offset": 2929,
+        "line": 84,
+        "column": 52
+      },
+      "end": {
+        "offset": 2944,
+        "line": 84,
+        "column": 67
       }
     },
     {
       "context": "toRows",
       "start": {
-        "offset": 661,
-        "line": 11,
+        "offset": 1697,
+        "line": 43,
+        "column": 24
+      },
+      "end": {
+        "offset": 1703,
+        "line": 43,
+        "column": 30
+      }
+    },
+    {
+      "context": "toRows",
+      "start": {
+        "offset": 723,
+        "line": 12,
         "column": 23
       },
       "end": {
-        "offset": 667,
-        "line": 11,
+        "offset": 729,
+        "line": 12,
         "column": 29
+      }
+    },
+    {
+      "context": "toRows(data)",
+      "start": {
+        "offset": 1697,
+        "line": 43,
+        "column": 24
+      },
+      "end": {
+        "offset": 1709,
+        "line": 43,
+        "column": 36
       }
     },
     {
       "context": "totalAmount",
       "start": {
-        "offset": 1820,
-        "line": 53,
+        "offset": 2080,
+        "line": 61,
         "column": 8
       },
       "end": {
-        "offset": 1831,
-        "line": 53,
+        "offset": 2091,
+        "line": 61,
         "column": 19
       }
     },
@@ -2245,94 +6581,315 @@
       }
     },
     {
+      "context": "true",
+      "start": {
+        "offset": 2468,
+        "line": 70,
+        "column": 25
+      },
+      "end": {
+        "offset": 2472,
+        "line": 70,
+        "column": 29
+      }
+    },
+    {
+      "context": "try {\n            await deleteAccount({ recordId });\n            this.dispatchEvent(new ShowToastEvent({ title: '削除しました', variant: 'success' }));\n        } catch (error) {\n            this.error = error;\n        }",
+      "start": {
+        "offset": 2824,
+        "line": 82,
+        "column": 8
+      },
+      "end": {
+        "offset": 3037,
+        "line": 87,
+        "column": 9
+      }
+    },
+    {
       "context": "type ViewMode = 'table' | 'tile';",
       "start": {
-        "offset": 687,
-        "line": 13,
+        "offset": 749,
+        "line": 14,
         "column": 0
       },
       "end": {
-        "offset": 720,
-        "line": 13,
+        "offset": 782,
+        "line": 14,
         "column": 33
+      }
+    },
+    {
+      "context": "type: 'standard__objectPage'",
+      "start": {
+        "offset": 3772,
+        "line": 112,
+        "column": 12
+      },
+      "end": {
+        "offset": 3800,
+        "line": 112,
+        "column": 40
+      }
+    },
+    {
+      "context": "type: 'standard__recordPage'",
+      "start": {
+        "offset": 2587,
+        "line": 75,
+        "column": 12
+      },
+      "end": {
+        "offset": 2615,
+        "line": 75,
+        "column": 40
       }
     },
     {
       "context": "unknown",
       "start": {
-        "offset": 1091,
-        "line": 27,
+        "offset": 1153,
+        "line": 28,
         "column": 12
       },
       "end": {
-        "offset": 1098,
-        "line": 27,
+        "offset": 1160,
+        "line": 28,
         "column": 19
+      }
+    },
+    {
+      "context": "unknown",
+      "start": {
+        "offset": 3610,
+        "line": 105,
+        "column": 27
+      },
+      "end": {
+        "offset": 3617,
+        "line": 105,
+        "column": 34
+      }
+    },
+    {
+      "context": "updateRecord",
+      "start": {
+        "offset": 149,
+        "line": 3,
+        "column": 35
+      },
+      "end": {
+        "offset": 161,
+        "line": 3,
+        "column": 47
+      }
+    },
+    {
+      "context": "updateRecord",
+      "start": {
+        "offset": 3344,
+        "line": 99,
+        "column": 8
+      },
+      "end": {
+        "offset": 3356,
+        "line": 99,
+        "column": 20
+      }
+    },
+    {
+      "context": "updateRecord({ fields: { Id: this.recordId } })",
+      "start": {
+        "offset": 3344,
+        "line": 99,
+        "column": 8
+      },
+      "end": {
+        "offset": 3391,
+        "line": 99,
+        "column": 55
+      }
+    },
+    {
+      "context": "updateRecord({ fields: { Id: this.recordId } })\n            .then(() => {\n                this.dispatchEvent(\n                    new CustomEvent('reloaded', { detail: { count: this.rows.length, row } }),\n                );\n            })",
+      "start": {
+        "offset": 3344,
+        "line": 99,
+        "column": 8
+      },
+      "end": {
+        "offset": 3582,
+        "line": 104,
+        "column": 14
+      }
+    },
+    {
+      "context": "updateRecord({ fields: { Id: this.recordId } })\n            .then(() => {\n                this.dispatchEvent(\n                    new CustomEvent('reloaded', { detail: { count: this.rows.length, row } }),\n                );\n            })\n            .catch((error: unknown) => {\n                this.error = error;\n            })",
+      "start": {
+        "offset": 3344,
+        "line": 99,
+        "column": 8
+      },
+      "end": {
+        "offset": 3674,
+        "line": 107,
+        "column": 14
+      }
+    },
+    {
+      "context": "updateRecord({ fields: { Id: this.recordId } })\n            .then(() => {\n                this.dispatchEvent(\n                    new CustomEvent('reloaded', { detail: { count: this.rows.length, row } }),\n                );\n            })\n            .catch((error: unknown) => {\n                this.error = error;\n            });",
+      "start": {
+        "offset": 3344,
+        "line": 99,
+        "column": 8
+      },
+      "end": {
+        "offset": 3675,
+        "line": 107,
+        "column": 15
+      }
+    },
+    {
+      "context": "variant: 'success'",
+      "start": {
+        "offset": 2946,
+        "line": 84,
+        "column": 69
+      },
+      "end": {
+        "offset": 2964,
+        "line": 84,
+        "column": 87
       }
     },
     {
       "context": "viewMode",
       "start": {
-        "offset": 1007,
-        "line": 25,
+        "offset": 1069,
+        "line": 26,
         "column": 4
       },
       "end": {
-        "offset": 1015,
-        "line": 25,
+        "offset": 1077,
+        "line": 26,
         "column": 12
       }
     },
     {
       "context": "viewMode: ViewMode = 'table';",
       "start": {
-        "offset": 1007,
-        "line": 25,
+        "offset": 1069,
+        "line": 26,
         "column": 4
       },
       "end": {
-        "offset": 1036,
-        "line": 25,
+        "offset": 1098,
+        "line": 26,
         "column": 33
       }
     },
     {
       "context": "void",
       "start": {
-        "offset": 1386,
-        "line": 33,
+        "offset": 1646,
+        "line": 41,
         "column": 75
       },
       "end": {
-        "offset": 1390,
-        "line": 33,
+        "offset": 1650,
+        "line": 41,
         "column": 79
       }
     },
     {
       "context": "void",
       "start": {
-        "offset": 1992,
-        "line": 57,
+        "offset": 2252,
+        "line": 65,
         "column": 52
       },
       "end": {
-        "offset": 1996,
-        "line": 57,
+        "offset": 2256,
+        "line": 65,
         "column": 56
       }
     },
     {
       "context": "void",
       "start": {
-        "offset": 2809,
-        "line": 83,
+        "offset": 3069,
+        "line": 91,
         "column": 15
       },
       "end": {
-        "offset": 2813,
-        "line": 83,
+        "offset": 3073,
+        "line": 91,
         "column": 19
+      }
+    },
+    {
+      "context": "void",
+      "start": {
+        "offset": 3709,
+        "line": 110,
+        "column": 25
+      },
+      "end": {
+        "offset": 3713,
+        "line": 110,
+        "column": 29
+      }
+    },
+    {
+      "context": "void",
+      "start": {
+        "offset": 3966,
+        "line": 118,
+        "column": 25
+      },
+      "end": {
+        "offset": 3970,
+        "line": 118,
+        "column": 29
+      }
+    },
+    {
+      "context": "window",
+      "start": {
+        "offset": 3981,
+        "line": 119,
+        "column": 8
+      },
+      "end": {
+        "offset": 3987,
+        "line": 119,
+        "column": 14
+      }
+    },
+    {
+      "context": "window.addEventListener('resize', this.handleReload)",
+      "start": {
+        "offset": 3981,
+        "line": 119,
+        "column": 8
+      },
+      "end": {
+        "offset": 4033,
+        "line": 119,
+        "column": 60
+      }
+    },
+    {
+      "context": "window.addEventListener('resize', this.handleReload);",
+      "start": {
+        "offset": 3981,
+        "line": 119,
+        "column": 8
+      },
+      "end": {
+        "offset": 4034,
+        "line": 119,
+        "column": 61
       }
     },
     {
@@ -2351,156 +6908,299 @@
     {
       "context": "wiredAccounts",
       "start": {
-        "offset": 1315,
-        "line": 33,
+        "offset": 1575,
+        "line": 41,
         "column": 4
       },
       "end": {
-        "offset": 1328,
-        "line": 33,
+        "offset": 1588,
+        "line": 41,
         "column": 17
+      }
+    },
+    {
+      "context": "{ Id: this.recordId }",
+      "start": {
+        "offset": 3367,
+        "line": 99,
+        "column": 31
+      },
+      "end": {
+        "offset": 3388,
+        "line": 99,
+        "column": 52
+      }
+    },
+    {
+      "context": "{ count: this.rows.length, row }",
+      "start": {
+        "offset": 3512,
+        "line": 102,
+        "column": 58
+      },
+      "end": {
+        "offset": 3544,
+        "line": 102,
+        "column": 90
       }
     },
     {
       "context": "{ data, error }: { data?: unknown[]; error?: unknown }",
       "start": {
-        "offset": 1329,
-        "line": 33,
+        "offset": 1589,
+        "line": 41,
         "column": 18
       },
       "end": {
-        "offset": 1383,
-        "line": 33,
+        "offset": 1643,
+        "line": 41,
         "column": 72
       }
     },
     {
       "context": "{ data?: unknown; error?: unknown }",
       "start": {
-        "offset": 1200,
-        "line": 30,
+        "offset": 1262,
+        "line": 31,
         "column": 13
       },
       "end": {
-        "offset": 1235,
-        "line": 30,
+        "offset": 1297,
+        "line": 31,
         "column": 48
+      }
+    },
+    {
+      "context": "{ data?: unknown; error?: unknown }",
+      "start": {
+        "offset": 1460,
+        "line": 38,
+        "column": 19
+      },
+      "end": {
+        "offset": 1495,
+        "line": 38,
+        "column": 54
       }
     },
     {
       "context": "{ data?: unknown[]; error?: unknown }",
       "start": {
-        "offset": 1346,
-        "line": 33,
+        "offset": 1606,
+        "line": 41,
         "column": 35
       },
       "end": {
-        "offset": 1383,
-        "line": 33,
+        "offset": 1643,
+        "line": 41,
         "column": 72
       }
     },
     {
-      "context": "{\n        const recordId = (event.target as HTMLElement).dataset.id!;\n        try {\n            await deleteAccount({ recordId });\n            this.dispatchEvent(new ShowToastEvent({ title: '削除しました', variant: 'success' }));\n        } catch (error) {\n            this.error = error;\n        }\n    }",
+      "context": "{ detail: { count: this.rows.length, row } }",
       "start": {
-        "offset": 2486,
-        "line": 72,
-        "column": 52
+        "offset": 3502,
+        "line": 102,
+        "column": 48
       },
       "end": {
-        "offset": 2783,
-        "line": 80,
-        "column": 5
+        "offset": 3546,
+        "line": 102,
+        "column": 92
       }
     },
     {
-      "context": "{\n        const { recordId, index } = event.detail;\n        this.dispatchEvent(\n            new CustomEvent<SelectDetail>('accountselect', {\n                detail: { recordId, index },\n                bubbles: true,\n                composed: false,\n            }),\n        );\n        this[NavigationMixin.Navigate]({\n            type: 'standard__recordPage',\n            attributes: { recordId, actionName: 'view' },\n        });\n    }",
+      "context": "{ fields: { Id: this.recordId } }",
       "start": {
-        "offset": 1997,
-        "line": 57,
-        "column": 57
+        "offset": 3357,
+        "line": 99,
+        "column": 21
       },
       "end": {
-        "offset": 2432,
-        "line": 70,
-        "column": 5
+        "offset": 3390,
+        "line": 99,
+        "column": 54
       }
     },
     {
-      "context": "{\n        if (data) {\n            this.rows = toRows(data);\n        } else if (error) {\n            this.error = error;\n        }\n    }",
+      "context": "{ filterName: 'Recent' }",
       "start": {
-        "offset": 1391,
-        "line": 33,
-        "column": 80
+        "offset": 3895,
+        "line": 114,
+        "column": 19
       },
       "end": {
-        "offset": 1526,
-        "line": 39,
-        "column": 5
+        "offset": 3919,
+        "line": 114,
+        "column": 43
       }
     },
     {
-      "context": "{\n        return formatAmount(this.rows.reduce((sum, row) => sum + (row.amount ?? 0), 0));\n    }",
+      "context": "{ objectApiName: 'Account', actionName: 'list' }",
       "start": {
-        "offset": 1842,
-        "line": 53,
-        "column": 30
+        "offset": 3826,
+        "line": 113,
+        "column": 24
       },
       "end": {
-        "offset": 1938,
-        "line": 55,
-        "column": 5
+        "offset": 3874,
+        "line": 113,
+        "column": 72
       }
     },
     {
-      "context": "{\n        return getFieldValue(this.record?.data, NAME_FIELD) as string | undefined;\n    }",
+      "context": "{ parentId: '$recordId', limitSize: '$maxRows' }",
       "start": {
+        "offset": 1521,
+        "line": 40,
+        "column": 23
+      },
+      "end": {
         "offset": 1569,
-        "line": 41,
-        "column": 41
-      },
-      "end": {
-        "offset": 1659,
-        "line": 43,
-        "column": 5
+        "line": 40,
+        "column": 71
       }
     },
     {
-      "context": "{\n        return this.rows.length > 0;\n    }",
+      "context": "{ recordId }",
       "start": {
-        "offset": 1688,
-        "line": 45,
-        "column": 27
-      },
-      "end": {
-        "offset": 1732,
-        "line": 47,
-        "column": 5
-      }
-    },
-    {
-      "context": "{\n        return this.viewMode === 'table';\n    }",
-      "start": {
-        "offset": 1761,
-        "line": 49,
-        "column": 27
-      },
-      "end": {
-        "offset": 1810,
-        "line": 51,
-        "column": 5
-      }
-    },
-    {
-      "context": "{\n        this.refs.table?.focus();\n    }",
-      "start": {
-        "offset": 2814,
+        "offset": 2862,
         "line": 83,
-        "column": 20
+        "column": 32
       },
       "end": {
-        "offset": 2855,
-        "line": 85,
+        "offset": 2874,
+        "line": 83,
+        "column": 44
+      }
+    },
+    {
+      "context": "{ recordId, actionName: 'view' }",
+      "start": {
+        "offset": 2641,
+        "line": 76,
+        "column": 24
+      },
+      "end": {
+        "offset": 2673,
+        "line": 76,
+        "column": 56
+      }
+    },
+    {
+      "context": "{ recordId, index } = event.detail",
+      "start": {
+        "offset": 2273,
+        "line": 66,
+        "column": 14
+      },
+      "end": {
+        "offset": 2307,
+        "line": 66,
+        "column": 48
+      }
+    },
+    {
+      "context": "{ recordId, index }",
+      "start": {
+        "offset": 2273,
+        "line": 66,
+        "column": 14
+      },
+      "end": {
+        "offset": 2292,
+        "line": 66,
+        "column": 33
+      }
+    },
+    {
+      "context": "{ recordId, index }",
+      "start": {
+        "offset": 2422,
+        "line": 69,
+        "column": 24
+      },
+      "end": {
+        "offset": 2441,
+        "line": 69,
+        "column": 43
+      }
+    },
+    {
+      "context": "{ recordId: '$recordId', fields: [NAME_FIELD, INDUSTRY_FIELD] }",
+      "start": {
+        "offset": 1184,
+        "line": 30,
+        "column": 21
+      },
+      "end": {
+        "offset": 1247,
+        "line": 30,
+        "column": 84
+      }
+    },
+    {
+      "context": "{ title: '削除しました', variant: 'success' }",
+      "start": {
+        "offset": 2927,
+        "line": 84,
+        "column": 50
+      },
+      "end": {
+        "offset": 2966,
+        "line": 84,
+        "column": 89
+      }
+    },
+    {
+      "context": "{\n                detail: { recordId, index },\n                bubbles: true,\n                composed: false,\n            }",
+      "start": {
+        "offset": 2396,
+        "line": 68,
+        "column": 59
+      },
+      "end": {
+        "offset": 2520,
+        "line": 72,
+        "column": 13
+      }
+    },
+    {
+      "context": "{\n            type: 'standard__objectPage',\n            attributes: { objectApiName: 'Account', actionName: 'list' },\n            state: { filterName: 'Recent' },\n        }",
+      "start": {
+        "offset": 3758,
+        "line": 111,
+        "column": 39
+      },
+      "end": {
+        "offset": 3930,
+        "line": 115,
+        "column": 9
+      }
+    },
+    {
+      "context": "{\n            type: 'standard__recordPage',\n            attributes: { recordId, actionName: 'view' },\n        }",
+      "start": {
+        "offset": 2573,
+        "line": 74,
+        "column": 39
+      },
+      "end": {
+        "offset": 2684,
+        "line": 77,
+        "column": 9
+      }
+    },
+    {
+      "context": "{\n        recordId: '$recordId',\n        fields: ['Account.Name'],\n        optionalFields: ['Account.Industry'],\n    }",
+      "start": {
+        "offset": 1321,
+        "line": 33,
+        "column": 21
+      },
+      "end": {
+        "offset": 1439,
+        "line": 37,
         "column": 5
       }
     }

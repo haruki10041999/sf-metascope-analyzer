@@ -133,7 +133,7 @@
               {
                 "kind": "lwcImport",
                 "sourceKeys": {
-                  "objectKey": "importDeclaration_de898917de382c78",
+                  "objectKey": "importDeclaration_4a7e7fea2d2a5ae9",
                   "sourceKey": "importDeclaration_1fed2c593684ea24"
                 },
                 "source": "lwc",
@@ -142,7 +142,7 @@
                   {
                     "kind": "lwcImportSpecifier",
                     "sourceKeys": {
-                      "objectKey": "importSpecifier_cfa9b55daa09bb3a",
+                      "objectKey": "importSpecifier_8f839237f9706f5b",
                       "sourceKey": "importSpecifier_3d5a19413b2aa336"
                     },
                     "specifierType": "named",
@@ -153,7 +153,7 @@
                   {
                     "kind": "lwcImportSpecifier",
                     "sourceKeys": {
-                      "objectKey": "importSpecifier_0b0d904086d94cfc",
+                      "objectKey": "importSpecifier_530ce1ac695ad5c6",
                       "sourceKey": "importSpecifier_e9eba784067951c9"
                     },
                     "specifierType": "named",
@@ -164,7 +164,7 @@
                   {
                     "kind": "lwcImportSpecifier",
                     "sourceKeys": {
-                      "objectKey": "importSpecifier_5d2c36b5f9af2c7e",
+                      "objectKey": "importSpecifier_69eb9a59090a13f2",
                       "sourceKey": "importSpecifier_0c7329e473ff337a"
                     },
                     "specifierType": "named",
@@ -180,27 +180,33 @@
               "kind": "lwcComponent",
               "sourceKeys": {
                 "base": {
-                  "objectKey": "classDeclaration_faee3e27b8dd7c04",
+                  "objectKey": "classDeclaration_ffac4f052b28791a",
                   "sourceKey": "classDeclaration_a03e602956c9d56d"
                 },
                 "name": {
-                  "objectKey": "identifier_b3091273d93d49ea",
+                  "objectKey": "identifier_1a3a6fd4c00bce68",
                   "sourceKey": "identifier_b79a23af7140afca"
                 }
               },
               "name": "Broken",
-              "extend": "LightningElement",
-              "mixins": [],
+              "superClass": {
+                "kind": "jsIdentifier",
+                "sourceKeys": {
+                  "objectKey": "identifier_4a7a59e701040717",
+                  "sourceKey": "identifier_ca05ed8d0e885f7e"
+                },
+                "name": "LightningElement"
+              },
               "block": [
                 {
                   "kind": "lwcField",
                   "sourceKeys": {
                     "base": {
-                      "objectKey": "classProperty_a229db5fadcd8d24",
+                      "objectKey": "classProperty_fff535b23d3f5885",
                       "sourceKey": "classProperty_ee0277806011b964"
                     },
                     "name": {
-                      "objectKey": "identifier_d2114d204cdd1232",
+                      "objectKey": "identifier_e4544106445ec702",
                       "sourceKey": "identifier_379a701265ffe98b"
                     }
                   },
@@ -215,7 +221,14 @@
                     "type": "primitive",
                     "primitiveType": "string"
                   },
-                  "init": "''",
+                  "init": {
+                    "kind": "jsString",
+                    "sourceKeys": {
+                      "objectKey": "stringLiteral_1fb0babbdedea16e",
+                      "sourceKey": "stringLiteral_5fc4506d39750698"
+                    },
+                    "value": ""
+                  },
                   "references": [],
                   "optional": false,
                   "modifier": {
@@ -223,7 +236,7 @@
                       {
                         "kind": "lwcDecorator",
                         "sourceKeys": {
-                          "objectKey": "decorator_1332fed18f380344",
+                          "objectKey": "decorator_4d9f350c3eae69d9",
                           "sourceKey": "decorator_4c884ed06765a036"
                         },
                         "name": "api",
@@ -232,7 +245,7 @@
                       {
                         "kind": "lwcDecorator",
                         "sourceKeys": {
-                          "objectKey": "decorator_81ed15e86f6c2163",
+                          "objectKey": "decorator_dfd32f4fee7b5db3",
                           "sourceKey": "decorator_ff669d8b308916b6"
                         },
                         "name": "track",
@@ -243,10 +256,21 @@
                 }
               ]
             },
-            "otherExports": [],
+            "exports": [
+              {
+                "kind": "lwcExport",
+                "sourceKeys": {
+                  "objectKey": "exportDefaultDeclaration_712fb18fc64a9733",
+                  "sourceKey": "exportDefaultDeclaration_f38f153a82849b3e"
+                },
+                "exportType": "default",
+                "exported": "default",
+                "local": "Broken",
+                "typeOnly": false
+              }
+            ],
             "declarations": [],
-            "typeDeclarations": [],
-            "errors": []
+            "typeDeclarations": []
           }
         }
       ],
@@ -405,7 +429,7 @@
     },
     "sourceObject": [
       {
-        "objectKey": "importDeclaration_de898917de382c78",
+        "objectKey": "importDeclaration_4a7e7fea2d2a5ae9",
         "context": "import { LightningElement, api, track } from 'lwc';",
         "source": [
           {
@@ -425,7 +449,7 @@
         ]
       },
       {
-        "objectKey": "importSpecifier_cfa9b55daa09bb3a",
+        "objectKey": "importSpecifier_8f839237f9706f5b",
         "context": "LightningElement",
         "source": [
           {
@@ -445,7 +469,7 @@
         ]
       },
       {
-        "objectKey": "importSpecifier_0b0d904086d94cfc",
+        "objectKey": "importSpecifier_530ce1ac695ad5c6",
         "context": "api",
         "source": [
           {
@@ -465,7 +489,7 @@
         ]
       },
       {
-        "objectKey": "importSpecifier_5d2c36b5f9af2c7e",
+        "objectKey": "importSpecifier_69eb9a59090a13f2",
         "context": "track",
         "source": [
           {
@@ -485,7 +509,27 @@
         ]
       },
       {
-        "objectKey": "classDeclaration_faee3e27b8dd7c04",
+        "objectKey": "exportDefaultDeclaration_712fb18fc64a9733",
+        "context": "export default class Broken extends LightningElement {\n    @api @track value: string = '';\n}",
+        "source": [
+          {
+            "sourceKey": "exportDefaultDeclaration_f38f153a82849b3e",
+            "start": {
+              "offset": 53,
+              "line": 3,
+              "column": 0
+            },
+            "end": {
+              "offset": 145,
+              "line": 5,
+              "column": 1
+            },
+            "filePath": "broken/broken.ts"
+          }
+        ]
+      },
+      {
+        "objectKey": "classDeclaration_ffac4f052b28791a",
         "context": "class Broken extends LightningElement {\n    @api @track value: string = '';\n}",
         "source": [
           {
@@ -505,7 +549,7 @@
         ]
       },
       {
-        "objectKey": "identifier_b3091273d93d49ea",
+        "objectKey": "identifier_1a3a6fd4c00bce68",
         "context": "Broken",
         "source": [
           {
@@ -525,7 +569,27 @@
         ]
       },
       {
-        "objectKey": "classProperty_a229db5fadcd8d24",
+        "objectKey": "identifier_4a7a59e701040717",
+        "context": "LightningElement",
+        "source": [
+          {
+            "sourceKey": "identifier_ca05ed8d0e885f7e",
+            "start": {
+              "offset": 89,
+              "line": 3,
+              "column": 36
+            },
+            "end": {
+              "offset": 105,
+              "line": 3,
+              "column": 52
+            },
+            "filePath": "broken/broken.ts"
+          }
+        ]
+      },
+      {
+        "objectKey": "classProperty_fff535b23d3f5885",
         "context": "@api @track value: string = '';",
         "source": [
           {
@@ -545,7 +609,7 @@
         ]
       },
       {
-        "objectKey": "identifier_d2114d204cdd1232",
+        "objectKey": "identifier_e4544106445ec702",
         "context": "value",
         "source": [
           {
@@ -585,7 +649,27 @@
         ]
       },
       {
-        "objectKey": "decorator_1332fed18f380344",
+        "objectKey": "stringLiteral_1fb0babbdedea16e",
+        "context": "''",
+        "source": [
+          {
+            "sourceKey": "stringLiteral_5fc4506d39750698",
+            "start": {
+              "offset": 140,
+              "line": 4,
+              "column": 32
+            },
+            "end": {
+              "offset": 142,
+              "line": 4,
+              "column": 34
+            },
+            "filePath": "broken/broken.ts"
+          }
+        ]
+      },
+      {
+        "objectKey": "decorator_4d9f350c3eae69d9",
         "context": "@api",
         "source": [
           {
@@ -605,7 +689,7 @@
         ]
       },
       {
-        "objectKey": "decorator_81ed15e86f6c2163",
+        "objectKey": "decorator_dfd32f4fee7b5db3",
         "context": "@track",
         "source": [
           {

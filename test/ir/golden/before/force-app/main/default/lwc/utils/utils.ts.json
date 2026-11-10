@@ -2,9 +2,55 @@
   "module": {
     "fileType": "ts",
     "imports": [],
-    "otherExports": [
-      "formatAmount",
-      "toRows"
+    "exports": [
+      {
+        "kind": "lwcExport",
+        "sourceKeys": {},
+        "exportType": "named",
+        "local": "SortDirection",
+        "exported": "SortDirection",
+        "typeOnly": true
+      },
+      {
+        "kind": "lwcExport",
+        "sourceKeys": {},
+        "exportType": "named",
+        "local": "Row",
+        "exported": "Row",
+        "typeOnly": true
+      },
+      {
+        "kind": "lwcExport",
+        "sourceKeys": {},
+        "exportType": "named",
+        "local": "formatAmount",
+        "exported": "formatAmount",
+        "typeOnly": false
+      },
+      {
+        "kind": "lwcExport",
+        "sourceKeys": {},
+        "exportType": "named",
+        "local": "toRows",
+        "exported": "toRows",
+        "typeOnly": false
+      },
+      {
+        "kind": "lwcExport",
+        "sourceKeys": {},
+        "exportType": "named",
+        "local": "RowCache",
+        "exported": "RowCache",
+        "typeOnly": false
+      },
+      {
+        "kind": "lwcExport",
+        "sourceKeys": {},
+        "exportType": "named",
+        "local": "formatAmount",
+        "exported": "format",
+        "typeOnly": false
+      }
     ],
     "declarations": [
       {
@@ -17,10 +63,58 @@
         "declarationType": "variable",
         "exported": false,
         "variableKind": "const",
-        "init": "new Intl.NumberFormat('ja-JP', { style: 'currency', currency: 'JPY' })",
-        "references": [],
-        "calls": [],
-        "events": []
+        "init": {
+          "kind": "jsNew",
+          "sourceKeys": {},
+          "callee": {
+            "kind": "jsMemberAccess",
+            "sourceKeys": {},
+            "type": "object",
+            "object": {
+              "kind": "jsIdentifier",
+              "sourceKeys": {},
+              "name": "Intl"
+            },
+            "operator": ".",
+            "member": "NumberFormat"
+          },
+          "arg": [
+            {
+              "kind": "jsString",
+              "sourceKeys": {},
+              "value": "ja-JP"
+            },
+            {
+              "kind": "jsObject",
+              "sourceKeys": {},
+              "properties": [
+                {
+                  "kind": "jsProperty",
+                  "sourceKeys": {},
+                  "key": "style",
+                  "value": {
+                    "kind": "jsString",
+                    "sourceKeys": {},
+                    "value": "currency"
+                  },
+                  "shorthand": false
+                },
+                {
+                  "kind": "jsProperty",
+                  "sourceKeys": {},
+                  "key": "currency",
+                  "value": {
+                    "kind": "jsString",
+                    "sourceKeys": {},
+                    "value": "JPY"
+                  },
+                  "shorthand": false
+                }
+              ]
+            }
+          ]
+        },
+        "references": []
       },
       {
         "kind": "lwcDeclaration",
@@ -32,8 +126,8 @@
         "declarationType": "function",
         "exported": true,
         "variableKind": "const",
-        "init": "(value: number): string => formatter.format(value)",
         "references": [],
+        "arrow": true,
         "param": [
           {
             "kind": "lwcParameter",
@@ -58,8 +152,26 @@
           "primitiveType": "string"
         },
         "async": false,
-        "calls": [],
-        "events": []
+        "generator": false,
+        "expression": {
+          "kind": "jsMemberAccess",
+          "sourceKeys": {},
+          "type": "method",
+          "object": {
+            "kind": "jsIdentifier",
+            "sourceKeys": {},
+            "name": "formatter"
+          },
+          "operator": ".",
+          "member": "format",
+          "memberArg": [
+            {
+              "kind": "jsIdentifier",
+              "sourceKeys": {},
+              "name": "value"
+            }
+          ]
+        }
       },
       {
         "kind": "lwcDeclaration",
@@ -71,6 +183,7 @@
         "declarationType": "function",
         "exported": true,
         "references": [],
+        "arrow": false,
         "param": [
           {
             "kind": "lwcParameter",
@@ -101,13 +214,383 @@
           }
         },
         "async": false,
-        "body": {
-          "kind": "lwcBody",
-          "sourceKeys": {},
-          "statements": 1
+        "generator": false,
+        "block": [
+          {
+            "kind": "jsReturn",
+            "sourceKeys": {},
+            "field": {
+              "kind": "jsMemberAccess",
+              "sourceKeys": {},
+              "type": "method",
+              "object": {
+                "kind": "jsIdentifier",
+                "sourceKeys": {},
+                "name": "records"
+              },
+              "operator": ".",
+              "member": "map",
+              "memberArg": [
+                {
+                  "kind": "jsFunction",
+                  "sourceKeys": {},
+                  "arrow": true,
+                  "async": false,
+                  "generator": false,
+                  "param": [
+                    {
+                      "kind": "lwcParameter",
+                      "sourceKeys": {},
+                      "variant": "record",
+                      "optional": false,
+                      "modifier": {}
+                    }
+                  ],
+                  "expression": {
+                    "kind": "jsTypeCast",
+                    "sourceKeys": {},
+                    "expression": {
+                      "kind": "jsIdentifier",
+                      "sourceKeys": {},
+                      "name": "record"
+                    },
+                    "operator": "as",
+                    "convertType": {
+                      "kind": "lwcType",
+                      "sourceKeys": {},
+                      "text": "Row",
+                      "type": "custom",
+                      "customType": "Row"
+                    }
+                  }
+                }
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "kind": "lwcClass",
+        "sourceKeys": {
+          "base": {},
+          "name": {}
         },
-        "calls": [],
-        "events": []
+        "name": "RowCache",
+        "exported": true,
+        "block": [
+          {
+            "kind": "lwcField",
+            "sourceKeys": {
+              "base": {},
+              "name": {}
+            },
+            "name": "instances",
+            "init": {
+              "kind": "jsNumber",
+              "sourceKeys": {},
+              "value": 0
+            },
+            "references": [],
+            "optional": false,
+            "modifier": {
+              "declaration": [
+                "static"
+              ]
+            }
+          },
+          {
+            "kind": "lwcField",
+            "sourceKeys": {
+              "base": {},
+              "name": {}
+            },
+            "name": "#rows",
+            "init": {
+              "kind": "jsNew",
+              "sourceKeys": {},
+              "callee": {
+                "kind": "jsIdentifier",
+                "sourceKeys": {},
+                "name": "Map"
+              },
+              "arg": [],
+              "typeArguments": [
+                {
+                  "kind": "lwcType",
+                  "sourceKeys": {},
+                  "text": "string",
+                  "type": "primitive",
+                  "primitiveType": "string"
+                },
+                {
+                  "kind": "lwcType",
+                  "sourceKeys": {},
+                  "text": "Row",
+                  "type": "custom",
+                  "customType": "Row"
+                }
+              ]
+            },
+            "references": [],
+            "optional": false,
+            "modifier": {}
+          },
+          {
+            "kind": "lwcProperty",
+            "sourceKeys": {
+              "base": {},
+              "name": {}
+            },
+            "name": "size",
+            "isGetter": true,
+            "isSetter": false,
+            "getterContent": {
+              "modifier": {},
+              "block": [
+                {
+                  "kind": "jsReturn",
+                  "sourceKeys": {},
+                  "field": {
+                    "kind": "jsMemberAccess",
+                    "sourceKeys": {},
+                    "type": "object",
+                    "object": {
+                      "kind": "jsMemberAccess",
+                      "sourceKeys": {},
+                      "type": "object",
+                      "object": {
+                        "kind": "jsThis",
+                        "sourceKeys": {}
+                      },
+                      "operator": ".",
+                      "member": "#rows"
+                    },
+                    "operator": ".",
+                    "member": "size"
+                  }
+                }
+              ],
+              "references": []
+            },
+            "variantType": {
+              "kind": "lwcType",
+              "sourceKeys": {},
+              "text": "number",
+              "type": "primitive",
+              "primitiveType": "number"
+            }
+          },
+          {
+            "kind": "lwcMethod",
+            "sourceKeys": {
+              "base": {},
+              "name": {}
+            },
+            "name": "put",
+            "returnType": {
+              "kind": "lwcType",
+              "sourceKeys": {},
+              "text": "number",
+              "type": "primitive",
+              "primitiveType": "number"
+            },
+            "param": [
+              {
+                "kind": "lwcParameter",
+                "sourceKeys": {},
+                "variant": "rows",
+                "variantType": {
+                  "kind": "lwcType",
+                  "sourceKeys": {},
+                  "text": "Row[]",
+                  "type": "array",
+                  "elementType": {
+                    "type": "custom",
+                    "customType": "Row"
+                  }
+                },
+                "optional": false,
+                "modifier": {}
+              }
+            ],
+            "async": false,
+            "modifier": {},
+            "block": [
+              {
+                "kind": "jsLocalVariable",
+                "sourceKeys": {},
+                "variableKind": "let",
+                "variants": [
+                  {
+                    "kind": "jsVariant",
+                    "sourceKeys": {},
+                    "target": {
+                      "kind": "jsIdentifier",
+                      "sourceKeys": {},
+                      "name": "count"
+                    },
+                    "init": {
+                      "kind": "jsNumber",
+                      "sourceKeys": {},
+                      "value": 0
+                    }
+                  }
+                ]
+              },
+              {
+                "kind": "jsForOf",
+                "sourceKeys": {},
+                "variableKind": "const",
+                "left": {
+                  "kind": "jsIdentifier",
+                  "sourceKeys": {},
+                  "name": "row"
+                },
+                "right": {
+                  "kind": "jsIdentifier",
+                  "sourceKeys": {},
+                  "name": "rows"
+                },
+                "await": false,
+                "block": [
+                  {
+                    "kind": "jsIf",
+                    "sourceKeys": {},
+                    "conditionBlock": [
+                      {
+                        "condition": {
+                          "kind": "jsUnary",
+                          "sourceKeys": {},
+                          "operator": "!",
+                          "operatorLocation": "front",
+                          "argument": {
+                            "kind": "jsMemberAccess",
+                            "sourceKeys": {},
+                            "type": "object",
+                            "object": {
+                              "kind": "jsIdentifier",
+                              "sourceKeys": {},
+                              "name": "row"
+                            },
+                            "operator": ".",
+                            "member": "id"
+                          }
+                        },
+                        "block": [
+                          {
+                            "kind": "jsContinue",
+                            "sourceKeys": {}
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "kind": "jsSwitch",
+                    "sourceKeys": {},
+                    "discriminant": {
+                      "kind": "jsMemberAccess",
+                      "sourceKeys": {},
+                      "type": "object",
+                      "object": {
+                        "kind": "jsIdentifier",
+                        "sourceKeys": {},
+                        "name": "row"
+                      },
+                      "operator": ".",
+                      "member": "name"
+                    },
+                    "cases": [
+                      {
+                        "test": {
+                          "kind": "jsString",
+                          "sourceKeys": {},
+                          "value": ""
+                        },
+                        "block": [
+                          {
+                            "kind": "jsBreak",
+                            "sourceKeys": {}
+                          }
+                        ]
+                      },
+                      {
+                        "block": [
+                          {
+                            "kind": "jsExpression",
+                            "sourceKeys": {},
+                            "value": {
+                              "kind": "jsMemberAccess",
+                              "sourceKeys": {},
+                              "type": "method",
+                              "object": {
+                                "kind": "jsMemberAccess",
+                                "sourceKeys": {},
+                                "type": "object",
+                                "object": {
+                                  "kind": "jsThis",
+                                  "sourceKeys": {}
+                                },
+                                "operator": ".",
+                                "member": "#rows"
+                              },
+                              "operator": ".",
+                              "member": "set",
+                              "memberArg": [
+                                {
+                                  "kind": "jsMemberAccess",
+                                  "sourceKeys": {},
+                                  "type": "object",
+                                  "object": {
+                                    "kind": "jsIdentifier",
+                                    "sourceKeys": {},
+                                    "name": "row"
+                                  },
+                                  "operator": ".",
+                                  "member": "id"
+                                },
+                                {
+                                  "kind": "jsIdentifier",
+                                  "sourceKeys": {},
+                                  "name": "row"
+                                }
+                              ]
+                            }
+                          },
+                          {
+                            "kind": "jsExpression",
+                            "sourceKeys": {},
+                            "value": {
+                              "kind": "jsUnary",
+                              "sourceKeys": {},
+                              "operator": "++",
+                              "operatorLocation": "back",
+                              "argument": {
+                                "kind": "jsIdentifier",
+                                "sourceKeys": {},
+                                "name": "count"
+                              }
+                            }
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "kind": "jsReturn",
+                "sourceKeys": {},
+                "field": {
+                  "kind": "jsIdentifier",
+                  "sourceKeys": {},
+                  "name": "count"
+                }
+              }
+            ],
+            "references": []
+          }
+        ]
       }
     ],
     "typeDeclarations": [
@@ -180,6 +663,71 @@
   },
   "sourceObject": [
     {
+      "context": "!row.id",
+      "start": {
+        "offset": 718,
+        "line": 30,
+        "column": 16
+      },
+      "end": {
+        "offset": 725,
+        "line": 30,
+        "column": 23
+      }
+    },
+    {
+      "context": "#rows = new Map<string, Row>();",
+      "start": {
+        "offset": 517,
+        "line": 21,
+        "column": 4
+      },
+      "end": {
+        "offset": 548,
+        "line": 21,
+        "column": 35
+      }
+    },
+    {
+      "context": "#rows",
+      "start": {
+        "offset": 517,
+        "line": 21,
+        "column": 4
+      },
+      "end": {
+        "offset": 522,
+        "line": 21,
+        "column": 9
+      }
+    },
+    {
+      "context": "''",
+      "start": {
+        "offset": 790,
+        "line": 32,
+        "column": 21
+      },
+      "end": {
+        "offset": 792,
+        "line": 32,
+        "column": 23
+      }
+    },
+    {
+      "context": "'JPY'",
+      "start": {
+        "offset": 206,
+        "line": 9,
+        "column": 80
+      },
+      "end": {
+        "offset": 211,
+        "line": 9,
+        "column": 85
+      }
+    },
+    {
       "context": "'asc' | 'desc'",
       "start": {
         "offset": 28,
@@ -190,6 +738,136 @@
         "offset": 42,
         "line": 1,
         "column": 42
+      }
+    },
+    {
+      "context": "'currency'",
+      "start": {
+        "offset": 184,
+        "line": 9,
+        "column": 58
+      },
+      "end": {
+        "offset": 194,
+        "line": 9,
+        "column": 68
+      }
+    },
+    {
+      "context": "'ja-JP'",
+      "start": {
+        "offset": 166,
+        "line": 9,
+        "column": 40
+      },
+      "end": {
+        "offset": 173,
+        "line": 9,
+        "column": 47
+      }
+    },
+    {
+      "context": "(record) => record as Row",
+      "start": {
+        "offset": 373,
+        "line": 14,
+        "column": 23
+      },
+      "end": {
+        "offset": 398,
+        "line": 14,
+        "column": 48
+      }
+    },
+    {
+      "context": "0",
+      "start": {
+        "offset": 509,
+        "line": 19,
+        "column": 23
+      },
+      "end": {
+        "offset": 510,
+        "line": 19,
+        "column": 24
+      }
+    },
+    {
+      "context": "0",
+      "start": {
+        "offset": 665,
+        "line": 28,
+        "column": 20
+      },
+      "end": {
+        "offset": 666,
+        "line": 28,
+        "column": 21
+      }
+    },
+    {
+      "context": "Intl",
+      "start": {
+        "offset": 148,
+        "line": 9,
+        "column": 22
+      },
+      "end": {
+        "offset": 152,
+        "line": 9,
+        "column": 26
+      }
+    },
+    {
+      "context": "Intl.NumberFormat",
+      "start": {
+        "offset": 148,
+        "line": 9,
+        "column": 22
+      },
+      "end": {
+        "offset": 165,
+        "line": 9,
+        "column": 39
+      }
+    },
+    {
+      "context": "Map",
+      "start": {
+        "offset": 529,
+        "line": 21,
+        "column": 16
+      },
+      "end": {
+        "offset": 532,
+        "line": 21,
+        "column": 19
+      }
+    },
+    {
+      "context": "Row",
+      "start": {
+        "offset": 395,
+        "line": 14,
+        "column": 45
+      },
+      "end": {
+        "offset": 398,
+        "line": 14,
+        "column": 48
+      }
+    },
+    {
+      "context": "Row",
+      "start": {
+        "offset": 541,
+        "line": 21,
+        "column": 28
+      },
+      "end": {
+        "offset": 544,
+        "line": 21,
+        "column": 31
       }
     },
     {
@@ -206,6 +884,19 @@
       }
     },
     {
+      "context": "RowCache",
+      "start": {
+        "offset": 475,
+        "line": 18,
+        "column": 13
+      },
+      "end": {
+        "offset": 483,
+        "line": 18,
+        "column": 21
+      }
+    },
+    {
       "context": "Row[]",
       "start": {
         "offset": 342,
@@ -216,6 +907,19 @@
         "offset": 347,
         "line": 13,
         "column": 49
+      }
+    },
+    {
+      "context": "Row[]",
+      "start": {
+        "offset": 628,
+        "line": 27,
+        "column": 14
+      },
+      "end": {
+        "offset": 633,
+        "line": 27,
+        "column": 19
       }
     },
     {
@@ -232,6 +936,149 @@
       }
     },
     {
+      "context": "break;",
+      "start": {
+        "offset": 814,
+        "line": 33,
+        "column": 20
+      },
+      "end": {
+        "offset": 820,
+        "line": 33,
+        "column": 26
+      }
+    },
+    {
+      "context": "class RowCache {\n    static instances = 0;\n\n    #rows = new Map<string, Row>();\n\n    get size(): number {\n        return this.#rows.size;\n    }\n\n    put(rows: Row[]): number {\n        let count = 0;\n        for (const row of rows) {\n            if (!row.id) continue;\n            switch (row.name) {\n                case '':\n                    break;\n                default:\n                    this.#rows.set(row.id, row);\n                    count++;\n            }\n        }\n        return count;\n    }\n}",
+      "start": {
+        "offset": 469,
+        "line": 18,
+        "column": 7
+      },
+      "end": {
+        "offset": 977,
+        "line": 41,
+        "column": 1
+      }
+    },
+    {
+      "context": "continue;",
+      "start": {
+        "offset": 727,
+        "line": 30,
+        "column": 25
+      },
+      "end": {
+        "offset": 736,
+        "line": 30,
+        "column": 34
+      }
+    },
+    {
+      "context": "count = 0",
+      "start": {
+        "offset": 657,
+        "line": 28,
+        "column": 12
+      },
+      "end": {
+        "offset": 666,
+        "line": 28,
+        "column": 21
+      }
+    },
+    {
+      "context": "count",
+      "start": {
+        "offset": 657,
+        "line": 28,
+        "column": 12
+      },
+      "end": {
+        "offset": 662,
+        "line": 28,
+        "column": 17
+      }
+    },
+    {
+      "context": "count",
+      "start": {
+        "offset": 915,
+        "line": 36,
+        "column": 20
+      },
+      "end": {
+        "offset": 920,
+        "line": 36,
+        "column": 25
+      }
+    },
+    {
+      "context": "count",
+      "start": {
+        "offset": 963,
+        "line": 39,
+        "column": 15
+      },
+      "end": {
+        "offset": 968,
+        "line": 39,
+        "column": 20
+      }
+    },
+    {
+      "context": "count++",
+      "start": {
+        "offset": 915,
+        "line": 36,
+        "column": 20
+      },
+      "end": {
+        "offset": 922,
+        "line": 36,
+        "column": 27
+      }
+    },
+    {
+      "context": "count++;",
+      "start": {
+        "offset": 915,
+        "line": 36,
+        "column": 20
+      },
+      "end": {
+        "offset": 923,
+        "line": 36,
+        "column": 28
+      }
+    },
+    {
+      "context": "currency: 'JPY'",
+      "start": {
+        "offset": 196,
+        "line": 9,
+        "column": 70
+      },
+      "end": {
+        "offset": 211,
+        "line": 9,
+        "column": 85
+      }
+    },
+    {
+      "context": "for (const row of rows) {\n            if (!row.id) continue;\n            switch (row.name) {\n                case '':\n                    break;\n                default:\n                    this.#rows.set(row.id, row);\n                    count++;\n            }\n        }",
+      "start": {
+        "offset": 676,
+        "line": 29,
+        "column": 8
+      },
+      "end": {
+        "offset": 947,
+        "line": 38,
+        "column": 9
+      }
+    },
+    {
       "context": "formatAmount = (value: number): string => formatter.format(value)",
       "start": {
         "offset": 230,
@@ -242,6 +1089,19 @@
         "offset": 295,
         "line": 11,
         "column": 78
+      }
+    },
+    {
+      "context": "formatAmount as format",
+      "start": {
+        "offset": 988,
+        "line": 43,
+        "column": 9
+      },
+      "end": {
+        "offset": 1010,
+        "line": 43,
+        "column": 31
       }
     },
     {
@@ -284,6 +1144,32 @@
       }
     },
     {
+      "context": "formatter",
+      "start": {
+        "offset": 272,
+        "line": 11,
+        "column": 55
+      },
+      "end": {
+        "offset": 281,
+        "line": 11,
+        "column": 64
+      }
+    },
+    {
+      "context": "formatter.format(value)",
+      "start": {
+        "offset": 272,
+        "line": 11,
+        "column": 55
+      },
+      "end": {
+        "offset": 295,
+        "line": 11,
+        "column": 78
+      }
+    },
+    {
       "context": "function toRows(records: unknown[]): Row[] {\n    return records.map((record) => record as Row);\n}",
       "start": {
         "offset": 305,
@@ -294,6 +1180,45 @@
         "offset": 402,
         "line": 15,
         "column": 1
+      }
+    },
+    {
+      "context": "get size(): number {\n        return this.#rows.size;\n    }",
+      "start": {
+        "offset": 554,
+        "line": 23,
+        "column": 4
+      },
+      "end": {
+        "offset": 612,
+        "line": 25,
+        "column": 5
+      }
+    },
+    {
+      "context": "if (!row.id) continue;",
+      "start": {
+        "offset": 714,
+        "line": 30,
+        "column": 12
+      },
+      "end": {
+        "offset": 736,
+        "line": 30,
+        "column": 34
+      }
+    },
+    {
+      "context": "instances",
+      "start": {
+        "offset": 497,
+        "line": 19,
+        "column": 11
+      },
+      "end": {
+        "offset": 506,
+        "line": 19,
+        "column": 20
       }
     },
     {
@@ -310,6 +1235,45 @@
       }
     },
     {
+      "context": "let count = 0;",
+      "start": {
+        "offset": 653,
+        "line": 28,
+        "column": 8
+      },
+      "end": {
+        "offset": 667,
+        "line": 28,
+        "column": 22
+      }
+    },
+    {
+      "context": "new Intl.NumberFormat('ja-JP', { style: 'currency', currency: 'JPY' })",
+      "start": {
+        "offset": 144,
+        "line": 9,
+        "column": 18
+      },
+      "end": {
+        "offset": 214,
+        "line": 9,
+        "column": 88
+      }
+    },
+    {
+      "context": "new Map<string, Row>()",
+      "start": {
+        "offset": 525,
+        "line": 21,
+        "column": 12
+      },
+      "end": {
+        "offset": 547,
+        "line": 21,
+        "column": 34
+      }
+    },
+    {
       "context": "number",
       "start": {
         "offset": 253,
@@ -320,6 +1284,123 @@
         "offset": 259,
         "line": 11,
         "column": 42
+      }
+    },
+    {
+      "context": "number",
+      "start": {
+        "offset": 566,
+        "line": 23,
+        "column": 16
+      },
+      "end": {
+        "offset": 572,
+        "line": 23,
+        "column": 22
+      }
+    },
+    {
+      "context": "number",
+      "start": {
+        "offset": 636,
+        "line": 27,
+        "column": 22
+      },
+      "end": {
+        "offset": 642,
+        "line": 27,
+        "column": 28
+      }
+    },
+    {
+      "context": "put",
+      "start": {
+        "offset": 618,
+        "line": 27,
+        "column": 4
+      },
+      "end": {
+        "offset": 621,
+        "line": 27,
+        "column": 7
+      }
+    },
+    {
+      "context": "put(rows: Row[]): number {\n        let count = 0;\n        for (const row of rows) {\n            if (!row.id) continue;\n            switch (row.name) {\n                case '':\n                    break;\n                default:\n                    this.#rows.set(row.id, row);\n                    count++;\n            }\n        }\n        return count;\n    }",
+      "start": {
+        "offset": 618,
+        "line": 27,
+        "column": 4
+      },
+      "end": {
+        "offset": 975,
+        "line": 40,
+        "column": 5
+      }
+    },
+    {
+      "context": "record as Row",
+      "start": {
+        "offset": 385,
+        "line": 14,
+        "column": 35
+      },
+      "end": {
+        "offset": 398,
+        "line": 14,
+        "column": 48
+      }
+    },
+    {
+      "context": "record",
+      "start": {
+        "offset": 374,
+        "line": 14,
+        "column": 24
+      },
+      "end": {
+        "offset": 380,
+        "line": 14,
+        "column": 30
+      }
+    },
+    {
+      "context": "record",
+      "start": {
+        "offset": 385,
+        "line": 14,
+        "column": 35
+      },
+      "end": {
+        "offset": 391,
+        "line": 14,
+        "column": 41
+      }
+    },
+    {
+      "context": "records",
+      "start": {
+        "offset": 361,
+        "line": 14,
+        "column": 11
+      },
+      "end": {
+        "offset": 368,
+        "line": 14,
+        "column": 18
+      }
+    },
+    {
+      "context": "records.map((record) => record as Row)",
+      "start": {
+        "offset": 361,
+        "line": 14,
+        "column": 11
+      },
+      "end": {
+        "offset": 399,
+        "line": 14,
+        "column": 49
       }
     },
     {
@@ -336,6 +1417,201 @@
       }
     },
     {
+      "context": "return count;",
+      "start": {
+        "offset": 956,
+        "line": 39,
+        "column": 8
+      },
+      "end": {
+        "offset": 969,
+        "line": 39,
+        "column": 21
+      }
+    },
+    {
+      "context": "return records.map((record) => record as Row);",
+      "start": {
+        "offset": 354,
+        "line": 14,
+        "column": 4
+      },
+      "end": {
+        "offset": 400,
+        "line": 14,
+        "column": 50
+      }
+    },
+    {
+      "context": "return this.#rows.size;",
+      "start": {
+        "offset": 583,
+        "line": 24,
+        "column": 8
+      },
+      "end": {
+        "offset": 606,
+        "line": 24,
+        "column": 31
+      }
+    },
+    {
+      "context": "row",
+      "start": {
+        "offset": 687,
+        "line": 29,
+        "column": 19
+      },
+      "end": {
+        "offset": 690,
+        "line": 29,
+        "column": 22
+      }
+    },
+    {
+      "context": "row",
+      "start": {
+        "offset": 719,
+        "line": 30,
+        "column": 17
+      },
+      "end": {
+        "offset": 722,
+        "line": 30,
+        "column": 20
+      }
+    },
+    {
+      "context": "row",
+      "start": {
+        "offset": 757,
+        "line": 31,
+        "column": 20
+      },
+      "end": {
+        "offset": 760,
+        "line": 31,
+        "column": 23
+      }
+    },
+    {
+      "context": "row",
+      "start": {
+        "offset": 881,
+        "line": 35,
+        "column": 35
+      },
+      "end": {
+        "offset": 884,
+        "line": 35,
+        "column": 38
+      }
+    },
+    {
+      "context": "row",
+      "start": {
+        "offset": 889,
+        "line": 35,
+        "column": 43
+      },
+      "end": {
+        "offset": 892,
+        "line": 35,
+        "column": 46
+      }
+    },
+    {
+      "context": "row.id",
+      "start": {
+        "offset": 719,
+        "line": 30,
+        "column": 17
+      },
+      "end": {
+        "offset": 725,
+        "line": 30,
+        "column": 23
+      }
+    },
+    {
+      "context": "row.id",
+      "start": {
+        "offset": 881,
+        "line": 35,
+        "column": 35
+      },
+      "end": {
+        "offset": 887,
+        "line": 35,
+        "column": 41
+      }
+    },
+    {
+      "context": "row.name",
+      "start": {
+        "offset": 757,
+        "line": 31,
+        "column": 20
+      },
+      "end": {
+        "offset": 765,
+        "line": 31,
+        "column": 28
+      }
+    },
+    {
+      "context": "rows",
+      "start": {
+        "offset": 694,
+        "line": 29,
+        "column": 26
+      },
+      "end": {
+        "offset": 698,
+        "line": 29,
+        "column": 30
+      }
+    },
+    {
+      "context": "rows: Row[]",
+      "start": {
+        "offset": 622,
+        "line": 27,
+        "column": 8
+      },
+      "end": {
+        "offset": 633,
+        "line": 27,
+        "column": 19
+      }
+    },
+    {
+      "context": "size",
+      "start": {
+        "offset": 558,
+        "line": 23,
+        "column": 8
+      },
+      "end": {
+        "offset": 562,
+        "line": 23,
+        "column": 12
+      }
+    },
+    {
+      "context": "static instances = 0;",
+      "start": {
+        "offset": 490,
+        "line": 19,
+        "column": 4
+      },
+      "end": {
+        "offset": 511,
+        "line": 19,
+        "column": 25
+      }
+    },
+    {
       "context": "string",
       "start": {
         "offset": 262,
@@ -346,6 +1622,136 @@
         "offset": 268,
         "line": 11,
         "column": 51
+      }
+    },
+    {
+      "context": "string",
+      "start": {
+        "offset": 533,
+        "line": 21,
+        "column": 20
+      },
+      "end": {
+        "offset": 539,
+        "line": 21,
+        "column": 26
+      }
+    },
+    {
+      "context": "style: 'currency'",
+      "start": {
+        "offset": 177,
+        "line": 9,
+        "column": 51
+      },
+      "end": {
+        "offset": 194,
+        "line": 9,
+        "column": 68
+      }
+    },
+    {
+      "context": "switch (row.name) {\n                case '':\n                    break;\n                default:\n                    this.#rows.set(row.id, row);\n                    count++;\n            }",
+      "start": {
+        "offset": 749,
+        "line": 31,
+        "column": 12
+      },
+      "end": {
+        "offset": 937,
+        "line": 37,
+        "column": 13
+      }
+    },
+    {
+      "context": "this",
+      "start": {
+        "offset": 590,
+        "line": 24,
+        "column": 15
+      },
+      "end": {
+        "offset": 594,
+        "line": 24,
+        "column": 19
+      }
+    },
+    {
+      "context": "this",
+      "start": {
+        "offset": 866,
+        "line": 35,
+        "column": 20
+      },
+      "end": {
+        "offset": 870,
+        "line": 35,
+        "column": 24
+      }
+    },
+    {
+      "context": "this.#rows",
+      "start": {
+        "offset": 590,
+        "line": 24,
+        "column": 15
+      },
+      "end": {
+        "offset": 600,
+        "line": 24,
+        "column": 25
+      }
+    },
+    {
+      "context": "this.#rows",
+      "start": {
+        "offset": 866,
+        "line": 35,
+        "column": 20
+      },
+      "end": {
+        "offset": 876,
+        "line": 35,
+        "column": 30
+      }
+    },
+    {
+      "context": "this.#rows.set(row.id, row)",
+      "start": {
+        "offset": 866,
+        "line": 35,
+        "column": 20
+      },
+      "end": {
+        "offset": 893,
+        "line": 35,
+        "column": 47
+      }
+    },
+    {
+      "context": "this.#rows.set(row.id, row);",
+      "start": {
+        "offset": 866,
+        "line": 35,
+        "column": 20
+      },
+      "end": {
+        "offset": 894,
+        "line": 35,
+        "column": 48
+      }
+    },
+    {
+      "context": "this.#rows.size",
+      "start": {
+        "offset": 590,
+        "line": 24,
+        "column": 15
+      },
+      "end": {
+        "offset": 605,
+        "line": 24,
+        "column": 30
       }
     },
     {
@@ -388,6 +1794,19 @@
       }
     },
     {
+      "context": "value",
+      "start": {
+        "offset": 289,
+        "line": 11,
+        "column": 72
+      },
+      "end": {
+        "offset": 294,
+        "line": 11,
+        "column": 77
+      }
+    },
+    {
       "context": "value: number",
       "start": {
         "offset": 246,
@@ -401,16 +1820,16 @@
       }
     },
     {
-      "context": "{\n    return records.map((record) => record as Row);\n}",
+      "context": "{ style: 'currency', currency: 'JPY' }",
       "start": {
-        "offset": 348,
-        "line": 13,
-        "column": 50
+        "offset": 175,
+        "line": 9,
+        "column": 49
       },
       "end": {
-        "offset": 402,
-        "line": 15,
-        "column": 1
+        "offset": 213,
+        "line": 9,
+        "column": 87
       }
     }
   ],

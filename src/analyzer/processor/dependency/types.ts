@@ -40,6 +40,8 @@ export type DependencyKind =
     | 'deletes'
     | 'undeletes'
     | 'merges'
+    /** プラットフォームイベントの発行 (Apex の EventBus.publish) */
+    | 'publishes'
     | 'calls'
     | 'creates'
     | 'extends'

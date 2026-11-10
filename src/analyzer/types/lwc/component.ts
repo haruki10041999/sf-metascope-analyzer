@@ -19,7 +19,17 @@ import type {
 } from '../lwc_IR';
 
 import { nameOf, unwrapExpression, walkNodes, type LwcJsonContext, type LwcNode } from './commons';
+import {
+    makeLwcArgumentJson,
+    makeLwcExpressionJson,
+    makeLwcPatternJson,
+    type LwcJsArgumentJson,
+    type LwcJsExpressionJson,
+    type LwcJsIdentifierJson,
+    type LwcJsPatternJson,
+} from './expression';
 import type { LwcImportJson } from './import';
+import { makeLwcBlockJson, makeLwcStatementJson, type LwcJsStatementJson } from './statement';
 import { makeLwcTypeJson, type LwcTypeJson } from './type';
 
 // ---------------------------------------------------------------------------
@@ -39,24 +49,29 @@ export type LwcImportReferenceJson = {
 /** @wire(adapter, { key: value }) の設定の 1 項目 */
 export type LwcWireConfigJson = JsonType<'lwcWireConfig'> & {
     key: string;
-    /** 値の式の文字列 */
-    value: string;
+    /** 値の式 (5.4。ソースの文字列は持たない) */
+    value: LwcJsExpressionJson;
     /** '$recordId' のような、プロパティに追従する値 */
     reactive?: string;
     /** 値の中で使っている import (fields: [NAME_FIELD] の NAME_FIELD など) */
     references: LwcImportReferenceJson[];
+    /**
+     * 値の中の、文字列で書いた項目 (fields: ['Account.Name'] の Account.Name。<オブジェクト>.<項目> の形のもの)。
+     * 値の文字列のリテラル・配列の中の文字列のリテラルを見る。なければ持たない
+     */
+    fieldNames?: string[];
 };
 
 /** デコレーター (Apex の AnnotationJson に当たる) */
 export type LwcDecoratorJson = JsonType<'lwcDecorator'> & {
     /** api / track / wire など */
     name: string;
-    /** 引数の式の文字列 */
-    arg: string[];
+    /** 引数の式 (@api などの引数のないものは []) */
+    arg: LwcJsArgumentJson[];
     /** @wire のとき */
     wire?: {
-        /** アダプターの式の文字列 (getRecord、getAccounts など) */
-        adapter: string;
+        /** アダプターの式 (getRecord・getAccounts などの識別子。第 1 引数) */
+        adapter: LwcJsExpressionJson;
         /** アダプターを import したモジュール (lightning/uiRecordApi、@salesforce/apex/... など) */
         adapterSource?: string;
         /** アダプターが Apex のメソッドのとき (@salesforce/apex/<クラス>.<メソッド>) */
@@ -72,53 +87,41 @@ export type LwcModifiersJson = {
     decorator?: LwcDecoratorJson[];
 };
 
-export type LwcCallJson = JsonType<'lwcCall'> & {
-    /**
-     * apex: import した Apex のメソッドの呼び出し / navigate: this[NavigationMixin.Navigate] など /
-     * querySelector: this.template.querySelector(All) / refs: this.refs.<名前> /
-     * dispatchEvent: this.dispatchEvent(...) / innerHTML: innerHTML・outerHTML への代入
-     */
-    callType: 'apex' | 'navigate' | 'querySelector' | 'refs' | 'dispatchEvent' | 'innerHTML';
-    /**
-     * apex: import の名前 / navigate: Navigate・GenerateUrl / querySelector: セレクターの式 / refs: 名前 /
-     * dispatchEvent: イベントのクラス (CustomEvent / ShowToastEvent) か式 / innerHTML: 代入先の式
-     */
-    target: string;
-    apex?: { className: string; methodName: string };
-    /** 引数の式の文字列 (refs・innerHTML はなし) */
-    arg: string[];
-    /** 引数の中で使っている import */
+/**
+ * メソッド・getter / setter・関数・static ブロックの本体。
+ * 決まった形の呼び出し・イベント (段階 5 までの calls / events) は JSON に持たず、文の JSON から解析で出す
+ * (processor/Lwc/calls.ts。docs/lwc-json-types.md 7 章の 4・8.8)
+ */
+export type LwcBodyContentJson = {
+    /** 本体の文 (Apex の block と同じ。アロー関数の式の本体のように、ブロックでなければなし) */
+    block?: LwcJsStatementJson[];
+    /** 本体の中で使っている import (getFieldValue(..., NAME_FIELD) の NAME_FIELD など。同じ名前は 1 つ) */
     references: LwcImportReferenceJson[];
 };
 
-/** メソッド・getter / setter・関数の本体。中身はソース位置 (sourceObject) が持つ。本体が変わると objectKey が変わる */
-export type LwcBodyJson = JsonType<'lwcBody'> & {
-    /** 本体の直下の文の数 */
-    statements: number;
-};
-
-export type LwcEventJson = JsonType<'lwcEvent'> & {
-    /** イベント名 (文字列のリテラルでなければ式の文字列) */
-    name: string;
-    bubbles?: boolean;
-    composed?: boolean;
-    /** detail の式の文字列 */
-    detail?: string;
-    /** TS の CustomEvent<T> の T */
-    detailType?: LwcTypeJson;
-};
-
-/** メソッド・getter / setter・関数の本体と、本体から取り出したもの */
-export type LwcBodyContentJson = {
-    /** 本体 (アロー関数の式の本体のように、ブロックでなければなし) */
-    body?: LwcBodyJson;
-    calls: LwcCallJson[];
-    events: LwcEventJson[];
+/**
+ * 関数 (メソッド以外の function・アロー関数) の引数・戻り値の型・async と本体。
+ * 関数を初期値にしたフィールド・変数は、これだけで関数を表す (初期値の式 initExpression に同じ関数を重ねて持たない)
+ */
+export type LwcFunctionContentJson = LwcBodyContentJson & {
+    /** アロー関数か (false は function 式・function 宣言) */
+    arrow: boolean;
+    param: LwcParameterJson[];
+    returnType?: LwcTypeJson;
+    async: boolean;
+    generator: boolean;
+    /** function 式の名前 (const f = function g() {} の g) */
+    functionName?: string;
+    /** アロー関数の式の本体 (x => x.id の x.id)。ブロックの本体は block */
+    expression?: LwcJsExpressionJson;
 };
 
 /** 引数 (Apex の ParameterJson に当たる) */
 export type LwcParameterJson = JsonType<'lwcParameter'> & {
-    variant: string;
+    /** 名前 (識別子のとき。...rest は rest)。分割代入の引数は持たず pattern を持つ */
+    variant?: string;
+    /** 分割代入の引数 ({ data, error }) のパターン (型注釈は variantType。既定値は含まない) */
+    pattern?: LwcJsPatternJson;
     variantType?: LwcTypeJson;
     optional: boolean;
     /** constructor(private x: T) の修飾子 */
@@ -129,10 +132,15 @@ export type LwcParameterJson = JsonType<'lwcParameter'> & {
 export type LwcFieldJson = StructureJsonType<'lwcField', { name: ConvertKeys }> & {
     name: string;
     variantType?: LwcTypeJson;
-    /** 初期値の式の文字列 */
-    init?: string;
+    /**
+     * 初期値の式 (5.4)。初期値がそのまま関数 (handleClick = () => {...}) のときは持たず、function だけで表す
+     * (括弧・as などで包んだ関数は、包んだ形を残すため持つ)
+     */
+    init?: LwcJsExpressionJson;
     /** 初期値の中で使っている import (@api title = TITLE_LABEL の TITLE_LABEL など) */
     references: LwcImportReferenceJson[];
+    /** 初期値が関数 (handleClick = () => {...}) のとき、メソッドと同じ本体の中身。そのときは init を持たない */
+    function?: LwcFunctionContentJson;
     optional: boolean;
     modifier: LwcModifiersJson;
 };
@@ -169,15 +177,20 @@ export type LwcConstructorJson = StructureJsonType<'lwcConstructor', { name: Con
         modifier: LwcModifiersJson;
     };
 
-export type LwcMemberJson = LwcFieldJson | LwcPropertyJson | LwcMethodJson | LwcConstructorJson;
+/** static { ... } のブロック。名前を持たないので、Diff では位置と中身で対応付ける */
+export type LwcStaticBlockJson = JsonType<'lwcStaticBlock'> & LwcBodyContentJson;
+
+export type LwcMemberJson =
+    LwcFieldJson | LwcPropertyJson | LwcMethodJson | LwcConstructorJson | LwcStaticBlockJson;
 
 export type LwcComponentJson = StructureJsonType<'lwcComponent', { name: ConvertKeys }> & {
     /** クラス名 (export default class {} のように名前がなければ null) */
     name: string | null;
-    /** 継承元のクラス (NavigationMixin(LightningElement) なら LightningElement。Apex の extend に当たる) */
-    extend?: string;
-    /** ミックスイン (NavigationMixin(LightningElement) なら NavigationMixin) */
-    mixins: string[];
+    /**
+     * extends の式 (NavigationMixin(LightningElement) など。lwcClass と同じ)。
+     * 継承元とミックスインの名前は解析で出す (processor/Lwc/walker.ts の lwcHeritageOf)
+     */
+    superClass?: LwcJsExpressionJson;
     /** TS の implements (Apex の implement に当たる) */
     implement?: LwcTypeJson[];
     /** メンバー (ソースの順) */
@@ -188,13 +201,24 @@ export type LwcComponentJson = StructureJsonType<'lwcComponent', { name: Convert
 // 部品
 // ---------------------------------------------------------------------------
 
+/** 値の import 1 つ (型だけの import は除く)。呼び出しの種類 (lds・module など) を決めるのに使う */
+export type LwcImportBinding = {
+    source: string;
+    specifierType: 'default' | 'named' | 'namespace';
+    /** import 元での名前 (default は 'default'、名前空間の import は持たない) */
+    imported?: string;
+};
+
 export type LwcImportTables = {
     /** import の名前 → import 元と、Apex のメソッド・項目 */
     imports: Map<string, LwcImportReferenceJson>;
+    /** import の名前 → 値の import (型だけの import は入れない) */
+    bindings: Map<string, LwcImportBinding>;
 };
 
 export const makeLwcImportTables = (imports: LwcImportJson[]): LwcImportTables => {
     const tables = new Map<string, LwcImportReferenceJson>();
+    const bindings = new Map<string, LwcImportBinding>();
     for (const item of imports) {
         for (const specifier of item.specifiers) {
             // Apex のメソッド・項目は default import のときだけ
@@ -205,9 +229,19 @@ export const makeLwcImportTables = (imports: LwcImportJson[]): LwcImportTables =
                 ...(isDefault && item.apex ? { apex: item.apex } : {}),
                 ...(isDefault && item.schema ? { schema: item.schema } : {}),
             });
+            if (item.typeOnly || specifier.typeOnly) continue;
+            bindings.set(specifier.local, {
+                source: item.source,
+                specifierType: specifier.specifierType,
+                ...(isDefault
+                    ? { imported: 'default' }
+                    : specifier.specifierType === 'named'
+                      ? { imported: specifier.imported ?? specifier.local }
+                      : {}),
+            });
         }
     }
-    return { imports: tables };
+    return { imports: tables, bindings };
 };
 
 /** 式の中で使っている import (識別子が import の名前のもの。同じ名前は 1 つ) */
@@ -245,6 +279,35 @@ const objectPropertiesOf = (node: LwcNode | null | undefined): ir.ObjectProperty
         );
 };
 
+/** 文字列のリテラル ('x'・式のないテンプレートリテラル `x`) の値。それ以外は null */
+const stringValueOf = (node: LwcNode | null | undefined): string | null => {
+    if (!node) return null;
+    const target = unwrapExpression(node);
+    if (target.kind === 'stringLiteral') {
+        return (target as ir.StringLiteralTypeClass).getFields().value;
+    }
+    if (target.kind === 'templateLiteral') {
+        const { head, spans } = (target as ir.TemplateLiteralTypeClass).getFields();
+        if (spans.length === 0) return head.getFields().value.cooked ?? null;
+    }
+    return null;
+};
+
+/** <オブジェクト>.<項目> (リレーションをたどるもの Account.Owner.Email を含む) */
+const FIELD_NAME = /^\w+(\.\w+)+$/;
+
+/** wire の設定の値の中の、文字列で書いた項目 (値そのもの・配列の要素の文字列のリテラル) */
+const fieldNamesOf = (node: LwcNode): string[] => {
+    const target = unwrapExpression(node);
+    if (target.kind === 'arrayExpression') {
+        return (target as ir.ArrayExpressionTypeClass)
+            .getFields()
+            .elements.flatMap((element) => (element ? fieldNamesOf(element) : []));
+    }
+    const value = stringValueOf(target);
+    return value !== null && FIELD_NAME.test(value) ? [value] : [];
+};
+
 /** 呼び出し (callExpression・optionalCallExpression) の callee と引数。呼び出しでなければ null */
 const callPartsOf = (node: LwcNode): { callee: LwcNode; args: LwcNode[] } | null => {
     if (node.kind !== 'callExpression' && node.kind !== 'optionalCallExpression') return null;
@@ -252,17 +315,6 @@ const callPartsOf = (node: LwcNode): { callee: LwcNode; args: LwcNode[] } | null
         node as ir.CallExpressionTypeClass | standardizedVisitor.OptionalCallExpressionTypeClass
     ).getFields();
     return { callee: fields.callee, args: fields.arguments };
-};
-
-/** メンバーの参照 (memberExpression・optionalMemberExpression) の中身。メンバーの参照でなければ null */
-const memberPartsOf = (
-    node: LwcNode,
-): { object: LwcNode; property: LwcNode; computed: boolean } | null => {
-    if (node.kind !== 'memberExpression' && node.kind !== 'optionalMemberExpression') return null;
-    const fields = (
-        node as ir.MemberExpressionTypeClass | standardizedVisitor.OptionalMemberExpressionTypeClass
-    ).getFields();
-    return { object: fields.object, property: fields.property, computed: fields.computed };
 };
 
 const makeDecoratorJson = (
@@ -279,8 +331,18 @@ const makeDecoratorJson = (
     let wire: LwcDecoratorJson['wire'];
     if (name === 'wire') {
         const [adapterNode, configNode] = args;
-        const adapter = adapterNode ? context.textOf(adapterNode) : '';
-        const adapterImport = tables.imports.get(adapter.split('.')[0] ?? '');
+        // アダプターの import は、式の先頭の識別子 (apex.getAccounts なら apex) で引く
+        let head = adapterNode ? unwrapExpression(adapterNode) : null;
+        while (
+            head &&
+            (head.kind === 'memberExpression' || head.kind === 'optionalMemberExpression')
+        ) {
+            head = unwrapExpression((head as ir.MemberExpressionTypeClass).getFields().object);
+        }
+        const adapterImport =
+            head?.kind === 'identifier'
+                ? tables.imports.get((head as ir.IdentifierTypeClass).getFields().name)
+                : undefined;
         const config: LwcWireConfigJson[] = [];
         const configObject = configNode ? unwrapExpression(configNode) : null;
         for (const property of objectPropertiesOf(configObject)) {
@@ -289,21 +351,30 @@ const makeDecoratorJson = (
                 value.kind === 'stringLiteral'
                     ? (value as ir.StringLiteralTypeClass).getFields().value
                     : null;
+            const fieldNames = fieldNamesOf(value);
             config.push(
                 makeJsonType<'lwcWireConfig', LwcWireConfigJson>(
                     'lwcWireConfig',
                     context.keysOf(property),
                     {
                         key: nameOf(key, context),
-                        value: context.textOf(value),
+                        value: makeLwcExpressionJson(value, tables, context),
                         ...(literal?.startsWith('$') ? { reactive: literal.slice(1) } : {}),
                         references: referencesOf(value, tables),
+                        ...(fieldNames.length > 0 ? { fieldNames } : {}),
                     },
                 ),
             );
         }
         wire = {
-            adapter,
+            // @wire() (アダプターなし) はコンパイラが受け付けないが、JSON は作るので空の識別子にする
+            adapter: adapterNode
+                ? makeLwcExpressionJson(adapterNode, tables, context)
+                : makeJsonType<'jsIdentifier', LwcJsIdentifierJson>(
+                      'jsIdentifier',
+                      context.keysOf(target),
+                      { name: '' },
+                  ),
             ...(adapterImport ? { adapterSource: adapterImport.source } : {}),
             ...(adapterImport?.apex ? { apex: adapterImport.apex } : {}),
             config,
@@ -312,7 +383,7 @@ const makeDecoratorJson = (
 
     return makeJsonType<'lwcDecorator', LwcDecoratorJson>('lwcDecorator', context.keysOf(target), {
         name,
-        arg: args.map((arg) => context.textOf(arg)),
+        arg: args.map((arg) => makeLwcArgumentJson(arg, tables, context)),
         ...(wire ? { wire } : {}),
     });
 };
@@ -394,182 +465,99 @@ export const makeLwcParameterJson = (
         optional?: boolean;
     };
     const annotation = targetFields.typeAnnotation ?? null;
-    // 分割代入 ({ data, error }: T) の範囲は型注釈を含むので、型注釈の部分を除く
-    let variant =
-        target.kind === 'identifier'
-            ? (target as ir.IdentifierTypeClass).getFields().name
-            : context.textOf(target);
-    const annotationText = annotation ? context.textOf(annotation) : '';
-    if (target.kind !== 'identifier' && annotationText && variant.endsWith(annotationText)) {
-        variant = variant.slice(0, -annotationText.length).trimEnd();
-    }
+    // 分割代入 ({ data, error }: T) はパターン (型注釈は variantType)
     return makeJsonType<'lwcParameter', LwcParameterJson>('lwcParameter', context.keysOf(param), {
-        variant,
+        ...(target.kind === 'identifier'
+            ? { variant: (target as ir.IdentifierTypeClass).getFields().name }
+            : { pattern: makeLwcPatternJson(target, tables, context) }),
         ...makeTypeJsonOrUndefined(annotation, context),
         optional: hasDefault || targetFields.optional === true,
         modifier,
     });
 };
 
-/** this.<名前> の <名前> (this でなければ null) */
-const thisMemberName = (node: LwcNode, context: LwcJsonContext): string | null => {
-    const member = memberPartsOf(node);
-    if (!member) return null;
-    if (unwrapExpression(member.object).kind !== 'thisExpression') return null;
-    return member.computed ? context.textOf(member.property) : nameOf(member.property, context);
-};
-
 /**
- * メソッド・getter / setter・関数の本体。本体 (lwcBody) と、解析に使う呼び出し
- * (Apex・ナビゲーション・querySelector・refs・dispatchEvent・innerHTML への代入) と new CustomEvent を取り出す
+ * メソッド・getter / setter・関数の本体。本体の文 (block) と、本体の中の import の参照。
+ * 決まった形の呼び出し・イベントは JSON に持たず、解析で文の JSON から出す (processor/Lwc/calls.ts)
  */
 export const makeLwcBodyContentJson = (
     body: LwcNode | null,
     tables: LwcImportTables,
     context: LwcJsonContext,
 ): LwcBodyContentJson => {
-    const calls: LwcCallJson[] = [];
-    const events: LwcEventJson[] = [];
-    const seenRefs = new Set<string>();
-    const call = (
-        node: LwcNode,
-        properties: Omit<LwcCallJson, 'kind' | 'sourceKeys' | 'arg' | 'references'>,
-        args: LwcNode[] = [],
-    ) =>
-        calls.push(
-            makeJsonType<'lwcCall', LwcCallJson>('lwcCall', context.keysOf(node), {
-                ...properties,
-                arg: args.map((arg) => context.textOf(arg)),
-                references: args.flatMap((arg) => referencesOf(arg, tables)),
-            }),
-        );
-
-    const visit = (node: LwcNode): void => {
-        const callParts = callPartsOf(node);
-        if (callParts) {
-            const callee = unwrapExpression(callParts.callee);
-            const { args } = callParts;
-            if (callee.kind === 'identifier') {
-                const calleeName = (callee as ir.IdentifierTypeClass).getFields().name;
-                const apex = tables.imports.get(calleeName)?.apex;
-                if (apex) call(node, { callType: 'apex', target: calleeName, apex }, args);
-            }
-            const calleeMember = memberPartsOf(callee);
-            if (calleeMember) {
-                const member = thisMemberName(callee, context);
-                // this[NavigationMixin.Navigate](...) / this[NavigationMixin.GenerateUrl](...)
-                const navigation = member?.match(/^NavigationMixin\.(\w+)$/);
-                if (navigation) {
-                    call(node, { callType: 'navigate', target: navigation[1]! }, args);
-                }
-                // this.dispatchEvent(event)
-                if (member === 'dispatchEvent') {
-                    // new CustomEvent(...) / new ShowToastEvent(...) ならイベントのクラス、変数ならその式
-                    const event = args[0] ? unwrapExpression(args[0]) : null;
-                    const target = !event
-                        ? ''
-                        : event.kind === 'newExpression'
-                          ? context.textOf((event as ir.NewExpressionTypeClass).getFields().callee)
-                          : context.textOf(event);
-                    call(node, { callType: 'dispatchEvent', target }, args);
-                }
-                // this.template.querySelector(...) / querySelectorAll(...)
-                const method = nameOf(calleeMember.property, context);
-                if (
-                    (method === 'querySelector' || method === 'querySelectorAll') &&
-                    thisMemberName(unwrapExpression(calleeMember.object), context) === 'template'
-                ) {
-                    const [selector] = args;
-                    call(
-                        node,
-                        {
-                            callType: 'querySelector',
-                            target: selector ? context.textOf(selector) : '',
-                        },
-                        args,
-                    );
-                }
-            }
-            return;
-        }
-        const memberParts = memberPartsOf(node);
-        if (memberParts) {
-            // this.refs.<名前>
-            if (thisMemberName(unwrapExpression(memberParts.object), context) === 'refs') {
-                const name = nameOf(memberParts.property, context);
-                if (!seenRefs.has(name)) {
-                    seenRefs.add(name);
-                    call(node, { callType: 'refs', target: name });
-                }
-            }
-            return;
-        }
-        switch (node.kind) {
-            case 'assignmentExpression': {
-                // element.innerHTML = ... / element.outerHTML = ... (LWC で避けるべき DOM の直接の操作)
-                const left = (node as ir.AssignmentExpressionTypeClass).getFields().left;
-                const leftMember = memberPartsOf(left);
-                if (
-                    leftMember &&
-                    !leftMember.computed &&
-                    ['innerHTML', 'outerHTML'].includes(nameOf(leftMember.property, context))
-                ) {
-                    call(node, { callType: 'innerHTML', target: context.textOf(left) });
-                }
-                break;
-            }
-            case 'newExpression': {
-                // new CustomEvent(名前, { detail, bubbles, composed })
-                const fields = (node as ir.NewExpressionTypeClass).getFields();
-                if (nameOf(unwrapExpression(fields.callee), context) !== 'CustomEvent') break;
-                const [nameArg, optionsArg] = fields.arguments;
-                const options: Pick<LwcEventJson, 'bubbles' | 'composed' | 'detail'> = {};
-                const optionsObject = optionsArg ? unwrapExpression(optionsArg) : null;
-                for (const property of objectPropertiesOf(optionsObject)) {
-                    const { key: keyNode, value } = property.getFields();
-                    const key = nameOf(keyNode, context);
-                    if (key === 'detail') options.detail = context.textOf(value);
-                    if (
-                        (key === 'bubbles' || key === 'composed') &&
-                        value.kind === 'booleanLiteral'
-                    ) {
-                        options[key] = (value as ir.BooleanLiteralTypeClass).getFields().value;
-                    }
-                }
-                const { typeArguments } = fields;
-                const detailTypeNode =
-                    typeArguments?.kind === 'tSTypeParameterInstantiation'
-                        ? (
-                              typeArguments as typeScriptVisitor.TSTypeParameterInstantiationTypeClass
-                          ).getFields().params[0]
-                        : undefined;
-                events.push(
-                    makeJsonType<'lwcEvent', LwcEventJson>('lwcEvent', context.keysOf(node), {
-                        name: nameArg ? nameOf(unwrapExpression(nameArg), context) : '',
-                        ...options,
-                        ...(detailTypeNode
-                            ? { detailType: makeLwcTypeJson(detailTypeNode, context) }
-                            : {}),
-                    }),
-                );
-                break;
-            }
-        }
-    };
-    if (body) walkNodes(body, visit);
-    // 本体のブロック。中身はソース位置が持ち、本体が変わると objectKey が変わる (Diff で本体の変更が見える)
+    // 本体の文 (Diff は GumTree で文ごとに比べる)
     const block = body?.kind === 'blockStatement' ? (body as ir.BlockStatementTypeClass) : null;
     return {
-        ...(block
-            ? {
-                  body: makeJsonType<'lwcBody', LwcBodyJson>('lwcBody', context.keysOf(block), {
-                      statements: block.getFields().body.length,
-                  }),
-              }
-            : {}),
-        calls,
-        events,
+        ...(block ? { block: makeLwcBlockJson(block, tables, context) } : {}),
+        references: referencesOf(body, tables),
     };
+};
+
+/** 関数 (function / アロー関数) なら、引数・戻り値の型・async と本体。関数でなければ null */
+export const makeLwcFunctionContentJson = (
+    node: LwcNode | null | undefined,
+    tables: LwcImportTables,
+    context: LwcJsonContext,
+): LwcFunctionContentJson | null => {
+    if (!node) {
+        return null;
+    }
+    let fields:
+        | ir.FunctionDeclarationFields
+        | ir.FunctionExpressionFields
+        | ir.ArrowFunctionExpressionFields;
+    let body: LwcNode;
+    let expression: LwcNode | null = null;
+    let functionName: string | null = null;
+    switch (node.kind) {
+        case 'functionDeclaration':
+        case 'functionExpression': {
+            const fn = (
+                node as ir.FunctionDeclarationTypeClass | ir.FunctionExpressionTypeClass
+            ).getFields();
+            fields = fn;
+            body = fn.body;
+            // function 宣言の名前は宣言 (lwcDeclaration) の name が持つ
+            if (node.kind === 'functionExpression' && fn.id) functionName = fn.id.getFields().name;
+            break;
+        }
+        case 'arrowFunctionExpression': {
+            const arrow = (node as ir.ArrowFunctionExpressionTypeClass).getFields();
+            fields = arrow;
+            // アロー関数の本体は、ブロックか式 (v1 の body と同じノード)
+            body = arrow.body.kind === 'block' ? arrow.body.block : arrow.body.expression;
+            if (arrow.body.kind !== 'block') expression = arrow.body.expression;
+            break;
+        }
+        default:
+            return null;
+    }
+    return {
+        arrow: node.kind === 'arrowFunctionExpression',
+        param: fields.params.map((p) => makeLwcParameterJson(p, tables, context)),
+        ...(fields.returnType ? { returnType: makeLwcTypeJson(fields.returnType, context) } : {}),
+        async: fields.async === true,
+        generator: 'generator' in fields && fields.generator === true,
+        ...(functionName !== null ? { functionName } : {}),
+        ...(expression ? { expression: makeLwcExpressionJson(expression, tables, context) } : {}),
+        ...makeLwcBodyContentJson(body, tables, context),
+    };
+};
+
+/** メンバーが持つ本体の中身 (メソッド・コンストラクタ・getter / setter・関数を初期値にしたフィールド・static ブロック) */
+export const lwcMemberBodyContentsOf = (member: LwcMemberJson): LwcBodyContentJson[] => {
+    switch (member.kind) {
+        case 'lwcMethod':
+        case 'lwcConstructor':
+        case 'lwcStaticBlock':
+            return [member];
+        case 'lwcProperty':
+            return [member.getterContent, member.setterContent].filter(
+                (content): content is LwcAccessorContentJson => content !== undefined,
+            );
+        case 'lwcField':
+            return member.function ? [member.function] : [];
+    }
 };
 
 // ---------------------------------------------------------------------------
@@ -644,11 +632,16 @@ const makeFieldJson = (
     const { annotation, init } = target.getFields();
     const value = init.kind === 'value' ? init.value : null;
     const member = memberKeyOf(target);
+    // handleClick = () => {...} は、メソッドと同じく本体の中身 (呼び出し・イベント・import の参照) を持つ
+    const fn = value ? makeLwcFunctionContentJson(unwrapExpression(value), tables, context) : null;
+    // 初期値がそのまま関数なら function だけで表す (初期値の式・文字列に同じ関数を重ねて持たない)
+    const onlyFunction = fn !== null && value !== null && unwrapExpression(value) === value;
     return makeStructureJson('lwcField', context.structureKeysOf(target, { name: member.key }), {
         name: makeNameJson(member, context),
         ...makeTypeJsonOrUndefined(annotation?.typeAnnotation, context),
-        ...(value ? { init: context.textOf(value) } : {}),
+        ...(value && !onlyFunction ? { init: makeLwcExpressionJson(value, tables, context) } : {}),
         references: referencesOf(value, tables),
+        ...(fn ? { function: fn } : {}),
         optional: init.kind !== 'definite' && init.optional,
         modifier: makeModifiersJson(fieldModifierSourceOf(target), tables, context),
     });
@@ -728,7 +721,8 @@ const makeAccessorJson = (
     return property;
 };
 
-const makeMembersJson = (
+/** クラスのメンバー (コンポーネント・コンポーネント以外のクラス・クラス式・本体の中のクラスで共通) */
+export const makeLwcClassMembersJson = (
     members: ReturnType<standardizedVisitor.ClassBodyTypeClass['getFields']>['body'],
     tables: LwcImportTables,
     context: LwcJsonContext,
@@ -757,7 +751,22 @@ const makeMembersJson = (
                 if (!existing) block.push(property);
                 break;
             }
-            // static ブロック・TS のオーバーロード (TSDeclareMethod)・インデックスシグネチャは対象外
+            case 'staticBlock': {
+                // static { ... } の本体はブロックではなく文の並び
+                const statements = member.getFields().body as LwcNode[];
+                block.push(
+                    makeJsonType<'lwcStaticBlock', LwcStaticBlockJson>(
+                        'lwcStaticBlock',
+                        context.keysOf(member),
+                        {
+                            ...makeLwcBodyContentJson(member, tables, context),
+                            block: statements.map((s) => makeLwcStatementJson(s, tables, context)),
+                        },
+                    ),
+                );
+                break;
+            }
+            // TS のオーバーロード (TSDeclareMethod)・インデックスシグネチャは対象外
         }
     }
     return block;
@@ -766,27 +775,6 @@ const makeMembersJson = (
 // ---------------------------------------------------------------------------
 // コンポーネント
 // ---------------------------------------------------------------------------
-
-/** superClass の式から、継承元とミックスインを取り出す (Mixin2(Mixin1(LightningElement))) */
-const makeExtendJson = (
-    superClass: LwcNode | null,
-    context: LwcJsonContext,
-): Pick<LwcComponentJson, 'extend' | 'mixins'> => {
-    if (!superClass) {
-        return { mixins: [] };
-    }
-    const mixins: string[] = [];
-    let current = unwrapExpression(superClass);
-    // v1 と同じく callExpression だけをたどる (optionalCallExpression はたどらない)
-    while (current.kind === 'callExpression') {
-        const { callee, args } = callPartsOf(current)!;
-        mixins.push(context.textOf(callee));
-        const [inner] = args;
-        if (!inner) break;
-        current = unwrapExpression(inner);
-    }
-    return { extend: context.textOf(current), mixins };
-};
 
 /** クラス (ClassDeclaration / ClassExpression) → lwcComponent */
 export const makeLwcComponentJson = (
@@ -805,9 +793,17 @@ export const makeLwcComponentJson = (
         context.structureKeysOf(target, { name: id }),
         {
             name: id ? id.getFields().name : null,
-            ...makeExtendJson(component.heritage?.superClass ?? null, context),
+            ...(component.heritage?.superClass
+                ? {
+                      superClass: makeLwcExpressionJson(
+                          component.heritage.superClass,
+                          tables,
+                          context,
+                      ),
+                  }
+                : {}),
             ...(implement.length > 0 ? { implement } : {}),
-            block: makeMembersJson(component.body.getFields().body, tables, context),
+            block: makeLwcClassMembersJson(component.body.getFields().body, tables, context),
         },
     );
 };

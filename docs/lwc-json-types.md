@@ -1,17 +1,18 @@
 # LWC の JS / TS の JSON の型の見直し
 
-LWC の JS / TS の JSON（[types/lwc/](../src/analyzer/types/lwc/)）は、Apex の JSON（[types/apex/](../src/analyzer/types/apex/)）より粗い。メソッドの本体は「文の数」と「決まった形の呼び出しの一覧」だけで、引数・初期値はソースの文字列のまま持つ。この文書は次の 5 つをまとめる。
+LWC の JS / TS の JSON（[types/lwc/](../src/analyzer/types/lwc/)）は、Apex の JSON（[types/apex/](../src/analyzer/types/apex/)）より粗い。メソッドの本体は「文の数」と「決まった形の呼び出しの一覧」だけで、引数・初期値はソースの文字列のまま持つ。この文書は次の 6 つをまとめる。
 
 1. 今の LWC の JSON の型（2 章）
 2. 使われ方（3 章）
 3. 足りていないもの（4 章）
 4. 型にするべきタイプの案（5 章）
 5. 進め方の案（6 章）
+6. 進み具合（8 章）
 
 - 流れ: Babel → IR（[lwc_IR](../src/analyzer/types/lwc_IR/)。一覧は [lwc-ir-types.md](./lwc-ir-types.md)）→ JSON（types/lwc）→ Diff（[processor/Lwc/diff/](../src/analyzer/processor/Lwc/diff/)）・解析・依存関係。
 - 比べる相手: Apex の JSON（[apex-implementation.md](./apex-implementation.md)、[apex-json-analysis.md](./apex-json-analysis.md)）。
 - 調べた範囲はコードを読んだもの。実行して確かめていないものは **未確認** と書く。
-- この文書は調査と案だけ。ソースは変えていない。
+- 1〜7 章は調査と案（段階 1 の前の JSON を書いている）。段階 1〜6 を入れた結果は 8 章。
 
 ## 1. 用語（境界ノード）
 
@@ -32,31 +33,31 @@ Apex の JSON に合わせて、ノードを 3 つに分けて書く。
 
 `Lwc*Json` のうち、JS / TS のもの（テンプレート・CSS・js-meta.xml は除く）。
 
-| 型                                                                           | kind                 | 区分              | もとの IR のノード                                                                                     |
-| ---------------------------------------------------------------------------- | -------------------- | ----------------- | ------------------------------------------------------------------------------------------------------ |
-| [`LwcModuleJson`](../src/analyzer/types/lwc/module.ts#L49)                   | なし                 | 入れ物            | `file` → `program.body`                                                                                |
-| [`LwcImportJson`](../src/analyzer/types/lwc/import.ts#L33)                   | `lwcImport`          | 境界              | `importDeclaration`                                                                                    |
-| [`LwcImportSpecifierJson`](../src/analyzer/types/lwc/import.ts#L23)          | `lwcImportSpecifier` | 境界              | `importSpecifier` / `importDefaultSpecifier` / `importNamespaceSpecifier`                              |
-| [`LwcDeclarationJson`](../src/analyzer/types/lwc/module.ts#L32)              | `lwcDeclaration`     | 境界（Structure） | 直下の `variableDeclarator` / `functionDeclaration` / `classDeclaration`（コンポーネント以外）         |
-| [`LwcTypeDeclarationJson`](../src/analyzer/types/lwc/typeDeclaration.ts#L23) | `lwcTypeDeclaration` | 境界（Structure） | `tSInterfaceDeclaration` / `tSTypeAliasDeclaration` / `tSEnumDeclaration`                              |
-| [`LwcTypeMemberJson`](../src/analyzer/types/lwc/typeDeclaration.ts#L15)      | なし                 | キーなし          | `tSPropertySignature` / `tSMethodSignature`                                                            |
-| [`LwcTypeJson`](../src/analyzer/types/lwc/type.ts#L35)                       | `lwcType`            | 境界              | 型注釈（`tSTypeAnnotation` など）の最上位の型                                                          |
-| [`LwcTypeContentJson`](../src/analyzer/types/lwc/type.ts#L17)                | なし                 | キーなし          | 型引数・要素型                                                                                         |
-| [`LwcComponentJson`](../src/analyzer/types/lwc/component.ts#L174)            | `lwcComponent`       | 境界（Structure） | default export の `classDeclaration` / `classExpression`                                               |
-| [`LwcFieldJson`](../src/analyzer/types/lwc/component.ts#L129)                | `lwcField`           | 境界（Structure） | `classProperty` / `classPrivateProperty` / `classAccessorProperty`                                     |
-| [`LwcPropertyJson`](../src/analyzer/types/lwc/component.ts#L146)             | `lwcProperty`        | 境界（Structure） | `classMethod`（`get` / `set`）。同じ名前の getter と setter を 1 つにする                              |
-| [`LwcAccessorContentJson`](../src/analyzer/types/lwc/component.ts#L141)      | なし                 | キーなし          | getter / setter の中身                                                                                 |
-| [`LwcMethodJson`](../src/analyzer/types/lwc/component.ts#L156)               | `lwcMethod`          | 境界（Structure） | `classMethod` / `classPrivateMethod`                                                                   |
-| [`LwcConstructorJson`](../src/analyzer/types/lwc/component.ts#L165)          | `lwcConstructor`     | 境界（Structure） | `classMethod`（`constructor`）                                                                         |
-| [`LwcParameterJson`](../src/analyzer/types/lwc/component.ts#L120)            | `lwcParameter`       | 境界              | 関数の引数・`tSParameterProperty`                                                                      |
-| [`LwcModifiersJson`](../src/analyzer/types/lwc/component.ts#L69)             | なし                 | キーなし          | TS の修飾子・`decorator` の配列                                                                        |
-| [`LwcDecoratorJson`](../src/analyzer/types/lwc/component.ts#L51)             | `lwcDecorator`       | 境界              | `decorator`                                                                                            |
-| [`LwcWireConfigJson`](../src/analyzer/types/lwc/component.ts#L40)            | `lwcWireConfig`      | 境界              | `@wire` の第 2 引数の `objectProperty`                                                                 |
-| [`LwcBodyContentJson`](../src/analyzer/types/lwc/component.ts#L112)          | なし                 | キーなし          | 本体の部分木（`walkNodes` でたどる）                                                                   |
-| [`LwcBodyJson`](../src/analyzer/types/lwc/component.ts#L95)                  | `lwcBody`            | 境界              | 本体の `blockStatement`                                                                                |
-| [`LwcCallJson`](../src/analyzer/types/lwc/component.ts#L75)                  | `lwcCall`            | 境界              | 決まった形の `callExpression` / `optionalCallExpression` / `memberExpression` / `assignmentExpression` |
-| [`LwcEventJson`](../src/analyzer/types/lwc/component.ts#L100)                | `lwcEvent`           | 境界              | `newExpression`（`new CustomEvent`）                                                                   |
-| [`LwcImportReferenceJson`](../src/analyzer/types/lwc/component.ts#L30)       | なし                 | キーなし          | 式の中の `identifier` のうち、import の名前のもの                                                      |
+| 型                                                                           | kind                 | 区分              | もとの IR のノード                                                                                                                                                |
+| ---------------------------------------------------------------------------- | -------------------- | ----------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [`LwcModuleJson`](../src/analyzer/types/lwc/module.ts#L49)                   | なし                 | 入れ物            | `file` → `program.body`                                                                                                                                           |
+| [`LwcImportJson`](../src/analyzer/types/lwc/import.ts#L33)                   | `lwcImport`          | 境界              | `importDeclaration`                                                                                                                                               |
+| [`LwcImportSpecifierJson`](../src/analyzer/types/lwc/import.ts#L23)          | `lwcImportSpecifier` | 境界              | `importSpecifier` / `importDefaultSpecifier` / `importNamespaceSpecifier`                                                                                         |
+| [`LwcDeclarationJson`](../src/analyzer/types/lwc/module.ts#L32)              | `lwcDeclaration`     | 境界（Structure） | 直下の `variableDeclarator` / `functionDeclaration` / `classDeclaration`（コンポーネント以外）                                                                    |
+| [`LwcTypeDeclarationJson`](../src/analyzer/types/lwc/typeDeclaration.ts#L26) | `lwcTypeDeclaration` | 境界（Structure） | `tSInterfaceDeclaration` / `tSTypeAliasDeclaration` / `tSEnumDeclaration`、Flow の `interfaceDeclaration` / `typeAlias` / `opaqueType` / `enumDeclaration`        |
+| [`LwcTypeMemberJson`](../src/analyzer/types/lwc/typeDeclaration.ts#L16)      | なし                 | キーなし          | `tSPropertySignature` / `tSMethodSignature`、Flow の `objectTypeProperty`                                                                                         |
+| [`LwcTypeJson`](../src/analyzer/types/lwc/type.ts#L60)                       | `lwcType`            | 境界              | 型注釈（`tSTypeAnnotation`・Flow の `typeAnnotation`）の最上位の型。Flow の型は TS の同じ意味の型と同じ形（Flow だけのものは `variance`・`exactness`・`spreads`） |
+| [`LwcTypeContentJson`](../src/analyzer/types/lwc/type.ts#L30)                | なし                 | キーなし          | 型引数・要素型                                                                                                                                                    |
+| [`LwcComponentJson`](../src/analyzer/types/lwc/component.ts#L174)            | `lwcComponent`       | 境界（Structure） | default export の `classDeclaration` / `classExpression`                                                                                                          |
+| [`LwcFieldJson`](../src/analyzer/types/lwc/component.ts#L129)                | `lwcField`           | 境界（Structure） | `classProperty` / `classPrivateProperty` / `classAccessorProperty`                                                                                                |
+| [`LwcPropertyJson`](../src/analyzer/types/lwc/component.ts#L146)             | `lwcProperty`        | 境界（Structure） | `classMethod`（`get` / `set`）。同じ名前の getter と setter を 1 つにする                                                                                         |
+| [`LwcAccessorContentJson`](../src/analyzer/types/lwc/component.ts#L141)      | なし                 | キーなし          | getter / setter の中身                                                                                                                                            |
+| [`LwcMethodJson`](../src/analyzer/types/lwc/component.ts#L156)               | `lwcMethod`          | 境界（Structure） | `classMethod` / `classPrivateMethod`                                                                                                                              |
+| [`LwcConstructorJson`](../src/analyzer/types/lwc/component.ts#L165)          | `lwcConstructor`     | 境界（Structure） | `classMethod`（`constructor`）                                                                                                                                    |
+| [`LwcParameterJson`](../src/analyzer/types/lwc/component.ts#L120)            | `lwcParameter`       | 境界              | 関数の引数・`tSParameterProperty`                                                                                                                                 |
+| [`LwcModifiersJson`](../src/analyzer/types/lwc/component.ts#L69)             | なし                 | キーなし          | TS の修飾子・`decorator` の配列                                                                                                                                   |
+| [`LwcDecoratorJson`](../src/analyzer/types/lwc/component.ts#L51)             | `lwcDecorator`       | 境界              | `decorator`                                                                                                                                                       |
+| [`LwcWireConfigJson`](../src/analyzer/types/lwc/component.ts#L40)            | `lwcWireConfig`      | 境界              | `@wire` の第 2 引数の `objectProperty`                                                                                                                            |
+| [`LwcBodyContentJson`](../src/analyzer/types/lwc/component.ts#L112)          | なし                 | キーなし          | 本体の部分木（`walkNodes` でたどる）                                                                                                                              |
+| [`LwcBodyJson`](../src/analyzer/types/lwc/component.ts#L95)                  | `lwcBody`            | 境界              | 本体の `blockStatement`                                                                                                                                           |
+| [`LwcCallJson`](../src/analyzer/types/lwc/component.ts#L75)                  | `lwcCall`            | 境界              | 決まった形の `callExpression` / `optionalCallExpression` / `memberExpression` / `assignmentExpression`                                                            |
+| [`LwcEventJson`](../src/analyzer/types/lwc/component.ts#L100)                | `lwcEvent`           | 境界              | `newExpression`（`new CustomEvent`）                                                                                                                              |
+| [`LwcImportReferenceJson`](../src/analyzer/types/lwc/component.ts#L30)       | なし                 | キーなし          | 式の中の `identifier` のうち、import の名前のもの                                                                                                                 |
 
 ### 2.2 本体の型（いちばん粗いところ）
 
@@ -190,7 +191,7 @@ export type LwcBodyContentJson = {
 - **名前**: テンプレートにすでに `lwcIf` / `lwcForEach` / `lwcText` と `LwcExpressionJson`（[template.ts](../src/analyzer/types/lwc/template.ts#L35)）がある。JS の文・式は `kind` を `js` で始め、型名を `LwcJs*Json` にする案（例: `jsIf` / `LwcJsIfStatementJson`）。決めていない（7 章）。
 - **形は Apex に合わせる**。文は境界ノード、式は「位置だけ」、呼び出し（`memberAccess`）だけ境界ノード。Apex と同じ考え方の文は、プロパティ名も Apex に合わせる（`conditionBlock`、`memberArg` など）。
 - **式の種類は明示する**。Apex は kind のない式の種類を形から決めている（`getExpressionLabel`）。LWC は式の種類が多いので、`expressionType` を持たせる案。
-- **文字列も残す**。読みやすさのため、式には `text`（ソースの文字列）を任意で残す案。JSON が大きくなるので、残す場所は決める（7 章）。
+- ~~文字列も残す~~（7 章の 2 で取り消し。式は文字列を持たず、すべて構造で表す）。
 - **`calls` / `events` は当面残す**。文と式を JSON にしたあとも、Diff・検証・解析が使っているので、すぐには消さない。最後に解析（`processor/Lwc/analysis`）へ移すかを決める。
 
 優先度の基準: **高** = 今の解析・検証の漏れを直す、または依存関係・Diff の精度に直結する。**中** = 新しい解析ができる。**低** = 完全さのため。
@@ -315,7 +316,7 @@ JS で Apex と違う形が要るところ:
 
 - 段階 1〜3 は今の `calls` / `events` の作りに足すだけなので、小さく出せる。
 - 段階 4 がいちばん大きい。式（段階 2）が先にあると、文は式を入れる入れ物を作るだけで済む。
-- 段階ごとに、JSON の大きさ（`sourceObject` の数）を測る。`keysOf` は使ったノードの位置をすべて `sourceObject` に登録するので（[commons.ts](../src/analyzer/types/lwc/commons.ts#L40-L65)）、式を細かくすると増える。どれくらい増えるかは **未確認**。
+- 段階ごとに、JSON の大きさ（`sourceObject` の数）を測る。`keysOf` は使ったノードの位置をすべて `sourceObject` に登録するので（[commons.ts](../src/analyzer/types/lwc/commons.ts#L40-L65)）、式を細かくすると増える。増え方は 8.5 に記録する。
 
 ### 6.2 ゴールデン
 
@@ -330,14 +331,221 @@ JS で Apex と違う形が要るところ:
 - JSON の形を変える段階を出すたびに上げ、コメントに何を変えたかを書く（例: `5: LWC の本体に関数のフィールドの中身・references を足した`）。
 - 同じリリースに入れる段階はまとめて 1 回上げてもよい。版は Apex・メタデータと共通なので、上げると全部が解析し直しになる。
 
-## 7. 決めていないこと
+## 7. 決めたこと（2026-11-10）
 
-1. JS の文・式の `kind` の付け方（`js*` / `lwcJs*` / ほか）。テンプレートの `lwcIf` / `LwcExpressionJson` とぶつからないようにする。
-2. 式に `text`（ソースの文字列）を残すか。残すなら全部の式か、引数・初期値などの入口だけか。
-3. 式の種類を `expressionType` で明示するか、Apex と同じく形から決めるか。
-4. `calls` / `events` を JSON に残すか、文と式の JSON ができたら解析に移すか。
-5. 文はどこまで細かくするか。Apex と同じく全部の文か、LWC の解析に効くもの（式の文・`if`・`try`・`return`・ローカル変数）だけか。
-6. コンポーネント以外のクラスと、ユーティリティのモジュール（`c/utils`）をどこまで対象にするか。
-7. JSON の大きさの上限（`sourceObject` の数）。
-8. Flow の型・JSX（IR にはある）は対象外のままでよいか。
-9. 3.3 の `@api` の定義の件を、依存関係の担当がいつ直すか。
+| 項目                  | 決めたこと                                                                                                                    |
+| --------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
+| 1. 文・式の `kind`    | `js*`（5 章の案。テンプレートの `lwc*` とぶつからない）                                                                       |
+| 2. 式の `text`        | **残さない**。式はすべて構造（JSON の型）で表す。5.3・5.4 の `text` を持つ案（`jsOther`・`other` など）も、種類ごとの型にする |
+| 3. 式の種類           | `kind` で明示する（文字列を持たないので、形から決めるより確か）                                                               |
+| 4. `calls` / `events` | 当面は JSON に残す。文・式がそろった段階 6 で、解析に移すかを決める → **段階 6 で解析に移し、JSON から消した**（8.8）         |
+| 5. 文の細かさ         | Apex と同じく、すべての文                                                                                                     |
+| 6. 対象               | コンポーネント以外のクラスと、ユーティリティのモジュールも対象（段階 5）                                                      |
+| 7. JSON の大きさ      | 上限は決めない。段階ごとに `sourceObject` の数を測って記録する                                                                |
+| 8. Flow・JSX          | **Flow の型も JSON にする**（TS の型と同じく `LwcTypeJson` で表す）。JSX は LWC で使わないので対象外                          |
+| 9. `@api` の定義      | 2026-11-10 に直した（[json-gaps.md](./json-gaps.md) 6 章）                                                                    |
+
+方針（5.1）の「文字列も残す」は、2 で取り消す。
+
+## 8. 進み具合
+
+段階 1〜6 を入れた（2026-11-10）。`SAVE_FORMAT_VERSION` はまだ上げていない（6.3。まとめて上げる）。
+
+### 8.1 段階 1（足すだけの変更）
+
+| 変えた型・処理                                    | 内容                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
+| ------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `LwcFieldJson.function?: LwcFunctionContentJson`  | 初期値が関数（`handleClick = () => {...}`・`function` 式）のとき、メソッドと同じ中身（`param`・`returnType?`・`async`・`body?`・`calls`・`events`・`references`）。作り方は module.ts の `functionPartsOf` を component.ts の `makeLwcFunctionContentJson` に移して共通にした                                                                                                                                                                                                                                   |
+| `LwcBodyContentJson.references`                   | 本体の中で使っている import（同じ名前は 1 つ）。getter の `getFieldValue(..., NAME_FIELD)` の `NAME_FIELD` がメンバーに結び付く。`lwcDeclaration` は、変数は今までどおり初期値全体の参照、`function` 宣言は本体の参照（今までは いつも `[]`）                                                                                                                                                                                                                                                                   |
+| `LwcCallJson.callType` を増やす                   | `lds`（`lightning/uiRecordApi` の `createRecord` / `updateRecord` / `deleteRecord` / `getRecordNotifyChange` / `notifyRecordUpdateAvailable`）、`refreshApex`、`messageService`（`publish` / `subscribe` / `unsubscribe` / `createMessageContext` / `releaseMessageContext`）、`platformResource`（`loadScript` / `loadStyle`）、`module`（`c/...`・相対パスの import の関数。名前空間の import の `ns.f()` を含む）、`listener`（`addEventListener` / `removeEventListener`）、`importCall`（`import('c/x')`） |
+| `LwcCallJson.source?` / `imported?` / `listener?` | import で決まる callType の import 元と import 元での名前（default は `'default'`、`target` は今までどおりこのモジュールの中の名前）。`listener` は `'add'` / `'remove'`（`target` はイベント名。リテラルでなければ `''`）                                                                                                                                                                                                                                                                                      |
+| `lwcMemberBodyContentsOf`（component.ts）         | メンバーが持つ本体の中身の一覧（メソッド・コンストラクタ・getter / setter・関数のフィールド）。analysis.ts の `events` と validate/bundle.ts の `refCallsOf` がこれを使い、関数のフィールドのイベント・`this.refs` も見るようになった（4.1 の 15）                                                                                                                                                                                                                                                              |
+| Diff                                              | `LwcFunctionContentDiff`、`LwcBodyContentDiff.references`（B. 集合）、`LwcCallJsonDiff` の `source` / `imported` / `listener`。宣言の `references` は本体の中身の差分に入れた                                                                                                                                                                                                                                                                                                                                   |
+
+### 8.2 段階 2（式の JSON）
+
+[expression.ts](../src/analyzer/types/lwc/expression.ts) を足した。式はすべて `kind`（`js*`）と `sourceKeys` を持ち、ソースの文字列を持たない（7 章の 2・3）。
+
+| kind                                                                                                            | 型（フィールド）                                                                                                                                                                            |
+| --------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `jsIdentifier` / `jsThis` / `jsSuper` / `jsPrivateName`                                                         | `name`（`this` / `super` はなし。`jsPrivateName` は `#x in obj` の `#x`）                                                                                                                   |
+| `jsString` / `jsNumber` / `jsBoolean` / `jsNull` / `jsBigInt` / `jsRegExp`                                      | `value`（`jsBigInt` は文字列）、`jsRegExp` は `pattern`・`flags`                                                                                                                            |
+| `jsTemplate` / `jsTaggedTemplate`                                                                               | `quasis: string[]`（書いたまま）・`expressions`、タグ付きは `tag`・`quasi`・`typeArguments?`                                                                                                |
+| `jsMemberAccess`（境界）                                                                                        | `type: 'object' \| 'method'`、`object`、`operator: '.' \| '?.'`、`member?`（名前）か `computed?`（式）、`memberArg?`、`optionalCall?`、`typeArguments?`。`a.b(...)` は `type: 'method'`     |
+| `jsCall`（境界）                                                                                                | `callee`、`arg`、`optionalCall?`、`typeArguments?`（メンバーの参照でない callee）                                                                                                           |
+| `jsImportCall` / `jsNew` / `jsSpread`                                                                           | `source`・`options?`・`phase?` / `callee`・`arg`・`typeArguments?` / `argument`                                                                                                             |
+| `jsObject` / `jsProperty` / `jsObjectMethod` / `jsArray`                                                        | `properties` / `key?` か `computed?`・`value`・`shorthand` / `methodKind`・`async`・`generator`・`param`・`returnType?`・`block`（段階 4。段階 2 は `lwcBody`） / `elements`（穴は `null`） |
+| `jsFunction`                                                                                                    | `arrow`・`async`・`generator`・`name?`・`param`（`LwcParameterJson`）・`returnType?`・`block?`（段階 4。段階 2 は `lwcBody`）か `expression?`                                               |
+| `jsClass`                                                                                                       | `name?`・`superClass?`・`implement?`・`block`（メンバー。段階 5）                                                                                                                           |
+| `jsAwait` / `jsYield`                                                                                           | `argument` / `delegate`・`argument?`                                                                                                                                                        |
+| `jsUnary` / `jsBinary` / `jsLogical` / `jsAssignment` / `jsConditional` / `jsSequence`                          | Apex に合わせた名前（`operator`・`operatorLocation`、`left`・`operator`・`right`、`condition`・`trueValue`・`falseValue`）。`++` / `--` も `jsUnary`                                        |
+| `jsParenthesized` / `jsTypeCast` / `jsNonNull` / `jsInstantiation`                                              | `expression`、`jsTypeCast` は `operator: 'as' \| 'satisfies' \| '<>' \| ':'`・`convertType`（`LwcTypeJson`。Flow の `(x: T)` は `':'`）、`jsInstantiation` は `typeArguments`               |
+| `jsMetaProperty`                                                                                                | `meta: 'new.target' \| 'import.meta'`                                                                                                                                                       |
+| `jsObjectPattern` / `jsPatternProperty` / `jsArrayPattern` / `jsAssignmentPattern` / `jsRest` / `jsVoidPattern` | 代入の左辺の分割代入（`LwcJsPatternJson`）                                                                                                                                                  |
+| `jsUnsupported`                                                                                                 | `nodeType`（IR の kind）。今の構文解析のプラグイン（typescript・decorators・flow）では作られない式（JSX・提案段階の構文）のためだけのもの                                                   |
+
+置いた場所（今の文字列の隣）: `LwcCallJson.args`（`arg` と同じ並び）、`LwcWireConfigJson.valueExpression`、`LwcEventJson.detailExpression?`、`LwcFieldJson.initExpression?`。Diff は値として比べる（`LwcExpressionDiff = ValueDiff<LwcJsExpressionJson>`。式は `kind` を持つので objectKey（中身のハッシュ）で比べ、位置だけの変化は unchanged）。
+
+### 8.3 段階 3（LWC に固有のもの）
+
+| 型                                                                                            | 内容                                                                                                                                                                                                                            |
+| --------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `LwcNavigationJson`（`lwcNavigation`、`LwcCallJson.navigation?`）                             | `method`・`pageType?`・`attributes`（キー → 文字列のリテラルの値か式）・`state?`・`replace?`。位置はページ参照の引数                                                                                                            |
+| `LwcQueryJson`（`lwcQuery`、`LwcCallJson.query?`）                                            | `root: 'template' \| 'host'`・`all`・`selector?`・`tags?`・`dataAttributes?`。light DOM の `this.querySelector(All)` も `querySelector` の呼び出しにした（`root: 'host'`）                                                      |
+| `LwcWireConfigJson.fieldNames?`                                                               | 値・配列の要素の文字列のリテラルのうち `<オブジェクト>.<項目>` の形のもの                                                                                                                                                       |
+| `LwcEventJson.eventClass` / `dispatched`                                                      | `'CustomEvent' \| 'Event'`（`new Event(...)` も `lwcEvent` にした）。`dispatched` は同じ本体の `this.dispatchEvent` で発行するか（引数に直接書いたもの・変数に入れてから渡したもの）                                            |
+| 依存関係（[units.ts](../src/analyzer/processor/dependency/units.ts) の `getLwcDependencies`） | `lwcNavigation` の `attributes.objectApiName`（文字列）→ `uses object`（via `navigation`）、`lwcQuery` の `c-*` の要素名 → `uses lwc`（via `query`）、wire の項目は `fieldNames` から（古い JSON は今までどおり値の文字列から） |
+
+`LwcToastJson`・`LwcRefUseJson`・`apexCall` は入れていない（5.6 で低・中のもの）。
+
+### 8.4 サンプルとゴールデン
+
+- サンプル（before / after の `accountList.ts`。同じものを両方に足したので、before → after の Diff は変わらない）に、関数のフィールド（`handleReload` / `handleOpenList`）、`then` / `catch`、`updateRecord`・`refreshApex`、ナビゲーション（`standard__objectPage`）、`querySelector('c-account-row')`、文字列の `fields` / `optionalFields` の `@wire`、`window.addEventListener` を足した。
+- ゴールデンは段階ごとに作り直し、違いが「足したサンプルのメンバーと、増えたプロパティだけ」であることを確かめた（Apex のゴールデンは変わらない）。段階 1 は `references`・`function`・`calls` の増加（`toRows` / `formatAmount` が `module`）、段階 2 は `args`・`valueExpression`・`detailExpression`・`initExpression`、段階 3 は `navigation`・`query`・`fieldNames`・`eventClass`・`dispatched`。
+- 段階 4 は、`lwcBody` を除いた形と `block` を除いた形が同じであることを、スクリプトで全ファイル分確かめた。ほかの違いは決めたものだけ: 関数の中身（`function`・関数の宣言）に `arrow`・`generator`・`expression`（`formatAmount` の式の本体）が増えたこと、関数を初期値にしたフィールド（`handleReload` / `handleOpenList`）の `init`・`initExpression` がなくなったこと（8.6 の重複の解消）。
+- 段階 5 は `otherExports` → `exports`（10 ファイルとも default の export 1 つ、`utils` は名前つきの export）、`formatter` の `initExpression` の追加、`formatAmount` の `init`（関数全体の文字列）の削除だけ。
+- 段階 6 は 8.8 のとおり。ゴールデンの違いを、スクリプトで全 38 ファイル分確かめた（古いゴールデンに「消したもの・名前を変えたもの」を当てると、モジュールの JSON は新しいものと同じ）: `calls` / `events` の削除（37 か所。中身があったのは 22 か所）、`init`（文字列）の削除と `initExpression` → `init`（23 か所）、wire の `value`（文字列）の削除と `valueExpression` → `value`（15 か所）、デコレーターの `arg` と wire の `adapter` が式（30・6 か所）、分割代入の引数の `variant` → `pattern`（2 か所）、`extend` / `mixins` → `superClass`（8 か所）。`sourceObject` は消えた位置がなく、増えたのは新しく式にした位置だけ（`superClass`・アダプターの識別子・wire の設定のオブジェクト・分割代入のパターンの名前）。Apex のゴールデンと `resolvedError` は変わらない。
+- そのあとサンプルの `utils.ts`（before / after の両方に同じもの）に、コンポーネント以外のクラス `RowCache`（static フィールド・`#rows`・getter・`for of` / `if` / `continue` / `switch` / `break` を含むメソッド）と `export { formatAmount as format }` を足した。ゴールデンの違いは追加だけ（消えた行なし、`resolvedError` も同じ）。static ブロックは LWC のコンパイラが受け付けない（`LWC1007: Static class blocks are not enabled`）ので、サンプルには入れずテストで確かめる。
+
+### 8.5 JSON の大きさ（LWC のサンプル 10 ファイルの `sourceObject` の数）
+
+ゴールデン（[golden.ts](../test/ir/golden.ts)）と同じく、`sourceObject` の位置（`source`）を 1 件ずつ数えた合計。
+
+| 時点                            | 合計 | 内訳（before / after の accountList）     |
+| ------------------------------- | ---- | ----------------------------------------- |
+| 段階 1 の前（今までのサンプル） | 386  | 115 / 125                                 |
+| 段階 1（今までのサンプル）      | 392  | 117 / 127                                 |
+| 段階 1（構文を足したサンプル）  | 450  | 146 / 156                                 |
+| 段階 2                          | 697  | 247 / 269                                 |
+| 段階 3                          | 697  | 247 / 269                                 |
+| 段階 4                          | 911  | 340 / 362                                 |
+| 段階 5                          | 937  | 341 / 363                                 |
+| 段階 5（構文を足したサンプル）  | 1043 | 341 / 363（`utils` は 37 → 90 / 44 → 97） |
+| 段階 6                          | 1075 | 354 / 376                                 |
+
+- 段階 1 は呼び出しが増えた分だけ（+6）。サンプルに足した構文で +58。
+- 段階 2 で約 1.5 倍（+247）。式のノードをすべて `sourceObject` に登録するため（同じ中身の部分木は 1 つの objectKey にまとまるが、位置は別に数える）。
+- 段階 3 は増えない（ページ参照・セレクターの位置は、段階 2 で登録した式のノードと同じ）。
+- 段階 4 で約 1.3 倍（+214）。文のノードと、本体の中の式（段階 2 では呼び出しの引数・初期値の式だけだった）を登録するため。
+- 段階 5 は export の位置（ファイルごとに 1〜6）と、`formatter` の初期値の式の分だけ（+26）。サンプルに足したクラスで +106。
+- 段階 6 は、文字列を式にした分だけ増える（+32。コンポーネントの `superClass` がファイルごとに 1〜3、`accountList` はアダプターの識別子・wire の設定のオブジェクト・分割代入の名前も）。`calls` / `events` の位置は本体の式の位置と同じなので、消しても `sourceObject` は減らない。ファイルの大きさ（ゴールデンの LWC の 10 ファイルの合計）は 582,769 → 526,700 バイト（-9.6%。`calls` の引数の式・`init` などの文字列が重なっていた分）。kind を持つノードの数（[output/json/index.md](./examples/lwc/output/json/index.md)）は `accountList` が 506 → 423（before）・551 → 452（after）。
+
+### 8.6 段階 4（文の JSON）
+
+[statement.ts](../src/analyzer/types/lwc/statement.ts) を足した。文はすべて境界ノード（`kind`（`js*`）と `sourceKeys`）で、ソースの文字列を持たない。Apex と同じ考え方の文はプロパティ名も Apex に合わせた。
+
+| kind                                            | 型（フィールド）                                                                                                                                                                                                              |
+| ----------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `jsExpression`                                  | `value`（式。Apex の `expression`）                                                                                                                                                                                           |
+| `jsLocalVariable`                               | `variableKind`（`var` / `let` / `const` / `using` / `await using`）・`declare?`・`variants: LwcJsVariantJson[]`                                                                                                               |
+| `jsVariant`（宣言子）                           | `target`（`jsIdentifier` か分割代入のパターン `LwcJsPatternJson`）・`variantType?`（`const x: T`）・`definite?`（`let x!: T`）・`init?`                                                                                       |
+| `jsIf`                                          | `conditionBlock: { condition: 'else' \| 式; block }[]`（`else if` は 1 つの列。`else { if }` は else の中の `jsIf`）                                                                                                          |
+| `jsFor`                                         | `condition: { initializer?（jsLocalVariable か式）; condition?; update? }`・`block`                                                                                                                                           |
+| `jsForIn` / `jsForOf`                           | `variableKind?`（左辺が宣言のとき）・`left`（パターン）・`right`・`block`、`jsForOf` は `await`（`for await`）                                                                                                                |
+| `jsWhile` / `jsDoWhile`                         | `condition`・`block`                                                                                                                                                                                                          |
+| `jsSwitch`                                      | `discriminant`・`cases: { test?（ない case は default）; block }[]`                                                                                                                                                           |
+| `jsTry`                                         | `block: ({ condition: 'try'; block } \| { condition: 'catch'; param?; variantType?; block } \| { condition: 'finally'; block })[]`（Apex の `try` と同じく節の並び。`catch {}` は `param` なし）                              |
+| `jsThrow` / `jsReturn`                          | `value` / `field?`（Apex と同じ名前）                                                                                                                                                                                         |
+| `jsBreak` / `jsContinue` / `jsLabeled`          | `label?` / `label?` / `label`・`body`（1 文）                                                                                                                                                                                 |
+| `jsBlock` / `jsEmpty` / `jsDebugger` / `jsWith` | 文の並びの中の `{ }`（`block`） / なし / なし / `object`・`block`                                                                                                                                                             |
+| `jsDirective`                                   | `value`（本体の先頭の `'use strict'` など）                                                                                                                                                                                   |
+| `jsFunctionDeclaration` / `jsClassDeclaration`  | 本体の中の宣言。`name`・`async`・`generator`・`param`・`returnType?`・`block` / `name`・`superClass?`・`implement?`・`block`（メンバー。コンポーネントと同じ `LwcMemberJson`）。式の `jsFunction`・`jsClass` と kind を分けた |
+| `lwcTypeDeclaration`                            | 本体の中の `type` / `interface` / `enum`（`exported: false`）                                                                                                                                                                 |
+| `jsUnsupportedStatement`                        | `nodeType`。本体に書けても LWC で使わない宣言（TS の `namespace`・`declare function`・`import x = require()`・Flow の `declare`）だけ                                                                                         |
+
+- 制御構造の本体は文の配列（`block`）。`{ }` のブロックはその中の文、`{ }` のない 1 文は要素 1 つの配列にする（Apex の GumTree が本体を並びにするのと同じ）。文の並びの中に書いた `{ }` だけが `jsBlock`。
+- 本体を持つもの: `LwcBodyContentJson.block?: LwcJsStatementJson[]`（メソッド・getter / setter・コンストラクタ・関数のフィールドの `function`・直下の関数）、式の `jsFunction.block?`（式の本体は `expression`）・`jsObjectMethod.block`。`LwcBodyJson`（`lwcBody`）はなくした。
+- `calls` / `events` / `references` は今までどおり本体の部分木から作る（7 章の 4）。
+- `LwcFunctionContentJson` に `arrow`・`generator`・`functionName?`（function 式の名前）・`expression?`（アロー関数の式の本体）を足した。
+
+**関数を初期値にしたフィールドの重複（8.2 の `initExpression` と段階 1 の `function`）**: `function`（`LwcFunctionContentJson`）を 1 つの表し方にした。初期値がそのまま関数（`handleClick = () => {...}`）のときは `initExpression` と `init`（文字列）を持たない。`function` が関数の式の情報（`arrow`・`async`・`generator`・`functionName`・引数・戻り値の型・`block` / `expression`）をすべて持つ。括弧・`as` などで包んだ関数（`x = ((e) => {...}) as Handler`）だけは、包んだ形を残すために `initExpression` も持つ（中の関数は重なる。まれなので許す）。`function` を選んだのは、解析（`lwcMemberBodyContentsOf`）・検証（`refCallsOf`）・Diff が `function` の `calls` / `events` を使っているため。
+
+**Diff**: 本体の文の並びは GumTree（[processor/Lwc/diff/gumtree/tree.ts](../src/analyzer/processor/Lwc/diff/gumtree/tree.ts) の `LWC_GUMTREE_LANGUAGE`・`makeLwcBlockDiff`）。`LwcBodyContentDiff.block?: PresentDiff<LwcJsStatementJson[], GumTreeDiff[]>`（Apex の `makeGumTreeBlockDiff` と同じ形）。`LwcBodyJsonDiff` は消した。言語の設定は Apex の [tree.ts](../src/analyzer/processor/Apex/diff/gumtree/tree.ts) と同じ置き方（言語ごとのファイル。共通の木の作り方は commons/diff/gumtree）:
+
+| 設定          | LWC                                                                                                                                                                                                             |
+| ------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `nodeLabel`   | kind のまま。`jsMemberAccess` は `jsMemberAccess:object` / `:method`（Apex の `memberAccess:type`）、アロー関数は `jsFunction:arrow`                                                                            |
+| `valueLabel`  | `jsIf.branch`・`jsTry.try` / `.catch` / `.finally`・`jsSwitch.case` / `.default`。ほかの入れ物は `<親>.<プロパティ>`（式はすべて kind を持つので、Apex の `getExpressionLabel` のような形からの推定は要らない） |
+| `isBlockRole` | `block`（`jsTry` の `block` は節の並びなので除く）と `jsLabeled` の `body`                                                                                                                                      |
+| `isOrdered`   | デコレーター・`references`・`implement` は順序なし、ほかは順序あり                                                                                                                                              |
+| `leafValues`  | `lwcType` は葉（書かれた型の文字列 `text` で比べる。Apex の型と同じ）                                                                                                                                           |
+
+本体の外の式（フィールドの初期値・呼び出しの引数など）は、今までどおり値として比べる（`LwcExpressionDiff`）。
+
+### 8.7 段階 5（モジュールの直下）
+
+| 型・プロパティ                                                         | 内容                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
+| ---------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `LwcClassJson`（`lwcClass`。`declarations` に入る）                    | コンポーネント以外のクラス。`name`・`exported`・`superClass?`（式。文字列ではない）・`implement?`・`block: LwcMemberJson[]`（コンポーネントと同じメンバー）。今までの `lwcDeclaration` の `declarationType: 'class'` を置き換えた                                                                                                                                                                                                                    |
+| `LwcStaticBlockJson`（`lwcStaticBlock`。メンバー）                     | `static { ... }`。`LwcBodyContentJson`（`block`・`calls`・`events`・`references`）。名前がないので Diff ではキーを持たず、位置と中身で対応付ける。LWC のコンパイラは static ブロックを受け付けない（`LWC1007`）が、JSON は作る                                                                                                                                                                                                                       |
+| `LwcJsClassJson`（`jsClass`）                                          | クラス式もメンバー（`block`）と `implement?` を持つ                                                                                                                                                                                                                                                                                                                                                                                                  |
+| `LwcExportJson`（`lwcExport`。`exports`）                              | `exportType: 'named' \| 'default' \| 'all'`・`local?`・`exported?`・`source?`・`typeOnly`。`export const` / `function` / `class`（宣言の名前ごと）、`export { a as b }`、`export { a } from 'x'`、`export v from 'x'`（`local: 'default'`）、`export * from 'x'`、`export * as ns from 'x'`（`all` で `exported: 'ns'`）、`export default ...`、型だけの export（`export type { }`・`export interface` など）。`otherExports: string[]` を置き換えた |
+| `export default function`                                              | `lwcDeclaration`（`declarationType: 'function'`、名前がなければ `name: 'default'`）。`export default <式>`（クラス・名前の参照以外）は `name: 'default'` の宣言（関数なら関数の中身、ほかは `initExpression`）                                                                                                                                                                                                                                       |
+| `LwcDeclarationJson`                                                   | `declarationType` は `'variable' \| 'function'`。`variantType?`（`const x: T`）・`initExpression?` を足した。初期値がそのまま関数のときは `init`（関数全体の文字列）・`initExpression` を持たず、関数の中身（`arrow`・`param`・`block` / `expression` など）で表す（8.6 と同じ）。`export { a }`・`export default a` で export したものも `exported: true`                                                                                           |
+| `LwcModuleJson.statements?`                                            | 宣言でも import / export でもない直下の文（`registerX(...)` などの式の文・`if` など。文の JSON）。なければ持たない。直下の変数の宣言は今までどおり `declarations`（`statements` に重ねない）                                                                                                                                                                                                                                                         |
+| 動的 import                                                            | 式は `jsImportCall`（段階 2）、呼び出しは `lwcCall` の `importCall`（段階 1）。依存関係で `import('c/x')` を `imports lwc:x (importCall)` にした                                                                                                                                                                                                                                                                                                     |
+| 依存関係（[units.ts](../src/analyzer/processor/dependency/units.ts)）  | 再エクスポート（`lwcExport` の `source`）を import と同じ表で参照にする（via `export`）。動的 import（上）                                                                                                                                                                                                                                                                                                                                           |
+| Diff（[diff/module.ts](../src/analyzer/processor/Lwc/diff/module.ts)） | `exports` は外から見える名前（`exported`。`export *` は import 元）で D. キー対応、`declarations` は名前で D. キー対応（`lwcClass` はメンバーをコンポーネントと同じ `makeLwcMembersDiff` で比べる）、`statements` は GumTree                                                                                                                                                                                                                         |
+
+入れていないもの: 直下の文の `calls` / `events`（直下の文は文の JSON だけ。段階 6 で解析が出すようにした）、`otherExports` を残す互換（使う側は diff/module.ts とテストだけだったので置き換えた）、文字列のまま残っているもの（`init`・`arg`・`variant`・`extend` / `mixins` など。段階 6 で構造にした。8.8）。
+
+### 8.8 段階 6（ソースの文字列をなくす・解析の走査・`calls` / `events` を解析へ）
+
+#### ソースの文字列のプロパティ（7 章の 2）
+
+types/lwc の component・module・expression・statement・import の JSON の型で、ソースの文字列を持つプロパティを、同じ意味の構造（式の JSON）に置き換えた。名前（メンバー名・宣言名・デコレーター名・イベント名）・import 元・文字列のリテラルの値は文字列のまま残す。
+
+| 型                                                                 | 前                                                                  | 後                                                                                                                                                                                       |
+| ------------------------------------------------------------------ | ------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `LwcFieldJson`                                                     | `init?: string`・`initExpression?: LwcJsExpressionJson`             | `init?: LwcJsExpressionJson`（関数だけの初期値は今までどおり `function` だけ）                                                                                                           |
+| `LwcDeclarationJson`                                               | `init?: string`・`initExpression?`                                  | `init?: LwcJsExpressionJson`                                                                                                                                                             |
+| `LwcWireConfigJson`                                                | `value: string`・`valueExpression: LwcJsExpressionJson`             | `value: LwcJsExpressionJson`（`reactive`・`fieldNames`・`references` はそのまま）                                                                                                        |
+| `LwcDecoratorJson`                                                 | `arg: string[]`、`wire.adapter: string`                             | `arg: LwcJsArgumentJson[]`、`wire.adapter: LwcJsExpressionJson`（`adapterSource`・`apex` は式の先頭の識別子で引く。今までの `split('.')` と同じ）                                        |
+| `LwcParameterJson`                                                 | `variant: string`（分割代入はパターンの文字列 `'{ data, error }'`） | `variant?: string`（識別子の名前だけ）・`pattern?: LwcJsPatternJson`（分割代入。型注釈は `variantType`）                                                                                 |
+| `LwcComponentJson`                                                 | `extend?: string`・`mixins: string[]`                               | `superClass?: LwcJsExpressionJson`（`lwcClass`・`jsClass` と同じ名前。継承元・ミックスインの名前は解析の `lwcHeritageOf` で出す）                                                        |
+| `LwcBodyContentJson`                                               | `calls: LwcCallJson[]`・`events: LwcEventJson[]`                    | なし（下の「`calls` / `events`」）。`block`・`references` は残す                                                                                                                         |
+| `LwcCallJson`・`LwcEventJson`・`LwcNavigationJson`・`LwcQueryJson` | JSON の型（`lwcCall`・`lwcEvent`・`lwcNavigation`・`lwcQuery`）     | 解析の結果の型 `LwcCallInfo`・`LwcEventInfo`・`LwcNavigationInfo`・`LwcQueryInfo`（[processor/Lwc/calls.ts](../src/analyzer/processor/Lwc/calls.ts)。kind を持たず `sourceKeys` を持つ） |
+
+残したもの（文字列だが、この段階では変えない）:
+
+| 場所                                                                                                 | 持ち方                                                                            | 理由・案                                                                                                                                                                                                                                                                     |
+| ---------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `LwcTypeJson.text`（[type.ts](../src/analyzer/types/lwc/type.ts)）                                   | 書かれた型のソースの文字列。`type: 'other'`（条件型・マップ型など）は `text` だけ | GumTree の葉の値（8.6 の `leafValues`）と Diff の比較に使う。型は Flow を TS に合わせたところなので、この段階では変えない。案: `text` をなくし、`other` を `conditional` / `mapped` / `indexedAccess` などの種類にしてから、葉の値を中身（`LwcTypeContentJson`）の比較にする |
+| `LwcTypeContentJson` の `literal.value`・`custom.customType`・`typeof.target`、Flow の名前のない引数 | 型のリテラル・名前の並び（`a.B`）のソースの文字列（type.ts の `textOf`）          | 名前に近いもの。上の型の見直しと合わせる                                                                                                                                                                                                                                     |
+| `LwcTypeDeclarationJson.extend`（typeDeclaration.ts）                                                | `interface A extends B<T>` の `B<T>` の文字列                                     | 型。案: `LwcTypeJson[]` にする（上と合わせる）                                                                                                                                                                                                                               |
+| 計算されたキーのメンバー名（`[expr]: ...` の `name`）                                                | `[` + 式のソースの文字列 + `]`                                                    | メンバーの名前は Diff のキー（D. キー対応）なので残す。まれ。案: `computedKey?: LwcJsExpressionJson` を足し、`name` はキーだけに使う                                                                                                                                         |
+
+#### 解析の走査（walker）
+
+[processor/Lwc/walker.ts](../src/analyzer/processor/Lwc/walker.ts)。Apex の案（[apex-json-analysis.md](./apex-json-analysis.md) 2.1・2.2）と同じ形にした。
+
+| 部品                                   | 内容                                                                                                                                                                                                                                                                                         |
+| -------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `LwcVisitor`                           | kind ごとの処理（`{ jsCall?: (node, context) => void \| boolean, ... }`）。`false` を返すとそのノードの中に入らない。文・式はすべて kind を持つので、Apex の `expression`（kind のない式のラベル）に当たるものは要らない                                                                     |
+| `walkLwcJson(root, visitor, context?)` | 前順で 1 回たどる。kind を持たない入れ物（if の分岐・try の節・関数の中身・修飾子など）は中に入るだけ、型（`lwcType`）の中には入らない。`walkLwcModuleJson`（モジュール全体）・`walkLwcBodyContent`（本体の `block` と式の本体だけ）もある                                                   |
+| `composeLwcVisitors(...visitors)`      | 複数の解析を 1 回の走査で行う                                                                                                                                                                                                                                                                |
+| `LwcWalkContext`                       | `owner`（コンポーネント・クラス・宣言）・`member`（いちばん外側のメンバー）・`functionDepth`（入れ子の関数）・`loopDepth`・`nestingDepth`・`inTry`（try の節の中。catch・finally は含めない）。入れ子の関数（コールバック）の境界でループ・ネスト・try を 0 に戻す（呼ばれる場所が別なので） |
+| 式の部品                               | `unwrapLwcExpression`（括弧・as・!・型引数を外す。types/lwc/commons.ts の `unwrapExpression` と同じ考え方）、`lwcStringValueOf`（文字列のリテラル・式のないテンプレートリテラル）、`lwcDottedNameOf`（名前の並び `this.template` を構造から作る）、`lwcObjectPropertiesOf`、`lwcHeritageOf`  |
+
+#### `calls` / `events`（7 章の 4 の結論）
+
+**解析に移し、JSON から消した。** [processor/Lwc/calls.ts](../src/analyzer/processor/Lwc/calls.ts) の `analyzeLwcBodyCalls(content, tables)`（本体 1 つ）・`analyzeLwcModuleCalls(module)`（モジュールのすべての本体。import の表は `module.imports` から作る）が、段階 1〜3 と同じ形（callType・target・apex・source / imported・listener・ナビゲーション・セレクター、イベントの name・eventClass・dispatched・bubbles / composed・detail・detailType）を文・式の JSON から出す。
+
+理由:
+
+- **文・式の JSON から確実に出せる。** 拾う形はすべて callee の形・import の表・文字列のリテラルで決まり、どれも JSON にある。確かめ方: 段階 5 の作り（IR から `calls` / `events` を作る今までのコード）と段階 6 の解析を、同じソースで比べるスクリプトを作り、サンプル・テストのソース（74 ファイル。呼び出し 116・イベント 22）と node_modules の JS / TS（599 ファイル）で、callType・target・apex・source / imported・listener・位置（`sourceKeys`）・引数の位置・ナビゲーション・セレクター・イベントのすべてが一致した。違うのは、ソースの文字列を持たなくしたことで決めた `target` だけ（`querySelector` は引用符ごとの式の文字列 → リテラルの値（リテラルでなければ `''`）、`innerHTML` は代入先の式の文字列 → 名前の並び（`this.template.host.innerHTML`。並びでなければ `innerHTML` / `outerHTML`）、`dispatchEvent` は名前の並び（並びでなければ `''`））。
+- **重なりがなくなる。** `calls` の引数（`args`）・イベントの `detail` は、本体の文の中の同じ式を、もう 1 つ持っていた（ファイルの大きさの -9.6% はおもにこの分。8.5）。解析の結果は文の JSON のノードそのものを指す。
+- **前もって作っておく必要がある使う側がない。** 検証（`this.refs`）・解析（`events`）・依存関係（動的 import・ナビゲーション・セレクター）は、どれもモジュールの JSON を持っているので、その場で解析を呼べばよい。Diff は、本体の文の GumTree（段階 4）が呼び出し・イベントの変化も文の中の式の変化として出す（例: `composed: false → true` は `jsNew` の中の `jsBoolean` の変化。[summary.md](./examples/lwc/output/diff/summary.md)）。「Apex の呼び出しが増えた」のような意味の差分が要るときは、Apex の案（apex-json-analysis.md 5 章の `impact.ts`）と同じく、2 つの時点の解析の結果を比べる（Diff には入れない）。
+- **解析なら文脈を足せる。** 呼び出しは `context`（`functionDepth`・`loopDepth`・`nestingDepth`・`inTry`）を持つ（5.5 の `apexCall` の `inTry` に当たるもの）。直下の文（`statements`）の呼び出しも出す（`ownerKind: 'module'`）。
+
+`references`（本体・初期値の import の参照）は JSON に残した。本体の外（フィールド・宣言の初期値・wire の設定）にもあり、解析（`resolveSchema`）がメンバー単位で使うため。式の JSON から出すこともできるが（`LwcCallInfo.references` はそうしている）、型の中の名前（`lwcType` は文字列の `customType`）の扱いを決めてからにする。
+
+使う側の変更:
+
+| 使う側                                                                                                                                    | 変更                                                                                                                                                                                                                                   |
+| ----------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 検証 [validate/bundle.ts](../src/analyzer/parser/Lwc/validate/bundle.ts)                                                                  | `this.refs` は `analyzeLwcModuleCalls(main)` のコンポーネントの呼び出しから。`hasAllMembers` は `lwcHeritageOf(component.superClass)`。processor/Lwc/calls.ts・walker.ts は types だけに依存するので、parser から使っても循環しない    |
+| 解析 [analysis.ts](../src/analyzer/processor/Lwc/analysis.ts)                                                                             | `events` はメインのモジュールの `analyzeLwcModuleCalls` から                                                                                                                                                                           |
+| 依存関係 [units.ts](../src/analyzer/processor/dependency/units.ts)                                                                        | 動的 import・ナビゲーションの `objectApiName`・セレクターの `c-*` は解析の結果から（本体の中身をたどり終えたところで出すので、参照の並びは今までと同じ）。wire の `objectApiName` は値の式の文字列のリテラル（古い JSON は値の文字列） |
+| Diff [diff/component.ts](../src/analyzer/processor/Lwc/diff/component.ts)・[diff/module.ts](../src/analyzer/processor/Lwc/diff/module.ts) | `LwcCallJsonDiff`・`LwcEventJsonDiff`・`LwcNavigationJsonDiff`・`LwcQueryJsonDiff` を消した。`init`・wire の `value`・`adapter`・デコレーターの `arg`・引数の `pattern`・`superClass` は式を値として比べる                             |
+| レポート                                                                                                                                  | 使っていない（3.1）                                                                                                                                                                                                                    |

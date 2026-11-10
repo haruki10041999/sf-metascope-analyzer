@@ -184,7 +184,9 @@ export const buildDependencyGraph = (units: readonly GraphUnit[]): DependencyGra
             const parentName = member.name.includes('.')
                 ? member.name.slice(0, member.name.lastIndexOf('.'))
                 : undefined;
+            // 単位そのものの名前なら単位 (ワークフローのアラート <オブジェクト>.<名前> をオブジェクトの下にしない)
             const parent =
+                (parentName?.toLowerCase() === primaryDef.name.toLowerCase() && unitNode) ||
                 (parentName &&
                     [...defined.entries()].find(([key]) =>
                         key.endsWith(`:${parentName.toLowerCase()}`),
@@ -370,7 +372,10 @@ export const buildDependencyGraph = (units: readonly GraphUnit[]): DependencyGra
             const to = resolveTarget(reference, unitNode);
             edges.push({ from, to, kind: reference.kind, via: reference.via, unit: unitRef });
             const target = nodes.get(to)!;
-            if (target.origin === 'missing') {
+            // 子のコンポーネント自体がないときの @api (<バンドル>.<プロパティ>) は、UNKNOWN_LWC と同じ原因なので重ねて出さない
+            const ownerMissing =
+                target.type === 'lwcProperty' && !lookup('lwc', target.name.split('.')[0]!);
+            if (target.origin === 'missing' && !ownerMissing) {
                 findings.push({
                     // 今までの参照の解析と同じ名前 (UNKNOWN_FIELD / UNKNOWN_APEX_CLASS など)
                     code: `UNKNOWN_${target.type.replace(/[A-Z]/g, (c) => `_${c}`).toUpperCase()}`,
@@ -762,6 +767,20 @@ const METADATA_TYPE_NAMES: Record<string, string> = {
     externalCredential: 'ExternalCredential',
     customNotificationType: 'CustomNotificationType',
     reportType: 'ReportType',
+    assignmentRules: 'AssignmentRules',
+    autoResponseRules: 'AutoResponseRules',
+    escalationRules: 'EscalationRules',
+    pathAssistant: 'PathAssistant',
+    duplicateRule: 'DuplicateRule',
+    matchingRules: 'MatchingRules',
+    platformEventChannel: 'PlatformEventChannel',
+    platformEventChannelMember: 'PlatformEventChannelMember',
+    platformEventSubscriberConfig: 'PlatformEventSubscriberConfig',
+    cspTrustedSite: 'CspTrustedSite',
+    externalDataSource: 'ExternalDataSource',
+    settings: 'Settings',
+    workflowAlert: 'WorkflowAlert',
+    matchingRule: 'MatchingRule',
 };
 
 /** ノード (単位・項目など) の package.xml。種類ごとに名前の順。apiVersion は sfdx-project.json の sourceApiVersion など */

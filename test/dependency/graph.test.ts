@@ -42,10 +42,13 @@ describe('dependency graph (依存関係のグラフ)', () => {
             'flow:Invoice_Status_Update',
             'layout:Invoice__c-Invoice Detail',
             'layout:Invoice__c-Invoice Layout',
+            // オブジェクトの翻訳 (項目の翻訳)・レポートタイプの列 (docs/json-gaps.md 5 章の 5)
+            'objectTranslation:Invoice__c-ja',
             'permissionSet:Invoice_Manager',
             'permissionSet:Payment_Clerk',
             'quickAction:Invoice__c.Approve',
             'report:Invoice_Reports/Open_Invoices',
+            'reportType:Invoices_with_Lines',
             'sharingRules:Invoice__c',
         ]);
         // メンバーの細かさでは、同じオブジェクトの入力規則・項目セットも出る

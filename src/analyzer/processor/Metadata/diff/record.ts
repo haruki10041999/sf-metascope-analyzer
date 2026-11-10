@@ -10,6 +10,7 @@ import type {
     RecordChildSpec,
     RecordJson,
     RecordSpec,
+    SettingsJson,
     TreeSpec,
     ValueTree,
     VisualforceMarkupJson,
@@ -42,6 +43,7 @@ import {
     makeUnorderedValuesDiff,
     presentEntry,
 } from '../../commons/diff/present';
+import { FlowPropertiesDiff, makeFlowPropertiesDiff } from './flow';
 import { NameValuesDiff, makeNameValuesDiff } from './page';
 
 // 優先度 B・C の差分。方針: docs/metadata-implementation.md 10 章
@@ -345,6 +347,7 @@ export type AuraBundleJsonDiff = NodeDiff<
         handlers?: DeclarationsDiff<'auraHandler'>;
         methods?: DeclarationsDiff<'auraMethod'>;
         dependencies?: PresentDiff<string[], TypedListDiff<string, never>>;
+        messageChannels?: PresentDiff<string[], TypedListDiff<string, never>>;
         /** B. 使っている部品 */
         components: TypedListDiff<string, never>;
         expressions?: PresentDiff<string[], TypedListDiff<string, never>>;
@@ -412,6 +415,10 @@ export const makeAuraBundleDiff = (
                 'dependencies',
                 makePresentDiff(b.dependencies, a.dependencies, makeUnorderedValuesDiff),
             ),
+            ...presentEntry(
+                'messageChannels',
+                makePresentDiff(b.messageChannels, a.messageChannels, makeUnorderedValuesDiff),
+            ),
             components: makeUnorderedValuesDiff(b.components, a.components),
             ...presentEntry(
                 'expressions',
@@ -425,3 +432,26 @@ export const makeAuraBundleDiff = (
             ),
         };
     });
+
+// ---------------------------------------------------------------------------
+// 組織の設定
+// ---------------------------------------------------------------------------
+
+/** 組織の設定の差分。値の木 (properties) は要素ごと (Flow の properties と同じ。配列は書いた順の C) */
+export type SettingsJsonDiff = NodeDiff<
+    'settings',
+    SettingsJson,
+    { fullName: ValueDiff<string>; properties?: FlowPropertiesDiff }
+>;
+
+export const makeSettingsDiff = (
+    before: SettingsJson,
+    after: SettingsJson,
+    match: Match = 'key',
+): SettingsJsonDiff =>
+    makeNodeDiff('settings', before, after, match, (b, a) => ({
+        fullName: makeValueDiff(b.fullName, a.fullName),
+        ...(b.properties || a.properties
+            ? { properties: makeFlowPropertiesDiff(b.properties, a.properties) }
+            : {}),
+    }));

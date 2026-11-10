@@ -51,8 +51,11 @@
         "name": {}
       },
       "name": "NewBanner",
-      "extend": "LightningElement",
-      "mixins": [],
+      "superClass": {
+        "kind": "jsIdentifier",
+        "sourceKeys": {},
+        "name": "LightningElement"
+      },
       "block": [
         {
           "kind": "lwcField",
@@ -61,7 +64,11 @@
             "name": {}
           },
           "name": "message",
-          "init": "BANNER_LABEL",
+          "init": {
+            "kind": "jsIdentifier",
+            "sourceKeys": {},
+            "name": "BANNER_LABEL"
+          },
           "references": [
             {
               "local": "BANNER_LABEL",
@@ -87,7 +94,11 @@
             "name": {}
           },
           "name": "variant",
-          "init": "'info'",
+          "init": {
+            "kind": "jsString",
+            "sourceKeys": {},
+            "value": "info"
+          },
           "references": [],
           "optional": false,
           "modifier": {
@@ -111,37 +122,84 @@
           "param": [],
           "async": false,
           "modifier": {},
-          "body": {
-            "kind": "lwcBody",
-            "sourceKeys": {},
-            "statements": 1
-          },
-          "calls": [
+          "block": [
             {
-              "kind": "lwcCall",
+              "kind": "jsExpression",
               "sourceKeys": {},
-              "callType": "dispatchEvent",
-              "target": "CustomEvent",
-              "arg": [
-                "new CustomEvent('close')"
-              ],
-              "references": []
+              "value": {
+                "kind": "jsMemberAccess",
+                "sourceKeys": {},
+                "type": "method",
+                "object": {
+                  "kind": "jsThis",
+                  "sourceKeys": {}
+                },
+                "operator": ".",
+                "member": "dispatchEvent",
+                "memberArg": [
+                  {
+                    "kind": "jsNew",
+                    "sourceKeys": {},
+                    "callee": {
+                      "kind": "jsIdentifier",
+                      "sourceKeys": {},
+                      "name": "CustomEvent"
+                    },
+                    "arg": [
+                      {
+                        "kind": "jsString",
+                        "sourceKeys": {},
+                        "value": "close"
+                      }
+                    ]
+                  }
+                ]
+              }
             }
           ],
-          "events": [
-            {
-              "kind": "lwcEvent",
-              "sourceKeys": {},
-              "name": "close"
-            }
-          ]
+          "references": []
         }
       ]
     },
-    "otherExports": [],
+    "exports": [
+      {
+        "kind": "lwcExport",
+        "sourceKeys": {},
+        "exportType": "default",
+        "exported": "default",
+        "local": "NewBanner",
+        "typeOnly": false
+      }
+    ],
     "declarations": []
   },
   "sourceObject": [
+    {
+      "context": "'close'",
+      "start": {
+        "offset": 290,
+        "line": 9,
+        "column": 43
+      },
+      "end": {
+        "offset": 297,
+        "line": 9,
+        "column": 50
+      }
+    },
+    {
+      "context": "'info'",
+      "start": {
+        "offset": 218,
+        "line": 6,
+        "column": 19
+      },
+      "end": {
+        "offset": 224,
+        "line": 6,
+        "column": 25
+      }
+    },
     {
       "context": "@api message = BANNER_LABEL;",
       "start": {
@@ -197,6 +255,19 @@
     {
       "context": "BANNER_LABEL",
       "start": {
+        "offset": 185,
+        "line": 5,
+        "column": 19
+      },
+      "end": {
+        "offset": 197,
+        "line": 5,
+        "column": 31
+      }
+    },
+    {
+      "context": "BANNER_LABEL",
+      "start": {
         "offset": 52,
         "line": 2,
         "column": 7
@@ -205,6 +276,32 @@
         "offset": 64,
         "line": 2,
         "column": 19
+      }
+    },
+    {
+      "context": "CustomEvent",
+      "start": {
+        "offset": 278,
+        "line": 9,
+        "column": 31
+      },
+      "end": {
+        "offset": 289,
+        "line": 9,
+        "column": 42
+      }
+    },
+    {
+      "context": "LightningElement",
+      "start": {
+        "offset": 147,
+        "line": 4,
+        "column": 39
+      },
+      "end": {
+        "offset": 163,
+        "line": 4,
+        "column": 55
       }
     },
     {
@@ -252,6 +349,19 @@
         "offset": 123,
         "line": 4,
         "column": 15
+      },
+      "end": {
+        "offset": 308,
+        "line": 11,
+        "column": 1
+      }
+    },
+    {
+      "context": "export default class NewBanner extends LightningElement {\n    @api message = BANNER_LABEL;\n    @api variant = 'info';\n\n    handleClose() {\n        this.dispatchEvent(new CustomEvent('close'));\n    }\n}",
+      "start": {
+        "offset": 108,
+        "line": 4,
+        "column": 0
       },
       "end": {
         "offset": 308,
@@ -338,6 +448,19 @@
       }
     },
     {
+      "context": "this",
+      "start": {
+        "offset": 255,
+        "line": 9,
+        "column": 8
+      },
+      "end": {
+        "offset": 259,
+        "line": 9,
+        "column": 12
+      }
+    },
+    {
       "context": "this.dispatchEvent(new CustomEvent('close'))",
       "start": {
         "offset": 255,
@@ -351,6 +474,19 @@
       }
     },
     {
+      "context": "this.dispatchEvent(new CustomEvent('close'));",
+      "start": {
+        "offset": 255,
+        "line": 9,
+        "column": 8
+      },
+      "end": {
+        "offset": 300,
+        "line": 9,
+        "column": 53
+      }
+    },
+    {
       "context": "variant",
       "start": {
         "offset": 208,
@@ -361,19 +497,6 @@
         "offset": 215,
         "line": 6,
         "column": 16
-      }
-    },
-    {
-      "context": "{\n        this.dispatchEvent(new CustomEvent('close'));\n    }",
-      "start": {
-        "offset": 245,
-        "line": 8,
-        "column": 18
-      },
-      "end": {
-        "offset": 306,
-        "line": 10,
-        "column": 5
       }
     }
   ],

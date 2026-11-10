@@ -2,15 +2,19 @@
 // template-compiler はテンプレートだけを見るので、テンプレートの式・ハンドラー・lwc:ref が JS のメンバーと合っているか、
 // lwc:component を使ってよいか (js-meta.xml の capabilities) は、JSON がそろったところでここで見る。
 // 誤検出がありうる (継承・mixin のメンバーは JSON にない) ので、すべて phase bundle・level warning
+// 本体の呼び出し (this.refs.<名前>) は JSON に持たず、解析で文の JSON から出す (docs/lwc-json-types.md 8.8)。
+// 解析の部品は types だけに依存するので、parser から使っても循環しない
+import { analyzeLwcModuleCalls, type LwcCallInfo } from '../../../processor/Lwc/calls';
+import { lwcHeritageOf } from '../../../processor/Lwc/walker';
 import {
     findSpanSourceInfo,
     hash,
     type ConvertKeys,
     type LwcAttributeValueJson,
     type LwcBundleJson,
-    type LwcCallJson,
     type LwcComponentJson,
     type LwcExpressionJson,
+    type LwcModuleJson,
     type LwcSourceJson,
     type LwcTemplateNodeJson,
 } from '../../../types';
@@ -101,29 +105,27 @@ const collectTemplate = (nodes: LwcTemplateNodeJson[]) => {
 const memberNamesOf = (component: LwcComponentJson) =>
     new Set(
         component.block.flatMap((member) =>
-            member.kind !== 'lwcConstructor' ? [member.name] : [],
+            member.kind !== 'lwcConstructor' && member.kind !== 'lwcStaticBlock'
+                ? [member.name]
+                : [],
         ),
     );
 
 /** メンバーがすべて JSON にあるか (LightningElement を直接継承し、mixin は既知のものだけ) */
-const hasAllMembers = (component: LwcComponentJson) =>
-    component.extend === 'LightningElement' &&
-    component.mixins.every((mixin) => KNOWN_MIXINS.includes(mixin));
+const hasAllMembers = (component: LwcComponentJson) => {
+    const { extend, mixins } = lwcHeritageOf(component.superClass);
+    return (
+        extend === 'LightningElement' &&
+        mixins.every((mixin) => mixin !== null && KNOWN_MIXINS.includes(mixin))
+    );
+};
 
-/** JS の this.refs.<名前> (lwcCall の callType: 'refs') */
-const refCallsOf = (component: LwcComponentJson): LwcCallJson[] =>
-    component.block
-        .flatMap((member) => {
-            if (member.kind === 'lwcMethod' || member.kind === 'lwcConstructor')
-                return member.calls;
-            if (member.kind === 'lwcProperty') {
-                return [
-                    ...(member.getterContent?.calls ?? []),
-                    ...(member.setterContent?.calls ?? []),
-                ];
-            }
-            return [];
-        })
+/** JS の this.refs.<名前> (解析の呼び出しの callType: 'refs') */
+const refCallsOf = (module: LwcModuleJson): LwcCallInfo[] =>
+    analyzeLwcModuleCalls(module)
+        // コンポーネントのメソッド・getter / setter・関数を初期値にしたフィールド (handleClick = () => {...}) の本体
+        .filter((content) => content.ownerKind === 'lwcComponent')
+        .flatMap((content) => content.calls)
         .filter((call) => call.callType === 'refs');
 
 /** 突き合わせの結果を resolvedError にする。位置は sourceObject から引く (見つからなければ出さない) */
@@ -168,7 +170,7 @@ export const validateBundle = (
     const main = bundle.modules.find((m) => m.main)?.module;
     const component = main?.component;
     const templates = bundle.templates.flatMap((t) => (t.template ? [t.template] : []));
-    if (!component || templates.length === 0) return [];
+    if (!main || !component || templates.length === 0) return [];
 
     const collected = templates.map((template) => collectTemplate(template.children));
     const members = memberNamesOf(component);
@@ -212,7 +214,7 @@ export const validateBundle = (
 
     // JS の this.refs.<名前> が、どのテンプレートの lwc:ref にもない
     const refs = new Set(collected.flatMap((c) => [...c.refs]));
-    for (const call of refCallsOf(component)) {
+    for (const call of refCallsOf(main)) {
         if (refs.has(call.target)) continue;
         findings.push({
             code: 'TEMPLATE_UNKNOWN_REF',

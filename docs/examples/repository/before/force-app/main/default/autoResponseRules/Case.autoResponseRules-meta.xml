@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<AutoResponseRules xmlns="http://soap.sforce.com/2006/04/metadata">
+    <autoResponseRule>
+        <fullName>Web_Response</fullName>
+        <active>true</active>
+        <ruleEntry>
+            <criteriaItems>
+                <field>Case.Origin</field>
+                <operation>equals</operation>
+                <value>Web</value>
+            </criteriaItems>
+            <senderEmail>support@example.com</senderEmail>
+            <senderName>Support</senderName>
+        </ruleEntry>
+    </autoResponseRule>
+</AutoResponseRules>

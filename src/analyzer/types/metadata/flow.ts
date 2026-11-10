@@ -147,7 +147,19 @@ export type FlowReferenceType =
     | 'flow'
     | 'lwc'
     | 'component'
-    | 'label';
+    | 'label'
+    /** $Permission.<名前> */
+    | 'customPermission'
+    /** $CustomMetadata.<型>__mdt.<レコード> のレコード (<型 (__mdt なし)>.<レコード>) */
+    | 'customMetadata'
+    /** アクション (actionCalls) の emailAlert (ワークフローのメールアラート <オブジェクト>.<名前>) */
+    | 'emailAlert'
+    /** アクションの quickAction (<オブジェクト>.<名前> か、グローバルなら <名前>) */
+    | 'quickAction'
+    /** アクションの externalService (外部サービスの登録の名前。actionName の . の前) */
+    | 'externalService'
+    /** カスタム通知 (CustomNotificationType を DeveloperName で取得するもの) */
+    | 'customNotificationType';
 
 export type FlowReference = {
     refType: FlowReferenceType;
@@ -307,6 +319,28 @@ const makeReferenceCollector = (startObject: string | undefined) => {
                 ? add('field', `${startObject}.${record[1]}`)
                 : add('global', trimmed);
         }
+        // カスタム権限・カスタム設定・カスタムメタデータは、定義のある種類の参照にする (数式の解析と同じ。dependency/formula.ts)
+        const [head, first, second, third] = trimmed.split('.');
+        switch (head?.toLowerCase()) {
+            case '$permission':
+                if (first) return add('customPermission', first);
+                break;
+            case '$setup':
+                if (first) {
+                    add('object', first);
+                    if (second) add('field', `${first}.${second}`);
+                    return;
+                }
+                break;
+            case '$custommetadata':
+                if (first) {
+                    add('object', first);
+                    if (second) add('customMetadata', `${first.replace(/__mdt$/i, '')}.${second}`);
+                    if (third) add('field', `${first}.${third}`);
+                    return;
+                }
+                break;
+        }
         if (trimmed.startsWith('$')) return add('global', trimmed.split('.').slice(0, 2).join('.'));
         add('element', trimmed.split('.')[0]!);
     };
@@ -362,6 +396,20 @@ const collectReferences = (
         const actionName = readText(element, 'actionName');
         if (actionName && actionType === 'apex') collector.add('apexClass', actionName);
         if (actionName && actionType === 'flow') collector.add('flow', actionName);
+        if (actionName && actionType === 'emailAlert') collector.add('emailAlert', actionName);
+        if (actionName && actionType === 'quickAction') collector.add('quickAction', actionName);
+        // externalService の actionName は <登録の名前>.<操作>
+        if (actionName && actionType === 'externalService')
+            collector.add('externalService', actionName.split('.')[0]!);
+    }
+    // カスタム通知は Id で渡すので、CustomNotificationType を DeveloperName で取得するところから名前を取る
+    if (elementName === 'recordLookups' && object?.toLowerCase() === 'customnotificationtype') {
+        for (const filter of childrenOf(element, 'filters')) {
+            const value = childOf(filter, 'value');
+            const name = value && readText(value, 'stringValue');
+            if (readText(filter, 'field')?.toLowerCase() === 'developername' && name)
+                collector.add('customNotificationType', name);
+        }
     }
     if (elementName === 'apexPluginCalls') {
         const apexClass = readText(element, 'apexClass');

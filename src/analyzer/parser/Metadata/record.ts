@@ -6,6 +6,7 @@ import {
     makeAuraBundleJson,
     makeEmailTemplateJson,
     makeRecordJson,
+    makeSettingsJson,
     type RecordMetadataType,
 } from '../../types';
 import type { DecomposedSpec } from './decomposed';
@@ -75,6 +76,26 @@ const RECORD_FOLDERS: Record<
     },
     customNotificationType: { folder: 'notificationtypes', suffix: '.notiftype-meta.xml' },
     reportType: { folder: 'reportTypes', suffix: '.reportType-meta.xml' },
+    assignmentRules: { folder: 'assignmentRules', suffix: '.assignmentRules-meta.xml' },
+    autoResponseRules: { folder: 'autoResponseRules', suffix: '.autoResponseRules-meta.xml' },
+    escalationRules: { folder: 'escalationRules', suffix: '.escalationRules-meta.xml' },
+    pathAssistant: { folder: 'pathAssistants', suffix: '.pathAssistant-meta.xml' },
+    duplicateRule: { folder: 'duplicateRules', suffix: '.duplicateRule-meta.xml' },
+    matchingRules: { folder: 'matchingRules', suffix: '.matchingRule-meta.xml' },
+    platformEventChannel: {
+        folder: 'platformEventChannels',
+        suffix: '.platformEventChannel-meta.xml',
+    },
+    platformEventChannelMember: {
+        folder: 'platformEventChannelMembers',
+        suffix: '.platformEventChannelMember-meta.xml',
+    },
+    platformEventSubscriberConfig: {
+        folder: 'PlatformEventSubscriberConfigs',
+        suffix: '.platformEventSubscriberConfig-meta.xml',
+    },
+    cspTrustedSite: { folder: 'cspTrustedSites', suffix: '.cspTrustedSite-meta.xml' },
+    externalDataSource: { folder: 'dataSources', suffix: '.dataSource-meta.xml' },
 };
 
 const recordParser = <T extends RecordMetadataType>(type: T) =>
@@ -107,6 +128,25 @@ export const LightningMessageChannelParser = recordParser('messageChannel');
 export const ExternalCredentialParser = recordParser('externalCredential');
 export const CustomNotificationTypeParser = recordParser('customNotificationType');
 export const ReportTypeParser = recordParser('reportType');
+export const AssignmentRulesParser = recordParser('assignmentRules');
+export const AutoResponseRulesParser = recordParser('autoResponseRules');
+export const EscalationRulesParser = recordParser('escalationRules');
+export const PathAssistantParser = recordParser('pathAssistant');
+export const DuplicateRuleParser = recordParser('duplicateRule');
+export const MatchingRulesParser = recordParser('matchingRules');
+export const PlatformEventChannelParser = recordParser('platformEventChannel');
+export const PlatformEventChannelMemberParser = recordParser('platformEventChannelMember');
+export const PlatformEventSubscriberConfigParser = recordParser('platformEventSubscriberConfig');
+export const CspTrustedSiteParser = recordParser('cspTrustedSite');
+export const ExternalDataSourceParser = recordParser('externalDataSource');
+
+/** 組織の設定 (settings/<名前>.settings-meta.xml)。ルート要素がファイルごとに違うので、表ではなく値の木で読む */
+export const SettingsParser = new MetadataFolderParser({
+    type: 'settings',
+    folder: 'settings',
+    suffix: '.settings-meta.xml',
+    make: makeSettingsJson,
+});
 
 /** Visualforce ページ (pages/<名前>.page-meta.xml と <名前>.page) */
 export const ApexPageParser = new MetadataFolderParser({
@@ -171,6 +211,22 @@ export type LightningMessageChannelParseResult = ParseResultOf<
 export type ExternalCredentialParseResult = ParseResultOf<typeof ExternalCredentialParser>;
 export type CustomNotificationTypeParseResult = ParseResultOf<typeof CustomNotificationTypeParser>;
 export type ReportTypeParseResult = ParseResultOf<typeof ReportTypeParser>;
+export type AssignmentRulesParseResult = ParseResultOf<typeof AssignmentRulesParser>;
+export type AutoResponseRulesParseResult = ParseResultOf<typeof AutoResponseRulesParser>;
+export type EscalationRulesParseResult = ParseResultOf<typeof EscalationRulesParser>;
+export type PathAssistantParseResult = ParseResultOf<typeof PathAssistantParser>;
+export type DuplicateRuleParseResult = ParseResultOf<typeof DuplicateRuleParser>;
+export type MatchingRulesParseResult = ParseResultOf<typeof MatchingRulesParser>;
+export type PlatformEventChannelParseResult = ParseResultOf<typeof PlatformEventChannelParser>;
+export type PlatformEventChannelMemberParseResult = ParseResultOf<
+    typeof PlatformEventChannelMemberParser
+>;
+export type PlatformEventSubscriberConfigParseResult = ParseResultOf<
+    typeof PlatformEventSubscriberConfigParser
+>;
+export type CspTrustedSiteParseResult = ParseResultOf<typeof CspTrustedSiteParser>;
+export type ExternalDataSourceParseResult = ParseResultOf<typeof ExternalDataSourceParser>;
+export type SettingsParseResult = ParseResultOf<typeof SettingsParser>;
 export type ApexPageParseResult = ParseResultOf<typeof ApexPageParser>;
 export type ApexComponentParseResult = ParseResultOf<typeof ApexComponentParser>;
 export type EmailTemplateParseResult = ParseResultOf<typeof EmailTemplateParser>;

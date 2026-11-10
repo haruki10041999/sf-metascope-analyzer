@@ -13,7 +13,10 @@ import type {
 // - 定義: クラス (内側のクラスは Outer.Inner)・インターフェース・enum・メソッド・プロパティ・項目
 // - 参照: SOQL / SOSL の対象 (オブジェクト・項目)、DML の対象、メソッドの呼び出し、型 (extends / implements /
 //   変数の型 / new)、Label.<名前>、Schema の参照、カスタム権限 (FeatureManagement.checkPermission)、トリガーのオブジェクト、
-//   カスタム設定・カスタムメタデータ型の読み取り (X__c.getInstance() / X__mdt.getInstance('Rec') など)
+//   カスタム設定・カスタムメタデータ型の読み取り (X__c.getInstance() / X__mdt.getInstance('Rec') など)、
+//   名前を文字列などで渡すもの (Page.X / new PageReference('/apex/X') / PageReference.forResource('X') /
+//   StaticResource の SOQL / Type.forName('X') / 'callout:X' / Flow.Interview.X / Label.get('', 'X'))、
+//   プラットフォームイベントの発行 (EventBus.publish)。文字列はリテラルのときだけ (変数・連結は推測しない)
 // - 変数の型は、メソッドの引数・ローカル変数・for の変数・クラスの項目から決める (同じ名前は内側を優先)。
 //   型がクラスかオブジェクトかは決めず (apexType / apexTypeMember)、グラフで定義と突き合わせて決める
 
@@ -33,7 +36,13 @@ const isStatement = (node: Json) => typeof node.kind === 'string' && keysOf(node
 /** 型 ({ type: 'custom', customType } など) の中の、名前の型 (List<Account> なら Account) */
 const customTypesOf = (type: unknown): string[] => {
     if (!isRecord(type)) return [];
-    const own = str(type.customType) ? [type.customType as string] : [];
+    // . でつないだ型 (['Flow', 'Interview', 'X']) は、今は Flow.Interview.X だけを取る
+    const dotted = Array.isArray(type.customType) ? type.customType.map(String).join('.') : '';
+    const own = str(type.customType)
+        ? [type.customType as string]
+        : FLOW_INTERVIEW.test(dotted)
+          ? [dotted]
+          : [];
     return [
         ...own,
         ...customTypesOf(type.elementType),
@@ -84,6 +93,38 @@ const nameArgOf = (node: Json): string | undefined => {
 const SETTINGS_METHODS = new Set(['getinstance', 'getorgdefaults', 'getvalues', 'getall']);
 
 const APEX_LABEL = /^(?:System\.)?Label\.(\w+)$/i;
+
+/** Visualforce のページ (Page.X) */
+const APEX_PAGE = /^(?:System\.)?Page\.(\w+)$/i;
+
+/** Flow の型 (Flow.Interview.X) */
+const FLOW_INTERVIEW = /^Flow\.Interview\.(\w+)$/i;
+
+/** 文字列のリテラル ('...') の中身。リテラルでなければ undefined */
+const literalOf = (value: unknown): string | undefined => {
+    const literal = isRecord(value) ? str(value.value) : undefined;
+    return literal && /^'.*'$/s.test(literal) ? literal.slice(1, -1) : undefined;
+};
+
+/** 名前空間の引数が「なし」('' か null) か */
+const isNoNamespace = (value: unknown): boolean =>
+    literalOf(value) === '' || (isRecord(value) && value.valueType === 'null') || value === 'null';
+
+/**
+ * 名前空間と名前を受け取る呼び出し (Type.forName('X') / Type.forName('', 'X') など) の名前。
+ * 名前空間が '' / null でないとき (パッケージのもの) と、名前がリテラルでないときは undefined
+ */
+const namespacedNameArg = (args: unknown[], nameIndex: number): string | undefined => {
+    if (nameIndex > 0 && !isNoNamespace(args[0])) return undefined;
+    const name = literalOf(args[nameIndex]);
+    return name && /^\w+(?:\.\w+)*$/.test(name) ? name : undefined;
+};
+
+/** 指定ログイン情報 ('callout:Name/path') */
+const CALLOUT = /^callout:(\w+)/i;
+
+/** Visualforce のページの URL ('/apex/X?id=...') */
+const APEX_PAGE_URL = /^\/apex\/(\w+)(?:[?#/]|$)/i;
 
 /** . でつないだ名前 (System.Label.Greeting)。名前だけの並びでなければ undefined */
 const dottedName = (value: unknown): string | undefined => {
@@ -162,7 +203,11 @@ export const getApexDependencies = (unit: ApexUnitParseResult): UnitDependencies
         kind: DependencyKind = 'uses',
     ) => {
         for (const name of customTypesOf(type)) {
-            add(context, 'apexType', name, kind, via, isRecord(type) ? keysOf(type) : undefined);
+            const keys = isRecord(type) ? keysOf(type) : undefined;
+            // Flow.Interview.X 型の変数は Flow X を使う
+            const flow = name.match(FLOW_INTERVIEW);
+            if (flow) add(context, 'flow', flow[1]!, 'uses', 'Flow.Interview', keys);
+            else add(context, 'apexType', name, kind, via, keys);
         }
     };
 
@@ -175,6 +220,7 @@ export const getApexDependencies = (unit: ApexUnitParseResult): UnitDependencies
             .find((name) => name !== undefined);
         if (!object) return;
         add(context, 'object', object, 'queries', 'soql.from', keys);
+        if (object.toLowerCase() === 'staticresource') staticResourceRefs(context, soql);
         const fieldRef = (field: unknown, via: string) => {
             const name = fieldOfPath(object, field);
             if (name) add(context, 'field', name, 'reads', via, keys);
@@ -197,6 +243,35 @@ export const getApexDependencies = (unit: ApexUnitParseResult): UnitDependencies
                 }
             }
             return true;
+        });
+    };
+
+    /** StaticResource の SOQL の WHERE Name = 'X' / Name IN ('X', 'Y') (文字列のリテラル) の静的リソース */
+    const staticResourceRefs = (context: Context, soql: Json) => {
+        walk(soql.where, (node) => {
+            if (node.kind === 'subQuery' || node.kind === 'soql') return false;
+            if (node.kind !== 'singleCondition' || !isRecord(node.field)) return true;
+            const field = node.field.field;
+            const isName =
+                node.field.type === 'field' &&
+                Array.isArray(field) &&
+                field.length === 1 &&
+                String(field[0]).toLowerCase() === 'name';
+            const operator = str(node.operator)?.toLowerCase();
+            if (!isName || (operator !== '=' && operator !== 'in')) return false;
+            const values = isRecord(node.value)
+                ? node.value.type === 'list' && Array.isArray(node.value.value)
+                    ? node.value.value
+                    : [node.value]
+                : [];
+            for (const value of values) {
+                const name =
+                    isRecord(value) && value.type === 'string' ? literalOf(value) : undefined;
+                if (name && /^\w+$/.test(name)) {
+                    add(context, 'staticResource', name, 'uses', 'soql.where', keysOf(soql));
+                }
+            }
+            return false;
         });
     };
 
@@ -292,8 +367,15 @@ export const getApexDependencies = (unit: ApexUnitParseResult): UnitDependencies
             add(context, 'customLabel', label[1]!, 'uses', 'Label', keys);
             return;
         }
+        // Page.X (Page という名前の変数のメンバーは除く)
+        const page = dotted?.match(APEX_PAGE);
+        if (page && !variableOf(context, dotted!.split('.')[0]!)) {
+            add(context, 'visualforcePage', page[1]!, 'uses', 'Page', keys);
+            return;
+        }
         const object = node.object;
         if (node.type === 'method') {
+            stringArgRefs(context, node);
             // FeatureManagement.checkPermission('Name')
             if (
                 object === 'FeatureManagement' &&
@@ -377,6 +459,64 @@ export const getApexDependencies = (unit: ApexUnitParseResult): UnitDependencies
                 );
             }
         }
+    };
+
+    /**
+     * 名前を文字列の引数で渡す標準のメソッドの呼び出し (文字列のリテラルのときだけ)。
+     * PageReference.forResource('X') / Type.forName('X') / Flow.Interview.createInterview('X', …) /
+     * Label.get('', 'X')、と EventBus.publish (プラットフォームイベントの発行)
+     */
+    const stringArgRefs = (context: Context, node: Json) => {
+        const keys = keysOf(node);
+        const owner = dottedName(node.object)
+            ?.replace(/^System\./i, '')
+            .toLowerCase();
+        const member = str(node.member)?.toLowerCase();
+        const args: unknown[] = Array.isArray(node.memberArg) ? node.memberArg : [];
+        if (!owner || !member || variableOf(context, owner.split('.')[0]!)) return;
+        const call = `${owner}.${member}`;
+        if (call === 'pagereference.forresource') {
+            // forResource('Name') / forResource('Name', 'path/in/zip')
+            const name = literalOf(args[0]);
+            if (name && /^\w+$/.test(name)) {
+                add(context, 'staticResource', name, 'uses', 'PageReference.forResource', keys);
+            }
+        } else if (call === 'type.forname') {
+            // forName('X') / forName('Outer.Inner') / forName('', 'X')。名前空間のある (パッケージの) クラスは取らない
+            const name = namespacedNameArg(args, args.length >= 2 ? 1 : 0);
+            // 標準の型 (String など) もありうるので、クラスかはグラフで決める (apexType)
+            if (name) add(context, 'apexType', name, 'uses', 'Type.forName', keys);
+        } else if (call === 'flow.interview.createinterview') {
+            // createInterview('Name', params) / createInterview('', 'Name', params)
+            const name = namespacedNameArg(args, args.length >= 3 ? 1 : 0);
+            if (name && /^\w+$/.test(name)) {
+                add(context, 'flow', name, 'calls', 'Flow.Interview.createInterview', keys);
+            }
+        } else if (call === 'label.get') {
+            // Label.get('', 'X') / Label.get('', 'X', 'ja')
+            const name = namespacedNameArg(args, 1);
+            if (name && /^\w+$/.test(name)) {
+                add(context, 'customLabel', name, 'uses', 'Label.get', keys);
+            }
+        } else if (call === 'eventbus.publish') {
+            // EventBus.publish(new X__e(...)) / EventBus.publish(events) (変数の型が X__e のときだけ)
+            const event = eventTypeOf(context, args[0]);
+            if (event) add(context, 'object', event, 'publishes', 'EventBus.publish', keys);
+        }
+    };
+
+    /** 発行するプラットフォームイベント (X__e) の名前 */
+    const eventTypeOf = (context: Context, arg: unknown): string | undefined => {
+        let type: string | undefined;
+        if (typeof arg === 'string') type = typeOfVariable(context, arg);
+        else if (isRecord(arg) && Array.isArray(arg.collection)) {
+            const created = arg.collection.map(String).join('.');
+            // new List<X__e>{ ... }
+            type = /^(List|Set)$/i.test(created)
+                ? customTypesOf(Array.isArray(arg.generic) ? arg.generic[0] : undefined)[0]
+                : created;
+        }
+        return type && /__e$/i.test(type) ? type : undefined;
     };
 
     /** 代入の左辺 (acc.Name = ...) の項目は writes */
@@ -559,8 +699,23 @@ export const getApexDependencies = (unit: ApexUnitParseResult): UnitDependencies
         if (Array.isArray(node.collection) && node.collection.length) {
             // new X(...) / new List<X>()
             const created = node.collection.map(String).join('.');
-            if (!/^(List|Set|Map)$/i.test(created))
+            const flow = created.match(FLOW_INTERVIEW);
+            if (flow) {
+                // new Flow.Interview.X(params) は Flow X の呼び出し
+                add(inner, 'flow', flow[1]!, 'calls', 'Flow.Interview', keysOf(node));
+            } else if (!/^(List|Set|Map)$/i.test(created)) {
                 add(inner, 'apexType', created, 'creates', 'new', keysOf(node));
+            }
+            // new PageReference('/apex/X')
+            const url = /^(System\.)?PageReference$/i.test(created)
+                ? literalOf(Array.isArray(node.arg) ? node.arg[0] : undefined)?.match(APEX_PAGE_URL)
+                : undefined;
+            if (url) add(inner, 'visualforcePage', url[1]!, 'uses', 'PageReference', keysOf(node));
+        }
+        // 'callout:Name/path' (文字列のリテラル。setEndpoint の引数・定数など、どこにあっても)
+        if (node.valueType === 'string') {
+            const callout = literalOf(node)?.match(CALLOUT);
+            if (callout) add(inner, 'namedCredential', callout[1]!, 'uses', 'callout', keys);
         }
         visitChildren(node, inner);
     };

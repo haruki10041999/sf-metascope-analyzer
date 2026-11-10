@@ -1,18 +1,21 @@
 import type {
     LwcAccessorContentJson,
     LwcBodyContentJson,
-    LwcBodyJson,
-    LwcCallJson,
     LwcComponentJson,
     LwcConstructorJson,
     LwcDecoratorJson,
-    LwcEventJson,
     LwcFieldJson,
+    LwcFunctionContentJson,
+    LwcJsArgumentJson,
+    LwcJsExpressionJson,
+    LwcJsPatternJson,
+    LwcJsStatementJson,
     LwcMemberJson,
     LwcMethodJson,
     LwcModifiersJson,
     LwcParameterJson,
     LwcPropertyJson,
+    LwcStaticBlockJson,
     LwcTypeJson,
     LwcWireConfigJson,
 } from '../../../types';
@@ -36,6 +39,7 @@ import {
     makeUnorderedValuesDiff,
     presentEntry,
 } from '../../commons/diff/present';
+import { LwcBlockDiff, makeLwcBlockDiff } from './gumtree/tree';
 
 // LWC のコンポーネント (default export のクラス) の差分。方針: docs/lwc-implementation.md
 // 分類 (A. スロット / B. 集合 / C. 順序付き列 / D. キー対応) と出力の形は Apex と同じ (docs/apex-implementation.md)。
@@ -50,6 +54,12 @@ export const makeOptionalValueDiff = <T>(before: T | undefined, after: T | undef
 /** 型は書かれた型の文字列ごと値として比べる (Apex の型と同じく葉) */
 export type LwcTypeDiff = OptionalValueDiff<LwcTypeJson>;
 
+/**
+ * 本体の外の式 (初期値・引数など。docs/lwc-json-types.md 5.4) は値として比べる (中身のハッシュの objectKey で比べる)。
+ * 本体の文の中の式は、文の並びの GumTree (LwcBlockDiff) の中で比べる
+ */
+export type LwcExpressionDiff = ValueDiff<LwcJsExpressionJson>;
+
 /** import の参照は local で決まるので値の集合 */
 type ReferencesDiff = TypedListDiff<LwcFieldJson['references'][number], never>;
 
@@ -62,9 +72,11 @@ export type LwcWireConfigJsonDiff = NodeDiff<
     LwcWireConfigJson,
     {
         key: ValueDiff<string>;
-        value: ValueDiff<string>;
+        value: LwcExpressionDiff;
         reactive?: OptionalValueDiff<string>;
         references: ReferencesDiff;
+        /** B. 集合 */
+        fieldNames?: PresentDiff<string[], TypedListDiff<string, never>>;
     }
 >;
 
@@ -78,6 +90,10 @@ const makeWireConfigDiff = (
         value: makeValueDiff(b.value, a.value),
         ...presentEntry('reactive', makeOptionalValueDiff(b.reactive, a.reactive)),
         references: makeUnorderedValuesDiff(b.references, a.references),
+        ...presentEntry(
+            'fieldNames',
+            makePresentDiff(b.fieldNames, a.fieldNames, makeUnorderedValuesDiff),
+        ),
     }));
 
 type WireJson = NonNullable<LwcDecoratorJson['wire']>;
@@ -85,7 +101,7 @@ type WireJson = NonNullable<LwcDecoratorJson['wire']>;
 export type LwcWireDiff = TypedObjectDiff<
     WireJson,
     {
-        adapter: ValueDiff<string>;
+        adapter: LwcExpressionDiff;
         adapterSource?: OptionalValueDiff<string>;
         apex?: OptionalValueDiff<NonNullable<WireJson['apex']>>;
         /** D. キー対応 (設定のキー名) */
@@ -113,8 +129,8 @@ export type LwcDecoratorJsonDiff = NodeDiff<
     LwcDecoratorJson,
     {
         name: ValueDiff<string>;
-        /** C. 順序付き列 (引数は位置で意味が決まる) */
-        arg: TypedListDiff<string, ValueDiff<string>>;
+        /** C. 順序付き列 (引数は位置で意味が決まる)。式は値として比べる */
+        arg: TypedListDiff<LwcJsArgumentJson, ValueDiff<LwcJsArgumentJson>>;
         wire?: PresentDiff<WireJson, LwcWireDiff>;
     }
 >;
@@ -178,58 +194,17 @@ export const makeLwcModifiersDiff = (
     }));
 
 // ---------------------------------------------------------------------------
-// 本体 (呼び出し・イベント・文の数)
+// 本体 (文)
 // ---------------------------------------------------------------------------
 
-export type LwcCallJsonDiff = NodeDiff<
-    'lwcCall',
-    LwcCallJson,
-    {
-        callType: ValueDiff<LwcCallJson['callType']>;
-        target: ValueDiff<string>;
-        apex?: OptionalValueDiff<NonNullable<LwcCallJson['apex']>>;
-        arg: TypedListDiff<string, ValueDiff<string>>;
-        references: ReferencesDiff;
-    }
->;
-
-const makeCallDiff = (before: LwcCallJson, after: LwcCallJson, match: Match): LwcCallJsonDiff =>
-    makeNodeDiff('lwcCall', before, after, match, (b, a) => ({
-        callType: makeValueDiff(b.callType, a.callType),
-        target: makeValueDiff(b.target, a.target),
-        ...presentEntry('apex', makeOptionalValueDiff(b.apex, a.apex)),
-        arg: makeOrderedValuesDiff(b.arg, a.arg),
-        references: makeUnorderedValuesDiff(b.references, a.references),
-    }));
-
-export type LwcEventJsonDiff = NodeDiff<
-    'lwcEvent',
-    LwcEventJson,
-    {
-        name: ValueDiff<string>;
-        bubbles?: OptionalValueDiff<boolean>;
-        composed?: OptionalValueDiff<boolean>;
-        detail?: OptionalValueDiff<string>;
-        detailType?: LwcTypeDiff;
-    }
->;
-
-const makeEventDiff = (before: LwcEventJson, after: LwcEventJson, match: Match): LwcEventJsonDiff =>
-    makeNodeDiff('lwcEvent', before, after, match, (b, a) => ({
-        name: makeValueDiff(b.name, a.name),
-        ...presentEntry('bubbles', makeOptionalValueDiff(b.bubbles, a.bubbles)),
-        ...presentEntry('composed', makeOptionalValueDiff(b.composed, a.composed)),
-        ...presentEntry('detail', makeOptionalValueDiff(b.detail, a.detail)),
-        ...presentEntry('detailType', makeOptionalValueDiff(b.detailType, a.detailType)),
-    }));
-
-export type LwcBodyJsonDiff = NodeDiff<'lwcBody', LwcBodyJson, { statements: ValueDiff<number> }>;
-
-/** 本体の中身。呼び出し・イベントは書かれた順に意味があるので C. 順序付き列 */
+/**
+ * 本体の中身。文の並びは GumTree (Apex の本体と同じ。文の追加・削除・移動・中の式の変更が分かる)。
+ * 決まった形の呼び出し・イベントは JSON に持たない (解析で出す。processor/Lwc/calls.ts) ので、その変更も文の差分に出る
+ */
 export type LwcBodyContentDiff = {
-    body?: PresentDiff<LwcBodyJson, LwcBodyJsonDiff>;
-    calls: ListItemDiff<'lwcCall', LwcCallJson, LwcCallJsonDiff>[];
-    events: ListItemDiff<'lwcEvent', LwcEventJson, LwcEventJsonDiff>[];
+    block?: PresentDiff<LwcJsStatementJson[], LwcBlockDiff>;
+    /** B. 集合 (import の参照は local で決まる) */
+    references: ReferencesDiff;
 };
 
 export const makeLwcBodyContentDiff = (
@@ -238,19 +213,42 @@ export const makeLwcBodyContentDiff = (
     sources?: Sources,
 ): LwcBodyContentDiff => ({
     ...presentEntry(
-        'body',
-        makePresentDiff(before.body, after.body, (b, a) =>
-            makeNodeDiff('lwcBody', b, a, 'slot', (x, y) => ({
-                statements: makeValueDiff(x.statements, y.statements),
-            })),
-        ),
+        'block',
+        makePresentDiff(before.block, after.block, (b, a) => makeLwcBlockDiff(b, a, sources)),
     ),
-    calls: makeSequenceDiff('lwcCall', before.calls, after.calls, makeCallDiff, {
-        sources,
-        canPair: (b, a) => b.callType === a.callType,
-    }),
-    events: makeSequenceDiff('lwcEvent', before.events, after.events, makeEventDiff, { sources }),
+    references: makeUnorderedValuesDiff(before.references, after.references),
 });
+
+/** 関数 (関数を初期値にしたフィールド) の中身。メソッドと同じ形 */
+export type LwcFunctionContentDiff = TypedObjectDiff<
+    LwcFunctionContentJson,
+    LwcBodyContentDiff & {
+        arrow: ValueDiff<boolean>;
+        param: LwcParametersDiff;
+        returnType?: LwcTypeDiff;
+        async: ValueDiff<boolean>;
+        generator: ValueDiff<boolean>;
+        functionName?: OptionalValueDiff<string>;
+        /** アロー関数の式の本体は値として比べる */
+        expression?: OptionalValueDiff<LwcJsExpressionJson>;
+    }
+>;
+
+export const makeLwcFunctionContentDiff = (
+    before: LwcFunctionContentJson,
+    after: LwcFunctionContentJson,
+    sources?: Sources,
+): LwcFunctionContentDiff =>
+    makeTypedObjectDiff(before, after, (b, a) => ({
+        arrow: makeValueDiff(b.arrow, a.arrow),
+        param: makeLwcParametersDiff(b.param, a.param, sources),
+        ...presentEntry('returnType', makeOptionalValueDiff(b.returnType, a.returnType)),
+        async: makeValueDiff(b.async, a.async),
+        generator: makeValueDiff(b.generator, a.generator),
+        ...presentEntry('functionName', makeOptionalValueDiff(b.functionName, a.functionName)),
+        ...presentEntry('expression', makeOptionalValueDiff(b.expression, a.expression)),
+        ...makeLwcBodyContentDiff(b, a, sources),
+    }));
 
 // ---------------------------------------------------------------------------
 // メンバー
@@ -260,7 +258,9 @@ export type LwcParameterJsonDiff = NodeDiff<
     'lwcParameter',
     LwcParameterJson,
     {
-        variant: ValueDiff<string>;
+        variant?: OptionalValueDiff<string>;
+        /** 分割代入のパターンは値として比べる */
+        pattern?: OptionalValueDiff<LwcJsPatternJson>;
         variantType?: LwcTypeDiff;
         optional: ValueDiff<boolean>;
         modifier: LwcModifiersDiff;
@@ -274,7 +274,8 @@ const makeParameterDiff = (
     sources?: Sources,
 ): LwcParameterJsonDiff =>
     makeNodeDiff('lwcParameter', before, after, match, (b, a) => ({
-        variant: makeValueDiff(b.variant, a.variant),
+        ...presentEntry('variant', makeOptionalValueDiff(b.variant, a.variant)),
+        ...presentEntry('pattern', makeOptionalValueDiff(b.pattern, a.pattern)),
         ...presentEntry('variantType', makeOptionalValueDiff(b.variantType, a.variantType)),
         optional: makeValueDiff(b.optional, a.optional),
         modifier: makeLwcModifiersDiff(b.modifier, a.modifier, sources),
@@ -308,8 +309,10 @@ export type LwcFieldJsonDiff = NodeDiff<
     {
         name: NameDiff;
         variantType?: LwcTypeDiff;
-        init?: OptionalValueDiff<string>;
+        /** 初期値の式は値として比べる */
+        init?: OptionalValueDiff<LwcJsExpressionJson>;
         references: ReferencesDiff;
+        function?: PresentDiff<LwcFunctionContentJson, LwcFunctionContentDiff>;
         optional: ValueDiff<boolean>;
         modifier: LwcModifiersDiff;
     }
@@ -326,6 +329,12 @@ const makeFieldDiff = (
         ...presentEntry('variantType', makeOptionalValueDiff(b.variantType, a.variantType)),
         ...presentEntry('init', makeOptionalValueDiff(b.init, a.init)),
         references: makeUnorderedValuesDiff(b.references, a.references),
+        ...presentEntry(
+            'function',
+            makePresentDiff(b.function, a.function, (x, y) =>
+                makeLwcFunctionContentDiff(x, y, sources),
+            ),
+        ),
         optional: makeValueDiff(b.optional, a.optional),
         modifier: makeLwcModifiersDiff(b.modifier, a.modifier, sources),
     }));
@@ -428,8 +437,28 @@ const makeConstructorDiff = (
         ...makeLwcBodyContentDiff(b, a, sources),
     }));
 
+export type LwcStaticBlockJsonDiff = NodeDiff<
+    'lwcStaticBlock',
+    LwcStaticBlockJson,
+    LwcBodyContentDiff
+>;
+
+const makeStaticBlockDiff = (
+    before: LwcStaticBlockJson,
+    after: LwcStaticBlockJson,
+    match: Match,
+    sources?: Sources,
+): LwcStaticBlockJsonDiff =>
+    makeNodeDiff('lwcStaticBlock', before, after, match, (b, a) =>
+        makeLwcBodyContentDiff(b, a, sources),
+    );
+
 export type LwcMemberJsonDiff =
-    LwcFieldJsonDiff | LwcPropertyJsonDiff | LwcMethodJsonDiff | LwcConstructorJsonDiff;
+    | LwcFieldJsonDiff
+    | LwcPropertyJsonDiff
+    | LwcMethodJsonDiff
+    | LwcConstructorJsonDiff
+    | LwcStaticBlockJsonDiff;
 
 /**
  * メンバー 1 組の差分。同じ名前で種類が変わった (フィールド → getter など) ものは、
@@ -459,13 +488,21 @@ const makeMemberDiff = (
                 match,
                 sources,
             );
+        case 'lwcStaticBlock':
+            return makeStaticBlockDiff(
+                before as LwcStaticBlockJson,
+                after as LwcStaticBlockJson,
+                match,
+                sources,
+            );
         default:
             return makeFieldDiff(before as LwcFieldJson, after as LwcFieldJson, match, sources);
     }
 };
 
-/** メンバーの識別キー。static とインスタンスは別のメンバー */
-export const getLwcMemberKey = (member: LwcMemberJson): string => {
+/** メンバーの識別キー。static とインスタンスは別のメンバー。static ブロックは名前がないのでキーを持たない (位置と中身で対応付ける) */
+export const getLwcMemberKey = (member: LwcMemberJson): string | undefined => {
+    if (member.kind === 'lwcStaticBlock') return undefined;
     const isStatic = 'modifier' in member && member.modifier.declaration?.includes('static');
     return `${isStatic ? 'static ' : ''}${member.name}`;
 };
@@ -475,15 +512,31 @@ export type LwcComponentJsonDiff = NodeDiff<
     LwcComponentJson,
     {
         name: ValueDiff<string | null>;
-        extend?: OptionalValueDiff<string>;
-        /** C. 順序付き列 (mixin は外側から順に適用される) */
-        mixins: TypedListDiff<string, ValueDiff<string>>;
+        /** extends の式 (ミックスインを含む) は値として比べる (lwcClass と同じ) */
+        superClass?: OptionalValueDiff<LwcJsExpressionJson>;
         /** B. 集合 */
         implement?: PresentDiff<LwcTypeJson[], TypedListDiff<LwcTypeJson, never>>;
         /** D. キー対応 (メンバー名)。Apex のクラスの block と同じ */
-        block: ListItemDiff<'lwcMember', LwcMemberJson, LwcMemberJsonDiff>[];
+        block: LwcMembersDiff;
     }
 >;
+
+/** クラスのメンバーの並び (D. キー対応。コンポーネント・コンポーネント以外のクラスで共通) */
+export type LwcMembersDiff = ListItemDiff<'lwcMember', LwcMemberJson, LwcMemberJsonDiff>[];
+
+export const makeLwcMembersDiff = (
+    before: LwcMemberJson[],
+    after: LwcMemberJson[],
+    sources?: Sources,
+): LwcMembersDiff =>
+    makeKeyedDiff(
+        'lwcMember',
+        before,
+        after,
+        (x, y, m) => makeMemberDiff(x, y, m, sources),
+        getLwcMemberKey,
+        sources,
+    );
 
 export const makeLwcComponentDiff = (
     before: LwcComponentJson,
@@ -493,18 +546,10 @@ export const makeLwcComponentDiff = (
 ): LwcComponentJsonDiff =>
     makeNodeDiff('lwcComponent', before, after, match, (b, a) => ({
         name: makeValueDiff(b.name, a.name),
-        ...presentEntry('extend', makeOptionalValueDiff(b.extend, a.extend)),
-        mixins: makeOrderedValuesDiff(b.mixins, a.mixins),
+        ...presentEntry('superClass', makeOptionalValueDiff(b.superClass, a.superClass)),
         ...presentEntry(
             'implement',
             makePresentDiff(b.implement, a.implement, makeUnorderedValuesDiff),
         ),
-        block: makeKeyedDiff(
-            'lwcMember',
-            b.block,
-            a.block,
-            (x, y, m) => makeMemberDiff(x, y, m, sources),
-            getLwcMemberKey,
-            sources,
-        ),
+        block: makeLwcMembersDiff(b.block, a.block, sources),
     }));

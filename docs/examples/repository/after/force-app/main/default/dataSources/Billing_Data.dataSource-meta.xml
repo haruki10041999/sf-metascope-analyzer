@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ExternalDataSource xmlns="http://soap.sforce.com/2006/04/metadata">
+    <endpoint>https://billing.example.com/odata</endpoint>
+    <isWritable>true</isWritable>
+    <label>Billing Data</label>
+    <principalType>Anonymous</principalType>
+    <protocol>NoAuthentication</protocol>
+    <type>OData4</type>
+</ExternalDataSource>

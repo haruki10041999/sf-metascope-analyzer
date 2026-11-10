@@ -53,8 +53,11 @@
         "name": {}
       },
       "name": "AccountRow",
-      "extend": "LightningElement",
-      "mixins": [],
+      "superClass": {
+        "kind": "jsIdentifier",
+        "sourceKeys": {},
+        "name": "LightningElement"
+      },
       "block": [
         {
           "kind": "lwcField",
@@ -97,7 +100,11 @@
             "type": "primitive",
             "primitiveType": "string"
           },
-          "init": "''",
+          "init": {
+            "kind": "jsString",
+            "sourceKeys": {},
+            "value": ""
+          },
           "references": [],
           "optional": false,
           "modifier": {
@@ -149,13 +156,50 @@
           "isSetter": false,
           "getterContent": {
             "modifier": {},
-            "body": {
-              "kind": "lwcBody",
-              "sourceKeys": {},
-              "statements": 1
-            },
-            "calls": [],
-            "events": []
+            "block": [
+              {
+                "kind": "jsReturn",
+                "sourceKeys": {},
+                "field": {
+                  "kind": "jsCall",
+                  "sourceKeys": {},
+                  "callee": {
+                    "kind": "jsIdentifier",
+                    "sourceKeys": {},
+                    "name": "formatAmount"
+                  },
+                  "arg": [
+                    {
+                      "kind": "jsLogical",
+                      "sourceKeys": {},
+                      "left": {
+                        "kind": "jsMemberAccess",
+                        "sourceKeys": {},
+                        "type": "object",
+                        "object": {
+                          "kind": "jsThis",
+                          "sourceKeys": {}
+                        },
+                        "operator": ".",
+                        "member": "amount"
+                      },
+                      "operator": "??",
+                      "right": {
+                        "kind": "jsNumber",
+                        "sourceKeys": {},
+                        "value": 0
+                      }
+                    }
+                  ]
+                }
+              }
+            ],
+            "references": [
+              {
+                "local": "formatAmount",
+                "source": "c/utils"
+              }
+            ]
           },
           "variantType": {
             "kind": "lwcType",
@@ -182,39 +226,133 @@
           "param": [],
           "async": false,
           "modifier": {},
-          "body": {
-            "kind": "lwcBody",
-            "sourceKeys": {},
-            "statements": 1
-          },
-          "calls": [
+          "block": [
             {
-              "kind": "lwcCall",
+              "kind": "jsExpression",
               "sourceKeys": {},
-              "callType": "dispatchEvent",
-              "target": "CustomEvent",
-              "arg": [
-                "new CustomEvent('select', { detail: { recordId: this.recordId } })"
-              ],
-              "references": []
+              "value": {
+                "kind": "jsMemberAccess",
+                "sourceKeys": {},
+                "type": "method",
+                "object": {
+                  "kind": "jsThis",
+                  "sourceKeys": {}
+                },
+                "operator": ".",
+                "member": "dispatchEvent",
+                "memberArg": [
+                  {
+                    "kind": "jsNew",
+                    "sourceKeys": {},
+                    "callee": {
+                      "kind": "jsIdentifier",
+                      "sourceKeys": {},
+                      "name": "CustomEvent"
+                    },
+                    "arg": [
+                      {
+                        "kind": "jsString",
+                        "sourceKeys": {},
+                        "value": "select"
+                      },
+                      {
+                        "kind": "jsObject",
+                        "sourceKeys": {},
+                        "properties": [
+                          {
+                            "kind": "jsProperty",
+                            "sourceKeys": {},
+                            "key": "detail",
+                            "value": {
+                              "kind": "jsObject",
+                              "sourceKeys": {},
+                              "properties": [
+                                {
+                                  "kind": "jsProperty",
+                                  "sourceKeys": {},
+                                  "key": "recordId",
+                                  "value": {
+                                    "kind": "jsMemberAccess",
+                                    "sourceKeys": {},
+                                    "type": "object",
+                                    "object": {
+                                      "kind": "jsThis",
+                                      "sourceKeys": {}
+                                    },
+                                    "operator": ".",
+                                    "member": "recordId"
+                                  },
+                                  "shorthand": false
+                                }
+                              ]
+                            },
+                            "shorthand": false
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
             }
           ],
-          "events": [
-            {
-              "kind": "lwcEvent",
-              "sourceKeys": {},
-              "name": "select",
-              "detail": "{ recordId: this.recordId }"
-            }
-          ]
+          "references": []
         }
       ]
     },
-    "otherExports": [],
+    "exports": [
+      {
+        "kind": "lwcExport",
+        "sourceKeys": {},
+        "exportType": "default",
+        "exported": "default",
+        "local": "AccountRow",
+        "typeOnly": false
+      }
+    ],
     "declarations": [],
     "typeDeclarations": []
   },
   "sourceObject": [
+    {
+      "context": "''",
+      "start": {
+        "offset": 197,
+        "line": 6,
+        "column": 24
+      },
+      "end": {
+        "offset": 199,
+        "line": 6,
+        "column": 26
+      }
+    },
+    {
+      "context": "'select'",
+      "start": {
+        "offset": 387,
+        "line": 14,
+        "column": 43
+      },
+      "end": {
+        "offset": 395,
+        "line": 14,
+        "column": 51
+      }
+    },
+    {
+      "context": "0",
+      "start": {
+        "offset": 307,
+        "line": 10,
+        "column": 43
+      },
+      "end": {
+        "offset": 308,
+        "line": 10,
+        "column": 44
+      }
+    },
     {
       "context": "@api amount?: number;",
       "start": {
@@ -307,6 +445,32 @@
       }
     },
     {
+      "context": "CustomEvent",
+      "start": {
+        "offset": 375,
+        "line": 14,
+        "column": 31
+      },
+      "end": {
+        "offset": 386,
+        "line": 14,
+        "column": 42
+      }
+    },
+    {
+      "context": "LightningElement",
+      "start": {
+        "offset": 126,
+        "line": 4,
+        "column": 40
+      },
+      "end": {
+        "offset": 142,
+        "line": 4,
+        "column": 56
+      }
+    },
+    {
       "context": "LightningElement",
       "start": {
         "offset": 9,
@@ -359,6 +523,45 @@
       }
     },
     {
+      "context": "detail: { recordId: this.recordId }",
+      "start": {
+        "offset": 399,
+        "line": 14,
+        "column": 55
+      },
+      "end": {
+        "offset": 434,
+        "line": 14,
+        "column": 90
+      }
+    },
+    {
+      "context": "export default class AccountRow extends LightningElement {\n    @api recordId!: string;\n    @api name: string = '';\n    @api amount?: number;\n\n    get formattedAmount(): string {\n        return formatAmount(this.amount ?? 0);\n    }\n\n    handleClick(): void {\n        this.dispatchEvent(new CustomEvent('select', { detail: { recordId: this.recordId } }));\n    }\n}",
+      "start": {
+        "offset": 86,
+        "line": 4,
+        "column": 0
+      },
+      "end": {
+        "offset": 447,
+        "line": 16,
+        "column": 1
+      }
+    },
+    {
+      "context": "formatAmount",
+      "start": {
+        "offset": 279,
+        "line": 10,
+        "column": 15
+      },
+      "end": {
+        "offset": 291,
+        "line": 10,
+        "column": 27
+      }
+    },
+    {
       "context": "formatAmount",
       "start": {
         "offset": 54,
@@ -369,6 +572,19 @@
         "offset": 66,
         "line": 2,
         "column": 21
+      }
+    },
+    {
+      "context": "formatAmount(this.amount ?? 0)",
+      "start": {
+        "offset": 279,
+        "line": 10,
+        "column": 15
+      },
+      "end": {
+        "offset": 309,
+        "line": 10,
+        "column": 45
       }
     },
     {
@@ -502,6 +718,32 @@
       }
     },
     {
+      "context": "recordId: this.recordId",
+      "start": {
+        "offset": 409,
+        "line": 14,
+        "column": 65
+      },
+      "end": {
+        "offset": 432,
+        "line": 14,
+        "column": 88
+      }
+    },
+    {
+      "context": "return formatAmount(this.amount ?? 0);",
+      "start": {
+        "offset": 272,
+        "line": 10,
+        "column": 8
+      },
+      "end": {
+        "offset": 310,
+        "line": 10,
+        "column": 46
+      }
+    },
+    {
       "context": "string",
       "start": {
         "offset": 165,
@@ -541,6 +783,71 @@
       }
     },
     {
+      "context": "this",
+      "start": {
+        "offset": 292,
+        "line": 10,
+        "column": 28
+      },
+      "end": {
+        "offset": 296,
+        "line": 10,
+        "column": 32
+      }
+    },
+    {
+      "context": "this",
+      "start": {
+        "offset": 352,
+        "line": 14,
+        "column": 8
+      },
+      "end": {
+        "offset": 356,
+        "line": 14,
+        "column": 12
+      }
+    },
+    {
+      "context": "this",
+      "start": {
+        "offset": 419,
+        "line": 14,
+        "column": 75
+      },
+      "end": {
+        "offset": 423,
+        "line": 14,
+        "column": 79
+      }
+    },
+    {
+      "context": "this.amount ?? 0",
+      "start": {
+        "offset": 292,
+        "line": 10,
+        "column": 28
+      },
+      "end": {
+        "offset": 308,
+        "line": 10,
+        "column": 44
+      }
+    },
+    {
+      "context": "this.amount",
+      "start": {
+        "offset": 292,
+        "line": 10,
+        "column": 28
+      },
+      "end": {
+        "offset": 303,
+        "line": 10,
+        "column": 39
+      }
+    },
+    {
       "context": "this.dispatchEvent(new CustomEvent('select', { detail: { recordId: this.recordId } }))",
       "start": {
         "offset": 352,
@@ -551,6 +858,32 @@
         "offset": 438,
         "line": 14,
         "column": 94
+      }
+    },
+    {
+      "context": "this.dispatchEvent(new CustomEvent('select', { detail: { recordId: this.recordId } }));",
+      "start": {
+        "offset": 352,
+        "line": 14,
+        "column": 8
+      },
+      "end": {
+        "offset": 439,
+        "line": 14,
+        "column": 95
+      }
+    },
+    {
+      "context": "this.recordId",
+      "start": {
+        "offset": 419,
+        "line": 14,
+        "column": 75
+      },
+      "end": {
+        "offset": 432,
+        "line": 14,
+        "column": 88
       }
     },
     {
@@ -567,29 +900,29 @@
       }
     },
     {
-      "context": "{\n        return formatAmount(this.amount ?? 0);\n    }",
+      "context": "{ detail: { recordId: this.recordId } }",
       "start": {
-        "offset": 262,
-        "line": 9,
-        "column": 34
+        "offset": 397,
+        "line": 14,
+        "column": 53
       },
       "end": {
-        "offset": 316,
-        "line": 11,
-        "column": 5
+        "offset": 436,
+        "line": 14,
+        "column": 92
       }
     },
     {
-      "context": "{\n        this.dispatchEvent(new CustomEvent('select', { detail: { recordId: this.recordId } }));\n    }",
+      "context": "{ recordId: this.recordId }",
       "start": {
-        "offset": 342,
-        "line": 13,
-        "column": 24
+        "offset": 407,
+        "line": 14,
+        "column": 63
       },
       "end": {
-        "offset": 445,
-        "line": 15,
-        "column": 5
+        "offset": 434,
+        "line": 14,
+        "column": 90
       }
     }
   ],

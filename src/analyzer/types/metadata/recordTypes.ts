@@ -738,6 +738,213 @@ export const REPORT_TYPE_SPEC = {
 } as const satisfies RecordSpec;
 export type ReportTypeJson = RecordJson<typeof REPORT_TYPE_SPEC>;
 
+// ---------------------------------------------------------------------------
+// 単位がなかった種類 (docs/json-gaps.md 3 章)
+// ---------------------------------------------------------------------------
+
+const RULE_SCHEMA = { fullName: 'string', active: 'boolean' } as const;
+
+/**
+ * 割り当てルール (assignmentRules/<オブジェクト>.assignmentRules-meta.xml)。
+ * ルールの行 (ruleEntry: 条件の行・割り当て先・メールテンプレート) は、上から順に評価されるので値の木の並び
+ */
+export const ASSIGNMENT_RULES_SPEC = {
+    kind: 'assignmentRules',
+    root: 'AssignmentRules',
+    schema: {},
+    children: {
+        assignmentRule: {
+            kind: 'assignmentRule',
+            key: ['fullName'],
+            schema: RULE_SCHEMA,
+            trees: { ruleEntry: 'many' },
+        },
+    },
+} as const satisfies RecordSpec;
+export type AssignmentRulesJson = RecordJson<typeof ASSIGNMENT_RULES_SPEC>;
+
+/** 自動応答ルール (autoResponseRules/<オブジェクト>.autoResponseRules-meta.xml) */
+export const AUTO_RESPONSE_RULES_SPEC = {
+    kind: 'autoResponseRules',
+    root: 'AutoResponseRules',
+    schema: {},
+    children: {
+        autoResponseRule: {
+            kind: 'autoResponseRule',
+            key: ['fullName'],
+            schema: RULE_SCHEMA,
+            trees: { ruleEntry: 'many' },
+        },
+    },
+} as const satisfies RecordSpec;
+export type AutoResponseRulesJson = RecordJson<typeof AUTO_RESPONSE_RULES_SPEC>;
+
+/** エスカレーションルール (escalationRules/<オブジェクト>.escalationRules-meta.xml)。ruleEntry の中に escalationAction */
+export const ESCALATION_RULES_SPEC = {
+    kind: 'escalationRules',
+    root: 'EscalationRules',
+    schema: {},
+    children: {
+        escalationRule: {
+            kind: 'escalationRule',
+            key: ['fullName'],
+            schema: RULE_SCHEMA,
+            trees: { ruleEntry: 'many' },
+        },
+    },
+} as const satisfies RecordSpec;
+export type EscalationRulesJson = RecordJson<typeof ESCALATION_RULES_SPEC>;
+
+/** パス (pathAssistants/<名前>.pathAssistant-meta.xml)。選択リスト項目 (entityName.fieldName) の値ごとのステップ */
+export const PATH_ASSISTANT_SPEC = {
+    kind: 'pathAssistant',
+    root: 'PathAssistant',
+    schema: {
+        masterLabel: 'string',
+        active: 'boolean',
+        entityName: 'string',
+        fieldName: 'string',
+        recordTypeName: 'string',
+    },
+    children: {
+        pathAssistantSteps: {
+            kind: 'pathAssistantStep',
+            key: ['picklistValueName'],
+            schema: { picklistValueName: 'string', info: 'string' },
+            lists: ['fieldNames'],
+        },
+    },
+} as const satisfies RecordSpec;
+export type PathAssistantJson = RecordJson<typeof PATH_ASSISTANT_SPEC>;
+
+/** 重複ルール (duplicateRules/<オブジェクト>.<名前>.duplicateRule-meta.xml)。使う一致ルールは子 */
+export const DUPLICATE_RULE_SPEC = {
+    kind: 'duplicateRule',
+    root: 'DuplicateRule',
+    schema: {
+        masterLabel: 'string',
+        description: 'string',
+        isActive: 'boolean',
+        actionOnInsert: 'string',
+        actionOnUpdate: 'string',
+        alertText: 'string',
+        securityOption: 'string',
+        sortOrder: 'number',
+    },
+    /** 重複したときの動作 (Alert・Report) */
+    lists: ['operationsOnInsert', 'operationsOnUpdate'],
+    trees: { duplicateRuleFilter: 'one' },
+    children: {
+        duplicateRuleMatchRules: {
+            kind: 'duplicateRuleMatchRule',
+            key: ['matchRuleSObjectType', 'matchingRule'],
+            schema: { matchRuleSObjectType: 'string', matchingRule: 'string' },
+            trees: { objectMapping: 'one' },
+        },
+    },
+} as const satisfies RecordSpec;
+export type DuplicateRuleJson = RecordJson<typeof DUPLICATE_RULE_SPEC>;
+
+/** 一致ルール (matchingRules/<オブジェクト>.matchingRule-meta.xml)。条件の項目 (matchingRuleItems) は書いた順 */
+export const MATCHING_RULES_SPEC = {
+    kind: 'matchingRules',
+    root: 'MatchingRules',
+    schema: {},
+    children: {
+        matchingRules: {
+            kind: 'matchingRule',
+            key: ['fullName'],
+            schema: {
+                fullName: 'string',
+                label: 'string',
+                description: 'string',
+                ruleStatus: 'string',
+                booleanFilter: 'string',
+            },
+            trees: { matchingRuleItems: 'many' },
+        },
+    },
+} as const satisfies RecordSpec;
+export type MatchingRulesJson = RecordJson<typeof MATCHING_RULES_SPEC>;
+
+/** プラットフォームイベントのチャネル (platformEventChannels/<名前>.platformEventChannel-meta.xml) */
+export const PLATFORM_EVENT_CHANNEL_SPEC = {
+    kind: 'platformEventChannel',
+    root: 'PlatformEventChannel',
+    schema: { label: 'string', channelType: 'string' },
+} as const satisfies RecordSpec;
+export type PlatformEventChannelJson = RecordJson<typeof PLATFORM_EVENT_CHANNEL_SPEC>;
+
+/**
+ * チャネルのメンバー (platformEventChannelMembers/<名前>.platformEventChannelMember-meta.xml)。
+ * selectedEntity はイベント (X__e) か変更イベント (AccountChangeEvent・Invoice__ChangeEvent)
+ */
+export const PLATFORM_EVENT_CHANNEL_MEMBER_SPEC = {
+    kind: 'platformEventChannelMember',
+    root: 'PlatformEventChannelMember',
+    schema: { eventChannel: 'string', selectedEntity: 'string', filterExpression: 'string' },
+    trees: { enrichedFields: 'many' },
+} as const satisfies RecordSpec;
+export type PlatformEventChannelMemberJson = RecordJson<typeof PLATFORM_EVENT_CHANNEL_MEMBER_SPEC>;
+
+/** イベントの購読の設定 (PlatformEventSubscriberConfigs/<名前>.platformEventSubscriberConfig-meta.xml)。platformEventConsumer はトリガー */
+export const PLATFORM_EVENT_SUBSCRIBER_CONFIG_SPEC = {
+    kind: 'platformEventSubscriberConfig',
+    root: 'PlatformEventSubscriberConfig',
+    schema: {
+        masterLabel: 'string',
+        platformEventConsumer: 'string',
+        batchSize: 'number',
+        user: 'string',
+        numPartitions: 'number',
+        partitionKey: 'string',
+    },
+} as const satisfies RecordSpec;
+export type PlatformEventSubscriberConfigJson = RecordJson<
+    typeof PLATFORM_EVENT_SUBSCRIBER_CONFIG_SPEC
+>;
+
+/** CSP 信頼済みサイト (cspTrustedSites/<名前>.cspTrustedSite-meta.xml) */
+export const CSP_TRUSTED_SITE_SPEC = {
+    kind: 'cspTrustedSite',
+    root: 'CspTrustedSite',
+    schema: {
+        endpointUrl: 'string',
+        description: 'string',
+        context: 'string',
+        isActive: 'boolean',
+        canAccessCamera: 'boolean',
+        canAccessMicrophone: 'boolean',
+        isApplicableToConnectSrc: 'boolean',
+        isApplicableToFontSrc: 'boolean',
+        isApplicableToFrameSrc: 'boolean',
+        isApplicableToImgSrc: 'boolean',
+        isApplicableToMediaSrc: 'boolean',
+        isApplicableToStyleSrc: 'boolean',
+    },
+} as const satisfies RecordSpec;
+export type CspTrustedSiteJson = RecordJson<typeof CSP_TRUSTED_SITE_SPEC>;
+
+/** 外部データソース (dataSources/<名前>.dataSource-meta.xml)。権限の externalDataSourceAccesses が指す */
+export const EXTERNAL_DATA_SOURCE_SPEC = {
+    kind: 'externalDataSource',
+    root: 'ExternalDataSource',
+    schema: {
+        label: 'string',
+        type: 'string',
+        endpoint: 'string',
+        principalType: 'string',
+        protocol: 'string',
+        isWritable: 'boolean',
+        authProvider: 'string',
+        certificate: 'string',
+        customConfiguration: 'string',
+        repository: 'string',
+        version: 'string',
+    },
+} as const satisfies RecordSpec;
+export type ExternalDataSourceJson = RecordJson<typeof EXTERNAL_DATA_SOURCE_SPEC>;
+
 /** XML 1 ファイルの種類 (種類 → 表)。parser・Diff の一覧に使う */
 export const RECORD_METADATA_SPECS = {
     customMetadata: CUSTOM_METADATA_RECORD_SPEC,
@@ -763,6 +970,17 @@ export const RECORD_METADATA_SPECS = {
     externalCredential: EXTERNAL_CREDENTIAL_SPEC,
     customNotificationType: CUSTOM_NOTIFICATION_TYPE_SPEC,
     reportType: REPORT_TYPE_SPEC,
+    assignmentRules: ASSIGNMENT_RULES_SPEC,
+    autoResponseRules: AUTO_RESPONSE_RULES_SPEC,
+    escalationRules: ESCALATION_RULES_SPEC,
+    pathAssistant: PATH_ASSISTANT_SPEC,
+    duplicateRule: DUPLICATE_RULE_SPEC,
+    matchingRules: MATCHING_RULES_SPEC,
+    platformEventChannel: PLATFORM_EVENT_CHANNEL_SPEC,
+    platformEventChannelMember: PLATFORM_EVENT_CHANNEL_MEMBER_SPEC,
+    platformEventSubscriberConfig: PLATFORM_EVENT_SUBSCRIBER_CONFIG_SPEC,
+    cspTrustedSite: CSP_TRUSTED_SITE_SPEC,
+    externalDataSource: EXTERNAL_DATA_SOURCE_SPEC,
 } as const;
 
 export type RecordMetadataType = keyof typeof RECORD_METADATA_SPECS;

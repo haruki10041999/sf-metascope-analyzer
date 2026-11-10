@@ -1,7 +1,8 @@
 import { LightningElement, api, wire, track } from 'lwc';
 import { NavigationMixin } from 'lightning/navigation';
-import { getRecord, getFieldValue } from 'lightning/uiRecordApi';
+import { getRecord, getFieldValue, updateRecord } from 'lightning/uiRecordApi';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
+import { refreshApex } from '@salesforce/apex';
 import getAccounts from '@salesforce/apex/AccountController.getAccounts';
 import deleteAccount from '@salesforce/apex/AccountController.deleteAccount';
 import NAME_FIELD from '@salesforce/schema/Account.Name';
@@ -28,6 +29,13 @@ export default class AccountList extends NavigationMixin(LightningElement) {
 
     @wire(getRecord, { recordId: '$recordId', fields: [NAME_FIELD, INDUSTRY_FIELD] })
     record?: { data?: unknown; error?: unknown };
+
+    @wire(getRecord, {
+        recordId: '$recordId',
+        fields: ['Account.Name'],
+        optionalFields: ['Account.Industry'],
+    })
+    recordByName?: { data?: unknown; error?: unknown };
 
     @wire(getAccounts, { parentId: '$recordId', limitSize: '$maxRows' })
     wiredAccounts({ data, error }: { data?: unknown[]; error?: unknown }): void {
@@ -82,5 +90,32 @@ export default class AccountList extends NavigationMixin(LightningElement) {
     @api
     refresh(): void {
         this.refs.table?.focus();
+    }
+
+    /** 関数を初期値にしたフィールド (ハンドラー)。本体の呼び出し・イベントはメソッドと同じく JSON に入る */
+    handleReload = async (): Promise<void> => {
+        const row = this.template.querySelector('c-account-row');
+        await refreshApex(this.record);
+        updateRecord({ fields: { Id: this.recordId } })
+            .then(() => {
+                this.dispatchEvent(
+                    new CustomEvent('reloaded', { detail: { count: this.rows.length, row } }),
+                );
+            })
+            .catch((error: unknown) => {
+                this.error = error;
+            });
+    };
+
+    handleOpenList = (): void => {
+        this[NavigationMixin.Navigate]({
+            type: 'standard__objectPage',
+            attributes: { objectApiName: 'Account', actionName: 'list' },
+            state: { filterName: 'Recent' },
+        });
+    };
+
+    connectedCallback(): void {
+        window.addEventListener('resize', this.handleReload);
     }
 }
